@@ -1,0 +1,5680 @@
+## version $VER: YAM.catalog 5.3 (07.06.2001)
+## language suomi
+## codeset 0
+;   
+; ----------------------------------------------------------------------
+; History:
+;
+; 5.1 (4.6.2001)
+;
+; Initial version
+;
+;
+; 5.2 (6.6.2001)
+;
+; - QA by David Rey
+;
+; - Shortcurts clashing in the Preselection window: fixed the shortcuts
+;   in MSG_TR_DownloadOnly & MSG_TR_Clear
+;
+; - Added the missing shortcuts in MSG_WR_AddInfo, MSG_FO_SortBy &
+;   MSG_FO_ThenBy
+;
+; - Shortcuts clashing in Addressbook -> Edit Person: fixed the shortcuts
+;   in MSG_EA_Phone & MSG_EA_PGPId
+;
+; - Shortcuts clashing in Addressbook -> List: fixed the shortcut in
+;   MSG_EA_Description
+;
+; - Shortcuts clashing in Configuration/TCP/IP: fixed the shortcuts in
+;   MSG_CO_SMTPUser, MSG_CO_UseSTMPAUTH, MSG_CO_POPUserID, MSG_CO_Domain,
+;   MSG_CO_SMTPPass & MSG_CO_DeleteServerMail
+;
+; - Shortcuts clashing in Configuration/New Mail: fixed the shortcut in
+;   MSG_CO_AvoidDuplicates, modified the one in MSG_CO_NotiCommand
+;
+; - Shortcuts clashing in Configuration/Filters: removed the shortcut in
+;   MSG_CO_ActionBounce, changed the one in MSG_CO_ActionPlay, fixed the
+;   one in MSG_CO_ActionDelete
+;
+; - Shortcuts clashing in Configuration/Lists: fixed the shortcut in
+;   MSG_CO_FixedFontList
+;
+; - Shortcuts clashing in the User configuration: fixed the shortcut in
+;   MSG_US_Password
+;
+; - Removed the fake shortcut from MSG_CO_Del
+;
+; - Removed the shortcut from MSG_Del, since it can't be used in this
+;   translation while avoiding all the clashes <sigh>
+;
+;
+; 5.3 (7.6.2001)
+;
+; - Added the shortcuts to the now officially updated MSG_CO_AltQuote &
+;   MSG_CO_DoQuote strings
+;
+; ----------------------------------------------------------------------
+;
+; General
+;
+MSG_Folder
+Kansio
+; Folder
+;
+MSG_Message
+Viesti
+; Message
+;
+MSG_Attachments
+Liitetiedostot
+; Attachments
+;
+MSG_Options
+Valinnat
+; Options
+;
+MSG_Add
+_Uusi
+; _New
+;
+MSG_Del
+Poista
+; _Delete
+;
+MSG_New
+Uusi
+; New
+;
+MSG_Open
+Avaa...
+; Open...
+;
+MSG_Append
+Lisää...
+; Append...
+;
+MSG_Save
+Tallenna
+; Save
+;
+MSG_SaveAs
+Tallenna...
+; Save as...
+;
+MSG_Print
+Tulosta...
+; Print...
+;
+MSG_Edit
+Muokkaa...
+; Edit...
+;
+MSG_Display
+Näytä
+; Display
+;
+MSG_Filter
+Suodata
+; Filter
+;
+MSG_Process
+Käsittele
+; Process
+;
+MSG_Okay
+_OK
+; _Okay
+;
+MSG_Use
+_Käytä
+; _Use
+;
+MSG_Cancel
+_Peru
+; _Cancel
+;
+MSG_Yes
+_Kyllä
+; _Yes
+;
+MSG_No
+_ei
+; _No
+;
+MSG_OkayReq
+*_OK
+; *_Okay
+;
+MSG_OkayCancelReq
+*_OK|_Peru
+; *_Okay|_Cancel
+;
+MSG_YesNoReq
+*_Kyllä|_Ei
+; *_Yes|_No
+;
+MSG_ErrorReq
+Virhe
+; Error
+;
+MSG_NewEntry
+- uusi -
+; - new -
+;
+MSG_Unnamed
+nimetön
+; unnamed
+;
+MSG_Bytes
+tavua
+; bytes
+;
+MSG_Date
+Päiväys
+; Date
+;
+MSG_Sender
+Lähettäjä
+; Sender
+;
+MSG_Recipient
+Vastaanottaja
+; Recipient
+;
+MSG_Subject
+Aihe
+; Subject
+;
+MSG_Size
+Koko
+; Size
+;
+MSG_Status
+Tila
+; Status
+;
+MSG_FolderList
+Kansiolista
+; Folder list
+;
+MSG_MessageList
+Viestilista
+; Message list
+;
+MSG_Realname
+Oikea nimi
+; Real name
+;
+MSG_Filename
+Tiedostonimi
+; Filename
+;
+MSG_Alias
+Alias
+; Alias
+;
+MSG_Description
+Kuvaus
+; Description
+;
+MSG_DOB
+Syntymäpäivä
+; Date of birth
+;
+MSG_City
+Kaupunki
+; City
+;
+MSG_Country
+Maa
+; Country
+;
+MSG_Street
+Katu
+; Street
+;
+MSG_Phone
+Puhelin
+; Phone
+;
+MSG_Name
+Nimi
+; Name
+;
+MSG_Email
+Sähköpostiosoite
+; Email address
+;
+MSG_Address
+Osoite
+; Address
+;
+MSG_ReturnAddress
+Vastausosoite
+; Return address
+;
+MSG_SenderRecpt
+Lähettäjä/vastaanottaja
+; Sender/recipient
+;
+MSG_MessageDate
+Viestin päiväys
+; Message date
+;
+MSG_Unread
+Lukematta
+; Unread
+;
+MSG_Total
+Yht.
+; Total
+;
+MSG_From
+Lähettäjä
+; From
+;
+MSG_To
+Vastaanottaja
+; To
+;
+MSG_Default
+oletus
+; default
+;
+MSG_Columns
+Sarakkeet
+; Columns
+;
+MSG_Path
+Polku
+; Path
+;
+MSG_Directory
+Hakemisto
+; Directory
+;
+; Module Root
+;
+MSG_Copyright1
+Lähdekoodiltaan avoin sähköpostiohjelma Amigalle\n\
+\n\
+Tekijänoikeudet (c) 1995-2000 Marcel Beck\n\
+Tekijänoikeudet (c) 2000-2005 YAM Open Source Team
+; Open Source E-mail package for the Amiga\n\
+; \n\
+; Copyright (C) 1995-2000 Marcel Beck\n\
+; Copyright (C) 2000-2007 YAM Open Source Team
+;   
+MSG_Version
+Versio:
+; Version:
+;
+MSG_CompilationDate
+Kääntämispäivä:
+; Compilation date:
+;
+MSG_Copyright2
+Tämä on vapaa ohjelma; saat levittää ja/tai muuttaa sitä GNU Yleisen Julkisen Lisenssin mukaisesti. Katso yksityiskohdat manuaalista.\n
+;This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
+; 
+MSG_UsedSoftware
+\nTämä ohjelma käyttää seuraavia muiden tekemiä ohjelmia:\n
+; \nThis application uses the following third party software:\n
+;
+MSG_WebSite
+Tuoreimmat YAM-uutiset löytyvät YAM-tukisivuilta osoitteesta \e5http://www.yam.ch
+; The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch
+;
+MSG_UserLogin
+Kirjaudu klikkaamalla nimeäsi
+; Click your name to login
+;
+MSG_AppDescription
+SMTP/POP3 Asiak/Post.ohj.AmiTCP:tä vrt
+; SMTP/POP3 Client & Mailer for AmiTCP
+;
+MSG_ErrorStartup
+Virhe käynnistyksen aikana
+; Error during startup
+;
+MSG_Quit
+Lopeta
+; Quit
+;
+MSG_ErrorLib
+En voi avata kirjastoa '%s', versiota %ld
+; Can't open library '%s', version %ld
+;LIBRARY_NAME, LIBRARY_VERSION
+;
+MSG_LoadingConfig
+Lataan kokoonpanoa...
+; Loading configuration...
+;
+MSG_CreatingGUI
+Teen käyttöliittymää...
+; Creating user interface...
+;
+MSG_ErrorMuiApp
+Ohjelmaa ei voinut tehdä
+; Can't create application
+;
+MSG_RebuildIndices
+Kokoan kansioiden sisällön uudelleen...
+; Rebuilding folders' indices...
+;
+MSG_LoadingFolders
+Lataan kansiot...
+; Loading folders...
+;
+MSG_LoadingABook
+Lataan osoitekirjan...
+; Loading address book...
+;
+MSG_InitLibs
+Alustan kirjastot ja luokat...
+; Initialising libraries and classes...
+;
+MSG_ErrorClasses
+MUI erikoisluokkia ei voi tehdä
+; Can't create MUI custom classes
+;
+MSG_ErrorAslStruct
+ASL-tietuetta ei voi varata
+; Can't allocate ASL structure
+;
+MSG_ErrorTimer
+Timer.deviceä ei voi avata
+; Can't open timer.device
+;
+MSG_ErrorARexx
+ARexx-porttia ei voi tehdä
+; Can't create ARexx port
+;
+MSG_LoadingGFX
+Lataan grafiikkaa...
+; Loading graphics...
+;
+MSG_SendStartReq
+Lähtevien kansio sisältää lähettämätötä postia.\nHaluatko lähettää nämä viestit nyt?
+; The outgoing folder contains unsent mail.\nDo you want to send these messages now?
+;
+MSG_QuitYAMReq
+Tahdotko todella sammuttaa YAM:in?
+; Do you really want to quit YAM?
+;
+MSG_CTtextplain
+tavallinen teksti
+; plain text
+;
+MSG_CTtexthtml
+HTML-asiakirja
+; HTML document
+;
+MSG_CTtextaguide
+AmigaGuide-asiakirja
+; AmigaGuide document
+;
+MSG_CTapplicationoctetstream
+binääritiedosto
+; binary file
+;
+MSG_CTapplicationpostscript
+Postscript-asiakirja
+; Postscript document
+;
+MSG_CTapplicationrtf
+Rich Text Format
+; Rich Text Format
+;
+MSG_CTapplicationlha
+LhA-paketti
+; LhA archive
+;
+MSG_CTapplicationlzx
+LZX-paketti
+; LZX archive
+;
+MSG_CTapplicationzip
+ZIP-paketti
+; ZIP archive
+;
+MSG_CTapplicationamigaexe
+Amigan ohjelma
+; Amiga executable
+;
+MSG_CTimagejpeg
+JPEG/JFIF-kuva
+; JPEG/JFIF picture
+;
+MSG_CTimagegif
+GIF-kuva
+; GIF picture
+;
+MSG_CTimagepng
+PNG-kuva
+; PNG picture
+;
+MSG_CTimagetiff
+TIFF-kuva
+; TIFF picture
+;
+MSG_CTimageilbm
+Amiga IFF-ILBM-kuva
+; Amiga IFF-ILBM picture
+;
+MSG_CTaudiobasic
+UNIX äänitiedosto
+; UNIX audio file
+;
+MSG_CTaudio8svx
+Amiga IFF-8SVX-ääni
+; Amiga IFF-8SVX audio
+;
+MSG_CTaudiowav
+Microsoft WAV-ääni
+; Microsoft WAV audio
+;
+MSG_CTvideompeg
+MPEG-video
+; MPEG video stream
+;
+MSG_CTvideoquicktime
+Apple Quicktime-video
+; Apple QuickTime video
+;
+MSG_CTvideoanim
+Amiga IFF-Anim-video
+; Amiga IFF-ANIM video
+;
+MSG_CTvideomsvideo
+Microsoft AVI-video
+; Microsoft AVI video
+;
+MSG_CTmessagerfc822
+Sähköpostiviesti
+; E-mail message
+;
+; Logfile entries
+;
+MSG_LOG_Started
+YAM käynnistyi
+; YAM started
+;
+MSG_LOG_Terminated
+YAM pysähtyi
+; YAM terminated
+;
+MSG_LOG_LoggedIn
+Kirjautunut käyttäjänä '%s'
+; Logged in as user '%s'
+; USER_NAME
+;
+MSG_LOG_LoggedInVerbose
+Kirjautunut nimellä '%s', käyttäen kokoonpanoa '%s' ja postihakemistoa '%s'
+; Logged in as '%s', using configuration '%s' and mail directory '%s'
+; USER_NAME, CONFIG_FILE, FOLDER_PATH
+;
+MSG_LOG_Deleting
+Poistettu %ld viesti(ä) kansiosta '%s'
+; Deleted %ld message(s) in folder '%s'
+; COUNT, FOLDER
+;
+MSG_LOG_DeletingVerbose
+Poistettu viesti, lähettäjä '%s', aihe '%s' kansiosta '%s'
+; Deleted message from '%s' about '%s' in folder '%s'
+; SENDER, SUBJECT, FOLDER
+;
+MSG_LOG_Moving
+Siirretty %ld viesti(ä) kansiosta '%s' kansioon '%s'
+; Moved %ld message(s) from folder '%s' to '%s'
+; COUNT, FOLDER, FOLDER
+;
+MSG_LOG_MovingVerbose
+Siirretty viesti, lähettäjä '%s', aihe '%s', kansiosta '%s' kansioon '%s'
+; Moved message from '%s' about '%s' from folder '%s' to '%s'
+; SENDER, SUBJECT, FOLDER, FOLDER
+;
+MSG_LOG_Copying
+Kopioitu %ld viesti(ä) kansiosta '%s' kansioon '%s'
+; Copied %ld message(s) from folder '%s' to '%s'
+; COUNT, FOLDER, FOLDER
+;
+MSG_LOG_CopyingVerbose
+Kopioitu viesti, lähettäjä '%s', aihe '%s' kansiosta '%s' kansioon '%s'
+; Copied message from '%s' about '%s' from folder '%s' to '%s'
+; SENDER, SUBJECT, FOLDER, FOLDER
+;
+MSG_LOG_ConnectPOP
+Kirjauduttu POP3-tilille '%s@%s': %ld viestiä odottaa 
+; Logged in on POP3 account '%s@%s': %ld messages waiting
+; USER_ID, HOST, COUNT
+;
+MSG_LOG_RetrievingVerbose
+Noudettu viesti, lähettäjä '%s', aihe '%s' (%ld tavua)
+; Retrieved message from '%s' about '%s' (%ld bytes)
+; SENDER, SUBJECT, SIZE
+;
+MSG_LOG_Retrieving
+Noudettu %ld viesti(ä) POP3-tililtä '%s@%s'
+; Retrieved %ld message(s) from POP3 account '%s@%s'
+; COUNT, USER_ID, HOST
+;
+MSG_LOG_ConnectSMTP
+Yhdistetty SMTP-palvelimeen '%s'
+; Connected to SMTP server '%s'
+; HOST
+;
+MSG_LOG_SendingVerbose
+Lähetetty viesti, vastaanottaja '%s', aihe '%s' (%ld tavua)
+; Sent message to '%s' about '%s' (%ld bytes)
+; RECIPIENT, SUBJECT, SIZE
+;
+MSG_LOG_Sending
+Lähetetty %ld viesti(ä) käyttäen SMTP-palvelinta '%s'
+; Sent %ld message(s) using SMTP server '%s'
+; COUNT, HOST
+;
+MSG_LOG_Editing
+Muokattu viesti, lähettäjä '%s', vastaanottaja '%s', aihe '%s'
+; Edited message from '%s' to '%s' about '%s'
+; SENDER, RECIPIENT, SUBJECT
+;
+MSG_LOG_Creating
+Kirjoitettu uusi viesti, vastaanottaja '%s', aihe '%s', mukana %ld liitetiedosto(a)
+; Wrote new message for '%s' about '%s', including %ld attachment(s)
+; RECIPIENT, SUBJECT, COUNT
+;
+MSG_LOG_Replying
+Vastattu viestiin, lähettäjä '%s', aihe '%s'
+; Replied message from '%s' about '%s'
+; SENDER, SUBJECT
+;
+MSG_LOG_Bouncing
+Eteenpäin lähetetty viesti, lähettäjä '%s', aihe '%s', vastaanottaja '%s'
+; Bounced message from '%s' about '%s' to '%s'
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_LOG_Forwarding
+Välitetty viesti, lähettäjä '%s', aihe '%s', vastaanottaja '%s'
+; Forwarded message from '%s' about '%s' to '%s'
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_LOG_Filtering
+Suodatettu %ld viesti(ä) kansiossa '%s': %ld osuma(a)
+; Filtered %ld message(s) in folder '%s': %ld match(es)
+; COUNT, FOLDER, COUNT
+;
+MSG_LOG_SavingConfig
+Tallennettu kokoonpanotiedosto '%s'
+; Saved configuration file '%s'
+; CONFIG_FILE
+;
+MSG_LOG_SavingABook
+Tallennettu osoitekirja '%s'
+; Saved address book '%s'
+; FILENAME
+;
+MSG_LOG_SavingUsers
+Tallennettu käyttäjän kokoonpano
+; Saved user configuration
+;
+MSG_LOG_NewAddress
+Lisätty osoitekirjaan kohta '%s'
+; Added address book entry '%s'
+; ALIAS
+;
+MSG_LOG_Importing
+Tuotu %ld viesti(ä) tiedostosta '%s' kansioon '%s'
+; Imported %ld message(s) from file '%s' into folder '%s'
+; COUNT, FILENAME, FOLDER
+;
+MSG_LOG_Exporting
+Viety %ld viesti(ä) kansiosta '%s' tiedostoon '%s'
+; Exported %ld message(s) from folder '%s' to file '%s'
+; COUNT, FOLDER, FILENAME
+;
+MSG_LOG_SavingAtt
+Tallennettu liitetiedosto '%s' viestistä '%s' kansiossa '%s'
+; Saved attachment '%s' of message '%s' in folder '%s'
+; FILENAME, MAILFILE, FOLDER
+;
+MSG_LOG_CroppingAtt
+Poistettu liitetiedosto(t) viestistä '%s' kansiossa '%s'
+; Cropped attachment(s) of message '%s' in folder '%s'
+; MAILFILE, FOLDER
+;
+MSG_LOG_ChangingSubject
+Muutettu aihe '%s' viestistä '%s' kansiossa '%s', uusi aihe '%s'
+; Changed subject '%s' of message '%s' in folder '%s' to '%s'
+; SUBJECT, MAILFILE, FOLDER, SUBJECT
+;
+;
+; Module UT - Procedures
+;
+MSG_UT_Save
+Tallenna
+; Save
+;
+MSG_UT_Load
+Lataa
+; Load
+;
+MSG_UT_PGPPassReq
+Ole hyvä ja anna PGP-salasanasi:
+; Please enter your PGP pass phrase:
+;
+MSG_UT_AppStats
+;Replaced by MSG_APPICON_STATS
+; COUNT, COUNT
+;
+MSG_UT_NoPrinter
+Ei tulostinta tai tulostin ofline-tilassa!
+; No printer or printer offline!
+;
+MSG_UT_NoPaper
+Paperi lopussa!
+; Out of paper!
+;
+; Module MA - Procedures
+;
+MSG_MA_GetFolderPass
+Kansio '%s' in suojattu kansio.\nOle hyvä ja anna salasana, jolla se avataan:
+; Folder '%s' is a protected folder.\nPlease enter the password to unlock it:
+; FOLDER
+;
+MSG_MA_LatestVersion
+Uusin versio: %s (%2ld.%02ld.%ld)\nTämä versio: %s (%s)\n\n%s
+; Latest version: %s (%2ld.%02ld.%ld)\nThis version: %s (%s)\n\n%s
+; VERSION_NUMBER, DAY, MONTH, YEAR, VERSION_NUMBER, DATE, TEXT
+;
+MSG_MA_NewVersion
+\e8A uusi versio in saatavana YAM-kotisivulla!
+; \e8A new version is available at the YAM homepage!
+;
+MSG_MA_NoNewVersion
+Käytät jo uusinta versiota.
+; You're already using the latest version.
+;
+MSG_MA_VersionReqOpt
+_Vieraile kotisivulla|*_Peru
+; _Visit homepage|*_Cancel
+;
+MSG_MA_ReplyReq
+Valitulla viestillä on useita vastaanottajia.\n\
+\n\
+Haluatko lähettää vastauksen...
+; The selected message has multiple recipients.\nDo you want to send the reply...
+;
+MSG_MA_ReplyReqOpt
+*_lähettäjälle|lähettäjälle _ja\nvastaanottajille|_vastaanottajille|_Peru
+; *to the\n_sender|to the sender and\n_all recipients|to the\n_recipients|_Cancel
+;
+MSG_MA_CompareReq
+Lähettäjän (From) osoite on <%s>, mutta\nvastausosoite on (Reply-To) <%s>.\nKumpaa osoitetta tahdot käyttää?
+; Sender address (From) is <%s>, but\nreturn address (Reply-To) is <%s>.\nWhich address do you want to use?
+; ADDRESS, ADDRESS
+;
+MSG_MA_Compare3ReqOpt
+_Lähettäjä|*_Vastausosoite|_Molemmat|_Peru
+; _From|*_Reply-To|_Both|_Cancel
+;
+MSG_MA_Compare2ReqOpt
+_Lähettäjä|*_Vastausosoite|_Peru
+; _From|*_Reply-To|_Cancel
+;
+MSG_MA_AttachRemoved
+\n_Seuraavat liitetiedostot on poistettu manuaalisesti:_\n
+; \n_The following attachments have been removed manually:_\n
+;
+MSG_MA_ConfirmReq
+Ole hyvä ja varmista...
+; Please confirm...
+;
+MSG_MA_ConfirmDel
+Haluatko varmasti poistaa?
+; Please confirm deletion.
+;
+MSG_MA_1Selected
+Yksi viesti valittuna.\n
+; One message selected.\n
+;
+MSG_MA_xSelected
+%lD viestiä valittuna.\n
+; %lD messages selected.\n
+; COUNT
+;
+MSG_MA_ConfirmFilter
+Onko tarkoitus suodattaa kaikki viestit\nkansiossa '%s'?
+; Is it okay to filter all the messages\nin the folder '%s'?
+; FOLDER
+;
+MSG_MA_FilterStats
+Suodatus tehty:\n%3ld viestiä tarkistettu,\n%3ld välitetty,\n%3ld arkistoitu,\n%3ld poistettu
+; Filtering done:\n%3ld messages checked,\n%3ld forwarded,\n%3ld archived,\n%3ld deleted
+; COUNT, COUNT, COUNT, COUNT
+;
+MSG_MA_ExportAppendReq
+Tiedosto on jo olemassa. Haluatko kirjoittaa\nsen päälle vai yhdistää viestit?
+; The output file already exists. Do you want\nto overwrite it or append the messages?
+;
+MSG_MA_ExportAppendOpts
+*_Ylikirjoita|_Yhdistä|_Peru
+; *_Overwrite|_Append|_Cancel
+;
+MSG_MA_MoveMsg
+Siirrä viesti(t)
+; Move message(s)
+;
+MSG_MA_MoveMsgReq
+Valitse kansio, johon siirretään:
+; Please select a destination folder:
+;
+MSG_MA_MoveGad
+_Siirrä
+; _Move
+;
+MSG_MA_CopyMsg
+Kopioi viesti(t)
+; Copy message(s)
+;
+MSG_MA_CopyGad
+K_opioi
+; Cop_y
+;
+MSG_MA_ChangeSubjReq
+Anna uusi aihe:
+; Enter a new subject:
+;
+MSG_MA_All
+_Kaikki
+; All
+;
+MSG_MA_Cancel
+\ePeru
+; \ebCancel
+;
+MSG_MA_TitleStatus
+Tila
+; Status
+;
+MSG_MA_Scripts
+Komentojonot
+; Scripts
+;
+MSG_MA_ExecuteScript
+Aja komentojono...
+; Execute script...
+;
+MSG_MA_CheckSingle
+Valitse tili
+; Check single account
+;
+MSG_MA_FolderInfo
+\ebTämänhetkinen kansio\en\nNimi: %s\nPolku: %s\nKoko: %lD tavua\nViestejä: %lD (%lD uutta, %lD lukematta)
+; \ebCurrent folder\en\nName: %s\nPath: %s\nSize: %lD bytes\nMessages: %lD (%lD new, %lD unread)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MA_MessageInfo
+\ebTämänhetkinen viesti\en\nLähettäjä: %s <%s>\nVastaanottaja: %s <%s>\nAihe: %s\nPäiväys: %s\nTiedostonimi: %s\nKoko: %lD tavua
+; \ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %lD bytes
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_MA_WinTitle
+YAM %s - Käyttäjä: %s
+; YAM %s  -  User: %s
+; VERSION, NAME
+;
+MSG_MA_ToPrefix
+\ebVastaanottaja: \en
+; \ebTo: \en
+;
+; Module MA - Window
+;
+MSG_MA_Incoming
+Saapuvat
+; Incoming
+;
+MSG_MA_Outgoing
+Lähtevät
+; Outgoing
+;
+MSG_MA_Sent
+Lähetetyt
+; Sent
+;
+MSG_MA_Deleted
+Poistetut
+; Deleted
+;
+MSG_MA_Archived
+Arkistoidut
+; Archived
+;
+; Module MA - Toolbar
+;
+MSG_MA_TBRead
+_Lue
+; Rea_d
+;
+MSG_MA_TBEdit
+_Muokkaa
+; _Edit
+;
+MSG_MA_TBMove
+Sii_rrä
+; _Move
+;
+MSG_MA_TBDelete
+_Poista
+; De_lete
+;
+MSG_MA_TBGetAddr
+O_ta os.
+; Ge_tAdd
+;
+MSG_MA_TBWrite
+_Uusi
+; _New
+;
+MSG_MA_TBReply
+_Vastaa
+; _Reply
+;
+MSG_MA_TBForward
+Väl_itä
+; For_ward
+;
+MSG_MA_TBGetMail
+_Hae
+; _Get
+;
+MSG_MA_TBSendAll
+L_ähetä
+; _Send
+;
+MSG_MA_TBFilter
+_Suodata
+; F_ilter
+;
+MSG_MA_TBFind
+_Etsi
+; _Find
+;
+MSG_MA_TBAddrBook
+_Osoitek
+; _Addr
+;
+MSG_MA_TBConfig
+_Kokoonp
+; _Config
+;
+; Module MA - Menus
+;
+MSG_MA_Project
+Työ
+; Project
+;
+MSG_MA_About
+Tietoa...
+; About...
+;
+MSG_MA_AboutMUI
+Tietoa MUI:sta...
+; About MUI...
+;
+MSG_MA_CheckVersion
+Tarkista versio
+; Check version
+;
+MSG_MA_LastErrors
+Näytä edellinen viesti
+; Show last message
+;
+MSG_MA_Restart
+Käynnistä uudelleen
+; Restart
+;
+MSG_MA_Hide
+H\000Piilota
+; Hide
+;
+MSG_MA_Quit
+Q\000Lopeta
+; Quit
+;
+MSG_MA_NewFolder
+Uusi kansio...
+; New folder...
+;
+MSG_MA_NewSeparator
+Uusi erotin...
+; New separator...
+;
+MSG_MA_SortOrder
+Järjestys
+; Order
+;
+MSG_MA_OSave
+Tallenna
+; Save
+;
+MSG_MA_Reset
+Nollaa
+; Reset
+;
+MSG_MA_Select
+Valitse
+; Select
+;
+MSG_MA_SelectAll
+L\000Kaikki
+; All
+;
+MSG_MA_SelectNone
+Ei mitään
+; None
+;
+MSG_MA_SelectToggle
+Vaihda
+; Toggle
+;
+MSG_MA_MSearch
+F\000Etsi...
+; Search...
+;
+MSG_MA_MFilter
+I\000Suodata
+; Filter
+;
+MSG_MA_RemoveDeleted
+Z\000Tyhjennä roskakori
+; Empty trash
+;
+MSG_MA_UpdateIndex
+U\000Päivitä hakemisto
+; Update index
+;
+MSG_MA_FlushIndices
+Tyhjennä sisältö
+; Flush indices
+;
+MSG_MA_ExportMessages
+Vie...
+; Export...
+;
+MSG_MA_ImportMessages
+Tuo...
+; Import...
+;
+MSG_MA_MSendAll
+S\000Lähetä odottava posti
+; Send queued mail
+;
+MSG_MA_Exchange
+X\000Vaihda posti
+; Exchange mail
+;
+MSG_MA_MGetMail
+G\000Hae uudet postit
+; Get new mail
+;
+MSG_MA_MRead
+D\000Lue
+; Read
+;
+MSG_MA_MEdit
+Muokkaa
+; Edit
+;
+MSG_MA_MDelete
+Poista
+; Delete
+;
+MSG_MA_MMove
+Siirrä...
+; Move...
+;
+MSG_MA_MCopy
+Kopioi...
+; Copy...
+;
+MSG_MA_Save
+Tallenna...
+; Save...
+;
+MSG_MA_Crop
+Poista
+; Crop
+;
+MSG_MA_MReply
+Vastaa...
+; Reply...
+;
+MSG_MA_MForward
+Välitä...
+; Forward...
+;
+MSG_MA_MBounce
+Lähetä eteenpäin...
+; Bounce...
+;
+MSG_MA_MGetAddress
+Tallenna osoite...
+; Save address...
+;
+MSG_MA_SetStatus
+Muuta tila...
+; Set status to
+;
+MSG_MA_ToUnread
+[\000Lukematta
+; Unread
+;
+MSG_MA_ToRead
+]\000Luettu
+; Read
+;
+MSG_MA_ToHold
+{\000Säilytä
+; Hold
+;
+MSG_MA_ToQueued
+}\000Odottava
+; Queued
+;
+MSG_MA_ChangeSubj
+Vaihda aihe...
+; Change subject...
+;
+MSG_MA_MSend
+Lähetä
+; Send
+;
+MSG_MA_Settings
+Asetukset
+; Settings
+;
+MSG_MA_MAddrBook
+Osoitekirja...
+; Address Book...
+;
+MSG_MA_MConfig
+Kokoonpano...
+; Configuration...
+;
+MSG_MA_MUsers
+Käyttäjät...
+; Users...
+;
+; Module MA - Bubblehelp
+;
+MSG_HELP_MA_BT_READ
+Näytä valitun\nviestin sisältö
+; Display contents of\nselected message
+;
+MSG_HELP_MA_BT_EDIT
+Muokkaa\nvalittua viestiä
+; Modify the\nselected message
+;
+MSG_HELP_MA_BT_MOVE
+Siirrä valittu/valitut\nviestit toiseen kansioon
+; Move selected message(s)\nto another folder
+;
+MSG_HELP_MA_BT_DELETE
+Poista valittu/valitut viesti(t)
+; Delete selected message(s)
+;
+MSG_HELP_MA_BT_GETADDRESS
+Tallenna lähettäjän osoite\nosoitekirjaasi
+; Save sender's address\nin your address book
+;
+MSG_HELP_MA_BT_WRITE
+Laadi uusi viesti
+; Compose a new message
+;
+MSG_HELP_MA_BT_REPLY
+Vastaa valittuun viestiin
+; Reply to selected message
+;
+MSG_HELP_MA_BT_FORWARD
+Välitä valittu viesti\ntoiselle vastaanottajalle
+; Forward selected message\nto another recipient
+;
+MSG_HELP_MA_BT_POPNOW
+Yhdistä postipalvelimeen\nja hae uudet viestit
+; Connect to the mail server\nand download new messages
+;
+MSG_HELP_MA_BT_SENDALL
+Lähetä odottavat viestit\nlähtevien kansiosta
+; Send queued messages\nin the outgoing folder
+;
+MSG_HELP_MA_BT_FILTER
+Käytä suodattimia kaikkiin\ntämän kansion viesteihin
+; Apply filters to all\nmessages in this folder
+;
+MSG_HELP_MA_BT_SEARCH
+Etsi postikansioistasi
+; Search your mail folders
+;
+MSG_HELP_MA_BT_ABOOK
+Avaa osoitekirja
+; Open the address book
+;
+MSG_HELP_MA_BT_CONFIG
+Muokkaa YAM:in asetuksia
+; Modify YAM's preferences
+;
+;
+; Module CO - Procedures
+;
+MSG_CO_SelectDir
+Valitse hakemisto uudelle kansiolle:
+; Please select a directory for the new folder:
+;
+MSG_CO_ChangeFolderPass
+Anna tämän kansion salasana:
+; Enter a new password for this folder:
+;
+MSG_CO_RetypePass
+Anna salasana uudelleen:
+; Please re-type the password:
+;
+MSG_CO_ConfirmDelete
+Kaikki tämän kansion viestit katoavat!\nHaluatko todellakin poistaa sen?
+; All messages in this folder will be lost!\nDo you really want to delete it?
+;
+MSG_CO_InvalidConf
+Epäkelpo kokoonpano (puuttuva palvelin\ntai sähköpostiosoite)\n\nTäytä nämä kentät ja yritä uudelleen!
+; Invalid configuration (missing hostname\n or email address)\n\nPlease fill in these fields and try again!
+;
+MSG_CO_ImportMIMEReq
+Tuo asetukset...
+; Import settings from...
+;
+MSG_CO_ImportMIMEGads
+*_MIME.prefs|m_ailcap|m_ime.types|_Peru
+; *_MIME.prefs|m_ailcap|m_ime.types|_Cancel
+;
+MSG_CO_NewIntroDef
+Hei,\\\\n
+; Hello,\\\\n
+;
+MSG_CO_AltRepIntroDef
+
+; 
+;
+MSG_CO_AltRepPatternDef
+
+; 
+;
+MSG_CO_ForwardIntroDef
+*** Välitetty viest alkaa ***\\\\n\\\\nPäiväys: %c\\\\nLähettäjä: %n <%e>\\\\nAihe: %s\\\\n\\\\n--- Välitetty viesti alkaa ---\\\\n\\\\n
+; *** Begin of forwarded message ***\\\\n\\\\nDate: %c\\\\nFrom: %n <%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n
+;
+MSG_CO_ForwardFinishDef
+*** Välitetty viesti päättyy ***\\\\n
+; *** End of forwarded message ***\\\\n
+;
+MSG_CO_GreetingsDef
+Parhain terveisin
+; Kind regards
+;
+MSG_CO_AltRepHelloDef
+
+; 
+;
+MSG_CO_AltRepByeDef
+
+; 
+;
+MSG_CO_MLRepHelloDef
+
+; 
+;
+MSG_CO_MLRepIntroDef
+%c, %n kirjoitti:\\\\n
+; On %c, %n wrote:\\\\n
+;
+MSG_CO_MLRepByeDef
+Terveisin
+; Regards
+;
+MSG_CO_LineBreak
+\\\\n  Rivin vaihto
+; \\\\n  Line break
+;
+MSG_CO_SenderName
+%n  Alkuperäinen lähettäjä: Nimi
+; %n  Original sender: Name
+;
+MSG_CO_SenderFirstname
+%f Alkuperäinen lähettäjä: Etunimi
+; %f  Original sender: First name
+;
+MSG_CO_SenderAddress
+%e Alkuperäinen lähettäjä: Osoite
+; %e  Original sender: Address
+;
+MSG_CO_SenderSubject
+%s Alkuperäinen viesti: Aihe
+; %s  Original message: Subject
+;
+MSG_CO_SenderDate
+%d Alkuperäinen viesti: Päiväys
+; %d  Original message: Date
+;
+MSG_CO_SenderTime
+%t Alkuperäinen viesti: Aika
+; %t  Original message: Time
+;
+MSG_CO_SenderDOW
+%w Alkuperäinen viesti: Viikonpäivä
+; %w  Original message: Day of week
+;
+MSG_CO_SenderMsgID
+%m Alkuperäinen viesti: Viestin tunniste
+; %m  Original message: Message ID
+;
+MSG_CO_SenderInitials
+%i Alkuperäinen lähettäjä: Alkukirjaimet
+; %i  Original sender: Initials
+;
+MSG_CO_Sender2Initials
+%j Alkuperäinen lähettäjä: Kaksi alkukirjainta
+; %j  Original sender: Two initials
+;
+MSG_CO_RecptName
+%r Vastaanottaja: Nimi
+; %r  Recipient: Name
+;
+MSG_CO_RecptFirstname
+%v Vastaanottaja: Etunimi
+; %v  Recipient: First name
+;
+MSG_CO_RecptAddress
+%a Vastaanottaja: Osoite
+; %a  Recipient: Address
+;
+MSG_CO_ORecptName
+%r Alkuperäinen vastaanottaja: Nimi
+; %r  Original recipient: Name
+;
+MSG_CO_ORecptFirstname
+%v Alkuperäinen vastaanottaja: Etunimi
+; %v  Original recipient: First name
+;
+MSG_CO_ORecptAddress
+%a Alkuperäinen vastaanottaja: Osoite
+; %a  Original recipient: Address
+;
+MSG_CO_CompleteHeader
+%h Täydellinen otsake
+; %h  Complete header
+;
+MSG_CO_ArchiveName
+%a Paketin tiedostonimi
+; %a  Filename of archive
+;
+MSG_CO_ArchiveFiles
+%f Pakattavat tiedostot
+; %f  Files to be archived
+;
+MSG_CO_ArchiveFilelist
+%l Tiedostonimien lista
+; %l  List containing filenames
+;
+; Module CO - Window
+;
+MSG_CO_CrdFirstSteps
+Ensi askeleet
+; First steps
+;
+MSG_CO_CrdTCPIP
+TCP/IP
+; TCP/IP
+;
+MSG_CO_CrdNewMail
+Uusi viesti
+; New mail
+;
+MSG_CO_CrdFilters
+Suodattimet
+; Filters
+;
+MSG_CO_CrdRead
+Lukeminen
+; Read
+;
+MSG_CO_CrdWrite
+Kirjoitus
+; Write
+;
+MSG_CO_CrdReply
+Vastaaminen
+; Reply
+;
+MSG_CO_CrdSignature
+Allekirjoitus
+; Signature
+;
+MSG_CO_CrdLists
+Listat
+; Lists
+;
+MSG_CO_CrdMIME
+MIME
+; MIME
+;
+MSG_CO_CrdSecurity
+Turvallisuus
+; Security
+;
+MSG_CO_CrdMixed
+Sekalaiset
+; Miscellaneous
+;
+MSG_CO_CrdScripts
+ARexx
+; ARexx
+;
+MSG_CO_CrdStartQuit
+Aloitus/Lopetus
+; Start/Quit
+;
+MSG_CO_CrdABook
+Osoitekirja
+; Address book
+;
+MSG_CO_Save
+_Tallenna
+; _Save
+;
+MSG_CO_Use
+_Käytä
+; _Use
+;
+MSG_CO_Cancel
+_Peru
+; _Cancel
+;
+MSG_CO_TZoneM12
+GMT-12  Kwajalein saaret
+; GMT-12  Kwajalein Islands
+;
+MSG_CO_TZoneM11
+GMT-11  Midwaysaaret, Samoa
+; GMT-11  Midway Islands, Samoa
+;
+MSG_CO_TZoneM10
+GMT-10  Honolulu, Tahiti
+; GMT-10  Honolulu, Tahiti
+;
+MSG_CO_TZoneM9
+GMT-9   Anchorage
+; GMT-9   Anchorage
+;
+MSG_CO_TZoneM8
+GMT-8   Los Angeles, San Francisco (PDT)
+; GMT-8   Los Angeles, San Francisco (PDT)
+;
+MSG_CO_TZoneM7
+GMT-7   Calgary, Denver, Phoenix (MDT)
+; GMT-7   Calgary, Denver, Phoenix (MDT)
+;
+MSG_CO_TZoneM6
+GMT-6   Chicago, Dallas, Mexico City (CMT)
+; GMT-6   Chicago, Dallas, Mexico City (CMT)
+;
+MSG_CO_TZoneM5
+GMT-5   Lima, Miami, Montreal, New York (EST)
+; GMT-5   Lima, Miami, Montreal, New York (EST)
+;
+MSG_CO_TZoneM4
+GMT-4   Caracas, Santiago, Thule (ADT)
+; GMT-4   Caracas, Santiago, Thule (ADT)
+;
+MSG_CO_TZoneM3
+GMT-3   Buenos Aires, Rio de Janeiro
+; GMT-3   Buenos Aires, Rio de Janeiro
+;
+MSG_CO_TZoneM2
+GMT-2   Itäinen Brasilia
+; GMT-2   Brazil East
+;
+MSG_CO_TZoneM1
+GMT-1   Azores
+; GMT-1   Azores
+;
+MSG_CO_TZone0
+GMT     Dublin, Lisbon, Lontoo (GMT)
+; GMT     Dublin, Lisbon, London (GMT)
+;
+MSG_CO_TZone1
+GMT+1   Berliini, Pariisi, Madrid, Oslo (MET)
+; GMT+1   Berlin, Paris, Madrid, Oslo (MET)
+;
+MSG_CO_TZone2
+GMT+2   Ateena, Kairo, Helsinki (EET)
+; GMT+2   Athens, Cairo, Helsinki (EET)
+;
+MSG_CO_TZone3
+GMT+3   Baghdad, Kuwait, Moskova, Nairobi
+; GMT+3   Baghdad, Kuwait, Moscow, Nairobi
+;
+MSG_CO_TZone4
+GMT+4   Dubai, Port Louis, Victoria
+; GMT+4   Dubai, Port Louis, Victoria
+;
+MSG_CO_TZone5
+GMT+5   Islamabad, Karachi
+; GMT+5   Islamabad, Karachi
+;
+MSG_CO_TZone6
+GMT+6   Alma-Ata, Dhaka, Tashkent
+; GMT+6   Alma-Ata, Dhaka, Tashkent
+;
+MSG_CO_TZone7
+GMT+7   Bangkok, Hanoi, Phnom Penh
+; GMT+7   Bangkok, Hanoi, Phnom Penh
+;
+MSG_CO_TZone8
+GMT+8   Hong Kong, Shanghai, Singapore (PST)
+; GMT+8   Hong Kong, Shanghai, Singapore (PST)
+;
+MSG_CO_TZone9
+GMT+9   Osaka, Soul, Tokio
+; GMT+9   Osaka, Seoul, Tokyo
+;
+MSG_CO_TZone10
+GMT+10  Melbourne, Sydney, Vladivostok
+; GMT+10  Melbourne, Sydney, Vladivostok
+;
+MSG_CO_TZone11
+GMT+11  Uusi Kaledonia
+; GMT+11  New Caldonia
+;
+MSG_CO_TZone12
+GMT+12  Auckland, Wellington
+; GMT+12  Auckland, Wellington
+;
+MSG_CO_MinConfig
+Minimikokoonpano
+; Minimal configuration
+;
+MSG_CO_RealName
+_Oikea nimi
+; _Real name
+;
+MSG_CO_EmailAddress
+S_ähköpostiosoite
+; _Email address
+;
+MSG_CO_POPServer
+POP_3-palvelin
+; POP_3 server
+;
+MSG_CO_Password
+_Salasana
+; _Password
+;
+MSG_CO_TimeZone
+Aikavyöhyke
+; Time zone
+;
+MSG_CO_DaylightSaving
+K_esäaika
+; _Add adjustment for daylight saving time
+;
+MSG_CO_SendMail
+Postin lähetys (SMTP)
+; Send mail (SMTP)
+;
+MSG_CO_Server
+Palvelin
+; Server
+;
+MSG_CO_Domain
+Toimialu_e
+; Do_main
+;
+MSG_CO_Allow8bit
+Palvelin sallii _8-bittisen merkistön käytön
+; Server allows _8bit
+;
+MSG_CO_ReceiveMail
+Postin vastaanotto (POP3)
+; Receive mail (POP3)
+;
+MSG_CO_POPUserID
+Käyttäjätu_nnus
+; User _ID
+;
+MSG_CO_POPActive
+Aktii_vinen
+; _Active
+;
+MSG_CO_DeleteServerMail
+Po_ista posti palvelimelta
+; Delete mail _on server
+;
+MSG_CO_UseAPOP
+Kirjaudu _APOP:ia käyttäen
+; _Login using APOP
+;
+MSG_CO_PSNever
+ei koskaan
+; never
+;
+MSG_CO_PSLarge
+suuret viestit
+; large messages
+;
+MSG_CO_PSAlways
+aina
+; always
+;
+MSG_CO_PSAlwaysFast
+aina, pelkät koot
+; always, only sizes
+;
+MSG_CO_TWNever
+piilota aina
+; hide always
+;
+MSG_CO_TWAuto
+automaattinen
+; automatic
+;
+MSG_CO_TWAlways
+näytä aina
+; show always
+;
+MSG_CO_Download
+Lataa
+; Download
+;
+MSG_CO_AvoidDuplicates
+Estä kaks_oiskappaleet
+; _Avoid duplicates
+;
+MSG_CO_TransferWin
+_Siirtoikkuna
+; _Transfer window
+;
+MSG_CO_PreSelect
+_Esivalinta
+; _Pre-selection
+;
+MSG_CO_UpdateStatus
+Päivitä _viestin tila
+; Update m_essage status
+;
+MSG_CO_WarnSize1
+Koko_rajoitus
+; Size _limit
+;
+MSG_CO_WarnSize2
+Kt
+; KB
+;
+MSG_CO_AutoOperation
+Automaattinen toiminta
+; Automatic operation
+;
+MSG_CO_CheckMail
+T_arkista posti
+; Chec_k for new mail every
+;
+MSG_CO_Minutes
+minuutin välein
+; minutes
+;
+MSG_CO_DownloadLarge
+_Lataa suuret viestit
+; _Download large messages
+;
+MSG_CO_Notification
+Ilmoitus
+; Notification
+;
+MSG_CO_NotiReq
+Valinta_ikkuna
+; _Requester
+;
+MSG_CO_NotiSound
+_Ääni
+; S_ound
+;
+MSG_CO_NotiCommand
+Ko_mento
+; Co_mmand
+;
+MSG_CO_Name
+_Nimi
+; N_ame
+;
+MSG_CO_CTNone
+ei käytössä
+; don't combine
+;
+MSG_CO_CTAnd
+ja
+; and
+;
+MSG_CO_CTOr
+tai
+; or
+;
+MSG_CO_CTXor
+joko tai
+; exclusive or
+;
+MSG_CO_Comparison
+Vertailu
+; Comparison
+;
+MSG_CO_Action
+Toiminta
+; Action
+;
+MSG_CO_Remote
+_Etäsuodatin
+; Remote _filter
+;
+MSG_CO_ApplyToNew
+Käytä uu_siin viesteihin
+; A_pply to new mail
+;
+MSG_CO_ApplyToSent
+Käytä _lähetettyyn postiin
+; Apply to sent _mail
+;
+MSG_CO_ApplyOnReq
+Käytä p_yydettäessä
+; Apply on _request
+;
+MSG_CO_ActionBounce
+Palauta
+; _Bounce
+;
+MSG_CO_ActionForward
+V_älitä
+; _Forward
+;
+MSG_CO_ActionReply
+_Vastaa
+; _Reply
+;
+MSG_CO_ActionExecute
+Suorit_a
+; _Execute
+;
+MSG_CO_ActionPlay
+Soita ää_ni
+; _Play sound
+;
+MSG_CO_ActionMove
+_Siirrä
+; _Move
+;
+MSG_CO_ActionDelete
+Po_ista
+; De_lete
+;
+MSG_CO_ActionSkip
+Älä _lataa
+; D_on't download
+;
+MSG_CO_HeadNone
+ei mitään
+; none
+;
+MSG_CO_HeadShort
+valittu
+; selected
+;
+MSG_CO_HeadFull
+täysi
+; full
+;
+MSG_CO_SINone
+ei mikään
+; none
+;
+MSG_CO_SIFields
+vain tiedot
+; data only
+;
+MSG_CO_SIAll
+tiedot ja kuva
+; data and image
+;
+MSG_CO_SLBlank
+tyhjä rivi
+; blank line
+;
+MSG_CO_SLDash
+kaksi ajatusviivaa
+; two dashes
+;
+MSG_CO_SLBar
+erotinviiva
+; separator bar
+;
+MSG_CO_SLSkip
+ei allekirjoitusta
+; no signature
+;
+MSG_CO_HeaderLayout
+Otsakkeen asettelu
+; Header layout
+;
+MSG_CO_BodyLayout
+Viestin rungon asettelu
+; Message body layout
+;
+MSG_CO_OtherOptions
+Muut valinnat
+; Other options
+;
+MSG_CO_WrapHeader
+_Rivitä otsake
+; _Wrap header
+;
+MSG_CO_OldQuotes
+_Vanhat lainaukset
+; Old _quotes
+;
+MSG_CO_UseTextstyles
+Käytä t_ekstityylejä
+; Use te_xtstyles
+;
+MSG_CO_Header
+_Otsake
+; _Header
+;
+MSG_CO_SenderInfo
+_Lähettäjän tiedot
+; Sender _info
+;
+MSG_CO_SignatureSep
+Erillinen _allekirjoitus
+; Separate si_g.
+;
+MSG_CO_ColoredText
+V_ärillinen teksti
+; C_olored text
+;
+MSG_CO_MultiReadWin
+Jokaiselle viestille oma _ikkuna
+; _Multiple windows
+;
+MSG_CO_CharsetTrans
+_Merkistömuunnos
+; Charset _translation
+;
+MSG_CO_DisplayAll
+_Näytä kaikki tekstit
+; Display _all texts
+;
+MSG_CO_FixedFontEdit
+Käytä ta_salevyistä kirjasinta
+; Use _fixed font
+;
+MSG_CO_MimeViewers
+MIME-näyttäjät
+; MIME viewers
+;
+MSG_CO_MimeType
+Liitetiedoston t_yyppi
+; Attachment _type
+;
+MSG_CO_MimeCmd
+_Näyttäjä
+; _Viewer
+;
+MSG_CO_Extension
+P_ääte
+; E_xtension
+;
+MSG_CO_DefaultViewer
+_Oletusnäyttäjä
+; De_fault viewer
+;
+MSG_CO_IdentifyBin
+Tunnista _binääriset liitetiedostot
+; _Identify binary attachments
+;
+MSG_CO_MessageHeader
+Viestin otsake
+; Message header
+;
+MSG_CO_ReplyTo
+_Vastausosoite
+; _Reply to
+;
+MSG_CO_Organization
+Or_ganisaatio
+; _Organization
+;
+MSG_CO_ExtraHeaders
+_Lisätunnisteet
+; E_xtra headers
+;
+MSG_CO_MessageBody
+Viestin runko
+; Message body
+;
+MSG_CO_Welcome
+Alkut_ervehdys
+; Welcome _phrase
+;
+MSG_CO_Greetings
+L_oppulause
+; Closing p_hrase
+;
+MSG_CO_Editor
+Editori
+; Editor
+;
+MSG_CO_WordWrap
+_Rivitys
+; _Word wrap
+;
+MSG_CO_EWOff
+pois
+; off
+;
+MSG_CO_EWAsYouType
+kirjoittaessa
+; as you type
+;
+MSG_CO_EWBeforeSend
+ennen lähetystä
+; before sending
+;
+MSG_CO_ExternalEditor
+_Ulkoinen editori
+; _External editor
+;
+MSG_CO_Launch
+Käynnistä _Heti
+; _Launch immediately
+;
+MSG_CO_PhraseOpen
+Avaus
+; Open
+;
+MSG_CO_PhraseIntro
+Pohjustus
+; Intro
+;
+MSG_CO_PhraseClose
+Lopetus
+; Close
+;
+MSG_CO_Forwarding
+Välitys
+; Forwarding
+;
+MSG_CO_FwdInit
+_Alkulause
+; _Initial phrase
+;
+MSG_CO_FwdFinish
+_Loppusanat
+; _Terminating phrase
+;
+MSG_CO_Replying
+Vastaaminen
+; Replying
+;
+MSG_CO_RepInit
+_Oletusvastaus
+; Default _reply phrase
+;
+MSG_CO_AltRepInit
+_Vaihtoehtoinen vastaus
+; _Alternative reply phrase
+;
+MSG_CO_AltRepPat
+Käytä _näillä toimialueilla
+; Use with these _domains
+;
+MSG_CO_MLRepInit
+Po_stituslistan vastaus
+; _Mailing list reply phrase
+;
+MSG_CO_QuoteMail
+La_inaa viestiä käyttäen
+; _Quote message using
+;
+MSG_CO_QuoteEmpty
+Lainaa tyhjät _rivit
+; Quote _empty lines
+;
+MSG_CO_VerifyAddress
+Var_mista vastaanottajan osoite
+; _Verify recipient address
+;
+MSG_CO_StripSignature
+Poista allekir_joitus
+; Stri_p signature
+;
+MSG_CO_DefSig
+Oletusallekirjoitus
+; Default signature
+;
+MSG_CO_AltSig1
+Vaihtoehto #1
+; Alt. signature #1
+;
+MSG_CO_AltSig2
+Vaihtoehto #2
+; Alt. signature #2
+;
+MSG_CO_Signature
+Allekirjoitus
+; Signature
+;
+MSG_CO_UseSig
+K_äytä allekirjoitusta
+; Use s_ignature
+;
+MSG_CO_EditSig
+_Muokkaa ulkoisessa editorissa
+; _Edit in external editor
+;
+MSG_CO_InsertTag
+Lisää _satunnainen sananparsi
+; Insert _random tagline
+;
+MSG_CO_InsertENV
+Lisää E_NV:Signature
+; Insert E_NV:Signature
+;
+MSG_CO_Taglines
+Sananparret
+; Taglines
+;
+MSG_CO_TaglineFile
+Sananparsit_iedosto
+; Tagline _file
+;
+MSG_CO_TaglineSep
+S_ananparsien erotin
+; T_agline separator
+;
+MSG_CO_FixedFontList
+Käytä t_asaleveyksistä kirjasinta
+; Use _fixed font
+;
+MSG_CO_SwatchBeat
+Aika Swatch _Beats:einä
+; Time in Swatch _Beats
+;
+MSG_CO_LogNone
+ei mitään
+; none
+;
+MSG_CO_LogNormal
+normaali
+; normal
+;
+MSG_CO_LogVerbose
+monisanainen
+; verbose
+;
+MSG_CO_PGPExe
+P_GP polku
+; P_GP path
+;
+MSG_CO_PGPKey
+PGP-avaimesi _ID
+; Your PGP key _ID
+;
+MSG_CO_EncryptToSelf
+Salaa its_elle
+; _Encrypt to self
+;
+MSG_CO_AnonMail
+Postitus nimettömänä
+; Anonymous mail
+;
+MSG_CO_ReMailer
+Uu_delleen postittaja
+; _Re-Mailer
+;
+MSG_CO_ReMailerLine
+_Otsakekenttä
+; _Header field
+;
+MSG_CO_Logfiles
+Lokitiedostot
+; Logfiles
+;
+MSG_CO_LogPath
+Polk_u
+; _Path
+;
+MSG_CO_LogSplit
+Jaa _lokitiedosto
+; Split _logfile
+;
+MSG_CO_LogMode
+_Muoto
+; _Mode
+;
+MSG_CO_LogAllEvents
+Tallenna k_aikki tapahtumat
+; Log _all events
+;
+MSG_CO_OnStartup
+Ohjelman käynnistyessä
+; On program startup
+;
+MSG_CO_LoadAll
+Lataa kaikki kansiot
+; Load all folders
+;
+MSG_CO_MarkNew
+Merkitse uusi posti lukemattomaksi
+; Mark new mail as unread
+;
+MSG_CO_SendStart
+Lähetä posti lähtevien kansiosta
+; Send mail in outgoing queue
+;
+MSG_CO_PopStart
+Hae uusi posti
+; Download new mail
+;
+MSG_CO_CheckDOB
+Tarkista syntymäpäivät
+; Check birthdates
+;
+MSG_CO_OnTermination
+Ohjelman sammutuksen yhteydessä
+; On program termination
+;
+MSG_CO_DeleteOld
+Poista vanha posti
+; Delete old mail
+;
+MSG_CO_RemoveDel
+Tuhoa poistettu posti
+; Remove deleted mail
+;
+MSG_CO_ATABnever
+ei koskaan
+; never
+;
+MSG_CO_ATABask
+kysy ensin
+; ask before
+;
+MSG_CO_ATABinfoask
+jos tieto saatavana, kysy
+; if info available; ask
+;
+MSG_CO_ATABinfo
+jos tieto saatavana
+; if info available
+;
+MSG_CO_ATABalways
+aina
+; always
+;
+MSG_CO_InfoExc
+Henkilökohtaisten tietojen vaihto
+; Personal data exchange
+;
+MSG_CO_Gallery
+Tallenna ku_vat
+; Save _photos in
+;
+MSG_CO_MyURL
+Kuvasi _URL
+; UR_L of your picture
+;
+MSG_CO_AddToAddrbook
+Tallenna lähettäjän _osoite
+; Sa_ve sender's address
+;
+MSG_CO_ProxyServer
+_HTTP välityspalvelin
+; _HTTP Proxy server
+;
+MSG_CO_NewGroup
+_Ryhmä uusille tiedoille
+; _Group for new entries
+;
+MSG_CO_AddInfo
+Lisää h_enkilökohtaiset tiedot
+; _Add personal info
+;
+MSG_CO_Paths
+Polut
+; Paths
+;
+MSG_CO_Detach
+Pu_ra tiedostot...
+; D_ecode files to
+;
+MSG_CO_Attach
+_Lisää tiedostot...
+; _Attach files from
+;
+MSG_CO_TempDir
+_Väliaikaishakemisto
+; Directory for _tempfiles
+;
+MSG_CO_AppIcon
+Postilaatikon tilaikoni
+; Mailbox status AppIcon
+;
+MSG_CO_PositionX
+Paikka _X
+; Position _X
+;
+MSG_CO_CloseGadget
+Sa_mmutuspainike ikonioi ohjelman
+; Close_gadget iconifies program
+;
+MSG_CO_SaveDelete
+Tallenna/poista viestit
+; Save/delete messages
+;
+MSG_CO_ConfirmDelPart1
+V_armista
+; Confirm _deletion of
+;
+MSG_CO_ConfirmDelPart2
+tai useamman viestin poisto
+; or more messages
+;
+MSG_CO_Remove
+Po_ista viestit välittömästi
+; _Remove messages immediately
+;
+MSG_CO_SaveSent
+Ta_llenna lähetetyt viestit
+; Sa_ve sent messages
+;
+MSG_CO_DispIgnore
+Ohita
+; Ignore
+;
+MSG_CO_DispDeny
+Hylkää automaattisesti
+; Autodeny
+;
+MSG_CO_DispAsk
+Kysy käyttäjältä
+; Ask user
+;
+MSG_CO_DispAccept
+Hyväksy
+; Accept
+;
+MSG_CO_MDN
+Viestin jäljitys
+; Message tracking
+;
+MSG_CO_SendAtOnce
+Lähetä _heti
+; Send at _once
+;
+MSG_CO_XPK
+XPK/LhA -asetukset
+; XPK/LhA settings
+;
+MSG_CO_XPKPack
+Pakkaa_ja
+; _Packer
+;
+MSG_CO_XPKPackEnc
+Pakkaa/_salaa
+; Pac_k/protect
+;
+MSG_CO_Archiver
+Pakkaus_ohjelma
+; _Archiver
+;
+MSG_CO_ScriptMenu
+'Komentojonot'-valikko kohta %ld
+; 'Scripts' menu entry %ld
+; COUNT
+;
+MSG_CO_ScriptStartup
+Ohjelman käynnistyessä
+; Program startup
+;
+MSG_CO_ScriptTerminate
+Ohjelmasta poistuttaessa
+; Program termination
+;
+MSG_CO_ScriptPreGetMail
+Ennen postin hakua
+; Before getting mail
+;
+MSG_CO_ScriptPostGetMail
+Postinhaun jälkeen
+; After getting mail
+;
+MSG_CO_ScriptNewMsg
+Jokainen uusi viesti
+; With each new message
+;
+MSG_CO_ScriptPreSendMail
+Ennen postin lähetystä
+; Before sending mail
+;
+MSG_CO_ScriptPostSendMail
+Postin lähetyksen jälkeen
+; After sending mail
+;
+MSG_CO_ScriptReadMsg
+Viestiä lukiessa
+; When reading a message
+;
+MSG_CO_ScriptPreWriteMsg
+Ennen viestin kirjoitusta
+; Before writing a message
+;
+MSG_CO_ScriptPostWriteMsg
+Viestin kirjoituksen jälkeen
+; After writing a message
+;
+MSG_CO_ScriptClickURL
+Kaksoisklikattaessa URL:ia
+; When double-clicking an URL
+;
+MSG_CO_Script
+Komento_jono
+; Sc_ript
+;
+MSG_CO_OpenConsole
+Avaa konsoli-_ikkuna
+; _Open console window
+;
+MSG_CO_WaitTerm
+_Odota päättymistä
+; _Wait for termination
+;
+; Module CO - Menus
+;
+MSG_CO_Open
+Avaa...
+; Open...
+;
+MSG_CO_SaveAs
+Tallenna...
+; Save as...
+;
+MSG_CO_Edit
+Muokkaa
+; Edit
+;
+MSG_CO_ResetDefaults
+Nollaa oletusarvoiksi
+; Reset to defaults
+;
+MSG_CO_ResetAll
+Nollaa kaikki asetukset
+; Reset all settings
+;
+MSG_CO_LastSaved
+Viimeeksi tallennettu
+; Last saved
+;
+MSG_CO_Restore
+Palauta
+; Restore
+;
+MSG_CO_Extras
+Lisätoiminnot
+; Extras
+;
+MSG_CO_ScanForFolders
+Selaa kansioita
+; Scan for folders
+;
+MSG_CO_ImportMIME
+Tuo MIME-näyttäjät & tyypit...
+; Import MIME viewers & types...
+;
+; Module CO - Bubblehelp
+;
+MSG_HELP_CO_ST_REALNAME
+Koko nimesi\n(etunimi sukunimi)
+; Your full name\n(first name last name)
+;
+MSG_HELP_CO_ST_EMAIL
+Sähköpostiosoitteesi
+; Your email address.
+;
+MSG_HELP_CO_ST_POPHOST
+POP3-palvelimen osoite, josta postit haetaan.\nJos jätät tämän kentän tyhjäksi, käytetään\n SMTP-palvelimen osoitetta.
+; Address of the POP3 server to receive mail.\nIf you leave this field empty, the address\n of the SMTP server is used.
+;
+MSG_HELP_CO_ST_PASSWD
+Postipalvelimen\nsalasana
+; Password to access\nthe mail server
+;
+MSG_HELP_CO_CY_TZONE
+Valitse sijaintisi\naikavyöhyke
+; Select the timezone of\nyour current location
+;
+MSG_HELP_CO_CH_DLSAVING
+Muuta aikavyöhykettä\nkesäaikaa varten
+; Adjust the timezone during daylight\nsaving time (summer time)
+;
+MSG_HELP_CO_ST_SMTPHOST
+SMTP-palvelimen osoite, johon postit lähetetään.\nJos jätät tämän kentän tyhjäksi,\n käytetään POP3-palvelimen osoitetta.
+; Address of the SMTP server to send mail.\nIf you leave this field empty,\nthe address of the POP3 server is used.
+;
+MSG_HELP_CO_ST_DOMAIN
+Amigasi isäntänimi. Muuta tätä kenttää,\njos HELO-komennot epäonnistuvat.
+; The hostname of your Amiga. Change this\nfield if the HELO commands fails.
+;
+MSG_HELP_CO_CH_SMTP8BIT
+Älä muunna viestejä 7-bittisiksi lähetystä varten.\nKäytä tätä valintaa vain, jos\nSMTP-palvelin tukee 8-bittistä siirtoa!\nMuuten viestisi vioittuvat.
+; Don't convert messages to 7bit for transfer.\nOnly use this option if your\nSMTP server supports 8bit transfers!\nOtherwise your messages will get corrupted.
+;
+MSG_HELP_CO_LV_POP3
+POP3-palvelinlista
+; List of POP3 hosts
+;
+MSG_HELP_CO_BT_PADD
+Lisää uusi POP3-palvelin listalle
+; Add a new POP3 host to the list
+;
+MSG_HELP_CO_BT_PDEL
+Poista valittu POP3-palvelin listalta
+; Remove selected POP3 host from the list
+;
+MSG_HELP_CO_ST_POPUSERID
+Käyttäjänimi, jolla kirjaudut POP3-palvelimelle.\nJos jätät tämän kentän tyhjäksi, käyttäjätunnuksena\n käytetään sähköpostiosoitettasi
+; User name to log into the POP3 server.\nIf you leave this field empty, the user-ID\nwill be extracted from your email address.
+;
+MSG_HELP_CO_CH_DELETE
+Poista viestit palvelimelta\nlatauksen jälkeen
+; Delete messages from\nmail server after\ndownloading
+;
+MSG_HELP_CO_CH_USEAPOP
+Kirjaudu käyttäen APOP-tunnistusta
+; Login using APOP authentication
+;
+MSG_HELP_CO_CH_POPENABLED
+Yhdistä tähän palvelimeen\nkun uudet postit tarkistetaan
+; Connect to this server\nwhen checking for new mail
+;
+MSG_HELP_CO_CH_AVOIDDUP
+Jos et poista vanhoja viestejä\npalvelimelta, käytä tätä valintaa\nestääksesi kaksoisviestit.
+; If you don't delete old mail\non the server, use this option to\navoid duplicate messages.
+;
+MSG_HELP_CO_CH_TRANSWIN
+Näytä edistymisikkuna postinsiirtojen aikana
+; Show progress window during mail transfers
+;
+MSG_HELP_CO_CY_MSGSELECT
+Tällä valinnalla näet POP3-postilaatikkosi sisällön ja\nvoit valita viestit, jotka ladataan
+; Enable this option to show the contents of the POP3 mailbox\nand allow selection of the messages to be downloaded
+;
+MSG_HELP_CO_CH_UPDSTAT
+Merkitse uudet viestit saapuvien kansiossa\nlukemattomiksi ennen uuden postin hakua.
+; Mark new messages in the incoming folder\nas unread before downloading new mail
+;
+MSG_HELP_CO_ST_WARNSIZE
+Viestit, jotka ylittävät tämän\nkynnysarvon ovat 'suuria'
+; Messages which exceed this\nthreshold rank as 'large'
+;
+MSG_HELP_CO_ST_INTERVAL
+Kuinka usein haluat tarkistaa uuden postin?\n(anna 0 tai tyhjä poistaaksesi tämän toiminnon käytöstä)?
+; How frequently do you want to check for new mail?\n(enter 0 or no value to disable this feature)?
+;
+MSG_HELP_CO_CH_DLLARGE
+Kun posti tarkistetaan automaattisesti,\nlataa suuret viestit, vaikka ne ovat suurempia,\nkuin aiemmin määritelty koko
+; When automatically checking for new mail,\ndownload large messages even if they are\nlarger than the size specified above
+;
+MSG_HELP_CO_CH_NOTIREQ
+Näytä valintaikkuna,\nkun saat uutta postia
+; Show a requester\nwhen you get new mail
+;
+MSG_HELP_CO_ST_NOTICMD
+Ohjelma, jonka haluat ajaa,\nkun saat uutta postia
+; The program you want to\nexecute when you get new mail
+;
+MSG_HELP_CO_ST_NOTISOUND
+Äänitiedosto, jonka haluat soittaa,\nkun saat uutta postia
+; The sound file you want to play\nwhen you get new mail
+;
+MSG_HELP_CO_LV_RULES
+Suodatinlista
+; List of filters
+;
+MSG_HELP_CO_ST_RNAME
+Suodattimen nimi
+; Filter name
+;
+MSG_HELP_CO_CH_REMOTE
+Käytä tätä suodatinta ennen viestin latausta
+; Apply this filter before downloading a message
+;
+MSG_HELP_CO_CH_APPLYNEW
+Käytä tätä suodatinta uusiin viesteihin
+; Apply this filter to new messages
+;
+MSG_HELP_CO_CH_APPLYSENT
+Käytä tätä suodatinta lähetettyihin viesteihin
+; Apply this filter to sent messages
+;
+MSG_HELP_CO_CH_APPLYREQ
+Käytä tätä suodatinta, kun aktivoit\nsuodatintoiminnon manuaalisesti
+; Apply this filter when you activate\nthe filter function manually
+;
+MSG_HELP_CO_CY_COMBINE
+Kuinka yhdistän kaksi haku-\navainta tähän suodattimeen
+; How to combine the two\nsearch keys for this filter
+;
+MSG_HELP_CO_CH_ABOUNCE
+Lähetä täsmäävät viestit toiselle henkilölle
+; Bounce matching messages to another person
+;
+MSG_HELP_CO_ST_ABOUNCE
+Eteenpäin lähetettyjen viestien saajan sähköpostiosoite
+; Email address of the person that gets the bounced messages
+;
+MSG_HELP_CO_CH_AFORWARD
+Välitä täsmäävät viestit toiselle henkilölle
+; Forward matching messages to another person
+;
+MSG_HELP_CO_ST_AFORWARD
+Välitettyjen viestien saajan sähköpostiosoite
+; Email address of the person that gets the forwarded messages
+;
+MSG_HELP_CO_CH_ARESPONSE
+Lähetä automaattinen vastaus jokaiseen täsmäävään viestiin
+; Send an automatic reply for each matching message
+;
+MSG_HELP_CO_ST_ARESPONSE
+Tekstitiedosto, joka sisältää vastauksen
+; Text file that contains the response
+;
+MSG_HELP_CO_CH_AEXECUTE
+Aja komento jokaiselle täsmäävälle viestille
+; Execute a command for each matching message
+;
+MSG_HELP_CO_ST_AEXECUTE
+Suoritettava komento. Täsmäävän viestin polku\nsyötetään argumenttina.
+; Command to execute. The path of the matching\nmessage is passed as an argument.
+;
+MSG_HELP_CO_CH_APLAY
+Soittaa äänitiedoston\njokaisella täsmäävällä viestillä
+; Plays a sound file for\neach matching message
+;
+MSG_HELP_CO_ST_APLAY
+Soitettava äänitiedosto
+; Sound file to play
+;
+MSG_HELP_CO_CH_AMOVE
+Siirrä täsmäävät viestit toiseen kansioon
+; Move matching messages to a different folder
+;
+MSG_HELP_CO_PO_MOVETO
+Kohdekansio
+; Destination folder
+;
+MSG_HELP_CO_CH_ADELETE
+Poista täsmäävät viestit
+; Delete matching messages
+;
+MSG_HELP_CO_CH_ASKIP
+Älä lataa täsmääviä viestejä
+; Don't download matching messages
+;
+MSG_HELP_CO_BT_RADD
+Lisää uusi suodatin
+; Add a new filter
+;
+MSG_HELP_CO_BT_RDEL
+Poista valittu suodatin
+; Remove selected filter
+;
+MSG_HELP_CO_CA_COL2QUOT
+Vaihda väriä, jota käytetään näyttämään lainattua viestiä
+; Adjust the color used for displaying old quotes
+;
+MSG_HELP_CO_CH_WRAPHEAD
+Näytä pitkät otsakkeet monella rivillä
+; Display long headers on multiple lines
+;
+MSG_HELP_CO_CH_TEXTSTYLES
+Käännä / * _ ja #\ntekstityylien ohjauskoodeiksi
+; Interpret / * _ and # as\ncontrol codes for textstyles
+;
+MSG_HELP_CO_CY_HEADER
+Haluatko näyttää\nviestin otsakkeen\nlukuikkunassa?
+; How do you want to\ndisplay the message header\nin the Read window?
+;
+MSG_HELP_CO_ST_HEADERS
+Määritä englanniksi AmigaDOS-mallinne, jolla\nvalitaan otsakkeen esitysjärjestys.\nOletus on (From|To|Date|Subject)
+; Specify an AmigaDOS pattern to\nchoose the headers in SELECTED format.\nDefault is (From|To|Date|Subject)
+;
+MSG_HELP_CO_CY_SENDERINFO
+Lukuikkunassa näytettävät\nlähettäjän tiedot (jos saatavana)
+; Information about the sender to display\nin the read window (if available)
+;
+MSG_HELP_CO_CY_SIGSEPLINE
+Allekirjoituksen erotin-\nviivan tyyppi
+; Type of the signature\nseparation line
+;
+MSG_HELP_CO_ST_INTRANS
+Käytä tätä merkistömuunnosta\nviestejä luettaessa
+; Apply this character set translation\nwhen reading messages
+;
+MSG_HELP_CO_CH_ALLTEXTS
+Näytä kaikki moniosaisen\nviestin tekstiosat
+; Display all textual parts\nof a multipart message
+;
+MSG_HELP_CO_CH_MULTIWIN
+Avaa jokainen valittu viesti\nomaan lukuikkunaansa
+; Open a new read window\nfor each selected message
+;
+MSG_HELP_CO_CA_COLTEXT
+Vaihda lukuikkunassa ja editorissa käytettävän\n'värillisen' tekstin väri
+; Adjust the color of 'colored' text used\nin the read window and the editor
+;
+MSG_HELP_CO_CH_FIXFEDIT
+Näytä viestit käyttäen\ntasaleveyksistä kirjasinta
+; Display messages using\na fixed-width font
+;
+MSG_HELP_CO_ST_CTYPE
+MIME-näyttäjä on aktivoitu\ntämän liitteen tyypin mukaan
+; MIME viewer is activated\nby this attachment type
+;
+MSG_HELP_CO_ST_COMMAND
+Näyttäjäkomennon polku ja valinnaiset\nargumentit. Käytä %s liittääksesi\nnäytettävän tiedoston.
+; Path and optional arguments of\nthe viewer command. Use %s to\ninsert the datafile.
+;
+MSG_HELP_CO_BT_MADD
+Lisää uusi MIME-näyttäjä
+; Add a new MIME viewer
+;
+MSG_HELP_CO_BT_MDEL
+Poista valittu MIME-näyttäjä
+; Remove selected MIME viewer
+;
+MSG_HELP_CO_ST_EXTENS
+Tämän tyypin käyttämät tiedostopäätteet
+; Filename extensions used by this file type
+;
+MSG_HELP_CO_ST_DEFVIEWER
+Ohjelma, jota käytetään näyttämään\ntuntemattomat tyypit
+; Program used to displaying\nattachments of unknown type
+;
+MSG_HELP_CO_CH_IDENTBIN
+Yritä tunnistaa tiedostotyyppi\nennen oletusnäyttäjän käyttöä
+; Try to identify the file type\nbefore using the default viewer
+;
+MSG_HELP_CO_ST_REPLYTO
+Anna oletuspalautusosoite, jos se\neroaa sähköpostiosoitteestasi.
+; Enter the default return address, if\nit differs from your email address.
+;
+MSG_HELP_CO_ST_ORGAN
+Yrityksesi tai yhteisösi nimi
+; The name of your\ncompany or institute
+;
+MSG_HELP_CO_ST_EXTHEADER
+Jokaiseen lähtevään viestiin\nlisättävät otsakkeet
+; Additional message header(s) that will\nbe added to every outgoing message
+;
+MSG_HELP_CO_ST_HELLOTEXT
+Viestin yläreunaan\nlisättävä teksti
+; Text to insert at the\ntop of a new message
+;
+MSG_HELP_CO_ST_BYETEXT
+Viestin alareunaan\nlisättävä teksti
+; Text to insert at the\nbottom of a new message
+;
+MSG_HELP_CO_ST_OUTTRANS
+Käytä tätä merkistömuunnosta\nuusiin viesteihin
+; Apply this characterset translation\non new messages
+;
+MSG_HELP_CO_ST_EDWRAP
+Rivitä tämän sarakkeen teksti
+; Word-wrap message text\nat this column
+;
+MSG_HELP_CO_CH_AUTOBREAK
+Lisää todelliset rivinvaihdot\nviestin kirjoituksen aikana
+; Insert real line breaks\nwhile entering a message
+;
+MSG_HELP_CO_CY_EDWRAP
+Valitse 'kirjoittaessa' lisätäksesi rivinvaihto-\nkoodit samalla, kun kirjoitat viestiä
+; Select 'as you type' to insert linebreak\ncodes while you're typing the message
+;
+MSG_HELP_CO_CH_LAUNCH
+Käynnistä ulkoinen editori,\nkun aloitat uuden viestin
+; Launch the external editor\nwhen you start a new message
+;
+MSG_HELP_CO_ST_EDITOR
+Suosikkieditorisi\ntiedostonimi
+; Filename of your\nfavorite text editor
+;
+MSG_HELP_CO_ST_FWDSTART
+Teksti, jolla aloitetaan lainattu viesti.\nKäytä oikealla olevaa nappia liittääksesi muuttujan.
+; Text used to introduce a forwarded message.\nUse the button at the right side to insert a variable.
+;
+MSG_HELP_CO_ST_FWDEND
+Teksti, joka liitetään\nlainatun viestin loppuun.
+; Text to insert at the\nend a forwarded message.
+;
+MSG_HELP_CO_ST_REPLYTEXT
+Tekstit, joita käytetään viesteihin vastattaessa.\nKäytä oikealla olevaa nappia lisätäksesi muuttujan.
+; Texts used in replies to messages.\nUse the button at the right side to insert a variable.
+;
+MSG_HELP_CO_ST_AREPLYTEXT
+Käytä näitä tekstejä viesteihin vastattaessa, jos\nalla oleva teksti täsmää vastaanottajan osoitteeseen.
+; Use these texts in replies to messages\nif the pattern below matches the recipient address.
+;
+MSG_HELP_CO_ST_AREPLYPAT
+AmigaDOS-teksti, joka ottaa käyttöön\nvaihtoehtoiset vastausotsakkeet
+; AmigaDOS pattern that triggers\nthe alternative reply headers
+;
+MSG_HELP_CO_ST_MREPLYTEXT
+Käytä näitä tekstejä postituslistalta\ntulleeseen viestiin vastattaessa.
+; Use these texts in replies to\nmessages from a mailing list.
+;
+MSG_HELP_CO_CH_QUOTE
+Lainaa alkuperäinen\nviesti vastaukseen?
+; Quote original\nmessage in reply?
+;
+MSG_HELP_CO_ST_REPLYCHAR
+Merkkijono, joka edeltää jokaista lainatun\nviestin riviä. Käytä oikealla olevaa nappia\nlisätäksesi muuttujan.
+; String that should precede each line of\nthe quoted message. Use the button at\nthe right side to insert a variable.
+;
+MSG_HELP_CO_CH_QUOTEEMPTY
+Lisää lainausmerkki/merkit tyhjille riveille?
+; Insert quote character(s) for empty lines?
+;
+MSG_HELP_CO_CH_COMPADDR
+Käyttäjä valitsee haluamansa vastausosoitteen, jos\nLähettäjä ja Vastausosoite eroavat toisistaan
+; Let the user select the desired recipient address\nif the From and Reply-To addresses are different
+;
+MSG_HELP_CO_CH_STRIPSIG
+Älä lainaa alkuperäisen\nviestin allekirjoitusta
+; Don't quote signature\nof original message
+;
+MSG_HELP_CO_CY_SIGNAT
+Valitse muokattava allekirjoitus
+; Select signature to edit
+;
+MSG_HELP_CO_BT_EDITSIG
+Muokkaa allekirjoitustasi\neditoria käyttäen
+; Modify your signature\nusing the editor
+;
+MSG_HELP_CO_BT_INSTAG
+Lisää ohjauskoodi satunnaisia sananparsia varten
+; Insert control code for random taglines
+;
+MSG_HELP_CO_BT_INSENV
+Lisää ohjauskoodi\nympäristömuuttujalle SIGNATURE
+; Insert control code for the\nenviromental variable SIGNATURE
+;
+MSG_HELP_CO_ST_TAGFILE
+Sananparret sisältävä tietokanta (\"evästeet\")
+; Database containing taglines (\"cookies\")
+;
+MSG_HELP_CO_ST_TAGSEP
+Merkki tai merkkijono, jota käytetään\ntietokannassa erottamaan sananparret
+; Character or string used to separate\nthe taglines in the database
+;
+MSG_HELP_CO_CG_FO
+Kansiolistassa näytettävät sarakkeet
+; Columns displayed in the folder list
+;
+MSG_HELP_CO_CG_MA
+Viestilistassa näytettävät sarakkeet
+; Columns displayed in the message list
+;
+MSG_HELP_CO_CG_AB
+Osoitekirjassa näytettävät sarakkeet
+; Columns displayed in the address book
+;
+MSG_HELP_CO_CH_FIXFLIST
+Näytä lista käyttäen\nns. kirjoituskonefonttia
+; Display list entries\nusing a fixed-width font
+;
+MSG_HELP_CO_CH_BEAT
+Näytä aika Swatch Beats:einä, uudella\nvallankumouksellisella aikayksiköllä
+; Display time in Swatch Beats, the\nrevolutionary new unit of time
+;
+MSG_HELP_CO_ST_PGPCMD
+Hakemisto, josta\nPGP-ohjelma löytyy
+; Directory where the PGP\nexecutable can be found
+;
+MSG_HELP_CO_ST_MYPGPID
+PGP-avaimesi tunnus, jota käytetään\nviestien allekirjoituksessa
+; The ID of your PGP key that's\nused to sign messages
+;
+MSG_HELP_CO_CH_ENCSELF
+Salaa uudet viestit julkisella avaimellasi,\njolloin voit yhä lukea ja muokata viestejä
+; Encrypt new messages with your public key,\nso you can still read or edit sent messages
+;
+MSG_HELP_CO_ST_REMAILER
+Anonyymipalvelimen sähköpostiosoite,\njota käytetään lähetettäessä postia nimettömänä
+; Email address of the remailer service\nused to send anonymous mail
+;
+MSG_HELP_CO_ST_FIRSTLINE
+Lisää tämä rivi viestisi alkuun, jos se\nlähetetään anonyymipalvelimen kautta
+; Insert this line at the top of your\nmessage if it is sent via remailer
+;
+MSG_HELP_CO_ST_LOGFILE
+Polku, johon lokitiedostot tallennetaan
+; Path where the logfiles will be saved
+;
+MSG_HELP_CO_CH_SPLITLOG
+Aloita uusi lokitiedosto joka kuukausi
+; Start a new logfile every month
+;
+MSG_HELP_CO_CY_LOGMODE
+Valitse kirjanpidon tyyppi
+; Select type of logging
+;
+MSG_HELP_CO_CH_LOGALL
+Kytke tämä valinta pois pitääksesi kirjaa ainoastaan postin siirroista
+; Disable this option to log mail transfers only
+;
+MSG_HELP_CO_CH_LOADALL
+Lataa kaikkien kansioiden sisältötiedostot
+; Load index files of all folders
+;
+MSG_HELP_CO_CH_MARKNEW
+Vaihda uusien viestien tila luetuksi
+; Change status of new messages to unread
+;
+MSG_HELP_CO_CH_SEND
+Lähetä jonossa olevat viestit
+; Send queued messages
+;
+MSG_HELP_CO_CH_POPSTART
+Katso posti
+; Check for mail
+;
+MSG_HELP_CO_CH_CHECKBD
+Tarkista osoitekirja ja ilmoita\njos on henkilön syntymäpäivä
+; Check the address book and open a reminder\nif it's a person's birthday
+;
+MSG_HELP_CO_CH_DELETEOLD
+Poista viestit, jotka ylittävät maksimi-iän\n(katso kansion kokoonpanosta)
+; Delete messages that exceed the maximum\nage (see folder configuration)
+;
+MSG_HELP_CO_CH_REMOVEDEL
+Tyhjennä poistettujen kansio
+; Empty trash folder
+;
+MSG_HELP_CO_ST_GALLDIR
+Hakemisto, johon tallennetaan\nkirjeenvaihtajiesi kuvat
+; Directory to save the\npictures of your correspondents
+;
+MSG_HELP_CO_ST_PHOTOURL
+Oman kuvasi WWW-osoite
+; WWW address of your portrait image
+;
+MSG_HELP_CO_CY_ATAB
+Lisää automaattisesti osoitekirjaan\nlukemasi viestin lähettäjän tiedot?
+; Automatically create an address book entry\nfor the sender when your read his/her message?
+;
+MSG_HELP_CO_ST_PROXY
+HTTP-välityspalvelimesi osoite ja\nvaihtoehtoinen porttinumero (oletusportti 80)\nVoit jättää tämän kentän tyhjäksi.
+; Address and optional port number of your\nHTTP proxy server (default port is 80)\nYou may leave this field empty.
+;
+MSG_HELP_CO_ST_NEWGROUP
+Lisää tämän ryhmän tiedot osoitekirjaan\n(tiedot lisätään, jos niitä ei ole osoitekirjassa)
+; Add new address book entries to this group (it\nwill be created if it doesn't already exist)
+;
+MSG_HELP_CO_ST_TEMPDIR
+Hakemisto, johon tallennetaan\nväliaikaistiedostot
+; Directory to store\ntemporary files
+;
+MSG_HELP_CO_ST_DETACHDIR
+Hakemisto, johon tallennetaan\nliitetiedostot
+; Directory to save\nattached files to
+;
+MSG_HELP_CO_ST_ATTACHDIR
+Oletushakemisto, josta\nliitetiedostot haetaan
+; Default source directory\nfor attachments
+;
+MSG_HELP_CO_ST_APP
+Postilaatikkokuvakkeen\npaikka pikseleinä
+; Position of the mailbox\nAppIcon in pixels
+;
+MSG_HELP_CO_CH_CLGADGET
+Haluatko YAM:in ikonioituvan,\nkun klikkaat sammutuspainiketta?
+; Do you want YAM to iconify when\nyou hit the closegadget?
+;
+MSG_HELP_CO_CH_CONFIRM
+Haluatko varmistaa\nviestien poistamisen?
+; Do you want to confirm\ndeletion of messages?
+;
+MSG_HELP_CO_NB_CONFIRMDEL
+Viestien minimimäärä, jolloin\nvarmistusikkuna avautuu
+; Minimum number of messages to\ndisplay the confirmation requester
+;
+MSG_HELP_CO_CH_REMOVE
+Poista viestit välittömästi, älä\nsiirrä niitä poistettujen kansioon
+; Delete messages instantly, don't\nmove them to the trash folder
+;
+MSG_HELP_CO_CH_SAVESENT
+Tallenna lähetetyt viestit Lähetettyjen kansioon
+; Save sent messages in the Sent folder
+;
+MSG_HELP_CO_RA_MDN_DISP
+Avatessa viestiä, lähetä vahvistus\nviestin vastaanottamisesta mikäli\nsellainen on pyydetty
+; When reading a message, send a\ndisposition notification to the\nsender if requested
+;
+MSG_HELP_CO_RA_MDN_PROC
+Välitettäessä viestiä, lähetä vahvistus\nviestin vastaanottamisesta mikäli\nsellainen on pyydetty
+; When forwarding a message, send a\ndisposition notification to the\nsender if requested
+;
+MSG_HELP_CO_RA_MDN_DELE
+Poistettaessa viestiä, lähetä vahvistus\nviestin vastaanottamisesta mikäli\nsellainen on pyydetty
+; When deleting a message, send a\ndisposition notification to the\nsender if requested
+;
+MSG_HELP_CO_RA_MDN_RULE
+Poistettaessa tai välitettäessä viestiä,\nlähetä vahvistus viestin vastaanottamisesta\nmikäli sellainen on pyydetty
+; When deleting or forwarding a message using\nfilters, send a disposition notification to the sender\nif requested
+;
+MSG_HELP_CO_CH_SEND_MDN
+Yritä lähettää vahvistus viestin vastaanottamisesta\nheti, kun se on saatu aikaan
+; Try to send the disposition notification\nas soon it has been generated
+;
+MSG_HELP_CO_TX_ENCPACK
+XPK-kirjastoa käytetty suojaamaan\nja pakkaamaan kansiot
+; XPK library used to protect\nand compress folders
+;
+MSG_HELP_CO_TX_PACKER
+XPK-kirjastoa käytetty\npakkaamaan kansiot
+; XPK library used to\ncompress folders
+;
+MSG_HELP_CO_NB_ENCPACK
+Tämän pakkaajan tehokkuus\n100% on paras, mutta hitain
+; Efficiency of this packer\n100% is best, but slowest
+;
+MSG_HELP_CO_ST_ARCHIVER
+Pakkauskomento ja käytettävät määreet, joita\nkäytetään tehtäessä pakattuja liitetiedostoja
+; Archiver command and options used\nto create compressed attachments
+;
+MSG_HELP_CO_ST_RXNAME
+'Komentojonot'-valikossa olevan\nkomentojonon selite
+; Description of the script\nin the 'Scripts' menu
+;
+MSG_HELP_CO_ST_SCRIPT
+Komentojonon tiedostonimi
+; Filename of the script
+;
+MSG_HELP_CO_CY_ISADOS
+Komentojonon tyyppi\n(ARexx tai AmigaDOS)
+; Type of the script\n(ARexx or AmigaDOS)
+;
+MSG_HELP_CO_CH_CONSOLE
+Avaa konsoli-ikkuna komentojonon\nsyöttöä ja tulostusta varten
+; Open a console window to allow input\nand output from the script
+;
+MSG_HELP_CO_CH_WAITTERM
+Älä laita komentojonoa tausta-ajoon
+; Don't run the script asynchronously
+;
+MSG_HELP_CO_BT_SAVE
+Tallenna tämänhetkiset asetukset
+; Save current settings
+;
+MSG_HELP_CO_BT_USE
+Käytä tämänhetkisiä asetuksia
+; Use current settings
+;
+MSG_HELP_CO_BT_CANCEL
+Sulje kokoonpanoikkuna\nja käytä vanhoja\nasetuksia
+; Close configuration\nwindow and use old\nsettings
+;
+; Module AB - Routines
+;
+MSG_AB_BirthdayReq
+Tänään, %s täyttää %ld vuotta!\nHaluatko lähettää onnittelukortin?
+; Today, %s reaches age %ld!\nDo you want to send a greetings card?
+; NAME, AGE
+;
+MSG_AB_BirthdayReminder
+Syntymäpäivämuistuttaja
+; Birthday Reminder
+;
+MSG_AB_HappyBirthday
+Hauskaa syntymäpäivää!
+; Happy birthday!
+;
+MSG_AB_PersonAlias
+Alias (HENKILÖ)
+; Alias (PERSON)
+;
+MSG_AB_ListAlias
+Alias (LISTA)
+; Alias (LIST)
+;
+MSG_AB_GroupAlias
+Alias (RYHMÄ)
+; Alias (GROUP)
+;
+MSG_AB_PrintReqGads
+P_itkä muoto|_Lyhyt muoto|_Peru
+; _Long format|_Short format|_Cancel
+;
+MSG_AB_PrintReq
+Valitse tulostusmuoto:
+; Select print format:
+;
+MSG_AB_AliasFld
+Alias
+; Alias
+;
+MSG_AB_FoundEntry
+Täsmäävä tieto löytyi!\nAlias: %s\nNimi: %s
+; Found matching entry!\nAlias: %s\nName: %s
+; ALIAS, NAME
+;
+MSG_AB_FindEntry
+Etsi tietoja
+; Find Entry
+;
+MSG_AB_FindEntryReq
+Tämä moduli etsii annettua tekstiä alias-, nimi-, osoite-,\nkuvaus-, lähiosoite-, kaupunki- ja maa-kentistä. Ole hyvä ja kirjoita\netsittävä teksti (AmigaDOS-jokerimerkit ovat tuettuja):
+; This module finds a given text in the alias, name, address,\ndescription, street, city or country fields. Please enter\nthe search pattern (AmigaDOS wildchars are supported):
+;
+MSG_AB_StartSearch
+_Aloita etsintä
+; _Start search
+;
+MSG_AB_FoundEntryGads
+_Seuraava osuma|_Muokkaa osumaa|_Peru
+; _Next hit|_Edit hit|_Cancel
+;
+MSG_AB_NoneFound
+Täsmääviä tietoja ei löytynyt!
+; No matching entries found!
+;
+MSG_AB_Modified
+Osoitekirjaa on muutettu!
+; Address book has been modified!
+;
+MSG_AB_ModifiedGads
+*_Tallenna|_Käytä|_Palauta entiselleen|_Peru
+; *_Save|_Use|_Discard changes|_Cancel
+;
+; Module AB - Hooks
+;
+MSG_AB_TitleAlias
+Alias
+; Alias
+;
+MSG_AB_TitleName
+Nimi
+; Name
+;
+MSG_AB_TitleDescription
+Kuvaus
+; Description
+;
+MSG_AB_TitleAddress
+Osoite
+; Address
+;
+MSG_AB_TitleStreet
+Lähiosoite
+; Street
+;
+MSG_AB_TitleCity
+Kaupunki
+; City
+;
+MSG_AB_TitleCountry
+Maa
+; Country
+;
+MSG_AB_TitlePhone
+Puhelin
+; Phone
+;
+MSG_AB_TitleBirthDate
+Syntymäpäivä
+; Birth date
+;
+MSG_AB_TitlePGPId
+PGP-tunnus
+; PGP Id
+;
+MSG_AB_TitleHomepage
+Kotisivu
+; Homepage
+;
+; Module AB - Window
+;
+MSG_AB_MIFind
+Etsi...
+; Find...
+;
+MSG_AB_Entry
+Tiedot
+; Entry
+;
+MSG_AB_AddUser
+Uusi henkilö...
+; New person...
+;
+MSG_AB_AddGroup
+Uusi ryhmä...
+; New group...
+;
+MSG_AB_AddList
+Uusi jakelulista...
+; New distribution list...
+;
+MSG_AB_Duplicate
+Kopioi
+; Duplicate
+;
+MSG_AB_MIPrint
+Tulosta
+; Print
+;
+MSG_AB_MIDelete
+Poista
+; Delete
+;
+MSG_AB_Sort
+Järjestä
+; Sort
+;
+MSG_AB_SortByAlias
+Aliaksen mukaan
+; By alias
+;
+MSG_AB_SortByName
+Sukunimen mukaan
+; By last name
+;
+MSG_AB_SortByFirstname
+Etunimen mukaan
+; By first name
+;
+MSG_AB_SortByDesc
+Kuvauksen mukaan
+; By description
+;
+MSG_AB_SortByAddress
+Osoitteen mukaan
+; By address
+;
+MSG_AB_View
+Näytä
+; View
+;
+MSG_AB_Fold
+Kaikki kiinni
+; Fold all
+;
+MSG_AB_Unfold
+Kaikki auki
+; Unfold all
+;
+; Module AB - Toolbar
+;
+MSG_AB_TBSave
+Talle_nna
+; _Save
+;
+MSG_AB_TBFind
+_Etsi
+; _Find
+;
+MSG_AB_TBNewUser
+_Henkilö
+; _Person
+;
+MSG_AB_TBNewList
+_Lista
+; _List
+;
+MSG_AB_TBNewGroup
+_Ryhmä
+; _Group
+;
+MSG_AB_TBEdit
+_Muokkaa
+; _Edit
+;
+MSG_AB_TBDelete
+_Poista
+; _Delete
+;
+MSG_AB_TBPrint
+T_ulosta
+; P_rint
+;
+MSG_AB_TBOpenTree
+_Auki
+; _Unfold
+;
+MSG_AB_TBCloseTree
+_Kiinni
+; F_old
+;
+; Module AB - Bubblehelp
+;
+MSG_HELP_AB_BT_SAVE
+Tallenna tämänhetkiset asetukset
+; Save current changes
+;
+MSG_HELP_AB_BT_SEARCH
+Etsi tietoja\nosoitekirjasta
+; Find an entry in\nthe address book
+;
+MSG_HELP_AB_BT_ADDUSER
+Lisää uusi henkilö\nosoitekirjaasi
+; Add a new person to\nyour address book
+;
+MSG_HELP_AB_BT_ADDGROUP
+Lisää uusi ryhmä (hakemisto)\nosoitekirjaasi
+; Add a new group (directory)\nto your address book
+;
+MSG_HELP_AB_BT_ADDMLIST
+Lisää uusi jakelulista\nosoitekirjaasi
+; Add a new distribution list\nto your address book
+;
+MSG_HELP_AB_BT_EDIT
+Muuta valittua\nkohtaa
+; Modify selected\nentry
+;
+MSG_HELP_AB_BT_DELETE
+Poista valittu kohta\nosoitekirjastasi
+; Delete selected entry\nfrom your address book
+;
+MSG_HELP_AB_BT_PRINT
+Tulosta valittu kohta
+; Print selected entry
+;
+MSG_HELP_AB_BT_OPEN
+Näytä kaikki kohdat\nosoitekirjasta
+; Display all entries in\nthe address book
+;
+MSG_HELP_AB_BT_CLOSE
+Näytä vain osoitekirjan juuressa\nolevat kohdat
+; Only display root entries\nin the address book
+;
+MSG_HELP_AB_BT_TO
+Valitse viestisi ensisijaiset\nvastaanottajat
+; Set primary recipient(s)\nfor new message
+;
+MSG_HELP_AB_BT_CC
+Valitse viestisi toissijaiset\nvastaanottajat
+; Set secondary recipient(s)\nfor new message
+;
+MSG_HELP_AB_BT_BCC
+Valitse viestisi kopion\nvastaanottajat
+; Set blind copy recipient(s)\nfor new message
+;
+; Module CL
+;
+MSG_CL_ErrorEmptyCB
+Leikepöytä on tyhjä.
+; The clipboard is empty.
+;
+MSG_CL_ErrorNotFTXT
+Leikepöydällä ei ole tekstiä.
+; The clipboard does not contain text.
+;
+MSG_CL_ErrorNoArea
+Ei aluetta merkittynä.
+; No area marked.
+;
+MSG_CL_ErrorNoRedo
+Ei mitään uudelleen tehtävää.
+; Nothing to redo.
+;
+MSG_CL_ErrorNoUndo
+Ei mitään peruttavaa.
+; Nothing to undo.
+;
+MSG_CL_ErrorNoUndoMem
+Muisti ei riitä peruutuspuskurille.\n\nPeruutuspuskuri on tyhjennetty.
+; There is not enough memory\nto keep the undo buffer.\n\nThe undo buffer is lost.
+;
+; Module EA - Procedures
+;
+MSG_EA_EditUser
+Muokkaa henkilön tietoja
+; Edit person
+;
+MSG_EA_EditList
+Muokkaa jakelulistaa
+; Edit distribution list
+;
+MSG_EA_EditGroup
+Muokkaa ryhmää
+; Edit group
+;
+; Module EA - Window
+;
+MSG_EA_ElectronicMail
+Sähköpostiosoite
+; Electronic mail
+;
+MSG_EA_Alias
+_Alias
+; _Alias
+;
+MSG_EA_RealName
+Oikea _nimi
+; _Real name
+;
+MSG_EA_EmailAddress
+_Sähköpostiosoite
+; E_mail address
+;
+MSG_EA_PGPId
+P_GP-avaimen tunnus
+; PGP _key ID
+;
+MSG_EA_Homepage
+_Kotisivu
+; _Homepage
+;
+MSG_EA_SnailMail
+Postiosoite
+; S_nail mail
+;
+MSG_EA_Street
+L_ähiosoite
+; _Street
+;
+MSG_EA_City
+Post_inumero/Toimipaikka
+; C_ity/ZIP
+;
+MSG_EA_Country
+Osavaltio/_Maa
+; S_tate/Country
+;
+MSG_EA_Phone
+Pu_helinnumero(t)
+; _Phone number(s)
+;
+MSG_EA_Miscellaneous
+Lisätietoja
+; Miscellaneous
+;
+MSG_EA_Description
+_Kuvaus
+; D_escription
+;
+MSG_EA_DOB
+S_yntymäpäivä
+; Date of _birth
+;
+MSG_EA_Portrait
+Kuva
+; Portrait
+;
+MSG_EA_SelectPhoto
+_Valitse
+; Se_lect
+;
+MSG_EA_LoadPhoto
+_Lataa
+; _Download
+;
+MSG_EA_ReturnAddress
+Pa_lautusosoite
+; _Return address
+;
+MSG_EA_MLName
+Postitusl_istan nimi
+; _Mailing list name
+;
+MSG_EA_Members
+Jäsenet
+; Members
+;
+MSG_EA_Sort
+_Järjestä
+; _Sort
+;
+; Module EA - Bubblehelp
+;
+MSG_HELP_EA_ST_ALIAS
+Tämän kohdan tunniste\n(esim. kutsumanimi tai lyhenne)
+; Identity (e.g. nickname or\nabbreviation) of this entry
+;
+MSG_HELP_EA_ST_DESCRIPTION
+Lyhyt kommentti henkilöstä
+; Comment for this entry
+;
+MSG_HELP_EA_ST_REALNAME
+Tämän kohdan koko nimi\netunimi sukunimi)
+; Full name of this entry\n(first name last name)
+;
+MSG_HELP_EA_ST_ADDRESS
+Tämän kohdan\ninternetosoite
+; Internet address\nof this entry
+;
+MSG_HELP_EA_ST_PGPKEY
+Tämän henkilön PGP-avaimen\nheksadesimaalitunnus
+; Hexadecimal ID of this\nperson's public PGP key
+;
+MSG_HELP_EA_ST_HOMEPAGE
+Tämän henkilön kotisivun osoite (URL).\nKlikkaa oikealla olevaa nappia avataksesi\nsivun selaimeesi.
+; URL of the homepage of this person.\nClick the button on the right side\nto load the page into your browser.
+;
+MSG_HELP_EA_ST_STREET
+Postiosoite:\nKadun nimi ja numero
+; Postal address:\nStreet name and number
+;
+MSG_HELP_EA_ST_CITY
+Postiosoite:\nPostinumero ja paikkakunta
+; Postal address:\nCity and postal code
+;
+MSG_HELP_EA_ST_COUNTRY
+Postiosoite:\nOsavaltio ja/tai maa
+; Postal address:\nState and/or country
+;
+MSG_HELP_EA_ST_PHONE
+Puhelin- ja FAX-numero(t)
+; Phone and/or FAX number(s)
+;
+MSG_HELP_EA_ST_BIRTHDAY
+Syntymäpäivä\nKäytä AmigaDOS-muotoa,\nesim. 10-Tam-1950
+; Date of birth\nUse AmigaDOS format,\ne.g. 10-Jan-1950
+;
+MSG_HELP_EA_BC_PHOTO
+Tämän henkilön kuva
+; Portrait picture of this person
+;
+MSG_HELP_EA_BT_SELECTPHOTO
+Valitse kuvatiedosto levyltä\n(kuvadatatyypit ovat tuettuja)
+; Select a picture file from disk\n(image datatypes supported)
+;
+MSG_HELP_EA_BT_LOADPHOTO
+Lataa henkilön kuva\nYAM Käyttäjägalleriasta
+; Download a picture of the person\nfrom the YAM User Gallery
+;
+MSG_HELP_EA_ST_REALNAME_L
+Tämän jakelulistan koko nimi\n(käytetään Vastaanottaja: -kentässä)
+; Full name of this distribution list\n(will be used in To: field)
+;
+MSG_HELP_EA_ST_ADDRESS_L
+Palautusosoite, jota käytetään\nlähetettäessä viesti tälle listalle
+; Return address to use when\nsending a message to this list
+;
+MSG_HELP_EA_LV_MEMBERS
+Tämän jakelulistan jäsenet
+; Members of this distribution list
+;
+MSG_HELP_EA_ST_MEMBER
+Jäsenen osoite (ja nimi)\n tai alias
+; Address (and name) or\nalias of a member
+;
+MSG_HELP_EA_BT_ADD
+Lisää uusi jäsen\nlistalle
+; Add a new member\nto the list
+;
+MSG_HELP_EA_BT_DEL
+Poista valittu jäsen\nlistalta
+; Remove selected member\nfrom the list
+;
+MSG_HELP_EA_BT_SORT
+Järjestä jäsenlista aakkosjärjestykseen
+; Sort member list alphabetically
+;
+MSG_HELP_EA_BT_OKAY
+Hyväksy nämä tiedot
+; Accept this entry
+;
+MSG_HELP_EA_BT_CANCEL
+Peru muutokset
+; Discard changes
+;
+; Module RE - Procedures
+;
+MSG_RE_MDNGads1
+Hyväksy ja\nlähetä myöhemmin|Hylkää ja\nlähetä myöhemmin
+; Accept and\nsend later|Deny and\nsend later
+;
+MSG_RE_MDNGads2
+|Hyväksy ja\nlähetä nyt|Hylkää ja\nlähetä nyt
+; |Accept and\nsend now|Deny and\nsend now
+;
+MSG_RE_MDNGads3
+|Ohita
+; |Ignore
+;
+MSG_RE_MDNReq
+Tämän viestin lähettäjä haluaa vahvistuksen viestin vastaanottamisesta (MDN).\nMitä haluat tehdä?
+; The sender of this message request a disposition notification (MDN).\nWhat do you want to do?
+;
+MSG_RE_SaveMessage
+Tallenna viesti...
+; Save message...
+;
+MSG_RE_Overwrite
+Tiedosto '%s' on jo olemassa.\nHaluatko tallentaa sen päälle?
+; File '%s' already exists.\nDo you want to overwrite it?
+; FILENAME
+;
+MSG_RE_PrintMsg
+Tulosta viesti
+; Print message
+;
+MSG_RE_SelectPrintPart
+Valitse tulostettava osa:
+; Select part to print:
+;
+MSG_RE_PrintGad
+_Tulosta
+; Print
+;
+MSG_RE_SelectSavePart
+Valitse tallennettava osa:
+; Select part to save:
+;
+MSG_RE_SaveGad
+_Tallenna
+; Save
+;
+MSG_RE_DisplayMsg
+Näytä viesti
+; Display message
+;
+MSG_RE_SelectDisplayPart
+Valitse näytettävä osa:
+; Select part to display:
+;
+MSG_RE_DisplayGad
+_Näytä
+; Display
+;
+MSG_RE_BadSig
+VAROITUS: Epäkelpo allekirjoitus
+; WARNING: Bad signature
+;
+MSG_RE_GoodSig
+Kelvollinen allekirjoitus
+; Good signature
+;
+MSG_RE_SigFrom
+lähettäjä\n
+;  from\n
+;
+MSG_RE_SigCheck
+Tarkista PGP-allekirjoitus
+; Check PGP signature
+;
+MSG_RE_SaveDecGads
+*_Säilytä|_Korvaa|_Peru
+; *_Keep|_Replace|_Cancel
+;
+MSG_RE_SaveDecReq
+Mitä haluat tehdä alkuperäiselle\nsalatulle viestille?
+; What do you want to do with\noriginal (encrypted) message?
+;
+MSG_RE_Header
+Otsake
+; Header
+;
+MSG_RE_Letter
+Kirje
+; Letter
+;
+MSG_RE_MDNFrom
+\nLähettäjä:
+; \nFrom:
+;
+MSG_RE_MDNTo
+\nVastaanottaja:
+; \nTo:
+;
+MSG_RE_MDNSubject
+\nAihe:
+; \nSubject:
+;
+MSG_RE_MDNMessageID
+\nViestitunnus:
+; \nMessage-ID:
+;
+MSG_RE_MDNDate
+\nPäiväys:
+; \nDate:
+;
+MSG_RE_MDNOrigRecpt
+\nAlkuperäinen vastaanottaja:
+; \nOriginal recipient:
+;
+MSG_RE_MDNFinalRecpt
+\nLopullinen vastaanottaja:
+; \nFinal recipient:
+;
+MSG_RE_MDNmanual
+palautteena käyttäjän komentoon
+;  in response to a user command
+;
+MSG_RE_MDNauto
+automaattisesti
+;  automatically
+;
+MSG_RE_MDNdisplay
+Viesti\n%s\non näytetty.\nTämä ei ole tae siitä, että sisältö on luettu ja ymmärretty.\n
+; The message\n%s\nhas been displayed.\nThis is no guarantee that the content has been read or understood.\n
+;
+MSG_RE_MDNprocessed
+Viesti\n%s\non käsitelty%s ilman,\nettä käyttäjä on nähnyt sitä. Käyttäjä saattaa\nnähdä viestin myöhemmin.\n
+; The message\n%s\nhas been processed%s,\nwithout being displayed to the user. The user may or may not see\nthe message later.\n
+;
+MSG_RE_MDNdispatched
+Viesti\n%s\non lähetetty jonnekin%s ilman,\nettä käyttäjä on nähnyt sitä. Käyttäjä saattaa\nnähdä viestin myöhemmin.\n
+; The message\n%s\nhas been sent somewhere%s,\nwithout being displayed to the user. The user may or may not see\nthe message later.\n
+;
+MSG_RE_MDNdeleted
+Viesti\n%s\non tuhottu%s.\nOn epävarmaa, onko käyttäjä nähnyt viestin. Vastaanottaja saattaa\n \"perua viestin poistamisen\" myöhemmin ja lukea viestin.\n
+; The message\n%s\nhas been deleted%s.\nThe recipient may or may not have seen the message. The recipient\nmay \"undelete\" the message at a later time and read the message.\n
+;
+MSG_RE_MDNdenied
+Viestin\n%s\nvastaanottaja ei halunnut ilmoittaa, onko saanut viestin.\n
+; The recipient of the message\n%s\ndoesn't wish to inform you about the disposition of that message.\n
+;
+MSG_RE_MDNunknown
+Viesti\n%s\non ollut %s%s.\n
+; The message\n%s\nhas been %s%s.\n
+;
+MSG_RE_PGPNotAllowed
+PGP-virhe<\n\nValtuutesi eivät riitä tämän PGP-salatun viestin avaamiseen. Joko PGP-ohjelmasi\nasetukset eivät ole kohdallaan, tai viesti oli salattu jollekin toiselle.\n
+; >PGP Error<\n\nYou're not allowed to view this PGP encrypted message. Either your PGP software\nisn't configured properly, or the message was encrypted for someone else.\n
+;
+MSG_RE_MsgReadOnly
+Ainoastaan %s voi lukea viestin\n
+; The message can only be read by %s\n
+; RECIPIENT
+;
+MSG_RE_AddSender
+Haluatko lisätä lähettäjän\n%s\nosoitekirjaasi?
+; Do you want to add the sender\n%s\nto your address book?
+; SENDER
+;
+MSG_RE_NewGroupTitle
+Automaattisesti lisätyt tiedot
+; Automatically added entries
+;
+MSG_RE_DownloadPhotoReq
+Haluatko ladata lähettäjän kuvan\nja lisätä sen omaan galleriaasi?\n(Internet-yhteytesi on oltava auki ennen OK-napin klikkausta)
+; Do you want to download the photo of the sender\nand add it to your personal gallery?\n(You must be online before clicking the OKAY button)
+;
+MSG_RE_ContentType
+Sisällön tyyppi
+; Content-Type
+;
+MSG_RE_Description
+Kuvaus
+; Description
+;
+MSG_RE_UUencodedFile
+UU-koodattu tiedosto
+; UUencoded file
+;
+MSG_RE_SelectAddressReq
+Valittu osoite: %s\nMitä haluat tehdä?
+; Selected address: %s\nWhat do you want to do?
+; ADDRESS
+;
+MSG_RE_SelectAddressEdit
+*_Kirjoita viesti|_Muokkaa tietoja|_Peru
+; *_Write message|_Edit entry|_Cancel
+;
+MSG_RE_SelectAddressAdd
+*_Kirjoita viesti|_Lisää tiedot|_Peru
+; *_Write message|_Add entry|_Cancel
+;
+; Module RE - Hooks
+;
+MSG_RE_Original
+Raw-muoto
+; Raw format
+;
+MSG_RE_AllTexts
+Näytetty teksti
+; Displayed text
+;
+; Module RE - Menus
+;
+MSG_RE_MDisplay
+Näytä...
+; Display...
+;
+MSG_RE_SaveAll
+Tallenna kaikki...
+; Save all...
+;
+MSG_RE_Navigation
+Navigointi
+; Navigation
+;
+MSG_RE_MNext
+Seuraava viesti
+; Next message
+;
+MSG_RE_MPrev
+Edellinen viesti
+; Previous message
+;
+MSG_RE_MURNext
+Seuraava lukematon viesti
+; Next unread message
+;
+MSG_RE_MURPrev
+Edellinen lukematon viesti
+; Previous unread message
+;
+MSG_RE_MNextTh
+Viestiketjun seuraava viesti
+; Next message in thread
+;
+MSG_RE_MPrevTh
+Viestiketjun edellinen viesti
+; Previous message in thread
+;
+MSG_RE_ExtractKey
+Poimi julkinen avain/avaimet viestistä
+; Extract public key(s)
+;
+MSG_RE_SaveDecrypted
+Tallenna viesti salaamattomassa muodossa
+; Save decrypted message
+;
+MSG_RE_NoHeaders
+Ei otsakkeita
+; No headers
+;
+MSG_RE_ShortHeaders
+Lyhyet otsakkeet
+; Short headers
+;
+MSG_RE_FullHeaders
+Täydelliset otsakkeet
+; Full headers
+;
+MSG_RE_NoSInfo
+Ei lähettäjän tietoja
+; No sender info
+;
+MSG_RE_SInfo
+Vain datakentät
+; Data fields only
+;
+MSG_RE_SInfoImage
+Data ja kuva
+; Data and image
+;
+MSG_RE_WrapHeader
+Rivitä otsakkeet
+; Wrap headers
+;
+MSG_RE_Textstyles
+Tekstityylit
+; Textstyles
+;
+; Module RE - Toolbar
+;
+MSG_RE_TBPrev
+_Edell.
+; _Prev
+;
+MSG_RE_TBNext
+_Seur.
+; _Next
+;
+MSG_RE_TBPrevTh
+Ketj.E_d
+; Prev_Thr
+;
+MSG_RE_TBNextTh
+_Ketj.Se
+; NextT_hr
+;
+MSG_RE_TBDisplay
+_Näytä
+; _Display
+;
+MSG_RE_TBSave
+_Tallenna
+; _Save
+;
+MSG_RE_TBPrint
+T_ulosta
+; Pr_int
+;
+MSG_RE_TBDelete
+_Poista
+; De_lete
+;
+MSG_RE_TBMove
+S_iirrä
+; _Move
+;
+MSG_RE_TBReply
+_Vastaa
+; _Reply
+;
+MSG_RE_TBForward
+V_älitä
+; For_ward
+;
+; Module RE - Bubblehelp
+;
+MSG_HELP_RE_BT_PREVIOUS
+Näytä edellisen\nviestin sisältö
+; Display contents of\nthe previous message
+;
+MSG_HELP_RE_BT_NEXT
+Näytä seuraavan\nviestin sisältö
+; Display contents of\nthe next message
+;
+MSG_HELP_RE_BT_QUESTION
+Näytä viesti, johon\nvastataan tässä\n(ketjun edellinen viesti)
+; Show the message which\nis being answered here\n(go back in thread)
+;
+MSG_HELP_RE_BT_ANSWER
+Näytä vastaus\ntähän viestiin\n(ketjun seuraava viesti)
+; Show the reply\nto this message\n(follow thread)
+;
+MSG_HELP_RE_BT_DISPLAY
+Käytä määriteltyä MIME-\nnäyttäjää näyttämään\nosa tästä viestistä
+; Use a configured MIME\nviewer to display a\npart of this message
+;
+MSG_HELP_RE_BT_EXPORT
+Tallenna näkyvä viesti tai\nosa siitä levylle
+; Save displayed message or\na part of it to disk
+;
+MSG_HELP_RE_BT_PRINT
+Lähetä tämä viesti\ntulostimelle
+; Send this message\nto the printer
+;
+MSG_HELP_RE_BT_MOVE
+Siirrä tämä viesti toiseen kansioon\nja näytä seuraava
+; Move this message to another folder\nand display the next one
+;
+MSG_HELP_RE_BT_DELETE
+Poista tämä viesti ja\nnäytä seuraava
+; Delete this message and\ndisplay the next one
+;
+MSG_HELP_RE_BT_REPLY
+Vastaa tähän\nviestiin
+; Reply to this\nmessage
+;
+MSG_HELP_RE_BT_FORWARD
+Välitä tämä\nviesti
+; Forward this\nmessage
+;
+; Module WR - Procedures
+;
+MSG_WR_ErrorNoRcpt
+Viesti on epätäydellinen: Vastaanottaja puuttuu!
+; Mail is incomplete: No recipient!
+;
+MSG_WR_NoRcptReqGad
+_Lisää vastaanottaja myöhemmin|*_Peru
+; _Add recipient later|*_Cancel
+;
+MSG_WR_PGPMIMEconflict
+PGP/MIME ei tue liitetiedostoja: allekirjoitus/salaus on pois käytöstä
+; PGP/MIME doesn't support attachments: signing/encrypting has been disabled.
+;
+MSG_WR_DiscardChanges
+Haluatko tosiaan palauttaa entiselleen kaikki tähän viestiin tehdyt muutokset?
+; Do you really want to discard all modifications to this message?
+;
+MSG_WR_DiscardChangesGad
+*_Lähetä myöhemmin|Palauta _Entiselleen|_Peru
+; *_Send later|_Discard|_Cancel
+;
+MSG_WR_SaveTextAs
+Tallenna teksti...
+; Save text as...
+;
+MSG_WR_AddFile
+Valitse liitettävä(t) tiedosto(t)...
+; Select file(s) to attach...
+;
+MSG_WR_CreateArc
+Tee pakattu tiedosto
+; Create archive
+;
+MSG_WR_CreateArcReq
+Anna uudelle paketille\ntiedostonimi
+; Please enter a filename\nfor the new archive
+;
+MSG_WR_InsertFile
+Lisää tiedosto...
+; Insert file...
+;
+; Module WR - Hooks
+;
+MSG_WR_TitleFile
+Tiedostonimi
+; File name
+;
+MSG_WR_TitleSize
+Koko
+; Size
+;
+MSG_WR_TitleContents
+Sisältö
+; Contents
+;
+MSG_WR_TitleEncoding
+Salaus
+; Enc.
+;
+MSG_WR_TitleDescription
+Selitys
+; Description
+;
+; Module WR - Window
+;
+MSG_WR_SecNone
+Ei mitään
+; None
+;
+MSG_WR_SecSign
+Allekirjoitus
+; Sign
+;
+MSG_WR_SecEncrypt
+Salaus
+; Encrypt
+;
+MSG_WR_SecBoth
+Allekirjoitus ja salaus
+; Sign and encrypt
+;
+MSG_WR_SecAnon
+Lähetä nimettömänä
+; Send anonymously
+;
+MSG_WR_ImpHigh
+Tärkeä
+; High
+;
+MSG_WR_ImpNormal
+Normaali
+; Normal
+;
+MSG_WR_ImpLow
+Epätärkeä
+; Low
+;
+MSG_WR_NoSig
+Ei mitään
+; None
+;
+MSG_WR_DefSig
+Oletus
+; Default
+;
+MSG_WR_AltSig1
+Vaihtoehto #1
+; Alt. #1
+;
+MSG_WR_AltSig2
+Vaihtoehto #2
+; Alt. #2
+;
+MSG_WR_WriteWT
+Kirjoita viesti
+; Write message
+;
+MSG_WR_Subject
+_Aihe
+; Sub_ject
+;
+MSG_WR_To
+_Vastaanottaja
+; _To
+;
+MSG_WR_Add
+Lisää _tiedosto(ja)
+; _Add file(s)
+;
+MSG_WR_AddPack
+P_akkaa & lisää
+; _Pack & add
+;
+MSG_WR_Display
+_Näytä
+; D_isplay
+;
+MSG_WR_Encoding
+Salaus
+; Encoding
+;
+MSG_WR_ContentType
+M_IME-tyyppi
+; _MIME type
+;
+MSG_WR_Description
+S_elitys
+; D_escription
+;
+MSG_WR_CopyTo
+K_opiot (CC)
+; C_opies to
+;
+MSG_WR_BlindCopyTo
+Piilo_kopiot (BCC)
+; Hidde_n copies to
+;
+MSG_WR_From
+Lä_hettäjä
+; _From
+;
+MSG_WR_ReplyTo
+_Vastausosoite
+; Reply _to
+;
+MSG_WR_ExtraHeaders
+_Ylimääräinen otsake
+; _Additional header
+;
+MSG_WR_SendOpt
+Lähetysvalinnat
+; Send Options
+;
+MSG_WR_DelSend
+Po_ista lähetyksen jälkeen
+; _Delete after sending
+;
+MSG_WR_Receipt
+Pyydä k_uittaus
+; _Return receipt
+;
+MSG_WR_GetMDN
+_Jäljitä viesti (MDN)
+; Track _message
+;
+MSG_WR_AddInfo
+Lisää henk. koht. tie_dot
+; Add _personal info
+;
+MSG_WR_Importance
+_Tärkeys
+; _Importance
+;
+MSG_WR_Signature
+Allekirjoitus
+; Signature
+;
+MSG_WR_Security
+Turvatoimet
+; Security
+;
+MSG_WR_ToQueue
+Lähetä _myöhemmin
+; Send _later
+;
+MSG_WR_Send
+_Lähetä nyt
+; _Send now
+;
+MSG_WR_Hold
+_Säilytä
+; _Hold
+;
+MSG_WR_BounceWT
+Lähetä viesti eteenpäin
+; Bounce message
+;
+MSG_WR_BounceTo
+Lähetä _eteenpäin...
+; Bounce _to
+;
+; Module WR - Toolbar
+;
+MSG_WR_TBEditor
+Editori
+; Editor
+;
+MSG_WR_TBInsert
+Lisää
+; Insert
+;
+MSG_WR_TBCut
+Leikkaa
+; Cut
+;
+MSG_WR_TBCopy
+Kopioi
+; Copy
+;
+MSG_WR_TBPaste
+Liitä
+; Paste
+;
+MSG_WR_TBUndo
+Peru
+; Undo
+;
+MSG_WR_TBBold
+Lihavoitu
+; Bold
+;
+MSG_WR_TBItalic
+Kursiivi
+; Italic
+;
+MSG_WR_TBUnderlined
+Alleviiv.
+; ULined
+;
+MSG_WR_TBColored
+Värill.
+; Colored
+;
+; Module WR - Menus
+;
+MSG_WR_Text
+Teksti
+; Text
+;
+MSG_WR_InsertAs
+Lisää...
+; Insert as
+;
+MSG_WR_Plain
+Tavallinen
+; Plain
+;
+MSG_WR_Quoted
+Siteerattu
+; Quoted
+;
+MSG_WR_ROT13
+ROT13-salattu
+; ROT13 encrypted
+;
+MSG_WR_LaunchEd
+Käynnistä editori
+; Launch editor
+;
+MSG_WR_Edit
+Muokkaa
+; Edit
+;
+MSG_WR_MCut
+Leikkaa
+; Cut
+;
+MSG_WR_MCopy
+Kopioi
+; Copy
+;
+MSG_WR_MPaste
+Liitä
+; Paste
+;
+MSG_WR_PasteAs
+Liitä...
+; PasteAs
+;
+MSG_WR_MUndo
+Peru
+; Undo
+;
+MSG_WR_Redo
+Tee uudelleen
+; Redo
+;
+MSG_WR_Dictionary
+Sanasto
+; Glossary
+;
+MSG_WR_Textstyle
+Tekstityyli
+; Textstyle
+;
+MSG_WR_Bold
+Lihavoitu
+; Bold
+;
+MSG_WR_Italic
+Kursiivi
+; Italic
+;
+MSG_WR_Underlined
+Alleviivattu
+; Underlined
+;
+MSG_WR_Colored
+Vaihtoehtoinen väri
+; Alternative color
+;
+MSG_WR_Separators
+Erottimet
+; Separators
+;
+MSG_WR_Thin
+Ohut
+; Thin
+;
+MSG_WR_Thick
+Paksu
+; Thick
+;
+MSG_WR_Emoticons
+Tunnetilat
+; Emoticons
+;
+MSG_WR_Happy
+Onnellinen
+; Happy
+;
+MSG_WR_Indifferent
+Välinpitämätön
+; Indifferent
+;
+MSG_WR_Sad
+Surullinen/vihainen
+; Sad/angry
+;
+MSG_WR_Ironic
+Ivallinen
+; Ironic
+;
+MSG_WR_SpellCheck
+Kirjoita ja tarkista
+; Type and spell
+;
+MSG_WR_MAddFile
+Lisää tiedosto...
+; Add file...
+;
+MSG_WR_AddCB
+Lisää leikepöydältä
+; Add clipboard
+;
+MSG_WR_AddKey
+Lisää PGP-avain
+; Add PGP key
+;
+MSG_WR_MDelSend
+Poista lähetyksen jälkeen
+; Delete after sending
+;
+MSG_WR_MReceipt
+Pyydä kuittaus
+; Return receipt
+;
+MSG_WR_MGetMDN
+Jäljitä viesti
+; Track message
+;
+MSG_WR_MAddInfo
+Lisää henkilökohtaiset tiedot
+; Add personal information
+;
+MSG_WR_MImportance
+Tärkeys
+; Importance
+;
+; Module WR - Bubblehelp
+;
+MSG_HELP_WR_ST_TO
+Päävastaanottajan/ottajien\nosoite (ja nimi) tai alias
+; Address (and name) or alias\nof the primary recipient(s)
+;
+MSG_HELP_WR_BT_VER
+Tarkista vastaanottaja: etsi sähköposti-\nosoitteesta alias tai nimi
+; Verify recipient: find email\naddress for alias or name
+;
+MSG_HELP_WR_BT_ADR
+Valitse vastaanottaja\nosoitekirjasta
+; Select recipient from\nthe address book
+;
+MSG_HELP_WR_ST_SUBJECT
+Viestisi aihe
+; Subject of your message
+;
+MSG_HELP_WR_BT_EDITOR
+Käytä ulkoista editoria\nmuokataksesi viestisi tekstiä
+; Use external editor to\n modify the message text
+;
+MSG_HELP_WR_BT_LOAD
+Lisää tekstitiedosto kohdistimen kohdalle
+; Insert textfile at cursor position
+;
+MSG_HELP_WR_BT_CUT
+Leikkaa merkattu teksti leikepöydälle
+; Cut marked text to the clipboard
+;
+MSG_HELP_WR_BT_COPY
+Kopioi merkattu teksti leikepöydälle
+; Copy marked text to the clipboard
+;
+MSG_HELP_WR_BT_PASTE
+Lisää leikepöydän sisältö\nkohdistimen kohdalle
+; Insert clipboard contents\nat cursor position
+;
+MSG_HELP_WR_BT_UNDO
+Peru äskeiset tekstiin tehdyt muutokset
+; Undo recent changes to the text
+;
+MSG_HELP_WR_BT_BOLD
+Muuta merkattu teksti lihavoiduksi
+; Use bold typeface for marked text
+;
+MSG_HELP_WR_BT_ITALIC
+Muuta merkattu teksti kursiiviksi
+; Use italic typeface for marked text
+;
+MSG_HELP_WR_BT_UNDERL
+Alleviivaa merkattu teksti
+; Underline marked text
+;
+MSG_HELP_WR_BT_COLOR
+Väritä merkattu teksti
+; Color marked text
+;
+MSG_HELP_WR_BT_ADD
+Lisää\nliitetiedosto
+; Add an attachment\nto the list
+;
+MSG_HELP_WR_BT_ADDPACK
+Tee useista tiedostoista\npaketti ja lisää se\nliitetiedostoksi
+; Create an archive from\nseveral files and add it\nas attachment to the list
+;
+MSG_HELP_WR_BT_DEL
+Poista valittu\nliitetiedosto
+; Remove selected attachment\nfrom the list
+;
+MSG_HELP_WR_BT_DISPLAY
+Käytä tämän liitetiedoston näyttämiseen\nvalitsemaasi MIME-näyttäjää
+; Use a configured MIME viewer\nto display this attachment
+;
+MSG_HELP_WR_RA_ENCODING
+Valitun liitetiedoston koodauksen tyyppi.\nKäytä vain UU-koodausta, jos vastaanottajalla ei ole\nMIME-liitteitä tukevaa sähköpostiohjelmaa.
+; Type of encoding used for the selected attachment.\nUse UUencode only if the recipient hasn't got\na MIME compliant mailer.
+;
+MSG_HELP_WR_ST_CTYPE
+Valitun liitetiedoston MIME-tyyppi.\nJos mahdollista, käytä ponnahduslistan vaihtoehtoja.
+; MIME type for the selected attachment.\nWhenever possible, use one from the popup list.
+;
+MSG_HELP_WR_ST_DESC
+Valinnainen selite\nliitetiedostolle
+; Optional description for\nthe selected attachment
+;
+MSG_HELP_WR_ST_CC
+Toissijaisen/sijaisten vastaanottajan\nosoite (ja nimi) tai alias
+; Address (and name) or alias\nof the secondary recipient(s)
+;
+MSG_HELP_WR_ST_BCC
+Lähetä kopio viestistä\ntälle vastaanottajalle
+; Send a blind carbon copy of the\nmessage to this recipient
+;
+MSG_HELP_WR_ST_EXTHEADER
+Vaihtoehtoiset viestiotsakkeet, jotka\nlisätään viestiin
+; Additional message header(s) that\nwill be added to the message
+;
+MSG_HELP_WR_ST_FROM
+Lähettäjä-otsakekentän sisältö\n(tämän viestin kirjoittajan\nosoite ja nimi)
+; Contents of From header field\n(address and name of the person\nwho's writing this letter)
+;
+MSG_HELP_WR_ST_REPLYTO
+Tämän kirjeen\npalautusosoite
+; Return address\nfor this letter
+;
+MSG_HELP_WR_CH_DELSEND
+Älä talleta tätä viestiä\nLähetetyt-kansioon
+; Don't store this message\nin the Sent folder
+;
+MSG_HELP_WR_CH_RECEIPT
+Hae varmistus\nonnistuneesta toimittamisesta
+; Get a notification on\nsuccessful delivery
+;
+MSG_HELP_WR_CH_DISPNOTI
+Hae varmistus siitä, että vastaanottaja\nlukee tai käsittelee viestin
+; Get a notification if the recipient\nreads or processes the message
+;
+MSG_HELP_WR_CH_ADDINFO
+Tee otsakekentät, jotka sisältävät tietosi\nhenkilökohtaisesta osoitekirjan kohdasta
+; Create header fields containing data\nfrom your personal address book entry
+;
+MSG_HELP_WR_CY_IMPORTANCE
+Aseta tämän\nviestin tärkeys
+; Set the priority\nof this message
+;
+MSG_HELP_WR_RA_SIGNATURE
+Minkä allekirjoituksen haluat\nlisätä tähän viestiin?
+; Which signature do you want\nto append to this letter?
+;
+MSG_HELP_WR_RA_SECURITY
+Valitse yksi näistä tietoturvavalinnoista\nlähettääksesi viestisi PGP-allekirjoitettuna,\nsalattuna tai nimettömänä
+; Select the one of these security options\nto send your message PGP-signed, encrypted\nor anonymously
+;
+MSG_HELP_WR_BT_HOLD
+Kopioi tehty viesti lähtevän\npostin kansioon ja aseta\nsen tilaksi SÄILYTÄ
+; Copy the created message to\nthe outgoing mail folder\nand set its status to HOLD
+;
+MSG_HELP_WR_BT_QUEUE
+Kopioi tehty viesti lähtevän\npostin kansioon
+; Copy the created message to\nthe outgoing mail folder
+;
+MSG_HELP_WR_BT_SEND
+Kopioi tehty viesti lähtevän\npostin kansioon ja lähetä\nse välittömästi
+; Copy the created message to\nthe outgoing mail folder\nand send it immediately
+;
+MSG_HELP_WR_BT_CANCEL
+Hävitä tehty\nviesti
+; Discard the\ncreated message
+;
+; Module TR - Procedures
+;
+MSG_TR_Connecting
+Yhdistän postipalvelimeen...
+; Connecting to mail server...
+;
+MSG_TR_WaitWelcome
+Yhdistetty, odotan tervetuloviestiä...
+; Connected, awaiting welcome message...
+;
+MSG_TR_PopLoginReq
+Ole hyvä ja anna POP3-tilisi\n%s@%s salasana
+; Please enter your POP3 password\nfor account %s@%s
+; USER_ID, HOST
+;
+MSG_TR_PopLogin
+POP3-kirjautuminen
+; POP3 login
+;
+MSG_TR_SendAPOPLogin
+Lähetän APOP-kirjautumistietoja...
+; Sending APOP login information...
+;
+MSG_TR_SendUserID
+Lähetän käyttäjätunnuksen...
+; Sending user ID...
+;
+MSG_TR_SendPassword
+Lähetän salasanan...
+; Sending password...
+;
+MSG_TR_GetStats
+Haen tilastoja...
+; Getting statistics...
+;
+MSG_TR_Disconnecting
+Kirjaudun ulos...
+; Disconnecting...
+;
+MSG_TR_ApplyFilters
+Käytän etäissuodattimia...
+; Applying remote filters...
+;
+MSG_TR_SendHello
+Lähetän 'Hei'...
+; Sending 'Hello'...
+;
+MSG_TR_SizeGauge
+%%ld / %ld tavua
+; %%ld of %ld bytes
+; SIZE, SIZE
+;
+MSG_TR_TransferStats
+%lD / %lD kt siirretty nopeudella %lD mrk/s\nAikaa jäljellä: %lD min %ld s
+; %lD of %lD kb transmitted at %lD cps\nRemaining time: %lD min %ld sec
+; SIZE, SIZE, SPEED, MINS, SECS
+;
+MSG_TR_Exporting
+Vien viestiä...
+; Exporting message...
+;
+MSG_TR_Sending
+Lähetän viestiä...
+; Sending message...
+;
+MSG_TR_Importing
+Tuon viestiä...
+; Importing message...
+;
+MSG_TR_DeletingServerMail
+Poistan viestin palvelimelta...
+; Deleting mail on server...
+;
+MSG_TR_NewMailReq
+\e8Sait uutta postia!\e2\n\n%3ld viestiä ladattu,\n%3ld jäljellä palvelimella\n%3ld kaksoiskappaletta ohitettu\n
+; \e8You have new mail!\e2\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n
+; COUNT, COUNT, COUNT, COUNT
+;
+MSG_TR_FilterStats
+\nSuodatus tehty:\n%3ld viestiä tarkistettu,\n%3ld ohjattu toisaalle,\n%3ld välitetty,\n%3ld vastattu automaattisesti,\n%3ld komento aktivoitu,\n%3ld siirretty,\n%3ld poistettu
+; \nFiltering done:\n%3ld messages checked,\n%3ld redirected,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted
+; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_TR_NewMail
+Uusi posti
+; New Mail
+;
+MSG_TR_Downloading
+Lataan viestiä...
+; Downloading message...
+;
+;
+; Module TR - Window
+;
+MSG_TR_MailTransferFrom
+Postin siirto osoitteesta '%s'
+; Transfer mail from '%s'
+; HOST
+;
+MSG_TR_MailTransferTo
+Postin siirto osoitteeseen '%s'
+; Transfer mail to '%s'
+; HOST
+;
+MSG_TR_MsgInFile
+Viestejä tiedostossa
+; Messages in file
+;
+MSG_TR_MsgOnServer
+Viestejä palvelimella
+; Messages on server
+;
+MSG_TR_Control
+Ohjaus
+; Control
+;
+MSG_TR_All
+_Kaikki
+; A_ll
+;
+MSG_TR_DownloadOnly
+Lataa vai_n
+; _Download only
+;
+MSG_TR_Leave
+_Jätä
+; L_eave
+;
+MSG_TR_Pause
+_Pysäytä
+; _Pause
+;
+MSG_TR_Clear
+T_yhjennä
+; _Clear
+;
+MSG_TR_DeleteOnly
+Poista _vain
+; Delete _only
+;
+MSG_TR_DownloadDelete
+_Lataa & poista
+; Do_wnload & delete
+;
+MSG_TR_Resume
+Ja_tka
+; _Resume
+;
+MSG_TR_Start
+_Aloita
+; _Start
+;
+MSG_TR_Status
+Tila
+; Status
+;
+MSG_TR_Abort
+K_eskeytä
+; _Abort
+;
+MSG_TR_TransferStats0
+   0 /   0 kt siirretty nopeudella    0 mrk/s\nJäljellä oleva aika:  0 min  0 s
+;   0 of   0 kb transmitted at    0 cps\nRemaining time:  0 min  0 sec
+;
+MSG_TR_BytesGauge0
+    0 /    0 tavua siirretty
+;    0 of    0 bytes
+;
+MSG_TR_MessageGauge0
+Viesti  0 /  0
+; Message  0 of  0
+;
+; Module TR - Bubblehelp
+;
+MSG_HELP_TR_TX_STATUS
+Tämänhetkinen postin\nsiirron tila
+; Current state\nof mail transfer
+;
+MSG_HELP_TR_BT_ABORT
+Keskeytä postin siirto\nheti, kun mahdollista
+; Abort mail transfer\nas soon as possible
+;
+; Module ER - Window
+;
+MSG_ER_ErrorMessages
+Virheilmoitukset:
+; Error messages:
+;
+MSG_ER_PrevError
+_Edellinen virhe
+; _Previous error
+;
+MSG_ER_NextError
+_Seuraava virhe
+; _Next error
+;
+MSG_ER_Clear
+_Poista ilmoitukset
+; _Delete messages
+;
+MSG_ER_Close
+_Sulje ikkuna
+; _Close window
+;
+; Module ER - Error Messages
+;
+MSG_ER_ErrorTTable
+Siirtotaulukkoa '%s' ei voinut avata\n(sitä ei ole tai muoto on väärä).
+; Couldn't open translation table '%s'\n(non existent or wrong format).
+; FILENAME
+;
+MSG_ER_CantCreateFile
+Tiedostoon '%s' ei voi kirjoittaa. Varmista, että polku on olemassa ja levy ei ole kirjoitussuojattu.
+; Can't write to file '%s'. Make sure that the path exists and that the volume isn't write-protected.
+; FILENAME
+;
+MSG_ER_CantCreateDir
+Hakemistoa '%s' ei voi tehdä. Varmista, että levy ei ole kirjoitussuojattu.
+; Can't create directory '%s'. Make sure that the volume isn't write-protected.
+; PATH
+;
+MSG_ER_ErrorNoAlias
+Sinun täytyy määritellä alias tämän kohdan yksilöimiseksi!
+; You must specify an alias to identify this entry!
+;
+MSG_ER_ErrorNoAddress
+Sinun täytyy määritellä tähän kohtaan osoite!
+; You must specify an address for this entry!
+;
+MSG_ER_ErrorDOBformat
+Syntymäpäivän muoto on väärä. Oikea muoto on PP-KKK-VVV (kuukaudennimet Englanniksi).
+; Date of birth is in wrong format. The correct format is DD-MMM-YYYY (month names in English).
+;
+MSG_ER_NotInGallery
+Tätä henkilöä ei löydy YAM-käyttäjägalleriasta. Joko henkilöä ei ole tietokannassa tai hänen nimensä tai osoitteensa on väärin kirjoitettu.
+; Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or her name or address is misspelled.
+;
+MSG_ER_NoTCP
+TCP/IP-pino ei ole käynnissä! bsdsocket.library-yhteensopiva internet-pino täytyy olla käynnistetty, ennenkuin voit käyttää tätä toimintoa.
+; No TCP/IP stack running! A bsdsocket.library-compatible internet stack must be started before you can use this function.
+;
+MSG_ER_ErrorDateFormat
+Viallinen päivän/ajan muoto.\nPäiväys on oltava AmigaDOS-muodossa.\nEsimerkki: %s
+; Invalid date/time format.\nThe date has to be in AmigaDOS format.\nExample: %s
+; DATE
+;
+MSG_ER_ErrorMaxFilters
+Suodattimien maksimimäärä saavutettu! Et voi lisätä enempää suodattimia.
+; Maximum number of filters reached! You can't add more filters.
+;
+MSG_ER_CantOpenTempfile
+Väliaikaistiedostoa '%s' ei voi avata. Tarkista polun asetukset kokoonpanosta.
+; Can't open temporary file '%s'. Check the path settings in the configuration.
+; FILENAME
+;
+MSG_ER_CantCreateTempfile
+Väliaikaistiedostoa ei voi tehdä. Syy: muisti lopussa tai kokoonpanossa määritelty viallinen polku.
+; Can't create temporary file. Reason: out of memory or invalid path specified in the configuration.
+;
+MSG_ER_ErrorConsole
+Ei voi avata konsoli-ikkunaa komentojonolle.
+; Can't open console window for script.
+;
+MSG_ER_ErrorARexxScript
+ARexx-komentoa '%s' ei voi lähettää. Varmistu, että komentojono on olemassa.
+; Can't send ARexx command '%s'. Make sure that the script exists.
+; REXX_COMMAND
+;
+MSG_ER_UnexpEOFB64
+Odottamaton tiedoston loppuminen purettaessa BASE64-koodattua tiedostoa. Viesti näyttää katkenneelta.
+; Unexpected EOF while decoding a BASE64 encoded file. The message seems to be truncated.
+;
+MSG_ER_UnexpEOFUU
+Odottamaton tiedoston loppuminen purettaessa UU-koodattua tiedostoa. Viesti näyttää katkenneelta.
+; Unexpected EOF while decoding a UUencoded file. The message seems to be truncated.
+;
+MSG_ER_InvalidLength
+UU-koodatun tiedoston %lD pituus virheellinen. On käytetty viallista UU-koodaajaa tai viesti on katkennut.
+; Invalid line length in UUencoded file: %lD. A defective UUencoder was used or the message is truncated.
+; SIZE
+;
+MSG_ER_CreateMailError
+Postitiedostoa ei voi tehdä. Syy: viallinen kansion hakemisto tai levytila ei riitä.
+; Can't create mail file. Reason: invalid folder directory or unsufficient diskspace.
+;
+MSG_ER_UnknownEnc
+Tuntematon MIME-koodaus: %s. YAM epäonnistui viestin osan purkamisessa. Tallenna viesti levylle ja yritä eri purkuohjelmalla.
+; Unknown MIME encoding: %s. YAM failed decoding a part of the message. Save the message to disk and try with a different decoder.
+; ENCODING_TYPE
+;
+MSG_ER_UnknownHeaderEnc
+Tuntematon otsakkeen koodaus: %s. YAM ei voi näyttää tätä viestin otsaketta oikein.
+; Unknown header encoding: %s. YAM cannot display a particular message header correctly.
+; ENCODING_TYPE
+;
+MSG_ER_MultipartEOF
+Epätäydellinen moniosainen viesti: odottamaton viestin loppu. Viesti näyttää katkenneelta.
+; Incomplete multipart message: unexpected end of file. The message seems to be truncated.
+;
+MSG_ER_MIMEError
+MIME-viestiä ei voi purkaa. Viesti sisältää huonosti muotoiltuja MIME-osia tai on tyhjä tai katkennut.
+; Can't extract MIME message. The message contains badly formed MIME parts or it's empty or truncated.
+;
+MSG_ER_MissingBoundary
+Moniosaisesta viestistä puuttuu rajakohta. Viesti näyttää katkenneelta.
+; Missing boundary in multipart message. The message seems to be truncated.
+;
+MSG_ER_CantOpenFile
+Tiedostosta '%s' ei voi lukea. Tiedostoa ei näytä olevan olemassa.
+; Can't read from file '%s'. The file doesn't seem to exists.
+; FILENAME
+;
+MSG_ER_UUSize
+Purettu koko [%lD] ei täsmää\nalkuperäisen kanssa [%lD]. On käytetty viallista UU-koodaajaa tai viesti on katkennut.
+; Decoded size [%lD] does not\nmatch original size [%lD]. A defective UUencoder was used or the message is truncated.
+; SIZE, SIZE
+;
+MSG_ER_DocNotFound
+HTML-asiakirjaa '%s' ei löydy. Tiedosto ei ole WWW-palvelimella.
+; HTML document '%s' not found. The file doesn't exist on the WWW server.
+; FILENAME
+;
+MSG_ER_SendHTTP
+HTTP-pyyntöä ei voi lähettää. Asiakirjan pyyntö WWW-palvelimelta epäonnistui.
+; Can't send HTTP request. Requesting a document from the WWW server failed.
+;
+MSG_ER_ConnectHTTP
+WWW-palvelimeen '%s' ei voi yhdistää. Mahdollisia syitä: TCP/IP-yhteys poikki, kelpaamaton osoite, palvelin on kaatunut tai ei tue HTTP-pyyntöjä.
+; Can't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid address, server is currently down or doesn't support HTTP requests.
+; HOST
+;
+MSG_ER_BadResponse
+Kelvoton komennon %s vastaus:\n%s\nPostipalvelin ei voinut suorittaa komentoa ja vastasi virheilmoituksella.
+; Bad %s command response: %s.\nThe mail server couldn't execute the command and replied with the error message.
+; COMMAND, TEXT
+;
+MSG_ER_UnknownPOP
+Tuntematon POP3-palvelin: '%s'. TCP/IP-yhteys on poikki tai palvelimen osoite on kelpaamaton.
+; Unknown POP3 server: '%s'. TCP/IP is off-line or the server address is invalid.
+; HOST
+;
+MSG_ER_UnknownSMTP
+Tuntematon SMTP-palvelin: '%s'. TCP/IP-yhteys on poikki tai palvelimen osoite on kelpaamaton.
+; Unknown SMTP server: '%s'. TCP/IP is off-line or the server address is invalid.
+; HOST
+;
+MSG_ER_CantConnect
+Osoitteeseen '%s' ei voi yhdistää. Postipalvelin on kaatunut tai ei tue POP3/SMTP-protokollia.
+; Can't connect to '%s'. The mail server is currently down or doesn't support the POP3/SMTP protocols.
+; HOST
+;
+MSG_ER_NoAPOP
+POP3-palvelimesi ei tue APOP:ia. Kytke APOP pois päältä YAMin kokoonpanossa.
+; Your POP3 server doesn't support APOP. Disable the APOP option in your YAM configuration.
+;
+MSG_ER_ErrorWriteMailfile
+Virhe kirjoitettaessa levylle tiedostoa: %s.\nYAM ei voi tallentaa viestiä levylle, levy on ehkä täynnä.
+; Write error on mail file: %s.\nYAM can't save the message to disk, maybe you're out of diskspace.
+; FILENAME
+;
+MSG_ER_ConnectionBroken
+TCP/IP-yhteys poikki, mahdollisesti kantoaallon katkeamisen takia.
+; TCP/IP connection broken, probably due to a carrier drop.
+;
+MSG_ER_InvalidAddress
+Osoite '%s' on viallinen. SMTP-palvelin ei hyväksynyt osoitetta. Tarkista, että siinä ei ole laittomia merkkejä.
+; Invalid address '%s'. The SMTP server didn't accept the address. Check for illegal characters.
+; ADDRESS
+;
+MSG_ER_ErrorReadMailfile
+Virhe luettaessa tiedostoa: %s.\nTiedosto on olemassa, mutta sen lukeminen ei onnistunut.
+; Read error on mail file: %s.\nThe file exists, but there was an error while reading the file.
+; FILENAME
+;
+MSG_ER_UserRemoved
+Hakemistoa '%s' ei löytynyt!\nKäyttäjä %s on poistettu.
+; Directory '%s' not found!\nUser %s has been removed.
+; PATH
+;
+MSG_ER_MissingDirectory
+Sinun on nimettävä uudelle käyttäjälle hakemisto!
+; You must specify a directory for the new user!
+;
+MSG_ER_MissingName
+Sinun on annettava uudelle käyttäjälle nimi!
+; You must specify a name for the new user!
+;
+MSG_ER_NoPublicKeys
+Julkisia PGP-avaimia ei löydy. Varmista, että PGP on asennettu ja tarvittavat asetukset on tehty YAMin kokoonpanossa.
+; No public PGP keys found. Make sure that PGP is installed and the required settings are made in the configuration of YAM.
+;
+MSG_ER_PGPreturnsError
+Seuraava PGP-komento palautui virheilmoituksen kanssa: '%s'\nTarkista tiedosto %s määrittääksesi, mikä on vikana.
+; The following PGP command returned with an error: '%s'\nCheck the file %s for a diagnosis.
+; COMMAND, FILENAME
+;
+MSG_ER_PGPnotfound
+PGP-komentoa ei voitu suorittaa.\nTarkista, että %s on olemassa.
+; Couldn't execute PGP command.\nCheck if %s exists.
+; FILENAME
+;
+MSG_ER_InvalidAlias
+Viallinen alias: %s. Moninkertaiset osoitteet eivät ole sallittuja tässä kentässä.
+; Invalid alias: %s. Multiple addresses are not allowed in this field.
+; ALIAS
+;
+MSG_ER_AliasNotFound
+Tuntematon alias tai nimi: %s. YAM ei löytänyt osoitekirjasta vastaanottajan sähköpostiosoitetta. Ole hyvä ja tarkista oikeinkirjoitus.
+; Unknown alias or name: %s. YAM couldn't find the email address of this recipient in the address book. Please verify the spelling.
+; ALIAS
+;
+MSG_ER_AmbiguousAlias
+Monitulkintainen alias tai nimi: %s. Osoitekirjassa on enemmän, kuin yksi kohta, jossa on tämä nimi. Ole hyvä ja poista moninkertaiset kohdat tai käytä eri aliaksia.
+; Ambiguous alias or name: %s. There is more than one entry with this name in the address book. Please remove duplicate entries or use unique aliases.
+; ALIAS
+;
+MSG_ER_ErrorAddrDontFit
+Osoitteet eivät sovi niille varattuun tilaan. Käytä jakelulistaa ehkäistäksesi tämän ongelman.
+; Addresses don't fit in string gadget. Use a distribution list to avoid this problem.
+;
+MSG_ER_ErrorNoPGPId
+'%s':n PGP-tunnusta ei löytynyt osoitekirjasta, yritän nyt '%s'.
+; Couldn't find PGP ID for '%s' in the address book, now trying '%s'.
+; RECIPIENT, ADDRESS
+;
+MSG_ER_ErrorAppendKey
+Julkista PGP-avainta %s ei voi liittää. Sen purkamisessa PGP-avainrenkaasta oli ongelma.
+; Can't append public PGP key %s. There was a problem extracting it from the PGP keyring.
+; KEY_ID
+;
+; Module DI - Window
+;
+MSG_DI_Alias
+L_yhenne
+; _Abbreviation
+;
+MSG_DI_New
+_Uusi
+; _New
+;
+MSG_DI_AddSelect
+Lisää _valinta
+; Add _selection
+;
+MSG_DI_Delete
+_Poista
+; _Delete
+;
+MSG_DI_Paste
+_Liitä
+; _Paste
+;
+; Module DI - Bubblehelp
+;
+MSG_HELP_DI_LV_ENTRIES
+Lista saatavilla olevista lyhenteistä
+; List of available abbreviations
+;
+MSG_HELP_DI_ST_ALIAS
+Valitun kohdan lyhenne
+; Abbreviation of selected entry
+;
+MSG_HELP_DI_BT_NEW
+Lisää lyhenne\nsanastoon
+; Add a new abbreviation\nto the glossary
+;
+MSG_HELP_DI_BT_ADDSELECT
+Tee uusi kohta, joka perustuu\neditorissa merkattuun tekstiin
+; Create a new entry based on\nthe marked text in the editor
+;
+MSG_HELP_DI_BT_DELETE
+Poista valittu kohta
+; Remove selected entry
+;
+MSG_HELP_DI_BT_PASTE
+Liitä valittu kohta tämänhetkiseen\ntekstieditorin kohtaan
+; Insert selected entry at the current\nposition in the text editor
+;
+; Module FI - Procedures
+;
+MSG_FI_GaugeText
+%%lD:s viesti, yht. %ld
+; %%lD of %ld messages
+; COUNT, COUNT
+;
+MSG_FI_AddFilter
+Lisää suodatin
+; Add filter
+;
+MSG_FI_AddFilterReq
+Anna nimi uudelle suodattimelle
+; Enter a name for the new filter
+;
+; Module FI - Window
+;
+MSG_FI_StatNew
+Uusi/Lukematta
+; New/Unread
+;
+MSG_FI_StatRead
+Luettu
+; Read
+;
+MSG_FI_StatForwarded
+Välitetty
+; Forwarded
+;
+MSG_FI_StatReplied
+Vastattu
+; Replied
+;
+MSG_FI_StatQueued
+Odottaa
+; Queued
+;
+MSG_FI_StatFailed
+Lähetys epäonnistui
+; Send failed
+;
+MSG_FI_StatHold
+Säilössä
+; On hold
+;
+MSG_FI_StatSent
+Lähetetty
+; Sent
+;
+MSG_FI_FromField
+\ebLähettäjä-\enkenttä
+; \ebFrom\en field
+;
+MSG_FI_ToField
+\ebVastaanottaja-\enkenttä
+; \ebTo\en field
+;
+MSG_FI_CCField
+\ebKopio-\enkenttä
+; \ebCC\en field
+;
+MSG_FI_ReplyToField
+\ebVastausosoite-\enkenttä
+; \ebReply-To\en field
+;
+MSG_FI_SubjectField
+\ebAihe-\enkenttä
+; \ebSubject\en field
+;
+MSG_FI_DateField
+\ebPäiväys-\enkenttä
+; \ebDate\en field
+;
+MSG_FI_OtherField
+Muu kenttä:
+; Other field:
+;
+MSG_FI_MessageSize
+Viestin koko
+; Message size
+;
+MSG_FI_MessageHeader
+Viestin otsake
+; Message header
+;
+MSG_FI_MessageBody
+Viestin runko
+; Message body
+;
+MSG_FI_WholeMessage
+Koko viesti
+; Whole message
+;
+MSG_FI_SearchIn
+Mistä
+; Search in
+;
+MSG_FI_CaseSensitive
+Kokoerottelu
+; Case sensitive
+;
+MSG_FI_SubString
+Merkkijonon etsintä
+; Substring search
+;
+; Module FI - Window
+;
+MSG_FI_FindMessages
+Viestien etsintä
+; Find Messages
+;
+MSG_FI_AllFolders
+_kaikkialta
+; _everywhere
+;
+MSG_FI_FindIn
+Mistä etsitään
+; Find in
+;
+MSG_FI_FindWhat
+Mitä etsitään
+; Find what
+;
+MSG_FI_UseFilter
+Käytä _suodattimen asetuksia
+; _Use filter settings
+;
+MSG_FI_AddAsFilter
+Lisää _uudeksi suodattimeksi
+; Add as _new filter
+;
+MSG_FI_Results
+Tulokset
+; Results
+;
+MSG_FI_StartSearch
+_Aloita etsintä
+; _Start search
+;
+MSG_FI_SelectMatched
+_Valitse täsmäävä
+; Select _matched
+;
+MSG_FI_ReadMessage
+_Lue viesti
+; _Read message
+;
+MSG_FI_Abort
+_Peru
+; _Abort
+;
+; Module FI - Bubblehelp
+;
+MSG_HELP_FI_LV_FOLDERS
+Valitse yksi tai useampi\nkansio, joista etsitään
+; Select one or more\nfolders to search in
+;
+MSG_HELP_FI_BT_ALL
+Etsi kaikista kansioista
+; Include all folders in your search
+;
+MSG_HELP_FI_PO_FROMRULE
+Ota etsimisperusteet\nsuodattimesta
+; Get search criteria\nfrom a filter
+;
+MSG_HELP_FI_BT_TORULE
+Tee uusi suodatin näistä\netsimisperusteista
+; Create a new filter from\nthese search criteria
+;
+MSG_HELP_FI_BT_SEARCH
+Aloita etsintä ja näytä tulokset\nyläpuolella olevalla listalla.
+; Start the search and display\nthe results in the list above
+;
+MSG_HELP_FI_BT_SELECT
+Valitse täsmäävät viestit\npääikkunassa
+; Select matching messages\nin the main window
+;
+MSG_HELP_FI_BT_READ
+Näytä yläpuolella olevalta\nlistalta valittu viesti
+; Display selected message/nfrom the list above
+;
+MSG_HELP_FI_BT_ABORT
+Lopeta etsintä
+; Stop searching
+;
+MSG_HELP_FI_CY_MODE
+Kenttä tai viestin osa, jonka\npitäisi täsmätä
+; Field or message part that\nshould match the pattern
+;
+MSG_HELP_FI_ST_FIELD
+Etsittävän otsakekentän nimi
+; Name of header field to search in
+;
+MSG_HELP_FI_RA_ADRMODE
+Valitse, etsitäänkö osoitteesta vai\nviestin oikea nimi-kohdasta
+; Choose whether you want to search in the\naddress or realname part of the field
+;
+MSG_HELP_FI_CY_STATUS
+Etsittävä viestin tila
+; Message status to match
+;
+MSG_HELP_FI_ST_MATCH
+Etsittävä merkkijono (AmigaDOS-\nmallinneet ovat tuettuja)
+; Search pattern (AmigaDOS\nwildchars are supported)
+;
+MSG_HELP_FI_CH_CASESENS
+Onko isojen ja\npienten kirjaimien täsmättävä?
+; Should the search\nbe case sensitive?
+;
+MSG_HELP_FI_CH_SUBSTR
+Salli osittaisen merkkijonon etsintä
+; Enable partial string search
+;
+MSG_HELP_FI_CY_COMP
+Vertailun tyyppi. Valitse <> saadaksesi kaikki viestit, jotka eivät\ntäsmää merkkijonoon, IN käyttääksesi merkkijonoista koostuvaa tiedostoa
+; Type of comparison. Select <> to get all messages that\ndon't match the pattern, IN to use a file of patterns
+;
+; Module US - Routines
+;
+MSG_US_EnterPassword
+Ole hyvä ja anna salasanasi
+; Please enter your password
+;
+MSG_US_TitleUserName
+Käyttäjänimi
+; User name
+;
+MSG_US_TitleMailDir
+Postihakemisto
+; Mail directory
+;
+MSG_US_WaitLogin
+Odotan käyttäjän kirjautumista...
+; Waiting for user login...
+;
+MSG_US_RemoveReq
+Kaikki viestit, kansiot ja kokoonpanotiedostot,\njotka kuuluvat tälle käyttäjälle, tuhoutuvat!\nHaluatko todellakin poistaa käyttäjän?
+; All messages, folders and configuration\nfiles belonging to this user will be lost!\nDo you really want to remove the user?
+;
+MSG_US_RemoveReqGads
+*_OK|_Säilytä tiedostot|_Peru
+; *_Okay|_Keep files|_Cancel
+;
+MSG_US_ErrorNoDirectory
+Postihakemistoa ei löydy.\nHaluatko, että se tehdään?
+; Mail directory not found.\nDo you want to create it?
+;
+; Module US - Window
+;
+MSG_US_UserName
+_Käyttäjänimi
+; _User name
+;
+MSG_US_MailDirectory
+Posti_hakemisto
+; _Mail directory
+;
+MSG_US_GlobalAddrBook
+Käytä _yleistä osoitekirjaa
+; Use global address _book
+;
+MSG_US_GlobalDict
+Käytä yleistä _sanastoa
+; Use global _glossary
+;
+MSG_US_CopyConfig
+K_opioi kokoonpano tämänhetkiseltä käyttäjältä
+; C_opy configuration from current user
+;
+MSG_US_Password
+Salasa_na
+; _Password
+;
+MSG_US_SuperVisor
+P_ääkäyttäjän oikeudet
+; _Supervisor privileges
+;
+MSG_US_AddUser
+_Lisää käyttäjä
+; _Add user
+;
+MSG_US_DelUser
+_Poista käyttäjä
+; _Delete user
+;
+; Module US - Bubblehelp
+;
+MSG_HELP_US_ST_USER
+Uuden YAM-käyttäjän nimi
+; Name of the new YAM user
+;
+MSG_HELP_US_ST_MAILDIR
+Hakemisto, johon tallennetaan\nuuden käyttäjätilin kansiot\nja kokoonpanotiedostot
+; Directory to store the\nfolders and config files\nof the new user account
+;
+MSG_HELP_US_CH_USEADDR
+Jaa osoitekirja toisten\nkäyttäjien kanssa
+; Share address book\nwith other users
+;
+MSG_HELP_US_CH_USEDICT
+Jaa sanasto toisten\nkäyttäjien kanssa
+; Share glossary\nwith other users
+;
+MSG_HELP_US_ST_PASSWD
+Tämän käyttäjän kirjautumiseen tarvittava salasana
+; Password required for this user to login
+;
+MSG_HELP_US_CH_ROOT
+Laita tämä päälle, jos käyttäjä voi\nlisätä tai poistaa toisia käyttäjiä
+; Enable this option if the user\nmay add or remove other users
+;
+MSG_HELP_US_CH_CLONE
+Käytä tämänhetkistä kokonpanoa\nuuden tilin oletusarvoina
+; Use current configuration as\ndefault for the new account
+;
+MSG_HELP_US_BT_ADD
+Tee uusi tili
+; Create the new account
+;
+MSG_HELP_US_BT_DEL
+Poista valittu tili
+; Remove selected account
+;
+;
+; Module FO - Routines
+;
+MSG_FO_NewSepReq
+Valinnainen erottimen nimi
+; Optional label for the separator
+;
+MSG_FO_NewFolderReq
+Mitä asetuksia haluat käyttää uudella kansiolla?\nValitse 'Olemassaoleva hakemisto', jos kansio on jo olemassa\nlevylläsi
+; What settings do you want to use for the new folder?\nSelect 'Existing directory' if the folder already exists\non your disk
+;
+MSG_FO_NewFolderGads
+*_Sisäiset oletusarvot|_Kuten tämänhetkinen|_Olemassaoleva hakemisto|_Peru
+; *_Internal defaults|_Like current|_Existing directory|_Cancel
+;
+MSG_FO_SelectDir
+Valitse hakemisto...
+; Select directory...
+;
+;
+; Module FO - Window
+;
+MSG_FO_MessageDate
+Viestin päiväys
+; Message date
+;
+MSG_FO_DateRecvd
+Vastaanottopäivä
+; Date received
+;
+MSG_FO_FMNormal
+normaali
+; normal
+;
+MSG_FO_FMSimple
+yksinkertainen suojaus
+; simple protection
+;
+MSG_FO_FMPack
+pakattu
+; compressed
+;
+MSG_FO_FMEncPack
+salasanan kanssa pakattu
+; compressed with password
+;
+MSG_FO_FTRcvdMail
+saapunut posti
+; received mail
+;
+MSG_FO_FTSentMail
+lähetetty posti
+; sent mail
+;
+MSG_FO_FTBothMail
+saapunut ja lähetetty
+; received and sent
+;
+MSG_FO_FTSeparate
+erotin
+; separator
+;
+MSG_FO_EditFolder
+Kansion asetukset
+; Folder settings
+;
+MSG_FO_Properties
+Ominaisuudet
+; Properties
+;
+MSG_FO_MaxAge
+Maks. _ikä
+; Ma_x. age
+;
+MSG_FO_FolderType
+_Tyyppi
+; T_ype
+;
+MSG_FO_FolderMode
+_Muoto
+; _Mode
+;
+MSG_FO_SortBy
+Jä_rj. ensin
+; S_ort by
+;
+MSG_FO_ThenBy
+Sitt_en
+; T_hen by
+;
+MSG_FO_Reverse
+Käänt.
+; Rev
+;
+MSG_FO_MLSupport
+Tuki postituslistalle
+; Mailing list support
+;
+MSG_FO_ToPattern
+Vast.ottaja: merkki_jono
+; To: _pattern
+;
+MSG_FO_ToAddress
+Vast.ottaja: o_soite
+; _To: address
+;
+; Module FO - Bubblehelp
+;
+MSG_HELP_FO_ST_FNAME
+Kansion nimi
+; Folder name
+;
+MSG_HELP_FO_TX_FPATH
+Hakemisto, johon valitun kansion\nviestit tallennetaan
+; Directory where the messages of\nthe selected folder are stored
+;
+MSG_HELP_FO_ST_MAXAGE
+Vanhat viestit tuhotaan automaattisesti\ntämän ajan kuluttua (päivinä).\nAnna 0 tai ei arvoa poistaaksesi tämän toiminnon käytöstä.
+; Old messages will automatically\nbe deleted after this time (in days).\nEnter 0 or no value to disable this feature.
+;
+MSG_HELP_FO_CY_FTYPE
+Erikoisarkistokansion tyyppi\n(sisään/ulos/molemmat)
+; Type of custom archive folder\n(in/out/both)
+;
+MSG_HELP_FO_CY_FMODE
+Kansiot voidaan suojata salasanalla\nja/tai pakata käyttäen XPK:ta
+; Folders can be password-protected\nand/or compressed using XPK
+;
+MSG_HELP_FO_CY_SORT0
+Ensisijainen tämän kansion\nviestien lajittelujärjestys
+; Primary sorting order of the\nmessage in this folder
+;
+MSG_HELP_FO_CY_SORT1
+Toissijainen tämän kansion\nviestien lajittelujärjestys
+; Secondary sorting order of the\nmessage in this folder
+;
+MSG_HELP_FO_CH_REVERSE
+Takaperin lajittelu
+; Reversed sorting
+;
+MSG_HELP_FO_ST_MLPATTERN
+Viesti kuuluu postituslistalle, jos\nVastaanottaja:-kenttä täsmää tämän merkkijonon kanssa
+; A message belongs to a mailing list\nif the To: field matches this pattern
+;
+MSG_HELP_FO_ST_MLADDRESS
+Käytä tätä vastaanottajan osoitetta\npostituslistaviestin vastausosoitteena
+; Use this recipient address for\na reply to a mailing list message
+;
+;
+; BUSY messages
+;
+MSG_BusySavingAB
+Tallennan osoitekirjaa '%s'...
+; Saving address book '%s'...
+; FILENAME
+;
+MSG_BusyPrintingAB
+Tulostan osoitekirjaa...
+; Printing address book...
+;
+MSG_BusySavingDI
+Tallennan sanastoa...
+; Saving glossary...
+;
+MSG_BusyLoadingDI
+Lataan sanastoa...
+; Loading glossary...
+;
+MSG_BusyDownloadingPic
+Lataan %s:n muotokuvaa...
+; Downloading portrait of %s...
+; NAME
+;
+MSG_BusyUncompressingFO
+Puran kansioiden pakkausta...
+; (De)compressing folders...
+;
+MSG_BusyMoving
+Siirrän/kopioin %s viestiä...
+; Moving/copying %s messages...
+; COUNT
+;
+MSG_BusyRemovingAtt
+Poistan liitetiedostoja...
+; Removing attachments...
+;
+MSG_BusyDeleting
+Poistan %s viestiä...
+; Deleting %s message(s)...
+; COUNT
+;
+MSG_BusyFiltering
+Käytän suodattimia...
+; Applying filters...
+;
+MSG_BusyDeletingOld
+Poistan vanhaa postia...
+; Deleting old mail...
+;
+MSG_BusyEmptyingTrash
+Tyhjennän roskakoria...
+; Emptying trash folder...
+;
+MSG_BusyGettingVerInfo
+Haen päivitystietoja...
+; Getting update information...
+;
+MSG_BusyLoadingIndex
+Lataan kansion '%s' sisältöä...
+; Loading index of folder '%s'...
+; FOLDER
+;
+MSG_BusySavingIndex
+Tallennan kansion '%s' sisältöä...
+; Saving index of folder '%s'...
+; FOLDER
+;
+MSG_BusyScanning
+Skannaan kansion '%s' hakemistoa...
+; Scanning directory of folder '%s'...
+; FOLDER
+;
+MSG_BusyReading
+Luen viestiä...
+; Reading message...
+;
+MSG_BusyDisplaying
+Näytän viestiä...
+; Displaying message...
+;
+MSG_BusyDisplayingList
+Näytän viestejä...
+; Displaying messages...
+;
+MSG_BusyPGPrunning
+PGP-toiminto...
+; PGP operation...
+;
+MSG_BusyComposing
+Muodostan viestiä...
+; Composing message...
+;
+MSG_BusyDecPrinting
+Puran/tulostan...
+; Decoding/printing...
+;
+MSG_BusyDecSaving
+Puran/tallennan...
+; Decoding/saving...
+;
+MSG_BusyDecDisplaying
+Puran/näytän...
+; Decoding/displaying...
+;
+; ADDED AFTER 13-MAR-1999
+;
+MSG_RE_FollowThreadReq
+Tämän viestiketjun seuraamiseksi YAM:in on ladattava kaikkien viestien sisältö.\nTähän voi mennä pitkä aika. Haluatko jatkaa?
+; In order to follow the thread, YAM has to load all indices.\nThis may be time consuming. Do you want to continue?
+;
+MSG_CTapplicationadosscript
+AmigaDOS-komentojono
+; AmigaDOS script
+;
+MSG_CTapplicationrexx
+Rexx-komentojono
+; Rexx script
+;
+; ADDED AFTER 04-DEC-2000
+;
+MSG_CO_Del
+Poista
+;
+MSG_MESSAGE_EXPORT
+Vie...
+; Export...
+;
+MSG_MESSAGE_NEW
+N\000Uusi
+;
+MSG_MESSAGE_SAVE
+V\000Tallenna
+;
+MSG_MESSAGE_PRINT
+P\000Tulosta...
+;
+MSG_PROJECT_ABOUT
+?\000Tietoa...
+;
+MSG_PROJECT_CHECKVERSION
+Tarkista versio
+;
+MSG_FOLDER_NEWFOLDER
+Uusi kansio...
+;
+MSG_FOLDER_NEWSEPARATOR
+Uusi erotin...
+;
+MSG_FOLDER_EXPORT
+Vie...
+;
+MSG_FOLDER_IMPORT
+Tuo...
+;
+MSG_MESSAGE_EDIT
+E\000Muokkaa
+;
+MSG_FOLDER_EDIT
+Muokkaa
+; Edit
+;
+MSG_FOLDER_DELETE
+Poista
+;
+MSG_MESSAGE_MOVE
+M\000Siirrä...
+;
+MSG_MESSAGE_COPY
+Kopioi...
+;
+MSG_MESSAGE_SAVEATT
+T\000Tallenna...
+;
+MSG_MESSAGE_CROP
+O\000Poista
+;
+MSG_MESSAGE_REPLY
+R\000Vastaa...
+;
+MSG_MESSAGE_FORWARD
+W\000Välitä...
+;
+MSG_MESSAGE_BOUNCE
+B\000Lähetä eteenpäin...
+;
+MSG_MESSAGE_GETADDRESS
+J\000Tallenna osoite...
+;
+MSG_MESSAGE_CHANGESUBJECT
+Vaihda aihe...
+;
+MSG_SETTINGS_ADDRESSBOOK
+A\000Osoitekirja...
+;
+MSG_SETTINGS_CONFIG
+K\000Kokoonpano...
+;
+MSG_SETTINGS_USERS
+Käyttäjät...
+;
+MSG_SETTINGS_MUI
+MUI...
+; MUI...
+;
+MSG_FO_FromAddress
+Lähettäjän osoite
+; From: address
+;
+MSG_HELP_FO_ST_MLFROMADDRESS
+Käytä tätä osoitetta, kun postitat\n\
+uusia viestejä listalle
+; Use this from address when posting\n\
+; new mails to the list
+;
+MSG_FO_ReplyToAddress
+Vastausosoite:
+; Reply-To: address
+;
+MSG_HELP_FO_ST_MLREPLYTOADDRESS
+Käytä tätä vastausosoitetta, kun postitat\n\
+uusia viestejä listalle
+; Use this reply-to address when posting\n\
+; new mails to the list
+;
+MSG_RE_MDNGads4
+|Ohita kaikki
+; |Ignore all
+;
+MSG_EA_DefSecurity
+_Tietoturva
+; Se_curity
+;
+MSG_HELP_MA_CY_DEFSECURITY
+Tietoturvan oletusarvo lähetettäessä\n\
+postia tälle henkilölle
+; Default security for sending\n\
+; mail to this person
+;
+MSG_WR_DefSecurityConflict
+Tämän viestin vastaanottajilla on erilaiset tietoturvan\n\
+oletusarvot. Millaisen turvan haluat?
+; The recipients of this mail have different default\n\
+; security settings. What kind of security do you want?
+;
+MSG_WR_DefSecurityConflictGads
+*_Ei mitään|_Allekirjoitus|_Salaus|_Molemmat|Lähetä _nimettömänä
+; *_None|_Sign|_Encrypt|_Both|Send _anonymously
+;
+MSG_WR_SecDefaults
+Oletus
+; Default
+;
+MSG_ER_PGPMultipart
+Virhe tehtäessä moniosaista PGP-viestiä. Salaus/allekirjoitus poistettu!
+; Error creating multipart PGP message. Encryption/signing disabled!
+;
+MSG_RE_FixedFont
+Tasaleveyksinen kirjasin
+; Fixed font
+;
+MSG_ER_NO_SMTP_AUTH
+ESMTP-palvelin %s ei tue SMTP-käyttäjätunnusta!
+; ESMTP Server %s doesn't support SMTP AUTH!
+;
+MSG_CO_UseSMTPAUTH
+Käytä S_MTP Käyttäjätunnusta
+; Use SMTP _AUTH
+;
+MSG_CO_SMTPUser
+K_äyttäjätunnus
+; _User ID
+;
+MSG_CO_SMTPPass
+Sa_lasana
+; Pa_ssword
+;
+MSG_RE_SetUnread
+Vaihda tila ei-luetuksi
+; Set status to unread
+;
+MSG_WR_AltQuoted
+Vuorottaisesti lainattu
+; Alternate Quoted
+;
+MSG_CO_AltQuote
+Lainaa ulkoista kä_yttäen
+; Quote external using
+;
+MSG_CO_DoQuote
+Lainaa vi_esti
+; Quote message
+;
+MSG_HELP_CO_ST_ALTQUOTECHAR
+Merkkijono, jonka pitäisi edeltää jokaista\n\
+muuta, kuin sähköpostista lainattavaa riviä
+; String that should precede each line of\n\
+; a quote inserted from non-email sources
+;
+MSG_EA_SelectPhoto_Title
+Valitse pystysuunta
+; Select portrait
+;
+MSG_RE_MoveNextFolderReq
+Seuraava kansio, jossa lukemattomia viestejä:\n\
+\eb%s\en\n\
+Vaihdanko tähän kansioon ja jatketaanko\n\
+lukemista sieltä?
+; The next folder with unread messages\n\
+; is: \eb%s\en\n\
+; Change to this folder and continue\n\
+; with reading there?
+;
+MSG_WR_NoSubjectReqGad
+*_Anna otsikko|_Jatka ilman otsikkoa
+; *_Set subject|_Continue without subject
+;
+MSG_NoSubjectReq
+Varoitus: Ei otsikkoa
+; Warning: Subject is empty
+;
+MSG_MA_ABookModifiedGad
+*_Tallenna nyt|_Poistu tallentamatta
+; *_Save now|_Quit without saving
+;
+MSG_APPICON_STATS
+U:%lD L:%lD Y:%lD
+; N:%lD U:%lD T:%lD
+; COUNT, COUNT, COUNT
+;
+MSG_ATTACH_NO
+Ei.
+; No.
+;
+MSG_ATTACH_PART
+Osittain
+; Part
+;
+MSG_ABOUT_OKAY_GAD
+OK
+; OK
+;
+MSG_TR_MESSAGEGAUGE
+Viesti %%ld / %ld
+; Message %%ld of %ld
+; COUNT, COUNT
+;

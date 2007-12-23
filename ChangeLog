@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-23  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/#?.ct, doc/#?.guide, Makefile: changed all catalog translation and
+    AmigaGuide file names to english names instead of translated ones. This
+    makes it easier to keep/add further translations which may contain
+    characters not displayable on some systems (like the french 'ç' for
+    example).
+  * YAM_COg.c, YAM_FO.c, YAM_MA.c: changed some requesters to default to "no" as
+    answer to avoid unwanted deletion of things.
+
 2007-12-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_global.c: bumped version to "2.6-dev" as we have finally released the

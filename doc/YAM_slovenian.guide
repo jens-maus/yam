@@ -1,0 +1,4347 @@
+@database YAM.guide
+@$VER: YAM.guide 2.0 (13.03.99)
+@author "Marcel Beck"
+@index "Index"
+
+@node "Main" "YAM - Slovenska navodila"
+
+
+             @{b}===============================================
+              Y A M    (Yet Another Mailer)   RAZLIÈICA 2.0
+             ===============================================@{ub}
+
+                         (c) 1999 Marcel Beck
+
+
+  @{" Uvod              " link "INTR" 0}  - O programu YAM
+  @{" Zahteve           " link "REQS" 0}  - Sistemske zahteve in potrebna programska oprema
+  @{" Avtorske pravice  " link "COPY" 0}  - Pravne informacije
+
+  @{" Namestitev        " link "INST" 0}  - Name¹èanje programa na trdi disk
+  @{" Hitri zaèetek     " link "TUTO" 0}  - Nauèenje uporabe YAMa v 5 minutah
+
+  @{" Glavno okno       " link "MA_W" 0}  - Kako prejeti in poslati po¹to, jo kopirati itd.
+  @{" Nastavitve        " link "CO_W" 0}  - Nastavljanje YAMa po lastnih ¾eljah
+  @{" Imenik naslovov   " link "AB_W" 0}  - Shranjevanje pomembnih naslovov
+  @{" Pisanje           " link "WR_W" 0}  - Pisanje e-po¹tnih sporoèil
+  @{" Urejevalnik       " link "EDIT" 0}  - O lastnem urejevalniku
+  @{" Branje            " link "RE_W" 0}  - Prebiranje e-po¹tnih sporoèil
+  @{" Prenos po¹te      " link "TR_W" 0}  - Prevzemanje in po¹iljanje sporoèil
+  @{" Iskanje           " link "FI_W" 0}  - Iskanje doloèenega sporoèila
+  @{" Uporabniki        " link "US_W" 0}  - Doloèitev veè uporabnikov
+
+  @{" Zagonske mo¾nosti " link "OPTI" 0}  - Lastnosti in mo¾nosti pri zagonu v lupini
+  @{" Vmesnik za ARexx  " link "REXX" 0}  - Nadziranje YAMa iz drugih programov
+  @{" Nasveti, zvijaèe  " link "TIPS" 0}  - Nekaj koristnih namigov
+  @{" Tehnièni podatki  " link "TECH" 0}  - O YAMovem naèinu arhiviranja sporoèil
+  @{" Kaj je e-po¹ta?   " link "MAIL" 0}  - Uvod v elektronsko po¹to
+  @{" Glave e-pisem     " link "HEAD" 0}  - O zgradbi glave sporoèila
+  @{" Po¹tni protokoli  " link "PROT" 0}  - Nekaj informacij o SMTP in POP3
+  @{" Kaj je MIME?      " link "MIME" 0}  - O MIME
+  @{" PGP               " link "PGP"  0}  - ©ifriranje e-po¹te z uporabo javnih kljuèev
+  @{" Netiquette        " link "NETI" 0}  - Vljudno obna¹anje do souporabnikov
+
+  @{" Prihodnost        " link "PLAN" 0}  - Naèrtovane izbolj¹ave
+  @{" Avtor             " link "INFO" 0}  - Navezava stika z avtorjem
+  @{" Zahvale           " link "CRED" 0}  - Ljudem, ki so podprli razvoj programa YAM 2.0
+@endnode
+
+@node "INTR" "Uvod"
+                                    @{b}@{u}UVOD@{ub}@{uu}
+
+
+YAM (Yet Another Mailer) vam omogoèa po¹iljanje in prejemanje @{"elektronske po¹te" link "MAIL" 0}
+preko Interneta in vzdr¾evanje arhivov s sporoèili v va¹em raèunalniku.
+
+Ideja za YAM se mi je porodila leta 1995 z mojim prvim poskusom uporabe e-po¹te.
+Programi, ki so bili takrat na voljo, so bili ali zmogljivi toda z zapletenimi
+nastavitvami ali pa so uporabljali grafièni vmesnik vendar z omejenimi
+funkcijami. Potemtakem je bil cilj sprogramirati nekak¹nega kri¾anca med AdMail
+in AirMail, z nekaj idejami vzetimi iz Pegasus Mail. Neprièakovan navdu¹en odziv
+na Razlièico 1.2 je vodil k stalnemu razvoju YAMa, ki se odra¾a  v prièujoèi
+Razlièici 2.0; ta razlièica je precej veè kot samo nadgradnja priljubljene
+Razlièice 1.3.5.
+
+@{b}@{u}Lastnosti YAMa@{ub}@{uu}
+
+Enostavna @{"namestitev" link "INST" 0} in @{"nastavitve" link "TUTO" 0}, ki terjajo le nekaj minut.
+
+Enostavno delovanje z uporabo gumbov, menijev, tipkovnice in sistema
+@{"povleci in spusti" link "Drag" 0}.
+
+Kontekstno-odvisna pomoè v programu, programska pomoè z uporabo oblaèkov s
+pomoèjo in sistema AmigaGuide.
+
+Podpora najveè 16 razliènih @{"uporabnikov" link "US_W" 0}; vsak med njimi ima lahko svoje mape in
+doloèi lastne nastavitve.
+
+Poljubno ¹tevilo @{"uporabni¹ko doloèenih map" link "FO_W" 0}; te so lahko stisnjene ali 
+za¹èitene z gesli.
+
+Hierarhièni @{"imenik naslovov" link "AB_W" 0} s skupinami in seznami za razpo¹iljanje, kot tudi
+ob¹irnimi opisi vseh vpisov.
+
+Prosto prilagodljiv vmesnik, zahvaljujoè @{"MUI" link "MUI" 0}.
+
+Izbira med ikonami MagicWorkbench in @{"NewIcons" link "NEWI" 0}.
+
+Vgrajen odjemalec za @{"POP3" link "PROT" 0}, ki preverja do 16 razliènih po¹tnih stre¾nikov
+znotraj ene same povezave in dopu¹èa tudi predhodno izbiro sporoèil, ki jih
+boste prevzeli.
+
+Sporoèila lahko napi¹ete v nepovezanem stanju in jih kasneje po¹ljete po¹tnemu
+stre¾niku z vgrajenim odjemalcem za @{"SMTP" link "PROT" 0}.
+
+Zmogljiv @{"urejevalnik besedil" link "EDIT" 0}, namenjen pisanju e-pisem z veè pripravljenimi
+predlogami, @{"slovarjem" link "DI_W" 0} in èrkovalnikom.
+
+Izèrpne @{"mo¾nosti iskanja" link "FI_W" 0} kot je npr. iskanje poljubnega besedila v vseh
+sporoèilih z uporabo ene same poizvedbe.
+
+Samodejno razvr¹èanje po¹te z do 100 @{"filtri" link "CO03" 0}. Arhiviranje ali izpu¹èanje
+doloèenih èlankov, samodejno odpisovanje ter izbris reklamnih sporoèil so samo
+nekateri od mo¾nih naèinov uporabe filtrov.
+
+Podpora za ¹ifriranje in podpisovanje sporoèil po sistemu @{"PGP" link "PGP" 0}, prav tako za
+overovljanje pri branju in prejemanju.
+
+Vgrajena podpora za UUencode in @{"MIME" link "MIME" 0} pri po¹iljanju in prejemanju binarnih
+datotek in samodejno prepoznavanje preko 20 podatkovnih tipov.
+
+Dogodkovno odvisno zaganjanje @{"makrov" link "CO13" 0} in obse¾na podpora za @{"ARexx" link "REXX" 0}.
+
+Lokalizacija s ¹tevilnimi jeziki.
+@endnode
+
+@node "REQS" "Zahteve"
+                                  @{b}@{u}ZAHTEVE@{ub}@{uu}
+
+@{u}Strojna oprema@{uu}
+
+ - raèunalnik Amiga
+ - najmanj 2MB RAM
+ - CPE 68020 ali bolj¹i
+
+
+@{u}Programska oprema@{uu}
+
+ - Kickstart 3.0 ali vi¹je razlièice
+ - Workbench 3.0 ali vi¹je razlièice
+ - @{"MUI 3.8" link "MUI" 0} ali vi¹je razlièice
+ - TCP sklad, zdru¾ljiv z AmiTCP (AmiTCP, Miami ali TermiteTCP)
+ - neobvezno: Modul XPK za stiskanje èlankov
+ - neobvezno: Paket PGP 2.6 ali 5.0 za ¹ifriranje in podpisovanje sporoèil
+ - neobvezno: Arhivirni program za stiskanje map, @{i}npr.@{ui} LhA
+ - neobvezno: Èrkovalnik, @{i}npr.@{ui} AlphaSpell
+@endnode
+
+@node "COPY" "Pravne informacije"
+                                 @{b}@{u}PRAVNE INFORMACIJE@{ub}@{uu}
+
+@{u}Obvestilo o avtorstvu@{uu}
+
+Avtorstvo tega programa pripada Marcelu Becku. Arhiv smete razpo¹iljati samo
+pod pogojem, da ostane cel in nespremenjen, odstranitev dokumentacije in tega
+obvestila o avtorstvu pa je strogo prepovedana.
+
+
+@{u}Razpo¹iljanje@{uu}
+
+Ta program smete prosto razpo¹iljati pod naslednjimi pogoji:
+
+- Vsak razposlan izvod mora vsebovati vse podatke, zajete v tem arhivu.
+
+- Dovoljeno je razpo¹iljanje preko BBSov, Interneta, programskih knji¾nic kot
+  sta zbirka disket Fred Fish in zbirka zgo¹èenk Aminet, ter podobnih
+  elektronskih medijev.
+
+- Revije na disketah in vsi ostali razpo¹iljatelji, ki zahtevajo dodatno plaèilo
+  za prenos ali kopiranje podatkov, ne smejo razpo¹iljati tega programa brez
+  izrecnega dovoljenja avtorja.
+
+
+@{u}Ovr¾itev@{uu}
+
+Kot uporabnik tega programa prevzemate polno odgovornost za karkr¹nokoli ¹kodo,
+ki bi lahko bila povzroèena z njegovo uporabo ali zlorabo. Avtorju tega programa
+ne morete naprtiti nikakr¹ne odgovornosti za morebitno nastalo ¹kodo.
+@endnode
+
+@node "MUI" "MUI"
+
+                          Ta program uporablja
+
+
+                        MUI - MagicUserInterface
+
+                (c) Avtorsko delo 1993-97 Stefana Stuntza
+
+
+MUI je sistem za gradnjo in vzdr¾evanje grafiènih uporabni¹kih vmesnikov.
+S  pomoèjo  nastavitvenega  programa  lahko  uporabnik  izgled doloèenega
+uporabnega programa prilagodi svojemu okusu.
+
+MUI  se  razpo¹ilja  kot shareware.  Èe  ¾elite  prejeti  celoten  paket,
+vkljuèno  z  veliko primeri in veè informacijami o registraciji, poi¹èite
+prosim  datoteko  "muiXXusr.lha"  (XX pomeni  oznako zadnje razlièice) na
+lokalnih BBSih ali na disketah s programi v javni lasti.
+
+
+          Èe ¾elite program registrirati neposredno, po¹ljite
+
+
+                          30 DEM  ali  20 USD
+
+                               na naslov
+
+                             Stefan Stuntz
+                        Eduard-Spranger-Straße 7
+                             80935 München
+                              DEUTSCHLAND
+
+
+
+        Podpora in registracija sta dosegljivi na spletnem mestu
+
+                          http://www.sasg.com/
+@endnode
+
+@node "NEWI" "NewIcons"
+
+                                 @{b}@{u}NewIcons@{ub}@{uu}
+
+   Ikone NewIcons, dobavljene s programom Yam, je narisal Ash Thomas. Vkljuèil
+sem celotno zbirko z ikonami za programe, aplikacijske ikone in orodne vrstice -
+vse so narisane s standardno 32-barvno paleto; to pomeni, da ne boste izgubili
+nobenega peresa. Ikone nenehno posodabljam. Èe mi po¹ljete e-pismo, vam bom
+poslal zadnjo razlièico. Upo¹tevam tudi predloge in konstruktivne kritike. Lahko
+me sreèate tudi na IRCu (IRCNet in ANet) ali na kanalu #amiga; moj nadimek je
+Abstruse.
+   Velika zahvala gre Paulu "lanky" Demarku za vsa e-pisma, pogovore na IRCu,
+predloge in izbolj¹ave; dodal sem tudi statusne ikone (male ikone), ki zbirko ¹e
+dopolnjujejo.
+   Preden se zadu¹im v e-pismih z vpra¹anji, kako sem uspel dodati vzorec v
+obrobe oken na predogledni sliki, vam svetujem: preizkusite program Birdie
+(trenutna razlièica je 1.5) na Aminetu ali na spletnem mestu
+http://www.vgr.com/birdie/
+   Razlièica ikon je 0.8 (ikone niso dokonène, kot ni dokonèen tudi YAM) in je
+precej¹nja izbolj¹ava razlièice v7. Ikone se ob pritisku ne premaknejo dol in
+desno za eno toèko, paè pa zamenjajo podobo podobno kot NewIcons. Narisal sem
+jih tako, da lahko prikaz besedila tudi izkljuèite (preko MUI) in ohranile bodo
+velikost. Besedilo na ikonah niti ni bilo potrebno (ikone naj bi nadome¹èale
+besedilo), zato sedaj izgledajo zelo profesionalno.
+
+ e-po¹ta:  ash\@absurd.demon.co.uk
+ URL:      www.absurd.demon.co.uk
+@endnode
+
+@node "INST" "Namestitev"
+                                @{b}@{u}NAMESTITEV@{ub}@{uu}
+
+@{u}Namestitev s programom Installer@{uu}
+
+Odprite mapo 'Install', dvokliknite na ikono 'Slovensko' in sledite navodilom,
+ki jih daje namestitveni program. Èe ste ¾e prej namestili starej¹o razlièico
+YAMa, potem po konèani namestitvi YAMa 2.0 ponovno po¾enite va¹o Amigo.
+
+
+@{u}Roèna namestitev@{uu}
+
+Èe nimate Amiginega programa Installer ali pa ga iz doloèenega razloga ne morete
+ali ne ¾elite uporabljati, sledite temle navodilom:
+
+- Ustvarite predal za YAM na va¹em trdem disku.
+
+- Prekopirajte datoteke 'YAM', 'YAM_slovensko.guide' in '.taglines' ter predale
+  'Charsets', 'Icons' in 'Rexx' v novoustvarjeni predal. Preimenujte datoteko
+  guide v 'YAM.guide'.
+
+- Prekopirajte datoteko s slovenskim katalogom 'YAM.catalog' v predal
+  'LOCALE:Catalogs/Slovensko'.
+
+- Prekopirajte vse knji¾nice za MUI (mcc/mcp) iz predala 'MUI' v 'MUI:libs/MUI'
+
+- V datoteko 's:user-startup' dodajte ukaz, ki dodeli 'YAM:' predalu, ki ste ga
+  ustvarili za YAM 2.0, npr. 'Assign YAM: Delo:Internet/Yam'.
+
+- Ponovno za¾enite Amigo.
+@endnode
+
+@node "TUTO" "Hitri zaèetek"
+                                @{b}@{u}HITRI ZAÈETEK@{ub}@{uu}
+
+To poglavje je zami¹ljeno kot postopni vodnik po principih delovanja YAMa 2.0.
+Predpostavljam, da ste ¾e opravili namestitev YAMa 2.0 na va¹ sistem in da kot
+TCP/IP sklad uporabljate Miami.
+
+@{fg shine}1.@{fg text} Od va¹ega dobavitelja storitev Interneta si priskrbite naslednje podatke:
+
+ - va¹ e-po¹tni naslov
+ - internetni naslov po¹tnega stre¾nika (takoimenovan POP- ali SMTP-stre¾nik)
+ - va¹e geslo, potrebno za prijavljanje na po¹tni stre¾nik
+
+Tukaj je kot primer navedena prilagoditev za izmi¹ljenega uporabnika z
+imenom 'Janez Kranjski', ¾iveèega v Sloveniji. Njegov e-po¹tni naslov
+je 'jkranjski\@dobavitelj.si', naslov njegovega po¹tnega stre¾nika
+pa 'mail.dobavitelj.si'. Uporablja geslo 'nguz56'.
+
+@{fg shine}2.@{fg text} Za¾enite YAM z dvoklikom na njegovo ikono. Potem, ko se zapre okno z
+avtorskimi pravicami, se odpre glavno okno z dvema razdelkoma (seznamom map in
+seznamom sporoèil) in orodno vrstico.
+
+@{fg shine}3.@{fg text} Predno zaènete z delom morate doloèiti programske nastavitve. Izberite
+'Splo¹ne nastavitve' v meniju 'Nastavitve' ali enostavno kliknite na gumb z
+vpra¹ajem; s tem boste odprli nastavitveno okno. Pojavi se stran z naslovom
+'Prvi koraki'. Na njej vnesite podatke, potrebne za prenos podatkov. V na¹em
+primeru so podatki tile:
+
+ Pravo ime:        Janez Kranjski
+ E-po¹tni naslov:  jkranjski\@dobavitelj.si
+ Stre¾nik za POP3: mail.dobavitelj.si
+ Geslo:            nguz56
+ Èasovni pas:      GMT+1
+
+Iz varnostnih razlogov so v polju za vnos gesla prikazane le zvezdice, po ena za
+vsak vtipkani znak. Èe v trenutku namestitve uporabljate poletni èas, vkljuèite
+njegovo upo¹tevanje (desno pod èasovnim pasom).
+
+@{fg shine}4.@{fg text} YAM vam omogoèa doloèitev odlomka besedila, ki bo dodan vsakemu va¹emu
+e-pismu kot vljudnostno zakljuèno reklo. Za njegov vnos kliknite na 'Pisanje' na
+seznamu na levi strani okna z nastavitvami. Na strani, ki se tedaj pojavi,
+izberite polje za vnos 'Zakljuèna fraza', izbri¹ite prvotno besedilo s pritiskom
+na kombinacijo tipk RAmiga-X in vnesite nekaj v tem slogu:
+
+   Lep pozdrav,\\n     Janez
+
+
+Nadzorni niz \\n vrine novo vrstico za besedo 'pozdrav'.
+
+@{fg shine}5.@{fg text} Shranite nastavitve s klikom na gumb [Shrani]. Vnesli ste dovolj podatkov, da
+vam program YAM dovoli pisanje va¹ega prvega sporoèila.
+
+@{fg shine}6.@{fg text} Po shranjevanju nastavitev se spet pojavi glavno okno. Kliknite na gumb
+'Novo' (¹esti z leve) ali izberite 'Novo' v meniju 'Sporoèilo'. Odprlo se bo
+okno z urejevalnikom. Vnesite e-po¹tni naslov prejemnika v polje 'K' (npr.
+'jkranjski\@dobavitelj.si'). Obièajno bi vtipkali naslov nekoga drugega, toda
+sedaj ¾elite preizkusiti sistem, zato vnesite va¹ naslov. V polje 'Zadeva'
+vnesite dve ali tri besede ki oznaèujejo temo (za to pismo bo primerna kar
+'Preizkus'!). Kliknite zdaj na veèje prazno obmoèje in natipkajte sporoèilo.
+
+Èe uporabljate YAM na obièajen naèin in ¾elite poslati kopije (vkljuèno s
+prikritimi kopijami) komurkoli, lahko to storite s klikom na `Nastavitve', in
+vklopom tretje od treh strani (Sporoèilo, Priloge, Mo¾nosti) v pisalnem oknu.
+
+@{fg shine}7.@{fg text} Ob predpostavki, da trenutno niste na zvezi (Miami ni pognan), kliknite na
+[Po¹lji kasneje].  S tem ste premaknili sporoèilo v mapo 'Odhajajoèa' - v
+nasprotju s takoj¹njim prenosom sporoèila [Po¹lji takoj].
+
+@{fg shine}8.@{fg text} Za¾enite Miami in se priklopite na Internet. Odprite mapo 'Odhajajoèa' s
+klikom na 'Odhajajoèa' v seznamu map, izpisanem v glavnem oknu. Po¹ljite
+sporoèilo s klikom na gumb 'Po¹lji' (peti z desne). Odprlo se bo okno s stanjem
+prenosa; obve¹èalo vas bo o napredovanju pri prijavljanju YAMa na po¹tni
+stre¾nik in po¹iljanju sporoèila.
+
+@{fg shine}9.@{fg text} Kot ste verjetno ¾e opazili je po¹ta izginila iz mape 'Odhajajoèa'. Brez
+panike! Premaknjena je bila v mapo 'Poslana'. Znak za pismo v seznamu ima sedaj
+nalepljeno znamko, kar pomeni, da je bilo sporoèilo uspe¹no poslano.
+
+@{fg shine}10.@{fg text} Z dvoklikom na sporoèilo odprete bralno okno. Prepoznati bi morali besedilo,
+ki ste ga napisali malo prej.  Vrstice v zgornjem delu sporoèila je dodal YAM,
+vsebujejo pa podatke, potrebne za po¹tni prenos (tako menovane "glave e-pisem").
+
+@{fg shine}11.@{fg text} Ker ste napisali pismo sami/samemu sebi lahko sedaj preverite, èe ste
+prejeli novo po¹to. Umaknite bralno okno v ozadje ali ga zaprite, potem kliknite
+na gumb 'Prevzemi' (¹esti gumb z desne).
+
+@{fg shine}12.@{fg text} Okno s stanjem prenosa, ki ste ga videli prejle, se ponovno odpre in lahko
+opazujete, kako YAM prena¹a va¹o po¹to s po¹tnega stre¾nika. Èe vse poteka tako,
+kot je treba, se bo odprl zahtevek s sporoèilom, da ste prejeli novo po¹to. 
+Preberete jo lahko v mapi 'Prihajajoèa'.
+
+Èe ste brez veèjih te¾av pri¹li do te toèke, potem ste spoznali bistvene
+funkcije programa YAM. Za nadaljnje razlage in bolj podrobne informacije o
+posameznih temah preberite prosim naslednja poglavja.
+@endnode
+
+@node "MA_W" "Glavno okno"
+                                @{b}@{u}GLAVNO OKNO@{ub}@{uu}
+
+YAMovo glavno okno izgleda tako, kot je prikazano na tej shemi:
+
+
+    Menijska vrstica:
+    @{"Projekt" link "MAM1" 0} @{"Mapa" link "MAM2" 0} @{"Sporoèilo" link "MAM3" 0} @{"Nastavitve" link "MAM4" 0} @{"Skripti" link "MAM5" 0}
+    ________________________________________________________
+   |          @{"orodna vrstica" link "MA02" 0}                               |
+   |________________________________________________________|
+   |                 |                                      |
+   |                 |          @{"Seznam sporoèil"  link "MA01" 0}            |
+   |   @{"Seznam map" link "MA00" 0}   |                                      |
+   |                 |      Tu je prikazana vsebina         |
+   |                 |      trenutno izbrane mape.          |
+   |                 |                                      |
+   |_________________|______________________________________|
+   |________________________________________________________|
+                       ^ vrstica stanja
+@endnode
+
+@node "MA00" "Glavno okno - seznam map"
+@toc "MA_W"
+@{b}@{u}Glavno okno - SEZNAM MAP@{ub}@{uu}
+
+Vedno so prikazane naslednje ¹tiri standardne nabiralni¹ke mape:
+
+@{fg shine}Prihajajoèa@{fg text}: Vsebuje nova sporoèila, ki so vam bila poslana. Po vsakem prevzemu
+nove po¹te bodo nova sporoèila najprej shranjena sem. Seveda lahko prihajajoèa
+sporoèila z uporabo @{"filtrov" link "CO03" 0} poljubno preusmerjate v druge mape.
+
+@{fg shine}Odhajajoèa@{fg text}: Ta nabiralnik vsebuje sporoèila, ki ste jih napisali in jih
+nameravate poslati, ko boste naslednjiè na zvezi.
+
+@{fg shine}Poslana@{fg text}: V tem nabiralniku hranite kopije sporoèil, ki ste jih ¾e poslali.
+Sporoèila se prenesejo sem (iz mape 'Odhajajoèa') ¹ele potem, ko so dejansko
+poslana. Tudi tu lahko uporabite @{"filtre" link "CO03" 0} za prenos poslanih sporoèil v druge
+mape.
+
+@{fg shine}Izbrisana@{fg text}: Ta nabiralnik hrani sporoèila, ki so bila oznaèena za izbris.
+Obièajno se oznaèena sporoèila ne izbri¹ejo s trdega diska vse dokler ne
+zapustite YAMa. To vam omogoèa njihovo kasnej¹o obnovitev.
+
+Z uporabo menija @{"Mapa" link "MAM2" 0} lahko ustvarite veè map za shranjevanje prispelih in/ali
+poslanih sporoèil; tako lahko va¹o po¹to po ¾elji prerazporejate.
+
+Seznam map ima lahko pet stolpcev: ime mape, ¹tevilo sporoèil (vseh, novih in ¹e
+neprebranih), pa tudi velikost mape v bajtih. Na to, kateri od teh stolpcev so
+dejansko prikazani, vplivajo nastavitve @{"seznamov" link "CO08" 0}. ©irine stolpcev uravnavate,
+èe z mi¹ko vleèete tanke èrte, ki loèujejo stolpiène naslove v seznamu map.
+Vrstni red stolpcev spreminjate s premikanjem stolpiènih naslovov.
+
+Mape lahko prerazporedite na naèin @{"povleci in spusti" link "Drag" 0} ali s klikom na naslov
+stolpca. Majhna pu¹èica v enem od stolpiènih naslovov prikazuje naèin
+razvr¹èanja sporoèil. Drugi klik na isti naslov obrne vrstni red razvr¹èanja
+(®->A namesto A->®).
+
+Èe je ime mape izpisano z belo barvo, potem nabiralnik vsebuje novo ali ¹e
+neprebrano po¹to. Kadar pri doloèeni mapi manjkajo ¹tevilski podatki, to
+oznaèuje, da mapa ¹e ni bila pregledana (program je prihranil prostor). Èe pa je
+ime mape prikazano na sredini med dvema debelima èrtama, potem to ni prava mapa
+paè pa razmejitev, ki slu¾i loèevanju va¹ih osebnih map.
+
+Èe z mi¹kinim kazalcem za nekaj sekund obmirujete na seznamu, se prika¾e oblaèek
+s pomoèjo, ki vsebuje informacije o pojavnih menijih trenutne mape.
+
+Da bi videli vsebino doloèene mape kliknite na ustrezno vrstico v seznamu map.
+Na desni se pojavi seznam sporoèil, vèasih s kratko zakasnitvijo.
+
+Z dvoklikom na vrstico v seznamu odprete @{"nastavitveno okno" link "FO_W" 0}, kjer lahko doloèite
+lastnosti trenutno izbrane mape.
+@endnode
+
+@node "MA01" "Glavno okno - seznam sporoèil"
+@toc "MA_W"
+@{b}@{u}Glavno okno - SEZNAM SPOROÈIL@{ub}@{uu}
+
+Seznam sporoèil ima lahko najveè osem stolpcev, katerih vsebina je doloèena v
+nastavitvah @{"seznamov" link "CO08" 0}.
+
+@{fg shine}Stanje sporoèila@{fg text}: Ikona prikazuje @{"stanje" link "MA0S" 0} sporoèila (novo, ¹e neprebrano,
+prebrano itd.)
+
+@{fg shine}Po¹iljatelj/Prejemnik@{fg text}: E-po¹tni naslov - ali, v tem primeru - ime po¹iljatelja
+ali prejemnika sporoèila, odvisno paè od vrste nabiralnika. Èe je bilo sporoèilo
+poslano veèim ljudem hkrati, se pred imenom pojavi majhna ikona s tremi glavami.
+
+@{fg shine}Zadeva@{fg text}: Tema sporoèila. Pri razvr¹èanju sporoèil glede na temo sta predponi Re:
+in AW: ignorirani.
+
+@{fg shine}Datum@{fg text}: Datum po¹iljanja sporoèila, izraèunan glede na krajevni èas (va¹ èasovni
+pas).  Da bi bil izraèun toèen morata imeti oba, vi in po¹iljatelj, doloèen
+pravilni @{"èasovni pas" link "CO00" 0}.
+
+@{fg shine}Datoteka@{fg text}: Ime datoteke, prilo¾ene sporoèilu.
+
+@{fg shine}Povratni naslov@{fg text}: Vsebina vrstice Reply-To: v glavi sporoèila. Èe te vrstice ni,
+je tu naveden po¹iljateljev naslov (vrstica From: v glavi).
+
+@{fg shine}Velikost@{fg text}: Velikost sporoèila v bajtih.
+
+©irine stolpcev uravnavate, èe z mi¹ko vleèete tanke èrte, ki loèujejo stolpiène
+naslove v seznamu map. Vrstni red stolpcev spreminjate s premikanjem stolpiènih
+naslovov.
+
+Majhna pu¹èica v enem od stolpiènih naslovov prikazuje naèin razvr¹èanja
+sporoèil. Prvi klik na naslov stolpca povzroèi, da se sporoèila razvr¹èajo glede
+na to lastnost. Drugi klik na isti naslov obrne vrstni red razvr¹èanja (®->A
+namesto A->®). Za doloèitev drugotnega kljuèa razvr¹èanja dr¾ite med klikanjem
+naslovov stolpcev pritisnjeno tipko Shift. Te spremembe so samo zaèasne; èe jih
+¾elite obdr¾ati tudi pozneje, morate postopek ponoviti v @{"nastavitvah" link "FO_W" 0}.
+
+Èe z mi¹kinim kazalcem za nekaj sekund obmirujete na seznamu, se prika¾e oblaèek
+s pomoèjo, ki vsebuje informacije o pojavnih menijih trenutne mape.
+
+Dvoklik na vrstico v seznamu odpre @{"bralno okno" link "RE_W" 0} in prika¾e ustrezno sporoèilo.
+Za premik sporoèil v drugo mapo uporabite mi¹ko. Blok sporoèil oznaèite s klikom
+na vrstico in vleèenjem navzdol (dr¾ite pritisnjen levi mi¹kin gumb). Potem
+kliknite in @{"povlecite" LINK "Drag" 0} oznaèen blok na levo v seznam map ter
+ga spustite na izbrano mapo.
+@endnode
+
+@node "MA0S" "Ikone stanja"
+@toc "MA_W"
+                                @{b}@{u}IKONE STANJA@{ub}@{uu}
+
+ @{fg shine}Stanje sporoèil               Ikona@{fg text}
+
+ @{b}Nova sporoèila@{ub}                hrbtna stran ovojnice s èrko 'N'
+   Nova, ¹e neprebrana sporoèila, sneta pri zadnjem prevzemu po¹te.
+   
+ @{b}Neprebrana sporoèila@{ub}          hrbtna stran zaprte ovojnice
+   Sporoèila, ki jih ¹e niste prebrali.
+
+ @{b}Prebrana sporoèila@{ub}            odprta ovojnica
+   Sporoèila, ki ste jih ¾e prebrali.
+
+ @{b}Odpisana sporoèila@{ub}            odprta ovojnica s èrko 'R'
+   Sporoèila, na katere ste ¾e odgovorili.
+
+ @{b}Posredovana sporoèila@{ub}         odprta ovojnica s èrko 'F'
+   Sporoèila, ki so vam bila poslana kot tretji osebi.
+
+ @{b}Neposlana sporoèila@{ub}           prednja stran ovojnice
+   Sporoèila v mapi 'Odhajajoèa', ki èakajo na po¹iljanje.
+
+ @{b}Zadr¾ana sporoèila@{ub}            prednja stran ovojnice s èrko 'H'
+   Sporoèila v mapi 'Odhajajoèa', ki pred po¹iljanjem terjajo dopolnila.
+
+ @{b}Poslana sporoèila@{ub}             ovojnica z znamko
+   Sporoèila, ki so ¾e bila poslana.
+
+ @{b}Spodletela sporoèila@{ub}          pretrgana ovojnica
+   Sporoèila, ki so bila zaradi napake pri prenosu neuspe¹no poslana.
+
+ @{b}Sporoèila s prilogami@{ub}         papirna sponka  
+   Sporoèila z eno ali veè prilo¾enimi datotekami.
+
+ @{b}Zaklenjena sporoèila@{ub}          kljuè
+   Sporoèila, ¹ifrirana po sistemu PGP.
+
+ @{b}Poroèila o stanju@{ub}             majhen znak s èrko 'i'
+   Samodejni odgovori po¹tnega stre¾nika ali prejemnikovega po¹tnega programa.
+
+ @{b}Pomembna sporoèila@{ub}            klicaj
+   Sporoèila, ki jih je po¹iljatelj oznaèil za pomembna.
+@endnode
+
+@node "MA02" "Glavno okno - orodna vrstica"
+@toc "MA_W"
+@{b}@{u}Glavno okno - ORODNA VRSTICA@{ub}@{uu}
+
+Uporaba orodne vrstice vam pohitri dostop do najpogosteje uporabljanih funkcij.
+
+     ___ ___ ___ ___ ___    ___ ___ ___    ___ ___    ___ ___ ___ ___
+    | 1 | 2 | 3 | 4 | 5 |  | 6 | 7 | 8 |  | 9 |10 |  |11 |12 |13 |14 |
+    |___|___|___|___|___|  |___|___|___|  |___|___|  |___|___|___|___|
+
+Tabela prikazuje povezave med gumbi (njihovo lego in oznako), bli¾njiènimi
+tipkami in menijskimi elementi. Na gumbih so lahko prikazane ikone, oznake
+ali pa oboje: za doloèitev izgleda poglejte v poglavje @{"Nastavitve/MUI" link "MAM4" 0}.
+
+      @{u}Gumb@{uu}        @{u}Bli¾njièna tipka@{uu}   @{u}Pripadajoèi menijski element...@{uu}
+
+  1   [Preberi]       B,<return>     @{"Sporoèilo/Preberi" link "MAM3" 0}
+  2   [Uredi]         U              @{"Sporoèilo/Uredi" link "MAM3" 0}
+  3   [Premik]        M              @{"Sporoèilo/Premakni..." link "MAM3" 0}
+  4   [Izbri¹i]       Z,<del>        @{"Sporoèilo/Izbri¹i" link "MAM3" 0}
+  5   [IzvlNasl]      I              @{"Sporoèilo/Shrani naslov..." link "MAM3" 0}
+
+  6   [Novo]          N              @{"Sporoèilo/Novo" link "MAM3" 0}
+  7   [Odgovor]       O              @{"Sporoèilo/Odgovori..." link "MAM3" 0}
+  8   [Posred]        S              @{"Sporoèilo/Posreduj..." link "MAM3" 0}
+
+  9   [Prevzem]       V              @{"Mapa/Prevzemi po¹to" link "MAM2" 0}
+ 10   [Po¹lji]        S              @{"Mapa/Po¹lji pripravljeno po¹to" link "MAM2" 0}
+
+ 11   [Filtriraj]     F              @{"Mapa/Filtriraj" link "MAM2" 0}
+ 12   [Najdi]         A              @{"Mapa/I¹èi..." link "MAM2" 0}
+ 13   [Imenik]        E              @{"Nastavitve/Imenik naslovov..." link "MAM4" 0}
+ 14   [Nastavi]       T              @{"Nastavitve/Splo¹ne nastavitve..." link "MAM4" 0}
+@endnode
+
+@node "MAM1" "Glavno okno - meni Projekt"
+@toc "MA_W"
+@{b}@{u}Glavno okno - MENI PROJEKT@{ub}@{uu}
+
+@{u}Projekt/Vizitka...@{uu}
+   Prika¾e @{"informacije o avtorstvu" link "COPY" 0} programa YAM.
+
+@{u}Projekt/MUI vizitka...@{uu}
+   Prika¾e informacije o avtorstvu in razlièici sistema @{"MUI" link "MUI" 0}.
+
+@{u}Projekt/Preveri razlièico@{uu}
+   Z YAMove domaèe strani dobi informacije o najnovej¹i razlièici YAMa. Pred
+izbiro tega menijskega elementa se preprièajte, da ste na zvezi. Èe je na voljo
+posodobitev va¹e razlièice, vas bo YAM o tem obvestil. Gumb [Obi¹èi domaèo stran]
+bo v tem primeru pognal @{"ARexx skript" link "CO13" 0} za prikaz domaèe strani YAMa v va¹em
+brskalniku.
+
+@{u}Projekt/Prika¾i zadnje sporoèilo@{uu}
+   Izpi¹e zadnja sporoèila o napakah.
+
+@{u}Projekt/Ponovno za¾eni@{uu}
+   Izvede "topli zagon" YAMa. Na ta naèin lahko uporabljate program z drugim
+uporabni¹kim imenom, èe je prijavljenih @{"uporabnikov" link "US_W" 0} seveda veè.
+
+@{u}Projekt/Skrij@{uu}
+   Preklopi YAM v ikoniziran naèin delovanja. Ikona prikazuje @{"stanje" link "MA0S" 0}
+nabiralnika s prispelo po¹to (prazen, stara po¹ta, nova po¹ta). Ponavljajoèe se
+pregledovanje po¹te in vsi @{"ARexx" link "REXX" 0} skripti ostanejo vklopljeni. Izgled ikon
+nabiralnikov lahko spremenite, èe ¾elite. To napravite tako, da v YAMov predal z
+ikonami prekopirate nove datoteke @{b}new.info@{ub}, @{b}old.info@{ub}, @{b}empty.info@{ub} in @{b}check.info@{ub}.
+
+@{u}Projekt/Konèaj@{uu}
+   Zapusti program YAM.
+@endnode
+
+@node "MAM2" "Glavno okno - meni Mapa"
+@toc "MA_W"
+@{b}@{u}Glavno okno - MENI MAPA@{ub}@{uu}
+
+@{u}Mapa/Nova mapa...@{uu}
+   Ustvari novo mapo in jo vstavi v seznam pod trenutno izbrano. Èe predal nove
+mape ¾e obstaja (èe je to npr. predal drugega uporabnika), izberite "Obstojeèi
+predal". Pri ustvarjanju nove mape lahko uporabite YAMove "Lastne privzete
+vrednosti" ali pa prekopirate nastavitve iz trenutno izbrane mape ("Kot
+trenutna"). V pogovornem oknu, ki se odpre, vnesite ime predala, ki ga ¾elite
+ustvariti. Nadrejeni predal (pot) spremenite samo v primeru, ko je to nujno
+potrebno. Odprla se bo @{"nastavitvena plo¹èa" link "FO_W" 0}, na kateri lahko spremenite
+lastnosti nove mape.
+
+@{u}Mapa/Nov loènik...@{uu}
+   Pod izbrano mapo vstavi nov loènik z neobvezno oznako. Loèniki slu¾ijo
+zdru¾evanju map v skupine.
+
+@{u}Mapa/Uredi@{uu}
+   Odpre @{"nastavitveno plo¹èo" link "FO_W" 0}, na kateri lahko spreminjate lastnosti trenutno
+izbrane mape.
+
+@{u}Mapa/Izbri¹i@{uu}
+   Odstrani trenutno izbrano (uporabnikovo) mapo.
+
+@{u}Mapa/Vrstni red@{uu}  » Shrani|Ponovno nastavi
+   Shrani ali obnovi vrstni red map v njihovem @{"seznamu" link "MA00" 0}. Ta vrstni red je
+shranjen tudi pri spreminjanju nastavitev mape.
+
+@{u}Mapa/I¹èi...@{uu}
+   Odpre @{"iskalno okno" link "FI_W" 0} z mo¾nostjo iskanja kakr¹negakoli sporoèila.
+
+@{u}Mapa/Filtriraj@{uu}
+   Uporabi uporabnikov @{"filter" link "CO03" 0} na vseh sporoèilih trenutno izbrane mape. Filtri
+imajo obliko 'Pri @{i}poizvedba@{ui}, izvr¹i @{i}akcija@{ui}', njihove mo¾nosti so doloèene v
+nastavitvah.
+
+@{u}Mapa/Izprazni ko¹ za smeti@{uu}
+   Dejansko izbri¹e sporoèila v mapi 'Izbrisana'.
+
+@{u}Mapa/Posodobi kazalo@{uu}
+   Pregleda predal trenutno izbrane mape in zgradi novo kazalèno datoteko.
+Ponavadi YAM takrat, ko je to potrebno, samodejno posodablja kazalène datoteke.
+Kljub temu je po sesutju sistema ali v primeru drugih te¾av koristno roèno
+posodobiti kazala.
+
+@{u}Mapa/Izplakni kazala@{uu}
+   Odstrani kazalène datoteke uporabnikovih map. Ta menijski element
+izberite takrat, ko vam primanjkuje pomnilnika. Ko kasneje izberete eno izmed
+teh map, se kazalène datoteke ponovno nalo¾ijo s trdega diska.
+
+@{u}Mapa/Uvozi...@{uu}
+   Omogoèi uvoz po¹tne datoteke, ustvarjene z drugimi programi. Datoteka mora
+ustrezati standardnemu MBOX po¹tnemu formatu. Ta format uporabljajo drugi
+odjemalci za po¹tne-stre¾nike, kot sta npr. AmiPOP in IMAP. Po¹tna datoteka
+lahko vsebuje veè sporoèil, ki so enolièno doloèena z vrsticami 'From: NASLOV
+DATUM' v njihovih glavah.
+
+@{u}Mapa/Izvozi...@{uu}
+   Shrani vsa sporoèila trenutno izbrane mape v eno samo datoteko, tako da jih
+lahko prebere drug e-po¹tni program (poglejte v opis za 'Uvozi'.).
+
+@{u}Mapa/Po¹lji pripravljeno po¹to@{uu}
+   Po¹lje vsa sporoèila iz mape 'Odhajajoèa' (z izjemo tistih, ki so
+'Zadr¾ana').
+
+@{u}Mapa/Izmenjaj po¹to@{uu}
+   Najprej prenese novo po¹to z va¹ega po¹tnega stre¾nika, potem pa po¹lje
+sporoèila iz nabiralnika 'Odhajajoèa'. Ta menijski element v bistvu zdru¾uje
+ukaza 'Prevzemi novo po¹to' in 'Po¹lji pripravljeno po¹to'.
+
+@{u}Mapa/Prevzemi po¹to@{uu}
+   Poizku¹a vzpostaviti povezavo s po¹tnim stre¾nikom, preveri, èe vas èaka nova
+po¹ta, in èe je temu tako, jo prenese v nabiralnik 'Prihajajoèa'. Èe ste
+doloèili veè kot eno povezavo s @{"stre¾nikom za POP3" link "CO02" 0} bodo po vrsti pregledani vsi
+stre¾niki.
+
+@{u}Mapa/Preveri posamezen raèun@{uu}
+   Èe ste doloèili veè stre¾nikov za POP3 izberite za pregled posameznega
+stre¾nika ta menijski element.
+@endnode
+
+@node "MAM3" "Glavno okno - meni Sporoèilo"
+@toc "MA_W"
+@{b}@{u}Glavno okno - MENI SPOROÈILO@{ub}@{uu}
+
+@{u}Sporoèilo/Preberi@{uu}
+   Nalo¾i izbrano sporoèilo v @{"bralno okno" link "RE_W" 0}.
+
+@{u}Sporoèilo/Uredi@{uu}
+   Omogoèi vam urejanje sporoèila, ki ste ga sestavili ¾e prej.
+
+@{u}Sporoèilo/Premakni...@{uu}
+   Premakne eno ali veè sporoèil v drugo mapo. To lahko napravite tudi z
+@{"vleèenjem" link "Drag" 0} sporoèil(-a) iz seznama s sporoèili v @{"seznam map" link "MA00" 0} in spu¹èanjem na
+izbrani cilj.
+
+@{u}Sporoèilo/Prekopiraj...@{uu}
+   Prekopira eno ali veè sporoèil v drugo mapo; kopije se razen v imenu ne
+razlikujejo od izvirnikov.
+
+@{u}Sporoèilo/Izbri¹i@{uu}
+   Premakne eno ali veè sporoèil v mapo 'Izbrisana' (le-te lahko kasneje
+obnovite). Èe ¾elite sporoèila dejansko izbrisati takoj, potem v nastavitvah za
+@{"razno" link "CO14" 0} obkljukajte "takoj izbri¹i sporoèila". Tipka <Del> slu¾i kot bli¾njica za
+menijski element Menu/Delete, kombinacija tipk <Shift-Del> pa povzroèi
+takoj¹nji izbris s trdega diska, neglede na stanje nastavitev.
+
+@{u}Sporoèilo/Natisni...@{uu}
+   Tiskalniku po¹lje berljiv del (besedilo in pisemsko glavo) sporoèil(-a).
+
+@{u}Sporoèilo/Shrani...@{uu}
+   Shrani besedilo (in glave) enega ali veè sporoèil in pri tem za vsako
+sporoèilo ustvari posebno datoteko. Èe ¾elite shraniti sporoèilo v njihovem
+prvotnem formatu (MBOX), izberite menijski element @{"Mapa/Izvozi" link "MAM2" 0}.
+
+@{u}Sporoèilo/Priloge@{uu} » Shrani...
+   Shrani prilo¾ene datoteke enega ali veè sporoèil v predal po va¹i izbiri.
+
+@{u}Sporoèilo/Priloge@{uu} » Odstrani
+   Iz enega ali veè sporoèil izbri¹e, brez predhodnega opozorila, priloge MIME
+in s tem prihrani prostor. V vsako sporoèilo, spremenjeno na ta naèin, je dodan
+zaznamek o izbrisanih prilogah.
+
+@{u}Sporoèilo/Izvozi...@{uu}
+   Shrani eno ali veè sporoèil v eno samo datoteko, tako da jih lahko prebere
+drug e-po¹tni program (poglejte v opis za 'Uvozi'.)
+
+@{u}Sporoèilo/Novo@{uu}
+   Odpre @{"pisalno okno" link "WR_W" 0}, v katerem napi¹ete novo sporoèilo.
+
+@{u}Sporoèilo/Odgovori...@{uu}
+   Da bi odgovorili na sporoèilo, ki vam ga je poslal nekdo drug, izberite ta
+menijski element. Vrstici Zadeva in Prejemnik v glavi sta doloèeni samodejno,
+izvirno besedilo je citirano. Mo¾na je izbira veè sporoèil, ki bodo citirana v
+enem samem odgovoru in vrnjena prvotnim po¹iljateljem ("Veèkratni odgovor").
+
+@{u}Sporoèilo/Posreduj...@{uu}
+   Ta menijski element vam dopu¹èa po¹iljanje vsebine e-pisma drugemu
+prejemniku. Zadeva in besedilo se ohranita, nova pa je vsebina glave sporoèila.
+YAM vstavi na zaèetek in konec citiranega besedila rekla za posredovanje; le-te
+doloèite v nastavitvah za @{"odgovor" link "CO06" 0}. Izberete lahko tudi veè sporoèil, ki se zdru¾ijo v eno
+samo posredovano sporoèilo ("Veèkratno posredovanje").
+
+@{u}Sporoèilo/Odbij...@{uu}
+   Omogoèi vam, da sporoèilo v nespremenjeni obliki po¹ljete drugemu prejemniku.
+V pisemski glavi se spremeni samo vrstica To:, dodan je tudi par vrstic Resent:.
+Rekla, doloèena za posredovanje sporoèil tu niso uporabljena.
+
+@{u}Sporoèilo/Izberi@{uu}  » Vsa|Nobeno|Preklopi
+   Izbere vsa sporoèila v tretutno izbrani mapi, poèisti izbrana sporoèila ali
+pa preklopi izbiro (@{i}tj.@{ui} oznaèi neoznaèena sporoèila in obratno).
+
+@{u}Sporoèilo/Shrani naslov...@{uu}
+   V va¹ @{"imenik naslovov" link "AB_W" 0} doda po¹iljateljev (ali prejemnikov - odvisno od
+trenutnega nabiralnika) naslov izbranega sporoèila. Èe ste izbrali veè sporoèil
+ali pa ima sporoèilo veè prejemnikov, dobite mo¾nost tvorbe seznama za
+razpo¹iljanje.
+
+@{u}Sporoèilo/Nastavi stanje na@{uu} » Neprebrano|Prebrano|Zadr¾ano|Pripravljeno
+   Ta element spremeni stanje enega ali veè sporoèil. Na ta naèin lahko
+sprostite zadr¾ana sporoèila v nabiralniku 'Odhajajaèa' ali oznaèite ¹e
+neprebrana kot prebrana.
+
+@{u}Sporoèilo/Spremeni zadevo...@{uu}
+   Spremeni zadevo enega ali veè sporoèil. S tem lahko v glavah prispelih
+sporoèil popravite nesmiselne vrstice 'Subject:'. Zaradi mo¾nosti sledenja rdeèi
+niti razprave je prvotna zadeva shranjena v pisemsko glavo v vrstico
+X-Original-Subject.
+
+@{u}Sporoèilo/Po¹lji@{uu}
+   Vzpostavi povezavo s po¹tnim stre¾nikom in prenese izbrana sporoèila. Èe
+¾elite poslati vsa sporoèila v nabiralniku 'Odhajajoèa', potem vam svetujem
+izbiro menijskega elementa @{"Mapa/Po¹lji pripravljeno po¹to" link "MAM2" 0}.
+@endnode
+
+@node "MAM4" "Glavno okno - meni Nastavitve"
+@toc "MA_W"
+@{b}@{u}Glavno okno - MENI NASTAVITVE@{ub}@{uu}
+
+@{u}Nastavitve/Imenik naslovov...@{uu}
+   Dovoli urejanje vpisov v @{"imeniku naslovov" link "AB_W" 0}.
+
+@{u}Nastavitve/Splo¹ne nastavitve...@{uu}
+   Odpre @{"nastavitveno okno" link "CO_W" 0}, v katerem doloèate YAMove nastavitve.
+
+@{u}Nastavitve/Uporabniki...@{uu}
+   Prika¾e @{"okno uporabnikov" link "US_W" 0}, kjer dodajate nove uporabnike programa YAM
+("Veè uporabnikov").
+
+@{u}Nastavitve/MUI...@{uu}
+   Odpre nastavitveno okno za @{"MUI" link "MUI" 0}, v katerem lahko doloèite skoraj vse
+lastnosti grafiènega vmesnika, vkljuèno s pisavami, barvno paleto, zaslonskim
+naèinom, ozadjem, obrobami, orodji, bli¾njiènimi tipkami, itd. Za veè informacij
+poglejte prosim v navodila za MUI. YAM uporablja veè razredov MUI, ki jih v
+prvotni izdaji sistema MUI ¹e ni bilo; zato doloèenih nastavitev ne morete
+spreminjati v YAMovem nastavitvenem oknu, paè pa v ustreznem oknu v sistemu MUI.
+Tile razredi MUI so:
+
+ @{b}NListviews:@{ub} nekaj seznamov v YAMu, @{i}npr.@{ui} seznama map in sporoèil.
+   Mo¾nosti: barve, pisave, drsniki, razno.
+
+ @{b}Toolbar:@{ub} gumbi z ikonami v YAMovem oknu.
+   Mo¾nosti: oznake, razmik, pisave.
+
+ @{b}TextEditor:@{ub} lastni urejevalnik ter prikazovalnik sporoèil v bralnem oknu.
+   Mo¾nosti: pisave, barve, kurzor, loènik, vezava tipk, èrkovalnik.
+
+ @{b}Listtree:@{ub} strukturiran seznam v Imeniku naslovov.
+   Mo¾nosti: izgled vrstic in ikon za oznaèitev skupin.
+
+ @{b}BetterString:@{ub} splo¹no enovrstièno polje za vnos.
+   Mo¾nosti: pisava, barvna paleta, kurzor.
+@endnode
+
+@node "MAM5" "Glavno okno - meni Skripti"
+@toc "MA_W"
+@{b}@{u}Glavno okno - MENI SKRIPTI@{ub}@{uu}
+
+@{u}Skripti/Izvr¹i skript...@{uu}
+   Omogoèi vam izbiro skripta @{"ARexx" link "REXX" 0} in njegov zagon.
+@endnode
+
+@node "FO_W" "Nastavitve map"
+@toc "MA00"
+@{b}@{u}NASTAVITVE MAP@{uu}@{ub}
+
+Poleg ¹tirih nabiralnikov 'Prihajajoèa', 'Odhajajoèa', 'Poslana' in 'Izbrisana'
+lahko ustvarite poljubno ¹tevilo uporabni¹ko doloèenih map. Te mape slu¾ijo npr.
+arhiviranju prispele in/ali poslane po¹te ali vzdr¾evanju po¹tnih seznamov.
+
+@{u}Ime@{uu}
+   Ime mape, kot bo prikazano v seznamu map v glavnem oknu.
+ @{i}Primer:@{ui} YAMov po¹tni seznam
+
+@{u}Pot@{uu}
+   To je pot do predala, v katerem bodo shranjena sporoèila, nastavitvena
+datoteka s konènico .config in kazalèna datoteka s konènico .index trenutno
+izbrane mape. Ponavadi je to podpredal osnovnega predala mape, lahko pa doloèite
+katerokoli mesto, npr. drugi trdi disk ali particijo.
+ @{i}Primer:@{ui} yam_ns
+
+@{u}Najv. starost@{uu}
+   YAM lahko namesto vas samodejno bri¹e sporoèila, katerih starost je presegla
+doloèeno mejo. V ta namen v to polje vpi¹ite ¹tevilo razlièno od niè (vrednost
+pomeni najveèjo ¹e dopustno starost po¹te v DNEVIH). Izberite polo
+'Zaèetek/Konec' v nastavitvem oknu in vklopite mo¾nost 'Izbri¹i staro po¹to'.
+Pomnite: sporoèila s stanjem 'novo' ali 'neprebrano' ne bodo samodejno
+izbrisana.
+
+@{u}Tip@{uu}
+   Doloèa, ali je to mapa za prejeto in/ali poslano po¹to. Tip vpliva na
+stolpiène naslove in na to, kateri naslovi bodo prikazani v seznamu sporoèil.
+
+@{u}Naèin@{uu}
+   Mape lahko za¹èitite z gesli in/ali jih po potrebi stisnete. Na voljo so
+tile naèini:
+
+@{b}normalno@{ub}                 brez za¹èite z geslom, brez stiskanja
+                         + hitrost
+                         - ni za¹èite va¹e e-po¹te pred tretjimi osebami z
+                           dostopom do va¹ega raèunalnika      
+
+@{b}enostavna za¹èita@{ub}        enostavna za¹èita z geslom, brez stiskanja
+                         + hitrost
+                         - va¹a e-po¹ta je za¹èitena samo znotraj YAMa
+
+@{b}stisnjeno@{ub}                stiskanje z XPK brez uporabe za¹èite     
+                         + varènost s prostorom na trdem disku
+                         - poèasnost, za¹èite va¹e e-po¹te ni
+
+@{b}stisnjeno z geslom@{ub}       stiskanje z XPK z uporabo za¹èite z geslom
+                         + varènost s prostorom na trdem disku, zanesljiva
+                           za¹èita
+                         - poèasnost
+
+Za stiskanje potrebujete programski paket XPK. V YAMovem arhivu tega paketa ni,
+lahko pa ga zastonj snamete @{i}npr.@{ui} z Amineta. Opis nastavitev knji¾nice za
+stiskanje najdete v opisu nastavitvene pole @{"Razno" link "CO14" 0}.
+
+@{u}Uredi po@{uu}
+   Tu doloèite prvotni kljuè razvr¹èanja sporoèil v izbrani mapi. Po¹ta je lahko
+razvr¹èena glede na datum po¹iljanja, datum prejema, ime po¹iljatelja, ime
+prejemnika, zadevo, velikost ali stanje. Pri razvr¹èanju glede na stanje veljata
+ti dve razvrstitveni pravili:
+
+ novo > neprebrano > prebrano > odpisano > posredovano
+ spodletelo > za¹èiteno > pripravljeno > poslano
+
+Z izbiro mo¾nosti 'Obr' boste obrnili vrstni red razvr¹èanja (@{i}npr.@{ui} ®-A namesto
+A-®).
+
+@{u}Potem po@{uu}
+   Tu doloèite drugotni kljuè razvr¹èanja sporoèil v izbrani mapi. Èe so e-pisma
+prvotno razvr¹èena npr. glede na zadevo, lahko z doloèitvijo drugotnega kljuèa
+sporoèila z isto zadevo razvrstite npr. glede na datum ali ime avtorja.
+
+@{u}Podpora za po¹tni seznam@{uu}
+   Vsi stre¾niki po¹tnih seznamov vrstice 'Reply-To' v e-pisemski glavi ne
+izpolnjujejo s pravim naslovom (to naj bi bil naslov po¹tnega seznama). V ta
+namen se YAM tovrstnim nepravilnim vpisom lahko izogne oz. jih popravi. Ko
+odpi¹ete po¹iljatelju e-pisma, shranjenega v tej mapi, YAM najprej preveri, èe
+je vsebina vrstice 'To' v glavi prvotnega sporoèila enaka vsebini vrstice
+'To pattern'. Èe se vsebini ujemata, potem bo v vrstico s prejemnikovim naslovom
+namesto prejemnikovega naslova iz prvotnega sporoèila vne¹en naslov iz vrstice
+'To'.
+@endnode
+
+@node "CO_W" "Nastavitve"
+                              @{b}@{u}NASTAVITVE@{ub}@{uu}
+
+YAM nudi ¹tevilne mo¾nosti, katerih naèin uporabe doloèate v nastavitvenem oknu.
+Programske mo¾nosti so razdeljene na 15 kartic; te izbirate s klikom na ustrezno
+besedo na levem delu nastavitvenega okna.
+
+  @{" Prvi koraki     " link "CO00" 0}  - Neobhodno potrebne informacije za uporabo YAMa:
+                        va¹ e-po¹tni naslov, po¹tni stre¾nik in èasovni pas
+  @{" TCP/IP          " link "CO01" 0}  - Nastavitve za SMTP in POP3 pri prenosu po¹te
+  @{" Nova po¹ta      " link "CO02" 0}  - Nadzor nad prena¹anjem po¹te
+  @{" Filtri          " link "CO03" 0}  - Samodejno razvr¹èanje in izpolnjevanje sporoèil
+  @{" Branje          " link "CO04" 0}  - Mo¾nosti izgleda
+  @{" Pisanje         " link "CO05" 0}  - Glave, ¾e pripravljena rekla in nastavitve urejevalnika
+  @{" Odgovarjanje    " link "CO06" 0}  - Mo¾nosti za citiranje sporoèil
+  @{" Podpis          " link "CO07" 0}  - Podpisi... in sklepne vrstice!
+  @{" Seznami         " link "CO08" 0}  - Vidni stolpci v seznamih map in sporoèil
+  @{" Varnost         " link "CO09" 0}  - ©ifriranje po sistemu @{"PGP" link "PGP" 0} in uporaba prepo¹iljalnikov
+  @{" Zaèetek/Konec   " link "CO10" 0}  - Mo¾nosti akcij pri zagonu in zaustavitvi programa
+  @{" MIME            " link "CO11" 0}  - Prikazovalniki prilog vrst @{"MIME" link "MIME" 0}
+  @{" Imenik naslovov " link "CO12" 0}  - Vidni stolpci, izmenjava osebnih podatkov
+  @{" ARexx           " link "CO13" 0}  - Doloèanje novih makrov
+  @{" Razno           " link "CO14" 0}  - Poti, aplikacijske ikone, shranjevanje/izbris, sledenje
+                        in pakiranje
+  @{" Skrite mo¾nosti " link "CO_H" 0}  - Teh ne vidite :-)
+
+Na vseh polah so vseskozi prisotni trije gumbi:
+
+[@{u}Shrani@{uu}]
+   Da bi shranili spremembe na trdi disk kliknite na ta gumb. Spremembe bodo
+ohranjene tudi po ponovnem zagonu raèunalnika.
+
+[@{u}Uporabi@{uu}]
+   S tem gumbom bodo spremembe samo zaèasne. Veljale bodo samo do zaustavitve
+YAMa.
+
+[@{u}Preklièi@{uu}]
+   Ta gumb iznièi vse spremembe.
+
+@{"Meni" link "CO_M" 0} nudi ¹e dodatne mo¾nosti.
+@endnode
+
+@node "CO00" "Nastavitve - Prvi koraki"
+@toc "CO_W"
+@{b}@{u}Nastavitve - PRVI KORAKI@{uu}  (Neobhodno potrebne informacije za uporabo YAMa)@{ub}
+
+@{fg shine}-----------------Najosnovnej¹e nastavitve------------------@{fg text}
+
+@{u}Ime in priimek@{uu}
+   Va¹e pravo ime in priimek. Poskrbite, da bo to polje izpolnjeno s toènimi
+podatki. Ne uporabljajte navednic, prosim.
+ @{i}Primer:@{ui} Janez Kranjski
+
+@{u}E-po¹tni naslov@{uu}
+   To je va¹ e-po¹tni naslov. Sestavljen je iz zaporedja
+<uporabni¹ko_ime>\@<ime_domene>.
+ @{i}Primer:@{ui} jkranjski\@dobavitelj.si
+
+@{u}Stre¾nik za POP3@{uu}
+   Internetni naslov va¹ega po¹tnega stre¾nika. Stre¾nik, ki je obièajno
+raèunalnik va¹ega ISPja (dobavitelja storitev Interneta), mora biti sposoben
+komunicirati po protokolu POP3. Èe tega vnosa ne izpolnite, bo YAM uporabil
+naslov stre¾nika za SMTP.
+ @{i}Primer:@{ui} mail.dobavitelj.si
+
+@{u}Geslo@{uu}
+   To je geslo, po katerem vas vpra¹a va¹ po¹tni stre¾nik. Geslo je lahko, ne
+pa nujno, enako geslu, ki ga uporabljate za prijavo v va¹ ISP (@{i}npr.@{ui} z uporabo
+PPP).
+ @{i}Primer:@{ui} nguz56
+
+@{fg shine}------------------------Èasovni pas------------------------@{fg text}
+
+@{u}Èasovni pas@{uu}
+   Datum in èas, ki ju YAM prikazuje v seznamu sporoèil, sta vedno pretvorjena v
+va¹ @{i}krajevni@{ui} èas. To vam zagotavlja pravilno razvrstitev sporoèil, poslanih iz
+vseh koncev sveta in iz razliènih èasovnih pasov. Èasovni pas je del datuma
+sporoèila; doloèa razliko med krajevnim in èasom Greenwich Mean Time (GMT). Èe
+¾elite, da bo imela spremenljivka èasovnega pasu vedno isto vrednost (@{i}npr.@{ui}
+razliko ure in pol), lahko to dose¾ete z doloèitvijo spremenljivke okolja
+YAM_TZ.
+ @{i}Primeri@{ui}: GMT+1 (za Slovenijo)
+          GMT   (za Veliko Britanijo)
+          GMT-5 (za ZDA EST @{i}npr.@{ui} New York City)
+
+[] @{u}Upo¹tevaj spremembe zaradi poletnega èasa@{uu}
+   To mo¾nost morate vklopiti v obdobju uporabe poletnega èasa. S tem bo
+vrednosti za èasovni pas dodana ena ura. Èe imate name¹èen program
+SummertimeGuard YAM samodejno pretvarja v/iz poletnega èasa.
+@endnode
+
+@node "CO01" "Nastavitve - TCP/IP"
+@toc "CO_W"
+@{b}@{u}Nastavitve - TCP/IP@{uu}  (Potrebne informacije za prenos e-po¹te preko Interneta)@{ub}
+
+@{fg shine}-------------------Po¹iljanje po¹te (SMTP)------------------@{fg text}
+
+@{u}Stre¾nik@{uu}
+   Internetni naslov, na katerega po¹iljate po¹to. Stre¾nik na tem naslovu
+(ponavadi raèunalnik va¹ega ISPja (dobavitelja storitev Interneta)) mora biti
+sposoben komunicirati v skladu s protokolom SMTP. Oznaka vrat za storitev SMTP
+je obièajno 25. Èe stre¾nik uporablja drugaèno vrednost od navedene, jo sami
+dotipkajte k naslovu po¹tnega stre¾nika. Naslov in oznako vrat mora loèevati
+dvopièje.
+ @{i}Primer:@{ui} mail.dobavitelj.si
+
+@{u}Domena@{uu}
+   Pri po¹iljanju po¹te se mora va¹a Amiga najprej predstaviti stre¾niku za SMTP
+tako, da mu posreduje svoj naslov (ukaz HELO). SMTP stre¾nik se na podlagi tega
+naslova odloèi, ali vam bo dovolil dostop, ali ne. YAM obièajno posreduje samo
+tisti del naslova, v katerem je navedena domena, kar v veèini primerov tudi
+zado¹èa. Èe se pri tem pojavijo te¾ave, tj. prejmete od va¹ega stre¾nika za SMTP
+po po¹iljanju po¹te sporoèilo o napaki, dopolnite nastavitve domene z @{i}npr.@{ui}
+vnosom imena va¹ega raèunalnika.
+ @{i}Primer:@{ui} mojaAmiga.dobavitelj.si
+
+[] @{u}Stre¾nik za SMTP dovoljuje 8 bitov@{uu}
+   Sprva je bila v e-po¹tne namene dovoljena samo uporaba nabora znakov
+US-ASCII. To je za uporabnike pomenilo prepoved uporabe nagla¹enih samoglasnikov
+in podobnih neobièajnih znakov v e-pismih. Namesto èrke 'ä' so tako morali
+natipkati 'ae'. Vzrok za to omejitev je bil v tem, da je veèina stre¾nikov
+upo¹tevala le prvih 7 bitov in enostavno odrezala 8. bit. S tem je e-pismo
+precej osiroma¹ila. Re¹itev za problem je pomenila uvedba standarda MIME
+natisljivih citatov, po katerem so bili pred prenosom vsi 'neavtorizirani' znaki
+pretvorjeni v 7-bitne in pred dostavo ponovno obnovljeni v prvotno obliko.
+Sodobni po¹tni stre¾niki z ne-US-ASCII znaki nimajo veÈ te¾av, tako da pretvorba
+sporoèil ni veè nujna. Èe ste povsem preprièani, da va¹ po¹tni stre¾nik podpira
+8-bitni prenos lahko izberete to mo¾nost in pri prenosu prihranite nekaj bitov.
+Najbolj¹i naèin za preverjanje, ali va¹ po¹tni stre¾nik podpira tak prenos je,
+da sami sebi po¹ljete sporoèilo z nagla¹enimi samoglasniki in pogledate, kaj se
+zgodi.
+
+@{fg shine}------------------Prejemanje po¹te (POP3)-------------------@{fg text}
+
+@{u}Dostop do POP3@{uu}
+   Poleg prvotnega stre¾nika za POP3, ki ste ga ¾e doloèili v @{"Prvih korakih" link "CO00" 0},
+lahko tu doloèite podatke za dostop ¹e za 15 dodatnih raèunov; imena se pojavijo
+na seznamu na levi, klik na ime spro¾i prikaz uporabnih podrobnosti na desni.
+Pomnite, da imate lahko veè dostopnih ¾etonov za razliène stre¾nike in istega
+uporabnika ali pa za isti stre¾nik in veè uporabnikov. V obeh primerih lahko za
+novo po¹to pogledate z enim samim klikom mi¹ke. Za vnos novih podatkov,
+potrebnih za nov e-po¹tni dostopni ¾eton, kliknite na gumb [Nov]. Oèitno je, da
+z gumbom [Izbri¹i] bri¹ete dostopne ¾etone.
+
+@{u}Stre¾nik za POP3@{uu}
+   Internetni naslov sistema, s katerega ¾elite prevzeti po¹to. Ta stre¾nik
+(ponavadi raèunalnik va¹ega ISPja (dobavitelja storitev Interneta)) mora biti
+sposoben komunicirati v skladu s protokolom POP3. Oznaka vrat za storitev POP3
+je obièajno 110. Èe stre¾nik uporablja drugaèno vrednost od navedene, jo sami
+dotipkajte k naslovu po¹tnega stre¾nika. Naslov in oznako vrat mora loèevati
+dvopièje.
+ @{i}Primer:@{ui} pop.dobavitelj.si:109
+
+@{u}ID uporabnika@{uu}
+   Sem vnesite uporabnikovo ID, ki jo zahteva stre¾nik za POP3. Obièajno bo ta
+enaka uporabni¹kemu imenu v va¹em e-po¹tnem naslovu. Vèasih pa pride do izjem,
+tako da vam priporoèam, da vseeno najprej preberete navodila va¹ega ISPja.
+(YAM bo sestavil polno ime za dostop oblike <uporabnikova-ID>\@<stre¾nik>.)
+ @{i}Primer:@{ui} jkranjski
+
+@{u}Geslo@{uu}
+   To je geslo, ki mora biti poslano po¹tnemu stre¾niku ob prijavljanju.
+Iz varnostnih razlogov lahko polje tudi pustite prazno. Èe to tudi storite,
+boste morali geslo vna¹ati ob vsakem pregledovanju za novo po¹to.
+ @{i}Primer:@{ui} nguz56
+
+[] @{u}Dejaven@{uu}
+   Za zaznavo nove po¹te na izbranem stre¾niku za POP3 vkljuèite tole mo¾nost.
+Èe ne ¾elite, da se ta e-po¹tni dostopni ¾eton pregleduje samodejno, to mo¾nost
+izkljuèite in namesto te raje uporabite menijski element 'Mapa/Preveri
+posamezen raèun' v glavnem oknu.
+
+[] @{u}Prijava z uporabo APOP@{uu}
+   Uporabnikova ID in geslo se pri povezavi s stre¾nikom za POP3 ponavadi
+prena¹ata kot navadno besedilo. To lahko pod doloèenimi pogoji predstavlja
+varnostno tveganje. Sodobni stre¾niki za POP3 zato podpirajo overovljanje APOP,
+ki omogoèa prena¹anje podatkov, ¹ifriranih s kljuèem. Kljuè podeli stre¾nik. Èe
+va¹ stre¾nik za POP3 ne podpira tovrstnega overovljanja, boste pri preverjanju
+nove po¹te prejeli sporoèilo o napaki. V tem primeru to mo¾nost izkljuèite.
+
+[] @{u}Izbri¹i po¹to na stre¾niku@{uu}
+   Ko je ta mo¾nost vklopljena, bo nova po¹ta po prenosu s po¹tnega stre¾nika
+s tega stre¾nika izbrisana. Sporoèila bodo izbrisana ¹ele po uspe¹nem prenosu
+in shranjevanju v va¹em raèunalniku. Èe dostopni ¾eton za POP3 uporablja veè
+ljudi ali pa ga ¾elite pozneje uporabljati z drugega raèunalnika, to mo¾nost
+izklopite.
+@endnode
+
+@node "CO02" "Nastavitve - Nova po¹ta"
+@toc "CO_W"
+@{b}@{u}Nastavitve - NOVA PO©TA@{uu}  (Ureditev za prevzem po¹te)@{ub}
+
+@{fg shine}-----------------------Prevzemanje-------------------------@{fg text}
+
+@{u}Predizbira@{uu}
+   Po vzpostavitvi zveze s stre¾nikom za POP3 se bo odprlo @{"predizbirno okno" link "TR_W" 0} s
+seznamom vseh novih sporoèil v POP3 nabiralniku. Za vsako sporoèilo se odloèite,
+ali ga boste sneli, izbrisali ali pa pustili na stre¾niku, odvisno paè od
+njegove velikosti, zadeve in po¹iljatelja. Za pravilno delovanje predizbire mora
+stre¾nik podpirati ukaz TOP (ki ga veèina stre¾nikov pozna).
+
+ @{b}nikoli:@{ub}               predizbira je izklopljena
+ @{b}velika sporoèila:@{ub}     pri predizbiri bodo prikazana le sporoèila, dalj¹a od
+                       doloèene vrednosti             
+ @{b}vedno:@{ub}                pri predizbiri bo prikazano vsako sporoèilo     
+ @{b}vedno, le velikosti:@{ub}  prikazana bodo vsa sporoèila, vendar bo vidna le   
+                       njihova velikost. Prednost tega naèina je v njegovi
+                       precej¹nji hitrosti.
+
+@{u}Omejitev velikosti@{uu}
+   Èe je predizbira vklopljena, bodo sporoèila, ki presegajo tu navedeno
+velikost, poudarjena. Na ta naèin se izognete prevzemanju sporoèil z ogromnimi
+prilogami. Velikost je podana v kilobajtih. Èe ne ¾elite uporabljati omejitve
+vnesite '0'. Izkazalo se je, da je za vsakdanjo rabo najbolj koristna ureditev
+'Predizbira = velika sporoèila' in 'Omejitev velikosti = 100 kB'. Z uporabo teh
+nastavitev se bo predizbirno okno odprlo le v primeru, ko velikost vsaj enega
+od novih sporoèil presega 100 kilobajtov.
+
+[] @{u}Okno prenosa@{uu}
+   S to izbiro se lahko odloèite, èe ¾elite videti @{"okno stanja prenosa" link "TR_W" 0} med
+prejemanjem ali po¹iljanjem po¹te. S 'samodejno' se odpre samo, èe prenos
+zaènete roèno. Okno se ne odpre med YAMovim samodejnim pregledovanjem za novo
+po¹to.
+
+[] @{u}Izogibaj se podvojitvam@{uu}
+   Èe mo¾nosti za samodejni izbris po¹te s stre¾nika ne vklopite, bo po¹ta
+ponovno prevzeta ob naslednjem YAMovem snemanju, torej bodo vsa sporoèila v mapi
+'Prihajajoèa' podvojena. Da bi se izgonili tej te¾avi, potrdite to izbiro. Dokler
+je ta mo¾nost vklopljena, YAM bele¾i vsa prevzeta sporoèila v datoteki '.uidl' in
+uporablja posebne ukaze stre¾nika POP3 v izogib dvakratnemu prevzemu istega
+sporoèila. Èe stre¾nik POP3 podpira ukaze UIDL, bo preverjanje konèano
+razmeroma hitro, sicer bo YAM za branje ID sporoèila uporabil ukaz TOP. V primeru,
+da stre¾nik ne podpira niti tega ukaza, morate to mo¾nost izklopiti.
+
+[] @{u}Posodobi stanje sporoèil@{uu}
+   Èe je vklopljena ta mo¾nost, bo stanje vseh sporoèil mape 'Prihajajoèa'
+spremenjeno iz 'novo' na 'neprebrano'. Tako lahko v trenutku ugotovite, katera
+e-pisma ste sneli med zadnjim prevzemanjem po¹te.
+
+@{fg shine}--------------------Samodejno delovanje--------------------@{fg text}
+
+@{u}Preglej novo po¹to vsakih [xx] minut@{uu}
+   Tukaj doloèite èasovni razmik, po katerem YAM ponovno samodejno pregleda
+po¹tni stre¾nik z novo po¹to. Da bi to mo¾nost onemogoèili, vnesite vrednost 0.
+ @{i}Primer:@{ui} 15 minut
+
+[] @{u}Prevzemi velika sporoèila@{uu}
+   Pri samodejnem prevzemanju nove po¹te (vsakih xx minut ali z uporabo ARexxa)
+izbirno okno ne bo prikazano, saj je velika verjetnost, da uporabnik trenutno
+dela z drugim programom ali pa ga za raèunalnikom sploh ni. Neizbrana mo¾nost
+pomeni, da velika sporoèila, ki presegajo omejitev dol¾ine, ne bodo prevzeta,
+paè pa bodo ostala na stre¾niku.
+
+@{fg shine}--------------------------Oznanilo-------------------------@{fg text}
+
+[] @{u}Zahtevek@{uu}
+   Pri prevzemu nove po¹te odpre YAM zahtevek s prikazom novih in izbrisanih
+sporoèil.
+
+[] @{u}Zvok@{uu}
+   Po konèanem prevzemu nove po¹te predvaja YAM zvoèno datoteko. Za predvajanje
+je uporabljena knji¾nica podatkovnih tipov, zato je zvoèna datoteka lahko v
+kateremkoli formatu (kot npr. AIFF ali WAVE), èe le imate name¹èen podatkovni tip
+zanj. Za preizkusno predvajanje kliknite na malo pu¹èico (znak PREDVAJAJ).
+ @{i}Primer:@{ui} Podatki:Zvok/NovaPo¹ta.snd
+
+[] @{u}Ukaz@{uu}
+   To je program, ki se izvede pri prihodu nove po¹te. Vnesite ukaz tako, kot bi
+ga vtipkali v ukazni lupini. Èe je ukaz dejansko skript ARexx morate predenj
+vstaviti ukaz 'rx'.
+ @{i}Primer:@{ui} rx YAM:rexx/NovaPo¹ta.yam
+@endnode
+
+@node "CO03" "Nastavitve - Filtri"
+@toc "CO_W"
+@{b}@{u}Nastavitve - FILTRI@{uu}  (uporabni¹ko doloèeni po¹tni filtri)@{ub}
+
+Namen po¹tnega filtra je obdelati oz. razvrstiti po¹to glede na uporabni¹ko
+doloèena merila. Kadarkoli e-pismo ustreza doloèenemu vzorcu se izvede doloèena
+akcija. Primeri uporabe filtrov so npr. tile:
+
+ - samodejno premikanje po¹te iz po¹tnega seznama v doloèeno mapo
+ - samodejna obdelava prispelih povpra¹evanj s po¹iljanjem predhodno
+   doloèenih odgovorov
+ - samodejno izbrisanje neza¾eljene e-po¹te (ogla¹evanja preko e-po¹te, danes
+   ¾e prave nadloge )
+ - samodejna preusmeritev po¹te drugemu prejemniku
+
+Doloèite lahko do 100 tovrstnih filtrov. Seznam na levi prikazuje imena vseh
+¾e doloèenih filtrov. Za prikaz podrobnosti filtra na desni, kliknite na njegovo
+ime. Podrobnosti so prikazane na treh polah - Mo¾nosti, Primerjava in Ukrep.
+Kliknite na gumb [Nov] za tvorbo novega filtra ali pa uporabite gumb [Izbri¹i]
+za njegov izbris. Filtri se izvr¹ujejo v vrstnem redu od-zgoraj-navzdol, zato
+morate filtre, ki bri¹ejo ali premikajo sporoèila, uvrstiti na dno seznama.
+
+
+          ----------------------@{b}Pola Mo¾nosti@{ub}----------------------
+
+@{u}Ime@{uu}
+   Ime filtra slu¾i le ugotavljanju istovetnosti in ni namenjeno drugi uporabi.
+
+[] @{u}Oddaljeni filter@{uu}
+   Oddaljeni filter bo na stre¾niku POP3 pregledal za novo e-po¹to, ne da bi jo
+prevzel. Za delovanje tega filtra je nujno, da stre¾nik POP3 podpira ukaz TOP. V
+nasprotju z 'obièajnimi' filtri so z doloèenimi vzorci preiskane le glave
+e-pisem. Iz razumljivih razlogov potemtakem posredovanje in premikanje e-pisem
+z oddaljenimi filtri ni mo¾no. Èe so oddaljeni filtri vkloplnjeni, lahko
+upoèasnijo prevzemanje e-po¹te, vendar so nadvse priroèni za za¹èito pred
+neza¾eljeno e-po¹to in 'pisemskimi bombami'.
+
+[] @{u}Izvr¹i na novi po¹ti@{uu}
+   Filter lahko obdela vso novo po¹to, kar dose¾ete z vklopom te mo¾nosti.
+Obdelava bo po prejetju nove po¹te stekla samodejno.
+
+[] @{u}Izvr¹i na poslani po¹ti@{uu}
+   To mo¾nost vklopite, da bi filter obdelal vso poslano po¹to. Obdelava bo po
+poslanju po¹te stekla samodejno.
+
+[] @{u}Izvr¹i na zahtevo@{uu}
+   Vklop te mo¾nosti pomeni, da se bo filtriranje zaèelo po kliku na gumb
+Filtriraj v glavnem oknu ali izbiri menijskega elementa 'Filtriraj' menija
+'Mapa'. Na ta naèin lahko obdelate tudi stara sporoèila, ki niso nujno v mapi
+'Prihajajoèa'.
+
+
+          ----------------------@{b}Pola Primerjava@{ub}-------------------
+
+@{u}I¹èi v@{uu}
+   Tu izberete del sporoèila, ki bo preiskan z vzorcem za iskanje. Èe ¾elite
+preiskovati doloèeno vrstico glav, jo lahko poi¹èete v seznamu izbirnega gumba
+ali pa izberete 'Drugem polju:' in vtipkate oznako polja v polju za vnos na
+desni. Izbira 'Telesu sporoèila' povzroèi iskanje v celotnem sporoèilu, razen v
+glavi. Pomnite: preiskovanje celotnega sporoèila lahko traja malo dlje (YAM mora
+pred iskanjem priloge formata MIME dekodirati).
+ @{i}Primer@{ui}: Drugem polju: X-Mailer
+
+@{u}Primerjanje@{uu}
+   Ukaz vsebuje @{b}primerjalni operator@{ub} in @{b}iskalni vzorec@{ub}.
+
+YAM upo¹teva naslednje @{b}primerjalne operatorje@{ub}:
+
+ @{b}=@{ub}   primerjano besedilo mora ustrezati iskalnemu vzorcu
+ @{b}<@{ub}   primerjano besedilo mora biti "manj¹e" od iskalnega vzorca
+ @{b}>@{ub}   primerjano besedilo mora biti "veèje" od iskalnega vzorca
+ @{b}<>@{ub}  besedilo mora biti razlièno od iskalnega vzorca
+ @{b}IN@{ub}  besedilo mora ustrezati vzorcu, ki je zapisan v datoteki, navedeni v
+     polju za vnos na desni strani izbirnega gumba primerjav. Namesto
+     iskalnega vzorca tu navedete ime datoteke z enim ali veè iskalnimi
+     vzorci. Na ta naèin lahko ustvarite tako imenovano 'Ubijalsko datoteko'
+     s seznamom e-po¹tnih naslovov. Za njeno urejanje kliknite na ikono
+     na skrajni desni.
+
+Pomnite: delovanje primerjalnih operatorjev < in > je odvisno od tipa polja.
+YAM ve, da sta velikost sporoèila in datum ¹tevilska podatka in ju zato uredi v
+¹tevilskem vrstnem redu, za polja kot je npr. 'Subject' se uporablja
+èrkovno¹tevilski vrstni red, podobno kot v telefonskem imeniku. Od tod veljata
+zvezi Janez < Jo¾e in 12 < 2.
+
+@{b}Vzorec iskanja@{ub} sme vsebovati @{"vzorce" link "DOSW" 0} AmigaDOSa, kot so ?, #?, (a|b) in
+[abc].  Pomnite: iskalni vzorec [YAM]#? bo na¹el vsa sporoèila, ki se zaèenjajo
+z Y, A ali M.  Za filtriranje e-pisem s po¹tnega seznama (npr. po¹tnega seznama
+v zvezi z YAMom) uporabite iskalni vzorec ?YAM#? ali pa filtru naroèite
+primerjanje polja 'K' z naslovom seznama.
+ @{i}Primer:@{ui} = YAM 1.3.#?
+
+@{u}Naslov/Ime@{uu}
+   Èe s filtrom preiskujete polje glave z e-po¹tnim naslovom, lahko tu doloèite,
+ali naj se iskanje izvede v naslovu (@{i}npr.@{ui} jkranjski\@dobavitelj.si) ali v imenu
+avtorja (@{i}npr.@{ui} 'Janez Kranjski').
+
+[] @{u}Obèutljivo na velikost èrk@{uu}
+   Izbira te mo¾nosti slu¾i loèevanju filtra med malimi in velikimi èrkami.
+
+[] @{u}Iskanje podnizov@{uu}
+   Èe iskalni vzorec sestoji le iz dela polja glave, v katerem naj se izvede
+preiskovanje, morate obvezno vklopiti to mo¾nost. YAM bo sam na primeren naèin
+dopolnil iskalni vzorec z nizom #?.
+
+Mo¾na je povezava @{b}dveh iskalnih meril@{ub}. Izbirni gumb vam omogoèa doloèitev
+naèina povezovanja:
+
+ @{b}ne kombiniraj@{ub}       ne uporabi drugega merila
+ @{b}in@{ub}                  zado¹èeno mora biti obema meriloma
+ @{b}ali@{ub}                 zado¹èeno mora biti vsaj enemu merilu
+ @{b}izkljuèujoèi ali@{ub}    ali eno ali drugo merilo mora zado¹èati,
+                              ne pa obe hkrati
+
+
+          -----------------------@{b}Pola Ukrep@{ub}------------------------
+
+[] @{u}Odbij@{uu}
+   Èe ¾elite, da bo e-pismo pri ujemanju iskalnemu merilu odbito drugi osebi,
+vklopite to mo¾nost. Naslov tega prejemnika e-pisma vnesite v polje za vnos
+na desni. 
+ @{i}Primer:@{ui}jkranjski\@doma.si
+
+[] @{u}Posreduj@{uu}
+   Èe je vklopljena ta mo¾nost, bo ujemajoèe e-pismo posredovano drugi osebi.
+E-po¹tni naslov tega prejemika vnesite v polje za vnos na desni.
+
+[] @{u}Odgovori@{uu}
+   Z vklopom te mo¾nosti dose¾ete, da bo YAM samodejno odgovoril na vsako
+sporoèilo, ki ustreza iskalnemu merilu. V polje za vnos zraven vnesite ime
+datoteke z besedilom za samodejno odgovarjanje.
+ @{i}Primer:@{ui} YAM:Samodejna-Besedila/Odgovor1.txt
+
+[] @{u}Izvr¹i@{uu}
+   To mo¾nost izberite takrat, ko ¾elite, da bi se pri vsakem ujemanju z
+iskalnim merilom zagnal zunanji progam. Temu programu bo YAM posredoval pot do
+e-pisma kot zaèetni parameter. V polje za vnos zraven vnesite vsebino ukazne
+vrstice. Pomnite: za zagon skripta ARexx boste morali na zaèetek vrstice
+vstaviti ukaz 'RX'.
+ @{i}Primer:@{ui} rx YAM:Rexx/NaroèiSe.rexx
+
+[] @{u}Predvajaj zvok@{uu}
+   Vklopite to mo¾nost da bi se ob vsakem ujemanju sporoèila z iskalnim merilom
+predvajal zvok. Zvoèno datoteko navedite v polje za vnos zraven. Za predvajanje
+zvokov uporablja YAM knji¾nice podatkovnih tipov. Za preizkusno predvajanje
+kliknite na malo pu¹èico (znak PREDVAJAJ).
+ @{i}Primer:@{ui} Podatki:Zvok/Sovra¾imSpam.wav
+
+[] @{u}Premakni@{uu}
+   Èe vklopite to mo¾nost bo YAM vsa e-pisma, ustrezajoèa iskalnemu merilu,
+premaknil v drugo mapo. Mapo izberete s klikom na pojavni gumb.
+
+[] @{u}Izbri¹i@{uu}
+   Ko je izbrana ta mo¾nost, bodo izbrisana vsa sporoèila, ki se skladajo z
+iskalnim merilom (Verjetno ste to ugotovili ¾e sami... ;) )
+
+[] @{u}Ne prevzemi@{uu}
+   Izbira te mo¾nosti povzroèi, da se po¹ta, ki ustreza iskalnemu merilu, ne bo
+samodejno prevzela s po¹tnega stre¾nika. Skupaj s to mo¾nostjo lahko uporabite
+oddaljeni filter, èe si raèun POP3 deli veè oseb.
+@endnode
+
+@node "CO04" "Nastavitve - Branje"
+@toc "CO_W"
+@{b}@{u}Nastavitve - BRANJE@{uu}  (Nastavitve prebiranja e-po¹te)@{ub}
+
+@{fg shine}----------------------Izgled glave-----------------------@{fg text}
+
+@{u}Glava@{uu}
+   Polna glava bo prikazana, èe ste doloèili izbiro 'polna', Izberite 'brez', èe
+prikaza glave ne ¾elite. Ko izberete 'izbrano' lahko sami doloèite, katera polja
+glave naj bodo vidna v bralnem oknu. Za doloèitev polj lahko uporabite
+kakr¹enkoli @{"vzorec AmigaDOS" link "DOSW" 0}. Polja FROM, TO, DATE in SUBJECT so prednastavljena
+v skladu s privzetimi nastavitvami. Izgled glave je lahko (zaèasno) spremenjen v
+samem bralnem oknu.
+ @{i}Primer:@{ui} (From|Subject|Date|X-Mailer)
+
+@{u}Podatki o po¹iljatelju@{uu}
+   Èe je po¹iljatelj po¹te najden v YAMovem imeniku naslovov, bo YAM v razdelku
+z glavo v bralnem oknu prikazal dodatne informacije. Èe ste izbrali mo¾nost
+'zgolj podatki', bo YAM prikazal ime in priimek, datum, naslov obièajne po¹te,
+opis itd., tj. podatke vpisa v imeniku naslovov. Da bi poleg tega pogledali tudi
+po¹iljateljevo sliko (èe ta seveda obstaja v imeniku ;-) ) izberite mo¾nost
+'podatki in slika'.
+
+[] @{u}Prelomi glavo@{uu}
+   Izberete lahko prikaz polne glave v eni vrstici ali njen prelom preko dveh
+ali veè vrstic. V prvem primeru morate za pregled vseh podatkov uporabiti
+vodoravni drsnik.
+
+@{fg shine}---------------Izgled telesa sporoèila-----------------@{fg text}
+
+@{u}Loèen podpis@{uu}
+   Loèevanje podpisa od besedila e-pisma z dvema pomi¹ljajema in presledkom.
+Èe tega naèina loèevanja noèete, lahko tu doloèite svojega. Poleg 'dveh
+pomi¹ljajev' lahko izbirate med 'loèno vrstico', 'prazno vrstico' ali uporabite
+izbiro 'brez podpisa', èe se noèete podpisati.
+
+@{u}Barvasto besedilo@{uu}
+   Razdelke besedila, vstavljene med znaka #, bo YAM posvetlil s posebno barvo
+(v lastnem urejevalniku in bralnem oknu). To posebno barvo lahko izberete tu.
+
+@{u}Stari citati@{uu}
+   Barvo za prikaz citiranega besedila izberete v modulu TextEditor nastavitev
+MUI. Pri veènivojskem citiranju bo za parne nivoje (2., 4., itd.) izbrana
+alternativna barva.
+
+[] @{u}Uporabi nesorazmerno pisavo@{uu}
+   Pogosto je bolj smiselno, da za branje sporoèil uporabite nesorazmerno
+pisavo, ker bi bil prikaz s sorazmerno pisavo popaèen. Ne pozabite, da lahko
+doloèite poljubno pisavo v razdelku 'Fonts/fixed' modula 'TextEditor' YAMovih
+nastavitev MUI.
+
+[] @{u}Prika¾i vsa besedila@{uu}
+   Èe je ta mo¾nost vklopljena in sporoèilo poleg osnovnega besedila vsebuje
+tudi priloge, bodo le-te prav tako prikazane, èe so le tipa 'besedilo'.
+
+@{u}Uporabi sloge besedila@{uu}
+   Za oznaèbo podèrtanega, po¹evnega, krepkega in barvastega besedila uporablja
+YAM znake _ / * in #. Za doloèene posebne dokumente (kot npr. izvorne kode)
+lahko to zaradi prepovedi nekaterih znakov predstavlja te¾avo. Zato imate tu
+mo¾nost, da upodobitev slogov besedila vkljuèite ali izkljuèite.
+
+@{fg shine}-------------------Druge mo¾nosti---------------------@{fg text}
+
+@{u}Pretvorba nabora znakov@{uu}
+   Pri branju sporoèil je uporabljen pretvornik nabora znakov. V nekaterih
+dr¾avah uporabljajo namreè znake, ki jih Amigin nabor znakov ISO-Latin-1 ne
+vkljuèuje. Na Poljskem na primer je zelo popularen nabor AmigaPL, saj zajema
+vse manjkajoèe znake. YAM upo¹teva te znake tako pri branju, kot tudi pri
+pisanju. V predalu z znakovnimi nabori je nekaj primerov. Tabela za pretvorbo
+je urejena takole:
+
+ 1. vrstica:          YCT1 - YAM Charset Translation
+ 2. vrstica:          Opis pretvornika
+ 3. vrstica:          Ciljni znakovni nabor, @{i}npr.@{ui} iso-5589-1
+ nadaljnje vrstice:   (neobvezno) FROM zaèetni nabor (npr. iso-5589-1)
+                      (neobvezno) TO ciljni nabor
+                      (neobvezno) HEADER
+                      Prvotni znak=Nadomestni znak
+
+Znaki so doloèeni v ¹estnajsti¹ki kodi s predhodnim $ ali kot dejanski znaki.
+Znakovna doloèitev lahko izgleda takole: $E5=$61 ali takole: å=a   Z navedbo
+kljuène besede HEADER bo pretvorba znakov opravljena tudi v glavah sporoèil.
+
+[] Veè oken
+   Z uporabo te mo¾nosti bo za branje vsakega novega sporoèila odprto novo
+bralno okno. Hkrati imate lahko odprta najveè ¹tiri bralna okna.
+@endnode
+
+@node "CO05" "Nastavitve - Pisanje"
+@toc "CO_W"
+@{b}@{u}Nastavitve - PISANJE@{uu} (Nastavitve za pisanje novih sporoèil)@{ub}
+
+@{fg shine}--------------------Message Header---------------------@{fg text}
+
+@{u}Odgovor na@{uu}
+   Obièajno ostane to polje prazno. Privzet naslov za odgovor je va¹ e-po¹tni
+naslov. Èe ¾elite uporabiti drugaènega (IN SAMO TEDAJ!!), ga vtipkajte v to
+polje.
+ @{i}Primer:@{ui} jkranjski\@doma.si
+
+@{u}Organizacija@{uu}
+   Da bi se v glavo va¹ega sporoèila zabele¾ila va¹a organizacija, ¹ola, dru¹tvo
+ali kaj drugega, vnesite ta podatek sem.
+ @{i}Primer:@{ui} Kranjska Izdelava Megle d.d.
+
+@{u}Dodatna glava@{uu}
+   Èe morate iz kakr¹negakoli razloga v glavi sporoèila dodati eno ali veè
+dodatnih vrstic, jih vnesite sem. Veè vrstic vnesete tako, da jih loèite z
+nizom '\\n'. PROSIM, NIKAR NE uporabljajte te ugodnosti, èe ne poznate dovolj
+delovanja Internetne e-po¹te.
+  @{i}Primer:@{ui} Content-Language: si\\nKeywords:Pattern, YAM, Internet
+
+@{fg shine}---------------------Telo sporoèila--------------------@{fg text}
+
+@{u}Pozdravna fraza@{uu}
+   YAM bo vstavil to besedilo na zaèetek vsakega novega sporoèila, ki ga
+sestavite (z izjemo odgovorov in posredovanih sporoèil). Prelom vrstice doloèite
+z nizom '\\n'.
+ @{i}Primer:@{ui} Zdravo,\\n
+
+@{u}Zakljuèna fraza@{uu}
+   To besedilo je dodano na konec vsakega novega sporoèila, ki ga sestavite, tik
+pred loènik podpisa. Tudi tu prelom vrstice doloèite z nizom '\\n'.
+ @{i}Primer:@{ui} Lep pozdrav\\n\\nJanez Kranjski
+
+@{u}Pretvorba nabora znakov@{uu}
+   Pri pisanju sporoèil je uporabljen naveden pretvornik znakovnih naborov. Veè
+informacij na to temo lahko najdete v razdelku @{"Branje" link "CO04" 0}.
+ @{i}Primer:@{ui} YAM:charsets/Latin1toUSASCII   (izbri¹e mutirane samoglasnike, itd.)
+
+@{fg shine}----------------------Urejevalnik----------------------@{fg text}
+
+@{u}Prelom vrstic@{uu}
+   Ko shranite na novo napisano sporoèilo bo le-to preurejeno tako, da nobena
+vrstica ne bo presegala tu doloèenega ¹tevila znakov. YAMu lahko naroèite tudi,
+ali naj med tipkanjem sproti vstavlja vrstiène prelome ali pa naj to napravi
+tip preden bo sporoèilo poslano.
+ @{i}Primer:@{ui} 76
+
+[] @{u}med tipkanjem@{uu}
+   Èe se odloèite za vstavljanje kod vrtiènih prelomov @{i}med@{ui} tipkanjem, vklopite
+to mo¾nost. Na ta naèin se izognete ne¾eljenim preseneèenjem v besedilu, ki je
+preurejeno kasneje. Zavedajte se pa, da utegne biti zapovrstno vstavljanje in
+brisanje besedila manj udobno.
+
+@{u}Zunanji urejevalnik@{uu}
+   V primeru, da vam lastni urejevalnik ne ustreza in bi ¾eleli uporabljati
+drugega (pri tem pa izgubiti samodejno èrkovanje, sloge besedila in slovar),
+vnesite njegovo ime sem. Ne pozabite, da morate vnesti polno pot do urejevalnika
+in potrebne kljuène besede kot npr. '-sticky' or '-keepio'.
+ @{i}Primer:@{ui} C:Ed   or   C:CED -keepio
+
+[] @{u}Za¾eni takoj@{uu}
+   To mo¾nost vklopite, èe ¾elite pognati zunanji urejevalnik vedno, ko
+zaènete pisati novo sporoèilo. S tem se izognete dodatnemu kliku na gumb
+[Urejevalnik] v pisalnem oknu.
+@endnode
+
+@node "CO06" "Nastavitve - Odgovarjanje"
+@toc "CO_W"
+@{b}@{u}Nastavitve - ODGOVARJANJE@{uu} (Odgovarjanje in posredovanje sporoèil)@{ub}
+
+@{fg shine}---------------------Posredovanje---------------------@{fg text}
+
+@{u}Zaèetna fraza@{uu}
+   To besedilo bo vstavljeno na zaèetek prvotnega besedila vsakega sporoèila, ki
+ga posredujete. Spremenljivke, ki jih lahko vstavite, so zbrane v seznamu, ki se
+prika¾e po kliku na pojavni gumb (%r na primer pomeni prejemnikovo ime, %s
+zadevo, itd.). Pri vstavljanju besedila v sporoèilo zamenja YAM spremenljivke z
+njihovimi vrednostmi, ki jih preberere v sporoèilu, ki ga nameravate
+posredovati.
+ @{i}Primer:@{ui} *** Posredovano sporoèilo od %n o %d: ***\\n
+
+@{u}Zakljuèna fraza@{uu}
+   To besedilo bo dodano na konec posredovanega sporoèila (toda pred zakljuèno
+frazo). Kliknite na pojavni gumb in na seznamu izberite spremenljivko (zadevo,
+datum, po¹iljatelja, itd.).
+ @{i}Primer:@{ui} *** Konec posredovanega sporoèila ***\\n
+
+@{fg shine}---------------------Odgovarjanje----------------------@{fg text}
+
+
+@{u}Privzeta fraza v odgovorih@{uu}
+   Ko odgovarjate na sporoèilo lahko YAM v novo sporoèilo samodejno vstavi tri
+razliène fraze: pozdrav (Otvoritvena), uvod k citiranemu sporoèilu (Uvodna) in
+konèna fraza (Zakljuèna). Za izbiro ene od fraz uporabite izbirni gumb in
+¾eljeno frazo vnesite v polje na desni. Spremenljivke (za zadevo, datum,
+po¹iljatelja, itd.) lahko izberete s klikom na pojavni gumb.
+ @{i}Primer:@{ui}
+   [Otvoritvena]    Zdravo %f,\\n
+   [Uvodna]         V %d, si napisal(-a):\\n
+   [Zakljuèna]      Lep pozdrav
+
+@{u}Alternativna fraza v odgovorih@{uu}
+   Komuniciranje preko Interneta pogosto terja pisanje v tujem jeziku. Iz tega
+razloga vam YAM omogoèa uporabo alternativne zbirke fraz v odgovorih, ki bo
+izbrana samodejno vsakiè, ko bo prejemnikov naslov ustrezal uporabni¹ko
+doloèenemu vzorcu. Na ta naèin lahko na primer uporabljate nem¹ko razlièico
+zbirke fraz v odgovorih za naslove v Nemèiji, Avstriji in ©vici, medtem ko za
+ostale dr¾ave uporabljate angle¹ko razlièico.
+ @{i}Primer:@{ui}
+   [Otvoritvena]    Zdravo %f,\\n
+   [Uvodna]         V %d si napisal(-a):\\n
+   [Zakljuèna]      Lep pozdrav
+
+@{u}Uporabi pri naslednjih domenah@{uu}
+   Vsakokrat, ko prejemnikov naslov ustreza @{"vzorcu AmigaDOS" link "DOSW" 0} bo uporabljena
+alternativna fraza za odgovore.
+ @{i}Primer:@{ui} #?.(de|ch|at)  (Naslovi v dr¾avah, kjer je materni jezik nem¹èina)
+
+@{u}Odgovorna fraza za po¹tne sezname@{uu}
+   Za odgovor na sporoèilo iz po¹tnega seznama je na razpolago dodatna zbirka
+fraz. Uporabljena bo, èe je sporoèilo, na katerega odgovarjate, shranjeno v
+mapi s podporo za po¹tni seznam (@{"Nastavitve map" link "FO_W" 0}).
+ @{i}Primer:@{ui}
+   [Otvoritvena]    Zdravo!\\n
+   [Uvodna]         V %d, je %n napisal(-a):\\n
+   [Zakljuèna]      Lep pozdrav
+
+[] @{u}Citirano sporoèilo oznaèi z@{uu}
+   To mo¾nost vklopite ko ¾elite, da YAM citira sporoèilo, na katerega
+odgovarjate. Na zaèetek vsake vrstice prvotnega sporoèila bo dodan niz znakov,
+ki so navedeni v polju za vnos na desni, in ¹e en presledek. Za izbiro
+po¹iljateljevih zaèetnic kliknite na pojavni gumb.
+ @{i}Primer:@{ui} %i>
+
+[] @{u}Citiraj prazne vrstice@{uu}
+   Obièajno je znak za citiranje vstavljen tudi na zaèetek praznih vrstic
+citiranega sporoèila. Èe vam to iz kakr¹negakoli vzroka ni po volji, to mo¾nost
+izklopite.
+
+[] @{u}Preveri naslov prejemnika@{uu}
+   Èe vklopite to mo¾nost, bo YAM preveril, ali imata po¹iljatelj in prejemnik
+enak naslov. Èe je polje 'From' glave sporoèila drugaèno od vsebine polja
+'ReplyTo' lahko uporabnik (to ste vi) izbere komu odgovoriti. Tako lahko
+razmeroma enostavno po¹ljete zasebni odgovor na sporoèilo iz po¹tnega seznama.
+
+[] @{u}Odstrani podpis@{uu}
+   Z vklopom te mo¾nosti se izognete citiranju podpisa (saj ga boste v veèini
+primerov izbrisali). To bo delovalo le v primeru, ko je v prvotnem sporoèilu
+podpis loèen od dejanskega besedila z obièajnim razmejitvenim nizom '-- '.
+@endnode
+
+@node "CO07" "Nastavitve - Podpis"
+@toc "CO_W"
+@{b}@{u}Nastavitve - PODPIS@{uu}  (Doloèanje podpisa in sklepnih vrstic)@{ub}
+
+V YAMu lahko doloèite in uporabljate en obièajni in dva alternativna podpisa
+(@{i}npr.@{ui} en podpis za zasebno po¹to in drugi za poslovno). S klikom na izbirni
+gumb pridete do prikaza podpisov, ki jih urejate v oknu z malim urejevalnikom
+besedil.
+
+[] @{u}Uporabi podpis@{uu}
+   Èe je ta mo¾nost vklopljena, bo podpis vstavljen na konec vsakega napisanega
+sporoèila.
+
+[@{u}Uredi z zunanjim urejevalnikom@{uu}]
+   Kliknite na ta gumb, èe ¾elite urejati sporoèilo z zunanjim urejevalnikom,
+doloèenim na poli 'Nastavitve/Pisanje/Zunanji urejevalnik'.
+
+[@{u}Vstavi nakljuèno sklepno vrstico@{uu}]
+   Za vstavitev spremenljivke '%t' na trenutni polo¾aj kurzorja kliknite na ta
+gumb. YAM bo pri obdelavi novega sporoèila to spremenljivko nadomestil z
+nakljuèno sklepno vrstico iz datoteke s sklepnimi vrsticami.
+
+[@{u}Vstavi ENV:Signature@{uu}]
+   Klik na ta gumb povzroèi vstavitev spremenljivke '%e' na trenutni polo¾aj
+kurzorja v urejevalniku. YAM bo pri tvorbi novega sporoèila to spremenljivko
+nadomestil z vsebino spremenljivke okolja 'SIGNATURE'. Na ta naèin dose¾ete, da
+so v podpis samodejno vstavljene raziène vrednosti, kot npr. datum, trenutna
+temperatura, èas, va¹a telesna vi¹ina ali karkoli drugega...
+
+@{u}Datoteka s sklepnimi vrsticami@{uu}
+   Datoteka sklepnih vrstic vsebuje krilatice, kratke pesmi in druge zelo resne
+ali hudomu¹ne modrosti, ki so nakljuèno izbrane in vstavljene v va¹ podpis. Na
+Aminetu obstajajo zbirke s tisoèi in tisoèi tak¹nih sklepnih vrstic.
+ @{i}Primer:@{ui} YAM:.sklvrstice
+
+@{u}Loènik sklepnih vrstic@{uu}
+   Ker lahko sklepna vrstica zavzema veè dejanskih vrstic, morate njihove vpise
+v datoteki med seboj loèiti z loèilnim nizom. V to polje vnesite niz, ki ga
+¾elite uporabljati v ta namen.
+ @{i}Primer:@{ui} %%
+@endnode
+
+@node "CO08" "Nastavitve - Seznami"
+@toc "CO_W"
+@{b}@{u}Nastavitve - SEZNAMI@{uu}  (Razpored stolpcev v razliènih seznamih)@{ub}
+
+@{u}Seznam map@{uu}
+   Izberite nadrobnosti, ki jih ¾elite videti v seznamu map.
+
+@{u}Seznam sporoèil@{uu}
+   Izberite nadrobnosti, ki jih ¾elite videti v seznamu sporoèil.
+
+[] @{u}Uporabi nesorazmerno pisavo@{uu}
+   Pogosto je smiselno, da za prikaz uporabljate nesorazmerno pisavo, saj lahko
+sorazmerna pisava izgleda dokaj zmedeno. Ne pozabite, da lahko doloèite poljubno
+pisavo v razdelku 'Fonts/fixed' modula 'TextEditor' YAMovih nastavitev MUI.
+
+[] @{u}Èas v utripih ur Swatch@{uu}
+   To mo¾nost izberite za prikaz èasa v Swatchevih utripih namesto v obliki
+ure:minute. Ta revolucionarna èasovna enota - izna¹el jo je ¹vicarski
+izdelovalec ur Swatch - deli dan na 1000 utripov in ne upo¹teva loèevanja med
+èasovnimi pasovi. Èasovno izhodi¹èe je poldnevnik kraja Biel v ©vici.
+@endnode
+
+@node "CO09" "Nastavitve - Varnost"
+@toc "CO_W"
+@{b}@{u}Nastavitve - VARNOST@{uu} (©ifriranje, anonimna po¹ta, protokoli)@{ub}
+
+@{fg shine}--------------------------PGP--------------------------@{fg text}
+
+@{u}Pot do PGP@{uu}
+   Slavni (nekateri ljudje in ugledne¾i bi celo rekli notorièni) program PGP
+(Pretty Good Privacy) Philipa Zimmermanna slu¾i ¹ifriranju, de¹ifriranju in
+digitalnemu 'podpisovanju' sporoèil. Namestite prosim PGP tako, kot je opisano
+v priroèniku za PGP in sem vpi¹ite polno pot do predala z izvr¹ljivimi
+datotekami PGP. YAM samodejno zazna, èe uporabljate razlièico 2.6 ali 5.x.
+ @{i}Primer:@{ui} Delo:Programi/PGP/bin/
+
+@{u}ID va¹ega kljuèa za PGP@{uu}
+   Za podpisovanje sporoèil potrebuje YAM bli¾njico do va¹ega skritega kljuèa
+PGP. Kliknite na pojavni gumb in izberite va¹ kljuè. Èe kljuèa ne morete najti,
+sta za to dva mo¾na razloga: ali paket PGP na va¹em sistemu ni pravilno name¹èen
+ali pa ste navedli napaèno pot do izvr¹ljivih datotek PGP.
+  @{i}Primer:@{ui} 0x70804A7B
+
+[] @{u}©ifriraj zase@{uu}
+   ©ifriranje sporoèil za doloèenega prejemnika ima eno slabost: po ¹ifriranju
+sporoèila ne morete veè brati ali urejati. Z vklopom te mo¾nosti boste mogli
+sporoèilo brati ali urejati tudi po ¹ifriranju. To vam bo YAM omogoèil s tem, da
+bo e-pismo ¹ifriral s prejemnikovim kljuèem, prav tako pa tudi z va¹im.
+
+@{fg shine}--------------------Anonimna po¹ta---------------------@{fg text}
+
+@{u}Prepo¹iljalnik@{uu}
+   E-po¹tni naslov prepo¹iljalnika, ki ga ¾elite uporabljati. Pri po¹iljanju
+anonimne po¹te bo tako imenovani 'prepo¹iljalnik' iz glave sporoèila izbrisal
+vse podatke, ki bi lahko bili uporabljeni pri doloèanju po¹iljatelja, in tako
+spremenjeno sporoèilo posredoval dejanskemu prejemniku. Naslove prepo¹iljalnikov
+lahko poi¹èete, èe iskalnemu raèunalniku podate kljuèno besedo 'remailer'.
+ @{i}Primer:@{ui} Prepo¹iljalnik <remailer\@replay.com>
+
+@{u}Polje v glavi@{uu}
+   Naslov dejanskega prejemnika sporoèila je prene¹en prepo¹iljalniku v polju
+glave ali v prvi vrstici sporoèila. V slednjem primeru enostavno dodajte na
+zaèetek polja razpo¹iljanja prazno vrstico z vstavitvijo niza '\\n'.
+Spremenljivka '%s' bo nadome¹èena s prejemnikovim naslovom. Za podrobne
+informacije o formatu polja razpo¹iljanja poglejte prosim v dokumentacijo za
+prepo¹iljalnik.
+ @{i}Primer:@{ui} Anon-to: %s
+
+@{fg shine}-----------------------Dnevniki------------------------@{fg text}
+
+@{u}Pot@{uu}
+   YAM bo shranjeval dnevnike v predal, èigar pot je navedena tu. Dnevniki imajo
+zapise oblike: Datum/èas/[koda]/opis dogodka. Koda sestoji iz dveh ¹tevk in je
+priroèna pri izvajanju raèunalni¹ke analize dnevni¹kih zapisov, saj ni odvisna
+od izbranega jezika (za razliko od opisov dogodkov).
+
+[] @{u}Razdeli dnevnik@{uu}
+   Za vsakomeseèno tvorjenje dnevnika vklopite to mo¾nost. Zaradi loèevanja med
+ustvarjenimi datotekami YAM v ime dnevnika doda datum bele¾enja, @{i}npr.@{ui}
+YAM-Jan98.log. Èe ¾elite imeti samo en skupen dnevnik, pustite to mo¾nost
+izklopljeno.
+
+@{u}Naèin@{uu}
+   Èe vas zapisovanje dnevnikov ne zanima, izberite 'brez'. Izbiro 'normalen'
+uporabite za bele¾enje pomembnih dogodkov, kot je prejemanje/po¹iljanje. V
+'ob¹irnem' naèinu bo YAM podrobno zabele¾il prenos vsakega e-pisma.
+
+[] @{u}Bele¾i vse dogodke@{uu}
+   Izklopite to mo¾nost le takrat, ko ¾elite bele¾iti samo dogodke pri po¹tnih
+prenosih (po¹iljanje/prejemanje).
+@endnode
+
+@node "CO10" "Nastavitve - Zaèetek/Konec"
+@toc "CO_W"
+@{b}@{u}Nastavitve - ZAÈETEK/KONEC@{uu}  (Akcije po zagonu in pred zaustavitvijo programa)@{ub}
+
+@{fg shine}-----------------Pri zagonu programa-------------------@{fg text}
+
+[] @{u}Nalo¾i vse mape@{uu}
+   Pri uporabi obse¾nih arhivskih map lahko z izklopom te mo¾nosti poveèate
+YAMovo zagonsko hitrost. Poleg tega bo izklop te mo¾nosti prihranil pomnilnik,
+saj bodo pri zagonu nalo¾ena le kazala sistemskih map. Kazala uporabni¹ko
+doloèenih map bodo nalo¾ena le takrat, ko ji boste potrebovali.
+
+[] @{u}Oznaèi vso novo po¹to kot neprebrano@{uu}
+   Da bi pri zagonu vsa sporoèila s stanjem 'novo' oznaèili kot 'neprebrana',
+vklopite to mo¾nost.
+
+[] @{u}Izbri¹i staro po¹to@{uu}
+   V primeru, da ste pri doloèenih mapah doloèili najveèjo starost sporoèil,
+in vklopite to mo¾nost, bo YAM po dejanskem zagonu izbrisal vsa sporoèila,
+ki to starost presegajo.
+
+[] @{u}Odstrani izbrisano po¹to@{uu}
+   Èe ¾elite, da YAM pri vsakem zagonu izprazni mapo 'Izbrisana', uporabite
+to mo¾nost.
+
+[] @{u}Preveri rojstne dneve@{uu}
+   To mo¾nost vklopite, èe ¾elite, da YAM pri zagonu pregleda imenik naslovov
+in vas obvesti, èe ima kak¹na oseba rojstni dan. Èe praznuje va¹(-a)
+prijatelj(-ica) (ali celo poslovni(-a) partner(-ka)), mu(ji) lahko takoj
+po¹ljete èestitko.
+
+[] @{u}Po¹lji pripravljeno po¹to@{uu}
+   Èe je ta mo¾nost vklopljena, bo YAM pri zagonu preiskal mapo 'Odhajajoèa'
+in vas vpra¹al, èe ¾elite poslati sporoèila, ki so v njej. Pomnite: to deluje
+le, ko imate ¾e nalo¾en sklad TCP/IP. Preverjanje lahko zaèasno preskoèite, èe
+YAM po¾enete v lupini z navedbo kljuène besede NOCHECK.
+
+[] @{u}Prevzemi novo po¹to@{uu}
+   YAM bo v primeru, da je izbrana ta mo¾nost (in je na va¹em sistemu ¾e nalo¾en
+sklad TCP/IP), na po¹tnem stre¾niku pogledal za novo po¹to. Pregledovanje lahko
+zaèasno preskoèite, èe YAM po¾enete v lupini z navedbo kljuène besede NOCHECK.
+
+@{fg shine}----------------Pri zaustavitvi programa---------------@{fg text}
+
+[] @{u}Po¹lji pripravljeno po¹to@{uu}
+   Ta mo¾nost slu¾i namenu, da program pred zaustavitvijo v mapi 'Odhajajoèa'
+poi¹èe sporoèila, pripravljena na odpremo. Èe je mo¾nost izbrana, vas bo
+YAM tik pred zaustavitvijo vpra¹al, èe ¾elite ta sporoèila poslati (seveda bo to
+storil le tedaj, ko ta mapa ne bo prazna).
+
+[] @{u}Izbri¹i staro po¹to@{uu}
+   V primeru, da ste pri doloèenih mapah doloèili najveèjo starost sporoèil,
+in vklopite to mo¾nost, bo YAM pred dejansko zaustavitvijo izbrisal vsa
+sporoèila, ki to starost presegajo.
+
+[] @{u}Odstrani izbrisano po¹to@{uu}
+   Èe ¾elite, da YAM pri vsaki zaustavitvi izprazni mapo 'Izbrisana', uporabite
+to mo¾nost.   
+@endnode
+
+@node "CO11" "Nastavitve - MIME"
+@toc "CO_W"
+@{b}@{u}Nastavitve - MIME@{uu}  (Ogledovalniki prilog MIME)@{ub}
+
+@{fg shine}-------------------Ogledovalniki MIME------------------@{fg text}
+
+Privzeti program za prikaz prilog je MultiView. Sporoèila v @{"formatu MIME" link "MIME" 0}
+vsebujejo polje, imenovano 'ContentType', v katerem je zapisan tip kodirane
+datoteke. Za vsak posamezen tip datoteke lahko doloèite program, s katerim
+se le-ta obdeluje. To je pomembno za tiste uporabnike, ki za prikaz slik,
+predvajanje zvokov in obdelavo datoteènih tipov, ki ¹e niso podprti s
+podatkovnimi tipi, ne ¾elijo uporabljati programa MultiView. Za nastavitev
+ogledovalnika kliknite na gumb [Nov], za njegovo brisanje pa ne gumb [Izbri¹i].
+
+@{u}Tip priloge@{uu}
+   To je tip dejanskega vpisa, ustreza pa polju ContentType v glavi priloge. Tip
+lahko izberete iz pojavnega seznama ali pa zanj uporabite vzorce AmigaDOSa;
+da bi uporabljali en sam program za celoten razred datoteènih tipov, uporabite
+@{i}npr.@{ui} 'image/#?'.
+ @{i}Primer:@{ui} image/jpeg
+
+@{u}Konènica@{uu}
+   Konènica imen datotek posameznega datoteènega tipa. Ta YAMu omogoèa pravilno
+izpolnitev polja ContentType v glavah prilog.
+ @{i}Primer:@{ui} jpg jpeg jfif
+
+@{u}Ogledovalnik@{uu}
+   Izberite program, ki bi ga radi uporabili za prikaz priloge. V ukazno
+vrstico ne pozabite vstaviti "%s", ki ga bo YAM med obdelavo nadomestil
+z imenom datoteke. Narekovaji pri "%s" omogoèajo uporabo presledkov v imenu
+datoteke.
+ @{i}Primer:@{ui} TOOLS:Gfx/ViewJPG "%s"
+
+@{u}Privzeti ogledovalnik@{uu}
+   To je ogledovalnik, ki bo uporabljen v primeru, ko priloga ne ustreza
+nobenemu uporabni¹ko doloèenemu datoteènemu tipu (poglejte v opis zgoraj).
+ @{i}Primer:@{ui} SYS:Utilities/Multiview "%s" SCREEN
+
+[] @{u}Prepoznaj dvoji¹ke priloge@{uu}
+   Nekateri po¹tni odjemalci v polju priloge ContentType vedno navedejo dvoji¹ki
+datoteèni tip 'application/octet-stream'. Da bi vam bilo kljub temu omogoèeno
+pregledovanje prilog z ustreznimi programi, poi¹èe YAM ustrezen ogledovalnik v
+njihovem seznamu na osnovi konènice imena prilo¾ene datoteke (poglejte v
+razdelek Konènica).
+
+@{fg shine}---------------------------Poti------------------------@{fg text}
+
+@{u}Dekodiraj datoteke v@{uu}
+   To je predhodno izbrani predal, v katerega se dekodirajo priloge sporoèila.
+ @{i}Primer:@{ui} Delo:Podatki/V
+
+@{u}Prilo¾i datoteke iz@{uu}
+   Pri vsakokratnem prilaganju datoteke novemu sporoèilu, bo YAM za datoteko
+najprej pogledal v navedeni predal.
+ @{i}Primer:@{ui} Delo:Podatki/Iz
+@endnode
+
+@node "CO12" "Nastavitve - Imenik naslovov"
+@toc "CO_W"
+@{b}@{u}Nastavitve - IMENIK NASLOVOV@{uu}   (vidni stolpci, izmenjava osebnih podatkov) @{ub}
+
+@{u}Stolpci@{uu}
+   Izberite nadrobnosti, ki jih ¾elite videti v imeniku naslovov.
+
+@{fg shine}----------------Izmenjava osebnih podatkov-------------@{fg text}
+
+[] @{u}Dodaj osebne podatke@{uu}
+   Èe obkljukate to mo¾nost,  boste v glavi vsakega sporoèila ustvarili posebno
+polje z osebnimi podatki, kot so po¹tni naslov, telefonska ¹tevilka, domaèa
+stran, datum rojstva in URL va¹e slike. Èe tudi prejemnik uporablja YAM, mu bo
+program omogoèil tvorbo vpisa v imeniku naslovov in njegovo izpolnitev z va¹imi
+podatki. Da bi to dosegli, dodajte v @{i}va¹@{ui} imenik naslovov nov vpis z
+va¹imi podatki (YAM bo na¹el va¹ vpis na podlagi e-po¹tnega naslova).
+
+@{u}Shrani po¹iljateljev naslov@{uu}
+   YAM lahko med branjem sporoèila samodejno shrani po¹iljateljev naslov, tj.
+ustvari nov vpis v imeniku naslovov. Izberite enega od teh naèinov:
+ @{b}nikoli@{ub}                   Ne shranjuj naslovov
+ @{b}najprej vpra¹aj@{ub}          Vsakiè sproti boste vpra¹ani, ali naj
+                          se naslov shrani       
+ @{b}èe ni podatkov,@{ub}          Vpra¹ani boste le takrat, ko so na voljo   
+ @{b}najprej vpra¹aj@{ub}          osebni podatki po¹iljatelja, sicer naslov ne
+                          bo shranjen            
+ @{b}èe so podatki@{ub}            Naslov bo samodejno shranjen le v primeru,
+                          ko so na voljo osebni podatki po¹iljatelja
+ @{b}vedno@{ub}                    Vsi novi naslovi bodo samodejno
+                          shranjeni    
+
+@{u}Shrani fotografije v@{uu}
+   V tem predalu so shranjene slike po¹iljateljev.
+ @{i}Primer:@{ui} YAM:Gallery
+
+@{u}Skupina za nove vpise@{uu}
+   To je vzdevek skupine, ki bo vsebovala nove vpise v imenik naslovov. Èe ¹e ne
+obstaja, bo skupina ustvarjena.
+ @{i}Primer:@{ui} NOVI
+
+@{u}URL va¹e slike@{uu}
+   Vnesite spletni naslov (URL) va¹e slike, èe ta obstaja. URL bo vpisan v glavo
+vsakega odhajajoèega sporoèila, èe je vkljuèena mo¾nost 'Dodaj osebne podatke'.
+ @{i}Primer:@{ui} http://www.yam.ch/gallery/BECK_Marcel.gif
+
+@{u}Nadomestni stre¾nik za HTTP@{uu}
+   Èe je va¹ raèunalnik za po¾arnim zidom in do Interneta dostopate preko
+nadomestnega stre¾nika, morate vnesti naslov slednjega. Èe tega ne storite, k
+sebi ne boste mogli prena¹ati fotografij in informacij o novih razlièicah YAMa.
+ @{i}Primer:@{ui} proxy.dostop.si:8080
+@endnode
+
+@node "CO13" "Nastavitve - ARexx"
+@toc "CO_W"
+@{b}@{u}Nastavitve - AREXX@{uu}   (Skripti ARexx in AmigaDOS)@{ub}
+
+Razen menija ARexx glavnega okna, ki lahko dr¾i do deset skriptov, lahko skripte
+ARexx poganjajo doloèeni dogodki. Tako z dvema enostavnima skriptoma za¾enete
+Miami in se s tem prikljuèite, prevzamete novo po¹to in po konèanem snemanju
+Miami zaustavite.
+
+@{u}Ime@{uu}
+   Naslov skripta kot je prikazan v meniju ARexx, @{i}npr.@{ui} Zagon brskalnika.
+
+@{u}Skript@{uu}
+   Ime datoteke ARexx skripta skupaj s potrebnimi parametri (v ustaljenem
+ARexx-ovem slogu, toda brez klica 'RX').
+ @{i}Primer:@{ui} YAM:rexx/StartBrowser.rexx
+
+[] @{u}Odpri okno konzole@{uu}
+   Med delovanjem skripta bo odprto vhodno/izhodno okno. Èe le-tega ne
+potrebujete, to mo¾nost izklopite.
+
+[] @{u}Poèakaj na zakljuèek@{uu}
+   To mo¾nost pustite izklopljeno, èe ¾elite skript pognati v ozadju, kar
+pomeni, da noèete èakati na njegov zakljuèek.
+@endnode
+
+@node "CO14" "Nastavitve - Razno"
+@toc "CO_W"
+@{b}@{u}Nastavitve - RAZNO@{ub}@{uu}
+
+@{fg shine}-------------------------Poti--------------------------@{fg text}
+
+@{u}Predal za zaèasne datoteke@{uu}
+   YAM potrebuje ta predal za shranjevanje nekaterih datotek med obdelavo
+sporoèil. Èe imate malo prostega pomnilnika (2MB ali manj) je bolje, da izberete
+pot na trdem disku in se tako izognete mo¾nim problemom z dolgimi sporoèili.
+ @{i}Primer:@{ui} RAM:t
+
+@{fg shine}---------Aplikacijska ikona stanja nabiralnika---------@{fg text}
+
+@{u}Polo¾aj@{uu} X   Y
+   Vnesite ¾eljeni polo¾aj YAMove aplikacijske ikone na zaslonu Workbencha. V
+primeru, da je na tem mestu ¾e kak¹na druga ikona, bo Workbench samodejno
+doloèil 'varno' lego za aplikacijsko ikono (zato vam ni treba skrbeti glede
+'izbrisa' druge ikone).
+ @{i}Primer:@{ui} X 550  Y 144
+
+[] @{u}Zapiralni gumb ikonizira program@{uu}
+   Obièajno bo program zaustavil klik na zapiralni gumb (ali pritisk tipke ESC).
+Pri izbiri te mo¾nosti bosta omenjena postopka program le ikonizirala.
+
+@{fg shine}-----------------Shrani/izbri¹i sporoèila--------------@{fg text}
+
+[] @{u}Potrditev brisanja [xx] ali veè sporoèil@{uu}
+   Èe je ta mo¾nost vkljuèena, bo pred brisanjem tu vne¹enega ¹tevila sporoèil
+prikazan varnostni zahtevek. Ta za¹èita je smiselna pri izbiri dveh ali veè
+sporoèil.
+
+[] @{u}Takoj odstrani sporoèila@{uu}
+   Èe izberete to mo¾nost, potem sporoèila, doloèena za brisanje, ne bodo
+premaknjena v mapo 'Izbrisana', temveè bodo takoj izbrisana s trdega diska.
+Na ta naèin boste sicer privarèevali nekaj èasa in pomnilnika, vendar ne boste
+mogli obnoviti pomotoma izbrisanih sporoèil.
+
+[] @{u}Shrani poslana sporoèila@{uu}
+   Z vklopom te mo¾nosti naroèite YAMu, naj poslana sporoèila shrani v mapo
+'Poslana'. Enako naroèilo lahko podate tudi pri obdelavi vsakega e-pisma
+posebej.
+
+@{fg shine}-------------------Sledenje sporoèilom-------------------@{fg text}
+
+Tu lahko doloèite, kako naj YAM reagira, ko po¹iljatelj pri pisanju sporoèila z
+izbiro mo¾nosti 'Message tracking' zahteva poroèilo o stanju (MDN).
+
+@{fg shine} Ignoriraj@{fg text}          - Zahteva bo v celoti ignorirana, poroèilo o stanju ne bo
+                      ustvarjeno.
+@{fg shine} Samodejno zavrni@{fg text}   - Po¹iljatelj bo obve¹èen o tem, da mu poroèila o stanju
+                      ne ¾elite poslati.
+@{fg shine} Sprejmi@{fg text}            - Po¹iljatelj bo obve¹èen o stanju sporoèila v skladu
+                      s svojo zahtevo.
+@{fg shine} Vpra¹aj uporabnika@{fg text} - V vsakem primeru posebej odloèite, ali ¾elite ignorirati,
+                      zavrniti ali sprejeti zahtevo.
+
+Dodatno lahko YAMovo reagiranje pove¾ete z dogodkom, ki aktivira poroèilo o
+stanju:
+@{fg shine} Prika¾i@{fg text}   - Sporoèilo bo prebrano ali pa bo nanj poslan odgovor
+@{fg shine} Obdelaj@{fg text}   - Sporoèilo bo odbito ali posredovano, ne da bi bilo prebrano
+@{fg shine} Izbri¹i@{fg text}   - Sporoèilo bo brez vpra¹anj izbrisano
+@{fg shine} Filtriraj@{fg text} - Sporoèilo bo filter samodejno obdelal ali izbrisal
+
+[] @{u}Po¹lji takoj@{uu}
+   Poroèilo o stanju bo poslano takoj, èe je le pognan sklad TCP/IP. Èe
+sklad ni pognan, bo poroèilo shranjeno v mapo 'Odhajajoèa'.
+
+@{fg shine}-----------------Nastavitve XPK/LhA--------------------@{fg text}
+
+@{u}Pakirni program@{uu}
+   S klikom na pojavni gumb lahko izberete knji¾nico XPK, ki jo ¾elite
+uporabljati za stiskanje map. Pred tem mora biti na va¹em raèunalniku ¾e
+name¹èen paket XPK. Tega paketa v YAMovem arhivu ni; dobite ga na Aminetu.
+Uèinkovitost pakirnika uravnavate z uporabo drsnika na desni strani pojavnega
+gumba. Veèja vrednost pomeni uèinkovitej¹e in obenem poèasnej¹e stiskanje.
+ @{i}Primer:@{ui} NUKE 100%
+
+@{u}Zapakiraj/za¹èiti@{uu}
+   Kliknite na pojavni gumb in izberite knji¾nico XPK, ki jo ¾elite uporabljati
+za stiskanje map in njihovo za¹èito z geslom. Izberete lahko le knji¾nice XPK,
+ki tovrstno za¹èito podpirajo. Uèinkovitost pakirnika doloèite z drsnikom na
+desni strani pojavnega gumba.
+ @{i}Primer:@{ui} HUFF 50%
+
+@{u}Arhivirni program@{uu}
+   YAM omogoèa stiskanje datotek pred njihovim prilaganjem v e-pismo. Za ta
+namen so primerni arhivirni programi, kot npr. LhA, LZX ali ZIP. Vnesite celotno
+ukazno vrstico va¹ega priljubljenega arhivirnega programa. S klikom pojavnega
+gumba na desni strani polja za vnos lahko vstavite spremenljivke imena arhiva
+in izvornih datotek (ali seznam imen izvornih datotek).
+ @{i}Primer:@{ui} LhA -a -m -i%l a %a
+ @{i}Primer:@{ui} BIN:LZX -a -m a %a %f
+@endnode
+
+@node "CO_H" "Nastavitve - Skrite mo¾nosti"
+@toc "CO_W"
+@{b}@{u}Nastavitve - SKRITE MO®NOSTI@{ub}@{uu}
+
+YAM prepoznava nekaj parametrov, ki jih ne morete doloèiti v oknih za
+nastavitve. Do njih pridete, èe v va¹ urejevalnik besedil nalo¾ite datoteko
+YAM:.config in poi¹èete razdelek [Advanced] (slov. Napredno). Tam jih lahko
+roèno spremenite.
+
+@{u}LetterPart@{uu} (slov. PisemskiDel)
+   Navadno je dejansko besedilo vsebovano v prvem delu veèdelnega sporoèila,
+sledeèi deli pa vsebujejo priloge. Redki po¹tni stre¾niki, npr. GeoCities, 
+uporabljajo prvi del za ogla¹evalska sporoèila, ki so v odgovorih citirana
+namesto dejanskega besedila. Z doloèitvijo mo¾nosti LetterPart lahko to
+neskladje odpravite.
+ @{i}Primer:@{ui} LetterPart = 2
+
+@{u}WriteIndexes@{uu} (slov. ZapisujKazala)
+   Ko se vsebina mape spremeni, mora YAM ponovno zgraditi kazalo. Kazalo je
+vzdr¾evano v pomnilniku in shranjeno na trdi disk pri obièajni zaustavitvi
+programa. V primeru da morate ponovno zagnati raèunalnik (npr. zaradi sesutja),
+mora YAM pri zagonu ponovno zgraditi kazala. V izogib temu YAM shranjuje
+spremembe v kazalo v 120-sekundnih presledkih. Ta èasovni presledek lahko
+spremenite z uporabo mo¾nosti WriteIndexes.
+ @{i}Primer:@{ui} WriteIndexes = 30
+
+@{u}AutoSave@{uu} (slov. SamodejnoShranjuj)
+   Med vna¹anjem dolgih sproroèil YAM vsakih deset minut zapi¹e vsebino
+urejevalnika v datoteko .autosave0.txt ali autosave1.txt v programskem predalu.
+Po sesutju lahko to datoteko nalo¾ite z uporabo menijskega elementa
+"Besedilo/Vstavi kot...". Parameter AutoSave pomeni presledek v sekundah med
+dvema zapisovanjema rezervne kopije.
+ @{i}Primer:@{ui} AutoSave = 600
+
+@{u}SupportSite@{uu} (slov. PodpornoMesto)
+   To je naslov YAMove domaèe strani, preko katere program dostopa do galerije
+slik uporabnikov in podatkov o razlièicah.
+ @{i}Primer:@{ui} SupportSite = http://www.yam.ch/
+
+@{u}JumpToNewMsg@{uu} (slov. SkoèiNaNovoSporoèilo)
+   Èe je ta mo¾nost postavljena na 'Y', se YAM pri vsakem odpiranju mape postavi
+na prvo novo ali neprebrano sporoèilo.
+ @{i}Primer:@{ui} JumpToNewMsg = N
+
+@{u}PrinterCheck@{uu} (slov. PreizkusTiskalnika)
+   Pred tiskanjem sporoèila opravi YAM preizkus tiskalnika. Ta preizkus lahko
+onemogoèite, saj ni popolnoma zdru¾ljiv z nekaterimi tiskalni¹kimi gonilniki.
+ @{i}Primer:@{ui} PrinterCheck = N
+
+@{u}IsOnlineCheck@{uu} (slov. Preizkus:JeNaZvezi?)
+   Èe uporabljate paket Miami ali AmiTCP Genesis lahko YAM preveri, èe je va¹a
+Amiga dejansko na zvezi. Pri uporabi ostalih programskih paketov za TCP/IP se
+lahko YAM prito¾uje o manjkajoèi povezavi, medtem ko ste dejansko na zvezi. V
+teh primerih morate to mo¾nost izklopiti.
+ @{i}Primer:@{ui} IsOnlineCheck = N
+
+@{u}ConfirmOnQuit@{uu} (slov. PotrditiPredKoncem)
+   Ko je ta mo¾nost omogoèena, YAM pri zaustavitvi vedno terja potrditev.
+Privzeto je, da zahteva YAM potrditev le v primeru, ko nekaterih podatkov ¹e
+niste shranili (nastavitev, imenika naslovov).
+ @{i}Primer:@{ui} ConfirmOnQuit = Y
+
+@{u}HideGUIElements@{uu} (slov. SkrijElementeGUI)
+   Ta mo¾nost slu¾i izkljuèitvi prikaza nekaterih elementov grafiènega
+uporabni¹kega vmesnika. Pri¹teti smete naslednje vrednosti: 4 za orodne vrstice,
+2 za prikaz polo¾aja kurzorja v urejevalniku in 1 za statusno vrstico.
+ @{i}Primer:@{ui} HideGUIElements = 3
+
+@{u}LocalCharset@{uu} (slov. KrajevniNaborZnakov)
+   To je oznaka ISO nabora znakov, ki ga uporabljate na va¹em raèunalniku.
+Privzeta oznaka iso-8859-1 (Latin-1) velja za Zahodno Evropo in dr¾ave, kjer se
+govori angle¹ki jezik. Uporabniki s Poljske ali iz Rusije bo morali to mo¾nost
+po vsej verjetnosti doloèiti po svoje.
+ @{i}Primer:@{ui} LocalCharset = iso-8859-2
+@endnode
+
+@node "CO_M" "Nastavitve - Meniji"
+@{b}@{u}Nastavitve - MENIJI@{ub}@{uu}
+
+@{u}Projekt/Odpri...@{uu}
+   Nalo¾i datoteko z nastavitvami in vam s tem omogoèi uporabo veè
+razliènih nastavitvenih ureditev.
+
+@{u}Projekt/Shrani kot...@{uu}
+   Shrani trenutne nastavitve pod drugim imenom.
+
+@{u}Uredi/Nastavi na privzeto@{uu}
+   Ponovno nastavi parametre izbrane pole na njihove privzete vrednosti,
+shranjene v YAMu.
+
+@{u}Uredi/Ponovno nastavi vse nastavive@{uu}
+   Ponovno nastavi vse parametre na njihove privzete vrednosti, shranjene v YAMu.
+
+@{u}Uredi/Zadnje shranjeno@{uu}
+   Nadomesti trenutne nastavitve s tistimi, ki so bile nazadnje shranjene.
+
+@{u}Uredi/Obnovi@{uu}
+   Zavr¾e vse spremembe nastavitev, narejene po tem, ko so bile zadnjiè
+shranjene ([Shrani]) ali uporabljene ([Uporabi]).
+
+@{u}Dodatki/Uvozi MIME ogledovalnike in tipe...@{uu}
+   Uvozi vrste prilog, konènice imen datotek in ogledovalnike MIME. Podprti
+formati datotek so mime.types, mailcap in MIME.prefs. Ta menijski element
+lahko izberete le iz pole @{"MIME" link "CO11" 0}.
+@endnode
+
+@node "AB_W" "Imenik naslovov"
+                               @{b}@{u}IMENIK NASLOVOV@{ub}@{uu}
+
+    @{"menijska vrstica" link "AB_M" 0}
+    _____________________________________________________________________
+   |                        @{"orodna vrstica" link "AB_B" 0}                              |
+   |_____________________________________________________________________|
+    _____________________________________________________________________
+   | @{fg shine}Vzdevek@{fg text}  |      @{fg shine}Ime@{fg text}       |     @{fg shine}Opis@{fg text}      |        @{fg shine}Naslov@{fg text}           |
+   |----------|----------------|---------------|-------------------------|
+   |jk        | Janez Kranjski | kolega        | jkranjski\@dobavitelj.si |
+   |          |                |               |                         |
+   |          |                |               |                         |
+   |          |                |               |                         |
+   |__________|________________|_______________|_________________________|
+
+Privzeto je, da vkljuèuje prikaz seznama ¹tiri stolpce, kot je prikazano zgoraj,
+vendar lahko (kar je razumljivo) nastavitve za @{"Seznam" link "CO08" 0} spremenite tako, da so
+prikazane tudi npr. telefonske ¹tevilke. Prav tako lahko na naèin povleci in
+spusti stolpce prerazporejate ali pa jih o¾ate in ¹irite z vleèenjem loènikov
+med njimi.
+
+Dvokliknite na vpis da bi pogledali ali uredili podatke v oknu @{"Uredi naslov" link "EA_W" 0}.
+Poleg omenjenih polj lahko vnesete ¹e po¹tni naslov, kljuè PGP, spletni naslov
+domaèe strani, datum rojstva in va¹o sliko.
+
+Vpis mora vsebovati najmanj ime in priimek ter e-po¹tni naslov. Smisel @{b}Vzdevka@{ub}
+je v prihranitvi tipkanja; v polje 'To' sporoèila lahko vpi¹ete kratek nadimek
+ali zaèetnice in dopisovanje podrobnosti prepustite YAMu. Da bi to sploh lahko
+delovalo, mora vzdevek nedvoumno doloèati vpis.
+
+Imenik naslovov lahko razen osebnih vpisov dodatno vsebuje @{b}Sezname@{ub} veè
+prejemnikov, ki so priklicani z enim samim vzdevkom. Seznami slu¾ijo kro¾nim
+e-pismom in so oznaèeni z znakom za seznam (tri majhne glave).
+
+Tako posamezni vpisi kot tudi seznami so lahko zdru¾eni v @{b}Skupine@{ub}, ki spominjajo
+na podimenike; namenjeni so bolj¹emu pregledu nad imenikom naslovov. Imena
+skupin so prikazana v krepkem slogu. Spisek èlanov skupine lahko razprostrete s
+klikom na [+] in ga spet zlo¾ite s klikom na [-]. Vpise premikate iz ene skupine
+v drugo na naèin @{"povleci in spusti" link "Drag" 0}.
+@endnode
+
+@node "AB_B" "Imenik naslovov - Orodna vrstica"
+@toc "AB_W"
+@{b}@{u}Imenik naslovov - ORODNA VRSTICA@{ub}@{uu}
+
+[@{u}Shrani@{uu}]
+   Shrani imenik naslovov na va¹ trdi disk.
+
+[@{u}Najdi@{uu}]
+   Poi¹èe v imeniku naslovov doloèen znakovni niz. Vse spremenljivke v
+podatkovni zbirki bodo preiskane z izèrpno uporabo @{"vzorcev AmigaDOS" link "DOSW" 0}. Èe je
+iskani zapis najden bosta prikazana njegov vzdevek in ime. I¹èete lahko naprej
+ali pa dobljeni vpis uredite.
+ @{i}Primer:@{ui} Mojca#? (poi¹èe vse Mojce, zapisane v imeniku naslovov)
+
+[@{u}Oseba@{uu}] [@{u}Seznam@{uu}] [@{u}Skupina@{uu}]
+   Vsi trije gumbi odprejo okno @{"Nov naslov" link "EA_W" 0} za dodajanje novega vpisa v imenik
+naslovov. Vendar je izgled okna odvisen od vrste vpisa, saj so za vsako vrsto
+shranjeni drugaèni podatki.
+
+[@{u}Uredi@{uu}]
+   Tudi ta izbira odpre okno za urejanje naslovov ali njihov pregled. Izgled je
+zopet odvisen od vrste vpisa.
+
+[@{u}Izbri¹i@{uu}]
+   Izbri¹e izbrani vpis iz imenika naslovov.
+
+[@{u}Natisni@{uu}]
+   Natisne izbrani vpis.
+
+[@{u}Razgrni@{uu}]
+   Razgrne vse skupine (podimenike) imenika naslovov in prika¾e vse vpise.
+
+[@{u}Zlo¾i@{uu}]
+   Zlo¾i vse skupine (podimenike) imenika naslovov in prika¾e le vpise
+najvi¹jega nivoja.
+
+[@{u}To:@{uu}]
+   Uporabi izbrani vpis za naslov prvotnega prejemnika novega sporoèila. Èe ste
+okno imenika odprli v glavnem oknu, se bo pojavilo novo okno 'Napi¹i sporoèilo'.
+
+[@{u}CC:@{uu}]
+   Uporabi izbrani vpis za naslov drugotnega prejemnika novega sporoèila. Èe ste
+okno imenika odprli v glavnem oknu, se bo pojavilo novo okno 'Napi¹i sporoèilo'.
+
+[@{u}BCC:@{uu}]
+   Uporabi izbrani vpis za naslov prejemnika prikrite kopije novega sporoèila.
+Èe ste okno imenika odprli v glavnem oknu, se bo pojavilo novo okno 'Napi¹i
+sporoèilo'.
+@endnode
+
+@node "AB_M" "Imenik naslovov - Meniji"
+@toc "AB_W"
+@{b}@{u}Imenik naslovov - MENIJI@{ub}@{uu}
+
+@{u}Imenik naslovov/Novo@{uu}
+   Ustvari nov imenik naslovov; vsi obstojeèi vpisi imenika, ki je shranjen v
+RAMu, bodo izbrisani. POZOR: Pred izbiro tega menijskega elementa shranite va¹
+prej¹nji imenik naslovov pod drugim imenom.
+
+@{u}Imenik naslovov/Odpri...@{uu}
+   Odpre obstojeèi imenik naslovov na trdem disku in z njim nadomesti imenik, ki
+je shranjen v RAMu.
+
+@{u}Imenik naslovov/Pripni...@{uu}
+   Nalo¾i dodaten imenik naslovov z va¹ega trdega diska in pripne njegovo
+vsebino k imenu, ki je shranjen v RAMu.
+
+@{u}Imenik naslovov/Shrani@{uu}
+   Shrani imenik naslovov na va¹ trdi disk.
+
+@{u}Imenik naslovov/Shrani kot...@{uu}
+   Shrani imenik naslovov v datoteko z imenom po va¹i izbiri. Tako lahko hkrati
+vzdr¾ujete veè datotek z imeniki.
+
+@{u}Imenik naslovov/Najdi...@{uu}
+   Prei¹èe imenik naslovov za znakovni niz. Podrobnosti najdete v razdelku
+@{"Orodna vrstica" link "AB_B" 0}/Najdi.
+
+@{u}Imenik naslovov/Natisni...@{uu}
+   Natisne celoten imenik naslovov. Izberite 'Kratek format' za tiskanje ene
+vrstice vsakega vpisa. 'Dolg format' pomeni tiskanje vpisa z vsemi
+podrobnostmi, kar pomeni veè vrstic 
+
+@{u}Vpis/Nova oseba...@{uu} @{u}Vnos/Nov seznam razpo¹iljanja...@{uu} @{u}Vnos/Nova skupina...@{uu}
+   Odpre @{"okno za vnos naslovov" link "EA_W" 0} za dodajanje novega vpisa v
+imenik. Izgled okna je odvisen od vrste vpisa.
+
+@{u}Vpis/Uredi...@{uu}
+   Trenutno izbrani vpis lahko spremenite v oknu @{"vna¹anja naslovov" link "EA_W" 0}.
+
+@{u}Vpis/Podvoji@{uu}
+   Podvoji izbrani vpis. Vzdevek bo prilagojen samodejno.
+
+@{u}Vpis/Izbri¹i@{uu}
+   Izbri¹e izbrani vpis iz imenika naslovov.
+
+@{u}Vpis/Natisni@{uu}
+   Natisne izbrani vpis. (Le kdo bi uganil? ;) ).
+
+@{u}Uredi/Po@{uu}...
+   Uredi imenik naslovov glede na vzdevek, priimek, ime, opis ali e-po¹tni
+naslov. Pomnite: 'Ime' je povezano s prvo besedo polja 'Polno ime', 'Priimek' pa
+z zadnjo besedo tega polja.
+@endnode
+
+@node "EA_W" "Vna¹anje naslovov"
+@toc "AB_W"
+@{b}@{u}Imenik naslovov - VNA©ANJE NASLOVOV@{ub}@{uu}
+
+V tem oknu urejate podatke posameznega vpisa v imenik naslovov. Glede na vrsto
+vpisa (oseba, seznam ali skupina) boste videli drugaèen nabor polj za vnos.
+Kliknite na gumb [V redu] da bi ohranili spremembe, na gumb [Preklièi] da bi
+spremembe zavrgli.
+
+@{b}====================oseba=====================@{ub}
+
+@{fg shine}-------------------Elektronska po¹ta-------------------@{fg text}
+
+@{u}Vzdevek@{uu}   (velja za osebo, seznam ali skupino)
+   'Vzdevek' je primerno kratko ime, ki nedvoumno doloèa vpis v imeniku
+naslovov. Namenjen je prihranitvi tipkanja - vzdevek lahko vpi¹ete v polje 'K'
+in YAM bo podrobnosti dodal pri po¹iljanju sporoèila. Èe pustite to polje
+prazno, bo YAM sam ustvaril vzdevek za vpis.
+ @{i}Primer:@{ui} JanezK
+
+@{u}Pravo ime@{uu}
+   Ime in priimek osebe.
+ @{i}Primer:@{ui} Janez Kranjski
+
+@{u}E-po¹tni naslov@{uu}
+   Internetni naslov, ki ga uporabljate, ko po¹iljate e-po¹to tej osebi.
+ @{i}Primer:@{ui} jkranjski\@doma.si
+
+@{u}ID kljuèa za PGP@{uu}
+   ©estnajsti¹ka koda kljuèa za PGP te osebe. Potrebna je pri po¹iljanju
+sporoèila, ¹ifriranega po sistemu PGP. Kliknite na pojavni gumb in izberite
+kljuè iz va¹e mape z javnimi kljuèi (v ta namen mora biti PGP name¹èen na va¹
+sistem, kljuè, ki ga potrebujete, pa mora biti v mapi s ¹opom kljuèev).
+ @{i}Primer:@{ui} 0x709B40C3
+
+@{u}Domaèa stran@{uu}
+   URL domaèe strani osebe na svetovnem spletu. YAM se lahko pove¾e s tem
+naslovom preko va¹ega brskalnika, seveda èe je v nastavitvah @{"Skripti" link "CO13" 0} doloèen
+ustrezen skript za akcijo 'Ob dvojnem kliku na URL'. Da bi to dosegli, kliknite
+na gumb na desni strani polja za vnos.
+ @{i}Primer:@{ui} http://pridite.na/mars
+
+@{fg shine}--------------------Obièajna po¹ta---------------------@{fg text}
+
+@{u}Ulica@{uu}
+   Ulica in hi¹na ¹tevilka obièajnega po¹tnega naslova.
+ @{i}Primer:@{ui} Novakova ulica 91
+
+@{u}Kraj/po¹tna ¹t.@{uu}
+   Kraj in po¹tna ¹tevilka (kdo bi le to uganil...).
+ @{i}Primer:@{ui} 3000 Celje
+
+@{u}Dr¾ava@{uu}
+ @{i}Primer:@{ui} Slovenija
+
+@{u}Telefonska ¹tevilka@{uu}
+   Ena ali veè telefonskih ¹tevilk (telefon, faks, mobilni telefon,
+   karkoli...).
+ @{i}Primer:@{ui} 062/926-451
+
+@{fg shine}-------------------------Razno-------------------------@{fg text}
+
+@{u}Opis@{uu}    (velja za osebo, seznam ali skupino)
+   Kakr¹enkoli komentar, ki opisuje tale vpis.
+ @{i}Primer:@{ui} Moj dragi ;-)
+
+@{u}Datum rojstva@{uu}
+   Rojstni datum osebe. Vne¹ena vrednost mora biti oblike DD-MMM-LLLL.
+ @{i}Primer:@{ui} 12-Dec-1967
+
+@{fg shine}------------------------Portret------------------------@{fg text}
+
+@{u}Izberi@{uu}
+   Tu lahko doloèite slike (po mo¾nosti portret) osebe. Z uporabo knji¾nice
+podatkovnih tipov lahko uporabite katerikoli format slike, èe je le name¹èen
+podatkovni tip za njegov prikaz. Po ¾elji je ta slika prikazana vsakokrat, ko
+berete sporoèilo te osebe (poglejte mo¾nost 'Podatki o po¹iljatelju' v
+nastavitvah za @{"Branje" link "CO04" 0}).
+
+@{u}Snemi@{uu}
+   Stalno nara¹èajoèo zbirko portretov uporabnikov YAMa najdete na YAMovi domaèi
+strani. YAM dostopa do te zbirke podatkov samodejno; vse kar morate storiti je
+vnesti ime ali/in e-po¹tni naslov, povezati se z Internetom in klikniti na gumb
+[snemi]. YAM najprej dobi seznam razpolo¾ljivih fotografij in v njem potem
+poi¹èe imenovano osebo. Èe jo najde, dopolni vse manjkajoèe informacije njenega
+vpisa v imeniku naslovov (ime, e-po¹tni naslov in domaèo stran), jo sname ter
+shrani v galerijo. Èe ¾elite v to zbirko dodati tudi va¹o sliko, sledite prosim
+navodilom na YAMovi domaèi strani na naslovu http://www.yam.ch/gallery.html.
+
+
+@{b}====================seznam====================@{ub}
+
+@{u}Vzdevek@{uu}   enako, kot je opisan zgoraj.
+
+@{u}Povratni naslov@{uu}
+   Da bi lahko vzdr¾evali majhen po¹tni seznam z uporabo YAMovega seznama za
+razpo¹iljanje, morate popraviti vrstice reply-to v glavah izvirnih sporoèil.
+Sicer bo odgovor na e-pismo vrnjen avtorju sporoèila in ne po¹tnemu seznamu.
+Vnesite povratni naslov, ki ga ¾elite uporabljati.
+ @{i}Primer:@{ui} razprava\@dobavitelj.si
+
+@{u}Ime po¹tnega seznama@{uu}
+   Sem vnesite  ime po¹tnega seznama, ki ga ¾elite vzdr¾evati z uporabo YAMovih
+seznamov za razpo¹iljanje. To ime se bo pojavilo v vrstci 'To' glave in omogoèilo
+prejemniku pravilno razvrstitev po¹te z uporabo filtrov.
+ @{i}Primer:@{ui} razprava-PS
+
+@{u}Èlani@{uu}
+   Seznam vseh trenutnih èlanov seznama za razpo¹iljanje. Vnesete lahko vzdevke,
+imena ali popolne e-po¹tne naslove. Da bi dodali novega èlana seznama kliknite
+na gumb [Nov], klik na gumb [Izbri¹i] izbri¹e oznaèeni vpis, gumb [Uredi] pa se
+uporablja za abecedno urejanje vpisov.
+
+
+@{b}===================skupina====================@{ub}
+
+Za ta primer veljata samo polji @{i}Vzdevek@{ui} in @{i}Opis@{ui}.
+@endnode
+
+@node "FI_W" "Iskanje sporoèil"
+                              @{b}@{u}ISKANJE SPOROÈIL@{ub}@{uu}
+
+   Èe imate v mapah veliko sporoèil se vam pogosto zgodi, da za njimi izgubite
+vsako sled. Veste sicer, da ste sporoèilo z doloèeno vsebino shranili, toda kam?
+YAMova funkcija iskanja vam pomaga re¹iti ta problem.
+
+V zgornji polovici okna doloèite poizvedbo. Na levi izberite eno ali veè map, v
+katerih ¾elite iskati. Na desni doloèite @{"Iskalno merilo" link "FI_K" 0}. V spodnji polovici
+okna bo prikazan seznam sporoèil, ki ustrezajo pogojem poizvedbe.
+
+@{u}Funkcije gumbov@{uu}
+
+[@{u}povsod@{uu}]
+   V iskanje vkljuèi vse mape.
+
+[@{u}Uporabi nastavitve filtrov@{uu}]
+   Nadomesti iskalno merilo s @{"Filtrom" link "CO03" 0}.
+
+[@{u}Dodaj kot nov filter@{uu}]
+   Doloèi nov @{"Filter" link "CO03" 0}, osnovan na trenutnem iskalnem merilu.
+
+[@{u}Zaèni z iskanjem@{uu}]
+   Priène iskanje. Ujemajoèa sporoèila so prikazana v seznamu rezultatov.
+Iskanje lahko zaustavite s klikom na gumb [Prekini].
+
+[@{u}Izberi ujemajoèe@{uu}]
+   Izbere vsa sporoèila navedena v rezultatih iskanja tako, da jih oznaèi v
+@{"seznamu sporoèil" link "MA01" 0} v glavnem oknu.
+
+[@{u}Beri sporoèilo@{uu}]
+   Prika¾e vsebino izbranega sporoèila v seznamu rezultatov. Dvoklik na ime v tem
+seznamu ima isti uèinek.
+@endnode
+
+@node "FI_K" "Iskanje sporoèil - Iskalna merila"
+@toc "FI_W"
+                               @{b}@{u}ISKALNA MERILA@{ub}@{uu}
+
+@{u}I¹èi v@{uu}
+   Tu izberete del sporoèila, ki bo preiskan z vzorcem za iskanje. Èe ¾elite
+preiskovati doloèeno vrstico glav, jo lahko poi¹èete v seznamu izbirnega gumba
+ali pa izberete 'Drugem polju:' in vtipkate oznako polja v polju za vnos na
+desni. Izbira 'Telesu sporoèila' povzroèi iskanje v celotnem sporoèilu, razen v
+glavi. Pomnite: preiskovanje celotnega sporoèila lahko traja malo dlje (YAM mora
+med iskanjem dekodirati priloge formata MIME).
+ @{i}Primer@{ui}: Drugem polju: X-Mailer
+
+@{u}Primerjanje@{uu}
+   Ukaz je sestavljen iz dveh delov: primerjalnega operatorja in vzorca iskanja.
+
+YAM podpira naslednje @{b}primerjalne operatorje@{ub}:
+
+@{fg shine} =@{fg text}   besedilo, ki ga preiskujete, mora ustrezati vzorcu iskanja
+@{fg shine} <@{fg text}   besedilo mora biti "manj¹e" od iskalnega vzorca
+@{fg shine} >@{fg text}   besedilo mora biti "veèje" od iskalnega vzorca
+@{fg shine} <>@{fg text}  besedilo se mora razlikovati od iskalnega vzorca
+@{fg shine} IN@{fg text}  besedilo mora ustrezati vzorcu, vsebovanemu v datoteki, doloèeni
+     v polju za vnos na desni strani izbirnega gumba primerjave. Torej
+     morate namesto vzorca iskanja vnesti ime datoteke z eno ali veè
+     vrsticami iskalnih vzorcev. Na ta naèin lahko ustvarite tako
+     imenovano 'Ubijalsko datoteko' s seznamom e-po¹tnih naslovov. K
+     urejanju datoteke preidete s klikom na pojavni gumb na skrajni desni.
+
+Primerjalna operatorja < in > upo¹tevata èrkovno¹tevilski vrstni red, kot je
+uporabljen za imena v telefonskem imeniku. Od tod sledita zvezi Janez < Jo¾e
+in 12 < 2.
+
+@{b}Vzorec iskanja@{ub} sme vsebovati @{"vzorce" link "DOSW" 0} AmigaDOSa, kot so ?, #?, (a|b) in
+[abc].  Pomnite: iskalni vzorec [YAM]#? bo na¹el vsa sporoèila, ki se zaèenjajo
+z Y, A ali M.  Za filtriranje e-pisem s po¹tnega seznama (npr. po¹tnega seznama
+v zvezi z YAMom) uporabite iskalni vzorec ?YAM#? ali pa filtru naroèite
+primerjanje polja 'K' z naslovom seznama.
+ @{i}Primer:@{ui} = YAM 1.3.#?
+
+@{u}Naslov/Ime@{uu}
+   Pri preiskovanju vrstice glave z e-po¹tnim naslovom lahko podrobneje doloèite
+ali naj se iskalni vzorec primerja z naslovom (@{i}npr.@{ui} jkranjski\@dobavitelj.si) ali
+z imenom avtorja (@{i}npr.@{ui} 'Janez Kranjski').
+
+[] @{u}Obèutljivo na velikost èrk@{uu}
+   To mo¾nost vklopite èe ¾elite, da iskanje loèuje med malimi in velikimi
+èrkami.
+
+[] @{u}Iskanje podnizov@{uu}
+   V primeru, da vzorec iskanja sestavlja le del vrstice glave, ki jo nameravate
+preiskati, morate izbrati to mo¾nost. YAM bo notranje dopolnil iskalni vzorec z
+nizom #?.
+@endnode
+
+@node "WR_W" "Pisalno okno"
+                               @{b}@{u}PISANJE SPOROÈIL@{ub}@{uu}
+
+To okno se bo odprlo ko se odloèite za pisanje novega sporoèila ali za
+odgovarjanje ali posredovanje obstojeèega sporoèila. Hkrati lahko odprete DVE
+okni. Pisalno okno sestavljajo tri pole podobnega izgleda kot tale shema:
+
+  Menijska vrstica je na vseh polah enaka:
+  @{"Besedilo" link "WRM1" 0} @{"Uredi" link "WRM2" 0} @{"Priloge" link "WRM3" 0} @{"Mo¾nosti" link "WR02" 0}
+   _______________________   ____________________   ____________________
+  |      @{" Sporoèilo  " link "WR00" 0}    |  |    @{"  Priloge  " link "WR01" 0}    | |    @{"  Mo¾nosti  " link "WR02" 0}   |
+  |                       |_|____________________|_|____________________|
+  |                                                                     |
+  |                                                                     |
+  |                                                                     |
+  |                                                                     |
+  |            Veliko polje za urejanje besedila na poli                |
+  |            'Sporoèilo' je @{"lastni urejevalnik" link "EDIT" 0}, ki ga                |
+  |            uporabljate za vnos sporoèila.                           |
+  |                                                                     |
+  |                                                                     |
+  |                                                                     |
+  |                                                                     |
+  |_____________________________________________________________________|
+   _______________   _______________   _______________   _______________
+  |@{u} Po¹lji takoj  @{uu}| |@{u}Po¹lji kasneje @{uu}| |@{u}    Zadr¾i     @{uu}| |@{u}   Preklièi    @{uu}|
+
+ Na dnu vsake pole so prikazani ¹tirje gumbi:
+
+@{u}Po¹lji takoj@{uu}
+   Pripravi sporoèilo na odpremo, ga prekopira v mapo 'Odhajajoèa' in poizku¹a
+po¹to poslati takoj. Za pravilno delovanje te funkcije morate imeti v ozadju
+nalo¾en sklad TCP/IP.
+
+@{u}Po¹lji kasneje@{uu}
+   Pripravi sporoèilo na odpremo in ga prekopira v mapo 'Odhajajoèa'. Ta gumb
+uporabite v èasu, ko je raèunalnik nepovezan.
+
+@{u}Zadr¾i@{uu}
+   Sporoèilo bo pripravljeno tako, kot je opisano pri [Po¹lji kasneje] in
+prekopirano v mapo 'Odhajajoèa', vendar bo zadr¾ano in *NE* odposlano. Mo¾nost
+uporabite pri nedokonèanih sporoèilih ({i}npr.@{ui} èe ¾elite e-pismo kasneje
+¹e popravljati).
+
+@{u}Preklièi@{uu}
+   V primeru, da ste se premislili, kliknite na ta gumb. POZOR: vsi vnosi v tem
+oknu bodo izgubljeni. Kljub temu pa so va¹e skrbi odveè; predno bo YAM resnièno
+zavrgel vse spremembe, ki ste jih naredili, se bo pojavil varnostni zahtevek
+(èe ni bilo nobenih sprememb zahtevek seveda ne bo prikazan).
+@endnode
+
+@node "WR00" "Pisalno okno - Sporoèilo"
+@toc "WR_W"
+@{b}@{u}Pisalno okno - POLA SPOROÈILO@{ub}@{uu}
+
+Nad velikim poljem @{"urejevalnika besedil" link "EDIT" 0} sta dve polji glave in orodna vrstica.
+
+@{u}K@{uu}
+   Sem vnesite glavnega prejemnika, ki mu ¾elite poslati sporoèilo. Uporabite
+lahko imena ali vzdevke iz imenika naslovov ali pa polne e-po¹tne naslove, èe
+prejemnika v imeniku ni. Pri veè vne¹enih prejemnikih morate njihove naslove
+loèiti z vejicami. Za vnos vpisa iz imenika naslovov kliknite na pojavni gumb
+za imenik na desni strani. Sedaj dvokliknite na izbrani vpis ali ga z dr¾anjem
+levega mi¹kinega gumba enostavno @{"povlecite" link "Drag" 0} na polje za vnos. Nato kliknite na
+polje za vnos [K]. Èe YAM ne najde imena ali vzdevka, ki ste ga roèno vnesli v
+polje za vnos v imeniku naslovov, bo zaslon zabliskal takoj, ko boste pritisnili
+tipko RETURN.
+
+Vzdevek lahko roèno spremenite v e-po¹tni naslov s klikom na gumb [<] na desni.
+ @{i}Primer:@{ui} jkranjski, ¹ef\@slu¾ba.zakajjaz.com
+
+@{u}Zadeva@{uu}
+   Pove, kaj je tema pisanja. Pri odgovarjanju na e-pismo bo v to polje pred
+prvotno zadevo vstavljen niz 'Re:', pri posredovanju pa bo za zadevo dodan niz
+'(fwd)'.
+
+@{b}@{u}Orodna vrstica@{ub}@{uu}
+
+@{u}[Urejevalnik]@{uu}  ustreza menijskemu elementu @{"Besedilo/Za¾eni urejevalnik" link "WRM1" 0}.
+
+@{u}[Vstavi]@{uu}       ustreza menijskemu elementu @{"Besedilo/Vstavi kot/Navadno" link "WRM1" 0}.
+
+@{u}[Izre¾i]@{uu}       ustreza menijskemu elementu @{"Uredi/Izre¾i" link "WRM2" 0}.
+
+@{u}[Kopiraj]@{uu}      ustreza menijskemu elementu @{"Uredi/Kopiraj" link "WRM2" 0}.
+
+@{u}[Prilepi]@{uu}      ustreza menijskemu elementu @{"Uredi/Prilepi" link "WRM2" 0}.
+
+@{u}[Razveljavi]@{uu}   ustreza menijskemu elementu @{"Uredi/Razveljavi" link "WRM2" 0}.
+
+@{u}[Krepko]@{uu}       ustreza menijskemu elementu @{"Uredi/Slog besedila/Krepko" link "WRM2" 0}.
+
+@{u}[Po¹evno]@{uu}      ustreza menijskemu elementu @{"Uredi/Slog besedila/Po¹evno" link "WRM2" 0}.
+
+@{u}[Podèrtano]@{uu}    ustreza menijskemu elementu @{"Uredi/Slog besedila/Podèrtano" link "WRM2" 0}.
+
+@{u}[Obarvano]@{uu}     ustreza menijskemu elementu @{"Uredi/Slog besedila/Alternativna barva" link "WRM2" 0}.
+
+@endnode
+
+@node "WR01" "Pisalno okno - Priloge"
+@toc "WR_W"
+@{b}@{u}Pisalno okno - POLA PRILOGE@{ub}@{uu}
+
+Va¹emu sporoèilu lahko dodate eno ali veè datotek. Tako morete preko e-po¹te
+poslati dvoji¹ke datoteke, npr. arhive, slike itd. Izberete lahko tudi kodirno
+metodo (MIME ali UUencode) in vsaki prilogi dopi¹ete komentar. Za varèevanje s
+prostorom lahko YAMu naroèite, da datoteke pred prilaganjem sporoèilu samodejno
+arhivira.
+
+Seznam prilog sestavlja pet stolpcev:
+     Ime datoteke, Velikost (v bajtih), Vsebina, ©ifriranje in Opis. Stolpce
+lahko preuredite na naèin sistema povleci in spusti.
+
+@{b}@{u}Gumbi in orodja@{ub}@{uu}
+
+@{u}Dodaj datoteko@{uu}
+   Izberete lahko eno ali veè datotek, ki bodo dodane seznamu kot nove priloge.
+YAM samodejno prepozna preko 20 vrst datotek in tem ustrezno izpolni polja 'MIME
+tip'.
+
+@{u}Pakiraj in dodaj@{uu}
+   Èe za prilaganje uporabite ta naèin, bodo datoteke pred prilo¾itvijo
+arhivirane s programi LHA, LZX ali ZIP. Najprej izberite datoteke, ki jih ¾elite
+dodati v arhiv, nato vnesite ime arhiva. Arhivirni program doloèite v
+nastavitvenem oknu @{"Razno" link "CO14" 0}.
+
+@{u}Izbri¹i@{uu}
+   Odstrani izbrane vpise iz seznama.
+
+@{u}Prika¾i@{uu}
+   Prika¾e izbrani vpis z uporabo pravega programa iz seznama ogledovalnikov
+vrst MIME. Privzeti program je MultiView.
+
+@{u}Kodiranje@{uu}
+   Pri normalni uporabi datoteke kodirate po sistemu MIME (base64/qp). YAM
+uporablja naèin "quoted-printable" za besedila in naèin "base64" za dvoji¹ke
+datoteke. Èe prejemnik ne more dekodirati sporoèil formata MIME (ker njegov
+e-po¹tni program tega ne podpira), lahko za kodirni naèin doloèite "UUencode".
+Sporoèila z datotekami, kodiranimi z "UUencode" so ¹e vedno formata MIME
+'multipart/mixed', le da pri njih z uporabo programa za "UUencode" datoteke
+lahko loèite od besedila. Eden od tovrstnih programov je UUxt. Sporoèilo, ki ga
+je ustvaril YAM, torej lahko vsebuje priloge vrste 'UUencoded' ali pa 'base64'.
+
+@{u}MIME tip@{uu}
+   Èe YAM prepozna tip datoteke za prilogo, samodejno doloèi pravo vrsto MIME.
+Sicer pa uporabi privzeto nastavitev ('application/octet-stream'). Pred
+doloèanjem novih vrst MIME prosim preverite, èe vrsta morda ¾e ni v seznamu.
+ @{i}Primer:@{ui} image/gif
+
+@{u}Opis@{uu}
+   Sem lahko vnesete komentar priloge. Ko dodajate veè prilog, bo ta opis - èe
+obstaja - prekopiran k vsaki od njih.
+ @{i}Primer:@{ui} Slika z va¹ih poletnih poèitnic (format GIF)
+@endnode
+
+@node "WR02" "Pisalno okno - Mo¾nosti"
+@toc "WR_W"
+@{b}@{u}Pisalno okno - POLA MO®NOSTI@{ub}@{uu}
+
+Gumbom na tej poli ustrezajo elementi @{b}MENIJA MO®NOSTI@{ub}.
+
+Izgled te pole je podoben tej shemi:
+                    ___________________________________________________
+           Kopije k|_______________________________________________|@{u}<@{uu}|@{u}^@{uu}|
+    Skrite kopije k|_______________________________________________|@{u}<@{uu}|@{u}^@{uu}|
+                 Od|_______________________________________________|@{u}<@{uu}|@{u}^@{uu}|
+         Odgovor na|_______________________________________________|@{u}<@{uu}|@{u}^@{uu}|
+      Dodatna glava|___________________________________________________|
+
+     ___________________           _____________           ____________
+    |                   |         |             |         |            |
+    |Mo¾nosti po¹iljanja|         |   Podpis    |         |  Varnost   |
+    |___________________|         |_____________|         |____________|
+
+
+@{b}@{u}Polja glave@{ub}@{uu}
+
+@{u}Kopije k@{uu}
+   Vsi prejemniki, navedeni v tem polju, bodo dobili kopijo dejanskega
+sporoèila. Poglejte tudi informacije o polju 'K' za polo @{"Sporoèilo" link "WR00" 0}.
+
+@{u}Skrite kopije k@{uu}
+   Prejemniki, navedeni v tem polju, bodo dobili kopijo samega sporoèila. Za
+razliko od prejemnikov, navedenih v polju 'Kopije k', ne bodo navedeni v glavi
+sporoèila. Ta mo¾nost se uporablja takrat, ko ¾elite nekomu poslati kopijo
+sporoèila, ne da za to vedeli drugi prejemniki.
+
+@{u}Od@{uu}
+   Precej oèitno, res! YAM bo to polje izpolnil z va¹im naslovom, vi pa lahko
+vplivate na prikaz va¹ega imena in priimka (niz v dvojnih navednicah).
+
+@{u}Odgovor na@{uu}
+   Ta nastavitev velja le za samo sporoèilo in bo vstavljena namesto obièajnega
+naslova 'Reply-to', njena vsebina je doloèena v programskih nastavitvah. Polje
+pustite prazno, èe se le ne razlikuje od e-po¹tnega naslova v polju 'Od'.
+
+@{u}Dodatna glava@{uu}
+   Èe morate iz kakr¹negakoli razloga sporoèilu dodati dodatne vrstice glave,
+lahko te vnesete sem. Veè vrstic morate loèiti z nizom '/n'.
+
+@{b}@{u}Mo¾nosti po¹iljanja@{ub}@{uu}
+
+@{u}Izbri¹i po po¹iljanju@{uu}
+   To mo¾nost vklopite èe ¾elite sporoèilo izbrisati takoj po prenosu, namesto
+da bi ga prekopirali v mapo 'Poslana'.
+
+@{u}Potrdilo o prejemu@{uu}
+   Z vklopom te mo¾nosti naroèite prejemnikovemu po¹tnemu stre¾niku, naj vas
+obve¹èa o uspe¹nih prenosih po¹te. Ponavadi ste obve¹èeni le v primeru te¾av pri
+prenosih. Pomnite: vsi po¹tni stre¾niki ne podpirajo te funckije. Ukaz za va¹e
+obve¹èanje je poslan v polju 'Return-Receipt-To' glave sporoèila.
+
+@{u}Sledi sporoèilu@{uu}
+   Vklopite to mo¾nost in prejemnikov e-po¹tni program vas bo obvestil o stanju
+va¹ega sporoèila. Navedel bo, ali je prejemnik sporoèilo sploh prebral, ga
+izbrisal ali posredoval drugim. Pomnite: e-po¹tni programi, ki podpirajo to
+funkcijo, so razmeroma redki. Obenem lahko prejemnik onemogoèi po¹iljanje
+poroèil o stanju e-po¹te. Zato nedobivanje informacij kljub izbiri te mo¾nosti
+¹e ne pomeni nujno, da sporoèilo ni bilo prebrano. Ukaz za po¹iljanje poroèila o
+stanju je naveden v polju 'Disposition-Notification-To' glave. V èasu pisanja
+tega besedila je bil Internetni standard za MDN, oz. Message Disposition
+Notification (slov. Obvestilo o stanju sporoèila) ¹ele v fazi snovanja.
+
+@{u}Dodaj osebne podatke@{uu}
+   Z obkljukanjem te mo¾nosti vam je v glavo sporoèila omogoèeno dodajanje
+posebnih polj z osebnimi podatki, kot so npr. obièajni po¹tni naslov, telefonska
+¹tevilka, spletni naslov domaèe strani, datum rojstva ali pa URL va¹ega
+portreta. Èe tudi prejemnik uporablja YAM, bo s temi podatki lahko ustvaril nov
+vpis v imeniku naslovov. Da bi si ta postopek olaj¹ali, ustvarite v @{i}svojem@{ui}
+imeniku naslovov vpis z va¹imi podatki (YAM bo na¹el va¹ vpis na osnovi
+e-po¹tnega naslova). Èe imate na svetovnem spletu svojo sliko, vnesite njen
+spletni naslvo v razdelek "imenik naslovov" nastavitev.
+
+@{u}Pomembnost@{uu}
+   Tu doloèite pomembnost sporoèila za prejemnika. Sporoèila z visoko stopnjo
+pomembnosti bodo v vrstici stanja oznaèena s klicajem; prav tako bo samodejno
+po¹tno razvr¹èanje ta sporoèila posebej izpostavilo. Pomembnost bo zapisana v
+polje 'Importance' glave sporoèila.
+
+@{b}@{u}Podpis@{ub}@{uu}
+   Obièajni podpis lahko nadomestite z enim od dveh alternativnih podpisov,
+lahko pa ga tudi izklopite.
+
+@{b}@{u}Varnost@{ub}@{uu}
+   Tu izberite varnostne ukrepe, ki jih ¾elite izvesti pred po¹iljanjem
+sporoèila.
+
+@{b} Brez:@{ub} Po¹ta bo poslana na obièajen naèin.
+@{b} Podpi¹i:@{ub} Sporoèilo bo podpisano s prejemnikovim kljuèem PGP in shranjeno
+       v formatu veèdelno/podpisano. Besedilo sporoèila bo moè prebrati brez
+       uporabe PGP.
+@{b} ©ifriraj:@{ub} Sporoèilo bo ¹ifrirano z uporabo prejemnikovega kljuèa PGP in
+       shranjeno v formatu veèdelno/podpisano.
+@{b} Podpi¹i in ¹ifriraj:@{ub} To je zveza prej¹njih dveh mo¾nosti in omogoèa
+       prejemniku omogoèa preverjanje po¹iljateljeve istovetnosti.
+@{b} Po¹lji anonimno:@{ub} Po¹ta bo poslana preko ene od slu¾b ANON; po¹iljatelj
+       bo ostal anonimen.
+
+Zapomnite si, prosim, da so v ¹ifriranih ali podpisanih sporoèilih priloge z
+dvoji¹kimi datotekami prepovedane. Veè informacij o tem najdete v razdelkih @{"PGP" link "PGP" 0}
+in @{"Nastavitve/Varnost" link "CO09" 0}.
+@endnode
+
+@node "WRM1" "Pisalno okno - meni Besedilo"
+@toc "WR_W"
+@{b}@{u}Pisalno okno - MENI BESEDILO@{ub}@{uu}
+
+@{u}Besedilo/Novo@{uu}
+   Izbri¹e besedilo in se pripravi na pisanje novega sporoèila.
+
+@{u}Besedilo/Odpri...@{uu}
+   Odpre obstojeèo datoteko.
+
+@{u}Besedilo/Vstavi kot...@{uu}  » Navadno
+   Na trenutno mesto kurzorja vstavi datoteko z besedilom.
+
+@{u}Besedilo/Vstavi kot...@{uu}  » Citirano
+   Na trenutno mesto kurzorja vstavi datoteko z besedilom in pri tem vsako
+vrstico uvede z znakom za citiranje (obièajno '>').
+
+@{u}Besedilo/Vstavi kot...@{uu}  » ROT13 kodirano
+   Na trenutno mesto kurzorja vstavi datoteko z besedilom in pri tem vsako èrko
+nadomesti s tisto, ki le¾i za 13 mest naprej v abecedi - po èrki Z pride na
+vrsto spet A (od tod A->M, B->N, M->A). Ta enostavna koda se uporablja za
+prikrivanje nespodobnih ¹al.
+
+@{u}Besedilo/Za¾eni urejevalnik@{uu}
+   Mo¾nost vam omogoèa urejanje sporoèila z va¹im najljub¹im urejevalnikom (ki
+je naveden v nastavitvah za @{"Branje" link "CO05" 0}). Pomnite: nekaj funckijam, kot npr. slogom
+besedila in @{"Slovarju" link "DI_W" 0}, je zagotovljeno pravilno delovanje le znotraj lastnega
+urejevalnika. Kadarkoli posnamete svoje sporoèilo v zunanjem urejevalniku, se
+posodobi besedilo v lastnem urejevalniku (to je zasluga operacijskega sistema in
+njegove razlage obvestila datoteènega sistema o tem, da ste shranili zaèasno
+datoteko).
+@endnode
+
+@node "WRM2" "Pisalno okno - meni Uredi"
+@toc "WR_W"
+@{b}@{u}Pisalno okno - MENI UREDI@{ub}@{uu}
+
+@{u}Uredi/Izre¾i@{uu}
+   Izre¾e oznaèeno besedilo in ga shrani na odlo¾i¹èe.
+
+@{u}Uredi/Kopiraj@{uu}
+   V odlo¾i¹èe postavi kopijo oznaèenega besedila.
+
+@{u}Uredi/Prilepi@{uu}
+   Na trenutno mesto kurzorja vstavi besedilo v odlo¾i¹èu.
+
+@{u}Uredi/Prilepi kot@{uu}  » Citirano
+   Na trenutno mesto kurzorja vstavi besedilo v odlo¾i¹èu in vsako vrstico uvede
+z znakom za citiranje.
+
+@{u}Uredi/Prilepi kot@{uu}  » ROT13 kodirano
+   Na trenutno mesto kurzorja vstavi besedilo v odlo¾i¹èu in na njem uporabi
+kodiranje ROT-13 (poglejte tudi v opis za @{"Besedilo/Vstavi kot..." link "WRM1" 0}).
+
+@{u}Uredi/Razveljavi@{uu}
+   Razveljavi zadnjo spremembo, narejeno v urejevalniku.
+
+@{u}Uredi/Uveljavi@{uu}
+   Obnovi spremembo, pravkar razveljavljeno z 'Uredi/Razveljavi'.
+
+@{u}Uredi/Slovar@{uu}
+   Odpre okno s @{"Slovarjem" link "DI_W" 0}.
+
+@{u}Uredi/Slog besedila@{uu} » Krepko
+   Preklopi med krepkim in navadnim slogom oznaèenega odlomka ali naknadno
+vne¹enega besedila. V prene¹enem sporoèilu je besedilo v krepkem slogu
+upodobljeno z zvezdicama, od tod @{b}krepko@{ub} -> *krepko*
+
+@{u}Uredi/Slog besedila@{uu} » Po¹evno
+   Preklopi med po¹evnim in navadnim slogom oznaèenega odlomka ali naknadno
+vne¹enega besedila. V prene¹enem sporoèilu je besedilo v po¹evnem slogu
+upodobljeno s po¹evnicama, od tod @{i}po¹evno@{ui} -> /po¹evno/
+
+@{u}Uredi/Slog besedila@{uu} » Podèrtano
+   Preklopi med podèrtavnim in navadnim slogom oznaèenega odlomka ali naknadno
+vne¹enega besedila. V prene¹enem sporoèilu je besedilo v podèrtanem slogu
+upodobljeno s podèrtajema, od tod @{u}podèrtano@{uu} -> _podèrtano_
+
+@{u}Uredi/Slog besedila@{uu} » Alternativna barva
+   Preklopi med obarvanim in navadnim slogom oznaèenega odlomka ali naknadno
+vne¹enega besedila. Barva je doloèena v nastavitvah za @{"Branje" link "CO04" 0}. V prene¹enem
+sporoèilu je besedilo v obarvanem slogu upodobljeno z ograjama, od tod
+@{fg fill}obarvano@{fg text} -> #obarvano#
+
+@{u}Uredi/Loèniki@{uu}  » Tanek @{i}ali@{ui} Debel
+   Na trenutno mesto kurzorja vstavi loènik. To program naredi tako, da vstavi
+dodatno vrstico, ki vsebuje <sb> ali <tsb>. YAM in ostali po¹tni programi (ki
+uporabljajo MUI) ta niz znakov obravnavajo kot loènik.
+
+@{u}Uredi/Ikone obèutkov@{uu} » Sreèen | Ravnodu¹en | ®alosten/jezen | Ironièen
+    Na trenutno mesto kurzorja vstavi 'sme¹kota'. Sme¹koti izra¾ajo va¹a obèutja
+o temi in nadoknadijo izgubo informacij, ko se namesto z govorom izra¾ate s
+tipkanjem (poglejte tudi v opis za @{"E-po¹tno Netiquette" link "NETI" 0}).
+
+@{u}Uredi/Tipkaj in èrkuj@{uu}
+   Samodejno vkljuèi ali izkljuèi èrkovanje. Èrkovanje je funkcija razreda
+Text-editor in mora biti nastavljeno v nastavitvah za @{"MUI" link "MAM5" 0}. Za delovanje
+potrebuje zunanji program kot npr. AlphaSpell.
+
+Ko vtipkate besedo, ki je v slovarju ni, bo zaslon zabliskal (èe ste v
+Workbenchu v nastavitvah za zvok doloèili predvajanje zvokov pri napakah, boste
+sli¹ali tudi zvoèni znak). Pritisnite tipko <Help> in zagledali boste seznam
+predlogov za pravilno èrkovanje.
+@endnode
+
+@node "WRM3" "Pisalno okno - meni Priloge"
+@toc "WR_W"
+@{b}@{u}Pisalno okno - MENI PRILOGE@{ub}@{uu}
+
+@{u}Priloge/Dodaj datoteko...@{uu}
+   Ustreza gumbu [Dodaj datoteko] na poli @{"Priloge" link "WR01" 0}.
+
+@{u}Priloge/Dodaj vsebino odlo¾i¹èa@{uu}
+   Doda vsebino odlo¾i¹èa kot prilogo va¹emu sporoèilu, tako da lahko enostavno
+vkljuèite dokumente drugih aplikacij.
+
+@{u}Priloge/Dodaj kljuè za PGP@{uu}
+   To mo¾nost uporabite za prilo¾itev va¹ega @{"javnega kljuèa PGP" link "PGP" 0} sporoèilu.
+Prejemnik le-tega lahko doda v svoj "¹op kljuèev" in v bodoèe vam bo mogel
+poslati sporoèila, ¹ifrirana po sistemu PGP.
+@endnode
+
+@node "EDIT" "Lastnosti urejevalnika"
+                             @{b}@{u}LASTNI UREJEVALNIK@{ub}@{uu}
+
+YAM uporablja uèinkovit razred MUI @{fg shine}TextEditor.mcc@{fg text}. Veliko doloèil uporabe
+urejevalnika, kot npr. vezave tipk, èrkovanje ali pisave, lahko spremenite na
+poli 'TextEditor' nastavitev @{"MUI" link "MAM4" 0}. Tu je naveden seznam pomembnih ¾e doloèenih
+privzetih vezav, ki jih lahko naknadno spremenite:
+
+ <Control-Gor>        pojdi na zaèetek besedila  
+ <Control-Dol>        pojdi na konec besedila   
+ <Control-Levo>       pojdi na zaèetek vrstice   
+ <Control-Desno>      pojdi na konec vrstice    
+ <Alt-Gor>            prej¹nja stran
+ <Alt-Dol>            naslednja stran
+ <Alt-Levo>           prej¹nja beseda
+ <Alt-Desno>          naslednja beseda
+ <RAmiga-x>           izre¾i
+ <RAmiga-c>           kopiraj
+ <RAmiga-v>           prilepi
+ <RAmiga-z>           razveljavi
+ <RAmiga-RShift-z>    uveljavi
+ <Help>               predlagaj besedo
+ <Del>                izbri¹i znak
+ <Shift-Backspace>    izbri¹i do zaèetka vrstice
+ <Shift-Del>          izbri¹i do konca vrstice
+ <Alt-Backspace>      izbri¹i do zaèetka besede
+ <Alt-Del>            izbri¹i do konca besede
+ <Alt-Tab>            zapusti urejevalnik
+
+Domaèo stran razreda TextEditor lahko najdete na spletnem naslovu
+http://www.DIKU.dk/students/duff/texteditor/
+@endnode
+
+@node "DI_W" "Slovar"
+                                  @{b}@{u}SLOVAR@{ub}@{uu}
+
+YAMov slovar predstavlja mesto za zbiranje odlomkov besedila, ki jih pogosto
+uporabljate, npr. predloge za pisma, pozdravna rekla ali pogosto zastavljena
+vpra¹anja. Odlomki so lahko poljubno dolgi in se lahko raztezajo preko veè
+vrstic. Z izbiro menijskega elementa 'Uredi/Slovar' ali pritiska na kombinacijo
+tipk <RAmiga-D> lahko skoèite iz @{"lastnega urejevalnika" link "EDIT" 0} v slovar neposredno.
+Vsako geslo ima ime (@{i}npr.@{ui} "iv" za "Iskreno va¹"), ki ga vidite v levem delu
+okna. Kliknite na ime in v desnem delu okna boste lahko uredili vpis. Dvoklik na
+ime prilepi odlomek besedila na trenutni polo¾aj kurzorja in zapre okno.
+
+@{b}@{u}Funkcije gumbov@{ub}@{uu}:
+
+@{b}[Nova]@{ub}
+   Vknji¾i nov vpis v slovar.
+
+@{b}[Dodaj izbiro]@{ub}
+   V slovarju ustvari nov vpis z besedilom, ki je trenutno oznaèeno v
+urejevalniku.
+
+@{b}[Izbri¹i]@{ub}
+   Izbri¹e izbrani vpis iz slovarja.
+
+@{b}[Prilepi]@{ub}
+   Prilepi oznaèen vpis na trenutni polo¾aj kurzorja v urejevalniku.
+@endnode
+
+@node "RE_W" "Bralno okno"
+                               @{b}@{u}BRANJE SPOROÈIL@{ub}@{uu}
+
+Va¹a odloèitev za branje sporoèila vodi do tega okna. Èe ste v nastavitvah za
+@{"Branje" link "CO04" 0} omogoèili veè oken, potem imate hkrati lahko odprta najveè ¹tiri okna.
+Okno izgleda podobno kot tale shema:
+
+  Menijska vrstica
+  @{"Sporoèilo" link "REM1" 0}  @{"Navigacija" link "REM2" 0}  @{"PGP" link "REM3" 0}  @{"Nastavitve" link "REM4" 0}
+  __________________________________________________   ________
+ |                 @{"orodna vrstica" link "RE_B" 0}                  |  | @{"stanje" link "MA0S" 0}|
+ |__________________________________________________| |________|
+  _____________________________________________________________
+ |                                                             |
+ |                      Glava sporoèila                        |
+ |_____________________________________________________________| Tu lahko
+  _____________________________________________________________ <--
+ |                                                             | kliknete in
+ |                                                             | povleèete
+ |                                                             | loènik
+ |                      Telo sporoèila                         |
+ |                                                             |
+ |                                                             |
+ |_____________________________________________________________|
+
+@{u}Stanje sporoèila@{uu}
+   V zgornjem desnem kotu je majhno polje, v katerem se pojavljajo ikone za
+prikaz @{"stanja" link "MA0S" 0} sporoèila (novo, prebrano, itd.).
+
+@{u}Glava sporoèila@{uu}
+   Kolièina informacij prikazanih v seznamu vrstic @{"glave" link "HEAD" 0} izbranega sporoèila je
+doloèena v @{"nastavitvah" link "CO04" 0}, vendar jo lahko (zaèasno) spremenite z uporabo menija
+@{"Nastavitve" link "REM4" 0}. Èe ¾elite prekopirati vsebino vrstic na odlo¾i¹èe, pritisnite
+mi¹kin gumb in z vleèenjem oznaèite ¾eljene vrstice. Kopiranje se zaène
+samodejno, oznaèitev vrstic pa izgine.
+
+@{u}Telo sporoèila@{uu}
+   V najveèjem polju je prikazano telo sporoèila. Vidno je le besedilo; prikaz
+slik in predvajanje zvokov izvedete z uporabo @{"zunanjih programov" link "CO04" 0}. Premikanju
+po sporoèilu so namenjene iste bli¾njiène tipke kot v @{"lastnemu urejevalniku" link "EDIT" 0}.
+Dodatni tipki sta preslednica - skok za eno stran naprej, in  <backspace> - skok
+za eno stran nazaj. Da bi prekopirali del besedila na odlo¾i¹èe, oznaèite
+besedilo s klikom in vleèenjem mi¹ke. Po samodejnem kopiranju oznaèitev izgine.
+Z dvoklikom na e-po¹tni naslov odprete novo 'Pisalno okno' in prilepite naslov
+v vrstico 'To'. Dvoklik na URL, bodisi http:// bodisi ftp://, po¾ene makro,
+doloèen v nastavitvah @{"Skripti" link "CO13" 0}, z URLjem kot parametrom (èe je name¹èena
+knji¾nica openurl.library, bo uporabljena namesto makra). Na ta naèin lahko brez
+te¾av v va¹ brskalnik kopirate spletne naslove.
+@endnode
+
+@node "RE_B" "Bralno okno - Gumbi"
+@toc "RE_W"
+@{b}@{u}Bralno okno - ORODNA VRSTICA@{ub}@{uu}
+
+  ____ ____ ____ ____   ____ ____ ____   ____ ____ ____ ____
+ |  1 |  2 |  3 |  4 | |  5 |  6 |  7 | |  8 |  9 | 10 | 11 |
+ |____|____|____|____| |____|____|____| |____|____|____|____|
+
+      @{u}Gumb@{uu}        @{u}Bli¾njièna tipka@{uu}   @{u}Pripadajoèi menijski element...@{uu}
+
+  1.  [Prej¹nje]      P,<levo>       @{"Navigacija/Prej¹nje sporoèilo" link "REM2" 0}
+  2.  [Naslednje]     N,<desno>      @{"Navigacija/Naslednje sporoèilo" link "REM2" 0}
+  3.  [PrejNit]       I              @{"Navigacija/Prej¹nje sporoèilo v niti" link "REM2" 0}
+  4.  [NaslNit]       T              @{"Navigacija/Naslednje sporoèilo v niti" link "REM2" 0}
+
+  5.  [Prika¾i]       R              @{"Sporoèilo/Priloge/Prika¾¡..." link "REM1" 0}
+  6.  [Shrani]        S              @{"Sporoèilo/Shrani..." link "REM1" 0}
+  7.  [Natisni]       A              @{"Sporoèilo/Natisni..." link "REM1" 0}
+
+  8.  [Izbri¹i]       Z,<del>        @{"Sporoèilo/Izbri¹i" link "REM1" 0}
+  9.  [Premakni]      M              @{"Sporoèilo/Premakni..." link "REM1" 0}
+ 10.  [Odgovori]      O              @{"Sporoèilo/Odgovori..." link "REM1" 0}
+ 11.  [Posreduj]      E              @{"Sporoèilo/Posreduj..." link "REM1" 0}
+@endnode
+
+@node "REM1" "Bralno okno - meni Sporoèilo"
+@toc "RE_W"
+@{b}@{u}Bralno okno - MENI SPOROÈILO@{ub}@{uu}
+
+@{u}Sporoèilo/Uredi@{uu}
+   Nalo¾i trenutno izbrano sporoèilo v urejevalnik.
+
+@{u}Sporoèilo/Premakni...@{uu}
+   Premakne trenutno izbrano sporoèilo v drugo mapo.
+
+@{u}Sporoèilo/Prekopiraj...@{uu}
+   V drugi mapi ustvari kopijo trenutno izbranega sporoèila. Z izjemo imena
+datoteke je kopija istovetna izvirniku.
+
+@{u}Sporoèilo/Izbri¹i@{uu}
+   Izbri¹e trenutno izbrano sporoèilo in v bralno okno nalo¾i naslednje. Èe
+mo¾nost 'Takoj odstrani sporoèila' (v nastavitvah @{"Razno" link "CO14" 0}) ni izbrana, bo
+sporoèilo v resnici premaknjeno v mapo "Izbrisana", iz katere ga lahko ¹e vedno
+obnovite. Bli¾njièna tipka je tipka <Del>, kombinacija tipk <Shift-Del> pa
+izvede takoj¹nji (nepovratni) izbris neglede na nastavitvena doloèila.
+
+@{u}Sporoèilo/Natisni...@{uu}
+   Po¹lje sporoèilo ali njegov del tiskalniku. Pojavi se zahtevek z izbiro med
+tiskanjem sporoèila v izvirni obliki brez dekodiranja (v surovem formatu),
+tiskanjem dekodiranega besedila tako, kot je prikazano, in pa tiskanjem
+prilo¾enega besedila. Pomnite: dvoji¹kih podatkov kot so npr. slike ne morete
+natisniti; za to uporabite zmo¾nosti tiskanja ustreznega @{"ogledovalnika MIME" link "CO11" 0}.
+
+@{u}Sporoèilo/Shrani...@{uu}
+   Shrani trenutno izbrano sporoèilo ali njegov del na va¹ trdi disk, disketo,
+itd. Tudi tu se pojavi zahtevek z veè mo¾nostmi: shranjevanjem v surovem
+formatu, shranjevanjem dekodiranega besedila (tako kot je prikazano v bralnem
+oknu) in shranjevanjem prilo¾ene datoteke.
+
+@{u}Sporoèilo/Priloge@{uu}  » Prika¾i...
+   Z uporabo tega menijskega elementa si ogledate trenutno izbrano sporoèilo ali
+njegov del z ogledovalnikom MIME, ki je doloèen v nastavitvah za @{"MIME" link "CO11" 0}.  Izberete
+lahko prikaz v surovem formatu (za preizkus na napake) ali prikaz ene od
+prilo¾enih datotek. Èe se ne zgodi niè, preverite nastavitve za ogledovalnike
+MIME.
+
+@{u}Sporoèilo/Priloge@{uu}  » Shrani vse...
+   Shrani vse prilo¾ene datoteke trenutno izbranega sporoèila v predal po va¹i
+izbiri.
+
+@{u}Sporoèilo/Priloge@{uu}  » Odstrani
+   Izbri¹e vse prilo¾ene datoteke v trenutno izbranem sporoèilu in tako prihrani
+prostor na trdem disku. Pomnite: izbrisane datoteke niso premaknjene v mapo
+'Izbrisana', zato se predhodno preprièajte, èe jih zares ¾elite izbrisati.
+Funkcija je uporabna le za sporoèila v  @{"formatu MIME" link "MIME" 0}. Na konec sporoèila
+je dodan zaznamek o izbrisanih datotekah.
+
+@{u}Sporoèilo/Novo@{uu}
+   Odpre @{"pisalno okno" link "WR_W" 0}, v katerem sestavljate novo sporoèilo.
+
+@{u}Sporoèilo/Odgovori...@{uu}
+   Ta element uporabite za odgovor na trenutno izbrano sporoèilo. Vrstici z
+zadevo in prejemnikom sta izpolnjeni samodejno, prvotno sporoèilo pa je
+citirano.
+
+@{u}Sporoèilo/Posreduj...@{uu}
+   To izberite takrat, ko ¾elite posredovati vsebino sporoèila ¹e kak¹nemu
+prejemniku. Zadeva in telo sporoèila sta prekopirani samodejno in tvorita novo
+glavo sporoèila. Na zaèetek sporoèila je vstavljeno besedilo za posredovanje, ki
+je doloèeno v nastavitvah za @{"Odgovarjanje" link "CO06" 0}.
+
+@{u}Sporoèilo/Odbij...@{uu}
+   Izbira je uporabna takrat, ko hoèete sporoèilo v izvirni obliki poslati
+drugemu prejemniku. Edini spremembi sta drugaèna vrstica To, ki jo vnesete sami,
+in dodaten par vrstic Resent (na osnovi prvotne vrstice To), ki ju doda YAM.  
+Besedilo za posredovana sporoèila (kot je doloèeno v nastavitvah) tu ni
+uporabljeno.
+
+M@{u}Sporoèilo/Shrani naslov...@{uu}
+   YAM doda naslov po¹iljatelja (ali prejemnika, odvisno od vrste mape) trenutno
+izbranega sporoèila v va¹ @{"Imenik naslovov" link "AB_W" 0}. Èe je to sporoèilo z veè prejemniki,
+se lahko odloèite za snovanje seznama za razpo¹iljanje.
+
+M@{u}Sporoèilo/Spremeni zadevo...@{uu}
+   Omogoèa vam spremembo teme trenutno izbranega sporoèila. Na ta naèin lahko
+popravite neinformativno vrstico 'Zadeva', ki se pojavi po prejemu sporoèila.
+Prvotna zadeva je shranjena v vrstico glave X-Original-Subject, kar vam omogoèa
+sledenje rdeèi niti razprave.
+@endnode
+
+@node "REM2" "Bralno okno - meni Navigacija"
+@toc "RE_W"
+@{b}@{u}Bralno okno - MENI NAVIGACIJA@{ub}@{uu}
+
+@{u}Navigacija/Naslednje sporoèilo@{uu}
+   Izbira tega menijskega elementa prika¾e naslednje sporoèilo @{i}tj.@{ui} tisto, ki je v
+glavnem oknu prikazano tik pod trenutnim. Bli¾njièna tipka: <kurzor desno>
+
+@{u}Navigacija/Prej¹nje sporoèilo@{uu}
+   Ta izbira prika¾e pre¹nje sporoèilo @{i}tj.@{ui} tisto, ki je v glavnem oknu prikazano
+tik nad trenutnim. Bli¾njièna tipka: <kurzor levo>
+
+@{u}Navigacija/Naslednje neprebrano sporoèilo@{uu}
+   Povzroèi prikaz naslednjega neprebranega sporoèila @{i}tj.@{ui} tistega, ki je v
+glavnem oknu prikazano pod trenutnim. Bli¾njièna kombinacija tipk:
+<Shift-kurzor desno>
+
+@{u}Navigacija/Prej¹nje neprebrano sporoèilo@{uu}
+   Prika¾e prej¹nje neprebrano sporoèilo @{i}tj.@{ui} tisto, ki je v glavnem oknu
+prikazano nad trenutnim. Bli¾njièna kombinacija tipk: <Shift-kurzor levo>
+
+@{u}Navigacija/Naslednje sporoèilo v niti@{uu}
+   Izbira prika¾e sporoèilo, ki je odgovor trenutno izbranemu. To vam omogoèa
+spremljanje pogovora med vami in drugo osebo ne glede na to, katera druga
+sporoèila so ¹e prisotna v mapah. Pomnite: da bi poiskal odgovor v drugi mapi,
+mora YAM nalo¾iti kazala vseh map, kar lahko vzame nekaj èasa. YAM primerja
+vrstico @{"message-ID" link "HEAD" 0} glave trenutno izbranega sporoèila z vrstico In-Reply-To
+glave vseh drugih sporoèil. Èe je iskanje neuspe¹no bo zaslon zabliskal.
+
+@{u}Navigacija/Prej¹nje sporoèilo v niti@{uu}
+   Nalo¾i sporoèilo, kateremu trenutno izbrano predstavlja odgovor (poglejte v
+opis prej¹njega menijskega elementa!).
+@endnode
+
+@node "REM3" "Bralno okno - meni PGP"
+@toc "RE_W"
+@{b}@{u}Bralno okno - MENI PGP@{ub}@{uu}
+
+@{u}PGP/Izvleci javni kljuè@{uu}
+   Èe je po¹iljatelj trenutnega sporoèila prilo¾il svoj @{"javni kljuè PGP" link "PGP" 0}, lahko
+ta kljuè dodate svojemu "¹opu kljuèev" in ga tako pripravite za kasnej¹o
+uporabo pri prejemanju ¹ifriranih sporoèil.
+
+@{u}PGP/Preveri podpis PGP@{uu}
+   Preveri podpis trenutno izbranega sporoèila. Preverjanje deluje samo pri
+sporoèilih, podpisanih po sistemu PGP, in slu¾i zagotavljanju, da se v njegovo
+vsebino ni vme¹al nihèe ter da res prihaja od navedenega po¹iljatelja.
+
+@{u}PGP/Shrani de¹ifrirano sporoèilo@{uu}
+   Iz varnostnih razlogov je vsako sporoèilo, @{"¹ifrirano po sistemu PGP" link "PGP" 0},
+shranjeno na trdi disk v ¹ifrirani obliki. Kljuè morate uporabiti pri vsakem
+ponovnem branju. Z izbiro tega menijskega elementa pa dose¾ete, da bo sporoèilo
+prekrilo ¹ifrirani zapis in shranjeno na trdi disk v de¹ifrirani obliki.
+@endnode
+
+@node "REM4" "Bralno okno - meni Nastavitve"
+@toc "RE_W"
+@{b}@{u}Bralno okno - MENI NASTAVITVE@{ub}@{uu}
+
+Te nastavitve se nana¹ajo samo na izbrano okno; pri odprtju novega bralnega okna
+bodo spet uporabljene nastavitve za @{"Branje" link "CO04" 0}.
+
+@{u}Nastavitve/Glava   Brez glave@{uu}|@{u}Kratka glava@{uu}|@{u}Polna glava@{uu}
+   S tem nastavite, kolik¹en del informacij iz pisemske glave bo prikazan v
+bralnem oknu. Izbira vpliva le na trenutno sejo; pri odprtju novega bralnega
+okna bodo spet uporabljene @{"Bralne nastavitve" link "CO04" 0}.
+
+@{u}Nastavitve/Podatki o po¹iljatelju@{uu}
+    @{u}Brez podatkov o po¹iljatelju@{uu}|@{u}Zgolj polja s podatki@{uu}|@{u}Podatki in slika@{uu}
+   Doloèa kolik¹en del informacij o po¹iljatelju, shranjenih v va¹em
+@{"imeniku naslovov" link "AB_W" 0}, bo prikazan. Izbira vpliva le na trenutno sejo; pri
+odprtju novega bralnega okna bodo spet uporabljene @{"Bralne nastavitve" link "CO04" 0}.
+
+@{u}Nastavitve/Prelomi glavo@{uu}
+   Preklopi med prikazom dolge glave v eni vrstici in njenim prelomom na dve ali
+veè vrstic. V prvem primeru boste morali za ogled vseh podatkov uporabiti
+drsnik.
+
+@{u}Nastavitve/Slogi besedila@{uu}
+   Za oznaèitev podèrtanega, po¹evnega, krepkega in barvastega besedila
+uporablja YAM znake _ / * in #. V nekaterih posebnih dokumentih (npr. izvorna
+koda) lahko to zaradi prepovedi nekaterih znakov predstavlja te¾avo. V ta namen
+je ta mo¾nost, ki omogoèa vklop ali izklop upodabljanja slogov besedila.
+@endnode
+
+@node "TR_W" "Prenos po¹te"
+                                @{b}@{u}PRENOS PO©TE@{ub}@{uu}
+
+Pri prevzemanju, po¹iljanju, uva¾anju ali izva¾anju po¹te odpre YAM okno s
+stanjem prenosa v katerem lahko vplivate na omenjene postopke.
+
+Èe je predizbira vklopljena, YAM prika¾e seznam sporoèil, ki so pripravljena na
+uva¾anje oz. prevzem. Sporoèila, dalj¹a od prednastavljene najveèje dopustne
+dol¾ine, so poudarjena z belo barvo. Ob robu vrstice sporoèila se lahko pojavita
+dve ikoni, ki zaznamujeta njegovo stanje. Ko¹ za odpadke pomeni, da bodo
+sporoèila s stre¾nika izbrisana. Disketa nakazuje, da bo sporoèilo prevzeto.
+Mo¾nih ackij je veè:
+
+   @{fg shine}Ko¹ za odpadke   Disketa  Akcija@{fg text}
+         da           da     Sporoèilo bo prevzeto in potem izbrisano s
+                             stre¾nika.
+         da           ne     Sporoèilo bo izbrisano takoj! To je priporoèena
+                             izbira za nenaroèeno ogla¹evalno e-po¹to.
+         ne           ne     Sporoèilo ne bo prevzeto, paè pa bo ostalo na
+                             stre¾niku.
+         ne           da     Sporoèilo bo prevzeto, toda ne izbrisano.
+
+@{b}Pomeni gumbov@{ub}:
+
+@{u}Vsa@{uu}
+   Izbere vsa sporoèila v seznamu in jih s tem doloèi za spremembo stanja. Gumb
+nima vpliva na izbiro akcij.
+
+@{u}Nobeno@{uu}
+   Poèisti trenutni izbor. Gumb nima vpliva na va¹o izbiro akcij.
+
+@{u}Prevzemi in izbri¹i@{uu}
+   Prika¾e ikoni z disketo in ko¹em za odpadke za vsa izbrana sporoèila ->
+prevzemi in izbri¹i s stre¾nika.
+
+@{u}Samo prevzemi@{uu}
+   Prika¾e ikono  z disketo in skrije ikono s ko¹em za odpadke za vsa izbrana
+sporoèila -> prevzemi, toda ohrani na stre¾niku.
+
+@{u}Pusti@{uu}
+   Skrije ikoni z disketo in ko¹em za odpadke za vsa izbrana sporoèila -> ne
+naredi niè.
+
+@{u}Samo izbri¹i@{uu}
+   Skrije ikono z disketo in prika¾e ikono s ko¹em za odpadke za vsa izbrana
+sporoèila -> ne prevzemi, toda kljub temu izbri¹i s stre¾nika.
+
+@{u}Zaustavi/Nadaljuj@{uu}
+   Dokler je viden predizbirni seznam YAM bere podrobnosti posameznih sporoèil
+- s stre¾nika prena¹a njihove glave. Klik na gumb [Zaustavi] ta postopek zaèasno
+ustavi.
+
+@{u}Zaèni@{uu}
+   Zakljuèi z izbiranjem in priène po¹tni prenos.
+
+@{u}Prekini@{uu}
+   Takoj prekine po¹tni prenos.
+
+
+Na plo¹èi '@{b}Stanje@{ub}' lahko vidite, koliko kilobajtov in koliko sporoèil je ¾e
+bilo prene¹enih in s kak¹no hitrostjo ter koliko èasa bo ¹e trajal prenos.
+Hitrost prenosa je izra¾ena v znakih na sekundo. Ne bodite razoèarani, èe
+prenos ne dosega hitrosti modema. Kraj¹e sporoèilo terja relativno veè èasa za
+sporazumevanje med YAMom in stre¾nikom, kar pri izraèunu hitrosti ni upo¹tevano.
+Dejstvo preverite sami tako, da si po¹ljete sporoèilo z veliko prilogo (@{i}npr.@{ui}
+100kb).
+
+Pritisk gumba @{b}[Prekini]@{ub} izsili predèasen konec prenosa. Ukaz deluje le, èe ima
+YAM nadzor nad prenosom. Èe YAM zaradi nedejavnosti stre¾nika zmrzne, poèakajte
+na èasovni iztek ali pa prekinite povezavo v programu za TCP/IP.
+@endnode
+
+@node "US_W" "Uporabniki"
+                          @{b}@{u}VZDR®EVANJE UPORABNIKOV@{ub}@{uu}
+
+YAM bo zadovoljil potrebe ¹e tako velike dru¾ine, saj je sposoben upravljati z
+do 16 uporabniki, od katerih ima vsak svoje mape in nastavitvena doloèila. Pri
+zagonu YAMa se predstavite in program takoj priklièe va¹o osebno ureditev. S tem
+postanejo programi, kot je npr. MultiYAM, odveè. Izbira menijskega elementa
+Nastavitve/Uporabniki vodi do okna Uporabniki.
+
+@{u}Uporabni¹ko ime@{uu}
+   To je uporabnikovo ime. Prikazano je v pozdravnem pogovornem oknu pri zagonu
+programa, seveda èe je edini doloèeni uporabnik.
+ @{i}Primer:@{ui} Janez Kranjski
+
+@{u}Geslo@{uu}
+   Èe izpolnite to polje se bo pri zagonu programa pojavil zahtevek za vnos
+gesla.
+
+@{u}Po¹tni predal@{uu}
+   To je osebni predal za vse posebne uporabnikove datoteke, kot so mape in
+nastavitvena doloèila. Oèitno je, da ta predal ne sme biti isti kot predal
+kateregakoli drugega uporabnika.
+ @{i}Primer:@{ui} YAM:janez
+
+[] @{u}Uporabi skupni imenik naslovov@{uu}
+   To mo¾nost obkljukajte, èe uporabnik ne ¾eli uporabljati lastnega imenika
+naslovov. To pomeni, da ga bo delil z ostalimi uporabniki; datoteka bo shranjena
+v izhodi¹èni predal programa in ne v uporabnikov osebni predal.
+
+[] @{u}Uporabi skupni slovar@{uu}
+   Vklop te mo¾nosti pomeni, da uporabnik ne ¾eli vzdr¾evati loèenega slovarja,
+paè pa ga je pripravljen deliti z ostalimi uporabniki. Datoteka je shranjena v
+izhodi¹ènem programskem predalu.
+
+[] @{u}Posebne pravice nadzornika@{uu}
+   Z vklopom te mo¾nosti uporabniku dovolite ustvarjanje ali odstranjevanje
+drugih uporabnikov.
+
+[] @{u}Prekopiraj nastavitve trenutnega uporabnika@{uu}
+Pri dodajanju novega uporabnika izberite to mo¾nost, èe ¾elite, da bodo zanj
+doloèene trenutne nastavitve - prekopirane datoteke v njegov osebni predal. S
+tem mu prihranite dolgotrajno doloèanje nastavitev od zaèetka. 
+
+@{b}[Dodaj uporabnika]@{ub}         V seznam dodaj novega uporabnika.
+
+@{b}[Izbri¹i uporabnika]@{ub}       Izbri¹i izbranega uporabnika iz seznama.
+@endnode
+
+@node "Drag" "Povleci in Spusti"
+                             @{b}@{u}POVLECI IN SPUSTI@{ub}@{uu}
+
+YAM omogoèa uporabo na naèin 'povleci in spusti', tako kot veèina sodobnih
+programov. To pomeni, da s pritiskom na levi mi¹kinim gumb doloèen predmet lahko
+zgrabite, ga povleèete in z izpustitvijo gumba odlo¾ite na drug predmet. V YAMu
+lahko na naèin 'povleci in spusti' izvedete naslednje operacije:
+
+@{b}Izvor                 Ponor                 Operacija@{ub}
+Seznam sporoèil       Polje 'Prejemnik'     Izvleci prejemnika iz sporoèila
+Seznam sporoèil       Seznam prilog         Dodaj sporoèilo kot prilogo
+Seznam sporoèil       Seznam map            Premakni sporoèilo
+Seznam map            Seznam map            Preuredi mape
+Seznam prilog         Seznam prilog         Preuredi priloge
+Imenik naslovov       Imenik naslovov       Preuredi vpise v imenik
+Imenik naslovov       Polje 'Prejemnik'     Izvleci prejemnika iz imen. naslovov
+Imenik naslovov       Okno urejevalnika     Vstavi naslov v pismo
+Imenik naslovov       Seznam razpo¹iljanja  Vèlani osebo v seznam razpo¹iljanja
+Seznam razpo¹iljanja  Seznam razpo¹iljanja  Preuredi èlane seznama razpo¹iljanja
+Datoteka z besedilom  Okno urejevalnika     Vstavi datoteko kot pismo
+Datoteka z besedilom  Seznam prilog         Dodaj datoteko kot prilogo
+Datoteka z besedilom  Ikona stanja          Uporabi datoteko kot besedilo novega
+                                            sporoèila
+Dvoji¹ka datoteka     Ikona stanja          Uporabi datoteko kot prilogo novega
+                                            sporoèila
+Dvoji¹ka datoteka     Okno urejevalnika     Dodaj datoteko kot prilogo
+Dvoji¹ka datoteka     Seznam prilog         Dodaj datoteko kot prilogo
+@endnode
+
+@node "OPTI" "Zagonske mo¾nosti"
+                                 @{b}@{u}ZAGONSKE MO®NOSTI@{ub}@{uu}
+
+YAM podpira nekaj posebnih zagonskih mo¾nosti, ki jih lahko uporabite v lupini
+ali v Workbenchu (preko lastnosti).
+
+@{b}USER=ime uporabnika@{ub}
+   Doloèi trenutnega uporabnika YAMa. V primeru, da YAM uporablja veè oseb,
+boste na ta naèin zaob¹li postopek prijave pri zagonu.
+
+@{b}PASSWORD=geslo@{ub}
+   To je geslo izbranega uporabnika (poglejte v prej¹nji odstavek). Namenjeno
+je izpustitvi zahtevka za vnos gesla pri zagonu programa.
+
+@{b}MAILDIR=pot@{ub}
+   Doloèi osnovni predal za mape in nastavitvene datoteke. V YAMu 1.3.x je ta
+mo¾nost slu¾ila veèuporabni¹ki podpori. YAM 2.0 doloèi osnovni predal za vsakega
+uporabnika posebej v uporabni¹kih nastavitvah.
+
+@{b}PREFSFILE=ime datoteke@{ub}
+   Nastavitvena datoteka, ki jo ¾elite uporabljati. Privzeto ime je
+<MAILDIR>/.config
+
+@{b}HIDE@{ub}
+   Za¾ene YAM v ikoniziranem naèinu.
+
+@{b}NOCHECK@{ub}
+   Izpusti mo¾nost 'Po¹lji/Prejmi po¹to ob zagonu' in 'Preveri rojstne dneve'
+(to je uporabno kadar poganjate YAM iz spletnega brskalnika).
+
+@{b}DEBUG@{ub}
+   Izbira te mo¾nosti povzroèi, da se protokolarni pogovori med YAMom in po¹tnim
+stre¾nikom izpisujejo v okno lupine. Je nepogre¹ljivo orodje v primeru
+spodletelega povezovanja.
+
+@{b}MAILTO=naslov@{ub}
+   Ob zagonu ustvari novo sporoèilo namenjeno navedenemu naslovniku.
+
+@{b}SUBJECT=tema@{ub}
+   Doloèi temo za novo sporoèilo (poglejte v opis za MAILTO).
+
+@{b}LETTER=datoteka z besedilom@{ub}
+   Datoteka z besedilom, ki ga ¾elite poslati (poglejte v opis za MAILTO).
+
+@{b}ATTACH=datoteke@{ub}
+   Novemu sporoèilu prilo¾i eno ali veè datotek (poglejte v opis za MAILTO).
+
+@{i}Primer:@{ui}
+ YAM USER Peter PASSWORD skrivnost HIDE
+ YAM NOCHECK MAILTO mbeck\@access.ch SUBJECT "Poroèilo o hro¹èih"
+     ATTACH ram:razhro¹èi.txt
+@endnode
+
+@node "REXX" "Vmesnik za ARexx"
+                               @{b}@{u}VMESNIK ZA AREXX@{ub}@{uu}
+
+S pomoèjo skriptov za ARexx lahko dodajate YAMu nove funkcije ali pa mu naroèite
+naj doloèena opravila izvaja samodejno. YAM nudi @{"zbirko ukazov" link "REXL" 0}, ki jih klièete
+preko vmesnika za ARexx z imenom "YAM".
+
+Obrazlo¾itev sintakse predlog @{"ukazov za ARexx" link "REXL" 0}:
+
+ /A   Parameter je obvezen
+ /K   Parameter mora uvesti kljuèna beseda
+ /N   ©tevilski parameter ali rezultat
+ /M   Parameter ali rezultat je seznam niè ali veè elementov
+
+Bodite pozorni pri podajanju parametrov, ki vsebujejo presledke:
+
+ sub = 'Pozdravljen Svet'
+ 'WRITESUBJECT' sub
+ @{u}ne deluje@{uu}! Napisati bi morali:
+ 'WRITESUBJECT "'sub'"'   ali
+ 'WRITESUBJECT "Pozdravljen Svet"'
+
+Ukazi vraèajo rezultate treh razliènih tipov. Oglejte si tele @{i}primere@{ui} uporabe
+ukaza FOLDERINFO:
+
+@{b}FOLDERINFO@{ub}
+ -> RESULT = "0 Prispela prispela 10 2 4 23030"
+
+@{b}FOLDERINFO VAR fi@{ub}
+ -> fi = "0 Prispela prispela 10 2 4 23030"
+
+@{b}FOLDERINFO STEM fi.@{ub}
+ -> fi.number = 0
+    fi.name = "Prispela"
+    fi.path = "prispela"
+    fi.total = 10
+    fi.new = 2
+    fi.unread = 4
+    fi.size = 23030
+
+©e en primer, ki vrne rezultat tipa /M:
+
+@{b}ADDRFIND STEM found. "Marcel Beck" SEARCHNAME@{ub}
+ -> found.alias.count = 2
+    found.alias.0 = "Mars"
+    found.alias.1 = "mbe"
+
+@{"Seznam vseh ukazov za ARexx" link "REXL" 0}
+@endnode
+
+@node "REXL" "Seznam vseh ukazov za ARexx"
+@toc "REXX"
+                          @{b}@{u}SEZNAM VSEH UKAZOV ZA AREXX@{ub}@{uu}
+
+@{b}ADDRDELETE@{ub}       ALIAS
+   Odstrani vpis iz imenika naslovov. Èe vzdevka ne navedete, bo izbrisan
+trenutni vpis.
+
+@{b}ADDREDIT@{ub}         ALIAS,NAME,EMAIL,PGP,HOMEPAGE,STREET,CITY,COUNTRY,PHONE,
+                 COMMENT,BIRTHDATE/N,IMAGE,MEMBER/M,ADD/S
+   Izpolni polja trenutno izbranega vpisa v imeniku naslovov. ALIAS vam npr.
+   omogoèa, da spremenite vzdevek vpisa. BIRTHDATE je zapis datuma rojstva v
+   obliki DDMMYYYY, npr. 13091969. Èe kljuèno besedo MEMBER uporabite brez
+   stikala ADD, bodo prepisani podatki ¾e obstojeèega vpisa.
+
+@{b}ADDRFIND@{ub}         VAR/K,STEM/K,PATTERN/A,NAMEONLY/S,EMAILONLY/S => ALIAS/M
+   Prei¹èe imenik naslovov za en ali veè vpisov. Za iskanje samo po poljih
+   'Pravo ime' in 'Naslov' uporabite stikali NAMEONLY in EMAILONLY.
+
+@{b}ADDRGOTO@{ub}         ALIAS/A
+   Napravi imeni¹ki vpis, na katerega se nana¹a ALIAS, za trenutni naslov.
+
+@{b}ADDRINFO@{ub}         VAR/K,STEM/K,ALIAS/A => TYPE,NAME,EMAIL,PGP,HOMEPAGE,
+                 STREET,CITY,COUNTRY,PHONE,COMMENT,BIRTHDATE/N,IMAGE,
+                 MEMBERS/M
+   Vrne informacije o vpisu ALIAS v imeniku naslovov. Tip TYPE je P (person,
+   slov. oseba), L (distribution list, slov. seznam razpo¹iljanja) ali G
+   (group, slov. skupina). Zapis datuma rojstva je oblike YYYYMMDD. IMAGE je
+   pot do datoteke z va¹o sliko, MEMBERS vsebuje vse èlane seznama
+   razpo¹iljanja. Pomen ostalih rezultatov je jasen.
+
+@{b}ADDRLOAD@{ub}         FILENAME/A
+   Nalo¾i imenik naslovov iz datoteke z navedenim imenom.
+
+@{b}ADDRNEW@{ub}          VAR/K,STEM/K,TYPE,ALIAS,NAME,EMAIL => ALIAS
+   Ustvari nov vpis v imeniku naslovov in ga vstavi za izbrani vpis. TYPE
+   je G za skupine, L za sezname razpo¹iljanja, privzeta vrednost je vpis
+   osebe. Doloèeno mora biti vsaj eno od polj ALIAS, NAME, EMAIL. Po
+   uspe¹nem vpisovanju bo vrnjen vzdevek osebe ustvarjenega vpisa.
+
+@{b}ADDRRESOLVE@{ub}      VAR/K,STEM/K,ALIAS/A => RECPT/M
+   Pretvori vzdevek ali ime v ustrezen(-ne) e-po¹tni(-e) naslov(-e).
+
+@{b}ADDRSAVE@{ub}         FILENAME
+   Shrani imenik naslovov v datoteko z navedenim imenom. Èe le-tega izpustite,
+   bo uporabljeno trenutno ime.
+
+@{b}APPBUSY@{ub}          VAR/K,STEM/K,TEXT
+   Preklopi YAM v stanje "zaposlen" in v vrstici stanja glavnega okna prika¾e
+   besedilo TEXT. V tem stanju se YAM ne odziva na vhod. Èe je YAM trenutno
+   zaposlen, je vrednost RC postavljena na 1.
+
+@{b}APPNOBUSY@{ub}
+   Zapusti stanje "zaposlen". Èe je YAM ¹e vedno zaposlen, je vrednost RC
+   postavljena na 1.
+
+@{b}FOLDERINFO@{ub}       VAR/K,STEM/K => NUMBER/N,NAME,PATH,TOTAL/N,NEW/N,UNREAD/N,
+                 SIZE/N
+   Vrne informacije o trenutno izbrani mapi. Vrednost NUMBER je notranje
+   ¹tevilo (0=mapa 'Prihajajoèa'), PATH je predal in SIZE skupna velikost v
+   bajtih. TOTAL, NEW in UNREAD so ¹tevila vseh, novih in neprebranih
+   sporoèil.
+
+@{b}GETSELECTED@{ub}      VAR/K,STEM/K => NUM/N/M
+   Ugotovi polo¾aj izbranih sporoèil v trenutni mapi. Sporoèilo na vrhu
+   seznama dobi oznako za polo¾aj 0.
+
+@{b}HELP@{ub}             FILE
+   V oknu lupine izpi¹e seznam podprtih ukazov za ARexx ali pa ga shrani v
+   datoteko FILE.
+
+@{b}HIDE@{ub}
+   Preklopi YAM v ikoniziran naèin.
+
+@{b}INFO@{ub}             VAR/K,STEM/K,ITEM => VALUE
+   Vrne informacije o programu. ITEM sme biti ena od besed TITLE, AUTHOR,
+   COPYRIGHT, DESCRIPTION, VERSION, BASE in SCREEN (poglejte v datoteko
+   MUI.guide).
+
+@{b}ISONLINE@{ub}
+   Zazna, èe je YAM trenutno zaposlen s prejemanjem ali po¹iljanjem po¹te.
+   Èe je temu tako, je vrednost RC postavljena na 1.
+
+@{b}LISTSELECT@{ub}       MODE/A
+   Izbere sporoèila v trenutno izbrani mapi. Mo¾ne vrednosti MODE so:
+   N (nobeno), A (vsa), T (preklopi). Èe je MODE ¹tevilska vrednost, bo
+   sporoèilo s to ¹tevilko dodano k izboru.
+
+@{b}MAILBOUNCE@{ub}      VAR/K,STEM/K => WINDOW/N
+   Odpre novo pisalno okno za odbitje izbranega sporoèila. Vrednost
+   WINDOW je ¹tevilka pravkar odprtega okna.
+
+@{b}MAILCHECK@{ub}       VAR/K,STEM/K,POP/K/N,MANUAL/S => DOWNLOADED/N,
+                 ONSERVER/N,DUPSKIPPED/N,DELETED/N
+   Prevzame novo po¹to. Èe izpustite parameter POP bodo pregledani vsi
+   nastavljeni stre¾niki za POP3.  Èe ¾elite uporabniku omogoèiti delo s
+   programom (predizbiro sporoèil, itd.), uporabite stikalo MANUAL.
+
+@{b}MAILCOPY@{ub}         FOLDER/A
+   Prekopira izbrano(-a) sporoèilo(-a) v drugo mapo. FOLDER je lahko ¹tevilka
+   ali ime ciljne mape.
+
+@{b}MAILDELETE@{ub}       ATONCE/S,FORCE/S
+   Izbri¹e izbrano(-a) sporoèilo(-a). Stikalo ATONCE povzroèi, da se sporoèila
+   dejansko izbri¹ejo takoj (niso preme¹èena v mapo 'Izbrisana'). Stikalo
+   FORCE preskoèi potrditveni zahtevek.    
+
+@{b}MAILEDIT@{ub}         VAR/K,STEM/K => WINDOW/N
+   V novem pisalnem oknu omogoèi urejanje izbranega sporoèila. Vrednost
+   WINDOW je ¹tevilka pravkar odprtega okna.
+
+@{b}MAILEXPORT@{ub}       FILENAME/A,ALL/S,APPEND/S
+   Izvozi izbrano(-a) sporoèilo(-a) v datoteko. Uporaba stikala ALL povzroèi
+   izvoz vseh sporoèil mape.
+
+@{b}MAILFILTER@{ub}       VAR/K,STEM/K,ALL/S => CHECKED/N,BOUNCED/N,
+                 FORWARDED/N,REPLIED/N,EXECUTED/N,MOVED/N,DELETED/N
+   Filtrira sporoèila trenutno izbrane mape. Èe stikala ALL ne uporabite, bodo
+   filtrirana samo nova sporoèila.
+
+@{b}MAILFORWARD@{ub}      VAR/K,STEM/K => WINDOW/N
+   Odpre novo pisalno okno za posredovanje izbranega sporoèila. Vrednost
+   WINDOW je ¹tevilka pravkar odprtega okna.
+
+@{b}MAILIMPORT@{ub}       FILENAME/A,WAIT/S
+   V trenutno izbrano mapo uvozi sporoèila iz datoteke FILENAME. Èe ¾elite
+   uporabniku omogoèiti delo s programom (predizbiro sporoèil), uporabite
+   stikalo WAIT.
+
+@{b}MAILINFO@{ub}         VAR/K,STEM/K,INDEX/N => INDEX/N,STATUS,FROM,TO,REPLYTO,
+                 SUBJECT,FILENAME,SIZE/N,DATE,FLAGS
+   Vrne informacijo o sporoèilu na mestu INDEX v seznamu (ali trenutnem
+   sporoèilu, èe INDEX ni navedeno). STATUS je N,O,U,R,F,S,W,H ali E, FROM
+   vsebuje naslov po¹iljatelja, TO prejemnika, REPLYTO je povratni naslov,
+   besedi SUBJECT in DATE sta oèitni, FILENAME je pot do datoteke sporoèila.
+   SIZE je velikost sporoèila v bajtih; FLAGS je 8-bajtni niz v obliki
+   "MARCS-00" (M=veè prejemnikov, A=priloge, R=poroèilo, C=¹ifrirano,
+   S=podpisano; zadnji dve ¹tevki sta uporabni¹ko doloèeni zastavici - poglejte
+   v opis za SETFLAG).
+
+@{b}MAILMOVE@{ub}         FOLDER/A
+   Premakne izbrano(-a) sporoèilo(-a) v drugo mapo. FOLDER je lahko ¹tevilka
+   ali ime ciljne mape.
+
+@{b}MAILREAD@{ub}         VAR/K,STEM/K,WINDOW/N,QUIET/S => WINDOW/N
+   Nalo¾i izbrano sporoèilo v bralno okno ali, èe je navedena vrednost WINDOW,
+   izbere ¾e odprto bralno okno. Èe ¾elite, da okno ostane nevidno, uporabite
+   stikalo QUIET.
+
+@{b}MAILREPLY@{ub}        VAR/K,STEM/K => WINDOW/N
+   Odpre novo pisalno okno za odgovarjanje na izbrano sporoèilo. Vrednost
+   WINDOW je ¹tevilka pravkar odprtega okna.
+
+@{b}MAILSEND@{ub}         ALL/S
+   Po¹lje vsa ali pa izbrana sporoèila v mapo 'Prihajajoèa'.
+
+@{b}MAILSTATUS@{ub}       STATUS
+   Spremeni stanje izbranih(-ega) sporoèil(-a). Veljavne vrednosti za STATUS
+   so O (prebrano), U (neprebrano), H (zadr¾ano) in W (pripravljeno na
+   odpremo).
+
+@{b}MAILUPDATE@{ub}
+   Posodobi kazalèno datoteko trenutno izbrane mape.
+
+@{b}MAILWRITE@{ub}        VAR/K,STEM/K,WINDOW/N => WINDOW/N
+   Odpre novo pisalno okno ali izbere ¾e odprto (z navedbo WINDOW).
+
+@{b}NEWMAILFILE@{ub}      VAR/K,STEM/K,FOLDER => FILENAME
+   Vrne veljavno, ¹e neuporabljeno ime datoteke za sporoèilo v mapi FOLDER.
+
+@{b}QUIT@{ub}             FORCE/S
+   Zapusti YAM. Za preskok varnostnih zahtevkov uporabite stikalo FORCE.
+
+@{b}READCLOSE@{ub}
+   Zapre izbrano bralno okno.
+
+@{b}READINFO@{ub}         VAR/K,STEM/K => PARTS/N,FILENAME/M,FILETYPE/M,
+                 FILESIZE/N/M,TEMPFILE/M
+   Prebere podrobnosti o prilogah sporoèila v izbranem bralnem oknu.
+
+@{b}READPRINT@{ub}        PART/N
+   Natisne prilogo (ali vidni del sporoèila, èe PART ni navedeno).
+
+@{b}READSAVE@{ub}         PART/N,FILENAME/K,OVERWRITE/S
+   Shrani vse priloge (ali vidni del sporoèila, èe PART ni navedeno) v datoteko.
+
+@{b}REQUEST@{ub}          VAR/K,STEM/K,BODY/A,GADGETS/A => RESULT/N
+   Odpre zahtevek z besedilom BODY in gumbi GADGET. ©tevilka izbranega gumba
+   bo vrnjena kot RESULT (0=desni, 1=levi, 2=drugi z leve, itd.). Doloèite
+   lahko toliko gumbov, kolikor vas je volja, npr. "Da|Morda|Ne|Preklièi".
+
+@{b}REQUESTSTRING@{ub}    VAR/K,STEM/K,BODY/A,STRING/K,SECRET/S => STRING
+   Odpre zahtevek z besedilom BODY in poljem za vnos niza znakov; privzeti
+   vne¹eni niz je STRING, uporabite lahko stikalo SECRET za varen vnos tajnih
+   podatkov, kot so gesla. Èe kliknete na gumb "Preklièi", je vrnitvena koda RC
+   postavljena na 1.
+
+@{b}REQUESTFOLDER@{ub}    VAR/K,STEM/K,BODY/A,EXCLUDEACTIVE/S => FOLDER
+   Odpre zahtevek z besedilom BODY in seznamom map; èe trenutno izbrane
+   mape noèete prikazati, uporabite stikalo EXCLUDEACTIVE. Vrnitvena
+   koda vsebuje ime mape. Èe kliknete na gumb "Preklièi", je vrnitvena koda
+   RC postavljena na 1.
+
+@{b}SCREENTOBACK@{ub}
+   Prestavi YAMov zaslon v ozadje (za vse ostale zaslone).
+
+@{b}SCREENTOFRONT@{ub}
+   Prestavi YAMov zaslon v ospredje.
+
+@{b}SETFLAG@{ub}          VOL/K/N,PER/K/N
+   Sporoèilu postavi zastavico PER (permanent, slov. trajno) ali zastavico VOL
+   (volatile, slov. zaèasno). Vrednost zastavic je lahko med 0 in 7. Zastavice
+   se ne uporabljajo notranje, paè pa utegnejo biti koristne v zapletenej¹ih
+   skriptih za ARexx. Zastavica trajnosti (PER) se shrani tudi v komentar
+   datoteke sporoèila, tako da "pre¾ivi" ponovni zagon raèunalnika.
+
+@{b}SETFOLDER@{ub}        FOLDER/A
+   Doloèi mapo FOLDER za trenutno izbrano.
+
+@{b}SETMAIL@{ub}          NUM/N/A
+   Izbere sporoèilo v trenutno izbrani mapi, NUM je v obmoèju med 0 in n-1.
+
+@{b}SETMAILFILE@{ub}      MAILFILE/A
+   Izbere trenutno sporoèilo. MAILFILE je ime datoteke sporoèila.
+
+@{b}SHOW@{ub}
+   Preklopi YAM iz ikoniziranega spet v normalni naèin.
+
+@{b}USERINFO@{ub}         VAR/K,STEM/K => USERNAME,EMAIL,REALNAME,CONFIG,MAILDIR
+   Prebere podrobnosti o uporabniku, ki je prijavljen v trenutku poizvedbe.
+
+@{b}WRITEATTACH@{ub}      FILE/A,DESC,ENCMODE,CTYPE
+   Novemu sporoèilu prilo¾i datoteko. Ime datoteke je FILE, njen opis DESC,
+   ENCMODE je bodisi "uu" bodisi "b64", beseda CTYPE pa oznaèuje tip vsebine.
+
+@{b}WRITEBCC@{ub}         ADDRESS/A/M,ADD/S
+   V pisalnem oknu vnese v polje "Prikrite kopije k" en ali veè naslovov (ali
+   vzdevkov). Èe stikalo ADD ni uporabljeno, bodo ¾e vpisani naslovi prepisani.
+
+@{b}WRITECC@{ub}          ADDRESS/A/M,ADD/S
+   V pisalnem oknu vnese v polje "Kopije k" en ali veè naslovov (ali vzdevkov).
+   Èe stikalo ADD ni uporabljeno, bodo ¾e vpisani naslovi prepisani.
+
+@{b}WRITEEDITOR@{ub}      COMMAND/A
+   Prenese ukaz za ARexx vgrajenemu urejevalniku. Za opis razreda TextEditor
+   poglejte v ustrezna navodila.
+
+@{b}WRITEFROM@{ub}        ADDRESS/A
+   V pisalnem oknu vnese v polje "Od" naslov ali vzdevek.
+
+@{b}WRITELETTER@{ub}      FILE/A,NOSIG/S
+   V vgrajeni urejevalnik nalo¾i datoteko FILE. Èe besedilu ne ¾elite dodati
+   podpisa, uporabite stikalo NOSIG.
+
+@{b}WRITEOPTIONS@{ub}     DELETE/S,RECEIPT/S,NOTIF/S,ADDINFO/S,IMPORTANCE/N,SIG/N,
+                 SECURITY/N
+   Doloèi mo¾nosti novega sporoèila. DELETE se znebi sporoèila po odpremi,
+   RECEIPT vpra¹a po potrdilu o prejemu, NOTIF omogoèi sledenje sporoèilu,
+   ADDINFO doda osebne podatke, IMPORTANCE je vrednost v obmoèju 0-2
+   (0=visoka), SIG izbere podpis (0-3, 0=brez), SECURITY je vrednost med 0
+   in 5 (0=brez).
+
+@{b}WRITEQUEUE@{ub}       HOLD/S
+   Vstavi novo sporoèilo v vrsto s pripravljeno po¹to. Zaklenete ga s
+   stikalom HOLD.
+
+@{b}WRITEREPLYTO@{ub}     ADDRESS/A
+   V pisalnem oknu vnese v polje "Reply to" naslov ali vzdevek.
+
+@{b}WRITESEND@{ub}
+   Po¹lje novo sporoèilo.
+
+@{b}WRITESUBJECT@{ub}     SUBJECT/A
+   V pisalnem oknu vpi¹e zadevo.
+
+@{b}WRITETO@{ub}          ADDRESS/A/M,ADD/S
+   V pisalnem oknu vnese v polje "K" en ali veè naslovov (ali vzdevkov). Èe
+   stikalo ADD ni uporabljeno, bodo ¾e vpisani naslovi prepisani.
+@endnode
+
+@node "TIPS" "Nasveti in zvijaèe"
+                            @{b}@{u}NASVETI IN ZVIJAÈE@{ub}@{uu}
+
+@{u}Shranjevanje velikosti in polo¾aja okna@{uu}
+   Odprite nastavitveni vmesnik za MUI z izbiro menijskega elementa
+'Nastavitve/MUI'. Izberite razdelek 'Windows' in se preprièajte, da je tretji
+mali sistemski gumb vklopljen. Po shranjevanju nastavitev bo imelo vsako okno v
+desnem zgornjem kotu dodaten sistemski gumb. Klik na ta gumb bo shranil trenutno
+velikost in polo¾aj okna in si ju s tem zapomnil za v prihodnje. 
+@endnode
+
+@node "TECH" "Tehnièni podatki"
+                               @{b}@{u}TEHNIÈNI PODATKI@{ub}@{uu}
+
+@{b}@{u}Vsebina predalov@{ub}@{uu}
+   V programskem predalu za YAM (obièajno je to YAM:) najdete naslednje
+datoteke in predale:
+
+ @{b}YAM@{ub}               program
+ @{b}YAM.info@{ub}          programska ikona
+ @{b}YAM.guide@{ub}         prièujoèa navodila v formatu AmigaGuide
+
+ @{b}Icons/#?.info@{ub}     Ikone, ki prikazujejo stanje nabiralnika 'Prihajajoèa' med
+                   ikoniziranim naèinom delovanja programa:
+                   @{b}empty.info@{ub}     nabiralnik je prazen
+                   @{b}old.info@{ub}       nabiralnik vsebuje le "staro" po¹to
+                   @{b}new.info@{ub}       nabiralnik vsebuje vsaj eno novo sporoèilo
+                   @{b}check.info@{ub}     YAM pregleduje za novo po¹to
+ @{b}Icons/status_#?@{ub}   ikone stanja v formatu IFF/ILBM 
+ @{b}Icons/#?.toolbar@{ub}  obrobe gumbov v formatu IFF/ILBM
+
+ @{b}Rexx/@{ub}             programi za YAMov vmesnik ARexx
+ @{b}Gallery/@{ub}          slike ljudi, vpisanih v imeniku naslovov
+
+ @{b}.config@{ub}           datoteka z @{"nastavitvami" link "CO_W" 0}
+ @{b}.folders@{ub}          seznam @{"map" link "MA00" 0}
+ @{b}.addressbook@{ub}      @{"imenik naslovov" link "AB_W" 0}
+ @{b}.glossary@{ub}         @{"slovar" link "DI_W" 0}
+ @{b}.users@{ub}            seznam @{"uporabnikov YAMa" link "US_W" 0}
+ @{b}.signature@{ub}        va¹ osebni @{"podpis" link "CO07" 0}
+ @{b}.altsignature1@{ub}    prvi alternativni podpis
+ @{b}.altsignature2@{ub}    drugi alternativni podpis
+ @{b}.taglines@{ub}         zbirka va¹ih @{"sklepnih vrstic" link "CO07" 0}
+ @{b}.autosave?.txt@{ub}    @{"rezervne kopije" link "CO_H"} urejevanega besedila
+ @{b}.uidl@{ub}             datoteka, namenjena @{"izogibanju podvojitev" link "CO02" 0}
+ @{b}YAM.log@{ub}           protokolna datoteka (èe ste vklopili @{"Vodenje dnevnika" link "CO09" 0})
+
+ @{b}incoming/@{ub}         predal za nabiralnik 'Prihajajoèa'
+ @{b}outgoing/@{ub}         predal za nabiralnik 'Odhajajoèa'
+ @{b}sent/@{ub}             predal za poslano po¹to
+ @{b}deleted/@{ub}          predal za po¹to, oznaèeno za izbris
+ @{b}archiveX/@{ub}         @{"uporabni¹ko doloèene arhivske mape" link "FO_W" 0} (X je ¹tevilo)
+
+Vsako sporoèilo je shranjeno v lastno datoteko. Ime datoteke je sestavljeno z
+zdru¾evanjem (s piko) ¹tevila dni od 1.1.1978 in tekoèim ¹tevilom sporoèila
+istega dne. Stanje e-pisma je shranjeno v datoteki s komentarji. V vsakem
+nabiralni¹kem predalu je kazalèna datoteka z imenom .index z glavami vseh
+sporoèil tega predala. Poleg nje je tu ¹e datoteka poimenovana .fconfig. Ta
+hrani nastavitve mape predala.
+@endnode
+
+@node "MAIL" "Osnove - Kaj je e-po¹ta?"
+                           @{b}@{u}KAJ JE ELEKTRONSKA PO©TA?@{ub}@{uu}
+
+E-po¹ta je storitev, ki je bila prva udejanjena na Internetu, in je na Internetu
+¹e vedno najbolj priljubljen naèin komuniciranja. Znaten del ljudi, ki
+uporabljajo Internet, uporablja samo to storitev. Napovedujejo, da bo e-po¹ta v
+naslednjih nekaj letih iz veè razlogov izpodrinila tradicionalne oblike
+sporoèanja kot so pisma in faksi. Z uporabo e-po¹te lahko danes v samo nekaj
+minutah dose¾ete veè milijonov ljudi po celem svetu. Uporabniki drugih omre¾ij,
+kot sta Compuserve in T-Online, so na Internet prikljuèeni preko "prehodov"
+(angl. gateway).
+
+Sorodne teme:
+ @{"Zgradba glave sporoèila" link "HEAD" 0}
+ @{"Po¹tni protokoli (POP3 in SMTP)" link "PROT" 0}
+ @{"Kaj je MIME?" link "MIME" 0}
+ @{"©ifriranje po sistemu PGP" link "PGP" 0}
+ @{"Zlata pravila (Netiquette)" link "NETI" 0}
+@endnode
+
+@node "HEAD" "Zgradba glave sporoèila"
+                            @{b}@{u}ZGRADBA GLAVE SPOROÈILA@{ub}@{uu}
+
+Vsako e-pismo se zaèenja z glavo, ki je od dejanske vsebine sporoèila loèena s
+prazno vrstico. YAM glavo sestavi samodejno, upo¹tevajoè doloèila v Nastavitvah.
+
+Glava je razdeljena na veè polj, od katerih se vsako zaène v novi vrstici in ima
+splo¹no obliko 'Ime_polja: vsebina'. Polja, predolga za eno samo vrstico, so
+razdeljena na veè vrstic. Veèina vrstic glave je lahko brez ¹kode izpu¹èena;
+le-te so dodane z namenom preskrbeti prejemnikov po¹tni program z dodatnimi
+informacijami o sporoèilu ali preverjati pravilnost prenosa le-tega. Nekatera
+pomembna polja so razlo¾ena z naslednjim primerom.
+
+ @{fg shine}Return-Path:@{b}@{fg text} <peer\@fri.uni-lj.si>@{ub}
+
+To polje navede prejemnikov po¹tni stre¾nik sam, vsebuje pa e-po¹tni naslov
+po¹iljatelja; s tem je prejemnikovemu raèunalniku omogoèeno po¹iljanje
+e-pisemskega odgovora.
+
+ @{fg shine}Received:@{b}@{fg text} from ninurta.fri.uni-lj.si by atlantica.access.ch
+           (8.8.5/NINURTA-1.05pri) id XAA29100;
+           Tue, 23 Dec 1997 23:40:45 +0100 (MET)
+ @{ub}@{fg shine}Received:@{b}@{fg text} from orphan.fri.uni-lj.si by ninurta.fri.uni-lj.si
+           (AIX 3.2/UCB 5.64/FRIserver) id AA26355;
+           Tue, 23 Dec 1997 23:40:13 +0100@{ub}
+
+Raèunalniki, ki po¹ljejo sporoèilo na naslednji odsek poti po omre¾ju in 
+nazadnje tudi prejemnikov sistem sam, dodajo v glavo polje Received in tako
+zabele¾ijo, kdaj in od kod je prispelo sporoèilo. To omogoèa kasnej¹o izsleditev
+napak, ki so se morda pojavile med prenosom.
+
+ @{fg shine}From:@{b}@{fg text} Peter Peer <peer\@fri.uni-lj.si>@{ub}
+
+E-po¹tni naslov in pravo ime po¹iljatelja.
+
+ @{fg shine}Reply-To:@{b}@{fg text} peer\@fri.uni-lj.si@{ub}
+
+Naslov, na katerega mora biti poslan odgovor na sporoèilo. Prav pride pri
+odpremi sporoèil iz raèunalnika, ki ga po¹iljatelj iz kakr¹negakoli vzroka ne
+more uporabljati za branje po¹te. V tem primeru vpi¹e to polje - kot obvestilo,
+kam mora biti poslan odgovor. Èe polja 'Reply-To' v glavi sporoèila ni, bo
+odgovor poslan na naslov, naveden v polju 'From'.
+
+ @{fg shine}To:@{b}@{fg text} "Marcel Beck (Yet another Mailer-author)" <mbeck\@access.ch>@{ub}
+
+Prejemnikov naslov. Vpisati smete tudi dodatna imena, ki pa jih morate loèiti z
+vejico. Polje lahko vsebuje naslov oblike ime\@domena ali pa naslov, uveden z
+dodatnim komentarjem kot je npr. ime prejemnika. Naslov morate v tem primeru
+obdati z ostrima oklepajema < in >.
+
+ @{fg shine}Date:@{fg text} @{b}Tue, 23 Dec 1997 23:28:30 +0200@{ub}
+
+Datum in èas odpreme sporoèila. Izraz za zapisom èasa predstavlja èasovni pas,
+izra¾en z razliko od èasa Greenwich Mean Time. Prvi dve ¹tevki pomenita ure,
+drugi dve pa minute.
+
+ @{fg shine}Message-Id:@{fg text} @{b}<yam7296.1549.122414920\@zfn.uni-bremen.de>@{ub}
+
+Enolièna prepoznavna koda, samodejno ustvarjena pri odpremi. Slu¾i nedvoumnemu
+odbitju doloèenega sporoèila.
+
+ @{fg shine}In-Reply-To:@{fg text} @{b}<yam7296.263.121102896\@mail.access.ch>@{ub}
+
+Natanèen sklic na sporoèilo, kateremu bo odgovorjeno. Tak sklic je lahko npr. ID
+sporoèila.
+
+ @{fg shine}X-Mailer:@{fg text} @{b}YAM 2.0beta4 - Amiga Mailer by Marcel Beck - http://www.yam.ch@{ub}
+
+Ime in razlièica po¹tnega programa po¹iljatelja.
+
+ @{fg shine}Subject:@{fg text} @{b}Re: YAM2beta5@{ub}
+
+To polje jedrnato doloèa temo sporoèila. Izbor jasne in informativne zadeve je
+pokazatelj uglajenosti ("Netiquette").
+
+ @{fg shine}Mime-Version:@{fg text} @{b}1.0@{ub}
+ @{fg shine}Content-Transfer-Encoding:@{fg text} @{b}quoted-printable@{ub}
+ @{fg shine}Content-Type:@{fg text} @{b}text/plain; charset=iso-8859-1@{ub}
+
+Ta polja opozarjajo na to, da je sporoèilo urejeno v formatu MIME. V gornjem
+primeru vsebuje navadno besedilo v naboru znakov ISO-Latin-1, znaki pa, ki ne
+morejo biti predstavljeni z uporabo samo 7 bitov, so kodirani kot
+'quoted-printable'.
+@endnode
+
+@node "PGP" "Osnove - ©ifriranje po sistemu PGP"
+@toc "MAIL"
+                          @{b}@{u}©IFRIRANJE PO SISTEMU PGP@{ub}@{uu}
+
+Da bi prepreèili branje e-po¹te komurkoli, ki ni naslovnik, jo morate obvezno
+¹ifrirati. Ali je to sploh pomembno? Vèasih ¹e kako! Nemogoèe je namreè vnaprej
+napovedati, katero pot preko omre¾ja bo elektronska po¹ta izbrala; obenem je
+tudi mo¾no, da to po¹to prebere nekdo, ki za to nima pooblastila, pri tem pa
+povzroèi nemalo te¾av. ©ifriranje e-po¹te je vsekakor modra poteza pred
+po¹iljanjem gesel, ¹tevilk kreditnih kartic in podobnih podatkov preko
+Interneta. Prenos tako ¹ifriranih podatkov je pogosto bolj varen od prenosa
+navadne po¹te. Preprosto, uèinkovito in ¹iroko uporabljano orodje za tovrstno
+¹ifriranje je PGP oz. Pretty Good Privacy (slov. Precej Dobra Zasebnost).
+Sistem, ki ga je razvil Phil Zimmerman, izkori¹èa metodo javnih kljuèev.
+Z uporabo programa za PGP je vsakdo lahko preprièan, da je dobljeno sporoèilo
+res napisal tisti, ki je oznaèen kot po¹iljatelj in da ga lahko prebere le
+tisti, ki mu je bilo namenjeno. Tako imenovani javni kljuèi nudijo najveèjo
+stopnjo za¹èite.
+
+Obstajata dve vrsti kljuèev:
+ - Prva je va¹ zasebni kljuè; uporabljate ga samo na va¹em raèunalniku in ga
+   nikoli ne razkrijete drugje.
+ - Druga vrsta je va¹ javni kljuè. Ustvarite lahko poljubno ¹tevilo njegovih
+   kopij in te po¹ljete drugim uporabnikom, tako da lahko berejo od vas poslano
+   ¹ifrirano po¹to.
+
+Za uporabo sistema potrebujete obe vrsti kljuèev, zasebne in javne, saj sta
+medsebojno povezani. Javni kljuè lahko prosto razpo¹iljate naprej, deloval pa bo
+le v povezavi z njegovim toènim nasprotkom. Torej sta oba, zasebni in javni
+kljuè uporabljena pri zaklepanju in (obièajno) odklepanju podatkov. Kljuèi za
+PGP se uporabljajo na dva razlièna naèina:
+ 1. Nekdo drug z uporabo va¹ega javnega kljuèa ¹ifrira podatke in vam po¹lje
+    ¹ifrirano datoteko, ki jo boste de¹ifrirali z va¹im zasebnim kljuèem.
+ 2. Sami ¹ifrirate podatke z va¹im zasebnim kljuèem in jih varno po¹ljete
+    preko omre¾ja. Vsak, ki ima va¹ javni kljuè, lahko prisostvuje tej
+    komunikaciji. Prejemnik je lahko gotov, da so podatki res va¹i
+    (verodostojnost jamèi va¹ digitalni podpis) in da pred tem niso bili
+    spremenjeni.
+
+Programska oprema za PGP je vrste freeware, spletno stran International PGP
+Home Page lahko hitro najdete na Internetu: 'http://www.ifi.uio.no/pgp/'.
+@endnode
+
+@node "PROT" "Osnove - Po¹tni protokoli"
+@toc "MAIL"
+                              @{b}@{u}PO©TNI PROTOKOLI@{ub}@{uu}
+
+YAM za prenos po¹te do va¹ega stre¾nika za SMTP uporablja Simple Mail Transfer
+Protocol - SMTP (slov. Enostavni Protokol za Prenos Po¹te) . Isti protokol
+uporablja nadalje stre¾nik za prenos po¹te po celem svetu. Prihajajoèa po¹ta se
+zbira na va¹em stre¾niku za Post Office Protocol - POP (slov. Protokol Po¹tnega
+Urada), kjer èaka, da jo program YAM z uporabo protokolov POP3 (razlièica 3)
+prevzame in s tem prenese v va¹ raèunalnik. Format sporoèil, ki jih YAM po¹ilja
+in prejema, ustreza dogovorom, zapisanim v dokumentih RFC 822 in RFC 1521
+(MIME).
+
+@{b}Odhajajoèa po¹ta@{ub}
+
+Ko nekomu po¹ljete e-po¹tno sporoèilo, ga YAM preko protokola SMTP prenese do
+va¹ega krajevnega stre¾nika za SMTP. Ta raèunalnik odpo¹lje sporoèilo naprej
+prejemnikovemu raèunalniku, obièajno prav tako preko protokola SMTP.
+
+Zakaj YAM ne rokuje neposredno s prejemnikovim stre¾nikom? Prviè, va¹i Amigi bi
+vzpostavljanje povezave z doloèenim raèunalnikom in kasnej¹e prena¹anje
+sporoèila vzelo kar precej èasa. Drugiè, veliko raèunalnikov je te¾ko najti;
+precej elegantneje je iskanje njihovih naslovov prepustiti po¹tnemu stre¾niku,
+kot pa bremeniti va¹o Amigo. Tretjiè, pogosto naslovnikov stre¾nik v èasu
+po¹iljanja po¹te ne bo na voljo. Stre¾nik za SMTP te probleme re¹uje tako, da
+sporoèila zadr¾i vse dokler nasprotni raèunalnik ni pripravljen na sprejem.
+
+@{b}Prihajajoèa po¹ta@{ub}
+
+Ko nekdo po¹lje po¹to vam, jo njegov raèunalnik preko prokola SMTP prenese do
+va¹ega stre¾nika za POP. Ta potem shrani sporoèila v nekak¹nemu po¹tnem
+predalu, kjer ostanejo vse do prevzema z YAMom. Ko pogledate za novo po¹to, YAM
+sname sporoèila preko POP3 v va¹ raèunalnik.
+
+Zakaj YAM za prispelo po¹to ne uporablja protokola SMTP? SMTP deluje najbolje
+takrat, ko sta na sprejem sporoèil pripravljena oba komunicirajoèa raèunalnika.
+Èe ne poganjate YAMa v va¹i Amigi 24 ur na dan in sedem dni na teden, SMTP za
+vas ne bo posebej primeren.
+@endnode
+
+@node "MIME" "Osnove - MIME"
+@toc "MAIL"
+                                @{b}@{u}KAJ JE MIME?@{ub}@{uu}
+
+MIME je kratica za Multipurpose Internet Mail Extensions (slov. Veènamenske
+Internetne Po¹tne Raz¹iritve). Sistem MIME slu¾i dvema glavnima ciljema:
+omogoèiti obve¹èanje ene po¹tne aplikacije drugih o tem, kak¹ni podatki so
+zajeti v sporoèilu, in doloèati poenotena pravila, po katerih naj po¹tne
+aplikacije te podatke kodirajo, da bodo primerni za prenos po po¹tnem omre¾ju
+Interneta.
+
+@{b}Kodiranje vrst MIME@{ub}
+
+Na Internetu se za prena¹anje po¹te uporablja protokol SMTP. Ta protokol je
+omejen na prenos nabora znakov US-ASCII, kar pa za govorce jezikov, ki niso
+ameri¹ka angle¹èina, predstavlja oviro. Oni namreè uporabljajo nagla¹ene znake.
+Enaka te¾ava se pojavi pri ljudeh, ki uporabljajo posebne simbole, npr. zrno. ©e
+bolj zapleten je prenos binarnih datotek (kot prilog). MIME zagotavlja odpravo
+vseh teh omejitev. Ponuja namreè dve vrsti kodiranja, "quoted- printable" in
+"base64". Tidve kodiranji za predstavitev poljubne vrste podatkov, vkljuèno s
+posebnimi znaki in ne-znakovnimi podatki, uporabljata znakovne kode US-ASCII.
+Metoda "quoted-printable" je uporabljena za podatke, ki so poveèini besedilo,
+vendar vkljuèujejo posebne znake za zelo dolge vrstice. Besedilo
+"quoted-printable" izgleda kot obièajno besedilo razen v primeru, ko je
+uporabljen posebni znak. Ta znak zamenjajo = (enaèaj) in ¹e dva znaka, ki sta
+njegova (¹estnajsti¹ka) znakovna koda. Zrno je v kodiranju "quoted-printable"
+zapisano kot =95DA. V tem kodiranju niso dovoljene vrstice dol¾ine veè kot 76
+znakov. Èe je v va¹em pismu vrstica, ki je dalj¹a od 76 znakov, jo bo kodiranje
+"quoted-printable" razbilo na dva dela in dodalo = na konec prve vrstice kot
+opozorilo po¹tnemu bralniku na drugi strani, da ti vrstici dejansko pomenita
+eno samo. Kodiranje "base64" je druga metoda za¹èite binarnih podatkov pred
+po¹tnim sistemom SMTP. Vendar pa ta sistem ne ohranja berljivosti besedila in je
+zato najbolj primeren za neznakovne podatke. Enakovreden je starej¹emu sistemu
+UUencode, vendar bolj zanesljiv.
+
+
+@{b}Tip vsebine@{ub}
+
+Druga pomembna funkcija MIME je omogoèanje po¹tnim programom izmenjavo
+informacij o tipu podatkov v sporoèilu (ali delu sporoèila). Osnovni mehanizem
+za dosego tega cilja je vrstica Content-Type v e-pisemski glavi. Glavni tipi
+vsebine so:
+
+   text        berljivo besedilo
+   image       podobe in grafika
+   audio       zvok
+   video       animacije
+   message     sporoèila ali deli sporoèil
+   multipart   veè razliènih vrst podatkov v enem sporoèilu
+
+Podtip podaja dodatno informacijo o tipu podatkov:
+
+   text/plain   navadno besedilo
+   text/html    besedilo v formatu HTML
+   image/gif    slika v formatu GIF
+   itd.
+
+Z upo¹tevanjem tipa vsebine po¹tni program lahko izbere ustrezen pripomoèek za
+predstavitev prilo¾ene datoteke.
+@endnode
+
+@node "DOSW" "Vzorci in posebni znaki v AmigaDOSu"
+                        @{b}@{u}VZORCI IN POSEBNI ZNAKI V AMIGADOSU@{ub}@{uu}
+
+Uporaba posebnih znakov in vzorcev dopu¹èa izvajanje zelo natanènega
+preiskovanja. Tule so na¹teti posebni znaki.
+
+   ?   ustreza kateremukoli posameznegu znaku
+       tako se Y?M ujema z YAM, YUM, Y\@M itd.
+
+   #   ustreza niè ali veè pojavitvam sledeèega izraza
+       tako se Y#AM ujema z YM, YAM, YAAM, YAAAM itd.
+
+   #?  ustreza èemurkoli (vkljuèno s praznim nizom!)
+       tako se #?YAM#? ujema z vsemi nizi, ki vsebujejo zaporedje "YAM"
+
+   %   ustreza praznemu nizu. Ta vzorec sam ni pretirano uporaben, vendar pa
+       vam omogoèi iskanje sporoèil s prazno vrstico 'Zadeva'.
+
+   ()  Okrogli oklepaji slu¾ijo zdru¾evanju znakov in izrazov in nakazujejo,
+       kako je izraz ovrednoten. Uporabljajte jih povsod, kjer je le mogoèe!
+       Na ta naèin #(Re:)YAM ustreza YAM, Re:YAM, Re:Re:YAM ...
+
+   []  Oglati oklepaji slu¾ijo oznaèevanju seznama alternativ; tako vzorec
+       [YAM] ustreza katerikoli posamezni èrki Y, A ali M @{i}ne@{ui} pa YAM
+
+   -   oznaèuje obseg; vzorec [0-9] ustreza katerikoli posamezni ¹tevki,
+       #[0-9] pa kateremukoli celemu ¹tevilu.
+
+   ~   pomeni NE in se nana¹a na celoten izraz, ki mu sledi. Vzorec ~Re: se
+       ujema s @{i}katerimkoli@{ui} nizom, ki se ne zaène z "Re:".
+
+   |   pomeni ALI; nana¹a se na izraza na obeh straneh. Celoten izraz @{i}morate@{ui}
+       vkljuèiti med okrogla oklepaja: @{i}npr.@{ui} (#?YAM#?|#?MUI#?) poi¹èe nize, ki
+       vsebujejo bodisi "YAM" bodisi "MUI".
+
+OPOZORILO! Uporaba vzorcev ni tako enostavna, kot se zdi! Sestavimo na primer
+filter, ki bo poiskal vsa zaporedja, vsebujoèa YAM ali YAM2, zavrgel pa tista z
+YAM1. Poskusimo s tem:  #?YAM(~1)
+
+Kaj nam naroèa ta vzorec? Med branjem niza z leve i¹èimo zaporedje YAM. Èe smo
+ga na¹li, poglejmo v sledeèi del: ali je enak "1"? Èe ni, smo na¹li ujemanje.
+Problem, ki se tu pojavi, je tale: "1.3.5" ni enako "1" (niz je predolg), tako
+da zaporedje YAM1.3.5 ustreza, èeprav tega noèemo. Re¹itev je v tem, da izrecno
+naroèimo, da se niz, ki sledi "YAM" ne sme prièeti z "1".
+Poskusimo z:  #?YAM(~1#?)
+
+S tem se res znebimo 1.3.5 , toda ¹e vedno imamo te¾ave. Vèasih je med YAM in
+¹tevilko razlièice vstavljen presledek, vèasih pa ne. Zaporedja kot je npr.
+YAM 1 morajo biti ¹e vedno najdena. Reèi torej moramo, da sme biti presledkov
+poljubno mnogo; to storimo z vzorcem:  #?YAM# (~1#?)
+
+©e en primer: predpostavimo, da ¾elimo poiskati vse nize, ki vsebujejo YAM in se
+ne zaèenjajo z "Re:". Poizkusimo torej z:  (~Re:)YAM#?
+
+Vzorec nam narekuje, naj zaènemo s primerjavo zaèetka niza z "Re:". Èe imamo
+ujemanje, niz zavr¾emo. Sicer poglejmo v ostanek niza za zaporedje "YAM". Kaj
+se zgodi tedaj, ko se prvotni niz @{i}zaèenja@{ui} z "YAM"? Prva èrka ni R, zato
+pogoju NI zado¹èeno. Toda Y smo sedaj ¾e pustili za seboj in zaporedja YAM ne
+bomo uspeli najti! Da bi odpravili to dvoumnost moramo filtru doloèiti, da je
+niz pred "YAM" lahko tudi prazen niz (to je torej dokaz njegove uporabnosti!).
+Pravilen vzorec je:  (~Re:|%)YAM#?
+
+   Vpra¹anje za raèunalni¹ke obsedence: kaj pomeni ~((~#?YAM#?)|(~#?MUI#?)) ?
+@endnode
+
+@node "NETI" "Osnove - E-po¹tna Netiquette"
+@toc "MAIL"
+                           @{b}@{u}E-PO©TNA NETIQUETTE@{uu}@{ub}
+
+Sporoèila naj bodo kratka in jasna.
+
+Sporoèilom dodajte jedrnato in smiselno vrstico 'Zadeva', tako da ga boste
+kasneje lahko hitro na¹li.
+
+Pod sporoèilo se podpi¹ite. Podpis naj vsebuje va¹e ime in e-po¹tni naslov in
+naj ne presega pet vrstic. V podpise so èesto vpisani tudi navadni po¹tni
+naslov, telefonska ¹tevilka, spletno mesto in navodila za po¹iljanje sporoèil,
+¹ifriranih po sistemu PGP.
+
+Z velikimi èrkami pi¹ite le takrat, ko ¾elite posebej poudariti doloèeno misel.
+Za poudarek se uporabljajo tudi *zvezdice* (YAM to tolmaèi z uporabo krepkega
+sloga pisave).
+
+Velike èrke so pogosto razumljene kot VPITJE.
+
+Nastavite YAM tako, da bo dol¾ina vrstic omejena na manj kot 80 znakov; v pismu
+ne uporabljajte nobenih nadzornih znakov.
+
+Ne uporabljajte ne-ASCII znakov èe niste preprièani, da jih prejemnikovi
+programi pravilno tolmaèijo.
+
+Posredovanje zasebnega sporoèila na po¹tni seznam brez dovoljenja prvotnega
+po¹iljatelja se smatra za skrajno nevljudno. 
+
+Okraj¹ave in TLA (Three Letter Acronyms, slov. Trièrkovni Akronimi) uporabljajte
+pod pogojem, da sporoèila ne napravijo nerazumljivega. Pogosto se uporabljajo
+tile:
+
+  IMHO   (in my humble opinion)   =>   PMSM (po mojem skromnem mnenju)
+  BTW    (by the way)             =>   MG   (mimogrede)
+  FYI    (for your information)   =>   VVV  (v va¹o vednost)
+  AFAIK  (as far as I know)       =>   KMJZ (kolikor mi je znano)
+  ASAP   (as soon as possible)    =>   ÈKM  (èimprej ko morete)
+  CU     (see you)                =>   KN   (kmalu nasvidenje)
+
+Za pridih ironije, ki bi bila sicer narobe razumljena, uporabljajte sme¹kota
+;-) (me¾ikalca?).
+
+Bodite uvidevni do napak drugih, @{i}npr.@{ui} pri pravopisu, slovnici, izra¾anju ali
+poznavanju e-po¹te.
+
+Ko se pridru¾ite naslovnemu seznamu si najprej preberite nekaj sporoèil, da
+dobite predstavo, kaj je rdeèa nit dopisovanja, kak¹na vpra¹anja se obièajno
+postavljajo in kaj ni primerno za razpravo.
+
+Preberite seznam FAQ (Frequently Asked Questions list, slov. seznam Pogosto
+Zastavljenih Vpra¹anj). Èlanom skupine je neprijetno, èe morajo vedno znova
+odgovarjati na ista vpra¹anja.
+
+Èe nekdo po¹lje sporoèilo èigar tema je "izven podroèja", @{i}npr.@{ui} ne pripada
+naslovnemu seznamu, mu odgovorite zasebno in ne preko seznama.
+
+Ko citirate sporoèilo nekoga drugega vedno izre¾ite vse "bite", ki niso pomembni
+za va¹ odgovor. Nihèe ne prebere rad istega sporoèila trikrat ali ¹tirikrat, ¹e
+posebno ko je vse, kar je bilo sporoèilu dodano, stavek: "Da, tudi jaz.".
+
+Uprite se sku¹njavi ¾aljenja na naslovnem seznamu. ("Flame", slov. "Podkuriti"
+= pisati na ¾aljiv naèin, ponavadi po izzvanju z neumnostmi.) Pomnite, da je
+seznam javen in kot tak namenjen konstruktivni razpravi. Obna¹ajte se tako, kot
+¾elite, da se drugi do vas!
+
+Ko odgovarjate sporoèilu na naslovnem seznamu premislite, ali boste odgovor
+poslali neposredno po¹iljatelju ali pa celotnemu seznamu, zato preverite, èe je
+naslov v vrstici 'K' pravilen. Èe se pismo naslovljeno doloèeni osebi pojavi na
+seznamu nenamenoma, je to lahko zelo moteèe.
+@endnode
+
+@node "PLAN" "Naèrti za prihodnost"
+                            @{b}@{u}NAÈRTI ZA PRIHODNOST@{ub}@{uu}
+
+Tule je nekaj funkcij, ki jih bom predvidoma vkljuèil v naslednjo razlièico
+YAMa:
+
+ - Podpora za sporoèila v formatu HTML
+ - Sprotni prikaz prilo¾enih datotek (slik)
+ - Podpora za protokol IMAP-4
+ - Hierarhièno urejanje map
+ - Asinhronski prenos po¹te
+@endnode
+
+@node "INFO" "Nadaljnje informacije o programu YAM"
+                    @{b}@{u}NADALJNJE INFORMACIJE O PROGRAMU YAM@{ub}@{uu}
+
+Z ¾eljo, da bi bile vsem uporabnikom na voljo najnovej¹e informacije o programu
+YAM, sem na svetovnem spletu postavil domaèo stran:
+
+                        @{fg shine}http://www.yam.ch@{fg text}
+
+Èe ¾elite o zadevah v zvezi z YAMom razpravljati z drugimi uporabniki, se lahko
+pridru¾ite YAMovemu naslovnemu seznamu. V ta namen enostavno po¹ljite e-pismo na
+naslov @{i}listserv\@tu-clausthal.de@{ui} z ukazom 'subscribe yam' v prvi vrstici besedila
+(vse naslednje vrstice bodo ignorirane).
+
+Predloge, vpra¹anja, kritike, poroèila o hro¹èih, itd. mi lahko po¹ljete na
+naslov:
+
+ support\@yam.ch
+ http://www.yam.ch/contact.html
+ http://come.to/mars
+
+ali, èe vam to ne uspe, poskusite z navadno po¹to na naslov:
+
+ Marcel Beck
+ Hammerstraße 4
+ 4414 Füllinsdorf
+ Switzerland
+@endnode
+
+@node "CRED" "Zasluge"
+                                   @{b}@{u}ZASLUGE@{ub}@{uu}
+
+Na tem mestu bi se rad zahvalil naslednjim ljudem, ki so tvorno prispevali k
+razvoju YAMa:
+
+@{u}Beta-preizku¹evalci@{uu}:
+
+Phil Beazley, Benjamin Busche, Mario Cattaneo, Patrick Ernst, Giuseppe Ghibo,
+Christian Just, Laurent Kempe, Peter Kromarek, Markus Lamers, Jens Langner,
+Richard Marti, Marco Musso, Benny Kjær Nielsen, Marcin Orlowski, Allan Odgaard,
+Roman Patzner, Lars Pisanec, Georgia Pristo, Christoph Rickers, Markus Roth,
+Thomas Schraitle, Ulf Seltier, Stefan Sommerfeld, Martin Sprenger, Peter
+Thiessen, Danny Thinnes, Walter Watzl, Piotr Wojciechowski, Michael Zaruba
+
+@{u}Prevajalci@{uu}:
+
+Ulf Seltier, James Bridge (datoteka YAM.guide v angle¹kem jeziku)
+
+@{u}Risarji ikon@{uu}:
+
+Roman Patzner (naslovna podoba, obrobe gumbov, ikone stanj), Ash Thomas (cela
+zbirka @{"NewIcons" link "NEWI" 0})
+
+@{u}Programerji@{uu}:
+
+Stefan Stuntz (MUI), Allan Odgaard (TextEditor.mcc, BetterString.mcc),
+Benny Kjaer Nielsen (Toolbar.mcc), Marcin Orlowski (Flexcat), Gilles Masson
+(NList.mcc), Klaus Melchior (Listtree.mcc)
+@endnode
+
+@NODE INDEX "Vsebina"
+@{CODE}
+
+   B...
+
+   @{"Bralno okno" link RE_W}
+   @{"Bralno okno - Gumbi" link RE_B}
+   @{"Bralno okno - meni Nastavitve" link REM4}
+   @{"Bralno okno - meni PGP" link REM3}
+   @{"Bralno okno - meni Sporoèilo" link REM1}
+   @{"Bralno okno - meni Navigacija" link REM2}
+
+   G...
+
+   @{"Glavno okno" link MA_W}
+   @{"Glavno okno - meni Mapa" link MAM2}
+   @{"Glavno okno - meni Nastavitve" link MAM4}
+   @{"Glavno okno - meni Projekt" link MAM1}
+   @{"Glavno okno - meni Skripti" link MAM5}
+   @{"Glavno okno - meni Sporoèilo" link MAM3}
+   @{"Glavno okno - Orodna vrstica" link MA02}
+   @{"Glavno okno - Seznam map" link MA00}
+   @{"Glavno okno - Seznam sporoèil" link MA01}
+
+   H...
+
+   @{"Hitri zaèetek" link TUTO}
+
+   I...
+
+   @{"Ikone stanja" link MA0S}
+   @{"Imenik naslovov" link AB_W}
+   @{"Imenik naslovov - Meniji" link AB_M}
+   @{"Imenik naslovov - Orodna vrstica" link AB_B}
+   @{"Iskanje sporoèil" link FI_W}
+   @{"Iskanje sporoèil - Iskalna merila" link FI_K}
+
+   L...
+
+   @{"Lastnosti urejevalnika" link EDIT}
+
+   M...
+
+   @{"MUI" link MUI}
+
+   N...
+
+   @{"Naèrti za prihodnost" link PLAN}
+   @{"Nadaljnje informacije o programu YAM" link INFO}
+   @{"Namestitev" link INST}
+   @{"Nastavitve" link CO_W}
+   @{"Nastavitve map" link FO_W}
+   @{"Nastavitve - ARexx" link CO13}
+   @{"Nastavitve - Branje" link CO04}
+   @{"Nastavitve - Filtri" link CO03}
+   @{"Nastavitve - Imenik naslovov" link CO12}
+   @{"Nastavitve - Meniji" link CO_M}
+   @{"Nastavitve - MIME" link CO11}
+   @{"Nastavitve - Nova po¹ta " link CO02}
+   @{"Nastavitve - Odgovarjanje" link CO06}
+   @{"Nastavitve - Pisanje" link CO05}
+   @{"Nastavitve - Podpis" link CO07}
+   @{"Nastavitve - Prvi koraki" link CO00}
+   @{"Nastavitve - Razno" link CO14}
+   @{"Nastavitve - Seznami" link CO08}
+   @{"Nastavitve - Skrite mo¾nosti" link CO_H}
+   @{"Nastavitve - TCP/IP" link CO01}
+   @{"Nastavitve - Varnost" link CO09}
+   @{"Nastavitve - Zaèetek/Konec" link CO10}
+   @{"Nasveti in zvijaèe" link TIPS}
+   @{"NewIcons" link NEWI}
+
+   O...
+
+   @{"Osnove - E-po¹tna Netiquette" link NETI}
+   @{"Osnove - Kaj je e-po¹ta?" link MAIL}
+   @{"Osnove - MIME" link MIME}
+   @{"Osnove - Po¹tni protokoli" link PROT}
+   @{"Osnove - ©ifriranje po sistemu PGP" link PGP}
+
+   P...
+
+   @{"Pisalno okno" link WR_W}
+   @{"Pisalno okno - meni Besedilo" link WRM1}
+   @{"Pisalno okno - meni Priloge" link WRM3}
+   @{"Pisalno okno - meni Uredi" link WRM2}
+   @{"Pisalno okno - Mo¾nosti" link WR02}
+   @{"Pisalno okno - Priloge" link WR01}
+   @{"Pisalno okno - Sporoèilo" link WR00}
+   @{"Povleci in Spusti" link DRAG}
+   @{"Pravne informacije" link COPY}
+   @{"Prenos po¹te" link TR_W}
+
+   S...
+
+   @{"Seznam vseh ukazov za ARexx" link REXL}
+   @{"Slovar" link DI_W}
+
+   T...
+
+   @{"Tehniène podrobnosti" link TECH}
+
+   U...
+
+   @{"Uporabniki" link US_W}
+   @{"Uvod" link INTR}
+
+   V...
+
+   @{"Vmesnik za ARexx" link REXX}
+   @{"Vna¹anje naslovov" link EA_W}
+   @{"Vzorci in posebni znaki v AmigaDOSu" link DOSW}
+
+   Y...
+
+   @{"YAM - Slovenska navodila" link MAIN}
+
+   Z...
+
+   @{"Zagonske mo¾nosti" link OPTI}
+   @{"Zahteve" link REQS}
+   @{"Zasluge" link CRED}
+   @{"Zgradba pisemske glave" link HEAD}
+
+@{BODY}
+@ENDNODE
+
+
