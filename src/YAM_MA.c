@@ -3142,7 +3142,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
         snprintf(buffer, sizeof(buffer), tr(MSG_MA_CONFIRMDELETION), selected);
 
-        if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buffer) == 0)
+        if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq2), buffer) == 0)
           okToDelete = FALSE;
       }
 

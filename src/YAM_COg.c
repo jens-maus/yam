@@ -1309,7 +1309,7 @@ HOOKPROTONHNONP(ResetSpamTrainingDataFunc, void)
 {
   ENTER();
 
-  if (MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_SPAM_RESETTRAININGDATAASK)))
+  if (MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_SPAM_RESETTRAININGDATAASK)))
   {
     BayesFilterResetTrainingData();
 

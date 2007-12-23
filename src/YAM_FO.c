@@ -1434,7 +1434,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       case FT_CUSTOMSENT:
       case FT_CUSTOMMIXED:
       {
-        if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ConfirmDelete))))
+        if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_ConfirmDelete))))
         {
           DeleteMailDir(GetFolderDir(folder), FALSE);
           ClearMailList(folder, TRUE);
@@ -1465,7 +1465,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
         if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE)) != NULL)
         {
           // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
-          if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_GROUP_CONFDEL))))
+          if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_FO_GROUP_CONFDEL))))
           {
             struct MUI_NListtree_TreeNode *tn_sub_next = tn_sub;
 
