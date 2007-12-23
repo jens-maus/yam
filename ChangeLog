@@ -5,13 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-#### YAM 2.5 RELEASE ####################################################
-
-2007-12-07  Alexandre Balaban <abalaban@free.fr>
+2007-12-23  Alexandre Balaban <abalaban@free.fr>
 
   * doc/YAM_francais.guide: documentation french translation update according
     to latest changes.
   * locale/francais.ct: french translation update according to latest changes.
+
+#### YAM 2.5 RELEASE ####################################################
 
 2007-12-21  Jens Langner <Jens.Langner@light-speed.de>
 
