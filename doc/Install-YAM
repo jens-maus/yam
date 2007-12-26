@@ -13,8 +13,10 @@
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only OS4 can handle them.
 (set #def_lang_English_British      4)
+;(set #def_lang_French              8) I don't know if this is the right place to add it
 
 (set #def_doc_English               0)
+;(set #def_doc_French               1) I don't know if this is the right place
 
 ; ///
 ;----------------------------------------------------------------------------
@@ -145,6 +147,53 @@
 (set #done_1   (cat "\nYAM installerades utan problem\n\n"
                     "Klicka på \"YAM\"-ikonen i katalogen\n"))
 (set #done_2        "\nför att pröva det.\n\nHa det så bra!")
+)
+)
+; ///
+; /// ***** Français
+(if (= @language "français")
+(
+;(set #def_cat_lang #def_doc_French) uncomment when french variables are activated
+(set #def_cat_lang #def_doc_English)
+;(set #def_doc_lang #def_doc_French) uncomment when french variables are activated
+(set #def_doc_lang #def_doc_English)
+(set #wrongOS  "YAM nécessite au moins AmigaOS 3.0 pour fonctionner !\n")
+(set #wrongMUI "YAM nécessite au moins MUI 3.8 pour fonctionner !\n")
+(set #wrongCPU "YAM nécessite au moins un processeur 68020 pour fonctionner !\n")
+(set #YAM_dir  (cat "Veuillez sélectionner un répertoire pour YAM\n"
+                    "(AUCUN nouveau tiroir ne sera créé !)"))
+(set #lang_catalog (cat "Quel catalogue voulez-vous installer ?\n"
+                        "(L'anglais est déjà incorporé)"))
+(set #lang_manual "Sélectionnez la langue de l'aide en ligne AmigaGuide")
+(set #no_way_back_warning (cat "\n"
+                               "ATTENTION !!\n"
+                               "(si vous voulez mettre à jour une installation\n"
+                               "existante de YAM 2.4)\n"
+                               "\n"
+                               "Le schéma de nommage des messages a complètement changé.\n"
+                               "Lorsque vous lancez YAM 2.5 pour la première fois, tous vos\n"
+                               "messages existants seront automatiquement convertis. Après\n"
+                               "cela YAM 2.4 ne pourra plus les gérer.\n"
+                               "Vous devriez donc faire une sauvegarde de TOUS vos messages\n"
+                               "AVANT de lancer YAM 2.5.\n"
+                               "\n"
+                               "Cependant, il n'y a absolument AUCUN problème à installer\n"
+                               "YAM 2.4 et 2.5 dans des répertoires différents."))
+(set #faq_and_bugtracker (cat "\n"
+                              "Si vous avez des questions concernant YAM\n"
+                              "vous pouvez les poser sur le forum :\n"
+                              "http://forum.yam.ch/\n"
+                              "\n"
+                              "Une Foire Aux Questions déjà répondues\n"
+                              "se trouve à l'adresse :\n"
+                              "http://faq.yam.ch/\n"
+                              "\n"
+                              "Si vous trouvez un bug dans YAM, veuillez\n"
+                              "le rapporter dans le suivi d'anomalies :\n"
+                              "http://bugs.yam.ch/"))
+(set #done_1   (cat "\nYAM a été installé avec succés.\n\n"
+                    "Double-cliquez the sur l'icône « YAM » dans\n"))
+(set #done_2        "\nle répertoire pour le tester.\n\nAmusez-vous bien...")
 )
 )
 ; ///

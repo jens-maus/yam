@@ -926,7 +926,7 @@ vers un autre destinataire
 ; to another recipient.
 ;
 MSG_HELP_MA_BT_POPNOW
-Se connecte au serveur et rapatrie\n\
+Se connecte au serveur et recoit\n\
 les nouveaux messages
 ; Connect to the mail server\n\
 ; and download new messages.
@@ -1011,7 +1011,7 @@ MSG_CO_AltRepPatternDef
 ; 
 ;
 MSG_CO_ForwardIntroDef
-*** Message suivi ***\\\\n\
+*** Message retransmis ***\\\\n\
 \\\\n\
 Date : %c\\\\n\
 De : %n <%e>\\\\n\
@@ -1382,7 +1382,7 @@ toujours montrer
 ; show always
 ;
 MSG_CO_Download
-Rapatrier les messages
+Recevoir les messages
 ; Download
 ;
 MSG_CO_AvoidDuplicates
@@ -1510,7 +1510,7 @@ E_ffacer
 ; Dele_te
 ;
 MSG_CO_ActionSkip
-Ne pas _rapatrier
+Ne pas _recevoir
 ; Don't do_wnload
 ;
 MSG_CO_HeadNone
@@ -2003,11 +2003,11 @@ MSG_CO_ScriptTerminate
 ; Program termination
 ;
 MSG_CO_ScriptPreGetMail
-Avant de rapatrier les messages
+Avant de recevoir du courrier
 ; Before getting mail
 ;
 MSG_CO_ScriptPostGetMail
-Après avoir rapatrié les messages
+Après avoir rapatrié du courrier
 ; After getting mail
 ;
 MSG_CO_ScriptNewMsg
@@ -2167,8 +2167,8 @@ de votre adresse électronique qui sera utilisée.
 ; part of your e-mail address will be used.
 ;
 MSG_HELP_CO_CH_DELETE
-Efface les messages sur le serveur\n\
-après les avoir rapatriés
+Efface les messages sur le\n\
+serveur après les avoir reçus
 ; Delete messages from\n\
 ; mail server after the\n\
 ; download.
@@ -2204,17 +2204,15 @@ pendant le transfert des messages.
 ; during mail transfers.
 ;
 MSG_HELP_CO_CY_MSGSELECT
-Utilisez cette option pour voir le\n\
-contenu du serveur POP3 et pouvoir\n\
-sélectionner les messages que\n\
-vous voulez charger.
+Cette option montre le contenu de la boite aux lettres serveur\n\
+POP3 et permet ainsi de sélectionner les messages à recevoir.
 ; Message pre-selection shows (a part of) the contents of the\n\
 ; POP3 mailbox and allows you to select which messages you\n\
 ; want to download.
 ;
 MSG_HELP_CO_CH_UPDSTAT
-Marque les messages reçus en non-lus\n\
-avant de chercher les nouveaux messages
+Marque « non lu » les nouveaux messages du dossier\n\
+« Arrivée » avec d'en recevoir de nouveaux.
 ; Mark new messages in the Incoming folder\n\
 ; as 'unread' before downloading new mail.
 ;
@@ -2232,7 +2230,7 @@ Utilisez 0 si vous ne voulez pas que YAM fasse cela.
 ; Use '0' if you don't want YAM to do this.
 ;
 MSG_HELP_CO_CH_DLLARGE
-Charge les gros messages lors du rapatriement automatique,\n\
+Télécharge les gros messages lors de la réception automatique,\n\
 même s'ils dépassent la taille limite spécifiée ci-dessus.
 ; When automatically checking for new mail,\n\
 ; download large messages even if they exceed\n\
@@ -2266,7 +2264,7 @@ Nom du filtre
 ;
 MSG_HELP_CO_CH_REMOTE
 Applique ce filtre avant de\n\
-télécharger du nouveau courrier
+recevoir du nouveau courrier
 ; Apply this filter before\n\
 ; downloading new mail.
 ;
@@ -2285,8 +2283,8 @@ demande de filtrage manuel
 ; the filter function manually.
 ;
 MSG_HELP_CO_CY_COMBINE
-Comment combiner les deux critères\n\
-de recherche pour ce filtre
+Comment sont combinés les\n\
+critères de ce filtre
 ; How to combine the rules\n\
 ; for this filter.
 ;
@@ -2362,7 +2360,7 @@ Efface les messages correspondant
 ; Delete the matching messages.
 ;
 MSG_HELP_CO_CH_ASKIP
-Ne rapatrie pas les messages correspondant
+Ne recevoir pas les messages correspondant
 ; Do not download\n\
 ; the matching messages.
 ;
@@ -2371,18 +2369,19 @@ Ajoute un nouveau filtre
 ; Add a new filter.
 ;
 MSG_HELP_CO_BT_RDEL
-Supprime le filtre sélectionné
+Supprime de la liste\n\
+le filtre sélectionné
 ; Remove the selected filter\n\
 ; from the list.
 ;
 MSG_HELP_CO_CA_COL2QUOT
-Couleur à utiliser pour l'affichage\n\
-des anciennes citations (2 ème rang).
+Couleur utilisée pour afficher\n\
+les citations de niveau 2.
 ; Color used to display\n\
 ; 2nd level quotes.
 ;
 MSG_HELP_CO_CH_WRAPHEAD
-Affiche les longs en-têtes\n\
+Réparti les longs en-têtes\n\
 sur plusieurs lignes
 ; Split long headers\n\
 ; on multiple lines.
@@ -2394,23 +2393,22 @@ comme signes de formatage du texte
 ; control codes for text styles.
 ;
 MSG_HELP_CO_CY_HEADER
-Comment voulez-vous afficher\n\
-les en-têtes dans la fenêtre de\n\
-visualisation ?
+Les en-têtes de messages que vous voulez\n\
+que YAM affiche dans la fenêtre de lecture
 ; Which message headers do you want YAM\n\
 ; to display by default in the Read window?
 ;
 MSG_HELP_CO_ST_HEADERS
 Spécifie sous forme de motifs AmigaDos\n\
 les éléments de l'en-tête à afficher.\n\
-Par défaut : (From|To|Date|Subject)
+Par défaut : (De|À|Cc|BCC|Date|Sujet)
 ; Specify an AmigaDOS pattern to\n\
 ; choose the headers in SELECTED format.\n\
 ; Default is (From|To|Cc|BCC|Date|Subject).
 ;
 MSG_HELP_CO_CY_SENDERINFO
-Afficher les informations sur l'expéditeur\n\
-dans la fenêtre (si elles sont disponible)
+Affiche les informations sur l'expéditeur\n\
+dans la fenêtre (si elles sont disponibles)
 ; Information about the sender to display\n\
 ; in the Read window (if available).
 ;
@@ -2421,83 +2419,85 @@ entre le texte et la signature
 ; for the signature.
 ;
 MSG_HELP_CO_CH_ALLTEXTS
-Affiche toutes les différentes\n\
-parties d'un message composé
+Affiche toutes les parties textes\n\
+d'un parties d'un message composé
 ; Display all plain text parts\n\
 ; of a multipart message.
 ;
 MSG_HELP_CO_CH_MULTIWIN
-Ouvre une nouvelle fenêtre\n\
-pour chaque message sélectionné
+Utilise une nouvelle fenêtre de\n\
+lecture pour chaque message ouvert
 ; Use a separate Read window\n\
 ; for each opened message.
 ;
 MSG_HELP_CO_CA_COLTEXT
-C'est dans cette couleur que les textes\n\
-colorés s'afficheront dans la fenêtre\n\
-de visualisation.
+Couleur utilisée pour le texte « coloré »\n\
+dans la fenêtre de lecture et l'éditeur.
 ; Color for the 'colored' text used in\n\
 ; the Read window and the editor.
 ;
 MSG_HELP_CO_CH_FIXFEDIT
 Affiche les messages avec\n\
-une police non proportionnelle
+une police à chasse fixe
 ; Display messages using\n\
 ; a fixed width font.
 ;
 MSG_HELP_CO_ST_CTYPE
-Type de données MIME contenu\n\
-dans le fichier joint qui sera\n\
-associé au programme correspondant
+Entrez un nouveau type MIME ou sélectionnez\n\
+en un grace au bouton popup à droite.
 ; Enter a new MIME type or select one\n\
 ; using the popup button at the right.
 ;
 MSG_HELP_CO_ST_COMMAND
-Chemin et paramètres du programme d'affichage.\n\
-« %s » définit le nom du fichier à afficher.
+Chemin et paramètres du programme\n\
+d'affichage. Cliquez sur le bouton\n\
+popup pour voir la liste des variables\n\
+supportées.
 ; Path and optional arguments of\n\
 ; the viewer command. Click the popup\n\
 ; button to see the list of supported\n\
 ; variables.
 ;
 MSG_HELP_CO_BT_MADD
-Insérer un nouveau programme MIME
+Insére une nouvelle\n\
+visionneuse MIME
 ; Add a new MIME viewer.
 ;
 MSG_HELP_CO_BT_MDEL
-Supprime le programme MIME sélectionné
+Supprime la visionneuse\n\
+MIME sélectionnée
 ; Remove the selected\n\
 ; MIME viewer.
 ;
 MSG_HELP_CO_ST_EXTENS
-Extension utilisée par\n\
-ce type de fichier
+Liste des extensions utilisées par ce type\n\
+de fichier séparées par des virgules.
 ; A space separated list of extensions\n\
 ; (suffixes) used by this file type.
 ;
 MSG_HELP_CO_ST_DEFVIEWER
 Programme à utiliser pour afficher\n\
-les données de types inconnus
+les pièces jointes de types inconnus
 ; Program used to display\n\
 ; attachments of unknown type.
 ;
 MSG_HELP_CO_ST_REPLYTO
-Entrez une adresse de réponse\n\
-prédéfinie, si elle est différente\n\
-de votre adresse électronique.
+Si les réponses à vos messages doivent envoyées par\n\
+défaut ailleurs en plus (ou à la place) de votre\n\
+adresse électronique, spécifiez ces adresses ici.
 ; Should replies to your messages need to be sent by\n\
 ; default somewhere else besides (or instead of) your\n\
 ; e-mail address, specify those other addresses here.
 ;
 MSG_HELP_CO_ST_ORGAN
-Le nom de votre employeur\n\
+Le nom de votre entreprise\n\
 ou de votre organisation
 ; The name of your\n\
 ; company or institute.
 ;
 MSG_HELP_CO_ST_EXTHEADER
 En-tête(s) supplémentaire(s) devant-être\n\
-ajouté(s) a chaque message envoyé
+ajouté(s) à chaque message envoyé
 ; Additional message header(s) that will\n\
 ; be added to every outgoing message.
 ;
@@ -2508,7 +2508,7 @@ de chaque nouveau message
 ; top of a new message.
 ;
 MSG_HELP_CO_ST_BYETEXT
-Texte à insérer à la fin\n\
+Texte à ajouter à la fin\n\
 de chaque nouveau message
 ; Text to add at the\n\
 ; bottom of a new message.
@@ -2520,8 +2520,9 @@ automatique à cette colonne
 ; at this column.
 ;
 MSG_HELP_CO_CY_EDWRAP
-Sélectionnez « pendant la frappe », pour activer\n\
-le retour à la ligne pendant l'écriture du message
+Sélectionnez « pendant la frappe », pour\n\
+activer le retour à la ligne automatique\n\
+pendant l'écriture du message
 ; Select 'as you type' to have line feeds\n\
 ; automatically added while you're\n\
 ; typing your messages.
@@ -2539,66 +2540,69 @@ de texte préféré
 ; favorite text editor.
 ;
 MSG_HELP_CO_ST_FWDSTART
-Texte qui sera inséré dans un message retransmis.\n\
-Utilisez le gadget de droite pour obtenir\n\
-la liste des variables utilisables.
+Texte utilisé pour introduire un\n\
+message retransmis. Cliquez sur le\n\
+bouton popup à droite pour obtenir\n\
+la liste des variables utilisables
 ; Text used to introduce a forwarded message.\n\
 ; Click the popup button at the right to see\n\
 ; the variables you can use.
 ;
 MSG_HELP_CO_ST_FWDEND
-Texte qui sera inséré à la fin\n\
-d'un message suivi.
+Texte à ajouter à la fin\n\
+d'un message retransmis
 ; Text to add at the end\n\
 ; of a forwarded message.
 ;
 MSG_HELP_CO_ST_REPLYTEXT
-Texte utilisé dans la réponse à un message.\n\
-Utilisez le gadget de droite pour insérer une variable.
+Textes utilisés par défaut lors\n\
+des réponses aux messages. Cliquez\n\
+sur le bouton popup à droite pour\n\
+voir les variables supportées.
 ; Default phrases used in replies to messages. Use the\n\
 ; popup button at the right to see the supported variables.
 ;
 MSG_HELP_CO_ST_AREPLYTEXT
-Texte qui sera inséré si le motif\n\
-ci-dessous correspond à l'adresse\n\
-du destinataire
+Textes de remplacement utilisé lorsque l'adresse\n\
+du destinataire correspond aux motifs ci-dessous.
 ; Use these phrases instead when then pattern\n\
 ; below matches the recipient's address.
 ;
 MSG_HELP_CO_ST_AREPLYPAT
-Joker AmigaDOS qui activera\n\
+Motif AmigaDOS qui activera\n\
 l'en-tête de réponse alternative
 ; AmigaDOS pattern that triggers\n\
 ; the alternative reply phrases.
 ;
 MSG_HELP_CO_ST_MREPLYTEXT
-Utilise ce texte en réponse à\n\
-un message de liste de discussions.
+Textes utilisés en réponse aux\n\
+messages de liste de discussions.
 ; Use these phrases in replies to\n\
 ; messages from a mailing list.
 ;
 MSG_HELP_CO_CH_QUOTE
-Citer le message original\n\
-lors de la réponse ?
+Cite le message original\n\
+dans la réponse
 ; Quote the original\n\
 ; message in your reply?
 ;
 MSG_HELP_CO_CH_QUOTEEMPTY
-Marquer aussi les lignes vides ?
+Insère un caractère de citation\n\
+pour les lignes vides
 ; Insert quote character\n\
 ; for empty lines?
 ;
 MSG_HELP_CO_CH_COMPADDR
-Laisse l'utilisateur choisir l'adresse de réponse\n\
-lorsque celle-ci est différente dans\n\
-le champ « De » et dans le champ « Répondre à ».
+Laisse l'utilisateur choisir l'adress de réponse\n\
+lorsque celle-ci n'est pas la même dans le champ\n\
+« De » et dans le champ « Répondre à ».
 ; If checked, you will be asked where to send your\n\
 ; reply when the 'From:' and 'Reply-To:' addresses\n\
 ; of the original message differ.
 ;
 MSG_HELP_CO_CH_STRIPSIG
-Ne cite pas la signature\n\
-du message original
+Évite de citer la signature\n\
+du message original.
 ; Avoids quoting the signature\n\
 ; of the original message.
 ;
@@ -2608,8 +2612,8 @@ Choix de la signature à éditer
 ; you want to edit.
 ;
 MSG_HELP_CO_BT_EDITSIG
-Modifier votre signature\n\
-à l'aide de l'éditeur
+Modifie cette signature\n\
+dans l'éditeur externe
 ; Modify this signature\n\
 ; using the external editor.
 ;
@@ -2620,92 +2624,94 @@ l'ajout de citations aléatoires
 ; for a random tagline.
 ;
 MSG_HELP_CO_BT_INSENV
-Insère le caractère de contrôle pour\n\
-l'ajout de la signature
+Insère le code de contrôle pour utiliser\n\
+la variable d'environnement « SIGNATURE »
 ; Insert a control code for the\n\
 ; 'SIGNATURE' environment variable.
 ;
 MSG_HELP_CO_ST_TAGFILE
-Fichier contenant les citations
+Spécifie le fichier contenant\n\
+les citations (ou proverbes)
 ; Specify here a database file containing\n\
 ; taglines (also known as 'cookies').
 ;
 MSG_HELP_CO_ST_TAGSEP
-Caractère ou chaîne de caractères utilisé\n\
-pour séparer les citations dans la banque de données
+Chaîne de caractères utilisée\n\
+pour séparer les citations dans\n\
+le fichier de citations
 ; String used to separate the\n\
 ; taglines in the database.
 ;
 MSG_HELP_CO_CG_FO
-Colonnes visibles\n\
-dans la liste des dossiers.
+Colonnes à afficher dans\n\
+la liste des dossiers.
 ; Columns that should be\n\
 ; displayed in the folder list.
 ;
 MSG_HELP_CO_CG_MA
-Colonnes affichées\n\
-dans la liste des messages.
+Colonnes à afficher dans\n\
+la liste des messages.
 ; Columns that should be\n\
 ; displayed in the message list.
 ;
 MSG_HELP_CO_CG_AB
-Colonnes affichées\n\
-dans le carnet d'adresses.
+Colonnes à afficher dans\n\
+le carnet d'adresses.
 ; Columns that should be\n\
 ; displayed in the address book.
 ;
 MSG_HELP_CO_CH_FIXFLIST
-L'affichage des listes\n\
-se fait avec une police fixe.
+Affiche les éléments des listes\n\
+avec une police à chasse fixe.
 ; Display list entries\n\
 ; using a fixed width font.
 ;
 MSG_HELP_CO_CH_BEAT
 Affiche l'heure en unité « Swatch Beats »\n\
-la nouvelle unité horaire inventée par Swatch
+l'unité temporelle inventée par Swatch
 ; Display time in Swatch Beats, the\n\
 ; unit of time from Swatch.
 ;
 MSG_HELP_CO_ST_PGPCMD
-Chemin où trouver le\n\
-programme PGP
+Chemin où trouver\n\
+le programme PGP
 ; Directory where the PGP\n\
 ; executable can be found.
 ;
 MSG_HELP_CO_ST_MYPGPID
-L'ID de votre clé PGP avec\n\
-laquelle sera signé chaque message
+L'ID de votre clé PGP utilisée pour\n\
+signer et crypter les messages
 ; The ID of your PGP key that is used\n\
 ; to sign and encrypt messages.
 ;
 MSG_HELP_CO_CH_ENCSELF
-Protéger les nouveaux messages avec votre clé\n\
-publique PGP, pour que les messages expédiés\n\
-puissent encore être lus ou modifiés par vous.
+Crypte les nouveaux messages avec votre clé\n\
+publique, de manière à ce que vous puissiez\n\
+toujours lire ou éditer les messages sortants.
 ; Encrypt new messages with your public key,\n\
 ; so you can still read or edit outgoing messages.
 ;
 MSG_HELP_CO_ST_REMAILER
-Adresse électronique de votre\n\
-Remailer pour les messages anonymes
+Adresse électronique du Remailer à utiliser\n\
+pour envoyer des messages anonymes.
 ; E-mail address of the remailer service\n\
 ; used to send anonymous mail.
 ;
 MSG_HELP_CO_ST_FIRSTLINE
-Cette ligne sera insérée au début de\n\
-votre message s'il est expédié par\n\
-un service d'anonymat
+Ligne insérée automatiquement au début\n\
+de tous messages expédié via le Remailer.
 ; Automatically insert this line at the top\n\
 ; of all messages sent through the remailer.
 ;
 MSG_HELP_CO_ST_LOGFILE
-Chemin pour le fichier d'évènements
+Chemin où sont stockés\n\
+les fichiers d'évènements
 ; Path where the log\n\
 ; files will be stored.
 ;
 MSG_HELP_CO_CH_SPLITLOG
-Commence un nouveau\n\
-fichier d'évènements chaque mois
+Avec cette option, un nouveau fichier\n\
+d'évènements est créé chaque mois
 ; If checked, a separate log file\n\
 ; will be started every month.
 ;
@@ -2714,8 +2720,8 @@ Sélectionnez le type de fichier évènements
 ; Select type of logging.
 ;
 MSG_HELP_CO_CH_LOGALL
-Désactivez cette option si le fichier d'évennements\n\
-ne doit concerner que les transferts.
+Désactivez cette option si le fichier d'évènements\n\
+ne doit concerner que les transferts de courrier.
 ; Disable this option to\n\
 ; log mail transfers only.
 ;
@@ -2724,7 +2730,8 @@ Charge les index de tous les dossiers
 ; Load index files of all folders.
 ;
 MSG_HELP_CO_CH_MARKNEW
-Change le statut des messages en non-lu
+Change le statut des nouveaux\n\
+messages en « non lu »
 ; Change status of new\n\
 ; messages to unread.
 ;
@@ -2761,7 +2768,8 @@ les photos de vos correspondants
 ; of your correspondents.
 ;
 MSG_HELP_CO_ST_PHOTOURL
-URL où charger votre photo
+Adresse URL de\n\
+votre photo.
 ; URL address of your\n\
 ; portrait image.
 ;
@@ -2805,7 +2813,8 @@ pour les pièces jointes
 ; for attachments.
 ;
 MSG_HELP_CO_ST_APP
-Position de l'AppIcon en pixel
+Tente de positionner l'AppIcône\n\
+à ces coordonnées précises.
 ; Try to put the AppIcon\n\
 ; exactly at these coordinates.
 ;
@@ -2829,7 +2838,8 @@ de cette quantité de messages
 ;
 MSG_HELP_CO_CH_REMOVE
 Supprime les messages immédiatement,\n\
-sans passer par le dossier « Corbeille »
+sans passer par le dossier « Corbeille ».\n\
+(À utiliser avec précaution)
 ; Immediately delete the messages rather\n\
 ; than moving them to the Trash folder.\n\
 ; (Use this with care)
@@ -2855,7 +2865,7 @@ compresser les dossiers
 MSG_HELP_CO_NB_ENCPACK
 Efficacité de la compression.\n\
 100% est la plus efficace,\n\
-mais la plus lente.
+mais ausi la plus lente.
 ; Efficiency of this packer. 100% is\n\
 ; the best value, but also the slowest.
 ;
@@ -2888,7 +2898,9 @@ l'exécution d'un script
 ; and output from the script.
 ;
 MSG_HELP_CO_CH_WAITTERM
-N'exécute pas le script de façon asynchrone
+N'exécute pas le script\n\
+de façon asynchrone, et\n\
+attend qu'il se termine.
 ; Do not run the script\n\
 ; asynchronously but wait\n\
 ; for it to complete.
@@ -2953,7 +2965,7 @@ Alias
 ; Alias
 ;
 MSG_AB_FoundEntry
-J'ai trouvé cette personne :\n\
+J'ai trouvé cette personne :\n\n\
 Alias : \eb%s\en\n\
   Nom : \eb%s\en
 ; Found matching entry!\n\
@@ -2963,7 +2975,7 @@ Alias : \eb%s\en\n\
 ; ALIAS, NAME
 ;
 MSG_AB_FindEntry
-Rechercher une entrée...
+Rechercher une entrée
 ; Find Entry
 ;
 MSG_AB_FindEntryReq
@@ -3053,15 +3065,15 @@ Entrée
 ; Entry
 ;
 MSG_AB_AddUser
-Nouvelle personne...
+Nouvelle personne
 ; New person
 ;
 MSG_AB_AddGroup
-Nouveau groupe...
+Nouveau groupe
 ; New group
 ;
 MSG_AB_AddList
-Nouvelle liste...
+Nouvelle liste
 ; New distribution list
 ;
 MSG_AB_Duplicate
@@ -3187,18 +3199,17 @@ dans votre carnet d'adresses
 ; to the address book.
 ;
 MSG_HELP_AB_BT_EDIT
-Modifie le contenu\n\
-de la sélection
+Édite cet élément
 ; Edit this entry.
 ;
 MSG_HELP_AB_BT_DELETE
-Efface la sélection\n\
-de votre carnet d'adresses
+Supprime de votre carnet\n\
+d'adresses l'élément sélectionné.
 ; Delete the selected entry\n\
 ; from the address book.
 ;
 MSG_HELP_AB_BT_PRINT
-Imprime la sélection
+Imprime l'élément sélectioné
 ; Print the selected entry.
 ;
 MSG_HELP_AB_BT_OPEN
@@ -3208,26 +3219,26 @@ inscrites dans le carnet d'adresses
 ; in the address book.
 ;
 MSG_HELP_AB_BT_CLOSE
-Ne montre que les groupes\n\
-du carnet d'adresses
+Ne montre que les éléments à\n\
+la racine du carnet d'adresses
 ; Only display the root\n\
 ; entries in the address book.
 ;
 MSG_HELP_AB_BT_TO
 Désigne le(s) destinataire(s)\n\
-pour les nouveaux messages
+principaux d'un nouveau message
 ; Set primary recipient(s)\n\
 ; for a new message.
 ;
 MSG_HELP_AB_BT_CC
 Désigne le(s) destinataire(s)\n\
-pour l'envoi d'une copie du message
+secondaires d'un nouveau message
 ; Set secondary recipient(s)\n\
 ; for a new message.
 ;
 MSG_HELP_AB_BT_BCC
-Désigne le(s) destinataire(s)\n\
-pour l'envoi en « copie cachée »
+Désigne le(s) destinataire(s) en\n\
+ « copie cachée » d'un nouveau message
 ; Set blind copy recipient(s)\n\
 ; for a new message.
 ;
@@ -3334,24 +3345,25 @@ _Trier
 ;
 MSG_HELP_EA_ST_ALIAS
 Identifiant (ex : pseudo ou\n\
-abréviation) de cette entrée
+abréviation) de cette personne
 ; Identity (e.g. nickname or\n\
 ; abbreviation) of this entry.
 ;
 MSG_HELP_EA_ST_DESCRIPTION
-Commentaire à associer...
+Un court commentaire\n\
+pour cette personne.
 ; A short comment\n\
 ; for this entry.
 ;
 MSG_HELP_EA_ST_REALNAME
-Nom complet pour ce champ\n\
-(prénom et nom)
+Nom complet pour cette\n\
+personne (prénom et nom)
 ; Full name of this entry\n\
 ; (first name last name).
 ;
 MSG_HELP_EA_ST_ADDRESS
 Adresse internet\n\
-de cette entrée
+de cette personne
 ; Official e-mail address\n\
 ; of this entry.
 ;
@@ -3364,7 +3376,7 @@ PGP de cette personne
 MSG_HELP_EA_ST_HOMEPAGE
 URL de la page web de cette personne.\n\
 Cliquez le gadget de droite pour\n\
-charger cette page sur votre navigateur.
+charger cette page avec votre navigateur.
 ; URL of the homepage of this person.\n\
 ; Click the button at the right side\n\
 ; to load the page into your browser.
@@ -3377,7 +3389,7 @@ N° et nom de la rue
 ;
 MSG_HELP_EA_ST_CITY
 Adresse postale :\n\
-Ville et code postale
+Ville et code postal
 ; Postal address: city\n\
 ; and zip code.
 ;
@@ -3401,7 +3413,8 @@ ex: 10-Jan-1950
 ; (e.g. 10-Jan-1950).
 ;
 MSG_HELP_EA_BC_PHOTO
-Photo de cette personne
+Portrait de\n\
+cette personne
 ; Portrait picture\n\
 ; of this person.
 ;
@@ -3441,8 +3454,8 @@ membre dans la liste
 ; to the list.
 ;
 MSG_HELP_EA_BT_DEL
-Supprime le membre sélectionné,\n\
-de la liste
+Supprime de la liste\n\
+le membre sélectionné
 ; Remove the selected\n\
 ; member from the list.
 ;
@@ -3452,7 +3465,7 @@ Trie la liste alphabétiquement
 ; alphabetically.
 ;
 MSG_HELP_EA_BT_OKAY
-Accepte cette entrée
+Valide cette entrée
 ; Accept this entry.
 ;
 MSG_HELP_EA_BT_CANCEL
@@ -3778,19 +3791,19 @@ Formatage du texte
 ; Module RE - Toolbar
 ;
 MSG_RE_TBPrev
-_Précédent
+_Préc.
 ; _Prev
 ;
 MSG_RE_TBNext
-S_uivant
+S_uiv.
 ; _Next
 ;
 MSG_RE_TBPrevTh
-Thème _<-
+Fil _<-
 ; Prev_Thr
 ;
 MSG_RE_TBNextTh
-Thème -_>
+Fil -_>
 ; NextT_hr
 ;
 MSG_RE_TBDisplay
@@ -3917,11 +3930,11 @@ MSG_WR_DiscardChangesGad
 ; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
-Sauver texte sous...
+Sauver texte sous
 ; Save text as
 ;
 MSG_WR_AddFile
-Choisir le(s) fichier(s) à joindre...
+Choisir les fichiers à joindre...
 ; Select files to attach
 ;
 MSG_WR_CreateArc
@@ -4023,11 +4036,11 @@ _à
 ; _To
 ;
 MSG_WR_Add
-A_jouter fichier(s)
+A_jouter fichier(s)...
 ; _Add file(s)...
 ;
 MSG_WR_AddPack
-_Compresser et ajouter
+_Compresser et ajouter...
 ; _Pack & add...
 ;
 MSG_WR_Display
@@ -4035,7 +4048,7 @@ M_ontrer
 ; D_isplay
 ;
 MSG_WR_Encoding
-Codage
+Encodage
 ; Encoding
 ;
 MSG_WR_ContentType
@@ -4063,7 +4076,7 @@ Répondre _à
 ; Reply _to
 ;
 MSG_WR_ExtraHeaders
-En_-tête supplémentaire
+En_-têtes supplémentaires
 ; _Additional headers
 ;
 MSG_WR_SendOpt
@@ -4245,7 +4258,7 @@ Ironique
 ; Ironic
 ;
 MSG_WR_SpellCheck
-Dictionnaire
+Vérificaiton orthographique
 ; Type and spell?
 ;
 MSG_WR_MAddFile
@@ -4281,12 +4294,12 @@ Importance
 ;
 MSG_HELP_WR_ST_TO
 Adresse (et nom) ou alias\n\
-du premier destinataire
+des destinataires principaux
 ; Address (and name) or alias\n\
 ; of the primary recipient(s).
 ;
 MSG_HELP_WR_BT_ADR
-Choisir un destinataire\n\
+Choisir les destinataires\n\
 depuis le carnet d'adresses
 ; Select recipient(s) from\n\
 ; the address book.
@@ -4302,7 +4315,8 @@ pour modifier le message
 ; modify the message text.
 ;
 MSG_HELP_WR_BT_LOAD
-Insère un texte à la position du curseur
+Insère le contenu d'un fichier texte\n\
+à la position courante du curseur
 ; Insert the contents of a text file\n\
 ; at the current cursor position.
 ;
@@ -4316,43 +4330,47 @@ Copie le texte sélectionné vers le presse-papiers
 ;
 MSG_HELP_WR_BT_PASTE
 Insère le contenu du presse-papiers\n\
-à la position du curseur
+à la position courante du curseur
 ; Insert the contents of the clipboard\n\
 ; at the current cursor position.
 ;
 MSG_HELP_WR_BT_UNDO
-Revient à l'état précédent
+Annule la dernière modification du texte
 ; Undo the last change in the text.
 ;
 MSG_HELP_WR_BT_BOLD
-Met le texte sélectionné en gras
+Met en gras le texte sélectionné\n\
+(mots complets seulement)
 ; Use bold typeface for marked\n\
 ; text (whole words only).
 ;
 MSG_HELP_WR_BT_ITALIC
-Met le texte sélectionné en italique
+Met en italique le texte sélectionné\n\
+(mots complets seulement)
 ; Use italic typeface for marked\n\
 ; text (whole words only).
 ;
 MSG_HELP_WR_BT_UNDERL
-Souligne le texte sélectionné
+Souligne le texte sélectionné\n\
+(mots complets seulement)
 ; Underline marked text\n\
 ; (whole words only).
 ;
 MSG_HELP_WR_BT_COLOR
-Colorie le texte sélectionné
+Colorie le texte sélectionné\n\
+(mots complets seulement)
 ; Colorize marked text\n\
 ; (whole words only).
 ;
 MSG_HELP_WR_BT_ADD
-Ajoute un ou plusieurs fichiers\n\
-à la liste des pièces jointes
+Ajoute une ou plusieurs\n\
+pièces jointes à la liste
 ; Add attachments\n\
 ; to the list.
 ;
 MSG_HELP_WR_BT_ADDPACK
-Crée une archive à partir de\n\
-plusieurs fichiers et l'ajoute\n\
+Crée une archive à partir d'un\n\
+ou plusieurs fichiers et l'ajoute\n\
 à la liste des pièces jointes
 ; Create an archive with one\n\
 ; or more files and add it to\n\
@@ -4365,15 +4383,15 @@ sélectionnée de la liste
 ; attachment from the list.
 ;
 MSG_HELP_WR_BT_DISPLAY
-Utilise un programme MIME pour\n\
-la pièce jointe sélectionnée
+Utilise le programme MIME configuré pour\n\
+afficher la pièce jointe sélectionnée
 ; Use the configured MIME viewer\n\
 ; to display this attachment.
 ;
 MSG_HELP_WR_RA_ENCODING
 Codage à utiliser pour la pièce jointe sélectionnée.\n\
-N'utilisez UUencode, uniquement si le destinataire\n\
-n'a pas de gestionnaire de courriers compatible MIME.
+N'utilisez UUencode, que si le destinataire n'utilise\n\
+pas de gestionnaire de courriers compatible MIME.
 ; Type of encoding used for the selected attachment.\n\
 ; Select UUencode only if the recipient is not using\n\
 ; a MIME compliant mailer.
@@ -4391,8 +4409,8 @@ la pièce jointe sélectionnée
 ; the selected attachment.
 ;
 MSG_HELP_WR_ST_CC
-Adresse (et nom) ou alias\n\
-des autres destinataires
+Envoie une copie carbone du\n\
+message à ce(s) destinataires
 ; Send a carbon copy (CC) of the\n\
 ; message to these recipients.
 ;
@@ -4418,19 +4436,19 @@ a écrit ce message)
 ;
 MSG_HELP_WR_ST_REPLYTO
 Adresse de réponse\n\
-pour ce courrier
+pour ce message
 ; Return address\n\
 ; for this message.
 ;
 MSG_HELP_WR_CH_DELSEND
-Ne sauve pas le message\n\
+Ne pas sauver le message\n\
 dans le dossier « Envoyés »
 ; Do not store this message\n\
 ; in the Sent folder.
 ;
 MSG_HELP_WR_CH_RECEIPT
-Retourne une notification en\n\
-cas de bonne réception
+Demande une notification\n\
+en cas de bonne réception
 ; Request a notification on\n\
 ; successful delivery.
 ;
@@ -4448,14 +4466,17 @@ Donne une priorité\n\
 ;
 MSG_HELP_WR_RA_SIGNATURE
 Quelle signature voulez-vous\n\
-ajouter à ce courrier ?
+ajouter à ce message ?
 ; Which signature do you want\n\
 ; to append to this message?
 ;
 MSG_HELP_WR_RA_SECURITY
 Choisissez une de ces options de sécurité\n\
-pour envoyer votre courrier. Soit signé (PGP),\n\
-soit crypté ou de manière anonyme.
+pour envoyer votre courrier : signé (PGP),\n\
+soit crypté ou anonyme. « défaut » tente\n\
+de trouver le destinataire dans votre carnet\n\
+d'adresses et utilise les réglages de sécurité\n\
+mentionnés à cet endroit.
 ; Select one of these security options to send\n\
 ; your message PGP signed, encrypted\n\
 ; or anonymously. "Default" tries to find\n\
@@ -4463,9 +4484,9 @@ soit crypté ou de manière anonyme.
 ; the security settings specified there.
 ;
 MSG_HELP_WR_BT_HOLD
-Place ce message dans\n\
+Place le message créé dans\n\
 le dossier « En attente » et\n\
-change son statut en « bloqué »
+passe son statut à « bloqué »
 ; Copy the created message to\n\
 ; the Outgoing folder and set\n\
 ; its status to 'hold'.
@@ -4577,7 +4598,7 @@ Filtrage terminé :\n\
 %3ld détournés,\n\
 %3ld retransmis,\n\
 %3ld répondus,\n\
-%3ld exécutent une commande,\n\
+%3ld commandes exécutées,\n\
 %3ld déplacés,\n\
 %3ld supprimés.
 ; \n\
@@ -4593,23 +4614,23 @@ Filtrage terminé :\n\
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_NewMail
-Nouveau message
+Nouveau courrier
 ; New mail
 ;
 MSG_TR_Downloading
-Charge le courrier...
+Télécharge le courrier...
 ; Downloading message...
 ;
 ;
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Rapatrie le courrier depuis '%s'
+Reçoit le courrier sur « %s »
 ; Mail transfer from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Transfère le courrier vers '%s'
+Transfère le courrier vers « %s »
 ; Mail transfer to '%s'
 ; HOST
 ;
@@ -4745,7 +4766,7 @@ Il faut utiliser JJ-MMM-AAAA. (Noms des mois en Anglais).
 MSG_ER_ErrorDateFormat
 Format date/heure invalide.\n\
 \n\
-La date doit être dans le format AmigaDos.\n\
+La date et l'heure doivent être spéciées dans un format compatible.\n\
 Exemple : %s
 ; Invalid date/time format.\n\
 ; \n\
@@ -4798,8 +4819,8 @@ Ce fichier ne semble pas exister.
 ; FILENAME
 ;
 MSG_ER_UUSize
-La taille décodée [%ld] ne correspond pas\
-à la taille d'origine [%ld].\n\
+La taille décodée (%ld) ne correspond pas\
+à la taille d'origine (%ld).\n\
 \n\
 Un mauvais encodeur UU a été utilisé ou le message est tronqué.
 ; Decoded size (%ld) does not match original size (%ld).\n\
@@ -4860,8 +4881,8 @@ Le serveur de courrier est hors service, ou n'est pas compatible POP3/SMTP.
 ; HOST
 ;
 MSG_ER_NoAPOP
-Votre serveur POP3 est incompatible APOP. \
-Désactivez l'option APOP dans la configuration.
+Votre serveur POP3 ne supporte pas APOP. \
+Veuillez désactivez l'option dans la configuration.
 ; Your POP3 server doesn't support APOP. \
 ; Please disable APOP in the configuration.
 ;
@@ -5191,7 +5212,7 @@ lequel il faut effectuer la recherche
 ; should match the pattern.
 ;
 MSG_HELP_FI_ST_FIELD
-Nom du champ d'en-tête dans\n\
+Nom de l'en-tête dans\n\
 lequel il faut chercher
 ; Name of the header\n\
 ; to search in.
@@ -5361,14 +5382,14 @@ Supprime le compte sélectionné
 ;
 MSG_FO_NewFolderReq
 Quel type de nouveau dossier voulez-vous créer ?\n\
-Choisir « Existant » si le répertoire existe\n\
-déjà sur votre disque.
+Choisissez « Répertoire existant » si vous voulez\n\
+réutiliser un répertoire qui existe déjà.
 ; What settings do you want to use for the new folder?\n\
 ; Select 'Existing directory' if you want to re-use an\n\
 ; already existing directory.
 ;
 MSG_FO_NewFolderGads
-*_Interne|_Comme sélectionné|_Existant|_Annuler
+*_Interne|_Comme sélectionné|Répertoire _existant|_Annuler
 ; *_Internal defaults|_Like current|_Existing directory|_Cancel
 ;
 MSG_FO_SelectDir
@@ -5691,7 +5712,7 @@ Désactivation des fonctions de chiffrage et de signature !
 ; Error creating multipart PGP message. Encrypting/signing disabled!
 ;
 MSG_RE_FixedFont
-Police fixe
+Police à chasse fixe
 ; Fixed font?
 ;
 MSG_CO_UseSMTPAUTH
@@ -5699,7 +5720,7 @@ Utiliser SMTP AUT_H
 ; Use SMTP AU_TH
 ;
 MSG_CO_SMTPUser
-I_D utilisateur
+N_om utilisateur
 ; Us_er name
 ;
 MSG_CO_SMTPPass
@@ -5791,14 +5812,14 @@ Dans le doute, n'activez pas cette option.
 ; If in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER
-Indiquez ici, le nom d'utilisateur\n\
-pour l'authentification SMTP.
+Nom utilisateur pour\n\
+l'authentification SMTP.
 ; User name of the\n\
 ; SMTP AUTH user.
 ;
 MSG_HELP_CO_ST_SMTPAUTHPASS
-Indiquez ici, le mot de passe\n\
-pour l'authentification SMTP.
+Mot de passe pour\n\
+l'authentification SMTP.
 ; Password of the\n\
 ; SMTP AUTH user.
 ;
@@ -6013,9 +6034,9 @@ Auto_-détection
 ; Auto_detect
 ;
 MSG_HELP_FO_BT_AUTODETECT
-Essai de trouver automatiquement la liste\n\
-de discussions qui convient, en analysant\n\
-les 5 premiers courriers du dossier.
+Tente de deviner automatiquement les\n\
+réglages de la liste de discussion en\n\
+analysant les 5 premiers courriers du dossier.
 ; Try to guess automatically the suitable\n\
 ; ML support settings by scanning the\n\
 ; first five e-mails in the folder.
@@ -6106,8 +6127,8 @@ Le fichier est soit inexistant, soit inaccessible.
 MSG_AB_NOYAMADDRBOOK
 Le fichier « %s » n'est pas un carnet d'adresses valide pour YAM.\n\
 \n\
-Voulez-vous quand même utiliser ce fichier comme un fichier\n\
-contenant des adresses électroniques sur des lignes individuelles ?
+Voulez-vous quand même le traiter comme un fichier contenant\n\
+des adresses électroniques sur des lignes individuelles ?
 ; File '%s' isn't a valid YAM address book.\n\
 ; \n\
 ; Process it as a file containing e-mail addresses\n\
@@ -6140,7 +6161,7 @@ Ré-essayer|Quitter
 ;
 MSG_ER_NOSTARTTLS
 Le serveur SMTP auquel vous essayez de vous connecter ne gère pas \
-TLS/SSL. Veuillez désactiver cette option dans la configuration de YAM.
+TLS/SSL. Veuillez désactiver cette option dans la configuration.
 ; Your SMTP server doesn't support TLS/SSL. \
 ; Please disable this option in the configuration.
 ;
@@ -6176,19 +6197,20 @@ De/à
 ; From/To
 ;
 MSG_HELP_CO_CA_COL1QUOT
-Couleur utilisée pour l'affichage des citations.
+Couleur utilisée pour\n\
+afficher les citations.
 ; Color used to\n\
 ; display quotes.
 ;
 MSG_HELP_CO_CA_COL3QUOT
-Couleur à utiliser pour l'affichage\n\
-des citations de 3ème rang.
+Couleur utilisée pour afficher\n\
+les citations de niveau 3.
 ; Color used to display\n\
 ; 3rd level quotes.
 ;
 MSG_HELP_CO_CA_COL4QUOT
-Couleur à utiliser pour l'affichage\n\
-des citations de 4ème rang.
+Couleur utilisée pour afficher\n\
+les citations de niveau 4.
 ; Color used to display\n\
 ; 4th level quotes.
 ;
@@ -6331,10 +6353,10 @@ Phrase de _fin
 ; C_losing phrase
 ;
 MSG_ER_SOCKETOPTION
-Avertissement : Impossible de positionner l'option de socket '%s'.\n\
+Impossible de positionner l'option de socket « %s ».\n\
 \n\
-Cela peut ne pas être supporté par la pile TCP/IP que vous utilisez,\n\
-ou bien est incorrectement spécifié dans votre configuration.
+Soit cette option n'est pas supportée par la pile TCP/IP que vous utilisez, \
+soit elle est incorrectement spécifiée dans votre configuration.
 ; Couldn't set socket option '%s'.\n\
 ; \n\
 ; Either this option is not supported by the TCP/IP stack your are using, \
@@ -6342,48 +6364,52 @@ ou bien est incorrectement spécifié dans votre configuration.
 ; OPTIONNAME
 ;
 MSG_ER_B64FILEENCODE
-Une erreur inattendue est survenue lors de l'encodage du fichier '%s' avec les routines d'encodage « base64 ».
+Une erreur inattendue est survenue lors de l'encodage du fichier « %s » avec les routines d'encodage « Base64 ».
 ; An unexpected error occurred while trying to encode file \
 ; '%s' with the Base64 file encoding routines.
 ; FILENAME
 ;
 MSG_ER_QPFILEENCODE
-Une erreur inattendue est survenue lors de l'encodage du fichier '%s' avec les routines d'encodage « quoted-printable ».
+Une erreur inattendue est survenue lors de l'encodage du fichier « %s » avec les routines d'encodage « Quoted-Printable » (QP).
 ; An unexpected error occurred while trying to encode file \
 ; '%s' with the Quoted-Printable (QP) file encoding routines.
 ; FILENAME
 ;
 MSG_ER_UUFILEENCODE
-Une erreur inattendue est survenue lors de l'encodage du fichier '%s' avec les routines d'encodage « UUcode ».
+Une erreur inattendue est survenue lors de l'encodage du fichier « %s » avec les routines d'encodage « UUcode ».
 ; An unexpected error occurred while trying to encode file \
 ; '%s' with the UUcode file encoding routines.
 ; FILENAME
 ;
 MSG_ER_QPDEC_FILEIO
-Une erreur d'entrée/sortie est survenue lors du décodage « quoted printable » du fichier '%s'.
+Une erreur d'entrée/sortie est survenue lors du décodage « Quoted-Printable » du fichier « %s ».
 ; An input/output error occurred during decoding of the \
 ; Quoted-Printable (QP) encoded file '%s'.
 ;
 MSG_ER_QPDEC_UNEXP
-Une erreur inattendue est survenue lors du décodage du fichier '%s' avec les routines de décodage « quoted-printable ».
+Une erreur inattendue est survenue lors du décodage du fichier « %s » avec les routines de décodage « Quoted-Printable » (QP).
 ; An unexpected error occurred while trying to decode file \
 ; '%s' with the Quoted-Printable (QP) file decoding routines.
 ; FILENAME
 ;
 MSG_ER_QPDEC_WARN
-Lors du décodage « quoted-printable » du fichier '%s', des séquences de contrôle incorrectes ont été détectées et sont restées non décodées dans le résultat.
+Lors du décodage « Quoted-Printable » (QP) du fichier « %s », des séquences \
+de contrôle incorrectes ont été détectées et sont restées non décodées dans le résultat.
 ; During the Quoted-Printable (QP) decoding of file '%s' some broken \
 ; control sequences were detected and kept undecoded in the output.
 ; FILENAME
 ;
 MSG_ER_QPDEC_CHAR
-Des caractères interdits ont été détectés lors du décodage « quoted-printable » du fichier '%s' et on donc été supprimés lors du décodage.
+Lors du décodage « Quoted-Printable » (QP) du fichier « %s », des caractères \
+interdits ont été détectés et par conséquent ont été supprimés du résultat.
 ; During the Quoted-Printable (QP) decoding of file '%s' some forbidden \
 ; characters were found and therefore removed in the output.
 ; FILENAME
 ;
 MSG_ER_UUDEC_TAGMISS
-Lors du décodage « UUdecode » du fichier '%s', YAM n'a pas pu trouver le tag obligatoire '%s' comme indiqué dans le standard « UUcode ».
+Lors du décodage « UUdecode » du fichier « %s », le tag obligatoire « %s » n'a pas été trouvé.\n\
+\n\
+Soit le message est tronqué, soit il n'a pas été encodé en respectant le standard d'encodage UUcode.
 ; During the UUcode decoding of file '%s' the required '%s' tag couldn't be found.\n\
 ; \n\
 ; Either the file is truncated or it wasn't encoded following the UUcode \
@@ -6391,9 +6417,10 @@ Lors du décodage « UUdecode » du fichier '%s', YAM n'a pas pu trouver le tag obl
 ; FILENAME, TAG
 ;
 MSG_ER_UUDEC_CHECKSUM
-Lors du décodage « UUdecode » du fichier '%s', YAM s'est aperçu que des sommes de contrôle internes étaient invalides et suggère par conséquent de vérifier que le fichier résultant n'est pas corrompu.\n\
+Lors du décodage « UUdecode » du fichier « %s », des sommes de contrôle invalides ont \
+été rencontrées, par conséquent le fichier résultant peut être corrompu.\n\
 \n\
-Un encodeur « UUencode » défectueux a été utilisé ou le message est tronqué.
+Soit le message est tronqué soit il a été généré par encodeur « UUencode » défectueux.
 ; During the UUcode decoding of file '%s' some checksums were found invalid, so \n\
 ; that the resulting file might be corrupt.\n\
 ; \n\
@@ -6401,9 +6428,9 @@ Un encodeur « UUencode » défectueux a été utilisé ou le message est tronqué.
 ; FILENAME
 ;
 MSG_ER_UUDEC_CORRUPT
-Lors du décodage « UUdecode » du fichier '%s', YAM s'est aperçu que la partie « UUencodée » semblait être corrompue. \n\
+Lors du décodage « UUdecode » du fichier « %s », la partie « UUencodée » semble être corrompue. \n\
 \n\
-Un encodeur « UUencode » défectueux a été utilisé ou le message est tronqué.
+Soit le message est tronqué, soit il a été généré par un encodeur « UUencode » défectueux.
 ; During the UUcode decoding of file '%s' the encoded part was found be corrupt.\n\
 ; \n\
 ; Either the message is truncated or it was generated with a faulty UUcode encoder.
@@ -6414,8 +6441,8 @@ Marqué
 ; Marked
 ;
 MSG_MA_CREQUEST_OLDFILE
-YAM s'est aperçu que le fichier '%s' du dossier '%s' est un vieux fichier mail\n\
-normalement utilisé dans des versions de YAM antérieures à celle-ci.\n\
+Le fichier « %s » du dossier « %s » utilise format de messages obsolète \
+uniquement supporté par les versions antérieures de YAM.\n\
 \n\
 Voulez-vous convertir ce fichier dans le nouveau format ?
 ; File '%s' in folder '%s' uses an obsolete mail format\n\
@@ -6425,9 +6452,9 @@ Voulez-vous convertir ce fichier dans le nouveau format ?
 ; FILENAME, FOLDER
 ;
 MSG_MA_CREQUEST_UNKNOWN
-YAM a trouvé un fichier '%s' inconnu dans le dossier '%s'.\n\
+Un fichier inconnu « %s » a été trouvé dans le dossier « %s ».\n\
 \n\
-Voulez-vous l'importer en tant que fichier de mail normal ?
+Voulez-vous l'importer en tant que fichier de messages normal ?
 ; Unknown file '%s' found in directory of folder '%s'.\n\
 ; \n\
 ; Do you want to import it as a normal mail file?
@@ -6438,9 +6465,11 @@ MSG_MA_YESNOTOALL
 ; *_Yes|Y_es to all|_No|N_o to all
 ;
 MSG_ER_CONVERTMFILE
-Une erreur est survenue lors de la conversion du fichier de mail '%s' du dossier '%s'.\n\
+Une erreur est survenue lors de la mise à jour vers le format de messages \
+courant du fichier de « %s » dans le dossier « %s ».\n\
 \n\
-Veuillez vérifier que le dossier dispose de suffisamment d'espace disque et des autorisations d'écriture nécessaires.
+Veuillez vérifier que le dossier dispose de suffisamment d'espace disque \
+et qu'il n'est pas protégé contre l'écriture.
 ; An error occurred while trying to upgrade file \
 ; '%s' in folder '%s' to the current mail format.\n\
 ; \n\
@@ -6449,9 +6478,9 @@ Veuillez vérifier que le dossier dispose de suffisamment d'espace disque et des 
 ; FILENAME, FOLDER
 ;
 MSG_ER_XPKUSAGE
-Une erreur est survenue lors de la compression/décompression du fichier '%s' avec XPK.\n\
+Une erreur est survenue lors de la compression/décompression du fichier « %s » avec XPK.\n\
 \n\
-Veuillez vérifier votre installation de XPK ainsi que les réglages de compression correspondant dans la configuration de YAM.
+Veuillez vérifier votre installation de XPK ainsi que les réglages correspondants dans la configuration.
 ; An error occurred while trying to compress/uncompress file '%s' with XPK.\n\
 ; \n\
 ; Please check your XPK installation and the relevant settings \
@@ -6493,11 +6522,11 @@ support AmiSSL n'est pas disponible actuellement.
 ; currently not available.
 ;
 MSG_CO_SHOWEMBEDDEDREADPANE
-_Volet de visualisation dans fenêtre principale
+Afficher le _volet de visualisation dans fenêtre principale
 ; Show embedded read _pane in main window
 ;
 MSG_HELP_CO_CH_EMBEDDEDREADPANE
-Ajoute un volet de visualisation de mail\n\
+Affiche un volet de visualisation\n\
 directement dans la fenêtre principale.
 ; Shows an embedded read pane\n\
 ; directly in the main window.
@@ -6511,9 +6540,9 @@ seconde(s)
 ; second(s)
 ;
 MSG_HELP_CO_SETSTATUSDELAYED
-Lors du changement ou de l'affichage d'un mail dans le\n\
-volet de visualisation, YAM ne marquera le message comme\n\
-étant lu qu'après le nombre de secondes spécifié.
+Après l'ouverture d'un courrier,\n\
+YAM\ attendra le temps spécifié\n\
+avant de le marquer « lu ».
 ; After opening an e-mail, YAM will\n\
 ; wait this amount of time before\n\
 ; marking the e-mail as 'read'.
@@ -6559,12 +6588,12 @@ Image seule
 ; Image only
 ;
 MSG_CO_CHARSETWARN_TITLE
-Avertissement de configuration de jeu de caractères local
+Avertissement de jeu de caractères local
 ; Local charset warning
 ;
 MSG_CO_CHARSETWARN
-Le jeu de caractères configuré dans YAM est '%s' et ne\n\
-ne correspond pas à celui par défaut du système '%s'.\n\
+Le jeu de caractères configuré dans YAM est « %s » et ne\n\
+ne correspond pas à celui par défaut du système « %s ».\n\
 \n\
 Comment voulez-vous régler cela ?
 ; The '%s' charset selected for YAM doesn't\n\
@@ -6578,11 +6607,11 @@ MSG_CO_CHARSETWARN_BT
 ; *_Change|Ignore _always|_Ignore
 ;
 MSG_CO_SenderRFCDateTime
-%c  Original sender: RFC2822 Date&Time
+%c  Expéditeur d'origine : date et heure RFC2822
 ; %c  Original sender: RFC 2822 date & time
 ;
 MSG_CO_SenderTimeZone
-%z  Original sender: TimeZone (+0000)
+%z  Expéditeur d'origine : TimeZone (+0000)
 ; %z  Original sender: Time zone (+0000)
 ;
 MSG_CO_Filter_Name
@@ -6619,7 +6648,7 @@ _Moins
 ;
 MSG_MA_AUTOSAVEFOUND
 YAM a trouvé un fichier de sauvegarde automatique\n\
-de message '%s' ayant été créé lors\n\
+de message « %s » ayant été créé lors\n\
 d'une session précédente. Cela peut être dû a un\n\
 éventuel plantage ou reboot lors de la rédaction du\n\
 nouveau message.\n\
@@ -6645,9 +6674,9 @@ MSG_CO_NB_AUTOSAVEFMT
 ; %ld minute(s)
 ;
 MSG_HELP_CO_NB_AUTOSAVE
-Intervalle en minutes auquel YAM doit créer\n\
-automatiquement une copie de sauvegarde\n\
-du mail que vous êtes en train de rédiger.\n\
+A quelle fréquence YAM doit créer une copie\n\
+de sauvegarde du courrier que vous êtes en train\n\
+de rédiger.\n\
 Sélectionnez 0 pour désactiver cette fonction.
 ; How often YAM should write to disk a backup\n\
 ; of the e-mail you are currently composing.\n\
@@ -6661,7 +6690,7 @@ MSG_ER_GENESISUSER
 YAM a détecté que vous utilisez Genesis/AmiTCP, mais ne\n\
 peut pas trouver un compte utilisateur YAM correspondant\n\
 au compte global actif qui est actuellement configuré dans\n\
-Genesis : '%s'\n\
+Genesis (%s)\n\
 \n\
 Veuillez vous assurer que vos noms d'utilisateur Genesis et\n\
 YAM correspondent. Dans le cas contraire, la fonction de\n\
@@ -6681,7 +6710,7 @@ MSG_ER_CONTINUEEXIT
 ;
 MSG_ER_MOVEFOLDERDIR
 Une erreur est survenue lors du déplacement du contenu du\
-dossier '%s' vers le répertoire '%s'.\n\
+dossier « %s » vers le répertoire « %s ».\n\
 \n\
 Cela peut être causé soit par un espace disque insuffisant,\
 soit un chemin de destination invalide ou protégé en écriture.
@@ -6692,23 +6721,24 @@ soit un chemin de destination invalide ou protégé en écriture.
 ; destination path.
 ;
 MSG_CO_QUICKSEARCHBAR
-Afficher la barre de recherche rapide dans la fenêtre principale
+Afficher la barre de recherche dans la fenêtre principale
 ; Show search _bar in main window
 ;
 MSG_HELP_CO_CH_QUICKSEARCHBAR
-Active une barre de recherche dans la fenêtre\n\
-principale pour une recherche rapide de mails.
+Active une barre de recherche\n\
+dans la fenêtre principale pour\n\
+une recherche rapide de messages.
 ; If checked, a search bar will appear\n\
 ; in the main window to let you find\n\
 ; certain e-mails more quickly.
 ;
 MSG_FI_SELECTACTIVE
-Sélectionner résultat _actif
+Sélectionner ce résult_at
 ; Select this m_atch
 ;
 MSG_HELP_FI_BT_SELECTACTIVE
-Affiche dans la fenêtre principale\n\
-les messages trouvés en surbrillance.
+Sélectionne dans la fenêtre\n\
+principale le message courant.
 ; Select the current message\n\
 ; in the main window.
 ;
@@ -6725,15 +6755,15 @@ Sujet Ou Expéditeur
 ; Subject Or Sender
 ;
 MSG_QUICKSEARCH_SO_TOORCC
-Destinataire (A Ou Cc)
+Destinataire (À Ou Cc)
 ; Recipient (To or CC)
 ;
 MSG_QUICKSEARCH_SO_INMSG
-Trouver dans le message
+Corps du message
 ; Message Body
 ;
 MSG_QUICKSEARCH_SO_ENTIREMSG
-Message entier
+Message complet
 ; Whole Message
 ;
 MSG_QUICKSEARCH_VO_ALL
@@ -6773,7 +6803,7 @@ Taille > 1 MO
 ; Message Size > 1 MB
 ;
 MSG_QUICKSEARCH_VIEW
-Voir :
+_Voir :
 ; _View:
 ;
 MSG_QUICKSEARCH_SHOWNMSGS
@@ -6786,26 +6816,26 @@ _nulle part
 ; n_owhere
 ;
 MSG_HELP_QUICKSEARCH_VIEWOPTIONS
-Seuls les mails correspondant au critère\n\
-d'affichage sélectionné sera affichés.
+Seuls les courriers correspondant au critère\n\
+d'affichage sélectionné seront affichés.
 ; Only mail matching this criterion\n\
 ; will be displayed.
 ;
 MSG_HELP_QUICKSEARCH_SEARCHSTRING
 Le texte inséré ici sera utilisé comme critère\n\
-de recherche pour l'affichage des mails dans\n\
+de recherche pour l'affichage des courriers dans\n\
 le dossier courant.
 ; Text inserted here will be used as the search\n\
 ; criterion to display mail in this folder.
 ;
 MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Ce menu déroulant permet de sélectionner le\n\
-critère sur lequel porte la recherche du texte spécifié.
+Sélectionnez ici où le texte saisi à droite\n\
+doit être recherché dans le courrier.
 ; Select here where the string at the right\n\
 ; should be searched in the mail.
 ;
 MSG_BUSY_SEARCHINGFOLDER
-Recherche des messages dans le dossier '%s'...
+Recherche des messages dans le dossier « %s »...
 ; Searching messages in folder '%s'...
 ; FOLDERNAME
 ;
@@ -6820,22 +6850,26 @@ avec les statistiques des dossiers.
 ; Workbench showing folder statistics.
 ;
 MSG_CO_DOCKYICON
-D_ockyIcon
+Active l'icône « d_ocky »
 ; Enable 'd_ocky' icon
 ;
 MSG_HELP_CO_CH_DOCKYICON
-Affiche un Docky icône via application.library.\n\
-(disponible uniquement sous AmigaOS4)
+Avec cette option, YAM ajoute un « docky »\n\
+dans AmiDock. Cela nécessite AmigaOS 4.x.
 ; If checked, YAM will add a 'docky' to\n\
 ; AmiDock. This requires AmigaOS 4.x.
 ;
 MSG_MA_MessageImport
-Importation des messages depuis fichier MBOX, BX ou texte...
+Import de messages
 ; Import messages
 ;
 MSG_ER_MESSAGEIMPORT
-Une erreur est survenue lors de l'import des messages depuis le fichier '%s'.\n\n\
-Veuillez vous assurer que le fichier choisi est lisible et qu'il contient bien des messages conformes à la RFC822 dans l'un des formats  d'import supporté par YAM. YAM est actuellement capable d'importer des messages depuis un fichier 'MBOX', 'DBX' (Outlook Express) et même un fichier texte RFC822. Veuillez vérifier la documentation pour plus d'information sur les formats d'imports supportés et les méthodes alternatives d'import de messages.
+Une erreur est survenue lors de l'import des messages depuis le fichier « %s ».\n\
+\n\
+Veuillez vérifier que le fichier est lisible et qu'il contient des \
+messages conformes à la RFC822 dans l'un des formats d'import supporté \
+par YAM. Les format actuellement supportés sont « MBOX », « DBX » (Outlook \
+Express) ou fichier brut RFC822. Veuillez lire la documentation pour plus d'information.
 ; An error occurred while trying to import mail from file '%s'.\n\
 ; \n\
 ; Please check that the file is readable and contains RFC822 compliant \
@@ -6845,7 +6879,7 @@ Veuillez vous assurer que le fichier choisi est lisible et qu'il contient bien d
 ; FILENAME
 ;
 MSG_MA_MESSAGEEXPORT
-Exportation des messages vers un fichier de messages compatible MBOX...
+Export de messages
 ; Export messages
 ;
 MSG_YAMINFO
@@ -6861,7 +6895,7 @@ Jeu de caractères
 ; C_harset
 ;
 MSG_CO_CHARSETUNKNOWNWARN
-Le jeu de caractères configuré dans YAM est '%s' qui n'est\n\
+Le jeu de caractères configuré dans YAM est « %s » qui n'est\n\
 pas supporté par la version installée de codesets.library.\n\
 \n\
 Comment voulez-vous procéder ?
@@ -6876,10 +6910,10 @@ MSG_CO_CHARSETUNKNOWNWARN_BT
 ; *_Change to default|_Ignore
 ;
 MSG_ER_LIB
-Impossible d'ouvrir '%s' version v%lu.%lu requise.\n\
+Impossible d'ouvrir « %s » version v%lu.%lu requise.\n\
 \n\
 Veuillez vérifier que vous possédez au moins cette\n\
-version installée dans votre chemin de recherche.
+version installée correctement.
 ; Couldn't open required '%s', version v%lu.%lu\n\
 ; \n\
 ; Please make sure you have at least this\n\
@@ -6887,12 +6921,11 @@ version installée dans votre chemin de recherche.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
 ;
 MSG_ER_LIB_URL
-Impossible d'ouvrir '%s' version v%lu.%lu requise.\n\
+Impossible d'ouvrir « %s » version v%lu.%lu requise.\n\
 \n\
-Veuillez consulter '%s'\n\
+Veuillez consulter « %s »\n\
 pour télécharger la dernière version et vous assurer\n\
-qu'elle est correctement installée dans votre chemin\n\
-de recherche.
+qu'elle est correctement installée.
 ; Couldn't open required '%s', version v%lu.%lu\n\
 ; \n\
 ; Please visit '%s',\n\
@@ -6901,10 +6934,11 @@ de recherche.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
 ;
 MSG_ER_NO_MCC
-Impossible d'ouvrir la classe MUI requise '%s' v%lu.%lu.\n\
+Impossible d'ouvrir la classe MUI requise « %s » v%lu.%lu.\n\
 \n\
-Veuillez consulter '%s'\n\
-et vous assurer que vous avez la dernière version installée.
+Veuillez consulter « %s »\n\
+pour télécharger la dernière version et vous assurer\n\
+qu'elle est correctement installée.
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
 ; \n\
 ; Please visit '%s',\n\
@@ -6913,11 +6947,11 @@ et vous assurer que vous avez la dernière version installée.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_OLD
-Impossible d'ouvrir la classe MUI requise '%s' v%lu.%lu.\n\
+Impossible d'ouvrir la classe MUI requise « %s » v%lu.%lu.\n\
 \n\
 La version actuellement installée est v%lu.%lu, veuillez\n\
 vous mettre à jour en téléchargeant la dernière version\n\
-depuis '%s'.
+depuis « %s ».
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
 ; \n\
 ; Currently installed is v%lu.%lu. Please upgrade by downloading\n\
@@ -6925,10 +6959,11 @@ depuis '%s'.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_IN_USE
-Impossible d'ouvrir la classe MUI requise '%s' v%lu.%lu.\n\
+Impossible d'ouvrir la classe MUI requise « %s » v%lu.%lu.\n\
+\n\
 La version %lu.%lu est actuellement utilisée par d'autres applications.\n\
 \n\
-Veuillez consulter '%s'.\n\
+Veuillez consulter « %s ».\n\
 Lorsque vous aurez installé la version requise, fermez tous les\n\
 programmes MUI, puis vous assurer que l'ancienne classe soit\n\
 déchargée de la mémoire avant de réessayer.
@@ -6948,7 +6983,7 @@ Réglages de base
 ; First Steps Settings
 ;
 MSG_CO_FIRSTSTEPS_SUMMARY
-Pour configurer rapidement le strict minimum...
+Les paramètres minimum pour pouvoir envoyer/recevoir du courrier...
 ; The minimum parameters to be able to send/receive e-mail...
 ;
 MSG_CO_TCPIP_TITLE
@@ -6956,7 +6991,7 @@ Réglages TCP/IP
 ; TCP/IP Settings
 ;
 MSG_CO_TCPIP_SUMMARY
-Pour configurer vos serveurs SMTP et POP3...
+Configure vos serveurs SMTP et POP3...
 ; Configure your SMTP and POP3 accounts...
 ;
 MSG_CO_NEWMAIL_TITLE
@@ -6964,7 +6999,7 @@ Réglages nouveaux courriers
 ; New Mail Settings
 ;
 MSG_CO_NEWMAIL_SUMMARY
-Comment agir à la réception de nouveaux courriers...
+Comment traiter et réagir à la réception de nouveaux courriers...
 ; How to handle and react upon incoming mail...
 ;
 MSG_CO_FILTER_TITLE
@@ -6972,7 +7007,7 @@ Réglages des filtres
 ; Mail Filter Settings
 ;
 MSG_CO_FILTER_SUMMARY
-Pour définir vos propres filtres de courrier...
+Définit les filtres de courrier dont vous avez besoin...
 ; Define own mail filters you need...
 ;
 MSG_CO_READ_TITLE
@@ -6980,7 +7015,7 @@ Réglages de lecture de courrier
 ; Mail Reading Settings
 ;
 MSG_CO_READ_SUMMARY
-Pour configurer la manière de lire vos courriers...
+Réglages relatifs à la lecture du courrier...
 ; Settings related to e-mail reading...
 ;
 MSG_CO_WRITE_TITLE
@@ -6988,15 +7023,15 @@ Réglages de rédaction de courrier
 ; Mail Writing Settings
 ;
 MSG_CO_WRITE_SUMMARY
-Pour configurer la manière de rédiger vos courriers...
+Réglages relatifs à la rédaction de courrier...
 ; Settings related to e-mail composing...
 ;
 MSG_CO_REPLY_TITLE
-Réglages de réponse au courrier
+Réglages de réponse et transfert de courrier
 ; Mail Reply & Forward Settings
 ;
 MSG_CO_REPLY_SUMMARY
-Pour configurer la manière de répondre à vous courriers...
+Réglages relatifs aux réponses et transferts de courrier...
 ; Settings related to e-mail replying & forwarding...
 ;
 MSG_CO_SIGNATURE_TITLE
@@ -7008,11 +7043,11 @@ Pour configurer les signatures de vos courriers...
 ; Configure your e-mail signatures...
 ;
 MSG_CO_LISTS_TITLE
-Réglages des listes de diffusion
+Réglages des listes
 ; Mail Listview Settings
 ;
 MSG_CO_LISTS_SUMMARY
-Changez l'apparence des listes de diffusion...
+Configure l'apparence des listes de courrier...
 ; Configure the basic appearance of mail listviews...
 ;
 MSG_CO_SECURITY_TITLE
@@ -7020,7 +7055,7 @@ Réglages de sécurité
 ; Security Settings
 ;
 MSG_CO_SECURITY_SUMMARY
-Pour configurer toutes les options de sécurité...
+Configure les options relatives à la sécurité...
 ; Configure security related settings...
 ;
 MSG_CO_STARTUP_TITLE
@@ -7028,7 +7063,7 @@ Réglages des actions de démarrage/arrêt
 ; Startup/Quit Action Settings
 ;
 MSG_CO_STARTUP_SUMMARY
-Opérations de maintenance lors du démarrage et l'arrêt de YAM...
+Configure ce que YAM doit exécuter au démarrage et à l'arrêt...
 ; Configure what YAM should do on startup and exit...
 ;
 MSG_CO_MIME_TITLE
@@ -7036,7 +7071,7 @@ Réglages des types MIME
 ; MIME Types Settings
 ;
 MSG_CO_MIME_SUMMARY
-Pour configurer la manière de traiter les types MIME...
+Configure vos propres types MIME et leur visionneuses...
 ; Configure own MIME types and viewers...
 ;
 MSG_CO_ABOOK_TITLE
@@ -7044,15 +7079,15 @@ Réglages du carnet d'adresses
 ; Address Book Settings
 ;
 MSG_CO_ABOOK_SUMMARY
-Pour configurer les options relatives au carnet d'adresses...
+Configure les options relatives au carnet d'adresses...
 ; Configure address book related options...
 ;
 MSG_CO_SCRIPTS_TITLE
-Réglages des scripts utilisateur
+Réglages des scripts
 ; Scripts Settings
 ;
 MSG_CO_SCRIPTS_SUMMARY
-Pour configurer vos scripts utilitaires...
+Configure vos scripts utilitaires...
 ; Configure your helper scripts...
 ;
 MSG_CO_MIXED_TITLE
@@ -7060,7 +7095,7 @@ Réglages divers
 ; Miscellaneous Settings
 ;
 MSG_CO_MIXED_SUMMARY
-Pour configurer diverses options...
+Une palanquée d'options qui n'allaient pas ailleurs...
 ; A bunch of settings that don't fit anywhere else...
 ;
 MSG_CO_UPDATE_TITLE
@@ -7068,7 +7103,7 @@ Réglages des mises à jour
 ; Software Updates
 ;
 MSG_CO_UPDATE_SUMMARY
-Vérification des mises à jour de YAM...
+Garde un oeil sur les mises à jour de YAM et de ses composants...
 ; Keep track of updates to YAM and related components...
 ;
 MSG_CO_CrdUpdate
@@ -7076,19 +7111,18 @@ Mises à jour
 ; Updates
 ;
 MSG_CO_AMISSLWARN_TITLE
-Avertissement de disponibilité AmiSSL
+AmiSSL non disponible
 ; AmiSSL not available
 ;
 MSG_CO_AMISSLWARN
-YAM a détecté qu'AmiSSL est indisponible\n\
-pour ses fonctions internes SSLv3/TLSv1.\n\
-Aussi toute connexion sécurisée sera désactivée\n\
-jusqu'à ce qu'AmiSSL soit installé correctement\n\
-et détecté  comme tel.\n\
+AmiSSL n'est pas disponible. Pour cela toutes\n\
+les connexions sécurisées (SSLv3/TLSv1) sont\n\
+désactivées jusqu'à ce qu'AmiSSL soit installé\n\
+correctement\n\
 \n\
 Veuillez vous assurer que vous avez installé\n\
-correctement au moins AmiSSL v%lu.%lu sur\n\
-votre système et redémarrez YAM.
+correctement au moins AmiSSL v%lu.%lu puis\n\
+veuillez redémarrer YAM.
 ; AmiSSL was found to be unavailable. Therefore,\n\
 ; all secure connections (SSL/TLS) are disabled\n\
 ; until AmiSSL is found to be installed correctly.\n\
@@ -7106,12 +7140,12 @@ Ouverture de la configuration...
 ; Opening configuration...
 ;
 MSG_CO_TIMEZONEWARN_TITLE
-Avertissement de réglage de Timezone
+Avertissement de réglage de fuseau horaire
 ; Time zone setting warning
 ;
 MSG_CO_TIMEZONEWARN
-Le réglage de Timezone dans YAM ne correspond\n\
-pas à la Timezone par défaut du système.\n\
+Le fuseau horaire configuré dans YAM ne\n\
+correspond pas à celui du système.\n\
 \n\
 Que désirez-vous faire ?
 ; The time zone setting in YAM doesn't match\n\
@@ -7144,11 +7178,11 @@ _Changer|_Toujours ignorer|_Ignorer
 ; *_Change|Ignore _always|_Ignore
 ;
 MSG_MA_UPDATECHECK
-Rechercher des mises à jour...
+Rechercher des mises à jour
 ; Check for updates
 ;
 MSG_CO_SOFTWAREUPDATE
-Mise à jour logicielle
+Vérification de mise à jour
 ; Update check
 ;
 MSG_CO_UPDATE_DAILY
@@ -7199,7 +7233,7 @@ MSG_WR_SECURITYREQ
 Les destinataires de ce courrier ont des réglages\n\
 de sécurité de messagerie par défaut différents.\n\
 \n\
-Comment désirez-vous composer ce mail ?
+Quel type de sécurité désirez-vous utiliser ?
 ; The recipients of the e-mail have different\n\
 ; default mail security settings.\n\
 ; \n\
@@ -7210,12 +7244,12 @@ MSG_WR_SECURITYREQ_GADS
 ; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Anonymous|_Cancel
 ;
 MSG_ER_OPENTCPIP
-YAM n'a pas été en mesure d'ouvrir l'interface\n\
-bsdsocket.library requise pour les connexions TCP/IP.\n\
+Impossible d'ouvrir l'interface bsdsocket.library requise \
+pour les connexions TCP/IP.\n\
 \n\
-Veuillez vous assurer que vous disposez d'une pile TCP/IP\n\
-compatible installée, correctement configurée et que votre\n\
-interface réseau est active et fonctionnelle.
+Veuillez vous assurer que vous disposez d'une pile TCP/IP \
+compatible et correctement configurée, et que votre interface \
+réseau est active et fonctionnelle.
 ; Couldn't open bsdsocket.library interface required for \
 ; TCP/IP connections.\n\
 ; \n\
@@ -7236,7 +7270,7 @@ Mise(s) à jour disponible(s)
 ; Updates available
 ;
 MSG_UPD_NOTIFICATION_SUMMARY
-YAM a trouvé les mises à jour suivantes :
+Les mises à jour suivantes sont disponibles au téléchargement :
 ; The following updates are available for download:
 ;
 MSG_UPD_NOTIFICATION_CHANGES
@@ -7288,7 +7322,7 @@ Fichier Microsoft Excel
 ; Microsoft Excel file
 ;
 MSG_CTapplicationppt
-Fichier Microsoft Powerpoint
+Fichier Microsoft PowerPoint
 ; Microsoft PowerPoint file
 ;
 MSG_CTapplicationdoc
@@ -7365,16 +7399,15 @@ Affichage des entêtes
 ; Header display
 ;
 MSG_RE_MAILDETAILS
-Détails du mail
+Détails du courrier
 ; Mail details
 ;
 MSG_ER_ADDFILEERROR
-Le fichier sélectionné '%s' ne peut pas être \
-ajouté comme attachement au mail courant.\n\
+Le fichier « %s » ne peut pas être ajouté comme \
+pièce jointe au courrier courant.\n\
 \n\
 Veuillez vous assurer que le fichier est \
-accessible et que vous possédez les permissions \
-de lecture adéquates.
+accessible et qu'il n'est pas protégé en écriture.
 ; File '%s' couldn't be added as an attachment to the current e-mail.\n\
 ; \n\
 ; Please make sure that the file is accessible \
@@ -7394,15 +7427,15 @@ d'accès adéquates.
 ; and not read protected.
 ;
 MSG_CO_ABOOKLOOKUP
-Recherche dans le carnet d'adresses pour la liste des messages
+_Rechercher dans le carnet d'adresses pour la liste des messages
 ; _Address book lookup in message list
 ;
 MSG_HELP_CO_CH_ABOOKLOOKUP
-Effectue une recherche dans le carnet d'adresses\n\
-pour le destinataire principal de mail et affiche\n\
-le nom réel du l'entrée du carnet à la place.\n\
+Recherche l'adresse de l'expéditeur/émetteur dans\n\
+le carnet d'adresses pour la remplacer dans la liste\n\
+des courriers par son nom réel.\n\
 \n\
-Veuillez noter : Ceci est très consommateur de\n\
+Veuillez noter que ceci est très consommateur de\n\
 temps et peut faire baisser les performances\n\
 d'affichage de la liste, en particulier avec de\n\
 gros carnets d'adresses.
@@ -7421,13 +7454,12 @@ Message %%ld sur %ld
 ; COUNT, COUNT
 ;
 MSG_CO_CONVERTHTML
-Convertir en texte brut les parties _HTML affichables du message
+Convertir les courriers HTML en texte brut
 ; Con_vert HTML e-mails to plain text
 ;
 MSG_HELP_CO_CONVERTHTML
-Si un mail contient des parties HTML affichables comme\n\
-partie principale, YAM les convertira en texte brut si\n\
-cette option est activée.
+Si la partie principale d'un courrier est HTML, YAM\n\
+la convertira en texte brut avant de l'afficher.
 ; If the main part of an e-mail is HTML, YAM will\n\
 ; convert it to plain text before displaying it.
 ;
@@ -7516,9 +7548,9 @@ minute(s) d'inactivités
 ; idle minute(s)
 ;
 MSG_HELP_CO_PGPPASSINTERVAL
-Une phrase secrète de PGP saisie sera mémorisée pendant\n\
-le nombre de minutes d'inactivité spécifié de manière\n\
-à ce que les opérations PGP suivantes ne la redemande pas.
+Avec cette option, votre phrase secrète PGP sera mémorisée\n\
+pendant le temps spécifié. Les opérations PGP suivantes ne\n\
+demanderont pas la saisie de la phrase secrète.
 ; If selected, your PGP passphrase will be remembered\n\
 ; for this amount of time. Subsequent PGP operations then\n\
 ; won't trigger another passphrase query.
@@ -7572,8 +7604,8 @@ Une erreur est survenue lors de l'ouverture \
 d'une requête ASL.\n\
 \n\
 Veuillez vous assurer que votre installation \
-ASL est valide et que vous disposez de ressources \
-suffisantes.
+ASL est valide et que vous disposez de suffisamment \
+de mémoire libre.
 ; An error occurred while trying to open \
 ; an ASL requester.\n\
 ; \n\
@@ -7596,7 +7628,7 @@ Courrier indésirable
 ; Spam
 ;
 MSG_LOADINGSPAMTRAININGDATA
-Chargement de la détection des courriers indésirables...
+Chargement des données sur les courriers indésirables...
 ; Loading spam training data...
 ;
 MSG_MA_TBSPAM
@@ -7632,12 +7664,12 @@ Marque ce message comme acceptable
 ; Mark message as not spam.
 ;
 MSG_LOG_MAILISSPAM
-Le message de '%s' à propos de '%s' est considéré comme indésirable
+Le message de « %s » à propos de « %s » est considéré comme indésirable
 ; Message from '%s' about '%s' is treated as spam.
 ; SENDER, SUBJECT
 ;
 MSG_LOG_MAILISNOTSPAM
-Le message de '%s' à propos de '%s' n'est plus considéré comme indésirable
+Le message de « %s » à propos de « %s » n'est plus considéré comme indésirable
 ; Message from '%s' about '%s' is no longer treated as spam.
 ; SENDER, SUBJECT
 ;
@@ -7666,7 +7698,7 @@ Filtragre des courriers indésirables
 ; Spam filter
 ;
 MSG_CO_SPAMFILTER_SUMMARY
-Pour configurer le filtrage des courriers indésirables...
+Configure le filtrage des courriers indésirables...
 ; Configure the spam filter...
 ;
 MSG_CO_SPAM_FILTERFORNEWMAIL
@@ -7694,7 +7726,7 @@ _Marquer comme indésirables les courriers déplacés vers le dossier « Indésirable
 ; Mark mails as spam when _moved to the Spam folder
 ;
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
-Le carnet d'adresse est une liste _blanche
+Le carnet d'adresses est une liste _blanche
 ; Address book is _white list
 ;
 MSG_CO_SPAM_RECOGNITION
@@ -7722,9 +7754,9 @@ Vérification des UIDL pour éviter les doublons...
 ; Checking UIDLs to avoid duplicates...
 ;
 MSG_CO_SPAM_DISABLEFILTERASK
-Le filtre des courriers indésirables était\n\
-actif et vient d'être désactivé. Laquelle des\n\
-actions suivantes voulez-vous réaliser ?
+Le filtre des courriers indésirables est maintenant désactivé.\n\
+\n\
+Laquelle des actions suivantes voulez-vous réaliser ?
 ; The spam filter has now been disabled.\n\
 ; \n\
 ; Which of the following operations\n\
@@ -7747,12 +7779,12 @@ M_éthode
 ; Met_hod
 ;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
-Permet de spécifier la méthode d'authentification\n\
-SMTP utilisée avec le serveur configuré. 'Auto'\n\
-sélectionne la méthode automatiquement en fonction\n\
-des capacités du serveur. Les autres permettent de\n\
-sélectionner explicitement la méthode, sachant que\n\
-la plus sûre est classée en haut.
+Sélectionnez ici la méthode d'authentification que YAM\n\
+doit utiliser. « Auto » laisse YAM en sélectionner une\n\
+en fonction des capacités du serveur et est la méthode\n\
+recommandée. Les autres vous permet d'en choisir une\n\
+explicitement. Elles sont listées dans l'ordre de sécurité\n\
+la plus sûre étant en haut.
 ; Select here the authentication method YAM should use.\n\
 ; 'Auto' lets YAM pick one automatically depending on\n\
 ; the server's capabilities and is the recommended value.\n\
@@ -7781,12 +7813,12 @@ PLAIN
 ; PLAIN
 ;
 MSG_CO_ER_SMTPAUTH
-Le serveur SMTP '%s' ne semble pas supporter la\n\
+Le serveur SMTP « %s » ne semble pas supporter la \
 méthode d'authentification sélectionnée.\n\
 \n\
-Veuillez vérifier avec votre fournisseur quelles\n\
-méthodes d'authentification sont disponibles et\n\
-comment les configurer dans vitre client mail.
+Veuillez vérifier avec votre fournisseur quelles \
+méthodes d'authentification sont disponibles et \
+comment les configurer dans votre client de messagerie.
 ; The SMTP server '%s' doesn't seem to support the \
 ; selected SMTP-AUTH method.\n\
 ; \n\
@@ -7794,11 +7826,11 @@ comment les configurer dans vitre client mail.
 ; available and how to configure them in your e-mail client.
 ;
 MSG_ER_SPAMDIR_EXISTS
-En tentant de créer un nouveau dossier pour les\n\
-indésirables, YAM a trouvé qu'il existait déjà\n\
+En tentant de créer un nouveau dossier pour les \
+indésirables, YAM a trouvé qu'il existait déjà \
 un dossier « spam ».\n\
 \n\
-De quelle manière voulez-vous utiliser ce dossier\n\
+De quelle manière voulez-vous utiliser ce dossier \
 en tant que dossier standard pour les indésirables ?
 ; While trying to create a new Spam folder, YAM\n\
 ; found that a directory named 'Spam' already exists.\n\
@@ -7811,13 +7843,12 @@ _Vider et utiliser|_Utiliser|*_Annuler
 ; C_leanup&Use|_Use|*_Cancel
 ;
 MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER
-Impossible de créer le dossier standard pour\n\
+Impossible de créer le dossier standard pour \
 les courriers indésirables !\n\
 \n\
-Le filtrage des indésirables a de nouveau été\n\
-désactivé. Veuillez vous assurer qu'il reste\n\
-suffisament de place sur le disque et qu'il\n\
-n'est protégé en écriture.
+Le filtrage des courriers indésirables a de nouveau été \
+désactivé. Veuillez vous assurer qu'il reste suffisament \
+de place sur le disque et qu'il n'est protégé en écriture.
 ; Couldn't create the standard Spam folder.\n\
 ; \n\
 ; The spam filter has been disabled again. Please make sure that \
@@ -7857,7 +7888,7 @@ Exporter
 ; Export
 ;
 MSG_AB_LDIF
-Carnet d'adresse LDIF (*.ldif)
+Carnet d'adresses LDIF (*.ldif)
 ; LDIF address book (*.ldif)
 ;
 MSG_AB_CSV
@@ -7881,11 +7912,11 @@ Chargement de l'état des mises à jour...
 ; Loading update state data...
 ;
 MSG_CO_ASK_SAVE_SIGNATURE
-Les changements de signature doivent être sauvés\n\
-indépendamment de la configuration globale, sinon\n\
-ils seront perdus !\n\
+Les modifications des signatures doivent être enregistrées \
+indépendamment de la configuration globale, sinon \
+elles seront perdues !\n\
 \n\
-Voulez-vous sauver la signature maintenant ?
+Voulez-vous enregistrer les signatures maintenant ?
 ; Changes to the signatures must be saved separately\n\
 ; from the global configuration or otherwise they\n\
 ; will be lost.\n\
@@ -8013,7 +8044,7 @@ Sauver l'adresse...
 ; Save address...
 ;
 MSG_MA_MADDRESSBOOK
-Carnet d'adresse...
+Carnet d'adresses...
 ; Address book...
 ;
 MSG_MA_MCONFIG
@@ -8041,8 +8072,8 @@ Nom du compte
 ; Account name
 ;
 MSG_HELP_CO_ST_POPACCOUNT
-Un nom arbitraire qui sera utilisé pour\n\
-ce compte à la place de utilisateur@hôte.
+Un nom arbitraire qui sera utilisé pour ce\n\
+compte à la place de « utilisateur@hôte ».
 ; An arbitrary name for this account which\n\
 ; will be used instead of user@host.
 ;
@@ -8067,8 +8098,9 @@ Marquer les nouveaux courriers indésirables comme _lus
 ; Mark new spam mai_ls as read
 ;
 MSG_HELP_CH_SPAMFILTERENABLED
-Active le moteur de filtre des indésirables de YAM qui\n\
-permet d'écarter les courriers publicitaires abusifs.
+Active le filtrage des courriers\n\
+indésirables permettant d'écarter\n\
+les courriers publicitaires abusifs.
 ; Enables the spam filter, allowing you\n\
 ; to filter out abusive advertising e-mails.
 ;
@@ -8088,8 +8120,7 @@ identifiés comme étant acceptables.
 MSG_HELP_BT_SPAMRESETTRAININGDATA
 Permet de manuellement réinitialiser la totalité de\n\
 l'apprentissage du filtre de détection des indésirables.\n\
-Veuillez noter que cela ne devrait être nécessaire que\n\
-dans de très rares cas.
+Cela ne devrait être nécessaire que dans de très rares cas.
 ; Allows to manually reset the whole spam filter\n\
 ; training data. This should be necessary only\n\
 ; in very rare cases.
@@ -8116,18 +8147,15 @@ marqués comme étant indésirables.
 ; folder will be automatically marked as spam.
 ;
 MSG_HELP_CH_SPAMMARKASREAD
-Avec cette option, les courriers indésirables seront\n\
-autmatiquement marqués comme lus et ne seront donc pas\n\
-portés à l'attention de l'utilisateur.
+Avec cette option, les courriers indésirables\n\
+seront automatiquement marqués comme lus.
 ; If checked, spam mail will be\n\
 ; automatically flagged as 'read'.
 ;
 MSG_HELP_CH_UPDATECHECK
-Cette option active le mécanisme de vérification\n\
-automatique de mise à jour dans YAM. En respectant\n\
-un intervalle défini, YAM tentera de récupérer les\n\
-informations sur la dernière version par Internet,\n\
-et avertira l'utilisateur des mises à jour logicielles.
+Fréquence à laquelle YAM doit vérifier\n\
+automatiquement la présence de mise à jour.\n\
+Sélectionnez « Jamais » pour la désactiver.
 ; How often do you want YAM to\n\
 ; automatically check for updates?\n\
 ; Select 'never' to disable this feature.
@@ -8175,7 +8203,7 @@ Accusés réception
 ; Return receipts
 ;
 MSG_CO_MDN_DESCRIPTION
-Lorsque je reçois un demande d'accusé de réception :
+Lorsque je reçois une demande d'accusé de réception :
 ; When I receive a request for a return receipt...
 ;
 MSG_CO_MDN_DISABLED
@@ -8187,7 +8215,7 @@ Ren_voyer certains accusés de réception :
 ; Allow _return receipts for some messages
 ;
 MSG_CO_MDN_NORECIPIENT
-Si je n'apparais pas _dans le champ « A » et « Cc »
+Si je n'apparais pas _dans le champ « À » ou « Cc »
 ; If I'm not in the _To: or Cc: of the message:
 ;
 MSG_CO_MDN_NODOMAIN
@@ -8203,13 +8231,14 @@ Dans tous les autres _cas
 ; In all oth_er cases:
 ;
 MSG_CO_REQUESTMDN
-Lors de l'envoi de _messages, toujours demander un accusé
+Toujours de_mander un accusé de réception
 ; Always request a retur_n receipt
 ;
 MSG_HELP_CO_CH_REQUESTMDN
 Avec cette option, l'option de renvoi des\n\
 accusés de réception de la fenêtre de rédaction\n\
-sera activée par défaut.
+sera toujours activée par défaut (à utiliser\n\
+avec précaution).
 ; If selected, the return receipt option in\n\
 ; the Write window will always be enabled\n\
 ; by default (Use this with care).
@@ -8227,44 +8256,44 @@ sont traités selon les règles définies ici.
 ; according to the rules defined here.
 ;
 MSG_HELP_CO_CY_MDN_NORECIPIENT
-Si un accusé de réception est requis, mais\n\
-que votre adresse électronique n'est pas\n\
-présente dans le champ « A: » ou « CC: »,\n\
-l'action spécifiée sera exécutée.
+Ce qu'il faut faire d'une demande d'accusé\n\
+de réception lorsque votre adresse électronique\n\
+n'est présente ni dans le champ « À: » ni « CC: ».
 ; What to do with a return receipt request\n\
 ; when your e-mail address doesn't appear\n\
 ; neither in the To: or Cc: headers.
 ;
 MSG_HELP_CO_CY_MDN_NODOMAIN
-Si un accusé de réception est requis, mais\n\
-que le domaine de votre adesse email et\n\
-celui de l'émetteur ne correspondent pas,\n\
-l'action définie est exécutée.
+Ce qu'il faut faire d'une demande d'accusé\n\
+de réception lorsque le domaine de l'expéditeur\n\
+ne correspond pas au votre.
 ; What to do with a return receipt request\n\
 ; when the sender's domain doesn't match yours.
 ;
 MSG_HELP_CO_CY_MDN_DELETE
-Si vous supprimez un message sans l'afficher,\n\
-l'action définie ici ext exécutée.
+Ce qu'il faut faire d'une demande d'accusé\n\
+de réception lors de la suppression d'un\n\
+message sans l'avoir lu.
 ; What to do with a return receipt request\n\
 ; when you just delete the original message.
 ;
 MSG_HELP_CO_CY_MDN_OTHER
-Lorsqu'aucun des cas précédents ne s'applique,\n\
-cette action est exécutée à la place.
+Ce qu'il faut faire d'une demande\n\
+d'accusé de réception lorsqu'aucun\n\
+des cas précédents ne s'applique.
 ; What to do with a return receipt request\n\
 ; when none of the above rules applies.
 ;
 MSG_CO_LOOKFEEL_TITLE
-Look&Feel
+Apparence
 ; Look & Feel
 ;
 MSG_CO_LOOKFEEL_SUMMARY
-Configure le look&feel général de YAM...
+Configure l'apparence générale de YAM...
 ; Configure the general Look & Feel of YAM...
 ;
 MSG_CO_CRDLOOKFEEL
-Look&Feel
+Apparence
 ; Look & Feel
 ;
 MSG_CO_DSTACTIVE
@@ -8334,14 +8363,14 @@ URL
 ; URL
 ;
 MSG_CO_RELDATETIME
-Format des dates relatives (Aujourd'hui, hier...)
+Format des dates relatives
 ; Rela_tive date output
 ;
 MSG_HELP_CO_CH_RELDATETIME
-Avec cette option, les colonnes contenant des\n\
-dates utiliseront des format relatifs. Par exemple\n\
-de telles colonnes afficheront des textes comme\n\
-« Aujourd'hui » ou « Hier » au lieu de la date.
+Avec cette option, les colonnes contenant\n\
+des dates utiliseront des format relatifs\n\
+(p.ex. « Aujourd'hui » ou « Hier ») au lieu\n\
+de la date complète si possible.
 ; If selected, columns with date information\n\
 ; will use a relative output (e.g. 'Today' or\n\
 ; 'Yesterday') instead of the full date if possible.
@@ -8367,20 +8396,18 @@ L'utilisateur « %s » est inconnu !
 ; Unknown user '%s'!
 ;
 MSG_HELP_CO_CA_COLSIG
-La couleur de texte à utiliser pour\n\
-afficher la signature d'un message.
+La couleur à utiliser pour\n\
+la signature d'un message.
 ; The color that should be used to\n\
 ; print the signature of a mail.
 ;
 MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS
-Vous avez choisi de marquer automatiquement les courriers\n\
-indésirables comme lus, mais pour le moment vous n'avez que\n\
-%ld courriers classés.\n\
-Il n'est pas recommandé d'activer cette option au début de\n\
-l'entrainement du filtre de détection des indésirables.\n\
+Il n'est pas recommandé d'activer cette fonction avec \
+aussi peu de courriers classés indésirables (%ld). En \
+effet cela peut entraîner des performances moindre du \
+filtre des indésirables.\n\
 \n\
-Voulez-vous désactiver le marquage automatique des courriers\n\
-indésirables comme lus ?
+Voulez-vous désactiver cette option à nouveau ?
 ; It is not recommended to enable this feature with as\n\
 ; few as %ld mails classified as spam so far, as this\n\
 ; may lead to poor performance of the spam filter.\n\
@@ -8392,7 +8419,7 @@ Impossible de créer le sémaphore !
 ; Can't create semaphore!
 ;
 MSG_MA_AUTOSAVEFOUND_BUTTONS
-*_Envoyer|_Editer|E_ffacer|_Ignorer
+*Déplacer vers « _En Attente »|_Editer|E_ffacer|_Ignorer
 ; *Move to _Outgoing|_Edit|_Delete|_Ignore
 ;
 MSG_RE_HDR_FROM
@@ -8412,7 +8439,7 @@ Sujet
 ; Subject
 ;
 MSG_RE_VIRTUALMAIL
-Mail virtuel
+Courrier virtuel
 ; Virtual e-mail
 ;
 MSG_CO_MIMECMD_PUBSCREEN
@@ -8420,13 +8447,14 @@ MSG_CO_MIMECMD_PUBSCREEN
 ; %p  Name of YAM's public screen
 ;
 MSG_ER_ZOMBIE_FILES_EXIST
-YAM n'a pas été en mesure d'effacer tous les fichiers\n\
-temporaires générés lors du nettoyage. Ces fichiers sont\n\
-peut-être actuellement verrouillés par d'autre applications.\n\
+Impossible d'effacer tous les fichiers temporaires lors \
+du nettoyage.\n\
 \n\
-Veuillez vous assurer que vous avez fermé toutes les\n\
-applications que vous pourriez avoir utilisé depuis YAM\n\
-(par exemple Multiview).
+Ces fichiers sont peut-être actuellement verrouillés par \
+d'autre applications.\n\
+Veuillez vous assurer que vous avez fermé toutes les \
+applications que vous pourriez avoir utilisé depuis YAM, \
+telles que les visionneuses MIME (par exemple Multiview).
 ; Couldn't delete all temporary files during cleanup.\n\
 ; \n\
 ; These files might be locked by other applications.\n\
@@ -8447,26 +8475,27 @@ Afficher les parties a_lternatives
 ; Show a_lternative parts
 ;
 MSG_HELP_CO_CH_SHOWALTPARTS
-Active l'affichage - normalement masqué - des parties\n\
-alternatives d'un message « multipart/alternative » comme\n\
-des pièces jointes.
+Avec cette option, les parties MIME alternatives\n\
+d'un courrier « multipart/alternative » qui\n\
+seraient normalemnt masquées seront affichées en\n\
+tant que pièces jointes.
 ; If enabled, alternative MIME parts of a\n\
 ; 'multipart/alternative' e-mail that\n\
 ; would otherwise remain hidden will be\n\
 ; displayed as attachments instead.
 ;
 MSG_US_DIRECTORY_DOESNT_EXIST
-Le répertoire de messagerie '%s' de\n\
-l'utilisateur '%s' n'existe pas.\n\
+Le répertoire de messagerie « %s » de\n\
+l'utilisateur « %s » n'existe pas.\n\
 \n\
-Voulez-vous le créer ?
+Voulez-vous le créer maintenant ?
 ; Mail directory '%s' for user '%s' does not exist.\n\
 ; \n\
 ; Do you want to create it now?
 ;
 MSG_HELP_CO_BT_APPICONGETPOS
-Configure la position de l'AppIcon en récupérant\n\
-la position actuelle sur le Workbench.
+Cliquez ici pour récupérer la\n\
+position actuelle de l'AppIcône.
 ; Click to get the current\n\
 ; position of the AppIcon.
 ;
@@ -8475,22 +8504,22 @@ Remettre les courrier « Acceptables » dans la boite de réce_ption
 ; Move 'not spam' e-mails back to _Incoming folder
 ;
 MSG_HELP_CH_MOVE_HAM_TO_INCOMING
-Avec cette option un courrier faussement classé comme\n\
-indésirable et marqué manuellement comme acceptable\n\
-est remis dans la boite de réception.
+Avec cette option toutou courrier faussement classé\n\
+comme indésirable puis marqué manuellement comme\n\
+acceptable sera remis dans la boite de réception.
 ; If enabled, any e-mail which was incorrectly classified\n\
 ; as 'spam' and later manually marked as 'not spam' will be\n\
 ; automatically moved back to the Incoming folder.
 ;
 MSG_ER_NO8BITMIME
-Lors de la tentative de connexion au serveur SMPT '%s',\n\
-celui a indiqué qu'il ne supportait pas les transferts\n\
-8 bits. Cependant il semble que l'option 'Autoriser les\n\
-caractères 8 bits' est activée dans la configuration de\n\
-ce serveur SMTP.\n\
-Veuillez vous assurer de désactiver cette option et de\n\
-rééditer le message, dans le cas contraire il se peut qui\n\
-soit corrompu lors de son transfert.
+Le serveur SMPT « %s » a indiqué qu'il ne supportait pas \
+le transfert de courriers 8 bits et vous avez l'option \
+autorisant le 8 bits activée.\n\
+\n\
+Veuillez désactiver cette option dans vos préférences \
+TCP/IP et rééditer le message avant de le renvoyer. Dans \
+le cas contraire il se peut qu'il soit corrompu lors de \
+son transfert.
 ; SMTP server '%s' reported that it doesn't support 8bit \
 ; mail transfers while you have the 'Allow8bit' option \
 ; enabled.\n\
@@ -8504,8 +8533,8 @@ Appliquer les _filtres
 ; Apply _filters
 ;
 MSG_HELP_CH_FILTER_HAM
-Avec cett option, après le déplacement du message tous les\n\
-filtres définis par l'utilisteur lui seront appliqués.
+Avec cette option, après le déplacement du message\n\
+tous les filtres utilisteur lui seront appliqués.
 ; If enabled, after moving the e-mail all the user\n\
 ; defined filters will be applied to it.
 ;
@@ -8540,11 +8569,11 @@ Nom (non-lus/nouveaux)
 ; Folder name (unread/new)
 ;
 MSG_ER_BADRESPONSE
-Mauvaise réponse de la part du serveur de courier « %s » \
-pour la commande « %s » :\n\
+Mauvaise réponse du serveur de courrier « %s » \
+à la commande « %s » :\n\
 %s\n\
 \n\
-Le serveur de mail ne peut pas exécuter la commande \
+Le serveur de mail n'a pas pu exécuter la commande \
 et a répondu par le message d'erreur ci-dessus.
 ; Bad response from mail server '%s' to command '%s':\n\
 ; \n\
@@ -8558,7 +8587,8 @@ MSG_ER_POP3WELCOME
 Le serveur POP3 « %s » a répondu par un message d'erreur lors de la \
 procédure d'accueil et la communication a été interrompue :\n\
 \n\
-%s\n
+%s\n\
+\n
 ; POP3 server '%s' replied with an error message during the welcome \
 ; procedure and the connection was terminated:\n\
 ; \n\
@@ -8609,8 +8639,8 @@ Annuler
 ; Cancel
 ;
 MSG_ER_CONNECTIONBROKEN
-La connexion TCP/IP avec le serveur « %s » a été interrompue \
-lors de la tentative d'envoi de la commande « %s ».\n\
+La connexion avec le serveur « %s » a été interrompue \
+au cours de l'envoi de la commande « %s ».\n\
 \n\
 Cela peut être dû à une fermeture de connexion par le serveur.
 ; Connection with server '%s' was interrupted \
@@ -8620,34 +8650,35 @@ Cela peut être dû à une fermeture de connexion par le serveur.
 ; SERVER, COMMAND
 ;
 MSG_WR_MSWITCH_MSG
-Basculer vers le « Message »
+Message
 ; Message
 ;
 MSG_WR_MSWITCH_ATT
-Basculer vers les « Pièces jointes »
+Pièces jointes
 ; Attachments
 ;
 MSG_WR_MSWITCH_OPT
-Basculer vers les « Options »
+Options
 ; Options
 ;
 MSG_CO_FWDMSG
-Courr_ier retransmis
+Courr_iers retransmis
 ; _Forward messages
 ;
 MSG_CO_FWDMSG_ATTACH
-en pièce jointe
+en pièces jointes
 ; as attachments
 ;
 MSG_CO_FWDMSG_INLINE
-inséré dans le corps
+insérés dans le corps
 ; inlined
 ;
 MSG_HELP_CO_CY_FORWARDMODE
-Permet de choisir comment un courrier doit être\n\
-retransmis. Soit il peut être retransmis en tant\n\
-que pièce jointe ou son texte peut être inséré\n\
-dans le corps du nouveau courrier.
+Sélectionnez ici la façon dont les courriers\n\
+doivent être retransmis par défaut. Un courrier\n\
+peut être soit retransmis en tant que pièce\n\
+jointe, soit inséré directement dans le corps\n\
+du nouveau message.
 ; Select here the way messages should be\n\
 ; forwarded by default. Either a message\n\
 ; can be forwarded as an attachment or the\n\
@@ -8695,7 +8726,7 @@ MSG_ER_CONNECTERR_SOCKET_IN_USE
 Impossible de se connecter à « %s ».\n\
 \n\
 Une connexion socket TCP/IP semble être déjà active. \
-Veuillez vous assurer de fermer tous les autres transferts en cours.
+Veuillez fermer tous les autres transferts en cours.
 ; Couldn't connect to '%s'.\n\
 ; \n\
 ; A TCP/IP socket connection seems to be already active. \
@@ -8727,8 +8758,7 @@ Impossible de se connecter à « %s ».\n\
 \n\
 YAM n'a pas été en mesure d'établir une connexion \
 avec accès non bloquant. Veuillez vous assurer que \
-votre pile TCP/IP est caâble d'établir de telles \
-connections.
+votre pile TCP/IP peut établir de telles connections.
 ; Couldn't connect to '%s'.\n\
 ; \n\
 ; YAM wasn't able to establish a non-blocking I/O \
@@ -8767,11 +8797,11 @@ Alerte de sécurité
 ; Security warning
 ;
 MSG_AB_INVALIDSECURITY
-L'entrée du carnet d'adresses spécifie de signer\n\
-et/ou crypter les messages par défaut. Cependant\n\
+L'entrée du carnet d'adresses spécifie de signer \
+et/ou crypter les messages par défaut. Cependant \
 l'installation requise de PGP n'a pas été trouvée.\n\
 \n\
-Voulez-vous effacer le réglage de sécurité par\n\
+Voulez-vous réinitialiser le réglage de sécurité par \
 défaut de cette entrée ?
 ; This address book entry was set to default to\n\
 ; either signed and/or encrypted messages, but the\n\
@@ -8789,13 +8819,13 @@ Alerte de sécurité
 ; Security warning
 ;
 MSG_WR_INVALIDSECURITY
-Les réglages du carnet d'adresses pour le\n\
+Les réglages du carnet d'adresses pour le \n\
 destinataire « %s » \n\
-spécifie de signer ou crypter les messages,\n\
+spécifient de signer ou crypter les messages,\n\
 cependant l'installation requise de PGP n'a\n\
 pas été trouvée.\n\
 \n\
-Le message ne sera pas signé, ni crypté.
+Le message ne sera ni signé, ni crypté.
 ; The address book security setting for recipient\n\
 ; \n\
 ; '%s'\n\
@@ -8815,7 +8845,7 @@ Une erreur inattendue est survenue lors de l'encodage du \
 fichier « % ».\n\
 \n\
 Veuillez vous assurer que ce fichier existe et est lisible \
-avant d'essayer à nouveau de composer le message.
+puis essayez à nouveau de rédiger le message.
 ; An unexpected error occurred while trying to encode file \
 ; '%s'.\n\
 ; \n\
@@ -8824,11 +8854,11 @@ avant d'essayer à nouveau de composer le message.
 ; FILENAME
 ;
 MSG_ER_MISSINGATTFILE
-Lors de la composition des pièces jointes d'un message, le \
-fichier « %s » n'a pas été trouvé.\n\
+Le fichier « %s » n'a pas pu être trouvé lors de la \
+création des pièces jointes d'un courrier.\n\
 \n\
 Veuillez vous assurer que ce fichier existe et est lisible \
-avant d'essayer à nouveau de composer le message.
+puis essayez à nouveau de rédiger le message.
 ; File '%s' couldn't be found while trying to compose the \
 ; attachments of a message.\n\
 ; \n\
@@ -8837,11 +8867,11 @@ avant d'essayer à nouveau de composer le message.
 ; FILENAME
 ;
 MSG_ER_INVALIDATTFILE
-Lors de l'affichage d'une pièce jointe d'un message, \
-le fichier « %s » n'a pas été trouvé.\n\
+Le fichier « %s » n'a pas pu être trouvé lors de \
+l'affichage d'une pièce jointe d'un courrier.\n\
 \n\
-Veuillez vous assurer que le fichier existe et peut \
-être lu.
+Veuillez vous assurer que le fichier existe et est \
+lisible.
 ; File '%s' couldn't be found while trying to view the attachment \
 ; of a message.\n\
 ; \n\
@@ -8849,11 +8879,9 @@ Veuillez vous assurer que le fichier existe et peut \
 ; FILENAME
 ;
 MSG_ER_PRINTER_OFFLINE
-Lors de la vérification de l'état de l'imprimante,\n\
-YAM a détecté qu'elle était hors-ligne ou occupée.\n\
+L'imprimante semble être hors-ligne ou occupée.\n\
 \n\
-Veuillez vérifier votre imprimante et réessayer plus\n\
-tard.
+Veuillez vérifier votre imprimante et réessayer plus tard.
 ; The printer seems to be offline or busy.\n\
 ; \n\
 ; Please check the printer or try again later.
@@ -8863,11 +8891,9 @@ MSG_ER_PRINTER_OFFLINE_GADS
 ; *_Retry|_Ignore|_Cancel
 ;
 MSG_ER_PRINTER_NOPAPER
-Lors de la vérification de l'état de l'imprimante,\n\
-YAM a détecté qu'elle n'avait plus de papier.\n\
+L'imprimante semble ne plus avoir de papier.\n\
 \n\
-Veuillez vérifier votre imprimante et réessayer un\n\
-peu plus tard.
+Veuillez vérifier votre imprimante et réessayer plus tard.
 ; The printer seems to be out of paper.\n\
 ; \n\
 ; Please check the printer or try again later.
@@ -8877,10 +8903,10 @@ MSG_ER_PRINTER_NOPAPER_GADS
 ; *_Retry|_Ignore|_Cancel
 ;
 MSG_ER_PRINTER_FAILED
-Lors de l'envoi de données à l'imprimante, une\n\
-erreur a été renvoyée.\n\
+Une erreur a été retournée lors de l'envoi de \
+données à l'imprimante.\n\
 \n\
-Veuillez véirfier votre imprimante et réessayer\n\
+Veuillez vérifier votre imprimante et réessayer \
 si votre document n'a pas été imprimé correctement.
 ; An error was returned while\n\
 ; sending data to the printer.\n\
@@ -8929,13 +8955,12 @@ Fichier de messages invalide trouvé
 ; Invalid mail file found
 ;
 MSG_MA_INVALIDMFILE
-Lors de l'examen du fichier de messages « %s » du,\n\
-dossier « %s », YAM a trouvé que le fichier été soit\n\
-invalide soit qu'il n'est pas dans un format de fichier\n\
-de message correct.\n\
+Le fichier « %s » du dossier « %s »\n\
+ne semble pas avoir un format valide de fichier\n\
+de messages ou est peut-être corrompu.\n\
 \n\
-Veuillez vous assurer que le fichier est valide et agissez\n\
-en conséquence.
+Veuillez vous assurer que le fichier est lisible\n\
+et qu'il s'agit d'un fichier de messages valide.
 ; File '%s' in folder '%s'\n\
 ; doesn't seem to have a valid mail format\n\
 ; or may be corrupted.\n\
@@ -8962,8 +8987,8 @@ permissions d'accès sont correctement réglées.
 MSG_ER_CANNOT_WRITE_INDEX
 Une erreur est survenue lors de l'écriture du fichier d'index « %s » du \
 dossier « %s ».\n\
-Veuillez vérifier que vous êtes capable d'écrire dans le répertoire où le \
-fichier est supposé être écrit.
+Veuillez vérifier que vous pouvez écrire dans le répertoire où le \
+fichier est supposé être stocké.
 ; An error occurred while trying to write the index file '%s' in folder '%s'.\n\
 ; \n\
 ; Please check that you can write to the directory where the \
@@ -8974,7 +8999,8 @@ MSG_ER_INDEX_CORRUPTED
 Le fichier d'index « %s » du dossier « %s » est corrompu à la position %d \
 près des informations concernant le fichier de message « %s » (OctetsSupp. : 0x%x).\n\
 \­\
-Le dossier a été marqué 'déchargé' et une réindexation a été lancée ou est nécessaire.
+Le dossier a été marqué 'déchargé' et une réindexation a été lancée ou \
+est requise pour corriger le problème.
 ; Index file '%s' in folder '%s' is corrupt at position \
 ; %d near the information about mail file '%s' (MoreBytes: 0x%x).\n\
 ; \n\
@@ -8996,14 +9022,14 @@ Sauvez le message sur le disque et essayez avec un autre décodeur.
 MSG_ER_UNKNOWN_HEADER_ENCODING
 Encodage d'en-tête « %s » inconnu dans le fichier de message « %s ».\n\
 \n\
-YAM ne peut pas afficher correctement cet en-tête de message.
+YAM ne peut pas afficher un certain en-tête de ce message.
 ; Unknown header encoding '%s' in mail file '%s'.\n\
 ; \n\
 ; YAM cannot display a certain header in this message.
 ; ENCODING_TYPE, FILENAME
 ;
 MSG_ER_UNEXPECTED_MULTIPART_EOF
-Fin de fichier inattendue lors du décodage du message multipartie dans le fichier « %s ».\n\
+Fin de fichier inattendue lors du décodage d'un message multipartie dans le fichier « %s ».\n\
 \n\
 Le message semble être tronqué.
 ; Unexpected EOF while decoding multipart message in file '%s'.\n\
@@ -9030,7 +9056,7 @@ Le message semble avoir été tronqué.
 MSG_ER_INVALID_UUE_LENGTH
 %ld longueur de ligne invalide dans le fichier UUencodé « %s ».\n\
 \n\
-Un encodeur défectueux a été utilisé ou le message est incomplet.
+Soit un encodeur défectueux a été utilisé soit le message est incomplet.
 ; Invalid line length %ld in UUcode encoded file '%s'.\n\
 ; \n\
 ; Either a faulty UUcode encoder was used or the message is truncated.
@@ -9114,11 +9140,11 @@ n'était pas accessible.
 ;
 MSG_ER_B64DEC_WARN
 Des caractères invalides ont été rencontrés lors du décodage \
-de la pièce jointe, encodée en base64, %ld du message « %s ». \
-Le résultat peut par conséquent contenir des données invalides \
-ou être corrompu.\n\
+Base64, de la pièce jointe %ld du message « %s ». Le résultat \
+peut par conséquent contenir des données invalides ou être \
+corrompu.\n\
 \n\
-Cela peut être du à un encodage incorrect par le client de mail \
+Cela peut être dû à un encodage incorrect par le client de mail \
 émetteur ou à une altération de la partie base64 lors de la transmission.
 ; Some invalid characters were found while Base64 decoding \
 ; MIME part %ld of mail file '%s'. The generated output may \
@@ -9155,17 +9181,17 @@ Laquelle voulez-vous ajouter à votre carnet d'adresses ?
 ; ADDRESS, ADDRESS
 ;
 MSG_CO_SCRIPTACTION
-Action du script (Nom)
+Action (Nom)
 ; Action (Name)
 ;
 MSG_CO_SCRIPTPATH
-Chemin du script
+Chemin
 ; Path
 ;
 MSG_ER_ICONOBJECT_WARNING
-Une erreur est survenue lors du chargement du l'icone \
-« %s.info » du le thème « %s ». L'icône ne sera pas \
-affiché durant cette session.\n\
+Une erreur est survenue lors du chargement de l'icône \
+« %s.info » du thème « %s ». L'icône ne sera pas affiché \
+durant cette session.\n\
 \n\
 Veuillez vous assurer que répertoire de thèmes contient \
 tous les icônes nécessaires ou désactivez le support des \
@@ -9180,11 +9206,11 @@ thèmes pour ne plus en être averti.
 ;
 MSG_ER_THEMEVER_FALLBACK
 Le thème « %s » actuellement activé est d'une version \
-incompatible et n'a pas été chargé.\n\
+incompatible et n'a pas été chargé. Le thème par défaut \
+a donc été activé en remplacement.\n\
 \n\
-Le thème par défaut de YAM a donc été activé en dernier \
-recours. Veuillez vous assurer de mettre à jour le thème \
-dans une version compatible ou de le désactiver dans la \
+Veuillez vous assurer de mettre à jour le thème dans \
+une version compatible ou de le désactiver dans la \
 configuration.
 ; The currently activated theme '%s' was found to be \
 ; of an incompatible version and wasn't loaded. The \
@@ -9209,8 +9235,8 @@ version compatible.
 ; version.
 ;
 MSG_ER_DATATYPE_ERROR
-Une erreur est survenue lors du chargement des données \
-de l'image « %s » via les datatypes.\n\
+Une erreur est survenue lors du chargement de l'image « %s » \
+via les datatypes.\n\
 \n\
 Veuillez vous assurer que le fichier existe et que votre \
 système de datatypes est correctement configuré (p. ex. \
@@ -9226,9 +9252,9 @@ MSG_ER_IMAGEOBJECT_WARNING
 Une erreur est survenur lors du chargement de l'image « %s » \
 depuis le répertoire « %s ».\n\
 \n\
-Veuillez vous assurer que votre répertoire de thèmes contient \
-toutes les images nécessaires telles que définies dans la \
-dernier version du layout de thème.
+Veuillez vous assurer que votre thème contient toutes les \
+images nécessaires telles que définies dans la dernier \
+version du layout de thème.
 ; An error occurred while trying to load the image file \
 ; '%s' from directory '%s'.\n\
 ; \n\
@@ -9251,10 +9277,10 @@ avec YAM.
 ;
 MSG_ER_THEME_FALLBACK
 Le thème « % » actuellement activé n'est pas accessible \
-ou est corrompu et n'a pas pu être chargé.\n\
+ou est corrompu et n'a pas pu être chargé. Le thème par \
+défaut de YAM a donc été activé en remplacement.\n\
 \n\
-Le thème par défaut de YAM a donc été activé en dernier \
-recours. Veuillez vous assurer que le thème sélectionné \
+Veuillez vous assurer que le thème sélectionné \
 est lisible et est un thème YAM valide.
 ; The currently activated theme '%s' is either \
 ; inaccesible or it is corrupt. The default theme \
@@ -9268,9 +9294,8 @@ Redémarrage de YAM nécessaire
 ; YAM restart required
 ;
 MSG_ER_THEME_ACTIVATED
-Veuillez noter qu'avant que le thème sélectionné puisse\n\
-être activén vous devez sauver la configuration et YAM\n\
-doit être redémarré.
+Avant que le thème sélectionné ne puisse être activé, \
+vous devez la configuration et redémarrer YAM.
 ; Before the selected theme can be applied, you have\n\
 ; to save the configuration and restart YAM.
 ;
@@ -9289,148 +9314,133 @@ Supprime le portrait sélectionné.\n\
 ; file on disk will remain).
 ;
 MSG_HELP_CO_TX_DEFAULTCHARSET
-
+Utilisez le bouton popup pour choisir le jeu de\n\
+caractère que vous voulez que YAM utilise par défaut.\n\
+Cela doit correspondre au jeu de caractères par défaut\n\
+de votre système, sinon une requête sera affichée pour\n\
+vous demander commenet procéder.
 ; Use the popup button to select the character set\n\
 ; you would like YAM to use by default. This should\n\
 ; match the system's default charset, otherwise a\n\
 ; requester will appear asking how do you want to\n\
 ; proceed.
 ;
-; ***NEW***
-;
 MSG_HELP_CO_CH_NOTISOUND
-
+Joue un son lors de la\n\
+réception de nouveau courrier.
 ; Play a sound file\n\
 ; when you receive\n\
 ; new mail.
 ;
-; ***NEW***
-;
 MSG_HELP_CO_CH_NOTICMD
-
+Exécute une commande lors de la\n\
+réception de nouveau courrier.
 ; Execute a command\n\
 ; when you received\n\
 ; new mail.
 ;
-; ***NEW***
-;
 MSG_HELP_CO_BT_MORE
-
+Ajoute une règle à ce filtre.
 ; Add a rule to this filter.
 ;
-; ***NEW***
 ;
 MSG_HELP_CO_BT_LESS
-
+Retire la dernière\n\
+règle de ce filtre.
 ; Remove the last rule\n\
 ; from this filter.
 ;
-; ***NEW***
-;
 MSG_HELP_CO_BT_FILTERUP
-
+Déplace ce filtre vers\n\
+le haut de la liste.
 ; Move this filter\n\
 ; up in the list.
 ;
-; ***NEW***
-;
 MSG_HELP_CO_BT_FILTERDOWN
-
+Déplace ce filtre vers\n\
+le base de la liste.
 ; Move this filter\n\
 ; down in the list.
 ;
-; ***NEW***
-;
 MSG_HELP_CO_PO_APLAY
-
+Ouvre une requête de fichier\n\
+pour sélectionner le son à jouer.
 ; Open a file requester to\n\
 ; select the file to play.
 ;
-; ***NEW***
-;
 MSG_HELP_CO_BT_APLAY
-
+Teste le son.
 ; Test the sound.
 ;
-; ***NEW***
-;
 MSG_HELP_CO_CH_USESIG
-
+Active l'utilisation des\n\
+signatures par défaut.
 ; Do you want to enable\n\
 ; signatures by default?
 ;
-; ***NEW***
-;
 MSG_HELP_CO_ST_DESCRIPTION
-
+Une description personnalisée\n\
+pour ce type MIME.
 ; A custom description for\n\
 ; this MIME type.
 ;
-; ***NEW***
-;
 MSG_HELP_CO_LV_REXX
-
+Liste des scripts
 ; List of scripts.
 ;
-; ***NEW***
-;
 MSG_HELP_CO_BT_UPDATENOW
-
+Effectue une recherche de\n\
+mise à jour maintenant.
 ; Perform a check\n\
 ; for updates now.
 ;
-; ***NEW***
-;
 MSG_HELP_WR_LV_ATTACH
-
+Liste des pièces jointes\n\
+dans ce message.
 ; List of attachments\n\
 ; in this message.
 ;
-; ***NEW***
-;
 MSG_QUICKSEARCH_STR_CONTROLCHAR
-
+k
 ; k
 ;
-; ***NEW***
-;
 MSG_CO_UPDATE_NEVER
-
+Jamais
 ; Never
 ;
-; ***NEW***
-;
 MSG_MA_EXECUTESCRIPT_TITLE
-
+Sélectionnez le script à exécuter
 ; Select script to execute
 ;
-; ***NEW***
-;
 MSG_HELP_FI_BT_NONE
-
+Exclut de la recherche tous les\n\
+dossiers, sauf le dossier courant.
 ; Exclude all folders from the\n\
 ; search, except the current one.
 ;
-; ***NEW***
-;
 MSG_MA_CONFIRMFILTER_ALL
-
+Si vous continuez, tous les messages du\n\
+dossier « %s » seront filtrés.\n\
+\n\
+Voulez-vous continuer ?
 ; If you continue, all messages of folder\n\
 ; '%s' will be filtered.\n\
 ; \n\
 ; Do you want to proceed?
 ;
-; ***NEW***
 ; FOLDER
 ;
 MSG_MA_CONFIRMFILTER_SELECTED
-
+Vous avez sélectionné plusieurs messages\n\
+dans le dossier « %s ». Seuls ces messages\n\
+seront examinés pour le filtrage.\n\
+\n\
+Voulez-vous continuer ?
 ; You have selected several messages in\n\
 ; folder '%s'. Only these messages\n\
 ; are going to be filtered.\n\
 ; \n\
 ; Do you want to proceed?
 ;
-; ***NEW***
 ; FOLDER
 ;
