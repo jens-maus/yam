@@ -1672,6 +1672,7 @@ static void Terminate(void)
 
   // close all libraries now.
   D(DBF_STARTUP, "closing all opened libraries...");
+  CLOSELIB(CyberGfxBase,  ICyberGfx);
   CLOSELIB(CodesetsBase,  ICodesets);
   CLOSELIB(DataTypesBase, IDataTypes);
   CLOSELIB(MUIMasterBase, IMUIMaster);

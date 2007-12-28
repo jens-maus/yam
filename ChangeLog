@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-28  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: added missing CloseLibrary() call for cybergraphics.library.
+
 2007-12-27  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/francais.ct: removed this file again, because we use english named
