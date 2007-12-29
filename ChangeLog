@@ -7,6 +7,8 @@ $URL$
 
 2007-12-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/#?.guide: finally removed the translated file names in favour of the
+    english named files.
   * locale/#?.ct: finally removed the translated file names in favour of the
     english named files.
 
