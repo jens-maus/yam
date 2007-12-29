@@ -485,10 +485,16 @@
 
 (complete 80)
 
+(if mos
+   ; MorphOS has no MUI: assign anymore but places MUI subclasses in LIBS: directly.
+   (set #MCC_dir "LIBS:")
+   ; OS3 and OS4 use the MUI: assign
+   (set #MCC_dir "MUI:libs/mui/")
+)
 (foreach "MUI/" "#?.mc?"
    (copylib (prompt (cat "MUI - " @each-name))
             (source (cat "MUI/" @each-name))
-            (dest "MUI:Libs/MUI/")
+            (dest #MCC_dir)
             (confirm)
             (help @copylib-help)
    )

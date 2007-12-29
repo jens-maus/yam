@@ -7,6 +7,8 @@ $URL$
 
 2007-12-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/Install-YAM: adapted the install script to respect differences in where
+    MUI expects its subclasses.
   * include/#?expat#?: added includes for expat.library.
   * classes/ImageArea.c: added missing SAS/C pragma and prototype for
     WritePixelArrayAlpha().
