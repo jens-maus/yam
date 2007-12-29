@@ -7,6 +7,7 @@ $URL$
 
 2007-12-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * include/#?expat#?: added includes for expat.library.
   * classes/ImageArea.c: added missing SAS/C pragma and prototype for
     WritePixelArrayAlpha().
   * extrasrc/xset.c: added missing cast to avoid warnings.
