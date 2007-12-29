@@ -16,7 +16,7 @@ ULONG VARARGS68K xset(Object *obj, ...)
   int i;
 
   VA_START(args, obj);
-  tags = VA_ARG(args, struct TagItem *);
+  tags = (struct TagItem *)VA_ARG(args, struct TagItem *);
   // We will try to rebuild a new tag list with a terminating TAG_DONE.
   // This approach is not perfect as we have to "guess" the end of the
   // supplied tag list or at least have to set a definite limit on the

@@ -7,6 +7,11 @@ $URL$
 
 2007-12-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc/xset.c: added missing cast to avoid warnings.
+  * YAM_AB, YAM_UT.c, YAM.c: added import of XML address books (i.e. from
+    SimpleMail) via expat.library. Currently only "new" addressbooks
+    (.newaddressbook.xml) are supported and group support is also missing,
+    because SimpleMail's groups are somewhat different from YAM's.
   * doc/#?.guide: finally removed the translated file names in favour of the
     english named files.
   * locale/#?.ct: finally removed the translated file names in favour of the
