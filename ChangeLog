@@ -7,6 +7,8 @@ $URL$
 
 2007-12-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * classes/ImageArea.c: added missing SAS/C pragma and prototype for
+    WritePixelArrayAlpha().
   * extrasrc/xset.c: added missing cast to avoid warnings.
   * YAM_AB, YAM_UT.c, YAM.c: added import of XML address books (i.e. from
     SimpleMail) via expat.library. Currently only "new" addressbooks
