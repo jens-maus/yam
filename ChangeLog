@@ -7,6 +7,7 @@ $URL$
 
 2007-12-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * include/#?expat#?: added GCC/MOS includes for expat.library.
   * doc/Install-YAM: adapted the install script to respect differences in where
     MUI expects its subclasses.
   * include/#?expat#?: added includes for expat.library.
