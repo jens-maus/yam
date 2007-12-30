@@ -7,7 +7,8 @@ $URL$
 
 2007-12-30  Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_AB, YAM_UT.c, YAM.c: the same changes as yesterday, because my local
+  * YAM_AB.c: added some comments
+  * YAM_AB.c, YAM_UT.c, YAM.c: the same changes as yesterday, because my local
     working copy was broken and nothing was really transferred.
 
 2007-12-29  Thore Böckelmann <tboeckel@gmx.de>

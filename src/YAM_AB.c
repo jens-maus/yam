@@ -1315,6 +1315,7 @@ BOOL AB_ImportTreeXML(char *fname, BOOL append, BOOL sorted)
 
     set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, TRUE);
 
+    // create the XML parser
     if((parser = XML_ParserCreate(NULL)) != NULL)
     {
       struct XMLUserData xmlUserData;
@@ -1330,6 +1331,7 @@ BOOL AB_ImportTreeXML(char *fname, BOOL append, BOOL sorted)
       XML_SetCharacterDataHandler(parser, XMLCharacterDataHandler);
       XML_SetUserData(parser, &xmlUserData);
 
+      // now parse the file line by line
       while(GetLine(fh, buffer, sizeof(buffer)))
       {
         if(XML_Parse(parser, buffer, strlen(buffer), FALSE) == XML_STATUS_ERROR)
@@ -1340,12 +1342,15 @@ BOOL AB_ImportTreeXML(char *fname, BOOL append, BOOL sorted)
       }
       if(result == TRUE)
       {
+        // if everything went fine we need one final parsing step in case
+        // there are some characters left in the parsing pipeline.
         if(XML_Parse(parser, "", 0, TRUE) == XML_STATUS_ERROR)
         {
           result = FALSE;
         }
       }
 
+      // free the parser again
       XML_ParserFree(parser);
     }
 
