@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (20.12.2007)
+## version $VER: YAM.catalog 6.0 (30.12.2007)
 ## language deutsch
 ## codeset 0
 ;
@@ -8366,4 +8366,7 @@ diese werden im Folgenden gefiltert.\n\
 \n\
 Möchten Sie wirklich fortfahren?
 ; FOLDER
+;
+MSG_AB_XML
+XML-Adressbuch (*.xml)
 ;

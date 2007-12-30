@@ -168,6 +168,7 @@ struct Library* LayersBase        = NULL;
 struct Library* DiskfontBase      = NULL;
 struct Library* CodesetsBase      = NULL;
 struct Library* CyberGfxBase      = NULL;
+struct Library* ExpatBase         = NULL;
 #if !defined(__NEWLIB__)
 struct Library* UtilityBase       = NULL;
 #endif
@@ -201,6 +202,7 @@ struct LayersIFace*       ILayers       = NULL;
 struct DiskfontIFace*     IDiskfont     = NULL;
 struct CodesetsIFace*     ICodesets     = NULL;
 struct CyberGfxIFace*     ICyberGfx     = NULL;
+struct ExpatIFace*        IExpat        = NULL;
 struct ApplicationIFace*  IApplication  = NULL;
 struct TimezoneIFace*     ITimezone     = NULL;
 #if !defined(__NEWLIB__)

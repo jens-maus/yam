@@ -70,7 +70,7 @@ enum TZConvert { TZC_NONE, TZC_UTC, TZC_LOCAL };
 
 enum ReqFileType { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH,
   ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_EXPORT, ASL_FOLDER,
-  ASL_ABOOK_LDIF, ASL_ABOOK_CSV, ASL_ABOOK_TAB,
+  ASL_ABOOK_LDIF, ASL_ABOOK_CSV, ASL_ABOOK_TAB, ASL_ABOOK_XML,
   ASL_MAX };
 
 enum OutputDefType { OUT_DOS=0, OUT_NIL };
@@ -192,6 +192,13 @@ struct TimeRequest
 #define isSaveReq(v)      (isFlagSet((v), ATTREQ_SAVE))
 #define isPrintReq(v)     (isFlagSet((v), ATTREQ_PRINT))
 #define isMultiReq(v)     (isFlagSet((v), ATTREQ_MULTI))
+
+#ifndef MAX
+#define MAX(a,b)          (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef MIN
+#define MIN(a,b)          (((a) < (b)) ? (a) : (b))
+#endif
 
 #define ARRAY_SIZE(x)     (sizeof(x[0]) ? sizeof(x)/sizeof(x[0]) : 0)
 

@@ -43,6 +43,7 @@
 #include <proto/muimaster.h>
 #include <proto/utility.h>
 #include <proto/codesets.h>
+#include <proto/expat.h>
 
 #include "extrasrc.h"
 
@@ -62,6 +63,43 @@
 #include "classes/Classes.h"
 
 #include "Debug.h"
+
+enum XMLSection
+{
+  xs_Unknown = 0,
+  xs_Group,
+  xs_Contact,
+};
+
+enum XMLData
+{
+  xd_Unknown = 0,
+  xd_GroupName,
+  xd_ContactName,
+  xd_Description,
+  xd_Address,
+  xd_Alias,
+  xd_PGPId,
+  xd_Homepage,
+  xd_Portrait,
+  xd_BirthDay,
+  xd_Street,
+  xd_City,
+  xd_ZIPCode,
+  xd_State,
+  xd_Country,
+  xd_Phone,
+};
+
+struct XMLUserData
+{
+  enum XMLSection section;
+  enum XMLData dataType;
+  struct ABEntry entry;
+  XML_Char xmlData[SIZE_LARGE];
+  size_t xmlDataSize;
+  BOOL sorted;
+};
 
 /***************************************************************************
  Module: Address book
@@ -723,6 +761,7 @@ BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
 
             // now convert this prossible UTF8 string to a normal string
             value = CodesetsUTF8ToStr(CSA_Source, Trim(b64buffer),
+                                      CSA_DestCodeset, G->localCharset,
                                       TAG_DONE);
             utf8 = TRUE;
           }
@@ -948,6 +987,377 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
   }
 
   LEAVE();
+}
+
+///
+/// XMLStartHandler
+// handle an XML start tag
+static void XMLCALL XMLStartHandler(void *userData, const XML_Char *name, UNUSED const XML_Char **atts)
+{
+  struct XMLUserData *xmlUserData = userData;
+
+  ENTER();
+
+  if(strcmp(name, "newgroup") == 0)
+  {
+    xmlUserData->section = xs_Group;
+    memset(&xmlUserData->entry, 0, sizeof(xmlUserData->entry));
+  }
+  else if(strcmp(name, "newcontact") == 0)
+  {
+    xmlUserData->section = xs_Contact;
+    memset(&xmlUserData->entry, 0, sizeof(xmlUserData->entry));
+  }
+  else if(strcmp(name, "name") == 0)
+  {
+    switch(xmlUserData->section)
+    {
+      default:
+      case xs_Group:
+        // not yet supported
+        xmlUserData->dataType = xd_Unknown;
+      break;
+
+      case xs_Contact:
+        xmlUserData->dataType = xd_ContactName;
+      break;
+    }
+  }
+  else if(strcmp(name, "description") == 0)
+  {
+    xmlUserData->dataType = xd_Description;
+  }
+  else if(strcmp(name, "email") == 0)
+  {
+    xmlUserData->dataType = xd_Address;
+  }
+  else if(strcmp(name, "alias") == 0)
+  {
+    xmlUserData->dataType = xd_Alias;
+  }
+  else if(strcmp(name, "pgpid") == 0)
+  {
+    xmlUserData->dataType = xd_PGPId;
+  }
+  else if(strcmp(name, "homepage") == 0)
+  {
+    xmlUserData->dataType = xd_Homepage;
+  }
+  else if(strcmp(name, "portrait") == 0)
+  {
+    xmlUserData->dataType = xd_Portrait;
+  }
+  else if(strcmp(name, "birthday") == 0)
+  {
+    xmlUserData->dataType = xd_BirthDay;
+  }
+  else if(strcmp(name, "street") == 0)
+  {
+    xmlUserData->dataType = xd_Street;
+  }
+  else if(strcmp(name, "city") == 0)
+  {
+    xmlUserData->dataType = xd_City;
+  }
+  else if(strcmp(name, "zip") == 0)
+  {
+    xmlUserData->dataType = xd_ZIPCode;
+  }
+  else if(strcmp(name, "state") == 0)
+  {
+    xmlUserData->dataType = xd_State;
+  }
+  else if(strcmp(name, "country") == 0)
+  {
+    xmlUserData->dataType = xd_Country;
+  }
+  else if(strcmp(name, "phone") == 0 || strcmp(name, "mobil") == 0 || strcmp(name, "fax") == 0)
+  {
+    xmlUserData->dataType = xd_Phone;
+  }
+  else
+  {
+    xmlUserData->dataType = xd_Unknown;
+  }
+
+  xmlUserData->xmlData[0] = '\0';
+  xmlUserData->xmlDataSize = 0;
+
+  LEAVE();
+}
+
+///
+/// XMLEndHandler
+// handle an XML end tag
+static void XMLCALL XMLEndHandler(void *userData, const XML_Char *name)
+{
+  struct XMLUserData *xmlUserData = userData;
+  struct ABEntry *entry = &xmlUserData->entry;
+  char *isoStr;
+
+  ENTER();
+
+  // add the terminating NUL character
+  xmlUserData->xmlData[xmlUserData->xmlDataSize] = '\0';
+
+  // now convert this prossible UTF8 string to a normal string
+  if((isoStr = CodesetsUTF8ToStr(CSA_Source, Trim(xmlUserData->xmlData),
+                                 CSA_DestCodeset, G->localCharset,
+                                 TAG_DONE)) != NULL)
+  {
+    if(xmlUserData->section == xs_Group)
+    {
+    }
+    else if(xmlUserData->section == xs_Contact)
+    {
+      // now fill the converted string into the entry
+      // possible double entries (private, work, etc) will be merged
+      switch(xmlUserData->dataType)
+      {
+        case xd_ContactName:
+        {
+          strlcpy(entry->RealName, isoStr, sizeof(entry->RealName));
+        }
+        break;
+
+        case xd_Description:
+        {
+          strlcpy(entry->Comment, isoStr, sizeof(entry->Comment));
+        }
+        break;
+
+        case xd_Address:
+        {
+          strlcpy(entry->Address, isoStr, sizeof(entry->Address));
+        }
+        break;
+
+        case xd_Alias:
+        {
+          strlcpy(entry->Alias, isoStr, sizeof(entry->Alias));
+        }
+        break;
+
+        case xd_PGPId:
+        {
+          strlcpy(entry->PGPId, isoStr, sizeof(entry->PGPId));
+        }
+        break;
+
+        case xd_Homepage:
+        {
+          strlcpy(entry->Homepage, isoStr, sizeof(entry->Homepage));
+        }
+        break;
+
+        case xd_Portrait:
+        {
+          strlcpy(entry->Photo, isoStr, sizeof(entry->Photo));
+        }
+        break;
+
+        case xd_BirthDay:
+        {
+          LONG day = 0;
+          LONG month = 0;
+          LONG year = 0;
+          char *p = isoStr;
+          char *q;
+
+          if((q = strchr(p, '/')) != NULL)
+          {
+            *q++ = '\0';
+            month = atol(p);
+            p = q;
+          }
+          if((q = strchr(p, '/')) != NULL)
+          {
+            *q++ = '\0';
+            day = atol(p);
+            p = q;
+          }
+          year = atol(p);
+
+          entry->BirthDay = day * 1000000 + month * 10000 + year;
+        }
+        break;
+
+        case xd_Street:
+        {
+          strlcpy(entry->Street, isoStr, sizeof(entry->Street));
+        }
+        break;
+
+        case xd_City:
+        {
+          if(entry->City[0] == '\0')
+          {
+            strlcpy(entry->City, isoStr, sizeof(entry->City));
+          }
+          else
+          {
+            snprintf(entry->City, sizeof(entry->City), "%s %s", entry->City, isoStr);
+          }
+        }
+        break;
+
+        case xd_ZIPCode:
+        {
+          if(entry->City[0] == '\0')
+          {
+            strlcpy(entry->City, isoStr, sizeof(entry->City));
+          }
+          else
+          {
+            char tmp[SIZE_DEFAULT];
+
+            strlcpy(tmp, entry->City, sizeof(tmp));
+            snprintf(entry->City, sizeof(entry->City), "%s %s", isoStr, tmp);
+          }
+        }
+        break;
+
+        case xd_State:
+        case xd_Country:
+        {
+          if(entry->Country[0] == '\0')
+          {
+            strlcpy(entry->Country, isoStr, sizeof(entry->Country));
+          }
+          else
+          {
+            snprintf(entry->Country, sizeof(entry->Country), "%s %s", entry->Country, isoStr);
+          }
+        }
+        break;
+
+        case xd_Phone:
+        {
+          if(entry->Phone[0] == '\0')
+          {
+            strlcpy(entry->Phone, isoStr, sizeof(entry->Phone));
+          }
+          else
+          {
+            snprintf(entry->Phone, sizeof(entry->Phone), "%s, %s", entry->Phone, isoStr);
+          }
+        }
+        break;
+
+        default:
+        {
+          // ignore this item
+        }
+        break;
+      }
+    }
+
+    CodesetsFreeA(isoStr, NULL);
+  }
+
+  // add the entry to our address book if it was a normal contact information
+  if(xmlUserData->section == xs_Contact && strcmp(name, "newcontact") == 0)
+  {
+    // we need at least an EMail address
+    if(entry->Address[0] != '\0')
+    {
+      // set up an alias only if none is given
+      if(entry->Alias[0] == '\0')
+        EA_SetDefaultAlias(entry);
+
+      // put it into the tree
+      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, entry->Alias[0] ? entry->Alias : entry->RealName, entry, MUIV_NListtree_Insert_ListNode_Root, xmlUserData->sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+    }
+  }
+
+  LEAVE();
+}
+
+///
+/// XMLCharacterDataHandler
+// handle the XML character data
+static void XMLCALL XMLCharacterDataHandler(void *userData, const XML_Char *s, int len)
+{
+  struct XMLUserData *xmlUserData = userData;
+
+  ENTER();
+
+  // does the string still fit in our buffer?
+  if(xmlUserData->xmlDataSize < sizeof(xmlUserData->xmlData))
+  {
+    strncpy(&xmlUserData->xmlData[xmlUserData->xmlDataSize], s, MIN(sizeof(xmlUserData->xmlData) - xmlUserData->xmlDataSize, (size_t)len));
+  }
+  // add the size nevertheless
+  xmlUserData->xmlDataSize += len;
+
+  LEAVE();
+}
+
+///
+/// AB_ImportTreeXML
+// imports an address book in XML format (i.e. from SimpleMail)
+BOOL AB_ImportTreeXML(char *fname, BOOL append, BOOL sorted)
+{
+  FILE *fh;
+  BOOL result = FALSE;
+
+  ENTER();
+
+  if((fh = fopen(fname, "r")) != NULL)
+  {
+    XML_Parser parser;
+
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    G->AB->Modified = append;
+    if(append == FALSE)
+      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
+
+    set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, TRUE);
+
+    if((parser = XML_ParserCreate(NULL)) != NULL)
+    {
+      struct XMLUserData xmlUserData;
+      char buffer[SIZE_LARGE];
+
+      result = TRUE;
+
+      xmlUserData.section = xs_Unknown;
+      xmlUserData.dataType = xd_Unknown;
+      xmlUserData.sorted = sorted;
+
+      XML_SetElementHandler(parser, XMLStartHandler, XMLEndHandler);
+      XML_SetCharacterDataHandler(parser, XMLCharacterDataHandler);
+      XML_SetUserData(parser, &xmlUserData);
+
+      while(GetLine(fh, buffer, sizeof(buffer)))
+      {
+        if(XML_Parse(parser, buffer, strlen(buffer), FALSE) == XML_STATUS_ERROR)
+        {
+          result = FALSE;
+          break;
+        }
+      }
+      if(result == TRUE)
+      {
+        if(XML_Parse(parser, "", 0, TRUE) == XML_STATUS_ERROR)
+        {
+          result = FALSE;
+        }
+      }
+
+      XML_ParserFree(parser);
+    }
+
+    set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, FALSE);
+
+    fclose(fh);
+  }
+  else
+     ER_NewError(tr(MSG_ER_ADDRBOOKIMPORT), fname);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -1569,7 +1979,7 @@ MakeStaticHook(AB_AppendABookHook, AB_AppendABookFunc);
 
 ///
 /// AB_ImportLDIFABookFunc
-/*** AB_ImportLDIFABookFunc - Imports LDIF address book ***/
+// imports an LDIF address book
 HOOKPROTONHNONP(AB_ImportLDIFABookFunc, void)
 {
   struct FileReqCache *frc;
@@ -1590,7 +2000,7 @@ MakeStaticHook(AB_ImportLDIFABookHook, AB_ImportLDIFABookFunc);
 
 ///
 /// AB_ExportLDIFABookFunc
-/*** AB_ExportLDIFABookFunc - Imports LDIF address book ***/
+// exports an LDIF address book
 HOOKPROTONHNONP(AB_ExportLDIFABookFunc, void)
 {
   struct FileReqCache *frc;
@@ -1611,7 +2021,7 @@ MakeStaticHook(AB_ExportLDIFABookHook, AB_ExportLDIFABookFunc);
 
 ///
 /// AB_ImportTabCSVABookFunc
-/*** AB_ImportTabCSVABookFunc - Imports comma or TAB separated address book ***/
+// imports a comma or TAB separated address book
 HOOKPROTONHNO(AB_ImportTabCSVABookFunc, void, int *arg)
 {
   char delim = (char)arg[0];
@@ -1641,7 +2051,7 @@ MakeStaticHook(AB_ImportTabCSVABookHook, AB_ImportTabCSVABookFunc);
 
 ///
 /// AB_ExportTabCSVABookFunc
-/*** AB_ExportTabCSVABookFunc - Exports comma or TAB separated address book ***/
+// exports a comma or TAB separated address book
 HOOKPROTONHNO(AB_ExportTabCSVABookFunc, void, int *arg)
 {
   char delim = (char)arg[0];
@@ -1669,6 +2079,27 @@ HOOKPROTONHNO(AB_ExportTabCSVABookFunc, void, int *arg)
 }
 
 MakeStaticHook(AB_ExportTabCSVABookHook, AB_ExportTabCSVABookFunc);
+
+///
+/// AB_ImportXMLABookFunc
+// imports an XML address book
+HOOKPROTONHNONP(AB_ImportXMLABookFunc, void)
+{
+  struct FileReqCache *frc;
+
+  ENTER();
+
+  if((frc = ReqFile(ASL_ABOOK_XML, G->AB->GUI.WI, tr(MSG_AB_IMPORT), REQF_NONE, G->MA_MailDir, "")) != NULL)
+  {
+    char xmlname[SIZE_PATHFILE];
+
+    AddPath(xmlname, frc->drawer, frc->file, sizeof(xmlname));
+    AB_ImportTreeXML(xmlname, TRUE, FALSE);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(AB_ImportXMLABookHook, AB_ImportXMLABookFunc);
 
 ///
 /// AB_SaveABookFunc
@@ -2420,7 +2851,7 @@ struct AB_ClassData *AB_New(void)
   {
     enum {
       AMEN_NEW,AMEN_OPEN,AMEN_APPEND,AMEN_SAVE,AMEN_SAVEAS,
-      AMEN_IMPORT_LDIF, AMEN_IMPORT_CSV, AMEN_IMPORT_TAB,
+      AMEN_IMPORT_LDIF, AMEN_IMPORT_CSV, AMEN_IMPORT_TAB, AMEN_IMPORT_XML,
       AMEN_EXPORT_LDIF, AMEN_EXPORT_CSV, AMEN_EXPORT_TAB,
       AMEN_PRINTA,
       AMEN_FIND,AMEN_NEWUSER,AMEN_NEWLIST,AMEN_NEWGROUP,AMEN_EDIT,
@@ -2441,6 +2872,7 @@ struct AB_ClassData *AB_New(void)
                 MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_LDIF), MUIA_UserData, AMEN_IMPORT_LDIF, End,
                 MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_CSV), MUIA_UserData, AMEN_IMPORT_CSV, End,
                 MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_TAB), MUIA_UserData, AMEN_IMPORT_TAB, End,
+                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_XML), MUIA_UserData, AMEN_IMPORT_XML, MUIA_Menuitem_Enabled, ExpatBase != NULL, End,
              End,
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_EXPORT),
                 MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_AB_LDIF), MUIA_UserData, AMEN_EXPORT_LDIF, End,
@@ -2535,6 +2967,7 @@ struct AB_ClassData *AB_New(void)
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_IMPORT_LDIF, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_ImportLDIFABookHook);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_IMPORT_TAB , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_ImportTabCSVABookHook, '\t');
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_IMPORT_CSV , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_ImportTabCSVABookHook, ',');
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_IMPORT_XML , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_ImportXMLABookHook);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_EXPORT_LDIF, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_ExportLDIFABookHook);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_EXPORT_TAB , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_ExportTabCSVABookHook, '\t');
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_EXPORT_CSV , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_ExportTabCSVABookHook, ',');

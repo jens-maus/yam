@@ -62,6 +62,7 @@
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
 #include <proto/cybergraphics.h>
+#include <proto/expat.h>
 
 #if defined(__amigaos4__)
 #include <proto/application.h>
@@ -1629,7 +1630,7 @@ static void Terminate(void)
 
   // free our private codesets list
   D(DBF_STARTUP, "freeing private codesets list...");
-  if(G->codesetsList)
+  if(G->codesetsList != NULL)
   {
     CodesetsListDelete(CSA_CodesetList, G->codesetsList,
                        TAG_DONE);
@@ -1660,7 +1661,7 @@ static void Terminate(void)
 
   // cleaning up all AmiSSL stuff
   D(DBF_STARTUP, "cleaning up AmiSSL stuff...");
-  if(AmiSSLBase)
+  if(AmiSSLBase != NULL)
   {
     CleanupAmiSSLA(NULL);
 
@@ -1673,6 +1674,7 @@ static void Terminate(void)
   // close all libraries now.
   D(DBF_STARTUP, "closing all opened libraries...");
   CLOSELIB(CyberGfxBase,  ICyberGfx);
+  CLOSELIB(ExpatBase,     IExpat);
   CLOSELIB(CodesetsBase,  ICodesets);
   CLOSELIB(DataTypesBase, IDataTypes);
   CLOSELIB(MUIMasterBase, IMUIMaster);
@@ -1686,7 +1688,7 @@ static void Terminate(void)
   // close the catalog and locale now
   D(DBF_STARTUP, "closing catalog...");
   CloseYAMCatalog();
-  if(G->Locale)
+  if(G->Locale != NULL)
     CloseLocale(G->Locale);
 
   CLOSELIB(LocaleBase, ILocale);
@@ -2388,6 +2390,7 @@ static void InitBeforeLogin(BOOL hidden)
   // Hence we try to open openurl.library without
   INITLIB("openurl.library",        1, 0, &OpenURLBase,   "main", &IOpenURL,   FALSE, NULL);
   INITLIB("codesets.library",       6, 5, &CodesetsBase,  "main", &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
+  INITLIB("expat.library", XML_MAJOR_VERSION, 0, &ExpatBase, "main", &IExpat, FALSE, NULL);
 
   // we check for the amisslmaster.library v3 accordingly
   if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))

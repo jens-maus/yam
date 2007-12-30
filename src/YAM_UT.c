@@ -2164,6 +2164,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
     "#?.(ldif|ldi)",                       // ASL_ABOOK_LIF
     "#?.csv",                              // ASL_ABOOK_CSV
     "#?.(tab|txt)",                        // ASL_ABOOK_TAB
+    "#?.xml",                              // ASL_ABOOK_XML
   };
 
   struct FileRequester *fileReq;
@@ -2172,7 +2173,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
   ENTER();
 
   // allocate the required data for our file requester
-  if((fileReq = MUI_AllocAslRequest(ASL_FileRequest, NULL)))
+  if((fileReq = MUI_AllocAslRequest(ASL_FileRequest, NULL)) != NULL)
   {
     const char *pattern = acceptPattern[num];
     struct FileReqCache *frc = G->FileReqCache[num];
@@ -2220,7 +2221,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
       // now we copy the optional arglist
       if(fileReq->fr_NumArgs > 0)
       {
-        if((frc->argList = calloc(sizeof(char*), fileReq->fr_NumArgs)))
+        if((frc->argList = calloc(sizeof(char*), fileReq->fr_NumArgs)) != NULL)
         {
           int i;
 
@@ -2263,13 +2264,13 @@ void FreeFileReqCache(struct FileReqCache *frc)
 {
   ENTER();
 
-  if(frc->file)
+  if(frc->file != NULL)
     free(frc->file);
 
-  if(frc->drawer)
+  if(frc->drawer != NULL)
     free(frc->drawer);
 
-  if(frc->pattern)
+  if(frc->pattern != NULL)
     free(frc->pattern);
 
   if(frc->numArgs > 0)

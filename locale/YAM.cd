@@ -6697,3 +6697,6 @@ are going to be filtered.\n\
 Do you want to proceed?
 ; FOLDER
 ;
+MSG_AB_XML (2070//)
+XML address book (*.xml)
+;
