@@ -6793,28 +6793,45 @@ static BOOL TR_DeleteMessage(int number)
 static void TR_NewMailAlert(void)
 {
   struct DownloadResult *stats = &G->TR->Stats;
+  struct RuleResult *rr = &G->RuleResults;
 
   ENTER();
 
-  if(stats->Downloaded != 0)
+  // show the statistics only if we downloaded some mails at all,
+  // and not all of them were spam mails
+  if(stats->Downloaded != 0 && rr->Checked > rr->Spam)
   {
     if(hasRequesterNotify(C->NotifyType) && G->TR->GUIlevel != POP_REXX)
     {
       static char buffer[SIZE_LARGE];
-      struct RuleResult *rr = &G->RRs;
-
       // make sure the application isn't iconified
       if(xget(G->App, MUIA_Application_Iconified) == TRUE)
         PopUp();
 
       snprintf(buffer, sizeof(buffer), tr(MSG_TR_NewMailReq), stats->Downloaded, stats->OnServer-stats->Deleted, stats->DupSkipped);
-      snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FilterStats), rr->Checked,
-                                                                       rr->Bounced,
-                                                                       rr->Forwarded,
-                                                                       rr->Replied,
-                                                                       rr->Executed,
-                                                                       rr->Moved,
-                                                                       rr->Deleted);
+      if(C->SpamFilterEnabled == TRUE)
+      {
+        // include the number of spam classified mails
+        snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FILTER_STATS_SPAM),
+                                                                         rr->Checked,
+                                                                         rr->Bounced,
+                                                                         rr->Forwarded,
+                                                                         rr->Replied,
+                                                                         rr->Executed,
+                                                                         rr->Moved,
+                                                                         rr->Deleted,
+                                                                         rr->Spam);
+      }
+      else
+      {
+        snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FilterStats), rr->Checked,
+                                                                         rr->Bounced,
+                                                                         rr->Forwarded,
+                                                                         rr->Replied,
+                                                                         rr->Executed,
+                                                                         rr->Moved,
+                                                                         rr->Deleted);
+      }
 
       // show the info window.
       InfoWindow(tr(MSG_TR_NewMail), buffer, tr(MSG_Okay), G->MA->GUI.WI, G->TR->GUIlevel == POP_USER);

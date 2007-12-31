@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-31  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c, YAM_TR.c: the number of spam classified mails will now be included
+    in the statistics requester after a mail download or filter operation if the
+    spam filter is enabled. This fulfills change request #1861290. Additionally
+    the statistics window will only be shown after a download if at least one
+    mail was not spam. This fulfills change request #1861292.
+
 2007-12-30  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c: added some comments

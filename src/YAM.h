@@ -140,7 +140,7 @@ struct Global
 
    struct DateStamp         StartDate;
    struct Users             Users;
-   struct RuleResult        RRs;
+   struct RuleResult        RuleResults;
    struct DownloadResult    LastDL;
    struct sockaddr_in       TR_INetSocketAddr;
    struct MinList           readMailDataList;

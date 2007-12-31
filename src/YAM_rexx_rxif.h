@@ -57,6 +57,7 @@ struct RuleResult
    long Executed;
    long Moved;
    long Deleted;
+   long Spam;
 };
 
 /* Add local variables only at end of rxd structs */
@@ -468,6 +469,7 @@ struct rxd_mailfilter
                 long *executed;
                 long *moved;
                 long *deleted;
+                long *spam;
         } res;
 };
 

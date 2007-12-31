@@ -6700,3 +6700,27 @@ Do you want to proceed?
 MSG_AB_XML (2070//)
 XML address book (*.xml)
 ;
+MSG_MA_FILTER_STATS_SPAM (2071//)
+Filtering done:\n\
+\n\
+%3ld messages checked,\n\
+%3ld forwarded,\n\
+%3ld archived,\n\
+%3ld deleted,\n\
+%3ld classified as spam
+; COUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_TR_FILTER_STATS_SPAM (2072//)
+\n\
+Filtering done:\n\
+\n\
+%3ld messages checked,\n\
+%3ld bounced,\n\
+%3ld forwarded,\n\
+%3ld auto-replied,\n\
+%3ld command activated,\n\
+%3ld moved,\n\
+%3ld deleted,\n\
+%3ld classified as spam
+; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
+;

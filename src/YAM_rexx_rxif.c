@@ -1115,7 +1115,7 @@ void rx_mailfilter( UNUSED struct RexxHost *host, struct rxd_mailfilter **rxd, e
 
     case RXIF_ACTION:
     {
-      struct RuleResult *rr = &G->RRs;
+      struct RuleResult *rr = &G->RuleResults;
 
       DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, rd->arg.all ? APPLY_RX_ALL : APPLY_RX, 0);
 
@@ -1126,6 +1126,7 @@ void rx_mailfilter( UNUSED struct RexxHost *host, struct rxd_mailfilter **rxd, e
       rd->res.executed = &rr->Executed;
       rd->res.moved = &rr->Moved;
       rd->res.deleted = &rr->Deleted;
+      rd->res.spam = &rr->Spam;
     }
     break;
 

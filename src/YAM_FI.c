@@ -1493,7 +1493,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
   // Bounce Action
   if(hasBounceAction(filter) && !filter->remote && *filter->bounceTo)
   {
-    G->RRs.Bounced++;
+    G->RuleResults.Bounced++;
     MA_NewBounce(mail, TRUE);
     setstring(G->WR[2]->GUI.ST_TO, filter->bounceTo);
     DoMethod(G->App, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, 2);
@@ -1502,7 +1502,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
   // Forward Action
   if(hasForwardAction(filter) && !filter->remote && *filter->forwardTo)
   {
-    G->RRs.Forwarded++;
+    G->RuleResults.Forwarded++;
     MA_NewForward(mlist, TRUE);
     setstring(G->WR[2]->GUI.ST_TO, filter->forwardTo);
     WR_NewMail(WRITE_QUEUE, 2);
@@ -1514,7 +1514,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
     MA_NewReply(mlist, TRUE);
     FileToEditor(filter->replyFile, G->WR[2]->GUI.TE_EDIT);
     WR_NewMail(WRITE_QUEUE, 2);
-    G->RRs.Replied++;
+    G->RuleResults.Replied++;
   }
 
   // Execute Action
@@ -1524,7 +1524,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
 
     snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
     ExecuteCommand(buf, FALSE, OUT_DOS);
-    G->RRs.Executed++;
+    G->RuleResults.Executed++;
   }
 
   // PlaySound Action
@@ -1545,7 +1545,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
         BOOL accessFreed = FALSE;
         enum LoadedMode oldLoadedMode = fo->LoadedMode;
 
-        G->RRs.Moved++;
+        G->RuleResults.Moved++;
 
         // temporarily grant free access to the folder, but only if it has no free access yet
         if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo) && isFreeAccess(fo) == FALSE)
@@ -1577,7 +1577,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
   // Delete Action
   if(hasDeleteAction(filter) && success == TRUE)
   {
-    G->RRs.Deleted++;
+    G->RuleResults.Deleted++;
 
     if(isSendMDNMail(mail) &&
        (hasStatusNew(mail) || !hasStatusRead(mail)))
@@ -1667,7 +1667,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         int matches = 0;
         struct Mail *mail;
 
-        memset(&G->RRs, 0, sizeof(struct RuleResult));
+        memset(&G->RuleResults, 0, sizeof(G->RuleResults));
         set(lv, MUIA_NList_Quiet, TRUE);
         G->AppIconQuiet = TRUE;
 
@@ -1710,11 +1710,11 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
                 doClassification = FALSE;
               }
 
-              if(doClassification)
+              if(doClassification == TRUE)
               {
                 D(DBF_FILTER, "Classifying message with subject \"%s\"", mail->Subject);
 
-                if(BayesFilterClassifyMessage(mail))
+                if(BayesFilterClassifyMessage(mail) == TRUE)
                 {
                   D(DBF_FILTER, "Message was classified as spam");
 
@@ -1727,6 +1727,10 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
                   // move newly recognized spam to the spam folder
                   MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
                   wasSpam = TRUE;
+
+                  // update the stats
+                  G->RuleResults.Checked++;
+                  G->RuleResults.Spam++;
                 }
               }
             }
@@ -1735,7 +1739,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
             {
               // apply all other user defined filters (if they exist) for non-spam mails
               // or if the spam filter is disabled
-              G->RRs.Checked++;
+              G->RuleResults.Checked++;
 
               // now we process the search
               FI_FilterSingleMail(mail, &matches);
@@ -1750,8 +1754,8 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
         FreeFilterSearch();
 
-        if(G->RRs.Checked)
-          AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_Filtering), G->RRs.Checked, folder->Name, matches);
+        if(G->RuleResults.Checked != 0)
+          AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_Filtering), G->RuleResults.Checked, folder->Name, matches);
 
         BusyEnd();
 
@@ -1761,11 +1765,26 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         if(mode != APPLY_AUTO)
           DisplayStatistics(NULL, TRUE);
 
-        if(G->RRs.Checked && mode == APPLY_USER)
+        if(G->RuleResults.Checked != 0 && mode == APPLY_USER)
         {
           char buf[SIZE_LARGE];
 
-          snprintf(buf, sizeof(buf), tr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
+          if(C->SpamFilterEnabled == TRUE)
+          {
+            // include the number of spam classified mails
+            snprintf(buf, sizeof(buf), tr(MSG_MA_FILTER_STATS_SPAM), G->RuleResults.Checked,
+                                                                     G->RuleResults.Forwarded,
+                                                                     G->RuleResults.Moved,
+                                                                     G->RuleResults.Deleted,
+                                                                     G->RuleResults.Spam);
+          }
+          else
+          {
+            snprintf(buf, sizeof(buf), tr(MSG_MA_FilterStats), G->RuleResults.Checked,
+                                                               G->RuleResults.Forwarded,
+                                                               G->RuleResults.Moved,
+                                                               G->RuleResults.Deleted);
+          }
           MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), buf);
         }
       }
