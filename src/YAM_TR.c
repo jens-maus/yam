@@ -6804,6 +6804,7 @@ static void TR_NewMailAlert(void)
     if(hasRequesterNotify(C->NotifyType) && G->TR->GUIlevel != POP_REXX)
     {
       static char buffer[SIZE_LARGE];
+
       // make sure the application isn't iconified
       if(xget(G->App, MUIA_Application_Iconified) == TRUE)
         PopUp();
@@ -6824,7 +6825,8 @@ static void TR_NewMailAlert(void)
       }
       else
       {
-        snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FilterStats), rr->Checked,
+        snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FilterStats),
+                                                                         rr->Checked,
                                                                          rr->Bounced,
                                                                          rr->Forwarded,
                                                                          rr->Replied,
