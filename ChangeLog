@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-01  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YES!! The first commit of 2008 is mine!! :)
+  * YAM_MAf.c: failing to convert an old-style mail file name to the new style
+    resulted in overwriting the old name with NULL, and hence the error message
+    also showed '(null)' as file name instead of the old name.
+  * Happy New Year, Miss Sophie! :)
+
 2007-12-31  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c, YAM_TR.c: the number of spam classified mails will now be included

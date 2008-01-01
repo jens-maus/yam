@@ -900,6 +900,8 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
   char *ptr;
   char *result = filename;
 
+  ENTER();
+
   // clear
   dateFilePart[0] = '\0';
   statusFilePart[0] = '\0';
@@ -910,13 +912,14 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
      ObtainFileInfo(oldFilePath, FI_COMMENT, &comment) == FALSE ||
      comment == NULL)
   {
+    RETURN(NULL);
     return NULL;
   }
 
   // for a proper conversion we have to take mainly the file comment into
   // account as in there all status information aswell as the transfer
   // data was stored in YAM versions prior to 2.5
-  if(*comment)
+  if(comment[0] != '\0')
   {
     // read out the mailstatus - which was normally the first character
     // of the comment
@@ -967,7 +970,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 
     // now we check if second char is present and if we set the mailfag
     // as "marked" and the arexx permanent flag
-    if(comment[1] && comment[1] != ' ')
+    if(comment[1] != '\0' && comment[1] != ' ')
     {
       int pval = 0;
 
@@ -992,7 +995,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
     // we check if this comment also has the transfer Date included
     // we only take the string if it is exactly 12bytes long or
     // otherwise it could be some weird data in the Comment string
-    if(comment[1] && comment[2] && comment[14] == '\0')
+    if(comment[1] != '\0' && comment[2] != '\0' && comment[14] == '\0')
     {
       // ok we have the transfer Date, so lets put it at the beginning of
       // the new filename
@@ -1020,7 +1023,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
   // as the dateFilePart may contain slashes "/" we have to replace them
   // with "-" chars to don't drive the filesystem crazy :)
   ptr = dateFilePart;
-  while((ptr = strchr(ptr, '/')))
+  while((ptr = strchr(ptr, '/')) != NULL)
     *ptr = '-';
 
   do
@@ -1087,7 +1090,12 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
   }
   while(FALSE);
 
-  return result != filename ? result : NULL;
+  // return failure if we didn't change anything
+  if(result == filename)
+    result = NULL;
+
+  RETURN(result);
+  return result;
 }
 ///
 
@@ -2291,8 +2299,10 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
                 if(convertAllOld == TRUE || convertOnce == TRUE)
                 {
+                  char *newfname;
+
                   // now we finally convert the file to a new style mail file
-                  if((fname = MA_ConvertOldMailFile(fname, folder)) == NULL)
+                  if((newfname = MA_ConvertOldMailFile(fname, folder)) == NULL)
                   {
                     // if there occurred any error we skip to the next file.
                     ER_NewError(tr(MSG_ER_CONVERTMFILE), fname, folder->Name);
