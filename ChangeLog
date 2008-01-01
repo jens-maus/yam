@@ -7,6 +7,8 @@ $URL$
 
 2008-01-01  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MAf.c: the new converted mail name will now be used like before in case
+    it is valid.
   * YES!! The first commit of 2008 is mine!! :)
   * YAM_MAf.c: failing to convert an old-style mail file name to the new style
     resulted in overwriting the old name with NULL, and hence the error message

@@ -2308,6 +2308,11 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                     ER_NewError(tr(MSG_ER_CONVERTMFILE), fname, folder->Name);
                     continue;
                   }
+                  else
+                  {
+                    // use the new name from now on
+                    fname = newfname;
+                  }
                 }
                 else
                   continue;
