@@ -100,6 +100,17 @@ HOOKPROTONHNO(DisplayFunc, LONG, struct NList_DisplayMessage *msg)
 MakeStaticHook(DisplayHook, DisplayFunc);
 
 ///
+/// CompareHook
+HOOKPROTONHNO(CompareFunc, LONG, struct NList_CompareMessage *msg)
+{
+  struct Theme *theme1 = (struct Theme *)msg->entry1;
+  struct Theme *theme2 = (struct Theme *)msg->entry2;
+
+  return stricmp(theme1->directory, theme2->directory);
+}
+MakeStaticHook(CompareHook, CompareFunc);
+
+///
 
 /* Private Functions */
 
@@ -134,6 +145,7 @@ OVERLOAD(OM_NEW)
                 MUIA_NList_ConstructHook, &ConstructHook,
                 MUIA_NList_DestructHook,  &DestructHook,
                 MUIA_NList_DisplayHook2,  &DisplayHook,
+                MUIA_NList_CompareHook2,  &CompareHook,
               End,
             End,
 
@@ -276,7 +288,7 @@ DECLARE(Update)
 
           // add the theme to our NList which in fact will allocate/free everything the
           // ParseThemeFile() function did allocate previously.
-          DoMethod(data->NL_THEMELIST, MUIM_NList_InsertSingle, &theme, MUIV_NList_Insert_Bottom);
+          DoMethod(data->NL_THEMELIST, MUIM_NList_InsertSingle, &theme, MUIV_NList_Insert_Sorted);
 
           result = TRUE;
         }
