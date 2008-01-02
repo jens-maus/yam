@@ -7,6 +7,12 @@ $URL$
 
 2008-01-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: the Edit menu will now be generated dynamically if either the
+    quick search bar or the embedded read pane is activated, as only these two
+    need the edit menu. This fulfills feature request #1844493.
+  * Debug.c: implemented the STARTCLOCK() and STOPCLOCK() debug functions for
+    time measurement. Up to 8 nested times can be measured. Just make sure that
+    each STARTCLOCK() has a matching STOPCLOCK() call.
   * YAM.c, YAM_WR.c, YAM_UT.c: a mail will only automatically be saved if it
     really was modified since the last autosave cycle. This fixes bug #1862032.
 

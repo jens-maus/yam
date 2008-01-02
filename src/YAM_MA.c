@@ -4704,7 +4704,7 @@ void MA_SetupDynamicMenus(void)
 
   // generate the dynamic REXX Menu of the main window.
   // make sure we remove an old dynamic menu first
-  if(G->MA->GUI.MN_REXX)
+  if(G->MA->GUI.MN_REXX != NULL)
   {
     DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_Remove, G->MA->GUI.MN_REXX);
     MUI_DisposeObject(G->MA->GUI.MN_REXX);
@@ -4723,7 +4723,7 @@ void MA_SetupDynamicMenus(void)
     End,
   End;
 
-  if(G->MA->GUI.MN_REXX)
+  if(G->MA->GUI.MN_REXX != NULL)
   {
     static const char *const shortcuts[10] = { "1","2","3","4","5","6","7","8","9","0" };
     int i;
@@ -4733,7 +4733,7 @@ void MA_SetupDynamicMenus(void)
     // linked to the main menu.
     for(i=0; i < 10; i++)
     {
-      if(C->RX[i].Script[0])
+      if(C->RX[i].Script[0] != '\0')
       {
         Object *newObj = MenuitemObject,
                            MUIA_Menuitem_Title,    C->RX[i].Name,
@@ -4753,7 +4753,7 @@ void MA_SetupDynamicMenus(void)
 
 
   // dynamic Folder/Check menu items
-  if(G->MA->GUI.MI_CSINGLE)
+  if(G->MA->GUI.MI_CSINGLE != NULL)
   {
     DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_CSINGLE);
     MUI_DisposeObject(G->MA->GUI.MI_CSINGLE);
@@ -4763,7 +4763,7 @@ void MA_SetupDynamicMenus(void)
     MUIA_Menuitem_Title, tr(MSG_MA_CheckSingle),
   End;
 
-  if(G->MA->GUI.MI_CSINGLE)
+  if(G->MA->GUI.MI_CSINGLE !=  NULL)
   {
     int i;
 
@@ -4784,7 +4784,7 @@ void MA_SetupDynamicMenus(void)
                    MUIA_UserData,       MMEN_POPHOST+i,
                  End;
 
-        if(newObj)
+        if(newObj != NULL)
           DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
       }
     }
@@ -4795,7 +4795,7 @@ void MA_SetupDynamicMenus(void)
   }
 
   // handle the spam filter menu items
-  if(C->SpamFilterEnabled)
+  if(C->SpamFilterEnabled == TRUE)
   {
     // for each entry check if it exists and if it is part of the menu
     // if not, create a new entry and add it to the current layout
@@ -4835,29 +4835,62 @@ void MA_SetupDynamicMenus(void)
   {
     // for each entry check if it exists and if it is part of the menu
     // if yes, then remove the entry and dispose it
-    if(G->MA->GUI.MI_TOSPAM != NULL && isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOSPAM))
+    if(G->MA->GUI.MI_TOSPAM != NULL && isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOSPAM) == TRUE)
     {
       DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Remove, G->MA->GUI.MI_TOSPAM);
       MUI_DisposeObject(G->MA->GUI.MI_TOSPAM);
       G->MA->GUI.MI_TOSPAM = NULL;
     }
-    if(G->MA->GUI.MI_TOHAM != NULL && isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOHAM))
+    if(G->MA->GUI.MI_TOHAM != NULL && isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOHAM) == TRUE)
     {
       DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Remove, G->MA->GUI.MI_TOHAM);
       MUI_DisposeObject(G->MA->GUI.MI_TOHAM);
       G->MA->GUI.MI_TOHAM = NULL;
     }
-    if(G->MA->GUI.MI_DELSPAM != NULL && isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_DELSPAM))
+    if(G->MA->GUI.MI_DELSPAM != NULL && isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_DELSPAM) == TRUE)
     {
       DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_DELSPAM);
       MUI_DisposeObject(G->MA->GUI.MI_DELSPAM);
       G->MA->GUI.MI_DELSPAM = NULL;
     }
-    if(G->MA->GUI.MI_CHECKSPAM != NULL && isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_CHECKSPAM))
+    if(G->MA->GUI.MI_CHECKSPAM != NULL && isChildOfFamily(G->MA->GUI.MN_FOLDER, G->MA->GUI.MI_CHECKSPAM) == TRUE)
     {
       DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_CHECKSPAM);
       MUI_DisposeObject(G->MA->GUI.MI_CHECKSPAM);
       G->MA->GUI.MI_CHECKSPAM = NULL;
+    }
+  }
+
+  if(C->QuickSearchBar == TRUE || C->EmbeddedReadPane == TRUE)
+  {
+    if(G->MA->GUI.MN_EDIT == NULL || isChildOfFamily(G->MA->GUI.MS_MAIN, G->MA->GUI.MN_EDIT) == FALSE)
+    {
+      G->MA->GUI.MN_EDIT = MenuObject, MUIA_Menu_Title, tr(MSG_MA_EDIT),
+        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_UNDO), "Z", TRUE, FALSE, MMEN_EDIT_UNDO),
+        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_REDO), NULL, TRUE, FALSE, MMEN_EDIT_REDO),
+        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_CUT), "X", TRUE, FALSE, MMEN_EDIT_CUT),
+        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_COPY), "C", TRUE, FALSE, MMEN_EDIT_COPY),
+        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_PASTE), "V", TRUE, FALSE, MMEN_EDIT_PASTE),
+        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_DELETE), NULL, TRUE, FALSE, MMEN_EDIT_DELETE),
+        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_SALL), "A", TRUE, FALSE, MMEN_EDIT_SALL),
+        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_SNONE), NULL, TRUE, FALSE, MMEN_EDIT_SNONE),
+      End;
+
+      if(G->MA->GUI.MN_EDIT != NULL)
+      {
+        DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_Insert, G->MA->GUI.MN_EDIT, G->MA->GUI.MN_PROJECT);
+      }
+    }
+  }
+  else
+  {
+    if(G->MA->GUI.MN_EDIT != NULL && isChildOfFamily(G->MA->GUI.MS_MAIN, G->MA->GUI.MN_EDIT) == TRUE)
+    {
+      DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_Remove, G->MA->GUI.MN_EDIT);
+      MUI_DisposeObject(G->MA->GUI.MN_EDIT);
+      G->MA->GUI.MN_EDIT = NULL;
     }
   }
 
@@ -5011,17 +5044,17 @@ BOOL MA_SortWindow(void)
 //  Creates main window
 struct MA_ClassData *MA_New(void)
 {
-  struct MA_ClassData *data = calloc(1, sizeof(struct MA_ClassData));
+  struct MA_ClassData *data;
 
   ENTER();
 
-  if(data)
+  if((data = calloc(1, sizeof(struct MA_ClassData))) != NULL)
   {
     char *username = C->RealName;
     struct User *user;
 
     // get the RealName and/or username of the current user
-    if(username == NULL && (user = US_GetCurrentUser()))
+    if(username == NULL && (user = US_GetCurrentUser()) != NULL)
       username = user->Name;
 
     // prepare the generic window title of the main window
@@ -5087,7 +5120,7 @@ struct MA_ClassData *MA_New(void)
 
     //
     data->GUI.MS_MAIN = MenustripObject,
-      MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Project),
+      MUIA_Family_Child, data->GUI.MN_PROJECT = MenuObject, MUIA_Menu_Title, tr(MSG_MA_Project),
         MUIA_Family_Child, Menuitem(tr(MSG_PROJECT_MABOUT), "?", TRUE, FALSE, MMEN_ABOUT),
         MUIA_Family_Child, Menuitem(tr(MSG_MA_AboutMUI), NULL, TRUE, FALSE, MMEN_ABOUTMUI),
         MUIA_Family_Child, data->GUI.MI_UPDATECHECK = Menuitem(tr(MSG_MA_UPDATECHECK), NULL, TRUE, FALSE, MMEN_VERSION),
@@ -5096,18 +5129,6 @@ struct MA_ClassData *MA_New(void)
         MUIA_Family_Child, Menuitem(tr(MSG_MA_Restart), NULL, TRUE, FALSE, MMEN_LOGIN),
         MUIA_Family_Child, Menuitem(tr(MSG_MA_HIDE), "H", TRUE, FALSE, MMEN_HIDE),
         MUIA_Family_Child, Menuitem(tr(MSG_MA_QUIT), "Q", TRUE, FALSE, MMEN_QUIT),
-      End,
-      MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_MA_EDIT),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_UNDO), "Z", TRUE, FALSE, MMEN_EDIT_UNDO),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_REDO), NULL, TRUE, FALSE, MMEN_EDIT_REDO),
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_CUT), "X", TRUE, FALSE, MMEN_EDIT_CUT),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_COPY), "C", TRUE, FALSE, MMEN_EDIT_COPY),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_PASTE), "V", TRUE, FALSE, MMEN_EDIT_PASTE),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_DELETE), NULL, TRUE, FALSE, MMEN_EDIT_DELETE),
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_SALL), "A", TRUE, FALSE, MMEN_EDIT_SALL),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_SNONE), NULL, TRUE, FALSE, MMEN_EDIT_SNONE),
       End,
       MUIA_Family_Child, data->GUI.MN_FOLDER = MenuObject, MUIA_Menu_Title, tr(MSG_Folder),
         MUIA_Family_Child, Menuitem(tr(MSG_FOLDER_NEWFOLDER), NULL, TRUE, FALSE, MMEN_NEWF),
@@ -5200,7 +5221,7 @@ struct MA_ClassData *MA_New(void)
           End,
         End,
         Child, data->GUI.IB_INFOBAR = InfoBarObject,
-          MUIA_ShowMe,  !(C->InfoBar == IB_POS_OFF),
+          MUIA_ShowMe,  (C->InfoBar != IB_POS_OFF),
         End,
         Child, data->GUI.GR_BOTTOM = HGroup,
           GroupSpacing(1),
@@ -5229,7 +5250,7 @@ struct MA_ClassData *MA_New(void)
 
     // check if we were able to generate the main
     // window object
-    if(data->GUI.WI)
+    if(data->GUI.WI != NULL)
     {
       ULONG i;
 
@@ -5336,18 +5357,17 @@ struct MA_ClassData *MA_New(void)
         key[8] = '0' + i;
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_InputEvent, key, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_FolderKeyHook, i);
       }
-
-      RETURN(data);
-      return data;
     }
-
+  }
+  else
+  {
+    E(DBF_GUI, "Couldn't create main window object!");
     free(data);
+    data = NULL;
   }
 
-  E(DBF_GUI, "Couldn't create main window object!");
-
-  RETURN(NULL);
-  return NULL;
+  RETURN(data);
+  return data;
 }
 ///
 

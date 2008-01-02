@@ -227,6 +227,8 @@ enum EditAction
 struct MA_GUIData
 {
   Object *WI;
+  Object *MN_PROJECT;
+  Object *MN_EDIT;
   Object *MN_FOLDER;
   Object *MN_REXX;
   Object *MS_MAIN;
