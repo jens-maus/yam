@@ -6289,7 +6289,7 @@ MSG_FI_StatMarked
 Markiert
 ;
 MSG_MA_CREQUEST_OLDFILE
-YAM hat die Datei '%s' im Postfach '%s' als eine Maildatei identifiziert\n\
+YAM hat die Datei '%s' im Postfach '%s' als eine Maildatei identifiziert,\n\
 die mit einer älteren YAM Version generiert wurde.\n\
 \n\
 Möchten Sie die Datei in das neue Mailformat konvertieren?
