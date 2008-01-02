@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-02  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, YAM_WR.c, YAM_UT.c: a mail will only automatically be saved if it
+    really was modified since the last autosave cycle. This fixes bug #1862032.
+
 2008-01-01  Thore Böckelmann <tboeckel@gmx.de>
 
   * ThemeListGroup.c: the list of themes is now sorted by directory name.

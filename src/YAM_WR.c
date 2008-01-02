@@ -2345,26 +2345,51 @@ void WR_Cleanup(int winnum)
 HOOKPROTONHNO(WR_CancelFunc, void, int *arg)
 {
   int winnum = *arg;
+  BOOL discard = TRUE;
 
-  if (G->WR[winnum]->Mode != NEW_BOUNCE)
+  ENTER();
+
+  if(G->WR[winnum]->Mode != NEW_BOUNCE)
   {
-    if (winnum < 2)
+    if(winnum < 2)
     {
-      int haschanged = xget(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged);
-      if (haschanged)
+      // ask the user what to do if the mail text was modified
+      if(xget(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE || G->WR[winnum]->AutoSaved == TRUE)
       {
-        switch (MUI_Request(G->App, G->WR[winnum]->GUI.WI, 0, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
+        switch(MUI_Request(G->App, G->WR[winnum]->GUI.WI, 0, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
         {
-          case 0: return;
-          case 1: WR_NewMail(WRITE_QUEUE, winnum);
-                  return;
-          case 2: break;
+          case 0:
+          {
+            // cancel
+            discard = FALSE;
+          }
+          break;
+
+          case 1:
+          {
+            // send later
+            WR_NewMail(WRITE_QUEUE, winnum);
+            discard = FALSE;
+          }
+          break;
+
+          case 2:
+          {
+            // discard
+          }
+          break;
         }
       }
     }
-    WR_Cleanup(winnum);
+
+    if(discard == TRUE)
+      WR_Cleanup(winnum);
   }
-  DisposeModulePush(&G->WR[winnum]);
+
+  if(discard == TRUE)
+    DisposeModulePush(&G->WR[winnum]);
+
+  LEAVE();
 }
 MakeStaticHook(WR_CancelHook, WR_CancelFunc);
 
@@ -3752,6 +3777,9 @@ static void WR_SharedSetup(struct WR_ClassData *data, int winnum)
   DoMethod(data->GUI.BT_SEND    ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_NewMailHook,WRITE_SEND,winnum);
   DoMethod(data->GUI.BT_CANCEL  ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_CancelHook,winnum);
   DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_CancelHook,winnum);
+
+  // the new mail has not been automatically saved yet
+  data->AutoSaved = FALSE;
 
   LEAVE();
 }

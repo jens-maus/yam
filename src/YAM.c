@@ -1062,13 +1062,13 @@ static void TC_Dispatcher(enum TimerIO tio)
 
       // only if there is currently no write window open we
       // check for new mail.
-      for(i = 0; i < MAXWR && !G->WR[i]; i++) ;
+      for(i = 0; i < MAXWR && G->WR[i] == NULL; i++) ;
 
       // also the configuration window needs to be closed
       // or we skip the pop operation
-      if(i == MAXWR && !G->CO)
+      if(i == MAXWR && G->CO == NULL)
       {
-        MA_PopNow(POP_TIMED,-1);
+        MA_PopNow(POP_TIMED, -1);
       }
 
       // prepare the timer to get fired again
@@ -1088,8 +1088,21 @@ static void TC_Dispatcher(enum TimerIO tio)
 
       for(i = 0; i < MAXWR; i++)
       {
-        if(G->WR[i] && G->WR[i]->Mode != NEW_BOUNCE)
-          EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i, fileName, sizeof(fileName)));
+        if(G->WR[i] != NULL && G->WR[i]->Mode != NEW_BOUNCE)
+        {
+          // do the autosave only if something was modified
+          if(xget(G->WR[i]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
+          {
+            if(EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i, fileName, sizeof(fileName))) == TRUE)
+            {
+              // we just saved the mail text, so it is no longer modified
+              set(G->WR[i]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
+              // we must remember if the mail was automatically saved, since the editor object cannot
+              // tell about changes anymore if they don't happen from now on.
+              G->WR[i]->AutoSaved = TRUE;
+            }
+          }
+        }
       }
 
       // prepare the timer to get fired again
@@ -1104,7 +1117,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     {
       D(DBF_TIMERIO, "timer[%ld]: TIO_READPANEUPDATE fired @ %s", tio, dateString);
 
-      if(C->EmbeddedReadPane)
+      if(C->EmbeddedReadPane == TRUE)
       {
         struct MA_GUIData *gui = &G->MA->GUI;
         struct Mail *mail;
@@ -1172,7 +1185,7 @@ static void TC_Dispatcher(enum TimerIO tio)
       D(DBF_TIMERIO, "timer[%ld]: TIO_POP3_KEEPALIVE fired @ %s", tio, dateString);
 
       // send the POP3 server a 'NOOP'
-      if(TR_SendPOP3KeepAlive())
+      if(TR_SendPOP3KeepAlive() == TRUE)
       {
         // prepare the timer to get fired again
         TC_Prepare(tio, C->KeepAliveInterval, 0);

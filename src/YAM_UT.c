@@ -4612,10 +4612,12 @@ BOOL FileToEditor(char *file, Object *editor)
   {
     char *parsedText;
 
-    // Parse the text and do some highlighting and stuff
-    if((parsedText = ParseEmailText(text, FALSE)))
+    // parse the text and do some highlighting and stuff
+    if((parsedText = ParseEmailText(text, FALSE)) != NULL)
     {
-      set(editor, MUIA_TextEditor_Contents, parsedText);
+      // set the new text and tell the editor that its content has changed
+      xset(editor, MUIA_TextEditor_Contents, parsedText,
+                   MUIA_TextEditor_HasChanged, TRUE);
       free(parsedText);
 
       res = TRUE;

@@ -86,6 +86,8 @@ struct WR_ClassData  /* write window */
   int               OldSecurity;
   int               winnum;       // the window number this class data belongs to
 
+  BOOL              AutoSaved; // was this mail automatically saved?
+
   char              MsgID[SIZE_MSGID];
   char              CursorPos[SIZE_DEFAULT];
   char              WTitle[SIZE_SUBJECT+1];
@@ -93,15 +95,15 @@ struct WR_ClassData  /* write window */
 
 struct Attach
 {
-   int  Size;
+  int  Size;
 
-   BOOL IsMIME;
-   BOOL IsTemp;
+  BOOL IsMIME;
+  BOOL IsTemp;
 
-   char FilePath[SIZE_PATHFILE];
-   char Name[SIZE_FILE];
-   char ContentType[SIZE_CTYPE];
-   char Description[SIZE_DEFAULT];
+  char FilePath[SIZE_PATHFILE];
+  char Name[SIZE_FILE];
+  char ContentType[SIZE_CTYPE];
+  char Description[SIZE_DEFAULT];
 };
 
 enum TransformMode
@@ -116,13 +118,13 @@ enum Encoding { ENC_NONE, ENC_QP, ENC_B64, ENC_UUE, ENC_BIN, ENC_8BIT };
 
 struct WritePart
 {
-   struct WritePart *Next;
-   const char *      ContentType;
-   char *            Filename;
-   char *            Description;
-   char *            Name;
-   BOOL              IsTemp;
-   enum Encoding     EncType;
+  struct WritePart *Next;
+  const char *      ContentType;
+  char *            Filename;
+  char *            Description;
+  char *            Name;
+  BOOL              IsTemp;
+  enum Encoding     EncType;
 };
 
 /* if you add anything here, check the following places for potential changes:
@@ -133,27 +135,27 @@ enum Security { SEC_NONE=0, SEC_SIGN, SEC_ENCRYPT, SEC_BOTH, SEC_SENDANON, SEC_D
 
 struct Compose
 {
-   FILE *             FH;
-   char *             MailTo;
-   char *             MailCC;
-   char *             MailBCC;
-   char *             From;
-   char *             ReplyTo;
-   char *             RealName;
-   const char *       Subject;
-   char *             ExtHeader;
-   char *             IRTMsgID;
-   struct WritePart * FirstPart;
-   struct Mail *      refMail;    // ptr to the original mail we composing a new one from.
-   int                Mode;
-   int                Importance;
-   int                Signature;
-   BOOL               RequestMDN;  // should an MDN be requested
-   BOOL               GenerateMDN; // should and MDN report be generated?
-   BOOL               DelSend;
-   BOOL               UserInfo;
-   enum Security      Security;
-   enum Security      OldSecurity;
+  FILE *             FH;
+  char *             MailTo;
+  char *             MailCC;
+  char *             MailBCC;
+  char *             From;
+  char *             ReplyTo;
+  char *             RealName;
+  const char *       Subject;
+  char *             ExtHeader;
+  char *             IRTMsgID;
+  struct WritePart * FirstPart;
+  struct Mail *      refMail;    // ptr to the original mail we composing a new one from.
+  int                Mode;
+  int                Importance;
+  int                Signature;
+  BOOL               RequestMDN;  // should an MDN be requested
+  BOOL               GenerateMDN; // should and MDN report be generated?
+  BOOL               DelSend;
+  BOOL               UserInfo;
+  enum Security      Security;
+  enum Security      OldSecurity;
 };
 
 // Soft-style modes for text
