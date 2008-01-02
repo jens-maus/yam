@@ -7,6 +7,9 @@ $URL$
 
 2008-01-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_WR.c: the signature will now be appended only if the selected signature
+    file contains at least one character. This fulfills feature request
+    #1837290.
   * locale/german.ct: minor spelling fix.
   * YAM_MA.c: the Edit menu will now be generated dynamically if either the
     quick search bar or the embedded read pane is activated, as only these two

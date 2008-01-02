@@ -973,42 +973,52 @@ static void WR_AddTagline(FILE *fh_mail)
 //  Writes signature to the message file
 static void WR_WriteSignature(FILE *out, int signat)
 {
-  FILE *in;
+  char *sigFile;
+  LONG sigSize;
 
   ENTER();
 
-  if((in = fopen(CreateFilename(SigNames[signat]), "r")))
+  sigFile = CreateFilename(SigNames[signat]);
+
+  // check whether the signature file exists and contains at least one character
+  if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE && sigSize > 0)
   {
-    int ch;
+    FILE *in;
 
-    setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
-
-    fputs("-- \n", out);
-    while((ch = fgetc(in)) != EOF)
+    // now append the signature file and fill the placeholders
+    if((in = fopen(sigFile, "r")) != NULL)
     {
-      if(ch == '%')
+      int ch;
+
+      setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
+      fputs("-- \n", out);
+      while((ch = fgetc(in)) != EOF)
       {
-        ch = fgetc(in);
-
-        if(ch == 't')
+        if(ch == '%')
         {
-          WR_AddTagline(out);
-          continue;
-        }
+          ch = fgetc(in);
 
-        if(ch == 'e')
-        {
-          CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
-          continue;
-        }
+          if(ch == 't')
+          {
+            WR_AddTagline(out);
+            continue;
+          }
 
-        ungetc(ch, in);
-        ch = '%';
+          if(ch == 'e')
+          {
+            CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
+            continue;
+          }
+
+          ungetc(ch, in);
+          ch = '%';
+        }
+        fputc(ch, out);
       }
-      fputc(ch, out);
-    }
 
-    fclose(in);
+      fclose(in);
+    }
   }
 
   LEAVE();
