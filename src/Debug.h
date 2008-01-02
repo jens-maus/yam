@@ -94,6 +94,8 @@ void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string,
 void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const char *file, int line);
 void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, ...);
 void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, va_list args);
+void _STARTCLOCK(const char *file, int line);
+void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, int line);
 
 #if defined(__SASC)
   #define __FUNCTION__        __FUNC__
@@ -108,6 +110,8 @@ void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int
 #define SHOWPOINTER(f, p)     _SHOWPOINTER(DBC_REPORT, f, p, #p, __FILE__, __LINE__)
 #define SHOWSTRING(f, s)      _SHOWSTRING(DBC_REPORT, f, s, #s, __FILE__, __LINE__)
 #define SHOWMSG(f, m)         _SHOWMSG(DBC_REPORT, f, m, __FILE__, __LINE__)
+#define STARTCLOCK()          _STARTCLOCK(__FILE__, __LINE__)
+#define STOPCLOCK(f, m)       _STOPCLOCK(f, m, __FILE__, __LINE__)
 #if defined(NO_VARARG_MARCOS)
 void D(unsigned long f, const char *format, ...);
 void E(unsigned long f, const char *format, ...);
@@ -143,6 +147,8 @@ void W(unsigned long f, const char *format, ...);
 #define SHOWPOINTER(f, p)    ((void)0)
 #define SHOWSTRING(f, s)     ((void)0)
 #define SHOWMSG(f, m)        ((void)0)
+#define STARTCLOCK()         ((void)0)
+#define STOPCLOCK(f, m)      ((void)0)
 #define D(f, ...)            ((void)0)
 #define E(f, ...)            ((void)0)
 #define W(f, ...)            ((void)0)

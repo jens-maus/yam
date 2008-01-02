@@ -34,6 +34,7 @@
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/intuition.h>
+#include <proto/timer.h>
 
 #include "YAM_global.h"
 #include "YAM_utilities.h" // CLEAR_FLAG,SET_FLAG
@@ -65,6 +66,8 @@ static int indent_level = 0;
 static BOOL ansi_output = FALSE;
 static ULONG debug_flags = DBF_ALWAYS | DBF_STARTUP; // default debug flags
 static ULONG debug_classes = DBC_ERROR | DBC_DEBUG | DBC_WARNING | DBC_ASSERT | DBC_REPORT; // default debug classes
+static int timer_level = -1;
+static struct TimeVal startTimes[8];
 
 /****************************************************************************/
 
@@ -458,6 +461,36 @@ void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int
     else
       kprintf("%s:%ld:%s\n", file, line, buf);
   }
+}
+
+/****************************************************************************/
+
+void _STARTCLOCK(const char *file, int line)
+{
+  if(timer_level < (int)ARRAY_SIZE(startTimes))
+  {
+    timer_level++;
+    GetSysTime(TIMEVAL(&startTimes[timer_level]));
+  }
+  else
+    _DPRINTF(DBC_ERROR, DBF_ALWAYS, file, line, "already %ld clocks in use!", ARRAY_SIZE(startTimes));
+}
+
+/****************************************************************************/
+
+void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, int line)
+{
+  if(timer_level >= 0)
+  {
+    struct TimeVal stopTime;
+
+    GetSysTime(TIMEVAL(&stopTime));
+    SubTime(TIMEVAL(&stopTime), TIMEVAL(&startTimes[timer_level]));
+    _DPRINTF(DBC_TIMEVAL, dflags, file, line, "operation '%s' took %ld.%09ld seconds", message, stopTime.Seconds, stopTime.Microseconds);
+    timer_level--;
+  }
+  else
+    _DPRINTF(DBC_ERROR, DBF_ALWAYS, file, line, "no clocks in use!");
 }
 
 /****************************************************************************/
