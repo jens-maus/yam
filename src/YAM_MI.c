@@ -1925,8 +1925,8 @@ int rfc2047_encode_file(FILE *fh, const char *str)
 
     // now we have to check whether we are in the encode mode or not
     // This means, that if we previously found characters which require
-    // endcoding, the followed character also should be encoded if
-    // it is no whitespace and not quoted printable safe.
+    // encoding, the followed character also should be encoded if
+    // they are no whitespace and not quoted printable safe.
     if(encode_mode == TRUE)
     {
       if(is_lwsp(*c) || *c == '\0')
@@ -2063,7 +2063,8 @@ int rfc2047_encode_file(FILE *fh, const char *str)
       if(*c != '\0' &&
          (!isascii(*c) || iscntrl(*c) ||
           (*c == '=' && *(c+1) == '?' && isascii(*(c+2)) &&
-           (c == str || is_lwsp(*(c-1))))))
+           (c == str || is_lwsp(*(c-1)))) ||
+          (*c == '"' || *c == '\'')))
       {
         // ok, this is a non US-ASCII char and should be encoded
         // accordingly. so lets check whether the previous word was
