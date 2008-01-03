@@ -7,6 +7,12 @@ $URL$
 
 2008-01-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * themes/default: replaced all images/icons of the default theme with new
+    image versions kindly supplied by Martin 'Mason' Merz. Please note, however,
+    that this is still work-in-progress and that we are going to update that
+    new default theme until the final release of YAM 2.6. In addition, we have
+    plans to supply a low-colour theme for those platforms (especially old
+    m68k classic) not able to load the new nice alpha-channel images from Mason.
   * misc: bumped all copyright years from 2007 to 2008. Another constructive
     year passed!
 
