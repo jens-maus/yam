@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: bumped all copyright years from 2007 to 2008. Another constructive
+    year passed!
+
 2008-01-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * classes/ImageArea.c: setting a new ID or filename caused the previously
