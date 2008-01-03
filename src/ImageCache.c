@@ -423,7 +423,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
               {
                 node->bytesPerPixel = node->depth / 8;
                 node->bytesPerRow = node->width * node->bytesPerPixel;
-                node->pixelFormat = (node->depth == 32) ? PBPAFMT_ARGB : PBPAFMT_RGBA;
+                node->pixelFormat = (node->depth == 32) ? PBPAFMT_ARGB : PBPAFMT_RGB;
 
                 if((node->pixelArray = AllocVecPooled(G->SharedMemPool, node->bytesPerRow * node->height)) != NULL)
                 {

@@ -7,6 +7,8 @@ $URL$
 
 2008-01-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: fixed wrong pixel data access for 24 bit images (RGBA instead
+    of RGB).
   * ThemeListGroup.c: for sorting the list only the directory part of the theme
     path is used now.
 
