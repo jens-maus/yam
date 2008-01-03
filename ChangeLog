@@ -7,6 +7,9 @@ $URL$
 
 2008-01-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * locale/YAM.cd: renamed the "No spam" toolbar buttons to "N.Spam" as that
+    won't cause the buttons of the toolbar to automatically adapt to the new
+    text width which in fact is ugly.
   * themes/default: replaced all images/icons of the default theme with new
     image versions kindly supplied by Martin 'Mason' Merz. Please note, however,
     that this is still work-in-progress and that we are going to update that

@@ -5479,7 +5479,7 @@ MSG_MA_TBSPAM (1746//8)
 Sp_am
 ;
 MSG_MA_TBNOTSPAM (1747//8)
-No sp_am
+N.Sp_am
 ;
 MSG_HELP_MA_BT_SPAM (1748//)
 Mark message as spam
@@ -5491,7 +5491,7 @@ MSG_RE_TBSPAM (1750//8)
 Sp_am
 ;
 MSG_RE_TBNOTSPAM (1751//8)
-No sp_am
+N.Sp_am
 ;
 MSG_HELP_RE_BT_SPAM (1752//)
 Mark message as spam.
