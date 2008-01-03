@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ThemeListGroup.c: for sorting the list only the directory part of the theme
+    path is used now.
+
 2008-01-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: the signature will now be appended only if the selected signature

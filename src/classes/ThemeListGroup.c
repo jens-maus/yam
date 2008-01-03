@@ -106,7 +106,7 @@ HOOKPROTONHNO(CompareFunc, LONG, struct NList_CompareMessage *msg)
   struct Theme *theme1 = (struct Theme *)msg->entry1;
   struct Theme *theme2 = (struct Theme *)msg->entry2;
 
-  return stricmp(theme1->directory, theme2->directory);
+  return stricmp(FilePart(theme1->directory), FilePart(theme2->directory));
 }
 MakeStaticHook(CompareHook, CompareFunc);
 
