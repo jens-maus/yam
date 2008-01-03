@@ -7,6 +7,8 @@ $URL$
 
 2008-01-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * classes/ImageArea.c: setting a new ID or filename caused the previously
+    loaded image to be expunged, even if no image had been set before.
   * doc/Install-YAM: modified the MOS path for MUI subclasses again.
   * ImageCache.c: fixed wrong pixel data access for 24 bit images (RGBA instead
     of RGB).

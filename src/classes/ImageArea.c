@@ -546,11 +546,11 @@ OVERLOAD(OM_SET)
 
         Image_Unload(data);
 
-        if(newId == NULL || newId[0] != '\0')
-          ReleaseImage(data->id, TRUE);
-
         if(data->id != NULL)
         {
+          if(newId == NULL || newId[0] != '\0')
+            ReleaseImage(data->id, TRUE);
+
           free(data->id);
           data->id = NULL;
         }
@@ -587,7 +587,10 @@ OVERLOAD(OM_SET)
           relayout = TRUE;
         }
         else
-          ReleaseImage(data->id, TRUE);
+        {
+          if(data->id != NULL)
+            ReleaseImage(data->id, TRUE);
+        }
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
