@@ -7,6 +7,7 @@ $URL$
 
 2008-01-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/Install-YAM: modified the MOS path for MUI subclasses again.
   * ImageCache.c: fixed wrong pixel data access for 24 bit images (RGBA instead
     of RGB).
   * ThemeListGroup.c: for sorting the list only the directory part of the theme

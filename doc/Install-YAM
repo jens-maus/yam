@@ -486,8 +486,8 @@
 (complete 80)
 
 (if mos
-   ; MorphOS has no MUI: assign anymore but places MUI subclasses in LIBS: directly.
-   (set #MCC_dir "LIBS:")
+   ; MorphOS has no MUI: assign anymore but places MUI subclasses in SYS:Classes/MUI
+   (set #MCC_dir "SYS:Classes/MUI/")
    ; OS3 and OS4 use the MUI: assign
    (set #MCC_dir "MUI:libs/mui/")
 )
