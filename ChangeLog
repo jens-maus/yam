@@ -16,6 +16,9 @@ $URL$
 
 2008-01-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: Ambient should provide the same file recognition functionallity as
+    DefIcons does. MOS users please check if the attachments icons are more
+    beautiful now and if that "screw" image is gone.
   * extrasrc/AllocSysObject.c: added our own implementation of AllocSysObject()
     and FreeSysObject() based on the implementation by Ilkka 'itix' Lehtoranta.
     These functions are intended to be used with OS3 and MOS, since OS4 offers

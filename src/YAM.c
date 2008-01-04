@@ -2390,9 +2390,10 @@ static void InitBeforeLogin(BOOL hidden)
     Abort(tr(MSG_ER_CANNOT_CREATE_SEMAPHORE));
 
   // try to find out if DefIcons is running or not by querying
-  // the Port of DefIcons
+  // the Port of DefIcons. Alternatively the Ambient desktop
+  // should provide the same functionallity.
   Forbid();
-  G->DefIconsAvailable = (FindPort("DEFICONS") != NULL);
+  G->DefIconsAvailable = (FindPort("DEFICONS") != NULL || FindPort("AMBIENT") != NULL);
   Permit();
 
   // Initialise and Setup our own MUI custom classes before we go on
