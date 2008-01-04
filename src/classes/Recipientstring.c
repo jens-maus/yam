@@ -19,7 +19,7 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
  YAM Official Support Site : http://www.yam.ch
- YAM OpenSource project     : http://sourceforge.net/projects/yamos/
+ YAM OpenSource project    : http://sourceforge.net/projects/yamos/
 
  $Id$
 
@@ -769,7 +769,7 @@ DECLARE(Resolve) // ULONG flags
     {
       char *marks;
 
-      D(DBF_GUI, "token: '%s'", s);
+      D(DBF_GUI, "token: '%s' (quoted: %ld)", s, quote);
 
       // if the resolve string is empty we skip it and go on
       if(s[0] == '\0')
@@ -940,7 +940,7 @@ DECLARE(RecipientStart)
 
   for(i = 0; i < pos; i++)
   {
-    if(buf[i] == '\"')
+    if(buf[i] == '"')
       quote ^= TRUE;
   }
 
@@ -999,6 +999,8 @@ DECLARE(ReplaceSelected) // char *address
   long len;
 
   ENTER();
+
+  D(DBF_GUI, "replace selected: '%s'", new_address);
 
   if(data->isActive == FALSE && data->selectSize != 0)
   {

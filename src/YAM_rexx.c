@@ -256,12 +256,7 @@ void CloseDownARexxHost(struct RexxHost *host)
 
     if(isFlagClear(host->flags, ARB_HF_USRMSGPORT))
     {
-      #if defined(__amigaos4__)
       FreeSysObject(ASOT_PORT, host->port);
-      #else
-      DeleteMsgPort(host->port);
-      #endif
-
       host->port = NULL;
     }
   }
@@ -297,11 +292,7 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
     {
       SET_FLAG(host->flags, ARB_HF_USRMSGPORT);
     }
-    #if defined(__amigaos4__)
     else if((host->port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
-    #else
-    else if((host->port = CreateMsgPort()) != NULL)
-    #endif
     {
       host->port->mp_Node.ln_Pri = 0;
     }
@@ -338,11 +329,7 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
 
       if(isFlagClear(host->flags, ARB_HF_USRMSGPORT))
       {
-        #if defined(__amigaos4__)
         FreeSysObject(ASOT_PORT, host->port);
-        #else
-        DeleteMsgPort(host->port);
-        #endif
       }
 
       FreeVecPooled(G->SharedMemPool, host);

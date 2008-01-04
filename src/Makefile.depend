@@ -41,7 +41,9 @@ $(OBJDIR)/YAM.o: YAM.c include/libraries/amisslmaster.h \
   include/proto/openurl.h include/interfaces/openurl.h \
   include/inline4/openurl.h include/proto/xpkmaster.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h \
-  include/interfaces/xpkmaster.h include/inline4/xpkmaster.h extrasrc.h \
+  include/interfaces/xpkmaster.h include/inline4/xpkmaster.h \
+  include/proto/expat.h include/libraries/expat.h \
+  include/interfaces/expat.h include/inline4/expat.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   include/NewReadArgs.h include/amiga-align.h include/default-align.h \
   include/SDI_hook.h YAM.h YAM_rexx_rxif.h YAM_stringsizes.h \
@@ -310,7 +312,7 @@ $(OBJDIR)/ReadWindowStatusBar.o: classes/ReadWindowStatusBar.c \
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
   YAM_write.h YAM_main.h UpdateCheck.h YAM_global.h YAM_locale.h \
   YAM_mail_lex.h YAM_utilities.h YAM_main.h YAM_read.h BayesFilter.h \
-  Debug.h
+  Themes.h Debug.h
 $(OBJDIR)/Splashwindow.o: classes/Splashwindow.c classes/Splashwindow_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -391,7 +393,7 @@ $(OBJDIR)/MainMailList.o: classes/MainMailList.c classes/MainMailList_cl.h \
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
   YAM_write.h YAM_main.h UpdateCheck.h YAM_global.h YAM_locale.h \
   YAM_mail_lex.h YAM_utilities.h YAM_main.h YAM_read.h BayesFilter.h \
-  Debug.h
+  Themes.h Debug.h
 $(OBJDIR)/MainMailListGroup.o: classes/MainMailListGroup.c \
   classes/MainMailListGroup_cl.h classes/Classes.h classes/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -553,7 +555,7 @@ $(OBJDIR)/TransferMailList.o: classes/TransferMailList.c \
   YAM_config.h YAM_find.h YAM_read.h YAM_addressbook.h \
   include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
   YAM_main.h UpdateCheck.h YAM_global.h YAM_locale.h YAM_mail_lex.h \
-  YAM_utilities.h YAM_main.h YAM_read.h BayesFilter.h Debug.h
+  YAM_utilities.h YAM_main.h YAM_read.h BayesFilter.h Themes.h Debug.h
 $(OBJDIR)/UpdateNotifyWindow.o: classes/UpdateNotifyWindow.c \
   classes/UpdateNotifyWindow_cl.h classes/Classes.h \
   classes/ClassesExtra.h include/libraries/mui.h \
@@ -608,7 +610,9 @@ $(OBJDIR)/YAM_AB.o: YAM_AB.c include/mui/BetterString_mcc.h include/mui/NList_mc
   include/proto/muimaster.h include/interfaces/muimaster.h \
   include/inline4/muimaster.h include/proto/codesets.h \
   include/libraries/codesets.h include/interfaces/codesets.h \
-  include/inline4/codesets.h extrasrc.h include/SDI_compiler.h \
+  include/inline4/codesets.h include/proto/expat.h \
+  include/libraries/expat.h include/interfaces/expat.h \
+  include/inline4/expat.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h include/SDI_hook.h YAM.h \
   include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_mainFolder.h \
@@ -905,12 +909,12 @@ $(OBJDIR)/ImageCache.o: ImageCache.c include/proto/muimaster.h \
   include/amiga-align.h include/default-align.h YAM_rexx_rxif.h \
   YAM_stringsizes.h YAM_transfer.h YAM_mainFolder.h YAM_folderconfig.h \
   YAM_utilities.h include/SDI_compiler.h HashTable.h YAM_userlist.h \
-  BayesFilter.h Themes.h YAM_locale.h YAM_error.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h YAM_addressbook.h \
-  include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
-  YAM_main.h BayesFilter.h ImageCache.h include/mui/TheBar_mcc.h \
-  FileInfo.h extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h \
-  Debug.h
+  BayesFilter.h Themes.h YAM_global.h YAM_locale.h YAM_error.h \
+  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
+  YAM_write.h YAM_main.h BayesFilter.h ImageCache.h \
+  include/mui/TheBar_mcc.h FileInfo.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h Debug.h
 $(OBJDIR)/UpdateCheck.o: UpdateCheck.c include/mui/BetterString_mcc.h \
   include/mui/NFloattext_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/mui/NList_mcc.h \

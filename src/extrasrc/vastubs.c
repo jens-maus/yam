@@ -106,7 +106,7 @@ LONG SocketBaseTags(Tag tag1, ...)
 
 #include <proto/openurl.h>
 ULONG URL_Open(STRPTR url, Tag tag1, ...)
-{ return URL_OpenA((struct TagItem *)&tag1); }
+{ return URL_OpenA(url, (struct TagItem *)&tag1); }
 
 #else
   #error "VARGS stubs are only save on m68k systems!"

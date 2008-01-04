@@ -1,3 +1,38 @@
+/***************************************************************************
+
+ YAM - Yet Another Mailer
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2008 by YAM Open Source Team
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+ YAM Official Support Site :  http://www.yam.ch/
+ YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+
+ NOTE:
+ This implementation of AllocSysObject() and FreeSysObject() is inspired by
+ Ilkka 'itix' Lehtoranta'a AllocSysObject implementation available on Aminet
+ (http://aminet.net/dev/c/AllocSysObject.lha). Some modifications had to be
+ done, because we don't need the full range of possible object types here,
+ or itix' implementation was incomplete in some ways (i.e. FreeSysObject(),
+ RemPort()'s a public port automatically).
+
+ $Id: Debug.c 3733 2008-01-03 17:04:38Z damato $
+
+***************************************************************************/
+
 #include <proto/exec.h>
 #include <proto/utility.h>
 
@@ -5,16 +40,6 @@
 #include "SDI_compiler.h"
 
 #include "Debug.h"
-
-/*
-This implementation of AllocSysObject() and FreeSysObject() is inspired by Ilkka 'itix' Lehtoranta's
-AllocSysObject implementation available on Aminet (http://aminet.net/dev/c/AllocSysObject.lha)
-Some modifications had to be done, because we don't need the full range of possible object types here,
-or itix' implementation was incomplete in some ways (i.e. FreeSysObject() RemPort()'s a public port
-automatically).
-*/
-
-#define MEMF_MASK   (MEMF_CLEAR|MEMF_LARGEST|MEMF_REVERSE|MEMF_TOTAL|MEMF_NO_EXPUNGE)
 
 #ifdef __GNUC__
    #ifdef __PPC__
@@ -468,7 +493,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           switch(tag->ti_Tag)
           {
             case ASOPOOL_MFlags:
-              flags = tag->ti_Data & MEMF_MASK;
+              flags = tag->ti_Data;
             break;
 
             case ASOPOOL_Puddle:
@@ -509,7 +534,7 @@ APTR VARARGS68K AllocSysObjectTags(ULONG type, ...)
   ENTER();
 
   VA_START(args, type);
-  object = _AllocSysObject(type, VA_ARG(args, struct TagItem *));
+  object = AllocSysObject(type, (struct TagItem *)VA_ARG(args, struct TagItem *));
   VA_END(args);
 
   RETURN(object);
@@ -544,7 +569,7 @@ void FreeSysObject(ULONG type, APTR object)
         if(sobject->signal != -1)
           FreeSignal(sobject->signal);
 
-        FreeVec(object);
+        FreeVec(sobject);
       }
       break;
 
@@ -576,7 +601,7 @@ void FreeSysObject(ULONG type, APTR object)
         if(sobject->copy != FALSE && sobject->name != NULL)
           free(sobject->name);
 
-        FreeVec(object);
+        FreeVec(sobject);
       }
       break;
 

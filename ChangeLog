@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-04  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM_UT.c, YAM_rexx.c, AllocSysObject.c: removed all specific
+    #ifdef preprocessor statements around the use of AllocSysObject and
+    FreeSysObject. Now our own wrapper function will be used on OS3 and
+    MorphOS systems which in fact should make the sources a bit more clean.
+  * YAM_UT.c: fixed URL_Open() call to use the URL_OpenA() function instead
+    which should fix compilation on OS3 and MorphOS.
+
 2008-01-04  Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/AllocSysObject.c: added our own implementation of AllocSysObject()
@@ -33,6 +42,9 @@ $URL$
 
 2008-01-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MI.c: fixed a bug where in case a quoted recipient name was specified
+    in one of the RFC2047 aware headers (To/Cc/Bcc) it happened that the
+    quotation wasn't properly closed and ended up in an invalid header.
   * locale/YAM.cd: renamed the "No spam" toolbar buttons to "N.Spam" as that
     won't cause the buttons of the toolbar to automatically adapt to the new
     text width which in fact is ugly.

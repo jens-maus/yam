@@ -36,6 +36,7 @@ ULONG URL_OldLaunchPrefsApp(void);
 
 /* Reach URL */
 ULONG URL_OpenA(STRPTR, struct TagItem *);
+ULONG URL_Open(STRPTR, Tag tag1, ...);
 
 /* Preferences */
 struct URL_Prefs *URL_GetPrefsA(struct TagItem *);
@@ -49,7 +50,6 @@ ULONG URL_LaunchPrefsAppA(struct TagItem *);
 ULONG URL_GetAttr(ULONG attr,ULONG *storage);
 
 #if defined(_DCC) || defined(__SASC) || defined (__STORM__)
-ULONG URL_Open(STRPTR, ...);
 struct URL_Prefs *URL_GetPrefs(...);
 void URL_FreePrefs(struct URL_Prefs *,...);
 ULONG URL_SetPrefs(struct URL_Prefs *,...);
