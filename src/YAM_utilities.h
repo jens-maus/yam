@@ -347,7 +347,7 @@ int      GetMUINumer(Object *obj);
 int      GetMUIRadio(Object *obj);
 char *   GetNextLine(char *p1);
 int      GetSimpleID(void);
-void     GotoURL(const char *url);
+void     GotoURL(const char *url, BOOL newWindow);
 const char *IdentifyFile(const char *fname);
 void     InfoWindow(const char *title, const char *body, const char *oktext, Object *parent, BOOL active);
 void     InsertAddresses(Object *obj, char **addr, BOOL add);

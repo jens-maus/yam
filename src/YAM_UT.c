@@ -6490,7 +6490,7 @@ int GetSimpleID(void)
 ///
 /// GotoURL
 //  Loads an URL using an ARexx script or openurl.library
-void GotoURL(const char *url)
+void GotoURL(const char *url, BOOL newWindow)
 {
   ENTER();
 
@@ -6509,7 +6509,8 @@ void GotoURL(const char *url)
     // let the user decide himself if he wants to see
     // it popping up in a new window or not (via OpenURL
     // prefs)
-    URL_OpenA((STRPTR)url, NULL);
+    URL_Open((STRPTR)url, URL_NewWindow, newWindow,
+                          TAG_DONE);
   }
   else
     W(DBF_HTML, "No openurl.library v1+ found");

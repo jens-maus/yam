@@ -366,8 +366,8 @@ DECLARE(VisitURL)
   ENTER();
 
   DoMethod(data->ComponentList, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &comp);
-  if(comp)
-    GotoURL(comp->url);
+  if(comp != NULL)
+    GotoURL(comp->url, FALSE);
 
   RETURN(0);
   return 0;

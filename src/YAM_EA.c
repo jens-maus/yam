@@ -548,7 +548,7 @@ HOOKPROTONHNO(EA_HomepageFunc, void, int *arg)
 
   url = (char *)xget(G->EA[*arg]->GUI.ST_HOMEPAGE, MUIA_String_Contents);
   if(url != NULL && url[0] != '\0')
-    GotoURL(url);
+    GotoURL(url, FALSE);
 
   LEAVE();
 }

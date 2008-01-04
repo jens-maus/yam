@@ -221,7 +221,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
         case tNEWS:
         case tURL:
         {
-          GotoURL(url);
+          GotoURL(url, FALSE);
         }
         break;
 

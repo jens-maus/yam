@@ -47,7 +47,7 @@ struct Data
 //  User clicked homepage URL in About window
 HOOKPROTONHNONP(OpenSupportPageFunc, void)
 {
-  GotoURL("http://www.yam.ch/");
+  GotoURL("http://www.yam.ch/", FALSE);
 }
 MakeStaticHook(OpenSupportPageHook, OpenSupportPageFunc);
 ///

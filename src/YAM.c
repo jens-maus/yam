@@ -277,7 +277,7 @@ static BOOL InitLib(const char *libname,
 
         // visit the home page if the user requested that
         if(answer == 1)
-          GotoURL(homepage);
+          GotoURL(homepage, FALSE);
 
         Abort(NULL);
       }
@@ -372,7 +372,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
             else
             {
               // visit the home page if it is known but bail out nevertheless
-              GotoURL(url);
+              GotoURL(url, FALSE);
               break;
             }
           }
@@ -416,7 +416,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
             else
             {
               // visit the home page if it is known but bail out nevertheless
-              GotoURL(url);
+              GotoURL(url, FALSE);
               break;
             }
           }
@@ -441,7 +441,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
       else if(answer == 2)
       {
         // visit the home page if it is known but bail out nevertheless
-        GotoURL(url);
+        GotoURL(url, FALSE);
         break;
       }
     }
@@ -1422,8 +1422,8 @@ static void DeleteStartupSemaphore(void)
     // if nobody else uses this semaphore it can be removed complete
     if(startupSemaphore->UseCount == 0)
     {
-      // remove the semaphore from the public listA
       #if !defined(__amigaos4__)
+      // remove the semaphore from the public list
       RemSemaphore(&startupSemaphore->semaphore);
       #endif
 
@@ -1433,6 +1433,8 @@ static void DeleteStartupSemaphore(void)
 
     if(freeIt == TRUE)
     {
+      // free the semaphore structure
+      // for OS4 this will also remove our public semaphore from the list
       #if defined(__amigaos4__)
       FreeSysObject(ASOT_SEMAPHORE, startupSemaphore);
       #else
@@ -2902,7 +2904,7 @@ int main(int argc, char **argv)
           if(EasyRequestArgs(NULL, &ErrReq, NULL, NULL) == 1)
           {
             // visit YAM's nightly build page and exit
-            GotoURL("http://nightly.yam.ch/");
+            GotoURL("http://nightly.yam.ch/", FALSE);
           }
 
           CLOSELIB(OpenURLBase, IOpenURL);
@@ -2949,7 +2951,7 @@ int main(int argc, char **argv)
           else if(answer == 2)
           {
             // visit YAM's home page and continue normally
-            GotoURL("http://www.yam.ch/");
+            GotoURL("http://www.yam.ch/", FALSE);
           }
 
           CLOSELIB(OpenURLBase, IOpenURL);
