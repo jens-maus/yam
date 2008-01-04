@@ -7,6 +7,8 @@ $URL$
 
 2008-01-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ReadMailGroup.c: changed the qualifier for a new browser window from ALT to
+    CTRL.
   * ReadMailGroup.c: with TextEditor.mcc 15.26+ a new browser window instead of
     a new browser tab will be opened if a link is double clicked with either of
     the ALT keys pressed. This fulfills feature request #1177865.

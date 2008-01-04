@@ -224,11 +224,11 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
           BOOL newWindow = FALSE;
 
           // TextEditor.mcc V15.26+ tells us the pressed qualifier
-          // if either ALT key is pressed we try to open a new window
+          // if the CTRL key is pressed we try to open a new window
           // as soon as TE.mcc 15.26 has gone public and is mandatory this
           // revision check can be removed again.
           if(xget(editor, MUIA_Revision) >= 26)
-            newWindow = hasFlag(clickmsg->Qualifier, IEQUALIFIER_LALT|IEQUALIFIER_RALT);
+            newWindow = hasFlag(clickmsg->Qualifier, IEQUALIFIER_CONTROL);
 
           GotoURL(url, newWindow);
         }
