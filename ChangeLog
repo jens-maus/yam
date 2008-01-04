@@ -7,6 +7,10 @@ $URL$
 
 2008-01-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc/AllocSysObject.c: added our own implementation of AllocSysObject()
+    and FreeSysObject() based on the implementation by Ilkka 'itix' Lehtoranta.
+    These functions are intended to be used with OS3 and MOS, since OS4 offers
+    them already natively.
   * ReadMailGroup.c: changed the qualifier for a new browser window from ALT to
     CTRL.
   * ReadMailGroup.c: with TextEditor.mcc 15.26+ a new browser window instead of

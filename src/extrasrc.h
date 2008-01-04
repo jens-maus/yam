@@ -143,6 +143,7 @@
 #if defined(__amigaos4__)
 #define HAVE_SETPROCWINDOW
 #define HAVE_EXAMINEDIR
+#define HAVE_ALLOCSYSOBJECT
 #endif
 
 #if !defined(HAVE_SETPROCWINDOW)
@@ -151,6 +152,10 @@
 
 #if !defined(HAVE_EXAMINEDIR)
 #define NEED_EXAMINEDIR
+#endif
+
+#if !defined(HAVE_ALLOCSYSOBJECT)
+#define NEED_ALLOCSYSOBJECT
 #endif
 
 /*
@@ -240,6 +245,19 @@ APTR VARARGS68K ObtainDirContextTags(ULONG tag1, ...);
 void ReleaseDirContext(APTR context);
 struct ExamineData *ExamineDir(APTR context);
 #include "extrasrc/ExamineDir.h"
+#endif
+
+#if defined(NEED_ALLOCSYSOBJECT)
+APTR AllocSysObject(ULONG type, struct TagItem *tags);
+#if defined(PPC)
+#define AllocSysObjectTags(type, ...) \
+    ({ULONG _tags[] = { __VA_ARGS__ }; \
+    AllocSysObject(type, (struct TagItem *)_tags);})
+#else
+APTR VARARGS68K AllocSysObjectTags(ULONG type, ...);
+#endif
+void FreeSysObject(ULONG type, APTR object);
+#include "extrasrc/AllocSysObject.h"
 #endif
 
 #if defined(NEED_ALLOCVECPOOLED)

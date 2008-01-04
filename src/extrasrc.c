@@ -107,6 +107,10 @@
   #include "extrasrc/ExamineDir.c"
 #endif
 
+#if defined(NEED_ALLOCSYSOBJECT)
+  #include "extrasrc/AllocSysObject.c"
+#endif
+
 #if defined(NEED_ALLOCVECPOOLED)
   #include "extrasrc/AllocVecPooled.c"
 #endif
