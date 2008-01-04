@@ -418,8 +418,13 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
                node->pixelArray == NULL)
             #endif
             {
+              #if defined(__MORPHOS__)
+              // MOS' png.datatype doesn't report an available alpha channel in the masking field
+              if(node->depth > 8)
+              #else
               // check if the bitmap may have alpha channel data or not.
               if(node->depth > 8 && bmhd->bmh_Masking == mskHasAlpha)
+              #endif
               {
                 node->bytesPerPixel = node->depth / 8;
                 node->bytesPerRow = node->width * node->bytesPerPixel;

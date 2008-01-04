@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-04  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c: removed the alpha channel check again for MorphOS, as that
+    picture.datatype doesn't seem to provide this information in the bitmap
+    header structure and and hence makes the use of 32bit PNG images with
+    full transparency handling impossible.
+
 2008-01-03  Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/YAM.cd: renamed the "No spam" toolbar buttons to "N.Spam" as that
