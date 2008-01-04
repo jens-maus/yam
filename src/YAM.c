@@ -3206,7 +3206,9 @@ int main(int argc, char **argv)
       yamFirst = FALSE;
     }
     else
-      DisplayAppIconStatistics();
+    {
+      DoStartup((BOOL)args.nocheck, FALSE);
+    }
 
     user = US_GetCurrentUser();
     AppendToLogfile(LF_NORMAL, 1, tr(MSG_LOG_LoggedIn), user->Name);

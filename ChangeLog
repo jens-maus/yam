@@ -7,6 +7,8 @@ $URL$
 
 2008-01-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: restarting YAM never caused the usual startup actions (delete old
+    mail, send waiting mail, etc) to be performed.
   * YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM_MA.c, YAM_TR.c, YAM.c, locale/YAM.cd:
     the order of the mail exchange is now configurable. Thus both change
     requests #802481 and #1688168 are hereby fulfilled. The default behaviour
