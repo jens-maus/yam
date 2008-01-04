@@ -6500,7 +6500,7 @@ void GotoURL(const char *url)
   {
     char newurl[SIZE_LARGE];
 
-    snprintf(newurl, sizeof(newurl), "%c%s%c", '"', url, '"');
+    snprintf(newurl, sizeof(newurl), "\"%s\"", url);
     MA_StartMacro(MACRO_URL, newurl);
   }
   else if(OpenURLBase != NULL)

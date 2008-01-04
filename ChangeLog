@@ -7,6 +7,7 @@ $URL$
 
 2008-01-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: simplified the creation of a quoted URL string.
   * YAM.c: restarting YAM never caused the usual startup actions (delete old
     mail, send waiting mail, etc) to be performed.
   * YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM_MA.c, YAM_TR.c, YAM.c, locale/YAM.cd:
