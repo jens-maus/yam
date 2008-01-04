@@ -78,6 +78,7 @@ struct CO_GUIData
   Object *CH_USEAPOP;
   Object *RA_POP3SECURE;
   Object *CH_POPENABLED;
+  Object *CY_EXCHANGEORDER;
   Object *CH_AVOIDDUP;
   Object *CY_MSGSELECT;
   Object *CY_TRANSWIN;
@@ -318,11 +319,11 @@ enum ConfigPage
 
 struct CO_ClassData  /* configuration window */
 {
-   struct CO_GUIData GUI;
-   enum ConfigPage VisiblePage;
-   int  LastSig;
-   BOOL Visited[cp_Max];
-   BOOL UpdateAll;
+  struct CO_GUIData GUI;
+  enum ConfigPage VisiblePage;
+  int  LastSig;
+  BOOL Visited[cp_Max];
+  BOOL UpdateAll;
 };
 
 #define P3SSL_OFF 0
@@ -346,11 +347,11 @@ struct POP3
 /*** RxHook structure ***/
 struct RxHook
 {
-   BOOL  IsAmigaDOS;
-   BOOL  UseConsole;
-   BOOL  WaitTerm;
-   char  Name[SIZE_NAME];
-   char  Script[SIZE_PATHFILE];
+  BOOL  IsAmigaDOS;
+  BOOL  UseConsole;
+  BOOL  WaitTerm;
+  char  Name[SIZE_NAME];
+  char  Script[SIZE_PATHFILE];
 };
 
 // flags for hiding GUI elements
@@ -383,11 +384,25 @@ enum FolderInfoMode
   FIM_NAME_AND_UNREAD_NEW_MAILS
 };
 
-enum InfoBarPos { IB_POS_TOP=0, IB_POS_CENTER, IB_POS_BOTTOM, IB_POS_OFF };
-enum WrapMode { EWM_OFF=0,   // no word wrapping at all
-                EWM_EDITING, // word wrapping while editing
-                EWM_ONSENT   // word wrapping before sent
-              };
+enum InfoBarPos
+{
+  IB_POS_TOP=0,
+  IB_POS_CENTER,
+  IB_POS_BOTTOM,
+  IB_POS_OFF
+};
+enum WrapMode
+{
+  EWM_OFF=0,   // no word wrapping at all
+  EWM_EDITING, // word wrapping while editing
+  EWM_ONSENT   // word wrapping before sent
+};
+
+enum MailExchangeOrder
+{
+  MEO_GET_FIRST = 0,
+  MEO_SEND_FIRST,
+};
 
 /*** Configuration main structure ***/
 struct Config
@@ -432,22 +447,23 @@ struct Config
   int   SpamFlushTrainingDataThreshold;
   int   SocketTimeout;
 
-  enum  PrintMethod    PrintMethod;
-  enum  SMTPSecMethod  SMTP_SecureMethod;
-  enum  LFMode         LogfileMode;
-  enum  SMTPAuthMethod SMTP_AUTH_Method;
-  enum  MDNAction      MDN_NoRecipient;
-  enum  MDNAction      MDN_NoDomain;
-  enum  MDNAction      MDN_OnDelete;
-  enum  MDNAction      MDN_Other;
-  enum  DateStampType  DSListFormat;
-  enum  SigSepType     SigSepLine;
-  enum  TransWinMode   TransferWindow;
-  enum  PreSelMode     PreSelection;
-  enum  FolderInfoMode FolderInfoMode;
-  enum  ForwardMode    ForwardMode;
-  enum  InfoBarPos     InfoBar;
-  enum  WrapMode       EdWrapMode;
+  enum  PrintMethod        PrintMethod;
+  enum  SMTPSecMethod      SMTP_SecureMethod;
+  enum  LFMode             LogfileMode;
+  enum  SMTPAuthMethod     SMTP_AUTH_Method;
+  enum  MDNAction          MDN_NoRecipient;
+  enum  MDNAction          MDN_NoDomain;
+  enum  MDNAction          MDN_OnDelete;
+  enum  MDNAction          MDN_Other;
+  enum  DateStampType      DSListFormat;
+  enum  SigSepType         SigSepLine;
+  enum  TransWinMode       TransferWindow;
+  enum  PreSelMode         PreSelection;
+  enum  FolderInfoMode     FolderInfoMode;
+  enum  ForwardMode        ForwardMode;
+  enum  InfoBarPos         InfoBar;
+  enum  WrapMode           EdWrapMode;
+  enum  MailExchangeOrder  MailExchangeOrder;
 
   BOOL  DaylightSaving;
   BOOL  Allow8bit;

@@ -70,16 +70,18 @@
 
 #include "Debug.h"
 
-enum VarPopMode { VPM_FORWARD=0,
-                  VPM_REPLYHELLO,
-                  VPM_REPLYINTRO,
-                  VPM_REPLYBYE,
-                  VPM_ARCHIVE,
-                  VPM_MAILSTATS,
-                  VPM_SCRIPTS,
-                  VPM_MIME_DEFVIEWER,
-                  VPM_MIME_COMMAND,
-                };
+enum VarPopMode
+{
+  VPM_FORWARD=0,
+  VPM_REPLYHELLO,
+  VPM_REPLYINTRO,
+  VPM_REPLYBYE,
+  VPM_ARCHIVE,
+  VPM_MAILSTATS,
+  VPM_SCRIPTS,
+  VPM_MIME_DEFVIEWER,
+  VPM_MIME_COMMAND,
+};
 
 /* local defines */
 /// ConfigPageHeaderObject()
@@ -1953,6 +1955,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
   static const char *secureSMTPMethods[4];
   static const char *securePOP3Methods[4];
   static const char *authMethods[6];
+  static const char *exchangeOrder[3];
 
   ENTER();
 
@@ -1972,6 +1975,10 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
   authMethods[3] = tr(MSG_CO_SMTPAUTH_LOGIN);
   authMethods[4] = tr(MSG_CO_SMTPAUTH_PLAIN);
   authMethods[5] = NULL;
+
+  exchangeOrder[0] = tr(MSG_CO_EXCHANGE_ORDER_GET_FIRST);
+  exchangeOrder[1] = tr(MSG_CO_EXCHANGE_ORDER_SEND_FIRST);
+  exchangeOrder[2] = NULL;
 
   obj = VGroup,
           MUIA_HelpNode, "CO01",
@@ -2053,7 +2060,6 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
               End,
 
               Child, HGroup, GroupFrameT(tr(MSG_CO_ReceiveMail)),
-
                 Child, VGroup,
                   MUIA_HorizWeight, 30,
                   Child, NListviewObject,
@@ -2135,10 +2141,19 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
 
                     End,
                   End,
-
-                  Child, HVSpace,
                 End,
+
               End,
+
+              Child, HGroup, GroupFrameT(tr(MSG_CO_EXCHANGE_MAIL)),
+
+                 Child, Label2(tr(MSG_CO_EXCHANGE_ORDER)),
+                 Child, data->GUI.CY_EXCHANGEORDER = MakeCycle(exchangeOrder, tr(MSG_CO_EXCHANGE_ORDER)),
+
+              End,
+
+              Child, HVSpace,
+
             End,
           End,
         End;
@@ -2166,6 +2181,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_POPENABLED     ,MSG_HELP_CO_CH_POPENABLED     );
     SetHelp(data->GUI.RA_SMTPSECURE     ,MSG_HELP_CO_RA_SMTPSECURE     );
     SetHelp(data->GUI.RA_POP3SECURE     ,MSG_HELP_CO_RA_POP3SECURE     );
+    SetHelp(data->GUI.CY_EXCHANGEORDER  ,MSG_HELP_CO_CY_EXCHANGE_ORDER );
 
     DoMethod(data->GUI.LV_POP3        ,MUIM_Notify ,MUIA_NList_Active    ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_GetP3EntryHook,0);
     DoMethod(data->GUI.ST_POPACCOUNT  ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);

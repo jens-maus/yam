@@ -1431,7 +1431,7 @@ static void DeleteStartupSemaphore(void)
       freeIt = TRUE;
     }
 
-    if(freeIt)
+    if(freeIt == TRUE)
     {
       #if defined(__amigaos4__)
       FreeSysObject(ASOT_SEMAPHORE, startupSemaphore);
@@ -2559,7 +2559,7 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
   {
     struct Mail *mail;
 
-    for(mail=fo->Messages; mail; mail = mail->Next)
+    for(mail = fo->Messages; mail; mail = mail->Next)
     {
       if(!hasStatusHold(mail) && !hasStatusError(mail))
       {
@@ -2602,67 +2602,53 @@ static void DoStartup(BOOL nocheck, BOOL hide)
 
   // if the user wishs to delete all old mail during startup of YAM,
   // we do it now
-  if(C->CleanupOnStartup)
+  if(C->CleanupOnStartup == TRUE)
     DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
 
   // if the user wants to clean the trash upon starting YAM, do it
-  if(C->RemoveOnStartup)
+  if(C->RemoveOnStartup == TRUE)
     DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
 
   // check for current birth days in our addressbook if the user
   // selected it
-  if(C->CheckBirthdates && !nocheck && !hide)
+  if(C->CheckBirthdates == TRUE && nocheck == FALSE && hide == FALSE)
     AB_CheckBirthdates();
 
   // the rest of the startup jobs require a running TCP/IP stack,
   // so check if it is properly running.
-  if(!nocheck && TR_IsOnline())
+  if(nocheck == FALSE && TR_IsOnline() == TRUE)
   {
-    BOOL noSendOnStartup = FALSE;
+    enum GUILevel mode;
 
-    // first get all mail waiting on the POP3 servers (SMTP-after-POP3
-    if(C->GetOnStartup)
+    mode = (C->PreSelection == PSM_NEVER || hide == TRUE) ? POP_START : POP_USER;
+
+    if(C->GetOnStartup == TRUE && C->SendOnStartup == TRUE)
     {
-      if(C->PreSelection == PSM_NEVER || hide)
+      // check whether there is mail to be sent and the user allows us to send it
+      if(SendWaitingMail(hide, TRUE) == TRUE)
       {
-        MA_PopNow(POP_START, -1);
-        if(G->TR != NULL)
-          DisposeModule(&G->TR);
-
-        DoMethod(G->App, MUIM_Application_InputBuffered);
+        // do a complete mail exchange, the order depends on the user settings
+        MA_ExchangeMail(mode);
+        // the delayed closure of any transfer window is already handled in MA_ExchangeMail()
       }
       else
       {
-        // if SendOnStartup is active as well we do a full exchange
-        // to preserve the SMTP-after-POP3 rule.
-        if(C->SendOnStartup)
-        {
-          // see if there is any mail to send and
-          // if so ask the user. However we do not
-          // immediately send it, but set the Exchange mode
-          // so that the next POP operation will also do
-          // and SMTP checkup.
-          if(SendWaitingMail(hide, TRUE))
-            G->TR_Exchange = TRUE;
-
-          noSendOnStartup = TRUE;
-        }
-
-        MA_PopNow(POP_USER, -1);
+        // just get new mail
+        MA_PopNow(mode, -1);
+        // let MUI execute the delayed disposure of the POP3 transfer window
+        DoMethod(G->App, MUIM_Application_InputBuffered);
       }
     }
-
-    // send all wariting mail from the Outgoing folder
-    if(C->SendOnStartup && !noSendOnStartup)
+    else if(C->GetOnStartup == TRUE)
     {
-      // check for any waiting mail in our
-      // outgoing folder and ask the user
-      // if he wants to send it.
+      MA_PopNow(mode, -1);
+      // let MUI execute the delayed disposure of the POP3 transfer window
+      DoMethod(G->App, MUIM_Application_InputBuffered);
+    }
+    else if(C->SendOnStartup == TRUE)
+    {
       SendWaitingMail(hide, FALSE);
-
-      if(G->TR != NULL)
-        DisposeModule(&G->TR);
-
+      // let MUI execute the delayed disposure of the SMTP transfer window
       DoMethod(G->App, MUIM_Application_InputBuffered);
     }
   }
@@ -3415,7 +3401,7 @@ int main(int argc, char **argv)
               // older workbench versions doesn't seem to have the Class
               // member and may have it uninitialized, therefore we
               // check here for the v44+ workbench
-              if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
+              if(WorkbenchBase != NULL && WorkbenchBase->lib_Version >= 44)
                 action = apmsg->am_Class;
 
               // check the action

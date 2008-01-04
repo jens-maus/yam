@@ -45,118 +45,125 @@
 
 /**************************************************************************/
 
-enum GlobalDispatcherJob { ID_CLOSEALL=1000, ID_RESTART, ID_ICONIFY, ID_LOGIN };
+enum GlobalDispatcherJob
+{
+  ID_CLOSEALL=1000,
+  ID_RESTART,
+  ID_ICONIFY,
+  ID_LOGIN
+};
 
 // all the different timerIOs YAM is using
-enum TimerIO { TIO_WRINDEX=0,
-               TIO_CHECKMAIL,
-               TIO_AUTOSAVE,
-               TIO_READPANEUPDATE,
-               TIO_READSTATUSUPDATE,
-               TIO_PROCESSQUICKSEARCH,
-               TIO_POP3_KEEPALIVE,
-               TIO_UPDATECHECK,
-               TIO_SPAMFLUSHTRAININGDATA,
-               TIO_DELETEZOMBIEFILES,
-               TIO_NUM
-             };
+enum TimerIO
+{
+  TIO_WRINDEX=0,
+  TIO_CHECKMAIL,
+  TIO_AUTOSAVE,
+  TIO_READPANEUPDATE,
+  TIO_READSTATUSUPDATE,
+  TIO_PROCESSQUICKSEARCH,
+  TIO_POP3_KEEPALIVE,
+  TIO_UPDATECHECK,
+  TIO_SPAMFLUSHTRAININGDATA,
+  TIO_DELETEZOMBIEFILES,
+  TIO_NUM
+};
 
 /*** Global Structure ***/
 struct Global
 {
-   // pointers first
-   APTR                     SharedMemPool; // MEMF_SHARED memory pool
-   Object *                 App;
-   Object *                 WI_SEARCH;
-   Object *                 NewMailSound_Obj;
-   Object *                 SplashWinObject;
-   Object *                 AboutWinObject;
-   Object *                 AboutMUIObject;
-   Object *                 UpdateNotifyWinObject;
-   Object *                 ReadToolbarCacheObject;
-   Object *                 WriteToolbarCacheObject;
-   Object *                 AbookToolbarCacheObject;
-   char *                   ER_Message[MAXERR];
-   struct DiskObject *      HideIcon;
-   struct AppIcon *         AppIcon;
-   struct MsgPort *         AppPort;
-   struct RexxHost *        RexxHost;
-   struct FileReqCache *    FileReqCache[ASL_MAX];
-   struct Locale *          Locale;
-   struct Catalog *         Catalog;
-   struct MA_ClassData *    MA;
-   struct CO_ClassData *    CO;
-   struct AB_ClassData *    AB;
-   struct EA_ClassData *    EA[MAXEA];
-   struct WR_ClassData *    WR[MAXWR+1];
-   struct TR_ClassData *    TR;
-   struct ER_ClassData *    ER;
-   struct FI_ClassData *    FI;
-   struct FO_ClassData *    FO;
-   struct DI_ClassData *    DI;
-   struct US_ClassData *    US;
-   struct ReadMailData *    ActiveRexxRMData;
-   struct codeset *         localCharset;
-   struct codesetList *     codesetsList;
-   struct HashTable *       imageCacheHashTable;
-   struct NotifyRequest *   WR_NotifyRequest[MAXWR+1];
+  // pointers first
+  APTR                     SharedMemPool; // MEMF_SHARED memory pool
+  Object *                 App;
+  Object *                 WI_SEARCH;
+  Object *                 NewMailSound_Obj;
+  Object *                 SplashWinObject;
+  Object *                 AboutWinObject;
+  Object *                 AboutMUIObject;
+  Object *                 UpdateNotifyWinObject;
+  Object *                 ReadToolbarCacheObject;
+  Object *                 WriteToolbarCacheObject;
+  Object *                 AbookToolbarCacheObject;
+  char *                   ER_Message[MAXERR];
+  struct DiskObject *      HideIcon;
+  struct AppIcon *         AppIcon;
+  struct MsgPort *         AppPort;
+  struct RexxHost *        RexxHost;
+  struct FileReqCache *    FileReqCache[ASL_MAX];
+  struct Locale *          Locale;
+  struct Catalog *         Catalog;
+  struct MA_ClassData *    MA;
+  struct CO_ClassData *    CO;
+  struct AB_ClassData *    AB;
+  struct EA_ClassData *    EA[MAXEA];
+  struct WR_ClassData *    WR[MAXWR+1];
+  struct TR_ClassData *    TR;
+  struct ER_ClassData *    ER;
+  struct FI_ClassData *    FI;
+  struct FO_ClassData *    FO;
+  struct DI_ClassData *    DI;
+  struct US_ClassData *    US;
+  struct ReadMailData *    ActiveRexxRMData;
+  struct codeset *         localCharset;
+  struct codesetList *     codesetsList;
+  struct HashTable *       imageCacheHashTable;
+  struct NotifyRequest *   WR_NotifyRequest[MAXWR+1];
 
-   #if defined(__amigaos4__)
-   struct MsgPort *         AppLibPort;
-   #endif
+  #if defined(__amigaos4__)
+  struct MsgPort *         AppLibPort;
+  #endif
 
-   LONG                     Weights[12];
-   LONG                     TR_Socket;
-   LONG                     TR_SMTPflags;
+  LONG                     Weights[12];
+  LONG                     TR_Socket;
+  LONG                     TR_SMTPflags;
 
-   int                      PGPVersion;
-   int                      CO_DST;
-   int                      ER_NumErr;
-   int                      ActiveWriteWin;
-   enum IconImages          currentAppIcon;
-   #if defined(__amigaos4__)
-   enum IconImages          LastIconID;
-   #endif
-   time_t                   LastPGPUsage;
+  int                      PGPVersion;
+  int                      CO_DST;
+  int                      ER_NumErr;
+  int                      ActiveWriteWin;
+  enum IconImages          currentAppIcon;
+  #if defined(__amigaos4__)
+  enum IconImages          LastIconID;
+  #endif
+  time_t                   LastPGPUsage;
 
-   #if defined(__amigaos4__)
-   uint32                   applicationID;
-   #endif
+  #if defined(__amigaos4__)
+  uint32                   applicationID;
+  #endif
 
-   BOOL                     Error;
-   BOOL                     PGP5;
-   BOOL                     AppIconQuiet;
-   BOOL                     PGPPassVolatile;
-   BOOL                     CO_Valid;
-   BOOL                     TR_Debug;
-   BOOL                     TR_Allow;
-   BOOL                     TR_Exchange;
-   BOOL                     TR_UseableTLS;
-   BOOL                     TR_UseTLS;
-   BOOL                     InStartupPhase;
-   BOOL                     NoImageWarning;
-   BOOL                     NoCatalogTranslation;
-   BOOL                     DefIconsAvailable;
+  BOOL                     Error;
+  BOOL                     PGP5;
+  BOOL                     AppIconQuiet;
+  BOOL                     PGPPassVolatile;
+  BOOL                     CO_Valid;
+  BOOL                     TR_Debug;
+  BOOL                     TR_Allow;
+  BOOL                     TR_UseableTLS;
+  BOOL                     TR_UseTLS;
+  BOOL                     InStartupPhase;
+  BOOL                     NoImageWarning;
+  BOOL                     NoCatalogTranslation;
+  BOOL                     DefIconsAvailable;
 
-   struct DateStamp         StartDate;
-   struct Users             Users;
-   struct RuleResult        RuleResults;
-   struct DownloadResult    LastDL;
-   struct sockaddr_in       TR_INetSocketAddr;
-   struct MinList           readMailDataList;
-   struct MinList           xpkPackerList;
-   struct MinList           zombieFileList;
-   struct Theme             theme;
-   struct TokenAnalyzer     spamFilter;
+  struct DateStamp         StartDate;
+  struct Users             Users;
+  struct RuleResult        RuleResults;
+  struct DownloadResult    LastDL;
+  struct sockaddr_in       TR_INetSocketAddr;
+  struct MinList           readMailDataList;
+  struct MinList           xpkPackerList;
+  struct MinList           zombieFileList;
+  struct Theme             theme;
+  struct TokenAnalyzer     spamFilter;
 
-   char                     ProgDir[SIZE_PATH];
-   char                     ProgName[SIZE_FILE];
-   char                     PGPPassPhrase[SIZE_DEFAULT];
-   char                     MA_MailDir[SIZE_PATH];
-   char                     AB_Filename[SIZE_PATHFILE];
-   char                     CO_PrefsFile[SIZE_PATHFILE];
-   char                     WR_Filename[MAXWR+1][SIZE_PATHFILE];
-   char                     DI_Filename[SIZE_PATHFILE];
+  char                     ProgDir[SIZE_PATH];
+  char                     ProgName[SIZE_FILE];
+  char                     PGPPassPhrase[SIZE_DEFAULT];
+  char                     MA_MailDir[SIZE_PATH];
+  char                     AB_Filename[SIZE_PATHFILE];
+  char                     CO_PrefsFile[SIZE_PATHFILE];
+  char                     WR_Filename[MAXWR+1][SIZE_PATHFILE];
+  char                     DI_Filename[SIZE_PATHFILE];
 };
 
 extern struct Global *G;

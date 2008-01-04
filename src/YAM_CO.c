@@ -767,6 +767,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     *co->SMTP_AUTH_User = '\0';
     *co->SMTP_AUTH_Pass = '\0';
     co->SMTP_AUTH_Method = SMTPAUTH_AUTO;
+    co->MailExchangeOrder = MEO_GET_FIRST;
     if((co->P3[0] = CO_NewPOP3(co, TRUE)) != NULL)
       co->P3[0]->DeleteOnServer = TRUE;
   }
@@ -1231,6 +1232,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->SMTP_SecureMethod               == c2->SMTP_SecureMethod &&
      c1->LogfileMode                     == c2->LogfileMode &&
      c1->SMTP_AUTH_Method                == c2->SMTP_AUTH_Method &&
+     c1->MailExchangeOrder               == c2->MailExchangeOrder &&
      c1->MDN_NoRecipient                 == c2->MDN_NoRecipient &&
      c1->MDN_NoDomain                    == c2->MDN_NoDomain &&
      c1->MDN_OnDelete                    == c2->MDN_OnDelete &&

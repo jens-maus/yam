@@ -3489,6 +3489,42 @@ HOOKPROTONHNONP(MA_GetAddressFunc, void)
 MakeHook(MA_GetAddressHook, MA_GetAddressFunc);
 
 ///
+/// MA_ExchangeMail
+//  send and get mails
+void MA_ExchangeMail(enum GUILevel mode)
+{
+  ENTER();
+
+  switch(C->MailExchangeOrder)
+  {
+    case MEO_GET_FIRST:
+    {
+      MA_PopNow(mode, -1);
+      // the POP transfer window is not yet disposed
+      // we need to process that disposure first before we can send any outstanding mail
+      DoMethod(G->App, MUIM_Application_InputBuffered);
+      MA_Send(mode == POP_USER ? SEND_ALL_USER : SEND_ALL_AUTO);
+    }
+    break;
+
+    case MEO_SEND_FIRST:
+    {
+      MA_Send(mode == POP_USER ? SEND_ALL_USER : SEND_ALL_AUTO);
+      // the SMTP transfer window is not yet disposed
+      // we need to process that disposure first before we can fetch any new mail
+      DoMethod(G->App, MUIM_Application_InputBuffered);
+      MA_PopNow(mode, -1);
+    }
+    break;
+  }
+
+  // close the last window
+  DoMethod(G->App, MUIM_Application_InputBuffered);
+
+  LEAVE();
+}
+
+///
 /// MA_PopNow
 //  Fetches new mail from POP3 account(s)
 void MA_PopNow(enum GUILevel mode, int pop)
@@ -3498,7 +3534,7 @@ void MA_PopNow(enum GUILevel mode, int pop)
   // Don't proceed if another transfer is in progress
   if(G->TR == NULL)
   {
-    if(C->UpdateStatus)
+    if(C->UpdateStatus == TRUE)
       MA_UpdateStatus();
 
     MA_StartMacro(MACRO_PREGET, itoa(mode));
@@ -3513,11 +3549,26 @@ void MA_PopNow(enum GUILevel mode, int pop)
 /// MA_PopNowFunc
 HOOKPROTONHNO(MA_PopNowFunc, void, int *arg)
 {
-   ULONG qual = (ULONG)arg[2];
-   if(hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) G->TR_Exchange = TRUE;
-   MA_PopNow(arg[0],arg[1]);
+  ULONG qual = (ULONG)arg[2];
+
+  ENTER();
+
+  // if the "get" button was clicked while a shift button was
+  // pressed then a mail exchange is done rather than a simple
+  // download of mails
+  if(hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
+  {
+    MA_ExchangeMail(arg[0]);
+  }
+  else
+  {
+    MA_PopNow(arg[0], arg[1]);
+  }
+
+  LEAVE();
 }
 MakeHook(MA_PopNowHook, MA_PopNowFunc);
+
 ///
 
 /*** Sub-button functions ***/
@@ -3567,10 +3618,15 @@ BOOL MA_Send(enum SendMode mode)
 /// MA_SendHook
 HOOKPROTONHNO(MA_SendFunc, void, int *arg)
 {
+  ENTER();
+
   MA_Send(arg[0]);
+
+  LEAVE();
 }
 MakeHook(MA_SendHook, MA_SendFunc);
 ///
+
 
 /*** Menu options ***/
 /// MA_SetStatusTo

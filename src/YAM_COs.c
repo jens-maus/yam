@@ -265,6 +265,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "SMTP-AUTH-User   = %s\n", co->SMTP_AUTH_User);
     fprintf(fh, "SMTP-AUTH-Pass   = %s\n", Encrypt(co->SMTP_AUTH_Pass));
     fprintf(fh, "SMTP-AUTH-Method = %d\n", co->SMTP_AUTH_Method);
+    fprintf(fh, "MailExchangeOrder = %d\n", co->MailExchangeOrder);
 
     for(i = 0; i < MAXP3; i++) if (co->P3[i])
     {
@@ -819,6 +820,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
           else if(!stricmp(buffer, "SMTP-AUTH-User")) strlcpy(co->SMTP_AUTH_User, value, sizeof(co->SMTP_AUTH_User));
           else if(!stricmp(buffer, "SMTP-AUTH-Pass")) strlcpy(co->SMTP_AUTH_Pass, Decrypt(value), sizeof(co->SMTP_AUTH_Pass));
           else if(!stricmp(buffer, "SMTP-AUTH-Method")) co->SMTP_AUTH_Method = atoi(value);
+          else if(!stricmp(buffer, "MailExchangeOrder")) co->MailExchangeOrder = atoi(value);
           else if(!strnicmp(buffer, "POP", 3) && buffer[5] == '.')
           {
             int j = atoi(&buffer[3]);
@@ -1421,6 +1423,7 @@ void CO_GetConfig(BOOL saveConfig)
         GetMUIString(CE->SMTP_AUTH_User, gui->ST_SMTPAUTHUSER, sizeof(CE->SMTP_AUTH_User));
         GetMUIString(CE->SMTP_AUTH_Pass, gui->ST_SMTPAUTHPASS, sizeof(CE->SMTP_AUTH_Pass));
         CE->SMTP_AUTH_Method = GetMUICycle(gui->CY_SMTPAUTHMETHOD);
+        CE->MailExchangeOrder = GetMUICycle(gui->CY_EXCHANGEORDER);
         // iterate through the account list to update the pointers if the order has been changed
         for(i = 0;; i++)
         {
@@ -2073,9 +2076,10 @@ void CO_SetConfig(void)
       nnset(gui->RA_SMTPSECURE, MUIA_Disabled, !G->TR_UseableTLS && CE->SMTP_SecureMethod == SMTPSEC_NONE);
       setcheckmark(gui->CH_SMTP8BIT  ,CE->Allow8bit);
       setcheckmark(gui->CH_USESMTPAUTH,CE->Use_SMTP_AUTH);
-      setstring   (gui->ST_SMTPAUTHUSER,CE->SMTP_AUTH_User);
-      setstring   (gui->ST_SMTPAUTHPASS,CE->SMTP_AUTH_Pass);
+      setstring(gui->ST_SMTPAUTHUSER,CE->SMTP_AUTH_User);
+      setstring(gui->ST_SMTPAUTHPASS,CE->SMTP_AUTH_Pass);
       setcycle(gui->CY_SMTPAUTHMETHOD, CE->SMTP_AUTH_Method);
+      setcycle(gui->CY_EXCHANGEORDER, CE->MailExchangeOrder);
 
       // clear the list first
       DoMethod(gui->LV_POP3, MUIM_List_Clear);

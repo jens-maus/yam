@@ -343,6 +343,7 @@ int   MA_NewForward(struct Mail **mlist, int flags);
 int   MA_NewMessage(enum NewMode mode, int flags);
 int   MA_NewNew(struct Mail *mail, int flags);
 int   MA_NewReply(struct Mail **mlist, int flags);
+void  MA_ExchangeMail(enum GUILevel mode);
 void  MA_PopNow(enum GUILevel mode, int pop);
 void  MA_RemoveAttach(struct Mail *mail, BOOL warning);
 BOOL  MA_Send(enum SendMode sendpos);

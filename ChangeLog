@@ -7,6 +7,10 @@ $URL$
 
 2008-01-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM_MA.c, YAM_TR.c, YAM.c, locale/YAM.cd:
+    the order of the mail exchange is now configurable. Thus both change
+    requests #802481 and #1688168 are hereby fulfilled. The default behaviour
+    matches the current behaviour (get first, then send).
   * ImageCache.c: removed the alpha channel check again for MorphOS, as that
     picture.datatype doesn't seem to provide this information in the bitmap
     header structure and and hence makes the use of 32bit PNG images with
