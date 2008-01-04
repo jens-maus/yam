@@ -3706,6 +3706,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
   static int laststats;
   int msgs, pop = singlepop;
 
+  ENTER();
+
   if(isfirst == TRUE) /* Init first connection */
   {
     G->LastDL.Error = TRUE;
@@ -3714,17 +3716,22 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       if(guilevel == POP_USER)
         ER_NewError(tr(MSG_ER_OPENTCPIP));
 
+      LEAVE();
       return;
     }
 
     if(CO_IsValid() == FALSE)
     {
       TR_CloseTCPIP();
+
+      LEAVE();
       return;
     }
     if((G->TR = TR_New(guilevel == POP_USER ? TR_GET_USER : TR_GET_AUTO)) == NULL)
     {
       TR_CloseTCPIP();
+
+      LEAVE();
       return;
     }
     G->TR->Checking = TRUE;
@@ -3849,12 +3856,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     MA_ChangeTransfer(TRUE);
 
     DisposeModulePush(&G->TR);
-    if(G->TR_Exchange == TRUE)
-    {
-      G->TR_Exchange = FALSE;
-      DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, guilevel == POP_USER ? SEND_ALL_USER : SEND_ALL_AUTO);
-    }
 
+    LEAVE();
     return;
   }
 
@@ -3978,6 +3981,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
         }
 
         BusyEnd();
+
+        LEAVE();
         return;
       }
       else
@@ -3997,6 +4002,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
   BusyEnd();
 
   TR_GetMailFromNextPOP(FALSE, 0, 0);
+
+  LEAVE();
 }
 ///
 /// TR_SendPOP3KeepAlive()
