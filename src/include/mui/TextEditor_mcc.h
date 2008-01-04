@@ -19,7 +19,7 @@
 
  TextEditor class Support Site:  http://www.sf.net/projects/texteditor-mcc
 
- $Id: TextEditor_mcc.h 396 2007-09-11 22:39:56Z damato $
+ $Id: TextEditor_mcc.h 441 2008-01-04 10:45:21Z thboeckel $
 
 ***************************************************************************/
 
@@ -170,6 +170,7 @@ struct ClickMessage
 {
   STRPTR  LineContents;  /* This field is ReadOnly!!! */
   ULONG   ClickPosition;
+  ULONG   Qualifier;     /* V15.26+, a possible qualifier that was pressed during the double click */
 };
 
 /* Definitions for Separator type */

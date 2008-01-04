@@ -7,6 +7,9 @@ $URL$
 
 2008-01-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ReadMailGroup.c: with TextEditor.mcc 15.26+ a new browser window instead of
+    a new browser tab will be opened if a link is double clicked with either of
+    the ALT keys pressed. This fulfills feature request #1177865.
   * YAM_UT.c, YAM.c, YAM_EA.c, AboutWindow.c, UpdateNotifyWindow.c,
     ReadMailGroup.c: added the possibility to open a new browser window for
     URLs.

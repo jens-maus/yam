@@ -157,7 +157,7 @@ MakeStaticHook(HeaderCompareHook, HeaderCompareFunc);
 ///
 /// TextEditDoubleClickHook
 //  Handles double-clicks on an URL
-HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
+HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *clickmsg)
 {
   char *p;
   BOOL result = FALSE;
@@ -221,7 +221,16 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
         case tNEWS:
         case tURL:
         {
-          GotoURL(url, FALSE);
+          BOOL newWindow = FALSE;
+
+          // TextEditor.mcc V15.26+ tells us the pressed qualifier
+          // if either ALT key is pressed we try to open a new window
+          // as soon as TE.mcc 15.26 has gone public and is mandatory this
+          // revision check can be removed again.
+          if(xget(editor, MUIA_Revision) >= 26)
+            newWindow = hasFlag(clickmsg->Qualifier, IEQUALIFIER_LALT|IEQUALIFIER_RALT);
+
+          GotoURL(url, newWindow);
         }
         break;
 
