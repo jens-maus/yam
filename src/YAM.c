@@ -1726,6 +1726,11 @@ static void yam_exitfunc(void)
   CLOSELIB(IntuitionBase,  IIntuition);
 
   LEAVE();
+
+  // cleanup our debugging system.
+  #if defined(DEBUG)
+  CleanupDebug();
+  #endif
 }
 
 ///

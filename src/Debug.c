@@ -44,26 +44,17 @@
 
 #include "Debug.h"
 
-// redefinition section
-#if defined(__amigaos4__)
-  #undef DebugPrintF
-  #ifndef kprintf
-    #define kprintf(...) IExec->DebugPrintF(__VA_ARGS__)
-  #endif
+#if defined(__MORPHOS__)
+#include <exec/rawfmt.h>
 #else
-  void kprintf(const char *formatString, ...);
-
-  #if defined(__MORPHOS__)
-    #include <exec/rawfmt.h>
-    #define KPutFmt(format, args) VNewRawDoFmt(format, (APTR)RAWFMTFUNC_SERIAL, NULL, args)
-  #else
-    void STDARGS KPutFmt(const char *format, va_list arg);
-  #endif
+#include <clib/debug_protos.h>
 #endif
 
 // our static variables with default values
 static int indent_level = 0;
 static BOOL ansi_output = FALSE;
+static BOOL con_output = FALSE;
+static FILE *file_output = NULL;
 static ULONG debug_flags = DBF_ALWAYS | DBF_STARTUP; // default debug flags
 static ULONG debug_classes = DBC_ERROR | DBC_DEBUG | DBC_WARNING | DBC_ASSERT | DBC_REPORT; // default debug classes
 static int timer_level = -1;
@@ -71,17 +62,42 @@ static struct TimeVal startTimes[8];
 
 /****************************************************************************/
 
+void _DBPRINTF(const char *format, ...)
+{
+  va_list args;
+
+  va_start(args, format);
+
+  if(con_output == TRUE)
+    vprintf(format, args);
+  else if(file_output != NULL)
+    vfprintf(file_output, format, args);
+  else
+  {
+    #if defined(__MORPHOS__)
+    VNewRawDoFmt(format, (APTR)RAWFMTFUNC_SERIAL, NULL, args);
+    #elif defined(__amigaos4__)
+    static char buf[1024];
+    vsnprintf(buf, 1024, format, args);
+    DebugPrintF("%s", buf);
+    #else
+    KPutFmt(format, args);
+    #endif
+  }
+
+  va_end(args);
+}
+
+/****************************************************************************/
+
 void SetupDebug(void)
 {
   char var[256];
 
-  kprintf("** %s build: %s startup **********************\n", yamversion, yambuildid);
-  kprintf("Exec version: v%ld.%ld\n", ((struct Library *)SysBase)->lib_Version, ((struct Library *)SysBase)->lib_Revision);
-  kprintf("Initializing runtime debugging:\n");
-
   if(GetVar("yamdebug", var, sizeof(var), 0) > 0)
   {
     char *s = var;
+    char *t;
 
     // static list of our debugging classes tokens.
     // in the yamdebug variable these classes always start with a @
@@ -126,6 +142,38 @@ void SetupDebug(void)
       { NULL,       0           }
     };
 
+    // before we search for our debug tokens we search
+    // for our special output tokens
+    if(stristr(s, "ansi") != NULL)
+      ansi_output = TRUE;
+
+    if(stristr(s, "con") != NULL)
+      con_output = TRUE;
+
+    if((t = stristr(s, "file:")) != NULL)
+    {
+      char *e;
+      char filename[256];
+
+      // put t to the first char of the filename
+      t += 5;
+
+      // the user wants to output the debugging information
+      // to a file instead
+      if((e = strpbrk(t, " ,;")) == NULL)
+        strlcpy(filename, t, sizeof(filename));
+      else
+        strlcpy(filename, t, e-t+1);
+
+      // now we can open the file for output of the debug info
+      file_output = fopen(filename, "w");
+    }
+
+    // output information on the debugging settings
+    _DBPRINTF("** %s build: %s startup **********************\n", yamversion, yambuildid);
+    _DBPRINTF("Exec version: v%ld.%ld\n", (unsigned long)((struct Library *)SysBase)->lib_Version, (unsigned long)((struct Library *)SysBase)->lib_Revision);
+    _DBPRINTF("Initializing runtime debugging:\n");
+
     // we parse the env variable token-wise
     while(*s)
     {
@@ -141,17 +189,20 @@ void SetupDebug(void)
       {
         // skip the '@'
         s++;
+
         // check if this call is a negation or not
         if(s[0] == '!')
         {
           // skip the '!'
           s++;
+
           // search for the token and clear the flag
           for(i=0; dbclasses[i].token; i++)
           {
             if(strnicmp(s, dbclasses[i].token, strlen(dbclasses[i].token)) == 0)
             {
-              kprintf("clear '%s' debug class flag.\n", dbclasses[i].token);
+              _DBPRINTF("clear '%s' debug class flag.\n", dbclasses[i].token);
+
               CLEAR_FLAG(debug_classes, dbclasses[i].flag);
             }
           }
@@ -163,7 +214,8 @@ void SetupDebug(void)
           {
             if(strnicmp(s, dbclasses[i].token, strlen(dbclasses[i].token)) == 0)
             {
-              kprintf("set '%s' debug class flag\n", dbclasses[i].token);
+              _DBPRINTF("set '%s' debug class flag\n", dbclasses[i].token);
+
               SET_FLAG(debug_classes, dbclasses[i].flag);
             }
           }
@@ -180,7 +232,8 @@ void SetupDebug(void)
           {
             if(strnicmp(s, dbflags[i].token, strlen(dbflags[i].token)) == 0)
             {
-              kprintf("clear '%s' debug flag\n", dbflags[i].token);
+              _DBPRINTF("clear '%s' debug flag\n", dbflags[i].token);
+
               CLEAR_FLAG(debug_flags, dbflags[i].flag);
             }
           }
@@ -191,8 +244,28 @@ void SetupDebug(void)
           // output
           if(strnicmp(s, "ansi", 4) == 0)
           {
-            kprintf("ansi output enabled\n");
+            _DBPRINTF("ANSI output enabled\n");
             ansi_output = TRUE;
+          }
+          else if(strnicmp(s, "con", 3) == 0)
+          {
+            con_output = TRUE;
+            _DBPRINTF("CON: output enabled\n");
+          }
+          else if(strnicmp(s, "file:", 5) == 0)
+          {
+            char *e;
+            char *t = s+5;
+            char filename[256];
+
+            // the user wants to output the debugging information
+            // to a file instead
+            if((e = strpbrk(t, " ,;")) == NULL)
+              strlcpy(filename, t, sizeof(filename));
+            else
+              strlcpy(filename, t, e-t+1);
+
+            _DBPRINTF("FILE output enabled to: '%s'\n", filename);
           }
           else
           {
@@ -200,7 +273,8 @@ void SetupDebug(void)
             {
               if(strnicmp(s, dbflags[i].token, strlen(dbflags[i].token)) == 0)
               {
-                kprintf("set '%s' debug flag\n", dbflags[i].token);
+                _DBPRINTF("set '%s' debug flag\n", dbflags[i].token);
+
                 SET_FLAG(debug_flags, dbflags[i].flag);
               }
             }
@@ -215,9 +289,29 @@ void SetupDebug(void)
         break;
     }
   }
+  else
+  {
+    // output information on the debugging settings
+    _DBPRINTF("** %s build: %s startup **********************\n", yamversion, yambuildid);
+    _DBPRINTF("Exec version: v%ld.%ld\n", (unsigned long)((struct Library *)SysBase)->lib_Version, (unsigned long)((struct Library *)SysBase)->lib_Revision);
+    _DBPRINTF("no 'yamdebug' variable found\n");
+  }
 
-  kprintf("set debug classes/flags (env:yamdebug): %08lx/%08lx\n", debug_classes, debug_flags);
-  kprintf("** Normal processing follows ***************************************\n");
+  _DBPRINTF("set debug classes/flags (env:yamdebug): %08lx/%08lx\n", debug_classes, debug_flags);
+  _DBPRINTF("** Normal processing follows ***************************************\n");
+}
+
+/****************************************************************************/
+
+void CleanupDebug(void)
+{
+  _DBPRINTF("** Cleaned up debugging ********************************************\n");
+
+  if(file_output != NULL)
+  {
+    fclose(file_output);
+    file_output = NULL;
+  }
 }
 
 /****************************************************************************/
@@ -261,26 +355,26 @@ INLINE void _INDENT(void)
 {
   int i;
   for(i=0; i < indent_level; i++)
-    kprintf(" ");
+    _DBPRINTF(" ");
 }
 
 /****************************************************************************/
 
-void _ENTER(unsigned long dclass, const char *file, int line, const char *function)
+void _ENTER(unsigned long dclass, const char *file, unsigned long line, const char *function)
 {
   if(isFlagSet(debug_classes, dclass))
   {
     _INDENT();
     if(ansi_output)
-      kprintf("%s%s:%ld:Entering %s%s\n", ANSI_ESC_FG_BROWN, file, line, function, ANSI_ESC_CLR);
+      _DBPRINTF("%s%s:%ld:Entering %s%s\n", ANSI_ESC_FG_BROWN, file, line, function, ANSI_ESC_CLR);
     else
-      kprintf("%s:%ld:Entering %s\n", file, line, function);
+      _DBPRINTF("%s:%ld:Entering %s\n", file, line, function);
   }
 
   indent_level++;
 }
 
-void _LEAVE(unsigned long dclass, const char *file, int line, const char *function)
+void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const char *function)
 {
   indent_level--;
 
@@ -288,13 +382,13 @@ void _LEAVE(unsigned long dclass, const char *file, int line, const char *functi
   {
     _INDENT();
     if(ansi_output)
-      kprintf("%s%s:%ld:Leaving %s%s\n", ANSI_ESC_FG_BROWN, file, line, function, ANSI_ESC_CLR);
+      _DBPRINTF("%s%s:%ld:Leaving %s%s\n", ANSI_ESC_FG_BROWN, file, line, function, ANSI_ESC_CLR);
     else
-      kprintf("%s:%ld:Leaving %s\n", file, line, function);
+      _DBPRINTF("%s:%ld:Leaving %s\n", file, line, function);
   }
 }
 
-void _RETURN(unsigned long dclass, const char *file, int line, const char *function, unsigned long result)
+void _RETURN(unsigned long dclass, const char *file, unsigned long line, const char *function, unsigned long result)
 {
   indent_level--;
 
@@ -302,15 +396,15 @@ void _RETURN(unsigned long dclass, const char *file, int line, const char *funct
   {
     _INDENT();
     if(ansi_output)
-      kprintf("%s%s:%ld:Leaving %s (result 0x%08lx, %ld)%s\n", ANSI_ESC_FG_BROWN, file, line, function, result, result, ANSI_ESC_CLR);
+      _DBPRINTF("%s%s:%ld:Leaving %s (result 0x%08lx, %ld)%s\n", ANSI_ESC_FG_BROWN, file, line, function, result, result, ANSI_ESC_CLR);
     else
-      kprintf("%s:%ld:Leaving %s (result 0x%08lx, %ld)\n", file, line, function, result, result);
+      _DBPRINTF("%s:%ld:Leaving %s (result 0x%08lx, %ld)\n", file, line, function, result, result);
   }
 }
 
 /****************************************************************************/
 
-void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value, int size, const char *name, const char *file, int line)
+void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value, int size, const char *name, const char *file, unsigned long line)
 {
   if(isFlagSet(debug_classes, dclass) &&
      isFlagSet(debug_flags, dflags))
@@ -335,28 +429,28 @@ void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value,
     _INDENT();
 
     if(ansi_output)
-      kprintf(ANSI_ESC_FG_GREEN);
+      _DBPRINTF(ANSI_ESC_FG_GREEN);
 
-    kprintf(fmt, file, line, name, value, value);
+    _DBPRINTF(fmt, file, line, name, value, value);
 
     if(size == 1 && value < 256)
     {
       if(value < ' ' || (value >= 127 && value < 160))
-        kprintf(", '\\x%02lx'", value);
+        _DBPRINTF(", '\\x%02lx'", value);
       else
-        kprintf(", '%lc'", value);
+        _DBPRINTF(", '%c'", (unsigned char)value);
     }
 
     if(ansi_output)
-      kprintf("%s\n", ANSI_ESC_CLR);
+      _DBPRINTF("%s\n", ANSI_ESC_CLR);
     else
-      kprintf("\n");
+      _DBPRINTF("\n");
   }
 }
 
 /****************************************************************************/
 
-void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, const char *name, const char *file, int line)
+void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, const char *name, const char *file, unsigned long line)
 {
   if(isFlagSet(debug_classes, dclass) &&
      isFlagSet(debug_flags, dflags))
@@ -372,18 +466,18 @@ void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, con
 
     if(ansi_output)
     {
-      kprintf(ANSI_ESC_FG_GREEN);
-      kprintf(fmt, file, line, name, p);
-      kprintf(ANSI_ESC_CLR);
+      _DBPRINTF(ANSI_ESC_FG_GREEN);
+      _DBPRINTF(fmt, file, line, name, p);
+      _DBPRINTF(ANSI_ESC_CLR);
     }
     else
-      kprintf(fmt, file, line, name, p);
+      _DBPRINTF(fmt, file, line, name, p);
   }
 }
 
 /****************************************************************************/
 
-void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string, const char *name, const char *file, int line)
+void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string, const char *name, const char *file, unsigned long line)
 {
   if(isFlagSet(debug_classes, dclass) &&
      isFlagSet(debug_flags, dflags))
@@ -391,15 +485,15 @@ void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string,
     _INDENT();
 
     if(ansi_output)
-      kprintf("%s%s:%ld:%s = 0x%08lx \"%s\"%s\n", ANSI_ESC_FG_GREEN, file, line, name, string, string, ANSI_ESC_CLR);
+      _DBPRINTF("%s%s:%ld:%s = 0x%08lx \"%s\"%s\n", ANSI_ESC_FG_GREEN, file, line, name, (unsigned long)string, string, ANSI_ESC_CLR);
     else
-      kprintf("%s:%ld:%s = 0x%08lx \"%s\"\n", file, line, name, string, string);
+      _DBPRINTF("%s:%ld:%s = 0x%08lx \"%s\"\n", file, line, name, (unsigned long)string, string);
   }
 }
 
 /****************************************************************************/
 
-void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const char *file, int line)
+void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const char *file, unsigned long line)
 {
   if(isFlagSet(debug_classes, dclass) &&
      isFlagSet(debug_flags, dflags))
@@ -407,15 +501,15 @@ void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const
     _INDENT();
 
     if(ansi_output)
-      kprintf("%s%s:%ld:%s%s\n", ANSI_ESC_FG_GREEN, file, line, msg, ANSI_ESC_CLR);
+      _DBPRINTF("%s%s:%ld:%s%s\n", ANSI_ESC_FG_GREEN, file, line, msg, ANSI_ESC_CLR);
     else
-      kprintf("%s:%ld:%s\n", file, line, msg);
+      _DBPRINTF("%s:%ld:%s\n", file, line, msg);
   }
 }
 
 /****************************************************************************/
 
-void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, ...)
+void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, ...)
 {
   if((isFlagSet(debug_classes, dclass) && isFlagSet(debug_flags, dflags)) ||
      (isFlagSet(dclass, DBC_ERROR) || isFlagSet(dclass, DBC_WARNING)))
@@ -430,7 +524,7 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
 
 /****************************************************************************/
 
-void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, va_list args)
+void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, va_list args)
 {
   if((isFlagSet(debug_classes, dclass) && isFlagSet(debug_flags, dflags)) ||
      (isFlagSet(dclass, DBC_ERROR) || isFlagSet(dclass, DBC_WARNING)))
@@ -456,16 +550,16 @@ void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int
         case DBC_WARNING: highlight = ANSI_ESC_FG_PURPLE;break;
       }
 
-      kprintf("%s%s:%ld:%s%s\n", highlight, file, line, buf, ANSI_ESC_CLR);
+      _DBPRINTF("%s%s:%ld:%s%s\n", highlight, file, line, buf, ANSI_ESC_CLR);
     }
     else
-      kprintf("%s:%ld:%s\n", file, line, buf);
+      _DBPRINTF("%s:%ld:%s\n", file, line, buf);
   }
 }
 
 /****************************************************************************/
 
-void _STARTCLOCK(const char *file, int line)
+void _STARTCLOCK(const char *file, unsigned long line)
 {
   if(timer_level < (int)ARRAY_SIZE(startTimes))
   {
@@ -478,7 +572,7 @@ void _STARTCLOCK(const char *file, int line)
 
 /****************************************************************************/
 
-void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, int line)
+void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, unsigned long line)
 {
   if(timer_level >= 0)
   {

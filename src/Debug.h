@@ -84,18 +84,19 @@
 #define DBF_ALL      0xffffffff
 
 void SetupDebug(void);
+void CleanupDebug(void);
 
-void _ENTER(unsigned long dclass, const char *file, int line, const char *function);
-void _LEAVE(unsigned long dclass, const char *file, int line, const char *function);
-void _RETURN(unsigned long dclass, const char *file, int line, const char *function, unsigned long result);
-void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value, int size, const char *name, const char *file, int line);
-void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, const char *name, const char *file, int line);
-void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string, const char *name, const char *file, int line);
-void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const char *file, int line);
-void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, ...);
-void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int line, const char *format, va_list args);
-void _STARTCLOCK(const char *file, int line);
-void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, int line);
+void _ENTER(unsigned long dclass, const char *file, unsigned long line, const char *function);
+void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const char *function);
+void _RETURN(unsigned long dclass, const char *file, unsigned long line, const char *function, unsigned long result);
+void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value, int size, const char *name, const char *file, unsigned long line);
+void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, const char *name, const char *file, unsigned long line);
+void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string, const char *name, const char *file, unsigned long line);
+void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const char *file, unsigned long line);
+void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, ...);
+void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, va_list args);
+void _STARTCLOCK(const char *file, unsigned long line);
+void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, unsigned long line);
 
 #if defined(__SASC)
   #define __FUNCTION__        __FUNC__

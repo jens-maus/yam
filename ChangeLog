@@ -5,6 +5,21 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-05  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Debug.c, Debug.h, YAM.c: changed the runtime debugging facility to use
+    a generic _DBPRINTF() function for actually output something. This finally
+    allowed to introduce the possibility to redirect the debugging output
+    to CON: and directly to a specified file instead of always forcing to
+    catch the YAM debug output from the serial line or via Sashimi. Now a
+    user can use "setenv yamdebug con" to let YAM output anything to CON:
+    instead. In addition a "setenv yamdebug file:debugfile" will instruct
+    YAM to output all debug information to a file called "debugfile" in
+    the very directory YAM is started from. Please note, however, that this
+    will only redirect the YAM debug information. Enforcer/CyberGuard
+    output will still be redirected to the serial line per default. And the
+    default will be kept to output anything on the serial line instead.
+
 2008-01-05  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: upon restart the old behaviour is now restored if the logged in user
