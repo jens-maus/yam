@@ -2521,64 +2521,81 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
 //  Performs different checks/cleanup operations on startup
 static void DoStartup(BOOL nocheck, BOOL hide)
 {
+  static char lastUserName[SIZE_NAME] = "";
+  char *currentUserName = NULL;
+  struct User *currentUser;
+
   ENTER();
 
   // Display the AppIcon now because if non of the below
   // do it it could happen that no AppIcon will be displayed at all.
   DisplayAppIconStatistics();
 
-  // if the user wishs to delete all old mail during startup of YAM,
-  // we do it now
-  if(C->CleanupOnStartup == TRUE)
-    DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
+  // execute the startup stuff only if the user changed upon a restart or if
+  // we start for the first time
+  if((currentUser = US_GetCurrentUser()) != NULL)
+    currentUserName = currentUser->Name;
 
-  // if the user wants to clean the trash upon starting YAM, do it
-  if(C->RemoveOnStartup == TRUE)
-    DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
-
-  // check for current birth days in our addressbook if the user
-  // selected it
-  if(C->CheckBirthdates == TRUE && nocheck == FALSE && hide == FALSE)
-    AB_CheckBirthdates();
-
-  // the rest of the startup jobs require a running TCP/IP stack,
-  // so check if it is properly running.
-  if(nocheck == FALSE && TR_IsOnline() == TRUE)
+  // we must compare the names here instead of the IDs, because the IDs will
+  // change upon every restart
+  if(currentUserName != NULL && strcmp(lastUserName, currentUserName) != 0)
   {
-    enum GUILevel mode;
+    // if the user wishs to delete all old mail during startup of YAM,
+    // we do it now
+    if(C->CleanupOnStartup == TRUE)
+      DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
 
-    mode = (C->PreSelection == PSM_NEVER || hide == TRUE) ? POP_START : POP_USER;
+    // if the user wants to clean the trash upon starting YAM, do it
+    if(C->RemoveOnStartup == TRUE)
+      DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
 
-    if(C->GetOnStartup == TRUE && C->SendOnStartup == TRUE)
+    // check for current birth days in our addressbook if the user
+    // selected it
+    if(C->CheckBirthdates == TRUE && nocheck == FALSE && hide == FALSE)
+      AB_CheckBirthdates();
+
+    // the rest of the startup jobs require a running TCP/IP stack,
+    // so check if it is properly running.
+    if(nocheck == FALSE && TR_IsOnline() == TRUE)
     {
-      // check whether there is mail to be sent and the user allows us to send it
-      if(SendWaitingMail(hide, TRUE) == TRUE)
+      enum GUILevel mode;
+
+      mode = (C->PreSelection == PSM_NEVER || hide == TRUE) ? POP_START : POP_USER;
+
+      if(C->GetOnStartup == TRUE && C->SendOnStartup == TRUE)
       {
-        // do a complete mail exchange, the order depends on the user settings
-        MA_ExchangeMail(mode);
-        // the delayed closure of any transfer window is already handled in MA_ExchangeMail()
+        // check whether there is mail to be sent and the user allows us to send it
+        if(SendWaitingMail(hide, TRUE) == TRUE)
+        {
+          // do a complete mail exchange, the order depends on the user settings
+          MA_ExchangeMail(mode);
+          // the delayed closure of any transfer window is already handled in MA_ExchangeMail()
+        }
+        else
+        {
+          // just get new mail
+          MA_PopNow(mode, -1);
+          // let MUI execute the delayed disposure of the POP3 transfer window
+          DoMethod(G->App, MUIM_Application_InputBuffered);
+        }
       }
-      else
+      else if(C->GetOnStartup == TRUE)
       {
-        // just get new mail
         MA_PopNow(mode, -1);
         // let MUI execute the delayed disposure of the POP3 transfer window
         DoMethod(G->App, MUIM_Application_InputBuffered);
       }
-    }
-    else if(C->GetOnStartup == TRUE)
-    {
-      MA_PopNow(mode, -1);
-      // let MUI execute the delayed disposure of the POP3 transfer window
-      DoMethod(G->App, MUIM_Application_InputBuffered);
-    }
-    else if(C->SendOnStartup == TRUE)
-    {
-      SendWaitingMail(hide, FALSE);
-      // let MUI execute the delayed disposure of the SMTP transfer window
-      DoMethod(G->App, MUIM_Application_InputBuffered);
+      else if(C->SendOnStartup == TRUE)
+      {
+        SendWaitingMail(hide, FALSE);
+        // let MUI execute the delayed disposure of the SMTP transfer window
+        DoMethod(G->App, MUIM_Application_InputBuffered);
+      }
     }
   }
+
+  // remember the current user name for a possible restart
+  strlcpy(lastUserName, currentUserName, sizeof(lastUserName));
 
   LEAVE();
 }
@@ -2600,11 +2617,11 @@ static void Login(const char *user, const char *password,
   {
     struct Library *GenesisBase;
 
-    if((GenesisBase = OpenLibrary("genesis.library", 1L)))
+    if((GenesisBase = OpenLibrary("genesis.library", 1L)) != NULL)
     {
       struct genUser *guser;
 
-      if((guser = GetGlobalUser()))
+      if((guser = GetGlobalUser()) != NULL)
       {
         D(DBF_STARTUP, "GetGlobalUser returned: '%s'", guser->us_name);
 
@@ -2612,10 +2629,10 @@ static void Login(const char *user, const char *password,
 
         D(DBF_STARTUP, "US_Login returned: %ld %ld", terminate, loggedin);
 
-        if(!loggedin && !MUI_Request(G->App, NULL, 0, tr(MSG_ER_GENESISUSER_TITLE),
-                                                      tr(MSG_ER_CONTINUEEXIT),
-                                                      tr(MSG_ER_GENESISUSER),
-                                                      guser->us_name))
+        if(loggedin == FALSE && MUI_Request(G->App, NULL, 0, tr(MSG_ER_GENESISUSER_TITLE),
+                                                             tr(MSG_ER_CONTINUEEXIT),
+                                                             tr(MSG_ER_GENESISUSER),
+                                                             guser->us_name) == 0)
         {
           terminate = TRUE;
         }
@@ -2630,10 +2647,10 @@ static void Login(const char *user, const char *password,
   }
   #endif
 
-  if(!loggedin && !terminate)
-    terminate = !US_Login(user, password, maildir, prefsfile);
+  if(loggedin == FALSE && terminate == FALSE)
+    terminate = (US_Login(user, password, maildir, prefsfile) == FALSE);
 
-  if(terminate)
+  if(terminate == TRUE)
   {
     E(DBF_STARTUP, "terminating due to incorrect login information");
     exit(RETURN_WARN);
@@ -2959,7 +2976,7 @@ int main(int argc, char **argv)
 
     // get the PROGDIR: and program name and put it into own variables
     NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
-    if(WBmsg && WBmsg->sm_NumArgs > 0)
+    if(WBmsg != NULL && WBmsg->sm_NumArgs > 0)
     {
       strlcpy(G->ProgName, (char *)WBmsg->sm_ArgList[0].wa_Name, sizeof(G->ProgName));
     }
@@ -3025,7 +3042,7 @@ int main(int argc, char **argv)
       WR_AutoSaveFile(i, fileName, sizeof(fileName));
 
       // check if the file exists
-      if(FileExists(fileName))
+      if(FileExists(fileName) == TRUE)
       {
         int answer;
 
@@ -3101,7 +3118,7 @@ int main(int argc, char **argv)
       int wrwin;
 
       DoStartup((BOOL)args.nocheck, (BOOL)args.hide);
-      if((args.mailto != NULL|| args.letter != NULL || args.subject != NULL || args.attach != NULL) && (wrwin = MA_NewNew(NULL, 0)) >= 0)
+      if((args.mailto != NULL || args.letter != NULL || args.subject != NULL || args.attach != NULL) && (wrwin = MA_NewNew(NULL, 0)) >= 0)
       {
         if(args.mailto != NULL)
           setstring(G->WR[wrwin]->GUI.ST_TO, args.mailto);
@@ -3231,7 +3248,7 @@ int main(int argc, char **argv)
           #endif
 
           // check if we have a waiting message
-          while((timeReq = (struct TimeRequest *)GetMsg(TCData.port)))
+          while((timeReq = (struct TimeRequest *)GetMsg(TCData.port)) != NULL)
           {
             enum TimerIO tio;
 

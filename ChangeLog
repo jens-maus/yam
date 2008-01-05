@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-05  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: upon restart the old behaviour is now restored if the logged in user
+    stays the same. Otherwise the usual startup actions will be executed.
+
 2008-01-04  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, YAM_UT.c, YAM_rexx.c, AllocSysObject.c: removed all specific
