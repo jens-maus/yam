@@ -7,6 +7,9 @@ $URL$
 
 2008-01-05  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Makefile: removed "-ldebug" from the MorphOS build as our debugging
+    is using the VNewRawDoFmt() function instead of the deprecated kprintf()
+    now.
   * Debug.c, Debug.h, YAM.c: changed the runtime debugging facility to use
     a generic _DBPRINTF() function for actually output something. This finally
     allowed to introduce the possibility to redirect the debugging output

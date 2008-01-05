@@ -219,7 +219,7 @@ ifeq ($(OS), mos)
   CPU     = -mcpu=powerpc
   CFLAGS  += -noixemul -pipe -I./include/netinclude
   LDFLAGS += -noixemul
-  LDLIBS  += -ldebug -lxpk -lamissl -lcodesets
+  LDLIBS  += -lxpk -lamissl -lcodesets
 
 else
 ifeq ($(OS), aros)
