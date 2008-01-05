@@ -7,6 +7,7 @@ $URL$
 
 2008-01-05  Jens Langner <Jens.Langner@light-speed.de>
 
+  * misc: added some casts to fix some warnings caused on the MorphOS build.
   * Makefile: removed "-ldebug" from the MorphOS build as our debugging
     is using the VNewRawDoFmt() function instead of the deprecated kprintf()
     now.

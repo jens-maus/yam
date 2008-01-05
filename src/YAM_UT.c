@@ -2541,7 +2541,7 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
 
   ENTER();
 
-  if((context = ObtainDirContextTags(EX_StringName, dir,
+  if((context = ObtainDirContextTags(EX_StringName,   (ULONG)dir,
                                      EX_DoCurrentDir, TRUE,
                                      TAG_DONE)) != NULL)
   {
@@ -2659,8 +2659,8 @@ LONG FileCount(const char *directory, const char *pattern)
   {
     ParsePatternNoCase(pattern, parsedPattern, parsedPatternSize);
 
-    if((context = ObtainDirContextTags(EX_StringName, directory,
-                                       EX_MatchString, parsedPattern,
+    if((context = ObtainDirContextTags(EX_StringName,  (ULONG)directory,
+                                       EX_MatchString, (ULONG)parsedPattern,
                                        TAG_DONE)) != NULL)
     {
       struct ExamineData *ed;
@@ -5950,7 +5950,7 @@ BOOL CheckPrinter(void)
       // create the IO request for checking the printer status
       if((pio = AllocSysObjectTags(ASOT_IOREQUEST,
                                    ASOIOR_Size,      sizeof(struct IOStdReq),
-                                   ASOIOR_ReplyPort, mp,
+                                   ASOIOR_ReplyPort, (ULONG)mp,
                                    TAG_DONE)) != NULL)
       {
         // from here on we assume the printer is online

@@ -256,7 +256,7 @@ DECLARE(Update)
   AddPath(themesDir, G->ProgDir, "Themes", sizeof(themesDir));
 
   // prepare for an ExamineDir()
-  if((context = ObtainDirContextTags(EX_StringName, themesDir, TAG_DONE)) != NULL)
+  if((context = ObtainDirContextTags(EX_StringName, (ULONG)themesDir, TAG_DONE)) != NULL)
   {
     struct ExamineData *ed;
 

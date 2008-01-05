@@ -2203,7 +2203,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
       D(DBF_FOLDER, "Scanning folder: '%s' (path '%s', %ld files)...", folder->Name, GetFolderDir(folder), filecount);
 
-      if((context = ObtainDirContextTags(EX_StringName, GetFolderDir(folder), TAG_DONE)) != NULL)
+      if((context = ObtainDirContextTags(EX_StringName, (ULONG)GetFolderDir(folder), TAG_DONE)) != NULL)
       {
         struct ExamineData *ed;
         long processedFiles = 0;

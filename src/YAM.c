@@ -939,7 +939,7 @@ static BOOL TC_Init(void)
     // free the data in case YAM crashes (only available on OS4)
     if((TCData.timer[0].tr = AllocSysObjectTags(ASOT_IOREQUEST,
                                                 ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                ASOIOR_ReplyPort, TCData.port,
+                                                ASOIOR_ReplyPort, (ULONG)TCData.port,
                                                 TAG_DONE)) != NULL)
     {
       // then open the device
@@ -958,7 +958,7 @@ static BOOL TC_Init(void)
             // free the data in case YAM crashes (only available on OS4)
             if((TCData.timer[tio].tr = AllocSysObjectTags(ASOT_IOREQUEST,
                                                           ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                          ASOIOR_ReplyPort, TCData.port,
+                                                          ASOIOR_ReplyPort, (ULONG)TCData.port,
                                                           TAG_DONE)) == NULL)
             {
               break;
@@ -1345,7 +1345,7 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
     // allocate the memory for the semaphore system structure itself
     semaphore = AllocSysObjectTags(ASOT_SEMAPHORE,
                                    ASOSEM_Size,     sizeof(struct StartupSemaphore),
-                                   ASOSEM_Name,     STARTUP_SEMAPHORE_NAME,
+                                   ASOSEM_Name,     (ULONG)STARTUP_SEMAPHORE_NAME,
                                    ASOSEM_CopyName, TRUE,
                                    ASOSEM_Public,   TRUE,
                                    TAG_DONE);
@@ -2965,7 +2965,7 @@ int main(int argc, char **argv)
                                               ASOPOOL_MFlags,    MEMF_SHARED|MEMF_CLEAR,
                                               ASOPOOL_Puddle,    2048,
                                               ASOPOOL_Threshold, 1024,
-                                              ASOPOOL_Name,      "YAM Shared Pool",
+                                              ASOPOOL_Name,      (ULONG)"YAM Shared Pool",
                                               TAG_DONE)) == NULL)
     {
       // break out immediately to signal an error!

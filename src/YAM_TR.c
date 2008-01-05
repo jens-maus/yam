@@ -1658,7 +1658,7 @@ static enum ConnectError TR_Connect(char *host, int port)
               connectIssued++;
 
               // get the error value which should normally be set by a connect()
-              SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), &connerr, TAG_END);
+              SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), (ULONG)&connerr, TAG_END);
 
               // check the errno variable which connect() will set
               switch(connerr)
@@ -2351,7 +2351,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
         LONG err = -1;
 
         // get the error value which should normally be set by a recv()
-        SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), &err, TAG_END);
+        SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), (ULONG)&err, TAG_END);
 
         switch(err)
         {
@@ -2717,7 +2717,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
         LONG err = -1;
 
         // get the error value which should normally be set by a send()
-        SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), &err, TAG_END);
+        SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), (ULONG)&err, TAG_END);
 
         switch(err)
         {
