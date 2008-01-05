@@ -36,6 +36,8 @@
 #include <proto/exec.h>
 #include <proto/utility.h>
 
+#include <clib/alib_protos.h>
+
 #include "AllocSysObject.h"
 #include "SDI_compiler.h"
 
