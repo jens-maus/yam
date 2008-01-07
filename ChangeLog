@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-07  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM_MA.c, YAM_UT.c: added some more debug information to the
+    write window file notification setup/handling. This should help to
+    investigate issues related to the file notification system.
+  * QuickSearchBar.c: fixed a potential NULL pointer access.
+
 2008-01-05  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: added some casts to fix some warnings caused on the MorphOS build.

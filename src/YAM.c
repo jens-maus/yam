@@ -1505,9 +1505,8 @@ static void Terminate(void)
     if(G->WR_NotifyRequest[i] != NULL)
     {
       if(G->WR_NotifyRequest[i]->nr_stuff.nr_Msg.nr_Port != NULL)
-      {
         FreeSysObject(ASOT_PORT, G->WR_NotifyRequest[i]->nr_stuff.nr_Msg.nr_Port);
-      }
+
       #if defined(__amigaos4__)
       FreeDosObject(DOS_NOTIFYREQUEST, G->WR_NotifyRequest[i]);
       #else
@@ -2456,9 +2455,9 @@ static void InitBeforeLogin(BOOL hidden)
     }
 
     #if defined(__amigaos4__)
-    if((G->WR_NotifyRequest[i] = AllocDosObjectTags(DOS_NOTIFYREQUEST, ADO_NotifyName, G->WR_Filename[i],
+    if((G->WR_NotifyRequest[i] = AllocDosObjectTags(DOS_NOTIFYREQUEST, ADO_NotifyName,   G->WR_Filename[i],
                                                                        ADO_NotifyMethod, NRF_SEND_MESSAGE,
-                                                                       ADO_NotifyPort, notifyPort,
+                                                                       ADO_NotifyPort,   notifyPort,
                                                                        TAG_DONE)) == NULL)
     #else
     if((G->WR_NotifyRequest[i] = AllocVecPooled(G->SharedMemPool, sizeof(struct NotifyRequest))) == NULL)
@@ -3561,7 +3560,10 @@ int main(int argc, char **argv)
               ReplyMsg(msg);
 
             if(G->WR[i] != NULL)
+            {
+              D(DBF_UTIL, "temporary file of write window %ld seem to have changed [%s], reloading...", i, G->WR_Filename[i]);
               FileToEditor(G->WR_Filename[i], G->WR[i]->GUI.TE_EDIT);
+            }
           }
         }
 

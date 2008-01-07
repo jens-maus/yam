@@ -1547,9 +1547,21 @@ static void MA_InsertIntroText(FILE *fh, char *text, struct ExpandTextData *etd)
 //  Starts file notification for temporary message file
 static void MA_EditorNotification(int winnum)
 {
-   FileToEditor(G->WR_Filename[winnum], G->WR[winnum]->GUI.TE_EDIT);
-   StartNotify(G->WR_NotifyRequest[winnum]);
-   set(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
+  ENTER();
+
+  // load the current file in the editor
+  FileToEditor(G->WR_Filename[winnum], G->WR[winnum]->GUI.TE_EDIT);
+
+  // start the notification
+  if(StartNotify(G->WR_NotifyRequest[winnum]) != 0)
+    D(DBF_UTIL, "started notification request for file: '%s' of write window %ld", G->WR_Filename[winnum], winnum);
+  else
+    W(DBF_UTIL, "file notification [%s] of write window %ld failed!", G->WR_Filename[winnum], winnum);
+
+  // flag the editor as not being changed.
+  set(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
+
+  LEAVE();
 }
 
 ///
