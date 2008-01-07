@@ -432,10 +432,17 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
 
                 if((node->pixelArray = AllocVecPooled(G->SharedMemPool, node->bytesPerRow * node->height)) != NULL)
                 {
+                  ULONG result;
+
                   // perform a PDTM_READPIXELARRAY operation
                   // for writing the image data of the image in our pixelArray
-                  if(DoMethod(node->dt_obj, PDTM_READPIXELARRAY, node->pixelArray, node->pixelFormat, node->bytesPerRow,
-                                                                 0, 0, node->width, node->height) == FALSE)
+                  result = DoMethod(node->dt_obj, PDTM_READPIXELARRAY, node->pixelArray, node->pixelFormat, node->bytesPerRow,
+                                                                       0, 0, node->width, node->height);
+                  #if defined(__MORPHOS__)
+                  // ignore the result for MorphOS
+                  result = TRUE;
+                  #endif
+				  if(result == FALSE)
                   {
                     W(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' with depth %ld (%ld) failed!", node->id, node->depth, bmhd->bmh_Masking);
 

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-07  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c: the result of the PDTM_READPIXEL method call is now ignored
+    for MorphOS as this function seems to signal failure even if the operation
+    succeeded. TheBar.mcc ignores this value, too.
+
 2008-01-07  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, YAM_MA.c, YAM_UT.c: added some more debug information to the
