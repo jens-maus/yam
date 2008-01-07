@@ -6739,3 +6739,17 @@ send mail first, then get mail
 MSG_HELP_CO_CY_EXCHANGE_ORDER (2077//)
 The order of the mail exchange.
 ;
+MSG_FCHANGE_WARN_TITLE (2078//)
+Filechange warning
+;
+MSG_FCHANGE_WARN (2079//)
+While you have edited the message text\n\
+of write window %ld in an external editor,\n\
+the text in the internal text editor has\n\
+also been altered.\n\
+\n\
+Do you really want to use the text of\n\
+the external editor dropping the changes\n\
+done in the internal editor?
+; NUMBER
+;

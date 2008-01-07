@@ -3550,7 +3550,7 @@ int main(int argc, char **argv)
         #endif
 
         // check for the write window signals
-        for(i = 0; i <= MAXWR; i++)
+        for(i=0; i <= MAXWR; i++)
         {
           if(signals & notsig[i])
           {
@@ -3561,9 +3561,32 @@ int main(int argc, char **argv)
 
             if(G->WR[i] != NULL)
             {
-              D(DBF_UTIL, "temporary file of write window %ld seem to have changed [%s], reloading...", i, G->WR_Filename[i]);
-              FileToEditor(G->WR_Filename[i], G->WR[i]->GUI.TE_EDIT);
+              BOOL abort = FALSE;
+
+              D(DBF_UTIL, "received notification that the tempfile of write window %ld have changed [%s]", i, G->WR_Filename[i]);
+
+              // check if the content of the TextEditor.mcc gadget changed
+              // as well and if so warn the user
+              if(xget(G->WR[i]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
+              {
+                // warn the user that both the tempfile and the content of the TextEditor.mcc
+                // changed.
+                int answer = MUI_Request(G->App, G->WR[i]->GUI.WI, 0L, tr(MSG_FCHANGE_WARN_TITLE),
+                                                                       tr(MSG_YesNoReq),
+                                                                       tr(MSG_FCHANGE_WARN), i+1);
+
+                if(answer == 0)
+                {
+                  // cancel / keep old text
+                  abort = TRUE;
+                }
+              }
+
+              if(abort == FALSE)
+                FileToEditor(G->WR_Filename[i], G->WR[i]->GUI.TE_EDIT);
             }
+            else
+              W(DBF_UTIL, "file notification received on dead write window %ld", i);
           }
         }
 

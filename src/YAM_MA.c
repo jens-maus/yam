@@ -1543,20 +1543,14 @@ static void MA_InsertIntroText(FILE *fh, char *text, struct ExpandTextData *etd)
 }
 
 ///
-/// MA_EditorNotification
-//  Starts file notification for temporary message file
-static void MA_EditorNotification(int winnum)
+/// MA_ShowMessageText
+//  Loads/shows the previously generated message text
+static void MA_ShowMessageText(int winnum)
 {
   ENTER();
 
   // load the current file in the editor
   FileToEditor(G->WR_Filename[winnum], G->WR[winnum]->GUI.TE_EDIT);
-
-  // start the notification
-  if(StartNotify(G->WR_NotifyRequest[winnum]) != 0)
-    D(DBF_UTIL, "started notification request for file: '%s' of write window %ld", G->WR_Filename[winnum], winnum);
-  else
-    W(DBF_UTIL, "file notification [%s] of write window %ld failed!", G->WR_Filename[winnum], winnum);
 
   // flag the editor as not being changed.
   set(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
@@ -1735,7 +1729,7 @@ int MA_NewNew(struct Mail *mail, int flags)
       if(!quiet)
         set(wr->GUI.WI, MUIA_Window_Open, TRUE);
 
-      MA_EditorNotification(winnum);
+      MA_ShowMessageText(winnum);
       set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
 
       if(C->LaunchAlways && !quiet)
@@ -1941,7 +1935,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
       if(!quiet)
         set(wr->GUI.WI, MUIA_Window_Open, TRUE);
 
-      MA_EditorNotification(winnum);
+      MA_ShowMessageText(winnum);
       sbuf = (STRPTR)xget(wr->GUI.ST_TO, MUIA_String_Contents);
       set(wr->GUI.WI, MUIA_Window_ActiveObject, *sbuf ? wr->GUI.TE_EDIT : wr->GUI.ST_TO);
 
@@ -2166,7 +2160,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
       if(!quiet)
         set(wr->GUI.WI, MUIA_Window_Open, TRUE);
 
-      MA_EditorNotification(winnum);
+      MA_ShowMessageText(winnum);
       set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
 
       if(C->LaunchAlways && !quiet)
@@ -2673,7 +2667,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
       if(!quiet)
         set(wr->GUI.WI, MUIA_Window_Open, TRUE);
 
-      MA_EditorNotification(winnum);
+      MA_ShowMessageText(winnum);
       set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.TE_EDIT);
 
       if(C->LaunchAlways && !quiet)

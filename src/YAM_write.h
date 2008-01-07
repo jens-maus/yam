@@ -79,14 +79,15 @@ struct WR_ClassData  /* write window */
 {
   struct WR_GUIData GUI;
 
-  struct Mail *     refMail;      // ptr to the original mail this write window was created from
-  struct Mail **    refMailList;  // ptr to a list of orginal mails.
+  struct Mail *     refMail;            // ptr to the original mail this write window was created from
+  struct Mail **    refMailList;        // ptr to a list of orginal mails.
 
   enum NewMode      Mode;
   int               OldSecurity;
-  int               winnum;       // the window number this class data belongs to
+  int               winnum;             // the window number this class data belongs to
 
-  BOOL              AutoSaved; // was this mail automatically saved?
+  BOOL              AutoSaved;          // was this mail automatically saved?
+  BOOL              FileNotifyActive;   // is a file change notification currently active or not
 
   char              MsgID[SIZE_MSGID];
   char              CursorPos[SIZE_DEFAULT];

@@ -21,6 +21,16 @@ $URL$
 
 2008-01-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c, YAM.c, YAM_MA.c, YAM.cd: changed the write window file
+    notification routines to only start a file notification in case an
+    external editor is used instead of always being notified in case the
+    temporary file has been modified. In addition, a warning requester will
+    now be issued in case the internal editor was also used while the external
+    editor is used. This should prevent a loss of either of the modified texts
+    by accident.
+  * YAM_WR.c, WriteWindowToolbar.c: in case no external Editor is configured
+    in the configuration, the Editor toolbar button is hided and the
+    corresponding menu item ghosted.
   * YAM.c, YAM_MA.c, YAM_UT.c: added some more debug information to the
     write window file notification setup/handling. This should help to
     investigate issues related to the file notification system.

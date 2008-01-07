@@ -2100,7 +2100,8 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     }
     fclose(comp.FH);
 
-    if(wr->Mode != NEW_BOUNCE)
+    // stop any pending file notification.
+    if(G->WR[winnum]->FileNotifyActive == TRUE)
       EndNotify(G->WR_NotifyRequest[winnum]);
 
     if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)))
@@ -2327,7 +2328,10 @@ void WR_Cleanup(int winnum)
     char fileName[SIZE_PATHFILE];
     int i;
 
-    EndNotify(G->WR_NotifyRequest[winnum]);
+    // stop any pending file notification.
+    if(G->WR[winnum]->FileNotifyActive == TRUE)
+      EndNotify(G->WR_NotifyRequest[winnum]);
+
     DeleteFile(G->WR_Filename[winnum]);
 
     for(i=0; ;i++)
@@ -2444,13 +2448,28 @@ HOOKPROTONHNO(WR_Edit, void, int *arg)
     int winnum = *arg;
     char buffer[SIZE_COMMAND+SIZE_PATHFILE];
 
-    /* Workaround for a MUI bug */
+    // stop any pending file notification.
+    if(G->WR[winnum]->FileNotifyActive == TRUE)
+      EndNotify(G->WR_NotifyRequest[winnum]);
+
+    // Workaround for a MUI bug
     if(xget(G->WR[winnum]->GUI.WI, MUIA_Window_Open))
       set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
 
     EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum]);
     snprintf(buffer, sizeof(buffer), "%s \"%s\"", C->Editor, GetRealPath(G->WR_Filename[winnum]));
     ExecuteCommand(buffer, TRUE, OUT_NIL);
+
+    // (re)start the file notification on the temporary write window
+    // content file
+    // start the notification
+    if(StartNotify(G->WR_NotifyRequest[winnum]) != 0)
+    {
+      D(DBF_UTIL, "started notification request for file: '%s' of write window %ld", G->WR_Filename[winnum], winnum);
+      G->WR[winnum]->FileNotifyActive = TRUE;
+    }
+    else
+      W(DBF_UTIL, "file notification [%s] of write window %ld failed!", G->WR_Filename[winnum], winnum);
   }
 
   LEAVE();
@@ -3938,7 +3957,7 @@ static struct WR_ClassData *WR_New(int winnum)
                 MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_UUCODE), MUIA_UserData,WMEN_INSUUCODE, End,
              End,
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_LaunchEd), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,WMEN_EDIT, End,
+             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_LaunchEd), MUIA_Menuitem_Shortcut,"E", MUIA_Menuitem_Enabled, C->Editor[0] != '\0', MUIA_UserData,WMEN_EDIT, End,
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_SaveAs), MUIA_UserData,WMEN_SAVEAS, End,
              MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,

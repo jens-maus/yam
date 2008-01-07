@@ -77,7 +77,7 @@ OVERLOAD(OM_NEW)
     struct MUIS_TheBar_Button buttons[TB_WRITE_NUM+4] =
     {
     #if !defined(__SASC)
-      { TB_WRITE_EDITOR,    TB_WRITE_EDITOR,    tr(MSG_WR_TBEditor),    tr(MSG_HELP_WR_BT_EDITOR),    0, 0, NULL, NULL },
+      { TB_WRITE_EDITOR,    TB_WRITE_EDITOR,    tr(MSG_WR_TBEditor),    tr(MSG_HELP_WR_BT_EDITOR),    C->Editor[0] == '\0' ? MUIV_TheBar_ButtonFlag_Hide : 0, 0, NULL, NULL },
       { TB_WRITE_INSERT,    TB_WRITE_INSERT,    tr(MSG_WR_TBInsert),    tr(MSG_HELP_WR_BT_LOAD),      0, 0, NULL, NULL },
 
       { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
@@ -126,7 +126,7 @@ OVERLOAD(OM_NEW)
     };
 
     #if defined(__SASC)
-    buttons[ 0].text = tr(MSG_WR_TBEditor);     buttons[ 0].help = tr(MSG_HELP_WR_BT_EDITOR);
+    buttons[ 0].text = tr(MSG_WR_TBEditor);     buttons[ 0].help = tr(MSG_HELP_WR_BT_EDITOR); buttons[0].flags = C->Editor[0] == '\0' ? MUIV_TheBar_ButtonFlag_Hide : 0;
     buttons[ 1].text = tr(MSG_WR_TBInsert);     buttons[ 1].help = tr(MSG_HELP_WR_BT_LOAD);
 
     buttons[ 3].text = tr(MSG_WR_TBCut);        buttons[ 3].help = tr(MSG_HELP_WR_BT_CUT);
