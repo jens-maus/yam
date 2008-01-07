@@ -7,6 +7,10 @@ $URL$
 
 2008-01-07  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: the POP3 account list now has a proper display hook. The old
+    solution only worked by pure luck, because the first element of struct POP3
+    was the string actually to be displayed. Additionally inactive accounts
+    will be shown in italics now.
   * ImageCache.c: improved the alpha channel detection for MOS even more by
     asking the object directly about the presence of an alpha channel.
   * ImageCache.c: the result of the PDTM_READPIXEL method call is now ignored

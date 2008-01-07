@@ -1439,6 +1439,35 @@ HOOKPROTONHNONP(CO_DelPOP3, void)
 MakeStaticHook(CO_DelPOP3Hook,CO_DelPOP3);
 
 ///
+/// POP3DisplayHook
+// display hook for the POP3 account list
+HOOKPROTONHNO(POP3DisplayFunc, LONG, struct NList_DisplayMessage *msg)
+{
+  ENTER();
+
+  if(msg != NULL)
+  {
+    struct POP3 *pop;
+
+    // now we set our local variables to the DisplayMessage structure ones
+    pop = (struct POP3 *)msg->entry;
+
+    if(pop != NULL)
+    {
+      msg->strings[0] = pop->Account;
+
+      // inactive accounts are shown in italics
+      if(pop->Enabled == FALSE)
+        msg->preparses[0] = (char *)MUIX_I;
+    }
+  }
+
+  RETURN(0);
+  return 0;
+}
+MakeStaticHook(POP3DisplayHook, POP3DisplayFunc);
+
+///
 /// GetAppIconPos
 // Retrieves the position x/y of the AppIcon and
 // sets the position label accordingly
@@ -2068,6 +2097,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                     MUIA_NListview_NList, data->GUI.LV_POP3 = NListObject,
                       InputListFrame,
                       MUIA_NList_Title,        FALSE,
+                      MUIA_NList_DisplayHook2, &POP3DisplayHook,
                       MUIA_NList_DragType,     MUIV_NList_DragType_Immediate,
                       MUIA_NList_DragSortable, TRUE,
                     End,
