@@ -7,6 +7,8 @@ $URL$
 
 2008-01-07  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: changed the alpha channel detection once more, because
+    24bit images were displayed wrong.
   * YAM_COg.c: the POP3 account list now has a proper display hook. The old
     solution only worked by pure luck, because the first element of struct POP3
     was the string actually to be displayed. Additionally inactive accounts
