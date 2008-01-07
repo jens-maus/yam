@@ -832,16 +832,20 @@ DECLARE(UpdateStats) // ULONG force
 DECLARE(DoEditAction) // enum EditAction editAction
 {
   GETDATA;
-  Object *selectedObj;
+  Object *selectedObj = NULL;
+  Object *windowObj = _win(obj);
   BOOL result = FALSE;
 
   ENTER();
 
   // we first check which object is current selected
   // as the 'active' Object
-  selectedObj = (Object *)xget(_win(obj), MUIA_Window_ActiveObject);
-  if(selectedObj == NULL)
-    selectedObj = (Object *)xget(_win(obj), MUIA_Window_DefaultObject);
+  if(windowObj != NULL)
+  {
+    selectedObj = (Object *)xget(windowObj, MUIA_Window_ActiveObject);
+    if(selectedObj == NULL)
+      selectedObj = (Object *)xget(windowObj, MUIA_Window_DefaultObject);
+  }
 
   // if we still haven't got anything selected
   // something must be extremly strange ;)
