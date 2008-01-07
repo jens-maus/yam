@@ -54,6 +54,11 @@
 
 #include "Debug.h"
 
+#ifndef PDTA_AlphaChannel
+/* does the image contain alpha channel data? */
+#define PDTA_AlphaChannel     (DTA_Dummy + 256)
+#endif
+
 /*** Static variables/functions ***/
 /// LoadImage
 // loads a specific file via datatypes.library
@@ -418,13 +423,23 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
                node->pixelArray == NULL)
             #endif
             {
-              #if defined(__MORPHOS__)
-              // MOS' png.datatype doesn't report an available alpha channel in the masking field
-              if(node->depth > 8)
-              #else
+              // the datatypes system tells us about the alpha channel either
+              // by setting the correct masking type or by the PDTA_AlphaChannel
+              // attribute. We simply make sure the image depth is set to 32 bits
+              // in this case, since all further functions rely on this value.
+              if(bmhd->bmh_Masking == mskHasAlpha)
+                node->depth = 32;
+              else
+              {
+                ULONG alphaChannel = 0;
+
+                GetDTAttrs(node->dt_obj, PDTA_AlphaChannel, &alphaChannel, TAG_DONE);
+                if(alphaChannel != 0)
+                   node->depth = 32;
+              }
+
               // check if the bitmap may have alpha channel data or not.
-              if(node->depth > 8 && bmhd->bmh_Masking == mskHasAlpha)
-              #endif
+              if(node->depth > 8)
               {
                 node->bytesPerPixel = node->depth / 8;
                 node->bytesPerRow = node->width * node->bytesPerPixel;

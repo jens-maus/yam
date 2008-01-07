@@ -7,6 +7,8 @@ $URL$
 
 2008-01-07  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: improved the alpha channel detection for MOS even more by
+    asking the object directly about the presence of an alpha channel.
   * ImageCache.c: the result of the PDTM_READPIXEL method call is now ignored
     for MorphOS as this function seems to signal failure even if the operation
     succeeded. TheBar.mcc ignores this value, too.
