@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-08  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ImageCache.c: we only issue the PDTM_READPIXELARRAY method in case the
+    bitmap isn't masked as having a transparent color (mskHasTransparentColor).
+    This should prevent the use of a pixel array on 24bit images which are
+    having a transparent color instead of an alpha channel.
+
 2008-01-08  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: added some more debug output concering alpha channel

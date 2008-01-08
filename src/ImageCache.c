@@ -439,10 +439,10 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
                    hasAlphaChannel = TRUE;
               }
 
-              D(DBF_IMAGE, "image '%s' has %ld bit depth and %s alpha channel", node->id, node->depth, (hasAlphaChannel == TRUE) ? "an" : "no");
+              D(DBF_IMAGE, "image '%s' has %ld bit depth and %s alpha channel", node->id, node->depth, (hasAlphaChannel == TRUE) ? "AN" : "NO");
 
               // check if the bitmap may have alpha channel data or not.
-              if(node->depth > 8)
+              if(node->depth > 8 && bmhd->bmh_Masking != mskHasTransparentColor)
               {
                 node->bytesPerPixel = (hasAlphaChannel == TRUE) ? 4 : 3;
                 node->bytesPerRow = node->width * node->bytesPerPixel;
@@ -457,10 +457,12 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
                   result = DoMethod(node->dt_obj, PDTM_READPIXELARRAY, node->pixelArray, node->pixelFormat, node->bytesPerRow,
                                                                        0, 0, node->width, node->height);
                   #if defined(__MORPHOS__)
-                  // ignore the result for MorphOS
+                  // MorphOS < v2.0 doesn't return a valid value for the PDTM_READPIXELARRAY method
+                  // so ignore it
                   result = TRUE;
                   #endif
-				  if(result == FALSE)
+
+                  if(result == FALSE)
                   {
                     W(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' with depth %ld (%ld) failed!", node->id, node->depth, bmhd->bmh_Masking);
 
