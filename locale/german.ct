@@ -8406,3 +8406,16 @@ erst Post senden, dann holen
 MSG_HELP_CO_CY_EXCHANGE_ORDER
 Die Reihenfolge beim Postaustausch.
 ;
+MSG_FCHANGE_WARN_TITLE
+Warnung wegen Dateiänderung
+;
+MSG_FCHANGE_WARN
+Während Sie den Nachrichtentext des\n\
+Schreibfenster %ld im externen Editor\n\
+geändert haben, wurde der Text im internen\n\
+Editor ebenfalls geändert.\n\
+\n\
+Wollen Sie den Text des externen Editors\n\
+verwenden und die gemachten Änderungen im\n\
+internen Editor verwerfen?
+;

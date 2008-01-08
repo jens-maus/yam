@@ -14,6 +14,7 @@ $URL$
 
 2008-01-08  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/german.ct: german translation updateed according to latest changes.
   * YAM_UT.c: added an error debug message in case exection of an external
     command failed.
   * misc: removed several hard TABs from the source.
