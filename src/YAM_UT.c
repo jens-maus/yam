@@ -6446,6 +6446,7 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
   {
     // an error occurred as SystemTags should always
     // return zero on success, no matter what.
+    E(DBF_UTIL, "execution of command '%s' failed, IoErr()=%ld", cmd, IoErr());
 
     // manually free our search path
     // as SystemTags() shouldn't have freed
