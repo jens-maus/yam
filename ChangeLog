@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-08  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c, ImageArea.c: the pixel array size calculation no longer relies
+    on the image depth but only on whether an alpha channel is available or not.
+
 2008-01-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: changed the alpha channel detection once more, because

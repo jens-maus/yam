@@ -836,7 +836,7 @@ OVERLOAD(MUIM_Draw)
       #if defined(__amigaos4__)
       BltBitMapTags(BLITA_Source,         data->scaledPixelArray,
                     BLITA_Dest,           rp,
-                    BLITA_SrcType,        (data->imageNode.depth == 32) ? BLITT_ARGB32 : BLITT_RGB24,
+                    BLITA_SrcType,        (data->imageNode.pixelFormat == PBPAFMT_ARGB) ? BLITT_ARGB32 : BLITT_RGB24,
                     BLITA_DestType,       BLITT_RASTPORT,
                     BLITA_DestX,          _mleft(obj),
                     BLITA_DestY,          _mtop(obj),
@@ -887,7 +887,7 @@ OVERLOAD(MUIM_Draw)
         #if defined(__amigaos4__)
         BltBitMapTags(BLITA_Source,         data->imageNode.pixelArray,
                       BLITA_Dest,           rp,
-                      BLITA_SrcType,        (data->imageNode.depth == 32) ? BLITT_ARGB32 : BLITT_RGB24,
+                      BLITA_SrcType,        (data->imageNode.pixelFormat == PBPAFMT_ARGB) ? BLITT_ARGB32 : BLITT_RGB24,
                       BLITA_DestType,       BLITT_RASTPORT,
                       BLITA_DestX,          _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
                       BLITA_DestY,          _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,

@@ -439,12 +439,13 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
                    hasAlphaChannel = TRUE;
               }
 
+
               // check if the bitmap may have alpha channel data or not.
-              if(node->depth > 8 && hasAlphaChannel == TRUE)
+              if(node->depth > 8)
               {
-                node->bytesPerPixel = node->depth / 8;
+                node->bytesPerPixel = (hasAlphaChannel == TRUE) ? 4 : 3;
                 node->bytesPerRow = node->width * node->bytesPerPixel;
-                node->pixelFormat = (node->depth == 32) ? PBPAFMT_ARGB : PBPAFMT_RGB;
+                node->pixelFormat = (hasAlphaChannel == TRUE) ? PBPAFMT_ARGB : PBPAFMT_RGB;
 
                 if((node->pixelArray = AllocVecPooled(G->SharedMemPool, node->bytesPerRow * node->height)) != NULL)
                 {
