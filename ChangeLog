@@ -7,6 +7,8 @@ $URL$
 
 2008-01-08  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: added some more debug output concering alpha channel
+    detection.
   * ImageCache.c, ImageArea.c: the pixel array size calculation no longer relies
     on the image depth but only on whether an alpha channel is available or not.
 

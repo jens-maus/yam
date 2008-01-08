@@ -439,6 +439,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
                    hasAlphaChannel = TRUE;
               }
 
+              D(DBF_IMAGE, "image '%s' has %ld bit depth and %s alpha channel", node->id, node->depth, (hasAlphaChannel == TRUE) ? "an" : "no");
 
               // check if the bitmap may have alpha channel data or not.
               if(node->depth > 8)
