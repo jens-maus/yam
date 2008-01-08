@@ -34,55 +34,55 @@
 char *
 strtok_r(char *str, const char *separator_set,char ** state_ptr)
 {
-	char * result = NULL;
-	char * last;
-	size_t size;
+  char *result = NULL;
+  char *last;
+  size_t size;
 
-	last = (*state_ptr);
+  last = (*state_ptr);
 
-	/* Did we get called before? Restart at the last valid position. */
-	if(str == NULL)
-	{
-		str = last;
+  /* Did we get called before? Restart at the last valid position. */
+  if(str == NULL)
+  {
+    str = last;
 
-		/* However, we may have hit the end of the
-		   string already. */
-		if(str == NULL)
-			goto out;
-	}
+    /* However, we may have hit the end of the
+       string already. */
+    if(str == NULL)
+      goto out;
+  }
 
-	last = NULL;
+  last = NULL;
 
-	/* Skip the characters which count as
-	   separators. */
-	str += strspn(str, separator_set);
-	if((*str) == '\0')
-		goto out;
+  /* Skip the characters which count as
+     separators. */
+  str += strspn(str, separator_set);
+  if((*str) == '\0')
+    goto out;
 
-	/* Count the number of characters which aren't
-	   separators. */
-	size = strcspn(str, separator_set);
-	if(size == 0)
-		goto out;
+  /* Count the number of characters which aren't
+     separators. */
+  size = strcspn(str, separator_set);
+  if(size == 0)
+    goto out;
 
-	/* This is where the search can resume later. */
-	last = &str[size];
+  /* This is where the search can resume later. */
+  last = &str[size];
 
-	/* If we didn't hit the end of the string already,
-	   skip the separator. */
-	if((*last) != '\0')
-		last++;
+  /* If we didn't hit the end of the string already,
+     skip the separator. */
+  if((*last) != '\0')
+    last++;
 
-	/* This is the token we found; make sure that
-	   it looks like a valid string. */
-	str[size] = '\0';
+  /* This is the token we found; make sure that
+     it looks like a valid string. */
+  str[size] = '\0';
 
-	result = str;
+  result = str;
 
 out:
 
-	if(state_ptr != NULL)
-		(*state_ptr) = last;
+  if(state_ptr != NULL)
+    (*state_ptr) = last;
 
-	return(result);
+  return(result);
 }

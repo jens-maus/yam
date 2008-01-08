@@ -818,7 +818,7 @@ DECLARE(Resolve) // ULONG flags
 
               if((members = strdup(entry->Members)))
               {
-              	char *lf;
+                char *lf;
 
                 while((lf = strchr(members, '\n')) != NULL)
                   lf[0] = ',';

@@ -298,7 +298,7 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
     if(FileExists(dest) && !overwrite)
     {
       if(MUI_Request(G->App, win, 0, tr(MSG_MA_ConfirmReq), tr(MSG_OkayCancelReq), tr(MSG_RE_Overwrite), FilePart(dest)) == 0)
-      	dest = NULL;
+        dest = NULL;
     }
   }
 
@@ -2377,7 +2377,7 @@ static int RE_DecryptPGP(struct ReadMailData *rmData, char *src)
   }
   else
   {
-  	char options[SIZE_LARGE];
+    char options[SIZE_LARGE];
 
     snprintf(options, sizeof(options), "%s +bat +f +lang=en", src);
     error = PGPCommand("pgp", options, KEEPLOG|NOERRORS);

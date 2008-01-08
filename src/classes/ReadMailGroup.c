@@ -394,7 +394,7 @@ static void ExtractSenderInfo(const struct Mail *mail, struct ABEntry *ab)
             *t++ = '\0';
 
           if((eq = strchr(s, '=')) == NULL)
-          	Cleanse(s);
+            Cleanse(s);
           else
           {
             *eq++ = '\0';

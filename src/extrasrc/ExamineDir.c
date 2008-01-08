@@ -140,8 +140,8 @@ void ReleaseDirContext(APTR context)
     if(ctx->eaControl != NULL)
       FreeDosObject(DOS_EXALLCONTROL, ctx->eaControl);
 
-  	if(ctx->lock)
-  	  UnLock(ctx->lock);
+    if(ctx->lock)
+      UnLock(ctx->lock);
 
     free(context);
   }

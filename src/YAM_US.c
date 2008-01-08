@@ -120,11 +120,11 @@ static void US_SaveUsers(void)
 
       flags = 0;
       if(user->Limited)
-      	flags |= UFLAG_LIMITED_USER;
+        flags |= UFLAG_LIMITED_USER;
       if(user->UseAddr)
-      	flags |= UFLAG_USE_GLOBAL_ADDRESSBOOK;
+        flags |= UFLAG_USE_GLOBAL_ADDRESSBOOK;
       if(user->UseDict)
-      	flags |= UFLAG_USE_GLOBAL_DICTIONARY;
+        flags |= UFLAG_USE_GLOBAL_DICTIONARY;
 
       if(user->Name != NULL)
         fprintf(fh, "@USER %s\n%s\n%d\n%s\n@ENDUSER\n", user->Name, user->MailDir, flags, Encrypt(user->Password));
@@ -275,7 +275,7 @@ BOOL US_Login(const char *username, const char *password, const char *maildir, c
   // for it.
   if(userIndex < 0)
   {
-  	// erase a possibly given password
+    // erase a possibly given password
     password = NULL;
 
     if(username != NULL)
@@ -357,13 +357,13 @@ HOOKPROTONHNONP(US_DelFunc, void)
   }
   else
   {
-  	// just remove the user, as this doesn't have an own mail directory
-  	m = 2;
+    // just remove the user, as this doesn't have an own mail directory
+    m = 2;
   }
 
   if(m != 0)
   {
-  	DoMethod(lv, MUIM_NList_Remove, index);
+    DoMethod(lv, MUIM_NList_Remove, index);
     // reactivate the Add/Del buttons
     set(G->US->GUI.BT_ADD, MUIA_Disabled, FALSE);
     set(G->US->GUI.BT_DEL, MUIA_Disabled, xget(lv, MUIA_NList_Entries) == 0);
@@ -473,8 +473,8 @@ static BOOL US_SaveUserList(void)
          AddPath(dest, user->MailDir, ".config", sizeof(dest));
          CopyFile(dest, NULL, G->CO_PrefsFile, NULL);
       }
-	}
-	else
+    }
+    else
     {
       set(G->US->GUI.LV_USERS, MUIA_NList_Active, i);
       result = FALSE;
@@ -585,15 +585,15 @@ HOOKPROTONHNONP(US_GetUSEntryFunc, void)
     set(gui->BT_DEL,     MUIA_Disabled, !act || iscurrent);
    }
    else
-   	 DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, gui->ST_USER,
-   	                                                      gui->ST_PASSWD,
-   	                                                      gui->PO_MAILDIR,
-   	                                                      gui->CH_USEDICT,
-   	                                                      gui->CH_USEADDR,
-   	                                                      gui->CH_ROOT,
-   	                                                      gui->CH_CLONE,
-   	                                                      gui->BT_DEL,
-   	                                                      NULL);
+     DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, gui->ST_USER,
+                                                          gui->ST_PASSWD,
+                                                          gui->PO_MAILDIR,
+                                                          gui->CH_USEDICT,
+                                                          gui->CH_USEADDR,
+                                                          gui->CH_ROOT,
+                                                          gui->CH_CLONE,
+                                                          gui->BT_DEL,
+                                                          NULL);
 
   LEAVE();
 }

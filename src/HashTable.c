@@ -629,7 +629,7 @@ void HashTableRawRemove(struct HashTable *table, struct HashEntryHeader *entry)
     // this entry collided with another entry, so it must not be marked
     // as free, but as removed instead. HashTableOperate() knows how to
     // handle this case.
-  	MARK_ENTRY_REMOVED(entry);
+    MARK_ENTRY_REMOVED(entry);
     table->removedCount++;
   }
   else
@@ -839,11 +839,11 @@ void HashTableTest(void)
 
   if((table = HashTableNew((struct HashTableOps *)&hashTableOps, NULL, sizeof(struct TestHashNode), 32)) != NULL)
   {
-  	int j;
-  	struct TestHashNode *node;
+    int j;
+    struct TestHashNode *node;
 
-  	for(j = 0; j < 5; j++)
-  	{
+    for(j = 0; j < 5; j++)
+    {
       int i;
 
       for(i = 0; i < si_Max; i++)

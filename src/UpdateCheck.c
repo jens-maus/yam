@@ -574,8 +574,10 @@ void GetLastUpdateState(struct UpdateState *state)
   ENTER();
 
   if(state != NULL)
+  {
     // copy the last state
-  	memcpy(state, &LastUpdateState, sizeof(*state));
+    memcpy(state, &LastUpdateState, sizeof(*state));
+  }
 
   LEAVE();
 }

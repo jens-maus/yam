@@ -674,8 +674,8 @@ static BOOL FO_LoadFolderImage(struct Folder *folder)
   // first we make sure that valid data is underway.
   if(folder != NULL)
   {
-  	if(folder->ImageIndex >= MAX_FOLDERIMG+1)
-  	{
+    if(folder->ImageIndex >= MAX_FOLDERIMG+1)
+    {
       char fname[SIZE_PATHFILE];
       Object *lv = G->MA->GUI.NL_FOLDERS;
 
@@ -1745,7 +1745,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
           prevFolder = FO_GetCurrentFolder();
           if(prevFolder != NULL && isGroupFolder(prevFolder))
           {
-          	// add the folder to the end of the current folder group
+            // add the folder to the end of the current folder group
             DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, FO_GetFolderTreeNode(prevFolder), MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
           }
           else

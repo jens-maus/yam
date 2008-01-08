@@ -146,7 +146,7 @@ static struct Token *tokenizerGet(struct Tokenizer *t,
   entry = HashTableOperate(&t->tokenTable, word, htoLookup);
   if(HASH_ENTRY_IS_FREE(entry))
   {
-  	// we didn't find the entry we were looking for
+    // we didn't find the entry we were looking for
     entry = NULL;
   }
 
@@ -173,10 +173,10 @@ static struct Token *tokenizerAdd(struct Tokenizer *t,
 
   if((tmpWord = (STRPTR)malloc(len)) != NULL)
   {
-  	if(prefix != NULL)
-  	  snprintf(tmpWord, len, "%s:%s", prefix, word);
-  	else
-  	  strlcpy(tmpWord, word, len);
+    if(prefix != NULL)
+      snprintf(tmpWord, len, "%s:%s", prefix, word);
+    else
+      strlcpy(tmpWord, word, len);
 
     if((token = (struct Token *)HashTableOperate(&t->tokenTable, tmpWord, htoAdd)) != NULL)
     {

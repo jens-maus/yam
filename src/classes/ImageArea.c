@@ -158,9 +158,9 @@ static void Image_Unload(struct Data *data)
 
   if(data->imageLoaded == TRUE)
   {
-  	// releasing an image requires a valid ID
-  	if(data->id != NULL && data->id[0] != '\0')
-  	{
+    // releasing an image requires a valid ID
+    if(data->id != NULL && data->id[0] != '\0')
+    {
       D(DBF_IMAGE, "unloaded old image '%s' (%s)", data->id, data->filename);
       ReleaseImage(data->id, FALSE);
     }

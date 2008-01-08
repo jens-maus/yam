@@ -3016,9 +3016,9 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
   // find the first occurance of the '/' separator in out
   // url and insert a terminating NUL character
   if((path = strchr(url, '/')) != NULL)
-  	*path++ = '\0';
+    *path++ = '\0';
   else
-  	path = (char *)"";
+    path = (char *)"";
 
   // extract the hostname from the URL or use the proxy server
   // address if specified.
@@ -3028,11 +3028,11 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
   // hostname contain an ':' separator
   if((bufptr = strchr(host, ':')) != NULL)
   {
-  	*bufptr++ = '\0';
-  	hport = atoi(bufptr);
+    *bufptr++ = '\0';
+    hport = atoi(bufptr);
   }
   else
-  	hport = noproxy ? 80 : 8080;
+    hport = noproxy ? 80 : 8080;
 
   // open the TCP/IP connection to 'host' under the port 'hport'
   if(TR_Connect(host, hport) == CONNECTERR_SUCCESS)
@@ -4808,8 +4808,8 @@ static void CleanupUIDLhash(void)
   {
     // save the UIDLs only if something has been changed or if there are
     // some entries to be saved at all
-  	if(G->TR->UIDLhashIsDirty == TRUE || G->TR->UIDLhashTable->entryCount > 0)
-  	{
+    if(G->TR->UIDLhashIsDirty == TRUE || G->TR->UIDLhashTable->entryCount > 0)
+    {
       FILE *fh;
 
       // before we go and destroy the UIDL hash we have to

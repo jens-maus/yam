@@ -1315,14 +1315,14 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->RequestMDN                      == c2->RequestMDN &&
 
      c1->SocketOptions.SendBuffer        == c2->SocketOptions.SendBuffer &&
-  	 c1->SocketOptions.RecvBuffer        == c2->SocketOptions.RecvBuffer &&
-  	 c1->SocketOptions.SendLowAt         == c2->SocketOptions.SendLowAt &&
-  	 c1->SocketOptions.RecvLowAt         == c2->SocketOptions.RecvLowAt &&
-  	 c1->SocketOptions.SendTimeOut       == c2->SocketOptions.SendTimeOut &&
-  	 c1->SocketOptions.RecvTimeOut       == c2->SocketOptions.RecvTimeOut &&
-  	 c1->SocketOptions.KeepAlive         == c2->SocketOptions.KeepAlive &&
-  	 c1->SocketOptions.NoDelay           == c2->SocketOptions.NoDelay &&
-  	 c1->SocketOptions.LowDelay          == c2->SocketOptions.LowDelay &&
+     c1->SocketOptions.RecvBuffer        == c2->SocketOptions.RecvBuffer &&
+     c1->SocketOptions.SendLowAt         == c2->SocketOptions.SendLowAt &&
+     c1->SocketOptions.RecvLowAt         == c2->SocketOptions.RecvLowAt &&
+     c1->SocketOptions.SendTimeOut       == c2->SocketOptions.SendTimeOut &&
+     c1->SocketOptions.RecvTimeOut       == c2->SocketOptions.RecvTimeOut &&
+     c1->SocketOptions.KeepAlive         == c2->SocketOptions.KeepAlive &&
+     c1->SocketOptions.NoDelay           == c2->SocketOptions.NoDelay &&
+     c1->SocketOptions.LowDelay          == c2->SocketOptions.LowDelay &&
 
      ComparePOP3Accounts((const struct POP3 **)c1->P3, (const struct POP3 **)c2->P3) &&
      CompareFilterLists(&c1->filterList, &c2->filterList) &&

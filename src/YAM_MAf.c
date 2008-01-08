@@ -519,7 +519,7 @@ void MA_ExpireIndex(struct Folder *folder)
   ENTER();
 
   if(!isModified(folder))
-  	DeleteFile(MA_IndexFileName(folder));
+    DeleteFile(MA_IndexFileName(folder));
 
   SET_FLAG(folder->Flags, FOFL_MODIFY);
 
@@ -2150,8 +2150,8 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
   // check if there are files in this mailbox or not.
   if(filecount < 0)
   {
-  	// an error happened in FileCount()
-  	result = FALSE;
+    // an error happened in FileCount()
+    result = FALSE;
   }
   else if(filecount == 0)
   {

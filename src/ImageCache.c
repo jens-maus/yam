@@ -154,7 +154,7 @@ static BOOL RemapImage(struct ImageCacheNode *node, const struct Screen *scr)
   }
   else
   {
-  	// assume success for non-existing DT-objects
+    // assume success for non-existing DT-objects
     success = TRUE;
   }
 

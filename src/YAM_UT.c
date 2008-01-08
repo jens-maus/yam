@@ -5948,7 +5948,7 @@ BOOL CheckPrinter(void)
     // create the message port
     if((mp = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
     {
-	    struct IOStdReq *pio;
+      struct IOStdReq *pio;
 
       // create the IO request for checking the printer status
       if((pio = AllocSysObjectTags(ASOT_IOREQUEST,
@@ -5961,8 +5961,8 @@ BOOL CheckPrinter(void)
         result = TRUE;
 
         // open printer.device unit 0
-      	if(OpenDevice("printer.device", 0, (struct IORequest *)pio, 0) == 0)
-      	{
+        if(OpenDevice("printer.device", 0, (struct IORequest *)pio, 0) == 0)
+        {
           // we allow to retry the checking so
           // we iterate into a do/while loop
           do
@@ -6058,7 +6058,7 @@ BOOL CheckPrinter(void)
           W(DBF_PRINT, "couldn't open printer.device unit 0");
 
         FreeSysObject(ASOT_IOREQUEST, pio);
-	    }
+      }
       else
         W(DBF_PRINT, "wasn't able to create io request for printer state checking");
 
@@ -6564,7 +6564,7 @@ char *SWSSearch(char *str1, char *str2)
 
   // and allocate the result string separately
   if(Z != NULL)
-  	free(Z);
+    free(Z);
   if(!(Z = calloc(lz, sizeof(char)))) goto abort;
 
   // we copy str1&str2 into X and Y but have to copy a placeholder in front of them
@@ -6686,9 +6686,9 @@ abort:
 
   // now we free our temporary buffers now
   if(X != NULL)
-  	free(X);
+    free(X);
   if(Y != NULL)
-  	free(Y);
+    free(Y);
 
   // lets free our help matrixes
   if(L != NULL)
@@ -6696,7 +6696,7 @@ abort:
     for(i = 0; i < lx; i++)
     {
       if(L[i] != NULL)
-      	free(L[i]);
+        free(L[i]);
     }
     free(L);
   }
@@ -6705,7 +6705,7 @@ abort:
     for(i = 0; i < lx; i++)
     {
       if(Ind[i] != NULL)
-      	free(Ind[i]);
+        free(Ind[i]);
     }
     free(Ind);
   }

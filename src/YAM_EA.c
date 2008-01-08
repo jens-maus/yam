@@ -592,8 +592,8 @@ HOOKPROTONHNO(EA_CloseFunc, void, int *arg)
 
   if(gui->BC_PHOTO != NULL && G->EA[winnum]->ABEntry != NULL)
   {
-  	// update the user image ID and remove it from the cache
-  	// it will be reloaded when necessary
+    // update the user image ID and remove it from the cache
+    // it will be reloaded when necessary
     xset(gui->BC_PHOTO, MUIA_ImageArea_ID,       G->EA[winnum]->ABEntry->Address,
                         MUIA_ImageArea_Filename, NULL);
   }
