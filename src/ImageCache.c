@@ -431,15 +431,9 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
               if(bmhd->bmh_Masking == mskHasAlpha)
                 hasAlphaChannel = TRUE;
               else
-              {
-                ULONG alphaChannel = 0;
+                GetDTAttrs(node->dt_obj, PDTA_AlphaChannel, &hasAlphaChannel, TAG_DONE);
 
-                GetDTAttrs(node->dt_obj, PDTA_AlphaChannel, &alphaChannel, TAG_DONE);
-                if(alphaChannel != 0)
-                   hasAlphaChannel = TRUE;
-              }
-
-              D(DBF_IMAGE, "image '%s' has %ld bit depth and %s alpha channel", node->id, node->depth, (hasAlphaChannel == TRUE) ? "AN" : "NO");
+              D(DBF_IMAGE, "image '%s' has %ld bit depth and %s alpha channel (%ld)", node->id, node->depth, (hasAlphaChannel == TRUE) ? "AN" : "NO", bmhd->bmh_Masking);
 
               // check if the bitmap may have alpha channel data or not.
               if(node->depth > 8 && bmhd->bmh_Masking != mskHasTransparentColor)
@@ -450,7 +444,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
 
                 if((node->pixelArray = AllocVecPooled(G->SharedMemPool, node->bytesPerRow * node->height)) != NULL)
                 {
-                  ULONG result;
+                  BOOL result;
 
                   // perform a PDTM_READPIXELARRAY operation
                   // for writing the image data of the image in our pixelArray
@@ -464,17 +458,17 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
 
                   if(result == FALSE)
                   {
-                    W(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' with depth %ld (%ld) failed!", node->id, node->depth, bmhd->bmh_Masking);
+                    W(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' failed!", node->id);
 
                     FreeVecPooled(G->SharedMemPool, node->pixelArray);
                     node->pixelArray = NULL;
                   }
                   else
-                    D(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' with depth %ld (%ld) succeeded", node->id, node->depth, bmhd->bmh_Masking);
+                    D(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' succeeded", node->id);
                 }
               }
               else
-                D(DBF_IMAGE, "PDTM_READPIXELARRAY not required - no alpha data in image '%s' (%ld/%ld)", node->id, node->depth, bmhd->bmh_Masking);
+                D(DBF_IMAGE, "PDTM_READPIXELARRAY not required - no alpha data in image '%s'", node->id);
             }
 
             // get the normal bitmaps supplied by datatypes.library if either this is

@@ -45,8 +45,8 @@ struct ImageCacheNode
   Object *dt_obj;              // the datatypes object
   struct Screen *screen;       // pointer to the screen the image is mapped to
   int openCount;               // counter how often the image is now opened/used
-  APTR pixelArray;
-  ULONG pixelFormat;
+  APTR pixelArray;             // pointer to a pixel array read by PDTM_READPIXELARRAY
+  ULONG pixelFormat;           // the pixel format of the array (e.g. PBPAFMT_ARGB)
   struct BitMap *bitmap;
   PLANEPTR mask;
 

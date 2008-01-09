@@ -242,10 +242,20 @@ static void Image_Scale(struct Data *data)
 
           if((data->scaledPixelArray = AllocVecPooled(G->SharedMemPool, data->scaledBytesPerRow * newHeight)) != NULL)
           {
+            BOOL result;
+
             // perform a PDTM_READPIXELARRAY operation
             // for writing the image data of the image in our pixelArray
-            if(DoMethod(data->imageNode.dt_obj, PDTM_READPIXELARRAY, data->scaledPixelArray, data->imageNode.pixelFormat, data->scaledBytesPerRow,
-                                                                     0, 0, newWidth, newHeight) == FALSE)
+            result = DoMethod(data->imageNode.dt_obj, PDTM_READPIXELARRAY, data->scaledPixelArray, data->imageNode.pixelFormat, data->scaledBytesPerRow,
+                                                                           0, 0, newWidth, newHeight);
+
+            #if defined(__MORPHOS__)
+            // MorphOS < v2.0 doesn't return a valid value for the PDTM_READPIXELARRAY method
+            // so ignore it
+            result = TRUE;
+            #endif
+
+            if(result == FALSE)
             {
               W(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' with depth %ld failed after PDTM_SCALE!", data->imageNode.id, data->imageNode.depth);
 
@@ -358,7 +368,8 @@ static void Image_Scale(struct Data *data)
     }
     else
     {
-      D(DBF_IMAGE, "no image scaling required");
+      D(DBF_IMAGE, "no image scaling required for image '%s'", data->imageNode.id);
+
       data->scaledBitMap = NULL;
       data->scaledBitMask = NULL;
       data->scaledPixelArray = NULL;
