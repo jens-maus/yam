@@ -4604,7 +4604,7 @@ BOOL EditorToFile(Object *editor, char *file)
 ///
 /// FileToEditor
 //  Loads a file into a texteditor object
-BOOL FileToEditor(char *file, Object *editor)
+BOOL FileToEditor(char *file, Object *editor, BOOL changed)
 {
   char *text;
   BOOL res = FALSE;
@@ -4620,7 +4620,7 @@ BOOL FileToEditor(char *file, Object *editor)
     {
       // set the new text and tell the editor that its content has changed
       xset(editor, MUIA_TextEditor_Contents, parsedText,
-                   MUIA_TextEditor_HasChanged, TRUE);
+                   MUIA_TextEditor_HasChanged, changed);
       free(parsedText);
 
       res = TRUE;

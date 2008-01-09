@@ -330,7 +330,7 @@ char *   GetRealPath(char *path);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef);
 void     ExtractAddress(const char *line, struct Person *pe);
 char *   FileToBuffer(const char *file);
-BOOL     FileToEditor(char *file, Object *editor);
+BOOL     FileToEditor(char *file, Object *editor, BOOL changed);
 LONG     FileCount(const char *directory, const char *pattern);
 char *   AddPath(char *dst, const char *src, const char *add, size_t size);
 void     FinishUnpack(char *file);

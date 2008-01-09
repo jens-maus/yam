@@ -1549,11 +1549,8 @@ static void MA_ShowMessageText(int winnum)
 {
   ENTER();
 
-  // load the current file in the editor
-  FileToEditor(G->WR_Filename[winnum], G->WR[winnum]->GUI.TE_EDIT);
-
-  // flag the editor as not being changed.
-  set(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
+  // load the current file in the editor and flag it as not being changed.
+  FileToEditor(G->WR_Filename[winnum], G->WR[winnum]->GUI.TE_EDIT, FALSE);
 
   LEAVE();
 }

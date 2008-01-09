@@ -1943,10 +1943,9 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
   if(refresh == TRUE)
   {
     // refresh the signature in the internal editor
-    if(FileToEditor(CreateFilename(SigNames[sig]), ed) == FALSE)
+    if(FileToEditor(CreateFilename(SigNames[sig]), ed, FALSE) == FALSE)
       DoMethod(ed, MUIM_TextEditor_ClearText);
 
-    set(ed, MUIA_TextEditor_HasChanged, FALSE);
     G->CO->LastSig = sig;
   }
 

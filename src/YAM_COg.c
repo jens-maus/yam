@@ -47,8 +47,6 @@
 #include <clib/alib_protos.h> // DoMethod
 #endif
 
-#include "extrasrc.h"
-
 #include "SDI_hook.h"
 
 #include "YAM.h"
@@ -65,8 +63,10 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
+#include "ImageCache.h"
 #include "UpdateCheck.h"
 #include "BayesFilter.h"
+#include "extrasrc.h"
 
 #include "Debug.h"
 

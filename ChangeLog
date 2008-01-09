@@ -7,6 +7,10 @@ $URL$
 
 2008-01-09  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: reading the contents of an editor object from a file now
+    optionally flags the editor as changed instead of always. This makes
+    it possible again to recognize a modified signature in the config
+    window.
   * ImageArea.c: the image scaling mechanism which in fact also uses
     PDTM_READPIXELARRAY will now also ignore the return value for MorphOS
     builds as a workaround of the problem that the picture.datatype of

@@ -71,6 +71,7 @@
 
 #if !defined(__amigaos4__)
 #include <proto/genesis.h>
+#include <proto/cybergraphics.h>
 #endif
 
 #include "extrasrc.h"
@@ -2344,6 +2345,9 @@ static void InitBeforeLogin(BOOL hidden)
   INITLIB("openurl.library",        1, 0, &OpenURLBase,   "main", &IOpenURL,   FALSE, NULL);
   INITLIB("codesets.library",       6, 5, &CodesetsBase,  "main", &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
   INITLIB("expat.library", XML_MAJOR_VERSION, 0, &ExpatBase, "main", &IExpat, FALSE, NULL);
+  #if !defined(__amigaos4__)
+  INITLIB("cybergraphics.library", 40, 0, &CyberGfxBase, "main", &ICyberGfx, TRUE, NULL);
+  #endif
 
   // we check for the amisslmaster.library v3 accordingly
   if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))
@@ -3067,11 +3071,8 @@ int main(int argc, char **argv)
             set(G->WR[wrwin]->GUI.ST_TO, MUIA_String_Contents, "no@receiver");
             set(G->WR[wrwin]->GUI.ST_SUBJECT, MUIA_String_Contents, "(subject)");
 
-            // load the file in the new editor gadget
-            FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT);
-
-            // make sure the texteditor gadget is marked as being changed
-            set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
+            // load the file in the new editor gadget and flag it as changed
+            FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT, TRUE);
 
             // put the new mail on hold
             WR_NewMail(WRITE_HOLD, wrwin);
@@ -3094,11 +3095,8 @@ int main(int argc, char **argv)
 
           if((wrwin = MA_NewNew(NULL, 0)) >= 0)
           {
-            // load the file in the new editor gadget
-            FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT);
-
-            // make sure the texteditor gadget is marked as being changed
-            set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
+            // load the file in the new editor gadget and flag it as changed
+            FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT, TRUE);
 
             // we don't need to delete the autosave file here as the write
             // window itself will delete it when it will be closed. However,
@@ -3131,7 +3129,7 @@ int main(int argc, char **argv)
           setstring(G->WR[wrwin]->GUI.ST_SUBJECT, args.subject);
 
         if(args.letter != NULL)
-          FileToEditor(args.letter, G->WR[wrwin]->GUI.TE_EDIT);
+          FileToEditor(args.letter, G->WR[wrwin]->GUI.TE_EDIT, FALSE);
 
         if(args.attach != NULL)
         {
@@ -3583,7 +3581,7 @@ int main(int argc, char **argv)
               }
 
               if(abort == FALSE)
-                FileToEditor(G->WR_Filename[i], G->WR[i]->GUI.TE_EDIT);
+                FileToEditor(G->WR_Filename[i], G->WR[i]->GUI.TE_EDIT, TRUE);
             }
             else
               W(DBF_UTIL, "file notification received on dead write window %ld", i);

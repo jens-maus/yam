@@ -448,10 +448,10 @@ void rx_writeletter( UNUSED struct RexxHost *host, struct rxd_writeletter **rxd,
     {
       if(G->WR[G->ActiveWriteWin] && CopyFile(G->WR_Filename[G->ActiveWriteWin], 0, rd->arg.file, 0))
       {
-        if(C->UseSignature && !rd->arg.nosig)
+        if(C->UseSignature == TRUE && !rd->arg.nosig)
           WR_AddSignature(G->ActiveWriteWin, -1);
 
-        FileToEditor(G->WR_Filename[G->ActiveWriteWin], G->WR[G->ActiveWriteWin]->GUI.TE_EDIT);
+        FileToEditor(G->WR_Filename[G->ActiveWriteWin], G->WR[G->ActiveWriteWin]->GUI.TE_EDIT, TRUE);
       }
       else
         rd->rc = RETURN_ERROR;

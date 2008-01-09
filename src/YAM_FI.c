@@ -1512,7 +1512,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
   if(hasReplyAction(filter) && !filter->remote && *filter->replyFile)
   {
     MA_NewReply(mlist, TRUE);
-    FileToEditor(filter->replyFile, G->WR[2]->GUI.TE_EDIT);
+    FileToEditor(filter->replyFile, G->WR[2]->GUI.TE_EDIT, TRUE);
     WR_NewMail(WRITE_QUEUE, 2);
     G->RuleResults.Replied++;
   }
