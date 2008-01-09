@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-09  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageArea.c: fixed the wrong pixel format detection for MorphOS and OS3.
+    32bit image data was blittet as 24bit data, which resulted in stretched
+    and striped images.
+
 2008-01-08  Jens Langner <Jens.Langner@light-speed.de>
 
   * ImageCache.c: we only issue the PDTM_READPIXELARRAY method in case the

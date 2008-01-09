@@ -849,7 +849,7 @@ OVERLOAD(MUIM_Draw)
       // this also works for OS3, because we only have valid pixel data if
       // cybergraphics.library and picture.datatype are able to handle the
       // alpha channel correctly.
-      if(data->imageNode.depth == 32)
+      if(data->imageNode.pixelFormat == PBPAFMT_ARGB)
       {
         WritePixelArrayAlpha(data->scaledPixelArray,
                              0,
@@ -900,7 +900,7 @@ OVERLOAD(MUIM_Draw)
         // this also works for OS3, because we only have valid pixel data if
         // cybergraphics.library and picture.datatype are able to handle the
         // alpha channel correctly.
-        if(data->imageNode.depth == 32)
+        if(data->imageNode.pixelFormat == PBPAFMT_ARGB)
         {
           WritePixelArrayAlpha(data->imageNode.pixelArray,
                                0,
