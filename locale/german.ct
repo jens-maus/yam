@@ -6960,7 +6960,7 @@ Autoerkennung k_yrillischer Zeichensätze
 MSG_HELP_CO_DETECT_CYRILLIC
 Versucht mittels einer automatischen\n\
 Methode in der codesets.library, den\n\
-benutzen kyrillischen Zeichensatz zu\n\
+benutzten kyrillischen Zeichensatz zu\n\
 identifizieren.\n\
 (nur für kyrillische Benutzer relevant)
 ;
