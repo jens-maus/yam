@@ -5,9 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ImageCache.c: reverted some of the optimizations when querying the
+    PDTA_AlphaChannel attribute. This might have caused some issues as the
+    picture.datatype of MOS doesn't seem to purely set the attribute to
+    a BOOL?!?
+
 2008-01-09  Jens Langner <Jens.Langner@light-speed.de>
 
- * ImageArea.c: the image scaling mechanism which in fact also uses
+  * ImageArea.c: the image scaling mechanism which in fact also uses
     PDTM_READPIXELARRAY will now also ignore the return value for MorphOS
     builds as a workaround of the problem that the picture.datatype of
     MorphOS <2.0 doesn't return a correct value.

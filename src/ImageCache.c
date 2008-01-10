@@ -431,7 +431,13 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
               if(bmhd->bmh_Masking == mskHasAlpha)
                 hasAlphaChannel = TRUE;
               else
-                GetDTAttrs(node->dt_obj, PDTA_AlphaChannel, &hasAlphaChannel, TAG_DONE);
+              {
+                ULONG alphaChannel = 0;
+
+                GetDTAttrs(node->dt_obj, PDTA_AlphaChannel, &alphaChannel, TAG_DONE);
+                if(alphaChannel != 0)
+                  hasAlphaChannel = TRUE;
+              }
 
               D(DBF_IMAGE, "image '%s' has %ld bit depth and %s alpha channel (%ld)", node->id, node->depth, (hasAlphaChannel == TRUE) ? "AN" : "NO", bmhd->bmh_Masking);
 
