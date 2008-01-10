@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2007-12-26  Alexandre Balaban <balaban@free.fr>
+
+  * locale/french.ct: french translation update according to latest changes.
+
 2008-01-10  Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageArea.c: added some more debug output about blitting the image on the

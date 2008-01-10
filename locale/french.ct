@@ -3,7 +3,7 @@
 ## codeset 0
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 3632 2007-12-20 08:08:39Z
+; based on YAM.cd 3759 2008-01-07 23:49:15Z damato
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -7637,7 +7637,7 @@ Indésir_able
 ;
 MSG_MA_TBNOTSPAM
 Accept_able
-; No sp_am
+; N.Sp_am
 ;
 MSG_HELP_MA_BT_SPAM
 Marque ce message comme indésirable
@@ -7653,7 +7653,7 @@ Indésir_able
 ;
 MSG_RE_TBNOTSPAM
 Accept_able
-; No sp_am
+; N.Sp_am
 ;
 MSG_HELP_RE_BT_SPAM
 Marque ce message comme indésirable
@@ -9343,7 +9343,6 @@ MSG_HELP_CO_BT_MORE
 Ajoute une règle à ce filtre.
 ; Add a rule to this filter.
 ;
-;
 MSG_HELP_CO_BT_LESS
 Retire la dernière\n\
 règle de ce filtre.
@@ -9427,7 +9426,6 @@ Voulez-vous continuer ?
 ; '%s' will be filtered.\n\
 ; \n\
 ; Do you want to proceed?
-;
 ; FOLDER
 ;
 MSG_MA_CONFIRMFILTER_SELECTED
@@ -9441,6 +9439,96 @@ Voulez-vous continuer ?
 ; are going to be filtered.\n\
 ; \n\
 ; Do you want to proceed?
-;
 ; FOLDER
+;
+MSG_AB_XML
+Carnet d'adresses XML (*.xml)
+; XML address book (*.xml)
+;
+MSG_MA_FILTER_STATS_SPAM
+Filtrage terminé :\n\
+\n\
+%3ld messages vérifiés,\n\
+%3ld retransmis,\n\
+%3ld archivés,\n\
+%3ld effacés,\n\
+%3ld classés comme spam.
+; Filtering done:\n\
+; \n\
+; %3ld messages checked,\n\
+; %3ld forwarded,\n\
+; %3ld archived,\n\
+; %3ld deleted,\n\
+; %3ld classified as spam
+;
+; COUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_TR_FILTER_STATS_SPAM
+Filtrage terminé :\n\
+\n\
+%3ld messages vérifiés,\n\
+%3ld détournés,\n\
+%3ld retransmis,\n\
+%3ld répondus,\n\
+%3ld commandes exécutées,\n\
+%3ld déplacés,\n\
+%3ld supprimés,\n\
+%3ld classés comme spam.
+; \n\
+; Filtering done:\n\
+; \n\
+; %3ld messages checked,\n\
+; %3ld bounced,\n\
+; %3ld forwarded,\n\
+; %3ld auto-replied,\n\
+; %3ld command activated,\n\
+; %3ld moved,\n\
+; %3ld deleted,\n\
+; %3ld classified as spam
+;
+; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_CO_EXCHANGE_MAIL
+Échange de courrier
+; Exchange mail
+;
+MSG_CO_EXCHANGE_ORDER
+Ordre d'échange
+; Exchange order
+;
+MSG_CO_EXCHANGE_ORDER_GET_FIRST
+réception puis émission du courrier
+; get mail first, then send mail
+;
+MSG_CO_EXCHANGE_ORDER_SEND_FIRST
+émission puis réception du courrier
+; send mail first, then get mail
+;
+MSG_HELP_CO_CY_EXCHANGE_ORDER
+L'ordre d'échange du courrier
+; The order of the mail exchange.
+;
+MSG_FCHANGE_WARN_TITLE
+Avertissement de fichier modifié
+; Filechange warning
+;
+MSG_FCHANGE_WARN
+Alors que vous éditiez le texte du message\n\
+de la fenêtre de rédaction %ld dans l'éditeur\n\
+externe, le texte de l'éditeur interne a\n\
+également été modifié.\n\
+\n\
+Voulez-vous utiliser le texte du l'éditeur\n\
+externe et abandonner les modifications faites\n\
+dans l'éditeur interne ?
+; While you have edited the message text\n\
+; of write window %ld in an external editor,\n\
+; the text in the internal text editor has\n\
+; also been altered.\n\
+; \n\
+; Do you really want to use the text of\n\
+; the external editor dropping the changes\n\
+; done in the internal editor?
+;
+; NUMBER
 ;
