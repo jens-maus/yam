@@ -234,16 +234,24 @@ static void Image_Scale(struct Data *data)
       // have to use the PDTM_SCALE method of picture.datatype v45
       if(data->imageNode.pixelArray != NULL)
       {
-        if(DoMethod(data->imageNode.dt_obj, PDTM_SCALE, newWidth > 0 ? newWidth : 1,
-                                                        newHeight > 0 ? newHeight : 1,
-                                                        0) == TRUE)
+        BOOL result;
+
+        result = DoMethod(data->imageNode.dt_obj, PDTM_SCALE, newWidth > 0 ? newWidth : 1,
+                                                              newHeight > 0 ? newHeight : 1,
+                                                              0);
+        #if defined(__MORPHOS__)
+        // MorphOS < v2.0 may return an invalid value for the PDTM_SCALE method
+        // so ignore it
+        result = TRUE;
+        #endif
+        if(result == TRUE)
         {
           data->scaledBytesPerRow = newWidth * data->imageNode.bytesPerPixel;
+          SHOWVALUE(DBF_IMAGE, data->scaledBytesPerRow);
+          SHOWVALUE(DBF_IMAGE, data->imageNode.pixelFormat);
 
           if((data->scaledPixelArray = AllocVecPooled(G->SharedMemPool, data->scaledBytesPerRow * newHeight)) != NULL)
           {
-            BOOL result;
-
             // perform a PDTM_READPIXELARRAY operation
             // for writing the image data of the image in our pixelArray
             result = DoMethod(data->imageNode.dt_obj, PDTM_READPIXELARRAY, data->scaledPixelArray, data->imageNode.pixelFormat, data->scaledBytesPerRow,
@@ -281,7 +289,7 @@ static void Image_Scale(struct Data *data)
           wasScaled = TRUE;
         }
         else
-          W(DBF_IMAGE, "PDTM_SCALE method on image '%s' returned an error! picture.datatype >= v45?");
+          W(DBF_IMAGE, "PDTM_SCALE method on image '%s' returned an error! picture.datatype >= v45?", data->imageNode.id);
       }
 
       // check if we generated a scaled interpretation or not
@@ -788,12 +796,13 @@ OVERLOAD(MUIM_Draw)
       #if defined(__amigaos4__)
       if(data->scaledBitMask != NULL)
       {
+        D(DBF_IMAGE, "drawing scaled/masked bitmap image '%s' (%s)", data->id, data->filename);
         BltBitMapTags(BLITA_Source,     data->scaledBitMap,
                       BLITA_Dest,       rp,
                       BLITA_SrcType,    BLITT_BITMAP,
                       BLITA_DestType,   BLITT_RASTPORT,
-                      BLITA_DestX,      _mleft(obj),
-                      BLITA_DestY,      _mtop(obj),
+                      BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - width) / 2,
+                      BLITA_DestY,      _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
                       BLITA_Width,      width,
                       BLITA_Height,     height,
                       BLITA_Minterm,    (ABC|ABNC|ANBC),
@@ -802,12 +811,13 @@ OVERLOAD(MUIM_Draw)
       }
       else
       {
+        D(DBF_IMAGE, "drawing scaled bitmap image '%s' (%s)", data->id, data->filename);
         BltBitMapTags(BLITA_Source,     data->scaledBitMap,
                       BLITA_Dest,       rp,
                       BLITA_SrcType,    BLITT_BITMAP,
                       BLITA_DestType,   BLITT_RASTPORT,
-                      BLITA_DestX,      _mleft(obj),
-                      BLITA_DestY,      _mtop(obj),
+                      BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - width) / 2,
+                      BLITA_DestY,      _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
                       BLITA_Width,      width,
                       BLITA_Height,     height,
                       BLITA_Minterm,    (ABC|ABNC),
@@ -815,26 +825,32 @@ OVERLOAD(MUIM_Draw)
       }
       #else
       if(data->scaledBitMask != NULL)
+      {
+        D(DBF_IMAGE, "drawing scaled/masked bitmap image '%s' (%s)", data->id, data->filename);
         MyBltMaskBitMapRastPort(data->scaledBitMap,
                                 0,
                                 0,
                                 rp,
-                                _mleft(obj),
-                                _mtop(obj),
+                                _mleft(obj) + (_mwidth(obj) - width) / 2,
+                                _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
                                 width,
                                 height,
                                 (ABC|ABNC|ANBC),
                                 data->scaledBitMask->Planes[0]);
+      }
       else
+      {
+        D(DBF_IMAGE, "drawing scaled bitmap image '%s' (%s)", data->id, data->filename);
         BltBitMapRastPort(data->scaledBitMap,
                           0,
                           0,
                           rp,
-                          _mleft(obj),
-                          _mtop(obj),
+                          _mleft(obj) + (_mwidth(obj) - width) / 2,
+                          _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
                           width,
                           height,
                           (ABC|ABNC));
+      }
       #endif
 
       rel_y += height;
@@ -845,12 +861,13 @@ OVERLOAD(MUIM_Draw)
       ULONG height = MIN(data->scaledHeight, (ULONG)_mheight(obj));
 
       #if defined(__amigaos4__)
+      D(DBF_IMAGE, "drawing scaled (A)RGB image '%s' (%s)", data->id, data->filename);
       BltBitMapTags(BLITA_Source,         data->scaledPixelArray,
                     BLITA_Dest,           rp,
                     BLITA_SrcType,        (data->imageNode.pixelFormat == PBPAFMT_ARGB) ? BLITT_ARGB32 : BLITT_RGB24,
                     BLITA_DestType,       BLITT_RASTPORT,
-                    BLITA_DestX,          _mleft(obj),
-                    BLITA_DestY,          _mtop(obj),
+                    BLITA_DestX,          _mleft(obj) + (_mwidth(obj) - width) / 2,
+                    BLITA_DestY,          _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
                     BLITA_Width,          width,
                     BLITA_Height,         height,
                     BLITA_SrcBytesPerRow, data->scaledBytesPerRow,
@@ -862,26 +879,28 @@ OVERLOAD(MUIM_Draw)
       // alpha channel correctly.
       if(data->imageNode.pixelFormat == PBPAFMT_ARGB)
       {
+        D(DBF_IMAGE, "drawing scaled ARGB image '%s' (%s)", data->id, data->filename);
         WritePixelArrayAlpha(data->scaledPixelArray,
                              0,
                              0,
                              data->scaledBytesPerRow,
                              rp,
-                             _mleft(obj),
-                             _mtop(obj),
+                             _mleft(obj) + (_mwidth(obj) - width) / 2,
+                             _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
                              width,
                              height,
                              0xffffffff);
       }
       else
       {
+        D(DBF_IMAGE, "drawing scaled RGB image '%s' (%s)", data->id, data->filename);
         WritePixelArray(data->scaledPixelArray,
                         0,
                         0,
                         data->scaledBytesPerRow,
                         rp,
-                        _mleft(obj),
-                        _mtop(obj),
+                        _mleft(obj) + (_mwidth(obj) - width) / 2,
+                        _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
                         width,
                         height,
                         RECTFMT_RGB);
@@ -896,6 +915,7 @@ OVERLOAD(MUIM_Draw)
       if(data->imageNode.pixelArray != NULL)
       {
         #if defined(__amigaos4__)
+        D(DBF_IMAGE, "drawing (A)RGB image '%s' (%s)", data->id, data->filename);
         BltBitMapTags(BLITA_Source,         data->imageNode.pixelArray,
                       BLITA_Dest,           rp,
                       BLITA_SrcType,        (data->imageNode.pixelFormat == PBPAFMT_ARGB) ? BLITT_ARGB32 : BLITT_RGB24,
@@ -913,6 +933,7 @@ OVERLOAD(MUIM_Draw)
         // alpha channel correctly.
         if(data->imageNode.pixelFormat == PBPAFMT_ARGB)
         {
+          D(DBF_IMAGE, "drawing ARGB image '%s' (%s)", data->id, data->filename);
           WritePixelArrayAlpha(data->imageNode.pixelArray,
                                0,
                                0,
@@ -926,6 +947,7 @@ OVERLOAD(MUIM_Draw)
         }
         else
         {
+          D(DBF_IMAGE, "drawing RGB image '%s' (%s)", data->id, data->filename);
           WritePixelArray(data->imageNode.pixelArray,
                           0,
                           0,
@@ -945,6 +967,7 @@ OVERLOAD(MUIM_Draw)
         #if defined(__amigaos4__)
         if(data->imageNode.mask != NULL)
         {
+          D(DBF_IMAGE, "drawing masked bitmap image '%s' (%s)", data->id, data->filename);
           BltBitMapTags(BLITA_Source,     data->imageNode.bitmap,
                         BLITA_Dest,       rp,
                         BLITA_SrcType,    BLITT_BITMAP,
@@ -959,6 +982,7 @@ OVERLOAD(MUIM_Draw)
         }
         else
         {
+          D(DBF_IMAGE, "drawing bitmap image '%s' (%s)", data->id, data->filename);
           BltBitMapTags(BLITA_Source,     data->imageNode.bitmap,
                         BLITA_Dest,       rp,
                         BLITA_SrcType,    BLITT_BITMAP,
@@ -975,6 +999,7 @@ OVERLOAD(MUIM_Draw)
         {
           // we use an own BltMaskBitMapRastPort() implemenation to also support
           // interleaved images.
+          D(DBF_IMAGE, "drawing masked bitmap image '%s' (%s)", data->id, data->filename);
           MyBltMaskBitMapRastPort(data->imageNode.bitmap,
                                   0,
                                   0,
@@ -988,6 +1013,7 @@ OVERLOAD(MUIM_Draw)
         }
         else
         {
+          D(DBF_IMAGE, "drawing bitmap image '%s' (%s)", data->id, data->filename);
           BltBitMapRastPort(data->imageNode.bitmap,
                             0,
                             0,

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-10  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageArea.c: added some more debug output about blitting the image on the
+    screen and fixed a broken D() call. Additionally the scaled image will now
+    be centered within its domain, too.
+
 2008-01-10  Jens Langner <Jens.Langner@light-speed.de>
 
   * ImageCache.c: reverted some of the optimizations when querying the
