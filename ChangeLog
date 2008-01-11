@@ -5,7 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2007-12-26  Alexandre Balaban <balaban@free.fr>
+2008-01-11  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: fixed a bug in the WR_ChangeSignatureHook which shows up if the
+    the file change notification does not work or is not active. Now the
+    signature should be changed regardless of any file notification and
+    therefore update in any case. In addition, the signature change will now
+    respect the HasChanged attribute of the texteditor and doesn't touch
+    it.
+
+2007-01-10  Alexandre Balaban <balaban@free.fr>
 
   * locale/french.ct: french translation update according to latest changes.
 

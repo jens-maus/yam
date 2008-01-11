@@ -2705,46 +2705,60 @@ MakeStaticHook(WR_DeleteFileHook, WR_DeleteFile);
 /*** WR_ChangeSignatureFunc - Changes the current signature ***/
 HOOKPROTONHNO(WR_ChangeSignatureFunc, void, int *arg)
 {
-  struct TempFile *tf;
+  int winnum = arg[1];
 
   ENTER();
 
-  if((tf = OpenTempFile(NULL)) != NULL)
+  if(G->WR[winnum] != NULL)
   {
-    int winnum = arg[1];
-    FILE *in;
+    struct TempFile *tfin;
 
-    EditorToFile(G->WR[winnum]->GUI.TE_EDIT, tf->Filename);
-    if((in = fopen(tf->Filename, "r")) != NULL)
+    if((tfin = OpenTempFile(NULL)) != NULL)
     {
-      FILE *out;
+      FILE *in;
+      Object *editor = G->WR[winnum]->GUI.TE_EDIT;
 
-      setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
-
-      if((out = fopen(G->WR_Filename[winnum], "w")) != NULL)
+      EditorToFile(editor, tfin->Filename);
+      if((in = fopen(tfin->Filename, "r")) != NULL)
       {
-        int signat = arg[0];
-        char buffer[SIZE_LINE];
+        struct TempFile *tfout;
 
-        setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+        setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
 
-        while(fgets(buffer, SIZE_LINE, in))
+        // open a new temporary file for writing the new text
+        if((tfout = OpenTempFile("w")) != NULL)
         {
-          if(strcmp(buffer, "-- \n"))
-            fputs(buffer, out);
-          else
-            break;
+          int signat = arg[0];
+          char buffer[SIZE_LINE];
+
+          while(fgets(buffer, sizeof(buffer), in))
+          {
+            if(strcmp(buffer, "-- \n") == 0)
+              break;
+
+            fputs(buffer, tfout->FP);
+          }
+
+          if(signat > 0)
+            WR_WriteSignature(tfout->FP, signat-1);
+
+          // now our out file is finished, so we can
+          // put everything in our text editor.
+          fclose(tfout->FP);
+          tfout->FP = NULL;
+
+          // put everything in the editor.
+          FileToEditor(tfout->Filename, editor, xget(editor, MUIA_TextEditor_HasChanged));
+
+          // make sure the temp file is deleted
+          CloseTempFile(tfout);
         }
 
-        if(signat)
-          WR_WriteSignature(out, signat-1);
-
-        fclose(out);
+        fclose(in);
       }
 
-      fclose(in);
+      CloseTempFile(tfin);
     }
-    CloseTempFile(tf);;
   }
 
   LEAVE();

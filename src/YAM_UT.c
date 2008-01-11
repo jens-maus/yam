@@ -4619,8 +4619,9 @@ BOOL FileToEditor(char *file, Object *editor, BOOL changed)
     if((parsedText = ParseEmailText(text, FALSE)) != NULL)
     {
       // set the new text and tell the editor that its content has changed
-      xset(editor, MUIA_TextEditor_Contents, parsedText,
+      xset(editor, MUIA_TextEditor_Contents,   parsedText,
                    MUIA_TextEditor_HasChanged, changed);
+
       free(parsedText);
 
       res = TRUE;
