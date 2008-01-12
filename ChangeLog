@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: added some debug output to the PlaySound() function.
+
 2008-01-11  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: fixed a bug in the WR_ChangeSignatureHook which shows up if the

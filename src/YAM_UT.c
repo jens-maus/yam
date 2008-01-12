@@ -6092,6 +6092,7 @@ void PlaySound(char *filename)
     {
       // create a datatype trigger
       struct dtTrigger dtt;
+      ULONG result;
 
       // Fill the trigger
       dtt.MethodID     = DTM_TRIGGER;
@@ -6100,7 +6101,8 @@ void PlaySound(char *filename)
       dtt.dtt_Data     = NULL;
 
       // stop the sound by calling DoDTMethodA()
-      DoDTMethodA(G->NewMailSound_Obj, NULL, NULL, (APTR)&dtt);
+      result = DoDTMethodA(G->NewMailSound_Obj, NULL, NULL, (APTR)&dtt);
+      D(DBF_UTIL, "stopping playback returned %ld", result);
 
       // finally dispose the old object
       DisposeDTObject(G->NewMailSound_Obj);
@@ -6113,6 +6115,7 @@ void PlaySound(char *filename)
     {
       // create a datatype trigger
       struct dtTrigger dtt;
+      ULONG result;
 
       // Fill the trigger
       dtt.MethodID     = DTM_TRIGGER;
@@ -6121,8 +6124,11 @@ void PlaySound(char *filename)
       dtt.dtt_Data     = NULL;
 
       // Play the sound by calling DoDTMethodA()
-      DoDTMethodA(G->NewMailSound_Obj, NULL, NULL, (APTR)&dtt);
+      result = DoDTMethodA(G->NewMailSound_Obj, NULL, NULL, (APTR)&dtt);
+      D(DBF_UTIL, "starting playback of '%s' returned %ld", filename, result);
     }
+    else
+      W(DBF_UTIL, "failed to create sound DT object from '%s'", filename);
   }
 
   LEAVE();
