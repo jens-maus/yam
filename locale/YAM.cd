@@ -6753,3 +6753,7 @@ the external editor dropping the changes\n\
 done in the internal editor?
 ; NUMBER
 ;
+MSG_LOG_SENDING_FAILED (2080//)
+Sending %ld message(s) using SMTP server '%s' failed
+; COUNT, HOST
+;

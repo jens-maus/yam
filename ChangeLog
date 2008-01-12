@@ -7,6 +7,8 @@ $URL$
 
 2008-01-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c, locale/YAM.cd, locale/german.ct: if sending messages fails the log
+    file will now no longer have a successful entry. This fixes bug #1869847.
   * YAM_UT.c: added some debug output to the PlaySound() function.
 
 2008-01-11  Jens Langner <Jens.Langner@light-speed.de>

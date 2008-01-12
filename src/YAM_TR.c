@@ -4653,26 +4653,34 @@ static void TR_AbortnClose(void)
 //  Applies filters to a sent message
 static BOOL TR_ApplySentFilters(struct Mail *mail)
 {
-  struct MinNode *curNode;
+  BOOL result = TRUE;
+
+  ENTER();
 
   // only if we have a positiv search count we start
   // our filtering at all, otherwise we return immediatly
   if(G->TR->SearchCount > 0)
   {
+    struct MinNode *curNode;
+
     // Now we process the read header to set all flags accordingly
     for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct FilterNode *filter = (struct FilterNode *)curNode;
 
-      if(DoFilterSearch(filter, mail))
+      if(DoFilterSearch(filter, mail) == TRUE)
       {
-        if(!ExecuteFilterAction(filter, mail))
-          return FALSE;
+        if(ExecuteFilterAction(filter, mail) == FALSE)
+        {
+          result = FALSE;
+          break;
+        }
       }
     }
   }
 
-  return TRUE;
+  RETURN(result);
+  return result;
 }
 ///
 
@@ -5380,7 +5388,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
               // send a CRLF+octet "\r\n." to signal that the data is finished.
               // we do it here because if there was an error and we send it, the message
               // will be send incomplete.
-              if(TR_SendSMTPCmd(SMTP_FINISH, NULL, tr(MSG_ER_BADRESPONSE)))
+              if(TR_SendSMTPCmd(SMTP_FINISH, NULL, tr(MSG_ER_BADRESPONSE)) != NULL)
               {
                 // put the transferStat to 100%
                 TR_TransStat_Update(ts, TS_SETMAX);
@@ -5612,7 +5620,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist, enum SendMode mode)
                     case 1:
                     {
                       setStatusToSent(mail->Reference);
-                      if(TR_ApplySentFilters(mail->Reference))
+                      if(TR_ApplySentFilters(mail->Reference) == TRUE)
                         MA_MoveCopy(mail->Reference, outfolder, sentfolder, FALSE, TRUE);
                     }
                     break;
@@ -5621,14 +5629,17 @@ BOOL TR_ProcessSEND(struct Mail **mlist, enum SendMode mode)
                     case 2:
                     {
                       setStatusToSent(mail->Reference);
-                      if (TR_ApplySentFilters(mail->Reference))
+                      if (TR_ApplySentFilters(mail->Reference) == TRUE)
                         MA_DeleteSingle(mail->Reference, FALSE, FALSE, FALSE);
                     }
                     break;
                   }
                 }
 
-                AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_Sending), c, host);
+                if(G->Error == FALSE)
+                  AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_Sending), c, host);
+                else
+                  AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_SENDING_FAILED), c, host);
 
                 // now we can disconnect from the SMTP
                 // server again

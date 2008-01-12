@@ -8419,3 +8419,6 @@ Wollen Sie den Text des externen Editors\n\
 verwenden und die gemachten Änderungen im\n\
 internen Editor verwerfen?
 ;
+MSG_LOG_SENDING_FAILED
+Senden von %ld Nachricht(en) via SMTP-Server '%s' fehlgeschlagen
+;
