@@ -7,6 +7,10 @@ $URL$
 
 2008-01-14  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c, YAM_FI.c: the assumption about the number of checked mails
+    compared to the number of spam classified mails was wrong if there are
+    no user defined filters and caused the actions new mail to be never
+    executed (i.e. play a sample).
   * YAM_TR.c: added some more debug output to track down a MOS problem.
 
 2008-01-12  Thore Böckelmann <tboeckel@gmx.de>

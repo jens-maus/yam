@@ -1399,7 +1399,7 @@ static void TR_Disconnect(void)
 
   if(G->TR_Socket != TCP_NO_SOCKET)
   {
-    if(G->TR_UseTLS)
+    if(G->TR_UseTLS == TRUE)
     {
       TR_EndTLS();
       G->TR_UseTLS = FALSE;
@@ -3246,7 +3246,7 @@ static int TR_ConnectPOP(int guilevel)
 
   // now we have to check whether SSL/TLS is selected for that POP account,
   // but perhaps TLS is not working.
-  if(pop3->SSLMode != P3SSL_OFF && !G->TR_UseableTLS)
+  if(pop3->SSLMode != P3SSL_OFF && G->TR_UseableTLS == FALSE)
   {
     ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
     RETURN(-1);
@@ -3723,12 +3723,16 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 //  Terminates a POP3 session
 static void TR_DisconnectPOP(void)
 {
+  ENTER();
+
   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
 
   if(G->Error == FALSE)
     TR_SendPOP3Cmd(POPCMD_QUIT, NULL, tr(MSG_ER_BADRESPONSE));
 
   TR_Disconnect();
+
+  LEAVE();
 }
 
 ///
@@ -3834,7 +3838,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
   {
     for(pop = ++G->TR->POP_Nr; pop < MAXP3; pop++)
     {
-      if(C->P3[pop] != NULL && C->P3[pop]->Enabled)
+      if(C->P3[pop] != NULL && C->P3[pop]->Enabled == TRUE)
         break;
     }
   }
@@ -6850,12 +6854,11 @@ static void TR_NewMailAlert(void)
   ENTER();
 
   SHOWVALUE(DBF_NET, stats->Downloaded);
-  SHOWVALUE(DBF_NET, rr->Checked);
   SHOWVALUE(DBF_NET, rr->Spam);
 
   // show the statistics only if we downloaded some mails at all,
   // and not all of them were spam mails
-  if(stats->Downloaded != 0 && rr->Checked > rr->Spam)
+  if(stats->Downloaded > 0 && stats->Downloaded > rr->Spam)
   {
     if(hasRequesterNotify(C->NotifyType) && G->TR->GUIlevel != POP_REXX)
     {

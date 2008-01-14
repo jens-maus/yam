@@ -1729,9 +1729,10 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
                   wasSpam = TRUE;
 
                   // update the stats
-                  G->RuleResults.Checked++;
                   G->RuleResults.Spam++;
                 }
+                // we just checked the mail
+                G->RuleResults.Checked++;
               }
             }
 
