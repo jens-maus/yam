@@ -3229,220 +3229,253 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
 //  Connects to a POP3 mail server
 static int TR_ConnectPOP(int guilevel)
 {
-   char passwd[SIZE_PASSWORD], host[SIZE_HOST], buf[SIZE_LINE], *p;
-   char *welcomemsg = NULL;
-   int pop = G->TR->POP_Nr, msgs;
-   struct POP3 *pop3 = C->P3[pop];
-   int port = pop3->Port;
-   char *resp;
-   enum ConnectError err;
+  char passwd[SIZE_PASSWORD], host[SIZE_HOST], buf[SIZE_LINE], *p;
+  char *welcomemsg = NULL;
+  int pop = G->TR->POP_Nr, msgs;
+  struct POP3 *pop3 = C->P3[pop];
+  int port = pop3->Port;
+  char *resp;
+  enum ConnectError err;
 
-   strlcpy(passwd, pop3->Password, sizeof(passwd));
-   strlcpy(host, pop3->Server, sizeof(host));
+  ENTER();
 
-   // now we have to check whether SSL/TLS is selected for that POP account,
-   // but perhaps TLS is not working.
-   if(pop3->SSLMode != P3SSL_OFF && !G->TR_UseableTLS)
-   {
-      ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
-      return -1;
-   }
+  D(DBF_NET, "connect to POP3 server '%s'", pop3->Server);
 
-   if(C->TransferWindow == TWM_SHOW || (C->TransferWindow == TWM_AUTO && (guilevel == POP_START || guilevel == POP_USER)))
-   {
-     // avoid MUIA_Window_Open's side effect of activating the window if it was already open
-     if(!xget(G->TR->GUI.WI, MUIA_Window_Open))
-       set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
-   }
-   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Connecting));
+  strlcpy(passwd, pop3->Password, sizeof(passwd));
+  strlcpy(host, pop3->Server, sizeof(host));
 
-   // If the hostname has a explicit :xxxxx port statement at the end we
-   // take this one, even if its not needed anymore.
-   if((p = strchr(host, ':')))
-   {
-     *p = '\0';
-     port = atoi(++p);
-   }
+  // now we have to check whether SSL/TLS is selected for that POP account,
+  // but perhaps TLS is not working.
+  if(pop3->SSLMode != P3SSL_OFF && !G->TR_UseableTLS)
+  {
+    ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
+    RETURN(-1);
+    return -1;
+  }
 
-   // set the busy text and window title to some
-   // descriptive to the job. Here we use the "account"
-   // name of the POP3 server as there might be more than
-   // one configured accounts for the very same host
-   // and as such the hostname might just be not enough
-   if(pop3->Account[0] != '\0')
-   {
-     BusyText(tr(MSG_TR_MailTransferFrom), pop3->Account);
-     TR_SetWinTitle(TRUE, pop3->Account);
-   }
-   else
-   {
-     // if the user hasn't specified any account name
-     // we take the hostname instead
-     BusyText(tr(MSG_TR_MailTransferFrom), host);
-     TR_SetWinTitle(TRUE, host);
-   }
+  if(C->TransferWindow == TWM_SHOW || (C->TransferWindow == TWM_AUTO && (guilevel == POP_START || guilevel == POP_USER)))
+  {
+    // avoid MUIA_Window_Open's side effect of activating the window if it was already open
+    if(xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
+      set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
+  }
+  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Connecting));
 
-   // now we start our connection to the POP3 server
-   if((err = TR_Connect(host, port)) != CONNECTERR_SUCCESS)
-   {
-     if(guilevel == POP_USER)
-     {
-       switch(err)
-       {
-         case CONNECTERR_SUCCESS:
-         case CONNECTERR_ABORTED:
-         case CONNECTERR_NO_ERROR:
-           // do nothing
-         break;
+  // If the hostname has a explicit :xxxxx port statement at the end we
+  // take this one, even if its not needed anymore.
+  if((p = strchr(host, ':')) != NULL)
+  {
+    *p = '\0';
+    port = atoi(++p);
+  }
 
-         // socket is already in use
-         case CONNECTERR_SOCKET_IN_USE:
-           ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE), host);
-         break;
+  // set the busy text and window title to some
+  // descriptive to the job. Here we use the "account"
+  // name of the POP3 server as there might be more than
+  // one configured accounts for the very same host
+  // and as such the hostname might just be not enough
+  if(pop3->Account[0] != '\0')
+  {
+    BusyText(tr(MSG_TR_MailTransferFrom), pop3->Account);
+    TR_SetWinTitle(TRUE, pop3->Account);
+  }
+  else
+  {
+    // if the user hasn't specified any account name
+    // we take the hostname instead
+    BusyText(tr(MSG_TR_MailTransferFrom), host);
+    TR_SetWinTitle(TRUE, host);
+  }
 
-         // socket() execution failed
-         case CONNECTERR_NO_SOCKET:
-           ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET), host);
-         break;
-
-         // couldn't establish non-blocking IO
-         case CONNECTERR_NO_NONBLOCKIO:
-           ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO), host);
-         break;
-
-         // connection request timed out
-         case CONNECTERR_TIMEDOUT:
-           ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT), host);
-         break;
-
-         // unknown host - gethostbyname() failed
-         case CONNECTERR_UNKNOWN_HOST:
-           ER_NewError(tr(MSG_ER_UnknownPOP), host);
-         break;
-
-         // general connection error
-         case CONNECTERR_UNKNOWN_ERROR:
-           ER_NewError(tr(MSG_ER_CantConnect), host);
-         break;
-
-         case CONNECTERR_SSLFAILED:
-         case CONNECTERR_INVALID8BIT:
-           // can't occur, do nothing
-         break;
-       }
-     }
-
-     return -1;
-   }
-
-   // If this connection should be a STLS like connection we have to get the welcome
-   // message now and then send the STLS command to start TLS negotiation
-   if(pop3->SSLMode == P3SSL_TLS)
-   {
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
-
-      // Initiate a connect and see if we succeed
-      if((resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
-        return -1;
-      welcomemsg = StrBufCpy(NULL, resp);
-
-      // If the user selected STLS support we have to first send the command
-      // to start TLS negotiation (RFC 2595)
-      if(TR_SendPOP3Cmd(POPCMD_STLS, NULL, tr(MSG_ER_BADRESPONSE)) == NULL)
-        return -1;
-   }
-
-   // Here start the TLS/SSL Connection stuff
-   if(pop3->SSLMode != P3SSL_OFF)
-   {
-     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_INITTLS));
-
-     // Now we have to Initialize and Start the TLS stuff if requested
-     if(TR_InitTLS() && TR_StartTLS())
-     {
-        G->TR_UseTLS = TRUE;
-     }
-     else
-     {
-        ER_NewError(tr(MSG_ER_INITTLS), host);
-        return -1;
-     }
-   }
-
-   // If this was a connection on a stunnel on port 995 or a non-ssl connection
-   // we have to get the welcome message now
-   if(pop3->SSLMode != P3SSL_TLS)
-   {
-      // Initiate a connect and see if we succeed
-      if((resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
-        return -1;
-      welcomemsg = StrBufCpy(NULL, resp);
-   }
-
-   if (!*passwd)
-   {
-      snprintf(buf, sizeof(buf), tr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
-      if (!StringRequest(passwd, SIZE_PASSWORD, tr(MSG_TR_PopLogin), buf, tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->TR->GUI.WI))
+  // now we start our connection to the POP3 server
+  if((err = TR_Connect(host, port)) != CONNECTERR_SUCCESS)
+  {
+    if(guilevel == POP_USER)
+    {
+      switch(err)
       {
-        return -1;
-      }
-   }
+        case CONNECTERR_SUCCESS:
+        case CONNECTERR_ABORTED:
+        case CONNECTERR_NO_ERROR:
+          // do nothing
+        break;
 
-   // if the user has selected APOP for that POP3 host
-   // we have to process it now
-   if (pop3->UseAPOP)
-   {
+        // socket is already in use
+        case CONNECTERR_SOCKET_IN_USE:
+          ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE), host);
+        break;
+
+        // socket() execution failed
+        case CONNECTERR_NO_SOCKET:
+          ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET), host);
+        break;
+
+        // couldn't establish non-blocking IO
+        case CONNECTERR_NO_NONBLOCKIO:
+          ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO), host);
+        break;
+
+        // connection request timed out
+        case CONNECTERR_TIMEDOUT:
+          ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT), host);
+        break;
+
+        // unknown host - gethostbyname() failed
+        case CONNECTERR_UNKNOWN_HOST:
+          ER_NewError(tr(MSG_ER_UnknownPOP), host);
+        break;
+
+        // general connection error
+        case CONNECTERR_UNKNOWN_ERROR:
+          ER_NewError(tr(MSG_ER_CantConnect), host);
+        break;
+
+        case CONNECTERR_SSLFAILED:
+        case CONNECTERR_INVALID8BIT:
+          // can't occur, do nothing
+        break;
+      }
+    }
+
+    RETURN(-1);
+    return -1;
+  }
+
+  // If this connection should be a STLS like connection we have to get the welcome
+  // message now and then send the STLS command to start TLS negotiation
+  if(pop3->SSLMode == P3SSL_TLS)
+  {
+    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
+
+    // Initiate a connect and see if we succeed
+    if((resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
+    {
+      RETURN(-1);
+      return -1;
+    }
+    welcomemsg = StrBufCpy(NULL, resp);
+
+    // If the user selected STLS support we have to first send the command
+    // to start TLS negotiation (RFC 2595)
+    if(TR_SendPOP3Cmd(POPCMD_STLS, NULL, tr(MSG_ER_BADRESPONSE)) == NULL)
+    {
+      RETURN(-1);
+      return -1;
+    }
+  }
+
+  // Here start the TLS/SSL Connection stuff
+  if(pop3->SSLMode != P3SSL_OFF)
+  {
+    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_INITTLS));
+
+    // Now we have to Initialize and Start the TLS stuff if requested
+    if(TR_InitTLS() == TRUE && TR_StartTLS() == TRUE)
+    {
+       G->TR_UseTLS = TRUE;
+    }
+    else
+    {
+       ER_NewError(tr(MSG_ER_INITTLS), host);
+       RETURN(-1);
+       return -1;
+    }
+  }
+
+  // If this was a connection on a stunnel on port 995 or a non-ssl connection
+  // we have to get the welcome message now
+  if(pop3->SSLMode != P3SSL_TLS)
+  {
+    // Initiate a connect and see if we succeed
+    if((resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
+    {
+      RETURN(-1);
+      return -1;
+    }
+    welcomemsg = StrBufCpy(NULL, resp);
+  }
+
+  if(passwd[0] == '\0')
+  {
+    snprintf(buf, sizeof(buf), tr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
+    if(StringRequest(passwd, SIZE_PASSWORD, tr(MSG_TR_PopLogin), buf, tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->TR->GUI.WI) == 0)
+    {
+      RETURN(-1);
+      return -1;
+    }
+  }
+
+  // if the user has selected APOP for that POP3 host
+  // we have to process it now
+  if(pop3->UseAPOP == TRUE)
+  {
+    // Now we get the APOP Identifier out of the welcome
+    // message
+    if((p = strchr(welcomemsg, '<')) != NULL)
+    {
       struct MD5Context context;
-      UBYTE digest[16];
+      char digest[16];
       int i, j;
 
-      // Now we get the APOP Identifier out of the welcome
-      // message
-      if((p = strchr(welcomemsg, '<')))
+      strlcpy(buf, p, sizeof(buf));
+      if((p = strchr(buf, '>')) != NULL)
+        p[1] = '\0';
+
+      // then we send the APOP command to authenticate via APOP
+      strlcat(buf, passwd, sizeof(buf));
+      MD5Init(&context);
+      MD5Update(&context, (unsigned char *)buf, strlen(buf));
+      MD5Final(digest, &context);
+      snprintf(buf, sizeof(buf), "%s ", pop3->User);
+      for(j=strlen(buf), i=0; i<16; j+=2, i++)
+        snprintf(&buf[j], sizeof(buf)-j, "%02x", digest[i]);
+      buf[j] = '\0';
+      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendAPOPLogin));
+      if(TR_SendPOP3Cmd(POPCMD_APOP, buf, tr(MSG_ER_BADRESPONSE)) == NULL)
       {
-         strlcpy(buf, p, sizeof(buf));
-         if ((p = strchr(buf, '>'))) p[1] = 0;
-
-         // then we send the APOP command to authenticate via APOP
-         strlcat(buf, passwd, sizeof(buf));
-         MD5Init(&context);
-         MD5Update(&context, (unsigned char *)buf, strlen(buf));
-         MD5Final(digest, &context);
-         snprintf(buf, sizeof(buf), "%s ", pop3->User);
-         for(j=strlen(buf), i=0; i<16; j+=2, i++)
-           snprintf(&buf[j], sizeof(buf)-j, "%02x", digest[i]);
-         buf[j] = 0;
-         set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendAPOPLogin));
-         if (TR_SendPOP3Cmd(POPCMD_APOP, buf, tr(MSG_ER_BADRESPONSE)) == NULL)
-           return -1;
-      }
-      else
-      {
-         ER_NewError(tr(MSG_ER_NoAPOP));
-         return -1;
-      }
-   }
-   else
-   {
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendUserID));
-      if (TR_SendPOP3Cmd(POPCMD_USER, pop3->User, tr(MSG_ER_BADRESPONSE)) == NULL)
+        RETURN(-1);
         return -1;
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendPassword));
-      if (TR_SendPOP3Cmd(POPCMD_PASS, passwd, tr(MSG_ER_BADRESPONSE)) == NULL)
-        return -1;
-   }
+      }
+    }
+    else
+    {
+      ER_NewError(tr(MSG_ER_NoAPOP));
+      RETURN(-1);
+      return -1;
+    }
+  }
+  else
+  {
+    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendUserID));
+    if(TR_SendPOP3Cmd(POPCMD_USER, pop3->User, tr(MSG_ER_BADRESPONSE)) == NULL)
+    {
+      RETURN(-1);
+      return -1;
+    }
 
-   FreeStrBuf(welcomemsg);
+    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendPassword));
+    if(TR_SendPOP3Cmd(POPCMD_PASS, passwd, tr(MSG_ER_BADRESPONSE)) == NULL)
+    {
+      RETURN(-1);
+      return -1;
+    }
+  }
 
-   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_GetStats));
-   if ((resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, tr(MSG_ER_BADRESPONSE))) == NULL)
-     return -1;
+  FreeStrBuf(welcomemsg);
 
-   sscanf(&resp[4], "%d", &msgs);
-   if(msgs != 0)
-     AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_ConnectPOP), pop3->User, host, msgs);
+  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_GetStats));
+  if((resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, tr(MSG_ER_BADRESPONSE))) == NULL)
+  {
+    RETURN(-1);
+    return -1;
+  }
 
-   return msgs;
+  sscanf(&resp[4], "%d", &msgs);
+  if(msgs != 0)
+    AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_ConnectPOP), pop3->User, host, msgs);
+
+  RETURN(msgs);
+  return msgs;
 }
 ///
 /// TR_DisplayMailList
@@ -3787,6 +3820,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
   {
     struct POP3 *p = C->P3[G->TR->POP_Nr];
 
+    D(DBF_NET, "downloaded %ld mails from server '%s'", G->TR->Stats.Downloaded, p->Server);
     TR_DisconnectPOP();
     TR_Cleanup();
     AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_Retrieving), G->TR->Stats.Downloaded-laststats, p->User, p->Server);
@@ -6814,6 +6848,10 @@ static void TR_NewMailAlert(void)
   struct RuleResult *rr = &G->RuleResults;
 
   ENTER();
+
+  SHOWVALUE(DBF_NET, stats->Downloaded);
+  SHOWVALUE(DBF_NET, rr->Checked);
+  SHOWVALUE(DBF_NET, rr->Spam);
 
   // show the statistics only if we downloaded some mails at all,
   // and not all of them were spam mails

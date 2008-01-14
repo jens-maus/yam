@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-14  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: added some more debug output to track down a MOS problem.
+
 2008-01-12  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c, locale/YAM.cd, locale/german.ct: if sending messages fails the log
