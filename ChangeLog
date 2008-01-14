@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-14  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MAf.c: again Outlook seems to violate known RFCs by inserting
+    only properitary headers for requesting a return receipt. YAM therefore
+    didn't react on any "Return-Receipt-To" header for requesting a receipt
+    and instead only recognized a "Disposition-Notification-To" header.
+    Now YAM should also react on the "Return-Receipt-To" headers and ask
+    the user what to do. We however won't insert that properitary header
+    field for any return receipt request.
+
 2008-01-14  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: fixed a signedness warning.

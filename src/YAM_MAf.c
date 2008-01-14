@@ -1795,7 +1795,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           ExtractAddress(value, &pe);
           email->ReturnPath = pe;
         }
-        else if(stricmp(field, "disposition-notification-to") == 0)
+        else if(stricmp(field, "disposition-notification-to") == 0 ||
+                stricmp(field, "return-receipt-to") == 0)
         {
           ExtractAddress(value, &pe);
           email->ReceiptTo = pe;
