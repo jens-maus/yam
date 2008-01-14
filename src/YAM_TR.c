@@ -3414,7 +3414,7 @@ static int TR_ConnectPOP(int guilevel)
     if((p = strchr(welcomemsg, '<')) != NULL)
     {
       struct MD5Context context;
-      char digest[16];
+      unsigned char digest[16];
       int i, j;
 
       strlcpy(buf, p, sizeof(buf));
