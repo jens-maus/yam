@@ -25,6 +25,8 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
+
 #include <proto/dos.h>
 #include <proto/icon.h>
 
@@ -33,6 +35,7 @@
 #include "YAM_locale.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
+#include "YAM_utilities.h"
 #include "extrasrc.h"
 
 #include "ImageCache.h"
@@ -424,6 +427,11 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                 free(theme->version);
 
               theme->version = strdup(value);
+              found = TRUE;
+            }
+            else if(stricmp(id, "IgnoreMissingImages") == 0)
+            {
+              G->NoImageWarning = Txt2Bool(value);
               found = TRUE;
             }
             else

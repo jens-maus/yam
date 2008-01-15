@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-15  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Themes.c: added "IgnoreMissingImages" as boolean config option in .theme
+    files to automatically ignore missing image files. This is quite handy if
+    you use the empty theme as you don't have to set the NOIMGWARNING ToolType.
+
 2008-01-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MAf.c: again Outlook seems to violate known RFCs by inserting
