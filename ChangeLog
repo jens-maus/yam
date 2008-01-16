@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-16  Vit Sindlarv <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2008-01-15  Thore Böckelmann <tboeckel@gmx.de>
 
   * Themes.c: added "IgnoreMissingImages" as boolean config option in .theme
