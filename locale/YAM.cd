@@ -2474,11 +2474,6 @@ MSG_HELP_EA_ST_PHONE (809//)
 Phone and/or\n\
 FAX number(s).
 ;
-MSG_HELP_EA_ST_BIRTHDAY (810//)
-Date of birth in\n\
-AmigaDOS format\n\
-(e.g. 10-Jan-1950).
-;
 MSG_HELP_EA_BC_PHOTO (811//)
 Portrait picture\n\
 of this person.
@@ -6756,4 +6751,8 @@ done in the internal editor?
 MSG_LOG_SENDING_FAILED (2080//)
 Sending %ld message(s) using SMTP server '%s' failed
 ; COUNT, HOST
+;
+MSG_HELP_EA_ST_BIRTHDAY (2081//)
+Date of birth in locale format\n\
+(e.g. 19.06.1974 or 19/06/1974).
 ;

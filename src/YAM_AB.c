@@ -29,12 +29,14 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include <clib/alib_protos.h>
 #include <dos/datetime.h>
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
 #include <libraries/gadtools.h>
+#include <libraries/locale.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
@@ -169,19 +171,257 @@ APTR AB_GotoEntry(char *alias)
 }
 
 ///
+/// ParseDateString
+// parse a date string produces by strftime() and put the result in a struct tm
+enum ScanDateState
+{
+  SDS_DEFAULT = 0,
+  SDS_SPECIFIER,
+  SDS_DONE,
+  SDS_SECOND,
+  SDS_MINUTE,
+  SDS_HOUR,
+  SDS_DAY_OF_MONTH,
+  SDS_MONTH,
+  SDS_YEAR,
+  SDS_DAY_OF_WEEK,
+  SDS_DAY_YEAR,
+  SDS_IS_DST,
+};
+
+#define FLG_SEC         (1<<0)
+#define FLG_MIN         (1<<1)
+#define FLG_HOUR        (1<<2)
+#define FLG_MDAY        (1<<3)
+#define FLG_MON         (1<<4)
+#define FLG_YEAR        (1<<5)
+#define FLG_WDAY        (1<<6)
+#define FLG_YDAY        (1<<7)
+#define FLG_ISDST       (1<<8)
+
+static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
+{
+  BOOL result = TRUE;
+  char fc;
+  char sc;
+  enum ScanDateState state = SDS_DEFAULT;
+  int flags = 0;
+
+  ENTER();
+
+  memset(res, 0, sizeof(*res));
+
+  // start with the first character in both strings
+  fc = *fmt++;
+  sc = *string++;
+
+  while(state != SDS_DONE)
+  {
+    if(fc == '\0' && sc == '\0')
+      state = SDS_DONE;
+
+    switch(state)
+    {
+      case SDS_DEFAULT:
+      {
+        if(fc == '%')
+        {
+          state = SDS_SPECIFIER;
+          fc = *fmt++;
+        }
+        else
+        {
+          // the format string seems to be malformed, bail out
+          state = SDS_DONE;
+        }
+      }
+      break;
+
+      case SDS_SPECIFIER:
+      {
+        switch(fc)
+        {
+          case 'd':
+          {
+            flags |= FLG_MDAY;
+            state = SDS_DAY_OF_MONTH;
+            fc = *fmt++;
+          }
+          break;
+
+          case 'm':
+          {
+            flags |= FLG_MON;
+            state = SDS_MONTH;
+            fc = *fmt++;
+          }
+          break;
+
+          case 'Y':
+          {
+            flags |= FLG_YEAR;
+            state = SDS_YEAR;
+            fc = *fmt++;
+          }
+          break;
+
+          default:
+          {
+            // unknown specifier, bail out
+            state = SDS_DONE;
+          }
+          break;
+        }
+      }
+      break;
+
+      case SDS_DAY_OF_MONTH:
+      {
+        if(sc == fc)
+        {
+          // next separator in format string found
+          state = SDS_DEFAULT;
+          fc = *fmt++;
+          sc = *string++;
+        }
+        else if(sc >= '0' && sc <= '9')
+        {
+          // valid number found, add it to the day of month
+          res->tm_mday = res->tm_mday * 10 + sc - '0';
+          sc = *string++;
+        }
+        else
+        {
+          // unexpected character, bail out
+          state = SDS_DONE;
+        }
+      }
+      break;
+
+      case SDS_MONTH:
+      {
+        if(sc == fc)
+        {
+          // next separator in format string found
+          state = SDS_DEFAULT;
+          fc = *fmt++;
+          sc = *string++;
+        }
+        else if(sc >= '0' && sc <= '9')
+        {
+          // valid number found, add it to the month
+          res->tm_mon = res->tm_mon * 10 + sc - '0';
+          sc = *string++;
+        }
+        else
+        {
+          // unexpected character, bail out
+          state = SDS_DONE;
+        }
+      }
+      break;
+
+      case SDS_YEAR:
+      {
+        if(sc == fc)
+        {
+          // next separator in format string found
+          state = SDS_DEFAULT;
+          fc = *fmt++;
+          sc = *string++;
+        }
+        else if(sc >= '0' && sc <= '9')
+        {
+          // valid number found, add it to the year
+          res->tm_year = res->tm_year * 10 + sc - '0';
+          sc = *string++;
+        }
+        else
+        {
+          // unexpected character, bail out
+          state = SDS_DONE;
+        }
+      }
+      break;
+
+      default:
+        // nothing to do
+      break;
+    }
+  }
+
+  // finally check if the calculated values are correct, but only those which
+  // were specified in the format string
+  if(flags & FLG_MDAY)
+  {
+    if(res->tm_mday >= 1 && res->tm_mday <= 31)
+    {
+      // nothing to adjust
+    }
+    else
+    {
+      result = FALSE;
+    }
+  }
+  if(flags & FLG_MON)
+  {
+    if(res->tm_mon >= 1 && res->tm_mon <= 12)
+    {
+      // tm_mon counts from 0 to 11
+      res->tm_mon--;
+    }
+    else
+    {
+      result = FALSE;
+    }
+  }
+  if(flags & FLG_YEAR)
+  {
+    if(res->tm_year >= 1900)
+    {
+      // tm_year counts the years from 1900
+      res->tm_year -= 1900;
+    }
+    else
+    {
+      result = FALSE;
+    }
+  }
+
+  return result;
+}
+
+///
 /// AB_ExpandBD
 //  Converts date from numeric into textual format
 char *AB_ExpandBD(long date)
 {
   static char datestr[SIZE_SMALL];
+  LONG day;
+  LONG month;
+  LONG year;
 
   ENTER();
 
+  year = date % 10000;
+  date = date / 10000;
+  month = date % 100;
+  day = date / 100;
+
   // check first if it could be a valid date!
-  if(!date || date/1000000 > 31 || date/1000000 < 1 || ((date/10000)%100) > 12 || ((date/10000)%100) < 1 || date%10000 < 1000)
+  // I think we can assume that nobody used EMail before WW1 :)
+  if(date == 0 || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900)
     datestr[0] = '\0';
   else
-    snprintf(datestr, sizeof(datestr), "%02ld-%s-%ld", date/1000000, months[((date/10000)%100)-1], date%10000);
+  {
+  	struct tm tm;
+
+  	tm.tm_mday = day;
+  	tm.tm_mon = month - 1;
+  	tm.tm_year = year - 1900;
+
+  	strftime(datestr, sizeof(datestr), G->Locale != NULL ? G->Locale->loc_ShortDateFormat : (STRPTR)"%d.%m.%Y", &tm);
+  }
 
   RETURN(datestr);
   return datestr;
@@ -193,29 +433,13 @@ char *AB_ExpandBD(long date)
 long AB_CompressBD(char *datestr)
 {
   long result = 0;
-  long m;
+  struct tm tm;
 
   ENTER();
 
-  for(m = 12; m > 0; m--)
+  if(ScanDateString(datestr, G->Locale != NULL ? G->Locale->loc_ShortDateFormat : (STRPTR)"%d.%m.%Y", &tm) == TRUE)
   {
-    // check for a valid month name
-    if(strnicmp(&datestr[3], months[m - 1], 3) == 0)
-    {
-      long d;
-
-      // check for a valid day
-      d = atoi(datestr);
-      if(d >= 1 && d <= 31)
-      {
-        long y;
-
-        // check for a valid year
-        y = atoi(&datestr[7]);
-        if(y >= 1800 && y <= 2100)
-          result = (100 * d + m) * 10000 + y;
-      }
-    }
+	result = tm.tm_mday * 1000000 + (tm.tm_mon + 1) * 10000 + (tm.tm_year + 1900);
   }
 
   RETURN(result);

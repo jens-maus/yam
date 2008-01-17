@@ -826,7 +826,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
       SetHelp(data->GUI.ST_COMMENT ,MSG_HELP_EA_ST_DESCRIPTION);
       SetHelp(data->GUI.BT_OKAY    ,MSG_HELP_EA_BT_OKAY       );
       SetHelp(data->GUI.BT_CANCEL  ,MSG_HELP_EA_BT_CANCEL     );
-      set(data->GUI.ST_BIRTHDAY, MUIA_String_Accept, "0123456789-AaBbCcDdEeFfGgJjLlMmNnOoPpRrSsTtUuVvYy");
+      set(data->GUI.ST_BIRTHDAY, MUIA_String_Accept, "0123456789.-/");
       DoMethod(data->GUI.BT_CANCEL,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&EA_CloseHook,winnum);
       DoMethod(data->GUI.BT_OKAY  ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&EA_OkayHook,winnum);
       DoMethod(data->GUI.WI       ,MUIM_Notify,MUIA_Window_CloseRequest,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook,&EA_CloseHook,winnum);

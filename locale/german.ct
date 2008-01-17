@@ -3345,14 +3345,6 @@ MSG_HELP_EA_ST_PHONE
 Telefon- und/oder Fax-Nummer(n).
 ; Phone and/or FAX number(s)
 ;
-MSG_HELP_EA_ST_BIRTHDAY
-Geburtsdatum\n\
-Benutzen Sie das AmigaDOS-Format,\n\
-z.B. 10-Jan-1950.
-; Date of birth.\n\
-; Use AmigaDOS format,\n\
-; e.g. 10-Jan-1950
-;
 MSG_HELP_EA_BC_PHOTO
 Porträtbild dieser Person\n\
 (Bild-Datatypes werden unterstützt).
@@ -8421,4 +8413,9 @@ internen Editor verwerfen?
 ;
 MSG_LOG_SENDING_FAILED
 Senden von %ld Nachricht(en) via SMTP-Server '%s' fehlgeschlagen
+;
+MSG_HELP_EA_ST_BIRTHDAY
+Geburtsdatum\n\
+Benutzen Sie das landestypische Format,\n\
+z.B. 19.06.1974.
 ;
