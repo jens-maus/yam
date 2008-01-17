@@ -466,27 +466,27 @@ MakeHook(CO_RemoteToggleHook,CO_RemoteToggleFunc);
 //  Initializes a new POP3 account
 struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
 {
-   struct POP3 *pop3;
+  struct POP3 *pop3;
 
-   ENTER();
+  ENTER();
 
-   if((pop3 = (struct POP3 *)calloc(1, sizeof(struct POP3))) != NULL)
-   {
-      if(first)
-      {
-         char *p = strchr(co->EmailAddress, '@');
+  if((pop3 = (struct POP3 *)calloc(1, sizeof(struct POP3))) != NULL)
+  {
+    if(first)
+    {
+      char *p = strchr(co->EmailAddress, '@');
 
-         strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(pop3->User));
-         strlcpy(pop3->Server, co->SMTP_Server, sizeof(pop3->Server));
-      }
+      strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(pop3->User));
+      strlcpy(pop3->Server, co->SMTP_Server, sizeof(pop3->Server));
+    }
 
-      pop3->Port = 110;
-      pop3->Enabled = TRUE;
-      pop3->DeleteOnServer = TRUE;
-   }
+    pop3->Port = 110;
+    pop3->Enabled = TRUE;
+    pop3->DeleteOnServer = TRUE;
+  }
 
-   RETURN(pop3);
-   return pop3;
+  RETURN(pop3);
+  return pop3;
 }
 
 ///
@@ -540,7 +540,7 @@ HOOKPROTONHNONP(CO_GetP3Entry, void)
     }
 
     // we have to enabled/disable the SSL support accordingly
-    set(gui->RA_POP3SECURE, MUIA_Disabled, !G->TR_UseableTLS && pop3->SSLMode == P3SSL_OFF);
+    set(gui->RA_POP3SECURE, MUIA_Disabled, G->TR_UseableTLS == FALSE || pop3->SSLMode == P3SSL_OFF);
   }
 
   LEAVE();
@@ -1609,7 +1609,7 @@ void CO_Validate(struct Config *co, BOOL update)
   // we also check if AmiSSL was found installed or not. And in case the
   // AmiSSL warning is enabled we notify the user about a not running
   // amissl installation.
-  if(co->AmiSSLCheck)
+  if(co->AmiSSLCheck == TRUE)
   {
     if(AmiSSLMasterBase == NULL || AmiSSLBase == NULL ||
        G->TR_UseableTLS == FALSE)
@@ -1646,7 +1646,7 @@ void CO_Validate(struct Config *co, BOOL update)
     }
   }
 
-  if(co->SpamFilterEnabled)
+  if(co->SpamFilterEnabled == TRUE)
   {
     // limit the spam probability threshold to sensible values
     if(co->SpamProbabilityThreshold < 75)
@@ -1674,7 +1674,7 @@ void CO_Validate(struct Config *co, BOOL update)
     saveAtEnd = TRUE;
   }
 
-  if(update && G->CO)
+  if(update == TRUE && G->CO != NULL)
   {
     switch(G->CO->VisiblePage)
     {
@@ -1702,13 +1702,13 @@ void CO_Validate(struct Config *co, BOOL update)
       break;
     }
 
-    if(G->CO->Visited[cp_NewMail] || G->CO->UpdateAll)
+    if(G->CO->Visited[cp_NewMail] == TRUE || G->CO->UpdateAll == TRUE)
     {
       // requeue the timerequest for the CheckMailDelay
       TC_Restart(TIO_CHECKMAIL, co->CheckMailDelay*60, 0);
     }
 
-    if(G->CO->Visited[cp_Spam] || G->CO->UpdateAll)
+    if(G->CO->Visited[cp_Spam] == TRUE || G->CO->UpdateAll == TRUE)
     {
       // if we enabled or disable the spam filter then we need to update
       // the enable/disable status of some toolbar items of the main window
@@ -1722,20 +1722,20 @@ void CO_Validate(struct Config *co, BOOL update)
       updateReadWindows = TRUE;
     }
 
-    if(G->CO->Visited[cp_Read] || G->CO->UpdateAll)
+    if(G->CO->Visited[cp_Read] == TRUE || G->CO->UpdateAll == TRUE)
     {
       // open read windows need to be updated, too
       updateHeaderMode = TRUE;
       updateSenderInfo = TRUE;
     }
 
-    if(G->CO->Visited[cp_Write] || G->CO->UpdateAll)
+    if(G->CO->Visited[cp_Write] == TRUE || G->CO->UpdateAll == TRUE)
     {
       // requeue the timerequest for the AutoSave interval
       TC_Restart(TIO_AUTOSAVE, co->AutoSave, 0);
     }
 
-    if(G->CO->Visited[cp_Lists] || G->CO->UpdateAll)
+    if(G->CO->Visited[cp_Lists] == TRUE || G->CO->UpdateAll == TRUE)
     {
       // First we set the PG_MAILLIST and NL_FOLDER Quiet
       set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
@@ -1755,12 +1755,12 @@ void CO_Validate(struct Config *co, BOOL update)
       set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
     }
 
-    if(G->CO->Visited[cp_AddressBook] || G->CO->UpdateAll)
+    if(G->CO->Visited[cp_AddressBook] == TRUE || G->CO->UpdateAll == TRUE)
     {
       AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
     }
 
-    if(G->CO->Visited[cp_LookFeel] || G->CO->UpdateAll)
+    if(G->CO->Visited[cp_LookFeel] == TRUE || G->CO->UpdateAll == TRUE)
     {
       // First we set the PG_MAILLIST and NL_FOLDER Quiet
       set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
@@ -1793,7 +1793,7 @@ void CO_Validate(struct Config *co, BOOL update)
         MA_ChangeSelected(TRUE);
     }
 
-    if(G->CO->Visited[cp_Mixed] || G->CO->UpdateAll)
+    if(G->CO->Visited[cp_Mixed] == TRUE || G->CO->UpdateAll == TRUE)
     {
       // in case the DockyIcon should be enabled we have reregister YAM
       // to application library for the DockyIcon to reappear
@@ -1848,7 +1848,7 @@ void CO_Validate(struct Config *co, BOOL update)
       #endif
     }
 
-    if(G->CO->Visited[cp_Update] || G->CO->UpdateAll)
+    if(G->CO->Visited[cp_Update] == TRUE || G->CO->UpdateAll == TRUE)
     {
       // make sure we reinit the update check timer
       InitUpdateCheck(FALSE);
@@ -1977,7 +1977,7 @@ HOOKPROTONHNONP(CO_OpenConfig, void)
 
   ENTER();
 
-  if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, tr(MSG_CO_Open), REQF_NONE, G->MA_MailDir, "")))
+  if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, tr(MSG_CO_Open), REQF_NONE, G->MA_MailDir, "")) != NULL)
   {
     char cname[SIZE_PATHFILE];
 

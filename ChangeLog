@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-17  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c, YAM_COs.c: the TLS/SSL radio buttons where not correctly disabled
+    if AmiSSLv3 was not available.
+
 2008-01-16  Vit Sindlarv <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.

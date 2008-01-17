@@ -2073,7 +2073,7 @@ void CO_SetConfig(void)
       set(gui->ST_SMTPPORT, MUIA_String_Integer, CE->SMTP_Port);
       setstring(gui->ST_DOMAIN, CE->SMTP_Domain);
       setmutex(gui->RA_SMTPSECURE, CE->SMTP_SecureMethod);
-      nnset(gui->RA_SMTPSECURE, MUIA_Disabled, !G->TR_UseableTLS && CE->SMTP_SecureMethod == SMTPSEC_NONE);
+      nnset(gui->RA_SMTPSECURE, MUIA_Disabled, G->TR_UseableTLS == FALSE || CE->SMTP_SecureMethod == SMTPSEC_NONE);
       setcheckmark(gui->CH_SMTP8BIT  ,CE->Allow8bit);
       setcheckmark(gui->CH_USESMTPAUTH,CE->Use_SMTP_AUTH);
       setstring(gui->ST_SMTPAUTHUSER,CE->SMTP_AUTH_User);
