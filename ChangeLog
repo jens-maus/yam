@@ -7,6 +7,10 @@ $URL$
 
 2008-01-18  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: added SKIPGENESISUSER option to skip automatic login of Genesis'
+    global user. This will enable Genesis users to get the normal login prompt.
+    Also changed all usages of /S options to true boolean values instead of
+    negated integers.
   * YAM_AB.c: added missing RETURN() macro call and some debug output about the
     string to be parsed.
 

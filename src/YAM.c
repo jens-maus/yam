@@ -123,6 +123,9 @@ struct Args
   char **attach;
   LONG   noImgWarning;
   LONG   noCatalog;
+  #if !defined(__amigaos4__)
+  LONG   skipGenesisUser;
+  #endif
 };
 
 static struct NewRDArgs nrda;
@@ -2621,7 +2624,7 @@ static void Login(const char *user, const char *password,
   // we query genesis.library (from the Genesis TCP/IP stack) for the user
   // name in case the caller doesn't want to force a specific username
   #if !defined(__amigaos4__)
-  if(user == NULL)
+  if(user == NULL && args.skipGenesisUser == 0)
   {
     struct Library *GenesisBase;
 
@@ -2686,7 +2689,23 @@ static LONG ParseCommandArgs(void)
   if((extHelp = malloc(SIZE_EXTHELP)) != NULL)
   {
     // set argument template
-    nrda.Template = (STRPTR)"USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M,NOIMGWARNING/S,NOCATALOG/S";
+    nrda.Template = (STRPTR)"USER/K,"
+                            "PASSWORD/K,"
+                            "MAILDIR/K,"
+                            "PREFSFILE/K,"
+                            "NOCHECK/S,"
+                            "HIDE/S,"
+                            "DEBUG/S,"
+                            "MAILTO/K,"
+                            "SUBJECT/K,"
+                            "LETTER/K,"
+                            "ATTACH/M,"
+                            "NOIMGWARNING/S,"
+                            "NOCATALOG/S"
+                            #if !defined(__amigaos4__)
+                            ",NOGENESISUSER/S"
+                            #endif
+                            ;
 
     // now we build an extended help page text
     snprintf(extHelp, SIZE_EXTHELP, "%s (%s)\n%s\n\nUsage: YAM <options>\nOptions/Tooltypes:\n"
@@ -2713,6 +2732,10 @@ static LONG ParseCommandArgs(void)
                                     "                        image files.\n"
                                     "  NOCATALOG           : Starts YAM without loading any catalog\n"
                                     "                        translation (english).\n"
+                                    #if !defined(__amigaos4__)
+                                    "  SKIPGENESISUSER     : Skip automatic login of Genesis' global\n"
+                                    "                        user.\n"
+                                    #endif
                                     "\n%s: ", yamversion,
                                               yamversiondate,
                                               yamcopyright,
@@ -2729,11 +2752,7 @@ static LONG ParseCommandArgs(void)
 
     // now call NewReadArgs to parse all our commandline/tooltype arguments in accordance
     // to the above template
-    if((result = NewReadArgs(WBmsg, &nrda)) != 0)
-    {
-      args.hide = -args.hide;
-      args.nocheck = -args.nocheck;
-    }
+    result = NewReadArgs(WBmsg, &nrda);
 
     free(extHelp);
     nrda.ExtHelp = NULL;
@@ -3002,12 +3021,12 @@ int main(int argc, char **argv)
     if(args.maildir == NULL)
       strlcpy(G->MA_MailDir, G->ProgDir, sizeof(G->MA_MailDir));
 
-    G->TR_Debug = -args.debug;
+    G->TR_Debug = args.debug ? TRUE : FALSE;
     G->TR_Socket = TCP_NO_SOCKET;
     G->TR_Allow = TRUE;
     G->CO_DST = GetDST(FALSE);
-    G->NoImageWarning = args.noImgWarning;
-    G->NoCatalogTranslation = args.noCatalog;
+    G->NoImageWarning = args.noImgWarning ? TRUE : FALSE;
+    G->NoCatalogTranslation = args.noCatalog ? TRUE : FALSE;
 
     // setup our ImageCache
     ImageCacheSetup();
@@ -3025,7 +3044,7 @@ int main(int argc, char **argv)
 
     if(yamFirst == TRUE)
     {
-      InitBeforeLogin((BOOL)args.hide);
+      InitBeforeLogin(args.hide ? TRUE : FALSE);
       Login(args.user, args.password, args.maildir, args.prefsfile);
       InitAfterLogin();
     }
@@ -3119,7 +3138,7 @@ int main(int argc, char **argv)
     {
       int wrwin;
 
-      DoStartup((BOOL)args.nocheck, (BOOL)args.hide);
+      DoStartup(args.nocheck ? TRUE : FALSE, args.hide ? TRUE : FALSE);
       if((args.mailto != NULL || args.letter != NULL || args.subject != NULL || args.attach != NULL) && (wrwin = MA_NewNew(NULL, 0)) >= 0)
       {
         if(args.mailto != NULL)
@@ -3149,7 +3168,7 @@ int main(int argc, char **argv)
     }
     else
     {
-      DoStartup((BOOL)args.nocheck, FALSE);
+      DoStartup(args.nocheck ? TRUE : FALSE, FALSE);
     }
 
     user = US_GetCurrentUser();
