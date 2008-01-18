@@ -590,6 +590,8 @@ void EmitHeader(FILE *fh, const char *hdr, const char *body)
 {
   ENTER();
 
+  D(DBF_MAIL, "writing header '%s' with content '%s'", hdr, body);
+
   fprintf(fh, "%s: ", hdr);
   HeaderFputs(fh, body, NULL);
   fputc('\n', fh);
@@ -1675,155 +1677,155 @@ static BOOL WR_ComposeMulti(FILE *fh, const struct Compose *comp, const char *bo
 //  Outputs header and body of a new message
 BOOL WriteOutMessage(struct Compose *comp)
 {
-   BOOL success;
-   struct TempFile *tf=NULL;
-   FILE *fh = comp->FH;
-   struct WritePart *firstpart = comp->FirstPart;
-   char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
+  BOOL success;
+  struct TempFile *tf=NULL;
+  FILE *fh = comp->FH;
+  struct WritePart *firstpart = comp->FirstPart;
+  char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
 
-   ENTER();
+  ENTER();
 
-   if (comp->Mode == NEW_BOUNCE)
-   {
-     if(comp->DelSend)
-       EmitHeader(fh, "X-YAM-Options", "delsent");
+  if(comp->Mode == NEW_BOUNCE)
+  {
+    if(comp->DelSend == TRUE)
+      EmitHeader(fh, "X-YAM-Options", "delsent");
 
-     success = WR_Bounce(fh, comp);
+    success = WR_Bounce(fh, comp);
 
-     RETURN(success);
-     return success;
-   }
-   else if (comp->Mode == NEW_SAVEDEC)
-   {
-      if(!WR_SaveDec(fh, comp))
+    RETURN(success);
+    return success;
+  }
+  else if(comp->Mode == NEW_SAVEDEC)
+  {
+    if(WR_SaveDec(fh, comp) == FALSE)
+    {
+      RETURN(FALSE);
+      return FALSE;
+    }
+    else
+      goto mimebody;
+  }
+
+  if(firstpart == NULL)
+  {
+    RETURN(FALSE);
+    return FALSE;
+  }
+
+  /* encrypted multipart message requested? */
+  if(firstpart->Next != NULL && comp->Security > SEC_NONE  && comp->Security <= SEC_BOTH)
+  {
+    struct Compose tcomp;
+    FILE *tfh;
+
+    if((tf = OpenTempFile(NULL)) != NULL && (tfh = fopen(tf->Filename, "w")) != NULL)
+    {
+      setvbuf(tfh, NULL, _IOFBF, SIZE_FILEBUF);
+
+      memcpy(&tcomp,comp,sizeof(tcomp));   // clone struct Compose
+      tcomp.FH = tfh;                      // set new filehandle
+      tcomp.Security = SEC_NONE;           // temp msg gets attachments and no security
+
+      /* clear a few other fields to avoid redundancies */
+      tcomp.MailCC = NULL;
+      tcomp.MailBCC = NULL;
+      tcomp.ExtHeader = NULL;
+      tcomp.Importance = 0;
+      tcomp.DelSend = FALSE;
+      tcomp.RequestMDN = FALSE;
+      tcomp.UserInfo = FALSE;
+
+      if(WriteOutMessage(&tcomp) == TRUE)    /* recurse! */
       {
-        RETURN(FALSE);
-        return FALSE;
-      }
-      else
-        goto mimebody;
-   }
+        struct WritePart *tpart = comp->FirstPart; /* save parts list so we're able to recover from a calloc() error */
 
-   if(!firstpart)
-   {
-     RETURN(FALSE);
-     return FALSE;
-   }
-
-   /* encrypted multipart message requested? */
-   if (firstpart->Next && comp->Security > SEC_NONE  && comp->Security <= SEC_BOTH)
-   {
-      struct Compose tcomp;
-      FILE *tfh;
-
-      if((tf = OpenTempFile(NULL)) && (tfh = fopen(tf->Filename, "w")))
-      {
-         setvbuf(tfh, NULL, _IOFBF, SIZE_FILEBUF);
-
-         memcpy(&tcomp,comp,sizeof(tcomp));   // clone struct Compose
-         tcomp.FH = tfh;                      // set new filehandle
-         tcomp.Security = SEC_NONE;           // temp msg gets attachments and no security
-
-         /* clear a few other fields to avoid redundancies */
-         tcomp.MailCC = NULL;
-         tcomp.MailBCC = NULL;
-         tcomp.ExtHeader = NULL;
-         tcomp.Importance = 0;
-         tcomp.DelSend = FALSE;
-         tcomp.RequestMDN = FALSE;
-         tcomp.UserInfo = FALSE;
-
-         if(WriteOutMessage(&tcomp))    /* recurse! */
-         {
-            struct WritePart *tpart = comp->FirstPart; /* save parts list so we're able to recover from a calloc() error */
-
-            /* replace with single new part */
-            if((comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart))))
-            {
-               comp->FirstPart->EncType = tpart->EncType;          /* reuse encoding */
-               FreePartsList(tpart);                               /* free old parts list */
-               comp->FirstPart->ContentType = "message/rfc822";    /* the only part is an email message */
-               comp->FirstPart->Filename = tf->Filename;           /* set filename to tempfile */
-               comp->Signature = 0;                                /* only use sig in enclosed mail */
-            }
-            else
-            {
-               /* no errormsg here - the window probably won't open anyway... */
-               DisplayBeep(NULL);
-               comp->FirstPart = tpart;     /* just restore old parts list */
-               comp->Security = 0;          /* switch off security */
-               /* we'll most likely get more errors further down :( */
-            }
-         }
-         else
-         {
-            ER_NewError(tr(MSG_ER_PGPMultipart));
-            comp->Security = 0;
-         }
-
-         fclose(tfh);
+        /* replace with single new part */
+        if((comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart))) != NULL)
+        {
+          comp->FirstPart->EncType = tpart->EncType;          /* reuse encoding */
+          FreePartsList(tpart);                               /* free old parts list */
+          comp->FirstPart->ContentType = "message/rfc822";    /* the only part is an email message */
+          comp->FirstPart->Filename = tf->Filename;           /* set filename to tempfile */
+          comp->Signature = 0;                                /* only use sig in enclosed mail */
+        }
+        else
+        {
+          /* no errormsg here - the window probably won't open anyway... */
+          DisplayBeep(NULL);
+          comp->FirstPart = tpart;     /* just restore old parts list */
+          comp->Security = 0;          /* switch off security */
+          /* we'll most likely get more errors further down :( */
+        }
       }
       else
       {
-         ER_NewError(tr(MSG_ER_PGPMultipart));
-         comp->Security = 0;
+        ER_NewError(tr(MSG_ER_PGPMultipart));
+        comp->Security = 0;
       }
-   }
-   *options = 0;
-   if (comp->DelSend) strlcat(options, ",delsent", sizeof(options));
-   if (comp->Security) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",%s", SecCodes[comp->Security]);
-   if (comp->Signature) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",sigfile%d", comp->Signature-1);
-   if (*options) EmitHeader(fh, "X-YAM-Options", &options[1]);
-   EmitRcptHeader(fh, "From", comp->From ? comp->From : AB_BuildAddressString(C->EmailAddress, C->RealName));
-   if (comp->ReplyTo) EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
-   if (comp->MailTo) EmitRcptHeader(fh, "To", comp->Security == 4 ? C->ReMailer : comp->MailTo);
-   if (comp->MailCC) EmitRcptHeader(fh, "CC", comp->MailCC);
-   if (comp->MailBCC) EmitRcptHeader(fh, "BCC", comp->MailBCC);
-   EmitHeader(fh, "Date", GetDateTime());
-   fprintf(fh, "Message-ID: <%s>\n", NewID(TRUE));
-   if (comp->IRTMsgID) EmitHeader(fh, "In-Reply-To", comp->IRTMsgID);
-   rcptto = comp->ReplyTo ? comp->ReplyTo : (comp->From ? comp->From : C->EmailAddress);
-   if(comp->RequestMDN) EmitRcptHeader(fh, "Disposition-Notification-To", rcptto);
-   if (comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
-   fprintf(fh, "User-Agent: %s\n", yamuseragent);
-   if (comp->UserInfo) WR_WriteUserInfo(fh, comp->From);
-   if (*C->Organization) EmitHeader(fh, "Organization", C->Organization);
-   if (*comp->Subject) EmitHeader(fh, "Subject", comp->Subject);
-   if (comp->ExtHeader) WR_EmitExtHeader(fh, comp);
+
+      fclose(tfh);
+    }
+    else
+    {
+      ER_NewError(tr(MSG_ER_PGPMultipart));
+      comp->Security = 0;
+    }
+  }
+  *options = 0;
+  if(comp->DelSend) strlcat(options, ",delsent", sizeof(options));
+  if(comp->Security) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",%s", SecCodes[comp->Security]);
+  if(comp->Signature) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",sigfile%d", comp->Signature-1);
+  if(*options) EmitHeader(fh, "X-YAM-Options", &options[1]);
+  EmitRcptHeader(fh, "From", comp->From ? comp->From : AB_BuildAddressString(C->EmailAddress, C->RealName));
+  if(comp->ReplyTo) EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
+  if(comp->MailTo) EmitRcptHeader(fh, "To", comp->Security == 4 ? C->ReMailer : comp->MailTo);
+  if(comp->MailCC) EmitRcptHeader(fh, "CC", comp->MailCC);
+  if(comp->MailBCC) EmitRcptHeader(fh, "BCC", comp->MailBCC);
+  EmitHeader(fh, "Date", GetDateTime());
+  fprintf(fh, "Message-ID: <%s>\n", NewID(TRUE));
+  if(comp->IRTMsgID) EmitHeader(fh, "In-Reply-To", comp->IRTMsgID);
+  rcptto = comp->ReplyTo ? comp->ReplyTo : (comp->From ? comp->From : C->EmailAddress);
+  if(comp->RequestMDN) EmitRcptHeader(fh, "Disposition-Notification-To", rcptto);
+  if(comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
+  fprintf(fh, "User-Agent: %s\n", yamuseragent);
+  if(comp->UserInfo) WR_WriteUserInfo(fh, comp->From);
+  if(*C->Organization) EmitHeader(fh, "Organization", C->Organization);
+  if(*comp->Subject) EmitHeader(fh, "Subject", comp->Subject);
+  if(comp->ExtHeader) WR_EmitExtHeader(fh, comp);
 
 mimebody:
 
-   fputs("MIME-Version: 1.0\n", fh); // RFC 1521 requires that
+  fputs("MIME-Version: 1.0\n", fh); // RFC 1521 requires that
 
-   strlcpy(boundary, NewID(FALSE), sizeof(boundary));
+  strlcpy(boundary, NewID(FALSE), sizeof(boundary));
 
-   if(comp->GenerateMDN)
-   {
-     success = WR_ComposeReport(fh, comp, boundary);
-   }
-   else if(comp->Security > SEC_NONE && comp->Security <= SEC_BOTH)
-   {
-     success = WR_ComposePGP(fh, comp, boundary);
-   }
-   else if(firstpart->Next)
-   {
-     success = WR_ComposeMulti(fh, comp, boundary);
-   }
-   else
-   {
-     WriteContentTypeAndEncoding(fh, firstpart);
-     if(comp->Security == SEC_SENDANON && comp->OldSecurity != SEC_SENDANON)
-       WR_Anonymize(fh, comp->MailTo);
+  if(comp->GenerateMDN == TRUE)
+  {
+    success = WR_ComposeReport(fh, comp, boundary);
+  }
+  else if(comp->Security > SEC_NONE && comp->Security <= SEC_BOTH)
+  {
+    success = WR_ComposePGP(fh, comp, boundary);
+  }
+  else if(firstpart->Next != NULL)
+  {
+    success = WR_ComposeMulti(fh, comp, boundary);
+  }
+  else
+  {
+    WriteContentTypeAndEncoding(fh, firstpart);
+    if(comp->Security == SEC_SENDANON && comp->OldSecurity != SEC_SENDANON)
+      WR_Anonymize(fh, comp->MailTo);
 
-     fputs("\n", fh);
+    fputs("\n", fh);
 
-     success = EncodePart(fh, firstpart);
-   }
+    success = EncodePart(fh, firstpart);
+  }
 
-   CloseTempFile(tf);
+  CloseTempFile(tf);
 
-   RETURN(success);
-   return success;
+  RETURN(success);
+  return success;
 }
 
 ///

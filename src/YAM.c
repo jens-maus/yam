@@ -500,7 +500,7 @@ static void ADSTnotify_stop(void)
     // stop the NotifyRequest
     struct NotifyRequest *nr = &ADSTdata.nRequest;
 
-    if(nr->nr_Name)
+    if(nr->nr_Name != NULL)
     {
       EndNotify(nr);
       FreeSignal((LONG)nr->nr_stuff.nr_Signal.nr_SignalNum);
@@ -588,7 +588,7 @@ static int GetDST(BOOL update)
   // FACTS saves the DST information in a ENV:FACTS/DST env variable which will be
   // Hex 00 or 01 to indicate the DST value.
   if((update == FALSE || ADSTdata.method == ADST_FACTS) && result == 0
-    && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, sizeof(buffer), GVF_BINARY_VAR) > 0)
+     && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, sizeof(buffer), GVF_BINARY_VAR) > 0)
   {
     ADSTdata.method = ADST_FACTS;
 
@@ -617,7 +617,7 @@ static int GetDST(BOOL update)
   // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
   // DST is actually active.
   if((update == FALSE || ADSTdata.method == ADST_IXGMT) && result == 0
-    && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, sizeof(buffer), GVF_BINARY_VAR) >= 4)
+     && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, sizeof(buffer), GVF_BINARY_VAR) >= 4)
   {
     ADSTdata.method = ADST_IXGMT;
 
@@ -983,13 +983,20 @@ static BOOL TC_Init(void)
 //  Returns TRUE if the internal editor is currently being used
 static BOOL TC_ActiveEditor(int wrwin)
 {
-   if (G->WR[wrwin])
-   {
-      APTR ao = (APTR)xget(G->WR[wrwin]->GUI.WI, MUIA_Window_ActiveObject);
+  BOOL active = FALSE;
 
-      return (BOOL)(ao==G->WR[wrwin]->GUI.TE_EDIT);
-   }
-   return FALSE;
+  ENTER();
+
+  if(G->WR[wrwin] != NULL)
+  {
+    Object *ao = (Object *)xget(G->WR[wrwin]->GUI.WI, MUIA_Window_ActiveObject);
+
+    if(ao == G->WR[wrwin]->GUI.TE_EDIT)
+      active = TRUE;
+  }
+
+  RETURN(active);
+  return active;
 }
 
 ///
@@ -1021,7 +1028,7 @@ static void TC_Dispatcher(enum TimerIO tio)
       D(DBF_TIMERIO, "timer[%ld]: TIO_WRINDEX fired @ %s", tio, dateString);
 
       // only write the indexes if no Editor is actually in use
-      if(!TC_ActiveEditor(0) && !TC_ActiveEditor(1))
+      if(TC_ActiveEditor(0) == FALSE && TC_ActiveEditor(1) == FALSE)
         MA_UpdateIndexes(FALSE);
 
       // prepare the timer to get fired again
@@ -1345,13 +1352,12 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
   if(semaphore == NULL)
   {
     // allocate the memory for the semaphore system structure itself
-    semaphore = AllocSysObjectTags(ASOT_SEMAPHORE,
-                                   ASOSEM_Size,     sizeof(struct StartupSemaphore),
-                                   ASOSEM_Name,     (ULONG)STARTUP_SEMAPHORE_NAME,
-                                   ASOSEM_CopyName, TRUE,
-                                   ASOSEM_Public,   TRUE,
-                                   TAG_DONE);
-    if(semaphore != NULL)
+    if((semaphore = AllocSysObjectTags(ASOT_SEMAPHORE,
+                                       ASOSEM_Size,     sizeof(struct StartupSemaphore),
+                                       ASOSEM_Name,     STARTUP_SEMAPHORE_NAME,
+                                       ASOSEM_CopyName, TRUE,
+                                       ASOSEM_Public,   TRUE,
+                                       TAG_DONE)) != NULL)
     {
       // initialize the semaphore structure and start with a use counter of 1
       semaphore->UseCount = 1;
@@ -1432,6 +1438,7 @@ static void Terminate(void)
   {
     // search through our ReadDataList
     struct MinNode *curNode;
+
     for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ;)
     {
       struct ReadMailData *rmData = (struct ReadMailData *)curNode;
@@ -1717,7 +1724,7 @@ static void yam_exitfunc(void)
     CurrentDir(olddirlock);
   }
 
-  if(nrda.Template)
+  if(nrda.Template != NULL)
     NewFreeArgs(&nrda);
 
   // close some libraries now
@@ -1740,7 +1747,11 @@ static void yam_exitfunc(void)
 //  Shows progress of program initialization in the splash window
 static void SplashProgress(const char *txt, int percent)
 {
+  ENTER();
+
   DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, txt, percent);
+
+  LEAVE();
 }
 ///
 /// PopUp
@@ -1755,7 +1766,7 @@ void PopUp(void)
   nnset(G->App, MUIA_Application_Iconified, FALSE);
 
   // avoid MUIA_Window_Open's side effect of activating the window if it was already open
-  if(!xget(window, MUIA_Window_Open))
+  if(xget(window, MUIA_Window_Open) == FALSE)
     set(window, MUIA_Window_Open, TRUE);
 
   DoMethod(window, MUIM_Window_ScreenToFront);
@@ -1800,8 +1811,12 @@ void PopUp(void)
 //  A second copy of YAM was started
 HOOKPROTONHNONP(DoublestartFunc, void)
 {
+  ENTER();
+
   if(G->App != NULL && G->MA != NULL && G->MA->GUI.WI != NULL)
     PopUp();
+
+  LEAVE();
 }
 MakeStaticHook(DoublestartHook, DoublestartFunc);
 ///
@@ -1965,7 +1980,7 @@ static BOOL Root_New(BOOL hidden)
 
   if((G->App = YAMObject, End) != NULL)
   {
-    if(hidden)
+    if(hidden == TRUE)
       set(G->App, MUIA_Application_Iconified, TRUE);
 
     DoMethod(G->App, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &DoublestartHook);
@@ -1973,7 +1988,7 @@ static BOOL Root_New(BOOL hidden)
 
     // create the splash window object and return true if
     // everything worked out fine.
-    if((G->SplashWinObject = SplashwindowObject, End))
+    if((G->SplashWinObject = SplashwindowObject, End) != NULL)
     {
       G->InStartupPhase = TRUE;
 
@@ -2036,7 +2051,7 @@ static void InitAfterLogin(void)
   // before we go and create the first MUI windows
   // we register the application to application.library
   #if defined(__amigaos4__)
-  if(ApplicationBase)
+  if(ApplicationBase != NULL)
   {
     struct ApplicationIconInfo aii;
 
@@ -2054,7 +2069,7 @@ static void InitAfterLogin(void)
   #endif
 
   // Create a new Main & Addressbook Window
-  if(!(G->MA = MA_New()) || !(G->AB = AB_New()))
+  if((G->MA = MA_New()) == NULL || (G->AB = AB_New()) == NULL)
      Abort(tr(MSG_ErrorMuiApp));
 
   // make sure the GUI objects for the embedded read pane are created
@@ -2107,7 +2122,7 @@ static void InitAfterLogin(void)
   if(FO_GetFolderByType(FT_TRASH, NULL) == NULL)
     newfolders |= FO_CreateFolder(FT_TRASH, FolderName[FT_TRASH], tr(MSG_MA_TRASH));
 
-  if(C->SpamFilterEnabled)
+  if(C->SpamFilterEnabled == TRUE)
   {
     // check if the spam folder has to be created
     if(FO_GetFolderByType(FT_SPAM, NULL) == NULL)
@@ -2152,7 +2167,7 @@ static void InitAfterLogin(void)
         }
       }
 
-      if(createSpamFolder)
+      if(createSpamFolder == TRUE)
       {
         struct Folder *spamFolder;
 
@@ -2179,7 +2194,7 @@ static void InitAfterLogin(void)
     }
   }
 
-  if(newfolders)
+  if(newfolders == TRUE)
   {
     set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
     FO_SaveTree(CreateFilename(".folders"));
@@ -2212,7 +2227,7 @@ static void InitAfterLogin(void)
       continue;
 
     if((isIncomingFolder(folder) || isOutgoingFolder(folder) || isTrashFolder(folder) ||
-        C->LoadAllFolders) && !isProtectedFolder(folder))
+        C->LoadAllFolders == TRUE) && !isProtectedFolder(folder))
     {
       // call the getIndex function which on one hand loads the full .index file
       // and makes sure that all "new" mail is marked to unread if the user
@@ -2246,7 +2261,7 @@ static void InitAfterLogin(void)
 
     // now we have to add the amount of mails of this folder to the foldergroup
     // aswell and also the grandparents.
-    while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
+    while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)) != NULL)
     {
       // fo_parent is NULL then it`s ROOT and we have to skip here
       // because we cannot have a status of the ROOT tree.
@@ -2434,7 +2449,7 @@ static void InitBeforeLogin(BOOL hidden)
   InitXPKPackerList();
 
   // initialize our timers
-  if(!TC_Init())
+  if(TC_Init() == FALSE)
     Abort(tr(MSG_ErrorTimer));
 
   // initialize our ASL FileRequester cache stuff
@@ -2622,7 +2637,7 @@ static void Login(const char *user, const char *password,
   // we query genesis.library (from the Genesis TCP/IP stack) for the user
   // name in case the caller doesn't want to force a specific username
   #if !defined(__amigaos4__)
-  if(user == NULL && args.noAutoLogin == 0)
+  if(user == NULL)
   {
     struct Library *GenesisBase;
 
@@ -2776,7 +2791,7 @@ int main(int argc, char **argv)
   if(SysBase->lib_Version < 52 ||
      (SysBase->lib_Version == 52 && SysBase->lib_Revision < 2))
   {
-    if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) &&
+    if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) != NULL &&
        GETINTERFACE("main", IIntuition, IntuitionBase))
     {
       struct EasyStruct ErrReq;
@@ -2802,7 +2817,7 @@ int main(int argc, char **argv)
   #if _M68060 || _M68040 || _M68030 || _M68020 || __mc68020 || __mc68030 || __mc68040 || __mc68060
   if((SysBase->AttnFlags & AFF_68020) == 0)
   {
-    if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)))
+    if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) != NULL)
     {
       struct EasyStruct ErrReq;
 
@@ -2946,7 +2961,7 @@ int main(int argc, char **argv)
   INITLIB("diskfont.library",  37, 0, &DiskfontBase,  "main", &IDiskfont,  TRUE, NULL);
 
   // now we parse the command-line arguments
-  if((err = ParseCommandArgs()))
+  if((err = ParseCommandArgs()) != 0)
   {
     PrintFault(err, "YAM");
 
@@ -2955,7 +2970,7 @@ int main(int argc, char **argv)
   }
 
   // security only, can happen for residents only
-  if(!(progdir = GetProgramDir()))
+  if((progdir = GetProgramDir()) == (BPTR)0)
     exit(RETURN_ERROR);
 
   olddirlock = CurrentDir(progdir);
@@ -3080,8 +3095,8 @@ int main(int argc, char **argv)
           {
             // set some default receiver and subject, because the autosave file just contains
             // the message text
-            set(G->WR[wrwin]->GUI.ST_TO, MUIA_String_Contents, "no@receiver");
-            set(G->WR[wrwin]->GUI.ST_SUBJECT, MUIA_String_Contents, "(subject)");
+            setstring(G->WR[wrwin]->GUI.ST_TO, "no@receiver");
+            setstring(G->WR[wrwin]->GUI.ST_SUBJECT, "(subject)");
 
             // load the file in the new editor gadget and flag it as changed
             FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT, TRUE);
@@ -3182,7 +3197,7 @@ int main(int argc, char **argv)
                           APPATTR_Port,     (uint32)&G->AppLibPort,
                           TAG_DONE);
 
-      if(G->AppLibPort)
+      if(G->AppLibPort != NULL)
         applibsig = (1UL << G->AppLibPort->mp_SigBit);
       else
       {
