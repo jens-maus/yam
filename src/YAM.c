@@ -123,9 +123,7 @@ struct Args
   char **attach;
   LONG   noImgWarning;
   LONG   noCatalog;
-  #if !defined(__amigaos4__)
-  LONG   skipGenesisUser;
-  #endif
+  LONG   noAutoUser;
 };
 
 static struct NewRDArgs nrda;
@@ -2624,7 +2622,7 @@ static void Login(const char *user, const char *password,
   // we query genesis.library (from the Genesis TCP/IP stack) for the user
   // name in case the caller doesn't want to force a specific username
   #if !defined(__amigaos4__)
-  if(user == NULL && args.skipGenesisUser == 0)
+  if(user == NULL && args.noAutoUser == 0)
   {
     struct Library *GenesisBase;
 
@@ -2701,11 +2699,8 @@ static LONG ParseCommandArgs(void)
                             "LETTER/K,"
                             "ATTACH/M,"
                             "NOIMGWARNING/S,"
-                            "NOCATALOG/S"
-                            #if !defined(__amigaos4__)
-                            ",NOGENESISUSER/S"
-                            #endif
-                            ;
+                            "NOCATALOG/S,"
+                            "NOAUTOUSER/S";
 
     // now we build an extended help page text
     snprintf(extHelp, SIZE_EXTHELP, "%s (%s)\n%s\n\nUsage: YAM <options>\nOptions/Tooltypes:\n"
@@ -2732,10 +2727,8 @@ static LONG ParseCommandArgs(void)
                                     "                        image files.\n"
                                     "  NOCATALOG           : Starts YAM without loading any catalog\n"
                                     "                        translation (english).\n"
-                                    #if !defined(__amigaos4__)
-                                    "  SKIPGENESISUSER     : Skip automatic login of Genesis' global\n"
-                                    "                        user.\n"
-                                    #endif
+                                    "  NOAUTOUSER          : Skip automatic login of globally defined\n"
+                                    "                        users (i.e. by the Genesis TCP/IP stack).\n"
                                     "\n%s: ", yamversion,
                                               yamversiondate,
                                               yamcopyright,

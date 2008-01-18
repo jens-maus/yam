@@ -7,6 +7,8 @@ $URL$
 
 2008-01-18  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: renamed the SKIPGENESISUSER option to NOAUTOUSER which is available
+    in all builds.
   * YAM.c: added SKIPGENESISUSER option to skip automatic login of Genesis'
     global user. This will enable Genesis users to get the normal login prompt.
     Also changed all usages of /S options to true boolean values instead of
