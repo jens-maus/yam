@@ -123,7 +123,7 @@ struct Args
   char **attach;
   LONG   noImgWarning;
   LONG   noCatalog;
-  LONG   noAutoUser;
+  LONG   noAutoLogin;
 };
 
 static struct NewRDArgs nrda;
@@ -2622,7 +2622,7 @@ static void Login(const char *user, const char *password,
   // we query genesis.library (from the Genesis TCP/IP stack) for the user
   // name in case the caller doesn't want to force a specific username
   #if !defined(__amigaos4__)
-  if(user == NULL && args.noAutoUser == 0)
+  if(user == NULL && args.noAutoLogin == 0)
   {
     struct Library *GenesisBase;
 
@@ -2700,7 +2700,7 @@ static LONG ParseCommandArgs(void)
                             "ATTACH/M,"
                             "NOIMGWARNING/S,"
                             "NOCATALOG/S,"
-                            "NOAUTOUSER/S";
+                            "NOAUTOLOGIN/S";
 
     // now we build an extended help page text
     snprintf(extHelp, SIZE_EXTHELP, "%s (%s)\n%s\n\nUsage: YAM <options>\nOptions/Tooltypes:\n"
@@ -2727,7 +2727,7 @@ static LONG ParseCommandArgs(void)
                                     "                        image files.\n"
                                     "  NOCATALOG           : Starts YAM without loading any catalog\n"
                                     "                        translation (english).\n"
-                                    "  NOAUTOUSER          : Skip automatic login of globally defined\n"
+                                    "  NOAUTOLOGIN         : Skip automatic login of globally defined\n"
                                     "                        users (i.e. by the Genesis TCP/IP stack).\n"
                                     "\n%s: ", yamversion,
                                               yamversiondate,
