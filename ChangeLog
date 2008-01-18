@@ -7,6 +7,8 @@ $URL$
 
 2008-01-18  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_WR.c: added some debug output to the header emit functions to track down
+    that japanese UTF8 encoding bug.
   * YAM.c, YAM_WR.c: some more minor changes according to the STYLEGUIDE.
   * YAM_WR.c, YAM_CO.c: some minor changes according to the STYLEGUIDE.
   * YAM.c: renamed the SKIPGENESISUSER option to NOAUTOUSER which is available

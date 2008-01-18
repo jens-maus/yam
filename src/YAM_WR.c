@@ -513,7 +513,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
 
   ENTER();
 
-  if(param)
+  if(param != NULL)
     paramLen = strlen(param);
 
   // let us now search for any non-ascii compliant character aswell
@@ -537,14 +537,17 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
   if(doEncoding == FALSE)
   {
     if(param != NULL)
-      doEncoding = (c-s+1+paramLen+6) > 78;
+    {
+      if((c-s+1+paramLen+6) > 78)
+        doEncoding = TRUE;
+    }
     else
     {
       // we have to check for stray =? strings as we are
       // going to consider a rfc2047 encoding
-      doEncoding = ((c = strstr(s, "=?")) && isascii(*(c+1)) &&
-                    (c == s || isspace(*(c-1))));
-
+      if((c = strstr(s, "=?")) != NULL && isascii(*(c+1)) &&
+           (c == s || isspace(*(c-1))))
+        doEncoding = TRUE;
     }
 
   }
@@ -552,21 +555,24 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
 
   // if an encoding is required, we go and process it accordingly but
   // have to check whether we do rfc2047 or rfc2231 based encoding
-  if(doEncoding)
+  if(doEncoding == TRUE)
   {
-    if(param)
+    if(param != NULL)
     {
       // do the actual rfc2231 based MIME paramater encoding
+      D(DBF_MAIL, "writing RFC2231 content '%s'='%s'", param, s);
       rfc2231_encode_file(fh, param, s);
     }
     else
     {
       // do the actual rfc2047 based encoding
+      D(DBF_MAIL, "writing RFC2047 content '%s'", s);
       rfc2047_encode_file(fh, s);
     }
   }
-  else if(param)
+  else if(param != NULL)
   {
+    D(DBF_MAIL, "writing quoted content '%s'='%s'", param, s);
     // output the parameter name right before
     // the resulting parameter value
     fprintf(fh, "\n\t%s=\"%s\"", param, s);
@@ -577,6 +583,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
     // the resulting string will also be not > 78 chars in case we
     // have to encode a MIME parameter, so we go and putout the source
     // string immediately
+    D(DBF_MAIL, "writing plain content '%s'", s);
     fputs(s, fh);
   }
 
@@ -694,7 +701,7 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
   }
 
   // output the Content-Description if appropriate
-  if((p = part->Description) && *p)
+  if((p = part->Description) != NULL && p[0] != '\0')
     EmitHeader(fh, "Content-Description", p);
 
   LEAVE();
