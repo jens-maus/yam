@@ -209,6 +209,8 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
 
   ENTER();
 
+  D(DBF_UTIL, "scan date string '%s' with format '%s'", string, fmt);
+
   memset(res, 0, sizeof(*res));
 
   // start with the first character in both strings
@@ -388,6 +390,7 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
     }
   }
 
+  RETURN(result);
   return result;
 }
 

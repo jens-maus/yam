@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-18  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: added missing RETURN() macro call and some debug output about the
+    string to be parsed.
+
 2008-01-17  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c, YAM_EA.c, locale/YAM.cd, locale/german.ct: birthday dates are now
