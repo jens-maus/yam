@@ -2077,18 +2077,22 @@ HOOKPROTONHNO(CO_ChangePageFunc, void, int *arg)
 {
   enum ConfigPage page = (enum ConfigPage)(*arg);
 
-  if(page < cp_FirstSteps || page >= cp_Max)
-    return;
+  ENTER();
 
-  // the config is not saved yet, but some parts (like the signature) need to be saved nevertheless
-  CO_GetConfig(FALSE);
+  if(page >= cp_FirstSteps && page < cp_Max)
+  {
+    // the config is not saved yet, but some parts (like the signature) need to be saved nevertheless
+    CO_GetConfig(FALSE);
 
-  G->CO->VisiblePage = page;
-  G->CO->Visited[page] = TRUE;
+    G->CO->VisiblePage = page;
+    G->CO->Visited[page] = TRUE;
 
-  CO_SetConfig();
+    CO_SetConfig();
 
-  set(G->CO->GUI.GR_PAGE, MUIA_Group_ActivePage, *arg);
+    set(G->CO->GUI.GR_PAGE, MUIA_Group_ActivePage, page);
+  }
+
+  LEAVE();
 }
 MakeStaticHook(CO_ChangePageHook,CO_ChangePageFunc);
 ///

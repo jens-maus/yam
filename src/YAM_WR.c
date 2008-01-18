@@ -1866,7 +1866,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
   ENTER();
 
   // Workaround for a MUI bug
-  if(winOpen)
+  if(winOpen == TRUE)
     set(gui->RG_PAGE, MUIA_Group_ActivePage, xget(gui->RG_PAGE, MUIA_Group_ActivePage));
 
   // clear some variables we fill up later on
@@ -1880,11 +1880,11 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
   // get the contents of the TO: String gadget and check if it is valid
   addr = (char *)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-  if(!addr)
+  if(addr == NULL)
   {
     ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_TO, MUIA_String_Contents));
 
-    if(winOpen)
+    if(winOpen == TRUE)
       set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
 
     set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
@@ -1892,15 +1892,15 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     LEAVE();
     return;
   }
-  else if(!addr[0] && quietMode == FALSE)
+  else if(addr[0] == '\0' && quietMode == FALSE)
   {
     // set the TO Field active and go back
-    if(winOpen)
+    if(winOpen == TRUE)
       set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
 
     set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
 
-    if(MUI_Request(G->App, gui->WI, 0, NULL, tr(MSG_WR_NoRcptReqGad), tr(MSG_WR_ErrorNoRcpt)))
+    if(MUI_Request(G->App, gui->WI, 0, NULL, tr(MSG_WR_NoRcptReqGad), tr(MSG_WR_ErrorNoRcpt)) != 0)
       mode = WRITE_HOLD;
     else
     {
@@ -1913,15 +1913,15 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
   // get the content of the Subject: String gadget and check if it is empty or not.
   comp.Subject = (char *)xget(gui->ST_SUBJECT, MUIA_String_Contents);
-  if(wr->Mode != NEW_BOUNCE && quietMode == FALSE && C->WarnSubject &&
+  if(wr->Mode != NEW_BOUNCE && quietMode == FALSE && C->WarnSubject == TRUE &&
      (comp.Subject == NULL || comp.Subject[0] == '\0'))
   {
-    if(winOpen)
+    if(winOpen == TRUE)
       set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
 
     set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
 
-    if(!MUI_Request(G->App, gui->WI, 0, NULL, tr(MSG_WR_OKAYCANCELREQ), tr(MSG_WR_NOSUBJECTREQ)))
+    if(MUI_Request(G->App, gui->WI, 0, NULL, tr(MSG_WR_OKAYCANCELREQ), tr(MSG_WR_NOSUBJECTREQ)) == 0)
     {
       LEAVE();
       return;
@@ -1936,11 +1936,11 @@ void WR_NewMail(enum WriteMode mode, int winnum)
   {
     // now we check the From gadget and raise an error if is invalid
     addr = (char *)DoMethod(gui->ST_FROM, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-    if(!addr)
+    if(addr == NULL)
     {
       ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_FROM, MUIA_String_Contents));
 
-      if(winOpen)
+      if(winOpen == TRUE)
         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
 
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
@@ -1948,15 +1948,15 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       LEAVE();
       return;
     }
-    else if(!addr[0] && quietMode == FALSE)
+    else if(addr[0] == '\0' && quietMode == FALSE)
     {
       // set the TO Field active and go back
-      if(winOpen)
+      if(winOpen == TRUE)
         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
 
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
 
-      if(!MUI_Request(G->App, gui->WI, 0, NULL, tr(MSG_WR_NOSENDERREQGAD), tr(MSG_WR_ERRORNOSENDER)))
+      if(MUI_Request(G->App, gui->WI, 0, NULL, tr(MSG_WR_NOSENDERREQGAD), tr(MSG_WR_ERRORNOSENDER)) == 0)
       {
         LEAVE();
         return;
@@ -1967,11 +1967,11 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
     // then we check the CC string gadget
     addr = (char *)DoMethod(gui->ST_CC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-    if(!addr)
+    if(addr == NULL)
     {
       ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_CC, MUIA_String_Contents));
 
-      if(winOpen)
+      if(winOpen == TRUE)
         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
 
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_CC);
@@ -1984,11 +1984,11 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
     // then we check the BCC string gadget
     addr = (char *)DoMethod(gui->ST_BCC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-    if(!addr)
+    if(addr == NULL)
     {
       ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_BCC, MUIA_String_Contents));
 
-      if(winOpen)
+      if(winOpen == TRUE)
         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
 
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_BCC);
@@ -2001,11 +2001,11 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
     // then we check the ReplyTo string gadget
     addr = (char *)DoMethod(gui->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-    if(!addr)
+    if(addr == NULL)
     {
       ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_REPLYTO, MUIA_String_Contents));
 
-      if(winOpen)
+      if(winOpen == TRUE)
         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
 
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_REPLYTO);
@@ -2062,7 +2062,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
   {
     case NEW_EDIT:
     {
-      if(wr->refMail != NULL && MailExists(wr->refMail, NULL))
+      if(wr->refMail != NULL && MailExists(wr->refMail, NULL) == TRUE)
       {
         GetMailFile(newMailFile, outfolder, wr->refMail);
         break;
@@ -2080,7 +2080,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
   // now open the new mail file for write operations
   if(newMailFile[0] != '\0' &&
-     (comp.FH = fopen(newMailFile, "w")))
+     (comp.FH = fopen(newMailFile, "w")) != NULL)
   {
     struct ExtendedMail *email;
     int stat = mode == WRITE_HOLD ? SFLAG_HOLD : SFLAG_QUEUED;
@@ -2104,7 +2104,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     if(G->WR[winnum]->FileNotifyActive == TRUE)
       EndNotify(G->WR_NotifyRequest[winnum]);
 
-    if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)))
+    if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)) != NULL)
     {
       email->Mail.sflags = stat;
 

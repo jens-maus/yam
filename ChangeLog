@@ -7,6 +7,7 @@ $URL$
 
 2008-01-18  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_WR.c, YAM_CO.c: some minor changes according to the STYLEGUIDE.
   * YAM.c: renamed the SKIPGENESISUSER option to NOAUTOUSER which is available
     in all builds.
   * YAM.c: added SKIPGENESISUSER option to skip automatic login of Genesis'
