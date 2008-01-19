@@ -1889,6 +1889,8 @@ int rfc2047_encode_file(FILE *fh, const char *str)
   char *eb_wend = NULL;
   BOOL encode_mode = FALSE;
 
+  ENTER();
+
   // in the following we parse the string charwise and separate each
   // single word, analyze it to be RFC 2047 compliant and if any non US-ASCII
   // chars are found we convert them to quoted printables and concatenate them
@@ -1949,7 +1951,7 @@ int rfc2047_encode_file(FILE *fh, const char *str)
         // then we check whether the current line is
         // larger than 75 chars as this is the limit for a line
         // containing RFC 2047 encoded strings
-        while((ebp-encode_buf) > ENCWORD_LEN)
+        while((ebp-encode_buf-1) > ENCWORD_LEN)
         {
           // check if there are any words before the current one
           if(eb_wstart != encode_buf)
@@ -1971,11 +1973,12 @@ int rfc2047_encode_file(FILE *fh, const char *str)
           }
           else
           {
-            // so it seems to now got a huge encoded-word that we
+            // so it seems we now got a huge encoded-word that we
             // require to split up into several small (<75 chars) ones
             // and we do this in a loop, of course.
-            while((ebp-encode_buf) > ENCWORD_LEN)
+            while((ebp-encode_buf-1) > ENCWORD_LEN)
             {
+              int move_start;
               char *split_pos;
 
               // ok, now it gets a bit more tricky, as we
@@ -2004,27 +2007,16 @@ int rfc2047_encode_file(FILE *fh, const char *str)
               // can't dealing with them in headers
               fwrite("?=\n ", 4*sizeof(char), 1, fh);
 
-              if(ebp-split_pos > 3)
-              {
-                int move_start;
+              // as we splitted an encoded-word we have to start the next
+              // line with a proper encoded-word charset information.
+              move_start = snprintf(encode_buf, sizeof(encode_buf), "=?%s?Q?", strippedCharsetName(G->localCharset));
 
-                // as we splitted an encoded-word we have to start the next
-                // line with a proper encoded-word start again.
-                move_start = snprintf(encode_buf, sizeof(encode_buf), "=?%s?Q?", strippedCharsetName(G->localCharset));
+              // then move the other stuff to the start again
+              memmove(encode_buf+move_start, split_pos, ebp-split_pos);
 
-                // then move the other stuff to the start again
-                memmove(encode_buf+move_start, split_pos, ebp-split_pos);
-
-                eb_wstart = encode_buf+move_start;
-                eb_wend = eb_wstart+(eb_wend-split_pos);
-                ebp = eb_wstart+(ebp-split_pos);
-              }
-              else
-              {
-                eb_wstart = encode_buf;
-                eb_wend = encode_buf;
-                ebp = encode_buf;
-              }
+              eb_wstart = encode_buf+move_start;
+              eb_wend = eb_wstart+(eb_wend-split_pos);
+              ebp = eb_wstart+(ebp-split_pos);
             }
           }
         }
@@ -2139,7 +2131,7 @@ int rfc2047_encode_file(FILE *fh, const char *str)
           // only if there is an encoded-word on the current line
           // we check whether the line is too long and split
           // it accordingly.
-          if((ebp-encode_buf) > ENCWORD_LEN)
+          if((ebp-encode_buf-1) > ENCWORD_LEN)
           {
             // check if there are any words before the current one
             // and if not we got a huge plain unencoded word on the line
@@ -2177,6 +2169,7 @@ int rfc2047_encode_file(FILE *fh, const char *str)
   // write it out to the file stream
   fwrite(encode_buf, strlen(encode_buf), 1, fh);
 
+  RETURN(0);
   return 0;
 }
 

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MI.c: fixed bug #1874388 where the RFC2047 header encoding routines did
+    not correctly perform a line break under certain situations. This had the
+    effect that in those cases the encoding routines doubled the subject
+    line.
+
 2008-01-18  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: added some debug output to the header emit functions to track down
