@@ -546,8 +546,10 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
       // we have to check for stray =? strings as we are
       // going to consider a rfc2047 encoding
       if((c = strstr(s, "=?")) != NULL && isascii(*(c+1)) &&
-           (c == s || isspace(*(c-1))))
+         (c == s || isspace(*(c-1))))
+      {
         doEncoding = TRUE;
+      }
     }
 
   }
