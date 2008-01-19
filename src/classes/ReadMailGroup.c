@@ -36,6 +36,7 @@
 
 #include "HTML2Mail.h"
 #include "FileInfo.h"
+#include "Timer.h"
 
 #include "Debug.h"
 
@@ -1012,7 +1013,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
           // start the timer event. Please note that the timer event might be
           // canceled by the MA_ChangeSelected() function when the next mail
           // will be selected.
-          TC_Restart(TIO_READSTATUSUPDATE, 0, (C->StatusChangeDelay-500)*1000);
+          RestartTimer(TIMER_READSTATUSUPDATE, 0, (C->StatusChangeDelay-500)*1000);
         }
         else
         {

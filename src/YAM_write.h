@@ -175,6 +175,7 @@ BOOL  WR_AddFileToList(int winnum, const char *filename, const char *name, BOOL 
 void  WR_AddSignature(int winnum, int signat);
 void  WR_App(int winnum, STRPTR fileName);
 char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length);
+BOOL EditorObjectActive(const int wrwin);
 void  WR_Cleanup(int winnum);
 void  WR_NewMail(enum WriteMode mode, int winnum);
 int   WR_Open(int winnum, BOOL bounce);

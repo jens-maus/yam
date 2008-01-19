@@ -61,7 +61,7 @@
 // debug flags
 #define DBF_ALWAYS   (1<<0)
 #define DBF_STARTUP  (1<<1)     // for startup/shutdown events (YAM.c)
-#define DBF_TIMERIO  (1<<2)     // for timerIO debug output (YAM.c)
+#define DBF_TIMER    (1<<2)     // for timer debug output (Timer.c)
 #define DBF_CONFIG   (1<<3)     // for configuration management (YAM_CO.c)
 #define DBF_FILTER   (1<<4)     // for filter/search management (YAM_FI.c)
 #define DBF_FOLDER   (1<<5)     // for folder management (YAM_FO.c, YAM_MAf.c)

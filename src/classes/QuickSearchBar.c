@@ -524,9 +524,9 @@ DECLARE(SearchContentChanged) // char *content, ULONG force
       // the correct mailview is displayed to the user
       set(data->BT_CLEARBUTTON, MUIA_ShowMe, TRUE);
 
-      // now we issue a TC_Restart() command to schedule
+      // now we issue a RestartTimer() command to schedule
       // the actual search in about 400ms from now on
-      TC_Restart(TIO_PROCESSQUICKSEARCH, 0, msg->force ? 1 : 500000);
+      RestartTimer(TIMER_PROCESSQUICKSEARCH, 0, msg->force ? 1 : 500000);
     }
   }
   else
@@ -536,7 +536,7 @@ DECLARE(SearchContentChanged) // char *content, ULONG force
     if(xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active) == VO_ALL)
     {
       // first we make sure no waiting timer is scheduled
-      TC_Stop(TIO_PROCESSQUICKSEARCH);
+      StopTimer(TIMER_PROCESSQUICKSEARCH);
 
       // now we switch the ActivePage of the mailview pagegroup
       DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_SwitchToList, LT_MAIN);
@@ -548,7 +548,7 @@ DECLARE(SearchContentChanged) // char *content, ULONG force
     else
     {
       // otherwise we issue a quicksearch start as well
-      TC_Restart(TIO_PROCESSQUICKSEARCH, 0, 500000);
+      RestartTimer(TIMER_PROCESSQUICKSEARCH, 0, 500000);
     }
   }
 
@@ -590,7 +590,7 @@ DECLARE(SearchOptionChanged) // int activeSearchOption
   {
     // immediately process the search, but make sure there is no
     // pending timerIO waiting already
-    TC_Stop(TIO_PROCESSQUICKSEARCH);
+    StopTimer(TIMER_PROCESSQUICKSEARCH);
     DoMethod(obj, MUIM_QuickSearchBar_ProcessSearch);
   }
 
@@ -620,7 +620,7 @@ DECLARE(ViewOptionChanged) // int activeCycle
   {
     // immediately process the search, but make sure there is no
     // pending timerIO waiting already
-    TC_Stop(TIO_PROCESSQUICKSEARCH);
+    StopTimer(TIMER_PROCESSQUICKSEARCH);
     DoMethod(obj, MUIM_QuickSearchBar_ProcessSearch);
   }
 
@@ -748,7 +748,7 @@ DECLARE(Clear)
   ENTER();
 
   // first we make sure no waiting timer is scheduled
-  TC_Stop(TIO_PROCESSQUICKSEARCH);
+  StopTimer(TIMER_PROCESSQUICKSEARCH);
 
   // now we switch the ActivePage of the mailview pagegroup
   DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_SwitchToList, LT_MAIN);

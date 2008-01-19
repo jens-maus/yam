@@ -2303,7 +2303,7 @@ void AddZombieFile(const char *fileName)
       D(DBF_UTIL, "added file '%s' to the zombie list", fileName);
 
       // trigger the retry mechanism in 5 minutes
-      TC_Restart(TIO_DELETEZOMBIEFILES, 5 * 60, 0);
+      RestartTimer(TIMER_DELETEZOMBIEFILES, 5 * 60, 0);
     }
     else
       free(zombie);

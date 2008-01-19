@@ -102,20 +102,20 @@ void InitUpdateCheck(BOOL initial)
 
       // instead of calling CheckForUpdates() directly, we issue
       // a timer to timeout in 1 milliseconds
-      TC_Restart(TIO_UPDATECHECK, 0, 1);
+      RestartTimer(TIMER_UPDATECHECK, 0, 1);
     }
     else
     {
       // we now (re)issue the next update check with the same update
       // interval as our previous one.
       D(DBF_UPDATE, "update-check is due to be processed in %ld seconds.", nextCheck.Seconds - now.Seconds);
-      TC_Restart(TIO_UPDATECHECK, nextCheck.Seconds - now.Seconds, 0);
+      RestartTimer(TIMER_UPDATECHECK, nextCheck.Seconds - now.Seconds, 0);
     }
   }
   else
   {
     // make sure the updatecheck timer is not running anymore
-    TC_Stop(TIO_UPDATECHECK);
+    StopTimer(TIMER_UPDATECHECK);
   }
 
   LEAVE();
@@ -142,7 +142,7 @@ BOOL CheckForUpdates(void)
 
     // pause the mail check timer so that we are not
     // interfering with an automatic mail check action
-    TC_Pause(TIO_CHECKMAIL);
+    PauseTimer(TIMER_CHECKMAIL);
 
     // now we open a new TCP/IP connection socket
     if(TR_OpenTCPIP() == TRUE)
@@ -443,7 +443,7 @@ BOOL CheckForUpdates(void)
     MA_ChangeTransfer(TRUE);
 
     // resume the mail check timer
-    TC_Resume(TIO_CHECKMAIL);
+    ResumeTimer(TIMER_CHECKMAIL);
   }
 
   // as the last operation we get the current time as the

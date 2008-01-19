@@ -35,13 +35,14 @@
 
 #include "netinet/in.h"
 
-#include "YAM_rexx_rxif.h"   /* struct RuleResult */
+#include "YAM_rexx_rxif.h"   // struct RuleResult
 #include "YAM_stringsizes.h"
-#include "YAM_transfer.h"    /* struct DownloadResult */
-#include "YAM_userlist.h"    /* struct Users */
-#include "BayesFilter.h"     /* struct TokenAnalyzer */
-#include "HashTable.h"       /* struct HashTable */
-#include "Themes.h"          /* struct Theme */
+#include "YAM_transfer.h"    // struct DownloadResult
+#include "YAM_userlist.h"    // struct Users
+#include "BayesFilter.h"     // struct TokenAnalyzer
+#include "HashTable.h"       // struct HashTable
+#include "Themes.h"          // struct Theme
+#include "Timer.h"           // struct Timers
 
 /**************************************************************************/
 
@@ -51,22 +52,6 @@ enum GlobalDispatcherJob
   ID_RESTART,
   ID_ICONIFY,
   ID_LOGIN
-};
-
-// all the different timerIOs YAM is using
-enum TimerIO
-{
-  TIO_WRINDEX=0,
-  TIO_CHECKMAIL,
-  TIO_AUTOSAVE,
-  TIO_READPANEUPDATE,
-  TIO_READSTATUSUPDATE,
-  TIO_PROCESSQUICKSEARCH,
-  TIO_POP3_KEEPALIVE,
-  TIO_UPDATECHECK,
-  TIO_SPAMFLUSHTRAININGDATA,
-  TIO_DELETEZOMBIEFILES,
-  TIO_NUM
 };
 
 /*** Global Structure ***/
@@ -155,6 +140,7 @@ struct Global
   struct MinList           zombieFileList;
   struct Theme             theme;
   struct TokenAnalyzer     spamFilter;
+  struct Timers            timerData;
 
   char                     ProgDir[SIZE_PATH];
   char                     ProgName[SIZE_FILE];
@@ -173,11 +159,6 @@ struct xpkPackerNode
   struct MinNode node;
   struct XpkPackerInfo info;
 };
-
-void TC_Stop(enum TimerIO tio);
-void TC_Pause(enum TimerIO tio);
-void TC_Resume(enum TimerIO tio);
-void TC_Restart(enum TimerIO tio, int seconds, int micros);
 
 void PopUp(void);
 

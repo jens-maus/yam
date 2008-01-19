@@ -209,7 +209,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
   // we make sure the an eventually running timer event for setting the mail
   // status of a previous mail to read is canceled beforehand
   if(C->StatusChangeDelayOn)
-    TC_Stop(TIO_READSTATUSUPDATE);
+    StopTimer(TIMER_READSTATUSUPDATE);
 
   // ask the mail list how many entries are currently available and selected
   if((numEntries = xget(gui->PG_MAILLIST, MUIA_NList_Entries)) > 0)
@@ -230,11 +230,11 @@ void MA_ChangeSelected(BOOL forceUpdate)
     // selected more than one mail at a time which then should clear the
     // readpane as it might have been disabled.
     if(numSelected == 1)
-      TC_Restart(TIO_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
+      RestartTimer(TIMER_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
     else
     {
       // make sure an already existing readpaneupdate timer is canceled in advance.
-      TC_Stop(TIO_READPANEUPDATE);
+      StopTimer(TIMER_READPANEUPDATE);
 
       // clear the readmail group now
       DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, fo->Total > 0 ? MUIF_ReadMailGroup_Clear_KeepAttachmentGroup : MUIF_NONE);
@@ -4405,7 +4405,7 @@ HOOKPROTONHNONP(MA_CheckVersionFunc, void)
   // we rather call CheckForUpdates() directly, we better
   // issue the waiting timerequest with an interval of 1 micros so
   // that it gets fired immediately
-  TC_Restart(TIO_UPDATECHECK, 0, 1);
+  RestartTimer(TIMER_UPDATECHECK, 0, 1);
 }
 MakeStaticHook(MA_CheckVersionHook, MA_CheckVersionFunc);
 

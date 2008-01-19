@@ -118,7 +118,7 @@ void SetupDebug(void)
     {
       { "always",   DBF_ALWAYS  },
       { "startup",  DBF_STARTUP },
-      { "timerio",  DBF_TIMERIO },
+      { "timer",    DBF_TIMER   },
       { "config",   DBF_CONFIG  },
       { "filter",   DBF_FILTER  },
       { "folder",   DBF_FOLDER  },

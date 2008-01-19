@@ -473,7 +473,7 @@ OVERLOAD(OM_SET)
            C->StatusChangeDelayOn == TRUE && C->EmbeddedReadPane == FALSE &&
            xget(obj, MUIA_Window_Open) == TRUE)
         {
-          TC_Stop(TIO_READSTATUSUPDATE);
+          StopTimer(TIMER_READSTATUSUPDATE);
         }
       }
       break;

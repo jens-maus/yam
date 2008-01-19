@@ -6726,18 +6726,22 @@ MakeHook(TR_ProcessIMPORTHook, TR_ProcessIMPORTFunc);
 //  Aborts a POP3 download
 HOOKPROTONHNONP(TR_AbortGETFunc, void)
 {
-   // make sure the NOOP timer is definitly stopped
-   TC_Stop(TIO_POP3_KEEPALIVE);
+  ENTER();
 
-   // first set the Abort variable so that other can benefit from it
-   G->TR->Abort = TRUE;
+  // make sure the NOOP timer is definitly stopped
+  StopTimer(TIMER_POP3_KEEPALIVE);
 
-   // we can easily abort the transfer by setting the POP_Nr to the
-   // highest value possible and issue a GetMailFromNextPOP command.
-   // with this solution YAM will also process the filters for mails that
-   // were already downloaded even if the user aborted the transfer somehow
-   G->TR->POP_Nr = MAXP3;
-   TR_GetMailFromNextPOP(FALSE, MAXP3, 0);
+  // first set the Abort variable so that other can benefit from it
+  G->TR->Abort = TRUE;
+
+  // we can easily abort the transfer by setting the POP_Nr to the
+  // highest value possible and issue a GetMailFromNextPOP command.
+  // with this solution YAM will also process the filters for mails that
+  // were already downloaded even if the user aborted the transfer somehow
+  G->TR->POP_Nr = MAXP3;
+  TR_GetMailFromNextPOP(FALSE, MAXP3, 0);
+
+  LEAVE();
 }
 MakeStaticHook(TR_AbortGETHook, TR_AbortGETFunc);
 ///
@@ -6921,7 +6925,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
   TR_TransStat_Init(&ts);
 
   // make sure the NOOP timer is definitly stopped
-  TC_Stop(TIO_POP3_KEEPALIVE);
+  StopTimer(TIMER_POP3_KEEPALIVE);
 
   if(ts.Msgs_Tot > 0)
   {
@@ -7066,7 +7070,7 @@ static void TR_CompleteMsgList(void)
     // start the timer which makes sure we send
     // a regular NOOP command to the POP3 server
     // so that it doesn't drop the connection
-    TC_Restart(TIO_POP3_KEEPALIVE, C->KeepAliveInterval, 0);
+    RestartTimer(TIMER_POP3_KEEPALIVE, C->KeepAliveInterval, 0);
   }
 
   LEAVE();
@@ -7082,17 +7086,19 @@ HOOKPROTONHNO(TR_PauseFunc, void, int *arg)
 
   set(G->TR->GUI.BT_RESUME, MUIA_Disabled, pause == FALSE);
   set(G->TR->GUI.BT_PAUSE,  MUIA_Disabled, pause == TRUE);
+
   if(pause == TRUE)
   {
     // start the timer which makes sure we send
     // a regular NOOP command to the POP3 server
     // so that it doesn't drop the connection
-    TC_Restart(TIO_POP3_KEEPALIVE, C->KeepAliveInterval, 0);
-    return;
+    RestartTimer(TIMER_POP3_KEEPALIVE, C->KeepAliveInterval, 0);
   }
-
-  G->TR->Pause = FALSE;
-  TR_CompleteMsgList();
+  else
+  {
+    G->TR->Pause = FALSE;
+    TR_CompleteMsgList();
+  }
 
   LEAVE();
 }

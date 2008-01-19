@@ -1705,7 +1705,7 @@ void CO_Validate(struct Config *co, BOOL update)
     if(G->CO->Visited[cp_NewMail] == TRUE || G->CO->UpdateAll == TRUE)
     {
       // requeue the timerequest for the CheckMailDelay
-      TC_Restart(TIO_CHECKMAIL, co->CheckMailDelay*60, 0);
+      RestartTimer(TIMER_CHECKMAIL, co->CheckMailDelay*60, 0);
     }
 
     if(G->CO->Visited[cp_Spam] == TRUE || G->CO->UpdateAll == TRUE)
@@ -1732,7 +1732,7 @@ void CO_Validate(struct Config *co, BOOL update)
     if(G->CO->Visited[cp_Write] == TRUE || G->CO->UpdateAll == TRUE)
     {
       // requeue the timerequest for the AutoSave interval
-      TC_Restart(TIO_AUTOSAVE, co->AutoSave, 0);
+      RestartTimer(TIMER_AUTOSAVE, co->AutoSave, 0);
     }
 
     if(G->CO->Visited[cp_Lists] == TRUE || G->CO->UpdateAll == TRUE)

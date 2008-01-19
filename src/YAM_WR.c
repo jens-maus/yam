@@ -1855,7 +1855,27 @@ char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length)
   return dest;
 }
 ///
+/// EditorObjectActive
+//  Returns TRUE if the internal editor is currently being used
+BOOL EditorObjectActive(const int wrwin)
+{
+  BOOL active = FALSE;
 
+  ENTER();
+
+  if(G->WR[wrwin] != NULL)
+  {
+    Object *ao = (Object *)xget(G->WR[wrwin]->GUI.WI, MUIA_Window_ActiveObject);
+
+    if(ao == G->WR[wrwin]->GUI.TE_EDIT)
+      active = TRUE;
+  }
+
+  RETURN(active);
+  return active;
+}
+
+///
 /*** Buttons ***/
 /// WR_NewMail
 //  Validates write window options and generates a new message

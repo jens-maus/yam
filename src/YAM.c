@@ -30,12 +30,14 @@
 #include <string.h>
 #include <ctype.h>
 
+#if !defined(__amigaos4__)
 #include <clib/alib_protos.h>
+#endif
+
 #include <exec/execbase.h>
 #include <libraries/amisslmaster.h>
 #include <libraries/asl.h>
 #include <mui/BetterString_mcc.h>
-#include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/NFloattext_mcc.h>
 #include <mui/TextEditor_mcc.h>
@@ -97,6 +99,7 @@
 #include "UpdateCheck.h"
 #include "BayesFilter.h"
 #include "FileInfo.h"
+#include "Timer.h"
 
 #include "classes/Classes.h"
 
@@ -129,25 +132,6 @@ struct Args
 static struct NewRDArgs nrda;
 static struct Args args;
 static BPTR olddirlock = -1; /* -1 is an unset indicator */
-
-/**************************************************************************/
-
-// TimerIO structures we use
-struct TC_Request
-{
-  struct TimeRequest *tr;       // pointer to the timerequest
-  struct TimeVal startTime;     // at which time has this request been started
-  struct TimeVal remainingTime; // the remaining time if the request was paused
-  BOOL isRunning;               // if the request is currenty active/running
-  BOOL isPrepared;              // if the request is prepared to get fired
-  BOOL isPaused;                // if the request is currently paused
-};
-
-static struct TC_Data
-{
-  struct MsgPort    *port;
-  struct TC_Request timer[TIO_NUM];
-} TCData;
 
 /**************************************************************************/
 
@@ -643,594 +627,6 @@ static int GetDST(BOOL update)
 }
 ///
 
-/*** TimerIO management routines ***/
-/// TC_Prepare
-//  prepares a timer for being started with TC_Start later on
-static void TC_Prepare(enum TimerIO tio, int seconds, int micros)
-{
-  ENTER();
-
-  if(seconds > 0 || micros > 0)
-  {
-    struct TC_Request *timer = &TCData.timer[tio];
-
-    if(timer->isRunning == FALSE && timer->isPrepared == FALSE)
-    {
-      struct TimeRequest *tr = timer->tr;
-
-      // issue a new timerequest
-      tr->Request.io_Command  = TR_ADDREQUEST;
-      tr->Time.Seconds        = seconds;
-      tr->Time.Microseconds   = micros;
-      // remember the remaining time
-      timer->remainingTime.Seconds = seconds;
-      timer->remainingTime.Microseconds = micros;
-
-      // flag the timer to be prepared to get fired later on
-      timer->isPrepared = TRUE;
-    }
-    else
-      W(DBF_TIMERIO, "timer[%ld]: already running/prepared", tio);
-  }
-  else
-    W(DBF_TIMERIO, "timer[%ld]: secs and micros are zero, no prepare required", tio);
-
-  LEAVE();
-}
-
-///
-/// TC_Start
-//  Start a delay depending on the time specified
-static void TC_Start(enum TimerIO tio)
-{
-  struct TC_Request *timer = &TCData.timer[tio];
-
-  ENTER();
-
-  if(timer->isRunning == FALSE && timer->isPrepared == TRUE)
-  {
-    #if defined(DEBUG)
-    char dateString[64];
-
-    DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
-
-    D(DBF_TIMERIO, "timer[%ld]: started @ %s to finish in %ld'%ld secs", tio,
-                                                                         dateString,
-                                                                         timer->tr->Time.Seconds,
-                                                                         timer->tr->Time.Microseconds);
-    #endif
-
-    // fire the timer by doing a SendIO()
-    SendIO(&timer->tr->Request);
-
-    // remember the start time
-    GetSysTime(TIMEVAL(&timer->startTime));
-
-    // signal that our timer is running
-    timer->isRunning = TRUE;
-    timer->isPrepared = FALSE;
-  }
-  else
-    W(DBF_TIMERIO, "timer[%ld]: either already running or not prepared to get fired", tio);
-
-  LEAVE();
-}
-
-///
-/// TC_Stop
-//  Stop a currently running TimerIO request
-//  Please note that this function may NOT be used in the eventloop after having received
-//  a timer with GetMsg because CheckIO and friends are not defined to work there correctly.
-void TC_Stop(enum TimerIO tio)
-{
-  struct TC_Request *timer = &TCData.timer[tio];
-
-  ENTER();
-
-  // check if we have a already issued ioreq running
-  if(timer->isRunning == TRUE)
-  {
-    struct IORequest *ioreq = &timer->tr->Request;
-
-    if(ioreq->io_Command != 0)
-    {
-      if(CheckIO(ioreq) == NULL)
-        AbortIO(ioreq);
-
-      WaitIO(ioreq);
-
-      // there is no time left for this request
-      timer->remainingTime.Seconds = 0;
-      timer->remainingTime.Microseconds = 0;
-
-      // make sure the timer is signalled to be NOT running
-      timer->isRunning = FALSE;
-      timer->isPrepared = FALSE;
-
-      D(DBF_TIMERIO, "timer[%ld]: successfully stopped", tio);
-    }
-    else
-      E(DBF_TIMERIO, "timer[%ld]: is invalid and can't be stopped", tio);
-  }
-  else
-    W(DBF_TIMERIO, "timer[%ld]: already stopped", tio);
-
-  LEAVE();
-}
-
-///
-/// TC_Pause
-//  Pause a currently running TimerIO request
-void TC_Pause(enum TimerIO tio)
-{
-  struct TC_Request *timer = &TCData.timer[tio];
-
-  ENTER();
-
-  // check if we have a already issued ioreq running
-  if(timer->isRunning == TRUE && timer->isPaused == FALSE)
-  {
-    struct IORequest *ioreq = &timer->tr->Request;
-
-    if(ioreq->io_Command != 0)
-    {
-      struct TimeVal stopTime;
-
-      if(CheckIO(ioreq) == NULL)
-        AbortIO(ioreq);
-
-      WaitIO(ioreq);
-
-      // calculate the remaining time
-      GetSysTime(TIMEVAL(&stopTime));
-      SubTime(TIMEVAL(&stopTime), TIMEVAL(&timer->startTime));
-      SubTime(TIMEVAL(&timer->remainingTime), TIMEVAL(&stopTime));
-
-      // make sure the timer is signalled to be NOT running
-      timer->isRunning = FALSE;
-      timer->isPaused = TRUE;
-
-      #if defined(DEBUG)
-      {
-        char dateString[64];
-        DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
-        D(DBF_TIMERIO, "timer[%ld]: paused @ %s with %ld'%ld secs remaining", tio,
-                                                                              dateString,
-                                                                              timer->remainingTime.Seconds,
-                                                                              timer->remainingTime.Microseconds);
-      }
-      #endif
-    }
-    else
-      E(DBF_TIMERIO, "timer[%ld]: is invalid and can't be paused", tio);
-  }
-  else
-    W(DBF_TIMERIO, "timer[%ld]: already paused", tio);
-
-  LEAVE();
-}
-
-///
-/// TC_Resume
-//  Resume a timer with the remaining time
-void TC_Resume(enum TimerIO tio)
-{
-  struct TC_Request *timer = &TCData.timer[tio];
-
-  ENTER();
-
-  if(timer->isRunning == FALSE && timer->isPaused == TRUE)
-  {
-    struct TimeRequest *tr = timer->tr;
-
-    // issue a new timerequest with the previously calculated remaining time
-    tr->Request.io_Command  = TR_ADDREQUEST;
-    tr->Time.Seconds = timer->remainingTime.Seconds;
-    tr->Time.Microseconds = timer->remainingTime.Microseconds;
-
-    #if defined(DEBUG)
-    {
-      char dateString[64];
-      DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
-
-      D(DBF_TIMERIO, "timer[%ld]: resumed @ %s to finish in %ld'%ld secs", tio,
-                                                                           dateString,
-                                                                           tr->Time.Seconds,
-                                                                           tr->Time.Microseconds);
-    }
-    #endif
-
-    // fire the timer by doing a SendIO()
-    SendIO((struct IORequest *)tr);
-
-    // remember the new start time
-    GetSysTime(TIMEVAL(&timer->startTime));
-
-    // signal that our timer is running
-    timer->isRunning = TRUE;
-    timer->isPaused = FALSE;
-  }
-  else
-    W(DBF_TIMERIO, "timer[%ld]: either already running or not paused", tio);
-
-  LEAVE();
-}
-
-///
-/// TC_Restart
-//  restarts a particular timer. In fact it makes sure that the timer in question
-//  is first stopped via AbortIO() and then issues a new one. Please note that
-//  this function may NOT be called from the eventloop because CheckIO and friends
-//  are not defined to work there.
-void TC_Restart(enum TimerIO tio, int seconds, int micros)
-{
-  ENTER();
-
-  TC_Stop(tio);
-  TC_Prepare(tio, seconds, micros);
-  TC_Start(tio);
-
-  LEAVE();
-}
-///
-/// TC_Exit
-//  Frees timer resources
-static void TC_Exit(void)
-{
-  ENTER();
-
-  // first we abort & delete the IORequests
-  if(TCData.timer[0].tr != NULL)
-  {
-    enum TimerIO tio;
-
-    // first make sure every TimerIO is stoppped
-    for(tio = TIO_WRINDEX; tio < TIO_NUM; tio++)
-      TC_Stop(tio);
-
-    // then close the device
-    if(TCData.timer[0].tr->Request.io_Device != NULL)
-    {
-      // drop the OS4 Interface of the TimerBase
-      DROPINTERFACE(ITimer);
-
-      CloseDevice(&TCData.timer[0].tr->Request);
-    }
-
-    // and then we delete the IO requests
-    for(tio = TIO_WRINDEX + 1; tio < TIO_NUM; tio++)
-    {
-      if(TCData.timer[tio].tr != NULL)
-      {
-        FreeSysObject(ASOT_IOREQUEST, TCData.timer[tio].tr);
-
-        TCData.timer[tio].tr = NULL;
-      }
-    }
-
-    FreeSysObject(ASOT_IOREQUEST, TCData.timer[0].tr);
-    TCData.timer[0].tr = NULL;
-  }
-
-  // remove the MsgPort now.
-  if(TCData.port != NULL)
-  {
-    FreeSysObject(ASOT_PORT, TCData.port);
-    TCData.port = NULL;
-  }
-
-  LEAVE();
-}
-
-///
-/// TC_Init
-//  Initializes timer resources
-static BOOL TC_Init(void)
-{
-  ENTER();
-
-  // clear our static structure first
-  memset(&TCData, 0, sizeof(struct TC_Data));
-
-  // create message port
-  if((TCData.port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
-  {
-    // create the TimerIOs now
-
-    // we use AllocSysObjectTags to give the OS a better chance to
-    // free the data in case YAM crashes (only available on OS4)
-    if((TCData.timer[0].tr = AllocSysObjectTags(ASOT_IOREQUEST,
-                                                ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                ASOIOR_ReplyPort, (ULONG)TCData.port,
-                                                TAG_DONE)) != NULL)
-    {
-      // then open the device
-      if(OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.timer[0].tr->Request, 0L) == 0)
-      {
-        // needed to get GetSysTime() working
-        if((TimerBase = (APTR)TCData.timer[0].tr->Request.io_Device) &&
-           GETINTERFACE("main", ITimer, TimerBase))
-        {
-          enum TimerIO tio;
-
-          // create our other TimerIOs now
-          for(tio = TIO_WRINDEX + 1; tio < TIO_NUM; tio++)
-          {
-            // we use AllocSysObjectTags to give the OS a better chance to
-            // free the data in case YAM crashes (only available on OS4)
-            if((TCData.timer[tio].tr = AllocSysObjectTags(ASOT_IOREQUEST,
-                                                          ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                          ASOIOR_ReplyPort, (ULONG)TCData.port,
-                                                          TAG_DONE)) == NULL)
-            {
-              break;
-            }
-
-            // copy the data of timerIO[0] to the new one
-            CopyMem(TCData.timer[0].tr, TCData.timer[tio].tr, sizeof(struct TimeRequest));
-          }
-        }
-      }
-    }
-  }
-
-  LEAVE();
-  return (BOOL)(TCData.timer[TIO_NUM-1].tr != NULL);
-}
-
-///
-/// TC_ActiveEditor
-//  Returns TRUE if the internal editor is currently being used
-static BOOL TC_ActiveEditor(int wrwin)
-{
-  BOOL active = FALSE;
-
-  ENTER();
-
-  if(G->WR[wrwin] != NULL)
-  {
-    Object *ao = (Object *)xget(G->WR[wrwin]->GUI.WI, MUIA_Window_ActiveObject);
-
-    if(ao == G->WR[wrwin]->GUI.TE_EDIT)
-      active = TRUE;
-  }
-
-  RETURN(active);
-  return active;
-}
-
-///
-/// TC_Dispatcher
-//  Dispatcher for timer class
-//  WARNING: Do NOT use TC_Start() directly in this function as it is
-//           called within the timer eventloop which is undefined!
-//           Do a TC_Prepare() instead here and a TC_Start() in the
-//           the parent eventloop at the end of the file here.
-static void TC_Dispatcher(enum TimerIO tio)
-{
-  // prepare some debug information
-  #if defined(DEBUG)
-  char dateString[64];
-
-  DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
-  #endif
-
-  ENTER();
-
-  // now dispatch between the differnent timerIOs
-  switch(tio)
-  {
-    // in case the WriteIndexes TimerIO request was triggered
-    // we first check if no Editor is currently active and
-    // if so we write the indexes.
-    case TIO_WRINDEX:
-    {
-      D(DBF_TIMERIO, "timer[%ld]: TIO_WRINDEX fired @ %s", tio, dateString);
-
-      // only write the indexes if no Editor is actually in use
-      if(TC_ActiveEditor(0) == FALSE && TC_ActiveEditor(1) == FALSE)
-        MA_UpdateIndexes(FALSE);
-
-      // prepare the timer to get fired again
-      TC_Prepare(tio, C->WriteIndexes, 0);
-    }
-    break;
-
-    // in case the checkMail timerIO request was triggered we
-    // need to check if no writewindow is currently in use and
-    // then check for new mail.
-    case TIO_CHECKMAIL:
-    {
-      int i;
-
-      D(DBF_TIMERIO, "timer[%ld]: TIO_CHECKMAIL fired @ %s", tio, dateString);
-
-      // only if there is currently no write window open we
-      // check for new mail.
-      for(i = 0; i < MAXWR && G->WR[i] == NULL; i++) ;
-
-      // also the configuration window needs to be closed
-      // or we skip the pop operation
-      if(i == MAXWR && G->CO == NULL)
-      {
-        MA_PopNow(POP_TIMED, -1);
-      }
-
-      // prepare the timer to get fired again
-      TC_Prepare(tio, C->CheckMailDelay*60, 0);
-    }
-    break;
-
-    // in case the AutoSave timerIO was triggered we check
-    // whether there is really need to autosave the content
-    // of the currently used editors.
-    case TIO_AUTOSAVE:
-    {
-      char fileName[SIZE_PATHFILE];
-      int i;
-
-      D(DBF_TIMERIO, "timer[%ld]: TIO_AUTOSAVE fired @ %s", tio, dateString);
-
-      for(i = 0; i < MAXWR; i++)
-      {
-        if(G->WR[i] != NULL && G->WR[i]->Mode != NEW_BOUNCE)
-        {
-          // do the autosave only if something was modified
-          if(xget(G->WR[i]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
-          {
-            if(EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i, fileName, sizeof(fileName))) == TRUE)
-            {
-              // we just saved the mail text, so it is no longer modified
-              set(G->WR[i]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
-              // we must remember if the mail was automatically saved, since the editor object cannot
-              // tell about changes anymore if they don't happen from now on.
-              G->WR[i]->AutoSaved = TRUE;
-            }
-          }
-        }
-      }
-
-      // prepare the timer to get fired again
-      TC_Prepare(tio, C->AutoSave, 0);
-    }
-    break;
-
-    // in case the READPANEUPDATE timerIO was triggered the embedded read
-    // pane in the main window should get updated. Therefore we get the
-    // currently active mail out of the main mail list and display it in the pane
-    case TIO_READPANEUPDATE:
-    {
-      D(DBF_TIMERIO, "timer[%ld]: TIO_READPANEUPDATE fired @ %s", tio, dateString);
-
-      if(C->EmbeddedReadPane == TRUE)
-      {
-        struct MA_GUIData *gui = &G->MA->GUI;
-        struct Mail *mail;
-
-        // get the actually active mail
-        DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-
-        // update the readMailGroup of the main window.
-        if(mail != NULL)
-          DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_ReadMail, mail,
-                                             MUIF_ReadMailGroup_ReadMail_StatusChangeDelay);
-      }
-    }
-    break;
-
-    // on a READSTATUSUPDATE timerIO request the mail status of the currently active mail
-    // should change from new/unread to read. So we get the currently active mail
-    // out of the main mail list and modify its status to read.
-    case TIO_READSTATUSUPDATE:
-    {
-      struct MA_GUIData *gui = &G->MA->GUI;
-      struct Mail *mail;
-
-      D(DBF_TIMERIO, "timer[%ld]: TIO_READSTATUSUPDATE fired @ %s", tio, dateString);
-
-      // get the actually active mail
-      DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-
-      // update the status of the mail to READ now
-      if(mail != NULL && (hasStatusNew(mail) || !hasStatusRead(mail)))
-      {
-        setStatusToRead(mail); // set to OLD
-        DisplayStatistics(mail->Folder, TRUE);
-
-        // update the status of the readmaildata (window)
-        // of the mail here
-        UpdateReadMailDataStatus(mail);
-      }
-    }
-    break;
-
-    // on a PROCESSQUICKSEARCH we signal the quicksearch bar to actually process the
-    // search. This is used to let a user type in a string in the quicksearchbar
-    // without always reissuing the search process, so only the last search request
-    // comes actually through. This should prevent the GUI from blocking in some
-    // cases.
-    case TIO_PROCESSQUICKSEARCH:
-    {
-      struct MA_GUIData *gui = &G->MA->GUI;
-
-      D(DBF_TIMERIO, "timer[%ld]: TIO_PROCESSQUICKSEARCH fired @ %s", tio, dateString);
-
-      // abort a still running previous search
-      DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_AbortSearch);
-      // signal the QuickSearchBar to search now
-      DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_ProcessSearch);
-    }
-    break;
-
-    // on a POP3_KEEPALIVE we make sure that a currently active, but waiting
-    // POP3 connection (preselection) doesn't die by sending NOOP commands regularly
-    // to the currently connected POP3 server.
-    case TIO_POP3_KEEPALIVE:
-    {
-      D(DBF_TIMERIO, "timer[%ld]: TIO_POP3_KEEPALIVE fired @ %s", tio, dateString);
-
-      // send the POP3 server a 'NOOP'
-      if(TR_SendPOP3KeepAlive() == TRUE)
-      {
-        // prepare the timer to get fired again
-        TC_Prepare(tio, C->KeepAliveInterval, 0);
-      }
-    }
-    break;
-
-    // on a UPDATECHECK we have to process our update check routines as the
-    // user wants to check if there is a new version of YAM available or not.
-    case TIO_UPDATECHECK:
-    {
-      D(DBF_TIMERIO, "timer[%ld]: TIO_UPDATECHECK fired @ %s", tio, dateString);
-
-      CheckForUpdates();
-
-      // prepare the timer to get fired again
-      if(C->UpdateInterval > 0)
-        TC_Prepare(tio, C->UpdateInterval, 0);
-    }
-    break;
-
-    // on a SPAMFLUSHTRAININGDATA we write back the spam training data gathered so far
-    case TIO_SPAMFLUSHTRAININGDATA:
-    {
-      D(DBF_TIMERIO, "timer[%ld]: TIO_SPAMFLUSHTRAININGDATA fired @ %s", tio, dateString);
-
-      BusyText(tr(MSG_BUSYFLUSHINGSPAMTRAININGDATA), "");
-      BayesFilterFlushTrainingData();
-      BusyEnd();
-
-      TC_Prepare(tio, C->SpamFlushTrainingDataInterval, 0);
-    }
-    break;
-
-    // on a DELETEZOMBIEFILES we try to delete zombie files which could not be deleted
-    // before. Files which still cannot be deleted will be kept in the list and retried
-    // later.
-    case TIO_DELETEZOMBIEFILES:
-    {
-      D(DBF_TIMERIO, "timer[%ld]: TIO_DELETEZOMBIEFILES fired @ %s", tio, dateString);
-
-      if(DeleteZombieFiles(FALSE) == FALSE)
-      {
-        // trigger the retry mechanism in 5 minutes
-        TC_Prepare(TIO_DELETEZOMBIEFILES, 5 * 60, 0);
-      }
-    }
-    break;
-
-    // dummy to please GCC
-    case TIO_NUM:
-      // nothing
-    break;
-  }
-
-  LEAVE();
-}
-
-///
-
 /*** XPK Packer initialization routines ***/
 /// InitXPKPackerList()
 // initializes the internal XPK PackerList
@@ -1354,7 +750,7 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
     // allocate the memory for the semaphore system structure itself
     if((semaphore = AllocSysObjectTags(ASOT_SEMAPHORE,
                                        ASOSEM_Size,     sizeof(struct StartupSemaphore),
-                                       ASOSEM_Name,     STARTUP_SEMAPHORE_NAME,
+                                       ASOSEM_Name,     (ULONG)STARTUP_SEMAPHORE_NAME,
                                        ASOSEM_CopyName, TRUE,
                                        ASOSEM_Public,   TRUE,
                                        TAG_DONE)) != NULL)
@@ -1538,8 +934,8 @@ static void Terminate(void)
   if(G->RexxHost != NULL)
     CloseDownARexxHost(G->RexxHost);
 
-  D(DBF_STARTUP, "freeing timerIOs...");
-  TC_Exit();
+  D(DBF_STARTUP, "freeing timer resources...");
+  CleanupTimers();
 
   // stop the AutoDST notify
   D(DBF_STARTUP, "stoping ADSTnotify...");
@@ -2449,7 +1845,7 @@ static void InitBeforeLogin(BOOL hidden)
   InitXPKPackerList();
 
   // initialize our timers
-  if(TC_Init() == FALSE)
+  if(InitTimers() == FALSE)
     Abort(tr(MSG_ErrorTimer));
 
   // initialize our ASL FileRequester cache stuff
@@ -3210,7 +2606,7 @@ int main(int argc, char **argv)
       applibsig = 0;
 
     // prepare the other signal bits
-    timsig    = (1UL << TCData.port->mp_SigBit);
+    timsig    = (1UL << G->timerData.port->mp_SigBit);
     rexsig    = (1UL << G->RexxHost->port->mp_SigBit);
     appsig    = (1UL << G->AppPort->mp_SigBit);
     notsig[0] = (1UL << G->WR_NotifyRequest[0]->nr_stuff.nr_Msg.nr_Port->mp_SigBit);
@@ -3227,17 +2623,16 @@ int main(int argc, char **argv)
     D(DBF_STARTUP, " notsig[1]= %08lx", notsig[1]);
     D(DBF_STARTUP, " notsig[2]= %08lx", notsig[2]);
 
-    // start our maintanance TimerIO requests for
+    // start our maintanance Timer requests for
     // different purposes (writeindexes/mailcheck/autosave)
-    TC_Prepare(TIO_WRINDEX,   C->WriteIndexes, 0);
-    TC_Prepare(TIO_CHECKMAIL, C->CheckMailDelay*60, 0);
-    TC_Prepare(TIO_AUTOSAVE,  C->AutoSave, 0);
-    TC_Start(TIO_WRINDEX);
-    TC_Start(TIO_CHECKMAIL);
-    TC_Start(TIO_AUTOSAVE);
-
-    TC_Prepare(TIO_SPAMFLUSHTRAININGDATA, C->SpamFlushTrainingDataInterval, 0);
-    TC_Start(TIO_SPAMFLUSHTRAININGDATA);
+    PrepareTimer(TIMER_WRINDEX,   C->WriteIndexes, 0);
+    PrepareTimer(TIMER_CHECKMAIL, C->CheckMailDelay*60, 0);
+    PrepareTimer(TIMER_AUTOSAVE,  C->AutoSave, 0);
+    PrepareTimer(TIMER_SPAMFLUSHTRAININGDATA, C->SpamFlushTrainingDataInterval, 0);
+    StartTimer(TIMER_WRINDEX);
+    StartTimer(TIMER_CHECKMAIL);
+    StartTimer(TIMER_AUTOSAVE);
+    StartTimer(TIMER_SPAMFLUSHTRAININGDATA);
 
     // initialize the automatic UpdateCheck facility and schedule an
     // automatic update check during startup if necessary
@@ -3263,93 +2658,19 @@ int main(int argc, char **argv)
         if(signals & SIGBREAKF_CTRL_F)
           PopUp();
 
-        // check for a TimerIO event
+        // check for a Timer event
         if(signals & timsig)
         {
-          struct TimeRequest *timeReq;
-          BOOL processed = FALSE;
-
           #if defined(DEBUG)
           char dateString[64];
 
           DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
-          D(DBF_TIMERIO, "timer signal received @ %s", dateString);
+          D(DBF_TIMER, "timer signal received @ %s", dateString);
           #endif
 
-          // check if we have a waiting message
-          while((timeReq = (struct TimeRequest *)GetMsg(TCData.port)) != NULL)
-          {
-            enum TimerIO tio;
-
-            for(tio = TIO_WRINDEX; tio < TIO_NUM; tio++)
-            {
-              struct TC_Request *timer = &TCData.timer[tio];
-
-              if(timeReq == timer->tr)
-              {
-                // set the timer to be not running and not be prepared for
-                // another shot. Our dispatcher have to do the rest then
-                timer->isRunning = FALSE;
-                timer->isPrepared = FALSE;
-
-                // call the dispatcher with signalling which timerIO
-                // this request caused
-                TC_Dispatcher(tio);
-
-                // signal that we processed something
-                processed = TRUE;
-
-                // break out of the for() loop
-                break;
-              }
-            }
-
-            // no ReplyMsg() needed
-          }
-
-          // make sure that we are starting the timer again after the GetMsg loop
-          if(processed == TRUE)
-          {
-            // here we just check for the timers that TC_Dispatcher really
-            // prepares and not all of them in a loop
-
-            if(TCData.timer[TIO_WRINDEX].isPrepared == TRUE)
-              TC_Start(TIO_WRINDEX);
-
-            if(TCData.timer[TIO_CHECKMAIL].isPrepared == TRUE)
-              TC_Start(TIO_CHECKMAIL);
-
-            if(TCData.timer[TIO_AUTOSAVE].isPrepared == TRUE)
-              TC_Start(TIO_AUTOSAVE);
-
-            if(TCData.timer[TIO_POP3_KEEPALIVE].isPrepared == TRUE)
-              TC_Start(TIO_POP3_KEEPALIVE);
-
-            if(TCData.timer[TIO_UPDATECHECK].isPrepared == TRUE)
-              TC_Start(TIO_UPDATECHECK);
-
-            if(TCData.timer[TIO_SPAMFLUSHTRAININGDATA].isPrepared == TRUE)
-              TC_Start(TIO_SPAMFLUSHTRAININGDATA);
-
-            if(TCData.timer[TIO_DELETEZOMBIEFILES].isPrepared == TRUE)
-              TC_Start(TIO_DELETEZOMBIEFILES);
-          }
-          else
-            W(DBF_TIMERIO, "timer signal received, but no timer request was processed!!!");
-
-          #if defined(DEBUG)
-          // let us check whether all necessary maintenance timers are running
-          // because right here ALL maintenance timers should run or something is definitly wrong!
-
-          if(C->WriteIndexes > 0 && TCData.timer[TIO_WRINDEX].isRunning == FALSE)
-            E(DBF_ALWAYS, "timer[%ld]: TIO_WRINDEX is not running and was probably lost!", TIO_WRINDEX);
-
-          if(C->CheckMailDelay > 0 && TCData.timer[TIO_CHECKMAIL].isRunning == FALSE)
-            E(DBF_ALWAYS, "timer[%ld]: TIO_CHECKMAIL is not running and was probably lost!", TIO_CHECKMAIL);
-
-          if(C->AutoSave > 0 && TCData.timer[TIO_AUTOSAVE].isRunning == FALSE)
-            E(DBF_ALWAYS, "timer[%ld]: TIO_AUTOSAVE is not running and was probably lost!", TIO_AUTOSAVE);
-          #endif
+          // call ProcessTimerEvent() to check all our
+          // timers are process accordingly.
+          ProcessTimerEvent();
         }
 
         // check for a Arexx signal
