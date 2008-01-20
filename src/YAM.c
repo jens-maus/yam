@@ -62,6 +62,7 @@
 #include <proto/timer.h>
 #include <proto/utility.h>
 #include <proto/wb.h>
+#include <proto/xadmaster.h>
 #include <proto/xpkmaster.h>
 #include <proto/cybergraphics.h>
 #include <proto/expat.h>
@@ -1000,6 +1001,10 @@ static void Terminate(void)
   FreeXPKPackerList();
   CLOSELIB(XpkBase, IXpk);
 
+  // free our xad stuff
+  D(DBF_STARTUP, "cleaning up XAD stuff...");
+  CLOSELIB(xadMasterBase, IxadMaster);
+
   D(DBF_STARTUP, "freeing main application object...");
   if(G->App != NULL)
     MUI_DisposeObject(G->App);
@@ -1837,6 +1842,10 @@ static void InitBeforeLogin(BOOL hidden)
   // signal that we are loading our libraries
   D(DBF_STARTUP, "init libraries...");
   SplashProgress(tr(MSG_InitLibs), 10);
+
+  // try to open the xadmaster.library v12.1+ as this is the somewhat
+  // most recent version publically available
+  INITLIB(XADNAME, 12, 1, &xadMasterBase, "main", &IxadMaster, FALSE, NULL);
 
   // try to open xpkmaster.library v5.0+ as this is somewhat the most
   // stable version available. Previous version might have some issues

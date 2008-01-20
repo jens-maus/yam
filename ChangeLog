@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM_global.c, include: added all necessary includes of xadmaster
+    library and added the openlib/closlib stuff to YAM.c. This should be the
+    first preparations for a possible integration of xadmaster functionality
+    directly in YAM (direct extracting of archived attachments).
+
 2008-01-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, Timer.c, misc: moved all our Timer management functionality in a
