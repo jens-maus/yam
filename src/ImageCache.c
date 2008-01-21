@@ -38,7 +38,10 @@
 #include <proto/intuition.h>
 #include <proto/graphics.h>
 #include <proto/muimaster.h>
+
+#if !defined(__amigaos4__)
 #include <proto/cybergraphics.h>
+#endif
 
 #include "YAM.h"
 #include "YAM_global.h"
@@ -414,7 +417,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
             // we restrict this to 32bit image until we have a solution.
             #if defined(__amigaos4__) || defined(__MORPHOS__)
             // OS4 and MorphOS can handle the alpha channel correctly
-            if(CyberGfxBase != NULL && node->pixelArray == NULL)
+            if(node->pixelArray == NULL)
             #else
             // for OS3 we check for CGX V45+ and picture.datatype V46+
             // older versions cannot handle the alpha channel correctly
@@ -479,7 +482,11 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
 
             // get the normal bitmaps supplied by datatypes.library if either this is
             // an 8bit image or we could not get the hi/truecolor pixel data
+            #if defined(__amigaos4__) || defined(__MORPHOS__)
+            if(node->pixelArray == NULL)
+            #else
             if(node->pixelArray == NULL || CyberGfxBase == NULL)
+            #endif
             {
               node->bytesPerPixel = 1;
               node->bytesPerRow = node->width;
