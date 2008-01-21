@@ -33,13 +33,14 @@
 
 #if defined(__amigaos4__)
 #include <graphics/blitattr.h>
+#else
+#include <cybergraphx/cybergraphics.h>
+#include <proto/cybergraphics.h>
 #endif
 
-#include <cybergraphx/cybergraphics.h>
 #include <proto/datatypes.h>
 #include <proto/icon.h>
 #include <proto/graphics.h>
-#include <proto/cybergraphics.h>
 
 #include "Debug.h"
 
