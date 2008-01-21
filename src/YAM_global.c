@@ -168,7 +168,9 @@ struct Library* GfxBase           = NULL;
 struct Library* LayersBase        = NULL;
 struct Library* DiskfontBase      = NULL;
 struct Library* CodesetsBase      = NULL;
+#if !defined(__amigaos4__)
 struct Library* CyberGfxBase      = NULL;
+#endif
 struct Library* ExpatBase         = NULL;
 #if !defined(__NEWLIB__)
 struct Library* UtilityBase       = NULL;
@@ -203,7 +205,9 @@ struct GraphicsIFace*     IGraphics     = NULL;
 struct LayersIFace*       ILayers       = NULL;
 struct DiskfontIFace*     IDiskfont     = NULL;
 struct CodesetsIFace*     ICodesets     = NULL;
+#if !defined(__amigaos4__)
 struct CyberGfxIFace*     ICyberGfx     = NULL;
+#endif
 struct ExpatIFace*        IExpat        = NULL;
 struct ApplicationIFace*  IApplication  = NULL;
 struct TimezoneIFace*     ITimezone     = NULL;

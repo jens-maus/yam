@@ -64,7 +64,6 @@
 #include <proto/wb.h>
 #include <proto/xadmaster.h>
 #include <proto/xpkmaster.h>
-#include <proto/cybergraphics.h>
 #include <proto/expat.h>
 
 #if defined(__amigaos4__)
@@ -1018,7 +1017,7 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing internal MUI classes...");
   YAM_CleanupClasses();
 
-  D(DBF_STARTUP, "deleting semaphore");
+  D(DBF_STARTUP, "deleting semaphore...");
   DeleteStartupSemaphore();
 
   // cleaning up all AmiSSL stuff
@@ -1035,7 +1034,9 @@ static void Terminate(void)
 
   // close all libraries now.
   D(DBF_STARTUP, "closing all opened libraries...");
+  #if !defined(__amigaos4__)
   CLOSELIB(CyberGfxBase,  ICyberGfx);
+  #endif
   CLOSELIB(ExpatBase,     IExpat);
   CLOSELIB(CodesetsBase,  ICodesets);
   CLOSELIB(DataTypesBase, IDataTypes);
@@ -1751,8 +1752,13 @@ static void InitBeforeLogin(BOOL hidden)
   INITLIB(RXSNAME,                 36, 0, &RexxSysBase,   "main", &IRexxSys,   TRUE,  NULL);
   INITLIB("datatypes.library",     39, 0, &DataTypesBase, "main", &IDataTypes, TRUE,  NULL);
 
-  // then all third-party libraries (either as mandatory or non-mandatory)
+  // try to open the cybergraphics.library on non-OS4 systems as on OS4 we use the
+  // new graphics.library functions instead.
+  #if !defined(__amigaos4__)
   INITLIB("cybergraphics.library", 40, 0, &CyberGfxBase,  "main", &ICyberGfx,  FALSE, NULL);
+  #endif
+
+  // try to open MUI 3.8+
   INITLIB("muimaster.library",     19, 0, &MUIMasterBase, "main", &IMUIMaster, TRUE, "http://www.sasg.com/");
 
   // openurl.library has a homepage, but providing that homepage without having OpenURL
@@ -1760,11 +1766,12 @@ static void InitBeforeLogin(BOOL hidden)
   // to visit the URL which in turn requires OpenURL to be installed...
   // Hence we try to open openurl.library without
   INITLIB("openurl.library",        1, 0, &OpenURLBase,   "main", &IOpenURL,   FALSE, NULL);
+
+  // try to open the mandatory codesets.library
   INITLIB("codesets.library",       6, 5, &CodesetsBase,  "main", &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
+
+  // try to open expat.library for our XML import stuff
   INITLIB("expat.library", XML_MAJOR_VERSION, 0, &ExpatBase, "main", &IExpat, FALSE, NULL);
-  #if !defined(__amigaos4__)
-  INITLIB("cybergraphics.library", 40, 0, &CyberGfxBase, "main", &ICyberGfx, TRUE, NULL);
-  #endif
 
   // we check for the amisslmaster.library v3 accordingly
   if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))

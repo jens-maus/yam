@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: fixed bug #1876343 where the cybergraphics library was being opened
+    two times as well as being flagged necessary. This prevented YAM from
+    on systems without any graphics card.
+
 2008-01-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, YAM_global.c, include: added all necessary includes of xadmaster
