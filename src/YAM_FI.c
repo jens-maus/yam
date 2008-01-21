@@ -57,7 +57,9 @@
 #include "YAM_read.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
+
 #include "BayesFilter.h"
+#include "MailList.h"
 
 #include "Debug.h"
 
@@ -1481,115 +1483,116 @@ void FreeFilterSearch(void)
 BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
 {
   BOOL success = TRUE;
-  struct Mail *mlist[3];
+  struct MailList *mlist;
 
   ENTER();
 
   // initialize mlist
-  mlist[0] = (struct Mail *)1;
-  mlist[1] = NULL;
-  mlist[2] = mail;
-
-  // Bounce Action
-  if(hasBounceAction(filter) && !filter->remote && *filter->bounceTo)
+  if((mlist = CreateMailList()) != NULL)
   {
-    G->RuleResults.Bounced++;
-    MA_NewBounce(mail, TRUE);
-    setstring(G->WR[2]->GUI.ST_TO, filter->bounceTo);
-    DoMethod(G->App, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, 2);
-  }
+    AddMailNode(mlist, mail);
 
-  // Forward Action
-  if(hasForwardAction(filter) && !filter->remote && *filter->forwardTo)
-  {
-    G->RuleResults.Forwarded++;
-    MA_NewForward(mlist, TRUE);
-    setstring(G->WR[2]->GUI.ST_TO, filter->forwardTo);
-    WR_NewMail(WRITE_QUEUE, 2);
-  }
-
-  // Reply Action
-  if(hasReplyAction(filter) && !filter->remote && *filter->replyFile)
-  {
-    MA_NewReply(mlist, TRUE);
-    FileToEditor(filter->replyFile, G->WR[2]->GUI.TE_EDIT, TRUE);
-    WR_NewMail(WRITE_QUEUE, 2);
-    G->RuleResults.Replied++;
-  }
-
-  // Execute Action
-  if(hasExecuteAction(filter) && *filter->executeCmd)
-  {
-    char buf[SIZE_COMMAND + SIZE_PATHFILE];
-
-    snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
-    ExecuteCommand(buf, FALSE, OUT_DOS);
-    G->RuleResults.Executed++;
-  }
-
-  // PlaySound Action
-  if(hasPlaySoundAction(filter) && *filter->playSound)
-  {
-    PlaySound(filter->playSound);
-  }
-
-  // Move Action
-  if(hasMoveAction(filter) && !filter->remote)
-  {
-    struct Folder* fo;
-
-    if((fo = FO_GetFolderByName(filter->moveTo, NULL)) != NULL)
+    // Bounce Action
+    if(hasBounceAction(filter) && !filter->remote && *filter->bounceTo)
     {
-      if(mail->Folder != fo)
+      G->RuleResults.Bounced++;
+      MA_NewBounce(mail, TRUE);
+      setstring(G->WR[2]->GUI.ST_TO, filter->bounceTo);
+      DoMethod(G->App, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, 2);
+    }
+
+    // Forward Action
+    if(hasForwardAction(filter) && !filter->remote && *filter->forwardTo)
+    {
+      G->RuleResults.Forwarded++;
+      MA_NewForward(mlist, TRUE);
+      setstring(G->WR[2]->GUI.ST_TO, filter->forwardTo);
+      WR_NewMail(WRITE_QUEUE, 2);
+    }
+
+    // Reply Action
+    if(hasReplyAction(filter) && !filter->remote && *filter->replyFile)
+    {
+      MA_NewReply(mlist, TRUE);
+      FileToEditor(filter->replyFile, G->WR[2]->GUI.TE_EDIT, TRUE);
+      WR_NewMail(WRITE_QUEUE, 2);
+      G->RuleResults.Replied++;
+    }
+
+    // Execute Action
+    if(hasExecuteAction(filter) && *filter->executeCmd)
+    {
+      char buf[SIZE_COMMAND + SIZE_PATHFILE];
+
+      snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
+      ExecuteCommand(buf, FALSE, OUT_DOS);
+      G->RuleResults.Executed++;
+    }
+
+    // PlaySound Action
+    if(hasPlaySoundAction(filter) && *filter->playSound)
+    {
+      PlaySound(filter->playSound);
+    }
+
+    // Move Action
+    if(hasMoveAction(filter) && !filter->remote)
+    {
+      struct Folder* fo;
+
+      if((fo = FO_GetFolderByName(filter->moveTo, NULL)) != NULL)
       {
-        BOOL accessFreed = FALSE;
-        enum LoadedMode oldLoadedMode = fo->LoadedMode;
-
-        G->RuleResults.Moved++;
-
-        // temporarily grant free access to the folder, but only if it has no free access yet
-        if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo) && isFreeAccess(fo) == FALSE)
+        if(mail->Folder != fo)
         {
-          SET_FLAG(fo->Flags, FOFL_FREEXS);
-          accessFreed = TRUE;
+          BOOL accessFreed = FALSE;
+          enum LoadedMode oldLoadedMode = fo->LoadedMode;
+
+          G->RuleResults.Moved++;
+
+          // temporarily grant free access to the folder, but only if it has no free access yet
+          if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo) && isFreeAccess(fo) == FALSE)
+          {
+            SET_FLAG(fo->Flags, FOFL_FREEXS);
+            accessFreed = TRUE;
+          }
+
+          MA_MoveCopy(mail, mail->Folder, fo, FALSE, TRUE);
+
+          // restore the old access mode if it was changed before
+          if(accessFreed)
+          {
+            // restore old index settings
+            // if it was not yet loaded before, the MA_MoveCopy() call changed this to "loaded"
+            fo->LoadedMode = oldLoadedMode;
+            CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
+          }
+
+          // signal failure, although everything was successful yet
+          // but the mail is not available anymore for other filters
+          success = FALSE;
         }
-
-        MA_MoveCopy(mail, mail->Folder, fo, FALSE, TRUE);
-
-        // restore the old access mode if it was changed before
-        if(accessFreed)
-        {
-          // restore old index settings
-          // if it was not yet loaded before, the MA_MoveCopy() call changed this to "loaded"
-          fo->LoadedMode = oldLoadedMode;
-          CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
-        }
-
-        // signal failure, although everything was successful yet
-        // but the mail is not available anymore for other filters
-        success = FALSE;
       }
+      else
+        ER_NewError(tr(MSG_ER_CANTMOVEMAIL), mail->MailFile, filter->moveTo);
     }
-    else
-      ER_NewError(tr(MSG_ER_CANTMOVEMAIL), mail->MailFile, filter->moveTo);
-  }
 
-  // Delete Action
-  if(hasDeleteAction(filter) && success == TRUE)
-  {
-    G->RuleResults.Deleted++;
-
-    if(isSendMDNMail(mail) &&
-       (hasStatusNew(mail) || !hasStatusRead(mail)))
+    // Delete Action
+    if(hasDeleteAction(filter) && success == TRUE)
     {
-      RE_ProcessMDN(MDN_MODE_DELETE, mail, FALSE, TRUE);
+      G->RuleResults.Deleted++;
+
+      if(isSendMDNMail(mail) &&
+         (hasStatusNew(mail) || !hasStatusRead(mail)))
+      {
+        RE_ProcessMDN(MDN_MODE_DELETE, mail, FALSE, TRUE);
+      }
+
+      MA_DeleteSingle(mail, FALSE, FALSE, TRUE);
+
+      // signal failure, although everything was successful yet
+      // but the mail is not available anymore for other filters
+      success = FALSE;
     }
-
-    MA_DeleteSingle(mail, FALSE, FALSE, TRUE);
-
-    // signal failure, although everything was successful yet
-    // but the mail is not available anymore for other filters
-    success = FALSE;
   }
 
   RETURN(success);
@@ -1612,21 +1615,21 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
      (C->SpamFilterEnabled == FALSE || (spamfolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL))
   {
     Object *lv = G->MA->GUI.PG_MAILLIST;
-    struct Mail **mlist = NULL;
+    struct MailList *mlist = NULL;
     BOOL processAllMails = TRUE;
 
     // query how many mails are currently selected/marked
     if(mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL || mode == APPLY_SPAM)
     {
-      int minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
+      ULONG minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
 
       if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) != NULL)
       {
-        if((int)mlist[0] < minselected)
+        if(mlist->count < minselected)
         {
-          W(DBF_FILTER, "number of selected mails < required minimum (%ld < %ld)", mlist[0], minselected);
+          W(DBF_FILTER, "number of selected mails < required minimum (%ld < %ld)", mlist->count, minselected);
 
-          free(mlist);
+          DeleteMailList(mlist);
           mlist = NULL;
         }
         else
@@ -1655,17 +1658,17 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         else
           snprintf(buf, sizeof(buf), tr(MSG_MA_CONFIRMFILTER_SELECTED), folder->Name);
 
-        if(!MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buf))
+        if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buf) == 0)
           applyFilters = FALSE;
       }
 
       // the user has not cancelled the filter process
       if(applyFilters == TRUE)
       {
-        int m;
+        struct MailNode *mnode;
+        ULONG m;
         int scnt;
         int matches = 0;
-        struct Mail *mail;
 
         memset(&G->RuleResults, 0, sizeof(G->RuleResults));
         set(lv, MUIA_NList_Quiet, TRUE);
@@ -1678,23 +1681,25 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         // a spam classification session. And we build an interruptable
         // Gauge which will report back if the user pressed the stop button
         if(mode != APPLY_SPAM)
-          BusyGaugeInt(tr(MSG_BusyFiltering), "", (int)*mlist);
+          BusyGaugeInt(tr(MSG_BusyFiltering), "", mlist->count);
         else
-          BusyGaugeInt(tr(MSG_FI_BUSYCHECKSPAM), "", (int)*mlist);
+          BusyGaugeInt(tr(MSG_FI_BUSYCHECKSPAM), "", mlist->count);
 
-        for(m = 0; m < (int)*mlist; m++)
+        m = 0;
+        ForEachMailNode(mlist, mnode)
         {
+          struct Mail *mail = mnode->mail;
           BOOL wasSpam = FALSE;
 
-          if((mail = mlist[m + 2]) != NULL)
+          if(mail != NULL)
           {
-            if(C->SpamFilterEnabled && (mode == APPLY_AUTO || mode == APPLY_SPAM))
+            if(C->SpamFilterEnabled == TRUE && (mode == APPLY_AUTO || mode == APPLY_SPAM))
             {
               BOOL doClassification;
 
               D(DBF_FILTER, "About to apply SPAM filter to message with subject \"%s\"", mail->Subject);
 
-              if(mode == APPLY_AUTO && C->SpamFilterForNewMail)
+              if(mode == APPLY_AUTO && C->SpamFilterForNewMail == TRUE)
               {
                 // classify this mail if we are allowed to check new mails automatically
                 doClassification = TRUE;
@@ -1719,7 +1724,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
                   D(DBF_FILTER, "Message was classified as spam");
 
                   // set the SPAM flags, but clear the NEW and READ flags only if desired
-                  if(C->SpamMarkAsRead)
+                  if(C->SpamMarkAsRead == TRUE)
                     setStatusToReadAutoSpam(mail);
                   else
                     setStatusToAutoSpam(mail);
@@ -1748,7 +1753,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
             // we update the busy gauge and
             // see if we have to exit/abort in case it returns FALSE
-            if(BusySet(m+1) == FALSE)
+            if(BusySet(++m) == FALSE)
               break;
           }
         }
@@ -1792,8 +1797,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
       else
         D(DBF_FILTER, "filtering rejected by user.");
 
-      free(mlist);
-      mlist = NULL;
+      DeleteMailList(mlist);
     }
     else
       W(DBF_FILTER, "folder empty or error on creating list of mails.");

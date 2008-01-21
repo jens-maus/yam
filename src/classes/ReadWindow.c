@@ -31,7 +31,9 @@
 #include "ReadWindow_cl.h"
 
 #include "YAM_mime.h"
+
 #include "BayesFilter.h"
+#include "MailList.h"
 
 #include "Debug.h"
 
@@ -682,31 +684,49 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
   // then create a new mail depending on the current mode
   if(MailExists(mail, NULL))
   {
-    enum NewMode mode = msg->mode;
-    int flags;
+    struct MailList *mlist;
 
-    // create some fake mail list
-    struct Mail *mlist[3];
-    mlist[0] = (struct Mail*)1;
-    mlist[1] = NULL;
-    mlist[2] = mail;
-
-    // get the newmail flags depending on the currently
-    // set qualifier keys. We submit these flags to the
-    // NewMessage() function later on
-    mode = CheckNewMailQualifier(mode, msg->qualifier, &flags);
-
-    switch(mode)
+    if((mlist = CreateMailList()) != NULL)
     {
-      case NEW_NEW:     MA_NewNew(mail, flags);     break;
-      case NEW_EDIT:    MA_NewEdit(mail, flags);    break;
-      case NEW_BOUNCE:  MA_NewBounce(mail, flags);  break;
-      case NEW_FORWARD: MA_NewForward(mlist, flags);break;
-      case NEW_REPLY:   MA_NewReply(mlist, flags);  break;
+      enum NewMode mode = msg->mode;
+      int flags;
 
-      default:
-       // nothing
-      break;
+      // add the mail to the list of mails for those functions which need it
+      AddMailNode(mlist, mail);
+
+      // get the newmail flags depending on the currently
+      // set qualifier keys. We submit these flags to the
+      // NewMessage() function later on
+      mode = CheckNewMailQualifier(mode, msg->qualifier, &flags);
+
+      switch(mode)
+      {
+        case NEW_NEW:
+          MA_NewNew(mail, flags);
+        break;
+
+        case NEW_EDIT:
+          MA_NewEdit(mail, flags);
+        break;
+
+        case NEW_BOUNCE:
+          MA_NewBounce(mail, flags);
+        break;
+
+        case NEW_FORWARD:
+          MA_NewForward(mlist, flags);
+        break;
+
+        case NEW_REPLY:
+          MA_NewReply(mlist, flags);
+        break;
+
+        default:
+         // nothing
+        break;
+      }
+
+      DeleteMailList(mlist);
     }
   }
 
@@ -1053,13 +1073,16 @@ DECLARE(GrabSenderAddress)
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
   struct Mail *mail = rmData->mail;
 
-  if(MailExists(mail, mail->Folder))
+  if(MailExists(mail, mail->Folder) == TRUE)
   {
-    struct Mail *mlist[3];
-    mlist[0] = (struct Mail *)1;
-    mlist[1] = NULL;
-    mlist[2] = mail;
-    MA_GetAddress(mlist);
+    struct MailList *mlist;
+
+    if((mlist = CreateMailList()) != NULL)
+    {
+      AddMailNode(mlist, mail);
+      MA_GetAddress(mlist);
+      DeleteMailList(mlist);
+    }
   }
 
   return 0;

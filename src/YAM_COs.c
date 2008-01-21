@@ -55,6 +55,8 @@
 
 #include "BayesFilter.h"
 #include "FileInfo.h"
+#include "MailList.h"
+
 #include "Debug.h"
 
 /***************************************************************************
@@ -1528,22 +1530,22 @@ void CO_GetConfig(BOOL saveConfig)
 
                   if(!isGroupFolder(folder))
                   {
-                    struct Mail **mlist;
+                    struct MailList *mlist;
 
                     if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
                     {
-                      int i;
+                      struct MailNode *mnode;
 
                       // clear all possible spam/ham flags from each mail
-                      for(i = 0; i < (int)*mlist; i++)
+                      ForEachMailNode(mlist, mnode)
                       {
-                        struct Mail *mail = mlist[i + 2];
+                        struct Mail *mail = mnode->mail;
 
                         if(mail != NULL)
                           MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_USERSPAM|SFLAG_AUTOSPAM|SFLAG_HAM);
                       }
 
-                      free(mlist);
+                      DeleteMailList(mlist);
                     }
                   }
                 }

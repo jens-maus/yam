@@ -76,6 +76,7 @@
 
 #include "HashTable.h"
 #include "FileInfo.h"
+#include "MailList.h"
 
 #include "Debug.h"
 
@@ -5065,10 +5066,11 @@ static void RemoveUIDLfromHash(const char *uidl)
 /*** EXPORT ***/
 /// TR_ProcessEXPORT
 //  Saves a list of messages to a MBOX mailbox file
-BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
+BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
 {
   BOOL success = FALSE;
   BOOL abort = FALSE;
+  struct MailNode *mnode;
   int i;
 
   ENTER();
@@ -5078,9 +5080,13 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 
   // temporarly copy all data out of our mlist to the
   // processing list and mark all mails to get "loaded"
-  for(i = 0; i < (int)*mlist; i++)
+  i = 0;
+
+  LockMailList(mlist);
+
+  ForEachMailNode(mlist, mnode)
   {
-    struct Mail *mail = mlist[i + 2];
+    struct Mail *mail = mnode->mail;
 
     if(mail != NULL)
     {
@@ -5113,7 +5119,11 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
         break;
       }
     }
+
+    i++;
   }
+
+  UnlockMailList(mlist);
 
   // if we have now something in our processing list,
   // lets go on
@@ -5248,7 +5258,8 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
       fclose(fh);
 
       // write the status to our logfile
-      AppendToLogfile(LF_ALL, 51, tr(MSG_LOG_Exporting), ts.Msgs_Done, mlist[2]->Folder->Name, fname);
+      mnode = FirstMailNode(mlist);
+      AppendToLogfile(LF_ALL, 51, tr(MSG_LOG_Exporting), ts.Msgs_Done, mnode->mail->Folder->Name, fname);
     }
   }
 
@@ -5461,7 +5472,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 ///
 /// TR_ProcessSEND
 //  Sends a list of messages
-BOOL TR_ProcessSEND(struct Mail **mlist, enum SendMode mode)
+BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
 {
   BOOL success = FALSE;
 
@@ -5480,7 +5491,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist, enum SendMode mode)
       if(SafeOpenWindow(G->TR->GUI.WI) == TRUE)
       {
         int c;
-        int i;
+        struct MailNode *mnode;
 
         NewList((struct List *)&G->TR->transferList);
         G->TR_Allow = FALSE;
@@ -5489,9 +5500,13 @@ BOOL TR_ProcessSEND(struct Mail **mlist, enum SendMode mode)
 
         // now we build the list of mails which should
         // be transfered.
-        for(c = i = 0; i < (int)*mlist; i++)
+        c = 0;
+
+        LockMailList(mlist);
+
+        ForEachMailNode(mlist, mnode)
         {
-          struct Mail *mail = mlist[i + 2];
+          struct Mail *mail = mnode->mail;
 
           if(mail != NULL)
           {
@@ -5521,6 +5536,8 @@ BOOL TR_ProcessSEND(struct Mail **mlist, enum SendMode mode)
             }
           }
         }
+
+        UnlockMailList(mlist);
 
         // just go on if we really have something
         if(c > 0)

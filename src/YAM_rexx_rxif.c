@@ -43,6 +43,8 @@
 #include <proto/rexxsyslib.h>
 #include <proto/utility.h>
 
+#include "extrasrc.h"
+
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
@@ -60,7 +62,7 @@
 #include "classes/Classes.h"
 
 #include "FileInfo.h"
-#include "extrasrc.h"
+#include "MailList.h"
 
 #include "Debug.h"
 
@@ -2976,27 +2978,31 @@ void rx_getselected( UNUSED struct RexxHost *host, struct rxd_getselected **rxd,
 
     case RXIF_ACTION:
     {
-      struct Mail **mlist;
+      struct MailList *mlist;
       Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
 
       if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
       {
-        if((rd->res.num = calloc(1 + (int)mlist[0], sizeof(long))))
+        if((rd->res.num = calloc(mlist->count + 1, sizeof(long))))
         {
-          int i;
+          struct MailNode *mnode;
+          ULONG i;
 
-          for(i = 0; i < (int)mlist[0]; i++)
+          i = 0;
+          ForEachMailNode(mlist, mnode)
           {
-            struct Mail *mail = mlist[i + 2];
+            struct Mail *mail = mnode->mail;
 
             if(mail != NULL)
               rd->res.num[i] = &mail->position;
             else
               rd->res.num[i] = 0;
+
+            i++;
           }
         }
 
-        free(mlist);
+        DeleteMailList(mlist);
       }
       else
       {
@@ -3334,22 +3340,22 @@ void rx_mailchangesubject( UNUSED struct RexxHost *host, struct rxd_mailchangesu
 
     case RXIF_ACTION:
     {
-      struct Mail **mlist;
+      struct MailList *mlist;
       Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
 
       if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
       {
-        int i, selected = (int)*mlist;
+        struct MailNode *mnode;
 
-        for(i = 0; i < selected; i++)
+        ForEachMailNode(mlist, mnode)
         {
-          struct Mail *mail = mlist[i + 2];
+          struct Mail *mail = mnode->mail;
 
           if(mail != NULL)
             MA_ChangeSubject(mail, rd->arg.subject);
         }
 
-        free(mlist);
+        DeleteMailList(mlist);
 
         DoMethod(lv, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
       }

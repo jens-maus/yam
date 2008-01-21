@@ -76,6 +76,7 @@
 #include "HTML2Mail.h"
 #include "BayesFilter.h"
 #include "FileInfo.h"
+#include "MailList.h"
 
 #include "Debug.h"
 
@@ -175,217 +176,212 @@ void MA_ChangeTransfer(BOOL on)
 // window and triggers an update of the embedded read pane if required.
 void MA_ChangeSelected(BOOL forceUpdate)
 {
-  static struct Mail *lastMail = NULL;
-  struct MA_GUIData *gui = &G->MA->GUI;
   struct Folder *fo = FO_GetCurrentFolder();
-  BOOL active;
-  BOOL hasattach = FALSE;
-  BOOL folderEnabled;
-  ULONG numSelected = 0;
-  ULONG numEntries = 0;
-  struct Mail *mail = NULL;
 
   ENTER();
 
-  if(!fo)
+  if(fo != NULL)
   {
-    LEAVE();
-    return;
-  }
+    static struct Mail *lastMail = NULL;
+    struct MA_GUIData *gui = &G->MA->GUI;
+    BOOL active;
+    BOOL hasattach = FALSE;
+    BOOL folderEnabled;
+    ULONG numSelected = 0;
+    ULONG numEntries = 0;
+    struct Mail *mail = NULL;
 
-  // get the currently active mail entry.
-  DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+    // get the currently active mail entry.
+    DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
 
-  // now we check if the previously selected mail is the same one as
-  // the currently active one, then we don't have to proceed.
-  if(forceUpdate == FALSE && mail == lastMail)
-  {
-    LEAVE();
-    return;
-  }
-  else
-    lastMail = mail;
-
-  // we make sure the an eventually running timer event for setting the mail
-  // status of a previous mail to read is canceled beforehand
-  if(C->StatusChangeDelayOn)
-    StopTimer(TIMER_READSTATUSUPDATE);
-
-  // ask the mail list how many entries are currently available and selected
-  if((numEntries = xget(gui->PG_MAILLIST, MUIA_NList_Entries)) > 0)
-    DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
-  else
-    numSelected = 0;
-
-  SHOWVALUE(DBF_MAIL, numEntries);
-  SHOWVALUE(DBF_MAIL, numSelected);
-
-  // make sure the mail is displayed in our readMailGroup of the main window
-  // (if enabled) - but we do only issue a timer event here so the read pane
-  // is only refreshed about 100 milliseconds after the last change in the listview
-  // was recognized.
-  if(C->EmbeddedReadPane)
-  {
-    // but before we really issue a readpaneupdate we check whether the user has
-    // selected more than one mail at a time which then should clear the
-    // readpane as it might have been disabled.
-    if(numSelected == 1)
-      RestartTimer(TIMER_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
-    else
+    // now we check if the previously selected mail is the same one as
+    // the currently active one, then we don't have to proceed.
+    if(forceUpdate == TRUE || mail != lastMail)
     {
-      // make sure an already existing readpaneupdate timer is canceled in advance.
-      StopTimer(TIMER_READPANEUPDATE);
+      lastMail = mail;
 
-      // clear the readmail group now
-      DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, fo->Total > 0 ? MUIF_ReadMailGroup_Clear_KeepAttachmentGroup : MUIF_NONE);
-      lastMail = NULL;
+      // we make sure the an eventually running timer event for setting the mail
+      // status of a previous mail to read is canceled beforehand
+      if(C->StatusChangeDelayOn == TRUE)
+        StopTimer(TIMER_READSTATUSUPDATE);
+
+      // ask the mail list how many entries are currently available and selected
+      if((numEntries = xget(gui->PG_MAILLIST, MUIA_NList_Entries)) > 0)
+        DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
+      else
+        numSelected = 0;
+
+      SHOWVALUE(DBF_MAIL, numEntries);
+      SHOWVALUE(DBF_MAIL, numSelected);
+
+      // make sure the mail is displayed in our readMailGroup of the main window
+      // (if enabled) - but we do only issue a timer event here so the read pane
+      // is only refreshed about 100 milliseconds after the last change in the listview
+      // was recognized.
+      if(C->EmbeddedReadPane == TRUE)
+      {
+        // but before we really issue a readpaneupdate we check whether the user has
+        // selected more than one mail at a time which then should clear the
+        // readpane as it might have been disabled.
+        if(numSelected == 1)
+          RestartTimer(TIMER_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
+        else
+        {
+          // make sure an already existing readpaneupdate timer is canceled in advance.
+          StopTimer(TIMER_READPANEUPDATE);
+
+          // clear the readmail group now
+          DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, fo->Total > 0 ? MUIF_ReadMailGroup_Clear_KeepAttachmentGroup : MUIF_NONE);
+          lastMail = NULL;
+        }
+      }
+
+      // in case the currently active maillist is the mainmainlist we
+      // have to save the lastactive mail ID
+      if(xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveList) == LT_MAIN)
+        fo->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);
+
+      if((active = (mail != NULL)) && isMultiPartMail(mail))
+        hasattach = TRUE;
+
+      SHOWVALUE(DBF_MAIL, active);
+
+      // now we have to make sure that all toolbar and menu items are
+      // enabled and disabled according to the folder/mail status
+      folderEnabled = !isGroupFolder(fo);
+
+      // deal with the toolbar and disable/enable certain buttons
+      if(gui->TO_TOOLBAR != NULL)
+      {
+        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_READ,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_EDIT,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
+        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_MOVE,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_DELETE,  MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETADDR, MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_NEWMAIL, MUIA_TheBar_Attr_Disabled, !folderEnabled);
+        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isOutgoingFolder(fo) || isSpamFolder(fo));
+        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FORWARD, MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FILTER,  MUIA_TheBar_Attr_Disabled, !folderEnabled || numEntries == 0);
+        DoMethod(gui->TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
+      }
+
+      // change the menu item title of the
+      // Edit item so that we either display "Edit" or "Edit as New"
+      if(isOutgoingFolder(fo))
+        set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDIT));
+      else
+        set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDITASNEW));
+
+      // in the following section we define which menu item should be
+      // enabled or disabled. Please note that a menu item can only be part of
+      // ONE of the following groups for enabling/disabling items based on
+      // certain dependencies. So if there is a menu item which is part of
+      // more than one group, something is definitly wrong!
+
+      // Enable if:
+      //  * the folder is enabled
+      //  * NOT in the "Outgoing" folder
+      //  * NOT in the "SPAM" folder
+      //  * > 0 mails selected
+      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isOutgoingFolder(fo) && !isSpamFolder(fo) && (active || numSelected > 0),
+                                                             gui->MI_CHSUBJ,
+                                                             gui->MI_REPLY,
+                                                             NULL);
+
+      // Enable if:
+      //  * the folder is enabled
+      //  * NOT in the "SPAM" folder
+      //  * > 0 mails selected
+      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(fo) && (active || numSelected > 0),
+                                                             gui->MI_EDIT,
+                                                             NULL);
+
+      // Enable if:
+      //  * the folder is enabled
+      //  * NOT in the "Sent" folder
+      //  * > 0 mails selected
+      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSentMailFolder(fo) && (active || numSelected > 0),
+                                                             gui->MI_TOREAD,
+                                                             gui->MI_TOUNREAD,
+                                                             gui->MI_ALLTOREAD,
+                                                             gui->MI_BOUNCE,
+                                                             NULL);
+
+      // Enable if:
+      //  * the folder is enabled
+      //  * is in the "Outgoing" Folder
+      //  * > 0 mails selected
+      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && isOutgoingFolder(fo) && (active || numSelected > 0),
+                                                             gui->MI_SEND,
+                                                             gui->MI_TOHOLD,
+                                                             gui->MI_TOQUEUED,
+                                                             NULL);
+
+      // Enable if:
+      //  * the folder is enabled
+      //  * > 0 mails selected
+      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && (active || numSelected > 0),
+                                                             gui->MI_READ,
+                                                             gui->MI_MOVE,
+                                                             gui->MI_DELETE,
+                                                             gui->MI_GETADDRESS,
+                                                             gui->MI_STATUS,
+                                                             gui->MI_EXPMSG,
+                                                             gui->MI_COPY,
+                                                             gui->MI_PRINT,
+                                                             gui->MI_SAVE,
+                                                             gui->MI_ATTACH,
+                                                             gui->MI_FORWARD,
+                                                             NULL);
+
+      // Enable if:
+      //  * the folder is enabled
+      //  * > 0 mails in folder
+      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0,
+                                                             gui->MI_FILTER,
+                                                             gui->MI_SELECT,
+                                                             NULL);
+
+
+      // Enable if:
+      //  * the folder is enabled
+      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled,
+                                                             gui->MI_UPDINDEX,
+                                                             gui->MI_IMPORT,
+                                                             gui->MI_EXPORT,
+                                                             gui->MI_NEW,
+                                                             NULL);
+
+
+      // Enable if:
+      //  * TOSPAM menu item exists
+      //  * > 0 mails selected or the active one isn't marked as SPAM
+      //  * the folder is enabled
+      //  * the mail is not spam
+      if(gui->MI_TOSPAM != NULL)
+        set(gui->MI_TOSPAM, MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && !hasStatusSpam(mail))));
+
+      // Enable if:
+      //  * TOHAM menu item exists
+      //  * > 0 mails selected
+      //  * the folder is enabled
+      //  * the mail is classified as spam
+      if(gui->MI_TOHAM != NULL)
+        set(gui->MI_TOHAM,  MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && hasStatusSpam(mail))));
+
+      // Enable if:
+      //  * DELSPAM menu item exists
+      //  * is in the "SPAM" folder
+      if(gui->MI_DELSPAM != NULL)
+        set(gui->MI_DELSPAM, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0);
+
+      // Enable if:
+      //  * CHECKSPAM menu item exists
+      //  * the folder is enabled
+      if(gui->MI_CHECKSPAM != NULL)
+        set(gui->MI_CHECKSPAM, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0);
     }
   }
-
-  // in case the currently active maillist is the mainmainlist we
-  // have to save the lastactive mail ID
-  if(xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveList) == LT_MAIN)
-    fo->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);
-
-  if((active = (mail != NULL)) && isMultiPartMail(mail))
-    hasattach = TRUE;
-
-  SHOWVALUE(DBF_MAIL, active);
-
-  // now we have to make sure that all toolbar and menu items are
-  // enabled and disabled according to the folder/mail status
-  folderEnabled = !isGroupFolder(fo);
-
-  // deal with the toolbar and disable/enable certain buttons
-  if(gui->TO_TOOLBAR)
-  {
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_READ,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_EDIT,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_MOVE,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_DELETE, MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETADDR,MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_NEWMAIL,MUIA_TheBar_Attr_Disabled, !folderEnabled);
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,  MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isOutgoingFolder(fo) || isSpamFolder(fo));
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FORWARD,MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FILTER, MUIA_TheBar_Attr_Disabled, !folderEnabled || numEntries == 0);
-    DoMethod(gui->TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
-  }
-
-  // change the menu item title of the
-  // Edit item so that we either display "Edit" or "Edit as New"
-  if(isOutgoingFolder(fo))
-    set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDIT));
-  else
-    set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDITASNEW));
-
-  // in the following section we define which menu item should be
-  // enabled or disabled. Please note that a menu item can only be part of
-  // ONE of the following groups for enabling/disabling items based on
-  // certain dependencies. So if there is a menu item which is part of
-  // more than one group, something is definitly wrong!
-
-  // Enable if:
-  //  * the folder is enabled
-  //  * NOT in the "Outgoing" folder
-  //  * NOT in the "SPAM" folder
-  //  * > 0 mails selected
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isOutgoingFolder(fo) && !isSpamFolder(fo) && (active || numSelected > 0),
-                                                         gui->MI_CHSUBJ,
-                                                         gui->MI_REPLY,
-                                                         NULL);
-
-  // Enable if:
-  //  * the folder is enabled
-  //  * NOT in the "SPAM" folder
-  //  * > 0 mails selected
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(fo) && (active || numSelected > 0),
-                                                         gui->MI_EDIT,
-                                                         NULL);
-
-  // Enable if:
-  //  * the folder is enabled
-  //  * NOT in the "Sent" folder
-  //  * > 0 mails selected
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSentMailFolder(fo) && (active || numSelected > 0),
-                                                         gui->MI_TOREAD,
-                                                         gui->MI_TOUNREAD,
-                                                         gui->MI_ALLTOREAD,
-                                                         gui->MI_BOUNCE,
-                                                         NULL);
-
-  // Enable if:
-  //  * the folder is enabled
-  //  * is in the "Outgoing" Folder
-  //  * > 0 mails selected
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && isOutgoingFolder(fo) && (active || numSelected > 0),
-                                                         gui->MI_SEND,
-                                                         gui->MI_TOHOLD,
-                                                         gui->MI_TOQUEUED,
-                                                         NULL);
-
-  // Enable if:
-  //  * the folder is enabled
-  //  * > 0 mails selected
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && (active || numSelected > 0),
-                                                         gui->MI_READ,
-                                                         gui->MI_MOVE,
-                                                         gui->MI_DELETE,
-                                                         gui->MI_GETADDRESS,
-                                                         gui->MI_STATUS,
-                                                         gui->MI_EXPMSG,
-                                                         gui->MI_COPY,
-                                                         gui->MI_PRINT,
-                                                         gui->MI_SAVE,
-                                                         gui->MI_ATTACH,
-                                                         gui->MI_FORWARD,
-                                                         NULL);
-
-  // Enable if:
-  //  * the folder is enabled
-  //  * > 0 mails in folder
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0,
-                                                         gui->MI_FILTER,
-                                                         gui->MI_SELECT,
-                                                         NULL);
-
-
-  // Enable if:
-  //  * the folder is enabled
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled,
-                                                         gui->MI_UPDINDEX,
-                                                         gui->MI_IMPORT,
-                                                         gui->MI_EXPORT,
-                                                         gui->MI_NEW,
-                                                         NULL);
-
-
-  // Enable if:
-  //  * TOSPAM menu item exists
-  //  * > 0 mails selected or the active one isn't marked as SPAM
-  //  * the folder is enabled
-  //  * the mail is not spam
-  if(gui->MI_TOSPAM)
-    set(gui->MI_TOSPAM, MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && !hasStatusSpam(mail))));
-
-  // Enable if:
-  //  * TOHAM menu item exists
-  //  * > 0 mails selected
-  //  * the folder is enabled
-  //  * the mail is classified as spam
-  if(gui->MI_TOHAM)
-    set(gui->MI_TOHAM,  MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && hasStatusSpam(mail))));
-
-  // Enable if:
-  //  * DELSPAM menu item exists
-  //  * is in the "SPAM" folder
-  if(gui->MI_DELSPAM)
-    set(gui->MI_DELSPAM, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0);
-
-  // Enable if:
-  //  * CHECKSPAM menu item exists
-  //  * the folder is enabled
-  if(gui->MI_CHECKSPAM)
-    set(gui->MI_CHECKSPAM, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0);
 
   LEAVE();
 }
@@ -651,34 +647,27 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 ///
 /// MA_CreateFullList
 //  Builds a list containing all messages in a folder
-struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
+struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 {
-  struct Mail **mlist = NULL;
+  struct MailList *mlist = NULL;
 
   ENTER();
 
   if(fo != NULL && isGroupFolder(fo) == FALSE)
   {
-    int selected;
-
-    selected = onlyNew ? fo->New : fo->Total;
-
-    if(selected > 0)
+    if((onlyNew == TRUE  && fo->New > 0) ||
+       (onlyNew == FALSE && fo->Total > 0))
     {
-      if((mlist = calloc(selected + 2, sizeof(struct Mail *))) != NULL)
+      if((mlist = CreateMailList()) != NULL)
       {
-        struct Mail *mail, **mPtr;
-
-        mlist[0] = (struct Mail *)selected;
-        mlist[1] = (struct Mail *)2;
-        mPtr = &mlist[2];
+        struct Mail *mail;
 
         for(mail = fo->Messages; mail; mail = mail->Next)
         {
           // only if we want ALL or this is just a îew mail we add it to our list
-          if(!onlyNew || hasStatusNew(mail))
+          if(onlyNew == FALSE || hasStatusNew(mail))
           {
-            *mPtr++ = mail;
+            AddMailNode(mlist, mail);
           }
         }
       }
@@ -692,9 +681,9 @@ struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 ///
 /// MA_CreateMarkedList
 //  Builds a linked list containing the selected messages
-struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
+struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 {
-  struct Mail **mlist = NULL;
+  struct MailList *mlist = NULL;
   struct Folder *folder;
 
   ENTER();
@@ -703,50 +692,40 @@ struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
   folder = FO_GetCurrentFolder();
   if(folder != NULL && isGroupFolder(folder) == FALSE)
   {
-    int selected;
-
-    DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
-    if(selected > 0)
+    if((mlist = CreateMailList()) != NULL)
     {
-      if((mlist = calloc(selected + 2, sizeof(struct Mail *))) != NULL)
+      LONG selected;
+
+      DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
+      if(selected > 0)
       {
-        struct Mail *mail, **mPtr;
-        int id;
-
-        mlist[0] = (struct Mail *)selected;
-        mlist[1] = (struct Mail *)1;
-        mPtr = &mlist[2];
-
-        id = MUIV_NList_NextSelected_Start;
+        LONG id = MUIV_NList_NextSelected_Start;
 
         while(TRUE)
         {
+          struct Mail *mail;
+
           DoMethod(lv, MUIM_NList_NextSelected, &id);
           if(id == MUIV_NList_NextSelected_End)
             break;
 
           DoMethod(lv, MUIM_NList_GetEntry, id, &mail);
-          mail->position = id;
-
-          if(!onlyNew || hasStatusNew(mail))
+          if(mail != NULL && (onlyNew == FALSE || hasStatusNew(mail)))
           {
-            *mPtr++ = mail;
+            mail->position = id;
+            AddMailNode(mlist, mail);
           }
         }
       }
-    }
-    else
-    {
-      struct Mail *mail;
-
-      DoMethod(lv, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-      if(mail != NULL && (!onlyNew || hasStatusNew(mail)))
+      else
       {
-        if((mlist = calloc(3, sizeof(struct Mail *))) != NULL)
+        struct Mail *mail;
+
+        DoMethod(lv, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+        if(mail != NULL && (onlyNew == FALSE || hasStatusNew(mail)))
         {
           mail->position = xget(lv, MUIA_NList_Active);
-          mlist[0] = (struct Mail *)1;
-          mlist[2] = mail;
+          AddMailNode(mlist, mail);
         }
       }
     }
@@ -787,15 +766,17 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
 
           if(writeWin->refMailList != NULL)
           {
-            int j;
+            struct MailNode *mnode;
 
-            for(j=0; j < (int)writeWin->refMailList[0]; j++)
+            LockMailList(writeWin->refMailList);
+
+            ForEachMailNode(writeWin->refMailList, mnode)
             {
-              struct Mail *curMail = writeWin->refMailList[j+2];
-
-              if(curMail == mail)
-                writeWin->refMailList[j+2] = NULL;
+              if(mnode->mail == mail)
+                mnode->mail = NULL;
             }
+
+            UnlockMailList(writeWin->refMailList);
           }
         }
       }
@@ -888,16 +869,14 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 
           if(writeWin->refMailList)
           {
-            int j;
+            struct MailNode *mnode;
 
-            D(DBF_MAIL, "refMailList: %ld entries", writeWin->refMailList[0]);
+            D(DBF_MAIL, "refMailList: %ld entries", writeWin->refMailList->count);
 
-            for(j=0; j < (int)writeWin->refMailList[0]; j++)
+            ForEachMailNode(writeWin->refMailList, mnode)
             {
-              struct Mail *curMail = writeWin->refMailList[j+2];
-
-              if(curMail == mail)
-                writeWin->refMailList[j+2] = newMail;
+              if(mnode->mail == mail)
+                mnode->mail = newMail;
             }
           }
         }
@@ -956,63 +935,65 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 //  Moves or copies messages from one folder to another
 void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit, BOOL closeWindows)
 {
-  struct Mail **mlist;
-  int selected = 0;
+  struct MailList *mlist;
+  ULONG selected = 0;
 
   ENTER();
 
-  if(frombox == tobox && !copyit)
+  if(frombox == tobox && copyit == FALSE)
   {
     LEAVE();
     return;
   }
 
-  if(!(frombox == FO_GetCurrentFolder()) && !mail)
+  if(frombox != FO_GetCurrentFolder() && mail == NULL)
   {
     LEAVE();
     return;
   }
 
   // if a specific mail should be moved we do it now.
-  if(mail)
+  if(mail != NULL)
   {
     selected = 1;
     MA_MoveCopySingle(mail, frombox, tobox, copyit, closeWindows);
   }
   else if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
-    int i;
+    struct MailNode *mnode;
+    ULONG i;
 
     // get the list of the currently marked mails
-    selected = (int)*mlist;
+    selected = mlist->count;
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
     BusyGaugeInt(tr(MSG_BusyMoving), itoa(selected), selected);
-    for(i = 0; i < selected; i++)
+
+    i = 0;
+    ForEachMailNode(mlist, mnode)
     {
-      if((mail = mlist[i+2]) != NULL)
-        MA_MoveCopySingle(mail, frombox, tobox, copyit, closeWindows);
+      if(mnode->mail != NULL)
+        MA_MoveCopySingle(mnode->mail, frombox, tobox, copyit, closeWindows);
 
       // if BusySet() returns FALSE, then the user aborted
-      if(BusySet(i+1) == FALSE)
+      if(BusySet(++i) == FALSE)
       {
-        selected = i+1;
         break;
       }
     }
     BusyEnd();
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
 
-    free(mlist);
+    DeleteMailList(mlist);
   }
 
   // write some log out
-  if(copyit)
+  if(copyit == TRUE)
     AppendToLogfile(LF_NORMAL, 24, tr(MSG_LOG_Copying), selected, FolderName(frombox), FolderName(tobox));
   else
     AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, FolderName(frombox), FolderName(tobox));
 
   // refresh the folder statistics if necessary
-  if(!copyit)
+  if(copyit == FALSE)
     DisplayStatistics(frombox, FALSE);
 
   DisplayStatistics(tobox, TRUE);
@@ -1518,10 +1499,10 @@ static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 //  Compares two messages by date
 int MA_CompareByDate(const void *p1, const void *p2)
 {
-  struct Mail **pentry1 = (struct Mail **)p1;
-  struct Mail **pentry2 = (struct Mail **)p2;
+  struct Mail *pentry1 = (struct Mail *)p1;
+  struct Mail *pentry2 = (struct Mail *)p2;
 
-  return CompareDates(&(pentry2[0]->Date), &(pentry1[0]->Date));
+  return CompareDates(&pentry2->Date, &pentry1->Date);
 }
 
 ///
@@ -1632,11 +1613,11 @@ int MA_NewNew(struct Mail *mail, int flags)
   ENTER();
 
   // First check if the basic configuration is okay, then open write window */
-  if(folder != NULL && CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+  if(folder != NULL && CO_IsValid() == TRUE && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
   {
     FILE *out;
 
-    if((out = fopen(G->WR_Filename[winnum], "w")))
+    if((out = fopen(G->WR_Filename[winnum], "w")) != NULL)
     {
       struct WR_ClassData *wr = G->WR[winnum];
 
@@ -1645,7 +1626,7 @@ int MA_NewNew(struct Mail *mail, int flags)
       wr->Mode = NEW_NEW;
       wr->refMail = mail;
 
-      if(mail)
+      if(mail != NULL)
       {
         struct ExtendedMail *email;
 
@@ -1655,7 +1636,7 @@ int MA_NewNew(struct Mail *mail, int flags)
         if(mail->ReplyTo.Address[0] != '\0')
         {
           if(isMultiReplyToMail(mail) &&
-             (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+             (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
           {
             char *sbuf;
             int i;
@@ -1676,7 +1657,7 @@ int MA_NewNew(struct Mail *mail, int flags)
         else
         {
           if(isMultiSenderMail(mail) &&
-            (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+            (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
           {
             char *sbuf;
             int i;
@@ -1695,24 +1676,24 @@ int MA_NewNew(struct Mail *mail, int flags)
             setstring(wr->GUI.ST_TO, AB_BuildAddressStringPerson(&mail->From));
         }
       }
-      else if(folder->MLSupport)
+      else if(folder->MLSupport == TRUE)
       {
-        if(folder->MLAddress[0])
+        if(folder->MLAddress[0] != '\0')
           setstring(wr->GUI.ST_TO, folder->MLAddress);
 
-        if(folder->MLFromAddress[0])
+        if(folder->MLFromAddress[0] != '\0')
           setstring(wr->GUI.ST_FROM, folder->MLFromAddress);
 
-        if(folder->MLReplyToAddress[0])
+        if(folder->MLReplyToAddress[0] != '\0')
           setstring(wr->GUI.ST_REPLYTO, folder->MLReplyToAddress);
       }
 
-      if(folder->WriteIntro[0])
+      if(folder->WriteIntro[0] != '\0')
         MA_InsertIntroText(out, folder->WriteIntro, NULL);
       else
         MA_InsertIntroText(out, C->NewIntro, NULL);
 
-      if(folder->WriteGreetings[0])
+      if(folder->WriteGreetings[0] != '\0')
         MA_InsertIntroText(out, folder->WriteGreetings, NULL);
       else
         MA_InsertIntroText(out, C->Greetings, NULL);
@@ -1723,20 +1704,20 @@ int MA_NewNew(struct Mail *mail, int flags)
       // add a signature to the mail depending on the selected signature for this list
       WR_AddSignature(winnum, folder->MLSupport ? folder->MLSignature: -1);
 
-      if(!quiet)
+      if(quiet == FALSE)
         set(wr->GUI.WI, MUIA_Window_Open, TRUE);
 
       MA_ShowMessageText(winnum);
       set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
 
-      if(C->LaunchAlways && !quiet)
+      if(C->LaunchAlways == TRUE && quiet == FALSE)
         DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
     }
     else
       DisposeModulePush(&G->WR[winnum]);
   }
 
-  if(winnum >= 0 && !quiet)
+  if(winnum >= 0 && quiet == FALSE)
     winnum = MA_CheckWriteWindow(winnum);
 
   RETURN(winnum);
@@ -1769,7 +1750,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
     // return if mail is already being written/edited
     for(i=0; i < MAXWR; i++)
     {
-      if(G->WR[i] && G->WR[i]->refMail == mail)
+      if(G->WR[i] != NULL && G->WR[i]->refMail == mail)
       {
         DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
 
@@ -1780,11 +1761,11 @@ int MA_NewEdit(struct Mail *mail, int flags)
   }
 
   // check if necessary settings fror writing are OK and open new window
-  if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+  if(CO_IsValid() == TRUE && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
   {
     FILE *out;
 
-    if((out = fopen(G->WR_Filename[winnum], "w")))
+    if((out = fopen(G->WR_Filename[winnum], "w")) != NULL)
     {
       char *sbuf = NULL;
       struct ReadMailData *rmData;
@@ -1801,7 +1782,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
 
       wr->refMail = mail;
 
-      if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
+      if((email = MA_ExamineMail(folder, mail->MailFile, TRUE)) == NULL)
       {
         ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
         fclose(out);
@@ -1811,11 +1792,11 @@ int MA_NewEdit(struct Mail *mail, int flags)
         return winnum;
       }
 
-      if((rmData = AllocPrivateRMData(mail, PM_ALL)))
+      if((rmData = AllocPrivateRMData(mail, PM_ALL)) != NULL)
       {
         char *cmsg;
 
-        if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)))
+        if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)) != NULL)
         {
           int msglen = strlen(cmsg);
 
@@ -1837,7 +1818,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
             // are trying to edit.
             if(wr->Mode == NEW_EDITASNEW)
             {
-              if(folder->MLSupport)
+              if(folder->MLSupport == TRUE)
               {
                 if(folder->MLFromAddress[0] != '\0')
                   setstring(wr->GUI.ST_FROM, folder->MLFromAddress);
@@ -1895,7 +1876,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
             // free our temporary buffer
             FreeStrBuf(sbuf);
 
-            if(email->extraHeaders)
+            if(email->extraHeaders != NULL)
               setstring(wr->GUI.ST_EXTHEADER, email->extraHeaders);
 
             setcheckmark(wr->GUI.CH_DELSEND, email->DelSend);
@@ -1929,21 +1910,21 @@ int MA_NewEdit(struct Mail *mail, int flags)
       fclose(out);
       MA_FreeEMailStruct(email);
 
-      if(!quiet)
+      if(quiet == FALSE)
         set(wr->GUI.WI, MUIA_Window_Open, TRUE);
 
       MA_ShowMessageText(winnum);
       sbuf = (STRPTR)xget(wr->GUI.ST_TO, MUIA_String_Contents);
       set(wr->GUI.WI, MUIA_Window_ActiveObject, *sbuf ? wr->GUI.TE_EDIT : wr->GUI.ST_TO);
 
-      if(C->LaunchAlways && !quiet)
+      if(C->LaunchAlways == TRUE && quiet == FALSE)
         DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
     }
     else
       DisposeModulePush(&G->WR[winnum]);
   }
 
-  if(winnum >= 0 && !quiet)
+  if(winnum >= 0 && quiet == FALSE)
     winnum = MA_CheckWriteWindow(winnum);
 
   RETURN(winnum);
@@ -1960,20 +1941,20 @@ int MA_NewBounce(struct Mail *mail, int flags)
 
   ENTER();
 
-  if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, TRUE)) >= 0)
+  if(CO_IsValid() == TRUE && (winnum = WR_Open(quiet ? 2 : -1, TRUE)) >= 0)
   {
     struct WR_ClassData *wr = G->WR[winnum];
 
     wr->Mode = NEW_BOUNCE;
     wr->refMail = mail;
 
-    if(!quiet)
+    if(quiet == FALSE)
       set(wr->GUI.WI, MUIA_Window_Open, TRUE);
 
     set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
   }
 
-  if(winnum >= 0 && !quiet)
+  if(winnum >= 0 && quiet == FALSE)
     winnum = MA_CheckWriteWindow(winnum);
 
   RETURN(winnum);
@@ -1983,25 +1964,24 @@ int MA_NewBounce(struct Mail *mail, int flags)
 ///
 /// MA_NewForward
 //  Forwards a list of messages
-int MA_NewForward(struct Mail **mlist, int flags)
+int MA_NewForward(struct MailList *mlist, int flags)
 {
   BOOL quiet = hasQuietFlag(flags);
   int winnum = -1;
 
   ENTER();
 
-  if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+  if(CO_IsValid() == TRUE && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
   {
     FILE *out;
 
-    if((out = fopen(G->WR_Filename[winnum], "w")))
+    if((out = fopen(G->WR_Filename[winnum], "w")) != NULL)
     {
-      int i;
-      int mlen = (2+(int)mlist[0])*sizeof(struct Mail *);
       int signature = -1;
       struct WR_ClassData *wr = G->WR[winnum];
       char *rsub = AllocStrBuf(SIZE_SUBJECT);
       enum ForwardMode fwdMode = C->ForwardMode;
+      struct MailNode *mnode;
 
       // if the user wants to have the alternative
       // forward mode we go and select it here
@@ -2023,26 +2003,25 @@ int MA_NewForward(struct Mail **mlist, int flags)
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
       wr->Mode = NEW_FORWARD;
-      if((wr->refMailList = malloc(mlen)))
-        memcpy(wr->refMailList, mlist, mlen);
+      wr->refMailList = CloneMailList(mlist);
 
-      qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), MA_CompareByDate);
+      SortMailList(mlist, MA_CompareByDate);
 
       MA_InsertIntroText(out, C->NewIntro, NULL);
 
-      for(i=0; i < (int)mlist[0]; i++)
+      ForEachMailNode(mlist, mnode)
       {
         struct ExtendedMail *email;
         struct ExpandTextData etd;
-        struct Mail *mail = mlist[i+2];
+        struct Mail *mail = mnode->mail;
 
         if(signature == -1 && mail->Folder)
         {
-          if(mail->Folder->MLSupport)
+          if(mail->Folder->MLSupport == TRUE)
             signature = mail->Folder->MLSignature;
         }
 
-        if(!(email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+        if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) == NULL)
         {
           ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, mail->Folder, mail));
           fclose(out);
@@ -2112,7 +2091,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
             // we allocate some private readmaildata object so that
             // we can silently parse the mail which we want to
             // forward.
-            if((rmData = AllocPrivateRMData(mail, PM_ALL)))
+            if((rmData = AllocPrivateRMData(mail, PM_ALL)) != NULL)
             {
               char *cmsg;
 
@@ -2121,7 +2100,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
               MA_FreeEMailStruct(email);
 
               // read in the message text to cmsg.
-              if((cmsg = RE_ReadInMessage(rmData, RIM_FORWARD)))
+              if((cmsg = RE_ReadInMessage(rmData, RIM_FORWARD)) != NULL)
               {
                 // output the readin message text immediately to
                 // our out filehandle
@@ -2154,20 +2133,20 @@ int MA_NewForward(struct Mail **mlist, int flags)
       FreeStrBuf(rsub);
 
       // make sure the window is open
-      if(!quiet)
+      if(quiet == FALSE)
         set(wr->GUI.WI, MUIA_Window_Open, TRUE);
 
       MA_ShowMessageText(winnum);
       set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
 
-      if(C->LaunchAlways && !quiet)
+      if(C->LaunchAlways == TRUE && quiet == FALSE)
         DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
     }
     else
       DisposeModulePush(&G->WR[winnum]);
   }
 
-  if(winnum >= 0 && !quiet)
+  if(winnum >= 0 && quiet == FALSE)
     winnum = MA_CheckWriteWindow(winnum);
 
   RETURN(winnum);
@@ -2177,7 +2156,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
 ///
 /// MA_NewReply
 //  Creates a reply to a list of messages
-int MA_NewReply(struct Mail **mlist, int flags)
+int MA_NewReply(struct MailList *mlist, int flags)
 {
   int winnum = -1;
   BOOL doabort = FALSE;
@@ -2187,16 +2166,15 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
   // check if the configuration is valid and open a new
   // write window immediately
-  if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+  if(CO_IsValid() == TRUE && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
   {
     FILE *out;
 
     // open a new output file handle for generating
     // a new output file
-    if((out = fopen(G->WR_Filename[winnum], "w")))
+    if((out = fopen(G->WR_Filename[winnum], "w")) != NULL)
     {
       int j;
-      int mlen = (2+(int)mlist[0])*sizeof(struct Mail *);
       int repmode = 1;
       int signature = -1;
       BOOL altpat = FALSE;
@@ -2211,30 +2189,31 @@ int MA_NewReply(struct Mail **mlist, int flags)
       struct WR_ClassData *wr = G->WR[winnum];
       struct ExpandTextData etd;
       BOOL mlIntro = FALSE;
+      struct MailNode *mnode;
 
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
       // make sure the write window know of the
       // operation and knows which mails to process
       wr->Mode = NEW_REPLY;
-      if((wr->refMailList = malloc(mlen)))
-        memcpy(wr->refMailList, mlist, mlen);
+      wr->refMailList = CloneMailList(mlist);
 
       // make sure we sort the mlist according to
       // the mail date
-      qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), MA_CompareByDate);
+      SortMailList(mlist, MA_CompareByDate);
 
       // Now we iterate through all selected mails
-      for(j=0; j < (int)mlist[0]; j++)
+      j = 0;
+      ForEachMailNode(mlist, mnode)
       {
         int k;
-        struct Mail *mail = mlist[j+2];
+        struct Mail *mail = mnode->mail;
         struct Folder *folder = mail->Folder;
         struct ExtendedMail *email;
         struct Person pe;
         BOOL foundMLFolder = FALSE;
 
-        if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
+        if((email = MA_ExamineMail(folder, mail->MailFile, TRUE)) == NULL)
         {
           ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
           fclose(out);
@@ -2278,7 +2257,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
           }
 
           // try to find following subjects in the yet created reply subject
-          if(!strstr(rsub, buffer))
+          if(strstr(rsub, buffer) == NULL)
           {
             if(rsub[0] != '\0')
               rsub = StrBufCat(rsub, "; ");
@@ -2289,12 +2268,12 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
         // in case we are replying to a single message we also have to
         // save the messageID of it.
-        if((int)mlist[0] == 1)
+        if(mlist->count == 1)
           strlcpy(wr->MsgID, email->MsgID, sizeof(wr->MsgID));
 
         // Now we analyse the folder of the selected mail and if it
         // is a mailing list we have to do some special operation
-        if(folder)
+        if(folder != NULL)
         {
           // if the mail we are going to reply resists in the incoming folder
           // we have to check all other folders first.
@@ -2304,13 +2283,13 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
             // walk through all our folders
             // and check if it matches a pattern
-            if((flist = FO_CreateList()))
+            if((flist = FO_CreateList()) != NULL)
             {
               int i;
 
               for(i=1; i <= (int)*flist; i++)
               {
-                if(flist[i] != NULL && flist[i]->MLSupport && flist[i]->MLPattern[0])
+                if(flist[i] != NULL && flist[i]->MLSupport == TRUE && flist[i]->MLPattern[0])
                 {
                   char *pattern = flist[i]->MLPattern;
 
@@ -2349,7 +2328,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
               free(flist);
             }
           }
-          else if(folder->MLSupport && folder->MLPattern[0])
+          else if(folder->MLSupport == TRUE && folder->MLPattern[0])
           {
             if(MatchNoCase(mail->To.Address, folder->MLPattern) == FALSE &&
                MatchNoCase(mail->To.RealName, folder->MLPattern) == FALSE)
@@ -2386,7 +2365,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
         {
           // ask the user and in case he want to abort, quit this
           // function immediately.
-          if(!(repmode = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_ReplyReqOpt), tr(MSG_MA_ReplyReq))))
+          if((repmode = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_ReplyReqOpt), tr(MSG_MA_ReplyReq))) == 0)
           {
             MA_FreeEMailStruct(email);
             fclose(out);
@@ -2448,7 +2427,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
               free(p);
             }
           }
-          else if(C->CompareAddress && !hasMListFlag(flags) &&
+          else if(C->CompareAddress == TRUE && !hasMListFlag(flags) &&
                   mail->ReplyTo.Address[0] != '\0')
           {
             BOOL askUser = FALSE;
@@ -2476,7 +2455,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
             // if askUser == TRUE, we go and
             // ask the user which address he wants to reply to.
-            if(askUser)
+            if(askUser == TRUE)
             {
               snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
               switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_Compare3ReqOpt), buffer))
@@ -2530,7 +2509,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
           else
             addDefault = TRUE;
 
-          if(addDefault)
+          if(addDefault == TRUE)
           {
             // otherwise we check whether to use the ReplyTo: or From: addresses as the
             // To: adress of our reply. If a ReplyTo: exists we use that one instead
@@ -2586,7 +2565,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
         // extract the domain name from the To address or respective
         // the default To: mail address
-        if(!(domain = strchr(pe.Address, '@')))
+        if((domain = strchr(pe.Address, '@')) == NULL)
           domain = strchr(C->EmailAddress, '@');
 
         if(C->AltReplyPattern[0] != '\0' && domain && MatchNoCase(domain, C->AltReplyPattern))
@@ -2609,14 +2588,14 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
         // if the user wants to quote the mail text of the original mail,
         // we process it right now.
-        if(C->QuoteMessage && !hasNoQuoteFlag(flags))
+        if(C->QuoteMessage == TRUE && !hasNoQuoteFlag(flags))
         {
           struct ReadMailData *rmData;
 
           if(j > 0)
             fputc('\n', out);
 
-          if((rmData = AllocPrivateRMData(mail, PM_TEXTS)))
+          if((rmData = AllocPrivateRMData(mail, PM_TEXTS)) != NULL)
           {
             char *cmsg;
 
@@ -2639,6 +2618,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
         // free out temporary extended mail structure again.
         MA_FreeEMailStruct(email);
+
+        j++;
       }
 
       // now that the mail is finished, we go and output some footer message to
@@ -2651,23 +2632,23 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
       // If this is a reply to a mail belonging to a mailing list,
       // set the "From:" and "Reply-To:" addresses accordingly */
-      if(rfrom)
-        setstring(wr->GUI.ST_FROM,    rfrom);
+      if(rfrom != NULL)
+        setstring(wr->GUI.ST_FROM, rfrom);
 
-      if(rrepto)
+      if(rrepto != NULL)
         setstring(wr->GUI.ST_REPLYTO, rrepto);
 
       setstring(wr->GUI.ST_TO, rto);
       setstring(rto[0] != '\0' ? wr->GUI.ST_CC : wr->GUI.ST_TO, rcc);
       setstring(wr->GUI.ST_SUBJECT, rsub);
 
-      if(!quiet)
+      if(quiet == FALSE)
         set(wr->GUI.WI, MUIA_Window_Open, TRUE);
 
       MA_ShowMessageText(winnum);
       set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.TE_EDIT);
 
-      if(C->LaunchAlways && !quiet)
+      if(C->LaunchAlways == TRUE && quiet == FALSE)
         DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
 
       // free our temporary buffers
@@ -2679,10 +2660,10 @@ int MA_NewReply(struct Mail **mlist, int flags)
       doabort = TRUE;
   }
 
-  if(winnum >= 0 && !quiet && !doabort)
+  if(winnum >= 0 && quiet == FALSE && doabort == FALSE)
     winnum = MA_CheckWriteWindow(winnum);
 
-  if(doabort)
+  if(doabort == TRUE)
     DisposeModulePush(&G->WR[winnum]);
 
   RETURN(winnum);
@@ -2811,27 +2792,29 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
 //  Removes attachments from selected messages
 HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
 {
-  int i;
-
   ENTER();
 
   // we need to warn the user of this operation we put up a requester
   // before we go on
   if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_CROPREQUEST)) > 0)
   {
-    struct Mail **mlist;
+    struct MailList *mlist;
 
+    // get the list of all selected mails
     if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
     {
-      int selected = (int)*mlist;
+      int i;
+      struct MailNode *mnode;
 
-      BusyGaugeInt(tr(MSG_BusyRemovingAtt), "", selected);
-      for(i = 0; i < selected; i++)
+      BusyGaugeInt(tr(MSG_BusyRemovingAtt), "", mlist->count);
+
+      i = 0;
+      ForEachMailNode(mlist, mnode)
       {
-        MA_RemoveAttach(mlist[i + 2], FALSE);
+        MA_RemoveAttach(mnode->mail, FALSE);
 
         // if BusySet() returns FALSE, then the user aborted
-        if(BusySet(i+1) == FALSE)
+        if(BusySet(++i) == FALSE)
           break;
       }
 
@@ -2840,6 +2823,9 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
       MA_ChangeSelected(TRUE);
       DisplayStatistics(NULL, TRUE);
       BusyEnd();
+
+      // free the mail list again
+      DeleteMailList(mlist);
     }
   }
 
@@ -2852,7 +2838,7 @@ MakeHook(MA_RemoveAttachHook, MA_RemoveAttachFunc);
 //  Saves all attachments of selected messages to disk
 HOOKPROTONHNONP(MA_SaveAttachFunc, void)
 {
-  struct Mail **mlist;
+  struct MailList *mlist;
 
   ENTER();
 
@@ -2862,26 +2848,26 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
 
     if((frc = ReqFile(ASL_DETACH, G->MA->GUI.WI, tr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")) != NULL)
     {
-      int i;
+      struct MailNode *mnode;
 
       BusyText(tr(MSG_BusyDecSaving), "");
 
-      for(i=0; i < (int)*mlist; i++)
+      ForEachMailNode(mlist, mnode)
       {
         struct ReadMailData *rmData;
 
-        if((rmData = AllocPrivateRMData(mlist[i + 2], PM_ALL)))
+        if((rmData = AllocPrivateRMData(mnode->mail, PM_ALL)) != NULL)
         {
           char *cmsg;
 
-          if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)))
+          if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)) != NULL)
           {
             struct Part *part;
 
             // free the message again as we don't need its content here.
             free(cmsg);
 
-            if((part = rmData->firstPart->Next) && part->Next)
+            if((part = rmData->firstPart->Next) != NULL && part->Next != NULL)
               RE_SaveAll(rmData, frc->drawer);
           }
 
@@ -2892,7 +2878,7 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
       BusyEnd();
     }
 
-    free(mlist);
+    DeleteMailList(mlist);
   }
 
   LEAVE();
@@ -2905,35 +2891,36 @@ MakeHook(MA_SaveAttachHook, MA_SaveAttachFunc);
 HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
 {
   BOOL doprint = (*arg != 0);
-  struct Mail **mlist;
 
   ENTER();
 
   if(doprint == FALSE || CheckPrinter() == TRUE)
   {
-    if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)))
+    struct MailList *mlist;
+
+    if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
     {
-      int i;
+      struct MailNode *mnode;
       BOOL abort = FALSE;
 
-      for(i=0; i < (int)*mlist && abort == FALSE; i++)
+      ForEachMailNode(mlist, mnode)
       {
         struct ReadMailData *rmData;
 
-        if((rmData = AllocPrivateRMData(mlist[i+2], PM_TEXTS)))
+        if((rmData = AllocPrivateRMData(mnode->mail, PM_TEXTS)) != NULL)
         {
           char *cmsg;
 
-          if((cmsg = RE_ReadInMessage(rmData, RIM_PRINT)))
+          if((cmsg = RE_ReadInMessage(rmData, RIM_PRINT)) != NULL)
           {
             struct TempFile *tf;
 
-            if((tf = OpenTempFile("w")))
+            if((tf = OpenTempFile("w")) != NULL)
             {
               fputs(cmsg, tf->FP);
               fclose(tf->FP); tf->FP = NULL;
 
-              if(doprint)
+              if(doprint == TRUE)
               {
                 if(CopyFile("PRT:", 0, tf->Filename, 0) == FALSE)
                 {
@@ -2959,7 +2946,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
         }
       }
 
-      free(mlist);
+      DeleteMailList(mlist);
     }
   }
 
@@ -2986,7 +2973,7 @@ int MA_NewMessage(enum NewMode mode, int flags)
     {
       struct Mail *mail;
 
-      if((mail = MA_GetActiveMail(NULL, NULL, NULL)))
+      if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
         winnr = MA_NewEdit(mail, flags);
     }
     break;
@@ -2995,33 +2982,33 @@ int MA_NewMessage(enum NewMode mode, int flags)
     {
       struct Mail *mail;
 
-      if((mail = MA_GetActiveMail(NULL, NULL, NULL)))
+      if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
         winnr = MA_NewBounce(mail, flags);
     }
     break;
 
     case NEW_FORWARD:
     {
-      struct Mail **mlist;
+      struct MailList *mlist;
 
       if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
       {
         winnr = MA_NewForward(mlist, flags);
 
-        free(mlist);
+        DeleteMailList(mlist);
       }
     }
     break;
 
     case NEW_REPLY:
     {
-      struct Mail **mlist;
+      struct MailList *mlist;
 
       if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
       {
         winnr = MA_NewReply(mlist, flags);
 
-        free(mlist);
+        DeleteMailList(mlist);
       }
     }
     break;
@@ -3131,15 +3118,15 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
   if(folder != NULL && delfolder != NULL)
   {
     Object *lv = G->MA->GUI.PG_MAILLIST;
-    struct Mail **mlist;
+    struct MailList *mlist;
 
     if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
     {
-      int selected;
+      ULONG selected;
       BOOL okToDelete = TRUE;
 
-      selected = (int)*mlist;
-      if(C->Confirm == TRUE && selected >= C->ConfirmDelete && force == FALSE)
+      selected = mlist->count;
+      if(C->Confirm == TRUE && selected >= (ULONG)C->ConfirmDelete && force == FALSE)
       {
         char buffer[SIZE_DEFAULT];
 
@@ -3151,15 +3138,18 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
       if(okToDelete == TRUE)
       {
+        struct MailNode *mnode;
         int i;
         BOOL ignoreall = FALSE;
 
         set(lv, MUIA_NList_Quiet, TRUE);
 
         BusyGaugeInt(tr(MSG_BusyDeleting), itoa(selected), selected);
-        for(i = 0; i < selected; i++)
+
+        i = 0;
+        ForEachMailNode(mlist, mnode)
         {
-          struct Mail *mail = mlist[i + 2];
+          struct Mail *mail = mnode->mail;
 
           if(isSendMDNMail(mail) && ignoreall == FALSE &&
              (hasStatusNew(mail) || !hasStatusRead(mail)))
@@ -3171,11 +3161,8 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
           MA_DeleteSingle(mail, delatonce, TRUE, TRUE);
 
           // if BusySet() returns FALSE, then the user aborted
-          if(BusySet(i + 1) == FALSE)
-          {
-            selected = i + 1;
+          if(BusySet(++i) == FALSE)
             break;
-          }
         }
         BusyEnd();
         set(lv, MUIA_NList_Quiet, FALSE);
@@ -3199,7 +3186,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
       }
 
       // free the mail list again
-      free(mlist);
+      DeleteMailList(mlist);
     }
   }
 
@@ -3234,19 +3221,21 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
   if(folder != NULL && spamFolder != NULL && incomingFolder != NULL)
   {
     Object *lv = G->MA->GUI.PG_MAILLIST;
-    struct Mail **mlist;
+    struct MailList *mlist;
 
     if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
     {
-      int i;
-      int selected = (int)*mlist;
+      struct MailNode *mnode;
+      ULONG selected = mlist->count;
+      ULONG i;
 
       set(lv, MUIA_NList_Quiet, TRUE);
       BusyGaugeInt(tr(MSG_BusyMoving), itoa(selected), selected);
 
-      for(i = 0; i < selected; i++)
+      i = 0;
+      ForEachMailNode(mlist, mnode)
       {
-        struct Mail *mail = mlist[i + 2];
+        struct Mail *mail = mnode->mail;
 
         if(mail != NULL)
         {
@@ -3294,15 +3283,13 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
         }
 
         // if BusySet() returns FALSE, then the user aborted
-        if(BusySet(i + 1) == FALSE)
-        {
-          selected = i + 1;
+        if(BusySet(++i) == FALSE)
           break;
-        }
       }
       BusyEnd();
       set(lv, MUIA_NList_Quiet, FALSE);
-      free(mlist);
+
+      DeleteMailList(mlist);
 
       AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, folder->Name, spamFolder->Name);
       DisplayStatistics(spamFolder, FALSE);
@@ -3328,14 +3315,14 @@ MakeHook(MA_ClassifyMessageHook, MA_ClassifyMessageFunc);
 ///
 /// MA_GetAddress
 //  Stores address from a list of messages to the address book
-void MA_GetAddress(struct Mail **mlist)
+void MA_GetAddress(struct MailList *mlist)
 {
   int winnum;
-  int num = (int)mlist[0];
   enum ABEntry_Type mode;
-  struct Mail *mail = mlist[2];
+  struct MailNode *mnode = FirstMailNode(mlist);
+  struct Mail *mail = mnode->mail;
   struct Folder *folder = mail->Folder;
-  BOOL isSentMail = folder ? isSentMailFolder(folder) : FALSE;
+  BOOL isSentMail = (folder != NULL) ? isSentMailFolder(folder) : FALSE;
   struct ExtendedMail *email;
   struct Person *pe = NULL;
 
@@ -3343,16 +3330,16 @@ void MA_GetAddress(struct Mail **mlist)
 
   // check whether we want to create a single addressbook
   // entry or a list of addresses
-  if(num == 1 && !(isSentMail && isMultiRCPTMail(mail)))
+  if(mlist->count == 1 && !(isSentMail == TRUE && isMultiRCPTMail(mail)))
   {
-    if(isSentMail)
+    if(isSentMail == TRUE)
       pe = &mail->To;
     else
     {
       // now ask the user which one of the two
       // adresses it should consider for adding it to the
       // addressbook
-      if(C->CompareAddress && mail->ReplyTo.Address[0] != '\0' &&
+      if(C->CompareAddress == TRUE && mail->ReplyTo.Address[0] != '\0' &&
          stricmp(mail->From.Address, mail->ReplyTo.Address) != 0)
       {
         char buffer[SIZE_LARGE];
@@ -3404,13 +3391,13 @@ void MA_GetAddress(struct Mail **mlist)
     }
     else
     {
-      int i;
+      LockMailList(mlist);
 
-      for(i=2; i < num+2; i++)
+      ForEachMailNode(mlist, mnode)
       {
-        struct Mail *mail = mlist[i];
+        struct Mail *mail = mnode->mail;
 
-        if(isSentMail)
+        if(isSentMail == TRUE)
         {
           DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, AB_BuildAddressStringPerson(&mail->To), MUIV_List_Insert_Bottom);
 
@@ -3466,6 +3453,8 @@ void MA_GetAddress(struct Mail **mlist)
           }
         }
       }
+
+      UnlockMailList(mlist);
     }
   }
 
@@ -3477,14 +3466,14 @@ void MA_GetAddress(struct Mail **mlist)
 //  Stores addresses from selected messages to the address book
 HOOKPROTONHNONP(MA_GetAddressFunc, void)
 {
-  struct Mail **mlist;
+  struct MailList *mlist;
 
   ENTER();
 
   if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
     MA_GetAddress(mlist);
-    free(mlist);
+    DeleteMailList(mlist);
   }
 
   LEAVE();
@@ -3587,7 +3576,7 @@ BOOL MA_Send(enum SendMode mode)
   // window/process in action
   if(G->TR == NULL)
   {
-    struct Mail **mlist = NULL;
+    struct MailList *mlist = NULL;
     struct Folder *fo = FO_GetFolderByType(FT_OUTGOING, NULL);
 
     switch(mode)
@@ -3609,7 +3598,7 @@ BOOL MA_Send(enum SendMode mode)
     if(mlist != NULL)
     {
       success = TR_ProcessSEND(mlist, mode);
-      free(mlist);
+      DeleteMailList(mlist);
     }
   }
 
@@ -3637,32 +3626,31 @@ MakeHook(MA_SendHook, MA_SendFunc);
 void MA_SetStatusTo(int addflags, int clearflags, BOOL all)
 {
   Object *lv = G->MA->GUI.PG_MAILLIST;
-  struct Mail **mlist;
+  struct MailList *mlist;
 
   ENTER();
 
   // generate a mail list of either all or just the selected
   // (marked) mails.
-  if(all)
+  if(all == TRUE)
     mlist = MA_CreateFullList(FO_GetCurrentFolder(), FALSE);
   else
     mlist = MA_CreateMarkedList(lv, FALSE);
 
   if(mlist != NULL)
   {
-    int i;
+    struct MailNode *mnode;
 
     set(lv, MUIA_NList_Quiet, TRUE);
-    for(i = 0; i < (int)*mlist; i++)
-    {
-      struct Mail *mail = mlist[i + 2];
 
-      if(mail != NULL)
-        MA_ChangeMailStatus(mail, addflags, clearflags);
+    ForEachMailNode(mlist, mnode)
+    {
+      MA_ChangeMailStatus(mnode->mail, addflags, clearflags);
     }
+
     set(lv, MUIA_NList_Quiet, FALSE);
 
-    free(mlist);
+    DeleteMailList(mlist);
     DisplayStatistics(NULL, TRUE);
   }
 
@@ -3833,7 +3821,7 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
 
   if(folder != NULL && folder->Type != FT_GROUP)
   {
-    struct Mail **mlist = NULL;
+    struct MailList *mlist;
 
     // show an interruptable Busy gauge
     BusyGaugeInt(tr(MSG_MA_BUSYEMPTYINGSPAM), "", folder->Total);
@@ -3841,14 +3829,16 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
     // get the complete mail list of the spam folder
     if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
     {
-      int i;
+      struct MailNode *mnode;
+      ULONG i;
 
-      for(i = 0; i < (int)*mlist; i++)
+      i = 0;
+      ForEachMailNode(mlist, mnode)
       {
-        struct Mail *mail = mlist[i + 2];
+        struct Mail *mail = mnode->mail;
 
         // if BusySet() returns FALSE, then the user aborted
-        if(BusySet(i+1) == FALSE)
+        if(BusySet(++i) == FALSE)
           break;
 
         if(mail != NULL)
@@ -3870,7 +3860,7 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
         DisplayStatistics(folder, TRUE);
 
       // finally free the mail list
-      free(mlist);
+      DeleteMailList(mlist);
     }
 
     BusyEnd();
@@ -3917,18 +3907,18 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
   BOOL success = FALSE;
   char outname[SIZE_PATHFILE];
   struct Folder *actfo = FO_GetCurrentFolder();
-  struct Mail **mlist;
+  struct MailList *mlist;
 
   ENTER();
 
   // check that a real folder is active
-  if(!actfo || isGroupFolder(actfo))
+  if(actfo == NULL || isGroupFolder(actfo))
   {
     RETURN(FALSE);
     return FALSE;
   }
 
-  if(all)
+  if(all == TRUE)
     mlist = MA_CreateFullList(actfo, FALSE);
   else
     mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
@@ -3937,10 +3927,10 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
   {
     struct FileReqCache *frc;
 
-    if(!filename && (frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, tr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, "")))
+    if(filename == NULL && (frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, tr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, "")) != NULL)
     {
       filename = AddPath(outname, frc->drawer, frc->file, sizeof(outname));
-      if(FileExists(filename))
+      if(FileExists(filename) == TRUE)
       {
         switch(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_MESSAGEEXPORT), tr(MSG_MA_ExportAppendOpts), tr(MSG_MA_ExportAppendReq)))
         {
@@ -3963,7 +3953,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
       }
     }
 
-    free(mlist);
+    DeleteMailList(mlist);
   }
 
   RETURN(success);
@@ -4270,30 +4260,33 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
 //  Changes subject of selected messages
 HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
 {
-  struct Mail **mlist;
+  struct MailList *mlist;
 
   ENTER();
 
   if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
-    int i, selected;
+    struct MailNode *mnode;
+    ULONG i;
+    ULONG selected;
     BOOL ask = TRUE;
     BOOL goOn = TRUE;
     char subj[SIZE_SUBJECT];
 
-    selected = (int)*mlist;
+    selected = mlist->count;
 
-    for (i = 0; i < selected; i++)
+    i = 0;
+    ForEachMailNode(mlist, mnode)
     {
-      struct Mail *mail = mlist[i + 2];
+      struct Mail *mail = mnode->mail;
 
       if(mail != NULL)
       {
-        if(ask)
+        if(ask == TRUE)
         {
           strlcpy(subj, mail->Subject, sizeof(subj));
 
-          switch (StringRequest(subj, SIZE_SUBJECT, tr(MSG_MA_ChangeSubj), tr(MSG_MA_ChangeSubjReq), tr(MSG_Okay), (i || selected == 1) ? NULL : tr(MSG_MA_All), tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+          switch(StringRequest(subj, SIZE_SUBJECT, tr(MSG_MA_ChangeSubj), tr(MSG_MA_ChangeSubjReq), tr(MSG_Okay), (i > 0 || selected == 1) ? NULL : tr(MSG_MA_All), tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
           {
             case 0:
             {
@@ -4313,15 +4306,17 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
           }
         }
 
-        if(goOn)
+        if(goOn == TRUE)
           MA_ChangeSubject(mail, subj);
         else
           // the user cancelled the whole thing, bail out
           break;
       }
+
+      i++;
     }
 
-    free(mlist);
+    DeleteMailList(mlist);
 
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
     DisplayStatistics(NULL, TRUE);

@@ -30,6 +30,7 @@
 
 #include "YAM_main.h"
 #include "YAM_stringsizes.h"
+#include "MailList.h"
 
 #ifndef WORKBENCH_WORKBENCH_H
 struct AppMessage;
@@ -80,7 +81,7 @@ struct WR_ClassData  /* write window */
   struct WR_GUIData GUI;
 
   struct Mail *     refMail;            // ptr to the original mail this write window was created from
-  struct Mail **    refMailList;        // ptr to a list of orginal mails.
+  struct MailList * refMailList;        // ptr to a list of orginal mails.
 
   enum NewMode      Mode;
   int               OldSecurity;

@@ -872,7 +872,7 @@ void MA_JumpToRecentMsg(void)
     if(mail == NULL)
       break;
 
-    if(recent == NULL || MA_CompareByDate(&mail, &recent) > 0)
+    if(recent == NULL || MA_CompareByDate(mail, recent) > 0)
     {
       // this mail is more recent than the yet most recent known
       recentIdx = i;

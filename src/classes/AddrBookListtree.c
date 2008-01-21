@@ -30,6 +30,8 @@
 
 #include "AddrBookListtree_cl.h"
 
+#include "MailList.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -98,11 +100,12 @@ OVERLOAD(MUIM_DragDrop)
 
   if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
   {
-    struct Mail **mlist = MA_CreateMarkedList(d->obj, FALSE);
-    if(mlist)
+    struct MailList *mlist;
+
+    if((mlist = MA_CreateMarkedList(d->obj, FALSE)) != NULL)
     {
       MA_GetAddress(mlist);
-      free(mlist);
+      DeleteMailList(mlist);
     }
   }
 
@@ -118,7 +121,7 @@ OVERLOAD(MUIM_NListtree_DropType)
 
   ENTER();
 
-  /// get the current drop target
+  // get the current drop target
   if((tn = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget)) != NULL)
   {
     struct ABEntry *entry;

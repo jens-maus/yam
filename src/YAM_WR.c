@@ -1885,7 +1885,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
   struct Compose comp;
   struct Mail *newMail = NULL;
   char *addr;
-  struct Mail *mlist[3];
   int numAttachments = 0;
   struct WR_ClassData *wr = G->WR[winnum];
   struct WR_GUIData *gui = &wr->GUI;
@@ -1902,9 +1901,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
   // clear some variables we fill up later on
   memset(&comp, 0, sizeof(struct Compose));
-  mlist[0] = (struct Mail *)1;
-  mlist[1] = NULL;
-  mlist[2] = NULL;
 
   // first we check all input values and fill up
   // the struct Compose variable
@@ -2202,49 +2198,49 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
     if(wr->Mode != NEW_NEW)
     {
-      struct Mail **ml;
+      struct MailList *mlist;
 
       if(wr->refMailList != NULL)
       {
-        ml = wr->refMailList;
+        mlist = CloneMailList(wr->refMailList);
       }
-      else if(wr->refMail)
+      else if(wr->refMail != NULL)
       {
-        ml = mlist;
-        mlist[2] = wr->refMail;
+        if((mlist = CreateMailList()) != NULL)
+          AddMailNode(mlist, wr->refMail);
       }
       else
-        ml = NULL;
+        mlist = NULL;
 
-      if(ml)
+      if(mlist != NULL)
       {
-        int i;
+        struct MailNode *mnode;
 
-        for(i=0; i < (int)ml[0]; i++)
+        ForEachMailNode(mlist, mnode)
         {
-          struct Mail *m = ml[i+2];
+          struct Mail *mail = mnode->mail;
 
-          if(m != NULL && !isVirtualMail(m) && m->Folder != NULL &&
-             !isOutgoingFolder(m->Folder) && !isSentFolder(m->Folder))
+          if(mail != NULL && !isVirtualMail(mail) && mail->Folder != NULL &&
+             !isOutgoingFolder(mail->Folder) && !isSentFolder(mail->Folder))
           {
             // process MDN notifications
-            if(hasStatusNew(m) || !hasStatusRead(m))
-              RE_ProcessMDN(MDN_MODE_DISPLAY, m, FALSE, winnum==2);
+            if(hasStatusNew(mail) || !hasStatusRead(mail))
+              RE_ProcessMDN(MDN_MODE_DISPLAY, mail, FALSE, winnum==2);
 
             switch(wr->Mode)
             {
               case NEW_REPLY:
               {
-                setStatusToReplied(m);
-                DisplayStatistics(m->Folder, FALSE);
+                setStatusToReplied(mail);
+                DisplayStatistics(mail->Folder, FALSE);
               }
               break;
 
               case NEW_FORWARD:
               case NEW_BOUNCE:
               {
-                setStatusToForwarded(m);
-                DisplayStatistics(m->Folder, FALSE);
+                setStatusToForwarded(mail);
+                DisplayStatistics(mail->Folder, FALSE);
               }
               break;
 
@@ -2254,6 +2250,8 @@ void WR_NewMail(enum WriteMode mode, int winnum)
             }
           }
         }
+
+        DeleteMailList(mlist);
       }
     }
 
@@ -2268,8 +2266,10 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
       case NEW_REPLY:
       {
-        if(wr->refMailList && wr->refMailList[2])
-          AppendToLogfile(LF_ALL, 11, tr(MSG_LOG_Replying), AddrName(wr->refMailList[2]->From), wr->refMailList[2]->Subject);
+        struct MailNode *mnode = FirstMailNode(wr->refMailList);
+
+        if(mnode != NULL)
+          AppendToLogfile(LF_ALL, 11, tr(MSG_LOG_Replying), AddrName(mnode->mail->From), mnode->mail->Subject);
         else
           AppendToLogfile(LF_ALL, 11, tr(MSG_LOG_Replying), "<unknown>", "<unknown>");
       }
@@ -2277,8 +2277,10 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
       case NEW_FORWARD:
       {
-        if(wr->refMailList && wr->refMailList[2])
-          AppendToLogfile(LF_ALL, 12, tr(MSG_LOG_Forwarding), AddrName(wr->refMailList[2]->From), wr->refMailList[2]->Subject, AddrName(newMail->To));
+        struct MailNode *mnode = FirstMailNode(wr->refMailList);
+
+        if(mnode != NULL)
+          AppendToLogfile(LF_ALL, 12, tr(MSG_LOG_Forwarding), AddrName(mnode->mail->From), mnode->mail->Subject, AddrName(newMail->To));
         else
           AppendToLogfile(LF_ALL, 12, tr(MSG_LOG_Forwarding), "<unknown>", "<unknown>", AddrName(newMail->To));
       }
@@ -2314,16 +2316,25 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
   if(wr->refMailList != NULL)
   {
-    free(wr->refMailList);
+    DeleteMailList(wr->refMailList);
     wr->refMailList = NULL;
   }
 
   // now we make sure we immediately send out the mail.
   if(mode == WRITE_SEND && newMail != NULL && G->TR == NULL)
   {
-    set(gui->WI, MUIA_Window_Open, FALSE);
-    mlist[2] = newMail;
-    TR_ProcessSEND(mlist, SEND_ACTIVE_USER);
+    struct MailList *mlist;
+
+    if((mlist = CreateMailList()) != NULL)
+    {
+      if(AddMailNode(mlist, newMail) != NULL)
+      {
+        set(gui->WI, MUIA_Window_Open, FALSE);
+        TR_ProcessSEND(mlist, SEND_ACTIVE_USER);
+      }
+
+      DeleteMailList(mlist);
+    }
   }
 
   // delete a possible autosave file

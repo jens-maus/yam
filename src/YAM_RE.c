@@ -67,6 +67,7 @@
 
 #include "HTML2Mail.h"
 #include "FileInfo.h"
+#include "MailList.h"
 
 #include "Debug.h"
 
@@ -1247,13 +1248,13 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
 
   ENTER();
 
-  if(!in)
+  if(in == NULL)
   {
     RETURN(FALSE);
     return FALSE;
   }
 
-  if(rp)
+  if(rp != NULL)
     blen = strlen(rp->CParBndr);
 
   // we process the file line-by-line, analyze it if it is between the boundary
@@ -1264,7 +1265,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
 
     // search for either a \r or \n and terminate there
     // if found.
-    if((pNewline = strpbrk(buf, "\r\n")))
+    if((pNewline = strpbrk(buf, "\r\n")) != NULL)
       *pNewline = '\0'; // strip any newline
 
     // first we check if we reached a MIME boundary yet.
@@ -1282,7 +1283,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
       }
     }
 
-    if(out)
+    if(out != NULL)
     {
       int buflen = strlen(buf);
 
@@ -1292,7 +1293,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
       {
         // in case the user wants us to detect the correct cyrillic codeset
         // we do it now
-        if(C->DetectCyrillic && allowAutoDetect &&
+        if(C->DetectCyrillic == TRUE && allowAutoDetect == TRUE &&
            (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
         {
           struct codeset *cs = CodesetsFindBest(CSA_Source,         buf,
@@ -1307,7 +1308,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
         // if this function was invoked with a source Codeset we have to make sure
         // we convert from the supplied source Codeset to our current local codeset with
         // help of the functions codesets.library provides.
-        if(srcCodeset)
+        if(srcCodeset != NULL)
         {
           // convert from the srcCodeset to the destination one.
           char *str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
@@ -1326,7 +1327,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
             return FALSE;
           }
 
-          if(str)
+          if(str != NULL)
             CodesetsFreeA(str, NULL);
           else
             W(DBF_MAIL, "couldn't convert str with CodesetsConvertStr()");
@@ -1343,7 +1344,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
           }
         }
       }
-      else if(prependNewline)
+      else if(prependNewline == TRUE)
         fputc('\n', out);
 
       // check if the next iteration should prepend a newline or not.
@@ -1360,7 +1361,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
   {
     // if we still have a prependNewline as TRUE we have to add
     // a single newline
-    if(out && prependNewline)
+    if(out != NULL && prependNewline == TRUE)
       fputc('\n', out);
 
     RETURN(TRUE);
@@ -3574,32 +3575,39 @@ static void RE_SendMDN(const enum MDNMode mode,
           }
 
           outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-          if(outfolder && (comp.FH = fopen(MA_NewMailFile(outfolder, mfile), "w")) != NULL)
+          if(outfolder != NULL && (comp.FH = fopen(MA_NewMailFile(outfolder, mfile), "w")) != NULL)
           {
-            struct Mail *mlist[3];
+            struct MailList *mlist;
 
-            mlist[0] = (struct Mail *)1;
-            mlist[2] = NULL;
-
-            setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
-
-            WriteOutMessage(&comp);
-            fclose(comp.FH);
-
-            if((email = MA_ExamineMail(outfolder, mfile, TRUE)) != NULL)
+            if((mlist = CreateMailList()) != NULL)
             {
-              if((mlist[2] = AddMailToList(&email->Mail, outfolder)) != NULL)
-                setStatusToQueued(mlist[2]);
-              MA_FreeEMailStruct(email);
+              setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
+
+              WriteOutMessage(&comp);
+              fclose(comp.FH);
+
+              if((email = MA_ExamineMail(outfolder, mfile, TRUE)) != NULL)
+              {
+                struct Mail *mail;
+
+                if((mail = AddMailToList(&email->Mail, outfolder)) != NULL)
+                {
+                  setStatusToQueued(mail);
+                  AddMailNode(mlist, mail);
+                }
+                MA_FreeEMailStruct(email);
+              }
+
+              // in case the user wants to send the message
+              // immediately we go and send it out
+              if(sendnow == TRUE && mlist->count != 0 && G->TR == NULL)
+                TR_ProcessSEND(mlist, autoSend ? SEND_ACTIVE_AUTO : SEND_ACTIVE_USER);
+
+              // refresh the folder statistics
+              DisplayStatistics(outfolder, TRUE);
+
+              DeleteMailList(mlist);
             }
-
-            // in case the user wants to send the message
-            // immediately we go and send it out
-            if(sendnow == TRUE && mlist[2] != NULL && G->TR == NULL)
-              TR_ProcessSEND(mlist, autoSend ? SEND_ACTIVE_AUTO : SEND_ACTIVE_USER);
-
-            // refresh the folder statistics
-            DisplayStatistics(outfolder, TRUE);
           }
           else
             ER_NewError(tr(MSG_ER_CreateMailError));

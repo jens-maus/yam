@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-21  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: replaced all array based lists of mail by true Exec lists. This
+    fullfils task #134391.
+
 2008-01-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * ImageCache.c: removed some unnecessary checks for CyberGfxBase on OS4/MOS.

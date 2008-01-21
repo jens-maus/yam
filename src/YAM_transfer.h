@@ -31,7 +31,9 @@
 #include <stdio.h>
 
 #include "YAM_mainFolder.h"
+
 #include "HashTable.h"
+#include "MailList.h"
 
 enum TransferType
 {
@@ -158,8 +160,8 @@ BOOL  TR_GetMessageList_IMPORT(void);
 BOOL  TR_IsOnline(void);
 struct TR_ClassData *TR_New(enum TransferType TRmode);
 BOOL  TR_OpenTCPIP(void);
-BOOL  TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append);
-BOOL  TR_ProcessSEND(struct Mail **mlist, enum SendMode mode);
+BOOL  TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append);
+BOOL  TR_ProcessSEND(struct MailList *mlist, enum SendMode mode);
 void  TR_SetWinTitle(BOOL from, const char *text);
 BOOL  TR_SendPOP3KeepAlive(void);
 
