@@ -7,6 +7,7 @@ $URL$
 
 2008-01-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: removed a superflous ContainsMailNodes() check.
   * AllocSysObject.c: user specified memory flags are now respected and the size
     of an object now cannot be smaller than the default size.
   * YAM_MA.c: MA_Create#?List() will now fail if no mails could be added to the

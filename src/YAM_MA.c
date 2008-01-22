@@ -987,29 +987,26 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
   }
   else if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
-  	if(ContainsMailNodes(mlist) == TRUE)
-  	{
-      struct MailNode *mnode;
-      ULONG i;
+    struct MailNode *mnode;
+    ULONG i;
 
-      // get the list of the currently marked mails
-      selected = mlist->count;
-      set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
-      BusyGaugeInt(tr(MSG_BusyMoving), itoa(selected), selected);
+    // get the list of the currently marked mails
+    selected = mlist->count;
+    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
+    BusyGaugeInt(tr(MSG_BusyMoving), itoa(selected), selected);
 
-      i = 0;
-      ForEachMailNode(mlist, mnode)
-      {
-        if(mnode->mail != NULL)
-          MA_MoveCopySingle(mnode->mail, frombox, tobox, copyit, closeWindows);
+    i = 0;
+    ForEachMailNode(mlist, mnode)
+    {
+      if(mnode->mail != NULL)
+        MA_MoveCopySingle(mnode->mail, frombox, tobox, copyit, closeWindows);
 
-        // if BusySet() returns FALSE, then the user aborted
-        if(BusySet(++i) == FALSE)
-          break;
-      }
-      BusyEnd();
-      set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
+      // if BusySet() returns FALSE, then the user aborted
+      if(BusySet(++i) == FALSE)
+        break;
     }
+    BusyEnd();
+    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
 
     DeleteMailList(mlist);
   }
