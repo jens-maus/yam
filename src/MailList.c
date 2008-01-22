@@ -204,28 +204,6 @@ void DeleteMailNode(struct MailNode *mnode)
 }
 
 ///
-/// LockMailList
-void LockMailList(struct MailList *mlist)
-{
-  ENTER();
-
-  ObtainSemaphore(mlist->lockSemaphore);
-
-  LEAVE();
-}
-
-///
-/// UnlockMailList
-void UnlockMailList(struct MailList *mlist)
-{
-  ENTER();
-
-  ReleaseSemaphore(mlist->lockSemaphore);
-
-  LEAVE();
-}
-
-///
 /// SortMailList
 // sort a list of mails with a comparison function
 void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1, const struct Mail *m2))

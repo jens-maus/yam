@@ -53,8 +53,6 @@ struct MailList *CloneMailList(struct MailList *mlist);
 struct MailNode *AddMailNode(struct MailList *mlist, struct Mail *mail);
 void RemoveMailNode(struct MailList *mlist, struct MailNode *mnode);
 void DeleteMailNode(struct MailNode *mnode);
-void LockMailList(struct MailList *mlist);
-void UnlockMailList(struct MailList *mlist);
 void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1, const struct Mail *m2));
 
 // check if a mail list is not empty
@@ -66,5 +64,8 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
 // get the first mail node of a list
 #define FirstMailNode(mlist)            (((mlist) != NULL && (mlist)->list.mlh_Head != NULL) ? (struct MailNode *)(mlist)->list.mlh_Head : (struct MailNode *)NULL)
 
-#endif /* MAILLIST_H */
+// lock and unlock a mail list via its semaphore
+#define LockMailList(mlist)             ObtainSemaphore(mlist->lockSemaphore)
+#define UnlockMailList(mlist)           ReleaseSemaphore(mlist->lockSemaphore)
 
+#endif /* MAILLIST_H */

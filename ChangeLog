@@ -21,6 +21,8 @@ $URL$
 
 2008-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * MailList.c,MailList.h: converted the Lock/UnlockMailList() functions to
+    preprocessor macros which should be more convienent. :)
   * ReadWindow.c: minor optimization to not allocate a mail list for all
     operations (new,reply, etc.)
   * YAM_MA.c: the number of moved and copied mails were calculated incorrect
