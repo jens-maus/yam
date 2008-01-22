@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-22  Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+  * doc/Install-YAM: added Czech translation.
+
 2008-01-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, MailList.c: moved the list empty check to the end of the function
@@ -87,7 +92,7 @@ $URL$
   * YAM_CO.c, YAM_COs.c: the TLS/SSL radio buttons where not correctly disabled
     if AmiSSLv3 was not available.
 
-2008-01-16  Vit Sindlarv <sindlarv at centrum dot cz>
+2008-01-16  Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.
 

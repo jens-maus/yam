@@ -10,10 +10,11 @@
 (set #def_lang_English              0)
 (set #def_lang_Deutsch              1)
 (set #def_lang_Svenska              2)
+(set #def_lang_Czech                4)
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only OS4 can handle them.
-(set #def_lang_English_British      4)
-;(set #def_lang_French              8) I don't know if this is the right place to add it
+(set #def_lang_English_British      8)
+;(set #def_lang_French             16) I don't know if this is the right place to add it
 
 (set #def_doc_English               0)
 ;(set #def_doc_French               1) I don't know if this is the right place
@@ -197,6 +198,47 @@
 )
 )
 ; ///
+;/// ***** Czech
+(set #def_cat_lang #def_lang_Czech)
+(set #def_doc_lang #def_doc_English)
+(set #wrongOS  "YAM vy¾aduje AmigaOS 3.0 nebo novìj¹í!\n")
+(set #wrongMUI "YAM vy¾aduje MUI 3.8 nebo novìj¹í!\n")
+(set #wrongCPU "YAM vy¾aduje minimálnì procesor 68020!\n")
+(set #YAM_dir  (cat "Vyberte prosím cílový adresáø pro YAM\n"
+                    "(Instalátor ¾ádný adresáø nevytvoøí!)"))
+(set #lang_catalog (cat "Které z pøekladù chcete nainstalovat?\n"
+                        "(Angliètinu pou¾ívá program internì.)"))
+(set #lang_manual "Vyberte pøeklad nápovìdy k programu")
+(set #no_way_back_warning (cat "\n"
+                               "UPOZORNÌNÍ!\n"
+                               "(Platí pro pøípad, ¾e chcete pøejít z verze 2.4.)\n"
+                               "\n"
+                               "Zpùsob pojmenování souborù se zprávami a jejich formát\n"
+                               "byl v nové verzi úplnì pøepracován. Pøi prvním spu¹tìní\n"
+                               "budou v¹echny zprávy automaticky pøevedeny do nového\n"
+                               "systému a pak u¾ je nebude mo¾né pou¾ívat v YAM 2.4!\n"
+                               "Je¹tì PØED spu¹tìním verze 2.5 nebo novìj¹í proto\n"
+                               "dùraznì doporuèujeme zazálohovat V©ECHNY zprávy.\n"
+                               "\n"
+                               "Pozn.: Pokud chcete, technicky není ¾ádný problém\n"
+                               "nainstalovat a pou¾ívat YAM 2.4 a YAM 2.5 ve dvou\n"
+                               "rùzných adresáøích."))
+(set #faq_and_bugtracker (cat "\n"
+                              "Máte-li jakékoli dotazy ohlednì programu YAM,\n"
+                              "zeptejte se na tomto diskusním fóru:\n"
+                              "http://forum.yam.ch/\n"
+                              "\n"
+                              "Nejèastìji kladené otázky a jejich øe¹ení najdete\n"
+                              "na adrese:\n"
+                              "http://faq.yam.ch/\n"
+                              "\n"
+                              "Pokud najdete chybu, dejte nám prosím vìdìt:\n"
+                              "http://bugs.yam.ch/"))
+(set #done_1   (cat "\nInstalace programu YAM byla úspì¹nì dokonèena.\n\n"
+                    "Nyní vyhledejte ikonu \"YAM\" v adresáøi\n"))
+(set #done_2        "\n a dvojím kliknutím program spus»te.\n\nA» se Vám líbí...")
+
+; ///
 ;----------------------------------------------------------------------------
 ; /// Checking environment
 ;(set installer_ver (/ @installer-version 65536))
@@ -240,12 +282,14 @@
   (
     (set #cat_name_Deutsch               "german")
     (set #cat_name_Svenska               "swedish")
+    (set #cat_name_Czech                 "czech")
     (set #cat_name_English_British       "english-british")
   )
   ; OS3 and MOS use localized locale names
   (
     (set #cat_name_Deutsch               "deutsch")
     (set #cat_name_Svenska               "svenska")
+    (set #cat_name_Czech                 "czech")
   )
 )
 
@@ -280,6 +324,7 @@
          (help @askoptions-help)
          (choices "Deutsch"
                   "Svenska"
+                  "Czech"
                   "English (british)"
          )
          (default #def_cat_lang)
@@ -292,6 +337,7 @@
          (help @askoptions-help)
          (choices "Deutsch"
                   "Svenska"
+                  "Czech"
          )
          (default #def_cat_lang)
       )
@@ -398,6 +444,18 @@
       (copyfiles (source "/Catalogs/english-british")
          (choices "YAM.catalog")
          (dest (tackon Cat_dir #cat_name_English_British))
+      )
+   )
+)
+
+; czech catalog file
+(if (bitand Catalog_lang #def_lang_Czech)
+   (
+      (makedir (tackon Cat_dir #cat_name_Czech))
+
+      (copyfiles (source "/Catalogs/czech")
+         (choices "YAM.catalog")
+         (dest (tackon Cat_dir #cat_name_Czech))
       )
    )
 )

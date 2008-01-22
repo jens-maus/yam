@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.24 (16.1.2008)
+## version $VER: YAM.catalog 6.31 (22.1.2008)
 ## language czech
 ## codeset 5
 ;
@@ -103,7 +103,7 @@ Chyba
 ; Error
 ;
 MSG_NewEntry
-- nový -
+-nová-
 ; - new -
 ;
 MSG_Unnamed
@@ -576,9 +576,9 @@ Zadejte prosím po¾adované heslo:
 ; FOLDER
 ;
 MSG_MA_ReplyReq
-Vybraná zpráva je adresovaná více lidem.\n\
+Zpráva, na kterou chcete reagovat, byla adresovaná více lidem.\n\
 \n\
-Chcete odeslat odpovìï...
+Chcete odpovìdìt...
 ; The selected message has multiple recipients.\n\
 ; \n\
 ; You want to send the reply to the...
@@ -975,7 +975,7 @@ A nyní pro jistotu heslo zadejte znovu:
 ; Please re-type the password:
 ;
 MSG_CO_ConfirmDelete
-V¹echny zprávy ve vybrané slo¾ce budou ztraceny!\n\
+Pøijdete o v¹echny zprávy ve vybrané slo¾ce!\n\
 Opravdu ji chcete smazat?
 ; All messages in this folder will be lost!\n\
 ; Do you really want to delete it?
@@ -1091,7 +1091,7 @@ MSG_CO_SenderDOW
 ; %w  Original message: Day of week
 ;
 MSG_CO_SenderMsgID
-%m  pùvodní zpráva: èíslo zprávy
+%m  pùvodní zpráva: identifikátor zprávy
 ; %m  Original message: Message ID
 ;
 MSG_CO_RecptName
@@ -1606,7 +1606,7 @@ Pou¾ít _fixní písmo
 ; Use _fixed font
 ;
 MSG_CO_MimeType
-_Typ pøílohy
+_Typ MIME
 ; MIME _type
 ;
 MSG_CO_MimeCmd
@@ -1798,7 +1798,7 @@ Podrobný
 ; verbose
 ;
 MSG_CO_PGPExe
-Program P_GP
+Adresáø P_GP
 ; P_GP's directory
 ;
 MSG_CO_PGPKey
@@ -2634,7 +2634,7 @@ firmy Swatch.
 ; unit of time from Swatch.
 ;
 MSG_HELP_CO_ST_PGPCMD
-Definuje cestu k programu PGP.
+Zde vyberte cestu k programu PGP.
 ; Directory where the PGP\n\
 ; executable can be found.
 ;
@@ -2858,8 +2858,8 @@ budou platné pouze do pøí¹tího restartu.
 ; Use current settings.
 ;
 MSG_HELP_CO_BT_CANCEL
-Zavøe konfiguraèní okno, tj. ve¹keré provedené\n\
-zmìny budou ztraceny.
+Zavøe konfiguraèní okno, tj. pøijdete o ve¹keré\n\
+provedené zmìny.
 ; Close configuration\n\
 ; window and use the old\n\
 ; settings.
@@ -3344,13 +3344,6 @@ Definuje telefonní a faxová èísla.
 ; Phone and/or\n\
 ; FAX number(s).
 ;
-MSG_HELP_EA_ST_BIRTHDAY
-Urèuje datum narození. Zadejte ho ve formátu\n\
-DD-MMM-RRRR, tedy napø. 10-Jan-1950.
-; Date of birth in\n\
-; AmigaDOS format\n\
-; (e.g. 10-Jan-1950).
-;
 MSG_HELP_EA_BC_PHOTO
 Zde uvidíte fotografii dané osoby (pokud tuto\n\
 informaci zveøejòuje).
@@ -3465,11 +3458,11 @@ Zo_brazit
 ; _Display
 ;
 MSG_RE_BadSig
-Upozornìní: Neplatný podpis
+Upozornìní :: Neplatný podpis PGP
 ; WARNING: Bad signature
 ;
 MSG_RE_GoodSig
-Platný podpis
+Platný podpis PGP
 ; Good signature
 ;
 MSG_RE_SigFrom
@@ -3477,11 +3470,11 @@ MSG_RE_SigFrom
 ;  from\n
 ;
 MSG_RE_SigCheck
-Zkontrolovat podpis
+Zkontrolovat podpis PGP
 ; Check PGP signature
 ;
 MSG_RE_SaveDecGads
-*Z_achovat|Nah_radit|_Zru¹it
+*_Ponechat|Nah_radit|_Zru¹it
 ; *_Keep|_Replace|_Cancel
 ;
 MSG_RE_SaveDecReq
@@ -3517,7 +3510,7 @@ Pøedmìt:
 ;
 MSG_RE_MDNMessageID
 \n\
-ID zprávy:
+Identifikátor zprávy:
 ; \n\
 ; Message-ID:
 ;
@@ -3535,12 +3528,12 @@ Pùvodní pøíjemce:
 ;
 MSG_RE_MDNFinalRecpt
 \n\
-Koneèný pøíjemce:
+Cílový pøíjemce:
 ; \n\
 ; Final recipient:
 ;
 MSG_RE_MDNmanual
- na základì pøíkazu u¾ivatele
+ na základì ¾ádosti o
 ;  in response to a user command
 ;
 MSG_RE_MDNauto
@@ -3551,7 +3544,8 @@ MSG_RE_MDNdisplay
 Zpráva\n\
 %s\n\
 byla zobrazena.\n\
-To ov¹em neznamená, ¾e obsah byl pøeèten nebo pochopen.\n
+Upozornìní: Není mo¾né zaruèit, ¾e u¾ivatel obsah zprávy èetl nebo mu\n\
+porozumìl.\n
 ; The message\n\
 ; %s\n\
 ; has been displayed.\n\
@@ -3560,9 +3554,9 @@ To ov¹em neznamená, ¾e obsah byl pøeèten nebo pochopen.\n
 MSG_RE_MDNdeleted
 Zpráva\n\
 %s\n\
-byla smazána %s.\n\
-Pøíjemce ji mohl, ale nemusel èíst. Pozdìji ji lze\n\
-\"obnovit\" a pøeèíst.\n
+byla smazána%s.\n\
+Upozornìní: Pøíjemce zprávu mohl ale také nemusel vidìt. V ka¾dém ji lze\n\
+kdykoli vytáhnout z ko¹e a pøeèíst.\n
 ; The message\n\
 ; %s\n\
 ; has been deleted%s.\n\
@@ -3580,8 +3574,9 @@ byla %s%s.\n
 MSG_RE_PGPNotAllowed
 >Chyba PGP<\n\
 \n\
-Nemáte oprávnìní potøebné k zobrazení této zprávy. Buï není správnì\n\
-nakonfigurován balík PGP nebo je zpráva urèena nìkomu jinému.\n
+Nemáte oprávnìní potøebné k zobrazení této zprávy.\n\
+Buï není správnì nakonfigurován balík PGP nebo je\n\
+zpráva urèena nìkomu jinému.\n
 ; >PGP Error<\n\
 ; \n\
 ; You're not allowed to view this PGP encrypted message.\n\
@@ -3603,7 +3598,7 @@ mezi ostatní do seznamu kontaktù?
 ; SENDER
 ;
 MSG_RE_NewGroupTitle
-Automaticky pøidaná osoba
+Automaticky pøidaná osoby
 ; Automatically added entries
 ;
 MSG_RE_ContentType
@@ -3626,11 +3621,11 @@ Co chcete udìlat?
 ; ADDRESS
 ;
 MSG_RE_SelectAddressEdit
-*_Napsat zprávu|Up_ravit údaje|_Zru¹it
+*_Napsat zprávu|Upravit údaj_e|_Zru¹it
 ; *_Write message|_Edit entry|_Cancel
 ;
 MSG_RE_SelectAddressAdd
-*_Napsat zprávu|Pøid_at polo¾ku|_Zru¹it
+*_Napsat zprávu|Pøid_at k ostatním|_Zru¹it
 ; *_Write message|_Add entry|_Cancel
 ;
 ;
@@ -3774,63 +3769,73 @@ Pø_eposlat
 ; Module RE - Bubblehelp
 ;
 MSG_HELP_RE_BT_PREVIOUS
-Zobrazí obsah pøedchozí zprávy
+Zobrazí obsah pøedchozí\n\
+zprávy.
 ; Display contents of\n\
 ; the previous message.
 ;
 MSG_HELP_RE_BT_NEXT
-Zobrazí obsah dal¹í zprávy
+Zobrazí obsah dal¹í\n\
+zprávy.
 ; Display contents of\n\
 ; the next message.
 ;
 MSG_HELP_RE_BT_QUESTION
-Zobrazí obsah pùvodní zprávy, na kterou\n\
-právì vidíte odpovìï (pøedchozí v diskusi)
+Zobrazí obsah zprávy,\n\
+která této pøedcházela\n\
+(= pøedchozí v diskusi).
 ; Show the message that\n\
 ; is being answered here\n\
 ; (go back in thread).
 ;
 MSG_HELP_RE_BT_ANSWER
-Zobrazí odpovìï na danou zprávu (návaznou\n\
-v diskusi)
+Zobrazí odpovìï na tuto\n\
+zprávu (= návaznou).
 ; Show the reply\n\
 ; to this message\n\
 ; (follow thread).
 ;
 MSG_HELP_RE_BT_DISPLAY
-K zobrazení dané èásti zprávy pou¾ije\n\
-nastavený prohlí¾eè MIME
+Zobrazí vybranou èást\n\
+zprávy definovaným\n\
+prohlí¾eèem.
 ; Use the configured MIME\n\
 ; viewer to display a\n\
 ; part of this message.
 ;
 MSG_HELP_RE_BT_EXPORT
-Ulo¾í zobrazenou zprávu nebo její èást na disk
+Ulo¾í zobrazenou zprávu\n\
+nebo její èást na disk.
 ; Save displayed message or\n\
 ; a part of it to disk.
 ;
 MSG_HELP_RE_BT_PRINT
-Vytiskne zprávu na tiskárnì
+Vytiskne obsah zprávy.
 ; Send this message\n\
 ; to the printer.
 ;
 MSG_HELP_RE_BT_MOVE
-Pøesune zprávu do jiné slo¾ky a zobrazí dal¹í
+Umo¾ní pøesunout tuto zprávu\n\
+do jiné slo¾ky a poté zobrazí\n\
+dal¹í.
 ; Move this message to another folder\n\
 ; and display the next one.
 ;
 MSG_HELP_RE_BT_DELETE
-Sma¾e aktuální zprávu a zobrazí dal¹í
+Sma¾e tuto zprávu a poté\n\
+zobrazí dal¹í.
 ; Delete this message and\n\
 ; display the next one.
 ;
 MSG_HELP_RE_BT_REPLY
-Odpoví na aktuální zprávu
+Umo¾ní odpovìdìt na tuto\n\
+zprávu.
 ; Reply to this\n\
 ; message.
 ;
 MSG_HELP_RE_BT_FORWARD
-Pøedá aktuální zprávu
+Umo¾ní pøeposlat tuto\n\
+zprávu.
 ; Forward this\n\
 ; message.
 ;
@@ -3846,7 +3851,7 @@ Pøid_at pozdìji|*_Zru¹it
 ; _Add recipient later|*_Cancel
 ;
 MSG_WR_DiscardChanges
-Opravdu chcete ztratit v¹echny provedené úpravy?
+Opravdu chcete pøijít o v¹echny provedené úpravy?
 ; Do you really want to discard all\n\
 ; modifications to this message?
 ;
@@ -3859,7 +3864,7 @@ Ulo¾te text
 ; Save text as
 ;
 MSG_WR_AddFile
-Vyberte pøílohu nebo pøílohy
+Vyberte po¾adované soubory
 ; Select files to attach
 ;
 MSG_WR_CreateArc
@@ -3886,7 +3891,7 @@ Velikost
 ; Size
 ;
 MSG_WR_TitleContents
-Typ souboru
+Druh souboru
 ; Contents
 ;
 MSG_WR_TitleEncoding
@@ -3985,7 +3990,7 @@ P_opis
 ; D_escription
 ;
 MSG_WR_CopyTo
-K_opie pro (CC)
+Kopie pro (_CC)
 ; C_opies to (CC)
 ;
 MSG_WR_BlindCopyTo
@@ -4139,7 +4144,7 @@ Odvolat zpìt
 ; Redo
 ;
 MSG_WR_Dictionary
-Glosáø...
+Glosáø
 ; Glossary
 ;
 MSG_WR_Textstyle
@@ -4218,179 +4223,184 @@ Dùle¾itost
 ; Module WR - Bubblehelp
 ;
 MSG_HELP_WR_ST_TO
-Adresa (a jméno) nebo alias hlavního pøíjemce
+Zadejte adresu, jméno nebo alias pøíjemce zprávy.
 ; Address (and name) or alias\n\
 ; of the primary recipient(s).
 ;
 MSG_HELP_WR_BT_ADR
-Výbìr pøíjemce ze seznamu kontaktù
+Umo¾ní výbìr pøíjemce ze seznamu kontaktù.
 ; Select recipient(s) from\n\
 ; the address book.
 ;
 MSG_HELP_WR_ST_SUBJECT
-Krátký popis zprávy
+Krátký popis zprávy.
 ; Subject of your message.
 ;
 MSG_HELP_WR_BT_EDITOR
-K úpravì textu zprávy vyvolá externí editor
+Umo¾ní upravit text zprávy\n\
+v externím editoru.
 ; Use an external editor to\n\
 ; modify the message text.
 ;
 MSG_HELP_WR_BT_LOAD
-Vlo¾í textový soubor od pozice kurzoru
+Vlo¾í textový soubor\n\
+od pozice kurzoru.
 ; Insert the contents of a text file\n\
 ; at the current cursor position.
 ;
 MSG_HELP_WR_BT_CUT
-Vyjme oznaèený text a vlo¾í do schránky
+Vyjme oznaèený text\n\
+a vlo¾í do schránky.
 ; Cut marked text to the clipboard.
 ;
 MSG_HELP_WR_BT_COPY
-Zkopíruje oznaèený text do schránky
+Zkopíruje oznaèený text\n\
+do schránky.
 ; Copy marked text to the clipboard.
 ;
 MSG_HELP_WR_BT_PASTE
-Vlo¾í obsah schránky od pozice kurzoru
+Vlo¾í obsah schránky\n\
+od pozice kurzoru.
 ; Insert the contents of the clipboard\n\
 ; at the current cursor position.
 ;
 MSG_HELP_WR_BT_UNDO
-Vrátí aktuální zmìny textu do pùvodního stavu
+Vrátí zpìt poslední zmìnu\n\
+v textu.
 ; Undo the last change in the text.
 ;
 MSG_HELP_WR_BT_BOLD
-Oznaèený text zobrazí tuènì (platí pouze\n\
-pro celá slova).
+Oznaèený text zobrazí tuènì\n\
+(platí pouze pro celá slova).
 ; Use bold typeface for marked\n\
 ; text (whole words only).
 ;
 MSG_HELP_WR_BT_ITALIC
-Oznaèený text zobrazí kurzívou (platí pouze\n\
-pro celá slova).
+Oznaèený text zobrazí kurzívou\n\
+(platí pouze pro celá slova).
 ; Use italic typeface for marked\n\
 ; text (whole words only).
 ;
 MSG_HELP_WR_BT_UNDERL
-Oznaèený text zobrazí podtr¾enì (platí pouze\n\
-pro celá slova).
+Oznaèený text zobrazí podtr¾enì\n\
+(platí pouze pro celá slova).
 ; Underline marked text\n\
 ; (whole words only).
 ;
 MSG_HELP_WR_BT_COLOR
-Oznaèený text obarví (platí pouze pro celá slova).
+Oznaèený text obarví (platí\n\
+pouze pro celá slova).
 ; Colorize marked text\n\
 ; (whole words only).
 ;
 MSG_HELP_WR_BT_ADD
-Pøidá soubor do seznamu pøíloh
+Ke zprávì pøilo¾í vybraný\n\
+soubor.
 ; Add attachments\n\
 ; to the list.
 ;
 MSG_HELP_WR_BT_ADDPACK
-Vytvoøí archív z nìkolika souborù a pøidá\n\
-jej do seznamu pøíloh
+Z vybraných souborù vytvoøí\n\
+archív a pøilo¾í ke zprávì.
 ; Create an archive with one\n\
 ; or more files and add it to\n\
 ; the list as an attachment.
 ;
 MSG_HELP_WR_BT_DEL
-Odstraní vybranou pøílohu ze seznamu
+Sma¾e vybranou pøílohu.
 ; Remove the selected\n\
 ; attachment from the list.
 ;
 MSG_HELP_WR_BT_DISPLAY
-Zobrazí vybranou pøílohu pomocí nastaveného\n\
-prohlí¾eèe MIME
+Zobrazí vybranou pøílohu\n\
+definovaným prohlí¾eèem.
 ; Use the configured MIME viewer\n\
 ; to display this attachment.
 ;
 MSG_HELP_WR_RA_ENCODING
-Metoda kódování pou¾itá pro vybranou\n\
-pøílohu. UUencode pou¾ívejte tehdy,\n\
-nemá-li pøíjemce po¹tovní program\n\
-s podporou MIME.
+Definuje metodu kódování pøená¹eného souboru.\n\
+UUencode pou¾ijte pouze tehdy, pokud má pøíjemce\n\
+hodnì zastaralý po¹tovní program.
 ; Type of encoding used for the selected attachment.\n\
 ; Select UUencode only if the recipient is not using\n\
 ; a MIME compliant mailer.
 ;
 MSG_HELP_WR_ST_CTYPE
-Typ MIME pro vybranou pøílohu. Pokud je\n\
-to mo¾né, pou¾ijte nìkterý z typù uvedených\n\
-v seznamu.
+Definuje typ MIME vybrané pøílohy. Pokud je to\n\
+mo¾né, pou¾ijte nìkterý z typù ze seznamu.
 ; MIME type for the selected attachment.\n\
 ; Whenever possible, use one from the popup list.
 ;
 MSG_HELP_WR_ST_DESC
-Volitelný popis pro vybranou pøílohu.
+Umo¾òuje pøidat popis k vybrané pøíloze.
 ; Optional description for\n\
 ; the selected attachment.
 ;
 MSG_HELP_WR_ST_CC
 Zde zadejte pøíjemce, kterému chcete odeslat\n\
-kopii zprávy
+kopii zprávy.
 ; Send a carbon copy (CC) of the\n\
 ; message to these recipients.
 ;
 MSG_HELP_WR_ST_BCC
 Zde zadejte pøíjemce, kterému chcete odeslat\n\
-skrytou kopii
+skrytou kopii zprávy.
 ; Send a blind carbon copy of\n\
 ; the message to these recipients.
 ;
 MSG_HELP_WR_ST_EXTHEADER
-Dodateèná hlavièka zprávy, která bude\n\
-pøidána ke zprávì
+Definuje dodateènou hlavièku, která bude pøidána\n\
+k té standardní.
 ; Additional headers that should\n\
 ; be added to the message.
 ;
 MSG_HELP_WR_ST_FROM
-Obsah pole Odesílatel (adresa a jméno\n\
-osoby, která napsala\ndanou zprávu)
+Zobrazí informace o odesílateli zprávy (adresa\n\
+a jméno osoby).
 ; Contents of the 'From:' header\n\
 ; (name and address of the person\n\
 ; who is writing this message).
 ;
 MSG_HELP_WR_ST_REPLYTO
-Zpáteèní adresa pro danou zprávu
+Definuje zpáteèní adresu pro danou zprávu.
 ; Return address\n\
 ; for this message.
 ;
 MSG_HELP_WR_CH_DELSEND
-Zpráva nebude ulo¾ena do slo¾ky 'Odeslané'
+Zpráva nebude ulo¾ena do slo¾ky 'Odeslané'.
 ; Do not store this message\n\
 ; in the Sent folder.
 ;
 MSG_HELP_WR_CH_RECEIPT
-Toto tlaèítko za¹krtnìte, chcete-li obdr¾et\n\
-oznámení o úspì¹ném doruèení zprávy
+Chcete-li obdr¾et oznámení o úspì¹ném doruèení\n\
+zprávy, pou¾ijte tuto funkci.
 ; Request a notification on\n\
 ; successful delivery.
 ;
 MSG_HELP_WR_CH_ADDINFO
-Za¹krtnete-li toto tlaèítko, bude ke zprávì\n\
-pøidána hlavièka s va¹imi údaji ze seznamu kontaktù
+Pøidá do hlavièky zprávy va¹e osobní údaje.
 ; Create header fields containing data\n\
 ; from your personal address book entry.
 ;
 MSG_HELP_WR_CY_IMPORTANCE
-Nastaví prioritu zprávy
+Nastaví prioritu zprávy.
 ; Set the priority\n\
 ; of this message.
 ;
 MSG_HELP_WR_RA_SIGNATURE
-Zde vyberte podpis, který chcete pøipojit\n\
-k aktuální zprávì
+Zde urèíte který z nabízených podpisù pou¾ít.
 ; Which signature do you want\n\
 ; to append to this message?
 ;
 MSG_HELP_WR_RA_SECURITY
-Vyberte jednu z mo¾ností zabezpeèení. Ke zprávì\n\
-lze pøipojit podpis PGP, lze ji za¹ifrovat\n\
-nebo odeslat anonymnì.\n\
+Definuje zpùsob zabezpeèení. Pomocí systému PGP\n\
+lze zprávu podepsat, za¹ifrovat. Jinou mo¾ností\n\
+je poslání zprávy prostøednictvím dal¹í slu¾by\n\
+a tím pádem vystupovat anonymnì.\n\
 \n\
 'Výchozí' znamená, ¾e se program pokusí najít\n\
 adresáta v seznamu kontaktù a následnì pou¾ít\n\
-definovaný zpùsob zabezpeèení.
+tam definovaný zpùsob zabezpeèení.
 ; Select one of these security options to send\n\
 ; your message PGP signed, encrypted\n\
 ; or anonymously. "Default" tries to find\n\
@@ -4417,7 +4427,7 @@ a ihned ji ode¹le.
 ; it immediately.
 ;
 MSG_HELP_WR_BT_CANCEL
-Zru¹í vytváøení zprávy
+Sma¾e rozepsanou zprávu a zavøe okno.
 ; Discard the\n\
 ; created message.
 ;
@@ -4448,11 +4458,11 @@ Posílání pøihla¹ovacích informací APOP...
 ; Sending APOP login information...
 ;
 MSG_TR_SendUserID
-Odesílání ID u¾ivatele...
+Posílání u¾ivatelského jména...
 ; Sending user ID...
 ;
 MSG_TR_SendPassword
-Odesílání hesla...
+Posílání hesla...
 ; Sending password...
 ;
 MSG_TR_GetStats
@@ -4468,7 +4478,7 @@ Filtrování zpráv na serveru...
 ; Applying remote filters...
 ;
 MSG_TR_SendHello
-Odesílání 'Hello'...
+Odesílání pøíkazu 'Hello'...
 ; Sending 'Hello'...
 ;
 MSG_TR_Exporting
@@ -4476,7 +4486,7 @@ Export zpráv...
 ; Exporting message...
 ;
 MSG_TR_Sending
-Odesílání zprávy...
+Posílání zprávy...
 ; Sending message...
 ;
 MSG_TR_Importing
@@ -4484,15 +4494,15 @@ Import zpráv...
 ; Importing message...
 ;
 MSG_TR_DeletingServerMail
-Probíhá mazání po¹ty na serveru...
+Mazání po¹ty na serveru...
 ; Deleting mail on server...
 ;
 MSG_TR_NewMailReq
 \e8Pøi¹la nová po¹ta!\e2\n\
 \n\
 Poèet stáhnutých zpráv: %3ld\n\
-Poèet zpráv ponechaných na serveru: %3ld\n\
-Poèet vynechaných duplicitních zpráv: %3ld\n
+Na serveru ponecháno: %3ld\n\
+Duplicitních vynecháno: %3ld\n
 ; \e8You have new mail!\e2\n\
 ; \n\
 ; %3ld messages downloaded,\n\
@@ -4565,7 +4575,7 @@ Pouze stá_hnout
 ; _Download only
 ;
 MSG_TR_Leave
-Po_nechat
+Úplnì vy_nechat
 ; L_eave
 ;
 MSG_TR_Pause
@@ -4603,12 +4613,12 @@ Pø_eru¹it
 ; Module TR - Bubblehelp
 ;
 MSG_HELP_TR_TX_STATUS
-Aktuální stav pøenosu po¹ty.
+Informuje o prùbìhu pøenosu dat.
 ; Current state\n\
 ; of mail transfer.
 ;
 MSG_HELP_TR_BT_ABORT
-Pøeru¹í pøenos po¹ty jakmile to bude mo¾né.
+Pøeru¹í pøenos dat.
 ; Abort mail transfer\n\
 ; as soon as possible.
 ;
@@ -4616,7 +4626,7 @@ Pøeru¹í pøenos po¹ty jakmile to bude mo¾né.
 ; Module ER - Window
 ;
 MSG_ER_ErrorMessages
-Chybové zprávy:
+Chybové zprávy
 ; Error messages
 ;
 MSG_ER_PrevError
@@ -4657,11 +4667,11 @@ Pøesvìdète se, ¾e zaøízení není chránìno proti zápisu.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias
-K rozpoznání této polo¾ky je nutné zadat alias!
+Zadejte prosím polo¾ku 'alias'!
 ; You must specify an alias to identify this entry!
 ;
 MSG_ER_ErrorNoAddress
-Pro tuto polo¾ku je nutné zadat adresu!
+Zadejte prosím polo¾ku 'adresa'!
 ; You must specify an address for this entry!
 ;
 MSG_ER_ErrorDOBformat
@@ -4693,24 +4703,24 @@ Zkontrolujte nastavení cesty v souboru nastavení.
 MSG_ER_CantCreateTempfile
 Nelze vytvoøit doèasný soubor.\n\
 \n\
-Dùvod: nedostatek pamìti nebo chybnì zadaná cesta v souboru nastavení.
+Dùvod: Nedostatek volné pamìti nebo chybnì zadaná cesta v konfiguraci.
 ; Couldn't create temporary file.\n\
 ; \n\
 ; Reason: out of memory or invalid path specified in the configuration.
 ;
 MSG_ER_ErrorConsole
-Nelze otevøít okno konzoly pro skript.
+Nelze otevøít výstupní okno pro skript.
 ; Couldn't open console window for script.
 ;
 MSG_ER_ErrorARexxScript
-Nelze odeslat ARexxový pøíkaz '%s'. Pøesvìdète se, zda skript existuje.
+Nelze provést pøíkaz '%s'. Zkontrolujte, zda zadaný skript existuje.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
 ;
 MSG_ER_CreateMailError
 Nelze vytvoøit soubor se zprávou.\n\
 \n\
-Dùvod: neplatná slo¾ka nebo nedostatek místa na disku.
+Dùvod: Neplatná slo¾ka nebo nedostatek volného místa na disku.
 ; Couldn't create mail file.\n\
 ; \n\
 ; Reason: invalid folder directory or insufficient disk space.
@@ -4744,14 +4754,14 @@ Po¾adovaný soubor ji¾ zøejmì není na serveru.
 ; FILENAME
 ;
 MSG_ER_SendHTTP
-Nelze odeslat HTTP po¾adavek. Chyba pøi pokusu o stáhnutí dokumentu z WWW serveru.
+Nelze odeslat pøíkaz protokolu HTTP. Chyba pøi pokusu o stáhnutí dokumentu ze serveru.
 ; Couldn't send HTTP request. Requesting a document from the WWW server failed.
 ;
 MSG_ER_ConnectHTTP
 Nelze navázat spojení s WWW serverem '%s'.\n\
 \n\
-Pøehled mo¾ných dùvodù: nefunkèní pøipojení k síti, \
-neplatná adresa, server je mimo provoz nebo nepodporuje HTTP.
+Pøehled mo¾ných dùvodù: Nefunkèní pøipojení k síti, neplatná adresa, \
+server je mimo provoz nebo neodpovídá na pøíkazy protokolu HTTP.
 ; Couldn't connect to WWW server '%s'.\n\
 ; \n\
 ; Possible reasons: TCP/IP offline, invalid address, \
@@ -4792,9 +4802,9 @@ Vypnìte APOP v konfiguraèním oknì programu YAM.
 ; Please disable APOP in the configuration.
 ;
 MSG_ER_ErrorWriteMailfile
-Chyba pøi zápisu zprávy: %s.\n\
+Chyba pøi ukládání souboru se zprávou: %s.\n\
 \n\
-Nepodaøilo se zapsat zprávu na disk. Není zaplnìn harddisk?
+Nelze zapsat zprávu na disk. Máte dostatek volného místa na disku?
 ; Write error on mail file: %s.\n\
 ; \n\
 ; YAM can't save the message to disk, maybe you're out of disk space.
@@ -4803,43 +4813,43 @@ Nepodaøilo se zapsat zprávu na disk. Není zaplnìn harddisk?
 MSG_ER_ErrorReadMailfile
 Chyba pøi ètení zprávy: %s.\n\
 \n\
-Soubor sice existuje, ale pøesto nastala chyba pøi ètení.
+Soubor sice existuje, ale nelze ho pøeèíst.
 ; Read error on mail file: %s.\n\
 ; \n\
 ; The file exists, but there was an error while reading it.
 ; FILENAME
 ;
 MSG_ER_UserRemoved
-Adresáø '%s' nebyl nalezen!\n\
-U¾ivatel %s byl odstranìn.
+Nelze najít adresáø '%s'!\n\
+Informace o u¾ivateli %s byly smazány.
 ; Directory '%s' not found!\n\
 ; User %s has been removed.
 ; PATH
 ;
 MSG_ER_MissingDirectory
-Definujte adresáø pro nového u¾ivatele!
+Zadejte prosím adresáø pro nového u¾ivatele!
 ; You must specify a directory for the new user!
 ;
 MSG_ER_MissingName
-Musíte zadat jméno nového u¾ivatele!
+Zadejte prosím jméno nového u¾ivatele!
 ; You must specify a name for the new user!
 ;
 MSG_ER_NoPublicKeys
-Nebyly nalezeny ¾ádné veøejné PGP klíèe.\n\
+Nebyly nalezeny ¾ádné veøejné klíèe PGP.\n\
 \n\
 Zkontrolujte, zda máte nainstalovaný balík PGP a \
-pøíslu¹nì nakonfigurovaný YAM.
+odpovídajícím zpùsobem nastavený YAM.
 ; No public PGP keys found.\n\
 ; \n\
 ; Make sure that PGP is installed and the required settings \
 ; are made in the configuration of YAM.
 ;
 MSG_ER_PGPreturnsError
-Tento pøíkaz PGP zahlásil chybu:\n\
+Chyba pøi práci s PGP:\n\
 \n\
 '%s'\n\
 \n\
-Zkontrolujte soubor %s.
+Podívejte se do souboru %s.
 ; The following PGP command returned with an error:\n\
 ; \n\
 ; '%s'\n\
@@ -4848,9 +4858,9 @@ Zkontrolujte soubor %s.
 ; COMMAND, FILENAME
 ;
 MSG_ER_PGPnotfound
-Nelze spustit systém PGP.\n\
+Nelze spustit program PGP.\n\
 \n\
-Ovìøte, zda je pøíkaz %s v cestì.
+Zkontrolujte, zda je %s nainstalován.
 ; Couldn't execute PGP command.\n\
 ; \n\
 ; Check if %s exists.
@@ -4859,7 +4869,8 @@ Ovìøte, zda je pøíkaz %s v cestì.
 MSG_ER_AliasNotFound
 Neznámý alias nebo jméno: %s.\n\
 \n\
-V seznamu kontaktù nelze nalézt e-mail tohoto pøíjemce. Zkontrolujte prosím zadaný øetìzec.
+V seznamu kontaktù nelze nalézt po¾adovanou polo¾ku. Zkontrolujte \
+prosím zadaný text.
 ; Unknown alias or name: %s.\n\
 ; \n\
 ; YAM couldn't find the e-mail address of this recipient \
@@ -4867,14 +4878,14 @@ V seznamu kontaktù nelze nalézt e-mail tohoto pøíjemce. Zkontrolujte prosím zada
 ; ALIAS
 ;
 MSG_ER_ErrorNoPGPId
-Pro '%s' ze seznamu kontaktù nelze nalézt èíslo PGP klíèe, nyní YAM zkou¹í '%s'.
+K zadané osobì '%s' nelze najít odpovídající klíè PGP. YAM zkusí adresu '%s'.
 ; Couldn't find PGP ID for '%s' in the address book, now trying '%s'.
 ; RECIPIENT, ADDRESS
 ;
 MSG_ER_ErrorAppendKey
-Veøejný PGP klíè %s nelze pøidat.\n\
+Veøejný PGP klíè %s nelze pøilo¾it.\n\
 \n\
-Nastal problém pøi jeho hledání na krou¾ku s klíèi PGP.
+Chyba pøi ètení ze systému PGP.
 ; Couldn't append public PGP key %s.\n\
 ; \n\
 ; There was a problem extracting it from the PGP keyring.
@@ -4888,7 +4899,7 @@ Zkr_atka
 ; _Abbreviation
 ;
 MSG_DI_New
-_Nový
+_Nová
 ; _New
 ;
 MSG_DI_AddSelect
@@ -4907,31 +4918,30 @@ _Vlo¾it
 ; Module DI - Bubblehelp
 ;
 MSG_HELP_DI_LV_ENTRIES
-Seznam dostupných zkratek
+Pøehled ulo¾ených polo¾ek.
 ; List of available abbreviations.
 ;
 MSG_HELP_DI_ST_ALIAS
-Zkratka vybrané polo¾ky
+Zkratka vybrané polo¾ky.
 ; Abbreviation of selected entry.
 ;
 MSG_HELP_DI_BT_NEW
-Pøidá do glosáøe novou zkratku
+Umo¾ní pøidat do glosáøe novou novou polo¾ku.
 ; Add a new abbreviation\n\
 ; to the glossary.
 ;
 MSG_HELP_DI_BT_ADDSELECT
-Vytvoøí novou polo¾ku na základì textu\n\
-oznaèeného v editoru
+Umo¾ní pøidat do glosáøe oznaèený text z editoru\n\
+anebo, není-li text oznaèený, pak obsah schránky.
 ; Create a new entry based on\n\
 ; the text marked in the editor.
 ;
 MSG_HELP_DI_BT_DELETE
-Odstraní vybranou polo¾ku
+Sma¾e vybranou polo¾ku.
 ; Remove the selected entry.
 ;
 MSG_HELP_DI_BT_PASTE
-Vlo¾í vybranou polo¾ku na aktuální pozici\n\
-v textovém editoru
+Vlo¾í vybranou polo¾ku do editoru na pozici kurzoru.
 ; Insert selected entry at the current\n\
 ; position in the text editor.
 ;
@@ -5010,7 +5020,7 @@ Rozli¹ovat malá/VELKÁ písmena
 ; Case sensitive
 ;
 MSG_FI_SubString
-Roz¹íøit mo¾nosti hledání (#?)
+Zapnout hledání pomocí masky (#?)
 ; Substring search
 ;
 ;
@@ -5021,7 +5031,7 @@ Hledání ve zprávách
 ; Find messages
 ;
 MSG_FI_AllFolders
-_Ve v¹ech
+V_e v¹ech
 ; _everywhere
 ;
 MSG_FI_FindIn
@@ -5064,30 +5074,28 @@ Pø_eru¹it
 ; Module FI - Bubblehelp
 ;
 MSG_HELP_FI_LV_FOLDERS
-Vyberte jednu nebo více slo¾ek, které\n\
-chcete prohledat
+Umo¾ní výbìr slo¾ek, ve kterých chcete hledat.
 ; Select one or more\n\
 ; folders to search in.
 ;
 MSG_HELP_FI_BT_ALL
-Zahrne do prohledávání v¹echny slo¾ky
+Vybere v¹echny slo¾ky.
 ; Include all folders\n\
 ; in your search.
 ;
 MSG_HELP_FI_PO_FROMRULE
-Pøevezme kritérium pro hledání z ji¾\n\
-vytvoøeného filtru
+Pøevezme kritérium hledání z vytvoøeného filtru.
 ; Get search criterion\n\
 ; from a filter.
 ;
 MSG_HELP_FI_BT_TORULE
-Vytvoøí ze zadaného kritéria nový filtr\n\
-a pøidá do seznamu
+Ze zadaného kritéria vytvoøí nový filtr a pøidá\n\
+do seznamu.
 ; Create a new filter from\n\
 ; this search criterion.
 ;
 MSG_HELP_FI_BT_SEARCH
-Spustí prohledávání a zobrazí výsledek v seznamu
+Spustí hledání a poté zobrazí výsledek v seznamu.
 ; Start the search and display\n\
 ; the results in the list above.
 ;
@@ -5107,49 +5115,50 @@ Zastaví hledání.
 ; Stop searching.
 ;
 MSG_HELP_FI_CY_MODE
-Pole nebo èást zprávy, která je souèástí\n\
-kritéria pro hledání
+Pole nebo èást zprávy, která je souèástí kritéria\n\
+hledání.
 ; Field or message part that\n\
 ; should match the pattern.
 ;
 MSG_HELP_FI_ST_FIELD
-Název èásti hlavièky, které mají být prohledány
+Název hlavièky, která má být prohledána.
 ; Name of the header\n\
 ; to search in.
 ;
 MSG_HELP_FI_RA_ADRMODE
-Zde vyberete, zda se mají v dané èásti\n\
-hlavièky prohledat jména nebo adresy
+Definuje, zda hledat mezi jmény nebo adresami.
 ; Choose whether you want to search in the\n\
 ; address or real name part of the field.
 ;
 MSG_HELP_FI_CY_STATUS
-Stav zpráv, které mají být prohledány
+Urèuje stav zpráv, které mají být prohledány.
 ; Message status\n\
 ; to match.
 ;
 MSG_HELP_FI_ST_MATCH
-Maska pøi prohledávání (maskování specifické\n\
-pro AmigaOS je podporováno)
+Zadejte text, který chcete najít (masku AmigaOS\n\
+lze pou¾ít).
 ; Search pattern (AmigaDOS\n\
 ; wildchars are supported).
 ;
 MSG_HELP_FI_CH_CASESENS
-Mají být pøi prohledávání rozli¹ována malá\n\
-a VELKÁ písmena?
+Zapne rozli¹ování malých a VELKÝCH písmen.
 ; Should the search\n\
 ; be case sensitive?
 ;
 MSG_HELP_FI_CH_SUBSTR
-Povolí roz¹íøení prohledávání (pou¾itím masky #?)
+Zapne hledání v rámci jednotlivých slov pomocí\n\
+masky AmigaOS, tj. ?, #?, (a|b) a [abc].
 ; Enable a partial\n\
 ; string search.
 ;
 MSG_HELP_FI_CY_COMP
-Druh porovnání. Vyberete-li <>, budou nalezeny\n\
-v¹echny zprávy nevyhovující danému kritériu,\n\
-IN umo¾ní pou¾ít externí soubor s komplexnìj¹í\n\
-definicí masek
+Definuje druh porovnání vybrané polo¾ky a zadaného\n\
+textu. Pokud vyberete <>, budou nalezeny v¹echny\n\
+zprávy nevyhovující danému kritériu. Za pomoci IN\n\
+mù¾ete srovnávat vstupní data s externím souborem\n\
+(nabízí komplexnìj¹í definici masek nebo té¾ tzv.\n\
+Killfile).
 ; Type of comparison. Select <> to get all messages that\n\
 ; don't match the pattern, IN to use a file of patterns.
 ;
@@ -5169,27 +5178,27 @@ Adresáø s po¹tou
 ; Mail directory
 ;
 MSG_US_WaitLogin
-Pøihlá¹ení u¾ivatele
+Pøihlá¹ení u¾ivatele...
 ; Waiting for user login...
 ;
 MSG_US_RemoveReq
-V¹echny zprávy, slo¾ky a konfiguraèní soubory\n\
-patøící vybranému u¾ivateli budou ztraceny!\n\
+Tímto krokem pøijdete o v¹echny zprávy, slo¾ky\n\
+a konfiguraèní soubory patøící danému u¾ivateli!\n\
 \n\
-Opravdu chcete daný profil odstranit?
+Opravdu chcete vybraný profil smazat?
 ; All messages, folders and configuration\n\
 ; files belonging to this user will be lost!\n\
 ; \n\
 ; Do you really want to remove the user?
 ;
 MSG_US_RemoveReqGads
-*_OK|Z_achovat soubory|_Zru¹it
+*_Smazat v¹e|_Ponechat soubory|_Zru¹it
 ; *_Ok|_Keep files|_Cancel
 ;
 ; Module US - Window
 ;
 MSG_US_UserName
-_U¾ivatel
+Jméno _u¾ivatele
 ; _User name
 ;
 MSG_US_MailDirectory
@@ -5197,15 +5206,15 @@ A_dresáø s po¹tou
 ; _Mail directory
 ;
 MSG_US_GlobalAddrBook
-Pou¾ít seznam kontaktù glo_bálnì
+Pou¾ít glo_bální seznam kontaktù
 ; Use global address _book
 ;
 MSG_US_GlobalDict
-Pou¾ít glosáø _globálnì
+Pou¾ít globální _glosáø
 ; Use global _glossary
 ;
 MSG_US_CopyConfig
-Zk_opírovat konfiguraci aktuálního u¾ivatele
+Zk_opírovat konfiguraci vybraného u¾ivatele
 ; C_opy configuration from current user
 ;
 MSG_US_Password
@@ -5228,49 +5237,48 @@ _Smazat u¾ivatele
 ; Module US - Bubblehelp
 ;
 MSG_HELP_US_ST_USER
-Jméno nového u¾ivatele programu YAM
+Urèuje jméno nového u¾ivatele programu YAM.
 ; Name of the new YAM user.
 ;
 MSG_HELP_US_ST_MAILDIR
-Adresáø, do kterého budou ulo¾eny slo¾ky\n\
-a konfiguraèní soubory nového úètu
+Definuje adresáø obsahující slo¾ky a konfiguraèní\n\
+soubory nového úètu.
 ; Directory to store the\n\
 ; folders and config files\n\
 ; of the new user account.
 ;
 MSG_HELP_US_CH_USEADDR
-Nastaví sdílení seznamu kontaktù s ostatními
+Nastaví sdílení seznamu kontaktù s ostatními.
 ; Share address book\n\
 ; with other users.
 ;
 MSG_HELP_US_CH_USEDICT
-Nastaví sdílení glosáøe mezi u¾ivateli
+Nastaví sdílení glosáøe s ostatními u¾ivateli.
 ; Share glossary\n\
 ; with other users.
 ;
 MSG_HELP_US_ST_PASSWD
-Heslo potøebné k pøihlá¹ení u¾ivatele
+Definuje heslo pro pøístup k datùm u¾ivatele.
 ; Password required for\n\
 ; this user to login.
 ;
 MSG_HELP_US_CH_ROOT
-Nastavením této mo¾nosti dáte u¾ivateli mo¾nost\n\
-pøidávat nebo mazat dal¹í u¾ivatele
+Dává oprávnìní pøidat nebo smazat jiné u¾ivatele.
 ; Enable this option if the user should be\n\
 ; allowed to add or remove other users.
 ;
 MSG_HELP_US_CH_CLONE
-Pou¾ije aktuální konfiguraci jako základ\n\
-pøi vytváøení nového úètu
+Pøi vytváøení nového úètu pou¾ije jako základ\n\
+konfiguraci vybraného u¾ivatele.
 ; Use current configuration as\n\
 ; default for the new account.
 ;
 MSG_HELP_US_BT_ADD
-Vytvoøí nový úèet
+Umo¾ní vytvoøit nový úèet.
 ; Create a new account.
 ;
 MSG_HELP_US_BT_DEL
-Odstraní vybraný úèet
+Umo¾ní smazat vybraný úèet.
 ; Remove selected account.
 ;
 ;
@@ -5372,12 +5380,12 @@ Rozesílací seznam
 ; Module FO - Bubblehelp
 ;
 MSG_HELP_FO_ST_FNAME
-Název slo¾ky
+Urèuje název slo¾ky.
 ; Folder name.
 ;
 MSG_HELP_FO_TX_FPATH
-Adresáø, ve kterém jsou ulo¾eny zprávy\n\
-vybrané slo¾ky
+Definuje adresáø, ve kterém jsou ulo¾eny zprávy\n\
+vybrané slo¾ky.
 ; Directory where the messages of\n\
 ; the selected folder are stored.
 ;
@@ -5395,36 +5403,37 @@ Definuje druh slo¾ky (Pøijaté/Odeslané/Oboje).
 ; (in/out/both).
 ;
 MSG_HELP_FO_CY_FMODE
-Slo¾ky lze chránit heslem nebo komprimovat\n\
-pomocí XPK
+Umo¾ní obsah slo¾ky zkomprimovat nebo zabezpeèit\n\
+heslem.
 ; Folders can be password protected\n\
 ; and/or compressed using XPK.
 ;
 MSG_HELP_FO_CY_SORT0
-Primární metoda øazení zpráv v dané slo¾ce
+Definuje primární zpùsob øazení zpráv ve slo¾ce.
 ; Primary sorting order of the\n\
 ; messages in this folder.
 ;
 MSG_HELP_FO_CY_SORT1
-Sekundární metoda øazení zpráv v dané slo¾ce
+Definuje sekundární zpùsob øazení zpráv ve slo¾ce.
 ; Secondary sorting order of the\n\
 ; messages in this folder.
 ;
 MSG_HELP_FO_CH_REVERSE
-Seøadí zprávy obrácenì
+Obrátí zpùsob øazení.
 ; Reversed sorting.
 ;
 MSG_HELP_FO_ST_MLPATTERN
-Pokud vyhovuje adresa v poli 'Komu:'\n\
-zadané masce, bude zpráva brána jako\n\
-pocházející z rozesílacího seznamu
+Umo¾ní rozpoznat zprávy pocházející z rozesílacího\n\
+seznamu.\n\
+Zadejte text (lze pou¾ít i masku) a pokud vyhovuje\n\
+adrese v poli 'Komu:', program bude takovou zprávu\n\
+pova¾ovat za patøící do rozesílacího seznamu.
 ; A message belongs to a mailing list\n\
 ; if the contents of the 'To:' field are\n\
 ; matched by this pattern.
 ;
 MSG_HELP_FO_ST_MLADDRESS
-Tato adresa bude pou¾ita k odpovìdím\n\
-do rozesílacího seznamu
+Urèuje adresu rozesílacího seznamu.
 ; Use this recipient address for a\n\
 ; reply to a mailing list message.
 ;
@@ -5576,16 +5585,12 @@ Konfigurace MUI...
 ; MUI...
 ;
 MSG_HELP_FO_ST_MLFROMADDRESS
-Pøi odesílání pøíspìvkù do rozesílacího\n\
-seznamu nastaví va¹i adresu podle toho,\n\
-co máte uvedeno v poli \"Adresa odesílatele\"
+Urèuje adresu odesílatele pro rozesílací seznam.
 ; Use this 'From:' address when\n\
 ; posting new mails to the list.
 ;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
-Pøi odesílání pøíspìvkù do rozesílacího\n\
-seznamu nastaví va¹i adresu podle toho,\n\
-co máte uvedeno v poli \"Zpáteèní adresa\"
+Urèuje adresu pro odpovìdi do rozesílacího seznamu.
 ; Use this 'Reply-To:' address when\n\
 ; posting new mails to the list.
 ;
@@ -5594,8 +5599,8 @@ Dru_h zabezpeèení
 ; Sec_urity
 ;
 MSG_HELP_MA_CY_DEFSECURITY
-Standardní druh zabezpeèení pou¾ívaný\n\
-pøi komunikaci s konkrétním èlovìkem
+Definuje druh zabezpeèení komunikace s vybranou\n\
+osobou.
 ; Default security for sending\n\
 ; mail to this person.
 ;
@@ -5604,8 +5609,8 @@ Výchozí
 ; Default
 ;
 MSG_ER_PGPMultipart
-Chyba pøi vytváøení zprávy slo¾ené z více èástí a ¹ifrované pomocí PGP. \
-Obsah nebude ani za¹ifrován ani podepsán.
+Chyba pøi vytváøení zabezpeèené zprávy. Text nelze pomocí PGP podepsat \
+ani za¹ifrovat.
 ; Error creating multipart PGP message. Encrypting/signing disabled!
 ;
 MSG_RE_FixedFont
@@ -5637,10 +5642,8 @@ Vyberte fotografii
 ; Select portrait
 ;
 MSG_RE_MoveNextFolderReq
-Dal¹í slo¾ka s nepøeètenými zprávami:\n\
-\eb%s\en\n\
-Chcete do této slo¾ky pøejít a\n\
-pokraèovat ve ètení?
+Dal¹í nepøeètené zprávy obsahuje slo¾ka \eb%s\en.\n\
+Chcete do této slo¾ky pøejít a pokraèovat ve ètení?
 ; Next folder with unread messages is \eb%s\en\n\
 ; Go to this folder and continue reading there?
 ;
@@ -5673,7 +5676,7 @@ Záp_is velikosti
 ; Si_ze format
 ;
 MSG_HELP_CO_CY_SIZE
-Definice zobrazení velikosti zprávy
+Definuje formát zobrazení velikosti zprávy.
 ; How would you like the size of\n\
 ; each mail to be displayed?
 ;
@@ -5698,12 +5701,10 @@ Pøesnost na tisíciny (0,001 GB/MB/KB)
 ; 10^-3 precision (0.001 GB/MB/KB)
 ;
 MSG_HELP_CO_CH_USESMTPAUTH
-Umo¾ní ovìøené pøihlá¹ení k SMTP serveru.\n\
-Typickým pøíkladem je vyu¾ití serveru, který\n\
-není umístìn u va¹eho poskytovatele pøipojení\n\
-k internetu.\n\
-Za normálních okolností nechte tuto mo¾nost\n\
-neaktivní.
+Umo¾ní ovìøené pøihlá¹ení k po¹tovnímu serveru.\n\
+Typickým pøíkladem je posílání zpráv pøes server,\n\
+který není umístìn v síti va¹eho poskytovatele\n\
+pøipojení k internetu.
 ; Select if you wish to authenticate\n\
 ; yourself to a foreign SMTP server\n\
 ; (usually outside your ISP's domain).\n\
@@ -5753,8 +5754,9 @@ Stat_istika
 ; App_Icon stats
 ;
 MSG_HELP_FO_CH_STATS
-Umo¾ní zobrazit vybrané statistiky slo¾ek\n\
-v aplikaèní ikonì.
+Pøidá informace o poètu zpráv ve vybrané slo¾ce\n\
+k ostatním a souhrn zobrazí v ikonì na pracovní\n\
+plo¹e.
 ; Would you like to see this\n\
 ; folder's statistics in the\n\
 ; YAM AppIcon's label?
@@ -5768,8 +5770,8 @@ Kontextové menu
 ; Context menu
 ;
 MSG_HELP_CO_CONTEXTMENU
-Pøi kliknutí pravého tlaèítka my¹i nad tímto\n\
-seznamem zobrazí kontextové menu.
+Kliknutím pravého tlaèítka my¹i na vybraný seznam\n\
+zpráv zobrazí kontextové menu.
 ; Show a popup menu when clicking\n\
 ; the right mouse button on this list?
 ;
@@ -5778,7 +5780,7 @@ Stavová li¹ta
 ; Status bar
 ;
 MSG_HELP_CO_CH_INFOBAR
-Definice umístìní stavové li¹ty, která podává\n\
+Definuje umístìní stavové li¹ty, která podává\n\
 obecné informace o programu YAM.
 ; Here you can select the position of the status bar\n\
 ; that shows general information in YAM.
@@ -5788,7 +5790,7 @@ Upozornit na nev_yplnìné pole 'Pøedmìt'
 ; Warn when there's an empty su_bject line
 ;
 MSG_HELP_CO_CH_WARNSUBJECT
-Upozornìní v pøípadì, ¾e není vyplnìno\n\
+Upozornìní u¾ivatele v pøípadì, ¾e není vyplnìno\n\
 pole 'Pøedmìt'.
 ; Would you like to be warned if you\n\
 ; leave the subject line blank?
@@ -5835,7 +5837,7 @@ Text '%s' nelze najít.
 ; '%s' not found.
 ;
 MSG_WR_ERRORNOSENDER
-Zpráva není úplná: Vyberte adresu odesílatele!
+Zpráva není úplná! Vyberte adresu odesílatele.
 ; Mail is incomplete: no sender!
 ;
 MSG_WR_NOSENDERREQGAD
@@ -5913,12 +5915,11 @@ _Text
 ; _Label
 ;
 MSG_FO_MLSUPPORT
-Zapnout _podporu pro seznamy
+Za_pnout podporu pro seznam
 ; ML_-Support
 ;
 MSG_HELP_FO_CH_MLSUPPORT
-Pro vybranou slo¾ku aktivuje podporu\n\
-pro rozesílací seznam
+Usnadní komunikaci v rámci rozesílacího seznamu.
 ; Turn on/off the mailing list\n\
 ; support for this folder.
 ;
@@ -5951,21 +5952,23 @@ MSG_CO_NB_EMAILCACHEFMT
 ; %ld address(es)
 ;
 MSG_HELP_CO_NB_EMAILCACHE
-Velikost cache pro nìkolik posledních pøíjemcù,\n\
-kteøí nejsou v seznamu kontaktù.\n\
+Definuje velikost cache pro nìkolik naposledy\n\
+pou¾itých adres, které je¹tì nejsou v seznamu\n\
+kontaktù.\n\
 Funkci vypnete zadáním hodnoty 0.
 ; Cache size for the most recently used\n\
 ; recipients not yet in the address book.\n\
 ; Select 0 to disable this feature.
 ;
 MSG_HELP_CO_ST_SMTPPORT
-Definice portu pro SMTP server\n\
-(výchozí: 25)
+Definuje port pro po¹tovní server (SMTP).\n\
+Výchozí: 25
 ; Port used by the SMTP server\n\
 ; (default: 25).
 ;
 MSG_HELP_CO_ST_POPPORT
-Definice portu pro POP3 server (výchozí: 110)
+Definuje port pro po¹tovní server (POP3).\n\
+Výchozí: 110
 ; Port used by the POP3 server\n\
 ; (default: 110).
 ;
@@ -5974,21 +5977,21 @@ MSG_CO_InfoBarDef
 ; - Total: %t New: %n Unread: %u
 ;
 MSG_TR_INITTLS
-Inicializace spojení pomocí TLSv1/SSLv3...
+Inicializace relace TLSv1/SSLv3...
 ; Initializing TLSv1/SSLv3 session...
 ;
 MSG_ER_INITAMISSL
-Nelze zinicializovat knihovnu amissl.library.\n\
+Nelze inicializovat knihovnu amissl.library.\n\
 Podpora protokolù TLSv1/SSLv3 není aktivní.\n\
 \n\
-Zkontrolujte a opravte instalaci balíku AmiSSL\n\
+Zkontrolujte a opravte instalaci balíku AmiSSL.\n\
 Poté restartujte YAM.
 ; Couldn't init amissl.library - TLSv1/SSLv3 support disabled.\n\
 ; \n\
 ; Please check your AmiSSL installation and restart YAM.
 ;
 MSG_ER_INITTLS
-Nelze zinicializovat relaci TLSv1/SSLv3 pro %s
+Nelze inicializovat relaci TLSv1/SSLv3 pro %s
 ; Couldn't initialize TLSv1/SSLv3 session for %s
 ;
 MSG_TR_SENDAUTH
@@ -6053,8 +6056,8 @@ Opakovat|Ukonèit
 ; Try again|Quit
 ;
 MSG_ER_NOSTARTTLS
-Vybraný SMTP server nepodporuje zabezpeèený\n\
-pøenos dat (protokoly TLS/SSL).
+Vybraný SMTP server nepodporuje zabezpeèený pøenos\n\
+dat (protokoly TLS/SSL).
 ; Your SMTP server doesn't support TLS/SSL. \
 ; Please disable this option in the configuration.
 ;
@@ -6089,32 +6092,32 @@ Od/komu
 ; From/To
 ;
 MSG_HELP_CO_CA_COL1QUOT
-Definice barvy pro poprvé odsazený text
+Definuje barvu pro poprvé odsazený text.
 ; Color used to\n\
 ; display quotes.
 ;
 MSG_HELP_CO_CA_COL3QUOT
-Definice barvy pro potøetí odsazený text
+Definuje barvu pro potøetí odsazený text.
 ; Color used to display\n\
 ; 3rd level quotes.
 ;
 MSG_HELP_CO_CA_COL4QUOT
-Definice barvy pro poètvrté odsazený text
+Definuje barvu pro poètvrté odsazený text.
 ; Color used to display\n\
 ; 4th level quotes.
 ;
 MSG_CO_URLCOLOR
-Definuje barvu odkazu
+Barva odkazu
 ; URL color
 ;
 MSG_HELP_CO_CA_COLURL
-Definice barvy pro odkazy uvedené v textu
+Definuje barvu pro odkazy uvedené v textu.
 ; Color used to display\n\
 ; clickable URL links.
 ;
 MSG_FO_FOLDEREXISTS
-V zadané cestì ji¾ existuje soubor\n\
-nebo adresáø se stejným názvem.\n\
+V zadané cestì ji¾ existuje soubor nebo adresáø\n\
+se stejným názvem.\n\
 \n\
 Opravdu chcete pokraèovat?
 ; A file or directory with the given folder path already exists.\n\
@@ -6126,9 +6129,8 @@ Opravdu chcete pøesunout slo¾ku jinam?
 ; Do you really want to move the folder to another path?
 ;
 MSG_FO_FOLDERNAMEINVALID
-Prázdný øetìzec nebo název ji¾ existující\n\
-slo¾ky nejsou povoleny. Zadejte prosím\n\
-platný název.
+Prázdný øetìzec nebo název ji¾ existující slo¾ky\n\
+nejsou povoleny. Zadejte prosím jiný název.
 ; The specified folder name is empty or already exists.\n\
 ; Please enter a valid folder name before you proceed.
 ;
@@ -6161,7 +6163,7 @@ Seznam slo¾ek
 ; Folder list
 ;
 MSG_HELP_FO_CY_MLSIGNATURE
-Tento podpis je urèen pro rozesílací seznam
+Urèuje podpis pro vybraný rozesílací seznam.
 ; Use this signature when posting\n\
 ; new mails to the list.
 ;
@@ -6222,12 +6224,12 @@ _Ano|*_Ne
 ; _Yes|*_No
 ;
 MSG_HELP_FO_ST_HELLOTEXT
-Text vkládaný na zaèátek nové zprávy.
+Urèuje text vlo¾ený na zaèátek nové zprávy.
 ; Text to insert at the\n\
 ; top of a new message.
 ;
 MSG_HELP_FO_ST_BYETEXT
-Text vkládaný na konec nové zprávy.
+Urèuje text vlo¾ený na konec nové zprávy.
 ; Text to insert at the\n\
 ; bottom of a new message.
 ;
@@ -7062,7 +7064,7 @@ MSG_CO_AUTODSTWARN_BT
 ; *_Change|Ignore _always|_Ignore
 ;
 MSG_MA_UPDATECHECK
-Zjistit aktualizace...
+Zjistit aktualizace
 ; Check for updates
 ;
 MSG_CO_SOFTWAREUPDATE
@@ -7627,22 +7629,22 @@ Ovìøení duplicit pomocí UIDL...
 MSG_CO_SPAM_DISABLEFILTERASK
 Právì jste vypnuli funkci filtrování spamu.\n\
 \n\
-Kterou z nabízených mo¾ností si vyberete?
+Které z nabízených mo¾ností si vyberete?
 ; The spam filter has now been disabled.\n\
 ; \n\
 ; Which of the following operations\n\
 ; do you want to apply?
 ;
 MSG_CO_SPAM_RESETTDATA
-Vynulovat data získaná pøi _rozpoznávání spamu
+Vymazat data získaná pøi _rozpoznávání spamu
 ; _Reset training data
 ;
 MSG_CO_SPAM_RESETMAILFLAGS
-Vynulovat stav v¹ech zpráv oznaèených jako _spam
+Smazat stav _spam u takto oznaèených zpráv
 ; Reset _spam state of all mails
 ;
 MSG_CO_SPAM_DELETESPAMFOLDER
-??_Smazat slo¾ku 'Spam'
+S_mazat slo¾ku 'Spam'
 ; _Delete Spam folder
 ;
 MSG_CO_SMTPAUTH_METHOD
@@ -7901,7 +7903,7 @@ Pøeposlat...
 ; Forward...
 ;
 MSG_MA_MBOUNCE
-Odrazit...
+Pøedat beze zmìny...
 ; Bounce...
 ;
 MSG_MA_MSAVEADDRESS
@@ -8049,7 +8051,7 @@ Poka¾dé pøijmout
 ; Always send
 ;
 MSG_CO_MDN_ACTION_QUEUE
-Zaøadit do fronty??
+Poka¾dé do fronty
 ; Always queue
 ;
 MSG_CO_MDN_ACTION_ASK
@@ -8224,11 +8226,11 @@ a vèerej¹í 'vèera'.
 ; 'Yesterday') instead of the full date if possible.
 ;
 MSG_FOLDER_SNAPSHOT_TREE
-Ulo¾it stav?? slo¾ek
+Ulo¾it stav slo¾ek
 ; Snapshot arrangement
 ;
 MSG_FOLDER_RELOAD_TREE
-Naèíst stav?? slo¾ek
+Naèíst stav slo¾ek
 ; Reload arrangement
 ;
 MSG_ER_USER_UNKNOWN_TITLE
@@ -8287,7 +8289,7 @@ Pøedmìt
 ; Subject
 ;
 MSG_RE_VIRTUALMAIL
-Virtuální e-mail
+Vlo¾ená (virtuální) zpráva
 ; Virtual e-mail
 ;
 MSG_CO_MIMECMD_PUBSCREEN
@@ -9109,7 +9111,7 @@ Tato zmìna vy¾aduje restart programu YAM
 ; YAM restart required
 ;
 MSG_ER_THEME_ACTIVATED
-Zmìna vzhledu programu neprobíhá okam¾itì. Nejdøíve\n\
+Zmìna vzhledu programu neprobìhne okam¾itì. Nejdøíve\n\
 je nutno ulo¾it konfiguraci a pak restartovat YAM.
 ; Before the selected theme can be applied, you have\n\
 ; to save the configuration and restart YAM.
@@ -9334,4 +9336,16 @@ Opravdu chcete pou¾ít text z externího editoru?
 ; the external editor dropping the changes\n\
 ; done in the internal editor?
 ; NUMBER
+;
+MSG_LOG_SENDING_FAILED
+Chyba pøi odesílání %ld zpráv pøes server '%s'
+; Sending %ld message(s) using SMTP server '%s' failed
+; COUNT, HOST
+;
+MSG_HELP_EA_ST_BIRTHDAY
+Urèuje datum narození. Zadejte ho ve formátu, který\n\
+odpovídá nastavení systému, tedy napø. pro èe¹tinu\n\
+takto: 28.10.1918.
+; Date of birth in locale format\n\
+; (e.g. 19.06.1974 or 19/06/1974).
 ;
