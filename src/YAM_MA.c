@@ -727,13 +727,6 @@ struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
           else
             E(DBF_MAIL, "MUIM_NList_GetEntry didn't return a valid mail pointer");
         }
-
-        // let everything fail if there were no mails added to the list
-        if(ContainsMailNodes(mlist) == FALSE)
-        {
-          DeleteMailList(mlist);
-          mlist = NULL;
-        }
       }
       else
         E(DBF_MAIL, "couldn't create mail list!");
@@ -754,6 +747,13 @@ struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
           E(DBF_MAIL, "couldn't create mail list!");
       }
     }
+  }
+
+  // let everything fail if there were no mails added to the list
+  if(mlist != NULL && IsMailListEmpty(mlist) == TRUE)
+  {
+    DeleteMailList(mlist);
+    mlist = NULL;
   }
 
   RETURN(mlist);
@@ -789,7 +789,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
           if(writeWin->refMail == mail)
             writeWin->refMail = NULL;
 
-          if(writeWin->refMailList != NULL && ContainsMailNodes(writeWin->refMailList) == TRUE)
+          if(writeWin->refMailList != NULL && IsMailListEmpty(writeWin->refMailList) == FALSE)
           {
             struct MailNode *mnode;
 
@@ -892,7 +892,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
           if(writeWin->refMail == mail)
             writeWin->refMail = newMail;
 
-          if(writeWin->refMailList != NULL && ContainsMailNodes(writeWin->refMailList) == TRUE)
+          if(writeWin->refMailList != NULL && IsMailListEmpty(writeWin->refMailList) == FALSE)
           {
             struct MailNode *mnode;
 

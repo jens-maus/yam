@@ -58,7 +58,7 @@ void UnlockMailList(struct MailList *mlist);
 void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1, const struct Mail *m2));
 
 // check if a mail list is not empty
-#define ContainsMailNodes(mlist)        (IsListEmpty((struct List *)(mlist)) == FALSE)
+#define IsMailListEmpty(mlist)          IsListEmpty((struct List *)(mlist))
 
 // iterate through the list, the list must *NOT* be modified!
 #define ForEachMailNode(mlist, mnode)   for(mnode = (struct MailNode *)(mlist)->list.mlh_Head; mnode->node.mln_Succ != NULL; mnode = (struct MailNode *)mnode->node.mln_Succ)

@@ -7,6 +7,8 @@ $URL$
 
 2008-01-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c, MailList.c: moved the list empty check to the end of the function
+    and renamed the ContainsMailNodes() macro to IsMailListEmpty().
   * YAM_AB.c: removed some TABs.
   * YAM_MA.c: removed a superflous ContainsMailNodes() check.
   * AllocSysObject.c: user specified memory flags are now respected and the size

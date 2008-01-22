@@ -110,7 +110,7 @@ struct MailList *CloneMailList(struct MailList *mlist)
 
   ENTER();
 
-  if(mlist != NULL && ContainsMailNodes(mlist) == TRUE)
+  if(mlist != NULL && IsMailListEmpty(mlist) == FALSE)
   {
     if((clone = CreateMailList()) != NULL)
     {
@@ -126,7 +126,7 @@ struct MailList *CloneMailList(struct MailList *mlist)
       UnlockMailList(mlist);
 
       // let everything fail if there were no mails added to the list
-      if(ContainsMailNodes(clone) == FALSE)
+      if(IsMailListEmpty(clone) == TRUE)
       {
         DeleteMailList(clone);
         clone = NULL;
