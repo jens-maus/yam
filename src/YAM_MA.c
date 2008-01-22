@@ -3170,7 +3170,10 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
           // if BusySet() returns FALSE, then the user aborted
           if(BusySet(++i) == FALSE)
+          {
+            selected = i;
             break;
+          }
         }
         BusyEnd();
         set(lv, MUIA_NList_Quiet, FALSE);
@@ -3292,7 +3295,10 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
 
         // if BusySet() returns FALSE, then the user aborted
         if(BusySet(++i) == FALSE)
+        {
+          selected = i;
           break;
+        }
       }
       BusyEnd();
       set(lv, MUIA_NList_Quiet, FALSE);
@@ -4275,12 +4281,10 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
   {
     struct MailNode *mnode;
     ULONG i;
-    ULONG selected;
+    ULONG selected = mlist->count;
     BOOL ask = TRUE;
     BOOL goOn = TRUE;
     char subj[SIZE_SUBJECT];
-
-    selected = mlist->count;
 
     i = 0;
     ForEachMailNode(mlist, mnode)
