@@ -692,12 +692,12 @@ struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
   folder = FO_GetCurrentFolder();
   if(folder != NULL && isGroupFolder(folder) == FALSE)
   {
-    if((mlist = CreateMailList()) != NULL)
-    {
-      LONG selected;
+    LONG selected;
 
-      DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
-      if(selected > 0)
+    DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
+    if(selected > 0)
+    {
+      if((mlist = CreateMailList()) != NULL)
       {
         LONG id = MUIV_NList_NextSelected_Start;
 
@@ -710,23 +710,34 @@ struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
             break;
 
           DoMethod(lv, MUIM_NList_GetEntry, id, &mail);
-          if(mail != NULL && (onlyNew == FALSE || hasStatusNew(mail)))
+          if(mail != NULL)
           {
             mail->position = id;
-            AddMailNode(mlist, mail);
+
+            if(onlyNew == FALSE || hasStatusNew(mail))
+               AddMailNode(mlist, mail);
           }
+          else
+            E(DBF_MAIL, "MUIM_NList_GetEntry didn't return a valid mail pointer");
         }
       }
       else
-      {
-        struct Mail *mail;
+        E(DBF_MAIL, "couldn't create mail list!");
+    }
+    else
+    {
+      struct Mail *mail;
 
-        DoMethod(lv, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-        if(mail != NULL && (onlyNew == FALSE || hasStatusNew(mail)))
+      DoMethod(lv, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+      if(mail != NULL && (onlyNew == FALSE || hasStatusNew(mail)))
+      {
+        if((mlist = CreateMailList()) != NULL)
         {
           mail->position = xget(lv, MUIA_NList_Active);
           AddMailNode(mlist, mail);
         }
+        else
+          E(DBF_MAIL, "couldn't create mail list!");
       }
     }
   }
@@ -3618,7 +3629,6 @@ HOOKPROTONHNO(MA_SendFunc, void, int *arg)
 }
 MakeHook(MA_SendHook, MA_SendFunc);
 ///
-
 
 /*** Menu options ***/
 /// MA_SetStatusTo
