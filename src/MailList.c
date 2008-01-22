@@ -45,7 +45,7 @@ struct MailList *CreateMailList(void)
 
   // at first create the list itself
   if((mlist = AllocSysObjectTags(ASOT_LIST, ASOLIST_Size, sizeof(*mlist),
-                                            ASOLIST_Min, TRUE,
+                                            ASOLIST_Min,  TRUE,
                                             TAG_DONE)) != NULL)
   {
     // now create the arbitration semaphore
@@ -91,6 +91,7 @@ void DeleteMailList(struct MailList *mlist)
 
       // free the semaphore
       FreeSysObject(ASOT_SEMAPHORE, mlist->lockSemaphore);
+      mlist->lockSemaphore = NULL;
     }
 
     // free the list itself
@@ -105,11 +106,11 @@ void DeleteMailList(struct MailList *mlist)
 // create a clone copy of a mail list
 struct MailList *CloneMailList(struct MailList *mlist)
 {
-  struct MailList *clone;
+  struct MailList *clone = NULL;
 
   ENTER();
 
-  if((clone = CreateMailList()) != NULL)
+  if(mlist != NULL && (clone = CreateMailList()) != NULL)
   {
     struct MailNode *mnode;
 
@@ -136,10 +137,10 @@ struct MailNode *AddMailNode(struct MailList *mlist, struct Mail *mail)
   ENTER();
 
   // we only accept existing mails
-  if(mail != NULL)
+  if(mail != NULL && mlist != NULL)
   {
     if((mnode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*mnode),
-                                              ASONODE_Min, TRUE,
+                                              ASONODE_Min,  TRUE,
                                               TAG_DONE)) != NULL)
     {
       // initialize the node's contents
