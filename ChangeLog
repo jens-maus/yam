@@ -7,6 +7,8 @@ $URL$
 
 2008-01-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: MA_Create#?List() will now fail if no mails could be added to the
+    list.
   * MailList.c: added some more comments about when to lock a list of mails and
     added a new macro to check for empty lists.
 

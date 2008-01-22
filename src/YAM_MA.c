@@ -670,6 +670,13 @@ struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
             AddMailNode(mlist, mail);
           }
         }
+
+        // let everything fail if there were no mails added to the list
+        if(ContainsMailNodes(mlist) == FALSE)
+        {
+          DeleteMailList(mlist);
+          mlist = NULL;
+        }
       }
     }
   }
@@ -719,6 +726,13 @@ struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
           }
           else
             E(DBF_MAIL, "MUIM_NList_GetEntry didn't return a valid mail pointer");
+        }
+
+        // let everything fail if there were no mails added to the list
+        if(ContainsMailNodes(mlist) == FALSE)
+        {
+          DeleteMailList(mlist);
+          mlist = NULL;
         }
       }
       else
@@ -775,7 +789,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
           if(writeWin->refMail == mail)
             writeWin->refMail = NULL;
 
-          if(writeWin->refMailList != NULL)
+          if(writeWin->refMailList != NULL && ContainsMailNodes(writeWin->refMailList) == TRUE)
           {
             struct MailNode *mnode;
 
@@ -873,22 +887,24 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
       {
         struct WR_ClassData *writeWin = G->WR[i];
 
-        if(writeWin)
+        if(writeWin != NULL)
         {
           if(writeWin->refMail == mail)
             writeWin->refMail = newMail;
 
-          if(writeWin->refMailList)
+          if(writeWin->refMailList != NULL && ContainsMailNodes(writeWin->refMailList) == TRUE)
           {
             struct MailNode *mnode;
 
-            D(DBF_MAIL, "refMailList: %ld entries", writeWin->refMailList->count);
+            LockMailList(writeWin->refMailList);
 
             ForEachMailNode(writeWin->refMailList, mnode)
             {
               if(mnode->mail == mail)
                 mnode->mail = newMail;
             }
+
+            UnlockMailList(writeWin->refMailList);
           }
         }
       }
@@ -971,28 +987,29 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
   }
   else if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
-    struct MailNode *mnode;
-    ULONG i;
+  	if(ContainsMailNodes(mlist) == TRUE)
+  	{
+      struct MailNode *mnode;
+      ULONG i;
 
-    // get the list of the currently marked mails
-    selected = mlist->count;
-    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
-    BusyGaugeInt(tr(MSG_BusyMoving), itoa(selected), selected);
+      // get the list of the currently marked mails
+      selected = mlist->count;
+      set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
+      BusyGaugeInt(tr(MSG_BusyMoving), itoa(selected), selected);
 
-    i = 0;
-    ForEachMailNode(mlist, mnode)
-    {
-      if(mnode->mail != NULL)
-        MA_MoveCopySingle(mnode->mail, frombox, tobox, copyit, closeWindows);
-
-      // if BusySet() returns FALSE, then the user aborted
-      if(BusySet(++i) == FALSE)
+      i = 0;
+      ForEachMailNode(mlist, mnode)
       {
-        break;
+        if(mnode->mail != NULL)
+          MA_MoveCopySingle(mnode->mail, frombox, tobox, copyit, closeWindows);
+
+        // if BusySet() returns FALSE, then the user aborted
+        if(BusySet(++i) == FALSE)
+          break;
       }
+      BusyEnd();
+      set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
     }
-    BusyEnd();
-    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
 
     DeleteMailList(mlist);
   }
