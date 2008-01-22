@@ -3940,9 +3940,11 @@ void DisplayMailList(struct Folder *fo, Object *lv)
   // we convert the mail list of the folder
   // to a temporary array because that allows us
   // to quickly populate the NList object.
+  STARTCLOCK();
   LockMailList(fo->messages);
   array = MailListToMailArray(fo->messages);
   UnlockMailList(fo->messages);
+  STOPCLOCK(DBF_STARTUP, "MailListToMailArray");
 
   if(array != NULL)
   {
