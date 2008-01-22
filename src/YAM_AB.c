@@ -417,13 +417,13 @@ char *AB_ExpandBD(long date)
     datestr[0] = '\0';
   else
   {
-  	struct tm tm;
+    struct tm tm;
 
-  	tm.tm_mday = day;
-  	tm.tm_mon = month - 1;
-  	tm.tm_year = year - 1900;
+    tm.tm_mday = day;
+    tm.tm_mon = month - 1;
+    tm.tm_year = year - 1900;
 
-  	strftime(datestr, sizeof(datestr), G->Locale != NULL ? G->Locale->loc_ShortDateFormat : (STRPTR)"%d.%m.%Y", &tm);
+    strftime(datestr, sizeof(datestr), G->Locale != NULL ? G->Locale->loc_ShortDateFormat : (STRPTR)"%d.%m.%Y", &tm);
   }
 
   RETURN(datestr);
@@ -442,7 +442,7 @@ long AB_CompressBD(char *datestr)
 
   if(ScanDateString(datestr, G->Locale != NULL ? G->Locale->loc_ShortDateFormat : (STRPTR)"%d.%m.%Y", &tm) == TRUE)
   {
-	result = tm.tm_mday * 1000000 + (tm.tm_mon + 1) * 10000 + (tm.tm_year + 1900);
+    result = tm.tm_mday * 1000000 + (tm.tm_mon + 1) * 10000 + (tm.tm_year + 1900);
   }
 
   RETURN(result);

@@ -7,6 +7,7 @@ $URL$
 
 2008-01-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_AB.c: removed some TABs.
   * YAM_MA.c: removed a superflous ContainsMailNodes() check.
   * AllocSysObject.c: user specified memory flags are now respected and the size
     of an object now cannot be smaller than the default size.
