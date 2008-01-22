@@ -85,8 +85,11 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 {
   APTR object = NULL;
   struct TagItem *tstate, *tag;
+  ULONG memFlags;
 
   ENTER();
+
+  memFlags = GetTagData(ASO_MemoryOvr, 0, tags);
 
   tstate  = tags;
 
@@ -143,7 +146,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
             case ASOHOOK_Subentry:
               subentry = (APTR)tag->ti_Data;
             break;
-            
+
             case ASOHOOK_Data:
               data = (APTR)tag->ti_Data;
             break;
@@ -151,7 +154,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         }
       }
 
-      if((object = AllocVec(size, MEMF_CLEAR)) != NULL)
+      if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
         ((struct Hook *)object)->h_Entry = entry;
         ((struct Hook *)object)->h_SubEntry = subentry;
@@ -173,7 +176,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           switch(tag->ti_Tag)
           {
             case ASOLIST_Size:
-              size = tag->ti_Data;
+              size = MAX(size, tag->ti_Data);
             break;
 
             case ASOLIST_Type:
@@ -187,7 +190,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         }
       }
 
-      if((object = AllocVec(size, MEMF_CLEAR)) != NULL)
+      if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
         NewList((struct List *)object);
 
@@ -212,7 +215,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           switch(tag->ti_Tag)
           {
             case ASONODE_Size:
-              size = tag->ti_Data;
+              size = MAX(size, tag->ti_Data);
             break;
 
             case ASONODE_Min:
@@ -234,7 +237,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         }
       }
 
-      if((object = AllocVec(size, MEMF_CLEAR)) != NULL)
+      if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
         if(min == FALSE)
         {
@@ -265,7 +268,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           switch (tag->ti_Tag)
           {
               case ASOPORT_Size:
-                size = tag->ti_Data;
+                size = MAX(size, tag->ti_Data);
               break;
 
               case ASOPORT_AllocSig:
@@ -306,7 +309,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       // add our own data size to the allocation
       size += sizeof(struct SysMsgPort) - sizeof(struct MsgPort);
 
-      if((object = AllocVec(size, MEMF_CLEAR)) != NULL)
+      if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
         struct SysMsgPort *sobject = (struct SysMsgPort *)object;
 
@@ -323,7 +326,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
             FreeVec(object);
             object = NULL;
             goto done;
-          }   
+          }
 
           sobject->signal = signum;
         }
@@ -365,15 +368,15 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           switch(tag->ti_Tag)
           {
             case ASOMSG_Size:
-              size = tag->ti_Data;
+              size = MAX(size, tag->ti_Data);
             break;
-            
+
             case ASOMSG_ReplyPort:
               port = (APTR)tag->ti_Data;
             break;
 
             case ASOMSG_Length:
-              size = tag->ti_Data;
+              size = MAX(size, tag->ti_Data);
             break;
 
             case ASOMSG_Name:
@@ -383,7 +386,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         }
       }
 
-      if((object = AllocVec(size, MEMF_CLEAR)) != NULL)
+      if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
         ((struct Message *)object)->mn_Node.ln_Type = NT_MESSAGE;
         ((struct Message *)object)->mn_ReplyPort = port;
@@ -407,9 +410,9 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           switch(tag->ti_Tag)
           {
             case ASOSEM_Size:
-              size = tag->ti_Data;
+              size = MAX(size, tag->ti_Data);
             break;
-            
+
             case ASOSEM_Name:
               name = (STRPTR)tag->ti_Data;
             break;
@@ -432,7 +435,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       // add our own data size to the allocation
       size += sizeof(struct SysSignalSemaphore) - sizeof(struct SignalSemaphore);
 
-      if((object = AllocVec(size, MEMF_CLEAR)) != NULL)
+      if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
         struct SysSignalSemaphore *sobject = (struct SysSignalSemaphore *)object;
 
@@ -478,7 +481,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         }
       }
 
-      object = AllocVec(entries * sizeof(struct TagItem), MEMF_CLEAR);
+      object = AllocVec(entries * sizeof(struct TagItem), memFlags|MEMF_CLEAR);
     }
     break;
 
@@ -501,7 +504,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
             case ASOPOOL_Puddle:
               puddle = tag->ti_Data;
             break;
-            
+
             case ASOPOOL_Threshold:
               thresh = tag->ti_Data;
             break;
