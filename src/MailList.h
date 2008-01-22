@@ -71,7 +71,7 @@ struct Mail **MailListToMailArray(struct MailList *mlist);
 #define FirstMailNode(mlist)                      (((mlist) != NULL && (mlist)->list.mlh_Head != NULL) ? (struct MailNode *)(mlist)->list.mlh_Head : (struct MailNode *)NULL)
 
 // lock and unlock a mail list via its semaphore
-#define LockMailList(mlist)                       ObtainSemaphore(mlist->lockSemaphore)
-#define UnlockMailList(mlist)                     ReleaseSemaphore(mlist->lockSemaphore)
+#define LockMailList(mlist)                       ObtainSemaphore((mlist)->lockSemaphore)
+#define UnlockMailList(mlist)                     ReleaseSemaphore((mlist)->lockSemaphore)
 
 #endif /* MAILLIST_H */

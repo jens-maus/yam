@@ -39,8 +39,12 @@
 // initialize a mail list
 void InitMailList(struct MailList *mlist)
 {
+  ENTER();
+
   NewList((struct List *)&mlist->list);
   mlist->count = 0;
+
+  LEAVE();
 }
 
 ///
@@ -84,24 +88,21 @@ void DeleteMailList(struct MailList *mlist)
 
   if(mlist != NULL)
   {
-    if(mlist->lockSemaphore != NULL)
-    {
-      struct MailNode *mnode;
+    struct MailNode *mnode;
 
-      // lock the list just, just for safety reasons
-      LockMailList(mlist);
+    // lock the list just, just for safety reasons
+    LockMailList(mlist);
 
-      // remove and free all remaining nodes in the list
-      while((mnode = (struct MailNode *)RemHead((struct List *)&mlist->list)) != NULL)
-        FreeSysObject(ASOT_NODE, mnode);
+    // remove and free all remaining nodes in the list
+    while((mnode = (struct MailNode *)RemHead((struct List *)&mlist->list)) != NULL)
+      FreeSysObject(ASOT_NODE, mnode);
 
-      // unlock the list again
-      UnlockMailList(mlist);
+    // unlock the list again
+    UnlockMailList(mlist);
 
-      // free the semaphore
-      FreeSysObject(ASOT_SEMAPHORE, mlist->lockSemaphore);
-      mlist->lockSemaphore = NULL;
-    }
+    // free the semaphore
+    FreeSysObject(ASOT_SEMAPHORE, mlist->lockSemaphore);
+    mlist->lockSemaphore = NULL;
 
     // free the list itself
     FreeSysObject(ASOT_LIST, mlist);
@@ -344,9 +345,7 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
 
       // if we have done only one merge at most, we're finished
       if(nmerges <= 1)
-      {
         break;
-      }
       else
       {
         struct List *tmp;
@@ -364,9 +363,7 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
     // put all the sorted nodes back into the original list
     NewList((struct List *)&mlist->list);
     while((node = RemHead(to)) != NULL)
-    {
       AddTail((struct List *)&mlist->list, node);
-    }
   }
 
   LEAVE();
