@@ -1,5 +1,5 @@
 #ifndef YAM_FOLDERCONFIG_H
-#define YAM_FOLDERCONFIG_H
+#define YAM_FOLDERCONFIG_H 1
 
 /***************************************************************************
 
@@ -31,6 +31,10 @@
 #include <proto/intuition.h>
 
 #include "YAM_stringsizes.h"
+
+#ifndef MAILLIST_H
+struct MailList;
+#endif
 
 struct FO_GUIData
 {
@@ -166,39 +170,39 @@ enum FolderMode { FM_NORMAL=0,  // normal folder
 
 struct Folder
 {
-   Object *        imageObject;
-   struct Mail *   Messages;
-   ULONG           Flags;
-   LONG            Size;
-   int             MLSignature;
-   int             Total;
-   int             New;
-   int             Unread;
-   int             Sent;
-   int             Deleted;
-   int             Sort[2];
-   int             MaxAge;
-   int             LastActive;
-   int             SortIndex;
-   int             ImageIndex;
+   Object *          imageObject;
+   struct MailList * messages;
+   ULONG             Flags;
+   LONG              Size;
+   int               MLSignature;
+   int               Total;
+   int               New;
+   int               Unread;
+   int               Sent;
+   int               Deleted;
+   int               Sort[2];
+   int               MaxAge;
+   int               LastActive;
+   int               SortIndex;
+   int               ImageIndex;
 
-   enum FolderMode Mode;
-   enum FolderType Type;
-   enum LoadedMode LoadedMode;
+   enum FolderMode   Mode;
+   enum FolderType   Type;
+   enum LoadedMode   LoadedMode;
 
-   char            Name[SIZE_NAME];
-   char            Path[SIZE_PATH];
-   char            Password[SIZE_USERID];
-   char            MLPattern[SIZE_PATTERN];
-   char            MLAddress[SIZE_ADDRESS];
-   char            MLFromAddress[SIZE_ADDRESS];
-   char            MLReplyToAddress[SIZE_ADDRESS];
-   char            WriteIntro[SIZE_INTRO];
-   char            WriteGreetings[SIZE_INTRO];
+   char              Name[SIZE_NAME];
+   char              Path[SIZE_PATH];
+   char              Password[SIZE_USERID];
+   char              MLPattern[SIZE_PATTERN];
+   char              MLAddress[SIZE_ADDRESS];
+   char              MLFromAddress[SIZE_ADDRESS];
+   char              MLReplyToAddress[SIZE_ADDRESS];
+   char              WriteIntro[SIZE_INTRO];
+   char              WriteGreetings[SIZE_INTRO];
 
-   BOOL            ExpireUnread;
-   BOOL            Stats;
-   BOOL            MLSupport;
+   BOOL              ExpireUnread;
+   BOOL              Stats;
+   BOOL              MLSupport;
 };
 
 extern struct Hook FO_DeleteFolderHook;

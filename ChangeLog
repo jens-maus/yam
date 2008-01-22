@@ -12,6 +12,8 @@ $URL$
 
 2008-01-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: replaced the list of mail within a folder structure by the new mail
+    list. This makes mail list handling much more consistent.
   * YAM_MA.c, MailList.c: moved the list empty check to the end of the function
     and renamed the ContainsMailNodes() macro to IsMailListEmpty().
   * YAM_AB.c: removed some TABs.

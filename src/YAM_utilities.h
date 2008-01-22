@@ -40,10 +40,6 @@
 #include "YAM_stringsizes.h"
 
 // some forward declarations
-#ifndef YAM_FOLDERCONFIG_H
-struct Folder;
-#endif
-
 #ifndef YAM_READ_H
 struct ReadMailData;
 #endif

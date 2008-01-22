@@ -713,7 +713,7 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
 
         if((mlist = CreateMailList()) != NULL)
         {
-          AddMailNode(mlist, mail);
+          AddNewMailNode(mlist, mail);
 
           if(mode == NEW_FORWARD)
             MA_NewForward(mlist, flags);
@@ -1080,7 +1080,7 @@ DECLARE(GrabSenderAddress)
 
     if((mlist = CreateMailList()) != NULL)
     {
-      AddMailNode(mlist, mail);
+      AddNewMailNode(mlist, mail);
       MA_GetAddress(mlist);
       DeleteMailList(mlist);
     }

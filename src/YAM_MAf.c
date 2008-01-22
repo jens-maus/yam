@@ -186,26 +186,35 @@ static void MA_ValidateStatus(struct Folder *folder)
 {
   ENTER();
 
-  if(C->UpdateNewMail          ||
+  if(C->UpdateNewMail == TRUE  ||
      isOutgoingFolder(folder)  ||
      isSentFolder(folder))
   {
-    struct Mail *mail;
-
     D(DBF_FOLDER, "Validating status of new msgs in folder %s", folder->Name);
 
-    for(mail = folder->Messages; mail; mail = mail->Next)
+    LockMailList(folder->messages);
+
+    if(IsMailListEmpty(folder->messages) == FALSE)
     {
-      if(hasStatusNew(mail))
+      struct MailNode *mnode;
+
+      ForEachMailNode(folder->messages, mnode)
       {
-        if(isOutgoingFolder(folder))
-          setStatusToQueued(mail);
-        else if(isSentFolder(folder))
-          setStatusToSent(mail);
-        else
-          setStatusToUnread(mail);
+        struct Mail *mail = mnode->mail;
+
+        if(hasStatusNew(mail))
+        {
+          if(isOutgoingFolder(folder))
+            setStatusToQueued(mail);
+          else if(isSentFolder(folder))
+            setStatusToSent(mail);
+          else
+            setStatusToUnread(mail);
+        }
       }
     }
+
+    UnlockMailList(folder->messages);
   }
 
   LEAVE();
@@ -393,7 +402,6 @@ BOOL MA_SaveIndex(struct Folder *folder)
   if((fh = fopen(MA_IndexFileName(folder), "w")) != NULL)
   {
     struct FIndex fi;
-    struct Mail *mail;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -409,32 +417,42 @@ BOOL MA_SaveIndex(struct Folder *folder)
     fi.Size = folder->Size;
     fwrite(&fi, sizeof(struct FIndex), 1, fh);
 
-    for(mail = folder->Messages; mail; mail = mail->Next)
+    LockMailList(folder->messages);
+
+    if(IsMailListEmpty(folder->messages) == FALSE)
     {
-      struct ComprMail cmail;
-      char buf[SIZE_LARGE];
+      struct MailNode *mnode;
 
-      memset(&cmail, 0, sizeof(struct ComprMail));
-      snprintf(buf, sizeof(buf), "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
-         mail->Subject,
-         mail->From.Address, mail->From.RealName,
-         mail->To.Address, mail->To.RealName,
-         mail->ReplyTo.Address, mail->ReplyTo.RealName);
+      ForEachMailNode(folder->messages, mnode)
+      {
+        struct Mail *mail = mnode->mail;
+        struct ComprMail cmail;
+        char buf[SIZE_LARGE];
 
-      strlcpy(cmail.mailFile, mail->MailFile, sizeof(cmail.mailFile));
-      cmail.date = mail->Date;
-      cmail.transDate = mail->transDate;
-      cmail.sflags = mail->sflags;
-      cmail.mflags = mail->mflags;
-      setVOLValue(&cmail, 0);  // we have to make sure that the volatile flag field isn`t saved
-      cmail.cMsgID = mail->cMsgID;
-      cmail.cIRTMsgID = mail->cIRTMsgID;
-      cmail.size = mail->Size;
-      cmail.moreBytes = strlen(buf);
+        memset(&cmail, 0, sizeof(struct ComprMail));
+        snprintf(buf, sizeof(buf), "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+           mail->Subject,
+           mail->From.Address, mail->From.RealName,
+           mail->To.Address, mail->To.RealName,
+           mail->ReplyTo.Address, mail->ReplyTo.RealName);
 
-      fwrite(&cmail, sizeof(struct ComprMail), 1, fh);
-      fwrite(buf, 1, cmail.moreBytes, fh);
+        strlcpy(cmail.mailFile, mail->MailFile, sizeof(cmail.mailFile));
+        cmail.date = mail->Date;
+        cmail.transDate = mail->transDate;
+        cmail.sflags = mail->sflags;
+        cmail.mflags = mail->mflags;
+        setVOLValue(&cmail, 0);  // we have to make sure that the volatile flag field isn`t saved
+        cmail.cMsgID = mail->cMsgID;
+        cmail.cIRTMsgID = mail->cIRTMsgID;
+        cmail.size = mail->Size;
+        cmail.moreBytes = strlen(buf);
+
+        fwrite(&cmail, sizeof(struct ComprMail), 1, fh);
+        fwrite(buf, 1, cmail.moreBytes, fh);
+      }
     }
+
+    UnlockMailList(folder->messages);
 
     fclose(fh);
 

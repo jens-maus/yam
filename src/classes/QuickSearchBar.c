@@ -658,7 +658,7 @@ DECLARE(ProcessSearch)
   // normal folders
   if(!isGroupFolder(curFolder))
   {
-    struct Mail *curMail;
+    struct MailNode *mnode;
     enum ViewOptions viewOption = xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active);
     enum SearchOptions searchOption = xget(data->NL_SEARCHOPTIONS, MUIA_NList_Active);
     char *searchString = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
@@ -681,16 +681,26 @@ DECLARE(ProcessSearch)
 
     // now we can process the search/sorting by searching the mail list of the
     // current folder querying different criterias of a mail
+    LockMailList(curFolder->messages);
+
     BusyText(tr(MSG_BUSY_SEARCHINGFOLDER), curFolder->Name);
-    for(curMail = curFolder->Messages; curMail != NULL && data->abortSearch == FALSE; curMail = curMail->Next)
+
+    ForEachMailNode(curFolder->messages, mnode)
     {
+      struct Mail *curMail = mnode->mail;
+
       // check if that mail matches the search/view criteria
       if(MatchMail(curMail, viewOption, searchOption, searchString, &curTimeUTC) == TRUE)
         DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_AddMailToList, LT_QUICKVIEW, curMail);
 
       DoMethod(G->App, MUIM_Application_InputBuffered);
+
+      if(data->abortSearch == TRUE)
+        break;
     }
     BusyEnd();
+
+    UnlockMailList(curFolder->messages);
 
     // only update the GUI if this search was not aborted
     if(data->abortSearch == FALSE)

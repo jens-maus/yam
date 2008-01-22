@@ -1,5 +1,5 @@
 #ifndef YAM_MAINFOLDER_H
-#define YAM_MAINFOLDER_H
+#define YAM_MAINFOLDER_H 1
 
 /***************************************************************************
 
@@ -33,7 +33,6 @@
 
 struct Mail
 {
-   struct Mail *    Next;       // pointer to the next mail or NULL
    struct Mail *    Reference;  // pointer to the mail referencing to us
    struct Folder *  Folder;     // pointer to the folder this mail belongs to
    long             cMsgID;     // compressed message ID

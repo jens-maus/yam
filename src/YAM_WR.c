@@ -2207,7 +2207,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       else if(wr->refMail != NULL)
       {
         if((mlist = CreateMailList()) != NULL)
-          AddMailNode(mlist, wr->refMail);
+          AddNewMailNode(mlist, wr->refMail);
       }
       else
         mlist = NULL;
@@ -2327,7 +2327,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
     if((mlist = CreateMailList()) != NULL)
     {
-      if(AddMailNode(mlist, newMail) != NULL)
+      if(AddNewMailNode(mlist, newMail) != NULL)
       {
         set(gui->WI, MUIA_Window_Open, FALSE);
         TR_ProcessSEND(mlist, SEND_ACTIVE_USER);

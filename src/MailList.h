@@ -47,25 +47,31 @@ struct MailNode
   struct Mail *mail;
 };
 
+void InitMailList(struct MailList *mlist);
 struct MailList *CreateMailList(void);
 void DeleteMailList(struct MailList *mlist);
 struct MailList *CloneMailList(struct MailList *mlist);
-struct MailNode *AddMailNode(struct MailList *mlist, struct Mail *mail);
+struct MailNode *AddNewMailNode(struct MailList *mlist, struct Mail *mail);
+void AddMailNode(struct MailList *mlist, struct MailNode *mnode);
 void RemoveMailNode(struct MailList *mlist, struct MailNode *mnode);
 void DeleteMailNode(struct MailNode *mnode);
 void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1, const struct Mail *m2));
+struct Mail **MailListToMailArray(struct MailList *mlist);
 
 // check if a mail list is not empty
-#define IsMailListEmpty(mlist)          IsListEmpty((struct List *)(mlist))
+#define IsMailListEmpty(mlist)                    IsListEmpty((struct List *)(mlist))
 
 // iterate through the list, the list must *NOT* be modified!
-#define ForEachMailNode(mlist, mnode)   for(mnode = (struct MailNode *)(mlist)->list.mlh_Head; mnode->node.mln_Succ != NULL; mnode = (struct MailNode *)mnode->node.mln_Succ)
+#define ForEachMailNode(mlist, mnode)             for(mnode = (struct MailNode *)(mlist)->list.mlh_Head; mnode->node.mln_Succ != NULL; mnode = (struct MailNode *)mnode->node.mln_Succ)
+
+// same as above, but the list may be modified
+#define ForEachMailNodeSafe(mlist, mnode, next)   for(mnode = (struct MailNode *)(mlist)->list.mlh_Head; (next = (struct MailNode *)mnode->node.mln_Succ) != NULL; mnode = next)
 
 // get the first mail node of a list
-#define FirstMailNode(mlist)            (((mlist) != NULL && (mlist)->list.mlh_Head != NULL) ? (struct MailNode *)(mlist)->list.mlh_Head : (struct MailNode *)NULL)
+#define FirstMailNode(mlist)                      (((mlist) != NULL && (mlist)->list.mlh_Head != NULL) ? (struct MailNode *)(mlist)->list.mlh_Head : (struct MailNode *)NULL)
 
 // lock and unlock a mail list via its semaphore
-#define LockMailList(mlist)             ObtainSemaphore(mlist->lockSemaphore)
-#define UnlockMailList(mlist)           ReleaseSemaphore(mlist->lockSemaphore)
+#define LockMailList(mlist)                       ObtainSemaphore(mlist->lockSemaphore)
+#define UnlockMailList(mlist)                     ReleaseSemaphore(mlist->lockSemaphore)
 
 #endif /* MAILLIST_H */

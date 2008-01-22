@@ -96,34 +96,48 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
     // first we take the folder of the srcMail as a priority in the
     // search of the next/prev thread so we have to check that we
     // have a valid index before we are going to go on.
-    if(srcMail->Folder->LoadedMode == LM_VALID || MA_GetIndex(srcMail->Folder))
+    if(srcMail->Folder->LoadedMode == LM_VALID || MA_GetIndex(srcMail->Folder) == TRUE)
     {
       struct Folder **flist;
       BOOL found = FALSE;
 
       // ok the folder is valid and we can scan it now
-      for(mail = srcMail->Folder->Messages; mail != NULL; mail = mail->Next)
+
+      LockMailList(srcMail->Folder->messages);
+
+      if(IsMailListEmpty(srcMail->Folder->messages) == FALSE)
       {
-        if(nextThread) // find the answer to the srcMail
+        struct MailNode *mnode;
+
+        ForEachMailNode(srcMail->Folder->messages, mnode)
         {
-          if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
+          struct Mail *mail = mnode->mail;
+
+          if(nextThread == TRUE) 
           {
-            found = TRUE;
-            break;
+            // find the answer to the srcMail
+            if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
+            {
+              found = TRUE;
+              break;
+            }
           }
-        }
-        else // else we have to find the question to the srcMail
-        {
-          if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
+          else 
           {
-            found = TRUE;
-            break;
+            // else we have to find the question to the srcMail
+            if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
+            {
+              found = TRUE;
+              break;
+            }
           }
         }
       }
 
+      UnlockMailList(srcMail->Folder->messages);
+
       // if we still haven`t found the mail we have to scan the other folder aswell
-      if(!found && (flist = FO_CreateList()) != NULL)
+      if(found == FALSE && (flist = FO_CreateList()) != NULL)
       {
         int i;
         int autoloadindex = -1;
@@ -140,13 +154,13 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
             {
               if(autoloadindex == -1)
               {
-                if(askLoadAllFolder)
+                if(askLoadAllFolder == TRUE)
                 {
                   // if we are going to ask for loading all folders we do it now
                   if(MUI_Request(G->App, readWindow, 0,
                                  tr(MSG_MA_ConfirmReq),
                                  tr(MSG_YesNoReq),
-                                 tr(MSG_RE_FOLLOWTHREAD)))
+                                 tr(MSG_RE_FOLLOWTHREAD)) != 0)
                     autoloadindex = 1;
                   else
                     autoloadindex = 0;
@@ -163,26 +177,39 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
             // check again for a valid index
             if(fo->LoadedMode == LM_VALID)
             {
-              // now scan the folder
-              for(mail = fo->Messages; mail != NULL; mail = mail->Next)
+              LockMailList(fo->messages);
+
+              if(IsMailListEmpty(fo->messages) == FALSE)
               {
-                if(nextThread) // find the answer to the srcMail
+                struct MailNode *mnode;
+
+                // now scan the folder
+                ForEachMailNode(fo->messages, mnode)
                 {
-                  if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
+                  struct Mail *mail = mnode->mail;
+
+                  if(nextThread == TRUE) 
                   {
-                    found = TRUE;
-                    break;
+                    // find the answer to the srcMail
+                    if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
+                    {
+                      found = TRUE;
+                      break;
+                    }
                   }
-                }
-                else // else we have to find the question to the srcMail
-                {
-                  if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
+                  else 
                   {
-                    found = TRUE;
-                    break;
+                    // else we have to find the question to the srcMail
+                    if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
+                    {
+                      found = TRUE;
+                      break;
+                    }
                   }
                 }
               }
+
+              UnlockMailList(fo->messages);
             }
           }
         }
@@ -578,8 +605,8 @@ void RE_DisplayMIME(char *fname, const char *ctype)
 
       // copy the contents of our message file into the
       // temporary file.
-      if(CopyFile(tf->Filename, NULL, fname, NULL) &&
-         (email = MA_ExamineMail(NULL, (char *)FilePart(tf->Filename), TRUE)))
+      if(CopyFile(tf->Filename, NULL, fname, NULL) == TRUE &&
+         (email = MA_ExamineMail(NULL, (char *)FilePart(tf->Filename), TRUE)) != NULL)
       {
         struct Mail *mail;
         struct ReadMailData *rmData;
@@ -591,8 +618,7 @@ void RE_DisplayMIME(char *fname, const char *ctype)
           return;
         }
 
-        memcpy(mail, &(email->Mail), sizeof(struct Mail));
-        mail->Next      = NULL;
+        memcpy(mail, &email->Mail, sizeof(struct Mail));
         mail->Reference = NULL;
         mail->Folder    = NULL;
         mail->sflags    = SFLAG_READ; // this sets the mail as OLD
@@ -3593,7 +3619,7 @@ static void RE_SendMDN(const enum MDNMode mode,
                 if((mail = AddMailToList(&email->Mail, outfolder)) != NULL)
                 {
                   setStatusToQueued(mail);
-                  AddMailNode(mlist, mail);
+                  AddNewMailNode(mlist, mail);
                 }
                 MA_FreeEMailStruct(email);
               }

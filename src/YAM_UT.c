@@ -2712,31 +2712,6 @@ char *AddPath(char *dst, const char *src, const char *add, size_t size)
 ///
 
 /*** Mail related ***/
-/// MyRemove
-//  Removes a message from a message list
-static void MyRemove(struct Mail **list, struct Mail *rem)
-{
-  struct Mail *mail;
-
-  ENTER();
-
-  if(*list == rem)
-    *list = rem->Next;
-  else
-  {
-    for(mail = *list; mail->Next; mail = mail->Next)
-    {
-      if(mail->Next == rem)
-      {
-        mail->Next = rem->Next;
-        break;
-      }
-    }
-  }
-
-  LEAVE();
-}
-///
 /// CreateFilename
 //  Prepends mail directory to a file name
 char *CreateFilename(const char * const file)
@@ -3923,19 +3898,26 @@ BOOL MailExists(struct Mail *mailptr, struct Folder *folder)
   }
   else
   {
-    struct Mail *work;
-
     if(folder == NULL)
       folder = mailptr->Folder;
 
-    for(work = folder->Messages; work; work = work->Next)
+    LockMailList(folder->messages);
+
+    if(IsMailListEmpty(folder->messages) == FALSE)
     {
-      if(work == mailptr)
+      struct MailNode *mnode;
+
+      ForEachMailNode(folder->messages, mnode)
       {
-        exists = TRUE;
-        break;
+        if(mnode->mail == mailptr)
+        {
+          exists = TRUE;
+          break;
+        }
       }
     }
+
+    UnlockMailList(folder->messages);
   }
 
   RETURN(exists);
@@ -3953,17 +3935,14 @@ void DisplayMailList(struct Folder *fo, Object *lv)
 
   lastActive = fo->LastActive;
 
-  if((array = (struct Mail **)calloc(fo->Total + 1, sizeof(struct Mail *))) != NULL)
+  BusyText(tr(MSG_BusyDisplayingList), "");
+
+  LockMailList(fo->messages);
+  array = MailListToMailArray(fo->messages);
+  UnlockMailList(fo->messages);
+
+  if(array != NULL)
   {
-    struct Mail *work;
-    struct Mail **arrPtr = array;
-
-    BusyText(tr(MSG_BusyDisplayingList), "");
-    for(work = fo->Messages; work; work = work->Next)
-    {
-      *arrPtr++ = work;
-    }
-
     // We do not encapsulate this Clear&Insert with a NList_Quiet because
     // this will speed up the Insert with about 3-4 seconds for ~6000 items
     DoMethod(lv, MUIM_NList_Clear);
@@ -3971,8 +3950,9 @@ void DisplayMailList(struct Folder *fo, Object *lv)
                  C->AutoColumnResize ? MUIF_NONE : MUIV_NList_Insert_Flag_Raw);
 
     free(array);
-    BusyEnd();
   }
+
+  BusyEnd();
 
   // Now we have to recover the LastActive or otherwise it will be -1 later
   fo->LastActive = lastActive;
@@ -3993,8 +3973,9 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
     new->Folder = folder;
 
     // lets add the new Message to our message list
-    new->Next = folder->Messages;
-    folder->Messages = new;
+    LockMailList(folder->messages);
+    AddNewMailNode(folder->messages, new);
+    UnlockMailList(folder->messages);
 
     // lets summarize the stats
     folder->Total++;
@@ -4042,8 +4023,31 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
   if(!hasStatusRead(mail))
     folder->Unread--;
 
-  // remove the mail from the folderlist now
-  MyRemove(&(folder->Messages), mail);
+  LockMailList(folder->messages);
+
+  if(IsMailListEmpty(folder->messages) == FALSE)
+  {
+    struct MailNode *remNode = NULL;
+    struct MailNode *mnode;
+
+    ForEachMailNode(folder->messages, mnode)
+    {
+      if(mnode->mail == mail)
+      {
+        remNode = mnode;
+        break;
+      }
+    }
+
+    // remove the mail from the folderlist now
+    if(remNode != NULL)
+    {
+      RemoveMailNode(folder->messages, remNode);
+      DeleteMailNode(remNode);
+    }
+  }
+
+  UnlockMailList(folder->messages);
 
   // then we have to mark the folder index as expired so
   // that it will be saved next time.
@@ -4062,7 +4066,7 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 
       if(rmData->mail == mail)
       {
-        if(closeWindows && rmData->readWindow != NULL)
+        if(closeWindows == TRUE && rmData->readWindow != NULL)
         {
           // Just ask the window to close itself, this will effectively clear the pointer.
           // We cannot set the attribute directly, because a DoMethod() call is synchronous
@@ -4095,34 +4099,44 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 //  Removes all messages from a folder
 void ClearMailList(struct Folder *folder, BOOL resetstats)
 {
-  struct Mail *mail;
-  struct Mail *next;
-
   ENTER();
 
-  for(mail = folder->Messages; mail != NULL; mail = next)
+  LockMailList(folder->messages);
+
+  if(IsMailListEmpty(folder->messages) == FALSE)
   {
-    next = mail->Next;
+    struct MailNode *mnode;
 
-    // Now we check if there is any read window with that very same
-    // mail currently open and if so we have to clean it.
-    if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+    while((mnode = (struct MailNode *)RemHead((struct List *)&folder->messages->list)) != NULL)
     {
-      // search through our ReadDataList
-      struct MinNode *curNode;
+      struct Mail *mail = mnode->mail;
 
-      for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      // Now we check if there is any read window with that very same
+      // mail currently open and if so we have to clean it.
+      if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
       {
-        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+        // search through our ReadDataList
+        struct MinNode *curNode;
 
-        if(rmData->mail == mail)
-          CleanupReadMailData(rmData, TRUE);
+        for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        {
+          struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+          if(rmData->mail == mail)
+            CleanupReadMailData(rmData, TRUE);
+        }
       }
-    }
 
-    // free the mail pointer
-    free(mail);
+      DeleteMailNode(mnode);
+      // free the mail pointer
+      free(mail);
+    }
   }
+
+  // reset the list of mails
+  InitMailList(folder->messages);
+
+  UnlockMailList(folder->messages);
 
   if(resetstats)
   {
@@ -4131,8 +4145,6 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
     folder->Unread = 0;
     folder->Size = 0;
   }
-
-  folder->Messages = NULL;
 
   LEAVE();
 }

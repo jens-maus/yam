@@ -660,16 +660,25 @@ struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
     {
       if((mlist = CreateMailList()) != NULL)
       {
-        struct Mail *mail;
+        LockMailList(fo->messages);
 
-        for(mail = fo->Messages; mail; mail = mail->Next)
+        if(IsMailListEmpty(fo->messages) == FALSE)
         {
-          // only if we want ALL or this is just a îew mail we add it to our list
-          if(onlyNew == FALSE || hasStatusNew(mail))
+          struct MailNode *mnode;
+
+          ForEachMailNode(fo->messages, mnode)
           {
-            AddMailNode(mlist, mail);
+            struct Mail *mail = mnode->mail;
+
+            // only if we want ALL or this is just a îew mail we add it to our list
+            if(onlyNew == FALSE || hasStatusNew(mail))
+            {
+              AddNewMailNode(mlist, mail);
+            }
           }
         }
+
+        LockMailList(fo->messages);
 
         // let everything fail if there were no mails added to the list
         if(IsMailListEmpty(mlist) == TRUE)
@@ -722,7 +731,7 @@ struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
             mail->position = id;
 
             if(onlyNew == FALSE || hasStatusNew(mail))
-               AddMailNode(mlist, mail);
+               AddNewMailNode(mlist, mail);
           }
           else
             E(DBF_MAIL, "MUIM_NList_GetEntry didn't return a valid mail pointer");
@@ -741,7 +750,7 @@ struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
         if((mlist = CreateMailList()) != NULL)
         {
           mail->position = xget(lv, MUIA_NList_Active);
-          AddMailNode(mlist, mail);
+          AddNewMailNode(mlist, mail);
         }
         else
           E(DBF_MAIL, "couldn't create mail list!");
@@ -1047,19 +1056,29 @@ static void MA_UpdateStatus(void)
     {
       if(!isSentMailFolder(flist[i]) && flist[i]->LoadedMode == LM_VALID)
       {
-        struct Mail *mail;
         BOOL updated = FALSE;
 
-        for(mail = flist[i]->Messages; mail; mail = mail->Next)
+        LockMailList(flist[i]->messages);
+
+        if(IsMailListEmpty(flist[i]->messages) == FALSE)
         {
-          if(hasStatusNew(mail))
+          struct MailNode *mnode;
+
+          ForEachMailNode(flist[i]->messages, mnode)
           {
-            updated = TRUE;
-            setStatusToUnread(mail);
+            struct Mail *mail = mnode->mail;
+
+            if(hasStatusNew(mail))
+            {
+              updated = TRUE;
+              setStatusToUnread(mail);
+            }
           }
         }
 
-        if(updated)
+        UnlockMailList(flist[i]->messages);
+
+        if(updated == TRUE)
           DisplayStatistics(flist[i], TRUE);
       }
     }
@@ -3730,39 +3749,50 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
     {
       struct Folder *folder = flist[f];
 
-      if(folder->MaxAge > 0 &&
-         MA_GetIndex(folder))
+      if(folder->MaxAge > 0 && MA_GetIndex(folder) == TRUE)
       {
-        struct Mail *mail;
-        struct Mail *next;
+        LockMailList(folder->messages);
 
-        for(mail = folder->Messages; mail; mail = next)
+        if(IsMailListEmpty(folder->messages) == FALSE)
         {
-          next = mail->Next;
-          today.ds_Days = today_days - folder->MaxAge;
+          struct MailNode *mnode;
+          struct MailNode *next;
 
-          if(CompareDates(&today, &(mail->Date)) < 0)
+          // we are probably modifying the list, so we must use the safe variant
+          ForEachMailNodeSafe(folder->messages, mnode, next)
           {
-            // delete any message from trash and spam folder automatically
-            // or if the message is read already (keep unread messages)
-            if(isTrashFolder(folder) ||
-               isSpamFolder(folder) ||
-               (!hasStatusNew(mail) && hasStatusRead(mail)) ||
-               folder->ExpireUnread == TRUE)
+            struct Mail *mail = mnode->mail;
+
+            today.ds_Days = today_days - folder->MaxAge;
+
+            if(CompareDates(&today, &mail->Date) < 0)
             {
-               MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE, FALSE);
-               mailsDeleted = TRUE;
+              // delete any message from trash and spam folder automatically
+              // or if the message is read already (keep unread messages)
+              if(isTrashFolder(folder) ||
+                 isSpamFolder(folder) ||
+                 (!hasStatusNew(mail) && hasStatusRead(mail)) ||
+                 folder->ExpireUnread == TRUE)
+              {
+                MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE, FALSE);
+                // remove the mail node from this folder and free it
+                RemoveMailNode(folder->messages, mnode);
+                DeleteMailNode(mnode);
+                mailsDeleted = TRUE;
+              }
             }
           }
+        }
 
-          // if BusySet() returns FALSE, then the user aborted
-          if(BusySet(f) == FALSE)
-          {
-            // make sure to abort both loop
-            f = (int)*flist;
+        UnlockMailList(folder->messages);
 
-            break;
-          }
+        // if BusySet() returns FALSE, then the user aborted
+        if(BusySet(f) == FALSE)
+        {
+          // make sure to abort both loop
+          f = (int)*flist;
+
+          break;
         }
 
         DisplayStatistics(folder, FALSE);
@@ -3800,8 +3830,6 @@ MakeHook(MA_DeleteOldHook, MA_DeleteOldFunc);
 HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
 {
   BOOL quiet = *arg != 0;
-  int i = 0;
-  struct Mail *mail;
   struct Folder *folder = FO_GetFolderByType(FT_TRASH, NULL);
 
   ENTER();
@@ -3810,28 +3838,40 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
   {
     BusyGaugeInt(tr(MSG_BusyEmptyingTrash), "", folder->Total);
 
-    for(mail = folder->Messages; mail; mail = mail->Next)
+    LockMailList(folder->messages);
+
+    if(IsMailListEmpty(folder->messages) == FALSE)
     {
-      BusySet(++i);
-      AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
-      DeleteFile(GetMailFile(NULL, NULL, mail));
+      struct MailNode *mnode;
+      int i = 0;
+
+      ForEachMailNode(folder->messages, mnode)
+      {
+        struct Mail *mail = mnode->mail;
+
+        BusySet(++i);
+        AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
+        DeleteFile(GetMailFile(NULL, NULL, mail));
+      }
+
+      // We only clear the folder if it wasn't empty anyway..
+      if(i > 0)
+      {
+        ClearMailList(folder, TRUE);
+
+        MA_ExpireIndex(folder);
+
+        if(FO_GetCurrentFolder() == folder)
+          DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
+
+        AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), i, folder->Name);
+
+        if(quiet == FALSE)
+          DisplayStatistics(folder, TRUE);
+      }
     }
 
-    // We only clear the folder if it wasn`t empty anyway..
-    if(i > 0)
-    {
-      ClearMailList(folder, TRUE);
-
-      MA_ExpireIndex(folder);
-
-      if(FO_GetCurrentFolder() == folder)
-        DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
-
-      AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), i, folder->Name);
-
-      if(quiet == FALSE)
-        DisplayStatistics(folder, TRUE);
-    }
+    UnlockMailList(folder->messages);
 
     BusyEnd();
   }

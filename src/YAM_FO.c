@@ -41,6 +41,8 @@
 #include <proto/utility.h>
 #include <proto/xpkmaster.h>
 
+#include "extrasrc.h"
+
 #include "SDI_hook.h"
 
 #include "YAM.h"
@@ -57,7 +59,7 @@
 
 #include "ImageCache.h"
 #include "FileInfo.h"
-#include "extrasrc.h"
+#include "MailList.h"
 
 #include "Debug.h"
 
@@ -561,22 +563,31 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
 
   if((folder = calloc(1, sizeof(struct Folder))) != NULL)
   {
-    folder->Sort[0] = 1;
-    folder->Sort[1] = 3;
-    folder->Type = type;
-    // set the standard icon images, or none for a custom folder
-    switch(type)
+    if((folder->messages = CreateMailList()) != NULL)
     {
-      case FT_INCOMING: folder->ImageIndex = FICON_ID_INCOMING; break;
-      case FT_OUTGOING: folder->ImageIndex = FICON_ID_OUTGOING; break;
-      case FT_TRASH:    folder->ImageIndex = FICON_ID_TRASH;    break;
-      case FT_SENT:     folder->ImageIndex = FICON_ID_SENT;     break;
-      case FT_SPAM:     folder->ImageIndex = FICON_ID_SPAM;     break;
-      default:          folder->ImageIndex = -1;                break;
+      folder->Sort[0] = 1;
+      folder->Sort[1] = 3;
+      folder->Type = type;
+      // set the standard icon images, or none for a custom folder
+      switch(type)
+      {
+        case FT_INCOMING: folder->ImageIndex = FICON_ID_INCOMING; break;
+        case FT_OUTGOING: folder->ImageIndex = FICON_ID_OUTGOING; break;
+        case FT_TRASH:    folder->ImageIndex = FICON_ID_TRASH;    break;
+        case FT_SENT:     folder->ImageIndex = FICON_ID_SENT;     break;
+        case FT_SPAM:     folder->ImageIndex = FICON_ID_SPAM;     break;
+        default:          folder->ImageIndex = -1;                break;
+      }
+      strlcpy(folder->Path, path, sizeof(folder->Path));
+      strlcpy(folder->Name, name, sizeof(folder->Name));
+      if(!CreateDirectory(GetFolderDir(folder)))
+      {
+        DeleteMailList(folder->messages);
+        free(folder);
+        folder = NULL;
+      }
     }
-    strlcpy(folder->Path, path, sizeof(folder->Path));
-    strlcpy(folder->Name, name, sizeof(folder->Name));
-    if(!CreateDirectory(GetFolderDir(folder)))
+    else
     {
       free(folder);
       folder = NULL;
@@ -615,6 +626,8 @@ BOOL FO_FreeFolder(struct Folder *folder)
       // the folder object itself as it is part of the hierarchy since we
       // added it with OM_ADDMEMBER.
     }
+
+    DeleteMailList(folder->messages);
 
     // now it`s time to deallocate the folder itself
     free(folder);
@@ -746,30 +759,59 @@ BOOL FO_LoadTree(char *fname)
           fo.Sort[1] = 3;
           strlcpy(fo.Name, Trim(&buffer[8]), sizeof(fo.Name));
           strlcpy(fo.Path, Trim(GetLine(fh, buffer, sizeof(buffer))), sizeof(fo.Path));
-
-          if(CreateDirectory(GetFolderDir(&fo)) == TRUE)
+          if((fo.messages = CreateMailList()) != NULL)
           {
-            // if there doesn't exist any .fconfig configuration in the folder
-            // we do have to generate it and we do that by analyzing its name,
-            // comparing it to the default folder names we know.
-            if(FO_LoadConfig(&fo) == FALSE)
+            if(CreateDirectory(GetFolderDir(&fo)) == TRUE)
             {
-              char *folderpath = (char *)FilePart(fo.Path);
+              // if there doesn't exist any .fconfig configuration in the folder
+              // we do have to generate it and we do that by analyzing its name,
+              // comparing it to the default folder names we know.
+              if(FO_LoadConfig(&fo) == FALSE)
+              {
+                char *folderpath = (char *)FilePart(fo.Path);
 
-              // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
-              if(stricmp(folderpath, FolderName[FT_INCOMING]) == 0)
-                fo.Type = FT_INCOMING;
-              else if(stricmp(folderpath, FolderName[FT_OUTGOING]) == 0)
-                fo.Type = FT_OUTGOING;
-              else if(stricmp(folderpath, FolderName[FT_SENT]) == 0)
-                fo.Type = FT_SENT;
-              else if(stricmp(folderpath, FolderName[FT_TRASH]) == 0)
-                fo.Type = FT_TRASH;
-              else if(C->SpamFilterEnabled && stricmp(folderpath, FolderName[FT_SPAM]) == 0)
-                fo.Type = FT_SPAM;
+                // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
+                if(stricmp(folderpath, FolderName[FT_INCOMING]) == 0)
+                  fo.Type = FT_INCOMING;
+                else if(stricmp(folderpath, FolderName[FT_OUTGOING]) == 0)
+                  fo.Type = FT_OUTGOING;
+                else if(stricmp(folderpath, FolderName[FT_SENT]) == 0)
+                  fo.Type = FT_SENT;
+                else if(stricmp(folderpath, FolderName[FT_TRASH]) == 0)
+                  fo.Type = FT_TRASH;
+                else if(C->SpamFilterEnabled && stricmp(folderpath, FolderName[FT_SPAM]) == 0)
+                  fo.Type = FT_SPAM;
 
-              // Save the config now because it could be changed in the meantime
-              if(FO_SaveConfig(&fo) == FALSE)
+                // Save the config now because it could be changed in the meantime
+                if(FO_SaveConfig(&fo) == FALSE)
+                {
+                  fclose(fh);
+
+                  RETURN(FALSE);
+                  return FALSE;
+                }
+              }
+
+              fo.SortIndex = i++;
+              fo.ImageIndex = j;
+
+              // Now we load the FolderImages if they exists
+              if(FO_LoadFolderImage(&fo) == TRUE)
+                j++;
+              else
+              {
+                // we cannot find out if there is new/unread mail in the folder,
+                // so we initialize the folder with the std ImageIndex.
+                if(isIncomingFolder(&fo))      fo.ImageIndex = FICON_ID_INCOMING;
+                else if(isOutgoingFolder(&fo)) fo.ImageIndex = FICON_ID_OUTGOING;
+                else if(isTrashFolder(&fo))    fo.ImageIndex = FICON_ID_TRASH;
+                else if(isSentFolder(&fo))     fo.ImageIndex = FICON_ID_SENT;
+                else if(isSpamFolder(&fo))     fo.ImageIndex = FICON_ID_SPAM;
+                else fo.ImageIndex = -1; // or with -1 for a non std folder.
+              }
+
+              // Now we add this folder to the folder listtree
+              if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
               {
                 fclose(fh);
 
@@ -777,38 +819,11 @@ BOOL FO_LoadTree(char *fname)
                 return FALSE;
               }
             }
-
-            fo.SortIndex = i++;
-            fo.ImageIndex = j;
-
-            // Now we load the FolderImages if they exists
-            if(FO_LoadFolderImage(&fo))
-              j++;
-            else
-            {
-              // we cannot find out if there is new/unread mail in the folder,
-              // so we initialize the folder with the std ImageIndex.
-              if(isIncomingFolder(&fo))      fo.ImageIndex = FICON_ID_INCOMING;
-              else if(isOutgoingFolder(&fo)) fo.ImageIndex = FICON_ID_OUTGOING;
-              else if(isTrashFolder(&fo))    fo.ImageIndex = FICON_ID_TRASH;
-              else if(isSentFolder(&fo))     fo.ImageIndex = FICON_ID_SENT;
-              else if(isSpamFolder(&fo))     fo.ImageIndex = FICON_ID_SPAM;
-              else fo.ImageIndex = -1; // or with -1 for a non std folder.
-            }
-
-            // Now we add this folder to the folder listtree
-            if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
-            {
-              fclose(fh);
-
-              RETURN(FALSE);
-              return FALSE;
-            }
+            do
+              if(strcmp(buffer, "@ENDFOLDER") == 0)
+                break;
+            while(GetLine(fh, buffer, sizeof(buffer)));
           }
-          do
-            if(strcmp(buffer, "@ENDFOLDER") == 0)
-              break;
-          while(GetLine(fh, buffer, sizeof(buffer)));
         }
         else if(strncmp(buffer, "@SEPARATOR", 10) == 0)
         {
@@ -1002,8 +1017,6 @@ BOOL FO_SaveTree(char *fname)
 // recalculate the number of new/unread/etc mails in a folder
 void FO_UpdateStatistics(struct Folder *folder)
 {
-  struct Mail *mail;
-
   ENTER();
 
   if(folder == (struct Folder *)-1)
@@ -1015,23 +1028,33 @@ void FO_UpdateStatistics(struct Folder *folder)
   folder->Sent = 0;
   folder->Deleted = 0;
 
-  // now we recount the amount of messages of this folder
-  for(mail = folder->Messages; mail != NULL; mail = mail->Next)
+  LockMailList(folder->messages);
+
+  if(IsMailListEmpty(folder->messages) == FALSE)
   {
-    folder->Total++;
+    struct MailNode *mnode;
+    // now we recount the amount of messages of this folder
+    ForEachMailNode(folder->messages, mnode)
+    {
+      struct Mail *mail = mnode->mail;
 
-    if(hasStatusNew(mail))
-      folder->New++;
+      folder->Total++;
 
-    if(!hasStatusRead(mail))
-      folder->Unread++;
+      if(hasStatusNew(mail))
+        folder->New++;
 
-    if(hasStatusSent(mail))
-      folder->Sent++;
+      if(!hasStatusRead(mail))
+        folder->Unread++;
 
-    if(hasStatusDeleted(mail))
-      folder->Deleted++;
+      if(hasStatusSent(mail))
+        folder->Sent++;
+
+      if(hasStatusDeleted(mail))
+        folder->Deleted++;
+    }
   }
+
+  UnlockMailList(folder->messages);
 
   LEAVE();
 }
@@ -1040,10 +1063,8 @@ void FO_UpdateStatistics(struct Folder *folder)
 //  Moves a folder to a new directory
 static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 {
-  struct Mail *mail;
   char srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
   BOOL success = TRUE;
-  int i;
 
   ENTER();
 
@@ -1051,24 +1072,41 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
   strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
   strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
 
-  for(i = 0, mail = fo->Messages; mail && success; mail = mail->Next, i++)
-  {
-    BusySet(i+1);
-    GetMailFile(dstbuf, fo, mail);
-    GetMailFile(srcbuf, oldfo, mail);
+  LockMailList(fo->messages);
 
-    if(MoveFile(srcbuf, dstbuf))
-      RepackMailFile(mail, fo->Mode, fo->Password);
-    else
-      success = FALSE;
+  if(IsMailListEmpty(fo->messages) == FALSE)
+  {
+    struct MailNode *mnode;
+    ULONG i = 0;
+
+    ForEachMailNode(fo->messages, mnode)
+    {
+      struct Mail *mail = mnode->mail;
+
+      if(BusySet(++i) == FALSE)
+      {
+        success = FALSE;
+        break;
+      }
+
+      GetMailFile(dstbuf, fo, mail);
+      GetMailFile(srcbuf, oldfo, mail);
+
+      if(MoveFile(srcbuf, dstbuf) == TRUE)
+        RepackMailFile(mail, fo->Mode, fo->Password);
+      else
+        success = FALSE;
+    }
   }
 
-  if(success)
+  UnlockMailList(fo->messages);
+
+  if(success == TRUE)
   {
     // now we try to move an existing .index file
     AddPath(srcbuf, GetFolderDir(oldfo), ".index", sizeof(srcbuf));
     AddPath(dstbuf, GetFolderDir(fo), ".index", sizeof(dstbuf));
-    if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
+    if(FileExists(srcbuf) == TRUE && MoveFile(srcbuf, dstbuf) == FALSE)
     {
       success = FALSE;
     }
@@ -1077,7 +1115,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
       // now we try to mvoe the .fimage file aswell
       AddPath(srcbuf, GetFolderDir(oldfo), ".fimage", sizeof(srcbuf));
       AddPath(dstbuf, GetFolderDir(fo), ".fimage", sizeof(dstbuf));
-      if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
+      if(FileExists(srcbuf) == TRUE && MoveFile(srcbuf, dstbuf) == FALSE)
       {
         success = FALSE;
       }
@@ -1301,6 +1339,8 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
    int mode = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_NewFolder), tr(MSG_FO_NewFolderGads), tr(MSG_FO_NewFolderReq));
    static struct Folder folder;
 
+   ENTER();
+
    // reset the folder struct and set some default values.
    memset(&folder, 0, sizeof(struct Folder));
    folder.Sort[0] = 1;
@@ -1310,64 +1350,85 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
 
    switch (mode)
    {
-      case 1: break;
-      case 2:
-      {
-         struct Folder *currfolder = FO_GetCurrentFolder();
-         if(!currfolder) return;
+     case 1: break;
+     case 2:
+     {
+       struct Folder *currfolder;
 
-         // as the user decided to use the settings from the current folder, wie copy
-         // the current one to our new one.
-         memcpy(&folder, currfolder, sizeof(struct Folder));
+       if((currfolder = FO_GetCurrentFolder()) == NULL)
+       {
+         LEAVE();
+         return;
+       }
 
-         if(isGroupFolder(&folder))
-         {
-           FO_NewFolderGroupFunc();
-           return;
-         }
-         else if(isIncomingFolder(&folder) || isTrashFolder(&folder))
-           folder.Type = FT_CUSTOM;
-         else if(isOutgoingFolder(&folder) || isSentFolder(&folder))
-           folder.Type = FT_CUSTOMSENT;
+       // as the user decided to use the settings from the current folder, wie copy
+       // the current one to our new one.
+       memcpy(&folder, currfolder, sizeof(struct Folder));
 
-         // now that we have the correct folder type, we set some default values for the new
-         // folder
-         *folder.Path       = 0;
-         *folder.Name       = 0;
-         folder.imageObject = NULL;
-         folder.Messages    = NULL;
-         folder.ImageIndex  = -1;  // No Image for the folder by default.
-      }
-      break;
+       if(isGroupFolder(&folder))
+       {
+         FO_NewFolderGroupFunc();
+         LEAVE();
+         return;
+       }
+       else if(isIncomingFolder(&folder) || isTrashFolder(&folder))
+         folder.Type = FT_CUSTOM;
+       else if(isOutgoingFolder(&folder) || isSentFolder(&folder))
+         folder.Type = FT_CUSTOMSENT;
 
-      case 3:
-      {
-        struct FileReqCache *frc;
+       // now that we have the correct folder type, we set some default values for the new
+       // folder
+       *folder.Path       = 0;
+       *folder.Name       = 0;
+       folder.imageObject = NULL;
+       folder.messages    = NULL;
+       folder.ImageIndex  = -1;  // No Image for the folder by default.
+     }
+     break;
 
-        if((frc = ReqFile(ASL_FOLDER, G->MA->GUI.WI, tr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, "")))
-        {
-          strlcpy(folder.Path, frc->drawer, sizeof(folder.Path));
+     case 3:
+     {
+       struct FileReqCache *frc;
 
-          FO_LoadConfig(&folder);
-        }
-        else
-          return;
-      }
-      break;
+       if((frc = ReqFile(ASL_FOLDER, G->MA->GUI.WI, tr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, "")) != NULL)
+       {
+         strlcpy(folder.Path, frc->drawer, sizeof(folder.Path));
 
-      default:
-      {
-        return;
-      }
+         FO_LoadConfig(&folder);
+       }
+       else
+       {
+         LEAVE();
+         return;
+       }
+     }
+     break;
+
+     default:
+     {
+       LEAVE();
+       return;
+     }
    }
 
-   if (!G->FO)
+   if(G->FO == NULL)
    {
-      if (!(G->FO = FO_New())) return;
-      if (!SafeOpenWindow(G->FO->GUI.WI)) { DisposeModulePush(&G->FO); return; }
+     if((G->FO = FO_New()) == NULL)
+     {
+       LEAVE();
+       return;
+     }
+     if(SafeOpenWindow(G->FO->GUI.WI) == FALSE)
+     {
+       DisposeModulePush(&G->FO);
+       LEAVE();
+       return;
+     }
    }
 
    FO_GetFolder(&folder);
+
+   LEAVE();
 }
 MakeHook(FO_NewFolderHook, FO_NewFolderFunc);
 
@@ -1671,15 +1732,24 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
         if(folder.Mode != oldmode)
         {
-          struct Mail *mail;
-          int i;
-
           BusyGauge(tr(MSG_BusyUncompressingFO), "", folder.Total);
-          for(i = 0, mail = folder.Messages; mail; mail = mail->Next, i++)
+
+          LockMailList(folder.messages);
+
+          if(IsMailListEmpty(folder.messages) == FALSE)
           {
-            BusySet(i+1);
-            RepackMailFile(mail, folder.Mode, folder.Password);
+            struct MailNode *mnode;
+            ULONG i = 0;
+
+            ForEachMailNode(folder.messages, mnode)
+            {
+              BusySet(++i);
+              RepackMailFile(mnode->mail, folder.Mode, folder.Password);
+            }
           }
+
+          UnlockMailList(folder.messages);
+
           BusyEnd();
 
           oldfolder->Mode = newmode;
@@ -1690,7 +1760,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       oldfolder->Type = folder.Type;
     }
 
-    if(FO_SaveConfig(&folder))
+    if(FO_SaveConfig(&folder) == TRUE)
       success = TRUE;
   }
   else // if not then a new folder should be generated
@@ -1859,59 +1929,88 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   BOOL takePattern = TRUE;
   BOOL takeAddress = TRUE;
   struct Folder *folder;
-  struct Mail *mail;
+  struct MailNode *mnode;
   int i;
 
+  ENTER();
+
   folder = G->FO->EditFolder;
-  if(!folder) return;
-
-  mail = folder->Messages;
-  if(!mail) return;
-
-  toPattern = mail->To.Address;
-  toAddress = mail->To.Address;
-
-  for(i=0, mail=mail->Next; mail && i < SCANMSGS; i++, mail = mail->Next)
+  if(folder == NULL)
   {
-    char *result;
-
-    D(DBF_FOLDER, "SWS: [%s] [%s]", toPattern, mail->To.Address);
-
-    // Analyze the ToAdress through the Smith&Waterman algorithm
-    if(takePattern && (result = SWSSearch(toPattern, mail->To.Address)))
-    {
-      if(res)
-        free(res);
-
-      res = strdup(result);
-      if(!res)
-        return;
-
-      toPattern = res;
-
-      // If we reached a #? pattern then we break here
-      if(strcmp(toPattern, "#?") == 0)
-        takePattern = FALSE;
-    }
-
-    // Lets check if the toAddress kept the same and then we can use
-    // it for the TOADDRESS string gadget
-    if(takeAddress && stricmp(toAddress, mail->To.Address) != 0)
-      takeAddress = FALSE;
+    LEAVE();
+    return;
   }
 
+  if(IsMailListEmpty(folder->messages) == TRUE)
+  {
+    LEAVE();
+    return;
+  }
+
+  mnode = FirstMailNode(folder->messages);
+  toPattern = mnode->mail->To.Address;
+  toAddress = mnode->mail->To.Address;
+
+  LockMailList(folder->messages);
+
+  i = 0;
+  ForEachMailNode(folder->messages, mnode)
+  {
+    // skip the first mail as this has already been processed before
+    if(i > 0)
+    {
+      struct Mail *mail = mnode->mail;
+      char *result;
+
+      D(DBF_FOLDER, "SWS: [%s] [%s]", toPattern, mail->To.Address);
+
+      // Analyze the toAdress through the Smith&Waterman algorithm
+      if(takePattern == TRUE && (result = SWSSearch(toPattern, mail->To.Address)) != NULL)
+      {
+        if(res != NULL)
+          free(res);
+
+        res = strdup(result);
+        if(res == NULL)
+        {
+          LEAVE();
+          return;
+        }
+
+        toPattern = res;
+
+        // If we reached a #? pattern then we break here
+        if(strcmp(toPattern, "#?") == 0)
+          takePattern = FALSE;
+      }
+
+      // Lets check if the toAddress kept the same and then we can use
+      // it for the TOADDRESS string gadget
+      if(takeAddress == TRUE && stricmp(toAddress, mail->To.Address) != 0)
+        takeAddress = FALSE;
+    }
+
+    if(++i > SCANMSGS)
+      break;
+  }
+
+  UnlockMailList(folder->messages);
+
   // lets make a pattern out of the found SWS string
-  if(takePattern)
+  if(takePattern == TRUE)
   {
     if(strlen(toPattern) >= 2 && !(toPattern[0] == '#' && toPattern[1] == '?'))
     {
-      if(res)
+      if(res != NULL)
         res = realloc(res, strlen(res)+3);
-      else if((res = malloc(strlen(toPattern)+3)))
+      else if((res = malloc(strlen(toPattern)+3)) != NULL)
         strlcpy(res, toPattern, strlen(toPattern));
 
-      if(!res)
+      if(res == NULL)
+      {
+        LEAVE();
         return;
+      }
 
       // move the actual string to the back and copy the wildcard in front of it.
       memmove(&res[2], res, strlen(res)+1);
@@ -1923,12 +2022,16 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
 
     if(strlen(toPattern) >= 2 && !(toPattern[strlen(toPattern)-2] == '#' && toPattern[strlen(toPattern)-1] == '?'))
     {
-      if(res)
+      if(res != NULL)
         res = realloc(res, strlen(res)+3);
-      else if((res = malloc(strlen(toPattern)+3)))
+      else if((res = malloc(strlen(toPattern)+3)) != NULL)
         strlcpy(res, toPattern, strlen(toPattern));
 
-      if(!res) return;
+      if(res == NULL)
+      {
+        LEAVE();
+        return;
+      }
 
       // and now copy also the wildcard at the back of the string
       strcat(res, "#?");
@@ -1945,8 +2048,12 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   setstring(G->FO->GUI.ST_MLADDRESS, takeAddress ? toAddress : notRecog);
 
   // lets free all resources now
-  if(res) free(res);
+  if(res != NULL)
+    free(res);
+
   SWSSearch(NULL, NULL);
+
+  LEAVE();
 }
 MakeStaticHook(FO_MLAutoDetectHook, FO_MLAutoDetectFunc);
 

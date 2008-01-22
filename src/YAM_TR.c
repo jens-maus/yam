@@ -5521,7 +5521,6 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
                 if((newMail = memdup(mail, sizeof(struct Mail))) != NULL)
                 {
                   newMail->Reference = mail;
-                  newMail->Next = NULL;
 
                   // set index and transfer flags to LOAD
                   mtn->index = ++c;

@@ -35,6 +35,15 @@
 
 #include "Debug.h"
 
+/// InitMailList
+// initialize a mail list
+void InitMailList(struct MailList *mlist)
+{
+  NewList((struct List *)&mlist->list);
+  mlist->count = 0;
+}
+
+///
 /// CreateMailList
 // create a new list for mails
 struct MailList *CreateMailList(void)
@@ -120,7 +129,7 @@ struct MailList *CloneMailList(struct MailList *mlist)
 
       ForEachMailNode(mlist, mnode)
       {
-        AddMailNode(clone, mnode->mail);
+        AddNewMailNode(clone, mnode->mail);
       }
 
       UnlockMailList(mlist);
@@ -139,10 +148,10 @@ struct MailList *CloneMailList(struct MailList *mlist)
 }
 
 ///
-/// AddMailNode
-// add a mail to an existing list
+/// AddNewMailNode
+// add a new mail to an existing list
 // if locking of the list is needed this must be done by the calling function
-struct MailNode *AddMailNode(struct MailList *mlist, struct Mail *mail)
+struct MailNode *AddNewMailNode(struct MailList *mlist, struct Mail *mail)
 {
   struct MailNode *mnode = NULL;
 
@@ -169,6 +178,27 @@ struct MailNode *AddMailNode(struct MailList *mlist, struct Mail *mail)
   // return the new mail node in case someone is interested in it
   RETURN(mnode);
   return mnode;
+}
+
+///
+/// AddMailNode
+// add a mail node to an existing list
+// if locking of the list is needed this must be done by the calling function
+void AddMailNode(struct MailList *mlist, struct MailNode *mnode)
+{
+  ENTER();
+
+  // we only accept existing mails
+  if(mlist != NULL && mnode != NULL)
+  {
+    // add the new mail node to the end of the list
+    AddTail((struct List *)&mlist->list, (struct Node *)&mnode->node);
+
+    // and increase the counter
+    mlist->count++;
+  }
+
+  LEAVE();
 }
 
 ///
@@ -340,6 +370,37 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
   }
 
   LEAVE();
+}
+
+///
+/// MailListToMailArray
+// convert a mail list to a mail array
+struct Mail **MailListToMailArray(struct MailList *mlist)
+{
+  struct Mail **marray = NULL;
+
+  ENTER();
+
+  if(mlist != NULL)
+  {
+    // we allocate at least the terminating NULL entry
+    if((marray = (struct Mail **)calloc(mlist->count + 1, sizeof(struct Mail *))) != NULL)
+    {
+      if(IsMailListEmpty(mlist) == FALSE)
+      {
+        struct Mail **mptr = marray;
+        struct MailNode *mnode;
+
+        ForEachMailNode(mlist, mnode)
+        {
+          *mptr++ = mnode->mail;
+        }
+      }
+    }
+  }
+
+  RETURN(marray);
+  return marray;
 }
 
 ///

@@ -1920,16 +1920,23 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
 
   if((fo = FO_GetFolderByType(FT_OUTGOING, NULL)) != NULL)
   {
-    struct Mail *mail;
+    LockMailList(fo->messages);
 
-    for(mail = fo->Messages; mail; mail = mail->Next)
+    if(IsMailListEmpty(fo->messages) == FALSE)
     {
-      if(!hasStatusHold(mail) && !hasStatusError(mail))
+      struct MailNode *mnode;
+
+      ForEachMailNode(fo->messages, mnode)
       {
-        sendableMail = TRUE;
-        break;
+        if(!hasStatusHold(mnode->mail) && !hasStatusError(mnode->mail))
+        {
+          sendableMail = TRUE;
+          break;
+        }
       }
     }
+
+    UnlockMailList(fo->messages);
 
     // in case the folder contains
     // mail which could be sent, we ask the

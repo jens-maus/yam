@@ -938,48 +938,57 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
 
       for(i = 0; i < sfonum && G->FI->Abort == FALSE; i++)
       {
-        struct Mail *mail;
+        LockMailList(sfo[i]->messages);
 
-        for(mail = sfo[i]->Messages; mail != NULL && G->FI->Abort == FALSE; mail = mail->Next)
+        if(IsMailListEmpty(sfo[i]->messages) == FALSE)
         {
-          if(FI_DoSearch(&search, mail) == TRUE)
+          struct MailNode *mnode;
+
+          ForEachMailNode(sfo[i]->messages, mnode)
           {
-            DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
-            fndmsg++;
-          }
+            struct Mail *mail = mnode->mail;
 
-          // increase the progress counter
-          progress++;
-
-          // then we update the gauge, but we take also care of not refreshing
-          // it too often or otherwise it slows down the whole search process.
-          GetSysTime(TIMEVAL(&now));
-          if(-CmpTime(TIMEVAL(&now), TIMEVAL(&last)) > 0)
-          {
-            struct TimeVal delta;
-
-            // how much time has passed exactly?
-            memcpy(&delta, &now, sizeof(struct TimeVal));
-            SubTime(TIMEVAL(&delta), TIMEVAL(&last));
-
-            // update the display at least twice a second
-            if(delta.Seconds > 0 || delta.Microseconds > 250000)
+            if(FI_DoSearch(&search, mail) == TRUE)
             {
-              // update the gauge
-              set(ga, MUIA_Gauge_Current, progress);
-              // let the list show the found mails so far
-              set(lv, MUIA_NList_Quiet, FALSE);
+              DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
+              fndmsg++;
+            }
 
-              // signal the application to update now
-              DoMethod(G->App, MUIM_Application_InputBuffered);
+            // increase the progress counter
+            progress++;
 
-              memcpy(&last, &now, sizeof(struct TimeVal));
+            // then we update the gauge, but we take also care of not refreshing
+            // it too often or otherwise it slows down the whole search process.
+            GetSysTime(TIMEVAL(&now));
+            if(-CmpTime(TIMEVAL(&now), TIMEVAL(&last)) > 0)
+            {
+              struct TimeVal delta;
 
-              // forbid immediate display again
-              set(lv, MUIA_NList_Quiet, TRUE);
+              // how much time has passed exactly?
+              memcpy(&delta, &now, sizeof(struct TimeVal));
+              SubTime(TIMEVAL(&delta), TIMEVAL(&last));
+
+              // update the display at least twice a second
+              if(delta.Seconds > 0 || delta.Microseconds > 250000)
+              {
+                // update the gauge
+                set(ga, MUIA_Gauge_Current, progress);
+                // let the list show the found mails so far
+                set(lv, MUIA_NList_Quiet, FALSE);
+
+                // signal the application to update now
+                DoMethod(G->App, MUIM_Application_InputBuffered);
+
+                memcpy(&last, &now, sizeof(struct TimeVal));
+
+                // forbid immediate display again
+                set(lv, MUIA_NList_Quiet, TRUE);
+              }
             }
           }
         }
+
+        UnlockMailList(sfo[i]->messages);
       }
 
       // to let the gauge move to 100% lets increase it accordingly.
@@ -1490,7 +1499,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
   // initialize mlist
   if((mlist = CreateMailList()) != NULL)
   {
-    AddMailNode(mlist, mail);
+    AddNewMailNode(mlist, mail);
 
     // Bounce Action
     if(hasBounceAction(filter) && !filter->remote && *filter->bounceTo)
