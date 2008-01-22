@@ -672,7 +672,7 @@ struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
         }
 
         // let everything fail if there were no mails added to the list
-        if(ContainsMailNodes(mlist) == FALSE)
+        if(IsMailListEmpty(mlist) == TRUE)
         {
           DeleteMailList(mlist);
           mlist = NULL;
