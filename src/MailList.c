@@ -77,14 +77,14 @@ void DeleteMailList(struct MailList *mlist)
   {
     if(mlist->lockSemaphore != NULL)
     {
-      struct MailNode *node;
+      struct MailNode *mnode;
 
       // lock the list just, just for safety reasons
       LockMailList(mlist);
 
       // remove and free all remaining nodes in the list
-      while((node = (struct MailNode *)RemHead((struct List *)&mlist->list)) != NULL)
-        FreeSysObject(ASOT_NODE, node);
+      while((mnode = (struct MailNode *)RemHead((struct List *)&mlist->list)) != NULL)
+        FreeSysObject(ASOT_NODE, mnode);
 
       // unlock the list again
       UnlockMailList(mlist);
@@ -110,18 +110,28 @@ struct MailList *CloneMailList(struct MailList *mlist)
 
   ENTER();
 
-  if(mlist != NULL && (clone = CreateMailList()) != NULL)
+  if(mlist != NULL && ContainsMailNodes(mlist) == TRUE)
   {
-    struct MailNode *mnode;
-
-    LockMailList(mlist);
-
-    ForEachMailNode(mlist, mnode)
+    if((clone = CreateMailList()) != NULL)
     {
-      AddMailNode(clone, mnode->mail);
-    }
+      struct MailNode *mnode;
 
-    UnlockMailList(mlist);
+      LockMailList(mlist);
+
+      ForEachMailNode(mlist, mnode)
+      {
+        AddMailNode(clone, mnode->mail);
+      }
+
+      UnlockMailList(mlist);
+
+      // let everything fail if there were no mails added to the list
+      if(ContainsMailNodes(clone) == FALSE)
+      {
+        DeleteMailList(clone);
+        clone = NULL;
+      }
+    }
   }
 
   RETURN(clone);
@@ -130,6 +140,8 @@ struct MailList *CloneMailList(struct MailList *mlist)
 
 ///
 /// AddMailNode
+// add a mail to an existing list
+// if locking of the list is needed this must be done by the calling function
 struct MailNode *AddMailNode(struct MailList *mlist, struct Mail *mail)
 {
   struct MailNode *mnode = NULL;
@@ -154,33 +166,50 @@ struct MailNode *AddMailNode(struct MailList *mlist, struct Mail *mail)
     }
   }
 
-  // return the new mail node in case someone is interesed in it
+  // return the new mail node in case someone is interested in it
   RETURN(mnode);
   return mnode;
 }
 
 ///
 /// RemoveMailNode
+// remove a mail node from the list, the node is NOT freed
+// if locking of the list is needed this must be done by the calling function
 void RemoveMailNode(struct MailList *mlist, struct MailNode *mnode)
 {
   ENTER();
 
-  // remove the mail node from the list
-  Remove((struct Node *)&mnode->node);
+  if(mlist != NULL && mnode != NULL)
+  {
+    // remove the mail node from the list
+    Remove((struct Node *)&mnode->node);
 
-  // and decrease the counter
-  mlist->count--;
+    // and decrease the counter
+    mlist->count--;
+  }
+
+  LEAVE();
+}
+
+///
+/// DeleteMailNode
+// free a mail node that does not belong to a list
+void DeleteMailNode(struct MailNode *mnode)
+{
+  ENTER();
+
+  FreeSysObject(ASOT_NODE, mnode);
 
   LEAVE();
 }
 
 ///
 /// LockMailList
-void LockMailList(struct MailList *list)
+void LockMailList(struct MailList *mlist)
 {
   ENTER();
 
-  ObtainSemaphore(list->lockSemaphore);
+  ObtainSemaphore(mlist->lockSemaphore);
 
   LEAVE();
 }
@@ -204,7 +233,7 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
   ENTER();
 
   // sort only if there is something to sort at all
-  if(mlist->count > 1)
+  if(mlist != NULL && mlist->count > 1)
   {
     // we use standard lists and node instead of MinLists and MinNodes to avoid too
     // much type casting, which in fact only pleases the compiler

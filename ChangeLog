@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-22  Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailList.c: added some more comments about when to lock a list of mails and
+    added a new macro to check for empty lists.
+
+
 2008-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * ReadWindow.c: minor optimization to not allocate a mail list for all
