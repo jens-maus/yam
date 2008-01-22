@@ -1003,7 +1003,10 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 
       // if BusySet() returns FALSE, then the user aborted
       if(BusySet(++i) == FALSE)
+      {
+        selected = i;
         break;
+      }
     }
     BusyEnd();
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
