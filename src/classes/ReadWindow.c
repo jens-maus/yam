@@ -684,49 +684,50 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
   // then create a new mail depending on the current mode
   if(MailExists(mail, NULL))
   {
-    struct MailList *mlist;
+    enum NewMode mode;
+    int flags;
 
-    if((mlist = CreateMailList()) != NULL)
+    // get the newmail flags depending on the currently
+    // set qualifier keys. We submit these flags to the
+    // NewMessage() function later on
+    mode = CheckNewMailQualifier(msg->mode, msg->qualifier, &flags);
+
+    switch(mode)
     {
-      enum NewMode mode = msg->mode;
-      int flags;
+      case NEW_NEW:
+        MA_NewNew(mail, flags);
+      break;
 
-      // add the mail to the list of mails for those functions which need it
-      AddMailNode(mlist, mail);
+      case NEW_EDIT:
+        MA_NewEdit(mail, flags);
+      break;
 
-      // get the newmail flags depending on the currently
-      // set qualifier keys. We submit these flags to the
-      // NewMessage() function later on
-      mode = CheckNewMailQualifier(mode, msg->qualifier, &flags);
+      case NEW_BOUNCE:
+        MA_NewBounce(mail, flags);
+      break;
 
-      switch(mode)
+      case NEW_FORWARD:
+      case NEW_REPLY:
       {
-        case NEW_NEW:
-          MA_NewNew(mail, flags);
-        break;
+        struct MailList *mlist;
 
-        case NEW_EDIT:
-          MA_NewEdit(mail, flags);
-        break;
+        if((mlist = CreateMailList()) != NULL)
+        {
+          AddMailNode(mlist, mail);
 
-        case NEW_BOUNCE:
-          MA_NewBounce(mail, flags);
-        break;
+          if(mode == NEW_FORWARD)
+            MA_NewForward(mlist, flags);
+          else
+            MA_NewReply(mlist, flags);
 
-        case NEW_FORWARD:
-          MA_NewForward(mlist, flags);
-        break;
-
-        case NEW_REPLY:
-          MA_NewReply(mlist, flags);
-        break;
-
-        default:
-         // nothing
-        break;
+          DeleteMailList(mlist);
+        }
       }
+      break;
 
-      DeleteMailList(mlist);
+      default:
+       // nothing
+      break;
     }
   }
 

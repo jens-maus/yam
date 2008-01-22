@@ -7,6 +7,8 @@ $URL$
 
 2008-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ReadWindow.c: minor optimization to not allocate a mail list for all
+    operations (new,reply, etc.)
   * YAM_MA.c: the number of moved and copied mails were calculated incorrect
     in case an action was aborted.
   * YAM_MA.c: changed the MA_CompareByDate() function to only accept pointers
