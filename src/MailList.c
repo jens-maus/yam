@@ -199,7 +199,7 @@ void UnlockMailList(struct MailList *mlist)
 ///
 /// SortMailList
 // sort a list of mails with a comparison function
-void SortMailList(struct MailList *mlist, int (* compare)(const void *m1, const void *m2))
+void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1, const struct Mail *m2))
 {
   ENTER();
 

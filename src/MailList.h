@@ -55,7 +55,7 @@ void RemoveMailNode(struct MailList *mlist, struct MailNode *mnode);
 void DeleteMailNode(struct MailNode *mnode);
 void LockMailList(struct MailList *mlist);
 void UnlockMailList(struct MailList *mlist);
-void SortMailList(struct MailList *mlist, int (* compare)(const void *m1, const void *m2));
+void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1, const struct Mail *m2));
 
 // iterate through the list, the list must *NOT* be modified!
 #define ForEachMailNode(mlist, mnode)   for(mnode = (struct MailNode *)(mlist)->list.mlh_Head; mnode->node.mln_Succ != NULL; mnode = (struct MailNode *)mnode->node.mln_Succ)

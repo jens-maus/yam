@@ -7,6 +7,8 @@ $URL$
 
 2008-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: changed the MA_CompareByDate() function to only accept pointers
+    of struct Mail rather than a generic void pointer.
   * YAM_MA.c: fix a possible bug in the updated MA_CreateMarkedList() function
     where the function itself did not return a NULL in case no mails were
     selected and/or active.

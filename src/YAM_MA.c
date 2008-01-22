@@ -1508,12 +1508,9 @@ static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 ///
 /// MA_CmpDate
 //  Compares two messages by date
-int MA_CompareByDate(const void *p1, const void *p2)
+int MA_CompareByDate(const struct Mail *m1, const struct Mail *m2)
 {
-  struct Mail *pentry1 = (struct Mail *)p1;
-  struct Mail *pentry2 = (struct Mail *)p2;
-
-  return CompareDates(&pentry2->Date, &pentry1->Date);
+  return CompareDates(&m2->Date, &m1->Date);
 }
 
 ///
