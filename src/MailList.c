@@ -104,7 +104,7 @@ void DeleteMailList(struct MailList *mlist)
     }
 
     // free the list itself
-    FreeSysObject(ASOT_PORT, mlist);
+    FreeSysObject(ASOT_LIST, mlist);
   }
 
   LEAVE();

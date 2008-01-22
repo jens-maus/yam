@@ -28,6 +28,9 @@ $URL$
 
 2008-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * MailList.c: fixed a nasty bug in the new mail list implementation which
+    caused heaps of memguard hits when deleting a mail node. We got it,
+    Thore! :)
   * MailList.c,MailList.h: converted the Lock/UnlockMailList() functions to
     preprocessor macros which should be more convienent. :)
   * ReadWindow.c: minor optimization to not allocate a mail list for all
