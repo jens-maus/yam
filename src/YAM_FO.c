@@ -614,7 +614,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
     {
       // Here we cannot remove the BC_FImage from the BC_GROUP because the
       // destructor of the Folder Listtree will call this function and then
-      // this BC_GROUP doesn`t exists anymore. -> Enforcer hit !
+      // this BC_GROUP doesn't exists anymore. -> Enforcer hit !
       // so if the user is going to remove this folder by hand we will remove
       // the BC_FImage of it in the FO_DeleteFolderFunc() before the destructor
       // is going to call this function.
@@ -627,9 +627,28 @@ BOOL FO_FreeFolder(struct Folder *folder)
       // added it with OM_ADDMEMBER.
     }
 
+    if(folder->messages != NULL)
+    {
+      // free all the mail pointers in the list
+      LockMailList(folder->messages);
+
+      if(IsMailListEmpty(folder->messages) == FALSE)
+      {
+        struct MailNode *mnode;
+
+        ForEachMailNode(folder->messages, mnode)
+        {
+          free(mnode->mail);
+        }
+      }
+
+      UnlockMailList(folder->messages);
+    }
+
+    // free the mail list itself
     DeleteMailList(folder->messages);
 
-    // now it`s time to deallocate the folder itself
+    // now it's time to deallocate the folder itself
     free(folder);
     result = TRUE;
   }

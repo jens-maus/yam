@@ -7,6 +7,8 @@ $URL$
 
 2008-01-23  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: upon deleting a folder (i.e. at program shutdown) the mails
+    themself were not deallocated.
   * YAM_EA.c: cleaned up according to the STYLEGUIDE.
   * ImageArea.c: fixed the width/height calculation for scaled images. Very
     small dimensions could result in a zero width or height which made
