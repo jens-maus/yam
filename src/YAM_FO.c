@@ -627,7 +627,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
       // added it with OM_ADDMEMBER.
     }
 
-    if(folder->messages != NULL)
+    if(!isGroupFolder(folder))
     {
       // free all the mail pointers in the list
       LockMailList(folder->messages);
