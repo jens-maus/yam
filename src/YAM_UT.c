@@ -95,6 +95,10 @@
 
 #define CRYPTBYTE 164
 
+#if !defined(SDTA_Cycles)
+#define SDTA_Cycles           (SDTA_Dummy + 6)
+#endif
+
 struct UniversalClassData
 {
    struct UniversalGUIData { APTR WI; } GUI;
