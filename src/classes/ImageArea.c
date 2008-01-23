@@ -221,14 +221,20 @@ static void Image_Scale(struct Data *data)
       if(scaleHeightDiff > scaleWidthDiff)
       {
         scaleFactor = (double)oldWidth / (double)oldHeight;
-        newWidth = scaleFactor * data->maxHeight + 0.5; // roundup the value
+        newWidth = scaleFactor * data->maxHeight;
+        // force a width of a least one pixel
+        if(newWidth < 1)
+          newWidth = 1;
         newHeight = data->maxHeight;
       }
       else
       {
         scaleFactor = (double)oldHeight / (double)oldWidth;
         newWidth = data->maxWidth;
-        newHeight = scaleFactor * data->maxWidth + 0.5; // roundup the value
+        newHeight = scaleFactor * data->maxWidth;
+        // force a height of a least one pixel
+        if(newHeight < 1)
+          newHeight = 1;
       }
 
       // in case we have image data with an alpha channel embedded we
@@ -237,9 +243,7 @@ static void Image_Scale(struct Data *data)
       {
         BOOL result;
 
-        result = DoMethod(data->imageNode.dt_obj, PDTM_SCALE, newWidth > 0 ? newWidth : 1,
-                                                              newHeight > 0 ? newHeight : 1,
-                                                              0);
+        result = DoMethod(data->imageNode.dt_obj, PDTM_SCALE, newWidth, newHeight, 0);
         #if defined(__MORPHOS__)
         // MorphOS < v2.0 may return an invalid value for the PDTM_SCALE method
         // so ignore it

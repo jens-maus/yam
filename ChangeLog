@@ -7,6 +7,11 @@ $URL$
 
 2008-01-23  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageArea.c: fixed the width/height calculation for scaled images. Very
+    small dimensions could result in a zero width or height which made
+    picture.datatype go mad. Also made sure that the resulting image dimensions
+    don't exceed the wanted maximum dimensions by not rounding up the scaled
+    dimensions.
   * YAM_UT.c: added a type cast to please GCC.
 
 2008-01-22  Vit Sindlar <sindlarv at centrum dot cz>
