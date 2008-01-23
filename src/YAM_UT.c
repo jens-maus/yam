@@ -6111,10 +6111,10 @@ BOOL PlaySound(const char *filename)
       DisposeDTObject(G->NewMailSound_Obj);
 
     // create the new datatype object
-    if((G->NewMailSound_Obj = NewDTObject(filename, DTA_SourceType, DTST_FILE,
-                                                    DTA_GroupID,    GID_SOUND,
-                                                    SDTA_Cycles,    1,
-                                                    TAG_DONE)) != NULL)
+    if((G->NewMailSound_Obj = NewDTObject((char *)filename, DTA_SourceType, DTST_FILE,
+                                                            DTA_GroupID,    GID_SOUND,
+                                                            SDTA_Cycles,    1,
+                                                            TAG_DONE)) != NULL)
     {
       // create a datatype trigger
       struct dtTrigger dtt;

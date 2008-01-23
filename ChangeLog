@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-23  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: added a type cast to please GCC.
+
 2008-01-22  Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.
