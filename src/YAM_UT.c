@@ -6097,8 +6097,10 @@ BOOL CheckPrinter(void)
 ///
 /// PlaySound
 //  Plays a sound file using datatypes
-void PlaySound(char *filename)
+BOOL PlaySound(const char *filename)
 {
+  BOOL result = FALSE;
+
   ENTER();
 
   if(DataTypesBase != NULL)
@@ -6106,33 +6108,16 @@ void PlaySound(char *filename)
     // if we previously created a sound object
     // lets dispose it first.
     if(G->NewMailSound_Obj != NULL)
-    {
-      // create a datatype trigger
-      struct dtTrigger dtt;
-      ULONG result;
-
-      // Fill the trigger
-      dtt.MethodID     = DTM_TRIGGER;
-      dtt.dtt_GInfo    = NULL;
-      dtt.dtt_Function = STM_STOP;
-      dtt.dtt_Data     = NULL;
-
-      // stop the sound by calling DoDTMethodA()
-      result = DoDTMethodA(G->NewMailSound_Obj, NULL, NULL, (APTR)&dtt);
-      D(DBF_UTIL, "stopping playback returned %ld", result);
-
-      // finally dispose the old object
       DisposeDTObject(G->NewMailSound_Obj);
-    }
 
     // create the new datatype object
-    if((G->NewMailSound_Obj = NewDTObject(filename, DTA_GroupID,    GID_SOUND,
-                                                    DTA_SourceType, DTST_FILE,
+    if((G->NewMailSound_Obj = NewDTObject(filename, DTA_SourceType, DTST_FILE,
+                                                    DTA_GroupID,    GID_SOUND,
+                                                    SDTA_Cycles,    1,
                                                     TAG_DONE)) != NULL)
     {
       // create a datatype trigger
       struct dtTrigger dtt;
-      ULONG result;
 
       // Fill the trigger
       dtt.MethodID     = DTM_TRIGGER;
@@ -6140,15 +6125,20 @@ void PlaySound(char *filename)
       dtt.dtt_Function = STM_PLAY;
       dtt.dtt_Data     = NULL;
 
-      // Play the sound by calling DoDTMethodA()
-      result = DoDTMethodA(G->NewMailSound_Obj, NULL, NULL, (APTR)&dtt);
-      D(DBF_UTIL, "starting playback of '%s' returned %ld", filename, result);
+      // Play the sound by calling DoMethodA()
+      if(DoMethodA(G->NewMailSound_Obj, (APTR)&dtt) == 1)
+        result = TRUE;
+
+      D(DBF_UTIL, "started playback of '%s' returned %ld", filename, result);
     }
     else
       W(DBF_UTIL, "failed to create sound DT object from '%s'", filename);
   }
+  else
+    W(DBF_UTIL, "datatypes.library missing, no sound playback!");
 
-  LEAVE();
+  RETURN(result);
+  return result;
 }
 ///
 /// MatchExtension

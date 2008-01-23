@@ -822,7 +822,12 @@ MakeStaticHook(ImportMimeTypesHook, ImportMimeTypesFunc);
 //  Plays sound file referred by the string gadget
 HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
 {
-   PlaySound((STRPTR)xget((Object *)arg[0], MUIA_String_Contents));
+  ENTER();
+
+  if(PlaySound((STRPTR)xget((Object *)arg[0], MUIA_String_Contents)) == FALSE)
+    MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_Okay), tr(MSG_ERROR_PLAYSOUND));
+
+  LEAVE();
 }
 MakeStaticHook(CO_PlaySoundHook,CO_PlaySoundFunc);
 ///
@@ -1311,7 +1316,7 @@ HOOKPROTONHNONP(ResetSpamTrainingDataFunc, void)
 {
   ENTER();
 
-  if (MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_SPAM_RESETTRAININGDATAASK)))
+  if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_SPAM_RESETTRAININGDATAASK)))
   {
     BayesFilterResetTrainingData();
 

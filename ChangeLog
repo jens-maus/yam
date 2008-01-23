@@ -28,6 +28,12 @@ $URL$
 
 2008-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c, YAM_utilities.h, YAM_COg.c: reworked the PlaySound function to
+    not try to stop any still open datatype object via STM_STOP as this may
+    cause runtime trouble. Just disposing the object and recreating/playing
+    it should be enough and exactly what others or doing. In addition, we
+    are now warning the user in case the STM_PLAY trigger method didn't work
+    on a sound file, when testing the sound in the configuration.
   * MailList.c: fixed a nasty bug in the new mail list implementation which
     caused heaps of memguard hits when deleting a mail node. We got it,
     Thore! :)
