@@ -568,6 +568,7 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
       folder->Sort[0] = 1;
       folder->Sort[1] = 3;
       folder->Type = type;
+
       // set the standard icon images, or none for a custom folder
       switch(type)
       {
@@ -578,9 +579,11 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
         case FT_SPAM:     folder->ImageIndex = FICON_ID_SPAM;     break;
         default:          folder->ImageIndex = -1;                break;
       }
+
       strlcpy(folder->Path, path, sizeof(folder->Path));
       strlcpy(folder->Name, name, sizeof(folder->Name));
-      if(!CreateDirectory(GetFolderDir(folder)))
+
+      if(CreateDirectory(GetFolderDir(folder)) == FALSE)
       {
         DeleteMailList(folder->messages);
         free(folder);
@@ -651,6 +654,8 @@ BOOL FO_FreeFolder(struct Folder *folder)
     // now it's time to deallocate the folder itself
     free(folder);
     result = TRUE;
+
+    D(DBF_FOLDER, "freed folder '%s'", folder->Name);
   }
 
   RETURN(result);
@@ -1789,62 +1794,70 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     memset(&folder, 0, sizeof(struct Folder));
     folder.ImageIndex = -1;
 
-    FO_PutFolder(&folder);
-
-    // lets first check for a valid folder name
-    // if the foldername is empty or the new name already exists it`s invalid
-    if(folder.Name[0] == '\0' || FO_GetFolderByName(folder.Name, NULL) != NULL)
+    if((folder.messages = CreateMailList()) != NULL)
     {
-      MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
+      FO_PutFolder(&folder);
 
-      LEAVE();
-      return;
-    }
-
-    // lets check if entered folder path is valid or not
-    if(folder.Path[0] == '\0')
-    {
-      MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERPATHINVALID));
-
-      LEAVE();
-      return;
-    }
-    else if(FileExists(folder.Path) == TRUE) // check if something with folder.Path already exists
-    {
-      result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDEREXISTS));
-    }
-    else
-      result = TRUE;
-
-    // only if the user want to proceed we go on.
-    if(result)
-    {
-      if(isProtectedFolder(&folder) && FO_EnterPassword(&folder) == FALSE)
+      // lets first check for a valid folder name
+      // if the foldername is empty or the new name already exists it`s invalid
+      if(folder.Name[0] == '\0' || FO_GetFolderByName(folder.Name, NULL) != NULL)
       {
+        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
+
         LEAVE();
         return;
       }
 
-      if(CreateDirectory(GetFolderDir(&folder)) == TRUE)
+      // lets check if entered folder path is valid or not
+      if(folder.Path[0] == '\0')
       {
-        if(FO_SaveConfig(&folder) == TRUE)
+        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERPATHINVALID));
+
+        LEAVE();
+        return;
+      }
+      else if(FileExists(folder.Path) == TRUE) // check if something with folder.Path already exists
+      {
+        result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDEREXISTS));
+      }
+      else
+        result = TRUE;
+
+      // only if the user want to proceed we go on.
+      if(result)
+      {
+        if(isProtectedFolder(&folder) && FO_EnterPassword(&folder) == FALSE)
         {
-          struct Folder *prevFolder;
+          LEAVE();
+          return;
+        }
 
-          prevFolder = FO_GetCurrentFolder();
-          if(prevFolder != NULL && isGroupFolder(prevFolder))
+        if(CreateDirectory(GetFolderDir(&folder)) == TRUE)
+        {
+          if(FO_SaveConfig(&folder) == TRUE)
           {
-            // add the folder to the end of the current folder group
-            DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, FO_GetFolderTreeNode(prevFolder), MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
-          }
-          else
-          {
-            // add the folder after the current folder
-            DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
-          }
+            struct Folder *prevFolder;
 
-          oldfolder = &folder;
-          success = TRUE;
+            prevFolder = FO_GetCurrentFolder();
+            if(prevFolder != NULL && isGroupFolder(prevFolder))
+            {
+              // add the folder to the end of the current folder group
+              DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, FO_GetFolderTreeNode(prevFolder), MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
+            }
+            else
+            {
+              // add the folder after the current folder
+              DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
+            }
+
+            oldfolder = &folder;
+            success = TRUE;
+          }
+        }
+        else
+        {
+          LEAVE();
+          return;
         }
       }
       else

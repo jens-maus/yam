@@ -4140,6 +4140,8 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
       // free the mail pointer
       free(mail);
     }
+
+    D(DBF_FOLDER, "cleared mail list of folder '%s'", folder->Name);
   }
 
   // reset the list of mails

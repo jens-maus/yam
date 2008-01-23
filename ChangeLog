@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FO.c: fixed a crash issue where creating a new folder just generated
+    an empty struct Folder without any mail list. It seems the whole folder
+    management needs some large rework as it seems to be quite a mess...
+
 2008-01-23  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: upon deleting a folder (i.e. at program shutdown) the mails
