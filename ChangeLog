@@ -28,6 +28,9 @@ $URL$
 
 2008-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: fixed another recenntly introduced bug where a RemoveMailNode
+    was not necessary and caused an illegal memory access when deleting old
+    mails during shutdown of YAM.
   * YAM_UT.c, YAM_utilities.h, YAM_COg.c: reworked the PlaySound function to
     not try to stop any still open datatype object via STM_STOP as this may
     cause runtime trouble. Just disposing the object and recreating/playing

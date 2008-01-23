@@ -3774,10 +3774,9 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
                  (!hasStatusNew(mail) && hasStatusRead(mail)) ||
                  folder->ExpireUnread == TRUE)
               {
+                // delete the mail. removing/freeing the mail from the folder list
+                // is in fact done by the MA_DeleteSingle() function itself.
                 MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE, FALSE);
-                // remove the mail node from this folder and free it
-                RemoveMailNode(folder->messages, mnode);
-                DeleteMailNode(mnode);
                 mailsDeleted = TRUE;
               }
             }
