@@ -83,13 +83,21 @@ int EA_Init(enum ABEntry_Type type, struct ABEntry *ab)
 
     switch (type)
     {
-      case AET_USER:  title = ab ? tr(MSG_EA_EditUser) : tr(MSG_AB_AddUser); break;
-      case AET_LIST:  title = ab ? tr(MSG_EA_EditList) : tr(MSG_AB_AddList); break;
-      case AET_GROUP: title = ab ? tr(MSG_EA_EditGroup): tr(MSG_AB_AddGroup); break;
+      case AET_USER:
+        title = (ab != NULL) ? tr(MSG_EA_EditUser) : tr(MSG_AB_AddUser);
+      break;
+
+      case AET_LIST:
+        title = (ab != NULL) ? tr(MSG_EA_EditList) : tr(MSG_AB_AddList);
+      break;
+
+      case AET_GROUP:
+        title = (ab != NULL) ? tr(MSG_EA_EditGroup): tr(MSG_AB_AddGroup);
+      break;
     }
 
     set(ea->GUI.WI, MUIA_Window_Title, title);
-    if(SafeOpenWindow(ea->GUI.WI))
+    if(SafeOpenWindow(ea->GUI.WI) == TRUE)
     {
       set(ea->GUI.WI, MUIA_Window_ActiveObject, ea->GUI.ST_ALIAS);
     }
@@ -109,44 +117,64 @@ int EA_Init(enum ABEntry_Type type, struct ABEntry *ab)
 //  Setup GUI fields with data from adress book entry
 void EA_Setup(int winnum, struct ABEntry *ab)
 {
-   struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
-   char *ptr;
+  struct EA_GUIData *gui = &G->EA[winnum]->GUI;
 
-   switch (ab->Type)
-   {
-      case AET_USER:   setstring(gui->ST_ALIAS, ab->Alias);
-                       setstring(gui->ST_REALNAME, ab->RealName);
-                       setstring(gui->ST_ADDRESS, ab->Address);
-                       setstring(gui->ST_PHONE, ab->Phone);
-                       setstring(gui->ST_STREET, ab->Street);
-                       setstring(gui->ST_CITY, ab->City);
-                       setstring(gui->ST_COUNTRY, ab->Country);
-                       nnset(gui->ST_PGPKEY,MUIA_String_Contents,ab->PGPId);
-                       /* avoid triggering notification to "default security" cycle */
-                       setcycle(gui->CY_DEFSECURITY,ab->DefSecurity);
-                       setstring(gui->ST_HOMEPAGE, ab->Homepage);
-                       setstring(gui->ST_COMMENT, ab->Comment);
-                       setstring(gui->ST_BIRTHDAY, AB_ExpandBD(ab->BirthDay));
-                       EA_SetPhoto(winnum, ab->Photo);
-                       break;
-      case AET_LIST:   setstring(gui->ST_ALIAS, ab->Alias);
-                       setstring(gui->ST_REALNAME, ab->RealName);
-                       setstring(gui->ST_ADDRESS, ab->Address);
-                       setstring(gui->ST_COMMENT, ab->Comment);
-                       DoMethod(gui->LV_MEMBER, MUIM_NList_Clear);
-                       for (ptr = ab->Members; *ptr; ptr++)
-                       {
-                          char *nptr = strchr(ptr, '\n');
-                          if (nptr) *nptr = 0; else break;
-                          DoMethod(gui->LV_MEMBER, MUIM_NList_InsertSingle, ptr, MUIV_NList_Insert_Bottom);
-                          *nptr = '\n';
-                          ptr = nptr;
-                       }
-                       break;
-      case AET_GROUP:  setstring(gui->ST_ALIAS, ab->Alias);
-                       setstring(gui->ST_COMMENT, ab->Comment);
-                       break;
-   }
+  ENTER();
+
+  switch (ab->Type)
+  {
+    case AET_USER:
+    {
+      setstring(gui->ST_ALIAS, ab->Alias);
+      setstring(gui->ST_REALNAME, ab->RealName);
+      setstring(gui->ST_ADDRESS, ab->Address);
+      setstring(gui->ST_PHONE, ab->Phone);
+      setstring(gui->ST_STREET, ab->Street);
+      setstring(gui->ST_CITY, ab->City);
+      setstring(gui->ST_COUNTRY, ab->Country);
+      nnset(gui->ST_PGPKEY,MUIA_String_Contents,ab->PGPId);
+      /* avoid triggering notification to "default security" cycle */
+      setcycle(gui->CY_DEFSECURITY,ab->DefSecurity);
+      setstring(gui->ST_HOMEPAGE, ab->Homepage);
+      setstring(gui->ST_COMMENT, ab->Comment);
+      setstring(gui->ST_BIRTHDAY, AB_ExpandBD(ab->BirthDay));
+      EA_SetPhoto(winnum, ab->Photo);
+    }
+    break;
+
+    case AET_LIST:
+    {
+      char *ptr;
+
+      setstring(gui->ST_ALIAS, ab->Alias);
+      setstring(gui->ST_REALNAME, ab->RealName);
+      setstring(gui->ST_ADDRESS, ab->Address);
+      setstring(gui->ST_COMMENT, ab->Comment);
+      DoMethod(gui->LV_MEMBER, MUIM_NList_Clear);
+      for(ptr = ab->Members; *ptr != '\0'; ptr++)
+      {
+        char *nptr;
+
+        if((nptr = strchr(ptr, '\n')) != NULL)
+          *nptr = '\0';
+        else
+          break;
+        DoMethod(gui->LV_MEMBER, MUIM_NList_InsertSingle, ptr, MUIV_NList_Insert_Bottom);
+        *nptr = '\n';
+        ptr = nptr;
+      }
+    }
+    break;
+
+    case AET_GROUP:
+    {
+      setstring(gui->ST_ALIAS, ab->Alias);
+      setstring(gui->ST_COMMENT, ab->Comment);
+    }
+    break;
+  }
+
+  LEAVE();
 }
 ///
 
@@ -155,10 +183,14 @@ void EA_Setup(int winnum, struct ABEntry *ab)
 //  Adds a single entry to the member list by Drag&Drop
 void EA_AddSingleMember(Object *obj, struct MUI_NListtree_TreeNode *tn)
 {
-   struct ABEntry *ab = tn->tn_User;
-   int dropmark = xget(obj, MUIA_List_DropMark);
+  struct ABEntry *ab = tn->tn_User;
+  int dropmark = xget(obj, MUIA_List_DropMark);
 
-   DoMethod(obj, MUIM_List_InsertSingle, ab->Alias ? ab->Alias : ab->RealName, dropmark);
+  ENTER();
+
+  DoMethod(obj, MUIM_List_InsertSingle, (ab->Alias != NULL) ? ab->Alias : ab->RealName, dropmark);
+
+  LEAVE();
 }
 
 ///
@@ -166,14 +198,25 @@ void EA_AddSingleMember(Object *obj, struct MUI_NListtree_TreeNode *tn)
 //  Adds an entire group to the member list by Drag&Drop
 void STACKEXT EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
 {
-   struct MUI_NListtree_TreeNode *tn;
-   int i;
+  struct MUI_NListtree_TreeNode *tn;
+  int i;
 
-   for (i=0; ; i++)
-      if ((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)))
-         if (isFlagSet(tn->tn_Flags, TNF_LIST)) EA_AddMembers(obj, tn);
-         else EA_AddSingleMember(obj, tn);
-      else break;
+  ENTER();
+
+  for(i=0; ; i++)
+  {
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
+    {
+      if(isFlagSet(tn->tn_Flags, TNF_LIST))
+        EA_AddMembers(obj, tn);
+      else
+        EA_AddSingleMember(obj, tn);
+    }
+    else
+      break;
+  }
+
+  LEAVE();
 }
 
 ///
@@ -181,26 +224,36 @@ void STACKEXT EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
 //  Fills string gadget with data from selected list entry
 HOOKPROTONHNO(EA_GetEntry, void, int *arg)
 {
-   int winnum = *arg;
-   char *entry = NULL;
-   DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &entry);
-   if (entry) nnset(G->EA[winnum]->GUI.ST_MEMBER, MUIA_String_Contents, entry);
+  int winnum = *arg;
+  char *entry = NULL;
+
+  ENTER();
+
+  DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &entry);
+  if(entry != NULL)
+    nnset(G->EA[winnum]->GUI.ST_MEMBER, MUIA_String_Contents, entry);
+
+  LEAVE();
 }
 MakeStaticHook(EA_GetEntryHook, EA_GetEntry);
 
 /*** EA_AddFunc - Adds a new entry to the member list ***/
 HOOKPROTONHNO(EA_AddFunc, void, int *arg)
 {
-   struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
-   char *buf = (char *)xget(gui->ST_MEMBER, MUIA_String_Contents);
+  struct EA_GUIData *gui = &G->EA[*arg]->GUI;
+  char *buf = (char *)xget(gui->ST_MEMBER, MUIA_String_Contents);
 
-   if (*buf)
-   {
-      DoMethod(gui->LV_MEMBER, MUIM_NList_InsertSingle, buf, MUIV_NList_Insert_Bottom);
-      nnset(gui->LV_MEMBER, MUIA_NList_Active, MUIV_NList_Active_Off);
-      setstring(gui->ST_MEMBER, "");
-   }
-   set(gui->WI, MUIA_Window_ActiveObject, gui->ST_MEMBER);
+  ENTER();
+
+  if(buf[0] != '\0')
+  {
+    DoMethod(gui->LV_MEMBER, MUIM_NList_InsertSingle, buf, MUIV_NList_Insert_Bottom);
+    nnset(gui->LV_MEMBER, MUIA_NList_Active, MUIV_NList_Active_Off);
+    setstring(gui->ST_MEMBER, "");
+  }
+  set(gui->WI, MUIA_Window_ActiveObject, gui->ST_MEMBER);
+
+  LEAVE();
 }
 MakeStaticHook(EA_AddHook, EA_AddFunc);
 
@@ -209,20 +262,24 @@ MakeStaticHook(EA_AddHook, EA_AddFunc);
 //  Updates selected list entry
 HOOKPROTONHNO(EA_PutEntry, void, int *arg)
 {
-   struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
-   int active = xget(gui->LV_MEMBER, MUIA_NList_Active);
+  struct EA_GUIData *gui = &G->EA[*arg]->GUI;
+  int active = xget(gui->LV_MEMBER, MUIA_NList_Active);
 
-   if(active == MUIV_List_Active_Off)
-   {
-     DoMethod(G->App, MUIM_CallHook, &EA_AddHook, *arg);
-   }
-   else
-   {
-     char *buf = (char *)xget(gui->ST_MEMBER, MUIA_String_Contents);
+  ENTER();
 
-     DoMethod(gui->LV_MEMBER, MUIM_NList_InsertSingle, buf, active);
-     DoMethod(gui->LV_MEMBER, MUIM_NList_Remove, active+1);
-   }
+  if(active == MUIV_List_Active_Off)
+  {
+    DoMethod(G->App, MUIM_CallHook, &EA_AddHook, *arg);
+  }
+  else
+  {
+    char *buf = (char *)xget(gui->ST_MEMBER, MUIA_String_Contents);
+
+    DoMethod(gui->LV_MEMBER, MUIM_NList_InsertSingle, buf, active);
+    DoMethod(gui->LV_MEMBER, MUIM_NList_Remove, active+1);
+  }
+
+  LEAVE();
 }
 MakeStaticHook(EA_PutEntryHook, EA_PutEntry);
 
@@ -231,12 +288,15 @@ MakeStaticHook(EA_PutEntryHook, EA_PutEntry);
 //  Inserts an entry into the address book tree
 void EA_InsertBelowActive(struct ABEntry *addr, int flags)
 {
-  APTR lt = G->AB->GUI.LV_ADDRESSES;
-  struct MUI_NListtree_TreeNode *node, *list;
+  Object *lt = G->AB->GUI.LV_ADDRESSES;
+  struct MUI_NListtree_TreeNode *node;
+  struct MUI_NListtree_TreeNode *list;
+
+  ENTER();
 
   // get the active node
   node = (struct MUI_NListtree_TreeNode *)xget(lt, MUIA_NListtree_Active);
-  if (node == MUIV_NListtree_Active_Off)
+  if(node == MUIV_NListtree_Active_Off)
   {
     list = MUIV_NListtree_Insert_ListNode_Root;
     node = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Insert_PrevNode_Sorted;
@@ -248,6 +308,8 @@ void EA_InsertBelowActive(struct ABEntry *addr, int flags)
 
   // now we insert the node in the list accordingly and set it active automatically
   DoMethod(lt, MUIM_NListtree_Insert, addr->Alias, addr, list, node, (flags | MUIV_NListtree_Insert_Flag_Active), TAG_DONE);
+
+  LEAVE();
 }
 
 ///
@@ -259,11 +321,17 @@ void EA_FixAlias(struct ABEntry *ab, BOOL excludemyself)
   int c = 1, l;
   struct ABEntry *ab_found = NULL;
 
+  ENTER();
+
   strlcpy(alias, ab->Alias, sizeof(alias));
 
   while(AB_SearchEntry(alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &ab_found) > 0)
   {
-    if (excludemyself && ab == ab_found) return;
+    if(excludemyself == TRUE && ab == ab_found)
+    {
+      LEAVE();
+      return;
+    }
 
     if((l = strlen(ab->Alias)) > SIZE_NAME-2)
       l = SIZE_NAME-2;
@@ -273,6 +341,8 @@ void EA_FixAlias(struct ABEntry *ab, BOOL excludemyself)
 
   // copy the modified string back
   strlcpy(ab->Alias, alias, sizeof(ab->Alias));
+
+  LEAVE();
 }
 
 ///
@@ -280,20 +350,45 @@ void EA_FixAlias(struct ABEntry *ab, BOOL excludemyself)
 //  Creates an alias from the real name if user left it empty
 void EA_SetDefaultAlias(struct ABEntry *ab)
 {
-   char *p = ab->Alias, *ln;
+  char *p = ab->Alias;
 
-   memset(p, 0, SIZE_NAME);
-   if (*ab->RealName)
-   {
-      if ((ln = strrchr(ab->RealName, ' ')))
+  ENTER();
+
+  memset(p, 0, SIZE_NAME);
+  if(ab->RealName[0] != '\0')
+  {
+    char *ln;
+
+    if((ln = strrchr(ab->RealName, ' ')) != NULL)
+    {
+      if(isAlNum(ab->RealName[0]))
       {
-         if (isAlNum(ab->RealName[0])) { *p++ = ab->RealName[0]; *p++ = '_'; }
-         ln++;
+        *p++ = ab->RealName[0];
+        *p++ = '_';
       }
-      else ln = ab->RealName;
-      for (; strlen(ab->Alias)<SIZE_NAME-2 && *ln; ln++) if (isAlNum(*ln)) *p++ = *ln;
-   }
-   else for (ln = ab->Address; strlen(ab->Alias)<SIZE_NAME-2 && *ln && *ln != '@'; ln++) if (isAlNum(*ln)) *p++ = *ln;
+      ln++;
+    }
+    else
+      ln = ab->RealName;
+
+    for(; strlen(ab->Alias) < SIZE_NAME-2 && ln[0] != '\0'; ln++)
+    {
+      if(isAlNum(*ln))
+        *p++ = *ln;
+    }
+  }
+  else
+  {
+    char *ln;
+
+    for(ln = ab->Address; strlen(ab->Alias) < SIZE_NAME-2 && *ln != '\0' && *ln != '@'; ln++)
+    {
+      if(isAlNum(*ln))
+        *p++ = *ln;
+    }
+  }
+
+  LEAVE();
 }
 ///
 
@@ -302,133 +397,167 @@ void EA_SetDefaultAlias(struct ABEntry *ab)
 //  Saves changes to the edited entry in the address book
 HOOKPROTONHNO(EA_Okay, void, int *arg)
 {
-   static struct ABEntry newaddr;
-   struct ABEntry *addr;
-   char *members, *str;
-   int i, winnum = *arg;
-   long bdate = 0;
-   struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
-   BOOL old = G->EA[winnum]->ABEntry != NULL;
+  static struct ABEntry newaddr;
+  struct ABEntry *addr;
+  char *members;
+  int winnum = *arg;
+  long bdate = 0;
+  struct EA_GUIData *gui = &G->EA[winnum]->GUI;
+  BOOL old = G->EA[winnum]->ABEntry != NULL;
 
-   memset(&newaddr, 0, sizeof(struct ABEntry));
-   if (G->EA[winnum]->Type)
-   {
-      str = (char *)xget(gui->ST_ALIAS, MUIA_String_Contents);
-      if(!*str)
-      {
-        ER_NewError(tr(MSG_ER_ErrorNoAlias));
-        return;
-      }
-   }
-   else
-   {
-      str = (char *)xget(gui->ST_ADDRESS, MUIA_String_Contents);
-      if(!*str)
-      {
-        ER_NewError(tr(MSG_ER_ErrorNoAddress));
-        return;
-      }
+  ENTER();
 
-      str = (char *)xget(gui->ST_BIRTHDAY, MUIA_String_Contents);
-      if(*str && !(bdate = AB_CompressBD(str)))
-      {
-        ER_NewError(tr(MSG_ER_ErrorDOBformat));
-        return;
-      }
-   }
+  memset(&newaddr, 0, sizeof(struct ABEntry));
+  if(G->EA[winnum]->Type != 0)
+  {
+    char *str = (char *)xget(gui->ST_ALIAS, MUIA_String_Contents);
 
-   G->AB->Modified = TRUE;
-   if (old) addr = G->EA[winnum]->ABEntry; else addr = &newaddr;
-   GetMUIString(addr->Alias, gui->ST_ALIAS, sizeof(addr->Alias));
-   GetMUIString(addr->Comment, gui->ST_COMMENT, sizeof(addr->Comment));
-   switch (addr->Type = G->EA[winnum]->Type)
-   {
-      case AET_USER:
-      {
-        GetMUIString(addr->RealName, gui->ST_REALNAME, sizeof(addr->RealName));
-        GetMUIString(addr->Address, gui->ST_ADDRESS, sizeof(addr->Address));
-        GetMUIString(addr->Phone, gui->ST_PHONE, sizeof(addr->Phone));
-        GetMUIString(addr->Street, gui->ST_STREET, sizeof(addr->Street));
-        GetMUIString(addr->City, gui->ST_CITY, sizeof(addr->City));
-        GetMUIString(addr->Country, gui->ST_COUNTRY, sizeof(addr->Country));
-        GetMUIString(addr->PGPId, gui->ST_PGPKEY, sizeof(addr->PGPId));
-        GetMUIString(addr->Homepage, gui->ST_HOMEPAGE, sizeof(addr->Homepage));
+    if(str[0] == '\0')
+    {
+      ER_NewError(tr(MSG_ER_ErrorNoAlias));
+      LEAVE();
+      return;
+    }
+  }
+  else
+  {
+    char *str = (char *)xget(gui->ST_ADDRESS, MUIA_String_Contents);
 
-        // get the default security setting and check if
-        // it is valid or not.
-        addr->DefSecurity = GetMUICycle(gui->CY_DEFSECURITY);
-        switch(addr->DefSecurity)
+    if(str[0] == '\0')
+    {
+      ER_NewError(tr(MSG_ER_ErrorNoAddress));
+      LEAVE();
+      return;
+    }
+
+    str = (char *)xget(gui->ST_BIRTHDAY, MUIA_String_Contents);
+    if(str[0] != '\0' && (bdate = AB_CompressBD(str)) == 0)
+    {
+      ER_NewError(tr(MSG_ER_ErrorDOBformat));
+      LEAVE();
+      return;
+    }
+  }
+
+  G->AB->Modified = TRUE;
+  if(old == TRUE)
+    addr = G->EA[winnum]->ABEntry;
+  else
+    addr = &newaddr;
+
+  GetMUIString(addr->Alias, gui->ST_ALIAS, sizeof(addr->Alias));
+  GetMUIString(addr->Comment, gui->ST_COMMENT, sizeof(addr->Comment));
+
+  addr->Type = G->EA[winnum]->Type;
+
+  switch(addr->Type)
+  {
+    case AET_USER:
+    {
+      GetMUIString(addr->RealName, gui->ST_REALNAME, sizeof(addr->RealName));
+      GetMUIString(addr->Address, gui->ST_ADDRESS, sizeof(addr->Address));
+      GetMUIString(addr->Phone, gui->ST_PHONE, sizeof(addr->Phone));
+      GetMUIString(addr->Street, gui->ST_STREET, sizeof(addr->Street));
+      GetMUIString(addr->City, gui->ST_CITY, sizeof(addr->City));
+      GetMUIString(addr->Country, gui->ST_COUNTRY, sizeof(addr->Country));
+      GetMUIString(addr->PGPId, gui->ST_PGPKEY, sizeof(addr->PGPId));
+      GetMUIString(addr->Homepage, gui->ST_HOMEPAGE, sizeof(addr->Homepage));
+
+      // get the default security setting and check if
+      // it is valid or not.
+      addr->DefSecurity = GetMUICycle(gui->CY_DEFSECURITY);
+      switch(addr->DefSecurity)
+      {
+        case SEC_SIGN:
+        case SEC_ENCRYPT:
+        case SEC_BOTH:
         {
-          case SEC_SIGN:
-          case SEC_ENCRYPT:
-          case SEC_BOTH:
+          // check if PGP was found to be available at all
+          // or warn the user accordingly.
+          if(G->PGPVersion == 0)
           {
-            // check if PGP was found to be available at all
-            // or warn the user accordingly.
-            if(G->PGPVersion == 0)
+            if(MUI_Request(G->App, NULL, 0, tr(MSG_AB_INVALIDSECURITY_TITLE),
+                                            tr(MSG_AB_INVALIDSECURITY_GADS),
+                                            tr(MSG_AB_INVALIDSECURITY)) != 0)
             {
-              if(MUI_Request(G->App, NULL, 0, tr(MSG_AB_INVALIDSECURITY_TITLE),
-                                              tr(MSG_AB_INVALIDSECURITY_GADS),
-                                              tr(MSG_AB_INVALIDSECURITY)) != 0)
-              {
-                addr->DefSecurity = SEC_NONE;
-              }
+              addr->DefSecurity = SEC_NONE;
             }
           }
-          break;
-
-          default:
-            // nothing
-          break;
         }
+        break;
 
-        strlcpy(addr->Photo, G->EA[winnum]->PhotoName, sizeof(addr->Photo));
-        addr->BirthDay = bdate;
-
-        if(!*addr->Alias)
-          EA_SetDefaultAlias(addr);
-
-        EA_FixAlias(addr, old);
-        if(!old)
-          EA_InsertBelowActive(addr, 0);
+        default:
+          // nothing
+        break;
       }
-      break;
 
-      case AET_LIST:  GetMUIString(addr->RealName, gui->ST_REALNAME, sizeof(addr->RealName));
-                      GetMUIString(addr->Address, gui->ST_ADDRESS, sizeof(addr->Address));
-                      members = AllocStrBuf(SIZE_DEFAULT);
-                      for (i = 0; ; i++)
-                      {
-                         char *p;
-                         DoMethod(gui->LV_MEMBER, MUIM_NList_GetEntry, i, &p);
-                         if (!p) break;
-                         members = StrBufCat(members, p);
-                         members = StrBufCat(members, "\n");
-                      }
+      strlcpy(addr->Photo, G->EA[winnum]->PhotoName, sizeof(addr->Photo));
+      addr->BirthDay = bdate;
 
-                      if(old)
-                      {
-                        if((addr->Members = realloc(addr->Members, strlen(members) + 1)) != NULL)
-                          memcpy(addr->Members, members, strlen(members) + 1);
-                      }
-                      else
-                        addr->Members = strdup(members);
+      if(addr->Alias[0] == '\0')
+        EA_SetDefaultAlias(addr);
 
-                      EA_FixAlias(addr, old);
-                      if (!old)
-                      {
-                         EA_InsertBelowActive(addr, 0);
-                         free(addr->Members);
-                      }
-                      FreeStrBuf(members);
-                      break;
-      case AET_GROUP: EA_FixAlias(addr, old);
-                      if (!old) EA_InsertBelowActive(addr, TNF_LIST);
-   }
-   set(gui->WI, MUIA_Window_Open, FALSE);
-   if (old) DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_List_Redraw, MUIV_List_Redraw_All);
-   else AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), addr->Alias);
-   DisposeModulePush(&G->EA[winnum]);
+      EA_FixAlias(addr, old);
+      if(old == FALSE)
+        EA_InsertBelowActive(addr, 0);
+    }
+    break;
+
+    case AET_LIST:
+    {
+      int i;
+
+      GetMUIString(addr->RealName, gui->ST_REALNAME, sizeof(addr->RealName));
+      GetMUIString(addr->Address, gui->ST_ADDRESS, sizeof(addr->Address));
+      members = AllocStrBuf(SIZE_DEFAULT);
+      for(i = 0; ; i++)
+      {
+        char *p;
+
+        DoMethod(gui->LV_MEMBER, MUIM_NList_GetEntry, i, &p);
+        if(p == NULL)
+          break;
+        members = StrBufCat(members, p);
+        members = StrBufCat(members, "\n");
+      }
+
+      if(old == TRUE)
+      {
+        if((addr->Members = realloc(addr->Members, strlen(members) + 1)) != NULL)
+          memcpy(addr->Members, members, strlen(members) + 1);
+      }
+      else
+        addr->Members = strdup(members);
+
+      EA_FixAlias(addr, old);
+      if(old == FALSE)
+      {
+        EA_InsertBelowActive(addr, 0);
+        free(addr->Members);
+      }
+      FreeStrBuf(members);
+    }
+    break;
+
+    case AET_GROUP:
+    {
+      EA_FixAlias(addr, old);
+      if(old == FALSE)
+        EA_InsertBelowActive(addr, TNF_LIST);
+    }
+    break;
+  }
+
+  set(gui->WI, MUIA_Window_Open, FALSE);
+
+  if(old == TRUE)
+    DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_List_Redraw, MUIV_List_Redraw_All);
+  else
+    AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), addr->Alias);
+
+  DisposeModulePush(&G->EA[winnum]);
+
+  LEAVE();
 }
 MakeStaticHook(EA_OkayHook, EA_Okay);
 
@@ -776,7 +905,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
               Child, data->GUI.ST_MEMBER = RecipientstringObject,
                  MUIA_CycleChain,    TRUE,
                  MUIA_String_MaxLen, SIZE_ADDRESS,
-                 End,
+              End,
               Child, ColGroup(3), GroupSpacing(0),
                  Child, data->GUI.BT_ADD = MakeButton(tr(MSG_Add)),
                  Child, data->GUI.BT_DEL = MakeButton(tr(MSG_Del)),
@@ -805,6 +934,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
       }
       break;
     }
+
     data->GUI.WI = WindowObject,
        MUIA_Window_Title, "",
        MUIA_HelpNode, "EA_W",
@@ -819,8 +949,8 @@ static struct EA_ClassData *EA_New(int winnum, int type)
        End,
     End;
 
-   if(data->GUI.WI != NULL)
-   {
+    if(data->GUI.WI != NULL)
+    {
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
       SetHelp(data->GUI.ST_ALIAS   ,MSG_HELP_EA_ST_ALIAS      );
       SetHelp(data->GUI.ST_COMMENT ,MSG_HELP_EA_ST_DESCRIPTION);
