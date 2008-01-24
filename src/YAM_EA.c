@@ -33,6 +33,7 @@
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
 #include <mui/NListview_mcc.h>
+#include <mui/BetterString_mcc.h>
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/locale.h>
@@ -782,11 +783,11 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                     Child, data->GUI.ST_HOMEPAGE = MakeString(SIZE_URL,tr(MSG_EA_Homepage)),
                     Child, bt_homepage = PopButton(MUII_TapeRecord),
                  End,
-          Child, Label2(tr(MSG_EA_DefSecurity)),
-          Child, data->GUI.CY_DEFSECURITY = CycleObject,
-            MUIA_Cycle_Entries, SecurityCycleEntries,
-            MUIA_ControlChar, ShortCut(tr(MSG_EA_DefSecurity)),
-          End,
+                 Child, Label2(tr(MSG_EA_DefSecurity)),
+                 Child, data->GUI.CY_DEFSECURITY = CycleObject,
+                    MUIA_Cycle_Entries, SecurityCycleEntries,
+                    MUIA_ControlChar, ShortCut(tr(MSG_EA_DefSecurity)),
+                 End,
               End,
               Child, ColGroup(2), GroupFrameT(tr(MSG_EA_SnailMail)),
                  Child, Label2(tr(MSG_EA_Street)),
@@ -903,8 +904,9 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                  End,
               End,
               Child, data->GUI.ST_MEMBER = RecipientstringObject,
-                 MUIA_CycleChain,    TRUE,
-                 MUIA_String_MaxLen, SIZE_ADDRESS,
+                 MUIA_CycleChain,               TRUE,
+                 MUIA_String_MaxLen,            SIZE_ADDRESS,
+                 MUIA_BetterString_NoShortcuts, FALSE,
               End,
               Child, ColGroup(3), GroupSpacing(0),
                  Child, data->GUI.BT_ADD = MakeButton(tr(MSG_Add)),

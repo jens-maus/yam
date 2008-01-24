@@ -7,6 +7,9 @@ $URL$
 
 2008-01-24  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_EA.c: pasting to the address field below the member list was impossible
+    because internal handling of shortcuts was forbidden. This caused bug
+    #1877025.
   * misc: converted all array based folder lists into true Exec style MinLists.
 
 2008-01-23  Jens Langner <Jens.Langner@light-speed.de>
