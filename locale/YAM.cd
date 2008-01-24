@@ -6756,11 +6756,12 @@ MSG_HELP_EA_ST_BIRTHDAY (2081//)
 Date of birth in locale format\n\
 (e.g. 19.06.1974 or 19/06/1974).
 ;
-MSG_ERROR_PLAYSOUND (2082//)
+MSG_ERROR_PLAYSOUND (2083//)
 An error occurred while trying to play\n\
-your sound file.\n\
+the sound file '%s'.\n\
 \n\
 This could be either due to a broken or\n\
 unsupported sound file or because your\n\
 sound datatype is not properly working.
+; FILE
 ;

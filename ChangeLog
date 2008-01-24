@@ -7,6 +7,9 @@ $URL$
 
 2008-01-24  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c, YAM.cd, german.ct: in case a sound file could not be played the
+    error requester now contains the file name as well. Also fixed the broken
+    german translation. This fixes bug #1878395.
   * YAM_EA.c: pasting to the address field below the member list was impossible
     because internal handling of shortcuts was forbidden. This caused bug
     #1877025.

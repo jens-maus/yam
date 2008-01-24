@@ -8419,3 +8419,12 @@ Geburtsdatum\n\
 Benutzen Sie das landestypische Format,\n\
 z.B. 19.06.1974.
 ;
+MSG_ERROR_PLAYSOUND
+Beim Abspielen der Tondatei '%s'\n\
+ist ein Fehler aufgetreten.\n\
+\n\
+Der Grund dafür könnte entweder eine beschädigte\n\
+bzw- nicht unterstützte Tondatei sein, oder Ihr\n\
+Datatype für Tondateien funktioniert nicht ordnungs-\n\
+gemäß.
+;
