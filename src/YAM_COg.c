@@ -58,7 +58,6 @@
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_global.h"
-#include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
@@ -67,6 +66,7 @@
 #include "ImageCache.h"
 #include "UpdateCheck.h"
 #include "BayesFilter.h"
+#include "Locale.h"
 #include "FolderList.h"
 #include "Mime.h"
 

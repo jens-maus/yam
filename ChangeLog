@@ -7,6 +7,9 @@ $URL$
 
 2008-01-24  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Locale_c,h.sd: renamed the C_c.sd and C_h.sd files to be called "Locale"
+    which in fact should be more precise. In addition a "Locale.c" and
+    "Locale.h" file will now be generated.
   * Mime.c, Mime.h: renamed the YAM_MI.c,h to Mime.c,h which really should
     have happened earlier as all functions in that file were anyway rewritten
     from scratch and we want to get rid of the YAM_ prefix sooner or later.

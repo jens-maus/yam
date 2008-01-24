@@ -39,9 +39,9 @@
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
-#include "YAM_locale.h"
 #include "YAM_utilities.h"
 
+#include "Locale.h"
 #include "Mime.h"
 
 #include "Debug.h"

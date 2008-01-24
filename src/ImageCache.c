@@ -45,13 +45,13 @@
 
 #include "YAM.h"
 #include "YAM_global.h"
-#include "YAM_locale.h"
 #include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
 #include "YAM_error.h"
 #include "classes/Classes.h"
 
 #include "ImageCache.h"
+#include "Locale.h"
 #include "FileInfo.h"
 #include "extrasrc.h"
 

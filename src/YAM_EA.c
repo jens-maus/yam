@@ -48,12 +48,13 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
-#include "YAM_locale.h"
 #include "YAM_transfer.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
 #include "FileInfo.h"
+#include "Locale.h"
+
 #include "Debug.h"
 
 /* local protos */

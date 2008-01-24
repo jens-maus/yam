@@ -38,10 +38,11 @@
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_mainFolder.h"
-#include "YAM_locale.h"
 #include "YAM_write.h"
 
 #include "extrasrc.h"
+
+#include "Locale.h"
 #include "Timer.h"
 
 #include "classes/Classes.h"

@@ -52,7 +52,6 @@
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
-#include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
@@ -60,6 +59,7 @@
 
 #include "ImageCache.h"
 #include "FileInfo.h"
+#include "Locale.h"
 #include "MailList.h"
 #include "FolderList.h"
 

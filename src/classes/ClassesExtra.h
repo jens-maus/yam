@@ -60,9 +60,10 @@
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_global.h"
-#include "YAM_locale.h"
 #include "YAM_mail_lex.h"
 #include "YAM_utilities.h"
+
+#include "Locale.h"
 
 #endif /* INCLUDE_KITCHEN_SINK */
 

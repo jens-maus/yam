@@ -42,9 +42,11 @@
 #include "YAM.h"
 #include "YAM_error.h"
 #include "YAM_glossarydisplay.h"
-#include "YAM_locale.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
+
+#include "Locale.h"
+
 #include "classes/Classes.h"
 
 /* local protos */

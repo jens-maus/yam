@@ -48,15 +48,15 @@
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
-#include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
 #include "BayesFilter.h"
 #include "FileInfo.h"
-#include "MailList.h"
 #include "FolderList.h"
+#include "Locale.h"
+#include "MailList.h"
 #include "Mime.h"
 
 #include "Debug.h"
