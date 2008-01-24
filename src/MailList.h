@@ -30,6 +30,7 @@
 
 #include <exec/lists.h>
 #include <exec/nodes.h>
+#include <exec/semaphores.h>
 #include <exec/types.h>
 
 #include "YAM_mainFolder.h"
@@ -58,7 +59,7 @@ void DeleteMailNode(struct MailNode *mnode);
 void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1, const struct Mail *m2));
 struct Mail **MailListToMailArray(struct MailList *mlist);
 
-// check if a mail list is not empty
+// check if a mail list is empty
 #define IsMailListEmpty(mlist)                    IsListEmpty((struct List *)(mlist))
 
 // iterate through the list, the list must *NOT* be modified!
