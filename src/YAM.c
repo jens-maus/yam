@@ -101,6 +101,7 @@
 #include "FileInfo.h"
 #include "Timer.h"
 #include "MailList.h"
+#include "FolderList.h"
 
 #include "classes/Classes.h"
 
@@ -1417,7 +1418,7 @@ static BOOL Root_New(BOOL hidden)
 //  Phase 2 of program initialization (after user logs in)
 static void InitAfterLogin(void)
 {
-  struct Folder **oldfolders = NULL;
+  struct FolderList *oldfolders = NULL;
   BOOL newfolders;
   BOOL splashWasActive;
   int i;
@@ -1494,25 +1495,36 @@ static void InitAfterLogin(void)
   LoadLayout();
 
   SplashProgress(tr(MSG_LoadingFolders), 50);
-  if(FO_LoadTree(CreateFilename(".folders")) == FALSE && oldfolders != NULL)
+
+  newfolders = FALSE;
+  if(FO_LoadTree(CreateFilename(".folders")) == FALSE && oldfolders != NULL && IsFolderListEmpty(oldfolders) == FALSE)
   {
-    for(i = 0; i < 100; i++)
+    struct FolderNode *fnode;
+
+    // add all YAM 1.x style folders
+    ForEachFolderNode(oldfolders, fnode)
     {
-      if(oldfolders[i] != NULL)
-        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root);
+      struct Folder *folder = fnode->folder;
+
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root);
     }
 
     newfolders = TRUE;
   }
 
-  if(oldfolders != NULL)
+  // free any YAM 1.x style folder
+  if(oldfolders != NULL && IsFolderListEmpty(oldfolders) == FALSE)
   {
-    for(i = 0; oldfolders[i] != NULL; i++)
-      free(oldfolders[i]);
-    free(oldfolders);
+    struct FolderNode *fnode;
+
+    ForEachFolderNode(oldfolders, fnode)
+    {
+      free(fnode->folder);
+    }
+
+    DeleteFolderList(oldfolders);
   }
 
-  newfolders = FALSE;
   if(FO_GetFolderByType(FT_INCOMING, NULL) == NULL)
     newfolders |= FO_CreateFolder(FT_INCOMING, FolderName[FT_INCOMING], tr(MSG_MA_Incoming));
 

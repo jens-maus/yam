@@ -622,7 +622,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 ///
 /// CO_LoadConfig
 //  Loads configuration from a file
-BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
+BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders)
 {
   BOOL success = FALSE;
   FILE *fh;
@@ -644,7 +644,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
     if(fgets(buffer, sizeof(buffer), fh) && strnicmp(buffer, "YCO", 3) == 0)
     {
       int version = buffer[3]-'0';
-      struct Folder **ofo = NULL;
+      struct FolderList *ofo = NULL;
       struct FilterNode *lastFilter = NULL;
       int lastTypeID = -1;
       struct MimeTypeNode *lastType = NULL;
@@ -693,29 +693,44 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
             else if(!strnicmp(buffer, "Folder", 6) && oldfolders != NULL)
             {
               static const int sortconv[4] = { -1, 1, 3, 5 };
-              int j = atoi(&buffer[6]);
+              int index = atoi(&buffer[6]);
               int type;
 
               if(ofo == NULL)
-                ofo = *oldfolders = calloc(100, sizeof(struct Folder *));
+              {
+              	ofo = CreateFolderList();
+              	*oldfolders = ofo;
+              }
               if(ofo != NULL)
               {
-                if(j >= 3)
+                struct Folder *folder;
+
+                switch(index)
                 {
-                  for(j = 4; j < 100; j++)
-                  {
-                    if(ofo[j] == NULL)
-                      break;
-                  }
+                  case 0:
+                    type = FT_INCOMING;
+                  break;
+
+                  case 1:
+                    type = FT_OUTGOING;
+                  break;
+
+                  case 2:
+                    type = FT_SENT;
+                  break;
+
+                  default:
+                    type = FT_CUSTOM;
+                  break;
                 }
-                type = (j == 0 ? FT_INCOMING : (j == 1 ? FT_OUTGOING : (j == 2 ? FT_SENT : FT_CUSTOM)));
+
                 if((p = strchr(&value[4], ';')) != NULL)
                   *p++ = '\0';
 
-                if(ofo[j] == NULL)
+                if((folder = FO_NewFolder(type, &value[4], p)) != NULL)
                 {
-                  if((ofo[j] = FO_NewFolder(type, &value[4], p)) != NULL)
-                    ofo[j]->Sort[0] = sortconv[atoi(&value[2])];
+                  folder->Sort[0] = sortconv[atoi(&value[2])];
+                  AddNewFolderNode(ofo, folder);
                 }
               }
             }
@@ -788,18 +803,21 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 
           if(!strnicmp(buffer, "FolderPath", 10) && oldfolders != NULL)
           {
-            int j = atoi(&buffer[10]);
-
             if(ofo == NULL)
-              ofo = *oldfolders = calloc(100, sizeof(struct Folder *));
+            {
+              ofo = CreateFolderList();
+              *oldfolders = ofo;
+            }
             if(ofo != NULL)
             {
-              if(ofo[j] == NULL)
+              struct Folder *folder;
+
+              if((folder = FO_NewFolder(FT_CUSTOM, value, (char *)FilePart(value))) != NULL)
               {
-                if((ofo[j] = FO_NewFolder(FT_CUSTOM, value, (char *)FilePart(value))) != NULL)
+                if(AddNewFolderNode(ofo, folder) != NULL)
                 {
-                  if(!FO_LoadConfig(ofo[j]))
-                    FO_SaveConfig(ofo[j]);
+                  if(FO_LoadConfig(folder) == FALSE)
+                    FO_SaveConfig(folder);
                 }
               }
             }

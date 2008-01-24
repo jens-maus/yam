@@ -18,6 +18,8 @@ $URL$
 
 2008-01-24  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_COs.c: replaced the old hand crafted 1.x style folder conversion
+    to use our recently introduced folder list functions.
   * YAM_FI.c: replaced a hand crafted folder list allocation by our recently
     introduced folder list functions.
   * Recipientstring.c: minor cosmetic fixes.

@@ -31,9 +31,10 @@
 // forward declarations
 struct Config;
 struct Folder;
+struct FolderList;
 
 void CO_GetConfig(BOOL saveConfig);
-BOOL CO_LoadConfig(struct Config *co, const char *fname, struct Folder ***oldfolders);
+BOOL CO_LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfolders);
 BOOL CO_SaveConfig(struct Config *co, const char *fname);
 void CO_SetConfig(void);
 
