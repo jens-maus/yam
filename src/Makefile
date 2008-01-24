@@ -323,6 +323,7 @@ OBJS = \
 	$(OBJDIR)/BayesFilter.o \
 	$(OBJDIR)/FileInfo.o \
 	$(OBJDIR)/MailList.o \
+	$(OBJDIR)/FolderList.o \
 	$(OBJDIR)/extrasrc.o \
 	$(OBJDIR)/Debug.o
 

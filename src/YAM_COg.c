@@ -47,6 +47,8 @@
 #include <clib/alib_protos.h> // DoMethod
 #endif
 
+#include "extrasrc.h"
+
 #include "SDI_hook.h"
 
 #include "YAM.h"
@@ -66,7 +68,7 @@
 #include "ImageCache.h"
 #include "UpdateCheck.h"
 #include "BayesFilter.h"
-#include "extrasrc.h"
+#include "FolderList.h"
 
 #include "Debug.h"
 
@@ -116,7 +118,7 @@ enum VarPopMode
 //  Creates a popup list of all folders
 HOOKPROTONH(PO_InitFolderList, BOOL, Object *pop, Object *str)
 {
-  struct Folder **flist;
+  struct FolderList *flist;
   char *s;
 
   ENTER();
@@ -126,26 +128,31 @@ HOOKPROTONH(PO_InitFolderList, BOOL, Object *pop, Object *str)
 
   DoMethod(pop, MUIM_List_Clear);
 
-  if((flist = FO_CreateList()))
+  if((flist = FO_CreateList()) != NULL)
   {
-    int i;
+    struct FolderNode *fnode;
+    ULONG i = 0;
 
-    for(i=1; i <= (int)*flist; i++)
+    ForEachFolderNode(flist, fnode)
     {
-      if(isGroupFolder(flist[i]) == FALSE)
+      struct Folder *folder = fnode->folder;
+
+      if(isGroupFolder(folder) == FALSE)
       {
-        DoMethod(pop, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
+        DoMethod(pop, MUIM_List_InsertSingle, folder->Name, MUIV_List_Insert_Bottom);
 
         // now we check whether we make that item active or not.
-        if(s && stricmp(flist[i]->Name, s) == 0)
+        if(s != NULL && stricmp(folder->Name, s) == 0)
         {
-          set(pop, MUIA_List_Active, i-1);
+          set(pop, MUIA_List_Active, i);
           s = NULL;
         }
       }
+
+      i++;
     }
 
-    free(flist);
+    DeleteFolderList(flist);
   }
 
   RETURN(TRUE);

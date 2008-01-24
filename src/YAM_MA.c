@@ -77,6 +77,7 @@
 #include "BayesFilter.h"
 #include "FileInfo.h"
 #include "MailList.h"
+#include "FolderList.h"
 
 #include "Debug.h"
 
@@ -477,17 +478,17 @@ struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folder
 
   ENTER();
 
-  if(folder)
+  if(folder != NULL)
   {
     LONG active = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active);
 
     if(active != MUIV_NList_Active_Off)
       DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, active, &mail);
 
-    if(folderp)
+    if(folderp != NULL)
       *folderp = folder;
 
-    if(activep)
+    if(activep != NULL)
       *activep = active;
   }
 
@@ -1044,27 +1045,29 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 //  Changes status of all new messages to unread
 static void MA_UpdateStatus(void)
 {
-  struct Folder **flist;
+  struct FolderList *flist;
 
   ENTER();
 
   if((flist = FO_CreateList()) != NULL)
   {
-    int i;
+    struct FolderNode *fnode;
 
-    for(i = 1; i <= (int)*flist; i++)
+    ForEachFolderNode(flist, fnode)
     {
-      if(!isSentMailFolder(flist[i]) && flist[i]->LoadedMode == LM_VALID)
+      struct Folder *folder = fnode->folder;
+
+      if(!isSentMailFolder(folder) && folder->LoadedMode == LM_VALID)
       {
         BOOL updated = FALSE;
 
-        LockMailList(flist[i]->messages);
+        LockMailList(folder->messages);
 
-        if(IsMailListEmpty(flist[i]->messages) == FALSE)
+        if(IsMailListEmpty(folder->messages) == FALSE)
         {
           struct MailNode *mnode;
 
-          ForEachMailNode(flist[i]->messages, mnode)
+          ForEachMailNode(folder->messages, mnode)
           {
             struct Mail *mail = mnode->mail;
 
@@ -1076,13 +1079,14 @@ static void MA_UpdateStatus(void)
           }
         }
 
-        UnlockMailList(flist[i]->messages);
+        UnlockMailList(folder->messages);
 
         if(updated == TRUE)
-          DisplayStatistics(flist[i], TRUE);
+          DisplayStatistics(folder, TRUE);
       }
     }
-    free(flist);
+
+    DeleteFolderList(flist);
   }
 
   LEAVE();
@@ -2323,19 +2327,19 @@ int MA_NewReply(struct MailList *mlist, int flags)
           // we have to check all other folders first.
           if(isIncomingFolder(folder))
           {
-            struct Folder **flist;
+            struct FolderList *flist;
 
             // walk through all our folders
             // and check if it matches a pattern
             if((flist = FO_CreateList()) != NULL)
             {
-              int i;
+              struct FolderNode *fnode;
 
-              for(i=1; i <= (int)*flist; i++)
+              ForEachFolderNode(flist, fnode)
               {
-                if(flist[i] != NULL && flist[i]->MLSupport == TRUE && flist[i]->MLPattern[0])
+                if(fnode->folder != NULL && fnode->folder->MLSupport == TRUE && fnode->folder->MLPattern[0] != '\0')
                 {
-                  char *pattern = flist[i]->MLPattern;
+                  char *pattern = fnode->folder->MLPattern;
 
                   if(MatchNoCase(mail->To.Address, pattern) == FALSE &&
                      MatchNoCase(mail->To.RealName, pattern) == FALSE)
@@ -2353,26 +2357,26 @@ int MA_NewReply(struct MailList *mlist, int flags)
                   else
                     foundMLFolder = TRUE;
 
-                  if(foundMLFolder)
+                  if(foundMLFolder == TRUE)
                   {
-                    mlistad = flist[i]->MLAddress[0] ? flist[i]->MLAddress : NULL;
-                    folder = flist[i];
+                    mlistad = fnode->folder->MLAddress[0] != '\0' ? fnode->folder->MLAddress : NULL;
+                    folder = fnode->folder;
 
-                    if(flist[i]->MLFromAddress[0])
-                      rfrom  = flist[i]->MLFromAddress;
+                    if(folder->MLFromAddress[0] != '\0')
+                      rfrom  = folder->MLFromAddress;
 
-                    if(flist[i]->MLReplyToAddress[0])
-                      rrepto = flist[i]->MLReplyToAddress;
+                    if(folder->MLReplyToAddress[0] != '\0')
+                      rrepto = folder->MLReplyToAddress;
 
                     break;
                   }
                 }
               }
 
-              free(flist);
+              DeleteFolderList(flist);
             }
           }
-          else if(folder->MLSupport == TRUE && folder->MLPattern[0])
+          else if(folder->MLSupport == TRUE && folder->MLPattern[0] != '\0')
           {
             if(MatchNoCase(mail->To.Address, folder->MLPattern) == FALSE &&
                MatchNoCase(mail->To.RealName, folder->MLPattern) == FALSE)
@@ -2390,14 +2394,14 @@ int MA_NewReply(struct MailList *mlist, int flags)
             else
               foundMLFolder = TRUE;
 
-            if(foundMLFolder)
+            if(foundMLFolder == TRUE)
             {
-              mlistad = folder->MLAddress[0] ? folder->MLAddress : NULL;
+              mlistad = folder->MLAddress[0] != '\0' ? folder->MLAddress : NULL;
 
-              if(folder->MLFromAddress[0])
+              if(folder->MLFromAddress[0] != '\0')
                 rfrom  = folder->MLFromAddress;
 
-              if(folder->MLReplyToAddress[0])
+              if(folder->MLReplyToAddress[0] != '\0')
                 rrepto = folder->MLReplyToAddress;
             }
           }
@@ -3727,7 +3731,7 @@ MakeHook(MA_SetAllStatusToHook, MA_SetAllStatusToFunc);
 //  Deletes old messages
 HOOKPROTONHNONP(MA_DeleteOldFunc, void)
 {
-  struct Folder **flist;
+  struct FolderList *flist;
   struct DateStamp today;
   ULONG today_days;
 
@@ -3740,14 +3744,16 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
   // later on
   if((flist = FO_CreateList()) != NULL)
   {
-    int f;
+    ULONG f;
     BOOL mailsDeleted = FALSE;
+    struct FolderNode *fnode;
 
-    BusyGaugeInt(tr(MSG_BusyDeletingOld), "", (int)*flist);
+    BusyGaugeInt(tr(MSG_BusyDeletingOld), "", flist->count);
 
-    for(f=1; f <= (int)*flist; f++)
+    f = 0;
+    ForEachFolderNode(flist, fnode)
     {
-      struct Folder *folder = flist[f];
+      struct Folder *folder = fnode->folder;
 
       if(folder->MaxAge > 0 && MA_GetIndex(folder) == TRUE)
       {
@@ -3786,19 +3792,21 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
         UnlockMailList(folder->messages);
 
         // if BusySet() returns FALSE, then the user aborted
-        if(BusySet(f) == FALSE)
+        if(BusySet(++f) == FALSE)
         {
           // make sure to abort both loop
-          f = (int)*flist;
-
+          f = flist->count;
           break;
         }
 
         DisplayStatistics(folder, FALSE);
       }
+
+      if(f >= flist->count)
+        break;
     }
 
-    free(flist);
+    DeleteFolderList(flist);
 
     // MA_DeleteSingle() does not update the trash folder treeitem if something was deleted from
     // from another folder, because it was advised to be quiet. So we must refresh the trash folder

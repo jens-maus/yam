@@ -60,6 +60,7 @@
 
 #include "BayesFilter.h"
 #include "MailList.h"
+#include "FolderList.h"
 
 #include "Debug.h"
 
@@ -1095,21 +1096,21 @@ HOOKPROTONHNONP(FI_Open, void)
 
     if((folder = FO_GetCurrentFolder()) != NULL)
     {
-      struct Folder **flist;
+      struct FolderList *flist;
 
       if((flist = FO_CreateList()) != NULL)
       {
-        int i;
         int j = 0;
         int apos = 0;
+        struct FolderNode *fnode;
 
-        for(i=1; i <= (int)*flist; i++)
+        ForEachFolderNode(flist, fnode)
         {
-          if(isGroupFolder(flist[i]) == FALSE)
+          if(isGroupFolder(fnode->folder) == FALSE)
           {
-            DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
+            DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, fnode->folder->Name, MUIV_List_Insert_Bottom);
 
-            if(flist[i] == folder)
+            if(fnode->folder == folder)
               apos = j;
 
             j++;
@@ -1117,14 +1118,14 @@ HOOKPROTONHNONP(FI_Open, void)
         }
 
         set(G->FI->GUI.LV_FOLDERS, MUIA_List_Active, apos);
-        free(flist);
+        DeleteFolderList(flist);
 
         // everything went fine
         success = TRUE;
       }
     }
 
-    if(success)
+    if(success == TRUE)
     {
       // check if the window is already open
       if(xget(G->FI->GUI.WI, MUIA_Window_Open) == TRUE)

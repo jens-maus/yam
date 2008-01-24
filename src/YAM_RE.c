@@ -68,6 +68,7 @@
 #include "HTML2Mail.h"
 #include "FileInfo.h"
 #include "MailList.h"
+#include "FolderList.h"
 
 #include "Debug.h"
 
@@ -98,7 +99,7 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
     // have a valid index before we are going to go on.
     if(srcMail->Folder->LoadedMode == LM_VALID || MA_GetIndex(srcMail->Folder) == TRUE)
     {
-      struct Folder **flist;
+      struct FolderList *flist;
       BOOL found = FALSE;
 
       // ok the folder is valid and we can scan it now
@@ -113,7 +114,7 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
         {
           struct Mail *mail = mnode->mail;
 
-          if(nextThread == TRUE) 
+          if(nextThread == TRUE)
           {
             // find the answer to the srcMail
             if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
@@ -122,7 +123,7 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
               break;
             }
           }
-          else 
+          else
           {
             // else we have to find the question to the srcMail
             if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
@@ -136,15 +137,15 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
 
       UnlockMailList(srcMail->Folder->messages);
 
-      // if we still haven`t found the mail we have to scan the other folder aswell
+      // if we still haven't found the mail we have to scan the other folder aswell
       if(found == FALSE && (flist = FO_CreateList()) != NULL)
       {
-        int i;
         int autoloadindex = -1;
+        struct FolderNode *fnode;
 
-        for(i = 1; i <= (int)*flist && !found; i++)
+        ForEachFolderNode(flist, fnode)
         {
-          struct Folder *fo = flist[i];
+          struct Folder *fo = fnode->folder;
 
           // check if this folder isn't a group and that we haven't scanned
           // it already.
@@ -188,7 +189,7 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
                 {
                   struct Mail *mail = mnode->mail;
 
-                  if(nextThread == TRUE) 
+                  if(nextThread == TRUE)
                   {
                     // find the answer to the srcMail
                     if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
@@ -197,7 +198,7 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
                       break;
                     }
                   }
-                  else 
+                  else
                   {
                     // else we have to find the question to the srcMail
                     if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
@@ -212,6 +213,9 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
               UnlockMailList(fo->messages);
             }
           }
+
+          if(found == TRUE)
+            break;
         }
       }
     }

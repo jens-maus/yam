@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-24  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: converted all array based folder lists into true Exec style MinLists.
+
 2008-01-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_FO.c: fixed a crash issue where creating a new folder just generated

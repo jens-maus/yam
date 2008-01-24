@@ -34,6 +34,7 @@
 
 #include "BayesFilter.h"
 #include "MailList.h"
+#include "FolderList.h"
 
 #include "Debug.h"
 
@@ -1187,7 +1188,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
       if(mail == NULL)
         break;
 
-      if(!onlynew ||
+      if(onlynew == FALSE ||
         (hasStatusNew(mail) || !hasStatusRead(mail)))
       {
          set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, act);
@@ -1202,75 +1203,89 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 
   // check if there are following/previous folders with unread
   // mails and change to there if the user wants
-  if(!found && onlynew)
+  if(found == FALSE && onlynew == TRUE)
   {
-    if(C->AskJumpUnread)
+    if(C->AskJumpUnread == TRUE)
     {
-      struct Folder **flist;
+      struct FolderList *flist;
 
       if((flist = FO_CreateList()) != NULL)
       {
-        int i;
+        struct FolderNode *fnode;
         BOOL abort;
         BOOL turnOver;
 
         // look for the current folder in the array
-        for(i = 1; i <= (int)*flist; i++)
+        ForEachFolderNode(flist, fnode)
         {
-          if(flist[i] == folder)
+          if(fnode->folder == folder)
             break;
         }
 
         abort = FALSE;
         turnOver = FALSE;
-        while(!found && !abort)
+        while(found == FALSE && abort == FALSE)
         {
+          struct FolderNode *fnode2;
+
           // look for first folder with at least one unread mail
           // and if found read that mail
-          for(i += direction; i <= (int)*flist && i >= 1; i += direction)
+          do
           {
-            struct Folder *fo = flist[i];
+            // either go forward or backward
+            if(direction > 0)
+              fnode2 = NextFolderNode(fnode);
+            else
+              fnode2 = PreviousFolderNode(fnode);
 
-            // skip group folders, outgoing, trash and spam folder when looking for still unread mail
-            if(!isGroupFolder(fo) &&
-               !isOutgoingFolder(fo) &&
-               !isTrashFolder(fo) &&
-               !isSpamFolder(fo) &&
-               fo->Unread > 0)
+            if(fnode2 != NULL)
             {
-              if(fo != folder)
+              struct Folder *fo = fnode2->folder;
+
+              // skip group folders, outgoing, trash and spam folder when looking for still unread mail
+              if(!isGroupFolder(fo) &&
+                 !isOutgoingFolder(fo) &&
+                 !isTrashFolder(fo) &&
+                 !isSpamFolder(fo) &&
+                 fo->Unread > 0)
               {
-                if(MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq),
-                                               tr(MSG_YesNoReq),
-                                               tr(MSG_RE_MoveNextFolderReq), fo->Name) == 0)
+                if(fo != folder)
                 {
-                  abort = TRUE;
-                  break;
+                  if(MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq),
+                                                 tr(MSG_YesNoReq),
+                                                 tr(MSG_RE_MoveNextFolderReq), fo->Name) == 0)
+                  {
+                    abort = TRUE;
+                    break;
+                  }
+
+                  MA_ChangeFolder(fo, TRUE);
+                }
+                else
+                {
+                  MA_JumpToNewMsg();
                 }
 
-                MA_ChangeFolder(fo, TRUE);
-              }
-              else
-              {
-                MA_JumpToNewMsg();
-              }
+                DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+                if(mail == NULL)
+                  break;
 
-              DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-              if(mail == NULL)
+                DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
+
+                // this is a valid break and not break because of an error
+                found = TRUE;
                 break;
+              }
 
-              DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
-
-              // this is a valid break and not break because of an error
-              found = TRUE;
-              break;
+              fnode = fnode2;
             }
           }
+          while(fnode2 != NULL);
 
           // beep if no folder with unread mails was found
-          if(!found && (i > (int)*flist || i < 1))
+          if(found == FALSE && fnode2 == NULL)
           {
-            if(turnOver)
+            if(turnOver == TRUE)
             {
               // we already run through the complete list and found nothing
               DisplayBeep(_screen(obj));
@@ -1282,12 +1297,16 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
               // we just reached the end of the folder list for the first time,
               // so let's try it again from the opposite side
               turnOver = TRUE;
-              i = (i < 1) ? (int)*flist + 1 : 0;
+
+              if(fnode == LastFolderNode(flist))
+                fnode = FirstFolderNode(flist);
+              else
+                fnode = LastFolderNode(flist);
             }
           }
         }
 
-        free(flist);
+        DeleteFolderList(flist);
       }
     }
     else

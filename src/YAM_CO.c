@@ -110,11 +110,11 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
   // get the active filterNode
   DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
 
-  if(filter)
+  if(filter != NULL)
   {
     struct RuleNode *rule;
 
-    if((rule = CreateNewRule(filter)))
+    if((rule = CreateNewRule(filter)) != NULL)
     {
       // add a new GUI element for that particular rule
       Object *newSearchGroup = SearchControlGroupObject,

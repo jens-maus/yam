@@ -60,6 +60,7 @@
 #include "ImageCache.h"
 #include "FileInfo.h"
 #include "MailList.h"
+#include "FolderList.h"
 
 #include "Debug.h"
 
@@ -86,24 +87,20 @@ const char* const FolderName[FT_NUM] = { NULL,       // FT_CUSTOM
 
 /// FO_CreateList
 //  Creates a linked list of all folders
-struct Folder **FO_CreateList(void)
+struct FolderList *FO_CreateList(void)
 {
   int max;
-  struct Folder **flist;
-  APTR lv;
+  struct FolderList *flist;
+  Object *lv;
 
   ENTER();
 
   lv = G->MA->GUI.NL_FOLDERS;
   max = DoMethod(lv, MUIM_NListtree_GetNr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_GetNr_Flag_CountAll);
 
-  if((flist = calloc(max + 1, sizeof(struct Folder *))) != NULL)
+  if((flist = CreateFolderList()) != NULL)
   {
     int i;
-    struct Folder **fPtr;
-
-    flist[0] = (struct Folder *)max;
-    fPtr = &flist[1];
 
     for(i = 0; i < max; i++)
     {
@@ -111,14 +108,14 @@ struct Folder **FO_CreateList(void)
 
       if(tn == NULL)
       {
-        free(flist);
+        DeleteFolderList(flist);
         flist = NULL;
         break;
       }
       else
       {
         // put the folder in the list
-        *fPtr++ = tn->tn_User;
+        AddNewFolderNode(flist, (struct Folder *)tn->tn_User);
       }
     }
   }
@@ -183,13 +180,14 @@ BOOL FO_SetCurrentFolder(struct Folder *fo)
 struct Folder *FO_GetFolderRexx(const char *arg, int *pos)
 {
   struct Folder *fo = NULL;
-  struct Folder **flist;
+  struct FolderList *flist;
 
   ENTER();
 
   if((flist = FO_CreateList()) != NULL)
   {
-    int nr = 0;
+    struct FolderNode *foundNode = NULL;
+    int listIndex = 0;
     const char *p = arg;
     BOOL numeric = TRUE;
 
@@ -198,68 +196,76 @@ struct Folder *FO_GetFolderRexx(const char *arg, int *pos)
     {
       int c = (int)*p++;
 
-      if(!isdigit(c))
+      if(isdigit(c) == FALSE)
       {
         numeric = FALSE;
         break;
       }
     }
 
-    // if this is a numeric search we go on.
-    if(numeric)
+    if(numeric == TRUE)
     {
-      int i = atoi(arg);
-      int k = 0;
+      // a numeric search, find the folder by index
+      int wantedIndex = atoi(arg);
+      int findIndex = 0;
 
-      if(i >= 0 && i < (int)*flist)
+      if(wantedIndex >= 0 && wantedIndex < (int)flist->count)
       {
-        int j;
+        struct FolderNode *fnode;
 
-        for(j = 1; j <= (int)*flist; j++)
+        listIndex = 0;
+        ForEachFolderNode(flist, fnode)
         {
           // if the current one is a FT_GROUP we go to the next one until we find
           // the correct one
-          if(isGroupFolder(flist[j]) == FALSE)
+          if(isGroupFolder(fnode->folder) == FALSE)
           {
-            if(k == i)
+            if(findIndex == wantedIndex)
             {
-              nr = j;
+              foundNode = fnode;
               break;
             }
-            k++;
+            // count real folders only
+            findIndex++;
           }
+          // count folders and groups
+          listIndex++;
         }
       }
     }
-
-    // for string folder search
-    if(nr == 0)
+    else
     {
-      int i;
+      // find the folder by name
+      struct FolderNode *fnode;
 
-      for(i = 1; i <= (int)*flist; i++)
+      listIndex = 0;
+      ForEachFolderNode(flist, fnode)
       {
-        if((!Stricmp(arg, flist[i]->Name) && !isGroupFolder(flist[i]))    ||
-           (!stricmp(arg, FolderName[FT_INCOMING]) && isIncomingFolder(flist[i]))  ||
-           (!stricmp(arg, FolderName[FT_OUTGOING]) && isOutgoingFolder(flist[i]))  ||
-           (!stricmp(arg, FolderName[FT_SENT]) && isSentFolder(flist[i]))      ||
-           (!stricmp(arg, FolderName[FT_TRASH]) && isTrashFolder(flist[i]))   ||
-           (!stricmp(arg, FolderName[FT_SPAM]) && isSpamFolder(flist[i])))
+        struct Folder *folder = fnode->folder;
+
+        if((!Stricmp(arg, folder->Name) && !isGroupFolder(folder))              ||
+           (!stricmp(arg, FolderName[FT_INCOMING]) && isIncomingFolder(folder)) ||
+           (!stricmp(arg, FolderName[FT_OUTGOING]) && isOutgoingFolder(folder)) ||
+           (!stricmp(arg, FolderName[FT_SENT]) && isSentFolder(folder))         ||
+           (!stricmp(arg, FolderName[FT_TRASH]) && isTrashFolder(folder))       ||
+           (!stricmp(arg, FolderName[FT_SPAM]) && isSpamFolder(folder)))
         {
-          nr = i;
+          foundNode = fnode;
           break;
         }
+
+        listIndex++;
       }
     }
 
-    if(nr != 0)
+    if(foundNode != NULL)
     {
-      fo = flist[nr];
+      fo = foundNode->folder;
       if(pos != NULL)
-        *pos = --nr;
+        *pos = listIndex;
     }
 
-    free(flist);
+    DeleteFolderList(flist);
   }
 
   RETURN(fo);
@@ -1907,17 +1913,17 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
 
     case SO_RESET:
     {
-      struct Folder **flist;
+      struct FolderList *flist;
 
       // before we reset/reload the foldertree we have to
       // make sure everything is freed correctly.
       if((flist = FO_CreateList()) != NULL)
       {
-        int i;
+        struct FolderNode *fnode;
 
-        for(i=1; i <= (int)*flist; i++)
+        ForEachFolderNode(flist, fnode)
         {
-          struct Folder *folder = flist[i];
+          struct Folder *folder = fnode->folder;
 
           if(folder == NULL)
             break;
@@ -1925,7 +1931,7 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
           // we do not have to call FreeFolder manually, because the
           // destructor of the Listtree will do this for us. But we
           // have to free the FImage of the folder if it exists
-          if(folder->imageObject)
+          if(folder->imageObject != NULL)
           {
             // we make sure that the NList also doesn`t use the image in future anymore
             DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
@@ -1936,7 +1942,7 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
           }
         }
 
-        free(flist);
+        DeleteFolderList(flist);
       }
 
       FO_LoadTree(CreateFilename(".folders"));

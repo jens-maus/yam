@@ -72,6 +72,8 @@
 #include <proto/application.h>
 #endif
 
+#include "extrasrc.h"
+
 #include "SDI_hook.h"
 #include "SDI_stdarg.h"
 
@@ -89,7 +91,7 @@
 #include "classes/Classes.h"
 
 #include "FileInfo.h"
-#include "extrasrc.h"
+#include "FolderList.h"
 
 #include "Debug.h"
 
@@ -781,19 +783,19 @@ struct Folder *FolderRequest(const char *title, const char *body, const char *ye
   {
     char *fname;
     static int lastactive;
-    struct Folder **flist;
+    struct FolderList *flist;
 
     if((flist = FO_CreateList()) != NULL)
     {
-      int i;
+      struct FolderNode *fnode;
 
-      for(i = 1; i <= (int)*flist; i++)
+      ForEachFolderNode(flist, fnode)
       {
-        if(flist[i] != exclude && !isGroupFolder(flist[i]))
-          DoMethod(lv_folder, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
+        if(fnode->folder != exclude && !isGroupFolder(fnode->folder))
+          DoMethod(lv_folder, MUIM_List_InsertSingle, fnode->folder->Name, MUIV_List_Insert_Bottom);
       }
 
-      free(flist);
+      DeleteFolderList(flist);
     }
 
     set(lv_folder, MUIA_List_Active, lastactive);
@@ -808,7 +810,7 @@ struct Folder *FolderRequest(const char *title, const char *body, const char *ye
     // lets collect the waiting returnIDs now
     COLLECT_RETURNIDS;
 
-    if(!SafeOpenWindow(wi_fr))
+    if(SafeOpenWindow(wi_fr) == FALSE)
       folder = NULL;
     else while(folder == (struct Folder *)-1)
     {
@@ -822,7 +824,7 @@ struct Folder *FolderRequest(const char *title, const char *body, const char *ye
 
           DoMethod(lv_folder, MUIM_List_GetEntry, act, &fname);
 
-          if((folder = FO_GetFolderByName(fname, NULL)))
+          if((folder = FO_GetFolderByName(fname, NULL)) != NULL)
             lastactive = act;
         }
         break;
@@ -2514,23 +2516,24 @@ static BOOL IsFolderDir(const char *dir)
 BOOL AllFolderLoaded(void)
 {
   BOOL allLoaded = TRUE;
-  struct Folder **flist;
+  struct FolderList *flist;
 
   ENTER();
 
   if((flist = FO_CreateList()) != NULL)
   {
-    int i;
+    struct FolderNode *fnode;
 
-    for (i = 1; i <= (int)*flist; i++)
+    ForEachFolderNode(flist, fnode)
     {
-      if(flist[i]->LoadedMode != LM_VALID && !isGroupFolder(flist[i]))
+      if(fnode->folder->LoadedMode != LM_VALID && !isGroupFolder(fnode->folder))
       {
         allLoaded = FALSE;
         break;
       }
     }
-    free(flist);
+
+    DeleteFolderList(flist);
   }
   else
     allLoaded = FALSE;
@@ -5707,7 +5710,7 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
 void DisplayAppIconStatistics(void)
 {
   static char apptit[SIZE_DEFAULT/2];
-  struct Folder **flist;
+  struct FolderList *flist;
   enum IconImages mode;
   int new_msg = 0;
   int unr_msg = 0;
@@ -5721,11 +5724,11 @@ void DisplayAppIconStatistics(void)
   // we go and calculate the mail stats for all folders out there.
   if((flist = FO_CreateList()) != NULL)
   {
-    int i;
+    struct FolderNode *fnode;
 
-    for(i = 1; i <= (int)*flist; i++)
+    ForEachFolderNode(flist, fnode)
     {
-      struct Folder *fo = flist[i];
+      struct Folder *fo = fnode->folder;
 
       if(fo == NULL)
         break;
@@ -5740,7 +5743,7 @@ void DisplayAppIconStatistics(void)
       }
     }
 
-    free(flist);
+    DeleteFolderList(flist);
   }
 
   // clear AppIcon Label first before we create it new

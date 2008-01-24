@@ -42,6 +42,8 @@
 #include <proto/muimaster.h>
 #include <proto/utility.h>
 
+#include "extrasrc.h"
+
 #include "SDI_hook.h"
 
 #include "YAM.h"
@@ -60,7 +62,7 @@
 #include "classes/Classes.h"
 
 #include "FileInfo.h"
-#include "extrasrc.h"
+#include "FolderList.h"
 
 #include "Debug.h"
 /*
@@ -549,17 +551,17 @@ void MA_ExpireIndex(struct Folder *folder)
 //  Updates indices of all folders
 void MA_UpdateIndexes(BOOL initial)
 {
-  struct Folder **flist;
+  struct FolderList *flist;
 
   ENTER();
 
   if((flist = FO_CreateList()) != NULL)
   {
-    int i;
+    struct FolderNode *fnode;
 
-    for(i = 1; i <= (int)*flist; i++)
+    ForEachFolderNode(flist, fnode)
     {
-      struct Folder *folder = flist[i];
+      struct Folder *folder = fnode->folder;
 
       if(folder != NULL && !isGroupFolder(folder))
       {
@@ -646,7 +648,7 @@ void MA_UpdateIndexes(BOOL initial)
       }
     }
 
-    free(flist);
+    DeleteFolderList(flist);
   }
 
   LEAVE();
@@ -657,19 +659,18 @@ void MA_UpdateIndexes(BOOL initial)
 //  Removes loaded folder indices from memory and closes folders
 void MA_FlushIndexes(BOOL all)
 {
-  struct Folder **flist;
+  struct FolderList *flist;
 
   ENTER();
 
-  if((flist = FO_CreateList()))
+  if((flist = FO_CreateList()) != NULL)
   {
-    struct Folder *folder;
+    struct FolderNode *fnode;
     struct Folder *actfolder = FO_GetCurrentFolder();
-    int i;
 
-    for(i=1; i <= (int)*flist; i++)
+    ForEachFolderNode(flist, fnode)
     {
-      folder = flist[i];
+      struct Folder *folder = fnode->folder;
 
       // make sure the folder index is saved
       if(isModified(folder))
@@ -681,7 +682,7 @@ void MA_FlushIndexes(BOOL all)
       // problems.
       if((isSentFolder(folder) || !isDefaultFolder(folder)) &&
           folder->LoadedMode == LM_VALID &&
-          (all || isFreeAccess(folder)) &&
+          (all == TRUE || isFreeAccess(folder)) &&
           folder != actfolder)
       {
         D(DBF_FOLDER, "Flush index of folder '%s'", folder->Name);
@@ -693,7 +694,7 @@ void MA_FlushIndexes(BOOL all)
     }
 
     // free the temporary folder list
-    free(flist);
+    DeleteFolderList(flist);
 
     // make sure to redraw the whole folder list
     DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, MUIF_NONE);

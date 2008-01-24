@@ -56,6 +56,7 @@
 #include "BayesFilter.h"
 #include "FileInfo.h"
 #include "MailList.h"
+#include "FolderList.h"
 
 #include "Debug.h"
 
@@ -1517,16 +1518,15 @@ void CO_GetConfig(BOOL saveConfig)
             // reset spam state of all mails
             if(mask & (1 << 1))
             {
-              struct Folder **flist;
+              struct FolderList *flist;
 
               if((flist = FO_CreateList()) != NULL)
               {
-                int j;
+                struct FolderNode *fnode;
 
-                // iterate over all available folders
-                for(j = 1; j <= (int)*flist; j++)
+                ForEachFolderNode(flist, fnode)
                 {
-                  struct Folder *folder = flist[j];
+                  struct Folder *folder = fnode->folder;
 
                   if(!isGroupFolder(folder))
                   {
@@ -1550,7 +1550,7 @@ void CO_GetConfig(BOOL saveConfig)
                   }
                 }
 
-                free(flist);
+                DeleteFolderList(flist);
               }
             }
 

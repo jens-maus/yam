@@ -63,8 +63,8 @@ struct FO_GUIData
 
 struct FO_ClassData  /* folder configuration window */
 {
-   struct FO_GUIData GUI;
-   struct Folder *   EditFolder;
+  struct FO_GUIData GUI;
+  struct Folder *   EditFolder;
 };
 
 // Foldertype macros
@@ -90,7 +90,7 @@ extern const char* const FolderName[FT_NUM];
 #define isGroupFolder(folder)       ((folder)->Type == FT_GROUP)
 #define isCustomSentFolder(folder)  ((folder)->Type == FT_CUSTOMSENT)
 #define isCustomMixedFolder(folder) ((folder)->Type == FT_CUSTOMMIXED)
-#define isSpamFolder(folder)        (C->SpamFilterEnabled && (folder)->Type == FT_SPAM)
+#define isSpamFolder(folder)        (C->SpamFilterEnabled == TRUE && (folder)->Type == FT_SPAM)
 
 #define isDefaultFolder(folder)     (isIncomingFolder(folder) || \
                                      isOutgoingFolder(folder) || \
@@ -170,39 +170,39 @@ enum FolderMode { FM_NORMAL=0,  // normal folder
 
 struct Folder
 {
-   Object *          imageObject;
-   struct MailList * messages;
-   ULONG             Flags;
-   LONG              Size;
-   int               MLSignature;
-   int               Total;
-   int               New;
-   int               Unread;
-   int               Sent;
-   int               Deleted;
-   int               Sort[2];
-   int               MaxAge;
-   int               LastActive;
-   int               SortIndex;
-   int               ImageIndex;
+  Object *          imageObject;
+  struct MailList * messages;
+  ULONG             Flags;
+  LONG              Size;
+  int               MLSignature;
+  int               Total;
+  int               New;
+  int               Unread;
+  int               Sent;
+  int               Deleted;
+  int               Sort[2];
+  int               MaxAge;
+  int               LastActive;
+  int               SortIndex;
+  int               ImageIndex;
 
-   enum FolderMode   Mode;
-   enum FolderType   Type;
-   enum LoadedMode   LoadedMode;
+  enum FolderMode   Mode;
+  enum FolderType   Type;
+  enum LoadedMode   LoadedMode;
 
-   char              Name[SIZE_NAME];
-   char              Path[SIZE_PATH];
-   char              Password[SIZE_USERID];
-   char              MLPattern[SIZE_PATTERN];
-   char              MLAddress[SIZE_ADDRESS];
-   char              MLFromAddress[SIZE_ADDRESS];
-   char              MLReplyToAddress[SIZE_ADDRESS];
-   char              WriteIntro[SIZE_INTRO];
-   char              WriteGreetings[SIZE_INTRO];
+  char              Name[SIZE_NAME];
+  char              Path[SIZE_PATH];
+  char              Password[SIZE_USERID];
+  char              MLPattern[SIZE_PATTERN];
+  char              MLAddress[SIZE_ADDRESS];
+  char              MLFromAddress[SIZE_ADDRESS];
+  char              MLReplyToAddress[SIZE_ADDRESS];
+  char              WriteIntro[SIZE_INTRO];
+  char              WriteGreetings[SIZE_INTRO];
 
-   BOOL              ExpireUnread;
-   BOOL              Stats;
-   BOOL              MLSupport;
+  BOOL              ExpireUnread;
+  BOOL              Stats;
+  BOOL              MLSupport;
 };
 
 extern struct Hook FO_DeleteFolderHook;
@@ -212,7 +212,7 @@ extern struct Hook FO_NewFolderHook;
 extern struct Hook FO_SetOrderHook;
 
 BOOL            FO_CreateFolder(enum FolderType type, const char * const path, const char *name);
-struct Folder **FO_CreateList(void);
+struct FolderList *FO_CreateList(void);
 BOOL            FO_FreeFolder(struct Folder *folder);
 struct Folder * FO_GetCurrentFolder(void);
 BOOL            FO_SetCurrentFolder(struct Folder *fo);
