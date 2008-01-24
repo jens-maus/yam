@@ -68,7 +68,7 @@ $(OBJDIR)/Classes.o: classes/Classes.c classes/Classes.h classes/ClassesExtra.h 
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h
 $(OBJDIR)/Recipientstring.o: classes/Recipientstring.c classes/Recipientstring_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -83,7 +83,7 @@ $(OBJDIR)/Recipientstring.o: classes/Recipientstring.c classes/Recipientstring_c
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_mainFolder.h Debug.h
 $(OBJDIR)/Searchwindow.o: classes/Searchwindow.c classes/Searchwindow_cl.h \
@@ -99,7 +99,7 @@ $(OBJDIR)/Searchwindow.o: classes/Searchwindow.c classes/Searchwindow_cl.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/SearchControlGroup.o: classes/SearchControlGroup.c \
   classes/SearchControlGroup_cl.h classes/Classes.h \
@@ -115,7 +115,7 @@ $(OBJDIR)/SearchControlGroup.o: classes/SearchControlGroup.c \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_find.h Debug.h
 $(OBJDIR)/AddrBookEntryList.o: classes/AddrBookEntryList.c \
   classes/AddrBookEntryList_cl.h classes/Classes.h classes/ClassesExtra.h \
@@ -130,7 +130,7 @@ $(OBJDIR)/AddrBookEntryList.o: classes/AddrBookEntryList.c \
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h
 $(OBJDIR)/AddrBookListtree.o: classes/AddrBookListtree.c \
   classes/AddrBookListtree_cl.h classes/Classes.h classes/ClassesExtra.h \
@@ -145,7 +145,7 @@ $(OBJDIR)/AddrBookListtree.o: classes/AddrBookListtree.c \
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbookEntry.h MailList.h Debug.h
 $(OBJDIR)/AddrBookToolbar.o: classes/AddrBookToolbar.c classes/AddrBookToolbar_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -160,7 +160,7 @@ $(OBJDIR)/AddrBookToolbar.o: classes/AddrBookToolbar.c classes/AddrBookToolbar_c
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   ImageCache.h Debug.h
 $(OBJDIR)/Addrmatchlist.o: classes/Addrmatchlist.c classes/Addrmatchlist_cl.h \
@@ -176,7 +176,7 @@ $(OBJDIR)/Addrmatchlist.o: classes/Addrmatchlist.c classes/Addrmatchlist_cl.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbookEntry.h Debug.h
 $(OBJDIR)/Aboutwindow.o: classes/Aboutwindow.c classes/Aboutwindow_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -191,7 +191,7 @@ $(OBJDIR)/Aboutwindow.o: classes/Aboutwindow.c classes/Aboutwindow_cl.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h include/mui/NFloattext_mcc.h Debug.h
 $(OBJDIR)/AttachmentGroup.o: classes/AttachmentGroup.c classes/AttachmentGroup_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -206,7 +206,7 @@ $(OBJDIR)/AttachmentGroup.o: classes/AttachmentGroup.c classes/AttachmentGroup_c
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_mainFolder.h Debug.h
 $(OBJDIR)/AttachmentImage.o: classes/AttachmentImage.c classes/AttachmentImage_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -221,7 +221,7 @@ $(OBJDIR)/AttachmentImage.o: classes/AttachmentImage.c classes/AttachmentImage_c
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/ConfigPageList.o: classes/ConfigPageList.c classes/ConfigPageList_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -236,7 +236,7 @@ $(OBJDIR)/ConfigPageList.o: classes/ConfigPageList.c classes/ConfigPageList_cl.h
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/ReadMailGroup.o: classes/ReadMailGroup.c classes/ReadMailGroup_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -251,7 +251,7 @@ $(OBJDIR)/ReadMailGroup.o: classes/ReadMailGroup.c classes/ReadMailGroup_cl.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_error.h YAM_mainFolder.h HTML2Mail.h FileInfo.h Mime.h Timer.h \
   Debug.h
@@ -268,7 +268,7 @@ $(OBJDIR)/ReadWindow.o: classes/ReadWindow.c classes/ReadWindow_cl.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbookEntry.h YAM_find.h \
   YAM_mainFolder.h MailList.h Mime.h FolderList.h Debug.h
 $(OBJDIR)/ReadWindowToolbar.o: classes/ReadWindowToolbar.c \
@@ -284,7 +284,7 @@ $(OBJDIR)/ReadWindowToolbar.o: classes/ReadWindowToolbar.c \
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_mainFolder.h ImageCache.h Debug.h
 $(OBJDIR)/ReadWindowStatusBar.o: classes/ReadWindowStatusBar.c \
   classes/ReadWindowStatusBar_cl.h classes/Classes.h \
@@ -300,7 +300,7 @@ $(OBJDIR)/ReadWindowStatusBar.o: classes/ReadWindowStatusBar.c \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_mainFolder.h Themes.h Debug.h
 $(OBJDIR)/Splashwindow.o: classes/Splashwindow.c classes/Splashwindow_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -315,7 +315,7 @@ $(OBJDIR)/Splashwindow.o: classes/Splashwindow.c classes/Splashwindow_cl.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/ShutdownWindow.o: classes/ShutdownWindow.c classes/ShutdownWindow_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -330,7 +330,7 @@ $(OBJDIR)/ShutdownWindow.o: classes/ShutdownWindow.c classes/ShutdownWindow_cl.h
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/MailTextEdit.o: classes/MailTextEdit.c classes/MailTextEdit_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -345,7 +345,7 @@ $(OBJDIR)/MailTextEdit.o: classes/MailTextEdit.c classes/MailTextEdit_cl.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   Debug.h
 $(OBJDIR)/MainFolderListtree.o: classes/MainFolderListtree.c \
@@ -362,7 +362,7 @@ $(OBJDIR)/MainFolderListtree.o: classes/MainFolderListtree.c \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_find.h YAM_mainFolder.h Debug.h
 $(OBJDIR)/MainMailList.o: classes/MainMailList.c classes/MainMailList_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -377,7 +377,7 @@ $(OBJDIR)/MainMailList.o: classes/MainMailList.c classes/MainMailList_cl.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_find.h YAM_mainFolder.h Themes.h Debug.h
 $(OBJDIR)/MainMailListGroup.o: classes/MainMailListGroup.c \
@@ -393,7 +393,7 @@ $(OBJDIR)/MainMailListGroup.o: classes/MainMailListGroup.c \
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/MainWindow.o: classes/MainWindow.c classes/MainWindow_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -408,7 +408,7 @@ $(OBJDIR)/MainWindow.o: classes/MainWindow.c classes/MainWindow_cl.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/MainWindowToolbar.o: classes/MainWindowToolbar.c \
   classes/MainWindowToolbar_cl.h classes/Classes.h classes/ClassesExtra.h \
@@ -423,7 +423,7 @@ $(OBJDIR)/MainWindowToolbar.o: classes/MainWindowToolbar.c \
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_find.h YAM_mainFolder.h \
   Debug.h
 $(OBJDIR)/InfoBar.o: classes/InfoBar.c classes/InfoBar_cl.h classes/Classes.h \
@@ -439,7 +439,7 @@ $(OBJDIR)/InfoBar.o: classes/InfoBar.c classes/InfoBar_cl.h classes/Classes.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/WriteAttachmentList.o: classes/WriteAttachmentList.c \
   classes/WriteAttachmentList_cl.h classes/Classes.h \
@@ -455,7 +455,7 @@ $(OBJDIR)/WriteAttachmentList.o: classes/WriteAttachmentList.c \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_mainFolder.h Debug.h
 $(OBJDIR)/WriteWindow.o: classes/WriteWindow.c classes/WriteWindow_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -470,7 +470,7 @@ $(OBJDIR)/WriteWindow.o: classes/WriteWindow.c classes/WriteWindow_cl.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/WriteWindowToolbar.o: classes/WriteWindowToolbar.c \
   classes/WriteWindowToolbar_cl.h classes/Classes.h \
@@ -486,7 +486,7 @@ $(OBJDIR)/WriteWindowToolbar.o: classes/WriteWindowToolbar.c \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h ImageCache.h Debug.h
 $(OBJDIR)/QuickSearchBar.o: classes/QuickSearchBar.c classes/QuickSearchBar_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
@@ -501,7 +501,7 @@ $(OBJDIR)/QuickSearchBar.o: classes/QuickSearchBar.c classes/QuickSearchBar_cl.h
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_find.h YAM_mainFolder.h MailList.h Debug.h
 $(OBJDIR)/ImageArea.o: classes/ImageArea.c ImageCache.h include/mui/TheBar_mcc.h \
@@ -517,7 +517,7 @@ $(OBJDIR)/ImageArea.o: classes/ImageArea.c ImageCache.h include/mui/TheBar_mcc.h
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h Themes.h Timer.h YAM_config.h \
   YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h YAM_global.h \
-  YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h YAM_read.h \
+  YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
   BayesFilter.h Debug.h
 $(OBJDIR)/TransferMailList.o: classes/TransferMailList.c \
   classes/TransferMailList_cl.h classes/Classes.h classes/ClassesExtra.h \
@@ -532,7 +532,7 @@ $(OBJDIR)/TransferMailList.o: classes/TransferMailList.c \
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Themes.h Debug.h
 $(OBJDIR)/UpdateNotifyWindow.o: classes/UpdateNotifyWindow.c \
   classes/UpdateNotifyWindow_cl.h classes/Classes.h \
@@ -548,7 +548,7 @@ $(OBJDIR)/UpdateNotifyWindow.o: classes/UpdateNotifyWindow.c \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h include/mui/NFloattext_mcc.h YAM_configFile.h \
   FileInfo.h Debug.h
 $(OBJDIR)/ThemeListGroup.o: classes/ThemeListGroup.c classes/ThemeListGroup_cl.h \
@@ -564,7 +564,7 @@ $(OBJDIR)/ThemeListGroup.o: classes/ThemeListGroup.c classes/ThemeListGroup_cl.h
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM.o: classes/YAM.c classes/YAM_cl.h classes/Classes.h \
   classes/ClassesExtra.h include/libraries/mui.h \
@@ -579,7 +579,7 @@ $(OBJDIR)/YAM.o: classes/YAM.c classes/YAM_cl.h classes/Classes.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_mail_lex.h YAM_utilities.h Locale.h YAM_main.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   Debug.h
 $(OBJDIR)/YAM_AB.o: YAM_AB.c include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -729,10 +729,6 @@ $(OBJDIR)/YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_main.h YAM_read.h BayesFilter.h FileInfo.h FolderList.h Locale.h \
   MailList.h Mime.h Debug.h include/amiga-align.h include/default-align.h
 $(OBJDIR)/YAM_md5.o: YAM_md5.c YAM_md5.h
-$(OBJDIR)/YAM_mail_lex.o: YAM_mail_lex.c YAM_mail_lex.h YAM_utilities.h \
-  include/SDI_compiler.h YAM_stringsizes.h YAM_folderconfig.h \
-  YAM_config.h include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h \
-  YAM_transfer.h UpdateCheck.h Debug.h
 $(OBJDIR)/YAM_RE.o: YAM_RE.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/mui/TextEditor_mcc.h \
   include/proto/codesets.h include/libraries/codesets.h \
@@ -745,10 +741,10 @@ $(OBJDIR)/YAM_RE.o: YAM_RE.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_addressbookEntry.h YAM_write.h YAM_main.h YAM_config.h YAM_read.h \
-  UpdateCheck.h YAM_error.h YAM_global.h YAM_mail_lex.h YAM_mainFolder.h \
+  UpdateCheck.h YAM_error.h YAM_global.h YAM_mainFolder.h \
   classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
   BayesFilter.h HTML2Mail.h FileInfo.h FolderList.h Locale.h MailList.h \
-  Mime.h Debug.h
+  Mime.h ParseEmail.h Debug.h
 $(OBJDIR)/YAM_rexx.o: YAM_rexx.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_rexx_rxif.h \
@@ -837,9 +833,9 @@ $(OBJDIR)/YAM_UT.o: YAM_UT.c include/libraries/openurl.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_addressbook.h YAM_config.h YAM_read.h YAM_write.h \
   YAM_main.h UpdateCheck.h YAM_error.h YAM_find.h YAM_global.h \
-  YAM_mail_lex.h YAM_mainFolder.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h FileInfo.h \
-  FolderList.h Locale.h MailList.h Mime.h Debug.h
+  YAM_mainFolder.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
+  YAM_read.h BayesFilter.h FileInfo.h FolderList.h Locale.h MailList.h \
+  Mime.h ParseEmail.h Debug.h
 $(OBJDIR)/YAM_WR.o: YAM_WR.c include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/mui/NListtree_mcc.h \
   include/mui/NListview_mcc.h include/mui/TextEditor_mcc.h \
@@ -925,6 +921,10 @@ $(OBJDIR)/Mime.o: Mime.c include/proto/codesets.h include/libraries/codesets.h \
   YAM_main.h UpdateCheck.h YAM_error.h Locale.h Mime.h Debug.h
 $(OBJDIR)/FolderList.o: FolderList.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h FolderList.h Debug.h
+$(OBJDIR)/ParseEmail.o: ParseEmail.c YAM_utilities.h include/SDI_compiler.h \
+  YAM_stringsizes.h YAM_folderconfig.h YAM_config.h \
+  include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h \
+  YAM_transfer.h UpdateCheck.h ParseEmail.h Debug.h
 $(OBJDIR)/extrasrc.o: extrasrc.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h extrasrc/stcgfe.c \
   extrasrc/NewReadArgs.c Debug.h extrasrc/vastubs.c extrasrc/DoSuperNew.c \

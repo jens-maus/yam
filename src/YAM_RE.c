@@ -55,7 +55,6 @@
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
-#include "YAM_mail_lex.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
@@ -69,6 +68,7 @@
 #include "Locale.h"
 #include "MailList.h"
 #include "Mime.h"
+#include "ParseEmail.h"
 
 #include "Debug.h"
 

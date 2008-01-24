@@ -7,6 +7,8 @@ $URL$
 
 2008-01-24  Jens Langner <Jens.Langner@light-speed.de>
 
+  * ParseEmail.l,h: renamed the YAM_mail_lex.? stuff to ParseEmail.? as that
+    stuff is also one of the reworked sources.
   * Locale_c,h.sd: renamed the C_c.sd and C_h.sd files to be called "Locale"
     which in fact should be more precise. In addition a "Locale.c" and
     "Locale.h" file will now be generated.

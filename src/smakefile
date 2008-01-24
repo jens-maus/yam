@@ -131,7 +131,7 @@ OBJS = \
 	$(OBJDIR)/YAM_MA.o \
 	$(OBJDIR)/YAM_MAf.o \
 	$(OBJDIR)/YAM_md5.o \
-	$(OBJDIR)/YAM_mail_lex.o \
+	$(OBJDIR)/ParseEmail.o \
 	$(OBJDIR)/YAM_RE.o \
 	$(OBJDIR)/YAM_rexx.o \
 	$(OBJDIR)/YAM_rexx_rxcl.o \
@@ -153,7 +153,7 @@ OBJS = \
 
 #
 
-all: note $(OBJDIR) classinfo Locale.c YAM_mail_lex.c $(TARGET)
+all: note $(OBJDIR) classinfo Locale.c ParseEmail.c $(TARGET)
 
 # make the object directories
 $(OBJDIR): $(OBJDIR)/.objdir_is_here
@@ -198,7 +198,7 @@ clean:
   -$(RMDIR) $(OBJDIR)
 
 cleanall: clean
-  -$(RM) Locale.? YAM_mail_lex.c HTML2Mail.c $(CLASSDIR)/Classes.? $(CLASSDIR)/*_cl.h
+  -$(RM) Locale.? ParseEmail.c HTML2Mail.c $(CLASSDIR)/Classes.? $(CLASSDIR)/*_cl.h
 
 distclean: cleanall
   @execute <<
@@ -318,8 +318,8 @@ $(OBJDIR)/YAM_md5.o: YAM_md5.c YAM_md5.h
 $(OBJDIR)/Mime.o: Mime.c YAM_error.h Locale.h Mime.h YAM_stringsizes.h \
   YAM_utilities.h
 
-$(OBJDIR)/YAM_mail_lex.o: YAM_mail_lex.c
-YAM_mail_lex.c: YAM_mail_lex.l YAM_mail_lex.h
+$(OBJDIR)/ParseEmail.o: ParseEmail.c
+ParseEmail.c: ParseEmail.l ParseEmail.h
 
 $(OBJDIR)/YAM_RE.o: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_config.h YAM_error.h YAM_find.h \

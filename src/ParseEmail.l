@@ -41,10 +41,11 @@
 %{
     #include <string.h>
 
-    #include "YAM_mail_lex.h"
     #include "YAM_utilities.h"
     #include "YAM_config.h"
     #include "YAM_read.h"
+
+    #include "ParseEmail.h"
 
     #include "Debug.h"
 
