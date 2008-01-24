@@ -28,8 +28,12 @@
 
 ***************************************************************************/
 
-#include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
+#include "YAM_transfer.h"
+
+// forward declarations
+struct Mail;
+struct Folder;
 
 // General internal flags of a mail (no status information)
 // Warning: Please note that if you change something here you have to make

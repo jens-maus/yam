@@ -585,3 +585,38 @@ corresponding AllocXXXXObject() functions if they exist and do the same
 job!
 
 ############################################################################
+
+21. Use forward declarations - keep the header files (*.h) clean!
+-----------------------------------------------------------------
+
+To keep the header files - and especially the way '#include' statements are
+performed - clean, the use of forward declarations should considered
+mandatory. To clear things up, the following rules should apply:
+
+  - If a variable in a header file (*.h) is to be defined as a pointer and
+    its type is a custom type (e.g. struct), then a forward declaration
+    of that type should be put at the top of the header file rather than
+    including the header where this type is defined.
+
+  - No forward declarations for 'enum' types should be defined. While some
+    compilers might support it, it is not part of any standard.
+
+  - put your forward declarations at the top of each header file, right
+    after the last #include statement. They should always look like:
+
+    --- cut here ---
+    #include <intuition/classusr.h> // Object
+
+    // forward declarations
+    struct Mail;
+    --- cut here ---
+
+    whereas "struct Mail" is the forward declaration.
+
+The main reason why we prefer the use of forward declarations rather than
+including every necessary header file is, because it keeps the header files
+clean and reduces the possibility of circular include statements. Even more
+important, it keeps the dependency list (which is generated via 'make
+depend') clean and speed up compilation as well.
+
+############################################################################

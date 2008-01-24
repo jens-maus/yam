@@ -33,6 +33,7 @@
 #include <libraries/locale.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NFloattext_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <mui/TheBar_mcc.h>
 

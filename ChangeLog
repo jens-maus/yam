@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc, STYLEGUIDE: cleaned up all our header files by using forward
+    declarations for variables which are defined as pointers only. Please note
+    that forward declarations can become very handy and usefull. It really
+    decreases the amount of cross dependencies between files and speeds up
+    compilation.
+
 2008-01-24  Thore Böckelmann <tboeckel@gmx.de>
 
   * Recipientstring.c: minor cosmetic fixes.

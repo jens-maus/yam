@@ -30,6 +30,13 @@
 
 #include "QuickSearchBar_cl.h"
 
+#include "YAM_addressbook.h"
+#include "YAM_addressbookEntry.h"
+#include "YAM_find.h"
+#include "YAM_mainFolder.h"
+
+#include "MailList.h"
+
 #include "Debug.h"
 
 /* CLASSDATA

@@ -28,7 +28,10 @@
 
 ***************************************************************************/
 
-#include "YAM_rexx_rxif.h"
+// forward declarations
+struct RexxHost;
+struct RexxMsg;
+struct MsgPort;
 
 void ARexxDispatch(struct RexxHost *host);
 void CloseDownARexxHost(struct RexxHost *host);

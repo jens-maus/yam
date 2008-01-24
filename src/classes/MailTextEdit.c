@@ -30,6 +30,9 @@
 
 #include "MailTextEdit_cl.h"
 
+#include "YAM_addressbook.h"
+#include "YAM_addressbookEntry.h"
+
 #include "Debug.h"
 
 /* CLASSDATA

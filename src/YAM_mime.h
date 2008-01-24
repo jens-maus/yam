@@ -30,9 +30,10 @@
 
 #include <stdio.h>
 
-#include <libraries/codesets.h>
-
 #include "YAM_stringsizes.h"
+
+// forward declarations
+struct codeset;
 
 // codesets.library helper functions
 char *strippedCharsetName(const struct codeset* codeset);

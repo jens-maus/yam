@@ -30,6 +30,9 @@
 
 #include "ReadWindow_cl.h"
 
+#include "YAM_addressbookEntry.h"
+#include "YAM_find.h"
+#include "YAM_mainFolder.h"
 #include "YAM_mime.h"
 
 #include "BayesFilter.h"

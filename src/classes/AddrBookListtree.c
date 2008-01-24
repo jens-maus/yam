@@ -30,6 +30,7 @@
 
 #include "AddrBookListtree_cl.h"
 
+#include "YAM_addressbookEntry.h"
 #include "MailList.h"
 
 #include "Debug.h"

@@ -30,6 +30,8 @@
 
 #include "ReadWindowToolbar_cl.h"
 
+#include "YAM_mainFolder.h"
+
 #include "ImageCache.h"
 
 #include "Debug.h"

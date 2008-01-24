@@ -30,7 +30,10 @@
 
 #include "ReadMailGroup_cl.h"
 
+#include "YAM_addressbook.h"
+#include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
+#include "YAM_mainFolder.h"
 #include "YAM_mime.h"
 #include "YAM_read.h"
 

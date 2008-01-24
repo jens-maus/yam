@@ -41,8 +41,7 @@
 
 #include "SDI_compiler.h"
 
-// forward declaration of struct HashTable, because we need it all along the way
-// before we really can define it.
+// forward declarations
 struct HashTable;
 
 // Table entry header structure.

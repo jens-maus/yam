@@ -28,7 +28,8 @@
 
 ***************************************************************************/
 
-#include <rexx/storage.h>
+// forward declarations
+struct RexxMsg;
 
 enum RexxAction
 {

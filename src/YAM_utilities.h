@@ -36,13 +36,12 @@
 
 #include "SDI_compiler.h"
 
-#include "YAM_folderconfig.h"
 #include "YAM_stringsizes.h"
+#include "YAM_folderconfig.h"
 
-// some forward declarations
-#ifndef YAM_READ_H
+// forward declarations
 struct ReadMailData;
-#endif
+struct Mail;
 
 // Types of string outputs the DateStamp2String()
 // function can handle. Please note that in case the

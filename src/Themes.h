@@ -30,6 +30,9 @@
 
 #include <exec/types.h>
 
+// forward declarations
+struct DiskObject;
+
 enum ConfigImages
 {
   ci_First = 0,

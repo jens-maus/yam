@@ -30,10 +30,11 @@
 
 #include <exec/lists.h>
 #include <exec/nodes.h>
-#include <exec/semaphores.h>
 #include <exec/types.h>
 
-#include "YAM_folderconfig.h"
+// forward declarations
+struct SignalSemaphore;
+struct Folder;
 
 struct FolderList
 {

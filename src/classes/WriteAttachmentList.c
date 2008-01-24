@@ -30,6 +30,8 @@
 
 #include "WriteAttachmentList_cl.h"
 
+#include "YAM_mainFolder.h"
+
 #include "Debug.h"
 
 /* CLASSDATA

@@ -31,8 +31,12 @@
 #include <mui/NListtree_mcc.h>
 
 #include "SDI_compiler.h"
-#include "YAM_addressbookEntry.h"
+
 #include "YAM_stringsizes.h"
+
+// forward declarations
+struct ABEntry;
+struct Person;
 
 // special Searchtypes for AB_SearchEntry()
 #define ASM_ALIAS    1

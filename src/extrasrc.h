@@ -33,11 +33,14 @@
 #include <stddef.h>
 #include <stdio.h>
 
-#include <utility/tagitem.h>
-#include <proto/intuition.h>
+#include <intuition/classusr.h> // Object
 
 #include "SDI_compiler.h"
 #include "SDI_stdarg.h"
+
+// forward declarations
+struct TagItem;
+struct IClass;
 
 /*
  * Differentations between runtime libs and operating system

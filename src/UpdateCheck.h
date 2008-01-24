@@ -28,6 +28,9 @@
 
 ***************************************************************************/
 
+// forward declarations
+struct TempFile;
+
 // enumeration values for the update check
 // status
 enum UpdateCheckStatus

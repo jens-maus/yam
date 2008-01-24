@@ -30,10 +30,11 @@
 
 #include <stdio.h>
 
-#include "YAM_mainFolder.h"
+#include <intuition/classusr.h> // Object
 
-#include "HashTable.h"
-#include "MailList.h"
+// forward declarations
+struct Folder;
+struct MailList;
 
 enum TransferType
 {

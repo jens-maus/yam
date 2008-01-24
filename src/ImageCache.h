@@ -29,10 +29,13 @@
 ***************************************************************************/
 
 #include <exec/nodes.h>
-#include <intuition/screens.h>
 #include <mui/TheBar_mcc.h>
 
 #include "HashTable.h"
+
+// forward declarations
+struct Screen;
+struct BitMap;
 
 // definition of an imageCacheNode which contains
 // all information of a loaded image file, including the

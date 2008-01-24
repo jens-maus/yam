@@ -35,6 +35,9 @@
 #include <proto/application.h>
 #endif
 
+#include "YAM_addressbook.h"
+#include "YAM_addressbookEntry.h"
+
 #include "Debug.h"
 
 #define EMAILCACHENAME "PROGDIR:.emailcache"

@@ -28,12 +28,13 @@
 
 ***************************************************************************/
 
-#include <mui/NListtree_mcc.h>
-
 #include "SDI_compiler.h"
 
 #include "YAM_stringsizes.h"
 #include "YAM_write.h"
+
+// forward declarations
+struct MUI_NListtree_TreeNode;
 
 struct EA_GUIData
 {

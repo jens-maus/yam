@@ -30,11 +30,11 @@
 
 #include "YAM_main.h"
 #include "YAM_stringsizes.h"
-#include "MailList.h"
 
-#ifndef WORKBENCH_WORKBENCH_H
+// forward declarations
 struct AppMessage;
-#endif
+struct Mail;
+struct MailList;
 
 struct WR_GUIData
 {

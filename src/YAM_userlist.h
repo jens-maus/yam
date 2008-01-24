@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include <intuition/classusr.h> // Object
+
 #include "YAM_stringsizes.h"
 
 struct US_GUIData

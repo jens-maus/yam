@@ -100,6 +100,7 @@
 #include "BayesFilter.h"
 #include "FileInfo.h"
 #include "Timer.h"
+#include "MailList.h"
 
 #include "classes/Classes.h"
 

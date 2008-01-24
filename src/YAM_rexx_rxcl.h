@@ -28,6 +28,10 @@
 
 ***************************************************************************/
 
+// forward declarations
+struct RexxHost;
+struct RexxMsg;
+
 #define ARB_CF_ENABLED     (1L << 0)
 
 #define ARB_HF_CMDSHELL    (1L << 0)

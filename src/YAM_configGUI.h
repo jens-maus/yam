@@ -30,6 +30,9 @@
 
 #include <exec/types.h>
 
+// forward declarations
+struct CO_ClassData;
+
 Object *CO_PageFirstSteps(struct CO_ClassData *data);
 Object *CO_PageTCPIP(struct CO_ClassData *data);
 Object *CO_PageNewMail(struct CO_ClassData *data);

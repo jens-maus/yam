@@ -28,11 +28,11 @@
 
 ***************************************************************************/
 
-#include "SDI_compiler.h"
-
-#include "YAM_addressbook.h"
-#include "YAM_mainFolder.h"
 #include "YAM_write.h"
+
+// forward declarations
+struct ABEntry;
+struct TempFile;
 
 // special defines for Part Types
 #define PART_ORIGINAL -2

@@ -30,6 +30,10 @@
 
 #include "SearchControlGroup_cl.h"
 
+#include <proto/asl.h>
+
+#include "YAM_find.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -55,6 +59,8 @@ struct Data
   BOOL showCombineCycle;
 };
 */
+
+const int Mode2Group[12] = { 0,0,0,0,1,2,1,2,4,4,4,3 };
 
 /* Hooks */
 

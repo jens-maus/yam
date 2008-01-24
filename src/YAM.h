@@ -28,9 +28,6 @@
 
 ***************************************************************************/
 
-#include <dos/notify.h>
-#include <libraries/asl.h>
-#include <libraries/mui.h>
 #include <xpk/xpk.h>
 
 #include "netinet/in.h"
@@ -39,10 +36,35 @@
 #include "YAM_stringsizes.h"
 #include "YAM_transfer.h"    // struct DownloadResult
 #include "YAM_userlist.h"    // struct Users
+#include "YAM_utilities.h"   // ASL_MAX
+
 #include "BayesFilter.h"     // struct TokenAnalyzer
-#include "HashTable.h"       // struct HashTable
 #include "Themes.h"          // struct Theme
 #include "Timer.h"           // struct Timers
+
+// forward declarations
+struct DiskObject;
+struct AppIcon;
+struct MsgPort;
+struct RexxHost;
+struct FileReqCache;
+struct Locale;
+struct Catalog;
+struct MA_ClassData;
+struct CO_ClassData;
+struct AB_ClassData;
+struct EA_ClassData;
+struct WR_ClassData;
+struct TR_ClassData;
+struct ER_ClassData;
+struct FI_ClassData;
+struct FO_ClassData;
+struct DI_ClassData;
+struct ReadMailData;
+struct codeset;
+struct codesetList;
+struct HashTable;
+struct NotifyRequest;
 
 /**************************************************************************/
 

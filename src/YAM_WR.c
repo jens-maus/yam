@@ -73,6 +73,7 @@
 #include "classes/Classes.h"
 
 #include "FileInfo.h"
+#include "MailList.h"
 
 #include "Debug.h"
 

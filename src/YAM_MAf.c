@@ -63,8 +63,10 @@
 
 #include "FileInfo.h"
 #include "FolderList.h"
+#include "MailList.h"
 
 #include "Debug.h"
+
 /*
 ** The following structures are used to build the
 ** .index files of a folder.

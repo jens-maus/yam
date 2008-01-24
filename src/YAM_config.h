@@ -30,11 +30,13 @@
 
 #include <libraries/mui.h>
 
-#include "YAM_find.h"
-#include "YAM_transfer.h"
 #include "YAM_read.h"
 
 #include "UpdateCheck.h"
+
+// forward declarations
+struct POP3;
+struct FilterNode;
 
 #define FOCOLNUM 5
 #define MACOLNUM 8  // the maximum number of columns the MessageListview can have

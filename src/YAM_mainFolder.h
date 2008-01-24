@@ -28,8 +28,10 @@
 
 ***************************************************************************/
 
-#include "YAM_folderconfig.h"
 #include "YAM_utilities.h"
+
+// forward declarations
+struct Folder;
 
 struct Mail
 {

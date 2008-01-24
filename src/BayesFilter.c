@@ -31,14 +31,16 @@
 
 #include <proto/dos.h>
 
-#include "BayesFilter.h"
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_read.h"
 #include "YAM_addressbook.h"
+#include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
+
 #include "extrasrc.h"
 
+#include "BayesFilter.h"
 #include "FileInfo.h"
 
 #include "Debug.h"

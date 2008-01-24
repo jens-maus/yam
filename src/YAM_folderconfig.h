@@ -32,9 +32,8 @@
 
 #include "YAM_stringsizes.h"
 
-#ifndef MAILLIST_H
+// forward declarations
 struct MailList;
-#endif
 
 struct FO_GUIData
 {

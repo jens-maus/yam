@@ -78,13 +78,16 @@
 #include "SDI_stdarg.h"
 
 #include "YAM.h"
+#include "YAM_addressbook.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
+#include "YAM_find.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
 #include "YAM_mail_lex.h"
 #include "YAM_main.h"
+#include "YAM_mainFolder.h"
 #include "YAM_mime.h"
 #include "YAM_read.h"
 #include "YAM_utilities.h"
@@ -92,6 +95,7 @@
 
 #include "FileInfo.h"
 #include "FolderList.h"
+#include "MailList.h"
 
 #include "Debug.h"
 

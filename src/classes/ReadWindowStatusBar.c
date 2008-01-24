@@ -33,6 +33,8 @@
 
 #include <proto/graphics.h>
 
+#include "YAM_mainFolder.h"
+
 #include "Themes.h"
 
 #include "Debug.h"

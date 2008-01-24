@@ -30,6 +30,9 @@
 
 #include "AddrBookEntryList_cl.h"
 
+#include "YAM_addressbook.h"
+#include "YAM_addressbookEntry.h"
+
 /* CLASSDATA
 struct Data
 {

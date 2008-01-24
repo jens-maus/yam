@@ -34,8 +34,6 @@
 #define FORMAT_DEF 4
 #endif
 
-#include "YAM_mainFolder.h"
-
 struct FI_GUIData
 {
   Object *WI;
@@ -151,7 +149,6 @@ struct FilterNode
 extern struct Hook FI_OpenHook;
 extern struct Hook ApplyFiltersHook;
 
-extern const int Mode2Group[12];
 extern const char mailStatusCycleMap[11];
 
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode,

@@ -31,6 +31,8 @@
 #include "Recipientstring_cl.h"
 
 #include "YAM_addressbook.h"
+#include "YAM_addressbookEntry.h"
+#include "YAM_mainFolder.h"
 
 #include "Debug.h"
 
@@ -71,7 +73,8 @@ HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *
 
   entry = (struct ABEntry *)msg->UserData;
 
-  if(entry->Type == AET_USER || entry->Type == AET_LIST) {
+  if(entry->Type == AET_USER || entry->Type == AET_LIST)
+  {
     if(Stricmp(msg->User, entry->Alias) == 0)
     {
       D(DBF_GUI, "\"%s\" matches alias \"%s\"", msg->User, entry->Alias);

@@ -74,8 +74,7 @@ static void FreeSearchPatternList(struct Search *search);
 ***************************************************************************/
 
 /// Global variables
-const int Mode2Group[12] = { 0,0,0,0,1,2,1,2,4,4,4,3 };
-
+//
 // The following array is a static map of the different unique statuses a mail
 // can have. It is used by the Find Cycle gadget to map the different statuses:
 // U - New/Unread

@@ -28,8 +28,10 @@
 
 ***************************************************************************/
 
-#include "YAM_mainFolder.h"
 #include "HashTable.h"
+
+// forward declarations
+struct Mail;
 
 /*
  YAM's spam filter is based upon Mozilla Thunderbird's junk filter.
