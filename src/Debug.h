@@ -66,7 +66,7 @@
 #define DBF_FILTER   (1<<4)     // for filter/search management (YAM_FI.c)
 #define DBF_FOLDER   (1<<5)     // for folder management (YAM_FO.c, YAM_MAf.c)
 #define DBF_MAIL     (1<<6)     // for mail management (YAM_MA.c)
-#define DBF_MIME     (1<<7)     // for mime encoding/decoding (YAM_MI.c)
+#define DBF_MIME     (1<<7)     // for mime encoding/decoding (Mime.c)
 #define DBF_GUI      (1<<8)     // for GUI management output
 #define DBF_REXX     (1<<9)     // for REXX management output
 #define DBF_NET      (1<<10)    // for Network management output (YAM_TR.c)

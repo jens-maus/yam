@@ -34,11 +34,11 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
 #include "YAM_mainFolder.h"
-#include "YAM_mime.h"
 #include "YAM_read.h"
 
 #include "HTML2Mail.h"
 #include "FileInfo.h"
+#include "Mime.h"
 #include "Timer.h"
 
 #include "Debug.h"

@@ -53,11 +53,11 @@
 #include "YAM_error.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
-#include "YAM_mime.h"
 #include "YAM_transfer.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
+#include "Mime.h"
 #include "UpdateCheck.h"
 
 #include "Debug.h"

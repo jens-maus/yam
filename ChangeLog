@@ -7,6 +7,9 @@ $URL$
 
 2008-01-24  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Mime.c, Mime.h: renamed the YAM_MI.c,h to Mime.c,h which really should
+    have happened earlier as all functions in that file were anyway rewritten
+    from scratch and we want to get rid of the YAM_ prefix sooner or later.
   * misc, STYLEGUIDE: cleaned up all our header files by using forward
     declarations for variables which are defined as pointers only. Please note
     that forward declarations can become very handy and usefull. It really

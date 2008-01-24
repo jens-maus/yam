@@ -44,10 +44,11 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_mime.h"
 #include "YAM_rexx.h"
 #include "YAM_rexx_rxcl.h"
 #include "YAM_utilities.h"
+
+#include "Mime.h"
 
 #include "Debug.h"
 

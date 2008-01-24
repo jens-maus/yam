@@ -33,10 +33,10 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
-#include "YAM_mime.h"
 
 #include "BayesFilter.h"
 #include "MailList.h"
+#include "Mime.h"
 #include "FolderList.h"
 
 #include "Debug.h"

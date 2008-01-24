@@ -1,5 +1,5 @@
-#ifndef YAM_MIME_H
-#define YAM_MIME_H
+#ifndef MIME_H
+#define MIME_H
 
 /***************************************************************************
 
@@ -136,4 +136,4 @@ enum IntMimeTypeID
   MT_ME_EMAIL    // message/rfc822
 };
 
-#endif /* YAM_MIME_H */
+#endif /* MIME_H */

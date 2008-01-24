@@ -54,7 +54,6 @@
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
-#include "YAM_mime.h"
 #include "YAM_read.h"
 #include "YAM_rexx.h"
 #include "YAM_userlist.h"
@@ -64,6 +63,7 @@
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "MailList.h"
+#include "Mime.h"
 
 #include "Debug.h"
 

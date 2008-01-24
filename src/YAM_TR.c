@@ -70,13 +70,13 @@
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_md5.h"
-#include "YAM_mime.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
 #include "HashTable.h"
 #include "FileInfo.h"
 #include "MailList.h"
+#include "Mime.h"
 
 #include "Debug.h"
 

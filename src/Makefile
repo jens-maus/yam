@@ -304,7 +304,6 @@ OBJS = \
 	$(OBJDIR)/YAM_MA.o \
 	$(OBJDIR)/YAM_MAf.o \
 	$(OBJDIR)/YAM_md5.o \
-	$(OBJDIR)/YAM_MI.o \
 	$(OBJDIR)/YAM_mail_lex.o \
 	$(OBJDIR)/YAM_RE.o \
 	$(OBJDIR)/YAM_rexx.o \
@@ -323,6 +322,7 @@ OBJS = \
 	$(OBJDIR)/BayesFilter.o \
 	$(OBJDIR)/FileInfo.o \
 	$(OBJDIR)/MailList.o \
+	$(OBJDIR)/Mime.o \
 	$(OBJDIR)/FolderList.o \
 	$(OBJDIR)/extrasrc.o \
 	$(OBJDIR)/Debug.o
