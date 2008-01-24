@@ -388,12 +388,38 @@ DECLARE(ActiveChange) // LONG active
     DoMethod(data->Matchlist, MUIM_NList_GetEntry, msg->active, &entry);
     if(entry != NULL)
     {
-      char *res;
+      switch(entry->MatchEntry->Type)
+      {
+        case AET_USER:
+        {
+          // for users we prefer their address
+          char *res = entry->MatchEntry->Address;
 
-      // signal the string that we need to replace the selected part with
-      // some new entry
-      if((res = entry->MatchEntry->Address) != NULL)
-        DoMethod(data->String, MUIM_Recipientstring_ReplaceSelected, res);
+          // signal the string that we need to replace the selected part with
+          // some new entry
+          if(res != NULL)
+            DoMethod(data->String, MUIM_Recipientstring_ReplaceSelected, res);
+        }
+        break;
+
+        case AET_LIST:
+        {
+          // for lists we use the list name
+          char *res = entry->MatchEntry->RealName;
+
+          // signal the string that we need to replace the selected part with
+          // some new entry
+          if(res != NULL)
+            DoMethod(data->String, MUIM_Recipientstring_ReplaceSelected, res);
+        }
+        break;
+
+        case AET_GROUP:
+        {
+          // this should not happen
+        }
+        break;
+      }
     }
   }
 
