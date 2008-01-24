@@ -860,12 +860,11 @@ BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail)
 //  Starts the search and shows progress
 HOOKPROTONHNONP(FI_SearchFunc, void)
 {
-  int fnr;
   int fndmsg = 0;
   int totmsg = 0;
   int progress = 0;
   struct FI_GUIData *gui = &G->FI->GUI;
-  struct Folder **sfo;
+  struct FolderList *flist;
 
   ENTER();
 
@@ -886,18 +885,16 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
   // up the search process if many mails match the search criteria.
   set(gui->LV_MAILS, MUIA_NList_Quiet, TRUE);
 
-  fnr = xget(gui->LV_FOLDERS, MUIA_List_Entries);
-
-  if((sfo = calloc(fnr, sizeof(struct Folder *))) != NULL)
+  if((flist = CreateFolderList()) != NULL)
   {
-    int sfonum = 0;
     int id;
-    char *name;
-    struct Folder *folder;
 
     id = MUIV_List_NextSelected_Start;
     while(TRUE)
     {
+      char *name;
+      struct Folder *folder;
+
       DoMethod(gui->LV_FOLDERS, MUIM_List_NextSelected, &id);
       if(id == MUIV_List_NextSelected_End)
         break;
@@ -907,8 +904,8 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
       {
         if(MA_GetIndex(folder) == TRUE)
         {
-          sfo[sfonum++] = folder;
-          totmsg += folder->Total;
+          if(AddNewFolderNode(flist, folder) != NULL)
+            totmsg += folder->Total;
         }
       }
     }
@@ -921,7 +918,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
       struct TimeVal last;
       Object *ga = gui->GA_PROGRESS;
       Object *lv = gui->LV_MAILS;
-      int i;
+      struct FolderNode *fnode;
 
       // lets prepare the search
       DoMethod(gui->GR_SEARCH, MUIM_SearchControlGroup_PrepareSearch, &search);
@@ -936,15 +933,17 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
 
       memset(&last, 0, sizeof(struct TimeVal));
 
-      for(i = 0; i < sfonum && G->FI->Abort == FALSE; i++)
+      ForEachFolderNode(flist, fnode)
       {
-        LockMailList(sfo[i]->messages);
+        struct Folder *folder = fnode->folder;
 
-        if(IsMailListEmpty(sfo[i]->messages) == FALSE)
+        LockMailList(folder->messages);
+
+        if(IsMailListEmpty(folder->messages) == FALSE)
         {
           struct MailNode *mnode;
 
-          ForEachMailNode(sfo[i]->messages, mnode)
+          ForEachMailNode(folder->messages, mnode)
           {
             struct Mail *mail = mnode->mail;
 
@@ -988,7 +987,11 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
           }
         }
 
-        UnlockMailList(sfo[i]->messages);
+        UnlockMailList(folder->messages);
+
+        // bail out if the search was aborted
+        if(G->FI->Abort == TRUE)
+          break;
       }
 
       // to let the gauge move to 100% lets increase it accordingly.
@@ -1000,7 +1003,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
       FreeSearchPatternList(&search);
     }
 
-    free(sfo);
+    DeleteFolderList(flist);
   }
 
   set(gui->LV_MAILS, MUIA_NList_Quiet, FALSE);

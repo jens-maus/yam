@@ -15,6 +15,8 @@ $URL$
 
 2008-01-24  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: replaced a hand crafted folder list allocation by our recently
+    introduced folder list functions.
   * Recipientstring.c: minor cosmetic fixes.
   * Addrmatchlist.c: distribution lists were treated like plain users and hence
     were not resolved correctly. Now the list name will be used instead of the
