@@ -728,7 +728,6 @@ $(OBJDIR)/YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_mainFolder.h YAM_rexx.h classes/Classes.h classes/ClassesExtra.h \
   YAM_main.h YAM_read.h BayesFilter.h FileInfo.h FolderList.h Locale.h \
   MailList.h Mime.h Debug.h include/amiga-align.h include/default-align.h
-$(OBJDIR)/YAM_md5.o: YAM_md5.c YAM_md5.h
 $(OBJDIR)/YAM_RE.o: YAM_RE.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/mui/TextEditor_mcc.h \
   include/proto/codesets.h include/libraries/codesets.h \
@@ -804,9 +803,8 @@ $(OBJDIR)/YAM_TR.o: YAM_TR.c include/libraries/genesis.h include/amiga-align.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_addressbookEntry.h YAM_write.h YAM_main.h YAM_config.h \
   YAM_read.h UpdateCheck.h YAM_error.h YAM_find.h YAM_global.h \
-  YAM_mainFolder.h YAM_md5.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h FileInfo.h Locale.h MailList.h \
-  Mime.h Debug.h
+  YAM_mainFolder.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
+  YAM_read.h BayesFilter.h FileInfo.h Locale.h MailList.h Mime.h Debug.h
 $(OBJDIR)/YAM_US.o: YAM_US.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/proto/muimaster.h \
   include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \

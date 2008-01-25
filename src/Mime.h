@@ -136,4 +136,17 @@ enum IntMimeTypeID
   MT_ME_EMAIL    // message/rfc822
 };
 
+// MD5 message digest routines
+struct MD5Context
+{
+  unsigned long state[4];
+  unsigned long count[2];
+  unsigned char buffer[64];
+};
+
+void md5init(struct MD5Context *ctx);
+void md5update(struct MD5Context *ctx, unsigned char const *buf, unsigned int len);
+void md5final(unsigned char digest[16], struct MD5Context *ctx);
+void md5hmac(unsigned char *text, int text_len, unsigned char *key, int key_len, unsigned char digest[16]);
+
 #endif /* MIME_H */

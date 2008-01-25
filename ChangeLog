@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_md5.c, Mime.c: moved all md5 message digest function to the generalized
+    Mime.c source file where all our message encoding/decoding and mime functions
+    are stored.
+
 2008-01-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * ParseEmail.l,h: renamed the YAM_mail_lex.? stuff to ParseEmail.? as that

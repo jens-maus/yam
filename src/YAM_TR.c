@@ -68,7 +68,6 @@
 #include "YAM_global.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
-#include "YAM_md5.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
@@ -899,18 +898,18 @@ static BOOL TR_InitSMTPAUTH(void)
           // A1 = { H( { username-value, ":", realm-value, ":", passwd } ),
           //      ":", nonce-value, ":", cnonce-value }
           snprintf(buf, sizeof(buf), "%s:%s:%s", C->SMTP_AUTH_User, realm, C->SMTP_AUTH_Pass);
-          MD5Init(&context);
-          MD5Update(&context, (unsigned char *)buf, strlen(buf));
-          MD5Final(digest, &context);
+          md5init(&context);
+          md5update(&context, (unsigned char *)buf, strlen(buf));
+          md5final(digest, &context);
           memcpy(buf, digest, 16);
           A1_len += snprintf(&buf[16], sizeof(buf)-16, ":%s:%s", nonce, cnonce);
           D(DBF_NET, "unencoded A1: `%s` (%ld)", buf, A1_len);
 
           // then we directly build the hexadecimal representation
           // HEX(H(A1))
-          MD5Init(&context);
-          MD5Update(&context, (unsigned char *)buf, A1_len);
-          MD5Final((UBYTE *)digest_hex, &context);
+          md5init(&context);
+          md5update(&context, (unsigned char *)buf, A1_len);
+          md5final((UBYTE *)digest_hex, &context);
           snprintf(A1, sizeof(A1), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                                            digest_hex[2], digest_hex[3]);
           D(DBF_NET, "encoded   A1: `%s`", A1);
@@ -923,9 +922,9 @@ static BOOL TR_InitSMTPAUTH(void)
 
           // and also directly build the hexadecimal representation
           // HEX(H(A2))
-          MD5Init(&context);
-          MD5Update(&context, (unsigned char *)buf, strlen(buf));
-          MD5Final((UBYTE *)digest_hex, &context);
+          md5init(&context);
+          md5update(&context, (unsigned char *)buf, strlen(buf));
+          md5final((UBYTE *)digest_hex, &context);
           snprintf(A2, sizeof(A2), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                                            digest_hex[2], digest_hex[3]);
           D(DBF_NET, "encoded   A2: `%s`", A2);
@@ -941,9 +940,9 @@ static BOOL TR_InitSMTPAUTH(void)
           // HEX( KD( HEX(H(A1)), ":",
           //          nonce-value, ":", nc-value, ":",
           //          cnonce-value, ":", qop-value, ":", HEX(H(A2)) }))
-          MD5Init(&context);
-          MD5Update(&context, (unsigned char *)buf, strlen(buf));
-          MD5Final((UBYTE *)digest_hex, &context);
+          md5init(&context);
+          md5update(&context, (unsigned char *)buf, strlen(buf));
+          md5final((UBYTE *)digest_hex, &context);
           snprintf(response, sizeof(response), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                                                        digest_hex[2], digest_hex[3]);
           D(DBF_NET, "encoded   resp: `%s`", response);
@@ -1038,7 +1037,7 @@ static BOOL TR_InitSMTPAUTH(void)
         D(DBF_NET, "decoded  CRAM-MD5 challenge: `%s`", challenge);
 
         // compose the md5 challenge
-        hmac_md5((unsigned char *)challenge, strlen(challenge), (unsigned char *)password, strlen(password), (unsigned char *)digest);
+        md5hmac((unsigned char *)challenge, strlen(challenge), (unsigned char *)password, strlen(password), (unsigned char *)digest);
         snprintf(buf, sizeof(buf), "%s %08lx%08lx%08lx%08lx", login, digest[0], digest[1], digest[2], digest[3]);
 
         D(DBF_NET, "prepared CRAM-MD5 reponse..: `%s`", buf);
@@ -3424,9 +3423,9 @@ static int TR_ConnectPOP(int guilevel)
 
       // then we send the APOP command to authenticate via APOP
       strlcat(buf, passwd, sizeof(buf));
-      MD5Init(&context);
-      MD5Update(&context, (unsigned char *)buf, strlen(buf));
-      MD5Final(digest, &context);
+      md5init(&context);
+      md5update(&context, (unsigned char *)buf, strlen(buf));
+      md5final(digest, &context);
       snprintf(buf, sizeof(buf), "%s ", pop3->User);
       for(j=strlen(buf), i=0; i<16; j+=2, i++)
         snprintf(&buf[j], sizeof(buf)-j, "%02x", digest[i]);

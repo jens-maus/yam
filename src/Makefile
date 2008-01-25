@@ -302,7 +302,6 @@ OBJS = \
 	$(OBJDIR)/YAM_FO.o \
 	$(OBJDIR)/YAM_MA.o \
 	$(OBJDIR)/YAM_MAf.o \
-	$(OBJDIR)/YAM_md5.o \
 	$(OBJDIR)/YAM_RE.o \
 	$(OBJDIR)/YAM_rexx.o \
 	$(OBJDIR)/YAM_rexx_rxcl.o \

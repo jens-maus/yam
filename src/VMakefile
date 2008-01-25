@@ -119,7 +119,6 @@ OBJS = \
 	  $(OBJDIR)/Locale.o \
 	  $(OBJDIR)/YAM_MA.o \
 	  $(OBJDIR)/YAM_MAf.o \
-	  $(OBJDIR)/YAM_md5.o \
 	  $(OBJDIR)/ParseEmail.o \
 	  $(OBJDIR)/YAM_RE.o \
 	  $(OBJDIR)/YAM_rexx.o \
@@ -291,8 +290,6 @@ $(OBJDIR)/YAM_MAf.o: YAM_MAf.c YAM.h YAM_config.h Debug.h YAM_find.h \
 	 YAM_mainFolder.h YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h \
 	 YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
-$(OBJDIR)/YAM_md5.o: YAM_md5.c YAM_md5.h
-
 $(OBJDIR)/Mime.o: Mime.c YAM_error.h Locale.h Mime.h YAM_stringsizes.h \
 	 YAM_utilities.h
 
@@ -322,7 +319,7 @@ $(OBJDIR)/YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM.h YAM_addressbook.h \
 
 $(OBJDIR)/YAM_TR.o: YAM_TR.c YAM.h YAM_addressbookEntry.h YAM_config.h YAM_error.h \
 	YAM_find.h YAM_folderconfig.h YAM_global.h include/SDI_hook.h Locale.h \
-	YAM_main.h YAM_mainFolder.h YAM_md5.h Mime.h YAM_rexx_rxif.h \
+	YAM_main.h YAM_mainFolder.h Mime.h YAM_rexx_rxif.h \
 	YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
 $(OBJDIR)/YAM_US.o: YAM_US.c YAM.h YAM_config.h YAM_error.h YAM_find.h include/SDI_hook.h \
