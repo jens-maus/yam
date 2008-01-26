@@ -2573,7 +2573,7 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
       {
         if(isdir == TRUE)
         {
-          if(IsFolderDir(fname))
+          if(IsFolderDir(fname) == TRUE)
             result = DeleteMailDir(fname, FALSE);
         }
         else
@@ -2584,6 +2584,7 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
              stricmp(filename, ".emailcache")  == 0 ||
              stricmp(filename, ".folders")     == 0 ||
              stricmp(filename, ".spamdata")    == 0 ||
+             stricmp(filename, ".signature")   == 0 ||
              stricmp(filename, ".uidl")        == 0)
           {
             if(DeleteFile(fname) == 0)
@@ -5955,7 +5956,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
     }
   }
 
-  if(!G->AppIconQuiet && updateAppIcon)
+  if(G->AppIconQuiet == FALSE && updateAppIcon == TRUE)
     DisplayAppIconStatistics();
 
   LEAVE();

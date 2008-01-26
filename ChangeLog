@@ -7,6 +7,8 @@ $URL$
 
 2008-01-26  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: a user folder was not deleted completely if there was a .signature
+    file existing.
   * YAM.c: fixed the initial wrong folder icon display. The "new" icon was
     always shown if there were mails in the folder at all, instead of only if
     unread mails existed.
