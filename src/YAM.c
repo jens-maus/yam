@@ -1667,10 +1667,10 @@ static void InitAfterLogin(void)
     if(folder->imageObject == NULL)
     {
       if(isIncomingFolder(folder))      folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
-      else if(isOutgoingFolder(folder)) folder->ImageIndex = (folder->Total != 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
-      else if(isTrashFolder(folder))    folder->ImageIndex = (folder->Total != 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
+      else if(isOutgoingFolder(folder)) folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
+      else if(isTrashFolder(folder))    folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
       else if(isSentFolder(folder))     folder->ImageIndex = FICON_ID_SENT;
-      else if(isSpamFolder(folder))     folder->ImageIndex = (folder->Total != 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
+      else if(isSpamFolder(folder))     folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
       else folder->ImageIndex = -1;
     }
 

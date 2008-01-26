@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-26  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: fixed the initial wrong folder icon display. The "new" icon was
+    always shown if there were mails in the folder at all, instead of only if
+    unread mails existed.
+
 2008-01-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_md5.c, Mime.c: moved all md5 message digest function to the generalized
