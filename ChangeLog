@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-27  Alexandre Balaban <balaban@free.fr>
+
+  * locale/french.ct: french translation update according to latest changes.
+
 2008-01-26  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: a user folder was not deleted completely if there was a .signature
@@ -219,7 +223,7 @@ $URL$
     respect the HasChanged attribute of the texteditor and doesn't touch
     it.
 
-2007-01-10  Alexandre Balaban <balaban@free.fr>
+2008-01-10  Alexandre Balaban <balaban@free.fr>
 
   * locale/french.ct: french translation update according to latest changes.
 

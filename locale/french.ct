@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 6.0 (22.12.2007)
+## version $VER: YAM.catalog 6.0 (27.01.2008)
 ## language français
 ## codeset 0
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 3759 2008-01-07 23:49:15Z damato
+; based on YAM.cd 3831 2008-01-24 13:45:52Z thboeckel
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -3403,14 +3403,6 @@ MSG_HELP_EA_ST_PHONE
 Téléphone(s) et/ou n° FAX
 ; Phone and/or\n\
 ; FAX number(s).
-;
-MSG_HELP_EA_ST_BIRTHDAY
-Date de naissance.\n\
-Utilisez le format AmigaDos,\n\
-ex: 10-Jan-1950
-; Date of birth in\n\
-; AmigaDOS format\n\
-; (e.g. 10-Jan-1950).
 ;
 MSG_HELP_EA_BC_PHOTO
 Portrait de\n\
@@ -8447,13 +8439,13 @@ MSG_CO_MIMECMD_PUBSCREEN
 ; %p  Name of YAM's public screen
 ;
 MSG_ER_ZOMBIE_FILES_EXIST
-Impossible d'effacer tous les fichiers temporaires lors \
+Impossible d'effacer tous les fichiers temporaires lors\n\
 du nettoyage.\n\
 \n\
-Ces fichiers sont peut-être actuellement verrouillés par \
+Ces fichiers sont peut-être actuellement verrouillés par\n\
 d'autre applications.\n\
-Veuillez vous assurer que vous avez fermé toutes les \
-applications que vous pourriez avoir utilisé depuis YAM, \
+Veuillez vous assurer que vous avez fermé toutes les\n\
+applications que vous pourriez avoir utilisé depuis YAM,\n\
 telles que les visionneuses MIME (par exemple Multiview).
 ; Couldn't delete all temporary files during cleanup.\n\
 ; \n\
@@ -9452,7 +9444,7 @@ Filtrage terminé :\n\
 %3ld retransmis,\n\
 %3ld archivés,\n\
 %3ld effacés,\n\
-%3ld classés comme spam.
+%3ld classés indésirables.
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
@@ -9460,7 +9452,6 @@ Filtrage terminé :\n\
 ; %3ld archived,\n\
 ; %3ld deleted,\n\
 ; %3ld classified as spam
-;
 ; COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FILTER_STATS_SPAM
@@ -9473,7 +9464,7 @@ Filtrage terminé :\n\
 %3ld commandes exécutées,\n\
 %3ld déplacés,\n\
 %3ld supprimés,\n\
-%3ld classés comme spam.
+%3ld classés indésirables.
 ; \n\
 ; Filtering done:\n\
 ; \n\
@@ -9485,7 +9476,6 @@ Filtrage terminé :\n\
 ; %3ld moved,\n\
 ; %3ld deleted,\n\
 ; %3ld classified as spam
-;
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_CO_EXCHANGE_MAIL
@@ -9529,6 +9519,33 @@ dans l'éditeur interne ?
 ; Do you really want to use the text of\n\
 ; the external editor dropping the changes\n\
 ; done in the internal editor?
-;
 ; NUMBER
+;
+MSG_LOG_SENDING_FAILED
+L'envoi de %ld messages(s) en utilisant le serveur SMTP '%s' a échoué
+; Sending %ld message(s) using SMTP server '%s' failed
+;
+; COUNT, HOST
+;
+MSG_HELP_EA_ST_BIRTHDAY
+Date de naissance au format local.\n\
+(par exemple 19.06.1974 ou 19/06/1974)\n\
+; Date of birth in locale format\n\
+; (e.g. 19.06.1974 or 19/06/1974).
+;
+MSG_ERROR_PLAYSOUND
+Une erreur est survenue lors de la tentative\n\
+de lecture du fichier son '%s'.\n\
+\n\
+Cela peut soit être dû à un fichier son corrompu\n\
+ou non supporté ou à une datatype sonore qui ne\n\
+fonctionne pas correctement.
+; An error occurred while trying to play\n\
+; the sound file '%s'.\n\
+; \n\
+; This could be either due to a broken or\n\
+; unsupported sound file or because your\n\
+; sound datatype is not properly working.
+;
+; FILE
 ;
