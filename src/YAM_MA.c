@@ -679,7 +679,7 @@ struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
           }
         }
 
-        LockMailList(fo->messages);
+        UnlockMailList(fo->messages);
 
         // let everything fail if there were no mails added to the list
         if(IsMailListEmpty(mlist) == TRUE)

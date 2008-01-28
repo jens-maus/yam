@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-28  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: fixed a double lock of a mail list.
+
 2008-01-27  Alexandre Balaban <balaban@free.fr>
 
   * locale/french.ct: french translation update according to latest changes.
