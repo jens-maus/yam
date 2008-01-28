@@ -99,26 +99,30 @@ static BOOL LoadImage(struct ImageCacheNode *node)
     // note that when using V43 datatypes, this might not be a real "struct BitMap *"
     if(o != NULL)
     {
-      struct FrameInfo fri;
+      struct BitMapHeader *bmhd = NULL;
 
-      memset(&fri, 0, sizeof(struct FrameInfo));
+      D(DBF_IMAGE, "loaded image '%s' (0x%08lx)", node->filename, o);
 
-      DoMethod(o, DTM_FRAMEBOX, NULL, (ULONG)&fri, (ULONG)&fri, sizeof(struct FrameInfo), 0);
+      // Now we retrieve the bitmap header to get the width/height of the loaded object.
+      // We do this now already, because getting the BMHD after the remap process seems
+      // to result in wrong depth information which causes wrong display of color mapped
+      // images.
+      GetDTAttrs(o, PDTA_BitMapHeader, &bmhd,
+                    TAG_DONE);
 
-      if(fri.fri_Dimensions.Depth > 0)
+      if(bmhd != NULL)
       {
-        D(DBF_IMAGE, "loaded image '%s' (0x%08lx)", node->filename, o);
-
         node->dt_obj = o;
-        node->width = fri.fri_Dimensions.Width;
-        node->height = fri.fri_Dimensions.Height;
-        node->depth = fri.fri_Dimensions.Depth;
+        node->width = bmhd->bmh_Width;
+        node->height = bmhd->bmh_Height;
+        node->depth = bmhd->bmh_Depth;
+        node->masking = bmhd->bmh_Masking;
 
         result = TRUE;
       }
       else
       {
-        E(DBF_IMAGE, "wasn't able to get frame box of image '%s'", node->filename);
+        E(DBF_IMAGE, "wasn't able to get BitMapHeader of image '%s'", node->filename);
         DisposeDTObject(o);
       }
     }
@@ -393,120 +397,105 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
         // check if the image is to be displayed on a new screen
         if(scr != NULL && node->dt_obj != NULL)
         {
-          struct BitMapHeader *bmhd = NULL;
+          node->bitmap = NULL;
 
-          // now we retrieve the bitmap header to
-          // get the width/height of the loaded object
-          GetDTAttrs(node->dt_obj, PDTA_BitMapHeader, &bmhd,
+          // if we are asked to display a hi/truecolor image on a CLUT screen, then we
+          // let datatypes.library do the dirty dithering work
+          if(node->depth > 8 && GetBitMapAttr(scr->RastPort.BitMap, BMA_DEPTH) <= 8)
+            node->depth = 8;
+
+          // The lower line should be used for 24bit images as well.
+          // Unfortunately this doesn't give the desired result on OS4, so
+          // we restrict this to 32bit image until we have a solution.
+          #if defined(__amigaos4__) || defined(__MORPHOS__)
+          // OS4 and MorphOS can handle the alpha channel correctly
+          if(node->pixelArray == NULL)
+          #else
+          // for OS3 we check for CGX V45+ and picture.datatype V46+
+          // older versions cannot handle the alpha channel correctly
+          if(CyberGfxBase != NULL && CyberGfxBase->lib_Version >= 45 &&
+             PictureDTBase != NULL && PictureDTBase->lib_Version >= 46 &&
+             node->pixelArray == NULL)
+          #endif
+          {
+            BOOL hasAlphaChannel = FALSE;
+
+            // the datatypes system tells us about the alpha channel either
+            // by setting the correct masking type or by the PDTA_AlphaChannel
+            // attribute.
+            if(node->masking == mskHasAlpha)
+              hasAlphaChannel = TRUE;
+            else
+            {
+              ULONG alphaChannel = 0;
+
+              GetDTAttrs(node->dt_obj, PDTA_AlphaChannel, &alphaChannel, TAG_DONE);
+              if(alphaChannel != 0)
+                hasAlphaChannel = TRUE;
+            }
+
+            D(DBF_IMAGE, "image '%s' has %ld bit depth and %s alpha channel (%ld)", node->id, node->depth, (hasAlphaChannel == TRUE) ? "AN" : "NO", node->masking);
+
+            // check if the bitmap may have alpha channel data or not.
+            if(node->depth > 8 && node->masking != mskHasTransparentColor)
+            {
+              node->bytesPerPixel = (hasAlphaChannel == TRUE) ? 4 : 3;
+              node->bytesPerRow = node->width * node->bytesPerPixel;
+              node->pixelFormat = (hasAlphaChannel == TRUE) ? PBPAFMT_ARGB : PBPAFMT_RGB;
+
+              if((node->pixelArray = AllocVecPooled(G->SharedMemPool, node->bytesPerRow * node->height)) != NULL)
+              {
+                BOOL result;
+
+                // perform a PDTM_READPIXELARRAY operation
+                // for writing the image data of the image in our pixelArray
+                result = DoMethod(node->dt_obj, PDTM_READPIXELARRAY, node->pixelArray, node->pixelFormat, node->bytesPerRow,
+                                                                     0, 0, node->width, node->height);
+                #if defined(__MORPHOS__)
+                // MorphOS < v2.0 doesn't return a valid value for the PDTM_READPIXELARRAY method
+                // so ignore it
+                result = TRUE;
+                #endif
+
+                if(result == FALSE)
+                {
+                  W(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' failed!", node->id);
+
+                  FreeVecPooled(G->SharedMemPool, node->pixelArray);
+                  node->pixelArray = NULL;
+                }
+                else
+                  D(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' succeeded", node->id);
+              }
+            }
+            else
+              D(DBF_IMAGE, "PDTM_READPIXELARRAY not required - no alpha data in image '%s'", node->id);
+          }
+
+          // get the normal bitmaps supplied by datatypes.library if either this is
+          // an 8bit image or we could not get the hi/truecolor pixel data
+          #if defined(__amigaos4__) || defined(__MORPHOS__)
+          if(node->pixelArray == NULL)
+          #else
+          if(node->pixelArray == NULL || CyberGfxBase == NULL)
+          #endif
+          {
+            node->bytesPerPixel = 1;
+            node->bytesPerRow = node->width;
+            node->pixelFormat = PBPAFMT_LUT8;
+            node->pixelArray = NULL;
+          }
+
+          // get the image bitmap and mask for transparency display of the image
+          GetDTAttrs(node->dt_obj, PDTA_DestBitMap, &node->bitmap,
+                                   PDTA_MaskPlane,  &node->mask,
                                    TAG_DONE);
 
-          if(bmhd != NULL)
-          {
-            node->width = bmhd->bmh_Width;
-            node->height = bmhd->bmh_Height;
-            node->depth = bmhd->bmh_Depth;
-            node->bitmap = NULL;
+          if(node->bitmap == NULL)
+            GetDTAttrs(node->dt_obj, PDTA_BitMap, &node->bitmap, TAG_DONE);
 
-            // if we are asked to display a hi/truecolor image on a CLUT screen, then we
-            // let datatypes.library do the dirty dithering work
-            if(node->depth > 8 && GetBitMapAttr(scr->RastPort.BitMap, BMA_DEPTH) <= 8)
-              node->depth = 8;
-
-            // The lower line should be used for 24bit images as well.
-            // Unfortunately this doesn't give the desired result on OS4, so
-            // we restrict this to 32bit image until we have a solution.
-            #if defined(__amigaos4__) || defined(__MORPHOS__)
-            // OS4 and MorphOS can handle the alpha channel correctly
-            if(node->pixelArray == NULL)
-            #else
-            // for OS3 we check for CGX V45+ and picture.datatype V46+
-            // older versions cannot handle the alpha channel correctly
-            if(CyberGfxBase != NULL && CyberGfxBase->lib_Version >= 45 &&
-               PictureDTBase != NULL && PictureDTBase->lib_Version >= 46 &&
-               node->pixelArray == NULL)
-            #endif
-            {
-              BOOL hasAlphaChannel = FALSE;
-
-              // the datatypes system tells us about the alpha channel either
-              // by setting the correct masking type or by the PDTA_AlphaChannel
-              // attribute.
-              if(bmhd->bmh_Masking == mskHasAlpha)
-                hasAlphaChannel = TRUE;
-              else
-              {
-                ULONG alphaChannel = 0;
-
-                GetDTAttrs(node->dt_obj, PDTA_AlphaChannel, &alphaChannel, TAG_DONE);
-                if(alphaChannel != 0)
-                  hasAlphaChannel = TRUE;
-              }
-
-              D(DBF_IMAGE, "image '%s' has %ld bit depth and %s alpha channel (%ld)", node->id, node->depth, (hasAlphaChannel == TRUE) ? "AN" : "NO", bmhd->bmh_Masking);
-
-              // check if the bitmap may have alpha channel data or not.
-              if(node->depth > 8 && bmhd->bmh_Masking != mskHasTransparentColor)
-              {
-                node->bytesPerPixel = (hasAlphaChannel == TRUE) ? 4 : 3;
-                node->bytesPerRow = node->width * node->bytesPerPixel;
-                node->pixelFormat = (hasAlphaChannel == TRUE) ? PBPAFMT_ARGB : PBPAFMT_RGB;
-
-                if((node->pixelArray = AllocVecPooled(G->SharedMemPool, node->bytesPerRow * node->height)) != NULL)
-                {
-                  BOOL result;
-
-                  // perform a PDTM_READPIXELARRAY operation
-                  // for writing the image data of the image in our pixelArray
-                  result = DoMethod(node->dt_obj, PDTM_READPIXELARRAY, node->pixelArray, node->pixelFormat, node->bytesPerRow,
-                                                                       0, 0, node->width, node->height);
-                  #if defined(__MORPHOS__)
-                  // MorphOS < v2.0 doesn't return a valid value for the PDTM_READPIXELARRAY method
-                  // so ignore it
-                  result = TRUE;
-                  #endif
-
-                  if(result == FALSE)
-                  {
-                    W(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' failed!", node->id);
-
-                    FreeVecPooled(G->SharedMemPool, node->pixelArray);
-                    node->pixelArray = NULL;
-                  }
-                  else
-                    D(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' succeeded", node->id);
-                }
-              }
-              else
-                D(DBF_IMAGE, "PDTM_READPIXELARRAY not required - no alpha data in image '%s'", node->id);
-            }
-
-            // get the normal bitmaps supplied by datatypes.library if either this is
-            // an 8bit image or we could not get the hi/truecolor pixel data
-            #if defined(__amigaos4__) || defined(__MORPHOS__)
-            if(node->pixelArray == NULL)
-            #else
-            if(node->pixelArray == NULL || CyberGfxBase == NULL)
-            #endif
-            {
-              node->bytesPerPixel = 1;
-              node->bytesPerRow = node->width;
-              node->pixelFormat = PBPAFMT_LUT8;
-              node->pixelArray = NULL;
-            }
-
-            // get the image bitmap and mask for transparency display of the image
-            GetDTAttrs(node->dt_obj, PDTA_DestBitMap, &node->bitmap,
-                                     PDTA_MaskPlane,  &node->mask,
-                                     TAG_DONE);
-
-            if(node->bitmap == NULL)
-              GetDTAttrs(node->dt_obj, PDTA_BitMap, &node->bitmap, TAG_DONE);
-
-            if(node->mask == NULL)
-              D(DBF_IMAGE, "no maskplane bitmask found for image '%s'", id);
-          }
-          else
-            W(DBF_IMAGE, "couldn't find BitMap header of file '%s' for image '%s'", node->filename, id);
+          if(node->mask == NULL)
+            D(DBF_IMAGE, "no maskplane bitmask found for image '%s'", id);
         }
       }
       else

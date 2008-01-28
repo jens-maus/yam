@@ -59,6 +59,8 @@ struct ImageCacheNode
   ULONG bytesPerPixel;
   ULONG bytesPerRow;
 
+  UBYTE masking;
+
   BOOL delayedDispose;         // do we wish to remove the image from the cache if openCount reaches zero?
 };
 

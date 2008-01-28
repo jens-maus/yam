@@ -11,6 +11,11 @@ $URL$
 
 2008-01-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: getting the BitMapHeader after the remapping process seems to
+    to obtain wrong depth information (a depth compatible to the screen being
+    remapped to instead of the true depth of the image) on OS4. Hence we obtain
+    the BitMapHeader right after loading the image via datatypes.library now.
+    This fixes bug #1876914.
   * YAM_MA.c: fixed a double lock of a mail list.
 
 2008-01-27  Alexandre Balaban <balaban@free.fr>
