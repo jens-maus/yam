@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.31 (22.1.2008)
+## version $VER: YAM.catalog 6.33 (28.1.2008)
 ## language czech
 ## codeset 5
 ;
@@ -4675,7 +4675,7 @@ Zadejte prosím polo¾ku 'adresa'!
 ; You must specify an address for this entry!
 ;
 MSG_ER_ErrorDOBformat
-Formát data narození je neplatný. Správný formát data je: \
+Formát data narození je neplatný. Správný formát: \
 DD-MMM-RRRR (názvy mìsícù v angliètinì)
 ; Date of birth uses a wrong format. The correct format is \
 ; DD-MMM-YYYY (month names in English).
@@ -4713,7 +4713,7 @@ Nelze otevøít výstupní okno pro skript.
 ; Couldn't open console window for script.
 ;
 MSG_ER_ErrorARexxScript
-Nelze provést pøíkaz '%s'. Zkontrolujte, zda zadaný skript existuje.
+Chyba pøi spu¹tìní pøíkazu '%s'. Zkontrolujte, zda zadaný skript existuje.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
 ;
@@ -4754,7 +4754,7 @@ Po¾adovaný soubor ji¾ zøejmì není na serveru.
 ; FILENAME
 ;
 MSG_ER_SendHTTP
-Nelze odeslat pøíkaz protokolu HTTP. Chyba pøi pokusu o stáhnutí dokumentu ze serveru.
+Nelze poslat pøíkaz protokolu HTTP. Chyba pøi pokusu o stáhnutí dokumentu.
 ; Couldn't send HTTP request. Requesting a document from the WWW server failed.
 ;
 MSG_ER_ConnectHTTP
@@ -9348,4 +9348,20 @@ odpovídá nastavení systému, tedy napø. pro èe¹tinu\n\
 takto: 28.10.1918.
 ; Date of birth in locale format\n\
 ; (e.g. 19.06.1974 or 19/06/1974).
+;
+MSG_ERROR_PLAYSOUND
+Chyba pøi pokusu o pøehrání zvukového souboru\n\
+'%s'.\n\
+\n\
+Zkontrolujte prosím, zda uvedený soubor existuje\n\
+a jestli systém podporuje tento formát zvuku. Dále\n\
+také provìøte, jestli máte nainstalovány v¹echny\n\
+aktualizace urèené pro Vá¹ operaèní systém.
+; An error occurred while trying to play\n\
+; the sound file '%s'.\n\
+; \n\
+; This could be either due to a broken or\n\
+; unsupported sound file or because your\n\
+; sound datatype is not properly working.
+; FILE
 ;

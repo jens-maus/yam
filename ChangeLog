@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-28  Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2008-01-28  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: fixed a double lock of a mail list.
