@@ -5543,6 +5543,7 @@ int PGPCommand(const char *progname, const char *options, int flags)
                                   NP_StackSize, C->StackSize,
                                   NP_WindowPtr, -1, // no requester at all
                                   TAG_DONE);
+      D(DBF_UTIL, "command '%s' returned with error code %ld", command, error);
 
       BusyEnd();
 
@@ -5558,7 +5559,7 @@ int PGPCommand(const char *progname, const char *options, int flags)
   if(error < 0)
     ER_NewError(tr(MSG_ER_PGPnotfound), C->PGPCmdPath);
 
-  if(!error && !hasKeepLogFlag(flags))
+  if(error == 0 && !hasKeepLogFlag(flags))
   {
     if(DeleteFile(PGPLOGFILE) == 0)
       AddZombieFile(PGPLOGFILE);
