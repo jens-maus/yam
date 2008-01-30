@@ -730,6 +730,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
     BOOL hasPGPKey = rmData->hasPGPKey;
     BOOL hasPGPSig = (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData));
     BOOL isPGPEnc = isRealMail && (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData));
+    BOOL notYetChecked = !hasPGPSCheckedFlag(rmData);
 
     if(hasContent == TRUE)
     {
@@ -766,7 +767,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
           MUIA_Menuitem_Title, "PGP",
           MUIA_Menuitem_Enabled, hasContent && (hasPGPKey || hasPGPSig || isPGPEnc),
           Child, Menuitem(tr(MSG_RE_ExtractKey),    NULL, hasPGPKey, FALSE, RMEN_EXTKEY),
-          Child, Menuitem(tr(MSG_RE_SigCheck),      NULL, hasPGPSig, FALSE, RMEN_CHKSIG),
+          Child, Menuitem(tr(MSG_RE_SigCheck),      NULL, hasPGPSig && notYetChecked, FALSE, RMEN_CHKSIG),
           Child, Menuitem(tr(MSG_RE_SaveDecrypted), NULL, isPGPEnc, FALSE, RMEN_SAVEDEC),
         End,
         Child, MenuBarLabel,

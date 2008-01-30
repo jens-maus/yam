@@ -537,9 +537,9 @@ DECLARE(ReadMail) // struct Mail *mail
   D(DBF_GUI, "setting up readWindow for reading a mail");
 
   // check the status of the next/prev thread nagivation
-  if(isRealMail)
+  if(isRealMail == TRUE)
   {
-    if(AllFolderLoaded())
+    if(AllFolderLoaded() == TRUE)
     {
       prevMailAvailable = RE_GetThread(mail, FALSE, FALSE, obj) != NULL;
       nextMailAvailable = RE_GetThread(mail, TRUE, FALSE, obj) != NULL;
@@ -553,7 +553,7 @@ DECLARE(ReadMail) // struct Mail *mail
 
   // change the menu item title of the
   // Edit item so that we either display "Edit" or "Edit as New"
-  if(isRealMail && isOutgoingFolder(folder))
+  if(isRealMail == TRUE && isOutgoingFolder(folder))
     set(data->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDIT));
   else
     set(data->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDITASNEW));
@@ -591,7 +591,7 @@ DECLARE(ReadMail) // struct Mail *mail
                                                                                               data->MI_TOQUEUED,
                                                                                               NULL);
 
-  if(data->windowToolbar)
+  if(data->windowToolbar != NULL)
   {
     LONG pos = MUIV_NList_GetPos_Start;
 
@@ -620,12 +620,13 @@ DECLARE(ReadMail) // struct Mail *mail
     BOOL hasPGPKey = rmData->hasPGPKey;
     BOOL hasPGPSig = (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData));
     BOOL isPGPEnc = isRealMail && (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData));
+    BOOL notYetChecked = !hasPGPSCheckedFlag(rmData);
 
     // if the title of the window is empty, we can assume that no previous mail was
     // displayed in this readwindow, so we can set the mailTextObject of the readmailgroup
     // as the active object so that the user can browse through the mailtext immediatley after
     // opening the window
-    if(initialCall)
+    if(initialCall == TRUE)
       DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ActivateMailText);
 
     // set the title of the readWindow now
@@ -661,7 +662,7 @@ DECLARE(ReadMail) // struct Mail *mail
     // enable some Menuitems depending on the read mail
     set(data->MI_PGP,     MUIA_Menu_Enabled, hasPGPKey || hasPGPSig || isPGPEnc);
     set(data->MI_EXTKEY,  MUIA_Menuitem_Enabled, hasPGPKey);
-    set(data->MI_CHKSIG,  MUIA_Menuitem_Enabled, hasPGPSig);
+    set(data->MI_CHKSIG,  MUIA_Menuitem_Enabled, hasPGPSig && notYetChecked);
     set(data->MI_SAVEDEC, MUIA_Menuitem_Enabled, isPGPEnc);
 
     // everything worked fine

@@ -7,6 +7,9 @@ $URL$
 
 2008-01-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ReadWindow.c, ReadMailGroup.c: the "Check signature" menu item will now be
+    disabled if the signature of a mail has been checked already, as YAM did
+    prevent a double check anyway already.
   * YAM_UT.c: added the return code of PGP commands to the debug log.
   * AttachmentGroup.c: in case an attachment had no name but a description only
     the name of attachment image could be drawn over futher images to the right,
