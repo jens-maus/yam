@@ -170,7 +170,15 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
             SetSoftStyle(&rp, FS_NORMAL, AskSoftStyle(&rp));
           }
           else
-            partNameLen = TextLength(&rp, mailPart->Name, strlen(mailPart->Name));
+          {
+            char *text;
+
+            if(mailPart->Name[0] != '\0')
+              text = mailPart->Name;
+            else
+              text = mailPart->Description;
+            partNameLen = TextLength(&rp, text, strlen(text));
+          }
 
           // calculate the contentTypeLen
           contentTypeLen = TextLength(&rp, ctDescr, strlen(ctDescr));

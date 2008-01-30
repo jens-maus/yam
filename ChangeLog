@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-30  Thore Böckelmann <tboeckel@gmx.de>
+
+  * AttachmentGroup.c: in case an attachment had no name but a description only
+    the name of attachment image could be drawn over futher images to the right,
+    because the width was calculated using the empty name instead of the
+    description.
+
 2008-01-28  Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.
