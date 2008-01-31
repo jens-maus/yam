@@ -621,11 +621,11 @@ BOOL FO_FreeFolder(struct Folder *folder)
     // free the mail list itself
     DeleteMailList(folder->messages);
 
+    D(DBF_FOLDER, "freed folder '%s'", folder->Name);
+
     // now it's time to deallocate the folder itself
     free(folder);
     result = TRUE;
-
-    D(DBF_FOLDER, "freed folder '%s'", folder->Name);
   }
 
   RETURN(result);

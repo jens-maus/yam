@@ -7,6 +7,7 @@ $URL$
 
 2008-01-31  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: fixed an "access after free()" bug.
   * ReadWindow.c, ReadMailGroup.c, YAM_RE.c: reverted the recent changes to the
     enabled state of the "Check PGP signature" menus. Only the signature of new
     mails will now be checked automatically. After that the user must invoke
