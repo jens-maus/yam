@@ -50,12 +50,10 @@ struct TempFile;
 #define PGPS_OLD      (1<<1)
 #define PGPS_BADSIG   (1<<2)
 #define PGPS_ADDRESS  (1<<3)
-#define PGPS_CHECKED  (1<<4)
 #define hasPGPSMimeFlag(v)     (isFlagSet((v)->signedFlags, PGPS_MIME))
 #define hasPGPSOldFlag(v)      (isFlagSet((v)->signedFlags, PGPS_OLD))
 #define hasPGPSBadSigFlag(v)   (isFlagSet((v)->signedFlags, PGPS_BADSIG))
 #define hasPGPSAddressFlag(v)  (isFlagSet((v)->signedFlags, PGPS_ADDRESS))
-#define hasPGPSCheckedFlag(v)  (isFlagSet((v)->signedFlags, PGPS_CHECKED))
 
 enum ReadInMode { RIM_QUIET, RIM_READ, RIM_EDIT, RIM_QUOTE, RIM_PRINT, RIM_FORWARD };
 enum HeaderMode { HM_NOHEADER, HM_SHORTHEADER, HM_FULLHEADER };
@@ -106,34 +104,34 @@ struct ReadMailData
 
 struct Part
 {
-   struct Part         *Prev;               // ptr to previous part or NULL
-   struct Part         *Next;               // ptr to next part or NULL
-   struct Part         *Parent;             // ptr to the parent part or NULL
-   struct Part         *NextSelected;       // ptr to next selected or NULL
-   struct Part         *MainAltPart;        // ptr to the main alternative part.
-   struct ReadMailData *rmData;             // ptr to the parent readmail Data
-   struct MinList      *headerList;         // ptr to a list of headers or NULL
-   char                *ContentType;        // ptr to the content-type "text/plain"
-   char                *ContentDisposition; // ptr to the content-disposition "attachment"
-   char                *CParName;           // ptr to the content-type "name"
-   char                *CParFileName;       // ptr to the content-disposition "filename"
-   char                *CParBndr;           // ptr to the content-type "boundary"
-   char                *CParProt;           // ptr to the content-type "protocol"
-   char                *CParDesc;           // ptr to the content-type "description"
-   char                *CParRType;          // ptr to the content-type "report-type"
-   char                *CParCSet;           // ptr to the content-type "charset" "iso8859-1"
-   long                 Size;
-   int                  MaxHeaderLen;
-   int                  Nr;
-   BOOL                 HasHeaders;
-   BOOL                 Printable;
-   BOOL                 Decoded;
-   BOOL                 isAltPart;          // is an alternative multipart
-   enum Encoding        EncodingCode;
+  struct Part         *Prev;               // ptr to previous part or NULL
+  struct Part         *Next;               // ptr to next part or NULL
+  struct Part         *Parent;             // ptr to the parent part or NULL
+  struct Part         *NextSelected;       // ptr to next selected or NULL
+  struct Part         *MainAltPart;        // ptr to the main alternative part.
+  struct ReadMailData *rmData;             // ptr to the parent readmail Data
+  struct MinList      *headerList;         // ptr to a list of headers or NULL
+  char                *ContentType;        // ptr to the content-type "text/plain"
+  char                *ContentDisposition; // ptr to the content-disposition "attachment"
+  char                *CParName;           // ptr to the content-type "name"
+  char                *CParFileName;       // ptr to the content-disposition "filename"
+  char                *CParBndr;           // ptr to the content-type "boundary"
+  char                *CParProt;           // ptr to the content-type "protocol"
+  char                *CParDesc;           // ptr to the content-type "description"
+  char                *CParRType;          // ptr to the content-type "report-type"
+  char                *CParCSet;           // ptr to the content-type "charset" "iso8859-1"
+  long                 Size;
+  int                  MaxHeaderLen;
+  int                  Nr;
+  BOOL                 HasHeaders;
+  BOOL                 Printable;
+  BOOL                 Decoded;
+  BOOL                 isAltPart;          // is an alternative multipart
+  enum Encoding        EncodingCode;
 
-   char                 Name[SIZE_DEFAULT];
-   char                 Description[SIZE_DEFAULT];
-   char                 Filename[SIZE_PATHFILE];
+  char                 Name[SIZE_DEFAULT];
+  char                 Description[SIZE_DEFAULT];
+  char                 Filename[SIZE_PATHFILE];
 };
 
 struct HeaderNode

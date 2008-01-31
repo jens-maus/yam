@@ -788,9 +788,9 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
 
     while(GetLine(fh, buffer, SIZE_LARGE))
     {
-      if(!decrFail && decrFor && G->PGPVersion == 5)
+      if(decrFail == FALSE && decrFor != NULL && G->PGPVersion == 5)
       {
-        if(!strnicmp(buffer, "cannot decrypt", 14))
+        if(strnicmp(buffer, "cannot decrypt", 14) == 0)
         {
           *decrFor = '\0';
           GetLine(fh, buffer, SIZE_LARGE);
@@ -800,17 +800,17 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
         }
       }
 
-      if(!sigDone)
+      if(sigDone == FALSE)
       {
-        if(!strnicmp(buffer, "good signature", 14))
+        if(strnicmp(buffer, "good signature", 14) == 0)
           sigDone = TRUE;
-        else if(!strnicmp(buffer, "bad signature", 13) || stristr(buffer, "unknown keyid"))
+        else if(strnicmp(buffer, "bad signature", 13) == 0 || stristr(buffer, "unknown keyid") != NULL)
         {
           SET_FLAG(rmData->signedFlags, PGPS_BADSIG);
           sigDone = TRUE;
         }
 
-        if(sigDone)
+        if(sigDone == TRUE)
         {
           if(G->PGPVersion == 5)
           {
@@ -818,18 +818,17 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
             GetLine(fh, buffer, SIZE_LARGE);
           }
 
-          if(RE_GetAddressFromLog(buffer, rmData->sigAuthor))
+          if(RE_GetAddressFromLog(buffer, rmData->sigAuthor) == TRUE)
             SET_FLAG(rmData->signedFlags, PGPS_ADDRESS);
-
-          SET_FLAG(rmData->signedFlags, PGPS_CHECKED);
 
           break;
         }
       }
     }
+
     fclose(fh);
 
-    if(sigDone || (decrFor && !decrFail))
+    if(sigDone == TRUE || (decrFor != NULL && decrFail == FALSE))
       DeleteFile(PGPLOGFILE);
   }
 

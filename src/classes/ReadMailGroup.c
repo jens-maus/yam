@@ -730,7 +730,6 @@ OVERLOAD(MUIM_ContextMenuBuild)
     BOOL hasPGPKey = rmData->hasPGPKey;
     BOOL hasPGPSig = (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData));
     BOOL isPGPEnc = isRealMail && (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData));
-    BOOL notYetChecked = !hasPGPSCheckedFlag(rmData);
 
     if(hasContent == TRUE)
     {
@@ -767,7 +766,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
           MUIA_Menuitem_Title, "PGP",
           MUIA_Menuitem_Enabled, hasContent && (hasPGPKey || hasPGPSig || isPGPEnc),
           Child, Menuitem(tr(MSG_RE_ExtractKey),    NULL, hasPGPKey, FALSE, RMEN_EXTKEY),
-          Child, Menuitem(tr(MSG_RE_SigCheck),      NULL, hasPGPSig && notYetChecked, FALSE, RMEN_CHKSIG),
+          Child, Menuitem(tr(MSG_RE_SigCheck),      NULL, hasPGPSig, FALSE, RMEN_CHKSIG),
           Child, Menuitem(tr(MSG_RE_SaveDecrypted), NULL, isPGPEnc, FALSE, RMEN_SAVEDEC),
         End,
         Child, MenuBarLabel,
@@ -996,13 +995,14 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
          (hasStatusNew(mail) || !hasStatusRead(mail)))
       {
         // first, depending on the PGP status we either check an existing
-        // PGP signature or not.
+        // PGP signature or not, but only for new mails. A second check must
+        // be triggered by the user via the menus.
         // This has to be done before we eventually set the mail state to "read"
         // which will in turn rename the mail file, which will make PGP fail,
         // because it cannot read the desired file anymore because of the delayed
         // status change.
         if((hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData))
-           && !hasPGPSCheckedFlag(rmData))
+           && hasStatusNew(mail))
         {
           DoMethod(obj, MUIM_ReadMailGroup_CheckPGPSignature, FALSE);
         }
@@ -1295,8 +1295,7 @@ DECLARE(CheckPGPSignature) // BOOL forceRequester
   // Don't try to use PGP if it's not installed
   if(G->PGPVersion >= 0)
   {
-    if((hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData)) &&
-       !hasPGPSCheckedFlag(rmData))
+    if(hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData))
     {
       char fullfile[SIZE_PATHFILE];
 

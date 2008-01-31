@@ -7,6 +7,10 @@ $URL$
 
 2008-01-31  Thore Böckelmann <tboeckel@gmx.de>
 
+  * ReadWindow.c, ReadMailGroup.c, YAM_RE.c: reverted the recent changes to the
+    enabled state of the "Check PGP signature" menus. Only the signature of new
+    mails will now be checked automatically. After that the user must invoke
+    that action manually.
   * YAM_MA.c: optimized the creation of complete mail lists by using
     CloneMailList() instead of doing the dirty work ourself.
   * Debug.c: fixed a possible buffer overrun when starting time measurement

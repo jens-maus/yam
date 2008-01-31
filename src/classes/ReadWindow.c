@@ -620,7 +620,6 @@ DECLARE(ReadMail) // struct Mail *mail
     BOOL hasPGPKey = rmData->hasPGPKey;
     BOOL hasPGPSig = (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData));
     BOOL isPGPEnc = isRealMail && (hasPGPEMimeFlag(rmData) || hasPGPEOldFlag(rmData));
-    BOOL notYetChecked = !hasPGPSCheckedFlag(rmData);
 
     // if the title of the window is empty, we can assume that no previous mail was
     // displayed in this readwindow, so we can set the mailTextObject of the readmailgroup
@@ -662,7 +661,7 @@ DECLARE(ReadMail) // struct Mail *mail
     // enable some Menuitems depending on the read mail
     set(data->MI_PGP,     MUIA_Menu_Enabled, hasPGPKey || hasPGPSig || isPGPEnc);
     set(data->MI_EXTKEY,  MUIA_Menuitem_Enabled, hasPGPKey);
-    set(data->MI_CHKSIG,  MUIA_Menuitem_Enabled, hasPGPSig && notYetChecked);
+    set(data->MI_CHKSIG,  MUIA_Menuitem_Enabled, hasPGPSig);
     set(data->MI_SAVEDEC, MUIA_Menuitem_Enabled, isPGPEnc);
 
     // everything worked fine
