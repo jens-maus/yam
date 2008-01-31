@@ -561,7 +561,7 @@ void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, uns
 
 void _STARTCLOCK(const char *file, unsigned long line)
 {
-  if(timer_level < (int)ARRAY_SIZE(startTimes))
+  if(timer_level + 1 < (int)ARRAY_SIZE(startTimes))
   {
     timer_level++;
     GetSysTime(TIMEVAL(&startTimes[timer_level]));

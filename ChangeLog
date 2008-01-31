@@ -7,6 +7,8 @@ $URL$
 
 2008-01-31  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Debug.c: fixed a possible buffer overrun when starting time measurement
+    clocks.
   * YAM_addressbookEntry.h: minor cosmetic changes.
   * misc: reconstructed the folder lists analog to the mail lists. All in all
     the folders are no longer managed by an NListtree object anymore but are
