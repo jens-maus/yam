@@ -7,6 +7,8 @@ $URL$
 
 2008-01-31  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: made the debug log a bit more verbose upon copying/moving a file
+    from one folder to an other one.
   * YAM_FO.c: fixed an "access after free()" bug.
   * ReadWindow.c, ReadMailGroup.c, YAM_RE.c: reverted the recent changes to the
     enabled state of the "Check PGP signature" menus. Only the signature of new

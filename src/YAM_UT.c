@@ -1764,10 +1764,10 @@ BOOL MoveFile(const char *oldfile, const char *newfile)
 
   // we first try to rename the file with a standard Rename()
   // and if it doesn't work we do a raw copy
-  if(!RenameFile(oldfile, newfile))
+  if(RenameFile(oldfile, newfile) == FALSE)
   {
     // a normal rename didn't work, so lets copy the file
-    if(!CopyFile(newfile, 0, oldfile, 0) ||
+    if(CopyFile(newfile, 0, oldfile, 0) == FALSE ||
        DeleteFile(oldfile) == 0)
     {
       // also a copy didn't work, so lets return an error
@@ -4277,24 +4277,24 @@ static BOOL UncompressMailFile(const char *src, const char *dst, const char *pas
 //  Copies or moves a message file, handles compression
 int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 {
-  char *pmeth;
-  char srcbuf[SIZE_PATHFILE];
-  char dstbuf[SIZE_PATHFILE];
-  char dstFileName[SIZE_MFILE];
   struct Folder *srcfolder = mail->Folder;
-  int peff = 0;
   enum FolderMode srcMode = srcfolder->Mode;
   enum FolderMode dstMode = dstfolder->Mode;
-  char *srcpw = srcfolder->Password;
-  char *dstpw = dstfolder->Password;
   int success = -1;
 
   ENTER();
 
-  D(DBF_UTIL, "TransferMailFile: %ld->%ld [%s]->[%s]", srcMode, dstMode, mail->MailFile, GetFolderDir(dstfolder));
+  D(DBF_UTIL, "TransferMailFile: %s '%s' to '%s' %ld->%ld", copyit ? "copy" : "move", mail->MailFile, GetFolderDir(dstfolder), srcMode, dstMode);
 
-  if(MA_GetIndex(srcfolder) && MA_GetIndex(dstfolder))
+  if(MA_GetIndex(srcfolder) == TRUE && MA_GetIndex(dstfolder) == TRUE)
   {
+    char *pmeth;
+    int peff = 0;
+    char srcbuf[SIZE_PATHFILE];
+    char dstbuf[SIZE_PATHFILE];
+    char dstFileName[SIZE_MFILE];
+    char *srcpw = srcfolder->Password;
+    char *dstpw = dstfolder->Password;
     BOOL counterExceeded = FALSE;
 
     // get some information we require
@@ -4307,7 +4307,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
     strlcpy(dstFileName, mail->MailFile, sizeof(dstFileName));
 
     AddPath(dstbuf, GetFolderDir(dstfolder), dstFileName, sizeof(dstbuf));
-    if(FileExists(dstbuf))
+    if(FileExists(dstbuf) == TRUE)
     {
       int mCounter = atoi(&dstFileName[13]);
 
@@ -4327,12 +4327,13 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
           AddPath(dstbuf, GetFolderDir(dstfolder), dstFileName, sizeof(dstbuf));
         }
       }
-      while(counterExceeded == FALSE && FileExists(dstbuf));
+      while(counterExceeded == FALSE && FileExists(dstbuf) == TRUE);
 
       if(counterExceeded == FALSE)
       {
         // if we end up here we finally found a new mailfilename which we can use, so
         // lets copy it to our MailFile variable
+        D(DBF_UTIL, "renaming mail file from '%s' to '%s'", mail->MailFile, dstFileName);
         strlcpy(mail->MailFile, dstFileName, sizeof(mail->MailFile));
       }
     }
@@ -4345,7 +4346,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
       if((srcMode == dstMode && srcMode <= FM_SIMPLE) ||
          (srcMode <= FM_SIMPLE && dstMode <= FM_SIMPLE))
       {
-        if(copyit)
+        if(copyit == TRUE)
           success = CopyFile(dstbuf, 0, srcbuf, 0) ? 1 : -1;
         else
           success = MoveFile(srcbuf, dstbuf) ? 1 : -1;
@@ -4357,7 +4358,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
           // if we end up here the source folder is a compressed folder but the
           // destination one not. so lets uncompress it
           success = UncompressMailFile(srcbuf, dstbuf, srcpw) ? 1 : -2;
-          if(success > 0 && !copyit)
+          if(success > 0 && copyit == FALSE)
             success = (DeleteFile(srcbuf) != 0) ? 1 : -1;
         }
         else
@@ -4375,7 +4376,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
             {
               // compress it immediatly again
               success = CompressMailFile(tf->Filename, dstbuf, dstpw, pmeth, peff) ? 1 : -2;
-              if(success > 0 && !copyit)
+              if(success > 0 && copyit == FALSE)
                 success = (DeleteFile(srcbuf) != 0) ? 1 : -1;
             }
 
@@ -4390,7 +4391,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
           // here the source folder is not compressed, but the destination one
           // so we compress the file in the destionation folder now
           success = CompressMailFile(srcbuf, dstbuf, dstpw, pmeth, peff) ? 1 : -2;
-          if(success > 0 && !copyit)
+          if(success > 0 && copyit == FALSE)
             success = (DeleteFile(srcbuf) != 0) ? 1 : -1;
         }
         else
