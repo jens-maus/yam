@@ -7,6 +7,8 @@ $URL$
 
 2008-01-31  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: simplified the copying/moving of a mail a bit so that YAM doesn't
+    have to handle yet another copy on the stack.
   * YAM_UT.c: made the debug log a bit more verbose upon copying/moving a file
     from one folder to an other one.
   * YAM_FO.c: fixed an "access after free()" bug.

@@ -868,7 +868,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
 //  Moves or copies a single message from one folder to another
 static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, struct Folder *to, BOOL copyit, BOOL closeWindows)
 {
-  struct Mail cmail = *mail;
+  struct Mail *newMail = NULL;
   char mfile[SIZE_MFILE];
   int result;
 
@@ -878,27 +878,24 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 
   if((result = TransferMailFile(copyit, mail, to)) >= 0)
   {
-    struct Mail *newMail;
-
-    strlcpy(cmail.MailFile, mail->MailFile, sizeof(cmail.MailFile));
-
-    if(copyit)
+    if(copyit == TRUE)
     {
       AppendToLogfile(LF_VERBOSE, 25, tr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
-      strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
-
       // add the new mail
-      newMail = AddMailToList(&cmail, to);
+      newMail = AddMailToList(mail, to);
+
+      // restore the old filename in case it was changed by TransferMailFile()
+      strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
     }
     else
     {
       int i;
 
-      AppendToLogfile(LF_VERBOSE, 23, tr(MSG_LOG_MovingVerbose),  AddrName(mail->From), mail->Subject, from->Name, to->Name);
+      AppendToLogfile(LF_VERBOSE, 23, tr(MSG_LOG_MovingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
       // add the new mail
-      newMail = AddMailToList(&cmail, to);
+      newMail = AddMailToList(mail, to);
 
       // now we have to check all opened write windows
       // for still valid references to the old mail and
@@ -943,7 +940,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
       if(isOutgoingFolder(to) && hasStatusSent(newMail))
         setStatusToQueued(newMail);
 
-      if(C->SpamFilterEnabled && C->SpamMarkOnMove)
+      if(C->SpamFilterEnabled == TRUE && C->SpamMarkOnMove == TRUE)
       {
         // if we are moving a non-spam mail to the spam folder then this one will be marked as spam
         if(isSpamFolder(to) && !hasStatusSpam(newMail))
@@ -953,9 +950,6 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
         }
       }
     }
-
-    RETURN(newMail);
-    return newMail;
   }
   else
   {
@@ -973,8 +967,8 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
     }
   }
 
-  RETURN(NULL);
-  return NULL;
+  RETURN(newMail);
+  return newMail;
 }
 
 ///
@@ -4200,27 +4194,25 @@ BOOL MA_ImportMessages(const char *fname)
 /// MA_ImportMessagesFunc
 HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
 {
-  struct FileReqCache *frc;
-  struct Folder *actfo = FO_GetCurrentFolder();
+  struct Folder *actfo;
 
   ENTER();
 
-  if(!actfo || isGroupFolder(actfo))
+  if((actfo = FO_GetCurrentFolder()) != NULL && !isGroupFolder(actfo))
   {
-    LEAVE();
-    return;
-  }
+    struct FileReqCache *frc;
 
-  // put up an Requester to query the user for the input file.
-  if((frc = ReqFile(ASL_IMPORT, G->MA->GUI.WI, tr(MSG_MA_MessageImport), REQF_NONE, C->DetachDir, "")))
-  {
-    char inname[SIZE_PATHFILE];
+    // put up an Requester to query the user for the input file.
+    if((frc = ReqFile(ASL_IMPORT, G->MA->GUI.WI, tr(MSG_MA_MessageImport), REQF_NONE, C->DetachDir, "")))
+    {
+      char inname[SIZE_PATHFILE];
 
-    AddPath(inname, frc->drawer, frc->file, sizeof(inname));
+      AddPath(inname, frc->drawer, frc->file, sizeof(inname));
 
-    // now start the actual importing of the messages
-    if(!MA_ImportMessages(inname))
-      ER_NewError(tr(MSG_ER_MESSAGEIMPORT), inname);
+      // now start the actual importing of the messages
+      if(MA_ImportMessages(inname) == FALSE)
+        ER_NewError(tr(MSG_ER_MESSAGEIMPORT), inname);
+    }
   }
 
   LEAVE();
@@ -4232,12 +4224,19 @@ MakeStaticHook(MA_ImportMessagesHook, MA_ImportMessagesFunc);
 //  Moves selected messages to a user specified folder
 HOOKPROTONHNONP(MA_MoveMessageFunc, void)
 {
-   struct Folder *src = FO_GetCurrentFolder(), *dst;
+  struct Folder *src;
 
-   if(!src) return;
+  ENTER();
 
-   if ((dst = FolderRequest(tr(MSG_MA_MoveMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_MoveGad), tr(MSG_Cancel), src, G->MA->GUI.WI)))
+  if((src = FO_GetCurrentFolder()) != NULL)
+  {
+    struct Folder *dst;
+
+    if((dst = FolderRequest(tr(MSG_MA_MoveMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_MoveGad), tr(MSG_Cancel), src, G->MA->GUI.WI)) != NULL)
       MA_MoveCopy(NULL, src, dst, FALSE, TRUE);
+  }
+
+  LEAVE();
 }
 MakeHook(MA_MoveMessageHook, MA_MoveMessageFunc);
 
@@ -4246,12 +4245,19 @@ MakeHook(MA_MoveMessageHook, MA_MoveMessageFunc);
 //  Copies selected messages to a user specified folder
 HOOKPROTONHNONP(MA_CopyMessageFunc, void)
 {
-   struct Folder *src = FO_GetCurrentFolder(), *dst;
+  struct Folder *src;
 
-   if(!src) return;
+  ENTER();
 
-   if ((dst = FolderRequest(tr(MSG_MA_CopyMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_CopyGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)))
+  if((src = FO_GetCurrentFolder()) != NULL)
+  {
+    struct Folder *dst;
+
+    if((dst = FolderRequest(tr(MSG_MA_CopyMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_CopyGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)) != NULL)
       MA_MoveCopy(NULL, src, dst, TRUE, FALSE);
+  }
+
+  LEAVE();
 }
 MakeHook(MA_CopyMessageHook, MA_CopyMessageFunc);
 
@@ -4354,7 +4360,6 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
   {
     struct MailNode *mnode;
     ULONG i;
-    ULONG selected = mlist->count;
     BOOL ask = TRUE;
     BOOL goOn = TRUE;
     char subj[SIZE_SUBJECT];
@@ -4370,7 +4375,7 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
         {
           strlcpy(subj, mail->Subject, sizeof(subj));
 
-          switch(StringRequest(subj, SIZE_SUBJECT, tr(MSG_MA_ChangeSubj), tr(MSG_MA_ChangeSubjReq), tr(MSG_Okay), (i > 0 || selected == 1) ? NULL : tr(MSG_MA_All), tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+          switch(StringRequest(subj, SIZE_SUBJECT, tr(MSG_MA_ChangeSubj), tr(MSG_MA_ChangeSubjReq), tr(MSG_Okay), (i > 0 || mlist->count == 1) ? NULL : tr(MSG_MA_All), tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
           {
             case 0:
             {
