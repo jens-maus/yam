@@ -661,7 +661,7 @@ struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
     {
       if((mlist = CreateMailList()) != NULL)
       {
-        LockMailList(fo->messages);
+        LockMailListShared(fo->messages);
 
         if(IsMailListEmpty(fo->messages) == FALSE)
         {
@@ -803,7 +803,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
           {
             struct MailNode *mnode;
 
-            LockMailList(writeWin->refMailList);
+            LockMailListShared(writeWin->refMailList);
 
             ForEachMailNode(writeWin->refMailList, mnode)
             {
@@ -906,7 +906,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
           {
             struct MailNode *mnode;
 
-            LockMailList(writeWin->refMailList);
+            LockMailListShared(writeWin->refMailList);
 
             ForEachMailNode(writeWin->refMailList, mnode)
             {
@@ -1061,7 +1061,7 @@ static void MA_UpdateStatus(void)
       {
         BOOL updated = FALSE;
 
-        LockMailList(folder->messages);
+        LockMailListShared(folder->messages);
 
         if(IsMailListEmpty(folder->messages) == FALSE)
         {
@@ -3445,7 +3445,7 @@ void MA_GetAddress(struct MailList *mlist)
     }
     else
     {
-      LockMailList(mlist);
+      LockMailListShared(mlist);
 
       ForEachMailNode(mlist, mnode)
       {

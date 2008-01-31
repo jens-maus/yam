@@ -3913,7 +3913,7 @@ BOOL MailExists(struct Mail *mailptr, struct Folder *folder)
     if(folder == NULL)
       folder = mailptr->Folder;
 
-    LockMailList(folder->messages);
+    LockMailListShared(folder->messages);
 
     if(IsMailListEmpty(folder->messages) == FALSE)
     {
@@ -3952,11 +3952,9 @@ void DisplayMailList(struct Folder *fo, Object *lv)
   // we convert the mail list of the folder
   // to a temporary array because that allows us
   // to quickly populate the NList object.
-  STARTCLOCK();
-  LockMailList(fo->messages);
+  LockMailListShared(fo->messages);
   array = MailListToMailArray(fo->messages);
   UnlockMailList(fo->messages);
-  STOPCLOCK(DBF_STARTUP, "MailListToMailArray");
 
   if(array != NULL)
   {

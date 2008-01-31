@@ -74,6 +74,7 @@ struct Mail **MailListToMailArray(struct MailList *mlist);
 
 // lock and unlock a mail list via its semaphore
 #define LockMailList(mlist)                       ObtainSemaphore((mlist)->lockSemaphore)
+#define LockMailListShared(mlist)                 ObtainSemaphoreShared((mlist)->lockSemaphore)
 #define UnlockMailList(mlist)                     ReleaseSemaphore((mlist)->lockSemaphore)
 
 #endif /* MAILLIST_H */

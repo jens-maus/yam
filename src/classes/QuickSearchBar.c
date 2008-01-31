@@ -688,7 +688,7 @@ DECLARE(ProcessSearch)
 
     // now we can process the search/sorting by searching the mail list of the
     // current folder querying different criterias of a mail
-    LockMailList(curFolder->messages);
+    LockMailListShared(curFolder->messages);
 
     BusyText(tr(MSG_BUSY_SEARCHINGFOLDER), curFolder->Name);
 

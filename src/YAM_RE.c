@@ -104,7 +104,7 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
 
       // ok the folder is valid and we can scan it now
 
-      LockMailList(srcMail->Folder->messages);
+      LockMailListShared(srcMail->Folder->messages);
 
       if(IsMailListEmpty(srcMail->Folder->messages) == FALSE)
       {
@@ -178,7 +178,7 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
             // check again for a valid index
             if(fo->LoadedMode == LM_VALID)
             {
-              LockMailList(fo->messages);
+              LockMailListShared(fo->messages);
 
               if(IsMailListEmpty(fo->messages) == FALSE)
               {

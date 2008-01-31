@@ -5081,7 +5081,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
   // processing list and mark all mails to get "loaded"
   i = 0;
 
-  LockMailList(mlist);
+  LockMailListShared(mlist);
 
   ForEachMailNode(mlist, mnode)
   {
@@ -5501,7 +5501,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
         // be transfered.
         c = 0;
 
-        LockMailList(mlist);
+        LockMailListShared(mlist);
 
         ForEachMailNode(mlist, mnode)
         {

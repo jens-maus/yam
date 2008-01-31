@@ -196,7 +196,7 @@ static void MA_ValidateStatus(struct Folder *folder)
   {
     D(DBF_FOLDER, "Validating status of new msgs in folder %s", folder->Name);
 
-    LockMailList(folder->messages);
+    LockMailListShared(folder->messages);
 
     if(IsMailListEmpty(folder->messages) == FALSE)
     {
@@ -421,7 +421,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
     fi.Size = folder->Size;
     fwrite(&fi, sizeof(struct FIndex), 1, fh);
 
-    LockMailList(folder->messages);
+    LockMailListShared(folder->messages);
 
     if(IsMailListEmpty(folder->messages) == FALSE)
     {

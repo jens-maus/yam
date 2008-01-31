@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-31  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: the mail lists can now be locked exclusively or shared, depending on
+    whether the list is going to be modified or not.
+
 2008-01-30  Thore Böckelmann <tboeckel@gmx.de>
 
   * ReadWindow.c, ReadMailGroup.c: the "Check signature" menu item will now be

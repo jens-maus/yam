@@ -126,7 +126,7 @@ struct MailList *CloneMailList(struct MailList *mlist)
     {
       struct MailNode *mnode;
 
-      LockMailList(mlist);
+      LockMailListShared(mlist);
 
       ForEachMailNode(mlist, mnode)
       {

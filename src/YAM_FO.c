@@ -640,7 +640,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
     if(!isGroupFolder(folder))
     {
       // free all the mail pointers in the list
-      LockMailList(folder->messages);
+      LockMailListShared(folder->messages);
 
       if(IsMailListEmpty(folder->messages) == FALSE)
       {
@@ -649,6 +649,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
         ForEachMailNode(folder->messages, mnode)
         {
           free(mnode->mail);
+          mnode->mail = NULL;
         }
       }
 
@@ -1059,7 +1060,7 @@ void FO_UpdateStatistics(struct Folder *folder)
   folder->Sent = 0;
   folder->Deleted = 0;
 
-  LockMailList(folder->messages);
+  LockMailListShared(folder->messages);
 
   if(IsMailListEmpty(folder->messages) == FALSE)
   {
@@ -1103,7 +1104,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
   strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
   strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
 
-  LockMailList(fo->messages);
+  LockMailListShared(fo->messages);
 
   if(IsMailListEmpty(fo->messages) == FALSE)
   {
@@ -1765,7 +1766,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         {
           BusyGauge(tr(MSG_BusyUncompressingFO), "", folder.Total);
 
-          LockMailList(folder.messages);
+          LockMailListShared(folder.messages);
 
           if(IsMailListEmpty(folder.messages) == FALSE)
           {
@@ -1990,7 +1991,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   toPattern = mnode->mail->To.Address;
   toAddress = mnode->mail->To.Address;
 
-  LockMailList(folder->messages);
+  LockMailListShared(folder->messages);
 
   i = 0;
   ForEachMailNode(folder->messages, mnode)

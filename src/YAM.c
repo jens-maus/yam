@@ -1933,7 +1933,7 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
 
   if((fo = FO_GetFolderByType(FT_OUTGOING, NULL)) != NULL)
   {
-    LockMailList(fo->messages);
+    LockMailListShared(fo->messages);
 
     if(IsMailListEmpty(fo->messages) == FALSE)
     {

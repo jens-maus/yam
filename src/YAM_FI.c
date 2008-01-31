@@ -937,7 +937,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
       {
         struct Folder *folder = fnode->folder;
 
-        LockMailList(folder->messages);
+        LockMailListShared(folder->messages);
 
         if(IsMailListEmpty(folder->messages) == FALSE)
         {
