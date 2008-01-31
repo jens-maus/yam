@@ -38,43 +38,48 @@ struct MUI_NListtree_TreeNode;
 
 struct EA_GUIData
 {
-   Object *WI;
-   Object *ST_ALIAS;
-   Object *ST_REALNAME;
-   Object *ST_ADDRESS;
-   Object *ST_COMMENT;
-   Object *ST_PHONE;
-   Object *ST_STREET;
-   Object *ST_CITY;
-   Object *ST_COUNTRY;
-   Object *ST_PGPKEY;
-   Object *CY_DEFSECURITY;
-   Object *ST_HOMEPAGE;
-   Object *ST_BIRTHDAY;
-   Object *GR_PHOTO;
-   Object *BC_PHOTO;
-   Object *BT_SELECTPHOTO;
-   Object *BT_REMOVEPHOTO;
-   Object *LV_MEMBER;
-   Object *ST_MEMBER;
-   Object *BT_ADD;
-   Object *BT_DEL;
-   Object *BT_OKAY;
-   Object *BT_CANCEL;
+  Object *WI;
+  Object *ST_ALIAS;
+  Object *ST_REALNAME;
+  Object *ST_ADDRESS;
+  Object *ST_COMMENT;
+  Object *ST_PHONE;
+  Object *ST_STREET;
+  Object *ST_CITY;
+  Object *ST_COUNTRY;
+  Object *ST_PGPKEY;
+  Object *CY_DEFSECURITY;
+  Object *ST_HOMEPAGE;
+  Object *ST_BIRTHDAY;
+  Object *GR_PHOTO;
+  Object *BC_PHOTO;
+  Object *BT_SELECTPHOTO;
+  Object *BT_REMOVEPHOTO;
+  Object *LV_MEMBER;
+  Object *ST_MEMBER;
+  Object *BT_ADD;
+  Object *BT_DEL;
+  Object *BT_OKAY;
+  Object *BT_CANCEL;
 };
 
 struct EA_ClassData  /* address book entry window */
 {
-   struct EA_GUIData  GUI;
-   struct ABEntry     *ABEntry;
-   int                Type;
-   int                EntryPos;
-   char               PhotoName[SIZE_PATHFILE];
+  struct EA_GUIData GUI;
+  struct ABEntry    *ABEntry;
+  int               Type;
+  int               EntryPos;
+  char              PhotoName[SIZE_PATHFILE];
 };
 
 #define AddrName(abentry) ((abentry).RealName[0]?(abentry).RealName:(abentry).Address)
 
-enum ABEntry_Type { AET_USER=0, AET_LIST, AET_GROUP };
+enum ABEntry_Type
+{
+  AET_USER=0,
+  AET_LIST,
+  AET_GROUP
+};
 
 struct ABEntry
 {
