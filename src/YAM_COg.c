@@ -118,7 +118,6 @@ enum VarPopMode
 //  Creates a popup list of all folders
 HOOKPROTONH(PO_InitFolderList, BOOL, Object *pop, Object *str)
 {
-  struct FolderList *flist;
   char *s;
 
   ENTER();
@@ -128,12 +127,14 @@ HOOKPROTONH(PO_InitFolderList, BOOL, Object *pop, Object *str)
 
   DoMethod(pop, MUIM_List_Clear);
 
-  if((flist = FO_CreateList()) != NULL)
+  LockFolderListShared(G->folders);
+
+  if(IsFolderListEmpty(G->folders) == FALSE)
   {
     struct FolderNode *fnode;
     ULONG i = 0;
 
-    ForEachFolderNode(flist, fnode)
+    ForEachFolderNode(G->folders, fnode)
     {
       struct Folder *folder = fnode->folder;
 
@@ -151,9 +152,9 @@ HOOKPROTONH(PO_InitFolderList, BOOL, Object *pop, Object *str)
 
       i++;
     }
-
-    DeleteFolderList(flist);
   }
+
+  UnlockFolderList(G->folders);
 
   RETURN(TRUE);
   return TRUE;

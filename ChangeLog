@@ -7,6 +7,12 @@ $URL$
 
 2008-01-31  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: reconstructed the folder lists analog to the mail lists. All in all
+    the folders are no longer managed by an NListtree object anymore but are
+    kept in a real global list while the tree items just reference the single
+    folders. Analog to mail list the global folder list can be locked either
+    exclusively or shared, depending on whether the list is going to be modified
+    or not. Creating clone copies therefore is no longer necessary.
   * misc: the mail lists can now be locked exclusively or shared, depending on
     whether the list is going to be modified or not.
 

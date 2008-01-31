@@ -49,9 +49,9 @@ struct FolderNode
   struct Folder *folder;
 };
 
+void InitFolderList(struct FolderList *flist);
 struct FolderList *CreateFolderList(void);
 void DeleteFolderList(struct FolderList *flist);
-struct FolderList *CloneFolderList(struct FolderList *flist);
 struct FolderNode *AddNewFolderNode(struct FolderList *flist, struct Folder *folder);
 void AddFolderNode(struct FolderList *flist, struct FolderNode *fnode);
 void RemoveFolderNode(struct FolderList *flist, struct FolderNode *fnode);
@@ -73,8 +73,8 @@ void DeleteFolderNode(struct FolderNode *fnode);
 #define PreviousFolderNode(fnode)                 (((fnode)->node.mln_Pred != NULL && (fnode)->node.mln_Pred->mln_Pred != NULL) ? (struct FolderNode *)(fnode)->node.mln_Pred : NULL)
 
 // lock and unlock a folder list via its semaphore
-#define LockFolderList(mlist)                     ObtainSemaphore((flist)->lockSemaphore)
-#define UnlockFolderList(mlist)                   ReleaseSemaphore((flist)->lockSemaphore)
+#define LockFolderListShared(flist)               ObtainSemaphoreShared((flist)->lockSemaphore)
+#define LockFolderList(flist)                     ObtainSemaphore((flist)->lockSemaphore)
+#define UnlockFolderList(flist)                   ReleaseSemaphore((flist)->lockSemaphore)
 
 #endif /* FOLDERLIST_H */
-

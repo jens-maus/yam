@@ -1537,13 +1537,13 @@ void CO_GetConfig(BOOL saveConfig)
             // reset spam state of all mails
             if(mask & (1 << 1))
             {
-              struct FolderList *flist;
+              LockFolderListShared(G->folders);
 
-              if((flist = FO_CreateList()) != NULL)
+              if(IsFolderListEmpty(G->folders) == FALSE)
               {
                 struct FolderNode *fnode;
 
-                ForEachFolderNode(flist, fnode)
+                ForEachFolderNode(G->folders, fnode)
                 {
                   struct Folder *folder = fnode->folder;
 
@@ -1569,7 +1569,7 @@ void CO_GetConfig(BOOL saveConfig)
                   }
                 }
 
-                DeleteFolderList(flist);
+                UnlockFolderList(G->folders);
               }
             }
 

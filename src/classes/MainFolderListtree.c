@@ -216,64 +216,6 @@ HOOKPROTONHNO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
 MakeStaticHook(DisplayHook, DisplayFunc);
 
 ///
-/// ConstructHook
-// Folder listview construction hook
-HOOKPROTONHNO(ConstructFunc, struct Folder *, struct MUIP_NListtree_ConstructMessage *msg)
-{
-  struct Folder *entry;
-
-  ENTER();
-
-  entry = memdup(msg->UserData, sizeof(struct Folder));
-
-  RETURN(entry);
-  return entry;
-}
-MakeStaticHook(ConstructHook, ConstructFunc);
-
-///
-/// DestructHook
-// Folder listtree destruction hook
-HOOKPROTONHNO(DestructFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
-{
-  ENTER();
-
-  FO_FreeFolder((struct Folder *)msg->UserData);
-
-  RETURN(0);
-  return 0;
-}
-MakeStaticHook(DestructHook, DestructFunc);
-
-///
-/// CompareHook
-// Folder listtree compare hook
-/*
-HOOKPROTONH(CompareFunc, long, Object *obj, struct MUIP_NListtree_CompareMessage *ncm)
-{
-   struct Folder *entry1 = (struct Folder *)ncm->TreeNode1->tn_User;
-   struct Folder *entry2 = (struct Folder *)ncm->TreeNode2->tn_User;
-   int cmp = 0;
-
-   if (ncm->SortType != MUIV_NList_SortType_None)
-   {
-      switch (ncm->SortType & MUIV_NList_TitleMark_ColMask)
-      {
-         case 0:  cmp = stricmp(entry1->Name, entry2->Name); break;
-         case 1:  cmp = entry1->Total-entry2->Total; break;
-         case 2:  cmp = entry1->Unread-entry2->Unread; break;
-         case 3:  cmp = entry1->New-entry2->New; break;
-         case 4:  cmp = entry1->Size-entry2->Size; break;
-         case 10: return entry1->SortIndex-entry2->SortIndex;
-      }
-      if (ncm->SortType & MUIV_NList_TitleMark_TypeMask) cmp = -cmp;
-   }
-
-   return cmp;
-}
-MakeStaticHook(CompareHook, CompareFunc);
-*/
-///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -297,9 +239,6 @@ OVERLOAD(OM_NEW)
     MUIA_NList_Exports,               MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
     MUIA_NList_Imports,               MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
     MUIA_NListtree_DisplayHook,       &DisplayHook,
-    MUIA_NListtree_ConstructHook,     &ConstructHook,
-    MUIA_NListtree_DestructHook,      &DestructHook,
-    //MUIA_NListtree_CompareHook,       &MA_LV_FCmp2Hook,
     MUIA_NListtree_DragDropSort,      TRUE,
     MUIA_NListtree_Title,             TRUE,
     MUIA_NListtree_DoubleClick,       MUIV_NListtree_DoubleClick_All,
@@ -340,13 +279,13 @@ OVERLOAD(OM_DISPOSE)
   int i;
 
   // make sure that our context menus are also disposed
-  if(data->context_menu)
+  if(data->context_menu != NULL)
     MUI_DisposeObject(data->context_menu);
 
   for(i=0; i < MAX_FOLDERIMG+1; i++)
   {
     DoMethod(obj, MUIM_NList_UseImage, NULL, i, MUIF_NONE);
-    if(data->folderImage[i])
+    if(data->folderImage[i] != NULL)
     {
       MUI_DisposeObject(data->folderImage[i]);
       data->folderImage[i] = NULL;

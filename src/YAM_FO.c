@@ -86,46 +86,6 @@ const char* const FolderName[FT_NUM] = { NULL,       // FT_CUSTOM
  Module: Folder Configuration
 ***************************************************************************/
 
-/// FO_CreateList
-//  Creates a linked list of all folders
-struct FolderList *FO_CreateList(void)
-{
-  int max;
-  struct FolderList *flist;
-  Object *lv;
-
-  ENTER();
-
-  lv = G->MA->GUI.NL_FOLDERS;
-  max = DoMethod(lv, MUIM_NListtree_GetNr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_GetNr_Flag_CountAll);
-
-  if((flist = CreateFolderList()) != NULL)
-  {
-    int i;
-
-    for(i = 0; i < max; i++)
-    {
-      struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-
-      if(tn == NULL)
-      {
-        DeleteFolderList(flist);
-        flist = NULL;
-        break;
-      }
-      else
-      {
-        // put the folder in the list
-        AddNewFolderNode(flist, (struct Folder *)tn->tn_User);
-      }
-    }
-  }
-
-  RETURN(flist);
-  return flist;
-}
-
-///
 /// FO_GetCurrentFolder
 //  Returns pointer to active folder
 struct Folder *FO_GetCurrentFolder(void)
@@ -181,11 +141,12 @@ BOOL FO_SetCurrentFolder(struct Folder *fo)
 struct Folder *FO_GetFolderRexx(const char *arg, int *pos)
 {
   struct Folder *fo = NULL;
-  struct FolderList *flist;
 
   ENTER();
 
-  if((flist = FO_CreateList()) != NULL)
+  LockFolderListShared(G->folders);
+
+  if(IsFolderListEmpty(G->folders) == FALSE)
   {
     struct FolderNode *foundNode = NULL;
     int listIndex = 0;
@@ -210,12 +171,12 @@ struct Folder *FO_GetFolderRexx(const char *arg, int *pos)
       int wantedIndex = atoi(arg);
       int findIndex = 0;
 
-      if(wantedIndex >= 0 && wantedIndex < (int)flist->count)
+      if(wantedIndex >= 0 && wantedIndex < (int)G->folders->count)
       {
         struct FolderNode *fnode;
 
         listIndex = 0;
-        ForEachFolderNode(flist, fnode)
+        ForEachFolderNode(G->folders, fnode)
         {
           // if the current one is a FT_GROUP we go to the next one until we find
           // the correct one
@@ -240,7 +201,7 @@ struct Folder *FO_GetFolderRexx(const char *arg, int *pos)
       struct FolderNode *fnode;
 
       listIndex = 0;
-      ForEachFolderNode(flist, fnode)
+      ForEachFolderNode(G->folders, fnode)
       {
         struct Folder *folder = fnode->folder;
 
@@ -265,9 +226,9 @@ struct Folder *FO_GetFolderRexx(const char *arg, int *pos)
       if(pos != NULL)
         *pos = listIndex;
     }
-
-    DeleteFolderList(flist);
   }
+
+  UnlockFolderList(G->folders);
 
   RETURN(fo);
   return fo;
@@ -455,7 +416,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
         if((p = strpbrk(buffer,"\r\n")) != NULL)
           *p = '\0';
 
-        for(p = buffer; *p != '\0' && !isspace(*p); p++);
+        for(p = buffer; *p != '\0' && isspace(*p) == FALSE; p++);
         *p = '\0';
 
         if(*buffer != '\0' && value != NULL)
@@ -497,7 +458,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
       }
 
       // mark an old spam folder as custom folder, so it can be deleted
-      if(fo->Type == FT_SPAM && !C->SpamFilterEnabled)
+      if(fo->Type == FT_SPAM && C->SpamFilterEnabled == FALSE)
         fo->Type = FT_CUSTOM;
     }
     fclose(fh);
@@ -619,6 +580,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
 
   if(folder != NULL)
   {
+    D(DBF_FOLDER, "freeing folder '%s'", folder->Name);
     // remove the image of this folder from the objectlist at the application
     if(folder->imageObject != NULL)
     {
@@ -682,25 +644,32 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
 
   if((folder = FO_NewFolder(type, path, name)) != NULL)
   {
-    struct MUI_NListtree_TreeNode *tn;
+    struct FolderNode *fnode;
 
-    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) != NULL)
+    LockFolderList(G->folders);
+    fnode = AddNewFolderNode(G->folders, folder);
+    UnlockFolderList(G->folders);
+
+    if(fnode != NULL)
     {
-      if(FO_SaveConfig(folder))
+      struct MUI_NListtree_TreeNode *tn;
+
+      if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) != NULL)
       {
-        // only if we reach here everything was fine and we can return TRUE
-        result = TRUE;
-      }
-      else
-      {
-        // If we reach here the SaveConfig() returned FALSE and we need to remove the folder again
-        // from the listtree. But we MUST pass the treenode and NOT the folder, because the folder
-        // pointer is no valid treenode but just the user data!!
-        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
+        if(FO_SaveConfig(folder) == TRUE)
+        {
+          // only if we reach here everything was fine and we can return TRUE
+          result = TRUE;
+        }
+        else
+        {
+          // If we reach here the SaveConfig() returned FALSE and we need to remove the folder again
+          // from the listtree. But we MUST pass the treenode and NOT the folder, because the folder
+          // pointer is no valid treenode but just the user data!!
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
+        }
       }
     }
-
-    free(folder);
   }
 
   RETURN(result);
@@ -762,7 +731,6 @@ static BOOL FO_LoadFolderImage(struct Folder *folder)
 //  Loads folder list from a file
 BOOL FO_LoadTree(char *fname)
 {
-  static struct Folder fo;
   BOOL success = FALSE;
   char buffer[SIZE_LARGE];
   int nested = 0, i = 0, j = MAX_FOLDERIMG+1;
@@ -783,141 +751,214 @@ BOOL FO_LoadTree(char *fname)
       set(lv, MUIA_NListtree_Quiet, TRUE);
       while(GetLine(fh, buffer, sizeof(buffer)))
       {
-        memset(&fo, 0, sizeof(struct Folder));
         if(strncmp(buffer, "@FOLDER", 7) == 0)
         {
-          fo.Type = FT_CUSTOM;
-          fo.Sort[0] = 1;
-          fo.Sort[1] = 3;
-          strlcpy(fo.Name, Trim(&buffer[8]), sizeof(fo.Name));
-          strlcpy(fo.Path, Trim(GetLine(fh, buffer, sizeof(buffer))), sizeof(fo.Path));
-          if((fo.messages = CreateMailList()) != NULL)
+          struct Folder *fo;
+
+          if((fo = calloc(1, sizeof(*fo))) != NULL)
           {
-            if(CreateDirectory(GetFolderDir(&fo)) == TRUE)
+            fo->Type = FT_CUSTOM;
+            fo->Sort[0] = 1;
+            fo->Sort[1] = 3;
+            strlcpy(fo->Name, Trim(&buffer[8]), sizeof(fo->Name));
+            strlcpy(fo->Path, Trim(GetLine(fh, buffer, sizeof(buffer))), sizeof(fo->Path));
+            if((fo->messages = CreateMailList()) != NULL)
             {
-              // if there doesn't exist any .fconfig configuration in the folder
-              // we do have to generate it and we do that by analyzing its name,
-              // comparing it to the default folder names we know.
-              if(FO_LoadConfig(&fo) == FALSE)
+              if(CreateDirectory(GetFolderDir(fo)) == TRUE)
               {
-                char *folderpath = (char *)FilePart(fo.Path);
+                struct FolderNode *fnode;
 
-                // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
-                if(stricmp(folderpath, FolderName[FT_INCOMING]) == 0)
-                  fo.Type = FT_INCOMING;
-                else if(stricmp(folderpath, FolderName[FT_OUTGOING]) == 0)
-                  fo.Type = FT_OUTGOING;
-                else if(stricmp(folderpath, FolderName[FT_SENT]) == 0)
-                  fo.Type = FT_SENT;
-                else if(stricmp(folderpath, FolderName[FT_TRASH]) == 0)
-                  fo.Type = FT_TRASH;
-                else if(C->SpamFilterEnabled && stricmp(folderpath, FolderName[FT_SPAM]) == 0)
-                  fo.Type = FT_SPAM;
+                // if there doesn't exist any .fconfig configuration in the folder
+                // we do have to generate it and we do that by analyzing its name,
+                // comparing it to the default folder names we know.
+                if(FO_LoadConfig(fo) == FALSE)
+                {
+                  char *folderpath = (char *)FilePart(fo->Path);
 
-                // Save the config now because it could be changed in the meantime
-                if(FO_SaveConfig(&fo) == FALSE)
+                  // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
+                  if(stricmp(folderpath, FolderName[FT_INCOMING]) == 0)
+                    fo->Type = FT_INCOMING;
+                  else if(stricmp(folderpath, FolderName[FT_OUTGOING]) == 0)
+                  fo->Type = FT_OUTGOING;
+                  else if(stricmp(folderpath, FolderName[FT_SENT]) == 0)
+                    fo->Type = FT_SENT;
+                  else if(stricmp(folderpath, FolderName[FT_TRASH]) == 0)
+                    fo->Type = FT_TRASH;
+                  else if(C->SpamFilterEnabled && stricmp(folderpath, FolderName[FT_SPAM]) == 0)
+                    fo->Type = FT_SPAM;
+
+                  // Save the config now because it could be changed in the meantime
+                  if(FO_SaveConfig(fo) == FALSE)
+                  {
+                    fclose(fh);
+                    free(fo);
+
+                    RETURN(FALSE);
+                    return FALSE;
+                  }
+                }
+
+                fo->SortIndex = i++;
+                fo->ImageIndex = j;
+
+                // Now we load the FolderImages if they exists
+                if(FO_LoadFolderImage(fo) == TRUE)
+                  j++;
+                else
+                {
+                  // we cannot find out if there is new/unread mail in the folder,
+                  // so we initialize the folder with the std ImageIndex.
+                  if(isIncomingFolder(fo))      fo->ImageIndex = FICON_ID_INCOMING;
+                  else if(isOutgoingFolder(fo)) fo->ImageIndex = FICON_ID_OUTGOING;
+                  else if(isTrashFolder(fo))    fo->ImageIndex = FICON_ID_TRASH;
+                  else if(isSentFolder(fo))     fo->ImageIndex = FICON_ID_SENT;
+                  else if(isSpamFolder(fo))     fo->ImageIndex = FICON_ID_SPAM;
+                  else fo->ImageIndex = -1; // or with -1 for a non std folder.
+                }
+
+                LockFolderList(G->folders);
+                fnode = AddNewFolderNode(G->folders, fo);
+                UnlockFolderList(G->folders);
+
+                if(fnode == NULL)
                 {
                   fclose(fh);
+                  free(fo);
+
+                  RETURN(FALSE);
+                  return FALSE;
+                }
+
+                // Now we add this folder to the folder listtree
+                if(!(DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
+                {
+                  fclose(fh);
+                  free(fo);
 
                   RETURN(FALSE);
                   return FALSE;
                 }
               }
+            }
+            else
+            {
+              fclose(fh);
+              free(fo);
 
-              fo.SortIndex = i++;
-              fo.ImageIndex = j;
-
-              // Now we load the FolderImages if they exists
-              if(FO_LoadFolderImage(&fo) == TRUE)
-                j++;
-              else
-              {
-                // we cannot find out if there is new/unread mail in the folder,
-                // so we initialize the folder with the std ImageIndex.
-                if(isIncomingFolder(&fo))      fo.ImageIndex = FICON_ID_INCOMING;
-                else if(isOutgoingFolder(&fo)) fo.ImageIndex = FICON_ID_OUTGOING;
-                else if(isTrashFolder(&fo))    fo.ImageIndex = FICON_ID_TRASH;
-                else if(isSentFolder(&fo))     fo.ImageIndex = FICON_ID_SENT;
-                else if(isSpamFolder(&fo))     fo.ImageIndex = FICON_ID_SPAM;
-                else fo.ImageIndex = -1; // or with -1 for a non std folder.
-              }
-
-              // Now we add this folder to the folder listtree
-              if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
-              {
-                fclose(fh);
-
-                RETURN(FALSE);
-                return FALSE;
-              }
+              RETURN(FALSE);
+              return FALSE;
             }
             do
+            {
               if(strcmp(buffer, "@ENDFOLDER") == 0)
                 break;
+            }
             while(GetLine(fh, buffer, sizeof(buffer)));
           }
         }
         else if(strncmp(buffer, "@SEPARATOR", 10) == 0)
         {
-          long tnflags = TNF_LIST;
+          struct Folder *fo;
 
-          // SEPARATOR support is obsolete since the folder hierachical order
-          // that`s why we handle SEPARATORs as GROUPs now for backward compatibility
-          fo.Type = FT_GROUP;
-          strlcpy(fo.Name, Trim(&buffer[11]), sizeof(fo.Name));
-          do
-            if(strcmp(buffer, "@ENDSEPARATOR") == 0)
-              break;
-          while(GetLine(fh, buffer, sizeof(buffer)));
-          fo.SortIndex = i++;
-
-          // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-          if(IsImageInCache("folder_fold") &&
-             IsImageInCache("folder_unfold"))
+          if((fo = calloc(1, sizeof(*fo))) != NULL)
           {
-            SET_FLAG(tnflags, TNF_NOSIGN);
-          }
+            long tnflags = TNF_LIST;
+            struct FolderNode *fnode;
 
-          if((Object *)DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags) == NULL)
-          {
-            fclose(fh);
+            // SEPARATOR support is obsolete since the folder hierachical order
+            // that`s why we handle SEPARATORs as GROUPs now for backward compatibility
+            fo->Type = FT_GROUP;
+            strlcpy(fo->Name, Trim(&buffer[11]), sizeof(fo->Name));
+            do
+            {
+              if(strcmp(buffer, "@ENDSEPARATOR") == 0)
+                break;
+            }
+            while(GetLine(fh, buffer, sizeof(buffer)));
+            fo->SortIndex = i++;
 
-            RETURN(FALSE);
-            return FALSE;
+            // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
+            if(IsImageInCache("folder_fold") &&
+               IsImageInCache("folder_unfold"))
+            {
+              SET_FLAG(tnflags, TNF_NOSIGN);
+            }
+
+            LockFolderList(G->folders);
+            fnode = AddNewFolderNode(G->folders, fo);
+            UnlockFolderList(G->folders);
+
+            if(fnode == NULL)
+            {
+              fclose(fh);
+              free(fo);
+
+              RETURN(FALSE);
+              return FALSE;
+            }
+
+            if((Object *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags) == NULL)
+            {
+              fclose(fh);
+              free(fo);
+
+              RETURN(FALSE);
+              return FALSE;
+            }
           }
         }
         else if(strncmp(buffer, "@GROUP", 6) == 0)
         {
-          long tnflags = TNF_LIST;
+          struct Folder *fo;
 
-          fo.Type = FT_GROUP;
-          strlcpy(fo.Name, Trim(&buffer[7]), sizeof(fo.Name));
-
-          // now we check if the node should be open or not
-          if(GetLine(fh, buffer, sizeof(buffer)))
+          if((fo = calloc(1, sizeof(*fo))) != NULL)
           {
-            // if it is greater zero then the node should be displayed open
-            if(atoi(buffer) > 0)
-              SET_FLAG(tnflags, TNF_OPEN);
+            long tnflags = TNF_LIST;
+            struct FolderNode *fnode;
+
+            fo->Type = FT_GROUP;
+            strlcpy(fo->Name, Trim(&buffer[7]), sizeof(fo->Name));
+
+            // now we check if the node should be open or not
+            if(GetLine(fh, buffer, sizeof(buffer)))
+            {
+              // if it is greater zero then the node should be displayed open
+              if(atoi(buffer) > 0)
+                SET_FLAG(tnflags, TNF_OPEN);
+            }
+
+            // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
+            if(IsImageInCache("folder_fold") &&
+               IsImageInCache("folder_unfold"))
+            {
+              SET_FLAG(tnflags, TNF_NOSIGN);
+            }
+
+            LockFolderList(G->folders);
+            fnode = AddNewFolderNode(G->folders, fo);
+            UnlockFolderList(G->folders);
+
+            if(fnode == NULL)
+            {
+              fclose(fh);
+              free(fo);
+
+              RETURN(FALSE);
+              return FALSE;
+            }
+
+            // now we are going to add this treenode to the list
+            if(!(tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
+            {
+              fclose(fh);
+              free(fo);
+
+              RETURN(FALSE);
+              return FALSE;
+            }
+
+            nested++;
           }
-
-          // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-          if(IsImageInCache("folder_fold") &&
-             IsImageInCache("folder_unfold"))
-          {
-            SET_FLAG(tnflags, TNF_NOSIGN);
-          }
-
-          // now we are going to add this treenode to the list
-          if(!(tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
-          {
-            fclose(fh);
-
-            RETURN(FALSE);
-            return FALSE;
-          }
-
-          nested++;
         }
         else if(strcmp(buffer,"@ENDGROUP") == 0)
         {
@@ -1915,15 +1956,16 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
 
     case SO_RESET:
     {
-      struct FolderList *flist;
-
       // before we reset/reload the foldertree we have to
       // make sure everything is freed correctly.
-      if((flist = FO_CreateList()) != NULL)
+      LockFolderList(G->folders);
+
+      if(IsFolderListEmpty(G->folders) == FALSE)
       {
         struct FolderNode *fnode;
+        struct FolderNode *next;
 
-        ForEachFolderNode(flist, fnode)
+        ForEachFolderNodeSafe(G->folders, fnode, next)
         {
           struct Folder *folder = fnode->folder;
 
@@ -1942,10 +1984,18 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
             MUI_DisposeObject(folder->imageObject);
             folder->imageObject = NULL; // let`s set it to NULL so that the destructor doesn`t do the work again.
           }
+
+          // free this folder
+          FO_FreeFolder(folder);
+          // and free its node
+          DeleteFolderNode(fnode);
         }
 
-        DeleteFolderList(flist);
+        // all folder nodes have been freed, now initialize the list again
+        InitFolderList(G->folders);
       }
+
+      UnlockFolderList(G->folders);
 
       FO_LoadTree(CreateFilename(".folders"));
     }

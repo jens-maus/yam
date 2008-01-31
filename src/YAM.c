@@ -884,6 +884,22 @@ static void Terminate(void)
   {
     MA_UpdateIndexes(FALSE);
     set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
+
+    // delete our list of folders
+    D(DBF_STARTUP, "freeing folders...");
+    LockFolderList(G->folders);
+    if(IsFolderListEmpty(G->folders) == FALSE)
+    {
+      struct FolderNode *fnode;
+
+      ForEachFolderNode(G->folders, fnode)
+      {
+        FO_FreeFolder(fnode->folder);
+        fnode->folder = NULL;
+      }
+    }
+    UnlockFolderList(G->folders);
+    DeleteFolderList(G->folders);
   }
 
   D(DBF_STARTUP, "freeing addressbook module...");
@@ -2433,6 +2449,10 @@ int main(int argc, char **argv)
       // break out immediately to signal an error!
       break;
     }
+
+    // create a list for all the folders
+    if((G->folders = CreateFolderList()) == NULL)
+      break;
 
     // prepare the exec lists in G and C
     NewList((struct List *)&(C->mimeTypeList));

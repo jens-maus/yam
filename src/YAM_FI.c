@@ -1098,15 +1098,16 @@ HOOKPROTONHNONP(FI_Open, void)
 
     if((folder = FO_GetCurrentFolder()) != NULL)
     {
-      struct FolderList *flist;
+      int apos = 0;
 
-      if((flist = FO_CreateList()) != NULL)
+      LockFolderListShared(G->folders);
+
+      if(IsFolderListEmpty(G->folders) == FALSE)
       {
-        int j = 0;
-        int apos = 0;
         struct FolderNode *fnode;
+        int j = 0;
 
-        ForEachFolderNode(flist, fnode)
+        ForEachFolderNode(G->folders, fnode)
         {
           if(isGroupFolder(fnode->folder) == FALSE)
           {
@@ -1118,13 +1119,14 @@ HOOKPROTONHNONP(FI_Open, void)
             j++;
           }
         }
-
-        set(G->FI->GUI.LV_FOLDERS, MUIA_List_Active, apos);
-        DeleteFolderList(flist);
-
-        // everything went fine
-        success = TRUE;
       }
+
+      UnlockFolderList(G->folders);
+
+      set(G->FI->GUI.LV_FOLDERS, MUIA_List_Active, apos);
+
+      // everything went fine
+      success = TRUE;
     }
 
     if(success == TRUE)

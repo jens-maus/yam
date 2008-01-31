@@ -1211,16 +1211,16 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
   {
     if(C->AskJumpUnread == TRUE)
     {
-      struct FolderList *flist;
+      LockFolderListShared(G->folders);
 
-      if((flist = FO_CreateList()) != NULL)
+      if(IsFolderListEmpty(G->folders) == FALSE)
       {
         struct FolderNode *fnode;
         BOOL abort;
         BOOL turnOver;
 
         // look for the current folder in the array
-        ForEachFolderNode(flist, fnode)
+        ForEachFolderNode(G->folders, fnode)
         {
           if(fnode->folder == folder)
             break;
@@ -1302,16 +1302,16 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
               // so let's try it again from the opposite side
               turnOver = TRUE;
 
-              if(fnode == LastFolderNode(flist))
-                fnode = FirstFolderNode(flist);
+              if(fnode == LastFolderNode(G->folders))
+                fnode = FirstFolderNode(G->folders);
               else
-                fnode = LastFolderNode(flist);
+                fnode = LastFolderNode(G->folders);
             }
           }
         }
-
-        DeleteFolderList(flist);
       }
+
+      UnlockFolderList(G->folders);
     }
     else
       DisplayBeep(_screen(obj));

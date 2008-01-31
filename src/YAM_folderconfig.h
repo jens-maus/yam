@@ -211,7 +211,6 @@ extern struct Hook FO_NewFolderHook;
 extern struct Hook FO_SetOrderHook;
 
 BOOL            FO_CreateFolder(enum FolderType type, const char * const path, const char *name);
-struct FolderList *FO_CreateList(void);
 BOOL            FO_FreeFolder(struct Folder *folder);
 struct Folder * FO_GetCurrentFolder(void);
 BOOL            FO_SetCurrentFolder(struct Folder *fo);

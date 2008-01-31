@@ -115,6 +115,7 @@ struct Global
   struct codesetList *     codesetsList;
   struct HashTable *       imageCacheHashTable;
   struct NotifyRequest *   WR_NotifyRequest[MAXWR+1];
+  struct FolderList *      folders;
 
   #if defined(__amigaos4__)
   struct MsgPort *         AppLibPort;

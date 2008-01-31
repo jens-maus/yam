@@ -783,24 +783,25 @@ struct Folder *FolderRequest(const char *title, const char *body, const char *ye
     End,
   End;
 
-  if(wi_fr)
+  if(wi_fr != NULL)
   {
     char *fname;
     static int lastactive;
-    struct FolderList *flist;
 
-    if((flist = FO_CreateList()) != NULL)
+    LockFolderListShared(G->folders);
+
+    if(IsFolderListEmpty(G->folders) == FALSE)
     {
       struct FolderNode *fnode;
 
-      ForEachFolderNode(flist, fnode)
+      ForEachFolderNode(G->folders, fnode)
       {
         if(fnode->folder != exclude && !isGroupFolder(fnode->folder))
           DoMethod(lv_folder, MUIM_List_InsertSingle, fnode->folder->Name, MUIV_List_Insert_Bottom);
       }
-
-      DeleteFolderList(flist);
     }
+
+    UnlockFolderList(G->folders);
 
     set(lv_folder, MUIA_List_Active, lastactive);
     set(wi_fr, MUIA_Window_ActiveObject, lv_folder);
@@ -2520,15 +2521,16 @@ static BOOL IsFolderDir(const char *dir)
 BOOL AllFolderLoaded(void)
 {
   BOOL allLoaded = TRUE;
-  struct FolderList *flist;
 
   ENTER();
 
-  if((flist = FO_CreateList()) != NULL)
+  LockFolderListShared(G->folders);
+
+  if(IsFolderListEmpty(G->folders) == FALSE)
   {
     struct FolderNode *fnode;
 
-    ForEachFolderNode(flist, fnode)
+    ForEachFolderNode(G->folders, fnode)
     {
       if(fnode->folder->LoadedMode != LM_VALID && !isGroupFolder(fnode->folder))
       {
@@ -2536,11 +2538,11 @@ BOOL AllFolderLoaded(void)
         break;
       }
     }
-
-    DeleteFolderList(flist);
   }
   else
     allLoaded = FALSE;
+
+  UnlockFolderList(G->folders);
 
   RETURN(allLoaded);
   return allLoaded;
@@ -4155,7 +4157,7 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
 
   UnlockMailList(folder->messages);
 
-  if(resetstats)
+  if(resetstats == TRUE)
   {
     folder->Total = 0;
     folder->New = 0;
@@ -5510,24 +5512,25 @@ void PGPClearPassPhrase(BOOL force)
 int PGPCommand(const char *progname, const char *options, int flags)
 {
   BPTR fhi;
-  char command[SIZE_LARGE];
   int error = -1;
+  char command[SIZE_LARGE];
 
   ENTER();
 
   D(DBF_UTIL, "[%s] [%s] - flags: %ld", progname, options, flags);
 
-  if((fhi = Open("NIL:", MODE_OLDFILE)))
+  AddPath(command, C->PGPCmdPath, progname, sizeof(command));
+  strlcat(command, " >" PGPLOGFILE " ", sizeof(command));
+  strlcat(command, options, sizeof(command));
+
+  if((fhi = Open("NIL:", MODE_OLDFILE)) != (BPTR)NULL)
   {
     BPTR fho;
 
-    if((fho = Open("NIL:", MODE_NEWFILE)))
+    if((fho = Open("NIL:", MODE_NEWFILE)) != (BPTR)NULL)
     {
-      BusyText(tr(MSG_BusyPGPrunning), "");
 
-      AddPath(command, C->PGPCmdPath, progname, sizeof(command));
-      strlcat(command, " >" PGPLOGFILE " ", sizeof(command));
-      strlcat(command, options, sizeof(command));
+      BusyText(tr(MSG_BusyPGPrunning), "");
 
       // use SystemTags() for executing PGP
       error = SystemTags(command, SYS_Input,    fhi,
@@ -5714,7 +5717,6 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
 void DisplayAppIconStatistics(void)
 {
   static char apptit[SIZE_DEFAULT/2];
-  struct FolderList *flist;
   enum IconImages mode;
   int new_msg = 0;
   int unr_msg = 0;
@@ -5726,11 +5728,13 @@ void DisplayAppIconStatistics(void)
 
   // if the user wants to show an AppIcon on the workbench,
   // we go and calculate the mail stats for all folders out there.
-  if((flist = FO_CreateList()) != NULL)
+  LockFolderListShared(G->folders);
+
+  if(IsFolderListEmpty(G->folders) == FALSE)
   {
     struct FolderNode *fnode;
 
-    ForEachFolderNode(flist, fnode)
+    ForEachFolderNode(G->folders, fnode)
     {
       struct Folder *fo = fnode->folder;
 
@@ -5746,9 +5750,9 @@ void DisplayAppIconStatistics(void)
         del_msg += fo->Deleted;
       }
     }
-
-    DeleteFolderList(flist);
   }
+
+  UnlockFolderList(G->folders);
 
   // clear AppIcon Label first before we create it new
   apptit[0] = '\0';

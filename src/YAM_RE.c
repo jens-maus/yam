@@ -99,7 +99,6 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
     // have a valid index before we are going to go on.
     if(srcMail->Folder->LoadedMode == LM_VALID || MA_GetIndex(srcMail->Folder) == TRUE)
     {
-      struct FolderList *flist;
       BOOL found = FALSE;
 
       // ok the folder is valid and we can scan it now
@@ -138,85 +137,92 @@ struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAll
       UnlockMailList(srcMail->Folder->messages);
 
       // if we still haven't found the mail we have to scan the other folder aswell
-      if(found == FALSE && (flist = FO_CreateList()) != NULL)
+      if(found == FALSE)
       {
-        int autoloadindex = -1;
-        struct FolderNode *fnode;
+        LockFolderListShared(G->folders);
 
-        ForEachFolderNode(flist, fnode)
+        if(IsFolderListEmpty(G->folders) == FALSE)
         {
-          struct Folder *fo = fnode->folder;
+          int autoloadindex = -1;
+          struct FolderNode *fnode;
 
-          // check if this folder isn't a group and that we haven't scanned
-          // it already.
-          if(!isGroupFolder(fo) && fo != srcMail->Folder)
+          ForEachFolderNode(G->folders, fnode)
           {
-            if(fo->LoadedMode != LM_VALID)
+            struct Folder *fo = fnode->folder;
+
+            // check if this folder isn't a group and that we haven't scanned
+            // it already.
+            if(!isGroupFolder(fo) && fo != srcMail->Folder)
             {
-              if(autoloadindex == -1)
+              if(fo->LoadedMode != LM_VALID)
               {
-                if(askLoadAllFolder == TRUE)
+                if(autoloadindex == -1)
                 {
-                  // if we are going to ask for loading all folders we do it now
-                  if(MUI_Request(G->App, readWindow, 0,
-                                 tr(MSG_MA_ConfirmReq),
-                                 tr(MSG_YesNoReq),
-                                 tr(MSG_RE_FOLLOWTHREAD)) != 0)
-                    autoloadindex = 1;
+                  if(askLoadAllFolder == TRUE)
+                  {
+                    // if we are going to ask for loading all folders we do it now
+                    if(MUI_Request(G->App, readWindow, 0,
+                                   tr(MSG_MA_ConfirmReq),
+                                   tr(MSG_YesNoReq),
+                                   tr(MSG_RE_FOLLOWTHREAD)) != 0)
+                      autoloadindex = 1;
+                    else
+                      autoloadindex = 0;
+                  }
                   else
                     autoloadindex = 0;
                 }
-                else
-                  autoloadindex = 0;
+
+                // load the folder's index, if we are allowed to do that
+                if(autoloadindex == 1)
+                  MA_GetIndex(fo);
               }
 
-              // load the folder's index, if we are allowed to do that
-              if(autoloadindex == 1)
-                MA_GetIndex(fo);
-            }
-
-            // check again for a valid index
-            if(fo->LoadedMode == LM_VALID)
-            {
-              LockMailListShared(fo->messages);
-
-              if(IsMailListEmpty(fo->messages) == FALSE)
+              // check again for a valid index
+              if(fo->LoadedMode == LM_VALID)
               {
-                struct MailNode *mnode;
+                LockMailListShared(fo->messages);
 
-                // now scan the folder
-                ForEachMailNode(fo->messages, mnode)
+                if(IsMailListEmpty(fo->messages) == FALSE)
                 {
-                  struct Mail *mail = mnode->mail;
+                  struct MailNode *mnode;
 
-                  if(nextThread == TRUE)
+                  // now scan the folder
+                  ForEachMailNode(fo->messages, mnode)
                   {
-                    // find the answer to the srcMail
-                    if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
+                    struct Mail *mail = mnode->mail;
+
+                    if(nextThread == TRUE)
                     {
-                      found = TRUE;
-                      break;
+                      // find the answer to the srcMail
+                      if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
+                      {
+                        found = TRUE;
+                        break;
+                      }
                     }
-                  }
-                  else
-                  {
-                    // else we have to find the question to the srcMail
-                    if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
+                    else
                     {
-                      found = TRUE;
-                      break;
+                      // else we have to find the question to the srcMail
+                      if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
+                      {
+                        found = TRUE;
+                        break;
+                      }
                     }
                   }
                 }
+
+                UnlockMailList(fo->messages);
               }
-
-              UnlockMailList(fo->messages);
             }
-          }
 
-          if(found == TRUE)
-            break;
+            if(found == TRUE)
+              break;
+          }
         }
+
+        UnlockFolderList(G->folders);
       }
     }
   }

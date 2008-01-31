@@ -553,15 +553,15 @@ void MA_ExpireIndex(struct Folder *folder)
 //  Updates indices of all folders
 void MA_UpdateIndexes(BOOL initial)
 {
-  struct FolderList *flist;
-
   ENTER();
 
-  if((flist = FO_CreateList()) != NULL)
+  LockFolderListShared(G->folders);
+
+  if(IsFolderListEmpty(G->folders) == FALSE)
   {
     struct FolderNode *fnode;
 
-    ForEachFolderNode(flist, fnode)
+    ForEachFolderNode(G->folders, fnode)
     {
       struct Folder *folder = fnode->folder;
 
@@ -649,9 +649,9 @@ void MA_UpdateIndexes(BOOL initial)
         }
       }
     }
-
-    DeleteFolderList(flist);
   }
+
+  UnlockFolderList(G->folders);
 
   LEAVE();
 }
@@ -661,16 +661,16 @@ void MA_UpdateIndexes(BOOL initial)
 //  Removes loaded folder indices from memory and closes folders
 void MA_FlushIndexes(BOOL all)
 {
-  struct FolderList *flist;
-
   ENTER();
 
-  if((flist = FO_CreateList()) != NULL)
+  LockFolderListShared(G->folders);
+
+  if(IsFolderListEmpty(G->folders) == FALSE)
   {
     struct FolderNode *fnode;
     struct Folder *actfolder = FO_GetCurrentFolder();
 
-    ForEachFolderNode(flist, fnode)
+    ForEachFolderNode(G->folders, fnode)
     {
       struct Folder *folder = fnode->folder;
 
@@ -695,12 +695,11 @@ void MA_FlushIndexes(BOOL all)
       }
     }
 
-    // free the temporary folder list
-    DeleteFolderList(flist);
-
     // make sure to redraw the whole folder list
     DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, MUIF_NONE);
   }
+
+  UnlockFolderList(G->folders);
 
   LEAVE();
 }

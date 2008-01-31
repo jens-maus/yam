@@ -35,6 +35,19 @@
 
 #include "Debug.h"
 
+/// InitFolderList
+// initialize a folder list
+void InitFolderList(struct FolderList *flist)
+{
+  ENTER();
+
+  NewList((struct List *)&flist->list);
+  flist->count = 0;
+
+  LEAVE();
+}
+
+///
 /// CreateFolderList
 // create a new list for folders
 struct FolderList *CreateFolderList(void)
@@ -77,14 +90,14 @@ void DeleteFolderList(struct FolderList *flist)
   {
     if(flist->lockSemaphore != NULL)
     {
-      struct FolderNode *node;
+      struct FolderNode *fnode;
 
       // lock the list just, just for safety reasons
       LockFolderList(flist);
 
       // remove and free all remaining nodes in the list
-      while((node = (struct FolderNode *)RemHead((struct List *)&flist->list)) != NULL)
-        FreeSysObject(ASOT_NODE, node);
+      while((fnode = (struct FolderNode *)RemHead((struct List *)&flist->list)) != NULL)
+        FreeSysObject(ASOT_NODE, fnode);
 
       // unlock the list again
       UnlockFolderList(flist);
@@ -98,33 +111,6 @@ void DeleteFolderList(struct FolderList *flist)
   }
 
   LEAVE();
-}
-
-///
-/// CloneFolderList
-// create a clone copy of a folder list
-struct FolderList *CloneFolderList(struct FolderList *flist)
-{
-  struct FolderList *clone;
-
-  ENTER();
-
-  if((clone = CreateFolderList()) != NULL)
-  {
-    struct FolderNode *fnode;
-
-    LockFolderList(flist);
-
-    ForEachFolderNode(flist, fnode)
-    {
-      AddNewFolderNode(clone, fnode->folder);
-    }
-
-    UnlockFolderList(flist);
-  }
-
-  RETURN(clone);
-  return clone;
 }
 
 ///
