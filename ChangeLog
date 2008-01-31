@@ -7,6 +7,8 @@ $URL$
 
 2008-01-31  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: optimized the creation of complete mail lists by using
+    CloneMailList() instead of doing the dirty work ourself.
   * Debug.c: fixed a possible buffer overrun when starting time measurement
     clocks.
   * YAM_addressbookEntry.h: minor cosmetic changes.

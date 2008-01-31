@@ -659,34 +659,44 @@ struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
     if((onlyNew == TRUE  && fo->New > 0) ||
        (onlyNew == FALSE && fo->Total > 0))
     {
-      if((mlist = CreateMailList()) != NULL)
+      if(onlyNew == TRUE)
       {
+        // create a list of new mails only
         LockMailListShared(fo->messages);
 
         if(IsMailListEmpty(fo->messages) == FALSE)
         {
-          struct MailNode *mnode;
-
-          ForEachMailNode(fo->messages, mnode)
+          if((mlist = CreateMailList()) != NULL)
           {
-            struct Mail *mail = mnode->mail;
+            struct MailNode *mnode;
 
-            // only if we want ALL or this is just a îew mail we add it to our list
-            if(onlyNew == FALSE || hasStatusNew(mail))
+            ForEachMailNode(fo->messages, mnode)
             {
-              AddNewMailNode(mlist, mail);
+              struct Mail *mail = mnode->mail;
+
+              // only if this is a new mail we add it to our list
+              if(hasStatusNew(mail))
+              {
+                AddNewMailNode(mlist, mail);
+              }
+            }
+
+            // let everything fail if there were no mails added to the list
+            if(IsMailListEmpty(mlist) == TRUE)
+            {
+              DeleteMailList(mlist);
+              mlist = NULL;
             }
           }
         }
 
         UnlockMailList(fo->messages);
-
-        // let everything fail if there were no mails added to the list
-        if(IsMailListEmpty(mlist) == TRUE)
-        {
-          DeleteMailList(mlist);
-          mlist = NULL;
-        }
+      }
+      else
+      {
+        // create a clone copy of all messages
+        // handling of empty lists is already done by CloneMailList()
+        mlist = CloneMailList(fo->messages);
       }
     }
   }
