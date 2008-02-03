@@ -1237,9 +1237,9 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
           {
             // either go forward or backward
             if(direction > 0)
-              fnode2 = NextFolderNode(fnode);
+              fnode2 = fnode == NULL ? FirstFolderNode(G->folders) : NextFolderNode(fnode);
             else
-              fnode2 = PreviousFolderNode(fnode);
+              fnode2 = fnode == NULL ? LastFolderNode(G->folders) : PreviousFolderNode(fnode);
 
             if(fnode2 != NULL)
             {
@@ -1300,11 +1300,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
               // we just reached the end of the folder list for the first time,
               // so let's try it again from the opposite side
               turnOver = TRUE;
-
-              if(fnode == LastFolderNode(G->folders))
-                fnode = FirstFolderNode(G->folders);
-              else
-                fnode = LastFolderNode(G->folders);
+              fnode = NULL;
             }
           }
         }

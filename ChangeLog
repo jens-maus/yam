@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ReadWindow.c: fixed the broken search for unread mails.
+
 2008-01-31  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: simplified the copying/moving of a mail a bit so that YAM doesn't
