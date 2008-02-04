@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-04  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: the UIDL hash table will now only be saved if it was modified
+    during the mail transfer. This fixes bug #1885491.
+
 2008-02-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * ReadWindow.c: fixed the broken search for unread mails.

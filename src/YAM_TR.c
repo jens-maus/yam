@@ -4852,9 +4852,8 @@ static void CleanupUIDLhash(void)
 
   if(G->TR->UIDLhashTable != NULL)
   {
-    // save the UIDLs only if something has been changed or if there are
-    // some entries to be saved at all
-    if(G->TR->UIDLhashIsDirty == TRUE || G->TR->UIDLhashTable->entryCount > 0)
+    // save the UIDLs only if something has been changed
+    if(G->TR->UIDLhashIsDirty == TRUE)
     {
       FILE *fh;
 
