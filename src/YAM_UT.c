@@ -4118,6 +4118,11 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
 {
   ENTER();
 
+  ASSERT(folder != NULL);
+  ASSERT(folder->messages != NULL);
+  ASSERT(folder->messages->lockSemaphore != NULL);
+  D(DBF_FOLDER, "clearing mail list of folder '%s'", folder->Name);
+
   LockMailList(folder->messages);
 
   if(IsMailListEmpty(folder->messages) == FALSE)
