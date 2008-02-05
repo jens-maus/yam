@@ -1095,6 +1095,8 @@ void FO_UpdateStatistics(struct Folder *folder)
   if(folder == (struct Folder *)-1)
     folder = FO_GetFolderByType(FT_INCOMING, NULL);
 
+  D(DBF_FOLDER, "updating folder '%s'", folder->Name);
+
   folder->Unread = 0;
   folder->New = 0;
   folder->Total = 0;
@@ -1214,30 +1216,37 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 //  Sets password for a protected folder
 static BOOL FO_EnterPassword(struct Folder *fo)
 {
-  char passwd[SIZE_PASSWORD], passwd2[SIZE_PASSWORD];
+  BOOL result = FALSE;
 
-  for(*passwd = 0;;)
+  ENTER();
+
+  do
   {
-    *passwd = *passwd2 = 0;
+    char passwd[SIZE_PASSWORD];
+    char passwd2[SIZE_PASSWORD];
 
-    if(!StringRequest(passwd, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_ChangeFolderPass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->FO->GUI.WI))
-      return FALSE;
+    passwd[0] = '\0';
+    passwd2[0] = '\0';
 
-    if(*passwd && !StringRequest(passwd2, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_RetypePass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->FO->GUI.WI))
-      return FALSE;
-
-    if(!Stricmp(passwd, passwd2))
+    if(StringRequest(passwd, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_ChangeFolderPass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->FO->GUI.WI) == 0)
       break;
+
+    if(passwd[0] != '\0' && StringRequest(passwd2, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_RetypePass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->FO->GUI.WI) == 0)
+      break;
+
+    if(Stricmp(passwd, passwd2) == 0)
+    {
+      strlcpy(fo->Password, passwd, sizeof(fo->Password));
+      result = TRUE;
+      break;
+    }
     else
       DisplayBeep(NULL);
   }
+  while(TRUE);
 
-  if(!*passwd)
-    return FALSE;
-
-  strlcpy(fo->Password, passwd, sizeof(fo->Password));
-
-  return TRUE;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -1310,7 +1319,7 @@ static void FO_GetFolder(struct Folder *folder)
 
   // we make sure the window is at the front if it
   // is already open
-  if(xget(G->FO->GUI.WI, MUIA_Window_Open))
+  if(xget(G->FO->GUI.WI, MUIA_Window_Open) == TRUE)
     DoMethod(G->FO->GUI.WI, MUIM_Window_ToFront);
 
   LEAVE();
@@ -1343,6 +1352,7 @@ static void FO_PutFolder(struct Folder *folder)
     folder->Type = cycle2type[GetMUICycle(gui->CY_FTYPE)];
     folder->Mode = GetMUICycle(gui->CY_FMODE);
   }
+
   for(i = 0; i < 2; i++)
   {
     folder->Sort[i] = GetMUICycle(gui->CY_SORT[i]) + 1;
@@ -1384,13 +1394,13 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
   memset(&folder, 0, sizeof(struct Folder));
   folder.Type = FT_GROUP;
 
-  if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+  if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI) != 0)
   {
     long tnflags = (TNF_LIST | TNF_OPEN);
 
     // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-    if(IsImageInCache("folder_fold") &&
-       IsImageInCache("folder_unfold"))
+    if(IsImageInCache("folder_fold") == TRUE &&
+       IsImageInCache("folder_unfold") == TRUE)
     {
       SET_FLAG(tnflags, TNF_NOSIGN);
     }
@@ -1409,99 +1419,102 @@ MakeHook(FO_NewFolderGroupHook, FO_NewFolderGroupFunc);
 //  Creates a new folder
 HOOKPROTONHNONP(FO_NewFolderFunc, void)
 {
-   int mode = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_NewFolder), tr(MSG_FO_NewFolderGads), tr(MSG_FO_NewFolderReq));
-   static struct Folder folder;
+  int mode = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_NewFolder), tr(MSG_FO_NewFolderGads), tr(MSG_FO_NewFolderReq));
+  // must be static, otherwise the GUI will access random memory
+  static struct Folder folder;
 
-   ENTER();
+  ENTER();
 
-   // reset the folder struct and set some default values.
-   memset(&folder, 0, sizeof(struct Folder));
-   folder.Sort[0] = 1;
-   folder.Sort[1] = 3;
-   folder.Type = FT_CUSTOM;
-   folder.ImageIndex = -1;
+  // reset the folder struct and set some default values.
+  memset(&folder, 0, sizeof(struct Folder));
+  folder.Sort[0] = 1;
+  folder.Sort[1] = 3;
+  folder.Type = FT_CUSTOM;
+  folder.ImageIndex = -1;
 
-   switch (mode)
-   {
-     case 1: break;
-     case 2:
-     {
-       struct Folder *currfolder;
+  switch (mode)
+  {
+    case 1: break;
+    case 2:
+    {
+      struct Folder *currfolder;
 
-       if((currfolder = FO_GetCurrentFolder()) == NULL)
-       {
-         LEAVE();
-         return;
-       }
+      if((currfolder = FO_GetCurrentFolder()) == NULL)
+      {
+        LEAVE();
+        return;
+      }
 
-       // as the user decided to use the settings from the current folder, wie copy
-       // the current one to our new one.
-       memcpy(&folder, currfolder, sizeof(struct Folder));
+      // as the user decided to use the settings from the current folder, wie copy
+      // the current one to our new one.
+      memcpy(&folder, currfolder, sizeof(struct Folder));
 
-       if(isGroupFolder(&folder))
-       {
-         FO_NewFolderGroupFunc();
-         LEAVE();
-         return;
-       }
-       else if(isIncomingFolder(&folder) || isTrashFolder(&folder))
-         folder.Type = FT_CUSTOM;
-       else if(isOutgoingFolder(&folder) || isSentFolder(&folder))
-         folder.Type = FT_CUSTOMSENT;
+      if(isGroupFolder(&folder))
+      {
+        FO_NewFolderGroupFunc();
+        LEAVE();
+        return;
+      }
+      else if(isIncomingFolder(&folder) || isTrashFolder(&folder))
+        folder.Type = FT_CUSTOM;
+      else if(isOutgoingFolder(&folder) || isSentFolder(&folder))
+        folder.Type = FT_CUSTOMSENT;
 
-       // now that we have the correct folder type, we set some default values for the new
-       // folder
-       *folder.Path       = 0;
-       *folder.Name       = 0;
-       folder.imageObject = NULL;
-       folder.messages    = NULL;
-       folder.ImageIndex  = -1;  // No Image for the folder by default.
-     }
-     break;
+      // now that we have the correct folder type, we set some default values for the new
+      // folder
+      folder.Path[0]     = '\0';
+      folder.Name[0]     = '\0';
+      folder.imageObject = NULL;
+      // erase the message list which might have been copied from the current folder
+      folder.messages    = NULL;
+      // no image for the folder by default
+      folder.ImageIndex  = -1;  
+    }
+    break;
 
-     case 3:
-     {
-       struct FileReqCache *frc;
+    case 3:
+    {
+      struct FileReqCache *frc;
 
-       if((frc = ReqFile(ASL_FOLDER, G->MA->GUI.WI, tr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, "")) != NULL)
-       {
-         strlcpy(folder.Path, frc->drawer, sizeof(folder.Path));
+      if((frc = ReqFile(ASL_FOLDER, G->MA->GUI.WI, tr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, "")) != NULL)
+      {
+        strlcpy(folder.Path, frc->drawer, sizeof(folder.Path));
 
-         FO_LoadConfig(&folder);
-       }
-       else
-       {
-         LEAVE();
-         return;
-       }
-     }
-     break;
+        FO_LoadConfig(&folder);
+      }
+      else
+      {
+        LEAVE();
+        return;
+      }
+    }
+    break;
 
-     default:
-     {
-       LEAVE();
-       return;
-     }
-   }
+    default:
+    {
+      LEAVE();
+      return;
+    }
+  }
 
-   if(G->FO == NULL)
-   {
-     if((G->FO = FO_New()) == NULL)
-     {
-       LEAVE();
-       return;
-     }
-     if(SafeOpenWindow(G->FO->GUI.WI) == FALSE)
-     {
-       DisposeModulePush(&G->FO);
-       LEAVE();
-       return;
-     }
-   }
+  if(G->FO == NULL)
+  {
+    if((G->FO = FO_New()) == NULL)
+    {
+      LEAVE();
+      return;
+    }
+    if(SafeOpenWindow(G->FO->GUI.WI) == FALSE)
+    {
+      DisposeModulePush(&G->FO);
+      LEAVE();
+      return;
+    }
+  }
 
-   FO_GetFolder(&folder);
+  FO_GetFolder(&folder);
 
-   LEAVE();
+  LEAVE();
 }
 MakeHook(FO_NewFolderHook, FO_NewFolderFunc);
 
@@ -1514,7 +1527,7 @@ HOOKPROTONHNONP(FO_EditFolderFunc, void)
 
   ENTER();
 
-  if(folder)
+  if(folder != NULL)
   {
     if(isGroupFolder(folder))
     {
@@ -1523,15 +1536,15 @@ HOOKPROTONHNONP(FO_EditFolderFunc, void)
     }
     else
     {
-      if(!G->FO)
+      if(G->FO == NULL)
       {
-        if(!(G->FO = FO_New()))
+        if((G->FO = FO_New()) == NULL)
         {
           LEAVE();
           return;
         }
 
-        if(!SafeOpenWindow(G->FO->GUI.WI))
+        if(SafeOpenWindow(G->FO->GUI.WI) == FALSE)
         {
           DisposeModulePush(&G->FO);
 
@@ -1540,7 +1553,8 @@ HOOKPROTONHNONP(FO_EditFolderFunc, void)
         }
       }
 
-      FO_GetFolder(G->FO->EditFolder = folder);
+      G->FO->EditFolder = folder;
+      FO_GetFolder(folder);
     }
   }
 
@@ -1568,14 +1582,15 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       case FT_CUSTOMSENT:
       case FT_CUSTOMMIXED:
       {
-        if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_ConfirmDelete))))
+        if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_ConfirmDelete)) != 0)
         {
+          delete_folder = TRUE;
           DeleteMailDir(GetFolderDir(folder), FALSE);
           ClearMailList(folder, TRUE);
 
           // Here we dispose the folderimage Object because the destructor
           // of the Folder Listtree can`t do this without throwing enforcer hits
-          if(folder->imageObject)
+          if(folder->imageObject != NULL)
           {
             // we make sure that the NList also doesn`t use the image in future anymore
             DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
@@ -1599,13 +1614,15 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
         if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE)) != NULL)
         {
           // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
-          if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_FO_GROUP_CONFDEL))))
+          if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_FO_GROUP_CONFDEL)))
           {
             struct MUI_NListtree_TreeNode *tn_sub_next = tn_sub;
 
+            delete_folder = TRUE;
+
             set(lv, MUIA_NListtree_Quiet, TRUE);
 
-            while(tn_sub_next)
+            while(tn_sub_next != NULL)
             {
               tn_sub_next = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_sub, MUIV_NListtree_GetEntry_Position_Next, MUIV_NListtree_GetEntry_Flag_SameLevel);
 
@@ -1630,7 +1647,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       break;
     }
 
-    if(delete_folder)
+    if(delete_folder == TRUE)
     {
       D(DBF_FOLDER, "deleting folder \"%s\"", folder->Name);
 
@@ -1677,6 +1694,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
   ENTER();
 
+  D(DBF_FOLDER, "oldfolder=%08lx '%s'", oldfolder, oldfolder ? oldfolder->Name: "NULL");
   // if this is a edit folder request we separate here.
   if(oldfolder != NULL)
   {
@@ -1840,12 +1858,14 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
   {
     int result;
 
+    D(DBF_FOLDER, "new folder");
     memset(&folder, 0, sizeof(struct Folder));
     folder.ImageIndex = -1;
 
     if((folder.messages = CreateMailList()) != NULL)
     {
       FO_PutFolder(&folder);
+      D(DBF_FOLDER, "new folder '%s'", folder.Name);
 
       // lets first check for a valid folder name
       // if the foldername is empty or the new name already exists it`s invalid
@@ -1873,7 +1893,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         result = TRUE;
 
       // only if the user want to proceed we go on.
-      if(result)
+      if(result == TRUE)
       {
         if(isProtectedFolder(&folder) && FO_EnterPassword(&folder) == FALSE)
         {
@@ -1885,22 +1905,30 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         {
           if(FO_SaveConfig(&folder) == TRUE)
           {
-            struct Folder *prevFolder;
-
-            prevFolder = FO_GetCurrentFolder();
-            if(prevFolder != NULL && isGroupFolder(prevFolder))
+            // allocate memory for the new folder
+            if((oldfolder = memdup(&folder, sizeof(folder))) != NULL)
             {
-              // add the folder to the end of the current folder group
-              DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, FO_GetFolderTreeNode(prevFolder), MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
-            }
-            else
-            {
-              // add the folder after the current folder
-              DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
-            }
+              struct Folder *prevFolder;
 
-            oldfolder = &folder;
-            success = TRUE;
+              prevFolder = FO_GetCurrentFolder();
+              if(prevFolder != NULL && isGroupFolder(prevFolder))
+              {
+                // add the folder to the end of the current folder group
+                DoMethod(lv, MUIM_NListtree_Insert, oldfolder->Name, oldfolder, FO_GetFolderTreeNode(prevFolder), MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
+              }
+              else
+              {
+                // add the folder after the current folder
+                DoMethod(lv, MUIM_NListtree_Insert, oldfolder->Name, oldfolder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
+              }
+
+              // finally add the new folder to the global list
+              LockFolderList(G->folders);
+              AddNewFolderNode(G->folders, oldfolder);
+              UnlockFolderList(G->folders);
+
+              success = TRUE;
+            }
           }
         }
         else
@@ -2321,3 +2349,4 @@ static struct FO_ClassData *FO_New(void)
   return data;
 }
 ///
+

@@ -7,6 +7,9 @@ $URL$
 
 2008-02-05  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: a newly created folder was never added to the new global list and
+    even worse the folder pointer in the tree view still pointed to a no longer
+    existing structure on the stack. This fixes bug #1887196.
   * YAM_UT.c: added some assertions to track down a possible bug in the folder
     maillist management.
 
