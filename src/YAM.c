@@ -102,6 +102,7 @@
 #include "Timer.h"
 #include "MailList.h"
 #include "FolderList.h"
+#include "Threads.h"
 
 #include "classes/Classes.h"
 
@@ -1038,6 +1039,9 @@ static void Terminate(void)
   D(DBF_STARTUP, "deleting semaphore...");
   DeleteStartupSemaphore();
 
+  D(DBF_STARTUP, "cleaning up thread system...");
+  CleanupThreads();
+
   // cleaning up all AmiSSL stuff
   D(DBF_STARTUP, "cleaning up AmiSSL stuff...");
   if(AmiSSLBase != NULL)
@@ -1841,6 +1845,10 @@ static void InitBeforeLogin(BOOL hidden)
 
   // Lets check for the correct TextEditor.mcc version
   CheckMCC(MUIC_TextEditor, 15, 25, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+
+  // initialize the thread system of YAM
+  if(InitThreads() == FALSE)
+    Abort(tr(MSG_ERROR_THREADS));
 
   // now we search through PROGDIR:Charsets and load all user defined
   // codesets via codesets.library

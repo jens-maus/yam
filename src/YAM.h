@@ -41,6 +41,7 @@
 #include "BayesFilter.h"     // struct TokenAnalyzer
 #include "Themes.h"          // struct Theme
 #include "Timer.h"           // struct Timers
+#include "Threads.h"         // struct Thread
 
 // forward declarations
 struct DiskObject;
@@ -164,6 +165,10 @@ struct Global
   struct Theme             theme;
   struct TokenAnalyzer     spamFilter;
   struct Timers            timerData;
+
+  // the data for our thread implementation
+  struct Thread            mainThread;     // the main thread
+  struct MinList           subThreadList;  // list of subthreads
 
   char                     ProgDir[SIZE_PATH];
   char                     ProgName[SIZE_FILE];

@@ -314,6 +314,7 @@ OBJS = \
 	$(OBJDIR)/UpdateCheck.o \
 	$(OBJDIR)/HTML2Mail.o \
 	$(OBJDIR)/Themes.o \
+	$(OBJDIR)/Threads.o \
 	$(OBJDIR)/Timer.o \
 	$(OBJDIR)/HashTable.o \
 	$(OBJDIR)/BayesFilter.o \

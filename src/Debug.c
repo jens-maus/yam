@@ -138,6 +138,7 @@ void SetupDebug(void)
       { "hash",     DBF_HASH    },
       { "print",    DBF_PRINT   },
       { "theme",    DBF_THEME   },
+      { "thread",   DBF_THREAD  },
       { "all",      DBF_ALL     },
       { NULL,       0           }
     };

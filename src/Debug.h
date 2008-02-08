@@ -81,6 +81,7 @@
 #define DBF_HASH     (1<<19)    // for the HashTable management (HashTable.c)
 #define DBF_PRINT    (1<<20)    // for print management
 #define DBF_THEME    (1<<21)    // for the Themes management (Themes.c)
+#define DBF_THREAD   (1<<22)    // for the Thread management (Thread.c)
 #define DBF_ALL      0xffffffff
 
 void SetupDebug(void);

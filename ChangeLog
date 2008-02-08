@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-08  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Threads.c, misc: added a first preliminary port of the multithreading
+    implementation of SimpleMail. Please note, that this is a first very basic
+    and untested port of the multitasking/multithreading framework. Apart from
+    the initialization routines it is currently not used at all in YAM. Further
+    work is definitely required and I would suggest to first try to get that
+    stuff running for one of our regular timer jobs (e.g. automatic index
+    saving) to verify that this stuff actually works as expected. Afterwards
+    we might try to use it for larger jobs like managing asynchronous TCP/IP
+    connections.
+
 2008-02-05  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: a newly created folder was never added to the new global list and

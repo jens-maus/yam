@@ -6756,6 +6756,9 @@ MSG_HELP_EA_ST_BIRTHDAY (2081//)
 Date of birth in locale format\n\
 (e.g. 19.06.1974 or 19/06/1974).
 ;
+MSG_ERROR_THREADS (2082//)
+Can't initialize thread system
+;
 MSG_ERROR_PLAYSOUND (2083//)
 An error occurred while trying to play\n\
 the sound file '%s'.\n\
