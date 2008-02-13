@@ -1,0 +1,110 @@
+VERSION: 2.5-dev
+BUILDID: 20071221
+BUILDDATE: 21.12.2007
+URL: m68k-amigaos http://nightly.yam.ch/2007-12-21-dev/YAM25dev-AmigaOS3.lha
+URL: ppc-amigaos http://nightly.yam.ch/2007-12-21-dev/YAM25dev-AmigaOS4.lha
+URL: ppc-morphos http://nightly.yam.ch/2007-12-21-dev/YAM25dev-MorphOS.lha
+CHANGES:
+---------------------------
+YAM Open Source - ChangeLog
+---------------------------
+
+$Id: ChangeLog 3648 2007-12-21 10:24:36Z thboeckel $
+$URL: https://yamos.svn.sourceforge.net/svnroot/yamos/trunk/ChangeLog $
+
+2007-12-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM_CO.c: minor adaptions to the debug output of the XPK packer
+    loading. Also the xpk packer list will only be iterated through in case
+    xpk was found at all.
+
+2007-12-21  Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install_YAM: some more adaptions for the final install script.
+  * YAM_COg.c: not all XPK libraries were added to the packers list because some
+    do not offer all flags. But since XPK is basically a packing suite all these
+    libs should occur in the list. This fixes bug #1855456.
+
+2007-12-20  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/svenska.ct: Updated according to changes.
+  * doc/YAM_english.guide: Updated the software requirements with the recently
+    release MUI mcc's and Codesets library.
+
+2007-12-20  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c: removed again some HVSpaces where they were not necessary.
+  * doc/Install_YAM: removed the YAM: assign from the installer script and the
+    british english catalog for OS3/MOS, as these systems cannot handle accents
+    of a language.
+  * doc/Install_YAM: first modifications for upcoming release of 2.5. Currently
+    only english, british english, german, french and swedish are all languages
+    still supported. All other languages will be excluded from the release,
+    because the catalogs have not been updated since 2.4 or even 2.3. The
+    documentation laggs even more behind, but since this is not essential to be
+    able to run YAM we leave it as it is for the moment.
+
+2007-12-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: bumped minimum required version of TextEditor.mcc to 15.25 as
+    that one is the very latest now.
+  * YAM.cd, deutsch.ct, english-british.ct: adapted all toolbar strings to
+    not be wider than 8 characters or otherwise the size of the toolbars
+    may become to wide for systems with a small screen size. In addition,
+    please note, that the strings of the toolbar are just meant to carry
+    rough abbreviations of the actions. So translators should keep the
+    strings small as well.
+
+2007-12-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: bumped minimum required version for all NList-classes according
+    to the version in the v0.101 release.
+
+2007-12-18  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c: put all config pages on a scroll group object. This fixes a
+    possible crash caused by MUI itself if the screen is too small to take the
+    resized window in case the preview image on the Look&Feel page is too big.
+    Additionally this makes all pages look a bit more uniform.
+
+2007-12-18  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: bumped minimum required version for codesets.library and
+    BetterString.mcc to the latest available version.
+
+2007-12-18  Pär Boberg <pbobbenb@spray.se>
+
+  * doc/YAM_english.guide: Made some more changes, added a section in
+    Configuration about the Spam filter.
+
+2007-12-17  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: in case the user wanted old mails to be deleted upon startup and
+    the current folder was not the trash folder, then the trash folder was not
+    updated after the complete cleanup process. Only a click on the trash folder
+    itself would immediately update the treeview item. Maybe this also fixes
+    bug #1822876.
+
+2007-12-17  Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/english-british.ct: added a first primilary version of a british
+    english translation of our internal catalog.
+  * deutsch.ct: minor adaptions/fixes.
+  * YAM_MA.c: fixed bug #1851175 where removing the last mail from a folder
+    didn't hide the attachment group.
+  * YAM_MA.c, YAM_WR.c, WriteAttachmentList.c: fixed bug #1851566 where
+    forwarding or drag&dropping a mail from a compressed folder as an
+    attachment ended up in having the mail attached in compressed/encrypted
+    form rather than in plain text.
+
+2007-12-17  Pär Boberg <pbobbenb@spray.se>
+
+  * doc/YAM_english.guide: Changed a little bit here and there, info about
+    developers/contributors, SVN access, required third party software and
+    version/copyright numbers.
+
+2007-12-16  Pär Boberg <pbobbenb@spray.se>
+
+
+
+THIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG

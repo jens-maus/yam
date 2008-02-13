@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-13  Jens Langner <Jens.Langner@light-speed.de>
+
+  * www: added new 'www' top-level directory to our repository and added all
+    the update mechanism php and data files so that every developer can go
+    and improve our update mechanism. In future all our website stuff should
+    be put here to make sure that every developer can modify and improve
+    things immediately.
+
 2008-02-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, YAM_MAf: the bubble help of the folder listtree is now also

@@ -1,0 +1,17 @@
+NAME: TextEditor.mcc
+VERSION: 15.26
+BUILDDATE: 08.02.2008
+URL: * http://downloads.sourceforge.net/texteditor-mcc/MCC_TextEditor-15.26.lha
+CHANGES:
+---------------------------------------------------------------------------
+                        TextEditor.mcc - 15.26
+---------------------------------------------------------------------------
+
+TextEditor.mcc is the MUI custom class used for creating/editing and
+reading mails in YAM. The version that is advertised here is an important
+bugfixing update and every YAM user is adviced to use this new version
+instead of the original version supplied with the original YAM
+distribution.
+
+For more information about the detail of changes in this version please
+consult the ChangeLog file within the lha archive of TextEditor.mcc.
