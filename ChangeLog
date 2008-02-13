@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c: some code clean up.
+
 2008-02-08  Jens Langner <Jens.Langner@light-speed.de>
 
   * Threads.c, misc: added a first preliminary port of the multithreading
