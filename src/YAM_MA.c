@@ -405,7 +405,7 @@ HOOKPROTONHNONP(MA_SetMessageInfoFunc, void)
 
   ENTER();
 
-  if((mail = MA_GetActiveMail(NULL, NULL, NULL)))
+  if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
   {
     static char buffer[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
     char datstr[64];
@@ -419,13 +419,13 @@ HOOKPROTONHNONP(MA_SetMessageInfoFunc, void)
     FormatSize(mail->Size, sizestr, sizeof(sizestr), SF_AUTO);
 
     snprintf(buffer, sizeof(buffer), tr(MSG_MA_MESSAGEINFO), mail->From.RealName,
-                                                                 mail->From.Address,
-                                                                 mail->To.RealName,
-                                                                 mail->To.Address,
-                                                                 mail->Subject,
-                                                                 datstr,
-                                                                 mail->MailFile,
-                                                                 sizestr);
+                                                             mail->From.Address,
+                                                             mail->To.RealName,
+                                                             mail->To.Address,
+                                                             mail->Subject,
+                                                             datstr,
+                                                             mail->MailFile,
+                                                             sizestr);
 
     set(G->MA->GUI.PG_MAILLIST, MUIA_ShortHelp, buffer);
   }
@@ -445,7 +445,7 @@ HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
 
   ENTER();
 
-  if((fo = FO_GetCurrentFolder()) && !isGroupFolder(fo))
+  if((fo = FO_GetCurrentFolder()) && !isGroupFolder(fo) && fo->LoadedMode == LM_VALID)
   {
     static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
     char sizestr[SIZE_DEFAULT];
@@ -453,11 +453,11 @@ HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
     FormatSize(fo->Size, sizestr, sizeof(sizestr), SF_AUTO);
 
     snprintf(buffer, sizeof(buffer), tr(MSG_MA_FOLDERINFO), fo->Name,
-                                                                fo->Path,
-                                                                sizestr,
-                                                                fo->Total,
-                                                                fo->New,
-                                                                fo->Unread);
+                                                            fo->Path,
+                                                            sizestr,
+                                                            fo->Total,
+                                                            fo->New,
+                                                            fo->Unread);
 
     set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, buffer);
   }

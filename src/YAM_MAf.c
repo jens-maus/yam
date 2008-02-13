@@ -2205,6 +2205,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
         // time being...
         xset(gui->PG_MAILLIST, MUIA_Disabled, TRUE,
                                MUIA_ShortHelp, NULL);
+        set(gui->NL_FOLDERS, MUIA_ShortHelp, NULL);
         DoMethod(gui->PG_MAILLIST, MUIM_NList_Clear);
 
         // and now we also make sure an eventually enabled preview pane

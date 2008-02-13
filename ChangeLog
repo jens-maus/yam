@@ -7,6 +7,10 @@ $URL$
 
 2008-02-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c, YAM_MAf: the bubble help of the folder listtree is now also
+    disabled while rescanning a folder. However, it is reactivated as soon as
+    the scanning is finished or if the current folder is changed. This and the
+    previous change fix bug #1892192.
   * YAM_MAf: the bubble help of the mail list is now disabled while rescanning
     a folder.
   * Threads.c: some code clean up.
