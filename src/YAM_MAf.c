@@ -730,7 +730,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
       folder = actfo;
     else if(actfo == folder)
       folderChanged = FALSE;
-    else if(set_active)
+    else if(set_active == TRUE)
       FO_SetCurrentFolder(folder);
 
     if(folderChanged == TRUE)
@@ -757,7 +757,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         }
 
         // also set an embedded read pane as disabled.
-        if(C->EmbeddedReadPane)
+        if(C->EmbeddedReadPane == TRUE)
           set(gui->MN_EMBEDDEDREADPANE, MUIA_Disabled, TRUE);
 
         DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
@@ -2203,7 +2203,8 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
         // before we go and rebuild the index of the folder we make
         // sure all major GUI components of it are disabled for the
         // time being...
-        set(gui->PG_MAILLIST, MUIA_Disabled, TRUE);
+        xset(gui->PG_MAILLIST, MUIA_Disabled, TRUE,
+                               MUIA_ShortHelp, NULL);
         DoMethod(gui->PG_MAILLIST, MUIM_NList_Clear);
 
         // and now we also make sure an eventually enabled preview pane
