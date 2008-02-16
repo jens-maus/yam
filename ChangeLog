@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-16  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: added some debug output when searching for a pattern in the
+    address book.
+
 2008-02-13  Jens Langner <Jens.Langner@light-speed.de>
 
   * www: added new 'www' top-level directory to our repository and added all

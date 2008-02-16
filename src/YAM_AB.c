@@ -2661,11 +2661,13 @@ int AB_FindEntry(char *pattern, enum AddressbookFind mode, char **result)
 
   ENTER();
 
+  D(DBF_ALWAYS, "searching for pattern '%s' in abook, mode=%ld", pattern, mode);
+
   for(i = 0; ; i++)
   {
     struct MUI_NListtree_TreeNode *tn;
 
-    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)))
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
     {
       struct ABEntry *ab = tn->tn_User;
 
@@ -2687,27 +2689,29 @@ int AB_FindEntry(char *pattern, enum AddressbookFind mode, char **result)
           break;
 
           case ABF_RX_NAMEEMAIL:
-            found = MatchNoCase(ab->RealName, pattern) | MatchNoCase(ab->Address, pattern);
+            found = MatchNoCase(ab->RealName, pattern) || MatchNoCase(ab->Address, pattern);
           break;
 
           default:
           {
-            if((found = MatchNoCase(ab->Alias, pattern) | MatchNoCase(ab->Comment, pattern)) == FALSE)
+            if((found = MatchNoCase(ab->Alias, pattern) || MatchNoCase(ab->Comment, pattern)) == FALSE)
             {
-              if((found = MatchNoCase(ab->RealName, pattern) | MatchNoCase(ab->Address, pattern)) == FALSE && ab->Type == AET_USER)
+              if((found = MatchNoCase(ab->RealName, pattern) || MatchNoCase(ab->Address, pattern)) == FALSE && ab->Type == AET_USER)
               {
-                found = MatchNoCase(ab->Homepage, pattern)|
-                        MatchNoCase(ab->Street, pattern)  |
-                        MatchNoCase(ab->City, pattern)    |
-                        MatchNoCase(ab->Country, pattern) |
+                found = MatchNoCase(ab->Homepage, pattern) ||
+                        MatchNoCase(ab->Street, pattern)   ||
+                        MatchNoCase(ab->City, pattern)     ||
+                        MatchNoCase(ab->Country, pattern)  ||
                         MatchNoCase(ab->Phone, pattern);
               }
             }
           }
         }
 
-        if(found)
+        if(found == TRUE)
         {
+          D(DBF_ALWAYS, "found pattern '%s' in entry with address '%s'", pattern, ab->Address);
+
           res++;
 
           if(mode == ABF_USER)
@@ -2739,7 +2743,7 @@ int AB_FindEntry(char *pattern, enum AddressbookFind mode, char **result)
               }
             }
           }
-          else if(result)
+          else if(result != NULL)
             *result++ = ab->Alias;
         }
       }
