@@ -7,6 +7,7 @@ $URL$
 
 2008-02-17  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: some minor optimizations.
   * BayesFilter.c: in case the address book is considered as white list the
     sender's real name and address are now searched in the address book. This
     should improve the white listing a bit.

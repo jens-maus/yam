@@ -4044,23 +4044,18 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 
   if(IsMailListEmpty(folder->messages) == FALSE)
   {
-    struct MailNode *remNode = NULL;
     struct MailNode *mnode;
 
     ForEachMailNode(folder->messages, mnode)
     {
       if(mnode->mail == mail)
       {
-        remNode = mnode;
+        // remove the mail from the folder's mail list
+        RemoveMailNode(folder->messages, mnode);
+        DeleteMailNode(mnode);
+        // and leave the loop
         break;
       }
-    }
-
-    // remove the mail from the folderlist now
-    if(remNode != NULL)
-    {
-      RemoveMailNode(folder->messages, remNode);
-      DeleteMailNode(remNode);
     }
   }
 
@@ -5648,22 +5643,22 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
 
   ENTER();
 
-  if(text)
+  if(text != NULL)
   {
-    if(*text)
+    if(text[0] != '\0')
     {
-      snprintf(infotext[BusyLevel], SIZE_DEFAULT, text, parameter);
+      snprintf(infotext[BusyLevel], sizeof(infotext[BusyLevel]), text, parameter);
 
       if(max > 0)
       {
         // initialize the InfoBar gauge and also make sure it
         // shows a stop gadget in case cur < 0
-        if(G->MA)
+        if(G->MA != NULL)
           DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, infotext[BusyLevel], cur, max);
 
         // check if we are in startup phase so that we also
         // update the gauge elements of the About window
-        if(G->InStartupPhase)
+        if(G->InStartupPhase == TRUE)
         {
           static char progressText[SIZE_DEFAULT];
 
@@ -5676,7 +5671,7 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
       else
       {
         // initialize the InfoBar infotext
-        if(G->MA)
+        if(G->MA != NULL)
           DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel]);
       }
 
@@ -5687,10 +5682,10 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
     }
     else
     {
-      if(BusyLevel)
+      if(BusyLevel != 0)
         BusyLevel--;
 
-      if(G->MA)
+      if(G->MA != NULL)
       {
         if(BusyLevel <= 0)
           DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_HideBars);
@@ -5705,10 +5700,10 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
     // level
     if(BusyLevel > 0)
     {
-      if(G->MA)
+      if(G->MA != NULL)
         result = DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, NULL, cur, max);
 
-      if(G->InStartupPhase)
+      if(G->InStartupPhase == TRUE)
         DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, NULL, cur, -1);
     }
   }
@@ -5874,7 +5869,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
   D(DBF_GUI, "updating statistics for folder: %08lx", fo);
 
   // If the parsed argument is NULL we want to show the statistics from the actual folder
-  if(!fo)
+  if(fo == NULL)
     fo = actfo;
   else if(fo == (struct Folder *)-1)
     fo = FO_GetFolderByType(FT_INCOMING, NULL);
@@ -5942,7 +5937,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
           struct Folder *fo_child;
 
           tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, MUIV_NListtree_GetEntry_Flag_SameLevel);
-          if(!tn_child)
+          if(tn_child == NULL)
             break;
 
           fo_child = (struct Folder *)tn_child->tn_User;
