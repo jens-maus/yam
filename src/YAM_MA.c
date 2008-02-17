@@ -798,6 +798,8 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
     {
       int i;
 
+      D(DBF_MAIL, "deleting mail with subject '%s' from folder '%s'", mail->Subject, mailFolder->Name);
+
       // before we go and delete/free the mail we have to check
       // all possible write windows if they are refering to it
       for(i=0; i < MAXWR; i++)
@@ -843,10 +845,12 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
     {
       struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
 
+      D(DBF_MAIL, "moving mail with subject '%s' from folder '%s' to folder 'trash'", mail->Subject, mailFolder->Name);
+
       MA_MoveCopySingle(mail, mailFolder, delfolder, FALSE, closeWindows);
 
       // if we are allowed to make some noise we
-      // update our Statistics
+      // update our statistics
       if(quiet == FALSE)
       {
         // don't update the appicon yet
@@ -3747,66 +3751,89 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
 
   if(IsFolderListEmpty(G->folders) == FALSE)
   {
-    ULONG f;
+    struct MailList *toBeDeletedList;
     BOOL mailsDeleted = FALSE;
-    struct FolderNode *fnode;
 
-    BusyGaugeInt(tr(MSG_BusyDeletingOld), "", G->folders->count);
-
-    f = 0;
-    ForEachFolderNode(G->folders, fnode)
+    // we need a temporary "to be deleted" list of mails to avoid doubly locking a folder's mail list
+    if((toBeDeletedList = CreateMailList()) != NULL)
     {
-      struct Folder *folder = fnode->folder;
+      ULONG f;
+      struct FolderNode *fnode;
 
-      if(folder->MaxAge > 0 && MA_GetIndex(folder) == TRUE)
+      BusyGaugeInt(tr(MSG_BusyDeletingOld), "", G->folders->count);
+
+      f = 0;
+      ForEachFolderNode(G->folders, fnode)
       {
-        LockMailList(folder->messages);
+        struct Folder *folder = fnode->folder;
 
-        if(IsMailListEmpty(folder->messages) == FALSE)
+        if(isGroupFolder(folder) == FALSE && folder->MaxAge > 0 && MA_GetIndex(folder) == TRUE)
         {
-          struct MailNode *mnode;
-          struct MailNode *next;
+          LockMailList(folder->messages);
 
-          // we are probably modifying the list, so we must use the safe variant
-          ForEachMailNodeSafe(folder->messages, mnode, next)
+          if(IsMailListEmpty(folder->messages) == FALSE)
           {
-            struct Mail *mail = mnode->mail;
+            struct MailNode *mnode;
 
-            today.ds_Days = today_days - folder->MaxAge;
+            // initialize the list of mails to be deleted
+            InitMailList(toBeDeletedList);
 
-            if(CompareDates(&today, &mail->Date) < 0)
+            ForEachMailNode(folder->messages, mnode)
             {
-              // delete any message from trash and spam folder automatically
-              // or if the message is read already (keep unread messages)
-              if(isTrashFolder(folder) ||
-                 isSpamFolder(folder) ||
-                 (!hasStatusNew(mail) && hasStatusRead(mail)) ||
-                 folder->ExpireUnread == TRUE)
+              struct Mail *mail = mnode->mail;
+
+              today.ds_Days = today_days - folder->MaxAge;
+
+              if(CompareDates(&today, &mail->Date) < 0)
               {
-                // delete the mail. removing/freeing the mail from the folder list
-                // is in fact done by the MA_DeleteSingle() function itself.
-                MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE, FALSE);
-                mailsDeleted = TRUE;
+                // delete any message from trash and spam folder automatically
+                // or if the message is read already (keep unread messages)
+                if(isTrashFolder(folder) ||
+                   isSpamFolder(folder) ||
+                   (!hasStatusNew(mail) && hasStatusRead(mail)) ||
+                   folder->ExpireUnread == TRUE)
+                {
+                  // put the mail in the "to be deleted" list
+                  AddNewMailNode(toBeDeletedList, mail);
+                }
               }
             }
           }
-        }
 
-        UnlockMailList(folder->messages);
+          UnlockMailList(folder->messages);
+
+          // no need to lock the "to be deleted" list as this is known in this function only
+          if(IsMailListEmpty(toBeDeletedList) == FALSE)
+          {
+            struct MailNode *mnode;
+            struct MailNode *next;
+
+            ForEachMailNodeSafe(toBeDeletedList, mnode, next)
+            {
+              // Finally delete the mail. Removing/freeing the mail from the folder's list of mails
+              // is in fact done by the MA_DeleteSingle() function itself.
+              MA_DeleteSingle(mnode->mail, C->RemoveOnQuit, TRUE, FALSE);
+              mailsDeleted = TRUE;
+
+              // remove the node from the "to be deleted" list
+              RemoveMailNode(toBeDeletedList, mnode);
+              DeleteMailNode(mnode);
+            }
+          }
+
+          DisplayStatistics(folder, FALSE);
+        }
 
         // if BusySet() returns FALSE, then the user aborted
         if(BusySet(++f) == FALSE)
         {
-          // make sure to abort both loop
-          f = G->folders->count;
+          // abort the loop
           break;
         }
-
-        DisplayStatistics(folder, FALSE);
       }
 
-      if(f >= G->folders->count)
-        break;
+      // delete the "to be deleted" list
+      DeleteMailList(toBeDeletedList);
     }
 
     // MA_DeleteSingle() does not update the trash folder treeitem if something was deleted from

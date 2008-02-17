@@ -7,6 +7,11 @@ $URL$
 
 2008-02-17  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: old mails are no longer deleted immediately but copied over to a
+    temporary "to be deleted" list first. This avoids locking a folder's mail
+    list twice (or even more often), which seems to produce deadlocks for some
+    users. Also added some more debugging informations about mails to be
+    deleted.
   * YAM_UT.c: some minor optimizations.
   * BayesFilter.c: in case the address book is considered as white list the
     sender's real name and address are now searched in the address book. This
