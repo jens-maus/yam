@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-17  Thore Böckelmann <tboeckel@gmx.de>
+
+  * BayesFilter.c: in case the address book is considered as white list the
+    sender's real name and address are now searched in the address book. This
+    should improve the white listing a bit.
+
 2008-02-16  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c: added some debug output when searching for a pattern in the

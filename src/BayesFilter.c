@@ -1267,14 +1267,27 @@ static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
                                          struct Mail *mail)
 {
   BOOL isSpam;
+  BOOL isInWhiteList;
 
   ENTER();
 
-  D(DBF_SPAM, "analyzing mail from '%s' with subject '%s'", mail->From.Address, mail->Subject);
+  D(DBF_SPAM, "analyzing mail from '%s/%s' with subject '%s'", mail->From.RealName, mail->From.Address, mail->Subject);
 
-  // if the sender address is in the address book then we assume it's not spam
-  if(C->SpamAddressBookIsWhiteList == FALSE || AB_FindEntry(mail->From.Address, ABF_RX_EMAIL, NULL) == 0)
+  if(C->SpamAddressBookIsWhiteList == TRUE)
   {
+    // try to find the sender's address or name in the address book
+    isInWhiteList = (AB_FindEntry(mail->From.Address, ABF_RX_EMAIL, NULL) != 0) ||
+                    (AB_FindEntry(mail->From.RealName, ABF_RX_NAME, NULL) != 0);
+  }
+  else
+  {
+    // address book should not be considered as white list
+    isInWhiteList = FALSE;
+  }
+
+  if(isInWhiteList == FALSE)
+  {
+    // the mail's sender was not found in the address book, so let's analyze the mail contents
     struct Token *tokens = NULL;
 
     SHOWVALUE(DBF_SPAM, G->spamFilter.goodCount);
@@ -1330,7 +1343,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
 
             if(distance >= 0.1)
             {
-              D(DBF_SPAM, "probability for token \"%s\" is %.2f", word, prob);
+              D(DBF_SPAM, "probability for token '%s' is %.2f", word, prob);
               goodClues++;
               token->distance = distance;
               token->probability = prob;
@@ -1438,7 +1451,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
   else
   {
     // sender found in address book, assume ham
-    D(DBF_SPAM, "found sender \"%s\" in address book, assuming non-spam", mail->From.Address);
+    D(DBF_SPAM, "found sender '%s/%s' in address book, assuming non-spam", mail->From.RealName, mail->From.Address);
     isSpam = FALSE;
   }
 
