@@ -1271,13 +1271,12 @@ static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
 
   ENTER();
 
-  D(DBF_SPAM, "analyzing mail from '%s/%s' with subject '%s'", mail->From.RealName, mail->From.Address, mail->Subject);
+  D(DBF_SPAM, "analyzing mail from '%s' with subject '%s'", mail->From.Address, mail->Subject);
 
   if(C->SpamAddressBookIsWhiteList == TRUE)
   {
-    // try to find the sender's address or name in the address book
-    isInWhiteList = (AB_FindEntry(mail->From.Address, ABF_RX_EMAIL, NULL) != 0) ||
-                    (AB_FindEntry(mail->From.RealName, ABF_RX_NAME, NULL) != 0);
+    // try to find the sender's address in the address book
+    isInWhiteList = (AB_FindEntry(mail->From.Address, ABF_RX_EMAIL, NULL) != 0);
   }
   else
   {
@@ -1451,7 +1450,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
   else
   {
     // sender found in address book, assume ham
-    D(DBF_SPAM, "found sender '%s/%s' in address book, assuming non-spam", mail->From.RealName, mail->From.Address);
+    D(DBF_SPAM, "found sender '%s' in address book, assuming non-spam", mail->From.Address);
     isSpam = FALSE;
   }
 
