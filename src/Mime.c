@@ -2062,7 +2062,7 @@ int rfc2047_encode_file(FILE *fh, const char *str)
         // ok, this is a non US-ASCII char and should be encoded
         // accordingly. so lets check whether the previous word was
         // also encoded or not and if so we concatenate them
-        if(eb_wend)
+        if(eb_wend != NULL && eb_wstart_prev != NULL)
         {
           ebp = eb_wend;
           eb_wstart = eb_wstart_prev;
@@ -2153,6 +2153,7 @@ int rfc2047_encode_file(FILE *fh, const char *str)
               memmove(encode_buf, eb_wstart, ebp-eb_wstart);
               eb_wend = encode_buf+(ebp-eb_wstart);
               eb_wstart = encode_buf;
+              eb_wstart_prev = NULL;
               ebp = eb_wend;
             }
           }
@@ -2165,7 +2166,7 @@ int rfc2047_encode_file(FILE *fh, const char *str)
 
     c++;
   }
-  while(1);
+  while(TRUE);
 
   // write it out to the file stream
   fwrite(encode_buf, strlen(encode_buf), 1, fh);
