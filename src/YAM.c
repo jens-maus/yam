@@ -1504,13 +1504,6 @@ static void InitAfterLogin(void)
   if(C->InfoBar != IB_POS_CENTER && C->InfoBar != IB_POS_OFF)
      MA_SortWindow();
 
-  // setup some dynamic (changing) menus
-  MA_SetupDynamicMenus();
-
-  // do some initial call to ChangeSelected() for correctly setting up
-  // some mail information
-  MA_ChangeSelected(TRUE);
-
   // load the main window GUI layout from the ENV: variable
   LoadLayout();
 
@@ -1635,6 +1628,13 @@ static void InitAfterLogin(void)
     FO_SaveTree(CreateFilename(".folders"));
   }
 
+  // setup some dynamic (changing) menus
+  MA_SetupDynamicMenus();
+
+  // do some initial call to ChangeSelected() for correctly setting up
+  // some mail information
+  MA_ChangeSelected(TRUE);
+
   SplashProgress(tr(MSG_RebuildIndices), 60);
   MA_UpdateIndexes(TRUE);
 
@@ -1678,7 +1678,7 @@ static void InitAfterLogin(void)
       // if the user wishs to make sure all "new" mail is flagged as
       // read upon start we go through our folders and make sure they show
       // no "new" mail, even if their .index file is not fully loaded
-      if(C->UpdateNewMail && folder->LoadedMode == LM_FLUSHED)
+      if(C->UpdateNewMail == TRUE && folder->LoadedMode == LM_FLUSHED)
         folder->New = 0;
     }
 

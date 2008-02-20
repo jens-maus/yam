@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-20  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: changing the active mail, which requires the active folder to be set,
+    doesn't make any sense before the folder list is loaded at all. This caused
+    the "Spam" button to be shown in disabled state right after starting YAM,
+    because there was no active mail nor an active folder.
+
 2008-02-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * Mime.c: fixed bug #1897222 where under certain circumstances the RFC2047
