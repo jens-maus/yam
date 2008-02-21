@@ -7,6 +7,8 @@ $URL$
 
 2008-02-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: added a warning/error message when no active/selected or new mail
+    could be found upon creating such a list of mails.
   * YAM_MA.c: slightly changed how the number of actually deleted mails is
     counted to be more obvious.
   * YAM_MA.c: added some more debug code when deleting mails.

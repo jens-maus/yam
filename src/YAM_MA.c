@@ -683,6 +683,7 @@ struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
             // let everything fail if there were no mails added to the list
             if(IsMailListEmpty(mlist) == TRUE)
             {
+              W(DBF_MAIL, "no new mails found, destroying empty list");
               DeleteMailList(mlist);
               mlist = NULL;
             }
@@ -771,6 +772,7 @@ struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
   // let everything fail if there were no mails added to the list
   if(mlist != NULL && IsMailListEmpty(mlist) == TRUE)
   {
+    E(DBF_MAIL, "no active or selected mails found, destroying empty list");
     DeleteMailList(mlist);
     mlist = NULL;
   }
