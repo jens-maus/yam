@@ -3954,11 +3954,7 @@ void DisplayMailList(struct Folder *fo, Object *lv)
   // we convert the mail list of the folder
   // to a temporary array because that allows us
   // to quickly populate the NList object.
-  LockMailListShared(fo->messages);
-  array = MailListToMailArray(fo->messages);
-  UnlockMailList(fo->messages);
-
-  if(array != NULL)
+  if((array = MailListToMailArray(fo->messages)) != NULL)
   {
     // We do not encapsulate this Clear&Insert with a NList_Quiet because
     // this will speed up the Insert with about 3-4 seconds for ~6000 items

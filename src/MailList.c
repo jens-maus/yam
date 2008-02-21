@@ -120,28 +120,31 @@ struct MailList *CloneMailList(struct MailList *mlist)
 
   ENTER();
 
-  if(mlist != NULL && IsMailListEmpty(mlist) == FALSE)
+  if(mlist != NULL)
   {
-    if((clone = CreateMailList()) != NULL)
+    LockMailListShared(mlist);
+
+    if(IsMailListEmpty(mlist) == FALSE)
     {
-      struct MailNode *mnode;
-
-      LockMailListShared(mlist);
-
-      ForEachMailNode(mlist, mnode)
+      if((clone = CreateMailList()) != NULL)
       {
-        AddNewMailNode(clone, mnode->mail);
-      }
+        struct MailNode *mnode;
 
-      UnlockMailList(mlist);
+        ForEachMailNode(mlist, mnode)
+        {
+          AddNewMailNode(clone, mnode->mail);
+        }
 
-      // let everything fail if there were no mails added to the list
-      if(IsMailListEmpty(clone) == TRUE)
-      {
-        DeleteMailList(clone);
-        clone = NULL;
+        // let everything fail if there were no mails added to the list
+        if(IsMailListEmpty(clone) == TRUE)
+        {
+          DeleteMailList(clone);
+          clone = NULL;
+        }
       }
     }
+
+    UnlockMailList(mlist);
   }
 
   RETURN(clone);
@@ -380,6 +383,8 @@ struct Mail **MailListToMailArray(struct MailList *mlist)
 
   if(mlist != NULL)
   {
+    LockMailListShared(mlist);
+
     // we allocate at least the terminating NULL entry
     if((marray = (struct Mail **)calloc(mlist->count + 1, sizeof(struct Mail *))) != NULL)
     {
@@ -394,6 +399,8 @@ struct Mail **MailListToMailArray(struct MailList *mlist)
         }
       }
     }
+
+    UnlockMailList(mlist);
   }
 
   RETURN(marray);

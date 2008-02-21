@@ -7,6 +7,9 @@ $URL$
 
 2008-02-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * MailList.c, YAM_UT.c: moved the locking of the mail list in some functions
+    more to the front to avoid accessing a non-locked list. Also moved the list
+    locking into MailListToMailArray().
   * YAM_MA.c: added a warning/error message when no active/selected or new mail
     could be found upon creating such a list of mails.
   * YAM_MA.c: slightly changed how the number of actually deleted mails is
