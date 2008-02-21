@@ -514,16 +514,16 @@ BOOL MA_GetIndex(struct Folder *folder)
           MA_ValidateStatus(folder);
         }
         else
-          W(DBF_MAIL, "status of loaded folder != LM_VALID (%ld)", folder->LoadedMode);
+          W(DBF_MAIL, "status of loaded folder '%s' != LM_VALID (%ld)", folder->Name, folder->LoadedMode);
 
         if(G->MA != NULL)
           DisplayStatistics(folder, FALSE);
       }
       else
-        W(DBF_MAIL, "password of protected folder couldn't be verified!");
+        W(DBF_FOLDER, "password of protected folder '%s' couldn't be verified!", folder->Name);
     }
     else
-      W(DBF_MAIL, "skipping index loading due to folder->LoadedMode: %ld", folder->LoadedMode);
+      W(DBF_FOLDER, "skipping index loading due to LoadedMode %ld for folder '%s'", folder->LoadedMode, folder->Name);
 
     // check if the load status is valid or not
     result = (BOOL)(folder->LoadedMode == LM_VALID);
@@ -818,7 +818,11 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 
 HOOKPROTONHNONP(MA_ChangeFolderFunc, void)
 {
-   MA_ChangeFolder(NULL, FALSE);
+  ENTER();
+
+  MA_ChangeFolder(NULL, FALSE);
+
+  LEAVE();
 }
 MakeHook(MA_ChangeFolderHook, MA_ChangeFolderFunc);
 ///
