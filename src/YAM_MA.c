@@ -185,11 +185,6 @@ void MA_ChangeSelected(BOOL forceUpdate)
   {
     static struct Mail *lastMail = NULL;
     struct MA_GUIData *gui = &G->MA->GUI;
-    BOOL active;
-    BOOL hasattach = FALSE;
-    BOOL folderEnabled;
-    ULONG numSelected = 0;
-    ULONG numEntries = 0;
     struct Mail *mail = NULL;
 
     // get the currently active mail entry.
@@ -199,6 +194,12 @@ void MA_ChangeSelected(BOOL forceUpdate)
     // the currently active one, then we don't have to proceed.
     if(forceUpdate == TRUE || mail != lastMail)
     {
+      ULONG numEntries;
+      ULONG numSelected = 0;
+      BOOL active;
+      BOOL hasattach = FALSE;
+      BOOL folderEnabled;
+
       lastMail = mail;
 
       // we make sure the an eventually running timer event for setting the mail
@@ -209,8 +210,6 @@ void MA_ChangeSelected(BOOL forceUpdate)
       // ask the mail list how many entries are currently available and selected
       if((numEntries = xget(gui->PG_MAILLIST, MUIA_NList_Entries)) > 0)
         DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
-      else
-        numSelected = 0;
 
       SHOWVALUE(DBF_MAIL, numEntries);
       SHOWVALUE(DBF_MAIL, numSelected);
@@ -3176,12 +3175,15 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
     Object *lv = G->MA->GUI.PG_MAILLIST;
     struct MailList *mlist;
 
+    // create a list of all selected mails first
     if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
     {
       ULONG selected;
       BOOL okToDelete = TRUE;
 
       selected = mlist->count;
+      // if there are more mails selected than the user allowed to be deleted
+      // silently then ask him first
       if(C->Confirm == TRUE && selected >= (ULONG)C->ConfirmDelete && force == FALSE)
       {
         char buffer[SIZE_DEFAULT];
@@ -3197,6 +3199,8 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         struct MailNode *mnode;
         int i;
         BOOL ignoreall = FALSE;
+
+        D(DBF_MAIL, "going to delete %ld mails from folder '%s'", selected, folder->Name);
 
         set(lv, MUIA_NList_Quiet, TRUE);
 
@@ -3223,6 +3227,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
             break;
           }
         }
+
         BusyEnd();
         set(lv, MUIA_NList_Quiet, FALSE);
 

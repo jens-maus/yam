@@ -7,6 +7,7 @@ $URL$
 
 2008-02-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: added some more debug code when deleting mails.
   * YAM_MAf.c: changed two debugging macros to the correct class.
 
 2008-02-20  Thore Böckelmann <tboeckel@gmx.de>
