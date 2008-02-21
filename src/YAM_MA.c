@@ -3197,7 +3197,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
       if(okToDelete == TRUE)
       {
         struct MailNode *mnode;
-        int i;
+        ULONG deleted;
         BOOL ignoreall = FALSE;
 
         D(DBF_MAIL, "going to delete %ld mails from folder '%s'", selected, folder->Name);
@@ -3206,7 +3206,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
         BusyGaugeInt(tr(MSG_BusyDeleting), itoa(selected), selected);
 
-        i = 0;
+        deleted = 0;
         ForEachMailNode(mlist, mnode)
         {
           struct Mail *mail = mnode->mail;
@@ -3221,20 +3221,17 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
           MA_DeleteSingle(mail, delatonce, TRUE, TRUE);
 
           // if BusySet() returns FALSE, then the user aborted
-          if(BusySet(++i) == FALSE)
-          {
-            selected = i;
+          if(BusySet(++deleted) == FALSE)
             break;
-          }
         }
 
         BusyEnd();
         set(lv, MUIA_NList_Quiet, FALSE);
 
         if(delatonce == TRUE || C->RemoveAtOnce == TRUE || folder == delfolder || isSpamFolder(folder))
-          AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), selected, folder->Name);
+          AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), deleted, folder->Name);
         else
-          AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, folder->Name, delfolder->Name);
+          AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), deleted, folder->Name, delfolder->Name);
 
         // update the stats for the deleted folder,
         // but only if it isn't the current one and only

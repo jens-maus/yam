@@ -7,6 +7,8 @@ $URL$
 
 2008-02-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: slightly changed how the number of actually deleted mails is
+    counted to be more obvious.
   * YAM_MA.c: added some more debug code when deleting mails.
   * YAM_MAf.c: changed two debugging macros to the correct class.
 
