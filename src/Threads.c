@@ -154,14 +154,14 @@ static BOOL InitThreadTimer(struct Thread *thread)
 {
   ENTER();
 
+  NewList((struct List*)&thread->timer_request_list);
+
   if((thread->timer_port = CreateMsgPort()) != NULL)
   {
     if((thread->timer_req = (struct TimeRequest *)CreateIORequest(thread->timer_port, sizeof(struct TimeRequest))) != NULL)
     {
       if(OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)thread->timer_req, 0) == 0)
       {
-        NewList((struct List*)&thread->timer_request_list);
-
         RETURN(TRUE);
         return TRUE;
       }
@@ -931,106 +931,109 @@ void CleanupThreads(void)
 {
   ENTER();
 
-  if(IsListEmpty((struct List *)&G->subThreadList) == FALSE)
-  {
-    ULONG thread_m;
-    ULONG timer_m;
-    struct TimerMessage *timeout = NULL;
-    struct MinNode *curNode;
-
-    // search through our subThreadList and signal all threads
-    // to abort
-    for(curNode = G->subThreadList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-    {
-      struct ThreadNode *node = (struct ThreadNode *)curNode;
-
-      // abort the thread
-      AbortThread(node->thread);
-    }
-
-    // get the signalbit of the message ports of the thread
-    // and its timer.
-    thread_m = 1UL << G->mainThread.thread_port->mp_SigBit;
-    timer_m = 1UL << G->mainThread.timer_port->mp_SigBit;
-
-    // now iterate again through our subThreadList and
-    // wait until the subthread have finished.
-    for(curNode = G->subThreadList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-    {
-      struct ThreadNode *node = (struct ThreadNode *)curNode;
-      struct ThreadMessage *tmsg;
-      ULONG mask;
-
-      // wait half a second to give our threads enough time
-      // to terminate its jobs...
-      if(timeout == NULL &&
-         (timeout = (struct TimerMessage*)AllocVecPooled(G->SharedMemPool, sizeof(*timeout))) != NULL)
-      {
-        timeout->time_req = *G->mainThread.timer_req;
-        timeout->time_req.Request.io_Command = TR_ADDREQUEST;
-        timeout->time_req.Time.Seconds = 0;
-        timeout->time_req.Time.Microseconds = 500000;
-        SendIO(&timeout->time_req.Request);
-
-        // Enqueue the timer_msg in our request list
-        AddTail((struct List*)&G->mainThread.timer_request_list, (struct Node*)&timeout->node);
-      }
-
-      // wait until the main thread or its timer
-      // wakes us up.
-      mask = Wait(thread_m|timer_m);
-
-      // check if we continued due to the issued timer
-      // request
-      if(mask & timer_m)
-      {
-        struct TimerMessage *timer;
-
-        while((timer = (struct TimerMessage*)GetMsg(G->mainThread.timer_port)) != NULL)
-        {
-          if(timer == timeout)
-          {
-            W(DBF_THREAD, "Timeout occured before main thread replied, aborting thread again");
-
-            // time out occured, abort the current task another time
-            timeout = NULL;
-            AbortThread(node->thread);
-          }
-
-          Remove((struct Node*)&timer->node);
-          FreeVecPooled(G->SharedMemPool, timer);
-        }
-      }
-
-      // process all pending messages on our mainThread message port
-      while((tmsg = (struct ThreadMessage *)GetMsg(G->mainThread.thread_port)) != NULL)
-      {
-        // if the thread was already started remove it!
-        if(tmsg->startup == TRUE)
-          RemoveThread(tmsg);
-        else
-        {
-          D(DBF_THREAD, "Got non startup message (async=%ld)", tmsg->async);
-
-          // check if the thread was running synchronous or
-          // asynchronous
-          if(tmsg->async == 0)
-          {
-            tmsg->called = FALSE;
-            ReplyMsg(&tmsg->msg);
-          }
-          else
-            FreeVecPooled(G->SharedMemPool, tmsg);
-        }
-      }
-    }
-  }
-
-  D(DBF_THREAD, "zero subthreads left");
-  CleanupThreadTimer((struct Thread*)(FindTask(NULL)->tc_UserData));
-
+  // first check if we have a valid port already, since this function
+  // is called whenever YAM is aborted or shut down. But upon abortion
+  // InitThreads() might not have been called yet.
   if(G->mainThread.thread_port != NULL)
   {
+    if(IsListEmpty((struct List *)&G->subThreadList) == FALSE)
+    {
+      ULONG thread_m;
+      ULONG timer_m;
+      struct TimerMessage *timeout = NULL;
+      struct MinNode *curNode;
+
+      // search through our subThreadList and signal all threads
+      // to abort
+      for(curNode = G->subThreadList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      {
+        struct ThreadNode *node = (struct ThreadNode *)curNode;
+
+        // abort the thread
+        AbortThread(node->thread);
+      }
+
+      // get the signalbit of the message ports of the thread
+      // and its timer.
+      thread_m = 1UL << G->mainThread.thread_port->mp_SigBit;
+      timer_m = 1UL << G->mainThread.timer_port->mp_SigBit;
+
+      // now iterate again through our subThreadList and
+      // wait until the subthread have finished.
+      for(curNode = G->subThreadList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      {
+        struct ThreadNode *node = (struct ThreadNode *)curNode;
+        struct ThreadMessage *tmsg;
+        ULONG mask;
+
+        // wait half a second to give our threads enough time
+        // to terminate its jobs...
+        if(timeout == NULL &&
+           (timeout = (struct TimerMessage*)AllocVecPooled(G->SharedMemPool, sizeof(*timeout))) != NULL)
+        {
+          timeout->time_req = *G->mainThread.timer_req;
+          timeout->time_req.Request.io_Command = TR_ADDREQUEST;
+          timeout->time_req.Time.Seconds = 0;
+          timeout->time_req.Time.Microseconds = 500000;
+          SendIO(&timeout->time_req.Request);
+
+          // Enqueue the timer_msg in our request list
+          AddTail((struct List*)&G->mainThread.timer_request_list, (struct Node*)&timeout->node);
+        }
+
+        // wait until the main thread or its timer
+        // wakes us up.
+        mask = Wait(thread_m|timer_m);
+
+        // check if we continued due to the issued timer
+        // request
+        if(mask & timer_m)
+        {
+          struct TimerMessage *timer;
+
+          while((timer = (struct TimerMessage*)GetMsg(G->mainThread.timer_port)) != NULL)
+          {
+            if(timer == timeout)
+            {
+              W(DBF_THREAD, "Timeout occured before main thread replied, aborting thread again");
+
+              // time out occured, abort the current task another time
+              timeout = NULL;
+              AbortThread(node->thread);
+            }
+
+            Remove((struct Node*)&timer->node);
+            FreeVecPooled(G->SharedMemPool, timer);
+          }
+        }
+
+        // process all pending messages on our mainThread message port
+        while((tmsg = (struct ThreadMessage *)GetMsg(G->mainThread.thread_port)) != NULL)
+        {
+          // if the thread was already started remove it!
+          if(tmsg->startup == TRUE)
+            RemoveThread(tmsg);
+          else
+          {
+            D(DBF_THREAD, "Got non startup message (async=%ld)", tmsg->async);
+
+            // check if the thread was running synchronous or
+            // asynchronous
+            if(tmsg->async == 0)
+            {
+              tmsg->called = FALSE;
+              ReplyMsg(&tmsg->msg);
+            }
+            else
+              FreeVecPooled(G->SharedMemPool, tmsg);
+          }
+        }
+      }
+    }
+
+    D(DBF_THREAD, "zero subthreads left");
+    CleanupThreadTimer(&G->mainThread);
+
     DeleteMsgPort(G->mainThread.thread_port);
     G->mainThread.thread_port = NULL;
   }

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-22  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c: in case YAM was aborted early (i.e. a missing .mcc) the thread
+    subsystem was cleaned up nevertheless and caused crashes, because
+    uninitialized lists were accessed. Now a proper check is done before then
+    cleanup. This fixes bug #1899531.
+
 2008-02-21  Thore Böckelmann <tboeckel@gmx.de>
 
   * MailList.c, YAM_UT.c: moved the locking of the mail list in some functions
