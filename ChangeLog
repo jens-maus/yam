@@ -7,6 +7,8 @@ $URL$
 
 2008-02-22  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COs.c: make sure the first entry of the MIME list is really visible and
+    not just active.
   * Threads.c: in case YAM was aborted early (i.e. a missing .mcc) the thread
     subsystem was cleaned up nevertheless and caused crashes, because
     uninitialized lists were accessed. Now a proper check is done before then

@@ -2349,6 +2349,7 @@ void CO_SetConfig(void)
 
       // make sure the first entry is selected per default
       set(gui->LV_MIME, MUIA_NList_Active, MUIV_NList_Active_Top);
+      DoMethod(gui->LV_MIME, MUIM_NList_Jump, MUIV_NList_Jump_Active);
 
       setstring(gui->ST_DEFVIEWER, CE->DefaultMimeViewer);
     }
