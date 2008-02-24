@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile: reworked the compilation output to not use any ANSI color output
+    as that messes with some terminals not properly supporting ANSI. In
+    addition we use "make -C" from now on to walk into subdirectory
+    compilation. Furthermore, the Arexx date calculation routines are now
+    used for native OS4 hosted compiles as the gdate based calculation didn't
+    work out as it seems.
+
 2008-02-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs.c: make sure the first entry of the MIME list is really visible and
