@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-23  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c: searching for a folder no longer relys on the graphical represen-
+    tation by the folder listtree, but uses the list of folders directly.
+
 2008-02-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile: reworked the compilation output to not use any ANSI color output

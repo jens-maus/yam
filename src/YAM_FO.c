@@ -238,33 +238,29 @@ struct Folder *FO_GetFolderRexx(const char *arg, int *pos)
 //  Generalized find-folder function
 static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(const struct Folder*, const void*), const void *attr, int *pos)
 {
-  int i;
+  int i = 0;
   struct Folder *folder = NULL;
 
   ENTER();
 
-  for(i=0; ;i++)
+  LockFolderListShared(G->folders);
+
+  if(IsFolderListEmpty(G->folders) == FALSE)
   {
-    struct MUI_NListtree_TreeNode *tn;
+    struct FolderNode *fnode;
 
-    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
+    ForEachFolderNode(G->folders, fnode)
     {
-      struct Folder *fo;
-
-      if((fo = tn->tn_User) != NULL)
+      if(cmpf(fnode->folder, attr) == TRUE)
       {
-        if(cmpf(fo, attr))
-        {
-          folder = fo;
-          break;
-        }
-      }
-      else
+        folder = fnode->folder;
         break;
+      }
+      i++;
     }
-    else
-      break;
   }
+
+  UnlockFolderList(G->folders);
 
   if(pos != NULL)
     *pos = i;
@@ -289,7 +285,7 @@ struct Folder *FO_GetFolderByType(const enum FolderType type, int *pos)
 // comparison function for FO_GetFolderByName
 static BOOL FO_GetFolderByName_cmp(const struct Folder *f, const char *name)
 {
-  return (BOOL)(!strcmp(f->Name, name) && (!isGroupFolder(f)));
+  return (BOOL)(strcmp(f->Name, name) == 0 && !isGroupFolder(f));
 }
 //  Finds a folder by its name
 struct Folder *FO_GetFolderByName(const char *name, int *pos)
@@ -301,7 +297,7 @@ struct Folder *FO_GetFolderByName(const char *name, int *pos)
 // comparison function for FO_GetFolderByPath
 static BOOL FO_GetFolderByPath_cmp(const struct Folder *f, const char *path)
 {
-  return (BOOL)(!stricmp(f->Path, path));
+  return (BOOL)(stricmp(f->Path, path) == 0);
 }
 //  Finds a folder by its path
 struct Folder *FO_GetFolderByPath(const char *path, int *pos)
@@ -314,35 +310,34 @@ struct Folder *FO_GetFolderByPath(const char *path, int *pos)
 int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
 {
   int pos = -1;
-  int i, j;
 
   ENTER();
 
-  for(i = 0, j = 0; ;i++, j++)
+  LockFolderListShared(G->folders);
+
+  if(IsFolderListEmpty(G->folders) == FALSE)
   {
-    struct MUI_NListtree_TreeNode *tn;
+    struct FolderNode *fnode;
+    int p = 0;
 
-    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
+    ForEachFolderNode(G->folders, fnode)
     {
-      struct Folder *fo;
-
-      if((fo = tn->tn_User) != NULL)
+      if(withGroups == FALSE && isGroupFolder(fnode->folder))
       {
-        if(withGroups == FALSE && isGroupFolder(fo))
-          j--;
-        if(fo == findfo)
-        {
-          // success
-          pos = j;
-          break;
-        }
+        // step back one index if folder groups are not to be counted
+        p--;
       }
-      else
+
+      if(fnode->folder == findfo)
+      {
+        // success
+        pos = p;
         break;
+      }
     }
-    else
-      break;
   }
+
+  UnlockFolderList(G->folders);
 
   RETURN(pos);
   return pos;
