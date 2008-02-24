@@ -38,11 +38,11 @@ CFLAGS = -O3 -funroll-loops -fomit-frame-pointer -W -Wall -pedantic -Wno-strict-
 .PHONY: clean
 
 $(TARGET): $(OBJS)
-	@echo '  LD $@'
+	@echo "  LD $@"
 	@$(CC) -o $@ $(OBJS)
 
 %.o: %.c
-	@echo '  CC $<'
+	@echo "  CC $<"
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
