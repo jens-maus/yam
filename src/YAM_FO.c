@@ -322,17 +322,17 @@ int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
 
     ForEachFolderNode(G->folders, fnode)
     {
-      if(withGroups == FALSE && isGroupFolder(fnode->folder))
-      {
-        // step back one index if folder groups are not to be counted
-        p--;
-      }
-
       if(fnode->folder == findfo)
       {
         // success
         pos = p;
         break;
+      }
+
+      if(withGroups == TRUE || isGroupFolder(fnode->folder) == FALSE)
+      {
+        // count all folders, or even groups if allowed
+        p++;
       }
     }
   }
