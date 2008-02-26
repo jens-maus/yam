@@ -7,6 +7,11 @@ $URL$
 
 2008-02-26  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentImage.c: fixed a potential crash in case a mail had a yet
+    undecoded attachment and YAM was iconified and uniconfied while this mail
+    was currently being displayed. In this case the event handler was not added
+    during MUIM_Setup, but removed in MUIM_Cleanup, which can cause any kind of
+    funny things to happen. Most probably this fixes bug #1899484.
   * misc: various little code cleanups, no functional changes.
 
 2008-02-24  Thore Böckelmann <tboeckel@gmx.de>

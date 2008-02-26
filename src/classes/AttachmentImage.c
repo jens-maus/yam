@@ -67,6 +67,7 @@ struct Data
   struct MUI_EventHandlerNode ehnode;
 
   BOOL lastDecodedStatus;
+  BOOL eventHandlerAdded;
 
   ULONG selectSecs;
   ULONG selectMicros;
@@ -205,8 +206,8 @@ static void LoadImage(Object *obj, struct Data *data)
 
     // only if we have at least icon.library >= v44 and we find deficons
     // we try to identify the file with deficons
-    if(mailPart->Decoded && mailPart->Filename[0] != '\0' &&
-       IconBase->lib_Version >= 44 && G->DefIconsAvailable)
+    if(mailPart->Decoded == TRUE && mailPart->Filename[0] != '\0' &&
+       IconBase->lib_Version >= 44 && G->DefIconsAvailable == TRUE)
     {
       D(DBF_GUI, "retrieving diskicon via DEFICONS for '%s'", mailPart->Filename);
 
@@ -226,7 +227,7 @@ static void LoadImage(Object *obj, struct Data *data)
     if(diskObject == NULL)
     {
       // with icon.library v44+ we can use GetIconTags again.
-      if(IconBase->lib_Version >= 44 && mailPart->ContentType)
+      if(IconBase->lib_Version >= 44 && mailPart->ContentType != NULL)
       {
         const char *def;
 
@@ -612,7 +613,7 @@ OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
 
-  if(data->dropPath)
+  if(data->dropPath != NULL)
   {
     free(data->dropPath);
     data->dropPath = NULL;
@@ -663,6 +664,7 @@ OVERLOAD(MUIM_Setup)
     data->ehnode.ehn_Events   = IDCMP_MOUSEBUTTONS | IDCMP_RAWKEY;
 
     DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+    data->eventHandlerAdded = TRUE;
   }
 
   RETURN(result);
@@ -677,34 +679,38 @@ OVERLOAD(MUIM_Cleanup)
 
   ENTER();
 
-  // remove the eventhandler first
-  DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+  if(data->eventHandlerAdded == TRUE)
+  {
+    // remove the eventhandler first
+    DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+    data->eventHandlerAdded = FALSE;
+  }
 
-  if(data->normalBitMap)
+  if(data->normalBitMap != NULL)
   {
     FreeBitMap(data->normalBitMap);
     data->normalBitMap = NULL;
   }
 
-  if(data->normalBitMask)
+  if(data->normalBitMask != NULL)
   {
     FreeBitMap(data->normalBitMask);
     data->normalBitMask = NULL;
   }
 
-  if(data->selectedBitMap)
+  if(data->selectedBitMap != NULL)
   {
     FreeBitMap(data->selectedBitMap);
     data->selectedBitMap = NULL;
   }
 
-  if(data->selectedBitMask)
+  if(data->selectedBitMask != NULL)
   {
     FreeBitMap(data->selectedBitMask);
     data->selectedBitMask = NULL;
   }
 
-  if(data->diskObject)
+  if(data->diskObject != NULL)
   {
     FreeDiskObject(data->diskObject);
     data->diskObject = NULL;
@@ -755,7 +761,7 @@ OVERLOAD(MUIM_Draw)
     // of our mail part changed and if so we have to reload
     // the image in case
     if(data->mailPart != NULL && data->mailPart->Decoded == TRUE &&
-       data->lastDecodedStatus == FALSE && IconBase->lib_Version >= 44 && G->DefIconsAvailable)
+       data->lastDecodedStatus == FALSE && IconBase->lib_Version >= 44 && G->DefIconsAvailable == TRUE)
     {
       LoadImage(obj, data);
     }
@@ -828,7 +834,7 @@ OVERLOAD(MUIM_HandleEvent)
 
   ENTER();
 
-  if(!imsg)
+  if(imsg == NULL)
   {
     RETURN(0);
     return 0;
