@@ -4506,9 +4506,9 @@ BOOL DoPack(char *file, char *newfile, struct Folder *folder)
 
   ENTER();
 
-  if(GetPackMethod(folder->Mode, &pmeth, &peff))
+  if(GetPackMethod(folder->Mode, &pmeth, &peff) == TRUE)
   {
-    if(CompressMailFile(file, newfile, folder->Password, pmeth, peff))
+    if(CompressMailFile(file, newfile, folder->Password, pmeth, peff) == TRUE)
     {
       if(DeleteFile(file) != 0)
       {
@@ -4530,7 +4530,7 @@ char *StartUnpack(const char *file, char *newfile, const struct Folder *folder)
 
   ENTER();
 
-  if((fh = fopen(file, "r")))
+  if((fh = fopen(file, "r")) != NULL)
   {
     BOOL xpk = FALSE;
 
@@ -4543,7 +4543,7 @@ char *StartUnpack(const char *file, char *newfile, const struct Folder *folder)
 
     // now we compose a temporary filename and start
     // uncompressing the source file into it.
-    if(xpk)
+    if(xpk == TRUE)
     {
       char nfile[SIZE_FILE];
 
@@ -4582,6 +4582,7 @@ void FinishUnpack(char *file)
     {
       // search through our ReadDataList
       struct MinNode *curNode;
+
       for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
         struct ReadMailData *rmData = (struct ReadMailData *)curNode;

@@ -214,7 +214,7 @@ DECLARE(UpdateSpamControls)
   ENTER();
 
   // with an enabled spam filter we display just one button, either "Spam" or "no Spam"
-  if(C->SpamFilterEnabled)
+  if(C->SpamFilterEnabled == TRUE)
   {
     struct Folder *folder;
 

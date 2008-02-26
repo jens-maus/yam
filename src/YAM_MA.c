@@ -3990,14 +3990,14 @@ HOOKPROTONHNONP(MA_RescanIndexFunc, void)
   ENTER();
 
   // on groups we don't allow any index rescanning operation
-  if(folder && !isGroupFolder(folder))
+  if(folder != NULL && isGroupFolder(folder) == FALSE)
   {
     // we start a rescan by expiring the current index and issueing
     // a new MA_GetIndex(). That will also cause the GUI to refresh!
     folder->LoadedMode = LM_UNLOAD;
 
     MA_ExpireIndex(folder);
-    if(MA_GetIndex(folder))
+    if(MA_GetIndex(folder) == TRUE)
     {
       // if we are still in the folder we wanted to rescan,
       // we can refresh the list.
@@ -4052,7 +4052,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
       }
     }
 
-    if(filename != NULL && (G->TR = TR_New(TR_EXPORT)))
+    if(filename != NULL && (G->TR = TR_New(TR_EXPORT)) != NULL)
     {
       if(SafeOpenWindow(G->TR->GUI.WI))
         success = TR_ProcessEXPORT(filename, mlist, append);

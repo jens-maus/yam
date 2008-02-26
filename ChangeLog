@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-26  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: various little code cleanups, no functional changes.
+
 2008-02-24  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: the last fix didn't work exactly as intended.

@@ -1463,7 +1463,7 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
       // erase the message list which might have been copied from the current folder
       folder.messages    = NULL;
       // no image for the folder by default
-      folder.ImageIndex  = -1;  
+      folder.ImageIndex  = -1;
     }
     break;
 

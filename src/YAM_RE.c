@@ -1197,10 +1197,10 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
       rp->MaxHeaderLen = headerLen;
 
     // if we have a fileoutput pointer lets write out the header immediatly
-    if(out)
+    if(out != NULL)
       fprintf(out, "%s: %s\n", field, value);
 
-    if(!stricmp(field, "content-type"))
+    if(stricmp(field, "content-type") == 0)
     {
       // we check whether we have a content-type value or not, because otherwise
       // we have to keep the default "text/plain" content-type value the
@@ -1213,7 +1213,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
       // check the alternative part status
       // and try to find out if this is the main alternative part
       // which we might show later
-      if(rp->isAltPart && rp->Parent)
+      if(rp->isAltPart == TRUE && rp->Parent != NULL)
       {
         if(stricmp(rp->ContentType, "text/plain") == 0 ||
            rp->Parent->MainAltPart == NULL)
@@ -1224,7 +1224,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
         }
       }
     }
-    else if(!stricmp(field, "content-transfer-encoding"))
+    else if(stricmp(field, "content-transfer-encoding") == 0)
     {
       char *p;
       char buf[SIZE_DEFAULT];
@@ -1234,20 +1234,20 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
 
       // As the content-transfer-encoding field is mostly used in
       // attachment MIME fields, we first check for common attachement encodings
-      if(!strnicmp(p, "base64", 6))
+      if(strnicmp(p, "base64", 6) == 0)
         rp->EncodingCode = ENC_B64;
-      else if(!strnicmp(p, "quoted-printable", 16))
+      else if(strnicmp(p, "quoted-printable", 16) == 0)
         rp->EncodingCode = ENC_QP;
-      else if(!strnicmp(p, "8bit", 4) || !strnicmp(p, "8-bit", 5))
+      else if(strnicmp(p, "8bit", 4) == 0 || strnicmp(p, "8-bit", 5) == 0)
         rp->EncodingCode = ENC_8BIT;
-      else if(!strnicmp(p, "7bit", 4) || !strnicmp(p, "7-bit", 5) ||
-              !strnicmp(p, "plain", 5) || !strnicmp(p, "none", 4))
+      else if(strnicmp(p, "7bit", 4) == 0 || strnicmp(p, "7-bit", 5) == 0 ||
+              strnicmp(p, "plain", 5) == 0 || strnicmp(p, "none", 4) == 0)
       {
         rp->EncodingCode = ENC_NONE;
       }
-      else if(!strnicmp(p, "x-uue", 5))
+      else if(strnicmp(p, "x-uue", 5) == 0)
         rp->EncodingCode = ENC_UUE;
-      else if(!strnicmp(p, "binary", 6))
+      else if(strnicmp(p, "binary", 6) == 0)
         rp->EncodingCode = ENC_BIN;
       else
       {
@@ -1257,13 +1257,13 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
         rp->EncodingCode = ENC_NONE;
       }
     }
-    else if(!stricmp(field, "content-description"))
+    else if(stricmp(field, "content-description") == 0)
     {
       // we just copy the value here as the initial rfc2047 decoding
       // was done in MA_ReadHeader() already.
       strlcpy(rp->Description, value, sizeof(rp->Description));
     }
-    else if(!stricmp(field, "content-disposition"))
+    else if(stricmp(field, "content-disposition") == 0)
     {
       RE_ParseContentParameters(value, rp, PT_CONTENTDISPOSITION);
     }
@@ -2009,33 +2009,33 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
 
   D(DBF_MAIL, "ParseMessage(): %08lx, %08lx, %08lx, %08lx", rmData, in, fname, hrp);
 
-  if(in == NULL && fname)
+  if(in == NULL && fname != NULL)
   {
-    if((in = fopen(fname, "r")))
+    if((in = fopen(fname, "r")) != NULL)
       setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
   }
 
-  if(in)
+  if(in != NULL)
   {
     FILE *out;
     struct Part *rp;
 
     if(hrp == NULL)
     {
-      if((out = RE_OpenNewPart(rmData, &hrp, NULL, NULL)))
+      if((out = RE_OpenNewPart(rmData, &hrp, NULL, NULL)) != NULL)
       {
         BOOL parse_ok = RE_ScanHeader(hrp, in, out, RHM_MAINHEADER);
 
         fclose(out);
 
-        if(parse_ok)
+        if(parse_ok == TRUE)
           RE_SetPartInfo(hrp);
       }
       else
         ER_NewError(tr(MSG_ER_CantCreateTempfile));
     }
 
-    if(hrp)
+    if(hrp != NULL)
     {
       if(hrp->CParBndr != NULL && strnicmp(hrp->ContentType, "multipart", 9) == 0)
       {
@@ -2043,12 +2043,14 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
 
         rp = hrp;
 
-        while(!done)
+        while(done == FALSE)
         {
           struct Part *prev = rp;
+
           out = RE_OpenNewPart(rmData, &rp, prev, hrp);
 
-          if(out == NULL) break;
+          if(out == NULL)
+            break;
 
           if(RE_ScanHeader(rp, in, out, RHM_SUBHEADER) == FALSE)
           {
@@ -2061,7 +2063,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
           {
             fclose(out);
 
-            if(RE_ParseMessage(rmData, in, NULL, rp))
+            if(RE_ParseMessage(rmData, in, NULL, rp) != NULL)
             {
               // undo the dummy part
               RE_UndoPart(rp);
@@ -2072,7 +2074,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
                 ;
             }
           }
-          else if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == SMT_ENCRYPTED)
+          else if (RE_SaveThisPart(rp) == TRUE || RE_RequiresSpecialHandling(hrp) == SMT_ENCRYPTED)
           {
             fputc('\n', out);
             done = RE_ConsumeRestOfPart(in, out, NULL, rp, FALSE);
@@ -2088,9 +2090,9 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
           }
         }
       }
-      else if((out = RE_OpenNewPart(rmData, &rp, hrp, hrp)))
+      else if((out = RE_OpenNewPart(rmData, &rp, hrp, hrp)) != NULL)
       {
-        if(RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == SMT_ENCRYPTED)
+        if(RE_SaveThisPart(rp) == TRUE || RE_RequiresSpecialHandling(hrp) == SMT_ENCRYPTED)
         {
           RE_ConsumeRestOfPart(in, out, NULL, NULL, FALSE);
           fclose(out);
@@ -2105,12 +2107,12 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
       }
     }
 
-    if(fname)
+    if(fname != NULL)
       fclose(in);
   }
 
   #if defined(DEBUG)
-  if(fname)
+  if(fname != NULL)
   {
     struct Part *rp;
 
@@ -2148,7 +2150,7 @@ BOOL RE_DecodePart(struct Part *rp)
   ENTER();
 
   // it only makes sense to go on here if
-  // the data wasn`t decoded before.
+  // the data wasn't decoded before.
   if(rp->Decoded == FALSE)
   {
     FILE *in;
@@ -2309,7 +2311,7 @@ BOOL RE_DecodePart(struct Part *rp)
           }
           else
           {
-            D(DBF_MAIL, "%s", decodeResult == 1 ? "successfully decoded" : "no decode required. did a raw copy");
+            D(DBF_MAIL, "%s", decodeResult == 1 ? "successfully decoded" : "no decode required, did a raw copy");
 
             DeleteFile(rp->Filename);
             rp->Decoded = TRUE;
