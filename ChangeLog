@@ -7,6 +7,8 @@ $URL$
 
 2008-02-26  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc classes: added the same "event handler added" check to all other
+    classes which could possibly walk into the same trap as AttachmentImage.
   * AttachmentImage.c: fixed a potential crash in case a mail had a yet
     undecoded attachment and YAM was iconified and uniconfied while this mail
     was currently being displayed. In this case the event handler was not added

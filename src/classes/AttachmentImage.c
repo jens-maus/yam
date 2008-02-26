@@ -885,7 +885,7 @@ OVERLOAD(MUIM_HandleEvent)
         data->selectMicros= 0;
       }
 
-      if(WorkbenchBase->lib_Version >= 45)
+      if(WorkbenchBase->lib_Version >= 45 && data->eventHandlerAdded == TRUE)
       {
         DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
         data->ehnode.ehn_Events |= IDCMP_MOUSEMOVE;

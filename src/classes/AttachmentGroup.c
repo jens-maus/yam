@@ -58,6 +58,7 @@ struct Data
 
   ULONG minHeight;
   BOOL resizePushed;
+  BOOL eventHandlerAdded;
 };
 */
 
@@ -389,6 +390,7 @@ OVERLOAD(MUIM_Setup)
     data->ehnode.ehn_Events   = IDCMP_MOUSEBUTTONS;
 
     DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+    data->eventHandlerAdded = TRUE;
   }
 
   RETURN(result);
@@ -404,8 +406,12 @@ OVERLOAD(MUIM_Cleanup)
 
   ENTER();
 
-  // remove the eventhandler first
-  DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+  if(data->eventHandlerAdded == TRUE)
+  {
+    // remove the eventhandler first
+    DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+    data->eventHandlerAdded = FALSE;
+  }
 
   result = DoSuperMethodA(cl, obj, msg);
 

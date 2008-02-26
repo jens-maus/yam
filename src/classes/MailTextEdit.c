@@ -42,6 +42,8 @@ struct Data
   LONG    colorMap[16];
 
   struct MUI_EventHandlerNode ehnode;
+
+  BOOL eventHandlerAdded;
 };
 */
 
@@ -179,6 +181,7 @@ OVERLOAD(MUIM_Setup)
     data->ehnode.ehn_Events   = IDCMP_RAWKEY;
 
     DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+    data->eventHandlerAdded = TRUE;
   }
 
   RETURN(result);
@@ -195,7 +198,11 @@ OVERLOAD(MUIM_Cleanup)
 
   ENTER();
 
-  DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+  if(data->eventHandlerAdded == TRUE)
+  {
+    DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+    data->eventHandlerAdded = FALSE;
+  }
 
   result = DoSuperMethodA(cl, obj, msg);
 
