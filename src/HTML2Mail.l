@@ -38,6 +38,7 @@
 %option prefix="h2m_"
 %option nodefault
 %option warn
+%option nounistd
 
 %{
     #include <string.h>
@@ -51,7 +52,14 @@
     #include "Debug.h"
 
     #define YY_NO_INPUT 1
-    #define YY_NO_UNISTD_H 1
+
+    // check for the FLEX version and that the
+    // developer uses the minimum version required
+    #if YY_FLEX_MAJOR_VERSION < 2 || \
+        (YY_FLEX_MAJOR_VERSION == 2 && (YY_FLEX_MINOR_VERSION < 5 || \
+                                        (YY_FLEX_MINOR_VERSION == 5 && YY_FLEX_SUBMINOR_VERSION < 35)))
+    #error "minimum flex version 2.5.35 is required to build"
+    #endif
 %}
 
 /*

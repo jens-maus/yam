@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-27  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ParseEmail.l, HTML2Mail.l: added a minimum flex version requirement check
+    to the lexer files. This is requires so that on one hand we have a unified
+    build environment throughout our developers and because the latest official
+    flex version (2.5.35) fixes some important issues. This should prevent
+    building YAM with ancient flex versions known to be buggy.
+
 2008-02-26  Thore Böckelmann <tboeckel@gmx.de>
 
   * misc classes: added the same "event handler added" check to all other
