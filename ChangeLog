@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-02-27  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: the incoming folder's treenode is now redrawn after each received
+    mail. First of all this is consistent to sending mails and redrawing the
+    outgoing folder's treenode, and it gives instant feedback even without a
+    transfer window. Scrolling in folder treeview while a transfer was in
+    progress did this redraw already as well as making the folder treeview
+    inactive and active again.
+
 2008-02-27  Jens Langner <Jens.Langner@light-speed.de>
 
   * ParseEmail.l, HTML2Mail.l: added a minimum flex version requirement check

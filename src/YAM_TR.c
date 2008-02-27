@@ -41,6 +41,7 @@
 #include <libraries/genesis.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <proto/amissl.h>
 #include <proto/bsdsocket.h>
 #include <proto/dos.h>
@@ -4420,7 +4421,7 @@ static void TR_TransStat_Init(struct TransStat *ts)
   ts->Msgs_Tot = 0;
   ts->Size_Tot = 0;
 
-  if(G->TR->GUI.GR_LIST)
+  if(G->TR->GUI.GR_LIST != NULL)
   {
     set(G->TR->GUI.GR_PAGE, MUIA_Group_ActivePage, 1);
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
@@ -4476,13 +4477,13 @@ static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, L
   ts->Size_Curr_Max = size;
 
   // if the window isn`t open we don`t need to update it, do we?
-  if(xget(G->TR->GUI.WI, MUIA_Window_Open))
+  if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
   {
     // get the new time since the last nextmsg start
     GetSysTime(TIMEVAL(&ts->Clock_Last));
 
     // if we have a preselection window, update it.
-    if(G->TR->GUI.GR_LIST && listpos >= 0)
+    if(G->TR->GUI.GR_LIST != NULL && listpos >= 0)
       set(G->TR->GUI.LV_MAILS, MUIA_NList_Active, listpos);
 
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, status);
@@ -4516,7 +4517,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
     ts->Size_Done += size_incr;
 
     // if the window isn`t open we don`t need to update it, do we?
-    if(xget(G->TR->GUI.WI, MUIA_Window_Open))
+    if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
     {
       // now we check if should really update our
       // transfer display or if it will be overkill
@@ -4587,8 +4588,8 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
     // we are done with this mail, so make sure the current size equals the final size
     ts->Size_Curr = ts->Size_Curr_Max;
 
-    // if the window isn`t open we don`t need to update it, do we?
-    if(xget(G->TR->GUI.WI, MUIA_Window_Open))
+    // if the window isn`t open we don't need to update it, do we?
+    if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
     {
       char size_done[SIZE_SMALL];
       char size_total[SIZE_SMALL];
@@ -6945,8 +6946,9 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
   {
     struct Folder *infolder = FO_GetFolderByType(FT_INCOMING, NULL);
     struct MinNode *curNode;
+    struct MUI_NListtree_TreeNode *incomingTreeNode = FO_GetFolderTreeNode(infolder);
 
-    if(C->TransferWindow == TWM_SHOW && !xget(G->TR->GUI.WI, MUIA_Window_Open))
+    if(C->TransferWindow == TWM_SHOW && xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
       set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
 
     TR_TransStat_Start(&ts);
@@ -6962,6 +6964,9 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 
         if(TR_LoadMessage(infolder, &ts, mtn->index) == TRUE)
         {
+          // redraw the folderentry in the listtree
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, incomingTreeNode, MUIF_NONE);
+
           // put the transferStat to 100%
           TR_TransStat_Update(&ts, TS_SETMAX);
 
