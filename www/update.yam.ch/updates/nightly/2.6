@@ -1,110 +1,110 @@
 VERSION: 2.6-dev
-BUILDID: 20080209
-BUILDDATE: 09.02.2008
-URL: m68k-amigaos http://nightly.yam.ch/2008-02-09-dev/YAM26dev-AmigaOS3.lha
-URL: ppc-amigaos http://nightly.yam.ch/2008-02-09-dev/YAM26dev-AmigaOS4.lha
-URL: ppc-morphos http://nightly.yam.ch/2008-02-09-dev/YAM26dev-MorphOS.lha
+BUILDID: 20080228
+BUILDDATE: 28.02.2008
+URL: m68k-amigaos http://nightly.yam.ch/2008-02-28-dev/YAM26dev-AmigaOS3.lha
+URL: ppc-amigaos http://nightly.yam.ch/2008-02-28-dev/YAM26dev-AmigaOS4.lha
+URL: ppc-morphos http://nightly.yam.ch/2008-02-28-dev/YAM26dev-MorphOS.lha
 CHANGES:
 ---------------------------
 YAM Open Source - ChangeLog
 ---------------------------
 
-$Id: ChangeLog 3864 2008-02-08 02:44:15Z damato $
+$Id: ChangeLog 3892 2008-02-27 20:11:27Z thboeckel $
 $URL: https://yamos.svn.sourceforge.net/svnroot/yamos/trunk/ChangeLog $
 
-2008-02-08  Jens Langner <Jens.Langner@light-speed.de>
+2008-02-27  Thore Böckelmann <tboeckel@gmx.de>
 
-  * Threads.c, misc: added a first preliminary port of the multithreading
-    implementation of SimpleMail. Please note, that this is a first very basic
-    and untested port of the multitasking/multithreading framework. Apart from
-    the initialization routines it is currently not used at all in YAM. Further
-    work is definitely required and I would suggest to first try to get that
-    stuff running for one of our regular timer jobs (e.g. automatic index
-    saving) to verify that this stuff actually works as expected. Afterwards
-    we might try to use it for larger jobs like managing asynchronous TCP/IP
-    connections.
+  * YAM_TR.c: the incoming folder's treenode is now redrawn after each received
+    mail. First of all this is consistent to sending mails and redrawing the
+    outgoing folder's treenode, and it gives instant feedback even without a
+    transfer window. Scrolling in folder treeview while a transfer was in
+    progress did this redraw already as well as making the folder treeview
+    inactive and active again.
 
-2008-02-05  Thore Böckelmann <tboeckel@gmx.de>
+2008-02-27  Jens Langner <Jens.Langner@light-speed.de>
 
-  * YAM_FO.c: a newly created folder was never added to the new global list and
-    even worse the folder pointer in the tree view still pointed to a no longer
-    existing structure on the stack. This fixes bug #1887196.
-  * YAM_UT.c: added some assertions to track down a possible bug in the folder
-    maillist management.
+  * ParseEmail.l, HTML2Mail.l: added a minimum flex version requirement check
+    to the lexer files. This is requires so that on one hand we have a unified
+    build environment throughout our developers and because the latest official
+    flex version (2.5.35) fixes some important issues. This should prevent
+    building YAM with ancient flex versions known to be buggy.
 
-2008-02-04  Thore Böckelmann <tboeckel@gmx.de>
+2008-02-26  Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_TR.c: the UIDL hash table will now only be saved if it was modified
-    during the mail transfer. This fixes bug #1885491.
+  * misc classes: added the same "event handler added" check to all other
+    classes which could possibly walk into the same trap as AttachmentImage.
+  * AttachmentImage.c: fixed a potential crash in case a mail had a yet
+    undecoded attachment and YAM was iconified and uniconfied while this mail
+    was currently being displayed. In this case the event handler was not added
+    during MUIM_Setup, but removed in MUIM_Cleanup, which can cause any kind of
+    funny things to happen. Most probably this fixes bug #1899484.
+  * misc: various little code cleanups, no functional changes.
 
-2008-02-03  Thore Böckelmann <tboeckel@gmx.de>
+2008-02-24  Thore Böckelmann <tboeckel@gmx.de>
 
-  * ReadWindow.c: fixed the broken search for unread mails.
+  * YAM_FO.c: the last fix didn't work exactly as intended.
+  * YAM_FO.c: searching for a folder no longer relys on the graphical represen-
+    tation by the folder listtree, but uses the list of folders directly.
 
-2008-01-31  Thore Böckelmann <tboeckel@gmx.de>
+2008-02-23  Jens Langner <Jens.Langner@light-speed.de>
 
-  * YAM_MA.c: simplified the copying/moving of a mail a bit so that YAM doesn't
-    have to handle yet another copy on the stack.
-  * YAM_UT.c: made the debug log a bit more verbose upon copying/moving a file
-    from one folder to an other one.
-  * YAM_FO.c: fixed an "access after free()" bug.
-  * ReadWindow.c, ReadMailGroup.c, YAM_RE.c: reverted the recent changes to the
-    enabled state of the "Check PGP signature" menus. Only the signature of new
-    mails will now be checked automatically. After that the user must invoke
-    that action manually.
-  * YAM_MA.c: optimized the creation of complete mail lists by using
-    CloneMailList() instead of doing the dirty work ourself.
-  * Debug.c: fixed a possible buffer overrun when starting time measurement
-    clocks.
-  * YAM_addressbookEntry.h: minor cosmetic changes.
-  * misc: reconstructed the folder lists analog to the mail lists. All in all
-    the folders are no longer managed by an NListtree object anymore but are
-    kept in a real global list while the tree items just reference the single
-    folders. Analog to mail list the global folder list can be locked either
-    exclusively or shared, depending on whether the list is going to be modified
-    or not. Creating clone copies therefore is no longer necessary.
-  * misc: the mail lists can now be locked exclusively or shared, depending on
-    whether the list is going to be modified or not.
+  * Makefile: reworked the compilation output to not use any ANSI color output
+    as that messes with some terminals not properly supporting ANSI. In
+    addition we use "make -C" from now on to walk into subdirectory
+    compilation. Furthermore, the Arexx date calculation routines are now
+    used for native OS4 hosted compiles as the gdate based calculation didn't
+    work out as it seems.
 
-2008-01-30  Thore Böckelmann <tboeckel@gmx.de>
+2008-02-22  Thore Böckelmann <tboeckel@gmx.de>
 
-  * ReadWindow.c, ReadMailGroup.c: the "Check signature" menu item will now be
-    disabled if the signature of a mail has been checked already, as YAM did
-    prevent a double check anyway already.
-  * YAM_UT.c: added the return code of PGP commands to the debug log.
-  * AttachmentGroup.c: in case an attachment had no name but a description only
-    the name of attachment image could be drawn over futher images to the right,
-    because the width was calculated using the empty name instead of the
-    description.
+  * YAM_COs.c: make sure the first entry of the MIME list is really visible and
+    not just active.
+  * Threads.c: in case YAM was aborted early (i.e. a missing .mcc) the thread
+    subsystem was cleaned up nevertheless and caused crashes, because
+    uninitialized lists were accessed. Now a proper check is done before then
+    cleanup. This fixes bug #1899531.
 
-2008-01-28  Vit Sindlar <sindlarv at centrum dot cz>
+2008-02-21  Thore Böckelmann <tboeckel@gmx.de>
 
-  * locale/czech.ct: updated Czech translation.
+  * MailList.c, YAM_UT.c: moved the locking of the mail list in some functions
+    more to the front to avoid accessing a non-locked list. Also moved the list
+    locking into MailListToMailArray().
+  * YAM_MA.c: added a warning/error message when no active/selected or new mail
+    could be found upon creating such a list of mails.
+  * YAM_MA.c: slightly changed how the number of actually deleted mails is
+    counted to be more obvious.
+  * YAM_MA.c: added some more debug code when deleting mails.
+  * YAM_MAf.c: changed two debugging macros to the correct class.
 
-2008-01-28  Thore Böckelmann <tboeckel@gmx.de>
+2008-02-20  Thore Böckelmann <tboeckel@gmx.de>
 
-  * ImageCache.c: getting the BitMapHeader after the remapping process seems to
-    to obtain wrong depth information (a depth compatible to the screen being
-    remapped to instead of the true depth of the image) on OS4. Hence we obtain
-    the BitMapHeader right after loading the image via datatypes.library now.
-    This fixes bug #1876914.
-  * YAM_MA.c: fixed a double lock of a mail list.
+  * YAM.c: changing the active mail, which requires the active folder to be set,
+    doesn't make any sense before the folder list is loaded at all. This caused
+    the "Spam" button to be shown in disabled state right after starting YAM,
+    because there was no active mail nor an active folder.
 
-2008-01-27  Alexandre Balaban <balaban@free.fr>
+2008-02-20  Jens Langner <Jens.Langner@light-speed.de>
 
-  * locale/french.ct: french translation update according to latest changes.
+  * Mime.c: fixed bug #1897222 where under certain circumstances the RFC2047
+    header encoding routines failed when line wrapping occurred due to the
+    encoding word limits.
 
-2008-01-26  Thore Böckelmann <tboeckel@gmx.de>
+2008-02-18  Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_UT.c: a user folder was not deleted completely if there was a .signature
-    file existing.
-  * YAM.c: fixed the initial wrong folder icon display. The "new" icon was
-    always shown if there were mails in the folder at all, instead of only if
-    unread mails existed.
+  * BayesFilter.c: having rethought the stuff, the address book is not longer
+    searched for the real name of a mail's sender as this is too easy to forge.
 
-2008-01-25  Jens Langner <Jens.Langner@light-speed.de>
+2008-02-17  Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_md5.c, Mime.c: moved all md5 message digest function to the generalized
+  * YAM_MA.c: old mails are no longer deleted immediately but copied over to a
+    temporary "to be deleted" list first. This avoids locking a folder's mail
+    list twice (or even more often), which seems to produce deadlocks for some
+    users. Also added some more debugging informations about mails to be
+    deleted.
+  * YAM_UT.c: some minor optimizations.
+  * BayesFilter.c: in case the address book is considered as white list the
+    sender's real name and address are now searched in the address book. This
+    should improve the white listing a bit.
 
 
 THIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG
