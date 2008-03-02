@@ -3171,6 +3171,7 @@ void TimeVal2DateStamp(const struct TimeVal *tv, struct DateStamp *ds, enum TZCo
 void DateStamp2TimeVal(const struct DateStamp *ds, struct TimeVal *tv, enum TZConvert tzc)
 {
   ENTER();
+
   // check if the ptrs are set or not.
   if(ds != NULL && tv != NULL)
   {
@@ -3182,6 +3183,8 @@ void DateStamp2TimeVal(const struct DateStamp *ds, struct TimeVal *tv, enum TZCo
     if(tzc != TZC_NONE)
       TimeValTZConvert(tv, tzc);
   }
+
+  LEAVE();
 }
 ///
 /// TimeVal2String
