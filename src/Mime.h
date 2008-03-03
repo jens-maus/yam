@@ -54,7 +54,7 @@ long uuencode_file(FILE *in, FILE *out);
 long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset);
 
 // rfc2047 encoding/decoding routines
-int rfc2047_encode_file(FILE *fh, const char *str);
+int rfc2047_encode_file(FILE *fh, const char *str, const size_t offset);
 int rfc2047_decode(char *dst, const char *src, unsigned int maxlen);
 
 // rfc1738 URL encoding/decoding routines

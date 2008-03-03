@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Mime.c, Mime.h, YAM_WR.c: completely reworked the RFC2047 header encoding
+    routines from scratch. The old routines were largely broken by design like
+    e.g. bug report #1897222 pointed out. The new routines should be more
+    robust now as they are largely adopted from the sources of the rfc2047
+    routines taken and adapted from the Courier IMAP server project
+    (http://www.sf.net/projects/courier). In addition, the new routines do
+    support base64 based rfc2047 encoding now, which the old functions didn't
+    implement at all. All in all, the new routines should be also a bit more
+    flexible to future adaptions - lets see how they perform ;)
+
 2008-02-27  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: the incoming folder's treenode is now redrawn after each received

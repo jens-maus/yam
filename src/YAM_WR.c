@@ -506,7 +506,7 @@ void FreePartsList(struct WritePart *p)
 // RFC2231 complicant MIME parameter encoding, but also RFC2047 compliant
 // MIME value encoding as well. As soon as "param" is set to NULL, RFC2047
 // encoding will be used, otherwise RFC2231-based one.
-static void HeaderFputs(FILE *fh, const char *s, const char *param)
+static void HeaderFputs(FILE *fh, const char *s, const char *param, const int offset)
 {
   BOOL doEncoding = FALSE;
   char *c = (char *)s;
@@ -569,8 +569,8 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
     else
     {
       // do the actual rfc2047 based encoding
-      D(DBF_MAIL, "writing RFC2047 content '%s'", s);
-      rfc2047_encode_file(fh, s);
+      D(DBF_MAIL, "writing RFC2047 content '%s' with offset %ld", s, offset);
+      rfc2047_encode_file(fh, s, offset);
     }
   }
   else if(param != NULL)
@@ -598,12 +598,14 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param)
 //  Outputs a complete header line
 void EmitHeader(FILE *fh, const char *hdr, const char *body)
 {
+  int offset;
+
   ENTER();
 
   D(DBF_MAIL, "writing header '%s' with content '%s'", hdr, body);
 
-  fprintf(fh, "%s: ", hdr);
-  HeaderFputs(fh, body, NULL);
+  offset = fprintf(fh, "%s: ", hdr);
+  HeaderFputs(fh, body, NULL, offset);
   fputc('\n', fh);
 
   LEAVE();
@@ -632,7 +634,7 @@ static void EmitRcptField(FILE *fh, const char *body)
       if((next = MyStrChr(part, ',')))
         *next++ = '\0';
 
-      HeaderFputs(fh, Trim(part), NULL);
+      HeaderFputs(fh, Trim(part), NULL, 0);
 
       if((part = next))
         fputs(",\n\t", fh);
@@ -677,9 +679,9 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
   if((p = part->Name) && *p)
   {
     fputc(';', fh);
-    HeaderFputs(fh, p, "name"); // output and do rfc2231 encoding
+    HeaderFputs(fh, p, "name", 0); // output and do rfc2231 encoding
     fputs("\nContent-Disposition: attachment;", fh);
-    HeaderFputs(fh, p, "filename"); // output and do rfc2231 encoding
+    HeaderFputs(fh, p, "filename", 0); // output and do rfc2231 encoding
   }
   fputc('\n', fh);
 
@@ -738,7 +740,7 @@ static void WR_WriteUserInfo(FILE *fh, char *from)
     if(C->MyPictureURL[0] != '\0')
     {
       fputc(';', fh);
-      HeaderFputs(fh, C->MyPictureURL, "picture");
+      HeaderFputs(fh, C->MyPictureURL, "picture", 0);
     }
 
     if(ab != NULL)
@@ -746,27 +748,27 @@ static void WR_WriteUserInfo(FILE *fh, char *from)
       if(*ab->Homepage)
       {
         fputc(';', fh);
-        HeaderFputs(fh, ab->Homepage, "homepage");
+        HeaderFputs(fh, ab->Homepage, "homepage", 0);
       }
       if(*ab->Street)
       {
         fputc(';', fh);
-        HeaderFputs(fh, ab->Street, "street");
+        HeaderFputs(fh, ab->Street, "street", 0);
       }
       if(*ab->City)
       {
         fputc(';', fh);
-        HeaderFputs(fh, ab->City, "city");
+        HeaderFputs(fh, ab->City, "city", 0);
       }
       if(*ab->Country)
       {
         fputc(';', fh);
-        HeaderFputs(fh, ab->Country, "country");
+        HeaderFputs(fh, ab->Country, "country", 0);
       }
       if(*ab->Phone)
       {
         fputc(';', fh);
-        HeaderFputs(fh, ab->Phone, "phone");
+        HeaderFputs(fh, ab->Phone, "phone", 0);
       }
       if(ab->BirthDay)
         fprintf(fh, ";\n\tdob=%ld", ab->BirthDay);
