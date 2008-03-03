@@ -183,7 +183,7 @@ LIB       = $(PREFIX)lib/$(OS)
 OBJDIR    = .obj_$(OS)
 
 # Common compiler/linker flags
-WARN     = -W -Wall -Wwrite-strings
+WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG #-O0
 DEBUGSYM = -gstabs
