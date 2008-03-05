@@ -53,6 +53,8 @@ ULONG SetAttrs( APTR object, ULONG tag1, ... )
 #include <proto/dos.h>
 LONG SystemTags( CONST_STRPTR command, ULONG tag1type, ... )
 { return SystemTagList(command, (struct TagItem *)&tag1type); }
+struct Process *CreateNewProcTags( ULONG tag1, ... )
+{ return CreateNewProc((struct TagItem *)&tag1); }
 
 #include <proto/datatypes.h>
 Object *NewDTObject( APTR name, Tag tag1, ... )

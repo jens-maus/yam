@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-05  Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/vastubs.c: added a stub for CreateNewProcTags() to be able to
+    do the OS3 build with clib2's libamiga.a.
+
 2008-03-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * Mime.c, Mime.h, YAM_WR.c: completely reworked the RFC2047 header encoding
