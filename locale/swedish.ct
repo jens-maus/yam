@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.30 (20.12.07)
+## version $VER: YAM.ct 6.31 (06.03.08)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -2877,10 +2877,6 @@ MSG_HELP_EA_ST_PHONE
 Telefon och/eller fax nr.
 ;#DEF Phone and/or\nFAX number(s).
 ;#SET (809//)
-MSG_HELP_EA_ST_BIRTHDAY
-Födelsedatum i\nAmigaDOS format\n(t.ex. 11-Nov-1978).
-;#DEF Date of birth in\nAmigaDOS format\n(e.g. 10-Jan-1950).
-;#SET (810//)
 MSG_HELP_EA_BC_PHOTO
 Bild på den här personen.
 ;#DEF Portrait picture\nof this person.
@@ -6099,7 +6095,7 @@ Skr_äp
 ;#SET (1746//8)
 MSG_MA_TBNOTSPAM
 Ej skr_äp
-;#DEF No sp_am
+;#DEF N.Sp_am
 ;#SET (1747//8)
 MSG_HELP_MA_BT_SPAM
 Markera meddelande som skräppost
@@ -6115,7 +6111,7 @@ Skr_äp
 ;#SET (1750//8)
 MSG_RE_TBNOTSPAM
 Ej skräp
-;#DEF No sp_am
+;#DEF N.Sp_am
 ;#SET (1751//8)
 MSG_HELP_RE_BT_SPAM
 Markera meddelande som skräppost.
@@ -7337,3 +7333,59 @@ MSG_MA_CONFIRMFILTER_SELECTED
 Du har valt flera meddelanden i mappen '%s'.\nBara dessa meddelanden kommer att filtreras.\n\nVill du fortsätta?
 ;#DEF You have selected several messages in\nfolder '%s'. Only these messages\nare going to be filtered.\n\nDo you want to proceed?
 ;#SET (2069//)
+MSG_AB_XML
+XML adressbok (*.xml)
+;#DEF XML address book (*.xml)
+;#SET (2070//)
+MSG_MA_FILTER_STATS_SPAM
+Filtrering klar:\n\n%3ld meddelanden kontrollerade,\n%3ld vidarebefordrade,\n%3ld arkiverade,\n%3ld raderade,\n%3ld klassifierade som skräppost
+;#DEF Filtering done:\n\n%3ld messages checked,\n%3ld forwarded,\n%3ld archived,\n%3ld deleted,\n%3ld classified as spam
+;#SET (2071//)
+MSG_TR_FILTER_STATS_SPAM
+\nFiltrering klar:\n\n%3ld meddelanden kontrollerade,\n%3ld studsade,\n%3ld vidarebefordrade,\n%3ld autosvarade,\n%3ld kommando aktiverade,\n%3ld flyttade,\n%3ld raderade,\n%3ld klassifierade som skräppost
+;#DEF \nFiltering done:\n\n%3ld messages checked,\n%3ld bounced,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted,\n%3ld classified as spam
+;#SET (2072//)
+MSG_CO_EXCHANGE_MAIL
+Växla e-post
+;#DEF Exchange mail
+;#SET (2073//)
+MSG_CO_EXCHANGE_ORDER
+Växlingsordning
+;#DEF Exchange order
+;#SET (2074//)
+MSG_CO_EXCHANGE_ORDER_GET_FIRST
+hämta e-post först, skicka sedan e-post
+;#DEF get mail first, then send mail
+;#SET (2075//)
+MSG_CO_EXCHANGE_ORDER_SEND_FIRST
+skicka e-post först, hämta sedan e-post
+;#DEF send mail first, then get mail
+;#SET (2076//)
+MSG_HELP_CO_CY_EXCHANGE_ORDER
+Ordningen på e-postväxlingen.
+;#DEF The order of the mail exchange.
+;#SET (2077//)
+MSG_FCHANGE_WARN_TITLE
+Filändringsvarning
+;#DEF Filechange warning
+;#SET (2078//)
+MSG_FCHANGE_WARN
+Medans du har redigerat meddelandetexten\ni skrivfönstret %ld i en extern redigerare,\nhar texten i den interna textredigeraren också\nändrats.\n\nVill du verkligen använda texten i den externa\nredigeraren och tappa ändringarna gjorda i\nden interna redigeraren?
+;#DEF While you have edited the message text\nof write window %ld in an external editor,\nthe text in the internal text editor has\nalso been altered.\n\nDo you really want to use the text of\nthe external editor dropping the changes\ndone in the internal editor?
+;#SET (2079//)
+MSG_LOG_SENDING_FAILED
+Skicka %ld meddelande(n) via SMTP-server '%s' misslyckades
+;#DEF Sending %ld message(s) using SMTP server '%s' failed
+;#SET (2080//)
+MSG_HELP_EA_ST_BIRTHDAY
+Födelsedatum i AmigaDOS format\n(t.ex. 11.13.1978 eller 11/13/1978).
+;#DEF Date of birth in locale format\n(e.g. 19.06.1974 or 19/06/1974).
+;#SET (2081//)
+MSG_ERROR_THREADS
+Kan inte initiera trådsystem
+;#DEF Can't initialize thread system
+;#SET (2082//)
+MSG_ERROR_PLAYSOUND
+Ett fel uppstod vid försök att spela\nljudfilen '%s'.\n\nDetta kan bero på antingen en trasig\nljudfil eller en ljudfil som inte stöds eller\nför att din ljuddatatyp inte fungerar korrekt.
+;#DEF An error occurred while trying to play\nthe sound file '%s'.\n\nThis could be either due to a broken or\nunsupported sound file or because your\nsound datatype is not properly working.
+;#SET (2083//)
