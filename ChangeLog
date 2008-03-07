@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-07  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c: the "checked" counter was bumped at the wrong place causing
+    all non-spam mails to be counted twice. This fixes bug #1909386.
+
 2008-03-06  Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated according to changes.
