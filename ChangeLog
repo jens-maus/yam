@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-14  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile, Makefile.dep: reworked the Makefile to not require the 'sed'
+    tool anymore to regenerate the dependency file. Also simplified other
+    sections of the Makefile by introducing the use of the $(VPATH) search
+    variable which allows to just list the object files without having
+    to explicitly put OBJDIR in front of it. All in all, the makefile
+    should now be much more cleaner and more slim.
+
 2008-03-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: the "checked" counter was bumped at the wrong place causing

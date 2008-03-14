@@ -43,16 +43,20 @@
 #############################################
 # find out the HOST operating system
 # on which this makefile is run
-ifndef (HOST)
-  HOST = $(shell uname)
-  ifeq ($(HOST), AmigaOS)
-    ifeq ($(shell uname -m), powerpc)
-      HOST = AmigaOS4
-    endif
-    ifeq ($(shell uname -m), ppc)
-      HOST = AmigaOS4
-    endif
+HOST ?= $(shell uname)
+ifeq ($(HOST), AmigaOS)
+  ifeq ($(shell uname -m), powerpc)
+    HOST = AmigaOS4
   endif
+  ifeq ($(shell uname -m), ppc)
+    HOST = AmigaOS4
+  endif
+endif
+
+# if no host is identifed (no uname tool)
+# we assume a AmigaOS build
+ifeq ($(HOST),)
+  HOST = AmigaOS
 endif
 
 #############################################
@@ -88,74 +92,52 @@ endif
 FLEX    = flex
 FC      = flexcat
 EXPR    = expr
-CHMOD   = chmod
-SED     = sed
 DATE    = date
-RM      = rm -f
-RMDIR   = rm -rf
-MKDIR   = mkdir -p
+RM      = delete force
+RMDIR   = delete force all
+MKDIR   = makedir
+CHMOD   = protect FLAGS=rwed
 CC      = gcc
 STRIP   = strip
 OBJDUMP = objdump
 
 # path definitions
-CDUP  = ../
-CDTHIS= ./
+CDUP  = /
+CDTHIS=
 
-# Special macros for version ID and developer builds
-DEVFLAGS = -DDEVWARNING -DEXPDATE="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922 + 31`"
-YAMVERID = -D__YAM_VERDATE=\"`$(DATE) +%d.%m.%Y`\" \
-           -D__YAM_VERDAYS="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922`" \
-           -D__YAM_BUILDDATE=\"`$(DATE) +%Y%m%d`\" \
-           -D__YAM_BUILDID="$(BUILDID)"
+# Special macros for version ID and developer builds via Arexx
+# and C:Date calls
+DEVFLAGS = -DDEVWARNING `rx "say '-DEXPDATE=' || date(I)+31"`
+YAMVERID = -D__YAM_BUILDID=$(BUILDID) \
+           `rx "say '-D__YAM_VERDATE=' || '22'x || right(date(S),2)'.'substr(date(S),5,2)'.'left(date(S),4) || '22'x"` \
+           `rx "say '-D__YAM_BUILDDATE=' || '22'x || date(S) || '22'x"` \
+           `rx "say '-D__YAM_VERDAYS=' || date(I)"` \
 
-# override commands for native builds
-ifeq ($(HOST), AmigaOS4)
-  # AmigaOS4 host
-  RM    = delete force
-  RMDIR = delete force all
-  MKDIR = makedir
+# override some variables for non-native builds (cross-compiler)
+ifneq ($(HOST), AmigaOS)
+ifneq ($(HOST), AmigaOS4)
 
-  # path definitions
-  CDUP  = /
-  CDTHIS=
+  # this is either a cross-compiler build on a UNIX-like system or
+  # on MorphOS, so lets use expr/gdate instead of the above ARexx stuff
+  DEVFLAGS = -DDEVWARNING -DEXPDATE="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922 + 31`"
+  YAMVERID = -D__YAM_VERDATE=\"`$(DATE) +%d.%m.%Y`\" \
+             -D__YAM_VERDAYS="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922`" \
+             -D__YAM_BUILDDATE=\"`$(DATE) +%Y%m%d`\" \
+             -D__YAM_BUILDID="$(BUILDID)"
 
-  # override the versionID and developer build macros with calls
-  # to ARexx instead of unix expr/date
-  DEVFLAGS = -DDEVWARNING `rx "say '-DEXPDATE=' || date(I)+31"`
-  YAMVERID = -D__YAM_BUILDID=$(BUILDID) \
-             `rx "say '-D__YAM_VERDATE=' || '22'x || right(date(S),2)'.'substr(date(S),5,2)'.'left(date(S),4) || '22'x"` \
-             `rx "say '-D__YAM_BUILDDATE=' || '22'x || date(S) || '22'x"` \
-             `rx "say '-D__YAM_VERDAYS=' || date(I)"` \
-else
-ifeq ($(HOST), AmigaOS)
-  # AmigaOS3 host
-  RM    = delete force
-  RMDIR = delete force all
-  MKDIR = makedir
+  ifneq ($HOST), MorphOS)
 
-  # path definitions
-  CDUP  = /
-  CDTHIS=
+    # when we end up here this is either a unix or Aros host
+    # so lets use unix kind of commands
+    RM      = rm -f
+    RMDIR   = rm -rf
+    MKDIR   = mkdir -p
+    CHMOD   = chmod 755
 
-  # override the versionID and developer build macros with calls
-  # to ARexx instead of unix expr/date
-  DEVFLAGS = -DDEVWARNING `rx "say '-DEXPDATE=' || date(I)+31"`
-  YAMVERID = -D__YAM_BUILDID=$(BUILDID) \
-             `rx "say '-D__YAM_VERDATE=' || '22'x || right(date(S),2)'.'substr(date(S),5,2)'.'left(date(S),4) || '22'x"` \
-             `rx "say '-D__YAM_BUILDDATE=' || '22'x || date(S) || '22'x"` \
-             `rx "say '-D__YAM_VERDAYS=' || date(I)"` \
-else
-ifeq ($(HOST), MorphOS)
-  # MorphOS host
-  RM    = delete force
-  RMDIR = delete force all
-  MKDIR = makedir
+    CDUP  = ../
+    CDTHIS= ./
 
-  # path definitions
-  CDUP  = /
-  CDTHIS=
-endif
+  endif
 endif
 endif
 
@@ -181,14 +163,14 @@ EXTRASRC  = $(PREFIX)extrasrc
 TOOLS     = $(PREFIX)tools
 LIB       = $(PREFIX)lib/$(OS)
 OBJDIR    = .obj_$(OS)
+VPATH     = $(OBJDIR)
 
 # Common compiler/linker flags
 WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG #-O0
 DEBUGSYM = -gstabs
-CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) \
-           $(DEBUG) $(DEBUGSYM) -c
+CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM)
 LDFLAGS  = $(CPU) $(DEBUGSYM)
 LDLIBS   = -L$(LIB) -lm
 
@@ -267,7 +249,7 @@ ifeq ($(OS), aros)
   endif
 
   # Compiler/Linker flags
-  CPU     =
+  CPU =
 
 endif
 endif
@@ -281,85 +263,84 @@ endif
 # General vars
 GENCLASSES= $(TOOLS)/genclasses
 
-.PHONY: all clean cleanall distclean classinfo dump depend
-
 # our few new rewritten classes
 CLASSES	= \
-	$(OBJDIR)/$(CLASSDIR)/Classes.o \
-	$(OBJDIR)/$(CLASSDIR)/Recipientstring.o \
-	$(OBJDIR)/$(CLASSDIR)/Searchwindow.o \
-	$(OBJDIR)/$(CLASSDIR)/SearchControlGroup.o \
-	$(OBJDIR)/$(CLASSDIR)/AddrBookEntryList.o \
-	$(OBJDIR)/$(CLASSDIR)/AddrBookListtree.o \
-	$(OBJDIR)/$(CLASSDIR)/AddrBookToolbar.o \
-	$(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o \
-	$(OBJDIR)/$(CLASSDIR)/Aboutwindow.o \
-	$(OBJDIR)/$(CLASSDIR)/AttachmentGroup.o \
-	$(OBJDIR)/$(CLASSDIR)/AttachmentImage.o \
-	$(OBJDIR)/$(CLASSDIR)/ConfigPageList.o \
-	$(OBJDIR)/$(CLASSDIR)/ReadMailGroup.o \
-	$(OBJDIR)/$(CLASSDIR)/ReadWindow.o \
-	$(OBJDIR)/$(CLASSDIR)/ReadWindowToolbar.o \
-	$(OBJDIR)/$(CLASSDIR)/ReadWindowStatusBar.o \
-	$(OBJDIR)/$(CLASSDIR)/Splashwindow.o \
-	$(OBJDIR)/$(CLASSDIR)/ShutdownWindow.o \
-	$(OBJDIR)/$(CLASSDIR)/MailTextEdit.o \
-	$(OBJDIR)/$(CLASSDIR)/MainFolderListtree.o \
-	$(OBJDIR)/$(CLASSDIR)/MainMailList.o \
-	$(OBJDIR)/$(CLASSDIR)/MainMailListGroup.o \
-	$(OBJDIR)/$(CLASSDIR)/MainWindow.o \
-	$(OBJDIR)/$(CLASSDIR)/MainWindowToolbar.o \
-	$(OBJDIR)/$(CLASSDIR)/InfoBar.o \
-	$(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o \
-	$(OBJDIR)/$(CLASSDIR)/WriteWindow.o \
-	$(OBJDIR)/$(CLASSDIR)/WriteWindowToolbar.o \
-	$(OBJDIR)/$(CLASSDIR)/QuickSearchBar.o \
-	$(OBJDIR)/$(CLASSDIR)/ImageArea.o \
-	$(OBJDIR)/$(CLASSDIR)/TransferMailList.o \
-	$(OBJDIR)/$(CLASSDIR)/UpdateNotifyWindow.o \
-	$(OBJDIR)/$(CLASSDIR)/ThemeListGroup.o \
-	$(OBJDIR)/$(CLASSDIR)/YAM.o
+  Classes.o \
+	Recipientstring.o \
+	Searchwindow.o \
+	SearchControlGroup.o \
+	AddrBookEntryList.o \
+	AddrBookListtree.o \
+	AddrBookToolbar.o \
+	Addrmatchlist.o \
+	Aboutwindow.o \
+	AttachmentGroup.o \
+	AttachmentImage.o \
+	ConfigPageList.o \
+	ReadMailGroup.o \
+	ReadWindow.o \
+	ReadWindowToolbar.o \
+	ReadWindowStatusBar.o \
+	Splashwindow.o \
+	ShutdownWindow.o \
+	MailTextEdit.o \
+	MainFolderListtree.o \
+	MainMailList.o \
+	MainMailListGroup.o \
+	MainWindow.o \
+	MainWindowToolbar.o \
+	InfoBar.o \
+	WriteAttachmentList.o \
+	WriteWindow.o \
+	WriteWindowToolbar.o \
+	QuickSearchBar.o \
+	ImageArea.o \
+	TransferMailList.o \
+	UpdateNotifyWindow.o \
+	ThemeListGroup.o \
+	YAM.o
 
-# and the other object files
+# and the other object files where
+# YAM_global.o and YAM.o have to stay at the top
 OBJS = \
-	$(OBJDIR)/YAM_global.o \
-	$(OBJDIR)/YAM.o \
-	$(CLASSES) \
-	$(OBJDIR)/YAM_AB.o \
-	$(OBJDIR)/YAM_CO.o \
-	$(OBJDIR)/YAM_COg.o \
-	$(OBJDIR)/YAM_COs.o \
-	$(OBJDIR)/YAM_DI.o \
-	$(OBJDIR)/YAM_EA.o \
-	$(OBJDIR)/YAM_ER.o \
-	$(OBJDIR)/YAM_FI.o \
-	$(OBJDIR)/YAM_FO.o \
-	$(OBJDIR)/YAM_MA.o \
-	$(OBJDIR)/YAM_MAf.o \
-	$(OBJDIR)/YAM_RE.o \
-	$(OBJDIR)/YAM_rexx.o \
-	$(OBJDIR)/YAM_rexx_rxcl.o \
-	$(OBJDIR)/YAM_rexx_rxif.o \
-	$(OBJDIR)/YAM_TR.o \
-	$(OBJDIR)/YAM_US.o \
-	$(OBJDIR)/YAM_UT.o \
-	$(OBJDIR)/YAM_WR.o \
-	$(OBJDIR)/ImageCache.o \
-	$(OBJDIR)/UpdateCheck.o \
-	$(OBJDIR)/HTML2Mail.o \
-	$(OBJDIR)/Themes.o \
-	$(OBJDIR)/Threads.o \
-	$(OBJDIR)/Timer.o \
-	$(OBJDIR)/HashTable.o \
-	$(OBJDIR)/BayesFilter.o \
-	$(OBJDIR)/Locale.o \
-	$(OBJDIR)/FileInfo.o \
-	$(OBJDIR)/MailList.o \
-	$(OBJDIR)/Mime.o \
-	$(OBJDIR)/FolderList.o \
-	$(OBJDIR)/ParseEmail.o \
-	$(OBJDIR)/extrasrc.o \
-	$(OBJDIR)/Debug.o
+	YAM_global.o \
+	YAM.o \
+  $(addprefix $(CLASSDIR)/,$(CLASSES)) \
+	YAM_AB.o \
+	YAM_CO.o \
+	YAM_COg.o \
+	YAM_COs.o \
+	YAM_DI.o \
+	YAM_EA.o \
+	YAM_ER.o \
+	YAM_FI.o \
+	YAM_FO.o \
+	YAM_MA.o \
+	YAM_MAf.o \
+	YAM_RE.o \
+	YAM_rexx.o \
+	YAM_rexx_rxcl.o \
+	YAM_rexx_rxif.o \
+	YAM_TR.o \
+	YAM_US.o \
+	YAM_UT.o \
+	YAM_WR.o \
+	ImageCache.o \
+	UpdateCheck.o \
+	HTML2Mail.o \
+	Themes.o \
+	Threads.o \
+	Timer.o \
+	HashTable.o \
+	BayesFilter.o \
+	Locale.o \
+	FileInfo.o \
+	MailList.o \
+	Mime.o \
+	FolderList.o \
+	ParseEmail.o \
+	extrasrc.o \
+	Debug.o
 
 # available catalog translations
 CATALOGS = \
@@ -384,7 +365,8 @@ CATALOGS = \
   $(LOCALE)/swedish.catalog \
   $(LOCALE)/turkish.catalog
 
-#
+# main target
+.PHONY: all
 all: $(OBJDIR) classinfo Locale.c ParseEmail.c HTML2Mail.c $(TARGET)
 
 # make the object directories
@@ -393,71 +375,79 @@ $(OBJDIR):
 	@$(MKDIR) $(OBJDIR)
 	@$(MKDIR) $(OBJDIR)/$(CLASSDIR)
 
-#
-
-$(OBJDIR)/%.o: %.c
+# for compiling single .c files
+%.o: %.c
 	@echo "  CC $<"
-	@$(CC) $(CFLAGS) $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $(OBJDIR)/$@
 
+# for making .c file out of .l lexer files
 %.c: %.l
 	@echo "  LX $<"
 	@$(FLEX) -Cfe -i -o$@ $<
 
-#
-
+# for linking the target
 $(TARGET): $(OBJS)
 	@echo "  LD $@.debug"
-	@$(CC) $(LDFLAGS) -o $@.debug $(OBJS) $(LDLIBS) -Wl,-Map,$@.map
+	@$(CC) $(LDFLAGS) -o $@.debug $(addprefix $(OBJDIR)/,$(OBJS)) $(LDLIBS) -Wl,--cref,-M,-Map=$@.map
 	@echo "  LD $@"
-	@$(STRIP) --preserve-dates --remove-section=".comment" --remove-section=".sdata2" --strip-debug -o $@ $@.debug
-	@$(CHMOD) a+x $@
+	@$(STRIP) --preserve-dates -R.comment -R.sdata2 -S -o $@ $@.debug
+	@$(CHMOD) $@
 
+# for creating a .dump file
+.PHONY: dump
 dump:
 	-$(OBJDUMP) --section-headers --all-headers --reloc --disassemble-all $(TARGET).debug > $(TARGET).dump
 
+# cleanup target
+.PHONY: clean
 clean:
-	-$(RM) $(TARGET) $(TARGET).debug $(TARGET).map $(OBJS)
+	-$(RM) $(TARGET) $(TARGET).debug $(TARGET).map $(addprefix $(OBJDIR)/,$(OBJS))
 
+# clean all including .obj directory
+.PHONY: cleanall
 cleanall: clean
 	-$(RM) Locale.? ParseEmail.c HTML2Mail.c $(CLASSDIR)/Classes.? $(CLASSDIR)/*_cl.h
 	-$(RM) $(LOCALE)/*.catalog
 	-$(RMDIR) $(OBJDIR)
 
+# clean all stuff, inclduing our autotools
+.PHONY: distclean
 distclean: cleanall
 	@$(MAKE) -C$(GENCLASSES) clean
 
 ## SPECIAL COMPILE RULES ##############
 
-$(OBJDIR)/YAM_global.o: YAM_global.c
+YAM_global.o: YAM_global.c
 	@echo "  CC $<"
-	@$(CC) $(YAMVERID) $(CFLAGS) $< -o $@
+	@$(CC) $(YAMVERID) $(CFLAGS) -c $< -o $(OBJDIR)/$@
 
-$(OBJDIR)/YAM.o: YAM.c
+YAM.o: YAM.c
 	@echo "  CC $<"
-	@$(CC) $(DEVFLAGS) $(CFLAGS) $< -o $@
+	@$(CC) $(DEVFLAGS) $(CFLAGS) -c $< -o $(OBJDIR)/$@
 
-$(OBJDIR)/ParseEmail.o: ParseEmail.c
+ParseEmail.o: ParseEmail.c
 	@echo "  CC $<"
-	@$(CC) $(CFLAGS) -Wno-sign-compare $< -o $@
+	@$(CC) $(CFLAGS) -Wno-sign-compare -c $< -o $(OBJDIR)/$@
 
-$(OBJDIR)/HTML2Mail.o: HTML2Mail.c
+HTML2Mail.o: HTML2Mail.c
 	@echo "  CC $<"
-	@$(CC) $(CFLAGS) -Wno-sign-compare $< -o $@
+	@$(CC) $(CFLAGS) -Wno-sign-compare -c $< -o $(OBJDIR)/$@
 
 ## DEPENDENCY GENERATION ##############
 
-Makefile.depend: ;
-	@echo "WARNING: Makefile.depend missing. Please run 'make depend'"
+Makefile.dep: ;
+	@echo "WARNING: Makefile.dep missing. Please run 'make depend'"
 
+.PHONY: depend
 depend: classinfo Locale.c ParseEmail.c HTML2Mail.c
-	@echo "  MK Makefile.depend"
-	@echo "# AUTOGENERATED! DO NOT EDIT!!!" >Makefile.depend
-	@$(CC) $(CFLAGS) $(OBJS:$(OBJDIR)/%.o=./%.c) -MM >>Makefile.depend
-	@$(SED) -i 's,^\(.*\)\.o:,$$\(OBJDIR\)/\1.o:,g' Makefile.depend
-	@echo "# AUTOGENERATED! DO NOT EDIT!!!" >>Makefile.depend
+	@echo "  MK Makefile.dep"
+	@echo "# AUTOGENERATED! DO NOT EDIT!!!" >Makefile.dep
+	@$(CC) -MM $(CFLAGS) $(patsubst %.o,%.c, $(OBJS)) >>Makefile.dep
+	@echo "# AUTOGENERATED! DO NOT EDIT!!!" >>Makefile.dep
 
 ## GENCLASSES TOOL ####################
 
+.PHONY: classinfo
 classinfo: $(CLASSDIR)/Classes.h
 
 $(CLASSDIR)/Classes.h: $(GENCLASSES)/GenClasses $(CLASSDIR)/*.c
@@ -484,9 +474,9 @@ catalogs: $(CATALOGS)
 
 Locale.h: Locale.c
 Locale.c: ../locale/YAM.cd Locale_h.sd Locale_c.sd
-	@echo "  LC $@"
+	@echo "  FC $@"
 	@$(FC) $(LOCALE)/YAM.cd Locale.h=Locale_h.sd Locale.c=Locale_c.sd
 
 ## DEPENDENCY INCLUDE #################
 
--include Makefile.depend
+-include Makefile.dep
