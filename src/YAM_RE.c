@@ -4227,7 +4227,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 
   // check if we also have to close an existing read window
   // or not.
-  if(fullCleanup && rmData->readWindow)
+  if(fullCleanup == TRUE && rmData->readWindow != NULL)
   {
     D(DBF_MAIL, "make sure the window is closed");
 
@@ -4236,7 +4236,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 
     // for other windows we have to save the GUI object weights
     // aswell
-    if(rmData->readMailGroup)
+    if(rmData->readMailGroup != NULL)
     {
       G->Weights[2] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_HGVertWeight);
       G->Weights[3] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_TGVertWeight);
@@ -4244,39 +4244,50 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   }
 
   // cleanup the parts and their temporarly files/memory areas
-  for(part = rmData->firstPart; part; part = next)
+  for(part = rmData->firstPart; part != NULL; part = next)
   {
     next = part->Next;
 
-    if(*part->Filename)
+    D(DBF_MAIL, "freeing mail part %08lx, next %08lx", part, next);
+
+    if(part->Filename[0] != '\0')
     {
       if(DeleteFile(part->Filename) == 0)
         AddZombieFile(part->Filename);
     }
 
-    if(part->headerList)
+    if(part->headerList != NULL)
     {
       FreeHeaderList(part->headerList);
       free(part->headerList);
-      part->headerList = NULL;
     }
 
-    free(part->ContentType);
-    part->ContentType = NULL;
+    if(part->ContentType != NULL)
+      free(part->ContentType);
 
-    free(part->ContentDisposition);
-    part->ContentDisposition = NULL;
+    if(part->ContentDisposition != NULL)
+      free(part->ContentDisposition);
 
     // free all the CPar structue members
-    if(part->CParName)      free(part->CParName);
-    if(part->CParFileName)  free(part->CParFileName);
-    if(part->CParBndr)      free(part->CParBndr);
-    if(part->CParProt)      free(part->CParProt);
-    if(part->CParDesc)      free(part->CParDesc);
-    if(part->CParRType)     free(part->CParRType);
-    if(part->CParCSet)      free(part->CParCSet);
+    if(part->CParName != NULL)
+      free(part->CParName);
+    if(part->CParFileName != NULL)
+      free(part->CParFileName);
+    if(part->CParBndr != NULL)
+      free(part->CParBndr);
+    if(part->CParProt != NULL)
+      free(part->CParProt);
+    if(part->CParDesc != NULL)
+      free(part->CParDesc);
+    if(part->CParRType != NULL)
+      free(part->CParRType);
+    if(part->CParCSet != NULL)
+      free(part->CParCSet);
 
-    D(DBF_MAIL, "freeing mailpart: %08lx", part);
+    // just a paranoia cleanup
+    memset(part, 0, sizeof(*part));
+
+    // finally free that part structure itself
     free(part);
   }
   rmData->firstPart = NULL;
@@ -4314,12 +4325,12 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   }
 
   // if the caller wants to cleanup everything tidy we do it here or exit immediatly
-  if(fullCleanup)
+  if(fullCleanup == TRUE)
   {
     D(DBF_MAIL, "doing a full cleanup");
 
     // close any opened temporary file
-    if(rmData->tempFile)
+    if(rmData->tempFile != NULL)
     {
       D(DBF_MAIL, "closing tempfile");
       CloseTempFile(rmData->tempFile);

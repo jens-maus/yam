@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-16  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: added some more paranoia checks when cleaning up the read mail
+    stuff.
+
 2008-03-16  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: YAM was always applying the RFC2047 header encoding routines
