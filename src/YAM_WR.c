@@ -523,7 +523,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
   {
     // check for any non-ascii character or
     // if the string would be
-    if(!isascii(*c) || iscntrl(*c) || *c == '"')
+    if(!isascii(*c) || iscntrl(*c))
     {
       doEncoding = TRUE;
       break;

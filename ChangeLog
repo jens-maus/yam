@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-16  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: YAM was always applying the RFC2047 header encoding routines
+    in case a header field contained quotation '"' characters. Since we
+    have new encoding routines this is not required anymore and therefore
+    better conforms to the respective RFC.
+
 2008-03-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile, Makefile.dep: reworked the Makefile to not require the 'sed'
