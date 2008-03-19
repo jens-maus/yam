@@ -71,13 +71,13 @@ struct AB_GUIData
 
 struct AB_ClassData  /* address book window */
 {
-   struct AB_GUIData    GUI;
-   int                  SortBy;
-   int                  WrWin;
-   enum AddressbookMode Mode;
-   BOOL                 Modified;
-   char                 WTitle[SIZE_DEFAULT];
-   Object               *parentStringGadget; // in case ABM_CONFIG is used.
+  struct AB_GUIData    GUI;
+  int                  SortBy;
+  int                  WrWin;
+  enum AddressbookMode Mode;
+  BOOL                 Modified;
+  char                 WTitle[SIZE_DEFAULT];
+  Object               *parentStringGadget; // in case ABM_CONFIG is used.
 };
 
 extern struct Hook AB_DeleteHook;

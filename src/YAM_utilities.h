@@ -80,14 +80,14 @@ enum SizeFormat { SF_DEFAULT=0, // format sizes in old-style   1,234,567 (bytes)
 
 struct Person
 {
-   char Address[SIZE_ADDRESS];
-   char RealName[SIZE_REALNAME];
+  char Address[SIZE_ADDRESS];
+  char RealName[SIZE_REALNAME];
 };
 
 struct TempFile
 {
-   FILE *FP;
-   char  Filename[SIZE_PATH+SIZE_MFILE];
+  FILE *FP;
+  char  Filename[SIZE_PATH+SIZE_MFILE];
 };
 
 struct NewToolbarEntry

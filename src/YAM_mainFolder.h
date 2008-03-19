@@ -35,49 +35,49 @@ struct Folder;
 
 struct Mail
 {
-   struct Mail *    Reference;  // pointer to the mail referencing to us
-   struct Folder *  Folder;     // pointer to the folder this mail belongs to
-   long             cMsgID;     // compressed message ID
-   long             cIRTMsgID;  // compressed in-return-to message ID
-   long             Size;       // the message size in bytes
-   unsigned int     mflags;     // internal mail flags (no status flags)
-   unsigned int     sflags;     // mail status flags (read/new etc.)
-   int              position;   // current position of the mail (various uses)
-   int              tzone;      // the timezone which this mail is based on
-   struct DateStamp Date;       // the datestamp of the mail (UTC)
-   struct TimeVal   transDate;  // the date/time when this messages arrived/was sent. (UTC)
-   struct Person    From;       // The main sender (normally first entry in "From:")
-   struct Person    To;         // The main mail recipient (first entry in "To:")
-   struct Person    ReplyTo;    // The main Reply-To recipients (first entry in "Reply-To:")
+  struct Mail *    Reference;  // pointer to the mail referencing to us
+  struct Folder *  Folder;     // pointer to the folder this mail belongs to
+  long             cMsgID;     // compressed message ID
+  long             cIRTMsgID;  // compressed in-return-to message ID
+  long             Size;       // the message size in bytes
+  unsigned int     mflags;     // internal mail flags (no status flags)
+  unsigned int     sflags;     // mail status flags (read/new etc.)
+  int              position;   // current position of the mail (various uses)
+  int              tzone;      // the timezone which this mail is based on
+  struct DateStamp Date;       // the datestamp of the mail (UTC)
+  struct TimeVal   transDate;  // the date/time when this messages arrived/was sent. (UTC)
+  struct Person    From;       // The main sender (normally first entry in "From:")
+  struct Person    To;         // The main mail recipient (first entry in "To:")
+  struct Person    ReplyTo;    // The main Reply-To recipients (first entry in "Reply-To:")
 
-   char             Subject[SIZE_SUBJECT];
-   char             MailFile[SIZE_MFILE];
+  char             Subject[SIZE_SUBJECT];
+  char             MailFile[SIZE_MFILE];
 };
 
 struct ExtendedMail
 {
-   struct Mail      Mail;
-   struct Person *  SFrom;        // ptr to an array of additional "From:" senders (excluding the main From:)
-   struct Person *  STo;          // ptr to an array of additional "To:" recipients (excluding the main To:)
-   struct Person *  SReplyTo;     // ptr to an array of additional "Reply-To:" recipients (excluding the main Reply-To:)
-   struct Person *  CC;           // ptr to an array of all "CC:" recipients
-   struct Person *  BCC;          // ptr to an array of all "BCC:" recipients
-   char *           extraHeaders; // YAM internal headers (X-YAM-...)
-   char *           SenderInfo;
-   int              NoSFrom;      // number of additional senders in SFrom (minus one)
-   int              NoSTo;        // number of additional recipients in STo (minus one)
-   int              NoSReplyTo;   // number of additional recipients in SReplyTo (minus one)
-   int              NoCC;         // number of recipients in CC
-   int              NoBCC;        // number of recipients in BCC
-   int              Signature;
-   int              Security;
-   BOOL             DelSend;
-   struct Person    ReturnPath;   // the "Return-Path" address of the mail, if present
-   struct Person    ReceiptTo;    // the recipient in for a requested MDN
-   struct Person    OriginalRcpt; // the original recipient for a requested MDN
+  struct Mail      Mail;
+  struct Person *  SFrom;        // ptr to an array of additional "From:" senders (excluding the main From:)
+  struct Person *  STo;          // ptr to an array of additional "To:" recipients (excluding the main To:)
+  struct Person *  SReplyTo;     // ptr to an array of additional "Reply-To:" recipients (excluding the main Reply-To:)
+  struct Person *  CC;           // ptr to an array of all "CC:" recipients
+  struct Person *  BCC;          // ptr to an array of all "BCC:" recipients
+  char *           extraHeaders; // YAM internal headers (X-YAM-...)
+  char *           SenderInfo;
+  int              NoSFrom;      // number of additional senders in SFrom (minus one)
+  int              NoSTo;        // number of additional recipients in STo (minus one)
+  int              NoSReplyTo;   // number of additional recipients in SReplyTo (minus one)
+  int              NoCC;         // number of recipients in CC
+  int              NoBCC;        // number of recipients in BCC
+  int              Signature;
+  int              Security;
+  BOOL             DelSend;
+  struct Person    ReturnPath;   // the "Return-Path" address of the mail, if present
+  struct Person    ReceiptTo;    // the recipient in for a requested MDN
+  struct Person    OriginalRcpt; // the original recipient for a requested MDN
 
-   char             MsgID[SIZE_MSGID];
-   char             IRTMsgID[SIZE_MSGID];
+  char             MsgID[SIZE_MSGID];
+  char             IRTMsgID[SIZE_MSGID];
 };
 
 extern struct Hook MA_ChangeFolderHook;
