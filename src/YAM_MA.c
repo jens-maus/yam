@@ -4553,11 +4553,11 @@ BOOL MA_StartMacro(enum Macro num, char *param)
     // now we check if the script command contains
     // the '%p' placeholder and if so we go and replace
     // it with our parameter
-    while((p = strstr(s, "%p")))
+    while((p = strstr(s, "%p")) != NULL)
     {
       strlcat(command, s, MIN(p-s+1, (LONG)sizeof(command)));
 
-      if(param)
+      if(param != NULL)
         strlcat(command, param, sizeof(command));
 
       s = p+2;
@@ -4568,7 +4568,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
 
     // check if the script in question is an amigados
     // or arexx script
-    if(C->RX[num].IsAmigaDOS)
+    if(C->RX[num].IsAmigaDOS == TRUE)
     {
       // now execute the command
       BusyText(tr(MSG_MA_EXECUTINGCMD), "");
@@ -4577,7 +4577,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
 
       result = TRUE;
     }
-    else if(G->RexxHost) // make sure that rexx it available
+    else if(G->RexxHost != NULL) // make sure that rexx it available
     {
       BPTR fh;
 
@@ -4593,11 +4593,11 @@ BOOL MA_StartMacro(enum Macro num, char *param)
         struct RexxMsg *sentrm;
 
         // execute the Arexx command
-        if((sentrm = SendRexxCommand(G->RexxHost, command, fh)))
+        if((sentrm = SendRexxCommand(G->RexxHost, command, fh)) != NULL)
         {
           // if the user wants to wait for the termination
           // of the script, we do so...
-          if(C->RX[num].WaitTerm)
+          if(C->RX[num].WaitTerm == TRUE)
           {
             struct RexxMsg *rm;
             BOOL waiting = TRUE;
@@ -4607,7 +4607,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
             {
               WaitPort(G->RexxHost->port);
 
-              while((rm = (struct RexxMsg *)GetMsg(G->RexxHost->port)))
+              while((rm = (struct RexxMsg *)GetMsg(G->RexxHost->port)) != NULL)
               {
                 if((rm->rm_Action & RXCODEMASK) != RXCOMM)
                   ReplyMsg((struct Message *)rm);
@@ -4615,9 +4615,9 @@ BOOL MA_StartMacro(enum Macro num, char *param)
                 {
                   struct RexxMsg *org = (struct RexxMsg *)rm->rm_Args[15];
 
-                  if(org)
+                  if(org != NULL)
                   {
-                    if(rm->rm_Result1)
+                    if(rm->rm_Result1 != 0)
                       ReplyRexxCommand(org, 20, ERROR_NOT_IMPLEMENTED, NULL);
                     else
                       ReplyRexxCommand(org, 0, 0, (char *)rm->rm_Result2);
@@ -4629,7 +4629,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
                   FreeRexxCommand(rm);
                   --G->RexxHost->replies;
                 }
-                else if(rm->rm_Args[0])
+                else if(rm->rm_Args[0] != NULL)
                   DoRXCommand(G->RexxHost, rm);
                 else
                   ReplyMsg((struct Message *)rm);
@@ -4667,7 +4667,7 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
 
   if(script >= 0)
     MA_StartMacro(MACRO_MEN0+script, NULL);
-  else if(G->RexxHost)
+  else if(G->RexxHost != NULL)
   {
     struct FileReqCache *frc;
     char scname[SIZE_COMMAND];
