@@ -5,7 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2008-03-196  Thore Böckelmann <tboeckel@gmx.de>
+2008-03-20  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Recipientstring.c: if Enter/Return is pressed while the matchlist was
+    visible the advance to the next object in the window will be skipped,
+    because pressing Enter/Return usually was meant to add the selected
+    recipient in this situation.
+
+2008-03-19  Thore Böckelmann <tboeckel@gmx.de>
 
   * misc headers: cleaned up some indentations.
   * YAM_MA.c: some minor code cleanups.

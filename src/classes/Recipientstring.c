@@ -538,13 +538,19 @@ OVERLOAD(MUIM_HandleEvent)
             // only if we successfully resolved the string we move on to the next object.
             if(DoMethod(obj, MUIM_Recipientstring_Resolve, hasFlag(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE))
             {
+              BOOL matchListWasOpen = xget(data->Matchwindow, MUIA_Window_Open);
+
               set(data->Matchwindow, MUIA_Window_Open, FALSE);
               set(_win(obj), MUIA_Window_ActiveObject, obj);
 
               // If the MUIA_String_AdvanceOnCR is TRUE we have to set the next object active in the window
-              // we have to check this within our instance data because Betterstring.mcc is buggy and don`t
+              // we have to check this within our instance data because Betterstring.mcc is buggy and doesn't
               // return MUIA_String_AdvanceOnCR within a get().
-              if(data->AdvanceOnCR == TRUE)
+              // We skip the advance to the next object if the matchlist was open, because
+              // if the user pressed Enter/Return with an open matchlist (s)he usually just
+              // wanted to add the selected recipient instead of advancing to the subject
+              // line.
+              if(data->AdvanceOnCR == TRUE && matchListWasOpen == FALSE)
                 set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
             }
             else
