@@ -351,8 +351,10 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
 
   if(dest != NULL)
   {
+    char address[SIZE_LARGE];
+
     // let us set a default file comment
-    SetComment(dest, AB_BuildAddressStringPerson(&mail->From));
+    SetComment(dest, BuildAddress(address, sizeof(address), mail->From.Address, mail->From.RealName));
 
     // set the protection bits correctly. Here we check if this file
     // is an identified amiga executable (MT_AP_AEXE) or if it of mime
@@ -3304,55 +3306,81 @@ void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
 //  Adds sender to the address book
 struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
 {
-   struct ABEntry ab_new;
-   char buf[SIZE_LARGE];
-   BOOL doit = FALSE;
+  struct ABEntry *result = NULL;
+  BOOL doit = FALSE;
 
-   switch (C->AddToAddrbook)
-   {
-      case 1: if (!templ->Type) break;
-      case 2: snprintf(buf, sizeof(buf), tr(MSG_RE_AddSender), AB_BuildAddressString(templ->Address, templ->RealName));
-              doit = MUI_Request(G->App, win, 0, NULL, tr(MSG_YesNoReq), buf);
-              break;
-      case 3: if (!templ->Type) break;
-      case 4: doit = TRUE;
-   }
+  ENTER();
 
-   if (doit)
-   {
-      struct MUI_NListtree_TreeNode *tn = NULL;
+  switch(C->AddToAddrbook)
+  {
+    case 1:
+    {
+      if(!templ->Type)
+        break;
+    }
+    // continue
 
-      // first we check if the group for new entries already exists and if so
-      // we add this address to this special group.
-      if(C->NewAddrGroup[0])
+    case 2:
+    {
+      char buf[SIZE_LARGE];
+      char address[SIZE_LARGE];
+      snprintf(buf, sizeof(buf), tr(MSG_RE_AddSender), BuildAddress(address, sizeof(address), templ->Address, templ->RealName));
+      doit = MUI_Request(G->App, win, 0, NULL, tr(MSG_YesNoReq), buf);
+    }
+    break;
+
+    case 3:
+    {
+      if(!templ->Type)
+        break;
+    }
+    // continue
+
+    case 4:
+      doit = TRUE;
+    break;
+  }
+
+  if(doit)
+  {
+    struct ABEntry ab_new;
+    struct MUI_NListtree_TreeNode *tn = NULL;
+
+    // first we check if the group for new entries already exists and if so
+    // we add this address to this special group.
+    if(C->NewAddrGroup[0])
+    {
+      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, C->NewAddrGroup, MUIF_NONE);
+
+      // only if the group doesn`t exist yet
+      if(tn == NULL || ((struct ABEntry *)tn->tn_User)->Type != AET_GROUP)
       {
-         tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, C->NewAddrGroup, MUIF_NONE);
-
-         // only if the group doesn`t exist yet
-         if(!tn || ((struct ABEntry *)tn->tn_User)->Type != AET_GROUP)
-         {
-            memset(&ab_new, 0, sizeof(struct ABEntry));
-            strlcpy(ab_new.Alias, C->NewAddrGroup, sizeof(ab_new.Alias));
-            strlcpy(ab_new.Comment, tr(MSG_RE_NewGroupTitle), sizeof(ab_new.Comment));
-            ab_new.Type = AET_GROUP;
-            tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, TNF_LIST);
-         }
+        memset(&ab_new, 0, sizeof(struct ABEntry));
+        strlcpy(ab_new.Alias, C->NewAddrGroup, sizeof(ab_new.Alias));
+        strlcpy(ab_new.Comment, tr(MSG_RE_NewGroupTitle), sizeof(ab_new.Comment));
+        ab_new.Type = AET_GROUP;
+        tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, TNF_LIST);
       }
+    }
 
-      // then lets add the entry to the group that was perhaps
-      // created previously.
-      memset(&ab_new, 0, sizeof(struct ABEntry));
-      ab_new.Type = AET_USER;
-      RE_UpdateSenderInfo(&ab_new, templ);
-      EA_SetDefaultAlias(&ab_new);
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, tn ? tn : MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, MUIF_NONE);
-      if (tn)
-      {
-         CallHookPkt(&AB_SaveABookHook, 0, 0);
-         return tn->tn_User;
-      }
-   }
-   return NULL;
+    // then lets add the entry to the group that was perhaps
+    // created previously.
+    memset(&ab_new, 0, sizeof(struct ABEntry));
+    ab_new.Type = AET_USER;
+    RE_UpdateSenderInfo(&ab_new, templ);
+    EA_SetDefaultAlias(&ab_new);
+
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, tn ? tn : MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, MUIF_NONE);
+    if(tn != NULL)
+    {
+      CallHookPkt(&AB_SaveABookHook, 0, 0);
+
+      result = tn->tn_User;
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 ///
 /// RE_ClickedOnMessage
@@ -3421,7 +3449,14 @@ void RE_ClickedOnMessage(char *address)
         {
           struct WR_GUIData *gui = &G->WR[win]->GUI;
 
-          setstring(gui->ST_TO, hits ? AB_BuildAddressString(address, ab->RealName) : address);
+          if(hits > 0)
+          {
+            char addrStr[SIZE_LARGE];
+            setstring(gui->ST_TO, BuildAddress(addrStr, sizeof(addrStr), address, ab->RealName));
+          }
+          else
+            setstring(gui->ST_TO, address);
+
           if(subject != NULL)
             setstring(gui->ST_SUBJECT, subject);
           if(body != NULL)
@@ -3486,7 +3521,7 @@ static void RE_SendMDN(const enum MDNMode mode,
     char buf[SIZE_LINE];
     char disp[SIZE_DEFAULT];
     char date[64];
-    char *rcpt = AB_BuildAddressStringPerson(&mail->To);
+    char address[SIZE_LARGE];
     struct WritePart *p2;
     struct TempFile *tf2;
 
@@ -3504,14 +3539,14 @@ static void RE_SendMDN(const enum MDNMode mode,
       case MDN_MODE_DISPLAY:
       {
         strlcat(disp, "displayed", sizeof(disp));
-        fprintf(tf1->FP, MDNMessage[0], date, rcpt, mail->Subject);
+        fprintf(tf1->FP, MDNMessage[0], date, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName), mail->Subject);
       }
       break;
 
       case MDN_MODE_DELETE:
       {
         strlcat(disp, "deleted", sizeof(disp));
-        fprintf(tf1->FP, MDNMessage[1], date, rcpt, mail->Subject, autoAction ? "automatically" : "in response to a user command");
+        fprintf(tf1->FP, MDNMessage[1], date, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName), mail->Subject, autoAction ? "automatically" : "in response to a user command");
       }
       break;
     }
@@ -3540,10 +3575,11 @@ static void RE_SendMDN(const enum MDNMode mode,
         EmitHeader(tf2->FP, "Reporting-UA", buf);
         if(email->OriginalRcpt.Address[0] != '\0')
         {
-          snprintf(buf, sizeof(buf), "rfc822;%s", AB_BuildAddressStringPerson(&email->OriginalRcpt));
+          snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddress(address, sizeof(address), email->OriginalRcpt.Address, email->OriginalRcpt.RealName));
           EmitHeader(tf2->FP, "Original-Recipient", buf);
         }
-        snprintf(buf, sizeof(buf), "rfc822;%s", AB_BuildAddressString(C->EmailAddress, C->RealName));
+
+        snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
         EmitHeader(tf2->FP, "Final-Recipient", buf);
         EmitHeader(tf2->FP, "Original-Message-ID", email->MsgID);
         EmitHeader(tf2->FP, "Disposition", disp);
@@ -3594,7 +3630,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
           // finally, we compose the MDN mail
           memset(&comp, 0, sizeof(struct Compose));
-          comp.MailTo = StrBufCpy(comp.MailTo, AB_BuildAddressStringPerson(recipient));
+          comp.MailTo = StrBufCpy(comp.MailTo, BuildAddress(address, sizeof(address), recipient->Address, recipient->RealName));
           comp.Subject = buf;
           comp.GenerateMDN = TRUE;
           comp.FirstPart = p1;

@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, YAM_AB.c: reworked the BuildAddress#? functions to better comply
+    to the rules defined in RFC2822. This includes a proper quotation according
+    to the 'specials' char list, excluding the '.' character. In addition,
+    " and \ will be properly escaped if it exists in a realname string right
+    before creating the address string. Last, but not least, the BuildAddress()
+    function was put into YAM_UT right beside the ExtractAddress() function
+    which in fact is the reverse function of it. All in all this should fix
+    certain issues which was caused by not properly quoting/escaping certain
+    chars in a realname.
+
 2008-03-20  Thore Böckelmann <tboeckel@gmx.de>
 
   * Recipientstring.c: after resolving the addresses upon pressing Enter or

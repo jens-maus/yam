@@ -1189,9 +1189,10 @@ static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
     {
       if(*buf == '\n' && !inbody)
       {
+        char address[SIZE_LARGE];
         inbody = TRUE;
         EmitRcptHeader(fh, "To", comp->MailTo);
-        EmitHeader(fh, "Resent-From", AB_BuildAddressString(C->EmailAddress, C->RealName));
+        EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
         EmitHeader(fh, "Resent-Date", GetDateTime());
       }
 
@@ -1430,11 +1431,13 @@ static BOOL SetDefaultSecurity(struct Compose *comp)
               currsec = SEC_NONE;
             else
             {
+              char address[SIZE_LARGE];
+
               // warn the user about this exeptional situation
               if(MUI_Request(G->App, NULL, 0, tr(MSG_WR_INVALIDSECURITY_TITLE),
                                               tr(MSG_WR_INVALIDSECURITY_GADS),
                                               tr(MSG_WR_INVALIDSECURITY),
-                                              AB_BuildAddressStringABEntry(ab)) != 0)
+                                              BuildAddress(address, sizeof(address), ab->Address, ab->RealName)) != 0)
               {
                 currsec = SEC_NONE;
               }
@@ -1712,7 +1715,9 @@ BOOL WriteOutMessage(struct Compose *comp)
   struct TempFile *tf=NULL;
   FILE *fh = comp->FH;
   struct WritePart *firstpart = comp->FirstPart;
-  char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
+  char boundary[SIZE_DEFAULT];
+  char options[SIZE_DEFAULT];
+  char *rcptto;
 
   ENTER();
 
@@ -1802,12 +1807,21 @@ BOOL WriteOutMessage(struct Compose *comp)
       comp->Security = 0;
     }
   }
-  *options = 0;
+
+  *options = '\0';
   if(comp->DelSend) strlcat(options, ",delsent", sizeof(options));
   if(comp->Security) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",%s", SecCodes[comp->Security]);
   if(comp->Signature) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",sigfile%d", comp->Signature-1);
   if(*options) EmitHeader(fh, "X-YAM-Options", &options[1]);
-  EmitRcptHeader(fh, "From", comp->From ? comp->From : AB_BuildAddressString(C->EmailAddress, C->RealName));
+
+  if(comp->From != NULL)
+    EmitRcptHeader(fh, "From", comp->From);
+  else
+  {
+    char address[SIZE_LARGE];
+    EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
+  }
+
   if(comp->ReplyTo) EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
   if(comp->MailTo) EmitRcptHeader(fh, "To", comp->Security == 4 ? C->ReMailer : comp->MailTo);
   if(comp->MailCC) EmitRcptHeader(fh, "CC", comp->MailCC);
@@ -1826,7 +1840,7 @@ BOOL WriteOutMessage(struct Compose *comp)
 
 mimebody:
 
-  fputs("MIME-Version: 1.0\n", fh); // RFC 1521 requires that
+  fputs("MIME-Version: 1.0\n", fh); // RFC 2049 requires that
 
   strlcpy(boundary, NewID(FALSE), sizeof(boundary));
 
@@ -1898,6 +1912,7 @@ BOOL EditorObjectActive(const int wrwin)
 }
 
 ///
+
 /*** Buttons ***/
 /// WR_NewMail
 //  Validates write window options and generates a new message
@@ -3176,9 +3191,10 @@ int WR_Open(int winnum, BOOL bounce)
       {
         if(!bounce)
         {
+          char address[SIZE_LARGE];
           struct WR_GUIData *gui = &G->WR[winnum]->GUI;
 
-          setstring(gui->ST_FROM, AB_BuildAddressString(C->EmailAddress, C->RealName));
+          setstring(gui->ST_FROM, BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
           setstring(gui->ST_REPLYTO, C->ReplyTo);
           setstring(gui->ST_EXTHEADER, C->ExtraHeaders);
           setcheckmark(gui->CH_DELSEND, !C->SaveSent);

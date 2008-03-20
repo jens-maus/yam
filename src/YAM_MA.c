@@ -1517,36 +1517,40 @@ static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 
   if(pe != NULL)
   {
+    char address[SIZE_LARGE];
     char *ins;
     BOOL skip = FALSE;
 
     if(strchr(pe->Address,'@'))
-      ins = AB_BuildAddressStringPerson(pe);
+      ins = BuildAddress(address, sizeof(address), pe->Address, pe->RealName);
     else
     {
       char addr[SIZE_ADDRESS];
       char *p = strchr(C->EmailAddress, '@');
 
       snprintf(addr, sizeof(addr), "%s%s", pe->Address, p ? p : "");
-      ins = AB_BuildAddressString(addr, pe->RealName);
+      ins = BuildAddress(address, sizeof(address), addr, pe->RealName);
     }
 
-    // exclude the given person if it is ourself
-    if(excludeme && stricmp(pe->Address, C->EmailAddress) == 0)
-      skip = TRUE;
-
-    // if the string already contains this person then skip it
-    if(stristr(sbuf, ins))
-      skip = TRUE;
-
-    if(skip == FALSE)
+    if(ins != NULL)
     {
-      // lets prepend a ", " sequence in case sbuf
-      // is not empty
-      if(*sbuf)
-        sbuf = StrBufCat(sbuf, ", ");
+      // exclude the given person if it is ourself
+      if(excludeme && stricmp(pe->Address, C->EmailAddress) == 0)
+        skip = TRUE;
 
-      sbuf = StrBufCat(sbuf, ins);
+      // if the string already contains this person then skip it
+      if(stristr(sbuf, ins))
+        skip = TRUE;
+
+      if(skip == FALSE)
+      {
+        // lets prepend a ", " sequence in case sbuf
+        // is not empty
+        if(*sbuf)
+          sbuf = StrBufCat(sbuf, ", ");
+
+        sbuf = StrBufCat(sbuf, ins);
+      }
     }
   }
 
@@ -1685,6 +1689,7 @@ int MA_NewNew(struct Mail *mail, int flags)
 
       if(mail != NULL)
       {
+        char address[SIZE_LARGE];
         struct ExtendedMail *email;
 
         // check whether the old mail contains a ReplyTo: address
@@ -1692,45 +1697,53 @@ int MA_NewNew(struct Mail *mail, int flags)
         // To: adresses
         if(mail->ReplyTo.Address[0] != '\0')
         {
-          if(isMultiReplyToMail(mail) &&
-             (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
+          char *addr = BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName);
+
+          if(addr != NULL)
           {
-            char *sbuf;
-            int i;
-
-            // add all "ReplyTo:" recipients of the mail
-            sbuf = StrBufCpy(NULL, AB_BuildAddressStringPerson(&mail->ReplyTo));
-            for(i=0; i < email->NoSReplyTo; i++)
+            if(isMultiReplyToMail(mail) &&
+               (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
             {
-              sbuf = MA_AppendRcpt(sbuf, &email->SReplyTo[i], FALSE);
-            }
-            setstring(wr->GUI.ST_TO, sbuf);
+              int i;
+              char *sbuf;
 
-            FreeStrBuf(sbuf);
+              // add all "ReplyTo:" recipients of the mail
+              sbuf = StrBufCpy(NULL, addr);
+              for(i=0; i < email->NoSReplyTo; i++)
+                sbuf = MA_AppendRcpt(sbuf, &email->SReplyTo[i], FALSE);
+
+              setstring(wr->GUI.ST_TO, sbuf);
+
+              FreeStrBuf(sbuf);
+            }
+            else
+              setstring(wr->GUI.ST_TO, addr);
           }
-          else
-            setstring(wr->GUI.ST_TO, AB_BuildAddressStringPerson(&mail->ReplyTo));
         }
         else
         {
-          if(isMultiSenderMail(mail) &&
-            (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
+          char *addr = BuildAddress(address, sizeof(address), mail->From.Address, mail->From.RealName);
+
+          if(addr != NULL)
           {
-            char *sbuf;
-            int i;
-
-            // add all "From:" recipients of the mail
-            sbuf = StrBufCpy(NULL, AB_BuildAddressStringPerson(&mail->From));
-            for(i=0; i < email->NoSFrom; i++)
+            if(isMultiSenderMail(mail) &&
+              (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
             {
-              sbuf = MA_AppendRcpt(sbuf, &email->SFrom[i], FALSE);
-            }
-            setstring(wr->GUI.ST_TO, sbuf);
+              char *sbuf;
+              int i;
 
-            FreeStrBuf(sbuf);
+              // add all "From:" recipients of the mail
+              sbuf = StrBufCpy(NULL, addr);
+              for(i=0; i < email->NoSFrom; i++)
+                sbuf = MA_AppendRcpt(sbuf, &email->SFrom[i], FALSE);
+
+              setstring(wr->GUI.ST_TO, sbuf);
+
+              FreeStrBuf(sbuf);
+            }
+            else
+              setstring(wr->GUI.ST_TO, addr);
           }
-          else
-            setstring(wr->GUI.ST_TO, AB_BuildAddressStringPerson(&mail->From));
         }
       }
       else if(folder->MLSupport == TRUE)
@@ -1861,6 +1874,8 @@ int MA_NewEdit(struct Mail *mail, int flags)
           // write out the whole text to our temporary file.
           if(msglen == 0 || fwrite(cmsg, msglen, 1, out) == 1)
           {
+            char address[SIZE_LARGE];
+
             // free our temp text now
             free(cmsg);
 
@@ -1890,28 +1905,25 @@ int MA_NewEdit(struct Mail *mail, int flags)
               // instead.
 
               // add all From: senders
-              sbuf = StrBufCpy(sbuf, AB_BuildAddressStringPerson(&mail->From));
+              sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->From.Address, mail->From.RealName));
               for(i=0; i < email->NoSFrom; i++)
-              {
                 sbuf = MA_AppendRcpt(sbuf, &email->SFrom[i], FALSE);
-              }
+
               setstring(wr->GUI.ST_FROM, sbuf);
 
               // add all ReplyTo: recipients
-              sbuf = StrBufCpy(sbuf, AB_BuildAddressStringPerson(&mail->ReplyTo));
+              sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
               for(i=0; i < email->NoSReplyTo; i++)
-              {
                 sbuf = MA_AppendRcpt(sbuf, &email->SReplyTo[i], FALSE);
-              }
+
               setstring(wr->GUI.ST_REPLYTO, sbuf);
             }
 
             // add all "To:" recipients of the mail
-            sbuf = StrBufCpy(sbuf, AB_BuildAddressStringPerson(&mail->To));
+            sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
             for(i=0; i < email->NoSTo; i++)
-            {
               sbuf = MA_AppendRcpt(sbuf, &email->STo[i], FALSE);
-            }
+
             setstring(wr->GUI.ST_TO, sbuf);
 
             // add all "CC:" recipients of the mail
@@ -3461,11 +3473,12 @@ void MA_GetAddress(struct MailList *mlist)
 
       ForEachMailNode(mlist, mnode)
       {
+        char address[SIZE_LARGE];
         struct Mail *mail = mnode->mail;
 
         if(isSentMail == TRUE)
         {
-          DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, AB_BuildAddressStringPerson(&mail->To), MUIV_List_Insert_Bottom);
+          DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName), MUIV_List_Insert_Bottom);
 
           if(isMultiRCPTMail(mail) &&
              (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
@@ -3473,10 +3486,10 @@ void MA_GetAddress(struct MailList *mlist)
             int j;
 
             for(j=0; j < email->NoSTo; j++)
-              DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, AB_BuildAddressStringPerson(&email->STo[j]), MUIV_List_Insert_Bottom);
+              DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), email->STo[j].Address, email->STo[j].RealName), MUIV_List_Insert_Bottom);
 
             for(j=0; j < email->NoCC; j++)
-              DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, AB_BuildAddressStringPerson(&email->CC[j]), MUIV_List_Insert_Bottom);
+              DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), email->CC[j].Address, email->CC[j].RealName), MUIV_List_Insert_Bottom);
 
             MA_FreeEMailStruct(email);
           }
@@ -3487,7 +3500,7 @@ void MA_GetAddress(struct MailList *mlist)
           // or if we should add all From: addresses
           if(mail->ReplyTo.Address[0] != '\0')
           {
-            DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, AB_BuildAddressStringPerson(&mail->ReplyTo), MUIV_List_Insert_Bottom);
+            DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName), MUIV_List_Insert_Bottom);
 
             if(isMultiReplyToMail(mail) &&
                (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
@@ -3495,7 +3508,7 @@ void MA_GetAddress(struct MailList *mlist)
               int j;
 
               for(j=0; j < email->NoSReplyTo; j++)
-                DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, AB_BuildAddressStringPerson(&email->SReplyTo[j]), MUIV_List_Insert_Bottom);
+                DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), email->SReplyTo[j].Address, email->SReplyTo[j].RealName), MUIV_List_Insert_Bottom);
 
               MA_FreeEMailStruct(email);
             }
@@ -3504,7 +3517,7 @@ void MA_GetAddress(struct MailList *mlist)
           {
             // there seem to exist no ReplyTo: addresses, so lets go and
             // add all From: addresses to our addressbook.
-            DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, AB_BuildAddressStringPerson(&mail->From), MUIV_List_Insert_Bottom);
+            DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), mail->From.Address, mail->From.RealName), MUIV_List_Insert_Bottom);
 
             if(isMultiSenderMail(mail) &&
                (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
@@ -3512,7 +3525,7 @@ void MA_GetAddress(struct MailList *mlist)
               int j;
 
               for(j=0; j < email->NoSFrom; j++)
-                DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, AB_BuildAddressStringPerson(&email->SFrom[j]), MUIV_List_Insert_Bottom);
+                DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), email->SFrom[j].Address, email->SFrom[j].RealName), MUIV_List_Insert_Bottom);
 
               MA_FreeEMailStruct(email);
             }

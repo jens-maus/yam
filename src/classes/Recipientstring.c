@@ -692,13 +692,21 @@ OVERLOAD(MUIM_HandleEvent)
               // name), but not right from the start of the name
               if(abentry->MatchField == 1 && abentry->RealNameMatchPart > 0)
               {
-                // insert " >> name <address>"
-                new_address = AB_BuildAddressStringABEntry(abentry->MatchEntry);
-                DoMethod(obj, MUIM_BetterString_Insert, " >> ", pos);
-                DoMethod(obj, MUIM_BetterString_Insert, new_address, pos + 4);
+                struct ABEntry *matchEntry = abentry->MatchEntry;
 
-                xset(obj, MUIA_String_BufferPos, pos,
-                          MUIA_BetterString_SelectSize, strlen(new_address) + 4);
+                if(matchEntry != NULL)
+                {
+                  // insert " >> name <address>"
+                  char address[SIZE_LARGE];
+
+                  strlcpy(address, " >> ", sizeof(address));
+                  BuildAddress(&address[4], sizeof(address)-4, matchEntry->Address, matchEntry->RealName);
+
+                  DoMethod(obj, MUIM_BetterString_Insert, address, pos);
+
+                  xset(obj, MUIA_String_BufferPos, pos,
+                            MUIA_BetterString_SelectSize, strlen(address));
+                }
               }
               else
               {
@@ -829,8 +837,17 @@ DECLARE(Resolve) // ULONG flags
         {
           if(entry->Type == AET_USER) /* it's a normal person */
           {
-            D(DBF_GUI, "\tPlain user: %s (%s, %s)", AB_BuildAddressStringABEntry(entry), entry->RealName, entry->Address);
-            DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname == TRUE && entry->RealName[0] != '\0' ? AB_BuildAddressStringABEntry(entry) : entry->Address);
+            D(DBF_GUI, "\tPlain user: '%s' <%s>", entry->RealName, entry->Address);
+
+            if(withrealname == TRUE && entry->RealName[0] != '\0')
+            {
+              char address[SIZE_LARGE];
+
+              BuildAddress(address, sizeof(address), entry->Address, entry->RealName);
+              DoMethod(obj, MUIM_Recipientstring_AddRecipient, address);
+            }
+            else
+              DoMethod(obj, MUIM_Recipientstring_AddRecipient, entry->Address);
           }
           else if(entry->Type == AET_LIST) /* it's a list of persons */
           {
@@ -850,7 +867,12 @@ DECLARE(Resolve) // ULONG flags
                 free(members);
 
                 if(data->From != NULL && entry->RealName[0] != '\0')
-                  set(data->From, MUIA_String_Contents, AB_BuildAddressString(C->EmailAddress, entry->RealName));
+                {
+                  char address[SIZE_LARGE];
+
+                  BuildAddress(address, sizeof(address), C->EmailAddress, entry->RealName);
+                  set(data->From, MUIA_String_Contents, address);
+                }
 
                 if(data->ReplyTo != NULL && entry->Address[0] != '\0')
                   set(data->ReplyTo, MUIA_String_Contents, entry->Address);
@@ -885,8 +907,16 @@ DECLARE(Resolve) // ULONG flags
       }
       else if(withcache == TRUE && (entry = (struct ABEntry *)DoMethod(G->App, MUIM_YAM_FindEmailCacheMatch, s)) != NULL)
       {
-        D(DBF_GUI, "\tEmailCache Hit: %s (%s, %s)", AB_BuildAddressStringABEntry(entry), entry->RealName, entry->Address);
-        DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname && entry->RealName[0] ? AB_BuildAddressStringABEntry(entry) : entry->Address);
+        D(DBF_GUI, "\tEmailCache Hit: '%s' <%s>", entry->RealName, entry->Address);
+        if(withrealname == TRUE && entry->RealName[0] != '\0')
+        {
+          char address[SIZE_LARGE];
+
+          BuildAddress(address, sizeof(address), entry->Address, entry->RealName);
+          DoMethod(obj, MUIM_Recipientstring_AddRecipient, address);
+        }
+        else
+          DoMethod(obj, MUIM_Recipientstring_AddRecipient, entry->Address);
       }
       else
       {

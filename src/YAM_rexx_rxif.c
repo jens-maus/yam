@@ -1209,9 +1209,11 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, enum 
         else if(!hasStatusNew(mail))
           rd->rd.res.status = "O"; // Old status
 
-        strlcpy(rd->rd.res.from = rd->from, AB_BuildAddressStringPerson(&mail->From), sizeof(rd->from));
-        strlcpy(rd->rd.res.to = rd->to, AB_BuildAddressStringPerson(&mail->To), sizeof(rd->to));
-        strlcpy(rd->rd.res.replyto = rd->replyto, AB_BuildAddressStringPerson(mail->ReplyTo.Address[0] != '\0' ? &mail->ReplyTo : &mail->From), sizeof(rd->replyto));
+        rd->rd.res.from = BuildAddress(rd->from, sizeof(rd->from), mail->From.Address, mail->From.RealName);
+        rd->rd.res.to = BuildAddress(rd->to, sizeof(rd->to), mail->To.Address, mail->To.RealName);
+        rd->rd.res.replyto = BuildAddress(rd->replyto, sizeof(rd->replyto), mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.Address : mail->From.Address,
+                                                                            mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.RealName : mail->From.RealName);
+
         DateStamp2String(rd->rd.res.date = rd->date, sizeof(rd->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
         rd->rd.res.subject = mail->Subject;
         rd->rd.res.size = &mail->Size;
@@ -1558,10 +1560,17 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
           else if(!hasStatusNew(mail))
             rd->rd.res.value = "O"; // Old status
         }
-        else if(!strnicmp(key, "FRO", 3)) strlcpy(rd->result, AB_BuildAddressStringPerson(&mail->From), sizeof(rd->result));
-        else if(!strnicmp(key, "TO" , 2)) strlcpy(rd->result, AB_BuildAddressStringPerson(&mail->To), sizeof(rd->result));
-        else if(!strnicmp(key, "REP", 3)) strlcpy(rd->result, AB_BuildAddressStringPerson(mail->ReplyTo.Address[0] != '\0' ? &mail->ReplyTo : &mail->From), sizeof(rd->result));
-        else if(!strnicmp(key, "SUB", 3)) rd->rd.res.value = mail->Subject;
+        else if(!strnicmp(key, "FRO", 3))
+          BuildAddress(rd->result, sizeof(rd->result), mail->From.Address, mail->From.RealName);
+        else if(!strnicmp(key, "TO" , 2))
+          BuildAddress(rd->result, sizeof(rd->result), mail->To.Address, mail->To.RealName);
+        else if(!strnicmp(key, "REP", 3))
+        {
+          BuildAddress(rd->result, sizeof(rd->result), mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.Address : mail->From.Address,
+                                                       mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.RealName : mail->From.RealName);
+        }
+        else if(!strnicmp(key, "SUB", 3))
+          rd->rd.res.value = mail->Subject;
         else if(!strnicmp(key, "FIL", 3))
         {
           GetMailFile(rd->result, mail->Folder, mail);

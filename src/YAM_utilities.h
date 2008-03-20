@@ -323,6 +323,7 @@ BOOL     EditorToFile(Object *editor, char *file);
 char *   Encrypt(const char *source);
 char *   GetRealPath(char *path);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef);
+char *   BuildAddress(char *buffer, size_t buflen, const char *address, const char *name);
 void     ExtractAddress(const char *line, struct Person *pe);
 char *   FileToBuffer(const char *file);
 BOOL     FileToEditor(char *file, Object *editor, BOOL changed);

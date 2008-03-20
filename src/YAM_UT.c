@@ -2840,6 +2840,95 @@ char *GetMailFile(char *string, const struct Folder *folder, const struct Mail *
   return result;
 }
 ///
+/// BuildAddress
+// Creates "Real Name <E-mail>" string from a given address and name
+// according to the rules defined in RFC2822, which in fact takes care
+// of quoatation of the real name as well as escaping some special characters
+char *BuildAddress(char *buffer, size_t buflen, const char *address, const char *name)
+{
+  ENTER();
+
+  // check that buffer is != NULL
+  if(buffer != NULL)
+  {
+    // check if a real name is given at all
+    // or not
+    if(name != NULL && name[0] != '\0')
+    {
+      // search for some chars which, when present,
+      // require us to put the real name into quotations
+      // see RFC2822 (section 3.2.1) - However, we don't
+      // include "." here because of the comments in section 4.1
+      // of RFC2822, which states that "." is a valid char in a
+      // "phrase" token and don't need to be escaped.
+      if(strpbrk(name, "()<>[]:;@\\,\"") != NULL) // check for 'specials' excluding '.'
+      {
+        char quotedstr[SIZE_REALNAME];
+        const char *s = name;
+        char *d;
+
+        // we now have to search for a '"' quotation char or for
+        // an escape '\' char which we need to escape via '\', if
+        // it exists in the specified real name
+        if((d = strpbrk(s, "\"\\")) != NULL)
+        {
+          quotedstr[0] = '\0';
+
+          // now iterate through s and escape any char
+          // we require to escape
+          do
+          {
+            size_t qlen;
+
+            // copy everything until the first escapable char
+            if(d-s > 0)
+            {
+              qlen = strlen(quotedstr)+(d-s)+1;
+              strlcat(quotedstr, s, (qlen <= sizeof(quotedstr)) ? qlen : sizeof(quotedstr));
+            }
+
+            // add the escape char + the char we want to escape
+            qlen = strlen(quotedstr);
+            if(qlen+2 < sizeof(quotedstr))
+            {
+              quotedstr[qlen]   = '\\';
+              quotedstr[qlen+1] = *d;
+              quotedstr[qlen+2] = '\0';
+            }
+
+            // prepare the next iteration
+            s = d+1;
+          }
+          while((d = strpbrk(s, "\"\\")) != NULL);
+
+          // check if there is anything left
+          // to attach to quotedstr
+          if(s < (name+strlen(name)))
+            strlcat(quotedstr, s, sizeof(quotedstr));
+        }
+        else
+        {
+          // otherwise simply output the real name
+          strlcpy(quotedstr, name, sizeof(quotedstr));
+        }
+
+        // add the addr-spec string
+        snprintf(buffer, buflen, "\"%s\" <%s>", quotedstr, address);
+      }
+      else
+        snprintf(buffer, buflen, "%s <%s>", name, address);
+    }
+    else
+      strlcpy(buffer, address, buflen);
+  }
+  else
+    E(DBF_UTIL, "BuildAddress buffer==NULL error!");
+
+  RETURN(buffer);
+  return buffer;
+}
+
+///
 /// ExtractAddress
 //  Extracts e-mail address and real name according to RFC2822 (section 3.4)
 void ExtractAddress(const char *line, struct Person *pe)

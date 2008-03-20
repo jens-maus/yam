@@ -100,7 +100,10 @@ OVERLOAD(MUIM_DragDrop)
 
       if(ab->Type != AET_GROUP)
       {
-        DoMethod(obj, MUIM_TextEditor_InsertText, AB_BuildAddressStringABEntry(ab), MUIV_TextEditor_InsertText_Cursor);
+        char address[SIZE_LARGE];
+
+        BuildAddress(address, sizeof(address), ab->Address, ab->RealName);
+        DoMethod(obj, MUIM_TextEditor_InsertText, address, MUIV_TextEditor_InsertText_Cursor);
       }
     }
   }
