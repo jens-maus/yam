@@ -7,6 +7,10 @@ $URL$
 
 2008-03-20  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Recipientstring.c: after resolving the addresses upon pressing Enter or
+    Return a separator will be added, if the matchlist was visible. This makes
+    it lot easier to enter several address right after each other. All in all
+    this fullfils change request #1918343.
   * Recipientstring.c: if Enter/Return is pressed while the matchlist was
     visible the advance to the next object in the window will be skipped,
     because pressing Enter/Return usually was meant to add the selected

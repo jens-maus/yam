@@ -552,6 +552,11 @@ OVERLOAD(MUIM_HandleEvent)
               // line.
               if(data->AdvanceOnCR == TRUE && matchListWasOpen == FALSE)
                 set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+              else
+              {
+                // add a separator as more recipients may be wanted
+                DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
+              }
             }
             else
               DisplayBeep(_screen(obj));
