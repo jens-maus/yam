@@ -1570,7 +1570,8 @@ char *UnquoteString(const char *s, BOOL new)
 
   ENTER();
 
-  // check if the string conatins any quotes
+  // check if the string contains any quote chars
+  // at all
   if(strchr(s, '"') == NULL)
   {
     if(new)
@@ -3025,11 +3026,7 @@ void ExtractAddress(const char *line, struct Person *pe)
 
       // as a realname may be quoted '"' and also may contain escaped sequences
       // like '\"', we extract the realname more carefully here.
-      p = realname;
-
-      // make sure we strip all leading spaces
-      while(isspace(*p))
-        p++;
+      p = Trim(realname);
 
       // check if the realname is quoted or not
       if(*p == '"')
@@ -3040,8 +3037,13 @@ void ExtractAddress(const char *line, struct Person *pe)
 
       for(i=0; *p && i < sizeof(pe->RealName); i++, p++)
       {
-        if(quoted && (*p == '\\' || *p == '"'))
-          p++;
+        if(quoted)
+        {
+          if(*p == '\\')
+            p++;
+          else if(*p == '"' && strlen(p) == 1)
+            break;
+        }
 
         if(*p)
           pe->RealName[i] = *p;
@@ -3055,9 +3057,6 @@ void ExtractAddress(const char *line, struct Person *pe)
         pe->RealName[i] = '\0';
       else
         pe->RealName[sizeof(pe->RealName)-1] = '\0';
-
-      // make sure we strip all trailing spaces
-      TrimEnd(pe->RealName);
     }
 
     D(DBF_MIME, "addr: '%s'", pe->Address);

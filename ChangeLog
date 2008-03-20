@@ -7,6 +7,8 @@ $URL$
 
 2008-03-20  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: fixed a minor bug in the ExtractAddress() function where a double
+    quoted string ""Realname"" was not properly unqoted at the borders only.
   * YAM_UT.c, YAM_AB.c: reworked the BuildAddress#? functions to better comply
     to the rules defined in RFC2822. This includes a proper quotation according
     to the 'specials' char list, excluding the '.' character. In addition,
