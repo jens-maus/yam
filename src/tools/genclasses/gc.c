@@ -63,8 +63,13 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  * History
  * -------
+ * 0.25 - fixed a memory leak due to a wrong linked list implementation. There
+ *        was always one node left in a list upon calling list_remhead() until
+ *        it returned NULL. Also added a sort functions for linked lists.
+ *
  * 0.24 - compilable by SAS/C again. The missing snprintf() is redirected to
  *        sprintf().
+ *
  * 0.23 - use new DISPATCHER() macro instead of DISPATCHERPROTO()
  *
  * 0.22 - removed unncesessary STDARGS uses
@@ -163,7 +168,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  */
 
-static const char * const verstr = "0.23";
+static const char * const verstr = "0.25";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -1085,6 +1090,7 @@ int gen_classheaders( struct list *classlist )
   struct node *n;
   struct classdef *nextcd;
   FILE *fp;
+
   for (n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd));)
   {
     char name[128], buf[128], *p;
@@ -1238,7 +1244,7 @@ int doargs( unsigned int argc, char *argv[] )
       "Options:\n"
       "\n"
       " -b<basename>                                 - basename (.i.e. YAM) used in sources (required)\n"
-      " -gpl                                         - write GPL headers onto sources\n");
+      " -gpl                                         - write GPL headers into sources\n");
 
     printf(
       " -storm                                       - include storm/GoldED fold markers\n"
@@ -1329,5 +1335,6 @@ int main( int argc, char *argv[] )
     free_classdef(n->data);
     free(n);
   }
+
   return 0;
 }

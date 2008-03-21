@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-21  Thore Böckelmann <tboeckel@gmx.de>
+
+  * genclasses: fixed a memory leak due to a wrong linked list implementation.
+    There was always one node left in a list upon calling list_remhead() until
+    it returned NULL. Also added a sort functions for linked lists.
+
 2008-03-20  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: fixed a minor bug in the ExtractAddress() function where a double

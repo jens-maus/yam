@@ -54,5 +54,6 @@ void list_addhead( struct list *l, struct node *n );
 void list_addtail( struct list *l, struct node *n );
 struct node *list_remhead( struct list *l );
 struct node *list_remtail( struct list *l );
+void list_sort( struct list *l, int (* compare)( const struct node *, const struct node *) );
 
 #endif /* LISTS_H */
