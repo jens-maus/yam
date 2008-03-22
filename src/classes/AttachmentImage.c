@@ -206,7 +206,7 @@ static void LoadImage(Object *obj, struct Data *data)
 
     // only if we have at least icon.library >= v44 and we find deficons
     // we try to identify the file with deficons
-    if(mailPart->Decoded == TRUE && mailPart->Filename[0] != '\0' &&
+    if(isDecoded(mailPart) == TRUE && mailPart->Filename[0] != '\0' &&
        IconBase->lib_Version >= 44 && G->DefIconsAvailable == TRUE)
     {
       D(DBF_GUI, "retrieving diskicon via DEFICONS for '%s'", mailPart->Filename);
@@ -310,7 +310,7 @@ static void LoadImage(Object *obj, struct Data *data)
 
       // if this is an alternative part we draw it with
       // transparency of 50%
-      if(mailPart->isAltPart)
+      if(isAlternativePart(mailPart))
         drawIconTags[2].ti_Data = 128;
 
       // initialize our temporary rastport
@@ -555,7 +555,7 @@ static void LoadImage(Object *obj, struct Data *data)
     // store the diskObject in our instance data for later
     // reference
     data->diskObject = diskObject;
-    data->lastDecodedStatus = mailPart->Decoded;
+    data->lastDecodedStatus = isDecoded(mailPart);
   }
 
   LEAVE();
@@ -760,7 +760,7 @@ OVERLOAD(MUIM_Draw)
     // we have to check whether the decoded status
     // of our mail part changed and if so we have to reload
     // the image in case
-    if(data->mailPart != NULL && data->mailPart->Decoded == TRUE &&
+    if(data->mailPart != NULL && isDecoded(data->mailPart) == TRUE &&
        data->lastDecodedStatus == FALSE && IconBase->lib_Version >= 44 && G->DefIconsAvailable == TRUE)
     {
       LoadImage(obj, data);

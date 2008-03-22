@@ -116,7 +116,14 @@ enum TransformMode
 
 enum WriteMode { WRITE_HOLD, WRITE_SEND, WRITE_QUEUE };
 
-enum Encoding { ENC_NONE, ENC_QP, ENC_B64, ENC_UUE, ENC_BIN, ENC_8BIT };
+// mail text encoding codes
+enum Encoding { ENC_7BIT,    // 7-bit US-ASCII
+                ENC_8BIT,    // 8-bit enhanced ASCII
+                ENC_QP,      // quoted-printable encoding
+                ENC_B64,     // base64 encoding
+                ENC_UUE,     // uucode encoding
+                ENC_BIN      // binary encoding
+              };
 
 struct WritePart
 {

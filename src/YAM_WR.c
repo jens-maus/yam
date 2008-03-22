@@ -305,7 +305,7 @@ static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
 
     // if there is no special stuff within the file we can break out
     // telling the caller that there is no encoding needed.
-    encoding = ENC_NONE;
+    encoding = ENC_7BIT;
 
     // scan until end of file
     while((c = fgetc(fh)) != EOF)
@@ -391,7 +391,7 @@ struct WritePart *NewPart(int winnum)
   if((p = calloc(1, sizeof(struct WritePart))) != NULL)
   {
     p->ContentType = "text/plain";
-    p->EncType = ENC_NONE;
+    p->EncType = ENC_7BIT;
     p->Filename = G->WR_Filename[winnum];
   }
   else
@@ -671,7 +671,7 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
 
   // output the "Content-Type:
   fprintf(fh, "Content-Type: %s", part->ContentType);
-  if(part->EncType != ENC_NONE && strncmp(part->ContentType, "text/", 5) == 0)
+  if(part->EncType != ENC_7BIT && strncmp(part->ContentType, "text/", 5) == 0)
     fprintf(fh, "; charset=%s", strippedCharsetName(G->localCharset));
 
   // output the "name" and Content-Disposition as well
@@ -686,9 +686,9 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
   fputc('\n', fh);
 
   // output the Content-Transfer-Encoding:
-  if(part->EncType != ENC_NONE)
+  if(part->EncType != ENC_7BIT)
   {
-    const char *enc = NULL;
+    const char *enc = "7bit";
 
     switch(part->EncType)
     {
@@ -697,12 +697,12 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
       case ENC_UUE:  enc = "x-uue"; break;
       case ENC_8BIT: enc = "8bit"; break;
       case ENC_BIN:  enc = "binary"; break;
-      case ENC_NONE:
+      case ENC_7BIT:
         // nothing
       break;
     }
 
-    fprintf(fh, "Content-Transfer-Encoding: %s\n", enc ? enc : "7bit");
+    fprintf(fh, "Content-Transfer-Encoding: %s\n", enc);
   }
 
   // output the Content-Description if appropriate
@@ -1527,7 +1527,7 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
   pgpfile[0] = '\0';
 
   pgppart.Filename = pgpfile;
-  pgppart.EncType = ENC_NONE;
+  pgppart.EncType = ENC_7BIT;
   if(sec == SEC_ENCRYPT || sec == SEC_BOTH)
   {
     if(comp->MailTo)

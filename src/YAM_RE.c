@@ -1178,13 +1178,14 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
         ER_NewError(tr(MSG_ER_UNEXPECTED_MULTIPART_EOF), rp->rmData->readFile);
     }
 
-    rp->HasHeaders = FALSE;
+    // clear the subheaders flag
+    CLEAR_FLAG(rp->Flags, PFLAG_SUBHEADERS);
 
     RETURN(FALSE);
     return FALSE;
   }
   else
-    rp->HasHeaders = TRUE;
+    SET_FLAG(rp->Flags, PFLAG_SUBHEADERS);
 
   // Now we process the read header to set all flags accordingly
   for(curNode = rp->headerList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
@@ -1215,7 +1216,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
       // check the alternative part status
       // and try to find out if this is the main alternative part
       // which we might show later
-      if(rp->isAltPart == TRUE && rp->Parent != NULL)
+      if(isAlternativePart(rp) == TRUE && rp->Parent != NULL)
       {
         if(stricmp(rp->ContentType, "text/plain") == 0 ||
            rp->Parent->MainAltPart == NULL)
@@ -1245,7 +1246,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
       else if(strnicmp(p, "7bit", 4) == 0 || strnicmp(p, "7-bit", 5) == 0 ||
               strnicmp(p, "plain", 5) == 0 || strnicmp(p, "none", 4) == 0)
       {
-        rp->EncodingCode = ENC_NONE;
+        rp->EncodingCode = ENC_7BIT;
       }
       else if(strnicmp(p, "x-uue", 5) == 0)
         rp->EncodingCode = ENC_UUE;
@@ -1255,8 +1256,8 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
       {
         ER_NewError(tr(MSG_ER_UNKNOWN_MIME_ENCODING), p, rp->rmData->readFile);
 
-        // set the default to ENC_NONE
-        rp->EncodingCode = ENC_NONE;
+        // set the default to ENC_7BIT
+        rp->EncodingCode = ENC_7BIT;
       }
     }
     else if(stricmp(field, "content-description") == 0)
@@ -1269,7 +1270,21 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
     {
       RE_ParseContentParameters(value, rp, PT_CONTENTDISPOSITION);
     }
+    else if(mode == RHM_MAINHEADER && stricmp(field, "mime-version") == 0)
+    {
+      // RFC 2049 requires a MIME coformance mail client
+      // to have a "MIME-Version" header field within the main header
+      // or otherwise the mail in not to be treated in anyway related
+      // to the MIME standards.
+      SET_FLAG(rp->Flags, PFLAG_MIME);
+    }
   }
+
+  // if this is a main header scan and if this main part
+  // is non MIME conform, we have to force the encoding mode to
+  // 7bit US-ASCII due to RFC2049 rules
+  if(mode == RHM_MAINHEADER && isMIMEconform(rp) == FALSE)
+    rp->EncodingCode = ENC_7BIT;
 
   RETURN(TRUE);
   return TRUE;
@@ -1427,7 +1442,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
   // now we find out if we should decode charset aware. This means
   // that we make sure that we convert the text in "in" into our
   // local charset or not.
-  if(rp->Nr != PART_RAW && rp->Printable && rp->CParCSet != NULL)
+  if(rp->Nr != PART_RAW && isPrintable(rp) == TRUE && rp->CParCSet != NULL)
   {
     // now we check that the codeset of the mail part really
     // differs from the local one we are currently using
@@ -1454,7 +1469,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
     // process a base64 decoding.
     case ENC_B64:
     {
-      long decoded = base64decode_file(in, out, sourceCodeset, rp->Printable);
+      long decoded = base64decode_file(in, out, sourceCodeset, isPrintable(rp));
       D(DBF_MAIL, "base64 decoded %ld bytes of part %ld.", decoded, rp->Nr);
 
       if(decoded > 0)
@@ -1627,7 +1642,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
         if(RE_ConsumeRestOfPart(in, out, sourceCodeset, NULL, TRUE))
           decodeResult = 1;
       }
-      else if(rp->HasHeaders)
+      else if(hasSubHeaders(rp))
       {
         if(CopyFile(NULL, out, NULL, in))
           decodeResult = 3;
@@ -1674,12 +1689,12 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     else
     {
       newPart->ContentType = strdup("text/plain");
-      newPart->EncodingCode = ENC_NONE;
+      newPart->EncodingCode = ENC_7BIT;
 
-      if(first != NULL && (first->isAltPart ||
+      if(first != NULL && (isAlternativePart(first) ||
          (first->ContentType[9] != '\0' && strnicmp(&first->ContentType[10], "alternative", 11) == 0)))
       {
-        newPart->isAltPart = TRUE;
+        SET_FLAG(newPart->Flags, PFLAG_ALTPART);
       }
     }
 
@@ -1694,7 +1709,7 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     AddPath(newPart->Filename, C->TempDir, file, sizeof(newPart->Filename));
 
     D(DBF_MAIL, "New Part #%ld [%lx]", newPart->Nr, newPart);
-    D(DBF_MAIL, "  IsAltPart..: %ld",  newPart->isAltPart);
+    D(DBF_MAIL, "  IsAltPart..: %ld",  isAlternativePart(newPart));
     D(DBF_MAIL, "  Filename...: [%s]", newPart->Filename);
     D(DBF_MAIL, "  Nextptr....: %lx",  newPart->Next);
     D(DBF_MAIL, "  Prevptr....: %lx",  newPart->Prev);
@@ -1822,7 +1837,7 @@ static void RE_UndoPart(struct Part *rp)
       for(trp = rmData->firstPart; trp; trp = trp->Next)
       {
         if(trp->Nr > PART_RAW && trp->Nr >= PART_LETTER &&
-           trp->Printable)
+           isPrintable(trp))
         {
           rmData->letterPartNum = trp->Nr;
           break;
@@ -1918,7 +1933,7 @@ static void RE_SetPartInfo(struct Part *rp)
 
   // let's calculate the partsize of an undecoded part, if this
   // part isn't the RAW part and we found a positive size.
-  if(rp->Decoded == FALSE && rp->Nr > PART_RAW && size > 0)
+  if(isDecoded(rp) == FALSE && rp->Nr > PART_RAW && size > 0)
   {
     // The following calculations are a very loosy estimation of the
     // real unencoded size of a MIME encoded part. Depending on how
@@ -1968,18 +1983,18 @@ static void RE_SetPartInfo(struct Part *rp)
      strnicmp(rp->ContentType, "text", 4) == 0 ||
      strnicmp(rp->ContentType, "message", 7) == 0)
   {
-    rp->Printable = TRUE;
+    SET_FLAG(rp->Flags, PFLAG_PRINTABLE);
   }
   else
-    rp->Printable = FALSE;
+    CLEAR_FLAG(rp->Flags, PFLAG_PRINTABLE);
 
   // Now that we have defined that this part is printable we have
   // to check whether our readMailData structure already contains a reference
   // to the actual readable letterPart or not and if not we do make this
   // part the actual letterPart
   if((rp->rmData->letterPartNum < PART_LETTER ||
-      (rp->isAltPart == TRUE && rp->Parent != NULL && rp->Parent->MainAltPart == rp)) &&
-      rp->Printable &&
+      (isAlternativePart(rp) == TRUE && rp->Parent != NULL && rp->Parent->MainAltPart == rp)) &&
+      isPrintable(rp) &&
       rp->Nr >= PART_LETTER)
   {
     D(DBF_MAIL, "setting part #%ld as LETTERPART", rp->Nr);
@@ -2019,7 +2034,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
 
   if(in != NULL)
   {
-    FILE *out;
+    FILE *out = NULL;
     struct Part *rp;
 
     if(hrp == NULL)
@@ -2029,6 +2044,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
         BOOL parse_ok = RE_ScanHeader(hrp, in, out, RHM_MAINHEADER);
 
         fclose(out);
+        out = NULL;
 
         if(parse_ok == TRUE)
           RE_SetPartInfo(hrp);
@@ -2037,9 +2053,14 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
         ER_NewError(tr(MSG_ER_CantCreateTempfile));
     }
 
+    // check if we have a header part at all
     if(hrp != NULL)
     {
-      if(hrp->CParBndr != NULL && strnicmp(hrp->ContentType, "multipart", 9) == 0)
+      // now we check if the header part tells us that
+      // this mail is MIME conform or not and that it has a
+      // boundary identifier
+      if(isMIMEconform(hrp) == TRUE &&
+         hrp->CParBndr != NULL && strnicmp(hrp->ContentType, "multipart", 9) == 0)
       {
         BOOL done = RE_ConsumeRestOfPart(in, NULL, NULL, hrp, FALSE);
 
@@ -2050,13 +2071,14 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
           struct Part *prev = rp;
 
           out = RE_OpenNewPart(rmData, &rp, prev, hrp);
-
           if(out == NULL)
             break;
 
           if(RE_ScanHeader(rp, in, out, RHM_SUBHEADER) == FALSE)
           {
             fclose(out);
+            out = NULL;
+
             RE_UndoPart(rp);
             break;
           }
@@ -2064,6 +2086,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
           if(strnicmp(rp->ContentType, "multipart", 9) == 0)
           {
             fclose(out);
+            out = NULL;
 
             if(RE_ParseMessage(rmData, in, NULL, rp) != NULL)
             {
@@ -2081,11 +2104,13 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
             fputc('\n', out);
             done = RE_ConsumeRestOfPart(in, out, NULL, rp, FALSE);
             fclose(out);
+            out = NULL;
             RE_SetPartInfo(rp);
           }
           else
           {
             fclose(out);
+            out = NULL;
             done = RE_ConsumeRestOfPart(in, NULL, NULL, rp, FALSE);
             RE_UndoPart(rp);
             rp = prev;
@@ -2098,19 +2123,24 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
         {
           RE_ConsumeRestOfPart(in, out, NULL, NULL, FALSE);
           fclose(out);
+          out = NULL;
           RE_SetPartInfo(rp);
         }
         else
         {
           fclose(out);
+          out = NULL;
           RE_UndoPart(rp);
           RE_ConsumeRestOfPart(in, NULL, NULL, NULL, FALSE);
         }
       }
     }
 
-    if(fname != NULL)
+    if(fname != NULL && in != NULL)
       fclose(in);
+
+    if(out != NULL)
+      fclose(out);
   }
 
   #if defined(DEBUG)
@@ -2127,8 +2157,8 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
       D(DBF_MAIL, "  ContentType: [%s]", rp->ContentType);
       D(DBF_MAIL, "  Boundary...: [%s]", rp->CParBndr ? rp->CParBndr : "NULL");
       D(DBF_MAIL, "  Charset....: [%s]", rp->CParCSet ? rp->CParCSet : "NULL");
-      D(DBF_MAIL, "  IsAltPart..: %ld",  rp->isAltPart);
-      D(DBF_MAIL, "  Printable..: %ld",  rp->Printable);
+      D(DBF_MAIL, "  IsAltPart..: %ld",  isAlternativePart(rp));
+      D(DBF_MAIL, "  Printable..: %ld",  isPrintable(rp));
       D(DBF_MAIL, "  Encoding...: %ld",  rp->EncodingCode);
       D(DBF_MAIL, "  Filename...: [%s]", rp->Filename);
       D(DBF_MAIL, "  Size.......: %ld",  rp->Size);
@@ -2153,7 +2183,7 @@ BOOL RE_DecodePart(struct Part *rp)
 
   // it only makes sense to go on here if
   // the data wasn't decoded before.
-  if(rp->Decoded == FALSE)
+  if(isDecoded(rp) == FALSE)
   {
     FILE *in;
     FILE *out;
@@ -2170,7 +2200,7 @@ BOOL RE_DecodePart(struct Part *rp)
 
       // if this part has some headers, let`s skip them so that
       // we just decode the raw data.
-      if(rp->HasHeaders == TRUE)
+      if(hasSubHeaders(rp) == TRUE)
       {
         while(GetLine(in, buf, SIZE_LINE))
         {
@@ -2309,14 +2339,18 @@ BOOL RE_DecodePart(struct Part *rp)
             D(DBF_MAIL, "no decode required. renaming file.");
 
             DeleteFile(buf); // delete the temporary file again.
-            rp->Decoded = Rename(rp->Filename, buf);
+
+            if(Rename(rp->Filename, buf) == 0)
+              CLEAR_FLAG(rp->Flags, PFLAG_DECODED);
+            else
+              SET_FLAG(rp->Flags, PFLAG_DECODED);
           }
           else
           {
             D(DBF_MAIL, "%s", decodeResult == 1 ? "successfully decoded" : "no decode required, did a raw copy");
 
             DeleteFile(rp->Filename);
-            rp->Decoded = TRUE;
+            SET_FLAG(rp->Flags, PFLAG_DECODED);
           }
 
           strlcpy(rp->Filename, buf, sizeof(rp->Filename));
@@ -2336,7 +2370,7 @@ BOOL RE_DecodePart(struct Part *rp)
         fclose(in);
         DeleteFile(rp->Filename);
         strlcpy(rp->Filename, buf, sizeof(rp->Filename));
-        rp->Decoded = TRUE;
+        SET_FLAG(rp->Flags, PFLAG_DECODED);
         RE_SetPartInfo(rp);
       }
       else
@@ -2344,8 +2378,8 @@ BOOL RE_DecodePart(struct Part *rp)
     }
   }
 
-  RETURN(rp->Decoded);
-  return rp->Decoded;
+  RETURN(isDecoded(rp));
+  return isDecoded(rp);
 }
 ///
 /// RE_HandleSignedMessage
@@ -2492,13 +2526,13 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
                 free(warnPart->ContentType);
 
               warnPart->ContentType = strdup("text/plain");
-              warnPart->Printable = TRUE;
-              warnPart->EncodingCode = ENC_NONE;
+              SET_FLAG(warnPart->Flags, PFLAG_PRINTABLE);
+              warnPart->EncodingCode = ENC_7BIT;
               *warnPart->Description = '\0';
               RE_ScanHeader(warnPart, in, NULL, RHM_MAINHEADER);
               fclose(in);
 
-              warnPart->Decoded = FALSE;
+              CLEAR_FLAG(warnPart->Flags, PFLAG_DECODED);
               RE_DecodePart(warnPart);
               RE_UndoPart(encrPart); // undo the encrypted part because we have a decrypted now.
             }
@@ -2514,11 +2548,11 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
               free(warnPart->ContentType);
 
             warnPart->ContentType = strdup("text/plain");
-            warnPart->Printable = TRUE;
-            warnPart->EncodingCode = ENC_NONE;
+            SET_FLAG(warnPart->Flags, PFLAG_PRINTABLE);
+            warnPart->EncodingCode = ENC_7BIT;
             *warnPart->Description = '\0';
-            warnPart->Decoded = TRUE;
-            warnPart->HasHeaders = FALSE;
+            SET_FLAG(warnPart->Flags, PFLAG_DECODED);
+            CLEAR_FLAG(warnPart->Flags, PFLAG_SUBHEADERS);
           }
         }
       }
@@ -2563,7 +2597,7 @@ static void RE_LoadMessagePart(struct ReadMailData *rmData, struct Part *part)
         if(stricmp(rp->ContentType, "application/pgp-keys") == 0)
           rmData->hasPGPKey = TRUE;
         else if(rp->Nr == PART_RAW || rp->Nr == rmData->letterPartNum ||
-                (rp->Printable && C->DisplayAllTexts))
+                (isPrintable(rp) && C->DisplayAllTexts))
         {
           RE_DecodePart(rp);
         }
@@ -2725,7 +2759,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
     if(mode != RIM_READ && part->Nr != PART_RAW && part->Nr != rmData->letterPartNum)
       continue;
 
-    if(part->Decoded || part->Nr == PART_RAW)
+    if(isDecoded(part) || part->Nr == PART_RAW)
       totsize += part->Size;
     else
       totsize += 200;
@@ -2773,14 +2807,14 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
     for(part = first->Next; part; part = part->Next)
     {
       BOOL dodisp = (part->Nr == PART_RAW || part->Nr == rmData->letterPartNum) ||
-                    (part->Printable && C->DisplayAllTexts && part->Decoded);
+                    (isPrintable(part) && C->DisplayAllTexts && isDecoded(part));
 
       // before we go on we check whether this is an alternative multipart
       // and if so we check that we only display the plain text one
       if(dodisp == TRUE)
       {
         if(C->DisplayAllAltPart == FALSE &&
-           (part->isAltPart == TRUE && part->Parent != NULL && part->Parent->MainAltPart != part))
+           (isAlternativePart(part) == TRUE && part->Parent != NULL && part->Parent->MainAltPart != part))
         {
           D(DBF_MAIL, "flagging part #%ld as hidden.", part->Nr);
 
@@ -2981,7 +3015,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                     D(DBF_MAIL, "UU decoded %ld chars of part %ld.", decoded, uup->Nr);
 
                     if(decoded >= 0)
-                      uup->Decoded = TRUE;
+                      SET_FLAG(uup->Flags, PFLAG_DECODED);
                     else
                     {
                       switch(decoded)
@@ -3012,7 +3046,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                           if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
                             ER_NewError(tr(MSG_ER_UUDEC_CHECKSUM), uup->Filename);
 
-                          uup->Decoded = TRUE; // allow to save the resulting file
+                          SET_FLAG(uup->Flags, PFLAG_DECODED); // allow to save the resulting file
                         }
                         break;
 
@@ -3028,7 +3062,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                           if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
                             ER_NewError(tr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "end");
 
-                          uup->Decoded = TRUE; // allow to save the resulting file
+                          SET_FLAG(uup->Flags, PFLAG_DECODED); // allow to save the resulting file
                         }
                         break;
 
@@ -3052,7 +3086,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   RE_SetPartInfo(uup);
 
                   // if everything was fine we try to find the end marker
-                  if(uup->Decoded == TRUE)
+                  if(isDecoded(uup) == TRUE)
                   {
                     // unfortunatly we have to find our ending "end" line now
                     // with an expensive string function. But this shouldn't be
@@ -4130,7 +4164,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
       // message
       DeleteFile(rp[0]->Filename);
       strlcpy(rp[0]->Filename, buf, sizeof(rp[0]->Filename));
-      rp[0]->Decoded = TRUE;
+      SET_FLAG(rp[0]->Flags, PFLAG_DECODED);
       RE_SetPartInfo(rp[0]);
 
       result = TRUE;

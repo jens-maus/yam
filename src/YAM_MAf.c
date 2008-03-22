@@ -1958,9 +1958,9 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         }
         else if(stricmp(field, "x-senderinfo") == 0)
         {
-           SET_FLAG(mail->mflags, MFLAG_SENDERINFO);
-           if(deep)
-             email->SenderInfo = StrBufCpy(email->SenderInfo, value);
+          SET_FLAG(mail->mflags, MFLAG_SENDERINFO);
+          if(deep)
+            email->SenderInfo = StrBufCpy(email->SenderInfo, value);
         }
         else if(deep) // and if we end up here we check if we really have to go further
         {

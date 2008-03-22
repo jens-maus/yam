@@ -262,14 +262,14 @@ HOOKPROTONHNO(AttachDspFunc, LONG, struct NList_DisplayMessage *msg)
       array[1] = (STRPTR)DescribeCT(entry->ContentType);
 
     // check the alternative status
-    if(entry->isAltPart == TRUE && entry->Parent != NULL && entry->Parent->MainAltPart != entry)
+    if(isAlternativePart(entry) == TRUE && entry->Parent != NULL && entry->Parent->MainAltPart != entry)
       msg->preparses[1] = (char *)MUIX_I;
 
     if(entry->Size > 0)
     {
       array[2] = dispsz;
 
-      if(entry->Decoded)
+      if(isDecoded(entry))
         FormatSize(entry->Size, dispsz, sizeof(dispsz), SF_AUTO);
       else
       {
@@ -918,7 +918,7 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
     spart[0].Nr = PART_ORIGINAL;
     strlcpy(spart[0].Name, tr(MSG_RE_Original), sizeof(spart[0].Name));
     spart[0].Size = rmData->mail->Size;
-    spart[0].Decoded = TRUE;
+    SET_FLAG(spart[0].Flags, PFLAG_DECODED);
     DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Top);
     set(lv_attach, MUIA_NList_Active, MUIV_NList_Active_Top);
 
@@ -935,7 +935,7 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
     // now we process the mail and pick every part out to the NListview
     for(part = rmData->firstPart->Next; part; part = part->Next)
     {
-      if(!isPrintReq(mode) || part->Printable)
+      if(!isPrintReq(mode) || isPrintable(part))
       {
         DoMethod(lv_attach, MUIM_NList_InsertSingle, part, MUIV_NList_Insert_Bottom);
       }

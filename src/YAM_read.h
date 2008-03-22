@@ -102,6 +102,20 @@ struct ReadMailData
   char sigAuthor[SIZE_ADDRESS];   // the author of an existing PGP signature
 };
 
+// flags for setting certain flags for a struct Part
+#define PFLAG_SUBHEADERS    (1<<0)  // has subheaders (headerList filled)
+#define PFLAG_PRINTABLE     (1<<1)  // has printable content
+#define PFLAG_DECODED       (1<<2)  // part was already decoded
+#define PFLAG_ALTPART       (1<<3)  // this part is an alternative part (multipart/alternative)
+#define PFLAG_MIME          (1<<4)  // this part conforms to the MIME standard
+#define hasSubHeaders(part)     (isFlagSet((part)->Flags, PFLAG_SUBHEADERS))
+#define isPrintable(part)       (isFlagSet((part)->Flags, PFLAG_PRINTABLE))
+#define isDecoded(part)         (isFlagSet((part)->Flags, PFLAG_DECODED))
+#define isAlternativePart(part) (isFlagSet((part)->Flags, PFLAG_ALTPART))
+#define isMIMEconform(part)     (isFlagSet((part)->Flags, PFLAG_MIME))
+
+// a struct Part is a structure for managing certain message
+// parts according to the hierarchical structuring of e-mails
 struct Part
 {
   struct Part         *Prev;               // ptr to previous part or NULL
@@ -120,13 +134,10 @@ struct Part
   char                *CParDesc;           // ptr to the content-type "description"
   char                *CParRType;          // ptr to the content-type "report-type"
   char                *CParCSet;           // ptr to the content-type "charset" "iso8859-1"
-  long                 Size;
+  long                 Size;               // the calculated size in bytes
+  int                  Flags;              // PFLAG_#? flags
   int                  MaxHeaderLen;
   int                  Nr;
-  BOOL                 HasHeaders;
-  BOOL                 Printable;
-  BOOL                 Decoded;
-  BOOL                 isAltPart;          // is an alternative multipart
   enum Encoding        EncodingCode;
 
   char                 Name[SIZE_DEFAULT];

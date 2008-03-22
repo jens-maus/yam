@@ -7,6 +7,13 @@ $URL$
 
 2008-03-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c, misc: modified the RE_ScanHeader() routines to test for the
+    existance of a "MIME-Version:" header field for a main header scan.
+    This should improve the RFC2049 MIME conformance such that YAM
+    does not assume all mails to be MIME-aware mails anymore. If now the
+    'MIME-Version:' header field is missing, YAM will skip all MIME
+    routines such as multpart management and the management of different
+    encoding schemes (base64,uucode, etc).
   * genclasses: fixed a bug in the list_findname() function where
     after the last fix the function didn't correctly find a named
     node. In addition, a new "-q" option now prevents all standard

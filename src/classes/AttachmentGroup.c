@@ -164,7 +164,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
           char buf[SIZE_DEFAULT];
 
           // calculate the partNameLen
-          if(mailPart->isAltPart)
+          if(isAlternativePart(mailPart))
           {
             SetSoftStyle(&rp, FSF_ITALIC, AskSoftStyle(&rp));
             partNameLen = TextLength(&rp, "multipart/alternative", 21);
@@ -188,7 +188,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
           largestLabelLen = MAX(partNameLen, contentTypeLen)+10;
 
           // calculate the sizeLabelLen
-          if(mailPart->Decoded == FALSE)
+          if(isDecoded(mailPart) == FALSE)
           {
             buf[0] = '~';
             FormatSize(mailPart->Size, &buf[1], sizeof(buf)-1, SF_AUTO);
@@ -472,7 +472,7 @@ OVERLOAD(MUIM_Draw)
           {
             // in case this is an alternative part we go
             // and write it out
-            if(mailPart->isAltPart)
+            if(isAlternativePart(mailPart))
             {
               SetSoftStyle(_rp(obj), FSF_ITALIC, AskSoftStyle(_rp(obj)));
               cnt = TextFit(_rp(obj), "multipart/alternative", 21, &te, NULL, 1, textSpaceWidth, textSpaceHeight);
@@ -510,7 +510,7 @@ OVERLOAD(MUIM_Draw)
             {
               char buf[SIZE_DEFAULT];
 
-              if(mailPart->Decoded == FALSE)
+              if(isDecoded(mailPart) == FALSE)
               {
                 buf[0] = '~';
                 FormatSize(mailPart->Size, &buf[1], sizeof(buf)-1, SF_AUTO);
@@ -597,7 +597,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
     Child, MenuObjectT(data->menuTitle),
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DISPLAY),  MUIA_Menuitem_Enabled, mailPart != NULL, MUIA_UserData, AMEN_DISPLAY,  End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEAS),   MUIA_Menuitem_Enabled, mailPart != NULL, MUIA_UserData, AMEN_SAVEAS,    End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),   MUIA_Menuitem_Enabled, mailPart != NULL && mailPart->Printable, MUIA_UserData, AMEN_PRINT,     End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),   MUIA_Menuitem_Enabled, mailPart != NULL && isPrintable(mailPart), MUIA_UserData, AMEN_PRINT,     End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL,   End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL,   End,
@@ -733,7 +733,7 @@ DECLARE(Refresh) // struct Part *firstPart
     for(rp = msg->firstPart; rp; rp = rp->Next)
     {
       if(rp->Nr > PART_RAW && rp->Nr != rp->rmData->letterPartNum && (C->DisplayAllAltPart ||
-         (rp->isAltPart == FALSE || rp->Parent == NULL || rp->Parent->MainAltPart == rp)))
+         (isAlternativePart(rp) == FALSE || rp->Parent == NULL || rp->Parent->MainAltPart == rp)))
       {
         Object *newImage = AttachmentImageObject,
                              MUIA_CycleChain,                 TRUE,
@@ -793,7 +793,7 @@ DECLARE(Display) // struct Part *part
 
   if(msg->part != NULL)
   {
-    BOOL oldDecoded = msg->part->Decoded;
+    BOOL oldDecoded = isDecoded(msg->part);
 
     BusyText(tr(MSG_BusyDecDisplaying), "");
 
@@ -806,7 +806,7 @@ DECLARE(Display) // struct Part *part
 
       // if the part was decoded in RE_DecodePart() then
       // we issue a full refresh of the attachment image
-      if(oldDecoded == FALSE && msg->part->Decoded == TRUE)
+      if(oldDecoded == FALSE && isDecoded(msg->part) == TRUE)
       {
         // issue a full redraw of the group which in fact
         // will issue a refresh of all images as well in
@@ -829,7 +829,7 @@ DECLARE(Save) // struct Part *part
 
   if(msg->part != NULL)
   {
-    BOOL oldDecoded = msg->part->Decoded;
+    BOOL oldDecoded = isDecoded(msg->part);
 
     BusyText(tr(MSG_BusyDecSaving), "");
 
@@ -842,7 +842,7 @@ DECLARE(Save) // struct Part *part
               FALSE,
               msg->part->ContentType);
 
-    if(oldDecoded == FALSE && msg->part->Decoded == TRUE)
+    if(oldDecoded == FALSE && isDecoded(msg->part) == TRUE)
     {
       // now we know the exact size of the file and can redraw ourself
       MUI_Redraw(obj, MADF_DRAWOBJECT);
@@ -903,7 +903,7 @@ DECLARE(SaveSelected)
 
         if((mailPart = (struct Part *)xget(child, MUIA_AttachmentImage_MailPart)) != NULL)
         {
-          oldDecoded &= mailPart->Decoded;
+          oldDecoded &= isDecoded(mailPart);
 
           RE_DecodePart(mailPart);
           RE_Export(mailPart->rmData,
