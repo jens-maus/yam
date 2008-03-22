@@ -4,6 +4,19 @@ GenClasses Tool - ChangeLog
 
 $Id$
 
+2008-03-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * gc.c,lists.c: fixed a bug in the list_findname() function where
+      after the last fix the function didn't correctly find a named
+      node. In addition, a new "-q" option now prevents all standard
+      output as only fprintf(stderr,...) will be shown upon execution.
+
+2008-03-21  Thore Böckelmann <tboeckel@gmx.de>
+
+    * lists.c: fixed a memory leak due to a wrong linked list implementation.
+      There was always one node left in a list upon calling list_remhead()
+      until it returned NULL. Also added a sort functions for linked lists.
+
 2006-10-07  Jens Langner <Jens.Langner@light-speed.de>
 
     * gc.c: use new DISPATCHER() macro instead of DISPATCHERPROTO()

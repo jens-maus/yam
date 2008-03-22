@@ -32,8 +32,8 @@
 
 void list_init( struct list *l )
 {
-  l->head = (struct node *)&l->tail;
-  l->tail = NULL;
+  l->head     = (struct node *)&l->tail;
+  l->tail     = NULL;
   l->tailpred = (struct node *)&l->head;
   l->cnt      = 0;
 }
@@ -68,15 +68,19 @@ struct node *list_getnext( struct list *l, struct node *n, void **data_ptr )
 
 struct node *list_findname( struct list *l, char *name )
 {
+  struct result *res = NULL;
   struct node *n;
-  for (n = l->head; n->succ; n = n->succ)
+
+  for(n = l->head; n != NULL && n->succ; n = n->succ)
   {
-    if(n->name)
+    if(n->name != NULL && strcmp(n->name, name) == 0)
     {
-      if (strcmp(n->name, name) == 0) break;
+      res = n;
+      break;
     }
   }
-  return n;
+
+  return res;
 }
 
 void list_insert( struct list *l, struct node *n, struct node *npred )

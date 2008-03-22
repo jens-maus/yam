@@ -63,6 +63,11 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  * History
  * -------
+ * 0.26 - fixed a bug in the list_findname() function where after the last fix
+ *        the function didn't correctly find a named node. In addition, a new "-q"
+ *        option now prevents all standard output as only fprintf(stderr,...)
+ *        will be shown upon execution
+ *
  * 0.25 - fixed a memory leak due to a wrong linked list implementation. There
  *        was always one node left in a list upon calling list_remhead() until
  *        it returned NULL. Also added a sort functions for linked lists.
@@ -168,7 +173,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  */
 
-static const char * const verstr = "0.25";
+static const char * const verstr = "0.26";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -183,6 +188,7 @@ char *arg_mkfile_ccopts   = NULL;
 int   arg_gpl             = 0;     /* booleans */
 int   arg_storm           = 0;
 int   arg_v               = 0;
+int   arg_q               = 0;
 
 /*******************************************************************************
  *
@@ -355,14 +361,14 @@ static unsigned int gettagvalue(char *tag, int checkcol)
   /* now we check that val is definitly between TAG_USER and the MUI tag base
      because anything above/below that might cause problems. */
   if(val < TAG_USER || val >= 0x80010000)
-    printf("WARNING: generate tag value '%x' of class '%s' collides with BOOPSI/MUI tag values!\n", val, tag);
+    fprintf(stderr, "WARNING: generate tag value '%x' of class '%s' collides with BOOPSI/MUI tag values!\n", val, tag);
 
   /* if we should check for a collision we do so */
   if(checkcol)
     ++collision_cnts[hash];
 
   if(arg_v)
-    printf("Assigning tag %-35s with value %x\n", tag, val);
+    fprintf(stdout, "Assigning tag %-35s with value %x\n", tag, val);
 
   return val;
 }
@@ -471,7 +477,9 @@ void add_attr( struct classdef *cd, char *name )
   if (!(ad->name = stralloc(name))) return;
   if (list_findname(&cd->attrlist, name))
   {
-    if (arg_v) printf("ATTR %s already collected, skipped.\n", name);
+    if(arg_v)
+      fprintf(stdout, "ATTR '%s' already collected, skipped.\n", name);
+
     free_attr(ad);
     return;
   }
@@ -490,8 +498,10 @@ struct classdef *processclasssrc( char *path )
   if (!(cd = calloc(1, sizeof(struct classdef)))) return NULL;
   if (!(fp = fopen(path, "r")))
   {
-    printf("ERROR: Unable to open %s\n", path);
-    free(cd); return NULL;
+    fprintf(stderr, "ERROR: Unable to open %s\n", path);
+    free(cd);
+
+    return NULL;
   }
   list_init(&cd->overloadlist);
   list_init(&cd->declarelist);
@@ -514,19 +524,25 @@ struct classdef *processclasssrc( char *path )
     /******** Scan line for keywords and extract the associated information... ********/
     if (!cd->superclass && (sub = strstr(p, KEYWD_SUPERCLASS)))
     {
-      if (arg_v) printf(KEYWD_SUPERCLASS " keyword found at line %d in file %s\n", lineno, path);
+      if(arg_v)
+        fprintf(stdout, KEYWD_SUPERCLASS " keyword found at line %d in file %s\n", lineno, path);
+
       sub += sizeof(KEYWD_SUPERCLASS) - 1;
       cd->superclass = stralloc(skipwhitespaces(sub));
     }
     else if (!cd->desc && (sub = strstr(p, KEYWD_DESC)))
     {
-      if (arg_v) printf(KEYWD_DESC " keyword found at line %d\n", lineno);
+      if(arg_v)
+        fprintf(stdout, KEYWD_DESC " keyword found at line %d\n", lineno);
+
       sub += sizeof(KEYWD_DESC) - 1;
       cd->desc = stralloc(skipwhitespaces(sub));
     }
     else if (!cd->classdata && strstr(line, KEYWD_CLASSDATA))
     {
-      if (arg_v) printf(KEYWD_CLASSDATA " keyword found at line %d\n", lineno);
+      if(arg_v)
+        fprintf(stdout, KEYWD_CLASSDATA " keyword found at line %d\n", lineno);
+
       spos = ftell(fp);
       while(fgets(p = line, 255, fp))
       {
@@ -536,7 +552,7 @@ struct classdef *processclasssrc( char *path )
         fseek(fp, spos, SEEK_SET);
         if (!(blk = calloc(1, (size_t)(epos - spos + 1))))
         {
-          printf("WARNING: Cannot read " KEYWD_CLASSDATA " block at line %d, out of memory!\n", exlineno); break;
+          fprintf(stderr, "WARNING: Cannot read " KEYWD_CLASSDATA " block at line %d, out of memory!\n", exlineno); break;
         }
         fread(blk, (size_t)(epos - spos), 1, fp);
         if ((ob = strchr(blk, '{')))
@@ -555,7 +571,9 @@ struct classdef *processclasssrc( char *path )
     }
     else if (strncmp(KEYWD_OVERLOAD, p, sizeof(KEYWD_OVERLOAD) - 1) == 0)
     {
-      if (arg_v) printf(KEYWD_OVERLOAD " keyword found at line %d in file %s\n", lineno, path);
+      if(arg_v)
+        fprintf(stdout, KEYWD_OVERLOAD " keyword found at line %d in file %s\n", lineno, path);
+
       p += sizeof(KEYWD_OVERLOAD) - 1;
       if (!(ob = strchr(p, '('))) continue; /* There's no open bracket, ignore it... */
       if (!(cb = strchr(ob, ')'))) cb = p + strlen(p);
@@ -563,7 +581,9 @@ struct classdef *processclasssrc( char *path )
     }
     else if (strncmp(KEYWD_DECLARE, p, sizeof(KEYWD_DECLARE) - 1) == 0)
     {
-      if (arg_v) printf(KEYWD_DECLARE " keyword found at line %d in file %s\n", lineno, path);
+      if(arg_v)
+        fprintf(stdout, KEYWD_DECLARE " keyword found at line %d in file %s\n", lineno, path);
+
       p += sizeof(KEYWD_DECLARE) - 1;
       if (!(ob = strchr(p, '('))) continue; /* There's no open bracket, ignore it... */
       if (!(cb = strchr(ob, ')'))) cb = p + strlen(p);
@@ -572,7 +592,9 @@ struct classdef *processclasssrc( char *path )
     }
     else if (strncmp(KEYWD_ATTR, p, sizeof(KEYWD_ATTR) - 1) == 0)
     {
-      if (arg_v) printf(KEYWD_ATTR " keyword found at line %d in file %s\n", lineno, path);
+      if(arg_v)
+        fprintf(stdout, KEYWD_ATTR " keyword found at line %d in file %s\n", lineno, path);
+
       p += sizeof(KEYWD_ATTR) - 1;
       if (!(ob = strchr(p, '('))) continue; /* There's no open bracket, ignore it... */
       if (!(cb = strchr(ob, ')'))) cb = p + strlen(p);
@@ -583,7 +605,9 @@ struct classdef *processclasssrc( char *path )
       p = skipwhitespaces(p + 2);
       if (strncmp(KEYWD_EXPORT, p, sizeof(KEYWD_EXPORT) - 1) == 0)
       {
-        if (arg_v) printf(KEYWD_EXPORT " keyword found at line %d in file %s\n", lineno, path);
+        if(arg_v)
+          fprintf(stdout, KEYWD_EXPORT " keyword found at line %d in file %s\n", lineno, path);
+
         p += sizeof(KEYWD_EXPORT) - 1;
         spos = ftell(fp);
         while(fgets(p = line, 255, fp))
@@ -594,25 +618,27 @@ struct classdef *processclasssrc( char *path )
           fseek(fp, spos, SEEK_SET);
           if (!(blk = calloc(1, (size_t)(epos - spos + 1))))
           {
-            printf("WARNING: Cannot read " KEYWD_EXPORT " block at line %d, out of memory!\n", exlineno); break;
+            fprintf(stderr, "WARNING: Cannot read " KEYWD_EXPORT " block at line %d, out of memory!\n", exlineno); break;
           }
           fread(blk, (size_t)(epos - spos), 1, fp);
           add_exportblk(cd, blk);
           free(blk);
           break;
         }
-        if (epos == 0) printf("WARNING: Unterminated EXPORT block at line %d\n", lineno);
+
+        if(epos == 0)
+          fprintf(stderr, "WARNING: Unterminated EXPORT block at line %d\n", lineno);
       }
     }
   }  /* while() */
   if (!cd->superclass)
   {
-    printf("WARNING: Source file '%s' doesn't contain a " KEYWD_SUPERCLASS " keyword. Skipping.\n", path);
+    fprintf(stderr, "WARNING: Source file '%s' doesn't contain a " KEYWD_SUPERCLASS " keyword. Skipping.\n", path);
     free_classdef(cd); cd = NULL;
   }
   else if (!cd->classdata)
   {
-    printf("WARNING: Source file '%s' doesn't contain a " KEYWD_CLASSDATA " keyword. Skipping.\n", path);
+    fprintf(stderr, "WARNING: Source file '%s' doesn't contain a " KEYWD_CLASSDATA " keyword. Skipping.\n", path);
     free_classdef(cd); cd = NULL;
   }
   fclose(fp);
@@ -627,17 +653,20 @@ void printclasslist( struct list *classlist )
   struct attrdef *ad;
   struct node *n, *nn;
 
-  printf("The following keywords were extracted:\n");
+  fprintf(stdout, "The following keywords were extracted:\n");
 
   for(nn = NULL; (nn = list_getnext(classlist, nn, (void **)&cd)); )
   {
-    printf("CLASS: %s\n", cd->name);
+    fprintf(stdout, "CLASS: %s\n", cd->name);
+
     for(n = NULL; (n = list_getnext(&cd->overloadlist, n, (void **) &od)); )
-      printf("  OVERLOAD: %s\n", od->name);
+      fprintf(stdout, "  OVERLOAD: %s\n", od->name);
+
     for(n = NULL; (n = list_getnext(&cd->declarelist, n, (void **) &dd)); )
-      printf("   DECLARE: %s\n", dd->name);
+      fprintf(stdout, "   DECLARE: %s\n", dd->name);
+
     for(n = NULL; (n = list_getnext(&cd->attrlist, n, (void **) &ad)); )
-      printf("      ATTR: %s\n", ad->name);
+      fprintf(stdout, "      ATTR: %s\n", ad->name);
   }
 }
 
@@ -649,24 +678,35 @@ int scanclasses( char *dirname, struct list *classlist )
   int len, srccnt = 0;
   struct classdef *cd;
   strncpy(dirbuf, dirname, 255);
-  if (arg_v) printf("scanning classes dir %s\n", dirbuf);
+
+  if(arg_v)
+    fprintf(stdout, "scanning classes dir '%s'\n", dirbuf);
+
   if (!(dir = opendir(dirname)))
   {
-    printf("Unable to open directory %s\n", dirname);
+    fprintf(stderr, "ERROR: Unable to open directory %s\n", dirname);
+
     return 0;
   }
+
   while ((de = readdir(dir)))
   {
     n = de->d_name; len = strlen(n);
     if (len < 2) continue;
     if ((n[len - 2] != '.') || (tolower(n[len - 1]) != 'c'))
     {
-      printf("Skipping: %s\n", n); continue;
+      if(arg_v)
+        fprintf(stdout, "Skipping: %s\n", n);
+
+      continue;
     }
     if (!strcmp(SOURCE_NAME, n) || !strcmp(HEADER_NAME, n)) continue;
     ++srccnt;
     myaddpart(dirbuf, de->d_name, 255);
-    printf("processing: %s\n", dirbuf);
+
+    if(arg_v)
+      fprintf(stdout, "processing: %s\n", dirbuf);
+
     if ((cd = processclasssrc(dirbuf)))
       list_saveitem(classlist, cd->name, cd);
     *mypathpart(dirbuf) = 0;
@@ -674,7 +714,7 @@ int scanclasses( char *dirname, struct list *classlist )
   closedir(dir);
   if (srccnt == 0)
   {
-    printf("ERROR: Was unable to find any sources in %s\n", dirname);
+    fprintf(stderr, "ERROR: Was unable to find any sources in %s\n", dirname);
     return 0;
   }
   if (arg_v) printclasslist(classlist);
@@ -818,10 +858,12 @@ int gen_source( char *destfile, struct list *classlist )
   struct declaredef *nextdd;
   struct node *n, *nn;
 
-  printf("Creating source      : %s\n", destfile);
+  if(arg_v)
+    fprintf(stdout, "Creating source      : %s\n", destfile);
+
   if (!(fp = fopen(destfile, "w")))
   {
-    printf("ERROR: Unable to open %s\n", destfile);
+    fprintf(stderr, "ERROR: Unable to open %s\n", destfile);
     return 0;
   }
 
@@ -914,10 +956,12 @@ int gen_header( char *destfile, struct list *classlist )
   struct overloaddef *nextod;
   struct node *n, *nn;
 
-  printf("Creating header      : %s\n", destfile);
+  if(arg_v)
+    fprintf(stdout, "Creating header      : %s\n", destfile);
+
   if (!(fp = fopen(destfile, "w")))
   {
-    printf("ERROR: Unable to open %s\n", destfile);
+    fprintf(stderr, "ERROR: Unable to open %s\n", destfile);
     return 0;
   }
 
@@ -1097,10 +1141,13 @@ int gen_classheaders( struct list *classlist )
     char *cn = nextcd->name;
     snprintf(name, sizeof(name), "%s_cl.h", cn);
     myaddpart(arg_classdir, name, 255);
-    printf("Creating class header: %s\n", arg_classdir);
+
+    if(arg_v)
+      fprintf(stdout, "Creating class header: %s\n", arg_classdir);
+
     if (!(fp = fopen(arg_classdir, "w")))
     {
-      printf("WARNING: Unable to write %s\n", name);
+      fprintf(stderr, "WARNING: Unable to write %s\n", name);
       *mypathpart(arg_classdir) = 0;
 
       continue;
@@ -1173,11 +1220,20 @@ int gen_makefile( char *destfile, struct list *classlist )
   FILE *fp;
   struct node *n;
 
-  for (p = arg_mkfile_ccopts;;) if ((p = strchr(p, ','))) *p++ = ' '; else break;
-  printf("Creating makefile    : %s\n", destfile);
+  for(p = arg_mkfile_ccopts;;)
+  {
+    if((p = strchr(p, ',')))
+      *p++ = ' ';
+    else
+      break;
+  }
+
+  if(arg_v)
+    fprintf(stdout, "Creating makefile    : %s\n", destfile);
+
   if (!(fp = fopen(destfile, "w")))
   {
-    printf("ERROR: Unable to open %s\n", destfile);
+    fprintf(stderr, "ERROR: Unable to open %s\n", destfile);
     return 0;
   }
   fprintf(fp, "#\n"
@@ -1236,25 +1292,6 @@ int doargs( unsigned int argc, char *argv[] )
   unsigned int i;
   int success;
 
-  if (argc < 2)
-  {
-    printf(
-      "Usage: GenClasses <classdir> -b<basename> <options>\n"
-         "\n"
-      "Options:\n"
-      "\n"
-      " -b<basename>                                 - basename (.i.e. YAM) used in sources (required)\n"
-      " -gpl                                         - write GPL headers into sources\n");
-
-    printf(
-      " -storm                                       - include storm/GoldED fold markers\n"
-      " -i<includes>                                 - includes for Classes.h (.i.e. -i\"YAM.h\",\"YAM_hook.h\",<stdlib.h>\n"
-      " -v                                           - verbose output while generating files\n"
-      " -mkfile<makefile>,<cc>,<outarg>,<ccopts,...> - Create a makefile\n"
-      "    (.i.e. -mkfileVMakefile,vc,-o,-O3,-+\n");
-
-    return 0;
-  }
   arg_gpl = 0;
   for (i = 1; i < argc; i++)
   {
@@ -1265,18 +1302,44 @@ int doargs( unsigned int argc, char *argv[] )
     if (getstrarg("-mkfile", argv[i], arg_mkfile,   255)) continue;
     if (getblnarg("-v",      argv[i], &arg_v           )) continue;
     if (getblnarg("-verbose",argv[i], &arg_v           )) continue;
+    if (getblnarg("-q",      argv[i], &arg_q           )) continue;
   }
+
+  if(arg_q == 0 || argc < 2)
+    fprintf(stdout, "GenClasses v%s by Andrew Bell <mechanismx@lineone.net>\n\n", verstr);
+
+  if(argc < 2)
+  {
+    fprintf(stderr,
+      "Usage: GenClasses <classdir> -b<basename> <options>\n"
+         "\n"
+      "Options:\n"
+      "\n"
+      " -b<basename>                                 - basename (.i.e. YAM) used in sources (required)\n"
+      " -gpl                                         - write GPL headers into sources\n");
+
+    fprintf(stderr,
+      " -storm                                       - include storm/GoldED fold markers\n"
+      " -i<includes>                                 - includes for Classes.h (.i.e. -i\"YAM.h\",\"YAM_hook.h\",<stdlib.h>\n"
+      " -v                                           - verbose output while generating files\n"
+      " -q                                           - keep output quiet and only output errors\n"
+      " -mkfile<makefile>,<cc>,<outarg>,<ccopts,...> - Create a makefile\n"
+      "    (.i.e. -mkfileVMakefile,vc,-o,-O3,-+)\n");
+
+    return 0;
+  }
+
   success = 1;
   strncpy(arg_classdir, argv[1], 255);
   if (arg_classdir[0] == 0 || arg_classdir[0] == '-')
   {
-    printf("No class dir specified, using current directory.\n");
+    fprintf(stderr, "No class dir specified, using current directory.\n");
     strcpy(arg_classdir, "");
   }
   if (!arg_basename[0])
   {
     success = 0;
-    printf("ERROR: You MUST provide a basename using the -b argument\n");
+    fprintf(stderr, "ERROR: You MUST provide a basename using the -b argument\n");
   }
 
   if(arg_mkfile[0])
@@ -1309,7 +1372,6 @@ int main( int argc, char *argv[] )
   struct list classlist;
 
   list_init(&classlist);
-  printf("GenClasses v%s by Andrew Bell <mechanismx@lineone.net>\n\n", verstr);
 
   if (!doargs(argc, argv)) return 0;
 

@@ -451,8 +451,8 @@ depend: classinfo Locale.c ParseEmail.c HTML2Mail.c
 classinfo: $(CLASSDIR)/Classes.h
 
 $(CLASSDIR)/Classes.h: $(GENCLASSES)/GenClasses $(CLASSDIR)/*.c
-	@echo "  GN genclasses"
-	@$(GENCLASSES)/GenClasses classes -bYAM -gpl -storm -iClassesExtra.h
+	@echo "  GN GenClasses"
+	@$(GENCLASSES)/GenClasses classes -bYAM -gpl -storm -iClassesExtra.h -q
 
 $(CLASSDIR)/Classes.c: $(CLASSDIR)/ClassesExtra.h
 
