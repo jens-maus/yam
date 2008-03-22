@@ -68,7 +68,7 @@ struct node *list_getnext( struct list *l, struct node *n, void **data_ptr )
 
 struct node *list_findname( struct list *l, char *name )
 {
-  struct result *res = NULL;
+  struct node *res = NULL;
   struct node *n;
 
   for(n = l->head; n != NULL && n->succ; n = n->succ)
