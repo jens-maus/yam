@@ -1284,7 +1284,10 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
   // is non MIME conform, we have to force the encoding mode to
   // 7bit US-ASCII due to RFC2049 rules
   if(mode == RHM_MAINHEADER && isMIMEconform(rp) == FALSE)
+  {
+    W(DBF_MAIL, "found non-MIME conform mail, forcing encoding to 7bit");
     rp->EncodingCode = ENC_7BIT;
+  }
 
   RETURN(TRUE);
   return TRUE;
@@ -1697,6 +1700,11 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
         SET_FLAG(newPart->Flags, PFLAG_ALTPART);
       }
     }
+
+    // make sure to set the MIME conforming flag in
+    // case the first one got that flag as well
+    if(first != NULL && isMIMEconform(first))
+      SET_FLAG(newPart->Flags, PFLAG_MIME);
 
     // make sure we make the hierarchy clear
     newPart->Parent = first;

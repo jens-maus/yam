@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: fixed a bug where the MIME conformance flag was not propagated
+    to the sub message parts and therefore ended up in not correctly parsing
+    some MIME messages.
+
 2008-03-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c, misc: modified the RE_ScanHeader() routines to test for the
