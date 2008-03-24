@@ -3696,7 +3696,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
           {
             char uidl[SIZE_DEFAULT+SIZE_HOST];
 
-            snprintf(uidl, sizeof(uidl), "%s@%s", Trim(email->MsgID), C->P3[G->TR->POP_Nr]->Server);
+            snprintf(uidl, sizeof(uidl), "%s@%s", email->messageID, C->P3[G->TR->POP_Nr]->Server);
             mtn->UIDL = strdup(uidl);
           }
           else if(lline == -2)

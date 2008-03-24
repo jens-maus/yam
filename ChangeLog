@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c, YAM_UT.c, misc: moved CompressMsgID() function to YAM_RE.c and
+    reworked it to only take the first found msgid found in the supplied msgid
+    character string. This should prevent that we are compressing the whole
+    content of the In-Reply-To header field which might contain more than just
+    one msgid according to RFC2822 section 3.6.4.
+
 2008-03-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c: fixed a bug where the MIME conformance flag was not propagated

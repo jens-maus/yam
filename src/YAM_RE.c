@@ -3623,7 +3623,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
         snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
         EmitHeader(tf2->FP, "Final-Recipient", buf);
-        EmitHeader(tf2->FP, "Original-Message-ID", email->MsgID);
+        EmitHeader(tf2->FP, "Original-Message-ID", email->messageID);
         EmitHeader(tf2->FP, "Disposition", disp);
 
         // close the file handle

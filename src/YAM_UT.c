@@ -3068,25 +3068,6 @@ void ExtractAddress(const char *line, struct Person *pe)
   LEAVE();
 }
 ///
-/// CompressMsgID
-//  Creates a crc32 checksum of the MsgID, so that it can be used later
-//  for the follow-up algorithms aso.
-ULONG CompressMsgID(char *msgid)
-{
-  ULONG id = 0;
-
-  ENTER();
-
-  // if the MsgID is valid we calculate the CRC32 checksum and as it
-  // consists only of one cycle through the crc function we call it
-  // with -1
-  if(msgid != NULL && msgid[0] != '\0')
-    id = CRC32(msgid, strlen(msgid), -1L);
-
-  RETURN(id);
-  return id;
-}
-///
 /// DescribeCT
 //  Returns description of a content type
 const char *DescribeCT(const char *ct)
@@ -6844,7 +6825,7 @@ abort:
 //  This implementation allows the usage of more than one persistant calls of
 //  the crc32 function. This allows to calculate a valid crc32 checksum over
 //  an unlimited amount of buffers.
-ULONG CRC32(void *buffer, unsigned int count, ULONG crc)
+ULONG CRC32(const void *buffer, unsigned int count, ULONG crc)
 {
   /* table generated with the following code:
    *
@@ -6897,12 +6878,12 @@ ULONG CRC32(void *buffer, unsigned int count, ULONG crc)
     0xbdbdf21c, 0xcabac28a, 0x53b39330, 0x24b4a3a6, 0xbad03605, 0xcdd70693, 0x54de5729, 0x23d967bf,
     0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94, 0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
   };
-  unsigned char *p = (unsigned char *)buffer;
+  const unsigned char *p = (const unsigned char *)buffer;
 
   ENTER();
 
   // we calculate the crc32 now.
-  while (count-- != 0)
+  while(count-- != 0)
   {
     ULONG temp1 = (crc >> 8) & 0x00FFFFFFL;
     ULONG temp2 = CRCTable[((int)crc ^ *p++) & 0xFF];

@@ -287,8 +287,7 @@ LONG     CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG 
 void     ClearMailList(struct Folder *folder, BOOL resetstats);
 BOOL     DeleteZombieFiles(BOOL force);
 void     CloseTempFile(struct TempFile *tf);
-ULONG    CRC32(void *buffer, unsigned int count, ULONG crc);
-ULONG    CompressMsgID(char *msgid);
+ULONG    CRC32(const void *buffer, unsigned int count, ULONG crc);
 BOOL     ConvertCRLF(char *in, char *out, BOOL to);
 unsigned char ConvertKey(const struct IntuiMessage *imsg);
 BOOL     isChildOfGroup(Object *group, Object *child);

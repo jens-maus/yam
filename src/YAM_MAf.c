@@ -1122,6 +1122,43 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
   return result;
 }
 ///
+/// CompressMsgID
+//  Creates a crc32 checksum of the MsgID, so that it can be used later
+//  for the follow-up algorithms aso.
+static ULONG CompressMsgID(const char *msgid)
+{
+  ULONG id = 0;
+
+  ENTER();
+
+  // if the MsgID is valid we calculate the CRC32 checksum and as it
+  // consists only of one cycle through the crc function we call it
+  // with -1
+  if(msgid != NULL && msgid[0] != '\0')
+  {
+    char *end = strchr(msgid, '>'); // find end of msgid
+    size_t len;
+
+    if(end != NULL)
+      len = end-msgid+1;
+    else
+    {
+      W(DBF_MAIL, "can't find closing '>' in msgid '%s'", msgid);
+      len = strlen(msgid);
+    }
+
+    // calculate the CRC32 checksum for the compressed
+    // message ID
+    id = CRC32(msgid, len, -1L);
+  }
+  else
+    E(DBF_MAIL, "can't calculate compressed MsgID");
+
+  RETURN(id);
+  return id;
+}
+///
+
 
 /*** Mail header scanning ***/
 /// MA_NewMailFile
@@ -1398,6 +1435,12 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
 
     FreeStrBuf(email->extraHeaders);
     email->extraHeaders = NULL;
+
+    FreeStrBuf(email->messageID);
+    email->messageID = NULL;
+
+    FreeStrBuf(email->inReplyToMsgID);
+    email->inReplyToMsgID = NULL;
 
     if(email->SFrom != NULL)
     {
@@ -1890,13 +1933,13 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         }
         else if(stricmp(field, "message-id") == 0)
         {
-          mail->cMsgID = CompressMsgID(p = Trim(value));
-          strlcpy(email->MsgID, p, sizeof(email->MsgID));
+          email->messageID = StrBufCpy(NULL, Trim(value));
+          mail->cMsgID = CompressMsgID(email->messageID);
         }
         else if(stricmp(field, "in-reply-to") == 0)
         {
-          mail->cIRTMsgID = CompressMsgID(p = Trim(value));
-          strlcpy(email->IRTMsgID, p, sizeof(email->IRTMsgID));
+          email->inReplyToMsgID = StrBufCpy(NULL, Trim(value));
+          mail->cIRTMsgID = CompressMsgID(email->inReplyToMsgID);
         }
         else if(stricmp(field, "date") == 0)
         {

@@ -57,27 +57,26 @@ struct Mail
 struct ExtendedMail
 {
   struct Mail      Mail;
-  struct Person *  SFrom;        // ptr to an array of additional "From:" senders (excluding the main From:)
-  struct Person *  STo;          // ptr to an array of additional "To:" recipients (excluding the main To:)
-  struct Person *  SReplyTo;     // ptr to an array of additional "Reply-To:" recipients (excluding the main Reply-To:)
-  struct Person *  CC;           // ptr to an array of all "CC:" recipients
-  struct Person *  BCC;          // ptr to an array of all "BCC:" recipients
-  char *           extraHeaders; // YAM internal headers (X-YAM-...)
+  struct Person *  SFrom;          // ptr to an array of additional "From:" senders (excluding the main From:)
+  struct Person *  STo;            // ptr to an array of additional "To:" recipients (excluding the main To:)
+  struct Person *  SReplyTo;       // ptr to an array of additional "Reply-To:" recipients (excluding the main Reply-To:)
+  struct Person *  CC;             // ptr to an array of all "CC:" recipients
+  struct Person *  BCC;            // ptr to an array of all "BCC:" recipients
+  char *           extraHeaders;   // YAM internal headers (X-YAM-...)
   char *           SenderInfo;
-  int              NoSFrom;      // number of additional senders in SFrom (minus one)
-  int              NoSTo;        // number of additional recipients in STo (minus one)
-  int              NoSReplyTo;   // number of additional recipients in SReplyTo (minus one)
-  int              NoCC;         // number of recipients in CC
-  int              NoBCC;        // number of recipients in BCC
+  char *           messageID;      // the composed "Message-ID:" (only one MsgID)
+  char *           inReplyToMsgID; // the composed "In-Reply-To:" (a set of multiple IDs)
+  int              NoSFrom;        // number of additional senders in SFrom (minus one)
+  int              NoSTo;          // number of additional recipients in STo (minus one)
+  int              NoSReplyTo;     // number of additional recipients in SReplyTo (minus one)
+  int              NoCC;           // number of recipients in CC
+  int              NoBCC;          // number of recipients in BCC
   int              Signature;
   int              Security;
   BOOL             DelSend;
   struct Person    ReturnPath;   // the "Return-Path" address of the mail, if present
   struct Person    ReceiptTo;    // the recipient in for a requested MDN
   struct Person    OriginalRcpt; // the original recipient for a requested MDN
-
-  char             MsgID[SIZE_MSGID];
-  char             IRTMsgID[SIZE_MSGID];
 };
 
 extern struct Hook MA_ChangeFolderHook;

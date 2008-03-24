@@ -1879,7 +1879,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
             // free our temp text now
             free(cmsg);
 
-            strlcpy(wr->MsgID, email->IRTMsgID, sizeof(wr->MsgID));
+            strlcpy(wr->MsgID, email->inReplyToMsgID, sizeof(wr->MsgID));
 
             // set the subject gadget
             setstring(wr->GUI.ST_SUBJECT, mail->Subject);
@@ -2102,7 +2102,7 @@ int MA_NewForward(struct MailList *mlist, int flags)
         }
 
         MA_SetupExpandTextData(&etd, &email->Mail);
-        etd.OM_MessageID = email->MsgID;
+        etd.OM_MessageID = email->messageID;
         etd.R_Name = mail->To.RealName[0] != '\0' ? mail->To.RealName : mail->To.Address;
         etd.R_Address = mail->To.Address;
 
@@ -2298,7 +2298,7 @@ int MA_NewReply(struct MailList *mlist, int flags)
         // make sure we setup the quote string
         // correctly.
         MA_SetupExpandTextData(&etd, &email->Mail);
-        etd.OM_MessageID = email->MsgID;
+        etd.OM_MessageID = email->messageID;
 
         // If the mail which we are going to reply to already has a subject,
         // we are going to add a "Re:" to it.
@@ -2338,7 +2338,7 @@ int MA_NewReply(struct MailList *mlist, int flags)
         // in case we are replying to a single message we also have to
         // save the messageID of it.
         if(mlist->count == 1)
-          strlcpy(wr->MsgID, email->MsgID, sizeof(wr->MsgID));
+          strlcpy(wr->MsgID, email->messageID, sizeof(wr->MsgID));
 
         // Now we analyse the folder of the selected mail and if it
         // is a mailing list we have to do some special operation
