@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-27  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: fixed a copy'n'paste bug which cleared the To: field when editing
+    a not yet sent mail. This fixes bug #1925711.
+
 2008-03-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c, YAM_UT.c, misc: moved CompressMsgID() function to YAM_RE.c and

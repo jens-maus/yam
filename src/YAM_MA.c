@@ -1920,7 +1920,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
             }
 
             // add all "To:" recipients of the mail
-            sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
+            sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName));
             for(i=0; i < email->NoSTo; i++)
               sbuf = MA_AppendRcpt(sbuf, &email->STo[i], FALSE);
 
