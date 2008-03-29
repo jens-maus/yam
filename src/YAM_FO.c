@@ -2171,6 +2171,39 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
 MakeStaticHook(FO_MLAutoDetectHook, FO_MLAutoDetectFunc);
 
 ///
+/// FolderPathFunc
+// set the user's mail directory path as default path instead of YAM's directory
+HOOKPROTONHNO(FolderPathFunc, LONG, struct TagItem *tags)
+{
+  BOOL drawerTagFound = FALSE;
+
+  ENTER();
+
+  // search for the end of the tag list or an already existing drawer tag item
+  while(tags->ti_Tag != TAG_DONE && tags->ti_Tag != ASLFR_InitialDrawer)
+    tags++;
+
+  // remember if we found ASLFR_InitialDrawer
+  if(tags->ti_Tag == ASLFR_InitialDrawer)
+    drawerTagFound = TRUE;
+  else
+    tags->ti_Tag = ASLFR_InitialDrawer;
+
+  // set the initial drawer to the user's mail directory
+  tags->ti_Data = (ULONG)G->MA_MailDir;
+
+  // add a terminating TAG_DONE if necessary
+  if(drawerTagFound == FALSE)
+  {
+    tags++;
+    tags->ti_Tag = TAG_DONE;
+  }
+
+  RETURN(TRUE);
+  return TRUE;
+}
+MakeStaticHook(FolderPathHook, FolderPathFunc);
+///
 
 /// FO_New
 //  Creates folder configuration window
@@ -2227,6 +2260,7 @@ static struct FO_ClassData *FO_New(void)
              Child, Label2(tr(MSG_Path)),
              Child, PopaslObject,
                 MUIA_Popasl_Type, ASL_FileRequest,
+                MUIA_Popasl_StartHook, &FolderPathHook,
                 MUIA_Popstring_String, data->GUI.ST_FPATH = MakeString(SIZE_PATH, ""),
                 MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
                 ASLFR_DrawersOnly, TRUE,

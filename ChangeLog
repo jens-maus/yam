@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-29  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c: when changing a folder's path the requester will now use the
+    user's mail directory as default directory instead of YAM's directory.
+
 2008-03-27  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: fixed a copy'n'paste bug which cleared the To: field when editing
