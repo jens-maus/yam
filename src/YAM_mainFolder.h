@@ -66,6 +66,7 @@ struct ExtendedMail
   char *           SenderInfo;
   char *           messageID;      // the composed "Message-ID:" (only one MsgID)
   char *           inReplyToMsgID; // the composed "In-Reply-To:" (a set of multiple IDs)
+  char *           references;     // the composed "References:" (a set of multiple IDs)
   int              NoSFrom;        // number of additional senders in SFrom (minus one)
   int              NoSTo;          // number of additional recipients in STo (minus one)
   int              NoSReplyTo;     // number of additional recipients in SReplyTo (minus one)

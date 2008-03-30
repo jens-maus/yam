@@ -2283,7 +2283,7 @@ int rfc2047_encode_file(FILE *fh, const char *src, const size_t offset)
     D(DBF_MIME, "encoded rfc2047 string: '%s'", dst);
 
     // now we split the dst string into different lines
-    if(len >= 75-offset-2) // -2 because of CRLF
+    if(len >= 75-offset)
     {
       char *s = dst;
       char *e = dst;

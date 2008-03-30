@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-30  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c, YAM_WR.c, YAM_MAf.c, misc: when replying to a message, YAM was
+    not respecting the required "References:" header field (according to
+    RFC2822) to allow mail clients to keep track of the mail threading. Now
+    YAM will insert a References: header field together with the required
+    In-Reply-To and Message-ID header field. This should make YAM more
+    compliant to the RFC as previously it wasn't taking note of the
+    References headers at all. In addition, the HeaderFputs() function will
+    now try to line wrap header field which are about to be larger than 78
+    characters.
+  * YAM_WR.c: the data of a write window was not properly cleaned up if it
+    was just canceled. This was a potential source for a memory leak.
+
 2008-03-29  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: when changing a folder's path the requester will now use the

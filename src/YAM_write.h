@@ -83,14 +83,16 @@ struct WR_ClassData  /* write window */
   struct Mail *     refMail;            // ptr to the original mail this write window was created from
   struct MailList * refMailList;        // ptr to a list of orginal mails.
 
-  enum NewMode      Mode;
+  char *            inReplyToMsgID;     // ptr to "In-Reply-To:" message header to compose the message for
+  char *            references;         // ptr to "References:" message header to compose the message for
+
+  enum NewMode      Mode;               // the compose mode this window is working on
   int               OldSecurity;
   int               winnum;             // the window number this class data belongs to
 
   BOOL              AutoSaved;          // was this mail automatically saved?
   BOOL              FileNotifyActive;   // is a file change notification currently active or not
 
-  char              MsgID[SIZE_MSGID];
   char              CursorPos[SIZE_DEFAULT];
   char              WTitle[SIZE_SUBJECT+1];
 };
@@ -153,14 +155,15 @@ struct Compose
   char *             RealName;
   const char *       Subject;
   char *             ExtHeader;
-  char *             IRTMsgID;
+  char *             inReplyToMsgID; // ptr to In-Reply-To MsgIDs
+  char *             references;     // ptr to References MsgIDs
   struct WritePart * FirstPart;
-  struct Mail *      refMail;    // ptr to the original mail we composing a new one from.
+  struct Mail *      refMail;        // ptr to the original mail we composing a new one from.
   int                Mode;
   int                Importance;
   int                Signature;
-  BOOL               RequestMDN;  // should an MDN be requested
-  BOOL               GenerateMDN; // should and MDN report be generated?
+  BOOL               RequestMDN;     // should a MDN be requested
+  BOOL               GenerateMDN;    // should a MDN report be generated?
   BOOL               DelSend;
   BOOL               UserInfo;
   enum Security      Security;

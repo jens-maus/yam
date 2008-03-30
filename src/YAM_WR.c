@@ -555,7 +555,6 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
 
   }
 
-
   // if an encoding is required, we go and process it accordingly but
   // have to check whether we do rfc2047 or rfc2231 based encoding
   if(doEncoding == TRUE)
@@ -582,12 +581,54 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
   }
   else
   {
+    size_t len = strlen(s);
+
     // there seems to be non "violating" characters in the string and
     // the resulting string will also be not > 78 chars in case we
-    // have to encode a MIME parameter, so we go and putout the source
+    // have to encode a MIME parameter, so we go and output the source
     // string immediately
     D(DBF_MAIL, "writing plain content '%s'", s);
-    fputs(s, fh);
+
+    // all we have to make sure now is that we don't write longer lines
+    // than 78 chars or we fold them
+    if(len >= (size_t)75-offset)
+    {
+      char *p = (char *)s;
+      char *e = (char *)s;
+      char *last_space = NULL;
+      size_t c = offset;
+
+      // start our search
+      while(len > 0)
+      {
+        if(*e == ' ')
+          last_space = e;
+
+        // check if we need a newline and
+        // if so we go and write out the last
+        // stuff including a newline.
+        if(c >= 75 && last_space != NULL)
+        {
+          fwrite(p, last_space-p, 1, fh);
+
+          if(len > 1)
+            fwrite("\n ", 2, 1, fh);
+
+          p = last_space+1;
+          c = e-p;
+          last_space = NULL;
+        }
+
+        c++;
+        e++;
+        len--;
+      }
+
+      if(c > 0)
+        fwrite(p, e-p, 1, fh);
+    }
+    else
+      fwrite(s, len, 1, fh);
   }
 
   LEAVE();
@@ -1827,8 +1868,14 @@ BOOL WriteOutMessage(struct Compose *comp)
   if(comp->MailCC) EmitRcptHeader(fh, "CC", comp->MailCC);
   if(comp->MailBCC) EmitRcptHeader(fh, "BCC", comp->MailBCC);
   EmitHeader(fh, "Date", GetDateTime());
+
+  // output the Message-ID, In-Reply-To and References message headers
   fprintf(fh, "Message-ID: <%s>\n", NewID(TRUE));
-  if(comp->IRTMsgID) EmitHeader(fh, "In-Reply-To", comp->IRTMsgID);
+  if(comp->inReplyToMsgID != NULL)
+    EmitHeader(fh, "In-Reply-To", comp->inReplyToMsgID);
+  if(comp->references != NULL)
+    EmitHeader(fh, "References", comp->references);
+
   rcptto = comp->ReplyTo ? comp->ReplyTo : (comp->From ? comp->From : C->EmailAddress);
   if(comp->RequestMDN) EmitRcptHeader(fh, "Disposition-Notification-To", rcptto);
   if(comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
@@ -2082,8 +2129,9 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
     comp.ExtHeader = (char *)xget(gui->ST_EXTHEADER, MUIA_String_Contents);
 
-    if(wr->MsgID[0] != '\0')
-      comp.IRTMsgID = wr->MsgID;
+    // In-Reply-To / References
+    comp.inReplyToMsgID = wr->inReplyToMsgID;
+    comp.references = wr->references;
 
     comp.Importance = 1-GetMUICycle(gui->CY_IMPORTANCE);
     comp.RequestMDN = GetMUICheck(gui->CH_MDN);
@@ -2357,6 +2405,19 @@ void WR_NewMail(enum WriteMode mode, int winnum)
     wr->refMailList = NULL;
   }
 
+  // cleanup the In-Reply-To / References stuff
+  if(wr->inReplyToMsgID != NULL)
+  {
+    FreeStrBuf(wr->inReplyToMsgID);
+    wr->inReplyToMsgID = NULL;
+  }
+
+  if(wr->references != NULL)
+  {
+    FreeStrBuf(wr->references);
+    wr->references = NULL;
+  }
+
   // now we make sure we immediately send out the mail.
   if(mode == WRITE_SEND && newMail != NULL && G->TR == NULL)
   {
@@ -2400,16 +2461,21 @@ MakeHook(WR_NewMailHook, WR_NewMailFunc);
 //  Terminates file notification and removes temporary files
 void WR_Cleanup(int winnum)
 {
+  struct WR_ClassData *wr = G->WR[winnum];
+
   ENTER();
 
-  if(G->WR[winnum]->Mode != NEW_BOUNCE)
+  if(wr->Mode != NEW_BOUNCE)
   {
     char fileName[SIZE_PATHFILE];
     int i;
 
     // stop any pending file notification.
-    if(G->WR[winnum]->FileNotifyActive == TRUE)
+    if(wr->FileNotifyActive == TRUE)
+    {
       EndNotify(G->WR_NotifyRequest[winnum]);
+      wr->FileNotifyActive = FALSE;
+    }
 
     DeleteFile(G->WR_Filename[winnum]);
 
@@ -2417,7 +2483,7 @@ void WR_Cleanup(int winnum)
     {
       struct Attach *att;
 
-      DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
+      DoMethod(wr->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
       if(att == NULL)
         break;
 
@@ -2427,6 +2493,28 @@ void WR_Cleanup(int winnum)
 
     // delete a possible autosave file
     DeleteFile(WR_AutoSaveFile(winnum, fileName, sizeof(fileName)));
+
+    // cleanup the reference mail list
+    if(wr->refMailList != NULL)
+    {
+      DeleteMailList(wr->refMailList);
+      wr->refMailList = NULL;
+    }
+
+    wr->refMail = NULL;
+
+    // cleanup the In-Reply-To / References stuff
+    if(wr->inReplyToMsgID != NULL)
+    {
+      FreeStrBuf(wr->inReplyToMsgID);
+      wr->inReplyToMsgID = NULL;
+    }
+
+    if(wr->references != NULL)
+    {
+      FreeStrBuf(wr->references);
+      wr->references = NULL;
+    }
   }
 
   LEAVE();
@@ -2442,45 +2530,43 @@ HOOKPROTONHNO(WR_CancelFunc, void, int *arg)
 
   ENTER();
 
-  if(G->WR[winnum]->Mode != NEW_BOUNCE)
+  if(G->WR[winnum]->Mode != NEW_BOUNCE &&
+     winnum < 2)
   {
-    if(winnum < 2)
+    // ask the user what to do if the mail text was modified
+    if(xget(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE || G->WR[winnum]->AutoSaved == TRUE)
     {
-      // ask the user what to do if the mail text was modified
-      if(xget(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE || G->WR[winnum]->AutoSaved == TRUE)
+      switch(MUI_Request(G->App, G->WR[winnum]->GUI.WI, 0, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
       {
-        switch(MUI_Request(G->App, G->WR[winnum]->GUI.WI, 0, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
+        case 0:
         {
-          case 0:
-          {
-            // cancel
-            discard = FALSE;
-          }
-          break;
-
-          case 1:
-          {
-            // send later
-            WR_NewMail(WRITE_QUEUE, winnum);
-            discard = FALSE;
-          }
-          break;
-
-          case 2:
-          {
-            // discard
-          }
-          break;
+          // cancel
+          discard = FALSE;
         }
+        break;
+
+        case 1:
+        {
+          // send later
+          WR_NewMail(WRITE_QUEUE, winnum);
+          discard = FALSE;
+        }
+        break;
+
+        case 2:
+        {
+          // discard
+        }
+        break;
       }
     }
-
-    if(discard == TRUE)
-      WR_Cleanup(winnum);
   }
 
   if(discard == TRUE)
+  {
+    WR_Cleanup(winnum);
     DisposeModulePush(&G->WR[winnum]);
+  }
 
   LEAVE();
 }

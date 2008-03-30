@@ -1879,7 +1879,12 @@ int MA_NewEdit(struct Mail *mail, int flags)
             // free our temp text now
             free(cmsg);
 
-            strlcpy(wr->MsgID, email->inReplyToMsgID, sizeof(wr->MsgID));
+            // set the In-Reply-To / References message header references, if they exist
+            if(email->inReplyToMsgID != NULL)
+              wr->inReplyToMsgID = StrBufCpy(NULL, email->inReplyToMsgID);
+
+            if(email->references != NULL)
+              wr->references = StrBufCpy(NULL, email->references);
 
             // set the subject gadget
             setstring(wr->GUI.ST_SUBJECT, mail->Subject);
@@ -2336,9 +2341,25 @@ int MA_NewReply(struct MailList *mlist, int flags)
         }
 
         // in case we are replying to a single message we also have to
-        // save the messageID of it.
-        if(mlist->count == 1)
-          strlcpy(wr->MsgID, email->messageID, sizeof(wr->MsgID));
+        // save the messageID of the email we are replying to
+        if(wr->inReplyToMsgID != NULL)
+          wr->inReplyToMsgID = StrBufCat(wr->inReplyToMsgID, " ");
+
+        wr->inReplyToMsgID = StrBufCat(wr->inReplyToMsgID, email->messageID);
+
+        // in addition, we check for "References:" message header stuff
+        if(wr->references != NULL)
+          wr->references = StrBufCat(wr->references, " ");
+
+        if(email->references != NULL)
+          wr->references = StrBufCat(wr->references, email->references);
+        else
+        {
+          // check if this email contains inReplyToMsgID data and if so we
+          // create a new references header entry
+          if(email->inReplyToMsgID != NULL)
+            wr->references = StrBufCat(wr->references, email->inReplyToMsgID);
+        }
 
         // Now we analyse the folder of the selected mail and if it
         // is a mailing list we have to do some special operation
@@ -2689,6 +2710,15 @@ int MA_NewReply(struct MailList *mlist, int flags)
         MA_FreeEMailStruct(email);
 
         j++;
+      }
+
+      // now we complement the "References:" header by adding our replyto header to it
+      if(wr->inReplyToMsgID != NULL)
+      {
+        if(wr->references != NULL)
+          wr->references = StrBufCat(wr->references, " ");
+
+        wr->references = StrBufCat(wr->references, wr->inReplyToMsgID);
       }
 
       // now that the mail is finished, we go and output some footer message to

@@ -1159,7 +1159,6 @@ static ULONG CompressMsgID(const char *msgid)
 }
 ///
 
-
 /*** Mail header scanning ***/
 /// MA_NewMailFile
 //  Function that creates a new plain mail filename or by taking provided
@@ -1441,6 +1440,9 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
 
     FreeStrBuf(email->inReplyToMsgID);
     email->inReplyToMsgID = NULL;
+
+    FreeStrBuf(email->references);
+    email->references = NULL;
 
     if(email->SFrom != NULL)
     {
@@ -1940,6 +1942,10 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         {
           email->inReplyToMsgID = StrBufCpy(NULL, Trim(value));
           mail->cIRTMsgID = CompressMsgID(email->inReplyToMsgID);
+        }
+        else if(stricmp(field, "references") == 0)
+        {
+          email->references = StrBufCpy(NULL, Trim(value));
         }
         else if(stricmp(field, "date") == 0)
         {
