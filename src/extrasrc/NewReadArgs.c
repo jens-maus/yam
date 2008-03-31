@@ -14,8 +14,17 @@
 */
 
 /*- INCLUDES & DEFINES -*/
+#if defined(__amigaos4__)
+  #define COMPILE_V52
+#else
+  #define COMPILE_V39
+#endif
+
 #include <dos/dos.h>
 #include <exec/memory.h>
+#if defined(COMPILE_V52)
+  #include <exec/exectags.h>
+#endif
 #include <workbench/startup.h>
 #include <workbench/workbench.h>
 #include <workbench/icon.h>
@@ -28,10 +37,6 @@
 #include <string.h>
 
 #include "Debug.h"
-
-#if defined(__amigaos4__)
-  #define COMPILE_V39
-#endif
 
 #ifndef MEMF_SHARED
 #define MEMF_SHARED MEMF_PUBLIC
@@ -54,7 +59,7 @@ struct NewRDArgs
   struct RDArgs *RDArgs;    // RDArgs we give to ReadArgs()
   struct RDArgs *FreeArgs;  // RDArgs we get from ReadArgs()
 
-  #ifdef COMPILE_V39
+  #if defined(COMPILE_V39) || defined(COMPILE_V52)
   APTR Pool;
   #else
   struct Remember *Remember;  // the memory we`ve allocated
@@ -94,12 +99,15 @@ void NewFreeArgs(struct NewRDArgs *rdargs)
     Close(SelectInput(rdargs->OldInput));
   }
 
-  #ifndef COMPILE_V39
-  if(rdargs->Remember)
-    FreeRemember(&rdargs->Remember, TRUE);
-  #else
+  #if defined(COMPILE_V39)
   if(rdargs->Pool)
     DeletePool(rdargs->Pool);
+  #elif defined(COMPILE_V52)
+  if(rdargs->Pool)
+    FreeSysObject(ASOT_MEMPOOL, rdargs->Pool);
+  #else
+  if(rdargs->Remember)
+    FreeRemember(&rdargs->Remember, TRUE);
   #endif
 
   D(DBF_STARTUP, "memory freed");
@@ -139,18 +147,18 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
   nrdargs->RDArgs   =
   nrdargs->FreeArgs = NULL;
   nrdargs->WinFH    = 0;
-  #ifndef COMPILE_V39
-  nrdargs->Remember = NULL;
-  #else
+  #if defined(COMPILE_V39) || defined(COMPILE_V52)
   nrdargs->Pool   = NULL;
+  #else
+  nrdargs->Remember = NULL;
   #endif
 
   if((nrdargs->RDArgs = (struct RDArgs *)AllocDosObject(DOS_RDARGS, NULL)))
   {
-    #ifndef COMPILE_V39
-    struct Remember **remember = &nrdargs->Remember;
-    #else
+    #if defined(COMPILE_V39) || defined(COMPILE_V52)
     APTR pool = NULL;
+    #else
+    struct Remember **remember = &nrdargs->Remember;
     #endif
     CONST_STRPTR ToolWindow = nrdargs->Window;
 
@@ -191,13 +199,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       FileArgs = (FileArgs > num) ? num : ((FileArgs == -1) ? 0L : num);
       MaxArgs += FileArgs;
 
-      #ifndef COMPILE_V39
-      if(!(Args = AllocRemember(remember, MaxArgs*sizeof(STRPTR)*2, MEMF_SHARED|MEMF_CLEAR)))
-      {
-        RETURN(ERROR_NO_FREE_STORE);
-        return(ERROR_NO_FREE_STORE);
-      }
-      #else
+      #if defined(COMPILE_V39)
       if(!(pool = nrdargs->Pool = CreatePool(MEMF_SHARED|MEMF_CLEAR, 1024, 1024)) || !(Args = AllocPooled(pool, MaxArgs*sizeof(STRPTR)*2)))
       {
         RETURN(ERROR_NO_FREE_STORE);
@@ -206,6 +208,21 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
       for(num = 0L; num < (MaxArgs*2); num++)
         Args[num] = 0L;
+      #elif defined(COMPILE_V52)
+      if(!(pool = nrdargs->Pool = AllocSysObject(ASOT_MEMPOOL, TAG_DONE)) || !(Args = AllocPooled(pool, MaxArgs*sizeof(STRPTR)*2)))
+      {
+        RETURN(ERROR_NO_FREE_STORE);
+        return(ERROR_NO_FREE_STORE);
+      }
+
+      for(num = 0L; num < (MaxArgs*2); num++)
+        Args[num] = 0L;
+      #else
+      if(!(Args = AllocRemember(remember, MaxArgs*sizeof(STRPTR)*2, MEMF_SHARED|MEMF_CLEAR)))
+      {
+        RETURN(ERROR_NO_FREE_STORE);
+        return(ERROR_NO_FREE_STORE);
+      }
       #endif
 
       ArgLen = (LONG *)&Args[MaxArgs];
@@ -231,10 +248,10 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
             {
               STRPTR dst;
               LONG len = strlen(buf) + 2L;
-              #ifndef COMPILE_V39
-              if((Args[FArgNum] = dst = AllocRemember(remember, len, MEMF_SHARED|MEMF_CLEAR)))
-              #else
+              #if defined(COMPILE_V39) || defined(COMPILE_V52)
               if((Args[FArgNum] = dst = AllocPooled(pool, len)))
+              #else
+              if((Args[FArgNum] = dst = AllocRemember(remember, len, MEMF_SHARED|MEMF_CLEAR)))
               #endif
               {
                 CopyMem(buf, (dst+1), len-2L);
@@ -296,10 +313,10 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
                   if( ArgLen[i] == 0L || (i-FileArgs) != MultiArg )
                   {
-                    #ifndef COMPILE_V39
-                    if((Args[i] = dst = AllocRemember(remember, (len = strlen(src))+2L, MEMF_SHARED|MEMF_CLEAR)))
-                    #else
+                    #if defined(COMPILE_V39) || defined(COMPILE_V52)
                     if((Args[i] = dst = AllocPooled(pool, (len = strlen(src))+2L)))
+                    #else
+                    if((Args[i] = dst = AllocRemember(remember, (len = strlen(src))+2L, MEMF_SHARED|MEMF_CLEAR)))
                     #endif
                     {
                       /*- copy arg -*/
@@ -325,10 +342,10 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                     while(*src && *src++ != '=' );
 
                     len = strlen( src ) + 1 + ArgLen[i];
-                    #ifndef COMPILE_V39
-                    if( (dst = AllocRemember(remember, len+2, MEMF_SHARED|MEMF_CLEAR)) )
-                    #else
+                    #if defined(COMPILE_V39) || defined(COMPILE_V52)
                     if( (dst = AllocPooled(pool, len+2)) )
+                    #else
+                    if( (dst = AllocRemember(remember, len+2, MEMF_SHARED|MEMF_CLEAR)) )
                     #endif
                     {
                       BOOL quotes = FALSE;
@@ -361,10 +378,10 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                 {
                   if((i = strlen(src)-6L) > 1L)
                   {
-                    #ifndef COMPILE_V39
-                    if((ToolWindow = AllocRemember(remember, i, MEMF_SHARED|MEMF_CLEAR)))
-                    #else
+                    #if defined(COMPILE_V39) || defined(COMPILE_V52)
                     if((ToolWindow = AllocPooled(pool, i)))
+                    #else
+                    if((ToolWindow = AllocRemember(remember, i, MEMF_SHARED|MEMF_CLEAR)))
                     #endif
                       CopyMem((src+7L), (STRPTR)ToolWindow, i);
                   }
@@ -463,10 +480,16 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       }
     }
 
-    #ifdef COMPILE_V39
+    #if defined(COMPILE_V39)
     if(pool)
     {
       DeletePool( pool );
+      nrdargs->Pool = NULL;
+    }
+    #elif defined(COMPILE_V52)
+    if(pool)
+    {
+      FreeSysObject(ASOT_MEMPOOL, pool);
       nrdargs->Pool = NULL;
     }
     #else

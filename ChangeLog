@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-03-31  Thore Böckelmann <tboeckel@gmx.de>
+
+  * NewReadArgs.c: modified to no longer use deprecated functions on OS4 but
+    resource tracking enabled functions instead. For all other builds finally
+    the intended pools are used instead of the ancient AllocRemember() calls.
+
 2008-03-30  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c, YAM_WR.c, YAM_MAf.c, misc: when replying to a message, YAM was
