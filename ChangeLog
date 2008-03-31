@@ -7,6 +7,7 @@ $URL$
 
 2008-03-31  Thore Böckelmann <tboeckel@gmx.de>
 
+  * NewReadArgs.c: use AllocSysObjectTags() instead of AllocSysObject().
   * NewReadArgs.c: modified to no longer use deprecated functions on OS4 but
     resource tracking enabled functions instead. For all other builds finally
     the intended pools are used instead of the ancient AllocRemember() calls.

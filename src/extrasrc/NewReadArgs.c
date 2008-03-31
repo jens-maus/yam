@@ -209,7 +209,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       for(num = 0L; num < (MaxArgs*2); num++)
         Args[num] = 0L;
       #elif defined(COMPILE_V52)
-      if(!(pool = nrdargs->Pool = AllocSysObject(ASOT_MEMPOOL, TAG_DONE)) || !(Args = AllocPooled(pool, MaxArgs*sizeof(STRPTR)*2)))
+      if(!(pool = nrdargs->Pool = AllocSysObjectTags(ASOT_MEMPOOL, TAG_DONE)) || !(Args = AllocPooled(pool, MaxArgs*sizeof(STRPTR)*2)))
       {
         RETURN(ERROR_NO_FREE_STORE);
         return(ERROR_NO_FREE_STORE);
