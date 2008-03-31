@@ -33,10 +33,6 @@
  * Thanks to the authors of SimpleMail!
  */
 
-#if !defined(__amigaos4__)
-#include <clib/alib_protos.h>
-#endif
-
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
@@ -45,6 +41,10 @@
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/timer.h>
+
+#if defined(__amigaos4__)
+#include <exec/exectags.h>
+#endif
 
 #include "YAM.h"
 
@@ -156,9 +156,11 @@ static BOOL InitThreadTimer(struct Thread *thread)
 
   NewList((struct List*)&thread->timer_request_list);
 
-  if((thread->timer_port = CreateMsgPort()) != NULL)
+  if((thread->timer_port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
-    if((thread->timer_req = (struct TimeRequest *)CreateIORequest(thread->timer_port, sizeof(struct TimeRequest))) != NULL)
+    if((thread->timer_req = (struct TimeRequest *)AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Size, sizeof(struct TimeRequest),
+                                                                                     ASOIOR_ReplyPort, thread->timer_port,
+                                                                                     TAG_DONE)) != NULL)
     {
       if(OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)thread->timer_req, 0) == 0)
       {
@@ -166,11 +168,11 @@ static BOOL InitThreadTimer(struct Thread *thread)
         return TRUE;
       }
 
-      DeleteIORequest((struct IORequest*)thread->timer_req);
+      FreeSysObject(ASOT_IOREQUEST, thread->timer_req);
       thread->timer_req = NULL;
     }
 
-    DeleteMsgPort(thread->timer_port);
+    FreeSysObject(ASOT_PORT, thread->timer_port);
     thread->timer_port = NULL;
   }
 
@@ -201,8 +203,8 @@ static void CleanupThreadTimer(struct Thread *thread)
   }
 
   CloseDevice((struct IORequest*)thread->timer_req);
-  DeleteIORequest((struct IORequest*)thread->timer_req);
-  DeleteMsgPort(thread->timer_port);
+  FreeSysObject(ASOT_IOREQUEST, thread->timer_req);
+  FreeSysObject(ASOT_PORT, thread->timer_port);
 
   LEAVE();
 }
@@ -305,7 +307,7 @@ static SAVEDS void ThreadEntry(void)
 
   // Set the task's UserData field to strore per thread data
   thread = msg->thread;
-  if((thread->thread_port = CreateMsgPort()) != NULL)
+  if((thread->thread_port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
     D(DBF_THREAD, "Subthreaded created port at 0x%lx", thread->thread_port);
 
@@ -332,7 +334,7 @@ static SAVEDS void ThreadEntry(void)
       CleanupThreadTimer(thread);
     }
 
-    DeleteMsgPort(thread->thread_port);
+    FreeSysObject(ASOT_PORT, thread->thread_port);
     thread->thread_port = NULL;
   }
 
@@ -353,7 +355,7 @@ int ParentThreadCanContinue(void)
 
   ENTER();
 
-  msg = (struct ThreadMessage *)AllocVec(sizeof(struct ThreadMessage),MEMF_PUBLIC|MEMF_CLEAR);
+  msg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage));
 
   D(DBF_THREAD, "Thread can continue");
 
@@ -383,11 +385,11 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void*
 
   ENTER();
 
-  if((thread = (struct Thread*)AllocVec(sizeof(*thread), MEMF_PUBLIC|MEMF_CLEAR)) != NULL)
+  if((thread = (struct Thread*)AllocVecPooled(G->SharedMemPool, sizeof(*thread))) != NULL)
   {
     struct ThreadMessage *msg;
 
-    if((msg = (struct ThreadMessage *)AllocVec(sizeof(*msg), MEMF_PUBLIC|MEMF_CLEAR)) != NULL)
+    if((msg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(*msg))) != NULL)
     {
       BPTR in;
       BPTR out;
@@ -437,8 +439,8 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void*
             /* This was the startup message, so something has failed */
             D(DBF_THREAD, "Got startup message back. Something went wrong");
 
-            FreeVec(thread_msg);
-            FreeVec(thread);
+            FreeVecPooled(G->SharedMemPool, thread_msg);
+            FreeVecPooled(G->SharedMemPool, thread);
 
             RETURN(NULL);
             return NULL;
@@ -449,7 +451,7 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void*
              * but we free it here (although it wasn't allocated by this task) */
             D(DBF_THREAD, "Got 'parent can continue'");
 
-            FreeVec(thread_msg);
+            FreeVecPooled(G->SharedMemPool, thread_msg);
 
             RETURN(thread);
             return thread;
@@ -461,7 +463,7 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void*
         Close(in);
       if(out != 0)
         Close(out);
-      FreeVec(msg);
+      FreeVecPooled(G->SharedMemPool, msg);
     }
   }
 
@@ -479,7 +481,7 @@ struct Thread *AddThread(const char *thread_name, int (*entry)(void *), void *eu
 
   ENTER();
 
-  if((thread_node = (struct ThreadNode*)AllocVec(sizeof(struct ThreadNode), MEMF_PUBLIC|MEMF_CLEAR)) != NULL)
+  if((thread_node = (struct ThreadNode*)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadNode))) != NULL)
   {
     struct Thread *thread = StartNewThread(thread_name, entry, eudata);
 
@@ -493,7 +495,7 @@ struct Thread *AddThread(const char *thread_name, int (*entry)(void *), void *eu
       return thread;
     }
 
-    FreeVec(thread_node);
+    FreeVecPooled(G->SharedMemPool, thread_node);
   }
 
   RETURN(NULL);
@@ -535,7 +537,7 @@ static struct ThreadMessage *CreateThreadMessage(void *function, int argcount, v
 
   ENTER();
 
-  if((tmsg = (struct ThreadMessage *)AllocVec(sizeof(struct ThreadMessage), MEMF_PUBLIC|MEMF_CLEAR)) != NULL)
+  if((tmsg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage))) != NULL)
   {
     struct MsgPort *subthread_port = ((struct Thread*)(FindTask(NULL)->tc_UserData))->thread_port;
 
@@ -595,9 +597,9 @@ static void HandleThreadMessage(struct ThreadMessage *tmsg)
       D(DBF_THREAD, "Freeing Message at 0x%lx", tmsg);
 
       if(tmsg->async == 2 && tmsg->argcount >= 1 && tmsg->arg[1] != NULL)
-        FreeVec(tmsg->arg[1]);
+        FreeVecPooled(G->SharedMemPool, tmsg->arg[1]);
 
-      FreeVec(tmsg);
+      FreeVecPooled(G->SharedMemPool, tmsg);
     }
     else
     {
@@ -650,7 +652,7 @@ int CallParentThreadFunctionSync(int *success, void *function, int argcount, ...
     if(success != NULL)
       *success = tmsg->called;
 
-    FreeVec(tmsg);
+    FreeVecPooled(G->SharedMemPool, tmsg);
   }
   else
   {
@@ -674,7 +676,7 @@ int CallParentThreadFunctionAsync(void *function, int argcount, ...)
 
   ENTER();
 
-  if((tmsg = (struct ThreadMessage *)AllocVec(sizeof(struct ThreadMessage), MEMF_PUBLIC|MEMF_CLEAR)) != NULL)
+  if((tmsg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage))) != NULL)
   {
     struct Process *p = (struct Process*)FindTask(NULL);
     va_list argptr;
@@ -711,7 +713,7 @@ int CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
   struct ThreadMessage *tmsg;
   int result = 0;
 
-  if((tmsg = (struct ThreadMessage *)AllocVec(sizeof(struct ThreadMessage),MEMF_PUBLIC|MEMF_CLEAR)) != NULL)
+  if((tmsg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage))) != NULL)
   {
     struct Process *p = (struct Process*)FindTask(NULL);
     va_list argptr;
@@ -732,7 +734,7 @@ int CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
 
     if(tmsg->arg[1] != NULL && argcount >= 1)
     {
-      STRPTR str = AllocVec(strlen((char*)tmsg->arg[1])+1, MEMF_PUBLIC);
+      STRPTR str = AllocVecPooled(G->SharedMemPool, strlen((char*)tmsg->arg[1])+1);
 
       if(str != NULL)
       {
@@ -741,7 +743,7 @@ int CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
       }
       else
       {
-        FreeVec(tmsg);
+        FreeVecPooled(G->SharedMemPool, tmsg);
 
         RETURN(0);
         return 0;
@@ -793,7 +795,7 @@ int CallThreadFunctionSync(struct Thread *thread, void *function, int argcount, 
     }
 
     rc = tmsg->result;
-    FreeVec(tmsg);
+    FreeVecPooled(G->SharedMemPool, tmsg);
   }
 
   va_end (argptr);
@@ -847,7 +849,7 @@ int PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
   if((tmsg = CreateThreadMessage(function, argcount, argptr)) != NULL)
   {
     struct Thread *thread = ((struct Thread*)(FindTask(NULL)->tc_UserData));
-    struct TimerMessage *timer_msg = AllocVec(sizeof(struct TimerMessage),MEMF_PUBLIC);
+    struct TimerMessage *timer_msg = AllocVecPooled(G->SharedMemPool, sizeof(struct TimerMessage));
 
     if(timer_msg != NULL)
     {
@@ -865,7 +867,7 @@ int PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
       rc = 1;
     }
     else
-      FreeVec(tmsg);
+      FreeVecPooled(G->SharedMemPool, tmsg);
   }
 
   va_end (argptr);
@@ -897,7 +899,7 @@ BOOL InitThreads(void)
 
   ENTER();
 
-  if((G->mainThread.thread_port = CreateMsgPort()) != NULL)
+  if((G->mainThread.thread_port = AllocSysObject(ASOT_PORT, TAG_DONE)) != NULL)
   {
     G->mainThread.process = (struct Process*)FindTask(NULL);
     G->mainThread.isMain = TRUE;
@@ -1034,7 +1036,7 @@ void CleanupThreads(void)
     D(DBF_THREAD, "zero subthreads left");
     CleanupThreadTimer(&G->mainThread);
 
-    DeleteMsgPort(G->mainThread.thread_port);
+    FreeSysObject(ASOT_PORT, G->mainThread.thread_port);
     G->mainThread.thread_port = NULL;
   }
 

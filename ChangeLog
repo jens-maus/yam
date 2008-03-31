@@ -7,6 +7,10 @@ $URL$
 
 2008-03-31  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Threads.c: replaced all #?IORequest() and #?MsgPort() calls by appropriate
+    calls to #?FreeSysObject(). Also replaced all AllocVec()/FreeVec() calls by
+    AllocVecPooled()/FreeVecPooled() calls. Thus all deprecated function calls
+    should be eliminated.
   * NewReadArgs.c: use AllocSysObjectTags() instead of AllocSysObject().
   * NewReadArgs.c: modified to no longer use deprecated functions on OS4 but
     resource tracking enabled functions instead. For all other builds finally
