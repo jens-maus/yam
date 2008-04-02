@@ -247,36 +247,42 @@ static char *GetDateTime(void)
 }
 
 ///
-/// NewID
+/// NewMessageID
 //  Creates a unique id, used for Message-ID header field
-static char *NewID(BOOL is_msgid)
+static char *NewMessageID(void)
 {
   static char idbuf[SIZE_MSGID];
+  ULONG seconds;
+  struct DateStamp ds;
 
   ENTER();
 
-  if(is_msgid)
-  {
-    ULONG seconds;
-    struct DateStamp ds;
+  // lets calculate the seconds
+  DateStamp(&ds);
+  seconds = ds.ds_Days * 24 * 60 * 60 + ds.ds_Minute * 60; // seconds since 1-Jan-78
 
-    // lets calculate the seconds
-    DateStamp(&ds);
-    seconds = ds.ds_Days * 24 * 60 * 60 + ds.ds_Minute * 60; // seconds since 1-Jan-78
+  // Here we try to generate a unique MessageID.
+  // We try to be as much conform to the Recommandations for generating
+  // unique Message IDs as we can: http://www.jwz.org/doc/mid.html
+  snprintf(idbuf, sizeof(idbuf), "<%lx%lx.%lx@%s>", seconds, ds.ds_Tick, (ULONG)rand(), C->SMTP_Server);
 
-    // Here we try to generate a unique MessageID.
-    // We try to be as much conform to the Recommandations for generating
-    // unique Message IDs as we can: http://www.jwz.org/doc/mid.html
-    snprintf(idbuf, sizeof(idbuf), "%lx%lx.%lx@%s", seconds, ds.ds_Tick, (ULONG)rand(), C->SMTP_Server);
-  }
-  else
-  {
-    static int ctr = 0;
+  RETURN(idbuf);
+  return idbuf;
+}
 
-    // Generate a unique Boundary ID which conforms to RFC 2045 and includes
-    // a "=_" sequence to make it safe for quoted printable encoded parts
-    snprintf(idbuf, sizeof(idbuf), "--=_BOUNDARY.%lx%lx.%02x", (ULONG)FindTask(NULL), (ULONG)rand(), ++ctr);
-  }
+///
+/// NewBoundaryID
+//  Creates a unique id, used for the MIME boundaries
+static char *NewBoundaryID(void)
+{
+  static char idbuf[SIZE_MSGID];
+  static int ctr = 0;
+
+  ENTER();
+
+  // Generate a unique Boundary ID which conforms to RFC 2045 and includes
+  // a "=_" sequence to make it safe for quoted printable encoded parts
+  snprintf(idbuf, sizeof(idbuf), "--=_BOUNDARY.%lx%lx.%02x", (ULONG)FindTask(NULL), (ULONG)rand(), ++ctr);
 
   RETURN(idbuf);
   return idbuf;
@@ -1214,43 +1220,35 @@ static char *WR_GetPGPIds(char *source, char *ids)
 //  Bounce message: inserts resent-headers while copying the message
 static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
 {
+  BOOL result = FALSE;
   FILE *oldfh;
 
   ENTER();
 
-  if(comp->refMail != NULL && (oldfh = fopen(GetMailFile(NULL, NULL, comp->refMail), "r")))
+  if(comp->refMail != NULL &&
+     (oldfh = fopen(GetMailFile(NULL, NULL, comp->refMail), "r")))
   {
-    char buf[SIZE_LINE];
-    BOOL infield = FALSE;
-    BOOL inbody = FALSE;
+    char address[SIZE_LARGE];
 
     setvbuf(oldfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    while(fgets(buf, SIZE_LINE, oldfh))
-    {
-      if(*buf == '\n' && !inbody)
-      {
-        char address[SIZE_LARGE];
-        inbody = TRUE;
-        EmitRcptHeader(fh, "To", comp->MailTo);
-        EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
-        EmitHeader(fh, "Resent-Date", GetDateTime());
-      }
+    // now we add the "Resent-#?" type headers which are defined
+    // by RFC2822 section 3.6.6. The RFC defined that these headers
+    // should be added to the top of a message
+    EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
+    EmitHeader(fh, "Resent-Date", GetDateTime());
+    EmitRcptHeader(fh, "Resent-To", comp->MailTo);
+    EmitHeader(fh, "Resent-Message-ID", NewMessageID());
 
-      if(!isspace(*buf) && !inbody)
-        infield = !strnicmp(buf, "to:", 3);
+    // now we copy the rest of the message
+    // directly from the file handlers
+    result = CopyFile(NULL, fh, NULL, oldfh);
 
-      if(!infield || inbody)
-        fputs(buf, fh);
-    }
     fclose(oldfh);
-
-    RETURN(TRUE);
-    return TRUE;
   }
 
-  RETURN(FALSE);
-  return FALSE;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -1870,7 +1868,7 @@ BOOL WriteOutMessage(struct Compose *comp)
   EmitHeader(fh, "Date", GetDateTime());
 
   // output the Message-ID, In-Reply-To and References message headers
-  fprintf(fh, "Message-ID: <%s>\n", NewID(TRUE));
+  EmitHeader(fh, "Message-ID", NewMessageID());
   if(comp->inReplyToMsgID != NULL)
     EmitHeader(fh, "In-Reply-To", comp->inReplyToMsgID);
   if(comp->references != NULL)
@@ -1889,7 +1887,7 @@ mimebody:
 
   fputs("MIME-Version: 1.0\n", fh); // RFC 2049 requires that
 
-  strlcpy(boundary, NewID(FALSE), sizeof(boundary));
+  strlcpy(boundary, NewBoundaryID(), sizeof(boundary));
 
   if(comp->GenerateMDN == TRUE)
   {
@@ -2214,7 +2212,10 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
     // stop any pending file notification.
     if(G->WR[winnum]->FileNotifyActive == TRUE)
+    {
       EndNotify(G->WR_NotifyRequest[winnum]);
+      G->WR[winnum]->FileNotifyActive = FALSE;
+    }
 
     if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)) != NULL)
     {
@@ -2615,7 +2616,10 @@ HOOKPROTONHNO(WR_Edit, void, int *arg)
 
     // stop any pending file notification.
     if(G->WR[winnum]->FileNotifyActive == TRUE)
+    {
       EndNotify(G->WR_NotifyRequest[winnum]);
+      G->WR[winnum]->FileNotifyActive = FALSE;
+    }
 
     // Workaround for a MUI bug
     if(xget(G->WR[winnum]->GUI.WI, MUIA_Window_Open))

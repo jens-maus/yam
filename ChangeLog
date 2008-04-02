@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, YAM_MAf.c, YAM_mainFolder.h, YAM_TR.c: reworked the bounce message
+    operation to more comply to the RFC2822 section 3.6.6 (Resent fields)
+    standard. Previously, a bounce operation touched the original message and
+    altered the "To:" header field. However, as we are reinserting a bounced
+    message into the transport stream we have to use the "Resent-#?" headers
+    as defined in the RFC2822 standard which makes it possible to identify that
+    the message in question is a resent message.
+
 2008-04-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs.c: the New/Delete button below the POP3 account list will now be

@@ -5310,38 +5310,53 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
     {
       struct ExtendedMail *email = MA_ExamineMail(outfolder, mail->MailFile, TRUE);
 
-      if(email)
+      if(email != NULL)
       {
         BOOL rcptok = TRUE;
         int j;
 
-        // specify the main 'To:' recipient
-        snprintf(buf, sizeof(buf), "TO:<%s>", mail->To.Address);
-        if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
-          rcptok = FALSE;
-
-        // now add the additional 'To:' recipients of the mail
-        for(j=0; j < email->NoSTo && rcptok; j++)
+        // if the mail in question has some "Resent-To:" mail
+        // header information we use that information instead
+        // of the one of the original mail
+        if(email->NoResentTo > 0)
         {
-          snprintf(buf, sizeof(buf), "TO:<%s>", email->STo[j].Address);
-          if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
-            rcptok = FALSE;
+          for(j=0; j < email->NoResentTo; j++)
+          {
+            snprintf(buf, sizeof(buf), "TO:<%s>", email->ResentTo[j].Address);
+            if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
+              rcptok = FALSE;
+          }
         }
-
-        // add the 'Cc:' recipients
-        for(j=0; j < email->NoCC && rcptok; j++)
+        else
         {
-          snprintf(buf, sizeof(buf), "TO:<%s>", email->CC[j].Address);
+          // specify the main 'To:' recipient
+          snprintf(buf, sizeof(buf), "TO:<%s>", mail->To.Address);
           if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
             rcptok = FALSE;
-        }
 
-        // add the 'BCC:' recipients
-        for(j=0; j < email->NoBCC && rcptok; j++)
-        {
-          snprintf(buf, sizeof(buf), "TO:<%s>", email->BCC[j].Address);
-          if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
-            rcptok = FALSE;
+          // now add the additional 'To:' recipients of the mail
+          for(j=0; j < email->NoSTo && rcptok; j++)
+          {
+            snprintf(buf, sizeof(buf), "TO:<%s>", email->STo[j].Address);
+            if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
+              rcptok = FALSE;
+          }
+
+          // add the 'Cc:' recipients
+          for(j=0; j < email->NoCC && rcptok; j++)
+          {
+            snprintf(buf, sizeof(buf), "TO:<%s>", email->CC[j].Address);
+            if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
+              rcptok = FALSE;
+          }
+
+          // add the 'BCC:' recipients
+          for(j=0; j < email->NoBCC && rcptok; j++)
+          {
+            snprintf(buf, sizeof(buf), "TO:<%s>", email->BCC[j].Address);
+            if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
+              rcptok = FALSE;
+          }
         }
 
         if(rcptok)

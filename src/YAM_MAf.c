@@ -1730,7 +1730,6 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
   struct Mail *mail;
   char *p;
   char fullfile[SIZE_PATHFILE];
-  int ok;
   BOOL dateFound = FALSE;
   FILE *fh;
 
@@ -1782,14 +1781,16 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
   // header lines
   if(fh != NULL && MA_ReadHeader(fullfile, fh, &headerList, RHM_MAINHEADER) == TRUE)
   {
+     BOOL foundTo = FALSE;
+     BOOL foundReplyTo = FALSE;
      char *ptr;
      char dateFilePart[12+1];
      char timebuf[sizeof(struct TimeVal)+1]; // +1 because the b64decode does set a NUL byte
-     struct MinNode *curNode = headerList.mlh_Head;
+     struct MinNode *curNode;
      LONG size;
 
      // Now we process the read header to set all flags accordingly
-     for(ok=0; curNode->mln_Succ; curNode = curNode->mln_Succ)
+     for(curNode = headerList.mlh_Head; curNode->mln_Succ != NULL; curNode = curNode->mln_Succ)
      {
         struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
         char *field = hdrNode->name;
@@ -1797,8 +1798,6 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
         if(stricmp(field, "from") == 0)
         {
-          SET_FLAG(ok, 1);
-
           // find out if there are more than one From: address
           if((p = MyStrChr(value, ',')) != NULL)
            *p++ = '\0';
@@ -1827,7 +1826,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         }
         else if(stricmp(field, "reply-to") == 0)
         {
-          SET_FLAG(ok, 8);
+          foundReplyTo = TRUE;
 
           // find out if there are more than one ReplyTo: address
           if((p = MyStrChr(value, ',')))
@@ -1873,9 +1872,10 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         }
         else if(stricmp(field, "to") == 0)
         {
-          if((ok & 2) == 0)
+          if(foundTo == FALSE)
           {
-            SET_FLAG(ok, 2);
+            foundTo = TRUE;
+
             if((p = MyStrChr(value, ',')) != NULL)
               *p++ = '\0';
 
@@ -1928,9 +1928,15 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
             SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
         }
+        else if(stricmp(field, "resent-to") == 0)
+        {
+          if(email->NoResentTo == 0)
+            email->NoResentTo = MA_GetRecipients(value, &(email->ResentTo));
+
+          D(DBF_MIME, "'Resent-To:' recipients: %ld", email->NoResentTo);
+        }
         else if(stricmp(field, "subject") == 0)
         {
-          SET_FLAG(ok, 4);
           strlcpy(mail->Subject, Trim(value), sizeof(mail->Subject));
         }
         else if(stricmp(field, "message-id") == 0)
@@ -2049,7 +2055,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
      // in case the replyTo recipient doesn't have a realname yet and it is
      // completly the same like the from address we go and copy the realname as both
      // are the same.
-     if((ok & 8) && !mail->ReplyTo.RealName[0] && !stricmp(mail->ReplyTo.Address, mail->From.Address))
+     if(foundReplyTo == TRUE && !mail->ReplyTo.RealName[0] && !stricmp(mail->ReplyTo.Address, mail->From.Address))
        strlcpy(mail->ReplyTo.RealName, mail->From.RealName, sizeof(mail->ReplyTo.RealName));
 
      // if this function call has a folder of NULL then we are examining a virtual mail

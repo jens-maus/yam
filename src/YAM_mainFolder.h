@@ -62,6 +62,7 @@ struct ExtendedMail
   struct Person *  SReplyTo;       // ptr to an array of additional "Reply-To:" recipients (excluding the main Reply-To:)
   struct Person *  CC;             // ptr to an array of all "CC:" recipients
   struct Person *  BCC;            // ptr to an array of all "BCC:" recipients
+  struct Person *  ResentTo;       // ptr to an array of "Resent-To:" recipients
   char *           extraHeaders;   // YAM internal headers (X-YAM-...)
   char *           SenderInfo;
   char *           messageID;      // the composed "Message-ID:" (only one MsgID)
@@ -72,6 +73,7 @@ struct ExtendedMail
   int              NoSReplyTo;     // number of additional recipients in SReplyTo (minus one)
   int              NoCC;           // number of recipients in CC
   int              NoBCC;          // number of recipients in BCC
+  int              NoResentTo;     // number of recipients in ResentTo
   int              Signature;
   int              Security;
   BOOL             DelSend;
