@@ -37,6 +37,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <clib/alib_protos.h>
+
 #include <dos/dostags.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
