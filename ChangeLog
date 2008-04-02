@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-02  Alexandre Balaban <balaban@free.fr>
+
+  * locale/french.ct: french translation update according to latest changes.
+
 2008-04-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, YAM_MAf.c, YAM_mainFolder.h, YAM_TR.c: reworked the bounce message

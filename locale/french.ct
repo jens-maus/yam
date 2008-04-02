@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 6.0 (27.01.2008)
+## version $VER: YAM.catalog 6.0 (02.04.2008)
 ## language français
-## codeset 0
+## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 3831 2008-01-24 13:45:52Z thboeckel
+; based on YAM.cd 3864 2008-02-08 02:44:15Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -4250,7 +4250,7 @@ Ironique
 ; Ironic
 ;
 MSG_WR_SpellCheck
-Vérificaiton orthographique
+Vérification orthographique
 ; Type and spell?
 ;
 MSG_WR_MAddFile
@@ -6814,9 +6814,8 @@ d'affichage sélectionné seront affichés.
 ; will be displayed.
 ;
 MSG_HELP_QUICKSEARCH_SEARCHSTRING
-Le texte inséré ici sera utilisé comme critère\n\
-de recherche pour l'affichage des courriers dans\n\
-le dossier courant.
+Le texte inséré ici sera utilisé comme filtre\n\
+d'affichage des courriers du dossier courant.
 ; Text inserted here will be used as the search\n\
 ; criterion to display mail in this folder.
 ;
@@ -7150,13 +7149,13 @@ MSG_CO_TIMEZONEWARN_BT
 ; *_Change|Ignore _always|_Ignore
 ;
 MSG_CO_AUTODSTWARN_TITLE
-Avertissement AutoDST
+Avertissement de changement d'heure
 ; AutoDST warning
 ;
 MSG_CO_AUTODSTWARN
-YAM a détecté un utilitaire AutoDST actif qui\n\
-indique un réglage d'heure d'été/hiver différent\n\
-de celui configuré dans YAM.\n\
+YAM a détecté un utilitaire de basculement automatique\n\
+d'heure d'été <-> heure d'hiver qui indique un réglage\n\
+d'heure d'été/hiver différent de celui configuré dans YAM.\n\
 \n\
 Que désirez-vous faire ?
 ; YAM has found an AutoDST tool active and\n\
@@ -9524,7 +9523,6 @@ dans l'éditeur interne ?
 MSG_LOG_SENDING_FAILED
 L'envoi de %ld messages(s) en utilisant le serveur SMTP '%s' a échoué
 ; Sending %ld message(s) using SMTP server '%s' failed
-;
 ; COUNT, HOST
 ;
 MSG_HELP_EA_ST_BIRTHDAY
@@ -9532,6 +9530,12 @@ Date de naissance au format local.\n\
 (par exemple 19.06.1974 ou 19/06/1974)\n\
 ; Date of birth in locale format\n\
 ; (e.g. 19.06.1974 or 19/06/1974).
+; Date of birth in locale format\n\
+; (e.g. 19.06.1974 or 19/06/1974).
+;
+MSG_ERROR_THREADS
+Impossible d'initialiser le système de thread
+; Can't initialize thread system
 ;
 MSG_ERROR_PLAYSOUND
 Une erreur est survenue lors de la tentative\n\
@@ -9546,6 +9550,5 @@ fonctionne pas correctement.
 ; This could be either due to a broken or\n\
 ; unsupported sound file or because your\n\
 ; sound datatype is not properly working.
-;
 ; FILE
 ;
