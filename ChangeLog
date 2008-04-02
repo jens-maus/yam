@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-02  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COs.c: the New/Delete button below the POP3 account list will now be
+    disabled if either limit is reached. This fixes bug #1931594.
+
 2008-03-31  Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.c: replaced all #?IORequest() and #?MsgPort() calls by appropriate

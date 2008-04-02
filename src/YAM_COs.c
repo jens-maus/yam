@@ -1594,7 +1594,7 @@ void CO_GetConfig(BOOL saveConfig)
 
                   if(spamFolder->imageObject != NULL)
                   {
-                    // we make sure that the NList also doesn`t use the image in future anymore
+                    // we make sure that the NList also doesn't use the image in future anymore
                     DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
                     spamFolder->imageObject = NULL;
 
@@ -1624,7 +1624,7 @@ void CO_GetConfig(BOOL saveConfig)
               {
                 if(spamFolder->imageObject != NULL)
                 {
-                  // we make sure that the NList also doesn`t use the image in future anymore
+                  // we make sure that the NList also doesn't use the image in future anymore
                   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
                   spamFolder->imageObject = NULL;
                   // we don't need to dispose the image, because it is one of the standard images and not
@@ -1722,7 +1722,7 @@ void CO_GetConfig(BOOL saveConfig)
               {
                 if(spamFolder->imageObject != NULL)
                 {
-                  // we make sure that the NList also doesn`t use the image in future anymore
+                  // we make sure that the NList also doesn't use the image in future anymore
                   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
                   spamFolder->imageObject = NULL;
                 }
@@ -2090,6 +2090,8 @@ void CO_SetConfig(void)
 
     case cp_TCPIP:
     {
+      int numPops;
+
       setstring(gui->ST_SMTPHOST, CE->SMTP_Server);
       set(gui->ST_SMTPPORT, MUIA_String_Integer, CE->SMTP_Port);
       setstring(gui->ST_DOMAIN, CE->SMTP_Domain);
@@ -2105,6 +2107,7 @@ void CO_SetConfig(void)
       // clear the list first
       DoMethod(gui->LV_POP3, MUIM_List_Clear);
 
+      numPops = 0;
       for(i=0; i < MAXP3; i++)
       {
         struct POP3 *pop3 = CE->P3[i];
@@ -2114,11 +2117,15 @@ void CO_SetConfig(void)
           if(pop3->Account[0] == '\0')
             snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
           DoMethod(gui->LV_POP3, MUIM_List_InsertSingle, pop3, MUIV_List_Insert_Bottom);
+          numPops++;
         }
       }
 
       // make sure the first entry is selected per default
       set(gui->LV_POP3, MUIA_List_Active, MUIV_List_Active_Top);
+      // set the enabled stated of the new/del buttons according to the number of available accounts
+      set(gui->BT_PADD, MUIA_Disabled, numPops == MAXP3);
+      set(gui->BT_PDEL, MUIA_Disabled, numPops == 0);
     }
     break;
 
