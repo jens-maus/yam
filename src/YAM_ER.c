@@ -59,28 +59,29 @@ static struct ER_ClassData *ER_New(void);
 ***************************************************************************/
 
 /// ER_NewError
-/*** ER_NewError - Adds a new error message and displays it ***/
+// Adds a new error message and displays it
 void ER_NewError(const char *error, ...)
 {
   static char label[SIZE_SMALL];
+  int oldNumErr = G->ER_NumErr;
 
   ENTER();
 
   // we only signal an error if we really have one,
   // otherwise calling this function with error=NULL is just
   // for showing the last errors,
-  if(error)
+  if(error != NULL)
     G->Error = TRUE;
 
-  if(!G->ER)
+  if(G->ER == NULL)
   {
-    if(!(G->ER = ER_New()))
+    if((G->ER = ER_New()) == NULL)
     {
       LEAVE();
       return;
     }
 
-    if(!SafeOpenWindow(G->ER->GUI.WI))
+    if(SafeOpenWindow(G->ER->GUI.WI) == FALSE)
     {
       DisposeModule(&G->ER);
 
@@ -89,18 +90,26 @@ void ER_NewError(const char *error, ...)
     }
   }
 
-  if(error)
+  if(error != NULL)
   {
     char buf[SIZE_LARGE];
     char datstr[64];
     va_list args;
-    int i;
 
-    if(++G->ER_NumErr > MAXERR)
+    // one more error message
+    G->ER_NumErr++;
+
+    // if the number of error messages exceeds the maximum number then delete
+    // the oldest one and shift the remaining errors down by one
+    if(G->ER_NumErr > MAXERR)
     {
+      int i;
+
+      G->ER_NumErr = MAXERR;
+
       free(G->ER_Message[0]);
 
-      for(--G->ER_NumErr, i = 1; i < G->ER_NumErr; i++)
+      for(i = 1; i < G->ER_NumErr; i++)
         G->ER_Message[i-1] = G->ER_Message[i];
     }
 
@@ -120,13 +129,20 @@ void ER_NewError(const char *error, ...)
     E(DBF_STARTUP, buf);
   }
 
-  snprintf(label, sizeof(label), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
-  xset(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
-                            MUIA_Numeric_Min,    1,
-                            MUIA_Numeric_Max,    G->ER_NumErr,
-                            MUIA_Numeric_Value,  G->ER_NumErr);
+  // The slider won't call the hook if the current number didn't change, but we need to
+  // to update the error display, so we have to do this update manually.
+  if(oldNumErr == G->ER_NumErr)
+    set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[G->ER_NumErr-1]);
+  else
+  {
+    snprintf(label, sizeof(label), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
+    xset(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
+                              MUIA_Numeric_Min,    1,
+                              MUIA_Numeric_Max,    G->ER_NumErr,
+                              MUIA_Numeric_Value,  G->ER_NumErr);
+  }
 
-  if(G->MA)
+  if(G->MA != NULL)
     set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
 
   LEAVE();
@@ -134,81 +150,106 @@ void ER_NewError(const char *error, ...)
 
 ///
 /// ER_SelectFunc
-/*** ER_SelectFunc - Displays an earlier error message ***/
+// Displays an earlier error message
 HOOKPROTONHNO(ER_SelectFunc, void, int *arg)
 {
-   int value = *arg;
-   set(G->ER->GUI.BT_NEXT, MUIA_Disabled, value == G->ER_NumErr);
-   set(G->ER->GUI.BT_PREV, MUIA_Disabled, value == 1);
-   set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[value-1]);
+  int value = arg[0];
+
+  ENTER();
+
+  set(G->ER->GUI.BT_NEXT, MUIA_Disabled, value == G->ER_NumErr);
+  set(G->ER->GUI.BT_PREV, MUIA_Disabled, value == 1);
+  set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[value-1]);
+
+  LEAVE();
 }
 MakeStaticHook(ER_SelectHook, ER_SelectFunc);
 
 ///
 /// ER_CloseFunc
-/*** ER_CloseFunc - Closes error window ***/
+// Closes error window
 HOOKPROTONHNO(ER_CloseFunc, void, int *arg)
 {
-   set(G->ER->GUI.WI, MUIA_Window_Open, FALSE);
-   if (*arg)
-   {
-      while (G->ER_NumErr) free(G->ER_Message[--G->ER_NumErr]);
-      if (G->MA) set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, FALSE);
-   }
-   DisposeModulePush(&G->ER);
+  ENTER();
+
+  set(G->ER->GUI.WI, MUIA_Window_Open, FALSE);
+
+  if(arg[0] == TRUE)
+  {
+    while(G->ER_NumErr > 0)
+      free(G->ER_Message[--G->ER_NumErr]);
+
+    if(G->MA != NULL)
+      set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, FALSE);
+  }
+
+  DisposeModulePush(&G->ER);
+
+  LEAVE();
 }
 MakeStaticHook(ER_CloseHook, ER_CloseFunc);
 
 ///
 
 /// ER_New
-/*** ER_New - Creates error window ***/
+// Creates error window
 static struct ER_ClassData *ER_New(void)
 {
-   struct ER_ClassData *data = calloc(1, sizeof(struct ER_ClassData));
-   if (data)
-   {
-      APTR bt_close, bt_clear;
-      data->GUI.WI = WindowObject,
-         MUIA_Window_Title, tr(MSG_ER_ErrorMessages),
-         MUIA_Window_ID, MAKE_ID('E','R','R','O'),
-         WindowContents, VGroup,
-            Child, HGroup,
-               Child, data->GUI.BT_PREV = MakeButton(tr(MSG_ER_PrevError)),
-               Child, data->GUI.NB_ERROR = NumericbuttonObject,
-                  MUIA_Numeric_Min,   0,
-                  MUIA_Numeric_Value, 0,
-                  MUIA_Numeric_Format, "Error %%ld/%ld",
-                  MUIA_CycleChain, TRUE,
-               End,
-               Child, data->GUI.BT_NEXT = MakeButton(tr(MSG_ER_NextError)),
-            End,
-            Child, NListviewObject,
-               MUIA_Listview_Input,   FALSE,
-               MUIA_CycleChain,       TRUE,
-               MUIA_NListview_NList,  data->GUI.LV_ERROR = NFloattextObject,
-                  ReadListFrame,
-               End,
-            End,
-            Child, ColGroup(2),
-               Child, bt_clear = MakeButton(tr(MSG_ER_Clear)),
-               Child, bt_close = MakeButton(tr(MSG_ER_Close)),
-            End,
-         End,
-      End;
-      if (data->GUI.WI)
-      {
-         DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-         DoMethod(data->GUI.BT_PREV ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,data->GUI.NB_ERROR     ,2,MUIM_Numeric_Decrease,1);
-         DoMethod(data->GUI.BT_NEXT ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,data->GUI.NB_ERROR     ,2,MUIM_Numeric_Increase,1);
-         DoMethod(data->GUI.NB_ERROR,MUIM_Notify,MUIA_Numeric_Value      ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&ER_SelectHook,MUIV_TriggerValue);
-         DoMethod(bt_clear          ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&ER_CloseHook,TRUE);
-         DoMethod(bt_close          ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&ER_CloseHook,FALSE);
-         DoMethod(data->GUI.WI      ,MUIM_Notify,MUIA_Window_CloseRequest,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook,&ER_CloseHook,FALSE);
-         return data;
-      }
+  struct ER_ClassData *data;
+
+  ENTER();
+
+  if((data = calloc(1, sizeof(struct ER_ClassData))) != NULL)
+  {
+    APTR bt_close, bt_clear;
+
+    data->GUI.WI = WindowObject,
+       MUIA_Window_Title, tr(MSG_ER_ErrorMessages),
+       MUIA_Window_ID, MAKE_ID('E','R','R','O'),
+       WindowContents, VGroup,
+          Child, HGroup,
+             Child, data->GUI.BT_PREV = MakeButton(tr(MSG_ER_PrevError)),
+             Child, data->GUI.NB_ERROR = NumericbuttonObject,
+                MUIA_Numeric_Min,   0,
+                MUIA_Numeric_Value, 0,
+                MUIA_Numeric_Format, "Error %%ld/%ld",
+                MUIA_CycleChain, TRUE,
+             End,
+             Child, data->GUI.BT_NEXT = MakeButton(tr(MSG_ER_NextError)),
+          End,
+          Child, NListviewObject,
+             MUIA_Listview_Input,   FALSE,
+             MUIA_CycleChain,       TRUE,
+             MUIA_NListview_NList,  data->GUI.LV_ERROR = NFloattextObject,
+                ReadListFrame,
+             End,
+          End,
+          Child, ColGroup(2),
+             Child, bt_clear = MakeButton(tr(MSG_ER_Clear)),
+             Child, bt_close = MakeButton(tr(MSG_ER_Close)),
+          End,
+       End,
+    End;
+
+    if(data->GUI.WI != NULL)
+    {
+      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+      DoMethod(data->GUI.BT_PREV ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,data->GUI.NB_ERROR     ,2,MUIM_Numeric_Decrease,1);
+      DoMethod(data->GUI.BT_NEXT ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,data->GUI.NB_ERROR     ,2,MUIM_Numeric_Increase,1);
+      DoMethod(data->GUI.NB_ERROR,MUIM_Notify,MUIA_Numeric_Value      ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&ER_SelectHook,MUIV_TriggerValue);
+      DoMethod(bt_clear          ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&ER_CloseHook,TRUE);
+      DoMethod(bt_close          ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&ER_CloseHook,FALSE);
+      DoMethod(data->GUI.WI      ,MUIM_Notify,MUIA_Window_CloseRequest,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook,&ER_CloseHook,FALSE);
+    }
+    else
+    {
       free(data);
-   }
-   return NULL;
+      data = NULL;
+    }
+  }
+
+  RETURN(data);
+  return data;
 }
 ///
+

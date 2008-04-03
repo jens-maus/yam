@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_ER.c: the error display wasn't updated if the number of errors reached
+    the maximum number, because the slider object doesn't trigger its change
+    hook when there is no real change. Now the update is performed manuall.
+    This fixes bug #1931532.
+
 2008-04-02  Alexandre Balaban <balaban@free.fr>
 
   * locale/french.ct: french translation update according to latest changes.
