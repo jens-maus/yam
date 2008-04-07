@@ -3530,7 +3530,7 @@ void MA_GetAddress(struct MailList *mlist)
         {
           // now we check whether the mail got ReplyTo addresses which we should add
           // or if we should add all From: addresses
-          if(mail->ReplyTo.Address[0] != '\0')
+          if(isMLFolder == FALSE && mail->ReplyTo.Address[0] != '\0')
           {
             DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName), MUIV_List_Insert_Bottom);
 
