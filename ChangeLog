@@ -7,6 +7,9 @@ $URL$
 
 2008-04-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: when getting an email adress from a mail message resisting
+    in a mailing list folder, the ReplyTo address was stored in the addressbook
+    rather than the From address.
   * Recipientstring.c, Addrmatchlist.c: fixed a problem where in case a
     realname was quoted within an addressbook entry, the recipient string
     didn't correctly find/replace the entry.

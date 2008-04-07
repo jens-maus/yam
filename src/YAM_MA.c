@@ -3431,6 +3431,7 @@ void MA_GetAddress(struct MailList *mlist)
   struct Mail *mail = mnode->mail;
   struct Folder *folder = mail->Folder;
   BOOL isSentMail = (folder != NULL) ? isSentMailFolder(folder) : FALSE;
+  BOOL isMLFolder = (folder != NULL) ? folder->MLSupport : FALSE;
   struct ExtendedMail *email;
   struct Person *pe = NULL;
 
@@ -3447,7 +3448,8 @@ void MA_GetAddress(struct MailList *mlist)
       // now ask the user which one of the two
       // adresses it should consider for adding it to the
       // addressbook
-      if(C->CompareAddress == TRUE && mail->ReplyTo.Address[0] != '\0' &&
+      if(isMLFolder == FALSE &&
+         C->CompareAddress == TRUE && mail->ReplyTo.Address[0] != '\0' &&
          stricmp(mail->From.Address, mail->ReplyTo.Address) != 0)
       {
         char buffer[SIZE_LARGE];
@@ -3465,7 +3467,7 @@ void MA_GetAddress(struct MailList *mlist)
           }
         }
       }
-      else if(mail->ReplyTo.Address[0] != '\0')
+      else if(isMLFolder == FALSE && mail->ReplyTo.Address[0] != '\0')
         pe = &mail->ReplyTo;
       else
         pe = &mail->From;
