@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-07  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Recipientstring.c, Addrmatchlist.c: fixed a problem where in case a
+    realname was quoted within an addressbook entry, the recipient string
+    didn't correctly find/replace the entry.
+
 2008-04-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_ER.c: the error display wasn't updated if the number of errors reached

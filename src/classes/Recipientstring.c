@@ -75,20 +75,29 @@ HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *
 
   if(entry->Type == AET_USER || entry->Type == AET_LIST)
   {
+    // first see if our string matches the alias
     if(Stricmp(msg->User, entry->Alias) == 0)
     {
       D(DBF_GUI, "\"%s\" matches alias \"%s\"", msg->User, entry->Alias);
       result = 0;
     }
-    else if(Stricmp(msg->User, entry->RealName) == 0)
+    else
     {
-      D(DBF_GUI, "\"%s\" matches realname \"%s\"", msg->User, entry->RealName);
-      result = 0;
-    }
-    else if(Stricmp(msg->User, entry->Address) == 0)
-    {
-      D(DBF_GUI, "\"%s\" matches address \"%s\"", msg->User, entry->Address);
-      result = 0;
+      // then we search for the realname
+      char *unquoted = UnquoteString(entry->RealName, TRUE);
+
+      if(Stricmp(msg->User, unquoted) == 0)
+      {
+        D(DBF_GUI, "\"%s\" matches realname \"%s\"", msg->User, entry->RealName);
+        result = 0;
+      }
+      else if(Stricmp(msg->User, entry->Address) == 0)
+      {
+        D(DBF_GUI, "\"%s\" matches address \"%s\"", msg->User, entry->Address);
+        result = 0;
+      }
+
+      free(unquoted);
     }
   }
 
@@ -685,8 +694,7 @@ OVERLOAD(MUIM_HandleEvent)
             if(cur_rcpt != NULL &&
                (abentry = (struct CustomABEntry *)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Open, cur_rcpt)) != NULL)
             {
-              char *new_address = abentry->MatchString;
-              long pos = xget(obj, MUIA_String_BufferPos);
+              ULONG pos = xget(obj, MUIA_String_BufferPos);
 
               // check if the returned entry matches some part of the name (i.e. the last
               // name), but not right from the start of the name
@@ -711,12 +719,15 @@ OVERLOAD(MUIM_HandleEvent)
               else
               {
                 // insert the matching string
-                long start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+                char *new_address = UnquoteString(abentry->MatchString, TRUE);
+                ULONG start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
 
                 DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
 
                 xset(obj, MUIA_String_BufferPos, pos,
                           MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start));
+
+                free(new_address);
               }
             }
           }
@@ -977,11 +988,14 @@ DECLARE(AddRecipient) // STRPTR address
 }
 ///
 /// DECALRE(RecipientStart)
-/* return the index where current recipient start (from cursor pos), this is only useful for objects with more than one recipient */
+// return the index where the current recipient start
+// (from cursor pos), this is only useful for objects
+// with more than one recipient or quotation chars
 DECLARE(RecipientStart)
 {
   STRPTR buf;
-  ULONG pos, i;
+  ULONG pos;
+  ULONG i;
   BOOL quote = FALSE;
 
   ENTER();
@@ -989,7 +1003,7 @@ DECLARE(RecipientStart)
   buf = (STRPTR)xget(obj, MUIA_String_Contents);
   pos = xget(obj, MUIA_String_BufferPos);
 
-  for(i = 0; i < pos; i++)
+  for(i=0; i < pos; i++)
   {
     if(buf[i] == '"')
       quote ^= TRUE;
@@ -998,9 +1012,11 @@ DECLARE(RecipientStart)
   while(i > 0 && (buf[i-1] != ',' || quote == TRUE))
   {
     i--;
+
     if(buf[i] == '"')
       quote ^= TRUE;
   }
+
   while(isspace(buf[i]))
     i++;
 

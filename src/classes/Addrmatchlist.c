@@ -82,7 +82,13 @@ HOOKPROTONH(DisplayFunc, LONG, CONST_STRPTR *array, struct CustomABEntry *e)
   array[1] = e->MatchEntry->RealName[0] ? e->MatchEntry->RealName : "-";
   array[2] = e->MatchEntry->Address[0]  ? e->MatchEntry->Address  : "-";
 
-  snprintf(buf, sizeof(buf), "\033b%." STR(SIZE_ADDRESS) "s", e->MatchString);
+  if(e->MatchField == 0)
+    snprintf(buf, sizeof(buf), "\033b%." STR(SIZE_NAME) "s", e->MatchString);
+  else if(e->MatchField == 1)
+    snprintf(buf, sizeof(buf), "\033b%." STR(SIZE_REALNAME) "s", e->MatchString);
+  else
+    snprintf(buf, sizeof(buf), "\033b%." STR(SIZE_ADDRESS) "s", e->MatchString);
+
   array[e->MatchField] = buf;
 
   RETURN(0);
@@ -351,6 +357,7 @@ DECLARE(Open) // char *str
     // of just the matching string to allow the recipient string to derive the
     // complete name and address.
     result = entry;
+
     // make no entry active yet
     nnset(data->Matchlist, MUIA_NList_Active, MUIV_NList_Active_Off);
   }
