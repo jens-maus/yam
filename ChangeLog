@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-08  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_ER.c: the error window's slider label wasn't set correctly upon opening
+    the error window manually.
+
 2008-04-07  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c: when getting an email adress from a mail message resisting

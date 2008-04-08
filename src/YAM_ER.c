@@ -129,18 +129,16 @@ void ER_NewError(const char *error, ...)
     E(DBF_STARTUP, buf);
   }
 
+  snprintf(label, sizeof(label), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
+  xset(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
+                            MUIA_Numeric_Min,    1,
+                            MUIA_Numeric_Max,    G->ER_NumErr,
+                            MUIA_Numeric_Value,  G->ER_NumErr);
+
   // The slider won't call the hook if the current number didn't change, but we need to
-  // to update the error display, so we have to do this update manually.
+  // to update the error display no matter what, so we have to do this update manually.
   if(oldNumErr == G->ER_NumErr)
     set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[G->ER_NumErr-1]);
-  else
-  {
-    snprintf(label, sizeof(label), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
-    xset(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
-                              MUIA_Numeric_Min,    1,
-                              MUIA_Numeric_Max,    G->ER_NumErr,
-                              MUIA_Numeric_Value,  G->ER_NumErr);
-  }
 
   if(G->MA != NULL)
     set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
