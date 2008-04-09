@@ -6767,7 +6767,7 @@ AmiSSL Warnung
 MSG_CO_AMISSLWARN
 YAM konnte keine aktuelle AmiSSL Installation finden\n\
 und es wurde daher die interne SSLv3/TLSv1 Funktionalität\n\
-deaktiviert. Eine Verbinden über einen verschlüsselten\n\
+deaktiviert. Eine Verbindung über einen verschlüsselten\n\
 Kanal ist daher nicht möglich.\n\
 \n\
 Bitte stellen Sie sicher, dass Sie die Version v%lu.%lu\n\

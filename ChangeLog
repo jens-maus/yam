@@ -7,6 +7,7 @@ $URL$
 
 2008-04-09  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/german.ct: fixed a typo.
   * YAM_COg.c: removed two senseless notifications which might be guilty for
     disabling the SSL/TLS radio buttons even if AmiSSL is available.
   * YAM_FO.c: when modifying the settings of an already existing folder the
