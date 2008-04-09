@@ -2246,11 +2246,9 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     DoMethod(data->GUI.CH_USESMTPAUTH ,MUIM_Notify ,MUIA_Selected        ,MUIV_EveryTime ,MUIV_Notify_Application ,7 ,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD, NULL);
 
     // modify the POP3 port according to the security level selected.
-    DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify  ,MUIA_Radio_Active, 0, data->GUI.RA_POP3SECURE, 3, MUIM_Set, MUIA_Disabled, !G->TR_UseableTLS);
-    DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify  ,MUIA_Radio_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutP3EntryHook, 0);
+    DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify, MUIA_Radio_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutP3EntryHook, 0);
 
     // modify the SMTP port according to the security level selected.
-    DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 0, data->GUI.RA_SMTPSECURE, 3, MUIM_Set, MUIA_Disabled, !G->TR_UseableTLS);
     DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 0, data->GUI.ST_SMTPPORT,   3, MUIM_Set, MUIA_String_Integer, 25);
     DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 1, data->GUI.ST_SMTPPORT,   3, MUIM_Set, MUIA_String_Integer, 25);
     DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 2, data->GUI.ST_SMTPPORT,   3, MUIM_Set, MUIA_String_Integer, 465);
