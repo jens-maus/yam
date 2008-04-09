@@ -1686,6 +1686,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
   struct Folder folder;
   struct Folder *oldfolder = G->FO->EditFolder;
   BOOL success = FALSE;
+  BOOL isNewFolder;
 
   ENTER();
 
@@ -1693,6 +1694,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
   // if this is a edit folder request we separate here.
   if(oldfolder != NULL)
   {
+  	isNewFolder = FALSE;
     memcpy(&folder, oldfolder, sizeof(struct Folder));
     FO_PutFolder(&folder);
 
@@ -1707,7 +1709,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
     // lets first check for a valid folder name
     // if the foldername is empty or it was changed and the new name already exists it`s invalid
-    if(*folder.Name == '\0' || (stricmp(oldfolder->Name, folder.Name) != 0 && FO_GetFolderByName(folder.Name, NULL) != NULL))
+    if(folder.Name[0] == '\0' || (stricmp(oldfolder->Name, folder.Name) != 0 && FO_GetFolderByName(folder.Name, NULL) != NULL))
     {
       MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
 
@@ -1854,6 +1856,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     int result;
 
     D(DBF_FOLDER, "new folder");
+    isNewFolder = TRUE;
     memset(&folder, 0, sizeof(struct Folder));
     folder.ImageIndex = -1;
 
@@ -1953,9 +1956,16 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_Title);
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Sort);
     MA_ChangeFolder(FO_GetFolderByName(folder.Name, NULL), FALSE);
-    FO_SaveTree(CreateFilename(".folders"));
+
+    // Save the folder tree only if we just created a new folder, otherwise
+    // a temporarily modified open/close state of folder groups will be saved
+    // as well, even if the user didn't want this.
+    if(isNewFolder == TRUE)
+      FO_SaveTree(CreateFilename(".folders"));
+
     DisplayStatistics(oldfolder, TRUE);
   }
+
   DisposeModulePush(&G->FO);
 
   LEAVE();

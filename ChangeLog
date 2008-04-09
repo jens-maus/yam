@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-09  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c: when modifying the settings of an already existing folder the
+    folder tree will no longer be saved to make sure that any temporarily
+    opened/closed folder groups will have the wrong state saved. For new folders
+    the tree will be saved nevertheless. This fixes bug #1876967.
+
 2008-04-08  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_ER.c: the error window's slider label wasn't set correctly upon opening
