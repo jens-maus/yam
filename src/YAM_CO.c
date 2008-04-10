@@ -541,7 +541,7 @@ HOOKPROTONHNONP(CO_GetP3Entry, void)
     }
 
     // we have to enabled/disable the SSL support accordingly
-    set(gui->RA_POP3SECURE, MUIA_Disabled, G->TR_UseableTLS == FALSE || pop3->SSLMode == P3SSL_OFF);
+    set(gui->RA_POP3SECURE, MUIA_Disabled, G->TR_UseableTLS == FALSE);
   }
 
   LEAVE();

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-10  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c, YAM_COs.c: the disable mechanism for the SSL/TLS radio buttons was
+    a bit too harsh and disabled the buttons even if AmiSSL was available. But
+    as soon as SSL/TLS was switched off once and the user returned to the config
+    the buttons were always ghosted and didn't allow to reactivate SSL/TLS.
+
 2008-04-09  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/german.ct: fixed a typo.
