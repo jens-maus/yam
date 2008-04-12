@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/italian.ct: updated italian translation kindly provided by Samir
+    Hawamdeh. Not yet finished, but work in progress.
+
 2008-04-10  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c, YAM_COs.c: the disable mechanism for the SSL/TLS radio buttons was
