@@ -193,7 +193,7 @@ void AddMailNode(struct MailList *mlist, struct MailNode *mnode)
   ENTER();
 
   // we only accept existing mails
-  if(mlist != NULL && mnode != NULL)
+  if(mlist != NULL && mnode != NULL && mnode->mail != NULL)
   {
     // add the new mail node to the end of the list
     AddTail((struct List *)&mlist->list, (struct Node *)&mnode->node);
@@ -411,6 +411,7 @@ struct Mail **MailListToMailArray(struct MailList *mlist)
 
 #if defined(DEBUG)
 static LONG mailLocks = 0;
+
 /// LockMailList()
 void LockMailList(struct MailList *mlist)
 {
@@ -441,5 +442,5 @@ void UnlockMailList(struct MailList *mlist)
 }
 
 ///
-
+#endif
 
