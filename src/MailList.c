@@ -435,9 +435,10 @@ void LockMailListShared(struct MailList *mlist)
 /// UnlockMailList()
 void UnlockMailList(struct MailList *mlist)
 {
-  if(--mailLocks != 0)
+  mailLocks--;
+  if(mailLocks < 0)
     E(DBF_ALWAYS, "too many unlocks (%ld) of maillist %08lx", mailLocks, mlist);
-  else
+  else if(mailLocks == 0)
     ReleaseSemaphore(mlist->lockSemaphore);
 }
 

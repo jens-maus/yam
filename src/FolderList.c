@@ -222,9 +222,10 @@ void LockFolderListShared(struct FolderList *flist)
 /// UnlockFolderList()
 void UnlockFolderList(struct FolderList *flist)
 {
-  if(--folderLocks != 0)
+  folderLocks--;
+  if(folderLocks < 0)
     E(DBF_ALWAYS, "too many unlocks (%ld) of folderlist %08lx", folderLocks, flist);
-  else
+  else if(folderLocks == 0)
     ReleaseSemaphore(flist->lockSemaphore);
 }
 

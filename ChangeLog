@@ -7,6 +7,8 @@ $URL$
 
 2008-04-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * MailList.c, FolderList.c: slightly extended the unlock mechanism in case of
+    too many unlocks and nested locks.
   * MailList.c, FolderList.c: the debug build will now use functions instead of
     macros for locking and unlocking of mail and folder lists. These functions
     will output an error in case to nested locks or too many unlocks. This
