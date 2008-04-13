@@ -408,3 +408,38 @@ struct Mail **MailListToMailArray(struct MailList *mlist)
 }
 
 ///
+
+#if defined(DEBUG)
+static LONG mailLocks = 0;
+/// LockMailList()
+void LockMailList(struct MailList *mlist)
+{
+  if(++mailLocks != 1)
+    E(DBF_ALWAYS, "nested (%ld) exclusive lock of maillist %08lx", mailLocks, mlist);
+  else
+    ObtainSemaphore(mlist->lockSemaphore);
+}
+
+///
+/// LockMailListShared()
+void LockMailListShared(struct MailList *mlist)
+{
+  if(++mailLocks != 1)
+    E(DBF_ALWAYS, "nested (%ld) shared lock of maillist %08lx", mailLocks, mlist);
+  else
+    ObtainSemaphoreShared(mlist->lockSemaphore);
+}
+
+///
+/// UnlockMailList()
+void UnlockMailList(struct MailList *mlist)
+{
+  if(--mailLocks != 0)
+    E(DBF_ALWAYS, "too many unlocks (%ld) of maillist %08lx", mailLocks, mlist);
+  else
+    ReleaseSemaphore(mlist->lockSemaphore);
+}
+
+///
+
+

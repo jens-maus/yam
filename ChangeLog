@@ -7,6 +7,10 @@ $URL$
 
 2008-04-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * MailList.c, FolderList.c: the debug build will now use functions instead of
+    macros for locking and unlocking of mail and folder lists. These functions
+    will output an error in case to nested locks or too many unlocks. This
+    should help avoiding and finding double locks like in bug #1883818.
   * YAM_UT.c: slightly modified the debug output while updating the AppIcon.
   * YAM_FO.c, YAM_rexx_rxif.c: removed the folder list locking within
     FO_GetFolderPosition() to be able to update the folder statistics while the

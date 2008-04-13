@@ -73,8 +73,14 @@ void DeleteFolderNode(struct FolderNode *fnode);
 #define PreviousFolderNode(fnode)                 (((fnode)->node.mln_Pred != NULL && (fnode)->node.mln_Pred->mln_Pred != NULL) ? (struct FolderNode *)(fnode)->node.mln_Pred : NULL)
 
 // lock and unlock a folder list via its semaphore
-#define LockFolderListShared(flist)               ObtainSemaphoreShared((flist)->lockSemaphore)
+#if defined(DEBUG)
+void LockFolderList(struct FolderList *flist);
+void LockFolderListShared(struct FolderList *flist);
+void UnlockFolderList(struct FolderList *flist);
+#else
 #define LockFolderList(flist)                     ObtainSemaphore((flist)->lockSemaphore)
+#define LockFolderListShared(flist)               ObtainSemaphoreShared((flist)->lockSemaphore)
 #define UnlockFolderList(flist)                   ReleaseSemaphore((flist)->lockSemaphore)
+#endif
 
 #endif /* FOLDERLIST_H */

@@ -73,8 +73,14 @@ struct Mail **MailListToMailArray(struct MailList *mlist);
 #define FirstMailNode(mlist)                      (((mlist) != NULL && (mlist)->list.mlh_Head != NULL) ? (struct MailNode *)(mlist)->list.mlh_Head : (struct MailNode *)NULL)
 
 // lock and unlock a mail list via its semaphore
+#if defined(DEBUG)
+void LockMailList(struct MailList *mlist);
+void LockMailListShared(struct MailList *mlist);
+void UnlockMailList(struct MailList *mlist);
+#else
 #define LockMailList(mlist)                       ObtainSemaphore((mlist)->lockSemaphore)
 #define LockMailListShared(mlist)                 ObtainSemaphoreShared((mlist)->lockSemaphore)
 #define UnlockMailList(mlist)                     ReleaseSemaphore((mlist)->lockSemaphore)
+#endif
 
 #endif /* MAILLIST_H */

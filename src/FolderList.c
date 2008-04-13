@@ -147,7 +147,7 @@ struct FolderNode *AddNewFolderNode(struct FolderList *flist, struct Folder *fol
 }
 
 ///
-/// AddNewFolderNode
+/// AddFolderNode
 // add a folder node to an existing list
 // if locking of the list is needed this must be done by the calling function
 void AddFolderNode(struct FolderList *flist, struct FolderNode *fnode)
@@ -195,3 +195,39 @@ void DeleteFolderNode(struct FolderNode *fnode)
 }
 
 ///
+
+#if defined(DEBUG)
+static LONG folderLocks = 0;
+
+/// LockFolderList()
+void LockFolderList(struct FolderList *flist)
+{
+  if(++folderLocks != 1)
+    E(DBF_ALWAYS, "nested (%ld) exclusive lock of folderlist %08lx", folderLocks, flist);
+  else
+    ObtainSemaphore(flist->lockSemaphore);
+}
+
+///
+/// LockFolderListShared()
+void LockFolderListShared(struct FolderList *flist)
+{
+  if(++folderLocks != 1)
+    E(DBF_ALWAYS, "nested (%ld) shared lock of folderlist %08lx", folderLocks, flist);
+  else
+    ObtainSemaphoreShared(flist->lockSemaphore);
+}
+
+///
+/// UnlockFolderList()
+void UnlockFolderList(struct FolderList *flist)
+{
+  if(--folderLocks != 0)
+    E(DBF_ALWAYS, "too many unlocks (%ld) of folderlist %08lx", folderLocks, flist);
+  else
+    ReleaseSemaphore(flist->lockSemaphore);
+}
+
+///
+#endif
+
