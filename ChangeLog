@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c, YAM_rexx_rxif.c: removed the folder list locking within
+    FO_GetFolderPosition() to be able to update the folder statistics while the
+    folder list is already locked. This most probably also fixes bug #1883818.
+
 2008-04-12  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/italian.ct: updated italian translation kindly provided by Samir

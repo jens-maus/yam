@@ -61,6 +61,7 @@
 #include "classes/Classes.h"
 
 #include "FileInfo.h"
+#include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
 #include "Mime.h"
@@ -1477,9 +1478,13 @@ void rx_getfolderinfo( UNUSED struct RexxHost *host, struct rxd_getfolderinfo **
 
       // this command should only act on a folder folder and
       // also only on a non-group
-      if(fo && !isGroupFolder(fo))
+      if(fo != NULL && !isGroupFolder(fo))
       {
-        int num = FO_GetFolderPosition(fo, FALSE);
+        int num;
+
+        LockFolderListShared(G->folders);
+        num = FO_GetFolderPosition(fo, FALSE);
+        UnlockFolderList(G->folders);
 
         if(!strnicmp(key, "NUM", 3))      snprintf(rd->rd.res.value = rd->result, sizeof(rd->result), "%d", num);
         else if(!strnicmp(key, "NAM", 3)) rd->rd.res.value = fo->Name;
@@ -1662,7 +1667,10 @@ void rx_folderinfo( UNUSED struct RexxHost *host, struct rxd_folderinfo **rxd, e
         static LONG size;
         static int type;
 
+        LockFolderListShared(G->folders);
         num = FO_GetFolderPosition(fo, FALSE);
+        UnlockFolderList(G->folders);
+
         total = fo->Total;
         new = fo->New;
         unread = fo->Unread;

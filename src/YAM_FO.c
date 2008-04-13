@@ -307,13 +307,12 @@ struct Folder *FO_GetFolderByPath(const char *path, int *pos)
 ///
 /// FO_GetFolderPosition
 //  Gets the position of a folder in the list
+//  !! must be called with a locked folder list !!
 int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
 {
   int pos = -1;
 
   ENTER();
-
-  LockFolderListShared(G->folders);
 
   if(IsFolderListEmpty(G->folders) == FALSE)
   {
@@ -336,8 +335,6 @@ int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
       }
     }
   }
-
-  UnlockFolderList(G->folders);
 
   RETURN(pos);
   return pos;
