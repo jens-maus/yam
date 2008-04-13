@@ -5935,13 +5935,13 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 
   ENTER();
 
-  D(DBF_GUI, "updating statistics for folder: %08lx", fo);
-
   // If the parsed argument is NULL we want to show the statistics from the actual folder
   if(fo == NULL)
     fo = actfo;
   else if(fo == (struct Folder *)-1)
     fo = FO_GetFolderByType(FT_INCOMING, NULL);
+
+  D(DBF_GUI, "updating statistics for folder '%s', appicon %ld", fo->Name, updateAppIcon);
 
   // Get Position of Folder
   pos = FO_GetFolderPosition(fo, TRUE);
