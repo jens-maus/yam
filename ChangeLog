@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-14  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/italian.ct: fixed some bugs in the italian translation to make it
+    compilable by FlexCat.
+
 2008-04-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * MailList.c, FolderList.c: slightly extended the unlock mechanism in case of
