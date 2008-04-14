@@ -415,31 +415,43 @@ static LONG mailLocks = 0;
 /// LockMailList()
 void LockMailList(struct MailList *mlist)
 {
+  ENTER();
+
   if(++mailLocks != 1)
     E(DBF_ALWAYS, "nested (%ld) exclusive lock of maillist %08lx", mailLocks, mlist);
   else
     ObtainSemaphore(mlist->lockSemaphore);
+
+  LEAVE();
 }
 
 ///
 /// LockMailListShared()
 void LockMailListShared(struct MailList *mlist)
 {
+  ENTER();
+
   if(++mailLocks != 1)
     E(DBF_ALWAYS, "nested (%ld) shared lock of maillist %08lx", mailLocks, mlist);
   else
     ObtainSemaphoreShared(mlist->lockSemaphore);
+
+  LEAVE();
 }
 
 ///
 /// UnlockMailList()
 void UnlockMailList(struct MailList *mlist)
 {
+  ENTER();
+
   mailLocks--;
   if(mailLocks < 0)
     E(DBF_ALWAYS, "too many unlocks (%ld) of maillist %08lx", mailLocks, mlist);
   else if(mailLocks == 0)
     ReleaseSemaphore(mlist->lockSemaphore);
+
+  LEAVE();
 }
 
 ///

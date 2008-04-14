@@ -7,6 +7,7 @@ $URL$
 
 2008-04-14  Thore Böckelmann <tboeckel@gmx.de>
 
+  * FolderList.c, MailList.c: added the usual ENTER()/LEAVE() macro calls.
   * YAM_MA.c: fixed another double folder list lock.
   * locale/italian.ct: fixed some bugs in the italian translation to make it
     compilable by FlexCat.
