@@ -170,7 +170,6 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ);
 void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor);
 void RE_ClickedOnMessage(char *address);
 BOOL RE_PrintFile(const char *filename);
-struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAllFolder, Object *readWindow);
 BOOL RE_Export(struct ReadMailData *rmData, const char *source, const char *dest, const char *name, int nr, BOOL force, BOOL overwrite, const char *ctype);
 void RE_SaveAll(struct ReadMailData *rmData, const char *path);
 

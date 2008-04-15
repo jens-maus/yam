@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-15  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c, ReadWindow.c: moved the RE_GetThread() function over to
+    ReadWindow.c and split it into two functions as it contained the same code
+    twice. Before the thread functionallity didn't work because a variable in
+    the loop shadowed the result variable and hence the function always returned
+    failure, even if the mail belonged to a thread of mails. This fixes bug
+    #1925722.
+
 2008-04-14  Thore Böckelmann <tboeckel@gmx.de>
 
   * FolderList.c, MailList.c: added the usual ENTER()/LEAVE() macro calls.

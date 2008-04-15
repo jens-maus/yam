@@ -118,6 +118,130 @@ INLINE LONG SelectMessage(struct Mail *mail)
   // return the position to the caller
   return pos;
 }
+
+///
+/// FindThreadInFolder
+/// Find the next/prev message in a thread within one folder
+static struct Mail *FindThreadInFolder(struct Mail *srcMail, struct Folder *folder, BOOL nextThread)
+{
+  struct Mail *result = NULL;
+
+  ENTER();
+
+  LockMailListShared(folder->messages);
+
+  if(IsMailListEmpty(folder->messages) == FALSE)
+  {
+    struct MailNode *mnode;
+
+    ForEachMailNode(folder->messages, mnode)
+    {
+      struct Mail *mail = mnode->mail;
+
+      if(nextThread == TRUE)
+      {
+        // find the answer to the srcMail
+        if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
+        {
+          result = mail;
+          break;
+        }
+      }
+      else
+      {
+        // else we have to find the question to the srcMail
+        if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
+        {
+          result = mail;
+          break;
+        }
+      }
+    }
+  }
+
+  UnlockMailList(folder->messages);
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// FindThread
+//  Find the next/prev message in a thread and return a pointer to it
+static struct Mail *FindThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAllFolder, Object *readWindow)
+{
+  struct Mail *mail = NULL;
+
+  ENTER();
+
+  if(srcMail != NULL)
+  {
+    if(srcMail->Folder->LoadedMode == LM_VALID || MA_GetIndex(srcMail->Folder) == TRUE)
+    {
+      // first we take the folder of the srcMail as a priority in the
+      // search of the next/prev thread so we have to check that we
+      // have a valid index before we are going to go on.
+	  if((mail = FindThreadInFolder(srcMail, srcMail->Folder, nextThread)) == NULL)
+	  {
+        // if we still haven't found the mail we have to scan the other folders aswell
+        LockFolderListShared(G->folders);
+
+        if(IsFolderListEmpty(G->folders) == FALSE)
+        {
+          int autoloadindex = -1;
+          struct FolderNode *fnode;
+
+          ForEachFolderNode(G->folders, fnode)
+          {
+            struct Folder *fo = fnode->folder;
+
+            // check if this folder isn't a group and that we haven't scanned
+            // it already.
+            if(!isGroupFolder(fo) && fo != srcMail->Folder)
+            {
+              if(fo->LoadedMode != LM_VALID)
+              {
+                if(autoloadindex == -1)
+                {
+                  if(askLoadAllFolder == TRUE)
+                  {
+                    // if we are going to ask for loading all folders we do it now
+                    if(MUI_Request(G->App, readWindow, 0,
+                                   tr(MSG_MA_ConfirmReq),
+                                   tr(MSG_YesNoReq),
+                                   tr(MSG_RE_FOLLOWTHREAD)) != 0)
+                      autoloadindex = 1;
+                    else
+                      autoloadindex = 0;
+                  }
+                  else
+                    autoloadindex = 0;
+                }
+
+                // load the folder's index, if we are allowed to do that
+                if(autoloadindex == 1)
+                  MA_GetIndex(fo);
+              }
+
+              // check again for a valid index
+              if(fo->LoadedMode == LM_VALID)
+                mail = FindThreadInFolder(srcMail, fo, nextThread);
+            }
+
+            if(mail != NULL)
+              break;
+          }
+        }
+
+        UnlockFolderList(G->folders);
+      }
+    }
+  }
+
+  RETURN(mail);
+  return mail;
+}
+
 ///
 
 /* Hooks */
@@ -541,8 +665,8 @@ DECLARE(ReadMail) // struct Mail *mail
   {
     if(AllFolderLoaded() == TRUE)
     {
-      prevMailAvailable = RE_GetThread(mail, FALSE, FALSE, obj) != NULL;
-      nextMailAvailable = RE_GetThread(mail, TRUE, FALSE, obj) != NULL;
+      prevMailAvailable = FindThreadInFolder(mail, mail->Folder, FALSE) != NULL;
+      nextMailAvailable = FindThreadInFolder(mail, mail->Folder, TRUE) != NULL;
     }
     else
     {
@@ -1339,7 +1463,7 @@ DECLARE(FollowThread) // LONG direction
 
   // depending on the direction we get the Question or Answer to the current Message
 
-  if((fmail = RE_GetThread(mail, msg->direction <= 0 ? FALSE : TRUE, TRUE, obj)) != NULL)
+  if((fmail = FindThread(mail, msg->direction > 0, TRUE, obj)) != NULL)
   {
     LONG pos = MUIV_NList_GetPos_Start;
 
