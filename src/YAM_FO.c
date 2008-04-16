@@ -1504,6 +1504,8 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
     }
   }
 
+  // there is no "old" folder which could be edited, just the new one
+  G->FO->EditFolder = NULL;
   FO_GetFolder(&folder);
 
   LEAVE();

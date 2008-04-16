@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-16  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c: when creating a new folder there was a slight chance that the
+    configuration of a previously edited folder was modified.
+
 2008-04-15  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c, ReadWindow.c: moved the RE_GetThread() function over to
