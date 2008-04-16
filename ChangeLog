@@ -7,6 +7,8 @@ $URL$
 
 2008-04-16  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_FO.c: fixed a small bug while calculating the amount of mails
+    within the folder listtree.
   * YAM.c, YAM_FO.c, YAM_UT.c, MainFolderListtree.c: modified all folder
     listtree related stuff to use FolderNodes in the tree instead of simple
     Folder pointers.

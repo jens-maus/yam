@@ -1698,12 +1698,12 @@ static void InitAfterLogin(void)
     // aswell and also the grandparents.
     while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)) != NULL)
     {
-      // fo_parent is NULL then it`s ROOT and we have to skip here
+      // tn_parent->tn_User is NULL then it's ROOT and we have to skip here
       // because we cannot have a status of the ROOT tree.
-      struct Folder *fo_parent;
-
-      if((fo_parent = ((struct FolderNode *)tn_parent->tn_User)->folder) != NULL)
+      if(tn_parent->tn_User != NULL)
       {
+        struct Folder *fo_parent = ((struct FolderNode *)tn_parent->tn_User)->folder;
+
         fo_parent->Unread    += folder->Unread;
         fo_parent->New       += folder->New;
         fo_parent->Total     += folder->Total;

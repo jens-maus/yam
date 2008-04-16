@@ -5808,9 +5808,6 @@ void DisplayAppIconStatistics(void)
     {
       struct Folder *fo = fnode->folder;
 
-      if(fo == NULL)
-        break;
-
       if(fo->Stats == TRUE)
       {
         new_msg += fo->New;
@@ -5985,11 +5982,10 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
     // set their status accordingly.
     while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
     {
-      // fo_parent is NULL then it`s ROOT and we have to skip here
-      struct Folder *fo_parent;
-
-      if((fo_parent = ((struct FolderNode *)tn_parent->tn_User)->folder) != NULL)
+      // tn_parent->tn_User is NULL then it's ROOT and we have to skip here
+      if(tn_parent->tn_User != NULL)
       {
+        struct Folder *fo_parent = ((struct FolderNode *)tn_parent->tn_User)->folder;
         int i;
 
         // clear the parent mailvariables first
