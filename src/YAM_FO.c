@@ -96,7 +96,7 @@ struct Folder *FO_GetCurrentFolder(void)
   ENTER();
 
   if((tn = (struct MUI_NListtree_TreeNode *)xget(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active)) != NULL)
-    folder = (struct Folder *)tn->tn_User;
+    folder = ((struct FolderNode *)tn->tn_User)->folder;
 
   RETURN(folder);
   return folder;
@@ -120,7 +120,7 @@ BOOL FO_SetCurrentFolder(struct Folder *fo)
       struct MUI_NListtree_TreeNode *tn;
 
       tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-      if(tn != NULL && tn->tn_User == fo)
+      if(tn != NULL && ((struct FolderNode *)tn->tn_User)->folder == fo)
       {
         // make sure the tree is opened to display it
         DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
@@ -360,7 +360,7 @@ struct MUI_NListtree_TreeNode *FO_GetFolderTreeNode(struct Folder *findfo)
       break;
     }
 
-    fo = tn->tn_User;
+    fo = ((struct FolderNode *)tn->tn_User)->folder;
     if(fo == findfo)
     {
       // we just found the desired folder, so break out of the loop and return the treenode
@@ -646,7 +646,7 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
     {
       struct MUI_NListtree_TreeNode *tn;
 
-      if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) != NULL)
+      if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) != NULL)
       {
         if(FO_SaveConfig(folder) == TRUE)
         {
@@ -822,7 +822,7 @@ BOOL FO_LoadTree(char *fname)
                 }
 
                 // Now we add this folder to the folder listtree
-                if(!(DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
+                if(!(DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
                 {
                   fclose(fh);
                   free(fo);
@@ -889,7 +889,7 @@ BOOL FO_LoadTree(char *fname)
               return FALSE;
             }
 
-            if((Object *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags) == NULL)
+            if((Object *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags) == NULL)
             {
               fclose(fh);
               free(fo);
@@ -940,7 +940,7 @@ BOOL FO_LoadTree(char *fname)
             }
 
             // now we are going to add this treenode to the list
-            if(!(tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
+            if(!(tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
             {
               fclose(fh);
               free(fo);
@@ -1009,8 +1009,10 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
     else
     {
       // get the next treenode
-      if(i == 0) tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, i, MUIF_NONE);
-      else tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
+      if(i == 0)
+        tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, i, MUIF_NONE);
+      else
+        tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
 
       // get the parent node of the treenode
       tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
@@ -1018,18 +1020,19 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
 
     // if tn is null or the parent of the next is not the same like the caller of this function
     // we are going to print ENDGROUP and return
-    if (!tn || tn_parent != subtree)
+    if(tn == NULL || tn_parent != subtree)
     {
       // if we reach here it`s just the end of a GROUP
-      if(!noendgroup)
+      if(noendgroup == FALSE)
         fputs("@ENDGROUP\n", fh);
 
       break;
     }
     else
     {
-      fo = tn->tn_User;
-      if (!fo) break;
+      fo = ((struct FolderNode *)tn->tn_User)->folder;
+      if(fo == NULL)
+        break;
       fo->SortIndex = i;
 
       if(isGroupFolder(fo))
@@ -1388,7 +1391,8 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
 
   if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI) != 0)
   {
-    long tnflags = (TNF_LIST | TNF_OPEN);
+    LONG tnflags = TNF_LIST | TNF_OPEN;
+    struct FolderNode *fnode;
 
     // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
     if(IsImageInCache("folder_fold") == TRUE &&
@@ -1397,9 +1401,16 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
       SET_FLAG(tnflags, TNF_NOSIGN);
     }
 
-    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
+    LockFolderList(G->folders);
+    fnode = AddNewFolderNode(G->folders, memdup(&folder, sizeof(folder)));
+    UnlockFolderList(G->folders);
 
-    FO_SaveTree(CreateFilename(".folders"));
+	if(fnode != NULL)
+	{
+	  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
+
+      FO_SaveTree(CreateFilename(".folders"));
+    }
   }
 
   LEAVE();
@@ -1905,26 +1916,31 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
             // allocate memory for the new folder
             if((oldfolder = memdup(&folder, sizeof(folder))) != NULL)
             {
-              struct Folder *prevFolder;
-
-              prevFolder = FO_GetCurrentFolder();
-              if(prevFolder != NULL && isGroupFolder(prevFolder))
-              {
-                // add the folder to the end of the current folder group
-                DoMethod(lv, MUIM_NListtree_Insert, oldfolder->Name, oldfolder, FO_GetFolderTreeNode(prevFolder), MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
-              }
-              else
-              {
-                // add the folder after the current folder
-                DoMethod(lv, MUIM_NListtree_Insert, oldfolder->Name, oldfolder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
-              }
+              struct FolderNode *fnode;
 
               // finally add the new folder to the global list
               LockFolderList(G->folders);
-              AddNewFolderNode(G->folders, oldfolder);
+              fnode = AddNewFolderNode(G->folders, oldfolder);
               UnlockFolderList(G->folders);
 
-              success = TRUE;
+              if(fnode != NULL)
+              {
+                struct Folder *prevFolder;
+
+                prevFolder = FO_GetCurrentFolder();
+                if(prevFolder != NULL && isGroupFolder(prevFolder))
+                {
+                  // add the folder to the end of the current folder group
+                  DoMethod(lv, MUIM_NListtree_Insert, oldfolder->Name, fnode, FO_GetFolderTreeNode(prevFolder), MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
+                }
+                else
+                {
+                  // add the folder after the current folder
+                  DoMethod(lv, MUIM_NListtree_Insert, oldfolder->Name, fnode, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
+                }
+
+                success = TRUE;
+              }
             }
           }
         }

@@ -1519,7 +1519,7 @@ static void InitAfterLogin(void)
     {
       struct Folder *folder = fnode->folder;
 
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root);
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root);
     }
 
     newfolders = TRUE;
@@ -1655,7 +1655,7 @@ static void InitAfterLogin(void)
     if(tn == NULL || tn->tn_User == NULL)
       break;
 
-    folder = tn->tn_User;
+    folder = ((struct FolderNode *)tn->tn_User)->folder;
 
     // if this entry is a group lets skip here immediatly
     if(isGroupFolder(folder))
@@ -1702,7 +1702,7 @@ static void InitAfterLogin(void)
       // because we cannot have a status of the ROOT tree.
       struct Folder *fo_parent;
 
-      if((fo_parent = (struct Folder *)tn_parent->tn_User) != NULL)
+      if((fo_parent = ((struct FolderNode *)tn_parent->tn_User)->folder) != NULL)
       {
         fo_parent->Unread    += folder->Unread;
         fo_parent->New       += folder->New;

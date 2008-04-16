@@ -5988,7 +5988,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
       // fo_parent is NULL then it`s ROOT and we have to skip here
       struct Folder *fo_parent;
 
-      if((fo_parent = (struct Folder *)tn_parent->tn_User) != NULL)
+      if((fo_parent = ((struct FolderNode *)tn_parent->tn_User)->folder) != NULL)
       {
         int i;
 
@@ -6009,7 +6009,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
           if(tn_child == NULL)
             break;
 
-          fo_child = (struct Folder *)tn_child->tn_User;
+          fo_child = ((struct FolderNode *)tn_child->tn_User)->folder;
 
           fo_parent->Unread    += fo_child->Unread;
           fo_parent->New       += fo_child->New;

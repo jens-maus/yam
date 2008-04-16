@@ -33,6 +33,8 @@
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
 
+#include "FolderList.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -143,7 +145,8 @@ HOOKPROTONHNO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
       static char unreadStr[SIZE_SMALL];
       static char newStr[SIZE_SMALL];
       static char sizeStr[SIZE_SMALL];
-      struct Folder *entry = (struct Folder *)msg->TreeNode->tn_User;
+      struct FolderNode *fnode = (struct FolderNode *)msg->TreeNode->tn_User;
+      struct Folder *entry = fnode->folder;
 
       folderStr[0] = '\0';
       totalStr[0] = '\0';
@@ -354,13 +357,13 @@ OVERLOAD(MUIM_DragDrop)
     if(!tn_dst)
       return 0;
 
-    dstfolder = tn_dst->tn_User;
+    dstfolder = ((struct FolderNode *)tn_dst->tn_User)->folder;
 
     tn_src = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active);
     if(!tn_src)
       return 0;
 
-    srcfolder = tn_src->tn_User;
+    srcfolder = ((struct FolderNode *)tn_src->tn_User)->folder;
 
     if(!isGroupFolder(dstfolder))
       MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE, TRUE);
@@ -386,7 +389,7 @@ OVERLOAD(MUIM_NListtree_DropType)
   {
     struct Folder *folder;
 
-    if((folder = (struct Folder *)tn->tn_User) != NULL)
+    if((folder = ((struct FolderNode *)tn->tn_User)->folder) != NULL)
     {
       if(data->draggingMails)
       {
@@ -468,7 +471,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 
   tn = r.tpr_TreeNode;
 
-  if(!tn || !tn->tn_User)
+  if(tn == NULL || tn->tn_User == NULL)
   {
     disable_delete = TRUE;
     disable_edit   = TRUE;
@@ -478,7 +481,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   }
   else
   {
-    folder = (struct Folder *)tn->tn_User;
+    folder = ((struct FolderNode *)tn->tn_User)->folder;
 
     // Set this Treenode as activ
     if(tn != (struct MUI_NListtree_TreeNode *)xget(gui->NL_FOLDERS, MUIA_NListtree_Active))
