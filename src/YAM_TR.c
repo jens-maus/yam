@@ -1873,8 +1873,13 @@ static int TR_Recv(char *recvdata, int maxlen)
     else
       recvdata[nread] = '\0';
 
-    if(G->TR_Debug)
+    if(G->TR_Debug == TRUE)
+    {
       printf("SERVER[%04d]: %s", nread, recvdata);
+      // add a linefeed in case of an error
+      if(nread == -1)
+        printf("\n");
+    }
 
     D(DBF_NET, "TCP: received %ld of max %ld bytes", nread, maxlen);
   }
@@ -2090,7 +2095,7 @@ static int TR_Send(const char *ptr, int len, int flags)
   {
     // perform some debug output on the console if requested
     // by the user
-    if(G->TR_Debug && ptr)
+    if(G->TR_Debug ==TRUE && ptr != NULL)
       printf("CLIENT[%04d]: %s", len, ptr);
 
     // we call the WriteBuffered() function to write this characters
@@ -2179,8 +2184,13 @@ static int TR_ReadLine(LONG socket, char *vptr, int maxlen)
 
     // perform some debug output on the console if requested
     // by the user
-    if(G->TR_Debug)
+    if(G->TR_Debug == TRUE)
+    {
       printf("SERVER[%04d]: %s", n, vptr);
+      // add a linefeed in case of an error
+      if(n == -1)
+        printf("\n");
+    }
 
     D(DBF_NET, "TCP: received %ld of max %ld bytes", n, maxlen);
 
