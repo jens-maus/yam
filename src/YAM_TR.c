@@ -1877,7 +1877,7 @@ static int TR_Recv(char *recvdata, int maxlen)
     {
       printf("SERVER[%04d]: %s", nread, recvdata);
       // add a linefeed in case of an error
-      if(nread == -1)
+      if(nread <= 0 || strlen(recvdata) == 0)
         printf("\n");
     }
 
@@ -2188,7 +2188,7 @@ static int TR_ReadLine(LONG socket, char *vptr, int maxlen)
     {
       printf("SERVER[%04d]: %s", n, vptr);
       // add a linefeed in case of an error
-      if(n == -1)
+      if(n <= 0 || strlen(vptr) == 0)
         printf("\n");
     }
 
