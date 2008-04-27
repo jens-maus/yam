@@ -239,6 +239,49 @@
 (set #done_2        "\n a dvojím kliknutím program spus»te.\n\nA» se Vám líbí...")
 
 ; ///
+;/// ***** Italiano
+(set #def_cat_lang #def_lang_Italiano)
+(set #def_doc_lang #def_doc_Italiano)
+(set #wrongOS  "YAM richiede almeno AmigaOS 3.0 per girare!\n")
+(set #wrongMUI "YAM richiede almeno MUI 3.8 per girare!\n")
+(set #wrongCPU "YAM richiede almeno una CPU 68020 per girare!\n")
+(set #YAM_dir  (cat "Per favore seleziona una directory per YAM\n"
+                    "(Non verrà creata nessuna cartella extra!)"))
+(set #lang_catalog (cat "Quale catalogo si desidera istallare?\n"
+                        "(La lingua inglese è integrata)"))
+(set #lang_manual "Seleziona la lingua da istallare per la guida in linea AmigaGuide")
+(set #no_way_back_warning (cat "\n"
+                               "ATTENZIONE!!\n"
+                               "(Nel caso di desideri aggiornare il programma\n"
+                               "da una precedente istallazione di YAM)\n"
+                               "\n"
+                               "Lo schema dei nomi dei messaggi è stato radicalmente modificato.\n"
+                               "Quando viene lanciata questa nuova versione per la prima volta\n"
+                               "tutti i precedenti messaggi verranno automaticamente convertiti\n"
+                               "al nuovo schema. Una volta effettuta la conversione non sarà più\n"
+                               "possibile utilizzare il vecchio schema con la vecchia versione di YAM\n"
+                               "Perciò è consigliabile effettuare un backup di TUTTI i messaggi PRIMA di procedere\n"
+                               "YAM 2.6\n"
+                               "\n"
+                               "Ricorda che è sempre possibile istallare due versioni"
+                               "differenti di YAM in directory separate."))
+(set #faq_and_bugtracker (cat "\n"
+                              "Nel caso si abbiano delle domande concernenti YAM\n"
+                              "è possibile contattarci attraverso il nostro forum:\n"
+                              "http://forum.yam.ch/\n"
+                              "\n"
+                              "Nota che le domande più frequentemente risposte sono\n"
+                              "disponibili nelle FAQ di YAM all'indirizzo:\n"
+                              "http://faq.yam.ch/\n"
+                              "\n"
+                              "In caso venga riscontrato qualche bug nel programma,\n"
+                              "è possibile segnalarlo attraverso il nostro bugtracker:\n"
+                              "http://bugs.yam.ch/"))
+(set #done_1   (cat "\nYAM è stato istallato con successo.\n\n"
+                    "Doppio click sull'icona di \"YAM\" nella\n"))
+(set #done_2        "\ndirectory dove si è deciso di istallarlo.\n\nBuon divertimento...")
+; ///
+
 ;----------------------------------------------------------------------------
 ; /// Checking environment
 ;(set installer_ver (/ @installer-version 65536))
@@ -283,6 +326,7 @@
     (set #cat_name_Deutsch               "german")
     (set #cat_name_Svenska               "swedish")
     (set #cat_name_Czech                 "czech")
+    (set #cat_name_Italiano              "italian")
     (set #cat_name_English_British       "english-british")
   )
   ; OS3 and MOS use localized locale names
@@ -290,6 +334,7 @@
     (set #cat_name_Deutsch               "deutsch")
     (set #cat_name_Svenska               "svenska")
     (set #cat_name_Czech                 "czech")
+    (set #cat_name_Italiano              "italiano")
   )
 )
 
@@ -325,6 +370,7 @@
          (choices "Deutsch"
                   "Svenska"
                   "Czech"
+                  "Italiano"
                   "English (british)"
          )
          (default #def_cat_lang)
@@ -338,6 +384,7 @@
          (choices "Deutsch"
                   "Svenska"
                   "Czech"
+                  "Italiano"
          )
          (default #def_cat_lang)
       )
@@ -456,6 +503,18 @@
       (copyfiles (source "/Catalogs/czech")
          (choices "YAM.catalog")
          (dest (tackon Cat_dir #cat_name_Czech))
+      )
+   )
+)
+
+; italian catalog file
+(if (bitand Catalog_lang #def_lang_Italiano)
+   (
+      (makedir (tackon Cat_dir #cat_name_Italiano))
+
+      (copyfiles (source "/Catalogs/italian")
+         (choices "YAM.catalog")
+         (dest (tackon Cat_dir #cat_name_Italiano))
       )
    )
 )
