@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-04-27  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/italian.ct: updated italian translation provided by Samir Hawamdeh.
+
 2008-04-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: in case of an error during a transfer an additional linefeed will
