@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.2 (26.04.2008)
+## version $VER: YAM.catalog 6.2 (5.05.2008)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -2121,10 +2121,11 @@ l'indirizzo del server POP3.
 ;
 MSG_HELP_CO_ST_DOMAIN
 L'Hostname del tuo Amiga.\n\
-Modifica questo campo nel caso\n\
-il comando HELLO fallisca.
+Modifica questo campo nel\n\
+caso il comando HELLO\n\
+fallisca.
 ; The hostname of your computer.\n\
-; Change this field if the HELO\n\
+; Change this field if the HELLO\n\
 ; commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT
@@ -2138,17 +2139,19 @@ Altrimenti i messaggi potrebbero rovinarsi.
 ; supports 8-bit transfers, otherwise your messages may get corrupted.
 ;
 MSG_HELP_CO_LV_POP3
-Lista degli host POP3
+Lista degli account POP3
 ; List of the POP3\n\
 ; accounts.
 ;
 MSG_HELP_CO_BT_PADD
-Aggiunge un nuovo host POP3 alla lista.
+Aggiunge un nuovo account POP3\n\
+alla lista.
 ; Add a new POP3 account\n\
 ; to the list.
 ;
 MSG_HELP_CO_BT_PDEL
-Rimuove l'host POP3 selezionato dalla lista.
+Rimuove l'account POP3 selezionato\n\
+dalla lista.
 ; Remove the selected POP3\n\
 ; account from the list.
 ;
@@ -4096,7 +4099,7 @@ Editor
 ; Editor
 ;
 MSG_WR_TBInsert
-Inser.
+Inserisci
 ; Insert
 ;
 MSG_WR_TBCut
@@ -4116,7 +4119,7 @@ Annulla
 ; Undo
 ;
 MSG_WR_TBBold
-Grass.
+Grassetto
 ; Bold
 ;
 MSG_WR_TBItalic
@@ -4124,7 +4127,7 @@ Corsivo
 ; Italic
 ;
 MSG_WR_TBUnderlined
-Sottolin.
+Sottolineato
 ; ULined
 ;
 MSG_WR_TBColored
@@ -4863,7 +4866,8 @@ MSG_ER_ErrorWriteMailfile
 Errore di scrittura nel file di posta: %s.\n\
 \n\
 Impossibile salvare il messaggio.\n\
-Assicurati che ci sia abbastanza spazio nel disco.
+Assicurati che ci sia abbastanza\n\
+spazio nel disco.
 ; Write error on mail file: %s.\n\
 ; \n\
 ; YAM can't save the message to disk, maybe you're out of disk space.
@@ -4872,7 +4876,8 @@ Assicurati che ci sia abbastanza spazio nel disco.
 MSG_ER_ErrorReadMailfile
 Errore di lettura nel file di posta: %s.\n\
 \n\
-Il file esiste, ma si è verificato un errore durante la sua lettura.
+Il file esiste, ma si è verificato un\n\
+errore durante la sua lettura.
 ; Read error on mail file: %s.\n\
 ; \n\
 ; The file exists, but there was an error while reading it.
@@ -5736,7 +5741,7 @@ Impostazioni generali
 ; General settings
 ;
 MSG_CO_FIELDLISTCFG
-Impostazione campi
+Impostazioni campo
 ; Field settings
 ;
 MSG_CO_SIZEFORMAT
@@ -6507,7 +6512,7 @@ con SSLv3
 ;
 MSG_HELP_CO_RA_SMTPSECURE
 Una connessione sicura TLSv1 o SSLv3 verrà stabilita tra il server SMTP\n\
-e YAM per inviare i messaggi attraverso una connessione criptata.\n\
+e YAM per l'invio dei messaggi attraverso una connessione criptata.\n\
 Nel caso questi pulsanti risultino disabilitati significa che il\n\
 supporto AmiSSL non è al momento disponibile.
 ; A TLSv1 or SSLv3 secure connection will be established between\n\
@@ -6535,7 +6540,7 @@ secondo(i)
 ;
 MSG_HELP_CO_SETSTATUSDELAYED
 Dopo aver aperto un messaggio o visualizzando un\n\
-E-Mail nel riquadro anteprima, YAM ritarderà la\n\
+messaggio nel riquadro anteprima, YAM ritarderà la\n\
 marcatura dei messaggi come già letti per il numero\n\
 di secondi specificato.
 ; After opening an e-mail, YAM will\n\
@@ -6642,8 +6647,8 @@ _Meno
 ; _Less
 ;
 MSG_MA_AUTOSAVEFOUND
-Il file '%s' di autosalvataggio è stato\n\
-creato in una precedente sessione.\n\
+Il file '%s' di autosalvataggio è stato creato\n\
+in una precedente sessione.\n\
 Questo problema potrebbe essersi verificato a\n\
 causa di un possibile crash o reboot durante\n\
 la scrittura di un messaggio.\n\
@@ -7009,7 +7014,7 @@ Comportamento alla ricezione dei nuovi messaggi...
 ; How to handle and react upon incoming mail...
 ;
 MSG_CO_FILTER_TITLE
-Impostazione Filtri della Posta
+Impostazioni Filtro della Posta
 ; Mail Filter Settings
 ;
 MSG_CO_FILTER_SUMMARY
@@ -7073,7 +7078,7 @@ Impostazioni relative al comportamento di YAM all'avvio ed alla chiusura...
 ; Configure what YAM should do on startup and exit...
 ;
 MSG_CO_MIME_TITLE
-Impostazione Datatype MIME
+Impostazioni Datatype MIME
 ; MIME Types Settings
 ;
 MSG_CO_MIME_SUMMARY
@@ -7089,7 +7094,7 @@ Impostazioni addizionali riguardanti la rubrica..
 ; Configure address book related options...
 ;
 MSG_CO_SCRIPTS_TITLE
-Impostazione script personalizzati
+Impostazioni script personalizzati
 ; Scripts Settings
 ;
 MSG_CO_SCRIPTS_SUMMARY
@@ -7239,7 +7244,7 @@ MSG_WR_SECURITYREQ
 I destinatari del messaggio usano diverse\n\
 impostazioni di sicurezza predefinite.\n\
 \n\
-Come si desidera comporre il messaggio?
+Quale tipo di sicurezza si desidera usare ?
 ; The recipients of the e-mail have different\n\
 ; default mail security settings.\n\
 ; \n\
@@ -8389,13 +8394,14 @@ Data rela_tiva
 MSG_HELP_CO_CH_RELDATETIME
 Se selezionato, le colonne con le informazioni\n\
 relative alla data useranno una forma ridotta\n\
-(per esempio: 'Oggi' o 'Domani')
+(per esempio: 'Oggi' o 'Domani') invece della\n\
+data completa.
 ; If selected, columns with date information\n\
 ; will use a relative output (e.g. 'Today' or\n\
 ; 'Yesterday') instead of the full date if possible.
 ;
 MSG_FOLDER_SNAPSHOT_TREE
-Disposizione fotografie
+Blocca disposizione 
 ; Snapshot arrangement
 ;
 MSG_FOLDER_RELOAD_TREE
@@ -8535,7 +8541,7 @@ Il server SMTP '%s' ha riportato di non poter supportare\n\
 il trasferimento dei messaggi a 8Bit nonostante questa\n\
 opzione sia attualmente attivata nella tua configurazione.\n\
 \n\
-Per favore disattiva questa opzione nelle tuo impostazioni\n\
+Per favore disattiva questa opzione nelle tue impostazioni\n\
 TCP/IP e riscrivi il messaggio prima di poter provare\n\
 nuovamente ad inviarlo, altrimenti lo stesso potrebbe\n\
 risultare malformato.
@@ -8608,7 +8614,7 @@ durante la procedura di benvenuto, la connessione verrà\n\
 terminata:\n\
 \n\
 %s\n\
-\n
+\n\
 ; POP3 server '%s' replied with an error message during the welcome \
 ; procedure and the connection was terminated:\n\
 ; \n\
@@ -8721,11 +8727,12 @@ Traduzioni a cura di:
 ; Localization Contributors:
 ;
 MSG_ABOUT_GPL
-Questo programma è un software libero; è lecito redistribuirlo o\n\
-modificarlo secondo i termini della Licenza Pubblica Generica GNU\n\
-come è pubblicata dalla Free Software Foundation; o la versione 2\n\
-della licenza o (a propria scelta) una versione successiva.\n\
-Si veda la Licenza Pubblica Generica GNU per ulteriori dettagli.
+YAM è un software libero; è lecito redistribuirlo o\n\
+modificarlo secondo i termini della Licenza Pubblica\n\
+Generica GNU cosi com'è pubblicata dalla Free Software\n\
+Foundation; nella versione 2 o successiva.\n\
+Si veda la Licenza Pubblica Generica GNU per ulteriori\n\
+dettagli.
 ; This program is free software; you're welcome to\n\
 ; distribute and/or modify it under the terms of the\n\
 ; GNU Public License. See the enclosed documents for\n\
@@ -8736,9 +8743,9 @@ Questo programma usa i seguenti software di terze parti:
 ; This program uses the following third party software:
 ;
 MSG_ABOUT_YAM_NEWS
-Le ultime novità circa lo sviluppo di questo programma\n\
-possono essere trovate sul sito di supporto all'indirizzo\n\
-\0335http://www.yam.ch/\033n
+Le ultime novità circa lo sviluppo di questo software\n\
+possono essere trovate sul sito di supporto di YAM\n\
+all'indirizzo internet \0335http://www.yam.ch/\033n
 ; The latest news about YAM can be found at the\n\
 ; YAM Support Site at \0335http://www.yam.ch/\033n
 ;
@@ -8776,7 +8783,7 @@ YAM non è stato in grado di stabilire una\n\
 connessione con il server di posta.\n\
 Per favore assicurati che lo Stack TCP/IP\n\
 sia connesso alla rete e che risulti\n\
-corrattamente configurato.
+correttamente configurato.
 ; Couldn't connect to '%s'.\n\
 ; \n\
 ; YAM wasn't able to establish a socket connection \
@@ -9584,7 +9591,7 @@ Avviso modifica file
 ;
 MSG_FCHANGE_WARN
 Durante la modifica del messaggio nella finestra\n\
-di scrittura %ld attuata con un editor di testi\n\
+di scrittura %ld attuata con un editor di test\n\
 esterno, il testo generato da quest'ultimo\n\
 potrebbe avere alterato il testo originale\n\
 dell'editor interno di YAM.\n\
