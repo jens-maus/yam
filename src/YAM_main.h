@@ -178,6 +178,12 @@ enum ForwardMode { FWM_ATTACH=0, // forward mail as attachment
                    FWM_INLINE    // forward mail inlined
                  };
 
+// flags for MA_DeleteSingle()
+#define DELF_AT_ONCE           (1<<0)
+#define DELF_QUIET             (1<<1)
+#define DELF_CLOSE_WINDOWS     (1<<2)
+#define DELF_UPDATE_APPICON    (1<<3)
+
 // flags and macros for creating new mails
 #define NEWF_QUIET        (1<<0)
 #define NEWF_REP_NOQUOTE  (1<<1)
@@ -333,7 +339,7 @@ int   MA_CompareByDate(const struct Mail *m1, const struct Mail *m2);
 struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew);
 struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew);
 void  MA_DeleteMessage(BOOL delatonce, BOOL force);
-void  MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL closeWindows);
+void  MA_DeleteSingle(struct Mail *mail, ULONG delFlags);
 BOOL  MA_ExportMessages(BOOL all, char *filename, BOOL append);
 struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, LONG *activep);
 void  MA_GetAddress(struct MailList *mlist);

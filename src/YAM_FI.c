@@ -1601,7 +1601,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
         RE_ProcessMDN(MDN_MODE_DELETE, mail, FALSE, TRUE);
       }
 
-      MA_DeleteSingle(mail, FALSE, FALSE, TRUE);
+      MA_DeleteSingle(mail, DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON);
 
       // signal failure, although everything was successful yet
       // but the mail is not available anymore for other filters

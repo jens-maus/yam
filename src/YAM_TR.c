@@ -5708,7 +5708,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
                     {
                       setStatusToSent(mail->Reference);
                       if (TR_ApplySentFilters(mail->Reference) == TRUE)
-                        MA_DeleteSingle(mail->Reference, FALSE, FALSE, FALSE);
+                        MA_DeleteSingle(mail->Reference, DELF_UPDATE_APPICON);
                     }
                     break;
                   }

@@ -784,7 +784,7 @@ struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 ///
 /// MA_DeleteSingle
 //  Deletes a single message
-void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL closeWindows)
+void MA_DeleteSingle(struct Mail *mail, ULONG delFlags)
 {
   ENTER();
 
@@ -795,7 +795,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
     if(C->RemoveAtOnce == TRUE ||
        isTrashFolder(mailFolder) ||
        (isSpamFolder(mailFolder) && hasStatusSpam(mail)) ||
-       forceatonce == TRUE)
+       isFlagSet(delFlags, DELF_AT_ONCE))
     {
       int i;
 
@@ -835,11 +835,11 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
       DeleteFile(GetMailFile(NULL, mailFolder, mail));
 
       // now remove the mail from its folder/mail list
-      RemoveMailFromList(mail, closeWindows);
+      RemoveMailFromList(mail, isFlagSet(delFlags, DELF_CLOSE_WINDOWS));
 
       // if we are allowed to make some noise we
       // update our Statistics
-      if(quiet == FALSE)
+      if(isFlagClear(delFlags, DELF_QUIET))
         DisplayStatistics(mailFolder, TRUE);
     }
     else
@@ -848,11 +848,11 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet, BOOL close
 
       D(DBF_MAIL, "moving mail with subject '%s' from folder '%s' to folder 'trash'", mail->Subject, mailFolder->Name);
 
-      MA_MoveCopySingle(mail, mailFolder, delfolder, FALSE, closeWindows);
+      MA_MoveCopySingle(mail, mailFolder, delfolder, FALSE, isFlagSet(delFlags, DELF_CLOSE_WINDOWS));
 
       // if we are allowed to make some noise we
       // update our statistics
-      if(quiet == FALSE)
+      if(isFlagClear(delFlags, DELF_QUIET))
       {
         // don't update the appicon yet
         DisplayStatistics(delfolder, FALSE);
@@ -3243,6 +3243,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         struct MailNode *mnode;
         ULONG deleted;
         BOOL ignoreall = FALSE;
+        ULONG delFlags = (delatonce == TRUE) ? DELF_AT_ONCE|DELF_QUIET|DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON : DELF_QUIET|DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON;
 
         D(DBF_MAIL, "going to delete %ld mails from folder '%s'", selected, folder->Name);
 
@@ -3262,7 +3263,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
           }
 
           // call our subroutine with quiet option
-          MA_DeleteSingle(mail, delatonce, TRUE, TRUE);
+          MA_DeleteSingle(mail, delFlags);
 
           // if BusySet() returns FALSE, then the user aborted
           if(BusySet(++deleted) == FALSE)
@@ -3802,6 +3803,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
   if(IsFolderListEmpty(G->folders) == FALSE)
   {
     struct MailList *toBeDeletedList;
+    ULONG delFlags = (C->RemoveOnQuit == TRUE) ? DELF_AT_ONCE|DELF_QUIET : DELF_QUIET;
 
     // we need a temporary "to be deleted" list of mails to avoid doubly locking a folder's mail list
     if((toBeDeletedList = CreateMailList()) != NULL)
@@ -3861,7 +3863,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
             {
               // Finally delete the mail. Removing/freeing the mail from the folder's list of mails
               // is in fact done by the MA_DeleteSingle() function itself.
-              MA_DeleteSingle(mnode->mail, C->RemoveOnQuit, TRUE, FALSE);
+              MA_DeleteSingle(mnode->mail, delFlags);
               mailsDeleted = TRUE;
 
               // remove the node from the "to be deleted" list
@@ -3891,7 +3893,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
   UnlockFolderList(G->folders);
 
   // MA_DeleteSingle() does not update the trash folder treeitem if something was deleted from
-  // from another folder, because it was advised to be quiet. So we must refresh the trash folder
+  // another folder, because it was advised to be quiet. So we must refresh the trash folder
   // tree item manually here to get an up-to-date folder treeview.
   if(mailsDeleted == TRUE)
   {
@@ -3970,14 +3972,16 @@ MakeHook(MA_DeleteDeletedHook, MA_DeleteDeletedFunc);
 //  Removes spam messages from any folder
 HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
 {
-  BOOL quiet = (*arg != 0);
   struct Folder *folder = FO_GetCurrentFolder();
 
   ENTER();
 
   if(folder != NULL && folder->Type != FT_GROUP)
   {
+    ULONG delFlags;
     struct MailList *mlist;
+
+    delFlags = (*arg != 0) ? DELF_QUIET|DELF_CLOSE_WINDOWS : DELF_CLOSE_WINDOWS;
 
     // show an interruptable Busy gauge
     BusyGaugeInt(tr(MSG_MA_BUSYEMPTYINGSPAM), "", folder->Total);
@@ -4007,12 +4011,12 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
             // remove it immediately in case this is the SPAM folder, otherwise
             // the mail will be moved to the trash first. In fact, DeleteSingle()
             // takes care of that itself.
-            MA_DeleteSingle(mail, FALSE, quiet, TRUE);
+            MA_DeleteSingle(mail, delFlags);
           }
         }
       }
 
-      if(quiet == FALSE)
+      if(isFlagClear(delFlags, DELF_QUIET))
         DisplayStatistics(folder, TRUE);
 
       // finally free the mail list
