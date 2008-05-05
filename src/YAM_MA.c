@@ -857,8 +857,8 @@ void MA_DeleteSingle(struct Mail *mail, ULONG delFlags)
         // don't update the appicon yet
         DisplayStatistics(delfolder, FALSE);
 
-        // but update it now.
-        DisplayStatistics(mailFolder, TRUE);
+        // but update it now, if that is allowed
+        DisplayStatistics(mailFolder, isFlagSet(delFlags, DELF_UPDATE_APPICON));
       }
     }
   }
