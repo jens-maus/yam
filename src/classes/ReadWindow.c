@@ -999,7 +999,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
     }
 
     // delete the mail
-    MA_DeleteSingle(mail, delatonce ? DELF_AT_ONCE : 0L);
+    MA_DeleteSingle(mail, delatonce ? DELF_AT_ONCE|DELF_UPDATE_APPICON : DELF_UPDATE_APPICON);
 
     // erase the old pointer as this has been free()ed by MA_DeleteSingle()
     rmData->mail = NULL;

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-06  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ReadMailGroup.c, ReadWindow.c: added the missing DELF_UPDATE_APPICON flag
+    to the MA_DeleteSingle() calls. Otherwise the AppIcon won't be updated.
+
 2008-05-06  Jens Langner <Jens.Langner@light-speed.de>
 
   * ReadMailGroup.c, ReadWindow.c: fixed some unconverted MA_DeleteSingle()
