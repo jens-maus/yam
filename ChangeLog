@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-06  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ReadMailGroup.c, ReadWindow.c: fixed some unconverted MA_DeleteSingle()
+    usages which where forgotten to be switched to the new flags based
+    API and prevented YAM from building correctly.
+
 2008-05-05  Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/Install-YAM: updated italian translation provided by Samir Hawamdeh.
