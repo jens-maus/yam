@@ -840,7 +840,7 @@ void MA_DeleteSingle(struct Mail *mail, ULONG delFlags)
       // if we are allowed to make some noise we
       // update our Statistics
       if(isFlagClear(delFlags, DELF_QUIET))
-        DisplayStatistics(mailFolder, TRUE);
+        DisplayStatistics(mailFolder, isFlagSet(delFlags, DELF_UPDATE_APPICON));
     }
     else
     {
