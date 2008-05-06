@@ -7,6 +7,7 @@ $URL$
 
 2008-05-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/italian.ct: updated italian translation provided by Samir Hawamdeh.
   * YAM_MA.c: added missing check for DELF_UPDATE_APPICON.
   * ReadMailGroup.c, ReadWindow.c: added the missing DELF_UPDATE_APPICON flag
     to the MA_DeleteSingle() calls. Otherwise the AppIcon won't be updated.

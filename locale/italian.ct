@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.2 (5.05.2008)
+## version $VER: YAM.catalog 6.2 (6.05.2008)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -714,7 +714,7 @@ L_eggi
 ; Rea_d
 ;
 MSG_MA_TBEdit
-_Modifica
+_Modif.
 ; _Edit
 ;
 MSG_MA_TBMove
@@ -722,7 +722,7 @@ _Sposta
 ; _Move
 ;
 MSG_MA_TBDelete
-C_ancella
+C_anc.
 ; De_lete
 ;
 MSG_MA_TBGetAddr
@@ -734,7 +734,7 @@ _Nuovo
 ; _New
 ;
 MSG_MA_TBReply
-_Rispondi
+_Risp.
 ; _Reply
 ;
 MSG_MA_TBForward
@@ -772,7 +772,7 @@ Progetto
 ; Project
 ;
 MSG_MA_AboutMUI
-Informazioni su MUI
+Informazioni su MUI...
 ; ...About MUI...
 ;
 MSG_MA_LastErrors
@@ -3050,7 +3050,7 @@ Home Page
 ; Module AB - Window
 ;
 MSG_AB_MIFind
-Trova
+Trova...
 ; Find...
 ;
 MSG_AB_Entry
@@ -3066,7 +3066,7 @@ Nuovo gruppo
 ; New group
 ;
 MSG_AB_AddList
-Nuova lista distribuzione...
+Nuova lista distribuzione
 ; New distribution list
 ;
 MSG_AB_Duplicate
@@ -3468,7 +3468,7 @@ Cosa si desidera fare?
 ; What do you want to do?
 ;
 MSG_RE_SaveMessage
-Salva il messaggio...
+Salva il messaggio
 ; Save message
 ;
 MSG_RE_Overwrite
@@ -3780,11 +3780,11 @@ _Succ.
 ; _Next
 ;
 MSG_RE_TBPrevTh
-Ogg._Prec
+Ogg._Pre
 ; Prev_Thr
 ;
 MSG_RE_TBNextTh
-Ogg._Succ
+Ogg._Suc
 ; NextT_hr
 ;
 MSG_RE_TBDisplay
@@ -3800,7 +3800,7 @@ S_tampa
 ; Pr_int
 ;
 MSG_RE_TBDelete
-Cance_lla
+C_anc.
 ; De_lete
 ;
 MSG_RE_TBMove
@@ -3808,7 +3808,7 @@ Muo_vi
 ; _Move
 ;
 MSG_RE_TBReply
-_Rispondi
+_Risp.
 ; _Reply
 ;
 MSG_RE_TBForward
@@ -3909,11 +3909,11 @@ MSG_WR_DiscardChangesGad
 ; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
-Salva testo come...
+Salva testo come
 ; Save text as
 ;
 MSG_WR_AddFile
-Seleziona il file da allegare...
+Seleziona il file da allegare
 ; Select files to attach
 ;
 MSG_WR_CreateArc
@@ -3925,7 +3925,7 @@ Per favore, scrivi un nome per il nuovo archivio
 ; Please enter a filename for the new archive
 ;
 MSG_WR_InsertFile
-Inserisci file...
+Inserisci file
 ; Insert file
 ;
 ; Module WR - Hooks
@@ -4017,7 +4017,7 @@ Agg. _file...
 ; _Add file(s)...
 ;
 MSG_WR_AddPack
-_Comprimi ed agg.
+_Comprimi ed agg...
 ; _Pack & add...
 ;
 MSG_WR_Display
@@ -4099,7 +4099,7 @@ Editor
 ; Editor
 ;
 MSG_WR_TBInsert
-Inserisci
+Inser.
 ; Insert
 ;
 MSG_WR_TBCut
@@ -4119,7 +4119,7 @@ Annulla
 ; Undo
 ;
 MSG_WR_TBBold
-Grassetto
+Grass.
 ; Bold
 ;
 MSG_WR_TBItalic
@@ -4127,7 +4127,7 @@ Corsivo
 ; Italic
 ;
 MSG_WR_TBUnderlined
-Sottolineato
+Sottol.
 ; ULined
 ;
 MSG_WR_TBColored
@@ -5372,7 +5372,7 @@ MSG_FO_NewFolderGads
 ; *_Internal defaults|_Like current|_Existing directory|_Cancel
 ;
 MSG_FO_SelectDir
-Seleziona directory...
+Seleziona directory
 ; Select directory
 ;
 ; Module FO - Window
@@ -5514,7 +5514,7 @@ un messaggio sulla Mailing list.
 ; BUSY messages
 ;
 MSG_BusySavingAB
-Salvataggio della rubrica '%s'..
+Salvataggio della rubrica '%s'...
 ; Saving address book '%s'...
 ; FILENAME
 ;
@@ -6864,7 +6864,7 @@ usando la application.library\n\
 ;
 MSG_MA_MessageImport
 Importa messaggi da MBOX, DBX\n\
-oppure da messaggi semplici...
+oppure da messaggi semplici
 ; Import messages
 ;
 MSG_ER_MESSAGEIMPORT
@@ -6892,7 +6892,7 @@ di posta.
 ;
 MSG_MA_MESSAGEEXPORT
 Esporta messaggi verso un\n\
-file compatibile MBOX...
+file compatibile MBOX
 ; Export messages
 ;
 MSG_YAMINFO
@@ -7046,7 +7046,7 @@ Configurazione relativa ai messaggi di risposta ed inoltro...
 ; Settings related to e-mail replying & forwarding...
 ;
 MSG_CO_SIGNATURE_TITLE
-Configurazione relativa alla firma dei messaggi...
+Configurazione relativa alla firma dei messaggi
 ; Mail Signature Settings
 ;
 MSG_CO_SIGNATURE_SUMMARY
@@ -7090,7 +7090,7 @@ Impostazioni Rubrica
 ; Address Book Settings
 ;
 MSG_CO_ABOOK_SUMMARY
-Impostazioni addizionali riguardanti la rubrica..
+Impostazioni addizionali riguardanti la rubrica...
 ; Configure address book related options...
 ;
 MSG_CO_SCRIPTS_TITLE
@@ -8361,7 +8361,7 @@ Una connessione sicura TLSv1 o SSLv3 verrà stabilita tra il server\n\
 POP3 e YAM in modo da ricevere messaggi attraverso una connessione\n\
 criptata.\n\
 Nel caso che AmiSSL non sia disponibile, questi pulsanti radio\n\
-appariranno come non selezionabili. 
+appariranno come non selezionabili.
 ; A TLSv1 or SSLv3 secure connection will be established between\n\
 ; the POP3 server and YAM to receive e-mail through an encrypted\n\
 ; connection. If these radio buttons are ghosted, it means AmiSSL\n\
@@ -8401,7 +8401,7 @@ data completa.
 ; 'Yesterday') instead of the full date if possible.
 ;
 MSG_FOLDER_SNAPSHOT_TREE
-Blocca disposizione 
+Blocca disposizione
 ; Snapshot arrangement
 ;
 MSG_FOLDER_RELOAD_TREE
@@ -8623,7 +8623,7 @@ terminata:\n\
 ; SERVER, TEXT
 ;
 MSG_FO_EXPIREUNREAD
-non letto 
+non letto
 ; also unread
 ;
 MSG_HELP_FO_CH_EXPIREUNREAD
@@ -9037,7 +9037,7 @@ Si è verificato un errore durante il tentativo di scrittura\n\
 del file indice '%s' nella cartella '%s'.\n\
 \n\
 Per favore verifica la possiblità di poter scrivere sulla\n\
-directory dove si presuppone che il file sia immagazzinato. 
+directory dove si presuppone che il file sia immagazzinato.
 ; An error occurred while trying to write the index file '%s' in folder '%s'.\n\
 ; \n\
 ; Please check that you can write to the directory where the \
@@ -9310,7 +9310,7 @@ del file immagine '%s' attraverso datatype.\n\
 Per favore assicurati che il file esista e di avere istallato\n\
 correttamente nel sistema il datatype necessario.\n\
 (Si consiglia di provare ad aprire il file con MultiView per\n\
-essere sicuri che esso funzioni correttamente). 
+essere sicuri che esso funzioni correttamente).
 ; An error occurred while trying to load the image file \
 ; '%s' via datatypes.\n\
 ; \n\
