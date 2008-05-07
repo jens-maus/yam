@@ -41,4 +41,16 @@ void ReplyRexxCommand(struct RexxMsg *rxmsg, long prim, long sec, char *res);
 struct RexxMsg *SendRexxCommand(struct RexxHost *host, char *buff, BPTR fh);
 struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport);
 
+struct rxs_command
+{
+  const char *command;
+  const char *args;
+  const char *results;
+  long resindex;
+  void (*function)(struct RexxHost *, void **, long, struct RexxMsg *);
+  long flags;
+};
+
+extern struct rxs_command rxs_commandlist[];
+
 #endif /* YAM_REXX_H */

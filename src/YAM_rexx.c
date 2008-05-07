@@ -45,7 +45,6 @@
 
 #include "YAM.h"
 #include "YAM_rexx.h"
-#include "YAM_rexx_rxcl.h"
 #include "YAM_utilities.h"
 
 #include "Mime.h"
@@ -61,125 +60,222 @@
 #define REXXMSG(msg) &msg->rm_Node
 #endif
 
+// not all SDKs do supply that new flag already
+#ifndef RXFF_SCRIPT
+#define RXFF_SCRIPT (1 << 21)
+#endif
+
 #if defined(__amigaos4__)
 #define SetRexxVar(msg, var, val, len)  SetRexxVarFromMsg((var), (val), (msg))
 #endif
 
 struct rxs_stemnode
 {
-   struct rxs_stemnode *succ;
-   char *name;
-   char *value;
+  struct rxs_stemnode *succ;
+  char *name;
+  char *value;
 };
 
-static void (*ARexxResultHook)( struct RexxHost *, struct RexxMsg * ) = NULL;
+// flags for rxs_command->flags
+#define ARB_CF_ENABLED     (1L << 0)
+
+// flags for host->flags
+#define ARB_HF_CMDSHELL    (1L << 0)
+#define ARB_HF_USRMSGPORT  (1L << 1)
+
+static void (*ARexxResultHook)(struct RexxHost *, struct RexxMsg *) = NULL;
+
+/// rxs_commandlist[]
+#define RESINDEX(stype) (((long)offsetof(struct stype,res)) / sizeof(long))
+
+struct rxs_command rxs_commandlist[] =
+{
+  { "ADDRDELETE", "ALIAS", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_addrdelete, ARB_CF_ENABLED},
+  { "ADDREDIT", "ALIAS,NAME,EMAIL,PGP,HOMEPAGE,STREET,CITY,COUNTRY,PHONE,COMMENT,BIRTHDATE/N,IMAGE,MEMBER/M,ADD/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_addredit, ARB_CF_ENABLED},
+  { "ADDRFIND", "PATTERN/A,NAMEONLY/S,EMAILONLY/S", "ALIAS/M", RESINDEX(rxd_addrfind), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_addrfind, ARB_CF_ENABLED},
+  { "ADDRGOTO", "ALIAS/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_addrgoto, ARB_CF_ENABLED},
+  { "ADDRINFO", "ALIAS/A", "TYPE,NAME,EMAIL,PGP,HOMEPAGE,STREET,CITY,COUNTRY,PHONE,COMMENT,BIRTHDATE/N,IMAGE,MEMBERS/M", RESINDEX(rxd_addrinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_addrinfo, ARB_CF_ENABLED},
+  { "ADDRLOAD", "FILENAME/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_addrload, ARB_CF_ENABLED},
+  { "ADDRNEW", "TYPE,ALIAS,NAME,EMAIL", "ALIAS", RESINDEX(rxd_addrnew), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_addrnew, ARB_CF_ENABLED},
+  { "ADDRRESOLVE", "ALIAS/A", "RECPT", RESINDEX(rxd_addrresolve), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_addrresolve, ARB_CF_ENABLED},
+  { "ADDRSAVE", "FILENAME", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_addrsave, ARB_CF_ENABLED},
+  { "APPBUSY", "TEXT", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_appbusy, ARB_CF_ENABLED},
+  { "APPNOBUSY", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_appnobusy, ARB_CF_ENABLED},
+  { "FOLDERINFO", "FOLDER", "NUMBER/N,NAME,PATH,TOTAL/N,NEW/N,UNREAD/N,SIZE/N,TYPE/N", RESINDEX(rxd_folderinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_folderinfo, ARB_CF_ENABLED},
+  { "GETCONFIGINFO", "ITEM/A", "VALUE", RESINDEX(rxd_getconfiginfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_getconfiginfo, ARB_CF_ENABLED},
+  { "GETFOLDERINFO", "ITEM/A", "VALUE", RESINDEX(rxd_getfolderinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_getfolderinfo, ARB_CF_ENABLED},
+  { "GETMAILINFO", "ITEM/A", "VALUE", RESINDEX(rxd_getmailinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_getmailinfo, ARB_CF_ENABLED},
+  { "GETSELECTED", NULL, "NUM/N/M", RESINDEX(rxd_getselected), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_getselected, ARB_CF_ENABLED},
+  { "GETURL", "URL/A,FILENAME/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_geturl, ARB_CF_ENABLED},
+  { "HELP", "FILE", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_help, ARB_CF_ENABLED},
+  { "HIDE", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_hide, ARB_CF_ENABLED},
+  { "INFO", "ITEM/A", "VALUE", RESINDEX(rxd_info), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_info, ARB_CF_ENABLED},
+  { "ISONLINE", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_isonline, ARB_CF_ENABLED},
+  { "LISTSELECT", "MODE/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_listselect, ARB_CF_ENABLED},
+  { "MAILARCHIVE", "FOLDER/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailarchive, ARB_CF_ENABLED},
+  { "MAILBOUNCE", "QUIET/S", "WINDOW/N", RESINDEX(rxd_mailbounce), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailbounce, ARB_CF_ENABLED},
+  { "MAILCHANGESUBJECT", "SUBJECT/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailchangesubject, ARB_CF_ENABLED},
+  { "MAILCHECK", "POP/K/N,MANUAL/S", "DOWNLOADED/N,ONSERVER/N,DUPSKIPPED/N,DELETED/N", RESINDEX(rxd_mailcheck), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailcheck, ARB_CF_ENABLED},
+  { "MAILCOPY", "FOLDER/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailcopy, ARB_CF_ENABLED},
+  { "MAILDELETE", "ATONCE/S,FORCE/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_maildelete, ARB_CF_ENABLED},
+  { "MAILEDIT", "QUIET/S", "WINDOW/N", RESINDEX(rxd_mailedit), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailedit, ARB_CF_ENABLED},
+  { "MAILEXPORT", "FILENAME/A,ALL/S,APPEND/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailexport, ARB_CF_ENABLED},
+  { "MAILFILTER", "ALL/S", "CHECKED/N,BOUNCED/N,FORWARDED/N,REPLIED/N,EXECUTED/N,MOVED/N,DELETED/N", RESINDEX(rxd_mailfilter), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailfilter, ARB_CF_ENABLED},
+  { "MAILFORWARD", "QUIET/S", "WINDOW/N", RESINDEX(rxd_mailforward), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailforward, ARB_CF_ENABLED},
+  { "MAILIMPORT", "FILENAME/A,WAIT/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailimport, ARB_CF_ENABLED},
+  { "MAILINFO", "INDEX/N", "INDEX/N,STATUS,FROM,TO,REPLYTO,SUBJECT,FILENAME,SIZE/N,DATE,FLAGS,MSGID", RESINDEX(rxd_mailinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailinfo, ARB_CF_ENABLED},
+  { "MAILMOVE", "FOLDER/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailmove, ARB_CF_ENABLED},
+  { "MAILREAD", "WINDOW/N,QUIET/S", "WINDOW/N", RESINDEX(rxd_mailread), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailread, ARB_CF_ENABLED},
+  { "MAILREPLY", "QUIET/S", "WINDOW/N", RESINDEX(rxd_mailreply), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailreply, ARB_CF_ENABLED},
+  { "MAILSEND", "ALL/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailsend, ARB_CF_ENABLED},
+  { "MAILSENDALL", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailsendall, ARB_CF_ENABLED},
+  { "MAILSTATUS", "STATUS/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailstatus, ARB_CF_ENABLED},
+  { "MAILUPDATE", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailupdate, ARB_CF_ENABLED},
+  { "MAILWRITE", "WINDOW/N,QUIET/S", "WINDOW/N", RESINDEX(rxd_mailwrite), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailwrite, ARB_CF_ENABLED},
+  { "NEWMAILFILE", "FOLDER", "FILENAME", RESINDEX(rxd_newmailfile), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_newmailfile, ARB_CF_ENABLED},
+  { "QUIT", "FORCE/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_quit, ARB_CF_ENABLED},
+  { "READCLOSE", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_readclose, ARB_CF_ENABLED},
+  { "READINFO", NULL, "FILENAME/M,FILETYPE/M,FILESIZE/N/M,TEMPFILE/M", RESINDEX(rxd_readinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_readinfo, ARB_CF_ENABLED},
+  { "READPRINT", "PART/N", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_readprint, ARB_CF_ENABLED},
+  { "READSAVE", "PART/N,FILENAME/K,OVERWRITE/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_readsave, ARB_CF_ENABLED},
+  { "REQUEST", "BODY/A,GADGETS/A", "RESULT/N", RESINDEX(rxd_request), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_request, ARB_CF_ENABLED},
+  { "REQUESTFOLDER", "BODY/A,EXCLUDEACTIVE/S", "FOLDER", RESINDEX(rxd_requestfolder), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_requestfolder, ARB_CF_ENABLED},
+  { "REQUESTSTRING", "BODY/A,STRING/K,SECRET/S", "STRING", RESINDEX(rxd_requeststring), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_requeststring, ARB_CF_ENABLED},
+  { "SCREENTOBACK", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_screentoback, ARB_CF_ENABLED},
+  { "SCREENTOFRONT", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_screentofront, ARB_CF_ENABLED},
+  { "SETFLAG", "VOL/K/N,PER/K/N", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_setflag, ARB_CF_ENABLED},
+  { "SETFOLDER", "FOLDER/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_setfolder, ARB_CF_ENABLED},
+  { "SETMAIL", "NUM/N/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_setmail, ARB_CF_ENABLED},
+  { "SETMAILFILE", "MAILFILE/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_setmailfile, ARB_CF_ENABLED},
+  { "SHOW", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_show, ARB_CF_ENABLED},
+  { "USERINFO", NULL, "USERNAME,EMAIL,REALNAME,CONFIG,MAILDIR,FOLDERS/N", RESINDEX(rxd_userinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_userinfo, ARB_CF_ENABLED},
+  { "WRITEATTACH", "FILE/A,DESC,ENCMODE,CTYPE", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writeattach, ARB_CF_ENABLED},
+  { "WRITEBCC", "ADDRESS/A/M,ADD/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writebcc, ARB_CF_ENABLED},
+  { "WRITECC", "ADDRESS/A/M,ADD/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writecc, ARB_CF_ENABLED},
+  { "WRITEEDITOR", "COMMAND/A", "RESULT", RESINDEX(rxd_writeeditor), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writeeditor, ARB_CF_ENABLED},
+  { "WRITEFROM", "ADDRESS/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writefrom, ARB_CF_ENABLED},
+  { "WRITELETTER", "FILE/A,NOSIG/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writeletter, ARB_CF_ENABLED},
+  { "WRITEMAILTO", "ADDRESS/A/M", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writemailto, ARB_CF_ENABLED},
+  { "WRITEOPTIONS", "DELETE/S,RECEIPT/S,NOTIF/S,ADDINFO/S,IMPORTANCE/N,SIG/N,SECURITY/N", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writeoptions, ARB_CF_ENABLED},
+  { "WRITEQUEUE", "HOLD/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writequeue, ARB_CF_ENABLED},
+  { "WRITEREPLYTO", "ADDRESS/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writereplyto, ARB_CF_ENABLED},
+  { "WRITESEND", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writesend, ARB_CF_ENABLED},
+  { "WRITESUBJECT", "SUBJECT/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writesubject, ARB_CF_ENABLED},
+  { "WRITETO", "ADDRESS/A/M,ADD/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writeto, ARB_CF_ENABLED},
+};
+
+///
 
 /// ReplyRexxCommand
 void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary, char *result)
 {
-   if(isFlagSet(rexxmessage->rm_Action, RXFF_RESULT))
-   {
-      if( primary == 0 )
-      {
-         secondary = result
-            ? (long) CreateArgstring( result, (ULONG)strlen(result) )
-            : (long) NULL;
-      }
-      else
-      {
-         if( primary > 0 )
-         {
-            char buf[16];
+  ENTER();
 
-            snprintf(buf, sizeof(buf), "%ld", secondary);
-            result = buf;
-         }
-         else
-         {
-            primary = -primary;
-            result = (char *) secondary;
-         }
+  if(isFlagSet(rexxmessage->rm_Action, RXFF_RESULT))
+  {
+    if(primary == 0)
+    {
+      secondary = result
+         ? (long)CreateArgstring(result, (ULONG)strlen(result))
+         : (long)NULL;
+    }
+    else if(primary > 0)
+    {
+      char buf[16];
 
-         SetRexxVar( REXXMSG(rexxmessage), (STRPTR)"RC2", result, (LONG)strlen(result) );
+      snprintf(buf, sizeof(buf), "%ld", secondary);
+      result = buf;
+    }
+    else
+    {
+       primary = -primary;
+       result = (char *) secondary;
+    }
 
-         secondary = 0;
-      }
-   }
-   else if( primary < 0 )
-      primary = -primary;
+    SetRexxVar( REXXMSG(rexxmessage), (STRPTR)"RC2", result, (LONG)strlen(result) );
 
-   rexxmessage->rm_Result1 = primary;
-   rexxmessage->rm_Result2 = secondary;
-   ReplyMsg( (struct Message *) rexxmessage );
+    secondary = 0;
+  }
+  else if(primary < 0)
+    primary = -primary;
+
+  rexxmessage->rm_Result1 = primary;
+  rexxmessage->rm_Result2 = secondary;
+  ReplyMsg((struct Message *) rexxmessage);
+
+  LEAVE();
 }
 
 ///
 /// FreeRexxCommand
-void FreeRexxCommand( struct RexxMsg *rexxmessage )
+void FreeRexxCommand(struct RexxMsg *rexxmessage)
 {
-   if(!rexxmessage->rm_Result1 && rexxmessage->rm_Result2)
-      DeleteArgstring((APTR)rexxmessage->rm_Result2);
+  ENTER();
 
-   if( rexxmessage->rm_Stdin &&
-      rexxmessage->rm_Stdin != Input() )
-      Close( rexxmessage->rm_Stdin );
+  if(rexxmessage->rm_Result1 == 0 && rexxmessage->rm_Result2 != 0)
+    DeleteArgstring((APTR)rexxmessage->rm_Result2);
 
-   if( rexxmessage->rm_Stdout &&
-      rexxmessage->rm_Stdout != rexxmessage->rm_Stdin &&
-      rexxmessage->rm_Stdout != Output() )
-      Close( rexxmessage->rm_Stdout );
+  if(rexxmessage->rm_Stdin != (BPTR)NULL && rexxmessage->rm_Stdin != Input())
+    Close(rexxmessage->rm_Stdin);
 
-   DeleteArgstring((APTR)ARG0(rexxmessage));
-   DeleteRexxMsg( rexxmessage );
+  if(rexxmessage->rm_Stdout != (BPTR)NULL && rexxmessage->rm_Stdout != rexxmessage->rm_Stdin && rexxmessage->rm_Stdout != Output())
+    Close(rexxmessage->rm_Stdout);
+
+  DeleteArgstring((APTR)ARG0(rexxmessage));
+  DeleteRexxMsg(rexxmessage);
+
+  LEAVE();
 }
 
 ///
 /// CreateRexxCommand
 static struct RexxMsg *CreateRexxCommand(struct RexxHost *host, char *buff, BPTR fh, int addFlags)
 {
-   struct RexxMsg *rexx_command_message;
+  struct RexxMsg *rexx_command_message;
 
-   if( (rexx_command_message = CreateRexxMsg( host->port,
-      RexxMsgExtension, host->port->mp_Node.ln_Name)) == NULL )
-   {
-      return( NULL );
-   }
+  ENTER();
 
-   if( (rexx_command_message->rm_Args[0] =
-      (APTR)CreateArgstring(buff, strlen(buff))) == NULL )
-   {
+  if((rexx_command_message = CreateRexxMsg(host->port, RexxMsgExtension, host->port->mp_Node.ln_Name)) != NULL)
+  {
+    if((rexx_command_message->rm_Args[0] = (APTR)CreateArgstring(buff, strlen(buff))) != NULL)
+    {
+      rexx_command_message->rm_Action = RXCOMM | RXFF_RESULT | addFlags;
+      rexx_command_message->rm_Stdin  = fh;
+      rexx_command_message->rm_Stdout = fh;
+    }
+    else
+    {
       DeleteRexxMsg(rexx_command_message);
-      return( NULL );
-   }
+      rexx_command_message = NULL;
+    }
+  }
 
-   rexx_command_message->rm_Action = RXCOMM | RXFF_RESULT | addFlags;
-   rexx_command_message->rm_Stdin  = fh;
-   rexx_command_message->rm_Stdout = fh;
-
-   return( rexx_command_message );
+  RETURN(rexx_command_message);
+  return rexx_command_message;
 }
 
 ///
 /// CommandToRexx
 static struct RexxMsg *CommandToRexx( struct RexxHost *host, struct RexxMsg *rexx_command_message )
 {
-   struct MsgPort *rexxport;
+  struct MsgPort *rexxport;
+  struct RexxMsg *result = NULL;
 
-   Forbid();
+  ENTER();
 
-   if( (rexxport = FindPort(RXSDIR)) == NULL )
-   {
-      Permit();
-      return( NULL );
-   }
+  Forbid();
 
-   PutMsg( rexxport, &rexx_command_message->rm_Node );
+  if((rexxport = FindPort(RXSDIR)) != NULL)
+  {
+    PutMsg(rexxport, &rexx_command_message->rm_Node);
+    host->replies++;
+    result = rexx_command_message;
+  }
 
-   Permit();
+  Permit();
 
-   ++host->replies;
-
-   return( rexx_command_message );
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -196,14 +292,7 @@ struct RexxMsg *SendRexxCommand(struct RexxHost *host, char *buff, BPTR fh)
   // only RexxSysBase v45+ seems to support properly quoted
   // strings via the new RXFF_SCRIPT flag
   if(((struct Library *)RexxSysBase)->lib_Version >= 45)
-  {
-    // not all SDKs do supply that new flag already
-    #ifndef RXFF_SCRIPT
-    #define RXFF_SCRIPT (1 << 21)
-    #endif
-
     rcm = CreateRexxCommand(host, buff, fh, RXFF_SCRIPT);
-  }
   else
     rcm = CreateRexxCommand(host, buff, fh, 0);
 
@@ -232,11 +321,11 @@ void CloseDownARexxHost(struct RexxHost *host)
     {
       WaitPort(host->port);
 
-      while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)) != NULL)
+      while((rexxmsg = (struct RexxMsg *)GetMsg(host->port)) != NULL)
       {
         if(rexxmsg->rm_Node.mn_Node.ln_Type == NT_REPLYMSG)
         {
-          if(!rexxmsg->rm_Args[15] )
+          if(rexxmsg->rm_Args[15] == NULL)
           {
             // it was a reply to a SendRexxCommand() call
             if(ARexxResultHook != NULL)
@@ -252,7 +341,7 @@ void CloseDownARexxHost(struct RexxHost *host)
     }
 
     // empty the message port
-    while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)) != NULL)
+    while((rexxmsg = (struct RexxMsg *)GetMsg(host->port)) != NULL)
       ReplyRexxCommand(rexxmsg, -20, (long)"Host closing down", NULL);
 
     if(isFlagClear(host->flags, ARB_HF_USRMSGPORT))
@@ -329,9 +418,7 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
         FreeDosObject(DOS_RDARGS, host->rdargs);
 
       if(isFlagClear(host->flags, ARB_HF_USRMSGPORT))
-      {
         FreeSysObject(ASOT_PORT, host->port);
-      }
 
       FreeVecPooled(G->SharedMemPool, host);
       host = NULL;
@@ -343,89 +430,13 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
 }
 
 ///
-
-// state machine for FindRXCommand()
-/// scmp
-static char *scmp(char *inp, const char *str)
+/// compare_rxs_commands
+static int compare_rxs_commands(const void *key, const void *value)
 {
-  while(*str != '\0' && *inp != '\0')
-    if(*inp++ != *str++)
-      return NULL;
+  struct rxs_command *rxkey = (struct rxs_command *)key;
+  struct rxs_command *rxvalue = (struct rxs_command *)value;
 
-  // return the remaining string
-  return inp;
-}
-
-///
-/// find
-static int find( char *input )
-{
-  struct arb_p_state *st = arb_p_state;
-  struct arb_p_link *ad;
-  char *ni;
-  char tmp[36];
-  const char *s;
-
-  ni = tmp;
-  while(*input != '\0' && ni-tmp < 32)
-  {
-    *ni++ = toupper(*input);
-    ++input;
-  }
-  *ni = 0;
-  input = tmp;
-
-  while(*input != '\0')
-  {
-    // did we reach the terminal state?
-    if(!st->pa)
-    {
-      if(*input != '\0')
-        return -1;
-      else
-        return st->cmd;
-    }
-
-    // where to continue?
-    ni = 0;
-    for(ad = st->pa; (s = ad->str); ad++)
-    {
-      // the links are sorted descendant
-      if(*input > *s)
-        break;
-
-      if(*input == *s)
-        if((ni = scmp(input+1, s+1)) != NULL)
-          break;
-    }
-
-    // nowhere to continue
-    if(ni == NULL)
-      return -1;
-
-    // state check
-    st = arb_p_state + ad->dst;
-    input = ni;
-  }
-
-  return st->cmd;
-}
-
-///
-/// FindRXCommand
-static struct rxs_command *FindRXCommand(char *com)
-{
-   int index;
-   struct rxs_command *cmd = NULL;
-
-   ENTER();
-   SHOWSTRING(DBF_REXX, com);
-
-   if((index = find(com)) != -1)
-     cmd = rxs_commandlist + index;
-
-   RETURN(cmd);
-   return cmd;
+  return stricmp(rxkey->command, rxvalue->command);
 }
 
 ///
@@ -433,7 +444,8 @@ static struct rxs_command *FindRXCommand(char *com)
 static struct rxs_command *ParseRXCommand(char **arg)
 {
   char com[256], *s, *t;
-   struct rxs_command *cmd;
+  struct rxs_command key;
+  struct rxs_command *cmd;
 
   ENTER();
 
@@ -445,13 +457,14 @@ static struct rxs_command *ParseRXCommand(char **arg)
 
   *t = '\0';
   while(*s == ' ')
-    ++s;
+    s++;
   *arg = s;
 
   SHOWSTRING(DBF_REXX, com);
   SHOWSTRING(DBF_REXX, *arg);
 
-  cmd = FindRXCommand(com);
+  key.command = com;
+  cmd = (struct rxs_command *)bsearch(&key, rxs_commandlist, ARRAY_SIZE(rxs_commandlist), sizeof(struct rxs_command), compare_rxs_commands);
 
   RETURN(cmd);
   return cmd;
@@ -459,82 +472,96 @@ static struct rxs_command *ParseRXCommand(char **arg)
 
 ///
 /// CreateVAR
-static char *CreateVAR( struct rxs_stemnode *stem )
+static char *CreateVAR(struct rxs_stemnode *stem)
 {
-   char *var;
-   struct rxs_stemnode *s;
-   long size = 0;
+  char *var;
+  struct rxs_stemnode *s;
+  long size = 0;
 
-   if( !stem || stem == (struct rxs_stemnode *) -1L )
-      return( (char *) stem );
+  ENTER();
 
-   for( s = stem; s; s = s->succ )
-      size += strlen( s->value ) + 1;
+  if(stem == NULL || stem == (struct rxs_stemnode *)-1L)
+  {
+    RETURN((char *)stem);
+    return (char *)stem;
+  }
 
-   if((var = AllocVecPooled(G->SharedMemPool, size+1)) == NULL)
-   {
-      return((char *)-1);
-   }
+  for(s = stem; s; s = s->succ)
+    size += strlen(s->value) + 1;
 
-   *var = '\0';
+  // one byte more for the trailing NUL byte
+  size++;
 
-   for( s = stem; s; s = s->succ )
-   {
-      strlcat(var, s->value, size+1);
-      if(s->succ)
-         strlcat(var, " ", size+1);
-   }
+  if((var = AllocVecPooled(G->SharedMemPool, size)) == NULL)
+  {
+    RETURN((char *)-1);
+    return (char *)-1;
+  }
 
-   return( var );
+  *var = '\0';
+
+  for(s = stem; s; s = s->succ)
+  {
+    strlcat(var, s->value, size);
+    if(s->succ != NULL)
+       strlcat(var, " ", size);
+  }
+
+  RETURN(var);
+  return var;
 }
 
 ///
 /// new_stemnode
-static struct rxs_stemnode *new_stemnode( struct rxs_stemnode **first, struct rxs_stemnode **old )
+static struct rxs_stemnode *new_stemnode(struct rxs_stemnode **first, struct rxs_stemnode **oldNode)
 {
-   struct rxs_stemnode *new;
+  struct rxs_stemnode *newNode;
 
-   if((new = AllocVecPooled(G->SharedMemPool, sizeof(struct rxs_stemnode))) == NULL)
-   {
-      return( NULL );
-   }
-   else
-   {
-      if( *old )
-      {
-         (*old)->succ = new;
-         (*old) = new;
-      }
-      else
-      {
-         *first = *old = new;
-      }
-   }
+  ENTER();
 
-   return( new );
+  if((newNode = AllocVecPooled(G->SharedMemPool, sizeof(struct rxs_stemnode))) != NULL)
+  {
+    if(*oldNode != NULL)
+    {
+      (*oldNode)->succ = newNode;
+      *oldNode = newNode;
+    }
+    else
+    {
+      *first = newNode;
+      *oldNode = newNode;
+    }
+  }
+
+  RETURN(newNode);
+  return newNode;
 }
 
 ///
 /// free_stemlist
-static void free_stemlist( struct rxs_stemnode *first )
+static void free_stemlist(struct rxs_stemnode *first )
 {
-   struct rxs_stemnode *next;
+  ENTER();
 
-   if( (long) first == -1 )
-      return;
+  if((long)first != -1)
+  {
+    struct rxs_stemnode *next;
 
-   for( ; first; first = next )
-   {
+    for( ; first != NULL; first = next)
+    {
       next = first->succ;
 
-      if(first->name)
+      if(first->name != NULL)
         free(first->name);
 
-      if(first->value)
+      if(first->value != NULL)
         free(first->value);
 
       FreeVecPooled(G->SharedMemPool, first);
-   }
+    }
+  }
+
+  LEAVE();
 }
 
 ///
@@ -723,7 +750,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    if(isFlagClear(rxc->flags, ARB_CF_ENABLED))
    {
       rc = -10;
-      rc2 = (long) "Command disabled";
+      rc2 = (long)"Command disabled";
       goto drc_cleanup;
    }
 
@@ -732,7 +759,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
 
    cargstr = AllocVecPooled(G->SharedMemPool, (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
 
-   if( !array || !cargstr )
+   if(!array || !cargstr)
    {
       rc2 = ERROR_NO_FREE_STORE;
       goto drc_cleanup;
@@ -864,28 +891,22 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
 drc_cleanup:
 
    // return RESULT only, if neither VAR nor STEM
-   ReplyRexxCommand( rexxmsg, rc, rc2, result );
+   ReplyRexxCommand(rexxmsg, rc, rc2, result);
 
    // free the memory
-   if(result)
-   {
+   if(result != NULL)
      FreeVecPooled(G->SharedMemPool, result);
-   }
 
-   FreeArgs( host->rdargs );
+   FreeArgs(host->rdargs);
 
-   if(cargstr)
-   {
+   if(cargstr != NULL)
      FreeVecPooled(G->SharedMemPool, cargstr);
-   }
 
-   if(array)
+   if(array != NULL)
      (rxc->function)(host, (void **)(APTR)&array, RXIF_FREE, rexxmsg);
 
-   if(argb)
-   {
+   if(argb != NULL)
      FreeVecPooled(G->SharedMemPool, argb);
-   }
 
    LEAVE();
 }
@@ -894,55 +915,54 @@ drc_cleanup:
 /// ARexxDispatch
 void ARexxDispatch( struct RexxHost *host )
 {
-   struct RexxMsg *rexxmsg;
+  struct RexxMsg *rexxmsg;
 
-   ENTER();
+  ENTER();
 
-   while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)))
-   {
-      if( (rexxmsg->rm_Action & RXCODEMASK) != RXCOMM )
-      {
-         // No Rexx-Message
-         ReplyMsg( (struct Message *) rexxmsg );
-      }
-      else if( rexxmsg->rm_Node.mn_Node.ln_Type == NT_REPLYMSG )
-      {
-         struct RexxMsg *org = (struct RexxMsg *) rexxmsg->rm_Args[15];
+  while((rexxmsg = (struct RexxMsg *)GetMsg(host->port)) != NULL)
+  {
+    if((rexxmsg->rm_Action & RXCODEMASK) != RXCOMM)
+    {
+      // No Rexx-Message
+      ReplyMsg( (struct Message *) rexxmsg );
+    }
+    else if(rexxmsg->rm_Node.mn_Node.ln_Type == NT_REPLYMSG)
+    {
+      struct RexxMsg *org;
 
-         if( org )
+      if((org = (struct RexxMsg *)rexxmsg->rm_Args[15]) != NULL)
+       {
+         // Reply to a forwarded Msg
+         if(rexxmsg->rm_Result1 != 0)
          {
-            // Reply to a forwarded Msg
-            if( rexxmsg->rm_Result1 != 0 )
-            {
-               // command unknown
-               ReplyRexxCommand( org, 20, ERROR_NOT_IMPLEMENTED, NULL );
-            }
-            else
-            {
-               ReplyRexxCommand( org, 0, 0, (char *) rexxmsg->rm_Result2 );
-            }
+           // command unknown
+           ReplyRexxCommand(org, 20, ERROR_NOT_IMPLEMENTED, NULL);
          }
          else
          {
-            // reply to a SendRexxCommand()-Call
-            if( ARexxResultHook )
-               ARexxResultHook( host, rexxmsg );
+           ReplyRexxCommand(org, 0, 0, (char *)rexxmsg->rm_Result2);
          }
+       }
+       else
+       {
+         // reply to a SendRexxCommand()-Call
+         if(ARexxResultHook != NULL)
+            ARexxResultHook(host, rexxmsg);
+       }
 
-         FreeRexxCommand( rexxmsg );
-         --host->replies;
-      }
-      else if( ARG0(rexxmsg) )
-      {
-         DoRXCommand( host, rexxmsg );
-      }
-      else
-      {
-         ReplyMsg( (struct Message *) rexxmsg );
-      }
-   }
+       FreeRexxCommand(rexxmsg);
+       host->replies--;
+    }
+    else if(ARG0(rexxmsg) != NULL)
+    {
+      DoRXCommand(host, rexxmsg);
+    }
+    else
+    {
+      ReplyMsg((struct Message *)rexxmsg);
+    }
+  }
 
-   LEAVE();
+  LEAVE();
 }
 ///
-

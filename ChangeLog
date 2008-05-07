@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-07  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_rexx.c, YAM_rexx_rxcl.c, YAM_rexx_rxif.c: replace the outdated custom
+    search method for ARexx command by a simple binary search. The old method
+    stems from an old tool to generate linked lists. Unfortunately the generated
+    code is not extendable without that tool and with the binary search the
+    parsing code becomes much easier to understand. All in all this change
+    makes the YAM_rexx_rxcl.c module completely unnecessary.
+
 2008-05-06  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/italian.ct: updated italian translation provided by Samir Hawamdeh.

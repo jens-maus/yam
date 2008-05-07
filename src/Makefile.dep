@@ -366,7 +366,8 @@ MainFolderListtree.o: classes/MainFolderListtree.c \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h Threads.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
-  YAM_read.h BayesFilter.h YAM_find.h YAM_mainFolder.h Debug.h
+  YAM_read.h BayesFilter.h YAM_find.h YAM_mainFolder.h FolderList.h \
+  Debug.h
 MainMailList.o: classes/MainMailList.c classes/MainMailList_cl.h \
   classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -753,8 +754,7 @@ YAM_rexx.o: YAM_rexx.c extrasrc.h include/SDI_compiler.h \
   include/amiga-align.h include/default-align.h YAM_rexx_rxif.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h Threads.h \
-  YAM_rexx.h YAM_rexx_rxcl.h Mime.h Debug.h
-YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx_rxif.h YAM_rexx_rxcl.h
+  YAM_rexx.h Mime.h Debug.h
 YAM_rexx_rxif.o: YAM_rexx_rxif.c include/mui/NList_mcc.h \
   include/libraries/mui.h include/mui/TextEditor_mcc.h \
   include/proto/muimaster.h include/interfaces/muimaster.h \
@@ -765,9 +765,9 @@ YAM_rexx_rxif.o: YAM_rexx_rxif.c include/mui/NList_mcc.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h Threads.h \
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
   YAM_write.h YAM_main.h YAM_config.h YAM_read.h UpdateCheck.h YAM_find.h \
-  YAM_global.h YAM_mainFolder.h YAM_rexx_rxcl.h classes/Classes.h \
+  YAM_global.h YAM_mainFolder.h YAM_rexx.h classes/Classes.h \
   classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h FileInfo.h \
-  Locale.h MailList.h Mime.h Debug.h
+  FolderList.h Locale.h MailList.h Mime.h Debug.h
 YAM_TR.o: YAM_TR.c include/libraries/genesis.h include/amiga-align.h \
   include/default-align.h include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \

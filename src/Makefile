@@ -319,7 +319,6 @@ OBJS = \
 	YAM_MAf.o \
 	YAM_RE.o \
 	YAM_rexx.o \
-	YAM_rexx_rxcl.o \
 	YAM_rexx_rxif.o \
 	YAM_TR.o \
 	YAM_US.o \
