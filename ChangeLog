@@ -7,6 +7,12 @@ $URL$
 
 2008-05-07  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: added a character set popup list to the write window's option page.
+    This allows to specify a different charset than the global charset for this
+    single mail. The selected charset is applied to the letter part of the mail
+    only. All other parts will still be encoded using to the global charset.
+    What is now missing is a suitable ARexx command to set this charset
+    remotely. This should fulfill feature request #1959238.
   * YAM_COg.c: the current charset wasn't highlighted in the popup list, because
     the wrong attribute was queried.
   * YAM_rexx.c, YAM_rexx_rxcl.c, YAM_rexx_rxif.c: replace the outdated custom

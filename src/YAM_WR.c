@@ -44,6 +44,7 @@
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <workbench/workbench.h>
+#include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
@@ -399,6 +400,7 @@ struct WritePart *NewPart(int winnum)
     p->ContentType = "text/plain";
     p->EncType = ENC_7BIT;
     p->Filename = G->WR_Filename[winnum];
+    p->charset = G->WR[winnum]->charset;
   }
   else
     E(DBF_MAIL, "couldn't create new MIME part for window %ld", winnum);
@@ -425,6 +427,7 @@ static struct WritePart *BuildPartsList(const int winnum)
     p = first;
     p->IsTemp = TRUE;
     p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
+    p->charset = G->WR[winnum]->charset;
 
     // now walk through our attachment list
     // and create additional parts
@@ -439,7 +442,7 @@ static struct WritePart *BuildPartsList(const int winnum)
 
       // we check if the file from the attachment list
       // still exists and is readable
-      if(FileExists(att->FilePath))
+      if(FileExists(att->FilePath) == TRUE)
       {
         // create a new MIME part for the attachment
         if((np = NewPart(winnum)) != NULL)
@@ -459,6 +462,8 @@ static struct WritePart *BuildPartsList(const int winnum)
             np->EncType = WhichEncodingForFile(np->Filename, np->ContentType);
           else
             np->EncType = ENC_UUE;
+
+          np->charset = G->localCharset;
 
           p = np;
         }
@@ -719,7 +724,7 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
   // output the "Content-Type:
   fprintf(fh, "Content-Type: %s", part->ContentType);
   if(part->EncType != ENC_7BIT && strncmp(part->ContentType, "text/", 5) == 0)
-    fprintf(fh, "; charset=%s", strippedCharsetName(G->localCharset));
+    fprintf(fh, "; charset=%s", strippedCharsetName(part->charset));
 
   // output the "name" and Content-Disposition as well
   // as the "filename" parameter to the mail
@@ -2142,6 +2147,16 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       return;
     }
 
+    // find the selected charset and default to the global one if it
+    // could not be found
+    if((wr->charset = CodesetsFind((char *)xget(wr->GUI.PO_CHARSET, MUIA_Text_Contents),
+                                   CSA_CodesetList,       G->codesetsList,
+                                   CSA_FallbackToDefault, FALSE,
+                                   TAG_DONE)) == NULL)
+    {
+      wr->charset = G->localCharset;
+    }
+
     comp.DelSend = GetMUICheck(gui->CH_DELSEND);
     comp.UserInfo = GetMUICheck(gui->CH_ADDINFO);
 
@@ -3279,7 +3294,7 @@ int WR_Open(int winnum, BOOL bounce)
       G->WR[winnum] = bounce ? WR_NewBounce(winnum) : WR_New(winnum);
       if(G->WR[winnum] != NULL)
       {
-        if(!bounce)
+        if(bounce == FALSE)
         {
           char address[SIZE_LARGE];
           struct WR_GUIData *gui = &G->WR[winnum]->GUI;
@@ -3310,7 +3325,7 @@ int WR_Open(int winnum, BOOL bounce)
 
 ///
 /// WR_SetupOldMail
-/*** WR_SetupOldMail - When editing a message, sets write window options to old values ***/
+// When editing a message, sets write window options to old values ***/
 void WR_SetupOldMail(int winnum, struct ReadMailData *rmData)
 {
   struct Part *part;
@@ -3319,9 +3334,23 @@ void WR_SetupOldMail(int winnum, struct ReadMailData *rmData)
 
   // we start to iterate right from the first part *after* PART_RAW
   // and check which one really is really an attachment or which
-  // on is the LetterPart
+  // one is the LetterPart
   for(part = rmData->firstPart->Next; part; part = part->Next)
   {
+    if(part->Nr == rmData->letterPartNum)
+    {
+      // find the selected charset and default to the global one if it
+      // could not be found
+      if((G->WR[winnum]->charset = CodesetsFind(part->CParCSet,
+                                                CSA_CodesetList,       G->codesetsList,
+                                                CSA_FallbackToDefault, FALSE,
+                                                TAG_DONE)) == NULL)
+      {
+        G->WR[winnum]->charset = G->localCharset;
+      }
+      nnset(G->WR[winnum]->GUI.PO_CHARSET, MUIA_Text_Contents, strippedCharsetName(G->WR[winnum]->charset));
+    }
+
     if(part->Nr != rmData->letterPartNum &&
        stricmp(part->ContentType, "application/pgp-signature"))
     {
@@ -4028,6 +4057,7 @@ static struct WR_ClassData *WR_New(int winnum)
     static const char *security[SEC_MAXDUMMY+1];
     static const char *priority[4];
     static const char *signat[5];
+    Object *charsetPopButton;
 
     static const char *const emoticons[4] =
     {
@@ -4347,6 +4377,9 @@ static struct WR_ClassData *WR_New(int winnum)
                      MUIA_CycleChain,               TRUE,
                    End,
 
+                   Child, Label(tr(MSG_WR_CHARSET)),
+                   Child, MakeCharsetPop((Object **)&data->GUI.PO_CHARSET, &charsetPopButton),
+
                 End,
                 Child, HGroup,
                    Child, VGroup, GroupFrameT(tr(MSG_WR_SendOpt)),
@@ -4396,6 +4429,9 @@ static struct WR_ClassData *WR_New(int winnum)
       set(mi_autospell, MUIA_Menuitem_Checked, xget(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell));
       set(mi_autowrap,  MUIA_Menuitem_Checked, xget(data->GUI.TE_EDIT, MUIA_TextEditor_WrapBorder) > 0);
 
+      set(charsetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_WR_CHARSET)));
+      nnset(data->GUI.PO_CHARSET, MUIA_Text_Contents, C->LocalCharset);
+
       set(data->GUI.CY_IMPORTANCE, MUIA_Cycle_Active, 1);
       DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->GUI.RA_ENCODING, data->GUI.ST_CTYPE, data->GUI.ST_DESC, data->GUI.BT_DEL, data->GUI.BT_DISPLAY, NULL);
       SetHelp(data->GUI.ST_SUBJECT    ,MSG_HELP_WR_ST_SUBJECT   );
@@ -4414,6 +4450,7 @@ static struct WR_ClassData *WR_New(int winnum)
       SetHelp(data->GUI.RA_SIGNATURE  ,MSG_HELP_WR_RA_SIGNATURE );
       SetHelp(data->GUI.RA_SECURITY   ,MSG_HELP_WR_RA_SECURITY  );
       SetHelp(data->GUI.LV_ATTACH     ,MSG_HELP_WR_LV_ATTACH    );
+      SetHelp(data->GUI.PO_CHARSET    ,MSG_HELP_WR_PO_CHARSET   );
 
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_NEW,        data->GUI.TE_EDIT, 1, MUIM_TextEditor_ClearText);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, WMEN_OPEN,       MUIV_Notify_Application, 4, MUIM_CallHook, &WR_EditorCmdHook, ED_OPEN, winnum);
@@ -4514,6 +4551,8 @@ static struct WR_ClassData *WR_New(int winnum)
         // ...and the other way round
         DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active     ,i            ,sec_menus[i]         ,3,MUIM_NoNotifySet,MUIA_Menuitem_Checked,TRUE);
       }
+
+      data->charset = G->localCharset;
 
       WR_SharedSetup(data, winnum);
     }

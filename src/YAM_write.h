@@ -33,6 +33,7 @@
 
 // forward declarations
 struct AppMessage;
+struct codeset;
 struct Mail;
 struct MailList;
 
@@ -74,6 +75,7 @@ struct WR_GUIData
   Object *MI_ITALIC;
   Object *MI_UNDERLINE;
   Object *MI_COLORED;
+  Object *PO_CHARSET;
 };
 
 struct WR_ClassData  /* write window */
@@ -85,6 +87,7 @@ struct WR_ClassData  /* write window */
 
   char *            inReplyToMsgID;     // ptr to "In-Reply-To:" message header to compose the message for
   char *            references;         // ptr to "References:" message header to compose the message for
+  struct codeset *  charset;            // the character set being used for this mail
 
   enum NewMode      Mode;               // the compose mode this window is working on
   int               OldSecurity;
@@ -134,6 +137,7 @@ struct WritePart
   char *            Filename;
   char *            Description;
   char *            Name;
+  struct codeset *  charset; // the character set being used for this part
   BOOL              IsTemp;
   enum Encoding     EncType;
 };

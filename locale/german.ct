@@ -8269,9 +8269,9 @@ Festplatte erhalten).
 ;
 MSG_HELP_CO_TX_DEFAULTCHARSET
 Mit Hilfe des PopUp-Knopfes können Sie die\n\
-Zeichenkodierung auswählen die YAM als Standard\n\
+Zeichenkodierung auswählen, die YAM als Standard\n\
 verwenden soll. Dies sollte mit der Kodierung\n\
-übereinstimmen die im System selber konfiguriert\n\
+übereinstimmen, die im System selber konfiguriert\n\
 ist. Anderenfalls erhalten Sie eine Warnung.
 ;
 MSG_HELP_CO_CH_NOTISOUND
@@ -8427,4 +8427,13 @@ Der Grund dafür könnte entweder eine beschädigte\n\
 bzw- nicht unterstützte Tondatei sein, oder Ihr\n\
 Datatype für Tondateien funktioniert nicht ordnungs-\n\
 gemäß.
+;
+MSG_WR_CHARSET
+Zeichenko_dierung
+;
+MSG_HELP_WR_PO_CHARSET
+Mit Hilfe des PopUp-Knopfes können Sie die\n\
+Zeichenkodierung auswählen, die YAM für diese\n\
+verwenden soll. Standardmäßig wird die globale\n\
+Zeichenkodierung verwendet.
 ;

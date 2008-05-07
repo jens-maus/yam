@@ -6768,3 +6768,11 @@ unsupported sound file or because your\n\
 sound datatype is not properly working.
 ; FILE
 ;
+MSG_WR_CHARSET (2084//)
+_Charset
+;
+MSG_HELP_WR_PO_CHARSET (2085//)
+Use the popup button to select the character set\n\
+you would like YAM to use for this mail. This\n\
+defaults to the global character set.
+;

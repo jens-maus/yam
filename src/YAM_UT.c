@@ -51,6 +51,7 @@
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <workbench/startup.h>
+#include <proto/codesets.h>
 #include <proto/datatypes.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -5040,6 +5041,7 @@ Object *MakeAddressField(Object **string, const char *label, const Object *help,
   RETURN(obj);
   return obj;
 }
+
 ///
 /// MakeNumeric
 //  Creates a MUI numeric slider
@@ -5052,6 +5054,165 @@ Object *MakeNumeric(int min, int max, BOOL percent)
            MUIA_CycleChain, TRUE,
          End;
 }
+
+///
+/// PO_CharsetOpenHook
+//  Sets the popup listview accordingly to the string gadget
+HOOKPROTONH(PO_CharsetOpenFunc, BOOL, Object *list, Object *str)
+{
+  char *s;
+
+  ENTER();
+
+  if((s = (char *)xget(str, MUIA_Text_Contents)) != NULL)
+  {
+    int i;
+
+    for(i=0;;i++)
+    {
+      char *x;
+
+      DoMethod(list, MUIM_List_GetEntry, i, &x);
+      if(x == NULL)
+      {
+        set(list, MUIA_List_Active, MUIV_List_Active_Off);
+        break;
+      }
+      else if(stricmp(x, s) == 0)
+      {
+        set(list, MUIA_List_Active, i);
+        break;
+      }
+    }
+  }
+
+  RETURN(TRUE);
+  return TRUE;
+}
+MakeStaticHook(PO_CharsetOpenHook, PO_CharsetOpenFunc);
+
+///
+/// PO_CharsetCloseHook
+//  Pastes an entry from the popup listview into string gadget
+HOOKPROTONH(PO_CharsetCloseFunc, void, Object *list, Object *txt)
+{
+  char *var = NULL;
+
+  ENTER();
+
+  DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
+  if(var != NULL)
+    set(txt, MUIA_Text_Contents, var);
+
+  LEAVE();
+}
+MakeStaticHook(PO_CharsetCloseHook, PO_CharsetCloseFunc);
+
+///
+/// PO_CharsetListDisplayHook
+//  Pastes an entry from the popup listview into string gadget
+HOOKPROTONH(PO_CharsetListDisplayFunc, LONG, const char **array, STRPTR str)
+{
+  ENTER();
+
+  if(str != NULL)
+  {
+    struct codeset *cs;
+
+    // the standard name is always in column 0
+    array[0] = str;
+
+    // try to find the codeset via codesets.library and
+    // display some more information about it.
+    if((cs = CodesetsFind(str,
+                          CSA_CodesetList,       G->codesetsList,
+                          CSA_FallbackToDefault, FALSE,
+                          TAG_DONE)) != NULL)
+    {
+      if(cs->characterization && stricmp(cs->characterization, str) != 0)
+        array[1] = cs->characterization;
+      else
+        array[1] = "";
+    }
+    else
+      array[1] = "";
+  }
+  else
+  {
+    array[0] = "";
+    array[1] = "";
+  }
+
+  RETURN(0);
+  return 0;
+}
+MakeStaticHook(PO_CharsetListDisplayHook, PO_CharsetListDisplayFunc);
+
+///
+/// MakeCharsetPop
+//  Creates a popup list of available charsets supported by codesets.library
+Object *MakeCharsetPop(Object **string, Object **pop)
+{
+  Object *lv;
+  Object *po;
+
+  ENTER();
+
+  if((po = PopobjectObject,
+
+    MUIA_Popstring_String, *string = TextObject,
+      TextFrame,
+      MUIA_Background,  MUII_TextBack,
+    End,
+
+    MUIA_Popstring_Button, *pop = PopButton(MUII_PopUp),
+    MUIA_Popobject_StrObjHook, &PO_CharsetOpenHook,
+    MUIA_Popobject_ObjStrHook, &PO_CharsetCloseHook,
+    MUIA_Popobject_WindowHook, &PO_WindowHook,
+    MUIA_Popobject_Object, lv = ListviewObject,
+       MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_Right,
+       MUIA_Listview_List, ListObject,
+          InputListFrame,
+          MUIA_List_Format,        "BAR,",
+          MUIA_List_AutoVisible,   TRUE,
+          MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
+          MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
+          MUIA_List_DisplayHook,   &PO_CharsetListDisplayHook,
+       End,
+    End,
+
+  End) != NULL)
+  {
+    struct codeset *codeset;
+    STRPTR *array;
+
+    set(*pop, MUIA_CycleChain,TRUE);
+    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+
+    // Build list of available codesets
+    if((array = CodesetsSupported(CSA_CodesetList, G->codesetsList,
+                                  TAG_DONE)) != NULL)
+    {
+      DoMethod(lv, MUIM_List_Insert, array, -1, MUIV_List_Insert_Sorted);
+      CodesetsFreeA(array, NULL);
+    }
+    else
+      set(po, MUIA_Disabled, TRUE);
+
+    // Use the system's default codeset
+    if((codeset = CodesetsFindA(NULL, NULL)) != NULL)
+      set(*string, MUIA_String_Contents, codeset->name);
+  }
+  else
+  {
+    *string = NULL;
+    *pop = NULL;
+  }
+
+  RETURN(po);
+  return po;
+}
+
 ///
 /// GetMUIInteger
 //  Returns the numeric value of a MUI string object

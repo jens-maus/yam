@@ -359,6 +359,7 @@ Object * MakePassString(const char *label);
 Object * MakePGPKeyList(Object **st, BOOL secret, const char *label);
 Object * MakeString(int maxlen, const char *label);
 Object * MakeAddressField(Object **string, const char *label, const Object *help, int abmode, int winnum, ULONG flags);
+Object * MakeCharsetPop(Object **string, Object **pop);
 BOOL     MatchNoCase(const char *string, const char *match);
 char *   MyStrChr(const char *s, const char c);
 struct TempFile *OpenTempFile(const char *mode);

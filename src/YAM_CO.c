@@ -1531,16 +1531,16 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // we try to find out the system charset and validate it with the
   // currently configured local charset
-  if(co->SysCharsetCheck)
+  if(co->SysCharsetCheck == TRUE)
   {
     struct codeset *sysCodeset;
 
     // get the system's default codeset
-    if((sysCodeset = CodesetsFindA(NULL, NULL)))
+    if((sysCodeset = CodesetsFindA(NULL, NULL)) != NULL)
     {
       // now we check whether the currently set localCharset matches
       // the system charset or not
-      if(co->LocalCharset[0] && sysCodeset->name[0])
+      if(co->LocalCharset[0] != '\0' && sysCodeset->name[0] != '\0')
       {
         if(stricmp(co->LocalCharset, sysCodeset->name) != 0)
         {
@@ -1564,7 +1564,7 @@ void CO_Validate(struct Config *co, BOOL update)
           }
         }
       }
-      else if(sysCodeset->name[0])
+      else if(sysCodeset->name[0] != '\0')
       {
         strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
         saveAtEnd = TRUE;
@@ -1599,7 +1599,7 @@ void CO_Validate(struct Config *co, BOOL update)
     if(res == 1)
     {
       // fallback to the system's default codeset
-      if((G->localCharset = CodesetsFindA(NULL, NULL)))
+      if((G->localCharset = CodesetsFindA(NULL, NULL)) != NULL)
       {
         strlcpy(co->LocalCharset, G->localCharset->name, sizeof(co->LocalCharset));
         saveAtEnd = TRUE;
