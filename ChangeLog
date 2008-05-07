@@ -7,6 +7,8 @@ $URL$
 
 2008-05-07  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: the current charset wasn't highlighted in the popup list, because
+    the wrong attribute was queried.
   * YAM_rexx.c, YAM_rexx_rxcl.c, YAM_rexx_rxif.c: replace the outdated custom
     search method for ARexx command by a simple binary search. The old method
     stems from an old tool to generate linked lists. Unfortunately the generated

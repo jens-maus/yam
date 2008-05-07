@@ -311,7 +311,7 @@ HOOKPROTONH(PO_CharsetOpenFunc, BOOL, Object *list, Object *str)
 
   ENTER();
 
-  if((s = (char *)xget(str, MUIA_String_Contents)))
+  if((s = (char *)xget(str, MUIA_Text_Contents)))
   {
     int i;
 
