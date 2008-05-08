@@ -347,12 +347,12 @@ DECLARE(SelectUser)
       // exiting with the last button
       DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+G->Users.Num);
 
+      // make sure the window is at the front
+      DoMethod(obj, MUIM_Window_ToFront);
+
       // make the first button the active object in the window
       xset(obj, MUIA_Window_ActiveObject,  button0,
                 MUIA_Window_DefaultObject, button0);
-
-      // make sure the window is at the front
-      DoMethod(obj, MUIM_Window_ToFront);
 
       // lets collect the waiting returnIDs now
       COLLECT_RETURNIDS;
@@ -453,7 +453,7 @@ DECLARE(PasswordRequest) // struct User *user
     Child, HVSpace,
   End;
 
-  if(pwGroup)
+  if(pwGroup != NULL)
   {
     BOOL wasIconified;
     BOOL wasOpen;
@@ -479,21 +479,21 @@ DECLARE(PasswordRequest) // struct User *user
     wasOpen = xget(obj, MUIA_Window_Open);
     wasIconified = xget(G->App, MUIA_Application_Iconified);
 
-    if(!wasOpen)
+    if(wasOpen == FALSE)
       set(obj, MUIA_Window_Open, TRUE);
 
-    if(wasIconified)
+    if(wasIconified == TRUE)
       set(G->App, MUIA_Application_Iconified, FALSE);
 
     // make sure the window is at the front
     DoMethod(obj, MUIM_Window_ToFront);
 
-    // make the passwordString the active object
-    xset(obj, MUIA_Window_ActiveObject,   pwString,
-              MUIA_Window_DefaultObject,  pwString);
-
     // lets collect the waiting returnIDs now
     COLLECT_RETURNIDS;
+
+    // make the passwordString the active object
+    xset(obj, MUIA_Window_ActiveObject,  pwString,
+              MUIA_Window_DefaultObject, pwString);
 
     do
     {
@@ -515,7 +515,7 @@ DECLARE(PasswordRequest) // struct User *user
       else if(ret == 2)
         break;
 
-      if(signals)
+      if(signals != 0)
         signals = Wait(signals);
     }
     while(1);
@@ -534,10 +534,10 @@ DECLARE(PasswordRequest) // struct User *user
               MUIA_Window_DefaultObject, NULL);
 
     // lets iconify/close the window if it had this state previously
-    if(!wasOpen)
+    if(wasOpen == FALSE)
       set(obj, MUIA_Window_Open, FALSE);
 
-    if(wasIconified)
+    if(wasIconified == TRUE)
       set(G->App, MUIA_Application_Iconified, TRUE);
 
     // remove the passwordRequest again

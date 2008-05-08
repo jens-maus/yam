@@ -1,6 +1,3 @@
-#ifndef YAM_REXX_H
-#define YAM_REXX_H
-
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -28,29 +25,52 @@
 
 ***************************************************************************/
 
-// forward declarations
-struct RexxHost;
-struct RexxMsg;
-struct MsgPort;
+#include "extrasrc.h"
 
-void ARexxDispatch(struct RexxHost *host);
-void CloseDownARexxHost(struct RexxHost *host);
-void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg);
-void FreeRexxCommand(struct RexxMsg *rxmsg);
-void ReplyRexxCommand(struct RexxMsg *rxmsg, long prim, long sec, char *res);
-struct RexxMsg *SendRexxCommand(struct RexxHost *host, char *buff, BPTR fh);
-struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport);
+#include "YAM.h"
+#include "classes/Classes.h"
 
-struct rxs_command
+#include "Locale.h"
+#include "Rexx.h"
+
+#include "Debug.h"
+
+void rx_requestfolder(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  const char *command;
-  const char *args;
-  const char *results;
-  long resindex;
-  void (*function)(struct RexxHost *, void **, long, struct RexxMsg *);
-  long flags;
-};
+  struct rxd_requestfolder *rd = *rxd;
 
-extern struct rxs_command rxs_commandlist[];
+  ENTER();
 
-#endif /* YAM_REXX_H */
+  switch( action )
+  {
+    case RXIF_INIT:
+    {
+      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+    }
+    break;
+
+    case RXIF_ACTION:
+    {
+      struct Folder *exfolder, *folder;
+      char *reqtext = AllocReqText(rd->arg.body);
+
+      exfolder = rd->arg.excludeactive ? FO_GetCurrentFolder() : NULL;
+
+      if((folder = FolderRequest(NULL, reqtext, tr(MSG_Okay), tr(MSG_Cancel), exfolder, G->MA->GUI.WI)))
+        rd->res.folder = folder->Name;
+      else
+        rd->rc = 1;
+
+      free(reqtext);
+    }
+    break;
+
+    case RXIF_FREE:
+    {
+      FreeVecPooled(G->SharedMemPool, rd);
+    }
+    break;
+  }
+
+  LEAVE();
+}

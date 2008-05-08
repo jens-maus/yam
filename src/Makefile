@@ -158,6 +158,7 @@ BUILDID = 0
 # Common Directories
 PREFIX    = $(CDTHIS)
 CLASSDIR  = $(PREFIX)classes
+REXXDIR   = $(PREFIX)rexx
 LOCALE    = $(PREFIX)$(CDUP)locale
 EXTRASRC  = $(PREFIX)extrasrc
 TOOLS     = $(PREFIX)tools
@@ -265,7 +266,7 @@ GENCLASSES= $(TOOLS)/genclasses
 
 # our few new rewritten classes
 CLASSES	= \
-  Classes.o \
+	Classes.o \
 	Recipientstring.o \
 	Searchwindow.o \
 	SearchControlGroup.o \
@@ -300,12 +301,87 @@ CLASSES	= \
 	ThemeListGroup.o \
 	YAM.o
 
+REXX = \
+	addrdelete.o \
+	addredit.o \
+	addrfind.o \
+	addrgoto.o \
+	addrinfo.o \
+	addrload.o \
+	addrnew.o \
+	addrresolve.o \
+	addrsave.o \
+	appbusy.o \
+	appnobusy.o \
+	folderinfo.o \
+	getconfiginfo.o \
+	getfolderinfo.o \
+	getmailinfo.o \
+	getselected.o \
+	geturl.o \
+	help.o \
+	hide.o \
+	info.o \
+	isonline.o \
+	listselect.o \
+	mailarchive.o \
+	mailbounce.o \
+	mailchangesubject.o \
+	mailcheck.o \
+	mailcopy.o \
+	maildelete.o \
+	mailedit.o \
+	mailexport.o \
+	mailfilter.o \
+	mailforward.o \
+	mailimport.o \
+	mailinfo.o \
+	mailmove.o \
+	mailread.o \
+	mailreply.o \
+	mailsendall.o \
+	mailsend.o \
+	mailstatus.o \
+	mailupdate.o \
+	mailwrite.o \
+	newmailfile.o \
+	quit.o \
+	readclose.o \
+	readinfo.o \
+	readprint.o \
+	readsave.o \
+	request.o \
+	requestfolder.o \
+	requeststring.o \
+	screentoback.o \
+	screentofront.o \
+	setflag.o \
+	setfolder.o \
+	setmail.o \
+	setmailfile.o \
+	show.o \
+	userinfo.o \
+	writeattach.o \
+	writebcc.o \
+	writecc.o \
+	writeeditor.o \
+	writefrom.o \
+	writeletter.o \
+	writemailto.o \
+	writeoptions.o \
+	writequeue.o \
+	writereplyto.o \
+	writesend.o \
+	writesubject.o \
+	writeto.o
+
 # and the other object files where
 # YAM_global.o and YAM.o have to stay at the top
 OBJS = \
 	YAM_global.o \
 	YAM.o \
-  $(addprefix $(CLASSDIR)/,$(CLASSES)) \
+	$(addprefix $(CLASSDIR)/,$(CLASSES)) \
+	$(addprefix $(REXXDIR)/,$(REXX)) \
 	YAM_AB.o \
 	YAM_CO.o \
 	YAM_COg.o \
@@ -318,26 +394,25 @@ OBJS = \
 	YAM_MA.o \
 	YAM_MAf.o \
 	YAM_RE.o \
-	YAM_rexx.o \
-	YAM_rexx_rxif.o \
 	YAM_TR.o \
 	YAM_US.o \
 	YAM_UT.o \
 	YAM_WR.o \
-	ImageCache.o \
-	UpdateCheck.o \
+	BayesFilter.o \
+	FileInfo.o \
+	FolderList.o \
+	HashTable.o \
 	HTML2Mail.o \
+	ImageCache.o \
+	Locale.o \
+	MailList.o \
+	Mime.o \
+	ParseEmail.o \
+	Rexx.o \
 	Themes.o \
 	Threads.o \
 	Timer.o \
-	HashTable.o \
-	BayesFilter.o \
-	Locale.o \
-	FileInfo.o \
-	MailList.o \
-	Mime.o \
-	FolderList.o \
-	ParseEmail.o \
+	UpdateCheck.o \
 	extrasrc.o \
 	Debug.o
 
@@ -373,6 +448,7 @@ $(OBJDIR):
 	@echo "  MK $@"
 	@$(MKDIR) $(OBJDIR)
 	@$(MKDIR) $(OBJDIR)/$(CLASSDIR)
+	@$(MKDIR) $(OBJDIR)/$(REXXDIR)
 
 # for compiling single .c files
 %.o: %.c

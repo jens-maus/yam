@@ -31,6 +31,7 @@
 #include <exec/lists.h>
 #include <exec/nodes.h>
 #include <exec/types.h>
+#include <proto/exec.h>
 
 // forward declarations
 struct SignalSemaphore;

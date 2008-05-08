@@ -32,13 +32,13 @@
 
 #include "netinet/in.h"
 
-#include "YAM_rexx_rxif.h"   // struct RuleResult
 #include "YAM_stringsizes.h"
 #include "YAM_transfer.h"    // struct DownloadResult
 #include "YAM_userlist.h"    // struct Users
 #include "YAM_utilities.h"   // ASL_MAX
 
 #include "BayesFilter.h"     // struct TokenAnalyzer
+#include "Rexx.h"            // struct RuleResult
 #include "Themes.h"          // struct Theme
 #include "Timer.h"           // struct Timers
 #include "Threads.h"         // struct Thread
