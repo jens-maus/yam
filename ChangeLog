@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-08  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_rexx.c: the HELP command was broken due to the latest changes.
+
 2008-05-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: added a character set popup list to the write window's option page.
