@@ -7,6 +7,7 @@ $URL$
 
 2008-05-08  Thore Böckelmann <tboeckel@gmx.de>
 
+  * rexx/*.c: added the missing proto/exec.h include for OS4.
   * misc: split the complete YAM_rexx_rxif.c file into separate files which
     are now located in the subdirectory "rexx". YAM_rexx.c has been renamed
     to Rexx.c.

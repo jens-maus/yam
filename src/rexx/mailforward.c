@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include <libraries/mui.h>
+#include <proto/exec.h>
 
 #include "extrasrc.h"
 

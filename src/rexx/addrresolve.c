@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include <clib/alib_protos.h>
+#include <proto/exec.h>
 #include <proto/muimaster.h>
 
 #include "extrasrc.h"

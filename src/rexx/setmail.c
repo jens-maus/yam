@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include <mui/NList_mcc.h>
+#include <proto/exec.h>
 
 #include "extrasrc.h"
 

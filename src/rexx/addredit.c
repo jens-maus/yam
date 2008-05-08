@@ -27,6 +27,7 @@
 
 #include <clib/alib_protos.h>
 #include <mui/NListtree_mcc.h>
+#include <proto/exec.h>
 
 #include "extrasrc.h"
 
