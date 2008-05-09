@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-09  Thore Böckelmann <tboeckel@gmx.de>
+
+  * rexx/help.c: fixed a slightly wrong output.
+
 2008-05-08  Thore Böckelmann <tboeckel@gmx.de>
 
   * rexx/*.c: added the missing proto/exec.h include for OS4.

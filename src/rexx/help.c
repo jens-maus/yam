@@ -58,12 +58,12 @@ void rx_help(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, U
       if(rd->arg.file && (fp = fopen(rd->arg.file, "w")))
         out = fp;
 
-      fprintf(out, "Commands for application \"YAM\"\n\nCommand          Template\n-------          --------\n");
+      fprintf(out, "Commands for application \"YAM\"\n\nCommand              Template\n-------              --------\n");
 
       for(rxc = rxs_commandlist; rxc->command; rxc++)
       {
-        fprintf(out, "%-16s%c%s%s%s%s%s\n", rxc->command,
-                                            (rxc->results || rxc->args) ? ' ' : '\0', rxc->results ? "VAR/K,STEM/K" : "",
+        fprintf(out, "%-20s%s%s%s%s%s%s\n", rxc->command,
+                                            (rxc->results || rxc->args) ? " " : "", rxc->results ? "VAR/K,STEM/K" : "",
                                             (rxc->results && rxc->args) ? "," : "", rxc->args ? rxc->args : "",
                                             rxc->results ? " => " : "", rxc->results ? rxc->results : "");
       }
