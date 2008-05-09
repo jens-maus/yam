@@ -40,6 +40,19 @@
 
 #include "Debug.h"
 
+struct rxd_mailread
+{
+  long rc, rc2;
+  struct {
+    char *var, *stem;
+    int *window;
+    long quiet;
+  } arg;
+  struct {
+    int *window;
+  } res;
+};
+
 void rx_mailread(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_mailread *rd = *rxd;
@@ -50,7 +63,8 @@ void rx_mailread(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_mailread *)(*rxd))->rc = offsetof(struct rxd_mailread, res) / sizeof(long);
     }
     break;
 

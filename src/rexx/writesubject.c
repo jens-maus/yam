@@ -37,6 +37,14 @@
 
 #include "Debug.h"
 
+struct rxd_writesubject
+{
+  long rc, rc2;
+  struct {
+    char *subject;
+  } arg;
+};
+
 void rx_writesubject(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_writesubject *rd = *rxd;
@@ -47,7 +55,8 @@ void rx_writesubject(UNUSED struct RexxHost *host, void **rxd, enum RexxAction a
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_writesubject *)(*rxd))->rc = 0;
     }
     break;
 

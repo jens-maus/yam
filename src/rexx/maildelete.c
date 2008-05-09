@@ -36,6 +36,15 @@
 
 #include "Debug.h"
 
+struct rxd_maildelete
+{
+  long rc, rc2;
+  struct {
+    long atonce;
+    long force;
+  } arg;
+};
+
 void rx_maildelete(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_maildelete *rd = *rxd;
@@ -46,7 +55,8 @@ void rx_maildelete(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_maildelete *)(*rxd))->rc = 0;
     }
     break;
 

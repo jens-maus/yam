@@ -37,6 +37,20 @@
 
 #include "Debug.h"
 
+struct rxd_addrfind
+{
+  long rc, rc2;
+  struct {
+    char *var, *stem;
+    char *pattern;
+    long nameonly;
+    long emailonly;
+  } arg;
+  struct {
+    char **alias;
+  } res;
+};
+
 void rx_addrfind(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_addrfind *rd = *rxd;
@@ -47,7 +61,8 @@ void rx_addrfind(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_addrfind *)(*rxd))->rc = offsetof(struct rxd_addrfind, res) / sizeof(long);
     }
     break;
 

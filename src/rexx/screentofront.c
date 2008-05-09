@@ -38,6 +38,11 @@
 
 #include "Debug.h"
 
+struct rxd_screentofront
+{
+  long rc, rc2;
+};
+
 void rx_screentofront(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_screentofront *rd = *rxd;
@@ -48,7 +53,8 @@ void rx_screentofront(UNUSED struct RexxHost *host, void **rxd, enum RexxAction 
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_screentofront *)(*rxd))->rc = 0;
     }
     break;
 

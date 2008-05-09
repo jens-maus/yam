@@ -38,6 +38,18 @@
 
 #include "Debug.h"
 
+struct rxd_mailreply
+{
+  long rc, rc2;
+  struct {
+    char *var, *stem;
+    long quiet;
+  } arg;
+  struct {
+    int *window;
+  } res;
+};
+
 void rx_mailreply(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_mailreply *rd = *rxd;
@@ -48,7 +60,8 @@ void rx_mailreply(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_mailreply *)(*rxd))->rc = offsetof(struct rxd_mailreply, res) / sizeof(long);
     }
     break;
 

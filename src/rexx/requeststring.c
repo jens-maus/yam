@@ -37,6 +37,20 @@
 
 #include "Debug.h"
 
+struct rxd_requeststring
+{
+  long rc, rc2;
+  struct {
+    char *var, *stem;
+    char *body;
+    char *string;
+    long secret;
+  } arg;
+  struct {
+    char *string;
+  } res;
+};
+
 void rx_requeststring(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct
@@ -51,7 +65,8 @@ void rx_requeststring(UNUSED struct RexxHost *host, void **rxd, enum RexxAction 
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_requeststring *)(*rxd))->rc = offsetof(struct rxd_requeststring, res) / sizeof(long);
     }
     break;
 

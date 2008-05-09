@@ -38,6 +38,14 @@
 
 #include "Debug.h"
 
+struct rxd_listselect
+{
+  long rc, rc2;
+  struct {
+    char *mode;
+  } arg;
+};
+
 void rx_listselect(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_listselect *rd = *rxd;
@@ -48,7 +56,8 @@ void rx_listselect(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_listselect *)(*rxd))->rc = 0;
     }
     break;
 

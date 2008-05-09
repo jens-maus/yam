@@ -37,6 +37,15 @@
 
 #include "Debug.h"
 
+struct rxd_setfolder
+{
+  long rc, rc2;
+  struct
+  {
+    char *folder;
+  } arg;
+};
+
 void rx_setfolder(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_setfolder *rd = *rxd;
@@ -47,7 +56,8 @@ void rx_setfolder(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_setfolder *)(*rxd))->rc = 0;
     }
     break;
 

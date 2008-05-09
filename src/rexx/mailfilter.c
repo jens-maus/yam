@@ -38,6 +38,25 @@
 
 #include "Debug.h"
 
+struct rxd_mailfilter
+{
+  long rc, rc2;
+  struct {
+    char *var, *stem;
+    long all;
+  } arg;
+  struct {
+    long *checked;
+    long *bounced;
+    long *forwarded;
+    long *replied;
+    long *executed;
+    long *moved;
+    long *deleted;
+    long *spam;
+  } res;
+};
+
 void rx_mailfilter(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_mailfilter *rd = *rxd;
@@ -48,7 +67,8 @@ void rx_mailfilter(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_mailfilter *)(*rxd))->rc = offsetof(struct rxd_mailfilter, res) / sizeof(long);
     }
     break;
 

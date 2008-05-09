@@ -37,6 +37,19 @@
 
 #include "Debug.h"
 
+struct rxd_requestfolder
+{
+  long rc, rc2;
+  struct {
+    char *var, *stem;
+    char *body;
+    long excludeactive;
+  } arg;
+  struct {
+    char *folder;
+  } res;
+};
+
 void rx_requestfolder(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_requestfolder *rd = *rxd;
@@ -47,7 +60,8 @@ void rx_requestfolder(UNUSED struct RexxHost *host, void **rxd, enum RexxAction 
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_requestfolder *)(*rxd))->rc = offsetof(struct rxd_requestfolder, res) / sizeof(long);
     }
     break;
 

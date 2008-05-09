@@ -36,6 +36,11 @@
 
 #include "Debug.h"
 
+struct rxd_appnobusy
+{
+  long rc, rc2;
+};
+
 void rx_appnobusy(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_appnobusy *rd = *rxd;
@@ -46,7 +51,8 @@ void rx_appnobusy(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_appnobusy *)(*rxd))->rc = 0;
     }
     break;
 

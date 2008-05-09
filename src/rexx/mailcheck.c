@@ -37,6 +37,22 @@
 
 #include "Debug.h"
 
+struct rxd_mailcheck
+{
+  long rc, rc2;
+  struct {
+    char *var, *stem;
+    long *pop;
+    long manual;
+  } arg;
+  struct {
+    long *downloaded;
+    long *onserver;
+    long *dupskipped;
+    long *deleted;
+  } res;
+};
+
 void rx_mailcheck(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
    struct rxd_mailcheck *rd = *rxd;
@@ -47,7 +63,8 @@ void rx_mailcheck(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_mailcheck *)(*rxd))->rc = offsetof(struct rxd_mailcheck, res) / sizeof(long);
     }
     break;
 

@@ -37,6 +37,15 @@
 
 #include "Debug.h"
 
+struct rxd_mailimport
+{
+  long rc, rc2;
+  struct {
+    char *filename;
+    long wait;
+  } arg;
+};
+
 void rx_mailimport(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_mailimport *rd = *rxd;
@@ -47,7 +56,8 @@ void rx_mailimport(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_mailimport *)(*rxd))->rc = 0;
     }
     break;
 

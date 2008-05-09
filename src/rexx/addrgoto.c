@@ -37,6 +37,14 @@
 
 #include "Debug.h"
 
+struct rxd_addrgoto
+{
+  long rc, rc2;
+  struct {
+    char *alias;
+  } arg;
+};
+
 void rx_addrgoto(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_addrgoto *rd = *rxd;
@@ -47,7 +55,8 @@ void rx_addrgoto(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_addrgoto *)(*rxd))->rc = 0;
     }
     break;
 

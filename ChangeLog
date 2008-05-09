@@ -7,6 +7,10 @@ $URL$
 
 2008-05-09  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Rexx.c, rexx/*.c: reworked the source layout again. Now the parameter
+    structures are strictly local and the required index for a possible result
+    of an indiviual command is returned upon memory allocation. Also removed
+    the possibility to disable certain commands, as this wasn't used at all.
   * rexx/help.c: fixed a slightly wrong output.
 
 2008-05-08  Thore Böckelmann <tboeckel@gmx.de>

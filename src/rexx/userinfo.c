@@ -40,6 +40,22 @@
 
 #include "Debug.h"
 
+struct rxd_userinfo
+{
+  long rc, rc2;
+  struct {
+    char *var, *stem;
+  } arg;
+  struct {
+    char *username;
+    char *email;
+    char *realname;
+    char *config;
+    char *maildir;
+    long *folders;
+  } res;
+};
+
 void rx_userinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct
@@ -54,7 +70,8 @@ void rx_userinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_userinfo *)(*rxd))->rc = offsetof(struct rxd_userinfo, res) / sizeof(long);
     }
     break;
 

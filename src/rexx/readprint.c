@@ -38,6 +38,14 @@
 
 #include "Debug.h"
 
+struct rxd_readprint
+{
+  long rc, rc2;
+  struct {
+    long *part;
+  } arg;
+};
+
 void rx_readprint(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_readprint *rd = *rxd;
@@ -48,7 +56,8 @@ void rx_readprint(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_readprint *)(*rxd))->rc = 0;
     }
     break;
 

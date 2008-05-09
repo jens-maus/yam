@@ -37,6 +37,15 @@
 
 #include "Debug.h"
 
+struct rxd_setflag
+{
+  long rc, rc2;
+  struct {
+    long *vol;
+    long *per;
+  } arg;
+};
+
 void rx_setflag(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_setflag *rd = *rxd;
@@ -47,7 +56,8 @@ void rx_setflag(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_setflag *)(*rxd))->rc = 0;
     }
     break;
 

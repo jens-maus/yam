@@ -37,6 +37,32 @@
 
 #include "Debug.h"
 
+struct rxd_addrinfo
+{
+  long rc, rc2;
+  struct
+  {
+    char *var, *stem;
+    char *alias;
+  } arg;
+  struct
+  {
+    const char *type;
+    char *name;
+    char *email;
+    char *pgp;
+    char *homepage;
+    char *street;
+    char *city;
+    char *country;
+    char *phone;
+    char *comment;
+    long *birthdate;
+    char *image;
+    char **members;
+  } res;
+};
+
 void rx_addrinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct
@@ -51,7 +77,8 @@ void rx_addrinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_addrinfo *)(*rxd))->rc = offsetof(struct rxd_addrinfo, res) / sizeof(long);
     }
     break;
 

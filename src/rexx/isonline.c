@@ -37,6 +37,11 @@
 
 extern struct Library *SocketBase;
 
+struct rxd_isonline
+{
+  long rc, rc2;
+};
+
 void rx_isonline(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_isonline *rd = *rxd;
@@ -47,7 +52,8 @@ void rx_isonline(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_isonline *)(*rxd))->rc = 0;
     }
     break;
 

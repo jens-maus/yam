@@ -39,6 +39,17 @@
 
 #include "Debug.h"
 
+struct rxd_getselected
+{
+  long rc, rc2;
+  struct {
+    char *var, *stem;
+  } arg;
+  struct {
+    int **num;
+  } res;
+};
+
 void rx_getselected(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_getselected *rd = *rxd;
@@ -49,7 +60,8 @@ void rx_getselected(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_getselected *)(*rxd))->rc = offsetof(struct rxd_getselected, res) / sizeof(long);
     }
     break;
 

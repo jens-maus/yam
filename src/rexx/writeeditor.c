@@ -38,6 +38,18 @@
 
 #include "Debug.h"
 
+struct rxd_writeeditor
+{
+  long rc, rc2;
+  struct {
+    char *var, *stem;
+    char *command;
+  } arg;
+  struct {
+    char *result;
+  } res;
+};
+
 void rx_writeeditor(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_writeeditor *rd = *rxd;
@@ -48,7 +60,8 @@ void rx_writeeditor(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_writeeditor *)(*rxd))->rc = offsetof(struct rxd_writeeditor, res) / sizeof(long);
     }
     break;
 

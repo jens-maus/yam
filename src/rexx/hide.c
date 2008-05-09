@@ -36,6 +36,11 @@
 
 #include "Debug.h"
 
+struct rxd_hide
+{
+  long rc, rc2;
+};
+
 void rx_hide(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_hide *rd = *rxd;
@@ -46,7 +51,8 @@ void rx_hide(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, U
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_hide *)(*rxd))->rc = 0;
     }
     break;
 

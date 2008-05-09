@@ -40,13 +40,27 @@
 
 #include "Debug.h"
 
+struct rxd_addrresolve
+{
+  long rc, rc2;
+  struct
+  {
+    char *var, *stem;
+    char *alias;
+  } arg;
+  struct
+  {
+    char *recpt;
+  } res;
+};
+
 void rx_addrresolve(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct
   {
     struct rxd_addrresolve rd;
     char *string;
-  } *rd = (void *)*rxd;
+  } *rd = *rxd;
 
   ENTER();
 
@@ -54,7 +68,8 @@ void rx_addrresolve(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_addrresolve *)(*rxd))->rc = offsetof(struct rxd_addrresolve, res) / sizeof(long);
     }
     break;
 
@@ -66,23 +81,29 @@ void rx_addrresolve(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
                       MUIA_String_Contents,                    rd->rd.arg.alias,
                     End;
 
-      STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoCache);
-      if(res && strcmp(rd->rd.arg.alias, res)) /* did the string change ? */
+      if(str != NULL)
       {
-        if((rd->rd.res.recpt = rd->string = AllocStrBuf(strlen(res)+1)))
-          strlcpy(rd->string, res, strlen(res)+1);
+        STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoCache);
+
+        // did the string change?
+        if(res != NULL && strcmp(rd->rd.arg.alias, res) != 0)
+        {
+          if((rd->rd.res.recpt = rd->string = AllocStrBuf(strlen(res)+1)) != NULL)
+            strlcpy(rd->string, res, strlen(res)+1);
+        }
+        else
+          rd->rd.rc = RETURN_WARN;
+
+        MUI_DisposeObject(str);
       }
       else
-        rd->rd.rc = RETURN_WARN;
-
-      MUI_DisposeObject(str);
+        rd->rd.rc = RETURN_FAIL;
     }
     break;
 
     case RXIF_FREE:
     {
       FreeStrBuf(rd->string);
-
       FreeVecPooled(G->SharedMemPool, rd);
     }
     break;

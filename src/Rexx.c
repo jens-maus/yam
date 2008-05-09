@@ -76,9 +76,6 @@ struct rxs_stemnode
   char *value;
 };
 
-// flags for rxs_command->flags
-#define ARB_CF_ENABLED     (1L << 0)
-
 // flags for host->flags
 #define ARB_HF_CMDSHELL    (1L << 0)
 #define ARB_HF_USRMSGPORT  (1L << 1)
@@ -86,83 +83,81 @@ struct rxs_stemnode
 static void (*ARexxResultHook)(struct RexxHost *, struct RexxMsg *) = NULL;
 
 /// rxs_commandlist[]
-#define RESINDEX(stype) (((long)offsetof(struct stype,res)) / sizeof(long))
-
 struct rxs_command rxs_commandlist[] =
 {
-  { "ADDRDELETE", "ALIAS", NULL, 0, rx_addrdelete, ARB_CF_ENABLED},
-  { "ADDREDIT", "ALIAS,NAME,EMAIL,PGP,HOMEPAGE,STREET,CITY,COUNTRY,PHONE,COMMENT,BIRTHDATE/N,IMAGE,MEMBER/M,ADD/S", NULL, 0, rx_addredit, ARB_CF_ENABLED},
-  { "ADDRFIND", "PATTERN/A,NAMEONLY/S,EMAILONLY/S", "ALIAS/M", RESINDEX(rxd_addrfind), rx_addrfind, ARB_CF_ENABLED},
-  { "ADDRGOTO", "ALIAS/A", NULL, 0, rx_addrgoto, ARB_CF_ENABLED},
-  { "ADDRINFO", "ALIAS/A", "TYPE,NAME,EMAIL,PGP,HOMEPAGE,STREET,CITY,COUNTRY,PHONE,COMMENT,BIRTHDATE/N,IMAGE,MEMBERS/M", RESINDEX(rxd_addrinfo), rx_addrinfo, ARB_CF_ENABLED},
-  { "ADDRLOAD", "FILENAME/A", NULL, 0, rx_addrload, ARB_CF_ENABLED},
-  { "ADDRNEW", "TYPE,ALIAS,NAME,EMAIL", "ALIAS", RESINDEX(rxd_addrnew), rx_addrnew, ARB_CF_ENABLED},
-  { "ADDRRESOLVE", "ALIAS/A", "RECPT", RESINDEX(rxd_addrresolve), rx_addrresolve, ARB_CF_ENABLED},
-  { "ADDRSAVE", "FILENAME", NULL, 0, rx_addrsave, ARB_CF_ENABLED},
-  { "APPBUSY", "TEXT", NULL, 0, rx_appbusy, ARB_CF_ENABLED},
-  { "APPNOBUSY", NULL, NULL, 0, rx_appnobusy, ARB_CF_ENABLED},
-  { "FOLDERINFO", "FOLDER", "NUMBER/N,NAME,PATH,TOTAL/N,NEW/N,UNREAD/N,SIZE/N,TYPE/N", RESINDEX(rxd_folderinfo), rx_folderinfo, ARB_CF_ENABLED},
-  { "GETCONFIGINFO", "ITEM/A", "VALUE", RESINDEX(rxd_getconfiginfo), rx_getconfiginfo, ARB_CF_ENABLED},
-  { "GETFOLDERINFO", "ITEM/A", "VALUE", RESINDEX(rxd_getfolderinfo), rx_getfolderinfo, ARB_CF_ENABLED},
-  { "GETMAILINFO", "ITEM/A", "VALUE", RESINDEX(rxd_getmailinfo), rx_getmailinfo, ARB_CF_ENABLED},
-  { "GETSELECTED", NULL, "NUM/N/M", RESINDEX(rxd_getselected), rx_getselected, ARB_CF_ENABLED},
-  { "GETURL", "URL/A,FILENAME/A", NULL, 0, rx_geturl, ARB_CF_ENABLED},
-  { "HELP", "FILE", NULL, 0, rx_help, ARB_CF_ENABLED},
-  { "HIDE", NULL, NULL, 0, rx_hide, ARB_CF_ENABLED},
-  { "INFO", "ITEM/A", "VALUE", RESINDEX(rxd_info), rx_info, ARB_CF_ENABLED},
-  { "ISONLINE", NULL, NULL, 0, rx_isonline, ARB_CF_ENABLED},
-  { "LISTSELECT", "MODE/A", NULL, 0, rx_listselect, ARB_CF_ENABLED},
-  { "MAILARCHIVE", "FOLDER/A", NULL, 0, rx_mailarchive, ARB_CF_ENABLED},
-  { "MAILBOUNCE", "QUIET/S", "WINDOW/N", RESINDEX(rxd_mailbounce), rx_mailbounce, ARB_CF_ENABLED},
-  { "MAILCHANGESUBJECT", "SUBJECT/A", NULL, 0, rx_mailchangesubject, ARB_CF_ENABLED},
-  { "MAILCHECK", "POP/K/N,MANUAL/S", "DOWNLOADED/N,ONSERVER/N,DUPSKIPPED/N,DELETED/N", RESINDEX(rxd_mailcheck), rx_mailcheck, ARB_CF_ENABLED},
-  { "MAILCOPY", "FOLDER/A", NULL, 0, rx_mailcopy, ARB_CF_ENABLED},
-  { "MAILDELETE", "ATONCE/S,FORCE/S", NULL, 0, rx_maildelete, ARB_CF_ENABLED},
-  { "MAILEDIT", "QUIET/S", "WINDOW/N", RESINDEX(rxd_mailedit), rx_mailedit, ARB_CF_ENABLED},
-  { "MAILEXPORT", "FILENAME/A,ALL/S,APPEND/S", NULL, 0, rx_mailexport, ARB_CF_ENABLED},
-  { "MAILFILTER", "ALL/S", "CHECKED/N,BOUNCED/N,FORWARDED/N,REPLIED/N,EXECUTED/N,MOVED/N,DELETED/N", RESINDEX(rxd_mailfilter), rx_mailfilter, ARB_CF_ENABLED},
-  { "MAILFORWARD", "QUIET/S", "WINDOW/N", RESINDEX(rxd_mailforward), rx_mailforward, ARB_CF_ENABLED},
-  { "MAILIMPORT", "FILENAME/A,WAIT/S", NULL, 0, rx_mailimport, ARB_CF_ENABLED},
-  { "MAILINFO", "INDEX/N", "INDEX/N,STATUS,FROM,TO,REPLYTO,SUBJECT,FILENAME,SIZE/N,DATE,FLAGS,MSGID", RESINDEX(rxd_mailinfo), rx_mailinfo, ARB_CF_ENABLED},
-  { "MAILMOVE", "FOLDER/A", NULL, 0, rx_mailmove, ARB_CF_ENABLED},
-  { "MAILREAD", "WINDOW/N,QUIET/S", "WINDOW/N", RESINDEX(rxd_mailread), rx_mailread, ARB_CF_ENABLED},
-  { "MAILREPLY", "QUIET/S", "WINDOW/N", RESINDEX(rxd_mailreply), rx_mailreply, ARB_CF_ENABLED},
-  { "MAILSEND", "ALL/S", NULL, 0, rx_mailsend, ARB_CF_ENABLED},
-  { "MAILSENDALL", NULL, NULL, 0, rx_mailsendall, ARB_CF_ENABLED},
-  { "MAILSTATUS", "STATUS/A", NULL, 0, rx_mailstatus, ARB_CF_ENABLED},
-  { "MAILUPDATE", NULL, NULL, 0, rx_mailupdate, ARB_CF_ENABLED},
-  { "MAILWRITE", "WINDOW/N,QUIET/S", "WINDOW/N", RESINDEX(rxd_mailwrite), rx_mailwrite, ARB_CF_ENABLED},
-  { "NEWMAILFILE", "FOLDER", "FILENAME", RESINDEX(rxd_newmailfile), rx_newmailfile, ARB_CF_ENABLED},
-  { "QUIT", "FORCE/S", NULL, 0, rx_quit, ARB_CF_ENABLED},
-  { "READCLOSE", NULL, NULL, 0, rx_readclose, ARB_CF_ENABLED},
-  { "READINFO", NULL, "FILENAME/M,FILETYPE/M,FILESIZE/N/M,TEMPFILE/M", RESINDEX(rxd_readinfo), rx_readinfo, ARB_CF_ENABLED},
-  { "READPRINT", "PART/N", NULL, 0, rx_readprint, ARB_CF_ENABLED},
-  { "READSAVE", "PART/N,FILENAME/K,OVERWRITE/S", NULL, 0, rx_readsave, ARB_CF_ENABLED},
-  { "REQUEST", "BODY/A,GADGETS/A", "RESULT/N", RESINDEX(rxd_request), rx_request, ARB_CF_ENABLED},
-  { "REQUESTFOLDER", "BODY/A,EXCLUDEACTIVE/S", "FOLDER", RESINDEX(rxd_requestfolder), rx_requestfolder, ARB_CF_ENABLED},
-  { "REQUESTSTRING", "BODY/A,STRING/K,SECRET/S", "STRING", RESINDEX(rxd_requeststring), rx_requeststring, ARB_CF_ENABLED},
-  { "SCREENTOBACK", NULL, NULL, 0, rx_screentoback, ARB_CF_ENABLED},
-  { "SCREENTOFRONT", NULL, NULL, 0, rx_screentofront, ARB_CF_ENABLED},
-  { "SETFLAG", "VOL/K/N,PER/K/N", NULL, 0, rx_setflag, ARB_CF_ENABLED},
-  { "SETFOLDER", "FOLDER/A", NULL, 0, rx_setfolder, ARB_CF_ENABLED},
-  { "SETMAIL", "NUM/N/A", NULL, 0, rx_setmail, ARB_CF_ENABLED},
-  { "SETMAILFILE", "MAILFILE/A", NULL, 0, rx_setmailfile, ARB_CF_ENABLED},
-  { "SHOW", NULL, NULL, 0, rx_show, ARB_CF_ENABLED},
-  { "USERINFO", NULL, "USERNAME,EMAIL,REALNAME,CONFIG,MAILDIR,FOLDERS/N", RESINDEX(rxd_userinfo), rx_userinfo, ARB_CF_ENABLED},
-  { "WRITEATTACH", "FILE/A,DESC,ENCMODE,CTYPE", NULL, 0, rx_writeattach, ARB_CF_ENABLED},
-  { "WRITEBCC", "ADDRESS/A/M,ADD/S", NULL, 0, rx_writebcc, ARB_CF_ENABLED},
-  { "WRITECC", "ADDRESS/A/M,ADD/S", NULL, 0, rx_writecc, ARB_CF_ENABLED},
-  { "WRITEEDITOR", "COMMAND/A", "RESULT", RESINDEX(rxd_writeeditor), rx_writeeditor, ARB_CF_ENABLED},
-  { "WRITEFROM", "ADDRESS/A", NULL, 0, rx_writefrom, ARB_CF_ENABLED},
-  { "WRITELETTER", "FILE/A,NOSIG/S", NULL, 0, rx_writeletter, ARB_CF_ENABLED},
-  { "WRITEMAILTO", "ADDRESS/A/M", NULL, 0, rx_writemailto, ARB_CF_ENABLED},
-  { "WRITEOPTIONS", "DELETE/S,RECEIPT/S,NOTIF/S,ADDINFO/S,IMPORTANCE/N,SIG/N,SECURITY/N", NULL, 0, rx_writeoptions, ARB_CF_ENABLED},
-  { "WRITEQUEUE", "HOLD/S", NULL, 0, rx_writequeue, ARB_CF_ENABLED},
-  { "WRITEREPLYTO", "ADDRESS/A", NULL, 0, rx_writereplyto, ARB_CF_ENABLED},
-  { "WRITESEND", NULL, NULL, 0, rx_writesend, ARB_CF_ENABLED},
-  { "WRITESUBJECT", "SUBJECT/A", NULL, 0, rx_writesubject, ARB_CF_ENABLED},
-  { "WRITETO", "ADDRESS/A/M,ADD/S", NULL, 0, rx_writeto, ARB_CF_ENABLED},
-  { NULL, NULL, NULL, 0, NULL, 0 },
+  { "ADDRDELETE", "ALIAS", NULL, rx_addrdelete},
+  { "ADDREDIT", "ALIAS,NAME,EMAIL,PGP,HOMEPAGE,STREET,CITY,COUNTRY,PHONE,COMMENT,BIRTHDATE/N,IMAGE,MEMBER/M,ADD/S", NULL, rx_addredit},
+  { "ADDRFIND", "PATTERN/A,NAMEONLY/S,EMAILONLY/S", "ALIAS/M", rx_addrfind},
+  { "ADDRGOTO", "ALIAS/A", NULL, rx_addrgoto},
+  { "ADDRINFO", "ALIAS/A", "TYPE,NAME,EMAIL,PGP,HOMEPAGE,STREET,CITY,COUNTRY,PHONE,COMMENT,BIRTHDATE/N,IMAGE,MEMBERS/M", rx_addrinfo},
+  { "ADDRLOAD", "FILENAME/A", NULL, rx_addrload},
+  { "ADDRNEW", "TYPE,ALIAS,NAME,EMAIL", "ALIAS", rx_addrnew},
+  { "ADDRRESOLVE", "ALIAS/A", "RECPT", rx_addrresolve},
+  { "ADDRSAVE", "FILENAME", NULL, rx_addrsave},
+  { "APPBUSY", "TEXT", NULL, rx_appbusy},
+  { "APPNOBUSY", NULL, NULL, rx_appnobusy},
+  { "FOLDERINFO", "FOLDER", "NUMBER/N,NAME,PATH,TOTAL/N,NEW/N,UNREAD/N,SIZE/N,TYPE/N", rx_folderinfo},
+  { "GETCONFIGINFO", "ITEM/A", "VALUE", rx_getconfiginfo},
+  { "GETFOLDERINFO", "ITEM/A", "VALUE", rx_getfolderinfo},
+  { "GETMAILINFO", "ITEM/A", "VALUE", rx_getmailinfo},
+  { "GETSELECTED", NULL, "NUM/N/M", rx_getselected},
+  { "GETURL", "URL/A,FILENAME/A", NULL, rx_geturl},
+  { "HELP", "FILE", NULL, rx_help},
+  { "HIDE", NULL, NULL, rx_hide},
+  { "INFO", "ITEM/A", "VALUE", rx_info},
+  { "ISONLINE", NULL, NULL, rx_isonline},
+  { "LISTSELECT", "MODE/A", NULL, rx_listselect},
+  { "MAILARCHIVE", "FOLDER/A", NULL, rx_mailarchive},
+  { "MAILBOUNCE", "QUIET/S", "WINDOW/N", rx_mailbounce},
+  { "MAILCHANGESUBJECT", "SUBJECT/A", NULL, rx_mailchangesubject},
+  { "MAILCHECK", "POP/K/N,MANUAL/S", "DOWNLOADED/N,ONSERVER/N,DUPSKIPPED/N,DELETED/N", rx_mailcheck},
+  { "MAILCOPY", "FOLDER/A", NULL, rx_mailcopy},
+  { "MAILDELETE", "ATONCE/S,FORCE/S", NULL, rx_maildelete},
+  { "MAILEDIT", "QUIET/S", "WINDOW/N", rx_mailedit},
+  { "MAILEXPORT", "FILENAME/A,ALL/S,APPEND/S", NULL, rx_mailexport},
+  { "MAILFILTER", "ALL/S", "CHECKED/N,BOUNCED/N,FORWARDED/N,REPLIED/N,EXECUTED/N,MOVED/N,DELETED/N", rx_mailfilter},
+  { "MAILFORWARD", "QUIET/S", "WINDOW/N", rx_mailforward},
+  { "MAILIMPORT", "FILENAME/A,WAIT/S", NULL, rx_mailimport},
+  { "MAILINFO", "INDEX/N", "INDEX/N,STATUS,FROM,TO,REPLYTO,SUBJECT,FILENAME,SIZE/N,DATE,FLAGS,MSGID", rx_mailinfo},
+  { "MAILMOVE", "FOLDER/A", NULL, rx_mailmove},
+  { "MAILREAD", "WINDOW/N,QUIET/S", "WINDOW/N", rx_mailread},
+  { "MAILREPLY", "QUIET/S", "WINDOW/N", rx_mailreply},
+  { "MAILSEND", "ALL/S", NULL, rx_mailsend},
+  { "MAILSENDALL", NULL, NULL, rx_mailsendall},
+  { "MAILSTATUS", "STATUS/A", NULL, rx_mailstatus},
+  { "MAILUPDATE", NULL, NULL, rx_mailupdate},
+  { "MAILWRITE", "WINDOW/N,QUIET/S", "WINDOW/N", rx_mailwrite},
+  { "NEWMAILFILE", "FOLDER", "FILENAME", rx_newmailfile},
+  { "QUIT", "FORCE/S", NULL, rx_quit},
+  { "READCLOSE", NULL, NULL, rx_readclose},
+  { "READINFO", NULL, "FILENAME/M,FILETYPE/M,FILESIZE/N/M,TEMPFILE/M", rx_readinfo},
+  { "READPRINT", "PART/N", NULL, rx_readprint},
+  { "READSAVE", "PART/N,FILENAME/K,OVERWRITE/S", NULL, rx_readsave},
+  { "REQUEST", "BODY/A,GADGETS/A", "RESULT/N", rx_request},
+  { "REQUESTFOLDER", "BODY/A,EXCLUDEACTIVE/S", "FOLDER", rx_requestfolder},
+  { "REQUESTSTRING", "BODY/A,STRING/K,SECRET/S", "STRING", rx_requeststring},
+  { "SCREENTOBACK", NULL, NULL, rx_screentoback},
+  { "SCREENTOFRONT", NULL, NULL, rx_screentofront},
+  { "SETFLAG", "VOL/K/N,PER/K/N", NULL, rx_setflag},
+  { "SETFOLDER", "FOLDER/A", NULL, rx_setfolder},
+  { "SETMAIL", "NUM/N/A", NULL, rx_setmail},
+  { "SETMAILFILE", "MAILFILE/A", NULL, rx_setmailfile},
+  { "SHOW", NULL, NULL, rx_show},
+  { "USERINFO", NULL, "USERNAME,EMAIL,REALNAME,CONFIG,MAILDIR,FOLDERS/N", rx_userinfo},
+  { "WRITEATTACH", "FILE/A,DESC,ENCMODE,CTYPE", NULL, rx_writeattach},
+  { "WRITEBCC", "ADDRESS/A/M,ADD/S", NULL, rx_writebcc},
+  { "WRITECC", "ADDRESS/A/M,ADD/S", NULL, rx_writecc},
+  { "WRITEEDITOR", "COMMAND/A", "RESULT", rx_writeeditor},
+  { "WRITEFROM", "ADDRESS/A", NULL, rx_writefrom},
+  { "WRITELETTER", "FILE/A,NOSIG/S", NULL, rx_writeletter},
+  { "WRITEMAILTO", "ADDRESS/A/M", NULL, rx_writemailto},
+  { "WRITEOPTIONS", "DELETE/S,RECEIPT/S,NOTIF/S,ADDINFO/S,IMPORTANCE/N,SIG/N,SECURITY/N", NULL, rx_writeoptions},
+  { "WRITEQUEUE", "HOLD/S", NULL, rx_writequeue},
+  { "WRITEREPLYTO", "ADDRESS/A", NULL, rx_writereplyto},
+  { "WRITESEND", NULL, NULL, rx_writesend},
+  { "WRITESUBJECT", "SUBJECT/A", NULL, rx_writesubject},
+  { "WRITETO", "ADDRESS/A/M,ADD/S", NULL, rx_writeto},
+  { NULL, NULL, NULL, NULL},
 };
 
 ///
@@ -257,7 +252,7 @@ static struct RexxMsg *CreateRexxCommand(struct RexxHost *host, char *buff, BPTR
 
 ///
 /// CommandToRexx
-static struct RexxMsg *CommandToRexx( struct RexxHost *host, struct RexxMsg *rexx_command_message )
+static struct RexxMsg *CommandToRexx(struct RexxHost *host, struct RexxMsg *rexx_command_message)
 {
   struct MsgPort *rexxport;
   struct RexxMsg *result = NULL;
@@ -298,7 +293,7 @@ struct RexxMsg *SendRexxCommand(struct RexxHost *host, char *buff, BPTR fh)
     rcm = CreateRexxCommand(host, buff, fh, 0);
 
   if(rcm != NULL)
-    result =  CommandToRexx(host, rcm);
+    result = CommandToRexx(host, rcm);
 
   RETURN(result);
   return result;
@@ -700,6 +695,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    LONG *argarray;
    LONG *resarray;
 
+   ULONG carglen;
    char *cargstr = NULL;
    long rc=20, rc2;
    char *result = NULL;
@@ -718,20 +714,20 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
 
    SHOWSTRING(DBF_REXX, arg);
 
-   if(!(rxc = ParseRXCommand( &arg )))
+   if((rxc = ParseRXCommand(&arg)) == NULL)
    {
-      // send messahe to ARexx, perhaps a script exists
+      // send message to ARexx, perhaps a script exists
       struct RexxMsg *rm;
 
-      if((rm = CreateRexxCommand(host, (char *) ARG0(rexxmsg), 0, 0)))
+      if((rm = CreateRexxCommand(host, (char *)ARG0(rexxmsg), 0, 0)) != NULL)
       {
-         /* Original-Msg merken */
-         rm->rm_Args[15] = (STRPTR) rexxmsg;
+         // remember original message
+         rm->rm_Args[15] = (STRPTR)rexxmsg;
 
-         if( CommandToRexx(host, rm) )
+         if(CommandToRexx(host, rm) != NULL)
          {
             // the reply is done later by the dispatcher
-            if(argb)
+            if(argb != NULL)
             {
               FreeVecPooled(G->SharedMemPool, argb);
             }
@@ -748,42 +744,39 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       goto drc_cleanup;
    }
 
-   if(isFlagClear(rxc->flags, ARB_CF_ENABLED))
-   {
-      rc = -10;
-      rc2 = (long)"Command disabled";
-      goto drc_cleanup;
-   }
-
-   // get memory for the arguments
+   // get memory for the arguments and the offset of a possible result array
    (rxc->function)(host, (void **)(APTR)&array, RXIF_INIT, rexxmsg);
 
-   cargstr = AllocVecPooled(G->SharedMemPool, (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
+   carglen = (rxc->args != NULL) ? 15 + strlen(rxc->args) : 15;
+   cargstr = AllocVecPooled(G->SharedMemPool, carglen);
 
-   if(!array || !cargstr)
+   if(array == NULL || cargstr == NULL)
    {
       rc2 = ERROR_NO_FREE_STORE;
       goto drc_cleanup;
    }
 
    argarray = array + 2;
-   resarray = array + rxc->resindex;
+   // the offset of the result array is returned in the first long
+   resarray = array + array[0];
+   // reset the value, as this will be used as primary error code
+   array[0] = 0;
 
    // parse the arguments
-   if( rxc->results )
-      strlcpy(cargstr, "VAR/K,STEM/K", (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
+   if(rxc->results != NULL)
+      strlcpy(cargstr, "VAR/K,STEM/K", carglen);
    else
-      *cargstr = '\0';
+      cargstr[0] = '\0';
 
-   if( rxc->args )
+   if(rxc->args != NULL)
    {
-      if(*cargstr)
-         strlcat(cargstr, ",", (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
+      if(cargstr[0] != '\0')
+         strlcat(cargstr, ",", carglen);
 
-      strlcat(cargstr, rxc->args, (ULONG)(rxc->args ? 15+strlen(rxc->args) : 15));
+      strlcat(cargstr, rxc->args, carglen);
    }
 
-   if( *cargstr )
+   if(cargstr[0] != '\0')
    {
       host->rdargs->RDA_Source.CS_Buffer = arg;
       host->rdargs->RDA_Source.CS_Length = strlen(arg);
@@ -803,26 +796,25 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    }
 
    // call the function
-   (rxc->function)( host, (void **)(APTR)&array, RXIF_ACTION, rexxmsg );
+   (rxc->function)(host, (void **)(APTR)&array, RXIF_ACTION, rexxmsg);
 
    rc = array[0];
    rc2 = array[1];
 
    // evaluate the results
-   if( rxc->results && rc==0 &&
-      (rexxmsg->rm_Action & RXFF_RESULT) )
+   if(rxc->results != NULL && rc == 0 && isFlagSet(rexxmsg->rm_Action, RXFF_RESULT))
    {
       struct rxs_stemnode *stem, *s;
 
-      stem = CreateSTEM( rxc, resarray, (char *)argarray[1] );
-      result = CreateVAR( stem );
+      stem = CreateSTEM(rxc, resarray, (char *)argarray[1]);
+      result = CreateVAR(stem);
 
-      if( result )
+      if(result != NULL)
       {
-         if( argarray[0] )
+         if(argarray[0])
          {
             // VAR
-            if( (long) result == -1 )
+            if((long)result == -1)
             {
                rc = 20;
                rc2 = ERROR_NO_FREE_STORE;
@@ -831,10 +823,10 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
             {
                char *rb;
 
-               for( rb = (char *) argarray[0]; *rb; ++rb )
-                  *rb = toupper( *rb );
+               for(rb = (char *)argarray[0]; *rb; ++rb)
+                  *rb = toupper(*rb);
 
-               if( SetRexxVar( REXXMSG(rexxmsg),
+               if(SetRexxVar( REXXMSG(rexxmsg),
                   (STRPTR)(*((char *)argarray[0]) ? (char *)argarray[0] : "RESULT"),
                   result, (LONG)strlen(result) ) )
                {
@@ -914,7 +906,7 @@ drc_cleanup:
 
 ///
 /// ARexxDispatch
-void ARexxDispatch( struct RexxHost *host )
+void ARexxDispatch(struct RexxHost *host)
 {
   struct RexxMsg *rexxmsg;
 
@@ -932,7 +924,7 @@ void ARexxDispatch( struct RexxHost *host )
       struct RexxMsg *org;
 
       if((org = (struct RexxMsg *)rexxmsg->rm_Args[15]) != NULL)
-       {
+      {
          // Reply to a forwarded Msg
          if(rexxmsg->rm_Result1 != 0)
          {
@@ -948,7 +940,7 @@ void ARexxDispatch( struct RexxHost *host )
        {
          // reply to a SendRexxCommand()-Call
          if(ARexxResultHook != NULL)
-            ARexxResultHook(host, rexxmsg);
+           ARexxResultHook(host, rexxmsg);
        }
 
        FreeRexxCommand(rexxmsg);

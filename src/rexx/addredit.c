@@ -40,6 +40,27 @@
 
 #include "Debug.h"
 
+struct rxd_addredit
+{
+  long rc, rc2;
+  struct {
+    char *alias;
+    char *name;
+    char *email;
+    char *pgp;
+    char *homepage;
+    char *street;
+    char *city;
+    char *country;
+    char *phone;
+    char *comment;
+    long *birthdate;
+    char *image;
+    char **member;
+    long add;
+  } arg;
+};
+
 void rx_addredit(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_addredit *rd = *rxd;
@@ -50,7 +71,8 @@ void rx_addredit(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_addredit *)(*rxd))->rc = 0;
     }
     break;
 

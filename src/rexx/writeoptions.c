@@ -37,6 +37,20 @@
 
 #include "Debug.h"
 
+struct rxd_writeoptions
+{
+  long rc, rc2;
+  struct {
+    long delete;
+    long receipt;
+    long notif;
+    long addinfo;
+    long *importance;
+    long *sig;
+    long *security;
+  } arg;
+};
+
 void rx_writeoptions(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct rxd_writeoptions *rd = *rxd;
@@ -47,7 +61,8 @@ void rx_writeoptions(UNUSED struct RexxHost *host, void **rxd, enum RexxAction a
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_writeoptions *)(*rxd))->rc = 0;
     }
     break;
 

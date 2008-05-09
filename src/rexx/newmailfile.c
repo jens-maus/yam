@@ -37,6 +37,18 @@
 
 #include "Debug.h"
 
+struct rxd_newmailfile
+{
+  long rc, rc2;
+  struct {
+    char *var, *stem;
+    char *folder;
+  } arg;
+  struct {
+    char *filename;
+  } res;
+};
+
 void rx_newmailfile(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct
@@ -51,7 +63,8 @@ void rx_newmailfile(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
   {
     case RXIF_INIT:
     {
-      *rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd));
+      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
+        ((struct rxd_newmailfile *)(*rxd))->rc = offsetof(struct rxd_newmailfile, res) / sizeof(long);
     }
     break;
 
