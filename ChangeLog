@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-10  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Rexx.c: one of the latest changes made YAM set ARexx variables even if there
+    was no result to be set. This caused OS4 to crash badly, while it went
+    unnoticed on OS3.
+
 2008-05-09  Thore Böckelmann <tboeckel@gmx.de>
 
   * Rexx.c, rexx/*.c: reworked the source layout again. Now the parameter

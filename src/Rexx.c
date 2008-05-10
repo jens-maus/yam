@@ -175,22 +175,25 @@ void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary,
          ? (long)CreateArgstring(result, (ULONG)strlen(result))
          : (long)NULL;
     }
-    else if(primary > 0)
-    {
-      char buf[16];
-
-      snprintf(buf, sizeof(buf), "%ld", secondary);
-      result = buf;
-    }
     else
     {
-       primary = -primary;
-       result = (char *) secondary;
+      if(primary > 0)
+      {
+        char buf[16];
+
+        snprintf(buf, sizeof(buf), "%ld", secondary);
+        result = buf;
+      }
+      else
+      {
+         primary = -primary;
+         result = (char *) secondary;
+      }
+
+      SetRexxVar(REXXMSG(rexxmessage), (STRPTR)"RC2", result, (LONG)strlen(result));
+
+      secondary = 0;
     }
-
-    SetRexxVar( REXXMSG(rexxmessage), (STRPTR)"RC2", result, (LONG)strlen(result) );
-
-    secondary = 0;
   }
   else if(primary < 0)
     primary = -primary;
@@ -702,7 +705,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
 
    ENTER();
 
-   if((argb = AllocVecPooled(G->SharedMemPool, (ULONG)strlen((char *) ARG0(rexxmsg)) + 2)) == NULL)
+   if((argb = AllocVecPooled(G->SharedMemPool, (ULONG)strlen((char *)ARG0(rexxmsg)) + 2)) == NULL)
    {
      rc2 = ERROR_NO_FREE_STORE;
      goto drc_cleanup;
@@ -744,6 +747,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       goto drc_cleanup;
    }
 
+   D(DBF_REXX, "RXIF_INIT '%s'", rxc->command);
    // get memory for the arguments and the offset of a possible result array
    (rxc->function)(host, (void **)(APTR)&array, RXIF_INIT, rexxmsg);
 
@@ -796,6 +800,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    }
 
    // call the function
+   D(DBF_REXX, "RXIF_ACTION '%s'", rxc->command);
    (rxc->function)(host, (void **)(APTR)&array, RXIF_ACTION, rexxmsg);
 
    rc = array[0];
@@ -811,7 +816,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
 
       if(result != NULL)
       {
-         if(argarray[0])
+         if(argarray[0] != 0)
          {
             // VAR
             if((long)result == -1)
@@ -826,9 +831,9 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
                for(rb = (char *)argarray[0]; *rb; ++rb)
                   *rb = toupper(*rb);
 
-               if(SetRexxVar( REXXMSG(rexxmsg),
+               if(SetRexxVar(REXXMSG(rexxmsg),
                   (STRPTR)(*((char *)argarray[0]) ? (char *)argarray[0] : "RESULT"),
-                  result, (LONG)strlen(result) ) )
+                  result, (LONG)strlen(result)))
                {
                   rc = -10;
                   rc2 = (long) "Unable to set Rexx variable";
@@ -840,26 +845,26 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
             result = NULL;
          }
 
-         if( !rc && argarray[1] )
+         if(rc == 0 && argarray[1] != 0)
          {
             // STEM
-            if( (long) stem == -1 )
+            if((long)stem == -1)
             {
                rc = 20;
                rc2 = ERROR_NO_FREE_STORE;
             }
             else
             {
-               for( s = stem; s; s = s->succ )
-                  rc |= SetRexxVar( REXXMSG(rexxmsg), s->name, s->value, (LONG)strlen(s->value) );
+               for(s = stem; s; s = s->succ)
+                  rc |= SetRexxVar(REXXMSG(rexxmsg), s->name, s->value, (LONG)strlen(s->value));
 
-               if( rc )
+               if(rc != 0)
                {
                   rc = -10;
                   rc2 = (long) "Unable to set Rexx variable";
                }
 
-               if(result && (long)result != -1)
+               if(result != 0&& (long)result != -1)
                {
                  FreeVecPooled(G->SharedMemPool, result);
                }
@@ -869,7 +874,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
          }
 
          // is a normal result possible?
-         if( (long) result == -1 )
+         if((long) result == -1)
          {
             // no!
             rc = 20;
@@ -878,7 +883,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
          }
       }
 
-      free_stemlist( stem );
+      free_stemlist(stem);
    }
 
 drc_cleanup:
@@ -896,7 +901,10 @@ drc_cleanup:
      FreeVecPooled(G->SharedMemPool, cargstr);
 
    if(array != NULL)
+   {
+     D(DBF_REXX, "RXIF_FREE '%s'", rxc->command);
      (rxc->function)(host, (void **)(APTR)&array, RXIF_FREE, rexxmsg);
+   }
 
    if(argb != NULL)
      FreeVecPooled(G->SharedMemPool, argb);
@@ -959,3 +967,4 @@ void ARexxDispatch(struct RexxHost *host)
   LEAVE();
 }
 ///
+
