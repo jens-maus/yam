@@ -69,9 +69,9 @@
 #define SetRexxVar(msg, var, val, len)  SetRexxVarFromMsg((var), (val), (msg))
 #endif
 
-struct rxs_stemnode
+struct StemNode
 {
-  struct rxs_stemnode *succ;
+  struct MinNode node;
   char *name;
   char *value;
 };
@@ -186,8 +186,8 @@ void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary,
       }
       else
       {
-         primary = -primary;
-         result = (char *) secondary;
+        primary = -primary;
+        result = (char *) secondary;
       }
 
       SetRexxVar(REXXMSG(rexxmessage), (STRPTR)"RC2", result, (LONG)strlen(result));
@@ -471,39 +471,37 @@ static struct rxs_command *ParseRXCommand(char **arg)
 
 ///
 /// CreateVAR
-static char *CreateVAR(struct rxs_stemnode *stem)
+static char *CreateVAR(struct MinList *stemList)
 {
-  char *var;
-  struct rxs_stemnode *s;
-  long size = 0;
+  char *var = NULL;
 
   ENTER();
 
-  if(stem == NULL || stem == (struct rxs_stemnode *)-1L)
+  if(IsListEmpty((struct List *)stemList) == FALSE)
   {
-    RETURN((char *)stem);
-    return (char *)stem;
-  }
+    long size = 0;
+    struct StemNode *stemNode;
 
-  for(s = stem; s; s = s->succ)
-    size += strlen(s->value) + 1;
+    // count the length of all variable names
+    for(stemNode = (struct StemNode *)stemList->mlh_Head; stemNode->node.mln_Succ != NULL; stemNode = (struct StemNode *)stemNode->node.mln_Succ)
+      size += strlen(stemNode->value) + 1;
 
-  // one byte more for the trailing NUL byte
-  size++;
+    // one byte more for the trailing NUL byte
+    size++;
 
-  if((var = AllocVecPooled(G->SharedMemPool, size)) == NULL)
-  {
-    RETURN((char *)-1);
-    return (char *)-1;
-  }
+    if((var = AllocVecPooled(G->SharedMemPool, size)) != NULL)
+    {
+      var[0] = '\0';
 
-  *var = '\0';
+      for(stemNode = (struct StemNode *)stemList->mlh_Head; stemNode->node.mln_Succ != NULL; stemNode = (struct StemNode *)stemNode->node.mln_Succ)
+      {
+        // append an additional space except for the first variable
+        if(var[0] != '\0')
+           strlcat(var, " ", size);
 
-  for(s = stem; s; s = s->succ)
-  {
-    strlcat(var, s->value, size);
-    if(s->succ != NULL)
-       strlcat(var, " ", size);
+        strlcat(var, stemNode->value, size);
+      }
+    }
   }
 
   RETURN(var);
@@ -511,53 +509,22 @@ static char *CreateVAR(struct rxs_stemnode *stem)
 }
 
 ///
-/// new_stemnode
-static struct rxs_stemnode *new_stemnode(struct rxs_stemnode **first, struct rxs_stemnode **oldNode)
+/// FreeStemList
+static void FreeStemList(struct MinList *list)
 {
-  struct rxs_stemnode *newNode;
+  struct StemNode *node;
 
   ENTER();
 
-  if((newNode = AllocVecPooled(G->SharedMemPool, sizeof(struct rxs_stemnode))) != NULL)
+  while((node = (struct StemNode *)RemHead((struct List *)list)) != NULL)
   {
-    if(*oldNode != NULL)
-    {
-      (*oldNode)->succ = newNode;
-      *oldNode = newNode;
-    }
-    else
-    {
-      *first = newNode;
-      *oldNode = newNode;
-    }
-  }
+    if(node->name != NULL)
+      free(node->name);
 
-  RETURN(newNode);
-  return newNode;
-}
+    if(node->value != NULL)
+      free(node->value);
 
-///
-/// free_stemlist
-static void free_stemlist(struct rxs_stemnode *first )
-{
-  ENTER();
-
-  if((long)first != -1)
-  {
-    struct rxs_stemnode *next;
-
-    for( ; first != NULL; first = next)
-    {
-      next = first->succ;
-
-      if(first->name != NULL)
-        free(first->name);
-
-      if(first->value != NULL)
-        free(first->value);
-
-      FreeVecPooled(G->SharedMemPool, first);
-    }
+    free(node);
   }
 
   LEAVE();
@@ -565,351 +532,349 @@ static void free_stemlist(struct rxs_stemnode *first )
 
 ///
 /// CreateSTEM
-static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray, char *stembase )
+static BOOL CreateSTEM(struct MinList *stemList, struct rxs_command *rxc, LONG *resarray, char *stembase)
 {
-   struct rxs_stemnode *first = NULL, *old = NULL, *new;
-   char resb[512];
-   char *rb;
-   char longbuff[16];
-   const char *rs;
+  char resb[512];
+  char *rb;
+  char longbuff[16];
+  const char *rs;
+  BOOL success = TRUE;
 
-   rb = resb;
-   if( stembase )
-   {
-      while( *stembase )
+  ENTER();
+
+  NewList((struct List *)stemList);
+
+  // create an upper case copy of the STEM name
+  rb = resb;
+  if(stembase != NULL)
+  {
+    while(*stembase != '\0')
+    {
+      *rb++ = toupper(*stembase);
+      stembase++;
+    }
+  }
+  *rb = '\0';
+
+  rb = resb + strlen(resb);
+  rs = rxc->results;
+
+  while(*rs != '\0' && success == TRUE)
+  {
+    char *t = rb;
+    BOOL isNumber = FALSE;
+    BOOL isMulti = FALSE;
+
+    // parse the variable names and check for numbers and multiple arguments
+    while(*rs != '\0' && *rs != ',')
+    {
+      if(*rs == '/' )
       {
-         *rb++ = toupper(*stembase);
-         stembase++;
+         rs++;
+         if(*rs == 'N' )
+           isNumber = TRUE;
+         else if(*rs == 'M')
+           isMulti = TRUE;
       }
-   }
-   *rb = '\0';
+      else
+        *t++ = *rs;
 
-   rb = resb + strlen(resb);
-   rs = rxc->results;
+      rs++;
+    }
 
-   while( *rs )
-   {
-      char *t = rb;
-      BOOL optn = FALSE, optm = FALSE;
+    if(*rs == ',' )
+      rs++;
 
-      while( *rs && *rs != ',' )
+    *t = '\0';
+
+    // create the results
+    if(*resarray == 0)
+    {
+       resarray++;
+       continue;
+    }
+
+    if(isMulti == TRUE)
+    {
+      struct StemNode *countNode;
+
+      // number of elements
+      if((countNode = malloc(sizeof(*countNode))) != NULL)
       {
-         if( *rs == '/' )
-         {
-            ++rs;
-            if( *rs == 'N' ) optn = TRUE;
-            else if( *rs == 'M' ) optm = TRUE;
-         }
-         else
-            *t++ = *rs;
+        long *r;
+        long index = 0;
+        LONG **subarray = (LONG **)*resarray++;
 
-         ++rs;
-      }
+        AddTail((struct List *)stemList, (struct Node *)countNode);
 
-      if( *rs == ',' ) ++rs;
-      *t = '\0';
+        // the elements
+        while((r = *subarray++) != NULL && success == TRUE)
+        {
+          struct StemNode *stemNode;
 
-      // create the results
-      if( !*resarray )
-      {
-         ++resarray;
-         continue;
-      }
-
-      if( optm )
-      {
-         long *r, index = 0;
-         LONG **subarray = (LONG **) *resarray++;
-         struct rxs_stemnode *countnd;
-
-         // number of elements
-         if( !(new = new_stemnode(&first, &old)) )
-         {
-            free_stemlist( first );
-            return( (struct rxs_stemnode *) -1L );
-         }
-         countnd = new;
-
-         // the elements
-         while((r = *subarray++))
-         {
-            if( !(new = new_stemnode(&first, &old)) )
-            {
-               free_stemlist( first );
-               return( (struct rxs_stemnode *) -1L );
-            }
-
+          if((stemNode = malloc(sizeof(*stemNode))) != NULL)
+          {
             snprintf(t, sizeof(resb)-(t-resb), ".%ld", index++);
-            new->name = strdup(resb);
+            stemNode->name = strdup(resb);
 
-            if( optn )
+            if(isNumber == TRUE)
             {
-               snprintf(longbuff, sizeof(longbuff), "%ld", *r);
-               new->value = strdup(longbuff);
+              snprintf(longbuff, sizeof(longbuff), "%ld", *r);
+              stemNode->value = strdup(longbuff);
             }
             else
             {
-               new->value = strdup((char *)r);
+              stemNode->value = strdup((char *)r);
             }
-         }
 
-         // the count node
-         strlcpy(t, ".COUNT", sizeof(resb)-(t-resb));
-         countnd->name = strdup(resb);
+            AddTail((struct List *)stemList, (struct Node *)stemNode);
+          }
+          else
+            success = FALSE;
+        }
 
-         snprintf(longbuff, sizeof(longbuff), "%ld", index);
-         countnd->value = strdup(longbuff);
+        // the count node
+        strlcpy(t, ".COUNT", sizeof(resb)-(t-resb));
+        countNode->name = strdup(resb);
+
+        snprintf(longbuff, sizeof(longbuff), "%ld", index);
+        countNode->value = strdup(longbuff);
+      }
+    }
+    else
+    {
+      struct StemNode *stemNode;
+
+      // create a new node
+      if((stemNode = malloc(sizeof(*stemNode))) != NULL)
+      {
+        AddTail((struct List *)stemList, (struct Node *)stemNode);
+
+        stemNode->name = strdup(resb);
+
+        if(isNumber == TRUE)
+        {
+          snprintf(longbuff, sizeof(longbuff), "%ld", *((long *)*resarray));
+          stemNode->value = strdup(longbuff);
+        }
+        else
+        {
+          stemNode->value = strdup((char *)*resarray);
+        }
+
+        resarray++;
       }
       else
-      {
-         // create a new node
-         if( !(new = new_stemnode(&first, &old)) )
-         {
-            free_stemlist( first );
-            return( (struct rxs_stemnode *) -1L );
-         }
+        success = FALSE;
+    }
+  }
 
-         new->name = strdup(resb);
-
-         if( optn )
-         {
-            snprintf(longbuff, sizeof(longbuff), "%ld", *((long *)*resarray));
-            new->value = strdup(longbuff);
-            ++resarray;
-         }
-         else
-         {
-            new->value = strdup((char *)(*resarray++));
-         }
-      }
-   }
-
-   return( first );
+  RETURN(success);
+  return success;
 }
 
 ///
 /// DoRXCommand
-void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
+void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg)
 {
-   struct rxs_command *rxc = 0;
-   char *argb, *arg;
+  struct rxs_command *rxc = 0;
+  char *argb, *arg;
 
-   LONG *array = NULL;
-   LONG *argarray;
-   LONG *resarray;
+  LONG *array = NULL;
+  LONG *argarray;
+  LONG *resarray;
 
-   ULONG carglen;
-   char *cargstr = NULL;
-   long rc=20, rc2;
-   char *result = NULL;
+  ULONG carglen;
+  char *cargstr = NULL;
+  long rc=20, rc2;
+  char *result = NULL;
 
-   ENTER();
+  ENTER();
 
-   if((argb = AllocVecPooled(G->SharedMemPool, (ULONG)strlen((char *)ARG0(rexxmsg)) + 2)) == NULL)
-   {
-     rc2 = ERROR_NO_FREE_STORE;
-     goto drc_cleanup;
-   }
+  if((argb = AllocVecPooled(G->SharedMemPool, (ULONG)strlen((char *)ARG0(rexxmsg)) + 2)) == NULL)
+  {
+    rc2 = ERROR_NO_FREE_STORE;
+    goto drc_cleanup;
+  }
 
-   // which command
-   snprintf(argb, strlen((char *)ARG0(rexxmsg))+2, "%s\n", ARG0(rexxmsg));
-   arg = argb;
+  // which command
+  snprintf(argb, strlen((char *)ARG0(rexxmsg))+2, "%s\n", ARG0(rexxmsg));
+  arg = argb;
 
-   SHOWSTRING(DBF_REXX, arg);
+  SHOWSTRING(DBF_REXX, arg);
 
-   if((rxc = ParseRXCommand(&arg)) == NULL)
-   {
-      // send message to ARexx, perhaps a script exists
-      struct RexxMsg *rm;
+  if((rxc = ParseRXCommand(&arg)) == NULL)
+  {
+    // send message to ARexx, perhaps a script exists
+    struct RexxMsg *rm;
 
-      if((rm = CreateRexxCommand(host, (char *)ARG0(rexxmsg), 0, 0)) != NULL)
+    if((rm = CreateRexxCommand(host, (char *)ARG0(rexxmsg), 0, 0)) != NULL)
+    {
+      // remember original message
+      rm->rm_Args[15] = (STRPTR)rexxmsg;
+
+      if(CommandToRexx(host, rm) != NULL)
       {
-         // remember original message
-         rm->rm_Args[15] = (STRPTR)rexxmsg;
+        // the reply is done later by the dispatcher
+        if(argb != NULL)
+          FreeVecPooled(G->SharedMemPool, argb);
 
-         if(CommandToRexx(host, rm) != NULL)
-         {
-            // the reply is done later by the dispatcher
-            if(argb != NULL)
-            {
-              FreeVecPooled(G->SharedMemPool, argb);
-            }
-
-            LEAVE();
-            return;
-         }
-         else
-            rc2 = ERROR_NOT_IMPLEMENTED;
+        LEAVE();
+        return;
       }
       else
-         rc2 = ERROR_NO_FREE_STORE;
-
-      goto drc_cleanup;
-   }
-
-   D(DBF_REXX, "RXIF_INIT '%s'", rxc->command);
-   // get memory for the arguments and the offset of a possible result array
-   (rxc->function)(host, (void **)(APTR)&array, RXIF_INIT, rexxmsg);
-
-   carglen = (rxc->args != NULL) ? 15 + strlen(rxc->args) : 15;
-   cargstr = AllocVecPooled(G->SharedMemPool, carglen);
-
-   if(array == NULL || cargstr == NULL)
-   {
+        rc2 = ERROR_NOT_IMPLEMENTED;
+    }
+    else
       rc2 = ERROR_NO_FREE_STORE;
+
+    goto drc_cleanup;
+  }
+
+  D(DBF_REXX, "RXIF_INIT '%s'", rxc->command);
+  // get memory for the arguments and the offset of a possible result array
+  (rxc->function)(host, (void **)(APTR)&array, RXIF_INIT, rexxmsg);
+
+  carglen = (rxc->args != NULL) ? 15 + strlen(rxc->args) : 15;
+  cargstr = AllocVecPooled(G->SharedMemPool, carglen);
+
+  if(array == NULL || cargstr == NULL)
+  {
+    rc2 = ERROR_NO_FREE_STORE;
+    goto drc_cleanup;
+  }
+
+  argarray = array + 2;
+  // the offset of the result array is returned in the first long
+  resarray = array + array[0];
+  // reset the value, as this will be used as primary error code
+  array[0] = 0;
+
+  // parse the arguments
+  if(rxc->results != NULL)
+    strlcpy(cargstr, "VAR/K,STEM/K", carglen);
+  else
+    cargstr[0] = '\0';
+
+  if(rxc->args != NULL)
+  {
+    if(cargstr[0] != '\0')
+      strlcat(cargstr, ",", carglen);
+
+    strlcat(cargstr, rxc->args, carglen);
+  }
+
+  if(cargstr[0] != '\0')
+  {
+    host->rdargs->RDA_Source.CS_Buffer = arg;
+    host->rdargs->RDA_Source.CS_Length = strlen(arg);
+    host->rdargs->RDA_Source.CS_CurChr = 0;
+    host->rdargs->RDA_DAList = 0;
+    host->rdargs->RDA_Buffer = NULL;
+    host->rdargs->RDA_BufSiz = 0;
+    host->rdargs->RDA_ExtHelp = NULL;
+    host->rdargs->RDA_Flags = RDAF_NOPROMPT;
+
+    if(ReadArgs(cargstr, argarray, host->rdargs) == NULL)
+    {
+      rc = 10;
+      rc2 = IoErr();
       goto drc_cleanup;
-   }
+    }
+  }
 
-   argarray = array + 2;
-   // the offset of the result array is returned in the first long
-   resarray = array + array[0];
-   // reset the value, as this will be used as primary error code
-   array[0] = 0;
+  // call the function
+  D(DBF_REXX, "RXIF_ACTION '%s'", rxc->command);
+  (rxc->function)(host, (void **)(APTR)&array, RXIF_ACTION, rexxmsg);
 
-   // parse the arguments
-   if(rxc->results != NULL)
-      strlcpy(cargstr, "VAR/K,STEM/K", carglen);
-   else
-      cargstr[0] = '\0';
+  rc = array[0];
+  rc2 = array[1];
 
-   if(rxc->args != NULL)
-   {
-      if(cargstr[0] != '\0')
-         strlcat(cargstr, ",", carglen);
+  // evaluate the results
+  if(rxc->results != NULL && rc == 0 && isFlagSet(rexxmsg->rm_Action, RXFF_RESULT))
+  {
+    struct MinList stemList;
 
-      strlcat(cargstr, rxc->args, carglen);
-   }
-
-   if(cargstr[0] != '\0')
-   {
-      host->rdargs->RDA_Source.CS_Buffer = arg;
-      host->rdargs->RDA_Source.CS_Length = strlen(arg);
-      host->rdargs->RDA_Source.CS_CurChr = 0;
-      host->rdargs->RDA_DAList = 0;
-      host->rdargs->RDA_Buffer = NULL;
-      host->rdargs->RDA_BufSiz = 0;
-      host->rdargs->RDA_ExtHelp = NULL;
-      host->rdargs->RDA_Flags = RDAF_NOPROMPT;
-
-      if(ReadArgs(cargstr, argarray, host->rdargs) == NULL)
+    if(CreateSTEM(&stemList, rxc, resarray, (char *)argarray[1]) == TRUE)
+    {
+      if((result = CreateVAR(&stemList)) != NULL)
       {
-         rc = 10;
-         rc2 = IoErr();
-         goto drc_cleanup;
+        if(argarray[0] != 0)
+        {
+          // VAR
+          char *rb;
+
+          // convert to upper case
+          for(rb = (char *)argarray[0]; *rb; ++rb)
+             *rb = toupper(*rb);
+
+          if(SetRexxVar(REXXMSG(rexxmsg), (STRPTR)(*((char *)argarray[0]) ? (char *)argarray[0] : "RESULT"), result, strlen(result)) != 0)
+          {
+            rc = -10;
+            rc2 = (long)"Unable to set Rexx variable";
+          }
+
+          FreeVecPooled(G->SharedMemPool, result);
+          result = NULL;
+        }
+
+        if(rc == 0 && argarray[1] != 0)
+        {
+          // STEM
+          struct StemNode *stemNode;
+
+          for(stemNode = (struct StemNode *)stemList.mlh_Head; stemNode->node.mln_Succ != NULL; stemNode = (struct StemNode *)stemNode->node.mln_Succ)
+            rc |= SetRexxVar(REXXMSG(rexxmsg), stemNode->name, stemNode->value, strlen(stemNode->value));
+
+          if(rc != 0)
+          {
+            rc = -10;
+            rc2 = (long)"Unable to set Rexx variable";
+          }
+
+          FreeVecPooled(G->SharedMemPool, result);
+          result = NULL;
+        }
       }
-   }
-
-   // call the function
-   D(DBF_REXX, "RXIF_ACTION '%s'", rxc->command);
-   (rxc->function)(host, (void **)(APTR)&array, RXIF_ACTION, rexxmsg);
-
-   rc = array[0];
-   rc2 = array[1];
-
-   // evaluate the results
-   if(rxc->results != NULL && rc == 0 && isFlagSet(rexxmsg->rm_Action, RXFF_RESULT))
-   {
-      struct rxs_stemnode *stem, *s;
-
-      stem = CreateSTEM(rxc, resarray, (char *)argarray[1]);
-      result = CreateVAR(stem);
-
-      if(result != NULL)
+      else
       {
-         if(argarray[0] != 0)
-         {
-            // VAR
-            if((long)result == -1)
-            {
-               rc = 20;
-               rc2 = ERROR_NO_FREE_STORE;
-            }
-            else
-            {
-               char *rb;
-
-               for(rb = (char *)argarray[0]; *rb; ++rb)
-                  *rb = toupper(*rb);
-
-               if(SetRexxVar(REXXMSG(rexxmsg),
-                  (STRPTR)(*((char *)argarray[0]) ? (char *)argarray[0] : "RESULT"),
-                  result, (LONG)strlen(result)))
-               {
-                  rc = -10;
-                  rc2 = (long) "Unable to set Rexx variable";
-               }
-
-               FreeVecPooled(G->SharedMemPool, result);
-            }
-
-            result = NULL;
-         }
-
-         if(rc == 0 && argarray[1] != 0)
-         {
-            // STEM
-            if((long)stem == -1)
-            {
-               rc = 20;
-               rc2 = ERROR_NO_FREE_STORE;
-            }
-            else
-            {
-               for(s = stem; s; s = s->succ)
-                  rc |= SetRexxVar(REXXMSG(rexxmsg), s->name, s->value, (LONG)strlen(s->value));
-
-               if(rc != 0)
-               {
-                  rc = -10;
-                  rc2 = (long) "Unable to set Rexx variable";
-               }
-
-               if(result != 0&& (long)result != -1)
-               {
-                 FreeVecPooled(G->SharedMemPool, result);
-               }
-            }
-
-            result = NULL;
-         }
-
-         // is a normal result possible?
-         if((long) result == -1)
-         {
-            // no!
-            rc = 20;
-            rc2 = ERROR_NO_FREE_STORE;
-            result = NULL;
-         }
+        rc = 20;
+        rc2 = ERROR_NO_FREE_STORE;
       }
+    }
+    else
+    {
+      rc = 20;
+      rc2 = ERROR_NO_FREE_STORE;
+    }
 
-      free_stemlist(stem);
-   }
+    FreeStemList(&stemList);
+  }
 
 drc_cleanup:
 
-   // return RESULT only, if neither VAR nor STEM
-   ReplyRexxCommand(rexxmsg, rc, rc2, result);
+  // return RESULT only, if neither VAR nor STEM
+  ReplyRexxCommand(rexxmsg, rc, rc2, result);
 
-   // free the memory
-   if(result != NULL)
-     FreeVecPooled(G->SharedMemPool, result);
+  // free the memory
+  if(result != NULL)
+    FreeVecPooled(G->SharedMemPool, result);
 
-   FreeArgs(host->rdargs);
+  FreeArgs(host->rdargs);
 
-   if(cargstr != NULL)
-     FreeVecPooled(G->SharedMemPool, cargstr);
+  if(cargstr != NULL)
+    FreeVecPooled(G->SharedMemPool, cargstr);
 
-   if(array != NULL)
-   {
-     D(DBF_REXX, "RXIF_FREE '%s'", rxc->command);
-     (rxc->function)(host, (void **)(APTR)&array, RXIF_FREE, rexxmsg);
-   }
+  if(array != NULL)
+  {
+    D(DBF_REXX, "RXIF_FREE '%s'", rxc->command);
+    (rxc->function)(host, (void **)(APTR)&array, RXIF_FREE, rexxmsg);
+  }
 
-   if(argb != NULL)
-     FreeVecPooled(G->SharedMemPool, argb);
+  if(argb != NULL)
+    FreeVecPooled(G->SharedMemPool, argb);
 
-   LEAVE();
+  LEAVE();
 }
 
 ///
