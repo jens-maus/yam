@@ -923,7 +923,7 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
     DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Top);
     set(lv_attach, MUIA_NList_Active, MUIV_NList_Active_Top);
 
-    // if this AttachRequest isn`t a DISPLAY request we show all the option to select the text we actually see
+    // if this AttachRequest isn't a DISPLAY request we show all the option to select the text we actually see
     if(!isDisplayReq(mode))
     {
       spart[1].Nr = PART_ALLTEXT;
@@ -2108,7 +2108,7 @@ void QuoteText(FILE *out, const char *src, const int len, const int line_max)
     }
 
     // check whether we finished the quoting with
-    // a newline or otherwise the followed signature won`t fit correctly
+    // a newline or otherwise the followed signature won't fit correctly
     if(newline == FALSE)
       fputc('\n', out);
   }
@@ -3199,7 +3199,7 @@ void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc)
   else if(tzc == TZC_UTC)
     ds->ds_Minute -= (C->TimeZone + C->DaylightSaving * 60);
 
-  // we need to check the datestamp variable that it is still in it`s borders
+  // we need to check the datestamp variable that it is still in it's borders
   // after the UTC correction
   while(ds->ds_Minute < 0)
   {
@@ -3281,7 +3281,7 @@ BOOL TimeVal2String(char *dst, int dstlen, const struct TimeVal *tv, enum DateSt
 //  at least 64 characters space.
 BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateStampType mode, enum TZConvert tzc)
 {
-  char datestr[64], timestr[64], daystr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
+  char datestr[64], timestr[64], daystr[64]; // we don't use LEN_DATSTRING as OS3.1 anyway ignores it.
   struct DateTime dt;
   struct DateStamp dsnow;
 
@@ -3400,7 +3400,7 @@ BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *da
   {
     datestamp.ds_Minute += timeZone;
 
-    // we need to check the datestamp variable that it is still in it`s borders
+    // we need to check the datestamp variable that it is still in it's borders
     // after adjustment
     while(datestamp.ds_Minute < 0)     { datestamp.ds_Minute += 1440; datestamp.ds_Days--; }
     while(datestamp.ds_Minute >= 1440) { datestamp.ds_Minute -= 1440; datestamp.ds_Days++; }
@@ -3431,7 +3431,7 @@ BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *da
 long DateStamp2Long(struct DateStamp *date)
 {
   char *s;
-  char datestr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
+  char datestr[64]; // we don't use LEN_DATSTRING as OS3.1 anyway ignores it.
   struct DateStamp dsnow;
   struct DateTime dt;
   int y;
@@ -3470,7 +3470,7 @@ long DateStamp2Long(struct DateStamp *date)
 //  Tries to converts a string into a datestamp via StrToDate()
 BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mode, enum TZConvert tzc)
 {
-  char datestr[64], timestr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
+  char datestr[64], timestr[64]; // we don't use LEN_DATSTRING as OS3.1 anyway ignores it.
   BOOL result = FALSE;
 
   ENTER();
@@ -3644,7 +3644,7 @@ int TZtoMinutes(char *tzone)
       In addition, the following timezone abbreviations are also accepted. In a few
       cases, the same abbreviation is used for two different timezones (for example,
       NST stands for Newfoundland Standard -0330 and North Sumatra +0630). In these
-      cases, only 1 of the two is available. The one preceded by a ``#'' sign is NOT
+      cases, only 1 of the two is available. The one preceded by a '#' sign is NOT
       available but is documented here for completeness.
    */
 
@@ -4079,6 +4079,7 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
   RETURN(new);
   return new;
 }
+
 ///
 /// RemoveMailFromList
 //  Removes a message from a folder
@@ -4170,11 +4171,12 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
     }
   }
 
-  // and last, but not least we have to free the mail
+  // and last, but not least, we have to free the mail
   free(mail);
 
   LEAVE();
 }
+
 ///
 /// ClearMailList
 //  Removes all messages from a folder
@@ -5471,8 +5473,8 @@ void SaveLayout(BOOL permanent)
     APTR oldWindowPtr;
 
     // this is for the people out there having their SYS: partition locked and whining about
-    // YAM popping up a error requester upon the exit - so it`s their fault now if
-    // the MUI objects aren`t saved correctly.
+    // YAM popping up a error requester upon the exit - so it's their fault now if
+    // the MUI objects aren't saved correctly.
     oldWindowPtr = SetProcWindow((APTR)-1);
 
     DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
@@ -5996,7 +5998,9 @@ void DisplayAppIconStatistics(void)
 
       if(*src == '%')
       {
-        switch (*++src)
+        src++;
+
+        switch (*src)
         {
           case '%': strlcpy(dst, "%", sizeof(dst));            break;
           case 'n': snprintf(dst, sizeof(dst), "%d", new_msg); break;
@@ -6016,8 +6020,12 @@ void DisplayAppIconStatistics(void)
   // we set the mode accordingly to the status of the folder (new/check/old)
   if(G->TR != NULL && G->TR->Checking == TRUE)
     mode = ii_Check;
+  else if(tot_msg == 0)
+    mode = ii_Empty;
+  else if(unr_msg == 0)
+    mode = ii_Old;
   else
-    mode = tot_msg ? (new_msg != 0 ? ii_New : ii_Old) : ii_Empty;
+    mode = ii_New;
 
 
   // We first have to remove the appicon before we can change it
@@ -6143,7 +6151,6 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
     // set their status accordingly.
     while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
     {
-      // tn_parent->tn_User is NULL then it's ROOT and we have to skip here
       if(tn_parent->tn_User != NULL)
       {
         struct Folder *fo_parent = ((struct FolderNode *)tn_parent->tn_User)->folder;
@@ -6883,7 +6890,7 @@ char *SWSSearch(char *str1, char *str2)
     for(j=0; j < ly; j++)
     {
       printf("%d", L[i][j]);
-      if(Ind[i][j] == TAKEBOTH)  printf("`");
+      if(Ind[i][j] == TAKEBOTH)  printf("'");
       else if(Ind[i][j] == DELX) printf("^");
       else if(Ind[i][j] == DELY) printf("<");
       else printf("*");

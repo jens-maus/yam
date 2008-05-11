@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-11  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: the AppIcon now uses the same image logic as the folder icons do.
+    That means that the "new" image will be used, whenever there is either new
+    or unread mail, "old" otherwise. Before the "new" image was used for really
+    true new mails. But since YAM removes the "new" state from a mail after
+    getting new mails this is much more intuitive, since the mail is "almost
+    new" and still unread.
+
 2008-05-10  Thore Böckelmann <tboeckel@gmx.de>
 
   * Rexx.c: one of the latest changes made YAM set ARexx variables even if there
