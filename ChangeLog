@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c: the argument array was initialized with shifted indices.
+
 2008-05-11  Thore Böckelmann <tboeckel@gmx.de>
 
   * Rexx.c: reworked the STEM variable handling to use a standard Exec MinList

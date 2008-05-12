@@ -269,11 +269,11 @@ void HandleThreadEvent(ULONG mask)
           // the function of the thread in a different manner.
           switch(tmsg->argcount)
           {
-            case 0: tmsg->function();break;
-            case 1: ((int (*)(void*))tmsg->function)(tmsg->arg[1]);break;
-            case 2: ((int (*)(void*,void*))tmsg->function)(tmsg->arg[1],tmsg->arg[2]);break;
-            case 3: ((int (*)(void*,void*,void*))tmsg->function)(tmsg->arg[1],tmsg->arg[2],tmsg->arg[3]);break;
-            case 4: ((int (*)(void*,void*,void*,void*))tmsg->function)(tmsg->arg[1],tmsg->arg[2],tmsg->arg[3],tmsg->arg[4]);break;
+            case 0: tmsg->function(); break;
+            case 1: ((int (*)(void *))tmsg->function)(tmsg->arg[0]); break;
+            case 2: ((int (*)(void *, void *))tmsg->function)(tmsg->arg[0], tmsg->arg[1]); break;
+            case 3: ((int (*)(void *, void *, void *))tmsg->function)(tmsg->arg[0], tmsg->arg[1], tmsg->arg[2]); break;
+            case 4: ((int (*)(void *, void *, void *, void *))tmsg->function)(tmsg->arg[0], tmsg->arg[1], tmsg->arg[2], tmsg->arg[3]); break;
           }
         }
 
@@ -321,13 +321,14 @@ static SAVEDS void ThreadEntry(void)
       proc->pr_Task.tc_UserData = thread;
 
       // get task's entry function
-      entry = (int(*)(void*))msg->function;
+      entry = (int(*)(void *))msg->function;
 
       dirlock = DupLock(proc->pr_CurrentDir);
       if(dirlock != 0)
       {
         BPTR odir = CurrentDir(dirlock);
-        entry(msg->arg[1]);
+
+        entry(msg->arg[0]);
         UnLock(CurrentDir(odir));
 
         thread->process = NULL;
@@ -350,9 +351,9 @@ static SAVEDS void ThreadEntry(void)
 ///
 /// ParentThreadCanContinue()
 // Informs the parent task that it can continue
-int ParentThreadCanContinue(void)
+BOOL ParentThreadCanContinue(void)
 {
-  int result = 0;
+  BOOL result = FALSE;
   struct ThreadMessage *msg;
 
   ENTER();
@@ -371,7 +372,7 @@ int ParentThreadCanContinue(void)
     PutMsg(G->mainThread.thread_port, &msg->msg);
 
     // Message is freed by parent task
-    result = 1;
+    result = TRUE;
   }
 
   RETURN(result);
@@ -381,7 +382,7 @@ int ParentThreadCanContinue(void)
 ///
 /// StartNewThread()
 // Runs the given function in a newly created thread under the given name
-static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void*), void *eudata)
+static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void *), void *eudata)
 {
   struct Thread *thread;
 
@@ -402,15 +403,15 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void*
       msg->startup = TRUE;
       msg->thread = thread;
       msg->function = (int (*)(void))entry;
-      msg->arg[1] = eudata;
+      msg->arg[0] = eudata;
 
-      in = Open("CONSOLE:",MODE_NEWFILE);
+      in = Open("CONSOLE:", MODE_NEWFILE);
       if(in == 0)
-        in = Open("NIL:",MODE_NEWFILE);
+        in = Open("NIL:", MODE_NEWFILE);
 
-      out = Open("CONSOLE:",MODE_NEWFILE);
+      out = Open("CONSOLE:", MODE_NEWFILE);
       if(out == 0)
-        out = Open("NIL:",MODE_NEWFILE);
+        out = Open("NIL:", MODE_NEWFILE);
 
       if(in != 0 && out != 0)
       {
@@ -421,7 +422,9 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void*
               NP_Priority,   -1,
               NP_Input,      in,
               NP_Output,     out,
-              #if defined(__MORPHOS__)
+              #if defined(__amigaos4__)
+              NP_Child,      TRUE,
+              #elif defined(__MORPHOS__)
               NP_CodeType,   MACHINE_PPC,
               #endif
               TAG_DONE,      0);
@@ -432,7 +435,7 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void*
 
           D(DBF_THREAD, "Thread started at 0x%lx", thread);
 
-          PutMsg(&thread->process->pr_MsgPort,(struct Message*)msg);
+          PutMsg(&thread->process->pr_MsgPort, (struct Message*)msg);
           WaitPort(G->mainThread.thread_port);
 
           thread_msg = (struct ThreadMessage *)GetMsg(G->mainThread.thread_port);
@@ -508,7 +511,7 @@ struct Thread *AddThread(const char *thread_name, int (*entry)(void *), void *eu
 /// StartAsDefaultThread()
 // Start a thread as a default sub thread. This function will be removed
 // in the future.
-int StartAsDefaultThread(int (*entry)(void*), void *eudata)
+int StartAsDefaultThread(int (*entry)(void *), void *eudata)
 {
   int result = 0;
 
@@ -550,16 +553,16 @@ static struct ThreadMessage *CreateThreadMessage(void *function, int argcount, v
 
     if(argcount-- > 0)
     {
-      tmsg->arg[1] = va_arg(argptr, void *);
+      tmsg->arg[0] = va_arg(argptr, void *);
       if(argcount-- > 0)
       {
-        tmsg->arg[2] = va_arg(argptr, void *);
+        tmsg->arg[1] = va_arg(argptr, void *);
         if(argcount-- > 0)
         {
-          tmsg->arg[3] = va_arg(argptr, void *);
+          tmsg->arg[2] = va_arg(argptr, void *);
           if(argcount-- > 0)
           {
-            tmsg->arg[4] = va_arg(argptr, void *);
+            tmsg->arg[3] = va_arg(argptr, void *);
           }
         }
       }
@@ -586,11 +589,11 @@ static void HandleThreadMessage(struct ThreadMessage *tmsg)
     {
       switch(tmsg->argcount)
       {
-        case  0: tmsg->result = tmsg->function();break;
-        case  1: tmsg->result = ((int (*)(void*))tmsg->function)(tmsg->arg[1]);break;
-        case  2: tmsg->result = ((int (*)(void*,void*))tmsg->function)(tmsg->arg[1],tmsg->arg[2]);break;
-        case  3: tmsg->result = ((int (*)(void*,void*,void*))tmsg->function)(tmsg->arg[1],tmsg->arg[2],tmsg->arg[3]);break;
-        case  4: tmsg->result = ((int (*)(void*,void*,void*,void*))tmsg->function)(tmsg->arg[1],tmsg->arg[2],tmsg->arg[3],tmsg->arg[4]);break;
+        case  0: tmsg->result = tmsg->function(); break;
+        case  1: tmsg->result = ((int (*)(void *))tmsg->function)(tmsg->arg[0]); break;
+        case  2: tmsg->result = ((int (*)(void *, void *))tmsg->function)(tmsg->arg[0], tmsg->arg[1]); break;
+        case  3: tmsg->result = ((int (*)(void *, void *, void *))tmsg->function)(tmsg->arg[0], tmsg->arg[1], tmsg->arg[2]); break;
+        case  4: tmsg->result = ((int (*)(void *, void *, void *, void *))tmsg->function)(tmsg->arg[0], tmsg->arg[1], tmsg->arg[2], tmsg->arg[3]); break;
       }
     }
 
@@ -598,8 +601,8 @@ static void HandleThreadMessage(struct ThreadMessage *tmsg)
     {
       D(DBF_THREAD, "Freeing Message at 0x%lx", tmsg);
 
-      if(tmsg->async == 2 && tmsg->argcount >= 1 && tmsg->arg[1] != NULL)
-        FreeVecPooled(G->SharedMemPool, tmsg->arg[1]);
+      if(tmsg->argcount >= 1 && tmsg->arg[0] != NULL && tmsg->async == 2)
+        free(tmsg->arg[0]);
 
       FreeVecPooled(G->SharedMemPool, tmsg);
     }
@@ -627,7 +630,7 @@ int CallParentThreadFunctionSync(int *success, void *function, int argcount, ...
 
   ENTER();
 
-  va_start(argptr,argcount);
+  va_start(argptr, argcount);
 
   if((tmsg = CreateThreadMessage(function, argcount, argptr)) != NULL)
   {
@@ -639,6 +642,7 @@ int CallParentThreadFunctionSync(int *success, void *function, int argcount, ...
     while(ready == FALSE)
     {
       struct Message *msg;
+
       WaitPort(subthread_port);
 
       while((msg = GetMsg(subthread_port)) != NULL)
@@ -683,21 +687,21 @@ int CallParentThreadFunctionAsync(void *function, int argcount, ...)
     struct Process *p = (struct Process*)FindTask(NULL);
     va_list argptr;
 
-    va_start(argptr,argcount);
+    va_start(argptr, argcount);
 
     tmsg->msg.mn_ReplyPort = &p->pr_MsgPort;
     tmsg->msg.mn_Length = sizeof(struct ThreadMessage);
     tmsg->function = (int (*)(void))function;
     tmsg->argcount = argcount;
-    tmsg->arg[1] = va_arg(argptr, void *);/*(*(&argcount + 1));*/
-    tmsg->arg[2] = va_arg(argptr, void *);/*(void*)(*(&argcount + 2));*/
-    tmsg->arg[3] = va_arg(argptr, void *);/*(void*)(*(&argcount + 3));*/
-    tmsg->arg[4] = va_arg(argptr, void *);/*(void*)(*(&argcount + 4));*/
+    tmsg->arg[0] = va_arg(argptr, void *); /*(*(&argcount + 1));*/
+    tmsg->arg[1] = va_arg(argptr, void *); /*(void *)(*(&argcount + 2));*/
+    tmsg->arg[2] = va_arg(argptr, void *); /*(void *)(*(&argcount + 3));*/
+    tmsg->arg[3] = va_arg(argptr, void *); /*(void *)(*(&argcount + 4));*/
     tmsg->async = 1;
 
-    va_end (argptr);
+    va_end(argptr);
 
-    PutMsg(G->mainThread.thread_port,&tmsg->msg);
+    PutMsg(G->mainThread.thread_port, &tmsg->msg);
 
     result = 1;
   }
@@ -720,45 +724,36 @@ int CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
     struct Process *p = (struct Process*)FindTask(NULL);
     va_list argptr;
 
-    va_start(argptr,argcount);
+    va_start(argptr, argcount);
 
     tmsg->msg.mn_ReplyPort = &p->pr_MsgPort;
     tmsg->msg.mn_Length = sizeof(struct ThreadMessage);
     tmsg->function = (int (*)(void))function;
     tmsg->argcount = argcount;
-    tmsg->arg[1] = va_arg(argptr, void *);/*(*(&argcount + 1));*/
-    tmsg->arg[2] = va_arg(argptr, void *);/*(void*)(*(&argcount + 2));*/
-    tmsg->arg[3] = va_arg(argptr, void *);/*(void*)(*(&argcount + 3));*/
-    tmsg->arg[4] = va_arg(argptr, void *);/*(void*)(*(&argcount + 4));*/
+    tmsg->arg[0] = va_arg(argptr, void *); /*(*(&argcount + 1));*/
+    tmsg->arg[1] = va_arg(argptr, void *); /*(void *)(*(&argcount + 2));*/
+    tmsg->arg[2] = va_arg(argptr, void *); /*(void *)(*(&argcount + 3));*/
+    tmsg->arg[3] = va_arg(argptr, void *); /*(void *)(*(&argcount + 4));*/
     tmsg->async = 2;
 
-    va_end (argptr);
+    va_end(argptr);
 
-    if(tmsg->arg[1] != NULL && argcount >= 1)
+    if(tmsg->arg[0] != NULL && argcount >= 1)
     {
-      STRPTR str = AllocVecPooled(G->SharedMemPool, strlen((char*)tmsg->arg[1])+1);
-
-      if(str != NULL)
+      if((tmsg->arg[0] = strdup((char *)tmsg->arg[0])) == NULL)
       {
-        strcpy(str,(char*)tmsg->arg[1]);
-        tmsg->arg[1] = (void*)str;
-      }
-      else
-      {
-        FreeVecPooled(G->SharedMemPool, tmsg);
-
         RETURN(0);
         return 0;
       }
     }
 
-    PutMsg(G->mainThread.thread_port,&tmsg->msg);
+    PutMsg(G->mainThread.thread_port, &tmsg->msg);
 
     result = 1;
   }
 
-  RETURN(0);
-  return 0;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -773,14 +768,14 @@ int CallThreadFunctionSync(struct Thread *thread, void *function, int argcount, 
 
   ENTER();
 
-  va_start(argptr,argcount);
+  va_start(argptr, argcount);
 
   if((tmsg = CreateThreadMessage(function, argcount, argptr)) != NULL)
   {
     struct MsgPort *subthread_port = tmsg->msg.mn_ReplyPort;
     BOOL ready = FALSE;
 
-    PutMsg(thread->thread_port,&tmsg->msg);
+    PutMsg(thread->thread_port, &tmsg->msg);
 
     while(ready == FALSE)
     {
@@ -800,7 +795,7 @@ int CallThreadFunctionSync(struct Thread *thread, void *function, int argcount, 
     FreeVecPooled(G->SharedMemPool, tmsg);
   }
 
-  va_end (argptr);
+  va_end(argptr);
 
   RETURN(rc);
   return rc;
@@ -818,16 +813,17 @@ int PushThreadFunction(void *function, int argcount, ...)
 
   ENTER();
 
-  va_start(argptr,argcount);
+  va_start(argptr, argcount);
 
   if((tmsg = CreateThreadMessage(function, argcount, argptr)) != NULL)
   {
     struct Thread *this_thread = ((struct Thread*)(FindTask(NULL)->tc_UserData));
-    AddTail((struct List*)&this_thread->push_list,&tmsg->msg.mn_Node);
+
+    AddTail((struct List*)&this_thread->push_list, &tmsg->msg.mn_Node);
     rc = 1;
   }
 
-  va_end (argptr);
+  va_end(argptr);
 
   RETURN(rc);
   return rc;
@@ -846,7 +842,7 @@ int PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
 
   ENTER();
 
-  va_start(argptr,argcount);
+  va_start(argptr, argcount);
 
   if((tmsg = CreateThreadMessage(function, argcount, argptr)) != NULL)
   {
@@ -872,7 +868,7 @@ int PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
       FreeVecPooled(G->SharedMemPool, tmsg);
   }
 
-  va_end (argptr);
+  va_end(argptr);
 
   RETURN(rc);
   return rc;
@@ -1050,7 +1046,7 @@ void CleanupThreads(void)
 /*
 // Call the function synchron, calls timer_callback on the calling process
 // context
-int thread_call_parent_function_sync_timer_callback(void (*timer_callback)(void*), void *timer_data, int millis, void *function, int argcount, ...)
+int thread_call_parent_function_sync_timer_callback(void (*timer_callback)(void *), void *timer_data, int millis, void *function, int argcount, ...)
 {
   va_list argptr;
   int rc = 0;
@@ -1109,7 +1105,7 @@ int thread_call_parent_function_sync_timer_callback(void (*timer_callback)(void*
     FreeVec(tmsg);
   }
 
-  va_end (argptr);
+  va_end(argptr);
 
   RETURN(rc);
   return rc;
@@ -1119,7 +1115,7 @@ int thread_call_parent_function_sync_timer_callback(void (*timer_callback)(void*
 /*
 // Waits until aborted and calls timer_callback periodically. It's possible
 // to execute functions on the threads context while in this function.
-void thread_wait(void (*timer_callback(void*)), void *timer_data, int millis)
+void thread_wait(void (*timer_callback(void *)), void *timer_data, int millis)
 {
   struct timer timer;
   if(timer_init(&timer))
@@ -1161,11 +1157,11 @@ void thread_wait(void (*timer_callback(void*)), void *timer_data, int millis)
         {
           switch(tmsg->argcount)
           {
-            case  0: tmsg->function();break;
-            case  1: ((int (*)(void*))tmsg->function)(tmsg->arg[1]);break;
-            case  2: ((int (*)(void*,void*))tmsg->function)(tmsg->arg[1],tmsg->arg[2]);break;
-            case  3: ((int (*)(void*,void*,void*))tmsg->function)(tmsg->arg[1],tmsg->arg[2],tmsg->arg[3]);break;
-            case  4: ((int (*)(void*,void*,void*,void*))tmsg->function)(tmsg->arg[1],tmsg->arg[2],tmsg->arg[3],tmsg->arg[4]);break;
+            case  0: tmsg->function(); break;
+            case  1: ((int (*)(void *))tmsg->function)(tmsg->arg[1]); break;
+            case  2: ((int (*)(void *, void *))tmsg->function)(tmsg->arg[1], tmsg->arg[2]); break;
+            case  3: ((int (*)(void *, void *, void *))tmsg->function)(tmsg->arg[1], tmsg->arg[2], tmsg->arg[3]); break;
+            case  4: ((int (*)(void *, void *, void *, void *))tmsg->function)(tmsg->arg[1], tmsg->arg[2], tmsg->arg[3], tmsg->arg[4]); break;
           }
         }
         FreeVec(tmsg);
