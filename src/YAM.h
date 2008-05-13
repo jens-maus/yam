@@ -189,6 +189,7 @@ struct xpkPackerNode
 };
 
 void PopUp(void);
+BOOL StayInProg(void);
 
 #endif /* MAIN_YAM_H */
 

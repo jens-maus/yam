@@ -398,7 +398,9 @@ OBJS = \
 	YAM_US.o \
 	YAM_UT.o \
 	YAM_WR.o \
+	AppIcon.o \
 	BayesFilter.o \
+	DockyIcon.o \
 	FileInfo.o \
 	FolderList.o \
 	HashTable.o \

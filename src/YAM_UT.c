@@ -91,6 +91,7 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
+#include "AppIcon.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"
@@ -5945,152 +5946,6 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
 }
 
 ///
-/// DisplayAppIconStatistics
-//  Calculates AppIconStatistic and update the AppIcon
-void DisplayAppIconStatistics(void)
-{
-  static char apptit[SIZE_DEFAULT/2];
-  enum IconImages mode;
-  int new_msg = 0;
-  int unr_msg = 0;
-  int tot_msg = 0;
-  int snt_msg = 0;
-  int del_msg = 0;
-
-  ENTER();
-
-  // if the user wants to show an AppIcon on the workbench,
-  // we go and calculate the mail stats for all folders out there.
-  LockFolderListShared(G->folders);
-
-  if(IsFolderListEmpty(G->folders) == FALSE)
-  {
-    struct FolderNode *fnode;
-
-    ForEachFolderNode(G->folders, fnode)
-    {
-      struct Folder *fo = fnode->folder;
-
-      if(fo->Stats == TRUE)
-      {
-        new_msg += fo->New;
-        unr_msg += fo->Unread;
-        tot_msg += fo->Total;
-        snt_msg += fo->Sent;
-        del_msg += fo->Deleted;
-      }
-    }
-  }
-
-  UnlockFolderList(G->folders);
-
-  // clear AppIcon Label first before we create it new
-  apptit[0] = '\0';
-
-  if(C->WBAppIcon == TRUE)
-  {
-    char *src;
-
-    // Lets create the label of the AppIcon now
-    for(src = C->AppIconText; *src; src++)
-    {
-      char dst[10];
-
-      if(*src == '%')
-      {
-        src++;
-
-        switch (*src)
-        {
-          case '%': strlcpy(dst, "%", sizeof(dst));            break;
-          case 'n': snprintf(dst, sizeof(dst), "%d", new_msg); break;
-          case 'u': snprintf(dst, sizeof(dst), "%d", unr_msg); break;
-          case 't': snprintf(dst, sizeof(dst), "%d", tot_msg); break;
-          case 's': snprintf(dst, sizeof(dst), "%d", snt_msg); break;
-          case 'd': snprintf(dst, sizeof(dst), "%d", del_msg); break;
-        }
-      }
-      else
-        snprintf(dst, sizeof(dst), "%c", *src);
-
-      strlcat(apptit, dst, sizeof(apptit));
-    }
-  }
-
-  // we set the mode accordingly to the status of the folder (new/check/old)
-  if(G->TR != NULL && G->TR->Checking == TRUE)
-    mode = ii_Check;
-  else if(tot_msg == 0)
-    mode = ii_Empty;
-  else if(unr_msg == 0)
-    mode = ii_Old;
-  else
-    mode = ii_New;
-
-
-  // We first have to remove the appicon before we can change it
-  if(G->AppIcon != NULL)
-  {
-    RemoveAppIcon(G->AppIcon);
-    G->AppIcon = NULL;
-  }
-
-  // Now we create the new AppIcon and display it
-  if(G->theme.icons[mode] != NULL)
-  {
-    struct DiskObject *dobj = G->theme.icons[mode];
-
-    // NOTE:
-    // 1.) Using the VARARGS version is better for GCC/68k and it doesn't
-    //     hurt other compilers
-    // 2.) Using "zero" as lock parameter avoids a header compatibility
-    //     issue (old: "struct FileLock *"; new: "BPTR")
-    if(C->WBAppIcon == TRUE)
-    {
-      // set the icon position
-      dobj->do_CurrentX = C->IconPositionX < 0 ? (LONG)NO_ICON_POSITION : C->IconPositionX;
-      dobj->do_CurrentY = C->IconPositionY < 0 ? (LONG)NO_ICON_POSITION : C->IconPositionY;
-
-      // add the AppIcon accordingly. Here we use v44+ tags, however older
-      // workbench versions should perfectly ignore them.
-      G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj, WBAPPICONA_SupportsOpen,       TRUE,
-                                                                 WBAPPICONA_SupportsSnapshot,   TRUE,
-                                                                 WBAPPICONA_SupportsUnSnapshot, TRUE,
-                                                                 WBAPPICONA_SupportsEmptyTrash, TRUE,
-                                                                 WBAPPICONA_PropagatePosition,  TRUE,
-                                                                 TAG_DONE);
-      SHOWVALUE(DBF_GUI, G->AppIcon);
-    }
-
-    #if defined(__amigaos4__)
-    // check if application.library is used and then
-    // we also notify it about the AppIcon change
-    if(G->applicationID > 0 && C->DockyIcon == TRUE)
-    {
-      if(G->LastIconID != mode)
-      {
-        struct ApplicationIconInfo aii;
-
-        aii.iconType = APPICONT_CustomIcon;
-        aii.info.customIcon = dobj;
-
-        if(SetApplicationAttrs(G->applicationID, APPATTR_IconType, (uint32)&aii, TAG_DONE))
-        {
-          // remember the new docky icon state
-          G->LastIconID = mode;
-        }
-      }
-    }
-    #endif
-
-    // remember this icon pointer for later use
-    G->currentAppIcon = mode;
-  }
-
-  LEAVE();
-}
-
-///
 /// DisplayStatistics
 //  Calculates folder statistics and update mailbox status icon
 void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
@@ -6194,7 +6049,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
   }
 
   if(G->AppIconQuiet == FALSE && updateAppIcon == TRUE)
-    DisplayAppIconStatistics();
+    UpdateAppIcon();
 
   LEAVE();
 }

@@ -72,6 +72,7 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
+#include "AppIcon.h"
 #include "HashTable.h"
 #include "FileInfo.h"
 #include "Locale.h"
@@ -3783,7 +3784,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       return;
     }
     G->TR->Checking = TRUE;
-    DisplayAppIconStatistics();
+    UpdateAppIcon();
     G->TR->GUIlevel = guilevel;
     G->TR->SearchCount = AllocFilterSearch(APPLY_REMOTE);
     if(singlepop >= 0)
@@ -3871,7 +3872,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     MA_StartMacro(MACRO_POSTGET, itoa((int)G->TR->Stats.Downloaded));
 
     // tell the appicon that we are finished with checking mail
-    // the apply rules or DisplayAppIconStatistics() function will refresh it later on
+    // the apply rules or UpdateAppIcon() function will refresh it later on
     G->TR->Checking = FALSE;
 
     // we only apply the filters if we downloaded something, or it`s wasted
@@ -3891,12 +3892,12 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       if((folder = FO_GetCurrentFolder()) && !isIncomingFolder(folder))
         DisplayStatistics((struct Folder *)-1, TRUE);
       else
-        DisplayAppIconStatistics();
+        UpdateAppIcon();
 
       TR_NewMailAlert();
     }
     else
-      DisplayAppIconStatistics();
+      UpdateAppIcon();
 
     // lets populate the LastDL statistics variable with the stats
     // of this download.

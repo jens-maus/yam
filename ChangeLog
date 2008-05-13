@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: moved all AppIcon and Docky icon related stuff to separate modules.
+
 2008-05-12  Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.c: the argument array was initialized with shifted indices.

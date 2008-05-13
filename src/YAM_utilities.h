@@ -313,7 +313,6 @@ char *   Decrypt(char *source);
 BOOL     DeleteMailDir(const char *dir, BOOL isroot);
 const char *DescribeCT(const char *ct);
 void     DisplayMailList(struct Folder *fo, Object *lv);
-void     DisplayAppIconStatistics(void);
 void     DisplayStatistics(struct Folder *fo, BOOL updateAppIcon);
 void     DisposeModule(void *modptr);
 BOOL     DoPack(char *file, char *newfile, struct Folder *folder);

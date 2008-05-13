@@ -93,16 +93,18 @@
 #include "YAM_write.h"
 #include "YAM_utilities.h"
 
-#include "ImageCache.h"
-#include "UpdateCheck.h"
+#include "AppIcon.h"
 #include "BayesFilter.h"
-#include "Locale.h"
+#include "DockyIcon.h"
 #include "FileInfo.h"
-#include "Timer.h"
-#include "MailList.h"
 #include "FolderList.h"
+#include "ImageCache.h"
+#include "Locale.h"
+#include "MailList.h"
 #include "Rexx.h"
 #include "Threads.h"
+#include "Timer.h"
+#include "UpdateCheck.h"
 
 #include "classes/Classes.h"
 
@@ -939,15 +941,7 @@ static void Terminate(void)
     }
   }
 
-  D(DBF_STARTUP, "freeing AppIcon...");
-  if(G->AppIcon != NULL)
-    RemoveAppIcon(G->AppIcon);
-
-  D(DBF_STARTUP, "freeing AppPort...");
-  if(G->AppPort != NULL)
-  {
-    FreeSysObject(ASOT_PORT, G->AppPort);
-  }
+  FreeAppIcon();
 
   D(DBF_STARTUP, "freeing Arexx port...");
   if(G->RexxHost != NULL)
@@ -986,15 +980,8 @@ static void Terminate(void)
     while(DeleteZombieFiles(ignore) == FALSE);
   }
 
-  // we deregister the application from
-  // application.library
-  #if defined(__amigaos4__)
-  D(DBF_STARTUP, "unregister from application.library...");
-  if(G->applicationID > 0)
-    UnregisterApplication(G->applicationID, NULL);
-
-  CLOSELIB(ApplicationBase, IApplication);
-  #endif
+  // we unregister the application from application.library
+  FreeDockyIcon();
 
   D(DBF_STARTUP, "freeing toolbar cache...");
   ToolbarCacheCleanup();
@@ -1056,19 +1043,21 @@ static void Terminate(void)
 
   // close all libraries now.
   D(DBF_STARTUP, "closing all opened libraries...");
-  #if !defined(__amigaos4__)
-  CLOSELIB(CyberGfxBase,  ICyberGfx);
+  #if defined(__amigaos4__)
+  CLOSELIB(ApplicationBase, IApplication);
+  #else
+  CLOSELIB(CyberGfxBase,    ICyberGfx);
   #endif
-  CLOSELIB(ExpatBase,     IExpat);
-  CLOSELIB(CodesetsBase,  ICodesets);
-  CLOSELIB(DataTypesBase, IDataTypes);
-  CLOSELIB(MUIMasterBase, IMUIMaster);
-  CLOSELIB(RexxSysBase,   IRexxSys);
-  CLOSELIB(IFFParseBase,  IIFFParse);
-  CLOSELIB(KeymapBase,    IKeymap);
-  CLOSELIB(LayersBase,    ILayers);
-  CLOSELIB(WorkbenchBase, IWorkbench);
-  CLOSELIB(GfxBase,       IGraphics);
+  CLOSELIB(ExpatBase,       IExpat);
+  CLOSELIB(CodesetsBase,    ICodesets);
+  CLOSELIB(DataTypesBase,   IDataTypes);
+  CLOSELIB(MUIMasterBase,   IMUIMaster);
+  CLOSELIB(RexxSysBase,     IRexxSys);
+  CLOSELIB(IFFParseBase,    IIFFParse);
+  CLOSELIB(KeymapBase,      IKeymap);
+  CLOSELIB(LayersBase,      ILayers);
+  CLOSELIB(WorkbenchBase,   IWorkbench);
+  CLOSELIB(GfxBase,         IGraphics);
 
   // close the catalog and locale now
   D(DBF_STARTUP, "closing catalog...");
@@ -1243,10 +1232,11 @@ HOOKPROTONHNONP(DoublestartFunc, void)
   LEAVE();
 }
 MakeStaticHook(DoublestartHook, DoublestartFunc);
+
 ///
 /// StayInProg
 //  Makes sure that the user really wants to quit the program
-static BOOL StayInProg(void)
+BOOL StayInProg(void)
 {
   BOOL stayIn = FALSE;
 
@@ -1474,23 +1464,7 @@ static void InitAfterLogin(void)
 
   // before we go and create the first MUI windows
   // we register the application to application.library
-  #if defined(__amigaos4__)
-  if(ApplicationBase != NULL)
-  {
-    struct ApplicationIconInfo aii;
-
-    aii.iconType = C->DockyIcon ? APPICONT_CustomIcon : APPICONT_None;
-    aii.info.customIcon = G->HideIcon;
-
-    // register YAM to application.library
-    G->applicationID = RegisterApplication("YAM", REGAPP_URLIdentifier, "yam.ch",
-                                                  REGAPP_AppIconInfo,   (uint32)&aii,
-                                                  REGAPP_Hidden,        xget(G->App, MUIA_Application_Iconified),
-                                                  TAG_DONE);
-
-    D(DBF_STARTUP, "Registered YAM to application.library with appID: %ld", G->applicationID);
-  }
-  #endif
+  InitDockyIcon();
 
   // Create a new Main & Addressbook Window
   if((G->MA = MA_New()) == NULL || (G->AB = AB_New()) == NULL)
@@ -1908,8 +1882,8 @@ static void InitBeforeLogin(BOOL hidden)
       Abort(NULL);
   }
 
-  // create the main message port
-  if((G->AppPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) == NULL)
+  // initialize the AppIcon related stuff
+  if(InitAppIcon() == FALSE)
     Abort(NULL);
 
   // initialize the file nofifications
@@ -2007,9 +1981,9 @@ static void DoStartup(BOOL nocheck, BOOL hide)
 
   ENTER();
 
-  // Display the AppIcon now because if non of the below
-  // do it it could happen that no AppIcon will be displayed at all.
-  DisplayAppIconStatistics();
+  // display the AppIcon now because if non of the functions below
+  // does it it could happen that no AppIcon will be displayed at all.
+  UpdateAppIcon();
 
   // execute the startup stuff only if the user changed upon a restart or if
   // we start for the first time
@@ -2504,12 +2478,6 @@ int main(int argc, char **argv)
     // some window wasn`t set active manually by an own rexx command.
     G->ActiveWriteWin = -1;
 
-    #if defined(__amigaos4__)
-    // reset the docky icon id to some sensible default
-    // upon restart this makes sure that the docky icon is set to the correct state
-    G->LastIconID = -1;
-    #endif
-
     if(yamFirst == TRUE)
     {
       InitBeforeLogin(args.hide ? TRUE : FALSE);
@@ -2649,30 +2617,11 @@ int main(int argc, char **argv)
     else
       adstsig = 0;
 
-    // get the msgport of the application.library
-    #if defined(__amigaos4__)
-    if(G->applicationID != 0)
-    {
-      GetApplicationAttrs(G->applicationID,
-                          APPATTR_Port,     (uint32)&G->AppLibPort,
-                          TAG_DONE);
-
-      if(G->AppLibPort != NULL)
-        applibsig = (1UL << G->AppLibPort->mp_SigBit);
-      else
-      {
-        E(DBF_STARTUP, "Error on trying to retrieve application libraries MsgPort for YAM.");
-        applibsig = 0;
-      }
-    }
-    else
-    #endif
-      applibsig = 0;
-
-    // prepare the other signal bits
+    // prepare all signal bits
     timsig    = (1UL << G->timerData.port->mp_SigBit);
     rexsig    = (1UL << G->RexxHost->port->mp_SigBit);
     appsig    = (1UL << G->AppPort->mp_SigBit);
+    applibsig = DockyIconSignal();
     notsig[0] = (1UL << G->WR_NotifyRequest[0]->nr_stuff.nr_Msg.nr_Port->mp_SigBit);
     notsig[1] = (1UL << G->WR_NotifyRequest[1]->nr_stuff.nr_Msg.nr_Port->mp_SigBit);
     notsig[2] = (1UL << G->WR_NotifyRequest[2]->nr_stuff.nr_Msg.nr_Port->mp_SigBit);
@@ -2744,217 +2693,15 @@ int main(int argc, char **argv)
         // check for a AppMessage signal
         if(signals & appsig)
         {
-          struct AppMessage *apmsg;
-
-          while((apmsg = (struct AppMessage *)GetMsg(G->AppPort)) != NULL)
-          {
-            if(apmsg->am_Type == AMTYPE_APPICON)
-            {
-              ULONG action = AMCLASSICON_Open;
-
-              // now we catch the am_Class member of the APPICON message
-              // which will be set by workbench.library v44+. However,
-              // older workbench versions doesn't seem to have the Class
-              // member and may have it uninitialized, therefore we
-              // check here for the v44+ workbench
-              if(WorkbenchBase != NULL && WorkbenchBase->lib_Version >= 44)
-                action = apmsg->am_Class;
-
-              // check the action
-              switch(action)
-              {
-                // user has pressed "Open" or double-clicked on the
-                // AppIcon, so we popup YAM and eventually load the
-                // drag&dropped file into a new write window.
-                case AMCLASSICON_Open:
-                {
-                  // bring all windows of YAM to front.
-                  PopUp();
-
-                  // check if something was dropped onto the AppIcon
-                  if(apmsg->am_NumArgs != 0)
-                  {
-                    int wrwin;
-
-                    if(G->WR[0] != NULL)
-                      wrwin = 0;
-                    else if(G->WR[1] != NULL)
-                      wrwin = 1;
-                    else
-                      wrwin = MA_NewNew(NULL, 0);
-
-                    if(wrwin >= 0)
-                    {
-                      int arg;
-
-                      // lets walk through all arguments in the appMessage
-                      for(arg = 0; arg < apmsg->am_NumArgs; arg++)
-                      {
-                        char buf[SIZE_PATHFILE];
-                        struct WBArg *ap = &apmsg->am_ArgList[arg];
-
-                        NameFromLock(ap->wa_Lock, buf, sizeof(buf));
-                        AddPart(buf, (char *)ap->wa_Name, sizeof(buf));
-
-                        // call WR_App to let it put in the text of the file
-                        // to the write window
-                        WR_App(wrwin, buf);
-                      }
-                    }
-                  }
-                }
-                break;
-
-                // user has pressed "Snapshot" on the AppIcon
-                case AMCLASSICON_Snapshot:
-                {
-                  struct DiskObject *dobj;
-
-                  if((dobj = G->theme.icons[G->currentAppIcon]) != NULL)
-                  {
-                    // remember the position.
-                    C->IconPositionX = dobj->do_CurrentX;
-                    C->IconPositionY = dobj->do_CurrentY;
-
-                    // we also save the configuration here, even if that
-                    // will trigger that other configurations will
-                    // be saved as well. However, such a snapshot action
-                    // is done very rarely and the user would definitly
-                    // expect that the position will be saved immediately.
-                    CO_SaveConfig(C, G->CO_PrefsFile);
-                  }
-                }
-                break;
-
-                // user has pressed "UnSnapshot" on the AppIcon
-                case AMCLASSICON_UnSnapshot:
-                {
-                  // for unsnapshotting the icon position we negate the
-                  // IconPosition values. So negative values mean they
-                  // are disabled.
-                  C->IconPositionX = -abs(C->IconPositionX);
-                  C->IconPositionY = -abs(C->IconPositionY);
-
-                  // we also save the configuration here, even if that
-                  // will trigger that other configurations will
-                  // be saved as well. However, such a snapshot action
-                  // is done very rarely and the user would definitly
-                  // expect that the position will be saved immediately.
-                  CO_SaveConfig(C, G->CO_PrefsFile);
-
-                  // refresh the AppIcon
-                  DisplayAppIconStatistics();
-                }
-                break;
-
-                // user has pressed "Empty Trash" on the AppIcon,
-                // so we go and empty the trash folder accordingly.
-                case AMCLASSICON_EmptyTrash:
-                {
-                  // empty the "deleted" folder
-                  DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
-                }
-                break;
-              }
-            }
-
-            ReplyMsg(&apmsg->am_Message);
-          }
+          HandleAppIcon();
         }
 
         #if defined(__amigaos4__)
         if(signals & applibsig)
         {
-          struct ApplicationMsg *msg;
-
-          while((msg = (struct ApplicationMsg *)GetMsg(G->AppLibPort)) != NULL)
-          {
-            switch(msg->type)
-            {
-              // ask the user if he really wants to quit the application
-              case APPLIBMT_Quit:
-              {
-                ret = (int)!StayInProg();
-              }
-              break;
-
-              // exit without bothering the user at all.
-              case APPLIBMT_ForceQuit:
-              {
-                ret = 1;
-              }
-              break;
-
-              // simply make sure YAM will be iconified/hidden
-              case APPLIBMT_Hide:
-              {
-                set(G->App, MUIA_Application_Iconified, TRUE);
-              }
-              break;
-
-              // simply make sure YAM will be uniconified
-              case APPLIBMT_Unhide:
-              {
-                set(G->App, MUIA_Application_Iconified, FALSE);
-              }
-              break;
-
-              // make sure the GUI of YAM is in front
-              // and open with the latest document.
-              case APPLIBMT_ToFront:
-              {
-                PopUp();
-              }
-              break;
-
-              // make sure YAM is in front and open
-              // the configuration window
-              case APPLIBMT_OpenPrefs:
-              {
-                PopUp();
-                CallHookPkt(&CO_OpenHook, 0, 0);
-              }
-              break;
-
-              // open YAM in front of everyone and
-              // import the passed document in
-              // a new or existing write window.
-              case APPLIBMT_OpenDoc:
-              {
-                struct ApplicationOpenPrintDocMsg* appmsg = (struct ApplicationOpenPrintDocMsg*)msg;
-                int wrwin;
-
-                if(G->WR[0] != NULL)
-                  wrwin = 0;
-                else if(G->WR[1] != NULL)
-                  wrwin = 1;
-                else
-                  wrwin = MA_NewNew(NULL, 0);
-
-                if(wrwin >= 0)
-                {
-                  PopUp();
-                  WR_App(wrwin, appmsg->fileName);
-                }
-              }
-              break;
-
-              // make sure YAM is in front and open
-              // a new write window.
-              case APPLIBMT_NewBlankDoc:
-              {
-                PopUp();
-                MA_NewNew(NULL, 0);
-              }
-              break;
-            }
-
-            ReplyMsg((struct Message *)msg);
-          }
-
           // make sure to break out here in case
           // the Quit or ForceQuit succeeded.
-          if(ret == 1)
+          if(HandleDockyIcon() == TRUE)
             break;
         }
         #endif
