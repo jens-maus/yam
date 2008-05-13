@@ -7,6 +7,8 @@ $URL$
 
 2008-05-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_AB.c: slightly modified the birthday check function, as it wasn't
+    recursive at all.
   * misc: moved all AppIcon and Docky icon related stuff to separate modules.
 
 2008-05-12  Thore Böckelmann <tboeckel@gmx.de>

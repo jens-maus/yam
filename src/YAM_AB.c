@@ -360,16 +360,18 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
 char *AB_ExpandBD(long date)
 {
   static char datestr[SIZE_SMALL];
+  ldiv_t d;
   LONG day;
   LONG month;
   LONG year;
 
   ENTER();
 
-  year = date % 10000;
-  date = date / 10000;
-  month = date % 100;
-  day = date / 100;
+  d = ldiv(date, 10000);
+  year = d.rem;
+  d = ldiv(d.quot, 100);
+  month = d.rem;
+  day = d.quot;
 
   // check first if it could be a valid date!
   // I think we can assume that nobody used EMail before WW1 :)
@@ -410,30 +412,37 @@ long AB_CompressBD(char *datestr)
 }
 
 ///
-/// AB_FindTodaysBirthdates (rec)
-//  Recursively searches the address book for a given birth date
-static STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode *list, long today)
+/// AB_CheckBirthdates
+// searches the address book for todays birth days
+void AB_CheckBirthdates(void)
 {
+  ldiv_t today;
+  int i;
   struct MUI_NListtree_TreeNode *tn;
-  int wrwin, i;
 
   ENTER();
 
-  for(i = 0; ; i++)
+  today = ldiv(DateStamp2Long(NULL), 10000);
+  i = 0;
+  while((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
   {
-    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIF_NONE)))
-    {
-      struct ABEntry *ab = tn->tn_User;
+    struct ABEntry *ab = tn->tn_User;
 
-      if(ab->Type == AET_USER && ab->BirthDay/10000 == today/10000)
+    if(ab->Type == AET_USER)
+    {
+      ldiv_t birthday = ldiv(ab->BirthDay, 10000);
+
+      if(birthday.quot == today.quot)
       {
         char question[SIZE_LARGE];
         char *name = *ab->RealName ? ab->RealName : ab->Alias;
 
-        snprintf(question, sizeof(question), tr(MSG_AB_BirthdayReq), name, today%10000-ab->BirthDay%10000);
+        snprintf(question, sizeof(question), tr(MSG_AB_BirthdayReq), name, today.rem - birthday.rem);
 
         if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_AB_BirthdayReminder), tr(MSG_YesNoReq), question))
         {
+          int wrwin;
+
           if((wrwin = MA_NewNew(NULL, 0)) >= 0)
           {
             setstring(G->WR[wrwin]->GUI.ST_TO, ab->Alias);
@@ -442,20 +451,11 @@ static STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode *list
         }
       }
     }
-    else
-      break;
+
+    i++;
   }
 
-  RETURN(TRUE);
-  return TRUE;
-}
-
-///
-/// AB_CheckBirthdates
-//  Searches address book for todays birth days
-void AB_CheckBirthdates(void)
-{
-  AB_FindTodaysBirthdates(MUIV_NListtree_GetEntry_ListNode_Root, DateStamp2Long(NULL));
+  LEAVE();
 }
 
 ///
