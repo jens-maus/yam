@@ -32,6 +32,8 @@
 
 #include "YAM_mainFolder.h"
 
+#include "MUIObjects.h"
+
 #include "Debug.h"
 
 /* CLASSDATA

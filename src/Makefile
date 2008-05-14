@@ -267,38 +267,38 @@ GENCLASSES= $(TOOLS)/genclasses
 # our few new rewritten classes
 CLASSES	= \
 	Classes.o \
-	Recipientstring.o \
-	Searchwindow.o \
-	SearchControlGroup.o \
+	Aboutwindow.o \
 	AddrBookEntryList.o \
 	AddrBookListtree.o \
 	AddrBookToolbar.o \
 	Addrmatchlist.o \
-	Aboutwindow.o \
 	AttachmentGroup.o \
 	AttachmentImage.o \
 	ConfigPageList.o \
-	ReadMailGroup.o \
-	ReadWindow.o \
-	ReadWindowToolbar.o \
-	ReadWindowStatusBar.o \
-	Splashwindow.o \
-	ShutdownWindow.o \
+	ImageArea.o \
+	InfoBar.o \
 	MailTextEdit.o \
 	MainFolderListtree.o \
 	MainMailList.o \
 	MainMailListGroup.o \
 	MainWindow.o \
 	MainWindowToolbar.o \
-	InfoBar.o \
+	QuickSearchBar.o \
+	ReadMailGroup.o \
+	ReadWindow.o \
+	ReadWindowToolbar.o \
+	ReadWindowStatusBar.o \
+	Recipientstring.o \
+	Searchwindow.o \
+	SearchControlGroup.o \
+	ShutdownWindow.o \
+	Splashwindow.o \
+	ThemeListGroup.o \
+	TransferMailList.o \
+	UpdateNotifyWindow.o \
 	WriteAttachmentList.o \
 	WriteWindow.o \
 	WriteWindowToolbar.o \
-	QuickSearchBar.o \
-	ImageArea.o \
-	TransferMailList.o \
-	UpdateNotifyWindow.o \
-	ThemeListGroup.o \
 	YAM.o
 
 REXX = \
@@ -409,7 +409,9 @@ OBJS = \
 	Locale.o \
 	MailList.o \
 	Mime.o \
+	MUIObjects.o \
 	ParseEmail.o \
+	Requesters.o \
 	Rexx.o \
 	Themes.o \
 	Threads.o \

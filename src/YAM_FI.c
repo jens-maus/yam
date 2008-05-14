@@ -61,6 +61,8 @@
 #include "Locale.h"
 #include "MailList.h"
 #include "FolderList.h"
+#include "MUIObjects.h"
+#include "Requesters.h"
 
 #include "Debug.h"
 

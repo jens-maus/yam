@@ -46,6 +46,7 @@
 #include "YAM_write.h"
 
 #include "Locale.h"
+#include "MUIObjects.h"
 
 #include "classes/Classes.h"
 

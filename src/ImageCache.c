@@ -53,6 +53,7 @@
 #include "ImageCache.h"
 #include "Locale.h"
 #include "FileInfo.h"
+#include "MUIObjects.h"
 #include "extrasrc.h"
 
 #include "Debug.h"

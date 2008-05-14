@@ -51,6 +51,8 @@
 
 #include "FileInfo.h"
 #include "Locale.h"
+#include "MUIObjects.h"
+#include "Requesters.h"
 
 #include "Debug.h"
 

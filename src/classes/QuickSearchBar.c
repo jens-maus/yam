@@ -36,6 +36,7 @@
 #include "YAM_mainFolder.h"
 
 #include "MailList.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 

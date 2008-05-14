@@ -30,6 +30,9 @@
 
 #include "Searchwindow_cl.h"
 
+#include "MUIObjects.h"
+#include "Requesters.h"
+
 #include "Debug.h"
 
 /* CLASSDATA

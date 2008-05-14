@@ -33,6 +33,9 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 
+#include "MUIObjects.h"
+#include "Requesters.h"
+
 #include "Debug.h"
 
 /* CLASSDATA

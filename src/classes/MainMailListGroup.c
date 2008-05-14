@@ -30,6 +30,8 @@
 
 #include "MainMailListGroup_cl.h"
 
+#include "MUIObjects.h"
+
 #include "Debug.h"
 
 /* CLASSDATA

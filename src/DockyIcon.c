@@ -35,6 +35,7 @@
 #include "YAM_config.h"
 
 #include "DockyIcon.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 

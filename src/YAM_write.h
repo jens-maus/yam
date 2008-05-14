@@ -36,6 +36,7 @@ struct AppMessage;
 struct codeset;
 struct Mail;
 struct MailList;
+struct ReadMailData;
 
 struct WR_GUIData
 {

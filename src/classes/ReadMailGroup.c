@@ -39,6 +39,8 @@
 #include "HTML2Mail.h"
 #include "FileInfo.h"
 #include "Mime.h"
+#include "MUIObjects.h"
+#include "Requesters.h"
 #include "Timer.h"
 
 #include "Debug.h"

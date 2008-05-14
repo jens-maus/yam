@@ -32,6 +32,8 @@
 
 #include "YAM_addressbookEntry.h"
 
+#include "MUIObjects.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -290,7 +292,7 @@ DECLARE(Event) // struct IntuiMessage *imsg
 
   ENTER();
 
-  if(xget(obj, MUIA_Window_Open))
+  if(xget(obj, MUIA_Window_Open) == TRUE)
   {
     struct IntuiMessage *imsg = msg->imsg;
     LONG position = xget(data->Matchlist, MUIA_NList_Active);
@@ -351,7 +353,7 @@ DECLARE(Open) // char *str
 
   /* is there more entries in the list and if only one, is it longer than what the user already typed... */
   entries = xget(data->Matchlist, MUIA_NList_Entries);
-  if(entries > 0 && (DoMethod(data->Matchlist, MUIM_NList_GetEntry, 0, &entry), (entries != 1 || Stricmp(msg->str, entry->MatchString))))
+  if(entries > 0 && (DoMethod(data->Matchlist, MUIM_NList_GetEntry, 0, &entry), (entries != 1 || Stricmp(msg->str, entry->MatchString) != 0)))
   {
     // now we return the complete first entry of the list of matches instead
     // of just the matching string to allow the recipient string to derive the

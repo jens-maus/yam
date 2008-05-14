@@ -78,6 +78,8 @@
 #include "Locale.h"
 #include "MailList.h"
 #include "Mime.h"
+#include "MUIObjects.h"
+#include "Requesters.h"
 
 #include "Debug.h"
 

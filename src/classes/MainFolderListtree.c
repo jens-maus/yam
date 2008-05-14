@@ -34,6 +34,7 @@
 #include "YAM_mainFolder.h"
 
 #include "FolderList.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 

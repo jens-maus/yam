@@ -31,6 +31,7 @@
 
 #include "YAM.h"
 
+#include "Requesters.h"
 #include "Rexx.h"
 
 #include "Debug.h"

@@ -33,6 +33,8 @@
 #include "YAM_addressbookEntry.h"
 #include "MailList.h"
 
+#include "MUIObjects.h"
+
 #include "Debug.h"
 
 /* CLASSDATA

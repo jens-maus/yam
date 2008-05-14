@@ -35,6 +35,7 @@
 #include "classes/Classes.h"
 
 #include "MailList.h"
+#include "MUIObjects.h"
 #include "Rexx.h"
 
 #include "Debug.h"

@@ -33,6 +33,10 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 
+#include "MUIObjects.h"
+
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -51,7 +55,7 @@ OVERLOAD(MUIM_DragQuery)
     if(d->obj == G->AB->GUI.LV_ADDRESSES)
     {
       struct MUI_NListtree_TreeNode *active;
-    
+
       if((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)))
       {
         if(!((struct ABEntry *)(active->tn_User))->Members)
@@ -76,7 +80,7 @@ OVERLOAD(MUIM_DragDrop)
     if(d->obj == G->AB->GUI.LV_ADDRESSES)
     {
       struct MUI_NListtree_TreeNode *active;
-    
+
       if((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)))
       {
         if(isFlagSet(active->tn_Flags, TNF_LIST))

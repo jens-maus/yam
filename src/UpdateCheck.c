@@ -58,6 +58,7 @@
 
 #include "Locale.h"
 #include "Mime.h"
+#include "MUIObjects.h"
 #include "UpdateCheck.h"
 
 #include "Debug.h"

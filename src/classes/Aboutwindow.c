@@ -33,6 +33,8 @@
 
 #include <mui/NFloattext_mcc.h>
 
+#include "MUIObjects.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -198,9 +200,7 @@ OVERLOAD(OM_NEW)
   // create the main window object
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_DragBar,      FALSE,
     MUIA_Window_CloseGadget,  FALSE,
-    MUIA_Window_DepthGadget,  FALSE,
     MUIA_Window_SizeGadget,   FALSE,
     MUIA_Window_LeftEdge,     MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,      MUIV_Window_TopEdge_Centered,

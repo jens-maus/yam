@@ -36,6 +36,7 @@
 #include "YAM_configFile.h"
 
 #include "FileInfo.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 

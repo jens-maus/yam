@@ -62,12 +62,14 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
-#include "ImageCache.h"
-#include "UpdateCheck.h"
 #include "BayesFilter.h"
-#include "Locale.h"
 #include "FolderList.h"
+#include "ImageCache.h"
+#include "Locale.h"
 #include "Mime.h"
+#include "MUIObjects.h"
+#include "Requesters.h"
+#include "UpdateCheck.h"
 
 #include "Debug.h"
 

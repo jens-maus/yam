@@ -43,6 +43,7 @@
 #include "extrasrc.h"
 
 #include "Locale.h"
+#include "MUIObjects.h"
 #include "Timer.h"
 
 #include "classes/Classes.h"

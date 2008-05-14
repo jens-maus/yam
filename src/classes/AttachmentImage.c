@@ -47,6 +47,8 @@
 #include <proto/icon.h>
 #include <proto/wb.h>
 
+#include "MUIObjects.h"
+
 #include "Debug.h"
 
 /* CLASSDATA

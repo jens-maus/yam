@@ -35,6 +35,7 @@
 
 #include "YAM_mainFolder.h"
 
+#include "MUIObjects.h"
 #include "Themes.h"
 
 #include "Debug.h"

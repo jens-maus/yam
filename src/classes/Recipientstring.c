@@ -34,6 +34,8 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_mainFolder.h"
 
+#include "MUIObjects.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -117,24 +119,25 @@ static char *rcptok(char *s, BOOL *quote)
 
   ENTER();
 
-  if (s)
+  if(s != NULL)
     p = s;
   else
     s = p;
 
-  if (!p || !*p)
+  if(p == NULL || *p == '\0')
   {
     RETURN(NULL);
     return NULL;
   }
 
-  while (*p)
+  while(*p != '\0')
   {
-    if (*p == '"')
+    if(*p == '"')
       *quote ^= TRUE;
-    else if (*p == ',' && !*quote)
+    else if(*p == ',' && *quote == FALSE)
     {
       *p++ = '\0';
+      RETURN(s);
       return s;
     }
     p++;

@@ -33,6 +33,7 @@
 #include "YAM.h"
 #include "YAM_main.h"
 
+#include "MUIObjects.h"
 #include "Rexx.h"
 
 #include "Debug.h"

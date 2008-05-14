@@ -33,6 +33,7 @@
 #include "classes/Classes.h"
 
 #include "Locale.h"
+#include "Requesters.h"
 #include "Rexx.h"
 
 #include "Debug.h"

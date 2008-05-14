@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-14  Thore Böckelmann <tboeckel@gmx.de>
+
+  * MUIObjects.c, Requesters.c: separated lots of functions into distinct
+    modules. All requester functions are now located in Requesters.c and all
+    simplified MUI object creation functions are located in MUIObjects.c. This
+    should help to shrink that monster YAM_UT.c.
+
 2008-05-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c: slightly modified the birthday check function, as it wasn't

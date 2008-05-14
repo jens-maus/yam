@@ -37,6 +37,7 @@
 #include "YAM_mainFolder.h"
 
 #include "BayesFilter.h"
+#include "MUIObjects.h"
 #include "Themes.h"
 
 #include "Debug.h"

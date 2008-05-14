@@ -35,9 +35,11 @@
 #include "YAM_mainFolder.h"
 
 #include "BayesFilter.h"
+#include "FolderList.h"
 #include "MailList.h"
 #include "Mime.h"
-#include "FolderList.h"
+#include "MUIObjects.h"
+#include "Requesters.h"
 
 #include "Debug.h"
 

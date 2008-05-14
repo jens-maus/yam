@@ -34,6 +34,7 @@
 #include "YAM_main.h"
 #include "classes/Classes.h"
 
+#include "MUIObjects.h"
 #include "Rexx.h"
 
 #include "Debug.h"

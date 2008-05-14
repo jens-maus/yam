@@ -57,11 +57,13 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
-#include "ImageCache.h"
 #include "FileInfo.h"
+#include "FolderList.h"
+#include "ImageCache.h"
 #include "Locale.h"
 #include "MailList.h"
-#include "FolderList.h"
+#include "MUIObjects.h"
+#include "Requesters.h"
 
 #include "Debug.h"
 

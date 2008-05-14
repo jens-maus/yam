@@ -34,6 +34,8 @@
 
 #include "YAM_find.h"
 
+#include "MUIObjects.h"
+
 #include "Debug.h"
 
 /* CLASSDATA

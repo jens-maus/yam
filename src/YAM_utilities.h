@@ -61,22 +61,46 @@ enum DateStampType
   DSS_RELDATEBEAT   // swatch beat datetime format with weekday subst.
 };
 
-enum TZConvert { TZC_NONE, TZC_UTC, TZC_LOCAL };
+enum TZConvert
+{
+  TZC_NONE,
+  TZC_UTC,
+  TZC_LOCAL
+};
 
-enum ReqFileType { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH,
-  ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_EXPORT, ASL_FOLDER,
-  ASL_ABOOK_LDIF, ASL_ABOOK_CSV, ASL_ABOOK_TAB, ASL_ABOOK_XML,
-  ASL_MAX };
+enum ReqFileType
+{
+  ASL_ABOOK=0,
+  ASL_CONFIG,
+  ASL_DETACH,
+  ASL_ATTACH,
+  ASL_REXX,
+  ASL_PHOTO,
+  ASL_IMPORT,
+  ASL_EXPORT,
+  ASL_FOLDER,
+  ASL_ABOOK_LDIF,
+  ASL_ABOOK_CSV,
+  ASL_ABOOK_TAB,
+  ASL_ABOOK_XML,
+  ASL_MAX
+};
 
-enum OutputDefType { OUT_DOS=0, OUT_NIL };
+enum OutputDefType
+{
+  OUT_DOS=0,
+  OUT_NIL
+};
 
-enum SizeFormat { SF_DEFAULT=0, // format sizes in old-style   1,234,567 (bytes)
-                  SF_MIXED,     // format in mixed mode        1.234 GB - 12.34 MB - 123.4 KB - 1234 B
-                  SF_1PREC,     // format in one-precision     1.2 GB - 12.3 MB - 123.4 KB - 1234 B
-                  SF_2PREC,     // format in two-precision     1.23 GB - 12.34 MB - 123.45 KB - 1234 B
-                  SF_3PREC,     // format in three precision   1.234 GB - 12.345 MB - 123.456 KB - 1234 B
-                  SF_AUTO       // format automatically via C->SizeFormat
-                };
+enum SizeFormat
+{
+  SF_DEFAULT=0, // format sizes in old-style   1,234,567 (bytes)
+  SF_MIXED,     // format in mixed mode        1.234 GB - 12.34 MB - 123.4 KB - 1234 B
+  SF_1PREC,     // format in one-precision     1.2 GB - 12.3 MB - 123.4 KB - 1234 B
+  SF_2PREC,     // format in two-precision     1.23 GB - 12.34 MB - 123.45 KB - 1234 B
+  SF_3PREC,     // format in three precision   1.234 GB - 12.345 MB - 123.456 KB - 1234 B
+  SF_AUTO       // format automatically via C->SizeFormat
+};
 
 struct Person
 {
@@ -178,16 +202,6 @@ struct TimeRequest
 #define BusyGauge(t, p, max)  Busy(t, p, 0, max)
 #define BusyGaugeInt(t, p, m) Busy(t, p, -1, m)
 
-// attachment requester flags & macros
-#define ATTREQ_DISP       (1<<0)
-#define ATTREQ_SAVE       (1<<1)
-#define ATTREQ_PRINT      (1<<2)
-#define ATTREQ_MULTI      (1<<3)
-#define isDisplayReq(v)   (isFlagSet((v), ATTREQ_DISP))
-#define isSaveReq(v)      (isFlagSet((v), ATTREQ_SAVE))
-#define isPrintReq(v)     (isFlagSet((v), ATTREQ_PRINT))
-#define isMultiReq(v)     (isFlagSet((v), ATTREQ_MULTI))
-
 #ifndef MAX
 #define MAX(a,b)          (((a) > (b)) ? (a) : (b))
 #endif
@@ -205,48 +219,6 @@ struct TimeRequest
 #define CLEAR_FLAG(v,f)     ((v) &= ~(f))         // clear the flag f in v
 #define MASK_FLAG(v,f)      ((v) &= (f))          // mask the variable v with flag f bitwise
 
-// some flags for MakeAddressField()
-#define AFF_ALLOW_MULTI         (1<<0)
-#define AFF_EXTERNAL_SHORTCUTS  (1<<1)
-
-/* ReturnID collecting macros
-** every COLLECT_ have to be finished with a REISSUE_
-**
-** Example:
-**
-** COLLECT_RETURNIDS;
-**
-** while(running)
-** {
-**    static ULONG signals=0;
-**    switch(DoMethod(G->App, MUIM_Application_NewInput, &signals))
-**    {
-**        case ID_PLAY:
-**           PlaySound();
-**           break;
-**
-**        case ID_CANCEL:
-**        case MUIV_Application_ReturnID_Quit:
-**           running = FALSE;
-**           break;
-**    }
-**
-**    if(running && signals)
-**      signals = Wait(signals);
-** }
-**
-** REISSUE_RETURNIDS;
-*/
-#define COLLECT_SIZE 32
-#define COLLECT_RETURNIDS { \
-                            ULONG returnID[COLLECT_SIZE], csize = COLLECT_SIZE, rpos = COLLECT_SIZE, userData, userSigs = 0; \
-                            while(csize && userSigs == 0 && (userData = DoMethod(G->App, MUIM_Application_NewInput, &userSigs))) \
-                              returnID[--csize] = userData
-
-#define REISSUE_RETURNIDS   while(rpos > csize) \
-                              DoMethod(G->App, MUIM_Application_ReturnID, returnID[--rpos]); \
-                          }
-
 // Wrapper define to be able to use the standard call of MUI_Request
 #ifdef MUI_Request
 #undef MUI_Request
@@ -254,7 +226,6 @@ struct TimeRequest
 #define MUI_Request YAMMUIRequest
 
 // function macros
-#define SetHelp(o,str)        set(o, MUIA_ShortHelp, tr(str))
 #define DisposeModulePush(m)  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, m)
 #define FreeStrBuf(str)       ((str != NULL) ? free(((char *)(str))-sizeof(size_t)) : (void)0)
 #define isSpace(c)            ((BOOL)(G->Locale ? (IsSpace(G->Locale, (ULONG)(c)) != 0) : (isspace((c)) != 0)))
@@ -263,11 +234,15 @@ struct TimeRequest
 #define isValidMailFile(file) (!(strlen(file) < 17 || file[12] != '.' || file[16] != ',' || !isdigit(file[13])))
 #define Bool2Txt(b)           ((b) ? "Y" : "N")
 #define Txt2Bool(t)           (BOOL)(toupper((int)*(t)) == 'Y' || (int)*(t) == '1')
-#define GetMUIString(a, o, l) strlcpy((a), (char *)xget((o), MUIA_String_Contents), (l))
-#define GetMUIText(a, o, l)   strlcpy((a), (char *)xget((o), MUIA_Text_Contents), (l))
 
 // LogFile enums and macros
-enum LFMode { LF_NONE=0, LF_NORMAL, LF_VERBOSE, LF_ALL };
+enum LFMode
+{
+  LF_NONE=0,
+  LF_NORMAL,
+  LF_VERBOSE,
+  LF_ALL
+};
 
 // external variables
 extern int            BusyLevel;
@@ -280,18 +255,14 @@ void     AddZombieFile(const char *fileName);
 char *   AllocReqText(char *s);
 char *   AllocStrBuf(size_t initlen);
 void     AppendToLogfile(enum LFMode, int id, const char *text, ...);
-struct Part *AttachRequest(const char *title, const char *body, const char *yestext, const char *notext, int mode, struct ReadMailData *rmData);
 BOOL     Busy(const char *text, const char *parameter, int cur, int max);
 BOOL     CheckPrinter(void);
-LONG     CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numBoxes, const char *text, ...);
 void     ClearMailList(struct Folder *folder, BOOL resetstats);
 BOOL     DeleteZombieFiles(BOOL force);
 void     CloseTempFile(struct TempFile *tf);
 ULONG    CRC32(const void *buffer, unsigned int count, ULONG crc);
 BOOL     ConvertCRLF(char *in, char *out, BOOL to);
 unsigned char ConvertKey(const struct IntuiMessage *imsg);
-BOOL     isChildOfGroup(Object *group, Object *child);
-BOOL     isChildOfFamily(Object *family, Object *child);
 BOOL     CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh);
 BOOL     MoveFile(const char *oldname, const char *newname);
 char *   CreateFilename(const char * const file);
@@ -328,37 +299,19 @@ BOOL     FileToEditor(char *file, Object *editor, BOOL changed);
 LONG     FileCount(const char *directory, const char *pattern);
 char *   AddPath(char *dst, const char *src, const char *add, size_t size);
 void     FinishUnpack(char *file);
-struct Folder *FolderRequest(const char *title, const char *body, const char *yestext, const char *notext, struct Folder *exclude, Object *parent);
 void     FormatSize(LONG size, char *buffer, int buflen, enum SizeFormat forcedPrecision);
 time_t   GetDateStamp(void);
 const char *GetFolderDir(const struct Folder *fo);
 char *   GetLine(FILE *fh, char *buffer, int bufsize);
 char *   GetMailFile(char *string, const struct Folder *folder, const struct Mail *mail);
-BOOL     GetMUICheck(Object *obj);
-int      GetMUICycle(Object *obj);
-int      GetMUIInteger(Object *obj);
-int      GetMUINumer(Object *obj);
-int      GetMUIRadio(Object *obj);
 char *   GetNextLine(char *p1);
 int      GetSimpleID(void);
 void     GotoURL(const char *url, BOOL newWindow);
 const char *IdentifyFile(const char *fname);
-void     InfoWindow(const char *title, const char *body, const char *oktext, Object *parent, BOOL active);
 void     InsertAddresses(Object *obj, char **addr, BOOL add);
 char *   itoa(int val);
 void     LoadLayout(void);
 BOOL     MailExists(struct Mail *mailptr, struct Folder *folder);
-Object * MakeButton(const char *txt);
-Object * MakeCheck(const char *label);
-Object * MakeCheckGroup(Object **check, const char *label);
-Object * MakeCycle(const char *const *labels, const char *label);
-Object * MakeInteger(int maxlen, const char *label);
-Object * MakeNumeric(int min, int max, BOOL percent);
-Object * MakePassString(const char *label);
-Object * MakePGPKeyList(Object **st, BOOL secret, const char *label);
-Object * MakeString(int maxlen, const char *label);
-Object * MakeAddressField(Object **string, const char *label, const Object *help, int abmode, int winnum, ULONG flags);
-Object * MakeCharsetPop(Object **string, Object **pop);
 BOOL     MatchNoCase(const char *string, const char *match);
 char *   MyStrChr(const char *s, const char c);
 struct TempFile *OpenTempFile(const char *mode);
@@ -375,14 +328,11 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win, const char *titl
 void     FreeFileReqCache(struct FileReqCache *frc);
 BOOL     SafeOpenWindow(Object *obj);
 void     SaveLayout(BOOL permanent);
-char     ShortCut(const char *label);
 void     SimpleWordWrap(char *filename, int wrapsize);
 char *   StartUnpack(const char *file, char *newfile, const struct Folder *folder);
 char *   StrBufCat(char *strbuf, const char *source);
 char *   StrBufCpy(char *strbuf, const char *source);
 char *   AppendToBuffer(char *buf, int *wptr, int *len, const char *add);
-int      StringRequest(char *string, int size, const char *title, const char *body,
-                       const char *yestext, const char *alttext, const char *notext, BOOL secret, Object *parent);
 char *   StripUnderscore(const char *label);
 char *   stristr(const char *a, const char *b);
 char *   SWSSearch(char *str1, char*str2);
@@ -391,7 +341,6 @@ int      TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfold
 char *   Trim(char *s);
 char *   TrimEnd(char *s);
 char *   TrimStart(char *s);
-LONG     YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *title, const char *gadgets, const char *format, ...);
 char *   UnquoteString(const char *s, BOOL new);
 int      ReadUInt32(FILE *stream, ULONG *value);
 int      WriteUInt32(FILE *stream, ULONG value);
@@ -399,27 +348,5 @@ int      WriteUInt32(FILE *stream, ULONG value);
 #if !defined(__amigaos4__)
 void MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, struct RastPort *destRP, LONG xDest, LONG yDest, LONG xSize, LONG ySize, ULONG minterm, APTR bltMask);
 #endif
-
-// Here we define inline functions that should be inlined by
-// the compiler, if possible.
-
-/// xget()
-//  Gets an attribute value from a MUI object
-ULONG xget(Object *obj, const ULONG attr);
-#if defined(__GNUC__)
-  // please note that we do not evaluate the return value of GetAttr()
-  // as some attributes (e.g. MUIA_Selected) always return FALSE, even
-  // when they are supported by the object. But setting b=0 right before
-  // the GetAttr() should catch the case when attr doesn't exist at all
-  #define xget(OBJ, ATTR) ({ULONG b=0; GetAttr(ATTR, OBJ, &b); b;})
-#endif
-///
-/// xset()
-//  Sets attributes for a MUI object
-ULONG xset(Object *obj, ...);
-#if defined(__GNUC__) || defined(__VBCC__)
-  #define xset(obj, ...)  SetAttrs((obj), __VA_ARGS__, TAG_DONE)
-#endif
-///
 
 #endif /* YAM_UTILITIES_H */
