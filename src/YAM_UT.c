@@ -5047,14 +5047,12 @@ void GotoURL(const char *url, BOOL newWindow)
   }
   else if(OpenURLBase != NULL)
   {
-    struct TagItem tags[] = { { URL_NewWindow, newWindow },
-                              { TAG_DONE,      TAG_END   } };
-
     // open the URL in a defined web browser and
     // let the user decide himself if he wants to see
     // it popping up in a new window or not (via OpenURL
     // prefs)
-    URL_OpenA((STRPTR)url, tags);
+    URL_Open((STRPTR)url, URL_NewWindow, newWindow,
+                          TAG_DONE);
   }
   else
     W(DBF_HTML, "No openurl.library v1+ found");
