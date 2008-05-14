@@ -39,6 +39,7 @@ FLEX = flex
 # Directories
 PREFIX     =
 CLASSDIR   = $(PREFIX)classes
+REXXDIR    = $(PREFIX)rexx
 LOCALE     = /$(PREFIX)locale
 EXTSRC     = $(PREFIX)extrasrc
 TOOLS      = $(PREFIX)tools
@@ -113,11 +114,86 @@ CLASSES = \
 	$(OBJDIR)/$(CLASSDIR)/ThemeListGroup.o \
 	$(OBJDIR)/$(CLASSDIR)/YAM.o
 
+REXX = \
+	$(OBJDIR)/$(REXXDIR)/addrdelete.o \
+	$(OBJDIR)/$(REXXDIR)/addredit.o \
+	$(OBJDIR)/$(REXXDIR)/addrfind.o \
+	$(OBJDIR)/$(REXXDIR)/addrgoto.o \
+	$(OBJDIR)/$(REXXDIR)/addrinfo.o \
+	$(OBJDIR)/$(REXXDIR)/addrload.o \
+	$(OBJDIR)/$(REXXDIR)/addrnew.o \
+	$(OBJDIR)/$(REXXDIR)/addrresolve.o \
+	$(OBJDIR)/$(REXXDIR)/addrsave.o \
+	$(OBJDIR)/$(REXXDIR)/appbusy.o \
+	$(OBJDIR)/$(REXXDIR)/appnobusy.o \
+	$(OBJDIR)/$(REXXDIR)/folderinfo.o \
+	$(OBJDIR)/$(REXXDIR)/getconfiginfo.o \
+	$(OBJDIR)/$(REXXDIR)/getfolderinfo.o \
+	$(OBJDIR)/$(REXXDIR)/getmailinfo.o \
+	$(OBJDIR)/$(REXXDIR)/getselected.o \
+	$(OBJDIR)/$(REXXDIR)/geturl.o \
+	$(OBJDIR)/$(REXXDIR)/help.o \
+	$(OBJDIR)/$(REXXDIR)/hide.o \
+	$(OBJDIR)/$(REXXDIR)/info.o \
+	$(OBJDIR)/$(REXXDIR)/isonline.o \
+	$(OBJDIR)/$(REXXDIR)/listselect.o \
+	$(OBJDIR)/$(REXXDIR)/mailarchive.o \
+	$(OBJDIR)/$(REXXDIR)/mailbounce.o \
+	$(OBJDIR)/$(REXXDIR)/mailchangesubject.o \
+	$(OBJDIR)/$(REXXDIR)/mailcheck.o \
+	$(OBJDIR)/$(REXXDIR)/mailcopy.o \
+	$(OBJDIR)/$(REXXDIR)/maildelete.o \
+	$(OBJDIR)/$(REXXDIR)/mailedit.o \
+	$(OBJDIR)/$(REXXDIR)/mailexport.o \
+	$(OBJDIR)/$(REXXDIR)/mailfilter.o \
+	$(OBJDIR)/$(REXXDIR)/mailforward.o \
+	$(OBJDIR)/$(REXXDIR)/mailimport.o \
+	$(OBJDIR)/$(REXXDIR)/mailinfo.o \
+	$(OBJDIR)/$(REXXDIR)/mailmove.o \
+	$(OBJDIR)/$(REXXDIR)/mailread.o \
+	$(OBJDIR)/$(REXXDIR)/mailreply.o \
+	$(OBJDIR)/$(REXXDIR)/mailsendall.o \
+	$(OBJDIR)/$(REXXDIR)/mailsend.o \
+	$(OBJDIR)/$(REXXDIR)/mailstatus.o \
+	$(OBJDIR)/$(REXXDIR)/mailupdate.o \
+	$(OBJDIR)/$(REXXDIR)/mailwrite.o \
+	$(OBJDIR)/$(REXXDIR)/newmailfile.o \
+	$(OBJDIR)/$(REXXDIR)/quit.o \
+	$(OBJDIR)/$(REXXDIR)/readclose.o \
+	$(OBJDIR)/$(REXXDIR)/readinfo.o \
+	$(OBJDIR)/$(REXXDIR)/readprint.o \
+	$(OBJDIR)/$(REXXDIR)/readsave.o \
+	$(OBJDIR)/$(REXXDIR)/request.o \
+	$(OBJDIR)/$(REXXDIR)/requestfolder.o \
+	$(OBJDIR)/$(REXXDIR)/requeststring.o \
+	$(OBJDIR)/$(REXXDIR)/screentoback.o \
+	$(OBJDIR)/$(REXXDIR)/screentofront.o \
+	$(OBJDIR)/$(REXXDIR)/setflag.o \
+	$(OBJDIR)/$(REXXDIR)/setfolder.o \
+	$(OBJDIR)/$(REXXDIR)/setmail.o \
+	$(OBJDIR)/$(REXXDIR)/setmailfile.o \
+	$(OBJDIR)/$(REXXDIR)/show.o \
+	$(OBJDIR)/$(REXXDIR)/userinfo.o \
+	$(OBJDIR)/$(REXXDIR)/writeattach.o \
+	$(OBJDIR)/$(REXXDIR)/writebcc.o \
+	$(OBJDIR)/$(REXXDIR)/writecc.o \
+	$(OBJDIR)/$(REXXDIR)/writeeditor.o \
+	$(OBJDIR)/$(REXXDIR)/writefrom.o \
+	$(OBJDIR)/$(REXXDIR)/writeletter.o \
+	$(OBJDIR)/$(REXXDIR)/writemailto.o \
+	$(OBJDIR)/$(REXXDIR)/writeoptions.o \
+	$(OBJDIR)/$(REXXDIR)/writequeue.o \
+	$(OBJDIR)/$(REXXDIR)/writereplyto.o \
+	$(OBJDIR)/$(REXXDIR)/writesend.o \
+	$(OBJDIR)/$(REXXDIR)/writesubject.o \
+	$(OBJDIR)/$(REXXDIR)/writeto.o
+
 # and the other object files
 OBJS = \
 	$(OBJDIR)/YAM_global.o \
 	$(OBJDIR)/YAM.o \
 	$(CLASSES) \
+	$(REXX) \
 	$(OBJDIR)/YAM_AB.o \
 	$(OBJDIR)/YAM_CO.o \
 	$(OBJDIR)/YAM_COg.o \
@@ -127,26 +203,32 @@ OBJS = \
 	$(OBJDIR)/YAM_ER.o \
 	$(OBJDIR)/YAM_FI.o \
 	$(OBJDIR)/YAM_FO.o \
-	$(OBJDIR)/Locale.o \
 	$(OBJDIR)/YAM_MA.o \
 	$(OBJDIR)/YAM_MAf.o \
-	$(OBJDIR)/ParseEmail.o \
 	$(OBJDIR)/YAM_RE.o \
-	$(OBJDIR)/YAM_rexx.o \
-	$(OBJDIR)/YAM_rexx_rxcl.o \
-	$(OBJDIR)/YAM_rexx_rxif.o \
 	$(OBJDIR)/YAM_TR.o \
 	$(OBJDIR)/YAM_US.o \
 	$(OBJDIR)/YAM_UT.o \
 	$(OBJDIR)/YAM_WR.o \
-	$(OBJDIR)/ImageCache.o \
-	$(OBJDIR)/UpdateCheck.o \
-	$(OBJDIR)/HTML2Mail.o \
-	$(OBJDIR)/HashTable.o \
+	$(OBJDIR)/AppIcon.o \
 	$(OBJDIR)/BayesFilter.o \
-	$(OBJDIR)/Mime.o \
+	$(OBJDIR)/DockyIcon.o \
 	$(OBJDIR)/FileInfo.o \
+	$(OBJDIR)/FolderList.o \
+	$(OBJDIR)/HashTable.o \
+	$(OBJDIR)/HTML2Mail.o \
+	$(OBJDIR)/ImageCache.o \
+	$(OBJDIR)/Locale.o \
+	$(OBJDIR)/MailList.o \
+	$(OBJDIR)/Mime.o \
+	$(OBJDIR)/MUIObjects.o \
+	$(OBJDIR)/ParseEmail.o \
+	$(OBJDIR)/Requesters.o \
+	$(OBJDIR)/Rexx.o \
 	$(OBJDIR)/Themes.o \
+	$(OBJDIR)/Threads.o \
+	$(OBJDIR)/Timer.o \
+	$(OBJDIR)/UpdateCheck.o \
 	$(OBJDIR)/extrasrc.o \
 	$(OBJDIR)/Debug.o
 
@@ -159,6 +241,7 @@ $(OBJDIR): $(OBJDIR)/.objdir_is_here
   @echo "*e[33mGenerating $@ directory*e[0m"
   @$(MKDIR) $(OBJDIR)
   @$(MKDIR) $(OBJDIR)/$(CLASSDIR)
+  @$(MKDIR) $(OBJDIR)/$(REXXDIR)
   @echo "dummy target" >$(OBJDIR)/.objdir_is_here
 
 $(OBJDIR)/.objdir_is_here:
@@ -252,64 +335,64 @@ $(OBJDIR)/Locale.o: Locale.c Locale.h
 $(OBJDIR)/YAM.o: YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_config.h YAM_configFile.h YAM_find.h YAM_folderconfig.h \
   YAM_global.h include/SDI_hook.h Locale.h YAM_main.h YAM_mainFolder.h \
-  YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
+  YAM_read.h YAM_stringsizes.h YAM_transfer.h \
   YAM_userlist.h YAM_utilities.h YAM_write.h
   @echo "*e[32mCompiling $*.c*e[0m"
   @$(CC) $(CFLAGS) $(DEVFLAGS) $< OBJNAME=$@
 
 $(OBJDIR)/YAM_AB.o: YAM_AB.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_config.h YAM_error.h YAM_find.h YAM_global.h \
-  include/SDI_hook.h Locale.h YAM_main.h YAM_mainFolder.h YAM_rexx_rxif.h \
+  include/SDI_hook.h Locale.h YAM_main.h YAM_mainFolder.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
 $(OBJDIR)/YAM_CO.o: YAM_CO.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_config.h YAM_configFile.h YAM_configGUI.h YAM_error.h \
   YAM_find.h YAM_folderconfig.h YAM_global.h include/SDI_hook.h Locale.h \
-  YAM_main.h YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h \
+  YAM_main.h YAM_mainFolder.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
 $(OBJDIR)/YAM_COg.o: YAM_COg.c YAM.h YAM_config.h YAM_find.h \
   YAM_global.h include/SDI_hook.h Locale.h YAM_main.h YAM_mainFolder.h \
-  Mime.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
+  Mime.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h
 
 $(OBJDIR)/YAM_COs.o: YAM_COs.c YAM.h YAM_config.h YAM_error.h YAM_find.h \
   YAM_folderconfig.h YAM_global.h Locale.h YAM_mainFolder.h \
-  YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
+  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h
 
 $(OBJDIR)/YAM_DI.o: YAM_DI.c YAM.h YAM_error.h YAM_glossarydisplay.h \
-  include/SDI_hook.h Locale.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
+  include/SDI_hook.h Locale.h YAM_stringsizes.h YAM_transfer.h \
   YAM_userlist.h YAM_utilities.h YAM_write.h
 
 $(OBJDIR)/YAM_EA.o: YAM_EA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_config.h YAM_error.h YAM_find.h include/SDI_hook.h \
-  Locale.h YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h \
+  Locale.h YAM_mainFolder.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
 $(OBJDIR)/YAM_ER.o: YAM_ER.c YAM.h YAM_config.h YAM_error.h YAM_find.h include/SDI_hook.h \
-  Locale.h YAM_main.h YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h \
+  Locale.h YAM_main.h YAM_mainFolder.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
 $(OBJDIR)/YAM_FI.o: YAM_FI.c YAM.h YAM_config.h YAM_configFile.h YAM_error.h \
   YAM_find.h YAM_folderconfig.h YAM_global.h include/SDI_hook.h Locale.h \
-  YAM_main.h YAM_mainFolder.h YAM_read.h YAM_rexx_rxif.h YAM_stringsizes.h \
+  YAM_main.h YAM_mainFolder.h YAM_read.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
 $(OBJDIR)/YAM_FO.o: YAM_FO.c YAM.h YAM_error.h \
   YAM_folderconfig.h YAM_global.h include/SDI_hook.h Locale.h YAM_main.h \
-  YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
+  YAM_mainFolder.h YAM_stringsizes.h YAM_transfer.h \
   YAM_userlist.h YAM_utilities.h
 
 $(OBJDIR)/YAM_MA.o: YAM_MA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_config.h YAM_error.h YAM_find.h \
   YAM_folderconfig.h YAM_global.h include/SDI_hook.h Locale.h YAM_main.h \
-  YAM_mainFolder.h YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h \
+  YAM_mainFolder.h YAM_read.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
 $(OBJDIR)/YAM_MAf.o: YAM_MAf.c YAM.h YAM_config.h YAM_find.h \
   YAM_folderconfig.h YAM_global.h include/SDI_hook.h Locale.h YAM_main.h \
-  YAM_mainFolder.h YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h \
+  YAM_mainFolder.h YAM_read.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
 $(OBJDIR)/Mime.o: Mime.c YAM_error.h Locale.h Mime.h YAM_stringsizes.h \
@@ -321,31 +404,21 @@ ParseEmail.c: ParseEmail.l ParseEmail.h
 $(OBJDIR)/YAM_RE.o: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_config.h YAM_error.h YAM_find.h \
   YAM_folderconfig.h include/SDI_hook.h YAM_global.h Locale.h YAM_main.h \
-  YAM_mainFolder.h Mime.h YAM_read.h YAM_rexx_rxif.h YAM_stringsizes.h \
+  YAM_mainFolder.h Mime.h YAM_read.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
-
-$(OBJDIR)/YAM_rexx.o: YAM_rexx.c YAM_rexx.h YAM_rexx_rxcl.h YAM_rexx_rxif.h
-
-$(OBJDIR)/YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx_rxcl.h YAM_rexx_rxif.h
-
-$(OBJDIR)/YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM.h YAM_addressbook.h \
-  YAM_addressbookEntry.h YAM_config.h YAM_find.h YAM_folderconfig.h \
-  YAM_global.h Locale.h YAM_main.h YAM_mainFolder.h YAM_read.h \
-  YAM_rexx_rxcl.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
-  YAM_userlist.h YAM_utilities.h YAM_write.h
 
 $(OBJDIR)/YAM_TR.o: YAM_TR.c YAM.h YAM_addressbookEntry.h YAM_config.h YAM_error.h \
   YAM_find.h YAM_folderconfig.h YAM_global.h include/SDI_hook.h Locale.h \
-  YAM_main.h YAM_mainFolder.h Mime.h YAM_rexx_rxif.h \
+  YAM_main.h YAM_mainFolder.h Mime.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
 $(OBJDIR)/YAM_US.o: YAM_US.c YAM.h YAM_config.h YAM_error.h YAM_find.h include/SDI_hook.h \
-  Locale.h YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h \
+  Locale.h YAM_mainFolder.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
 $(OBJDIR)/YAM_UT.o: YAM_UT.c YAM.h YAM_config.h YAM_error.h \
   YAM_find.h YAM_folderconfig.h YAM_global.h include/SDI_hook.h Locale.h \
-  YAM_main.h YAM_mainFolder.h Mime.h YAM_read.h YAM_rexx_rxif.h \
+  YAM_main.h YAM_mainFolder.h Mime.h YAM_read.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_write.h
 
@@ -353,7 +426,7 @@ $(OBJDIR)/YAM_WR.o: YAM_WR.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_config.h YAM_error.h YAM_find.h \
   YAM_folderconfig.h YAM_global.h YAM_glossarydisplay.h include/SDI_hook.h \
   Locale.h YAM_main.h YAM_mainFolder.h Mime.h YAM_read.h \
-  YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
+  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_write.h
 
 $(OBJDIR)/BayesFilter.o: BayesFilter.c BayesFilter.h
@@ -370,6 +443,24 @@ HTML2Mail.c: HTML2Mail.l HTML2Mail.h
 $(OBJDIR)/FileInfo.o: FileInfo.c FileInfo.h
 
 $(OBJDIR)/Themes.o: Themes.c Themes.h
+
+$(OBJDIR)/AppIcon.o: AppIcon.c AppIcon.h
+
+$(OBJDIR)/DockyIcon.o: DockyIcon.c DockyIcon.h
+
+$(OBJDIR)/MUIObjects.o: MUIObjects.c MUIObjects.h
+
+$(OBJDIR)/Requesters.o: Requesters.c Requesters.h
+
+$(OBJDIR)/FolderList.o: FolderList.c FolderList.h
+
+$(OBJDIR)/MailList.o: MailList.c MailList.h
+
+$(OBJDIR)/Rexx.o: Rexx.c Rexx.h
+
+$(OBJDIR)/Threads.o: Threads.c Threads.h
+
+$(OBJDIR)/Timer.o: Timer.c Timer.h
 
 $(OBJDIR)/extrasrc.o: extrasrc.c
 
@@ -494,3 +585,146 @@ $(OBJDIR)/$(CLASSDIR)/UpdateNotifyWindow.o: $(CLASSDIR)/UpdateNotifyWindow.c $(C
 $(OBJDIR)/$(CLASSDIR)/ThemeListGroup.o: $(CLASSDIR)/ThemeListGroup.c $(CLASSDIR)/ThemeListGroup_cl.h \
   $(CLASSDIR)/Classes.h
 
+$(OBJDIR)/$(REXXDIR)/addrdelete.o: $(REXXDIR)/addrdelete.c
+
+$(OBJDIR)/$(REXXDIR)/addredit.o: $(REXXDIR)/addredit.c
+
+$(OBJDIR)/$(REXXDIR)/addrfind.o: $(REXXDIR)/addrfind.c
+
+$(OBJDIR)/$(REXXDIR)/addrgoto.o: $(REXXDIR)/addrgoto.c
+
+$(OBJDIR)/$(REXXDIR)/addrinfo.o: $(REXXDIR)/addrinfo.c
+
+$(OBJDIR)/$(REXXDIR)/addrload.o: $(REXXDIR)/addrload.c
+
+$(OBJDIR)/$(REXXDIR)/addrnew.o: $(REXXDIR)/addrnew.c
+
+$(OBJDIR)/$(REXXDIR)/addrresolve.o: $(REXXDIR)/addrresolve.c
+
+$(OBJDIR)/$(REXXDIR)/addrsave.o: $(REXXDIR)/addrsave.c
+
+$(OBJDIR)/$(REXXDIR)/appbusy.o: $(REXXDIR)/appbusy.c
+
+$(OBJDIR)/$(REXXDIR)/appnobusy.o: $(REXXDIR)/appnobusy.c
+
+$(OBJDIR)/$(REXXDIR)/folderinfo.o: $(REXXDIR)/folderinfo.c
+
+$(OBJDIR)/$(REXXDIR)/getconfiginfo.o: $(REXXDIR)/getconfiginfo.c
+
+$(OBJDIR)/$(REXXDIR)/getfolderinfo.o: $(REXXDIR)/getfolderinfo.c
+
+$(OBJDIR)/$(REXXDIR)/getmailinfo.o: $(REXXDIR)/getmailinfo.c
+
+$(OBJDIR)/$(REXXDIR)/getselected.o: $(REXXDIR)/getselected.c
+
+$(OBJDIR)/$(REXXDIR)/geturl.o: $(REXXDIR)/geturl.c
+
+$(OBJDIR)/$(REXXDIR)/help.o: $(REXXDIR)/help.c
+
+$(OBJDIR)/$(REXXDIR)/hide.o: $(REXXDIR)/hide.c
+
+$(OBJDIR)/$(REXXDIR)/info.o: $(REXXDIR)/info.c
+
+$(OBJDIR)/$(REXXDIR)/isonline.o: $(REXXDIR)/isonline.c
+
+$(OBJDIR)/$(REXXDIR)/listselect.o: $(REXXDIR)/listselect.c
+
+$(OBJDIR)/$(REXXDIR)/mailarchive.o: $(REXXDIR)/mailarchive.c
+
+$(OBJDIR)/$(REXXDIR)/mailbounce.o: $(REXXDIR)/mailbounce.c
+
+$(OBJDIR)/$(REXXDIR)/mailchangesubject.o: $(REXXDIR)/mailchangesubject.c
+
+$(OBJDIR)/$(REXXDIR)/mailcheck.o: $(REXXDIR)/mailcheck.c
+
+$(OBJDIR)/$(REXXDIR)/mailcopy.o: $(REXXDIR)/mailcopy.c
+
+$(OBJDIR)/$(REXXDIR)/maildelete.o: $(REXXDIR)/maildelete.c
+
+$(OBJDIR)/$(REXXDIR)/mailedit.o: $(REXXDIR)/mailedit.c
+
+$(OBJDIR)/$(REXXDIR)/mailexport.o: $(REXXDIR)/mailexport.c
+
+$(OBJDIR)/$(REXXDIR)/mailfilter.o: $(REXXDIR)/mailfilter.c
+
+$(OBJDIR)/$(REXXDIR)/mailforward.o: $(REXXDIR)/mailforward.c
+
+$(OBJDIR)/$(REXXDIR)/mailimport.o: $(REXXDIR)/mailimport.c
+
+$(OBJDIR)/$(REXXDIR)/mailinfo.o: $(REXXDIR)/mailinfo.c
+
+$(OBJDIR)/$(REXXDIR)/mailmove.o: $(REXXDIR)/mailmove.c
+
+$(OBJDIR)/$(REXXDIR)/mailread.o: $(REXXDIR)/mailread.c
+
+$(OBJDIR)/$(REXXDIR)/mailreply.o: $(REXXDIR)/mailreply.c
+
+$(OBJDIR)/$(REXXDIR)/mailsendall.o: $(REXXDIR)/mailsendall.c
+
+$(OBJDIR)/$(REXXDIR)/mailsend.o: $(REXXDIR)/mailsend.c
+
+$(OBJDIR)/$(REXXDIR)/mailstatus.o: $(REXXDIR)/mailstatus.c
+
+$(OBJDIR)/$(REXXDIR)/mailupdate.o: $(REXXDIR)/mailupdate.c
+
+$(OBJDIR)/$(REXXDIR)/mailwrite.o: $(REXXDIR)/mailwrite.c
+
+$(OBJDIR)/$(REXXDIR)/newmailfile.o: $(REXXDIR)/newmailfile.c
+
+$(OBJDIR)/$(REXXDIR)/quit.o: $(REXXDIR)/quit.c
+
+$(OBJDIR)/$(REXXDIR)/readclose.o: $(REXXDIR)/readclose.c
+
+$(OBJDIR)/$(REXXDIR)/readinfo.o: $(REXXDIR)/readinfo.c
+
+$(OBJDIR)/$(REXXDIR)/readprint.o: $(REXXDIR)/readprint.c
+
+$(OBJDIR)/$(REXXDIR)/readsave.o: $(REXXDIR)/readsave.c
+
+$(OBJDIR)/$(REXXDIR)/request.o: $(REXXDIR)/request.c
+
+$(OBJDIR)/$(REXXDIR)/requestfolder.o: $(REXXDIR)/requestfolder.c
+
+$(OBJDIR)/$(REXXDIR)/requeststring.o: $(REXXDIR)/requeststring.c
+
+$(OBJDIR)/$(REXXDIR)/screentoback.o: $(REXXDIR)/screentoback.c
+
+$(OBJDIR)/$(REXXDIR)/screentofront.o: $(REXXDIR)/screentofront.c
+
+$(OBJDIR)/$(REXXDIR)/setflag.o: $(REXXDIR)/setflag.c
+
+$(OBJDIR)/$(REXXDIR)/setfolder.o: $(REXXDIR)/setfolder.c
+
+$(OBJDIR)/$(REXXDIR)/setmail.o: $(REXXDIR)/setmail.c
+
+$(OBJDIR)/$(REXXDIR)/setmailfile.o: $(REXXDIR)/setmailfile.c
+
+$(OBJDIR)/$(REXXDIR)/show.o: $(REXXDIR)/show.c
+
+$(OBJDIR)/$(REXXDIR)/userinfo.o: $(REXXDIR)/userinfo.c
+
+$(OBJDIR)/$(REXXDIR)/writeattach.o: $(REXXDIR)/writeattach.c
+
+$(OBJDIR)/$(REXXDIR)/writebcc.o: $(REXXDIR)/writebcc.c
+
+$(OBJDIR)/$(REXXDIR)/writecc.o: $(REXXDIR)/writecc.c
+
+$(OBJDIR)/$(REXXDIR)/writeeditor.o: $(REXXDIR)/writeeditor.c
+
+$(OBJDIR)/$(REXXDIR)/writefrom.o: $(REXXDIR)/writefrom.c
+
+$(OBJDIR)/$(REXXDIR)/writeletter.o: $(REXXDIR)/writeletter.c
+
+$(OBJDIR)/$(REXXDIR)/writemailto.o: $(REXXDIR)/writemailto.c
+
+$(OBJDIR)/$(REXXDIR)/writeoptions.o: $(REXXDIR)/writeoptions.c
+
+$(OBJDIR)/$(REXXDIR)/writequeue.o: $(REXXDIR)/writequeue.c
+
+$(OBJDIR)/$(REXXDIR)/writereplyto.o: $(REXXDIR)/writereplyto.c
+
+$(OBJDIR)/$(REXXDIR)/writesend.o: $(REXXDIR)/writesend.c
+
+$(OBJDIR)/$(REXXDIR)/writesubject.o: $(REXXDIR)/writesubject.c
+
+$(OBJDIR)/$(REXXDIR)/writeto.o: $(REXXDIR)/writeto.c

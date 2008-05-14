@@ -7,6 +7,8 @@ $URL$
 
 2008-05-14  Thore Böckelmann <tboeckel@gmx.de>
 
+  * smakefile: updated SAS/C smakefile according to latest changes. Compiling
+    with SAS/C really becomes annoying, because of the tons of warnings.
   * YAM_UT.c: replaced the tag call of URL_Open() by a varargs call.
   * MUIObjects.c, Requesters.c: separated lots of functions into distinct
     modules. All requester functions are now located in Requesters.c and all
