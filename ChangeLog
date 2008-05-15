@@ -7,6 +7,10 @@ $URL$
 
 2008-05-15  Jens Langner <Jens.Langner@light-speed.de>
 
+  * extrasrc.h, lib/mos: again reworked the URL_Open() stub handling by
+    adding stub libraries to 'lib/mos' rather than defining our own inline
+    stubs in extrasrc.h. This should be the way we are dealing with such
+    missing vararg stubs.
   * extrasrc.h, misc: added the missing URL_Open() inline stub so that the
     MorphOS compile proceeds again. Also fixed some minor compiler warnings.
 
