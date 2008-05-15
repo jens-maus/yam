@@ -156,8 +156,8 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
-        ((struct Hook *)object)->h_Entry = entry;
-        ((struct Hook *)object)->h_SubEntry = subentry;
+        ((struct Hook *)object)->h_Entry = (ULONG (*)())entry;
+        ((struct Hook *)object)->h_SubEntry = (ULONG (*)())subentry;
         ((struct Hook *)object)->h_Data = data;
       }
     }
