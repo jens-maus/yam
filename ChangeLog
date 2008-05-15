@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-15  Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc.h, misc: added the missing URL_Open() inline stub so that the
+    MorphOS compile proceeds again. Also fixed some minor compiler warnings.
+
 2008-05-14  Thore Böckelmann <tboeckel@gmx.de>
 
   * smakefile: updated SAS/C smakefile according to latest changes. Compiling

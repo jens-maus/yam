@@ -160,8 +160,8 @@ static BOOL InitThreadTimer(struct Thread *thread)
 
   if((thread->timer_port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
-    if((thread->timer_req = (struct TimeRequest *)AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Size, sizeof(struct TimeRequest),
-                                                                                     ASOIOR_ReplyPort, thread->timer_port,
+    if((thread->timer_req = (struct TimeRequest *)AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Size,      sizeof(struct TimeRequest),
+                                                                                     ASOIOR_ReplyPort, (ULONG)thread->timer_port,
                                                                                      TAG_DONE)) != NULL)
     {
       if(OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)thread->timer_req, 0) == 0)

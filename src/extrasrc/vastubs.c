@@ -112,5 +112,6 @@ ULONG URL_Open(STRPTR url, Tag tag1, ...)
 
 #else
   #error "VARGS stubs are only save on m68k systems!"
-#endif
-#endif
+#endif // !defined(__PPC__)
+
+#endif // defined(__VBCC__) || defined(NO_INLINE_STDARG)

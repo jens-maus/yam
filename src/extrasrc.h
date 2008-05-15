@@ -177,6 +177,10 @@ struct IClass;
 #define NEED_FREEVECPOOLED
 #endif
 
+#if defined(__MORPHOS__) && !defined(HAVE_URLOPEN)
+#define NEED_URLOPEN
+#endif
+
 /*
  * Function prototypes
  */
@@ -269,6 +273,12 @@ APTR AllocVecPooled(APTR poolHeader, ULONG memSize);
 
 #if defined(NEED_FREEVECPOOLED)
 void FreeVecPooled(APTR poolHeader, APTR memory);
+#endif
+
+#if defined(NEED_URLOPEN)
+#define URL_Open(__p0, ...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	URL_OpenA(__p0, (struct TagItem *)_tags);})
 #endif
 
 /*
