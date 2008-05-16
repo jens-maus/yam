@@ -247,18 +247,18 @@
 (set #wrongCPU "YAM richiede almeno una CPU 68020 per girare!\n")
 (set #YAM_dir  (cat "Per favore seleziona una directory per YAM\n"
                     "(Non verrà creata nessuna cartella extra!)"))
-(set #lang_catalog (cat "Quale catalogo si desidera istallare?\n"
+(set #lang_catalog (cat "Quale catalogo si desidera installare?\n"
                         "(La lingua inglese è quella predefinita)"))
-(set #lang_manual "Seleziona la lingua da istallare per la guida in linea AmigaGuide")
+(set #lang_manual "Seleziona la lingua da installare per la guida in linea AmigaGuide")
 (set #no_way_back_warning (cat "\n"
                                "ATTENZIONE!!\n"
                                "(Nel caso di desideri aggiornare il programma\n"
-                               "da una precedente istallazione di YAM)\n\n"
+                               "da una precedente installazione di YAM)\n\n"
                                "Lo schema dei nomi dei messaggi è stato modificato, quando viene lanciata"
                                " questa nuova versione per la prima volta tutti i precedenti messaggi verranno"
                                " automaticamente convertiti al nuovo schema.\n"
                                "Si consiglia di effettuare un backup di TUTTI i messaggi PRIMA di procedere.\n\n"
-                               "Ricorda che è sempre possibile istallare due differenti versioni di YAM"
+                               "Ricorda che è sempre possibile installare due differenti versioni di YAM"
                                " in directory separate."))
 (set #faq_and_bugtracker (cat "\n"
                               "Nel caso si abbiano delle domande concernenti YAM\n"
@@ -272,9 +272,9 @@
                               "In caso venga riscontrato qualche bug nel programma,\n"
                               "è possibile segnalarlo attraverso il nostro bugtracker:\n"
                               "http://bugs.yam.ch/"))
-(set #done_1   (cat "\nYAM è stato istallato con successo.\n\n"
+(set #done_1   (cat "\nYAM è stato installato con successo.\n\n"
                     "Doppio click sull'icona di \"YAM\" nella\n"))
-(set #done_2        "\ndirectory dove si è deciso di istallarlo.\n\nBuon divertimento...")
+(set #done_2        "\ndirectory dove si è deciso di installarlo.\n\nBuon divertimento...")
 ; ///
 
 ;----------------------------------------------------------------------------

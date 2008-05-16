@@ -7,6 +7,8 @@ $URL$
 
 2008-05-16  Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/Install-YAM, locale/italian.ct: updated italian translation provided
+    by Samir Hawamdeh.
   * Aboutwindow.c: added Luca Longone and Samir Hawamdeh to the list of
     translation contributors.
 
