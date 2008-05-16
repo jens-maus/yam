@@ -94,6 +94,8 @@ OVERLOAD(OM_NEW)
                           "\033b%s\033n\n\n"
                           "Alexandre Balaban\n"
                           "Par Boberg\n"
+                          "Luca Longone\n"
+                          "Samir Hawamdeh\n"
                           "\n"
                           "%s\n"
                           "\n"
