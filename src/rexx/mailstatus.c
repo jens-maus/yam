@@ -37,17 +37,14 @@
 
 #include "Debug.h"
 
-struct rxd_mailstatus
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *status;
-  } arg;
+  char *status;
 };
 
-void rx_mailstatus(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_mailstatus(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_mailstatus *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -55,14 +52,13 @@ void rx_mailstatus(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_mailstatus *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
     case RXIF_ACTION:
     {
-      switch (tolower(rd->arg.status[0]))
+      switch (tolower(args->status[0]))
       {
         case 'o': MA_SetStatusTo(SFLAG_READ,              SFLAG_NEW, FALSE);                         break;
         case 'u': MA_SetStatusTo(SFLAG_NONE,              SFLAG_NEW|SFLAG_READ, FALSE);              break;
@@ -70,14 +66,15 @@ void rx_mailstatus(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
         case 'w': MA_SetStatusTo(SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR, FALSE); break;
 
         default:
-          rd->rc = RETURN_WARN;
+          params->rc = RETURN_WARN;
       }
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

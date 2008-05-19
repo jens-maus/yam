@@ -39,18 +39,14 @@
 
 #include "Debug.h"
 
-struct rxd_setmail
+struct args
 {
-  long rc, rc2;
-  struct
-  {
-    long *num;
-  } arg;
+  long *num;
 };
 
-void rx_setmail(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_setmail(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_setmail *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -58,8 +54,7 @@ void rx_setmail(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_setmail *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -68,11 +63,11 @@ void rx_setmail(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
       int mail, max;
       Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
 
-      mail = *rd->arg.num;
+      mail = *args->num;
       max = xget(lv, MUIA_NList_Entries);
 
       if(mail < 0 || mail >= max)
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
       else
         set(lv, MUIA_NList_Active, mail);
     }
@@ -80,7 +75,8 @@ void rx_setmail(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

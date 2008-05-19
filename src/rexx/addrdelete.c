@@ -39,17 +39,14 @@
 
 #include "Debug.h"
 
-struct rxd_addrdelete
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *alias;
-  } arg;
+  char *alias;
 };
 
-void rx_addrdelete(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_addrdelete(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_addrdelete *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -57,8 +54,7 @@ void rx_addrdelete(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_addrdelete *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -66,23 +62,24 @@ void rx_addrdelete(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
     {
       // if the command was called without any parameter it will delete the active entry
       // if not we search for the one in question and if found delete it.
-      if(!rd->arg.alias)
+      if(!args->alias)
       {
         if(xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active) != MUIV_NListtree_Active_Off)
           CallHookPkt(&AB_DeleteHook, 0, 0);
         else
-          rd->rc = RETURN_WARN;
+          params->rc = RETURN_WARN;
       }
-      else if(AB_GotoEntry(rd->arg.alias))
+      else if(AB_GotoEntry(args->alias))
         CallHookPkt(&AB_DeleteHook, 0, 0);
       else
-        rd->rc = RETURN_WARN;
+        params->rc = RETURN_WARN;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

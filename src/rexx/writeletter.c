@@ -37,18 +37,15 @@
 
 #include "Debug.h"
 
-struct rxd_writeletter
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *file;
-    long nosig;
-  } arg;
+  char *file;
+  long nosig;
 };
 
-void rx_writeletter(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_writeletter(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_writeletter *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -56,28 +53,28 @@ void rx_writeletter(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_writeletter *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
     case RXIF_ACTION:
     {
-      if(G->WR[G->ActiveWriteWin] && CopyFile(G->WR_Filename[G->ActiveWriteWin], 0, rd->arg.file, 0))
+      if(G->WR[G->ActiveWriteWin] && CopyFile(G->WR_Filename[G->ActiveWriteWin], 0, args->file, 0))
       {
-        if(C->UseSignature == TRUE && !rd->arg.nosig)
+        if(C->UseSignature == TRUE && !args->nosig)
           WR_AddSignature(G->ActiveWriteWin, -1);
 
         FileToEditor(G->WR_Filename[G->ActiveWriteWin], G->WR[G->ActiveWriteWin]->GUI.TE_EDIT, TRUE);
       }
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

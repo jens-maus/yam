@@ -38,21 +38,21 @@
 
 #include "Debug.h"
 
-struct rxd_mailreply
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    long quiet;
-  } arg;
-  struct {
-    int *window;
-  } res;
+  struct RexxResult varStem;
+  long quiet;
 };
 
-void rx_mailreply(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct rxd_mailreply *rd = *rxd;
+  int *window;
+};
+
+void rx_mailreply(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
 
   ENTER();
 
@@ -60,8 +60,8 @@ void rx_mailreply(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_mailreply *)(*rxd))->rc = offsetof(struct rxd_mailreply, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
@@ -69,23 +69,26 @@ void rx_mailreply(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
     {
       int winnr;
 
-      rd->res.window = &G->ActiveWriteWin;
+      results->window = &G->ActiveWriteWin;
 
-      if((winnr = MA_NewMessage(NEW_REPLY, rd->arg.quiet?NEWF_QUIET:0)) >= 0)
+      if((winnr = MA_NewMessage(NEW_REPLY, args->quiet?NEWF_QUIET:0)) >= 0)
       {
         G->ActiveWriteWin = winnr;
 
-        if(rd->arg.quiet == FALSE && G->WR[winnr])
+        if(args->quiet == FALSE && G->WR[winnr])
           set(G->WR[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
       }
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
     }
     break;
   }

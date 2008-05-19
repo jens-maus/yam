@@ -37,17 +37,14 @@
 
 #include "Debug.h"
 
-struct rxd_writereplyto
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *address;
-  } arg;
+  char *address;
 };
 
-void rx_writereplyto(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_writereplyto(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_writereplyto *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -55,23 +52,23 @@ void rx_writereplyto(UNUSED struct RexxHost *host, void **rxd, enum RexxAction a
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_writereplyto *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
     case RXIF_ACTION:
     {
       if(G->WR[G->ActiveWriteWin])
-        setstring(G->WR[G->ActiveWriteWin]->GUI.ST_REPLYTO, rd->arg.address);
+        setstring(G->WR[G->ActiveWriteWin]->GUI.ST_REPLYTO, args->address);
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

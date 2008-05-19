@@ -37,23 +37,23 @@
 
 #include "Debug.h"
 
-struct rxd_addrfind
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    char *pattern;
-    long nameonly;
-    long emailonly;
-  } arg;
-  struct {
-    char **alias;
-  } res;
+  struct RexxResult varStem;
+  char *pattern;
+  long nameonly;
+  long emailonly;
 };
 
-void rx_addrfind(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct rxd_addrfind *rd = *rxd;
+  char **alias;
+};
+
+void rx_addrfind(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
 
   ENTER();
 
@@ -61,8 +61,8 @@ void rx_addrfind(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_addrfind *)(*rxd))->rc = offsetof(struct rxd_addrfind, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
@@ -71,28 +71,32 @@ void rx_addrfind(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
       int hits;
       int mode;
 
-      if(rd->arg.nameonly)
-        mode = rd->arg.emailonly ? ABF_RX_NAMEEMAIL : ABF_RX_NAME;
+      if(args->nameonly)
+        mode = args->emailonly ? ABF_RX_NAMEEMAIL : ABF_RX_NAME;
       else
-        mode = rd->arg.emailonly ? ABF_RX_EMAIL     : ABF_RX;
+        mode = args->emailonly ? ABF_RX_EMAIL     : ABF_RX;
 
-      if((hits = AB_FindEntry(rd->arg.pattern, mode, NULL)) > 0)
+      if((hits = AB_FindEntry(args->pattern, mode, NULL)) > 0)
       {
-        rd->res.alias = calloc(hits+1, sizeof(char *));
-        if(AB_FindEntry(rd->arg.pattern, mode, rd->res.alias) == 0)
-          rd->rc = RETURN_WARN;
+        results->alias = calloc(hits+1, sizeof(char *));
+        if(AB_FindEntry(args->pattern, mode, results->alias) == 0)
+          params->rc = RETURN_WARN;
       }
       else
-        rd->rc = RETURN_WARN;
+        params->rc = RETURN_WARN;
     }
     break;
 
     case RXIF_FREE:
     {
-      if(rd->res.alias)
-        free(rd->res.alias);
-
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+	  if(results != NULL)
+	  {
+        if(results->alias != NULL)
+          free(results->alias);
+		FreeVecPooled(G->SharedMemPool, results);
+      }
     }
     break;
   }

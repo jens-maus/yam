@@ -41,30 +41,27 @@
 
 #include "Debug.h"
 
-struct rxd_addredit
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *alias;
-    char *name;
-    char *email;
-    char *pgp;
-    char *homepage;
-    char *street;
-    char *city;
-    char *country;
-    char *phone;
-    char *comment;
-    long *birthdate;
-    char *image;
-    char **member;
-    long add;
-  } arg;
+  char *alias;
+  char *name;
+  char *email;
+  char *pgp;
+  char *homepage;
+  char *street;
+  char *city;
+  char *country;
+  char *phone;
+  char *comment;
+  long *birthdate;
+  char *image;
+  char **member;
+  long add;
 };
 
-void rx_addredit(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_addredit *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -72,8 +69,7 @@ void rx_addredit(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_addredit *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -85,38 +81,38 @@ void rx_addredit(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
       {
         struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
 
-        if(rd->arg.alias)    strlcpy(ab->Alias, rd->arg.alias, sizeof(ab->Alias));
-        if(rd->arg.name)     strlcpy(ab->RealName, rd->arg.name, sizeof(ab->RealName));
-        if(rd->arg.email)    strlcpy(ab->Address, rd->arg.email, sizeof(ab->Address));
-        if(rd->arg.pgp)      strlcpy(ab->PGPId, rd->arg.pgp, sizeof(ab->PGPId));
-        if(rd->arg.homepage) strlcpy(ab->Homepage, rd->arg.homepage, sizeof(ab->Homepage));
-        if(rd->arg.street)   strlcpy(ab->Street, rd->arg.street, sizeof(ab->Street));
-        if(rd->arg.city)     strlcpy(ab->City, rd->arg.city, sizeof(ab->City));
-        if(rd->arg.country)  strlcpy(ab->Country, rd->arg.country, sizeof(ab->Country));
-        if(rd->arg.phone)    strlcpy(ab->Phone, rd->arg.phone, sizeof(ab->Phone));
-        if(rd->arg.comment)  strlcpy(ab->Comment, rd->arg.comment, sizeof(ab->Comment));
+        if(args->alias)    strlcpy(ab->Alias, args->alias, sizeof(ab->Alias));
+        if(args->name)     strlcpy(ab->RealName, args->name, sizeof(ab->RealName));
+        if(args->email)    strlcpy(ab->Address, args->email, sizeof(ab->Address));
+        if(args->pgp)      strlcpy(ab->PGPId, args->pgp, sizeof(ab->PGPId));
+        if(args->homepage) strlcpy(ab->Homepage, args->homepage, sizeof(ab->Homepage));
+        if(args->street)   strlcpy(ab->Street, args->street, sizeof(ab->Street));
+        if(args->city)     strlcpy(ab->City, args->city, sizeof(ab->City));
+        if(args->country)  strlcpy(ab->Country, args->country, sizeof(ab->Country));
+        if(args->phone)    strlcpy(ab->Phone, args->phone, sizeof(ab->Phone));
+        if(args->comment)  strlcpy(ab->Comment, args->comment, sizeof(ab->Comment));
 
-        if(rd->arg.birthdate)
+        if(args->birthdate)
         {
           // if the user supplied 0 as the birthdate, he wants to "delete" the current
           // birthdate
-          if(*rd->arg.birthdate == 0) ab->BirthDay = 0;
-          else if(AB_ExpandBD(*rd->arg.birthdate)[0]) ab->BirthDay = *rd->arg.birthdate;
+          if(*args->birthdate == 0) ab->BirthDay = 0;
+          else if(AB_ExpandBD(*args->birthdate)[0]) ab->BirthDay = *args->birthdate;
           else
           {
-            rd->rc = RETURN_ERROR;
+            params->rc = RETURN_ERROR;
             break;
           }
         }
 
-        if(rd->arg.image)
-          strlcpy(ab->Photo, rd->arg.image, sizeof(ab->Photo));
+        if(args->image)
+          strlcpy(ab->Photo, args->image, sizeof(ab->Photo));
 
-        if(rd->arg.member && ab->Type == AET_LIST)
+        if(args->member && ab->Type == AET_LIST)
         {
            char **p, *memb = AllocStrBuf(SIZE_DEFAULT);
-           if (rd->arg.add && ab->Members) memb = StrBufCpy(memb, ab->Members);
-           for (p = rd->arg.member; *p; p++) { memb = StrBufCat(memb, *p); memb = StrBufCat(memb, "\n"); }
+           if (args->add && ab->Members) memb = StrBufCpy(memb, ab->Members);
+           for (p = args->member; *p; p++) { memb = StrBufCat(memb, *p); memb = StrBufCat(memb, "\n"); }
            if (ab->Members) free(ab->Members);
            ab->Members = strdup(memb);
            FreeStrBuf(memb);
@@ -126,13 +122,14 @@ void rx_addredit(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
         G->AB->Modified = TRUE;
       }
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

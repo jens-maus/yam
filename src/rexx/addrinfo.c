@@ -37,39 +37,40 @@
 
 #include "Debug.h"
 
-struct rxd_addrinfo
+struct args
 {
-  long rc, rc2;
-  struct
-  {
-    char *var, *stem;
-    char *alias;
-  } arg;
-  struct
-  {
-    const char *type;
-    char *name;
-    char *email;
-    char *pgp;
-    char *homepage;
-    char *street;
-    char *city;
-    char *country;
-    char *phone;
-    char *comment;
-    long *birthdate;
-    char *image;
-    char **members;
-  } res;
+  struct RexxResult varStem;
+  char *alias;
 };
 
-void rx_addrinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct
-  {
-    struct rxd_addrinfo rd;
-    char *members, **memberptr;
-  } *rd = *rxd;
+  const char *type;
+  char *name;
+  char *email;
+  char *pgp;
+  char *homepage;
+  char *street;
+  char *city;
+  char *country;
+  char *phone;
+  char *comment;
+  long *birthdate;
+  char *image;
+  char **members;
+};
+
+struct optional
+{
+  char *members;
+  char **memberptr;
+};
+
+void rx_addrinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
+  struct optional *optional = params->optional;
 
   ENTER();
 
@@ -77,8 +78,9 @@ void rx_addrinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_addrinfo *)(*rxd))->rc = offsetof(struct rxd_addrinfo, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
     }
     break;
 
@@ -86,42 +88,42 @@ void rx_addrinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
     {
       struct ABEntry *ab = NULL;
 
-      if(AB_SearchEntry(rd->rd.arg.alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &ab) && (ab != NULL))
+      if(AB_SearchEntry(args->alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &ab) && (ab != NULL))
       {
         switch(ab->Type)
         {
           case AET_USER:
-            rd->rd.res.type = "P";
+            results->type = "P";
           break;
 
           case AET_LIST:
-            rd->rd.res.type = "L";
+            results->type = "L";
           break;
 
           case AET_GROUP:
-            rd->rd.res.type = "G";
+            results->type = "G";
           break;
         }
 
-        rd->rd.res.name = ab->RealName;
-        rd->rd.res.email = ab->Address;
-        rd->rd.res.pgp = ab->PGPId;
-        rd->rd.res.homepage = ab->Homepage;
-        rd->rd.res.street = ab->Street;
-        rd->rd.res.city = ab->City;
-        rd->rd.res.country = ab->Country;
-        rd->rd.res.phone = ab->Phone;
-        rd->rd.res.comment = ab->Comment;
-        rd->rd.res.birthdate = &ab->BirthDay;
-        rd->rd.res.image = ab->Photo;
+        results->name = ab->RealName;
+        results->email = ab->Address;
+        results->pgp = ab->PGPId;
+        results->homepage = ab->Homepage;
+        results->street = ab->Street;
+        results->city = ab->City;
+        results->country = ab->Country;
+        results->phone = ab->Phone;
+        results->comment = ab->Comment;
+        results->birthdate = &ab->BirthDay;
+        results->image = ab->Photo;
 
-        if(ab->Members && (rd->members = strdup(ab->Members)))
+        if(ab->Members && (optional->members = strdup(ab->Members)))
         {
           char *ptr;
           int i;
           int j;
 
-          for(j = 0, ptr = rd->members; *ptr; j++, ptr++)
+          for(j = 0, ptr = optional->members; *ptr; j++, ptr++)
           {
             if((ptr = strchr(ptr, '\n')))
               *ptr = '\0';
@@ -129,22 +131,30 @@ void rx_addrinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
               break;
           }
 
-          rd->rd.res.members = rd->memberptr = calloc(j+1, sizeof(char *));
-          for(i = 0, ptr = rd->members; i < j; ptr += strlen(ptr)+1)
-            rd->memberptr[i++] = ptr;
+          results->members = optional->memberptr = calloc(j+1, sizeof(char *));
+          for(i = 0, ptr = optional->members; i < j; ptr += strlen(ptr)+1)
+            optional->memberptr[i++] = ptr;
         }
       }
       else
-        rd->rd.rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      if (rd->members) free(rd->members);
-      if (rd->memberptr) free(rd->memberptr);
-
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+        FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
+      if(optional != NULL)
+      {
+        if(optional->members != NULL)
+          free(optional->members);
+        if(optional->memberptr != NULL)
+          free(optional->memberptr);
+        FreeVecPooled(G->SharedMemPool, optional);
+      }
     }
     break;
   }

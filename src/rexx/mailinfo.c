@@ -41,39 +41,44 @@
 
 #include "Debug.h"
 
-struct rxd_mailinfo
+struct args
 {
-  long rc, rc2;
-  struct
-  {
-    char *var, *stem;
-    long *index;
-  } arg;
-  struct
-  {
-    long *index;
-    const char *status;
-    char *from;
-    char *to;
-    char *replyto;
-    char *subject;
-    char *filename;
-    long *size;
-    char *date;
-    char *flags;
-    char *msgid;
-  } res;
+  struct RexxResult varStem;
+  long *index;
 };
 
-void rx_mailinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct
-  {
-    struct rxd_mailinfo rd;
-    long active;
-    char from[SIZE_ADDRESS], to[SIZE_ADDRESS], replyto[SIZE_ADDRESS], flags[SIZE_SMALL];
-    char filename[SIZE_PATHFILE], date[64], msgid[9];
-  } *rd = *rxd;
+  long *index;
+  const char *status;
+  char *from;
+  char *to;
+  char *replyto;
+  char *subject;
+  char *filename;
+  long *size;
+  char *date;
+  char *flags;
+  char *msgid;
+};
+
+struct optional
+{
+  long active;
+  char from[SIZE_ADDRESS];
+  char to[SIZE_ADDRESS];
+  char replyto[SIZE_ADDRESS];
+  char flags[SIZE_SMALL];
+  char filename[SIZE_PATHFILE];
+  char date[64];
+  char msgid[9];
+};
+
+void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
+  struct optional *optional = params->optional;
 
   ENTER();
 
@@ -81,8 +86,9 @@ void rx_mailinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_mailinfo *)(*rxd))->rc = offsetof(struct rxd_mailinfo, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
     }
     break;
 
@@ -91,55 +97,55 @@ void rx_mailinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
       struct Mail *mail = NULL;
       struct Folder *folder = NULL;
 
-      if(rd->rd.arg.index)
+      if(args->index)
       {
         Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
-        rd->active = *rd->rd.arg.index;
-        DoMethod(lv, MUIM_NList_GetEntry, rd->active, &mail);
+        optional->active = *args->index;
+        DoMethod(lv, MUIM_NList_GetEntry, optional->active, &mail);
       }
       else
-        mail = MA_GetActiveMail(NULL, &folder, (LONG *)&rd->active);
+        mail = MA_GetActiveMail(NULL, &folder, (LONG *)&optional->active);
 
       if(mail)
       {
         int pf = getPERValue(mail);
         int vf = getVOLValue(mail);
 
-        GetMailFile(rd->rd.res.filename = rd->filename, folder, mail);
-        rd->rd.res.index = &rd->active;
+        GetMailFile(results->filename = optional->filename, folder, mail);
+        results->index = &optional->active;
 
         if(hasStatusError(mail))
-          rd->rd.res.status = "E"; // Error status
+          results->status = "E"; // Error status
         else if(hasStatusQueued(mail))
-          rd->rd.res.status = "W"; // Queued (WaitForSend) status
+          results->status = "W"; // Queued (WaitForSend) status
         else if(hasStatusHold(mail))
-          rd->rd.res.status = "H"; // Hold status
+          results->status = "H"; // Hold status
         else if(hasStatusSent(mail))
-          rd->rd.res.status = "S"; // Sent status
+          results->status = "S"; // Sent status
         else if(hasStatusReplied(mail))
-          rd->rd.res.status = "R"; // Replied status
+          results->status = "R"; // Replied status
         else if(hasStatusForwarded(mail))
-          rd->rd.res.status = "F"; // Forwarded status
+          results->status = "F"; // Forwarded status
         else if(!hasStatusRead(mail))
         {
           if(hasStatusNew(mail))
-            rd->rd.res.status = "N"; // New status
+            results->status = "N"; // New status
           else
-            rd->rd.res.status = "U"; // Unread status
+            results->status = "U"; // Unread status
         }
         else if(!hasStatusNew(mail))
-          rd->rd.res.status = "O"; // Old status
+          results->status = "O"; // Old status
 
-        rd->rd.res.from = BuildAddress(rd->from, sizeof(rd->from), mail->From.Address, mail->From.RealName);
-        rd->rd.res.to = BuildAddress(rd->to, sizeof(rd->to), mail->To.Address, mail->To.RealName);
-        rd->rd.res.replyto = BuildAddress(rd->replyto, sizeof(rd->replyto), mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.Address : mail->From.Address,
+        results->from = BuildAddress(optional->from, sizeof(optional->from), mail->From.Address, mail->From.RealName);
+        results->to = BuildAddress(optional->to, sizeof(optional->to), mail->To.Address, mail->To.RealName);
+        results->replyto = BuildAddress(optional->replyto, sizeof(optional->replyto), mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.Address : mail->From.Address,
                                                                             mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.RealName : mail->From.RealName);
 
-        DateStamp2String(rd->rd.res.date = rd->date, sizeof(rd->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
-        rd->rd.res.subject = mail->Subject;
-        rd->rd.res.size = &mail->Size;
-        snprintf(rd->rd.res.msgid = rd->msgid, sizeof(rd->msgid), "%lX", mail->cMsgID);
-        snprintf(rd->rd.res.flags = rd->flags, sizeof(rd->flags), "%c%c%c%c%c-%c%c%c",
+        DateStamp2String(results->date = optional->date, sizeof(optional->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
+        results->subject = mail->Subject;
+        results->size = &mail->Size;
+        snprintf(results->msgid = optional->msgid, sizeof(optional->msgid), "%lX", mail->cMsgID);
+        snprintf(results->flags = optional->flags, sizeof(optional->flags), "%c%c%c%c%c-%c%c%c",
                   isMultiRCPTMail(mail) ? 'M' : '-',
                   isMP_MixedMail(mail)  ? 'A' : '-',
                   isMP_ReportMail(mail) ? 'R' : '-',
@@ -151,13 +157,18 @@ void rx_mailinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
                );
       }
       else
-        rd->rd.rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
+      if(optional != NULL)
+        FreeVecPooled(G->SharedMemPool, optional);
     }
     break;
   }

@@ -38,21 +38,21 @@
 
 #include "Debug.h"
 
-struct rxd_writeeditor
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    char *command;
-  } arg;
-  struct {
-    char *result;
-  } res;
+  struct RexxResult varStem;
+  char *command;
 };
 
-void rx_writeeditor(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct rxd_writeeditor *rd = *rxd;
+  char *result;
+};
+
+void rx_writeeditor(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
 
   ENTER();
 
@@ -60,8 +60,8 @@ void rx_writeeditor(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_writeeditor *)(*rxd))->rc = offsetof(struct rxd_writeeditor, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
@@ -69,26 +69,30 @@ void rx_writeeditor(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
     {
       if(G->WR[G->ActiveWriteWin])
       {
-        ULONG p = DoMethod(G->WR[G->ActiveWriteWin]->GUI.TE_EDIT, MUIM_TextEditor_ARexxCmd, rd->arg.command);
+        ULONG p = DoMethod(G->WR[G->ActiveWriteWin]->GUI.TE_EDIT, MUIM_TextEditor_ARexxCmd, args->command);
 
         switch(p)
         {
-          case FALSE: rd->rc = RETURN_WARN; break;
+          case FALSE: params->rc = RETURN_WARN; break;
           case TRUE:  break;
-          default:    rd->res.result = (char *)p; break;
+          default:    results->result = (char *)p; break;
         }
       }
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      if(rd->res.result)
-        FreeVec(rd->res.result);
-
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+      {
+        if(results->result != NULL)
+          FreeVec(results->result);
+        FreeVecPooled(G->SharedMemPool, results);
+      }
     }
     break;
   }

@@ -36,26 +36,28 @@
 
 #include "Debug.h"
 
-struct rxd_request
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    char *body;
-    char *gadgets;
-  } arg;
-  struct {
-    long *result;
-  } res;
+  struct RexxResult varStem;
+  char *body;
+  char *gadgets;
 };
 
-void rx_request(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct
-  {
-     struct rxd_request rd;
-     long result;
-  } *rd = *rxd;
+  long *result;
+};
+
+struct optional
+{
+  long result;
+};
+
+void rx_request(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
+  struct optional *optional = params->optional;
 
   ENTER();
 
@@ -63,17 +65,18 @@ void rx_request(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_request *)(*rxd))->rc = offsetof(struct rxd_request, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
     }
     break;
 
     case RXIF_ACTION:
     {
-      char *reqtext = AllocReqText(rd->rd.arg.body);
+      char *reqtext = AllocReqText(args->body);
 
-      rd->result = MUI_Request(G->App, NULL, 0, NULL, rd->rd.arg.gadgets, reqtext);
-      rd->rd.res.result = &rd->result;
+      optional->result = MUI_Request(G->App, NULL, 0, NULL, args->gadgets, reqtext);
+      results->result = &optional->result;
 
       free(reqtext);
     }
@@ -81,7 +84,12 @@ void rx_request(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+        FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
+      if(optional != NULL)
+        FreeVecPooled(G->SharedMemPool, optional);
     }
     break;
   }

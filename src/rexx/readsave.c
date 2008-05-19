@@ -40,19 +40,16 @@
 
 #include "Debug.h"
 
-struct rxd_readsave
+struct args
 {
-  long rc, rc2;
-  struct {
-    long *part;
-    char *filename;
-    long overwrite;
-  } arg;
+  long *part;
+  char *filename;
+  long overwrite;
 };
 
-void rx_readsave(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_readsave(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_readsave *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -60,8 +57,7 @@ void rx_readsave(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_readsave *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -74,13 +70,13 @@ void rx_readsave(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
       {
         struct TempFile *tf;
 
-        if(rd->arg.part)
+        if(args->part)
         {
           struct Part *part;
 
           for(part = rmData->firstPart->Next; part; part = part->Next)
           {
-            if(part->Nr == *(rd->arg.part) &&
+            if(part->Nr == *(args->part) &&
                RE_DecodePart(part))
             {
               char file[SIZE_PATHFILE];
@@ -89,11 +85,11 @@ void rx_readsave(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
 
               success = RE_Export(rmData,
                                   part->Filename,
-                                  rd->arg.filename ? rd->arg.filename : "",
+                                  args->filename ? args->filename : "",
                                   part->Name,
                                   part->Nr,
                                   TRUE,
-                                  (BOOL)rd->arg.overwrite,
+                                  (BOOL)args->overwrite,
                                   part->ContentType);
             }
           }
@@ -107,11 +103,11 @@ void rx_readsave(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
 
           success = RE_Export(rmData,
                               tf->Filename,
-                              rd->arg.filename ? rd->arg.filename : "",
+                              args->filename ? args->filename : "",
                               "",
                               0,
                               TRUE,
-                              (BOOL)rd->arg.overwrite,
+                              (BOOL)args->overwrite,
                               IntMimeTypeArray[MT_TX_PLAIN].ContentType);
 
           CloseTempFile(tf);
@@ -119,13 +115,14 @@ void rx_readsave(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
       }
 
       if(!success)
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

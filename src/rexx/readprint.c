@@ -38,17 +38,14 @@
 
 #include "Debug.h"
 
-struct rxd_readprint
+struct args
 {
-  long rc, rc2;
-  struct {
-    long *part;
-  } arg;
+  long *part;
 };
 
-void rx_readprint(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_readprint(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_readprint *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -56,8 +53,7 @@ void rx_readprint(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_readprint *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -70,13 +66,13 @@ void rx_readprint(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
       {
         FILE *prt;
 
-        if(rd->arg.part)
+        if(args->part)
         {
           struct Part *part;
 
           for(part = rmData->firstPart->Next; part; part = part->Next)
           {
-            if(part->Nr == *(rd->arg.part) &&
+            if(part->Nr == *(args->part) &&
                RE_DecodePart(part))
             {
               success = CopyFile("PRT:", 0, part->Filename, 0);
@@ -97,13 +93,14 @@ void rx_readprint(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
       }
 
       if(success == FALSE)
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

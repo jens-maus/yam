@@ -35,17 +35,14 @@
 
 #include "Debug.h"
 
-struct rxd_help
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *file;
-  } arg;
+  char *file;
 };
 
-void rx_help(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_help(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_help *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -53,8 +50,7 @@ void rx_help(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, U
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_help *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -64,7 +60,7 @@ void rx_help(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, U
       FILE *fp = NULL;
       FILE *out = stdout;
 
-      if(rd->arg.file && (fp = fopen(rd->arg.file, "w")))
+      if(args->file != NULL && (fp = fopen(args->file, "w")))
         out = fp;
 
       fprintf(out, "Commands for application \"YAM\"\n\nCommand              Template\n-------              --------\n");
@@ -84,7 +80,8 @@ void rx_help(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, U
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

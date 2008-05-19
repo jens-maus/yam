@@ -36,23 +36,23 @@
 
 #include "Debug.h"
 
-struct rxd_readinfo
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-  } arg;
-  struct {
-    char **filename;
-    char **filetype;
-    long **filesize;
-    char **tempfile;
-  } res;
+  struct RexxResult varStem;
 };
 
-void rx_readinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct rxd_readinfo *rd = *rxd;
+  char **filename;
+  char **filetype;
+  long **filesize;
+  char **tempfile;
+};
+
+void rx_readinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
 
   ENTER();
 
@@ -60,8 +60,8 @@ void rx_readinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_readinfo *)(*rxd))->rc = offsetof(struct rxd_readinfo, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
@@ -76,32 +76,40 @@ void rx_readinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
 
         for(parts = 0, part = rmData->firstPart->Next; part; parts++, part = part->Next);
 
-        rd->res.filename = calloc(parts+1, sizeof(char *));
-        rd->res.filetype = calloc(parts+1, sizeof(char *));
-        rd->res.filesize = calloc(parts+1, sizeof(long));
-        rd->res.tempfile = calloc(parts+1, sizeof(char *));
+        results->filename = calloc(parts+1, sizeof(char *));
+        results->filetype = calloc(parts+1, sizeof(char *));
+        results->filesize = calloc(parts+1, sizeof(long));
+        results->tempfile = calloc(parts+1, sizeof(char *));
 
         for(i = 0, part = rmData->firstPart->Next; part; i++, part = part->Next)
         {
-          rd->res.filename[i] = part->Name;
-          rd->res.filetype[i] = part->ContentType;
-          rd->res.filesize[i] = (long *)&part->Size;
-          rd->res.tempfile[i] = part->Filename;
+          results->filename[i] = part->Name;
+          results->filetype[i] = part->ContentType;
+          results->filesize[i] = (long *)&part->Size;
+          results->tempfile[i] = part->Filename;
         }
       }
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      if(rd->res.filename) free(rd->res.filename);
-      if(rd->res.filetype) free(rd->res.filetype);
-      if(rd->res.filesize) free(rd->res.filesize);
-      if(rd->res.tempfile) free(rd->res.tempfile);
-
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+      {
+        if(results->filename != NULL)
+          free(results->filename);
+        if(results->filetype != NULL)
+          free(results->filetype);
+        if(results->filesize != NULL)
+          free(results->filesize);
+        if(results->tempfile != NULL)
+          free(results->tempfile);
+        FreeVecPooled(G->SharedMemPool, results);
+      }
     }
     break;
   }

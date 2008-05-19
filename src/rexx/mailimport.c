@@ -37,18 +37,15 @@
 
 #include "Debug.h"
 
-struct rxd_mailimport
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *filename;
-    long wait;
-  } arg;
+  char *filename;
+  long wait;
 };
 
-void rx_mailimport(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_mailimport(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_mailimport *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -56,23 +53,23 @@ void rx_mailimport(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_mailimport *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
     case RXIF_ACTION:
     {
-      if(!MA_ImportMessages(rd->arg.filename))
-        rd->rc = RETURN_ERROR;
-      else if(!rd->arg.wait)
+      if(!MA_ImportMessages(args->filename))
+        params->rc = RETURN_ERROR;
+      else if(!args->wait)
         CallHookPkt(&TR_ProcessIMPORTHook, 0, 0);
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

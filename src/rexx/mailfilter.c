@@ -38,28 +38,28 @@
 
 #include "Debug.h"
 
-struct rxd_mailfilter
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    long all;
-  } arg;
-  struct {
-    long *checked;
-    long *bounced;
-    long *forwarded;
-    long *replied;
-    long *executed;
-    long *moved;
-    long *deleted;
-    long *spam;
-  } res;
+  struct RexxResult varStem;
+  long all;
 };
 
-void rx_mailfilter(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct rxd_mailfilter *rd = *rxd;
+  long *checked;
+  long *bounced;
+  long *forwarded;
+  long *replied;
+  long *executed;
+  long *moved;
+  long *deleted;
+  long *spam;
+};
+
+void rx_mailfilter(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
 
   ENTER();
 
@@ -67,8 +67,8 @@ void rx_mailfilter(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_mailfilter *)(*rxd))->rc = offsetof(struct rxd_mailfilter, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
@@ -76,22 +76,25 @@ void rx_mailfilter(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
     {
       struct RuleResult *rr = &G->RuleResults;
 
-      DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, rd->arg.all ? APPLY_RX_ALL : APPLY_RX, 0);
+      DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, args->all ? APPLY_RX_ALL : APPLY_RX, 0);
 
-      rd->res.checked = &rr->Checked;
-      rd->res.bounced = &rr->Bounced;
-      rd->res.forwarded = &rr->Forwarded;
-      rd->res.replied = &rr->Replied;
-      rd->res.executed = &rr->Executed;
-      rd->res.moved = &rr->Moved;
-      rd->res.deleted = &rr->Deleted;
-      rd->res.spam = &rr->Spam;
+      results->checked = &rr->Checked;
+      results->bounced = &rr->Bounced;
+      results->forwarded = &rr->Forwarded;
+      results->replied = &rr->Replied;
+      results->executed = &rr->Executed;
+      results->moved = &rr->Moved;
+      results->deleted = &rr->Deleted;
+      results->spam = &rr->Spam;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
     }
     break;
   }

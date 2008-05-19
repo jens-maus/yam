@@ -37,18 +37,15 @@
 
 #include "Debug.h"
 
-struct rxd_setflag
+struct args
 {
-  long rc, rc2;
-  struct {
-    long *vol;
-    long *per;
-  } arg;
+  long *vol;
+  long *per;
 };
 
-void rx_setflag(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_setflag(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_setflag *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -56,8 +53,7 @@ void rx_setflag(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_setflag *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -68,17 +64,17 @@ void rx_setflag(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
 
       if((mail = MA_GetActiveMail(NULL, NULL, NULL)))
       {
-        if(rd->arg.vol)
+        if(args->vol)
         {
-          if((value = *rd->arg.vol) >= 0 && value < 8)
+          if((value = *args->vol) >= 0 && value < 8)
             setVOLValue(mail, value);
           else
-            rd->rc = RETURN_ERROR;
+            params->rc = RETURN_ERROR;
         }
 
-        if(rd->arg.per)
+        if(args->per)
         {
-          if((value = *rd->arg.per) >= 0 && value < 8)
+          if((value = *args->per) >= 0 && value < 8)
           {
             if((unsigned int)value != getPERValue(mail))
             {
@@ -88,17 +84,18 @@ void rx_setflag(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
             }
           }
           else
-            rd->rc = RETURN_ERROR;
+            params->rc = RETURN_ERROR;
         }
       }
       else
-        rd->rc = RETURN_WARN;
+        params->rc = RETURN_WARN;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

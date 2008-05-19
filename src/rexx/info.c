@@ -38,23 +38,27 @@
 
 #include "Debug.h"
 
-struct rxd_info
+struct args
 {
-  long rc, rc2;
-  struct
-  {
-    char *var, *stem;
-    char *item;
-  } arg;
-  struct
-  {
-    const char *value;
-  } res;
+  struct RexxResult varStem;
+  char *item;
 };
 
-void rx_info(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct rxd_info *rd = *rxd;
+  char *value;
+};
+
+struct optional
+{
+  char pubScreenName[SIZE_LARGE];
+};
+
+void rx_info(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
+  struct optional *optional = params->optional;
 
   ENTER();
 
@@ -62,29 +66,40 @@ void rx_info(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, U
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_info *)(*rxd))->rc = offsetof(struct rxd_info, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
     }
     break;
 
     case RXIF_ACTION:
     {
-      char *key = rd->arg.item;
+      char *key = args->item;
 
-      if(!key)  rd->rc = RETURN_ERROR;
-      else if(!stricmp(key, "title"))       rd->res.value = (char *)xget(G->App, MUIA_Application_Title);
-      else if(!stricmp(key, "author"))      rd->res.value = (char *)xget(G->App, MUIA_Application_Author);
-      else if(!stricmp(key, "copyright"))   rd->res.value = (char *)xget(G->App, MUIA_Application_Copyright);
-      else if(!stricmp(key, "description")) rd->res.value = (char *)xget(G->App, MUIA_Application_Description);
-      else if(!stricmp(key, "version"))     rd->res.value = (char *)xget(G->App, MUIA_Application_Version);
-      else if(!stricmp(key, "base"))        rd->res.value = (char *)xget(G->App, MUIA_Application_Base);
+      if(!key)  params->rc = RETURN_ERROR;
+      else if(!stricmp(key, "title"))       results->value = (char *)xget(G->App, MUIA_Application_Title);
+      else if(!stricmp(key, "author"))      results->value = (char *)xget(G->App, MUIA_Application_Author);
+      else if(!stricmp(key, "copyright"))   results->value = (char *)xget(G->App, MUIA_Application_Copyright);
+      else if(!stricmp(key, "description")) results->value = (char *)xget(G->App, MUIA_Application_Description);
+      else if(!stricmp(key, "version"))     results->value = (char *)xget(G->App, MUIA_Application_Version);
+      else if(!stricmp(key, "base"))        results->value = (char *)xget(G->App, MUIA_Application_Base);
       else if(!stricmp(key, "screen"))
       {
         struct Screen *screen;
-        rd->res.value = "Workbench";
+
         screen = (struct Screen *)xget(G->MA->GUI.WI, MUIA_Window_Screen);
 
-        if(screen)
+        #if defined(__amigaos4__)
+        // this very handy function is OS4 only
+        if(GetScreenAttr(screen, SA_PubName, optional->pubScreenName, sizeof(optional->pubScreenName)) == 0)
+        {
+          // GetScreenAttr() failed, we copy the default name again, just in case the function changed anything
+          strlcpy(optional->pubScreenName, "Workbench", sizeof(optional->pubScreenName));
+        }
+        #else
+        strlcpy(optional->pubScreenName, "Workbench", sizeof(optional->pubScreenName));
+
+        if(screen != NULL)
         {
           struct Node *pubs;
           struct List *pubscreens = LockPubScreenList();
@@ -93,22 +108,30 @@ void rx_info(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, U
           {
             if(((struct PubScreenNode *)pubs)->psn_Screen == screen)
             {
-              rd->res.value = pubs->ln_Name;
+              strlcpy(optional->pubScreenName, pubs->ln_Name, sizeof(optional->pubScreenName));
               break;
             }
           }
 
           UnlockPubScreenList();
         }
+        #endif
+
+        results->value = optional->pubScreenName;
       }
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
+      if(optional != NULL)
+        FreeVecPooled(G->SharedMemPool, optional);
     }
     break;
   }

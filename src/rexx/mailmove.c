@@ -36,17 +36,14 @@
 
 #include "Debug.h"
 
-struct rxd_mailmove
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *folder;
-  } arg;
+  char *folder;
 };
 
-void rx_mailmove(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_mailmove(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_mailmove *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -54,8 +51,7 @@ void rx_mailmove(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_mailmove *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -63,16 +59,17 @@ void rx_mailmove(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
     {
       struct Folder *folder;
 
-      if((folder = FO_GetFolderRexx(rd->arg.folder, NULL)))
+      if((folder = FO_GetFolderRexx(args->folder, NULL)))
         MA_MoveCopy(NULL, FO_GetCurrentFolder(), folder, FALSE, TRUE);
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

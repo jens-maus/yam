@@ -41,22 +41,22 @@
 
 #include "Debug.h"
 
-struct rxd_mailread
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    int *window;
-    long quiet;
-  } arg;
-  struct {
-    int *window;
-  } res;
+  struct RexxResult varStem;
+  int *window;
+  long quiet;
 };
 
-void rx_mailread(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct rxd_mailread *rd = *rxd;
+  int *window;
+};
+
+void rx_mailread(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
 
   ENTER();
 
@@ -64,8 +64,8 @@ void rx_mailread(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_mailread *)(*rxd))->rc = offsetof(struct rxd_mailread, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
@@ -73,9 +73,9 @@ void rx_mailread(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
     {
       static int winNumber = -1;
 
-      rd->res.window = &winNumber;
+      results->window = &winNumber;
 
-      if(rd->arg.window == NULL)
+      if(args->window == NULL)
       {
         struct Mail *mail;
 
@@ -87,7 +87,7 @@ void rx_mailread(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
           {
             G->ActiveRexxRMData = rmData;
 
-            if(rd->arg.quiet == FALSE)
+            if(args->quiet == FALSE)
               SafeOpenWindow(rmData->readWindow);
 
             if(DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail) == FALSE)
@@ -96,7 +96,7 @@ void rx_mailread(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
               // immediatly again.
               CleanupReadMailData(rmData, TRUE);
 
-              rd->rc = RETURN_ERROR;
+              params->rc = RETURN_ERROR;
             }
             else
             {
@@ -108,17 +108,17 @@ void rx_mailread(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
             }
           }
           else
-            rd->rc = RETURN_ERROR;
+            params->rc = RETURN_ERROR;
         }
         else
-          rd->rc = RETURN_WARN;
+          params->rc = RETURN_WARN;
       }
       else
       {
         // if a window number was specified with the command we have to search
         // through our ReadDataList and find the window with this particular
         // number
-        int winnr = *rd->arg.window;
+        int winnr = *args->window;
         struct MinNode *curNode = G->readMailDataList.mlh_Head;
 
         for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
@@ -132,7 +132,7 @@ void rx_mailread(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
             winNumber = winnr;
 
             // bring the window to the user's attention
-            if(rd->arg.quiet == FALSE)
+            if(args->quiet == FALSE)
               set(rmData->readWindow, MUIA_Window_Activate, TRUE);
 
             break;
@@ -142,14 +142,17 @@ void rx_mailread(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
         // check if we successfully found the window with that
         // number or if we have to return an error message
         if(curNode->mln_Succ == NULL)
-          rd->rc = RETURN_ERROR;
+          params->rc = RETURN_ERROR;
       }
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
     }
     break;
   }

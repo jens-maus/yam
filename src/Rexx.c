@@ -677,23 +677,25 @@ static BOOL CreateSTEM(struct MinList *stemList, struct rxs_command *rxc, LONG *
 /// DoRXCommand
 void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg)
 {
-  struct rxs_command *rxc = 0;
+  struct rxs_command *rxc = NULL;
   char *argb, *arg;
-
-  LONG *array = NULL;
-  LONG *argarray;
-  LONG *resarray;
-
+  struct RexxParams params;
   ULONG carglen;
   char *cargstr = NULL;
-  long rc=20, rc2;
   char *result = NULL;
 
   ENTER();
 
+  // clear all values
+  params.rc = 0;
+  params.rc2 = 0;
+  params.args = NULL;
+  params.results = NULL;
+  params.optional = NULL;
+
   if((argb = AllocVecPooled(G->SharedMemPool, (ULONG)strlen((char *)ARG0(rexxmsg)) + 2)) == NULL)
   {
-    rc2 = ERROR_NO_FREE_STORE;
+    params.rc2 = ERROR_NO_FREE_STORE;
     goto drc_cleanup;
   }
 
@@ -723,32 +725,33 @@ void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg)
         return;
       }
       else
-        rc2 = ERROR_NOT_IMPLEMENTED;
+      {
+        params.rc = 20;
+        params.rc2 = ERROR_NOT_IMPLEMENTED;
+      }
     }
     else
-      rc2 = ERROR_NO_FREE_STORE;
+    {
+      params.rc = 20;
+      params.rc2 = ERROR_NO_FREE_STORE;
+    }
 
     goto drc_cleanup;
   }
 
   D(DBF_REXX, "RXIF_INIT '%s'", rxc->command);
   // get memory for the arguments and the offset of a possible result array
-  (rxc->function)(host, (void **)(APTR)&array, RXIF_INIT, rexxmsg);
+  (rxc->function)(host, &params, RXIF_INIT, rexxmsg);
 
   carglen = (rxc->args != NULL) ? 15 + strlen(rxc->args) : 15;
   cargstr = AllocVecPooled(G->SharedMemPool, carglen);
 
-  if(array == NULL || cargstr == NULL)
+  if(params.args == NULL || cargstr == NULL || (rxc->results != NULL && params.results == NULL))
   {
-    rc2 = ERROR_NO_FREE_STORE;
+    params.rc = 20;
+    params.rc2 = ERROR_NO_FREE_STORE;
     goto drc_cleanup;
   }
-
-  argarray = array + 2;
-  // the offset of the result array is returned in the first long
-  resarray = array + array[0];
-  // reset the value, as this will be used as primary error code
-  array[0] = 0;
 
   // parse the arguments
   if(rxc->results != NULL)
@@ -775,77 +778,78 @@ void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg)
     host->rdargs->RDA_ExtHelp = NULL;
     host->rdargs->RDA_Flags = RDAF_NOPROMPT;
 
-    if(ReadArgs(cargstr, argarray, host->rdargs) == NULL)
+    if(ReadArgs(cargstr, params.args, host->rdargs) == NULL)
     {
-      rc = 10;
-      rc2 = IoErr();
+      params.rc = 10;
+      params.rc2 = IoErr();
       goto drc_cleanup;
     }
   }
 
   // call the function
   D(DBF_REXX, "RXIF_ACTION '%s'", rxc->command);
-  (rxc->function)(host, (void **)(APTR)&array, RXIF_ACTION, rexxmsg);
-
-  rc = array[0];
-  rc2 = array[1];
+  (rxc->function)(host, &params, RXIF_ACTION, rexxmsg);
 
   // evaluate the results
-  if(rxc->results != NULL && rc == 0 && isFlagSet(rexxmsg->rm_Action, RXFF_RESULT))
+  if(rxc->results != NULL && params.rc == 0 && isFlagSet(rexxmsg->rm_Action, RXFF_RESULT))
   {
+  	struct RexxResult *varStem = (struct RexxResult *)params.args;
     struct MinList stemList;
 
-    if(CreateSTEM(&stemList, rxc, resarray, (char *)argarray[1]) == TRUE)
+    if(CreateSTEM(&stemList, rxc, params.results, varStem->stem) == TRUE)
     {
       if((result = CreateVAR(&stemList)) != NULL)
       {
-        if(argarray[0] != 0)
+        if(varStem->var != NULL)
         {
           // VAR
           char *rb;
 
           // convert to upper case
-          for(rb = (char *)argarray[0]; *rb; ++rb)
+          for(rb = varStem->var; *rb; ++rb)
              *rb = toupper(*rb);
 
-          if(SetRexxVar(REXXMSG(rexxmsg), (STRPTR)(*((char *)argarray[0]) ? (char *)argarray[0] : "RESULT"), result, strlen(result)) != 0)
+          if(SetRexxVar(REXXMSG(rexxmsg), (varStem->var[0] != '\0') ? varStem->var : (char *)"RESULT", result, strlen(result)) != 0)
           {
-            rc = -10;
-            rc2 = (long)"Unable to set Rexx variable";
+            params.rc = -10;
+            params.rc2 = (long)"Unable to set Rexx variable";
           }
 
           FreeVecPooled(G->SharedMemPool, result);
           result = NULL;
         }
 
-        if(rc == 0 && argarray[1] != 0)
+        if(params.rc == 0 && varStem->stem != NULL)
         {
           // STEM
           struct StemNode *stemNode;
 
           for(stemNode = (struct StemNode *)stemList.mlh_Head; stemNode->node.mln_Succ != NULL; stemNode = (struct StemNode *)stemNode->node.mln_Succ)
-            rc |= SetRexxVar(REXXMSG(rexxmsg), stemNode->name, stemNode->value, strlen(stemNode->value));
+            params.rc |= SetRexxVar(REXXMSG(rexxmsg), stemNode->name, stemNode->value, strlen(stemNode->value));
 
-          if(rc != 0)
+          if(params.rc != 0)
           {
-            rc = -10;
-            rc2 = (long)"Unable to set Rexx variable";
+            params.rc = -10;
+            params.rc2 = (long)"Unable to set Rexx variable";
           }
 
-          FreeVecPooled(G->SharedMemPool, result);
-          result = NULL;
+          if(result != NULL)
+          {
+            FreeVecPooled(G->SharedMemPool, result);
+            result = NULL;
+          }
         }
       }
       else
       {
-        rc = 20;
-        rc2 = ERROR_NO_FREE_STORE;
+        params.rc = 20;
+        params.rc2 = ERROR_NO_FREE_STORE;
       }
     }
     else
     {
-      rc = 20;
-      rc2 = ERROR_NO_FREE_STORE;
+      params.rc = 20;
+      params.rc2 = ERROR_NO_FREE_STORE;
     }
 
     FreeStemList(&stemList);
@@ -854,7 +858,7 @@ void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg)
 drc_cleanup:
 
   // return RESULT only, if neither VAR nor STEM
-  ReplyRexxCommand(rexxmsg, rc, rc2, result);
+  ReplyRexxCommand(rexxmsg, params.rc, params.rc2, result);
 
   // free the memory
   if(result != NULL)
@@ -865,10 +869,10 @@ drc_cleanup:
   if(cargstr != NULL)
     FreeVecPooled(G->SharedMemPool, cargstr);
 
-  if(array != NULL)
+  if(rxc != NULL)
   {
     D(DBF_REXX, "RXIF_FREE '%s'", rxc->command);
-    (rxc->function)(host, (void **)(APTR)&array, RXIF_FREE, rexxmsg);
+    (rxc->function)(host, &params, RXIF_FREE, rexxmsg);
   }
 
   if(argb != NULL)

@@ -39,17 +39,14 @@
 
 #include "Debug.h"
 
-struct rxd_listselect
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *mode;
-  } arg;
+  char *mode;
 };
 
-void rx_listselect(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_listselect(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_listselect *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -57,8 +54,7 @@ void rx_listselect(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_listselect *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -66,20 +62,21 @@ void rx_listselect(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
     {
       Object *nl = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
 
-      switch(rd->arg.mode[0])
+      switch(args->mode[0])
       {
         case 'a': case 'A': DoMethod(nl, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL); break;
         case 'n': case 'N': DoMethod(nl, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL); break;
         case 't': case 'T': DoMethod(nl, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL); break;
         case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
-        case '8': case '9': DoMethod(nl, MUIM_NList_Select, atol(rd->arg.mode), MUIV_NList_Select_On, NULL); break;
+        case '8': case '9': DoMethod(nl, MUIM_NList_Select, atol(args->mode), MUIV_NList_Select_On, NULL); break;
       }
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-19  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Rexx.c, rexx/*.c: reworked the ARexx handling once more. The commands don't
+    use one single memory buffer for arguments and results anymore, but separate
+    buffers instead. This makes variable parsing and handling much easier and
+    safer.
+
 2008-05-16  Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/Install-YAM, locale/italian.ct: updated italian translation provided

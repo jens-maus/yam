@@ -37,17 +37,14 @@
 
 #include "Debug.h"
 
-struct rxd_addrsave
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *filename;
-  } arg;
+  char *filename;
 };
 
-void rx_addrsave(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_addrsave(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_addrsave *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -55,31 +52,31 @@ void rx_addrsave(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_addrsave *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
     case RXIF_ACTION:
     {
-      if(rd->arg.filename)
+      if(args->filename)
       {
-        if(!AB_SaveTree(rd->arg.filename))
-          rd->rc = RETURN_ERROR;
+        if(!AB_SaveTree(args->filename))
+          params->rc = RETURN_ERROR;
       }
       else
       {
         if(AB_SaveTree(G->AB_Filename))
           G->AB->Modified = FALSE;
         else
-          rd->rc = RETURN_ERROR;
+          params->rc = RETURN_ERROR;
       }
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

@@ -39,24 +39,24 @@
 
 #include "Debug.h"
 
-struct rxd_addrnew
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    char *type;
-    char *alias;
-    char *name;
-    char *email;
-  } arg;
-  struct {
-    char *alias;
-  } res;
+  struct RexxResult varStem;
+  char *type;
+  char *alias;
+  char *name;
+  char *email;
 };
 
-void rx_addrnew(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct rxd_addrnew *rd = *rxd;
+  char *alias;
+};
+
+void rx_addrnew(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
 
   ENTER();
 
@@ -64,8 +64,8 @@ void rx_addrnew(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_addrnew *)(*rxd))->rc = offsetof(struct rxd_addrnew, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
@@ -77,30 +77,30 @@ void rx_addrnew(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
       addr.Type = AET_USER;
       addr.Members = (char *)"";
 
-      if(rd->arg.type)
+      if(args->type)
       {
-        if(tolower(*rd->arg.type) == 'g')
+        if(tolower(*args->type) == 'g')
           addr.Type = AET_GROUP;
-        else if(tolower(*rd->arg.type) == 'l')
+        else if(tolower(*args->type) == 'l')
           addr.Type = AET_LIST;
       }
 
-      if(rd->arg.alias)    strlcpy(addr.Alias, rd->arg.alias, sizeof(addr.Alias));
-      if(rd->arg.name)     strlcpy(addr.RealName, rd->arg.name, sizeof(addr.RealName));
-      if(rd->arg.email)    strlcpy(addr.Address, rd->arg.email, sizeof(addr.Address));
+      if(args->alias)    strlcpy(addr.Alias, args->alias, sizeof(addr.Alias));
+      if(args->name)     strlcpy(addr.RealName, args->name, sizeof(addr.RealName));
+      if(args->email)    strlcpy(addr.Address, args->email, sizeof(addr.Address));
 
       if(!*addr.Alias)
       {
         if(addr.Type == AET_USER)
           EA_SetDefaultAlias(&addr);
         else
-          rd->rc = RETURN_ERROR;
+          params->rc = RETURN_ERROR;
       }
 
-      if(!rd->rc)
+      if(params->rc == 0)
       {
         EA_FixAlias(&addr, FALSE);
-        rd->res.alias = addr.Alias;
+        results->alias = addr.Alias;
         EA_InsertBelowActive(&addr, addr.Type == AET_GROUP ? TNF_LIST : 0);
         G->AB->Modified = TRUE;
         AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), addr.Alias);
@@ -110,7 +110,10 @@ void rx_addrnew(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
     }
     break;
   }

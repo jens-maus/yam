@@ -37,25 +37,27 @@
 
 #include "Debug.h"
 
-struct rxd_getmailinfo
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    char *item;
-  } arg;
-  struct {
-    char *value;
-  } res;
+  struct RexxResult varStem;
+  char *item;
 };
 
-void rx_getmailinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct
-  {
-    struct rxd_getmailinfo rd;
-    char result[SIZE_LARGE];
-  } *rd = *rxd;
+  char *value;
+};
+
+struct optional
+{
+  char result[SIZE_LARGE];
+};
+
+void rx_getmailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
+  struct optional *optional = params->optional;
 
   ENTER();
 
@@ -63,8 +65,9 @@ void rx_getmailinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_getmailinfo *)(*rxd))->rc = offsetof(struct rxd_getmailinfo, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
     }
     break;
 
@@ -77,62 +80,67 @@ void rx_getmailinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
       {
         char *key;
 
-        rd->rd.res.value = rd->result;
-        key = rd->rd.arg.item;
+        results->value = optional->result;
+        key = args->item;
 
         if(!strnicmp(key, "ACT", 3))
-          snprintf(rd->result, sizeof(rd->result), "%ld", active);
+          snprintf(optional->result, sizeof(optional->result), "%ld", active);
         else if(!strnicmp(key, "STA", 3))
         {
           if(hasStatusError(mail))
-            rd->rd.res.value = (char *)"E"; // Error status
+            results->value = (char *)"E"; // Error status
           else if(hasStatusQueued(mail))
-            rd->rd.res.value = (char *)"W"; // Queued (WaitForSend) status
+            results->value = (char *)"W"; // Queued (WaitForSend) status
           else if(hasStatusHold(mail))
-            rd->rd.res.value = (char *)"H"; // Hold status
+            results->value = (char *)"H"; // Hold status
           else if(hasStatusSent(mail))
-            rd->rd.res.value = (char *)"S"; // Sent status
+            results->value = (char *)"S"; // Sent status
           else if(hasStatusReplied(mail))
-            rd->rd.res.value = (char *)"R"; // Replied status
+            results->value = (char *)"R"; // Replied status
           else if(hasStatusForwarded(mail))
-            rd->rd.res.value = (char *)"F"; // Forwarded status
+            results->value = (char *)"F"; // Forwarded status
           else if(!hasStatusRead(mail))
           {
             if(hasStatusNew(mail))
-              rd->rd.res.value = (char *)"N"; // New status
+              results->value = (char *)"N"; // New status
             else
-              rd->rd.res.value = (char *)"U"; // Unread status
+              results->value = (char *)"U"; // Unread status
           }
           else if(!hasStatusNew(mail))
-            rd->rd.res.value = (char *)"O"; // Old status
+            results->value = (char *)"O"; // Old status
         }
         else if(!strnicmp(key, "FRO", 3))
-          BuildAddress(rd->result, sizeof(rd->result), mail->From.Address, mail->From.RealName);
+          BuildAddress(optional->result, sizeof(optional->result), mail->From.Address, mail->From.RealName);
         else if(!strnicmp(key, "TO" , 2))
-          BuildAddress(rd->result, sizeof(rd->result), mail->To.Address, mail->To.RealName);
+          BuildAddress(optional->result, sizeof(optional->result), mail->To.Address, mail->To.RealName);
         else if(!strnicmp(key, "REP", 3))
         {
-          BuildAddress(rd->result, sizeof(rd->result), mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.Address : mail->From.Address,
-                                                       mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.RealName : mail->From.RealName);
+          BuildAddress(optional->result, sizeof(optional->result), mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.Address : mail->From.Address,
+                                                                   mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.RealName : mail->From.RealName);
         }
         else if(!strnicmp(key, "SUB", 3))
-          rd->rd.res.value = mail->Subject;
+          results->value = mail->Subject;
         else if(!strnicmp(key, "FIL", 3))
         {
-          GetMailFile(rd->result, mail->Folder, mail);
-          rd->rd.res.value = rd->result;
+          GetMailFile(optional->result, mail->Folder, mail);
+          results->value = optional->result;
         }
         else
-          rd->rd.rc = RETURN_ERROR;
+          params->rc = RETURN_ERROR;
       }
       else
-        rd->rd.rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+        FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
+      if(optional != NULL)
+        FreeVecPooled(G->SharedMemPool, optional);
     }
     break;
   }

@@ -36,17 +36,14 @@
 
 #include "Debug.h"
 
-struct rxd_mailsend
+struct args
 {
-  long rc, rc2;
-  struct {
-    long all;
-  } arg;
+  long all;
 };
 
-void rx_mailsend(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_mailsend(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_mailsend *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -54,21 +51,21 @@ void rx_mailsend(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_mailsend *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
     case RXIF_ACTION:
     {
-      if(!MA_Send(rd->arg.all ? SEND_ALL_AUTO : SEND_ACTIVE_AUTO))
-        rd->rc = RETURN_WARN;
+      if(!MA_Send(args->all ? SEND_ALL_AUTO : SEND_ACTIVE_AUTO))
+        params->rc = RETURN_WARN;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

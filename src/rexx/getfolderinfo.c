@@ -36,25 +36,27 @@
 
 #include "Debug.h"
 
-struct rxd_getfolderinfo
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    char *item;
-  } arg;
-  struct {
-    char *value;
-  } res;
+  struct RexxResult varStem;
+  char *item;
 };
 
-void rx_getfolderinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct
-  {
-    struct rxd_getfolderinfo rd;
-    char result[SIZE_SMALL];
-  } *rd = *rxd;
+  char *value;
+};
+
+struct optional
+{
+  char result[SIZE_SMALL];
+};
+
+void rx_getfolderinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
+  struct optional *optional = params->optional;
 
   ENTER();
 
@@ -62,15 +64,16 @@ void rx_getfolderinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction 
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_getfolderinfo *)(*rxd))->rc = offsetof(struct rxd_getfolderinfo, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
     }
     break;
 
     case RXIF_ACTION:
     {
       struct Folder *fo = FO_GetCurrentFolder();
-      char *key = rd->rd.arg.item;
+      char *key = args->item;
 
       // this command should only act on a folder folder and
       // also only on a non-group
@@ -82,20 +85,25 @@ void rx_getfolderinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction 
         num = FO_GetFolderPosition(fo, FALSE);
         UnlockFolderList(G->folders);
 
-        if(!strnicmp(key, "NUM", 3))      snprintf(rd->rd.res.value = rd->result, sizeof(rd->result), "%d", num);
-        else if(!strnicmp(key, "NAM", 3)) rd->rd.res.value = fo->Name;
-        else if(!strnicmp(key, "PAT", 3)) rd->rd.res.value = fo->Path;
-        else if(!strnicmp(key, "MAX", 3)) snprintf(rd->rd.res.value = rd->result, sizeof(rd->result), "%d", fo->Total);
-        else rd->rd.rc = RETURN_ERROR;
+        if(!strnicmp(key, "NUM", 3))      snprintf(results->value = optional->result, sizeof(optional->result), "%d", num);
+        else if(!strnicmp(key, "NAM", 3)) results->value = fo->Name;
+        else if(!strnicmp(key, "PAT", 3)) results->value = fo->Path;
+        else if(!strnicmp(key, "MAX", 3)) snprintf(results->value = optional->result, sizeof(optional->result), "%d", fo->Total);
+        else params->rc = RETURN_ERROR;
       }
       else
-        rd->rd.rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+        FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
+      if(optional != NULL)
+        FreeVecPooled(G->SharedMemPool, optional);
     }
     break;
   }

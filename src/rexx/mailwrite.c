@@ -38,22 +38,22 @@
 
 #include "Debug.h"
 
-struct rxd_mailwrite
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    int *window;
-    long quiet;
-  } arg;
-  struct {
-    int *window;
-  } res;
+  struct RexxResult varStem;
+  int *window;
+  long quiet;
 };
 
-void rx_mailwrite(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct rxd_mailwrite *rd = *rxd;
+  int *window;
+};
+
+void rx_mailwrite(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
 
   ENTER();
 
@@ -61,27 +61,27 @@ void rx_mailwrite(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_mailwrite *)(*rxd))->rc = offsetof(struct rxd_mailwrite, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
     case RXIF_ACTION:
     {
-      int winnr = rd->arg.window ? *rd->arg.window : -1;
-      rd->res.window = &G->ActiveWriteWin;
+      int winnr = args->window ? *args->window : -1;
+      results->window = &G->ActiveWriteWin;
 
       if(winnr < 0)
       {
-        if((winnr = MA_NewMessage(NEW_NEW, rd->arg.quiet?NEWF_QUIET:0)) >= 0)
+        if((winnr = MA_NewMessage(NEW_NEW, args->quiet?NEWF_QUIET:0)) >= 0)
         {
           G->ActiveWriteWin = winnr;
 
-          if(rd->arg.quiet == FALSE && G->WR[winnr])
+          if(args->quiet == FALSE && G->WR[winnr])
             set(G->WR[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
         }
         else
-          rd->rc = RETURN_ERROR;
+          params->rc = RETURN_ERROR;
       }
       else
       {
@@ -91,21 +91,24 @@ void rx_mailwrite(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
           {
             G->ActiveWriteWin = winnr;
 
-            if(rd->arg.quiet == FALSE && G->WR[winnr])
+            if(args->quiet == FALSE && G->WR[winnr])
               set(G->WR[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
           }
           else
-            rd->rc = RETURN_WARN;
+            params->rc = RETURN_WARN;
         }
         else
-          rd->rc = RETURN_ERROR;
+          params->rc = RETURN_ERROR;
       }
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
     }
     break;
   }

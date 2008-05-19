@@ -42,17 +42,14 @@
 
 #include "Debug.h"
 
-struct rxd_setmailfile
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *mailfile;
-  } arg;
+  char *mailfile;
 };
 
-void rx_setmailfile(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_setmailfile(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_setmailfile *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -60,8 +57,7 @@ void rx_setmailfile(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_setmailfile *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -72,7 +68,7 @@ void rx_setmailfile(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
       char *mfile;
       int i;
 
-      mfile = (char *)FilePart(rd->arg.mailfile);
+      mfile = (char *)FilePart(args->mailfile);
 
       for(i=0;;i++)
       {
@@ -88,13 +84,14 @@ void rx_setmailfile(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
       }
 
       if(!mail)
-        rd->rc = RETURN_WARN;
+        params->rc = RETURN_WARN;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

@@ -35,7 +35,11 @@
 
 #include "Debug.h"
 
-void rx_mailarchive(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_mailarchive(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  rx_mailmove(host, rxd, action, rexxmsg);
+  ENTER();
+
+  rx_mailmove(host, params, action, rexxmsg);
+
+  LEAVE();
 }

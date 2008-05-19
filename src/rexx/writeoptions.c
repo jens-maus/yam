@@ -37,23 +37,20 @@
 
 #include "Debug.h"
 
-struct rxd_writeoptions
+struct args
 {
-  long rc, rc2;
-  struct {
-    long delete;
-    long receipt;
-    long notif;
-    long addinfo;
-    long *importance;
-    long *sig;
-    long *security;
-  } arg;
+  long delete;
+  long receipt;
+  long notif;
+  long addinfo;
+  long *importance;
+  long *sig;
+  long *security;
 };
 
-void rx_writeoptions(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_writeoptions(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_writeoptions *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -61,8 +58,7 @@ void rx_writeoptions(UNUSED struct RexxHost *host, void **rxd, enum RexxAction a
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_writeoptions *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -70,21 +66,22 @@ void rx_writeoptions(UNUSED struct RexxHost *host, void **rxd, enum RexxAction a
     {
       if(G->WR[G->ActiveWriteWin])
       {
-        setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_DELSEND, rd->arg.delete);
-        setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_MDN, rd->arg.receipt);
-        setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_ADDINFO, rd->arg.addinfo);
-        if(rd->arg.importance) setcycle(G->WR[G->ActiveWriteWin]->GUI.CY_IMPORTANCE, *rd->arg.importance);
-        if(rd->arg.sig)        setmutex(G->WR[G->ActiveWriteWin]->GUI.RA_SIGNATURE, *rd->arg.sig);
-        if(rd->arg.security)   setmutex(G->WR[G->ActiveWriteWin]->GUI.RA_SECURITY, *rd->arg.security);
+        setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_DELSEND, args->delete);
+        setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_MDN, args->receipt);
+        setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_ADDINFO, args->addinfo);
+        if(args->importance) setcycle(G->WR[G->ActiveWriteWin]->GUI.CY_IMPORTANCE, *args->importance);
+        if(args->sig)        setmutex(G->WR[G->ActiveWriteWin]->GUI.RA_SIGNATURE, *args->sig);
+        if(args->security)   setmutex(G->WR[G->ActiveWriteWin]->GUI.RA_SECURITY, *args->security);
       }
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

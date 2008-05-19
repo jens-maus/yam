@@ -40,17 +40,14 @@
 
 #include "Debug.h"
 
-struct rxd_mailchangesubject
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *subject;
-  } arg;
+  char *subject;
 };
 
-void rx_mailchangesubject(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_mailchangesubject(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_mailchangesubject *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -58,8 +55,7 @@ void rx_mailchangesubject(UNUSED struct RexxHost *host, void **rxd, enum RexxAct
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_mailchangesubject *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -77,7 +73,7 @@ void rx_mailchangesubject(UNUSED struct RexxHost *host, void **rxd, enum RexxAct
           struct Mail *mail = mnode->mail;
 
           if(mail != NULL)
-            MA_ChangeSubject(mail, rd->arg.subject);
+            MA_ChangeSubject(mail, args->subject);
         }
 
         DeleteMailList(mlist);
@@ -85,13 +81,14 @@ void rx_mailchangesubject(UNUSED struct RexxHost *host, void **rxd, enum RexxAct
         DoMethod(lv, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
       }
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

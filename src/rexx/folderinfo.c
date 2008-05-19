@@ -36,41 +36,43 @@
 
 #include "Debug.h"
 
-struct rxd_folderinfo
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    char *folder;
-  } arg;
-  struct {
-    int *number;
-    char *name;
-    char *path;
-    int *total;
-    int *new;
-    int *unread;
-    LONG *size;
-    int *type;
-  } res;
+  struct RexxResult varStem;
+  char *folder;
 };
 
-void rx_folderinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct rxd_folderinfo *rd = *rxd;
+  int *number;
+  char *name;
+  char *path;
+  int *total;
+  int *new;
+  int *unread;
+  LONG *size;
+  int *type;
+};
+
+void rx_folderinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
+
+  ENTER();
 
   switch(action)
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_folderinfo *)(*rxd))->rc = offsetof(struct rxd_folderinfo, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
     case RXIF_ACTION:
     {
-      struct Folder *fo = rd->arg.folder ? FO_GetFolderRexx(rd->arg.folder, NULL) : FO_GetCurrentFolder();
+      struct Folder *fo = args->folder ? FO_GetFolderRexx(args->folder, NULL) : FO_GetCurrentFolder();
 
       // this command should only act on a folder and
       // only on a non-group
@@ -93,23 +95,26 @@ void rx_folderinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction act
         size = fo->Size;
         type = fo->Type;
 
-        rd->res.number = &num;
-        rd->res.name = fo->Name;
-        rd->res.path = fo->Path;
-        rd->res.total = &total;
-        rd->res.new = &new;
-        rd->res.unread = &unread;
-        rd->res.size = &size;
-        rd->res.type = &type;
+        results->number = &num;
+        results->name = fo->Name;
+        results->path = fo->Path;
+        results->total = &total;
+        results->new = &new;
+        results->unread = &unread;
+        results->size = &size;
+        results->type = &type;
       }
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
     }
     break;
   }

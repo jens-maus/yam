@@ -36,17 +36,14 @@
 
 #include "Debug.h"
 
-struct rxd_appbusy
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *text;
-  } arg;
+  char *text;
 };
 
-void rx_appbusy(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_appbusy(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_appbusy *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -54,32 +51,30 @@ void rx_appbusy(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_appbusy *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
     case RXIF_ACTION:
     {
-      char *s = rd->arg.text;
-
-      // we don`t make a text a requirement. If the user hasn`t supplied
+      // we don't make a text a requirement. If the user hasn`t supplied
       // a text for the busytext we simply use a empty string.
-      if(s)
-        BusyText(s, "");
+      if(args->text != NULL)
+        BusyText(args->text, "");
       else
         BusyText(" ", "");
 
       if(BusyLevel == 1)
         nnset(G->App, MUIA_Application_Sleep, TRUE);
 
-      rd->rc = BusyLevel ? 1 : 0;
+      params->rc = BusyLevel ? 1 : 0;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

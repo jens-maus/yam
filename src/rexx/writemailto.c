@@ -36,17 +36,14 @@
 
 #include "Debug.h"
 
-struct rxd_writemailto
+struct args
 {
-  long rc, rc2;
-  struct {
-    char **address;
-  } arg;
+  char **address;
 };
 
-void rx_writemailto(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_writemailto(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_writemailto *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -54,23 +51,23 @@ void rx_writemailto(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_writemailto *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
     case RXIF_ACTION:
     {
       if(G->WR[G->ActiveWriteWin])
-        InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_TO, rd->arg.address, FALSE);
+        InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_TO, args->address, FALSE);
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

@@ -40,29 +40,31 @@
 
 #include "Debug.h"
 
-struct rxd_userinfo
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-  } arg;
-  struct {
-    char *username;
-    char *email;
-    char *realname;
-    char *config;
-    char *maildir;
-    long *folders;
-  } res;
+  struct RexxResult varStem;
 };
 
-void rx_userinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct
-  {
-    struct rxd_userinfo rd;
-    long folders;
-  } *rd = *rxd;
+  char *username;
+  char *email;
+  char *realname;
+  char *config;
+  char *maildir;
+  long *folders;
+};
+
+struct optional
+{
+  long folders;
+};
+
+void rx_userinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
+  struct optional *optional = params->optional;
 
   ENTER();
 
@@ -70,8 +72,9 @@ void rx_userinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_userinfo *)(*rxd))->rc = offsetof(struct rxd_userinfo, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
     }
     break;
 
@@ -81,11 +84,11 @@ void rx_userinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
       int i = 0, numfolders = 0;
       struct MUI_NListtree_TreeNode *tn;
 
-      rd->rd.res.username = u->Name;
-      rd->rd.res.email = C->EmailAddress;
-      rd->rd.res.realname = C->RealName;
-      rd->rd.res.config = G->CO_PrefsFile;
-      rd->rd.res.maildir = G->MA_MailDir;
+      results->username = u->Name;
+      results->email = C->EmailAddress;
+      results->realname = C->RealName;
+      results->config = G->CO_PrefsFile;
+      results->maildir = G->MA_MailDir;
 
       // count the real folders now
       while((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)))
@@ -96,14 +99,19 @@ void rx_userinfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction actio
         i++;
       }
 
-      rd->folders = numfolders;
-      rd->rd.res.folders = &rd->folders;
+      optional->folders = numfolders;
+      results->folders = &optional->folders;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+        FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
+      if(optional != NULL)
+        FreeVecPooled(G->SharedMemPool, optional);
     }
     break;
   }

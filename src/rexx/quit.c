@@ -37,17 +37,14 @@
 
 #include "Debug.h"
 
-struct rxd_quit
+struct args
 {
-  long rc, rc2;
-  struct {
-    long force;
-  } arg;
+  long force;
 };
 
-void rx_quit(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_quit(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_quit *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -55,14 +52,13 @@ void rx_quit(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, U
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_quit *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
     case RXIF_ACTION:
     {
-      if(rd->arg.force)
+      if(args->force)
         set(G->App, MUIA_Application_ForceQuit, TRUE);
 
       DoMethod(G->App, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
@@ -71,7 +67,8 @@ void rx_quit(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, U
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

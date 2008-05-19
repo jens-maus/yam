@@ -40,20 +40,20 @@
 
 #include "Debug.h"
 
-struct rxd_getselected
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-  } arg;
-  struct {
-    int **num;
-  } res;
+  struct RexxResult varStem;
 };
 
-void rx_getselected(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct rxd_getselected *rd = *rxd;
+  int **num;
+};
+
+void rx_getselected(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
 
   ENTER();
 
@@ -61,8 +61,8 @@ void rx_getselected(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_getselected *)(*rxd))->rc = offsetof(struct rxd_getselected, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
@@ -73,7 +73,7 @@ void rx_getselected(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
 
       if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
       {
-        if((rd->res.num = calloc(mlist->count + 1, sizeof(long))))
+        if((results->num = calloc(mlist->count + 1, sizeof(long))))
         {
           struct MailNode *mnode;
           ULONG i;
@@ -84,9 +84,9 @@ void rx_getselected(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
             struct Mail *mail = mnode->mail;
 
             if(mail != NULL)
-              rd->res.num[i] = &mail->position;
+              results->num[i] = &mail->position;
             else
-              rd->res.num[i] = 0;
+              results->num[i] = 0;
 
             i++;
           }
@@ -96,18 +96,22 @@ void rx_getselected(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
       }
       else
       {
-        rd->res.num    = calloc(1, sizeof(long));
-        rd->res.num[0] = 0;
+        results->num    = calloc(1, sizeof(long));
+        results->num[0] = 0;
       }
     }
     break;
 
     case RXIF_FREE:
     {
-      if(rd->res.num)
-        free(rd->res.num);
-
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+        FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+      {
+        if(results->num)
+          free(results->num);
+        FreeVecPooled(G->SharedMemPool, results);
+      }
     }
     break;
   }

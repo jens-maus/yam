@@ -40,27 +40,27 @@
 
 #include "Debug.h"
 
-struct rxd_addrresolve
+struct args
 {
-  long rc, rc2;
-  struct
-  {
-    char *var, *stem;
-    char *alias;
-  } arg;
-  struct
-  {
-    char *recpt;
-  } res;
+  struct RexxResult varStem;
+  char *alias;
 };
 
-void rx_addrresolve(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct
-  {
-    struct rxd_addrresolve rd;
-    char *string;
-  } *rd = *rxd;
+  char *recpt;
+};
+
+struct optional
+{
+  char *string;
+};
+
+void rx_addrresolve(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
+  struct optional *optional = params->optional;
 
   ENTER();
 
@@ -68,8 +68,9 @@ void rx_addrresolve(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_addrresolve *)(*rxd))->rc = offsetof(struct rxd_addrresolve, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
     }
     break;
 
@@ -78,7 +79,7 @@ void rx_addrresolve(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
       // generate a "fake" RecipientstringObject and use it on the resolve task
       Object *str = RecipientstringObject,
                       MUIA_Recipientstring_MultipleRecipients, TRUE,
-                      MUIA_String_Contents,                    rd->rd.arg.alias,
+                      MUIA_String_Contents,                    args->alias,
                     End;
 
       if(str != NULL)
@@ -86,25 +87,32 @@ void rx_addrresolve(UNUSED struct RexxHost *host, void **rxd, enum RexxAction ac
         STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoCache);
 
         // did the string change?
-        if(res != NULL && strcmp(rd->rd.arg.alias, res) != 0)
+        if(res != NULL && strcmp(args->alias, res) != 0)
         {
-          if((rd->rd.res.recpt = rd->string = AllocStrBuf(strlen(res)+1)) != NULL)
-            strlcpy(rd->string, res, strlen(res)+1);
+          if((results->recpt = optional->string = AllocStrBuf(strlen(res)+1)) != NULL)
+            strlcpy(optional->string, res, strlen(res)+1);
         }
         else
-          rd->rd.rc = RETURN_WARN;
+          params->rc = RETURN_WARN;
 
         MUI_DisposeObject(str);
       }
       else
-        rd->rd.rc = RETURN_FAIL;
+        params->rc = RETURN_FAIL;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeStrBuf(rd->string);
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+        FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
+      if(optional != NULL)
+      {
+        FreeStrBuf(optional->string);
+        FreeVecPooled(G->SharedMemPool, optional);
+      }
     }
     break;
   }

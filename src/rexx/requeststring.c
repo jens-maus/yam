@@ -38,27 +38,29 @@
 
 #include "Debug.h"
 
-struct rxd_requeststring
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    char *body;
-    char *string;
-    long secret;
-  } arg;
-  struct {
-    char *string;
-  } res;
+  struct RexxResult varStem;
+  char *body;
+  char *string;
+  long secret;
 };
 
-void rx_requeststring(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct
-  {
-    struct rxd_requeststring rd;
-    char string[SIZE_DEFAULT];
-  } *rd = (void *)*rxd;
+  char *string;
+};
+
+struct optional
+{
+  char string[SIZE_DEFAULT];
+};
+
+void rx_requeststring(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
+  struct optional *optional = params->optional;
 
   ENTER();
 
@@ -66,20 +68,21 @@ void rx_requeststring(UNUSED struct RexxHost *host, void **rxd, enum RexxAction 
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_requeststring *)(*rxd))->rc = offsetof(struct rxd_requeststring, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
     }
     break;
 
     case RXIF_ACTION:
     {
-      char *reqtext = AllocReqText(rd->rd.arg.body);
+      char *reqtext = AllocReqText(args->body);
 
-      if(rd->rd.arg.string)
-        strlcpy(rd->string, rd->rd.arg.string, sizeof(rd->string));
+      if(args->string)
+        strlcpy(optional->string, args->string, sizeof(optional->string));
 
-      rd->rd.rc = !StringRequest(rd->string, SIZE_DEFAULT, NULL, reqtext, tr(MSG_Okay), NULL, tr(MSG_Cancel), (BOOL)rd->rd.arg.secret, G->MA->GUI.WI);
-      rd->rd.res.string = rd->string;
+      params->rc = !StringRequest(optional->string, SIZE_DEFAULT, NULL, reqtext, tr(MSG_Okay), NULL, tr(MSG_Cancel), (BOOL)args->secret, G->MA->GUI.WI);
+      results->string = optional->string;
 
       free(reqtext);
     }
@@ -87,7 +90,12 @@ void rx_requeststring(UNUSED struct RexxHost *host, void **rxd, enum RexxAction 
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
+      if(optional != NULL)
+        FreeVecPooled(G->SharedMemPool, optional);
     }
     break;
   }

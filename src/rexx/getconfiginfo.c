@@ -37,21 +37,21 @@
 
 #include "Debug.h"
 
-struct rxd_getconfiginfo
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    char *item;
-  } arg;
-  struct {
-    char *value;
-  } res;
+  struct RexxResult varStem;
+  char *item;
 };
 
-void rx_getconfiginfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-  struct rxd_getconfiginfo *rd = *rxd;
+  char *value;
+};
+
+void rx_getconfiginfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
 
   ENTER();
 
@@ -59,27 +59,30 @@ void rx_getconfiginfo(UNUSED struct RexxHost *host, void **rxd, enum RexxAction 
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_getconfiginfo *)(*rxd))->rc = offsetof(struct rxd_getconfiginfo, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
     case RXIF_ACTION:
     {
-      char *key = rd->arg.item;
+      char *key = args->item;
 
       if(!strnicmp(key, "NAM", 3))
-        rd->res.value = C->RealName;
+        results->value = C->RealName;
       else if(!strnicmp(key, "EMA", 3))
-        rd->res.value = C->EmailAddress;
+        results->value = C->EmailAddress;
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
     }
     break;
   }

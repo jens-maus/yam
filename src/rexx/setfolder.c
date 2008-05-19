@@ -37,18 +37,14 @@
 
 #include "Debug.h"
 
-struct rxd_setfolder
+struct args
 {
-  long rc, rc2;
-  struct
-  {
-    char *folder;
-  } arg;
+  char *folder;
 };
 
-void rx_setfolder(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+void rx_setfolder(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
-  struct rxd_setfolder *rd = *rxd;
+  struct args *args = params->args;
 
   ENTER();
 
@@ -56,8 +52,7 @@ void rx_setfolder(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_setfolder *)(*rxd))->rc = 0;
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
     }
     break;
 
@@ -65,16 +60,17 @@ void rx_setfolder(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
     {
       struct Folder *folder;
 
-      if((folder = FO_GetFolderRexx(rd->arg.folder, NULL)))
+      if((folder = FO_GetFolderRexx(args->folder, NULL)))
         MA_ChangeFolder(folder, TRUE);
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

@@ -37,25 +37,25 @@
 
 #include "Debug.h"
 
-struct rxd_mailcheck
+struct args
 {
-  long rc, rc2;
-  struct {
-    char *var, *stem;
-    long *pop;
-    long manual;
-  } arg;
-  struct {
-    long *downloaded;
-    long *onserver;
-    long *dupskipped;
-    long *deleted;
-  } res;
+  struct RexxResult varStem;
+  long *pop;
+  long manual;
 };
 
-void rx_mailcheck(UNUSED struct RexxHost *host, void **rxd, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
 {
-   struct rxd_mailcheck *rd = *rxd;
+  long *downloaded;
+  long *onserver;
+  long *dupskipped;
+  long *deleted;
+};
+
+void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+{
+  struct args *args = params->args;
+  struct results *results = params->results;
 
   ENTER();
 
@@ -63,8 +63,8 @@ void rx_mailcheck(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
   {
     case RXIF_INIT:
     {
-      if((*rxd = AllocVecPooled(G->SharedMemPool, sizeof(*rd))) != NULL)
-        ((struct rxd_mailcheck *)(*rxd))->rc = offsetof(struct rxd_mailcheck, res) / sizeof(long);
+      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
@@ -73,9 +73,9 @@ void rx_mailcheck(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
       int pop;
       int popnr = -2;
 
-      if(rd->arg.pop)
+      if(args->pop)
       {
-        if((pop = *rd->arg.pop) >= 0 && pop < MAXP3 && C->P3[pop])
+        if((pop = *args->pop) >= 0 && pop < MAXP3 && C->P3[pop])
           popnr = pop;
       }
       else
@@ -85,26 +85,29 @@ void rx_mailcheck(UNUSED struct RexxHost *host, void **rxd, enum RexxAction acti
       {
         static long remaining;
 
-        MA_PopNow(rd->arg.manual ? POP_USER : POP_REXX, popnr);
+        MA_PopNow(args->manual ? POP_USER : POP_REXX, popnr);
 
         remaining = G->LastDL.OnServer - G->LastDL.Deleted;
 
-        rd->res.downloaded = &G->LastDL.Downloaded;
-        rd->res.onserver = &remaining;
-        rd->res.dupskipped = &G->LastDL.DupSkipped;
-        rd->res.deleted = &G->LastDL.Deleted;
+        results->downloaded = &G->LastDL.Downloaded;
+        results->onserver = &remaining;
+        results->dupskipped = &G->LastDL.DupSkipped;
+        results->deleted = &G->LastDL.Deleted;
 
         if(G->LastDL.Error)
-          rd->rc = RETURN_WARN;
+          params->rc = RETURN_WARN;
       }
       else
-        rd->rc = RETURN_ERROR;
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_FREE:
     {
-      FreeVecPooled(G->SharedMemPool, rd);
+      if(args != NULL)
+		FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
     }
     break;
   }
