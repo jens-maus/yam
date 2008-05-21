@@ -204,10 +204,14 @@ void LockFolderList(struct FolderList *flist)
 {
   ENTER();
 
-  if(++folderLocks != 1)
-    E(DBF_ALWAYS, "nested (%ld) exclusive lock of folderlist %08lx", folderLocks, flist);
-  else
-    ObtainSemaphore(flist->lockSemaphore);
+  if(AttemptSemaphoreShared(flist->lockSemaphore) == FALSE)
+  {
+    if(folderLocks > 0)
+      E(DBF_ALWAYS, "nested (%ld) exclusive lock of folderlist %08lx", folderLocks + 1, flist);
+    ObtainSemaphoreShared(flist->lockSemaphore);
+  }
+
+  folderLocks++;
 
   LEAVE();
 }
@@ -218,10 +222,14 @@ void LockFolderListShared(struct FolderList *flist)
 {
   ENTER();
 
-  if(++folderLocks != 1)
-    E(DBF_ALWAYS, "nested (%ld) shared lock of folderlist %08lx", folderLocks, flist);
-  else
+  if(AttemptSemaphoreShared(flist->lockSemaphore) == FALSE)
+  {
+    if(folderLocks > 0)
+      E(DBF_ALWAYS, "nested (%ld) shared lock of folderlist %08lx", folderLocks + 1, flist);
     ObtainSemaphoreShared(flist->lockSemaphore);
+  }
+
+  folderLocks++;
 
   LEAVE();
 }
@@ -235,8 +243,8 @@ void UnlockFolderList(struct FolderList *flist)
   folderLocks--;
   if(folderLocks < 0)
     E(DBF_ALWAYS, "too many unlocks (%ld) of folderlist %08lx", folderLocks, flist);
-  else if(folderLocks == 0)
-    ReleaseSemaphore(flist->lockSemaphore);
+
+  ReleaseSemaphore(flist->lockSemaphore);
 
   LEAVE();
 }

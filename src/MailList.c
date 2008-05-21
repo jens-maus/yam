@@ -417,10 +417,14 @@ void LockMailList(struct MailList *mlist)
 {
   ENTER();
 
-  if(++mailLocks != 1)
-    E(DBF_ALWAYS, "nested (%ld) exclusive lock of maillist %08lx", mailLocks, mlist);
-  else
+  if(AttemptSemaphore(mlist->lockSemaphore) == FALSE)
+  {
+    if(mailLocks > 0)
+      E(DBF_ALWAYS, "nested (%ld) exclusive lock of maillist %08lx", mailLocks + 1, mlist);
     ObtainSemaphore(mlist->lockSemaphore);
+  }
+
+  mailLocks++;
 
   LEAVE();
 }
@@ -431,10 +435,14 @@ void LockMailListShared(struct MailList *mlist)
 {
   ENTER();
 
-  if(++mailLocks != 1)
-    E(DBF_ALWAYS, "nested (%ld) shared lock of maillist %08lx", mailLocks, mlist);
-  else
-    ObtainSemaphoreShared(mlist->lockSemaphore);
+  if(AttemptSemaphore(mlist->lockSemaphore) == FALSE)
+  {
+    if(mailLocks > 0)
+      E(DBF_ALWAYS, "nested (%ld) shared lock of maillist %08lx", mailLocks + 1, mlist);
+    ObtainSemaphore(mlist->lockSemaphore);
+  }
+
+  mailLocks++;
 
   LEAVE();
 }
@@ -448,8 +456,8 @@ void UnlockMailList(struct MailList *mlist)
   mailLocks--;
   if(mailLocks < 0)
     E(DBF_ALWAYS, "too many unlocks (%ld) of maillist %08lx", mailLocks, mlist);
-  else if(mailLocks == 0)
-    ReleaseSemaphore(mlist->lockSemaphore);
+
+  ReleaseSemaphore(mlist->lockSemaphore);
 
   LEAVE();
 }

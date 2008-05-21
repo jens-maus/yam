@@ -7,6 +7,8 @@ $URL$
 
 2008-05-21  Thore Böckelmann <tboeckel@gmx.de>
 
+  * FolderList.c, MailList.c: reworked the deadlock detection when locking a
+    list to lock the list a second time, even if that has been done before.
   * YAM_WR.c: added missing includes for the OS3 build.
 
 2008-05-21  Jens Langner <Jens.Langner@light-speed.de>
