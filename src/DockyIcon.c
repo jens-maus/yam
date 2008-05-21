@@ -34,6 +34,8 @@
 #include "YAM.h"
 #include "YAM_config.h"
 
+#include "classes/Classes.h"
+
 #include "DockyIcon.h"
 #include "MUIObjects.h"
 
@@ -216,19 +218,13 @@ BOOL HandleDockyIcon(void)
       case APPLIBMT_OpenDoc:
       {
         struct ApplicationOpenPrintDocMsg* appmsg = (struct ApplicationOpenPrintDocMsg*)msg;
-        int wrwin;
+        struct WriteMailData *wmData;
 
-        if(G->WR[0] != NULL)
-          wrwin = 0;
-        else if(G->WR[1] != NULL)
-          wrwin = 1;
-        else
-          wrwin = MA_NewNew(NULL, 0);
-
-        if(wrwin >= 0)
+        // open a new write window
+        if((wmData = NewWriteMailWindow(NULL, 0)) != NULL)
         {
           PopUp();
-          WR_App(wrwin, appmsg->fileName);
+          DoMethod(wmData->window, MUIM_WriteWindow_DroppedFile, appmsg->fileName);
         }
       }
       break;
@@ -238,7 +234,7 @@ BOOL HandleDockyIcon(void)
       case APPLIBMT_NewBlankDoc:
       {
         PopUp();
-        MA_NewNew(NULL, 0);
+        NewWriteMailWindow(NULL, 0);
       }
       break;
     }

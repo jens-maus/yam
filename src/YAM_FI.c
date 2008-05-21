@@ -1511,28 +1511,43 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
     // Bounce Action
     if(hasBounceAction(filter) && !filter->remote && *filter->bounceTo)
     {
-      G->RuleResults.Bounced++;
-      MA_NewBounce(mail, TRUE);
-      setstring(G->WR[2]->GUI.ST_TO, filter->bounceTo);
-      DoMethod(G->App, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, 2);
+      struct WriteMailData *wmData;
+
+      if((wmData = NewBounceMailWindow(mail, NEWF_QUIET)) != NULL)
+      {
+        set(wmData->window, MUIA_WriteWindow_To, filter->bounceTo);
+        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
+
+        G->RuleResults.Bounced++;
+      }
     }
 
     // Forward Action
     if(hasForwardAction(filter) && !filter->remote && *filter->forwardTo)
     {
-      G->RuleResults.Forwarded++;
-      MA_NewForward(mlist, TRUE);
-      setstring(G->WR[2]->GUI.ST_TO, filter->forwardTo);
-      WR_NewMail(WRITE_QUEUE, 2);
+      struct WriteMailData *wmData;
+
+      if((wmData = NewForwardMailWindow(mlist, NEWF_QUIET)) != NULL)
+      {
+        set(wmData->window, MUIA_WriteWindow_To, filter->forwardTo);
+        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
+
+        G->RuleResults.Forwarded++;
+      }
     }
 
     // Reply Action
     if(hasReplyAction(filter) && !filter->remote && *filter->replyFile)
     {
-      MA_NewReply(mlist, TRUE);
-      FileToEditor(filter->replyFile, G->WR[2]->GUI.TE_EDIT, TRUE);
-      WR_NewMail(WRITE_QUEUE, 2);
-      G->RuleResults.Replied++;
+      struct WriteMailData *wmData;
+
+      if((wmData = NewReplyMailWindow(mlist, NEWF_QUIET)) != NULL)
+      {
+        DoMethod(wmData->window, MUIM_WriteWindow_LoadText, filter->replyFile, TRUE);
+        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
+
+        G->RuleResults.Replied++;
+      }
     }
 
     // Execute Action

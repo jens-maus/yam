@@ -64,6 +64,5 @@
 #define MAXERR          50
 #define MAXUSERS        16
 #define MAXEA            4
-#define MAXWR            2 /* BEWARE: Don't change this value - it's hardcoded many places! */
 
 #endif /* YAM_STRINGSIZES_H */

@@ -104,7 +104,6 @@ struct Global
   struct CO_ClassData *    CO;
   struct AB_ClassData *    AB;
   struct EA_ClassData *    EA[MAXEA];
-  struct WR_ClassData *    WR[MAXWR+1];
   struct TR_ClassData *    TR;
   struct ER_ClassData *    ER;
   struct FI_ClassData *    FI;
@@ -112,10 +111,10 @@ struct Global
   struct DI_ClassData *    DI;
   struct US_ClassData *    US;
   struct ReadMailData *    ActiveRexxRMData;
+  struct WriteMailData *   ActiveRexxWMData;
   struct codeset *         localCharset;
   struct codesetList *     codesetsList;
   struct HashTable *       imageCacheHashTable;
-  struct NotifyRequest *   WR_NotifyRequest[MAXWR+1];
   struct FolderList *      folders;
 
   #if defined(__amigaos4__)
@@ -129,7 +128,6 @@ struct Global
   int                      PGPVersion;
   int                      CO_DST;
   int                      ER_NumErr;
-  int                      ActiveWriteWin;
   enum IconImages          currentAppIcon;
   #if defined(__amigaos4__)
   enum IconImages          LastIconID;
@@ -160,6 +158,7 @@ struct Global
   struct DownloadResult    LastDL;
   struct sockaddr_in       TR_INetSocketAddr;
   struct MinList           readMailDataList;
+  struct MinList           writeMailDataList;
   struct MinList           xpkPackerList;
   struct MinList           zombieFileList;
   struct Theme             theme;
@@ -176,7 +175,7 @@ struct Global
   char                     MA_MailDir[SIZE_PATH];
   char                     AB_Filename[SIZE_PATHFILE];
   char                     CO_PrefsFile[SIZE_PATHFILE];
-  char                     WR_Filename[MAXWR+1][SIZE_PATHFILE];
+//  char                     WR_Filename[MAXWR+1][SIZE_PATHFILE];
   char                     DI_Filename[SIZE_PATHFILE];
 };
 

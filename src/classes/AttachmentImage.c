@@ -140,18 +140,21 @@ MakeStaticHook(SelectionHook, SelectionFunc);
 static BOOL FindWriteWindow(struct Window *win)
 {
   BOOL found = FALSE;
-  ULONG i;
 
   ENTER();
 
-  for(i = 0; i < ARRAY_SIZE(G->WR); i++)
+  if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
   {
-    if(G->WR[i] != NULL)
-    {
-      Object *w = G->WR[i]->GUI.WI;
+    // search through our WriteDataList
+    struct MinNode *curNode;
 
-      // the window must be open and match the supplied one
-      if(w != NULL && xget(w, MUIA_Window_Open) == TRUE && (struct Window *)xget(w, MUIA_Window_Window) == win)
+    for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+      if(wmData->window != NULL &&
+         xget(wmData->window, MUIA_Window_Open) == TRUE &&
+         (struct Window *)xget(wmData->window, MUIA_Window_Window) == win)
       {
         found = TRUE;
         break;

@@ -32,6 +32,8 @@
 #include "YAM.h"
 #include "YAM_write.h"
 
+#include "classes/Classes.h"
+
 #include "Rexx.h"
 
 #include "Debug.h"
@@ -57,8 +59,8 @@ void rx_writemailto(UNUSED struct RexxHost *host, struct RexxParams *params, enu
 
     case RXIF_ACTION:
     {
-      if(G->WR[G->ActiveWriteWin])
-        InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_TO, args->address, FALSE);
+      if(G->ActiveRexxWMData != NULL && G->ActiveRexxWMData->window != NULL)
+        DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_InsertAddresses, MUIV_WriteWindow_RcptType_To, args->address, FALSE);
       else
         params->rc = RETURN_ERROR;
     }
@@ -67,7 +69,7 @@ void rx_writemailto(UNUSED struct RexxHost *host, struct RexxParams *params, enu
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

@@ -475,7 +475,7 @@ struct Config
   BOOL  DownloadLarge;
   BOOL  DisplayAllTexts;
   BOOL  FixedFontEdit;
-  BOOL  MultipleWindows;
+  BOOL  MultipleReadWindows;
   BOOL  UseTextstyles;
   BOOL  WrapHeader;
   BOOL  LaunchAlways;

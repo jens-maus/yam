@@ -142,7 +142,7 @@ void MA_SetSortFlag(void)
 void MA_ChangeTransfer(BOOL on)
 {
   struct MA_GUIData *gui = &G->MA->GUI;
-  int i;
+  struct MinNode *curNode;
 
   ENTER();
 
@@ -164,10 +164,12 @@ void MA_ChangeTransfer(BOOL on)
                                                                      NULL);
 
   // modify the write window's "Send now" buttons
-  for(i = 0; i <= MAXWR; i++)
+  for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
   {
-    if(G->WR[i] != NULL)
-      set(G->WR[i]->GUI.BT_SEND, MUIA_Disabled, on == FALSE);
+    struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+    if(wmData->window != NULL)
+      set(wmData->window, MUIA_WriteWindow_SendDisabled, on == FALSE);
   }
 
   LEAVE();
@@ -799,37 +801,11 @@ void MA_DeleteSingle(struct Mail *mail, ULONG delFlags)
        (isSpamFolder(mailFolder) && hasStatusSpam(mail)) ||
        isFlagSet(delFlags, DELF_AT_ONCE))
     {
-      int i;
-
       D(DBF_MAIL, "deleting mail with subject '%s' from folder '%s'", mail->Subject, mailFolder->Name);
 
       // before we go and delete/free the mail we have to check
       // all possible write windows if they are refering to it
-      for(i=0; i < MAXWR; i++)
-      {
-        struct WR_ClassData *writeWin = G->WR[i];
-
-        if(writeWin != NULL)
-        {
-          if(writeWin->refMail == mail)
-            writeWin->refMail = NULL;
-
-          if(writeWin->refMailList != NULL && IsMailListEmpty(writeWin->refMailList) == FALSE)
-          {
-            struct MailNode *mnode;
-
-            LockMailListShared(writeWin->refMailList);
-
-            ForEachMailNode(writeWin->refMailList, mnode)
-            {
-              if(mnode->mail == mail)
-                mnode->mail = NULL;
-            }
-
-            UnlockMailList(writeWin->refMailList);
-          }
-        }
-      }
+      SetWriteMailDataMailRef(mail, NULL);
 
       AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
 
@@ -897,8 +873,6 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
     }
     else
     {
-      int i;
-
       AppendToLogfile(LF_VERBOSE, 23, tr(MSG_LOG_MovingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
       // add the new mail
@@ -907,31 +881,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
       // now we have to check all opened write windows
       // for still valid references to the old mail and
       // change it accordingly.
-      for(i=0; i < MAXWR; i++)
-      {
-        struct WR_ClassData *writeWin = G->WR[i];
-
-        if(writeWin != NULL)
-        {
-          if(writeWin->refMail == mail)
-            writeWin->refMail = newMail;
-
-          if(writeWin->refMailList != NULL && IsMailListEmpty(writeWin->refMailList) == FALSE)
-          {
-            struct MailNode *mnode;
-
-            LockMailListShared(writeWin->refMailList);
-
-            ForEachMailNode(writeWin->refMailList, mnode)
-            {
-              if(mnode->mail == mail)
-                mnode->mail = newMail;
-            }
-
-            UnlockMailList(writeWin->refMailList);
-          }
-        }
-      }
+      SetWriteMailDataMailRef(mail, newMail);
 
       // now remove the mail from its folder/mail list
       RemoveMailFromList(mail, closeWindows);
@@ -1587,19 +1537,6 @@ static void MA_InsertIntroText(FILE *fh, char *text, struct ExpandTextData *etd)
 }
 
 ///
-/// MA_ShowMessageText
-//  Loads/shows the previously generated message text
-static void MA_ShowMessageText(int winnum)
-{
-  ENTER();
-
-  // load the current file in the editor and flag it as not being changed.
-  FileToEditor(G->WR_Filename[winnum], G->WR[winnum]->GUI.TE_EDIT, FALSE);
-
-  LEAVE();
-}
-
-///
 /// MA_SetupExpandTextData
 //  Creates quote string by replacing variables with values
 static void MA_SetupExpandTextData(struct ExpandTextData *etd, struct Mail *mail)
@@ -1641,55 +1578,30 @@ static void MA_SetupExpandTextData(struct ExpandTextData *etd, struct Mail *mail
 }
 
 ///
-/// MA_CheckWriteWindow
-//  Opens a write window
-static int MA_CheckWriteWindow(int winnum)
-{
-  int num;
-
-  ENTER();
-
-  if(SafeOpenWindow(G->WR[winnum]->GUI.WI))
-  {
-    num = winnum;
-  }
-  else
-  {
-    WR_Cleanup(winnum);
-    DisposeModulePush(&G->WR[winnum]);
-    num = -1;
-  }
-
-  RETURN(num);
-  return num;
-}
-
-///
-/// MA_NewNew
-//  Creates a new, empty message
-int MA_NewNew(struct Mail *mail, int flags)
+/// NewWriteMailWindow()
+//  Creates a new, empty write message
+struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
 {
   BOOL quiet = hasQuietFlag(flags);
   struct Folder *folder = FO_GetCurrentFolder();
-  int winnum = -1;
+  struct WriteMailData *wmData = NULL;
 
   ENTER();
 
   // First check if the basic configuration is okay, then open write window */
-  if(folder != NULL && CO_IsValid() == TRUE && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+  if(folder != NULL && CO_IsValid() == TRUE &&
+     (wmData = CreateWriteWindow()) != NULL)
   {
     FILE *out;
 
-    if((out = fopen(G->WR_Filename[winnum], "w")) != NULL)
+    if((out = fopen(wmData->filename, "w")) != NULL)
     {
-      struct WR_ClassData *wr = G->WR[winnum];
-
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
-      wr->Mode = NEW_NEW;
-      wr->refMail = mail;
+      wmData->mode = NEW_NEW;
+      wmData->refMail = mail;
 
-      if(mail != NULL)
+      if(wmData->refMail != NULL)
       {
         char address[SIZE_LARGE];
         struct ExtendedMail *email;
@@ -1714,12 +1626,12 @@ int MA_NewNew(struct Mail *mail, int flags)
               for(i=0; i < email->NoSReplyTo; i++)
                 sbuf = MA_AppendRcpt(sbuf, &email->SReplyTo[i], FALSE);
 
-              setstring(wr->GUI.ST_TO, sbuf);
+              set(wmData->window, MUIA_WriteWindow_To, sbuf);
 
               FreeStrBuf(sbuf);
             }
             else
-              setstring(wr->GUI.ST_TO, addr);
+              set(wmData->window, MUIA_WriteWindow_To, addr);
           }
         }
         else
@@ -1739,25 +1651,25 @@ int MA_NewNew(struct Mail *mail, int flags)
               for(i=0; i < email->NoSFrom; i++)
                 sbuf = MA_AppendRcpt(sbuf, &email->SFrom[i], FALSE);
 
-              setstring(wr->GUI.ST_TO, sbuf);
+              set(wmData->window, MUIA_WriteWindow_To, sbuf);
 
               FreeStrBuf(sbuf);
             }
             else
-              setstring(wr->GUI.ST_TO, addr);
+              set(wmData->window, MUIA_WriteWindow_To, addr);
           }
         }
       }
       else if(folder->MLSupport == TRUE)
       {
         if(folder->MLAddress[0] != '\0')
-          setstring(wr->GUI.ST_TO, folder->MLAddress);
+          set(wmData->window, MUIA_WriteWindow_To, folder->MLAddress);
 
         if(folder->MLFromAddress[0] != '\0')
-          setstring(wr->GUI.ST_FROM, folder->MLFromAddress);
+          set(wmData->window, MUIA_WriteWindow_From, folder->MLFromAddress);
 
         if(folder->MLReplyToAddress[0] != '\0')
-          setstring(wr->GUI.ST_REPLYTO, folder->MLReplyToAddress);
+          set(wmData->window, MUIA_WriteWindow_ReplyTo, folder->MLReplyToAddress);
       }
 
       if(folder->WriteIntro[0] != '\0')
@@ -1774,94 +1686,99 @@ int MA_NewNew(struct Mail *mail, int flags)
       fclose(out);
 
       // add a signature to the mail depending on the selected signature for this list
-      WR_AddSignature(winnum, folder->MLSupport ? folder->MLSignature: -1);
+      DoMethod(wmData->window, MUIM_WriteWindow_AddSignature, folder->MLSupport ? folder->MLSignature: -1);
 
+      // update the message text
+      DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
+
+      // make sure the window is opened
       if(quiet == FALSE)
-        set(wr->GUI.WI, MUIA_Window_Open, TRUE);
-
-      MA_ShowMessageText(winnum);
-      set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
+        SafeOpenWindow(wmData->window);
 
       if(C->LaunchAlways == TRUE && quiet == FALSE)
-        DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
+        DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
     }
     else
-      DisposeModulePush(&G->WR[winnum]);
+    {
+      CleanupWriteMailData(wmData);
+      wmData = NULL;
+    }
   }
 
-  if(winnum >= 0 && quiet == FALSE)
-    winnum = MA_CheckWriteWindow(winnum);
-
-  RETURN(winnum);
-  return winnum;
+  RETURN(wmData);
+  return wmData;
 }
 
 ///
-/// MA_NewEdit
-//  Edits a message
-int MA_NewEdit(struct Mail *mail, int flags)
+/// NewEditMailWindow()
+//  Edits a message in a new write window
+struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 {
   BOOL quiet = hasQuietFlag(flags);
-  int i;
-  int winnum = -1;
   struct Folder *folder;
+  struct WriteMailData *wmData = NULL;
 
   ENTER();
 
   // check the parameters
   if(mail == NULL || (folder = mail->Folder) == NULL)
   {
-    RETURN(winnum);
-    return winnum;
+    RETURN(wmData);
+    return wmData;
   }
 
   // check if the mail in question resists in the outgoing
   // folder
-  if(isOutgoingFolder(folder))
+  if(isOutgoingFolder(folder) &&
+     IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
   {
-    // return if mail is already being written/edited
-    for(i=0; i < MAXWR; i++)
-    {
-      if(G->WR[i] != NULL && G->WR[i]->refMail == mail)
-      {
-        DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
+    // search through our WriteMailDataList
+    struct MinNode *curNode;
 
-        RETURN(-1);
-        return -1;
+    for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+      if(wmData->window != NULL && wmData->refMail == mail)
+      {
+        DoMethod(wmData->window, MUIM_Window_ToFront);
+
+        RETURN(wmData);
+        return wmData;
       }
     }
   }
 
   // check if necessary settings fror writing are OK and open new window
-  if(CO_IsValid() == TRUE && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+  if(CO_IsValid() == TRUE &&
+     (wmData = CreateWriteWindow()) != NULL)
   {
     FILE *out;
 
-    if((out = fopen(G->WR_Filename[winnum], "w")) != NULL)
+    if((out = fopen(wmData->filename, "w")) != NULL)
     {
       char *sbuf = NULL;
       struct ReadMailData *rmData;
       struct ExtendedMail *email;
-      struct WR_ClassData *wr = G->WR[winnum];
 
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
       // flag the exact creation mode
       if(isOutgoingFolder(folder))
-        wr->Mode = NEW_EDIT;
+        wmData->mode = NEW_EDIT;
       else
-        wr->Mode = NEW_EDITASNEW;
+        wmData->mode = NEW_EDITASNEW;
 
-      wr->refMail = mail;
+      wmData->refMail = mail;
 
       if((email = MA_ExamineMail(folder, mail->MailFile, TRUE)) == NULL)
       {
         ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
         fclose(out);
-        DisposeModulePush(&G->WR[winnum]);
+        CleanupWriteMailData(wmData);
 
-        RETURN(winnum);
-        return winnum;
+        RETURN(NULL);
+        return NULL;
       }
 
       if((rmData = AllocPrivateRMData(mail, PM_ALL)) != NULL)
@@ -1876,6 +1793,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
           // write out the whole text to our temporary file.
           if(msglen == 0 || fwrite(cmsg, msglen, 1, out) == 1)
           {
+            int i;
             char address[SIZE_LARGE];
 
             // free our temp text now
@@ -1883,27 +1801,27 @@ int MA_NewEdit(struct Mail *mail, int flags)
 
             // set the In-Reply-To / References message header references, if they exist
             if(email->inReplyToMsgID != NULL)
-              wr->inReplyToMsgID = StrBufCpy(NULL, email->inReplyToMsgID);
+              wmData->inReplyToMsgID = StrBufCpy(NULL, email->inReplyToMsgID);
 
             if(email->references != NULL)
-              wr->references = StrBufCpy(NULL, email->references);
+              wmData->references = StrBufCpy(NULL, email->references);
 
             // set the subject gadget
-            setstring(wr->GUI.ST_SUBJECT, mail->Subject);
+            set(wmData->window, MUIA_WriteWindow_Subject, mail->Subject);
 
             // in case this is a EDITASNEW action we have to make sure
             // to add the From: and ReplyTo: address of the user of
             // YAM instead of filling in the data of the mail we
             // are trying to edit.
-            if(wr->Mode == NEW_EDITASNEW)
+            if(wmData->mode == NEW_EDITASNEW)
             {
               if(folder->MLSupport == TRUE)
               {
                 if(folder->MLFromAddress[0] != '\0')
-                  setstring(wr->GUI.ST_FROM, folder->MLFromAddress);
+                  set(wmData->window, MUIA_WriteWindow_From, folder->MLFromAddress);
 
                 if(folder->MLReplyToAddress[0] != '\0')
-                  setstring(wr->GUI.ST_REPLYTO, folder->MLReplyToAddress);
+                  set(wmData->window, MUIA_WriteWindow_ReplyTo, folder->MLReplyToAddress);
               }
             }
             else
@@ -1916,14 +1834,14 @@ int MA_NewEdit(struct Mail *mail, int flags)
               for(i=0; i < email->NoSFrom; i++)
                 sbuf = MA_AppendRcpt(sbuf, &email->SFrom[i], FALSE);
 
-              setstring(wr->GUI.ST_FROM, sbuf);
+              set(wmData->window, MUIA_WriteWindow_From, sbuf);
 
               // add all ReplyTo: recipients
               sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
               for(i=0; i < email->NoSReplyTo; i++)
                 sbuf = MA_AppendRcpt(sbuf, &email->SReplyTo[i], FALSE);
 
-              setstring(wr->GUI.ST_REPLYTO, sbuf);
+              set(wmData->window, MUIA_WriteWindow_ReplyTo, sbuf);
             }
 
             // add all "To:" recipients of the mail
@@ -1931,7 +1849,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
             for(i=0; i < email->NoSTo; i++)
               sbuf = MA_AppendRcpt(sbuf, &email->STo[i], FALSE);
 
-            setstring(wr->GUI.ST_TO, sbuf);
+            set(wmData->window, MUIA_WriteWindow_To, sbuf);
 
             // add all "CC:" recipients of the mail
             sbuf[0] = '\0';
@@ -1939,7 +1857,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
             {
               sbuf = MA_AppendRcpt(sbuf, &email->CC[i], FALSE);
             }
-            setstring(wr->GUI.ST_CC, sbuf);
+            set(wmData->window, MUIA_WriteWindow_Cc, sbuf);
 
             // add all "BCC:" recipients of the mail
             sbuf[0] = '\0';
@@ -1947,22 +1865,26 @@ int MA_NewEdit(struct Mail *mail, int flags)
             {
               sbuf = MA_AppendRcpt(sbuf, &email->BCC[i], FALSE);
             }
-            setstring(wr->GUI.ST_BCC, sbuf);
+            set(wmData->window, MUIA_WriteWindow_BCC, sbuf);
 
             // free our temporary buffer
             FreeStrBuf(sbuf);
 
             if(email->extraHeaders != NULL)
-              setstring(wr->GUI.ST_EXTHEADER, email->extraHeaders);
+              set(wmData->window, MUIA_WriteWindow_ExtHeaders, email->extraHeaders);
 
-            setcheckmark(wr->GUI.CH_DELSEND, email->DelSend);
-            setcheckmark(wr->GUI.CH_MDN, isSendMDNMail(mail));
-            setcheckmark(wr->GUI.CH_ADDINFO, isSenderInfoMail(mail));
-            setcycle(wr->GUI.CY_IMPORTANCE, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1);
-            setmutex(wr->GUI.RA_SIGNATURE, email->Signature);
-            setmutex(wr->GUI.RA_SECURITY, wr->OldSecurity = email->Security);
+            xset(wmData->window, MUIA_WriteWindow_DelSend,    email->DelSend,
+                                 MUIA_WriteWindow_MDN,        isSendMDNMail(mail),
+                                 MUIA_WriteWindow_AddInfo,    isSenderInfoMail(mail),
+                                 MUIA_WriteWindow_Importance, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1,
+                                 MUIA_WriteWindow_Signature,  email->Signature,
+                                 MUIA_WriteWindow_Security,   email->Security);
 
-            WR_SetupOldMail(winnum, rmData);
+            // let us safe the security state
+            wmData->oldSecurity = email->Security;
+
+            // setup the write window from an existing readmailData structure
+            DoMethod(wmData->window, MUIM_WriteWindow_SetupFromOldMail, rmData);
           }
           else
           {
@@ -1973,10 +1895,11 @@ int MA_NewEdit(struct Mail *mail, int flags)
             FreePrivateRMData(rmData);
             fclose(out);
             MA_FreeEMailStruct(email);
-            DisposeModulePush(&G->WR[winnum]);
 
-            RETURN(winnum);
-            return winnum;
+            CleanupWriteMailData(wmData);
+
+            RETURN(NULL);
+            return NULL;
           }
         }
 
@@ -1986,77 +1909,52 @@ int MA_NewEdit(struct Mail *mail, int flags)
       fclose(out);
       MA_FreeEMailStruct(email);
 
-      if(quiet == FALSE)
-        set(wr->GUI.WI, MUIA_Window_Open, TRUE);
+      // update the message text
+      DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
 
-      MA_ShowMessageText(winnum);
-      sbuf = (STRPTR)xget(wr->GUI.ST_TO, MUIA_String_Contents);
-      set(wr->GUI.WI, MUIA_Window_ActiveObject, *sbuf ? wr->GUI.TE_EDIT : wr->GUI.ST_TO);
+      // make sure the window is opened
+      if(quiet == FALSE)
+        SafeOpenWindow(wmData->window);
+
+      sbuf = (STRPTR)xget(wmData->window, MUIA_WriteWindow_To);
+      set(wmData->window, MUIA_WriteWindow_ActiveObject, *sbuf ? MUIV_WriteWindow_ActiveObject_TextEditor :
+                                                                 MUIV_WriteWindow_ActiveObject_To);
 
       if(C->LaunchAlways == TRUE && quiet == FALSE)
-        DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
+        DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
     }
     else
-      DisposeModulePush(&G->WR[winnum]);
+    {
+      CleanupWriteMailData(wmData);
+      wmData = NULL;
+    }
   }
 
-  if(winnum >= 0 && quiet == FALSE)
-    winnum = MA_CheckWriteWindow(winnum);
-
-  RETURN(winnum);
-  return winnum;
+  RETURN(wmData);
+  return wmData;
 }
 
 ///
-/// MA_NewBounce
-//  Bounces a message
-int MA_NewBounce(struct Mail *mail, int flags)
-{
-  BOOL quiet = hasQuietFlag(flags);
-  int winnum = -1;
-
-  ENTER();
-
-  if(CO_IsValid() == TRUE && (winnum = WR_Open(quiet ? 2 : -1, TRUE)) >= 0)
-  {
-    struct WR_ClassData *wr = G->WR[winnum];
-
-    wr->Mode = NEW_BOUNCE;
-    wr->refMail = mail;
-
-    if(quiet == FALSE)
-      set(wr->GUI.WI, MUIA_Window_Open, TRUE);
-
-    set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
-  }
-
-  if(winnum >= 0 && quiet == FALSE)
-    winnum = MA_CheckWriteWindow(winnum);
-
-  RETURN(winnum);
-  return winnum;
-}
-
-///
-/// MA_NewForward
+/// NewForwardMailWindow()
 //  Forwards a list of messages
-int MA_NewForward(struct MailList *mlist, int flags)
+struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int flags)
 {
   BOOL quiet = hasQuietFlag(flags);
-  int winnum = -1;
+  struct WriteMailData *wmData = NULL;
 
   ENTER();
 
-  if(CO_IsValid() == TRUE && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+  // check if necessary settings fror writing are OK and open new window
+  if(CO_IsValid() == TRUE &&
+     (wmData = CreateWriteWindow()) != NULL)
   {
     FILE *out;
 
-    if((out = fopen(G->WR_Filename[winnum], "w")) != NULL)
+    if((out = fopen(wmData->filename, "w")) != NULL)
     {
       int signature = -1;
-      struct WR_ClassData *wr = G->WR[winnum];
-      char *rsub = AllocStrBuf(SIZE_SUBJECT);
       enum ForwardMode fwdMode = C->ForwardMode;
+      char *rsub = AllocStrBuf(SIZE_SUBJECT);
       struct MailNode *mnode;
 
       // if the user wants to have the alternative
@@ -2078,20 +1976,25 @@ int MA_NewForward(struct MailList *mlist, int flags)
       // set the output filestream buffer size
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
-      wr->Mode = NEW_FORWARD;
-      wr->refMailList = CloneMailList(mlist);
+      // set the write mode
+      wmData->mode = NEW_FORWARD;
+      wmData->refMailList = CloneMailList(mlist);
 
+      // sort the mail list by date
       SortMailList(mlist, MA_CompareByDate);
 
+      // insert the intro text
       MA_InsertIntroText(out, C->NewIntro, NULL);
 
+      // iterate through all the mail in the
+      // mail list and build up the forward text
       ForEachMailNode(mlist, mnode)
       {
         struct ExtendedMail *email;
         struct ExpandTextData etd;
         struct Mail *mail = mnode->mail;
 
-        if(signature == -1 && mail->Folder)
+        if(signature == -1 && mail->Folder != NULL)
         {
           if(mail->Folder->MLSupport == TRUE)
             signature = mail->Folder->MLSignature;
@@ -2102,10 +2005,11 @@ int MA_NewForward(struct MailList *mlist, int flags)
           ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, mail->Folder, mail));
           fclose(out);
           FreeStrBuf(rsub);
-          DisposeModulePush(&G->WR[winnum]);
 
-          RETURN(winnum);
-          return winnum;
+          CleanupWriteMailData(wmData);
+
+          RETURN(NULL);
+          return NULL;
         }
 
         MA_SetupExpandTextData(&etd, &email->Mail);
@@ -2151,7 +2055,7 @@ int MA_NewForward(struct MailList *mlist, int flags)
               attach.IsMIME = TRUE;
 
               // add the attachment to our attachment listview
-              DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
+              DoMethod(wmData->window, MUIM_WriteWindow_InsertAttachment, &attach);
             }
             else
               E(DBF_MAIL, "unpacking of file '%s' failed!", filename);
@@ -2188,7 +2092,7 @@ int MA_NewForward(struct MailList *mlist, int flags)
                 // if the mail we are forwarding has an attachment
                 // we go and attach them to our forwarded mail as well.
                 if(hasNoAttachFlag(flags) == FALSE)
-                  WR_SetupOldMail(winnum, rmData);
+                  DoMethod(wmData->window, MUIM_WriteWindow_SetupFromOldMail, rmData);
               }
 
               FreePrivateRMData(rmData);
@@ -2203,52 +2107,53 @@ int MA_NewForward(struct MailList *mlist, int flags)
       fclose(out);
 
       // add a signature to the mail depending on the selected signature for this list
-      WR_AddSignature(winnum, signature);
+      DoMethod(wmData->window, MUIM_WriteWindow_AddSignature, signature);
 
-      setstring(wr->GUI.ST_SUBJECT, rsub);
+      // set the composed subject text
+      set(wmData->window, MUIA_WriteWindow_Subject, rsub);
       FreeStrBuf(rsub);
 
-      // make sure the window is open
-      if(quiet == FALSE)
-        set(wr->GUI.WI, MUIA_Window_Open, TRUE);
+      // update the message text
+      DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
 
-      MA_ShowMessageText(winnum);
-      set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
+      // make sure the window is opened
+      if(quiet == FALSE)
+        SafeOpenWindow(wmData->window);
+
+      // set the active object of the window
+      set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_To);
 
       if(C->LaunchAlways == TRUE && quiet == FALSE)
-        DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
+        DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
     }
     else
-      DisposeModulePush(&G->WR[winnum]);
+    {
+      CleanupWriteMailData(wmData);
+      wmData = NULL;
+    }
   }
 
-  if(winnum >= 0 && quiet == FALSE)
-    winnum = MA_CheckWriteWindow(winnum);
-
-  RETURN(winnum);
-  return winnum;
+  RETURN(wmData);
+  return wmData;
 }
 
 ///
-/// MA_NewReply
+/// NewReplyMailWindow()
 //  Creates a reply to a list of messages
-int MA_NewReply(struct MailList *mlist, int flags)
+struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags)
 {
-  int winnum = -1;
-  BOOL doabort = FALSE;
   BOOL quiet = hasQuietFlag(flags);
+  struct WriteMailData *wmData = NULL;
 
   ENTER();
 
-  // check if the configuration is valid and open a new
-  // write window immediately
-  if(CO_IsValid() == TRUE && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+  // check if necessary settings fror writing are OK and open new window
+  if(CO_IsValid() == TRUE &&
+     (wmData = CreateWriteWindow()) != NULL)
   {
     FILE *out;
 
-    // open a new output file handle for generating
-    // a new output file
-    if((out = fopen(G->WR_Filename[winnum], "w")) != NULL)
+    if((out = fopen(wmData->filename, "w")) != NULL)
     {
       int j;
       int repmode = 1;
@@ -2262,7 +2167,6 @@ int MA_NewReply(struct MailList *mlist, int flags)
       char *rcc = AllocStrBuf(SIZE_ADDRESS);
       char *rsub = AllocStrBuf(SIZE_SUBJECT);
       char buffer[SIZE_LARGE];
-      struct WR_ClassData *wr = G->WR[winnum];
       struct ExpandTextData etd;
       BOOL mlIntro = FALSE;
       struct MailNode *mnode;
@@ -2271,8 +2175,8 @@ int MA_NewReply(struct MailList *mlist, int flags)
 
       // make sure the write window know of the
       // operation and knows which mails to process
-      wr->Mode = NEW_REPLY;
-      wr->refMailList = CloneMailList(mlist);
+      wmData->mode = NEW_REPLY;
+      wmData->refMailList = CloneMailList(mlist);
 
       // make sure we sort the mlist according to
       // the mail date
@@ -2293,13 +2197,13 @@ int MA_NewReply(struct MailList *mlist, int flags)
         {
           ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
           fclose(out);
-          DisposeModulePush(&G->WR[winnum]);
+          CleanupWriteMailData(wmData);
           FreeStrBuf(rto);
           FreeStrBuf(rcc);
           FreeStrBuf(rsub);
 
-          RETURN(winnum);
-          return winnum;
+          RETURN(NULL);
+          return NULL;
         }
 
         // make sure we setup the quote string
@@ -2344,23 +2248,23 @@ int MA_NewReply(struct MailList *mlist, int flags)
 
         // in case we are replying to a single message we also have to
         // save the messageID of the email we are replying to
-        if(wr->inReplyToMsgID != NULL)
-          wr->inReplyToMsgID = StrBufCat(wr->inReplyToMsgID, " ");
+        if(wmData->inReplyToMsgID != NULL)
+          wmData->inReplyToMsgID = StrBufCat(wmData->inReplyToMsgID, " ");
 
-        wr->inReplyToMsgID = StrBufCat(wr->inReplyToMsgID, email->messageID);
+        wmData->inReplyToMsgID = StrBufCat(wmData->inReplyToMsgID, email->messageID);
 
         // in addition, we check for "References:" message header stuff
-        if(wr->references != NULL)
-          wr->references = StrBufCat(wr->references, " ");
+        if(wmData->references != NULL)
+          wmData->references = StrBufCat(wmData->references, " ");
 
         if(email->references != NULL)
-          wr->references = StrBufCat(wr->references, email->references);
+          wmData->references = StrBufCat(wmData->references, email->references);
         else
         {
           // check if this email contains inReplyToMsgID data and if so we
           // create a new references header entry
           if(email->inReplyToMsgID != NULL)
-            wr->references = StrBufCat(wr->references, email->inReplyToMsgID);
+            wmData->references = StrBufCat(wmData->references, email->inReplyToMsgID);
         }
 
         // Now we analyse the folder of the selected mail and if it
@@ -2461,13 +2365,13 @@ int MA_NewReply(struct MailList *mlist, int flags)
           {
             MA_FreeEMailStruct(email);
             fclose(out);
-            DisposeModulePush(&G->WR[winnum]);
+            CleanupWriteMailData(wmData);
             FreeStrBuf(rto);
             FreeStrBuf(rcc);
             FreeStrBuf(rsub);
 
-            RETURN(winnum);
-            return winnum;
+            RETURN(NULL);
+            return NULL;
           }
         }
 
@@ -2550,6 +2454,7 @@ int MA_NewReply(struct MailList *mlist, int flags)
             if(askUser == TRUE)
             {
               snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
+
               switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_Compare3ReqOpt), buffer))
               {
                 // Both (From:/ReplyTo:) address
@@ -2585,13 +2490,13 @@ int MA_NewReply(struct MailList *mlist, int flags)
                 {
                   MA_FreeEMailStruct(email);
                   fclose(out);
-                  DisposeModulePush(&G->WR[winnum]);
+                  CleanupWriteMailData(wmData);
                   FreeStrBuf(rto);
                   FreeStrBuf(rcc);
                   FreeStrBuf(rsub);
 
-                  RETURN(winnum);
-                  return winnum;
+                  RETURN(NULL);
+                  return NULL;
                 }
               }
             }
@@ -2715,12 +2620,12 @@ int MA_NewReply(struct MailList *mlist, int flags)
       }
 
       // now we complement the "References:" header by adding our replyto header to it
-      if(wr->inReplyToMsgID != NULL)
+      if(wmData->inReplyToMsgID != NULL)
       {
-        if(wr->references != NULL)
-          wr->references = StrBufCat(wr->references, " ");
+        if(wmData->references != NULL)
+          wmData->references = StrBufCat(wmData->references, " ");
 
-        wr->references = StrBufCat(wr->references, wr->inReplyToMsgID);
+        wmData->references = StrBufCat(wmData->references, wmData->inReplyToMsgID);
       }
 
       // now that the mail is finished, we go and output some footer message to
@@ -2728,29 +2633,33 @@ int MA_NewReply(struct MailList *mlist, int flags)
       MA_InsertIntroText(out, mlIntro ? C->MLReplyBye : (altpat ? C->AltReplyBye: C->ReplyBye), &etd);
       fclose(out);
 
-      // now we add the configured signature to the reply
-      WR_AddSignature(winnum, signature);
+      // add a signature to the mail depending on the selected signature for this list
+      DoMethod(wmData->window, MUIM_WriteWindow_AddSignature, signature);
 
       // If this is a reply to a mail belonging to a mailing list,
       // set the "From:" and "Reply-To:" addresses accordingly */
       if(rfrom != NULL)
-        setstring(wr->GUI.ST_FROM, rfrom);
+        set(wmData->window, MUIA_WriteWindow_From, rfrom);
 
       if(rrepto != NULL)
-        setstring(wr->GUI.ST_REPLYTO, rrepto);
+        set(wmData->window, MUIA_WriteWindow_ReplyTo, rrepto);
 
-      setstring(wr->GUI.ST_TO, rto);
-      setstring(rto[0] != '\0' ? wr->GUI.ST_CC : wr->GUI.ST_TO, rcc);
-      setstring(wr->GUI.ST_SUBJECT, rsub);
+      set(wmData->window, MUIA_WriteWindow_To, rto);
+      set(wmData->window, rto[0] != '\0' ? MUIA_WriteWindow_Cc : MUIA_WriteWindow_To, rcc);
+      set(wmData->window, MUIA_WriteWindow_Subject, rsub);
 
+      // update the message text
+      DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
+
+      // make sure the window is opened
       if(quiet == FALSE)
-        set(wr->GUI.WI, MUIA_Window_Open, TRUE);
+        SafeOpenWindow(wmData->window);
 
-      MA_ShowMessageText(winnum);
-      set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.TE_EDIT);
+      // set the active object of the window
+      set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_TextEditor);
 
       if(C->LaunchAlways == TRUE && quiet == FALSE)
-        DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
+        DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
 
       // free our temporary buffers
       FreeStrBuf(rto);
@@ -2758,17 +2667,47 @@ int MA_NewReply(struct MailList *mlist, int flags)
       FreeStrBuf(rsub);
     }
     else
-      doabort = TRUE;
+    {
+      CleanupWriteMailData(wmData);
+      wmData = NULL;
+    }
   }
 
-  if(winnum >= 0 && quiet == FALSE && doabort == FALSE)
+  RETURN(wmData);
+  return wmData;
+}
+
+///
+/// NewBounceMailWindow()
+//  Bounces a message
+struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags)
+{
+  BOOL quiet = hasQuietFlag(flags);
+  struct WriteMailData *wmData = NULL;
+
+  ENTER();
+
+#warning "TODO: implement BounceWindow class"
+  // check if necessary settings fror writing are OK and open new window
+/*
+  if(CO_IsValid() == TRUE && (winnum = WR_Open(quiet ? 2 : -1, TRUE)) >= 0)
+  {
+    struct WR_ClassData *wr = G->WR[winnum];
+
+    wr->Mode = NEW_BOUNCE;
+    wr->refMail = mail;
+
+    if(quiet == FALSE)
+      set(wr->GUI.WI, MUIA_Window_Open, TRUE);
+
+    set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
+  }
+
+  if(winnum >= 0 && quiet == FALSE)
     winnum = MA_CheckWriteWindow(winnum);
-
-  if(doabort == TRUE)
-    DisposeModulePush(&G->WR[winnum]);
-
-  RETURN(winnum);
-  return winnum;
+*/
+  RETURN(wmData);
+  return wmData;
 }
 
 ///
@@ -3058,16 +2997,16 @@ MakeHook(MA_SavePrintHook, MA_SavePrintFunc);
 ///
 /// MA_NewMessage
 //  Starts a new message
-int MA_NewMessage(enum NewMode mode, int flags)
+struct WriteMailData *NewMessage(enum NewMode mode, const int flags)
 {
-  int winnr = -1;
+  struct WriteMailData *wmData = NULL;
 
   ENTER();
 
   switch(mode)
   {
     case NEW_NEW:
-      winnr = MA_NewNew(NULL, flags);
+      wmData = NewWriteMailWindow(NULL, flags);
     break;
 
     case NEW_EDIT:
@@ -3075,7 +3014,7 @@ int MA_NewMessage(enum NewMode mode, int flags)
       struct Mail *mail;
 
       if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
-        winnr = MA_NewEdit(mail, flags);
+        wmData = NewEditMailWindow(mail, flags);
     }
     break;
 
@@ -3084,7 +3023,7 @@ int MA_NewMessage(enum NewMode mode, int flags)
       struct Mail *mail;
 
       if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
-        winnr = MA_NewBounce(mail, flags);
+        wmData = NewBounceMailWindow(mail, flags);
     }
     break;
 
@@ -3094,7 +3033,7 @@ int MA_NewMessage(enum NewMode mode, int flags)
 
       if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
       {
-        winnr = MA_NewForward(mlist, flags);
+        wmData = NewForwardMailWindow(mlist, flags);
 
         DeleteMailList(mlist);
       }
@@ -3107,7 +3046,7 @@ int MA_NewMessage(enum NewMode mode, int flags)
 
       if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
       {
-        winnr = MA_NewReply(mlist, flags);
+        wmData = NewReplyMailWindow(mlist, flags);
 
         DeleteMailList(mlist);
       }
@@ -3120,8 +3059,8 @@ int MA_NewMessage(enum NewMode mode, int flags)
     break;
   }
 
-  RETURN(winnr);
-  return winnr;
+  RETURN(wmData);
+  return wmData;
 }
 
 ///
@@ -3142,7 +3081,7 @@ HOOKPROTONHNO(MA_NewMessageFunc, void, int *arg)
   // call the main NewMessage function which will
   // then in turn call the correct subfunction for
   // performing the mail action.
-  MA_NewMessage(mode, flags);
+  NewMessage(mode, flags);
 
   LEAVE();
 }

@@ -32,6 +32,8 @@
 #include "YAM.h"
 #include "YAM_write.h"
 
+#include "classes/Classes.h"
+
 #include "Rexx.h"
 
 #include "Debug.h"
@@ -58,8 +60,8 @@ void rx_writebcc(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
     case RXIF_ACTION:
     {
-      if(G->WR[G->ActiveWriteWin])
-        InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_BCC, args->address, (BOOL)args->add);
+      if(G->ActiveRexxWMData != NULL && G->ActiveRexxWMData->window != NULL)
+        DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_InsertAddresses, MUIV_WriteWindow_RcptType_BCC, args->address, (BOOL)args->add);
       else
         params->rc = RETURN_ERROR;
     }
@@ -68,7 +70,7 @@ void rx_writebcc(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

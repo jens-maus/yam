@@ -6776,3 +6776,6 @@ Use the popup button to select the character set\n\
 you would like YAM to use for this mail. This\n\
 defaults to the global character set.
 ;
+MSG_ABOUTYAM (2086//)
+About YAM...
+;

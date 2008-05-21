@@ -50,6 +50,8 @@
 
 #include "classes/Classes.h"
 
+#include "Debug.h"
+
 /* local protos */
 static struct DI_ClassData *DI_New(void);
 
@@ -175,11 +177,20 @@ MakeStaticHook(DI_CloseHook, DI_CloseFunc);
 //  Pastes text of selected glossary entry into the internal editors
 HOOKPROTONHNONP(DI_PasteFunc, void)
 {
-   struct Dict *entry;
-   DI_FinishEdit();
-   DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
-   DoMethod(G->WR[G->DI->WrWin]->GUI.TE_EDIT, MUIM_TextEditor_InsertText, entry->Text);
-   DI_CloseFunc();
+  struct Dict *entry;
+  ENTER();
+
+  DI_FinishEdit();
+
+  if(G->DI->writeWindow != NULL)
+  {
+    DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
+    DoMethod(G->DI->writeWindow, MUIM_WriteWindow_InsertText, entry->Text);
+  }
+
+  DI_CloseFunc();
+
+  LEAVE();
 }
 MakeStaticHook(DI_PasteHook, DI_PasteFunc);
 
@@ -216,38 +227,48 @@ MakeStaticHook(DI_DisplayHook, DI_DisplayFunc);
 //  Saves changed glossary item
 HOOKPROTONHNO(DI_ModifyFunc, void, int *arg)
 {
-   struct Dict new;
+  struct Dict new;
 
-   DI_FinishEdit();
-   strlcpy(new.Alias, tr(MSG_NewEntry), sizeof(new.Alias));
-   new.Text = AllocStrBuf(80);
-   DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_InsertSingle, &new, MUIV_List_Insert_Bottom);
-   nnset(G->DI->GUI.LV_ENTRIES, MUIA_List_Active, MUIV_List_Active_Bottom);
-   DI_DisplayFunc();
-   if (*arg == 1)
-   {
-      DoMethod(G->WR[G->DI->WrWin]->GUI.TE_EDIT, MUIM_TextEditor_ARexxCmd, "Copy");
-      DoMethod(G->DI->GUI.TE_EDIT, MUIM_TextEditor_ARexxCmd, "Paste");
-   }
-   set(G->DI->GUI.WI, MUIA_Window_ActiveObject, G->DI->GUI.ST_ALIAS);
+  ENTER();
+
+  DI_FinishEdit();
+  strlcpy(new.Alias, tr(MSG_NewEntry), sizeof(new.Alias));
+  new.Text = AllocStrBuf(80);
+  DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_InsertSingle, &new, MUIV_List_Insert_Bottom);
+  nnset(G->DI->GUI.LV_ENTRIES, MUIA_List_Active, MUIV_List_Active_Bottom);
+
+  DI_DisplayFunc();
+
+  if(*arg == 1 && G->DI->writeWindow != NULL)
+  {
+    DoMethod(G->DI->writeWindow, MUIM_WriteWindow_ArexxCommand, "Copy");
+    DoMethod(G->DI->GUI.TE_EDIT, MUIM_TextEditor_ARexxCmd, "Paste");
+  }
+
+  set(G->DI->GUI.WI, MUIA_Window_ActiveObject, G->DI->GUI.ST_ALIAS);
+
+  LEAVE();
 }
 MakeStaticHook(DI_ModifyHook, DI_ModifyFunc);
 
 ///
 /// DI_OpenFunc
 //  Opens glossary window
-HOOKPROTONHNO(DI_OpenFunc, void, int *arg)
+HOOKPROTONHNO(DI_OpenFunc, void, ULONG *arg)
 {
-   if (!G->DI)
-   {
-      if (!(G->DI = DI_New())) return;
-      G->DI->WrWin = *arg;
-      if (!SafeOpenWindow(G->DI->GUI.WI))
-      {
-        DisposeModulePush(&G->DI);
-      }
-      else if (DI_Load()) set(G->DI->GUI.LV_ENTRIES, MUIA_List_Active, 0);
-   }
+  ENTER();
+
+  if(G->DI == NULL && (G->DI = DI_New()) != NULL)
+  {
+    G->DI->writeWindow = (Object *)*arg;
+
+    if(SafeOpenWindow(G->DI->GUI.WI) == FALSE)
+      DisposeModulePush(&G->DI);
+    else if(DI_Load())
+      set(G->DI->GUI.LV_ENTRIES, MUIA_List_Active, 0);
+  }
+
+  LEAVE();
 }
 MakeHook(DI_OpenHook, DI_OpenFunc);
 ///

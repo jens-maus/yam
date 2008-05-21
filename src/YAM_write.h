@@ -38,67 +38,43 @@ struct Mail;
 struct MailList;
 struct ReadMailData;
 
-struct WR_GUIData
-{
-  Object *WI;
-  Object *RG_PAGE;
-  Object *ST_TO;
-  Object *ST_SUBJECT;
-  Object *TX_POSI;
-  Object *TE_EDIT;
-  Object *TO_TOOLBAR;
-  Object *LV_ATTACH;
-  Object *BT_ADD;
-  Object *BT_ADDPACK;
-  Object *BT_DEL;
-  Object *BT_DISPLAY;
-  Object *RA_ENCODING;
-  Object *CY_CTYPE;
-  Object *ST_CTYPE;
-  Object *ST_DESC;
-  Object *ST_CC;
-  Object *ST_BCC;
-  Object *ST_FROM;
-  Object *ST_REPLYTO;
-  Object *ST_EXTHEADER;
-  Object *CH_DELSEND;
-  Object *CH_MDN;
-  Object *CH_ADDINFO;
-  Object *CY_IMPORTANCE;
-  Object *RA_SECURITY;
-  Object *CH_DEFSECURITY;
-  Object *RA_SIGNATURE;
-  Object *BT_HOLD;
-  Object *BT_QUEUE;
-  Object *BT_SEND;
-  Object *BT_CANCEL;
-  Object *MI_BOLD;
-  Object *MI_ITALIC;
-  Object *MI_UNDERLINE;
-  Object *MI_COLORED;
-  Object *PO_CHARSET;
-};
+// enumeration with security levels a mail can
+// get so that it will be signed/encrypted and so on.
+enum Security { SEC_NONE=0,      // no security
+                SEC_SIGN,        // PGP sign the message
+                SEC_ENCRYPT,     // PGP encrypt the message
+                SEC_BOTH,        // PGP sign&encrypt the message
+                SEC_SENDANON,    // send the message anonymously
+                SEC_DEFAULTS,    // use the preconfigured defaults
+                SEC_MAXDUMMY 
+              };
 
-struct WR_ClassData  /* write window */
+// WriteMailData structure which carries all necessary information
+// during a write mail process. It is used while opening a write
+// window, or even during silently creating an email in background
+// (for Arexx stuff and so on).
+// This structure uses a MinNode for making it possible to place
+// all existing WriteMailData structs into the global YAM structure
+// in an unlimited list allowing unlimited WriteWindows and such.
+struct WriteMailData
 {
-  struct WR_GUIData GUI;
+  struct MinNode  node;                 // required for placing it into struct Global
+  Object *        window;               // ptr to the associated window or NULL
 
-  struct Mail *     refMail;            // ptr to the original mail this write window was created from
+  struct Mail *     refMail;            // ptr to the original mail this write operation was created from
   struct MailList * refMailList;        // ptr to a list of orginal mails.
-
+  enum NewMode      mode;               // the compose mode this write mail operation
   char *            inReplyToMsgID;     // ptr to "In-Reply-To:" message header to compose the message for
   char *            references;         // ptr to "References:" message header to compose the message for
   struct codeset *  charset;            // the character set being used for this mail
 
-  enum NewMode      Mode;               // the compose mode this window is working on
-  int               OldSecurity;
-  int               winnum;             // the window number this class data belongs to
+  char filename[SIZE_PATHFILE];         // filename of tmp text file
+  struct NotifyRequest *notifyRequest;  // file notification request
+  ULONG notifySignal;                   // file notification signal flag
+  BOOL fileNotifyActive;                // is the file change notification currently active or not
 
-  BOOL              AutoSaved;          // was this mail automatically saved?
-  BOOL              FileNotifyActive;   // is a file change notification currently active or not
-
-  char              CursorPos[SIZE_DEFAULT];
-  char              WTitle[SIZE_SUBJECT+1];
+  BOOL quietMode;                       // quietMode means no opened window, e.g. background processing
+  enum Security oldSecurity;
 };
 
 struct Attach
@@ -143,12 +119,6 @@ struct WritePart
   enum Encoding     EncType;
 };
 
-/* if you add anything here, check the following places for potential changes:
- * YAM_MAf.c:MA_ExamineMail() (X-YAM-options handling)
- * YAM:WR.c:WriteOutMessage() (PGP multipart stuff); WR_New() (GUI elements, menus)
- */
-enum Security { SEC_NONE=0, SEC_SIGN, SEC_ENCRYPT, SEC_BOTH, SEC_SENDANON, SEC_DEFAULTS, SEC_MAXDUMMY };
-
 struct Compose
 {
   FILE *             FH;
@@ -186,16 +156,13 @@ extern struct Hook WR_EditorCmdHook;
 
 void  EmitHeader(FILE *fh, const char *hdr, const char *body);
 void  FreePartsList(struct WritePart *p);
-struct WritePart *NewPart(int winnum);
-BOOL  WR_AddFileToList(int winnum, const char *filename, const char *name, BOOL istemp);
-void  WR_AddSignature(int winnum, int signat);
-void  WR_App(int winnum, STRPTR fileName);
 char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length);
-BOOL EditorObjectActive(const int wrwin);
-void  WR_Cleanup(int winnum);
 void  WR_NewMail(enum WriteMode mode, int winnum);
-int   WR_Open(int winnum, BOOL bounce);
-void  WR_SetupOldMail(int winnum, struct ReadMailData *rmData);
 BOOL  WriteOutMessage(struct Compose *comp);
+
+struct WriteMailData *CreateWriteWindow(void);
+BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRef);
+BOOL CleanupWriteMailData(struct WriteMailData *wmData);
+struct WritePart *NewMIMEpart(struct WriteMailData *wmData);
 
 #endif /* YAM_WRITE_H */

@@ -5348,32 +5348,6 @@ ULONG CRC32(const void *buffer, unsigned int count, ULONG crc)
 ///
 
 /*** REXX interface support ***/
-/// InsertAddresses
-//  Appends an array of addresses to a string gadget
-void InsertAddresses(Object *obj, char **addr, BOOL add)
-{
-  char *buf;
-
-  ENTER();
-
-  buf = (char *)xget(obj, MUIA_String_Contents);
-
-  if(buf[0] != '\0' && add)
-    DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
-  else
-    setstring(obj, "");
-
-  DoMethod(obj, MUIM_BetterString_Insert, *addr, MUIV_BetterString_Insert_EndOfString);
-
-  while(*++addr != NULL)
-  {
-    DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
-    DoMethod(obj, MUIM_BetterString_Insert, *addr, MUIV_BetterString_Insert_EndOfString);
-  }
-
-  LEAVE();
-}
-///
 /// AllocReqText
 //  Prepare multi-line text for requesters, converts \n to line breaks
 char *AllocReqText(char *s)

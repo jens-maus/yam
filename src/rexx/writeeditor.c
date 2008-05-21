@@ -34,6 +34,8 @@
 #include "YAM.h"
 #include "YAM_write.h"
 
+#include "classes/Classes.h"
+
 #include "Rexx.h"
 
 #include "Debug.h"
@@ -67,9 +69,9 @@ void rx_writeeditor(UNUSED struct RexxHost *host, struct RexxParams *params, enu
 
     case RXIF_ACTION:
     {
-      if(G->WR[G->ActiveWriteWin])
+      if(G->ActiveRexxWMData != NULL && G->ActiveRexxWMData->window != NULL)
       {
-        ULONG p = DoMethod(G->WR[G->ActiveWriteWin]->GUI.TE_EDIT, MUIM_TextEditor_ARexxCmd, args->command);
+        ULONG p = DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_ArexxCommand, args->command);
 
         switch(p)
         {
@@ -86,11 +88,13 @@ void rx_writeeditor(UNUSED struct RexxHost *host, struct RexxParams *params, enu
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
+
       if(results != NULL)
       {
         if(results->result != NULL)
           FreeVec(results->result);
+
         FreeVecPooled(G->SharedMemPool, results);
       }
     }

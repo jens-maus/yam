@@ -294,7 +294,7 @@ Object *MakePGPKeyList(Object **st, BOOL secret, const char *label)
 ///
 /// MakeAddressField
 //  Creates a recipient field
-Object *MakeAddressField(Object **string, const char *label, const Object *help, int abmode, int winnum, ULONG flags)
+Object *MakeAddressField(Object **string, const char *label, const Object *help, int abmode, int winnr, ULONG flags)
 {
   Object *obj;
   Object *bt_adr;
@@ -326,8 +326,8 @@ Object *MakeAddressField(Object **string, const char *label, const Object *help,
     }
     else
     {
-      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum);
-      DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum);
+      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnr);
+      DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnr);
     }
 
     DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime,  bt_adr, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);

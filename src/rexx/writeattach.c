@@ -32,6 +32,7 @@
 
 #include "YAM.h"
 #include "YAM_write.h"
+#include "classes/Classes.h"
 
 #include "FileInfo.h"
 #include "Rexx.h"
@@ -62,13 +63,22 @@ void rx_writeattach(UNUSED struct RexxHost *host, struct RexxParams *params, enu
 
     case RXIF_ACTION:
     {
-      if(FileExists(args->file) == TRUE && G->WR[G->ActiveWriteWin])
-      {
-        WR_AddFileToList((int)G->ActiveWriteWin, args->file, NULL, FALSE);
+      struct WriteMailData *wmData = G->ActiveRexxWMData;
 
-        if(args->desc)    setstring(G->WR[G->ActiveWriteWin]->GUI.ST_DESC, args->desc);
-        if(args->encmode) setmutex (G->WR[G->ActiveWriteWin]->GUI.RA_ENCODING, !strnicmp(args->encmode, "uu", 2) ? 1 : 0);
-        if(args->ctype)   setstring(G->WR[G->ActiveWriteWin]->GUI.ST_CTYPE, args->ctype);
+      if(FileExists(args->file) == TRUE &&
+         wmData != NULL && wmData->window != NULL)
+      {
+        // add the file to the attachment listview
+        DoMethod(wmData->window, MUIM_WriteWindow_AddAttachment, args->file, NULL, FALSE);
+
+        if(args->desc)
+          set(wmData->window, MUIA_WriteWindow_AttachDescription, args->desc);
+
+        if(args->encmode)
+          set(wmData->window, MUIA_WriteWindow_AttachEncoding, strnicmp(args->encmode, "uu", 2) == 0 ? 1 : 0);
+
+        if(args->ctype)
+          set(wmData->window, MUIA_WriteWindow_AttachContentType, args->ctype);
       }
       else
         params->rc = RETURN_ERROR;
@@ -78,7 +88,7 @@ void rx_writeattach(UNUSED struct RexxHost *host, struct RexxParams *params, enu
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

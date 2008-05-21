@@ -5,6 +5,38 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, WriteWindow.c, misc: largely rewrote the write window implementation
+    to fully use the MUI classes system in the "classes" directory. Also changed
+    the write window implementation to use a global exec list to manage the
+    write windows rather than using a fixed amount (3) of global write window
+    structures. This change therefore allows to open a theoretically unlimited
+    amount of write windows now. In addition, due to the port of the write
+    window code to the internal classes system the whole write window
+    functionality should be way more flexible now for future adaptions. As this
+    whole thing implies a rather large code change, please bear in mind that
+    some functionality may be broken and needs to be fixed in some way. In
+    addition, some minor things are still missing and need to be adapted.
+    Therefore "#warning 'TODO'" statements were added to the code where
+    some things still need to be moved to the new write window implementation
+    and which are currently disabled. This includes:
+
+      - YAM_MA.c: the bounce mail functionality which requires a new
+        "BounceWindow" class and/or adaptions to the current WriteWindow class
+        to open a bounce window (old WR_NewBounce) instead.
+      - YAM.c: the check for eventually existing .autosaveX.txt files have
+        to be adapted to search for such files and open a new write window
+        regardless of the X number.
+      - Arexx: the 'quietMode' functionality of the WriteWindow class still
+        needs some adaptions so that the window can really be opened in
+        quietMode (hided) and that the write Arexx commands still work as
+        expected.
+
+    So please keep the above write window rewrite in mind when running this
+    version because some things might still not work as expected or even
+    crash YAM.
+
 2008-05-19  Thore Böckelmann <tboeckel@gmx.de>
 
   * Rexx.c, rexx/*.c: reworked the ARexx handling once more. The commands don't

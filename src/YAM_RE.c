@@ -3300,7 +3300,6 @@ void RE_ClickedOnMessage(char *address)
     char buf[SIZE_LARGE];
     struct ABEntry *ab = NULL;
     int hits;
-    int win;
 
     // now we check for additional options to the mailto: string (if it is one)
     if((p = strchr(address, '?')) != NULL)
@@ -3341,34 +3340,42 @@ void RE_ClickedOnMessage(char *address)
     {
       case 1:
       {
-        if((win = MA_NewNew(NULL, 0)) >= 0)
-        {
-          struct WR_GUIData *gui = &G->WR[win]->GUI;
+        struct WriteMailData *wmData;
 
+        if((wmData = NewWriteMailWindow(NULL, 0)) != NULL)
+        {
           if(hits > 0)
           {
             char addrStr[SIZE_LARGE];
-            setstring(gui->ST_TO, BuildAddress(addrStr, sizeof(addrStr), address, ab->RealName));
+            set(wmData->window, MUIA_WriteWindow_To, BuildAddress(addrStr, sizeof(addrStr), address, ab->RealName));
           }
           else
-            setstring(gui->ST_TO, address);
+            set(wmData->window, MUIA_WriteWindow_To, address);
 
           if(subject != NULL)
-            setstring(gui->ST_SUBJECT, subject);
+            set(wmData->window, MUIA_WriteWindow_Subject, subject);
+
           if(body != NULL)
-            set(gui->TE_EDIT, MUIA_TextEditor_Contents, body);
+            set(wmData->window, MUIA_WriteWindow_MailBody, body);
+
           if(cc != NULL)
-            setstring(gui->ST_CC, cc);
+            set(wmData->window, MUIA_WriteWindow_Cc, cc);
+
           if(bcc != NULL)
-            setstring(gui->ST_BCC, bcc);
-          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
+            set(wmData->window, MUIA_WriteWindow_BCC, bcc);
+
+          // set the active object of the window
+          set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_Subject);
         }
       }
       break;
 
       case 2:
       {
-        DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT, TAG_DONE);
+        int win;
+
+        DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
+
         if(hits != 0)
         {
           if((win = EA_Init(ab->Type, ab)) >= 0)
@@ -3410,7 +3417,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
   SHOWVALUE(DBF_MAIL, sendnow);
 
-  p1 = NewPart(2);
+  p1 = NewMIMEpart(NULL);
 
   if(p1 && (tf1 = OpenTempFile("w")) != NULL)
   {
@@ -3455,7 +3462,7 @@ static void RE_SendMDN(const enum MDNMode mode,
     SimpleWordWrap(tf1->Filename, 72);
 
     // open a new part and another temporary file
-    p2 = p1->Next = NewPart(2);
+    p2 = p1->Next = NewMIMEpart(NULL);
     if(p2 && (tf2 = OpenTempFile("w")) != NULL)
     {
       struct ExtendedMail *email;
@@ -3485,7 +3492,7 @@ static void RE_SendMDN(const enum MDNMode mode,
         tf2->FP = NULL;
 
         // create another MIME part
-        p3 = p2->Next = NewPart(2);
+        p3 = p2->Next = NewMIMEpart(NULL);
         MA_FreeEMailStruct(email);
 
         if(p3 && (tf3 = OpenTempFile("w")) != NULL)
@@ -4054,12 +4061,12 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
   // if MultipleWindows support if off we try to reuse an already existing
   // readWindow
   if(forceNewWindow == FALSE &&
-     C->MultipleWindows == FALSE &&
+     C->MultipleReadWindows == FALSE &&
      IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
   {
     struct MinNode *curNode = G->readMailDataList.mlh_Head;
 
-    D(DBF_GUI, "No MultipleWindows support, trying to reuse a window.");
+    D(DBF_GUI, "No MultipleReadWindows support, trying to reuse a window.");
 
     // search through our ReadDataList
     for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
@@ -4161,7 +4168,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   // or not.
   if(fullCleanup == TRUE && rmData->readWindow != NULL)
   {
-    D(DBF_MAIL, "make sure the window is closed");
+    D(DBF_GUI, "make sure the read window is closed");
 
     // make sure the window is really closed
     nnset(rmData->readWindow, MUIA_Window_Open, FALSE);

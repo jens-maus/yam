@@ -35,6 +35,7 @@
 #include "classes/Classes.h"
 
 #include "Rexx.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 
@@ -68,33 +69,63 @@ void rx_mailwrite(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
 
     case RXIF_ACTION:
     {
-      int winnr = args->window ? *args->window : -1;
-      results->window = &G->ActiveWriteWin;
+      static int winNumber = -1;
 
-      if(winnr < 0)
+      if(args->window)
+        winNumber = *args->window;
+      else
+        winNumber = -1;
+
+      results->window = &winNumber;
+
+      if(winNumber < 0)
       {
-        if((winnr = MA_NewMessage(NEW_NEW, args->quiet?NEWF_QUIET:0)) >= 0)
-        {
-          G->ActiveWriteWin = winnr;
+        struct WriteMailData *wmData;
 
-          if(args->quiet == FALSE && G->WR[winnr])
-            set(G->WR[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
+        if((wmData = NewMessage(NEW_NEW, args->quiet ? NEWF_QUIET : 0L)) != NULL)
+        {
+          #warning "FIXME: What happens if multiple MAILBOUND QUIET calls happen after another? Who kills activeRexxWMData?"
+          G->ActiveRexxWMData = wmData;
+
+          if(wmData->window != NULL)
+          {
+            winNumber = xget(wmData->window, MUIA_WriteWindow_Num);
+
+            if(args->quiet == FALSE)
+              set(wmData->window, MUIA_Window_Activate, TRUE);
+          }
         }
         else
           params->rc = RETURN_ERROR;
       }
       else
       {
-        if(winnr >= 0 && winnr <= 1)
+        if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
         {
-          if(G->WR[winnr])
-          {
-            G->ActiveWriteWin = winnr;
+          // search through our WriteDataList
+          struct MinNode *curNode;
+          BOOL found = FALSE;
 
-            if(args->quiet == FALSE && G->WR[winnr])
-              set(G->WR[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
+          for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          {
+            struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+            if(wmData->window != NULL)
+            {
+              if(winNumber == (int)xget(wmData->window, MUIA_WriteWindow_Num))
+              {
+                G->ActiveRexxWMData = wmData;
+                found = TRUE;
+
+                if(args->quiet == FALSE)
+                  set(wmData->window, MUIA_Window_Activate, TRUE);
+
+                break;
+              }
+            }
           }
-          else
+
+          if(found == FALSE)
             params->rc = RETURN_WARN;
         }
         else
@@ -106,7 +137,8 @@ void rx_mailwrite(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
+
       if(results != NULL)
         FreeVecPooled(G->SharedMemPool, results);
     }

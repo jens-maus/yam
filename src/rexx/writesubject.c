@@ -33,6 +33,8 @@
 #include "YAM.h"
 #include "YAM_write.h"
 
+#include "classes/Classes.h"
+
 #include "Rexx.h"
 
 #include "Debug.h"
@@ -58,8 +60,8 @@ void rx_writesubject(UNUSED struct RexxHost *host, struct RexxParams *params, en
 
     case RXIF_ACTION:
     {
-      if(G->WR[G->ActiveWriteWin])
-        setstring(G->WR[G->ActiveWriteWin]->GUI.ST_SUBJECT, args->subject);
+      if(G->ActiveRexxWMData != NULL && G->ActiveRexxWMData->window != NULL)
+        set(G->ActiveRexxWMData->window, MUIA_WriteWindow_Subject, args->subject);
       else
         params->rc = RETURN_ERROR;
     }
@@ -68,7 +70,7 @@ void rx_writesubject(UNUSED struct RexxHost *host, struct RexxParams *params, en
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

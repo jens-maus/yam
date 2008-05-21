@@ -123,7 +123,7 @@ INLINE LONG SelectMessage(struct Mail *mail)
 
 ///
 /// FindThreadInFolder
-/// Find the next/prev message in a thread within one folder
+// Find the next/prev message in a thread within one folder
 static struct Mail *FindThreadInFolder(struct Mail *srcMail, struct Folder *folder, BOOL nextThread)
 {
   struct Mail *result = NULL;
@@ -183,8 +183,8 @@ static struct Mail *FindThread(struct Mail *srcMail, BOOL nextThread, BOOL askLo
       // first we take the folder of the srcMail as a priority in the
       // search of the next/prev thread so we have to check that we
       // have a valid index before we are going to go on.
-	  if((mail = FindThreadInFolder(srcMail, srcMail->Folder, nextThread)) == NULL)
-	  {
+      if((mail = FindThreadInFolder(srcMail, srcMail->Folder, nextThread)) == NULL)
+      {
         // if we still haven't found the mail we have to scan the other folders aswell
         LockFolderListShared(G->folders);
 
@@ -433,7 +433,7 @@ OVERLOAD(OM_NEW)
     End,
   End;
 
-  // create the menuStripObject
+  // create the read window object
   if(menuStripObject != NULL && (obj = DoSuperNew(cl, obj,
 
     MUIA_Window_Title,  "",
@@ -755,7 +755,7 @@ DECLARE(ReadMail) // struct Mail *mail
       DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ActivateMailText);
 
     // set the title of the readWindow now
-    if(C->MultipleWindows == TRUE ||
+    if(C->MultipleReadWindows == TRUE ||
        rmData == G->ActiveRexxRMData)
     {
       titleLen = snprintf(data->title, sizeof(data->title), "[%d] %s %s: ", data->windowNumber+1,
@@ -825,15 +825,15 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
     switch(mode)
     {
       case NEW_NEW:
-        MA_NewNew(mail, flags);
+        NewWriteMailWindow(mail, flags);
       break;
 
       case NEW_EDIT:
-        MA_NewEdit(mail, flags);
+        NewEditMailWindow(mail, flags);
       break;
 
       case NEW_BOUNCE:
-        MA_NewBounce(mail, flags);
+        NewBounceMailWindow(mail, flags);
       break;
 
       case NEW_FORWARD:
@@ -846,9 +846,9 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
           AddNewMailNode(mlist, mail);
 
           if(mode == NEW_FORWARD)
-            MA_NewForward(mlist, flags);
+            NewForwardMailWindow(mlist, flags);
           else
-            MA_NewReply(mlist, flags);
+            NewReplyMailWindow(mlist, flags);
 
           DeleteMailList(mlist);
         }

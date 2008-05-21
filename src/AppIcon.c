@@ -42,6 +42,8 @@
 #include "YAM_config.h"
 #include "YAM_configFile.h"
 
+#include "classes/Classes.h"
+
 #include "AppIcon.h"
 #include "DockyIcon.h"
 #include "FolderList.h"
@@ -298,16 +300,10 @@ void HandleAppIcon(void)
           // check if something was dropped onto the AppIcon
           if(apmsg->am_NumArgs != 0)
           {
-            int wrwin;
+            // open a new write window
+            struct WriteMailData *wmData;
 
-            if(G->WR[0] != NULL)
-              wrwin = 0;
-            else if(G->WR[1] != NULL)
-              wrwin = 1;
-            else
-              wrwin = MA_NewNew(NULL, 0);
-
-            if(wrwin >= 0)
+            if((wmData = NewWriteMailWindow(NULL, 0)) != NULL)
             {
               int arg;
 
@@ -322,7 +318,7 @@ void HandleAppIcon(void)
 
                 // call WR_App to let it put in the text of the file
                 // to the write window
-                WR_App(wrwin, buf);
+                DoMethod(wmData->window, MUIM_WriteWindow_DroppedFile, buf);
               }
             }
           }

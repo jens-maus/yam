@@ -824,7 +824,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->UseTextstyles = TRUE;
     co->DisplayAllAltPart = FALSE; // hide all sub "multipart/alternative" parts per default
     co->WrapHeader = FALSE;
-    co->MultipleWindows = FALSE;
+    co->MultipleReadWindows = FALSE;
     co->SigSepLine = SST_BAR;
     co->StatusChangeDelayOn = TRUE;
     co->StatusChangeDelay   = 1000; // 1s=1000ms delay by default
@@ -1255,7 +1255,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->DownloadLarge                   == c2->DownloadLarge &&
      c1->DisplayAllTexts                 == c2->DisplayAllTexts &&
      c1->FixedFontEdit                   == c2->FixedFontEdit &&
-     c1->MultipleWindows                 == c2->MultipleWindows &&
+     c1->MultipleReadWindows             == c2->MultipleReadWindows &&
      c1->UseTextstyles                   == c2->UseTextstyles &&
      c1->WrapHeader                      == c2->WrapHeader &&
      c1->LaunchAlways                    == c2->LaunchAlways &&
@@ -1520,15 +1520,8 @@ void CO_Validate(struct Config *co, BOOL update)
   // prepare the temporary directory
   CreateDirectory(co->TempDir);
 
-  // then prepare the temporary filenames for the write windows
-  for(i=0; i <= MAXWR; i++)
-  {
-    char filename[SIZE_FILE];
-
-    snprintf(filename, sizeof(filename), "YAMw%08lx-%d.tmp", (LONG)FindTask(NULL), i);
-    AddPath(G->WR_Filename[i], co->TempDir, filename, sizeof(G->WR_Filename[i]));
-  }
-
+  // check if the current configuration is already valid at an absolute
+  // minimum.
   G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
 
   // we try to find out the system charset and validate it with the

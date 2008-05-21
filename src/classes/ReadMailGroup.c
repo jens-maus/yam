@@ -1488,7 +1488,7 @@ DECLARE(SaveDecryptedMail)
 
       comp.Mode = NEW_SAVEDEC;
       comp.refMail = mail;
-      if((comp.FirstPart = NewPart(2)) != NULL)
+      if((comp.FirstPart = NewMIMEpart(NULL)) != NULL)
       {
         p1 = comp.FirstPart;
         p1->Filename = rmData->firstPart->Next->Filename;

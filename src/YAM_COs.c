@@ -395,7 +395,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "MDN_NoDomain     = %d\n", co->MDN_NoDomain);
     fprintf(fh, "MDN_OnDelete     = %d\n", co->MDN_OnDelete);
     fprintf(fh, "MDN_Other        = %d\n", co->MDN_Other);
-    fprintf(fh, "MultipleWindows  = %s\n", Bool2Txt(co->MultipleWindows));
+    fprintf(fh, "MultipleWindows  = %s\n", Bool2Txt(co->MultipleReadWindows));
     fprintf(fh, "StatusChangeDelay= %d\n", co->StatusChangeDelayOn ? co->StatusChangeDelay : -co->StatusChangeDelay);
     fprintf(fh, "ConvertHTML      = %s\n", Bool2Txt(co->ConvertHTML));
 
@@ -1059,7 +1059,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(!stricmp(buffer, "MDN_NoDomain"))     co->MDN_NoDomain = atoi(value);
           else if(!stricmp(buffer, "MDN_OnDelete"))     co->MDN_OnDelete = atoi(value);
           else if(!stricmp(buffer, "MDN_Other"))        co->MDN_Other = atoi(value);
-          else if(!stricmp(buffer, "MultipleWindows"))  co->MultipleWindows = Txt2Bool(value);
+          else if(!stricmp(buffer, "MultipleWindows"))  co->MultipleReadWindows = Txt2Bool(value);
           else if(!stricmp(buffer, "StatusChangeDelay"))
           {
             int delay = atoi(value);
@@ -1797,7 +1797,7 @@ void CO_GetConfig(BOOL saveConfig)
         CE->MDN_OnDelete    = GetMUICycle(gui->CY_MDN_DELETE);
         CE->MDN_Other       = GetMUICycle(gui->CY_MDN_OTHER);
 
-        CE->MultipleWindows   = GetMUICheck  (gui->CH_MULTIWIN);
+        CE->MultipleReadWindows = GetMUICheck  (gui->CH_MULTIWIN);
         CE->StatusChangeDelayOn  = GetMUICheck  (gui->CH_DELAYEDSTATUS);
         CE->StatusChangeDelay    = GetMUINumer  (gui->NB_DELAYEDSTATUS)*1000;
         CE->ConvertHTML       = GetMUICheck(gui->CH_CONVERTHTML);
@@ -2210,7 +2210,7 @@ void CO_SetConfig(void)
       setcycle(gui->CY_MDN_DELETE, CE->MDN_OnDelete);
       setcycle(gui->CY_MDN_OTHER, CE->MDN_Other);
 
-      setcheckmark(gui->CH_MULTIWIN  ,CE->MultipleWindows);
+      setcheckmark(gui->CH_MULTIWIN, CE->MultipleReadWindows);
       setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
 
       xset(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay / 1000,

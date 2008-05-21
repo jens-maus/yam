@@ -419,8 +419,8 @@ long AB_CompressBD(char *datestr)
 void AB_CheckBirthdates(void)
 {
   ldiv_t today;
-  int i;
   struct MUI_NListtree_TreeNode *tn;
+  int i;
 
   ENTER();
 
@@ -443,12 +443,12 @@ void AB_CheckBirthdates(void)
 
         if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_AB_BirthdayReminder), tr(MSG_YesNoReq), question))
         {
-          int wrwin;
+          struct WriteMailData *wmData;
 
-          if((wrwin = MA_NewNew(NULL, 0)) >= 0)
+          if((wmData = NewWriteMailWindow(NULL, 0)) != NULL)
           {
-            setstring(G->WR[wrwin]->GUI.ST_TO, ab->Alias);
-            setstring(G->WR[wrwin]->GUI.ST_SUBJECT, tr(MSG_AB_HappyBirthday));
+            xset(wmData->window, MUIA_WriteWindow_To, ab->Alias,
+                                 MUIA_WriteWindow_Subject, tr(MSG_AB_HappyBirthday));
           }
         }
       }
@@ -614,34 +614,53 @@ HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
   if(arg[0] != ABM_NONE &&
      (active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
   {
-    int winnum = G->AB->WrWin;
+    Object *writeWindow = NULL;
     struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
-    BOOL openwin = winnum < 0;
 
-    if(!openwin)
-      openwin = !G->WR[winnum];
-
-    if(openwin)
-      G->AB->WrWin = winnum = MA_NewNew(NULL, 0);
-
-    if(winnum >= 0)
+    if(G->AB->winNumber == -1)
     {
-      Object *string;
+      struct WriteMailData *wmData = NewWriteMailWindow(NULL, 0);
+      if(wmData != NULL)
+        writeWindow = wmData->window;
+    }
+    else
+    {
+      // find the write window object by iterating through the
+      // global write window list and identify it via its window number
+      if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+      {
+        // search through our WriteDataList
+        struct MinNode *curNode;
+
+        for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        {
+          struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+          if(wmData->window != NULL &&
+             (int)xget(wmData->window, MUIA_WriteWindow_Num) == G->AB->winNumber)
+          {
+            writeWindow = wmData->window;
+
+            break;
+          }
+        }
+      }
+    }
+
+    if(writeWindow != NULL)
+    {
+      enum RcptType type = MUIV_WriteWindow_RcptType_To;
 
       switch(arg[0])
       {
-        case ABM_TO:      string = G->WR[winnum]->GUI.ST_TO; break;
-        case ABM_CC:      string = G->WR[winnum]->GUI.ST_CC; break;
-        case ABM_BCC:     string = G->WR[winnum]->GUI.ST_BCC; break;
-        case ABM_REPLYTO: string = G->WR[winnum]->GUI.ST_REPLYTO; break;
-        case ABM_FROM:    string = G->WR[winnum]->GUI.ST_FROM; break;
-
-        default:
-          string = (Object *)arg[0];
-        break;
+        case ABM_TO:      type = MUIV_WriteWindow_RcptType_To; break;
+        case ABM_CC:      type = MUIV_WriteWindow_RcptType_Cc; break;
+        case ABM_BCC:     type = MUIV_WriteWindow_RcptType_BCC; break;
+        case ABM_REPLYTO: type = MUIV_WriteWindow_RcptType_ReplyTo; break;
+        case ABM_FROM:    type = MUIV_WriteWindow_RcptType_From; break;
       }
 
-      DoMethod(string, MUIM_Recipientstring_AddRecipient, addr->Alias ? addr->Alias : addr->RealName);
+      DoMethod(writeWindow, MUIM_WriteWindow_AddRecipient, type, addr->Alias ? addr->Alias : addr->RealName);
     }
   }
 
@@ -2049,25 +2068,9 @@ HOOKPROTONHNONP(AB_DoubleClick, void)
 {
   ENTER();
 
-  if(G->AB->WrWin >= 0 && G->WR[G->AB->WrWin])
+  if(G->AB->winNumber != -1)
   {
-    struct WR_GUIData *gui = &G->WR[G->AB->WrWin]->GUI;
-    Object *obj = NULL;
-
-    switch(G->AB->Mode)
-    {
-      case ABM_TO:      obj = gui->ST_TO;      break;
-      case ABM_CC:      obj = gui->ST_CC;      break;
-      case ABM_BCC:     obj = gui->ST_BCC;     break;
-      case ABM_FROM:    obj = gui->ST_FROM;    break;
-      case ABM_REPLYTO: obj = gui->ST_REPLYTO; break;
-
-      default:
-        // nothing
-      break;
-    }
-
-    DoMethod(G->App, MUIM_CallHook, &AB_FromAddrBookHook, obj);
+    DoMethod(G->App, MUIM_CallHook, &AB_FromAddrBookHook, G->AB->Mode);
     set(G->AB->GUI.WI, MUIA_Window_CloseRequest, TRUE);
   }
   else
@@ -2780,7 +2783,7 @@ HOOKPROTONHNO(AB_OpenFunc, void, LONG *arg)
     break;
   }
 
-  ab->WrWin = *md ? arg[1] : -1;
+  ab->winNumber = (*md != '\0' ? arg[1] : -1);
   ab->Modified = FALSE;
 
   // disable some GUI components if necessary.

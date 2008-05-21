@@ -32,6 +32,8 @@
 #include "YAM.h"
 #include "YAM_write.h"
 
+#include "classes/Classes.h"
+
 #include "Rexx.h"
 
 #include "Debug.h"
@@ -57,8 +59,10 @@ void rx_writequeue(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
     case RXIF_ACTION:
     {
-      if(G->WR[G->ActiveWriteWin])
-        WR_NewMail(args->hold ? WRITE_HOLD : WRITE_QUEUE, (int)G->ActiveWriteWin);
+      struct WriteMailData *wmData = G->ActiveRexxWMData;
+
+      if(wmData != NULL && wmData->window != NULL)
+        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, args->hold ? WRITE_HOLD : WRITE_QUEUE);
       else
         params->rc = RETURN_ERROR;
     }
@@ -67,7 +71,7 @@ void rx_writequeue(UNUSED struct RexxHost *host, struct RexxParams *params, enum
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

@@ -53,10 +53,10 @@ struct DI_GUIData
 
 struct DI_ClassData  /* glossary window */
 {
-   struct DI_GUIData GUI;
-   struct Dict *     OldEntry;
-   int               WrWin;
-   BOOL              Modified;
+  struct DI_GUIData GUI;
+  struct Dict *     OldEntry;
+  Object *          writeWindow;
+  BOOL              Modified;
 };
 
 extern struct Hook DI_OpenHook;

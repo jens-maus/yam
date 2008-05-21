@@ -854,13 +854,22 @@ static void Terminate(void)
     }
   }
 
-  D(DBF_STARTUP, "freeing write mail module...");
-  for(i = 0; i <= MAXWR; i++)
+  D(DBF_STARTUP, "freeing writemailData...");
+  // cleanup the still existing writemailData objects
+  if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
   {
-    if(G->WR[i] != NULL)
+    // search through our WriteMailDataList
+    struct MinNode *curNode;
+
+    for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ;)
     {
-      WR_Cleanup(i);
-      DisposeModule(&G->WR[i]);
+      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+      // already iterate to the next node as the cleanup
+      // will free the memory area
+      curNode = curNode->mln_Succ;
+
+      CleanupWriteMailData(wmData);
     }
   }
 
@@ -924,22 +933,6 @@ static void Terminate(void)
     {
       FreeFileReqCache(frc);
       free(frc);
-    }
-  }
-
-  D(DBF_STARTUP, "freeing write window notifies...");
-  for(i = 0; i <= MAXWR; i++)
-  {
-    if(G->WR_NotifyRequest[i] != NULL)
-    {
-      if(G->WR_NotifyRequest[i]->nr_stuff.nr_Msg.nr_Port != NULL)
-        FreeSysObject(ASOT_PORT, G->WR_NotifyRequest[i]->nr_stuff.nr_Msg.nr_Port);
-
-      #if defined(__amigaos4__)
-      FreeDosObject(DOS_NOTIFYREQUEST, G->WR_NotifyRequest[i]);
-      #else
-      FreeVecPooled(G->SharedMemPool, G->WR_NotifyRequest[i]);
-      #endif
     }
   }
 
@@ -1173,7 +1166,6 @@ static void SplashProgress(const char *txt, int percent)
 //  Un-iconify YAM
 void PopUp(void)
 {
-  int i;
   Object *window = G->MA->GUI.WI;
 
   ENTER();
@@ -1187,7 +1179,7 @@ void PopUp(void)
   DoMethod(window, MUIM_Window_ScreenToFront);
   DoMethod(window, MUIM_Window_ToFront);
 
-  // Now we check if there is any read and write window open and bring it also
+  // Now we check if there is any read window open and bring it also
   // to the front
   if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
   {
@@ -1206,13 +1198,22 @@ void PopUp(void)
     }
   }
 
-  // Bring the write window to the front
-  for(i = 0; i < MAXWR; i++)
+  // Now we check if there is any write window open and bring it also
+  // to the front
+  if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
   {
-    if(G->WR[i] != NULL)
+    // search through our WriteDataList
+    struct MinNode *curNode;
+
+    for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
-      DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
-      window = G->WR[i]->GUI.WI;
+      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+      if(wmData->window != NULL)
+      {
+        DoMethod(wmData->window, MUIM_Window_ToFront);
+        window = wmData->window;
+      }
     }
   }
 
@@ -1314,10 +1315,24 @@ BOOL StayInProg(void)
       if(G->EA[i] != NULL)
         req = TRUE;
     }
-    for(i=0; i < MAXWR && req == FALSE; i++)
+
+    // check if there exists an active write window
+    if(req == FALSE &&
+       IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
     {
-      if(G->WR[i] != NULL)
-        req = TRUE;
+      // search through our WriteDataList
+      struct MinNode *curNode;
+
+      for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      {
+        struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+        if(wmData->window != NULL)
+        {
+          req = TRUE;
+          break;
+        }
+      }
     }
 
     if(req == TRUE || G->CO != NULL || C->ConfirmOnQuit == TRUE)
@@ -1889,6 +1904,7 @@ static void InitBeforeLogin(BOOL hidden)
     Abort(NULL);
 
   // initialize the file nofifications
+  /*
   for(i=0; i <= MAXWR; i++)
   {
     struct MsgPort *notifyPort;
@@ -1918,6 +1934,7 @@ static void InitBeforeLogin(BOOL hidden)
     G->WR_NotifyRequest[i]->nr_stuff.nr_Msg.nr_Port = notifyPort;
     #endif
   }
+  */
 
   LEAVE();
 }
@@ -2409,9 +2426,15 @@ int main(int argc, char **argv)
 
   for(yamFirst=TRUE;;)
   {
-    ULONG signals, timsig, adstsig, rexsig, appsig, applibsig, notsig[MAXWR+1];
+    ULONG signals;
+    ULONG timsig;
+    ULONG adstsig;
+    ULONG rexsig;
+    ULONG appsig;
+    ULONG applibsig;
     struct User *user;
-    int i, ret;
+    int i;
+    int ret;
 
     // allocate our global G and C structures
     if((G = calloc(1, sizeof(struct Global))) == NULL ||
@@ -2442,6 +2465,7 @@ int main(int argc, char **argv)
     NewList((struct List *)&(C->mimeTypeList));
     NewList((struct List *)&(C->filterList));
     NewList((struct List *)&(G->readMailDataList));
+    NewList((struct List *)&(G->writeMailDataList));
     NewList((struct List *)&(G->xpkPackerList));
     NewList((struct List *)&(G->zombieFileList));
 
@@ -2475,11 +2499,6 @@ int main(int argc, char **argv)
     // setup our ImageCache
     ImageCacheSetup();
 
-    // We have to initialize the ActiveWin flags to -1, so than the
-    // the arexx commands for the windows are reporting an error if
-    // some window wasn`t set active manually by an own rexx command.
-    G->ActiveWriteWin = -1;
-
     if(yamFirst == TRUE)
     {
       InitBeforeLogin(args.hide ? TRUE : FALSE);
@@ -2497,6 +2516,8 @@ int main(int argc, char **argv)
     AppendToLogfile(LF_ALL, 0, tr(MSG_LOG_Started));
     MA_StartMacro(MACRO_STARTUP, NULL);
 
+#warning "TODO"
+    /*
     // before we go on we check whether there is any .autosaveX.txt file in the
     // maildir directory. And if so we ask the user what he would like to do with it
     for(i=0; i < MAXWR; i++)
@@ -2571,22 +2592,25 @@ int main(int argc, char **argv)
         }
       }
     }
+    */
 
     if(yamFirst == TRUE)
     {
-      int wrwin;
+      struct WriteMailData *wmData;
 
       DoStartup(args.nocheck ? TRUE : FALSE, args.hide ? TRUE : FALSE);
-      if((args.mailto != NULL || args.letter != NULL || args.subject != NULL || args.attach != NULL) && (wrwin = MA_NewNew(NULL, 0)) >= 0)
+
+      if((args.mailto != NULL || args.letter != NULL || args.subject != NULL || args.attach != NULL) &&
+         (wmData = NewWriteMailWindow(NULL, 0)) != NULL)
       {
         if(args.mailto != NULL)
-          setstring(G->WR[wrwin]->GUI.ST_TO, args.mailto);
+          set(wmData->window, MUIA_WriteWindow_To, args.mailto);
 
         if(args.subject != NULL)
-          setstring(G->WR[wrwin]->GUI.ST_SUBJECT, args.subject);
+          set(wmData->window, MUIA_WriteWindow_Subject, args.subject);
 
         if(args.letter != NULL)
-          FileToEditor(args.letter, G->WR[wrwin]->GUI.TE_EDIT, FALSE);
+          DoMethod(wmData->window, MUIM_WriteWindow_LoadText, args.letter, FALSE);
 
         if(args.attach != NULL)
         {
@@ -2597,7 +2621,7 @@ int main(int argc, char **argv)
             LONG size;
 
             if(ObtainFileInfo(*sptr, FI_SIZE, &size) == TRUE && size > 0)
-              WR_AddFileToList(wrwin, *sptr, NULL, FALSE);
+              DoMethod(wmData->window, MUIM_WriteWindow_AddAttachment, *sptr, NULL, FALSE);
           }
         }
       }
@@ -2624,9 +2648,6 @@ int main(int argc, char **argv)
     rexsig    = (1UL << G->RexxHost->port->mp_SigBit);
     appsig    = (1UL << G->AppPort->mp_SigBit);
     applibsig = DockyIconSignal();
-    notsig[0] = (1UL << G->WR_NotifyRequest[0]->nr_stuff.nr_Msg.nr_Port->mp_SigBit);
-    notsig[1] = (1UL << G->WR_NotifyRequest[1]->nr_stuff.nr_Msg.nr_Port->mp_SigBit);
-    notsig[2] = (1UL << G->WR_NotifyRequest[2]->nr_stuff.nr_Msg.nr_Port->mp_SigBit);
 
     D(DBF_STARTUP, "YAM allocated signals:");
     D(DBF_STARTUP, " adstsig  = %08lx", adstsig);
@@ -2634,9 +2655,6 @@ int main(int argc, char **argv)
     D(DBF_STARTUP, " rexsig   = %08lx", rexsig);
     D(DBF_STARTUP, " appsig   = %08lx", appsig);
     D(DBF_STARTUP, " applibsig= %08lx", applibsig);
-    D(DBF_STARTUP, " notsig[0]= %08lx", notsig[0]);
-    D(DBF_STARTUP, " notsig[1]= %08lx", notsig[1]);
-    D(DBF_STARTUP, " notsig[2]= %08lx", notsig[2]);
 
     // start our maintanance Timer requests for
     // different purposes (writeindexes/mailcheck/autosave)
@@ -2658,7 +2676,7 @@ int main(int argc, char **argv)
     {
       if(signals)
       {
-        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexsig | appsig | applibsig | notsig[0] | notsig[1] | notsig[2] | adstsig);
+        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexsig | appsig | applibsig | adstsig);
 
         if(signals & SIGBREAKF_CTRL_C)
         {
@@ -2709,6 +2727,7 @@ int main(int argc, char **argv)
         #endif
 
         // check for the write window signals
+        /*
         for(i=0; i <= MAXWR; i++)
         {
           if(signals & notsig[i])
@@ -2748,6 +2767,7 @@ int main(int argc, char **argv)
               W(DBF_UTIL, "file notification received on dead write window %ld", i);
           }
         }
+        */
 
         // check for the AutoDST signal
         if(signals & adstsig)

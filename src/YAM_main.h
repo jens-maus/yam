@@ -347,12 +347,6 @@ BOOL  MA_ImportMessages(const char *fname);
 struct MA_ClassData *MA_New(void);
 BOOL  MA_SortWindow(void);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit, BOOL closeWindows);
-int   MA_NewBounce(struct Mail *mail, int flags);
-int   MA_NewEdit(struct Mail *mail, int flags);
-int   MA_NewForward(struct MailList *mlist, int flags);
-int   MA_NewMessage(enum NewMode mode, int flags);
-int   MA_NewNew(struct Mail *mail, int flags);
-int   MA_NewReply(struct MailList *mlist, int flags);
 void  MA_ExchangeMail(enum GUILevel mode);
 void  MA_PopNow(enum GUILevel mode, int pop);
 void  MA_RemoveAttach(struct Mail *mail, BOOL warning);
@@ -373,5 +367,11 @@ char *MA_GetRealSubject(char *sub);
 void  MA_ChangeSelected(BOOL forceUpdate);
 
 enum NewMode CheckNewMailQualifier(const enum NewMode mode, const ULONG qualifier, int *flags);
+struct WriteMailData *NewMessage(enum NewMode mode, const int flags);
+struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags);
+struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags);
+struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags);
+struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int flags);
+struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags);
 
 #endif /* YAM_MAIN_H */

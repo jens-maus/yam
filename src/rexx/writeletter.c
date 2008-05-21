@@ -33,6 +33,8 @@
 #include "YAM_config.h"
 #include "YAM_write.h"
 
+#include "classes/Classes.h"
+
 #include "Rexx.h"
 
 #include "Debug.h"
@@ -59,12 +61,17 @@ void rx_writeletter(UNUSED struct RexxHost *host, struct RexxParams *params, enu
 
     case RXIF_ACTION:
     {
-      if(G->WR[G->ActiveWriteWin] && CopyFile(G->WR_Filename[G->ActiveWriteWin], 0, args->file, 0))
+      if(G->ActiveRexxWMData != NULL && G->ActiveRexxWMData->window != NULL)
       {
-        if(C->UseSignature == TRUE && !args->nosig)
-          WR_AddSignature(G->ActiveWriteWin, -1);
+        if(CopyFile(G->ActiveRexxWMData->filename, 0, args->file, 0))
+        {
+          if(C->UseSignature == TRUE && args->nosig == FALSE)
+            DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_AddSignature, -1);
 
-        FileToEditor(G->WR_Filename[G->ActiveWriteWin], G->WR[G->ActiveWriteWin]->GUI.TE_EDIT, TRUE);
+          DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_ReloadText, TRUE);
+        }
+        else
+          params->rc = RETURN_ERROR;
       }
       else
         params->rc = RETURN_ERROR;
@@ -74,7 +81,7 @@ void rx_writeletter(UNUSED struct RexxHost *host, struct RexxParams *params, enu
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

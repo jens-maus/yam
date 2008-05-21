@@ -415,11 +415,35 @@ static void TimerDispatcher(const enum Timer tid)
     // if so we write the indexes.
     case TIMER_WRINDEX:
     {
+      BOOL updateIndex = TRUE;
+
       D(DBF_TIMER, "timer[%ld]: TIMER_WRINDEX fired @ %s", tid, dateString);
 
       // only write the indexes if no Editor is actually in use
-      if(EditorObjectActive(0) == FALSE && EditorObjectActive(1) == FALSE)
+      if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+      {
+        // search through our WriteDataList
+        struct MinNode *curNode;
+
+        for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        {
+          struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+          if(wmData->window != NULL)
+          {
+            if(DoMethod(wmData->window, MUIM_WriteWindow_IsEditorActive) == TRUE)
+            {
+              updateIndex = FALSE;
+              break;
+            }
+          }
+        }
+      }
+
+      if(updateIndex == TRUE)
         MA_UpdateIndexes(FALSE);
+      else
+        D(DBF_TIMER, "Editor object of a write window is active, skipping update index operation");
 
       // prepare the timer to get fired again
       PrepareTimer(tid, C->WriteIndexes, 0);
@@ -431,17 +455,33 @@ static void TimerDispatcher(const enum Timer tid)
     // then check for new mail.
     case TIMER_CHECKMAIL:
     {
-      int i;
+      BOOL writeWindowActive = FALSE;
 
       D(DBF_TIMER, "timer[%ld]: TIMER_CHECKMAIL fired @ %s", tid, dateString);
 
       // only if there is currently no write window open we
       // check for new mail.
-      for(i = 0; i < MAXWR && G->WR[i] == NULL; i++) ;
+      if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+      {
+        // search through our WriteDataList
+        struct MinNode *curNode;
 
-      // also the configuratidn window needs to be closed
+        for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        {
+          struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+          if(wmData->window != NULL && xget(wmData->window, MUIA_Window_Open) == TRUE)
+          {
+            writeWindowActive = TRUE;
+            break;
+          }
+        }
+      }
+
+      // also the configuration window needs to be closed
       // or we skip the pop operatidn
-      if(i == MAXWR && G->CO == NULL)
+      if(writeWindowActive == FALSE &&
+         G->CO == NULL)
       {
         MA_PopNow(POP_TIMED, -1);
       }
@@ -456,27 +496,19 @@ static void TimerDispatcher(const enum Timer tid)
     // of the currently used editors.
     case TIMER_AUTOSAVE:
     {
-      char fileName[SIZE_PATHFILE];
-      int i;
-
       D(DBF_TIMER, "timer[%ld]: TIMER_AUTOSAVE fired @ %s", tid, dateString);
 
-      for(i = 0; i < MAXWR; i++)
+      if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
       {
-        if(G->WR[i] != NULL && G->WR[i]->Mode != NEW_BOUNCE)
+        // search through our WriteDataList
+        struct MinNode *curNode;
+
+        for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
         {
-          // do the autosave only if something was modified
-          if(xget(G->WR[i]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
-          {
-            if(EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i, fileName, sizeof(fileName))) == TRUE)
-            {
-              // we just saved the mail text, so it is no longer modified
-              set(G->WR[i]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
-              // we must remember if the mail was automatically saved, since the editor object cannot
-              // tell about changes anymore if they don't happen from now on.
-              G->WR[i]->AutoSaved = TRUE;
-            }
-          }
+          struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+          if(wmData->window != NULL)
+            DoMethod(wmData->window, MUIM_WriteWindow_DoAutoSave);
         }
       }
 

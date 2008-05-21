@@ -33,7 +33,10 @@
 #include "YAM.h"
 #include "YAM_write.h"
 
+#include "classes/Classes.h"
+
 #include "Rexx.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 
@@ -64,14 +67,22 @@ void rx_writeoptions(UNUSED struct RexxHost *host, struct RexxParams *params, en
 
     case RXIF_ACTION:
     {
-      if(G->WR[G->ActiveWriteWin])
+      if(G->ActiveRexxWMData != NULL && G->ActiveRexxWMData->window != NULL)
       {
-        setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_DELSEND, args->delete);
-        setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_MDN, args->receipt);
-        setcheckmark(G->WR[G->ActiveWriteWin]->GUI.CH_ADDINFO, args->addinfo);
-        if(args->importance) setcycle(G->WR[G->ActiveWriteWin]->GUI.CY_IMPORTANCE, *args->importance);
-        if(args->sig)        setmutex(G->WR[G->ActiveWriteWin]->GUI.RA_SIGNATURE, *args->sig);
-        if(args->security)   setmutex(G->WR[G->ActiveWriteWin]->GUI.RA_SECURITY, *args->security);
+        struct WriteMailData *wmData = G->ActiveRexxWMData;
+
+        xset(wmData->window, MUIA_WriteWindow_DelSend,    args->delete,
+                             MUIA_WriteWindow_MDN,        args->receipt,
+                             MUIA_WriteWindow_AddInfo,    args->addinfo);
+
+        if(args->importance)
+          set(wmData->window, MUIA_WriteWindow_Importance, *args->importance);
+
+        if(args->sig)
+          set(wmData->window, MUIA_WriteWindow_Signature, *args->sig);
+
+        if(args->security)
+          set(wmData->window, MUIA_WriteWindow_Security, *args->security);
       }
       else
         params->rc = RETURN_ERROR;
@@ -81,7 +92,7 @@ void rx_writeoptions(UNUSED struct RexxHost *host, struct RexxParams *params, en
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

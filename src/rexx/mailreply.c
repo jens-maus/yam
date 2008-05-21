@@ -35,6 +35,7 @@
 #include "classes/Classes.h"
 
 #include "Rexx.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 
@@ -67,16 +68,21 @@ void rx_mailreply(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
 
     case RXIF_ACTION:
     {
-      int winnr;
+      static int winNumber = -1;
+      struct WriteMailData *wmData;
 
-      results->window = &G->ActiveWriteWin;
+      results->window = &winNumber;
 
-      if((winnr = MA_NewMessage(NEW_REPLY, args->quiet?NEWF_QUIET:0)) >= 0)
+      if((wmData = NewMessage(NEW_REPLY, args->quiet ? NEWF_QUIET : 0L)) != NULL)
       {
-        G->ActiveWriteWin = winnr;
+        #warning "FIXME: What happens if multiple MAILBOUND QUIET calls happen after another? Who kills activeRexxWMData?"
+        G->ActiveRexxWMData = wmData;
 
-        if(args->quiet == FALSE && G->WR[winnr])
-          set(G->WR[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
+        if(wmData->window != NULL)
+          winNumber = xget(wmData->window, MUIA_WriteWindow_Num);
+
+        if(args->quiet == FALSE && wmData->window != NULL)
+          set(wmData->window, MUIA_Window_Activate, TRUE);
       }
       else
         params->rc = RETURN_ERROR;
@@ -86,7 +92,8 @@ void rx_mailreply(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
+
       if(results != NULL)
         FreeVecPooled(G->SharedMemPool, results);
     }
