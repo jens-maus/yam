@@ -435,11 +435,11 @@ void LockMailListShared(struct MailList *mlist)
 {
   ENTER();
 
-  if(AttemptSemaphore(mlist->lockSemaphore) == FALSE)
+  if(AttemptSemaphoreShared(mlist->lockSemaphore) == FALSE)
   {
     if(mailLocks > 0)
       E(DBF_ALWAYS, "nested (%ld) shared lock of maillist %08lx", mailLocks + 1, mlist);
-    ObtainSemaphore(mlist->lockSemaphore);
+    ObtainSemaphoreShared(mlist->lockSemaphore);
   }
 
   mailLocks++;

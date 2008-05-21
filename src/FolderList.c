@@ -204,11 +204,11 @@ void LockFolderList(struct FolderList *flist)
 {
   ENTER();
 
-  if(AttemptSemaphoreShared(flist->lockSemaphore) == FALSE)
+  if(AttemptSemaphore(flist->lockSemaphore) == FALSE)
   {
     if(folderLocks > 0)
       E(DBF_ALWAYS, "nested (%ld) exclusive lock of folderlist %08lx", folderLocks + 1, flist);
-    ObtainSemaphoreShared(flist->lockSemaphore);
+    ObtainSemaphore(flist->lockSemaphore);
   }
 
   folderLocks++;
