@@ -25,6 +25,7 @@
 
 ***************************************************************************/
 
+#include <clib/alib_protos.h>
 #include <proto/exec.h>
 
 #include "extrasrc.h"
