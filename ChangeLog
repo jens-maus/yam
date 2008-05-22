@@ -7,6 +7,9 @@ $URL$
 
 2008-05-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * WriteWindow.c: fixed bug where upon closing a write window no check
+    for an eventually existing data loss was performed and the user was never
+    warned of the data loss.
   * YAM_WR.c, rexx/*.c: forgot to reset the ActiveRexxWMData pointer as soon
     as a writeMailData object was cleaned up and it was the currently active
     rexx related window. In addition, the arexx commands will now cleanup

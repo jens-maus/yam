@@ -1533,15 +1533,9 @@ OVERLOAD(OM_NEW)
       DoMethod(data->BT_SEND,       MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_SEND);
       DoMethod(data->BT_CANCEL,     MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_WriteWindow_CancelAction);
 
-      // before we continue we make sure we connect a notify to the new window
-      // so that we get informed if the window is closed and therefore can be
-      // disposed
-      // However, please note that because we do kill the window upon closing it
-      // we have to use MUIM_Application_PushMethod instead of calling the CloseWriteWindowHook
-      // directly
-      DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE,
-                    MUIV_Notify_Application, 6,
-                      MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseWriteWindowHook, data->wmData);
+      // connect the closerequest attribute to the cancelaction method so that
+      // users might get informed of an eventually data loss
+      DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 1, MUIM_WriteWindow_CancelAction);
 
       // set some default values for this newly created
       // write window
@@ -3944,6 +3938,9 @@ DECLARE(CancelAction)
   }
 
   // check if we have to close/discard the window
+  // However, please note that because we do kill the window upon closing it
+  // we have to use MUIM_Application_PushMethod instead of calling the CloseWriteWindowHook
+  // directly
   if(discard == TRUE)
     DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseWriteWindowHook, data->wmData);
 
