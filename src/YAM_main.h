@@ -368,10 +368,5 @@ void  MA_ChangeSelected(BOOL forceUpdate);
 
 enum NewMode CheckNewMailQualifier(const enum NewMode mode, const ULONG qualifier, int *flags);
 struct WriteMailData *NewMessage(enum NewMode mode, const int flags);
-struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags);
-struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags);
-struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags);
-struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int flags);
-struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags);
 
 #endif /* YAM_MAIN_H */
