@@ -252,7 +252,7 @@
 (set #lang_manual "Seleziona la lingua da installare per la guida in linea AmigaGuide")
 (set #no_way_back_warning (cat "\n"
                                "ATTENZIONE!!\n"
-                               "(Nel caso di desideri aggiornare il programma\n"
+                               "(Nel caso si desideri aggiornare il programma\n"
                                "da una precedente installazione di YAM)\n\n"
                                "Lo schema dei nomi dei messaggi è stato modificato, quando viene lanciata"
                                " questa nuova versione per la prima volta tutti i precedenti messaggi verranno"
@@ -261,16 +261,16 @@
                                "Ricorda che è sempre possibile installare due differenti versioni di YAM"
                                " in directory separate."))
 (set #faq_and_bugtracker (cat "\n"
-                              "Nel caso si abbiano delle domande concernenti YAM\n"
-                              "è possibile contattarci attraverso il nostro forum:\n"
+                              "Nel caso si abbiano delle domande concernenti YAM e il suo sviluppo\n"
+                              "potete contattarci attraverso il nostro forum all'indirizzo internet:\n"
                               "http://forum.yam.ch/\n"
                               "\n"
                               "Nota che le domande più frequentemente risposte sono\n"
-                              "disponibili nelle FAQ di YAM all'indirizzo:\n"
+                              "disponibili nelle FAQ del sito di YAM all'indirizzo:\n"
                               "http://faq.yam.ch/\n"
                               "\n"
-                              "In caso venga riscontrato qualche bug nel programma,\n"
-                              "è possibile segnalarlo attraverso il nostro bugtracker:\n"
+                              "Nel caso venga riscontrato qualche bug o problema su YAM,\n"
+                              "potete segnalarcelo attraverso il nostro bugtracker:\n"
                               "http://bugs.yam.ch/"))
 (set #done_1   (cat "\nYAM è stato installato con successo.\n\n"
                     "Doppio click sull'icona di \"YAM\" nella\n"))

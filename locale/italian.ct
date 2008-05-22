@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.2 (16.05.2008)
+## version $VER: YAM.catalog 6.2 (22.05.2008)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.6 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 3864 2008-02-08 02:44:15Z
+; based on YAM.cd 3864 2008-05-21 02:44:15Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -3966,7 +3966,7 @@ Descrizione
 ; Module WR - Window
 ;
 MSG_WR_SecNone
-Nessuno
+Nessuna
 ; None
 ;
 MSG_WR_SecSign
@@ -4026,11 +4026,11 @@ _Per
 ; _To
 ;
 MSG_WR_Add
-Agg. _file...
+Aggiungi _file...
 ; _Add file(s)...
 ;
 MSG_WR_AddPack
-_Comprimi ed agg...
+_Comprimi ed aggiungi...
 ; _Pack & add...
 ;
 MSG_WR_Display
@@ -4082,7 +4082,7 @@ Rice_vuta di ritorno
 ; _Return receipt
 ;
 MSG_WR_AddInfo
-Agg. info _personali
+Aggiungi info _personali
 ; Add _personal info
 ;
 MSG_WR_Importance
@@ -4162,7 +4162,7 @@ Normale
 ; Plain
 ;
 MSG_WR_Quoted
-Citato
+Citazione
 ; Quoted
 ;
 MSG_WR_ROT13
@@ -4414,8 +4414,8 @@ verrà aggiunta al messaggio.
 ;
 MSG_HELP_WR_ST_FROM
 Contenuti dell'intestazione del campo 'Da'\n\
-(indirizzo e nome della persona che\n\
-sta componendo questo messaggio).
+(indirizzo E-Mail e nome della persona che\n\
+ha composto questo messaggio).
 ; Contents of the 'From:' header\n\
 ; (name and address of the person\n\
 ; who is writing this message).
@@ -5074,7 +5074,7 @@ Spediti
 ; Sent
 ;
 MSG_FI_OtherField
-altri campi:
+Altri campi:
 ; other field:
 ;
 MSG_FI_MessageSize
@@ -6415,7 +6415,7 @@ nel flusso di dati finale.
 ;
 MSG_ER_QPDEC_CHAR
 Alcuni caratteri non ammessi sono stati trovati durante la decodifica\n\
-quoted-printable del file '%s' e quindi sono stati rimossi durante la\n\
+quoted-printable del file '%s' e sono quindi stati rimossi durante la\n\
 decodifica.
 ; During the Quoted-Printable (QP) decoding of file '%s' some forbidden \
 ; characters were found and therefore removed in the output.
@@ -6424,14 +6424,15 @@ decodifica.
 MSG_ER_UUDEC_TAGMISS
 Durante la codifica UU del file '%s', YAM non è stato in grado di\n\
 trovare il Tag richiesto '%s' come proposto dallo standard UUcode.
-; During the UUcode decoding of file '%s' the required '%s' tag ; couldn't be found.\n\
+; During the UUcode decoding of file '%s' the required '%s' tag \
+; couldn't be found.\n\
 ; \n\
 ; Either the file is truncated or it wasn't encoded following the UUcode \
 ; encoding standard.
 ; FILENAME, TAG
 ;
 MSG_ER_UUDEC_CHECKSUM
-Tentando la codifica UU del file '%s', YAM ha trovato che alcuni\n\
+Durante la codifica UU del file '%s', YAM ha rilevato che alcuni\n\
 checksum usati erano invalidi e quindi suggerisce di controllare\n\
 che il file risultante non sia danneggiato.\n\
 È stato usato un codificatore UU difettoso o il messaggio risulta\n\
@@ -6459,9 +6460,9 @@ Selezionato
 ; Marked
 ;
 MSG_MA_CREQUEST_OLDFILE
-YAM ha trovato che il file '%s' nella cartella '%s' risulta usare\n\
-un vecchio formato di posta normalmente usato nelle precedenti\n\
-versioni di YAM.\n\
+YAM ha rilevato che il file '%s' nella cartella '%s'\n\
+risulta usare un vecchio formato di posta normalmente\n\
+usato nelle precedenti versioni di YAM.\n\
 \n\
 Si desidera convertire questo file nel nuovo formato?
 ; File '%s' in folder '%s' uses an obsolete mail format\n\
@@ -6533,10 +6534,11 @@ con SSLv3
 ; with SSLv3
 ;
 MSG_HELP_CO_RA_SMTPSECURE
-Una connessione sicura TLSv1 o SSLv3 verrà stabilita tra il server SMTP\n\
-e YAM per l'invio dei messaggi attraverso una connessione criptata.\n\
-Nel caso questi pulsanti risultino disabilitati significa che il\n\
-supporto AmiSSL non è al momento disponibile.
+Una connessione sicura TLSv1 o SSLv3 verrà stabilita tra il server\n\
+SMTP e YAM per l'invio dei messaggi attraverso una connessione.\n\
+criptata.\n\
+Nel caso questi pulsanti risultino disabilitati ciò significa che\n\
+il supporto AmiSSL non è al momento disponibile.
 ; A TLSv1 or SSLv3 secure connection will be established between\n\
 ; the SMTP server and YAM to send e-mail through an encrypted ; connection.\n\
 ; If these radio buttons are ghosted, it means AmiSSL support is\n\
@@ -6931,8 +6933,9 @@ _Set di caratteri predefinito
 ;
 MSG_CO_CHARSETUNKNOWNWARN
 Il set di caratteri configurato per YAM è '%s'\n\
-ma esso non è supportato dalla corrente versione\n\
-della codesets.library installata nel sistema.\n\
+ma questa non sembra essere supportata dalla\n\
+corrente versione della codesets.library\n\
+installata nel sistema.\n\
 \n\
 Come si desidera procedere?
 ; The charset configured for YAM is '%s' but isn't\n\
@@ -6960,8 +6963,8 @@ MSG_ER_LIB_URL
 Impossibile aprire '%s', versione v%lu.%lu\n\
 \n\
 Vai all'indirizzo '%s'\n\
-per scaricare l'ultima versione, dopodichè assicurati di averla\n\
-correttamente installata nel percorso delle librerie.
+Scarica l'ultima versione disponibile, dopodichè assicurati\n\
+di averla correttamente installata nel percorso delle librerie.
 ; Couldn't open required '%s', version v%lu.%lu\n\
 ; \n\
 ; Please visit '%s',\n\
@@ -6973,8 +6976,8 @@ MSG_ER_NO_MCC
 Impossibile aprire la classe MUI custom '%s' v%lu.%lu.\n\
 \n\
 Vai all'indirizzo '%s'\n\
-Scarica l'ultima versione disponibile ed assicurati di\n\
-averla correttamente installata sul tuo sistema.
+Scarica l'ultima versione disponibile, dopodichè assicurati\n\
+di averla correttamente installata nel tuo sistema.
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
 ; \n\
 ; Please visit '%s',\n\
@@ -7000,7 +7003,8 @@ Impossibile aprire la classe MUI custom '%s' v%lu.%lu.\n\
 Vai all'indirizzo '%s'.\n\
 Una volta installata la versione richiesta, chiudi\n\
 tutti i programmi MUI ed assicurati che la vecchia\n\
-classe venga liberata dalla memoria, dopodichè riprova.
+classe sia stata liberata dalla memoria, dopodichè\n\
+riprova ancora.
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
 ; \n\
 ; %lu.%lu is currently in use by other applications.\n\
@@ -7017,11 +7021,11 @@ Impostazioni Primi Passi
 ; First Steps Settings
 ;
 MSG_CO_FIRSTSTEPS_SUMMARY
-Configurazione veloce dei parametri per un primo utilizzo...
+Configurazione rapida dei parametri di YAM per un primo utilizzo...
 ; The minimum parameters to be able to send/receive e-mail...
 ;
 MSG_CO_TCPIP_TITLE
-Impostazioni TCP/IP
+Impostazioni Stack TCP/IP
 ; TCP/IP Settings
 ;
 MSG_CO_TCPIP_SUMMARY
@@ -7037,7 +7041,7 @@ Comportamento alla ricezione dei nuovi messaggi...
 ; How to handle and react upon incoming mail...
 ;
 MSG_CO_FILTER_TITLE
-Impostazioni Filtro della Posta
+Impostazioni Filtri della Posta
 ; Mail Filter Settings
 ;
 MSG_CO_FILTER_SUMMARY
@@ -7045,7 +7049,7 @@ Definizione dei filtri della posta...
 ; Define own mail filters you need...
 ;
 MSG_CO_READ_TITLE
-Impostazioni Lettura Posta
+Impostazioni Lettura Posta 
 ; Mail Reading Settings
 ;
 MSG_CO_READ_SUMMARY
@@ -7061,7 +7065,7 @@ Configurazione relativa alla composizione dei messaggi...
 ; Settings related to e-mail composing...
 ;
 MSG_CO_REPLY_TITLE
-Impostazioni per la Risposta e l'Inoltro della Posta
+Impostazioni per la risposta e l'inoltro della posta
 ; Mail Reply & Forward Settings
 ;
 MSG_CO_REPLY_SUMMARY
@@ -7069,7 +7073,7 @@ Configurazione relativa ai messaggi di risposta ed inoltro...
 ; Settings related to e-mail replying & forwarding...
 ;
 MSG_CO_SIGNATURE_TITLE
-Configurazione relativa alla firma dei messaggi
+Impostazioni relative alla firma dei messaggi
 ; Mail Signature Settings
 ;
 MSG_CO_SIGNATURE_SUMMARY
@@ -7093,11 +7097,11 @@ Configurazione relativa alle impostazioni di sicurezza...
 ; Configure security related settings...
 ;
 MSG_CO_STARTUP_TITLE
-Impostazioni delle azioni di Avvio/Chiusura
+Impostazioni delle azioni di avvio/chiusura
 ; Startup/Quit Action Settings
 ;
 MSG_CO_STARTUP_SUMMARY
-Impostazioni relative al comportamento di YAM all'avvio ed alla chiusura...
+Configurazione relativa al comportamento di YAM all'avvio ed alla chiusura...
 ; Configure what YAM should do on startup and exit...
 ;
 MSG_CO_MIME_TITLE
@@ -7105,19 +7109,19 @@ Impostazioni Datatype MIME
 ; MIME Types Settings
 ;
 MSG_CO_MIME_SUMMARY
-Impostazioni sul tipo di MIME da gestire...
+Configurazione relativa al tipo di MIME da gestire...
 ; Configure own MIME types and viewers...
 ;
 MSG_CO_ABOOK_TITLE
-Impostazioni Rubrica
+Impostazioni della rubrica
 ; Address Book Settings
 ;
 MSG_CO_ABOOK_SUMMARY
-Impostazioni addizionali riguardanti la rubrica...
+Configurazioni addizionali riguardanti la rubrica...
 ; Configure address book related options...
 ;
 MSG_CO_SCRIPTS_TITLE
-Impostazioni script personalizzati
+Impostazioni degli script personalizzati
 ; Scripts Settings
 ;
 MSG_CO_SCRIPTS_SUMMARY
@@ -7125,11 +7129,11 @@ Configurazione per gli script di aiuto personalizzati...
 ; Configure your helper scripts...
 ;
 MSG_CO_MIXED_TITLE
-Configurazioni Varie
+Impostazioni varie
 ; Miscellaneous Settings
 ;
 MSG_CO_MIXED_SUMMARY
-Altre impostazioni varie...
+Configurazione delle varie altre impostazioni...
 ; A bunch of settings that don't fit anywhere else...
 ;
 MSG_CO_UPDATE_TITLE
@@ -7734,7 +7738,7 @@ Filtro AntiSpam
 ; Spam filter
 ;
 MSG_CO_SPAMFILTER_TITLE
-Filtro AntiSpam
+Impostazioni Filtro AntiSpam
 ; Spam filter
 ;
 MSG_CO_SPAMFILTER_SUMMARY
@@ -8248,7 +8252,7 @@ Ricevuta di ritorno
 ; Return receipts
 ;
 MSG_CO_MDN_DESCRIPTION
-Nel caso si riceva una richiesta per una ricevuta di ritorno...
+Cosa fare nel caso si riceva una richiesta per una ricevuta di ritorno...
 ; When I receive a request for a return receipt...
 ;
 MSG_CO_MDN_DISABLED
@@ -8344,7 +8348,7 @@ Aspetto
 ; Look & Feel
 ;
 MSG_CO_DSTACTIVE
-D_aylight Saving Time (DST) è attivo
+Attiva D_aylight Saving Time (DST)
 ; D_aylight Saving Time (DST) is active
 ;
 MSG_HELP_CO_CH_DSTACTIVE
@@ -9331,7 +9335,7 @@ proprio Tema all'ultima versione disponibile.
 ;
 MSG_ER_DATATYPE_ERROR
 Si è verificato un errore durante il tentativo di caricamento\n\
-del file immagine '%s' attraverso datatype.\n\
+del file immagine '%s' attraverso l'uso del datatype.\n\
 \n\
 Per favore assicurati che il file esista e di avere installato\n\
 correttamente nel sistema il datatype necessario.\n\
@@ -9660,4 +9664,21 @@ oppure il datatype stesso non funziona correttamente.
 ; unsupported sound file or because your\n\
 ; sound datatype is not properly working.
 ; FILE
+;
+MSG_WR_CHARSET
+_Set di caratteri
+; _Charset
+;
+MSG_HELP_WR_PO_CHARSET
+Usa questo menu a comparsa in modo da selezionare il\n\
+set di caratteri da utilizzare con questo messaggio.\n\
+Questo set verrà utilizzato in modo predefinito come\n\
+set di caratteri globale.
+; Use the popup button to select the character set\n\
+; you would like YAM to use for this mail. This\n\
+; defaults to the global character set.
+;
+MSG_ABOUTYAM
+Informazioni su YAM...
+; About YAM...
 ;

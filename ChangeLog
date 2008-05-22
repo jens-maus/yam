@@ -7,6 +7,8 @@ $URL$
 
 2008-05-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * doc/Install-YAM, locale/italian.ct: updated italian translation provided
+    by Samir Hawamdeh.
   * WriteWindow.c: fixed bug where upon closing a write window no check
     for an eventually existing data loss was performed and the user was never
     warned of the data loss.
