@@ -1235,7 +1235,7 @@ char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length)
 // Function that creates a new WriteWindow object and returns
 // the referencing WriteMailData structure which was created
 // during that process - or NULL if an error occurred.
-struct WriteMailData *CreateWriteWindow(void)
+struct WriteMailData *CreateWriteWindow(const BOOL quietMode)
 {
   Object *newWriteWindow;
 
@@ -1244,7 +1244,10 @@ struct WriteMailData *CreateWriteWindow(void)
   D(DBF_GUI, "Creating new Write Window.");
 
   // if we end up here we create a new WriteWindowObject
-  newWriteWindow = WriteWindowObject, End;
+  newWriteWindow = WriteWindowObject,
+                     MUIA_WriteWindow_Quiet, quietMode,
+                   End;
+
   if(newWriteWindow)
   {
     // get the WriteMailData and check that it is the same like created

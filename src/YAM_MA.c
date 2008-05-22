@@ -1590,7 +1590,7 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
 
   // First check if the basic configuration is okay, then open write window */
   if(folder != NULL && CO_IsValid() == TRUE &&
-     (wmData = CreateWriteWindow()) != NULL)
+     (wmData = CreateWriteWindow(quiet)) != NULL)
   {
     FILE *out;
 
@@ -1751,7 +1751,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
   // check if necessary settings fror writing are OK and open new window
   if(CO_IsValid() == TRUE &&
-     (wmData = CreateWriteWindow()) != NULL)
+     (wmData = CreateWriteWindow(quiet)) != NULL)
   {
     FILE *out;
 
@@ -1946,7 +1946,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
 
   // check if necessary settings fror writing are OK and open new window
   if(CO_IsValid() == TRUE &&
-     (wmData = CreateWriteWindow()) != NULL)
+     (wmData = CreateWriteWindow(quiet)) != NULL)
   {
     FILE *out;
 
@@ -2149,7 +2149,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
   // check if necessary settings fror writing are OK and open new window
   if(CO_IsValid() == TRUE &&
-     (wmData = CreateWriteWindow()) != NULL)
+     (wmData = CreateWriteWindow(quiet)) != NULL)
   {
     FILE *out;
 
@@ -2995,7 +2995,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
 MakeHook(MA_SavePrintHook, MA_SavePrintFunc);
 
 ///
-/// MA_NewMessage
+/// NewMessage
 //  Starts a new message
 struct WriteMailData *NewMessage(enum NewMode mode, const int flags)
 {

@@ -160,7 +160,7 @@ char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length);
 void  WR_NewMail(enum WriteMode mode, int winnum);
 BOOL  WriteOutMessage(struct Compose *comp);
 
-struct WriteMailData *CreateWriteWindow(void);
+struct WriteMailData *CreateWriteWindow(const BOOL quietMode);
 BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRef);
 BOOL CleanupWriteMailData(struct WriteMailData *wmData);
 struct WritePart *NewMIMEpart(struct WriteMailData *wmData);

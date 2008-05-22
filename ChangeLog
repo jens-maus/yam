@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-22  Jens Langner <Jens.Langner@light-speed.de>
+
+  * WriteWindow.c, YAM_WR.c, YAM_MA.c, YAM_write.h: reimplanted the quietMode
+    functionality used for the Arexx command handling of write windows. Now
+    the Arexx commands dealing with the write windows should work as expected
+    again and keep things "quiet" in case background processing is selected.
+
 2008-05-21  Thore Böckelmann <tboeckel@gmx.de>
 
   * rexx/*.c: added missing includes for the OS3 build.

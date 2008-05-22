@@ -874,9 +874,6 @@ OVERLOAD(OM_NEW)
   ULONG i=0;
   struct Data *data;
   struct Data *tmpData;
-  Object *menuStripObject;
-  Object *charsetPopButton;
-  Object *slider;
 
   // the static arrays
   static const char *rtitles[4] = { NULL, NULL, NULL, NULL };
@@ -963,6 +960,21 @@ OVERLOAD(OM_NEW)
   // allocate the new writeMailData structure
   if((data->wmData = calloc(1, sizeof(struct WriteMailData))))
   {
+    Object *menuStripObject;
+    Object *charsetPopButton;
+    Object *slider;
+    struct TagItem *tags = inittags(msg);
+    struct TagItem *tag;
+
+    // check for some tags present at OM_NEW
+    while((tag = NextTagItem(&tags)))
+    {
+      switch(tag->ti_Tag)
+      {
+        ATTR(Quiet): data->wmData->quietMode = (BOOL)tag->ti_Data; break;
+      }
+    }
+
     // now we create the Menustrip object with all the menu items
     // and corresponding shortcuts
     //
@@ -1613,6 +1625,7 @@ OVERLOAD(OM_GET)
     ATTR(WriteMailData): *store = (ULONG)data->wmData; return TRUE;
     ATTR(Num):           *store = data->windowNumber; return TRUE;
     ATTR(To):            *store = xget(data->ST_TO, MUIA_String_Contents) ; return TRUE;
+    ATTR(Quiet):         *store = data->wmData->quietMode; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
