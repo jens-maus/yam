@@ -7,6 +7,14 @@ $URL$
 
 2008-05-22  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c, rexx/*.c: forgot to reset the ActiveRexxWMData pointer as soon
+    as a writeMailData object was cleaned up and it was the currently active
+    rexx related window. In addition, the arexx commands will now cleanup
+    and dispose a previously existing write window in quiet mode so that
+    no memory/window leak may happen due to the constantly hided status
+    of subsequent write windows using in arexx. That means, in practice,
+    there can only be one currently active write windwo in quiet mode for
+    arexx usage. I hope this is will be no serve limitation, thought.
   * YAM_MA.c, YAM_WR.c, misc: moved the NewXXXMailWindow() functions and all
     related local functions from YAM_MA to YAM_WR as they are better suited
     there.

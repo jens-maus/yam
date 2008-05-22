@@ -73,9 +73,17 @@ void rx_mailedit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
       results->window = &winNumber;
 
+      // check if there is already an open, quiet write window
+      // which is linked as the current active rexx window and
+      // if so we close it or otherwise the window will be "lost"
+      if(G->ActiveRexxWMData != NULL &&
+         G->ActiveRexxWMData->quietMode == TRUE)
+      {
+        CleanupWriteMailData(G->ActiveRexxWMData);
+      }
+
       if((wmData = NewMessage(NEW_EDIT, args->quiet ? NEWF_QUIET : 0L)) != NULL)
       {
-        #warning "FIXME: What happens if multiple MAILBOUND QUIET calls happen after another? Who kills activeRexxWMData?"
         G->ActiveRexxWMData = wmData;
 
         if(wmData->window != NULL)

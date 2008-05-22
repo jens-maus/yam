@@ -2730,6 +2730,12 @@ BOOL CleanupWriteMailData(struct WriteMailData *wmData)
   SHOWVALUE(DBF_MAIL, wmData);
   ASSERT(wmData != NULL);
 
+  // check if this wmData is the current active Rexx background
+  // processing one and if so set the ptr to NULL to signal the rexx
+  // commands that their active window was closed/disposed
+  if(wmData == G->ActiveRexxWMData)
+    G->ActiveRexxWMData = NULL;
+
   // stop any pending file notification.
   if(wmData->fileNotifyActive == TRUE)
   {
