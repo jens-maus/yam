@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Aboutwindow.c: updated current author list for 2.6 version.
+
 2008-05-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * doc/Install-YAM, locale/italian.ct: updated italian translation provided
