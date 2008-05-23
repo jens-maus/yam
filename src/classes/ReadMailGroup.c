@@ -1286,7 +1286,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
 
 ///
 /// DECLARE(CheckPGPSignature)
-DECLARE(CheckPGPSignature) // BOOL forceRequester
+DECLARE(CheckPGPSignature) // ULONG forceRequester
 {
   GETDATA;
   BOOL result = FALSE;

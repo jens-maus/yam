@@ -63,6 +63,9 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  * History
  * -------
+ * 0.27 - added warning in case a BOOL parameter type is used in a DECLARE()
+ *        statement as this type is known to case trouble.
+ *
  * 0.26 - fixed a bug in the list_findname() function where after the last fix
  *        the function didn't correctly find a named node. In addition, a new "-q"
  *        option now prevents all standard output as only fprintf(stderr,...)
@@ -173,7 +176,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  */
 
-static const char * const verstr = "0.26";
+static const char * const verstr = "0.27";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -589,6 +592,11 @@ struct classdef *processclasssrc( char *path )
       if (!(cb = strchr(ob, ')'))) cb = p + strlen(p);
       if ((p = strstr(cb + 1, "//"))) p += 2;
       *cb = 0; add_declare(cd, ++ob, p);
+
+      /* we check for the existance of a "BOOL" as a parameter
+         and warn the user accordingly because BOOL is known to be unsafe */
+      if(p != NULL && strstr(p, "BOOL ") != NULL)
+        fprintf(stderr, "WARNING: " KEYWD_DECLARE "() - BOOL parameter type is unsafe at line %d in file %s\n", lineno, path);
     }
     else if (strncmp(KEYWD_ATTR, p, sizeof(KEYWD_ATTR) - 1) == 0)
     {

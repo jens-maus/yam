@@ -7,6 +7,10 @@ $URL$
 
 2008-05-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * tools/genclasses, misc: added a parameter type check to the GenClasses
+    tool so that it checks for used BOOL parameters in the DECLARE()
+    statements of our classes. BOOL parameters are known to cause trouble
+    and therefore should be replaced by ULONG parameters instead.
   * YAM.c, YAM_WR.c, YAM_write.h, WriteWindow.c: reworked the .autosaveXX.txt
     file handling and implemented it for the new WriteWindow implementation.
     Now the autosave functionality should work again.
