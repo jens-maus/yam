@@ -1688,9 +1688,10 @@ LONG FileCount(const char *directory, const char *pattern)
         // count the entries
         result++;
       }
+
       if(IoErr() != ERROR_NO_MORE_ENTRIES)
       {
-        D(DBF_ALWAYS, "FileCount failed");
+        E(DBF_ALWAYS, "FileCount failed");
         result = -1;
       }
 
