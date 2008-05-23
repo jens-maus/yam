@@ -7,6 +7,9 @@ $URL$
 
 2008-05-23  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c, YAM_WR.c, YAM_write.h, WriteWindow.c: reworked the .autosaveXX.txt
+    file handling and implemented it for the new WriteWindow implementation.
+    Now the autosave functionality should work again.
   * Aboutwindow.c: updated current author list for 2.6 version.
 
 2008-05-22  Jens Langner <Jens.Langner@light-speed.de>

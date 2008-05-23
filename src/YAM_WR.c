@@ -2858,6 +2858,123 @@ BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRe
 
 ///
 
+
+/*** AutoSave files ***/
+/// CheckForAutoSaveFiles()
+// function that checks for .autosaveXX.txt files and
+// warn the user accordingly of the existance of such a backup file
+void CheckForAutoSaveFiles(void)
+{
+  static const char *pattern = ".autosave??.txt";
+  char *parsedPattern;
+  LONG parsedPatternSize;
+  APTR context;
+
+  ENTER();
+
+  // we go and check whether there is any .autosaveXX.txt file in the
+  // maildir directory. And if so we ask the user what he would like to do with it
+  parsedPatternSize = strlen(pattern) * 2 + 2;
+  if((parsedPattern = malloc(parsedPatternSize)) != NULL)
+  {
+    ParsePatternNoCase(pattern, parsedPattern, parsedPatternSize);
+
+    if((context = ObtainDirContextTags(EX_StringName,  (ULONG)G->MA_MailDir,
+                                       EX_MatchString, (ULONG)parsedPattern,
+                                       TAG_DONE)) != NULL)
+    {
+      struct ExamineData *ed;
+
+      while((ed = ExamineDir(context)) != NULL)
+      {
+        // check that this entry is a file
+        // because we don't accept any dir here
+        if(EXD_IS_FILE(ed))
+        {
+          int answer;
+          char fileName[SIZE_PATHFILE];
+
+          D(DBF_MAIL, "found file '%s' macthes autosave pattern '%s'", ed->Name, pattern);
+
+          // pack the filename and path together so that we can reference to it
+          AddPath(fileName, G->MA_MailDir, ed->Name, sizeof(fileName));
+
+
+          // now that we have identified the existance of a .autosave file
+          // we go and warn the user accordingly.
+          answer = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_AUTOSAVEFOUND_TITLE),
+                                                         tr(MSG_MA_AUTOSAVEFOUND_BUTTONS),
+                                                         tr(MSG_MA_AUTOSAVEFOUND),
+                                                         fileName);
+          if(answer == 1)
+          {
+            // the user wants to put the autosave file on hold in the outgoing folder
+            // so lets do it and delete the autosave file afterwards
+            struct WriteMailData *wmData;
+
+            if((wmData = NewWriteMailWindow(NULL, NEWF_QUIET)) != NULL)
+            {
+              // set some default receiver and subject, because the autosave file just contains
+              // the message text
+              set(wmData->window, MUIA_WriteWindow_To, "no@receiver");
+              set(wmData->window, MUIA_WriteWindow_Subject, "(subject)");
+
+              // load the file in the new editor gadget and flag it as changed
+              DoMethod(wmData->window, MUIM_WriteWindow_LoadText, fileName, TRUE);
+
+              // put the new mail on hold
+              DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_HOLD);
+
+              // we need to explicitly delete the autosave file here because
+              // the delete routine in WR_NewMail() doesn't catch the correct file
+              // because it only cares about the autosave file for the newly created
+              // write object
+              if(DeleteFile(fileName) == 0)
+                AddZombieFile(fileName);
+            }
+          }
+          else if(answer == 2)
+          {
+            // the user wants to open the autosave file in an own new write window,
+            // so lets do it and delete the autosave file afterwards
+            struct WriteMailData *wmData;
+
+            if((wmData = NewWriteMailWindow(NULL, 0)) != NULL)
+            {
+              // load the file in the new editor gadget and flag it as changed
+              DoMethod(wmData->window, MUIM_WriteWindow_LoadText, fileName, TRUE);
+
+              // we delete the autosave file now
+              if(DeleteFile(fileName) == 0)
+                AddZombieFile(fileName);
+
+              // then we immediately create a new autosave file
+              DoMethod(wmData->window, MUIM_WriteWindow_DoAutoSave);
+            }
+          }
+          else if(answer == 3)
+          {
+            // just delete the autosave file
+            if(DeleteFile(fileName) == 0)
+              AddZombieFile(fileName);
+          }
+        }
+      }
+
+      if(IoErr() != ERROR_NO_MORE_ENTRIES)
+        E(DBF_ALWAYS, "ExamineDir failed");
+
+      ReleaseDirContext(context);
+    }
+
+    free(parsedPattern);
+  }
+
+  LEAVE();
+}
+
+///
+
 /*** GUI ***/
 /// WR_NewBounce
 //  Creates a bounce window

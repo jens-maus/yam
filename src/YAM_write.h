@@ -169,5 +169,6 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRef);
 BOOL CleanupWriteMailData(struct WriteMailData *wmData);
 struct WritePart *NewMIMEpart(struct WriteMailData *wmData);
+void CheckForAutoSaveFiles(void);
 
 #endif /* YAM_WRITE_H */

@@ -2719,7 +2719,7 @@ DECLARE(SaveTextAs)
 ///
 /// DECLARE(AddAttachment)
 // Adds a file to the attachment list, gets its size and type
-DECLARE(AddAttachment) // const char *filename, const char *name, BOOL istemp
+DECLARE(AddAttachment) // const char *filename, const char *name, ULONG istemp
 {
   GETDATA;
   BOOL result = FALSE;
@@ -2909,7 +2909,7 @@ DECLARE(AddRecipient) // enum RcptType type, char *recipient
 ///
 /// DECLARE(InsertAddresses)
 //  Appends an array of addresses to a string gadget
-DECLARE(InsertAddresses) // enum RcptType type, char **addr, BOOL add
+DECLARE(InsertAddresses) // enum RcptType type, char **addr, ULONG add
 {
   GETDATA;
   Object *str = NULL;
@@ -3184,29 +3184,31 @@ DECLARE(InsertText) // char *text
 ///
 /// DECLARE(ReloadText)
 // Reload the message text from the current temporary file
-DECLARE(ReloadText) // BOOL changed
+DECLARE(ReloadText) // ULONG changed
 {
   GETDATA;
+  ULONG result;
   ENTER();
 
-  FileToEditor(data->wmData->filename, data->TE_EDIT, msg->changed);
+  result = FileToEditor(data->wmData->filename, data->TE_EDIT, msg->changed);
 
-  RETURN(0);
-  return 0;
+  RETURN(result);
+  return result;
 }
 
 ///
 /// DECLARE(LoadText)
 // Koad the message text from a specified file
-DECLARE(LoadText) // char *filename, BOOL changed
+DECLARE(LoadText) // char *filename, ULONG changed
 {
   GETDATA;
+  ULONG result;
   ENTER();
 
-  FileToEditor(msg->filename, data->TE_EDIT, msg->changed);
+  result = FileToEditor(msg->filename, data->TE_EDIT, msg->changed);
 
-  RETURN(0);
-  return 0;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -3887,8 +3889,14 @@ DECLARE(DoAutoSave)
         // we must remember if the mail was automatically saved, since the editor object cannot
         // tell about changes anymore if they don't happen from now on.
         data->autoSaved = TRUE;
+
+        D(DBF_MAIL, "saved mail text of write window #%d in autosave file '%s'", data->windowNumber, fileName);
       }
+      else
+        W(DBF_MAIL, "EditorToFile failed");
     }
+    else
+      D(DBF_MAIL, "No changes found in editor, no need to save an autosave file");
   }
 
   RETURN(0);

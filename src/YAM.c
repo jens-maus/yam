@@ -2433,7 +2433,6 @@ int main(int argc, char **argv)
     ULONG appsig;
     ULONG applibsig;
     struct User *user;
-    int i;
     int ret;
 
     // allocate our global G and C structures
@@ -2516,83 +2515,10 @@ int main(int argc, char **argv)
     AppendToLogfile(LF_ALL, 0, tr(MSG_LOG_Started));
     MA_StartMacro(MACRO_STARTUP, NULL);
 
-#warning "TODO"
-    /*
-    // before we go on we check whether there is any .autosaveX.txt file in the
-    // maildir directory. And if so we ask the user what he would like to do with it
-    for(i=0; i < MAXWR; i++)
-    {
-      char fileName[SIZE_PATHFILE];
-
-      // fill fileName with the autosave filename
-      WR_AutoSaveFile(i, fileName, sizeof(fileName));
-
-      // check if the file exists
-      if(FileExists(fileName) == TRUE)
-      {
-        int answer;
-
-        answer = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_AUTOSAVEFOUND_TITLE),
-                                                       tr(MSG_MA_AUTOSAVEFOUND_BUTTONS),
-                                                       tr(MSG_MA_AUTOSAVEFOUND),
-                                                       fileName);
-        if(answer == 1)
-        {
-          // the user wants to put the autosave file on hold in the outgoing folder
-          // so lets do it and delete the autosave file afterwards
-          int wrwin;
-
-          if((wrwin = MA_NewNew(NULL, NEWF_QUIET)) >= 0)
-          {
-            // set some default receiver and subject, because the autosave file just contains
-            // the message text
-            setstring(G->WR[wrwin]->GUI.ST_TO, "no@receiver");
-            setstring(G->WR[wrwin]->GUI.ST_SUBJECT, "(subject)");
-
-            // load the file in the new editor gadget and flag it as changed
-            FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT, TRUE);
-
-            // put the new mail on hold
-            WR_NewMail(WRITE_HOLD, wrwin);
-
-            // we need to explicitly delete the autosave file here because
-            // the delete routine in WR_NewMail() doesn't catch the correct file
-            // because it only cares about the autosave file for the newly created
-            // write object
-            if(DeleteFile(fileName) == 0)
-              AddZombieFile(fileName);
-          }
-        }
-        else if(answer == 2)
-        {
-          char newFileName[SIZE_PATHFILE];
-
-          // the user wants to open the autosave file in an own new write window,
-          // so lets do it and delete the autosave file afterwards
-          int wrwin;
-
-          if((wrwin = MA_NewNew(NULL, 0)) >= 0)
-          {
-            // load the file in the new editor gadget and flag it as changed
-            FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT, TRUE);
-
-            // we don't need to delete the autosave file here as the write
-            // window itself will delete it when it will be closed. However,
-            // we do have to rename the autosave file to the one that new wrwin
-            // will expect
-            if(i != wrwin)
-              RenameFile(fileName, WR_AutoSaveFile(wrwin, newFileName, sizeof(newFileName)));
-          }
-        }
-        else if(answer == 3)
-        {
-          // just delete the autosave file
-          if(DeleteFile(fileName) == 0)
-            AddZombieFile(fileName);
-        }
-      }
-    }
-    */
+    // let us check for the existance of .autosaveXX.txt files
+    // and war the user accordingly if there exists such an
+    // autosave file.
+    CheckForAutoSaveFiles();
 
     if(yamFirst == TRUE)
     {
