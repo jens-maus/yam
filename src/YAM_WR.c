@@ -2898,11 +2898,10 @@ void CheckForAutoSaveFiles(void)
           int answer;
           char fileName[SIZE_PATHFILE];
 
-          D(DBF_MAIL, "found file '%s' macthes autosave pattern '%s'", ed->Name, pattern);
+          D(DBF_MAIL, "found file '%s' matches autosave pattern '%s'", ed->Name, pattern);
 
           // pack the filename and path together so that we can reference to it
           AddPath(fileName, G->MA_MailDir, ed->Name, sizeof(fileName));
-
 
           // now that we have identified the existance of a .autosave file
           // we go and warn the user accordingly.
