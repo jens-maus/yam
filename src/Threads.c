@@ -156,7 +156,7 @@ static BOOL InitThreadTimer(struct Thread *thread)
 {
   ENTER();
 
-  NewList((struct List*)&thread->timer_request_list);
+  NewList((struct List *)&thread->timer_request_list);
 
   if((thread->timer_port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
@@ -190,10 +190,10 @@ static void CleanupThreadTimer(struct Thread *thread)
 
   ENTER();
 
-  while((node = (struct MinNode*)RemTail((struct List*)&thread->timer_request_list)) != NULL)
+  while((node = (struct MinNode*)RemTail((struct List *)&thread->timer_request_list)) != NULL)
   {
     struct TimerMessage *dummy = NULL;
-    struct TimerMessage *timer_msg = (struct TimerMessage*)((UBYTE*)node - ((UBYTE*)&dummy->node - (UBYTE*)dummy));
+    struct TimerMessage *timer_msg = (struct TimerMessage *)((UBYTE*)node - ((UBYTE*)&dummy->node - (UBYTE*)dummy));
 
     AbortIO((struct IORequest*)&timer_msg->time_req);
     WaitIO((struct IORequest*)&timer_msg->time_req);
@@ -215,7 +215,7 @@ static void CleanupThreadTimer(struct Thread *thread)
 // Returns the mask of the thread port of the current process
 ULONG CurrentThreadMask(void)
 {
-  struct Thread *thread = (struct Thread*)(FindTask(NULL)->tc_UserData);
+  struct Thread *thread = (struct Thread *)(FindTask(NULL)->tc_UserData);
 
   return (1UL << thread->thread_port->mp_SigBit) | (1UL << thread->timer_port->mp_SigBit);
 }
@@ -228,7 +228,7 @@ void HandleThreadEvent(ULONG mask)
 
   ENTER();
 
-  thread = (struct Thread*)(FindTask(NULL)->tc_UserData);
+  thread = (struct Thread *)(FindTask(NULL)->tc_UserData);
 
   // check if the mask hits the signal bit of a thread
   if(mask & (1UL << thread->thread_port->mp_SigBit))
@@ -256,7 +256,7 @@ void HandleThreadEvent(ULONG mask)
   {
     struct TimerMessage *timer_msg;
 
-    while((timer_msg = (struct TimerMessage*)GetMsg(thread->timer_port)) != NULL)
+    while((timer_msg = (struct TimerMessage *)GetMsg(thread->timer_port)) != NULL)
     {
       struct ThreadMessage *tmsg = timer_msg->thread_msg;
 
@@ -280,7 +280,7 @@ void HandleThreadEvent(ULONG mask)
         FreeVecPooled(G->SharedMemPool, tmsg);
       }
 
-      Remove((struct Node*)&timer_msg->node);
+      Remove((struct Node *)&timer_msg->node);
       FreeVecPooled(G->SharedMemPool, timer_msg);
     }
   }
@@ -313,7 +313,7 @@ static SAVEDS void ThreadEntry(void)
   {
     D(DBF_THREAD, "Subthreaded created port at 0x%lx", thread->thread_port);
 
-    NewList((struct List*)&thread->push_list);
+    NewList((struct List *)&thread->push_list);
 
     if(InitThreadTimer(thread) == TRUE)
     {
@@ -388,7 +388,7 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
 
   ENTER();
 
-  if((thread = (struct Thread*)AllocVecPooled(G->SharedMemPool, sizeof(*thread))) != NULL)
+  if((thread = (struct Thread *)AllocVecPooled(G->SharedMemPool, sizeof(*thread))) != NULL)
   {
     struct ThreadMessage *msg;
 
@@ -544,7 +544,7 @@ static struct ThreadMessage *CreateThreadMessage(void *function, int argcount, v
 
   if((tmsg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage))) != NULL)
   {
-    struct MsgPort *subthread_port = ((struct Thread*)(FindTask(NULL)->tc_UserData))->thread_port;
+    struct MsgPort *subthread_port = ((struct Thread *)(FindTask(NULL)->tc_UserData))->thread_port;
 
     tmsg->msg.mn_ReplyPort = subthread_port;
     tmsg->msg.mn_Length = sizeof(struct ThreadMessage);
@@ -817,9 +817,9 @@ int PushThreadFunction(void *function, int argcount, ...)
 
   if((tmsg = CreateThreadMessage(function, argcount, argptr)) != NULL)
   {
-    struct Thread *this_thread = ((struct Thread*)(FindTask(NULL)->tc_UserData));
+    struct Thread *this_thread = ((struct Thread *)(FindTask(NULL)->tc_UserData));
 
-    AddTail((struct List*)&this_thread->push_list, &tmsg->msg.mn_Node);
+    AddTail((struct List *)&this_thread->push_list, &tmsg->msg.mn_Node);
     rc = 1;
   }
 
@@ -846,21 +846,26 @@ int PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
 
   if((tmsg = CreateThreadMessage(function, argcount, argptr)) != NULL)
   {
-    struct Thread *thread = ((struct Thread*)(FindTask(NULL)->tc_UserData));
+    struct Thread *thread = ((struct Thread *)(FindTask(NULL)->tc_UserData));
     struct TimerMessage *timer_msg = AllocVecPooled(G->SharedMemPool, sizeof(struct TimerMessage));
 
     if(timer_msg != NULL)
     {
+      div_t milli;
+
+      milli = div(millis, 1000);
+
       timer_msg->time_req = *thread->timer_req;
       timer_msg->time_req.Request.io_Command = TR_ADDREQUEST;
-      timer_msg->time_req.Time.Seconds = millis / 1000;
-      timer_msg->time_req.Time.Microseconds = (millis % 1000)*1000;
+      timer_msg->time_req.Time.Seconds = milli.quot;
+      timer_msg->time_req.Time.Microseconds = milli.rem * 1000;
       timer_msg->thread_msg = tmsg;
 
-      SendIO(&timer_msg->time_req.Request);
+      // first enqueue the timer_msg in our request list
+      AddTail((struct List *)&thread->timer_request_list, (struct Node *)&timer_msg->node);
 
-      // Enqueue the timer_msg in our request list
-      AddTail((struct List*)&thread->timer_request_list,(struct Node*)&timer_msg->node);
+      // then start the timer
+      SendIO(&timer_msg->time_req.Request);
 
       rc = 1;
     }
@@ -906,10 +911,10 @@ BOOL InitThreads(void)
     InitThreadTimer(&G->mainThread);
 
     // prepare the threads' function push list
-    NewList((struct List*)&G->mainThread.push_list);
+    NewList((struct List *)&G->mainThread.push_list);
 
     // initialize the subThread list
-    NewList((struct List*)&G->subThreadList);
+    NewList((struct List *)&G->subThreadList);
 
     // set the user data of the main thread
     Forbid();
@@ -969,16 +974,18 @@ void CleanupThreads(void)
         // wait half a second to give our threads enough time
         // to terminate its jobs...
         if(timeout == NULL &&
-           (timeout = (struct TimerMessage*)AllocVecPooled(G->SharedMemPool, sizeof(*timeout))) != NULL)
+           (timeout = (struct TimerMessage *)AllocVecPooled(G->SharedMemPool, sizeof(*timeout))) != NULL)
         {
           timeout->time_req = *G->mainThread.timer_req;
           timeout->time_req.Request.io_Command = TR_ADDREQUEST;
           timeout->time_req.Time.Seconds = 0;
           timeout->time_req.Time.Microseconds = 500000;
-          SendIO(&timeout->time_req.Request);
 
-          // Enqueue the timer_msg in our request list
-          AddTail((struct List*)&G->mainThread.timer_request_list, (struct Node*)&timeout->node);
+          // first enqueue the timer_msg in our request list
+          AddTail((struct List *)&G->mainThread.timer_request_list, (struct Node *)&timeout->node);
+
+          // then start the timer
+          SendIO(&timeout->time_req.Request);
         }
 
         // wait until the main thread or its timer
@@ -991,7 +998,7 @@ void CleanupThreads(void)
         {
           struct TimerMessage *timer;
 
-          while((timer = (struct TimerMessage*)GetMsg(G->mainThread.timer_port)) != NULL)
+          while((timer = (struct TimerMessage *)GetMsg(G->mainThread.timer_port)) != NULL)
           {
             if(timer == timeout)
             {
@@ -1002,7 +1009,7 @@ void CleanupThreads(void)
               AbortThread(node->thread);
             }
 
-            Remove((struct Node*)&timer->node);
+            Remove((struct Node *)&timer->node);
             FreeVecPooled(G->SharedMemPool, timer);
           }
         }
@@ -1120,7 +1127,7 @@ void thread_wait(void (*timer_callback(void *)), void *timer_data, int millis)
   struct timer timer;
   if(timer_init(&timer))
   {
-    struct Thread *this_thread = ((struct Thread*)(FindTask(NULL)->tc_UserData));
+    struct Thread *this_thread = ((struct Thread *)(FindTask(NULL)->tc_UserData));
     struct MsgPort *this_thread_port = this_thread->thread_port;
     if(millis < 0) millis = 0;
 
@@ -1151,7 +1158,7 @@ void thread_wait(void (*timer_callback(void *)), void *timer_data, int millis)
       }
 
       // Now perform any pending push calls
-      while ((tmsg = (struct ThreadMessage*)RemHead((struct List*)&this_thread->push_list)))
+      while ((tmsg = (struct ThreadMessage*)RemHead((struct List *)&this_thread->push_list)))
       {
         if(tmsg->function)
         {

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-24  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c: swapped the timer start and the enqueue operation of the request
+    to ensure that the node is in the list before the timer expires for *very*
+    short delays.
+
 2008-05-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * MimeTypes.c: added a missing include statement which ended up in a
