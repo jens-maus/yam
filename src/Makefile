@@ -159,6 +159,7 @@ BUILDID = 0
 PREFIX    = $(CDTHIS)
 CLASSDIR  = $(PREFIX)classes
 REXXDIR   = $(PREFIX)rexx
+MIMEDIR   = $(PREFIX)mime
 LOCALE    = $(PREFIX)$(CDUP)locale
 EXTRASRC  = $(PREFIX)extrasrc
 TOOLS     = $(PREFIX)tools
@@ -375,6 +376,14 @@ REXX = \
 	writesubject.o \
 	writeto.o
 
+MIME = base64.o \
+       qprintable.o \
+       uucode.o \
+       rfc1738.o \
+       rfc2047.o \
+       rfc2231.o \
+       md5.o
+
 # and the other object files where
 # YAM_global.o and YAM.o have to stay at the top
 OBJS = \
@@ -382,6 +391,7 @@ OBJS = \
 	YAM.o \
 	$(addprefix $(CLASSDIR)/,$(CLASSES)) \
 	$(addprefix $(REXXDIR)/,$(REXX)) \
+	$(addprefix $(MIMEDIR)/,$(MIME)) \
 	YAM_AB.o \
 	YAM_CO.o \
 	YAM_COg.o \
@@ -408,7 +418,7 @@ OBJS = \
 	ImageCache.o \
 	Locale.o \
 	MailList.o \
-	Mime.o \
+	MimeTypes.o \
 	MUIObjects.o \
 	ParseEmail.o \
 	Requesters.o \
@@ -445,14 +455,22 @@ CATALOGS = \
 
 # main target
 .PHONY: all
-all: $(OBJDIR) classinfo Locale.c ParseEmail.c HTML2Mail.c $(TARGET)
+all: $(OBJDIR) $(OBJDIR)/$(CLASSDIR) $(OBJDIR)/$(REXXDIR) \
+ $(OBJDIR)/$(MIMEDIR) classinfo Locale.c ParseEmail.c HTML2Mail.c $(TARGET)
 
 # make the object directories
 $(OBJDIR):
 	@echo "  MK $@"
 	@$(MKDIR) $(OBJDIR)
+
+$(OBJDIR)/$(CLASSDIR): $(OBJDIR)
 	@$(MKDIR) $(OBJDIR)/$(CLASSDIR)
+
+$(OBJDIR)/$(REXXDIR): $(OBJDIR)
 	@$(MKDIR) $(OBJDIR)/$(REXXDIR)
+
+$(OBJDIR)/$(MIMEDIR): $(OBJDIR)
+	@$(MKDIR) $(OBJDIR)/$(MIMEDIR)
 
 # for compiling single .c files
 %.o: %.c

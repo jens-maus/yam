@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Mime.c, mime, misc: splitted the Mime.c file into smaller modules and
+    put them into the "mime" subdirectory. Now, e.g., the base64 routines
+    are in a separate file instead of having all those mime encoding/decoding
+    routines in one file. In addition, renamed the old Mime.c to MimeTypes.c
+    as only the mime types managing routines are left here.
+
 2008-05-23  Jens Langner <Jens.Langner@light-speed.de>
 
   * tools/genclasses, misc: added a parameter type check to the GenClasses

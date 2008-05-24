@@ -51,12 +51,16 @@
 #include "YAM_utilities.h"
 
 #include "classes/Classes.h"
+#include "mime/rfc2231.h"
+#include "mime/rfc2047.h"
+#include "mime/base64.h"
+#include "mime/qprintable.h"
+#include "mime/uucode.h"
 
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
-#include "Mime.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 

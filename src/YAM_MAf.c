@@ -56,13 +56,15 @@
 #include "YAM_read.h"
 #include "YAM_userlist.h"
 #include "YAM_utilities.h"
+
 #include "classes/Classes.h"
+#include "mime/base64.h"
+#include "mime/rfc2047.h"
 
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
-#include "Mime.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Rexx.h"

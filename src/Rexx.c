@@ -46,7 +46,6 @@
 #include "YAM.h"
 #include "YAM_utilities.h"
 
-#include "Mime.h"
 #include "Rexx.h"
 
 #include "Debug.h"

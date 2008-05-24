@@ -57,7 +57,7 @@
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
-#include "Mime.h"
+#include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 

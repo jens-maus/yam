@@ -37,7 +37,7 @@
 #include "BayesFilter.h"
 #include "FolderList.h"
 #include "MailList.h"
-#include "Mime.h"
+#include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 

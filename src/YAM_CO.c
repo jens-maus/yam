@@ -70,7 +70,7 @@
 
 #include "FileInfo.h"
 #include "Locale.h"
-#include "Mime.h"
+#include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 

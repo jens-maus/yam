@@ -42,6 +42,7 @@
 // forward declarations
 struct ReadMailData;
 struct Mail;
+struct codeset;
 
 // Types of string outputs the DateStamp2String()
 // function can handle. Please note that in case the
@@ -261,6 +262,7 @@ void     ClearMailList(struct Folder *folder, BOOL resetstats);
 BOOL     DeleteZombieFiles(BOOL force);
 void     CloseTempFile(struct TempFile *tf);
 ULONG    CRC32(const void *buffer, unsigned int count, ULONG crc);
+char *   strippedCharsetName(const struct codeset* codeset);
 BOOL     ConvertCRLF(char *in, char *out, BOOL to);
 unsigned char ConvertKey(const struct IntuiMessage *imsg);
 BOOL     CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh);

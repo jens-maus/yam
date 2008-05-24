@@ -69,6 +69,7 @@
 #include "YAM_write.h"
 
 #include "classes/Classes.h"
+#include "mime/base64.h"
 
 #include "UpdateCheck.h"
 #include "HTML2Mail.h"
@@ -77,7 +78,7 @@
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
-#include "Mime.h"
+#include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Rexx.h"

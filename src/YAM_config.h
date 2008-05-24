@@ -31,6 +31,7 @@
 #include <libraries/mui.h>
 
 #include "YAM_read.h"
+#include "YAM_utilities.h"
 
 #include "UpdateCheck.h"
 

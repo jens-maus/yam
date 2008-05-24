@@ -1,5 +1,5 @@
-#ifndef MIME_H
-#define MIME_H
+#ifndef MIMETYPES_H
+#define MIMETYPES_H
 
 /***************************************************************************
 
@@ -28,41 +28,8 @@
 
 ***************************************************************************/
 
-#include <stdio.h>
-
-#include "YAM_stringsizes.h"
-
 // forward declarations
 struct codeset;
-
-// codesets.library helper functions
-char *strippedCharsetName(const struct codeset* codeset);
-
-// base64 encoding/decoding routines
-int base64encode(char *to, const unsigned char *from, unsigned int len);
-int base64decode(char *to, const unsigned char *from, unsigned int len);
-long base64encode_file(FILE *in, FILE *out, BOOL convLF);
-long base64decode_file(FILE *in, FILE *out,
-                       struct codeset *srcCodeset, BOOL convCRLF);
-
-// quoted-printable encoding/decoding routines
-long qpencode_file(FILE *in, FILE *out);
-long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset);
-
-// uucode encoding/decoding routines
-long uuencode_file(FILE *in, FILE *out);
-long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset);
-
-// rfc2047 encoding/decoding routines
-int rfc2047_encode_file(FILE *fh, const char *str, const size_t offset);
-int rfc2047_decode(char *dst, const char *src, unsigned int maxlen);
-
-// rfc1738 URL encoding/decoding routines
-int urlencode(char *to, const char *from, unsigned int len);
-
-// rfc2231 encoding/decoding routines
-int rfc2231_encode_file(FILE *fh, const char *paramName, const char *str);
-int rfc2231_decode(char *attr, char *value, char **result, struct codeset **cs);
 
 // MimeType management
 struct MimeTypeNode
@@ -136,17 +103,4 @@ enum IntMimeTypeID
   MT_ME_EMAIL    // message/rfc822
 };
 
-// MD5 message digest routines
-struct MD5Context
-{
-  unsigned long state[4];
-  unsigned long count[2];
-  unsigned char buffer[64];
-};
-
-void md5init(struct MD5Context *ctx);
-void md5update(struct MD5Context *ctx, unsigned char const *buf, unsigned int len);
-void md5final(unsigned char digest[16], struct MD5Context *ctx);
-void md5hmac(unsigned char *text, int text_len, unsigned char *key, int key_len, unsigned char digest[16]);
-
-#endif /* MIME_H */
+#endif // MIMETYPES_H

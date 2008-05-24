@@ -62,9 +62,9 @@
 #include "YAM_write.h"
 
 #include "classes/Classes.h"
+#include "mime/base64.h"
 
 #include "Locale.h"
-#include "Mime.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 

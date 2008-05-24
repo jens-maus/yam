@@ -96,7 +96,7 @@
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
-#include "Mime.h"
+#include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Requesters.h"
@@ -3750,6 +3750,7 @@ HOOKPROTONHNO(GeneralDesFunc, long, void *entry)
 }
 MakeHook(GeneralDesHook, GeneralDesFunc);
 ///
+
 /*** MUI related ***/
 /// SafeOpenWindow
 //  Tries to open a window
@@ -5346,6 +5347,29 @@ ULONG CRC32(const void *buffer, unsigned int count, ULONG crc)
   RETURN(crc);
   return crc;
 }
+///
+/// strippedCharsetName()
+// return the charset code stripped and without any white spaces
+char *strippedCharsetName(const struct codeset* codeset)
+{
+  char *strStart = TrimStart(codeset->name);
+  char *strEnd = strchr(strStart, ' ');
+
+  if(strEnd > strStart || strStart > codeset->name)
+  {
+    static char strippedName[SIZE_CTYPE+1];
+
+    if(strEnd > strStart && (size_t)(strEnd-strStart) < sizeof(strippedName))
+      strlcpy(strippedName, strStart, strEnd-strStart+1);
+    else
+      strlcpy(strippedName, strStart, sizeof(strippedName));
+
+    return strippedName;
+  }
+  else
+    return codeset->name;
+}
+
 ///
 
 /*** REXX interface support ***/

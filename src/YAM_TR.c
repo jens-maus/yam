@@ -70,14 +70,16 @@
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
+
 #include "classes/Classes.h"
+#include "mime/base64.h"
+#include "mime/md5.h"
 
 #include "AppIcon.h"
 #include "HashTable.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MailList.h"
-#include "Mime.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 

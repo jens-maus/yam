@@ -54,10 +54,11 @@
 #include "YAM_global.h"
 #include "YAM_transfer.h"
 #include "YAM_utilities.h"
+
 #include "classes/Classes.h"
+#include "mime/rfc1738.h"
 
 #include "Locale.h"
-#include "Mime.h"
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
 
