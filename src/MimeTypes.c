@@ -28,6 +28,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if !defined(__amigaos4__)
+#include <clib/alib_protos.h>
+#endif
+
 #include <proto/exec.h>
 
 #include "YAM_stringsizes.h"
