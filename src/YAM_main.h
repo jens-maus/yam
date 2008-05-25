@@ -164,14 +164,14 @@ enum ImportanceLevel { IMP_NORMAL=0, // normal (default)
                      };
 
 // Mail creation modes
-enum NewMode { NEW_NEW=0,     // composing a new mail
-               NEW_REPLY,     // replying to an existing mail
-               NEW_FORWARD,   // forwarding an existing mail
-               NEW_BOUNCE,    // bounce an existing mail back to the sender
-               NEW_EDIT,      // edit a mail in the outgoing folder
-               NEW_EDITASNEW, // edit an existing sent/received mail
-               NEW_SAVEDEC    // create a decrypted copy of a PGP mail
-             };
+enum NewMailMode { NMM_NEW=0,     // composing a new mail
+                   NMM_REPLY,     // replying to an existing mail
+                   NMM_FORWARD,   // forwarding an existing mail
+                   NMM_BOUNCE,    // bounce an existing mail back to the sender
+                   NMM_EDIT,      // edit a mail in the outgoing folder
+                   NMM_EDITASNEW, // edit an existing sent/received mail
+                   NMM_SAVEDEC    // create a decrypted copy of a PGP mail
+                 };
 
 // Mail forward modes
 enum ForwardMode { FWM_ATTACH=0, // forward mail as attachment
@@ -366,7 +366,7 @@ void  MA_SetupQuickSearchBar(void);
 char *MA_GetRealSubject(char *sub);
 void  MA_ChangeSelected(BOOL forceUpdate);
 
-enum NewMode CheckNewMailQualifier(const enum NewMode mode, const ULONG qualifier, int *flags);
-struct WriteMailData *NewMessage(enum NewMode mode, const int flags);
+enum NewMailMode CheckNewMailQualifier(const enum NewMailMode mode, const ULONG qualifier, int *flags);
+struct WriteMailData *NewMessage(enum NewMailMode mode, const int flags);
 
 #endif /* YAM_MAIN_H */

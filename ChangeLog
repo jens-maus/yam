@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: changed the autosavefilename composing function to always
+    generate ".autosaveXX.txt" files with two digits.
+  * YAM_WR.c, misc: changed the CreateWriteWindow() function to accept an
+    additional paramater with the "mode" the write is being initialized for.
+    In addition, changed the "enum NewMode" to be called "enum NewMailMode"
+    and used respectively.
+
 2008-05-25  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: changed the pattern for the autosave files to accept numbers only

@@ -972,6 +972,7 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
+        ATTR(Mode): data->wmData->mode = (enum NewMailMode)tag->ti_Data; break;
         ATTR(Quiet): data->wmData->quietMode = (BOOL)tag->ti_Data; break;
       }
     }
@@ -3368,7 +3369,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   // get the content of the Subject: String gadget and check if it is empty or not.
   comp.Subject = (char *)xget(data->ST_SUBJECT, MUIA_String_Contents);
-  if(wmData->mode != NEW_BOUNCE && wmData->quietMode == FALSE && C->WarnSubject == TRUE &&
+  if(wmData->mode != NMM_BOUNCE && wmData->quietMode == FALSE && C->WarnSubject == TRUE &&
      (comp.Subject == NULL || comp.Subject[0] == '\0'))
   {
     if(winOpen == TRUE)
@@ -3387,7 +3388,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   comp.refMail = wmData->refMail;
   comp.OldSecurity = wmData->oldSecurity;
 
-  if(wmData->mode != NEW_BOUNCE)
+  if(wmData->mode != NMM_BOUNCE)
   {
     // now we check the From gadget and raise an error if is invalid
     addr = (char *)DoMethod(data->ST_FROM, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
@@ -3526,7 +3527,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   // or created off.
   switch(wmData->mode)
   {
-    case NEW_EDIT:
+    case NMM_EDIT:
     {
       if(wmData->refMail != NULL && MailExists(wmData->refMail, NULL) == TRUE)
       {
@@ -3536,8 +3537,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
     }
     // continue
 
-    case NEW_EDITASNEW:
-      wmData->mode = NEW_NEW;
+    case NMM_EDITASNEW:
+      wmData->mode = NMM_NEW;
     // continue
 
     default:
@@ -3609,7 +3610,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
         // if this write operation was an edit mode
         // we have to check all existing readmail objects for
         // references and update them accordingly.
-        if(wmData->mode == NEW_EDIT && wmData->refMail != NULL)
+        if(wmData->mode == NMM_EDIT && wmData->refMail != NULL)
         {
           struct MinNode *curNode;
 
@@ -3638,7 +3639,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
       MA_FreeEMailStruct(email);
     }
 
-    if(wmData->mode != NEW_NEW)
+    if(wmData->mode != NMM_NEW)
     {
       struct MailList *mlist;
 
@@ -3671,15 +3672,15 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
             switch(wmData->mode)
             {
-              case NEW_REPLY:
+              case NMM_REPLY:
               {
                 setStatusToReplied(mail);
                 DisplayStatistics(mail->Folder, FALSE);
               }
               break;
 
-              case NEW_FORWARD:
-              case NEW_BOUNCE:
+              case NMM_FORWARD:
+              case NMM_BOUNCE:
               {
                 setStatusToForwarded(mail);
                 DisplayStatistics(mail->Folder, FALSE);
@@ -3701,12 +3702,12 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // output a log entry about the write operation
     switch(wmData->mode)
     {
-      case NEW_NEW:
-      case NEW_EDITASNEW:
+      case NMM_NEW:
+      case NMM_EDITASNEW:
         AppendToLogfile(LF_ALL, 10, tr(MSG_LOG_Creating), AddrName(newMail->To), newMail->Subject, numAttachments);
       break;
 
-      case NEW_REPLY:
+      case NMM_REPLY:
       {
         struct MailNode *mnode = FirstMailNode(wmData->refMailList);
 
@@ -3717,7 +3718,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
       }
       break;
 
-      case NEW_FORWARD:
+      case NMM_FORWARD:
       {
         struct MailNode *mnode = FirstMailNode(wmData->refMailList);
 
@@ -3728,7 +3729,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
       }
       break;
 
-      case NEW_BOUNCE:
+      case NMM_BOUNCE:
       {
         if(wmData->refMail)
           AppendToLogfile(LF_ALL, 13, tr(MSG_LOG_Bouncing), AddrName(wmData->refMail->From), wmData->refMail->Subject, AddrName(newMail->To));
@@ -3737,13 +3738,13 @@ DECLARE(ComposeMail) // enum WriteMode mode
       }
       break;
 
-      case NEW_EDIT:
+      case NMM_EDIT:
       {
         AppendToLogfile(LF_ALL, 14, tr(MSG_LOG_Editing), AddrName(newMail->From), AddrName(newMail->To), newMail->Subject);
       }
       break;
 
-      case NEW_SAVEDEC:
+      case NMM_SAVEDEC:
         // not used
       break;
     }
@@ -3877,7 +3878,7 @@ DECLARE(DoAutoSave)
 
   ENTER();
 
-  if(data->wmData->mode != NEW_BOUNCE)
+  if(data->wmData->mode != NMM_BOUNCE)
   {
     // do the autosave only if something was modified
     if(xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
@@ -3914,7 +3915,7 @@ DECLARE(CancelAction)
 
   ENTER();
 
-  if(data->wmData->mode != NEW_BOUNCE &&
+  if(data->wmData->mode != NMM_BOUNCE &&
      data->wmData->quietMode == FALSE)
   {
     // ask the user what to do if the mail text was modified

@@ -353,7 +353,7 @@ DECLARE(DoubleClicked) // LONG entryNum
     {
       // in case the folder is the "outgoing" folder
       // we edit the mail instead.
-      DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NEW_EDIT, 0);
+      DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_EDIT, 0);
     }
     else
     {

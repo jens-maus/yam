@@ -82,7 +82,7 @@ void rx_mailbounce(UNUSED struct RexxHost *host, struct RexxParams *params, enum
         CleanupWriteMailData(G->ActiveRexxWMData);
       }
 
-      if((wmData = NewMessage(NEW_BOUNCE, args->quiet ? NEWF_QUIET : 0L)) != NULL)
+      if((wmData = NewMessage(NMM_BOUNCE, args->quiet ? NEWF_QUIET : 0L)) != NULL)
       {
         G->ActiveRexxWMData = wmData;
 

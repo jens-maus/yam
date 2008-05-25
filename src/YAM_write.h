@@ -63,7 +63,7 @@ struct WriteMailData
 
   struct Mail *     refMail;            // ptr to the original mail this write operation was created from
   struct MailList * refMailList;        // ptr to a list of orginal mails.
-  enum NewMode      mode;               // the compose mode this write mail operation
+  enum NewMailMode  mode;               // the compose mode this write mail operation
   char *            inReplyToMsgID;     // ptr to "In-Reply-To:" message header to compose the message for
   char *            references;         // ptr to "References:" message header to compose the message for
   struct codeset *  charset;            // the character set being used for this mail
@@ -134,7 +134,7 @@ struct Compose
   char *             references;     // ptr to References MsgIDs
   struct WritePart * FirstPart;
   struct Mail *      refMail;        // ptr to the original mail we composing a new one from.
-  int                Mode;
+  enum NewMailMode   Mode;           // the mode this mail was composed of
   int                Importance;
   int                Signature;
   BOOL               RequestMDN;     // should a MDN be requested
@@ -148,19 +148,13 @@ struct Compose
 // Soft-style modes for text
 enum SoftStyleMode { SSM_NORMAL, SSM_BOLD, SSM_ITALIC, SSM_UNDERLINE, SSM_COLOR };
 
-extern struct Hook WR_EditHook;
-extern struct Hook WR_NewMailHook;
-extern struct Hook WR_SetSoftStyleHook;
-extern struct Hook WR_SearchHook;
-extern struct Hook WR_EditorCmdHook;
-
 void  EmitHeader(FILE *fh, const char *hdr, const char *body);
 void  FreePartsList(struct WritePart *p);
 char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length);
 void  WR_NewMail(enum WriteMode mode, int winnum);
 BOOL  WriteOutMessage(struct Compose *comp);
 
-struct WriteMailData *CreateWriteWindow(const BOOL quietMode);
+struct WriteMailData *CreateWriteWindow(const enum NewMailMode mailMode, const BOOL quietMode);
 struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags);
 struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags);
 struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags);

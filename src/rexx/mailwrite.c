@@ -91,7 +91,7 @@ void rx_mailwrite(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
       {
         struct WriteMailData *wmData;
 
-        if((wmData = NewMessage(NEW_NEW, args->quiet ? NEWF_QUIET : 0L)) != NULL)
+        if((wmData = NewMessage(NMM_NEW, args->quiet ? NEWF_QUIET : 0L)) != NULL)
         {
           G->ActiveRexxWMData = wmData;
 

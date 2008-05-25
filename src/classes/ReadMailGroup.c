@@ -795,8 +795,8 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
   switch(xget(m->item, MUIA_UserData))
   {
-    case RMEN_REPLY:    DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NEW_REPLY, 0); break;
-    case RMEN_FORWARD:  DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NEW_FORWARD, 0); break;
+    case RMEN_REPLY:    DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_REPLY, 0); break;
+    case RMEN_FORWARD:  DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD, 0); break;
     case RMEN_MOVE:     DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
     case RMEN_COPY:     DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;
     case RMEN_DISPLAY:  DoMethod(obj, MUIM_ReadMailGroup_DisplayMailRequest); break;
@@ -1486,7 +1486,7 @@ DECLARE(SaveDecryptedMail)
 
       setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
 
-      comp.Mode = NEW_SAVEDEC;
+      comp.Mode = NMM_SAVEDEC;
       comp.refMail = mail;
       if((comp.FirstPart = NewMIMEpart(NULL)) != NULL)
       {

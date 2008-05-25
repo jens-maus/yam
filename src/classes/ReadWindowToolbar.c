@@ -216,8 +216,8 @@ DECLARE(InitNotify) // Object *readWindow, Object *readMailGroup
   DoMethod(obj, MUIM_TheBar_Notify, TB_READ_PRINT,      MUIA_Pressed, FALSE, readMailGroup, 1, MUIM_ReadMailGroup_PrintMailRequest);
   DoMethod(obj, MUIM_TheBar_Notify, TB_READ_DELETE,     MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_DeleteMailRequest, MUIV_TheBar_Qualifier);
   DoMethod(obj, MUIM_TheBar_Notify, TB_READ_MOVE,       MUIA_Pressed, FALSE, readWindow, 1, MUIM_ReadWindow_MoveMailRequest);
-  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_REPLY,      MUIA_Pressed, FALSE, readWindow, 3, MUIM_ReadWindow_NewMail, NEW_REPLY, MUIV_TheBar_Qualifier);
-  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_FORWARD,    MUIA_Pressed, FALSE, readWindow, 3, MUIM_ReadWindow_NewMail, NEW_FORWARD, MUIV_TheBar_Qualifier);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_REPLY,      MUIA_Pressed, FALSE, readWindow, 3, MUIM_ReadWindow_NewMail, NMM_REPLY, MUIV_TheBar_Qualifier);
+  DoMethod(obj, MUIM_TheBar_Notify, TB_READ_FORWARD,    MUIA_Pressed, FALSE, readWindow, 3, MUIM_ReadWindow_NewMail, NMM_FORWARD, MUIV_TheBar_Qualifier);
   DoMethod(obj, MUIM_TheBar_Notify, TB_READ_SPAM,       MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_ClassifyMessage, BC_SPAM);
   DoMethod(obj, MUIM_TheBar_Notify, TB_READ_HAM,        MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_ClassifyMessage, BC_HAM);
 

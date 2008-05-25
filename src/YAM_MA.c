@@ -1557,7 +1557,7 @@ MakeHook(MA_SavePrintHook, MA_SavePrintFunc);
 ///
 /// NewMessage
 //  Starts a new message
-struct WriteMailData *NewMessage(enum NewMode mode, const int flags)
+struct WriteMailData *NewMessage(enum NewMailMode mode, const int flags)
 {
   struct WriteMailData *wmData = NULL;
 
@@ -1565,11 +1565,11 @@ struct WriteMailData *NewMessage(enum NewMode mode, const int flags)
 
   switch(mode)
   {
-    case NEW_NEW:
+    case NMM_NEW:
       wmData = NewWriteMailWindow(NULL, flags);
     break;
 
-    case NEW_EDIT:
+    case NMM_EDIT:
     {
       struct Mail *mail;
 
@@ -1578,7 +1578,7 @@ struct WriteMailData *NewMessage(enum NewMode mode, const int flags)
     }
     break;
 
-    case NEW_BOUNCE:
+    case NMM_BOUNCE:
     {
       struct Mail *mail;
 
@@ -1587,7 +1587,7 @@ struct WriteMailData *NewMessage(enum NewMode mode, const int flags)
     }
     break;
 
-    case NEW_FORWARD:
+    case NMM_FORWARD:
     {
       struct MailList *mlist;
 
@@ -1600,7 +1600,7 @@ struct WriteMailData *NewMessage(enum NewMode mode, const int flags)
     }
     break;
 
-    case NEW_REPLY:
+    case NMM_REPLY:
     {
       struct MailList *mlist;
 
@@ -1613,8 +1613,8 @@ struct WriteMailData *NewMessage(enum NewMode mode, const int flags)
     }
     break;
 
-    case NEW_EDITASNEW:
-    case NEW_SAVEDEC:
+    case NMM_EDITASNEW:
+    case NMM_SAVEDEC:
       // not used
     break;
   }
@@ -1627,7 +1627,7 @@ struct WriteMailData *NewMessage(enum NewMode mode, const int flags)
 /// MA_NewMessageFunc
 HOOKPROTONHNO(MA_NewMessageFunc, void, int *arg)
 {
-  enum NewMode mode = arg[0];
+  enum NewMailMode mode = arg[0];
   ULONG qual = arg[1];
   int flags;
 
@@ -1649,9 +1649,9 @@ MakeHook(MA_NewMessageHook, MA_NewMessageFunc);
 
 ///
 /// CheckNewMailQualifier()
-enum NewMode CheckNewMailQualifier(const enum NewMode mode, const ULONG qualifier, int *flags)
+enum NewMailMode CheckNewMailQualifier(const enum NewMailMode mode, const ULONG qualifier, int *flags)
 {
-  enum NewMode newMode = mode;
+  enum NewMailMode newMode = mode;
 
   ENTER();
 
@@ -1659,13 +1659,13 @@ enum NewMode CheckNewMailQualifier(const enum NewMode mode, const ULONG qualifie
   *flags = 0;
 
   // depending on the newmode we go and check different qualifiers
-  if(mode == NEW_FORWARD)
+  if(mode == NMM_FORWARD)
   {
     // if the user pressed LSHIFT or RSHIFT while pressing
     // the 'forward' toolbar we do a BOUNCE message action
     // instead.
     if(hasFlag(qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
-      newMode = NEW_BOUNCE;
+      newMode = NMM_BOUNCE;
     else
     {
       // flag the forward message action to not
@@ -1680,7 +1680,7 @@ enum NewMode CheckNewMailQualifier(const enum NewMode mode, const ULONG qualifie
         SET_FLAG(*flags, NEWF_FWD_ALTMODE);
     }
   }
-  else if(mode == NEW_REPLY)
+  else if(mode == NMM_REPLY)
   {
     // flag the reply mail action to reply to the
     // sender of the mail directly
@@ -4027,7 +4027,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SENDMAIL,  MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ALL_USER);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXMAIL,    MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, POP_USER, -1, IEQUALIFIER_LSHIFT);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_READ,      MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ReadMessageHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT,      MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NEW_EDIT, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT,      MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_EDIT, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MOVE,      MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_MoveMessageHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_COPY,      MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_CopyMessageHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETE,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_DeleteMessageHook, 0);
@@ -4036,10 +4036,10 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DETACH,    MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_SaveAttachHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CROP,      MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_RemoveAttachHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXPMSG,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ExportMessagesHook, FALSE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEW,       MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NEW_NEW, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_REPLY,     MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NEW_REPLY, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FORWARD,   MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NEW_FORWARD, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_BOUNCE,    MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NEW_BOUNCE, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEW,       MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_NEW, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_REPLY,     MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_REPLY, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FORWARD,   MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_FORWARD, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_BOUNCE,    MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_BOUNCE, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SAVEADDR,  MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_GetAddressHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CHSUBJ,    MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ChangeSubjectHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SEND,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ACTIVE_USER);

@@ -490,7 +490,7 @@ OVERLOAD(OM_NEW)
     set(obj, MUIA_Window_DefaultObject, data->readMailGroup);
 
     // set some Notifies
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT,      obj, 3, MUIM_ReadWindow_NewMail, NEW_EDIT, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT,      obj, 3, MUIM_ReadWindow_NewMail, NMM_EDIT, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_MOVE,      obj, 1, MUIM_ReadWindow_MoveMailRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_COPY,      obj, 1, MUIM_ReadWindow_CopyMailRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DELETE,    obj, 2, MUIM_ReadWindow_DeleteMailRequest, 0);
@@ -499,10 +499,10 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DISPLAY,   data->readMailGroup, 1, MUIM_ReadMailGroup_DisplayMailRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DETACH,    data->readMailGroup, 1, MUIM_ReadMailGroup_SaveAllAttachments);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CROP,      data->readMailGroup, 1, MUIM_ReadMailGroup_CropAttachmentsRequest);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEW,       obj, 3, MUIM_ReadWindow_NewMail, NEW_NEW, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_REPLY,     obj, 3, MUIM_ReadWindow_NewMail, NEW_REPLY, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FORWARD,   obj, 3, MUIM_ReadWindow_NewMail, NEW_FORWARD, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_BOUNCE,    obj, 3, MUIM_ReadWindow_NewMail, NEW_BOUNCE, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEW,       obj, 3, MUIM_ReadWindow_NewMail, NMM_NEW, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_REPLY,     obj, 3, MUIM_ReadWindow_NewMail, NMM_REPLY, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FORWARD,   obj, 3, MUIM_ReadWindow_NewMail, NMM_FORWARD, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_BOUNCE,    obj, 3, MUIM_ReadWindow_NewMail, NMM_BOUNCE, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVEADDR,  obj, 1, MUIM_ReadWindow_GrabSenderAddress);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SEARCH,    data->readMailGroup, 2, MUIM_ReadMailGroup_Search, MUIF_NONE);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SEARCHAGAIN, data->readMailGroup, 2, MUIM_ReadMailGroup_Search, MUIF_ReadMailGroup_Search_Again);
@@ -803,7 +803,7 @@ DECLARE(ReadMail) // struct Mail *mail
 
 ///
 /// DECLARE(NewMail)
-DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
+DECLARE(NewMail) // enum NewMailMode mode, ULONG qualifier
 {
   GETDATA;
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
@@ -814,7 +814,7 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
   // then create a new mail depending on the current mode
   if(MailExists(mail, NULL))
   {
-    enum NewMode mode;
+    enum NewMailMode mode;
     int flags;
 
     // get the newmail flags depending on the currently
@@ -824,20 +824,20 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
 
     switch(mode)
     {
-      case NEW_NEW:
+      case NMM_NEW:
         NewWriteMailWindow(mail, flags);
       break;
 
-      case NEW_EDIT:
+      case NMM_EDIT:
         NewEditMailWindow(mail, flags);
       break;
 
-      case NEW_BOUNCE:
+      case NMM_BOUNCE:
         NewBounceMailWindow(mail, flags);
       break;
 
-      case NEW_FORWARD:
-      case NEW_REPLY:
+      case NMM_FORWARD:
+      case NMM_REPLY:
       {
         struct MailList *mlist;
 
@@ -845,7 +845,7 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
         {
           AddNewMailNode(mlist, mail);
 
-          if(mode == NEW_FORWARD)
+          if(mode == NMM_FORWARD)
             NewForwardMailWindow(mlist, flags);
           else
             NewReplyMailWindow(mlist, flags);

@@ -1074,7 +1074,7 @@ BOOL WriteOutMessage(struct Compose *comp)
 
   ENTER();
 
-  if(comp->Mode == NEW_BOUNCE)
+  if(comp->Mode == NMM_BOUNCE)
   {
     if(comp->DelSend == TRUE)
       EmitHeader(fh, "X-YAM-Options", "delsent");
@@ -1084,7 +1084,7 @@ BOOL WriteOutMessage(struct Compose *comp)
     RETURN(success);
     return success;
   }
-  else if(comp->Mode == NEW_SAVEDEC)
+  else if(comp->Mode == NMM_SAVEDEC)
   {
     if(WR_SaveDec(fh, comp) == FALSE)
     {
@@ -1242,8 +1242,7 @@ char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length)
   if(dest != NULL)
   {
     AddPath(dest, G->MA_MailDir, ".autosave", length);
-    strlcat(dest, itoa(winnr), length);
-    strlcat(dest, ".txt", length);
+    snprintf(dest, length, "%s%02d.txt", dest, winnr);
   }
 
   RETURN(dest);
@@ -1553,7 +1552,7 @@ static void SetupExpandTextData(struct ExpandTextData *etd, struct Mail *mail)
 // Function that creates a new WriteWindow object and returns
 // the referencing WriteMailData structure which was created
 // during that process - or NULL if an error occurred.
-struct WriteMailData *CreateWriteWindow(const BOOL quietMode)
+struct WriteMailData *CreateWriteWindow(const enum NewMailMode mailMode, const BOOL quietMode)
 {
   Object *newWriteWindow;
 
@@ -1563,6 +1562,7 @@ struct WriteMailData *CreateWriteWindow(const BOOL quietMode)
 
   // if we end up here we create a new WriteWindowObject
   newWriteWindow = WriteWindowObject,
+                     MUIA_WriteWindow_Mode,  mailMode,
                      MUIA_WriteWindow_Quiet, quietMode,
                    End;
 
@@ -1602,7 +1602,7 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
 
   // First check if the basic configuration is okay, then open write window */
   if(folder != NULL && CO_IsValid() == TRUE &&
-     (wmData = CreateWriteWindow(quiet)) != NULL)
+     (wmData = CreateWriteWindow(NMM_NEW, quiet)) != NULL)
   {
     FILE *out;
 
@@ -1610,7 +1610,6 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
     {
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
-      wmData->mode = NEW_NEW;
       wmData->refMail = mail;
 
       if(wmData->refMail != NULL)
@@ -1763,7 +1762,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
   // check if necessary settings fror writing are OK and open new window
   if(CO_IsValid() == TRUE &&
-     (wmData = CreateWriteWindow(quiet)) != NULL)
+     (wmData = CreateWriteWindow(isOutgoingFolder(folder) ? NMM_EDIT : NMM_EDITASNEW, quiet)) != NULL)
   {
     FILE *out;
 
@@ -1774,12 +1773,6 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
       struct ExtendedMail *email;
 
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
-
-      // flag the exact creation mode
-      if(isOutgoingFolder(folder))
-        wmData->mode = NEW_EDIT;
-      else
-        wmData->mode = NEW_EDITASNEW;
 
       wmData->refMail = mail;
 
@@ -1825,7 +1818,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             // to add the From: and ReplyTo: address of the user of
             // YAM instead of filling in the data of the mail we
             // are trying to edit.
-            if(wmData->mode == NEW_EDITASNEW)
+            if(wmData->mode == NMM_EDITASNEW)
             {
               if(folder->MLSupport == TRUE)
               {
@@ -1958,7 +1951,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
 
   // check if necessary settings fror writing are OK and open new window
   if(CO_IsValid() == TRUE &&
-     (wmData = CreateWriteWindow(quiet)) != NULL)
+     (wmData = CreateWriteWindow(NMM_FORWARD, quiet)) != NULL)
   {
     FILE *out;
 
@@ -1989,7 +1982,6 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
       // set the write mode
-      wmData->mode = NEW_FORWARD;
       wmData->refMailList = CloneMailList(mlist);
 
       // sort the mail list by date
@@ -2161,7 +2153,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
   // check if necessary settings fror writing are OK and open new window
   if(CO_IsValid() == TRUE &&
-     (wmData = CreateWriteWindow(quiet)) != NULL)
+     (wmData = CreateWriteWindow(NMM_REPLY, quiet)) != NULL)
   {
     FILE *out;
 
@@ -2187,7 +2179,6 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
       // make sure the write window know of the
       // operation and knows which mails to process
-      wmData->mode = NEW_REPLY;
       wmData->refMailList = CloneMailList(mlist);
 
       // make sure we sort the mlist according to
@@ -2861,7 +2852,6 @@ BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRe
 }
 
 ///
-
 
 /*** AutoSave files ***/
 /// CheckForAutoSaveFiles()
