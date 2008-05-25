@@ -55,7 +55,7 @@
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 
 #include "FileInfo.h"
 #include "FolderList.h"

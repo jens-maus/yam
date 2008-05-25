@@ -34,7 +34,7 @@
 #include "YAM.h"
 #include "YAM_config.h"
 
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 
 #include "DockyIcon.h"
 #include "MUIObjects.h"

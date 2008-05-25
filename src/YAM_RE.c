@@ -61,7 +61,7 @@
 #include "YAM_write.h"
 #include "YAM_utilities.h"
 
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 #include "mime/rfc2231.h"
 #include "mime/base64.h"
 #include "mime/qprintable.h"

@@ -50,7 +50,7 @@
 #include "YAM_global.h"
 #include "YAM_utilities.h"
 
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 #include "mime/rfc2231.h"
 #include "mime/rfc2047.h"
 #include "mime/base64.h"

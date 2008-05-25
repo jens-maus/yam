@@ -48,7 +48,7 @@
 #include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
 #include "YAM_error.h"
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 
 #include "ImageCache.h"
 #include "Locale.h"

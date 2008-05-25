@@ -32,7 +32,7 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 
 #include "MUIObjects.h"
 #include "Rexx.h"

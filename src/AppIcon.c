@@ -42,7 +42,7 @@
 #include "YAM_config.h"
 #include "YAM_configFile.h"
 
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 
 #include "AppIcon.h"
 #include "DockyIcon.h"

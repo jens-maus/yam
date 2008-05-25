@@ -54,9 +54,9 @@ YAM.o: YAM.c include/libraries/amisslmaster.h \
   include/mui/NListtree_mcc.h YAM_config.h YAM_read.h YAM_write.h \
   YAM_main.h UpdateCheck.h YAM_configFile.h YAM_global.h YAM_mainFolder.h \
   AppIcon.h DockyIcon.h FileInfo.h MUIObjects.h FolderList.h ImageCache.h \
-  Locale.h MailList.h Requesters.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h Debug.h
-Classes.o: classes/Classes.c classes/Classes.h classes/ClassesExtra.h \
+  Locale.h MailList.h Requesters.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h Debug.h
+Classes.o: mui/Classes.c mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
   include/mui/NList_mcc.h include/mui/NListview_mcc.h \
   include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
@@ -70,8 +70,8 @@ Classes.o: classes/Classes.c classes/Classes.h classes/ClassesExtra.h \
   Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h
-Aboutwindow.o: classes/Aboutwindow.c classes/Aboutwindow_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+Aboutwindow.o: mui/Aboutwindow.c mui/Aboutwindow_cl.h mui/Classes.h \
+  mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -86,40 +86,40 @@ Aboutwindow.o: classes/Aboutwindow.c classes/Aboutwindow_cl.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h include/mui/NFloattext_mcc.h MUIObjects.h \
   Debug.h
-AddrBookEntryList.o: classes/AddrBookEntryList.c \
-  classes/AddrBookEntryList_cl.h classes/Classes.h classes/ClassesExtra.h \
-  include/libraries/mui.h include/mui/BetterString_mcc.h \
-  include/mui/NList_mcc.h include/mui/NListview_mcc.h \
-  include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
-  include/mui/TheBar_mcc.h include/proto/muimaster.h \
-  include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
-  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
-  include/newmouse.h include/SDI_hook.h include/SDI_stdarg.h YAM.h \
-  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
-  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
-  YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
+AddrBookEntryList.o: mui/AddrBookEntryList.c mui/AddrBookEntryList_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
+  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
+  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
+  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
+  include/proto/muimaster.h include/interfaces/muimaster.h \
+  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
+  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
+  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
+  YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   MUIObjects.h Debug.h
-AddrBookListtree.o: classes/AddrBookListtree.c \
-  classes/AddrBookListtree_cl.h classes/Classes.h classes/ClassesExtra.h \
-  include/libraries/mui.h include/mui/BetterString_mcc.h \
-  include/mui/NList_mcc.h include/mui/NListview_mcc.h \
-  include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
-  include/mui/TheBar_mcc.h include/proto/muimaster.h \
-  include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
-  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
-  include/newmouse.h include/SDI_hook.h include/SDI_stdarg.h YAM.h \
-  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
-  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
-  YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
+AddrBookListtree.o: mui/AddrBookListtree.c mui/AddrBookListtree_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
+  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
+  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
+  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
+  include/proto/muimaster.h include/interfaces/muimaster.h \
+  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
+  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
+  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
+  YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbookEntry.h MailList.h MUIObjects.h \
   Debug.h
-AddrBookToolbar.o: classes/AddrBookToolbar.c classes/AddrBookToolbar_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+AddrBookToolbar.o: mui/AddrBookToolbar.c mui/AddrBookToolbar_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -134,8 +134,8 @@ AddrBookToolbar.o: classes/AddrBookToolbar.c classes/AddrBookToolbar_cl.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   ImageCache.h Debug.h
-Addrmatchlist.o: classes/Addrmatchlist.c classes/Addrmatchlist_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+Addrmatchlist.o: mui/Addrmatchlist.c mui/Addrmatchlist_cl.h mui/Classes.h \
+  mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -149,8 +149,8 @@ Addrmatchlist.o: classes/Addrmatchlist.c classes/Addrmatchlist_cl.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbookEntry.h MUIObjects.h Debug.h
-AttachmentGroup.o: classes/AttachmentGroup.c classes/AttachmentGroup_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+AttachmentGroup.o: mui/AttachmentGroup.c mui/AttachmentGroup_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -164,8 +164,8 @@ AttachmentGroup.o: classes/AttachmentGroup.c classes/AttachmentGroup_cl.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_mainFolder.h MUIObjects.h Debug.h
-AttachmentImage.o: classes/AttachmentImage.c classes/AttachmentImage_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+AttachmentImage.o: mui/AttachmentImage.c mui/AttachmentImage_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -179,8 +179,8 @@ AttachmentImage.o: classes/AttachmentImage.c classes/AttachmentImage_cl.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h MUIObjects.h Debug.h
-ConfigPageList.o: classes/ConfigPageList.c classes/ConfigPageList_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+ConfigPageList.o: mui/ConfigPageList.c mui/ConfigPageList_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -194,9 +194,9 @@ ConfigPageList.o: classes/ConfigPageList.c classes/ConfigPageList_cl.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Debug.h
-ImageArea.o: classes/ImageArea.c ImageCache.h include/mui/TheBar_mcc.h \
+ImageArea.o: mui/ImageArea.c ImageCache.h include/mui/TheBar_mcc.h \
   include/libraries/mui.h HashTable.h include/SDI_compiler.h \
-  classes/ImageArea_cl.h classes/Classes.h classes/ClassesExtra.h \
+  mui/ImageArea_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/proto/muimaster.h \
@@ -208,8 +208,8 @@ ImageArea.o: classes/ImageArea.c ImageCache.h include/mui/TheBar_mcc.h \
   BayesFilter.h Rexx.h Themes.h Timer.h Threads.h YAM_config.h YAM_read.h \
   YAM_write.h YAM_main.h UpdateCheck.h YAM_global.h YAM_utilities.h \
   Locale.h ParseEmail.h YAM_main.h YAM_read.h BayesFilter.h Debug.h
-InfoBar.o: classes/InfoBar.c classes/InfoBar_cl.h classes/Classes.h \
-  classes/ClassesExtra.h include/libraries/mui.h \
+InfoBar.o: mui/InfoBar.c mui/InfoBar_cl.h mui/Classes.h \
+  mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -223,8 +223,8 @@ InfoBar.o: classes/InfoBar.c classes/InfoBar_cl.h classes/Classes.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h MUIObjects.h Debug.h
-MailTextEdit.o: classes/MailTextEdit.c classes/MailTextEdit_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+MailTextEdit.o: mui/MailTextEdit.c mui/MailTextEdit_cl.h mui/Classes.h \
+  mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -239,25 +239,24 @@ MailTextEdit.o: classes/MailTextEdit.c classes/MailTextEdit_cl.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   MUIObjects.h Requesters.h Debug.h
-MainFolderListtree.o: classes/MainFolderListtree.c \
-  classes/MainFolderListtree_cl.h classes/Classes.h \
-  classes/ClassesExtra.h include/libraries/mui.h \
-  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
-  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
-  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
-  include/proto/muimaster.h include/interfaces/muimaster.h \
-  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
-  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
-  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
-  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
-  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
-  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
-  YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
+MainFolderListtree.o: mui/MainFolderListtree.c \
+  mui/MainFolderListtree_cl.h mui/Classes.h mui/ClassesExtra.h \
+  include/libraries/mui.h include/mui/BetterString_mcc.h \
+  include/mui/NList_mcc.h include/mui/NListview_mcc.h \
+  include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
+  include/mui/TheBar_mcc.h include/proto/muimaster.h \
+  include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
+  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
+  include/newmouse.h include/SDI_hook.h include/SDI_stdarg.h YAM.h \
+  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
+  YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
+  Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_find.h YAM_mainFolder.h FolderList.h \
   MUIObjects.h Debug.h
-MainMailList.o: classes/MainMailList.c classes/MainMailList_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+MainMailList.o: mui/MainMailList.c mui/MainMailList_cl.h mui/Classes.h \
+  mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -272,23 +271,8 @@ MainMailList.o: classes/MainMailList.c classes/MainMailList_cl.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_find.h YAM_mainFolder.h MUIObjects.h Themes.h Debug.h
-MainMailListGroup.o: classes/MainMailListGroup.c \
-  classes/MainMailListGroup_cl.h classes/Classes.h classes/ClassesExtra.h \
-  include/libraries/mui.h include/mui/BetterString_mcc.h \
-  include/mui/NList_mcc.h include/mui/NListview_mcc.h \
-  include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
-  include/mui/TheBar_mcc.h include/proto/muimaster.h \
-  include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
-  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
-  include/newmouse.h include/SDI_hook.h include/SDI_stdarg.h YAM.h \
-  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
-  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
-  YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
-  YAM_read.h BayesFilter.h MUIObjects.h Debug.h
-MainWindow.o: classes/MainWindow.c classes/MainWindow_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+MainMailListGroup.o: mui/MainMailListGroup.c mui/MainMailListGroup_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -302,24 +286,39 @@ MainWindow.o: classes/MainWindow.c classes/MainWindow_cl.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h MUIObjects.h Debug.h
-MainWindowToolbar.o: classes/MainWindowToolbar.c \
-  classes/MainWindowToolbar_cl.h classes/Classes.h classes/ClassesExtra.h \
-  include/libraries/mui.h include/mui/BetterString_mcc.h \
-  include/mui/NList_mcc.h include/mui/NListview_mcc.h \
-  include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
-  include/mui/TheBar_mcc.h include/proto/muimaster.h \
-  include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
-  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
-  include/newmouse.h include/SDI_hook.h include/SDI_stdarg.h YAM.h \
-  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
-  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
-  YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
+MainWindow.o: mui/MainWindow.c mui/MainWindow_cl.h mui/Classes.h \
+  mui/ClassesExtra.h include/libraries/mui.h \
+  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
+  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
+  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
+  include/proto/muimaster.h include/interfaces/muimaster.h \
+  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
+  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
+  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
+  YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
+  YAM_read.h BayesFilter.h MUIObjects.h Debug.h
+MainWindowToolbar.o: mui/MainWindowToolbar.c mui/MainWindowToolbar_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
+  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
+  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
+  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
+  include/proto/muimaster.h include/interfaces/muimaster.h \
+  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
+  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
+  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
+  YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_find.h YAM_mainFolder.h \
   Debug.h
-QuickSearchBar.o: classes/QuickSearchBar.c classes/QuickSearchBar_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+QuickSearchBar.o: mui/QuickSearchBar.c mui/QuickSearchBar_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -334,8 +333,8 @@ QuickSearchBar.o: classes/QuickSearchBar.c classes/QuickSearchBar_cl.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_find.h YAM_mainFolder.h MailList.h MUIObjects.h Debug.h
-ReadMailGroup.o: classes/ReadMailGroup.c classes/ReadMailGroup_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+ReadMailGroup.o: mui/ReadMailGroup.c mui/ReadMailGroup_cl.h mui/Classes.h \
+  mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -351,8 +350,8 @@ ReadMailGroup.o: classes/ReadMailGroup.c classes/ReadMailGroup_cl.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_error.h YAM_mainFolder.h HTML2Mail.h FileInfo.h MimeTypes.h \
   MUIObjects.h Requesters.h Timer.h Debug.h
-ReadWindow.o: classes/ReadWindow.c classes/ReadWindow_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+ReadWindow.o: mui/ReadWindow.c mui/ReadWindow_cl.h mui/Classes.h \
+  mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -368,24 +367,8 @@ ReadWindow.o: classes/ReadWindow.c classes/ReadWindow_cl.h \
   YAM_read.h BayesFilter.h YAM_addressbookEntry.h YAM_find.h \
   YAM_mainFolder.h FolderList.h MailList.h MimeTypes.h MUIObjects.h \
   Requesters.h Debug.h
-ReadWindowToolbar.o: classes/ReadWindowToolbar.c \
-  classes/ReadWindowToolbar_cl.h classes/Classes.h classes/ClassesExtra.h \
-  include/libraries/mui.h include/mui/BetterString_mcc.h \
-  include/mui/NList_mcc.h include/mui/NListview_mcc.h \
-  include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
-  include/mui/TheBar_mcc.h include/proto/muimaster.h \
-  include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
-  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
-  include/newmouse.h include/SDI_hook.h include/SDI_stdarg.h YAM.h \
-  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
-  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
-  YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
-  YAM_read.h BayesFilter.h YAM_mainFolder.h ImageCache.h Debug.h
-ReadWindowStatusBar.o: classes/ReadWindowStatusBar.c \
-  classes/ReadWindowStatusBar_cl.h classes/Classes.h \
-  classes/ClassesExtra.h include/libraries/mui.h \
+ReadWindowToolbar.o: mui/ReadWindowToolbar.c mui/ReadWindowToolbar_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -398,9 +381,24 @@ ReadWindowStatusBar.o: classes/ReadWindowStatusBar.c \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
+  YAM_read.h BayesFilter.h YAM_mainFolder.h ImageCache.h Debug.h
+ReadWindowStatusBar.o: mui/ReadWindowStatusBar.c \
+  mui/ReadWindowStatusBar_cl.h mui/Classes.h mui/ClassesExtra.h \
+  include/libraries/mui.h include/mui/BetterString_mcc.h \
+  include/mui/NList_mcc.h include/mui/NListview_mcc.h \
+  include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
+  include/mui/TheBar_mcc.h include/proto/muimaster.h \
+  include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
+  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
+  include/newmouse.h include/SDI_hook.h include/SDI_stdarg.h YAM.h \
+  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
+  YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
+  Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_mainFolder.h MUIObjects.h Themes.h Debug.h
-Recipientstring.o: classes/Recipientstring.c classes/Recipientstring_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+Recipientstring.o: mui/Recipientstring.c mui/Recipientstring_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -415,8 +413,8 @@ Recipientstring.o: classes/Recipientstring.c classes/Recipientstring_cl.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_mainFolder.h MUIObjects.h Debug.h
-Searchwindow.o: classes/Searchwindow.c classes/Searchwindow_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+Searchwindow.o: mui/Searchwindow.c mui/Searchwindow_cl.h mui/Classes.h \
+  mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -430,24 +428,23 @@ Searchwindow.o: classes/Searchwindow.c classes/Searchwindow_cl.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h MUIObjects.h Requesters.h Debug.h
-SearchControlGroup.o: classes/SearchControlGroup.c \
-  classes/SearchControlGroup_cl.h classes/Classes.h \
-  classes/ClassesExtra.h include/libraries/mui.h \
-  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
-  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
-  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
-  include/proto/muimaster.h include/interfaces/muimaster.h \
-  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
-  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
-  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
-  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
-  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
-  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
-  YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
+SearchControlGroup.o: mui/SearchControlGroup.c \
+  mui/SearchControlGroup_cl.h mui/Classes.h mui/ClassesExtra.h \
+  include/libraries/mui.h include/mui/BetterString_mcc.h \
+  include/mui/NList_mcc.h include/mui/NListview_mcc.h \
+  include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
+  include/mui/TheBar_mcc.h include/proto/muimaster.h \
+  include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
+  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
+  include/newmouse.h include/SDI_hook.h include/SDI_stdarg.h YAM.h \
+  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
+  YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
+  Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_find.h MUIObjects.h Debug.h
-ShutdownWindow.o: classes/ShutdownWindow.c classes/ShutdownWindow_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+ShutdownWindow.o: mui/ShutdownWindow.c mui/ShutdownWindow_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -461,8 +458,8 @@ ShutdownWindow.o: classes/ShutdownWindow.c classes/ShutdownWindow_cl.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h Debug.h
-Splashwindow.o: classes/Splashwindow.c classes/Splashwindow_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+Splashwindow.o: mui/Splashwindow.c mui/Splashwindow_cl.h mui/Classes.h \
+  mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -476,8 +473,8 @@ Splashwindow.o: classes/Splashwindow.c classes/Splashwindow_cl.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h MUIObjects.h Debug.h
-ThemeListGroup.o: classes/ThemeListGroup.c classes/ThemeListGroup_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+ThemeListGroup.o: mui/ThemeListGroup.c mui/ThemeListGroup_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -491,8 +488,23 @@ ThemeListGroup.o: classes/ThemeListGroup.c classes/ThemeListGroup_cl.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h MUIObjects.h Requesters.h Debug.h
-TransferMailList.o: classes/TransferMailList.c \
-  classes/TransferMailList_cl.h classes/Classes.h classes/ClassesExtra.h \
+TransferMailList.o: mui/TransferMailList.c mui/TransferMailList_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
+  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
+  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
+  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
+  include/proto/muimaster.h include/interfaces/muimaster.h \
+  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
+  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
+  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
+  YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
+  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
+  YAM_read.h BayesFilter.h Themes.h Debug.h
+UpdateNotifyWindow.o: mui/UpdateNotifyWindow.c \
+  mui/UpdateNotifyWindow_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
   include/mui/NList_mcc.h include/mui/NListview_mcc.h \
   include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
@@ -505,42 +517,25 @@ TransferMailList.o: classes/TransferMailList.c \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
-  YAM_read.h BayesFilter.h Themes.h Debug.h
-UpdateNotifyWindow.o: classes/UpdateNotifyWindow.c \
-  classes/UpdateNotifyWindow_cl.h classes/Classes.h \
-  classes/ClassesExtra.h include/libraries/mui.h \
-  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
-  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
-  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
-  include/proto/muimaster.h include/interfaces/muimaster.h \
-  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
-  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
-  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
-  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
-  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
-  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
-  YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h include/mui/NFloattext_mcc.h YAM_configFile.h \
   FileInfo.h MUIObjects.h Debug.h
-WriteAttachmentList.o: classes/WriteAttachmentList.c \
-  classes/WriteAttachmentList_cl.h classes/Classes.h \
-  classes/ClassesExtra.h include/libraries/mui.h \
-  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
-  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
-  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
-  include/proto/muimaster.h include/interfaces/muimaster.h \
-  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
-  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
-  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
-  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
-  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
-  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
-  YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
+WriteAttachmentList.o: mui/WriteAttachmentList.c \
+  mui/WriteAttachmentList_cl.h mui/Classes.h mui/ClassesExtra.h \
+  include/libraries/mui.h include/mui/BetterString_mcc.h \
+  include/mui/NList_mcc.h include/mui/NListview_mcc.h \
+  include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
+  include/mui/TheBar_mcc.h include/proto/muimaster.h \
+  include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
+  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
+  include/newmouse.h include/SDI_hook.h include/SDI_stdarg.h YAM.h \
+  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
+  YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
+  Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_mainFolder.h MUIObjects.h Debug.h
-WriteWindow.o: classes/WriteWindow.c classes/WriteWindow_cl.h \
-  classes/Classes.h classes/ClassesExtra.h include/libraries/mui.h \
+WriteWindow.o: mui/WriteWindow.c mui/WriteWindow_cl.h mui/Classes.h \
+  mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -558,35 +553,33 @@ WriteWindow.o: classes/WriteWindow.c classes/WriteWindow_cl.h \
   include/inline4/codesets.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_configGUI.h YAM_error.h YAM_glossarydisplay.h YAM_mainFolder.h \
   FileInfo.h MailList.h MUIObjects.h Requesters.h mime/uucode.h Debug.h
-WriteWindowToolbar.o: classes/WriteWindowToolbar.c \
-  classes/WriteWindowToolbar_cl.h classes/Classes.h \
-  classes/ClassesExtra.h include/libraries/mui.h \
-  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
-  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
-  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
-  include/proto/muimaster.h include/interfaces/muimaster.h \
-  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
-  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
-  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
-  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
-  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
-  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
-  YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
+WriteWindowToolbar.o: mui/WriteWindowToolbar.c \
+  mui/WriteWindowToolbar_cl.h mui/Classes.h mui/ClassesExtra.h \
+  include/libraries/mui.h include/mui/BetterString_mcc.h \
+  include/mui/NList_mcc.h include/mui/NListview_mcc.h \
+  include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
+  include/mui/TheBar_mcc.h include/proto/muimaster.h \
+  include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
+  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
+  include/newmouse.h include/SDI_hook.h include/SDI_stdarg.h YAM.h \
+  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
+  YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
+  Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h ImageCache.h Debug.h
-YAM.o: classes/YAM.c classes/YAM_cl.h classes/Classes.h \
-  classes/ClassesExtra.h include/libraries/mui.h \
-  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
-  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
-  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
-  include/proto/muimaster.h include/interfaces/muimaster.h \
-  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
-  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
-  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
-  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
-  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
-  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
-  YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
+YAM.o: mui/YAM.c mui/YAM_cl.h mui/Classes.h mui/ClassesExtra.h \
+  include/libraries/mui.h include/mui/BetterString_mcc.h \
+  include/mui/NList_mcc.h include/mui/NListview_mcc.h \
+  include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
+  include/mui/TheBar_mcc.h include/proto/muimaster.h \
+  include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
+  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
+  include/newmouse.h include/SDI_hook.h include/SDI_stdarg.h YAM.h \
+  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
+  YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
+  Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
   Debug.h
@@ -605,8 +598,8 @@ addredit.o: rexx/addredit.c include/mui/NListtree_mcc.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
   YAM_addressbook.h YAM_addressbookEntry.h YAM_write.h YAM_main.h \
-  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Rexx.h Debug.h
+  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  MUIObjects.h Rexx.h Debug.h
 addrfind.o: rexx/addrfind.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -650,8 +643,8 @@ addrresolve.o: rexx/addrresolve.c include/proto/muimaster.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
-  YAM_write.h YAM_main.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h Rexx.h Debug.h
+  YAM_write.h YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h BayesFilter.h Rexx.h Debug.h
 addrsave.o: rexx/addrsave.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -705,9 +698,9 @@ getselected.o: rexx/getselected.c extrasrc.h include/SDI_compiler.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_main.h \
-  YAM_mainFolder.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h MailList.h MUIObjects.h \
-  Rexx.h Debug.h
+  YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h YAM_main.h BayesFilter.h MailList.h MUIObjects.h Rexx.h \
+  Debug.h
 geturl.o: rexx/geturl.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -744,8 +737,8 @@ listselect.o: rexx/listselect.c include/mui/NList_mcc.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
-  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h MUIObjects.h Rexx.h Debug.h
+  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h MUIObjects.h Rexx.h Debug.h
 mailarchive.o: rexx/mailarchive.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -757,18 +750,17 @@ mailbounce.o: rexx/mailbounce.c include/libraries/mui.h extrasrc.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_main.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h Rexx.h \
-  MUIObjects.h Debug.h
+  Threads.h YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h Rexx.h MUIObjects.h \
+  Debug.h
 mailchangesubject.o: rexx/mailchangesubject.c include/mui/NList_mcc.h \
   include/libraries/mui.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
-  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h MailList.h MUIObjects.h Rexx.h \
-  Debug.h
+  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h MailList.h MUIObjects.h Rexx.h Debug.h
 mailcheck.o: rexx/mailcheck.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -793,9 +785,9 @@ mailedit.o: rexx/mailedit.c include/libraries/mui.h extrasrc.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_main.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h Rexx.h \
-  MUIObjects.h Debug.h
+  Threads.h YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h Rexx.h MUIObjects.h \
+  Debug.h
 mailexport.o: rexx/mailexport.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -813,9 +805,9 @@ mailforward.o: rexx/mailforward.c include/libraries/mui.h extrasrc.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_main.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h Rexx.h \
-  MUIObjects.h Debug.h
+  Threads.h YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h Rexx.h MUIObjects.h \
+  Debug.h
 mailimport.o: rexx/mailimport.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -828,9 +820,8 @@ mailinfo.o: rexx/mailinfo.c include/mui/NList_mcc.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_main.h \
-  YAM_mainFolder.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h MUIObjects.h Rexx.h \
-  Debug.h
+  YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h YAM_main.h BayesFilter.h MUIObjects.h Rexx.h Debug.h
 mailmove.o: rexx/mailmove.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -842,17 +833,17 @@ mailread.o: rexx/mailread.c include/libraries/mui.h extrasrc.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_main.h YAM_read.h YAM_write.h YAM_main.h \
-  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Rexx.h Debug.h
+  Threads.h YAM_main.h YAM_read.h YAM_write.h YAM_main.h mui/Classes.h \
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h MUIObjects.h \
+  Rexx.h Debug.h
 mailreply.o: rexx/mailreply.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_main.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h Rexx.h \
-  MUIObjects.h Debug.h
+  Threads.h YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h Rexx.h MUIObjects.h \
+  Debug.h
 mailsendall.o: rexx/mailsendall.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -882,9 +873,9 @@ mailwrite.o: rexx/mailwrite.c include/libraries/mui.h extrasrc.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_main.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h Rexx.h \
-  MUIObjects.h Debug.h
+  Threads.h YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h Rexx.h MUIObjects.h \
+  Debug.h
 newmailfile.o: rexx/newmailfile.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -914,16 +905,16 @@ readprint.o: rexx/readprint.c extrasrc.h include/SDI_compiler.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_read.h \
-  YAM_write.h YAM_main.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h Rexx.h Debug.h
+  YAM_write.h YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h BayesFilter.h Rexx.h Debug.h
 readsave.o: rexx/readsave.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
   YAM_config.h include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h \
-  UpdateCheck.h YAM_read.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h MimeTypes.h Rexx.h Debug.h
+  UpdateCheck.h YAM_read.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h BayesFilter.h MimeTypes.h Rexx.h Debug.h
 request.o: rexx/request.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -935,31 +926,29 @@ requestfolder.o: rexx/requestfolder.c extrasrc.h include/SDI_compiler.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
-  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h Locale.h Requesters.h Rexx.h \
-  Debug.h
+  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h Locale.h Requesters.h Rexx.h Debug.h
 requeststring.o: rexx/requeststring.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
-  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h Locale.h Requesters.h Rexx.h \
-  Debug.h
+  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h Locale.h Requesters.h Rexx.h Debug.h
 screentoback.o: rexx/screentoback.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h Rexx.h Debug.h
+  Threads.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h YAM_main.h BayesFilter.h Rexx.h Debug.h
 screentofront.o: rexx/screentofront.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h Rexx.h Debug.h
+  Threads.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h YAM_main.h BayesFilter.h Rexx.h Debug.h
 setflag.o: rexx/setflag.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -977,18 +966,17 @@ setmail.o: rexx/setmail.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/SDI_compiler.h YAM.h include/xpk/xpk.h include/amiga-align.h \
   include/default-align.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h \
-  Themes.h Timer.h Threads.h YAM_main.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h YAM_main.h \
-  BayesFilter.h MUIObjects.h Rexx.h Debug.h
+  Themes.h Timer.h Threads.h YAM_main.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h MUIObjects.h \
+  Rexx.h Debug.h
 setmailfile.o: rexx/setmailfile.c include/mui/NList_mcc.h \
   include/libraries/mui.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_main.h \
-  YAM_mainFolder.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h MUIObjects.h Rexx.h \
-  Debug.h
+  YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h YAM_main.h BayesFilter.h MUIObjects.h Rexx.h Debug.h
 show.o: rexx/show.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
@@ -1002,106 +990,102 @@ userinfo.o: rexx/userinfo.c include/libraries/mui.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h Rexx.h Debug.h
+  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  Rexx.h Debug.h
 writeattach.o: rexx/writeattach.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_write.h YAM_main.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h BayesFilter.h \
-  FileInfo.h Rexx.h Debug.h
+  Threads.h YAM_write.h YAM_main.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h YAM_write.h BayesFilter.h FileInfo.h Rexx.h \
+  Debug.h
 writebcc.o: rexx/writebcc.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_write.h \
-  YAM_main.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
+  YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h Rexx.h Debug.h
 writecc.o: rexx/writecc.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_write.h \
-  YAM_main.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
+  YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h Rexx.h Debug.h
 writeeditor.o: rexx/writeeditor.c include/mui/TextEditor_mcc.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_write.h YAM_main.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h BayesFilter.h \
-  Rexx.h Debug.h
+  Threads.h YAM_write.h YAM_main.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
 writefrom.o: rexx/writefrom.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_write.h YAM_main.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h BayesFilter.h \
-  Rexx.h Debug.h
+  Threads.h YAM_write.h YAM_main.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
 writeletter.o: rexx/writeletter.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
   YAM_config.h include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h \
-  UpdateCheck.h YAM_write.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h Rexx.h Debug.h
+  UpdateCheck.h YAM_write.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h BayesFilter.h Rexx.h Debug.h
 writemailto.o: rexx/writemailto.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_write.h \
-  YAM_main.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
+  YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h Rexx.h Debug.h
 writeoptions.o: rexx/writeoptions.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_write.h YAM_main.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h BayesFilter.h \
-  Rexx.h MUIObjects.h Debug.h
+  Threads.h YAM_write.h YAM_main.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h YAM_write.h BayesFilter.h Rexx.h MUIObjects.h \
+  Debug.h
 writequeue.o: rexx/writequeue.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_write.h \
-  YAM_main.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
+  YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h Rexx.h Debug.h
 writereplyto.o: rexx/writereplyto.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_write.h YAM_main.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h BayesFilter.h \
-  Rexx.h Debug.h
+  Threads.h YAM_write.h YAM_main.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
 writesend.o: rexx/writesend.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_write.h \
-  YAM_main.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
+  YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h Rexx.h Debug.h
 writesubject.o: rexx/writesubject.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_write.h YAM_main.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h BayesFilter.h \
-  Rexx.h Debug.h
+  Threads.h YAM_write.h YAM_main.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
 writeto.o: rexx/writeto.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_write.h \
-  YAM_main.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
+  YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h Rexx.h Debug.h
 base64.o: mime/base64.c include/proto/codesets.h \
   include/libraries/codesets.h include/interfaces/codesets.h \
   include/inline4/codesets.h YAM.h include/xpk/xpk.h \
@@ -1158,9 +1142,9 @@ YAM_AB.o: YAM_AB.c include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_addressbookEntry.h YAM_write.h YAM_main.h YAM_config.h YAM_read.h \
-  UpdateCheck.h YAM_error.h YAM_global.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
-  mime/base64.h Locale.h MUIObjects.h Requesters.h Debug.h
+  UpdateCheck.h YAM_error.h YAM_global.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h mime/base64.h Locale.h MUIObjects.h \
+  Requesters.h Debug.h
 YAM_CO.o: YAM_CO.c include/libraries/amisslmaster.h \
   include/mui/BetterString_mcc.h include/mui/NListview_mcc.h \
   include/libraries/mui.h include/mui/NList_mcc.h \
@@ -1175,8 +1159,8 @@ YAM_CO.o: YAM_CO.c include/libraries/amisslmaster.h \
   Themes.h Timer.h Threads.h YAM_addressbook.h \
   include/mui/NListtree_mcc.h YAM_config.h YAM_read.h YAM_write.h \
   YAM_main.h UpdateCheck.h YAM_configFile.h YAM_configGUI.h YAM_error.h \
-  YAM_find.h YAM_global.h YAM_mainFolder.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h FileInfo.h \
+  YAM_find.h YAM_global.h YAM_mainFolder.h mui/Classes.h \
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h FileInfo.h \
   Locale.h MimeTypes.h MUIObjects.h Requesters.h Debug.h
 YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
   include/mui/NListview_mcc.h include/libraries/mui.h \
@@ -1191,7 +1175,7 @@ YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
   HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_addressbook.h \
   include/mui/NListtree_mcc.h YAM_config.h YAM_read.h YAM_write.h \
   YAM_main.h UpdateCheck.h YAM_configFile.h YAM_error.h YAM_find.h \
-  YAM_global.h YAM_mainFolder.h classes/Classes.h classes/ClassesExtra.h \
+  YAM_global.h YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h \
   YAM_main.h YAM_read.h BayesFilter.h FolderList.h ImageCache.h \
   include/mui/TheBar_mcc.h Locale.h MimeTypes.h MUIObjects.h Requesters.h \
   Debug.h
@@ -1202,10 +1186,9 @@ YAM_COs.o: YAM_COs.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_error.h YAM_find.h YAM_global.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h FileInfo.h \
-  FolderList.h Locale.h MailList.h MimeTypes.h MUIObjects.h Requesters.h \
-  Debug.h
+  YAM_error.h YAM_find.h YAM_global.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h FileInfo.h FolderList.h Locale.h \
+  MailList.h MimeTypes.h MUIObjects.h Requesters.h Debug.h
 YAM_DI.o: YAM_DI.c include/mui/TextEditor_mcc.h include/proto/muimaster.h \
   include/libraries/mui.h include/interfaces/muimaster.h \
   include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
@@ -1214,8 +1197,8 @@ YAM_DI.o: YAM_DI.c include/mui/TextEditor_mcc.h include/proto/muimaster.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_error.h YAM_glossarydisplay.h YAM_write.h YAM_main.h \
-  Locale.h MUIObjects.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h YAM_write.h BayesFilter.h Debug.h
+  Locale.h MUIObjects.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h YAM_write.h BayesFilter.h Debug.h
 YAM_EA.o: YAM_EA.c include/mui/NListview_mcc.h include/libraries/mui.h \
   include/mui/NList_mcc.h include/mui/BetterString_mcc.h \
   include/proto/muimaster.h include/interfaces/muimaster.h \
@@ -1226,9 +1209,9 @@ YAM_EA.o: YAM_EA.c include/mui/NListview_mcc.h include/libraries/mui.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_addressbookEntry.h YAM_write.h YAM_main.h YAM_config.h YAM_read.h \
-  UpdateCheck.h YAM_error.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h FileInfo.h Locale.h MUIObjects.h \
-  Requesters.h Debug.h
+  UpdateCheck.h YAM_error.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h BayesFilter.h FileInfo.h Locale.h MUIObjects.h Requesters.h \
+  Debug.h
 YAM_ER.o: YAM_ER.c include/mui/NListview_mcc.h include/libraries/mui.h \
   include/mui/NList_mcc.h include/mui/NFloattext_mcc.h \
   include/proto/muimaster.h include/interfaces/muimaster.h \
@@ -1248,7 +1231,7 @@ YAM_FI.o: YAM_FI.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h \
   Themes.h Timer.h Threads.h YAM_config.h YAM_read.h YAM_write.h \
   YAM_main.h UpdateCheck.h YAM_configFile.h YAM_error.h YAM_find.h \
-  YAM_global.h YAM_mainFolder.h classes/Classes.h classes/ClassesExtra.h \
+  YAM_global.h YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h \
   YAM_main.h YAM_read.h BayesFilter.h Locale.h MailList.h FolderList.h \
   MUIObjects.h Requesters.h Debug.h
 YAM_FO.o: YAM_FO.c include/mui/NList_mcc.h include/libraries/mui.h \
@@ -1262,8 +1245,8 @@ YAM_FO.o: YAM_FO.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_addressbook.h YAM_config.h YAM_read.h YAM_write.h \
   YAM_main.h UpdateCheck.h YAM_configFile.h YAM_error.h YAM_global.h \
-  YAM_mainFolder.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h BayesFilter.h FileInfo.h FolderList.h ImageCache.h \
+  YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h FileInfo.h FolderList.h ImageCache.h \
   include/mui/TheBar_mcc.h Locale.h MailList.h MUIObjects.h Requesters.h \
   Debug.h
 YAM_MA.o: YAM_MA.c include/mui/NList_mcc.h include/libraries/mui.h \
@@ -1277,7 +1260,7 @@ YAM_MA.o: YAM_MA.c include/mui/NList_mcc.h include/libraries/mui.h \
   Themes.h Timer.h Threads.h YAM_addressbook.h \
   include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
   YAM_main.h YAM_config.h YAM_read.h UpdateCheck.h YAM_error.h YAM_find.h \
-  YAM_global.h YAM_mainFolder.h classes/Classes.h classes/ClassesExtra.h \
+  YAM_global.h YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h \
   YAM_main.h YAM_read.h BayesFilter.h mime/base64.h HTML2Mail.h \
   FileInfo.h FolderList.h Locale.h MailList.h MimeTypes.h MUIObjects.h \
   Requesters.h Debug.h
@@ -1290,10 +1273,10 @@ YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h \
   Themes.h Timer.h Threads.h YAM_config.h YAM_read.h YAM_write.h \
   YAM_main.h UpdateCheck.h YAM_error.h YAM_global.h YAM_mainFolder.h \
-  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h mime/base64.h mime/rfc2047.h FileInfo.h FolderList.h \
-  Locale.h MailList.h MUIObjects.h Requesters.h Debug.h \
-  include/amiga-align.h include/default-align.h
+  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mime/base64.h mime/rfc2047.h FileInfo.h FolderList.h Locale.h \
+  MailList.h MUIObjects.h Requesters.h Debug.h include/amiga-align.h \
+  include/default-align.h
 YAM_RE.o: YAM_RE.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/mui/TextEditor_mcc.h \
   include/proto/codesets.h include/libraries/codesets.h \
@@ -1306,11 +1289,11 @@ YAM_RE.o: YAM_RE.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_addressbookEntry.h YAM_write.h YAM_main.h YAM_config.h YAM_read.h \
-  UpdateCheck.h YAM_error.h YAM_global.h YAM_mainFolder.h \
-  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h mime/rfc2231.h mime/base64.h mime/qprintable.h \
-  mime/uucode.h HTML2Mail.h FileInfo.h FolderList.h Locale.h MailList.h \
-  MimeTypes.h MUIObjects.h ParseEmail.h Requesters.h Debug.h
+  UpdateCheck.h YAM_error.h YAM_global.h YAM_mainFolder.h mui/Classes.h \
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h mime/rfc2231.h \
+  mime/base64.h mime/qprintable.h mime/uucode.h HTML2Mail.h FileInfo.h \
+  FolderList.h Locale.h MailList.h MimeTypes.h MUIObjects.h ParseEmail.h \
+  Requesters.h Debug.h
 YAM_TR.o: YAM_TR.c include/libraries/genesis.h include/amiga-align.h \
   include/default-align.h include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
@@ -1350,9 +1333,9 @@ YAM_TR.o: YAM_TR.c include/libraries/genesis.h include/amiga-align.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_addressbookEntry.h YAM_write.h YAM_main.h YAM_config.h \
   YAM_read.h UpdateCheck.h YAM_error.h YAM_find.h YAM_global.h \
-  YAM_mainFolder.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h BayesFilter.h mime/base64.h mime/md5.h AppIcon.h FileInfo.h \
-  Locale.h MailList.h MUIObjects.h Requesters.h Debug.h
+  YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h mime/base64.h mime/md5.h AppIcon.h FileInfo.h Locale.h \
+  MailList.h MUIObjects.h Requesters.h Debug.h
 YAM_US.o: YAM_US.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/proto/muimaster.h \
   include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
@@ -1361,9 +1344,9 @@ YAM_US.o: YAM_US.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/default-align.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h \
   Themes.h Timer.h Threads.h YAM_config.h YAM_read.h YAM_write.h \
-  YAM_main.h UpdateCheck.h YAM_error.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h FileInfo.h \
-  Locale.h MUIObjects.h Requesters.h Debug.h
+  YAM_main.h UpdateCheck.h YAM_error.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h FileInfo.h Locale.h MUIObjects.h \
+  Requesters.h Debug.h
 YAM_UT.o: YAM_UT.c include/libraries/openurl.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/mui/NListtree_mcc.h \
@@ -1381,9 +1364,9 @@ YAM_UT.o: YAM_UT.c include/libraries/openurl.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_addressbook.h YAM_config.h YAM_read.h YAM_write.h \
   YAM_main.h UpdateCheck.h YAM_error.h YAM_find.h YAM_global.h \
-  YAM_mainFolder.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h BayesFilter.h AppIcon.h FileInfo.h FolderList.h Locale.h \
-  MailList.h MimeTypes.h MUIObjects.h ParseEmail.h Requesters.h Debug.h
+  YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h AppIcon.h FileInfo.h FolderList.h Locale.h MailList.h \
+  MimeTypes.h MUIObjects.h ParseEmail.h Requesters.h Debug.h
 YAM_WR.o: YAM_WR.c include/proto/muimaster.h include/libraries/mui.h \
   include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
@@ -1392,18 +1375,17 @@ YAM_WR.o: YAM_WR.c include/proto/muimaster.h include/libraries/mui.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_addressbookEntry.h YAM_write.h YAM_main.h YAM_config.h YAM_read.h \
-  UpdateCheck.h YAM_error.h YAM_mainFolder.h YAM_global.h \
-  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h mime/rfc2231.h mime/rfc2047.h mime/base64.h \
-  mime/qprintable.h mime/uucode.h FileInfo.h FolderList.h Locale.h \
-  MailList.h MUIObjects.h Requesters.h Debug.h
+  UpdateCheck.h YAM_error.h YAM_mainFolder.h YAM_global.h mui/Classes.h \
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h mime/rfc2231.h \
+  mime/rfc2047.h mime/base64.h mime/qprintable.h mime/uucode.h FileInfo.h \
+  FolderList.h Locale.h MailList.h MUIObjects.h Requesters.h Debug.h
 AppIcon.o: AppIcon.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
   YAM_config.h include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h \
-  UpdateCheck.h YAM_configFile.h classes/Classes.h classes/ClassesExtra.h \
+  UpdateCheck.h YAM_configFile.h mui/Classes.h mui/ClassesExtra.h \
   YAM_main.h YAM_read.h BayesFilter.h AppIcon.h DockyIcon.h FolderList.h \
   Debug.h
 BayesFilter.o: BayesFilter.c YAM.h include/xpk/xpk.h \
@@ -1419,8 +1401,8 @@ DockyIcon.o: DockyIcon.c YAM.h include/xpk/xpk.h include/amiga-align.h \
   YAM_utilities.h include/SDI_compiler.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  classes/Classes.h classes/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h DockyIcon.h MUIObjects.h Debug.h
+  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  DockyIcon.h MUIObjects.h Debug.h
 FileInfo.o: FileInfo.c FileInfo.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h Debug.h
 FolderList.o: FolderList.c extrasrc.h include/SDI_compiler.h \
@@ -1435,11 +1417,11 @@ ImageCache.o: ImageCache.c include/proto/muimaster.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h include/SDI_compiler.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
-  Threads.h YAM_global.h YAM_error.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_stringsizes.h YAM_transfer.h \
-  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h ImageCache.h \
-  include/mui/TheBar_mcc.h Locale.h FileInfo.h MUIObjects.h extrasrc.h \
-  include/SDI_stdarg.h include/SDI_compiler.h Debug.h
+  Threads.h YAM_global.h YAM_error.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_stringsizes.h YAM_transfer.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h ImageCache.h include/mui/TheBar_mcc.h Locale.h \
+  FileInfo.h MUIObjects.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h Debug.h
 Locale.o: Locale.c YAM.h include/xpk/xpk.h include/amiga-align.h \
   include/default-align.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h include/SDI_compiler.h YAM_folderconfig.h BayesFilter.h \
@@ -1459,8 +1441,8 @@ MUIObjects.o: MUIObjects.c include/mui/BetterString_mcc.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_addressbook.h YAM_error.h YAM_read.h YAM_write.h \
-  YAM_main.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h BayesFilter.h Locale.h MUIObjects.h Debug.h
+  YAM_main.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h Locale.h MUIObjects.h Debug.h
 ParseEmail.o: ParseEmail.c YAM_utilities.h include/SDI_compiler.h \
   YAM_stringsizes.h YAM_folderconfig.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h \
@@ -1474,9 +1456,8 @@ Requesters.o: Requesters.c include/mui/NList_mcc.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_mainFolder.h classes/Classes.h classes/ClassesExtra.h YAM_main.h \
-  YAM_read.h BayesFilter.h FolderList.h Locale.h MUIObjects.h \
-  Requesters.h Debug.h
+  YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h FolderList.h Locale.h MUIObjects.h Requesters.h Debug.h
 Rexx.o: Rexx.c extrasrc.h include/SDI_compiler.h include/SDI_stdarg.h \
   include/SDI_compiler.h YAM.h include/xpk/xpk.h include/amiga-align.h \
   include/default-align.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
@@ -1501,8 +1482,8 @@ Timer.o: Timer.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_mainFolder.h extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h \
-  Locale.h MUIObjects.h classes/Classes.h classes/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h Debug.h
+  Locale.h MUIObjects.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h BayesFilter.h Debug.h
 UpdateCheck.o: UpdateCheck.c include/mui/BetterString_mcc.h \
   include/mui/NFloattext_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/mui/NList_mcc.h \
@@ -1514,9 +1495,9 @@ UpdateCheck.o: UpdateCheck.c include/mui/BetterString_mcc.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h \
   Threads.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_configFile.h YAM_error.h YAM_global.h classes/Classes.h \
-  classes/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
-  mime/rfc1738.h Locale.h MUIObjects.h Debug.h
+  YAM_configFile.h YAM_error.h YAM_global.h mui/Classes.h \
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h mime/rfc1738.h \
+  Locale.h MUIObjects.h Debug.h
 extrasrc.o: extrasrc.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h extrasrc/stcgfe.c \
   extrasrc/NewReadArgs.c Debug.h extrasrc/vastubs.c extrasrc/DoSuperNew.c \

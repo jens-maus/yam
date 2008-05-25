@@ -44,7 +44,7 @@
 #include "YAM_addressbook.h"
 #include "YAM_error.h"
 #include "YAM_read.h"
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 
 #include "Locale.h"
 #include "MUIObjects.h"

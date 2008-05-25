@@ -108,7 +108,7 @@
 #include "Timer.h"
 #include "UpdateCheck.h"
 
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 
 #include "Debug.h"
 

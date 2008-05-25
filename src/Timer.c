@@ -46,7 +46,7 @@
 #include "MUIObjects.h"
 #include "Timer.h"
 
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 
 #include "Debug.h"
 

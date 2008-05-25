@@ -89,7 +89,7 @@
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 #include "YAM_utilities.h"
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 
 #include "AppIcon.h"
 #include "FileInfo.h"

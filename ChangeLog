@@ -7,6 +7,9 @@ $URL$
 
 2008-05-25  Jens Langner <Jens.Langner@light-speed.de>
 
+  * classes, misc: renamed the "classes" subdirectory to "mui" to make it
+    more clear that this subdirectory contains stuff related to the
+    graphical user interface.
   * YAM_WR.c: changed the autosavefilename composing function to always
     generate ".autosaveXX.txt" files with two digits.
   * YAM_WR.c, misc: changed the CreateWriteWindow() function to accept an

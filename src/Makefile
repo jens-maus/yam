@@ -157,7 +157,7 @@ BUILDID = 0
 
 # Common Directories
 PREFIX    = $(CDTHIS)
-CLASSDIR  = $(PREFIX)classes
+MUIDIR    = $(PREFIX)mui
 REXXDIR   = $(PREFIX)rexx
 MIMEDIR   = $(PREFIX)mime
 LOCALE    = $(PREFIX)$(CDUP)locale
@@ -266,7 +266,7 @@ endif
 GENCLASSES= $(TOOLS)/genclasses
 
 # our few new rewritten classes
-CLASSES	= \
+MUI	= \
 	Classes.o \
 	Aboutwindow.o \
 	AddrBookEntryList.o \
@@ -389,7 +389,7 @@ MIME = base64.o \
 OBJS = \
 	YAM_global.o \
 	YAM.o \
-	$(addprefix $(CLASSDIR)/,$(CLASSES)) \
+	$(addprefix $(MUIDIR)/,$(MUI)) \
 	$(addprefix $(REXXDIR)/,$(REXX)) \
 	$(addprefix $(MIMEDIR)/,$(MIME)) \
 	YAM_AB.o \
@@ -455,7 +455,7 @@ CATALOGS = \
 
 # main target
 .PHONY: all
-all: $(OBJDIR) $(OBJDIR)/$(CLASSDIR) $(OBJDIR)/$(REXXDIR) \
+all: $(OBJDIR) $(OBJDIR)/$(MUIDIR) $(OBJDIR)/$(REXXDIR) \
  $(OBJDIR)/$(MIMEDIR) classinfo Locale.c ParseEmail.c HTML2Mail.c $(TARGET)
 
 # make the object directories
@@ -463,8 +463,8 @@ $(OBJDIR):
 	@echo "  MK $@"
 	@$(MKDIR) $(OBJDIR)
 
-$(OBJDIR)/$(CLASSDIR): $(OBJDIR)
-	@$(MKDIR) $(OBJDIR)/$(CLASSDIR)
+$(OBJDIR)/$(MUIDIR): $(OBJDIR)
+	@$(MKDIR) $(OBJDIR)/$(MUIDIR)
 
 $(OBJDIR)/$(REXXDIR): $(OBJDIR)
 	@$(MKDIR) $(OBJDIR)/$(REXXDIR)
@@ -503,7 +503,7 @@ clean:
 # clean all including .obj directory
 .PHONY: cleanall
 cleanall: clean
-	-$(RM) Locale.? ParseEmail.c HTML2Mail.c $(CLASSDIR)/Classes.? $(CLASSDIR)/*_cl.h
+	-$(RM) Locale.? ParseEmail.c HTML2Mail.c $(MUIDIR)/Classes.? $(MUIDIR)/*_cl.h
 	-$(RM) $(LOCALE)/*.catalog
 	-$(RMDIR) $(OBJDIR)
 
@@ -545,13 +545,13 @@ depend: classinfo Locale.c ParseEmail.c HTML2Mail.c
 ## GENCLASSES TOOL ####################
 
 .PHONY: classinfo
-classinfo: $(CLASSDIR)/Classes.h
+classinfo: $(MUIDIR)/Classes.h
 
-$(CLASSDIR)/Classes.h: $(GENCLASSES)/GenClasses $(CLASSDIR)/*.c
+$(MUIDIR)/Classes.h: $(GENCLASSES)/GenClasses $(MUIDIR)/*.c
 	@echo "  GN GenClasses"
-	@$(GENCLASSES)/GenClasses classes -bYAM -gpl -storm -iClassesExtra.h -q
+	@$(GENCLASSES)/GenClasses mui -bYAM -gpl -storm -iClassesExtra.h -q
 
-$(CLASSDIR)/Classes.c: $(CLASSDIR)/ClassesExtra.h
+$(MUIDIR)/Classes.c: $(MUIDIR)/ClassesExtra.h
 
 $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
 	$(GENCLASSES)/lists.c $(GENCLASSES)/lists.h

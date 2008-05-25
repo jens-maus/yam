@@ -33,7 +33,7 @@
 
 #include "YAM.h"
 #include "YAM_write.h"
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 
 #include "FileInfo.h"
 #include "Rexx.h"

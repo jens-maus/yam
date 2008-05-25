@@ -32,7 +32,7 @@
 #include "YAM.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 
 #include "MailList.h"
 #include "MUIObjects.h"

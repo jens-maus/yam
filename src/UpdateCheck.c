@@ -55,7 +55,7 @@
 #include "YAM_transfer.h"
 #include "YAM_utilities.h"
 
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 #include "mime/rfc1738.h"
 
 #include "Locale.h"

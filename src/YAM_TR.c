@@ -71,7 +71,7 @@
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
 
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 #include "mime/base64.h"
 #include "mime/md5.h"
 

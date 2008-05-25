@@ -34,7 +34,7 @@
 #include "YAM.h"
 #include "YAM_write.h"
 
-#include "classes/Classes.h"
+#include "mui/Classes.h"
 
 #include "Rexx.h"
 
