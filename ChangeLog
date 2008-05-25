@@ -7,6 +7,10 @@ $URL$
 
 2008-05-25  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c, WriteWindow.c: reimplemented the bounce mail functionality
+    by adding the necessary GUI code to the 'WriteWindow' class and
+    reactiving its functionality in YAM_WR.c. Now bouncing a mail should
+    work as expected again.
   * classes, misc: renamed the "classes" subdirectory to "mui" to make it
     more clear that this subdirectory contains stuff related to the
     graphical user interface.

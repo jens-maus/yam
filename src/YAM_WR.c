@@ -699,7 +699,8 @@ static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
     // should be added to the top of a message
     EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
     EmitHeader(fh, "Resent-Date", GetDateTime());
-    EmitRcptHeader(fh, "Resent-To", comp->MailTo);
+    if(comp->MailTo != NULL)
+      EmitRcptHeader(fh, "Resent-To", comp->MailTo);
     EmitHeader(fh, "Resent-Message-ID", NewMessageID());
 
     // now we copy the rest of the message
@@ -2690,25 +2691,20 @@ struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags)
 
   ENTER();
 
-#warning "TODO: implement BounceWindow class"
   // check if necessary settings fror writing are OK and open new window
-/*
-  if(CO_IsValid() == TRUE && (winnum = WR_Open(quiet ? 2 : -1, TRUE)) >= 0)
+  if(CO_IsValid() == TRUE &&
+     (wmData = CreateWriteWindow(NMM_BOUNCE, quiet)) != NULL)
   {
-    struct WR_ClassData *wr = G->WR[winnum];
+    wmData->refMail = mail;
 
-    wr->Mode = NEW_BOUNCE;
-    wr->refMail = mail;
-
+    // make sure the window is opened
     if(quiet == FALSE)
-      set(wr->GUI.WI, MUIA_Window_Open, TRUE);
+      SafeOpenWindow(wmData->window);
 
-    set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
+    // set the active object of the window
+    set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_To);
   }
 
-  if(winnum >= 0 && quiet == FALSE)
-    winnum = MA_CheckWriteWindow(winnum);
-*/
   RETURN(wmData);
   return wmData;
 }
@@ -2966,51 +2962,4 @@ void CheckForAutoSaveFiles(void)
   LEAVE();
 }
 
-///
-
-/*** GUI ***/
-/// WR_NewBounce
-//  Creates a bounce window
-/*
-static struct WR_ClassData *WR_NewBounce(int winnum)
-{
-  struct WR_ClassData *data;
-
-  ENTER();
-
-  if((data = calloc(1, sizeof(struct WR_ClassData))) != NULL)
-  {
-    data->GUI.WI = WindowObject,
-       MUIA_Window_Title, tr(MSG_WR_BounceWT),
-       MUIA_HelpNode, "WR_W",
-       MUIA_Window_ID, MAKE_ID('W','R','I','B'),
-       WindowContents, VGroup,
-          Child, ColGroup(2),
-             Child, Label2(tr(MSG_WR_BounceTo)),
-             Child, MakeAddressField(&data->GUI.ST_TO, tr(MSG_WR_BounceTo), MSG_HELP_WR_ST_TO, ABM_TO, winnum, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
-          End,
-          Child, ColGroup(4),
-             Child, data->GUI.BT_SEND   = MakeButton(tr(MSG_WR_SENDNOW)),
-             Child, data->GUI.BT_QUEUE  = MakeButton(tr(MSG_WR_SENDLATER)),
-             Child, data->GUI.BT_HOLD   = MakeButton(tr(MSG_WR_HOLD)),
-             Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_WR_CANCEL)),
-          End,
-       End,
-    End;
-    if(data->GUI.WI != NULL)
-    {
-      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-      WR_SharedSetup(data, winnum);
-    }
-    else
-    {
-      free(data);
-      data = NULL;
-    }
-  }
-
-  RETURN(data);
-  return data;
-}
-*/
 ///
