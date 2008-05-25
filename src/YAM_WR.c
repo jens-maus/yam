@@ -2869,7 +2869,7 @@ BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRe
 // warn the user accordingly of the existance of such a backup file
 void CheckForAutoSaveFiles(void)
 {
-  static const char *pattern = ".autosave??.txt";
+  static const char *pattern = ".autosave[0-9][0-9].txt";
   char *parsedPattern;
   LONG parsedPatternSize;
   APTR context;

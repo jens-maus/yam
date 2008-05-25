@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-25  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: changed the pattern for the autosave files to accept numbers only
+    instead of any kind of character behind '.autosave'.
+
 2008-05-24  Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.c: swapped the timer start and the enqueue operation of the request
