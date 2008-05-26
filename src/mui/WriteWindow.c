@@ -437,7 +437,7 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData)
           else
             np->EncType = ENC_UUE;
 
-          np->charset = G->localCharset;
+          np->charset = G->writeCharset;
 
           p = np;
         }
@@ -1376,7 +1376,7 @@ OVERLOAD(OM_NEW)
 
         // set the charset popupbutton string list contents
         set(charsetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_WR_CHARSET)));
-        nnset(data->PO_CHARSET, MUIA_Text_Contents, C->LocalCharset);
+        nnset(data->PO_CHARSET, MUIA_Text_Contents, C->DefaultWriteCharset);
 
         // put the importance cycle gadget into the cycle group
         set(data->CY_IMPORTANCE, MUIA_Cycle_Active, TRUE);
@@ -1592,7 +1592,7 @@ OVERLOAD(OM_NEW)
       AddPath(data->wmData->filename, C->TempDir, filename, sizeof(data->wmData->filename));
 
       // set the global charset as the default one
-      data->wmData->charset = G->localCharset;
+      data->wmData->charset = G->writeCharset;
 
       // place our data in the node and add it to the writeMailDataList
       AddTail((struct List *)&(G->writeMailDataList), (struct Node *)data->wmData);
@@ -3280,8 +3280,8 @@ DECLARE(SetupFromOldMail) // struct ReadMailData *rmData
                                                       CSA_FallbackToDefault, FALSE,
                                                       TAG_DONE)) == NULL)
       {
-        // fallback to global localcharset
-        data->wmData->charset = G->localCharset;
+        // fallback to global writeCharset
+        data->wmData->charset = G->writeCharset;
       }
 
       nnset(data->PO_CHARSET, MUIA_Text_Contents, strippedCharsetName(data->wmData->charset));
@@ -3538,7 +3538,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
                                    CSA_FallbackToDefault, FALSE,
                                    TAG_DONE)) == NULL)
     {
-      wmData->charset = G->localCharset;
+      wmData->charset = G->writeCharset;
     }
 
     comp.DelSend = GetMUICheck(data->CH_DELSEND);

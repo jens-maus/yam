@@ -1731,7 +1731,6 @@ static Object *MakeStaticCheck(void)
 Object *CO_PageFirstSteps(struct CO_ClassData *data)
 {
   Object *obj;
-  Object *charsetPopButton;
   static const char *tzone[34];
 
   ENTER();
@@ -1800,12 +1799,6 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
 
                 Child, HSpace(1),
                 Child, MakeCheckGroup((Object **)&data->GUI.CH_DSTACTIVE, tr(MSG_CO_DSTACTIVE)),
-
-                Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
-                Child, MakeCharsetPop((Object **)&data->GUI.TX_DEFAULTCHARSET, &charsetPopButton),
-
-                Child, HSpace(1),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_DETECTCYRILLIC, tr(MSG_CO_DETECT_CYRILLIC)),
               End,
 
               Child, HVSpace,
@@ -1823,10 +1816,6 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
     SetHelp(data->GUI.ST_PASSWD0,        MSG_HELP_CO_ST_PASSWD);
     SetHelp(data->GUI.CY_TZONE,          MSG_HELP_CO_CY_TZONE);
     SetHelp(data->GUI.CH_DSTACTIVE,      MSG_HELP_CO_CH_DSTACTIVE);
-    SetHelp(data->GUI.TX_DEFAULTCHARSET, MSG_HELP_CO_TX_DEFAULTCHARSET);
-    SetHelp(data->GUI.CH_DETECTCYRILLIC, MSG_HELP_CO_DETECT_CYRILLIC);
-
-    set(charsetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
 
     DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetDefaultPOPHook, 0);
     DoMethod(data->GUI.ST_PASSWD0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetDefaultPOPHook, 0);
@@ -2577,6 +2566,7 @@ Object *CO_PageSpam(struct CO_ClassData *data)
 Object *CO_PageRead(struct CO_ClassData *data)
 {
   Object *obj;
+  Object *charsetPopButton;
   static const char *headopt[4];
   static const char *siopt[5];
   static const char *slopt[5];
@@ -2663,6 +2653,10 @@ Object *CO_PageRead(struct CO_ClassData *data)
                 MUIA_CycleChain, TRUE,
               End,
               Child, MakeCheckGroup((Object **)&data->GUI.CH_SHOWALTPARTS, tr(MSG_CO_SHOWALTPARTS)),
+
+              Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
+              Child, MakeCharsetPop((Object **)&data->GUI.TX_DEFCHARSET_READ, &charsetPopButton),
+              Child, HSpace(1),
             End,
 
             Child, VGroup, GroupFrameT(tr(MSG_CO_MDN_TITLE)),
@@ -2721,6 +2715,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
                 Child, HSpace(0),
               End,
               Child, MakeCheckGroup((Object **)&data->GUI.CH_CONVERTHTML, tr(MSG_CO_CONVERTHTML)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_DETECTCYRILLIC, tr(MSG_CO_DETECT_CYRILLIC)),
             End,
 
             Child, HVSpace,
@@ -2732,6 +2727,8 @@ Object *CO_PageRead(struct CO_ClassData *data)
   if(obj != NULL)
   {
     set(data->GUI.ST_HEADERS, MUIA_Disabled, TRUE);
+
+    set(charsetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
 
     SetHelp(data->GUI.CY_HEADER,          MSG_HELP_CO_CY_HEADER);
     SetHelp(data->GUI.ST_HEADERS,         MSG_HELP_CO_ST_HEADERS);
@@ -2759,6 +2756,8 @@ Object *CO_PageRead(struct CO_ClassData *data)
     SetHelp(data->GUI.CY_MDN_NODOMAIN,    MSG_HELP_CO_CY_MDN_NODOMAIN);
     SetHelp(data->GUI.CY_MDN_DELETE,      MSG_HELP_CO_CY_MDN_DELETE);
     SetHelp(data->GUI.CY_MDN_OTHER,       MSG_HELP_CO_CY_MDN_OTHER);
+    SetHelp(data->GUI.TX_DEFCHARSET_READ, MSG_HELP_CO_TX_DEFAULTCHARSET);
+    SetHelp(data->GUI.CH_DETECTCYRILLIC,  MSG_HELP_CO_DETECT_CYRILLIC);
 
     // disable all poppen objects in case the textstyles checkbox is disabled
     DoMethod(data->GUI.CH_TEXTSTYLES, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
@@ -2803,6 +2802,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
 Object *CO_PageWrite(struct CO_ClassData *data)
 {
   Object *obj;
+  Object *charsetPopButton;
   static const char *wrapmode[4];
 
   wrapmode[0] = tr(MSG_CO_EWOff);
@@ -2844,6 +2844,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
                   Child, Label2(tr(MSG_CO_WordWrap)),
                   Child, data->GUI.ST_EDWRAP = MakeInteger(3, tr(MSG_CO_WordWrap)),
                   Child, data->GUI.CY_EDWRAP = MakeCycle(wrapmode, ""),
+
                   Child, Label2(tr(MSG_CO_ExternalEditor)),
                   Child, PopaslObject,
                     MUIA_Popasl_Type     ,ASL_FileRequest,
@@ -2851,6 +2852,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
                     MUIA_Popstring_Button,PopButton(MUII_PopFile),
                   End,
                   Child, MakeCheckGroup((Object **)&data->GUI.CH_LAUNCH, tr(MSG_CO_Launch)),
+
                   Child, Label2(tr(MSG_CO_NB_EMAILCACHE)),
                   Child, HGroup,
                     Child, data->GUI.NB_EMAILCACHE = NumericbuttonObject,
@@ -2862,6 +2864,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
                     Child, HSpace(0),
                   End,
                   Child, HSpace(0),
+
                   Child, Label2(tr(MSG_CO_NB_AUTOSAVE)),
                   Child, HGroup,
                     Child, data->GUI.NB_AUTOSAVE = NumericbuttonObject,
@@ -2873,6 +2876,11 @@ Object *CO_PageWrite(struct CO_ClassData *data)
                     Child, HSpace(0),
                   End,
                   Child, HSpace(0),
+
+                  Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
+                  Child, MakeCharsetPop((Object **)&data->GUI.TX_DEFCHARSET_WRITE, &charsetPopButton),
+                  Child, HSpace(1),
+
                 End,
               End,
 
@@ -2891,20 +2899,23 @@ Object *CO_PageWrite(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.ST_REPLYTO,     MSG_HELP_CO_ST_REPLYTO);
-    SetHelp(data->GUI.ST_ORGAN,       MSG_HELP_CO_ST_ORGAN);
-    SetHelp(data->GUI.ST_EXTHEADER,   MSG_HELP_CO_ST_EXTHEADER);
-    SetHelp(data->GUI.ST_HELLOTEXT,   MSG_HELP_CO_ST_HELLOTEXT);
-    SetHelp(data->GUI.ST_BYETEXT,     MSG_HELP_CO_ST_BYETEXT);
-    SetHelp(data->GUI.CH_WARNSUBJECT, MSG_HELP_CO_CH_WARNSUBJECT);
-    SetHelp(data->GUI.ST_EDWRAP,      MSG_HELP_CO_ST_EDWRAP);
-    SetHelp(data->GUI.CY_EDWRAP,      MSG_HELP_CO_CY_EDWRAP);
-    SetHelp(data->GUI.ST_EDITOR,      MSG_HELP_CO_ST_EDITOR);
-    SetHelp(data->GUI.CH_LAUNCH,      MSG_HELP_CO_CH_LAUNCH);
-    SetHelp(data->GUI.NB_EMAILCACHE,  MSG_HELP_CO_NB_EMAILCACHE);
-    SetHelp(data->GUI.NB_AUTOSAVE,    MSG_HELP_CO_NB_AUTOSAVE);
-    SetHelp(data->GUI.CH_REQUESTMDN,  MSG_HELP_CO_CH_REQUESTMDN);
-    SetHelp(data->GUI.CH_SAVESENT,    MSG_HELP_CO_CH_SAVESENT);
+    set(charsetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
+
+    SetHelp(data->GUI.ST_REPLYTO,          MSG_HELP_CO_ST_REPLYTO);
+    SetHelp(data->GUI.ST_ORGAN,            MSG_HELP_CO_ST_ORGAN);
+    SetHelp(data->GUI.ST_EXTHEADER,        MSG_HELP_CO_ST_EXTHEADER);
+    SetHelp(data->GUI.ST_HELLOTEXT,        MSG_HELP_CO_ST_HELLOTEXT);
+    SetHelp(data->GUI.ST_BYETEXT,          MSG_HELP_CO_ST_BYETEXT);
+    SetHelp(data->GUI.CH_WARNSUBJECT,      MSG_HELP_CO_CH_WARNSUBJECT);
+    SetHelp(data->GUI.ST_EDWRAP,           MSG_HELP_CO_ST_EDWRAP);
+    SetHelp(data->GUI.CY_EDWRAP,           MSG_HELP_CO_CY_EDWRAP);
+    SetHelp(data->GUI.ST_EDITOR,           MSG_HELP_CO_ST_EDITOR);
+    SetHelp(data->GUI.CH_LAUNCH,           MSG_HELP_CO_CH_LAUNCH);
+    SetHelp(data->GUI.NB_EMAILCACHE,       MSG_HELP_CO_NB_EMAILCACHE);
+    SetHelp(data->GUI.NB_AUTOSAVE,         MSG_HELP_CO_NB_AUTOSAVE);
+    SetHelp(data->GUI.CH_REQUESTMDN,       MSG_HELP_CO_CH_REQUESTMDN);
+    SetHelp(data->GUI.CH_SAVESENT,         MSG_HELP_CO_CH_SAVESENT);
+    SetHelp(data->GUI.TX_DEFCHARSET_WRITE, MSG_HELP_CO_TX_DEFAULTCHARSET);
 
     DoMethod(data->GUI.CY_EDWRAP, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, data->GUI.ST_EDWRAP, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
   }

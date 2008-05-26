@@ -112,7 +112,8 @@ struct Global
   struct US_ClassData *    US;
   struct ReadMailData *    ActiveRexxRMData;
   struct WriteMailData *   ActiveRexxWMData;
-  struct codeset *         localCharset;
+  struct codeset *         readCharset;
+  struct codeset *         writeCharset;
   struct codesetList *     codesetsList;
   struct HashTable *       imageCacheHashTable;
   struct FolderList *      folders;

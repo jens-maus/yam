@@ -464,7 +464,7 @@ int rfc2047_encode_file(FILE *fh, const char *src, const size_t offset)
   // call encode_str() to encode the source string into a valid
   // RFC2047 encoded string with enough spaces so that we can
   // split it later into separate lines not longer than 75 chars.
-  if((dst = rfc2047_encode_str(src, strippedCharsetName(G->localCharset), &rfc2047_qp_allow_any)))
+  if((dst = rfc2047_encode_str(src, strippedCharsetName(G->writeCharset), &rfc2047_qp_allow_any)))
   {
     size_t len = strlen(dst);
 
@@ -583,7 +583,7 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
   {
     // check if the src codeset of the string isn't the same
     // like our local one.
-    if(stricmp(chset, strippedCharsetName(G->localCharset)) != 0)
+    if(stricmp(chset, strippedCharsetName(G->readCharset)) != 0)
     {
       struct codeset *srcCodeset;
 
@@ -597,7 +597,7 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
         // now we convert the text from the source codeset to our
         // local codeset
         STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
-                                        CSA_DestCodeset,   G->localCharset,
+                                        CSA_DestCodeset,   G->readCharset,
                                         CSA_Source,        txt,
                                         CSA_SourceLen,     len,
                                         CSA_DestLenPtr,    &dstLen,

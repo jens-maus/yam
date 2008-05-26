@@ -1019,7 +1019,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->IsOnlineCheck = TRUE;
     co->ConfirmOnQuit = FALSE;
     co->HideGUIElements = 0;
-    strlcpy(co->LocalCharset, "ISO-8859-1", sizeof(co->LocalCharset));
+    strlcpy(co->DefaultReadCharset, "ISO-8859-1", sizeof(co->DefaultReadCharset));
+    strlcpy(co->DefaultWriteCharset, "ISO-8859-1", sizeof(co->DefaultWriteCharset));
     co->SysCharsetCheck = TRUE;
     co->AmiSSLCheck = TRUE;
     co->TimeZoneCheck = TRUE;
@@ -1385,7 +1386,8 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      strcmp(c1->XPKPackEncrypt,     c2->XPKPackEncrypt) == 0 &&
      strcmp(c1->SupportSite,        c2->SupportSite) == 0 &&
      strcmp(c1->UpdateServer,       c2->UpdateServer) == 0 &&
-     strcmp(c1->LocalCharset,       c2->LocalCharset) == 0 &&
+     strcmp(c1->DefaultReadCharset, c2->DefaultReadCharset) == 0 &&
+     strcmp(c1->DefaultWriteCharset,c2->DefaultWriteCharset) == 0 &&
      strcmp(c1->IOCInterface,       c2->IOCInterface) == 0 &&
      strcmp(c1->AppIconText,        c2->AppIconText) == 0 &&
      strcmp(c1->InfoBarText,        c2->InfoBarText) == 0 &&
@@ -1535,21 +1537,21 @@ void CO_Validate(struct Config *co, BOOL update)
     {
       // now we check whether the currently set localCharset matches
       // the system charset or not
-      if(co->LocalCharset[0] != '\0' && sysCodeset->name[0] != '\0')
+      if(co->DefaultReadCharset[0] != '\0' && sysCodeset->name[0] != '\0')
       {
-        if(stricmp(co->LocalCharset, sysCodeset->name) != 0)
+        if(stricmp(co->DefaultReadCharset, sysCodeset->name) != 0)
         {
           int res = MUI_Request(G->App, NULL, 0,
                                 tr(MSG_CO_CHARSETWARN_TITLE),
                                 tr(MSG_CO_CHARSETWARN_BT),
                                 tr(MSG_CO_CHARSETWARN),
-                                co->LocalCharset, sysCodeset->name);
+                                co->DefaultReadCharset, sysCodeset->name);
 
           // if the user has clicked on Change, we do
           // change the charset and save it immediatly
           if(res == 1)
           {
-            strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
+            strlcpy(co->DefaultReadCharset, sysCodeset->name, sizeof(co->DefaultReadCharset));
             saveAtEnd = TRUE;
           }
           else if(res == 2)
@@ -1561,7 +1563,7 @@ void CO_Validate(struct Config *co, BOOL update)
       }
       else if(sysCodeset->name[0] != '\0')
       {
-        strlcpy(co->LocalCharset, sysCodeset->name, sizeof(co->LocalCharset));
+        strlcpy(co->DefaultReadCharset, sysCodeset->name, sizeof(co->DefaultReadCharset));
         saveAtEnd = TRUE;
       }
       else
@@ -1573,15 +1575,44 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // if the local charset is still empty we set the default
   // charset to 'iso-8859-1' as this one is probably the most common one.
-  if(co->LocalCharset[0] == '\0')
+  if(co->DefaultReadCharset[0] == '\0')
   {
-    strlcpy(co->LocalCharset, "ISO-8859-1", sizeof(co->LocalCharset));
+    strlcpy(co->DefaultReadCharset, "ISO-8859-1", sizeof(co->DefaultReadCharset));
     saveAtEnd = TRUE;
   }
 
-  // now we check if the set charset is a valid one also supported
+  if(co->DefaultWriteCharset[0] == '\0')
+  {
+    strlcpy(co->DefaultWriteCharset, "ISO-8859-1", sizeof(co->DefaultWriteCharset));
+    saveAtEnd = TRUE;
+  }
+
+  // now we check if the set default read charset is a valid one also supported
   // by codesets.library and if not we warn the user
-  if((G->localCharset = CodesetsFind(co->LocalCharset,
+  if((G->readCharset = CodesetsFind(co->DefaultReadCharset,
+                                    CSA_CodesetList,       G->codesetsList,
+                                    CSA_FallbackToDefault, FALSE,
+                                    TAG_DONE)) == NULL)
+  {
+    int res = MUI_Request(G->App, NULL, 0,
+                          tr(MSG_CO_CHARSETWARN_TITLE),
+                          tr(MSG_CO_CHARSETUNKNOWNWARN_BT),
+                          tr(MSG_CO_CHARSETUNKNOWNWARN),
+                          co->DefaultReadCharset);
+    if(res == 1)
+    {
+      // fallback to the system's default codeset
+      if((G->readCharset = CodesetsFindA(NULL, NULL)) != NULL)
+      {
+        strlcpy(co->DefaultReadCharset, G->readCharset->name, sizeof(co->DefaultReadCharset));
+        saveAtEnd = TRUE;
+      }
+    }
+  }
+
+  // now we check if the set default write charset is a valid one also supported
+  // by codesets.library and if not we warn the user
+  if((G->writeCharset = CodesetsFind(co->DefaultWriteCharset,
                                      CSA_CodesetList,       G->codesetsList,
                                      CSA_FallbackToDefault, FALSE,
                                      TAG_DONE)) == NULL)
@@ -1590,13 +1621,13 @@ void CO_Validate(struct Config *co, BOOL update)
                           tr(MSG_CO_CHARSETWARN_TITLE),
                           tr(MSG_CO_CHARSETUNKNOWNWARN_BT),
                           tr(MSG_CO_CHARSETUNKNOWNWARN),
-                          co->LocalCharset);
+                          co->DefaultWriteCharset);
     if(res == 1)
     {
       // fallback to the system's default codeset
-      if((G->localCharset = CodesetsFindA(NULL, NULL)) != NULL)
+      if((G->writeCharset = CodesetsFindA(NULL, NULL)) != NULL)
       {
-        strlcpy(co->LocalCharset, G->localCharset->name, sizeof(co->LocalCharset));
+        strlcpy(co->DefaultWriteCharset, G->writeCharset->name, sizeof(co->DefaultWriteCharset));
         saveAtEnd = TRUE;
       }
     }

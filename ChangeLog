@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-26  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, YAM_COg.c, misc: moved the charset configuration to the read
+    configuration pane and changed all internals to accept a different default
+    charset for the write window/operations instead. This should deal with
+    bug #1881825 and help users wanting to have more control over the default
+    charsets used for reading/writing an e-mail. Let's see how this goes,
+    thought.
+
 2008-05-26  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: dos.library 52.12 from the July update doesn't use the supplied

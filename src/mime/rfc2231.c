@@ -69,7 +69,7 @@ int rfc2231_encode_file(FILE *fh, const char *paramName, const char *str)
       // part, we go and add the charset as well but no language
       // definition as we don't support that yet.
       if(num == 0)
-        snprintf(buf, SIZE_DEFAULT, "\n\t%s*%d*=%s''", paramName, num++, strippedCharsetName(G->localCharset));
+        snprintf(buf, SIZE_DEFAULT, "\n\t%s*%d*=%s''", paramName, num++, strippedCharsetName(G->writeCharset));
       else
         snprintf(buf, SIZE_DEFAULT, "\n\t%s*%d*=", paramName, num++);
 
@@ -224,10 +224,10 @@ static int rfc2231_decode_int(char *dst, const char *src, struct codeset *srcCod
 
   *dst = '\0';
 
-  if(srcCodeset && srcCodeset != G->localCharset && p-src > 0)
+  if(srcCodeset && srcCodeset != G->readCharset && p-src > 0)
   {
     STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
-                                    CSA_DestCodeset,   G->localCharset,
+                                    CSA_DestCodeset,   G->readCharset,
                                     CSA_Source,        q,
                                     TAG_DONE);
 

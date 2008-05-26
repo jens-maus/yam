@@ -258,7 +258,8 @@ struct CO_GUIData
   Object *CH_QUICKSEARCHBAR;
   Object *CH_WBAPPICON;
   Object *CH_DOCKYICON;
-  Object *TX_DEFAULTCHARSET;
+  Object *TX_DEFCHARSET_READ;
+  Object *TX_DEFCHARSET_WRITE;
   Object *CY_UPDATEINTERVAL;
   Object *BT_UPDATENOW;
   Object *TX_UPDATESTATUS;
@@ -596,7 +597,8 @@ struct Config
   char XPKPackEncrypt[5];
   char SupportSite[SIZE_HOST];
   char UpdateServer[SIZE_HOST];
-  char LocalCharset[SIZE_CTYPE+1];
+  char DefaultReadCharset[SIZE_CTYPE+1];
+  char DefaultWriteCharset[SIZE_CTYPE+1];
   char IOCInterface[SIZE_SMALL];
   char AppIconText[SIZE_COMMAND];
   char InfoBarText[SIZE_COMMAND];

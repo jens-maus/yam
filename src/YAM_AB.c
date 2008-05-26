@@ -969,7 +969,7 @@ BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
 
             // now convert this prossible UTF8 string to a normal string
             value = CodesetsUTF8ToStr(CSA_Source, Trim(b64buffer),
-                                      CSA_DestCodeset, G->localCharset,
+                                      CSA_DestCodeset, G->readCharset,
                                       TAG_DONE);
             utf8 = TRUE;
           }
@@ -1310,7 +1310,7 @@ static void XMLCALL XMLEndHandler(void *userData, const XML_Char *name)
 
   // now convert this prossible UTF8 string to a normal string
   if((isoStr = CodesetsUTF8ToStr(CSA_Source, Trim(xmlUserData->xmlData),
-                                 CSA_DestCodeset, G->localCharset,
+                                 CSA_DestCodeset, G->readCharset,
                                  TAG_DONE)) != NULL)
   {
     if(xmlUserData->section == xs_Group)

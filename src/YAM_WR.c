@@ -159,7 +159,7 @@ struct WritePart *NewMIMEpart(struct WriteMailData *wmData)
       p->charset = wmData->charset;
     }
     else
-      p->charset = G->localCharset;
+      p->charset = G->writeCharset;
   }
   else
     E(DBF_MAIL, "couldn't create new MIME part");

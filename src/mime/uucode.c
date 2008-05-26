@@ -448,7 +448,7 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
           {
             ULONG strLen = 0;
             STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
-                                            CSA_DestCodeset,   G->localCharset,
+                                            CSA_DestCodeset,   G->readCharset,
                                             CSA_Source,        dptr,
                                             CSA_SourceLen,     todo,
                                             CSA_DestLenPtr,    &strLen,
@@ -578,7 +578,7 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
     {
       ULONG strLen = 0;
       STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
-                                      CSA_DestCodeset,   G->localCharset,
+                                      CSA_DestCodeset,   G->readCharset,
                                       CSA_Source,        dptr,
                                       CSA_SourceLen,     todo,
                                       CSA_DestLenPtr,    &strLen,

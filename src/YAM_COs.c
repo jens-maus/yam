@@ -258,8 +258,6 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "EmailAddress     = %s\n", co->EmailAddress);
     fprintf(fh, "TimeZone         = %d\n", co->TimeZone);
     fprintf(fh, "DaylightSaving   = %s\n", Bool2Txt(co->DaylightSaving));
-    fprintf(fh, "LocalCharset     = %s\n", co->LocalCharset);
-    fprintf(fh, "DetectCyrillic   = %s\n", Bool2Txt(co->DetectCyrillic));
 
     fprintf(fh, "\n[TCP/IP]\n");
     fprintf(fh, "SMTP-Server      = %s\n", co->SMTP_Server);
@@ -398,6 +396,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "MultipleWindows  = %s\n", Bool2Txt(co->MultipleReadWindows));
     fprintf(fh, "StatusChangeDelay= %d\n", co->StatusChangeDelayOn ? co->StatusChangeDelay : -co->StatusChangeDelay);
     fprintf(fh, "ConvertHTML      = %s\n", Bool2Txt(co->ConvertHTML));
+    fprintf(fh, "LocalCharset     = %s\n", co->DefaultReadCharset);
+    fprintf(fh, "DetectCyrillic   = %s\n", Bool2Txt(co->DetectCyrillic));
 
     fprintf(fh, "\n[Write]\n");
     fprintf(fh, "ReplyTo          = %s\n", co->ReplyTo);
@@ -414,6 +414,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "AutoSave         = %d\n", co->AutoSave);
     fprintf(fh, "RequestMDN       = %s\n", Bool2Txt(co->RequestMDN));
     fprintf(fh, "SaveSent         = %s\n", Bool2Txt(co->SaveSent));
+    fprintf(fh, "WriteCharset     = %s\n", co->DefaultWriteCharset);
 
     fprintf(fh, "\n[Reply/Forward]\n");
     fprintf(fh, "ReplyHello       = %s\n", co->ReplyHello);
@@ -830,8 +831,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(!stricmp(buffer, "EmailAddress"))   strlcpy(co->EmailAddress, value, sizeof(co->EmailAddress));
           else if(!stricmp(buffer, "TimeZone"))       co->TimeZone = atoi(value);
           else if(!stricmp(buffer, "DaylightSaving")) co->DaylightSaving = Txt2Bool(value);
-          else if(!stricmp(buffer, "LocalCharset"))   strlcpy(co->LocalCharset, value, sizeof(co->LocalCharset));
-          else if(!stricmp(buffer, "DetectCyrillic")) co->DetectCyrillic = Txt2Bool(value);
 
 /* TCP/IP */
           else if(!stricmp(buffer, "SMTP-Server"))    strlcpy(co->SMTP_Server, value, sizeof(co->SMTP_Server));
@@ -1076,6 +1075,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
             }
           }
           else if(!stricmp(buffer, "ConvertHTML"))    co->ConvertHTML = Txt2Bool(value);
+          else if(!stricmp(buffer, "LocalCharset"))   strlcpy(co->DefaultReadCharset, value, sizeof(co->DefaultReadCharset));
+          else if(!stricmp(buffer, "DetectCyrillic")) co->DetectCyrillic = Txt2Bool(value);
 
 /* Write */
           else if(!stricmp(buffer, "ReplyTo"))        strlcpy(co->ReplyTo,  value, sizeof(co->ReplyTo));
@@ -1092,6 +1093,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(!stricmp(buffer, "AutoSave"))       co->AutoSave = atoi(value);
           else if(!stricmp(buffer, "RequestMDN"))     co->RequestMDN = Txt2Bool(value);
           else if(!stricmp(buffer, "SaveSent"))       co->SaveSent = Txt2Bool(value);
+          else if(!stricmp(buffer, "WriteCharset"))   strlcpy(co->DefaultWriteCharset, value, sizeof(co->DefaultWriteCharset));
 
 /* Reply/Forward */
           else if(!stricmp(buffer, "ReplyHello"))     strlcpy(co->ReplyHello, value2, sizeof(co->ReplyHello));
@@ -1429,8 +1431,6 @@ void CO_GetConfig(BOOL saveConfig)
         GetMUIString(CE->EmailAddress, gui->ST_EMAIL, sizeof(CE->EmailAddress));
         CE->TimeZone = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
         CE->DaylightSaving = GetMUICheck(gui->CH_DSTACTIVE);
-        GetMUIText(CE->LocalCharset, gui->TX_DEFAULTCHARSET, sizeof(CE->LocalCharset));
-        CE->DetectCyrillic= GetMUICheck(gui->CH_DETECTCYRILLIC);
       }
       break;
 
@@ -1801,6 +1801,9 @@ void CO_GetConfig(BOOL saveConfig)
         CE->StatusChangeDelayOn  = GetMUICheck  (gui->CH_DELAYEDSTATUS);
         CE->StatusChangeDelay    = GetMUINumer  (gui->NB_DELAYEDSTATUS)*1000;
         CE->ConvertHTML       = GetMUICheck(gui->CH_CONVERTHTML);
+
+        GetMUIText(CE->DefaultReadCharset, gui->TX_DEFCHARSET_READ, sizeof(CE->DefaultReadCharset));
+        CE->DetectCyrillic = GetMUICheck(gui->CH_DETECTCYRILLIC);
       }
       break;
 
@@ -1820,6 +1823,7 @@ void CO_GetConfig(BOOL saveConfig)
         CE->AutoSave          = GetMUINumer  (gui->NB_AUTOSAVE)*60; // in seconds
         CE->RequestMDN = GetMUICheck(gui->CH_REQUESTMDN);
         CE->SaveSent = GetMUICheck(gui->CH_SAVESENT);
+        GetMUIText(CE->DefaultWriteCharset, gui->TX_DEFCHARSET_WRITE, sizeof(CE->DefaultWriteCharset));
       }
       break;
 
@@ -2085,8 +2089,6 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_DSTACTIVE, CE->DaylightSaving);
       nnset(gui->ST_POPHOST0, MUIA_String_Contents, CE->P3[0]->Server);
       nnset(gui->ST_PASSWD0,  MUIA_String_Contents, CE->P3[0]->Password);
-      nnset(gui->TX_DEFAULTCHARSET,  MUIA_Text_Contents, CE->LocalCharset);
-      setcheckmark(gui->CH_DETECTCYRILLIC, CE->DetectCyrillic);
     }
     break;
 
@@ -2221,6 +2223,8 @@ void CO_SetConfig(void)
       set(gui->ST_HEADERS, MUIA_Disabled, CE->ShowHeader == HM_NOHEADER || CE->ShowHeader == HM_FULLHEADER);
       set(gui->CY_SENDERINFO, MUIA_Disabled, CE->ShowHeader == HM_NOHEADER);
       set(gui->CH_WRAPHEAD, MUIA_Disabled, CE->ShowHeader == HM_NOHEADER);
+      nnset(gui->TX_DEFCHARSET_READ,  MUIA_Text_Contents, CE->DefaultReadCharset);
+      setcheckmark(gui->CH_DETECTCYRILLIC, CE->DetectCyrillic);
     }
     break;
 
@@ -2241,6 +2245,7 @@ void CO_SetConfig(void)
       setslider(gui->NB_AUTOSAVE, CE->AutoSave/60);
       setcheckmark(gui->CH_REQUESTMDN, CE->RequestMDN);
       setcheckmark(gui->CH_SAVESENT, CE->SaveSent);
+      nnset(gui->TX_DEFCHARSET_WRITE,  MUIA_Text_Contents, CE->DefaultWriteCharset);
     }
     break;
 
