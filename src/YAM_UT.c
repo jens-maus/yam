@@ -1679,6 +1679,9 @@ LONG FileCount(const char *directory, const char *pattern)
 
     if((context = ObtainDirContextTags(EX_StringName,  (ULONG)directory,
                                        EX_MatchString, (ULONG)parsedPattern,
+                                       #if defined(__amigaos4__)
+                                       EX_MatchFunc,   (DOSBase->lib_Version == 52 && DOSBase->lib_Revision < 17) ? &ExamineDirMatchHook : NULL,
+                                       #endif
                                        TAG_DONE)) != NULL)
     {
       struct ExamineData *ed;
@@ -3749,6 +3752,28 @@ HOOKPROTONHNO(GeneralDesFunc, long, void *entry)
   return 0;
 }
 MakeHook(GeneralDesHook, GeneralDesFunc);
+
+///
+/// ExamineDirMatchHook
+// dos.library 52.12 from the July update doesn't use the supplied match string
+// correctly and simply returns all directory entries instead of just the matching
+// ones. So we have to do the dirty work ourself. This bug has been fixed
+// since dos.library 52.17.
+#if defined(__amigaos4__)
+HOOKPROTONH(ExamineDirMatchFunc, LONG, STRPTR matchString, struct ExamineData *ed)
+{
+  LONG accept = TRUE;
+
+  ENTER();
+
+  if(matchString != NULL)
+    accept = MatchPatternNoCase(matchString, ed->Name);
+
+  RETURN(accept);
+  return accept;
+}
+MakeHook(ExamineDirMatchHook, ExamineDirMatchFunc);
+#endif
 ///
 
 /*** MUI related ***/

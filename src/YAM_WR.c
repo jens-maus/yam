@@ -2871,6 +2871,9 @@ void CheckForAutoSaveFiles(void)
 
     if((context = ObtainDirContextTags(EX_StringName,  (ULONG)G->MA_MailDir,
                                        EX_MatchString, (ULONG)parsedPattern,
+                                       #if defined(__amigaos4__)
+                                       EX_MatchFunc,   (DOSBase->lib_Version == 52 && DOSBase->lib_Revision < 17) ? &ExamineDirMatchHook : NULL,
+                                       #endif
                                        TAG_DONE)) != NULL)
     {
       struct ExamineData *ed;

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-26  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: dos.library 52.12 from the July update doesn't use the supplied
+    match string correctly and simply returns all directory entries instead of
+    just the matching ones. This bug has been fixed since dos.library 52.17.
+    As a temporaty workaround until the next OS4 update we simply supply a
+    suitable match hook to do the dirty work. This should fix bug #1971328.
+
 2008-05-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, WriteWindow.c: reimplemented the bounce mail functionality

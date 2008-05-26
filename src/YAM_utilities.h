@@ -249,6 +249,10 @@ enum LFMode
 extern int            BusyLevel;
 extern struct Hook    GeneralDesHook;
 extern struct Hook    DisposeModuleHook;
+#if defined(__amigaos4__)
+extern struct Hook    ExamineDirMatchHook;
+#endif
+
 
 // all the utility prototypes
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
