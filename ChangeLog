@@ -7,6 +7,9 @@ $URL$
 
 2008-05-27  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentImage.c: added a warning and a beep in case WorkbenchControl()
+    fails to deliver a list of all opened windows, which is the case for i.e.
+    DOpus Magellan.
   * AttachmentGroup.c: dropping an alternative HTML part of a mail onto a
     Workbench window will now try YAM's internal filename as output filename
     in case all other possible filenames are empty strings.

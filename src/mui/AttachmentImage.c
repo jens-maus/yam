@@ -1068,7 +1068,7 @@ OVERLOAD(MUIM_DeleteDragImage)
                 {
                   ChangeWorkbenchSelectionA(selMsg.drawer, &hook, NULL);
 
-                  if(selMsg.finish)
+                  if(selMsg.finish == TRUE)
                   {
                     if(selMsg.destName == NULL)
                     {
@@ -1090,20 +1090,20 @@ OVERLOAD(MUIM_DeleteDragImage)
                   if(selMsg.drawer != NULL)
                     free(selMsg.drawer);
 
-                  if(selMsg.finish)
+                  if(selMsg.finish == TRUE)
                     break;
                 }
               }
 
               WorkbenchControl(NULL, WBCTRLA_FreeOpenDrawerList, path_list, TAG_DONE);
 
-              if(!selMsg.finish)
+              if(selMsg.finish == FALSE)
               {
                 selMsg.drawer = NULL;
 
                 ChangeWorkbenchSelectionA(NULL, &hook, NULL);
 
-                if(selMsg.finish && selMsg.destName)
+                if(selMsg.finish == TRUE && selMsg.destName != NULL)
                   data->dropPath = selMsg.destName;
               }
 
@@ -1119,6 +1119,11 @@ OVERLOAD(MUIM_DeleteDragImage)
                 W(DBF_GUI, "couldn't find drop point of attachment image");
                 DisplayBeep(_screen(obj));
               }
+            }
+            else
+            {
+              W(DBF_GUI, "WorkbenchControl(WBCTRLA_GetOpenDrawerList) failed");
+              DisplayBeep(_screen(obj));
             }
           }
 #endif // __amigaos4__
