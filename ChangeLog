@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-27  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, YAM_UT.c: fixed the broken MorphOS build as the
+    ObtainDirContext() function is a macro call there and gcc 2.95.x does not
+    allow to have preprocessor directives within macros.
+
 2008-05-26  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, YAM_COg.c, misc: moved the charset configuration to the read
