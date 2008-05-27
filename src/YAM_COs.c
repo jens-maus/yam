@@ -1523,10 +1523,10 @@ void CO_GetConfig(BOOL saveConfig)
           // raise a CheckboxRequest and ask the user which
           // operations he want to performed while disabling the
           // SPAM filter.
-          mask = CheckboxRequest(G->CO->GUI.WI, 0, NULL, 3, tr(MSG_CO_SPAM_DISABLEFILTERASK),
-                                                            tr(MSG_CO_SPAM_RESETTDATA),
-                                                            tr(MSG_CO_SPAM_RESETMAILFLAGS),
-                                                            tr(MSG_CO_SPAM_DELETESPAMFOLDER));
+          mask = CheckboxRequest(G->CO->GUI.WI, NULL, 3, tr(MSG_CO_SPAM_DISABLEFILTERASK),
+                                                         tr(MSG_CO_SPAM_RESETTDATA),
+                                                         tr(MSG_CO_SPAM_RESETMAILFLAGS),
+                                                         tr(MSG_CO_SPAM_DELETESPAMFOLDER));
 
           SHOWVALUE(DBF_CONFIG, mask);
           // check if the user canceled the requester

@@ -275,15 +275,21 @@ MUI	= \
 	Addrmatchlist.o \
 	AttachmentGroup.o \
 	AttachmentImage.o \
+	AttachmentRequestWindow.o \
+	CheckboxRequestWindow.o \
 	ConfigPageList.o \
+	FolderRequestWindow.o \
+	GenericRequestWindow.o \
 	ImageArea.o \
 	InfoBar.o \
+	InfoWindow.o \
 	MailTextEdit.o \
 	MainFolderListtree.o \
 	MainMailList.o \
 	MainMailListGroup.o \
 	MainWindow.o \
 	MainWindowToolbar.o \
+	PassphraseRequestWindow.o \
 	QuickSearchBar.o \
 	ReadMailGroup.o \
 	ReadWindow.o \
@@ -294,6 +300,7 @@ MUI	= \
 	SearchControlGroup.o \
 	ShutdownWindow.o \
 	Splashwindow.o \
+	StringRequestWindow.o \
 	ThemeListGroup.o \
 	TransferMailList.o \
 	UpdateNotifyWindow.o \

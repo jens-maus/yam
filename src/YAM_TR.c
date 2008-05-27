@@ -6944,7 +6944,12 @@ static void TR_NewMailAlert(void)
       }
 
       // show the info window.
-      InfoWindow(tr(MSG_TR_NewMail), buffer, tr(MSG_Okay), G->MA->GUI.WI, G->TR->GUIlevel == POP_USER);
+      InfoWindowObject,
+        MUIA_Window_Title, tr(MSG_TR_NewMail),
+        MUIA_Window_RefWindow, G->MA->GUI.WI,
+        MUIA_Window_Activate, G->TR->GUIlevel == POP_USER,
+        MUIA_InfoWindow_Body, buffer,
+      End;
     }
 
     if(hasCommandNotify(C->NotifyType))

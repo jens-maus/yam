@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-27  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: splitted all requesters into separate classes and a function to open
+    a requester. By doing this we can get rid of the ugly pair of
+    COLLECT_RETURNIDS and REISSUE_RETURNIDS macro calls, which may cause crashes
+    because of double node removals.
+
 2008-05-27  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, YAM_UT.c: fixed the broken MorphOS build as the

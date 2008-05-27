@@ -43,7 +43,6 @@ int StringRequest(char *string, int size, const char *title, const char *body, c
 int PassphraseRequest(char *string, int size, Object *parent);
 struct Folder *FolderRequest(const char *title, const char *body, const char *yestext, const char *notext, struct Folder *exclude, Object *parent);
 struct Part *AttachRequest(const char *title, const char *body, const char *yestext, const char *notext, int mode, struct ReadMailData *rmData);
-void InfoWindow(const char *title, const char *body, const char *oktext, Object *parent, BOOL active);
-LONG CheckboxRequest(Object *win, UNUSED LONG flags, const char *tit, ULONG numBoxes, const char *text, ...);
+LONG CheckboxRequest(Object *parent, const char *tit, ULONG numBoxes, const char *text, ...);
 
 #endif /* REQUESTERS_H */
