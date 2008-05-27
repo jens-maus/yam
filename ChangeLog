@@ -7,6 +7,9 @@ $URL$
 
 2008-05-27  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentGroup.c: dropping an alternative HTML part of a mail onto a
+    Workbench window will now try YAM's internal filename as output filename
+    in case all other possible filenames are empty strings.
   * misc: splitted all requesters into separate classes and a function to open
     a requester. By doing this we can get rid of the ugly pair of
     COLLECT_RETURNIDS and REISSUE_RETURNIDS macro calls, which may cause crashes

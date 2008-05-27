@@ -1003,7 +1003,13 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
       OpenWorkbenchObjectA(msg->dropPath, NULL);
 
     // prepare the final path
-    fileName = mailPart->CParFileName ? mailPart->CParFileName : mailPart->Name;
+    fileName = mailPart->CParFileName;
+    if(fileName == NULL || strlen(fileName) == 0)
+    {
+      fileName = mailPart->Name;
+      if(fileName == NULL || strlen(fileName) == 0)
+        fileName = mailPart->Filename;
+    }
     AddPath(filePathBuf, msg->dropPath, fileName, sizeof(filePathBuf));
 
     RE_DecodePart(mailPart);
