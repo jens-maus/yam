@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-28  Thore Böckelmann <tboeckel@gmx.de>
+
+  * WriteWindow.c: added missing MUIA_Window_AppWindow tag to allow dragging
+    icons from Workbench to the attachment list.
+
 2008-05-27  Thore Böckelmann <tboeckel@gmx.de>
 
   * AttachmentImage.c: added a warning and a beep in case WorkbenchControl()

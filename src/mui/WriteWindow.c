@@ -982,9 +982,10 @@ OVERLOAD(OM_NEW)
     if(data->wmData->mode == NMM_BOUNCE)
     {
       obj = DoSuperNew(cl, obj,
-        MUIA_Window_Title, tr(MSG_WR_BounceWT),
-        MUIA_HelpNode,     "WR_W",
-        MUIA_Window_ID,    MAKE_ID('W','R','I','B'),
+        MUIA_Window_Title,     tr(MSG_WR_BounceWT),
+        MUIA_HelpNode,         "WR_W",
+        MUIA_Window_ID,        MAKE_ID('W','R','I','B'),
+        MUIA_Window_AppWindow, FALSE,
         WindowContents, VGroup,
           Child, ColGroup(2),
             Child, Label2(tr(MSG_WR_BounceTo)),
@@ -1143,16 +1144,17 @@ OVERLOAD(OM_NEW)
       {
         obj = DoSuperNew(cl, obj,
 
-          MUIA_Window_Title,  "",
-          MUIA_HelpNode,      "WR_W",
-          MUIA_Window_ID,     MAKE_ID('W','R','W',data->windowNumber),
+          MUIA_Window_Title,     "",
+          MUIA_HelpNode,         "WR_W",
+          MUIA_Window_ID,        MAKE_ID('W','R','W',data->windowNumber),
+          MUIA_Window_AppWindow, TRUE,
           MUIA_Window_Menustrip, menuStripObject,
           WindowContents, VGroup,
             Child, data->RG_PAGE = RegisterGroup(rtitles),
               MUIA_CycleChain, TRUE,
 
               // Message
-              Child, VGroup, 
+              Child, VGroup,
                 MUIA_HelpNode, "WR00",
                 Child, ColGroup(2),
                   Child, Label(tr(MSG_WR_To)),
@@ -1216,7 +1218,7 @@ OVERLOAD(OM_NEW)
               End,
 
               // Attachments
-              Child, VGroup, 
+              Child, VGroup,
                 MUIA_HelpNode, "WR01",
                 Child, NListviewObject,
                   MUIA_CycleChain, TRUE,
