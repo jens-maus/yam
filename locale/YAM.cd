@@ -3506,27 +3506,11 @@ Possible reasons: TCP/IP offline, invalid address, \
 server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
-MSG_ER_UnknownPOP (1128//)
-Unknown POP3 server: '%s'.\n\
-\n\
-TCP/IP is offline or the server address is invalid.
-; HOST
-;
 MSG_ER_UnknownSMTP (1129//)
 Unknown SMTP server: '%s'.\n\
 \n\
 TCP/IP is offline or the server address is invalid.
 ; HOST
-;
-MSG_ER_CantConnect (1130//)
-Couldn't connect to '%s'.\n\
-\n\
-The mail server is currently down or doesn't support the POP3/SMTP protocols.
-; HOST
-;
-MSG_ER_NoAPOP (1131//)
-Your POP3 server doesn't support APOP. \
-Please disable APOP in the configuration.
 ;
 MSG_ER_ErrorWriteMailfile (1132//)
 Write error on mail file: %s.\n\
@@ -4403,9 +4387,6 @@ Couldn't init amissl.library - TLSv1/SSLv3 support disabled.\n\
 \n\
 Please check your AmiSSL installation and restart YAM.
 ;
-MSG_ER_INITTLS (1438//)
-Couldn't initialize TLSv1/SSLv3 session for %s
-;
 MSG_TR_SENDAUTH (1439//)
 Sending SMTP AUTH request...
 ;
@@ -4447,10 +4428,6 @@ or disable TLS/SSL for this connection.
 ;
 MSG_RETRY_QUIT_GAD (1454//)
 Try again|Quit
-;
-MSG_ER_NOSTARTTLS (1455//)
-Your SMTP server doesn't support TLS/SSL. \
-Please disable this option in the configuration.
 ;
 MSG_ER_NOAUTHUSERPASS (1456//)
 No user name or password was specified for the SMTP AUTH connection \
@@ -6083,15 +6060,6 @@ If enabled, any e-mail which was incorrectly classified\n\
 as 'spam' and later manually marked as 'not spam' will be\n\
 automatically moved back to the Incoming folder.
 ;
-MSG_ER_NO8BITMIME (1932//)
-SMTP server '%s' reported that it doesn't support 8bit \
-mail transfers while you have the 'Allow8bit' option \
-enabled.\n\
-\n\
-Please disable this option in your TCP/IP preferences\n\
-and re-edit the e-mail before trying to send it again,\n\
-otherwise the e-mail may be malformed.
-;
 MSG_CO_FILTER_HAM (1933//)
 Apply _filters
 ;
@@ -6120,23 +6088,6 @@ Folder name (new/unread)
 ;
 MSG_CO_FOLDERINFO05 (1942//)
 Folder name (unread/new)
-;
-MSG_ER_BADRESPONSE (1943//)
-Bad response from mail server '%s' to command '%s':\n\
-\n\
-%s\n\
-\n\
-The mail server couldn't execute the command \
-and replied with the above error message.
-; SERVER, COMMAND, TEXT
-;
-MSG_ER_POP3WELCOME (1944//)
-POP3 server '%s' replied with an error message during the welcome \
-procedure and the connection was terminated:\n\
-\n\
-%s\n\
-\n
-; SERVER, TEXT
 ;
 MSG_FO_EXPIREUNREAD (1945//)
 also unread
@@ -6225,33 +6176,6 @@ YAM Support Site at \0335http://www.yam.ch/\033n
 ;
 MSG_WR_VIEW (1969//)
 View
-;
-MSG_ER_CONNECTERR_SOCKET_IN_USE (1970//)
-Couldn't connect to '%s'.\n\
-\n\
-A TCP/IP socket connection seems to be already active. \
-Please close any other existing transfers.
-;
-MSG_ER_CONNECTERR_TIMEDOUT (1971//)
-Couldn't connect to '%s'.\n\
-\n\
-The mail server didn't respond within the predefined \
-time frame and therefore timed out.
-;
-MSG_ER_CONNECTERR_NO_SOCKET (1972//)
-Couldn't connect to '%s'.\n\
-\n\
-YAM wasn't able to establish a socket connection \
-to the mail server. Please make sure that your TCP/IP \
-stack is online and working properly.
-;
-MSG_ER_CONNECTERR_NO_NONBLOCKIO (1973//)
-Couldn't connect to '%s'.\n\
-\n\
-YAM wasn't able to establish a non-blocking I/O \
-connection to the mail server. Please make sure that \
-your TCP/IP stack can establish non-blocking I/O \
-connections.
 ;
 MSG_CONFIG_MODIFIED (1974//)
 The configuration has been modified,\n\
@@ -6778,4 +6702,143 @@ defaults to the global character set.
 ;
 MSG_ABOUTYAM (2086//)
 About YAM...
+;
+MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3 (2087//)
+Couldn't connect to host '%s' of account '%s'.\n\
+\n\
+A TCP/IP socket connection seems to be already active. \
+Please close any other existing transfers.
+; HOST, ACCOUNT
+;
+MSG_ER_CONNECTERR_TIMEDOUT_POP3 (2088//)
+Couldn't connect to host '%s' of account '%s'.\n\
+\n\
+The mail server didn't respond within the predefined \
+time frame and therefore timed out.
+; HOST, ACCOUNT
+;
+MSG_ER_CONNECTERR_NO_SOCKET_POP3 (2089//)
+Couldn't connect to host '%s' of account '%s'.\n\
+\n\
+YAM wasn't able to establish a socket connection \
+to the mail server. Please make sure that your TCP/IP \
+stack is online and working properly.
+; HOST, ACCOUNT
+;
+MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3 (2090//)
+Couldn't connect to host '%s' of account '%s'.\n\
+\n\
+YAM wasn't able to establish a non-blocking I/O \
+connection to the mail server. Please make sure that \
+your TCP/IP stack can establish non-blocking I/O \
+connections.
+; HOST, ACCOUNT
+;
+MSG_ER_UNKNOWN_HOST_POP3 (2091//)
+Unknown POP3 server '%s' of account '%s'.\n\
+\n\
+TCP/IP is offline or the server address is invalid.
+; HOST, ACCOUNT
+;
+MSG_ER_CANNOT_CONNECT_POP3 (2092//)
+Couldn't connect to host '%s' of account '%s'.\n\
+\n\
+The mail server is currently down or doesn't support the POP3 protocols.
+; HOST, ACCOUNT
+;
+MSG_ER_POP3WELCOME (2093//)
+POP3 server '%s' of account '%s' replied with an error message during the welcome \
+procedure and the connection was terminated:\n\
+\n\
+%s\n\
+\n
+; SERVER, ACCOUNT, TEXT
+;
+MSG_ER_BADRESPONSE_POP3 (2094//)
+Bad response from mail server '%s' of account '%s' to command '%s':\n\
+\n\
+%s\n\
+\n\
+The mail server couldn't execute the command \
+and replied with the above error message.
+; SERVER, ACCOUNT, COMMAND, TEXT
+;
+MSG_ER_INITTLS_POP3 (2095//)
+Couldn't initialize TLSv1/SSLv3 session with host '%s' of account '%s'.
+; HOST, ACCOUNT
+;
+MSG_ER_NO_APOP (2096//)
+The POP3 server '%s' of account '%s' doesn't support APOP. \
+Please disable APOP in the configuration.
+; HOST, ACCOUNT
+;
+MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP (2097//)
+Couldn't connect to host '%s'.\n\
+\n\
+A TCP/IP socket connection seems to be already active. \
+Please close any other existing transfers.
+; HOST
+;
+MSG_ER_CONNECTERR_TIMEDOUT_SMTP (2098//)
+Couldn't connect to host '%s'.\n\
+\n\
+The mail server didn't respond within the predefined \
+time frame and therefore timed out.
+; HOST
+;
+MSG_ER_CONNECTERR_NO_SOCKET_SMTP (2099//)
+Couldn't connect to host '%s'.\n\
+\n\
+YAM wasn't able to establish a socket connection \
+to the mail server. Please make sure that your TCP/IP \
+stack is online and working properly.
+; HOST
+;
+MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP (2100//)
+Couldn't connect to host '%s'.\n\
+\n\
+YAM wasn't able to establish a non-blocking I/O \
+connection to the mail server. Please make sure that \
+your TCP/IP stack can establish non-blocking I/O \
+connections.
+; HOST
+;
+MSG_ER_INITTLS_SMTP (2101//)
+Couldn't initialize TLSv1/SSLv3 session with host '%s'.
+; HOST
+;
+MSG_ER_NOSTARTTLS_SMTP (2102//)
+Your SMTP server '%s' doesn't support TLS/SSL. \
+Please disable this option in the configuration.
+; HOST
+;
+MSG_ER_BADRESPONSE_SMTP (2103//)
+Bad response from mail server '%s' to command '%s':\n\
+\n\
+%s\n\
+\n\
+The mail server couldn't execute the command \
+and replied with the above error message.
+; SERVER, COMMAND, TEXT
+;
+MSG_ER_CANNOT_CONNECT_SMTP (2104//)
+Couldn't connect to host '%s'.\n\
+\n\
+The mail server is currently down or doesn't support the SMTP protocols.
+; HOS
+;
+MSG_ER_UNKNOWN_HOST_SMTP (2105//)
+Unknown SMTP server '%s'.\n\
+\n\
+TCP/IP is offline or the server address is invalid.
+; HOST
+;
+MSG_ER_NO8BITMIME_SMTP (2106//)
+The SMTP server '%s' reported that it doesn't support 8bit \
+mail transfers while you have the 'Allow8bit' option \
+enabled.\n\
+\n\
+Please disable this option in your TCP/IP preferences\n\
+and re-edit the e-mail before trying to send it again,\n\
+otherwise the e-mail may be malformed.
 ;

@@ -4760,39 +4760,6 @@ Mögliche Gründe: TCP/IP offline, ungültige Adresse, Server läuft momentan nicht 
 ; server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
-MSG_ER_UnknownPOP
-Unbekannter POP3-Server: '%s'.\n\
-\n\
-TCP/IP ist offline oder die Serveradresse ist ungültig.
-; Unknown POP3 server: '%s'.\n\
-; \n\
-; TCP/IP is offline or the server address is invalid.
-; HOST
-;
-MSG_ER_UnknownSMTP
-Unbekannter SMTP-Server: '%s'.\n\
-\n\
-TCP/IP ist offline oder die Serveradresse ist ungültig.
-; Unknown SMTP server: '%s'.\n\
-; \n\
-; TCP/IP is offline or the server address is invalid.
-; HOST
-;
-MSG_ER_CantConnect
-Keine Verbindung mit '%s'.\n\
-\n\
-Der Postserver ist zur Zeit nicht verfügbar oder er unterstützt das POP3/SMTP-Protokoll nicht.
-; Couldn't connect to '%s'.\n\
-; \n\
-; The mail server is currently down or doesn't support the POP3/SMTP protocols.
-; HOST
-;
-MSG_ER_NoAPOP
-Ihr POP3-Server unterstützt kein APOP. \
-Schalten Sie die APOP-Option in der YAM-Konfiguration aus.
-; Your POP3 server doesn't support APOP. \
-; Disable the APOP option in your YAM configuration.
-;
 MSG_ER_ErrorWriteMailfile
 Fehler beim Schreiben der Nachrichtdatei: %s.\n\
 \n\
@@ -5964,10 +5931,6 @@ Bitte die AmiSSL Installation überprüfen und YAM erneut starten.
 ; \n\
 ; Please check your AmiSSL installation and restart YAM.
 ;
-MSG_ER_INITTLS
-Fehler beim Initialisieren der TLSv1/SSLv3 Session für %s
-; Couldn't initialize TLSv1/SSLv3 session for %s
-;
 MSG_TR_SENDAUTH
 Sende SMTP-AUTH Anfrage...
 ; Sending SMTP AUTH request...
@@ -6030,14 +5993,6 @@ die TLS/SSL Unterstützung für diese Verbindung aus.
 MSG_RETRY_QUIT_GAD
 Wiederholen|Beenden
 ; Try again|Quit
-;
-MSG_ER_NOSTARTTLS
-Der SMTP Server, zu dem sie versucht haben eine Verbindung aufzubauen, \
-unterstützt das TLS/SSL protokoll nicht, jedoch haben Sie dies in der \
-Konfiguration ausgewählt. Bitte kontrollieren Sie Ihre Serverdaten und \
-begutachten Sie die Konfigurationseinstellungen erneut.
-; Your SMTP server doesn't support TLS/SSL. \
-; Please disable this option in your YAM configuration.
 ;
 MSG_ER_NOAUTHUSERPASS
 Es wurde kein Benutzername oder Passwort für die aufzubauende SMTP-AUTH \
@@ -7743,16 +7698,6 @@ Wenn ausgewählt, werden Nachrichten, die falsch als\n\
 klassifiziert werden, zurück in den Posteingang\n\
 verschoben.
 ;
-MSG_ER_NO8BITMIME
-Während des Verbindungsversuches mit dem SMTP Server '%s' \
-zeigte sich, dass dieser keine 8bit MIME-Übertragungen \
-unterstützt. Sie haben jedoch in Ihrer Konfiguration diese \
-Option eingeschaltet.\n\
-\n\
-Bitte stellen Sie sicher, dass Sie die Option abschalten und \
-danach die Nachricht neu editieren, da diese ansonsten eventuell \
-fehlerhaft übertragen werden kann.
-;
 MSG_CO_FILTER_HAM
 _Filter anwenden
 ;
@@ -7781,18 +7726,6 @@ Postfachname (neu/ungelesen)
 ;
 MSG_CO_FOLDERINFO05
 Postfachname (ungelesen/neu)
-;
-MSG_ER_BADRESPONSE
-Der Postserver '%s' hat auf den Befehl '%s' falsch geantwortet:\n\
-%s\n\
-\n\
-Der Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
-;
-MSG_ER_POP3WELCOME
-Der POP3 Server '%s' hat mit einer Fehlermeldung beim Verbindungsaufbau reagiert \
-und die Verbindung wurde daraufhin beendet:\n\
-\n\
-%s\n
 ;
 MSG_FO_EXPIREUNREAD
 auch ungelesene
@@ -7882,31 +7815,6 @@ YAM-Homepage unter \0335http://www.yam.ch/\033n
 ;
 MSG_WR_VIEW
 Ansicht
-;
-MSG_ER_CONNECTERR_SOCKET_IN_USE
-Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
-\n\
-Die TCP/IP Socket-Verbindung scheint schon aktiv zu sein. \
-Bitte beenden Sie alle anderen existierenden Verbindungen.
-;
-MSG_ER_CONNECTERR_TIMEDOUT
-Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
-\n\
-Der Postserver hat nicht in der erwarteten Zeit geantwortet.
-;
-MSG_ER_CONNECTERR_NO_SOCKET
-Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
-\n\
-YAM konnte keine Verbindung zum Postserver aufbauen. \
-Bitte stellen Sie sicher, dass Ihr TCP/IP-Stack läuft und \
-korrekt funktioniert.
-;
-MSG_ER_CONNECTERR_NO_NONBLOCKIO
-Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
-\n\
-YAM konnte keine nicht blockierende Verbindung zum Postserver \
-aufbauen. Bitte stellen Sie sicher, dass Ihr TCP/IP-Stack in \
-der Lage ist nicht blockierende Verbindungen aufzubauen.
 ;
 MSG_CONFIG_MODIFIED
 Die Konfiguration wurde verändert\n\
@@ -8436,4 +8344,116 @@ Mit Hilfe des PopUp-Knopfes können Sie die\n\
 Zeichenkodierung auswählen, die YAM für diese\n\
 verwenden soll. Standardmäßig wird die globale\n\
 Zeichenkodierung verwendet.
+;
+MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
+Verbindung zu '%s' von Konto '%s' konnte nicht aufgebaut werden.\n\
+\n\
+Die TCP/IP Socket-Verbindung scheint schon aktiv zu sein. \
+Bitte beenden Sie alle anderen existierenden Verbindungen.
+;
+MSG_ER_CONNECTERR_TIMEDOUT_POP3
+Verbindung zu '%s' von Konto '%s' konnte nicht aufgebaut werden.\n\
+\n\
+Der Postserver hat nicht in der erwarteten Zeit geantwortet.
+;
+MSG_ER_CONNECTERR_NO_SOCKET_POP3
+Verbindung zu '%s' von Konto '%s' konnte nicht aufgebaut werden.\n\
+\n\
+YAM konnte keine Verbindung zum Postserver aufbauen. \
+Bitte stellen Sie sicher, dass Ihr TCP/IP-Stack läuft und \
+korrekt funktioniert.
+;
+MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3
+Verbindung zu '%s' von Konto '%s' konnte nicht aufgebaut werden.\n\
+\n\
+YAM konnte keine nicht blockierende Verbindung zum Postserver \
+aufbauen. Bitte stellen Sie sicher, dass Ihr TCP/IP-Stack in \
+der Lage ist nicht blockierende Verbindungen aufzubauen.
+;
+MSG_ER_UNKNOWN_HOST_POP3
+Unbekannter POP3-Server '%s' von Konto '%s'.\n\
+\n\
+TCP/IP ist offline oder die Serveradresse ist ungültig.
+MSG_ER_CANNOT_CONNECT_POP3
+Keine Verbindung mit '%s' von Konto '%s'.\n\
+\n\
+Der Postserver ist zur Zeit nicht verfügbar oder er unterstützt das POP3-Protokoll nicht.
+;
+MSG_ER_POP3WELCOME
+Der POP3 Server '%s' von Konto '%s' hat mit einer Fehlermeldung beim Verbindungsaufbau reagiert \
+und die Verbindung wurde daraufhin beendet:\n\
+\n\
+%s\n
+;
+MSG_ER_BADRESPONSE_POP3
+Der Postserver '%s' von Konto '%s' hat auf den Befehl '%s' falsch geantwortet:\n\
+%s\n\
+\n\
+Der Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
+;
+MSG_ER_INITTLS_POP3
+Fehler beim Initialisieren der TLSv1/SSLv3 Session mit Server '%s' von Konto '%s'.
+;
+MSG_ER_NO_APOP
+Der POP3-Server '%s' von Konto '%s' unterstützt kein APOP. \
+Schalten Sie die APOP-Option in der YAM-Konfiguration aus.
+;
+MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP
+Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
+\n\
+Die TCP/IP Socket-Verbindung scheint schon aktiv zu sein. \
+Bitte beenden Sie alle anderen existierenden Verbindungen.
+;
+MSG_ER_CONNECTERR_TIMEDOUT_SMTP
+Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
+\n\
+Der Postserver hat nicht in der erwarteten Zeit geantwortet.
+;
+MSG_ER_CONNECTERR_NO_SOCKET_SMTP
+Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
+\n\
+YAM konnte keine Verbindung zum Postserver aufbauen. \
+Bitte stellen Sie sicher, dass Ihr TCP/IP-Stack läuft und \
+korrekt funktioniert.
+;
+MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP
+Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
+\n\
+YAM konnte keine nicht blockierende Verbindung zum Postserver \
+aufbauen. Bitte stellen Sie sicher, dass Ihr TCP/IP-Stack in \
+der Lage ist nicht blockierende Verbindungen aufzubauen.
+;
+MSG_ER_INITTLS_SMTP
+Fehler beim Initialisieren der TLSv1/SSLv3 Session mit Server '%s'.
+;
+MSG_ER_NOSTARTTLS_SMTP
+Der SMTP Server '%s' unterstützt das TLS/SSL-Protokoll nicht, jedoch haben Sie dies in der \
+Konfiguration ausgewählt. Bitte kontrollieren Sie Ihre Serverdaten und \
+begutachten Sie die Konfigurationseinstellungen erneut.
+;
+MSG_ER_BADRESPONSE_SMTP
+Der Postserver '%s' hat auf den Befehl '%s' falsch geantwortet:\n\
+%s\n\
+\n\
+Der Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
+;
+MSG_ER_CANNOT_CONNECT_SMTP
+Keine Verbindung mit '%s'.\n\
+\n\
+Der Postserver ist zur Zeit nicht verfügbar oder er unterstützt das SMTP-Protokoll nicht.
+;
+MSG_ER_UNKNOWN_HOST_SMTP
+Unbekannter SMTP-Server '%s'.\n\
+\n\
+TCP/IP ist offline oder die Serveradresse ist ungültig.
+;
+MSG_ER_NO8BITMIME_SMTP
+Während des Verbindungsversuches mit dem SMTP Server '%s' \
+zeigte sich, dass dieser keine 8bit MIME-Übertragungen \
+unterstützt. Sie haben jedoch in Ihrer Konfiguration diese \
+Option eingeschaltet.\n\
+\n\
+Bitte stellen Sie sicher, dass Sie die Option abschalten und \
+danach die Nachricht neu editieren, da diese ansonsten eventuell \
+fehlerhaft übertragen werden kann.
 ;

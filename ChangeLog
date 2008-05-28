@@ -7,6 +7,10 @@ $URL$
 
 2008-05-28  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.cd, german.ct, YAM_TR.c: added the account name to all error messages
+    during a POP3 mail transfer to make it easier to spot the faulty account
+    in case a user has more than one account at the same provider. This fixes
+    bug #1931612.
   * WriteWindow.c: added missing MUIA_Window_AppWindow tag to allow dragging
     icons from Workbench to the attachment list.
 

@@ -294,7 +294,7 @@ static SSL *ssl = NULL;
 /*** TLS/SSL routines ***/
 /// TR_InitTLS()
 // Initialize the SSL/TLS session accordingly
-static BOOL TR_InitTLS(VOID)
+static BOOL TR_InitTLS(void)
 {
   BOOL result = FALSE;
   char tmp[24+1];
@@ -382,7 +382,7 @@ static BOOL TR_InitTLS(VOID)
 ///
 /// TR_EndTLS()
 // function that stops all TLS context
-static VOID TR_EndTLS(VOID)
+static void TR_EndTLS(void)
 {
   ENTER();
 
@@ -405,7 +405,7 @@ static VOID TR_EndTLS(VOID)
 ///
 /// TR_StartTLS()
 // function that starts & initializes the TLS/SSL session
-static BOOL TR_StartTLS(VOID)
+static BOOL TR_StartTLS(void)
 {
   BOOL result = FALSE;
 
@@ -598,20 +598,20 @@ static BOOL TR_InitSTARTTLS(void)
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_INITTLS));
 
     // Now we initiate the STARTTLS command (RFC 2487)
-    if(TR_SendSMTPCmd(ESMTP_STARTTLS, NULL, tr(MSG_ER_BADRESPONSE)))
+    if(TR_SendSMTPCmd(ESMTP_STARTTLS, NULL, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)
     {
       // setup the TLS/SSL session
-      if(TR_InitTLS() && TR_StartTLS())
+      if(TR_InitTLS() == TRUE && TR_StartTLS() == TRUE)
       {
         G->TR_UseTLS = TRUE;
         result = TRUE;
       }
       else
-        ER_NewError(tr(MSG_ER_INITTLS), C->SMTP_Server);
+        ER_NewError(tr(MSG_ER_INITTLS_SMTP), C->SMTP_Server);
     }
   }
   else
-    ER_NewError(tr(MSG_ER_NOSTARTTLS));
+    ER_NewError(tr(MSG_ER_NOSTARTTLS_SMTP), C->SMTP_Server);
 
   RETURN(result);
   return result;
@@ -636,7 +636,7 @@ static BOOL TR_InitSMTPAUTH(void)
 
   // first we check if the user has supplied the User&Password
   // and if not we return with an error
-  if(!C->SMTP_AUTH_User[0] || !C->SMTP_AUTH_Pass[0])
+  if(C->SMTP_AUTH_User[0] == '\0' || C->SMTP_AUTH_Pass[0] == '\0')
   {
     ER_NewError(tr(MSG_ER_NOAUTHUSERPASS));
 
@@ -711,7 +711,7 @@ static BOOL TR_InitSMTPAUTH(void)
       D(DBF_NET, "processing AUTH DIGEST-MD5:");
 
       // send the AUTH command and get the response back
-      if((resp = TR_SendSMTPCmd(ESMTP_AUTH_DIGEST_MD5, NULL, tr(MSG_ER_BADRESPONSE))))
+      if((resp = TR_SendSMTPCmd(ESMTP_AUTH_DIGEST_MD5, NULL, tr(MSG_ER_BADRESPONSE_SMTP))) != NULL)
       {
         char *realm = NULL;
         char *nonce = NULL;
@@ -981,7 +981,7 @@ static BOOL TR_InitSMTPAUTH(void)
         {
           // get the server response and see if it was valid
           if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 334)
-            ER_NewError(tr(MSG_ER_BADRESPONSE), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
           else
           {
             // now that we have received the 334 code we just send a plain line
@@ -989,7 +989,7 @@ static BOOL TR_InitSMTPAUTH(void)
             if(TR_WriteLine("\r\n") > 0)
             {
               if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-                ER_NewError(tr(MSG_ER_BADRESPONSE), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+                ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
               else
                 rc = SMTP_ACTION_OK;
             }
@@ -1013,7 +1013,7 @@ static BOOL TR_InitSMTPAUTH(void)
       D(DBF_NET, "processing AUTH CRAM-MD5:");
 
       // send the AUTH command and get the response back
-      if((resp = TR_SendSMTPCmd(ESMTP_AUTH_CRAM_MD5, NULL, tr(MSG_ER_BADRESPONSE))))
+      if((resp = TR_SendSMTPCmd(ESMTP_AUTH_CRAM_MD5, NULL, tr(MSG_ER_BADRESPONSE_SMTP))) != NULL)
       {
         ULONG digest[4]; // 16 chars
         char buf[512];
@@ -1057,7 +1057,7 @@ static BOOL TR_InitSMTPAUTH(void)
         {
           // get the server response and see if it was valid
           if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-            ER_NewError(tr(MSG_ER_BADRESPONSE), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_CRAM_MD5], buffer);
+            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_CRAM_MD5], buffer);
           else
             rc = SMTP_ACTION_OK;
         }
@@ -1071,7 +1071,7 @@ static BOOL TR_InitSMTPAUTH(void)
       D(DBF_NET, "processing AUTH LOGIN:");
 
       // send the AUTH command
-      if((resp = TR_SendSMTPCmd(ESMTP_AUTH_LOGIN, NULL, tr(MSG_ER_BADRESPONSE))))
+      if((resp = TR_SendSMTPCmd(ESMTP_AUTH_LOGIN, NULL, tr(MSG_ER_BADRESPONSE_SMTP))) != NULL)
       {
         // prepare the username challenge
         D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_User);
@@ -1105,7 +1105,7 @@ static BOOL TR_InitSMTPAUTH(void)
           }
 
           if(rc != SMTP_ACTION_OK)
-            ER_NewError(tr(MSG_ER_BADRESPONSE), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_LOGIN], buffer);
+            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_LOGIN], buffer);
         }
       }
     }
@@ -1140,7 +1140,7 @@ static BOOL TR_InitSMTPAUTH(void)
       {
         // get the server response and see if it was valid
         if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-          ER_NewError(tr(MSG_ER_BADRESPONSE), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
+          ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
         else
           rc = SMTP_ACTION_OK;
       }
@@ -3231,7 +3231,7 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
             }
           }
 
-          ER_NewError(errorMsg, C->P3[G->TR->POP_Nr]->Server, (char *)POPcmd[command], buf);
+          ER_NewError(errorMsg, C->P3[G->TR->POP_Nr]->Server, C->P3[G->TR->POP_Nr]->Account, (char *)POPcmd[command], buf);
         }
       }
     }
@@ -3318,32 +3318,32 @@ static int TR_ConnectPOP(int guilevel)
 
         // socket is already in use
         case CONNECTERR_SOCKET_IN_USE:
-          ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE), host);
+          ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3), host, pop3->Account);
         break;
 
         // socket() execution failed
         case CONNECTERR_NO_SOCKET:
-          ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET), host);
+          ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_POP3), host, pop3->Account);
         break;
 
         // couldn't establish non-blocking IO
         case CONNECTERR_NO_NONBLOCKIO:
-          ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO), host);
+          ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3), host, pop3->Account);
         break;
 
         // connection request timed out
         case CONNECTERR_TIMEDOUT:
-          ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT), host);
+          ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_POP3), host, pop3->Account);
         break;
 
         // unknown host - gethostbyname() failed
         case CONNECTERR_UNKNOWN_HOST:
-          ER_NewError(tr(MSG_ER_UnknownPOP), host);
+          ER_NewError(tr(MSG_ER_UNKNOWN_HOST_POP3), host, pop3->Account);
         break;
 
         // general connection error
         case CONNECTERR_UNKNOWN_ERROR:
-          ER_NewError(tr(MSG_ER_CantConnect), host);
+          ER_NewError(tr(MSG_ER_CANNOT_CONNECT_POP3), host, pop3->Account);
         break;
 
         case CONNECTERR_SSLFAILED:
@@ -3373,7 +3373,7 @@ static int TR_ConnectPOP(int guilevel)
 
     // If the user selected STLS support we have to first send the command
     // to start TLS negotiation (RFC 2595)
-    if(TR_SendPOP3Cmd(POPCMD_STLS, NULL, tr(MSG_ER_BADRESPONSE)) == NULL)
+    if(TR_SendPOP3Cmd(POPCMD_STLS, NULL, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
     {
       RETURN(-1);
       return -1;
@@ -3392,7 +3392,7 @@ static int TR_ConnectPOP(int guilevel)
     }
     else
     {
-       ER_NewError(tr(MSG_ER_INITTLS), host);
+       ER_NewError(tr(MSG_ER_INITTLS_POP3), host, pop3->Account);
        RETURN(-1);
        return -1;
     }
@@ -3447,7 +3447,7 @@ static int TR_ConnectPOP(int guilevel)
         snprintf(&buf[j], sizeof(buf)-j, "%02x", digest[i]);
       buf[j] = '\0';
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendAPOPLogin));
-      if(TR_SendPOP3Cmd(POPCMD_APOP, buf, tr(MSG_ER_BADRESPONSE)) == NULL)
+      if(TR_SendPOP3Cmd(POPCMD_APOP, buf, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
       {
         RETURN(-1);
         return -1;
@@ -3455,7 +3455,7 @@ static int TR_ConnectPOP(int guilevel)
     }
     else
     {
-      ER_NewError(tr(MSG_ER_NoAPOP));
+      ER_NewError(tr(MSG_ER_NO_APOP), host, pop3->Account);
       RETURN(-1);
       return -1;
     }
@@ -3463,14 +3463,14 @@ static int TR_ConnectPOP(int guilevel)
   else
   {
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendUserID));
-    if(TR_SendPOP3Cmd(POPCMD_USER, pop3->User, tr(MSG_ER_BADRESPONSE)) == NULL)
+    if(TR_SendPOP3Cmd(POPCMD_USER, pop3->User, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
     {
       RETURN(-1);
       return -1;
     }
 
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendPassword));
-    if(TR_SendPOP3Cmd(POPCMD_PASS, passwd, tr(MSG_ER_BADRESPONSE)) == NULL)
+    if(TR_SendPOP3Cmd(POPCMD_PASS, passwd, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
     {
       RETURN(-1);
       return -1;
@@ -3480,7 +3480,7 @@ static int TR_ConnectPOP(int guilevel)
   FreeStrBuf(welcomemsg);
 
   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_GetStats));
-  if((resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, tr(MSG_ER_BADRESPONSE))) == NULL)
+  if((resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, tr(MSG_ER_BADRESPONSE_POP3))) == NULL)
   {
     RETURN(-1);
     return -1;
@@ -3541,7 +3541,7 @@ static BOOL TR_GetMessageList_GET(void)
   // we issue a LIST command without argument to get a list
   // of all messages available on the server. This command will
   // return TRUE if the server responsed with a +OK
-  if(TR_SendPOP3Cmd(POPCMD_LIST, NULL, tr(MSG_ER_BADRESPONSE)) != NULL)
+  if(TR_SendPOP3Cmd(POPCMD_LIST, NULL, tr(MSG_ER_BADRESPONSE_POP3)) != NULL)
   {
     char buf[SIZE_LINE];
 
@@ -3744,7 +3744,7 @@ static void TR_DisconnectPOP(void)
   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
 
   if(G->Error == FALSE)
-    TR_SendPOP3Cmd(POPCMD_QUIT, NULL, tr(MSG_ER_BADRESPONSE));
+    TR_SendPOP3Cmd(POPCMD_QUIT, NULL, tr(MSG_ER_BADRESPONSE_POP3));
 
   TR_Disconnect();
 
@@ -4073,7 +4073,7 @@ BOOL TR_SendPOP3KeepAlive(void)
   // should do the job as well. But there are several known POP3
   // servers out there which are known to ignore the NOOP commands
   // for keepalive message, so STAT should be the better choice.
-  result = (TR_SendPOP3Cmd(POPCMD_STAT, NULL, tr(MSG_ER_BADRESPONSE)) != NULL);
+  result = (TR_SendPOP3Cmd(POPCMD_STAT, NULL, tr(MSG_ER_BADRESPONSE_POP3)) != NULL);
 
   RETURN(result);
   return result;
@@ -4264,7 +4264,7 @@ static BOOL TR_ConnectSMTP(void)
   {
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
 
-    result = (TR_SendSMTPCmd(SMTP_CONNECT, NULL, tr(MSG_ER_BADRESPONSE)) != NULL);
+    result = (TR_SendSMTPCmd(SMTP_CONNECT, NULL, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL);
   }
   else
     result = TRUE;
@@ -4288,7 +4288,7 @@ static BOOL TR_ConnectSMTP(void)
     // in case we require SMTP-AUTH or a TLS secure connection we
     // have to force an ESMTP connection
     if(C->Use_SMTP_AUTH || C->SMTP_SecureMethod == SMTPSEC_TLS)
-      resp = TR_SendSMTPCmd(ESMTP_EHLO, C->SMTP_Domain, tr(MSG_ER_BADRESPONSE));
+      resp = TR_SendSMTPCmd(ESMTP_EHLO, C->SMTP_Domain, tr(MSG_ER_BADRESPONSE_SMTP));
     else
     {
       // in all other cases, we first try to get an ESMTP connection
@@ -4303,7 +4303,7 @@ static BOOL TR_ConnectSMTP(void)
 
         // now we send a HELO command which signals we are not
         // going to use any ESMTP stuff
-        resp = TR_SendSMTPCmd(SMTP_HELO, C->SMTP_Domain, tr(MSG_ER_BADRESPONSE));
+        resp = TR_SendSMTPCmd(SMTP_HELO, C->SMTP_Domain, tr(MSG_ER_BADRESPONSE_SMTP));
 
         // signal we are not into ESMTP stuff
         CLEAR_FLAG(flags, SMTP_FLG_ESMTP);
@@ -5321,7 +5321,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
       snprintf(buf, sizeof(buf), "%s BODY=%s", buf, C->Allow8bit ? "8BITMIME" : "7BIT");
 
     // send the MAIL command with the FROM: message
-    if(TR_SendSMTPCmd(SMTP_MAIL, buf, tr(MSG_ER_BADRESPONSE)))
+    if(TR_SendSMTPCmd(SMTP_MAIL, buf, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)
     {
       struct ExtendedMail *email = MA_ExamineMail(outfolder, mail->MailFile, TRUE);
 
@@ -5338,7 +5338,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
           for(j=0; j < email->NoResentTo; j++)
           {
             snprintf(buf, sizeof(buf), "TO:<%s>", email->ResentTo[j].Address);
-            if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
+            if(TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
               rcptok = FALSE;
           }
         }
@@ -5346,14 +5346,14 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
         {
           // specify the main 'To:' recipient
           snprintf(buf, sizeof(buf), "TO:<%s>", mail->To.Address);
-          if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
+          if(TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
             rcptok = FALSE;
 
           // now add the additional 'To:' recipients of the mail
           for(j=0; j < email->NoSTo && rcptok; j++)
           {
             snprintf(buf, sizeof(buf), "TO:<%s>", email->STo[j].Address);
-            if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
+            if(TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
               rcptok = FALSE;
           }
 
@@ -5361,7 +5361,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
           for(j=0; j < email->NoCC && rcptok; j++)
           {
             snprintf(buf, sizeof(buf), "TO:<%s>", email->CC[j].Address);
-            if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
+            if(TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
               rcptok = FALSE;
           }
 
@@ -5369,17 +5369,17 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
           for(j=0; j < email->NoBCC && rcptok; j++)
           {
             snprintf(buf, sizeof(buf), "TO:<%s>", email->BCC[j].Address);
-            if(!TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE)))
+            if(TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
               rcptok = FALSE;
           }
         }
 
-        if(rcptok)
+        if(rcptok == TRUE)
         {
           D(DBF_NET, "RCPTs accepted, sending mail data");
 
           // now we send the actual main data of the mail
-          if(TR_SendSMTPCmd(SMTP_DATA, NULL, tr(MSG_ER_BADRESPONSE)))
+          if(TR_SendSMTPCmd(SMTP_DATA, NULL, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)
           {
             BOOL lineskip = FALSE;
             BOOL inbody = FALSE;
@@ -5466,7 +5466,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
               // send a CRLF+octet "\r\n." to signal that the data is finished.
               // we do it here because if there was an error and we send it, the message
               // will be send incomplete.
-              if(TR_SendSMTPCmd(SMTP_FINISH, NULL, tr(MSG_ER_BADRESPONSE)) != NULL)
+              if(TR_SendSMTPCmd(SMTP_FINISH, NULL, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)
               {
                 // put the transferStat to 100%
                 TR_TransStat_Update(ts, TS_SETMAX);
@@ -5731,7 +5731,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
                 // send a 'QUIT' command, but only if
                 // we didn't receive any error during the transfer
                 if(G->Error == FALSE)
-                  TR_SendSMTPCmd(SMTP_QUIT, NULL, tr(MSG_ER_BADRESPONSE));
+                  TR_SendSMTPCmd(SMTP_QUIT, NULL, tr(MSG_ER_BADRESPONSE_SMTP));
               }
               else
               {
@@ -5762,46 +5762,46 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
               // a socket is already in use so we return
               // a specific error to the user
               case CONNECTERR_SOCKET_IN_USE:
-                ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE), host);
+                ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP), host);
               break;
 
               // socket() execution failed
               case CONNECTERR_NO_SOCKET:
-                ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET), host);
+                ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_SMTP), host);
               break;
 
               // couldn't establish non-blocking IO
               case CONNECTERR_NO_NONBLOCKIO:
-                ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO), host);
+                ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP), host);
               break;
 
               // the specified hostname isn't valid, so
               // lets tell the user
               case CONNECTERR_UNKNOWN_HOST:
-                ER_NewError(tr(MSG_ER_UnknownSMTP), host);
+                ER_NewError(tr(MSG_ER_UNKNOWN_HOST_SMTP), host);
               break;
 
               // the connection request timed out, so tell
               // the user
               case CONNECTERR_TIMEDOUT:
-                ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT), host);
+                ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_SMTP), host);
               break;
 
               // an error occurred while checking for 8bit MIME
               // compatibility
               case CONNECTERR_INVALID8BIT:
-                ER_NewError(tr(MSG_ER_NO8BITMIME), host);
+                ER_NewError(tr(MSG_ER_NO8BITMIME_SMTP), host);
               break;
 
               // error during initialization of an SSL connection
               case CONNECTERR_SSLFAILED:
-                ER_NewError(tr(MSG_ER_INITTLS), host);
+                ER_NewError(tr(MSG_ER_INITTLS_SMTP), host);
               break;
 
               // an unknown error occurred so lets show
               // a generic error message
               case CONNECTERR_UNKNOWN_ERROR:
-                ER_NewError(tr(MSG_ER_CantConnect), host);
+                ER_NewError(tr(MSG_ER_CANNOT_CONNECT_SMTP), host);
               break;
             }
 
@@ -6813,7 +6813,7 @@ static BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     snprintf(msgnum, sizeof(msgnum), "%d", number);
-    if(TR_SendPOP3Cmd(POPCMD_RETR, msgnum, tr(MSG_ER_BADRESPONSE)) != NULL)
+    if(TR_SendPOP3Cmd(POPCMD_RETR, msgnum, tr(MSG_ER_BADRESPONSE_POP3)) != NULL)
     {
       // now we call a subfunction to receive data from the POP3 server
       // and write it in the filehandle as long as there is no termination \r\n.\r\n
@@ -6883,7 +6883,7 @@ static BOOL TR_DeleteMessage(int number)
   // inform others of the delete operation
   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_DeletingServerMail));
 
-  if(TR_SendPOP3Cmd(POPCMD_DELE, msgnum, tr(MSG_ER_BADRESPONSE)) != NULL)
+  if(TR_SendPOP3Cmd(POPCMD_DELE, msgnum, tr(MSG_ER_BADRESPONSE_POP3)) != NULL)
   {
     G->TR->Stats.Deleted++;
     result = TRUE;
