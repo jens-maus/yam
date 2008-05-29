@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-29  Jens Langner <Jens.Langner@light-speed.de>
+
+  * italian.ct: updated italian translation provided by Samir Hawamdeh.
+
 2008-05-29  Thore Böckelmann <tboeckel@gmx.de>
 
   * italian.ct: fixed typo in italian translation.
