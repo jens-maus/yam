@@ -4560,7 +4560,7 @@ MSG_TR_NewMailReq
 \n\
 %3ld messaggi prelevati,\n\
 %3ld lasciati nel server\n\
-%3ld duplicati saltati\n\
+%3ld duplicati saltati\n
 ; \e8You have new mail!\e2\n\
 ; \n\
 ; %3ld messages downloaded,\n\

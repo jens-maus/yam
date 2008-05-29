@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-29  Thore Böckelmann <tboeckel@gmx.de>
+
+  * italian.ct: fixed typo in italian translation.
+
 2008-05-28  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.cd, german.ct, YAM_TR.c: added the account name to all error messages
