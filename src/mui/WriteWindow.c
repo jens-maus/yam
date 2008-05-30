@@ -1598,9 +1598,6 @@ OVERLOAD(OM_NEW)
       // set the global charset as the default one
       data->wmData->charset = G->writeCharset;
 
-      // place our data in the node and add it to the writeMailDataList
-      AddTail((struct List *)&(G->writeMailDataList), (struct Node *)data->wmData);
-
       if(data->wmData->mode != NMM_BOUNCE)
       {
         // Finally set up the notifications for external changes to the file being edited
@@ -1628,8 +1625,11 @@ OVERLOAD(OM_NEW)
         data->wmData->notifyRequest = NULL;
       }
 
-      // no active notification yet
+      // there is no active notification yet
       data->wmData->fileNotifyActive = FALSE;
+
+      // place our data in the node and add it to the writeMailDataList
+      AddTail((struct List *)&(G->writeMailDataList), (struct Node *)data->wmData);
 
       // we created a new write window, lets
       // go and start the PREWRITE macro

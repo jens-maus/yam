@@ -7,6 +7,8 @@ $URL$
 
 2008-05-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * WriteWindow.c: moved the AddTail() to the global list call behind the
+    notification initialization to avoid possible race conditions.
   * #?RequestWindow.c: changed the classes to let the super class ignore all
     custom attributes upon OM_NEW.
   * WriteWindow.c: fixed the WriteWindow's broken file notification mechanism.
