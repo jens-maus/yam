@@ -67,8 +67,19 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(StringContents): stringContents = (char *)tag->ti_Data; break;
-      ATTR(MaxLength):      maxLength = tag->ti_Data; break;
+      ATTR(StringContents):
+      {
+        stringContents = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(MaxLength):
+      {
+        maxLength = tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
     }
   }
 

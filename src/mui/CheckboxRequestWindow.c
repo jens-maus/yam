@@ -85,9 +85,26 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      case MUIA_Window_Title: titleText = (char *)tag->ti_Data; tag->ti_Tag = TAG_IGNORE; break;
-      ATTR(Body):             bodyText = (char *)tag->ti_Data; break;
-      ATTR(Entries):          entries = (char **)tag->ti_Data; break;
+      case MUIA_Window_Title:
+      {
+        titleText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(Body):
+      {
+        bodyText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(Entries):
+      {
+        entries = (char **)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
     }
   }
 

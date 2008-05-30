@@ -70,14 +70,61 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      case MUIA_Window_Title:     titleText = (char *)tag->ti_Data; tag->ti_Tag = TAG_IGNORE; break;
-      ATTR(Body):                 bodyText = (char *)tag->ti_Data; break;
-      ATTR(Secret):               secret = tag->ti_Data; break;
-      ATTR(YesText):              yesText = (char *)tag->ti_Data; break;
-      ATTR(NoText):               noText = (char *)tag->ti_Data; break;
-      ATTR(AlternativeText):      altText = (char *)tag->ti_Data; break;
-      ATTR(StringContents):       stringContents = (char *)tag->ti_Data; break;
-      ATTR(MaxLength):            maxLength = tag->ti_Data; break;
+      case MUIA_Window_Title:
+      {
+        titleText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(Body):
+      {
+        bodyText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(Secret):
+      {
+        secret = tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(YesText):
+      {
+        yesText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(NoText):
+      {
+        noText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(AlternativeText):
+      {
+        altText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(StringContents):
+      {
+        stringContents = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(MaxLength):
+      {
+        maxLength = tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
     }
   }
 
