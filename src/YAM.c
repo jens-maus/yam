@@ -938,6 +938,10 @@ static void Terminate(void)
 
   FreeAppIcon();
 
+  D(DBF_STARTUP, "freeing file notify port...");
+  if(G->FileNotifyPort != NULL)
+    FreeSysObject(ASOT_PORT, G->FileNotifyPort);
+
   D(DBF_STARTUP, "freeing Arexx port...");
   if(G->RexxHost != NULL)
     CloseDownARexxHost(G->RexxHost);
@@ -1904,37 +1908,8 @@ static void InitBeforeLogin(BOOL hidden)
     Abort(NULL);
 
   // initialize the file nofifications
-  /*
-  for(i=0; i <= MAXWR; i++)
-  {
-    struct MsgPort *notifyPort;
-
-    if((notifyPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) == NULL)
-    {
-      // port creation failed
-      Abort(NULL);
-    }
-
-    #if defined(__amigaos4__)
-    if((G->WR_NotifyRequest[i] = AllocDosObjectTags(DOS_NOTIFYREQUEST, ADO_NotifyName,   G->WR_Filename[i],
-                                                                       ADO_NotifyMethod, NRF_SEND_MESSAGE,
-                                                                       ADO_NotifyPort,   notifyPort,
-                                                                       TAG_DONE)) == NULL)
-    #else
-    if((G->WR_NotifyRequest[i] = AllocVecPooled(G->SharedMemPool, sizeof(struct NotifyRequest))) == NULL)
-    #endif
-    {
-      // notify request creation failed
-      Abort(NULL);
-    }
-
-    #if !defined(__amigaos4__)
-    G->WR_NotifyRequest[i]->nr_Name = (STRPTR)G->WR_Filename[i];
-    G->WR_NotifyRequest[i]->nr_Flags = NRF_SEND_MESSAGE;
-    G->WR_NotifyRequest[i]->nr_stuff.nr_Msg.nr_Port = notifyPort;
-    #endif
-  }
-  */
+  if((G->FileNotifyPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) == NULL)
+    Abort(NULL);
 
   LEAVE();
 }
@@ -2432,6 +2407,7 @@ int main(int argc, char **argv)
     ULONG rexsig;
     ULONG appsig;
     ULONG applibsig;
+    ULONG notifysig;
     struct User *user;
     int ret;
 
@@ -2574,13 +2550,15 @@ int main(int argc, char **argv)
     rexsig    = (1UL << G->RexxHost->port->mp_SigBit);
     appsig    = (1UL << G->AppPort->mp_SigBit);
     applibsig = DockyIconSignal();
+    notifysig = (1UL << G->FileNotifyPort->mp_SigBit);
 
     D(DBF_STARTUP, "YAM allocated signals:");
-    D(DBF_STARTUP, " adstsig  = %08lx", adstsig);
-    D(DBF_STARTUP, " timsig   = %08lx", timsig);
-    D(DBF_STARTUP, " rexsig   = %08lx", rexsig);
-    D(DBF_STARTUP, " appsig   = %08lx", appsig);
-    D(DBF_STARTUP, " applibsig= %08lx", applibsig);
+    D(DBF_STARTUP, " adstsig   = %08lx", adstsig);
+    D(DBF_STARTUP, " timsig    = %08lx", timsig);
+    D(DBF_STARTUP, " rexsig    = %08lx", rexsig);
+    D(DBF_STARTUP, " appsig    = %08lx", appsig);
+    D(DBF_STARTUP, " applibsig = %08lx", applibsig);
+    D(DBF_STARTUP, " notifysig = %08lx", notifysig);
 
     // start our maintanance Timer requests for
     // different purposes (writeindexes/mailcheck/autosave)
@@ -2602,7 +2580,7 @@ int main(int argc, char **argv)
     {
       if(signals)
       {
-        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexsig | appsig | applibsig | adstsig);
+        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexsig | appsig | applibsig | adstsig | notifysig);
 
         if(signals & SIGBREAKF_CTRL_C)
         {
@@ -2652,48 +2630,25 @@ int main(int argc, char **argv)
         }
         #endif
 
-        // check for the write window signals
-        /*
-        for(i=0; i <= MAXWR; i++)
+        // check for file notification signals
+        if(signals & notifysig)
         {
-          if(signals & notsig[i])
+          struct NotifyMessage *msg;
+
+          while((msg = (struct NotifyMessage *)GetMsg(G->FileNotifyPort)) != NULL)
           {
-            struct Message *msg;
+            // the messages UserData field contains the WriteWindow object
+            // which triggered the notification
+            Object *writeWin;
 
-            while((msg = GetMsg(G->WR_NotifyRequest[i]->nr_stuff.nr_Msg.nr_Port)) != NULL)
-              ReplyMsg(msg);
-
-            if(G->WR[i] != NULL)
+            if((writeWin = (Object *)msg->nm_NReq->nr_UserData) != NULL)
             {
-              BOOL abort = FALSE;
-
-              D(DBF_UTIL, "received notification that the tempfile of write window %ld have changed [%s]", i, G->WR_Filename[i]);
-
-              // check if the content of the TextEditor.mcc gadget changed
-              // as well and if so warn the user
-              if(xget(G->WR[i]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
-              {
-                // warn the user that both the tempfile and the content of the TextEditor.mcc
-                // changed.
-                int answer = MUI_Request(G->App, G->WR[i]->GUI.WI, 0L, tr(MSG_FCHANGE_WARN_TITLE),
-                                                                       tr(MSG_YesNoReq),
-                                                                       tr(MSG_FCHANGE_WARN), i+1);
-
-                if(answer == 0)
-                {
-                  // cancel / keep old text
-                  abort = TRUE;
-                }
-              }
-
-              if(abort == FALSE)
-                FileToEditor(G->WR_Filename[i], G->WR[i]->GUI.TE_EDIT, TRUE);
+              DoMethod(writeWin, MUIM_WriteWindow_MailFileModified);
             }
-            else
-              W(DBF_UTIL, "file notification received on dead write window %ld", i);
+
+            ReplyMsg((struct Message *)msg);
           }
         }
-        */
 
         // check for the AutoDST signal
         if(signals & adstsig)

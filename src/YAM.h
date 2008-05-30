@@ -96,6 +96,7 @@ struct Global
   struct DiskObject *      HideIcon;
   struct AppIcon *         AppIcon;
   struct MsgPort *         AppPort;
+  struct MsgPort *         FileNotifyPort;
   struct RexxHost *        RexxHost;
   struct FileReqCache *    FileReqCache[ASL_MAX];
   struct Locale *          Locale;

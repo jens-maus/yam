@@ -40,14 +40,16 @@ struct ReadMailData;
 
 // enumeration with security levels a mail can
 // get so that it will be signed/encrypted and so on.
-enum Security { SEC_NONE=0,      // no security
-                SEC_SIGN,        // PGP sign the message
-                SEC_ENCRYPT,     // PGP encrypt the message
-                SEC_BOTH,        // PGP sign&encrypt the message
-                SEC_SENDANON,    // send the message anonymously
-                SEC_DEFAULTS,    // use the preconfigured defaults
-                SEC_MAXDUMMY 
-              };
+enum Security
+{
+  SEC_NONE=0,      // no security
+  SEC_SIGN,        // PGP sign the message
+  SEC_ENCRYPT,     // PGP encrypt the message
+  SEC_BOTH,        // PGP sign&encrypt the message
+  SEC_SENDANON,    // send the message anonymously
+  SEC_DEFAULTS,    // use the preconfigured defaults
+  SEC_MAXDUMMY
+};
 
 // WriteMailData structure which carries all necessary information
 // during a write mail process. It is used while opening a write
@@ -70,7 +72,6 @@ struct WriteMailData
 
   char filename[SIZE_PATHFILE];         // filename of tmp text file
   struct NotifyRequest *notifyRequest;  // file notification request
-  ULONG notifySignal;                   // file notification signal flag
   BOOL fileNotifyActive;                // is the file change notification currently active or not
 
   BOOL quietMode;                       // quietMode means no opened window, e.g. background processing
@@ -92,20 +93,34 @@ struct Attach
 
 enum TransformMode
 {
-  ED_OPEN=0, ED_INSERT, ED_INSQUOT, ED_INSALTQUOT, ED_INSROT13, ED_PASQUOT, ED_PASALTQUOT,
-  ED_PASROT13, ED_INSUUCODE
+  ED_OPEN=0,
+  ED_INSERT,
+  ED_INSQUOT,
+  ED_INSALTQUOT,
+  ED_INSROT13,
+  ED_PASQUOT,
+  ED_PASALTQUOT,
+  ED_PASROT13,
+  ED_INSUUCODE
 };
 
-enum WriteMode { WRITE_HOLD, WRITE_SEND, WRITE_QUEUE };
+enum WriteMode
+{
+  WRITE_HOLD,
+  WRITE_SEND,
+  WRITE_QUEUE
+};
 
 // mail text encoding codes
-enum Encoding { ENC_7BIT,    // 7-bit US-ASCII
-                ENC_8BIT,    // 8-bit enhanced ASCII
-                ENC_QP,      // quoted-printable encoding
-                ENC_B64,     // base64 encoding
-                ENC_UUE,     // uucode encoding
-                ENC_BIN      // binary encoding
-              };
+enum Encoding
+{
+  ENC_7BIT,    // 7-bit US-ASCII
+  ENC_8BIT,    // 8-bit enhanced ASCII
+  ENC_QP,      // quoted-printable encoding
+  ENC_B64,     // base64 encoding
+  ENC_UUE,     // uucode encoding
+  ENC_BIN      // binary encoding
+};
 
 struct WritePart
 {
@@ -146,7 +161,14 @@ struct Compose
 };
 
 // Soft-style modes for text
-enum SoftStyleMode { SSM_NORMAL, SSM_BOLD, SSM_ITALIC, SSM_UNDERLINE, SSM_COLOR };
+enum SoftStyleMode
+{
+  SSM_NORMAL,
+  SSM_BOLD,
+  SSM_ITALIC,
+  SSM_UNDERLINE,
+  SSM_COLOR
+};
 
 void  EmitHeader(FILE *fh, const char *hdr, const char *body);
 void  FreePartsList(struct WritePart *p);

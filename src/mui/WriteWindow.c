@@ -31,7 +31,9 @@
 #include "WriteWindow_cl.h"
 
 #include <proto/codesets.h>
+#include <proto/dos.h>
 #include <proto/wb.h>
+#include <dos/notify.h>
 #include <workbench/startup.h>
 
 #include "YAM_addressbook.h"
@@ -956,10 +958,10 @@ OVERLOAD(OM_NEW)
 
     i++;
   }
-  while(1);
+  while(TRUE);
 
   // allocate the new writeMailData structure
-  if((data->wmData = calloc(1, sizeof(struct WriteMailData))))
+  if((data->wmData = calloc(1, sizeof(struct WriteMailData))) != NULL)
   {
     Object *menuStripObject = NULL;
     Object *charsetPopButton;
@@ -968,7 +970,7 @@ OVERLOAD(OM_NEW)
     struct TagItem *tag;
 
     // check for some tags present at OM_NEW
-    while((tag = NextTagItem(&tags)))
+    while((tag = NextTagItem(&tags)) != NULL)
     {
       switch(tag->ti_Tag)
       {
@@ -1598,6 +1600,36 @@ OVERLOAD(OM_NEW)
 
       // place our data in the node and add it to the writeMailDataList
       AddTail((struct List *)&(G->writeMailDataList), (struct Node *)data->wmData);
+
+      if(data->wmData->mode != NMM_BOUNCE)
+      {
+        // Finally set up the notifications for external changes to the file being edited
+        // if this is not a bounce window. We let the UserData point to this object to be
+        // able to invoke a method from the main loop.
+        #if defined(__amigaos4__)
+        data->wmData->notifyRequest = AllocDosObjectTags(DOS_NOTIFYREQUEST, ADO_NotifyName, data->wmData->filename,
+                                                                            ADO_NotifyUserData, (ULONG)obj,
+                                                                            ADO_NotifyMethod, NRF_SEND_MESSAGE,
+                                                                            ADO_NotifyPort, G->FileNotifyPort,
+                                                                            TAG_DONE);
+        #else
+        if((data->wmData->notifyRequest = AllocVecPooled(G->SharedMemPool, sizeof(*data->wmData->notifyRequest))) != NULL)
+        {
+          data->wmData->notifyRequest->nr_Name = data->wmData->filename;
+          data->wmData->notifyRequest->nr_UserData = (ULONG)obj;
+          data->wmData->notifyRequest->nr_Flags = NRF_SEND_MESSAGE;
+          data->wmData->notifyRequest->nr_stuff.nr_Msg.nr_Port = G->FileNotifyPort;
+        }
+        #endif
+      }
+      else
+      {
+        // no notification is required while bouncing mails
+        data->wmData->notifyRequest = NULL;
+      }
+
+      // no active notification yet
+      data->wmData->fileNotifyActive = FALSE;
 
       // we created a new write window, lets
       // go and start the PREWRITE macro
@@ -3997,6 +4029,40 @@ DECLARE(CancelAction)
   // directly
   if(discard == TRUE)
     DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseWriteWindowHook, data->wmData);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(MailFileModified)
+//
+DECLARE(MailFileModified)
+{
+  GETDATA;
+  BOOL keep = FALSE;
+
+  ENTER();
+
+  D(DBF_UTIL, "received notification that the tempfile of write window %ld have changed [%s]", data->windowNumber, data->wmData->filename);
+
+  // check if the content of the TextEditor.mcc gadget changed
+  // as well and if so warn the user
+  if(xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
+  {
+    // warn the user that both the tempfile and the content of the TextEditor.mcc
+    // changed.
+    if(MUI_Request(G->App, obj, 0L, tr(MSG_FCHANGE_WARN_TITLE),
+                                    tr(MSG_YesNoReq),
+                                    tr(MSG_FCHANGE_WARN), data->windowNumber+1) == 0)
+    {
+      // cancel / keep old text
+      keep = TRUE;
+    }
+  }
+
+  if(keep == FALSE)
+    FileToEditor(data->wmData->filename, data->TE_EDIT, FALSE);
 
   RETURN(0);
   return 0;

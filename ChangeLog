@@ -7,6 +7,8 @@ $URL$
 
 2008-05-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * WriteWindow.c: fixed the WriteWindow's broken file notification mechanism.
+    A global message port will be used for all windows.
   * FolderRequestWindow.c: fixed the doubleclick notification setup. This fixes
     bug #1978384.
 
