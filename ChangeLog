@@ -13,6 +13,9 @@ $URL$
 
 2008-05-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_WR.c: StrBufCat() was called with a NULL source pointer which caused
+    crashes on OS4, because newlib.library's strlen() function is not NULL
+    pointer safe. Added a check for this. This should fix bug #1978261.
   * YAM.c: the configuration was constantly checked to be valid due to a
     missing comparison if no ADST utility was running.
   * WriteWindow.c: moved the AddTail() to the global list call behind the

@@ -2255,7 +2255,8 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         if(wmData->inReplyToMsgID != NULL)
           wmData->inReplyToMsgID = StrBufCat(wmData->inReplyToMsgID, " ");
 
-        wmData->inReplyToMsgID = StrBufCat(wmData->inReplyToMsgID, email->messageID);
+        if(email->messageID != NULL)
+          wmData->inReplyToMsgID = StrBufCat(wmData->inReplyToMsgID, email->messageID);
 
         // in addition, we check for "References:" message header stuff
         if(wmData->references != NULL)
@@ -2739,9 +2740,6 @@ BOOL CleanupWriteMailData(struct WriteMailData *wmData)
   // free the notify resources
   if(wmData->notifyRequest != NULL)
   {
-    if(wmData->notifyRequest->nr_stuff.nr_Msg.nr_Port != NULL)
-      FreeSysObject(ASOT_PORT, wmData->notifyRequest->nr_stuff.nr_Msg.nr_Port);
-
     #if defined(__amigaos4__)
     FreeDosObject(DOS_NOTIFYREQUEST, wmData->notifyRequest);
     #else
