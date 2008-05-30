@@ -177,7 +177,6 @@ struct Global
   char                     MA_MailDir[SIZE_PATH];
   char                     AB_Filename[SIZE_PATHFILE];
   char                     CO_PrefsFile[SIZE_PATHFILE];
-//  char                     WR_Filename[MAXWR+1][SIZE_PATHFILE];
   char                     DI_Filename[SIZE_PATHFILE];
 };
 
