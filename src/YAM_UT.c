@@ -408,6 +408,8 @@ char *AllocStrBuf(size_t initlen)
 {
   size_t *strbuf;
 
+  ENTER();
+
   if((strbuf = calloc(initlen+sizeof(size_t), sizeof(char))) != NULL)
     *strbuf++ = initlen;
 
@@ -419,33 +421,42 @@ char *AllocStrBuf(size_t initlen)
 //  Fills a dynamic buffer
 char *StrBufCpy(char *strbuf, const char *source)
 {
-  size_t oldlen;
-  size_t newlen;
-  size_t reqlen=strlen(source);
-  char *newstrbuf;
+  char *newstrbuf = NULL;
 
-  // if our strbuf is NULL we have to allocate a new buffer
-  if(!strbuf && (strbuf = AllocStrBuf(reqlen+1)) == NULL)
-    return NULL;
+  ENTER();
 
-  oldlen = ((size_t *)strbuf)[-1];
-
-  // make sure we allocate in SIZE_DEFAULT chunks
-  for(newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT);
-
-  // if we have to change the size do it now
-  if(newlen != oldlen)
+  if(source != NULL)
   {
-    FreeStrBuf(strbuf);                // free previous buffer
-    newstrbuf = AllocStrBuf(newlen+1); // allocate a new one
+    size_t reqlen = strlen(source);
+
+    // if our strbuf is NULL we have to allocate a new buffer
+    if(strbuf == NULL)
+      strbuf = AllocStrBuf(reqlen+1);
+
+    if(strbuf != NULL)
+    {
+      size_t oldlen = ((size_t *)strbuf)[-1];
+      size_t newlen;
+
+      // make sure we allocate in SIZE_DEFAULT chunks
+      for(newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT);
+
+      // if we have to change the size do it now
+      if(newlen != oldlen)
+      {
+        FreeStrBuf(strbuf);                // free previous buffer
+        newstrbuf = AllocStrBuf(newlen+1); // allocate a new one
+      }
+
+      // do a string copy into the new buffer
+      if(newstrbuf != NULL)
+        strlcpy(newstrbuf, source, ((size_t *)newstrbuf)[-1]);
+    }
   }
   else
-    newstrbuf = strbuf;
+    E(DBF_UTIL, "source string is NULL in StrBufCpy()!!");
 
-  // do a string copy into the new buffer
-  if(newstrbuf)
-    strlcpy(newstrbuf, source, ((size_t *)newstrbuf)[-1]);
-
+  RETURN(newstrbuf);
   return newstrbuf;
 }
 ///
@@ -453,40 +464,48 @@ char *StrBufCpy(char *strbuf, const char *source)
 //  String concatenation using a dynamic buffer
 char *StrBufCat(char *strbuf, const char *source)
 {
-  size_t oldlen;
-  size_t newlen;
-  size_t reqlen=strlen(source);
-  char *newstrbuf;
+  char *newstrbuf = NULL;
 
-  // if our strbuf is NULL we have to allocate a new buffer
-  if(!strbuf)
+  ENTER();
+
+  if(source != NULL)
   {
-    if((strbuf = AllocStrBuf(reqlen+1)) == NULL)
-      return NULL;
+    size_t reqlen = strlen(source);
+
+    // if our strbuf is NULL we have to allocate a new buffer
+    if(strbuf == NULL)
+      strbuf = AllocStrBuf(reqlen+1);
+
+    if(strbuf != NULL)
+    {
+      size_t oldlen = ((size_t *)strbuf)[-1];
+      size_t newlen;
+
+      reqlen += strlen(strbuf);
+
+      // make sure we allocate in SIZE_DEFAULT chunks
+      for(newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT);
+
+      // if we have to change the size do it now
+      if(newlen != oldlen)
+      {
+        if((newstrbuf = AllocStrBuf(newlen+1)) != NULL)
+          strlcpy(newstrbuf, strbuf, newlen+1);
+
+        FreeStrBuf(strbuf);
+      }
+      else
+        newstrbuf = strbuf;
+
+      // do a string copy into the new buffer
+      if(newstrbuf != NULL)
+        strlcat(newstrbuf, source, newlen+1);
+    }
   }
   else
-    reqlen += strlen(strbuf);
+    E(DBF_UTIL, "source string is NULL in StrBufCat()!!");
 
-  oldlen = ((size_t *)strbuf)[-1];
-
-  // make sure we allocate in SIZE_DEFAULT chunks
-  for(newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT);
-
-  // if we have to change the size do it now
-  if(newlen != oldlen)
-  {
-    if((newstrbuf = AllocStrBuf(newlen+1)))
-      strlcpy(newstrbuf, strbuf, newlen+1);
-
-    FreeStrBuf(strbuf);
-  }
-  else
-    newstrbuf = strbuf;
-
-  // do a string copy into the new buffer
-  if(newstrbuf)
-    strlcat(newstrbuf, source, newlen+1);
-
+  RETURN(newstrbuf);
   return newstrbuf;
 }
 ///

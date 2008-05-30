@@ -13,6 +13,9 @@ $URL$
 
 2008-05-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: modified the StrBufCpy() and StrBufCat() functions to fail
+    gracefully and to output an error message if the supplied source string is
+    NULL.
   * YAM_WR.c: StrBufCat() was called with a NULL source pointer which caused
     crashes on OS4, because newlib.library's strlen() function is not NULL
     pointer safe. Added a check for this. This should fix bug #1978261.
