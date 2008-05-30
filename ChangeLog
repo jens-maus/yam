@@ -13,6 +13,8 @@ $URL$
 
 2008-05-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: the configuration was constantly checked to be valid due to a
+    missing comparison if no ADST utility was running.
   * WriteWindow.c: moved the AddTail() to the global list call behind the
     notification initialization to avoid possible race conditions.
   * #?RequestWindow.c: changed the classes to let the super class ignore all

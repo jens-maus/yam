@@ -2651,7 +2651,7 @@ int main(int argc, char **argv)
         }
 
         // check for the AutoDST signal
-        if(isFlagSet(signals, adstsig))
+        if(adstsig != 0 && isFlagSet(signals, adstsig))
         {
           // check the DST file and validate the configuration once more.
           G->CO_DST = GetDST(TRUE);
