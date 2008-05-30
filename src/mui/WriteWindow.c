@@ -1598,16 +1598,17 @@ OVERLOAD(OM_NEW)
       // set the global charset as the default one
       data->wmData->charset = G->writeCharset;
 
+      // Finally set up the notifications for external changes to the file being edited
+      // if this is not a bounce window. We let the UserData point to this object to be
+      // able to invoke a method from the main loop. However, we only do this for write
+      // windows which are not opened in bounce mode
       if(data->wmData->mode != NMM_BOUNCE)
       {
-        // Finally set up the notifications for external changes to the file being edited
-        // if this is not a bounce window. We let the UserData point to this object to be
-        // able to invoke a method from the main loop.
         #if defined(__amigaos4__)
-        data->wmData->notifyRequest = AllocDosObjectTags(DOS_NOTIFYREQUEST, ADO_NotifyName, data->wmData->filename,
+        data->wmData->notifyRequest = AllocDosObjectTags(DOS_NOTIFYREQUEST, ADO_NotifyName,     data->wmData->filename,
                                                                             ADO_NotifyUserData, (ULONG)obj,
-                                                                            ADO_NotifyMethod, NRF_SEND_MESSAGE,
-                                                                            ADO_NotifyPort, G->FileNotifyPort,
+                                                                            ADO_NotifyMethod,   NRF_SEND_MESSAGE,
+                                                                            ADO_NotifyPort,     G->writeWinNotifyPort,
                                                                             TAG_DONE);
         #else
         if((data->wmData->notifyRequest = AllocVecPooled(G->SharedMemPool, sizeof(*data->wmData->notifyRequest))) != NULL)
@@ -1615,15 +1616,12 @@ OVERLOAD(OM_NEW)
           data->wmData->notifyRequest->nr_Name = data->wmData->filename;
           data->wmData->notifyRequest->nr_UserData = (ULONG)obj;
           data->wmData->notifyRequest->nr_Flags = NRF_SEND_MESSAGE;
-          data->wmData->notifyRequest->nr_stuff.nr_Msg.nr_Port = G->FileNotifyPort;
+          data->wmData->notifyRequest->nr_stuff.nr_Msg.nr_Port = G->writeWinNotifyPort;
         }
         #endif
       }
       else
-      {
-        // no notification is required while bouncing mails
         data->wmData->notifyRequest = NULL;
-      }
 
       // there is no active notification yet
       data->wmData->fileNotifyActive = FALSE;

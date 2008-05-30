@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-30  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, WriteWindow.c: minor cosmetic code changes to better accomodate
+    the latest changes and to use the generic "isFlagSet()" macro for dealing
+    with the signal processing in our main event loop.
+
 2008-05-30  Thore Böckelmann <tboeckel@gmx.de>
 
   * WriteWindow.c: moved the AddTail() to the global list call behind the

@@ -938,9 +938,9 @@ static void Terminate(void)
 
   FreeAppIcon();
 
-  D(DBF_STARTUP, "freeing file notify port...");
-  if(G->FileNotifyPort != NULL)
-    FreeSysObject(ASOT_PORT, G->FileNotifyPort);
+  D(DBF_STARTUP, "freeing write window file notify port...");
+  if(G->writeWinNotifyPort != NULL)
+    FreeSysObject(ASOT_PORT, G->writeWinNotifyPort);
 
   D(DBF_STARTUP, "freeing Arexx port...");
   if(G->RexxHost != NULL)
@@ -1907,8 +1907,8 @@ static void InitBeforeLogin(BOOL hidden)
   if(InitAppIcon() == FALSE)
     Abort(NULL);
 
-  // initialize the file nofifications
-  if((G->FileNotifyPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) == NULL)
+  // initialize the write window file nofifications
+  if((G->writeWinNotifyPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) == NULL)
     Abort(NULL);
 
   LEAVE();
@@ -2401,13 +2401,13 @@ int main(int argc, char **argv)
 
   for(yamFirst=TRUE;;)
   {
-    ULONG signals;
+    ULONG signals = 0;
     ULONG timsig;
     ULONG adstsig;
-    ULONG rexsig;
+    ULONG rexxsig;
     ULONG appsig;
     ULONG applibsig;
-    ULONG notifysig;
+    ULONG writeWinNotifySig;
     struct User *user;
     int ret;
 
@@ -2546,19 +2546,19 @@ int main(int argc, char **argv)
       adstsig = 0;
 
     // prepare all signal bits
-    timsig    = (1UL << G->timerData.port->mp_SigBit);
-    rexsig    = (1UL << G->RexxHost->port->mp_SigBit);
-    appsig    = (1UL << G->AppPort->mp_SigBit);
-    applibsig = DockyIconSignal();
-    notifysig = (1UL << G->FileNotifyPort->mp_SigBit);
+    timsig            = (1UL << G->timerData.port->mp_SigBit);
+    rexxsig           = (1UL << G->RexxHost->port->mp_SigBit);
+    appsig            = (1UL << G->AppPort->mp_SigBit);
+    applibsig         = DockyIconSignal();
+    writeWinNotifySig = (1UL << G->writeWinNotifyPort->mp_SigBit);
 
     D(DBF_STARTUP, "YAM allocated signals:");
-    D(DBF_STARTUP, " adstsig   = %08lx", adstsig);
-    D(DBF_STARTUP, " timsig    = %08lx", timsig);
-    D(DBF_STARTUP, " rexsig    = %08lx", rexsig);
-    D(DBF_STARTUP, " appsig    = %08lx", appsig);
-    D(DBF_STARTUP, " applibsig = %08lx", applibsig);
-    D(DBF_STARTUP, " notifysig = %08lx", notifysig);
+    D(DBF_STARTUP, " adstsig           = %08lx", adstsig);
+    D(DBF_STARTUP, " timsig            = %08lx", timsig);
+    D(DBF_STARTUP, " rexxsig           = %08lx", rexxsig);
+    D(DBF_STARTUP, " appsig            = %08lx", appsig);
+    D(DBF_STARTUP, " applibsig         = %08lx", applibsig);
+    D(DBF_STARTUP, " writeWinNotifySig = %08lx", writeWinNotifySig);
 
     // start our maintanance Timer requests for
     // different purposes (writeindexes/mailcheck/autosave)
@@ -2578,25 +2578,27 @@ int main(int argc, char **argv)
     // start the event loop
     while((ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))) == 0)
     {
-      if(signals)
+      if(signals != 0)
       {
-        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexsig | appsig | applibsig | adstsig | notifysig);
+        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexxsig | appsig | applibsig | adstsig | writeWinNotifySig);
 
-        if(signals & SIGBREAKF_CTRL_C)
+        if(isFlagSet(signals, SIGBREAKF_CTRL_C))
         {
           ret = 1;
           break;
         }
-        if(signals & SIGBREAKF_CTRL_D)
+
+        if(isFlagSet(signals, SIGBREAKF_CTRL_D))
         {
           ret = 0;
           break;
         }
-        if(signals & SIGBREAKF_CTRL_F)
+
+        if(isFlagSet(signals, SIGBREAKF_CTRL_F))
           PopUp();
 
         // check for a Timer event
-        if(signals & timsig)
+        if(isFlagSet(signals, timsig))
         {
           #if defined(DEBUG)
           char dateString[64];
@@ -2611,17 +2613,15 @@ int main(int argc, char **argv)
         }
 
         // check for a Arexx signal
-        if(signals & rexsig)
+        if(isFlagSet(signals, rexxsig))
           ARexxDispatch(G->RexxHost);
 
         // check for a AppMessage signal
-        if(signals & appsig)
-        {
+        if(isFlagSet(signals, appsig))
           HandleAppIcon();
-        }
 
         #if defined(__amigaos4__)
-        if(signals & applibsig)
+        if(isFlagSet(signals, applibsig))
         {
           // make sure to break out here in case
           // the Quit or ForceQuit succeeded.
@@ -2630,12 +2630,12 @@ int main(int argc, char **argv)
         }
         #endif
 
-        // check for file notification signals
-        if(signals & notifysig)
+        // check for a write window file notification signal
+        if(isFlagSet(signals, writeWinNotifySig))
         {
           struct NotifyMessage *msg;
 
-          while((msg = (struct NotifyMessage *)GetMsg(G->FileNotifyPort)) != NULL)
+          while((msg = (struct NotifyMessage *)GetMsg(G->writeWinNotifyPort)) != NULL)
           {
             // the messages UserData field contains the WriteWindow object
             // which triggered the notification
@@ -2651,7 +2651,7 @@ int main(int argc, char **argv)
         }
 
         // check for the AutoDST signal
-        if(signals & adstsig)
+        if(isFlagSet(signals, adstsig))
         {
           // check the DST file and validate the configuration once more.
           G->CO_DST = GetDST(TRUE);
