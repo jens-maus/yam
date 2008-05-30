@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-30  Thore Böckelmann <tboeckel@gmx.de>
+
+  * FolderRequestWindow.c: fixed the doubleclick notification setup. This fixes
+    bug #1978384.
+
 2008-05-29  Jens Langner <Jens.Langner@light-speed.de>
 
   * italian.ct: updated italian translation provided by Samir Hawamdeh.

@@ -41,7 +41,7 @@
 /* CLASSDATA
 struct Data
 {
-  Object *listviewObj;
+  Object *listObj;
   ULONG result;
 };
 */
@@ -72,6 +72,7 @@ OVERLOAD(OM_NEW)
   char *noText = (char *)tr(MSG_Cancel);
   struct Folder *prevFolder = NULL;
   struct Folder *excludeFolder = NULL;
+  Object *listObj = NULL;
   Object *listviewObj = NULL;
   Object *yesButton = NULL;
   Object *noButton = NULL;
@@ -82,12 +83,47 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      case MUIA_Window_Title: titleText = (char *)tag->ti_Data; tag->ti_Tag = TAG_IGNORE; break;
-      ATTR(Body):             bodyText = (char *)tag->ti_Data; break;
-      ATTR(YesText):          yesText = (char *)tag->ti_Data; break;
-      ATTR(NoText):           noText = (char *)tag->ti_Data; break;
-      ATTR(Exclude):          excludeFolder = (struct Folder *)tag->ti_Data; break;
-      ATTR(Folder):           prevFolder = (struct Folder *)tag->ti_Data; break;
+      case MUIA_Window_Title:
+      {
+        titleText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(Body):
+      {
+        bodyText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(YesText):
+      {
+        yesText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(NoText):
+      {
+        noText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(Exclude):
+      {
+        excludeFolder = (struct Folder *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(Folder):
+      {
+        prevFolder = (struct Folder *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
     }
   }
 
@@ -107,7 +143,7 @@ OVERLOAD(OM_NEW)
         Child, listviewObj = ListviewObject,
           MUIA_CycleChain, TRUE,
           MUIA_Listview_DoubleClick, TRUE,
-          MUIA_Listview_List, ListObject,
+          MUIA_Listview_List, listObj = ListObject,
             InputListFrame,
             MUIA_List_AutoVisible, TRUE,
             MUIA_List_DisplayHook, &DisplayHook,
@@ -125,7 +161,7 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
-    data->listviewObj = listviewObj;
+    data->listObj = listObj;
     data->result = 0;
 
     LockFolderListShared(G->folders);
@@ -142,10 +178,10 @@ OVERLOAD(OM_NEW)
           // check if the folder is to be excluded
           if(fnode->folder != excludeFolder)
           {
-            DoMethod(listviewObj, MUIM_List_InsertSingle, fnode->folder, MUIV_List_Insert_Bottom);
+            DoMethod(listObj, MUIM_List_InsertSingle, fnode->folder, MUIV_List_Insert_Bottom);
             // mark the previously selected folder
             if(fnode->folder == prevFolder)
-              set(listviewObj, MUIA_List_Active, pos);
+              set(listObj, MUIA_List_Active, pos);
           }
         }
         pos++;
@@ -157,9 +193,9 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_FolderRequestWindow_FinishInput, 0);
     DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_FolderRequestWindow_FinishInput, 1);
     DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_FolderRequestWindow_FinishInput, 0);
-    DoMethod(listviewObj, MUIM_Notify, MUIA_Listview_DoubleClick, MUIV_EveryTime, 2, MUIM_FolderRequestWindow_FinishInput, 1);
+    DoMethod(listviewObj, MUIM_Notify, MUIA_Listview_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_FolderRequestWindow_FinishInput, 1);
 
-    set(obj, MUIA_Window_ActiveObject, listviewObj);
+    set(obj, MUIA_Window_ActiveObject, listObj);
   }
 
   RETURN(obj);
@@ -183,7 +219,7 @@ OVERLOAD(OM_GET)
 
     ATTR(Folder):
     {
-      DoMethod(data->listviewObj, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, store);
+      DoMethod(data->listObj, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, store);
       return TRUE;
     }
   }
