@@ -13,6 +13,8 @@ $URL$
 
 2008-05-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: modified StrBufCpy() and StrBufCat() once more to obey a possible
+    NULL source string when actually copying the string to the new buffer.
   * YAM_UT.c: modified the StrBufCpy() and StrBufCat() functions to fail
     gracefully and to output an error message if the supplied source string is
     NULL.
