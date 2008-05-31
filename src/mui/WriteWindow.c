@@ -99,6 +99,8 @@ struct Data
   Object *PO_CHARSET;
 
   struct WriteMailData *wmData; // ptr to write mail data structure
+  struct MsgPort *notifyPort;
+  struct NotifyRequest *notifyRequest;
 
   int windowNumber; // the unique window number
   BOOL autoSaved;   // was this mail automatically saved?
@@ -1629,6 +1631,32 @@ OVERLOAD(OM_NEW)
       // place our data in the node and add it to the writeMailDataList
       AddTail((struct List *)&(G->writeMailDataList), (struct Node *)data->wmData);
 
+      if(data->wmData->mode != NMM_BOUNCE)
+      {
+        // finally set up the notifications for external changes to the file being edited if this is not a bounce window
+        if((data->notifyPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+        {
+          #if defined(__amigaos4__)
+          data->notifyRequest = AllocDosObjectTags(DOS_NOTIFYREQUEST, ADO_NotifyName, data->wmData->filename,
+                                                                      ADO_NotifyMethod, NRF_SEND_MESSAGE,
+                                                                      ADO_NotifyPort, data->notifyPort,
+                                                                      TAG_DONE);
+          #else
+          if((data->notifyRequest = AllocVecPooled(G->SharedMemPool, sizeof(*data->notifyRequest))) != NULL)
+          {
+            data->notifyRequest->nr_Name = data->wmData->filename;
+            data->notifyRequest->nr_Flags = NRF_SEND_MESSAGE;
+            data->notifyRequest->nr_stuff.nr_Msg.nr_Port = data->notifyPort;
+          }
+          #endif
+
+          if(data->notifyRequest != NULL)
+          {
+            StartNotify(data->notifyRequest);
+          }
+        }
+      }
+
       // we created a new write window, lets
       // go and start the PREWRITE macro
       MA_StartMacro(MACRO_PREWRITE, itoa(data->windowNumber));
@@ -1669,6 +1697,24 @@ OVERLOAD(OM_DISPOSE)
         DeleteFile(att->FilePath);
     }
 
+    if(data->notifyRequest != NULL)
+    {
+      EndNotify(data->notifyRequest);
+
+      #if defined(__amigaos4__)
+      FreeDosObject(DOS_NOTIFYREQUEST, data->notifyRequest);
+      #else
+      FreeVecPooled(G->SharedMemPool, data->notifyRequest);
+      #endif
+      data->notifyRequest = NULL;
+    }
+
+    if(data->notifyPort != NULL)
+    {
+      FreeSysObject(ASOT_PORT, data->notifyPort);
+      data->notifyPort = NULL;
+    }
+
     // delete a possible autosave file
     DeleteFile(WR_AutoSaveFile(data->windowNumber, fileName, sizeof(fileName)));
   }
@@ -1697,6 +1743,7 @@ OVERLOAD(OM_GET)
     ATTR(Num):           *store = data->windowNumber; return TRUE;
     ATTR(To):            *store = xget(data->ST_TO, MUIA_String_Contents) ; return TRUE;
     ATTR(Quiet):         *store = data->wmData->quietMode; return TRUE;
+    ATTR(NotifyPort):    *store = (ULONG)data->notifyPort; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -3052,6 +3099,7 @@ DECLARE(LaunchEditor)
   {
     struct WriteMailData *wmData = data->wmData;
     char buffer[SIZE_COMMAND+SIZE_PATHFILE];
+    struct DateStamp *currentFileChangeTime;
 
     // stop any pending file notification.
     if(wmData->fileNotifyActive == TRUE)
@@ -3065,6 +3113,18 @@ DECLARE(LaunchEditor)
       set(data->RG_PAGE, MUIA_Group_ActivePage, 0);
 
     EditorToFile(data->TE_EDIT, wmData->filename);
+    // remember the modification date of the file
+    if(ObtainFileInfo(data->wmData->filename, FI_DATE, &currentFileChangeTime) == TRUE)
+    {
+      memcpy(&data->wmData->lastFileChangeTime, currentFileChangeTime, sizeof(data->wmData->lastFileChangeTime));
+      free(currentFileChangeTime);
+    }
+    else
+    {
+      // use the current time in case ObtainFileInfo() failed
+      DateStamp(&data->wmData->lastFileChangeTime);
+    }
+
     snprintf(buffer, sizeof(buffer), "%s \"%s\"", C->Editor, GetRealPath(wmData->filename));
     ExecuteCommand(buffer, TRUE, OUT_NIL);
 
@@ -3264,28 +3324,28 @@ DECLARE(InsertText) // char *text
 DECLARE(ReloadText) // ULONG changed
 {
   GETDATA;
-  ULONG result;
+  BOOL result;
   ENTER();
 
   result = FileToEditor(data->wmData->filename, data->TE_EDIT, msg->changed);
 
   RETURN(result);
-  return result;
+  return (ULONG)result;
 }
 
 ///
 /// DECLARE(LoadText)
-// Koad the message text from a specified file
+// Load the message text from a specified file
 DECLARE(LoadText) // char *filename, ULONG changed
 {
   GETDATA;
-  ULONG result;
+  BOOL result;
   ENTER();
 
   result = FileToEditor(msg->filename, data->TE_EDIT, msg->changed);
 
   RETURN(result);
-  return result;
+  return (ULONG)result;
 }
 
 ///
@@ -4038,29 +4098,50 @@ DECLARE(CancelAction)
 DECLARE(MailFileModified)
 {
   GETDATA;
-  BOOL keep = FALSE;
+  struct DateStamp *currentFileChangeTime;
 
   ENTER();
 
-  D(DBF_UTIL, "received notification that the tempfile of write window %ld have changed [%s]", data->windowNumber, data->wmData->filename);
-
-  // check if the content of the TextEditor.mcc gadget changed
-  // as well and if so warn the user
-  if(xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
+  // First we have to check if the date stamp of the file really did change, because notifications
+  // are triggered by *any* change, i.e. setting a comment, changing the protection flags, changing
+  // the contents. Since some editors (CubicIDE for example) do not only change the contents, but
+  // also modify the protection bits and the file comment as well, we may receive more than just one
+  // notification for the actual change of contents.
+  if(ObtainFileInfo(data->wmData->filename, FI_DATE, &currentFileChangeTime) == TRUE)
   {
-    // warn the user that both the tempfile and the content of the TextEditor.mcc
-    // changed.
-    if(MUI_Request(G->App, obj, 0L, tr(MSG_FCHANGE_WARN_TITLE),
-                                    tr(MSG_YesNoReq),
-                                    tr(MSG_FCHANGE_WARN), data->windowNumber+1) == 0)
+    if(CompareDates(&data->wmData->lastFileChangeTime, currentFileChangeTime) > 0)
     {
-      // cancel / keep old text
-      keep = TRUE;
-    }
-  }
+      BOOL keep = FALSE;
 
-  if(keep == FALSE)
-    FileToEditor(data->wmData->filename, data->TE_EDIT, FALSE);
+      D(DBF_UTIL, "received notification that the tempfile of write window %ld have changed [%s]", data->windowNumber, data->wmData->filename);
+
+      // check if the content of the TextEditor.mcc gadget changed
+      // as well and if so warn the user
+      if(xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
+      {
+        // warn the user that both the tempfile and the content of the TextEditor.mcc
+        // changed.
+        if(MUI_Request(G->App, obj, 0L, tr(MSG_FCHANGE_WARN_TITLE),
+                                        tr(MSG_YesNoReq),
+                                        tr(MSG_FCHANGE_WARN), data->windowNumber+1) == 0)
+        {
+          // cancel / keep old text
+          keep = TRUE;
+        }
+      }
+
+      if(keep == FALSE)
+      {
+        // let the TextEditor.mcc load the modified file and mark it as changed again
+        DoMethod(obj, MUIM_WriteWindow_ReloadText, TRUE);
+
+        // remember this new date stamp
+        memcpy(&data->wmData->lastFileChangeTime, currentFileChangeTime, sizeof(data->wmData->lastFileChangeTime));
+      }
+    }
+
+    free(currentFileChangeTime);
+  }
 
   RETURN(0);
   return 0;

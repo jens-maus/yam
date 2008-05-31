@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-05-31  Thore Böckelmann <tboeckel@gmx.de>
+
+  * WriteWindow.c: modified the file notification to only obey changes to the
+    file's contents, because a notification will be sent for *every* change
+    made, i.e. changing the file's comment will also trigger a notification.
+    This is archived by watching changes to the file's date stamp.
+
 2008-05-30  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, WriteWindow.c: minor cosmetic code changes to better accomodate

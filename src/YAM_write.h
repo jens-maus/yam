@@ -34,6 +34,7 @@
 // forward declarations
 struct AppMessage;
 struct codeset;
+struct DateStamp;
 struct Mail;
 struct MailList;
 struct ReadMailData;
@@ -71,6 +72,7 @@ struct WriteMailData
   struct codeset *  charset;            // the character set being used for this mail
 
   char filename[SIZE_PATHFILE];         // filename of tmp text file
+  struct DateStamp lastFileChangeTime;  // when was this file touched for the last time
   struct NotifyRequest *notifyRequest;  // file notification request
   BOOL fileNotifyActive;                // is the file change notification currently active or not
 
