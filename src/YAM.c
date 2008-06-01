@@ -160,9 +160,6 @@ static struct StartupSemaphore
 {
   struct SignalSemaphore semaphore; // a standard semaphore structure
   ULONG UseCount;                   // how many other participants know this semaphore
-  #if !defined(__amigaos4__)
-  char Name[12];                    // an optional name for a public semaphore
-  #endif
 } *startupSemaphore = NULL;
 
 #define STARTUP_SEMAPHORE_NAME      "YAM_Startup"
@@ -216,10 +213,10 @@ static BOOL InitLib(const char *libname,
       #if defined(__amigaos4__)
       struct Interface *i;
 
-      // if we weren`t able to obtain the interface, lets close the library also
+      // if we weren't able to obtain the interface, lets close the library also
       if(GETINTERFACE(iname, i, base) == NULL)
       {
-        D(DBF_STARTUP, "InitLib: can`t get '%s' interface of library %s", iname, libname);
+        D(DBF_STARTUP, "InitLib: can't get '%s' interface of library %s", iname, libname);
 
         CloseLibrary(base);
         *libbase = NULL;
@@ -235,7 +232,7 @@ static BOOL InitLib(const char *libname,
       #endif
     }
     else
-      D(DBF_STARTUP, "InitLib: can`t open library %s with minimum version v%ld.%ld", libname, version, revision);
+      D(DBF_STARTUP, "InitLib: can't open library %s with minimum version v%ld.%ld", libname, version, revision);
 
     if(base == NULL && required == TRUE)
     {
@@ -387,7 +384,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
         }
         else
         {
-          E(DBF_STARTUP, "%s: couldn`t find minimum required version.", name);
+          E(DBF_STARTUP, "%s: couldn't find minimum required version.", name);
 
           // We're out of luck - open count is 0, we've tried to flush
           // and still haven't got the version we want
@@ -1494,7 +1491,7 @@ static void InitAfterLogin(void)
   // make sure the GUI objects for the embedded read pane are created
   MA_SetupEmbeddedReadPane();
 
-  // Now we have to check on which position we should display the InfoBar and if it`s not
+  // Now we have to check on which position we should display the InfoBar and if it's not
   // center or off we have to resort the main group
   if(C->InfoBar != IB_POS_CENTER && C->InfoBar != IB_POS_OFF)
      MA_SortWindow();
@@ -1601,7 +1598,7 @@ static void InitAfterLogin(void)
 
           if(spamFolder->imageObject != NULL)
           {
-            // we make sure that the NList also doesn`t use the image in future anymore
+            // we make sure that the NList also doesn't use the image in future anymore
             DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
             spamFolder->imageObject = NULL;
           }
@@ -1677,7 +1674,7 @@ static void InitAfterLogin(void)
         folder->New = 0;
     }
 
-    // if this folder hasn`t got any own folder image in the folder
+    // if this folder hasn't got any own folder image in the folder
     // directory and it is one of our standard folders we have to check which image we put in front of it
     if(folder->imageObject == NULL)
     {
@@ -1806,7 +1803,7 @@ static void InitBeforeLogin(BOOL hidden)
   {
     if(InitAmiSSLMaster(AMISSL_CURRENT_VERSION, TRUE))
     {
-      if((AmiSSLBase = OpenAmiSSL()) &&
+      if((AmiSSLBase = OpenAmiSSL()) != NULL &&
          GETINTERFACE("main", IAmiSSL, AmiSSLBase))
       {
         G->TR_UseableTLS = TRUE;
@@ -2696,3 +2693,4 @@ int main(int argc, char **argv)
   return RETURN_OK;
 }
 ///
+

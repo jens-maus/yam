@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-01  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: removed the no longer needed Name field from the StartupSemaphore
+    structure.
+
 2008-05-31  Thore Böckelmann <tboeckel@gmx.de>
 
   * WriteWindow.c: modified the file notification to only obey changes to the
