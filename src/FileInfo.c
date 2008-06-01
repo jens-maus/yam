@@ -49,7 +49,7 @@
 //   FI_DATE          struct DateStamp *
 //   FI_TIME          ULONG
 //   FI_TYPE          enum FileType
-// Pointer types like FI_COMMENT or FI_DATE must be free()'d after usage to
+// File comments (FI_COMMENT) will be strdup()'ed and must be free()'d after usage to
 // avoid memory leaks.
 BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr)
 {
@@ -91,8 +91,8 @@ BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr)
 
         case FI_DATE:
         {
-          if((*((struct DateStamp **)valuePtr) = memdup(&ed->Date, sizeof(struct DateStamp))) != NULL)
-            result = TRUE;
+          memcpy((struct DateStamp *)valuePtr, &ed->Date, sizeof(struct DateStamp));
+          result = TRUE;
         }
         break;
 
@@ -229,3 +229,4 @@ BOOL FileExists(const char *filename)
 }
 
 ///
+

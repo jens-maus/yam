@@ -3114,12 +3114,7 @@ DECLARE(LaunchEditor)
 
     EditorToFile(data->TE_EDIT, wmData->filename);
     // remember the modification date of the file
-    if(ObtainFileInfo(data->wmData->filename, FI_DATE, &currentFileChangeTime) == TRUE)
-    {
-      memcpy(&data->wmData->lastFileChangeTime, currentFileChangeTime, sizeof(data->wmData->lastFileChangeTime));
-      free(currentFileChangeTime);
-    }
-    else
+    if(ObtainFileInfo(data->wmData->filename, FI_DATE, &data->wmData->lastFileChangeTime) == FALSE)
     {
       // use the current time in case ObtainFileInfo() failed
       DateStamp(&data->wmData->lastFileChangeTime);
@@ -4098,7 +4093,7 @@ DECLARE(CancelAction)
 DECLARE(MailFileModified)
 {
   GETDATA;
-  struct DateStamp *currentFileChangeTime;
+  struct DateStamp currentFileChangeTime;
 
   ENTER();
 
@@ -4139,8 +4134,6 @@ DECLARE(MailFileModified)
         memcpy(&data->wmData->lastFileChangeTime, currentFileChangeTime, sizeof(data->wmData->lastFileChangeTime));
       }
     }
-
-    free(currentFileChangeTime);
   }
 
   RETURN(0);

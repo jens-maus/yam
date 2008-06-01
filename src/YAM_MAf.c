@@ -79,7 +79,7 @@
 ** structures are saved RAW to a file.
 ** Therefore we have to ensure that the alignment
 ** will be the same for 68k and PPC.
-** That`s why we deal with the following #pragma
+** That's why we deal with the following #pragma
 ** calls
 */
 
@@ -324,7 +324,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
           mail.Folder = folder;
           mail.mflags = cmail.mflags;
           mail.sflags = cmail.sflags;
-          setVOLValue(&mail, 0);  // we have to make sure that the volatile flag field isn`t loaded
+          setVOLValue(&mail, 0);  // we have to make sure that the volatile flag field isn't loaded
           strlcpy(mail.MailFile, cmail.mailFile, sizeof(mail.MailFile));
           mail.Date = cmail.date;
           mail.transDate = cmail.transDate;
@@ -449,7 +449,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
         cmail.transDate = mail->transDate;
         cmail.sflags = mail->sflags;
         cmail.mflags = mail->mflags;
-        setVOLValue(&cmail, 0);  // we have to make sure that the volatile flag field isn`t saved
+        setVOLValue(&cmail, 0);  // we have to make sure that the volatile flag field isn't saved
         cmail.cMsgID = mail->cMsgID;
         cmail.cIRTMsgID = mail->cIRTMsgID;
         cmail.size = mail->Size;
@@ -1304,7 +1304,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
         else
         {
           // it seems that we have found another header line because
-          // it didn`t start with a linear-white-space, so lets
+          // it didn't start with a linear-white-space, so lets
           // first validate the previous one, if it exists.
           if(hdrNode != NULL)
           {
@@ -1709,7 +1709,7 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
     // bring the date in relation to UTC
     ds->ds_Minute -= mail->tzone;
 
-    // we need to check the datestamp variable that it is still in it`s borders
+    // we need to check the datestamp variable that it is still in it's borders
     // after the UTC correction
     while(ds->ds_Minute < 0)     { ds->ds_Minute += 1440; ds->ds_Days--; }
     while(ds->ds_Minute >= 1440) { ds->ds_Minute -= 1440; ds->ds_Days++; }
@@ -2084,7 +2084,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
        {
          W(DBF_FOLDER, "WARNING: failure in decoding the encoded date from mailfile: '%s'", mail->MailFile);
 
-         // if we weren`t able to decode the base64 encoded string
+         // if we weren't able to decode the base64 encoded string
          // we have to validate the transDate so that the calling function
          // recognizes to rewrite the comment with a valid string.
          mail->transDate.Seconds      = 0;
@@ -2177,14 +2177,10 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
        }
        else
        {
-         struct DateStamp *ds;
-
          // and as a fallback we take the date of the mail file
-         if(ObtainFileInfo(mail->MailFile, FI_DATE, &ds) == TRUE)
+         if(ObtainFileInfo(mail->MailFile, FI_DATE, &mail->Date) == TRUE)
          {
-           memcpy(&mail->Date, ds, sizeof(struct DateStamp));
            DateStampTZConvert(&mail->Date, TZC_UTC);
-           free(ds);
          }
        }
 
@@ -2517,7 +2513,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
                 if((newMail = AddMailToList(&email->Mail, folder)) != NULL)
                 {
-                  // if this new mail hasn`t got a valid transDate we have to check if we
+                  // if this new mail hasn't got a valid transDate we have to check if we
                   // have to take the fileDate as a fallback value.
                   if(newMail->transDate.Seconds == 0)
                   {
@@ -2525,7 +2521,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                     // as the fallback
                     if(!hasStatusQueued(newMail) && !hasStatusHold(newMail))
                     {
-                      struct DateStamp *ds;
+                      struct DateStamp ds;
 
                       W(DBF_FOLDER, "no transfer Date information found in mail file, taking fileDate...");
 
@@ -2533,8 +2529,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                       if(ObtainFileInfo(GetMailFile(NULL, folder, newMail), FI_DATE, &ds) == TRUE)
                       {
                         // now convert the local TZ fib_Date to a UTC transDate
-                        DateStamp2TimeVal(ds, &newMail->transDate, TZC_UTC);
-                        free(ds);
+                        DateStamp2TimeVal(&ds, &newMail->transDate, TZC_UTC);
                       }
 
                       // then we update the mailfilename

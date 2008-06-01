@@ -7,6 +7,9 @@ $URL$
 
 2008-06-01  Thore Böckelmann <tboeckel@gmx.de>
 
+  * FileInfo.c, YAM_MAf.c, WriteWindow.c: when obtaining the file's date stamp
+    a valid pointer must be supplied now instead of allocating a separate buffer
+    for the information.
   * AppIcon.c: added missing comment for code folding.
   * YAM.c: removed the no longer needed Name field from the StartupSemaphore
     structure.
