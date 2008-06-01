@@ -3099,7 +3099,6 @@ DECLARE(LaunchEditor)
   {
     struct WriteMailData *wmData = data->wmData;
     char buffer[SIZE_COMMAND+SIZE_PATHFILE];
-    struct DateStamp *currentFileChangeTime;
 
     // stop any pending file notification.
     if(wmData->fileNotifyActive == TRUE)
@@ -4104,7 +4103,7 @@ DECLARE(MailFileModified)
   // notification for the actual change of contents.
   if(ObtainFileInfo(data->wmData->filename, FI_DATE, &currentFileChangeTime) == TRUE)
   {
-    if(CompareDates(&data->wmData->lastFileChangeTime, currentFileChangeTime) > 0)
+    if(CompareDates(&data->wmData->lastFileChangeTime, &currentFileChangeTime) > 0)
     {
       BOOL keep = FALSE;
 
@@ -4131,7 +4130,7 @@ DECLARE(MailFileModified)
         DoMethod(obj, MUIM_WriteWindow_ReloadText, TRUE);
 
         // remember this new date stamp
-        memcpy(&data->wmData->lastFileChangeTime, currentFileChangeTime, sizeof(data->wmData->lastFileChangeTime));
+        memcpy(&data->wmData->lastFileChangeTime, &currentFileChangeTime, sizeof(data->wmData->lastFileChangeTime));
       }
     }
   }
