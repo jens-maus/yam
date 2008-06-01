@@ -239,6 +239,7 @@ static void SnapshotAppIcon(void)
 }
 
 /// UnsnapshotAppIcon
+/// UnsnapshotAppIcon
 // set the AppIcon's position to no specific position
 static void UnsnapshotAppIcon(void)
 {
@@ -355,3 +356,4 @@ void HandleAppIcon(void)
 }
 
 ///
+

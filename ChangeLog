@@ -7,6 +7,7 @@ $URL$
 
 2008-06-01  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AppIcon.c: added missing comment for code folding.
   * YAM.c: removed the no longer needed Name field from the StartupSemaphore
     structure.
 
