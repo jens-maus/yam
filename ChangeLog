@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * AttachmentGroup.c, AttachmentObject.c, ReadMailGroup.c, ReadWindow.c,
+    MainWindow.c, YAM.h, YAM_UT.h, YAM_RE.c: changed look&feel of latest changes
+    on our AttachmentGroup to match the look&feel of the previous implementation.
+    In addition, an added BalanceObject between the text editor and the attachment
+    group allows to manually change the height of the scrollgroup object now. This
+    should allow for a more appropriate adaption of the height of the attachment
+    group object after it was added.
+
 2008-06-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * AttachmentGroup.c: make sure that the first object on a line is really put

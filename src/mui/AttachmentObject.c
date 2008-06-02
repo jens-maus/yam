@@ -68,8 +68,8 @@ OVERLOAD(OM_NEW)
   mailPart = (struct Part *)GetTagData(MUIA_AttachmentObject_MailPart, (ULONG)NULL, inittags(msg));
 
   if((obj = DoSuperNew(cl, obj,
-                        MUIA_Background,  MUII_GroupBack,
-                        MUIA_Group_Horiz, TRUE,
+                        MUIA_Group_Horiz,   TRUE,
+                        MUIA_Group_Spacing, 0,
                         Child, imageObject = AttachmentImageObject,
                           MUIA_CycleChain,               TRUE,
                           MUIA_AttachmentImage_MailPart, mailPart,

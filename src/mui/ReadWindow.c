@@ -454,6 +454,7 @@ OVERLOAD(OM_NEW)
           Child, data->readMailGroup = ReadMailGroupObject,
             MUIA_ReadMailGroup_HGVertWeight, G->Weights[10],
             MUIA_ReadMailGroup_TGVertWeight, G->Weights[11],
+            MUIA_ReadMailGroup_AGVertWeight, G->Weights[12],
           End,
         End,
       End,
@@ -633,6 +634,7 @@ OVERLOAD(MUIM_Window_Snapshot)
   // on a snapshot request we save the weights of all our objects here.
   G->Weights[10] = xget(data->readMailGroup, MUIA_ReadMailGroup_HGVertWeight);
   G->Weights[11] = xget(data->readMailGroup, MUIA_ReadMailGroup_TGVertWeight);
+  G->Weights[12] = xget(data->readMailGroup, MUIA_ReadMailGroup_AGVertWeight);
 
   // make sure the layout is saved
   SaveLayout(TRUE);

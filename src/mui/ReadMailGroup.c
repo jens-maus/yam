@@ -55,7 +55,8 @@ struct Data
   Object *senderImageGroup;
   Object *senderImage;
   Object *senderImageSpace;
-  Object *balanceObject;
+  Object *balanceObjectTop;
+  Object *balanceObjectBottom;
   Object *mailBodyGroup;
   Object *mailTextObject;
   Object *textEditScrollbar;
@@ -271,6 +272,7 @@ static BOOL ShowAttachmentGroup(struct Data *data)
     if(DoMethod(data->mailBodyGroup, MUIM_Group_InitChange))
     {
       // add the group to the surrounding group
+      DoMethod(data->mailBodyGroup, OM_ADDMEMBER, data->balanceObjectBottom);
       DoMethod(data->mailBodyGroup, OM_ADDMEMBER, data->scrolledAttachmentGroup);
       data->activeAttachmentGroup = TRUE;
 
@@ -300,6 +302,7 @@ static void HideAttachmentGroup(struct Data *data)
     if(DoMethod(data->mailBodyGroup, MUIM_Group_InitChange))
     {
       // remove the attachment group and free it
+      DoMethod(data->mailBodyGroup, OM_REMMEMBER, data->balanceObjectBottom);
       DoMethod(data->mailBodyGroup, OM_REMMEMBER, data->scrolledAttachmentGroup);
       data->activeAttachmentGroup = FALSE;
 
@@ -450,6 +453,7 @@ OVERLOAD(OM_NEW)
   struct ReadMailData *rmData;
   LONG hgVertWeight = 5;
   LONG tgVertWeight = 100;
+  LONG agVertWeight = 1;
 
   ENTER();
 
@@ -460,6 +464,7 @@ OVERLOAD(OM_NEW)
     {
       ATTR(HGVertWeight): hgVertWeight = tag->ti_Data; break;
       ATTR(TGVertWeight): tgVertWeight = tag->ti_Data; break;
+      ATTR(AGVertWeight): agVertWeight = tag->ti_Data; break;
     }
   }
 
@@ -470,7 +475,8 @@ OVERLOAD(OM_NEW)
     Object *headerList;
     Object *senderImageGroup;
     Object *senderImageSpace;
-    Object *balanceObject;
+    Object *balanceObjectTop;
+    Object *balanceObjectBottom;
     Object *mailBodyGroup;
     Object *mailTextObject;
     Object *textEditScrollbar;
@@ -484,17 +490,28 @@ OVERLOAD(OM_NEW)
     rmData->useTextstyles = C->UseTextstyles;
     rmData->useFixedFont = C->FixedFontEdit;
 
-    // create some object before the real object
+    // create the scrollbar for the TE.mcc object
     textEditScrollbar = ScrollbarObject, End;
+
+    // create a balance object we can use between our texteditor
+    // and the attachment display
+    balanceObjectBottom = BalanceObject, End;
+
+    // create the scrolled group for our attachment display
     scrolledAttachmentGroup = HGroup,
+      MUIA_VertWeight, agVertWeight,
       Child, VGroup,
-        Child, LLabel(tr(MSG_MA_ATTACHMENTS)),
+        Child, TextObject,
+          MUIA_Font,          MUIV_Font_Tiny,
+          MUIA_Text_SetMax,   TRUE,
+          MUIA_Text_Contents, tr(MSG_MA_ATTACHMENTS),
+          MUIA_Text_PreParse, "\033b",
+        End,
         Child, VSpace(0),
       End,
       Child, ScrollgroupObject,
         MUIA_Scrollgroup_FreeHoriz, FALSE,
         MUIA_Scrollgroup_Contents, attachmentGroup = AttachmentGroupObject,
-          VirtualFrame,
         End,
       End,
     End;
@@ -533,7 +550,7 @@ OVERLOAD(OM_NEW)
                 End,
               End,
             End,
-            Child, balanceObject = BalanceObject,
+            Child, balanceObjectTop = BalanceObject,
               MUIA_ShowMe, rmData->headerMode != HM_NOHEADER,
             End,
             Child, mailBodyGroup = VGroup,
@@ -575,7 +592,8 @@ OVERLOAD(OM_NEW)
       data->headerList = headerList;
       data->senderImageGroup = senderImageGroup;
       data->senderImageSpace = senderImageSpace;
-      data->balanceObject = balanceObject;
+      data->balanceObjectTop = balanceObjectTop;
+      data->balanceObjectBottom = balanceObjectBottom;
       data->mailBodyGroup = mailBodyGroup;
       data->mailTextObject = mailTextObject;
 
@@ -627,7 +645,9 @@ OVERLOAD(OM_DISPOSE)
   // a child of this readmailgroup
   if(data->activeAttachmentGroup == FALSE)
   {
+    MUI_DisposeObject(data->balanceObjectBottom);
     MUI_DisposeObject(data->scrolledAttachmentGroup);
+    data->balanceObjectBottom = NULL;
     data->scrolledAttachmentGroup = NULL;
     data->attachmentGroup = NULL;
   }
@@ -650,6 +670,7 @@ OVERLOAD(OM_GET)
   {
     ATTR(HGVertWeight) : *store = xget(data->headerGroup, MUIA_VertWeight); return TRUE;
     ATTR(TGVertWeight) : *store = xget(data->mailBodyGroup, MUIA_VertWeight); return TRUE;
+    ATTR(AGVertWeight) : *store = xget(data->scrolledAttachmentGroup, MUIA_VertWeight); return TRUE;
     ATTR(ReadMailData) : *store = (ULONG)data->readMailData; return TRUE;
     ATTR(DefaultObject): *store = (ULONG)data->mailTextObject; return TRUE;
     ATTR(ActiveObject):
@@ -690,6 +711,15 @@ OVERLOAD(OM_SET)
       ATTR(TGVertWeight):
       {
         set(data->mailBodyGroup, MUIA_VertWeight, tag->ti_Data);
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(AGVertWeight):
+      {
+        set(data->scrolledAttachmentGroup, MUIA_VertWeight, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -1091,7 +1121,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   // or not.
   dispheader = (rmData->headerMode != HM_NOHEADER);
   set(data->headerGroup, MUIA_ShowMe, dispheader);
-  set(data->balanceObject, MUIA_ShowMe, dispheader);
+  set(data->balanceObjectTop, MUIA_ShowMe, dispheader);
 
   set(data->headerList, MUIA_NList_Quiet, TRUE);
 

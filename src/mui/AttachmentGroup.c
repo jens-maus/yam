@@ -62,9 +62,6 @@ struct Data
 };
 */
 
-#define BORDER    2 // border around our object
-#define SPACING   2 // pixels taken as space between our images/text
-
 /* Private Hooks */
 /// LayoutHook
 HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
@@ -77,25 +74,16 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
     // need to calculate it accordingly.
     case MUILM_MINMAX:
     {
-      LONG maxMinWidth;
-      LONG maxMinHeight;
+      LONG maxMinWidth = 0;
+      LONG maxMinHeight = 0;
       Object *cstate = (Object *)lm->lm_Children->mlh_Head;
       Object *child;
 
-      maxMinWidth = 0;
-      maxMinHeight = 0;
       while((child = NextObject(&cstate)) != NULL)
       {
         maxMinWidth = MAX(_minwidth(child), maxMinWidth);
         maxMinHeight = MAX(_minheight(child), maxMinHeight);
       }
-
-      // add the borders
-      maxMinWidth += 2*BORDER;
-      maxMinHeight += 2*BORDER;
-
-      // take four lines of text in case there was no child
-      maxMinHeight = MAX(_font(obj)->tf_YSize * 4, maxMinHeight);
 
       // then set our calculated values
       lm->lm_MinMax.MinWidth  = maxMinWidth;
@@ -103,7 +91,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
       lm->lm_MinMax.DefWidth  = maxMinWidth;
       lm->lm_MinMax.DefHeight = maxMinHeight;
       lm->lm_MinMax.MaxWidth  = MUI_MAXMAX;
-      lm->lm_MinMax.MaxHeight = maxMinHeight + 2*SPACING;
+      lm->lm_MinMax.MaxHeight = MUI_MAXMAX;
 
       RETURN(0);
       return 0;
@@ -117,16 +105,13 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
     {
       Object *cstate = (Object *)lm->lm_Children->mlh_Head;
       Object *child;
-      LONG left;
-      LONG top;
+      LONG left = 0;
+      LONG top = 0;
       LONG lastItemHeight = 0;
-      LONG maxWidth = BORDER;
-      BOOL firstObjectOnLine = TRUE;
+      LONG maxWidth = 0;
+      BOOL first = TRUE;
 
       D(DBF_GUI, "attgroup layout: %08lx %ld/%ld", obj, lm->lm_Layout.Width, lm->lm_Layout.Height);
-
-      left = BORDER;
-      top = BORDER;
 
       // Layout function. Here, we have to call MUI_Layout() for each
       // our children. MUI wants us to place them in a rectangle
@@ -142,23 +127,21 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 
         D(DBF_GUI, "layouting child %08lx '%s'", child, mailPart->Name);
 
-        if(firstObjectOnLine == TRUE)
-        {
-          firstObjectOnLine = FALSE;
-        }
+        if(first == TRUE)
+          first = FALSE;
         else
         {
-          if(left + mw + SPACING > lm->lm_Layout.Width)
+          if((left+mw) > lm->lm_Layout.Width)
           {
             D(DBF_GUI, "layout: putting object '%s' on new row", mailPart->Name);
+
             // the current object doesn't fit in this row anymore, start a new row
             if(left > maxWidth)
               maxWidth = left;
 
-            left = BORDER;
-            top += lastItemHeight + SPACING;
+            left = 0;
+            top += lastItemHeight;
             lastItemHeight = mh;
-            firstObjectOnLine = TRUE;
           }
         }
 
@@ -169,11 +152,11 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
           return FALSE;
         }
 
-        left += mw + SPACING;
+        left += mw;
         lastItemHeight = MAX(mh, lastItemHeight);
       }
 
-      top += lastItemHeight + SPACING + BORDER;
+      top += lastItemHeight;
 
       // update the layout dimensions in case we used more space than expected
       if(lm->lm_Layout.Width < maxWidth)
@@ -205,7 +188,7 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   obj = DoSuperNew(cl, obj,
-                    MUIA_Background,       MUII_GroupBack,
+                    MUIA_Font,             MUIV_Font_Tiny,
                     MUIA_Group_LayoutHook, &LayoutHook,
                     MUIA_ContextMenu,      TRUE,
                   TAG_MORE, inittags(msg));
