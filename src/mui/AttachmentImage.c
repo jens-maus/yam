@@ -68,6 +68,8 @@ struct Data
 
   struct MUI_EventHandlerNode ehnode;
 
+  Object *attachmentGroup;
+
   BOOL lastDecodedStatus;
   BOOL eventHandlerAdded;
 
@@ -589,6 +591,7 @@ OVERLOAD(OM_NEW)
         ATTR(MailPart)  : data->mailPart = (struct Part *)tag->ti_Data; break;
         ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
         ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
+        ATTR(Group)     : data->attachmentGroup = (Object *)tag->ti_Data; break;
       }
     }
 
@@ -888,15 +891,15 @@ OVERLOAD(MUIM_HandleEvent)
       }
       else
       {
-        Object *parent = (Object *)xget(obj, MUIA_Parent);
+        BOOL lastState = xget(obj, MUIA_Selected);
 
         // only clear the selection if the user hasn't used
         // the SHIFT key to select multiple items.
-        if(parent && hasFlag(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
-          DoMethod(parent, MUIM_AttachmentGroup_ClearSelection);
+        if(hasFlag(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
+          DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_ClearSelection);
 
         // invert the selection state
-        set(obj, MUIA_Selected, !xget(obj, MUIA_Selected));
+        set(obj, MUIA_Selected, !lastState);
       }
 
       // save the seconds/micros for the next handleEvent call
@@ -966,14 +969,14 @@ OVERLOAD(MUIM_HandleEvent)
       {
         if(obj == (Object *)xget(_win(obj), MUIA_Window_ActiveObject))
         {
-          Object *parent = (Object *)xget(obj, MUIA_Parent);
+          BOOL lastState = xget(obj, MUIA_Selected);
 
           // only clear the selection if the user hasn't used
           // the SHIFT key to select multiple items.
-          if(parent && hasFlag(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
-            DoMethod(parent, MUIM_AttachmentGroup_ClearSelection);
+          if(hasFlag(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
+            DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_ClearSelection);
 
-          set(obj, MUIA_Selected, !xget(obj, MUIA_Selected));
+          set(obj, MUIA_Selected, !lastState);
 
           RETURN(MUI_EventHandlerRC_Eat);
           return MUI_EventHandlerRC_Eat;

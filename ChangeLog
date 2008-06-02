@@ -7,6 +7,9 @@ $URL$
 
 2008-06-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * AttachmentGroup.c, AttachmentObject.c, AttachmentImage.c: the mouse selection
+    of the attachment parts was broken as multiselection was always active
+    regardless of the status of the SHIFT qualifier key.
   * AttachmentGroup.c, AttachmentObject.c, ReadMailGroup.c, ReadWindow.c,
     MainWindow.c, YAM.h, YAM_UT.h, YAM_RE.c: changed look&feel of latest changes
     on our AttachmentGroup to match the look&feel of the previous implementation.

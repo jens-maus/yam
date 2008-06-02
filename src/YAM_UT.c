@@ -3891,7 +3891,11 @@ void LoadLayout(void)
   {
     //    0  1   2  3   4  5   6  7   8 9   10 11 12
     ls = "30 100 25 100 30 100 25 100 5 100 5 100 1";
+
+    D(DBF_UTIL, "using default layout weight factors: '%s'", ls);
   }
+  else
+    D(DBF_UTIL, "loaded layout weight factors: '%s'", ls);
 
   // lets get the numbers for each weight factor out of the contents
   // of the fake string gadget
@@ -3984,7 +3988,6 @@ void SaveLayout(BOOL permanent)
   char buf[SIZE_DEFAULT+1];
 
   ENTER();
-  SHOWVALUE(DBF_UTIL, permanent);
 
   // we encode the different weight factors which are embeeded in a dummy string
   // gadgets:
@@ -4031,9 +4034,13 @@ void SaveLayout(BOOL permanent)
 
     DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
 
+    D(DBF_UTIL, "permanently saved layout weight factors: '%s'", buf);
+
     // restore the old windowPtr
     SetProcWindow(oldWindowPtr);
   }
+  else
+    D(DBF_UTIL, "saved layout weight factors: '%s'", buf);
 
   LEAVE();
 }

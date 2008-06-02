@@ -61,18 +61,31 @@ OVERLOAD(OM_NEW)
 {
   Object *imageObject;
   Object *textObject;
-  struct Part *mailPart;
+  Object *attGroupObject = NULL;
+  struct Part *mailPart = NULL;
+  struct TagItem *tags = inittags(msg);
+  struct TagItem *tag;
 
   ENTER();
 
-  mailPart = (struct Part *)GetTagData(MUIA_AttachmentObject_MailPart, (ULONG)NULL, inittags(msg));
+  // check for some tags present at OM_NEW
+  while((tag = NextTagItem(&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      ATTR(MailPart): mailPart = (struct Part *)tag->ti_Data; break;
+      ATTR(Group):    attGroupObject = (Object *)tag->ti_Data; break;
+    }
+  }
 
+  // create the object
   if((obj = DoSuperNew(cl, obj,
                         MUIA_Group_Horiz,   TRUE,
                         MUIA_Group_Spacing, 0,
                         Child, imageObject = AttachmentImageObject,
                           MUIA_CycleChain,               TRUE,
                           MUIA_AttachmentImage_MailPart, mailPart,
+                          MUIA_AttachmentImage_Group,    attGroupObject,
                         End,
                         Child, textObject = TextObject,
                           MUIA_Text_SetMax, FALSE,

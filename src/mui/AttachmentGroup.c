@@ -471,7 +471,8 @@ DECLARE(Refresh) // struct Part *firstPart
         Object *attObject;
 
         if((attObject = AttachmentObjectObject,
-                          MUIA_AttachmentObject_MailPart,   rp,
+                          MUIA_AttachmentObject_MailPart, rp,
+                          MUIA_AttachmentObject_Group,    obj,
                         End) != NULL)
         {
           Object *imageObject = (Object *)xget(attObject, MUIA_AttachmentObject_ImageObject);
@@ -814,6 +815,7 @@ DECLARE(ClearSelection)
     {
       Object *imageObject = (Object *)xget(child, MUIA_AttachmentObject_ImageObject);
 
+      W(DBF_GUI, "clearing MUIA_Selected of object %08lx", imageObject);
       set(imageObject, MUIA_Selected, FALSE);
     }
   }
