@@ -136,7 +136,9 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
       {
         LONG mw = _minwidth(child);
         LONG mh = _minheight(child);
+        #if defined(DEBUG)
         struct Part *mailPart = (struct Part *)xget(child, MUIA_AttachmentObject_MailPart);
+        #endif
 
         D(DBF_GUI, "layouting child %08lx '%s'", child, mailPart->Name);
 
