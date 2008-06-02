@@ -121,7 +121,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
       LONG top;
       LONG lastItemHeight = 0;
       LONG maxWidth = BORDER;
-      BOOL first = TRUE;
+      BOOL firstObjectOnLine = TRUE;
 
       D(DBF_GUI, "attgroup layout: %08lx %ld/%ld", obj, lm->lm_Layout.Width, lm->lm_Layout.Height);
 
@@ -142,9 +142,9 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 
         D(DBF_GUI, "layouting child %08lx '%s'", child, mailPart->Name);
 
-        if(first == TRUE)
+        if(firstObjectOnLine == TRUE)
         {
-          first = FALSE;
+          firstObjectOnLine = FALSE;
         }
         else
         {
@@ -158,6 +158,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
             left = BORDER;
             top += lastItemHeight + SPACING;
             lastItemHeight = mh;
+            firstObjectOnLine = TRUE;
           }
         }
 

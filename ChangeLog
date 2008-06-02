@@ -7,6 +7,10 @@ $URL$
 
 2008-06-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentGroup.c: make sure that the first object on a line is really put
+    there, no matter whether it will be fully visible or not. There must be at
+    least one object per line, otherwise we have an endless loop, because it
+    would not fit in the next line either.
   * AttachmentGroup.c, AttachmentObject.c, ReadMailGroup.c: the attachment group
     is now displayed as a scrollable virtual group. This become very handy if
     there are more attachments than can be displayed in one line or if the icon
