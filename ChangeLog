@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-02  Thore Böckelmann <tboeckel@gmx.de>
+
+  * AttachmentGroup.c, AttachmentObject.c, ReadMailGroup.c: the attachment group
+    is now displayed as a scrollable virtual group. This become very handy if
+    there are more attachments than can be displayed in one line or if the icon
+    texts are too long. This fulfills feature request #1876957.
+
 2008-06-01  Thore Böckelmann <tboeckel@gmx.de>
 
   * FileInfo.c, YAM_MAf.c, WriteWindow.c: when obtaining the file's date stamp

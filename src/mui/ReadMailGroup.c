@@ -59,6 +59,7 @@ struct Data
   Object *mailBodyGroup;
   Object *mailTextObject;
   Object *textEditScrollbar;
+  Object *scrolledAttachmentGroup;
   Object *attachmentGroup;
   Object *contextMenu;
   Object *searchWindow;
@@ -270,7 +271,7 @@ static BOOL ShowAttachmentGroup(struct Data *data)
     if(DoMethod(data->mailBodyGroup, MUIM_Group_InitChange))
     {
       // add the group to the surrounding group
-      DoMethod(data->mailBodyGroup, OM_ADDMEMBER, data->attachmentGroup);
+      DoMethod(data->mailBodyGroup, OM_ADDMEMBER, data->scrolledAttachmentGroup);
       data->activeAttachmentGroup = TRUE;
 
       DoMethod(data->mailBodyGroup, MUIM_Group_ExitChange);
@@ -299,7 +300,7 @@ static void HideAttachmentGroup(struct Data *data)
     if(DoMethod(data->mailBodyGroup, MUIM_Group_InitChange))
     {
       // remove the attachment group and free it
-      DoMethod(data->mailBodyGroup, OM_REMMEMBER, data->attachmentGroup);
+      DoMethod(data->mailBodyGroup, OM_REMMEMBER, data->scrolledAttachmentGroup);
       data->activeAttachmentGroup = FALSE;
 
       DoMethod(data->mailBodyGroup, MUIM_Group_ExitChange);
@@ -473,6 +474,7 @@ OVERLOAD(OM_NEW)
     Object *mailBodyGroup;
     Object *mailTextObject;
     Object *textEditScrollbar;
+    Object *scrolledAttachmentGroup;
     Object *attachmentGroup;
 
     // set some default values for a new readMailGroup
@@ -484,7 +486,18 @@ OVERLOAD(OM_NEW)
 
     // create some object before the real object
     textEditScrollbar = ScrollbarObject, End;
-    attachmentGroup = AttachmentGroupObject, End;
+    scrolledAttachmentGroup = HGroup,
+      Child, VGroup,
+        Child, LLabel(tr(MSG_MA_ATTACHMENTS)),
+        Child, VSpace(0),
+      End,
+      Child, ScrollgroupObject,
+        MUIA_Scrollgroup_FreeHoriz, FALSE,
+        MUIA_Scrollgroup_Contents, attachmentGroup = AttachmentGroupObject,
+          VirtualFrame,
+        End,
+      End,
+    End;
 
     // create the readmailgroup obj
     obj = DoSuperNew(cl, obj,
@@ -556,6 +569,7 @@ OVERLOAD(OM_NEW)
       // copy back the temporary object pointers
       data->readMailData = rmData;
       data->textEditScrollbar = textEditScrollbar;
+      data->scrolledAttachmentGroup = scrolledAttachmentGroup;
       data->attachmentGroup = attachmentGroup;
       data->headerGroup = headerGroup;
       data->headerList = headerList;
@@ -613,7 +627,8 @@ OVERLOAD(OM_DISPOSE)
   // a child of this readmailgroup
   if(data->activeAttachmentGroup == FALSE)
   {
-    MUI_DisposeObject(data->attachmentGroup);
+    MUI_DisposeObject(data->scrolledAttachmentGroup);
+    data->scrolledAttachmentGroup = NULL;
     data->attachmentGroup = NULL;
   }
 

@@ -626,6 +626,7 @@ OVERLOAD(OM_DISPOSE)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
 ///
 /// OVERLOAD(OM_GET)
 OVERLOAD(OM_GET)
@@ -643,6 +644,26 @@ OVERLOAD(OM_GET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
+///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags = inittags(msg), *tag;
+
+  while((tag = NextTagItem(&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
+      ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
+    }
+  }
+
+  return DoSuperMethodA(cl, obj, msg);;
+}
+
 ///
 /// OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Setup)

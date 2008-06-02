@@ -275,6 +275,7 @@ MUI	= \
 	Addrmatchlist.o \
 	AttachmentGroup.o \
 	AttachmentImage.o \
+	AttachmentObject.o \
 	AttachmentRequestWindow.o \
 	CheckboxRequestWindow.o \
 	ConfigPageList.o \

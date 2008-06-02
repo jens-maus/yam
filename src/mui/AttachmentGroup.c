@@ -58,15 +58,12 @@ struct Data
 
   char menuTitle[SIZE_DEFAULT];
 
-  ULONG minHeight;
-  BOOL resizePushed;
   BOOL eventHandlerAdded;
 };
 */
 
 #define BORDER    2 // border around our object
 #define SPACING   2 // pixels taken as space between our images/text
-#define TEXTROWS  3 // how many text rows does a attachmentimage normally have?
 
 /* Private Hooks */
 /// LayoutHook
@@ -80,38 +77,33 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
     // need to calculate it accordingly.
     case MUILM_MINMAX:
     {
+      LONG maxMinWidth;
       LONG maxMinHeight;
-      LONG objMinHeight = xget(obj, MUIA_AttachmentGroup_MinHeight);
       Object *cstate = (Object *)lm->lm_Children->mlh_Head;
       Object *child;
-      LONG childs = 0;
 
-      maxMinHeight = MAX(2*BORDER+_font(obj)->tf_YSize, objMinHeight);
-      while((child = NextObject(&cstate)))
+      maxMinWidth = 0;
+      maxMinHeight = 0;
+      while((child = NextObject(&cstate)) != NULL)
       {
-        // we know our childs and that we only carry AttachmentImages
-        // normally
-        struct Part *mailPart = (struct Part *)xget(child, MUIA_AttachmentImage_MailPart);
-        if(mailPart)
-        {
-          maxMinHeight = MAX(_minheight(child)+2*BORDER, maxMinHeight);
-          childs++;
-        }
+        maxMinWidth = MAX(_minwidth(child), maxMinWidth);
+        maxMinHeight = MAX(_minheight(child), maxMinHeight);
       }
 
-      if(childs)
-        maxMinHeight = MAX(2*BORDER+TEXTROWS*_font(obj)->tf_YSize, maxMinHeight);
+      // add the borders
+      maxMinWidth += 2*BORDER;
+      maxMinHeight += 2*BORDER;
 
-      if(objMinHeight != maxMinHeight)
-        set(obj, MUIA_AttachmentGroup_MinHeightNoPush, maxMinHeight);
+      // take four lines of text in case there was no child
+      maxMinHeight = MAX(_font(obj)->tf_YSize * 4, maxMinHeight);
 
       // then set our calculated values
-      lm->lm_MinMax.MinWidth  = 0;
+      lm->lm_MinMax.MinWidth  = maxMinWidth;
       lm->lm_MinMax.MinHeight = maxMinHeight;
-      lm->lm_MinMax.DefWidth  = MUI_MAXMAX;
+      lm->lm_MinMax.DefWidth  = maxMinWidth;
       lm->lm_MinMax.DefHeight = maxMinHeight;
       lm->lm_MinMax.MaxWidth  = MUI_MAXMAX;
-      lm->lm_MinMax.MaxHeight = maxMinHeight;
+      lm->lm_MinMax.MaxHeight = maxMinHeight + 2*SPACING;
 
       RETURN(0);
       return 0;
@@ -123,150 +115,70 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
     // components at the right position.
     case MUILM_LAYOUT:
     {
-      struct RastPort rp;
       Object *cstate = (Object *)lm->lm_Children->mlh_Head;
       Object *child;
-      LONG left = BORDER;
-      LONG top = BORDER;
-      LONG mainLabelWidth;
-      LONG itemsInRow = 0;
+      LONG left;
+      LONG top;
       LONG lastItemHeight = 0;
-      LONG usedHeight = BORDER+_font(obj)->tf_YSize;
-      LONG objMinHeight = xget(obj, MUIA_AttachmentGroup_MinHeight);
+      LONG maxWidth = BORDER;
+      BOOL first = TRUE;
 
-      D(DBF_GUI, "attgroup layout: %lx %ld/%ld %ld/%ld", obj, _mwidth(obj), _mheight(obj), lm->lm_Layout.Width, lm->lm_Layout.Height);
+      D(DBF_GUI, "attgroup layout: %08lx %ld/%ld", obj, lm->lm_Layout.Width, lm->lm_Layout.Height);
 
-      InitRastPort(&rp);
-      SetFont(&rp, _font(obj));
-      SetSoftStyle(&rp, FSF_BOLD, AskSoftStyle(&rp));
-      mainLabelWidth = TextLength(&rp, tr(MSG_MA_ATTACHMENTS), strlen(tr(MSG_MA_ATTACHMENTS))) + SPACING;
-      left += mainLabelWidth;
+      left = BORDER;
+      top = BORDER;
 
       // Layout function. Here, we have to call MUI_Layout() for each
       // our children. MUI wants us to place them in a rectangle
       // defined by (0,0,lm->lm_Layout.Width-1,lm->lm_Layout.Height-1)
       // We are free to put the children anywhere in this rectangle.
-      SetSoftStyle(&rp, FS_NORMAL, AskSoftStyle(&rp));
-      while((child = NextObject(&cstate)))
+      while((child = NextObject(&cstate)) != NULL)
       {
         LONG mw = _minwidth(child);
         LONG mh = _minheight(child);
-        struct Part *mailPart = (struct Part *)xget(child, MUIA_AttachmentImage_MailPart);
+        struct Part *mailPart = (struct Part *)xget(child, MUIA_AttachmentObject_MailPart);
 
-        D(DBF_GUI, "layouting child %08lx - mp: %08lx %08lx %08lx %08lx", child, mailPart, mailPart->ContentType, mailPart->headerList, mailPart->rmData);
+        D(DBF_GUI, "layouting child %08lx '%s'", child, mailPart->Name);
 
-        if(mailPart)
+        if(first == TRUE)
         {
-          const char *ctDescr = DescribeCT(mailPart->ContentType);
-          LONG partNameLen;
-          LONG contentTypeLen;
-          LONG sizeLabelLen;
-          LONG largestLabelLen;
-          LONG labelHeight = TEXTROWS*_font(obj)->tf_YSize;
-          char buf[SIZE_DEFAULT];
-
-          // calculate the partNameLen
-          if(isAlternativePart(mailPart))
-          {
-            SetSoftStyle(&rp, FSF_ITALIC, AskSoftStyle(&rp));
-            partNameLen = TextLength(&rp, "multipart/alternative", 21);
-            SetSoftStyle(&rp, FS_NORMAL, AskSoftStyle(&rp));
-          }
-          else
-          {
-            char *text;
-
-            if(mailPart->Name[0] != '\0')
-              text = mailPart->Name;
-            else
-              text = mailPart->Description;
-            partNameLen = TextLength(&rp, text, strlen(text));
-          }
-
-          // calculate the contentTypeLen
-          contentTypeLen = TextLength(&rp, ctDescr, strlen(ctDescr));
-
-          // see if contentTypeLen or partNameLen is longer
-          largestLabelLen = MAX(partNameLen, contentTypeLen)+10;
-
-          // calculate the sizeLabelLen
-          if(isDecoded(mailPart) == FALSE)
-          {
-            buf[0] = '~';
-            FormatSize(mailPart->Size, &buf[1], sizeof(buf)-1, SF_AUTO);
-          }
-          else
-            FormatSize(mailPart->Size, buf, sizeof(buf), SF_AUTO);
-
-          sizeLabelLen = TextLength(&rp, buf, strlen(buf));
-          largestLabelLen = MAX(sizeLabelLen, largestLabelLen);
-
-          mh = MAX(mh, labelHeight);
-
-          // before we are going to layout anything at all, we have to evaluate
-          // if the object fits in the current row or if we have to put it in a second row
-          if(left+mw+SPACING+largestLabelLen > _mwidth(obj))
-          {
-            LONG requiredHeight = top+lastItemHeight+SPACING+mh;
-
-            D(DBF_GUI, "obj [%s] doesn't fit in current row! %ld %ld %ld", mailPart->Name, itemsInRow, requiredHeight, objMinHeight);
-
-            // the objects doesn't seem to fit into the current line,
-            // so we have to put it in another line.
-            // but for that we have to check if our group has currently enough
-            // space to take that new row.
-            if(requiredHeight > objMinHeight)
-            {
-              // before we signal our group to relayout to a better height we
-              // check if we have at least one more item in the row or
-              // if we have to forget the relayout because there isn't enough space
-              // for another height increase anyway
-              if(itemsInRow > 0)
-              {
-                D(DBF_GUI, "group isn't high enough, signal relayout to get a height of %ld", requiredHeight);
-
-                // our group doesn't seem to be high enough so we have to signal
-                // it that it should relayout the whole thing
-                set(obj, MUIA_AttachmentGroup_MinHeight, requiredHeight);
-
-                RETURN(TRUE);
-                return TRUE;
-              }
-            }
-            else
-            {
-              if(lastItemHeight > 0)
-              {
-                top += lastItemHeight + SPACING;
-                left = BORDER + mainLabelWidth;
-              }
-
-              itemsInRow = 0;
-            }
-          }
-
-          D(DBF_GUI, "layout: %ld %ld %ld", mh, _minheight(child), _font(obj)->tf_YSize);
-          if(!MUI_Layout(child, left, top+(mh-_minheight(child))/2, mw, _minheight(child), 0))
-          {
-            RETURN(FALSE);
-            return FALSE;
-          }
-
-          lastItemHeight = mh;
-          itemsInRow++;
-          usedHeight = MAX(top+mh, usedHeight);
-
-          left += mw + SPACING + largestLabelLen;
+          first = FALSE;
         }
+        else
+        {
+          if(left + mw + SPACING > lm->lm_Layout.Width)
+          {
+            D(DBF_GUI, "layout: putting object '%s' on new row", mailPart->Name);
+            // the current object doesn't fit in this row anymore, start a new row
+            if(left > maxWidth)
+              maxWidth = left;
+
+            left = BORDER;
+            top += lastItemHeight + SPACING;
+            lastItemHeight = mh;
+          }
+        }
+
+        D(DBF_GUI, "layout: x=%ld y=%ld w=%ld h=%ld '%s'", left, top+(mh-_minheight(child))/2, mw, mh, mailPart->Name);
+        if(!MUI_Layout(child, left, top+(mh-_minheight(child))/2, mw, _minheight(child), 0))
+        {
+          RETURN(FALSE);
+          return FALSE;
+        }
+
+        left += mw + SPACING;
+        lastItemHeight = MAX(mh, lastItemHeight);
       }
 
-      // Now that we end up here we have to check whether our object used all
-      // of its provided height space or if we have to reduce the minHeight here
-      if(lm->lm_Layout.Height-1 > usedHeight+BORDER)
-      {
-        D(DBF_GUI, "group uses too much space, reducing and relayouting.. %ld > %ld", lm->lm_Layout.Height-1, usedHeight+BORDER);
-        set(obj, MUIA_AttachmentGroup_MinHeight, usedHeight+BORDER);
-      }
+      top += lastItemHeight + SPACING + BORDER;
+
+      // update the layout dimensions in case we used more space than expected
+      if(lm->lm_Layout.Width < maxWidth)
+        lm->lm_Layout.Width = maxWidth;
+      if(lm->lm_Layout.Height < top)
+        lm->lm_Layout.Height = top;
+
+      D(DBF_GUI, "attgroup layout: %08lx %ld/%ld", obj, lm->lm_Layout.Width, lm->lm_Layout.Height);
 
       RETURN(TRUE);
       return TRUE;
@@ -290,9 +202,9 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   obj = DoSuperNew(cl, obj,
-                    MUIA_Font,             MUIV_Font_Tiny,
+                    MUIA_Background,       MUII_GroupBack,
                     MUIA_Group_LayoutHook, &LayoutHook,
-                    MUIA_ContextMenu,       TRUE,
+                    MUIA_ContextMenu,      TRUE,
                   TAG_MORE, inittags(msg));
 
   RETURN((ULONG)obj);
@@ -311,54 +223,15 @@ OVERLOAD(OM_DISPOSE)
   return DoSuperMethodA(cl, obj, msg);
 }
 ///
-/// OVERLOAD(OM_GET)
-OVERLOAD(OM_GET)
-{
-  GETDATA;
-  ULONG *store = ((struct opGet *)msg)->opg_Storage;
-
-  switch(((struct opGet *)msg)->opg_AttrID)
-  {
-    ATTR(MinHeight) : *store = data->minHeight; return TRUE;
-  }
-
-  return DoSuperMethodA(cl, obj, msg);
-}
-///
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
 {
-  GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
 
   while((tag = NextTagItem(&tags)))
   {
     switch(tag->ti_Tag)
     {
-      ATTR(MinHeight):
-      {
-        data->minHeight = tag->ti_Data;
-
-        if(data->resizePushed == FALSE)
-        {
-          data->resizePushed = TRUE;
-          DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 1, MUIM_AttachmentGroup_Relayout);
-        }
-
-        // make the superMethod call ignore those tags
-        tag->ti_Tag = TAG_IGNORE;
-      }
-      break;
-
-      ATTR(MinHeightNoPush):
-      {
-        data->minHeight = tag->ti_Data;
-
-        // make the superMethod call ignore those tags
-        tag->ti_Tag = TAG_IGNORE;
-      }
-      break;
-
       // we also catch foreign attributes
       case MUIA_ShowMe:
       {
@@ -422,134 +295,6 @@ OVERLOAD(MUIM_Cleanup)
 }
 
 ///
-/// OVERLOAD(MUIM_Draw)
-OVERLOAD(MUIM_Draw)
-{
-  // call the supermethod first
-  DoSuperMethodA(cl, obj, msg);
-
-  // now we can start our draw operation where we have to
-  // draw different text objects into our group
-  if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
-  {
-    const char *attachmentLabel = tr(MSG_MA_ATTACHMENTS);
-    struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
-    struct TextExtent te;
-    int cnt;
-
-    // make sure we do not draw outside
-    if(_mleft(obj) <= 0 || _mtop(obj) < 10)
-      return 0;
-
-    // let us first draw the "Attachments:" label
-    SetAPen(_rp(obj), _dri(obj)->dri_Pens[TEXTPEN]);
-    SetFont(_rp(obj), _font(obj));
-    Move(_rp(obj), _mleft(obj) + BORDER, _mtop(obj) + _font(obj)->tf_Baseline + BORDER);
-    SetSoftStyle(_rp(obj), FSF_BOLD, AskSoftStyle(_rp(obj)));
-    cnt = TextFit(_rp(obj), attachmentLabel, strlen(attachmentLabel), &te, NULL, 1, _mwidth(obj)-2*BORDER, _mheight(obj)-2*BORDER);
-    if(cnt > 0)
-      Text(_rp(obj), attachmentLabel, cnt);
-
-    // then we have to place the other labels for our images right beside
-    // them.
-    SetSoftStyle(_rp(obj), FS_NORMAL, AskSoftStyle(_rp(obj)));
-    if(childList != NULL)
-    {
-      Object *cstate = (Object *)childList->lh_Head;
-      Object *child;
-
-      while((child = NextObject(&cstate)) != NULL)
-      {
-        struct Part *mailPart = (struct Part *)xget(child, MUIA_AttachmentImage_MailPart);
-
-        // make sure this child is valid and does not draw outside
-        if(mailPart != NULL && _mtop(child) > 10 && _mleft(child) > 10)
-        {
-          LONG maxHeight = MAX(_mheight(child), TEXTROWS*_font(obj)->tf_YSize);
-          LONG topPosition = _mtop(child)+_font(obj)->tf_Baseline-(maxHeight-_mheight(child))/2;
-          LONG textSpaceWidth  = _mwidth(obj)-((_mright(child)+SPACING)-_mleft(obj))-BORDER;
-          LONG textSpaceHeight = _mheight(obj)-((topPosition-_font(obj)->tf_Baseline)-_mtop(obj));
-
-          if(textSpaceWidth > 0 && textSpaceHeight > 0)
-          {
-            // in case this is an alternative part we go
-            // and write it out
-            if(isAlternativePart(mailPart))
-            {
-              SetSoftStyle(_rp(obj), FSF_ITALIC, AskSoftStyle(_rp(obj)));
-              cnt = TextFit(_rp(obj), "multipart/alternative", 21, &te, NULL, 1, textSpaceWidth, textSpaceHeight);
-              if(cnt > 0)
-              {
-                // move the rastport to the start where the text should be placed
-                Move(_rp(obj), _mright(child)+SPACING, topPosition);
-                Text(_rp(obj), "multipart/alternative", cnt);
-              }
-              SetSoftStyle(_rp(obj), FS_NORMAL, AskSoftStyle(_rp(obj)));
-            }
-            else
-            {
-              char *text;
-
-              // check if that mail part has a name and if
-              // it is empty we use the description
-              if(mailPart->Name[0] != '\0')
-                text = mailPart->Name;
-              else
-                text = mailPart->Description;
-
-              cnt = TextFit(_rp(obj), text, strlen(text), &te, NULL, 1, textSpaceWidth, textSpaceHeight);
-              if(cnt > 0)
-              {
-                // move the rastport to the start where the text should be placed
-                Move(_rp(obj), _mright(child)+SPACING, topPosition);
-                Text(_rp(obj), text, cnt);
-              }
-            }
-
-            textSpaceHeight -= _font(obj)->tf_YSize;
-            topPosition += _font(obj)->tf_YSize;
-            if(textSpaceHeight > 0)
-            {
-              char buf[SIZE_DEFAULT];
-
-              if(isDecoded(mailPart) == FALSE)
-              {
-                buf[0] = '~';
-                FormatSize(mailPart->Size, &buf[1], sizeof(buf)-1, SF_AUTO);
-              }
-              else
-                FormatSize(mailPart->Size, buf, sizeof(buf), SF_AUTO);
-
-              cnt = TextFit(_rp(obj), buf, strlen(buf), &te, NULL, 1, textSpaceWidth, textSpaceHeight);
-              if(cnt > 0)
-              {
-                Move(_rp(obj), _mright(child)+SPACING, topPosition);
-                Text(_rp(obj), buf, cnt);
-              }
-
-              textSpaceHeight -= _font(obj)->tf_YSize;
-              topPosition += _font(obj)->tf_YSize;
-              if(textSpaceHeight > 0)
-              {
-                const char *ctDescr = DescribeCT(mailPart->ContentType);
-
-                cnt = TextFit(_rp(obj), ctDescr, strlen(ctDescr), &te, NULL, 1, textSpaceWidth, textSpaceHeight);
-                if(cnt > 0)
-                {
-                  Move(_rp(obj), _mright(child)+SPACING, topPosition);
-                  Text(_rp(obj), ctDescr, cnt);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return 0;
-}
-///
 /// OVERLOAD(MUIM_ContextMenuBuild)
 OVERLOAD(MUIM_ContextMenuBuild)
 {
@@ -567,16 +312,16 @@ OVERLOAD(MUIM_ContextMenuBuild)
 
   // now we find out if the user clicked in a specific attachmentimage or
   // if it was just a click in our group
-  if(childList)
+  if(childList != NULL)
   {
     Object *cstate = (Object *)childList->lh_Head;
     Object *child;
 
-    while((child = NextObject(&cstate)))
+    while((child = NextObject(&cstate)) != NULL)
     {
       if(_isinobject(child, mb->mx, mb->my))
       {
-        mailPart = (struct Part *)xget(child, MUIA_AttachmentImage_MailPart);
+        mailPart = (struct Part *)xget(child, MUIA_AttachmentObject_MailPart);
 
         break;
       }
@@ -584,7 +329,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
   }
 
   // generate a context menu title now
-  if(mailPart)
+  if(mailPart != NULL)
   {
     snprintf(data->menuTitle, sizeof(data->menuTitle), tr(MSG_MA_MIMEPART_MENU), mailPart->Nr);
     data->selectedPart = mailPart;
@@ -609,6 +354,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
 
   return (ULONG)data->context_menu;
 }
+
 ///
 /// OVERLOAD(MUIM_ContextMenuChoice)
 OVERLOAD(MUIM_ContextMenuChoice)
@@ -648,6 +394,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
   return 0;
 }
+
 ///
 /// OVERLOAD(MUIM_HandleEvent)
 OVERLOAD(MUIM_HandleEvent)
@@ -657,7 +404,7 @@ OVERLOAD(MUIM_HandleEvent)
 
   ENTER();
 
-  if(imsg && imsg->Class == IDCMP_MOUSEBUTTONS)
+  if(imsg != NULL && imsg->Class == IDCMP_MOUSEBUTTONS)
   {
     // we clear the selection state in case the user clicked in
     // our area (= not an attachment image)
@@ -688,14 +435,14 @@ DECLARE(Clear)
   ENTER();
 
   // iterate through our child list and remove all attachmentimages
-  if(childList)
+  if(childList != NULL)
   {
     if(DoMethod(obj, MUIM_Group_InitChange))
     {
       Object *cstate = (Object *)childList->lh_Head;
       Object *child;
 
-      while((child = NextObject(&cstate)))
+      while((child = NextObject(&cstate)) != NULL)
       {
         DoMethod(obj, OM_REMMEMBER, child);
         MUI_DisposeObject(child);
@@ -719,8 +466,6 @@ DECLARE(Refresh) // struct Part *firstPart
 
   ENTER();
 
-  D(DBF_GUI, "Refresh(): %lx %ld/%ld", obj, _mwidth(obj), _mheight(obj));
-
   // before we are going to add some new childs we have to clean
   // out all old children
   DoMethod(obj, MUIM_AttachmentGroup_Clear);
@@ -732,33 +477,35 @@ DECLARE(Refresh) // struct Part *firstPart
 
     // now we iterate through our message part list and
     // generate an own attachment image for each attachment
-    for(rp = msg->firstPart; rp; rp = rp->Next)
+    for(rp = msg->firstPart; rp != NULL; rp = rp->Next)
     {
       if(rp->Nr > PART_RAW && rp->Nr != rp->rmData->letterPartNum && (C->DisplayAllAltPart ||
          (isAlternativePart(rp) == FALSE || rp->Parent == NULL || rp->Parent->MainAltPart == rp)))
       {
-        Object *newImage = AttachmentImageObject,
-                             MUIA_CycleChain,                 TRUE,
-                             MUIA_AttachmentImage_MailPart,   rp,
-                             MUIA_AttachmentImage_MaxHeight,  _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0,
-                             MUIA_AttachmentImage_MaxWidth,   _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0,
-                           End;
+        Object *attObject;
 
-        // connect some notifies which we might be interested in
-        DoMethod(newImage, MUIM_Notify, MUIA_AttachmentImage_DoubleClick, TRUE,
-                 obj, 2, MUIM_AttachmentGroup_Display, rp);
-        DoMethod(newImage, MUIM_Notify, MUIA_AttachmentImage_DropPath, MUIV_EveryTime,
-                 obj, 3, MUIM_AttachmentGroup_ImageDropped, newImage, MUIV_TriggerValue);
+        if((attObject = AttachmentObjectObject,
+                          MUIA_AttachmentObject_MailPart,   rp,
+                        End) != NULL)
+        {
+          Object *imageObject = (Object *)xget(attObject, MUIA_AttachmentObject_ImageObject);
 
-        DoMethod(obj, OM_ADDMEMBER, newImage);
+          // connect some notifies which we might be interested in
+          DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DoubleClick, TRUE,
+                   obj, 2, MUIM_AttachmentGroup_Display, rp);
+          DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DropPath, MUIV_EveryTime,
+                   obj, 3, MUIM_AttachmentGroup_ImageDropped, imageObject, MUIV_TriggerValue);
 
-        D(DBF_GUI, "added image obj %08lx for attachment: %ld:%s mp: %08lx %08lx %08lx %08lx", newImage, rp->Nr, rp->Name, rp, rp->ContentType, rp->headerList, rp->rmData);
+          DoMethod(obj, OM_ADDMEMBER, attObject);
 
-        addedParts++;
+          D(DBF_GUI, "added attachment obj %08lx for attachment: %ld:%s mp: %08lx %08lx %08lx %08lx", attObject, rp->Nr, rp->Name, rp, rp->ContentType, rp->headerList, rp->rmData);
+
+          addedParts++;
+        }
       }
     }
 
-    if(addedParts)
+    if(addedParts != 0)
       data->firstPart = msg->firstPart;
     else
       data->firstPart = NULL;
@@ -770,23 +517,7 @@ DECLARE(Refresh) // struct Part *firstPart
   RETURN(addedParts);
   return addedParts;
 }
-///
-/// DECLARE(Relayout)
-DECLARE(Relayout)
-{
-  GETDATA;
-  Object *parent = (Object *)xget(obj, MUIA_Parent);
 
-  if(DoMethod(parent, MUIM_Group_InitChange))
-  {
-    DoMethod(parent, OM_REMMEMBER, obj);
-    data->resizePushed = FALSE;
-    DoMethod(parent, OM_ADDMEMBER, obj);
-    DoMethod(parent, MUIM_Group_ExitChange);
-  }
-
-  return 0;
-}
 ///
 /// DECLARE(Display)
 DECLARE(Display) // struct Part *part
@@ -800,7 +531,7 @@ DECLARE(Display) // struct Part *part
     BusyText(tr(MSG_BusyDecDisplaying), "");
 
     // try to decode the message part
-    if(RE_DecodePart(msg->part))
+    if(RE_DecodePart(msg->part) == TRUE)
     {
       // run our MIME routines for displaying the part
       // to the user
@@ -899,11 +630,13 @@ DECLARE(SaveSelected)
 
     while((child = NextObject(&cstate)) != NULL)
     {
-      if(xget(child, MUIA_Selected))
+      Object *imageObject = (Object *)xget(child, MUIA_AttachmentObject_ImageObject);
+
+      if(xget(imageObject, MUIA_Selected))
       {
         struct Part *mailPart;
 
-        if((mailPart = (struct Part *)xget(child, MUIA_AttachmentImage_MailPart)) != NULL)
+        if((mailPart = (struct Part *)xget(imageObject, MUIA_AttachmentImage_MailPart)) != NULL)
         {
           oldDecoded &= isDecoded(mailPart);
 
@@ -1023,14 +756,14 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
                        mailPart->ContentType);
 
     // let the workbench know about the change
-    if(result)
+    if(result == TRUE)
     {
       struct DiskObject *diskObject = (struct DiskObject *)xget(msg->imageObject, MUIA_AttachmentImage_DiskObject);
 
       // make sure to write out the diskObject of our attachment as well
       // but only if the filename doesn't end with a ".info" itself or it
       // clearly suggests that this might be a diskobject itself.
-      if(diskObject)
+      if(diskObject != NULL)
       {
         char ext[SIZE_FILE];
 
@@ -1046,12 +779,12 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
           // gets notified of the .info file
           BPTR dlock;
 
-          if((dlock = Lock(msg->dropPath, SHARED_LOCK)))
+          if((dlock = Lock(msg->dropPath, SHARED_LOCK)) != 0)
           {
             char *p;
 
             // strip an eventually existing extension
-            if((p = strrchr(fileName, '.')))
+            if((p = strrchr(fileName, '.')) != NULL)
               *p = '\0';
 
             // UpdateWorkbench() seems to be only supported
@@ -1092,7 +825,11 @@ DECLARE(ClearSelection)
     Object *child;
 
     while((child = NextObject(&cstate)) != NULL)
-      set(child, MUIA_Selected, FALSE);
+    {
+      Object *imageObject = (Object *)xget(child, MUIA_AttachmentObject_ImageObject);
+
+      set(imageObject, MUIA_Selected, FALSE);
+    }
   }
 
   RETURN(0);
