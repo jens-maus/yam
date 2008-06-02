@@ -3884,13 +3884,12 @@ void LoadLayout(void)
   // 9:  Vertical weight of bottom object (texteditor) of the embedded read pane
   // 10: Vertical weight of top object (headerlist) in a read window
   // 11: Vertical weight of bottom object (texteditor) in a read window
-  // 12: Vertical weight of attachment group object in read window and embedded read pane
 
   if((ls = (STRPTR)xget(G->MA->GUI.ST_LAYOUT, MUIA_String_Contents)) == NULL ||
       ls[0] == '\0')
   {
-    //    0  1   2  3   4  5   6  7   8 9   10 11 12
-    ls = "30 100 25 100 30 100 25 100 5 100 5 100 1";
+    //    0  1   2  3   4  5   6  7   8 9   10 11
+    ls = "30 100 25 100 30 100 25 100 5 100 5 100";
 
     D(DBF_UTIL, "using default layout weight factors: '%s'", ls);
   }
@@ -3958,11 +3957,6 @@ void LoadLayout(void)
   if(endptr == NULL || endptr == ls)
     G->Weights[11] = 100;
 
-  ls = endptr;
-  G->Weights[12] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
-    G->Weights[12] = 1;
-
   // lets set the weight factors to the corresponding GUI elements now
   // if they exist
   set(G->MA->GUI.LV_FOLDERS,  MUIA_HorizWeight, G->Weights[0]);
@@ -3974,8 +3968,7 @@ void LoadLayout(void)
   {
     xset(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight,                 G->Weights[7],
                                          MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
-                                         MUIA_ReadMailGroup_TGVertWeight, G->Weights[9],
-                                         MUIA_ReadMailGroup_AGVertWeight, G->Weights[12]);
+                                         MUIA_ReadMailGroup_TGVertWeight, G->Weights[9]);
   }
 
   LEAVE();
@@ -4004,20 +3997,19 @@ void SaveLayout(BOOL permanent)
   // 9:  Vertical weight of bottom object (texteditor) of the embedded read pane
   // 10: Vertical weight of top object (headerlist) in a read window
   // 11: Vertical weight of bottom object (texteditor) in a read window
-  // 12: Vertical weight of attachment group object in read window and embedded read pane
-  snprintf(buf, sizeof(buf), "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld", G->Weights[0],
-                                                                                    G->Weights[1],
-                                                                                    G->Weights[2],
-                                                                                    G->Weights[3],
-                                                                                    G->Weights[4],
-                                                                                    G->Weights[5],
-                                                                                    G->Weights[6],
-                                                                                    G->Weights[7],
-                                                                                    G->Weights[8],
-                                                                                    G->Weights[9],
-                                                                                    G->Weights[10],
-                                                                                    G->Weights[11],
-                                                                                    G->Weights[12]);
+
+  snprintf(buf, sizeof(buf), "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld", G->Weights[0],
+                                                                                G->Weights[1],
+                                                                                G->Weights[2],
+                                                                                G->Weights[3],
+                                                                                G->Weights[4],
+                                                                                G->Weights[5],
+                                                                                G->Weights[6],
+                                                                                G->Weights[7],
+                                                                                G->Weights[8],
+                                                                                G->Weights[9],
+                                                                                G->Weights[10],
+                                                                                G->Weights[11]);
 
   setstring(G->MA->GUI.ST_LAYOUT, buf);
   DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);

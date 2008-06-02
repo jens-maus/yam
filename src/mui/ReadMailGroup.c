@@ -464,7 +464,6 @@ OVERLOAD(OM_NEW)
     {
       ATTR(HGVertWeight): hgVertWeight = tag->ti_Data; break;
       ATTR(TGVertWeight): tgVertWeight = tag->ti_Data; break;
-      ATTR(AGVertWeight): agVertWeight = tag->ti_Data; break;
     }
   }
 
@@ -670,7 +669,6 @@ OVERLOAD(OM_GET)
   {
     ATTR(HGVertWeight) : *store = xget(data->headerGroup, MUIA_VertWeight); return TRUE;
     ATTR(TGVertWeight) : *store = xget(data->mailBodyGroup, MUIA_VertWeight); return TRUE;
-    ATTR(AGVertWeight) : *store = xget(data->scrolledAttachmentGroup, MUIA_VertWeight); return TRUE;
     ATTR(ReadMailData) : *store = (ULONG)data->readMailData; return TRUE;
     ATTR(DefaultObject): *store = (ULONG)data->mailTextObject; return TRUE;
     ATTR(ActiveObject):
@@ -711,15 +709,6 @@ OVERLOAD(OM_SET)
       ATTR(TGVertWeight):
       {
         set(data->mailBodyGroup, MUIA_VertWeight, tag->ti_Data);
-
-        // make the superMethod call ignore those tags
-        tag->ti_Tag = TAG_IGNORE;
-      }
-      break;
-
-      ATTR(AGVertWeight):
-      {
-        set(data->scrolledAttachmentGroup, MUIA_VertWeight, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;

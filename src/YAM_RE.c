@@ -4184,7 +4184,6 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     {
       G->Weights[2] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_HGVertWeight);
       G->Weights[3] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_TGVertWeight);
-      G->Weights[12] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_AGVertWeight);
     }
   }
 

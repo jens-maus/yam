@@ -123,7 +123,7 @@ struct Global
   struct MsgPort *         AppLibPort;
   #endif
 
-  LONG                     Weights[13];
+  LONG                     Weights[12];
   LONG                     TR_Socket;
   LONG                     TR_SMTPflags;
 

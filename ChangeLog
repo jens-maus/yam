@@ -7,6 +7,10 @@ $URL$
 
 2008-06-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c, YAM.h, misc: reverted some of the latest changes regarding the
+    weight factor export/import usage to provide a possibility to save the height
+    of the attachment group. Somehow this does not work correctly at the moment
+    until we rework the LoadLayout/SaveLayout functionality.
   * AttachmentGroup.c, AttachmentObject.c, AttachmentImage.c: the mouse selection
     of the attachment parts was broken as multiselection was always active
     regardless of the status of the SHIFT qualifier key.
