@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-03  Thore Böckelmann <tboeckel@gmx.de>
+
+  * AttachmentGroup.c: readded the accidentally removed spacing between the
+    individual attachment objects.
+
 2008-06-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c, YAM.h, misc: reverted some of the latest changes regarding the

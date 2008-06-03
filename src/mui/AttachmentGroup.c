@@ -62,9 +62,12 @@ struct Data
 };
 */
 
+#define VERT_SPACING    4
+#define HORIZ_SPACING   4
+
 /* Private Hooks */
 /// LayoutHook
-HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
+HOOKPROTONH(LayoutFunc, ULONG, UNUSED Object *obj, struct MUI_LayoutMsg *lm)
 {
   ENTER();
 
@@ -131,16 +134,18 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
           first = FALSE;
         else
         {
-          if((left+mw) > lm->lm_Layout.Width)
+          if(left + mw + HORIZ_SPACING > lm->lm_Layout.Width)
           {
+            // the current object doesn't fit in this row anymore, start a new row
             D(DBF_GUI, "layout: putting object '%s' on new row", mailPart->Name);
 
-            // the current object doesn't fit in this row anymore, start a new row
+            // remember a possible new maximum width
             if(left > maxWidth)
               maxWidth = left;
 
+            // start again from the left border, but go down one line
             left = 0;
-            top += lastItemHeight;
+            top += lastItemHeight + VERT_SPACING;
             lastItemHeight = mh;
           }
         }
@@ -152,7 +157,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
           return FALSE;
         }
 
-        left += mw;
+        left += mw + HORIZ_SPACING;
         lastItemHeight = MAX(mh, lastItemHeight);
       }
 
