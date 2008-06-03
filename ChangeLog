@@ -7,6 +7,11 @@ $URL$
 
 2008-06-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Attachment#?.c: moved all actions which can be performed on a single item
+    over to the AttachmentObject class. This is much more intuitive and doesn't
+    require that constant get()ing of internal data. Each item has its own
+    context menu and the group's context menu just consists of the menu items
+    for actions to be performed on all attachments.
   * AttachmentObject.c: increased the buffer size for the description text a bit
     to be able to handle long file names and further text.
   * AttachmentGroup.c: readded the accidentally removed spacing between the

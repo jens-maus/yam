@@ -595,7 +595,7 @@ OVERLOAD(OM_NEW)
       }
     }
 
-    if(data->mailPart)
+    if(data->mailPart != NULL)
     {
       struct Part *mp = data->mailPart;
       char sizestr[SIZE_DEFAULT];
@@ -796,7 +796,7 @@ OVERLOAD(MUIM_Draw)
     }
 
     // check the selected state
-    if(xget(obj, MUIA_Selected))
+    if(xget(obj, MUIA_Selected) == TRUE)
     {
       bitmap = data->selectedBitMap;
       bitmask = data->selectedBitMask;

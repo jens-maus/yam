@@ -36,10 +36,6 @@
 
 #include "AttachmentGroup_cl.h"
 
-#include <proto/graphics.h>
-#include <proto/icon.h>
-#include <proto/wb.h>
-
 #include "YAM_mainFolder.h"
 
 #include "MUIObjects.h"
@@ -50,9 +46,8 @@
 struct Data
 {
   struct Part *firstPart;
-  struct Part *selectedPart;
 
-  Object *context_menu;
+  Object *contextMenu;
 
   struct MUI_EventHandlerNode ehnode;
 
@@ -181,9 +176,15 @@ HOOKPROTONH(LayoutFunc, ULONG, UNUSED Object *obj, struct MUI_LayoutMsg *lm)
   return MUILM_UNKNOWN;
 }
 MakeStaticHook(LayoutHook, LayoutFunc);
+
 ///
 /// Menu enumerations
-enum { AMEN_DISPLAY=100, AMEN_SAVEAS, AMEN_PRINT, AMEN_SAVEALL, AMEN_SAVESEL, AMEN_CROPALL };
+enum {
+  AMEN_SAVEALL=100,
+  AMEN_SAVESEL,
+  AMEN_CROPALL
+};
+
 ///
 
 /* Overloaded Methods */
@@ -201,6 +202,7 @@ OVERLOAD(OM_NEW)
   RETURN((ULONG)obj);
   return (ULONG)obj;
 }
+
 ///
 /// OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_DISPOSE)
@@ -208,11 +210,12 @@ OVERLOAD(OM_DISPOSE)
   GETDATA;
 
   // make sure that our context menus are also disposed
-  if(data->context_menu)
-    MUI_DisposeObject(data->context_menu);
+  if(data->contextMenu != NULL)
+    MUI_DisposeObject(data->contextMenu);
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
 ///
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
@@ -236,6 +239,7 @@ OVERLOAD(OM_SET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
 ///
 /// OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Setup)
@@ -290,60 +294,25 @@ OVERLOAD(MUIM_Cleanup)
 OVERLOAD(MUIM_ContextMenuBuild)
 {
   GETDATA;
-  struct MUIP_ContextMenuBuild *mb = (struct MUIP_ContextMenuBuild *)msg;
-  struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
-  struct Part *mailPart = NULL;
 
   // dispose the old context_menu if it still exists
-  if(data->context_menu)
+  if(data->contextMenu != NULL)
   {
-    MUI_DisposeObject(data->context_menu);
-    data->context_menu = NULL;
+    MUI_DisposeObject(data->contextMenu);
+    data->contextMenu = NULL;
   }
 
-  // now we find out if the user clicked in a specific attachmentimage or
-  // if it was just a click in our group
-  if(childList != NULL)
-  {
-    Object *cstate = (Object *)childList->lh_Head;
-    Object *child;
+  strlcpy(data->menuTitle, tr(MSG_Attachments), sizeof(data->menuTitle));
 
-    while((child = NextObject(&cstate)) != NULL)
-    {
-      if(_isinobject(child, mb->mx, mb->my))
-      {
-        mailPart = (struct Part *)xget(child, MUIA_AttachmentObject_MailPart);
-
-        break;
-      }
-    }
-  }
-
-  // generate a context menu title now
-  if(mailPart != NULL)
-  {
-    snprintf(data->menuTitle, sizeof(data->menuTitle), tr(MSG_MA_MIMEPART_MENU), mailPart->Nr);
-    data->selectedPart = mailPart;
-  }
-  else
-  {
-    strlcpy(data->menuTitle, tr(MSG_Attachments), sizeof(data->menuTitle));
-    data->selectedPart = NULL;
-  }
-
-  data->context_menu = MenustripObject,
+  data->contextMenu = MenustripObject,
     Child, MenuObjectT(data->menuTitle),
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DISPLAY),  MUIA_Menuitem_Enabled, mailPart != NULL, MUIA_UserData, AMEN_DISPLAY,  End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEAS),   MUIA_Menuitem_Enabled, mailPart != NULL, MUIA_UserData, AMEN_SAVEAS,    End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),   MUIA_Menuitem_Enabled, mailPart != NULL && isPrintable(mailPart), MUIA_UserData, AMEN_PRINT,     End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL,   End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL, End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROPALL), MUIA_UserData, AMEN_CROPALL, End,
     End,
   End;
 
-  return (ULONG)data->context_menu;
+  return (ULONG)data->contextMenu;
 }
 
 ///
@@ -355,18 +324,6 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
   switch(xget(m->item, MUIA_UserData))
   {
-    case AMEN_DISPLAY:
-      DoMethod(obj, MUIM_AttachmentGroup_Display, data->selectedPart);
-    break;
-
-    case AMEN_SAVEAS:
-      DoMethod(obj, MUIM_AttachmentGroup_Save, data->selectedPart);
-    break;
-
-    case AMEN_PRINT:
-      DoMethod(obj, MUIM_AttachmentGroup_Print, data->selectedPart);
-    break;
-
     case AMEN_SAVEALL:
       DoMethod(obj, MUIM_AttachmentGroup_SaveAll);
     break;
@@ -448,6 +405,7 @@ DECLARE(Clear)
   RETURN(0);
   return 0;
 }
+
 ///
 /// DECLARE(Refresh)
 DECLARE(Refresh) // struct Part *firstPart
@@ -480,14 +438,6 @@ DECLARE(Refresh) // struct Part *firstPart
                           MUIA_AttachmentObject_Group,    obj,
                         End) != NULL)
         {
-          Object *imageObject = (Object *)xget(attObject, MUIA_AttachmentObject_ImageObject);
-
-          // connect some notifies which we might be interested in
-          DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DoubleClick, TRUE,
-                   obj, 2, MUIM_AttachmentGroup_Display, rp);
-          DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DropPath, MUIV_EveryTime,
-                   obj, 3, MUIM_AttachmentGroup_ImageDropped, imageObject, MUIV_TriggerValue);
-
           DoMethod(obj, OM_ADDMEMBER, attObject);
 
           D(DBF_GUI, "added attachment obj %08lx for attachment: %ld:%s mp: %08lx %08lx %08lx %08lx", attObject, rp->Nr, rp->Name, rp, rp->ContentType, rp->headerList, rp->rmData);
@@ -511,75 +461,6 @@ DECLARE(Refresh) // struct Part *firstPart
 }
 
 ///
-/// DECLARE(Display)
-DECLARE(Display) // struct Part *part
-{
-  ENTER();
-
-  if(msg->part != NULL)
-  {
-    BOOL oldDecoded = isDecoded(msg->part);
-
-    BusyText(tr(MSG_BusyDecDisplaying), "");
-
-    // try to decode the message part
-    if(RE_DecodePart(msg->part) == TRUE)
-    {
-      // run our MIME routines for displaying the part
-      // to the user
-      RE_DisplayMIME(msg->part->Filename, msg->part->ContentType);
-
-      // if the part was decoded in RE_DecodePart() then
-      // we issue a full refresh of the attachment image
-      if(oldDecoded == FALSE && isDecoded(msg->part) == TRUE)
-      {
-        // issue a full redraw of the group which in fact
-        // will issue a refresh of all images as well in
-        // case they have changed.
-        MUI_Redraw(obj, MADF_DRAWOBJECT);
-      }
-    }
-
-    BusyEnd();
-  }
-
-  RETURN(0);
-  return 0;
-}
-///
-/// DECLARE(Save)
-DECLARE(Save) // struct Part *part
-{
-  ENTER();
-
-  if(msg->part != NULL)
-  {
-    BOOL oldDecoded = isDecoded(msg->part);
-
-    BusyText(tr(MSG_BusyDecSaving), "");
-
-    RE_DecodePart(msg->part);
-    RE_Export(msg->part->rmData,
-              msg->part->Filename, "",
-              msg->part->CParFileName ? msg->part->CParFileName : msg->part->Name,
-              msg->part->Nr,
-              FALSE,
-              FALSE,
-              msg->part->ContentType);
-
-    if(oldDecoded == FALSE && isDecoded(msg->part) == TRUE)
-    {
-      // now we know the exact size of the file and can redraw ourself
-      MUI_Redraw(obj, MADF_DRAWOBJECT);
-    }
-
-    BusyEnd();
-  }
-
-  RETURN(0);
-  return 0;
-}
-///
 /// DECLARE(SaveAll)
 DECLARE(SaveAll)
 {
@@ -602,6 +483,7 @@ DECLARE(SaveAll)
   RETURN(0);
   return 0;
 }
+
 ///
 /// DECLARE(SaveSelected)
 DECLARE(SaveSelected)
@@ -624,7 +506,7 @@ DECLARE(SaveSelected)
     {
       Object *imageObject = (Object *)xget(child, MUIA_AttachmentObject_ImageObject);
 
-      if(xget(imageObject, MUIA_Selected))
+      if(xget(imageObject, MUIA_Selected) == TRUE)
       {
         struct Part *mailPart;
 
@@ -660,22 +542,7 @@ DECLARE(SaveSelected)
   RETURN(0);
   return 0;
 }
-///
-/// DECLARE(Print)
-DECLARE(Print) // struct Part *part
-{
-  ENTER();
 
-  if(msg->part != NULL)
-  {
-    BusyText(tr(MSG_BusyDecPrinting), "");
-    RE_PrintFile(msg->part->Filename);
-    BusyEnd();
-  }
-
-  RETURN(0);
-  return 0;
-}
 ///
 /// DECLARE(CropAll)
 DECLARE(CropAll)
@@ -705,104 +572,7 @@ DECLARE(CropAll)
   RETURN(0);
   return 0;
 }
-///
-/// DECLARE(ImageDropped)
-DECLARE(ImageDropped) // Object *imageObject, char *dropPath
-{
-  struct Part *mailPart;
 
-  ENTER();
-
-  if((mailPart = (struct Part *)xget(msg->imageObject, MUIA_AttachmentImage_MailPart)) != NULL && msg->dropPath != NULL)
-  {
-    BOOL result;
-    char *fileName;
-    char filePathBuf[SIZE_PATHFILE];
-
-    D(DBF_GUI, "Image of Part %ld was dropped at [%s]", mailPart->Nr, msg->dropPath);
-
-    BusyText(tr(MSG_BusyDecSaving), "");
-
-    // make sure the drawer is opened upon the drag operation
-    if(WorkbenchBase->lib_Version >= 44)
-      OpenWorkbenchObjectA(msg->dropPath, NULL);
-
-    // prepare the final path
-    fileName = mailPart->CParFileName;
-    if(fileName == NULL || strlen(fileName) == 0)
-    {
-      fileName = mailPart->Name;
-      if(fileName == NULL || strlen(fileName) == 0)
-        fileName = mailPart->Filename;
-    }
-    AddPath(filePathBuf, msg->dropPath, fileName, sizeof(filePathBuf));
-
-    RE_DecodePart(mailPart);
-    result = RE_Export(mailPart->rmData,
-                       mailPart->Filename,
-                       filePathBuf,
-                       "",
-                       mailPart->Nr,
-                       FALSE,
-                       FALSE,
-                       mailPart->ContentType);
-
-    // let the workbench know about the change
-    if(result == TRUE)
-    {
-      struct DiskObject *diskObject = (struct DiskObject *)xget(msg->imageObject, MUIA_AttachmentImage_DiskObject);
-
-      // make sure to write out the diskObject of our attachment as well
-      // but only if the filename doesn't end with a ".info" itself or it
-      // clearly suggests that this might be a diskobject itself.
-      if(diskObject != NULL)
-      {
-        char ext[SIZE_FILE];
-
-        // extract the file extension.
-        stcgfe(ext, fileName);
-
-        if(stricmp(ext, "info") != 0)
-          PutDiskObject(filePathBuf, diskObject);
-        #if defined(__amigaos4__)
-        else
-        {
-          // the following code makes sure that the workbench
-          // gets notified of the .info file
-          BPTR dlock;
-
-          if((dlock = Lock(msg->dropPath, SHARED_LOCK)) != 0)
-          {
-            char *p;
-
-            // strip an eventually existing extension
-            if((p = strrchr(fileName, '.')) != NULL)
-              *p = '\0';
-
-            // UpdateWorkbench() seems to be only supported
-            // by OS4. That's why this stuff is OS4 only.
-            UpdateWorkbench(fileName, dlock, UPDATEWB_ObjectAdded);
-
-            UnLock(dlock);
-          }
-        }
-        #endif
-      }
-
-      // Now that the workbench knows about the new object we also have to make sure the icon
-      // is actually visible in the window
-      if(WorkbenchBase->lib_Version >= 44)
-        MakeWorkbenchObjectVisibleA(filePathBuf, NULL);
-    }
-    else
-      DisplayBeep(_screen(obj));
-
-    BusyEnd();
-  }
-
-  RETURN(0);
-  return 0;
-}
 ///
 /// DECLARE(ClearSelection)
 DECLARE(ClearSelection)
