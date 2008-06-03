@@ -319,7 +319,6 @@ OVERLOAD(MUIM_ContextMenuBuild)
 /// OVERLOAD(MUIM_ContextMenuChoice)
 OVERLOAD(MUIM_ContextMenuChoice)
 {
-  GETDATA;
   struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
 
   switch(xget(m->item, MUIA_UserData))
