@@ -51,6 +51,7 @@ struct Data
   Object *contextMenu;
   Object *imageObject;
   Object *textObject;
+  Object *attGroupObject;
   struct Part *mailPart;
   char menuTitle[SIZE_DEFAULT];
 };
@@ -59,10 +60,14 @@ struct Data
 #define TEXTROWS  3 // how many text rows does a attachmentimage normally have?
 
 /// Menu enumerations
-enum {
+enum
+{
   AMEN_DISPLAY=100,
   AMEN_SAVEAS,
-  AMEN_PRINT
+  AMEN_PRINT,
+  AMEN_SAVEALL,
+  AMEN_SAVESEL,
+  AMEN_CROPALL
 };
 
 ///
@@ -111,6 +116,7 @@ OVERLOAD(OM_NEW)
     data->imageObject = imageObject;
     data->textObject = textObject;
     data->mailPart = mailPart;
+    data->attGroupObject = attGroupObject;
 
     // connect some notifies which we might be interested in
     DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DoubleClick, TRUE,
@@ -195,6 +201,10 @@ OVERLOAD(MUIM_ContextMenuBuild)
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DISPLAY), MUIA_UserData, AMEN_DISPLAY, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEAS),  MUIA_UserData, AMEN_SAVEAS,  End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),   MUIA_Menuitem_Enabled, isPrintable(data->mailPart), MUIA_UserData, AMEN_PRINT, End,
+        Child, MenuBarLabel,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROPALL), MUIA_UserData, AMEN_CROPALL, End,
       End,
     End;
   }
@@ -206,6 +216,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
 /// OVERLOAD(MUIM_ContextMenuChoice)
 OVERLOAD(MUIM_ContextMenuChoice)
 {
+  GETDATA;
   struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
 
   switch(xget(m->item, MUIA_UserData))
@@ -220,6 +231,18 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
     case AMEN_PRINT:
       DoMethod(obj, MUIM_AttachmentObject_Print);
+    break;
+
+    case AMEN_SAVEALL:
+      DoMethod(data->attGroupObject, MUIM_AttachmentGroup_SaveAll);
+    break;
+
+    case AMEN_SAVESEL:
+      DoMethod(data->attGroupObject, MUIM_AttachmentGroup_SaveSelected);
+    break;
+
+    case AMEN_CROPALL:
+      DoMethod(data->attGroupObject, MUIM_AttachmentGroup_CropAll);
     break;
 
     default:

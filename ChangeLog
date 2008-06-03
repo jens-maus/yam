@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * AttachmentObject.c: changed the context menu layout once again to also
+    show the menu items which operate on all attachments. This is possible
+    because an attachment object normally knows to which group it belongs and
+    as such can send method calls to the respective object. This should be
+    far more intuitive instead of just showing the menu items which operate
+    on a single attachment object.
+
 2008-06-03  Thore Böckelmann <tboeckel@gmx.de>
 
   * Attachment#?.c: moved all actions which can be performed on a single item
