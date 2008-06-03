@@ -7,6 +7,8 @@ $URL$
 
 2008-06-03  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentObject.c: increased the buffer size for the description text a bit
+    to be able to handle long file names and further text.
   * AttachmentGroup.c: readded the accidentally removed spacing between the
     individual attachment objects.
 

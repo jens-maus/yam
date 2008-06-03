@@ -24,7 +24,7 @@
  $Id$
 
  Superclass:  MUIC_Group
- Description: Custom class to manage the attachments of a mail
+ Description: Custom class to manage a single attachment of a mail
 
  Credits: This class was highly inspired by the similar attachment group &
           image functionality available in Thunderbird and SimpleMail. Large
@@ -51,8 +51,6 @@ struct Data
 };
 */
 
-#define BORDER    2 // border around our object
-#define SPACING   2 // pixels taken as space between our images/text
 #define TEXTROWS  3 // how many text rows does a attachmentimage normally have?
 
 /* Overloaded Methods */
@@ -131,7 +129,7 @@ OVERLOAD(MUIM_Setup)
 
   if(data->mailPart != NULL && (result = DoSuperMethodA(cl, obj, msg)) != 0)
   {
-	char buffer[SIZE_DEFAULT];
+	char buffer[SIZE_PATH + SIZE_DEFAULT * 2];
 	char sizeBuffer[SIZE_DEFAULT];
 
     // first line: the
