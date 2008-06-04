@@ -7,6 +7,7 @@ $URL$
 
 2008-06-04  Thore Böckelmann <tboeckel@gmx.de>
 
+  * german.ct: fixed some typos.
   * AttachmentGroup.c: saving the selected items will now delegate the dirty
     work (saving the attachment) to the attachment object instead of doing
     that itself. This automatically lets the object update its description

@@ -6966,8 +6966,8 @@ Klartext konvertiert.
 ;
 MSG_RE_FOLLOWTHREAD
 Um nach mehr Nachrichten des selben Themas zu suchen,\n\
-muss YAM zusätzliche Postfach Indizes nachladen. Dies\n\
-könnte sehr Zeit- und Speicheraufwendig sein.\n\
+muss YAM zusätzliche Postfachindizes nachladen. Dies\n\
+könnte sehr zeit- und speicheraufwendig sein.\n\
 \n\
 Möchten Sie fortfahren?
 ;
