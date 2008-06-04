@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-04  Thore Böckelmann <tboeckel@gmx.de>
+
+  * AttachmentGroup.c: saving the selected items will now delegate the dirty
+    work (saving the attachment) to the attachment object instead of doing
+    that itself. This automatically lets the object update its description
+    after being decoded. Also readded a small border around all items.
+
 2008-06-03  Jens Langner <Jens.Langner@light-speed.de>
 
   * AttachmentObject.c: changed the context menu layout once again to also

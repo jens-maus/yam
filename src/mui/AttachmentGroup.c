@@ -83,6 +83,9 @@ HOOKPROTONH(LayoutFunc, ULONG, UNUSED Object *obj, struct MUI_LayoutMsg *lm)
         maxMinHeight = MAX(_minheight(child), maxMinHeight);
       }
 
+      maxMinWidth += 2 * HORIZ_SPACING;
+      maxMinHeight += 2 * VERT_SPACING;
+
       // then set our calculated values
       lm->lm_MinMax.MinWidth  = maxMinWidth;
       lm->lm_MinMax.MinHeight = maxMinHeight;
@@ -493,46 +496,19 @@ DECLARE(SaveSelected)
 
   BusyText(tr(MSG_BusyDecSaving), "");
 
-  // iterate through our child list and remove all attachmentimages
+  // iterate through our child list
   if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
   {
     Object *cstate = (Object *)childList->lh_Head;
     Object *child;
-    BOOL oldDecoded = TRUE;
-    BOOL newDecoded = FALSE;
 
+    // invoke the method for all selected items
     while((child = NextObject(&cstate)) != NULL)
     {
       Object *imageObject = (Object *)xget(child, MUIA_AttachmentObject_ImageObject);
 
       if(xget(imageObject, MUIA_Selected) == TRUE)
-      {
-        struct Part *mailPart;
-
-        if((mailPart = (struct Part *)xget(imageObject, MUIA_AttachmentImage_MailPart)) != NULL)
-        {
-          oldDecoded &= isDecoded(mailPart);
-
-          RE_DecodePart(mailPart);
-          RE_Export(mailPart->rmData,
-                    mailPart->Filename, "",
-                    mailPart->CParFileName ? mailPart->CParFileName : mailPart->Name,
-                    mailPart->Nr,
-                    FALSE,
-                    FALSE,
-                    mailPart->ContentType);
-
-          // at least one part has been decoded
-          newDecoded = TRUE;
-        }
-      }
-    }
-
-    if(oldDecoded == FALSE && newDecoded == TRUE)
-    {
-      // At least one attachment was not decoded before this operation but is now.
-      // Now we know the exact size of the file and can redraw ourself.
-      MUI_Redraw(obj, MADF_DRAWOBJECT);
+        DoMethod(child, MUIM_AttachmentObject_Save);
     }
   }
 
