@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-04  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c: when replying to a mail that is located in a Sent-type folder
+    the To: address of the write window will be set to the actual recipient
+    of the original mail rather than setting it to the sender. This was
+    changed because normally a Sent mail should only contain mail from the
+    very user using YAM and as such pressing "Reply" in a Sent mail folder
+    should trigger a reply of an own mail but with the recipient set to
+    the actual recipient of the original mail.
+
 2008-06-04  Thore Böckelmann <tboeckel@gmx.de>
 
   * german.ct: fixed some typos.

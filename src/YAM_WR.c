@@ -69,15 +69,15 @@
 /* local structures */
 struct ExpandTextData
 {
-  const char *      OS_Name;
-  const char *      OS_Address;
-  const char *      OM_Subject;
-  struct DateStamp  OM_Date;
-  int               OM_TimeZone;
-  const char *      OM_MessageID;
-  const char *      R_Name;
-  const char *      R_Address;
-  const char *      HeaderFile;
+  const char *     OS_Name;      // Realname of original sender
+  const char *     OS_Address;   // Address of original sender
+  const char *     OM_Subject;   // Subject of original message
+  struct DateStamp OM_Date;      // Date of original message
+  int              OM_TimeZone;  // Timezone of original message
+  const char *     OM_MessageID; // Message-ID of original message
+  const char *     R_Name;       // Realname of person we reply/forward to
+  const char *     R_Address;    // Address of person we reply/forward to
+  const char *     HeaderFile;   // filename of temporary file which contain mail header
 };
 
 /**************************************************************************/
@@ -2196,6 +2196,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         struct ExtendedMail *email;
         struct Person pe;
         BOOL foundMLFolder = FALSE;
+        BOOL foundSentFolder = FALSE;
 
         if((email = MA_ExamineMail(folder, mail->MailFile, TRUE)) == NULL)
         {
@@ -2329,6 +2330,10 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
             UnlockFolderList(G->folders);
           }
+          else if(isSentMailFolder(folder))
+          {
+            foundSentFolder = TRUE;
+          }
           else if(folder->MLSupport == TRUE && folder->MLPattern[0] != '\0')
           {
             if(MatchNoCase(mail->To.Address, folder->MLPattern) == FALSE &&
@@ -2362,7 +2367,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
         // If this mail is a standard multi-recipient mail and the user hasn't pressed SHIFT
         // or ALT we going to ask him to which recipient he want to send the mail to.
-        if(isMultiRCPTMail(mail) && !hasPrivateFlag(flags) && !hasMListFlag(flags))
+        if(isMultiRCPTMail(mail) && hasPrivateFlag(flags) == FALSE && hasMListFlag(flags) == FALSE)
         {
           // ask the user and in case he want to abort, quit this
           // function immediately.
@@ -2393,7 +2398,17 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           // the user wants to reply to the Sender (From:), however we
           // need to check whether he want to get asked or directly reply to
           // the wanted address.
-          if(hasPrivateFlag(flags))
+          if(foundSentFolder == TRUE)
+          {
+            // the mail to which the user wants to reply is stored in a
+            // sent mail folder. As such all mail should originate from ourself
+            // and as such when he presses "reply" on it we send it to
+            // the To: address recipient instead.
+            rto = AppendRcpt(rto, &mail->To, FALSE);
+            for(k=0; k < email->NoSTo; k++)
+              rto = AppendRcpt(rto, &email->STo[k], FALSE);
+          }
+          else if(hasPrivateFlag(flags) == TRUE)
           {
             // the user seem to have pressed the SHIFT key, so
             // we are going to "just"reply to the "From:" addresses of
@@ -2402,33 +2417,34 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             for(k=0; k < email->NoSFrom; k++)
               rto = AppendRcpt(rto, &email->SFrom[k], FALSE);
           }
-          else if(foundMLFolder && mlistad != NULL)
+          else if(foundMLFolder == TRUE && mlistad != NULL)
           {
             char *p;
 
             if((p = strdup(mlistad)) != NULL)
             {
-              struct Person pe;
+              char *ptr = p;
 
               // we found a matching folder for the mail we are going to
               // reply to, so we go and add the 'mlistad' to our To: addresses
-              while(p != NULL && *p != '\0')
+              while(ptr != NULL && *ptr != '\0')
               {
+                struct Person pe;
                 char *next;
 
-                if((next = MyStrChr(p, ',')) != NULL)
+                if((next = MyStrChr(ptr, ',')) != NULL)
                   *next++ = '\0';
 
-                ExtractAddress(p, &pe);
+                ExtractAddress(ptr, &pe);
                 rto = AppendRcpt(rto, &pe, FALSE);
 
-                p = next;
+                ptr = next;
               }
 
               free(p);
             }
           }
-          else if(C->CompareAddress == TRUE && !hasMListFlag(flags) &&
+          else if(C->CompareAddress == TRUE && hasMListFlag(flags) == FALSE &&
                   mail->ReplyTo.Address[0] != '\0')
           {
             BOOL askUser = FALSE;
@@ -2585,7 +2601,15 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             mlIntro = TRUE;
           }
 
-          InsertIntroText(out, foundMLFolder ? C->MLReplyHello : (altpat ? C->AltReplyHello : C->ReplyHello), &etd);
+          if(foundSentFolder == TRUE)
+          {
+            if(folder != NULL && folder->WriteIntro[0] != '\0')
+              InsertIntroText(out, folder->WriteIntro, NULL);
+            else
+              InsertIntroText(out, C->NewIntro, NULL);
+          }
+          else
+            InsertIntroText(out, foundMLFolder ? C->MLReplyHello : (altpat ? C->AltReplyHello : C->ReplyHello), &etd);
         }
 
         // if the user wants to quote the mail text of the original mail,
@@ -2636,6 +2660,8 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       // now that the mail is finished, we go and output some footer message to
       // the reply text.
       InsertIntroText(out, mlIntro ? C->MLReplyBye : (altpat ? C->AltReplyBye: C->ReplyBye), &etd);
+
+      // close the filehandle
       fclose(out);
 
       // add a signature to the mail depending on the selected signature for this list
