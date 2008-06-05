@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-05  Thore Böckelmann <tboeckel@gmx.de>
+
+  * italian.ct: fixed italian translation to be compilable by FlexCat again.
+    To all translators: PLEASE use FlexCat yourself to make sure your
+    translation is valid and at least can be compiled by FlexCat without
+    errors. Warning can be accepted, but not error. Otherwise it won't be
+    included in the nightly builds!!!
+
 2008-06-04  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: when replying to a mail that is located in a Sent-type folder

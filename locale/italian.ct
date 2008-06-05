@@ -1770,7 +1770,7 @@ Tagline
 ; Taglines
 ;
 MSG_CO_TaglineFile
-_File Tagline 
+_File Tagline
 ; Tagline _file
 ;
 MSG_CO_TaglineSep
@@ -2139,7 +2139,7 @@ dei messaggi a 7Bit.\n\
 Usa questa opzione solo se il tuo server SMTP\n\
 supporta il trasferimento a 8Bit!\n\
 Questa opzione è utile per evitare che si incorra\n\
-in possibili danneggiamenti dei messaggi. 
+in possibili danneggiamenti dei messaggi.
 ; Do not convert messages to 7-bit when transferring.\n\
 ; You should only use this option if you're sure that your SMTP server\n\
 ; supports 8-bit transfers, otherwise your messages may get corrupted.
@@ -7048,7 +7048,7 @@ Definizione dei filtri della posta...
 ; Define own mail filters you need...
 ;
 MSG_CO_READ_TITLE
-Impostazioni per la lettura dei messaggi 
+Impostazioni per la lettura dei messaggi
 ; Mail Reading Settings
 ;
 MSG_CO_READ_SUMMARY
@@ -8620,35 +8620,6 @@ MSG_CO_FOLDERINFO05
 Nome cartella (non letta/nuova)
 ; Folder name (unread/new)
 ;
-MSG_ER_BADRESPONSE
-Errato responso da parte del server di posta '%s' al comando '%s':\n\
-\n\
-%s\n\
-\n\
-Il server di posta non ha potuto eseguire il comando ed ha risposto\n\
-con il messaggio di errore sopra riportato.
-; Bad response from mail server '%s' to command '%s':\n\
-; \n\
-; %s\n\
-; \n\
-; The mail server couldn't execute the command \
-; and replied with the above error message.
-; SERVER, COMMAND, TEXT
-;
-MSG_ER_POP3WELCOME
-Il server POP3 '%s' ha risposto con un messaggio di errore\n\
-durante la procedura di benvenuto, la connessione verrà\n\
-terminata:\n\
-\n\
-%s\n\
-\n\
-; POP3 server '%s' replied with an error message during the welcome \
-; procedure and the connection was terminated:\n\
-; \n\
-; %s\n\
-; \n\
-; SERVER, TEXT
-;
 MSG_FO_EXPIREUNREAD
 non letto
 ; also unread
@@ -9760,7 +9731,7 @@ durante la procedura di benvenuto.\n\
 La connessione è stata terminata:\n\
 \n\
 %s\n\
-\n\
+\n
 ; POP3 server '%s' of account '%s' replied with an error message during the welcome \
 ; procedure and the connection was terminated:\n\
 ; \n\
