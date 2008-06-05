@@ -295,6 +295,7 @@ struct CO_GUIData
   Object *CY_FOLDERINFO;
   Object *CY_FORWARDMODE;
   Object *BT_MIMEIMPORT;
+  Object *CH_FOLDERDBLCLICK;
 };
 
 enum ConfigPage
@@ -540,6 +541,7 @@ struct Config
   BOOL  RequestMDN;
   BOOL  ConfigIsSaved;
   BOOL  AutoClip;
+  BOOL  FolderDoubleClick;
 
   struct MUI_PenSpec ColoredText;
   struct MUI_PenSpec Color1stLevel;

@@ -451,6 +451,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "FolderCntMenu    = %s\n", Bool2Txt(co->FolderCntMenu));
     fprintf(fh, "MessageCntMenu   = %s\n", Bool2Txt(co->MessageCntMenu));
     fprintf(fh, "FolderInfoMode   = %d\n", co->FolderInfoMode);
+    fprintf(fh, "FolderDoubleClick= %s\n", Bool2Txt(co->FolderDoubleClick));
 
     fprintf(fh, "\n[Security]\n");
     fprintf(fh, "PGPCmdPath       = %s\n", co->PGPCmdPath);
@@ -1130,6 +1131,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(!stricmp(buffer, "FolderCntMenu"))  co->FolderCntMenu = Txt2Bool(value);
           else if(!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
           else if(!stricmp(buffer, "FolderInfoMode")) co->FolderInfoMode = atoi(value);
+          else if(!stricmp(buffer, "FolderDoubleClick")) co->FolderDoubleClick = Txt2Bool(value);
 
 /* Security */
           else if(!stricmp(buffer, "PGPCmdPath"))     strlcpy(co->PGPCmdPath, value, sizeof(co->PGPCmdPath));
@@ -1885,9 +1887,10 @@ void CO_GetConfig(BOOL saveConfig)
         }
 
         CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
-        CE->ABookLookup   = GetMUICheck(gui->CH_ABOOKLOOKUP);
+        CE->ABookLookup = GetMUICheck(gui->CH_ABOOKLOOKUP);
         CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
-        CE->MessageCntMenu= GetMUICheck(gui->CH_MCNTMENU);
+        CE->MessageCntMenu = GetMUICheck(gui->CH_MCNTMENU);
+        CE->FolderDoubleClick = GetMUICheck(gui->CH_FOLDERDBLCLICK);
 
         if(GetMUICheck(gui->CH_BEAT) == TRUE)
         {
@@ -2296,12 +2299,13 @@ void CO_SetConfig(void)
         setcheckmark(gui->CH_MCOLS[i], isFlagSet(CE->MessageCols, (1<<i)));
       }
 
-      setcheckmark(gui->CH_FIXFLIST  ,CE->FixedFontList);
+      setcheckmark(gui->CH_FIXFLIST, CE->FixedFontList);
       setcheckmark(gui->CH_ABOOKLOOKUP, CE->ABookLookup);
-      setcheckmark(gui->CH_FCNTMENU  ,CE->FolderCntMenu);
-      setcheckmark(gui->CH_MCNTMENU  ,CE->MessageCntMenu);
+      setcheckmark(gui->CH_FCNTMENU, CE->FolderCntMenu);
+      setcheckmark(gui->CH_MCNTMENU, CE->MessageCntMenu);
       setcheckmark(gui->CH_BEAT, (CE->DSListFormat == DSS_DATEBEAT || CE->DSListFormat == DSS_RELDATEBEAT));
       setcheckmark(gui->CH_RELDATETIME, (CE->DSListFormat == DSS_RELDATETIME || CE->DSListFormat == DSS_RELDATEBEAT));
+      setcheckmark(gui->CH_FOLDERDBLCLICK, CE->FolderDoubleClick);
       setcycle(gui->CY_FOLDERINFO, CE->FolderInfoMode);
     }
     break;

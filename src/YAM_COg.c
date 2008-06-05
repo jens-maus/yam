@@ -3206,6 +3206,7 @@ Object *CO_PageLists(struct CO_ClassData *data)
               Child, MakeCheckGroup((Object **)&data->GUI.CH_BEAT, tr(MSG_CO_SwatchBeat)),
               Child, MakeCheckGroup((Object **)&data->GUI.CH_RELDATETIME, tr(MSG_CO_RELDATETIME)),
               Child, MakeCheckGroup((Object **)&data->GUI.CH_ABOOKLOOKUP, tr(MSG_CO_ABOOKLOOKUP)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_FOLDERDBLCLICK, tr(MSG_CO_FOLDERDBLCLICK)),
             End,
 
             Child, HVSpace,

@@ -895,6 +895,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->FolderCntMenu = TRUE;
     co->MessageCntMenu = TRUE;
     co->FolderInfoMode = FIM_NAME_AND_UNREAD_MAILS;
+    co->FolderDoubleClick = TRUE;
   }
 
   if(page == cp_Security || page == cp_AllPages)
@@ -1317,6 +1318,8 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->DisplayAllAltPart               == c2->DisplayAllAltPart &&
      c1->MDNEnabled                      == c2->MDNEnabled &&
      c1->RequestMDN                      == c2->RequestMDN &&
+     c1->AutoClip                        == c2->AutoClip &&
+     c1->FolderDoubleClick               == c2->FolderDoubleClick &&
 
      c1->SocketOptions.SendBuffer        == c2->SocketOptions.SendBuffer &&
      c1->SocketOptions.RecvBuffer        == c2->SocketOptions.RecvBuffer &&

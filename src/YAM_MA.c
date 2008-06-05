@@ -3355,10 +3355,12 @@ HOOKPROTONHNONP(MA_FolderClickFunc, void)
 {
   struct Folder *folder = FO_GetCurrentFolder();
 
-  if(!folder || isGroupFolder(folder))
-    return;
+  ENTER();
 
-  DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);
+  if(C->FolderDoubleClick == TRUE && folder != NULL && isGroupFolder(folder) == FALSE)
+    DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);
+
+  LEAVE();
 }
 MakeHook(MA_FolderClickHook, MA_FolderClickFunc);
 

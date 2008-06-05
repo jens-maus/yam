@@ -6842,3 +6842,6 @@ Please disable this option in your TCP/IP preferences\n\
 and re-edit the e-mail before trying to send it again,\n\
 otherwise the e-mail may be malformed.
 ;
+MSG_CO_FOLDERDBLCLICK (2107//)
+Double click on folder opens folder settings
+;

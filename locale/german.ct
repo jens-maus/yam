@@ -5896,7 +5896,7 @@ E-Mail Cache
 ; Email cache
 ;
 MSG_CO_NB_EMAILCACHEFMT
-%ld Addressen
+%ld Adressen
 ; %ld mails
 ;
 MSG_HELP_CO_NB_EMAILCACHE
@@ -5950,7 +5950,7 @@ kopiert werden.
 ; MAILFILE, FOLDERNAME
 ;
 MSG_ER_ADDRBOOKLOAD
-Konnte Addressbuch von Datei '%s' nicht laden.\n\
+Konnte Adressbuch von Datei '%s' nicht laden.\n\
 \n\
 Die Datei scheint nicht zu existieren oder ein \
 Zugriff ist nicht möglich.
@@ -5960,9 +5960,9 @@ Zugriff ist nicht möglich.
 ; FILENAME
 ;
 MSG_AB_NOYAMADDRBOOK
-Die Datei '%s' ist keine YAM Addressbuchdatei.\n\n\
+Die Datei '%s' ist keine YAM Adressbuchdatei.\n\n\
 Möchten Sie trotzdem diese Datei als eine durch Zeilenumbruch\n\
-getrennte Addressbuchdatei laden ?
+getrennte Adressbuchdatei laden ?
 ; File '%s' isn't a valid YAM address book.\n\
 ; \n\
 ; Process it as a file containing email addresses\n\
@@ -6690,7 +6690,7 @@ MSG_CO_MIME_SUMMARY
 Konfigurieren Sie Ihre eigenen MIME-Typen...
 ;
 MSG_CO_ABOOK_TITLE
-Addressbuch Einstellungen
+Adressbuch Einstellungen
 ;
 MSG_CO_ABOOK_SUMMARY
 Konfigurieren Sie Ihr Adressbuch...
@@ -6939,17 +6939,17 @@ Bitte stellen Sie sicher, dass die Dateien \
 existieren und Sie Leserechte besitzen.
 ;
 MSG_CO_ABOOKLOOKUP
-Nutze A_ddressbuch zur Namensanzeige
+Nutze A_dressbuch zur Namensanzeige
 ;
 MSG_HELP_CO_CH_ABOOKLOOKUP
-Führt eine Addressbuchabfrage für jede\n\
+Führt eine Adressbuchabfrage für jede\n\
 angezeigte Person einer Nachricht durch\n\
 und zeigt den Namen anstelle der reinen\n\
 Mailadresse an.\n\
 \n\
 Bitte beachten: Dies kann mitunter eine\n\
 sehr aufwendige Prozedur sein und besonders\n\
-bei grossen Addressbüchern zu Geschwindigkeits-\n\
+bei grossen Adressbüchern zu Geschwindigkeits-\n\
 einbußen beim Anzeigen führen.
 ;
 MSG_TR_MESSAGEGAUGE
@@ -7433,7 +7433,7 @@ automatisch auf ihren Spamgehalt hin überprüft.
 ;
 MSG_HELP_CH_SPAMABOOKISWHITELIST
 Wenn aktiviert, werden Nachrichten die von einer\n\
-Person kommen die sich in Ihrem Addressbuch befindet,\n\
+Person kommen die sich in Ihrem Adressbuch befindet,\n\
 automatisch als unbedenklich erkannt.
 ;
 MSG_HELP_CH_SPAMMARKONMOVE
@@ -7837,7 +7837,7 @@ MSG_AB_INVALIDSECURITY_TITLE
 Sicherheitswarnung
 ;
 MSG_AB_INVALIDSECURITY
-Der Addressbucheintrag wurde entweder auf\n\
+Der Adressbucheintrag wurde entweder auf\n\
 'signieren' oder 'verschlüsseln' eingestellt.\n\
 Jedoch konnte keine PGP Installation gefunden\n\
 werden.\n\
@@ -7852,7 +7852,7 @@ MSG_WR_INVALIDSECURITY_TITLE
 Sicherheitswarnung
 ;
 MSG_WR_INVALIDSECURITY
-Die Addressbucheinstellungen für den Empfänger\n\
+Die Adressbucheinstellungen für den Empfänger\n\
 '%s'\n\
 wurden auf 'signieren' oder 'verschlüsseln'\n\
 eingestellt. Es konnte jedoch keine PGP\n\
@@ -8456,4 +8456,7 @@ Option eingeschaltet.\n\
 Bitte stellen Sie sicher, dass Sie die Option abschalten und \
 danach die Nachricht neu editieren, da diese ansonsten eventuell \
 fehlerhaft übertragen werden kann.
+;
+MSG_CO_FOLDERDBLCLICK
+Doppelklick auf Postfach öffnet Postfacheinstellungen
 ;

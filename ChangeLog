@@ -7,6 +7,11 @@ $URL$
 
 2008-06-05  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO#?.c: implemented feature request #597669. This makes it possible
+    to disable opening the folder settings upon double clicking a folder item.
+    The folder settings are modified quite seldom, while (accidental) double
+    clicks on a folder happen quite easily, which made it very annoying if the
+    setting window pops up, but one just wanted to open/close a folder group.
   * italian.ct: fixed italian translation to be compilable by FlexCat again.
     To all translators: PLEASE use FlexCat yourself to make sure your
     translation is valid and at least can be compiled by FlexCat without
