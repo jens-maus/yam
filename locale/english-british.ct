@@ -62,9 +62,6 @@ Colourise marked text\n\
 MSG_FO_NOTRECOGNIZED
 Couldn't be recognised!
 ;
-MSG_ER_INITTLS
-Couldn't initialise TLSv1/SSLv3 session for %s
-;
 MSG_ER_UNUSABLEAMISSL
 You have selected TLSv1/SSLv3 for this connection, but AmiSSL \
 couldn't be initialised. Please check your AmiSSL installation \
@@ -108,4 +105,10 @@ more details.
 ;
 MSG_ABOUT_3RD_PARTY_SOFTWARE
 This programme uses the following third party software:
+;
+MSG_ER_INITTLS_POP3
+Couldn't initialise TLSv1/SSLv3 session with host '%s' of account '%s'.
+;
+MSG_ER_INITTLS_SMTP
+Couldn't initialise TLSv1/SSLv3 session with host '%s'.
 ;

@@ -7,6 +7,7 @@ $URL$
 
 2008-06-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * english-british.ct: updated british translation.
   * Makefile: commented out all translations which haven't been updated
     recently. These translations really need a big update to make them
     up-to-date again, so there is no point in putting them into the nightly
