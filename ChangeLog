@@ -7,6 +7,10 @@ $URL$
 
 2008-06-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Makefile: commented out all translations which haven't been updated
+    recently. These translations really need a big update to make them
+    up-to-date again, so there is no point in putting them into the nightly
+    archives.
   * german.ct, italian.ct: minor updates.
   * italian.ct: updated italian translation provided by Samir Hawamdeh.
 

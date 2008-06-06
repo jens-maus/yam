@@ -384,13 +384,14 @@ REXX = \
 	writesubject.o \
 	writeto.o
 
-MIME = base64.o \
-       qprintable.o \
-       uucode.o \
-       rfc1738.o \
-       rfc2047.o \
-       rfc2231.o \
-       md5.o
+MIME = \
+	base64.o \
+	qprintable.o \
+	uucode.o \
+	rfc1738.o \
+	rfc2047.o \
+	rfc2231.o \
+	md5.o
 
 # and the other object files where
 # YAM_global.o and YAM.o have to stay at the top
@@ -440,26 +441,27 @@ OBJS = \
 
 # available catalog translations
 CATALOGS = \
-  $(LOCALE)/german.catalog \
-  $(LOCALE)/bosnian.catalog \
-  $(LOCALE)/czech.catalog \
-  $(LOCALE)/danish.catalog \
-  $(LOCALE)/english-british.catalog \
-  $(LOCALE)/spanish.catalog \
-  $(LOCALE)/french.catalog \
-  $(LOCALE)/greek.catalog \
-  $(LOCALE)/italian.catalog \
-  $(LOCALE)/hungarian.catalog \
-  $(LOCALE)/norwegian.catalog \
-  $(LOCALE)/polish.catalog \
-  $(LOCALE)/portuguese-brazil.catalog \
-  $(LOCALE)/portuguese.catalog \
-  $(LOCALE)/russian.catalog \
-  $(LOCALE)/slovenian.catalog \
-  $(LOCALE)/serbian.catalog \
-  $(LOCALE)/finnish.catalog \
-  $(LOCALE)/swedish.catalog \
-  $(LOCALE)/turkish.catalog
+	$(LOCALE)/czech.catalog \
+	$(LOCALE)/english-british.catalog \
+	$(LOCALE)/french.catalog \
+	$(LOCALE)/german.catalog \
+	$(LOCALE)/italian.catalog \
+	$(LOCALE)/swedish.catalog \
+	# $(LOCALE)/bosnian.catalog \
+	# $(LOCALE)/danish.catalog \
+	# $(LOCALE)/finnish.catalog \
+	# $(LOCALE)/greek.catalog \
+	# $(LOCALE)/italian.catalog \
+	# $(LOCALE)/hungarian.catalog \
+	# $(LOCALE)/norwegian.catalog \
+	# $(LOCALE)/polish.catalog \
+	# $(LOCALE)/portuguese-brazil.catalog \
+	# $(LOCALE)/portuguese.catalog \
+	# $(LOCALE)/russian.catalog \
+	# $(LOCALE)/serbian.catalog \
+	# $(LOCALE)/slovenian.catalog \
+	# $(LOCALE)/spanish.catalog \
+	# $(LOCALE)/turkish.catalog
 
 # main target
 .PHONY: all
