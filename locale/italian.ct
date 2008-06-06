@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.2 (28.05.2008)
+## version $VER: YAM.catalog 6.2 (6.06.2008)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -644,7 +644,7 @@ MSG_MA_ExportAppendOpts
 ; *_Overwrite|_Append|_Cancel
 ;
 MSG_MA_MoveMsg
-Sposta i messaggi
+Spostamento dei messaggi
 ; Move message(s)
 ;
 MSG_MA_MoveMsgReq
@@ -656,7 +656,7 @@ _Muovi
 ; _Move
 ;
 MSG_MA_CopyMsg
-Copia i messaggi
+Copiatura dei messaggi
 ; Copy message(s)
 ;
 MSG_MA_CopyGad
@@ -4839,15 +4839,6 @@ non è riuscito a gestire le richieste HTTP.
 ; server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
-MSG_ER_UnknownPOP
-Server POP3 sconosciuto: '%s'.\n\
-\n\
-TCP/IP non in linea o indirizzo del server errato.\n\
-; Unknown POP3 server: '%s'.\n\
-; \n\
-; TCP/IP is offline or the server address is invalid.
-; HOST
-;
 MSG_ER_UnknownSMTP
 Server SMTP sconosciuto: '%s'.\n\
 \n\
@@ -4857,24 +4848,6 @@ del server errato.
 ; \n\
 ; TCP/IP is offline or the server address is invalid.
 ; HOST
-;
-MSG_ER_CantConnect
-Impossibili connettersi a '%s'.\n\
-\n\
-Il server di posta è al momento irragiungibile\n\
-oppure non è in grado di gestire adeguatamente\n\
-i protocolli POP3/SMTP.
-; Couldn't connect to '%s'.\n\
-; \n\
-; The mail server is currently down or doesn't support the POP3/SMTP
-; protocols.
-; HOST
-;
-MSG_ER_NoAPOP
-Il server POP3 non è in grado di gestire APOP.\n\
-Per favore disattiva l'opzione APOP nella configurazione.
-; Your POP3 server doesn't support APOP. \
-; Please disable APOP in the configuration.
 ;
 MSG_ER_ErrorWriteMailfile
 Errore di scrittura nel file di posta: %s.\n\
@@ -6085,10 +6058,6 @@ di AmiSSL e riavvia YAM.
 ; \n\
 ; Please check your AmiSSL installation and restart YAM.
 ;
-MSG_ER_INITTLS
-Impossibile inizializzare sessione TLSv1/SSLv3 per %s
-; Couldn't initialize TLSv1/SSLv3 session for %s
-;
 MSG_TR_SENDAUTH
 Invio richiesta SMTP AUTH...
 ; Sending SMTP AUTH request...
@@ -6155,13 +6124,6 @@ disabilita TLS/SSL per questa connessione.
 MSG_RETRY_QUIT_GAD
 Riprova|Esci
 ; Try again|Quit
-;
-MSG_ER_NOSTARTTLS
-Il tuo server SMTP non supporta TLS/SSL.\n\
-Per favore disabilita questa opzione\n\
-nella configurazione di YAM.
-; Your SMTP server doesn't support TLS/SSL. \
-; Please disable this option in the configuration.
 ;
 MSG_ER_NOAUTHUSERPASS
 Nessun nome utente o password specificati per la connessione\n\
@@ -6744,7 +6706,7 @@ da un non valido o non scrivibile percorso di destinazione.
 ; destination path.
 ;
 MSG_CO_QUICKSEARCHBAR
-Mostra _Barra di ricerca nella finestra principale
+Mostra _barra di ricerca nella finestra principale
 ; Show search _bar in main window
 ;
 MSG_HELP_CO_CH_QUICKSEARCHBAR
@@ -6886,8 +6848,7 @@ usando la application.library\n\
 ; AmiDock. This requires AmigaOS 4.x.
 ;
 MSG_MA_MessageImport
-Importa messaggi da MBOX, DBX\n\
-oppure da semplici messaggi.
+Importa messaggi da MBOX, DBX o altro.
 ; Import messages
 ;
 MSG_ER_MESSAGEIMPORT
@@ -6902,9 +6863,9 @@ YAM è al momento in grado di importare file da 'MBOX',\n\
 di posta più semplici basati su RFC822.\n\
 \n\
 Si prega di consultare la documentazione per maggiori\n\
-informazioni sui formati supportati in importazione e\n\
-sui metodi alternativi per importare i messaggi di\n\
-posta elettronica.
+informazioni circa i formati supportati in importazione\n\
+e sui metodi alternativi per l'importazione dei messaggi\n\
+di posta elettronica.
 ; An error occurred while trying to import mail from file '%s'.\n\
 ; \n\
 ; Please check that the file is readable and contains RFC822 compliant \
@@ -6914,8 +6875,7 @@ posta elettronica.
 ; FILENAME
 ;
 MSG_MA_MESSAGEEXPORT
-Esporta messaggi verso un\n\
-file compatibile MBOX
+Esporta messaggi da MBOX, DBX o altro.
 ; Export messages
 ;
 MSG_YAMINFO
@@ -7968,7 +7928,7 @@ Sei sicuro di voler salvare la firma adesso?
 ; Do you want to save the signatures now?
 ;
 MSG_MA_HIDE
-Nascondi
+Iconifica
 ; Hide
 ;
 MSG_MA_QUIT
@@ -7984,7 +7944,7 @@ Nessuno
 ; None
 ;
 MSG_MA_SELECTTOGGLE
-Interruttore
+Inverso
 ; Toggle
 ;
 MSG_MA_MSEARCH
@@ -8198,9 +8158,9 @@ automaticamente contrassegnato come 'Letto'.
 ; automatically flagged as 'read'.
 ;
 MSG_HELP_CH_UPDATECHECK
-Ogni quanto tempo si desidera che il programma\n\
-si connetta alla rete per cercare eventuali\n\
-aggiornamenti?\n\
+Ogni quanto tempo si desidera che il programma si\n\
+connetta alla rete internet per cercare eventuali\n\
+nuovi aggiornamenti?\n\
 Seleziona 'Mai' per disattivare questa opzione.
 ; How often do you want YAM to\n\
 ; automatically check for updates?\n\
@@ -8211,14 +8171,12 @@ Seleziona tutto
 ; Select all
 ;
 MSG_RE_MDN_ACCEPT_LATER
-Accetta ed invia\n\
-successivamente
+Accetta e invia dopo
 ; Accept and\n\
 ; send later
 ;
 MSG_RE_MDN_ACCEPT_NOW
-Accetta ed invia\n\
-subito
+Accetta e invia ora
 ; Accept and\n\
 ; send now
 ;
@@ -8562,24 +8520,6 @@ in arrivo.
 ; as 'spam' and later manually marked as 'not spam' will be\n\
 ; automatically moved back to the Incoming folder.
 ;
-MSG_ER_NO8BITMIME
-Il server SMTP '%s' ha riportato di non poter supportare\n\
-il trasferimento dei messaggi a 8Bit, questo nonostante\n\
-l'opzione risulti attualmente attivata nella propria\n\
-configurazione.\n\
-\n\
-Per favore disattiva questa opzione nelle tue impostazioni\n\
-TCP/IP e riscrivi il messaggio prima di poter provare\n\
-nuovamente ad inviarlo, altrimenti lo stesso una volta\n\
-inviato potrebbe risultare malformato.
-; SMTP server '%s' reported that it doesn't support 8bit \
-; mail transfers while you have the 'Allow8bit' option \
-; enabled.\n\
-; \n\
-; Please disable this option in your TCP/IP preferences\n\
-; and re-edit the e-mail before trying to send it again,\n\
-; otherwise the e-mail may be malformed.
-;
 MSG_CO_FILTER_HAM
 Applica _filtro
 ; Apply _filters
@@ -8750,58 +8690,6 @@ all'indirizzo internet \0335http://www.yam.ch/\033n
 MSG_WR_VIEW
 Visualizza
 ; View
-;
-MSG_ER_CONNECTERR_SOCKET_IN_USE
-Impossibile connettersi a '%s'.\n\
-\n\
-Una connessione TCP/IP sembra\n\
-essere già attiva.\n\
-Per favore chiudi tutte le applicazioni\n\
-che stanno eseguendo un trasferimento.
-; Couldn't connect to '%s'.\n\
-; \n\
-; A TCP/IP socket connection seems to be already active. \
-; Please close any other existing transfers.
-;
-MSG_ER_CONNECTERR_TIMEDOUT
-Impossibile connettersi a '%s'.\n\
-\n\
-Il server di posta non ha risposto entro i termini\n\
-prefissati, perciò la connessione verrà terminata.\n\
-; Couldn't connect to '%s'.\n\
-; \n\
-; The mail server didn't respond within the predefined \
-; time frame and therefore timed out.
-;
-MSG_ER_CONNECTERR_NO_SOCKET
-Impossibile connettersi a '%s'.\n\
-\n\
-YAM non è stato in grado di stabilire una\n\
-connessione con il server di posta.\n\
-Per favore assicurati che lo Stack TCP/IP\n\
-sia connesso alla rete e che risulti\n\
-correttamente configurato.
-; Couldn't connect to '%s'.\n\
-; \n\
-; YAM wasn't able to establish a socket connection \
-; to the mail server. Please make sure that your TCP/IP \
-; stack is online and working properly.
-;
-MSG_ER_CONNECTERR_NO_NONBLOCKIO
-Impossibile connettersi a '%s'.\n\
-\n\
-YAM non è stato in grado di stabilire una\n\
-connessione I/O non bloccante al server\n\
-di posta.\n\
-Per favore assicurati che lo Stack TCP/IP\n\
-sia in grado di stabilire una connessione\n\
-I/O non bloccante.
-; Couldn't connect to '%s'.\n\
-; \n\
-; YAM wasn't able to establish a non-blocking I/O \
-; connection to the mail server. Please make sure that \
-; your TCP/IP stack can establish non-blocking I/O \
-; connections.
 ;
 MSG_CONFIG_MODIFIED
 La configurazione è stata modificata\n\

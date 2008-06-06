@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-06  Thore Böckelmann <tboeckel@gmx.de>
+
+  * italian.ct: updated italian translation provided by Samir Hawamdeh.
+
 2008-06-05  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO#?.c: implemented feature request #597669. This makes it possible
