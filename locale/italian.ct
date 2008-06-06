@@ -9777,3 +9777,7 @@ inviato potrebbe risultare malformato.
 ; and re-edit the e-mail before trying to send it again,\n\
 ; otherwise the e-mail may be malformed.
 ;
+MSG_CO_FOLDERDBLCLICK
+Doppio click sulla cartella per l'apertura delle impostazioni medesime
+; Double click on folder opens folder settings
+;
