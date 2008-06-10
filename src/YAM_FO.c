@@ -773,12 +773,12 @@ BOOL FO_LoadTree(char *fname)
                   if(stricmp(folderpath, FolderName[FT_INCOMING]) == 0)
                     fo->Type = FT_INCOMING;
                   else if(stricmp(folderpath, FolderName[FT_OUTGOING]) == 0)
-                  fo->Type = FT_OUTGOING;
+                    fo->Type = FT_OUTGOING;
                   else if(stricmp(folderpath, FolderName[FT_SENT]) == 0)
                     fo->Type = FT_SENT;
                   else if(stricmp(folderpath, FolderName[FT_TRASH]) == 0)
                     fo->Type = FT_TRASH;
-                  else if(C->SpamFilterEnabled && stricmp(folderpath, FolderName[FT_SPAM]) == 0)
+                  else if(C->SpamFilterEnabled == TRUE && stricmp(folderpath, FolderName[FT_SPAM]) == 0)
                     fo->Type = FT_SPAM;
 
                   // Save the config now because it could be changed in the meantime
@@ -1092,41 +1092,44 @@ void FO_UpdateStatistics(struct Folder *folder)
   if(folder == (struct Folder *)-1)
     folder = FO_GetFolderByType(FT_INCOMING, NULL);
 
-  D(DBF_FOLDER, "updating folder '%s'", folder->Name);
-
-  folder->Unread = 0;
-  folder->New = 0;
-  folder->Total = 0;
-  folder->Sent = 0;
-  folder->Deleted = 0;
-
-  LockMailListShared(folder->messages);
-
-  if(IsMailListEmpty(folder->messages) == FALSE)
+  if(isGroupFolder(folder) == FALSE)
   {
-    struct MailNode *mnode;
-    // now we recount the amount of messages of this folder
-    ForEachMailNode(folder->messages, mnode)
+    D(DBF_FOLDER, "updating folder '%s'", folder->Name);
+
+    folder->Unread = 0;
+    folder->New = 0;
+    folder->Total = 0;
+    folder->Sent = 0;
+    folder->Deleted = 0;
+
+    LockMailListShared(folder->messages);
+
+    if(IsMailListEmpty(folder->messages) == FALSE)
     {
-      struct Mail *mail = mnode->mail;
+      struct MailNode *mnode;
+      // now we recount the amount of messages of this folder
+      ForEachMailNode(folder->messages, mnode)
+      {
+        struct Mail *mail = mnode->mail;
 
-      folder->Total++;
+        folder->Total++;
 
-      if(hasStatusNew(mail))
-        folder->New++;
+        if(hasStatusNew(mail))
+          folder->New++;
 
-      if(!hasStatusRead(mail))
-        folder->Unread++;
+        if(!hasStatusRead(mail))
+          folder->Unread++;
 
-      if(hasStatusSent(mail))
-        folder->Sent++;
+        if(hasStatusSent(mail))
+          folder->Sent++;
 
-      if(hasStatusDeleted(mail))
-        folder->Deleted++;
+        if(hasStatusDeleted(mail))
+          folder->Deleted++;
+      }
     }
-  }
 
-  UnlockMailList(folder->messages);
+    UnlockMailList(folder->messages);
+  }
 
   LEAVE();
 }

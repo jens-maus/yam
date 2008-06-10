@@ -7,6 +7,8 @@ $URL$
 
 2008-06-10  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: the given folder is now checked to be no group folder, because
+    these have no message list which could be locked.
   * AttachmentObject.c: an attachment part will now only be exported if the
     decoding succeeded.
 
