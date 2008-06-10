@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-10  Thore Böckelmann <tboeckel@gmx.de>
+
+  * AttachmentObject.c: an attachment part will now only be exported if the
+    decoding succeeded.
+
 2008-06-06  Thore Böckelmann <tboeckel@gmx.de>
 
   * english-british.ct: updated british translation.

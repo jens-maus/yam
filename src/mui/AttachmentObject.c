@@ -310,20 +310,33 @@ DECLARE(Save)
 
     BusyText(tr(MSG_BusyDecSaving), "");
 
-    RE_DecodePart(data->mailPart);
-    RE_Export(data->mailPart->rmData,
-              data->mailPart->Filename, "",
-              data->mailPart->CParFileName ? data->mailPart->CParFileName : data->mailPart->Name,
-              data->mailPart->Nr,
-              FALSE,
-              FALSE,
-              data->mailPart->ContentType);
-
-    if(oldDecoded == FALSE && isDecoded(data->mailPart) == TRUE)
+    if(RE_DecodePart(data->mailPart) == TRUE)
     {
-      // now we know the exact size of the file and can redraw ourself
-      MUI_Redraw(data->imageObject, MADF_DRAWOBJECT);
-      DoMethod(obj, MUIM_AttachmentObject_UpdateDescription);
+      char *fileName;
+
+      // export the mail part only if the decoding succeeded
+      fileName = data->mailPart->CParFileName;
+      if(fileName == NULL || strlen(fileName) == 0)
+      {
+        fileName = data->mailPart->Name;
+        if(fileName == NULL || strlen(fileName) == 0)
+          fileName = data->mailPart->Filename;
+      }
+
+      RE_Export(data->mailPart->rmData,
+                data->mailPart->Filename, "",
+                fileName,
+                data->mailPart->Nr,
+                FALSE,
+                FALSE,
+                data->mailPart->ContentType);
+
+      if(oldDecoded == FALSE)
+      {
+        // now we know the exact size of the file and can redraw ourself
+        MUI_Redraw(data->imageObject, MADF_DRAWOBJECT);
+        DoMethod(obj, MUIM_AttachmentObject_UpdateDescription);
+      }
     }
 
     BusyEnd();
