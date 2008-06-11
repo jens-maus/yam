@@ -97,7 +97,7 @@ struct Data
 
 /// Menu enumerations
 enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIMAGE, RMEN_WRAPH,
-       RMEN_TSTYLE, RMEN_FFONT, RMEN_EXTKEY, RMEN_CHKSIG, RMEN_SAVEDEC, RMEN_DISPLAY, RMEN_DETACH, RMEN_CROP,
+       RMEN_TSTYLE, RMEN_FFONT, RMEN_EXTKEY, RMEN_CHKSIG, RMEN_SAVEDEC, RMEN_DISPLAY, RMEN_DETACH, RMEN_DELETEATT,
        RMEN_PRINT, RMEN_SAVE, RMEN_REPLY, RMEN_FORWARD, RMEN_MOVE, RMEN_COPY, RMEN_DELETE, RMEN_SEARCH,
        RMEN_SEARCHAGAIN
      };
@@ -795,7 +795,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
           MUIA_Menuitem_Title, tr(MSG_Attachments),
           MUIA_Menuitem_Enabled, hasContent && hasAttach,
           Child, Menuitem(tr(MSG_RE_SaveAll), NULL, hasContent && hasAttach, FALSE, RMEN_DETACH),
-          Child, Menuitem(tr(MSG_MA_Crop),    NULL, hasContent && isRealMail && hasAttach, FALSE, RMEN_CROP),
+          Child, Menuitem(tr(MSG_MA_DELETEATT), NULL, hasContent && isRealMail && hasAttach, FALSE, RMEN_DELETEATT),
         End,
         Child, MenuBarLabel,
         Child, MenuitemObject,
@@ -838,7 +838,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case RMEN_PRINT:    DoMethod(obj, MUIM_ReadMailGroup_PrintMailRequest); break;
     case RMEN_DELETE:   DoMethod(obj, MUIM_ReadMailGroup_DeleteMail); break;
     case RMEN_DETACH:   DoMethod(obj, MUIM_ReadMailGroup_SaveAllAttachments); break;
-    case RMEN_CROP:     DoMethod(obj, MUIM_ReadMailGroup_CropAttachmentsRequest); break;
+    case RMEN_DELETEATT:DoMethod(obj, MUIM_ReadMailGroup_DeleteAttachmentsRequest); break;
     case RMEN_EXTKEY:   DoMethod(obj, MUIM_ReadMailGroup_ExtractPGPKey); break;
     case RMEN_CHKSIG:   DoMethod(obj, MUIM_ReadMailGroup_CheckPGPSignature, TRUE); break;
     case RMEN_SAVEDEC:  DoMethod(obj, MUIM_ReadMailGroup_SaveDecryptedMail); break;
@@ -1774,9 +1774,9 @@ DECLARE(DeleteMail)
 }
 
 ///
-/// DECLARE(CropAttachmentsRequest)
+/// DECLARE(DeleteAttachmentsRequest)
 //  Removes attachments from the current message
-DECLARE(CropAttachmentsRequest)
+DECLARE(DeleteAttachmentsRequest)
 {
   GETDATA;
   struct ReadMailData *rmData = data->readMailData;

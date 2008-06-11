@@ -613,7 +613,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSAVE),           MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_SAVE,     End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Attachments),        MUIA_Menuitem_Enabled, mail && hasattach,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSAVEATT),      MUIA_Menuitem_Enabled, mail && hasattach, MUIA_UserData, MMEN_DETACH, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MCROP),         MUIA_Menuitem_Enabled, mail && hasattach, MUIA_UserData, MMEN_CROP,   End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MDELETEATT),    MUIA_Menuitem_Enabled, mail && hasattach, MUIA_UserData, MMEN_DELETEATT, End,
       End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MESSAGE_EXPORT),     MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_EXPMSG,   End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
@@ -712,7 +712,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case MMEN_PRINT:      DoMethod(G->App, MUIM_CallHook, &MA_SavePrintHook,      TRUE); break;
     case MMEN_SAVE:       DoMethod(G->App, MUIM_CallHook, &MA_SavePrintHook,      FALSE); break;
     case MMEN_DETACH:     DoMethod(G->App, MUIM_CallHook, &MA_SaveAttachHook); break;
-    case MMEN_CROP:       DoMethod(G->App, MUIM_CallHook, &MA_RemoveAttachHook); break;
+    case MMEN_DELETEATT:  DoMethod(G->App, MUIM_CallHook, &MA_RemoveAttachHook); break;
     case MMEN_EXPMSG:     DoMethod(G->App, MUIM_CallHook, &MA_ExportMessagesHook, FALSE); break;
     case MMEN_NEW:        DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NMM_NEW,  0); break;
     case MMEN_SELALL:     DoMethod(obj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On,     NULL); break;

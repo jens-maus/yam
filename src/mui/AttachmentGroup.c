@@ -182,11 +182,12 @@ MakeStaticHook(LayoutHook, LayoutFunc);
 
 ///
 /// Menu enumerations
-enum {
+enum
+{
   AMEN_SAVEALL=100,
   AMEN_SAVESEL,
-  AMEN_CROPALL,
-  AMEN_CROPSEL
+  AMEN_DELETEALL,
+  AMEN_DELETESEL
 };
 
 ///
@@ -314,8 +315,8 @@ OVERLOAD(MUIM_ContextMenuBuild)
     Child, MenuObjectT(data->menuTitle),
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL, End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROPALL), MUIA_UserData, AMEN_CROPALL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROPSEL), MUIA_UserData, AMEN_CROPSEL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETEALL), MUIA_UserData, AMEN_DELETEALL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETESEL), MUIA_UserData, AMEN_DELETESEL, End,
     End,
   End;
 
@@ -339,12 +340,12 @@ OVERLOAD(MUIM_ContextMenuChoice)
       DoMethod(obj, MUIM_AttachmentGroup_SaveSelected);
     break;
 
-    case AMEN_CROPALL:
-      DoMethod(obj, MUIM_AttachmentGroup_CropAll);
+    case AMEN_DELETEALL:
+      DoMethod(obj, MUIM_AttachmentGroup_DeleteAll);
     break;
 
-    case AMEN_CROPSEL:
-      DoMethod(obj, MUIM_AttachmentGroup_CropSelected);
+    case AMEN_DELETESEL:
+      DoMethod(obj, MUIM_AttachmentGroup_DeleteSelected);
     break;
 
     default:
@@ -526,8 +527,8 @@ DECLARE(SaveSelected)
 }
 
 ///
-/// DECLARE(CropAll)
-DECLARE(CropAll)
+/// DECLARE(DeleteAll)
+DECLARE(DeleteAll)
 {
   GETDATA;
 
@@ -544,8 +545,8 @@ DECLARE(CropAll)
 }
 
 ///
-/// DECLARE(CropSelected)
-DECLARE(CropSelected)
+/// DECLARE(DeleteSelected)
+DECLARE(DeleteSelected)
 {
   GETDATA;
   struct List *childList;

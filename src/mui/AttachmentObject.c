@@ -64,12 +64,12 @@ enum
 {
   AMEN_DISPLAY=100,
   AMEN_SAVEAS,
-  AMEN_CROP,
+  AMEN_DELETE,
   AMEN_PRINT,
   AMEN_SAVEALL,
   AMEN_SAVESEL,
-  AMEN_CROPALL,
-  AMEN_CROPSEL
+  AMEN_DELETEALL,
+  AMEN_DELETESEL
 };
 
 ///
@@ -229,13 +229,13 @@ OVERLOAD(MUIM_ContextMenuBuild)
       Child, MenuObjectT(data->menuTitle),
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DISPLAY), MUIA_UserData, AMEN_DISPLAY, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEAS),  MUIA_UserData, AMEN_SAVEAS,  End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROP),    MUIA_UserData, AMEN_CROP,    End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETE),  MUIA_UserData, AMEN_DELETE,  End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),   MUIA_UserData, AMEN_PRINT,   MUIA_Menuitem_Enabled, isPrintable(data->mailPart), End,
         Child, MenuBarLabel,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROPALL), MUIA_UserData, AMEN_CROPALL, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROPSEL), MUIA_UserData, AMEN_CROPSEL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETEALL), MUIA_UserData, AMEN_DELETEALL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETESEL), MUIA_UserData, AMEN_DELETESEL, End,
       End,
     End;
   }
@@ -261,8 +261,8 @@ OVERLOAD(MUIM_ContextMenuChoice)
       DoMethod(obj, MUIM_AttachmentObject_Save);
     break;
 
-    case AMEN_CROP:
-      DoMethod(obj, MUIM_AttachmentObject_Crop);
+    case AMEN_DELETE:
+      DoMethod(obj, MUIM_AttachmentObject_Delete);
     break;
 
     case AMEN_PRINT:
@@ -277,12 +277,12 @@ OVERLOAD(MUIM_ContextMenuChoice)
       DoMethod(data->attGroupObject, MUIM_AttachmentGroup_SaveSelected);
     break;
 
-    case AMEN_CROPALL:
-      DoMethod(data->attGroupObject, MUIM_AttachmentGroup_CropAll);
+    case AMEN_DELETEALL:
+      DoMethod(data->attGroupObject, MUIM_AttachmentGroup_DeleteAll);
     break;
 
-    case AMEN_CROPSEL:
-      DoMethod(data->attGroupObject, MUIM_AttachmentGroup_CropSelected);
+    case AMEN_DELETESEL:
+      DoMethod(data->attGroupObject, MUIM_AttachmentGroup_DeleteSelected);
     break;
 
     default:
@@ -387,8 +387,8 @@ DECLARE(Save)
 }
 
 ///
-/// DECLARE(Crop)
-DECLARE(Crop)
+/// DECLARE(Delete)
+DECLARE(Delete)
 {
   GETDATA;
 

@@ -10,7 +10,7 @@
 
 CDFILE="./YAM.cd"
 CTFILE="./*.ct"
-SOURCES="../src/*.c ../src/classes/*.c"
+SOURCES="../src/*.c ../src/mui/*.c ../src/rexx/*.c ../src/mime/*.c"
 TMPCD="/tmp/YAM.cd"
 
 ########################################################

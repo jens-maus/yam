@@ -81,12 +81,6 @@ Error
 MSG_NewEntry (25//)
 - new -
 ;
-MSG_Unnamed (26//)
-unnamed
-;
-MSG_Bytes (27//)
-bytes
-;
 MSG_Date (28//)
 Date
 ;
@@ -413,10 +407,6 @@ MSG_LOG_SavingAtt (135//)
 Saved attachment '%s' of message '%s' in folder '%s'
 ; FILENAME, MAILFILE, FOLDER
 ;
-MSG_LOG_CroppingAtt (136//)
-Cropped attachment(s) of message '%s' in folder '%s'
-; MAILFILE, FOLDER
-;
 MSG_LOG_ChangingSubject (137//)
 Changed subject '%s' of message '%s' in folder '%s' to '%s'
 ; SUBJECT, MAILFILE, FOLDER, SUBJECT
@@ -461,10 +451,6 @@ _From|*_Reply-To|_Both|_Cancel
 ;
 MSG_MA_Compare2ReqOpt (153//)
 _From|*_Reply-To|_Cancel
-;
-MSG_MA_AttachRemoved (154//)
-\n\
-_The following attachments have been removed manually:_\n
 ;
 MSG_MA_ConfirmReq (155//)
 Confirmation Request
@@ -627,9 +613,6 @@ Copy...
 ;
 MSG_MA_Save (230//)
 Save...
-;
-MSG_MA_Crop (231//)
-Crop
 ;
 MSG_MA_MReply (232//)
 Reply...
@@ -3506,12 +3489,6 @@ Possible reasons: TCP/IP offline, invalid address, \
 server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
-MSG_ER_UnknownSMTP (1129//)
-Unknown SMTP server: '%s'.\n\
-\n\
-TCP/IP is offline or the server address is invalid.
-; HOST
-;
 MSG_ER_ErrorWriteMailfile (1132//)
 Write error on mail file: %s.\n\
 \n\
@@ -4046,9 +4023,6 @@ Displaying messages...
 MSG_BusyPGPrunning (1290//)
 PGP operation...
 ;
-MSG_BusyComposing (1291//)
-Composing message...
-;
 MSG_BusyDecPrinting (1292//)
 Decoding/printing...
 ;
@@ -4541,11 +4515,6 @@ in the status bar.
 ;
 ; *** Added for YAM 2.5 ********************************************************
 ;
-MSG_MA_CROPREQUEST (1493//)
-All attachments of the selected mails will be cropped.\n\
-\n\
-Do you really want to proceed?
-;
 MSG_YesNoReq2 (1494//)
 _Yes|*_No
 ;
@@ -4720,9 +4689,6 @@ Save all...
 ;
 MSG_MA_ATTACHMENT_SAVESEL (1536//)
 Save selected...
-;
-MSG_MA_ATTACHMENT_CROPALL (1537//)
-Crop all
 ;
 MSG_CO_SImageOnly (1538//)
 image only
@@ -5722,9 +5688,6 @@ Save...
 MSG_MA_MSAVEATT (1832//)
 Save...
 ;
-MSG_MA_MCROP (1833//)
-Crop
-;
 MSG_MA_MNEW (1834//)
 New
 ;
@@ -6701,7 +6664,7 @@ you would like YAM to use for this mail. This\n\
 defaults to the global character set.
 ;
 MSG_ABOUTYAM (2086//)
-About YAM...
+About YAM
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3 (2087//)
 Couldn't connect to host '%s' of account '%s'.\n\
@@ -6845,15 +6808,35 @@ otherwise the e-mail may be malformed.
 MSG_CO_FOLDERDBLCLICK (2107//)
 Double click on folder opens folder settings
 ;
-MSG_MA_ATTACHMENT_CROP (2108//)
-Crop
+MSG_MA_ATTACHMENT_DELETE (2108//)
+Delete
 ;
-MSG_MA_ATTACHMENT_CROPSEL (2109//)
-Crop selected
+MSG_MA_ATTACHMENT_DELETESEL (2109//)
+Delete selected
 ;
-MSG_MA_CROPSELECTEDREQUEST (2110//)
-These attachments will be cropped:\n\
+MSG_MA_DELETESELECTEDREQUEST (2110//)
+The following attachments will be\n\
+deleted:\n\
 %s\
 \n\
 Do you really want to proceed?
+;
+MSG_LOG_DELETEDATT (2111//)
+Deleted attachment(s) of message '%s' in folder '%s'
+; MAILFILE, FOLDER
+;
+MSG_MA_DELETEATT (2112//)
+Delete
+;
+MSG_MA_DELETEATTREQUEST (2113//)
+All attachments of the selected\n\
+mails will be deleted.\n\
+\n\
+Do you really want to proceed?
+;
+MSG_MA_ATTACHMENT_DELETEALL (2114//)
+Delete all
+;
+MSG_MA_MDELETEATT (2115//)
+Delete
 ;

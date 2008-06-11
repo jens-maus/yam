@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (6.6.2008)
+## version $VER: YAM.catalog 6.0 (12.06.2008)
 ## language deutsch
 ## codeset 0
 ;
@@ -90,14 +90,6 @@ Fehler
 MSG_NewEntry
 - neu -
 ; - new -
-;
-MSG_Unnamed
-unbenannt
-; unnamed
-;
-MSG_Bytes
-Bytes
-; bytes
 ;
 MSG_Date
 Datum
@@ -528,11 +520,6 @@ Anhang '%s' der Nachricht '%s' im Postfach '%s' gespeichert
 ; Saved attachment '%s' of message '%s' in folder '%s'
 ; FILENAME, MAILFILE, FOLDER
 ;
-MSG_LOG_CroppingAtt
-Anhänge der Nachricht '%s' im Postfach '%s' entfernt
-; Cropped attachment(s) of message '%s' in folder '%s'
-; MAILFILE, FOLDER
-;
 MSG_LOG_ChangingSubject
 Betreff '%s' der Nachricht '%s' im Postfach '%s' geändert in '%s'
 ; Changed subject '%s' of message '%s' in folder '%s' to '%s'
@@ -589,12 +576,6 @@ _Von|*A_nwort an|_Beide|_Abbrechen
 MSG_MA_Compare2ReqOpt
 _Von|*A_nwort an|_Abbrechen
 ; _From|*_Reply-To|_Cancel
-;
-MSG_MA_AttachRemoved
-\n\
-_Die folgenden Anhänge wurden manuell entfernt:_\n
-; \n\
-; _The following attachments have been removed manually:_\n
 ;
 MSG_MA_ConfirmReq
 Bitte bestätigen
@@ -811,10 +792,6 @@ Kopieren...
 MSG_MA_Save
 Speichern...
 ; Save...
-;
-MSG_MA_Crop
-Abschneiden
-; Crop
 ;
 MSG_MA_MReply
 Antworten...
@@ -5480,10 +5457,6 @@ MSG_BusyPGPrunning
 PGP Operation...
 ; PGP operation...
 ;
-MSG_BusyComposing
-Erstelle Nachricht...
-; Composing message...
-;
 MSG_BusyDecPrinting
 Dekodiere/drucke...
 ; Decoding/printing...
@@ -6142,14 +6115,6 @@ werden soll.
 ; Text that should be displayed\n\
 ; in the status bar
 ;
-MSG_MA_CROPREQUEST
-Alle Anhänge der ausgewählten Nachrichten werden entfernt.\n\
-\n\
-Möchten Sie wirklich fortfahren?
-; All attachments of the selected mails will be cropped.\n\
-; \n\
-; Do you really want to proceed?
-;
 MSG_YesNoReq2
 _Ja|*_Nein
 ;_Yes|*_No
@@ -6332,9 +6297,6 @@ Alle speichern...
 ;
 MSG_MA_ATTACHMENT_SAVESEL
 Ausgewählte speichern...
-;
-MSG_MA_ATTACHMENT_CROPALL
-Alle abschneiden
 ;
 MSG_CO_SImageOnly
 nur Bild
@@ -7351,9 +7313,6 @@ Speichern...
 MSG_MA_MSAVEATT
 Speichern...
 ;
-MSG_MA_MCROP
-Abschneiden
-;
 MSG_MA_MNEW
 Neu
 ;
@@ -8327,6 +8286,9 @@ Geburtsdatum\n\
 Benutzen Sie das landestypische Format,\n\
 z.B. 19.06.1974.
 ;
+MSG_ERROR_THREADS
+Kann das Thread-System nicht initialisieren
+;
 MSG_ERROR_PLAYSOUND
 Beim Abspielen der Tondatei '%s'\n\
 ist ein Fehler aufgetreten.\n\
@@ -8344,6 +8306,9 @@ Mit Hilfe des PopUp-Knopfes können Sie die\n\
 Zeichenkodierung auswählen, die YAM für diese\n\
 verwenden soll. Standardmäßig wird die globale\n\
 Zeichenkodierung verwendet.
+;
+MSG_ABOUTYAM
+Über YAM
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Verbindung zu '%s' von Konto '%s' konnte nicht aufgebaut werden.\n\
@@ -8460,15 +8425,34 @@ fehlerhaft übertragen werden kann.
 MSG_CO_FOLDERDBLCLICK
 Doppelklick auf Postfach öffnet Postfacheinstellungen
 ;
-MSG_MA_ATTACHMENT_CROP
-Abschneiden
+MSG_MA_ATTACHMENT_DELETE
+Löschen
 ;
-MSG_MA_ATTACHMENT_CROPSEL
-Ausgewählte abschneiden
+MSG_MA_ATTACHMENT_DELETESEL
+Ausgewählte löschen
 ;
-MSG_MA_CROPSELECTEDREQUEST
-Folgende Anhänge werden entfernt:\n\
+MSG_MA_DELETESELECTEDREQUEST
+Folgende Anhänge werden gelöscht:\n\
 %s\
 \n\
 Möchten Sie wirklich fortfahren?
+;
+MSG_LOG_DELETEDATT
+Anhänge der Nachricht '%s' im Postfach '%s' gelöscht
+; MAILFILE, FOLDER
+;
+MSG_MA_DELETEATT
+Löschen
+;
+MSG_MA_DELETEATTREQUEST
+Alle Anhänge der ausgewählten\n\
+Nachrichten werden entfernt.\n\
+\n\
+Möchten Sie wirklich fortfahren?
+;
+MSG_MA_ATTACHMENT_DELETEALL
+Alle löschen
+;
+MSG_MA_MDELETEATT
+Löschen
 ;

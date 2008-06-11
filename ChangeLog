@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-11  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c, YAM_WR.c, YAM.cd, german.ct, misc: renamed all "Crop" references
+    to be called "Delete" because that describes the action of deleting an
+    attachment from a mail a bit better. Also adapted the catalog accordingly
+    and updated it according to the latest changes in our sources.
+
 2008-06-11  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, YAM_WR.c, Attachment#?.c, YAM.cd: reworked the crop functionality

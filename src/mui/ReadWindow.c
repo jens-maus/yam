@@ -50,7 +50,7 @@ struct Data
   Object *MI_MOVE;
   Object *MI_DELETE;
   Object *MI_DETACH;
-  Object *MI_CROP;
+  Object *MI_DELETEATT;
   Object *MI_CHSUBJ;
   Object *MI_NAVIG;
   Object *MI_WRAPH;
@@ -90,7 +90,7 @@ struct Data
 enum
 {
   RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,
-  RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_CHSUBJ,RMEN_PREV,
+  RMEN_DELETEATT,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_CHSUBJ,RMEN_PREV,
   RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
   RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,
   RMEN_FFONT,RMEN_SIMAGE,RMEN_TOMARKED,RMEN_TOUNMARKED,RMEN_TOUNREAD,RMEN_TOREAD,RMEN_TOHOLD,
@@ -342,7 +342,7 @@ OVERLOAD(OM_NEW)
   //  L   Save all attachments (RMEN_DETACH)
   //  M   Move mail (RMEN_MOVE)
   //  N   Create new mail (RMEN_NEW)
-  //  O   Crop attachments (RMEN_CROP)
+  //  O   Delete attachments (RMEN_DELETEATT)
   //  P   Print mail part (RMEN_PRINT)
   //  Q
   //  R   Reply mail (RMEN_REPLY)
@@ -376,7 +376,7 @@ OVERLOAD(OM_NEW)
       MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Attachments),
         MenuChild, Menuitem(tr(MSG_RE_MDisplay),"D", TRUE, FALSE, RMEN_DISPLAY),
         MenuChild, data->MI_DETACH = Menuitem(tr(MSG_RE_SaveAll), "L", TRUE, FALSE, RMEN_DETACH),
-        MenuChild, data->MI_CROP = Menuitem(tr(MSG_MA_Crop), "O", TRUE, FALSE, RMEN_CROP),
+        MenuChild, data->MI_DELETEATT = Menuitem(tr(MSG_MA_DELETEATT), "O", TRUE, FALSE, RMEN_DELETEATT),
       End,
       MenuChild, MenuBarLabel,
       MenuChild, Menuitem(tr(MSG_New), "N", TRUE, FALSE, RMEN_NEW),
@@ -498,7 +498,7 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVE,      data->readMailGroup, 1, MUIM_ReadMailGroup_SaveMailRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DISPLAY,   data->readMailGroup, 1, MUIM_ReadMailGroup_DisplayMailRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DETACH,    data->readMailGroup, 1, MUIM_ReadMailGroup_SaveAllAttachments);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CROP,      data->readMailGroup, 1, MUIM_ReadMailGroup_CropAttachmentsRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DELETEATT, data->readMailGroup, 1, MUIM_ReadMailGroup_DeleteAttachmentsRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEW,       obj, 3, MUIM_ReadWindow_NewMail, NMM_NEW, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_REPLY,     obj, 3, MUIM_ReadWindow_NewMail, NMM_REPLY, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FORWARD,   obj, 3, MUIM_ReadWindow_NewMail, NMM_FORWARD, 0);
@@ -689,7 +689,7 @@ DECLARE(ReadMail) // struct Mail *mail
   set(data->MI_MOVE,      MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_DELETE,    MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_DETACH,    MUIA_Menuitem_Enabled, hasAttach);
-  set(data->MI_CROP,      MUIA_Menuitem_Enabled, isRealMail && hasAttach);
+  set(data->MI_DELETEATT, MUIA_Menuitem_Enabled, isRealMail && hasAttach);
   set(data->MI_CHSUBJ,    MUIA_Menuitem_Enabled, isRealMail && !inSpamFolder);
   set(data->MI_NAVIG,     MUIA_Menu_Enabled,     isRealMail);
   set(data->MI_REPLY,     MUIA_Menuitem_Enabled, !isSentMail && !inSpamFolder && !hasStatusSpam(mail));

@@ -1286,7 +1286,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
   else
   {
     if(whichParts == NULL)
-      goOn = (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_CROPREQUEST)) != 0);
+      goOn = (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETEATTREQUEST)) != 0);
     else
     {
       // build a list of filenames which will be deleted
@@ -1303,7 +1303,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
         i++;
       }
 
-      goOn = (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_CROPSELECTEDREQUEST), fileList) != 0);
+      goOn = (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETESELECTEDREQUEST), fileList) != 0);
 
       FreeStrBuf(fileList);
     }
@@ -1381,7 +1381,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
                 }
                 else if(whichParts == NULL)
                 {
-                  // a NULL list indicates that all attachments are to be cropped
+                  // a NULL list indicates that all attachments are to be deleted
                   keepThisPart = FALSE;
                 }
                 else
@@ -1445,12 +1445,12 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
                 else
                 {
                   // write out a new mail part which just contains some information
-                  // about the cropped part
+                  // about the deleted part
                   struct WritePart writePart;
                   char tempName[SIZE_PATHFILE];
                   char tempFileName[SIZE_PATHFILE];
 
-                  D(DBF_MAIL, "cropping part '%s' '%s'", part->CParName, part->Filename);
+                  D(DBF_MAIL, "deleting part '%s' '%s'", part->CParName, part->Filename);
 
                   snprintf(tempName, sizeof(tempName), "Deleted: %s", part->CParName);
                   snprintf(tempFileName, sizeof(tempFileName), "Deleted_%s", part->CParFileName);
@@ -1515,7 +1515,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
             MA_ChangeSelected(TRUE);
             DisplayStatistics(mail->Folder, TRUE);
 
-            AppendToLogfile(LF_ALL, 81, tr(MSG_LOG_CroppingAtt), mail->MailFile, mail->Folder->Name);
+            AppendToLogfile(LF_ALL, 81, tr(MSG_LOG_DELETEDATT), mail->MailFile, mail->Folder->Name);
           }
         }
 
@@ -1538,7 +1538,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
 
   // we need to warn the user of this operation we put up a requester
   // before we go on
-  if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_CROPREQUEST)) > 0)
+  if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETEATTREQUEST)) > 0)
   {
     struct MailList *mlist;
 
@@ -3949,7 +3949,7 @@ struct MA_ClassData *MA_New(void)
     //  L   Exchange mail (MMEN_EXMAIL)
     //  M   Move mail (MMEN_MOVE)
     //  N   New mail (MMEN_NEW)
-    //  O   Crop attachments (MMEN_CROP)
+    //  O   Delete attachments (MMEN_DELETEATT)
     //  P   Print (MMEN_PRINT)
     //  Q   Quit application (MMEN_QUIT)
     //  R   Reply mail (MMEN_REPLY)
@@ -4033,7 +4033,7 @@ struct MA_ClassData *MA_New(void)
         MUIA_Family_Child, data->GUI.MI_SAVE = Menuitem(tr(MSG_MA_MSAVE), "U", TRUE, FALSE, MMEN_SAVE),
         MUIA_Family_Child, data->GUI.MI_ATTACH = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Attachments),
           MUIA_Family_Child, data->GUI.MI_SAVEATT = Menuitem(tr(MSG_MA_MSAVEATT), "T", TRUE, FALSE, MMEN_DETACH),
-          MUIA_Family_Child, data->GUI.MI_REMATT = Menuitem(tr(MSG_MA_MCROP), "O", TRUE, FALSE, MMEN_CROP),
+          MUIA_Family_Child, data->GUI.MI_REMATT = Menuitem(tr(MSG_MA_MDELETEATT), "O", TRUE, FALSE, MMEN_DELETEATT),
         End,
         MUIA_Family_Child, data->GUI.MI_EXPMSG = Menuitem(tr(MSG_MESSAGE_EXPORT), NULL, TRUE, FALSE, MMEN_EXPMSG),
         MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
@@ -4178,7 +4178,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_PRINT,     MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SavePrintHook, TRUE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SAVE,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SavePrintHook, FALSE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DETACH,    MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_SaveAttachHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CROP,      MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_RemoveAttachHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETEATT, MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_RemoveAttachHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXPMSG,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ExportMessagesHook, FALSE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEW,       MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_NEW, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_REPLY,     MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_REPLY, 0);
