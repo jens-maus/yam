@@ -1785,15 +1785,7 @@ DECLARE(CropAttachmentsRequest)
   ENTER();
 
   // remove the attchments now
-  MA_RemoveAttach(mail, TRUE);
-
-  if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail))
-  {
-    MA_ChangeSelected(TRUE);
-    DisplayStatistics(mail->Folder, TRUE);
-  }
-
-  // the redraw of the mail is already done by MA_RemoveAttach()
+  MA_RemoveAttach(mail, NULL, TRUE);
 
   RETURN(0);
   return 0;
