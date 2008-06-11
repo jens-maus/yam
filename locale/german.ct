@@ -6328,10 +6328,10 @@ MSG_MA_ATTACHMENT_PRINT
 Drucken
 ;
 MSG_MA_ATTACHMENT_SAVEALL
-Speichere alle...
+Alle speichern...
 ;
 MSG_MA_ATTACHMENT_SAVESEL
-Speichere ausgewählte...
+Ausgewählte speichern...
 ;
 MSG_MA_ATTACHMENT_CROPALL
 Alle abschneiden
@@ -8459,4 +8459,16 @@ fehlerhaft übertragen werden kann.
 ;
 MSG_CO_FOLDERDBLCLICK
 Doppelklick auf Postfach öffnet Postfacheinstellungen
+;
+MSG_MA_ATTACHMENT_CROP
+Abschneiden
+;
+MSG_MA_ATTACHMENT_CROPSEL
+Ausgewählte abschneiden
+;
+MSG_MA_CROPSELECTEDREQUEST
+Folgende Anhänge werden entfernt:\n\
+%s\
+\n\
+Möchten Sie wirklich fortfahren?
 ;

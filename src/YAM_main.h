@@ -34,6 +34,7 @@
 // forward declarations
 struct Mail;
 struct Folder;
+struct Part;
 
 // General internal flags of a mail (no status information)
 // Warning: Please note that if you change something here you have to make
@@ -349,7 +350,7 @@ BOOL  MA_SortWindow(void);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit, BOOL closeWindows);
 void  MA_ExchangeMail(enum GUILevel mode);
 void  MA_PopNow(enum GUILevel mode, int pop);
-void  MA_RemoveAttach(struct Mail *mail, BOOL warning);
+void  MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning);
 BOOL  MA_Send(enum SendMode sendpos);
 void  MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags);
 BOOL  MA_UpdateMailFile(struct Mail *mail);

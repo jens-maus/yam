@@ -6845,3 +6845,15 @@ otherwise the e-mail may be malformed.
 MSG_CO_FOLDERDBLCLICK (2107//)
 Double click on folder opens folder settings
 ;
+MSG_MA_ATTACHMENT_CROP (2108//)
+Crop
+;
+MSG_MA_ATTACHMENT_CROPSEL (2109//)
+Crop selected
+;
+MSG_MA_CROPSELECTEDREQUEST (2110//)
+These attachments will be cropped:\n\
+%s\
+\n\
+Do you really want to proceed?
+;

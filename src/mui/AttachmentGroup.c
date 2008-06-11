@@ -185,7 +185,8 @@ MakeStaticHook(LayoutHook, LayoutFunc);
 enum {
   AMEN_SAVEALL=100,
   AMEN_SAVESEL,
-  AMEN_CROPALL
+  AMEN_CROPALL,
+  AMEN_CROPSEL
 };
 
 ///
@@ -298,6 +299,8 @@ OVERLOAD(MUIM_ContextMenuBuild)
 {
   GETDATA;
 
+  ENTER();
+
   // dispose the old context_menu if it still exists
   if(data->contextMenu != NULL)
   {
@@ -312,9 +315,11 @@ OVERLOAD(MUIM_ContextMenuBuild)
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL, End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL, End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROPALL), MUIA_UserData, AMEN_CROPALL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROPSEL), MUIA_UserData, AMEN_CROPSEL, End,
     End,
   End;
 
+  RETURN(data->contextMenu);
   return (ULONG)data->contextMenu;
 }
 
@@ -336,6 +341,10 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
     case AMEN_CROPALL:
       DoMethod(obj, MUIM_AttachmentGroup_CropAll);
+    break;
+
+    case AMEN_CROPSEL:
+      DoMethod(obj, MUIM_AttachmentGroup_CropSelected);
     break;
 
     default:
@@ -384,7 +393,7 @@ DECLARE(Clear)
 
   ENTER();
 
-  // iterate through our child list and remove all attachmentimages
+  // iterate through our child list and remove all attachment objects
   if(childList != NULL)
   {
     if(DoMethod(obj, MUIM_Group_InitChange))
@@ -505,9 +514,7 @@ DECLARE(SaveSelected)
     // invoke the method for all selected items
     while((child = NextObject(&cstate)) != NULL)
     {
-      Object *imageObject = (Object *)xget(child, MUIA_AttachmentObject_ImageObject);
-
-      if(xget(imageObject, MUIA_Selected) == TRUE)
+      if(xget(child, MUIA_Selected) == TRUE)
         DoMethod(child, MUIM_AttachmentObject_Save);
     }
   }
@@ -528,20 +535,55 @@ DECLARE(CropAll)
 
   if(data->firstPart != NULL)
   {
-    struct ReadMailData *rmData = data->firstPart->rmData;
-    struct Mail *mail = rmData->mail;
+    // remove all attachments now
+    MA_RemoveAttach(data->firstPart->rmData->mail, NULL, TRUE);
+  }
 
-    // remove the attchments now
-    MA_RemoveAttach(mail, TRUE);
+  RETURN(0);
+  return 0;
+}
 
-    // make sure the listview is properly redrawn
-    if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail))
+///
+/// DECLARE(CropSelected)
+DECLARE(CropSelected)
+{
+  GETDATA;
+  struct List *childList;
+
+  ENTER();
+
+  // iterate through our child list
+  if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
+  {
+    ULONG numSelected = 0;
+    Object *cstate = (Object *)childList->lh_Head;
+    Object *child;
+    struct Part **parts;
+
+    // first count the number of selected attachments
+    while((child = NextObject(&cstate)) != NULL)
     {
-      MA_ChangeSelected(TRUE);
-      DisplayStatistics(mail->Folder, TRUE);
+      if(xget(child, MUIA_Selected) == TRUE)
+        numSelected++;
     }
 
-    // the redraw of the mail is already done by MA_RemoveAttach()
+    // now build a list of selected attachments
+    if(numSelected > 0 && (parts = calloc(numSelected + 1, sizeof(*parts))) != NULL)
+    {
+      ULONG i = 0;
+
+      cstate = (Object *)childList->lh_Head;
+      while((child = NextObject(&cstate)) != NULL)
+      {
+        if(xget(child, MUIA_Selected) == TRUE)
+          parts[i++] = (struct Part *)xget(child, MUIA_AttachmentObject_MailPart);
+      }
+
+      // and finally remove the attachments
+      MA_RemoveAttach(data->firstPart->rmData->mail, parts, TRUE);
+
+      free(parts);
+    }
   }
 
   RETURN(0);
@@ -563,10 +605,8 @@ DECLARE(ClearSelection)
 
     while((child = NextObject(&cstate)) != NULL)
     {
-      Object *imageObject = (Object *)xget(child, MUIA_AttachmentObject_ImageObject);
-
-      W(DBF_GUI, "clearing MUIA_Selected of object %08lx", imageObject);
-      set(imageObject, MUIA_Selected, FALSE);
+      D(DBF_GUI, "clearing MUIA_Selected of object %08lx", child);
+      set(child, MUIA_Selected, FALSE);
     }
   }
 

@@ -391,9 +391,60 @@ static void EmitRcptHeader(FILE *fh, const char *hdr, const char *body)
 }
 
 ///
+/// EncodingName
+// return the literal name for the given encoding
+const char *EncodingName(enum Encoding enc)
+{
+  const char *encName;
+
+  ENTER();
+
+  switch(enc)
+  {
+    case ENC_B64:
+    {
+      encName = "base64";
+    }
+    break;
+    case ENC_QP:
+    {
+      encName = "quoted-printable";
+    }
+    break;
+
+    case ENC_UUE:
+    {
+      encName = "x-uue";
+    }
+    break;
+
+    case ENC_8BIT:
+    {
+      encName = "8bit";
+    }
+    break;
+
+    case ENC_BIN:
+    {
+      encName = "binary";
+    }
+    break;
+
+    default:
+    case ENC_7BIT:
+    {
+      encName = "7bit";
+    }
+    break;
+  }
+
+  RETURN(encName);
+  return encName;
+}
+
 /// WriteContentTypeAndEncoding
 //  Outputs content type header including parameters
-static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
+void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
 {
   char *p;
 
@@ -411,28 +462,14 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
     fputc(';', fh);
     HeaderFputs(fh, p, "name", 0); // output and do rfc2231 encoding
     fputs("\nContent-Disposition: attachment;", fh);
-    HeaderFputs(fh, p, "filename", 0); // output and do rfc2231 encoding
+    HeaderFputs(fh, part->Filename, "filename", 0); // output and do rfc2231 encoding
   }
   fputc('\n', fh);
 
   // output the Content-Transfer-Encoding:
   if(part->EncType != ENC_7BIT)
   {
-    const char *enc = "7bit";
-
-    switch(part->EncType)
-    {
-      case ENC_B64:  enc = "base64"; break;
-      case ENC_QP:   enc = "quoted-printable"; break;
-      case ENC_UUE:  enc = "x-uue"; break;
-      case ENC_8BIT: enc = "8bit"; break;
-      case ENC_BIN:  enc = "binary"; break;
-      case ENC_7BIT:
-        // nothing
-      break;
-    }
-
-    fprintf(fh, "Content-Transfer-Encoding: %s\n", enc);
+    fprintf(fh, "Content-Transfer-Encoding: %s\n", EncodingName(part->EncType));
   }
 
   // output the Content-Description if appropriate
@@ -511,14 +548,14 @@ static void WR_WriteUserInfo(FILE *fh, char *from)
 ///
 /// EncodePart
 //  Encodes a message part
-static BOOL EncodePart(FILE *ofh, const struct WritePart *part)
+BOOL EncodePart(FILE *ofh, const struct WritePart *part)
 {
   BOOL result = FALSE;
   FILE *ifh;
 
   ENTER();
 
-  if((ifh = fopen(part->Filename, "r")))
+  if((ifh = fopen(part->Filename, "r")) != NULL)
   {
     setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-11  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c, YAM_WR.c, Attachment#?.c, YAM.cd: reworked the crop functionality
+    to be able to crop arbitrary and even single attachments instead of all
+    attachments of a mail. The cropped attachments will remain in the mail as
+    attachments, but their content is changed to the former header lines only,
+    including the filename.
+
 2008-06-10  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: added a safety check when updating the AppIcon stats.

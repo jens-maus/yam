@@ -64,10 +64,12 @@ enum
 {
   AMEN_DISPLAY=100,
   AMEN_SAVEAS,
+  AMEN_CROP,
   AMEN_PRINT,
   AMEN_SAVEALL,
   AMEN_SAVESEL,
-  AMEN_CROPALL
+  AMEN_CROPALL,
+  AMEN_CROPSEL
 };
 
 ///
@@ -154,6 +156,31 @@ OVERLOAD(OM_GET)
   {
     ATTR(ImageObject) : *store = (ULONG)data->imageObject; return TRUE;
     ATTR(MailPart)    : *store = (ULONG)data->mailPart;    return TRUE;
+    case MUIA_Selected: *store = xget(data->imageObject, MUIA_Selected); return TRUE;
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags = inittags(msg), *tag;
+
+  while((tag = NextTagItem(&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      case MUIA_Selected:
+      {
+        // forward the information to the image object, but ignore it for ourself
+        set(data->imageObject, MUIA_Selected, tag->ti_Data);
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+    }
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -185,6 +212,8 @@ OVERLOAD(MUIM_ContextMenuBuild)
 {
   GETDATA;
 
+  ENTER();
+
   // dispose the old context_menu if it still exists
   if(data->contextMenu != NULL)
   {
@@ -200,15 +229,18 @@ OVERLOAD(MUIM_ContextMenuBuild)
       Child, MenuObjectT(data->menuTitle),
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DISPLAY), MUIA_UserData, AMEN_DISPLAY, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEAS),  MUIA_UserData, AMEN_SAVEAS,  End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),   MUIA_Menuitem_Enabled, isPrintable(data->mailPart), MUIA_UserData, AMEN_PRINT, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROP),    MUIA_UserData, AMEN_CROP,    End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),   MUIA_UserData, AMEN_PRINT,   MUIA_Menuitem_Enabled, isPrintable(data->mailPart), End,
         Child, MenuBarLabel,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROPALL), MUIA_UserData, AMEN_CROPALL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_CROPSEL), MUIA_UserData, AMEN_CROPSEL, End,
       End,
     End;
   }
 
+  RETURN(data->contextMenu);
   return (ULONG)data->contextMenu;
 }
 
@@ -229,6 +261,10 @@ OVERLOAD(MUIM_ContextMenuChoice)
       DoMethod(obj, MUIM_AttachmentObject_Save);
     break;
 
+    case AMEN_CROP:
+      DoMethod(obj, MUIM_AttachmentObject_Crop);
+    break;
+
     case AMEN_PRINT:
       DoMethod(obj, MUIM_AttachmentObject_Print);
     break;
@@ -243,6 +279,10 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
     case AMEN_CROPALL:
       DoMethod(data->attGroupObject, MUIM_AttachmentGroup_CropAll);
+    break;
+
+    case AMEN_CROPSEL:
+      DoMethod(data->attGroupObject, MUIM_AttachmentGroup_CropSelected);
     break;
 
     default:
@@ -340,6 +380,29 @@ DECLARE(Save)
     }
 
     BusyEnd();
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(Crop)
+DECLARE(Crop)
+{
+  GETDATA;
+
+  ENTER();
+
+  if(data->mailPart != NULL)
+  {
+    struct Part *parts[2];
+
+    // create a NULL terminated list with just this single part
+    parts[0] = data->mailPart;
+    parts[1] = NULL;
+
+    MA_RemoveAttach(data->mailPart->rmData->mail, parts, TRUE);
   }
 
   RETURN(0);

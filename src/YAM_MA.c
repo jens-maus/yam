@@ -1273,115 +1273,257 @@ int MA_CompareByDate(const struct Mail *m1, const struct Mail *m2)
 ///
 /// MA_RemoveAttach
 //  Removes attachments from a message
-void MA_RemoveAttach(struct Mail *mail, BOOL warning)
+void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
 {
-  struct ReadMailData *rmData;
+  BOOL goOn = TRUE;
 
   ENTER();
 
   // if we need to warn the user of this operation we put up a requester
   // before we go on
-  if(warning &&
-     MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_CROPREQUEST)) == 0)
+  if(warning == FALSE)
+    goOn = TRUE;
+  else
   {
-    LEAVE();
-    return;
-  }
-
-  if((rmData = AllocPrivateRMData(mail, PM_ALL)) != NULL)
-  {
-    struct Part *part;
-    char *cmsg;
-    char buf[SIZE_LINE];
-    char fname[SIZE_PATHFILE];
-    char tfname[SIZE_PATHFILE];
-
-    snprintf(tfname, sizeof(tfname), "%s.tmp", GetMailFile(fname, NULL, mail));
-
-    if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)) != NULL)
+    if(whichParts == NULL)
+      goOn = (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_CROPREQUEST)) != 0);
+    else
     {
-      if((part = rmData->firstPart->Next) != NULL && part->Next != NULL)
+      // build a list of filenames which will be deleted
+      char *fileList = NULL;
+      ULONG i = 0;
+
+      while(whichParts[i] != NULL)
       {
-        FILE *out;
-        struct ReadMailData *rmData2;
-
-        if((out = fopen(tfname, "w")) != NULL)
-        {
-          FILE *in;
-          struct Folder *fo = mail->Folder;
-          LONG size;
-
-          setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
-
-          if((in = fopen(rmData->firstPart->Filename, "r")) != NULL)
-          {
-            BOOL infield = FALSE, inbody = FALSE;
-
-            setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
-
-            while(fgets(buf, SIZE_LINE, in))
-            {
-              if(!isspace(*buf))
-                infield = !strnicmp(buf, "content-transfer-encoding", 25) || !strnicmp(buf, "content-type", 12);
-
-              if(!infield || inbody)
-                fputs(buf, out);
-            }
-            fclose(in);
-          }
-
-          fputs("Content-Transfer-Encoding: 8bit\nContent-Type: text/plain; charset=iso-8859-1\n\n", out);
-          fputs(cmsg, out);
-          MA_ExpireIndex(fo);
-          fputs(tr(MSG_MA_AttachRemoved), out);
-
-          for(part = part->Next; part; part = part->Next)
-          {
-            fprintf(out, "%s (%ld %s, %s)\n", part->Name ? part->Name : tr(MSG_Unnamed),
-                                              part->Size,
-                                              tr(MSG_Bytes),
-                                              part->ContentType);
-          }
-
-          fclose(out);
-
-          if(ObtainFileInfo(tfname, FI_SIZE, &size) == TRUE)
-          {
-            fo->Size += size - mail->Size;
-            mail->Size = size;
-          }
-          else
-            mail->Size = -1;
-
-          CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
-          SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
-          DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
-
-          DeleteFile(fname);
-
-          if(fo->Mode > FM_SIMPLE)
-            DoPack(tfname, fname, fo);
-          else
-            RenameFile(tfname, fname);
-
-          if((rmData2 = GetReadMailData(mail)) != NULL)
-          {
-            // make sure to refresh the mail of this window as we do not
-            // have any attachments anymore
-            if(rmData2->readWindow != NULL)
-              DoMethod(rmData2->readWindow, MUIM_ReadWindow_ReadMail, mail);
-            else if(rmData2->readMailGroup != NULL)
-              DoMethod(rmData2->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, MUIF_ReadMailGroup_ReadMail_UpdateTextOnly);
-          }
-
-          AppendToLogfile(LF_ALL, 81, tr(MSG_LOG_CroppingAtt), mail->MailFile, fo->Name);
-        }
+        if(whichParts[i]->CParName != NULL)
+          fileList = StrBufCat(fileList, whichParts[i]->CParName);
+		else
+          fileList = StrBufCat(fileList, whichParts[i]->CParFileName);
+        fileList = StrBufCat(fileList, "\n");
+        i++;
       }
 
-      free(cmsg);
-    }
+      goOn = (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_CROPSELECTEDREQUEST), fileList) != 0);
 
-    FreePrivateRMData(rmData);
+      FreeStrBuf(fileList);
+    }
+  }
+
+  if(goOn == TRUE)
+  {
+    struct ReadMailData *rmData;
+
+    if((rmData = AllocPrivateRMData(mail, PM_ALL)) != NULL)
+    {
+      struct Part *part;
+      char *cmsg;
+      char buf[SIZE_LINE];
+      char fname[SIZE_PATHFILE];
+      char tfname[SIZE_PATHFILE];
+
+      snprintf(tfname, sizeof(tfname), "%s.tmp", GetMailFile(fname, NULL, mail));
+
+      if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)) != NULL)
+      {
+        if((part = rmData->firstPart->Next) != NULL && part->Next != NULL)
+        {
+          FILE *out;
+          struct Part *headerPart = rmData->firstPart;
+
+          SHOWSTRING(DBF_MAIL, tfname);
+          if((out = fopen(tfname, "w")) != NULL)
+          {
+            ULONG keptParts = 0;
+            LONG size;
+            struct ReadMailData *rmData2;
+
+            for(part = rmData->firstPart; part; part = part->Next)
+            {
+              if(part == headerPart)
+              {
+                FILE *in;
+                char stopBoundary[SIZE_DEFAULT];
+
+                D(DBF_MAIL, "keeping header part '%s'", part->Filename);
+
+                snprintf(stopBoundary, sizeof(stopBoundary), "--%s\n", headerPart->CParBndr);
+
+                // For the header part we simply copy from the raw mail file instead of the
+                // parsed mail part file, because the raw file may contain additonal MIME
+                // warning texts which we want to keep, because they belong to the original
+                // mail.
+                if((in = fopen(rmData->readFile, "r")) != NULL)
+                {
+                  setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
+                  while(fgets(buf, sizeof(buf), in) != NULL)
+                  {
+                    // copy all lines until we find the first boundary marker which terminates
+                    // the first mail part
+                    if(strcmp(buf, stopBoundary) == 0)
+                      break;
+                    else
+                      fputs(buf, out);
+                  }
+                  fprintf(out, "--%s", headerPart->CParBndr);
+
+                  fclose(in);
+                }
+              }
+              else
+              {
+                BOOL keepThisPart = TRUE;
+
+                if(part->Nr == rmData->letterPartNum)
+                {
+                  // we keep the letter part in any case
+                  D(DBF_MAIL, "keeping letter part '%s'", part->Filename);
+                }
+                else if(whichParts == NULL)
+                {
+                  // a NULL list indicates that all attachments are to be cropped
+                  keepThisPart = FALSE;
+                }
+                else
+                {
+                  ULONG i = 0;
+
+                  while(whichParts[i] != NULL)
+                  {
+                    if(whichParts[i]->Nr == part->Nr)
+                    {
+                      keepThisPart = FALSE;
+                      break;
+                    }
+                    i++;
+                  }
+                }
+
+                if(keepThisPart == TRUE)
+                {
+                  // write out this part to the new mail file
+
+                  D(DBF_MAIL, "keeping part '%s' '%s'", part->CParName, part->Filename);
+
+                  if(isDecoded(part) == TRUE)
+                  {
+                    struct WritePart writePart;
+
+                    memset(&writePart, 0, sizeof(writePart));
+                    writePart.ContentType = part->ContentType;
+                    writePart.Filename = part->Filename;
+                    writePart.charset = G->writeCharset;
+                    writePart.EncType = ENC_8BIT;
+
+                    // create a new header, since decoded parts have these stripped
+                    fputc('\n', out);
+                    WriteContentTypeAndEncoding(out, &writePart);
+                    fputc('\n', out);
+                    EncodePart(out, &writePart);
+                    fprintf(out, "\n--%s", headerPart->CParBndr);
+                  }
+                  else
+                  {
+                    // undecoded parts are simply appended without change
+                    FILE *in;
+
+                    if((in = fopen(part->Filename, "r")) != NULL)
+                    {
+                      setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
+                      fputc('\n', out);
+                      while(fgets(buf, sizeof(buf), in) != NULL)
+                        fputs(buf, out);
+
+                      fclose(in);
+                      fprintf(out, "\n--%s", headerPart->CParBndr);
+                    }
+                  }
+
+                  keptParts++;
+                }
+                else
+                {
+                  // write out a new mail part which just contains some information
+                  // about the cropped part
+                  struct WritePart writePart;
+                  char tempName[SIZE_PATHFILE];
+                  char tempFileName[SIZE_PATHFILE];
+
+                  D(DBF_MAIL, "cropping part '%s' '%s'", part->CParName, part->Filename);
+
+                  snprintf(tempName, sizeof(tempName), "Deleted: %s", part->CParName);
+                  snprintf(tempFileName, sizeof(tempFileName), "Deleted_%s", part->CParFileName);
+
+                  memset(&writePart, 0, sizeof(writePart));
+                  writePart.ContentType = "text/deleted";
+                  writePart.Filename = tempFileName;
+                  writePart.Description = part->CParDesc;
+                  writePart.Name = tempName;
+                  writePart.charset = G->writeCharset;
+                  writePart.EncType = ENC_8BIT;
+
+                  fputc('\n', out);
+                  WriteContentTypeAndEncoding(out, &writePart);
+                  fputc('\n', out);
+                  fprintf(out, "The original MIME headers for this attachment are:\n");
+                  fprintf(out, "Content-Type: %s; name=\"%s\"\n", part->ContentType, part->CParName);
+                  fprintf(out, "Content-Transfer-Encoding: %s\n", EncodingName(part->EncodingCode));
+                  fprintf(out, "Content-Disposition: %s; filename=\"%s\"\n", part->ContentDisposition, part->CParFileName);
+                  fprintf(out, "\n--%s", headerPart->CParBndr);
+                }
+              }
+            }
+
+            fputs("--\n\n", out);
+
+            fclose(out);
+
+            // update the size information
+            if(ObtainFileInfo(tfname, FI_SIZE, &size) == TRUE)
+            {
+              mail->Folder->Size += size - mail->Size;
+              mail->Size = size;
+            }
+            else
+              mail->Size = -1;
+
+            // clear the multipart/mixed flag only if we just removed all attachments
+            if(keptParts == 0)
+              CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
+            // flag folder as modified
+            SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);
+            DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
+
+            DeleteFile(fname);
+
+            if(mail->Folder->Mode > FM_SIMPLE)
+              DoPack(tfname, fname, mail->Folder);
+            else
+              RenameFile(tfname, fname);
+
+            if((rmData2 = GetReadMailData(mail)) != NULL)
+            {
+              // make sure to refresh the mail of this window as we do not
+              // have any attachments anymore
+              if(rmData2->readWindow != NULL)
+                DoMethod(rmData2->readWindow, MUIM_ReadWindow_ReadMail, mail);
+              else if(rmData2->readMailGroup != NULL)
+                DoMethod(rmData2->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+            }
+
+            MA_ChangeSelected(TRUE);
+            DisplayStatistics(mail->Folder, TRUE);
+
+            AppendToLogfile(LF_ALL, 81, tr(MSG_LOG_CroppingAtt), mail->MailFile, mail->Folder->Name);
+          }
+        }
+
+        free(cmsg);
+      }
+
+      FreePrivateRMData(rmData);
+    }
   }
 
   LEAVE();
@@ -1411,7 +1553,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
       i = 0;
       ForEachMailNode(mlist, mnode)
       {
-        MA_RemoveAttach(mnode->mail, FALSE);
+        MA_RemoveAttach(mnode->mail, NULL, FALSE);
 
         // if BusySet() returns FALSE, then the user aborted
         if(BusySet(++i) == FALSE)
