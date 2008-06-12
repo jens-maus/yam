@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.2 (6.06.2008)
+## version $VER: YAM.catalog 6.2 (12.06.2008)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -108,14 +108,6 @@ Errore
 MSG_NewEntry
 - nuovo -
 ; - new -
-;
-MSG_Unnamed
-senza nome
-; unnamed
-;
-MSG_Bytes
-Byte
-; bytes
 ;
 MSG_Date
 Data
@@ -545,11 +537,6 @@ Salvato l'allegato '%s' del messaggio '%s' nella cartella '%s'
 ; Saved attachment '%s' of message '%s' in folder '%s'
 ; FILENAME, MAILFILE, FOLDER
 ;
-MSG_LOG_CroppingAtt
-Tagliati gli allegati del messaggio '%s' nella cartella '%s'
-; Cropped attachment(s) of message '%s' in folder '%s'
-; MAILFILE, FOLDER
-;
 MSG_LOG_ChangingSubject
 Modificato l'oggetto '%s' del messaggio '%s' nella cartella '%s' in '%s'
 ; Changed subject '%s' of message '%s' in folder '%s' to '%s'
@@ -606,12 +593,6 @@ _Da|*_Rispondi-A|_Entrambi|_Annulla
 MSG_MA_Compare2ReqOpt
 _Da|*_Rispondi-A|_Annulla
 ; _From|*_Reply-To|_Cancel
-;
-MSG_MA_AttachRemoved
-\n\
-_I seguenti allegati sono stati rimossi manualmente:_\n\
-; \n\
-; _The following attachments have been removed manually:_\n
 ;
 MSG_MA_ConfirmReq
 Richiesta di conferma
@@ -829,10 +810,6 @@ MSG_MA_Save
 Salva...
 ; Save...
 ;
-MSG_MA_Crop
-Taglia
-; Crop
-;
 MSG_MA_MReply
 Rispondi...
 ; Reply...
@@ -939,8 +916,8 @@ cartella al server di posta.
 ; in the Outgoing folder.
 ;
 MSG_HELP_MA_BT_FILTER
-Applica i filtri a tutti i messaggi\n\
-di questa cartella.\n\
+Applica i filtri a tutti i messaggi di\n\
+questa cartella.\n\
 \n\
 Nota che nel caso vengano selezionati\n\
 2 o più messaggi, solo questi verranno\n\
@@ -2756,9 +2733,9 @@ del programma?
 ; Check for mail.
 ;
 MSG_HELP_CO_CH_CHECKBD
-Verifica la rubrica ed apri un memorandum nel\n\
-caso sia il compleanno od un anniversario di\n\
-qualche amico o conoscente.
+Verifica la rubrica ed apre un memorandum nel caso\n\
+sia il compleanno o l'anniversario di qualche amico\n\
+o conoscente.
 ; Check the address book and open a\n\
 ; reminder if it's a person's birthday.
 ;
@@ -4839,16 +4816,6 @@ non è riuscito a gestire le richieste HTTP.
 ; server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
-MSG_ER_UnknownSMTP
-Server SMTP sconosciuto: '%s'.\n\
-\n\
-TCP/IP non in linea o indirizzo\n\
-del server errato.
-; Unknown SMTP server: '%s'.\n\
-; \n\
-; TCP/IP is offline or the server address is invalid.
-; HOST
-;
 MSG_ER_ErrorWriteMailfile
 Errore di scrittura nel file di posta: %s.\n\
 \n\
@@ -5583,10 +5550,6 @@ MSG_BusyPGPrunning
 Operazione PGP...
 ; PGP operation...
 ;
-MSG_BusyComposing
-Composizione del messaggio...
-; Composing message...
-;
 MSG_BusyDecPrinting
 Decodificazione/stampa...
 ; Decoding/printing...
@@ -6286,14 +6249,6 @@ barra di stato.
 ;
 ; *** Added for YAM 2.5 ********************************************************
 ;
-MSG_MA_CROPREQUEST
-Tutti gli allegati del messaggio selezionato verranno rimossi.\n\
-\n\
-Sei sicuro di voler continuare?
-; All attachments of the selected mails will be cropped.\n\
-; \n\
-; Do you really want to proceed?
-;
 MSG_YesNoReq2
 _Sì|*_No
 ; _Yes|*_No
@@ -6559,10 +6514,6 @@ Salva tutti...
 MSG_MA_ATTACHMENT_SAVESEL
 Salva selezionati...
 ; Save selected...
-;
-MSG_MA_ATTACHMENT_CROPALL
-Taglia tutti
-; Crop all
 ;
 MSG_CO_SImageOnly
 solo immagine
@@ -8022,10 +7973,6 @@ Salva...
 MSG_MA_MSAVEATT
 Salva...
 ; Save...
-;
-MSG_MA_MCROP
-Taglia
-; Crop
 ;
 MSG_MA_MNEW
 Nuovo
@@ -9536,8 +9483,8 @@ set di caratteri globale.
 ; defaults to the global character set.
 ;
 MSG_ABOUTYAM
-Informazioni su YAM...
-; About YAM...
+Informazioni su YAM
+; About YAM
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Impossibile connettersi all'host '%s' dell'account '%s'.\n\
@@ -9778,6 +9725,53 @@ inviato potrebbe risultare malformato.
 ; otherwise the e-mail may be malformed.
 ;
 MSG_CO_FOLDERDBLCLICK
-Doppio click sulla cartella per l'apertura delle impostazioni medesime
+Doppio click sulla cartella per l'apertura delle impostazioni della stessa
 ; Double click on folder opens folder settings
+;
+MSG_MA_ATTACHMENT_DELETE
+Cancella
+; Delete
+;
+MSG_MA_ATTACHMENT_DELETESEL
+Cancella selezionato
+; Delete selected
+;
+MSG_MA_DELETESELECTEDREQUEST
+I seguenti allegati verranno\n\
+cancellati:\n\
+%s\
+\n\
+Sei sicuro di voler procedere?
+; The following attachments will be\n\
+; deleted:\n\
+; %s\
+; \n\
+; Do you really want to proceed?
+;
+MSG_LOG_DELETEDATT
+Cancellato allegato(i) del messaggio '%s' nella cartella '%s'
+; Deleted attachment(s) of message '%s' in folder '%s'
+; MAILFILE, FOLDER
+;
+MSG_MA_DELETEATT
+Cancella
+; Delete
+;
+MSG_MA_DELETEATTREQUEST
+Tutti gli allegati del messaggio\n\
+selezionato verranno cancellati.\n\
+\n\
+Sei sicuro di voler procedere?
+; All attachments of the selected\n\
+; mails will be deleted.\n\
+; \n\
+; Do you really want to proceed?
+;
+MSG_MA_ATTACHMENT_DELETEALL
+Cancella tutto
+; Delete all
+;
+MSG_MA_MDELETEATT
+Cancella
+; Delete
 ;
