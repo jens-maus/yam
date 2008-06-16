@@ -1,21 +1,9 @@
-## version $VER: YAM.catalog 6.0 (02.04.2008)
+## version $VER: YAM.catalog 6.0 (17.06.2008)
 ## language français
-## codeset 111
+## codeset 0
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 3864 2008-02-08 02:44:15Z
-;
-; Please note that all catalog strings have to carry a proper
-; identifier number in the (X//) string part of the MSG_ identifier
-; field and that those numbers have to be unique and continuous over
-; all different YAM versions. This allows to remove some obsolete
-; strings later on without having to worry about identifier clashes.
-; This however means that if an entry is being deleted here its
-; identifier should NEVER be reused later on. So, if you are going to
-; add new strings here do that always at the bottom of the file
-; and increase the last listed identifier number by one for your
-; new entries. And if you delete an entry NEVER reorder or resort
-; the ID numbers accordingly.
+; based on YAM.cd 4060 2008-06-11 22:37:37Z
 ;
 ;#version 6
 ;#language english
@@ -105,14 +93,6 @@ Erreur
 MSG_NewEntry
 - nouveau -
 ; - new -
-;
-MSG_Unnamed
-Sans nom
-; unnamed
-;
-MSG_Bytes
-octets
-; bytes
 ;
 MSG_Date
 Date
@@ -540,11 +520,6 @@ Pièce(s) jointe(s) « %s » du message « %s » du dossier « %s » sauvée(s)
 ; Saved attachment '%s' of message '%s' in folder '%s'
 ; FILENAME, MAILFILE, FOLDER
 ;
-MSG_LOG_CroppingAtt
-Pièce(s) jointe(s) du message « %s » du dossier « %s » supprimée(s)
-; Cropped attachment(s) of message '%s' in folder '%s'
-; MAILFILE, FOLDER
-;
 MSG_LOG_ChangingSubject
 Change le sujet « %s » du message « %s » dans le dossier « %s » en « %s »
 ; Changed subject '%s' of message '%s' in folder '%s' to '%s'
@@ -607,12 +582,6 @@ _Expéditeur|*_Répondre à|_Les deux|_Annuler
 MSG_MA_Compare2ReqOpt
 _Expéditeur|*_Répondre à|_Annuler
 ; _From|*_Reply-To|_Cancel
-;
-MSG_MA_AttachRemoved
-\n\
--- Les pièces jointes suivantes ont été supprimées manuellement : --\n\n
-; \n\
-; _The following attachments have been removed manually:_\n
 ;
 MSG_MA_ConfirmReq
 Demande de confirmation
@@ -830,10 +799,6 @@ Copier...
 MSG_MA_Save
 Sauver...
 ; Save...
-;
-MSG_MA_Crop
-Supprimer
-; Crop
 ;
 MSG_MA_MReply
 Répondre...
@@ -4845,39 +4810,6 @@ ou ne supporte pas les requêtes HTTP.
 ; server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
-MSG_ER_UnknownPOP
-Serveur POP3 inconnu : « %s ».\n\
-\n\
-La couche TCP/IP est hors ligne ou l'adresse du serveur est invalide.
-; Unknown POP3 server: '%s'.\n\
-; \n\
-; TCP/IP is offline or the server address is invalid.
-; HOST
-;
-MSG_ER_UnknownSMTP
-Serveur SMTP inconnu : « %s ».\n\
-\n\
-La couche TCP/IP est hors ligne ou l'adresse du serveur est invalide.
-; Unknown SMTP server: '%s'.\n\
-; \n\
-; TCP/IP is offline or the server address is invalid.
-; HOST
-;
-MSG_ER_CantConnect
-Impossible de se connecter à « %s ».\n\
-\n\
-Le serveur de courrier est hors service, ou n'est pas compatible POP3/SMTP.
-; Couldn't connect to '%s'.\n\
-; \n\
-; The mail server is currently down or doesn't support the POP3/SMTP protocols.
-; HOST
-;
-MSG_ER_NoAPOP
-Votre serveur POP3 ne supporte pas APOP. \
-Veuillez désactivez l'option dans la configuration.
-; Your POP3 server doesn't support APOP. \
-; Please disable APOP in the configuration.
-;
 MSG_ER_ErrorWriteMailfile
 Erreur d'écriture pour : %s.\n\
 \n\
@@ -5610,10 +5542,6 @@ MSG_BusyPGPrunning
 Opération PGP...
 ; PGP operation...
 ;
-MSG_BusyComposing
-Composition du message...
-; Composing message...
-;
 MSG_BusyDecPrinting
 Décodage et impression...
 ; Decoding/printing...
@@ -6084,10 +6012,6 @@ Veuillez vérifier votre installation de AmiSSL et redémarrez YAM.
 ; \n\
 ; Please check your AmiSSL installation and restart YAM.
 ;
-MSG_ER_INITTLS
-Impossible d'initialiser la session TLSv1/SSLv3 pour %s
-; Couldn't initialize TLSv1/SSLv3 session for %s
-;
 MSG_TR_SENDAUTH
 Envoi la requête d'authentification SMTP...
 ; Sending SMTP AUTH request...
@@ -6150,12 +6074,6 @@ de AmiSSL ou désactivez TLS/SSL pour cette connexion.
 MSG_RETRY_QUIT_GAD
 Ré-essayer|Quitter
 ; Try again|Quit
-;
-MSG_ER_NOSTARTTLS
-Le serveur SMTP auquel vous essayez de vous connecter ne gère pas \
-TLS/SSL. Veuillez désactiver cette option dans la configuration.
-; Your SMTP server doesn't support TLS/SSL. \
-; Please disable this option in the configuration.
 ;
 MSG_ER_NOAUTHUSERPASS
 Le nom d'utilisateur ou bien le mot de passe n'a pas été indiqué dans \
@@ -6311,14 +6229,6 @@ dans la barre d'information.
 ;
 ;
 ; *** Added for YAM 2.5 ********************************************************
-;
-MSG_MA_CROPREQUEST
-Toutes les pièces jointes à ce courrier seront détruites.\n\
-\n\
-Voulez-vous continuer l'opération ?
-; All attachments of the selected mails will be cropped.\n\
-; \n\
-; Do you really want to proceed?
 ;
 MSG_YesNoReq2
 _Oui|*_Non
@@ -6566,10 +6476,6 @@ Sauver tous...
 MSG_MA_ATTACHMENT_SAVESEL
 Sauver sélection...
 ; Save selected...
-;
-MSG_MA_ATTACHMENT_CROPALL
-Crop all
-; Crop all
 ;
 MSG_CO_SImageOnly
 image seule
@@ -8010,10 +7916,6 @@ MSG_MA_MSAVEATT
 Sauver...
 ; Save...
 ;
-MSG_MA_MCROP
-Supprimer
-; Crop
-;
 MSG_MA_MNEW
 Nouveau
 ; New
@@ -8502,23 +8404,6 @@ acceptable sera remis dans la boite de réception.
 ; as 'spam' and later manually marked as 'not spam' will be\n\
 ; automatically moved back to the Incoming folder.
 ;
-MSG_ER_NO8BITMIME
-Le serveur SMPT « %s » a indiqué qu'il ne supportait pas \
-le transfert de courriers 8 bits et vous avez l'option \
-autorisant le 8 bits activée.\n\
-\n\
-Veuillez désactiver cette option dans vos préférences \
-TCP/IP et rééditer le message avant de le renvoyer. Dans \
-le cas contraire il se peut qu'il soit corrompu lors de \
-son transfert.
-; SMTP server '%s' reported that it doesn't support 8bit \
-; mail transfers while you have the 'Allow8bit' option \
-; enabled.\n\
-; \n\
-; Please disable this option in your TCP/IP preferences\n\
-; and re-edit the e-mail before trying to send it again,\n\
-; otherwise the e-mail may be malformed.
-;
 MSG_CO_FILTER_HAM
 Appliquer les _filtres
 ; Apply _filters
@@ -8558,34 +8443,6 @@ Nom (nouveaux/non-lus)
 MSG_CO_FOLDERINFO05
 Nom (non-lus/nouveaux)
 ; Folder name (unread/new)
-;
-MSG_ER_BADRESPONSE
-Mauvaise réponse du serveur de courrier « %s » \
-à la commande « %s » :\n\
-%s\n\
-\n\
-Le serveur de mail n'a pas pu exécuter la commande \
-et a répondu par le message d'erreur ci-dessus.
-; Bad response from mail server '%s' to command '%s':\n\
-; \n\
-; %s\n\
-; \n\
-; The mail server couldn't execute the command \
-; and replied with the above error message.
-; SERVER, COMMAND, TEXT
-;
-MSG_ER_POP3WELCOME
-Le serveur POP3 « %s » a répondu par un message d'erreur lors de la \
-procédure d'accueil et la communication a été interrompue :\n\
-\n\
-%s\n\
-\n
-; POP3 server '%s' replied with an error message during the welcome \
-; procedure and the connection was terminated:\n\
-; \n\
-; %s\n\
-; \n
-; SERVER, TEXT
 ;
 MSG_FO_EXPIREUNREAD
 même non-lus
@@ -8712,50 +8569,6 @@ Les dernières informations concernant YAM peuvent\n\
 MSG_WR_VIEW
 Affichage
 ; View
-;
-MSG_ER_CONNECTERR_SOCKET_IN_USE
-Impossible de se connecter à « %s ».\n\
-\n\
-Une connexion socket TCP/IP semble être déjà active. \
-Veuillez fermer tous les autres transferts en cours.
-; Couldn't connect to '%s'.\n\
-; \n\
-; A TCP/IP socket connection seems to be already active. \
-; Please close any other existing transfers.
-;
-MSG_ER_CONNECTERR_TIMEDOUT
-Impossible de se connecter à « %s ».\n\
-\n\
-Le serveur de courrier n'a pas répondu dans le délai imparti.
-; Couldn't connect to '%s'.\n\
-; \n\
-; The mail server didn't respond within the predefined \
-; time frame and therefore timed out.
-;
-MSG_ER_CONNECTERR_NO_SOCKET
-Impossible de se connecter à « %s ».\n\
-\n\
-YAM n'a pas été en mesure d'établir une connexion socket \
-vers le serveur de courrier. Veuillez vous assurer que votre \
-pile TCP/IP est bien démarrée et fonctionne correctement.
-; Couldn't connect to '%s'.\n\
-; \n\
-; YAM wasn't able to establish a socket connection \
-; to the mail server. Please make sure that your TCP/IP \
-; stack is online and working properly.
-;
-MSG_ER_CONNECTERR_NO_NONBLOCKIO
-Impossible de se connecter à « %s ».\n\
-\n\
-YAM n'a pas été en mesure d'établir une connexion \
-avec accès non bloquant. Veuillez vous assurer que \
-votre pile TCP/IP peut établir de telles connections.
-; Couldn't connect to '%s'.\n\
-; \n\
-; YAM wasn't able to establish a non-blocking I/O \
-; connection to the mail server. Please make sure that \
-; your TCP/IP stack can establish non-blocking I/O \
-; connections.
 ;
 MSG_CONFIG_MODIFIED
 La configuration a été modifiée, \
@@ -9551,4 +9364,307 @@ fonctionne pas correctement.
 ; unsupported sound file or because your\n\
 ; sound datatype is not properly working.
 ; FILE
+;
+MSG_WR_CHARSET
+Jeu de _Caractères
+; _Charset
+;
+MSG_HELP_WR_PO_CHARSET
+Utilisez la liste déroulante pour sélectionner\n\
+le jeu de caractères que vous souhaitez que YAM\n\
+utilise pour ce courrier. Par défaut, le jeu de\n\
+caractères global est utilisé.
+; Use the popup button to select the character set\n\
+; you would like YAM to use for this mail. This\n\
+; defaults to the global character set.
+;
+MSG_ABOUTYAM
+À propos de YAM...
+; About YAM
+;
+MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+\n\
+Une connexion socket TCP/IP semble être déjà active. \
+Veuillez fermer tous les autres transferts en cours.
+; Couldn't connect to host '%s' of account '%s'.\n\
+; \n\
+; A TCP/IP socket connection seems to be already active. \
+; Please close any other existing transfers.
+;
+; HOST, ACCOUNT
+;
+MSG_ER_CONNECTERR_TIMEDOUT_POP3
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+\n\
+Le serveur de courrier n'a pas répondu dans le délai imparti.
+; Couldn't connect to host '%s' of account '%s'.\n\
+; \n\
+; The mail server didn't respond within the predefined \
+; time frame and therefore timed out.
+;
+; HOST, ACCOUNT
+;
+MSG_ER_CONNECTERR_NO_SOCKET_POP3
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+\n\
+YAM n'a pas été en mesure d'établir une connexion socket \
+vers le serveur de courrier. Veuillez vous assurer que votre \
+pile TCP/IP est bien démarrée et fonctionne correctement.
+; Couldn't connect to host '%s' of account '%s'.\n\
+; \n\
+; YAM wasn't able to establish a socket connection \
+; to the mail server. Please make sure that your TCP/IP \
+; stack is online and working properly.
+;
+; HOST, ACCOUNT
+;
+MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+\n\
+YAM n'a pas été en mesure d'établir une connexion \
+avec accès non bloquant. Veuillez vous assurer que \
+votre pile TCP/IP peut établir de telles connexions.
+; Couldn't connect to host '%s' of account '%s'.\n\
+; \n\
+; YAM wasn't able to establish a non-blocking I/O \
+; connection to the mail server. Please make sure that \
+; your TCP/IP stack can establish non-blocking I/O \
+; connections.
+;
+; HOST, ACCOUNT
+;
+MSG_ER_UNKNOWN_HOST_POP3
+Serveur POP3 « %s » du compte « %s » inconnu.\n\
+\n\
+La couche TCP/IP est hors ligne ou l'adresse du serveur est invalide.
+; Unknown POP3 server '%s' of account '%s'.\n\
+; \n\
+; TCP/IP is offline or the server address is invalid.
+;
+; HOST, ACCOUNT
+;
+MSG_ER_CANNOT_CONNECT_POP3
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+\n\
+Le serveur de courrier est hors service, ou ne supporte pas le protocole POP3.
+; Couldn't connect to host '%s' of account '%s'.\n\
+; \n\
+; The mail server is currently down or doesn't support the POP3 protocols.
+;
+; HOST, ACCOUNT
+;
+MSG_ER_POP3WELCOME
+Le serveur POP3 « %s » du compte « %s » a répondu par un message d'erreur lors de la \
+procédure d'accueil et la communication a été interrompue :\n\
+\n\
+%s\n\
+\n
+; POP3 server '%s' of account '%s' replied with an error message during the welcome \
+; procedure and the connection was terminated:\n\
+; \n\
+; %s\n\
+; \n
+; SERVER, ACCOUNT, TEXT
+;
+MSG_ER_BADRESPONSE_POP3
+Mauvaise réponse du serveur de courrier « %s » du compte « %s » \
+à la commande « %s » :\n\
+%s\n\
+\n\
+Le serveur de mail n'a pas pu exécuter la commande \
+et a répondu par le message d'erreur ci-dessus.
+; Bad response from mail server '%s' of account '%s' to command '%s':\n\
+; \n\
+; %s\n\
+; \n\
+; The mail server couldn't execute the command \
+; and replied with the above error message.
+;
+; SERVER, ACCOUNT, COMMAND, TEXT
+;
+MSG_ER_INITTLS_POP3
+Impossible d'initialiser la session TLSv1/SSLv3 avec l'hôte « %s » du compte « %s ».
+; Couldn't initialize TLSv1/SSLv3 session with host '%s' of account '%s'.
+;
+; HOST, ACCOUNT
+;
+MSG_ER_NO_APOP
+Le serveur POP3 « %s » du compte « %s » ne supporte pas APOP. \
+Veuillez désactivez l'option dans la configuration.
+; The POP3 server '%s' of account '%s' doesn't support APOP. \
+; Please disable APOP in the configuration.
+;
+; HOST, ACCOUNT
+;
+MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+\n\
+Une connexion socket TCP/IP semble être déjà active. \
+Veuillez fermer tous les autres transferts en cours.
+; Couldn't connect to host '%s'.\n\
+; \n\
+; A TCP/IP socket connection seems to be already active. \
+; Please close any other existing transfers.
+;
+; HOST
+;
+MSG_ER_CONNECTERR_TIMEDOUT_SMTP
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+\n\
+Le serveur de courrier n'a pas répondu dans le délai imparti.
+; Couldn't connect to host '%s'.\n\
+; \n\
+; The mail server didn't respond within the predefined \
+; time frame and therefore timed out.
+;
+; HOST
+;
+MSG_ER_CONNECTERR_NO_SOCKET_SMTP
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+\n\
+YAM n'a pas été en mesure d'établir une connexion socket \
+vers le serveur de courrier. Veuillez vous assurer que votre \
+pile TCP/IP est bien démarrée et fonctionne correctement.
+; Couldn't connect to host '%s'.\n\
+; \n\
+; YAM wasn't able to establish a socket connection \
+; to the mail server. Please make sure that your TCP/IP \
+; stack is online and working properly.
+;
+; HOST
+;
+MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+\n\
+YAM n'a pas été en mesure d'établir une connexion \
+avec accès non bloquant. Veuillez vous assurer que \
+votre pile TCP/IP peut établir de telles connexions.
+; Couldn't connect to host '%s'.\n\
+; \n\
+; YAM wasn't able to establish a non-blocking I/O \
+; connection to the mail server. Please make sure that \
+; your TCP/IP stack can establish non-blocking I/O \
+; connections.
+;
+; HOST
+;
+MSG_ER_INITTLS_SMTP
+Impossible d'initialiser la session TLSv1/SSLv3 avec l'hôte « %s ».
+; Couldn't initialize TLSv1/SSLv3 session with host '%s'.
+;
+; HOST
+;
+MSG_ER_NOSTARTTLS_SMTP
+Votre serveur SMTP « %s » ne gère pas TLS/SSL. \
+Veuillez désactiver cette option dans la configuration.
+; Your SMTP server '%s' doesn't support TLS/SSL. \
+; Please disable this option in the configuration.
+;
+; HOST
+;
+MSG_ER_BADRESPONSE_SMTP
+Mauvaise réponse du serveur de courrier « %s » du compte « %s » \
+à la commande « %s » :\n\
+%s\n\
+\n\
+Le serveur de mail n'a pas pu exécuter la commande \
+et a répondu par le message d'erreur ci-dessus.
+; Bad response from mail server '%s' to command '%s':\n\
+; \n\
+; %s\n\
+; \n\
+; The mail server couldn't execute the command \
+; and replied with the above error message.
+;
+; SERVER, COMMAND, TEXT
+;
+MSG_ER_CANNOT_CONNECT_SMTP
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+\n\
+Le serveur de courrier est hors service, ou ne supporte pas le protocole SMTP.
+; Couldn't connect to host '%s'.\n\
+; \n\
+; The mail server is currently down or doesn't support the SMTP protocols.
+;
+; HOS
+;
+MSG_ER_UNKNOWN_HOST_SMTP
+Serveur SMTP « %s » inconnu.\n\
+\n\
+La couche TCP/IP est hors ligne ou l'adresse du serveur est invalide.
+; Unknown SMTP server '%s'.\n\
+; \n\
+; TCP/IP is offline or the server address is invalid.
+;
+; HOST
+;
+MSG_ER_NO8BITMIME_SMTP
+Le serveur SMPT « %s » a indiqué qu'il ne supportait pas \
+le transfert de courriers 8 bits et vous avez activé \
+l'option autorisant le 8 bits.\n\
+\n\
+Veuillez désactiver cette option dans vos préférences \
+TCP/IP et rééditer le message avant de le renvoyer. Dans \
+le cas contraire il se peut qu'il soit corrompu lors de \
+son transfert.
+; The SMTP server '%s' reported that it doesn't support 8bit \
+; mail transfers while you have the 'Allow8bit' option \
+; enabled.\n\
+; \n\
+; Please disable this option in your TCP/IP preferences\n\
+; and re-edit the e-mail before trying to send it again,\n\
+; otherwise the e-mail may be malformed.
+;
+MSG_CO_FOLDERDBLCLICK
+Double-clic sur un dossier ouvre les réglages du dossier
+; Double click on folder opens folder settings
+;
+MSG_MA_ATTACHMENT_DELETE
+Supprimer
+; Delete
+;
+MSG_MA_ATTACHMENT_DELETESEL
+Supprimer sélection
+; Delete selected
+;
+MSG_MA_DELETESELECTEDREQUEST
+Les pièces attachées suivantes seront\n\
+supprimées :\n\
+%s\
+\n\
+Désirez-vous vraiment poursuivre ?
+; The following attachments will be\n\
+; deleted:\n\
+; %s\
+; \n\
+; Do you really want to proceed?
+;
+MSG_LOG_DELETEDATT
+Pièce(s) jointe(s) du message « %s » du dossier « %s » supprimée(s)
+; Deleted attachment(s) of message '%s' in folder '%s'
+;
+; MAILFILE, FOLDER
+;
+MSG_MA_DELETEATT
+Supprimer
+; Delete
+;
+MSG_MA_DELETEATTREQUEST
+Toutes les pièces jointes aux courriers\n\
+sélectionnés seront détruites.\n\
+\n\
+Désirez-vous vraiment poursuivre ?
+; All attachments of the selected\n\
+; mails will be deleted.\n\
+; \n\
+; Do you really want to proceed?
+;
+MSG_MA_ATTACHMENT_DELETEALL
+Supprimer tout
+; Delete all
+;
+MSG_MA_MDELETEATT
+Supprimer
+; Delete
 ;

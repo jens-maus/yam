@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-17  Alexandre Balaban <balaban@free.fr>
+
+  * locale/french.ct: updated french translation according to latest changes.
+
 2008-06-12  Thore Böckelmann <tboeckel@gmx.de>
 
   * italian.ct: updated italian translation provided by Samir Hawamdeh.
