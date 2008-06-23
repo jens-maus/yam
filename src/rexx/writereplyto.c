@@ -62,7 +62,14 @@ void rx_writereplyto(UNUSED struct RexxHost *host, struct RexxParams *params, en
     case RXIF_ACTION:
     {
       if(G->ActiveRexxWMData != NULL && G->ActiveRexxWMData->window != NULL)
-        DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_InsertAddresses, MUIV_WriteWindow_RcptType_ReplyTo, args->address, FALSE);
+      {
+      	char *addresses[2];
+
+        // we have to supply a NULL terminated array of addresses
+      	addresses[0] = args->address;
+      	addresses[1] = NULL;
+        DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_InsertAddresses, MUIV_WriteWindow_RcptType_ReplyTo, addresses, FALSE);
+      }
       else
         params->rc = RETURN_ERROR;
     }
