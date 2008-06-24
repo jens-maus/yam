@@ -43,6 +43,8 @@
 #include "Requesters.h"
 #include "Timer.h"
 
+#include <mui/NBalance_mcc.h>
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -494,7 +496,7 @@ OVERLOAD(OM_NEW)
 
     // create a balance object we can use between our texteditor
     // and the attachment display
-    balanceObjectBottom = BalanceObject, End;
+    balanceObjectBottom = NBalanceObject, End;
 
     // create the scrolled group for our attachment display
     scrolledAttachmentGroup = HGroup,
@@ -549,7 +551,7 @@ OVERLOAD(OM_NEW)
                 End,
               End,
             End,
-            Child, balanceObjectTop = BalanceObject,
+            Child, balanceObjectTop = NBalanceObject,
               MUIA_ShowMe, rmData->headerMode != HM_NOHEADER,
             End,
             Child, mailBodyGroup = VGroup,

@@ -42,6 +42,7 @@
 #include <mui/NFloattext_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <mui/TheBar_mcc.h>
+#include <mui/NBalance_mcc.h>
 #include <proto/amissl.h>
 #include <proto/amisslmaster.h>
 #include <proto/codesets.h>
@@ -1821,22 +1822,23 @@ static void InitBeforeLogin(BOOL hidden)
   #endif
 
   // Lets check for the correct TheBar.mcc version
-  CheckMCC(MUIC_TheBar,     21, 5, TRUE, "http://www.sf.net/projects/thebar/");
-  CheckMCC(MUIC_TheBarVirt, 21, 5, TRUE, "http://www.sf.net/projects/thebar/");
-  CheckMCC(MUIC_TheButton,  21, 5, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheBar,     26, 2, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheBarVirt, 26, 2, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheButton,  26, 2, TRUE, "http://www.sf.net/projects/thebar/");
 
   // Lets check for the correct BetterString.mcc version
-  CheckMCC(MUIC_BetterString, 11, 14, TRUE, "http://www.sf.net/projects/bstring-mcc/");
+  CheckMCC(MUIC_BetterString, 11, 15, TRUE, "http://www.sf.net/projects/bstring-mcc/");
 
   // we also make sure the user uses the latest brand of all other NList classes, such as
   // NListview, NFloattext etc.
-  CheckMCC(MUIC_NList,      20, 120, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NListview,  19,  75, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NFloattext, 19,  56, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NListtree,  18,  27, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NList,      20, 121, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NListview,  19,  76, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NFloattext, 19,  57, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NListtree,  18,  28, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NBalance,   15,  1,  TRUE, "http://www.sf.net/projects/nlist-classes/");
 
   // Lets check for the correct TextEditor.mcc version
-  CheckMCC(MUIC_TextEditor, 15, 25, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+  CheckMCC(MUIC_TextEditor, 15, 27, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
   // initialize the thread system of YAM
   if(InitThreads() == FALSE)

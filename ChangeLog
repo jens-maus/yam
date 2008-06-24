@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: replaced all our "BalanceObject" uses by uses of "NBalanceObject".
+    This should introduce the more intuitive NBalance.mcc class to YAM.
+    Also added the new class usage to our startup check and update check
+    routines. In addition, the minimum requirements for all mcc classes are
+    now set to the very latest versions available.
+
 2008-06-23  Thore Böckelmann <tboeckel@gmx.de>
 
   * rexx/writefrom.c, rexx/writereplyto.c: a simply address string instead of

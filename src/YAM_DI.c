@@ -30,6 +30,7 @@
 
 #include <clib/alib_protos.h>
 #include <libraries/iffparse.h>
+#include <mui/NBalance_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
@@ -321,7 +322,7 @@ static struct DI_ClassData *DI_New(void)
                     MUIA_List_DragSortable, TRUE,
                   End,
                End,
-               Child, BalanceObject, End,
+               Child, NBalanceObject, End,
                Child, data->GUI.GR_TEXT = VGroup,
                   MUIA_HorizWeight, G->Weights[5],
                   Child, HGroup,

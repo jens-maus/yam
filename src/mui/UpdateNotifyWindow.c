@@ -30,6 +30,7 @@
 
 #include "UpdateNotifyWindow_cl.h"
 
+#include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NFloattext_mcc.h>
 
@@ -169,7 +170,7 @@ OVERLOAD(OM_NEW)
         End,
       End,
 
-      Child, BalanceObject, End,
+      Child, NBalanceObject, End,
 
       Child, TextObject,
         MUIA_Text_Contents, tr(MSG_UPD_NOTIFICATION_CHANGES),

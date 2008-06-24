@@ -34,6 +34,7 @@
 #include <mui/BetterString_mcc.h>
 #include <mui/NFloattext_mcc.h>
 #include <mui/NListtree_mcc.h>
+#include <mui/NBalance_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <mui/TheBar_mcc.h>
 
@@ -273,6 +274,14 @@ BOOL CheckForUpdates(void)
           {
             snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlisttree-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
                                                                                              xget(mccObj, MUIA_Revision));
+            MUI_DisposeObject(mccObj);
+          }
+
+          // add NBalance.mcc version information
+          if((mccObj = MUI_NewObject(MUIC_NBalance, TAG_DONE)) != NULL)
+          {
+            snprintf(request, REQUEST_SIZE, "%s&mcc%d=nbalance-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
+                                                                                            xget(mccObj, MUIA_Revision));
             MUI_DisposeObject(mccObj);
           }
 

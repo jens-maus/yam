@@ -31,6 +31,7 @@
 #include <clib/alib_protos.h>
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
+#include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <proto/dos.h>
@@ -2280,7 +2281,7 @@ static struct FI_ClassData *FI_New(void)
                 Child, VSpace(0),
              End,
           End,
-          Child, BalanceObject,
+          Child, NBalanceObject,
           End,
           Child, VGroup, GroupFrameT(tr(MSG_FI_Results)),
              MUIA_VertWeight, 100,

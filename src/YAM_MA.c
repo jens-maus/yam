@@ -37,6 +37,7 @@
 #include <libraries/asl.h>
 #include <libraries/gadtools.h>
 #include <libraries/iffparse.h>
+#include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
@@ -3805,7 +3806,7 @@ void MA_SetupEmbeddedReadPane(void)
     {
       // the user want to have the embedded read pane added to the main
       // window, so lets do it now and create the object
-      G->MA->GUI.BL_MAILVIEW = mailBalanceObj = BalanceObject, End;
+      G->MA->GUI.BL_MAILVIEW = mailBalanceObj = NBalanceObject, End;
       if(mailBalanceObj)
       {
         G->MA->GUI.MN_EMBEDDEDREADPANE = readPaneObj = ReadMailGroupObject,
@@ -4101,7 +4102,7 @@ struct MA_ClassData *MA_New(void)
             MUIA_NListview_NList, data->GUI.NL_FOLDERS = MainFolderListtreeObject,
             End,
           End,
-          Child, BalanceObject, End,
+          Child, NBalanceObject, End,
           Child, data->GUI.GR_MAILVIEW = VGroup,
             GroupSpacing(1),
             Child, data->GUI.GR_QUICKSEARCHBAR = QuickSearchBarObject,

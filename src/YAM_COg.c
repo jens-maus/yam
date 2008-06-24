@@ -33,6 +33,7 @@
 
 #include <libraries/asl.h>
 #include <mui/BetterString_mcc.h>
+#include <mui/NBalance_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <proto/dos.h>
@@ -1963,7 +1964,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                   End,
                 End,
 
-                Child, BalanceObject, End,
+                Child, NBalanceObject, End,
 
                 Child, VGroup,
                   MUIA_HorizWeight, 70,
@@ -2276,7 +2277,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                          End,
                       End,
                    End,
-                   Child, BalanceObject, End,
+                   Child, NBalanceObject, End,
                    Child, RegisterGroup(rtitles),
                       MUIA_CycleChain, TRUE,
                       Child, ColGroup(2),
@@ -3426,7 +3427,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
                     End,
                   End,
 
-                  Child, BalanceObject, End,
+                  Child, NBalanceObject, End,
 
                   Child, VGroup,
                     MUIA_Weight, 70,
