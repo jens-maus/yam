@@ -1835,7 +1835,7 @@ static void InitBeforeLogin(BOOL hidden)
   CheckMCC(MUIC_NListview,  19,  76, TRUE, "http://www.sf.net/projects/nlist-classes/");
   CheckMCC(MUIC_NFloattext, 19,  57, TRUE, "http://www.sf.net/projects/nlist-classes/");
   CheckMCC(MUIC_NListtree,  18,  28, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NBalance,   15,  1,  TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NBalance,   15,  2,  TRUE, "http://www.sf.net/projects/nlist-classes/");
 
   // Lets check for the correct TextEditor.mcc version
   CheckMCC(MUIC_TextEditor, 15, 27, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
