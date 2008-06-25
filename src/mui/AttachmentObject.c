@@ -362,9 +362,12 @@ DECLARE(Save)
         if(fileName == NULL || strlen(fileName) == 0)
           fileName = data->mailPart->Filename;
       }
+      // finally strip any path from the file name
+      fileName = FilePart(fileName);
 
       RE_Export(data->mailPart->rmData,
-                data->mailPart->Filename, "",
+                data->mailPart->Filename,
+                "",
                 fileName,
                 data->mailPart->Nr,
                 FALSE,
@@ -455,6 +458,9 @@ DECLARE(ImageDropped) // char *dropPath
     if(fileName == NULL || strlen(fileName) == 0)
       fileName = data->mailPart->Filename;
   }
+  // first strip any path from the file name
+  fileName = FilePart(fileName);
+  // then add the file name to the drop path
   AddPath(filePathBuf, msg->dropPath, fileName, sizeof(filePathBuf));
 
   RE_DecodePart(data->mailPart);

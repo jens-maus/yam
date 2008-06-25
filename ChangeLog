@@ -7,6 +7,12 @@ $URL$
 
 2008-06-25  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentObject.c: when saving a single attachment a possible path part
+    will now be stripped from the file name before this name is used further on.
+    Before it could happen that a full path was passed to an ASL requester and
+    the file either ended up in a place the user never has chosen or an error
+    occured if the full path did not exist. Thanks to Christoph Poelzl for this
+    hint.
   * YAM.c, YAM_UT.c, YAM_RE.c, rexx/info.c: YAM will now lock the public screen
     on which the splash window has been opened right before closing it and
     unlock it again as soon as the main window has been opened. This avoids the
