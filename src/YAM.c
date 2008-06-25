@@ -1451,6 +1451,8 @@ static void InitAfterLogin(void)
   BOOL newfolders;
   BOOL splashWasActive;
   int i;
+  char pubScreenName[MAXPUBSCREENNAME + 1];
+  struct Screen *pubScreen;
 
   ENTER();
 
@@ -1726,6 +1728,12 @@ static void InitAfterLogin(void)
   SplashProgress(tr(MSG_OPENGUI), 100);
   G->InStartupPhase = FALSE;
 
+  // Lock the screen that YAM has opened its splash window on to prevent this screen
+  // from closing after the splash window is closed and before the main window is opened.
+  // This is necessary if YAM is running on its own screen instead of the Workbench.
+  GetPubScreenName((struct Screen *)xget(G->SplashWinObject, MUIA_Window_Screen), pubScreenName, sizeof(pubScreenName));
+  pubScreen = LockPubScreen(pubScreenName);
+
   // close the splash window right before we open our main YAM window
   // but ask it before closing if it was activated or not.
   splashWasActive = xget(G->SplashWinObject, MUIA_Window_Activate);
@@ -1741,6 +1749,9 @@ static void InitAfterLogin(void)
   xset(G->MA->GUI.WI,
        MUIA_Window_Activate, splashWasActive,
        MUIA_Window_Open,     TRUE);
+
+  // unlock the public screen again now that the main window is open
+  UnlockPubScreen(pubScreenName, pubScreen);
 
   LEAVE();
 }

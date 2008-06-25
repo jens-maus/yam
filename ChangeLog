@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-25  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, YAM_UT.c, YAM_RE.c, rexx/info.c: YAM will now lock the public screen
+    on which the splash window has been opened right before closing it and
+    unlock it again as soon as the main window has been opened. This avoids the
+    screen closing and reopening if YAM is running on its own screen instead of
+    the Workbench.
+
 2008-06-25  Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.

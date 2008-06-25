@@ -5393,6 +5393,7 @@ ULONG CRC32(const void *buffer, unsigned int count, ULONG crc)
   RETURN(crc);
   return crc;
 }
+
 ///
 /// strippedCharsetName()
 // return the charset code stripped and without any white spaces
@@ -5414,6 +5415,56 @@ char *strippedCharsetName(const struct codeset* codeset)
   }
   else
     return codeset->name;
+}
+
+///
+/// GetPubScreenName
+// return the name of a public screen, if the screen is public
+void GetPubScreenName(struct Screen *screen, char *pubName, ULONG pubNameSize)
+{
+  ENTER();
+
+  // we use "Workbench" as the default public screen name
+  strlcpy(pubName, "Workbench", pubNameSize);
+
+  if(screen != NULL)
+  {
+    // try to get the public screen name
+    #if defined(__amigaos4__)
+    // this very handy function is OS4 only
+    if(GetScreenAttr(screen, SA_PubName, pubName, pubNameSize) == 0)
+    {
+      // GetScreenAttr() failed, copy the default name again, in case it was changed
+      strlcpy(pubName, "Workbench", pubNameSize);
+    }
+    #else
+    struct List *pubScreenList;
+
+    // on all other systems we have to obtain the public screen name in the hard way
+    // first get the list of all public screens
+    if((pubScreenList = LockPubScreenList()) != NULL)
+    {
+      struct PubScreenNode *psn;
+
+      // then iterate through this list
+      for(psn = (struct PubScreenNode *)pubScreenList->lh_Head; psn->psn_Node.ln_Succ != NULL; psn = (struct PubScreenNode *)psn->psn_Node.ln_Succ)
+      {
+        // check if we found the given screen
+        if(psn->psn_Screen == screen)
+        {
+          // copy the name and get out of the loop
+          strlcpy(pubName, psn->psn_Node.ln_Name, pubNameSize);
+          break;
+        }
+      }
+
+      // unlock the list again
+      UnlockPubScreenList();
+    }
+    #endif
+  }
+
+  LEAVE();
 }
 
 ///

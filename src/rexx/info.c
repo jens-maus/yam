@@ -85,38 +85,7 @@ void rx_info(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxA
       else if(!stricmp(key, "base"))        results->value = (char *)xget(G->App, MUIA_Application_Base);
       else if(!stricmp(key, "screen"))
       {
-        struct Screen *screen;
-
-        screen = (struct Screen *)xget(G->MA->GUI.WI, MUIA_Window_Screen);
-
-        #if defined(__amigaos4__)
-        // this very handy function is OS4 only
-        if(GetScreenAttr(screen, SA_PubName, optional->pubScreenName, sizeof(optional->pubScreenName)) == 0)
-        {
-          // GetScreenAttr() failed, we copy the default name again, just in case the function changed anything
-          strlcpy(optional->pubScreenName, "Workbench", sizeof(optional->pubScreenName));
-        }
-        #else
-        strlcpy(optional->pubScreenName, "Workbench", sizeof(optional->pubScreenName));
-
-        if(screen != NULL)
-        {
-          struct Node *pubs;
-          struct List *pubscreens = LockPubScreenList();
-
-          for(pubs = pubscreens->lh_Head; pubs->ln_Succ; pubs = pubs->ln_Succ)
-          {
-            if(((struct PubScreenNode *)pubs)->psn_Screen == screen)
-            {
-              strlcpy(optional->pubScreenName, pubs->ln_Name, sizeof(optional->pubScreenName));
-              break;
-            }
-          }
-
-          UnlockPubScreenList();
-        }
-        #endif
-
+        GetPubScreenName((struct Screen *)xget(G->MA->GUI.WI, MUIA_Window_Screen), optional->pubScreenName, sizeof(optional->pubScreenName));
         results->value = optional->pubScreenName;
       }
       else

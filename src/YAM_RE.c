@@ -308,49 +308,9 @@ static void BuildCommandString(char *command, const size_t commandLen, const cha
               {
                 // insert the public screen name
                 char pubScreenName[MAXPUBSCREENNAME + 1];
-                struct Screen *screen;
 
-                // The public screen name is determined by looking at the screen on which YAM's main
-                // window is located on. The Workbench screen is used as a fallback if no other valid
-                // name can be obtained.
-                strlcpy(pubScreenName, "Workbench", sizeof(pubScreenName));
-
-                if((screen = (struct Screen *)xget(G->MA->GUI.WI, MUIA_Window_Screen)) != NULL)
-                {
-                  // try to get the public screen name
-                  #if defined(__amigaos4__)
-                  // this very handy function is OS4 only
-                  if(GetScreenAttr(screen, SA_PubName, pubScreenName, sizeof(pubScreenName)) == 0)
-                  {
-                    // GetScreenAttr() failed, we copy the default name again, just in case the function changed anything
-                    strlcpy(pubScreenName, "Workbench", sizeof(pubScreenName));
-                  }
-                  #else
-                  struct List *pubScreenList;
-
-                  // on all other systems we have to obtain the public screen name in the hard way
-                  // first get the list of all public screens
-                  if((pubScreenList = LockPubScreenList()) != NULL)
-                  {
-                    struct PubScreenNode *psn;
-
-                    // then iterate through this list
-                    for(psn = (struct PubScreenNode *)pubScreenList->lh_Head; psn->psn_Node.ln_Succ != NULL; psn = (struct PubScreenNode *)psn->psn_Node.ln_Succ)
-                    {
-                      // check if we found YAM's own screen
-                      if(psn->psn_Screen == screen)
-                      {
-                        // copy the name and get out of the loop
-                        strlcpy(pubScreenName, psn->psn_Node.ln_Name, sizeof(pubScreenName));
-                        break;
-                      }
-                    }
-
-                    // unlock the list again
-                    UnlockPubScreenList();
-                  }
-                  #endif
-                }
+                // obtain the public screen name
+                GetPubScreenName((struct Screen *)xget(G->MA->GUI.WI, MUIA_Window_Screen), pubScreenName, sizeof(pubScreenName));
 
                 // insert the public screen name
                 if(!hasQuotes)
