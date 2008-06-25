@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-25  Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2008-06-24  Thore Böckelmann <tboeckel@gmx.de>
 
   * include/mui/NBalance_mcc.h: added missing include file for the new

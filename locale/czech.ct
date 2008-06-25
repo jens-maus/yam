@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.33 (28.1.2008)
+## version $VER: YAM.catalog 6.36 (24.6.2008)
 ## language czech
 ## codeset 5
 ;
@@ -105,14 +105,6 @@ Chyba
 MSG_NewEntry
 -nová-
 ; - new -
-;
-MSG_Unnamed
-bez_názvu
-; unnamed
-;
-MSG_Bytes
-bajtù
-; bytes
 ;
 MSG_Date
 Datum
@@ -540,11 +532,6 @@ Ulo¾en pøilo¾ený soubor '%s' patøící ke zprávì '%s' ze slo¾ky '%s'
 ; Saved attachment '%s' of message '%s' in folder '%s'
 ; FILENAME, MAILFILE, FOLDER
 ;
-MSG_LOG_CroppingAtt
-Odstranìny pøílohy zprávy '%s' ze slo¾ky '%s'
-; Cropped attachment(s) of message '%s' in folder '%s'
-; MAILFILE, FOLDER
-;
 MSG_LOG_ChangingSubject
 Zmìnìn pøedmìt '%s' zprávy '%s' ze slo¾ky '%s' do '%s'
 ; Changed subject '%s' of message '%s' in folder '%s' to '%s'
@@ -605,12 +592,6 @@ _Odesílatel|*Z_páteèní|O_bì adresy|_Zru¹it
 MSG_MA_Compare2ReqOpt
 _Odesílatel|*Z_páteèní|_Zru¹it
 ; _From|*_Reply-To|_Cancel
-;
-MSG_MA_AttachRemoved
-\n\
-_Seznam pøíloh, které byly ruènì odstranìny:_\n
-; \n\
-; _The following attachments have been removed manually:_\n
 ;
 MSG_MA_ConfirmReq
 Potvrzení
@@ -828,10 +809,6 @@ Zkopírovat do...
 MSG_MA_Save
 Ulo¾it...
 ; Save...
-;
-MSG_MA_Crop
-Odstranit
-; Crop
 ;
 MSG_MA_MReply
 Odpovìdìt...
@@ -4768,39 +4745,6 @@ server je mimo provoz nebo neodpovídá na pøíkazy protokolu HTTP.
 ; server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
-MSG_ER_UnknownPOP
-Neznámý POP3 server: '%s'.\n\
-\n\
-Nefunkèní pøipojení k síti nebo je neplatná adresa serveru.
-; Unknown POP3 server: '%s'.\n\
-; \n\
-; TCP/IP is offline or the server address is invalid.
-; HOST
-;
-MSG_ER_UnknownSMTP
-Neznámý SMTP server: '%s'.\n\
-\n\
-Nefunkèní pøipojení k síti nebo je neplatná adresa serveru.
-; Unknown SMTP server: '%s'.\n\
-; \n\
-; TCP/IP is offline or the server address is invalid.
-; HOST
-;
-MSG_ER_CantConnect
-Nelze navázat spojení s '%s'.\n\
-\n\
-Po¹tovní server neodpovídá nebo nepodporuje protokoly POP3/SMTP.
-; Couldn't connect to '%s'.\n\
-; \n\
-; The mail server is currently down or doesn't support the POP3/SMTP protocols.
-; HOST
-;
-MSG_ER_NoAPOP
-Tento POP3 server nepodporuje metodu ovìøení APOP. \
-Vypnìte APOP v konfiguraèním oknì programu YAM.
-; Your POP3 server doesn't support APOP. \
-; Please disable APOP in the configuration.
-;
 MSG_ER_ErrorWriteMailfile
 Chyba pøi ukládání souboru se zprávou: %s.\n\
 \n\
@@ -5522,10 +5466,6 @@ MSG_BusyPGPrunning
 Pou¾ití PGP...
 ; PGP operation...
 ;
-MSG_BusyComposing
-Vytváøení zprávy...
-; Composing message...
-;
 MSG_BusyDecPrinting
 Dekódování a tisk...
 ; Decoding/printing...
@@ -5990,10 +5930,6 @@ Poté restartujte YAM.
 ; \n\
 ; Please check your AmiSSL installation and restart YAM.
 ;
-MSG_ER_INITTLS
-Nelze inicializovat relaci TLSv1/SSLv3 pro %s
-; Couldn't initialize TLSv1/SSLv3 session for %s
-;
 MSG_TR_SENDAUTH
 Odesílání po¾adavku SMTP AUTH...
 ; Sending SMTP AUTH request...
@@ -6054,12 +5990,6 @@ nainstalovaný anebo vypnìte po¾adavek na zabezpeèené spojení.
 MSG_RETRY_QUIT_GAD
 Opakovat|Ukonèit
 ; Try again|Quit
-;
-MSG_ER_NOSTARTTLS
-Vybraný SMTP server nepodporuje zabezpeèený pøenos\n\
-dat (protokoly TLS/SSL).
-; Your SMTP server doesn't support TLS/SSL. \
-; Please disable this option in the configuration.
 ;
 MSG_ER_NOAUTHUSERPASS
 Chcete-li pou¾ít SMTP AUTH, je nutné znát pøihla¹ovací jméno a heslo. \
@@ -6210,14 +6140,6 @@ Text, který by mìl být zobrazen ve stavové li¹tì
 ;
 ;
 ; *** Added for YAM 2.5 ********************************************************
-;
-MSG_MA_CROPREQUEST
-Ze v¹ech vybraných zpráv budou odstranìny pøílohy.\n\
-\n\
-Opravdu chcete pokraèovat?
-; All attachments of the selected mails will be cropped.\n\
-; \n\
-; Do you really want to proceed?
 ;
 MSG_YesNoReq2
 _Ano|*_Ne
@@ -6472,10 +6394,6 @@ Ulo¾it v¹e...
 MSG_MA_ATTACHMENT_SAVESEL
 Ulo¾it vybrané...
 ; Save selected...
-;
-MSG_MA_ATTACHMENT_CROPALL
-Odstranit v¹e
-; Crop all
 ;
 MSG_CO_SImageOnly
 pouze obrázky
@@ -7886,10 +7804,6 @@ MSG_MA_MSAVEATT
 Ulo¾it...
 ; Save...
 ;
-MSG_MA_MCROP
-Odstranit
-; Crop
-;
 MSG_MA_MNEW
 Nová
 ; New
@@ -8358,20 +8272,6 @@ nesprávnì identifikovaných jako spam do slo¾ky\n\
 ; as 'spam' and later manually marked as 'not spam' will be\n\
 ; automatically moved back to the Incoming folder.
 ;
-MSG_ER_NO8BITMIME
-Po¹tovní server '%s' nepodporuje posílání textu 8bitovì.\n\
-\n\
-Otevøete konfiguraèní okno na stránce týkající se serveru \
-pro odesílání po¹ty a vypnìte odpovídající funkci. V opaèném \
-pøípadì mù¾e bìhem odesílání dojít k poru¹ení obsahu zprávy.
-; SMTP server '%s' reported that it doesn't support 8bit \
-; mail transfers while you have the 'Allow8bit' option \
-; enabled.\n\
-; \n\
-; Please disable this option in your TCP/IP preferences\n\
-; and re-edit the e-mail before trying to send it again,\n\
-; otherwise the e-mail may be malformed.
-;
 MSG_CO_FILTER_HAM
 Po pøesunutí tìchto zpráv spustit standardní _filtry
 ; Apply _filters
@@ -8409,32 +8309,6 @@ Název slo¾ky (nové/nepøeètené)
 MSG_CO_FOLDERINFO05
 Název slo¾ky (nepøeètené/nové)
 ; Folder name (unread/new)
-;
-MSG_ER_BADRESPONSE
-Chyba serveru '%s' pøi zpracování pøíkazu '%s':\n\
-%s\n\
-\n\
-Po¹tovní server korektnì nezpracoval uvedený pøíkaz.
-; Bad response from mail server '%s' to command '%s':\n\
-; \n\
-; %s\n\
-; \n\
-; The mail server couldn't execute the command \
-; and replied with the above error message.
-; SERVER, COMMAND, TEXT
-;
-MSG_ER_POP3WELCOME
-Chyba pøi úvodní komunikaci se serverem '%s'. Spojení bylo \
-pøeru¹eno:\n\
-\n\
-%s\n\
-\n
-; POP3 server '%s' replied with an error message during the welcome \
-; procedure and the connection was terminated:\n\
-; \n\
-; %s\n\
-; \n
-; SERVER, TEXT
 ;
 MSG_FO_EXPIREUNREAD
 i nepøeètené
@@ -8557,51 +8431,6 @@ na stránce \0335http://www.yam.ch/\033n.
 MSG_WR_VIEW
 Zobrazení
 ; View
-;
-MSG_ER_CONNECTERR_SOCKET_IN_USE
-Nelze navázat spojení se serverem '%s'.\n\
-\n\
-Spojení se zdá být u¾ jednou navázané. Ukonèete\n\
-ve¹keré ostatní pøenosy dat v rámci programu.
-; Couldn't connect to '%s'.\n\
-; \n\
-; A TCP/IP socket connection seems to be already active. \
-; Please close any other existing transfers.
-;
-MSG_ER_CONNECTERR_TIMEDOUT
-Nelze navázat spojení se serverem '%s'.\n\
-\n\
-Po¹tovní server neodpovìdìl v po¾adované dobì.
-; Couldn't connect to '%s'.\n\
-; \n\
-; The mail server didn't respond within the predefined \
-; time frame and therefore timed out.
-;
-MSG_ER_CONNECTERR_NO_SOCKET
-Nelze navázat spojení se serverem '%s'.\n\
-\n\
-Programu se nepodaøilo navázat spojení s po¹tovním\n\
-serverem. Zkontrolujte instalaci balíku pro podporu\n\
-protokolu TCP/IP.
-; Couldn't connect to '%s'.\n\
-; \n\
-; YAM wasn't able to establish a socket connection \
-; to the mail server. Please make sure that your TCP/IP \
-; stack is online and working properly.
-;
-MSG_ER_CONNECTERR_NO_NONBLOCKIO
-Nelze navázat spojení se serverem '%s'.\n\
-\n\
-Programu se nepodaøilo navázat neblokující spojení\n\
-(non-blocking IO connection) s po¹tovním serverem.\n\
-Zkontrolujte, zda tuto funkci vá¹ operaèní systém\n\
-podporuje.
-; Couldn't connect to '%s'.\n\
-; \n\
-; YAM wasn't able to establish a non-blocking I/O \
-; connection to the mail server. Please make sure that \
-; your TCP/IP stack can establish non-blocking I/O \
-; connections.
 ;
 MSG_CONFIG_MODIFIED
 Konfigurace programu byla zmìnìna, ale dosud není\n\
@@ -9349,6 +9178,10 @@ takto: 28.10.1918.
 ; Date of birth in locale format\n\
 ; (e.g. 19.06.1974 or 19/06/1974).
 ;
+MSG_ERROR_THREADS
+Nelze inicializovat systém správy vláken programu.
+; Can't initialize thread system
+;
 MSG_ERROR_PLAYSOUND
 Chyba pøi pokusu o pøehrání zvukového souboru\n\
 '%s'.\n\
@@ -9364,4 +9197,283 @@ aktualizace urèené pro Vá¹ operaèní systém.
 ; unsupported sound file or because your\n\
 ; sound datatype is not properly working.
 ; FILE
+;
+MSG_WR_CHARSET
+_Kódování
+; _Charset
+;
+MSG_HELP_WR_PO_CHARSET
+Ze seznamu vyberte po¾adované kódování.\n\
+\n\
+Vybrané kódování by obecnì mìlo odpovídat kódování\n\
+operaèního systému.
+; Use the popup button to select the character set\n\
+; you would like YAM to use for this mail. This\n\
+; defaults to the global character set.
+;
+MSG_ABOUTYAM
+O programu YAM
+; About YAM
+;
+MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
+Nelze navázat spojení se serverem '%s' (úèet: '%s').\n\
+\n\
+Spojení se zdá být u¾ jednou navázané. Ukonèete\n\
+ve¹keré ostatní pøenosy dat v rámci programu.
+; Couldn't connect to host '%s' of account '%s'.\n\
+; \n\
+; A TCP/IP socket connection seems to be already active. \
+; Please close any other existing transfers.
+; HOST, ACCOUNT
+;
+MSG_ER_CONNECTERR_TIMEDOUT_POP3
+Nelze navázat spojení se serverem '%s' (úèet: '%s').\n\
+\n\
+Po¹tovní server neodpovìdìl v po¾adované dobì.
+; Couldn't connect to host '%s' of account '%s'.\n\
+; \n\
+; The mail server didn't respond within the predefined \
+; time frame and therefore timed out.
+; HOST, ACCOUNT
+;
+MSG_ER_CONNECTERR_NO_SOCKET_POP3
+Nelze navázat spojení se serverem '%s' (úèet: '%s').\n\
+\n\
+Programu se nepodaøilo navázat spojení s po¹tovním\n\
+serverem. Zkontrolujte instalaci balíku pro podporu\n\
+protokolu TCP/IP.
+; Couldn't connect to host '%s' of account '%s'.\n\
+; \n\
+; YAM wasn't able to establish a socket connection \
+; to the mail server. Please make sure that your TCP/IP \
+; stack is online and working properly.
+; HOST, ACCOUNT
+;
+MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3
+Nelze navázat spojení se serverem '%s' (úèet: '%s').\n\
+\n\
+Programu se nepodaøilo navázat neblokující spojení\n\
+(non-blocking IO connection) s po¹tovním serverem.\n\
+Zkontrolujte, zda tuto funkci vá¹ operaèní systém\n\
+podporuje.
+; Couldn't connect to host '%s' of account '%s'.\n\
+; \n\
+; YAM wasn't able to establish a non-blocking I/O \
+; connection to the mail server. Please make sure that \
+; your TCP/IP stack can establish non-blocking I/O \
+; connections.
+; HOST, ACCOUNT
+;
+MSG_ER_UNKNOWN_HOST_POP3
+Neznámý POP3 server: '%s' (úèet: '%s').\n\
+\n\
+Nefunkèní pøipojení k síti nebo je neplatná adresa serveru.
+; Unknown POP3 server '%s' of account '%s'.\n\
+; \n\
+; TCP/IP is offline or the server address is invalid.
+; HOST, ACCOUNT
+;
+MSG_ER_CANNOT_CONNECT_POP3
+Nelze navázat spojení s '%s' (úèet: '%s').\n\
+\n\
+Po¹tovní server neodpovídá nebo nepodporuje protokol POP3.
+; Couldn't connect to host '%s' of account '%s'.\n\
+; \n\
+; The mail server is currently down or doesn't support the POP3 protocols.
+; HOST, ACCOUNT
+;
+MSG_ER_POP3WELCOME
+Chyba pøi úvodní komunikaci se serverem '%s' (úèet: '%s'). Spojení bylo \
+pøeru¹eno:\n\
+\n\
+%s\n\
+\n
+; POP3 server '%s' of account '%s' replied with an error message during the welcome \
+; procedure and the connection was terminated:\n\
+; \n\
+; %s\n\
+; \n
+; SERVER, ACCOUNT, TEXT
+;
+MSG_ER_BADRESPONSE_POP3
+Chyba serveru '%s' (úèet: '%s') pøi zpracování pøíkazu '%s':\n\
+%s\n\
+\n\
+Po¹tovní server korektnì nezpracoval uvedený pøíkaz.
+; Bad response from mail server '%s' of account '%s' to command '%s':\n\
+; \n\
+; %s\n\
+; \n\
+; The mail server couldn't execute the command \
+; and replied with the above error message.
+; SERVER, ACCOUNT, COMMAND, TEXT
+;
+MSG_ER_INITTLS_POP3
+Nelze inicializovat relaci TLSv1/SSLv3 pro %s (úèet: '%s').
+; Couldn't initialize TLSv1/SSLv3 session with host '%s' of account '%s'.
+; HOST, ACCOUNT
+;
+MSG_ER_NO_APOP
+POP3 server '%s' (úèet:  '%s') nepodporuje metodu ovìøení APOP. \
+Vypnìte APOP v konfiguraèním oknì programu YAM.
+; The POP3 server '%s' of account '%s' doesn't support APOP. \
+; Please disable APOP in the configuration.
+; HOST, ACCOUNT
+;
+MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP
+Nelze navázat spojení se serverem '%s'.\n\
+\n\
+Spojení se zdá být u¾ jednou navázané. Ukonèete\n\
+ve¹keré ostatní pøenosy dat v rámci programu.
+; Couldn't connect to host '%s'.\n\
+; \n\
+; A TCP/IP socket connection seems to be already active. \
+; Please close any other existing transfers.
+; HOST
+;
+MSG_ER_CONNECTERR_TIMEDOUT_SMTP
+Nelze navázat spojení se serverem '%s'.\n\
+\n\
+Po¹tovní server neodpovìdìl v po¾adované dobì.
+; Couldn't connect to host '%s'.\n\
+; \n\
+; The mail server didn't respond within the predefined \
+; time frame and therefore timed out.
+; HOST
+;
+MSG_ER_CONNECTERR_NO_SOCKET_SMTP
+Nelze navázat spojení se serverem '%s'.\n\
+\n\
+Programu se nepodaøilo navázat spojení s po¹tovním\n\
+serverem. Zkontrolujte instalaci balíku pro podporu\n\
+protokolu TCP/IP.
+; Couldn't connect to host '%s'.\n\
+; \n\
+; YAM wasn't able to establish a socket connection \
+; to the mail server. Please make sure that your TCP/IP \
+; stack is online and working properly.
+; HOST
+;
+MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP
+Nelze navázat spojení se serverem '%s'.\n\
+\n\
+Programu se nepodaøilo navázat neblokující spojení\n\
+(non-blocking IO connection) s po¹tovním serverem.\n\
+Zkontrolujte, zda tuto funkci vá¹ operaèní systém\n\
+podporuje.
+; Couldn't connect to host '%s'.\n\
+; \n\
+; YAM wasn't able to establish a non-blocking I/O \
+; connection to the mail server. Please make sure that \
+; your TCP/IP stack can establish non-blocking I/O \
+; connections.
+; HOST
+;
+MSG_ER_INITTLS_SMTP
+Nelze inicializovat relaci TLSv1/SSLv3 pro %s.
+; Couldn't initialize TLSv1/SSLv3 session with host '%s'.
+; HOST
+;
+MSG_ER_NOSTARTTLS_SMTP
+SMTP server '%s' nepodporuje zabezpeèený pøenos dat \
+(protokoly TLS/SSL). Vypnìte pøíslu¹nou mo¾nost \
+v konfiguraèním oknì programu YAM.
+; Your SMTP server '%s' doesn't support TLS/SSL. \
+; Please disable this option in the configuration.
+; HOST
+;
+MSG_ER_BADRESPONSE_SMTP
+Chyba serveru '%s' pøi zpracování pøíkazu '%s':\n\
+%s\n\
+\n\
+Po¹tovní server korektnì nezpracoval uvedený pøíkaz.
+; Bad response from mail server '%s' to command '%s':\n\
+; \n\
+; %s\n\
+; \n\
+; The mail server couldn't execute the command \
+; and replied with the above error message.
+; SERVER, COMMAND, TEXT
+;
+MSG_ER_CANNOT_CONNECT_SMTP
+Nelze navázat spojení s '%s'.\n\
+\n\
+Po¹tovní server neodpovídá nebo nepodporuje protokol SMTP.
+; Couldn't connect to host '%s'.\n\
+; \n\
+; The mail server is currently down or doesn't support the SMTP protocols.
+; HOS
+;
+MSG_ER_UNKNOWN_HOST_SMTP
+Neznámý SMTP server: '%s'.\n\
+\n\
+Nefunkèní pøipojení k síti nebo je neplatná adresa serveru.
+; Unknown SMTP server '%s'.\n\
+; \n\
+; TCP/IP is offline or the server address is invalid.
+; HOST
+;
+MSG_ER_NO8BITMIME_SMTP
+Po¹tovní server '%s' nepodporuje posílání textu 8bitovì.\n\
+\n\
+Otevøete konfiguraèní okno na stránce týkající se serveru\n\
+pro odesílání po¹ty a vypnìte odpovídající funkci. V opaèném\n\
+pøípadì mù¾e bìhem odesílání dojít k poru¹ení obsahu zprávy.
+; The SMTP server '%s' reported that it doesn't support 8bit \
+; mail transfers while you have the 'Allow8bit' option \
+; enabled.\n\
+; \n\
+; Please disable this option in your TCP/IP preferences\n\
+; and re-edit the e-mail before trying to send it again,\n\
+; otherwise the e-mail may be malformed.
+;
+MSG_CO_FOLDERDBLCLICK
+Otevøít nastavení slo¾ky dvojím kliknutím na slo¾ku
+; Double click on folder opens folder settings
+;
+MSG_MA_ATTACHMENT_DELETE
+Odstranit
+; Delete
+;
+MSG_MA_ATTACHMENT_DELETESEL
+Odstranit vybrané
+; Delete selected
+;
+MSG_MA_DELETESELECTEDREQUEST
+Seznam pøíloh, které budou odstranìny:\n\
+\n\
+%s\n\
+\n\
+Opravdu chcete pokraèovat?
+; The following attachments will be\n\
+; deleted:\n\
+; %s\
+; \n\
+; Do you really want to proceed?
+;
+MSG_LOG_DELETEDATT
+Odstranìny pøílohy zprávy '%s' ze slo¾ky '%s'
+; Deleted attachment(s) of message '%s' in folder '%s'
+; MAILFILE, FOLDER
+;
+MSG_MA_DELETEATT
+Odstranit
+; Delete
+;
+MSG_MA_DELETEATTREQUEST
+Ze v¹ech vybraných zpráv budou odstranìny pøílohy.\n\
+\n\
+Opravdu chcete pokraèovat?
+; All attachments of the selected\n\
+; mails will be deleted.\n\
+; \n\
+; Do you really want to proceed?
+;
+MSG_MA_ATTACHMENT_DELETEALL
+Odstranit v¹e
+; Delete all
+;
+MSG_MA_MDELETEATT
+Odstranit
+; Delete
 ;
