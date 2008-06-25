@@ -7,6 +7,8 @@ $URL$
 
 2008-06-25  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_WR.c: when composing a new mail the path will now also be stripped from
+    all attachment files.
   * AttachmentObject.c: when saving a single attachment a possible path part
     will now be stripped from the file name before this name is used further on.
     Before it could happen that a full path was passed to an ASL requester and

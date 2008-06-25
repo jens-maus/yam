@@ -460,9 +460,11 @@ void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
   if((p = part->Name) && *p)
   {
     fputc(';', fh);
-    HeaderFputs(fh, p, "name", 0); // output and do rfc2231 encoding
+    // output and do rfc2231 encoding
+    HeaderFputs(fh, p, "name", 0);
     fputs("\nContent-Disposition: attachment;", fh);
-    HeaderFputs(fh, part->Filename, "filename", 0); // output and do rfc2231 encoding
+    // output and do rfc2231 encoding, strip any path from the file name
+    HeaderFputs(fh, FilePart(part->Filename), "filename", 0);
   }
   fputc('\n', fh);
 
