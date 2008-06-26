@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-26  Thore Böckelmann <tboeckel@gmx.de>
+
+  * FolderList.c, MainFolderListtree.c: whenever a folder was moved within the
+    hierachical listtree it wasn't move in our folder list, because we no longer
+    derive the order of the folders from the graphical representation, but vice
+    versa. Now the folder list will be updated after every drag'n'drop action.
+
 2008-06-25  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: when composing a new mail the path will now also be stripped from

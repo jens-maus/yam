@@ -57,6 +57,7 @@ struct FolderNode *AddNewFolderNode(struct FolderList *flist, struct Folder *fol
 void AddFolderNode(struct FolderList *flist, struct FolderNode *fnode);
 void RemoveFolderNode(struct FolderList *flist, struct FolderNode *fnode);
 void DeleteFolderNode(struct FolderNode *fnode);
+void MoveFolderNode(struct FolderList *flist, struct FolderNode *fnode, struct FolderNode *afterThis);
 
 // check if a folder list is empty
 #define IsFolderListEmpty(flist)                  IsListEmpty((struct List *)(flist))

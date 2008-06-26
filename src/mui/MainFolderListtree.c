@@ -43,22 +43,24 @@ struct Data
 {
   Object *context_menu;
   Object *folderImage[MAX_FOLDERIMG+1];
-
   BOOL draggingMails;
 };
 */
 
-enum { CMN_EDITF=10,
-       CMN_DELETEF,
-       CMN_INDEX,
-       CMN_NEWF,
-       CMN_NEWFG,
-       CMN_SNAPS,
-       CMN_RELOAD,
-       CMN_EMPTYTRASH,
-       CMN_EMPTYSPAM,
-       CMN_ALLTOREAD,
-       CMN_SEARCH };
+enum
+{
+  CMN_EDITF=10,
+  CMN_DELETEF,
+  CMN_INDEX,
+  CMN_NEWF,
+  CMN_NEWFG,
+  CMN_SNAPS,
+  CMN_RELOAD,
+  CMN_EMPTYTRASH,
+  CMN_EMPTYSPAM,
+  CMN_ALLTOREAD,
+  CMN_SEARCH
+};
 
 /* Private Functions */
 /// FormatFolderInfo
@@ -346,33 +348,34 @@ OVERLOAD(MUIM_DragDrop)
 {
   struct MUIP_DragDrop *dd = (struct MUIP_DragDrop *)msg;
 
-  // if a folder is dragged on a folder we break here and the SuperClass should handle the msg
-  if(dd->obj != obj)
+  ENTER();
+
+  if(dd->obj == obj)
   {
-    struct Folder *srcfolder;
-    struct Folder *dstfolder;
-    struct MUI_NListtree_TreeNode *tn_src;
+    // A folder was dragged onto another folder we break here and
+    // let the super class do the dirty work. This will invoke the
+    // MUIM_NListtree_Move method, which we also catch to move the
+    // folder node within our folder list.
+    DoSuperMethodA(cl, obj, msg);
+  }
+  else
+  {
     struct MUI_NListtree_TreeNode *tn_dst;
+    struct MUI_NListtree_TreeNode *tn_src;
 
-    tn_dst = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget);
-    if(!tn_dst)
-      return 0;
+    if((tn_dst = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget)) != NULL &&
+       (tn_src = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active)) != NULL)
+    {
+      struct Folder *srcfolder = ((struct FolderNode *)tn_src->tn_User)->folder;
+      struct Folder *dstfolder = ((struct FolderNode *)tn_dst->tn_User)->folder;
 
-    dstfolder = ((struct FolderNode *)tn_dst->tn_User)->folder;
-
-    tn_src = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active);
-    if(!tn_src)
-      return 0;
-
-    srcfolder = ((struct FolderNode *)tn_src->tn_User)->folder;
-
-    if(!isGroupFolder(dstfolder))
-      MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE, TRUE);
-
-    return 0;
+      if(!isGroupFolder(dstfolder))
+        MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE, TRUE);
+    }
   }
 
-  return DoSuperMethodA(cl, obj, msg);
+  RETURN(0);
+  return 0;
 }
 
 ///
@@ -392,7 +395,7 @@ OVERLOAD(MUIM_NListtree_DropType)
 
     if((folder = ((struct FolderNode *)tn->tn_User)->folder) != NULL)
     {
-      if(data->draggingMails)
+      if(data->draggingMails == TRUE)
       {
         // if mails are being dragged the currently active folder and group folders must be excluded.
         // All other folders are valid drop targets.
@@ -414,6 +417,34 @@ OVERLOAD(MUIM_NListtree_DropType)
   }
   else
     *dt->Type = MUIV_NListtree_DropType_None;
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// OVERLOAD(MUIM_NListtree_Move)
+OVERLOAD(MUIM_NListtree_Move)
+{
+  struct MUIP_NListtree_Move *mv = (struct MUIP_NListtree_Move *)msg;
+  struct MUI_NListtree_TreeNode *prevTreeNode;
+  struct FolderNode *thisFNode;
+  struct FolderNode *prevFNode;
+
+  ENTER();
+
+  // first let the list tree class do the actual movement of the tree nodes
+  DoSuperMethodA(cl, obj, msg);
+
+  // now determine the current node and the previous one
+  thisFNode = (struct FolderNode *)mv->OldTreeNode->tn_User;
+  prevTreeNode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, mv->OldTreeNode, MUIV_NListtree_GetEntry_Position_Previous, MUIF_NONE);
+  prevFNode = (struct FolderNode *)prevTreeNode->tn_User;
+
+  // finally move the folder node within the exclusively locked folder list
+  LockFolderList(G->folders);
+  MoveFolderNode(G->folders, thisFNode, prevFNode);
+  UnlockFolderList(G->folders);
 
   RETURN(0);
   return 0;

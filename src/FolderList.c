@@ -195,6 +195,26 @@ void DeleteFolderNode(struct FolderNode *fnode)
 }
 
 ///
+/// MoveFolderNode
+// move a folder within the list to a different position
+// the folder list must be locked *exclusively* before calling this function!!
+void MoveFolderNode(struct FolderList *flist, struct FolderNode *fnode, struct FolderNode *afterThis)
+{
+  ENTER();
+
+  // first remove the node from the list
+  Remove((struct Node *)&fnode->node);
+
+  // then insert it again either at the front or somewhere in the middle
+  if(afterThis == NULL)
+    AddHead((struct List *)&flist->list, (struct Node *)&fnode->node);
+  else
+    Insert((struct List *)&flist->list, (struct Node *)&fnode->node, (struct Node *)&afterThis->node);
+
+  LEAVE();
+}
+
+///
 
 #if defined(DEBUG)
 static LONG folderLocks = 0;
