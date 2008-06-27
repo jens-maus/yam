@@ -1932,6 +1932,9 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
               {
                 struct Folder *prevFolder;
 
+                // allow the listtree to reorder our folder list
+                set(lv, MUIA_MainFolderListtree_ReorderFolderList, TRUE);
+
                 prevFolder = FO_GetCurrentFolder();
                 if(prevFolder != NULL && isGroupFolder(prevFolder))
                 {
@@ -1943,6 +1946,10 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
                   // add the folder after the current folder
                   DoMethod(lv, MUIM_NListtree_Insert, oldfolder->Name, fnode, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
                 }
+
+                // the MainFolderListtree class has catched the insert operation and
+                // move the new folder node within the folder list to the correct position.
+                set(lv, MUIA_MainFolderListtree_ReorderFolderList, FALSE);
 
                 success = TRUE;
               }

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-06-27  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c, MainFolderListtree.c: a newly created folder will now be moved to
+    the correct position within the global folder list, too.
+
 2008-06-26  Thore Böckelmann <tboeckel@gmx.de>
 
   * FolderList.c, MainFolderListtree.c: whenever a folder was moved within the

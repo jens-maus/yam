@@ -44,6 +44,7 @@ struct Data
   Object *context_menu;
   Object *folderImage[MAX_FOLDERIMG+1];
   BOOL draggingMails;
+  BOOL reorderFolderList;
 };
 */
 
@@ -318,6 +319,30 @@ OVERLOAD(OM_GET)
 }
 
 ///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags = inittags(msg), *tag;
+
+  while((tag = NextTagItem(&tags)))
+  {
+    switch(tag->ti_Tag)
+    {
+      ATTR(ReorderFolderList):
+      {
+        data->reorderFolderList = tag->ti_Data;
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+    }
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {
@@ -423,28 +448,69 @@ OVERLOAD(MUIM_NListtree_DropType)
 }
 
 ///
+/// OVERLOAD(MUIM_NListtree_Insert)
+OVERLOAD(MUIM_NListtree_Insert)
+{
+  GETDATA;
+  struct MUI_NListtree_TreeNode *thisTreeNode;
+
+  ENTER();
+
+  // first let the list tree class do the actual insertion of the tree nodes
+  if((thisTreeNode = (struct MUI_NListtree_TreeNode *)DoSuperMethodA(cl, obj, msg)) != NULL)
+  {
+    // reorder the folder list only if we are explicitly told to do so
+    if(data->reorderFolderList == TRUE)
+    {
+      struct MUI_NListtree_TreeNode *prevTreeNode;
+
+      // now determine the previous node
+      if((prevTreeNode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, thisTreeNode, MUIV_NListtree_GetEntry_Position_Previous, MUIF_NONE)) != NULL)
+      {
+        struct FolderNode *thisFNode;
+        struct FolderNode *prevFNode;
+
+        thisFNode = (struct FolderNode *)thisTreeNode->tn_User;
+        prevFNode = (struct FolderNode *)prevTreeNode->tn_User;
+
+        // finally move the folder node within the exclusively locked folder list
+        LockFolderList(G->folders);
+        MoveFolderNode(G->folders, thisFNode, prevFNode);
+        UnlockFolderList(G->folders);
+      }
+    }
+  }
+
+  RETURN(thisTreeNode);
+  return (ULONG)thisTreeNode;
+}
+
+///
 /// OVERLOAD(MUIM_NListtree_Move)
 OVERLOAD(MUIM_NListtree_Move)
 {
   struct MUIP_NListtree_Move *mv = (struct MUIP_NListtree_Move *)msg;
   struct MUI_NListtree_TreeNode *prevTreeNode;
-  struct FolderNode *thisFNode;
-  struct FolderNode *prevFNode;
 
   ENTER();
 
   // first let the list tree class do the actual movement of the tree nodes
   DoSuperMethodA(cl, obj, msg);
 
-  // now determine the current node and the previous one
-  thisFNode = (struct FolderNode *)mv->OldTreeNode->tn_User;
-  prevTreeNode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, mv->OldTreeNode, MUIV_NListtree_GetEntry_Position_Previous, MUIF_NONE);
-  prevFNode = (struct FolderNode *)prevTreeNode->tn_User;
+  // now determine the previous node
+  if((prevTreeNode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, mv->OldTreeNode, MUIV_NListtree_GetEntry_Position_Previous, MUIF_NONE)) != NULL)
+  {
+    struct FolderNode *thisFNode;
+    struct FolderNode *prevFNode;
 
-  // finally move the folder node within the exclusively locked folder list
-  LockFolderList(G->folders);
-  MoveFolderNode(G->folders, thisFNode, prevFNode);
-  UnlockFolderList(G->folders);
+    thisFNode = (struct FolderNode *)mv->OldTreeNode->tn_User;
+    prevFNode = (struct FolderNode *)prevTreeNode->tn_User;
+
+    // finally move the folder node within the exclusively locked folder list
+    LockFolderList(G->folders);
+    MoveFolderNode(G->folders, thisFNode, prevFNode);
+    UnlockFolderList(G->folders);
+  }
 
   RETURN(0);
   return 0;
