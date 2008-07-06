@@ -442,6 +442,7 @@ const char *EncodingName(enum Encoding enc)
   return encName;
 }
 
+///
 /// WriteContentTypeAndEncoding
 //  Outputs content type header including parameters
 void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)

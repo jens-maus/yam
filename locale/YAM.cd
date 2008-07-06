@@ -6840,3 +6840,12 @@ Delete all
 MSG_MA_MDELETEATT (2115//)
 Delete
 ;
+MSG_CO_MAPFOREIGNCHARS (2116//)
+Map foreign chars to ASCII
+;
+MSG_HELP_CO_MAPFOREIGNCHARS (2117//)
+If selected, characters that cannot\n\
+be converted to the read charset\n\
+will be mapped to looklike ASCII\n\
+sequences.
+;

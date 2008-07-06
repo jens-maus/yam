@@ -125,7 +125,7 @@ ifneq ($(HOST), AmigaOS4)
              -D__YAM_BUILDDATE=\"`$(DATE) +%Y%m%d`\" \
              -D__YAM_BUILDID="$(BUILDID)"
 
-  ifneq ($HOST), MorphOS)
+  ifneq ($(HOST), MorphOS)
 
     # when we end up here this is either a unix or Aros host
     # so lets use unix kind of commands

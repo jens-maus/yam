@@ -596,11 +596,12 @@ long base64decode_file(FILE *in, FILE *out,
     if(srcCodeset)
     {
       ULONG strLen = 0;
-      STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
-                                      CSA_DestCodeset,   G->readCharset,
-                                      CSA_Source,        outbuffer,
-                                      CSA_SourceLen,     outLength,
-                                      CSA_DestLenPtr,    &strLen,
+      STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
+                                      CSA_DestCodeset,     G->readCharset,
+                                      CSA_Source,          outbuffer,
+                                      CSA_SourceLen,       outLength,
+                                      CSA_DestLenPtr,      &strLen,
+                                      CSA_MapForeignChars, C->MapForeignChars,
                                       TAG_DONE);
 
       if(str && strLen > 0)

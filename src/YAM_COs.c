@@ -398,6 +398,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "ConvertHTML      = %s\n", Bool2Txt(co->ConvertHTML));
     fprintf(fh, "LocalCharset     = %s\n", co->DefaultReadCharset);
     fprintf(fh, "DetectCyrillic   = %s\n", Bool2Txt(co->DetectCyrillic));
+    fprintf(fh, "MapForeignChars  = %s\n", Bool2Txt(co->MapForeignChars));
 
     fprintf(fh, "\n[Write]\n");
     fprintf(fh, "ReplyTo          = %s\n", co->ReplyTo);
@@ -1078,6 +1079,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(!stricmp(buffer, "ConvertHTML"))    co->ConvertHTML = Txt2Bool(value);
           else if(!stricmp(buffer, "LocalCharset"))   strlcpy(co->DefaultReadCharset, value, sizeof(co->DefaultReadCharset));
           else if(!stricmp(buffer, "DetectCyrillic")) co->DetectCyrillic = Txt2Bool(value);
+          else if(!stricmp(buffer, "MapForeignChars"))co->MapForeignChars = Txt2Bool(value);
 
 /* Write */
           else if(!stricmp(buffer, "ReplyTo"))        strlcpy(co->ReplyTo,  value, sizeof(co->ReplyTo));
@@ -1806,6 +1808,7 @@ void CO_GetConfig(BOOL saveConfig)
 
         GetMUIText(CE->DefaultReadCharset, gui->TX_DEFCHARSET_READ, sizeof(CE->DefaultReadCharset));
         CE->DetectCyrillic = GetMUICheck(gui->CH_DETECTCYRILLIC);
+        CE->MapForeignChars = GetMUICheck(gui->CH_MAPFOREIGNCHARS);
       }
       break;
 
@@ -2228,6 +2231,7 @@ void CO_SetConfig(void)
       set(gui->CH_WRAPHEAD, MUIA_Disabled, CE->ShowHeader == HM_NOHEADER);
       nnset(gui->TX_DEFCHARSET_READ,  MUIA_Text_Contents, CE->DefaultReadCharset);
       setcheckmark(gui->CH_DETECTCYRILLIC, CE->DetectCyrillic);
+      setcheckmark(gui->CH_MAPFOREIGNCHARS, CE->MapForeignChars);
     }
     break;
 

@@ -31,6 +31,7 @@
 #include <proto/codesets.h>
 
 #include "YAM.h"
+#include "YAM_config.h"
 #include "YAM_stringsizes.h"
 
 #include "mime/qprintable.h"
@@ -226,9 +227,10 @@ static int rfc2231_decode_int(char *dst, const char *src, struct codeset *srcCod
 
   if(srcCodeset && srcCodeset != G->readCharset && p-src > 0)
   {
-    STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
-                                    CSA_DestCodeset,   G->readCharset,
-                                    CSA_Source,        q,
+    STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
+                                    CSA_DestCodeset,     G->readCharset,
+                                    CSA_Source,          q,
+                                    CSA_MapForeignChars, C->MapForeignChars,
                                     TAG_DONE);
 
     if(str)

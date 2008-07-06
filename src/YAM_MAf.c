@@ -1156,7 +1156,7 @@ static ULONG CompressMsgID(const char *msgid)
     id = CRC32(msgid, len, -1L);
   }
   else
-    E(DBF_MAIL, "can't calculate compressed MsgID");
+    W(DBF_MAIL, "couldn't calculate compressed MsgID from empty string");
 
   RETURN(id);
   return id;

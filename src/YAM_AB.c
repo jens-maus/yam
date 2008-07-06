@@ -968,8 +968,9 @@ BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
             base64decode(b64buffer, (const unsigned char *)&value[2], strlen(value) - 2);
 
             // now convert this prossible UTF8 string to a normal string
-            value = CodesetsUTF8ToStr(CSA_Source, Trim(b64buffer),
-                                      CSA_DestCodeset, G->readCharset,
+            value = CodesetsUTF8ToStr(CSA_Source,          Trim(b64buffer),
+                                      CSA_DestCodeset,     G->readCharset,
+                                      CSA_MapForeignChars, C->MapForeignChars,
                                       TAG_DONE);
             utf8 = TRUE;
           }
@@ -1309,8 +1310,9 @@ static void XMLCALL XMLEndHandler(void *userData, const XML_Char *name)
   xmlUserData->xmlData[xmlUserData->xmlDataSize] = '\0';
 
   // now convert this prossible UTF8 string to a normal string
-  if((isoStr = CodesetsUTF8ToStr(CSA_Source, Trim(xmlUserData->xmlData),
-                                 CSA_DestCodeset, G->readCharset,
+  if((isoStr = CodesetsUTF8ToStr(CSA_Source,          Trim(xmlUserData->xmlData),
+                                 CSA_DestCodeset,     G->readCharset,
+                                 CSA_MapForeignChars, C->MapForeignChars,
                                  TAG_DONE)) != NULL)
   {
     if(xmlUserData->section == xs_Group)

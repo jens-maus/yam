@@ -596,11 +596,12 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
 
         // now we convert the text from the source codeset to our
         // local codeset
-        STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
-                                        CSA_DestCodeset,   G->readCharset,
-                                        CSA_Source,        txt,
-                                        CSA_SourceLen,     len,
-                                        CSA_DestLenPtr,    &dstLen,
+        STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
+                                        CSA_DestCodeset,     G->readCharset,
+                                        CSA_Source,          txt,
+                                        CSA_SourceLen,       len,
+                                        CSA_DestLenPtr,      &dstLen,
+                                        CSA_MapForeignChars, C->MapForeignChars,
                                         TAG_DONE);
 
         // now that we have our converted string we can go and

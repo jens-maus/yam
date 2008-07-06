@@ -746,6 +746,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
      co->DaylightSaving = FALSE;
      co->DetectCyrillic = FALSE;
+     co->MapForeignChars = TRUE;
   }
 
   if(page == cp_TCPIP || page == cp_AllPages)
@@ -1306,6 +1307,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->TimeZoneCheck                   == c2->TimeZoneCheck &&
      c1->AutoDSTCheck                    == c2->AutoDSTCheck &&
      c1->DetectCyrillic                  == c2->DetectCyrillic &&
+     c1->MapForeignChars                 == c2->MapForeignChars &&
      c1->ABookLookup                     == c2->ABookLookup &&
      c1->ConvertHTML                     == c2->ConvertHTML &&
      c1->SpamFilterEnabled               == c2->SpamFilterEnabled &&

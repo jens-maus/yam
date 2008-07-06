@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-07-06  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: bumped the minimum requirement of codesets.library to 6.6.
+  * misc: implemented the new CSA_MapForeignChars functionality of codesets
+    library. By providing the possibility to convert foreign characters which
+    cannot be directly converted to the local charset into looklike ASCII
+    character strings, a more intuitive mapping of chars should be achieved.
+
 2008-06-27  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c, MainFolderListtree.c: a newly created folder will now be moved to

@@ -389,11 +389,12 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
         if(srcCodeset)
         {
           ULONG strLen = 0;
-          STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
-                                          CSA_DestCodeset,   G->readCharset,
-                                          CSA_Source,        dptr,
-                                          CSA_SourceLen,     todo,
-                                          CSA_DestLenPtr,    &strLen,
+          STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
+                                          CSA_DestCodeset,     G->readCharset,
+                                          CSA_Source,          dptr,
+                                          CSA_SourceLen,       todo,
+                                          CSA_DestLenPtr,      &strLen,
+                                          CSA_MapForeignChars, C->MapForeignChars,
                                           TAG_DONE);
 
           if(str && strLen > 0)
@@ -461,11 +462,12 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
     if(srcCodeset)
     {
       ULONG strLen = 0;
-      STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
-                                      CSA_DestCodeset,   G->readCharset,
-                                      CSA_Source,        dptr,
-                                      CSA_SourceLen,     todo,
-                                      CSA_DestLenPtr,    &strLen,
+      STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
+                                      CSA_DestCodeset,     G->readCharset,
+                                      CSA_Source,          dptr,
+                                      CSA_SourceLen,       todo,
+                                      CSA_DestLenPtr,      &strLen,
+                                      CSA_MapForeignChars, C->MapForeignChars,
                                       TAG_DONE);
 
       if(str && strLen > 0)

@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (12.06.2008)
+## version $VER: YAM.catalog 6.0 (06.07.2008)
 ## language deutsch
 ## codeset 0
 ;
@@ -8455,4 +8455,13 @@ Alle löschen
 ;
 MSG_MA_MDELETEATT
 Löschen
+;
+MSG_CO_MAPFOREIGNCHARS
+Konvertiere fremde Zeichen in ASCII
+;
+MSG_HELP_CO_MAPFOREIGNCHARS
+When aktiviert, werden Zeichen die nicht\n\
+in den konfigurierten Zeichensatz umgewandelt\n\
+werden können in ASCII Sequenzen konvertiert\n\
+die dem ursprünglichen Zeichen ähneln.
 ;

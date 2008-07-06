@@ -296,6 +296,7 @@ struct CO_GUIData
   Object *CY_FORWARDMODE;
   Object *BT_MIMEIMPORT;
   Object *CH_FOLDERDBLCLICK;
+  Object *CH_MAPFOREIGNCHARS;
 };
 
 enum ConfigPage
@@ -542,6 +543,7 @@ struct Config
   BOOL  ConfigIsSaved;
   BOOL  AutoClip;
   BOOL  FolderDoubleClick;
+  BOOL  MapForeignChars;
 
   struct MUI_PenSpec ColoredText;
   struct MUI_PenSpec Color1stLevel;

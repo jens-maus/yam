@@ -2716,6 +2716,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
                 Child, HSpace(0),
               End,
               Child, MakeCheckGroup((Object **)&data->GUI.CH_CONVERTHTML, tr(MSG_CO_CONVERTHTML)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_MAPFOREIGNCHARS, tr(MSG_CO_MAPFOREIGNCHARS)),
               Child, MakeCheckGroup((Object **)&data->GUI.CH_DETECTCYRILLIC, tr(MSG_CO_DETECT_CYRILLIC)),
             End,
 
@@ -2758,6 +2759,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
     SetHelp(data->GUI.CY_MDN_DELETE,      MSG_HELP_CO_CY_MDN_DELETE);
     SetHelp(data->GUI.CY_MDN_OTHER,       MSG_HELP_CO_CY_MDN_OTHER);
     SetHelp(data->GUI.TX_DEFCHARSET_READ, MSG_HELP_CO_TX_DEFAULTCHARSET);
+    SetHelp(data->GUI.CH_MAPFOREIGNCHARS, MSG_HELP_CO_MAPFOREIGNCHARS);
     SetHelp(data->GUI.CH_DETECTCYRILLIC,  MSG_HELP_CO_DETECT_CYRILLIC);
 
     // disable all poppen objects in case the textstyles checkbox is disabled

@@ -1185,10 +1185,11 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
         if(srcCodeset != NULL)
         {
           // convert from the srcCodeset to the destination one.
-          char *str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
-                                         CSA_DestCodeset,   G->readCharset,
-                                         CSA_Source,        buf,
-                                         CSA_SourceLen,     buflen,
+          char *str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
+                                         CSA_DestCodeset,     G->readCharset,
+                                         CSA_Source,          buf,
+                                         CSA_SourceLen,       buflen,
+                                         CSA_MapForeignChars, C->MapForeignChars,
                                          TAG_DONE);
 
           // now write back exactly the same amount of bytes we have read
