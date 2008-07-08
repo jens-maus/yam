@@ -195,7 +195,7 @@ OVERLOAD(OM_NEW)
     DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_FolderRequestWindow_FinishInput, 0);
     DoMethod(listviewObj, MUIM_Notify, MUIA_Listview_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_FolderRequestWindow_FinishInput, 1);
 
-    set(obj, MUIA_Window_ActiveObject, listObj);
+    set(obj, MUIA_Window_DefaultObject, listObj);
   }
 
   RETURN(obj);

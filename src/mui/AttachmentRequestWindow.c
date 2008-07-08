@@ -43,7 +43,7 @@
 struct Data
 {
   LONG result;
-  Object *listviewObj;
+  Object *listObj;
 };
 */
 
@@ -117,7 +117,7 @@ OVERLOAD(OM_NEW)
   char *bodyText = NULL;
   char *yesText = (char *)tr(MSG_Okay);
   char *noText = (char *)tr(MSG_Cancel);
-  Object *listviewObj = NULL;
+  Object *listObj = NULL;
   Object *yesButton = NULL;
   Object *noButton = NULL;
   struct ReadMailData *rmData = NULL;
@@ -188,7 +188,7 @@ OVERLOAD(OM_NEW)
         Child, LLabel(bodyText),
         Child, NListviewObject,
           MUIA_CycleChain, TRUE,
-          MUIA_NListview_NList, listviewObj = NListObject,
+          MUIA_NListview_NList, listObj = NListObject,
             InputListFrame,
             MUIA_NList_Format,               "BAR,BAR,",
             MUIA_NList_Title,                TRUE,
@@ -212,15 +212,15 @@ OVERLOAD(OM_NEW)
     static struct Part spart[2];
     struct Part *part;
 
-    data->listviewObj = listviewObj;
+    data->listObj = listObj;
 
     // lets create the static parts of the Attachrequest entries in the NList
     spart[0].Nr = PART_ORIGINAL;
     strlcpy(spart[0].Name, tr(MSG_RE_Original), sizeof(spart[0].Name));
     spart[0].Size = rmData->mail->Size;
     SET_FLAG(spart[0].Flags, PFLAG_DECODED);
-    DoMethod(listviewObj, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Top);
-    set(listviewObj, MUIA_NList_Active, MUIV_NList_Active_Top);
+    DoMethod(listObj, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Top);
+    set(listObj, MUIA_NList_Active, MUIV_NList_Active_Top);
 
     // if this AttachRequest isn't a DISPLAY request we show all the option to select the text we actually see
     if(!isDisplayReq(mode))
@@ -229,7 +229,7 @@ OVERLOAD(OM_NEW)
       strlcpy(spart[1].Name, tr(MSG_RE_AllTexts), sizeof(spart[1].Name));
       spart[1].Size = 0;
 
-      DoMethod(listviewObj, MUIM_NList_InsertSingle, &spart[1], MUIV_NList_Insert_Bottom);
+      DoMethod(listObj, MUIM_NList_InsertSingle, &spart[1], MUIV_NList_Insert_Bottom);
     }
 
     // now we process the mail and pick every part out to the NListview
@@ -237,16 +237,16 @@ OVERLOAD(OM_NEW)
     {
       if(!isPrintReq(mode) || isPrintable(part))
       {
-        DoMethod(listviewObj, MUIM_NList_InsertSingle, part, MUIV_NList_Insert_Bottom);
+        DoMethod(listObj, MUIM_NList_InsertSingle, part, MUIV_NList_Insert_Bottom);
       }
     }
 
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 0);
-    DoMethod(listviewObj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 1);
+    DoMethod(listObj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 1);
     DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 1);
     DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 0);
 
-    set(obj, MUIA_Window_DefaultObject, yesButton);
+    set(obj, MUIA_Window_DefaultObject, listObj);
   }
 
   RETURN(obj);
@@ -279,11 +279,11 @@ OVERLOAD(OM_GET)
       // now we pass through every selected entry and add it to the next part.
       for(id = MUIV_NList_NextSelected_Start; ; prevPart = part)
       {
-        DoMethod(data->listviewObj, MUIM_NList_NextSelected, &id);
+        DoMethod(data->listObj, MUIM_NList_NextSelected, &id);
         if(id == MUIV_NList_NextSelected_End)
           break;
 
-        DoMethod(data->listviewObj, MUIM_NList_GetEntry, id, &part);
+        DoMethod(data->listObj, MUIM_NList_GetEntry, id, &part);
 
         // we have to set NextSelected to NULL first
         part->NextSelected = NULL;

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-07-08  Thore Böckelmann <tboeckel@gmx.de>
+
+  * AttachmentRequestWindow.c, FolderRequestWindow.c: the attachment request
+    window's list is now the default object instead of the Ok button. This
+    fixes bug #2009701. Also changed the folder request window's list to be
+    "just" the default object instead of the active object.
+
 2008-07-06  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: bumped the minimum requirement of codesets.library to 6.6.
