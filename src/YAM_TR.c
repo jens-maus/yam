@@ -4745,21 +4745,6 @@ static BOOL InitUIDLhash(void)
 {
   BOOL result = FALSE;
 
-  // The default UIDLhashTable operators
-  static const struct HashTableOps UIDLhashTableOps =
-  {
-    DefaultHashAllocTable,
-    DefaultHashFreeTable,
-    DefaultHashGetKey,
-    StringHashHashKey,
-    StringHashMatchEntry,
-    DefaultHashMoveEntry,
-    StringHashClearEntry,
-    DefaultHashFinalize,
-    NULL,
-    NULL
-  };
-
   ENTER();
 
   // make sure no other UIDLhashTable is active
@@ -4767,7 +4752,7 @@ static BOOL InitUIDLhash(void)
     CleanupUIDLhash();
 
   // allocate a new hashtable for managing the UIDL data
-  if((G->TR->UIDLhashTable = HashTableNew((struct HashTableOps *)&UIDLhashTableOps, NULL, sizeof(struct UIDLtoken), 512)) != NULL)
+  if((G->TR->UIDLhashTable = HashTableNew(HashTableGetDefaultStringOps(), NULL, sizeof(struct UIDLtoken), 512)) != NULL)
   {
     FILE *fh;
     char *filename = CreateFilename(".uidl");

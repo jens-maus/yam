@@ -299,19 +299,6 @@ static enum HashTableOperator DeleteImageCacheNode(UNUSED struct HashTable *tabl
 //
 BOOL ImageCacheSetup(void)
 {
-  static const struct HashTableOps imageCacheHashTableOps =
-  {
-    DefaultHashAllocTable,
-    DefaultHashFreeTable,
-    DefaultHashGetKey,
-    StringHashHashKey,
-    StringHashMatchEntry,
-    DefaultHashMoveEntry,
-    StringHashClearEntry,
-    DefaultHashFinalize,
-    NULL,
-    NULL
-  };
   BOOL result = FALSE;
 
   ENTER();
@@ -320,7 +307,7 @@ BOOL ImageCacheSetup(void)
   PictureDTBase = OpenLibrary("picture.datatype", 0);
   #endif
 
-  if((G->imageCacheHashTable = HashTableNew((struct HashTableOps *)&imageCacheHashTableOps, NULL, sizeof(struct ImageCacheNode), 128)) != NULL)
+  if((G->imageCacheHashTable = HashTableNew(HashTableGetDefaultStringOps(), NULL, sizeof(struct ImageCacheNode), 128)) != NULL)
     result = TRUE;
 
   RETURN(result);

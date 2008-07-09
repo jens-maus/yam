@@ -143,7 +143,7 @@ enum HashTableOperator
 // HashTableInit, and return its address.  Return NULL on malloc failure.
 // Note that the entry storage at table->entryStore will be allocated using
 // the ops->allocTable callback.
-struct HashTable *HashTableNew(struct HashTableOps *ops, void *data, ULONG entrySize, ULONG capacity);
+struct HashTable *HashTableNew(const struct HashTableOps *ops, void *data, ULONG entrySize, ULONG capacity);
 
 // Finalize table's data, free its entry storage (via table->ops->freeTable),
 // and return the memory starting at table to the malloc heap.
@@ -181,6 +181,7 @@ void HashTableRawRemove(struct HashTable *table, struct HashEntryHeader *entry);
 
 // get the default hash table operators for your own use
 const struct HashTableOps *HashTableGetDefaultOps(void);
+const struct HashTableOps *HashTableGetDefaultStringOps(void);
 
 // Enumerate entries in table using etor:
 //

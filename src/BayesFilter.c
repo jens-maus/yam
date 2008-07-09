@@ -67,20 +67,6 @@ struct Token
   double distance;
 };
 
-static const struct HashTableOps tokenTableOps =
-{
-  DefaultHashAllocTable,
-  DefaultHashFreeTable,
-  DefaultHashGetKey,
-  StringHashHashKey,
-  StringHashMatchEntry,
-  DefaultHashMoveEntry,
-  StringHashClearEntry,
-  DefaultHashFinalize,
-  NULL,
-  NULL
-};
-
 struct TokenEnumeration
 {
   ULONG entrySize;
@@ -102,7 +88,7 @@ static BOOL tokenizerInit(struct Tokenizer *t)
 
   ENTER();
 
-  result = HashTableInit(&t->tokenTable, &tokenTableOps, NULL, sizeof(struct Token), 1024);
+  result = HashTableInit(&t->tokenTable, HashTableGetDefaultStringOps(), NULL, sizeof(struct Token), 1024);
 
   RETURN(result);
   return result;
