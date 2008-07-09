@@ -4757,6 +4757,7 @@ static BOOL InitUIDLhash(void)
     StringHashClearEntry,
     DefaultHashFinalize,
     NULL,
+    NULL
   };
 
   ENTER();

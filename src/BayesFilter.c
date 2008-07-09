@@ -78,6 +78,7 @@ static const struct HashTableOps tokenTableOps =
   StringHashClearEntry,
   DefaultHashFinalize,
   NULL,
+  NULL
 };
 
 struct TokenEnumeration

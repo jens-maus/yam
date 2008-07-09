@@ -94,6 +94,7 @@ struct HashTableOps
 
   // Optional hooks start here. If NULL, these are not called.
   BOOL         (* initEntry)(struct HashTable *table, const struct HashEntryHeader *entry, const void *key);
+  void         (* destroyEntry)(struct HashTable *table, const struct HashEntryHeader *entry);
 };
 
 struct HashTable

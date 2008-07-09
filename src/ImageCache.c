@@ -310,6 +310,7 @@ BOOL ImageCacheSetup(void)
     StringHashClearEntry,
     DefaultHashFinalize,
     NULL,
+    NULL
   };
   BOOL result = FALSE;
 

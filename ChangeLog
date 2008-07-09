@@ -7,6 +7,10 @@ $URL$
 
 2008-07-09  Thore Böckelmann <tboeckel@gmx.de>
 
+  * HashTable.c, misc: introduced new callback function destroyEntry() which
+    will be called upon HashTableCleanup() for every destroyed entry. By
+    default this function is NULL and hence will not be called which vastly
+    speeds up the cleanup process for large spam databases.
   * MainFolderListtree.c: if a folder is moved right behind a folder in a
     folder group, but at the parent level, it will now be inserted at the
     right position. Although the graphical representation was correct before,

@@ -374,8 +374,12 @@ void StringHashClearEntry(struct HashTable *table, struct HashEntryHeader *entry
 {
   struct HashEntry *stub = (struct HashEntry *)entry;
 
+  ENTER();
+
   free(stub->key);
   memset(entry, 0, table->entrySize);
+
+  LEAVE();
 }
 ///
 
@@ -484,21 +488,26 @@ void HashTableCleanup(struct HashTable *table)
 
   if(table->entryStore != NULL)
   {
-    char *entryAddr, *entryLimit;
-    ULONG entrySize;
-
-    entryAddr = table->entryStore;
-    entrySize = table->entrySize;
-    entryLimit = entryAddr + HASH_TABLE_SIZE(table) * entrySize;
-    while(entryAddr < entryLimit)
+    if(table->ops->destroyEntry != NULL)
     {
-      struct HashEntryHeader *entry;
+      void (* destroyEntry)(struct HashTable *table, const struct HashEntryHeader *entry);
+      char *entryAddr, *entryLimit;
+      ULONG entrySize;
 
-      entry = (struct HashEntryHeader *)entryAddr;
-      if(HASH_ENTRY_IS_LIVE(entry))
-        table->ops->clearEntry(table, entry);
+      destroyEntry = table->ops->destroyEntry;
+      entryAddr = table->entryStore;
+      entrySize = table->entrySize;
+      entryLimit = entryAddr + HASH_TABLE_SIZE(table) * entrySize;
+      while(entryAddr < entryLimit)
+      {
+        struct HashEntryHeader *entry;
 
-      entryAddr += entrySize;
+        entry = (struct HashEntryHeader *)entryAddr;
+        if(HASH_ENTRY_IS_LIVE(entry))
+          table->ops->destroyEntry(table, entry);
+
+        entryAddr += entrySize;
+      }
     }
 
     table->ops->freeTable(table, table->entryStore);
@@ -566,7 +575,7 @@ struct HashEntryHeader *HashTableOperate(struct HashTable *table, const void *ke
             table->removedCount--;
             keyHash |= COLLISION_FLAG;
           }
-          if(table->ops->initEntry != NULL && !table->ops->initEntry(table, entry, key))
+          if(table->ops->initEntry != NULL && table->ops->initEntry(table, entry, key) == FALSE)
           {
             // we haven't claimed entry yet; fail with NULL return.
             memset(entry + 1, 0, table->entrySize - sizeof(*entry));
@@ -656,6 +665,7 @@ const struct HashTableOps *HashTableGetDefaultOps(void)
     DefaultHashClearEntry,
     DefaultHashFinalize,
     NULL,
+    NULL
   };
 
   ENTER();
@@ -835,6 +845,7 @@ void HashTableTest(void)
     StringHashClearEntry,
     DefaultHashFinalize,
     NULL,
+    NULL
   };
 
   if((table = HashTableNew((struct HashTableOps *)&hashTableOps, NULL, sizeof(struct TestHashNode), 32)) != NULL)
