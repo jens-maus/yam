@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-07-09  Thore Böckelmann <tboeckel@gmx.de>
+
+  * MainFolderListtree.c: if a folder is moved right behind a folder in a
+    folder group, but at the parent level, it will now be inserted at the
+    right position. Although the graphical representation was correct before,
+    the internal list was screwed up.
+
 2008-07-08  Thore Böckelmann <tboeckel@gmx.de>
 
   * AttachmentRequestWindow.c, FolderRequestWindow.c: the attachment request
