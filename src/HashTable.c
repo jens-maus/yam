@@ -516,7 +516,7 @@ void HashTableCleanup(struct HashTable *table)
 
         entry = (struct HashEntryHeader *)entryAddr;
         if(HASH_ENTRY_IS_LIVE(entry))
-          table->ops->destroyEntry(table, entry);
+          destroyEntry(table, entry);
 
         entryAddr += entrySize;
       }
