@@ -7,6 +7,8 @@ $URL$
 
 2008-07-09  Thore Böckelmann <tboeckel@gmx.de>
 
+  * MainFolderListtree.c: added the same "leaf search" when inserting a folder
+    as when moving a folder.
   * HashTable.c, misc: since all instances use string hash tables only there
     is a new function providing the default string hashtable operators instead
     of having to define the same table over and over again.

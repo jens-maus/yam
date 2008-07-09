@@ -473,6 +473,16 @@ OVERLOAD(MUIM_NListtree_Insert)
         thisFNode = (struct FolderNode *)thisTreeNode->tn_User;
         prevFNode = (struct FolderNode *)prevTreeNode->tn_User;
 
+        // if the folder is to be moved behind a group folder then we have
+        // to get the bottom-most leaf of that group, otherwise the global
+        // folder list will be screwed up. This must be iterated through all
+        // nested groups.
+        while(isGroupFolder(prevFNode->folder))
+        {
+          prevTreeNode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, prevTreeNode, MUIV_NListtree_GetEntry_Position_Tail, MUIF_NONE);
+          prevFNode = (struct FolderNode *)prevTreeNode->tn_User;
+        }
+
         // finally move the folder node within the exclusively locked folder list
         LockFolderList(G->folders);
         MoveFolderNode(G->folders, thisFNode, prevFNode);
@@ -510,11 +520,11 @@ OVERLOAD(MUIM_NListtree_Move)
     // to get the bottom-most leaf of that group, otherwise the global
     // folder list will be screwed up. This must be iterated through all
     // nested groups.
-	while(isGroupFolder(prevFNode->folder))
-	{
-	  prevTreeNode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, prevTreeNode, MUIV_NListtree_GetEntry_Position_Tail, MUIF_NONE);
-	  prevFNode = (struct FolderNode *)prevTreeNode->tn_User;
-	}
+    while(isGroupFolder(prevFNode->folder))
+    {
+      prevTreeNode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, prevTreeNode, MUIV_NListtree_GetEntry_Position_Tail, MUIF_NONE);
+      prevFNode = (struct FolderNode *)prevTreeNode->tn_User;
+    }
 
     // finally move the folder node within the exclusively locked folder list
     LockFolderList(G->folders);
