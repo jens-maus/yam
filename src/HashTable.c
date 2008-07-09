@@ -689,7 +689,7 @@ const struct HashTableOps *HashTableGetDefaultOps(void)
 }
 
 ///
-/// HashTableGetDefaultOps()
+/// HashTableGetDefaultStringOps()
 //
 const struct HashTableOps *HashTableGetDefaultStringOps(void)
 {
