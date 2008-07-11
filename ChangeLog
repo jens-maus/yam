@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-07-11  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: Reimplemented the NOAUTOLOGIN feature which somehow had gone lost.
+    This fixes bug #1991643.
+
 2008-07-09  Thore Böckelmann <tboeckel@gmx.de>
 
   * MainFolderListtree.c: added the same "leaf search" when inserting a folder

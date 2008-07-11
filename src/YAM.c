@@ -293,7 +293,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
   ENTER();
 
-  SHOWSTRING(DBF_STARTUP, name);
+  D(DBF_STARTUP, "checking for v%ld.%ld+ of '%s'", minver, minrev, name);
 
   for(;;)
   {
@@ -2071,7 +2071,7 @@ static void Login(const char *user, const char *password,
   // we query genesis.library (from the Genesis TCP/IP stack) for the user
   // name in case the caller doesn't want to force a specific username
   #if !defined(__amigaos4__)
-  if(user == NULL)
+  if(user == NULL && args.noAutoLogin == FALSE)
   {
     struct Library *GenesisBase;
 
