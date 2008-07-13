@@ -325,6 +325,8 @@ void MA_ChangeSelected(BOOL forceUpdate)
                                                              gui->MI_ATTACH,
                                                              gui->MI_FORWARD,
                                                              gui->MI_CHSUBJ,
+                                                             gui->MI_NEXTTHREAD,
+                                                             gui->MI_PREVTHREAD,
                                                              NULL);
 
       // Enable if:
@@ -1211,6 +1213,131 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags)
   RETURN(sflags);
   return sflags;
 }
+///
+
+/*** Mail Thread Nagivation ***/
+/// FindThreadInFolder
+// Find the next/prev message in a thread within one folder
+struct Mail *FindThreadInFolder(struct Mail *srcMail, struct Folder *folder, BOOL nextThread)
+{
+  struct Mail *result = NULL;
+
+  ENTER();
+
+  LockMailListShared(folder->messages);
+
+  if(IsMailListEmpty(folder->messages) == FALSE)
+  {
+    struct MailNode *mnode;
+
+    ForEachMailNode(folder->messages, mnode)
+    {
+      struct Mail *mail = mnode->mail;
+
+      if(nextThread == TRUE)
+      {
+        // find the answer to the srcMail
+        if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
+        {
+          result = mail;
+          break;
+        }
+      }
+      else
+      {
+        // else we have to find the question to the srcMail
+        if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
+        {
+          result = mail;
+          break;
+        }
+      }
+    }
+  }
+
+  UnlockMailList(folder->messages);
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// FindThread
+//  Find the next/prev message in a thread and return a pointer to it
+struct Mail *FindThread(struct Mail *srcMail, BOOL nextThread, Object *window)
+{
+  struct Mail *mail = NULL;
+
+  ENTER();
+
+  if(srcMail != NULL)
+  {
+    if(srcMail->Folder->LoadedMode == LM_VALID || MA_GetIndex(srcMail->Folder) == TRUE)
+    {
+      // first we take the folder of the srcMail as a priority in the
+      // search of the next/prev thread so we have to check that we
+      // have a valid index before we are going to go on.
+      if((mail = FindThreadInFolder(srcMail, srcMail->Folder, nextThread)) == NULL)
+      {
+        // if the user enabled the global thread search we go and walk through all
+        // the other folders and search for further mails of the same threads.
+        if(C->GlobalMailThreads == TRUE)
+        {
+          // if we still haven't found the mail we have to scan the other folders aswell
+          LockFolderListShared(G->folders);
+
+          if(IsFolderListEmpty(G->folders) == FALSE)
+          {
+            int autoloadindex = -1;
+            struct FolderNode *fnode;
+
+            ForEachFolderNode(G->folders, fnode)
+            {
+              struct Folder *fo = fnode->folder;
+
+              // check if this folder isn't a group and that we haven't scanned
+              // it already.
+              if(!isGroupFolder(fo) && fo != srcMail->Folder)
+              {
+                if(fo->LoadedMode != LM_VALID)
+                {
+                  if(autoloadindex == -1)
+                  {
+                    // if we are going to ask for loading all folders we do it now
+                    if(MUI_Request(G->App, window, 0,
+                                   tr(MSG_MA_ConfirmReq),
+                                   tr(MSG_YesNoReq),
+                                   tr(MSG_RE_FOLLOWTHREAD)) != 0)
+                      autoloadindex = 1;
+                    else
+                      autoloadindex = 0;
+                  }
+
+                  // load the folder's index, if we are allowed to do that
+                  if(autoloadindex == 1)
+                    MA_GetIndex(fo);
+                }
+
+                // check again for a valid index
+                if(fo->LoadedMode == LM_VALID)
+                  mail = FindThreadInFolder(srcMail, fo, nextThread);
+              }
+
+              if(mail != NULL)
+                break;
+            }
+          }
+
+          UnlockFolderList(G->folders);
+        }
+      }
+    }
+  }
+
+  RETURN(mail);
+  return mail;
+}
+
 ///
 
 /*** Main button functions ***/
@@ -3563,6 +3690,46 @@ HOOKPROTONHNO(MA_EditActionFunc, void, int *arg)
 MakeStaticHook(MA_EditActionHook, MA_EditActionFunc);
 
 ///
+/// FollowThreadHook
+//  Hook that is called to find the next/prev message in a thread and change to it
+HOOKPROTONHNO(FollowThreadFunc, void, int *arg)
+{
+  int direction = arg[0];
+  struct MA_GUIData *gui = &G->MA->GUI;
+  struct Mail *mail = NULL;
+  struct Mail *fmail;
+
+  ENTER();
+
+  // get the currently active mail entry.
+  DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+
+  // depending on the direction we get the Question or Answer to the current Message
+  if(mail != NULL &&
+     (fmail = FindThread(mail, direction > 0, gui->WI)) != NULL)
+  {
+    LONG pos = MUIV_NList_GetPos_Start;
+
+    // we have to make sure that the folder where the message will be showed
+    // from is active and ready to display the mail
+    MA_ChangeFolder(fmail->Folder, TRUE);
+
+    // get the position of the mail in the currently active listview
+    DoMethod(gui->PG_MAILLIST, MUIM_NList_GetPos, fmail, &pos);
+
+    // if the mail is displayed we make it the active one
+    if(pos != MUIV_NList_GetPos_End)
+      set(gui->PG_MAILLIST, MUIA_NList_Active, pos);
+  }
+  else
+    DisplayBeep(_screen(obj));
+
+
+  LEAVE();
+}
+MakeStaticHook(FollowThreadHook, FollowThreadFunc);
+
+///
 
 /*** GUI ***/
 /// MA_SetupDynamicMenus
@@ -3986,8 +4153,15 @@ struct MA_ClassData *MA_New(void)
     //  *   Configuration (MMEN_CONFIG)
     //  _   Execute script (MMEN_SCRIPT)
     //  ?   Open about window (MMEN_ABOUT)
-
     //
+    // InputEvent shortcuts:
+    //
+    // -capslock del                : delete mail (MMEN_DELETE)
+    // -capslock shift del          : delete mail at once
+    // -repeat -capslock alt left   : Display previous mail in message thread (MMEN_PREVTH)
+    // -repeat -capslock alt right  : Display next mail in message thread (MMEN_NEXTTH)
+    //
+
     data->GUI.MS_MAIN = MenustripObject,
       MUIA_Family_Child, data->GUI.MN_PROJECT = MenuObject, MUIA_Menu_Title, tr(MSG_MA_Project),
         MUIA_Family_Child, Menuitem(tr(MSG_PROJECT_MABOUT), "?", TRUE, FALSE, MMEN_ABOUT),
@@ -3998,6 +4172,10 @@ struct MA_ClassData *MA_New(void)
         MUIA_Family_Child, Menuitem(tr(MSG_MA_Restart), NULL, TRUE, FALSE, MMEN_LOGIN),
         MUIA_Family_Child, Menuitem(tr(MSG_MA_HIDE), "H", TRUE, FALSE, MMEN_HIDE),
         MUIA_Family_Child, Menuitem(tr(MSG_MA_QUIT), "Q", TRUE, FALSE, MMEN_QUIT),
+      End,
+      MenuChild, data->GUI.MI_NAVIG = MenuObject, MUIA_Menu_Title, tr(MSG_MA_NAVIGATION),
+        MenuChild, data->GUI.MI_NEXTTHREAD = Menuitem(tr(MSG_MA_MNEXTTH), "alt right", TRUE, TRUE, MMEN_NEXTTH),
+        MenuChild, data->GUI.MI_PREVTHREAD = Menuitem(tr(MSG_MA_MPREVTH), "alt left", TRUE, TRUE, MMEN_PREVTH),
       End,
       MUIA_Family_Child, data->GUI.MN_FOLDER = MenuObject, MUIA_Menu_Title, tr(MSG_Folder),
         MUIA_Family_Child, Menuitem(tr(MSG_FOLDER_NEWFOLDER), NULL, TRUE, FALSE, MMEN_NEWF),
@@ -4202,6 +4380,8 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MUI,       MUIV_Notify_Application, 3, MUIM_Application_OpenConfigWindow, MUIF_NONE, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUTMUI,  MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_AboutMUIHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SCRIPT,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_CallRexxHook, -1);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_PREVTH,    MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, -1);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEXTTH,    MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, +1);
 
       for(i=0; i < 10; i++)
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MACRO+i, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_CallRexxHook, i);
@@ -4209,14 +4389,18 @@ struct MA_ClassData *MA_New(void)
       for(i=0; i < MAXP3; i++)
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, POP_USER, i, 0);
 
-      DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_DoubleClick   ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_FolderClickHook);
-      //DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_TitleClick    ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_NList_Sort2         ,MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
-      //DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_SortType      ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_Set                 ,MUIA_NList_TitleMark,MUIV_TriggerValue);
-      DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeFolderHook);
-      DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_SetFolderInfoHook);
-      DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_Application_ReturnID,ID_CLOSEALL);
-      DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-capslock del",       MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, FALSE);
-      DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-capslock shift del", MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, TRUE);
+      DoMethod(data->GUI.NL_FOLDERS,    MUIM_Notify, MUIA_NList_DoubleClick,    MUIV_EveryTime,         MUIV_Notify_Application,  2, MUIM_CallHook,             &MA_FolderClickHook);
+      //DoMethod(data->GUI.NL_FOLDERS,  MUIM_Notify, MUIA_NList_TitleClick,     MUIV_EveryTime,         MUIV_Notify_Self,         3, MUIM_NList_Sort2,          MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
+      //DoMethod(data->GUI.NL_FOLDERS,  MUIM_Notify, MUIA_NList_SortType,       MUIV_EveryTime,         MUIV_Notify_Self,         3, MUIM_Set,                  MUIA_NList_TitleMark,MUIV_TriggerValue);
+      DoMethod(data->GUI.NL_FOLDERS,    MUIM_Notify, MUIA_NListtree_Active,     MUIV_EveryTime,         MUIV_Notify_Application,  2, MUIM_CallHook,             &MA_ChangeFolderHook);
+      DoMethod(data->GUI.NL_FOLDERS,    MUIM_Notify, MUIA_NListtree_Active,     MUIV_EveryTime,         MUIV_Notify_Application,  2, MUIM_CallHook,             &MA_SetFolderInfoHook);
+      DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_CloseRequest,  TRUE,                   MUIV_Notify_Application,  2, MUIM_Application_ReturnID, ID_CLOSEALL);
+
+      // input events
+      DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_InputEvent,    "-capslock del",        MUIV_Notify_Application,  3, MUIM_CallHook,             &MA_DelKeyHook, FALSE);
+      DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_InputEvent,    "-capslock shift del",  MUIV_Notify_Application,  3, MUIM_CallHook,             &MA_DelKeyHook, TRUE);
+      DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_InputEvent,    "-repeat -capslock alt left",   MUIV_Notify_Application,  3, MUIM_CallHook,             &FollowThreadHook, -1);
+      DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_InputEvent,    "-repeat -capslock alt right",  MUIV_Notify_Application,  3, MUIM_CallHook,             &FollowThreadHook, +1);
 
       // Define Notifies for ShortcutFolderKeys
       for(i = 0; i < 10; i++)

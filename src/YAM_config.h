@@ -297,6 +297,7 @@ struct CO_GUIData
   Object *BT_MIMEIMPORT;
   Object *CH_FOLDERDBLCLICK;
   Object *CH_MAPFOREIGNCHARS;
+  Object *CH_GLOBALMAILTHREADS;
 };
 
 enum ConfigPage
@@ -544,6 +545,7 @@ struct Config
   BOOL  AutoClip;
   BOOL  FolderDoubleClick;
   BOOL  MapForeignChars;
+  BOOL  GlobalMailThreads;
 
   struct MUI_PenSpec ColoredText;
   struct MUI_PenSpec Color1stLevel;

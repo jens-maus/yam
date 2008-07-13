@@ -2704,6 +2704,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
 
             Child, VGroup, GroupFrameT(tr(MSG_CO_OtherOptions)),
               Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, tr(MSG_CO_MultiReadWin)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_GLOBALMAILTHREADS, tr(MSG_CO_GLOBALMAILTHREADS)),
               Child, HGroup,
                 Child, data->GUI.CH_DELAYEDSTATUS = MakeCheck(tr(MSG_CO_SETSTATUSDELAYED1)),
                 Child, Label2(tr(MSG_CO_SETSTATUSDELAYED1)),
@@ -2761,6 +2762,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
     SetHelp(data->GUI.TX_DEFCHARSET_READ, MSG_HELP_CO_TX_DEFAULTCHARSET);
     SetHelp(data->GUI.CH_MAPFOREIGNCHARS, MSG_HELP_CO_MAPFOREIGNCHARS);
     SetHelp(data->GUI.CH_DETECTCYRILLIC,  MSG_HELP_CO_DETECT_CYRILLIC);
+    SetHelp(data->GUI.CH_GLOBALMAILTHREADS, MSG_HELP_CO_CH_GLOBALMAILTHREADS);
 
     // disable all poppen objects in case the textstyles checkbox is disabled
     DoMethod(data->GUI.CH_TEXTSTYLES, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,

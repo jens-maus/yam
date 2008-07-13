@@ -122,129 +122,6 @@ INLINE LONG SelectMessage(struct Mail *mail)
 }
 
 ///
-/// FindThreadInFolder
-// Find the next/prev message in a thread within one folder
-static struct Mail *FindThreadInFolder(struct Mail *srcMail, struct Folder *folder, BOOL nextThread)
-{
-  struct Mail *result = NULL;
-
-  ENTER();
-
-  LockMailListShared(folder->messages);
-
-  if(IsMailListEmpty(folder->messages) == FALSE)
-  {
-    struct MailNode *mnode;
-
-    ForEachMailNode(folder->messages, mnode)
-    {
-      struct Mail *mail = mnode->mail;
-
-      if(nextThread == TRUE)
-      {
-        // find the answer to the srcMail
-        if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
-        {
-          result = mail;
-          break;
-        }
-      }
-      else
-      {
-        // else we have to find the question to the srcMail
-        if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
-        {
-          result = mail;
-          break;
-        }
-      }
-    }
-  }
-
-  UnlockMailList(folder->messages);
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// FindThread
-//  Find the next/prev message in a thread and return a pointer to it
-static struct Mail *FindThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAllFolder, Object *readWindow)
-{
-  struct Mail *mail = NULL;
-
-  ENTER();
-
-  if(srcMail != NULL)
-  {
-    if(srcMail->Folder->LoadedMode == LM_VALID || MA_GetIndex(srcMail->Folder) == TRUE)
-    {
-      // first we take the folder of the srcMail as a priority in the
-      // search of the next/prev thread so we have to check that we
-      // have a valid index before we are going to go on.
-      if((mail = FindThreadInFolder(srcMail, srcMail->Folder, nextThread)) == NULL)
-      {
-        // if we still haven't found the mail we have to scan the other folders aswell
-        LockFolderListShared(G->folders);
-
-        if(IsFolderListEmpty(G->folders) == FALSE)
-        {
-          int autoloadindex = -1;
-          struct FolderNode *fnode;
-
-          ForEachFolderNode(G->folders, fnode)
-          {
-            struct Folder *fo = fnode->folder;
-
-            // check if this folder isn't a group and that we haven't scanned
-            // it already.
-            if(!isGroupFolder(fo) && fo != srcMail->Folder)
-            {
-              if(fo->LoadedMode != LM_VALID)
-              {
-                if(autoloadindex == -1)
-                {
-                  if(askLoadAllFolder == TRUE)
-                  {
-                    // if we are going to ask for loading all folders we do it now
-                    if(MUI_Request(G->App, readWindow, 0,
-                                   tr(MSG_MA_ConfirmReq),
-                                   tr(MSG_YesNoReq),
-                                   tr(MSG_RE_FOLLOWTHREAD)) != 0)
-                      autoloadindex = 1;
-                    else
-                      autoloadindex = 0;
-                  }
-                  else
-                    autoloadindex = 0;
-                }
-
-                // load the folder's index, if we are allowed to do that
-                if(autoloadindex == 1)
-                  MA_GetIndex(fo);
-              }
-
-              // check again for a valid index
-              if(fo->LoadedMode == LM_VALID)
-                mail = FindThreadInFolder(srcMail, fo, nextThread);
-            }
-
-            if(mail != NULL)
-              break;
-          }
-        }
-
-        UnlockFolderList(G->folders);
-      }
-    }
-  }
-
-  RETURN(mail);
-  return mail;
-}
-
-///
 
 /* Hooks */
 /// CloseReadWindowHook()
@@ -355,8 +232,6 @@ OVERLOAD(OM_NEW)
   //  Y   Copy mail (RMEN_COPY)
   //  Z
   // Del  Remove mail (RMEN_DELETE)
-  //  >   Next mail in thread (RMEN_NEXTTH)
-  //  <   Prev mail in thread (RMEN_PREVTH)
   //  ,   Set status to 'marked' (RMEN_TOMARKED)
   //  .   Set status to 'unmarked' (RMEN_TOUNMARKED)
   //  [   Set status to 'unread' (RMEN_TOUNREAD)
@@ -364,6 +239,21 @@ OVERLOAD(OM_NEW)
   //  {   Set status to 'hold' (RMEN_TOHOLD)
   //  }   Set status to 'queued' (RMEN_TOQUEUED)
   //
+  // InputEvent shortcuts:
+  //
+  // -capslock del                : delete mail (RMEN_DELETE)
+  // -capslock shift del          : delete mail at once
+  // -repeat -capslock space      : move one page forward in texteditor display
+  // -repeat -capslock backspace  : move one page backward in texteditor display
+  // -repeat -capslock left       : Display previous mail in folder (RMEN_PREV)
+  // -repeat -capslock right      : Display next mail in folder (RMEN_NEXT)
+  // -repeat -capslock shift left : Display previous unread mail in folder (RMEN_URPREV)
+  // -repeat -capslock shift right: Display next unread mail in folder (RMEN_URNEXT)
+  // -repeat -capslock alt left   : Display previous mail in message thread (RMEN_PREVTH)
+  // -repeat -capslock alt right  : Display next mail in message thread (RMEN_NEXTTH)
+  //
+  //
+
   menuStripObject = MenustripObject,
     MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_Message),
       MenuChild, data->MI_EDIT = Menuitem(tr(MSG_MA_MEdit), "E", TRUE, FALSE, RMEN_EDIT),
@@ -409,8 +299,8 @@ OVERLOAD(OM_NEW)
       MenuChild, Menuitem(tr(MSG_RE_MPrev),    "left",  TRUE, TRUE, RMEN_PREV),
       MenuChild, Menuitem(tr(MSG_RE_MURNext),  "shift right", TRUE, TRUE, RMEN_URNEXT),
       MenuChild, Menuitem(tr(MSG_RE_MURPrev),  "shift left",  TRUE, TRUE, RMEN_URPREV),
-      MenuChild, data->MI_NEXTTHREAD = Menuitem(tr(MSG_RE_MNextTh), ">", TRUE, FALSE, RMEN_NEXTTH),
-      MenuChild, data->MI_PREVTHREAD = Menuitem(tr(MSG_RE_MPrevTh), "<", TRUE, FALSE, RMEN_PREVTH),
+      MenuChild, data->MI_NEXTTHREAD = Menuitem(tr(MSG_RE_MNextTh), "alt right", TRUE, TRUE, RMEN_NEXTTH),
+      MenuChild, data->MI_PREVTHREAD = Menuitem(tr(MSG_RE_MPrevTh), "alt left", TRUE, TRUE, RMEN_PREVTH),
     End,
     MenuChild, data->MI_PGP = MenuObject, MUIA_Menu_Title, "PGP",
       MenuChild, data->MI_EXTKEY = Menuitem(tr(MSG_RE_ExtractKey), "X", TRUE, FALSE, RMEN_EXTKEY),
@@ -547,6 +437,8 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock right",       obj, 3, MUIM_ReadWindow_SwitchMail, +1, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock shift left",  obj, 3, MUIM_ReadWindow_SwitchMail, -1, IEQUALIFIER_LSHIFT);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock shift right", obj, 3, MUIM_ReadWindow_SwitchMail, +1, IEQUALIFIER_LSHIFT);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock alt left",    obj, 2, MUIM_ReadWindow_FollowThread, -1);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock alt right",   obj, 2, MUIM_ReadWindow_FollowThread, +1);
 
     // make sure the right menus/toolbar spam button items are available
     DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
@@ -1464,8 +1356,7 @@ DECLARE(FollowThread) // LONG direction
   mail = rmData->mail;
 
   // depending on the direction we get the Question or Answer to the current Message
-
-  if((fmail = FindThread(mail, msg->direction > 0, TRUE, obj)) != NULL)
+  if((fmail = FindThread(mail, msg->direction > 0, obj)) != NULL)
   {
     LONG pos = MUIV_NList_GetPos_Start;
 

@@ -745,8 +745,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     else          co->TimeZone = 0;
 
      co->DaylightSaving = FALSE;
-     co->DetectCyrillic = FALSE;
-     co->MapForeignChars = TRUE;
   }
 
   if(page == cp_TCPIP || page == cp_AllPages)
@@ -835,6 +833,9 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->MDN_NoDomain = MDN_ACTION_ASK;
     co->MDN_OnDelete = MDN_ACTION_ASK;
     co->MDN_Other = MDN_ACTION_ASK;
+    co->DetectCyrillic = FALSE;
+    co->MapForeignChars = TRUE;
+    co->GlobalMailThreads = FALSE;
   }
 
   if(page == cp_Write || page == cp_AllPages)
@@ -1308,6 +1309,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->AutoDSTCheck                    == c2->AutoDSTCheck &&
      c1->DetectCyrillic                  == c2->DetectCyrillic &&
      c1->MapForeignChars                 == c2->MapForeignChars &&
+     c1->GlobalMailThreads               == c2->GlobalMailThreads &&
      c1->ABookLookup                     == c2->ABookLookup &&
      c1->ConvertHTML                     == c2->ConvertHTML &&
      c1->SpamFilterEnabled               == c2->SpamFilterEnabled &&

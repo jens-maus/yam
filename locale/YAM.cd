@@ -6849,3 +6849,21 @@ be converted to the read charset\n\
 will be mapped to looklike ASCII\n\
 sequences.
 ;
+MSG_MA_NAVIGATION (2118//)
+Navigation
+;
+MSG_MA_MNEXTTH (2119//)
+Next message in thread
+;
+MSG_MA_MPREVTH (2120//)
+Previous message in thread
+;
+MSG_CO_GLOBALMAILTHREADS (2121//)
+Search for mails of same thread in all folders
+;
+MSG_HELP_CO_CH_GLOBALMAILTHREADS (2122//)
+If enabled, the search for messages of\n\
+the same thread will be extended to all\n\
+folders rather than only searching for\n\
+mails in the same folder.
+;

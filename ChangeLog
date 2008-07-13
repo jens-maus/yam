@@ -7,6 +7,16 @@ $URL$
 
 2008-07-13  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c, ReadWindow.c, misc: changed the shortcut for the "next thread"
+    and "previous thread" functionality of the read window to use "alt right"
+    and "alt left" shortcuts. In addition, a new "Navigation" menu object was
+    added to the main window's menu with also the previous and next thread
+    functionality. Now it is possible to switch to the next/previous message
+    of a thread in the main window as well. Moreover, an option was added to
+    the configuration so that the search for mails of the same thread can be
+    explicitly enabled/disabled to search through all folders. Per default,
+    a mail thread search will now only be executed in the same folder because
+    normally mails of the same thread should resists in the very same folder.
   * YAM_MA.c: fixed bug #2017045 where the menutitem for changing the subject
     was disabled in certain folders including the outgoing folder.
 
