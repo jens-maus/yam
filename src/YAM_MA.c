@@ -277,7 +277,6 @@ void MA_ChangeSelected(BOOL forceUpdate)
       //  * NOT in the "SPAM" folder
       //  * > 0 mails selected
       DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isOutgoingFolder(fo) && !isSpamFolder(fo) && (active || numSelected > 0),
-                                                             gui->MI_CHSUBJ,
                                                              gui->MI_REPLY,
                                                              NULL);
 
@@ -325,6 +324,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
                                                              gui->MI_SAVE,
                                                              gui->MI_ATTACH,
                                                              gui->MI_FORWARD,
+                                                             gui->MI_CHSUBJ,
                                                              NULL);
 
       // Enable if:

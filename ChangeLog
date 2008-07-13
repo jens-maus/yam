@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-07-13  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: fixed bug #2017045 where the menutitem for changing the subject
+    was disabled in certain folders including the outgoing folder.
+
 2008-07-11  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: Reimplemented the NOAUTOLOGIN feature which somehow had gone lost.
