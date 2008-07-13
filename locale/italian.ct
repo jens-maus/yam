@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.2 (12.06.2008)
+## version $VER: YAM.catalog 6.2 (13.07.2008)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -292,7 +292,7 @@ Caricamento delle immagini...
 ; Loading graphics...
 ;
 MSG_SendStartReq
-La cartella contiene messaggi non inviati.\n\
+La cartella contiene dei messaggi non inviati.\n\
 Si desidera spedire questi messaggi adesso?
 ; The outgoing folder contains unsent mail.\n\
 ; Do you want to send these messages now?
@@ -919,8 +919,8 @@ MSG_HELP_MA_BT_FILTER
 Applica i filtri a tutti i messaggi di\n\
 questa cartella.\n\
 \n\
-Nota che nel caso vengano selezionati\n\
-2 o più messaggi, solo questi verranno\n\
+Nota bene che nel caso vengano selezionati\n\
+due o più messaggi, solo questi verranno\n\
 filtrati.
 ; Apply filters to the messages\n\
 ; in this folder.\n\
@@ -1379,7 +1379,7 @@ Aggiorna stato m_essaggio
 ; Update m_essage status
 ;
 MSG_CO_WarnSize1
-_Dim. limite
+_Dimensione limite
 ; Size _limit
 ;
 MSG_CO_WarnSize2
@@ -1883,7 +1883,7 @@ Salva _foto in
 ; Save _photos in
 ;
 MSG_CO_MyURL
-UR_L della tua immagine
+UR_L della propria immagine
 ; UR_L of your picture
 ;
 MSG_CO_AddToAddrbook
@@ -2115,7 +2115,7 @@ Durante il trasferimento evita la conversione\n\
 dei messaggi a 7Bit.\n\
 Usa questa opzione solo se il tuo server SMTP\n\
 supporta il trasferimento a 8Bit!\n\
-Questa opzione è utile per evitare che si incorra\n\
+Questa opzione è utile per evitare di incorrere\n\
 in possibili danneggiamenti dei messaggi.
 ; Do not convert messages to 7-bit when transferring.\n\
 ; You should only use this option if you're sure that your SMTP server\n\
@@ -2415,7 +2415,7 @@ di un messaggio multipart.
 ; of a multipart message.
 ;
 MSG_HELP_CO_CH_MULTIWIN
-Apri una nuova finestra di lettura per\n\
+Apre una nuova finestra di lettura per\n\
 ogni messaggio selezionato.
 ; Use a separate Read window\n\
 ; for each opened message.
@@ -2614,7 +2614,7 @@ per i Tagline casuali.
 ;
 MSG_HELP_CO_BT_INSENV
 Inserisce un codice di controllo per la firma\n\
-contenuto nella variabile env.
+contenuta nella variabile env.
 ; Insert a control code for the\n\
 ; 'SIGNATURE' environment variable.
 ;
@@ -2666,8 +2666,8 @@ l'eseguibile PGP.
 ; executable can be found.
 ;
 MSG_HELP_CO_ST_MYPGPID
-L'ID della chiave di PGP usata\n\
-per firmare e criptare i messaggi.
+L'ID della chiave di PGP usata per\n\
+firmare e criptare i messaggi.
 ; The ID of your PGP key that is used\n\
 ; to sign and encrypt messages.
 ;
@@ -2685,8 +2685,8 @@ utilizzato per inviare messaggi anonimi.
 ; used to send anonymous mail.
 ;
 MSG_HELP_CO_ST_FIRSTLINE
-Inserisce automaticamente questa linea all'inizio\n\
-di ogni tuo messaggio nel caso essi siano inviati\n\
+Inserisce automaticamente questa linea all'inizio di\n\
+ogni nuovo messaggio nel caso esso sia stato inviato\n\
 attraverso il servizio di Remailing.
 ; Automatically insert this line at the top\n\
 ; of all messages sent through the remailer.
@@ -2728,8 +2728,8 @@ Spedisce i messaggi in attesa.
 ; Send queued messages.
 ;
 MSG_HELP_CO_CH_POPSTART
-Controllare la posta all'avvio\n\
-del programma?
+Verifica automaticamente la presenza di\n\
+nuovi messaggi all'avvio del programma.
 ; Check for mail.
 ;
 MSG_HELP_CO_CH_CHECKBD
@@ -2751,12 +2751,12 @@ Svuota il cestino.
 ;
 MSG_HELP_CO_ST_GALLDIR
 Directory dove salvare le immagini\n\
-dei tuoi corrispondenti.
+dei propri corrispondenti.
 ; Directory to save the pictures\n\
 ; of your correspondents.
 ;
 MSG_HELP_CO_ST_PHOTOURL
-L'indirizzo WWW della tua immagine.
+L'indirizzo WWW della propria immagine.
 ; URL address of your\n\
 ; portrait image.
 ;
@@ -2770,7 +2770,7 @@ messaggio?
 MSG_HELP_CO_ST_PROXY
 Indirizzo e numero della porta del server HTTP proxy\n\
 E' anche possibile lasciare vuoto questo campo.\n\
-(La porta predefinita è 80).\n\
+(La porta predefinita è 80).
 ; Address and optional port number of your\n\
 ; HTTP proxy server (default port is 80).\n\
 ; You may leave this field empty.
@@ -2806,8 +2806,11 @@ di YAM in pixel.
 ; exactly at these coordinates.
 ;
 MSG_HELP_CO_CH_CLGADGET
-Si desidera iconificare YAM cliccando\n\
-sul gadget di chiusura del programma?
+Seleziona questa opzione se si desidera\n\
+iconificare YAM cliccando sul gadget di\n\
+chiusura del programma.\n\
+Normalmente questo gadget chiuderebbe\n\
+completamente il programma.
 ; Do you want YAM to iconify when\n\
 ; you hit the close gadget?
 ;
@@ -2878,8 +2881,8 @@ Tipo di script\n\
 ; (ARexx or AmigaDOS).
 ;
 MSG_HELP_CO_CH_CONSOLE
-Apre una console per permettere allo script\n\
-di gestire l'ingresso e l'uscita dei dati.
+Apre una console in moda da permettere allo script la\n\
+gestione dei flussi di dati in ingresso e in uscita.
 ; Open a console window to allow input\n\
 ; and output from the script.
 ;
@@ -4415,7 +4418,7 @@ l'avvenuta ricezione.
 ; successful delivery.
 ;
 MSG_HELP_WR_CH_ADDINFO
-Crea i campi d'intestazione che contengano i\n\
+Crea i campi d'intestazione contenenenti i\n\
 tuoi dati personali inseriti nella rubrica.
 ; Create header fields containing data\n\
 ; from your personal address book entry.
@@ -5799,9 +5802,9 @@ Menu contestuale
 ; Context menu
 ;
 MSG_HELP_CO_CONTEXTMENU
-Mostra un menu a comparsa cliccando\n\
-con il tasto destro del mouse su\n\
-una di queste voci nella lista?
+Visualizza un menu a comparsa cliccando\n\
+con il tasto destro del mouse su una di\n\
+queste voci nella lista?
 ; Show a popup menu when clicking\n\
 ; the right mouse button on this list?
 ;
@@ -6480,9 +6483,9 @@ secondo(i)
 ;
 MSG_HELP_CO_SETSTATUSDELAYED
 Dopo aver aperto un messaggio o visualizzando un\n\
-messaggio nel riquadro anteprima, YAM ritarderà la\n\
-marcatura dei messaggi come già letti per il numero\n\
-di secondi specificato.
+messaggio nel riquadro anteprima, YAM ritarderà\n\
+la marcatura dei messaggi come già letti per il\n\
+numero di secondi specificato.
 ; After opening an e-mail, YAM will\n\
 ; wait this amount of time before\n\
 ; marking the e-mail as 'read'.
@@ -7453,7 +7456,7 @@ A: %s <%s>\n\
 Oggetto: %s\n\
 Data: %s\n\
 Nome file: %s\n\
-Dim.: %s
+Dimensione: %s
 ; \ebCurrent message\en\n\
 ; From: %s <%s>\n\
 ; To: %s <%s>\n\
@@ -7467,7 +7470,7 @@ MSG_MA_FOLDERINFO
 \ebCartella corrente\en\n\
 Nome: %s\n\
 Percorso: %s\n\
-Dim.: %s\n\
+Dimensione: %s\n\
 Messaggi: %ld (%ld nuovi, %ld non letti)
 ; \ebCurrent folder\en\n\
 ; Name: %s\n\
@@ -7481,7 +7484,7 @@ MSG_MA_MIMEPART_INFO
 Nome: %s\n\
 Descrizione: %s\n\
 Tipo di contenuto: %s <%s>\n\
-Dim.: ~%s
+Dimensione: ~%s
 ; \ebAttachment - MIME part #%ld\en\n\
 ; Name: %s\n\
 ; Description: %s\n\
@@ -8587,12 +8590,11 @@ in coda
 ; inlined
 ;
 MSG_HELP_CO_CY_FORWARDMODE
-Seleziona qui la modalità con la quale\n\
-il messaggio dovrà essere inoltrato.\n\
-Il messaggio potrà essere inoltrato\n\
-sia sotto forma di allegato che come\n\
-messaggio di testo inserito all'interno\n\
-del nuovo messaggio.
+Seleziona qui la modalità con la quale il messaggio\n\
+dovrà essere inoltrato.\n\
+Il messaggio potrà essere inoltrato sia sotto forma\n\
+di semplice allegato, sia come normale messaggio di\n\
+testo inserito all'interno del nuovo messaggio.
 ; Select here the way messages should be\n\
 ; forwarded by default. Either a message\n\
 ; can be forwarded as an attachment or the\n\
