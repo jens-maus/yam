@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_hook.h
-        Versionstring:  $VER: SDI_hook.h 1.16 (06.10.2006)
+        Versionstring:  $VER: SDI_hook.h 1.17 (14.07.2008)
         Author:         SDI & Jens Langner
         Distribution:   PD
         Project page:   http://www.sf.net/projects/sditools/
@@ -42,6 +42,8 @@
                   DISPATCHERPROTO() definition. Now the DISPATCHERPROTO() should
                   only be used to get the correct prototype and the plain
                   DISPATCHER() for defining the dispatcher itself.
+ 1.17  14.07.08 : added "_" to all UNUSED variable specifications to make sure
+                  a user does not use those definition on accident.
 */
 
 /*
@@ -108,17 +110,17 @@
   #define HOOKPROTO(name, ret, obj, param) static SAVEDS ret                 \
     name(struct Hook *hook, obj, param)
   #define HOOKPROTONO(name, ret, param) static SAVEDS ret                    \
-    name(struct Hook *hook, UNUSED APTR obj, param)
+    name(struct Hook *hook, UNUSED APTR _obj, param)
   #define HOOKPROTONP(name, ret, obj) static SAVEDS ret                      \
-    name(struct Hook *hook, obj, UNUSED APTR param)
+    name(struct Hook *hook, obj, UNUSED APTR _param)
   #define HOOKPROTONONP(name, ret) static SAVEDS ret                         \
-    name(struct Hook *hook, UNUSED APTR obj, UNUSED APTR param)
+    name(struct Hook *hook, UNUSED APTR _obj, UNUSED APTR _param)
   #define HOOKPROTONH(name, ret, obj, param) static SAVEDS ret               \
-    name(UNUSED struct Hook *hook, obj, param)
+    name(UNUSED struct Hook *_hook, obj, param)
   #define HOOKPROTONHNO(name, ret, param) static SAVEDS ret                  \
-    name(UNUSED struct Hook *hook, UNUSED APTR obj, param)
+    name(UNUSED struct Hook *_hook, UNUSED APTR _obj, param)
   #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ret                    \
-    name(UNUSED struct Hook *hook, obj, UNUSED APTR param)
+    name(UNUSED struct Hook *_hook, obj, UNUSED APTR _param) 
   #define HOOKPROTONHNONP(name, ret) static SAVEDS ret name(void)
 #else
   #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM ret             \

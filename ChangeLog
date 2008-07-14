@@ -11,6 +11,8 @@ $URL$
 
 2008-07-14  Jens Langner <Jens.Langner@light-speed.de>
 
+  * include/SDI_hook.h: updated to 1.17 version which contains a minor fix
+    for the UNUSED variable specs in the hook macros.
   * locale/german.ct: adapted catalog translation to latest changes and
     fixed some minor spelling bugs.
   * mui/WriteWindow.c: fixed bug #2017051 where a copy/paste operation was
