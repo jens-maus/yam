@@ -1228,13 +1228,14 @@ OVERLOAD(OM_NEW)
                   MUIA_CycleChain, TRUE,
                   MUIA_NListview_NList,    data->LV_ATTACH = WriteAttachmentListObject,
                     InputListFrame,
-                    MUIA_NList_DragType,        MUIV_NList_DragType_Immediate,
-                    MUIA_NList_DragSortable,    TRUE,
-                    MUIA_NList_Format,          "D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
-                    MUIA_NList_Title,           TRUE,
-                    MUIA_NList_ConstructHook,   &ConstructHook,
-                    MUIA_NList_DestructHook,    &DestructHook,
-                    MUIA_NList_DisplayHook,     &DisplayHook,
+                    MUIA_NList_ActiveObjectOnClick,   TRUE,
+                    MUIA_NList_DragType,              MUIV_NList_DragType_Immediate,
+                    MUIA_NList_DragSortable,          TRUE,
+                    MUIA_NList_Format,                "D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
+                    MUIA_NList_Title,                 TRUE,
+                    MUIA_NList_ConstructHook,         &ConstructHook,
+                    MUIA_NList_DestructHook,          &DestructHook,
+                    MUIA_NList_DisplayHook,           &DisplayHook,
                   End,
                 End,
 
@@ -1255,7 +1256,14 @@ OVERLOAD(OM_NEW)
                     Child, Label2(tr(MSG_WR_ContentType)),
                     Child, MakeMimeTypePop(&data->ST_CTYPE, tr(MSG_WR_ContentType)),
                     Child, Label2(tr(MSG_WR_Description)),
-                    Child, data->ST_DESC = MakeString(SIZE_DEFAULT,tr(MSG_WR_Description)),
+                    Child, data->ST_DESC = BetterStringObject,
+                      StringFrame,
+                      MUIA_BetterString_NoShortcuts, TRUE,
+                      MUIA_String_MaxLen,            SIZE_DEFAULT,
+                      MUIA_String_AdvanceOnCR,       TRUE,
+                      MUIA_ControlChar,              ShortCut(tr(MSG_WR_Description)),
+                      MUIA_CycleChain,               TRUE,
+                    End,
                     Child, HSpace(0),
                   End,
                 End,
@@ -1508,6 +1516,7 @@ OVERLOAD(OM_NEW)
         DoMethod(data->MI_COLORED,   MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 2, MUIM_WriteWindow_SetSoftStyle, SSM_COLOR);
 
         DoMethod(data->RG_PAGE,      MUIM_Notify, MUIA_Group_ActivePage,   0, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
+        DoMethod(data->RG_PAGE,      MUIM_Notify, MUIA_Group_ActivePage,   1, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->LV_ATTACH);
         DoMethod(data->ST_SUBJECT,   MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
         DoMethod(data->ST_SUBJECT,   MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, MUIM_WriteWindow_UpdateWindowTitle);
         DoMethod(data->BT_ADD,       MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, MUIM_WriteWindow_RequestAttachment);
@@ -1976,7 +1985,8 @@ DECLARE(EditActionPerformed) // enum EditAction action
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
-                actObj == data->ST_EXTHEADER)
+                actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
+                actObj == data->ST_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Cut);
         }
@@ -1990,9 +2000,14 @@ DECLARE(EditActionPerformed) // enum EditAction action
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
-                actObj == data->ST_EXTHEADER)
+                actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
+                actObj == data->ST_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Copy);
+        }
+        else if(actObj == data->LV_ATTACH)
+        {
+          DoMethod(actObj, MUIM_NList_CopyToClip, MUIV_NList_CopyToClip_Active, 0, NULL, NULL);
         }
       }
       break;
@@ -2004,7 +2019,8 @@ DECLARE(EditActionPerformed) // enum EditAction action
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
-                actObj == data->ST_EXTHEADER)
+                actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
+                actObj == data->ST_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Paste);
         }
@@ -2018,7 +2034,8 @@ DECLARE(EditActionPerformed) // enum EditAction action
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
-                actObj == data->ST_EXTHEADER)
+                actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
+                actObj == data->ST_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Delete);
         }
@@ -2032,7 +2049,8 @@ DECLARE(EditActionPerformed) // enum EditAction action
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
-                actObj == data->ST_EXTHEADER)
+                actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
+                actObj == data->ST_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Undo);
         }
@@ -2046,7 +2064,8 @@ DECLARE(EditActionPerformed) // enum EditAction action
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
-                actObj == data->ST_EXTHEADER)
+                actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
+                actObj == data->ST_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Redo);
         }
@@ -2060,7 +2079,8 @@ DECLARE(EditActionPerformed) // enum EditAction action
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
-                actObj == data->ST_EXTHEADER)
+                actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
+                actObj == data->ST_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_SelectAll);
         }
@@ -2074,7 +2094,8 @@ DECLARE(EditActionPerformed) // enum EditAction action
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
-                actObj == data->ST_EXTHEADER)
+                actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
+                actObj == data->ST_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_SelectNone);
         }

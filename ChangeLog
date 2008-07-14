@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-07-14  Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/german.ct: adapted catalog translation to latest changes and
+    fixed some minor spelling bugs.
+  * mui/WriteWindow.c: fixed bug #2017051 where a copy/paste operation was
+    not possible on the attachment description, mime-type and the listview
+    like it was in previous versions of YAM.
+
 2008-07-13  Jens Langner <Jens.Langner@light-speed.de>
 
   * italian.ct: updated italian catalog translation kindly provided by
