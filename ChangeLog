@@ -7,6 +7,10 @@ $URL$
 
 2008-07-14  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: changed the list of downloadable mails to show really new (= not
+    yet downloaded) mails only. The old behaviour was quite unintuitive, because
+    one got the impression that a previously downloaded large mail was to be be
+    downloaded again.
   * YAM_MA.c: fixed the "undefined variable 'obj'" typo.
 
 2008-07-14  Jens Langner <Jens.Langner@light-speed.de>

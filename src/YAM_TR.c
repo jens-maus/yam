@@ -590,7 +590,7 @@ static BOOL TR_InitSTARTTLS(void)
 
   ENTER();
 
-  // If this server doesn`t support TLS at all we return with an error
+  // If this server doesn't support TLS at all we return with an error
   if(hasSTARTTLS(G->TR_SMTPflags))
   {
     // If we end up here the server supports STARTTLS and we can start
@@ -729,7 +729,7 @@ static BOOL TR_InitSMTPAUTH(void)
         if(chalRet)
           *chalRet = '\0'; // strip it
 
-        D(DBF_NET, "received DIGEST-MD5 challenge: `%s`", challenge);
+        D(DBF_NET, "received DIGEST-MD5 challenge: '%s'", challenge);
 
         // lets base64 decode it
         if(base64decode(challenge, (unsigned char *)challenge, strlen(challenge)) <= 0)
@@ -738,7 +738,7 @@ static BOOL TR_InitSMTPAUTH(void)
           return FALSE;
         }
 
-        D(DBF_NET, "decoded  DIGEST-MD5 challenge: `%s`", challenge);
+        D(DBF_NET, "decoded  DIGEST-MD5 challenge: '%s'", challenge);
 
         // we now analyze the received challenge identifier and pick out
         // the value which we are going to need for our challenge response.
@@ -776,12 +776,12 @@ static BOOL TR_InitSMTPAUTH(void)
           {
             W(DBF_NET, "'realm' not found in challange. using '%s' instead", C->SMTP_Domain);
 
-            // if the challenge doesn`t have a "realm" we assume our
+            // if the challenge doesn't have a "realm" we assume our
             // choosen SMTP domain to be the realm
             realm = strdup(C->SMTP_Domain);
           }
 
-          D(DBF_NET, "realm: `%s`", realm);
+          D(DBF_NET, "realm: '%s'", realm);
 
           // grab the "nonce" token for later reference
           if((pstart = strstr(challenge, "nonce=")))
@@ -812,7 +812,7 @@ static BOOL TR_InitSMTPAUTH(void)
           }
           else
           {
-            E(DBF_NET, "no `nonce=` token found!");
+            E(DBF_NET, "no 'nonce=' token found!");
 
             free(realm);
 
@@ -820,7 +820,7 @@ static BOOL TR_InitSMTPAUTH(void)
             return FALSE;
           }
 
-          D(DBF_NET, "nonce: `%s`", nonce);
+          D(DBF_NET, "nonce: '%s'", nonce);
 
           // now we check the "qop" to carry "auth" so that we are
           // sure that this server really wants an authentification from us
@@ -870,7 +870,7 @@ static BOOL TR_InitSMTPAUTH(void)
             // check if we found a plain auth
             if(!pstart)
             {
-              E(DBF_NET, "no `auth` in `qop` token found!");
+              E(DBF_NET, "no 'auth' in 'qop' token found!");
 
               free(realm);
               free(nonce);
@@ -883,7 +883,7 @@ static BOOL TR_InitSMTPAUTH(void)
 
         // if we passed here, the server seems to at least support all
         // mechanisms we need for a proper DIGEST-MD5 authentication.
-        // so it`s time for STEP TWO
+        // so it's time for STEP TWO
 
         // let us now generate a more or less random and unique cnonce
         // identifier which we can supply to our SMTP server.
@@ -909,7 +909,7 @@ static BOOL TR_InitSMTPAUTH(void)
           md5final(digest, &context);
           memcpy(buf, digest, 16);
           A1_len += snprintf(&buf[16], sizeof(buf)-16, ":%s:%s", nonce, cnonce);
-          D(DBF_NET, "unencoded A1: `%s` (%ld)", buf, A1_len);
+          D(DBF_NET, "unencoded A1: '%s' (%ld)", buf, A1_len);
 
           // then we directly build the hexadecimal representation
           // HEX(H(A1))
@@ -918,13 +918,13 @@ static BOOL TR_InitSMTPAUTH(void)
           md5final((UBYTE *)digest_hex, &context);
           snprintf(A1, sizeof(A1), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                                            digest_hex[2], digest_hex[3]);
-          D(DBF_NET, "encoded   A1: `%s`", A1);
+          D(DBF_NET, "encoded   A1: '%s'", A1);
 
 
           // then we generate the A2 string accordingly
           // A2 = { "AUTHENTICATE:", digest-uri-value }
           snprintf(buf, sizeof(buf), "AUTHENTICATE:smtp/%s", realm);
-          D(DBF_NET, "unencoded A2: `%s`", buf);
+          D(DBF_NET, "unencoded A2: '%s'", buf);
 
           // and also directly build the hexadecimal representation
           // HEX(H(A2))
@@ -933,14 +933,14 @@ static BOOL TR_InitSMTPAUTH(void)
           md5final((UBYTE *)digest_hex, &context);
           snprintf(A2, sizeof(A2), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                                            digest_hex[2], digest_hex[3]);
-          D(DBF_NET, "encoded   A2: `%s`", A2);
+          D(DBF_NET, "encoded   A2: '%s'", A2);
 
           // now we build the string from which we also build the MD5
           // HEX(H(A1)), ":",
           // nonce-value, ":", nc-value, ":",
           // cnonce-value, ":", qop-value, ":", HEX(H(A2))
           snprintf(buf, sizeof(buf), "%s:%s:00000001:%s:auth:%s", A1, nonce, cnonce, A2);
-          D(DBF_NET, "unencoded resp: `%s`", buf);
+          D(DBF_NET, "unencoded resp: '%s'", buf);
 
           // and finally build the respone-value =
           // HEX( KD( HEX(H(A1)), ":",
@@ -951,7 +951,7 @@ static BOOL TR_InitSMTPAUTH(void)
           md5final((UBYTE *)digest_hex, &context);
           snprintf(response, sizeof(response), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                                                        digest_hex[2], digest_hex[3]);
-          D(DBF_NET, "encoded   resp: `%s`", response);
+          D(DBF_NET, "encoded   resp: '%s'", response);
         }
 
         // form up the challenge to authenticate according to RFC 2831
@@ -971,9 +971,9 @@ static BOOL TR_InitSMTPAUTH(void)
                  realm,
                  response);
 
-        D(DBF_NET, "prepared challenge answer....: `%s`", challenge);
+        D(DBF_NET, "prepared challenge answer....: '%s'", challenge);
         base64encode(buffer, (unsigned char *)challenge, strlen(challenge));
-        D(DBF_NET, "encoded  challenge answer....: `%s`", buffer);
+        D(DBF_NET, "encoded  challenge answer....: '%s'", buffer);
         strlcat(buffer, "\r\n", sizeof(buffer));
 
         // now we send the SMTP AUTH response
@@ -985,7 +985,7 @@ static BOOL TR_InitSMTPAUTH(void)
           else
           {
             // now that we have received the 334 code we just send a plain line
-            // to signal that we don`t need any option
+            // to signal that we don't need any option
             if(TR_WriteLine("\r\n") > 0)
             {
               if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
@@ -1031,7 +1031,7 @@ static BOOL TR_InitSMTPAUTH(void)
         if(chalRet)
           *chalRet = '\0'; // strip it
 
-        D(DBF_NET, "received CRAM-MD5 challenge: `%s`", challenge);
+        D(DBF_NET, "received CRAM-MD5 challenge: '%s'", challenge);
 
         // lets base64 decode it
         if(base64decode(challenge, (unsigned char *)challenge, strlen(challenge)) <= 0)
@@ -1040,16 +1040,16 @@ static BOOL TR_InitSMTPAUTH(void)
           return FALSE;
         }
 
-        D(DBF_NET, "decoded  CRAM-MD5 challenge: `%s`", challenge);
+        D(DBF_NET, "decoded  CRAM-MD5 challenge: '%s'", challenge);
 
         // compose the md5 challenge
         md5hmac((unsigned char *)challenge, strlen(challenge), (unsigned char *)password, strlen(password), (unsigned char *)digest);
         snprintf(buf, sizeof(buf), "%s %08lx%08lx%08lx%08lx", login, digest[0], digest[1], digest[2], digest[3]);
 
-        D(DBF_NET, "prepared CRAM-MD5 reponse..: `%s`", buf);
+        D(DBF_NET, "prepared CRAM-MD5 reponse..: '%s'", buf);
         // lets base64 encode the md5 challenge for the answer
         base64encode(buffer, (unsigned char *)buf, strlen(buf));
-        D(DBF_NET, "encoded  CRAM-MD5 reponse..: `%s`", buffer);
+        D(DBF_NET, "encoded  CRAM-MD5 reponse..: '%s'", buffer);
         strlcat(buffer, "\r\n", sizeof(buffer));
 
         // now we send the SMTP AUTH response
@@ -1074,9 +1074,9 @@ static BOOL TR_InitSMTPAUTH(void)
       if((resp = TR_SendSMTPCmd(ESMTP_AUTH_LOGIN, NULL, tr(MSG_ER_BADRESPONSE_SMTP))) != NULL)
       {
         // prepare the username challenge
-        D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_User);
+        D(DBF_NET, "prepared AUTH LOGIN challenge: '%s'", C->SMTP_AUTH_User);
         base64encode(buffer, (unsigned char *)C->SMTP_AUTH_User, strlen(C->SMTP_AUTH_User));
-        D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
+        D(DBF_NET, "encoded  AUTH LOGIN challenge: '%s'", buffer);
         strlcat(buffer, "\r\n", sizeof(buffer));
 
         // now we send the SMTP AUTH response (UserName)
@@ -1087,9 +1087,9 @@ static BOOL TR_InitSMTPAUTH(void)
              && (rc = getResponseCode(buffer)) == 334)
           {
             // prepare the password challenge
-            D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_Pass);
+            D(DBF_NET, "prepared AUTH LOGIN challenge: '%s'", C->SMTP_AUTH_Pass);
             base64encode(buffer, (unsigned char *)C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass));
-            D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
+            D(DBF_NET, "encoded  AUTH LOGIN challenge: '%s'", buffer);
             strlcat(buffer, "\r\n", sizeof(buffer));
 
             // now lets send the Password
@@ -1123,7 +1123,7 @@ static BOOL TR_InitSMTPAUTH(void)
       // "[authorize-id] \0 authenticate-id \0 password"
       // where we can left out the first one
 
-      // we don`t have a "authorize-id" so we set the first char to \0
+      // we don't have a "authorize-id" so we set the first char to \0
       challenge[len++] = '\0';
       len += snprintf(challenge+len, sizeof(challenge)-len, "%s", C->SMTP_AUTH_User)+1; // authenticate-id
       len += snprintf(challenge+len, sizeof(challenge)-len, "%s", C->SMTP_AUTH_Pass);   // password
@@ -1151,7 +1151,7 @@ static BOOL TR_InitSMTPAUTH(void)
     {
       W(DBF_NET, "The SMTP server seems not to support any of the selected or automatic specified SMTP-AUTH methods");
 
-      // if we don`t have any of the Authentication Flags turned on we have to
+      // if we don't have any of the Authentication Flags turned on we have to
       // exit with an error
       ER_NewError(tr(MSG_CO_ER_SMTPAUTH), C->SMTP_Server);
     }
@@ -1984,7 +1984,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
         {
           if(*bufptr == '.')
           {
-            state++; // now it`s 3 or 6
+            state++; // now it's 3 or 6
             continue;
           }
 
@@ -2491,7 +2491,7 @@ static int TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags)
 
   ENTER();
 
-  // if we don`t have a buffer yet, lets allocate one
+  // if we don't have a buffer yet, lets allocate one
   if(read_buf != NULL || (read_buf = read_ptr = calloc(1, C->TRBufferSize*sizeof(char))) != NULL)
   {
     // if we called that function with the FREEBUFFER flag we free the buffer only
@@ -2914,7 +2914,7 @@ static int TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags)
       if(abortProc == FALSE)
       {
         // if the string we want to copy into the buffer
-        // wouldn`t fit, we copy as much as we can, clear the buffer
+        // wouldn't fit, we copy as much as we can, clear the buffer
         // and continue until there is enough space left
         while(write_cnt+maxlen > C->TRBufferSize)
         {
@@ -3197,7 +3197,7 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
     D(DBF_NET, "TCP: POP3 cmd '%s' with param '%s'", POPcmd[command], parmtext != NULL ? (command == POPCMD_PASS ? "XXX" : parmtext) : "<NULL>");
 
     // send the pop command to the server and see if it was received somehow
-    // and for a connect we don`t send something or the server will get
+    // and for a connect we don't send something or the server will get
     // confused.
     if(command == POPCMD_CONNECT || TR_WriteLine(buf) > 0)
     {
@@ -3511,15 +3511,20 @@ static void TR_DisplayMailList(BOOL largeonly)
     for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-      struct Mail *mail = mtn->mail;
 
-      // add this mail to the transfer list in case we either
-      // should show ALL mails or the mail size is >= the warning size
-      if(largeonly == FALSE || mail->Size >= C->WarnSize*1024)
+      // only display mails to be downloaded
+      if(hasTR_LOAD(mtn))
       {
-        mtn->position = pos++;
+        struct Mail *mail = mtn->mail;
 
-        DoMethod(lv, MUIM_NList_InsertSingle, mtn, MUIV_NList_Insert_Bottom);
+        // add this mail to the transfer list in case we either
+        // should show ALL mails or the mail size is >= the warning size
+        if(largeonly == FALSE || mail->Size >= C->WarnSize*1024)
+        {
+          mtn->position = pos++;
+
+          DoMethod(lv, MUIM_NList_InsertSingle, mtn, MUIV_NList_Insert_Bottom);
+        }
       }
     }
 
@@ -3552,7 +3557,7 @@ static BOOL TR_GetMessageList_GET(void)
     // get the first line the pop server returns after the LINE command
     if(TR_ReadLine(G->TR_Socket, buf, sizeof(buf)) > 0)
     {
-      // we get the "scan listing" as long as we haven`t received a a
+      // we get the "scan listing" as long as we haven't received a a
       // finishing octet
       while(G->Error == FALSE && strncmp(buf, ".\r\n", 3) != 0)
       {
@@ -3566,12 +3571,25 @@ static BOOL TR_GetMessageList_GET(void)
         {
           int mode;
           struct MailTransferNode *mtn;
-          static const int mode2tflags[16] = { TRF_LOAD, TRF_LOAD, (TRF_LOAD|TRF_DELETE),
-                                               (TRF_LOAD|TRF_DELETE), TRF_LOAD, TRF_LOAD,
-                                               (TRF_LOAD|TRF_DELETE), (TRF_LOAD|TRF_DELETE),
-                                               TRF_NONE, TRF_LOAD, TRF_NONE, (TRF_LOAD|TRF_DELETE),
-                                               TRF_NONE, TRF_LOAD, TRF_NONE, (TRF_LOAD|TRF_DELETE)
-                                             };
+          static const int mode2tflags[16] =
+          {
+            TRF_LOAD,
+            TRF_LOAD,
+            TRF_LOAD|TRF_DELETE,
+            TRF_LOAD|TRF_DELETE,
+            TRF_LOAD,
+            TRF_LOAD,
+            TRF_LOAD|TRF_DELETE,
+            TRF_LOAD|TRF_DELETE,
+            TRF_NONE,
+            TRF_LOAD,
+            TRF_NONE,
+            TRF_LOAD|TRF_DELETE,
+            TRF_NONE,
+            TRF_LOAD,
+            TRF_NONE,
+            TRF_LOAD|TRF_DELETE
+          };
 
           newMail->Size  = size;
 
@@ -3626,7 +3644,7 @@ static void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
     {
       struct FilterNode *filter = (struct FilterNode *)curNode;
 
-      if(DoFilterSearch(filter, mtn->mail))
+      if(DoFilterSearch(filter, mtn->mail) == TRUE)
       {
         if(hasExecuteAction(filter) && *filter->executeCmd)
            ExecuteCommand(filter->executeCmd, FALSE, OUT_DOS);
@@ -3668,7 +3686,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
     // we issue a TOP command with a one line message body.
     //
     // This command is optional within the RFC 1939 specification
-    // and therefore we don`t throw any error
+    // and therefore we don't throw any error
     snprintf(cmdbuf, sizeof(cmdbuf), "%d 1", mtn->index);
     if(TR_SendPOP3Cmd(POPCMD_TOP, cmdbuf, NULL) != NULL)
     {
@@ -3690,7 +3708,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
         fclose(tf->FP);
         tf->FP = NULL;
 
-        // If we end up here because of an error, abort or the upper loop wasn`t finished
+        // If we end up here because of an error, abort or the upper loop wasn't finished
         // we exit immediatly with deleting the temp file also.
         if(G->Error == TRUE || G->TR->Abort == TRUE || done == FALSE)
           lline = -1;
@@ -3704,7 +3722,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
           memcpy(&mail->Date, &email->Mail.Date, sizeof(mail->Date));
 
           // if thie function was called with -1, then the POP3 server
-          // doesn`t have the UIDL command and we have to generate our
+          // doesn't have the UIDL command and we have to generate our
           // own one by using the MsgID and the Serverstring for the POP3
           // server.
           if(lline == -1)
@@ -3879,7 +3897,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     // the apply rules or UpdateAppIcon() function will refresh it later on
     G->TR->Checking = FALSE;
 
-    // we only apply the filters if we downloaded something, or it`s wasted
+    // we only apply the filters if we downloaded something, or it's wasted
     if(G->TR->Stats.Downloaded > 0)
     {
       struct Folder *folder;
@@ -3891,7 +3909,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       if(C->JumpToIncoming == TRUE)
         MA_JumpToNewMsg();
 
-      // only call the DisplayStatistics() function if the actual folder wasn`t already the INCOMING
+      // only call the DisplayStatistics() function if the actual folder wasn't already the INCOMING
       // one or we would hav refreshed it twice
       if((folder = FO_GetCurrentFolder()) && !isIncomingFolder(folder))
         DisplayStatistics((struct Folder *)-1, TRUE);
@@ -3924,7 +3942,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
   G->TR->Start = FALSE;
   G->Error = FALSE;
 
-  // if the window isn`t open we don`t need to update it, do we?
+  // if the window isn't open we don't need to update it, do we?
   if(isfirst == FALSE && xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
   {
     char str_size_curr[SIZE_SMALL];
@@ -3947,12 +3965,15 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
                               MUIA_Gauge_InfoText, G->TR->BytesLabel);
   }
 
-  if((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)     // connection succeeded
+  if((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)
   {
-    if(msgs > 0)                                       // there are messages on the server
+    // connection succeeded
+    if(msgs > 0)
     {
-      if(TR_GetMessageList_GET())                     // message list read OK
+      // there are messages on the server
+      if(TR_GetMessageList_GET() == TRUE)
       {
+        // message list read OK
         BOOL preselect = FALSE;
 
         G->TR->Stats.OnServer += msgs;
@@ -3991,12 +4012,17 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
             for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
             {
               struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-              struct Mail *mail = mtn->mail;
 
-              if(mail->Size >= C->WarnSize*1024)
+              // check the size of those mails only, which are left for download
+              if(hasTR_LOAD(mtn))
               {
-                preselect = TRUE;
-                break;
+                struct Mail *mail = mtn->mail;
+
+                if(mail->Size >= C->WarnSize*1024)
+                {
+                  preselect = TRUE;
+                  break;
+                }
               }
             }
           }
@@ -4491,7 +4517,7 @@ static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, L
   ts->Size_Curr = 0;
   ts->Size_Curr_Max = size;
 
-  // if the window isn`t open we don`t need to update it, do we?
+  // if the window isn't open we don't need to update it, do we?
   if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
   {
     // get the new time since the last nextmsg start
@@ -4531,12 +4557,12 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
     ts->Size_Curr += size_incr;
     ts->Size_Done += size_incr;
 
-    // if the window isn`t open we don`t need to update it, do we?
+    // if the window isn't open we don't need to update it, do we?
     if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
     {
       // now we check if should really update our
       // transfer display or if it will be overkill
-      // we shouldn`t update it more than twice a second.
+      // we shouldn't update it more than twice a second.
       GetSysTime(TIMEVAL(&now));
       if(-CmpTime(TIMEVAL(&now), TIMEVAL(&ts->Clock_Last)) > 0)
       {
@@ -4603,7 +4629,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
     // we are done with this mail, so make sure the current size equals the final size
     ts->Size_Curr = ts->Size_Curr_Max;
 
-    // if the window isn`t open we don't need to update it, do we?
+    // if the window isn't open we don't need to update it, do we?
     if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
     {
       char size_done[SIZE_SMALL];
@@ -4913,7 +4939,7 @@ static BOOL FilterDuplicates(void)
         // get the first line the pop server returns after the UIDL command
         if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) > 0)
         {
-          // we get the "unique-id list" as long as we haven`t received a a
+          // we get the "unique-id list" as long as we haven't received a
           // finishing octet
           while(G->TR->Abort == FALSE && G->Error == FALSE && strncmp(buf, ".\r\n", 3) != 0)
           {
@@ -4949,6 +4975,7 @@ static BOOL FilterDuplicates(void)
 
                     // make sure the mail is flagged as being ignoreable
                     G->TR->Stats.DupSkipped++;
+                    // don't download this mail, because it has been downloaded before
                     MASK_FLAG(mtn->tflags, TRF_DELETE);
 
                     // mark the UIDLtoken as being checked
@@ -4984,7 +5011,7 @@ static BOOL FilterDuplicates(void)
         {
           struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
-          // if the server doesn`t support the UIDL command we
+          // if the server doesn't support the UIDL command we
           // use the TOP command and generate our own UIDL within
           // the GetMessageDetails function
           TR_GetMessageDetails(mtn, -1);
@@ -5001,6 +5028,7 @@ static BOOL FilterDuplicates(void)
             if(HASH_ENTRY_IS_LIVE(entry))
             {
               G->TR->Stats.DupSkipped++;
+              // don't download this mail, because it has been downloaded before
               MASK_FLAG(mtn->tflags, TRF_DELETE);
 
               D(DBF_UIDL, "mail %ld: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
@@ -5388,20 +5416,20 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
               {
                 // we check if we found the body of the mail now
                 // the start of a body is seperated by the header with a single
-                // empty line and we have to make sure that it isn`t the beginning of the file
+                // empty line and we have to make sure that it isn't the beginning of the file
                 if(sendsize == 1 && buf[0] == '\n' && buf[1] == '\0' && prevpos-startpos > 1)
                 {
                   inbody = TRUE;
                   lineskip = FALSE;
                 }
-                else if(!isspace(*buf)) // headerlines don`t start with a space
+                else if(!isspace(*buf)) // headerlines don't start with a space
                 {
                   // headerlines with bcc or x-yam- will be skipped by us.
                   lineskip = (strnicmp(buf, "bcc", 3) == 0 || strnicmp(buf, "x-yam-", 6) == 0);
                 }
               }
 
-              // if we don`t skip this line we write it out to the SMTP server
+              // if we don't skip this line we write it out to the SMTP server
               if(lineskip == FALSE)
               {
                 // RFC 821 says a starting period needs a second one
@@ -5414,7 +5442,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                 // lets copy everything into our sendbuffer
                 memcpy(&sendbuf[sendsize-cpos], &buf[0], (size_t)cpos+1);
 
-                // RFC 2822 doesn`t allow bare CR and LF so we have to put a CR before a LF
+                // RFC 2822 doesn't allow bare CR and LF so we have to put a CR before a LF
                 if(sendbuf[sendsize-1] == '\n')
                 {
                   sendbuf[sendsize-1] = '\r';
@@ -5445,7 +5473,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
             }
             else if(G->TR->Abort == FALSE && G->Error == FALSE)
             {
-              // we have to flush the write buffer if this wasn`t a error or
+              // we have to flush the write buffer if this wasn't a error or
               // abort situation
               TR_WriteFlush();
 
@@ -5736,7 +5764,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
               TR_Disconnect();
             }
 
-            // if we got an error here, let`s throw it
+            // if we got an error here, let's throw it
             switch(err)
             {
               case CONNECTERR_SUCCESS:
@@ -6995,7 +7023,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 
           if(hasTR_DELETE(mtn))
           {
-            if(TR_DeleteMessage(mtn->index) && G->TR->DuplicatesChecking == TRUE)
+            if(TR_DeleteMessage(mtn->index) == TRUE && G->TR->DuplicatesChecking == TRUE)
             {
               // remove the UIDL from the hash table and remember that change
               RemoveUIDLfromHash(mtn->UIDL);
