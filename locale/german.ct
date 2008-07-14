@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (06.07.2008)
+## version $VER: YAM.catalog 6.0 (14.07.2008)
 ## language deutsch
 ## codeset 0
 ;
@@ -3626,15 +3626,15 @@ Nächste Nachricht
 ; Next message
 ;
 MSG_RE_MPrev
-Vordere Nachricht
+Vorherige Nachricht
 ; Previous message
 ;
 MSG_RE_MURNext
-Nächste ungelesene
+Nächste Ungelesene
 ; Next unread message
 ;
 MSG_RE_MURPrev
-Vordere ungelesene
+Vorherige Ungelesene
 ; Previous unread message
 ;
 MSG_RE_MNextTh
@@ -3642,7 +3642,7 @@ Nächste zum Thema
 ; Next message in thread
 ;
 MSG_RE_MPrevTh
-Vordere zum Thema
+Vorherige zum Thema
 ; Previous message in thread
 ;
 MSG_RE_ExtractKey
@@ -3733,7 +3733,7 @@ _Weiterl
 ; Module RE - Bubblehelp
 ;
 MSG_HELP_RE_BT_PREVIOUS
-Inhalt der vorderen\n\
+Inhalt der vorherigen\n\
 Nachricht anzeigen.
 ; Display contents of\n\
 ; the previous message
@@ -3930,7 +3930,7 @@ A_n
 ; _To
 ;
 MSG_WR_Add
-Datei(en) _hinzufügen...
+Datei(en) h_inzufügen...
 ; _Add file(s)
 ;
 MSG_WR_AddPack
@@ -8464,4 +8464,21 @@ When aktiviert, werden Zeichen die nicht\n\
 in den konfigurierten Zeichensatz umgewandelt\n\
 werden können in ASCII Sequenzen konvertiert\n\
 die dem ursprünglichen Zeichen ähneln.
+;
+MSG_MA_NAVIGATION
+Navigation
+;
+MSG_MA_MNEXTTH
+Nächste Nachricht zum Thema
+;
+MSG_MA_MPREVTH
+Vorherige Nachricht zum Thema
+;
+MSG_CO_GLOBALMAILTHREADS
+Nach Nachrichten zum selben Thema in allen Ordnern suchen
+;
+MSG_HELP_CO_CH_GLOBALMAILTHREADS
+Wenn aktiviert, wird in allen Ordnern\n\
+nach Nachrichten zum selben Thema gesucht\n\
+anstatt nur in derzeit ausgewählten Ordner.
 ;
