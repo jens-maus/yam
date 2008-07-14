@@ -3692,7 +3692,7 @@ MakeStaticHook(MA_EditActionHook, MA_EditActionFunc);
 ///
 /// FollowThreadHook
 //  Hook that is called to find the next/prev message in a thread and change to it
-HOOKPROTONH(FollowThreadFunc, void, Object *obj, int *arg)
+HOOKPROTONHNO(FollowThreadFunc, void, int *arg)
 {
   int direction = arg[0];
   struct MA_GUIData *gui = &G->MA->GUI;
@@ -3722,7 +3722,7 @@ HOOKPROTONH(FollowThreadFunc, void, Object *obj, int *arg)
       set(gui->PG_MAILLIST, MUIA_NList_Active, pos);
   }
   else
-    DisplayBeep(_screen(obj));
+    DisplayBeep(_screen(gui->WI));
 
 
   LEAVE();
