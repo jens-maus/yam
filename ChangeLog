@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-07-14  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: fixed the "undefined variable 'obj'" typo.
+
 2008-07-14  Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/german.ct: adapted catalog translation to latest changes and

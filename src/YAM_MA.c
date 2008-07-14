@@ -3692,7 +3692,7 @@ MakeStaticHook(MA_EditActionHook, MA_EditActionFunc);
 ///
 /// FollowThreadHook
 //  Hook that is called to find the next/prev message in a thread and change to it
-HOOKPROTONHNO(FollowThreadFunc, void, int *arg)
+HOOKPROTONH(FollowThreadFunc, void, Object *obj, int *arg)
 {
   int direction = arg[0];
   struct MA_GUIData *gui = &G->MA->GUI;
