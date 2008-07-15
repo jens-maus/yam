@@ -73,7 +73,6 @@
 #endif
 
 #if !defined(__amigaos4__)
-#include <proto/genesis.h>
 #include <proto/cybergraphics.h>
 #endif
 
@@ -134,7 +133,6 @@ struct Args
   char **attach;
   LONG   noImgWarning;
   LONG   noCatalog;
-  LONG   noAutoLogin;
 };
 
 static struct NewRDArgs nrda;
@@ -2059,56 +2057,13 @@ static void DoStartup(BOOL nocheck, BOOL hide)
 }
 ///
 /// Login
-//  Allows automatic login for AmiTCP-Genesis users
+//  Log in a given user or prompt for user and password
 static void Login(const char *user, const char *password,
                   const char *maildir, const char *prefsfile)
 {
-  BOOL terminate = FALSE;
-  BOOL loggedin = FALSE;
-
   ENTER();
 
-  // we query genesis.library (from the Genesis TCP/IP stack) for the user
-  // name in case the caller doesn't want to force a specific username
-  #if !defined(__amigaos4__)
-  if(user == NULL && args.noAutoLogin == FALSE)
-  {
-    struct Library *GenesisBase;
-
-    if((GenesisBase = OpenLibrary("genesis.library", 1L)) != NULL)
-    {
-      struct genUser *guser;
-
-      if((guser = GetGlobalUser()) != NULL)
-      {
-        D(DBF_STARTUP, "GetGlobalUser returned: '%s'", guser->us_name);
-
-        loggedin = US_Login((const char *)guser->us_name, "\01", maildir, prefsfile);
-
-        D(DBF_STARTUP, "US_Login returned: %ld %ld", terminate, loggedin);
-
-        if(loggedin == FALSE && MUI_Request(G->App, NULL, 0, tr(MSG_ER_GENESISUSER_TITLE),
-                                                             tr(MSG_ER_CONTINUEEXIT),
-                                                             tr(MSG_ER_GENESISUSER),
-                                                             guser->us_name) == 0)
-        {
-          terminate = TRUE;
-        }
-
-        FreeUser(guser);
-      }
-      else
-        W(DBF_STARTUP, "GetGlobalUser returned NULL");
-
-      CloseLibrary(GenesisBase);
-    }
-  }
-  #endif
-
-  if(loggedin == FALSE && terminate == FALSE)
-    terminate = (US_Login(user, password, maildir, prefsfile) == FALSE);
-
-  if(terminate == TRUE)
+  if(US_Login(user, password, maildir, prefsfile) == FALSE)
   {
     E(DBF_STARTUP, "terminating due to incorrect login information");
     exit(RETURN_WARN);
@@ -2148,8 +2103,7 @@ static LONG ParseCommandArgs(void)
                             "LETTER/K,"
                             "ATTACH/M,"
                             "NOIMGWARNING/S,"
-                            "NOCATALOG/S,"
-                            "NOAUTOLOGIN/S";
+                            "NOCATALOG/S";
 
     // now we build an extended help page text
     snprintf(extHelp, SIZE_EXTHELP, "%s (%s)\n%s\n\nUsage: YAM <options>\nOptions/Tooltypes:\n"
@@ -2176,8 +2130,6 @@ static LONG ParseCommandArgs(void)
                                     "                        image files.\n"
                                     "  NOCATALOG           : Starts YAM without loading any catalog\n"
                                     "                        translation (english).\n"
-                                    "  NOAUTOLOGIN         : Skip automatic login of globally defined\n"
-                                    "                        users (i.e. by the Genesis TCP/IP stack).\n"
                                     "\n%s: ", yamversion,
                                               yamversiondate,
                                               yamcopyright,

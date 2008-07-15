@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-07-15  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: completely removed the Genesis specific auto-login feature, as this
+    was causing more confusion than real benefit. The TCP/IP stack's user(s)
+    should  not be mixed up with YAM's users, since there is no correlation
+    between these two types of users. This fixes bug #1991643.
+
 2008-07-14  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: changed the list of downloadable mails to show really new (= not
