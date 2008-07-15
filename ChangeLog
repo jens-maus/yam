@@ -7,6 +7,7 @@ $URL$
 
 2008-07-15  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/german.ct: fixed an inconsistent translation.
   * YAM.c: completely removed the Genesis specific auto-login feature, as this
     was causing more confusion than real benefit. The TCP/IP stack's user(s)
     should  not be mixed up with YAM's users, since there is no correlation
