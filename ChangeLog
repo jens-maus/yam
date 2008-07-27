@@ -7,6 +7,9 @@ $URL$
 
 2008-07-27  Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/GenericRequestWindow.c: slightly changed the requester layout of
+    the generic requester so that the requester text/group is always properly
+    centered.
   * Requesters.c: in case no title is specified for a YAMMUIRequest() call
     a generic title is used so that no requester without any actual title is
     generated at all.
