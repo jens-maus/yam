@@ -62,7 +62,7 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
   LONG result = -1;
   char reqtxt[SIZE_LINE];
   va_list args;
-  char *title = NULL;
+  char *title;
   char *gadgets = NULL;
 
   ENTER();
@@ -72,6 +72,8 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
   // access.
   if(tit != NULL)
     title = strdup(tit);
+  else
+    title = strdup(tr(MSG_MA_ConfirmReq));
 
   if(gad != NULL)
     gadgets = strdup(gad);

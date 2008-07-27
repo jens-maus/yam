@@ -235,7 +235,6 @@ OVERLOAD(OM_NEW)
 }
 
 ///
-///
 /// OVERLOAD(OM_GET)
 OVERLOAD(OM_GET)
 {
