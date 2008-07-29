@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.2 (13.07.2008)
+## version $VER: YAM.catalog 6.2 (16.07.2008)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.6 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 3864 2008-05-28 02:44:15Z
+; based on YAM.cd 3864 2008-07-14 02:44:15Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -464,12 +464,12 @@ Connesso al server SMTP '%s'
 ; HOST
 ;
 MSG_LOG_SendingVerbose
-Messaggio spedito a '%s' su '%s' (%ld byte)
+Messaggio inviato a '%s' su '%s' (%ld byte)
 ; Sent message to '%s' about '%s' (%ld bytes)
 ; RECIPIENT, SUBJECT, SIZE
 ;
 MSG_LOG_Sending
-Spediti %ld messaggi usando il server SMTP '%s'
+Inviati %ld messaggi attraverso il server SMTP '%s'
 ; Sent %ld message(s) using SMTP server '%s'
 ; COUNT, HOST
 ;
@@ -916,9 +916,8 @@ cartella al server di posta.
 ; in the Outgoing folder.
 ;
 MSG_HELP_MA_BT_FILTER
-Applica i filtri a tutti i messaggi di\n\
+Applica i filtri per tutti i messaggi di\n\
 questa cartella.\n\
-\n\
 Nota bene che nel caso vengano selezionati\n\
 due o più messaggi, solo questi verranno\n\
 filtrati.
@@ -1947,7 +1946,7 @@ _Rimuovi messaggi immediatamente
 ; _Remove messages immediately
 ;
 MSG_CO_SaveSent
-Sal_va messaggi spediti
+Sal_va messaggi inviati
 ; Sa_ve sent messages
 ;
 MSG_CO_XPK
@@ -2835,8 +2834,8 @@ passare prima per il cestino.\n\
 ; (Use this with care)
 ;
 MSG_HELP_CO_CH_SAVESENT
-Salva i messaggi inviati\n\
-nella cartella spediti.
+Salva i messaggi inoltrati\n\
+nella cartella inviati.
 ; Move sent messages to\n\
 ; the Sent folder.
 ;
@@ -4407,7 +4406,7 @@ Mittente per questo messaggio.
 ;
 MSG_HELP_WR_CH_DELSEND
 Non salvare questo messaggio\n\
-nella cartella 'Spediti'.
+nella cartella 'Inviati'.
 ; Do not store this message\n\
 ; in the Sent folder.
 ;
@@ -5012,7 +5011,7 @@ In sospeso
 ; On hold
 ;
 MSG_FI_StatSent
-Spediti
+Inviati
 ; Sent
 ;
 MSG_FI_OtherField
@@ -6115,7 +6114,7 @@ Inviati/Ricevuti
 ; Sent/Received
 ;
 MSG_CO_DATE_SNTRCVD
-Data Inviato/Ricevuto
+Data invio/ricezione
 ; Date Sent/Received
 ;
 MSG_FROMTO
@@ -6474,7 +6473,7 @@ direttamente nella finestra principale.
 ; directly in the main window.
 ;
 MSG_CO_SETSTATUSDELAYED1
-Ritarda mar_catura dei messaggi come già letti per
+Ritarda mar_catura dei messaggi appena letti a
 ; Delay mar_king of displayed mail as read for
 ;
 MSG_CO_SETSTATUSDELAYED2
@@ -6484,7 +6483,7 @@ secondo(i)
 MSG_HELP_CO_SETSTATUSDELAYED
 Dopo aver aperto un messaggio o visualizzando un\n\
 messaggio nel riquadro anteprima, YAM ritarderà\n\
-la marcatura dei messaggi come già letti per il\n\
+la marcatura dei messaggi appena letti per il\n\
 numero di secondi specificato.
 ; After opening an e-mail, YAM will\n\
 ; wait this amount of time before\n\
@@ -6531,8 +6530,8 @@ Avviso configurazione Set di Caratteri Locale
 ; Local charset warning
 ;
 MSG_CO_CHARSETWARN
-Il set di caratteri configurato per YAM è '%s' e non corrisponde\n\
-al set di caratteri predefinito di sistema '%s'.\n\
+Il set di caratteri configurato per YAM è '%s' ma non corrisponde al set\n\
+di caratteri predefinito di sistema che corrisponde a '%s'.\n\
 \n\
 Come si desidera procedere?
 ; The '%s' charset selected for YAM doesn't\n\
@@ -7067,10 +7066,10 @@ AmiSSL non disponibile
 ;
 MSG_CO_AMISSLWARN
 YAM non ha trovato disponibile AmiSSL per le sue\n\
-funzionalità interne SSLv3/TLSv1.\n\
+funzionalità interne relative a SSLv3/TLSv1.\n\
 Perciò tutte le connessioni sicure sono state al\n\
 momento disabilitate fino a che AmiSSL non verrà\n\
-correttamente installato e rilevato dal programma\n\
+correttamente installato e rilevato dal programma.\n\
 \n\
 Per favore assicurati di aver installato correttamente\n\
 AmiSSL v%lu.%lu sul tuo sistema, dopodichè riavvia YAM.
@@ -7683,7 +7682,7 @@ Marca messaggi come Spam nel caso vengano _spostati nella cartella Spam
 ; Mark mails as spam when _moved to the Spam folder
 ;
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
-La _Rubrica è una lista bianca
+La _rubrica è una lista bianca
 ; Address book is _white list
 ;
 MSG_CO_SPAM_RECOGNITION
@@ -9776,4 +9775,42 @@ Cancella tutto
 MSG_MA_MDELETEATT
 Cancella
 ; Delete
+;
+MSG_CO_MAPFOREIGNCHARS
+Mappa caratteri stranieri in formato ASCII
+; Map foreign chars to ASCII
+;
+MSG_HELP_CO_MAPFOREIGNCHARS
+Se selezionato, i caratteri non convertibili\n\
+in un formato leggibile verranno mappati in\n\
+una sequenza simile a quella ASCII.
+; If selected, characters that cannot\n\
+; be converted to the read charset\n\
+; will be mapped to looklike ASCII\n\
+; sequences.
+;
+MSG_MA_NAVIGATION
+Navigazione
+; Navigation
+;
+MSG_MA_MNEXTTH
+Messaggio successivo
+; Next message in thread
+;
+MSG_MA_MPREVTH
+Messaggio precedente
+; Previous message in thread
+;
+MSG_CO_GLOBALMAILTHREADS
+Ricerca messaggi relativi all'argomento in tutte le cartelle
+; Search for mails of same thread in all folders
+;
+MSG_HELP_CO_CH_GLOBALMAILTHREADS
+Se selezionato, la ricerca dei messaggi relativi\n\
+all'argomento verrà estesa a tutte le cartelle\n\
+anzichè ricercare solo nella cartella di partenza.
+; If enabled, the search for messages of\n\
+; the same thread will be extended to all\n\
+; folders rather than only searching for\n\
+; mails in the same folder.
 ;
