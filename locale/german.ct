@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner
-## version $VER: YAM.catalog 6.0 (14.07.2008)
+## version $VER: YAM.catalog 6.0 (29.07.2008)
 ## language deutsch
 ## codeset 0
 ;
@@ -3390,13 +3390,6 @@ Wie wollen Sie reagieren?
 ;
 MSG_RE_SaveMessage
 Nachricht speichern
-;
-MSG_RE_Overwrite
-Die Datei '%s' existiert bereits.\n\
-Soll sie überschrieben werden?
-; File '%s' already exists.\n\
-; Do you want to overwrite it?
-; FILENAME
 ;
 MSG_RE_PrintMsg
 Nachricht drucken
@@ -8481,4 +8474,9 @@ MSG_HELP_CO_CH_GLOBALMAILTHREADS
 Wenn aktiviert, wird in allen Ordnern\n\
 nach Nachrichten zum selben Thema gesucht\n\
 anstatt nur in derzeit ausgewählten Ordner.
+;
+MSG_FILE_OVERWRITE
+Die Datei '%s' existiert bereits.\n\
+\n\
+Soll sie überschrieben werden?
 ;

@@ -67,6 +67,7 @@
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "FileInfo.h"
 
 #include "Debug.h"
 
@@ -2211,7 +2212,12 @@ HOOKPROTONHNONP(AB_ExportLDIFABookFunc, void)
     char ldifname[SIZE_PATHFILE];
 
     AddPath(ldifname, frc->drawer, frc->file, sizeof(ldifname));
-    AB_ExportTreeLDIF(ldifname);
+
+    if(FileExists(ldifname) == FALSE ||
+       MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
+    {
+      AB_ExportTreeLDIF(ldifname);
+    }
   }
 
   LEAVE();
@@ -2271,7 +2277,12 @@ HOOKPROTONHNO(AB_ExportTabCSVABookFunc, void, int *arg)
     char aname[SIZE_PATHFILE];
 
     AddPath(aname, frc->drawer, frc->file, sizeof(aname));
-    AB_ExportTreeTabCSV(aname, delim);
+
+    if(FileExists(aname) == FALSE ||
+       MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
+    {
+      AB_ExportTreeTabCSV(aname, delim);
+    }
   }
 
   LEAVE();
@@ -2325,10 +2336,15 @@ HOOKPROTONHNONP(AB_SaveABookAsFunc, void)
 
   ENTER();
 
-  if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, tr(MSG_SaveAs), REQF_SAVEMODE, G->MA_MailDir, "")))
+  if((frc = ReqFile(ASL_ABOOK, G->AB->GUI.WI, tr(MSG_SaveAs), REQF_SAVEMODE, G->MA_MailDir, "")))
   {
     AddPath(G->AB_Filename, frc->drawer, frc->file, sizeof(G->AB_Filename));
-    AB_SaveABookFunc();
+
+    if(FileExists(G->AB_Filename) == FALSE ||
+       MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
+    {
+      AB_SaveABookFunc();
+    }
   }
 
   LEAVE();

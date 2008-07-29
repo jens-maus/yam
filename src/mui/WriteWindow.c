@@ -2851,10 +2851,14 @@ DECLARE(SaveTextAs)
 
     AddPath(filename, frc->drawer, frc->file, sizeof(filename));
 
-    EditorToFile(data->TE_EDIT, data->wmData->filename);
+    if(FileExists(filename) == FALSE ||
+       MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
+    {
+      EditorToFile(data->TE_EDIT, data->wmData->filename);
 
-    if(CopyFile(filename, NULL, data->wmData->filename, NULL) == FALSE)
-      ER_NewError(tr(MSG_ER_CantCreateFile), filename);
+      if(CopyFile(filename, NULL, data->wmData->filename, NULL) == FALSE)
+        ER_NewError(tr(MSG_ER_CantCreateFile), filename);
+    }
   }
 
   RETURN(0);

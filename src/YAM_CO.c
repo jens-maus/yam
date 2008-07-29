@@ -2036,17 +2036,21 @@ HOOKPROTONHNONP(CO_SaveConfigAs, void)
 
   ENTER();
 
-  if((frc = ReqFile(ASL_CONFIG,G->CO->GUI.WI, tr(MSG_CO_SaveAs), REQF_SAVEMODE, G->MA_MailDir, "")))
+  if((frc = ReqFile(ASL_CONFIG, G->CO->GUI.WI, tr(MSG_CO_SaveAs), REQF_SAVEMODE, G->MA_MailDir, "")))
   {
     char cname[SIZE_PATHFILE];
 
     AddPath(cname, frc->drawer, frc->file, sizeof(cname));
 
-    // the config is really saved
-    CO_GetConfig(TRUE);
-    CO_Validate(CE, TRUE);
-    CO_NewPrefsFile(cname);
-    CO_SaveConfig(CE, cname);
+    if(FileExists(cname) == FALSE ||
+       MUI_Request(G->App, G->CO->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
+    {
+      // the config is really saved
+      CO_GetConfig(TRUE);
+      CO_Validate(CE, TRUE);
+      CO_NewPrefsFile(cname);
+      CO_SaveConfig(CE, cname);
+    }
   }
 
   LEAVE();

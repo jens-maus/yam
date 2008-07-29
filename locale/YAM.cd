@@ -2511,11 +2511,6 @@ What do you want to do?
 MSG_RE_SaveMessage (827//)
 Save message
 ;
-MSG_RE_Overwrite (828//)
-File '%s' already exists.\n\
-Do you want to overwrite it?
-; FILENAME
-;
 MSG_RE_PrintMsg (829//)
 Print message
 ;
@@ -6866,4 +6861,10 @@ If enabled, the search for messages of\n\
 the same thread will be extended to all\n\
 folders rather than only searching for\n\
 mails in the same folder.
+;
+MSG_FILE_OVERWRITE (2123//)
+File '%s' already exists.\n\
+\n\
+Do you want to overwrite it?
+; FILENAME
 ;

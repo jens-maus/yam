@@ -194,7 +194,7 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
   {
     if(FileExists(dest) && !overwrite)
     {
-      if(MUI_Request(G->App, win, 0, tr(MSG_MA_ConfirmReq), tr(MSG_OkayCancelReq), tr(MSG_RE_Overwrite), FilePart(dest)) == 0)
+      if(MUI_Request(G->App, win, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), FilePart(dest)) == 0)
         dest = NULL;
     }
   }

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-07-29  Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/WriteWindow.c, YAM_AB.c, YAM_CO.c, YAM_RE.c: fixed bug #2030320 where
+    upon certain "Save as..." usages YAM did not ask if the selected file
+    should be overwritten in case it already exists.
+  * locale/italian.ct: updated italian catalog translation kindly provided by
+    Samir Hawamdeh.
+
 2008-07-27  Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/GenericRequestWindow.c: slightly changed the requester layout of
