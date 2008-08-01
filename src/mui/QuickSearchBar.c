@@ -713,13 +713,25 @@ DECLARE(ProcessSearch)
     // only update the GUI if this search was not aborted
     if(data->abortSearch == FALSE)
     {
+      struct Mail *lastActiveMail;
+      LONG pos = MUIV_NList_GetPos_Start;
+
       // make sure the statistics are updated as well
       DoMethod(obj, MUIM_QuickSearchBar_UpdateStats, TRUE);
 
-      // make sure the first message is set active or that we notify
-      xset(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active,       MUIV_NList_Active_Top,
+      // get the last active mail in the maillistgroup
+      lastActiveMail = (struct Mail *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_LastActiveMail);
+      if(lastActiveMail != NULL)
+      {
+        // retrieve the number of the lastActive entry within the main mail listview
+        DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, lastActiveMail, &pos);
+      }
+
+      // make sure to set a new message so that the mail view is updated
+      xset(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active,       pos != MUIV_NList_GetPos_End && pos != MUIV_NList_GetPos_Start ? pos : MUIV_NList_Active_Top,
                                    MUIA_NList_SelectChange, TRUE);
     }
+
     // finally de-quiet the list again
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
     data->searchInProgress = FALSE;

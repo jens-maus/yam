@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-08-01  Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/MainMailListGroup, mui/QuickSearchBar: when switching between the
+    quicksearchbar result listview and the main mail listview the last
+    active mail will now be kept active. This should make a quicksearch
+    operation a bit more intuitive as it will be kept active across the
+    different result listview. In addition, the activeobject status of
+    the mail list will now be reserved when switching between the two
+    alternative listviews.
+
 2008-07-29  Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/WriteWindow.c, YAM_AB.c, YAM_CO.c, YAM_RE.c: fixed bug #2030320 where

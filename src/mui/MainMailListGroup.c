@@ -39,7 +39,7 @@ struct Data
 {
   Object *mainListObjects[2];
   struct Folder *lastActiveFolder;
-  ULONG lastActiveEntry;
+  struct Mail *lastActiveMail;
   ULONG activeList;
 };
 */
@@ -115,7 +115,8 @@ OVERLOAD(OM_GET)
   {
     ATTR(ActiveList):       *store = data->activeList; return TRUE;
     ATTR(ActiveListObject): *store = (ULONG)data->mainListObjects[data->activeList]; return TRUE;
-    ATTR(MainList):          *store = (ULONG)data->mainListObjects[LT_MAIN]; return TRUE;
+    ATTR(MainList):         *store = (ULONG)data->mainListObjects[LT_MAIN]; return TRUE;
+    ATTR(LastActiveMail):   *store = (ULONG)data->lastActiveMail; return TRUE;
 
     // we also return foreign attributes
     case MUIA_NList_Active:
@@ -389,10 +390,14 @@ DECLARE(SwitchToList) // enum MainListType type
 
   ENTER();
 
+  // refresh the last active information
+  DoMethod(data->mainListObjects[data->activeList], MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &data->lastActiveMail);
+
   // no matter what, we always clear the quickview list on a switch.
   if(data->activeList != msg->type)
   {
     int i;
+    BOOL listWasActive = FALSE;
 
     // before we switch the activePage of the group object we
     // have to set the individual column width of the two NLists as we only save
@@ -405,21 +410,32 @@ DECLARE(SwitchToList) // enum MainListType type
       DoMethod(data->mainListObjects[msg->type], MUIM_NList_ColWidth, i, colWidth != -1 ? colWidth : MUIV_NList_ColWidth_Default);
     }
 
+    // see if we have to make the switched object as the new active one
+    if(((Object *)xget(_win(data->mainListObjects[data->activeList]), MUIA_Window_ActiveObject)) == data->mainListObjects[data->activeList])
+      listWasActive = TRUE;
+
     // switch the page of the group now
     set(obj, MUIA_Group_ActivePage, msg->type);
 
     if(msg->type == LT_MAIN)
     {
-      struct Folder *curFolder = FO_GetCurrentFolder();
+      LONG pos = MUIV_NList_GetPos_Start;
 
       // in case we are switching from LT_QUICKVIEW->LT_MAIN we go and set the
       // last active mail as well.
-      if(curFolder && curFolder->LastActive >= 0)
+      if(data->lastActiveMail != NULL)
       {
-        xset(data->mainListObjects[LT_MAIN], MUIA_NList_Active,       curFolder->LastActive,
-                                             MUIA_NList_SelectChange, TRUE);
+        // retrieve the number of the lastActive entry within the main mail listview
+        DoMethod(data->mainListObjects[LT_MAIN], MUIM_NList_GetPos, data->lastActiveMail, &pos);
       }
+
+      // make sure to set a new message so that the mail view is updated
+      xset(data->mainListObjects[LT_MAIN], MUIA_NList_Active,       pos != MUIV_NList_GetPos_End && pos != MUIV_NList_GetPos_Start ? pos : MUIV_NList_Active_Top,
+                                           MUIA_NList_SelectChange, TRUE);
     }
+
+    if(listWasActive == TRUE)
+      xset(_win(data->mainListObjects[data->activeList]), MUIA_Window_ActiveObject, data->mainListObjects[data->activeList]);
   }
 
   DoMethod(data->mainListObjects[LT_QUICKVIEW], MUIM_NList_Clear);
