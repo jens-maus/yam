@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-08-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_US.c, locale/YAM.cd, locale/german.ct: in case a user's home directory
+    does not exist the user will no longer be deleted, but just an error message
+    will be generated now. This fixes bug #2043562.
+
 2008-08-01  Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/MainMailListGroup, mui/QuickSearchBar: when switching between the

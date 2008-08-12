@@ -4748,13 +4748,6 @@ Die Datei existiert zwar, aber beim Lesen trat ein Fehler auf.
 ; The file exists, but there was an error while reading it.
 ; FILENAME
 ;
-MSG_ER_UserRemoved
-Verzeichnis '%s' existiert nicht!\n\
-Der Benutzer %s wurde entfernt.
-; Directory '%s' not found!\n\
-; User %s has been removed.
-; PATH
-;
 MSG_ER_MissingDirectory
 Sie müssen ein Verzeichnis für den neuen Benutzer angeben!
 ; You must specify a directory for the new user!
@@ -8479,4 +8472,7 @@ MSG_FILE_OVERWRITE
 Die Datei '%s' existiert bereits.\n\
 \n\
 Soll sie überschrieben werden?
+;
+MSG_ER_USER_DIR_MISSING
+Das Verzeichnis '%s' des Benutzers '%s' existiert nicht!
 ;

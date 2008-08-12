@@ -170,6 +170,7 @@ static void US_LoadUsers(void)
         if(strncmp(buffer, "@USER", 5) == 0)
         {
           struct User *user = &G->Users.User[G->Users.Num];
+          int flags;
           enum FType type;
 
           strlcpy(user->Name, Trim(&buffer[6]), sizeof(user->Name));
@@ -179,28 +180,24 @@ static void US_LoadUsers(void)
             strlcpy(user->MailDir, G->MA_MailDir, sizeof(user->MailDir));
             save = TRUE;
           }
-          if(ObtainFileInfo(user->MailDir, FI_TYPE, &type) == TRUE && type != FIT_DRAWER)
-          {
-            ER_NewError(tr(MSG_ER_UserRemoved), user->MailDir, user->Name);
-            user->Name[0] = 0;
-            save = TRUE;
-          }
-          else
-          {
-            int flags = atoi(Trim(GetLine(fh, buffer, sizeof(buffer))));
 
-            user->Limited = isFlagSet(flags, UFLAG_LIMITED_USER);
-            user->UseAddr = isFlagSet(flags, UFLAG_USE_GLOBAL_ADDRESSBOOK);
-            user->UseDict = isFlagSet(flags, UFLAG_USE_GLOBAL_DICTIONARY);
-            if(!user->Limited)
-              hasmanager = TRUE;
+          flags = atoi(Trim(GetLine(fh, buffer, sizeof(buffer))));
 
-            if(ver >= 2)
-              strlcpy(user->Password, Decrypt(GetLine(fh, buffer, sizeof(buffer))), sizeof(user->Password));
+          user->Limited = isFlagSet(flags, UFLAG_LIMITED_USER);
+          user->UseAddr = isFlagSet(flags, UFLAG_USE_GLOBAL_ADDRESSBOOK);
+          user->UseDict = isFlagSet(flags, UFLAG_USE_GLOBAL_DICTIONARY);
+          if(user->Limited == FALSE)
+            hasmanager = TRUE;
 
-            user->ID = GetSimpleID();
-            G->Users.Num++;
-          }
+          if(ver >= 2)
+            strlcpy(user->Password, Decrypt(GetLine(fh, buffer, sizeof(buffer))), sizeof(user->Password));
+
+          user->ID = GetSimpleID();
+          G->Users.Num++;
+
+          // check if the user's home directory exists
+          if(ObtainFileInfo(user->MailDir, FI_TYPE, &type) == FALSE || type != FIT_DRAWER)
+            ER_NewError(tr(MSG_ER_USER_DIR_MISSING), user->MailDir, user->Name);
 
           // skip all lines until we read the "@ENDUSER"
           while(GetLine(fh, buffer, sizeof(buffer)))
@@ -214,7 +211,7 @@ static void US_LoadUsers(void)
     fclose(fh);
 
     // if we found no user with manager privileges we give these privilege to the first user
-    if(!hasmanager)
+    if(hasmanager == FALSE)
     {
       G->Users.User[0].Limited = FALSE;
       save = TRUE;
@@ -237,7 +234,7 @@ static void US_LoadUsers(void)
     save = TRUE;
   }
 
-  if(save)
+  if(save == TRUE)
     US_SaveUsers();
 
   LEAVE();

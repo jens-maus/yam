@@ -3496,11 +3496,6 @@ Read error on mail file: %s.\n\
 The file exists, but there was an error while reading it.
 ; FILENAME
 ;
-MSG_ER_UserRemoved (1136//)
-Directory '%s' not found!\n\
-User %s has been removed.
-; PATH
-;
 MSG_ER_MissingDirectory (1137//)
 You must specify a directory for the new user!
 ;
@@ -6867,4 +6862,8 @@ File '%s' already exists.\n\
 \n\
 Do you want to overwrite it?
 ; FILENAME
+;
+MSG_ER_USER_DIR_MISSING (2124//)
+The home directory '%s' of user '%s' does not exist!
+; PATH, USERNAME
 ;
