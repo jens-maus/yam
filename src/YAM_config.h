@@ -67,7 +67,6 @@ struct CO_GUIData
   Object *ST_SMTPAUTHPASS;
   Object *CY_SMTPAUTHMETHOD;
   Object *LV_POP3;
-  Object *GR_POP3;
   Object *BT_PADD;
   Object *BT_PDEL;
   Object *BT_POPUP;

@@ -7,6 +7,9 @@ $URL$
 
 2008-08-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c, YAM_COg.c, YAM_COs.c: the POP3 account group was disabled and
+    enabled again immediately to work around a possible MUI3.8 bug, which in
+    fact did not exist. Removing this false workaround also fixes bug #2045338.
   * YAM_US.c, locale/YAM.cd, locale/german.ct: in case a user's home directory
     does not exist the user will no longer be deleted, but just an error message
     will be generated now. This fixes bug #2043562.

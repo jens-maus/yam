@@ -1968,7 +1968,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
 
                 Child, VGroup,
                   MUIA_HorizWeight, 70,
-                  Child, data->GUI.GR_POP3 = VGroup,
+                  Child, VGroup,
                     Child, ColGroup(2),
                       Child, Label2(tr(MSG_CO_POPACCOUNT)),
                       Child, data->GUI.ST_POPACCOUNT = MakeString(SIZE_HOST,tr(MSG_CO_POPACCOUNT)),

@@ -505,10 +505,6 @@ HOOKPROTONHNONP(CO_GetP3Entry, void)
 
   DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &pop3);
 
-  // This is needed due to a bug in MUI
-  if(xget(gui->GR_POP3, MUIA_Disabled) != !pop3)
-    set(gui->GR_POP3, MUIA_Disabled, !pop3);
-
   set(gui->BT_PDEL, MUIA_Disabled, pop3 == NULL || xget(gui->LV_POP3, MUIA_NList_Entries) < 2);
 
   if(pop3 != NULL)

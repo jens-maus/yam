@@ -2118,6 +2118,7 @@ void CO_SetConfig(void)
       setcycle(gui->CY_EXCHANGEORDER, CE->MailExchangeOrder);
 
       // clear the list first
+      set(gui->LV_POP3, MUIA_List_Quiet, TRUE);
       DoMethod(gui->LV_POP3, MUIM_List_Clear);
 
       numPops = 0;
@@ -2135,10 +2136,11 @@ void CO_SetConfig(void)
       }
 
       // make sure the first entry is selected per default
-      set(gui->LV_POP3, MUIA_List_Active, MUIV_List_Active_Top);
+      xset(gui->LV_POP3, MUIA_List_Quiet, FALSE,
+                         MUIA_List_Active, MUIV_List_Active_Top);
       // set the enabled stated of the new/del buttons according to the number of available accounts
       set(gui->BT_PADD, MUIA_Disabled, numPops == MAXP3);
-      set(gui->BT_PDEL, MUIA_Disabled, numPops == 0);
+      set(gui->BT_PDEL, MUIA_Disabled, numPops < 2);
     }
     break;
 
