@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.31 (06.03.08)
+## version $VER: YAM.ct 6.32 (13.08.08)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -85,14 +85,6 @@ MSG_NewEntry
 - nytt -
 ;#DEF - new -
 ;#SET (25//)
-MSG_Unnamed
-namnlös
-;#DEF unnamed
-;#SET (26//)
-MSG_Bytes
-byte
-;#DEF bytes
-;#SET (27//)
 MSG_Date
 Datum
 ;#DEF Date
@@ -489,10 +481,6 @@ MSG_LOG_SavingAtt
 Sparade bilagan '%s' från meddelandet '%s' i mappen '%s'
 ;#DEF Saved attachment '%s' of message '%s' in folder '%s'
 ;#SET (135//)
-MSG_LOG_CroppingAtt
-Tog bort bilag(a/or) från meddelandet '%s' i mappen '%s'
-;#DEF Cropped attachment(s) of message '%s' in folder '%s'
-;#SET (136//)
 MSG_LOG_ChangingSubject
 Ändrade ärendet '%s' i meddelandet '%s' i mappen '%s' till '%s'
 ;#DEF Changed subject '%s' of message '%s' in folder '%s' to '%s'
@@ -533,10 +521,6 @@ MSG_MA_Compare2ReqOpt
 _Från|*Sva_r till|A_vbryt
 ;#DEF _From|*_Reply-To|_Cancel
 ;#SET (153//)
-MSG_MA_AttachRemoved
-\n_Följande bilagor har blivit manuellt borttagna:_\n
-;#DEF \n_The following attachments have been removed manually:_\n
-;#SET (154//)
 MSG_MA_ConfirmReq
 Bekräftelseförfrågan
 ;#DEF Confirmation Request
@@ -733,10 +717,6 @@ MSG_MA_Save
 Spara...
 ;#DEF Save...
 ;#SET (230//)
-MSG_MA_Crop
-Ta bort
-;#DEF Crop
-;#SET (231//)
 MSG_MA_MReply
 Svara...
 ;#DEF Reply...
@@ -2929,10 +2909,6 @@ MSG_RE_SaveMessage
 Spara meddelande
 ;#DEF Save message
 ;#SET (827//)
-MSG_RE_Overwrite
-Filen '%s' finns redan.\nVill du skriva över den?
-;#DEF File '%s' already exists.\nDo you want to overwrite it?
-;#SET (828//)
 MSG_RE_PrintMsg
 Skriv ut meddelande
 ;#DEF Print message
@@ -3993,22 +3969,6 @@ MSG_ER_ConnectHTTP
 Kunde inte ansluta till webbservern '%s'.\n\nMöjliga felorsaker: TCP/IP-stacken är inte uppkopplad, servern är nere eller stöder inte HTTP-begäran.
 ;#DEF Couldn't connect to WWW server '%s'.\n\nPossible reasons: TCP/IP offline, invalid address, server is currently down or doesn't support HTTP requests.
 ;#SET (1126//)
-MSG_ER_UnknownPOP
-Okänd POP3-server: '%s'.\n\nTCP/IP-stacken är inte uppkopplad eller så är serverns adress felaktig.
-;#DEF Unknown POP3 server: '%s'.\n\nTCP/IP is offline or the server address is invalid.
-;#SET (1128//)
-MSG_ER_UnknownSMTP
-Okänd SMTP-server: '%s'.\n\nTCP/IP-stacken är inte uppkopplad eller så är serverns adress felaktig.
-;#DEF Unknown SMTP server: '%s'.\n\nTCP/IP is offline or the server address is invalid.
-;#SET (1129//)
-MSG_ER_CantConnect
-Kunde inte ansluta till '%s'.\n\nE-postservern är just nu nere eller stöder inte POP3/SMTP.
-;#DEF Couldn't connect to '%s'.\n\nThe mail server is currently down or doesn't support the POP3/SMTP protocols.
-;#SET (1130//)
-MSG_ER_NoAPOP
-Din POP3-server stöder inte APOP. Var god stäng av APOP i konfigurationen.
-;#DEF Your POP3 server doesn't support APOP. Please disable APOP in the configuration.
-;#SET (1131//)
 MSG_ER_ErrorWriteMailfile
 Skrivfel på brevfilen: %s.\n\nYAM kan inte spara meddelandet till disk. Disken kan vara full.
 ;#DEF Write error on mail file: %s.\n\nYAM can't save the message to disk, maybe you're out of disk space.
@@ -4017,10 +3977,6 @@ MSG_ER_ErrorReadMailfile
 Läsfel för brevfilen %s.\n\nFilen existerar, men något blev fel vid läsning av filen.
 ;#DEF Read error on mail file: %s.\n\nThe file exists, but there was an error while reading it.
 ;#SET (1135//)
-MSG_ER_UserRemoved
-Katalogen '%s' finns inte!\nAnvändaren %s har tagits bort.
-;#DEF Directory '%s' not found!\nUser %s has been removed.
-;#SET (1136//)
 MSG_ER_MissingDirectory
 Du måste ange en katalog för den nya användaren!
 ;#DEF You must specify a directory for the new user!
@@ -4573,10 +4529,6 @@ MSG_BusyPGPrunning
 PGP körs...
 ;#DEF PGP operation...
 ;#SET (1290//)
-MSG_BusyComposing
-Skriver meddelande...
-;#DEF Composing message...
-;#SET (1291//)
 MSG_BusyDecPrinting
 Avkodar/skriver ut...
 ;#DEF Decoding/printing...
@@ -4969,10 +4921,6 @@ MSG_ER_INITAMISSL
 Kunde inte initiera amissl.library - TLSv1/SSLv3 support avstängd.\n\nKolla din AmiSSL installation och starta om YAM.
 ;#DEF Couldn't init amissl.library - TLSv1/SSLv3 support disabled.\n\nPlease check your AmiSSL installation and restart YAM.
 ;#SET (1437//)
-MSG_ER_INITTLS
-Kunde inte initiera TLSv1/SSLv3 session för %s
-;#DEF Couldn't initialize TLSv1/SSLv3 session for %s
-;#SET (1438//)
 MSG_TR_SENDAUTH
 Skickar SMTP AUTH begäran...
 ;#DEF Sending SMTP AUTH request...
@@ -5013,10 +4961,6 @@ MSG_RETRY_QUIT_GAD
 Försök igen|Avsluta
 ;#DEF Try again|Quit
 ;#SET (1454//)
-MSG_ER_NOSTARTTLS
-Din SMTP-server stödjer inte TLS/SSL. Var god stäng av denna funktion i konfigurationen.
-;#DEF Your SMTP server doesn't support TLS/SSL. Please disable this option in the configuration.
-;#SET (1455//)
 MSG_ER_NOAUTHUSERPASS
 Inget användarnamn eller lösenord specifierades för SMTP AUTH anslutningen YAM försökte etablera. Kontrollera din konfiguration.
 ;#DEF No user name or password was specified for the SMTP AUTH connection YAM was trying to establish. Please check your configuration.
@@ -5149,10 +5093,6 @@ MSG_HELP_CO_ST_INFOBARTXT
 Text som bör visas i statusraden.
 ;#DEF Text that should be displayed\nin the status bar.
 ;#SET (1492//)
-MSG_MA_CROPREQUEST
-Alla bilagor hos de valda breven kommer att tas bort.\n\nVill du verkligen fortsätta?
-;#DEF All attachments of the selected mails will be cropped.\n\nDo you really want to proceed?
-;#SET (1493//)
 MSG_YesNoReq2
 _Ja|*_Nej
 ;#DEF _Yes|*_No
@@ -5317,10 +5257,6 @@ MSG_MA_ATTACHMENT_SAVESEL
 Spara valda...
 ;#DEF Save selected...
 ;#SET (1536//)
-MSG_MA_ATTACHMENT_CROPALL
-Beskär alla
-;#DEF Crop all
-;#SET (1537//)
 MSG_CO_SImageOnly
 endast bild
 ;#DEF image only
@@ -6417,10 +6353,6 @@ MSG_MA_MSAVEATT
 Spara...
 ;#DEF Save...
 ;#SET (1832//)
-MSG_MA_MCROP
-Ta bort
-;#DEF Crop
-;#SET (1833//)
 MSG_MA_MNEW
 Nytt
 ;#DEF New
@@ -6801,10 +6733,6 @@ MSG_HELP_CH_MOVE_HAM_TO_INCOMING
 Om vald, så kommer brev som felaktigt klassifierats\nsom 'skräppost' och manuellt markerad som 'ej skräppost'\natt automatiskt flyttas tillbaka till Inkorgen.
 ;#DEF If enabled, any e-mail which was incorrectly classified\nas 'spam' and later manually marked as 'not spam' will be\nautomatically moved back to the Incoming folder.
 ;#SET (1931//)
-MSG_ER_NO8BITMIME
-SMTP-server '%s', rapporterade att den inte stödjer 8-bitars brev\növerföringar, fast du har 'Tillåt 8-bitars tecken' alternativet aktiverat.\n\nVar god stäng av denna funktion i TCP/IP inställningarna och redigera\nom brevet annars kan det bli felaktigt formaterat vid överföringen.
-;#DEF SMTP server '%s' reported that it doesn't support 8bit mail transfers while you have the 'Allow8bit' option enabled.\n\nPlease disable this option in your TCP/IP preferences\nand re-edit the e-mail before trying to send it again,\notherwise the e-mail may be malformed.
-;#SET (1932//)
 MSG_CO_FILTER_HAM
 Applicera _filter
 ;#DEF Apply _filters
@@ -6841,14 +6769,6 @@ MSG_CO_FOLDERINFO05
 Mappnamn (olästa/nya)
 ;#DEF Folder name (unread/new)
 ;#SET (1942//)
-MSG_ER_BADRESPONSE
-Felaktigt svar från mail servern '%s' för kommando '%s':\n\n%s\n\nMail servern kunde inte exekvera kommandot och svarade med felmeddelandet ovan.
-;#DEF Bad response from mail server '%s' to command '%s':\n\n%s\n\nThe mail server couldn't execute the command and replied with the above error message.
-;#SET (1943//)
-MSG_ER_POP3WELCOME
-POP3-servern '%s' svarade med ett felmeddelande vid välkomstproceduren och anslutningen avbröts:\n\n%s\n\n
-;#DEF POP3 server '%s' replied with an error message during the welcome procedure and the connection was terminated:\n\n%s\n\n
-;#SET (1944//)
 MSG_FO_EXPIREUNREAD
 också olästa
 ;#DEF also unread
@@ -6949,22 +6869,6 @@ MSG_WR_VIEW
 Vy
 ;#DEF View
 ;#SET (1969//)
-MSG_ER_CONNECTERR_SOCKET_IN_USE
-Kunde inte ansluta till '%s'.\n\nEn TCP/IP socket anslutning verkar redan vara aktiv. Stäng ned alla andra existerande överföringar.
-;#DEF Couldn't connect to '%s'.\n\nA TCP/IP socket connection seems to be already active. Please close any other existing transfers.
-;#SET (1970//)
-MSG_ER_CONNECTERR_TIMEDOUT
-Kunde inte ansluta till '%s'.\n\nMail servern svarade inte inom en given intervall och därför gick tiden ut.
-;#DEF Couldn't connect to '%s'.\n\nThe mail server didn't respond within the predefined time frame and therefore timed out.
-;#SET (1971//)
-MSG_ER_CONNECTERR_NO_SOCKET
-Kunde inte ansluta till '%s'.\n\nYAM kunde inte etablera en socket anslutning till mail servern. Var god kontrollera att din TCP/IP stack är online och fungerar korrekt.
-;#DEF Couldn't connect to '%s'.\n\nYAM wasn't able to establish a socket connection to the mail server. Please make sure that your TCP/IP stack is online and working properly.
-;#SET (1972//)
-MSG_ER_CONNECTERR_NO_NONBLOCKIO
-Kunde inte ansluta till '%s'.\n\nYAM kunde inte etablera en icke-blockerande I/O-anslutning till mail servern. Var god kontrollera att din TCP/IP stack kan etablera en icke-blockerande I/O-anslutning.
-;#DEF Couldn't connect to '%s'.\n\nYAM wasn't able to establish a non-blocking I/O connection to the mail server. Please make sure that your TCP/IP stack can establish non-blocking I/O connections.
-;#SET (1973//)
 MSG_CONFIG_MODIFIED
 Inställningarna har ändrats\nmen inte sparats ännu.\n\nHur vill du fortsätta?
 ;#DEF The configuration has been modified,\nbut wasn't saved yet.\n\nHow do you want to proceed?
@@ -7389,3 +7293,167 @@ MSG_ERROR_PLAYSOUND
 Ett fel uppstod vid försök att spela\nljudfilen '%s'.\n\nDetta kan bero på antingen en trasig\nljudfil eller en ljudfil som inte stöds eller\nför att din ljuddatatyp inte fungerar korrekt.
 ;#DEF An error occurred while trying to play\nthe sound file '%s'.\n\nThis could be either due to a broken or\nunsupported sound file or because your\nsound datatype is not properly working.
 ;#SET (2083//)
+MSG_WR_CHARSET
+Te_ckenupps.
+;#DEF _Charset
+;#SET (2084//)
+MSG_HELP_WR_PO_CHARSET
+Använd popup knappen för att välja den tecken-\nuppsättning du vill YAM ska använda för detta mail.\nDetta är förvalt till systemets teckenuppsättning.
+;#DEF Use the popup button to select the character set\nyou would like YAM to use for this mail. This\ndefaults to the global character set.
+;#SET (2085//)
+MSG_ABOUTYAM
+Om YAM
+;#DEF About YAM
+;#SET (2086//)
+MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
+Kunde inte ansluta till värd '%s' för konto '%s'.\n\nEn TCP/IP socket anslutning verkar redan vara aktiv. Var god stäng ned andra aktiva överföringar.
+;#DEF Couldn't connect to host '%s' of account '%s'.\n\nA TCP/IP socket connection seems to be already active. Please close any other existing transfers.
+;#SET (2087//)
+MSG_ER_CONNECTERR_TIMEDOUT_POP3
+Kunde inte ansluta till värd '%s' för konto '%s'.\n\nMail-servern svarade inte inom den angivna tidsramen och avbröts därför.
+;#DEF Couldn't connect to host '%s' of account '%s'.\n\nThe mail server didn't respond within the predefined time frame and therefore timed out.
+;#SET (2088//)
+MSG_ER_CONNECTERR_NO_SOCKET_POP3
+Kunde inte ansluta till värd '%s' för konto '%s'.\n\nYAM kunde inte etablera en socket anslutning till mail-servern. Var god kontrollera att din TCP/IP stack är online och fungerar.
+;#DEF Couldn't connect to host '%s' of account '%s'.\n\nYAM wasn't able to establish a socket connection to the mail server. Please make sure that your TCP/IP stack is online and working properly.
+;#SET (2089//)
+MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3
+Kunde inte ansluta till värd '%s' för konto '%s'.\n\nYAM kunde inte etablera en icke blockerande I/O anslutning till mail-servern. Var god kontrollera att din TCP/IP stack kan etablera icke blockerande I/O anslutningar.
+;#DEF Couldn't connect to host '%s' of account '%s'.\n\nYAM wasn't able to establish a non-blocking I/O connection to the mail server. Please make sure that your TCP/IP stack can establish non-blocking I/O connections.
+;#SET (2090//)
+MSG_ER_UNKNOWN_HOST_POP3
+Okänd POP3-server '%s' för konto '%s'.\n\nTCP/IP är nedkopplad eller så är adressen ogiltig.
+;#DEF Unknown POP3 server '%s' of account '%s'.\n\nTCP/IP is offline or the server address is invalid.
+;#SET (2091//)
+MSG_ER_CANNOT_CONNECT_POP3
+Kunde inte ansluta till värd '%s' för konto '%s'.\n\nMail-servern är nere för tillfället eller stödjer inte POP3 protokoll.
+;#DEF Couldn't connect to host '%s' of account '%s'.\n\nThe mail server is currently down or doesn't support the POP3 protocols.
+;#SET (2092//)
+MSG_ER_POP3WELCOME
+POP3-servern '%s' för konto '%s' svarade med ett felmeddelande vid välkomstproceduren och anslutningen avbröts:\n\n%s\n\n
+;#DEF POP3 server '%s' of account '%s' replied with an error message during the welcome procedure and the connection was terminated:\n\n%s\n\n
+;#SET (2093//)
+MSG_ER_BADRESPONSE_POP3
+Felaktigt svar från mail-servern '%s' för konto '%s' för kommandot '%s':\n\n%s\n\nMail-servern kunde inte exekvera kommandot och svarade med felmeddelandet ovan.
+;#DEF Bad response from mail server '%s' of account '%s' to command '%s':\n\n%s\n\nThe mail server couldn't execute the command and replied with the above error message.
+;#SET (2094//)
+MSG_ER_INITTLS_POP3
+Kunde inte initiera TLSv1/SSLv3 session med värd '%s' för konto '%s'.
+;#DEF Couldn't initialize TLSv1/SSLv3 session with host '%s' of account '%s'.
+;#SET (2095//)
+MSG_ER_NO_APOP
+POP3-servern '%s' för konto '%s' stödjer inte APOP. Var god stäng av APOP i konfigurationen.
+;#DEF The POP3 server '%s' of account '%s' doesn't support APOP. Please disable APOP in the configuration.
+;#SET (2096//)
+MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP
+Kunde inte ansluta till värd '%s'.\n\nEn TCP/IP socket anslutning verkar redan vara aktiv. Var god stäng ev. andra existerande överföringar.
+;#DEF Couldn't connect to host '%s'.\n\nA TCP/IP socket connection seems to be already active. Please close any other existing transfers.
+;#SET (2097//)
+MSG_ER_CONNECTERR_TIMEDOUT_SMTP
+Kunde inte ansluta till värd '%s'.\n\nMail-servern svarade inte inom den angivna tidsramen och avbröts därför.
+;#DEF Couldn't connect to host '%s'.\n\nThe mail server didn't respond within the predefined time frame and therefore timed out.
+;#SET (2098//)
+MSG_ER_CONNECTERR_NO_SOCKET_SMTP
+Kunde inte ansluta till värd '%s'.\n\nYAM kunde inte etablera en socket anslutning till mail-servern. Var god kontrollera att din TCP/IP stack är online och fungerar.
+;#DEF Couldn't connect to host '%s'.\n\nYAM wasn't able to establish a socket connection to the mail server. Please make sure that your TCP/IP stack is online and working properly.
+;#SET (2099//)
+MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP
+Kunde inte ansluta till värd '%s'.\n\nYAM kunde inte etablera en icke blockerande I/O anslutning till mail-servern. Var god kontrollera att din TCP/IP stack kan etablera icke blockerande I/O anslutningar.
+;#DEF Couldn't connect to host '%s'.\n\nYAM wasn't able to establish a non-blocking I/O connection to the mail server. Please make sure that your TCP/IP stack can establish non-blocking I/O connections.
+;#SET (2100//)
+MSG_ER_INITTLS_SMTP
+Kunde inte initiera TLSv1/SSLv3 session med värd '%s'.
+;#DEF Couldn't initialize TLSv1/SSLv3 session with host '%s'.
+;#SET (2101//)
+MSG_ER_NOSTARTTLS_SMTP
+Din SMTP-server '%s' stödjer inte TLS/SSL. Var god stäng av detta val i konfigurationen.
+;#DEF Your SMTP server '%s' doesn't support TLS/SSL. Please disable this option in the configuration.
+;#SET (2102//)
+MSG_ER_BADRESPONSE_SMTP
+Felaktigt svar från mail-servern '%s'  för kommandot '%s':\n\n%s\n\nMail-servern kunde inte exekvera kommandot och svarade med felmeddelandet ovan.
+;#DEF Bad response from mail server '%s' to command '%s':\n\n%s\n\nThe mail server couldn't execute the command and replied with the above error message.
+;#SET (2103//)
+MSG_ER_CANNOT_CONNECT_SMTP
+Kunde inte ansluta till värd '%s'.\n\nMail-servern är nere för tillfället eller stödjer inte SMTP protokoll.
+;#DEF Couldn't connect to host '%s'.\n\nThe mail server is currently down or doesn't support the SMTP protocols.
+;#SET (2104//)
+MSG_ER_UNKNOWN_HOST_SMTP
+Okänd SMTP-server '%s'.\n\nTCP/IP är nedkopplad eller så är serveradressen ogiltig.
+;#DEF Unknown SMTP server '%s'.\n\nTCP/IP is offline or the server address is invalid.
+;#SET (2105//)
+MSG_ER_NO8BITMIME_SMTP
+SMTP-servern '%s' rapporterade att den inte stödjer 8-bits brevöverföringar medans du har valet 'Tillåt 8bit' aktiverad.\n\nVar god stäng av denna funktion i TCP/IP-inställningarna\noch redigera om brevet innan du försöker skicka det igen,\nannars kan brevet bli förstört.
+;#DEF The SMTP server '%s' reported that it doesn't support 8bit mail transfers while you have the 'Allow8bit' option enabled.\n\nPlease disable this option in your TCP/IP preferences\nand re-edit the e-mail before trying to send it again,\notherwise the e-mail may be malformed.
+;#SET (2106//)
+MSG_CO_FOLDERDBLCLICK
+Dubbelklick på mapp öppnar mappinställningar
+;#DEF Double click on folder opens folder settings
+;#SET (2107//)
+MSG_MA_ATTACHMENT_DELETE
+Radera
+;#DEF Delete
+;#SET (2108//)
+MSG_MA_ATTACHMENT_DELETESEL
+Radera valda
+;#DEF Delete selected
+;#SET (2109//)
+MSG_MA_DELETESELECTEDREQUEST
+Följande bilagor kommer att raderas:\n%s\nVill du verkligen fortsätta?
+;#DEF The following attachments will be\ndeleted:\n%s\nDo you really want to proceed?
+;#SET (2110//)
+MSG_LOG_DELETEDATT
+Raderade bilaga(or) för meddelande '%s' i mappen '%s
+;#DEF Deleted attachment(s) of message '%s' in folder '%s'
+;#SET (2111//)
+MSG_MA_DELETEATT
+Radera
+;#DEF Delete
+;#SET (2112//)
+MSG_MA_DELETEATTREQUEST
+Alla bilagor för de valda breven\nkommer att raderas.\n\nVill du verkligen fortsätta?
+;#DEF All attachments of the selected\nmails will be deleted.\n\nDo you really want to proceed?
+;#SET (2113//)
+MSG_MA_ATTACHMENT_DELETEALL
+Radera alla
+;#DEF Delete all
+;#SET (2114//)
+MSG_MA_MDELETEATT
+Radera
+;#DEF Delete
+;#SET (2115//)
+MSG_CO_MAPFOREIGNCHARS
+Mappa okända tecken till ASCII
+;#DEF Map foreign chars to ASCII
+;#SET (2116//)
+MSG_HELP_CO_MAPFOREIGNCHARS
+Om vald, kommer tecken som\ninte kan konverteras till teckenuppsättningen\nför läsning att mappas för att se ut som\nASCII sekvenser.
+;#DEF If selected, characters that cannot\nbe converted to the read charset\nwill be mapped to looklike ASCII\nsequences.
+;#SET (2117//)
+MSG_MA_NAVIGATION
+Navigering
+;#DEF Navigation
+;#SET (2118//)
+MSG_MA_MNEXTTH
+Nästa meddelande i tråd
+;#DEF Next message in thread
+;#SET (2119//)
+MSG_MA_MPREVTH
+Föregående meddelande i tråd
+;#DEF Previous message in thread
+;#SET (2120//)
+MSG_CO_GLOBALMAILTHREADS
+Sök efter brev av samma tråd i alla mappar
+;#DEF Search for mails of same thread in all folders
+;#SET (2121//)
+MSG_HELP_CO_CH_GLOBALMAILTHREADS
+Om aktiv, kommer sökandet efter meddelanden\nav samma tråd att sträcka sig till\nalla mappar, istället för att endast söka\nefter meddelanden i samma mapp.
+;#DEF If enabled, the search for messages of\nthe same thread will be extended to all\nfolders rather than only searching for\nmails in the same folder.
+;#SET (2122//)
+MSG_FILE_OVERWRITE
+Filen '%s' existerar redan.\n\nVill du skriva över den?
+;#DEF File '%s' already exists.\n\nDo you want to overwrite it?
+;#SET (2123//)
+MSG_ER_USER_DIR_MISSING
+Hemmamappen '%'s för användare '%s' existerar inte!
+;#DEF The home directory '%s' of user '%s' does not exist!
+;#SET (2124//)
