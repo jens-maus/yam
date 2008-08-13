@@ -383,7 +383,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
 
   // if we got an active entry lets set all other GUI elements from the
   // values of this filter
-  if(filter)
+  if(filter != NULL)
   {
     struct List *childList;
     int rm = GetMUICheck(gui->CH_REMOTE);
@@ -410,14 +410,14 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     GetMUIText(filter->moveTo, gui->TX_MOVETO, sizeof(filter->moveTo));
 
     // make sure to update all rule settings
-    if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
+    if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)) != NULL)
     {
       Object *cstate = (Object *)childList->lh_Head;
       Object *child;
       int i=0;
 
       // iterate through the childList and update the rule structures
-      while((child = NextObject(&cstate)))
+      while((child = NextObject(&cstate)) != NULL)
       {
         struct RuleNode *rule;
 

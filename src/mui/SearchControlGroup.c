@@ -182,12 +182,12 @@ OVERLOAD(OM_NEW)
         Child, VGroup, // 0  from, to, cc, reply-to
           Child, HGroup,
             MUIA_Group_HorizSpacing, 0,
-            Child, data->CY_COMP[0] = MakeCycle(&compopt[8],""),
+            Child, data->CY_COMP[0] = MakeCycle(&compopt[8], ""),
             Child, HSpace(4),
             Child, PopaslObject,
-              MUIA_Popasl_Type,        ASL_FileRequest,
-              MUIA_Popstring_String,  data->ST_MATCH[0] = MakeString(SIZE_PATTERN,""),
-              MUIA_Popstring_Button,  data->BT_FILE[0] = PopButton(MUII_PopFile),
+              MUIA_Popasl_Type,      ASL_FileRequest,
+              MUIA_Popstring_String, data->ST_MATCH[0] = MakeString(SIZE_PATTERN, ""),
+              MUIA_Popstring_Button, data->BT_FILE[0] = PopButton(MUII_PopFile),
             End,
             Child, data->BT_EDIT[0] = PopButton(MUII_PopUp),
           End,
@@ -202,12 +202,12 @@ OVERLOAD(OM_NEW)
         Child, VGroup, // 1  subject, other field
           Child, HGroup,
             MUIA_Group_HorizSpacing, 0,
-            Child, data->CY_COMP[1] = MakeCycle(&compopt[8],""),
+            Child, data->CY_COMP[1] = MakeCycle(&compopt[8], ""),
             Child, HSpace(4),
             Child, PopaslObject,
-              MUIA_Popasl_Type,        ASL_FileRequest,
-              MUIA_Popstring_String,  data->ST_MATCH[1] = MakeString(SIZE_PATTERN,""),
-              MUIA_Popstring_Button,  data->BT_FILE[1] = PopButton(MUII_PopFile),
+              MUIA_Popasl_Type,      ASL_FileRequest,
+              MUIA_Popstring_String, data->ST_MATCH[1] = MakeString(SIZE_PATTERN,""),
+              MUIA_Popstring_Button, data->BT_FILE[1] = PopButton(MUII_PopFile),
             End,
             Child, data->BT_EDIT[1] = PopButton(MUII_PopUp),
           End,
@@ -218,23 +218,23 @@ OVERLOAD(OM_NEW)
         End,
         Child, VGroup, // 2  date, size
           Child, HGroup,
-            Child, data->CY_COMP[2] = MakeCycle(compopt,""),
-            Child, data->ST_MATCH[2] = MakeString(SIZE_PATTERN,""),
+            Child, data->CY_COMP[2] = MakeCycle(compopt, ""),
+            Child, data->ST_MATCH[2] = MakeString(SIZE_PATTERN, ""),
           End,
           Child, HVSpace,
         End,
         Child, VGroup, // 3  status
            Child, HGroup,
-             Child, data->CY_COMP[3] = MakeCycle(&compopt[5],""),
-             Child, data->CY_STATUS = MakeCycle(statopt,""),
+             Child, data->CY_COMP[3] = MakeCycle(&compopt[5], ""),
+             Child, data->CY_STATUS = MakeCycle(statopt, ""),
              Child, HSpace(0),
            End,
           Child, HVSpace,
         End,
         Child, VGroup, // 4  message header/body
           Child, HGroup,
-            Child, data->CY_COMP[4] = MakeCycle(&compopt[5],""),
-            Child, data->ST_MATCH[4] = MakeString(SIZE_PATTERN,""),
+            Child, data->CY_COMP[4] = MakeCycle(&compopt[5], ""),
+            Child, data->ST_MATCH[4] = MakeString(SIZE_PATTERN, ""),
           End,
           Child, MakeCheckGroup((Object **)&data->CH_CASESENS[4], tr(MSG_FI_CaseSensitive)),
           Child, HVSpace,
@@ -573,9 +573,10 @@ DECLARE(Update)
 
     data->activeObject = newActiveObj;
 
-    xset(obj, MUIA_Disabled,                    FALSE,
-              MUIA_SearchControlGroup_Modified, TRUE);
+    set(obj, MUIA_Disabled, FALSE);
   }
+
+  set(obj, MUIA_SearchControlGroup_Modified, TRUE);
 
   RETURN(0);
   return 0;

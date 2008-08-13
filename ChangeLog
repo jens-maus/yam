@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-08-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * SearchControlGroup.c: a filter rule was not declared as modified if just the
+    search field (To, From, etc) was modified, but not the string to be searched
+    or anything else hence resulting in an unchanged filter.
+
 2008-08-13  Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated according to changes.
