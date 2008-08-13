@@ -7,6 +7,7 @@ $URL$
 
 2008-08-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Locale_c.sd, german.ct: fixed some strange spellings.
   * SearchControlGroup.c: a filter rule was not declared as modified if just the
     search field (To, From, etc) was modified, but not the string to be searched
     or anything else hence resulting in an unchanged filter.

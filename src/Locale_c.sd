@@ -77,14 +77,14 @@ BOOL Open%bCatalog(void)
   ENTER();
 
   // now we try to open the catalog
-  if(LocaleBase && G->Catalog == NULL)
+  if(LocaleBase != NULL && G->Catalog == NULL)
   {
     // try to open the catalog file in its
     // specified version.
     G->Catalog = OpenCatalogA(NULL, (STRPTR)"%b.catalog", NULL);
 
     // check if an error occurred.
-    if(G->Catalog)
+    if(G->Catalog != NULL)
     {
       // now we check if the opened catalog has the correct version or not
       // and we don't care about revisions here.
@@ -122,13 +122,13 @@ BOOL Open%bCatalog(void)
     {
       // now we check the error state
       if(IoErr() != 0)
-        W(DBF_STARTUP, "couldn't open '%b.catalog': IoErr: %%%d", IoErr());
+        W(DBF_STARTUP, "could not open '%b.catalog': IoErr: %%%d", IoErr());
       else
-        W(DBF_STARTUP, "coudln't open '%b.catalog': builtin strings can be used");
+        W(DBF_STARTUP, "could not open '%b.catalog': builtin strings can be used");
     }
   }
   else
-    W(DBF_STARTUP, "locale.library wasn't open, skipping catalog opening.");
+    W(DBF_STARTUP, "locale.library was not open, skipping catalog opening.");
 
   RETURN(success);
   return success;
