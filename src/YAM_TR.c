@@ -329,7 +329,7 @@ static BOOL TR_InitTLS(void)
         D(DBF_NET, "CAfile = %s, CApath = %s", CAfile ? CAfile : "none", CApath ? CApath : "none");
         if((!SSL_CTX_load_verify_locations(ctx, CAfile, CApath)))
         {
-          E(DBF_NET, "Error setting default verify locations !");
+          E(DBF_NET, "Error setting default verify locations!");
           return FALSE;
         }
       }
@@ -350,16 +350,16 @@ static BOOL TR_InitTLS(void)
           result = TRUE;
         }
         else
-          E(DBF_NET, "SSL_CTX_set_cipher_list() error !");
+          E(DBF_NET, "SSL_CTX_set_cipher_list() error!");
       }
       else
-        E(DBF_NET, "Error setting default verify locations !");
+        E(DBF_NET, "Error setting default verify locations!");
     }
     else
-      E(DBF_NET, "Can't create SSL_CTX object !");
+      E(DBF_NET, "Can't create SSL_CTX object!");
   }
   else
-    E(DBF_NET, "SSLv23_client_method() error !");
+    E(DBF_NET, "SSLv23_client_method() error!");
 
   // if we weren't ale to
   // init the TLS/SSL stuff we have to clear it
@@ -505,7 +505,7 @@ static BOOL TR_StartTLS(void)
             else
             {
               // the rest should signal an error
-              E(DBF_NET, "WaitSelect() returned an error: %ld", err);
+              E(DBF_NET, "WaitSelect() returned error %ld", err);
               errorState = TRUE;
             }
           }
@@ -513,7 +513,7 @@ static BOOL TR_StartTLS(void)
 
           default:
           {
-            E(DBF_NET, "SSL_connect() returned an error %ld", err);
+            E(DBF_NET, "SSL_connect() returned error %ld", err);
             errorState = TRUE;
           }
           break;
@@ -539,7 +539,7 @@ static BOOL TR_StartTLS(void)
             D(DBF_NET, "%s connection using %s", SSL_CIPHER_get_version(cipher), SSL_get_cipher(ssl));
 
           if(!(server_cert = SSL_get_peer_certificate(ssl)))
-            E(DBF_NET, "SSL_get_peer_certificate() error !");
+            E(DBF_NET, "SSL_get_peer_certificate() error!");
 
           D(DBF_NET, "Server public key is %ld bits", EVP_PKEY_bits(X509_get_pubkey(server_cert)));
 
@@ -551,12 +551,12 @@ static BOOL TR_StartTLS(void)
           D(DBF_NET, "Server certificate:");
 
           if(!(X509_NAME_oneline(X509_get_subject_name(server_cert), x509buf, X509BUFSIZE)))
-            E(DBF_NET, "X509_NAME_oneline...[subject] error !");
+            E(DBF_NET, "X509_NAME_oneline...[subject] error!");
 
           D(DBF_NET, "subject: %s", x509buf);
 
           if(!(X509_NAME_oneline(X509_get_issuer_name(server_cert), x509buf, X509BUFSIZE)))
-            E(DBF_NET, "X509_NAME_oneline...[issuer] error !");
+            E(DBF_NET, "X509_NAME_oneline...[issuer] error!");
 
           D(DBF_NET, "issuer:  %s", x509buf);
 
@@ -669,7 +669,7 @@ static BOOL TR_InitSMTPAUTH(void)
       if(hasDIGEST_MD5_Auth(G->TR_SMTPflags))
         selectedMethod = SMTPAUTH_DIGEST;
       else
-        W(DBF_NET, "User selected SMTP-Auth 'DIGEST-MD5' but server doesn't support it!");
+        W(DBF_NET, "User selected SMTP-Auth 'DIGEST-MD5', but server doesn't support it!");
     }
     break;
 
@@ -678,7 +678,7 @@ static BOOL TR_InitSMTPAUTH(void)
       if(hasCRAM_MD5_Auth(G->TR_SMTPflags))
         selectedMethod = SMTPAUTH_CRAM;
       else
-        W(DBF_NET, "User selected SMTP-Auth 'CRAM-MD5' but server doesn't support it!");
+        W(DBF_NET, "User selected SMTP-Auth 'CRAM-MD5', but server doesn't support it!");
     }
     break;
 
@@ -687,7 +687,7 @@ static BOOL TR_InitSMTPAUTH(void)
       if(hasLOGIN_Auth(G->TR_SMTPflags))
         selectedMethod = SMTPAUTH_LOGIN;
       else
-        W(DBF_NET, "User selected SMTP-Auth 'LOGIN' but server doesn't support it!");
+        W(DBF_NET, "User selected SMTP-Auth 'LOGIN', but server doesn't support it!");
     }
     break;
 
@@ -696,7 +696,7 @@ static BOOL TR_InitSMTPAUTH(void)
       if(hasCRAM_MD5_Auth(G->TR_SMTPflags))
         selectedMethod = SMTPAUTH_CRAM;
       else
-        W(DBF_NET, "User selected SMTP-Auth 'DIGEST-MD5' but server doesn't support it!");
+        W(DBF_NET, "User selected SMTP-Auth 'DIGEST-MD5', but server doesn't support it!");
     }
     break;
   }
@@ -723,7 +723,7 @@ static BOOL TR_InitSMTPAUTH(void)
         // AUTH command.
         strlcpy(challenge, &resp[4], sizeof(challenge));
 
-        // now that we have the challange phrase we need to base64decode
+        // now that we have the challenge phrase we need to base64decode
         // it, but have to take care to remove the ending "\r\n" cookie.
         chalRet = strpbrk(challenge, "\r\n"); // find the first CR or LF
         if(chalRet)
@@ -774,7 +774,7 @@ static BOOL TR_InitSMTPAUTH(void)
           }
           else
           {
-            W(DBF_NET, "'realm' not found in challange. using '%s' instead", C->SMTP_Domain);
+            W(DBF_NET, "'realm' not found in challenge, using '%s' instead", C->SMTP_Domain);
 
             // if the challenge doesn't have a "realm" we assume our
             // choosen SMTP domain to be the realm
@@ -1025,7 +1025,7 @@ static BOOL TR_InitSMTPAUTH(void)
         // AUTH command.
         strlcpy(challenge, &resp[4], sizeof(challenge));
 
-        // now that we have the challange phrase we need to base64decode
+        // now that we have the challenge phrase we need to base64decode
         // it, but have to take care to remove the ending "\r\n" cookie.
         chalRet = strpbrk(challenge, "\r\n"); // find the first CR or LF
         if(chalRet)
@@ -2436,7 +2436,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
             else
             {
               // the rest should signal an error
-              E(DBF_NET, "WaitSelect() returned an error: %ld", err);
+              E(DBF_NET, "WaitSelect() returned error: %ld", err);
               status = -1; // signal error
             }
           }
@@ -2452,7 +2452,7 @@ static int TR_Read(LONG socket, char *ptr, int maxlen)
 
           default:
           {
-            E(DBF_NET, "recv() returned an error %ld", err);
+            E(DBF_NET, "recv() returned error %ld", err);
             status = -1; // signal error
           }
           break;
@@ -2672,7 +2672,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
             else
             {
               // the rest should signal an error
-              E(DBF_NET, "WaitSelect() returned an error: %ld", err);
+              E(DBF_NET, "WaitSelect() returned error %ld", err);
               status = -1; // signal error
             }
           }
@@ -2697,7 +2697,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
 
           default:
           {
-            E(DBF_NET, "SSL_write() returned an error %ld", err);
+            E(DBF_NET, "SSL_write() returned error %ld", err);
             status = -1; // signal error
           }
           break;
@@ -2802,7 +2802,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
             else
             {
               // the rest should signal an error
-              E(DBF_NET, "WaitSelect() returned an error: %ld", err);
+              E(DBF_NET, "WaitSelect() returned error %ld", err);
               status = -1; // signal error
             }
           }
@@ -2818,7 +2818,7 @@ static int TR_Write(LONG socket, const char *ptr, int len)
 
           default:
           {
-            E(DBF_NET, "send() returned an error %ld", err);
+            E(DBF_NET, "send() returned error %ld", err);
             status = -1; // signal error
           }
           break;
@@ -3511,12 +3511,11 @@ static void TR_DisplayMailList(BOOL largeonly)
     for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+      struct Mail *mail = mtn->mail;
 
       // only display mails to be downloaded
       if(hasTR_LOAD(mtn))
       {
-        struct Mail *mail = mtn->mail;
-
         // add this mail to the transfer list in case we either
         // should show ALL mails or the mail size is >= the warning size
         if(largeonly == FALSE || mail->Size >= C->WarnSize*1024)
@@ -3524,8 +3523,13 @@ static void TR_DisplayMailList(BOOL largeonly)
           mtn->position = pos++;
 
           DoMethod(lv, MUIM_NList_InsertSingle, mtn, MUIV_NList_Insert_Bottom);
+          D(DBF_GUI, "added mail with subject '%s' and size %ld to preselection list", mail->Subject, mail->Size);
         }
+        else
+          D(DBF_GUI, "skipped mail with subject '%s' and size %ld", mail->Subject, mail->Size);
       }
+      else
+        D(DBF_GUI, "skipped mail with subject '%s' and size %ld", mail->Subject, mail->Size);
     }
 
     xset(lv, MUIA_NList_Active, MUIV_NList_Active_Top,
@@ -3593,10 +3597,10 @@ static BOOL TR_GetMessageList_GET(void)
 
           newMail->Size  = size;
 
-          mode = (C->DownloadLarge ? 1 : 0) +
-                 (C->P3[G->TR->POP_Nr]->DeleteOnServer ? 2 : 0) +
+          mode = (C->DownloadLarge == TRUE ? 1 : 0) +
+                 (C->P3[G->TR->POP_Nr]->DeleteOnServer == TRUE ? 2 : 0) +
                  (G->TR->GUIlevel == POP_USER ? 4 : 0) +
-                 ((C->WarnSize && newMail->Size >= (C->WarnSize*1024)) ? 8 : 0);
+                 ((C->WarnSize > 0 && newMail->Size >= (C->WarnSize*1024)) ? 8 : 0);
 
           // allocate a new MailTransferNode and add it to our
           // new transferlist
@@ -4012,14 +4016,14 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
             for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
             {
               struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+              struct Mail *mail = mtn->mail;
 
-              // check the size of those mails only, which are left for download
+              D(DBF_GUI, "checking mail with subject '%s' and size %ld for preselection", mail->Subject, mail->Size);              // check the size of those mails only, which are left for download
               if(hasTR_LOAD(mtn))
               {
-                struct Mail *mail = mtn->mail;
-
                 if(mail->Size >= C->WarnSize*1024)
                 {
+                  D(DBF_GUI, "mail with subject '%s' and size %ld exceeds size limit", mail->Subject, mail->Size);
                   preselect = TRUE;
                   break;
                 }
@@ -4862,7 +4866,7 @@ static enum HashTableOperator SaveUIDLtoken(UNUSED struct HashTable *table,
   else
     saveUIDL = TRUE;
 
-  if(saveUIDL)
+  if(saveUIDL == TRUE)
   {
     fprintf(fh, "%s\n", token->uidl);
     D(DBF_UIDL, "saved UIDL '%s' to .uidl file", token->uidl);
@@ -5064,13 +5068,13 @@ static void AddUIDLtoHash(const char *uidl, BOOL checked)
       token->uidl = strdup(uidl);
       token->checked = checked;
 
-      D(DBF_UIDL, "added '%s' (%lx) to UIDLhash", uidl, token);
+      D(DBF_UIDL, "added UIDL '%s' (%08lx) to hash", uidl, token);
     }
     else
       W(DBF_UIDL, "already existing hash entry for '%s' found, skipping.", uidl);
   }
   else
-    E(DBF_UIDL, "couldn't add uidl '%s' to hash", uidl);
+    E(DBF_UIDL, "couldn't add UIDL '%s' to hash", uidl);
 
   LEAVE();
 }
@@ -5917,7 +5921,7 @@ static BOOL ReadDBXMessage(FILE *fh, FILE *out, unsigned int addr)
 
   ENTER();
 
-  D(DBF_IMPORT, "reading message from addr 0x%lx", addr);
+  D(DBF_IMPORT, "reading message from addr 0x%08lx", addr);
 
   while(addr)
   {
@@ -6017,7 +6021,7 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
   // seek to the position where to find the message info object
   if(fseek(fh, addr, SEEK_SET))
   {
-    E(DBF_IMPORT, "Unable to seek at %x", addr);
+    E(DBF_IMPORT, "Unable to seek at %08lx", addr);
     goto out;
   }
 
@@ -6050,7 +6054,7 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
   {
     unsigned char *newbuf;
 
-    D(DBF_IMPORT, "read in %ld bytes of object at 0x%x, but index length is %ld", size, addr, length_of_idxs);
+    D(DBF_IMPORT, "read in %ld bytes of object at 0x%08lx, but index length is %ld", size, addr, length_of_idxs);
 
     if(!(newbuf = malloc(length_of_idxs + 12)))
     {
@@ -6143,7 +6147,7 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
   // Write the message into the out file */
   if(ReadDBXMessage(fh, mailout, msg_addr) == FALSE)
   {
-    E(DBF_IMPORT, "Couldn't read dbx message @ addr %x", msg_addr);
+    E(DBF_IMPORT, "Couldn't read dbx message @ addr %08lx", msg_addr);
 
     fclose(mailout);
     mailout = NULL;
@@ -6213,7 +6217,7 @@ static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mai
   {
     free(buf);
 
-    E(DBF_IMPORT, "Unable to seek at %x", addr);
+    E(DBF_IMPORT, "Unable to seek at %08lx", addr);
     RETURN(FALSE);
     return FALSE;
   }
@@ -6713,7 +6717,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
 
               if(ReadDBXMessage(ifh, ofh, mtn->importAddr) == FALSE)
-                E(DBF_IMPORT, "Couldn't import dbx message from addr %x", mtn->importAddr);
+                E(DBF_IMPORT, "Couldn't import dbx message from addr %08lx", mtn->importAddr);
 
               fclose(ofh);
 
@@ -7009,6 +7013,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 
       if(hasTR_LOAD(mtn))
       {
+        D(DBF_NET, "downloading mail with subject '%s' and size %ld", mail->Subject, mail->Size);
         TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
 
         if(TR_LoadMessage(infolder, &ts, mtn->index) == TRUE)
@@ -7023,6 +7028,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 
           if(hasTR_DELETE(mtn))
           {
+            D(DBF_NET, "deleting mail with subject '%s' on server", mail->Subject);
             if(TR_DeleteMessage(mtn->index) == TRUE && G->TR->DuplicatesChecking == TRUE)
             {
               // remove the UIDL from the hash table and remember that change
@@ -7032,14 +7038,18 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
           }
           else if(G->TR->DuplicatesChecking == TRUE)
           {
+            D(DBF_NET, "adding mail with subject '%s' to UIDL hash", mail->Subject);
             // add the UIDL to the hash table and remember that change
             AddUIDLtoHash(mtn->UIDL, TRUE);
             G->TR->UIDLhashIsDirty = TRUE;
           }
+          else
+            D(DBF_NET, "leaving mail with subject '%s' and size %ld on server to be downloaded again", mail->Subject, mail->Size);
         }
       }
       else if(hasTR_DELETE(mtn))
       {
+        D(DBF_NET, "deleting mail with subject '%s' on server", mail->Subject);
         TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
 
         if(TR_DeleteMessage(mtn->index) == TRUE && G->TR->DuplicatesChecking == TRUE)
@@ -7049,6 +7059,8 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
           G->TR->UIDLhashIsDirty = TRUE;
         }
       }
+      else
+        D(DBF_NET, "leaving mail with subject '%s' and size %ld on server to be downloaded again", mail->Subject, mail->Size);
     }
 
     DisplayStatistics(infolder, TRUE);
@@ -7178,7 +7190,7 @@ MakeStaticHook(TR_PauseHook, TR_PauseFunc);
 //  Message listview display hook
 HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
 {
-  if(entry)
+  if(entry != NULL)
   {
     static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL], dispdate[64];
     struct Mail *mail = entry->mail;
@@ -7188,7 +7200,6 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
     snprintf(array[0] = dispsta, sizeof(dispsta), "%3d ", entry->index);
     if(hasTR_LOAD(entry))
       strlcat(dispsta, SI_STR(si_Download), sizeof(dispsta));
-
     if(hasTR_DELETE(entry))
       strlcat(dispsta, SI_STR(si_Delete), sizeof(dispsta));
 
@@ -7212,7 +7223,7 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
     array[4] = dispdate;
     *dispdate = '\0';
 
-    if(mail->Date.ds_Days)
+    if(mail->Date.ds_Days != 0)
       DateStamp2String(dispdate, sizeof(dispdate), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
   }
   else

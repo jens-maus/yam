@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-08-14  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: extended the debugging stuff a bit to track down bugs #2031100 and
+    #2050291.
+
 2008-08-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * Locale_c.sd, german.ct: fixed some strange spellings.
