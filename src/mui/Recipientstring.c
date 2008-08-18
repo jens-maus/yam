@@ -93,7 +93,7 @@ HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *
         D(DBF_GUI, "\"%s\" matches realname \"%s\"", msg->User, entry->RealName);
         result = 0;
       }
-      else if(Stricmp(msg->User, entry->Address) == 0)
+      else if(entry->Type == AET_USER && Stricmp(msg->User, entry->Address) == 0)
       {
         D(DBF_GUI, "\"%s\" matches address \"%s\"", msg->User, entry->Address);
         result = 0;
@@ -804,7 +804,7 @@ DECLARE(Resolve) // ULONG flags
     if((contents = tmp = strdup(s)) == NULL)
       break;
 
-    // clear the string gadget without notifing others
+    // clear the string gadget without notifying others
     nnset(obj, MUIA_String_Contents, NULL);
 
     D(DBF_GUI, "Resolve this string: '%s'", tmp);

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-08-18  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Recipientstring.c: resolving the entered addresses will no longer match the
+    return address of a distribution list, but only its name or description.
+    This prevents flooding the To field when writing a new mail and one of the
+    recipients' address matches the return address of the list. Effectively this
+    fixes bug #2043554.
+
 2008-08-14  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: extended the debugging stuff a bit to track down bugs #2031100 and
