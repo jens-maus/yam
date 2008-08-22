@@ -224,8 +224,10 @@ struct MailTransferNode
 #define TRF_NONE              (0)
 #define TRF_LOAD              (1<<0)
 #define TRF_DELETE            (1<<1)
+#define TRF_PRESELECT         (1<<2)
 #define hasTR_LOAD(v)         (isFlagSet((v)->tflags, TRF_LOAD))
 #define hasTR_DELETE(v)       (isFlagSet((v)->tflags, TRF_DELETE))
+#define hasTR_PRESELECT(v)    (isFlagSet((v)->tflags, TRF_PRESELECT))
 
 /**************************************************************************/
 // general connection/transfer error enumation values
@@ -3514,11 +3516,11 @@ static void TR_DisplayMailList(BOOL largeonly)
       struct Mail *mail = mtn->mail;
 
       // only display mails to be downloaded
-      if(hasTR_LOAD(mtn))
+      if(hasTR_LOAD(mtn) || hasTR_PRESELECT(mtn))
       {
         // add this mail to the transfer list in case we either
         // should show ALL mails or the mail size is >= the warning size
-        if(largeonly == FALSE || mail->Size >= C->WarnSize*1024)
+        if(largeonly == FALSE || hasTR_PRESELECT(mtn))
         {
           mtn->position = pos++;
 
@@ -3589,10 +3591,10 @@ static BOOL TR_GetMessageList_GET(void)
             TRF_LOAD,
             TRF_NONE,
             TRF_LOAD|TRF_DELETE,
-            TRF_NONE,
-            TRF_LOAD,
-            TRF_NONE,
-            TRF_LOAD|TRF_DELETE
+            TRF_NONE|TRF_PRESELECT,
+            TRF_LOAD|TRF_PRESELECT,
+            TRF_NONE|TRF_PRESELECT,
+            TRF_LOAD|TRF_DELETE|TRF_PRESELECT
           };
 
           newMail->Size  = size;
@@ -3601,6 +3603,7 @@ static BOOL TR_GetMessageList_GET(void)
                  (C->P3[G->TR->POP_Nr]->DeleteOnServer == TRUE ? 2 : 0) +
                  (G->TR->GUIlevel == POP_USER ? 4 : 0) +
                  ((C->WarnSize > 0 && newMail->Size >= (C->WarnSize*1024)) ? 8 : 0);
+          D(DBF_GUI, "mail transfer flags %08lx", mode);
 
           // allocate a new MailTransferNode and add it to our
           // new transferlist
@@ -4019,14 +4022,11 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
               struct Mail *mail = mtn->mail;
 
               D(DBF_GUI, "checking mail with subject '%s' and size %ld for preselection", mail->Subject, mail->Size);              // check the size of those mails only, which are left for download
-              if(hasTR_LOAD(mtn))
+              if(hasTR_PRESELECT(mtn))
               {
-                if(mail->Size >= C->WarnSize*1024)
-                {
-                  D(DBF_GUI, "mail with subject '%s' and size %ld exceeds size limit", mail->Subject, mail->Size);
-                  preselect = TRUE;
-                  break;
-                }
+                D(DBF_GUI, "mail with subject '%s' and size %ld exceeds size limit", mail->Subject, mail->Size);
+                preselect = TRUE;
+                break;
               }
             }
           }
@@ -7192,25 +7192,31 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
 {
   if(entry != NULL)
   {
-    static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL], dispdate[64];
+    static char dispfro[SIZE_DEFAULT];
+    static char dispsta[SIZE_DEFAULT];
+    static char dispsiz[SIZE_SMALL];
+    static char dispdate[64];
     struct Mail *mail = entry->mail;
     struct Person *pe = &mail->From;
 
+
+    array[0] = dispsta;
     // status icon display
-    snprintf(array[0] = dispsta, sizeof(dispsta), "%3d ", entry->index);
+    snprintf(dispsta, sizeof(dispsta), "%3d ", entry->index);
     if(hasTR_LOAD(entry))
       strlcat(dispsta, SI_STR(si_Download), sizeof(dispsta));
     if(hasTR_DELETE(entry))
       strlcat(dispsta, SI_STR(si_Delete), sizeof(dispsta));
 
     // size display
-    if(C->WarnSize > 0 && mail->Size >= C->WarnSize*1024)
+    array[1] = dispsiz;
+    if(C->WarnSize > 0 && mail->Size >= (C->WarnSize*1024))
     {
-      strlcpy(array[1] = dispsiz, MUIX_PH, sizeof(dispsiz));
+      strlcpy(dispsiz, MUIX_PH, sizeof(dispsiz));
       FormatSize(mail->Size, dispsiz+strlen(dispsiz), sizeof(dispsiz)-strlen(dispsiz), SF_AUTO);
     }
     else
-      FormatSize(mail->Size, array[1] = dispsiz, sizeof(dispsiz), SF_AUTO);
+      FormatSize(mail->Size, dispsiz, sizeof(dispsiz), SF_AUTO);
 
     // from address display
     array[2] = dispfro;
@@ -7302,7 +7308,8 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
        End,
        Child, data->GUI.BT_ABORT = MakeButton(tr(MSG_TR_Abort)),
     End;
-    if(fullwin)
+
+    if(fullwin == TRUE)
     {
       data->GUI.GR_LIST = VGroup, GroupFrameT(TRmode==TR_IMPORT ? tr(MSG_TR_MsgInFile) : tr(MSG_TR_MsgOnServer)),
          MUIA_ShowMe, TRmode==TR_IMPORT || C->PreSelection >= PSM_ALWAYS,
@@ -7371,7 +7378,8 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
       SetHelp(data->GUI.TX_STATUS,MSG_HELP_TR_TX_STATUS);
       SetHelp(data->GUI.BT_ABORT ,MSG_HELP_TR_BT_ABORT);
-      if(fullwin)
+
+      if(fullwin == TRUE)
       {
         set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.LV_MAILS);
         set(data->GUI.BT_RESUME, MUIA_Disabled, TRUE);
