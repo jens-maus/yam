@@ -3588,12 +3588,12 @@ static BOOL TR_GetMessageList_GET(void)
             TRF_LOAD|TRF_DELETE,
             TRF_LOAD|TRF_DELETE,
             TRF_NONE,
-            TRF_LOAD,
-            TRF_NONE,
-            TRF_LOAD|TRF_DELETE,
-            TRF_NONE|TRF_PRESELECT,
             TRF_LOAD|TRF_PRESELECT,
-            TRF_NONE|TRF_PRESELECT,
+            TRF_NONE,
+            TRF_LOAD|TRF_DELETE|TRF_PRESELECT,
+            TRF_PRESELECT,
+            TRF_LOAD|TRF_PRESELECT,
+            TRF_PRESELECT,
             TRF_LOAD|TRF_DELETE|TRF_PRESELECT
           };
 
