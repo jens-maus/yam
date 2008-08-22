@@ -3513,7 +3513,6 @@ static void TR_DisplayMailList(BOOL largeonly)
     for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-      struct Mail *mail = mtn->mail;
 
       // only display mails to be downloaded
       if(hasTR_LOAD(mtn) || hasTR_PRESELECT(mtn))
@@ -3522,6 +3521,10 @@ static void TR_DisplayMailList(BOOL largeonly)
         // should show ALL mails or the mail size is >= the warning size
         if(largeonly == FALSE || hasTR_PRESELECT(mtn))
         {
+          #if defined(DEBUG)
+          struct Mail *mail = mtn->mail;
+          #endif
+
           mtn->position = pos++;
 
           DoMethod(lv, MUIM_NList_InsertSingle, mtn, MUIV_NList_Insert_Bottom);
@@ -4019,7 +4022,9 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
             for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
             {
               struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+              #if defined(DEBUG)
               struct Mail *mail = mtn->mail;
+              #endif
 
               D(DBF_GUI, "checking mail with subject '%s' and size %ld for preselection", mail->Subject, mail->Size);              // check the size of those mails only, which are left for download
               if(hasTR_PRESELECT(mtn))
