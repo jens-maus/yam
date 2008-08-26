@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-08-26  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/french.ct: updated french translation according to latest changes.
+
 2008-08-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: modified the preselection logic a bit again to track down bugs

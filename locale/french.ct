@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 6.0 (17.06.2008)
+## version $VER: YAM.catalog 6.0 (26.08.2008)
 ## language français
 ## codeset 0
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 4060 2008-06-11 22:37:37Z
+; based on YAM.cd 4098 2008-08-12 07:50:15Z
 ;
 ;#version 6
 ;#language english
@@ -3444,13 +3444,6 @@ MSG_RE_SaveMessage
 Sauver un message...
 ; Save message
 ;
-MSG_RE_Overwrite
-Le fichier « %s » existe déjà.\n\
-Voulez-vous le remplacer ?
-; File '%s' already exists.\n\
-; Do you want to overwrite it?
-; FILENAME
-;
 MSG_RE_PrintMsg
 Imprime le message
 ; Print message
@@ -4827,13 +4820,6 @@ Le fichier existe, mais il y a eu une erreur durant la lecture.
 ; \n\
 ; The file exists, but there was an error while reading it.
 ; FILENAME
-;
-MSG_ER_UserRemoved
-Répertoire « %s » non trouvé !\n\
-L'utilisateur %s a été retiré.
-; Directory '%s' not found!\n\
-; User %s has been removed.
-; PATH
 ;
 MSG_ER_MissingDirectory
 Vous devez spécifier un répertoire pour ce nouvel utilisateur !
@@ -9391,7 +9377,6 @@ Veuillez fermer tous les autres transferts en cours.
 ; \n\
 ; A TCP/IP socket connection seems to be already active. \
 ; Please close any other existing transfers.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_TIMEDOUT_POP3
@@ -9402,7 +9387,6 @@ Le serveur de courrier n'a pas répondu dans le délai imparti.
 ; \n\
 ; The mail server didn't respond within the predefined \
 ; time frame and therefore timed out.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_NO_SOCKET_POP3
@@ -9416,7 +9400,6 @@ pile TCP/IP est bien démarrée et fonctionne correctement.
 ; YAM wasn't able to establish a socket connection \
 ; to the mail server. Please make sure that your TCP/IP \
 ; stack is online and working properly.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3
@@ -9431,7 +9414,6 @@ votre pile TCP/IP peut établir de telles connexions.
 ; connection to the mail server. Please make sure that \
 ; your TCP/IP stack can establish non-blocking I/O \
 ; connections.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_UNKNOWN_HOST_POP3
@@ -9441,7 +9423,6 @@ La couche TCP/IP est hors ligne ou l'adresse du serveur est invalide.
 ; Unknown POP3 server '%s' of account '%s'.\n\
 ; \n\
 ; TCP/IP is offline or the server address is invalid.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_CANNOT_CONNECT_POP3
@@ -9451,7 +9432,6 @@ Le serveur de courrier est hors service, ou ne supporte pas le protocole POP3.
 ; Couldn't connect to host '%s' of account '%s'.\n\
 ; \n\
 ; The mail server is currently down or doesn't support the POP3 protocols.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_POP3WELCOME
@@ -9480,13 +9460,11 @@ et a répondu par le message d'erreur ci-dessus.
 ; \n\
 ; The mail server couldn't execute the command \
 ; and replied with the above error message.
-;
 ; SERVER, ACCOUNT, COMMAND, TEXT
 ;
 MSG_ER_INITTLS_POP3
 Impossible d'initialiser la session TLSv1/SSLv3 avec l'hôte « %s » du compte « %s ».
 ; Couldn't initialize TLSv1/SSLv3 session with host '%s' of account '%s'.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_NO_APOP
@@ -9494,7 +9472,6 @@ Le serveur POP3 « %s » du compte « %s » ne supporte pas APOP. \
 Veuillez désactivez l'option dans la configuration.
 ; The POP3 server '%s' of account '%s' doesn't support APOP. \
 ; Please disable APOP in the configuration.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP
@@ -9506,7 +9483,6 @@ Veuillez fermer tous les autres transferts en cours.
 ; \n\
 ; A TCP/IP socket connection seems to be already active. \
 ; Please close any other existing transfers.
-;
 ; HOST
 ;
 MSG_ER_CONNECTERR_TIMEDOUT_SMTP
@@ -9517,7 +9493,6 @@ Le serveur de courrier n'a pas répondu dans le délai imparti.
 ; \n\
 ; The mail server didn't respond within the predefined \
 ; time frame and therefore timed out.
-;
 ; HOST
 ;
 MSG_ER_CONNECTERR_NO_SOCKET_SMTP
@@ -9531,7 +9506,6 @@ pile TCP/IP est bien démarrée et fonctionne correctement.
 ; YAM wasn't able to establish a socket connection \
 ; to the mail server. Please make sure that your TCP/IP \
 ; stack is online and working properly.
-;
 ; HOST
 ;
 MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP
@@ -9546,13 +9520,11 @@ votre pile TCP/IP peut établir de telles connexions.
 ; connection to the mail server. Please make sure that \
 ; your TCP/IP stack can establish non-blocking I/O \
 ; connections.
-;
 ; HOST
 ;
 MSG_ER_INITTLS_SMTP
 Impossible d'initialiser la session TLSv1/SSLv3 avec l'hôte « %s ».
 ; Couldn't initialize TLSv1/SSLv3 session with host '%s'.
-;
 ; HOST
 ;
 MSG_ER_NOSTARTTLS_SMTP
@@ -9560,7 +9532,6 @@ Votre serveur SMTP « %s » ne gère pas TLS/SSL. \
 Veuillez désactiver cette option dans la configuration.
 ; Your SMTP server '%s' doesn't support TLS/SSL. \
 ; Please disable this option in the configuration.
-;
 ; HOST
 ;
 MSG_ER_BADRESPONSE_SMTP
@@ -9576,7 +9547,6 @@ et a répondu par le message d'erreur ci-dessus.
 ; \n\
 ; The mail server couldn't execute the command \
 ; and replied with the above error message.
-;
 ; SERVER, COMMAND, TEXT
 ;
 MSG_ER_CANNOT_CONNECT_SMTP
@@ -9586,7 +9556,6 @@ Le serveur de courrier est hors service, ou ne supporte pas le protocole SMTP.
 ; Couldn't connect to host '%s'.\n\
 ; \n\
 ; The mail server is currently down or doesn't support the SMTP protocols.
-;
 ; HOS
 ;
 MSG_ER_UNKNOWN_HOST_SMTP
@@ -9596,7 +9565,6 @@ La couche TCP/IP est hors ligne ou l'adresse du serveur est invalide.
 ; Unknown SMTP server '%s'.\n\
 ; \n\
 ; TCP/IP is offline or the server address is invalid.
-;
 ; HOST
 ;
 MSG_ER_NO8BITMIME_SMTP
@@ -9643,7 +9611,6 @@ Désirez-vous vraiment poursuivre ?
 MSG_LOG_DELETEDATT
 Pièce(s) jointe(s) du message « %s » du dossier « %s » supprimée(s)
 ; Deleted attachment(s) of message '%s' in folder '%s'
-;
 ; MAILFILE, FOLDER
 ;
 MSG_MA_DELETEATT
@@ -9667,4 +9634,59 @@ Supprimer tout
 MSG_MA_MDELETEATT
 Supprimer
 ; Delete
+;
+MSG_CO_MAPFOREIGNCHARS
+Convertir les caractères inconnus en ASCII
+; Map foreign chars to ASCII
+;
+MSG_HELP_CO_MAPFOREIGNCHARS
+Avec cette option, les caractères ne\n\
+pouvant pas être convertis dans le jeu\n\
+de caractères de lecture seront convertis\n\
+vers des séquences ASCII ressemblantes.
+; If selected, characters that cannot\n\
+; be converted to the read charset\n\
+; will be mapped to looklike ASCII\n\
+; sequences.
+;
+MSG_MA_NAVIGATION
+Navigation
+; Navigation
+;
+MSG_MA_MNEXTTH
+Message suivant dans le fil
+; Next message in thread
+;
+MSG_MA_MPREVTH
+Message précédent dans le fil
+; Previous message in thread
+;
+MSG_CO_GLOBALMAILTHREADS
+Recherche des messages du même fil dans tous les dossiers
+; Search for mails of same thread in all folders
+;
+MSG_HELP_CO_CH_GLOBALMAILTHREADS
+Avec cette option, la recherche de messages\n\
+du même fil sera étendue à tous les dossiers\n\
+plutôt que seulement au dossier courant.
+; If enabled, the search for messages of\n\
+; the same thread will be extended to all\n\
+; folders rather than only searching for\n\
+; mails in the same folder.
+;
+MSG_FILE_OVERWRITE
+Le fichier « %s » existe déjà.\n\
+\n\
+Voulez-vous l'écraser ?
+; File '%s' already exists.\n\
+; \n\
+; Do you want to overwrite it?
+;
+; FILENAME
+;
+MSG_ER_USER_DIR_MISSING
+Le répertoire personnel « %s » de l'utilisateur « %s » n'existe pas !
+; The home directory '%s' of user '%s' does not exist!
+;
+; PATH, USERNAME
 ;
