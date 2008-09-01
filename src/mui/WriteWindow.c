@@ -182,6 +182,7 @@ static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
         // but RFC 2822 says that lines shouldn`t be longer than 998 chars, so we take this one
         if(linesize > 998)
           ++longlines;
+
         linesize = 0;
       }
       else if (c > 127)
@@ -192,7 +193,7 @@ static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
       // if we successfully scanned 4000 bytes out of the file and found enough
       // data we break out here. we have to at least find some longlines or
       // we have to scan the whole part.
-      if(total > 4000 && longlines)
+      if(total > 4000 && longlines > 0)
         break;
     }
 
@@ -204,23 +205,23 @@ static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
     if(longlines != 0 || unsafechars != 0 || binarychars != 0)
     {
       // we make sure that the following content-types get always encoded via base64
-      if(!strnicmp(ctype, "image/", 6) ||
-         !strnicmp(ctype, "audio/", 6) ||
-         !strnicmp(ctype, "video/", 6))
+      if(strnicmp(ctype, "image/", 6) == 0 ||
+         strnicmp(ctype, "audio/", 6) == 0 ||
+         strnicmp(ctype, "video/", 6) == 0)
       {
         encoding = ENC_B64;
       }
       else if(unsafechars == 0 && binarychars == 0)
       {
-        // if we are here just because of long lines we have to decide for either
-        // binary or quoted-printable encoding.
-        encoding = C->Allow8bit ? ENC_BIN : ENC_QP;
+        // if we are here just because of long lines we have to use quoted-printable
+        // encoding or otherwise we have too long lines in our final mail
+        encoding = ENC_QP;
       }
-      else if(binarychars == 0 && C->Allow8bit)
+      else if(binarychars == 0 && longlines == 0 && C->Allow8bit == TRUE)
       {
-        // if there are no binary chars in the file we just have
-        // unsafe 8bit characters and if the server support them we can easily decide between binary or 8bit
-        encoding = longlines ? ENC_BIN : ENC_8BIT;
+        // if there are no binary chars and no long lines in the file and if
+        // our SMTP server support 8bit character we can go and encode it via 8bit
+        encoding = ENC_8BIT;
       }
       else if(total / (unsafechars+binarychars+1) < 16 || strnicmp(ctype, "application/", 12) == 0)
       {
@@ -235,6 +236,8 @@ static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
         encoding = ENC_QP;
       }
     }
+
+    D(DBF_MIME, "identified suitable MIME encoding: %ld", encoding);
   }
 
   RETURN(encoding);

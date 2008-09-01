@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.2 (16.07.2008)
+## version $VER: YAM.catalog 6.2 (17.08.2008)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.6 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 3864 2008-07-14 02:44:15Z
+; based on YAM.cd 3864 2008-08-13 02:44:15Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -284,7 +284,7 @@ Impossibile aprire timer.device
 ; Can't open timer.device
 ;
 MSG_ErrorARexx
-Impossibile creare porta Arexx
+Impossibile creare porta ARexx
 ; Can't create ARexx port
 ;
 MSG_LoadingGFX
@@ -827,7 +827,7 @@ Salva indirizzo...
 ; Save address...
 ;
 MSG_MA_SetStatus
-Imposta stato a
+Imposta stato su
 ; Set status to
 ;
 MSG_MA_ChangeSubj
@@ -916,11 +916,9 @@ cartella al server di posta.
 ; in the Outgoing folder.
 ;
 MSG_HELP_MA_BT_FILTER
-Applica i filtri per tutti i messaggi di\n\
-questa cartella.\n\
-Nota bene che nel caso vengano selezionati\n\
-due o più messaggi, solo questi verranno\n\
-filtrati.
+Applica i filtri per tutti i messaggi di questa cartella.\n\
+Nota bene che nel caso vengano selezionati due\n\
+o più messaggi, solo questi verranno filtrati.
 ; Apply filters to the messages\n\
 ; in this folder.\n\
 ; \n\
@@ -976,7 +974,7 @@ MSG_CO_ImportMIMEGads
 ; *_MIME.prefs|m_ailcap|m_ime.types|_Cancel
 ;
 MSG_CO_NewIntroDef
-Salve,\\\\n\
+Salve,
 ; Hello,\\\\n\
 ;
 MSG_CO_AltRepIntroDef
@@ -994,8 +992,7 @@ Data: %c\\\\n\
 Da: %n <%e>\\\\n\
 Oggetto: %s\\\\n\
 \\\\n\
---- Segue messaggio inoltrato ---\\\\n\
-\\\\n\
+--- Segue messaggio inoltrato ---
 ; *** Begin of forwarded message ***\\\\n\
 ; \\\\n\
 ; Date: %c\\\\n\
@@ -1006,7 +1003,7 @@ Oggetto: %s\\\\n\
 ; \\\\n
 ;
 MSG_CO_ForwardFinishDef
-*** Fine del messaggio inoltrato ***\\\\n\
+*** Fine del messaggio inoltrato ***
 ; *** End of forwarded message ***\\\\n
 ;
 MSG_CO_GreetingsDef
@@ -1310,7 +1307,7 @@ Server permette caratteri a _8Bit
 ; Server allows _8bit characters
 ;
 MSG_CO_ReceiveMail
-Ricevi posta (POP3)
+Ricezione posta (POP3)
 ; Receive mail (POP3)
 ;
 MSG_CO_POPUserID
@@ -1714,11 +1711,11 @@ Firma predefinita
 ; Default signature
 ;
 MSG_CO_AltSig1
-Alt. firma #1
+Firma Alt. #1
 ; Alt. signature #1
 ;
 MSG_CO_AltSig2
-Alt. firma #2
+Firma Alt. #2
 ; Alt. signature #2
 ;
 MSG_CO_Signature
@@ -1798,7 +1795,7 @@ Campo intesta_zione
 ; _Header field
 ;
 MSG_CO_Logfiles
-File di log
+Log dei File
 ; Log files
 ;
 MSG_CO_LogPath
@@ -2537,8 +2534,10 @@ inserire una variabile.
 ; the variables you can use.
 ;
 MSG_HELP_CO_ST_FWDEND
-Testo da inserire al termine del\n\
-messaggio inoltrato (forward).
+Testo da inserire al termine del messaggio\n\
+inoltrato (forward).\n\
+Usa il pulsante alla tua destra per\n\
+inserire una variabile.
 ; Text to add at the end\n\
 ; of a forwarded message.
 ;
@@ -2550,7 +2549,7 @@ visualizzare le variabili supportate.
 ; popup button at the right to see the supported variables.
 ;
 MSG_HELP_CO_ST_AREPLYTEXT
-Usa questi testi in risposta ai messaggi nel caso\n\
+Usa questi testi in risposta ai messaggi nel'eventualità\n\
 che il mittente rientri nel pattern specificato.
 ; Use these phrases instead when then pattern\n\
 ; below matches the recipient's address.
@@ -2875,7 +2874,7 @@ Nome dello script.
 ;
 MSG_HELP_CO_CY_ISADOS
 Tipo di script\n\
-(Arexx o AmigaDOS)
+(ARexx o AmigaDOS)
 ; Type of the script\n\
 ; (ARexx or AmigaDOS).
 ;
@@ -2965,10 +2964,8 @@ Cerca voce
 ; Find Entry
 ;
 MSG_AB_FindEntryReq
-Questo modulo verifica un determinato testo nei campi pseudonimo,\n\
-nome, indirizzo, descrizione, via, città o paese, per favore\n\
-inserisci un pattern di ricerca appropriato.\n\
-(Sono validi i caratteri jolly di AmigaDOS):
+Questo modulo verifica un determinato testo nei campi pseudonimo, nome, indirizzo, descrizione, via, città o paese.\n\
+Per favore inserisci un pattern di ricerca appropriato. (Sono validi anche i caratteri jolly di AmigaDOS):
 ; This module finds a given text in the alias, name, address,\n\
 ; description, street, city or country fields. Please enter\n\
 ; the search pattern (AmigaDOS wildchars are supported):
@@ -3357,14 +3354,14 @@ PGP di questa persona.
 ;
 MSG_HELP_EA_ST_HOMEPAGE
 URL della Home Page di questa persona.\n\
-Premi il pulsante sulla destra per\n\
-caricare la pagina sul tuo browser.
+Premi il pulsante a destra per caricare\n\
+la pagina web sul tuo browser.
 ; URL of the homepage of this person.\n\
 ; Click the button at the right side\n\
 ; to load the page into your browser.
 ;
 MSG_HELP_EA_ST_STREET
-Indirizzo postale:\n\
+Indirizzo di posta ordinaria:\n\
 Nome strada e numero.
 ; Postal address: street\n\
 ; name and number.
@@ -3440,7 +3437,7 @@ la lista dei membri.
 ; alphabetically.
 ;
 MSG_HELP_EA_BT_OKAY
-Accetta questa voce.
+Conferma queste modifiche.
 ; Accept this entry.
 ;
 MSG_HELP_EA_BT_CANCEL
@@ -3462,13 +3459,6 @@ Cosa si desidera fare?
 MSG_RE_SaveMessage
 Salva il messaggio
 ; Save message
-;
-MSG_RE_Overwrite
-Il file '%s' è già esistente.\n\
-Si desidera sovrascriverlo?
-; File '%s' already exists.\n\
-; Do you want to overwrite it?
-; FILENAME
 ;
 MSG_RE_PrintMsg
 Stampa messaggio
@@ -4417,8 +4407,8 @@ l'avvenuta ricezione.
 ; successful delivery.
 ;
 MSG_HELP_WR_CH_ADDINFO
-Crea i campi d'intestazione contenenenti i\n\
-tuoi dati personali inseriti nella rubrica.
+Crea i campi d'intestazione contenenti i\n\
+dati personali inseriti nella rubrica.
 ; Create header fields containing data\n\
 ; from your personal address book entry.
 ;
@@ -4757,7 +4747,7 @@ Impossibile aprire la console per lo script.
 ; Couldn't open console window for script.
 ;
 MSG_ER_ErrorARexxScript
-Impossibile inviare il comando Arexx '%s'.\n\
+Impossibile inviare il comando ARexx '%s'.\n\
 Assicurati che lo script sia esistente.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
@@ -4810,8 +4800,8 @@ MSG_ER_ConnectHTTP
 Impossibile connettersi al server WWW '%s'.\n\
 \n\
 Possibili cause: TCP/IP non in linea, indirizzo\n\
-errato, oppure il server è al momento assente o\n\
-non è riuscito a gestire le richieste HTTP.
+errato, oppure il server è al momento assente\n\
+o non è riuscito a gestire le richieste HTTP.
 ; Couldn't connect to WWW server '%s'.\n\
 ; \n\
 ; Possible reasons: TCP/IP offline, invalid address, \
@@ -4838,13 +4828,6 @@ errore durante la sua lettura.
 ; \n\
 ; The file exists, but there was an error while reading it.
 ; FILENAME
-;
-MSG_ER_UserRemoved
-Directory '%s' non trovata!\n\
-L'utente %s è stato rimosso.
-; Directory '%s' not found!\n\
-; User %s has been removed.
-; PATH
 ;
 MSG_ER_MissingDirectory
 E' necessario indicare una directory per il nuovo utente!
@@ -5589,15 +5572,15 @@ Cancella
 ; Delete
 ;
 MSG_FOLDER_IMPORT
-Importa...
+Importa messaggi...
 ; Import...
 ;
 MSG_FOLDER_EXPORT
-Esporta...
+Esporta messaggi...
 ; Export...
 ;
 MSG_MESSAGE_EXPORT
-Esporta...
+Esporta messaggi...
 ; Export...
 ;
 MSG_SETTINGS_USERS
@@ -5713,7 +5696,7 @@ Vecchio formato - (1.234.567 bytes)
 ; Old format - (1.234.567 bytes)
 ;
 MSG_CO_SIZEFORMAT02
-Precisione mixata (0.001 GB, 0.01 MB, 0.1 KB)
+Precisione mista (0.001 GB, 0.01 MB, 0.1 KB)
 ; Mixed precision (0.001 GB, 0.01 MB, 0.1 KB)
 ;
 MSG_CO_SIZEFORMAT03
@@ -5761,7 +5744,7 @@ Etic_hetta
 ; _Label
 ;
 MSG_CO_NEWMSGS
-%n  Nuovi messaggi
+%n  Messaggi nuovi
 ; %n  New messages
 ;
 MSG_CO_UNREADMSGS
@@ -5785,9 +5768,9 @@ Statistiche App_Icon
 ; App_Icon stats
 ;
 MSG_HELP_FO_CH_STATS
-Si desidera visualizzare le statistiche\n\
-della cartella nell'etichetta della\n\
-AppIcon di YAM?
+Se selezionato il programma visualizzerà le\n\
+statistiche della cartella nell'etichetta della\n\
+AppIcon di YAM
 ; Would you like to see this\n\
 ; folder's statistics in the\n\
 ; YAM AppIcon's label?
@@ -5963,8 +5946,8 @@ Rileva _automaticamente
 ;
 MSG_HELP_FO_BT_AUTODETECT
 Prova ad indovinare automaticamente le impostazioni\n\
-per il supporto Mailing list facendo un'analisi dei\n\
-primi 5 messaggi nella cartella.
+per il supporto Mailing list facendo un'analisi dei primi\n\
+5 messaggi nella cartella.
 ; Try to guess automatically the suitable\n\
 ; ML support settings by scanning the\n\
 ; first five e-mails in the folder.
@@ -6531,7 +6514,7 @@ Avviso configurazione Set di Caratteri Locale
 ;
 MSG_CO_CHARSETWARN
 Il set di caratteri configurato per YAM è '%s' ma non corrisponde al set\n\
-di caratteri predefinito di sistema che corrisponde a '%s'.\n\
+di caratteri predefinito di sistema corrispondente a '%s'.\n\
 \n\
 Come si desidera procedere?
 ; The '%s' charset selected for YAM doesn't\n\
@@ -9401,7 +9384,7 @@ Filtraggio eseguito:\n\
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_CO_EXCHANGE_MAIL
-Scambia messaggio
+Scambio messaggi
 ; Exchange mail
 ;
 MSG_CO_EXCHANGE_ORDER
@@ -9813,4 +9796,18 @@ anzichè ricercare solo nella cartella di partenza.
 ; the same thread will be extended to all\n\
 ; folders rather than only searching for\n\
 ; mails in the same folder.
+;
+MSG_FILE_OVERWRITE
+Il file '%s' è già esistente.\n\
+\n\
+Si desidera sovrascriverlo?
+; File '%s' already exists.\n\
+; \n\
+; Do you want to overwrite it?
+; FILENAME
+;
+MSG_ER_USER_DIR_MISSING
+La directory base '%s' dell'utente '%s' non esiste!
+; The home directory '%s' of user '%s' does not exist!
+; PATH, USERNAME
 ;
