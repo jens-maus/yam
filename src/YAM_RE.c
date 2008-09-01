@@ -673,7 +673,7 @@ static char *ExtractNextParam(char *s, char **name, char **value)
   p = TrimStart(s);
 
   // extract the paramater name first
-  if((s = u = strchr(p, '=')) && u > p)
+  if((s = u = strchr(p, '=')) != NULL && u > p)
   {
     char *t;
     int nameLen;
@@ -685,7 +685,7 @@ static char *ExtractNextParam(char *s, char **name, char **value)
     nameLen = u-p+1;
 
     // allocate enough memory to put in the name
-    if((*name = t = malloc(nameLen+1)))
+    if((*name = t = malloc(nameLen+1)) != NULL)
     {
       // copy the parameter name char by char
       // while converting it to lowercase
@@ -706,12 +706,12 @@ static char *ExtractNextParam(char *s, char **name, char **value)
       // now we go and extract the parameter value, actually
       // taking respect of quoted string and such
       s = TrimStart(++s);
-      if(*s)
+      if(*s != '\0')
       {
         BOOL quoted = (*s == '"');
         int valueLen;
 
-        if(quoted)
+        if(quoted == TRUE)
           s++;
 
         // we first calculate the value length for
@@ -728,9 +728,11 @@ static char *ExtractNextParam(char *s, char **name, char **value)
         }
 
         // allocate enough memory to put in the value
-        if((*value = t = malloc(valueLen+1)))
+        if((*value = t = malloc(valueLen+1)) != NULL)
         {
-          while(valueLen--)
+          int i = valueLen;
+
+          while(i--)
           {
             if(quoted)
             {
