@@ -1625,8 +1625,9 @@ UpdateCheck.o: UpdateCheck.c include/mui/BetterString_mcc.h \
   Locale.h MUIObjects.h Debug.h
 extrasrc.o: extrasrc.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h extrasrc/stcgfe.c \
-  extrasrc/NewReadArgs.c Debug.h extrasrc/vastubs.c extrasrc/DoSuperNew.c \
-  include/SDI_compiler.h include/SDI_stdarg.h extrasrc/memdup.c
+  extrasrc/memdup.c extrasrc/getdelim.c Debug.h extrasrc/NewReadArgs.c \
+  extrasrc/vastubs.c extrasrc/DoSuperNew.c include/SDI_compiler.h \
+  include/SDI_stdarg.h
 Debug.o: Debug.c YAM_global.h YAM_utilities.h include/SDI_compiler.h \
   YAM_stringsizes.h YAM_folderconfig.h extrasrc.h include/SDI_stdarg.h \
   include/SDI_compiler.h Debug.h

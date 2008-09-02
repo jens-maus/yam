@@ -1,5 +1,5 @@
 /*
- * $Id: string_strtok_r.c,v 1.4 2006/01/08 12:04:27 obarthel Exp $
+ * $Id$
  *
  * :ts=4
  *

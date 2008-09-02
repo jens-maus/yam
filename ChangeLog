@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-09-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc/getdelim.c: added getline()/getdelim() function to our extrasrc
+    pool of functions. In future we can use this functions as a replacement
+    for fgets() which is known to be slightly flawed in some aspects. The
+    implementation of these functions are based on the getline()/getdelim()
+    functionality of the glibc library.
+  * extrasrc: updated all sources to contain their proper copyright headers
+
 2008-09-01  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: fixed a wrong debug output while scanning the headers which caused

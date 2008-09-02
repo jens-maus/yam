@@ -23,13 +23,13 @@
 
  NOTE:
  This implementation of AllocSysObject() and FreeSysObject() is inspired by
- Ilkka 'itix' Lehtoranta'a AllocSysObject implementation available on Aminet
+ Ilkka 'itix' Lehtoranta's AllocSysObject implementation available on Aminet
  (http://aminet.net/dev/c/AllocSysObject.lha). Some modifications had to be
  done, because we don't need the full range of possible object types here,
  or itix' implementation was incomplete in some ways (i.e. FreeSysObject(),
  RemPort()'s a public port automatically).
 
- $Id: Debug.c 3733 2008-01-03 17:04:38Z damato $
+ $Id$
 
 ***************************************************************************/
 

@@ -1,17 +1,33 @@
-/*
-**
-**  NewReadArgs() -
-**  a shell/workbench transparent ReadArgs() interface
-**
-**  © 1997-99 by Stephan Rupprecht
-**  All rights reserved.
-**
-**  FREEWARE - I am not responsible for any damage that
-**  is caused by the (mis)use of this program.
-**
-**  MaxonC++, OS2.04+
-**
-*/
+/***************************************************************************
+
+ YAM - Yet Another Mailer
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2008 by YAM Open Source Team
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+ YAM Official Support Site :  http://www.yam.ch
+ YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+
+ NOTE:
+ This implementation of NewReadArgs() is inspired by the implementation of
+ Stephan Rupprecht's NewReadArgs().
+
+ $Id$
+
+***************************************************************************/
 
 /*- INCLUDES & DEFINES -*/
 #if defined(__amigaos4__)
