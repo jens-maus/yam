@@ -43,76 +43,78 @@
 ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream)
 {
   ssize_t result = -1;
-  size_t cur_len = 0;
 
   ENTER();
 
-  if(lineptr == NULL || n == NULL || stream == NULL)
+  // fail immediately if one of the parameters is crap
+  if(lineptr != NULL && n != NULL && stream != NULL)
   {
-    RETURN(-1);
-    return -1;
-  }
-
-  if(*lineptr == NULL || *n == 0)
-  {
-    *n = 120;
-    *lineptr = (char *)realloc(*lineptr, *n);
-    if(*lineptr == NULL)
+    if(*lineptr == NULL || *n == 0)
     {
-      result = -1;
-      goto out;
-    }
-  }
-
-  for(;;)
-  {
-    int i;
-
-    i = getc(stream);
-    if(i == EOF)
-    {
-      result = -1;
-      break;
+      *n = 120;
+      *lineptr = (char *)realloc(*lineptr, *n);
     }
 
-    // Make enough space for len+1 (for final NUL) bytes.
-    if(cur_len+1 >= *n)
+    // make sure we really have a destination buffer
+    if(*lineptr != NULL)
     {
-      size_t needed_max = SSIZE_MAX < SIZE_MAX ? (size_t)SSIZE_MAX + 1 : SIZE_MAX;
-      size_t needed = 2 * *n + 1;   // Be generous.
-      char *new_lineptr;
+      size_t cur_len = 0;
+      char *cptr = *lineptr; // we use cptr as a shortcut to the current end of the line
 
-      D(DBF_UTIL, "getline(): realloc auf %ld", needed);
-
-      if(needed_max < needed)
-        needed = needed_max;
-
-      if(cur_len+1 >= needed)
+      for(;;)
       {
-        result = -1;
-        goto out;
+        int i;
+
+        i = getc(stream);
+        if(i == EOF)
+          break;
+
+        // Make enough space for len+1 (for final NUL) bytes.
+        if(cur_len+1 >= *n)
+        {
+          const size_t needed_max = SSIZE_MAX < SIZE_MAX ? (size_t)SSIZE_MAX + 1 : SIZE_MAX;
+          size_t needed = 2 * *n + 1;   // Be generous.
+          int must_realloc = FALSE;
+
+          D(DBF_UTIL, "getline(): realloc auf %ld", needed);
+
+          if(needed_max < needed)
+          {
+            needed = needed_max;
+            must_realloc = TRUE;
+          }
+
+          if(cur_len+1 >= needed)
+            goto out;
+
+          if(must_realloc == TRUE)
+          {
+            char *new_lineptr;
+
+            new_lineptr = (char *)realloc(*lineptr, needed);
+            if(new_lineptr == NULL)
+              goto out;
+
+            *lineptr = new_lineptr;
+            *n = needed;
+            // also adjust our shortcut pointer
+            cptr = &new_lineptr[cur_len];
+          }
+        }
+
+        // put the character in the buffer
+        *cptr++ = i;
+        cur_len++;
+
+        if(i == delim)
+          break;
       }
 
-      new_lineptr = (char *)realloc(*lineptr, needed);
-      if(new_lineptr == NULL)
-      {
-        result = -1;
-        goto out;
-      }
-
-      *lineptr = new_lineptr;
-      *n = needed;
+      // add the trailing NUL character
+      *cptr = '\0';
+      result = cur_len > 0 ? (ssize_t)cur_len : result;
     }
-
-    (*lineptr)[cur_len] = i;
-    cur_len++;
-
-    if(i == delim)
-      break;
   }
-
-  (*lineptr)[cur_len] = '\0';
-  result = cur_len > 0 ? (ssize_t)cur_len : result;
 
 out:
 
