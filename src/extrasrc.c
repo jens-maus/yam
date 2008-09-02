@@ -40,7 +40,7 @@
 
 #include "extrasrc.h"
 
-// POSIX a-like string functions
+// POSIX a-like functions
 #if defined(NEED_STCGFE)
   #include "extrasrc/stcgfe.c"
 #endif
@@ -73,6 +73,14 @@
   #include "extrasrc/asprintf.c"
 #endif
 
+#if defined(NEED_MEMDUP)
+  #include "extrasrc/memdup.c"
+#endif
+
+#if defined(NEED_GETDELIM)
+  #include "extrasrc/getdelim.c"
+#endif
+
 // Amiga specific functions
 #if defined(NEED_NEWREADARGS)
   #include "extrasrc/NewReadArgs.c"
@@ -92,10 +100,6 @@
 
 #if defined(NEED_DOSUPERNEW)
   #include "extrasrc/DoSuperNew.c"
-#endif
-
-#if defined(NEED_MEMDUP)
-  #include "extrasrc/memdup.c"
 #endif
 
 #if defined(NEED_SETPROCWINDOW)

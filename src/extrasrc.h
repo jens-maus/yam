@@ -140,6 +140,10 @@ struct IClass;
 #define NEED_MEMDUP
 #endif
 
+#if !defined(HAVE_GETDELIM)
+#define NEED_GETDELIM
+#endif
+
 /*
  * Stuff that exists in OS4 already but not in OS3 or MOS
  */
@@ -216,6 +220,15 @@ int stcgfe(char *, const char *);
 char *strdup(const char *);
 #endif
 
+#if defined(NEED_MEMDUP)
+void *memdup(const void *source, const size_t size);
+#endif
+
+#if defined(NEED_GETDELIM)
+#define getline(p, n, s) getdelim((p), (n), '\n', (s))
+ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream);
+#endif
+
 #if defined(NEED_XGET)
 ULONG xget(Object *obj, const ULONG attr);
 #endif
@@ -226,10 +239,6 @@ ULONG VARARGS68K xset(Object *obj, ...);
 
 #if defined(NEED_DOSUPERNEW)
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
-#endif
-
-#if defined(NEED_MEMDUP)
-void *memdup(const void *source, const size_t size);
 #endif
 
 #if defined(NEED_SETPROCWINDOW)
