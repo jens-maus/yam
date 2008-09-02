@@ -7,6 +7,7 @@ $URL$
 
 2008-09-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: replaced some constant buffer sizes by sizeof() usages.
   * extrasrc/getdelim.c: optimized the getdelim() function a bit to avoid un-
     necessary pointer arithmetic and get rid of some goto instructions.
 

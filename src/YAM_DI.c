@@ -133,11 +133,11 @@ static int DI_Load(void)
       setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
       BusyText(tr(MSG_BusyLoadingDI), "");
-      GetLine(fh, buffer, SIZE_LARGE);
+      GetLine(fh, buffer, sizeof(buffer));
       if (!strncmp(buffer,"YDI",3))
       {
          set(G->DI->GUI.LV_ENTRIES, MUIA_List_Quiet, TRUE);
-         while (GetLine(fh, buffer, SIZE_LARGE))
+         while (GetLine(fh, buffer, sizeof(buffer)))
          {
             memset(&entry, 0, sizeof(struct Dict));
             if (!strncmp(buffer, "@ENTRY", 6))

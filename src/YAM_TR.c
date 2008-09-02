@@ -6330,7 +6330,7 @@ BOOL TR_GetMessageList_IMPORT(void)
 
           setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
-          while(GetLine(ifh, buffer, SIZE_LINE))
+          while(GetLine(ifh, buffer, sizeof(buffer)))
           {
             // now we parse through the input file until we
             // find the "From " separator
@@ -6577,7 +6577,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
               // now that we seeked to the mail address we go
               // and read in line by line
-              while(GetLine(ifh, buffer, SIZE_LINE) && G->TR->Abort == FALSE)
+              while(GetLine(ifh, buffer, sizeof(buffer)) && G->TR->Abort == FALSE)
               {
                 // if we did not find the message body yet
                 if(foundBody == FALSE)

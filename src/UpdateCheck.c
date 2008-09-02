@@ -304,7 +304,7 @@ BOOL CheckForUpdates(void)
               if(G->UpdateNotifyWinObject != NULL)
                 DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_Clear);
 
-              while(GetLine(tf->FP, buf, SIZE_LINE))
+              while(GetLine(tf->FP, buf, sizeof(buf)))
               {
                 // make sure we trim the line by stripping leading
                 // and trailing spaces.
@@ -388,7 +388,7 @@ BOOL CheckForUpdates(void)
                     {
                       FILE *out = comp->changeLogFile->FP;
 
-                      while(GetLine(tf->FP, buf, SIZE_LINE))
+                      while(GetLine(tf->FP, buf, sizeof(buf)))
                       {
                         D(DBF_UPDATE, "%s", buf);
 

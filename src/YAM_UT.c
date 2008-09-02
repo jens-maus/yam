@@ -810,7 +810,7 @@ BOOL ConvertCRLF(char *in, char *out, BOOL to)
 
       setvbuf(outfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      while(GetLine(infh, buf, SIZE_LINE))
+      while(GetLine(infh, buf, sizeof(buf)))
         fprintf(outfh, "%s%s\n", buf, to?"\r":"");
 
       success = TRUE;

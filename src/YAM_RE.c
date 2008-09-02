@@ -607,15 +607,15 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    while(GetLine(fh, buffer, SIZE_LARGE))
+    while(GetLine(fh, buffer, sizeof(buffer)))
     {
       if(decrFail == FALSE && decrFor != NULL && G->PGPVersion == 5)
       {
         if(strnicmp(buffer, "cannot decrypt", 14) == 0)
         {
           *decrFor = '\0';
-          GetLine(fh, buffer, SIZE_LARGE);
-          GetLine(fh, buffer, SIZE_LARGE);
+          GetLine(fh, buffer, sizeof(buffer));
+          GetLine(fh, buffer, sizeof(buffer));
           RE_GetAddressFromLog(buffer, decrFor);
           decrFail = TRUE;
         }
@@ -635,8 +635,8 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
         {
           if(G->PGPVersion == 5)
           {
-            GetLine(fh, buffer, SIZE_LARGE);
-            GetLine(fh, buffer, SIZE_LARGE);
+            GetLine(fh, buffer, sizeof(buffer));
+            GetLine(fh, buffer, sizeof(buffer));
           }
 
           if(RE_GetAddressFromLog(buffer, rmData->sigAuthor) == TRUE)
@@ -1135,7 +1135,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
 
   // we process the file line-by-line, analyze it if it is between the boundary
   // do an eventually existing charset translation and write it out again.
-  while(fgets(buf, SIZE_LINE, in))
+  while(fgets(buf, sizeof(buf), in))
   {
     char *pNewline;
 
@@ -2032,7 +2032,7 @@ BOOL RE_DecodePart(struct Part *rp)
       // we just decode the raw data.
       if(hasSubHeaders(rp) == TRUE)
       {
-        while(GetLine(in, buf, SIZE_LINE))
+        while(GetLine(in, buf, sizeof(buf)))
         {
           // if we find an empty string it is a sign that
           // by starting from the next line the encoded data
