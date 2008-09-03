@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-09-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc/getdelim.c: fixed realloc mechanism of getdelim() function. A
+    must_realloc check is not required really, especially not at the situation
+    it was placed ;)
+
 2008-09-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: replaced some constant buffer sizes by sizeof() usages.

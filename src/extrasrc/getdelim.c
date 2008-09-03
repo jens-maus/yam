@@ -73,37 +73,31 @@ ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream)
         if(cur_len+1 >= *n)
         {
           const size_t needed_max = SSIZE_MAX < SIZE_MAX ? (size_t)SSIZE_MAX + 1 : SIZE_MAX;
-          size_t needed = 2 * *n + 1;   // Be generous.
-          int must_realloc = FALSE;
+          size_t needed = 2 * (*n) + 1;   // Be generous.
+          char *new_lineptr;
 
-          D(DBF_UTIL, "getline(): realloc auf %ld", needed);
+          W(DBF_UTIL, "getline(): realloc to %ld", needed);
 
           if(needed_max < needed)
-          {
             needed = needed_max;
-            must_realloc = TRUE;
-          }
 
           if(cur_len+1 >= needed)
             goto out;
 
-          if(must_realloc == TRUE)
-          {
-            char *new_lineptr;
+          new_lineptr = (char *)realloc(*lineptr, needed);
+          if(new_lineptr == NULL)
+            goto out;
 
-            new_lineptr = (char *)realloc(*lineptr, needed);
-            if(new_lineptr == NULL)
-              goto out;
+          *lineptr = new_lineptr;
+          *n = needed;
 
-            *lineptr = new_lineptr;
-            *n = needed;
-            // also adjust our shortcut pointer
-            cptr = &new_lineptr[cur_len];
-          }
+          // also adjust our shortcut pointer
+          cptr = &new_lineptr[cur_len];
         }
 
         // put the character in the buffer
-        *cptr++ = i;
+        *cptr = i;
+        cptr++;
         cur_len++;
 
         if(i == delim)
