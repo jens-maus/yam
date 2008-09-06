@@ -632,7 +632,7 @@ char *UnquoteString(const char *s, BOOL new)
 //  Gets Null terminated line of a text file
 char *GetLine(FILE *fh, char *buffer, int bufsize)
 {
-  char *line;
+  char *line = NULL;
 
   ENTER();
 
@@ -656,8 +656,13 @@ char *GetLine(FILE *fh, char *buffer, int bufsize)
   }
   else
   {
-    // something bad happened, so we return NULL to signal abortion
-    line = NULL;
+    #if defined(DEBUG)
+    if(feof(fh) == 0 || ferror(fh) != 0)
+    {
+      // something bad happened, so we return NULL to signal abortion
+      W(DBF_MAIL, "fgets() in GetLine() returned  NULL and feof()=%ld || ferror()=%ld", feof(fh), ferror(fh));
+    }
+    #endif
   }
 
   // now return the line
