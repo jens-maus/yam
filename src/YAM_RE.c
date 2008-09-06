@@ -1,4 +1,4 @@
-/***********-****************************************************************
+/***************************************************************************
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
@@ -1116,64 +1116,81 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
 ///
 /// RE_ConsumeRestOfPart
 //  Processes body of a message part
-static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset, struct Part *rp, BOOL allowAutoDetect)
+static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcCodeset,
+                                 const struct Part *rp, const BOOL allowAutoDetect)
 {
-  char buf[SIZE_LINE];
-  int blen = 0;
-  BOOL prependNewline = FALSE;
+  BOOL result = FALSE;
 
   ENTER();
 
-  if(in == NULL)
+  // check if an input file stream was given
+  if(in != NULL)
   {
-    RETURN(FALSE);
-    return FALSE;
-  }
+    char *buf = NULL;
+    size_t buflen = 0;
+    ssize_t curlen = 0;
+    int boundaryLen = 0;
+    BOOL skipCodesets = FALSE;
 
-  if(rp != NULL)
-    blen = strlen(rp->CParBndr);
-
-  // we process the file line-by-line, analyze it if it is between the boundary
-  // do an eventually existing charset translation and write it out again.
-  while(fgets(buf, sizeof(buf), in))
-  {
-    char *pNewline;
-
-    // search for either a \r or \n and terminate there
-    // if found.
-    if((pNewline = strpbrk(buf, "\r\n")) != NULL)
-      *pNewline = '\0'; // strip any newline
-
-    // first we check if we reached a MIME boundary yet.
-    if(blen > 0 && buf[0] == '-' && buf[1] == '-' && strncmp(buf+2, rp->CParBndr, blen) == 0)
+    // if a part was specified we go and extract some information from
+    // it
+    if(rp != NULL)
     {
-      if(buf[blen+2] == '-' && buf[blen+3] == '-' && buf[blen+4] == '\0')
+      boundaryLen = strlen(rp->CParBndr);
+
+      // if the encoding of this part is not 7bit or 8bit ascii we go
+      // and set the srcCodeset = NULL so that no codesets.library stuff
+      // gets activated.
+      if(isDecoded(rp) == FALSE &&
+         rp->EncodingCode != ENC_7BIT && rp->EncodingCode != ENC_8BIT)
       {
-        RETURN(TRUE);
-        return TRUE;
-      }
-      else
-      {
-        RETURN(FALSE);
-        return FALSE;
+        skipCodesets = TRUE;
       }
     }
 
-    if(out != NULL)
+    // we process the file line-by-line, analyze it if it is between the boundary
+    // do an eventually existing charset translation and write it out again.
+    while((curlen = getline(&buf, &buflen, in)) > 0)
     {
-      int buflen = strlen(buf);
+      #if defined(DEBUG)
+      if(curlen > 1000) // 998+2 for string+CRLF
+        W(DBF_MIME, "RFC2822 violation: line length %ld in MIME part found to be > 1000", curlen);
+      #endif
 
-      // just in case our input buffer is > 0 we go on
-      // or otherwise we continue or iteration
-      if(buflen > 0)
+      // first we check if we reached a MIME boundary yet.
+      if(boundaryLen > 0 && curlen >= boundaryLen+2 &&
+         buf[0] == '-' && buf[1] == '-' && strncmp(buf+2, rp->CParBndr, boundaryLen) == 0)
+      {
+        if(buf[boundaryLen+2] == '-' && buf[boundaryLen+3] == '-' &&
+           (buf[boundaryLen+4] == '\n' || buf[boundaryLen+4] == '\r'))
+        {
+          D(DBF_MAIL, "found end boundary of MIME part");
+
+          // we had success, so lets break out
+          result = TRUE;
+          break;
+        }
+        else
+        {
+          D(DBF_MAIL, "found start boundary, but didn't find end boundary");
+
+          // no success, return FALSE
+          break;
+        }
+      }
+
+      // check if the data should be written out
+      // immediately or not
+      if(out != NULL)
       {
         // in case the user wants us to detect the correct cyrillic codeset
         // we do it now
-        if(C->DetectCyrillic == TRUE && allowAutoDetect == TRUE &&
+        if(skipCodesets == FALSE &&
+           C->DetectCyrillic == TRUE && allowAutoDetect == TRUE &&
            (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
         {
           struct codeset *cs = CodesetsFindBest(CSA_Source,         buf,
-                                                CSA_SourceLen,      buflen,
+                                                CSA_SourceLen,      curlen,
                                                 CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
                                                 TAG_DONE);
 
@@ -1184,24 +1201,24 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
         // if this function was invoked with a source Codeset we have to make sure
         // we convert from the supplied source Codeset to our current local codeset with
         // help of the functions codesets.library provides.
-        if(srcCodeset != NULL)
+        if(srcCodeset != NULL && skipCodesets == FALSE)
         {
           // convert from the srcCodeset to the destination one.
           char *str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
                                          CSA_DestCodeset,     G->readCharset,
                                          CSA_Source,          buf,
-                                         CSA_SourceLen,       buflen,
+                                         CSA_SourceLen,       curlen,
                                          CSA_MapForeignChars, C->MapForeignChars,
                                          TAG_DONE);
 
           // now write back exactly the same amount of bytes we have read
           // previously
-          if(fprintf(out, "%s%s", prependNewline ? "\n" : "", str ? str : buf) <= 0)
+          if(fwrite(str != NULL ? str : buf, curlen, 1, out) <= 0)
           {
             E(DBF_MAIL, "error during write operation!");
 
-            RETURN(FALSE);
-            return FALSE;
+            // no success, return false
+            break;
           }
 
           if(str != NULL)
@@ -1212,41 +1229,32 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset
         else
         {
           // now write back exactly the same amount of bytes we read previously
-          if(fprintf(out, "%s%s", prependNewline ? "\n" : "", buf) <= 0)
+          if(fwrite(buf, curlen, 1, out) <= 0)
           {
-            E(DBF_MAIL, "error during write operation!");
+            E(DBF_MAIL, "error during write operation! buf: (%ld) '%s'", curlen, buf);
 
-            RETURN(FALSE);
-            return FALSE;
+            // no success, return false
+            break;
           }
         }
       }
-      else if(prependNewline == TRUE)
-        fputc('\n', out);
-
-      // check if the next iteration should prepend a newline or not.
-      if(pNewline)
-        prependNewline = TRUE;
-      else
-        prependNewline = FALSE;
     }
+
+    // if we end up here because of a EOF we have to check
+    // if there is still something in c and then write it into the out fh.
+    if(result == FALSE &&
+       curlen == -1 && feof(in) != 0)
+    {
+      result = TRUE;
+    }
+
+    // free the buffer allocated by getline()
+    if(buf != NULL)
+      free(buf);
   }
 
-  // if we end up here because of a EOF we have check
-  // if there is still something in c and then write it into the out fh.
-  if(feof(in))
-  {
-    // if we still have a prependNewline as TRUE we have to add
-    // a single newline
-    if(out != NULL && prependNewline == TRUE)
-      fputc('\n', out);
-
-    RETURN(TRUE);
-    return TRUE;
-  }
-
-  RETURN(FALSE);
-  return FALSE;
+  RETURN(result);
+  return result;
 }
 ///
 /// RE_DecodeStream
@@ -1929,7 +1937,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
                 ;
             }
           }
-          else if (RE_SaveThisPart(rp) == TRUE || RE_RequiresSpecialHandling(hrp) == SMT_ENCRYPTED)
+          else if(RE_SaveThisPart(rp) == TRUE || RE_RequiresSpecialHandling(hrp) == SMT_ENCRYPTED)
           {
             fputc('\n', out);
             done = RE_ConsumeRestOfPart(in, out, NULL, rp, FALSE);

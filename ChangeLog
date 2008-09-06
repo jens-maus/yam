@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-09-07  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: reworked RE_ConsumeRestOfPart() function to use the new getline()
+    function instead of retrieving each line via fgets(). This also removes the
+    hardcoded line limit and allows to parse messages with lines longer than
+    1000 chars.
+
 2008-09-03  Jens Langner <Jens.Langner@light-speed.de>
 
   * extrasrc/getdelim.c: fixed realloc mechanism of getdelim() function. A
