@@ -7,6 +7,9 @@ $URL$
 
 2008-09-07  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c, YAM_read.h: replaces all fgets() and GetLine() usages with calls to
+    getline(). This should increase the flexibility and reduce stack stack usage
+    a bit.
   * YAM_RE.c: reworked RE_ConsumeRestOfPart() function to use the new getline()
     function instead of retrieving each line via fgets(). This also removes the
     hardcoded line limit and allows to parse messages with lines longer than

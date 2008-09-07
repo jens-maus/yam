@@ -136,7 +136,6 @@ struct Part
   char                *CParCSet;           // ptr to the content-type "charset" "iso8859-1"
   long                 Size;               // the calculated size in bytes
   int                  Flags;              // PFLAG_#? flags
-  int                  MaxHeaderLen;
   int                  Nr;
   enum Encoding        EncodingCode;
 

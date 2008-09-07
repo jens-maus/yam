@@ -603,29 +603,33 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
 
   if((fh = fopen(PGPLOGFILE, "r")) != NULL)
   {
-    char buffer[SIZE_LARGE];
+    char *buf = NULL;
+    size_t buflen = 0;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    while(GetLine(fh, buffer, sizeof(buffer)))
+    while(getline(&buf, &buflen, fh) > 0)
     {
       if(decrFail == FALSE && decrFor != NULL && G->PGPVersion == 5)
       {
-        if(strnicmp(buffer, "cannot decrypt", 14) == 0)
+        if(strnicmp(buf, "cannot decrypt", 14) == 0)
         {
           *decrFor = '\0';
-          GetLine(fh, buffer, sizeof(buffer));
-          GetLine(fh, buffer, sizeof(buffer));
-          RE_GetAddressFromLog(buffer, decrFor);
+
+          // skip one line
+          getline(&buf, &buflen, fh);
+          getline(&buf, &buflen, fh);
+
+          RE_GetAddressFromLog(buf, decrFor);
           decrFail = TRUE;
         }
       }
 
       if(sigDone == FALSE)
       {
-        if(strnicmp(buffer, "good signature", 14) == 0)
+        if(strnicmp(buf, "good signature", 14) == 0)
           sigDone = TRUE;
-        else if(strnicmp(buffer, "bad signature", 13) == 0 || stristr(buffer, "unknown keyid") != NULL)
+        else if(strnicmp(buf, "bad signature", 13) == 0 || stristr(buf, "unknown keyid") != NULL)
         {
           SET_FLAG(rmData->signedFlags, PGPS_BADSIG);
           sigDone = TRUE;
@@ -635,11 +639,12 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
         {
           if(G->PGPVersion == 5)
           {
-            GetLine(fh, buffer, sizeof(buffer));
-            GetLine(fh, buffer, sizeof(buffer));
+            // skip one line
+            getline(&buf, &buflen, fh);
+            getline(&buf, &buflen, fh);
           }
 
-          if(RE_GetAddressFromLog(buffer, rmData->sigAuthor) == TRUE)
+          if(RE_GetAddressFromLog(buf, rmData->sigAuthor) == TRUE)
             SET_FLAG(rmData->signedFlags, PGPS_ADDRESS);
 
           break;
@@ -648,6 +653,9 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
     }
 
     fclose(fh);
+
+    if(buf != NULL)
+      free(buf);
 
     if(sigDone == TRUE || (decrFor != NULL && decrFail == FALSE))
       DeleteFile(PGPLOGFILE);
@@ -1014,11 +1022,6 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
     struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
     char *field = hdrNode->name;
     char *value = hdrNode->content;
-    int headerLen = strlen(field)+strlen(value)+2;
-
-    // check the real one-line headerLen
-    if(headerLen > rp->MaxHeaderLen)
-      rp->MaxHeaderLen = headerLen;
 
     // if we have a fileoutput pointer lets write out the header immediatly
     if(out != NULL)
@@ -2025,8 +2028,8 @@ BOOL RE_DecodePart(struct Part *rp)
   {
     FILE *in;
     FILE *out;
+    char filepath[SIZE_PATHFILE];
     char file[SIZE_FILE];
-    char buf[SIZE_LINE];
     char ext[SIZE_FILE];
 
     // start with an empty extension string
@@ -2040,20 +2043,26 @@ BOOL RE_DecodePart(struct Part *rp)
       // we just decode the raw data.
       if(hasSubHeaders(rp) == TRUE)
       {
-        while(GetLine(in, buf, sizeof(buf)))
+        char *buf = NULL;
+        size_t buflen = 0;
+
+        // we walk through the mail file until we reach an empty
+        // line (with just a newline). This signals that the actual
+        // message body starts there.
+        while(getline(&buf, &buflen, in) > 0)
         {
-          // if we find an empty string it is a sign that
-          // by starting from the next line the encoded data
-          // should follow
-          if(*buf == '\0')
+          if(buf[0] == '\n' || (buf[0] == '\r' && buf[1] == '\n'))
             break;
         }
 
+        if(buf != NULL)
+          free(buf);
+
         // we only go on if we are not in an ferror() condition
         // as we shouldn`t have a EOF or real error here.
-        if(ferror(in) || feof(in))
+        if(ferror(in) || feof(in) || buflen == 0)
         {
-          E(DBF_MAIL, "ferror() or feof() while parsing through PartHeader.");
+          E(DBF_MAIL, "ferror()=%ld,feof()=%ld,buflen=%ld while parsing through PartHeader.", ferror(in), feof(in), buflen);
 
           fclose(in);
 
@@ -2149,12 +2158,12 @@ BOOL RE_DecodePart(struct Part *rp)
 
       // lets generate the destination file name for the decoded part
       snprintf(file, sizeof(file), "YAMm%08lx-p%d.%s", rp->rmData->uniqueID, rp->Nr, ext[0] != '\0' ? ext : "tmp");
-      AddPath(buf, C->TempDir, file, sizeof(buf));
+      AddPath(filepath, C->TempDir, file, sizeof(filepath));
 
-      D(DBF_MAIL, "decoding '%s' to '%s'", rp->Filename, buf);
+      D(DBF_MAIL, "decoding '%s' to '%s'", rp->Filename, filepath);
 
       // now open the stream and decode it afterwards.
-      if((out = fopen(buf, "w")) != NULL)
+      if((out = fopen(filepath, "w")) != NULL)
       {
         int decodeResult;
 
@@ -2176,9 +2185,9 @@ BOOL RE_DecodePart(struct Part *rp)
           {
             D(DBF_MAIL, "no decode required. renaming file.");
 
-            DeleteFile(buf); // delete the temporary file again.
+            DeleteFile(filepath); // delete the temporary file again.
 
-            if(Rename(rp->Filename, buf) == 0)
+            if(Rename(rp->Filename, filepath) == 0)
               CLEAR_FLAG(rp->Flags, PFLAG_DECODED);
             else
               SET_FLAG(rp->Flags, PFLAG_DECODED);
@@ -2191,23 +2200,23 @@ BOOL RE_DecodePart(struct Part *rp)
             SET_FLAG(rp->Flags, PFLAG_DECODED);
           }
 
-          strlcpy(rp->Filename, buf, sizeof(rp->Filename));
+          strlcpy(rp->Filename, filepath, sizeof(rp->Filename));
           RE_SetPartInfo(rp);
         }
         else
         {
           E(DBF_MAIL, "error during RE_DecodeStream()");
-          DeleteFile(buf); // delete the temporary file again.
+          DeleteFile(filepath); // delete the temporary file again.
         }
       }
-      else if((out = fopen(buf, "r")) != NULL)
+      else if((out = fopen(filepath, "r")) != NULL)
       {
         // if we couldn`t open that file for writing we check if it exists
         // and if so we use it because it is locked actually and already decoded
         fclose(out);
         fclose(in);
         DeleteFile(rp->Filename);
-        strlcpy(rp->Filename, buf, sizeof(rp->Filename));
+        strlcpy(rp->Filename, filepath, sizeof(rp->Filename));
         SET_FLAG(rp->Flags, PFLAG_DECODED);
         RE_SetPartInfo(rp);
       }
@@ -2622,20 +2631,19 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
       if((fh = fopen(first->Filename, "r")) != NULL)
       {
-        int buflen = first->MaxHeaderLen+4;
-        char *linebuf;
+        size_t buflen = 0;
+        char *buf = NULL;
 
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-        if((linebuf = malloc(buflen)) != NULL)
-        {
-          while(fgets(linebuf, buflen, fh))
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, linebuf);
-
-          free(linebuf);
-        }
+        while(getline(&buf, &buflen, fh) > 0)
+          cmsg = AppendToBuffer(cmsg, &wptr, &len, buf);
 
         fclose(fh);
+
+        if(buf != NULL)
+          free(buf);
+
         cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
       }
     }
@@ -3017,21 +3025,26 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                     }
                   }
 
-                  if ((tf->FP = fopen(tf->Filename, "r")))
+                  if((tf->FP = fopen(tf->Filename, "r")))
                   {
-                    char buf2[SIZE_LARGE];
+                    char *buf = NULL;
+                    size_t buflen = 0;
 
                     setvbuf(tf->FP, NULL, _IOFBF, SIZE_FILEBUF);
 
                     D(DBF_MAIL, "decrypted message follows:");
 
-                    while(fgets(buf2, SIZE_LARGE, tf->FP))
+                    while(getline(&buf, &buflen, tf->FP) > 0)
                     {
-                      rptr = buf2;
-                      D(DBF_MAIL, "%s", buf2);
-                      cmsg = AppendToBuffer(cmsg, &wptr, &len, buf2);
+                      rptr = buf;
+                      D(DBF_MAIL, "%s", buf);
+                      cmsg = AppendToBuffer(cmsg, &wptr, &len, buf);
                     }
+
+                    if(buf != NULL)
+                      free(buf);
                   }
+
                   CloseTempFile(tf);
                 }
 
@@ -3488,18 +3501,26 @@ static void RE_SendMDN(const enum MDNMode mode,
             // our third MIME part
             if((fh = fopen(fullfile, "r")) != NULL)
             {
+              char *buf = NULL;
+              size_t buflen = 0;
+              ssize_t curlen = 0;
+
               setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-              while(fgets(buf, SIZE_LINE, fh))
+              while((curlen = getline(&buf, &buflen, fh)) > 0)
               {
-                if(*buf == '\n')
+                if(*buf == '\n' || *buf == '\r')
                   break;
                 else
-                  fputs(buf, tf3->FP);
+                  fwrite(buf, curlen, 1, tf3->FP);
               }
 
               fclose(fh);
+
+              if(buf != NULL)
+                free(buf);
             }
+
             FinishUnpack(fullfile);
           }
 
