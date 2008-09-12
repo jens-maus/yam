@@ -121,10 +121,10 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
 
       if(SafeOpenWindow(win) == TRUE)
       {
+        ULONG signals = 0;
+
         do
         {
-          ULONG signals = 0;
-
           if(DoMethod(G->App, MUIM_Application_NewInput, &signals) == REQUESTER_RETURNID)
           {
             result = xget(win, MUIA_GenericRequestWindow_Result);
@@ -188,10 +188,10 @@ int StringRequest(char *string, int size, const char *title, const char *body,
 
     if(SafeOpenWindow(win) == TRUE)
     {
+      ULONG signals = 0;
+
       do
       {
-        ULONG signals = 0;
-
         if(DoMethod(G->App, MUIM_Application_NewInput, &signals) == REQUESTER_RETURNID)
         {
           if((result = xget(win, MUIA_StringRequestWindow_Result)) != 0)
@@ -244,10 +244,10 @@ int PassphraseRequest(char *string, int size, Object *parent)
 
     if(SafeOpenWindow(win) == TRUE)
     {
+      ULONG signals = 0;
+
       do
       {
-        ULONG signals = 0;
-
         if(DoMethod(G->App, MUIM_Application_NewInput, &signals) == REQUESTER_RETURNID)
         {
           if((result = xget(win, MUIA_PassphraseRequestWindow_Result)) != 0)
@@ -310,10 +310,10 @@ struct Folder *FolderRequest(const char *title, const char *body, const char *ye
 
     if(SafeOpenWindow(win) == TRUE)
     {
+      ULONG signals = 0;
+
       do
       {
-        ULONG signals = 0;
-
         if(DoMethod(G->App, MUIM_Application_NewInput, &signals) == REQUESTER_RETURNID)
         {
           if(xget(win, MUIA_FolderRequestWindow_Result) != 0)
@@ -372,10 +372,10 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
 
     if(SafeOpenWindow(win) == TRUE)
     {
+      ULONG signals = 0;
+
       do
       {
-        ULONG signals = 0;
-
         if(DoMethod(G->App, MUIM_Application_NewInput, &signals) == REQUESTER_RETURNID)
         {
           if(xget(win, MUIA_AttachmentRequestWindow_Result) != 0)
@@ -449,10 +449,10 @@ LONG CheckboxRequest(Object *parent, const char *tit, ULONG numBoxes, const char
 
       if(SafeOpenWindow(win) == TRUE)
       {
+        ULONG signals = 0;
+
         do
         {
-          ULONG signals = 0;
-
           if(DoMethod(G->App, MUIM_Application_NewInput, &signals) == REQUESTER_RETURNID)
           {
             flags = xget(win, MUIA_CheckboxRequestWindow_Flags);

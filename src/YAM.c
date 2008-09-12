@@ -2363,7 +2363,7 @@ int main(int argc, char **argv)
 
   for(yamFirst=TRUE;;)
   {
-    ULONG signals = 0;
+    ULONG signals;
     ULONG timsig;
     ULONG adstsig;
     ULONG rexxsig;
@@ -2538,6 +2538,7 @@ int main(int argc, char **argv)
     InitUpdateCheck(TRUE);
 
     // start the event loop
+    signals = 0;
     while((ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))) == 0)
     {
       if(signals != 0)

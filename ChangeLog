@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-09-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, Requesters.c: moved the defintion of the "signals" variable (and
+    setting it to zero out of the event handling loop. Before possible signals
+    from the previous loop's Wait() call would have effectively been zeroed
+    because of this, which might have had unpredictable results.
+
 2008-09-07  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c, YAM_read.h: replaces all fgets() and GetLine() usages with calls to
