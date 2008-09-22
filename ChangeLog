@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-09-22  Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install-YAM: updated the installer script a bit to correctly support
+    an installation in french language. The script now accepts both english
+    and localized language names.
+
 2008-09-12  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, Requesters.c: moved the defintion of the "signals" variable (and
