@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-09-24  Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2008-09-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/Install-YAM: updated the installer script a bit to correctly support

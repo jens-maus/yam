@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.36 (24.6.2008)
+## version $VER: YAM.catalog 6.37 (24.9.2008)
 ## language czech
 ## codeset 5
 ;
@@ -3395,13 +3395,6 @@ MSG_RE_SaveMessage
 Ulo¾ení zprávy
 ; Save message
 ;
-MSG_RE_Overwrite
-Soubor '%s' ji¾ existuje.\n\
-Opravdu ho chcete pøepsat?
-; File '%s' already exists.\n\
-; Do you want to overwrite it?
-; FILENAME
-;
 MSG_RE_PrintMsg
 Tisk zprávy
 ; Print message
@@ -4763,13 +4756,6 @@ Soubor sice existuje, ale nelze ho pøeèíst.
 ; The file exists, but there was an error while reading it.
 ; FILENAME
 ;
-MSG_ER_UserRemoved
-Nelze najít adresáø '%s'!\n\
-Informace o u¾ivateli %s byly smazány.
-; Directory '%s' not found!\n\
-; User %s has been removed.
-; PATH
-;
 MSG_ER_MissingDirectory
 Zadejte prosím adresáø pro nového u¾ivatele!
 ; You must specify a directory for the new user!
@@ -4813,7 +4799,7 @@ Zkontrolujte, zda je %s nainstalován.
 MSG_ER_AliasNotFound
 Neznámý alias nebo jméno: %s.\n\
 \n\
-V seznamu kontaktù nelze nalézt po¾adovanou polo¾ku. Zkontrolujte \
+V seznamu kontaktù nelze najít po¾adovanou polo¾ku. Zkontrolujte \
 prosím zadaný text.
 ; Unknown alias or name: %s.\n\
 ; \n\
@@ -9476,4 +9462,55 @@ Odstranit v¹e
 MSG_MA_MDELETEATT
 Odstranit
 ; Delete
+;
+MSG_CO_MAPFOREIGNCHARS
+Imitovat znaky s diakritikou v rámci ASCII
+; Map foreign chars to ASCII
+;
+MSG_HELP_CO_MAPFOREIGNCHARS
+V rámci mo¾ností základní tabulky ASCII se pokusí\n\
+interpretovat i takové znaky s diakritikou, které\n\
+nejsou obsa¾ené ve vybrané znakové sadì.
+; If selected, characters that cannot\n\
+; be converted to the read charset\n\
+; will be mapped to looklike ASCII\n\
+; sequences.
+;
+MSG_MA_NAVIGATION
+Navigace
+; Navigation
+;
+MSG_MA_MNEXTTH
+Dal¹í zpráva v diskusi
+; Next message in thread
+;
+MSG_MA_MPREVTH
+Pøedchozí zpráva v diskusi
+; Previous message in thread
+;
+MSG_CO_GLOBALMAILTHREADS
+Hledat zprávy té¾e diskuse ve v¹ech slo¾kách
+; Search for mails of same thread in all folders
+;
+MSG_HELP_CO_CH_GLOBALMAILTHREADS
+Zapne hledání zpráv vybrané diskuse ve v¹ech\n\
+slo¾kách, nikoli pouze ve vybrané.
+; If enabled, the search for messages of\n\
+; the same thread will be extended to all\n\
+; folders rather than only searching for\n\
+; mails in the same folder.
+;
+MSG_FILE_OVERWRITE
+Soubor '%s' ji¾ existuje.\n\
+\n\
+Opravdu ho chcete pøepsat?
+; File '%s' already exists.\n\
+; \n\
+; Do you want to overwrite it?
+; FILENAME
+;
+MSG_ER_USER_DIR_MISSING
+Nelze najít domovský adresáø '%s' u¾ivatele '%s'!
+; The home directory '%s' of user '%s' does not exist!
+; PATH, USERNAME
 ;
