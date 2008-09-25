@@ -7,6 +7,7 @@ $URL$
 
 2008-09-25  Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentImage.c: combined to consecutive set()'s into one single xset().
   * InfoWindow.c: private tags will now be changed to TAG_IGNORE before the tag
     list is passed to the parent class.
   * YAM_MA.c: while deleting mails the main window's Delete button and menu item

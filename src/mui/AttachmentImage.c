@@ -886,8 +886,8 @@ OVERLOAD(MUIM_HandleEvent)
       // check if this has been a double click at the image
       if(DoubleClick(data->selectSecs, data->selectMicros, imsg->Seconds, imsg->Micros))
       {
-        set(obj, MUIA_AttachmentImage_DoubleClick, TRUE);
-        set(obj, MUIA_Selected, TRUE);
+        xset(obj, MUIA_AttachmentImage_DoubleClick, TRUE,
+                  MUIA_Selected, TRUE);
       }
       else
       {
