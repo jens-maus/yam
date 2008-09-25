@@ -7,6 +7,8 @@ $URL$
 
 2008-09-25  Thore Böckelmann <tboeckel@gmx.de>
 
+  * InfoWindow.c: private tags will now be changed to TAG_IGNORE before the tag
+    list is passed to the parent class.
   * YAM_MA.c: while deleting mails the main window's Delete button and menu item
     will now be disabled to prevent invoking the delete action more than once
     and even worse causing YAM to crash. This should fix bug #2120523.

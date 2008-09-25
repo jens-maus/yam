@@ -58,9 +58,26 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(Body):                 bodyText = (char *)tag->ti_Data; break;
-      case MUIA_Window_RefWindow: parent = (Object *)tag->ti_Data; break;
-      case MUIA_Window_Activate:  active = tag->ti_Data; tag->ti_Tag = TAG_IGNORE; break;
+      case MUIA_Window_RefWindow:
+      {
+        parent = (Object *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      case MUIA_Window_Activate:
+      {
+        active = tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      ATTR(Body):
+      {
+        bodyText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
     }
   }
 
