@@ -1987,7 +1987,8 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
   if(folder != NULL && delfolder != NULL)
   {
-    Object *lv = G->MA->GUI.PG_MAILLIST;
+    struct MA_GUIData *gui = &G->MA->GUI;
+    Object *lv = gui->PG_MAILLIST;
     struct MailList *mlist;
 
     // create a list of all selected mails first
@@ -2020,6 +2021,13 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
         set(lv, MUIA_NList_Quiet, TRUE);
 
+        // modify the toolbar buttons, if the toolbar is visible
+        if(gui->TO_TOOLBAR != NULL)
+          DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_DELETE, MUIA_TheBar_Attr_Disabled, TRUE);
+
+        // modify the menu items
+        set(gui->MI_DELETE, MUIA_Menuitem_Enabled, FALSE);
+
         BusyGaugeInt(tr(MSG_BusyDeleting), itoa(selected), selected);
 
         deleted = 0;
@@ -2043,6 +2051,13 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
         BusyEnd();
         set(lv, MUIA_NList_Quiet, FALSE);
+
+        // modify the toolbar buttons, if the toolbar is visible
+        if(gui->TO_TOOLBAR != NULL)
+          DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_DELETE, MUIA_TheBar_Attr_Disabled, FALSE);
+
+        // modify the menu items
+        set(gui->MI_DELETE, MUIA_Menuitem_Enabled, TRUE);
 
         if(delatonce == TRUE || C->RemoveAtOnce == TRUE || folder == delfolder || isSpamFolder(folder))
           AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), deleted, folder->Name);

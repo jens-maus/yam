@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-09-25  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: while deleting mails the main window's Delete button and menu item
+    will now be disabled to prevent invoking the delete action more than once
+    and even worse causing YAM to crash. This should fix bug #2120523.
+
 2008-09-24  Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.
