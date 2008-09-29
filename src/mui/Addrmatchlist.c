@@ -65,7 +65,7 @@ HOOKPROTONHNO(ConstructFunc, struct CustomABEntry *, struct CustomABEntry *e)
 
   ENTER();
 
-  entry = memdup(e, sizeof(*e));
+  entry = _memdup(e, sizeof(*e));
 
   RETURN(entry);
   return entry;

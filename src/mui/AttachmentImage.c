@@ -116,12 +116,12 @@ HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
   {
     if(ism->ism_Type == WBDRAWER)
     {
-      msg->destName = strdup(ism->ism_Name);
+      msg->destName = _strdup(ism->ism_Name);
       return ISMACTION_Select;
     }
     else if(ism->ism_Type == WBDISK)
     {
-      msg->destName = malloc(strlen(ism->ism_Name)+2);
+      msg->destName = _malloc(strlen(ism->ism_Name)+2);
       if(msg->destName)
       {
         snprintf(msg->destName, strlen(ism->ism_Name)+2, "%s:", ism->ism_Name);
@@ -623,7 +623,7 @@ OVERLOAD(OM_DISPOSE)
 
   if(data->dropPath != NULL)
   {
-    free(data->dropPath);
+    _free(data->dropPath);
     data->dropPath = NULL;
   }
 
@@ -1001,7 +1001,7 @@ OVERLOAD(MUIM_DeleteDragImage)
 
   if(data->dropPath != NULL)
   {
-    free(data->dropPath);
+    _free(data->dropPath);
     data->dropPath = NULL;
   }
 
@@ -1021,7 +1021,7 @@ OVERLOAD(MUIM_DeleteDragImage)
 #if defined(__amigaos4__)
           char *buf;
 
-          if((buf = (STRPTR)malloc(SIZE_PATHFILE)) != NULL)
+          if((buf = (STRPTR)_malloc(SIZE_PATHFILE)) != NULL)
           {
             ULONG which;
             char name[SIZE_PATH];
@@ -1051,7 +1051,7 @@ OVERLOAD(MUIM_DeleteDragImage)
 
             if(which == WBO_DRAWER && buf[0] != '\0')
             {
-              if((data->dropPath = strdup(buf)) != NULL)
+              if((data->dropPath = _strdup(buf)) != NULL)
               {
                 D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
                 DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
@@ -1063,7 +1063,7 @@ OVERLOAD(MUIM_DeleteDragImage)
               DisplayBeep(_screen(obj));
             }
 
-            free(buf);
+            _free(buf);
           }
 #else // __amigaos4__
           // this stuff only works with Workbench v45+
@@ -1088,7 +1088,7 @@ OVERLOAD(MUIM_DeleteDragImage)
 
               for(n = path_list->lh_Head; n->ln_Succ; n = n->ln_Succ)
               {
-                if((selMsg.drawer = strdup(n->ln_Name)) != NULL)
+                if((selMsg.drawer = _strdup(n->ln_Name)) != NULL)
                 {
                   ChangeWorkbenchSelectionA(selMsg.drawer, &hook, NULL);
 
@@ -1104,15 +1104,15 @@ OVERLOAD(MUIM_DeleteDragImage)
                     {
                       int len = strlen(selMsg.destName) + strlen(selMsg.drawer) + 10;
 
-                      if((data->dropPath = malloc(len)) != NULL)
+                      if((data->dropPath = _malloc(len)) != NULL)
                         AddPath(data->dropPath, selMsg.drawer, selMsg.destName, len);
 
-                      free(selMsg.destName);
+                      _free(selMsg.destName);
                     }
                   }
 
                   if(selMsg.drawer != NULL)
-                    free(selMsg.drawer);
+                    _free(selMsg.drawer);
 
                   if(selMsg.finish == TRUE)
                     break;

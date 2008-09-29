@@ -523,7 +523,7 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
 
   ENTER();
 
-  if((folder = calloc(1, sizeof(struct Folder))) != NULL)
+  if((folder = _calloc(1, sizeof(struct Folder))) != NULL)
   {
     if((folder->messages = CreateMailList()) != NULL)
     {
@@ -548,13 +548,13 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
       if(CreateDirectory(GetFolderDir(folder)) == FALSE)
       {
         DeleteMailList(folder->messages);
-        free(folder);
+        _free(folder);
         folder = NULL;
       }
     }
     else
     {
-      free(folder);
+      _free(folder);
       folder = NULL;
     }
   }
@@ -604,7 +604,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
 
         ForEachMailNode(folder->messages, mnode)
         {
-          free(mnode->mail);
+          _free(mnode->mail);
           mnode->mail = NULL;
         }
       }
@@ -618,7 +618,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
     D(DBF_FOLDER, "freed folder '%s'", folder->Name);
 
     // now it's time to deallocate the folder itself
-    free(folder);
+    _free(folder);
     result = TRUE;
   }
 
@@ -749,7 +749,7 @@ BOOL FO_LoadTree(char *fname)
         {
           struct Folder *fo;
 
-          if((fo = calloc(1, sizeof(*fo))) != NULL)
+          if((fo = _calloc(1, sizeof(*fo))) != NULL)
           {
             fo->Type = FT_CUSTOM;
             fo->Sort[0] = 1;
@@ -785,7 +785,7 @@ BOOL FO_LoadTree(char *fname)
                   if(FO_SaveConfig(fo) == FALSE)
                   {
                     fclose(fh);
-                    free(fo);
+                    _free(fo);
 
                     RETURN(FALSE);
                     return FALSE;
@@ -817,7 +817,7 @@ BOOL FO_LoadTree(char *fname)
                 if(fnode == NULL)
                 {
                   fclose(fh);
-                  free(fo);
+                  _free(fo);
 
                   RETURN(FALSE);
                   return FALSE;
@@ -827,7 +827,7 @@ BOOL FO_LoadTree(char *fname)
                 if(!(DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
                 {
                   fclose(fh);
-                  free(fo);
+                  _free(fo);
 
                   RETURN(FALSE);
                   return FALSE;
@@ -837,7 +837,7 @@ BOOL FO_LoadTree(char *fname)
             else
             {
               fclose(fh);
-              free(fo);
+              _free(fo);
 
               RETURN(FALSE);
               return FALSE;
@@ -854,7 +854,7 @@ BOOL FO_LoadTree(char *fname)
         {
           struct Folder *fo;
 
-          if((fo = calloc(1, sizeof(*fo))) != NULL)
+          if((fo = _calloc(1, sizeof(*fo))) != NULL)
           {
             long tnflags = TNF_LIST;
             struct FolderNode *fnode;
@@ -885,7 +885,7 @@ BOOL FO_LoadTree(char *fname)
             if(fnode == NULL)
             {
               fclose(fh);
-              free(fo);
+              _free(fo);
 
               RETURN(FALSE);
               return FALSE;
@@ -894,7 +894,7 @@ BOOL FO_LoadTree(char *fname)
             if((Object *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags) == NULL)
             {
               fclose(fh);
-              free(fo);
+              _free(fo);
 
               RETURN(FALSE);
               return FALSE;
@@ -905,7 +905,7 @@ BOOL FO_LoadTree(char *fname)
         {
           struct Folder *fo;
 
-          if((fo = calloc(1, sizeof(*fo))) != NULL)
+          if((fo = _calloc(1, sizeof(*fo))) != NULL)
           {
             long tnflags = TNF_LIST;
             struct FolderNode *fnode;
@@ -935,7 +935,7 @@ BOOL FO_LoadTree(char *fname)
             if(fnode == NULL)
             {
               fclose(fh);
-              free(fo);
+              _free(fo);
 
               RETURN(FALSE);
               return FALSE;
@@ -945,7 +945,7 @@ BOOL FO_LoadTree(char *fname)
             if(!(tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
             {
               fclose(fh);
-              free(fo);
+              _free(fo);
 
               RETURN(FALSE);
               return FALSE;
@@ -1407,7 +1407,7 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
     }
 
     LockFolderList(G->folders);
-    fnode = AddNewFolderNode(G->folders, memdup(&folder, sizeof(folder)));
+    fnode = AddNewFolderNode(G->folders, _memdup(&folder, sizeof(folder)));
     UnlockFolderList(G->folders);
 
 	if(fnode != NULL)
@@ -1919,7 +1919,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
           if(FO_SaveConfig(&folder) == TRUE)
           {
             // allocate memory for the new folder
-            if((oldfolder = memdup(&folder, sizeof(folder))) != NULL)
+            if((oldfolder = _memdup(&folder, sizeof(folder))) != NULL)
             {
               struct FolderNode *fnode;
 
@@ -2118,9 +2118,9 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
       if(takePattern == TRUE && (result = SWSSearch(toPattern, mail->To.Address)) != NULL)
       {
         if(res != NULL)
-          free(res);
+          _free(res);
 
-        res = strdup(result);
+        res = _strdup(result);
         if(res == NULL)
         {
           LEAVE();
@@ -2152,8 +2152,8 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
     if(strlen(toPattern) >= 2 && !(toPattern[0] == '#' && toPattern[1] == '?'))
     {
       if(res != NULL)
-        res = realloc(res, strlen(res)+3);
-      else if((res = malloc(strlen(toPattern)+3)) != NULL)
+        res = _realloc(res, strlen(res)+3);
+      else if((res = _malloc(strlen(toPattern)+3)) != NULL)
         strlcpy(res, toPattern, strlen(toPattern));
 
       if(res == NULL)
@@ -2173,8 +2173,8 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
     if(strlen(toPattern) >= 2 && !(toPattern[strlen(toPattern)-2] == '#' && toPattern[strlen(toPattern)-1] == '?'))
     {
       if(res != NULL)
-        res = realloc(res, strlen(res)+3);
-      else if((res = malloc(strlen(toPattern)+3)) != NULL)
+        res = _realloc(res, strlen(res)+3);
+      else if((res = _malloc(strlen(toPattern)+3)) != NULL)
         strlcpy(res, toPattern, strlen(toPattern));
 
       if(res == NULL)
@@ -2199,7 +2199,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
 
   // lets free all resources now
   if(res != NULL)
-    free(res);
+    _free(res);
 
   SWSSearch(NULL, NULL);
 
@@ -2250,7 +2250,7 @@ static struct FO_ClassData *FO_New(void)
 
   ENTER();
 
-  if((data = calloc(1, sizeof(struct FO_ClassData))) != NULL)
+  if((data = _calloc(1, sizeof(struct FO_ClassData))) != NULL)
   {
     static const char *ftypes[4];
     static const char *fmodes[5];
@@ -2406,7 +2406,7 @@ static struct FO_ClassData *FO_New(void)
     }
     else
     {
-      free(data);
+      _free(data);
       data = NULL;
     }
   }

@@ -73,7 +73,7 @@ void rx_getselected(UNUSED struct RexxHost *host, struct RexxParams *params, enu
 
       if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
       {
-        if((results->num = calloc(mlist->count + 1, sizeof(long))))
+        if((results->num = _calloc(mlist->count + 1, sizeof(long))))
         {
           struct MailNode *mnode;
           ULONG i;
@@ -96,7 +96,7 @@ void rx_getselected(UNUSED struct RexxHost *host, struct RexxParams *params, enu
       }
       else
       {
-        results->num    = calloc(1, sizeof(long));
+        results->num    = _calloc(1, sizeof(long));
         results->num[0] = 0;
       }
     }
@@ -109,7 +109,7 @@ void rx_getselected(UNUSED struct RexxHost *host, struct RexxParams *params, enu
       if(results != NULL)
       {
         if(results->num)
-          free(results->num);
+          _free(results->num);
         FreeVecPooled(G->SharedMemPool, results);
       }
     }

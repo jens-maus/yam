@@ -78,7 +78,7 @@ VOID LoadEMailCache(STRPTR name, struct List *list)
       char *end;
       struct EMailCacheNode *node;
 
-      if((addr = strchr(line, '<')) && (end = strchr(addr, '>')) && (node = calloc(1, sizeof(struct EMailCacheNode))))
+      if((addr = strchr(line, '<')) && (end = strchr(addr, '>')) && (node = _calloc(1, sizeof(struct EMailCacheNode))))
       {
         if(addr != line)
         {
@@ -184,7 +184,7 @@ static BOOL MatchRealName(const char *realName, const char *text, LONG textLen, 
     // completly
     if(Strnicmp(realName, text, textLen) == 0)
       match = TRUE;
-    else if((name = strdup(realName)) != NULL)
+    else if((name = _strdup(realName)) != NULL)
     {
       char *n = name;
       char *p;
@@ -215,7 +215,7 @@ static BOOL MatchRealName(const char *realName, const char *text, LONG textLen, 
       }
       while(p != NULL);
 
-      free(name);
+      _free(name);
     }
 
     // remember which part of the name this is if there is any interest in it
@@ -465,7 +465,7 @@ DECLARE(AddToEmailCache) // struct Person *person
       struct EMailCacheNode *newnode;
 
       // we alloc mem for this new node and add it behind the last node
-      if((newnode = calloc(1, sizeof(struct EMailCacheNode))))
+      if((newnode = _calloc(1, sizeof(struct EMailCacheNode))))
       {
         struct ABEntry *entry = &newnode->ecn_Person;
 
@@ -594,7 +594,7 @@ OVERLOAD(OM_DISPOSE)
   // lets free the EMailCache List ourself in here, to make it a bit cleaner.
   while((node = (struct EMailCacheNode *)RemHead(&data->EMailCache)))
   {
-    free(node);
+    _free(node);
   }
 
   // then we call the supermethod to let

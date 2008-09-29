@@ -255,12 +255,12 @@ BOOL MatchNoCase(const char *string, const char *match)
 
   ENTER();
 
-  if((pattern = malloc((size_t)patternlen)) != NULL)
+  if((pattern = _malloc((size_t)patternlen)) != NULL)
   {
     if(ParsePatternNoCase((STRPTR)match, pattern, patternlen) != -1)
       result = MatchPatternNoCase((STRPTR)pattern, (STRPTR)string);
 
-    free(pattern);
+    _free(pattern);
   }
 
   RETURN(result);
@@ -410,7 +410,7 @@ char *AllocStrBuf(size_t initlen)
 
   ENTER();
 
-  if((strbuf = calloc(initlen+sizeof(size_t), sizeof(char))) != NULL)
+  if((strbuf = _calloc(initlen+sizeof(size_t), sizeof(char))) != NULL)
     *strbuf++ = initlen;
 
   RETURN(strbuf);
@@ -515,7 +515,7 @@ char *AppendToBuffer(char *buf, int *wptr, int *len, const char *add)
     nlen = (nlen*3)/2;
 
   if(nlen != *len)
-    buf = realloc(buf, *len = nlen);
+    buf = _realloc(buf, *len = nlen);
 
   if(buf != NULL)
   {
@@ -584,14 +584,14 @@ char *UnquoteString(const char *s, BOOL new)
   if(strchr(s, '"') == NULL)
   {
     if(new)
-      o = strdup(s);
+      o = _strdup(s);
 
     RETURN(o);
     return(o);
   }
 
   // now start unquoting the string
-  if((ans = malloc(strlen(s)+1)))
+  if((ans = _malloc(strlen(s)+1)))
   {
     char *t = ans;
 
@@ -619,7 +619,7 @@ char *UnquoteString(const char *s, BOOL new)
     // otherwise overwrite the original string array
     strcpy(o, ans);
 
-    free(ans);
+    _free(ans);
   }
 
   RETURN(o);
@@ -731,7 +731,7 @@ BOOL CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh)
   ENTER();
 
   // allocate a dynamic buffer instead of placing it on the stack
-  if((buf = malloc(SIZE_FILEBUF)) != NULL)
+  if((buf = _malloc(SIZE_FILEBUF)) != NULL)
   {
     if(sour != NULL && (sourfh = fopen(sour, "r")) != NULL)
       setvbuf(sourfh, NULL, _IOFBF, SIZE_FILEBUF);
@@ -762,7 +762,7 @@ BOOL CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh)
     if(sour != NULL && sourfh != NULL)
       fclose(sourfh);
 
-    free(buf);
+    _free(buf);
   }
 
   RETURN(success);
@@ -1234,9 +1234,9 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
 
       // copy all necessary data from the ASL filerequester structure
       // to our cache
-      frc->file     = strdup(fileReq->fr_File);
-      frc->drawer   = strdup(fileReq->fr_Drawer);
-      frc->pattern  = strdup(fileReq->fr_Pattern);
+      frc->file     = _strdup(fileReq->fr_File);
+      frc->drawer   = _strdup(fileReq->fr_Drawer);
+      frc->pattern  = _strdup(fileReq->fr_Pattern);
       frc->numArgs  = fileReq->fr_NumArgs;
       frc->left_edge= fileReq->fr_LeftEdge;
       frc->top_edge = fileReq->fr_TopEdge;
@@ -1247,12 +1247,12 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
       // now we copy the optional arglist
       if(fileReq->fr_NumArgs > 0)
       {
-        if((frc->argList = calloc(sizeof(char*), fileReq->fr_NumArgs)) != NULL)
+        if((frc->argList = _calloc(sizeof(char*), fileReq->fr_NumArgs)) != NULL)
         {
           int i;
 
           for(i=0; i < fileReq->fr_NumArgs; i++)
-            frc->argList[i] = strdup(fileReq->fr_ArgList[i].wa_Name);
+            frc->argList[i] = _strdup(fileReq->fr_ArgList[i].wa_Name);
         }
       }
       else
@@ -1291,22 +1291,22 @@ void FreeFileReqCache(struct FileReqCache *frc)
   ENTER();
 
   if(frc->file != NULL)
-    free(frc->file);
+    _free(frc->file);
 
   if(frc->drawer != NULL)
-    free(frc->drawer);
+    _free(frc->drawer);
 
   if(frc->pattern != NULL)
-    free(frc->pattern);
+    _free(frc->pattern);
 
   if(frc->numArgs > 0)
   {
     int j;
 
     for(j=0; j < frc->numArgs; j++)
-      free(frc->argList[j]);
+      _free(frc->argList[j]);
 
-    free(frc->argList);
+    _free(frc->argList);
   }
 
   LEAVE();
@@ -1320,9 +1320,9 @@ void AddZombieFile(const char *fileName)
 
   ENTER();
 
-  if((zombie = malloc(sizeof(*zombie))) != NULL)
+  if((zombie = _malloc(sizeof(*zombie))) != NULL)
   {
-    if((zombie->fileName = strdup(fileName)) != NULL)
+    if((zombie->fileName = _strdup(fileName)) != NULL)
     {
       AddTail((struct List *)&G->zombieFileList, (struct Node *)&zombie->node);
 
@@ -1332,7 +1332,7 @@ void AddZombieFile(const char *fileName)
       RestartTimer(TIMER_DELETEZOMBIEFILES, 5 * 60, 0);
     }
     else
-      free(zombie);
+      _free(zombie);
   }
 
   LEAVE();
@@ -1371,8 +1371,8 @@ BOOL DeleteZombieFiles(BOOL force)
       {
         // remove and free this node
         Remove((struct Node *)zombie);
-        free(zombie->fileName);
-        free(zombie);
+        _free(zombie->fileName);
+        _free(zombie);
       }
     }
   }
@@ -1389,7 +1389,7 @@ struct TempFile *OpenTempFile(const char *mode)
 
   ENTER();
 
-  if((tf = calloc(1, sizeof(struct TempFile))))
+  if((tf = _calloc(1, sizeof(struct TempFile))))
   {
     // the tempfile MUST be SIZE_MFILE long because we
     // also use this tempfile routine for showing temporary mails which
@@ -1410,7 +1410,7 @@ struct TempFile *OpenTempFile(const char *mode)
         E(DBF_UTIL, "couldn't create temporary file: '%s'", tf->Filename);
 
         // on error we free everything
-        free(tf);
+        _free(tf);
         tf = NULL;
       }
       else
@@ -1437,7 +1437,7 @@ void CloseTempFile(struct TempFile *tf)
     if(DeleteFile(tf->Filename) == 0)
       AddZombieFile(tf->Filename);
 
-    free(tf);
+    _free(tf);
   }
 
   LEAVE();
@@ -1644,7 +1644,7 @@ char *FileToBuffer(const char *file)
   ENTER();
 
   if(ObtainFileInfo(file, FI_SIZE, &size) == TRUE &&
-     size > 0 && (text = malloc((size+1)*sizeof(char))) != NULL)
+     size > 0 && (text = _malloc((size+1)*sizeof(char))) != NULL)
   {
     FILE *fh;
 
@@ -1654,7 +1654,7 @@ char *FileToBuffer(const char *file)
     {
       if(fread(text, sizeof(char), size, fh) != (size_t)size)
       {
-        free(text);
+        _free(text);
         text = NULL;
       }
 
@@ -1662,7 +1662,7 @@ char *FileToBuffer(const char *file)
     }
     else
     {
-      free(text);
+      _free(text);
       text = NULL;
     }
   }
@@ -1687,7 +1687,7 @@ LONG FileCount(const char *directory, const char *pattern)
     pattern = "#?";
 
   parsedPatternSize = strlen(pattern) * 2 + 2;
-  if((parsedPattern = malloc(parsedPatternSize)) != NULL)
+  if((parsedPattern = _malloc(parsedPatternSize)) != NULL)
   {
     ParsePatternNoCase(pattern, parsedPattern, parsedPatternSize);
 
@@ -1719,7 +1719,7 @@ LONG FileCount(const char *directory, const char *pattern)
       ReleaseDirContext(context);
     }
 
-    free(parsedPattern);
+    _free(parsedPattern);
   }
   else
     result = -1;
@@ -1965,7 +1965,7 @@ void ExtractAddress(const char *line, struct Person *pe)
 
   // create a temp copy of our source
   // string so that we don't have to alter it.
-  if((save = strdup(line)) != NULL)
+  if((save = _strdup(line)) != NULL)
   {
     char *p = save;
     char *start;
@@ -2084,7 +2084,7 @@ void ExtractAddress(const char *line, struct Person *pe)
     D(DBF_MIME, "addr: '%s'", pe->Address);
     D(DBF_MIME, "real: '%s'", pe->RealName);
 
-    free(save);
+    _free(save);
   }
 
   LEAVE();
@@ -3056,7 +3056,7 @@ void DisplayMailList(struct Folder *fo, Object *lv)
     DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted,
                  C->AutoColumnResize ? MUIF_NONE : MUIV_NList_Insert_Flag_Raw);
 
-    free(array);
+    _free(array);
   }
 
   BusyEnd();
@@ -3075,7 +3075,7 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
 
   ENTER();
 
-  if((new = memdup(mail, sizeof(struct Mail))) != NULL)
+  if((new = _memdup(mail, sizeof(struct Mail))) != NULL)
   {
     new->Folder = folder;
 
@@ -3193,7 +3193,7 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
   }
 
   // and last, but not least, we have to free the mail
-  free(mail);
+  _free(mail);
 
   LEAVE();
 }
@@ -3238,7 +3238,7 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
 
       DeleteMailNode(mnode);
       // free the mail pointer
-      free(mail);
+      _free(mail);
     }
 
     D(DBF_FOLDER, "cleared mail list of folder '%s'", folder->Name);
@@ -3747,12 +3747,12 @@ BOOL FileToEditor(char *file, Object *editor, BOOL changed)
       xset(editor, MUIA_TextEditor_Contents,   parsedText,
                    MUIA_TextEditor_HasChanged, changed);
 
-      free(parsedText);
+      _free(parsedText);
 
       res = TRUE;
     }
 
-    free(text);
+    _free(text);
   }
 
   RETURN(res);
@@ -3765,7 +3765,7 @@ BOOL FileToEditor(char *file, Object *editor, BOOL changed)
 //  General purpose destruction hook
 HOOKPROTONHNO(GeneralDesFunc, long, void *entry)
 {
-  free(entry);
+  _free(entry);
 
   return 0;
 }
@@ -3850,7 +3850,7 @@ void DisposeModule(void *modptr)
     // dispose the window object
     MUI_DisposeObject(window);
 
-    free(*module);
+    _free(*module);
     *module = NULL;
   }
 
@@ -5143,7 +5143,7 @@ char *SWSSearch(char *str1, char *str2)
   if(str1 == NULL || str2 == NULL)
   {
     if(Z != NULL)
-      free(Z);
+      _free(Z);
     Z = NULL;
 
     RETURN(NULL);
@@ -5156,22 +5156,22 @@ char *SWSSearch(char *str1, char *str2)
   lz = MAX(lx, ly)*3+3;
 
   // first allocate all resources
-  if(!(X   = calloc(lx+1, sizeof(char)))) goto abort;
-  if(!(Y   = calloc(ly+1, sizeof(char)))) goto abort;
+  if(!(X   = _calloc(lx+1, sizeof(char)))) goto abort;
+  if(!(Y   = _calloc(ly+1, sizeof(char)))) goto abort;
 
   // now we have to alloc our help matrixes
-  if(!(L   = calloc(lx,   sizeof(int))))  goto abort;
-  if(!(Ind = calloc(lx,   sizeof(int))))  goto abort;
+  if(!(L   = _calloc(lx,   sizeof(int))))  goto abort;
+  if(!(Ind = _calloc(lx,   sizeof(int))))  goto abort;
   for(i = 0; i < lx; i++)
   {
-    if(!(L[i]   = calloc(ly, sizeof(int)))) goto abort;
-    if(!(Ind[i] = calloc(ly, sizeof(int)))) goto abort;
+    if(!(L[i]   = _calloc(ly, sizeof(int)))) goto abort;
+    if(!(Ind[i] = _calloc(ly, sizeof(int)))) goto abort;
   }
 
   // and allocate the result string separately
   if(Z != NULL)
-    free(Z);
-  if(!(Z = calloc(lz, sizeof(char)))) goto abort;
+    _free(Z);
+  if(!(Z = _calloc(lz, sizeof(char)))) goto abort;
 
   // we copy str1&str2 into X and Y but have to copy a placeholder in front of them
   memcpy(&X[1], str1, lx);
@@ -5292,9 +5292,9 @@ abort:
 
   // now we free our temporary buffers now
   if(X != NULL)
-    free(X);
+    _free(X);
   if(Y != NULL)
-    free(Y);
+    _free(Y);
 
   // lets free our help matrixes
   if(L != NULL)
@@ -5302,18 +5302,18 @@ abort:
     for(i = 0; i < lx; i++)
     {
       if(L[i] != NULL)
-        free(L[i]);
+        _free(L[i]);
     }
-    free(L);
+    _free(L);
   }
   if(Ind != NULL)
   {
     for(i = 0; i < lx; i++)
     {
       if(Ind[i] != NULL)
-        free(Ind[i]);
+        _free(Ind[i]);
     }
-    free(Ind);
+    _free(Ind);
   }
 
   similar = success ? &(Z[lz]) : NULL;
@@ -5483,7 +5483,7 @@ char *AllocReqText(char *s)
 
   ENTER();
 
-  if((reqtext = calloc(strlen(s) + 1, 1)) != NULL)
+  if((reqtext = _calloc(strlen(s) + 1, 1)) != NULL)
   {
     char *d = reqtext;
 

@@ -232,7 +232,7 @@ void *DefaultHashAllocTable(UNUSED struct HashTable *table, ULONG capacity, ULON
 
   ENTER();
 
-  result = calloc(capacity, entrySize);
+  result = _calloc(capacity, entrySize);
 
   RETURN(result);
   return result;
@@ -245,7 +245,7 @@ void DefaultHashFreeTable(UNUSED struct HashTable *table, void *ptr)
 {
   ENTER();
 
-  free(ptr);
+  _free(ptr);
 
   LEAVE();
 }
@@ -383,8 +383,22 @@ void StringHashClearEntry(struct HashTable *table, struct HashEntryHeader *entry
 
   ENTER();
 
-  free(stub->key);
+  _free(stub->key);
   memset(entry, 0, table->entrySize);
+
+  LEAVE();
+}
+
+///
+/// StringHashDestroyEntry()
+//
+void StringHashDestroyEntry(UNUSED struct HashTable *table, const struct HashEntryHeader *entry)
+{
+  struct HashEntry *stub = (struct HashEntry *)entry;
+
+  ENTER();
+
+  _free(stub->key);
 
   LEAVE();
 }
@@ -400,11 +414,11 @@ struct HashTable *HashTableNew(const struct HashTableOps *ops, void *data, ULONG
 
   ENTER();
 
-  if((table = malloc(sizeof(*table))) != NULL)
+  if((table = _malloc(sizeof(*table))) != NULL)
   {
     if(HashTableInit(table, ops, data, entrySize, capacity) == FALSE)
     {
-      free(table);
+      _free(table);
       table = NULL;
     }
   }
@@ -423,7 +437,7 @@ void HashTableDestroy(struct HashTable *table)
   if(table != NULL)
   {
     HashTableCleanup(table);
-    free(table);
+    _free(table);
   }
 
   LEAVE();
@@ -704,7 +718,7 @@ const struct HashTableOps *HashTableGetDefaultStringOps(void)
     StringHashClearEntry,
     DefaultHashFinalize,
     NULL,
-    NULL
+    StringHashDestroyEntry
   };
 
   ENTER();
@@ -904,7 +918,7 @@ void HashTableTest(void)
         {
           if(node->str == NULL)
           {
-            node->str = strdup(statusImageIDs[i]);
+            node->str = _strdup(statusImageIDs[i]);
             node->cnt = 1;
           }
           else

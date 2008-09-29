@@ -98,7 +98,7 @@ HOOKPROTONHNO(DestructFunc, LONG, struct UpdateComponent *entry)
     if(entry->changeLogFile)
       CloseTempFile(entry->changeLogFile);
 
-    free(entry);
+    _free(entry);
   }
 
   return 0;
@@ -293,7 +293,7 @@ DECLARE(Clear)
 
   if(data->ChangeLogText)
   {
-    free(data->ChangeLogText);
+    _free(data->ChangeLogText);
     data->ChangeLogText = NULL;
   }
 
@@ -321,9 +321,9 @@ DECLARE(Select) // ULONG num
       if((comp->changeLogFile->FP = fopen(comp->changeLogFile->Filename, "r")) != NULL)
       {
         if(data->ChangeLogText != NULL)
-          free(data->ChangeLogText);
+          _free(data->ChangeLogText);
 
-        if((data->ChangeLogText = malloc(size+1)) != NULL)
+        if((data->ChangeLogText = _malloc(size+1)) != NULL)
         {
           if(fread(data->ChangeLogText, size, 1, comp->changeLogFile->FP) == 1)
           {

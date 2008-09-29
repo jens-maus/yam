@@ -52,7 +52,7 @@ ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream)
     if(*lineptr == NULL || *n == 0)
     {
       *n = 120;
-      *lineptr = (char *)realloc(*lineptr, *n);
+      *lineptr = (char *)_realloc(*lineptr, *n);
     }
 
     // make sure we really have a destination buffer
@@ -84,7 +84,7 @@ ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream)
           if(cur_len+1 >= needed)
             goto out;
 
-          new_lineptr = (char *)realloc(*lineptr, needed);
+          new_lineptr = (char *)_realloc(*lineptr, needed);
           if(new_lineptr == NULL)
             goto out;
 

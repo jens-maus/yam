@@ -113,8 +113,8 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
            char **p, *memb = AllocStrBuf(SIZE_DEFAULT);
            if (args->add && ab->Members) memb = StrBufCpy(memb, ab->Members);
            for (p = args->member; *p; p++) { memb = StrBufCat(memb, *p); memb = StrBufCat(memb, "\n"); }
-           if (ab->Members) free(ab->Members);
-           ab->Members = strdup(memb);
+           if (ab->Members) _free(ab->Members);
+           ab->Members = _strdup(memb);
            FreeStrBuf(memb);
         }
 

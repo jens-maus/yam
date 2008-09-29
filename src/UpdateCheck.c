@@ -163,7 +163,7 @@ BOOL CheckForUpdates(void)
         // and will inform it about our configuration/YAM version and so on.
         // use a max. request buffer of 1K.
         #define REQUEST_SIZE 1024
-        if((request = malloc(REQUEST_SIZE)) != NULL) // don't use stack for the request
+        if((request = _malloc(REQUEST_SIZE)) != NULL) // don't use stack for the request
         {
           Object *mccObj;
           struct Library *base;
@@ -357,7 +357,7 @@ BOOL CheckForUpdates(void)
 
                   // create a new UpdateComponent structure which we
                   // are going to fill step by step
-                  if((comp = calloc(sizeof(struct UpdateComponent), 1)) == NULL)
+                  if((comp = _calloc(sizeof(struct UpdateComponent), 1)) == NULL)
                   {
                     updatesAvailable = FALSE;
                     break;
@@ -438,7 +438,7 @@ BOOL CheckForUpdates(void)
               ER_NewError(tr(MSG_ER_CantOpenTempfile), tf->Filename);
           }
 
-          free(request);
+          _free(request);
         }
 
         BusyEnd();

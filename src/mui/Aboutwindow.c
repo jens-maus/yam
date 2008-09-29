@@ -291,7 +291,7 @@ OVERLOAD(OM_DISPOSE)
   ENTER();
 
   if(data->aboutText != NULL)
-    free(data->aboutText);
+    _free(data->aboutText);
 
   result = DoSuperMethodA(cl, obj, msg);
 

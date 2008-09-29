@@ -148,7 +148,7 @@ struct WritePart *NewMIMEpart(struct WriteMailData *wmData)
 
   ENTER();
 
-  if((p = calloc(1, sizeof(struct WritePart))) != NULL)
+  if((p = _calloc(1, sizeof(struct WritePart))) != NULL)
   {
     p->ContentType = "text/plain";
     p->EncType = ENC_7BIT;
@@ -183,7 +183,7 @@ void FreePartsList(struct WritePart *p)
     if(p->IsTemp)
       DeleteFile(p->Filename);
 
-    free(p);
+    _free(p);
   }
 
   LEAVE();
@@ -350,7 +350,7 @@ static void EmitRcptField(FILE *fh, const char *body)
 
   ENTER();
 
-  if((bodycpy = strdup(body)) != NULL)
+  if((bodycpy = _strdup(body)) != NULL)
   {
     char *part = bodycpy;
 
@@ -370,7 +370,7 @@ static void EmitRcptField(FILE *fh, const char *body)
         fputs(",\n\t", fh);
     }
 
-    free(bodycpy);
+    _free(bodycpy);
   }
 
   LEAVE();
@@ -1167,10 +1167,10 @@ BOOL WriteOutMessage(struct Compose *comp)
 
       if(WriteOutMessage(&tcomp) == TRUE)    /* recurse! */
       {
-        struct WritePart *tpart = comp->FirstPart; /* save parts list so we're able to recover from a calloc() error */
+        struct WritePart *tpart = comp->FirstPart; /* save parts list so we're able to recover from a _calloc() error */
 
         /* replace with single new part */
-        if((comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart))) != NULL)
+        if((comp->FirstPart = (struct WritePart *)_calloc(1,sizeof(struct WritePart))) != NULL)
         {
           comp->FirstPart->EncType = tpart->EncType;          /* reuse encoding */
           FreePartsList(tpart);                               /* free old parts list */
@@ -1508,7 +1508,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
           if((p = FileToBuffer(etd->HeaderFile)))
           {
             dst = StrBufCat(dst, p);
-            free(p);
+            _free(p);
           }
         }
         break;
@@ -1843,7 +1843,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             char address[SIZE_LARGE];
 
             // free our temp text now
-            free(cmsg);
+            _free(cmsg);
 
             // set the In-Reply-To / References message header references, if they exist
             if(email->inReplyToMsgID != NULL)
@@ -1937,7 +1937,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             E(DBF_MAIL, "Error while writing cmsg to out FH");
 
             // an error occurred while trying to write the text to out
-            free(cmsg);
+            _free(cmsg);
             FreePrivateRMData(rmData);
             fclose(out);
             MA_FreeEMailStruct(email);
@@ -2130,7 +2130,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
                 // output the readin message text immediately to
                 // our out filehandle
                 fputs(cmsg, out);
-                free(cmsg);
+                _free(cmsg);
 
                 InsertIntroText(out, C->ForwardFinish, &etd);
 
@@ -2461,7 +2461,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           {
             char *p;
 
-            if((p = strdup(mlistad)) != NULL)
+            if((p = _strdup(mlistad)) != NULL)
             {
               char *ptr = p;
 
@@ -2481,7 +2481,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                 ptr = next;
               }
 
-              free(p);
+              _free(p);
             }
           }
           else if(C->CompareAddress == TRUE && hasMListFlag(flags) == FALSE &&
@@ -2675,7 +2675,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               // make sure we quote the text in question.
               QuoteText(out, cmsg, strlen(cmsg), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);
 
-              free(cmsg);
+              _free(cmsg);
             }
 
             FreePrivateRMData(rmData);
@@ -2856,7 +2856,7 @@ BOOL CleanupWriteMailData(struct WriteMailData *wmData)
 
   // Remove the writeWindowNode and free it afterwards
   Remove((struct Node *)wmData);
-  free(wmData);
+  _free(wmData);
 
   RETURN(TRUE);
   return TRUE;
@@ -2929,7 +2929,7 @@ void CheckForAutoSaveFiles(void)
   // we go and check whether there is any .autosaveXX.txt file in the
   // maildir directory. And if so we ask the user what he would like to do with it
   parsedPatternSize = strlen(pattern) * 2 + 2;
-  if((parsedPattern = malloc(parsedPatternSize)) != NULL)
+  if((parsedPattern = _malloc(parsedPatternSize)) != NULL)
   {
     ParsePatternNoCase(pattern, parsedPattern, parsedPatternSize);
 
@@ -3027,7 +3027,7 @@ void CheckForAutoSaveFiles(void)
       ReleaseDirContext(context);
     }
 
-    free(parsedPattern);
+    _free(parsedPattern);
   }
 
   LEAVE();

@@ -762,12 +762,12 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
             members = StrBufCat(members, "\n");
           }
           len = strlen(members)+1;
-          if((addr.Members = malloc(len)) != NULL)
+          if((addr.Members = _malloc(len)) != NULL)
           {
             strlcpy(addr.Members, members, len);
             FreeStrBuf(members);
             DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
-            free(addr.Members);
+            _free(addr.Members);
           }
         }
         else if(strncmp(buffer, "@GROUP", 6) == 0)
@@ -2856,15 +2856,15 @@ HOOKPROTONHNO(AB_LV_ConFunc, struct ABEntry *, struct MUIP_NListtree_ConstructMe
 
   ENTER();
 
-  if((entry = memdup(addr, sizeof(*addr))) != NULL)
+  if((entry = _memdup(addr, sizeof(*addr))) != NULL)
   {
     // clone the member list aswell
     if(addr->Members != NULL)
     {
-      if((entry->Members = strdup(addr->Members)) == NULL)
+      if((entry->Members = _strdup(addr->Members)) == NULL)
       {
-        // if strdup() failed then we let the whole function fail
-        free(entry);
+        // if _strdup() failed then we let the whole function fail
+        _free(entry);
         entry = NULL;
       }
     }
@@ -2891,8 +2891,8 @@ HOOKPROTONHNO(AB_LV_DesFunc, long, struct MUIP_NListtree_DestructMessage *msg)
     if(entry != NULL)
     {
       if(entry->Members)
-        free(entry->Members);
-      free(entry);
+        _free(entry->Members);
+      _free(entry);
     }
   }
 
@@ -3066,7 +3066,7 @@ struct AB_ClassData *AB_New(void)
 
   ENTER();
 
-  if((data = calloc(1, sizeof(struct AB_ClassData))) != NULL)
+  if((data = _calloc(1, sizeof(struct AB_ClassData))) != NULL)
   {
     enum {
       AMEN_NEW,AMEN_OPEN,AMEN_APPEND,AMEN_SAVE,AMEN_SAVEAS,
@@ -3218,7 +3218,7 @@ struct AB_ClassData *AB_New(void)
     }
     else
     {
-      free(data);
+      _free(data);
       data = NULL;
     }
   }

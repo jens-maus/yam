@@ -99,7 +99,7 @@ HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *
         result = 0;
       }
 
-      free(unquoted);
+      _free(unquoted);
     }
   }
 
@@ -166,10 +166,10 @@ static void NormalizeSelection(Object *obj, BOOL clear)
   if((p = strstr(rcp, " >> ")) != NULL)
   {
     marksSize = (LONG)(p + 4 - rcp);
-    rcp = strdup(p + 4);
+    rcp = _strdup(p + 4);
   }
   else if(clear)
-    rcp = strdup(rcp);
+    rcp = _strdup(rcp);
   else
     rcp = NULL;
 
@@ -194,7 +194,7 @@ static void NormalizeSelection(Object *obj, BOOL clear)
     // now insert the correct recipient again
     DoMethod(obj, MUIM_BetterString_Insert, rcp, start);
 
-    free(rcp);
+    _free(rcp);
   }
 
   LEAVE();
@@ -262,7 +262,7 @@ OVERLOAD(OM_DISPOSE)
   }
 
   if(data->CurrentRecipient != NULL)
-    free(data->CurrentRecipient);
+    _free(data->CurrentRecipient);
 
   return DoSuperMethodA(cl, obj, msg);
 }
@@ -674,7 +674,7 @@ OVERLOAD(MUIM_HandleEvent)
 
             // now we get a temporary copy of our string contents, call the supermethod
             // and compare if something has changed or not
-            old = strdup((char *)xget(obj, MUIA_String_Contents));
+            old = _strdup((char *)xget(obj, MUIA_String_Contents));
             result = DoSuperMethodA(cl, obj, msg);
             new = (char *)xget(obj, MUIA_String_Contents);
 
@@ -683,7 +683,7 @@ OVERLOAD(MUIM_HandleEvent)
               changed = TRUE;
 
             // free our temporary buffer
-            free(old);
+            _free(old);
           }
           else
             result = DoSuperMethodA(cl, obj, msg);
@@ -730,7 +730,7 @@ OVERLOAD(MUIM_HandleEvent)
                 xset(obj, MUIA_String_BufferPos, pos,
                           MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start));
 
-                free(new_address);
+                _free(new_address);
               }
             }
           }
@@ -801,7 +801,7 @@ DECLARE(Resolve) // ULONG flags
 
     list_expansion = FALSE;
     s = (STRPTR)xget(obj, MUIA_String_Contents);
-    if((contents = tmp = strdup(s)) == NULL)
+    if((contents = tmp = _strdup(s)) == NULL)
       break;
 
     // clear the string gadget without notifying others
@@ -869,7 +869,7 @@ DECLARE(Resolve) // ULONG flags
             {
               char *members;
 
-              if((members = strdup(entry->Members)) != NULL)
+              if((members = _strdup(entry->Members)) != NULL)
               {
                 char *lf;
 
@@ -878,7 +878,7 @@ DECLARE(Resolve) // ULONG flags
 
                 D(DBF_GUI, "Found list: »%s«", members);
                 DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
-                free(members);
+                _free(members);
 
                 if(data->From != NULL && entry->RealName[0] != '\0')
                 {
@@ -957,7 +957,7 @@ DECLARE(Resolve) // ULONG flags
 
       tmp = NULL;
     }
-    free(contents);
+    _free(contents);
   } while(list_expansion == TRUE && max_list_nesting-- > 0);
 
   result = (res ? xget(obj, MUIA_String_Contents) : 0);
@@ -1039,7 +1039,7 @@ DECLARE(CurrentRecipient)
 
   if(data->CurrentRecipient != NULL)
   {
-    free(data->CurrentRecipient);
+    _free(data->CurrentRecipient);
     data->CurrentRecipient = NULL;
   }
 
@@ -1047,7 +1047,7 @@ DECLARE(CurrentRecipient)
   pos = xget(obj, MUIA_String_BufferPos);
 
   if((buf[pos] == '\0' || buf[pos] == ',') &&
-     (data->CurrentRecipient = strdup(&buf[DoMethod(obj, MUIM_Recipientstring_RecipientStart)])) &&
+     (data->CurrentRecipient = _strdup(&buf[DoMethod(obj, MUIM_Recipientstring_RecipientStart)])) &&
      (end = strchr(data->CurrentRecipient, ',')))
   {
     end[0] = '\0';

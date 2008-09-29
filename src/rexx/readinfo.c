@@ -76,10 +76,10 @@ void rx_readinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
         for(parts = 0, part = rmData->firstPart->Next; part; parts++, part = part->Next);
 
-        results->filename = calloc(parts+1, sizeof(char *));
-        results->filetype = calloc(parts+1, sizeof(char *));
-        results->filesize = calloc(parts+1, sizeof(long));
-        results->tempfile = calloc(parts+1, sizeof(char *));
+        results->filename = _calloc(parts+1, sizeof(char *));
+        results->filetype = _calloc(parts+1, sizeof(char *));
+        results->filesize = _calloc(parts+1, sizeof(long));
+        results->tempfile = _calloc(parts+1, sizeof(char *));
 
         for(i = 0, part = rmData->firstPart->Next; part; i++, part = part->Next)
         {
@@ -101,13 +101,13 @@ void rx_readinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
       if(results != NULL)
       {
         if(results->filename != NULL)
-          free(results->filename);
+          _free(results->filename);
         if(results->filetype != NULL)
-          free(results->filetype);
+          _free(results->filetype);
         if(results->filesize != NULL)
-          free(results->filesize);
+          _free(results->filesize);
         if(results->tempfile != NULL)
-          free(results->tempfile);
+          _free(results->tempfile);
         FreeVecPooled(G->SharedMemPool, results);
       }
     }

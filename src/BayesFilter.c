@@ -160,7 +160,7 @@ static struct Token *tokenizerAdd(struct Tokenizer *t,
   if(prefix != NULL)
     len += strlen(prefix) + 1;
 
-  if((tmpWord = (STRPTR)malloc(len)) != NULL)
+  if((tmpWord = (STRPTR)_malloc(len)) != NULL)
   {
     if(prefix != NULL)
       snprintf(tmpWord, len, "%s:%s", prefix, word);
@@ -171,7 +171,7 @@ static struct Token *tokenizerAdd(struct Tokenizer *t,
     {
       if(token->word == NULL)
       {
-        if((token->word = strdup(tmpWord)) != NULL)
+        if((token->word = _strdup(tmpWord)) != NULL)
         {
           token->length = strlen(tmpWord);
           token->count = count;
@@ -184,7 +184,7 @@ static struct Token *tokenizerAdd(struct Tokenizer *t,
         token->count += count;
     }
 
-    free(tmpWord);
+    _free(tmpWord);
   }
 
   RETURN(token);
@@ -313,19 +313,19 @@ static void tokenizerTokenizeAttachment(struct Tokenizer *t,
 
   ENTER();
 
-  if((tmpContentType = strdup(contentType)))
+  if((tmpContentType = _strdup(contentType)))
   {
-    if((tmpFileName = strdup(fileName)))
+    if((tmpFileName = _strdup(fileName)))
     {
       ToLowerCase(tmpContentType);
       ToLowerCase(tmpFileName);
       tokenizerAddTokenForHeader(t, "attachment/filename", tmpFileName, FALSE);
       tokenizerAddTokenForHeader(t, "attachment/content-type", tmpContentType, FALSE);
 
-      free(tmpFileName);
+      _free(tmpFileName);
     }
 
-    free(tmpContentType);
+    _free(tmpContentType);
   }
 
   LEAVE();
@@ -341,8 +341,8 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
 
   ENTER();
 
-  contentType = (part->ContentType != NULL) ? strdup(part->ContentType) : NULL;
-  charSet = (part->CParCSet != NULL) ? strdup(part->CParCSet) : NULL;
+  contentType = (part->ContentType != NULL) ? _strdup(part->ContentType) : NULL;
+  charSet = (part->CParCSet != NULL) ? _strdup(part->CParCSet) : NULL;
 
   if(contentType != NULL)
     ToLowerCase(contentType);
@@ -355,11 +355,11 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
     struct HeaderNode *hdr = (struct HeaderNode *)node;
     STRPTR name;
 
-    if((name = strdup(hdr->name)) != NULL)
+    if((name = _strdup(hdr->name)) != NULL)
     {
       STRPTR content;
 
-      if((content = strdup(hdr->content)) != NULL)
+      if((content = _strdup(hdr->content)) != NULL)
       {
         ToLowerCase(name);
         ToLowerCase(content);
@@ -416,17 +416,17 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
           }
           break;
         }
-        free(content);
+        _free(content);
       }
-      free(name);
+      _free(name);
     }
   }
 
   if(contentType != NULL)
-    free(contentType);
+    _free(contentType);
 
   if(charSet != NULL)
-    free(charSet);
+    _free(charSet);
 
   LEAVE();
 }
@@ -596,7 +596,7 @@ static struct Token *tokenizerCopyTokens(struct Tokenizer *t)
 
   if(count > 0)
   {
-    if((tokens = (struct Token *)malloc(count * sizeof(*tokens))) != NULL)
+    if((tokens = (struct Token *)_malloc(count * sizeof(*tokens))) != NULL)
     {
       struct TokenEnumeration te;
       struct Token *tp = tokens, *token;
@@ -741,7 +741,7 @@ static BOOL readTokens(FILE *stream,
     return FALSE;
   }
 
-  if((buffer = malloc(bufferSize)) != NULL)
+  if((buffer = _malloc(bufferSize)) != NULL)
   {
     ULONG i;
 
@@ -760,7 +760,7 @@ static BOOL readTokens(FILE *stream,
 
       if(size >= bufferSize)
       {
-        free(buffer);
+        _free(buffer);
 
         if((long)(filePos + size) > fileSize)
         {
@@ -779,7 +779,7 @@ static BOOL readTokens(FILE *stream,
           }
         }
 
-        if((buffer = malloc(bufferSize)) == NULL)
+        if((buffer = _malloc(bufferSize)) == NULL)
         {
           RETURN(FALSE);
           return FALSE;
@@ -796,7 +796,7 @@ static BOOL readTokens(FILE *stream,
       tokenizerAdd(t, buffer, NULL, count);
     }
 
-    free(buffer);
+    _free(buffer);
   }
 
   RETURN(TRUE);
@@ -1425,7 +1425,7 @@ static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
         isSpam = TRUE;
       }
 
-      free(tokens);
+      _free(tokens);
     }
     else
     {
@@ -1514,7 +1514,7 @@ static void tokenizeMail(struct Tokenizer *t,
         }
       }
 
-      free(rptr);
+      _free(rptr);
     }
 
     FreePrivateRMData(rmData);

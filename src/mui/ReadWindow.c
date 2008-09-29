@@ -159,7 +159,7 @@ OVERLOAD(OM_NEW)
 
   // generate a temporarly struct Data to which we store our data and
   // copy it later on
-  if((data = tmpData = calloc(1, sizeof(struct Data))) == NULL)
+  if((data = tmpData = _calloc(1, sizeof(struct Data))) == NULL)
   {
     RETURN(0);
     return 0;
@@ -455,7 +455,7 @@ OVERLOAD(OM_NEW)
   }
 
   // free the temporary mem we allocated before
-  free(tmpData);
+  _free(tmpData);
 
   RETURN((ULONG)obj);
   return (ULONG)obj;
@@ -792,7 +792,7 @@ DECLARE(MoveMailRequest)
       // move the mail to the selected destination folder
       MA_MoveCopy(mail, srcfolder, dstfolder, FALSE, FALSE);
 
-      // erase the old pointer as this has been free()ed by MA_MoveCopy()
+      // erase the old pointer as this has been _free()ed by MA_MoveCopy()
       rmData->mail = NULL;
 
       // if there are still mails in the current folder we make sure
@@ -895,7 +895,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
     // delete the mail
     MA_DeleteSingle(mail, delatonce ? DELF_AT_ONCE|DELF_UPDATE_APPICON : DELF_UPDATE_APPICON);
 
-    // erase the old pointer as this has been free()ed by MA_DeleteSingle()
+    // erase the old pointer as this has been _free()ed by MA_DeleteSingle()
     rmData->mail = NULL;
 
     // if there are still mails in the current folder we make sure
@@ -966,7 +966,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       // move the mail
       MA_MoveCopy(mail, folder, spamFolder, FALSE, FALSE);
 
-      // erase the old pointer as this has been free()ed by MA_MoveCopy()
+      // erase the old pointer as this has been _free()ed by MA_MoveCopy()
       rmData->mail = NULL;
 
       // if there are still mails in the current folder we make sure
@@ -1040,7 +1040,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
         if(moveToIncoming == TRUE)
           MA_MoveCopy(mail, folder, incomingFolder, FALSE, FALSE);
 
-        // erase the old pointer as this has been free()ed by MA_MoveCopy() or by the filter action
+        // erase the old pointer as this has been _free()ed by MA_MoveCopy() or by the filter action
         rmData->mail = NULL;
 
         // if there are still mails in the current folder we make sure

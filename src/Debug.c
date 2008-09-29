@@ -28,6 +28,7 @@
 #ifdef DEBUG
 
 #include <stdio.h> // vsnprintf
+#include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 
@@ -35,6 +36,7 @@
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/timer.h>
+#include <clib/alib_protos.h>
 
 #include "YAM_global.h"
 #include "YAM_utilities.h" // CLEAR_FLAG,SET_FLAG
@@ -59,6 +61,9 @@ static ULONG debug_flags = DBF_ALWAYS | DBF_STARTUP; // default debug flags
 static ULONG debug_classes = DBC_ERROR | DBC_DEBUG | DBC_WARNING | DBC_ASSERT | DBC_REPORT; // default debug classes
 static int timer_level = -1;
 static struct TimeVal startTimes[8];
+
+static void SetupDbgMalloc(void);
+static void CleanupDbgMalloc(void);
 
 /****************************************************************************/
 
@@ -139,6 +144,7 @@ void SetupDebug(void)
       { "print",    DBF_PRINT   },
       { "theme",    DBF_THEME   },
       { "thread",   DBF_THREAD  },
+      { "memory",   DBF_MEMORY  },
       { "all",      DBF_ALL     },
       { NULL,       0           }
     };
@@ -300,12 +306,16 @@ void SetupDebug(void)
 
   _DBPRINTF("set debug classes/flags (env:yamdebug): %08lx/%08lx\n", debug_classes, debug_flags);
   _DBPRINTF("** Normal processing follows ***************************************\n");
+
+  SetupDbgMalloc();
 }
 
 /****************************************************************************/
 
 void CleanupDebug(void)
 {
+  CleanupDbgMalloc();
+
   _DBPRINTF("** Cleaned up debugging ********************************************\n");
 
   if(file_output != NULL)
@@ -628,5 +638,271 @@ void W(unsigned long f, const char *format, ...)
 #endif
 
 /****************************************************************************/
+
+struct DbgMallocNode {
+  struct MinNode node;
+  void *memory;
+  size_t size;
+  char *file;
+  int line;
+};
+
+static struct MinList DbgMallocList;
+static struct SignalSemaphore DbgMallocListSema;
+static ULONG DbgMallocCount;
+
+#define ForEachNode    for(dmn = (struct DbgMallocNode *)DbgMallocList.mlh_Head; (next = (struct DbgMallocNode *)dmn->node.mln_Succ) != NULL; dmn = next)
+
+void *__malloc(const char *file, const int line, size_t size)
+{
+  void *result = NULL;
+
+  ENTER();
+
+  result = malloc(size);
+
+  if(isFlagSet(debug_flags, DBF_MEMORY) && result != NULL)
+  {
+    struct DbgMallocNode *dmn;
+
+    if((dmn = malloc(sizeof(*dmn))) != NULL)
+    {
+      if((dmn->file = strdup(file)) != NULL)
+      {
+        dmn->memory = result;
+        dmn->size = size;
+        dmn->line = line;
+
+        ObtainSemaphore(&DbgMallocListSema);
+        AddTail((struct List *)&DbgMallocList, (struct Node *)&dmn->node);
+        ReleaseSemaphore(&DbgMallocListSema);
+
+        DbgMallocCount++;
+      }
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+void *__calloc(const char *file, const int line, size_t n, size_t size)
+{
+  void *result;
+
+  ENTER();
+
+  if((result = __malloc(file, line, n*size)) != NULL)
+    memset(result, 0, n*size);
+
+  RETURN(result);
+  return result;
+}
+
+static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
+{
+  struct DbgMallocNode *result = NULL;
+
+  ENTER();
+
+  if(IsListEmpty((struct List *)&DbgMallocList) == FALSE)
+  {
+    struct DbgMallocNode *dmn;
+    struct DbgMallocNode *next;
+
+    ForEachNode
+    {
+      if(dmn->memory == ptr)
+      {
+        result = dmn;
+        break;
+      }
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+void *__realloc(UNUSED const char *file, UNUSED const int line, void *ptr, size_t size)
+{
+  void *result = NULL;
+
+  ENTER();
+
+  if(isFlagSet(debug_flags, DBF_MEMORY))
+  {
+    if(ptr == NULL)
+    {
+      result = __malloc(file, line, size);
+    }
+    else if(size == 0)
+    {
+      __free(file, line, ptr);
+    }
+    else
+    {
+      struct DbgMallocNode *dmn;
+
+      ObtainSemaphore(&DbgMallocListSema);
+
+      if((dmn = findDbgMallocNode(ptr)) != NULL)
+      {
+        if((result = realloc(ptr, size)) != NULL)
+        {
+          free(dmn->file);
+
+          dmn->memory = result;
+          dmn->size = size;
+          dmn->file = strdup(file);
+          dmn->line = line;
+        }
+      }
+
+      ReleaseSemaphore(&DbgMallocListSema);
+    }
+  }
+  else
+  {
+    result = realloc(ptr, size);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+void __free(const char *file, const int line, void *ptr)
+{
+  ENTER();
+
+  if(isFlagSet(debug_flags, DBF_MEMORY))
+  {
+    BOOL success = FALSE;
+    struct DbgMallocNode *dmn;
+
+    ObtainSemaphore(&DbgMallocListSema);
+
+    if((dmn = findDbgMallocNode(ptr)) != NULL)
+    {
+      Remove((struct Node *)dmn);
+      if(dmn->file != NULL)
+        free(dmn->file);
+      free(dmn);
+
+      DbgMallocCount--;
+
+      success = TRUE;
+    }
+
+    ReleaseSemaphore(&DbgMallocListSema);
+
+    if(success == FALSE)
+      W(DBF_MEMORY, "%s:%ld: free() of untracked allocation 0x%08lx attempted", file, line, ptr);
+  }
+
+  free(ptr);
+
+  LEAVE();
+}
+
+char *__strdup(const char *file, const int line, const char *s)
+{
+  char *result;
+
+  ENTER();
+
+  if((result = __malloc(file, line, strlen(s)+1)) != NULL)
+    strcpy(result, s);
+
+  RETURN(result);
+  return result;
+}
+
+void *__memdup(const char *file, const int line, const void *ptr, const size_t size)
+{
+  void *result;
+
+  ENTER();
+
+  if((result = __malloc(file, line, size)) != NULL)
+    memcpy(result, ptr, size);
+
+  RETURN(result);
+  return result;
+}
+
+static void SetupDbgMalloc(void)
+{
+  ENTER();
+
+  if(isFlagSet(debug_flags, DBF_MEMORY))
+  {
+    NewList((struct List *)&DbgMallocList);
+    InitSemaphore(&DbgMallocListSema);
+    DbgMallocCount = 0;
+  }
+
+  LEAVE();
+}
+
+static void CleanupDbgMalloc(void)
+{
+  ENTER();
+
+  if(isFlagSet(debug_flags, DBF_MEMORY))
+  {
+    ObtainSemaphore(&DbgMallocListSema);
+
+    if(IsListEmpty((struct List *)&DbgMallocList) == FALSE)
+    {
+      struct DbgMallocNode *dmn;
+
+      E(DBF_MEMORY, "there are still unfreed %ld allocations", DbgMallocCount);
+      while((dmn = (struct DbgMallocNode *)RemHead((struct List *)&DbgMallocList)) != NULL)
+      {
+        E(DBF_MEMORY, "unfreed allocation 0x%08lx, size %ld from file '%s', line %ld", dmn->memory, dmn->size, dmn->file, dmn->line);
+        if(dmn->memory != NULL)
+          free(dmn->memory);
+        if(dmn->file != NULL)
+          free(dmn->file);
+        free(dmn);
+      }
+    }
+    else
+    {
+      D(DBF_MEMORY, "all memory allocations have been free()'d correctly");
+    }
+
+    ReleaseSemaphore(&DbgMallocListSema);
+  }
+
+  LEAVE();
+}
+
+void DumpDbgMalloc(void)
+{
+  ENTER();
+
+  if(isFlagSet(debug_flags, DBF_MEMORY))
+  {
+    ObtainSemaphore(&DbgMallocListSema);
+
+    if(IsListEmpty((struct List *)&DbgMallocList) == FALSE)
+    {
+      struct DbgMallocNode *dmn;
+      struct DbgMallocNode *next;
+
+      D(DBF_MEMORY, "%ld allocations tracked", DbgMallocCount);
+      ForEachNode
+      {
+        D(DBF_MEMORY, "allocation 0x%08lx, size %ld from file '%s', line %ld", dmn->memory, dmn->size, dmn->file, dmn->line);
+      }
+    }
+
+    ReleaseSemaphore(&DbgMallocListSema);
+  }
+
+  LEAVE();
+}
 
 #endif /* DEBUG */

@@ -49,7 +49,7 @@
 //   FI_DATE          struct DateStamp *
 //   FI_TIME          ULONG
 //   FI_TYPE          enum FileType
-// File comments (FI_COMMENT) will be strdup()'ed and must be free()'d after usage to
+// File comments (FI_COMMENT) will be _strdup()'ed and must be _free()'d after usage to
 // avoid memory leaks.
 BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr)
 {
@@ -84,7 +84,7 @@ BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr)
 
         case FI_COMMENT:
         {
-          if((*((char **)valuePtr) = strdup(ed->Comment)) != NULL)
+          if((*((char **)valuePtr) = _strdup(ed->Comment)) != NULL)
             result = TRUE;
         }
         break;
@@ -151,14 +151,14 @@ BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr)
 
             case FI_COMMENT:
             {
-              if((*((char **)valuePtr) = strdup(fib->fib_Comment)) != NULL)
+              if((*((char **)valuePtr) = _strdup(fib->fib_Comment)) != NULL)
                 result = TRUE;
             }
             break;
 
             case FI_DATE:
             {
-              if((*((struct DateStamp **)valuePtr) = memdup(&fib->fib_Date, sizeof(struct DateStamp))) != NULL)
+              if((*((struct DateStamp **)valuePtr) = _memdup(&fib->fib_Date, sizeof(struct DateStamp))) != NULL)
                 result = TRUE;
             }
             break;

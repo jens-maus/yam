@@ -1647,7 +1647,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
           }
         }
 
-        free(cmsg);
+        _free(cmsg);
       }
 
       FreePrivateRMData(rmData);
@@ -1735,7 +1735,7 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
             struct Part *part;
 
             // free the message again as we don't need its content here.
-            free(cmsg);
+            _free(cmsg);
 
             if((part = rmData->firstPart->Next) != NULL && part->Next != NULL)
               RE_SaveAll(rmData, frc->drawer);
@@ -1809,7 +1809,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
               CloseTempFile(tf);
             }
 
-            free(cmsg);
+            _free(cmsg);
           }
 
           FreePrivateRMData(rmData);
@@ -2974,7 +2974,7 @@ BOOL MA_ImportMessages(const char *fname)
 
         // read the 9404 bytes long file header for properly identifying
         // an Outlook Express database file.
-        if((file_header = (unsigned char *)malloc(0x24bc)) !=  NULL)
+        if((file_header = (unsigned char *)_malloc(0x24bc)) !=  NULL)
         {
           if(fread(file_header, 1, 0x24bc, fh) == 0x24bc)
           {
@@ -2990,7 +2990,7 @@ BOOL MA_ImportMessages(const char *fname)
             }
           }
 
-          free(file_header);
+          _free(file_header);
         }
       }
 
@@ -4099,7 +4099,7 @@ struct MA_ClassData *MA_New(void)
 
   ENTER();
 
-  if((data = calloc(1, sizeof(struct MA_ClassData))) != NULL)
+  if((data = _calloc(1, sizeof(struct MA_ClassData))) != NULL)
   {
     char *username = C->RealName;
     struct User *user;
@@ -4430,7 +4430,7 @@ struct MA_ClassData *MA_New(void)
   else
   {
     E(DBF_GUI, "Couldn't create main window object!");
-    free(data);
+    _free(data);
     data = NULL;
   }
 

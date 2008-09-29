@@ -176,11 +176,11 @@ int rfc2231_decode(char *attr, char *value, char **result, struct codeset **srcC
     {
       int newSize = strlen(*result)+strlen(value)+1;
 
-      if((*result = realloc(*result, newSize)))
+      if((*result = _realloc(*result, newSize)))
       {
         strlcat(*result, value, newSize);
 
-        free(value);
+        _free(value);
       }
     }
   }

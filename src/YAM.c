@@ -657,7 +657,7 @@ static BOOL InitXPKPackerList(void)
         {
           struct xpkPackerNode *newPacker;
 
-          if((newPacker = memdup(&xpi, sizeof(struct xpkPackerNode))) != NULL)
+          if((newPacker = _memdup(&xpi, sizeof(struct xpkPackerNode))) != NULL)
           {
             // because the short name isn't always equal to the packer short name
             // we work around that problem and make sure they are equal.
@@ -718,7 +718,7 @@ static void FreeXPKPackerList(void)
     while((curNode = (struct MinNode *)RemHead((struct List *)&G->xpkPackerList)) != NULL)
     {
       // free everything of the node
-      free(curNode);
+      _free(curNode);
     }
   }
 
@@ -821,7 +821,7 @@ static void Terminate(void)
   if(G->CO != NULL)
   {
     CO_ClearConfig(CE);
-    free(CE);
+    _free(CE);
     CE = NULL;
 
     DisposeModule(&G->CO);
@@ -928,7 +928,7 @@ static void Terminate(void)
     if((frc = G->FileReqCache[i]) != NULL)
     {
       FreeFileReqCache(frc);
-      free(frc);
+      _free(frc);
     }
   }
 
@@ -983,7 +983,7 @@ static void Terminate(void)
 
   D(DBF_STARTUP, "freeing config...");
   CO_ClearConfig(C);
-  free(C);
+  _free(C);
   C = NULL;
 
   // free our private codesets list
@@ -1067,7 +1067,7 @@ static void Terminate(void)
   FreeSysObject(ASOT_MEMPOOL, G->SharedMemPool);
 
   // last, but not clear free the global structure
-  free(G);
+  _free(G);
   G = NULL;
 
   LEAVE();
@@ -1525,7 +1525,7 @@ static void InitAfterLogin(void)
 
     ForEachFolderNode(oldfolders, fnode)
     {
-      free(fnode->folder);
+      _free(fnode->folder);
     }
 
     DeleteFolderList(oldfolders);
@@ -1907,7 +1907,7 @@ static void InitBeforeLogin(BOOL hidden)
   // initialize our ASL FileRequester cache stuff
   for(i = 0; i < ASL_MAX; i++)
   {
-    if((G->FileReqCache[i] = calloc(sizeof(struct FileReqCache), 1)) == NULL)
+    if((G->FileReqCache[i] = _calloc(sizeof(struct FileReqCache), 1)) == NULL)
       Abort(NULL);
   }
 
@@ -2088,7 +2088,7 @@ static LONG ParseCommandArgs(void)
 
   // allocate some memory for the extended help
   #define SIZE_EXTHELP  2048
-  if((extHelp = malloc(SIZE_EXTHELP)) != NULL)
+  if((extHelp = _malloc(SIZE_EXTHELP)) != NULL)
   {
     // set argument template
     nrda.Template = (STRPTR)"USER/K,"
@@ -2148,7 +2148,7 @@ static LONG ParseCommandArgs(void)
     // to the above template
     result = NewReadArgs(WBmsg, &nrda);
 
-    free(extHelp);
+    _free(extHelp);
     nrda.ExtHelp = NULL;
   }
 
@@ -2374,8 +2374,8 @@ int main(int argc, char **argv)
     int ret;
 
     // allocate our global G and C structures
-    if((G = calloc(1, sizeof(struct Global))) == NULL ||
-       (C = calloc(1, sizeof(struct Config))) == NULL)
+    if((G = _calloc(1, sizeof(struct Global))) == NULL ||
+       (C = _calloc(1, sizeof(struct Config))) == NULL)
     {
       // break out immediately to signal an error!
       break;

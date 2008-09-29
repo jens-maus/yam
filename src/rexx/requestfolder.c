@@ -78,7 +78,7 @@ void rx_requestfolder(UNUSED struct RexxHost *host, struct RexxParams *params, e
       else
         params->rc = 1;
 
-      free(reqtext);
+      _free(reqtext);
     }
     break;
 

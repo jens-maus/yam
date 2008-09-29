@@ -518,12 +518,12 @@ static void FreeStemList(struct MinList *list)
   while((node = (struct StemNode *)RemHead((struct List *)list)) != NULL)
   {
     if(node->name != NULL)
-      free(node->name);
+      _free(node->name);
 
     if(node->value != NULL)
-      free(node->value);
+      _free(node->value);
 
-    free(node);
+    _free(node);
   }
 
   LEAVE();
@@ -598,7 +598,7 @@ static BOOL CreateSTEM(struct MinList *stemList, struct rxs_command *rxc, LONG *
       struct StemNode *countNode;
 
       // number of elements
-      if((countNode = malloc(sizeof(*countNode))) != NULL)
+      if((countNode = _malloc(sizeof(*countNode))) != NULL)
       {
         long *r;
         long index = 0;
@@ -611,19 +611,19 @@ static BOOL CreateSTEM(struct MinList *stemList, struct rxs_command *rxc, LONG *
         {
           struct StemNode *stemNode;
 
-          if((stemNode = malloc(sizeof(*stemNode))) != NULL)
+          if((stemNode = _malloc(sizeof(*stemNode))) != NULL)
           {
             snprintf(t, sizeof(resb)-(t-resb), ".%ld", index++);
-            stemNode->name = strdup(resb);
+            stemNode->name = _strdup(resb);
 
             if(isNumber == TRUE)
             {
               snprintf(longbuff, sizeof(longbuff), "%ld", *r);
-              stemNode->value = strdup(longbuff);
+              stemNode->value = _strdup(longbuff);
             }
             else
             {
-              stemNode->value = strdup((char *)r);
+              stemNode->value = _strdup((char *)r);
             }
 
             AddTail((struct List *)stemList, (struct Node *)stemNode);
@@ -634,10 +634,10 @@ static BOOL CreateSTEM(struct MinList *stemList, struct rxs_command *rxc, LONG *
 
         // the count node
         strlcpy(t, ".COUNT", sizeof(resb)-(t-resb));
-        countNode->name = strdup(resb);
+        countNode->name = _strdup(resb);
 
         snprintf(longbuff, sizeof(longbuff), "%ld", index);
-        countNode->value = strdup(longbuff);
+        countNode->value = _strdup(longbuff);
       }
     }
     else
@@ -645,20 +645,20 @@ static BOOL CreateSTEM(struct MinList *stemList, struct rxs_command *rxc, LONG *
       struct StemNode *stemNode;
 
       // create a new node
-      if((stemNode = malloc(sizeof(*stemNode))) != NULL)
+      if((stemNode = _malloc(sizeof(*stemNode))) != NULL)
       {
         AddTail((struct List *)stemList, (struct Node *)stemNode);
 
-        stemNode->name = strdup(resb);
+        stemNode->name = _strdup(resb);
 
         if(isNumber == TRUE)
         {
           snprintf(longbuff, sizeof(longbuff), "%ld", *((long *)*resarray));
-          stemNode->value = strdup(longbuff);
+          stemNode->value = _strdup(longbuff);
         }
         else
         {
-          stemNode->value = strdup((char *)*resarray);
+          stemNode->value = _strdup((char *)*resarray);
         }
 
         resarray++;

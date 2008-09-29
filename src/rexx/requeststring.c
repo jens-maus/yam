@@ -84,7 +84,7 @@ void rx_requeststring(UNUSED struct RexxHost *host, struct RexxParams *params, e
       params->rc = !StringRequest(optional->string, SIZE_DEFAULT, NULL, reqtext, tr(MSG_Okay), NULL, tr(MSG_Cancel), (BOOL)args->secret, G->MA->GUI.WI);
       results->string = optional->string;
 
-      free(reqtext);
+      _free(reqtext);
     }
     break;
 

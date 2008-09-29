@@ -59,7 +59,7 @@ HOOKPROTONHNO(ConstructFunc, struct Theme *, struct Theme *e)
 
   ENTER();
 
-  entry = memdup(e, sizeof(*e));
+  entry = _memdup(e, sizeof(*e));
 
   RETURN(entry);
   return entry;

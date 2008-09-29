@@ -363,7 +363,7 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
       rptr = ++ptr;
     }
 
-    free(cmsg);
+    _free(cmsg);
     FreePrivateRMData(rmData);
   }
 
@@ -390,7 +390,7 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
     {
       struct MinList *headerList;
 
-      if((headerList = calloc(1, sizeof(struct MinList))) != NULL)
+      if((headerList = _calloc(1, sizeof(struct MinList))) != NULL)
       {
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -432,7 +432,7 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
         }
 
         // free our temporary headerList
-        free(headerList);
+        _free(headerList);
       }
 
       // close the file
@@ -491,7 +491,7 @@ static void FI_GenerateListPatterns(struct Search *search)
           ParsePatternNoCase(buf, pattern, sizeof(pattern));
 
         // put the pattern in our search pattern list
-        if((newNode = malloc(sizeof(struct SearchPatternNode))) != NULL)
+        if((newNode = _malloc(sizeof(struct SearchPatternNode))) != NULL)
         {
           strlcpy(newNode->pattern, pattern, sizeof(newNode->pattern));
 
@@ -1345,7 +1345,7 @@ static void FreeSearchPatternList(struct Search *search)
     {
       struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
 
-      free(patternNode);
+      _free(patternNode);
     }
   }
 
@@ -1362,7 +1362,7 @@ void FreeRuleSearchData(struct RuleNode *rule)
   if(rule->search != NULL)
   {
     FreeSearchPatternList(rule->search);
-    free(rule->search);
+    _free(rule->search);
     rule->search = NULL;
   }
 
@@ -1422,7 +1422,7 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
 
             // check if that search structure already exists or not
             if(rule->search == NULL &&
-               (rule->search = calloc(1, sizeof(struct Search))))
+               (rule->search = _calloc(1, sizeof(struct Search))))
             {
               int stat = sizeof(mailStatusCycleMap);
 
@@ -1863,13 +1863,13 @@ void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
       struct RuleNode *newRule;
 
       // do a raw copy of the rule contents first
-      if((newRule = memdup(rule, sizeof(struct RuleNode))) != NULL)
+      if((newRule = _memdup(rule, sizeof(struct RuleNode))) != NULL)
       {
         // check if the search structure exists and if so
         // so start another deep copy
         if(rule->search != NULL)
         {
-          if((newRule->search = calloc(1, sizeof(struct Search))) != NULL)
+          if((newRule->search = _calloc(1, sizeof(struct Search))) != NULL)
             CopySearchData(newRule->search, rule->search);
         }
         else
@@ -1908,7 +1908,7 @@ static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
     struct SearchPatternNode *srcNode = (struct SearchPatternNode *)curNode;
     struct SearchPatternNode *dstNode;
 
-    if((dstNode = memdup(srcNode, sizeof(*srcNode))) != NULL)
+    if((dstNode = _memdup(srcNode, sizeof(*srcNode))) != NULL)
       AddTail((struct List *)&dstSearch->patternList, (struct Node *)dstNode);
   }
 
@@ -1934,7 +1934,7 @@ void FreeFilterRuleList(struct FilterNode *filter)
       // now we do free our search structure if it exists
       FreeRuleSearchData(rule);
 
-      free(rule);
+      _free(rule);
     }
   }
 
@@ -2048,7 +2048,7 @@ struct FilterNode *CreateNewFilter(void)
 
   ENTER();
 
-  if((filter = calloc(1, sizeof(struct FilterNode))) != NULL)
+  if((filter = _calloc(1, sizeof(struct FilterNode))) != NULL)
   {
     strlcpy(filter->name, tr(MSG_NewEntry), sizeof(filter->name));
     filter->applyToNew = TRUE;
@@ -2062,7 +2062,7 @@ struct FilterNode *CreateNewFilter(void)
     if(CreateNewRule(filter) == NULL)
     {
       // creating the default rule failed, so we let this operation fail, too
-      free(filter);
+      _free(filter);
       filter = NULL;
     }
   }
@@ -2081,7 +2081,7 @@ void FreeFilterNode(struct FilterNode *filter)
   // free this filter's rules
   FreeFilterRuleList(filter);
   // and finally free the filter itself
-  free(filter);
+  _free(filter);
 
   LEAVE();
 }
@@ -2120,7 +2120,7 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter)
 
   ENTER();
 
-  if((rule = calloc(1, sizeof(struct RuleNode))) != NULL)
+  if((rule = _calloc(1, sizeof(struct RuleNode))) != NULL)
   {
     // if a filter was specified we immediatley add this new rule to it
     if(filter != NULL)
@@ -2226,7 +2226,7 @@ static struct FI_ClassData *FI_New(void)
 
   ENTER();
 
-  if((data = calloc(1, sizeof(struct FI_ClassData))) != NULL)
+  if((data = _calloc(1, sizeof(struct FI_ClassData))) != NULL)
   {
     Object *bt_abort;
     Object *lv_fromrule;
@@ -2355,7 +2355,7 @@ static struct FI_ClassData *FI_New(void)
     }
     else
     {
-      free(data);
+      _free(data);
       data = NULL;
     }
   }

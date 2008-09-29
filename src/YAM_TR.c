@@ -547,7 +547,7 @@ static BOOL TR_StartTLS(void)
 
           #define X509BUFSIZE 4096
 
-          x509buf = (char *)malloc(X509BUFSIZE);
+          x509buf = (char *)_malloc(X509BUFSIZE);
           memset(x509buf, 0, X509BUFSIZE);
 
           D(DBF_NET, "Server certificate:");
@@ -562,7 +562,7 @@ static BOOL TR_StartTLS(void)
 
           D(DBF_NET, "issuer:  %s", x509buf);
 
-          if(x509buf)     free(x509buf);
+          if(x509buf)     _free(x509buf);
           if(server_cert) X509_free(server_cert);
         }
         #endif
@@ -765,7 +765,7 @@ static BOOL TR_InitSMTPAUTH(void)
               pend = pstart + strlen(pstart);
 
             // now copy the found realm into our realm string
-            realm = malloc((pend-pstart)+1);
+            realm = _malloc((pend-pstart)+1);
             if(realm)
               strlcpy(realm, pstart, (pend-pstart)+1);
             else
@@ -780,7 +780,7 @@ static BOOL TR_InitSMTPAUTH(void)
 
             // if the challenge doesn't have a "realm" we assume our
             // choosen SMTP domain to be the realm
-            realm = strdup(C->SMTP_Domain);
+            realm = _strdup(C->SMTP_Domain);
           }
 
           D(DBF_NET, "realm: '%s'", realm);
@@ -801,12 +801,12 @@ static BOOL TR_InitSMTPAUTH(void)
               pend = pstart + strlen(pstart);
 
             // now copy the found nonce into our nonce string
-            nonce = malloc((pend-pstart)+1);
+            nonce = _malloc((pend-pstart)+1);
             if(nonce)
               strlcpy(nonce, pstart, (pend-pstart)+1);
             else
             {
-              free(realm);
+              _free(realm);
 
               RETURN(FALSE);
               return FALSE;
@@ -816,7 +816,7 @@ static BOOL TR_InitSMTPAUTH(void)
           {
             E(DBF_NET, "no 'nonce=' token found!");
 
-            free(realm);
+            _free(realm);
 
             RETURN(FALSE);
             return FALSE;
@@ -845,13 +845,13 @@ static BOOL TR_InitSMTPAUTH(void)
               pend = pstart + strlen(pstart);
 
             // now copy the found qop into our qop string
-            qop = malloc((pend-pstart)+1);
+            qop = _malloc((pend-pstart)+1);
             if(qop)
               strlcpy(qop, pstart, (pend-pstart)+1);
             else
             {
-              free(realm);
-              free(nonce);
+              _free(realm);
+              _free(nonce);
 
               RETURN(FALSE);
               return FALSE;
@@ -867,15 +867,15 @@ static BOOL TR_InitSMTPAUTH(void)
             }
 
             // we don't need the qop string anymore
-            free(qop);
+            _free(qop);
 
             // check if we found a plain auth
             if(!pstart)
             {
               E(DBF_NET, "no 'auth' in 'qop' token found!");
 
-              free(realm);
-              free(nonce);
+              _free(realm);
+              _free(nonce);
 
               RETURN(FALSE);
               return FALSE;
@@ -1003,8 +1003,8 @@ static BOOL TR_InitSMTPAUTH(void)
           E(DBF_NET, "couldn't write empty line...");
 
         // free all our dynamic buffers
-        free(realm);
-        free(nonce);
+        _free(realm);
+        _free(nonce);
       }
     }
     break;
@@ -2494,13 +2494,13 @@ static int TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags)
   ENTER();
 
   // if we don't have a buffer yet, lets allocate one
-  if(read_buf != NULL || (read_buf = read_ptr = calloc(1, C->TRBufferSize*sizeof(char))) != NULL)
+  if(read_buf != NULL || (read_buf = read_ptr = _calloc(1, C->TRBufferSize*sizeof(char))) != NULL)
   {
     // if we called that function with the FREEBUFFER flag we free the buffer only
     // and return with 0
     if(hasTCP_FREEBUFFER(flags))
     {
-      free(read_buf);
+      _free(read_buf);
       read_cnt = 0;
       read_buf = NULL;
       read_ptr = NULL;
@@ -2865,13 +2865,13 @@ static int TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags)
 
   ENTER();
 
-  if(write_buf != NULL || (write_buf = write_ptr = calloc(1, C->TRBufferSize*sizeof(char))) != NULL)
+  if(write_buf != NULL || (write_buf = write_ptr = _calloc(1, C->TRBufferSize*sizeof(char))) != NULL)
   {
     // if we called that function with the FREEBUFFER flag we free the buffer only
     // and return with 0
     if(hasTCP_FREEBUFFER(flags))
     {
-      free(write_buf);
+      _free(write_buf);
       write_cnt = 0;
       write_buf = NULL;
       write_ptr = NULL;
@@ -3575,7 +3575,7 @@ static BOOL TR_GetMessageList_GET(void)
         // read the index and size of the first message
         sscanf(buf, "%d %d", &index, &size);
 
-        if(index > 0 && (newMail = calloc(1, sizeof(struct Mail))) != NULL)
+        if(index > 0 && (newMail = _calloc(1, sizeof(struct Mail))) != NULL)
         {
           int mode;
           struct MailTransferNode *mtn;
@@ -3609,7 +3609,7 @@ static BOOL TR_GetMessageList_GET(void)
 
           // allocate a new MailTransferNode and add it to our
           // new transferlist
-          if((mtn = calloc(1, sizeof(struct MailTransferNode))) != NULL)
+          if((mtn = _calloc(1, sizeof(struct MailTransferNode))) != NULL)
           {
             mtn->mail = newMail;
             mtn->tflags = mode2tflags[mode];
@@ -3739,7 +3739,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
             char uidl[SIZE_DEFAULT+SIZE_HOST];
 
             snprintf(uidl, sizeof(uidl), "%s@%s", email->messageID, C->P3[G->TR->POP_Nr]->Server);
-            mtn->UIDL = strdup(uidl);
+            mtn->UIDL = _strdup(uidl);
           }
           else if(lline == -2)
             TR_ApplyRemoteFilters(mtn);
@@ -4707,14 +4707,14 @@ void TR_Cleanup(void)
 
       // free the mail pointer
       if(mtn->mail != NULL)
-        free(mtn->mail);
+        _free(mtn->mail);
 
       // free the UIDL
       if(mtn->UIDL != NULL)
-        free(mtn->UIDL);
+        _free(mtn->UIDL);
 
       // free the node itself
-      free(mtn);
+      _free(mtn);
     }
   }
 
@@ -4970,7 +4970,7 @@ static BOOL FilterDuplicates(void)
 
               if(mtn->index == num)
               {
-                mtn->UIDL = strdup(uidl);
+                mtn->UIDL = _strdup(uidl);
 
                 if(G->TR->UIDLhashTable->entryCount > 0 && mtn->UIDL != NULL)
                 {
@@ -5069,7 +5069,7 @@ static void AddUIDLtoHash(const char *uidl, BOOL checked)
   {
     if(token->uidl == NULL)
     {
-      token->uidl = strdup(uidl);
+      token->uidl = _strdup(uidl);
       token->checked = checked;
 
       D(DBF_UIDL, "added UIDL '%s' (%08lx) to hash", uidl, token);
@@ -5128,9 +5128,9 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
     {
       struct MailTransferNode *mtn;
 
-      if((mtn = calloc(1, sizeof(struct MailTransferNode))) != NULL)
+      if((mtn = _calloc(1, sizeof(struct MailTransferNode))) != NULL)
       {
-        if((mtn->mail = memdup(mail, sizeof(struct Mail))) != NULL)
+        if((mtn->mail = _memdup(mail, sizeof(struct Mail))) != NULL)
         {
           mtn->index = i + 1;
 
@@ -5143,7 +5143,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
         {
           // we end up in a low memory condition, lets exit
           // after having freed everything
-          free(mtn);
+          _free(mtn);
           abort = TRUE;
           break;
         }
@@ -5565,11 +5565,11 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
             {
               struct MailTransferNode *mtn;
 
-              if((mtn = calloc(1, sizeof(struct MailTransferNode))) != NULL)
+              if((mtn = _calloc(1, sizeof(struct MailTransferNode))) != NULL)
               {
                 struct Mail *newMail;
 
-                if((newMail = memdup(mail, sizeof(struct Mail))) != NULL)
+                if((newMail = _memdup(mail, sizeof(struct Mail))) != NULL)
                 {
                   newMail->Reference = mail;
 
@@ -5581,7 +5581,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
                   AddTail((struct List *)&G->TR->transferList, (struct Node *)mtn);
                 }
                 else
-                  free(mtn);
+                  _free(mtn);
               }
             }
           }
@@ -5873,11 +5873,11 @@ static struct MailTransferNode *TR_AddMessageHeader(int *count, int size, long a
   {
     struct MailTransferNode *mtn;
 
-    if((mtn = calloc(1, sizeof(struct MailTransferNode))) != NULL)
+    if((mtn = _calloc(1, sizeof(struct MailTransferNode))) != NULL)
     {
       struct Mail *mail;
 
-      if((mail = memdup(&email->Mail, sizeof(struct Mail))) != NULL)
+      if((mail = _memdup(&email->Mail, sizeof(struct Mail))) != NULL)
       {
         mail->Folder  = NULL;
         mail->Size    = size;
@@ -5896,7 +5896,7 @@ static struct MailTransferNode *TR_AddMessageHeader(int *count, int size, long a
       }
       else
       {
-        free(mtn);
+        _free(mtn);
         E(DBF_IMPORT, "Couldn't allocate enough memory for struct Mail");
       }
     }
@@ -6015,7 +6015,7 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
   if(size < 12)
     size = 12;
 
-  if(!(buf = malloc(size)))
+  if(!(buf = _malloc(size)))
   {
     E(DBF_IMPORT, "Couldn't allocate %ld bytes", size);
     RETURN(FALSE);
@@ -6060,7 +6060,7 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
 
     D(DBF_IMPORT, "read in %ld bytes of object at 0x%08lx, but index length is %ld", size, addr, length_of_idxs);
 
-    if(!(newbuf = malloc(length_of_idxs + 12)))
+    if(!(newbuf = _malloc(length_of_idxs + 12)))
     {
       E(DBF_IMPORT, "Couldn't allocate %ld bytes", length_of_idxs+12);
       goto out;
@@ -6071,11 +6071,11 @@ static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, u
     {
       E(DBF_IMPORT, "Couldn't load more bytes");
 
-      free(newbuf);
+      _free(newbuf);
       goto out;
     }
 
-    free(buf);
+    _free(buf);
     buf = newbuf;
   }
 
@@ -6165,7 +6165,7 @@ out:
   if(mailout != NULL)
     fclose(mailout);
 
-  free(buf);
+  _free(buf);
 
   if(rc)
   {
@@ -6209,7 +6209,7 @@ static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mai
   ENTER();
 
   // alloc enough memory to facilitate the the whole tree
-  if(!(buf = malloc((0x18+0x264))))
+  if(!(buf = _malloc((0x18+0x264))))
   {
     E(DBF_IMPORT, "Couldn't allocate enough memory for node");
     RETURN(FALSE);
@@ -6219,7 +6219,7 @@ static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mai
   // seek to the start of the tree node
   if(fseek(fh, addr, SEEK_SET))
   {
-    free(buf);
+    _free(buf);
 
     E(DBF_IMPORT, "Unable to seek at %08lx", addr);
     RETURN(FALSE);
@@ -6229,7 +6229,7 @@ static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mai
   // read in the whole tree with one read operation
   if(fread(buf, 1, (0x18+0x264), fh) != (0x18+0x264))
   {
-    free(buf);
+    _free(buf);
 
     E(DBF_IMPORT, "Unable to read %ld bytes", 0x18+0x264);
     RETURN(FALSE);
@@ -6252,7 +6252,7 @@ static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mai
     {
       if(ReadDBXMessageInfo(fh, outFileName, value, novals, mail_accu, preview) == FALSE)
       {
-        free(buf);
+        _free(buf);
 
         E(DBF_IMPORT, "Failed to read the indexed info");
         RETURN(FALSE);
@@ -6264,7 +6264,7 @@ static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mai
     {
       if(ReadDBXNode(fh, outFileName, chld, mail_accu, preview) == FALSE)
       {
-        free(buf);
+        _free(buf);
 
         E(DBF_IMPORT, "Failed to read node at %p", chld);
         RETURN(FALSE);
@@ -6275,7 +6275,7 @@ static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mai
     body += 12;
   }
 
-  free(buf);
+  _free(buf);
 
   if(child)
     return ReadDBXNode(fh, outFileName, child, mail_accu, preview);
@@ -6452,7 +6452,7 @@ BOOL TR_GetMessageList_IMPORT(void)
 
           // read the 9404 bytes long file header for properly identifying
           // an Outlook Express database file.
-          if((file_header = (unsigned char *)malloc(0x24bc)) != NULL)
+          if((file_header = (unsigned char *)_malloc(0x24bc)) != NULL)
           {
             if(fread(file_header, 1, 0x24bc, ifh) == 0x24bc)
             {
@@ -6476,7 +6476,7 @@ BOOL TR_GetMessageList_IMPORT(void)
               }
             }
 
-            free(file_header);
+            _free(file_header);
           }
 
           fclose(ifh);
@@ -7257,7 +7257,7 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
 
   ENTER();
 
-  if((data = calloc(1, sizeof(struct TR_ClassData))) != NULL)
+  if((data = _calloc(1, sizeof(struct TR_ClassData))) != NULL)
   {
     Object *bt_all = NULL, *bt_none = NULL, *bt_loadonly = NULL, *bt_loaddel = NULL, *bt_delonly = NULL, *bt_leave = NULL;
     Object *gr_sel, *gr_proc, *gr_win;
@@ -7418,7 +7418,7 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
     }
     else
     {
-      free(data);
+      _free(data);
       data = NULL;
     }
   }

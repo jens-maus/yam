@@ -103,7 +103,7 @@ void NewFreeArgs(struct NewRDArgs *rdargs)
   if(rdargs->RDArgs)
   {
     if(rdargs->RDArgs->RDA_Source.CS_Buffer != NULL)
-      free((void*)rdargs->RDArgs->RDA_Source.CS_Buffer);
+      _free((void*)rdargs->RDArgs->RDA_Source.CS_Buffer);
 
     D(DBF_STARTUP, "FreeDosObject(DOS_RDARGS, rdargs->RDArgs)");
     FreeDosObject(DOS_RDARGS, rdargs->RDArgs);
@@ -424,7 +424,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       if(num)
       {
         nrdargs->RDArgs->RDA_Source.CS_Length = (num+=MaxArgs);
-        nrdargs->RDArgs->RDA_Source.CS_Buffer = malloc(num+1);
+        nrdargs->RDArgs->RDA_Source.CS_Buffer = _malloc(num+1);
         ptr = (char *)nrdargs->RDArgs->RDA_Source.CS_Buffer;
 
         if(ptr)
@@ -453,7 +453,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       else
       {
         nrdargs->RDArgs->RDA_Source.CS_Length = 1;
-        nrdargs->RDArgs->RDA_Source.CS_Buffer = malloc(1);
+        nrdargs->RDArgs->RDA_Source.CS_Buffer = _malloc(1);
         ptr = (char *)nrdargs->RDArgs->RDA_Source.CS_Buffer;
 
         if(ptr)

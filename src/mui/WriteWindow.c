@@ -272,7 +272,7 @@ static BOOL SetDefaultSecurity(struct Compose *comp)
       continue;
 
     // copy string as strtok() will modify it
-    if((buf = strdup(CheckThese[i])))
+    if((buf = _strdup(CheckThese[i])))
     {
       struct ABEntry *ab=NULL;
       enum Security currsec;
@@ -382,7 +382,7 @@ static BOOL SetDefaultSecurity(struct Compose *comp)
         }
       }
 
-      free(buf);
+      _free(buf);
     }
   }
 
@@ -495,7 +495,7 @@ static char *TransformText(const char *source, const enum TransformMode mode, co
     if(mode == ED_INSUUCODE)
       size += strlen(FilePart(qtext))+12+7; // for the "begin 644 XXX" and "end passage
 
-    if((dest = calloc(size, 1)))
+    if((dest = _calloc(size, 1)))
     {
       FILE *fp;
 
@@ -521,7 +521,7 @@ static char *TransformText(const char *source, const enum TransformMode mode, co
             if(p+qtextlen > size-2)
             {
               size += SIZE_LARGE;
-              dest = realloc(dest, size);
+              dest = _realloc(dest, size);
               if(dest == NULL)
                 break;
             }
@@ -549,7 +549,7 @@ static char *TransformText(const char *source, const enum TransformMode mode, co
           if(p > size-3)
           {
             size += SIZE_LARGE;
-            dest = realloc(dest, size);
+            dest = _realloc(dest, size);
             if(dest == NULL)
               break;
           }
@@ -785,7 +785,7 @@ HOOKPROTONHNO(ConstructFunc, struct Attach *, struct Attach *attach)
 
   ENTER();
 
-  entry = memdup(attach, sizeof(*attach));
+  entry = _memdup(attach, sizeof(*attach));
 
   RETURN(entry);
   return entry;
@@ -800,7 +800,7 @@ HOOKPROTONHNO(DestructFunc, LONG, struct Attach *attach)
   ENTER();
 
   FinishUnpack(attach->FilePath);
-  free(attach);
+  _free(attach);
 
   RETURN(0);
   return 0;
@@ -894,7 +894,7 @@ OVERLOAD(OM_NEW)
 
   // generate a temporarly struct Data to which we store our data and
   // copy it later on
-  if((data = tmpData = calloc(1, sizeof(struct Data))) == NULL)
+  if((data = tmpData = _calloc(1, sizeof(struct Data))) == NULL)
   {
     RETURN(0);
     return 0;
@@ -966,7 +966,7 @@ OVERLOAD(OM_NEW)
   while(TRUE);
 
   // allocate the new writeMailData structure
-  if((data->wmData = calloc(1, sizeof(struct WriteMailData))) != NULL)
+  if((data->wmData = _calloc(1, sizeof(struct WriteMailData))) != NULL)
   {
     Object *menuStripObject = NULL;
     Object *charsetPopButton;
@@ -1676,7 +1676,7 @@ OVERLOAD(OM_NEW)
   }
 
   // free the temporary mem we allocated before
-  free(tmpData);
+  _free(tmpData);
 
   RETURN((ULONG)obj);
   return (ULONG)obj;
@@ -2170,7 +2170,7 @@ DECLARE(AddClipboard)
       tf->FP = NULL;
 
       DoMethod(obj, MUIM_WriteWindow_AddAttachment, tf->Filename, "clipboard.text", TRUE);
-      free(tf);
+      _free(tf);
 
       // don't delete this file by CloseTempFile()
       dumped = TRUE;
@@ -2687,7 +2687,7 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm
             if(msg->ssm == SSM_NORMAL ||
                (txt[nx1] != marker[0] || txt[nx2-1] != marker[0]))
             {
-              if((ntxt = calloc(1, nx2-nx1+2+1)))
+              if((ntxt = _calloc(1, nx2-nx1+2+1)))
               {
                 ntxt[0] = marker[0];
 
@@ -2716,7 +2716,7 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm
             if(msg->ssm != SSM_NORMAL &&
                (txt[nx1] == marker[0] && txt[nx2-1] == marker[0]))
             {
-              if((ntxt = calloc(1, nx2-2-nx1+1+1)))
+              if((ntxt = _calloc(1, nx2-2-nx1+1+1)))
                 strlcpy(ntxt, &txt[nx1+1], nx2-2-nx1+1);
 
               addedChars -= 2;
@@ -2790,7 +2790,7 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm
               }
             }
 
-            free(ntxt);
+            _free(ntxt);
           }
 
           lastChar = nx2+addedChars;
@@ -3274,7 +3274,7 @@ DECLARE(EditorCmd) // enum TransformMode cmd
     DoMethod(data->TE_EDIT, MUIM_TextEditor_InsertText, text);
 
     // free our allocated text
-    free(text);
+    _free(text);
   }
 
   RETURN(0);
@@ -4011,7 +4011,7 @@ DECLARE(DroppedFile) // STRPTR fileName
     if((text = TransformText(msg->fileName, ED_INSERT, "")) != NULL)
     {
       DoMethod(data->TE_EDIT, MUIM_TextEditor_InsertText, text);
-      free(text);
+      _free(text);
     }
     else
       DoMethod(obj, MUIM_WriteWindow_AddAttachment, msg->fileName, NULL, FALSE);

@@ -602,7 +602,7 @@ static void HandleThreadMessage(struct ThreadMessage *tmsg)
       D(DBF_THREAD, "Freeing Message at 0x%lx", tmsg);
 
       if(tmsg->argcount >= 1 && tmsg->arg[0] != NULL && tmsg->async == 2)
-        free(tmsg->arg[0]);
+        _free(tmsg->arg[0]);
 
       FreeVecPooled(G->SharedMemPool, tmsg);
     }
@@ -740,7 +740,7 @@ int CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
 
     if(tmsg->arg[0] != NULL && argcount >= 1)
     {
-      if((tmsg->arg[0] = strdup((char *)tmsg->arg[0])) == NULL)
+      if((tmsg->arg[0] = _strdup((char *)tmsg->arg[0])) == NULL)
       {
         RETURN(0);
         return 0;
@@ -1189,7 +1189,7 @@ struct semaphore_s
 
 semaphore_t thread_create_semaphore(void)
 {
-  semaphore_t sem = malloc(sizeof(struct semaphore_s));
+  semaphore_t sem = _malloc(sizeof(struct semaphore_s));
   if(sem)
   {
     InitSemaphore(&sem->sem);
@@ -1199,7 +1199,7 @@ semaphore_t thread_create_semaphore(void)
 
 void thread_dispose_semaphore(semaphore_t sem)
 {
-  free(sem);
+  _free(sem);
 }
 
 void thread_lock_semaphore(semaphore_t sem)
