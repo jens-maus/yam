@@ -406,7 +406,7 @@ static char *rfc2047_encode_str(const char *str, const char *charset,
 
   // let us first count how much chars we are going to produce
   rfc2047_encode_callback(str, charset, qp_allow, &rfc2047_count_char, &i);
-  if((s = _malloc(i)) != NULL)
+  if((s = malloc(i)) != NULL)
   {
     char *p = s;
   
@@ -511,7 +511,7 @@ int rfc2047_encode_file(FILE *fh, const char *src, const size_t offset)
       fwrite(dst, len, 1, fh);
 
     // free the dst string
-    _free(dst);
+    free(dst);
   }
 
   RETURN(0);
@@ -675,7 +675,7 @@ INLINE char *rfc2047_search_quote(const char **ptr)
     ++(*ptr);
 
   l = *ptr - p;
-  if((s = _malloc(l + 1)) != NULL)
+  if((s = malloc(l + 1)) != NULL)
   {
     memcpy(s, p, l);
     s[l] = 0;
@@ -743,15 +743,15 @@ static int rfc2047_decode_int(const char *text,
     if(*text) ++text;
     if((encoding = rfc2047_search_quote(&text)) == 0)
     {
-      _free(chset);
+      free(chset);
       return -1;
     }
 
     if(*text) ++text;
     if((enctext = rfc2047_search_quote(&text)) == 0)
     {
-      _free(encoding);
-      _free(chset);
+      free(encoding);
+      free(chset);
 
       return -1;
     }
@@ -854,9 +854,9 @@ static int rfc2047_decode_int(const char *text,
     }
 
     // free everything and check if a returncode was given.
-    _free(enctext);
-    _free(chset);
-    _free(encoding);
+    free(enctext);
+    free(chset);
+    free(encoding);
     if(rc) return rc;
 
     // Ignore blanks between enc words

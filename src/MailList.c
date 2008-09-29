@@ -386,7 +386,7 @@ struct Mail **MailListToMailArray(struct MailList *mlist)
     LockMailListShared(mlist);
 
     // we allocate at least the terminating NULL entry
-    if((marray = (struct Mail **)_calloc(mlist->count + 1, sizeof(struct Mail *))) != NULL)
+    if((marray = (struct Mail **)calloc(mlist->count + 1, sizeof(struct Mail *))) != NULL)
     {
       if(IsMailListEmpty(mlist) == FALSE)
       {

@@ -177,7 +177,7 @@ HOOKPROTONHNONP(RemoveLastRule, void)
       // now we do free our search structure if it exists
       FreeRuleSearchData(rule);
 
-      _free(rule);
+      free(rule);
 
       // Remove the GUI elements as well
       if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
@@ -473,7 +473,7 @@ struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
 
   ENTER();
 
-  if((pop3 = (struct POP3 *)_calloc(1, sizeof(struct POP3))) != NULL)
+  if((pop3 = (struct POP3 *)calloc(1, sizeof(struct POP3))) != NULL)
   {
     if(first)
     {
@@ -704,7 +704,7 @@ void CO_ClearConfig(struct Config *co)
   for(i = 0; i < MAXP3; i++)
   {
     if(co->P3[i] != NULL)
-      _free(co->P3[i]);
+      free(co->P3[i]);
   }
 
   // we have to free the mimeTypeList
@@ -751,7 +751,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     {
       if(co->P3[i] != NULL)
       {
-        _free(co->P3[i]);
+        free(co->P3[i]);
         co->P3[i] = NULL;
       }
     }
@@ -1073,7 +1073,7 @@ static void CopyConfigData(struct Config *dco, const struct Config *sco)
 
   // then we have to do a deep copy any allocate separate memory for our copy
   for(i = 0; i < MAXP3; i++)
-    dco->P3[i] = _memdup(sco->P3[i], sizeof(struct POP3));
+    dco->P3[i] = memdup(sco->P3[i], sizeof(struct POP3));
 
   // for copying the mimetype list we have to do a deep copy of the list
   NewList((struct List *)&dco->mimeTypeList);
@@ -1083,7 +1083,7 @@ static void CopyConfigData(struct Config *dco, const struct Config *sco)
     struct MimeTypeNode *srcNode = (struct MimeTypeNode *)curNode;
     struct MimeTypeNode *dstNode;
 
-    if((dstNode = _memdup(srcNode, sizeof(struct MimeTypeNode))) != NULL)
+    if((dstNode = memdup(srcNode, sizeof(struct MimeTypeNode))) != NULL)
       AddTail((struct List *)&dco->mimeTypeList, (struct Node *)dstNode);
   }
 
@@ -1095,7 +1095,7 @@ static void CopyConfigData(struct Config *dco, const struct Config *sco)
     struct FilterNode *srcFilter = (struct FilterNode *)curNode;
     struct FilterNode *dstFilter;
 
-    if((dstFilter = _malloc(sizeof(struct FilterNode))) != NULL)
+    if((dstFilter = malloc(sizeof(struct FilterNode))) != NULL)
     {
       CopyFilterData(dstFilter, srcFilter);
 
@@ -2176,7 +2176,7 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
 
   // then we free our temporary config structure
   CO_ClearConfig(CE);
-  _free(CE);
+  free(CE);
   CE = NULL;
 
   // Dipose&Close the config window stuff
@@ -2199,7 +2199,7 @@ HOOKPROTONHNONP(CO_OpenFunc, void)
   {
     if((G->CO = CO_New()) != NULL)
     {
-      if((CE = _malloc(sizeof(struct Config))) != NULL)
+      if((CE = malloc(sizeof(struct Config))) != NULL)
       {
         CopyConfigData(CE, C);
         CO_SetConfig();
@@ -2238,7 +2238,7 @@ static struct CO_ClassData *CO_New(void)
 
   ENTER();
 
-  if((data = _calloc(1, sizeof(struct CO_ClassData))) != NULL)
+  if((data = calloc(1, sizeof(struct CO_ClassData))) != NULL)
   {
     static struct PageList page[cp_Max], *pages[cp_Max + 1];
     int i;
@@ -2358,7 +2358,7 @@ static struct CO_ClassData *CO_New(void)
     }
     else
     {
-      _free(data);
+      free(data);
       data = NULL;
     }
   }

@@ -78,7 +78,7 @@ void rx_request(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
       optional->result = MUI_Request(G->App, NULL, 0, NULL, args->gadgets, reqtext);
       results->result = &optional->result;
 
-      _free(reqtext);
+      free(reqtext);
     }
     break;
 

@@ -334,7 +334,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         // duplicate the given name if requested
         if(copy != FALSE && name != NULL)
         {
-          name = _strdup(name);
+          name = strdup(name);
           sobject->name = name;
         }
 
@@ -446,7 +446,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         // duplicate the given name if requested
         if(copy != FALSE && name != NULL)
         {
-          name = _strdup(name);
+          name = strdup(name);
           sobject->name = name;
         }
 
@@ -568,7 +568,7 @@ void FreeSysObject(ULONG type, APTR object)
 
         // free the name memory, if it was duplicated
         if(sobject->copy != FALSE && sobject->name != NULL)
-          _free(sobject->name);
+          free(sobject->name);
 
         // free the signal
         if(sobject->signal != -1)
@@ -604,7 +604,7 @@ void FreeSysObject(ULONG type, APTR object)
 
         // free the name memory, if it was duplicated
         if(sobject->copy != FALSE && sobject->name != NULL)
-          _free(sobject->name);
+          free(sobject->name);
 
         FreeVec(sobject);
       }

@@ -197,7 +197,7 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
 
       // create a new node in the cache
       node->delayedDispose = FALSE;
-      if((node->id = _strdup(id)) != NULL)
+      if((node->id = strdup(id)) != NULL)
       {
         if(filename == NULL || filename[0] == '\0')
         {
@@ -205,7 +205,7 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
           D(DBF_IMAGE, "no file given for image '%s'", id);
           success = TRUE;
         }
-        else if((node->filename = _strdup(filename)) != NULL)
+        else if((node->filename = strdup(filename)) != NULL)
         {
           // load the datatypes image now
           if((success = LoadImage(node)) == FALSE && FileExists(filename) == TRUE)
@@ -231,7 +231,7 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
         }
         if(node->filename != NULL)
         {
-          _free(node->filename);
+          free(node->filename);
           node->filename = NULL;
         }
         // node->id will be freed by HashTableRawRemove()
@@ -274,11 +274,11 @@ static enum HashTableOperator DeleteImageCacheNode(UNUSED struct HashTable *tabl
     node->dt_obj = NULL;
   }
 
-  // node->id will be _free()'ed by the hash table functions! We MUST NOT free it here,
+  // node->id will be free()'ed by the hash table functions! We MUST NOT free it here,
   // because this item may be addressed further on while iterating through the list.
   if(node->filename != NULL)
   {
-    _free(node->filename);
+    free(node->filename);
     node->filename = NULL;
   }
 
@@ -355,7 +355,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
       {
         char *path;
 
-        if((path = _strdup(filename)) != NULL)
+        if((path = strdup(filename)) != NULL)
         {
           char *p;
 
@@ -364,7 +364,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
 
           ER_NewError(tr(MSG_ER_IMAGEOBJECT_WARNING), FilePart(filename), path);
 
-          _free(path);
+          free(path);
         }
       }
     }
@@ -549,7 +549,7 @@ void ReleaseImage(const char *id, BOOL dispose)
 
         if(node->filename != NULL)
         {
-          _free(node->filename);
+          free(node->filename);
           node->filename = NULL;
         }
 

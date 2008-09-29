@@ -103,7 +103,7 @@ struct MimeTypeNode *CreateNewMimeType(void)
 
   ENTER();
 
-  if((mt = _calloc(1, sizeof(struct MimeTypeNode))))
+  if((mt = calloc(1, sizeof(struct MimeTypeNode))))
     strlcpy(mt->ContentType, "?/?", sizeof(mt->ContentType));
 
   RETURN(mt);
@@ -125,7 +125,7 @@ void FreeMimeTypeList(struct MinList *mimeTypeList)
     {
       struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
 
-      _free(mt);
+      free(mt);
     }
 
     NewList((struct List *)mimeTypeList);

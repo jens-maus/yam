@@ -527,17 +527,17 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
 
       if(old == TRUE)
       {
-        if((addr->Members = _realloc(addr->Members, strlen(members) + 1)) != NULL)
+        if((addr->Members = realloc(addr->Members, strlen(members) + 1)) != NULL)
           memcpy(addr->Members, members, strlen(members) + 1);
       }
       else
-        addr->Members = _strdup(members);
+        addr->Members = strdup(members);
 
       EA_FixAlias(addr, old);
       if(old == FALSE)
       {
         EA_InsertBelowActive(addr, 0);
-        _free(addr->Members);
+        free(addr->Members);
       }
       FreeStrBuf(members);
     }
@@ -747,7 +747,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
 
   ENTER();
 
-  if((data = _calloc(1, sizeof(struct EA_ClassData))) != NULL)
+  if((data = calloc(1, sizeof(struct EA_ClassData))) != NULL)
   {
     Object *group = NULL;
     Object *bt_homepage;
@@ -968,7 +968,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
     }
     else
     {
-      _free(data);
+      free(data);
       data = NULL;
     }
   }

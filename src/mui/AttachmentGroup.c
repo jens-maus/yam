@@ -569,7 +569,7 @@ DECLARE(DeleteSelected)
     }
 
     // now build a list of selected attachments
-    if(numSelected > 0 && (parts = _calloc(numSelected + 1, sizeof(*parts))) != NULL)
+    if(numSelected > 0 && (parts = calloc(numSelected + 1, sizeof(*parts))) != NULL)
     {
       ULONG i = 0;
 
@@ -583,7 +583,7 @@ DECLARE(DeleteSelected)
       // and finally remove the attachments
       MA_RemoveAttach(data->firstPart->rmData->mail, parts, TRUE);
 
-      _free(parts);
+      free(parts);
     }
   }
 

@@ -71,12 +71,12 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
   // local copies of those string to not risk and .rodata
   // access.
   if(tit != NULL)
-    title = _strdup(tit);
+    title = strdup(tit);
   else
-    title = _strdup(tr(MSG_MA_ConfirmReq));
+    title = strdup(tr(MSG_MA_ConfirmReq));
 
   if(gad != NULL)
-    gadgets = _strdup(gad);
+    gadgets = strdup(gad);
 
   // lets create the requester text
   va_start(args, format);
@@ -147,10 +147,10 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
   }
 
   if(title != NULL)
-    _free(title);
+    free(title);
 
   if(gadgets != NULL)
-    _free(gadgets);
+    free(gadgets);
 
   RETURN(result);
   return result;
@@ -421,7 +421,7 @@ LONG CheckboxRequest(Object *parent, const char *tit, ULONG numBoxes, const char
   numBoxes = MIN(31, numBoxes);
 
   // allocate memory for the entries plus one entry for the terminating NULL pointer
-  if((entries = _calloc(numBoxes + 1, sizeof(char *))) != NULL)
+  if((entries = calloc(numBoxes + 1, sizeof(char *))) != NULL)
   {
     ULONG i;
     char **ptr = entries;
@@ -473,7 +473,7 @@ LONG CheckboxRequest(Object *parent, const char *tit, ULONG numBoxes, const char
       set(G->App, MUIA_Application_Sleep, FALSE);
     }
 
-    _free(entries);
+    free(entries);
   }
 
   va_end(args);

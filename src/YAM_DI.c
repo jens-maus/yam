@@ -279,7 +279,7 @@ MakeHook(DI_OpenHook, DI_OpenFunc);
 //  Glossary listview construction hook
 HOOKPROTONHNO(DI_LV_ConFunc, struct Dict *, struct Dict *dict)
 {
-   return _memdup(dict, sizeof(*dict));
+   return memdup(dict, sizeof(*dict));
 }
 MakeStaticHook(DI_LV_ConFuncHook, DI_LV_ConFunc);
 
@@ -289,7 +289,7 @@ MakeStaticHook(DI_LV_ConFuncHook, DI_LV_ConFunc);
 HOOKPROTONHNO(DI_LV_DesFunc, long, struct Dict *entry)
 {
    FreeStrBuf(entry->Text);
-   _free(entry);
+   free(entry);
    return 0;
 }
 MakeStaticHook(DI_LV_DesFuncHook, DI_LV_DesFunc);
@@ -299,7 +299,7 @@ MakeStaticHook(DI_LV_DesFuncHook, DI_LV_DesFunc);
 //  Creates glossary window
 static struct DI_ClassData *DI_New(void)
 {
-   struct DI_ClassData *data = _calloc(1, sizeof(struct DI_ClassData));
+   struct DI_ClassData *data = calloc(1, sizeof(struct DI_ClassData));
    if (data)
    {
       data->GUI.SL_EDIT = ScrollbarObject, End;
@@ -370,7 +370,7 @@ static struct DI_ClassData *DI_New(void)
          DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook,&DI_CloseHook,0);
          return data;
       }
-      _free(data);
+      free(data);
    }
    return NULL;
 }

@@ -44,6 +44,7 @@
 
 #include "SDI_compiler.h"
 
+#define DEBUG_USE_MALLOC_REDEFINE 1
 #include "Debug.h"
 
 #if defined(__MORPHOS__)
@@ -651,52 +652,32 @@ static struct MinList DbgMallocList;
 static struct SignalSemaphore DbgMallocListSema;
 static ULONG DbgMallocCount;
 
-#define ForEachNode    for(dmn = (struct DbgMallocNode *)DbgMallocList.mlh_Head; (next = (struct DbgMallocNode *)dmn->node.mln_Succ) != NULL; dmn = next)
+#define ForEachNode    for(dmn = (struct DbgMallocNode *)DbgMallocList.mlh_Head; dmn->node.mln_Succ != NULL; dmn = (struct DbgMallocNode *)dmn->node.mln_Succ)
 
-void *__malloc(const char *file, const int line, size_t size)
+static struct DbgMallocNode *addDbgMallocNode(const char *file, const int line, void *ptr, size_t size)
 {
-  void *result = NULL;
+  struct DbgMallocNode *dmn;
 
   ENTER();
 
-  result = malloc(size);
-
-  if(isFlagSet(debug_flags, DBF_MEMORY) && result != NULL)
+  if((dmn = malloc(sizeof(*dmn))) != NULL)
   {
-    struct DbgMallocNode *dmn;
-
-    if((dmn = malloc(sizeof(*dmn))) != NULL)
+    if((dmn->file = strdup(file)) != NULL)
     {
-      if((dmn->file = strdup(file)) != NULL)
-      {
-        dmn->memory = result;
-        dmn->size = size;
-        dmn->line = line;
+      dmn->memory = ptr;
+      dmn->size = size;
+      dmn->line = line;
 
-        ObtainSemaphore(&DbgMallocListSema);
-        AddTail((struct List *)&DbgMallocList, (struct Node *)&dmn->node);
-        ReleaseSemaphore(&DbgMallocListSema);
+      ObtainSemaphore(&DbgMallocListSema);
+      AddTail((struct List *)&DbgMallocList, (struct Node *)&dmn->node);
+      ReleaseSemaphore(&DbgMallocListSema);
 
-        DbgMallocCount++;
-      }
+      DbgMallocCount++;
     }
   }
 
-  RETURN(result);
-  return result;
-}
-
-void *__calloc(const char *file, const int line, size_t n, size_t size)
-{
-  void *result;
-
-  ENTER();
-
-  if((result = __malloc(file, line, n*size)) != NULL)
-    memset(result, 0, n*size);
-
-  RETURN(result);
-  return result;
+  RETURN(dmn);
+  return dmn;
 }
 
 static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
@@ -708,7 +689,6 @@ static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
   if(IsListEmpty((struct List *)&DbgMallocList) == FALSE)
   {
     struct DbgMallocNode *dmn;
-    struct DbgMallocNode *next;
 
     ForEachNode
     {
@@ -724,7 +704,41 @@ static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
   return result;
 }
 
-void *__realloc(UNUSED const char *file, UNUSED const int line, void *ptr, size_t size)
+void *dbg_malloc(const char *file, const int line, size_t size)
+{
+  void *result = NULL;
+
+  ENTER();
+
+  result = malloc(size);
+
+  if(isFlagSet(debug_flags, DBF_MEMORY) && result != NULL)
+  {
+    addDbgMallocNode(file, line, result, size);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+void *dbg_calloc(const char *file, const int line, size_t n, size_t size)
+{
+  void *result;
+
+  ENTER();
+
+  result = calloc(n, size);
+
+  if(isFlagSet(debug_flags, DBF_MEMORY) && result != NULL)
+  {
+    addDbgMallocNode(file, line, result, size);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+void *dbg_realloc(UNUSED const char *file, UNUSED const int line, void *ptr, size_t size)
 {
   void *result = NULL;
 
@@ -734,11 +748,11 @@ void *__realloc(UNUSED const char *file, UNUSED const int line, void *ptr, size_
   {
     if(ptr == NULL)
     {
-      result = __malloc(file, line, size);
+      result = dbg_malloc(file, line, size);
     }
     else if(size == 0)
     {
-      __free(file, line, ptr);
+      dbg_free(file, line, ptr);
     }
     else
     {
@@ -771,7 +785,7 @@ void *__realloc(UNUSED const char *file, UNUSED const int line, void *ptr, size_
   return result;
 }
 
-void __free(const char *file, const int line, void *ptr)
+void dbg_free(const char *file, const int line, void *ptr)
 {
   ENTER();
 
@@ -805,26 +819,26 @@ void __free(const char *file, const int line, void *ptr)
   LEAVE();
 }
 
-char *__strdup(const char *file, const int line, const char *s)
+char *dbg_strdup(const char *file, const int line, const char *s)
 {
   char *result;
 
   ENTER();
 
-  if((result = __malloc(file, line, strlen(s)+1)) != NULL)
+  if((result = dbg_malloc(file, line, strlen(s)+1)) != NULL)
     strcpy(result, s);
 
   RETURN(result);
   return result;
 }
 
-void *__memdup(const char *file, const int line, const void *ptr, const size_t size)
+void *dbg_memdup(const char *file, const int line, const void *ptr, const size_t size)
 {
   void *result;
 
   ENTER();
 
-  if((result = __malloc(file, line, size)) != NULL)
+  if((result = dbg_malloc(file, line, size)) != NULL)
     memcpy(result, ptr, size);
 
   RETURN(result);
@@ -890,7 +904,6 @@ void DumpDbgMalloc(void)
     if(IsListEmpty((struct List *)&DbgMallocList) == FALSE)
     {
       struct DbgMallocNode *dmn;
-      struct DbgMallocNode *next;
 
       D(DBF_MEMORY, "%ld allocations tracked", DbgMallocCount);
       ForEachNode

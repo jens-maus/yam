@@ -470,7 +470,7 @@ OVERLOAD(OM_NEW)
   }
 
   // allocate the readMailData structure
-  if((rmData = _calloc(1, sizeof(struct ReadMailData))))
+  if((rmData = calloc(1, sizeof(struct ReadMailData))))
   {
     Object *headerGroup;
     Object *headerList;
@@ -616,7 +616,7 @@ OVERLOAD(OM_NEW)
       result = obj;
     }
     else
-      _free(rmData);
+      free(rmData);
   }
 
   RETURN((ULONG)result);
@@ -638,7 +638,7 @@ OVERLOAD(OM_DISPOSE)
   {
     // Remove our readWindowNode and free it afterwards
     Remove((struct Node *)data->readMailData);
-    _free(data->readMailData);
+    free(data->readMailData);
     data->readMailData = NULL;
   }
 
@@ -1018,9 +1018,9 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 
       // free the parsed text afterwards as the texteditor has copied it anyway.
       if(rmData->useTextstyles == TRUE)
-        _free(body);
+        free(body);
 
-      _free(cmsg);
+      free(cmsg);
 
       // start the macro
       if(rmData->readWindow != NULL)
@@ -1195,7 +1195,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         // make sure we cleaned up the senderInfoHeader List beforehand
         FreeHeaderList(&data->senderInfoHeaders);
 
-        if(*ab->RealName != '\0' && (newNode = _malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->RealName != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_RealName)));
@@ -1204,7 +1204,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Street != '\0' && (newNode = _malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->Street != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Street)));
@@ -1213,7 +1213,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->City != '\0' && (newNode = _malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->City != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_City)));
@@ -1222,7 +1222,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Country != '\0' && (newNode = _malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->Country != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Country)));
@@ -1231,7 +1231,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Phone != '\0' && (newNode = _malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->Phone != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Phone)));
@@ -1240,7 +1240,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*AB_ExpandBD(ab->BirthDay) && (newNode = _malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*AB_ExpandBD(ab->BirthDay) && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_DOB)));
@@ -1249,7 +1249,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Comment != '\0' && (newNode = _malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->Comment != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Description)));
@@ -1258,7 +1258,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Homepage != '\0' && (newNode = _malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->Homepage != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Homepage)));
@@ -1555,7 +1555,7 @@ DECLARE(SaveDecryptedMail)
           {
             MA_DeleteSingle(mail, DELF_UPDATE_APPICON);
 
-            // erase the old pointer as this has been _free()ed by MA_DeleteSingle()
+            // erase the old pointer as this has been free()ed by MA_DeleteSingle()
             rmData->mail = NULL;
 
             DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, newmail);
@@ -1767,7 +1767,7 @@ DECLARE(DeleteMail)
     MA_DeleteSingle(mail, DELF_UPDATE_APPICON);
     AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
 
-    // erase the old pointer as this has been _free()ed by MA_MoveCopy()
+    // erase the old pointer as this has been free()ed by MA_MoveCopy()
     rmData->mail = NULL;
   }
 

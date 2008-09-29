@@ -59,7 +59,7 @@ APTR ObtainDirContext(struct TagItem *tags)
 
   ENTER();
 
-  if((ctx = (struct DirContext *)_calloc(1, sizeof(*ctx))) != NULL)
+  if((ctx = (struct DirContext *)calloc(1, sizeof(*ctx))) != NULL)
   {
     char *dir;
 
@@ -73,7 +73,7 @@ APTR ObtainDirContext(struct TagItem *tags)
           ctx->eaControl->eac_MatchString = (STRPTR)GetTagData(EX_MatchString, (ULONG)NULL, tags);
           ctx->eaControl->eac_MatchFunc = NULL;
 
-          if((ctx->eaBuffer = _malloc(SIZE_EXALLBUF)) != NULL)
+          if((ctx->eaBuffer = malloc(SIZE_EXALLBUF)) != NULL)
           {
             if(GetTagData(EX_DoCurrentDir, FALSE, tags) == TRUE)
             {
@@ -135,7 +135,7 @@ void ReleaseDirContext(APTR context)
       CurrentDir(ctx->oldCD);
 
     if(ctx->eaBuffer != NULL)
-      _free(ctx->eaBuffer);
+      free(ctx->eaBuffer);
 
     if(ctx->eaControl != NULL)
       FreeDosObject(DOS_EXALLCONTROL, ctx->eaControl);
@@ -143,7 +143,7 @@ void ReleaseDirContext(APTR context)
     if(ctx->lock)
       UnLock(ctx->lock);
 
-    _free(context);
+    free(context);
   }
 
   LEAVE();

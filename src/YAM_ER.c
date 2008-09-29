@@ -108,7 +108,7 @@ void ER_NewError(const char *error, ...)
 
       G->ER_NumErr = MAXERR;
 
-      _free(G->ER_Message[0]);
+      free(G->ER_Message[0]);
 
       for(i = 1; i < G->ER_NumErr; i++)
         G->ER_Message[i-1] = G->ER_Message[i];
@@ -125,7 +125,7 @@ void ER_NewError(const char *error, ...)
     snprintf(buf, sizeof(buf), "%s\n\n(%s)", buf, datstr);
 
     // allocate an own buffer for our error string.
-    G->ER_Message[G->ER_NumErr-1] = _strdup(buf);
+    G->ER_Message[G->ER_NumErr-1] = strdup(buf);
 
     E(DBF_STARTUP, buf);
   }
@@ -176,7 +176,7 @@ HOOKPROTONHNO(ER_CloseFunc, void, int *arg)
   if(arg[0] == TRUE)
   {
     while(G->ER_NumErr > 0)
-      _free(G->ER_Message[--G->ER_NumErr]);
+      free(G->ER_Message[--G->ER_NumErr]);
 
     if(G->MA != NULL)
       set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, FALSE);
@@ -198,7 +198,7 @@ static struct ER_ClassData *ER_New(void)
 
   ENTER();
 
-  if((data = _calloc(1, sizeof(struct ER_ClassData))) != NULL)
+  if((data = calloc(1, sizeof(struct ER_ClassData))) != NULL)
   {
     APTR bt_close, bt_clear;
 
@@ -242,7 +242,7 @@ static struct ER_ClassData *ER_New(void)
     }
     else
     {
-      _free(data);
+      free(data);
       data = NULL;
     }
   }

@@ -117,7 +117,7 @@ void rx_addrinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         results->birthdate = &ab->BirthDay;
         results->image = ab->Photo;
 
-        if(ab->Members && (optional->members = _strdup(ab->Members)))
+        if(ab->Members && (optional->members = strdup(ab->Members)))
         {
           char *ptr;
           int i;
@@ -131,7 +131,7 @@ void rx_addrinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
               break;
           }
 
-          results->members = optional->memberptr = _calloc(j+1, sizeof(char *));
+          results->members = optional->memberptr = calloc(j+1, sizeof(char *));
           for(i = 0, ptr = optional->members; i < j; ptr += strlen(ptr)+1)
             optional->memberptr[i++] = ptr;
         }
@@ -150,9 +150,9 @@ void rx_addrinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
       if(optional != NULL)
       {
         if(optional->members != NULL)
-          _free(optional->members);
+          free(optional->members);
         if(optional->memberptr != NULL)
-          _free(optional->memberptr);
+          free(optional->memberptr);
         FreeVecPooled(G->SharedMemPool, optional);
       }
     }

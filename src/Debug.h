@@ -82,7 +82,7 @@
 #define DBF_PRINT    (1<<20)    // for print management
 #define DBF_THEME    (1<<21)    // for the Themes management (Themes.c)
 #define DBF_THREAD   (1<<22)    // for the Thread management (Thread.c)
-#define DBF_MEMORY   (1<<23)
+#define DBF_MEMORY   (1<<23)    // for memory tracking (Debug.c)
 #define DBF_ALL      0xffffffff
 
 void SetupDebug(void);
@@ -140,47 +140,42 @@ void W(unsigned long f, const char *format, ...);
    )                            \
   )
 
-void *__malloc(const char *file, const int line, size_t size);
-void *__calloc(const char *file, const int line, size_t n, size_t size);
-void *__realloc(const char *file, const int line, void *ptr, size_t size);
-void __free(const char *file, const int line, void *ptr);
-char *__strdup(const char *file, const int line, const char *s);
-void *__memdup(const char *file, const int line, const void *ptr, const size_t size);
+void *dbg_malloc(const char *file, const int line, size_t size);
+void *dbg_calloc(const char *file, const int line, size_t n, size_t size);
+void *dbg_realloc(const char *file, const int line, void *ptr, size_t size);
+void dbg_free(const char *file, const int line, void *ptr);
+char *dbg_strdup(const char *file, const int line, const char *s);
+void *dbg_memdup(const char *file, const int line, const void *ptr, const size_t size);
 
-#define _malloc(s)          __malloc(__FILE__, __LINE__, s)
-#define _calloc(n, s)       __calloc(__FILE__, __LINE__, n, s)
-#define _realloc(p, s)      __realloc(__FILE__, __LINE__, p, s)
-#define _free(p)            __free(__FILE__, __LINE__, p)
-#define _strdup(s)          __strdup(__FILE__, __LINE__, s)
-#define _memdup(p, s)       __memdup(__FILE__, __LINE__, p, s)
+#if !defined(DEBUG_USE_MALLOC_REDEFINE)
+#define malloc(s)             dbg_malloc(__FILE__, __LINE__, s)
+#define calloc(n, s)          dbg_calloc(__FILE__, __LINE__, n, s)
+#define realloc(p, s)         dbg_realloc(__FILE__, __LINE__, p, s)
+#define free(p)               dbg_free(__FILE__, __LINE__, p)
+#define strdup(s)             dbg_strdup(__FILE__, __LINE__, s)
+#define memdup(p, s)          dbg_memdup(__FILE__, __LINE__, p, s)
+#endif
 
 void DumpDbgMalloc(void);
 
 #else // DEBUG
 
 // to replace with NOPs is important here!
-#define ENTER()              ((void)0)
-#define LEAVE()              ((void)0)
-#define RETURN(r)            ((void)0)
-#define SHOWVALUE(f, v)      ((void)0)
-#define SHOWPOINTER(f, p)    ((void)0)
-#define SHOWSTRING(f, s)     ((void)0)
-#define SHOWMSG(f, m)        ((void)0)
-#define STARTCLOCK()         ((void)0)
-#define STOPCLOCK(f, m)      ((void)0)
-#define D(f, ...)            ((void)0)
-#define E(f, ...)            ((void)0)
-#define W(f, ...)            ((void)0)
-#define ASSERT(expression)   ((void)0)
+#define ENTER()               ((void)0)
+#define LEAVE()               ((void)0)
+#define RETURN(r)             ((void)0)
+#define SHOWVALUE(f, v)       ((void)0)
+#define SHOWPOINTER(f, p)     ((void)0)
+#define SHOWSTRING(f, s)      ((void)0)
+#define SHOWMSG(f, m)         ((void)0)
+#define STARTCLOCK()          ((void)0)
+#define STOPCLOCK(f, m)       ((void)0)
+#define D(f, ...)             ((void)0)
+#define E(f, ...)             ((void)0)
+#define W(f, ...)             ((void)0)
+#define ASSERT(expression)    ((void)0)
 
-#define _malloc(s)           malloc(s)
-#define _calloc(n, s)        calloc(n, s)
-#define _realloc(p, s)       realloc(p, s)
-#define _free(p)             free(p)
-#define _strdup(s)           strdup(s)
-#define _memdup(p, s)        memdup(p, s)
-
-#define DumpDbgMalloc()      {}
+#define DumpDbgMalloc()       ((void)0)
 
 #endif // DEBUG
 

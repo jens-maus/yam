@@ -294,7 +294,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
             foundMatch = stristr(cmsg, searchString) != NULL;
 
             // free the allocated message text immediately
-            _free(cmsg);
+            free(cmsg);
           }
 
           FreePrivateRMData(rmData);

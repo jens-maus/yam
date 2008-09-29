@@ -637,7 +637,7 @@ HOOKPROTONHNO(US_LV_ConFunc, struct User *, struct User *user)
 
   ENTER();
 
-  entry = _memdup(user, sizeof(*user));
+  entry = memdup(user, sizeof(*user));
 
   RETURN(entry);
   return entry;
@@ -678,7 +678,7 @@ static struct US_ClassData *US_New(BOOL supervisor)
 
   ENTER();
 
-  if((data = _calloc(1, sizeof(struct US_ClassData))) != NULL)
+  if((data = calloc(1, sizeof(struct US_ClassData))) != NULL)
   {
     data->Supervisor = supervisor;
     data->GUI.WI = WindowObject,
@@ -757,7 +757,7 @@ static struct US_ClassData *US_New(BOOL supervisor)
     }
     else
     {
-      _free(data);
+      free(data);
       data = NULL;
     }
   }

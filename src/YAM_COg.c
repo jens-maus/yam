@@ -447,7 +447,7 @@ HOOKPROTONH(PO_HandleVarFunc, void, Object *pop, Object *string)
     if(str && str[0] != '\0')
     {
       int len = strlen(str)+sizeof(addstr);
-      char *buf = _calloc(len, 1);
+      char *buf = calloc(len, 1);
 
       if(buf == NULL)
       {
@@ -467,7 +467,7 @@ HOOKPROTONH(PO_HandleVarFunc, void, Object *pop, Object *string)
 
       set(string, MUIA_String_Contents, buf);
 
-      _free(buf);
+      free(buf);
     }
     else
       set(string, MUIA_String_Contents, addstr);
@@ -862,7 +862,7 @@ HOOKPROTONHNONP(DelMimeTypeFunc, void)
       Remove((struct Node *)mt);
 
       // free memory.
-      _free(mt);
+      free(mt);
     }
   }
 

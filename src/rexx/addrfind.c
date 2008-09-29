@@ -78,7 +78,7 @@ void rx_addrfind(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
       if((hits = AB_FindEntry(args->pattern, mode, NULL)) > 0)
       {
-        results->alias = _calloc(hits+1, sizeof(char *));
+        results->alias = calloc(hits+1, sizeof(char *));
         if(AB_FindEntry(args->pattern, mode, results->alias) == 0)
           params->rc = RETURN_WARN;
       }
@@ -94,7 +94,7 @@ void rx_addrfind(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 	  if(results != NULL)
 	  {
         if(results->alias != NULL)
-          _free(results->alias);
+          free(results->alias);
 		FreeVecPooled(G->SharedMemPool, results);
       }
     }

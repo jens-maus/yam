@@ -145,7 +145,7 @@ OVERLOAD(OM_NEW)
 
   // generate a temporary struct Data to which we store our data and
   // copy it later on
-  if(!(data = tmpData = _calloc(1, sizeof(struct Data))))
+  if(!(data = tmpData = calloc(1, sizeof(struct Data))))
     return 0;
 
   // get eventually set attributes first
@@ -313,7 +313,7 @@ OVERLOAD(OM_NEW)
   }
 
   // free the temporary mem we allocated before
-  _free(tmpData);
+  free(tmpData);
 
   return (ULONG)obj;
 }

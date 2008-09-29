@@ -1032,7 +1032,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
   }
 
   // free the duplicated comment again
-  _free(comment);
+  free(comment);
 
   if(dateFilePart[0] == '\0')
   {
@@ -1230,7 +1230,7 @@ static BOOL MA_DetectUUE(FILE *fh)
 
   ENTER();
 
-  if((buffer = _malloc(SIZE_LINE)) != NULL)
+  if((buffer = malloc(SIZE_LINE)) != NULL)
   {
     // Now we process the whole mailfile and check if there is any line that
     // starts with "begin xxx"
@@ -1244,7 +1244,7 @@ static BOOL MA_DetectUUE(FILE *fh)
       }
     }
 
-    _free(buffer);
+    free(buffer);
   }
 
   RETURN(found);
@@ -1269,7 +1269,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
     NewList((struct List *)headerList);
 
     // allocate some memory for use as a read buffer
-    if((buffer = _calloc(SIZE_LINE, sizeof(char))) != NULL)
+    if((buffer = calloc(SIZE_LINE, sizeof(char))) != NULL)
     {
       BOOL finished = FALSE;
       struct HeaderNode *hdrNode = NULL;
@@ -1316,7 +1316,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
             // should give us the full charset interpretation
             if((len = rfc2047_decode(hdrContents, hdrContents, strlen(hdrContents))) == -1)
             {
-              E(DBF_FOLDER, "ERROR: _malloc() error during rfc2047() decoding");
+              E(DBF_FOLDER, "ERROR: malloc() error during rfc2047() decoding");
               break; // break-out
             }
             else if(len == -2)
@@ -1357,7 +1357,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
           // we can finally start processing a new one.
           // Which means we allocate a new HeaderNode and try to get out the header
           // name
-          if((hdrNode = _calloc(1, sizeof(struct HeaderNode))) != NULL)
+          if((hdrNode = calloc(1, sizeof(struct HeaderNode))) != NULL)
           {
             char *ptr;
 
@@ -1394,7 +1394,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
 
             // if we end up here then something went wrong and we have to clear
             // the header Node and stuff
-            _free(hdrNode);
+            free(hdrNode);
             hdrNode = NULL;
           }
           else
@@ -1416,7 +1416,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
         success = FALSE;
       }
 
-      _free(buffer);
+      free(buffer);
     }
   }
 
@@ -1452,7 +1452,7 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
     {
       ASSERT(email->NoSFrom > 0);
 
-      _free(email->SFrom);
+      free(email->SFrom);
       email->SFrom = NULL;
     }
 
@@ -1460,7 +1460,7 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
     {
       ASSERT(email->NoSTo > 0);
 
-      _free(email->STo);
+      free(email->STo);
       email->STo = NULL;
     }
 
@@ -1468,7 +1468,7 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
     {
       ASSERT(email->NoSReplyTo > 0);
 
-      _free(email->SReplyTo);
+      free(email->SReplyTo);
       email->SReplyTo = NULL;
     }
 
@@ -1476,7 +1476,7 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
     {
       ASSERT(email->NoCC > 0);
 
-      _free(email->CC);
+      free(email->CC);
       email->CC = NULL;
     }
 
@@ -1484,11 +1484,11 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
     {
       ASSERT(email->NoBCC > 0);
 
-      _free(email->BCC);
+      free(email->BCC);
       email->BCC = NULL;
     }
 
-    _free(email);
+    free(email);
   }
 
   LEAVE();
@@ -1520,7 +1520,7 @@ static int MA_GetRecipients(char *h, struct Person **per)
     // allocate enough memory to carry all
     // found recipients in an array of struct Person
     // structures.
-    if((*per = cur = _calloc(cnt, sizeof(struct Person))))
+    if((*per = cur = calloc(cnt, sizeof(struct Person))))
     {
       for(p=h; *p; cur++)
       {
@@ -1740,7 +1740,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
   ENTER();
 
   // first we generate a new ExtendedMail buffer
-  if((email = _calloc(1, sizeof(struct ExtendedMail))) == NULL)
+  if((email = calloc(1, sizeof(struct ExtendedMail))) == NULL)
   {
     RETURN(NULL);
     return NULL;
@@ -1763,7 +1763,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       // then unpack the file with XPK routines.
       if(!StartUnpack(GetMailFile(NULL, folder, mail), fullfile, folder))
       {
-        _free(email);
+        free(email);
 
         E(DBF_MAIL, "couldn't unpack mailfile");
 
@@ -2208,7 +2208,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
   if(fh)
    fclose(fh);
 
-  _free(email);
+  free(email);
 
   RETURN(NULL);
   return NULL;

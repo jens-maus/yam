@@ -422,9 +422,9 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        ATTR(ID):          if((char *)tag->ti_Data != NULL) data->id = _strdup((char *)tag->ti_Data); break;
-        ATTR(Filename):    if((char *)tag->ti_Data != NULL) data->filename = _strdup((char *)tag->ti_Data); break;
-        ATTR(Label):       if((char *)tag->ti_Data != NULL) data->label = _strdup((char *)tag->ti_Data); break;
+        ATTR(ID):          if((char *)tag->ti_Data != NULL) data->id = strdup((char *)tag->ti_Data); break;
+        ATTR(Filename):    if((char *)tag->ti_Data != NULL) data->filename = strdup((char *)tag->ti_Data); break;
+        ATTR(Label):       if((char *)tag->ti_Data != NULL) data->label = strdup((char *)tag->ti_Data); break;
         ATTR(FreeVert):    data->free_vert   = (BOOL)tag->ti_Data; break;
         ATTR(FreeHoriz):   data->free_horiz  = (BOOL)tag->ti_Data; break;
         ATTR(ShowLabel):   data->show_label  = (BOOL)tag->ti_Data; break;
@@ -448,13 +448,13 @@ OVERLOAD(OM_DISPOSE)
   ENTER();
 
   if(data->id != NULL)
-    _free(data->id);
+    free(data->id);
 
   if(data->filename != NULL)
-    _free(data->filename);
+    free(data->filename);
 
   if(data->label != NULL)
-    _free(data->label);
+    free(data->label);
 
   // everything else has been freed during MUIM_Cleanup already
 
@@ -575,13 +575,13 @@ OVERLOAD(OM_SET)
           if(newId == NULL || newId[0] != '\0')
             ReleaseImage(data->id, TRUE);
 
-          _free(data->id);
+          free(data->id);
           data->id = NULL;
         }
 
         if(newId != NULL && newId[0] != '\0')
         {
-          data->id = _strdup(newId);
+          data->id = strdup(newId);
 
           // remember to relayout the image
           relayout = TRUE;
@@ -600,13 +600,13 @@ OVERLOAD(OM_SET)
 
         if(data->filename != NULL)
         {
-          _free(data->filename);
+          free(data->filename);
           data->filename = NULL;
         }
 
         if(newFilename != NULL)
         {
-          data->filename = _strdup(newFilename);
+          data->filename = strdup(newFilename);
           // remember to relayout the image
           relayout = TRUE;
         }
