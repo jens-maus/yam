@@ -7,6 +7,7 @@ $URL$
 
 2008-09-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Themes.c: a theme's URL string wasn't free()'d.
   * extrasrc/NewReadArgs.c: fixed a possible free(NULL) call.
 
 2008-09-25  Thore Böckelmann <tboeckel@gmx.de>
@@ -30,7 +31,7 @@ $URL$
 
 2008-09-12  Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM.c, Requesters.c: moved the defintion of the "signals" variable (and
+  * YAM.c, Requesters.c: moved the definition of the "signals" variable (and
     setting it to zero out of the event handling loop. Before possible signals
     from the previous loop's Wait() call would have effectively been zeroed
     because of this, which might have had unpredictable results.

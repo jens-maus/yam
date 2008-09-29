@@ -77,7 +77,7 @@ static const char * const configImageIDs[ci_Max] =
   "config_spam",      "config_spam_big",
   "config_start",     "config_start_big",
   "config_update",    "config_update_big",
-  "config_write",     "config_write_big",
+  "config_write",     "config_write_big"
 };
 ///
 /// folder image IDs
@@ -93,7 +93,7 @@ static const char * const folderImageIDs[fi_Max] =
   "folder_spam",
   "folder_spam_new",
   "folder_trash",
-  "folder_trash_new",
+  "folder_trash_new"
 };
 ///
 /// icon image IDs
@@ -102,7 +102,7 @@ static const char * const iconImageIDs[ii_Max] =
   "check",
   "empty",
   "new",
-  "old",
+  "old"
 };
 ///
 /// status image IDs
@@ -126,7 +126,7 @@ static const char * const statusImageIDs[si_Max] =
   "status_spam",
   "status_unread",
   "status_urgent",
-  "status_waitsend",
+  "status_waitsend"
 };
 ///
 /// toolbar image IDs
@@ -170,7 +170,7 @@ static const char * const tbii[tbi_Max][tbim_Max] =
   { "tb_newlist",     "tb_newlist_s",     "tb_newlist_g"    },
   { "tb_newgroup",    "tb_newgroup_s",    "tb_newgroup_g"   },
   { "tb_opentree",    "tb_opentree_s",    "tb_opentree_g"   },
-  { "tb_closetree",   "tb_closetree_s",   "tb_closetree_g"  },
+  { "tb_closetree",   "tb_closetree_s",   "tb_closetree_g"  }
 };
 ///
 
@@ -227,7 +227,7 @@ static const enum ToolbarImages writeWindowToolbarImageIDs[wwtbi_Max] =
   tbi_Italic,
   tbi_Underline,
   tbi_Colored,
-  tbi_Find,
+  tbi_Find
 };
 ///
 /// addressbook window toolbar image IDs
@@ -242,7 +242,7 @@ static const enum ToolbarImages abookWindowToolbarImageIDs[awtbi_Max] =
   tbi_Delete,
   tbi_Print,
   tbi_OpenTree,
-  tbi_CloseTree,
+  tbi_CloseTree
 };
 ///
 
@@ -610,6 +610,12 @@ void FreeTheme(struct Theme *theme)
   {
     free(theme->author);
     theme->author = NULL;
+  }
+
+  if(theme->url != NULL)
+  {
+    _free(theme->url);
+    theme->url = NULL;
   }
 
   if(theme->version != NULL)
