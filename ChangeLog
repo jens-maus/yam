@@ -7,6 +7,8 @@ $URL$
 
 2008-09-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: fixed a memory when a .fimage file was used for a custom folder
+    icon. This image was never properly destructed.
   * YAM_RE.c: fixed possible memory leak which was caused by overwriting simply
     previous strdup()'d strings without free()ing the former copies.
   * misc: reworked the memory tracking framework to get rid of the special

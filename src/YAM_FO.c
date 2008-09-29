@@ -588,9 +588,9 @@ BOOL FO_FreeFolder(struct Folder *folder)
       // remove the bodychunk object from the nlist
       DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
 
-      // the image object itself will be freed by
-      // the folder object itself as it is part of the hierarchy since we
-      // added it with OM_ADDMEMBER.
+      MUI_DisposeObject(folder->imageObject);
+      // let's set it to NULL so that the destructor doesn't do the work again.
+      folder->imageObject = NULL;
     }
 
     if(!isGroupFolder(folder))
@@ -2042,7 +2042,8 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
 
             // and last, but not least we free the BC object here, so that this Object is also gone
             MUI_DisposeObject(folder->imageObject);
-            folder->imageObject = NULL; // let`s set it to NULL so that the destructor doesn`t do the work again.
+            // let's set it to NULL so that the destructor doesn't do the work again.
+            folder->imageObject = NULL;
           }
 
           // free this folder
