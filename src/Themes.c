@@ -614,7 +614,7 @@ void FreeTheme(struct Theme *theme)
 
   if(theme->url != NULL)
   {
-    _free(theme->url);
+    free(theme->url);
     theme->url = NULL;
   }
 
