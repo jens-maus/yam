@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-09-29  Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/NewReadArgs.c: fixed a possible free(NULL) call.
+
 2008-09-25  Thore Böckelmann <tboeckel@gmx.de>
 
   * AttachmentImage.c: combined to consecutive set()'s into one single xset().
