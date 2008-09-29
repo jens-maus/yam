@@ -7,6 +7,13 @@ $URL$
 
 2008-09-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: added a general memory tracking framework. This made it necessary to
+    change the name allocation calls (malloc, calloc, free, etc) to make this
+    optional and for the debug build only, as tracking all allocations has a
+    major impact, especially on the spam filter. Tracking is enabled by adding
+    "memory" to the YAMDEBUG ENV-variable. Upon termination YAM will log all
+    pending allocations along with their source code file and line. All in all
+    this should make it possible to track down memory leaks very easily.
   * Themes.c: a theme's URL string wasn't free()'d.
   * extrasrc/NewReadArgs.c: fixed a possible free(NULL) call.
 
