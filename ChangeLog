@@ -7,6 +7,8 @@ $URL$
 
 2008-09-29  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c: fixed possible memory leak which was caused by overwriting simply
+    previous strdup()'d strings without free()ing the former copies.
   * misc: reworked the memory tracking framework to get rid of the special
     function names. Now we are back to standard names like malloc().
   * misc: added a general memory tracking framework. This made it necessary to

@@ -916,13 +916,29 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
               }
             }
             else if(strcmp(attribute, "boundary") == 0)
+            {
+              if(rp->CParBndr != NULL)
+                free(rp->CParBndr);
               rp->CParBndr = value;
+            }
             else if(strcmp(attribute, "protocol") == 0)
+            {
+              if(rp->CParProt != NULL)
+                free(rp->CParProt);
               rp->CParProt = value;
+            }
             else if(strcmp(attribute, "report-type") == 0)
+            {
+              if(rp->CParRType != NULL)
+                free(rp->CParRType);
               rp->CParRType = value;
+            }
             else if(strcmp(attribute, "charset") == 0)
+            {
+              if(rp->CParCSet != NULL)
+                free(rp->CParCSet);
               rp->CParCSet = value;
+            }
             else
               free(value);
           }
