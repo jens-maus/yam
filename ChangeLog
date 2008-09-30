@@ -21,6 +21,8 @@ $URL$
 
 2008-09-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc/AllocSysObject.c: refined the memory tracking to track each single
+    type instead of just AllocSysObject() globally.
   * Debug.c: removed the conditional free() in _UNMEMTRACK() again as it was
     quite senseless. Pending allocations from malloc() will be freed auto-
     matically by the c-library's startup code and other allocations cannot be
