@@ -82,6 +82,17 @@
 #endif
 
 // Amiga specific functions
+#if defined(DEBUG)
+#undef AllocPooled
+#undef FreePooled
+#undef AllocVecPooled
+#undef FreeVecPooled
+#undef AllocDosObject
+#undef FreeDosObject
+#undef ObtainDirContext
+#undef ReleaseDirContext
+#endif
+
 #if defined(NEED_NEWREADARGS)
   #include "extrasrc/NewReadArgs.c"
 #endif

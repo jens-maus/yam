@@ -43,6 +43,12 @@
 
 #include "Debug.h"
 
+#if defined(DEBUG)
+#undef AllocSysObject
+#undef AllocSysObjectTags
+#undef FreeSysObject
+#endif
+
 #ifdef __GNUC__
    #ifdef __PPC__
     #pragma pack(2)
@@ -119,7 +125,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       // just create the IO request the usual way
       object = CreateIORequest(port, size);
-      MEMTRACK("AllocSysObject/ASOT_IOREQUEST", object, size);
     }
     break;
 
@@ -160,7 +165,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         ((struct Hook *)object)->h_Entry = (ULONG (*)())entry;
         ((struct Hook *)object)->h_SubEntry = (ULONG (*)())subentry;
         ((struct Hook *)object)->h_Data = data;
-        MEMTRACK("AllocSysObject/ASOT_HOOK", object, size);
       }
     }
     break;
@@ -198,8 +202,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
         if(min == FALSE)
           ((struct List *)object)->lh_Type = type;
-
-        MEMTRACK("AllocSysObject/ASOT_LIST", object, size);
       }
     }
     break;
@@ -249,8 +251,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           ((struct Node *)object)->ln_Pri = pri;
           ((struct Node *)object)->ln_Name = name;
         }
-
-        MEMTRACK("AllocSysObject/ASOT_NODE", object, size);
       }
     }
     break;
@@ -357,8 +357,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           AddPort(&sobject->port);
 
         object = &sobject->port;
-
-        MEMTRACK("AllocSysObject/ASOT_PORT", object, size);
       }
     }
     break;
@@ -399,8 +397,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         ((struct Message *)object)->mn_Node.ln_Type = NT_MESSAGE;
         ((struct Message *)object)->mn_ReplyPort = port;
         ((struct Message *)object)->mn_Length = size;
-
-        MEMTRACK("AllocSysObject/ASOT_MESSAGE", object, size);
       }
     }
     break;
@@ -470,8 +466,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           AddSemaphore(&sobject->semaphore);
 
         object = &sobject->semaphore;
-
-        MEMTRACK("AllocSysObject/ASOT_SEMAPHORE", object, size);
       }
     }
     break;
@@ -494,7 +488,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       }
 
       object = AllocVec(entries * sizeof(struct TagItem), memFlags|MEMF_CLEAR);
-      MEMTRACK("AllocSysObject/ASOT_TAGLIST", object, entries * sizeof(struct TagItem));
     }
     break;
 
@@ -531,7 +524,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       }
 
       object = CreatePool(flags, puddle, thresh);
-      MEMTRACK("AllocSysObject/ASOT_MEMPOOL", object, puddle);
     }
     break;
   }
@@ -637,8 +629,6 @@ void FreeSysObject(ULONG type, APTR object)
       }
       break;
     }
-
-    UNMEMTRACK(object);
   }
 
   LEAVE();

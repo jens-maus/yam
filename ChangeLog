@@ -7,6 +7,10 @@ $URL$
 
 2008-09-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Debug.c, Debug.h: enabled the memory tracking of the system functions also
+    for the OS3 and MorphOS debug builds. This unfortunately requires to
+    the inline macros for the function jumps ourself, but well, this is just
+    for debugging purposes anyway.
   * Debug.c, Debug.h: added the AllocVec#?() type of functions to the memory
     tracking framework. However, please note that the tracking of these
     functions does only work on the OS4 debug build for now.

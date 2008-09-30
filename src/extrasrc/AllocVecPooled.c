@@ -46,8 +46,6 @@ APTR AllocVecPooled(APTR poolHeader, ULONG memSize)
     *memory++ = memSize;
   }
 
-  MEMTRACK("AllocVecPooled", memory, memSize);
-
   RETURN(memory);
   return memory;
 }
