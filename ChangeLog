@@ -7,6 +7,8 @@ $URL$
 
 2008-09-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * HTML2Mail.l, ParseEmail.l: fixed two memory leaks caused by the flex
+    generated code by manually calling the final cleanup function.
   * Debug.c: massively improved the speed of the memory tracking free() function
     by using 256 separate lists instead of just one large list. The address of
     the allocated pointer will be used as a kind of hash value to get a more or

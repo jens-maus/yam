@@ -510,6 +510,9 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash)
     }
 
     yy_delete_buffer(buffer);
+
+    // call the destroy function ourself to avoid memory leaks, because flex doesn't do it
+    pm_lex_destroy();
   }
 
   RETURN(cmsg);
@@ -564,6 +567,9 @@ enum tokenType ExtractURL(const char *text, char *resultBuffer)
 
       yy_delete_buffer(buffer);
     }
+
+    // call the destroy function ourself to avoid memory leaks, because flex doesn't do it
+    pm_lex_destroy();
   }
 
   RETURN(result);

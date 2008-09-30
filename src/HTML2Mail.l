@@ -472,6 +472,9 @@ char *html2mail(char *htmlTxt)
     }
 
     yy_delete_buffer(buffer);
+
+    // call the destroy function ourself to avoid memory leaks, because flex doesn't do it
+    h2m_lex_destroy();
   }
 
   RETURN(cmsg);
