@@ -13,14 +13,20 @@ $URL$
   * Debug.c, Debug.h: slightly rewrote the new memory tracking debug framework
     to have a MEMTRACK() and UNMEMTRACK() macro similar to our D()-type of
     debugging macros. In addition, the preprocessor replacements for malloc()
-    and friends are now performed via GCC enhanced preprocessor macros which 
+    and friends are now performed via GCC enhanced preprocessor macros which
     call the original function directly. Furthermore, the memory tracking is
     now an own debug class rather than a flag and also enabled per default.
     That means if you want to get rid of the memory tracking you have to
     disable the memory tracking with "setenv yamdebug !@mtrack".
- 
+
 2008-09-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Debug.c: reworked the _UNMEMTRACK() function to only free those allocations,
+    which have been done by standard functions like malloc(). Before even
+    allocations from AllocSysObject() or similar have been freed by free() which
+    must have caused all kinds of obscure and funny things. Further more the
+    function and type informations are no longer copied, because the strings are
+    constants and cannot simply vanish while the program is running.
   * Debug.c: calling free(NULL) will no longer cause a warning.
   * HTML2Mail.l, ParseEmail.l: fixed two memory leaks caused by the flex
     generated code by manually calling the final cleanup function.

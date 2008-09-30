@@ -651,8 +651,8 @@ struct DbgMallocNode
   struct MinNode node;
   void *memory;
   size_t size;
-  char *file;
-  char *func;
+  const char *file;
+  const char *func;
   int line;
 };
 
@@ -693,7 +693,7 @@ static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
 
 ///
 /// _MEMTRACK
-// add a new node to the tracking lists
+// add a new node to the memory tracking lists
 void _MEMTRACK(const char *file, const int line, const char *func, void *ptr, size_t size)
 {
   if(isFlagSet(debug_classes, DBC_MTRACK))
@@ -704,29 +704,27 @@ void _MEMTRACK(const char *file, const int line, const char *func, void *ptr, si
 
       if((dmn = malloc(sizeof(*dmn))) != NULL)
       {
-        if((dmn->file = strdup(file)) != NULL)
-        {
-          dmn->memory = ptr;
-          dmn->size = size;
-          dmn->line = line;
-          dmn->func = strdup(func);
+        dmn->memory = ptr;
+        dmn->size = size;
+        dmn->file = file;
+        dmn->line = line;
+        dmn->func = func;
 
-          ObtainSemaphore(&DbgMallocListSema);
-          AddTail((struct List *)&DbgMallocList[ptr2hash(ptr)], (struct Node *)&dmn->node);
-          ReleaseSemaphore(&DbgMallocListSema);
+        ObtainSemaphore(&DbgMallocListSema);
+        AddTail((struct List *)&DbgMallocList[ptr2hash(ptr)], (struct Node *)&dmn->node);
+        ReleaseSemaphore(&DbgMallocListSema);
 
-          DbgMallocCount++;
-        }
+        DbgMallocCount++;
       }
     }
     else
-      _DPRINTF(DBC_WARNING, DBF_ALWAYS, file, line, "invalid malloc call or return (%08lx, %ld)", ptr, size);
+      _DPRINTF(DBC_WARNING, DBF_ALWAYS, file, line, "invalid malloc call or return (0x%08lx, %ld)", ptr, size);
   }
 }
 
 ///
 /// _UNMEMTRACK
-// remove a node from the memory tracking list
+// remove a node from the memory tracking lists
 void _UNMEMTRACK(const char *file, const int line, const void *ptr)
 {
   if(isFlagSet(debug_classes, DBC_MTRACK) && ptr != NULL)
@@ -739,9 +737,6 @@ void _UNMEMTRACK(const char *file, const int line, const void *ptr)
     if((dmn = findDbgMallocNode(ptr)) != NULL)
     {
       Remove((struct Node *)dmn);
-
-      if(dmn->file != NULL)
-        free(dmn->file);
 
       free(dmn);
 
@@ -800,16 +795,20 @@ static void CleanupDbgMalloc(void)
 
         while((dmn = (struct DbgMallocNode *)RemHead((struct List *)&DbgMallocList[i])) != NULL)
         {
-          _DPRINTF(DBC_ERROR, DBF_ALWAYS, dmn->file, dmn->line, "unfreed allocation 0x%08lx, size/type %ld (%s)", dmn->memory, dmn->size, dmn->func);
+          _DPRINTF(DBC_ERROR, DBF_ALWAYS, dmn->file, dmn->line, "unfreed allocation 0x%08lx, size %ld, type %s", dmn->memory, dmn->size, dmn->func);
 
           if(dmn->memory != NULL)
-            free(dmn->memory);
-
-          if(dmn->file != NULL)
-            free(dmn->file);
-
-          if(dmn->func != NULL)
-            free(dmn->func);
+          {
+            // only the allocations done via the standard function can be freed here
+            if(strcmp(dmn->func, "malloc") == 0 ||
+               strcmp(dmn->func, "calloc") == 0 ||
+               strcmp(dmn->func, "realloc") == 0 ||
+               strcmp(dmn->func, "strdup") == 0 ||
+               strcmp(dmn->func, "memdup") == 0)
+            {
+              free(dmn->memory);
+            }
+          }
 
           free(dmn);
         }
@@ -844,7 +843,7 @@ void DumpDbgMalloc(void)
 
       ForEachNode(i)
       {
-        _DPRINTF(DBC_MTRACK, DBF_ALWAYS, dmn->file, dmn->line, "allocation 0x%08lx, size/type %ld (%s)", dmn->memory, dmn->size, dmn->func);
+        _DPRINTF(DBC_MTRACK, DBF_ALWAYS, dmn->file, dmn->line, "allocation 0x%08lx, size %ld, type %s", dmn->memory, dmn->size, dmn->func);
       }
     }
 
