@@ -695,12 +695,12 @@ static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
 // add a new node to the tracking lists
 void _MEMTRACK(const char *file, const int line, void *ptr, size_t size)
 {
-  struct DbgMallocNode *dmn;
-
   if(isFlagSet(debug_classes, DBC_MTRACK))
   {
     if(ptr != NULL && size > 0)
     {
+      struct DbgMallocNode *dmn;
+
       if((dmn = malloc(sizeof(*dmn))) != NULL)
       {
         if((dmn->file = strdup(file)) != NULL)
@@ -727,11 +727,11 @@ void _MEMTRACK(const char *file, const int line, void *ptr, size_t size)
 // remove a node from the memory tracking list
 void _UNMEMTRACK(const char *file, const int line, const void *ptr)
 {
-  BOOL success = FALSE;
-  struct DbgMallocNode *dmn;
-
   if(isFlagSet(debug_classes, DBC_MTRACK) && ptr != NULL)
   {
+    BOOL success = FALSE;
+    struct DbgMallocNode *dmn;
+
     ObtainSemaphore(&DbgMallocListSema);
 
     if((dmn = findDbgMallocNode(ptr)) != NULL)
