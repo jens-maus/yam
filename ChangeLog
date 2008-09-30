@@ -7,6 +7,7 @@ $URL$
 
 2008-09-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Debug.c: calling free(NULL) will no longer cause a warning.
   * HTML2Mail.l, ParseEmail.l: fixed two memory leaks caused by the flex
     generated code by manually calling the final cleanup function.
   * Debug.c: massively improved the speed of the memory tracking free() function

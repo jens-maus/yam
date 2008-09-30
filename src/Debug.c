@@ -818,7 +818,7 @@ void dbg_free(const char *file, const int line, void *ptr)
 {
   ENTER();
 
-  if(isFlagSet(debug_flags, DBF_MEMORY))
+  if(isFlagSet(debug_flags, DBF_MEMORY) && ptr != NULL)
   {
     BOOL success = FALSE;
     struct DbgMallocNode *dmn;
