@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-09-30  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Debug.c: massively improved the speed of the memory tracking free() function
+    by using 256 separate lists instead of just one large list. The address of
+    the allocated pointer will be used as a kind of hash value to get a more or
+    less equal spread over all these lists.
+
 2008-09-29  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: fixed a memory when a .fimage file was used for a custom folder

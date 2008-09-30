@@ -648,13 +648,20 @@ struct DbgMallocNode {
   int line;
 };
 
-static struct MinList DbgMallocList;
+static struct MinList DbgMallocList[256];
 static struct SignalSemaphore DbgMallocListSema;
 static ULONG DbgMallocCount;
 
-#define ForEachNode    for(dmn = (struct DbgMallocNode *)DbgMallocList.mlh_Head; dmn->node.mln_Succ != NULL; dmn = (struct DbgMallocNode *)dmn->node.mln_Succ)
+#define ForEachNode(idx)      for(dmn = (struct DbgMallocNode *)DbgMallocList[idx].mlh_Head; dmn->node.mln_Succ != NULL; dmn = (struct DbgMallocNode *)dmn->node.mln_Succ)
+// a very simple hashing function to spread the allocations across the lists
+// Since AmigaOS memory allocation has a granularity of at least 8 bytes we simple ignore the
+// lower 4 bits (=16 Bytes) and take the next 8 bits as hash value. Not very sophisticated, but
+// it does the job quite good.
+#define ptr2hash(p)           ((((ULONG)(p)) >> 4) & 0xff)
 
-static struct DbgMallocNode *addDbgMallocNode(const char *file, const int line, void *ptr, size_t size)
+/// addDbgMallocNode
+// add a new node to the tracking lists
+static void addDbgMallocNode(const char *file, const int line, void *ptr, size_t size)
 {
   struct DbgMallocNode *dmn;
 
@@ -669,28 +676,30 @@ static struct DbgMallocNode *addDbgMallocNode(const char *file, const int line, 
       dmn->line = line;
 
       ObtainSemaphore(&DbgMallocListSema);
-      AddTail((struct List *)&DbgMallocList, (struct Node *)&dmn->node);
+      AddTail((struct List *)&DbgMallocList[ptr2hash(ptr)], (struct Node *)&dmn->node);
       ReleaseSemaphore(&DbgMallocListSema);
 
       DbgMallocCount++;
     }
   }
 
-  RETURN(dmn);
-  return dmn;
+  LEAVE();
 }
 
+///
+/// findDbgMallocNode
+// find a given pointer in the tracking lists
 static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
 {
   struct DbgMallocNode *result = NULL;
 
   ENTER();
 
-  if(IsListEmpty((struct List *)&DbgMallocList) == FALSE)
+  if(IsListEmpty((struct List *)&DbgMallocList[ptr2hash(ptr)]) == FALSE)
   {
     struct DbgMallocNode *dmn;
 
-    ForEachNode
+    ForEachNode(ptr2hash(ptr))
     {
       if(dmn->memory == ptr)
       {
@@ -704,6 +713,9 @@ static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
   return result;
 }
 
+///
+/// dbg_malloc
+// malloc() replacement
 void *dbg_malloc(const char *file, const int line, size_t size)
 {
   void *result = NULL;
@@ -721,6 +733,9 @@ void *dbg_malloc(const char *file, const int line, size_t size)
   return result;
 }
 
+///
+/// dbg_calloc
+// calloc() replacement
 void *dbg_calloc(const char *file, const int line, size_t n, size_t size)
 {
   void *result;
@@ -738,6 +753,9 @@ void *dbg_calloc(const char *file, const int line, size_t n, size_t size)
   return result;
 }
 
+///
+/// dbg_realloc
+// realloc() replacement
 void *dbg_realloc(UNUSED const char *file, UNUSED const int line, void *ptr, size_t size)
 {
   void *result = NULL;
@@ -762,6 +780,9 @@ void *dbg_realloc(UNUSED const char *file, UNUSED const int line, void *ptr, siz
 
       if((dmn = findDbgMallocNode(ptr)) != NULL)
       {
+        // first remove the node from the old allocation's list
+        Remove((struct Node *)&dmn->node);
+
         if((result = realloc(ptr, size)) != NULL)
         {
           free(dmn->file);
@@ -770,8 +791,13 @@ void *dbg_realloc(UNUSED const char *file, UNUSED const int line, void *ptr, siz
           dmn->size = size;
           dmn->file = strdup(file);
           dmn->line = line;
+
+          // then add it again to the list corresponding to the new allocation
+          AddTail((struct List *)&DbgMallocList[ptr2hash(result)], (struct Node *)&dmn->node);
         }
       }
+      else
+        W(DBF_MEMORY, "%s:%ld: realloc() cannot find track node for allocation 0x%08lx", file, line, ptr);
 
       ReleaseSemaphore(&DbgMallocListSema);
     }
@@ -785,6 +811,9 @@ void *dbg_realloc(UNUSED const char *file, UNUSED const int line, void *ptr, siz
   return result;
 }
 
+///
+/// dbg_free
+// free() replacement
 void dbg_free(const char *file, const int line, void *ptr)
 {
   ENTER();
@@ -799,6 +828,7 @@ void dbg_free(const char *file, const int line, void *ptr)
     if((dmn = findDbgMallocNode(ptr)) != NULL)
     {
       Remove((struct Node *)dmn);
+
       if(dmn->file != NULL)
         free(dmn->file);
       free(dmn);
@@ -819,6 +849,9 @@ void dbg_free(const char *file, const int line, void *ptr)
   LEAVE();
 }
 
+///
+/// dbg_strdup
+// strdup() replacement
 char *dbg_strdup(const char *file, const int line, const char *s)
 {
   char *result;
@@ -832,6 +865,9 @@ char *dbg_strdup(const char *file, const int line, const char *s)
   return result;
 }
 
+///
+/// dbg_memdup
+// memdup() replacement
 void *dbg_memdup(const char *file, const int line, const void *ptr, const size_t size)
 {
   void *result;
@@ -845,13 +881,19 @@ void *dbg_memdup(const char *file, const int line, const void *ptr, const size_t
   return result;
 }
 
+///
+/// SetupDbgMalloc
+// initialize the memory tracking framework
 static void SetupDbgMalloc(void)
 {
   ENTER();
 
   if(isFlagSet(debug_flags, DBF_MEMORY))
   {
-    NewList((struct List *)&DbgMallocList);
+    ULONG i;
+
+    for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
+      NewList((struct List *)&DbgMallocList[i]);
     InitSemaphore(&DbgMallocListSema);
     DbgMallocCount = 0;
   }
@@ -859,6 +901,9 @@ static void SetupDbgMalloc(void)
   LEAVE();
 }
 
+///
+/// CleanupDbgMalloc
+// cleanup the memory tracking framework and output possibly pending allocations
 static void CleanupDbgMalloc(void)
 {
   ENTER();
@@ -867,19 +912,24 @@ static void CleanupDbgMalloc(void)
   {
     ObtainSemaphore(&DbgMallocListSema);
 
-    if(IsListEmpty((struct List *)&DbgMallocList) == FALSE)
+    if(DbgMallocCount != 0)
     {
-      struct DbgMallocNode *dmn;
+      ULONG i;
 
-      E(DBF_MEMORY, "there are still unfreed %ld allocations", DbgMallocCount);
-      while((dmn = (struct DbgMallocNode *)RemHead((struct List *)&DbgMallocList)) != NULL)
+      E(DBF_MEMORY, "there are still %ld unfreed allocations", DbgMallocCount);
+      for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
       {
-        E(DBF_MEMORY, "unfreed allocation 0x%08lx, size %ld from file '%s', line %ld", dmn->memory, dmn->size, dmn->file, dmn->line);
-        if(dmn->memory != NULL)
-          free(dmn->memory);
-        if(dmn->file != NULL)
-          free(dmn->file);
-        free(dmn);
+        struct DbgMallocNode *dmn;
+
+        while((dmn = (struct DbgMallocNode *)RemHead((struct List *)&DbgMallocList[i])) != NULL)
+        {
+          E(DBF_MEMORY, "unfreed allocation 0x%08lx, size %ld from file '%s', line %ld", dmn->memory, dmn->size, dmn->file, dmn->line);
+          if(dmn->memory != NULL)
+            free(dmn->memory);
+          if(dmn->file != NULL)
+            free(dmn->file);
+          free(dmn);
+        }
       }
     }
     else
@@ -893,22 +943,27 @@ static void CleanupDbgMalloc(void)
   LEAVE();
 }
 
+///
+/// DumpDbgMalloc
+// output all current allocations
 void DumpDbgMalloc(void)
 {
   ENTER();
 
   if(isFlagSet(debug_flags, DBF_MEMORY))
   {
+    ULONG i;
+
     ObtainSemaphore(&DbgMallocListSema);
 
-    if(IsListEmpty((struct List *)&DbgMallocList) == FALSE)
+    D(DBF_MEMORY, "%ld allocations tracked", DbgMallocCount);
+    for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
     {
       struct DbgMallocNode *dmn;
 
-      D(DBF_MEMORY, "%ld allocations tracked", DbgMallocCount);
-      ForEachNode
+      ForEachNode(i)
       {
-        D(DBF_MEMORY, "allocation 0x%08lx, size %ld from file '%s', line %ld", dmn->memory, dmn->size, dmn->file, dmn->line);
+        D(DBF_MEMORY, "  allocation 0x%08lx, size %ld from file '%s', line %ld", dmn->memory, dmn->size, dmn->file, dmn->line);
       }
     }
 
@@ -917,5 +972,7 @@ void DumpDbgMalloc(void)
 
   LEAVE();
 }
+
+///
 
 #endif /* DEBUG */
