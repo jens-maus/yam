@@ -21,6 +21,7 @@ $URL$
 
 2008-09-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc/FreeVecPooled.c: fixed wrong UNMEMTRACK() call.
   * extrasrc/AllocSysObject.c: refined the memory tracking to track each single
     type instead of just AllocSysObject() globally.
   * Debug.c: removed the conditional free() in _UNMEMTRACK() again as it was
