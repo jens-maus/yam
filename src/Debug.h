@@ -194,7 +194,7 @@ void W(unsigned long f, const char *format, ...);
 #define SHOWMSG(f, m)         ((void)0)
 #define STARTCLOCK()          ((void)0)
 #define STOPCLOCK(f, m)       ((void)0)
-#define MEMTRACK(p, s)        ((void)0)
+#define MEMTRACK(f, p, s)     ((void)0)
 #define UNMEMTRACK(p)         ((void)0)
 #define D(f, ...)             ((void)0)
 #define E(f, ...)             ((void)0)
