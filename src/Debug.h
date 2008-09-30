@@ -100,7 +100,7 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsi
 void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, va_list args);
 void _STARTCLOCK(const char *file, unsigned long line);
 void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, unsigned long line);
-void _MEMTRACK(const char *file, const int line, void *ptr, size_t size);
+void _MEMTRACK(const char *file, const int line, const char *func, void *ptr, size_t size);
 void _UNMEMTRACK(const char *file, const int line, const void *ptr);
 
 #if defined(__SASC)
@@ -118,7 +118,7 @@ void _UNMEMTRACK(const char *file, const int line, const void *ptr);
 #define SHOWMSG(f, m)         _SHOWMSG(DBC_REPORT, f, m, __FILE__, __LINE__)
 #define STARTCLOCK()          _STARTCLOCK(__FILE__, __LINE__)
 #define STOPCLOCK(f, m)       _STOPCLOCK(f, m, __FILE__, __LINE__)
-#define MEMTRACK(p, s)        _MEMTRACK(__FILE__, __LINE__, p, s)
+#define MEMTRACK(f, p, s)     _MEMTRACK(__FILE__, __LINE__, f, p, s)
 #define UNMEMTRACK(p)         _UNMEMTRACK(__FILE__, __LINE__, p)
 #if defined(NO_VARARG_MARCOS)
 void D(unsigned long f, const char *format, ...);
@@ -146,12 +146,40 @@ void W(unsigned long f, const char *format, ...);
   )
 
 #if !defined(DEBUG_USE_MALLOC_REDEFINE)
-#define malloc(s)               ({void *P = malloc(s);     _MEMTRACK(__FILE__, __LINE__, P, s); P;})
-#define calloc(n, s)            ({void *P = calloc(n, s);  _MEMTRACK(__FILE__, __LINE__, P, s); P;})
-#define realloc(p, s)           ({void *P; _UNMEMTRACK(__FILE__, __LINE__, p); P = realloc(p, s); _MEMTRACK(__FILE__, __LINE__, P, s); P;})
-#define strdup(s)               ({char *P = strdup(s);     _MEMTRACK(__FILE__, __LINE__, P, strlen(s)+1); P;})
-#define memdup(p, s)            ({void *P = memdup(p, s);  _MEMTRACK(__FILE__, __LINE__, P, s); P;})
+#define malloc(s)               ({void *P = malloc(s);     _MEMTRACK(__FILE__, __LINE__, "malloc", P, s); P;})
+#define calloc(n, s)            ({void *P = calloc(n, s);  _MEMTRACK(__FILE__, __LINE__, "calloc", P, s); P;})
+#define realloc(p, s)           ({void *P; _UNMEMTRACK(__FILE__, __LINE__, p); P = realloc(p, s); _MEMTRACK(__FILE__, __LINE__, "realloc", P, s); P;})
+#define strdup(s)               ({char *P = strdup(s);     _MEMTRACK(__FILE__, __LINE__, "strdup", P, strlen(s)+1); P;})
+#define memdup(p, s)            ({void *P = memdup(p, s);  _MEMTRACK(__FILE__, __LINE__, "memdup", P, s); P;})
 #define free(p)                 ({_UNMEMTRACK(__FILE__, __LINE__, p); free(p);})
+
+#if defined(__amigaos4__)
+#undef AllocVecPooled
+#undef FreeVecPooled
+#undef AllocDosObject
+#undef AllocDosObjectTags
+#undef FreeDosObject
+#undef AllocSysObject
+#undef AllocSysObjectTags
+#undef FreeSysObject
+#undef ExamineObject
+#undef ExamineObjectTags
+#undef AllocBitMap
+#undef FreeBitMap
+#define AllocVecPooled(p, s)          ({APTR P = IExec->AllocVecPooled(p, s); _MEMTRACK(__FILE__, __LINE__, "AllocVecPooled", P, s); P;})
+#define FreeVecPooled(p, m)           ({_UNMEMTRACK(__FILE__, __LINE__, m); IExec->FreeVecPooled(p, m);})
+#define AllocDosObject(t, p)          ({APTR P = IDOS->AllocDosObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocDosObject", P, t+1); P;})
+#define AllocDosObjectTags(t, ...)    ({APTR P = IDOS->AllocDosObjectTags(t, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "AllocDosObjectTags", P, t+1); P;})
+#define ExamineObject(t)              ({APTR P = IDOS->ExamineObject(t); _MEMTRACK(__FILE__, __LINE__, "ExamineObject", P, t+1); P;})
+#define ExamineObjectTags(t, ...)     ({APTR P = IDOS->ExamineObjectTags(t, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ExamineObjectTags", P, t+1); P;})
+#define FreeDosObject(t, p)           ({_UNMEMTRACK(__FILE__, __LINE__, p); IDOS->FreeDosObject(t, p);})
+#define AllocSysObject(t, p)          ({APTR P = IExec->AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
+#define AllocSysObjectTags(t, ...)    ({APTR P = IExec->AllocSysObjectTags(t, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "AllocSysObjectTags", P, t+1); P;})
+#define FreeSysObject(t, p)           ({_UNMEMTRACK(__FILE__, __LINE__, p); IExec->FreeSysObject(t, p);})
+#define AllocBitMap(sx, sy, d, f, bm) ({APTR P = IGraphics->AllocBitMap(sx, sy, d, f, bm); _MEMTRACK(__FILE__, __LINE__, "AllocBitMap", P, sx); P;})
+#define FreeBitMap(p)                 ({_UNMEMTRACK(__FILE__, __LINE__, p); IGraphics->FreeBitMap(p);})
+#endif
+
 #endif
 
 #else // DEBUG

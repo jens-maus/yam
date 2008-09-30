@@ -7,6 +7,9 @@ $URL$
 
 2008-09-30  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Debug.c, Debug.h: added the AllocVec#?() type of functions to the memory
+    tracking framework. However, please note that the tracking of these
+    functions does only work on the OS4 debug build for now.
   * Debug.c, Debug.h: slightly rewrote the new memory tracking debug framework
     to have a MEMTRACK() and UNMEMTRACK() macro similar to our D()-type of
     debugging macros. In addition, the preprocessor replacements for malloc()

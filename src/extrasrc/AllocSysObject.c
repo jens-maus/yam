@@ -523,6 +523,9 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
   }
 
 done:
+
+  MEMTRACK("AllocSysObject", object, type+1);
+
   RETURN(object);
   return object;
 }
@@ -622,6 +625,8 @@ void FreeSysObject(ULONG type, APTR object)
       }
       break;
     }
+
+    UNMEMTRACK(object);
   }
 
   LEAVE();

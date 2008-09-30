@@ -652,6 +652,7 @@ struct DbgMallocNode
   void *memory;
   size_t size;
   char *file;
+  char *func;
   int line;
 };
 
@@ -693,7 +694,7 @@ static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
 ///
 /// _MEMTRACK
 // add a new node to the tracking lists
-void _MEMTRACK(const char *file, const int line, void *ptr, size_t size)
+void _MEMTRACK(const char *file, const int line, const char *func, void *ptr, size_t size)
 {
   if(isFlagSet(debug_classes, DBC_MTRACK))
   {
@@ -708,6 +709,7 @@ void _MEMTRACK(const char *file, const int line, void *ptr, size_t size)
           dmn->memory = ptr;
           dmn->size = size;
           dmn->line = line;
+          dmn->func = strdup(func);
 
           ObtainSemaphore(&DbgMallocListSema);
           AddTail((struct List *)&DbgMallocList[ptr2hash(ptr)], (struct Node *)&dmn->node);
@@ -749,7 +751,7 @@ void _UNMEMTRACK(const char *file, const int line, const void *ptr)
     }
 
     if(success == FALSE)
-      _DPRINTF(DBC_WARNING, DBF_ALWAYS, file, line, "free() of untracked allocation 0x%08lx attempted", ptr);
+      _DPRINTF(DBC_WARNING, DBF_ALWAYS, file, line, "free of untracked allocation 0x%08lx attempted", ptr);
 
     ReleaseSemaphore(&DbgMallocListSema);
   }
@@ -798,12 +800,17 @@ static void CleanupDbgMalloc(void)
 
         while((dmn = (struct DbgMallocNode *)RemHead((struct List *)&DbgMallocList[i])) != NULL)
         {
-          _DPRINTF(DBC_ERROR, DBF_ALWAYS, dmn->file, dmn->line, "unfreed allocation 0x%08lx, size %ld", dmn->memory, dmn->size);
+          _DPRINTF(DBC_ERROR, DBF_ALWAYS, dmn->file, dmn->line, "unfreed allocation 0x%08lx, size/type %ld (%s)", dmn->memory, dmn->size, dmn->func);
 
           if(dmn->memory != NULL)
             free(dmn->memory);
+
           if(dmn->file != NULL)
             free(dmn->file);
+
+          if(dmn->func != NULL)
+            free(dmn->func);
+
           free(dmn);
         }
       }
@@ -837,7 +844,7 @@ void DumpDbgMalloc(void)
 
       ForEachNode(i)
       {
-        _DPRINTF(DBC_MTRACK, DBF_ALWAYS, dmn->file, dmn->line, "allocation 0x%08lx, size %ld");
+        _DPRINTF(DBC_MTRACK, DBF_ALWAYS, dmn->file, dmn->line, "allocation 0x%08lx, size/type %ld (%s)", dmn->memory, dmn->size, dmn->func);
       }
     }
 

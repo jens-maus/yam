@@ -43,6 +43,8 @@ void FreeVecPooled(APTR poolHeader, APTR memory)
   // an return the memory block to the pool
   FreePooled(poolHeader, mem, memSize);
 
+  UNMEMTRACK(mem);
+
   LEAVE();
 }
 ///
