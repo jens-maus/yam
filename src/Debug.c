@@ -59,7 +59,7 @@ static BOOL ansi_output = FALSE;
 static BOOL con_output = FALSE;
 static FILE *file_output = NULL;
 static ULONG debug_flags = DBF_ALWAYS | DBF_STARTUP; // default debug flags
-static ULONG debug_classes = DBC_ERROR | DBC_DEBUG | DBC_WARNING | DBC_ASSERT | DBC_REPORT; // default debug classes
+static ULONG debug_classes = DBC_ERROR | DBC_DEBUG | DBC_WARNING | DBC_ASSERT | DBC_REPORT | DBC_MTRACK; // default debug classes
 static int timer_level = -1;
 static struct TimeVal startTimes[8];
 
@@ -116,6 +116,7 @@ void SetupDebug(void)
       { "debug",   DBC_DEBUG    },
       { "error",   DBC_ERROR    },
       { "warning", DBC_WARNING  },
+      { "mtrack",  DBC_MTRACK   },
       { "all",     DBC_ALL      },
       { NULL,      0            }
     };
@@ -145,7 +146,6 @@ void SetupDebug(void)
       { "print",    DBF_PRINT   },
       { "theme",    DBF_THEME   },
       { "thread",   DBF_THREAD  },
-      { "memory",   DBF_MEMORY  },
       { "all",      DBF_ALL     },
       { NULL,       0           }
     };
@@ -573,30 +573,36 @@ void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, uns
 
 void _STARTCLOCK(const char *file, unsigned long line)
 {
-  if(timer_level + 1 < (int)ARRAY_SIZE(startTimes))
+  if(isFlagSet(debug_classes, DBC_TIMEVAL))
   {
-    timer_level++;
-    GetSysTime(TIMEVAL(&startTimes[timer_level]));
+    if(timer_level + 1 < (int)ARRAY_SIZE(startTimes))
+    {
+      timer_level++;
+      GetSysTime(TIMEVAL(&startTimes[timer_level]));
+    }
+    else
+      _DPRINTF(DBC_ERROR, DBF_ALWAYS, file, line, "already %ld clocks in use!", ARRAY_SIZE(startTimes));
   }
-  else
-    _DPRINTF(DBC_ERROR, DBF_ALWAYS, file, line, "already %ld clocks in use!", ARRAY_SIZE(startTimes));
 }
 
 /****************************************************************************/
 
 void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, unsigned long line)
 {
-  if(timer_level >= 0)
+  if(isFlagSet(debug_classes, DBC_TIMEVAL))
   {
-    struct TimeVal stopTime;
+    if(timer_level >= 0)
+    {
+      struct TimeVal stopTime;
 
-    GetSysTime(TIMEVAL(&stopTime));
-    SubTime(TIMEVAL(&stopTime), TIMEVAL(&startTimes[timer_level]));
-    _DPRINTF(DBC_TIMEVAL, dflags, file, line, "operation '%s' took %ld.%09ld seconds", message, stopTime.Seconds, stopTime.Microseconds);
-    timer_level--;
+      GetSysTime(TIMEVAL(&stopTime));
+      SubTime(TIMEVAL(&stopTime), TIMEVAL(&startTimes[timer_level]));
+      _DPRINTF(DBC_TIMEVAL, dflags, file, line, "operation '%s' took %ld.%09ld seconds", message, stopTime.Seconds, stopTime.Microseconds);
+      timer_level--;
+    }
+    else
+      _DPRINTF(DBC_ERROR, DBF_ALWAYS, file, line, "no clocks in use!");
   }
-  else
-    _DPRINTF(DBC_ERROR, DBF_ALWAYS, file, line, "no clocks in use!");
 }
 
 /****************************************************************************/
@@ -640,7 +646,8 @@ void W(unsigned long f, const char *format, ...)
 
 /****************************************************************************/
 
-struct DbgMallocNode {
+struct DbgMallocNode
+{
   struct MinNode node;
   void *memory;
   size_t size;
@@ -653,47 +660,18 @@ static struct SignalSemaphore DbgMallocListSema;
 static ULONG DbgMallocCount;
 
 #define ForEachNode(idx)      for(dmn = (struct DbgMallocNode *)DbgMallocList[idx].mlh_Head; dmn->node.mln_Succ != NULL; dmn = (struct DbgMallocNode *)dmn->node.mln_Succ)
+
 // a very simple hashing function to spread the allocations across the lists
 // Since AmigaOS memory allocation has a granularity of at least 8 bytes we simple ignore the
 // lower 4 bits (=16 Bytes) and take the next 8 bits as hash value. Not very sophisticated, but
 // it does the job quite good.
 #define ptr2hash(p)           ((((ULONG)(p)) >> 4) & 0xff)
 
-/// addDbgMallocNode
-// add a new node to the tracking lists
-static void addDbgMallocNode(const char *file, const int line, void *ptr, size_t size)
-{
-  struct DbgMallocNode *dmn;
-
-  ENTER();
-
-  if((dmn = malloc(sizeof(*dmn))) != NULL)
-  {
-    if((dmn->file = strdup(file)) != NULL)
-    {
-      dmn->memory = ptr;
-      dmn->size = size;
-      dmn->line = line;
-
-      ObtainSemaphore(&DbgMallocListSema);
-      AddTail((struct List *)&DbgMallocList[ptr2hash(ptr)], (struct Node *)&dmn->node);
-      ReleaseSemaphore(&DbgMallocListSema);
-
-      DbgMallocCount++;
-    }
-  }
-
-  LEAVE();
-}
-
-///
 /// findDbgMallocNode
 // find a given pointer in the tracking lists
 static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
 {
   struct DbgMallocNode *result = NULL;
-
-  ENTER();
 
   if(IsListEmpty((struct List *)&DbgMallocList[ptr2hash(ptr)]) == FALSE)
   {
@@ -709,120 +687,51 @@ static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
     }
   }
 
-  RETURN(result);
   return result;
 }
 
 ///
-/// dbg_malloc
-// malloc() replacement
-void *dbg_malloc(const char *file, const int line, size_t size)
+/// _MEMTRACK
+// add a new node to the tracking lists
+void _MEMTRACK(const char *file, const int line, void *ptr, size_t size)
 {
-  void *result = NULL;
+  struct DbgMallocNode *dmn;
 
-  ENTER();
-
-  result = malloc(size);
-
-  if(isFlagSet(debug_flags, DBF_MEMORY) && result != NULL)
+  if(isFlagSet(debug_classes, DBC_MTRACK))
   {
-    addDbgMallocNode(file, line, result, size);
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// dbg_calloc
-// calloc() replacement
-void *dbg_calloc(const char *file, const int line, size_t n, size_t size)
-{
-  void *result;
-
-  ENTER();
-
-  result = calloc(n, size);
-
-  if(isFlagSet(debug_flags, DBF_MEMORY) && result != NULL)
-  {
-    addDbgMallocNode(file, line, result, size);
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// dbg_realloc
-// realloc() replacement
-void *dbg_realloc(UNUSED const char *file, UNUSED const int line, void *ptr, size_t size)
-{
-  void *result = NULL;
-
-  ENTER();
-
-  if(isFlagSet(debug_flags, DBF_MEMORY))
-  {
-    if(ptr == NULL)
+    if(ptr != NULL && size > 0)
     {
-      result = dbg_malloc(file, line, size);
-    }
-    else if(size == 0)
-    {
-      dbg_free(file, line, ptr);
-    }
-    else
-    {
-      struct DbgMallocNode *dmn;
-
-      ObtainSemaphore(&DbgMallocListSema);
-
-      if((dmn = findDbgMallocNode(ptr)) != NULL)
+      if((dmn = malloc(sizeof(*dmn))) != NULL)
       {
-        // first remove the node from the old allocation's list
-        Remove((struct Node *)&dmn->node);
-
-        if((result = realloc(ptr, size)) != NULL)
+        if((dmn->file = strdup(file)) != NULL)
         {
-          free(dmn->file);
-
-          dmn->memory = result;
+          dmn->memory = ptr;
           dmn->size = size;
-          dmn->file = strdup(file);
           dmn->line = line;
 
-          // then add it again to the list corresponding to the new allocation
-          AddTail((struct List *)&DbgMallocList[ptr2hash(result)], (struct Node *)&dmn->node);
+          ObtainSemaphore(&DbgMallocListSema);
+          AddTail((struct List *)&DbgMallocList[ptr2hash(ptr)], (struct Node *)&dmn->node);
+          ReleaseSemaphore(&DbgMallocListSema);
+
+          DbgMallocCount++;
         }
       }
-      else
-        W(DBF_MEMORY, "%s:%ld: realloc() cannot find track node for allocation 0x%08lx", file, line, ptr);
-
-      ReleaseSemaphore(&DbgMallocListSema);
     }
+    else
+      _DPRINTF(DBC_WARNING, DBF_ALWAYS, file, line, "invalid malloc call or return (%08lx, %ld)", ptr, size);
   }
-  else
-  {
-    result = realloc(ptr, size);
-  }
-
-  RETURN(result);
-  return result;
 }
 
 ///
-/// dbg_free
-// free() replacement
-void dbg_free(const char *file, const int line, void *ptr)
+/// _UNMEMTRACK
+// remove a node from the memory tracking list
+void _UNMEMTRACK(const char *file, const int line, const void *ptr)
 {
-  ENTER();
+  BOOL success = FALSE;
+  struct DbgMallocNode *dmn;
 
-  if(isFlagSet(debug_flags, DBF_MEMORY) && ptr != NULL)
+  if(isFlagSet(debug_classes, DBC_MTRACK) && ptr != NULL)
   {
-    BOOL success = FALSE;
-    struct DbgMallocNode *dmn;
-
     ObtainSemaphore(&DbgMallocListSema);
 
     if((dmn = findDbgMallocNode(ptr)) != NULL)
@@ -831,6 +740,7 @@ void dbg_free(const char *file, const int line, void *ptr)
 
       if(dmn->file != NULL)
         free(dmn->file);
+
       free(dmn);
 
       DbgMallocCount--;
@@ -838,47 +748,11 @@ void dbg_free(const char *file, const int line, void *ptr)
       success = TRUE;
     }
 
-    ReleaseSemaphore(&DbgMallocListSema);
-
     if(success == FALSE)
-      W(DBF_MEMORY, "%s:%ld: free() of untracked allocation 0x%08lx attempted", file, line, ptr);
+      _DPRINTF(DBC_WARNING, DBF_ALWAYS, file, line, "free() of untracked allocation 0x%08lx attempted", ptr);
+
+    ReleaseSemaphore(&DbgMallocListSema);
   }
-
-  free(ptr);
-
-  LEAVE();
-}
-
-///
-/// dbg_strdup
-// strdup() replacement
-char *dbg_strdup(const char *file, const int line, const char *s)
-{
-  char *result;
-
-  ENTER();
-
-  if((result = dbg_malloc(file, line, strlen(s)+1)) != NULL)
-    strcpy(result, s);
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// dbg_memdup
-// memdup() replacement
-void *dbg_memdup(const char *file, const int line, const void *ptr, const size_t size)
-{
-  void *result;
-
-  ENTER();
-
-  if((result = dbg_malloc(file, line, size)) != NULL)
-    memcpy(result, ptr, size);
-
-  RETURN(result);
-  return result;
 }
 
 ///
@@ -888,12 +762,13 @@ static void SetupDbgMalloc(void)
 {
   ENTER();
 
-  if(isFlagSet(debug_flags, DBF_MEMORY))
+  if(isFlagSet(debug_classes, DBC_MTRACK))
   {
     ULONG i;
 
     for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
       NewList((struct List *)&DbgMallocList[i]);
+
     InitSemaphore(&DbgMallocListSema);
     DbgMallocCount = 0;
   }
@@ -908,7 +783,7 @@ static void CleanupDbgMalloc(void)
 {
   ENTER();
 
-  if(isFlagSet(debug_flags, DBF_MEMORY))
+  if(isFlagSet(debug_classes, DBC_MTRACK))
   {
     ObtainSemaphore(&DbgMallocListSema);
 
@@ -916,14 +791,15 @@ static void CleanupDbgMalloc(void)
     {
       ULONG i;
 
-      E(DBF_MEMORY, "there are still %ld unfreed allocations", DbgMallocCount);
+      E(DBF_ALWAYS, "there are still %ld unfreed allocations", DbgMallocCount);
       for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
       {
         struct DbgMallocNode *dmn;
 
         while((dmn = (struct DbgMallocNode *)RemHead((struct List *)&DbgMallocList[i])) != NULL)
         {
-          E(DBF_MEMORY, "unfreed allocation 0x%08lx, size %ld from file '%s', line %ld", dmn->memory, dmn->size, dmn->file, dmn->line);
+          _DPRINTF(DBC_ERROR, DBF_ALWAYS, dmn->file, dmn->line, "unfreed allocation 0x%08lx, size %ld", dmn->memory, dmn->size);
+
           if(dmn->memory != NULL)
             free(dmn->memory);
           if(dmn->file != NULL)
@@ -933,9 +809,7 @@ static void CleanupDbgMalloc(void)
       }
     }
     else
-    {
-      D(DBF_MEMORY, "all memory allocations have been free()'d correctly");
-    }
+      D(DBF_ALWAYS, "all memory allocations have been free()'d correctly");
 
     ReleaseSemaphore(&DbgMallocListSema);
   }
@@ -950,20 +824,20 @@ void DumpDbgMalloc(void)
 {
   ENTER();
 
-  if(isFlagSet(debug_flags, DBF_MEMORY))
+  if(isFlagSet(debug_classes, DBC_MTRACK))
   {
     ULONG i;
 
     ObtainSemaphore(&DbgMallocListSema);
 
-    D(DBF_MEMORY, "%ld allocations tracked", DbgMallocCount);
+    D(DBF_ALWAYS, "%ld allocations tracked", DbgMallocCount);
     for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
     {
       struct DbgMallocNode *dmn;
 
       ForEachNode(i)
       {
-        D(DBF_MEMORY, "  allocation 0x%08lx, size %ld from file '%s', line %ld", dmn->memory, dmn->size, dmn->file, dmn->line);
+        _DPRINTF(DBC_MTRACK, DBF_ALWAYS, dmn->file, dmn->line, "allocation 0x%08lx, size %ld");
       }
     }
 

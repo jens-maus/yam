@@ -56,6 +56,7 @@
 #define DBC_DEBUG    (1<<4) // debugging output D()
 #define DBC_ERROR    (1<<5) // error output     E()
 #define DBC_WARNING  (1<<6) // warning output   W()
+#define DBC_MTRACK   (1<<7) // memory tracking MEMTRACK/UNMEMTRACK()
 #define DBC_ALL      0xffffffff
 
 // debug flags
@@ -82,11 +83,11 @@
 #define DBF_PRINT    (1<<20)    // for print management
 #define DBF_THEME    (1<<21)    // for the Themes management (Themes.c)
 #define DBF_THREAD   (1<<22)    // for the Thread management (Thread.c)
-#define DBF_MEMORY   (1<<23)    // for memory tracking (Debug.c)
 #define DBF_ALL      0xffffffff
 
 void SetupDebug(void);
 void CleanupDebug(void);
+void DumpDbgMalloc(void);
 
 void _ENTER(unsigned long dclass, const char *file, unsigned long line, const char *function);
 void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const char *function);
@@ -99,6 +100,8 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsi
 void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, va_list args);
 void _STARTCLOCK(const char *file, unsigned long line);
 void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, unsigned long line);
+void _MEMTRACK(const char *file, const int line, void *ptr, size_t size);
+void _UNMEMTRACK(const char *file, const int line, const void *ptr);
 
 #if defined(__SASC)
   #define __FUNCTION__        __FUNC__
@@ -115,6 +118,8 @@ void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, uns
 #define SHOWMSG(f, m)         _SHOWMSG(DBC_REPORT, f, m, __FILE__, __LINE__)
 #define STARTCLOCK()          _STARTCLOCK(__FILE__, __LINE__)
 #define STOPCLOCK(f, m)       _STOPCLOCK(f, m, __FILE__, __LINE__)
+#define MEMTRACK(p, s)        _MEMTRACK(__FILE__, __LINE__, p, s)
+#define UNMEMTRACK(p)         _UNMEMTRACK(__FILE__, __LINE__, p)
 #if defined(NO_VARARG_MARCOS)
 void D(unsigned long f, const char *format, ...);
 void E(unsigned long f, const char *format, ...);
@@ -140,23 +145,14 @@ void W(unsigned long f, const char *format, ...);
    )                            \
   )
 
-void *dbg_malloc(const char *file, const int line, size_t size);
-void *dbg_calloc(const char *file, const int line, size_t n, size_t size);
-void *dbg_realloc(const char *file, const int line, void *ptr, size_t size);
-void dbg_free(const char *file, const int line, void *ptr);
-char *dbg_strdup(const char *file, const int line, const char *s);
-void *dbg_memdup(const char *file, const int line, const void *ptr, const size_t size);
-
 #if !defined(DEBUG_USE_MALLOC_REDEFINE)
-#define malloc(s)             dbg_malloc(__FILE__, __LINE__, s)
-#define calloc(n, s)          dbg_calloc(__FILE__, __LINE__, n, s)
-#define realloc(p, s)         dbg_realloc(__FILE__, __LINE__, p, s)
-#define free(p)               dbg_free(__FILE__, __LINE__, p)
-#define strdup(s)             dbg_strdup(__FILE__, __LINE__, s)
-#define memdup(p, s)          dbg_memdup(__FILE__, __LINE__, p, s)
+#define malloc(s)               ({void *P = malloc(s);     _MEMTRACK(__FILE__, __LINE__, P, s); P;})
+#define calloc(n, s)            ({void *P = calloc(n, s);  _MEMTRACK(__FILE__, __LINE__, P, s); P;})
+#define realloc(p, s)           ({void *P; _UNMEMTRACK(__FILE__, __LINE__, p); P = realloc(p, s); _MEMTRACK(__FILE__, __LINE__, P, s); P;})
+#define strdup(s)               ({char *P = strdup(s);     _MEMTRACK(__FILE__, __LINE__, P, strlen(s)+1); P;})
+#define memdup(p, s)            ({void *P = memdup(p, s);  _MEMTRACK(__FILE__, __LINE__, P, s); P;})
+#define free(p)                 ({_UNMEMTRACK(__FILE__, __LINE__, p); free(p);})
 #endif
-
-void DumpDbgMalloc(void);
 
 #else // DEBUG
 
@@ -170,6 +166,8 @@ void DumpDbgMalloc(void);
 #define SHOWMSG(f, m)         ((void)0)
 #define STARTCLOCK()          ((void)0)
 #define STOPCLOCK(f, m)       ((void)0)
+#define MEMTRACK(p, s)        ((void)0)
+#define UNMEMTRACK(p)         ((void)0)
 #define D(f, ...)             ((void)0)
 #define E(f, ...)             ((void)0)
 #define W(f, ...)             ((void)0)

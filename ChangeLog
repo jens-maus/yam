@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-09-30  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Debug.c, Debug.h: slightly rewrote the new memory tracking debug framework
+    to have a MEMTRACK() and UNMEMTRACK() macro similar to our D()-type of
+    debugging macros. In addition, the preprocessor replacements for malloc()
+    and friends are now performed via GCC enhanced preprocessor macros which 
+    call the original function directly. Furthermore, the memory tracking is
+    now an own debug class rather than a flag and also enabled per default.
+    That means if you want to get rid of the memory tracking you have to
+    disable the memory tracking with "setenv yamdebug !@mtrack".
+ 
 2008-09-30  Thore Böckelmann <tboeckel@gmx.de>
 
   * Debug.c: calling free(NULL) will no longer cause a warning.
