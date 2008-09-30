@@ -21,6 +21,10 @@ $URL$
 
 2008-09-30  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Debug.c: removed the conditional free() in _UNMEMTRACK() again as it was
+    quite senseless. Pending allocations from malloc() will be freed auto-
+    matically by the c-library's startup code and other allocations cannot be
+    handled correctly here.
   * Debug.c: reworked the _UNMEMTRACK() function to only free those allocations,
     which have been done by standard functions like malloc(). Before even
     allocations from AllocSysObject() or similar have been freed by free() which

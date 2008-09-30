@@ -797,19 +797,11 @@ static void CleanupDbgMalloc(void)
         {
           _DPRINTF(DBC_ERROR, DBF_ALWAYS, dmn->file, dmn->line, "unfreed allocation 0x%08lx, size %ld, type %s", dmn->memory, dmn->size, dmn->func);
 
-          if(dmn->memory != NULL)
-          {
-            // only the allocations done via the standard function can be freed here
-            if(strcmp(dmn->func, "malloc") == 0 ||
-               strcmp(dmn->func, "calloc") == 0 ||
-               strcmp(dmn->func, "realloc") == 0 ||
-               strcmp(dmn->func, "strdup") == 0 ||
-               strcmp(dmn->func, "memdup") == 0)
-            {
-              free(dmn->memory);
-            }
-          }
-
+          // We only free the node structure here but not dmn->memory itself.
+          // First of all, this is because the allocation could have been done
+          // by other functions than malloc() and calling free() for these will
+          // cause havoc. And second the c-library's startup code will/should
+          // free all further pending allocations upon program termination.
           free(dmn);
         }
       }
