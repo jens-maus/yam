@@ -596,26 +596,26 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
 
   ENTER();
 
-  if((mode = MUI_Request(G->App, G->CO->GUI.WI, 0, tr(MSG_CO_ImportMIME), tr(MSG_CO_ImportMIMEGads), tr(MSG_CO_ImportMIMEReq))))
+  if((mode = MUI_Request(G->App, G->CO->GUI.WI, 0, tr(MSG_CO_ImportMIME), tr(MSG_CO_ImportMIMEGads), tr(MSG_CO_ImportMIMEReq))) != 0)
   {
     struct FileReqCache *frc;
 
-    if((frc = ReqFile(ASL_ATTACH, G->CO->GUI.WI, tr(MSG_CO_IMPORTMIMETITLE), REQF_NONE, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types")))))
+    if((frc = ReqFile(ASL_ATTACH, G->CO->GUI.WI, tr(MSG_CO_IMPORTMIMETITLE), REQF_NONE, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types")))) != NULL)
     {
       char fname[SIZE_PATHFILE];
       FILE *fh;
 
       AddPath(fname, frc->drawer, frc->file, sizeof(fname));
-      if((fh = fopen(fname, "r")))
+      if((fh = fopen(fname, "r")) != NULL)
       {
         Object *lv = G->CO->GUI.LV_MIME;
-        char buffer[SIZE_LARGE];
+        char *buffer = NULL;
 
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
         set(lv, MUIA_NList_Quiet, TRUE);
 
-        while(fgets(buffer, SIZE_LARGE, fh))
+        while(NGetLine(fh, &buffer) != NULL)
         {
           struct MimeTypeNode *mt = NULL;
           struct MinNode *curNode;
@@ -625,10 +625,7 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
           char *p;
           char *p2;
 
-          if((p = strpbrk(ctype, "\r\n")))
-            *p = '\0';
-
-          if(!*ctype || isspace(*ctype))
+          if(*ctype == '\0' || isspace(*ctype))
             continue;
 
           if(mode == 1)
@@ -719,6 +716,9 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
               p[1] = 's';
           }
         }
+
+        if(buffer != NULL)
+          free(buffer);
 
         fclose(fh);
 
