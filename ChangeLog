@@ -7,6 +7,8 @@ $URL$
 
 2008-10-01  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COs.c, YAM_FO.c: replaced the old fgets() style file reading by the new
+    NGetLine() function to get rid of stack based buffers.
   * YAM_UT.c: added new NGetLine() function which is based on the recently added
     getline() function.
   * YAM_FI.c: added a missing DeleteMailList() call to fix prevent a memory

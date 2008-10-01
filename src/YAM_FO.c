@@ -387,11 +387,11 @@ BOOL FO_LoadConfig(struct Folder *fo)
   AddPath(fname, GetFolderDir(fo), ".fconfig", sizeof(fname));
   if((fh = fopen(fname, "r")) != NULL)
   {
-    char buffer[SIZE_LARGE];
+    char *buffer = NULL;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    if(fgets(buffer, SIZE_LARGE, fh) && strnicmp(buffer, "YFC", 3) == 0)
+    if(NGetLine(fh, &buffer) != NULL && strnicmp(buffer, "YFC", 3) == 0)
     {
       BOOL statsproc = FALSE;
 
@@ -399,16 +399,13 @@ BOOL FO_LoadConfig(struct Folder *fo)
       fo->MLSignature  = 1;
       fo->MLSupport    = TRUE;
 
-      while(fgets(buffer, sizeof(buffer), fh))
+      while(NGetLine(fh, &buffer) != NULL)
       {
         char *p;
         char *value;
 
         if((value = strchr(buffer, '=')) != NULL)
           for(++value; isspace(*value); value++);
-
-        if((p = strpbrk(buffer,"\r\n")) != NULL)
-          *p = '\0';
 
         for(p = buffer; *p != '\0' && isspace(*p) == FALSE; p++);
         *p = '\0';
@@ -435,6 +432,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
           else if(!stricmp(buffer, "WriteGreetings")) strlcpy(fo->WriteGreetings, value, sizeof(fo->WriteGreetings));
         }
       }
+
       success = TRUE;
 
       if(statsproc == FALSE)
@@ -455,6 +453,10 @@ BOOL FO_LoadConfig(struct Folder *fo)
       if(fo->Type == FT_SPAM && C->SpamFilterEnabled == FALSE)
         fo->Type = FT_CUSTOM;
     }
+
+    if(buffer != NULL)
+      free(buffer);
+
     fclose(fh);
   }
 

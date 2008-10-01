@@ -643,11 +643,11 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
   if((fh = fopen(fname, "r")) != NULL)
   {
-    char buffer[SIZE_LARGE];
+    char *buffer = NULL;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    if(fgets(buffer, sizeof(buffer), fh) && strnicmp(buffer, "YCO", 3) == 0)
+    if(NGetLine(fh, &buffer) != NULL && strnicmp(buffer, "YCO", 3) == 0)
     {
       int version = buffer[3]-'0';
       struct FolderList *ofo = NULL;
@@ -659,7 +659,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
       // set defaults
       CO_SetDefaults(co, cp_AllPages);
 
-      while(fgets(buffer, sizeof(buffer), fh))
+      while(NGetLine(fh, &buffer) != NULL)
       {
         char *p;
         char *value;
@@ -667,9 +667,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
         if((value = strchr(buffer, '=')) != NULL)
           for(value2 = (++value)+1; isspace(*value); value++);
-
-        if((p = strpbrk(buffer,"\r\n")) != NULL)
-          *p = '\0';
 
         for(p = buffer; *p != '\0' && *p != '=' && !isspace(*p); p++);
         *p = '\0';
@@ -1327,42 +1324,42 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
               {
                 char *p = strchr(s, '=');
 
-                if(p)
+                if(p != NULL)
                   co->SocketOptions.SendBuffer = atoi(p+1);
               }
               else if(strnicmp(s, "SO_RCVBUF", 9) == 0)
               {
                 char *p = strchr(s, '=');
 
-                if(p)
+                if(p != NULL)
                   co->SocketOptions.RecvBuffer = atoi(p+1);
               }
               else if(strnicmp(s, "SO_SNDLOWAT", 11) == 0)
               {
                 char *p = strchr(s, '=');
 
-                if(p)
+                if(p != NULL)
                   co->SocketOptions.SendLowAt = atoi(p+1);
               }
               else if(strnicmp(s, "SO_RCVLOWAT", 11) == 0)
               {
                 char *p = strchr(s, '=');
 
-                if(p)
+                if(p != NULL)
                   co->SocketOptions.RecvLowAt = atoi(p+1);
               }
               else if(strnicmp(s, "SO_SNDTIMEO", 11) == 0)
               {
                 char *p = strchr(s, '=');
 
-                if(p)
+                if(p != NULL)
                   co->SocketOptions.SendTimeOut = atoi(p+1);
               }
               else if(strnicmp(s, "SO_RCVTIMEO", 11) == 0)
               {
                 char *p = strchr(s, '=');
 
-                if(p)
+                if(p != NULL)
                   co->SocketOptions.RecvTimeOut = atoi(p+1);
               }
 
@@ -1405,6 +1402,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
       else
         E(DBF_CONFIG, "error during config load operation");
     }
+
+    if(buffer != NULL)
+      free(buffer);
 
     fclose(fh);
   }
