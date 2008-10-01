@@ -1625,6 +1625,8 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
       // but the mail is not available anymore for other filters
       success = FALSE;
     }
+
+    DeleteMailList(mlist);
   }
 
   RETURN(success);
