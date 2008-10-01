@@ -253,7 +253,6 @@ extern struct Hook    DisposeModuleHook;
 extern struct Hook    ExamineDirMatchHook;
 #endif
 
-
 // all the utility prototypes
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
 void     AddZombieFile(const char *fileName);
@@ -310,6 +309,7 @@ void     FormatSize(LONG size, char *buffer, int buflen, enum SizeFormat forcedP
 time_t   GetDateStamp(void);
 const char *GetFolderDir(const struct Folder *fo);
 char *   GetLine(FILE *fh, char *buffer, int bufsize);
+char *   NGetLine(FILE *fh, char **buffer);
 char *   GetMailFile(char *string, const struct Folder *folder, const struct Mail *mail);
 char *   GetNextLine(char *p1);
 int      GetSimpleID(void);
