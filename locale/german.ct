@@ -3515,7 +3515,7 @@ Die Nachricht\n\
 %s\n\
 wurde%s gelöscht,\n\
 ohne dass sie dem Benutzer angezeigt wurde. Der Benutzer kann die\n\
-Nachricht unter Umständen zu einem späteren Zeitpunkt \"entlöschen\"\n\
+Nachricht unter Umständen zu einem späteren Zeitpunkt wiederherstellen\n\
 und lesen.\n
 ; The message\n\
 ; %s\n\
