@@ -831,7 +831,7 @@ static void Terminate(void)
   for(i = 0; i < MAXEA; i++)
     DisposeModule(&G->EA[i]);
 
-  D(DBF_STARTUP, "freeing readmailData...");
+  D(DBF_STARTUP, "freeing readMailData...");
   // cleanup the still existing readmailData objects
   if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
   {
@@ -850,7 +850,7 @@ static void Terminate(void)
     }
   }
 
-  D(DBF_STARTUP, "freeing writemailData...");
+  D(DBF_STARTUP, "freeing writeMailData...");
   // cleanup the still existing writemailData objects
   if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
   {
@@ -885,6 +885,17 @@ static void Terminate(void)
 
   if(G->ER != NULL)
     DisposeModule(&G->ER);
+
+  D(DBF_STARTUP, "freeing %ld error messages...", G->ER_NumErr);
+  for(i = 0; i < G->ER_NumErr; i++)
+  {
+    if(G->ER_Message[i] != NULL)
+    {
+      free(G->ER_Message[i]);
+      G->ER_Message[i] = NULL;
+    }
+  }
+  G->ER_NumErr = 0;
 
   if(G->US != NULL)
     DisposeModule(&G->US);
@@ -2369,6 +2380,7 @@ int main(int argc, char **argv)
     ULONG rexxsig;
     ULONG appsig;
     ULONG applibsig;
+    ULONG threadsig;
     ULONG writeWinNotifySig;
     struct User *user;
     int ret;
@@ -2513,6 +2525,7 @@ int main(int argc, char **argv)
     appsig            = (1UL << G->AppPort->mp_SigBit);
     applibsig         = DockyIconSignal();
     writeWinNotifySig = (1UL << G->writeWinNotifyPort->mp_SigBit);
+    threadsig = CurrentThreadMask();
 
     D(DBF_STARTUP, "YAM allocated signals:");
     D(DBF_STARTUP, " adstsig           = %08lx", adstsig);
@@ -2521,6 +2534,7 @@ int main(int argc, char **argv)
     D(DBF_STARTUP, " appsig            = %08lx", appsig);
     D(DBF_STARTUP, " applibsig         = %08lx", applibsig);
     D(DBF_STARTUP, " writeWinNotifySig = %08lx", writeWinNotifySig);
+    D(DBF_STARTUP, " threadsig= %08lx", threadsig);
 
     // start our maintanance Timer requests for
     // different purposes (writeindexes/mailcheck/autosave)
@@ -2592,6 +2606,9 @@ int main(int argc, char **argv)
             break;
         }
         #endif
+
+        // handle thread messages
+        HandleThreadEvent(signals);
 
         // check for a write window file notification signal
         if(isFlagSet(signals, writeWinNotifySig))

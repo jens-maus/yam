@@ -175,8 +175,17 @@ HOOKPROTONHNO(ER_CloseFunc, void, int *arg)
 
   if(arg[0] == TRUE)
   {
-    while(G->ER_NumErr > 0)
-      free(G->ER_Message[--G->ER_NumErr]);
+    int i;
+
+    for(i = 0; i < G->ER_NumErr; i++)
+    {
+      if(G->ER_Message[i] != NULL)
+      {
+        free(G->ER_Message[i]);
+        G->ER_Message[i] = NULL;
+      }
+    }
+    G->ER_NumErr = 0;
 
     if(G->MA != NULL)
       set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, FALSE);
