@@ -3249,7 +3249,8 @@ static int TR_ConnectPOP(int guilevel)
 {
   char passwd[SIZE_PASSWORD], host[SIZE_HOST], buf[SIZE_LINE], *p;
   char *welcomemsg = NULL;
-  int pop = G->TR->POP_Nr, msgs;
+  int pop = G->TR->POP_Nr;
+  int msgs = -1;
   struct POP3 *pop3 = C->P3[pop];
   int port = pop3->Port;
   char *resp;
@@ -3355,8 +3356,7 @@ static int TR_ConnectPOP(int guilevel)
       }
     }
 
-    RETURN(-1);
-    return -1;
+    goto out;
   }
 
   // If this connection should be a STLS like connection we have to get the welcome
@@ -3367,19 +3367,14 @@ static int TR_ConnectPOP(int guilevel)
 
     // Initiate a connect and see if we succeed
     if((resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
-    {
-      RETURN(-1);
-      return -1;
-    }
+      goto out;
+
     welcomemsg = StrBufCpy(NULL, resp);
 
     // If the user selected STLS support we have to first send the command
     // to start TLS negotiation (RFC 2595)
     if(TR_SendPOP3Cmd(POPCMD_STLS, NULL, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
-    {
-      RETURN(-1);
-      return -1;
-    }
+      goto out;
   }
 
   // Here start the TLS/SSL Connection stuff
@@ -3390,13 +3385,12 @@ static int TR_ConnectPOP(int guilevel)
     // Now we have to Initialize and Start the TLS stuff if requested
     if(TR_InitTLS() == TRUE && TR_StartTLS() == TRUE)
     {
-       G->TR_UseTLS = TRUE;
+      G->TR_UseTLS = TRUE;
     }
     else
     {
-       ER_NewError(tr(MSG_ER_INITTLS_POP3), host, pop3->Account);
-       RETURN(-1);
-       return -1;
+      ER_NewError(tr(MSG_ER_INITTLS_POP3), host, pop3->Account);
+      goto out;
     }
   }
 
@@ -3406,10 +3400,8 @@ static int TR_ConnectPOP(int guilevel)
   {
     // Initiate a connect and see if we succeed
     if((resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
-    {
-      RETURN(-1);
-      return -1;
-    }
+      goto out;
+
     welcomemsg = StrBufCpy(NULL, resp);
   }
 
@@ -3417,10 +3409,7 @@ static int TR_ConnectPOP(int guilevel)
   {
     snprintf(buf, sizeof(buf), tr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
     if(StringRequest(passwd, SIZE_PASSWORD, tr(MSG_TR_PopLogin), buf, tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->TR->GUI.WI) == 0)
-    {
-      RETURN(-1);
-      return -1;
-    }
+      goto out;
   }
 
   // if the user has selected APOP for that POP3 host
@@ -3450,47 +3439,36 @@ static int TR_ConnectPOP(int guilevel)
       buf[j] = '\0';
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendAPOPLogin));
       if(TR_SendPOP3Cmd(POPCMD_APOP, buf, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
-      {
-        RETURN(-1);
-        return -1;
-      }
+        goto out;
     }
     else
     {
       ER_NewError(tr(MSG_ER_NO_APOP), host, pop3->Account);
-      RETURN(-1);
-      return -1;
+      goto out;
     }
   }
   else
   {
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendUserID));
     if(TR_SendPOP3Cmd(POPCMD_USER, pop3->User, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
-    {
-      RETURN(-1);
-      return -1;
-    }
+      goto out;
 
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendPassword));
     if(TR_SendPOP3Cmd(POPCMD_PASS, passwd, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
-    {
-      RETURN(-1);
-      return -1;
-    }
+      goto out;
   }
-
-  FreeStrBuf(welcomemsg);
 
   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_GetStats));
   if((resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, tr(MSG_ER_BADRESPONSE_POP3))) == NULL)
-  {
-    RETURN(-1);
-    return -1;
-  }
+    goto out;
 
   sscanf(&resp[4], "%d", &msgs);
   if(msgs != 0)
     AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_ConnectPOP), pop3->User, host, msgs);
+
+out:
+
+  FreeStrBuf(welcomemsg);
 
   RETURN(msgs);
   return msgs;

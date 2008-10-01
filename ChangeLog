@@ -7,6 +7,9 @@ $URL$
 
 2008-10-01  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: in case a mail transfer failed (i.e. because of a bad password)
+    the error message from the server will now be freed correctly. This finally
+    fixes bug #2123715.
   * YAM.c, YAM_ER.c: pending error messages will now be freed upon program
     termination to avoid memory leaks. Furthermore the message pointers will
     now be correctly reset to NULL when the error window is closed.
