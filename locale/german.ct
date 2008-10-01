@@ -7401,17 +7401,17 @@ Alles auswählen
 ;
 MSG_RE_MDN_ACCEPT_LATER
 Akzeptieren und\n\
-später senden
+_später senden
 ;
 MSG_RE_MDN_ACCEPT_NOW
 Akzeptieren und\n\
-jetzt senden
+_jetzt senden
 ;
 MSG_RE_MDN_IGNORE
-Ignorieren
+_Ignorieren
 ;
 MSG_RE_MDN_IGNORE_ALL
-Alle ignorieren
+_Alle ignorieren
 ;
 MSG_CO_MDN_ACTION_IGNORE
 Nie senden

@@ -5778,17 +5778,17 @@ Select all
 ;
 MSG_RE_MDN_ACCEPT_LATER (1862//)
 Accept and\n\
-send later
+send _later
 ;
 MSG_RE_MDN_ACCEPT_NOW (1863//)
 Accept and\n\
-send now
+send _now
 ;
 MSG_RE_MDN_IGNORE (1864//)
-Ignore
+_Ignore
 ;
 MSG_RE_MDN_IGNORE_ALL (1865//)
-Ignore all
+Ignore _all
 ;
 MSG_CO_MDN_ACTION_IGNORE (1866//)
 Never send

@@ -7,6 +7,8 @@ $URL$
 
 2008-10-01  Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/YAM.cd, locale/german.ct: added shortcuts to the MDN confirmation
+    requester. This fixes bug #2140680.
   * mui/ThemeListGroup.c: the theme entry in a list will now be freed, too. This
     fixes bug #2140826.
   * locale/german.ct: fixed a "too direct" translation to somewhat more
