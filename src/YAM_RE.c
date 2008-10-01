@@ -3582,6 +3582,10 @@ static void RE_SendMDN(const enum MDNMode mode,
                 if((mail = AddMailToList(&email->Mail, outfolder)) != NULL)
                 {
                   setStatusToQueued(mail);
+
+                  // refresh the folder statistics before the transfer
+                  DisplayStatistics(outfolder, TRUE);
+
                   AddNewMailNode(mlist, mail);
                 }
                 MA_FreeEMailStruct(email);
@@ -3592,7 +3596,7 @@ static void RE_SendMDN(const enum MDNMode mode,
               if(sendnow == TRUE && mlist->count != 0 && G->TR == NULL)
                 TR_ProcessSEND(mlist, autoSend ? SEND_ACTIVE_AUTO : SEND_ACTIVE_USER);
 
-              // refresh the folder statistics
+              // refresh the folder statistics after the transfer
               DisplayStatistics(outfolder, TRUE);
 
               DeleteMailList(mlist);
