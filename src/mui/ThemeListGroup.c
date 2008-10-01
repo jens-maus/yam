@@ -72,6 +72,8 @@ MakeStaticHook(ConstructHook, ConstructFunc);
 HOOKPROTONHNO(DestructFunc, LONG, struct Theme *entry)
 {
   FreeTheme(entry);
+  free(entry);
+
   return 0;
 }
 MakeStaticHook(DestructHook, DestructFunc);
