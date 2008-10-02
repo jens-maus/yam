@@ -662,7 +662,7 @@ ssize_t GetLine(char **buffer, size_t *size, FILE *fh)
     if(feof(fh) == 0 || ferror(fh) != 0)
     {
       // something bad happened, so we return NULL to signal abortion
-      W(DBF_MAIL, "fgets() in GetLine() returned  NULL and feof()=%ld || ferror()=%ld", feof(fh), ferror(fh));
+      W(DBF_MAIL, "getline() in GetLine() returned NULL and feof()=%ld || ferror()=%ld", feof(fh), ferror(fh));
     }
   }
   #endif
