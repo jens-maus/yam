@@ -718,8 +718,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
               if(ofo == NULL)
               {
-              	ofo = CreateFolderList();
-              	*oldfolders = ofo;
+                ofo = CreateFolderList();
+                *oldfolders = ofo;
               }
               if(ofo != NULL)
               {

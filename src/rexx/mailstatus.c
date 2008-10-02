@@ -74,7 +74,7 @@ void rx_mailstatus(UNUSED struct RexxHost *host, struct RexxParams *params, enum
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

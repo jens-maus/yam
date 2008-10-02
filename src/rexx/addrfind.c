@@ -90,12 +90,12 @@ void rx_addrfind(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
-	  if(results != NULL)
-	  {
+        FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+      {
         if(results->alias != NULL)
           free(results->alias);
-		FreeVecPooled(G->SharedMemPool, results);
+        FreeVecPooled(G->SharedMemPool, results);
       }
     }
     break;

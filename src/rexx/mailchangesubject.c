@@ -88,7 +88,7 @@ void rx_mailchangesubject(UNUSED struct RexxHost *host, struct RexxParams *param
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

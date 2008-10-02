@@ -71,7 +71,7 @@ void rx_screentoback(UNUSED struct RexxHost *host, struct RexxParams *params, en
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

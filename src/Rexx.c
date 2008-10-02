@@ -792,7 +792,7 @@ void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg)
   // evaluate the results
   if(rxc->results != NULL && params.rc == 0 && isFlagSet(rexxmsg->rm_Action, RXFF_RESULT))
   {
-  	struct RexxResult *varStem = (struct RexxResult *)params.args;
+    struct RexxResult *varStem = (struct RexxResult *)params.args;
     struct MinList stemList;
 
     if(CreateSTEM(&stemList, rxc, params.results, varStem->stem) == TRUE)

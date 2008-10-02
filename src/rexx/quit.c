@@ -68,7 +68,7 @@ void rx_quit(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxA
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

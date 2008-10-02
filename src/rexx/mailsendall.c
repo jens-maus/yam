@@ -65,7 +65,7 @@ void rx_mailsendall(UNUSED struct RexxHost *host, struct RexxParams *params, enu
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

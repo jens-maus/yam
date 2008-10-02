@@ -63,11 +63,11 @@ void rx_writefrom(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
     {
       if(G->ActiveRexxWMData != NULL && G->ActiveRexxWMData->window != NULL)
       {
-      	char *addresses[2];
+        char *addresses[2];
 
         // we have to supply a NULL terminated array of addresses
-      	addresses[0] = args->address;
-      	addresses[1] = NULL;
+        addresses[0] = args->address;
+        addresses[1] = NULL;
         DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_InsertAddresses, MUIV_WriteWindow_RcptType_From, addresses, FALSE);
       }
       else

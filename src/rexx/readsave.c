@@ -122,7 +122,7 @@ void rx_readsave(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
     }
     break;
   }

@@ -80,7 +80,7 @@ void rx_getconfiginfo(UNUSED struct RexxHost *host, struct RexxParams *params, e
     case RXIF_FREE:
     {
       if(args != NULL)
-		FreeVecPooled(G->SharedMemPool, args);
+        FreeVecPooled(G->SharedMemPool, args);
       if(results != NULL)
         FreeVecPooled(G->SharedMemPool, results);
     }
