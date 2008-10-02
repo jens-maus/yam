@@ -675,14 +675,15 @@ static void AddTagline(FILE *fh_mail)
           if(ReadUInt32(fh_hash, (ULONG *)&fpos) == 1)
           {
             char *buf = NULL;
+            size_t bufsize = 0;
 
             fseek(fh_tag, fpos, SEEK_SET);
 
-            if(GetLine(fh_tag, &buf) != NULL)
+            if(GetLine(&buf, &bufsize, fh_tag) != NULL)
             {
               fputs(buf, fh_mail);
 
-              while(GetLine(fh_tag, &buf) != NULL)
+              while(GetLine(&buf, &bufsize, fh_tag) != NULL)
               {
                 if(strncmp(buf, C->TagsSeparator, strlen(C->TagsSeparator)) == 0)
                   break;

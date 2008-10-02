@@ -131,19 +131,20 @@ static int DI_Load(void)
   if((fh = fopen(G->DI_Filename, "r")) != NULL)
   {
     char *buffer = NULL;
+    size_t size = 0;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     BusyText(tr(MSG_BusyLoadingDI), "");
 
-    if(GetLine(fh, &buffer) != NULL && strncmp(buffer, "YDI", 3) == 0)
+    if(GetLine(&buffer, &size, fh) != NULL && strncmp(buffer, "YDI", 3) == 0)
     {
-      struct Dict entry;
-
       set(G->DI->GUI.LV_ENTRIES, MUIA_List_Quiet, TRUE);
 
-      while(GetLine(fh, &buffer) != NULL)
+      while(GetLine(&buffer, &size, fh) != NULL)
       {
+        struct Dict entry;
+
         memset(&entry, 0, sizeof(struct Dict));
         if(strncmp(buffer, "@ENTRY", 6) == 0)
         {
@@ -152,7 +153,7 @@ static int DI_Load(void)
           strlcpy(entry.Alias, Trim(&buffer[7]), sizeof(entry.Alias));
           entry.Text = AllocStrBuf(80);
 
-          while(GetLine(fh, &buffer) != NULL)
+          while(GetLine(&buffer, &size, fh) != NULL)
           {
             if((p = strstr(buffer, "@ENDENTRY")))
             {

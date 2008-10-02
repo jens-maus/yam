@@ -1226,13 +1226,14 @@ char *MA_NewMailFile(const struct Folder *folder, char *mailfile)
 static BOOL MA_DetectUUE(FILE *fh)
 {
   char *buffer = NULL;
+  size_t size = 0;
   BOOL found = FALSE;
 
   ENTER();
 
   // Now we process the whole mailfile and check if there is any line that
   // starts with "begin xxx"
-  while(GetLine(fh, &buffer) != NULL)
+  while(GetLine(&buffer, &size, fh) != NULL)
   {
     // lets check for digit first because this will throw out many others first
     if(isdigit((int)buffer[6]) && strncmp(buffer, "begin ", 6) == 0)
@@ -1262,6 +1263,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
   {
     unsigned int linesread = 0;
     char *buffer = NULL;
+    size_t size = 0;
     BOOL finished = FALSE;
     struct HeaderNode *hdrNode = NULL;
 
@@ -1270,7 +1272,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
 
     // we read out the whole header line by line and
     // concatenate lines that are belonging together.
-    while((GetLine(fh, &buffer) != NULL && (++linesread, buffer[0] != '\0')) ||
+    while((GetLine(&buffer, &size, fh) != NULL && (++linesread, buffer[0] != '\0')) ||
           (finished == FALSE && (finished = TRUE)))
     {
       // if the start of this line is a space or a tabulator sign

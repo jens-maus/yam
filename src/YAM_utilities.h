@@ -308,7 +308,7 @@ void     FinishUnpack(char *file);
 void     FormatSize(LONG size, char *buffer, int buflen, enum SizeFormat forcedPrecision);
 time_t   GetDateStamp(void);
 const char *GetFolderDir(const struct Folder *fo);
-char *   GetLine(FILE *fh, char **buffer);
+char *   GetLine(char **buffer, size_t *size, FILE *fh);
 char *   GetMailFile(char *string, const struct Folder *folder, const struct Mail *mail);
 char *   GetNextLine(char *p1);
 int      GetSimpleID(void);

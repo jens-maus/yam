@@ -211,26 +211,27 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
   if(retc == 0 && (fp = fopen(PGPLOGFILE, "r")) != NULL)
   {
     char *buf = NULL;
+    size_t size = 0;
 
     str = (char *)xget(string, MUIA_String_Contents);
     DoMethod(pop, MUIM_List_Clear);
 
     setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
 
-    while(GetLine(fp, &buf) != NULL)
+    while(GetLine(&buf, &size, fp) != NULL)
     {
       char entry[SIZE_DEFAULT];
 
       memset(entry, 0, SIZE_DEFAULT);
       if(G->PGPVersion == 5)
       {
-        if(!strncmp(buf, "sec", 3) || (!strncmp(&buf[1], "ub", 2) && secret == NULL))
+        if(strncmp(buf, "sec", 3) == 0 || (strncmp(&buf[1], "ub", 2) == 0 && secret == NULL))
         {
           memcpy(entry, &buf[12], 8);
 
-          while(GetLine(fp, &buf) != NULL)
+          while(GetLine(&buf, &size, fp) != NULL)
           {
-            if(!strncmp(buf, "uid", 3))
+            if(strncmp(buf, "uid", 3) == 0)
             {
               strlcat(entry, &buf[4], sizeof(entry) - 9);
               break;

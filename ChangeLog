@@ -30,6 +30,9 @@ $URL$
 
 2008-10-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: added a size parameter to the GetLine() function to be able to reuse
+    an already allocated buffer from a previous call. Also changed the order of
+    the parameters to match the order of getline().
   * misc: reworked the GetLine() function to use getline() and reworked all
     functions using GetLine() to use dynamically allocated buffers instead of
     stack based ones.

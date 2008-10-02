@@ -4775,10 +4775,11 @@ static BOOL InitUIDLhash(void)
     if(ObtainFileInfo(filename, FI_SIZE, &size) == TRUE && size > 0 && (fh = fopen(filename, "r")) != NULL)
     {
       char *uidl = NULL;
+      size_t size = 0;
 
       setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      while(GetLine(fh, &uidl) != NULL)
+      while(GetLine(&uidl, &size, fh) != NULL)
         AddUIDLtoHash(uidl, FALSE);
 
       fclose(fh);
@@ -6342,13 +6343,14 @@ BOOL TR_GetMessageList_IMPORT(void)
         {
           FILE *ofh = NULL;
           char *buffer = NULL;
+          size_t bufsize = 0;
           BOOL foundBody = FALSE;
           int size = 0;
           long addr = 0;
 
           setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
-          while(GetLine(ifh, &buffer) != NULL)
+          while(GetLine(&buffer, &bufsize, ifh) != NULL)
           {
             // now we parse through the input file until we
             // find the "From " separator
@@ -6576,6 +6578,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               FILE *ofh = NULL;
               char mfile[SIZE_MFILE];
               char *buffer = NULL;
+              size_t size = 0;
               BOOL foundBody = FALSE;
               unsigned int stat = SFLAG_NONE;
               BOOL ownStatusFound = FALSE;
@@ -6598,7 +6601,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
               // now that we seeked to the mail address we go
               // and read in line by line
-              while(GetLine(ifh, &buffer) != NULL && G->TR->Abort == FALSE)
+              while(GetLine(&buffer, &size, ifh) != NULL && G->TR->Abort == FALSE)
               {
                 // if we did not find the message body yet
                 if(foundBody == FALSE)

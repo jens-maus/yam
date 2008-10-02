@@ -472,13 +472,14 @@ static void FI_GenerateListPatterns(struct Search *search)
   if((fh = fopen(search->Match, "r")) != NULL)
   {
     char *buf = NULL;
+    size_t size = 0;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     // make sure the pattern list is successfully freed
     FreeSearchPatternList(search);
 
-    while(GetLine(fh, &buf) != NULL)
+    while(GetLine(&buf, &size, fh) != NULL)
     {
       if(buf[0] != '\0')
       {
