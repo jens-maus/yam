@@ -671,31 +671,6 @@ char *GetLine(FILE *fh, char *buffer, int bufsize)
 }
 
 ///
-/// NGetLine
-// get a NUL terminated line of a text file
-char *NGetLine(FILE *fh, char **buffer)
-{
-  size_t size = 0;
-  char *result = NULL;
-
-  ENTER();
-
-  if(getline(buffer, &size, fh) > 0)
-  {
-    char *p = (*buffer) + strlen(*buffer) - 1;
-
-    // strip possible CR or LF characters at the end of the line
-    if(*p == '\n' || *p == '\r')
-      *p = '\0';
-
-    result = *buffer;
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///
 /// RenameFile
 //  Renames a file and restores the protection bits
 BOOL RenameFile(const char *oldname, const char *newname)

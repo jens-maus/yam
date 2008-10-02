@@ -7,10 +7,10 @@ $URL$
 
 2008-10-02  Jens Langner <Jens.Langner@light-speed.de>
 
-  * YAM_MA.c, YAM_WR.c, YAM_DI.c, YAM_FO.c, YAM_COg.c, YAM_COs.c, Themes.c, 
+  * YAM_MA.c, YAM_WR.c, YAM_DI.c, YAM_FO.c, YAM_COg.c, YAM_COs.c, Themes.c,
     YAM_TR.c: replaced all our fgets() uses by using the new overflow safe
     getline() variant we have now. In cases where no \r,\n stripping was
-    required (mostly just needed for the TCP/IP stuff) the getline() was 
+    required (mostly just needed for the TCP/IP stuff) the getline() was
     planely used instead, otherwise the stripping will be performed
     afterwards.
   * YAM_config.h, YAM_read.h, WriteWindow.c, ReadWindow.c, ReadMailGroup.c,
@@ -27,6 +27,7 @@ $URL$
 
 2008-10-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: removed the now obsolete NGetLine function.
   * Threads.h: added some missing prototypes.
 
 2008-10-01  Thore Böckelmann <tboeckel@gmx.de>
