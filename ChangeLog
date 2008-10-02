@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-10-02  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.h: added some missing prototypes.
+
 2008-10-01  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: in case an MDN request is accepted the outgoing folder will now be

@@ -61,5 +61,7 @@ struct Thread
 /*** Thread system init/cleanup functions ***/
 BOOL InitThreads(void);
 void CleanupThreads(void);
+ULONG CurrentThreadMask(void);
+void HandleThreadEvent(ULONG mask);
 
 #endif /* THREADS_H */
