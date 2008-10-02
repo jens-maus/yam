@@ -803,15 +803,18 @@ BOOL ConvertCRLF(char *in, char *out, BOOL to)
 
     if((outfh = fopen(out, "w")))
     {
-      char buf[SIZE_LINE];
+      char *buf = NULL;
 
       setvbuf(outfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      while(GetLine(infh, buf, sizeof(buf)))
+      while(GetLine(infh, &buf) != NULL)
         fprintf(outfh, "%s%s\n", buf, to?"\r":"");
 
       success = TRUE;
       fclose(outfh);
+
+      if(buf != NULL)
+        free(buf);
     }
 
     fclose(infh);
