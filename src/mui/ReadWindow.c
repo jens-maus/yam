@@ -76,6 +76,7 @@ struct Data
   Object *MI_TOHAM;
   Object *MI_SEARCH;
   Object *MI_SEARCHAGAIN;
+  Object *MI_TCOLOR;
   Object *windowToolbar;
   Object *statusBar;
   Object *readMailGroup;
@@ -95,7 +96,7 @@ enum
   RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,
   RMEN_FFONT,RMEN_SIMAGE,RMEN_TOMARKED,RMEN_TOUNMARKED,RMEN_TOUNREAD,RMEN_TOREAD,RMEN_TOHOLD,
   RMEN_TOQUEUED,RMEN_TOSPAM,RMEN_TOHAM,RMEN_SEARCH,RMEN_SEARCHAGAIN,RMEN_EDIT_COPY,RMEN_EDIT_SALL,
-  RMEN_EDIT_SNONE
+  RMEN_EDIT_SNONE,RMEN_TCOLOR
 };
 
 /* Private Functions */
@@ -224,7 +225,7 @@ OVERLOAD(OM_NEW)
   //  Q
   //  R   Reply mail (RMEN_REPLY)
   //  S   Save mail part (RMEN_SAVE)
-  //  T   Enable/Disable Text Styles (RMEN_TSTYLE)
+  //  T   Enable/Disable Text Colors (RMEN_TCOLOR)
   //  U
   //  V   Save PGP decrypted mail (RMEN_SAVEDEC)
   //  W   Forward mail (RMEN_FORWARD)
@@ -317,9 +318,10 @@ OVERLOAD(OM_NEW)
       MenuChild, MenuitemCheck(tr(MSG_RE_SInfoImage),   "5", TRUE, C->ShowSenderInfo==SIM_ALL,    FALSE, 0x90, RMEN_SFULL),
       MenuChild, MenuitemCheck(tr(MSG_RE_SImageOnly),   "6", TRUE, C->ShowSenderInfo==SIM_IMAGE,  FALSE, 0x70, RMEN_SIMAGE),
       MenuChild, MenuBarLabel,
-      MenuChild, data->MI_WRAPH  = MenuitemCheck(tr(MSG_RE_WrapHeader), "H", TRUE, C->WrapHeader,    TRUE, 0, RMEN_WRAPH),
-      MenuChild, data->MI_TSTYLE = MenuitemCheck(tr(MSG_RE_Textstyles), "T", TRUE, C->UseTextstyles, TRUE, 0, RMEN_TSTYLE),
-      MenuChild, data->MI_FFONT  = MenuitemCheck(tr(MSG_RE_FixedFont),  "I", TRUE, C->FixedFontEdit, TRUE, 0, RMEN_FFONT),
+      MenuChild, data->MI_WRAPH  = MenuitemCheck(tr(MSG_RE_WrapHeader), "H",  TRUE, C->WrapHeader,        TRUE, 0, RMEN_WRAPH),
+      MenuChild, data->MI_FFONT  = MenuitemCheck(tr(MSG_RE_FixedFont),  "I",  TRUE, C->FixedFontEdit,     TRUE, 0, RMEN_FFONT),
+      MenuChild, data->MI_TCOLOR = MenuitemCheck(tr(MSG_RE_TEXTCOLORS), "T",  TRUE, C->UseTextColorsRead, TRUE, 0, RMEN_TCOLOR),
+      MenuChild, data->MI_TSTYLE = MenuitemCheck(tr(MSG_RE_Textstyles), NULL, TRUE, C->UseTextStylesRead, TRUE, 0, RMEN_TSTYLE),
     End,
   End;
 
@@ -427,6 +429,7 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SFULL,     obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_ALL);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SIMAGE,    obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_IMAGE);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_WRAPH,     obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TCOLOR,    obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TSTYLE,    obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FFONT,     obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-capslock del",                 obj, 2, MUIM_ReadWindow_DeleteMailRequest, 0);
@@ -1443,6 +1446,13 @@ DECLARE(StyleOptionsChanged)
   {
     rmData->wrapHeaders = tmp;
     updateHeader = TRUE;
+  }
+
+  // check useTextcolors diff
+  if((tmp = xget(data->MI_TCOLOR, MUIA_Menuitem_Checked)) != rmData->useTextcolors)
+  {
+    rmData->useTextcolors = tmp;
+    updateText = TRUE;
   }
 
   // check useTextstyles diff

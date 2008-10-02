@@ -816,7 +816,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->ColorSignature.buf, "m4", sizeof(co->ColorSignature.buf));
     co->DisplayAllTexts = TRUE;
     co->FixedFontEdit = TRUE;
-    co->UseTextstyles = TRUE;
+    co->UseTextStylesRead = TRUE;
+    co->UseTextColorsRead = TRUE;
     co->DisplayAllAltPart = FALSE; // hide all sub "multipart/alternative" parts per default
     co->WrapHeader = FALSE;
     co->MultipleReadWindows = FALSE;
@@ -844,6 +845,9 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->WarnSubject = TRUE;
     co->EdWrapCol = 78;
     co->EdWrapMode = EWM_EDITING;
+    co->UseFixedFontWrite = TRUE;
+    co->UseTextStylesWrite = TRUE;
+    co->UseTextColorsWrite = TRUE;
     strlcpy(co->Editor, "C:Ed", sizeof(co->Editor));
     co->LaunchAlways = FALSE;
     co->EmailCache = 10;
@@ -1256,7 +1260,11 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->DisplayAllTexts                 == c2->DisplayAllTexts &&
      c1->FixedFontEdit                   == c2->FixedFontEdit &&
      c1->MultipleReadWindows             == c2->MultipleReadWindows &&
-     c1->UseTextstyles                   == c2->UseTextstyles &&
+     c1->UseTextStylesRead               == c2->UseTextStylesRead &&
+     c1->UseTextColorsRead               == c2->UseTextColorsRead &&
+     c1->UseFixedFontWrite               == c2->UseFixedFontWrite &&
+     c1->UseTextStylesWrite              == c2->UseTextStylesWrite &&
+     c1->UseTextColorsWrite              == c2->UseTextColorsWrite &&
      c1->WrapHeader                      == c2->WrapHeader &&
      c1->LaunchAlways                    == c2->LaunchAlways &&
      c1->QuoteMessage                    == c2->QuoteMessage &&

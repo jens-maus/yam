@@ -95,6 +95,9 @@ struct Data
   Object *MI_DELSEND;
   Object *MI_MDN;
   Object *MI_ADDINFO;
+  Object *MI_FFONT;
+  Object *MI_TCOLOR;
+  Object *MI_TSTYLE;
   Object *WI_SEARCH;
   Object *PO_CHARSET;
 
@@ -140,7 +143,8 @@ enum
   WMEN_DELSEND,WMEN_MDN,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
   WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
   WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5, WMEN_INSUUCODE,
-  WMEN_SENDNOW,WMEN_QUEUE,WMEN_HOLD,WMEN_CANCEL,WMEN_SWITCH1,WMEN_SWITCH2,WMEN_SWITCH3
+  WMEN_SENDNOW,WMEN_QUEUE,WMEN_HOLD,WMEN_CANCEL,WMEN_SWITCH1,WMEN_SWITCH2,WMEN_SWITCH3,
+  WMEN_FFONT,WMEN_TSTYLE,WMEN_TCOLOR
 };
 
 /* Private Functions */
@@ -593,23 +597,27 @@ static BOOL CreateHashTable(char *source, char *hashfile, char *sep)
 
     if((out = fopen(hashfile, "w")) != NULL)
     {
-      char buffer[SIZE_LARGE];
-      const size_t l = strlen(sep);
+      char *buf = NULL;
+      size_t buflen = 0;
+      const size_t seplen = strlen(sep);
 
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
       // the first offset is always zero
       WriteUInt32(out, 0);
-      while(fgets(buffer, sizeof(buffer), in))
+      while(getline(&buf, &buflen, in) > 0)
       {
         // if we found a separator write out the current offset
-        if(strncmp(buffer, sep, l) == 0)
+        if(strncmp(buf, sep, seplen) == 0)
           WriteUInt32(out, ftell(in));
       }
 
-      result = TRUE;
-
       fclose(out);
+
+      if(buf != NULL)
+        free(buf);
+
+      result = TRUE;
     }
 
     fclose(in);
@@ -1034,7 +1042,7 @@ OVERLOAD(OM_NEW)
       //  Q   Insert as quoted text (WMEN_PASQUOT)
       //  R   Add file as attachment (WMEN_ADDFILE)
       //  S   Send mail (WMEN_SEND)
-      //  T
+      //  T   Enable/Disable Text Colors (RMEN_TCOLOR)
       //  U   Underline soft-style (WMEN_STYLE_UNDERLINE)
       //  V   reserved for 'Paste' operation (WMEN_PASTE)
       //  W   Cancel&Close window (WMEN_CANCEL)
@@ -1140,6 +1148,10 @@ OVERLOAD(OM_NEW)
             MenuChild, MenuitemCheck(security[SEC_SENDANON], NULL, TRUE, FALSE, TRUE, 0x2F, WMEN_SECUR4),
             MenuChild, MenuitemCheck(security[SEC_DEFAULTS], NULL, TRUE, TRUE, TRUE, 0x1F, WMEN_SECUR5),
           End,
+          MenuChild, MenuBarLabel,
+          MenuChild, data->MI_FFONT  = MenuitemCheck(tr(MSG_WR_FIXEDFONT),  NULL, TRUE, C->UseFixedFontWrite,  TRUE, 0, WMEN_FFONT),
+          MenuChild, data->MI_TCOLOR = MenuitemCheck(tr(MSG_WR_TEXTCOLORS), "T",  TRUE, C->UseTextColorsWrite, TRUE, 0, WMEN_TCOLOR),
+          MenuChild, data->MI_TSTYLE = MenuitemCheck(tr(MSG_WR_TEXTSTYLES), NULL, TRUE, C->UseTextStylesWrite, TRUE, 0, WMEN_TSTYLE),
         End,
       End;
 
@@ -1213,7 +1225,7 @@ OVERLOAD(OM_NEW)
                     InputListFrame,
                     MUIA_CycleChain, TRUE,
                     MUIA_TextEditor_Slider,     slider,
-                    MUIA_TextEditor_FixedFont,  C->FixedFontEdit,
+                    MUIA_TextEditor_FixedFont,  C->UseFixedFontWrite,
                     MUIA_TextEditor_WrapMode,   MUIV_TextEditor_WrapMode_SoftWrap,
                     MUIA_TextEditor_WrapBorder, C->EdWrapMode == EWM_EDITING ? C->EdWrapCol : 0,
                     MUIA_TextEditor_ExportWrap, C->EdWrapMode != EWM_OFF ? C->EdWrapCol : 0,
@@ -2529,14 +2541,16 @@ DECLARE(ChangeSignature) // LONG signature
       // open a new temporary file for writing the new text
       if((tfout = OpenTempFile("w")) != NULL)
       {
-        char buffer[SIZE_LINE];
+        char *buf = NULL;
+        size_t buflen = 0;
+        ssize_t curlen;
 
-        while(fgets(buffer, sizeof(buffer), in))
+        while((curlen = getline(&buf, &buflen, in)) > 0)
         {
-          if(strcmp(buffer, "-- \n") == 0)
+          if(strcmp(buf, "-- \n") == 0)
             break;
 
-          fputs(buffer, tfout->FP);
+          fwrite(buf, curlen, 1, tfout->FP);
         }
 
         if(msg->signature > 0)
@@ -2546,6 +2560,10 @@ DECLARE(ChangeSignature) // LONG signature
         // put everything in our text editor.
         fclose(tfout->FP);
         tfout->FP = NULL;
+
+        // free the buffer
+        if(buf != NULL)
+          free(buf);
 
         // put everything in the editor.
         FileToEditor(tfout->Filename, editor, xget(editor, MUIA_TextEditor_HasChanged));

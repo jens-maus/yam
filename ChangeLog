@@ -7,6 +7,21 @@ $URL$
 
 2008-10-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c, YAM_WR.c, YAM_DI.c, YAM_FO.c, YAM_COg.c, YAM_COs.c, Themes.c, 
+    YAM_TR.c: replaced all our fgets() uses by using the new overflow safe
+    getline() variant we have now. In cases where no \r,\n stripping was
+    required (mostly just needed for the TCP/IP stuff) the getline() was 
+    planely used instead, otherwise the stripping will be performed
+    afterwards.
+  * YAM_config.h, YAM_read.h, WriteWindow.c, ReadWindow.c, ReadMailGroup.c,
+    YAM_CO.c, ParseEmail.l, YAM_UT.c, YAM_RE.c, YAM_COg.c, YAM_COs.c, YAM.cd:
+    To fix bug #2056658, a way of configuring to enable/disable text soft
+    styles and colors for the read and write window display have been
+    implemented now. Please note that it is still not finished and needs
+    some adaptions to get finally working for the write window as well. In
+    addition, it seems TextEditor.mcc needs some tuning to enable/disable
+    fixed font settings on the fly before all this really starts working as
+    expected.
   * Debug.c, Debug.h: minor optimisations to our memory tracking framework,
     especially to the way things are output.
 

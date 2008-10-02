@@ -137,7 +137,7 @@ struct CO_GUIData
   Object *CH_ALLTEXTS;
   Object *CH_MULTIWIN;
   Object *CH_WRAPHEAD;
-  Object *CH_TEXTSTYLES;
+  Object *CH_TEXTSTYLES_READ;
   Object *ST_REPLYTO;
   Object *ST_ORGAN;
   Object *ST_EXTHEADER;
@@ -297,6 +297,10 @@ struct CO_GUIData
   Object *CH_FOLDERDBLCLICK;
   Object *CH_MAPFOREIGNCHARS;
   Object *CH_GLOBALMAILTHREADS;
+  Object *CH_TEXTCOLORS_READ;
+  Object *CH_FIXEDFONT_WRITE;
+  Object *CH_TEXTSTYLES_WRITE;
+  Object *CH_TEXTCOLORS_WRITE;
 };
 
 enum ConfigPage
@@ -480,7 +484,11 @@ struct Config
   BOOL  DisplayAllTexts;
   BOOL  FixedFontEdit;
   BOOL  MultipleReadWindows;
-  BOOL  UseTextstyles;
+  BOOL  UseTextStylesRead;
+  BOOL  UseTextColorsRead;
+  BOOL  UseTextStylesWrite;
+  BOOL  UseTextColorsWrite;
+  BOOL  UseFixedFontWrite;
   BOOL  WrapHeader;
   BOOL  LaunchAlways;
   BOOL  QuoteMessage;

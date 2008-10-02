@@ -101,7 +101,7 @@ struct Data
 enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIMAGE, RMEN_WRAPH,
        RMEN_TSTYLE, RMEN_FFONT, RMEN_EXTKEY, RMEN_CHKSIG, RMEN_SAVEDEC, RMEN_DISPLAY, RMEN_DETACH, RMEN_DELETEATT,
        RMEN_PRINT, RMEN_SAVE, RMEN_REPLY, RMEN_FORWARD, RMEN_MOVE, RMEN_COPY, RMEN_DELETE, RMEN_SEARCH,
-       RMEN_SEARCHAGAIN
+       RMEN_SEARCHAGAIN, RMEN_TCOLOR
      };
 ///
 
@@ -488,7 +488,8 @@ OVERLOAD(OM_NEW)
     rmData->headerMode = C->ShowHeader;
     rmData->senderInfoMode = C->ShowSenderInfo;
     rmData->wrapHeaders = C->WrapHeader;
-    rmData->useTextstyles = C->UseTextstyles;
+    rmData->useTextcolors = C->UseTextColorsRead;
+    rmData->useTextstyles = C->UseTextStylesRead;
     rmData->useFixedFont = C->FixedFontEdit;
 
     // create the scrollbar for the TE.mcc object
@@ -808,8 +809,9 @@ OVERLOAD(MUIM_ContextMenuBuild)
           Child, Menuitem(tr(MSG_RE_SaveDecrypted), NULL, isPGPEnc, FALSE, RMEN_SAVEDEC),
         End,
         Child, MenuBarLabel,
-        Child, MenuitemCheck(tr(MSG_RE_Textstyles), NULL, hasContent, rmData->useTextstyles, TRUE, 0, RMEN_TSTYLE),
         Child, MenuitemCheck(tr(MSG_RE_FixedFont),  NULL, hasContent, rmData->useFixedFont, TRUE, 0, RMEN_FFONT),
+        Child, MenuitemCheck(tr(MSG_RE_TEXTCOLORS), NULL, hasContent, rmData->useTextcolors, TRUE, 0, RMEN_TCOLOR),
+        Child, MenuitemCheck(tr(MSG_RE_Textstyles), NULL, hasContent, rmData->useTextstyles, TRUE, 0, RMEN_TSTYLE),
       End,
     End;
   }
@@ -856,8 +858,9 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case RMEN_SFULL:    rmData->senderInfoMode = SIM_ALL; updateHeader = TRUE; break;
     case RMEN_SIMAGE:   rmData->senderInfoMode = SIM_IMAGE; updateHeader = TRUE; break;
     case RMEN_WRAPH:    rmData->wrapHeaders = checked; updateHeader = TRUE; break;
-    case RMEN_TSTYLE:   rmData->useTextstyles = checked; updateText = TRUE; break;
     case RMEN_FFONT:    rmData->useFixedFont = checked; updateText = TRUE; break;
+    case RMEN_TCOLOR:   rmData->useTextcolors = checked; updateText = TRUE; break;
+    case RMEN_TSTYLE:   rmData->useTextstyles = checked; updateText = TRUE; break;
 
     default:
       result = DoSuperMethodA(cl, obj, msg);
@@ -1008,8 +1011,8 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       // before we can put the message body into the TextEditor, we have to preparse the text and
       // try to set some styles, as we don`t use the buggy ImportHooks of TextEditor anymore and are anyway
       // more powerful this way.
-      if(rmData->useTextstyles == TRUE)
-        body = ParseEmailText(cmsg, TRUE);
+      if(rmData->useTextstyles == TRUE || rmData->useTextcolors == TRUE)
+        body = ParseEmailText(cmsg, TRUE, rmData->useTextstyles, rmData->useTextcolors);
       else
         body = cmsg;
 
@@ -1017,7 +1020,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
                                  MUIA_TextEditor_Contents,  body);
 
       // free the parsed text afterwards as the texteditor has copied it anyway.
-      if(rmData->useTextstyles == TRUE)
+      if(rmData->useTextstyles == TRUE || rmData->useTextcolors == TRUE)
         free(body);
 
       free(cmsg);

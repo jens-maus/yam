@@ -181,7 +181,8 @@ NOTATEOL    ([^[:punct:][:space:]]|{ESCAPE}|"/"|"=")
 /// ParseEmailText()
 //  Function to parse the supplied text and replace text passages that contain
 //  tokens that could be sourrounded by textstyles.
-char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash)
+char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
+                     const BOOL useStyles, const BOOL useColors)
 {
   char *cmsg = NULL;
   int len, wptr=0;
@@ -221,9 +222,14 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash)
           case tNEWS:
           case tURL:
           {
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[12]");
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+            if(useColors)
+            {
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[12]");
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+            }
+            else
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
           }
           break;
 
@@ -255,122 +261,146 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash)
 
           case tBOLD:
           {
-            char *p;
-            char *q;
-
-            if((p = strchr(yytext, '*')))
+            if(useStyles)
             {
-              *p++ = '\0';
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              char *p;
 
-              q = p;
-              if((q = strchr(p, '*')))
+              if((p = strchr(yytext, '*')))
               {
-                *q++ = '\0';
+                char *q;
 
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b*");
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "*\033n");
+                *p++ = '\0';
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
 
-                if(*q != '\0')
-                  yyunput(*q, yytext);
+                q = p;
+                if((q = strchr(p, '*')))
+                {
+                  *q++ = '\0';
+
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b*");
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "*\033n");
+
+                  if(*q != '\0')
+                    yyunput(*q, yytext);
+                }
+                else
+                  W(DBF_MAIL, "couldn't find ending '*'");
               }
               else
-                W(DBF_MAIL, "couldn't find ending '*'");
+                W(DBF_MAIL, "couldn't find starting '*'");
             }
             else
-              W(DBF_MAIL, "couldn't find starting '*'");
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
           }
           break;
 
           case tITALIC:
           {
-            char *p;
-            char *q;
-
-            if((p = strchr(yytext, '/')))
+            if(useStyles)
             {
-              *p++ = '\0';
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              char *p;
 
-              q = p;
-              if((q = strchr(p, '/')))
+              if((p = strchr(yytext, '/')))
               {
-                *q++ = '\0';
+                char *q;
 
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i/");
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "/\033n");
+                *p++ = '\0';
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
 
-                if(*q != '\0')
-                  yyunput(*q, yytext);
+                q = p;
+                if((q = strchr(p, '/')))
+                {
+                  *q++ = '\0';
+
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i/");
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "/\033n");
+
+                  if(*q != '\0')
+                    yyunput(*q, yytext);
+                }
+                else
+                  W(DBF_MAIL, "couldn't find ending '/'");
               }
               else
-                W(DBF_MAIL, "couldn't find ending '/'");
+                W(DBF_MAIL, "couldn't find starting '/'");
             }
             else
-              W(DBF_MAIL, "couldn't find starting '/'");
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
           }
           break;
 
           case tUNDERLINE:
           {
-            char *p;
-            char *q;
-
-            if((p = strchr(yytext, '_')))
+            if(useStyles)
             {
-              *p++ = '\0';
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              char *p;
 
-              q = p;
-              if((q = strchr(p, '_')))
+              if((p = strchr(yytext, '_')))
               {
-                *q++ = '\0';
+                char *q;
 
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u_");
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "_\033n");
+                *p++ = '\0';
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
 
-                if(*q != '\0')
-                  yyunput(*q, yytext);
+                q = p;
+                if((q = strchr(p, '_')))
+                {
+                  *q++ = '\0';
+
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u_");
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "_\033n");
+
+                  if(*q != '\0')
+                    yyunput(*q, yytext);
+                }
+                else
+                  W(DBF_MAIL, "couldn't find ending '_'");
               }
               else
-                W(DBF_MAIL, "couldn't find ending '_'");
+                W(DBF_MAIL, "couldn't find starting '_'");
             }
             else
-              W(DBF_MAIL, "couldn't find starting '_'");
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
           }
           break;
 
           case tCOLORED:
           {
-            char *p;
-            char *q;
-
-            if((p = strchr(yytext, '#')))
+            if(useColors)
             {
-              *p++ = '\0';
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              char *p;
 
-              q = p;
-              if((q = strchr(p, '#')))
+              if((p = strchr(yytext, '#')))
               {
-                *q++ = '\0';
+                char *q;
 
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[7]#");
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "#");
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+                *p++ = '\0';
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
 
-                if(*q != '\0')
-                  yyunput(*q, yytext);
+                q = p;
+                if((q = strchr(p, '#')))
+                {
+                  *q++ = '\0';
+
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[7]#");
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "#");
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+
+                  if(*q != '\0')
+                    yyunput(*q, yytext);
+                }
+                else
+                  W(DBF_MAIL, "couldn't find ending '#'");
               }
               else
-                W(DBF_MAIL, "couldn't find ending '*'");
+                W(DBF_MAIL, "couldn't find starting '#'");
             }
             else
-              W(DBF_MAIL, "couldn't find starting '*'");
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
           }
           break;
 
@@ -386,17 +416,21 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash)
             {
               quotelevel++;
 
-              // prepare the ColorTag
-              if(quotelevel%4 == 1)
-                defaultPen = "\033p[8]";
-              else if(quotelevel%4 == 2)
-                defaultPen = "\033p[9]";
-              else if(quotelevel%4 == 3)
-                defaultPen = "\033p[10]";
-              else if(quotelevel%4 == 0)
-                defaultPen = "\033p[11]";
+              if(useColors)
+              {
+                // prepare the ColorTag
+                if(quotelevel%4 == 1)
+                  defaultPen = "\033p[8]";
+                else if(quotelevel%4 == 2)
+                  defaultPen = "\033p[9]";
+                else if(quotelevel%4 == 3)
+                  defaultPen = "\033p[10]";
+                else if(quotelevel%4 == 0)
+                  defaultPen = "\033p[11]";
 
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+              }
+
               *ptr = '\0'; // temporary set the > to a null byte so that we can append to our buffer
               cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
               cmsg = AppendToBuffer(cmsg, &wptr, &len, ">");
@@ -411,7 +445,8 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash)
 
             // as we are in the signature area of the
             // mail now, we can set a new defaultPen (the ghosted one)
-            defaultPen = "\033p[13]";
+            if(useColors)
+              defaultPen = "\033p[13]";
 
             // in case the user doesn't want to
             // tinker around with the signature dash we
@@ -422,8 +457,12 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash)
             switch(sst)
             {
               case SST_DASH:
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+              {
+                if(useColors)
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              }
               break;
 
               case SST_BAR:
@@ -439,7 +478,8 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash)
               break;
             }
 
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+            if(useColors)
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
 
             // mark the signature as 'found' so that we
             // can show text somewhat in another color and
@@ -458,7 +498,9 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash)
             if(signatureFound)
             {
               defaultPen = "\033p[0]";
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+
+              if(useColors)
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
 
               signatureFound = FALSE;
             }
@@ -492,7 +534,9 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash)
             else
             {
               defaultPen = "\033p[13]";
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+
+              if(useColors)
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
             }
           }
           break;
@@ -505,7 +549,7 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash)
 
       // we have to end the text with a color clearing ESC sequence
       // in case the signature was active at last
-      if(signatureFound)
+      if(signatureFound && useColors)
         cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[0]");
     }
 

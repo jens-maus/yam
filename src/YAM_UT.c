@@ -3766,7 +3766,8 @@ BOOL FileToEditor(char *file, Object *editor, BOOL changed)
     char *parsedText;
 
     // parse the text and do some highlighting and stuff
-    if((parsedText = ParseEmailText(text, FALSE)) != NULL)
+    #warning TODO: API of FileToEditor() should be changed to reflect API changes in ParseEmailText
+    if((parsedText = ParseEmailText(text, FALSE, TRUE, TRUE)) != NULL)
     {
       // set the new text and tell the editor that its content has changed
       xset(editor, MUIA_TextEditor_Contents,   parsedText,

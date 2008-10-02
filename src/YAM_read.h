@@ -94,6 +94,7 @@ struct ReadMailData
   short           encryptionFlags;// flags for encryption modes (i.e. PGP)
   short           letterPartNum;  // the number which was considered the letter part (0=no yet defined)
   BOOL            hasPGPKey;      // true if mail contains a PGP key
+  BOOL            useTextcolors;  // use Textcolors for displaying the mail
   BOOL            useTextstyles;  // use Textstyles for displaying the mail
   BOOL            wrapHeaders;    // Wrap the headers if necessary
   BOOL            useFixedFont;   // use a fixed font for displaying the mail

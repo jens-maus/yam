@@ -2699,10 +2699,12 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
           char buffer[SIZE_LARGE];
 
           // lets generate the separator bar.
-          snprintf(buffer, sizeof(buffer), "\n\033c\033[s:18]\033p[7]%s:%s%s\033p[0]\n"
-                                           "\033l\033b%s:\033n %s <%s>\n", tr(MSG_MA_ATTACHMENT),
+          snprintf(buffer, sizeof(buffer), "\n\033c\033[s:18]%s%s:%s%s%s\n"
+                                           "\033l\033b%s:\033n %s <%s>\n", rmData->useTextcolors ? "\033p[7]" : "",
+                                                                           tr(MSG_MA_ATTACHMENT),
                                                                            *part->Name ? " " : "",
                                                                            part->Name,
+                                                                           rmData->useTextcolors ? "\033p[0]" : "",
                                                                            tr(MSG_RE_ContentType),
                                                                            DescribeCT(part->ContentType),
                                                                            part->ContentType);
@@ -3085,7 +3087,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 {
                   if(C->SigSepLine == SST_BAR) // show seperator bar
                   {
-                    if(rmData->useTextstyles == FALSE)
+                    if(rmData->useTextcolors == FALSE)
                       cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033[s:2]");
                     else
                       cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
@@ -3093,7 +3095,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   else if(C->SigSepLine == SST_SKIP) // skip signature
                     break;
                   else if(C->SigSepLine == SST_DASH || // show "-- "
-                          (C->SigSepLine == SST_BLANK && rmData->useTextstyles))
+                          (C->SigSepLine == SST_BLANK && rmData->useTextcolors))
                   {
                     cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
                   }

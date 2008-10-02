@@ -2525,7 +2525,7 @@ int main(int argc, char **argv)
     appsig            = (1UL << G->AppPort->mp_SigBit);
     applibsig         = DockyIconSignal();
     writeWinNotifySig = (1UL << G->writeWinNotifyPort->mp_SigBit);
-    threadsig = CurrentThreadMask();
+    threadsig         = CurrentThreadMask();
 
     D(DBF_STARTUP, "YAM allocated signals:");
     D(DBF_STARTUP, " adstsig           = %08lx", adstsig);
@@ -2534,7 +2534,7 @@ int main(int argc, char **argv)
     D(DBF_STARTUP, " appsig            = %08lx", appsig);
     D(DBF_STARTUP, " applibsig         = %08lx", applibsig);
     D(DBF_STARTUP, " writeWinNotifySig = %08lx", writeWinNotifySig);
-    D(DBF_STARTUP, " threadsig= %08lx", threadsig);
+    D(DBF_STARTUP, " threadsig         = %08lx", threadsig);
 
     // start our maintanance Timer requests for
     // different purposes (writeindexes/mailcheck/autosave)

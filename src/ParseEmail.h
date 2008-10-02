@@ -67,7 +67,9 @@ enum tokenType
   tNEXTPART
 };
 
-char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash);
+char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
+                     const BOOL useStyles, const BOOL useColors);
+
 enum tokenType ExtractURL(const char *text, char *resultBuffer);
 
 #endif /* YAM_MAIL_LEX_H */

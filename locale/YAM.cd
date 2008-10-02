@@ -1160,9 +1160,6 @@ _Wrap headers
 MSG_CO_OldQuotes (414//)
 Old quotes
 ;
-MSG_CO_UseTextstyles (415//)
-Use te_xt styles
-;
 MSG_CO_Header (416//)
 _Headers
 ;
@@ -1749,10 +1746,6 @@ Color used to display\n\
 MSG_HELP_CO_CH_WRAPHEAD (604//)
 Split long headers\n\
 on multiple lines.
-;
-MSG_HELP_CO_CH_TEXTSTYLES (605//)
-Interpret / * _ and # as\n\
-control codes for text styles.
 ;
 MSG_HELP_CO_CY_HEADER (606//)
 Which message headers do you want YAM\n\
@@ -6866,4 +6859,50 @@ Do you want to overwrite it?
 MSG_ER_USER_DIR_MISSING (2124//)
 The home directory '%s' of user '%s' does not exist!
 ; PATH, USERNAME
+;
+MSG_CO_TEXTCOLORS_READ (2125//)
+Show te_xt colors
+;
+MSG_HELP_CO_CH_TEXTCOLORS_READ (2126//)
+Use text colors to signal special\n\
+text passages, (e.g. quotations, etc.)
+;
+MSG_CO_TEXTSTYLES_READ (2127//)
+Show te_xt styles
+;
+MSG_HELP_CO_CH_TEXTSTYLES_READ (2128//)
+Interpret '/', '*', '_' and '#' as\n\
+control characters for text styles.
+;
+MSG_CO_TEXTCOLORS_WRITE (2129//)
+Show tex_t colors
+;
+MSG_HELP_CO_CH_TEXTCOLORS_WRITE (2130//)
+Use text colors to signal special\n\
+text passages, (e.g. quotations, etc.)
+;
+MSG_CO_TEXTSTYLES_WRITE (2131//)
+Show te_xt styles
+;
+MSG_HELP_CO_CH_TEXTSTYLES_WRITE (2132//)
+Interpret '/', '*', '_' and '#' as\n\
+control characters for text styles.
+;
+MSG_CO_FONTSETTINGS (2133//)
+Font settings
+;
+MSG_CO_FIXEDFONT_WRITE (2134//)
+Use _fixed font
+;
+MSG_RE_TEXTCOLORS (2135//)
+Text colors?
+;
+MSG_WR_TEXTSTYLES (2136//)
+Text styles?
+;
+MSG_WR_TEXTCOLORS (2137//)
+Text colors?
+;
+MSG_WR_FIXEDFONT (2138//)
+Fixed font?
 ;
