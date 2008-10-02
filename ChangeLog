@@ -7,6 +7,9 @@ $URL$
 
 2008-10-02  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: applied minor optimisation to the new GetLine() function. Now
+    we search for the CRLF pair ourself instead of using the slower strpbrk()
+    function.
   * YAM_MA.c, YAM_WR.c, YAM_DI.c, YAM_FO.c, YAM_COg.c, YAM_COs.c, Themes.c,
     YAM_TR.c: replaced all our fgets() uses by using the new overflow safe
     getline() variant we have now. In cases where no \r,\n stripping was

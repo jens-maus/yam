@@ -629,21 +629,28 @@ char *UnquoteString(const char *s, BOOL new)
 
 /*** File related ***/
 /// GetLine
-//  gets a NUL terminated line of a text file
+// gets a NUL terminated line of a file handle and strips any
+// trailing CR or LF
 char *GetLine(FILE *fh, char **buffer)
 {
   size_t size = 0;
+  ssize_t len;
   char *result = NULL;
 
   ENTER();
 
-  if(getline(buffer, &size, fh) > 0)
+  if((len = getline(buffer, &size, fh)) > 0)
   {
-    char *p;
+    char *buf = *buffer;
 
     // strip possible CR or LF characters at the end of the line
-    if((p = strpbrk(*buffer, "\r\n")) != NULL)
-      *p = '\0';
+    if(buf[len-1] == '\n')
+    {
+      if(len > 1 && buf[len-2] == '\r')
+        buf[len-2] = '\0';
+      else
+        buf[len-1] = '\0';
+    }
 
     result = *buffer;
   }

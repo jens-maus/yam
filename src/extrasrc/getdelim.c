@@ -76,7 +76,7 @@ ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream)
           size_t needed = 2 * (*n) + 1;   // Be generous.
           char *new_lineptr;
 
-          W(DBF_UTIL, "getline(): realloc to %ld", needed);
+          D(DBF_UTIL, "getline(): realloc to %ld", needed);
 
           if(needed_max < needed)
             needed = needed_max;
