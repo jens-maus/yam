@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-10-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Debug.c, Debug.h: minor optimisations to our memory tracking framework,
+    especially to the way things are output.
+
 2008-10-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.h: added some missing prototypes.

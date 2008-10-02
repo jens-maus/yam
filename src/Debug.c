@@ -698,7 +698,7 @@ void _MEMTRACK(const char *file, const int line, const char *func, void *ptr, si
 {
   if(isFlagSet(debug_classes, DBC_MTRACK))
   {
-    if(ptr != NULL && size > 0)
+    if(ptr != NULL && size != 0)
     {
       struct DbgMallocNode *dmn;
 
@@ -711,14 +711,15 @@ void _MEMTRACK(const char *file, const int line, const char *func, void *ptr, si
         dmn->func = func;
 
         ObtainSemaphore(&DbgMallocListSema);
-        AddTail((struct List *)&DbgMallocList[ptr2hash(ptr)], (struct Node *)&dmn->node);
-        ReleaseSemaphore(&DbgMallocListSema);
 
+        AddTail((struct List *)&DbgMallocList[ptr2hash(ptr)], (struct Node *)&dmn->node);
         DbgMallocCount++;
+        
+        ReleaseSemaphore(&DbgMallocListSema);
       }
     }
     else
-      _DPRINTF(DBC_WARNING, DBF_ALWAYS, file, line, "invalid malloc call or return (0x%08lx, %ld)", ptr, size);
+      _DPRINTF(DBC_WARNING, DBF_ALWAYS, file, line, "potential invalid %s call with return (0x%08lx, 0x%08lx)", func, ptr, size);
   }
 }
 
@@ -746,7 +747,7 @@ void _UNMEMTRACK(const char *file, const int line, const void *ptr)
     }
 
     if(success == FALSE)
-      _DPRINTF(DBC_WARNING, DBF_ALWAYS, file, line, "free of untracked allocation 0x%08lx attempted", ptr);
+      _DPRINTF(DBC_WARNING, DBF_ALWAYS, file, line, "free of untracked memory area 0x%08lx attempted", ptr);
 
     ReleaseSemaphore(&DbgMallocListSema);
   }
@@ -766,8 +767,9 @@ static void SetupDbgMalloc(void)
     for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
       NewList((struct List *)&DbgMallocList[i]);
 
-    InitSemaphore(&DbgMallocListSema);
     DbgMallocCount = 0;
+
+    InitSemaphore(&DbgMallocListSema);
   }
 
   LEAVE();
@@ -788,14 +790,14 @@ static void CleanupDbgMalloc(void)
     {
       ULONG i;
 
-      E(DBF_ALWAYS, "there are still %ld unfreed allocations", DbgMallocCount);
+      E(DBF_ALWAYS, "there are still %ld unfreed memory trackings", DbgMallocCount);
       for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
       {
         struct DbgMallocNode *dmn;
 
         while((dmn = (struct DbgMallocNode *)RemHead((struct List *)&DbgMallocList[i])) != NULL)
         {
-          _DPRINTF(DBC_ERROR, DBF_ALWAYS, dmn->file, dmn->line, "unfreed allocation 0x%08lx, size %ld, type %s", dmn->memory, dmn->size, dmn->func);
+          _DPRINTF(DBC_ERROR, DBF_ALWAYS, dmn->file, dmn->line, "unfreed memory tracking: 0x%08lx, size/type %ld, func (%s)", dmn->memory, dmn->size, dmn->func);
 
           // We only free the node structure here but not dmn->memory itself.
           // First of all, this is because the allocation could have been done
@@ -807,7 +809,7 @@ static void CleanupDbgMalloc(void)
       }
     }
     else
-      D(DBF_ALWAYS, "all memory allocations have been free()'d correctly");
+      D(DBF_ALWAYS, "all memory trackings have been free()'d correctly");
 
     ReleaseSemaphore(&DbgMallocListSema);
   }
@@ -828,14 +830,14 @@ void DumpDbgMalloc(void)
 
     ObtainSemaphore(&DbgMallocListSema);
 
-    D(DBF_ALWAYS, "%ld allocations tracked", DbgMallocCount);
+    D(DBF_ALWAYS, "%ld memory areas tracked", DbgMallocCount);
     for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
     {
       struct DbgMallocNode *dmn;
 
       ForEachNode(i)
       {
-        _DPRINTF(DBC_MTRACK, DBF_ALWAYS, dmn->file, dmn->line, "allocation 0x%08lx, size %ld, type %s", dmn->memory, dmn->size, dmn->func);
+        _DPRINTF(DBC_MTRACK, DBF_ALWAYS, dmn->file, dmn->line, "memarea 0x%08lx, size/type %ld, func (%s)", dmn->memory, dmn->size, dmn->func);
       }
     }
 
