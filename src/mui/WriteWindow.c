@@ -674,15 +674,15 @@ static void AddTagline(FILE *fh_mail)
           // read the offset to the tagline from the hash file
           if(ReadUInt32(fh_hash, (ULONG *)&fpos) == 1)
           {
-            char buf[SIZE_LARGE];
+            char *buf = NULL;
 
             fseek(fh_tag, fpos, SEEK_SET);
 
-            if(GetLine(fh_tag, buf, sizeof(buf)) != NULL)
+            if(GetLine(fh_tag, &buf) != NULL)
             {
               fputs(buf, fh_mail);
 
-              while(GetLine(fh_tag, buf, sizeof(buf)) != NULL)
+              while(GetLine(fh_tag, &buf) != NULL)
               {
                 if(strncmp(buf, C->TagsSeparator, strlen(C->TagsSeparator)) == 0)
                   break;
@@ -690,6 +690,9 @@ static void AddTagline(FILE *fh_mail)
                   fprintf(fh_mail, "\n%s", buf);
               }
             }
+
+            if(buf != NULL)
+              free(buf);
           }
         }
 

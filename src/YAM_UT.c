@@ -629,45 +629,37 @@ char *UnquoteString(const char *s, BOOL new)
 
 /*** File related ***/
 /// GetLine
-//  Gets Null terminated line of a text file
-char *GetLine(FILE *fh, char *buffer, int bufsize)
+//  gets a NUL terminated line of a text file
+char *GetLine(FILE *fh, char **buffer)
 {
-  char *line = NULL;
+  size_t size = 0;
+  char *result = NULL;
 
   ENTER();
 
-  // lets NUL-terminate the string at least.
-  buffer[0] = '\0';
-
-  // read in the next line or return NULL if
-  // a problem occurrs. The caller then should
-  // query ferror() to determine why exactly it
-  // failed.
-  if(fgets(buffer, bufsize, fh) != NULL)
+  if(getline(buffer, &size, fh) > 0)
   {
-    char *ptr;
+    char *p;
 
-    // search for either a \r or \n and terminate there
-    // if found.
-    if((ptr = strpbrk(buffer, "\r\n")) != NULL)
-      *ptr = '\0';
+    // strip possible CR or LF characters at the end of the line
+    if((p = strpbrk(*buffer, "\r\n")) != NULL)
+      *p = '\0';
 
-    line = buffer;
+    result = *buffer;
   }
+  #if defined(DEBUG)
   else
   {
-    #if defined(DEBUG)
     if(feof(fh) == 0 || ferror(fh) != 0)
     {
       // something bad happened, so we return NULL to signal abortion
       W(DBF_MAIL, "fgets() in GetLine() returned  NULL and feof()=%ld || ferror()=%ld", feof(fh), ferror(fh));
     }
-    #endif
   }
+  #endif
 
-  // now return the line
-  RETURN(line);
-  return line;
+  RETURN(result);
+  return result;
 }
 
 ///

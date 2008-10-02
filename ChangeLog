@@ -27,6 +27,9 @@ $URL$
 
 2008-10-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: reworked the GetLine() function to use getline() and reworked all
+    functions using GetLine() to use dynamically allocated buffers instead of
+    stack based ones.
   * YAM_UT.c: removed the now obsolete NGetLine function.
   * Threads.h: added some missing prototypes.
 

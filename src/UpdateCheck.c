@@ -165,25 +165,25 @@ BOOL CheckForUpdates(void)
         #define REQUEST_SIZE 1024
         if((request = malloc(REQUEST_SIZE)) != NULL) // don't use stack for the request
         {
+          char buf[SIZE_LINE];
           Object *mccObj;
           struct Library *base;
-          char buf[SIZE_LINE];
           unsigned short cnt = 0;
 
           // encode the yam version
-          if(urlencode(buf, yamversion, SIZE_LINE) > 0)
+          if(urlencode(buf, yamversion, sizeof(buf)) > 0)
             snprintf(request, REQUEST_SIZE, "?ver=%s", buf);
 
           // encode the yam buildid if present
-          if(urlencode(buf, yambuildid, SIZE_LINE) > 0)
+          if(urlencode(buf, yambuildid, sizeof(buf)) > 0)
             snprintf(request, REQUEST_SIZE, "%s&buildid=%s", request, buf);
 
           // encode the yam builddate if present
-          if(urlencode(buf, yamversiondate, SIZE_LINE) > 0)
+          if(urlencode(buf, yamversiondate, sizeof(buf)) > 0)
             snprintf(request, REQUEST_SIZE, "%s&builddate=%s", request, buf);
 
           // encode the language in which YAM is running
-          if(G->Catalog != NULL && urlencode(buf, G->Catalog->cat_Language, SIZE_LINE) > 0)
+          if(G->Catalog != NULL && urlencode(buf, G->Catalog->cat_Language, sizeof(buf)) > 0)
             snprintf(request, REQUEST_SIZE, "%s&lang=%s%%20%d%%2E%d", request, buf, G->Catalog->cat_Version,
                                                                                     G->Catalog->cat_Revision);
 
@@ -297,6 +297,7 @@ BOOL CheckForUpdates(void)
               BOOL validUpdateCheck = FALSE;
               BOOL updatesAvailable = FALSE;
               struct UpdateComponent *comp = NULL;
+              char *buffer = NULL;
 
               setvbuf(tf->FP, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -304,11 +305,11 @@ BOOL CheckForUpdates(void)
               if(G->UpdateNotifyWinObject != NULL)
                 DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_Clear);
 
-              while(GetLine(tf->FP, buf, sizeof(buf)))
+              while(GetLine(tf->FP, &buffer) != NULL)
               {
                 // make sure we trim the line by stripping leading
                 // and trailing spaces.
-                char *p = Trim(buf);
+                char *p = Trim(buffer);
 
                 D(DBF_UPDATE, "'%s'", p);
 
@@ -388,9 +389,9 @@ BOOL CheckForUpdates(void)
                     {
                       FILE *out = comp->changeLogFile->FP;
 
-                      while(GetLine(tf->FP, buf, sizeof(buf)))
+                      while(GetLine(tf->FP, &buffer) != NULL)
                       {
-                        D(DBF_UPDATE, "%s", buf);
+                        D(DBF_UPDATE, "%s", buffer);
 
                         if(stricmp(buf, "</changelog>") == 0)
                         {
@@ -398,7 +399,7 @@ BOOL CheckForUpdates(void)
                           break;
                         }
                         else
-                          fprintf(out, "%s\n", buf);
+                          fprintf(out, "%s\n", buffer);
                       }
 
                       fclose(out);
@@ -433,6 +434,9 @@ BOOL CheckForUpdates(void)
 
               fclose(tf->FP);
               tf->FP = NULL;
+
+              if(buffer != NULL)
+                free(buffer);
             }
             else
               ER_NewError(tr(MSG_ER_CantOpenTempfile), tf->Filename);
@@ -502,11 +506,11 @@ void LoadUpdateState(void)
   // the YAM executable is the same for all users, hence we need no per user state file
   if((fh = fopen("PROGDIR:.updatestate", "r")) != NULL)
   {
-    char buf[SIZE_LARGE];
+    char *buf = NULL;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    if(GetLine(fh, buf, sizeof(buf)))
+    if(GetLine(fh, &buf) != NULL)
     {
       if(strnicmp(buf, "YUP", 3) == 0)
       {
@@ -516,7 +520,7 @@ void LoadUpdateState(void)
         version = buf[3] - '0';
 
         // read in all the lines
-        while(GetLine(fh, buf, sizeof(buf)))
+        while(GetLine(fh, &buf) != NULL)
         {
           char *p;
           char *value;
@@ -548,6 +552,9 @@ void LoadUpdateState(void)
     }
 
     fclose(fh);
+
+    if(buf != NULL)
+      free(buf);
   }
 
   LEAVE();

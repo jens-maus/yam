@@ -739,7 +739,6 @@ static BOOL FO_LoadFolderImage(struct Folder *folder)
 BOOL FO_LoadTree(char *fname)
 {
   BOOL success = FALSE;
-  char buffer[SIZE_LARGE];
   int nested = 0, i = 0, j = MAX_FOLDERIMG+1;
   FILE *fh;
   APTR lv = G->MA->GUI.NL_FOLDERS;
@@ -749,14 +748,15 @@ BOOL FO_LoadTree(char *fname)
 
   if((fh = fopen(fname, "r")) != NULL)
   {
+    char *buffer = NULL;
+
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    GetLine(fh, buffer, sizeof(buffer));
-    if(strncmp(buffer, "YFO", 3) == 0)
+    if(GetLine(fh, &buffer) != NULL && strncmp(buffer, "YFO", 3) == 0)
     {
       DoMethod(lv, MUIM_NListtree_Clear, NULL, 0);
       set(lv, MUIA_NListtree_Quiet, TRUE);
-      while(GetLine(fh, buffer, sizeof(buffer)))
+      while(GetLine(fh, &buffer) != NULL)
       {
         if(strncmp(buffer, "@FOLDER", 7) == 0)
         {
@@ -768,7 +768,7 @@ BOOL FO_LoadTree(char *fname)
             fo->Sort[0] = 1;
             fo->Sort[1] = 3;
             strlcpy(fo->Name, Trim(&buffer[8]), sizeof(fo->Name));
-            strlcpy(fo->Path, Trim(GetLine(fh, buffer, sizeof(buffer))), sizeof(fo->Path));
+            strlcpy(fo->Path, Trim(GetLine(fh, &buffer)), sizeof(fo->Path));
             if((fo->messages = CreateMailList()) != NULL)
             {
               if(CreateDirectory(GetFolderDir(fo)) == TRUE)
@@ -798,6 +798,7 @@ BOOL FO_LoadTree(char *fname)
                   if(FO_SaveConfig(fo) == FALSE)
                   {
                     fclose(fh);
+                    free(buffer);
                     free(fo);
 
                     RETURN(FALSE);
@@ -830,6 +831,7 @@ BOOL FO_LoadTree(char *fname)
                 if(fnode == NULL)
                 {
                   fclose(fh);
+                  free(buffer);
                   free(fo);
 
                   RETURN(FALSE);
@@ -840,6 +842,7 @@ BOOL FO_LoadTree(char *fname)
                 if(!(DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
                 {
                   fclose(fh);
+                  free(buffer);
                   free(fo);
 
                   RETURN(FALSE);
@@ -850,6 +853,7 @@ BOOL FO_LoadTree(char *fname)
             else
             {
               fclose(fh);
+              free(buffer);
               free(fo);
 
               RETURN(FALSE);
@@ -860,7 +864,7 @@ BOOL FO_LoadTree(char *fname)
               if(strcmp(buffer, "@ENDFOLDER") == 0)
                 break;
             }
-            while(GetLine(fh, buffer, sizeof(buffer)));
+            while(GetLine(fh, &buffer) != NULL);
           }
         }
         else if(strncmp(buffer, "@SEPARATOR", 10) == 0)
@@ -881,7 +885,7 @@ BOOL FO_LoadTree(char *fname)
               if(strcmp(buffer, "@ENDSEPARATOR") == 0)
                 break;
             }
-            while(GetLine(fh, buffer, sizeof(buffer)));
+            while(GetLine(fh, &buffer) != NULL);
             fo->SortIndex = i++;
 
             // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
@@ -898,6 +902,7 @@ BOOL FO_LoadTree(char *fname)
             if(fnode == NULL)
             {
               fclose(fh);
+              free(buffer);
               free(fo);
 
               RETURN(FALSE);
@@ -907,6 +912,7 @@ BOOL FO_LoadTree(char *fname)
             if((Object *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags) == NULL)
             {
               fclose(fh);
+              free(buffer);
               free(fo);
 
               RETURN(FALSE);
@@ -927,7 +933,7 @@ BOOL FO_LoadTree(char *fname)
             strlcpy(fo->Name, Trim(&buffer[7]), sizeof(fo->Name));
 
             // now we check if the node should be open or not
-            if(GetLine(fh, buffer, sizeof(buffer)))
+            if(GetLine(fh, &buffer) != NULL)
             {
               // if it is greater zero then the node should be displayed open
               if(atoi(buffer) > 0)
@@ -948,6 +954,7 @@ BOOL FO_LoadTree(char *fname)
             if(fnode == NULL)
             {
               fclose(fh);
+              free(buffer);
               free(fo);
 
               RETURN(FALSE);
@@ -958,6 +965,7 @@ BOOL FO_LoadTree(char *fname)
             if(!(tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
             {
               fclose(fh);
+              free(buffer);
               free(fo);
 
               RETURN(FALSE);
@@ -985,6 +993,10 @@ BOOL FO_LoadTree(char *fname)
     }
 
     fclose(fh);
+
+    if(buffer != NULL)
+      free(buffer);
+
     success = TRUE;
   }
 
@@ -1423,9 +1435,9 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
     fnode = AddNewFolderNode(G->folders, memdup(&folder, sizeof(folder)));
     UnlockFolderList(G->folders);
 
-	if(fnode != NULL)
-	{
-	  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
+    if(fnode != NULL)
+    {
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
 
       FO_SaveTree(CreateFilename(".folders"));
     }
@@ -1722,7 +1734,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
   // if this is a edit folder request we separate here.
   if(oldfolder != NULL)
   {
-  	isNewFolder = FALSE;
+    isNewFolder = FALSE;
     memcpy(&folder, oldfolder, sizeof(struct Folder));
     FO_PutFolder(&folder);
 

@@ -4774,14 +4774,17 @@ static BOOL InitUIDLhash(void)
     // line-by-line
     if(ObtainFileInfo(filename, FI_SIZE, &size) == TRUE && size > 0 && (fh = fopen(filename, "r")) != NULL)
     {
-      char uidl[SIZE_DEFAULT+SIZE_HOST];
+      char *uidl = NULL;
 
       setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      while(GetLine(fh, uidl, sizeof(uidl)))
+      while(GetLine(fh, &uidl) != NULL)
         AddUIDLtoHash(uidl, FALSE);
 
       fclose(fh);
+
+      if(uidl != NULL)
+        free(uidl);
 
       // start with a clean and and so far unmodified hash table
       G->TR->UIDLhashIsDirty = FALSE;
@@ -6338,14 +6341,14 @@ BOOL TR_GetMessageList_IMPORT(void)
         if((ifh = fopen(G->TR->ImportFile, "r")) != NULL)
         {
           FILE *ofh = NULL;
-          char buffer[SIZE_LINE];
+          char *buffer = NULL;
           BOOL foundBody = FALSE;
           int size = 0;
           long addr = 0;
 
           setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
-          while(GetLine(ifh, buffer, sizeof(buffer)))
+          while(GetLine(ifh, &buffer) != NULL)
           {
             // now we parse through the input file until we
             // find the "From " separator
@@ -6428,6 +6431,9 @@ BOOL TR_GetMessageList_IMPORT(void)
           }
 
           fclose(ifh);
+
+          if(buffer != NULL)
+            free(buffer);
         }
         else
           E(DBF_IMPORT, "Error on trying to open file '%s'", G->TR->ImportFile);
@@ -6569,7 +6575,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               struct Mail *mail = mtn->mail;
               FILE *ofh = NULL;
               char mfile[SIZE_MFILE];
-              char buffer[SIZE_LINE];
+              char *buffer = NULL;
               BOOL foundBody = FALSE;
               unsigned int stat = SFLAG_NONE;
               BOOL ownStatusFound = FALSE;
@@ -6592,7 +6598,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
               // now that we seeked to the mail address we go
               // and read in line by line
-              while(GetLine(ifh, buffer, sizeof(buffer)) && G->TR->Abort == FALSE)
+              while(GetLine(ifh, &buffer) != NULL && G->TR->Abort == FALSE)
               {
                 // if we did not find the message body yet
                 if(foundBody == FALSE)
@@ -6653,6 +6659,9 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
               fclose(ofh);
               ofh = NULL;
+
+              if(buffer != NULL)
+                free(buffer);
 
               // after writing out the mail to a
               // new mail file we go and add it to the folder

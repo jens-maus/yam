@@ -179,7 +179,7 @@ MakeStaticHook(PO_SetPublicKeyHook, PO_SetPublicKey);
 HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
 {
   APTR secret;
-  char buf[SIZE_LARGE], *str, p;
+  char *str;
   int retc, keys = 0;
   FILE *fp;
 
@@ -192,9 +192,13 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
   }
   else
   {
+    char buf[SIZE_LARGE];
+
     strlcpy(buf, "-kv  ", sizeof(buf));
     if(secret != NULL)
     {
+      char p;
+
       GetVar("PGPPATH", &buf[4], sizeof(buf) - 4, 0);
       if((p = buf[strlen(buf) - 1]) != ':' && p != '/')
         strlcat(buf, "/", sizeof(buf));
@@ -206,12 +210,14 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
 
   if(retc == 0 && (fp = fopen(PGPLOGFILE, "r")) != NULL)
   {
+    char *buf = NULL;
+
     str = (char *)xget(string, MUIA_String_Contents);
     DoMethod(pop, MUIM_List_Clear);
 
     setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
 
-    while(GetLine(fp, buf, sizeof(buf)) != NULL)
+    while(GetLine(fp, &buf) != NULL)
     {
       char entry[SIZE_DEFAULT];
 
@@ -222,7 +228,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
         {
           memcpy(entry, &buf[12], 8);
 
-          while(GetLine(fp, buf, sizeof(buf)) != NULL)
+          while(GetLine(fp, &buf) != NULL)
           {
             if(!strncmp(buf, "uid", 3))
             {
@@ -248,7 +254,11 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
         keys++;
       }
     }
+
     fclose(fp);
+
+    if(buf != NULL)
+      free(buf);
 
     if(DeleteFile(PGPLOGFILE) == 0)
       AddZombieFile(PGPLOGFILE);

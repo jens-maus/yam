@@ -1225,27 +1225,25 @@ char *MA_NewMailFile(const struct Folder *folder, char *mailfile)
 //  Checks if message contains an uuencoded file
 static BOOL MA_DetectUUE(FILE *fh)
 {
-  char *buffer;
+  char *buffer = NULL;
   BOOL found = FALSE;
 
   ENTER();
 
-  if((buffer = malloc(SIZE_LINE)) != NULL)
+  // Now we process the whole mailfile and check if there is any line that
+  // starts with "begin xxx"
+  while(GetLine(fh, &buffer) != NULL)
   {
-    // Now we process the whole mailfile and check if there is any line that
-    // starts with "begin xxx"
-    while(GetLine(fh, buffer, SIZE_LINE) != NULL)
+    // lets check for digit first because this will throw out many others first
+    if(isdigit((int)buffer[6]) && strncmp(buffer, "begin ", 6) == 0)
     {
-      // lets check for digit first because this will throw out many others first
-      if(isdigit((int)buffer[6]) && strncmp(buffer, "begin ", 6) == 0)
-      {
-        found = TRUE;
-        break;
-      }
+      found = TRUE;
+      break;
     }
-
-    free(buffer);
   }
+
+  if(buffer != NULL)
+    free(buffer);
 
   RETURN(found);
   return found;
@@ -1263,161 +1261,157 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
   if(headerList != NULL)
   {
     unsigned int linesread = 0;
-    char *buffer;
+    char *buffer = NULL;
+    BOOL finished = FALSE;
+    struct HeaderNode *hdrNode = NULL;
 
     // clear the headerList first
     NewList((struct List *)headerList);
 
-    // allocate some memory for use as a read buffer
-    if((buffer = calloc(SIZE_LINE, sizeof(char))) != NULL)
+    // we read out the whole header line by line and
+    // concatenate lines that are belonging together.
+    while((GetLine(fh, &buffer) != NULL && (++linesread, buffer[0] != '\0')) ||
+          (finished == FALSE && (finished = TRUE)))
     {
-      BOOL finished = FALSE;
-      struct HeaderNode *hdrNode = NULL;
-
-      // we read out the whole header line by line and
-      // concatenate lines that are belonging together.
-      while((GetLine(fh, buffer, SIZE_LINE) != NULL && (++linesread, buffer[0] != '\0')) ||
-            (finished == FALSE && (finished = TRUE)))
+      // if the start of this line is a space or a tabulator sign
+      // this line belongs to the last header also and we have to
+      // add it to the last one.
+      if((buffer[0] == ' ' || buffer[0] == '\t') && finished == FALSE)
       {
-        // if the start of this line is a space or a tabulator sign
-        // this line belongs to the last header also and we have to
-        // add it to the last one.
-        if((buffer[0] == ' ' || buffer[0] == '\t') && finished == FALSE)
+        if(hdrNode != NULL)
         {
-          if(hdrNode != NULL)
+          char *ptr;
+
+          // move to the "real" start of the string so that we can copy
+          // from there to our previous header.
+          for(ptr = buffer; *ptr && isspace(*ptr); ptr++);
+
+          // we want to preserve the last space so that this headerline
+          // is correctly connected
+          if(ptr != buffer)
+            *(--ptr) = ' ';
+
+          // now concatenate this new headerstring to our previous one
+          hdrNode->content = StrBufCat(hdrNode->content, ptr);
+        }
+      }
+      else
+      {
+        // it seems that we have found another header line because
+        // it didn't start with a linear-white-space, so lets
+        // first validate the previous one, if it exists.
+        if(hdrNode != NULL)
+        {
+          char *ptr;
+          char *hdrContents = hdrNode->content;
+          int len;
+
+          // we first decode the header according to RFC 2047 which
+          // should give us the full charset interpretation
+          if((len = rfc2047_decode(hdrContents, hdrContents, strlen(hdrContents))) == -1)
           {
-            char *ptr;
-
-            // move to the "real" start of the string so that we can copy
-            // from there to our previous header.
-            for(ptr = buffer; *ptr && isspace(*ptr); ptr++);
-
-            // we want to preserve the last space so that this headerline
-            // is correctly connected
-            if(ptr != buffer)
-              *(--ptr) = ' ';
-
-            // now concatenate this new headerstring to our previous one
-            hdrNode->content = StrBufCat(hdrNode->content, ptr);
+            E(DBF_FOLDER, "ERROR: malloc() error during rfc2047() decoding");
+            break; // break-out
           }
+          else if(len == -2)
+          {
+            W(DBF_FOLDER, "WARNING: unknown header encoding found");
+
+            // signal an error but continue.
+            ER_NewError(tr(MSG_ER_UNKNOWN_HEADER_ENCODING), hdrContents, mailFile);
+          }
+          else if(len == -3)
+          {
+            W(DBF_FOLDER, "WARNING: base64 header decoding failed");
+          }
+
+          // now that we have decoded the headerline accoring to rfc2047
+          // we have to strip out eventually existing ESC sequences as
+          // this can be dangerous with MUI.
+          for(ptr=hdrContents; *ptr; ptr++)
+          {
+            // if we find an ESC sequence, strip it!
+            if(*ptr == 0x1b)
+              *ptr = ' ';
+          }
+
+          // the headerNode seems to be finished so we put it into our
+          // headerList
+          AddTail((struct List *)headerList, (struct Node *)hdrNode);
+        }
+
+        // if we are finished we break out here
+        if(finished == TRUE)
+        {
+          success = TRUE;
+          break;
+        }
+
+        // now that we have finished the last header line
+        // we can finally start processing a new one.
+        // Which means we allocate a new HeaderNode and try to get out the header
+        // name
+        if((hdrNode = calloc(1, sizeof(struct HeaderNode))) != NULL)
+        {
+          char *ptr;
+
+          // now we try to find the name of the header (ends with a ':' and no white space
+          // or control character in between
+          for(ptr = buffer; *ptr; ptr++)
+          {
+            if(*ptr == ':')
+              break;
+            else if(*ptr < 33 || *ptr > 126)
+            {
+              ptr = NULL;
+              break;
+            }
+          }
+
+          if(ptr != NULL && *ptr != '\0')
+          {
+            *ptr = '\0';
+
+            // use our StrBufCpy() function to copy the name of the header
+            // into our ->name element
+            if((hdrNode->name = StrBufCpy(NULL, buffer)) != NULL)
+            {
+              // now we copy also the rest of buffer into the contents
+              // of the headerNode
+              if((hdrNode->content = StrBufCpy(NULL, Trim(ptr+1))) != NULL)
+              {
+                // everything seemed to work fine, so lets continue
+                continue;
+              }
+            }
+          }
+
+          // if we end up here then something went wrong and we have to clear
+          // the header Node and stuff
+          free(hdrNode);
+          hdrNode = NULL;
         }
         else
-        {
-          // it seems that we have found another header line because
-          // it didn't start with a linear-white-space, so lets
-          // first validate the previous one, if it exists.
-          if(hdrNode != NULL)
-          {
-            char *ptr;
-            char *hdrContents = hdrNode->content;
-            int len;
-
-            // we first decode the header according to RFC 2047 which
-            // should give us the full charset interpretation
-            if((len = rfc2047_decode(hdrContents, hdrContents, strlen(hdrContents))) == -1)
-            {
-              E(DBF_FOLDER, "ERROR: malloc() error during rfc2047() decoding");
-              break; // break-out
-            }
-            else if(len == -2)
-            {
-              W(DBF_FOLDER, "WARNING: unknown header encoding found");
-
-              // signal an error but continue.
-              ER_NewError(tr(MSG_ER_UNKNOWN_HEADER_ENCODING), hdrContents, mailFile);
-            }
-            else if(len == -3)
-            {
-              W(DBF_FOLDER, "WARNING: base64 header decoding failed");
-            }
-
-            // now that we have decoded the headerline accoring to rfc2047
-            // we have to strip out eventually existing ESC sequences as
-            // this can be dangerous with MUI.
-            for(ptr=hdrContents; *ptr; ptr++)
-            {
-              // if we find an ESC sequence, strip it!
-              if(*ptr == 0x1b)
-                *ptr = ' ';
-            }
-
-            // the headerNode seems to be finished so we put it into our
-            // headerList
-            AddTail((struct List *)headerList, (struct Node *)hdrNode);
-          }
-
-          // if we are finished we break out here
-          if(finished == TRUE)
-          {
-            success = TRUE;
-            break;
-          }
-
-          // now that we have finished the last header line
-          // we can finally start processing a new one.
-          // Which means we allocate a new HeaderNode and try to get out the header
-          // name
-          if((hdrNode = calloc(1, sizeof(struct HeaderNode))) != NULL)
-          {
-            char *ptr;
-
-            // now we try to find the name of the header (ends with a ':' and no white space
-            // or control character in between
-            for(ptr = buffer; *ptr; ptr++)
-            {
-              if(*ptr == ':')
-                break;
-              else if(*ptr < 33 || *ptr > 126)
-              {
-                ptr = NULL;
-                break;
-              }
-            }
-
-            if(ptr != NULL && *ptr != '\0')
-            {
-              *ptr = '\0';
-
-              // use our StrBufCpy() function to copy the name of the header
-              // into our ->name element
-              if((hdrNode->name = StrBufCpy(NULL, buffer)) != NULL)
-              {
-                // now we copy also the rest of buffer into the contents
-                // of the headerNode
-                if((hdrNode->content = StrBufCpy(NULL, Trim(ptr+1))) != NULL)
-                {
-                  // everything seemed to work fine, so lets continue
-                  continue;
-                }
-              }
-            }
-
-            // if we end up here then something went wrong and we have to clear
-            // the header Node and stuff
-            free(hdrNode);
-            hdrNode = NULL;
-          }
-          else
-            break;
-        }
+          break;
       }
-
-      // if we haven't had success in reading the headers
-      // we make sure we clean everything up. If we read no
-      // headers at all we return a failure. But if we were able to
-      // read a single empty line it is a signal that this part of
-      // the mail doesn't have any header at all (which may be valid)
-      if(success == FALSE)
-        FreeHeaderList(headerList);
-      else if(IsListEmpty((struct List *)headerList) == TRUE &&
-              (mode == RHM_MAINHEADER || buffer[0] != '\0' || linesread != 1))
-      {
-        W(DBF_MAIL, "no required header data found while having scanned '%s'.", mailFile);
-        success = FALSE;
-      }
-
-      free(buffer);
     }
+
+    // if we haven't had success in reading the headers
+    // we make sure we clean everything up. If we read no
+    // headers at all we return a failure. But if we were able to
+    // read a single empty line it is a signal that this part of
+    // the mail doesn't have any header at all (which may be valid)
+    if(success == FALSE)
+      FreeHeaderList(headerList);
+    else if(IsListEmpty((struct List *)headerList) == TRUE &&
+            (mode == RHM_MAINHEADER || (buffer != NULL && buffer[0] != '\0') || linesread != 1))
+    {
+      W(DBF_MAIL, "no required header data found while having scanned '%s'.", mailFile);
+      success = FALSE;
+    }
+
+    if(buffer != NULL)
+      free(buffer);
   }
 
   RETURN(success);
@@ -1431,7 +1425,7 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
 {
   ENTER();
 
-  if(email)
+  if(email != NULL)
   {
     FreeStrBuf(email->SenderInfo);
     email->SenderInfo = NULL;
