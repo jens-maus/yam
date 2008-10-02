@@ -691,7 +691,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    if(GetLine(&buffer, &size, fh) != NULL)
+    if(GetLine(&buffer, &size, fh) >= 0)
     {
       if(strncmp(buffer,"YAB",3) == 0)
       {
@@ -703,38 +703,50 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
 
         set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, TRUE);
 
-        while(GetLine(&buffer, &size, fh) != NULL)
+        while(GetLine(&buffer, &size, fh) >= 0)
         {
           memset(&addr, 0, sizeof(struct ABEntry));
           if(strncmp(buffer, "@USER", 5) == 0)
           {
             addr.Type = AET_USER;
             strlcpy(addr.Alias, Trim(&buffer[6]), sizeof(addr.Alias));
-            strlcpy(addr.Address, Trim(GetLine(&buffer, &size, fh)), sizeof(addr.Address));
-            strlcpy(addr.RealName, Trim(GetLine(&buffer, &size, fh)), sizeof(addr.RealName));
-            strlcpy(addr.Comment, Trim(GetLine(&buffer, &size, fh)), sizeof(addr.Comment));
+            GetLine(&buffer, &size, fh);
+            strlcpy(addr.Address, Trim(buffer), sizeof(addr.Address));
+            GetLine(&buffer, &size, fh);
+            strlcpy(addr.RealName, Trim(buffer), sizeof(addr.RealName));
+            GetLine(&buffer, &size, fh);
+            strlcpy(addr.Comment, Trim(buffer), sizeof(addr.Comment));
             if(version > 2)
             {
-              strlcpy(addr.Phone, Trim(GetLine(&buffer, &size, fh)), sizeof(addr.Phone));
-              strlcpy(addr.Street, Trim(GetLine(&buffer, &size, fh)), sizeof(addr.Street));
-              strlcpy(addr.City, Trim(GetLine(&buffer, &size, fh)), sizeof(addr.City));
-              strlcpy(addr.Country, Trim(GetLine(&buffer, &size, fh)), sizeof(addr.Country));
-              strlcpy(addr.PGPId, Trim(GetLine(&buffer, &size, fh)), sizeof(addr.PGPId));
-              addr.BirthDay = atol(Trim(GetLine(&buffer, &size, fh)));
-              strlcpy(addr.Photo, Trim(GetLine(&buffer, &size, fh)), sizeof(addr.Photo));
-              if(strcmp(GetLine(&buffer, &size, fh), "@ENDUSER"))
+              GetLine(&buffer, &size, fh);
+              strlcpy(addr.Phone, Trim(buffer), sizeof(addr.Phone));
+              GetLine(&buffer, &size, fh);
+              strlcpy(addr.Street, Trim(buffer), sizeof(addr.Street));
+              GetLine(&buffer, &size, fh);
+              strlcpy(addr.City, Trim(buffer), sizeof(addr.City));
+              GetLine(&buffer, &size, fh);
+              strlcpy(addr.Country, Trim(buffer), sizeof(addr.Country));
+              GetLine(&buffer, &size, fh);
+              strlcpy(addr.PGPId, Trim(buffer), sizeof(addr.PGPId));
+              GetLine(&buffer, &size, fh);
+              addr.BirthDay = atol(Trim(buffer));
+              GetLine(&buffer, &size, fh);
+              strlcpy(addr.Photo, Trim(buffer), sizeof(addr.Photo));
+              GetLine(&buffer, &size, fh);
+              if(strcmp(buffer, "@ENDUSER") == 0)
                 strlcpy(addr.Homepage, Trim(buffer), sizeof(addr.Homepage));
             }
             if(version > 3)
             {
-              addr.DefSecurity = atoi(Trim(GetLine(&buffer, &size, fh)));
+              GetLine(&buffer, &size, fh);
+              addr.DefSecurity = atoi(Trim(buffer));
             }
             do
             {
               if(strcmp(buffer, "@ENDUSER") == 0)
                 break;
             }
-            while(GetLine(&buffer, &size, fh));
+            while(GetLine(&buffer, &size, fh) >= 0);
 
             DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
           }
@@ -747,12 +759,15 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
             strlcpy(addr.Alias, Trim(&buffer[6]), sizeof(addr.Alias));
             if(version > 2)
             {
-              strlcpy(addr.Address , Trim(GetLine(&buffer, &size, fh)), sizeof(addr.Address));
-              strlcpy(addr.RealName, Trim(GetLine(&buffer, &size, fh)), sizeof(addr.RealName));
+              GetLine(&buffer, &size, fh);
+              strlcpy(addr.Address , Trim(buffer), sizeof(addr.Address));
+              GetLine(&buffer, &size, fh);
+              strlcpy(addr.RealName, Trim(buffer), sizeof(addr.RealName));
             }
-            strlcpy(addr.Comment , Trim(GetLine(&buffer, &size, fh)), sizeof(addr.Comment));
+            GetLine(&buffer, &size, fh);
+            strlcpy(addr.Comment , Trim(buffer), sizeof(addr.Comment));
             members = AllocStrBuf(SIZE_DEFAULT);
-            while(GetLine(&buffer, &size, fh))
+            while(GetLine(&buffer, &size, fh) >= 0)
             {
               if(strcmp(buffer, "@ENDLIST") == 0)
                 break;
@@ -776,7 +791,8 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
           {
             addr.Type = AET_GROUP;
             strlcpy(addr.Alias  , Trim(&buffer[7]), sizeof(addr.Alias));
-            strlcpy(addr.Comment, Trim(GetLine(&buffer, &size, fh)), sizeof(addr.Comment));
+            GetLine(&buffer, &size, fh);
+            strlcpy(addr.Comment, Trim(buffer), sizeof(addr.Comment));
             nested++;
             parent[nested] = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested-1], MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST);
           }
@@ -802,7 +818,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
             DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
 
           fseek(fh, 0, SEEK_SET);
-          while(GetLine(&buffer, &size, fh))
+          while(GetLine(&buffer, &size, fh) >= 0)
           {
             char *p, *p2;
 
@@ -937,7 +953,7 @@ BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
 
     set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, TRUE);
 
-    while(GetLine(&buffer, &size, fh) != NULL)
+    while(GetLine(&buffer, &size, fh) >= 0)
     {
       // an empty line separates two user entries
       if(buffer[0] == '\0')
@@ -1553,7 +1569,7 @@ BOOL AB_ImportTreeXML(char *fname, BOOL append, BOOL sorted)
       XML_SetUserData(parser, &xmlUserData);
 
       // now parse the file line by line
-      while(GetLine(&buffer, &size, fh) != NULL)
+      while(GetLine(&buffer, &size, fh) >= 0)
       {
         if(XML_Parse(parser, buffer, strlen(buffer), FALSE) == XML_STATUS_ERROR)
         {
@@ -1706,7 +1722,7 @@ BOOL AB_ImportTreeTabCSV(char *fname, BOOL append, BOOL sorted, char delim)
     delimStr[0] = delim;
     delimStr[1] = '\0';
 
-    while(GetLine(&buffer, &size, fh) != NULL)
+    while(GetLine(&buffer, &size, fh) >= 0)
     {
       struct ABEntry addr;
       char *item = buffer;

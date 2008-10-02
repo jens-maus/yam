@@ -631,7 +631,7 @@ char *UnquoteString(const char *s, BOOL new)
 /// GetLine
 // gets a NUL terminated line of a file handle and strips any
 // trailing CR or LF
-char *GetLine(char **buffer, size_t *size, FILE *fh)
+ssize_t GetLine(char **buffer, size_t *size, FILE *fh)
 {
   ssize_t len;
   char *result = NULL;
@@ -645,10 +645,13 @@ char *GetLine(char **buffer, size_t *size, FILE *fh)
     // strip possible CR or LF characters at the end of the line
     if(buf[len-1] == '\n')
     {
+      // search for possible CR or LF characters and adjust the length information accordingly
       if(len > 1 && buf[len-2] == '\r')
-        buf[len-2] = '\0';
+        len -= 2;
       else
-        buf[len-1] = '\0';
+        len -= 1;
+
+      buf[len] = '\0';
     }
 
     result = *buffer;
@@ -664,8 +667,8 @@ char *GetLine(char **buffer, size_t *size, FILE *fh)
   }
   #endif
 
-  RETURN(result);
-  return result;
+  RETURN(len);
+  return len;
 }
 
 ///
@@ -814,7 +817,7 @@ BOOL ConvertCRLF(char *in, char *out, BOOL to)
 
       setvbuf(outfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      while(GetLine(&buf, &size, infh) != NULL)
+      while(GetLine(&buf, &size, infh) >= 0)
         fprintf(outfh, "%s%s\n", buf, to?"\r":"");
 
       success = TRUE;

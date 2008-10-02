@@ -161,11 +161,11 @@ static void US_LoadUsers(void)
     size_t size = 0;
     BOOL hasmanager = FALSE;
 
-    if(GetLine(&buffer, &size, fh) != NULL && strncmp(buffer,"YUS", 3) == 0)
+    if(GetLine(&buffer, &size, fh) >= 3 && strncmp(buffer,"YUS", 3) == 0)
     {
       int ver = buffer[3] - '0';
 
-      while(GetLine(&buffer, &size, fh) != NULL)
+      while(GetLine(&buffer, &size, fh) >= 0)
       {
         if(strncmp(buffer, "@USER", 5) == 0)
         {
@@ -174,15 +174,16 @@ static void US_LoadUsers(void)
           enum FType type;
 
           strlcpy(user->Name, Trim(&buffer[6]), sizeof(user->Name));
-          strlcpy(user->MailDir, Trim(GetLine(&buffer, &size, fh)), sizeof(user->MailDir));
+          GetLine(&buffer, &size, fh);
+          strlcpy(user->MailDir, Trim(buffer), sizeof(user->MailDir));
           if(user->MailDir[0] == '\0')
           {
             strlcpy(user->MailDir, G->MA_MailDir, sizeof(user->MailDir));
             save = TRUE;
           }
 
-          flags = atoi(Trim(GetLine(&buffer, &size, fh)));
-
+          GetLine(&buffer, &size, fh);
+          flags = atoi(Trim(buffer));
           user->Limited = isFlagSet(flags, UFLAG_LIMITED_USER);
           user->UseAddr = isFlagSet(flags, UFLAG_USE_GLOBAL_ADDRESSBOOK);
           user->UseDict = isFlagSet(flags, UFLAG_USE_GLOBAL_DICTIONARY);
@@ -190,7 +191,10 @@ static void US_LoadUsers(void)
             hasmanager = TRUE;
 
           if(ver >= 2)
-            strlcpy(user->Password, Decrypt(GetLine(&buffer, &size, fh)), sizeof(user->Password));
+          {
+            GetLine(&buffer, &size, fh);
+            strlcpy(user->Password, Decrypt(buffer), sizeof(user->Password));
+          }
 
           user->ID = GetSimpleID();
           G->Users.Num++;
@@ -200,7 +204,7 @@ static void US_LoadUsers(void)
             ER_NewError(tr(MSG_ER_USER_DIR_MISSING), user->MailDir, user->Name);
 
           // skip all lines until we read the "@ENDUSER"
-          while(GetLine(&buffer, &size, fh))
+          while(GetLine(&buffer, &size, fh) >= 0)
           {
             if(strcmp(buffer, "@ENDUSER") == 0)
               break;

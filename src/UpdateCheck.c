@@ -306,7 +306,7 @@ BOOL CheckForUpdates(void)
               if(G->UpdateNotifyWinObject != NULL)
                 DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_Clear);
 
-              while(GetLine(&buffer, &size, tf->FP) != NULL)
+              while(GetLine(&buffer, &size, tf->FP) >= 0)
               {
                 // make sure we trim the line by stripping leading
                 // and trailing spaces.
@@ -390,7 +390,7 @@ BOOL CheckForUpdates(void)
                     {
                       FILE *out = comp->changeLogFile->FP;
 
-                      while(GetLine(&buffer, &size, tf->FP) != NULL)
+                      while(GetLine(&buffer, &size, tf->FP) >= 0L)
                       {
                         D(DBF_UPDATE, "%s", buffer);
 
@@ -512,7 +512,7 @@ void LoadUpdateState(void)
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    if(GetLine(&buf, &size, fh) != NULL)
+    if(GetLine(&buf, &size, fh) >= 3)
     {
       if(strnicmp(buf, "YUP", 3) == 0)
       {
@@ -522,7 +522,7 @@ void LoadUpdateState(void)
         version = buf[3] - '0';
 
         // read in all the lines
-        while(GetLine(&buf, &size, fh) != NULL)
+        while(GetLine(&buf, &size, fh) >= 0)
         {
           char *p;
           char *value;

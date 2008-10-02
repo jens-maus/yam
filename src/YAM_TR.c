@@ -4779,7 +4779,7 @@ static BOOL InitUIDLhash(void)
 
       setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      while(GetLine(&uidl, &size, fh) != NULL)
+      while(GetLine(&uidl, &size, fh) >= 0)
         AddUIDLtoHash(uidl, FALSE);
 
       fclose(fh);
@@ -6350,7 +6350,7 @@ BOOL TR_GetMessageList_IMPORT(void)
 
           setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
-          while(GetLine(&buffer, &bufsize, ifh) != NULL)
+          while(GetLine(&buffer, &bufsize, ifh) >= 0)
           {
             // now we parse through the input file until we
             // find the "From " separator
@@ -6601,7 +6601,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
               // now that we seeked to the mail address we go
               // and read in line by line
-              while(GetLine(&buffer, &size, ifh) != NULL && G->TR->Abort == FALSE)
+              while(GetLine(&buffer, &size, ifh) >= 0 && G->TR->Abort == FALSE)
               {
                 // if we did not find the message body yet
                 if(foundBody == FALSE)

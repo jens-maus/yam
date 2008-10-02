@@ -479,7 +479,7 @@ static void FI_GenerateListPatterns(struct Search *search)
     // make sure the pattern list is successfully freed
     FreeSearchPatternList(search);
 
-    while(GetLine(&buf, &size, fh) != NULL)
+    while(GetLine(&buf, &size, fh) >= 0)
     {
       if(buf[0] != '\0')
       {

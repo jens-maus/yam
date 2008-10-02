@@ -137,11 +137,11 @@ static int DI_Load(void)
 
     BusyText(tr(MSG_BusyLoadingDI), "");
 
-    if(GetLine(&buffer, &size, fh) != NULL && strncmp(buffer, "YDI", 3) == 0)
+    if(GetLine(&buffer, &size, fh) >= 3 && strncmp(buffer, "YDI", 3) == 0)
     {
       set(G->DI->GUI.LV_ENTRIES, MUIA_List_Quiet, TRUE);
 
-      while(GetLine(&buffer, &size, fh) != NULL)
+      while(GetLine(&buffer, &size, fh) >= 0)
       {
         struct Dict entry;
 
@@ -153,9 +153,9 @@ static int DI_Load(void)
           strlcpy(entry.Alias, Trim(&buffer[7]), sizeof(entry.Alias));
           entry.Text = AllocStrBuf(80);
 
-          while(GetLine(&buffer, &size, fh) != NULL)
+          while(GetLine(&buffer, &size, fh) >= 0)
           {
-            if((p = strstr(buffer, "@ENDENTRY")))
+            if((p = strstr(buffer, "@ENDENTRY")) != NULL)
             {
               *p = 0;
               entry.Text = StrBufCat(entry.Text, buffer);

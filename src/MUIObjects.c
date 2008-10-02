@@ -218,7 +218,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
 
     setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
 
-    while(GetLine(&buf, &size, fp) != NULL)
+    while(GetLine(&buf, &size, fp) >= 0)
     {
       char entry[SIZE_DEFAULT];
 
@@ -229,7 +229,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
         {
           memcpy(entry, &buf[12], 8);
 
-          while(GetLine(&buf, &size, fp) != NULL)
+          while(GetLine(&buf, &size, fp) >= 0)
           {
             if(strncmp(buf, "uid", 3) == 0)
             {

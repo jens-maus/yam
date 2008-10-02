@@ -753,11 +753,11 @@ BOOL FO_LoadTree(char *fname)
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    if(GetLine(&buffer, &size, fh) != NULL && strncmp(buffer, "YFO", 3) == 0)
+    if(GetLine(&buffer, &size, fh) >= 3 && strncmp(buffer, "YFO", 3) == 0)
     {
       DoMethod(lv, MUIM_NListtree_Clear, NULL, 0);
       set(lv, MUIA_NListtree_Quiet, TRUE);
-      while(GetLine(&buffer, &size, fh) != NULL)
+      while(GetLine(&buffer, &size, fh) >= 0)
       {
         if(strncmp(buffer, "@FOLDER", 7) == 0)
         {
@@ -769,7 +769,8 @@ BOOL FO_LoadTree(char *fname)
             fo->Sort[0] = 1;
             fo->Sort[1] = 3;
             strlcpy(fo->Name, Trim(&buffer[8]), sizeof(fo->Name));
-            strlcpy(fo->Path, Trim(GetLine(&buffer, &size, fh)), sizeof(fo->Path));
+            GetLine(&buffer, &size, fh);
+            strlcpy(fo->Path, Trim(buffer), sizeof(fo->Path));
             if((fo->messages = CreateMailList()) != NULL)
             {
               if(CreateDirectory(GetFolderDir(fo)) == TRUE)
@@ -865,7 +866,7 @@ BOOL FO_LoadTree(char *fname)
               if(strcmp(buffer, "@ENDFOLDER") == 0)
                 break;
             }
-            while(GetLine(&buffer, &size, fh) != NULL);
+            while(GetLine(&buffer, &size, fh) >= 0);
           }
         }
         else if(strncmp(buffer, "@SEPARATOR", 10) == 0)
@@ -886,7 +887,7 @@ BOOL FO_LoadTree(char *fname)
               if(strcmp(buffer, "@ENDSEPARATOR") == 0)
                 break;
             }
-            while(GetLine(&buffer, &size, fh) != NULL);
+            while(GetLine(&buffer, &size, fh) >= 0);
             fo->SortIndex = i++;
 
             // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
@@ -934,7 +935,7 @@ BOOL FO_LoadTree(char *fname)
             strlcpy(fo->Name, Trim(&buffer[7]), sizeof(fo->Name));
 
             // now we check if the node should be open or not
-            if(GetLine(&buffer, &size, fh) != NULL)
+            if(GetLine(&buffer, &size, fh) >= 0)
             {
               // if it is greater zero then the node should be displayed open
               if(atoi(buffer) > 0)

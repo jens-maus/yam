@@ -30,6 +30,10 @@ $URL$
 
 2008-10-02  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: modified the GetLine() once more to return the number of read bytes
+    instead of the buffer. Thus GetLine() is 99% the same as getline(), except
+    that 0 bytes indicates an empty line, because of the stripped CR and LF
+    characters.
   * misc: added a size parameter to the GetLine() function to be able to reuse
     an already allocated buffer from a previous call. Also changed the order of
     the parameters to match the order of getline().

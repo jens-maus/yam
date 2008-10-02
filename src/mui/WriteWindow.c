@@ -679,11 +679,11 @@ static void AddTagline(FILE *fh_mail)
 
             fseek(fh_tag, fpos, SEEK_SET);
 
-            if(GetLine(&buf, &bufsize, fh_tag) != NULL)
+            if(GetLine(&buf, &bufsize, fh_tag) >= 0)
             {
               fputs(buf, fh_mail);
 
-              while(GetLine(&buf, &bufsize, fh_tag) != NULL)
+              while(GetLine(&buf, &bufsize, fh_tag) >= 0)
               {
                 if(strncmp(buf, C->TagsSeparator, strlen(C->TagsSeparator)) == 0)
                   break;

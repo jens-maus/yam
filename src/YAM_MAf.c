@@ -1233,7 +1233,7 @@ static BOOL MA_DetectUUE(FILE *fh)
 
   // Now we process the whole mailfile and check if there is any line that
   // starts with "begin xxx"
-  while(GetLine(&buffer, &size, fh) != NULL)
+  while(GetLine(&buffer, &size, fh) >= 7)
   {
     // lets check for digit first because this will throw out many others first
     if(isdigit((int)buffer[6]) && strncmp(buffer, "begin ", 6) == 0)
@@ -1272,7 +1272,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
 
     // we read out the whole header line by line and
     // concatenate lines that are belonging together.
-    while((GetLine(&buffer, &size, fh) != NULL && (++linesread, buffer[0] != '\0')) ||
+    while((GetLine(&buffer, &size, fh) >= 0 && (++linesread, buffer[0] != '\0')) ||
           (finished == FALSE && (finished = TRUE)))
     {
       // if the start of this line is a space or a tabulator sign
