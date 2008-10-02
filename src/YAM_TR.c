@@ -2168,7 +2168,7 @@ static int TR_ReadLine(LONG socket, char *vptr, int maxlen)
       {
         *ptr++ = c;
         if(c == '\n')
-          break;  // newline is stored, like fgets()
+          break;  // newline is stored, like with getline()
       }
       else if(rc == 0)
       {
@@ -2187,7 +2187,7 @@ static int TR_ReadLine(LONG socket, char *vptr, int maxlen)
       }
     }
 
-    *ptr = '\0';              // null terminate like fgets()
+    *ptr = '\0'; // null terminate like getline()
 
     // perform some debug output on the console if requested
     // by the user
@@ -5179,7 +5179,9 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
           if((mfh = fopen(fullfile, "r")) != NULL)
           {
             char datstr[64];
-            char buf[SIZE_LINE];
+            char *buf = NULL;
+            size_t buflen = 0;
+            ssize_t curlen;
             BOOL inHeader = TRUE;
 
             // printf out our leading "From " MBOX format line first
@@ -5197,16 +5199,18 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
 
             // now we iterate through every line of our mail and try to substitute
             // found "From " line with quoted ones
-            while(G->TR->Abort == FALSE && fgets(buf, SIZE_LINE, mfh))
+            while(G->TR->Abort == FALSE &&
+                  (curlen = getline(&buf, &buflen, mfh)) > 0)
             {
               char *tmp = buf;
 
               // check if this is a single \n so that it
               // signals the end if a line
-              if(*buf == '\n')
+              if(buf[0] == '\n' || (buf[0] == '\r' && buf[1] == '\n'))
               {
                 inHeader = FALSE;
-                fputs(buf, fh);
+
+                fwrite(buf, curlen, 1, fh);
                 continue;
               }
 
@@ -5220,7 +5224,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
               {
                 fputc('>', fh);
               }
-              else if(inHeader)
+              else if(inHeader == TRUE)
               {
                 // let us skip some specific headerlines
                 // because we placed our own here
@@ -5233,21 +5237,21 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
               }
 
               // write the line to our destination file
-              fputs(buf, fh);
+              fwrite(buf, curlen, 1, fh);
 
               // make sure we have a newline at the end of the line
-              if(buf[strlen(buf)-1] != '\n')
+              if(buf[curlen-1] != '\n')
                 fputc('\n', fh);
 
               // update the transfer status
-              TR_TransStat_Update(&ts, strlen(buf));
+              TR_TransStat_Update(&ts, curlen);
             }
 
             // check why we exited the while() loop and
             // if everything is fine
-            if(feof(mfh) == 0)
+            if(ferror(mfh) != 0 || feof(mfh) == 0)
             {
-              E(DBF_NET, "error on reading data!");
+              E(DBF_NET, "error on reading data! ferror(mfh)=%ld feof(mfh)=%ld", ferror(mfh), feof(mfh));
 
               // an error occurred, lets return -1
               success = FALSE;
@@ -5255,6 +5259,9 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
 
             // close file pointer
             fclose(mfh);
+
+            if(buf != NULL)
+              free(buf);
 
             // put the transferStat to 100%
             TR_TransStat_Update(&ts, TS_SETMAX);
@@ -5286,39 +5293,41 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
 
 /*** SEND ***/
 /// TR_SendMessage
-//  Sends a single message
+// Sends a single message (-1 signals an error in DATA phase, 0 signals
+// error in start phase, 1 and 2 signals success)
 static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 {
   int result = 0;
   struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-  char *mf;
-  FILE *fh;
+  char *mf = GetMailFile(NULL, outfolder, mail);
+  FILE *fh = NULL;
+  char *buf = NULL;
+  size_t buflen = SIZE_LINE;
 
   ENTER();
 
-  D(DBF_NET, "about to send mail '%s' via SMTP", mail->MailFile);
+  D(DBF_NET, "about to send mail '%s' via SMTP", mf);
 
   // open the mail file for reading
-  if((fh = fopen(mf = GetMailFile(NULL, outfolder, mail), "r")) != NULL)
+  if((buf = malloc(buflen)) != NULL &&
+     mf != NULL && (fh = fopen(mf, "r")) != NULL)
   {
-    char buf[SIZE_LINE];
-
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     // now we put together our parameters for our MAIL command
     // which in fact may contain serveral parameters as well according
     // to ESMTP extensions.
-    snprintf(buf, sizeof(buf), "FROM:<%s>", C->EmailAddress);
+    snprintf(buf, buflen, "FROM:<%s>", C->EmailAddress);
 
     // in case the server supports the ESMTP SIZE extension lets add the
     // size
     if(hasSIZE(G->TR_SMTPflags) && mail->Size > 0)
-      snprintf(buf, sizeof(buf), "%s SIZE=%ld", buf, mail->Size);
+      snprintf(buf, buflen, "%s SIZE=%ld", buf, mail->Size);
 
     // in case the server supports the ESMTP 8BITMIME extension we can
     // add information about the encoding mode
     if(has8BITMIME(G->TR_SMTPflags))
-      snprintf(buf, sizeof(buf), "%s BODY=%s", buf, C->Allow8bit ? "8BITMIME" : "7BIT");
+      snprintf(buf, buflen, "%s BODY=%s", buf, C->Allow8bit ? "8BITMIME" : "7BIT");
 
     // send the MAIL command with the FROM: message
     if(TR_SendSMTPCmd(SMTP_MAIL, buf, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)
@@ -5337,7 +5346,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
         {
           for(j=0; j < email->NoResentTo; j++)
           {
-            snprintf(buf, sizeof(buf), "TO:<%s>", email->ResentTo[j].Address);
+            snprintf(buf, buflen, "TO:<%s>", email->ResentTo[j].Address);
             if(TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
               rcptok = FALSE;
           }
@@ -5345,14 +5354,14 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
         else
         {
           // specify the main 'To:' recipient
-          snprintf(buf, sizeof(buf), "TO:<%s>", mail->To.Address);
+          snprintf(buf, buflen, "TO:<%s>", mail->To.Address);
           if(TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
             rcptok = FALSE;
 
           // now add the additional 'To:' recipients of the mail
           for(j=0; j < email->NoSTo && rcptok; j++)
           {
-            snprintf(buf, sizeof(buf), "TO:<%s>", email->STo[j].Address);
+            snprintf(buf, buflen, "TO:<%s>", email->STo[j].Address);
             if(TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
               rcptok = FALSE;
           }
@@ -5360,7 +5369,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
           // add the 'Cc:' recipients
           for(j=0; j < email->NoCC && rcptok; j++)
           {
-            snprintf(buf, sizeof(buf), "TO:<%s>", email->CC[j].Address);
+            snprintf(buf, buflen, "TO:<%s>", email->CC[j].Address);
             if(TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
               rcptok = FALSE;
           }
@@ -5368,7 +5377,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
           // add the 'BCC:' recipients
           for(j=0; j < email->NoBCC && rcptok; j++)
           {
-            snprintf(buf, sizeof(buf), "TO:<%s>", email->BCC[j].Address);
+            snprintf(buf, buflen, "TO:<%s>", email->BCC[j].Address);
             if(TR_SendSMTPCmd(SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
               rcptok = FALSE;
           }
@@ -5383,19 +5392,19 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
           {
             BOOL lineskip = FALSE;
             BOOL inbody = FALSE;
-            char sendbuf[SIZE_LINE+2];
-            int sendsize;
-            int cpos;
-            int prevpos = ftell(fh); // get current file position
-            int startpos = prevpos;
-            int sentbytes = 0;
+            ssize_t curlen;
+            ssize_t proclen = 0;
+            size_t sentbytes = 0;
 
             // as long there is no abort situation we go on reading out
             // from the stream and sending it to our SMTP server
-            while(G->TR->Abort == FALSE && G->Error == FALSE && fgets(buf, SIZE_LINE, fh))
+            while(G->TR->Abort == FALSE && G->Error == FALSE &&
+                  (curlen = getline(&buf, &buflen, fh)) > 0)
             {
-              sendsize = cpos = ftell(fh)-prevpos; // get the size we really read out from the stream.
-              prevpos += sendsize;                 // set the new prevpos to the ftell() value.
+              #if defined(DEBUG)
+              if(curlen > 998)
+                W(DBF_NET, "RFC2822 violation: line length in source file is too large: %ld", curlen);
+              #endif
 
               // as long as we process header lines we have to make differ in some ways.
               if(inbody == FALSE)
@@ -5403,79 +5412,104 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                 // we check if we found the body of the mail now
                 // the start of a body is seperated by the header with a single
                 // empty line and we have to make sure that it isn't the beginning of the file
-                if(sendsize == 1 && buf[0] == '\n' && buf[1] == '\0' && prevpos-startpos > 1)
+                if(curlen == 1 && buf[0] == '\n' && proclen > 0)
                 {
                   inbody = TRUE;
                   lineskip = FALSE;
                 }
-                else if(!isspace(*buf)) // headerlines don't start with a space
+                else if(isspace(*buf) == FALSE) // headerlines don't start with a space
                 {
                   // headerlines with bcc or x-yam- will be skipped by us.
                   lineskip = (strnicmp(buf, "bcc", 3) == 0 || strnicmp(buf, "x-yam-", 6) == 0);
                 }
               }
 
+              // lets save the length we have processed already
+              proclen = curlen;
+
               // if we don't skip this line we write it out to the SMTP server
               if(lineskip == FALSE)
               {
                 // RFC 821 says a starting period needs a second one
+                // so we send out a period in advance
                 if(buf[0] == '.')
                 {
-                  sendbuf[0] = buf[0];
-                  sendsize++;
+                  if(TR_Send(".", 1, TCPF_NONE) <= 0)
+                  {
+                    E(DBF_NET, "couldn't send single '.' to SMTP server");
+
+                    ER_NewError(tr(MSG_ER_CONNECTIONBROKEN), C->SMTP_Server, (char *)SMTPcmd[SMTP_DATA]);
+                    break;
+                  }
+                  else
+                    sentbytes++;
                 }
 
-                // lets copy everything into our sendbuffer
-                memcpy(&sendbuf[sendsize-cpos], &buf[0], (size_t)cpos+1);
-
-                // RFC 2822 doesn't allow bare CR and LF so we have to put a CR before a LF
-                if(sendbuf[sendsize-1] == '\n')
-                {
-                  sendbuf[sendsize-1] = '\r';
-                  sendbuf[sendsize]   = '\n';
-                  sendbuf[sendsize+1] = '\0';
-                  sendsize++;
-                }
+                // if the last char is a LF we have to skip it right now
+                // as we have to send a CRLF per definition of the RFC
+                if(buf[curlen-1] == '\n')
+                  curlen--;
 
                 // now lets send the data buffered to the socket.
                 // we will flush it later then.
-                if(TR_Send(sendbuf, sendsize, TCPF_NONE) <= 0)
+                if(curlen > 0 && TR_Send(buf, curlen, TCPF_NONE) <= 0)
+                {
+                  E(DBF_NET, "couldn't send buffer data to SMTP server (%ld)", curlen);
+
                   ER_NewError(tr(MSG_ER_CONNECTIONBROKEN), C->SMTP_Server, (char *)SMTPcmd[SMTP_DATA]);
+                  break;
+                }
                 else
-                  sentbytes += sendsize;
+                  sentbytes += curlen;
+
+                // now we send the final CRLF (RFC 2822)
+                if(TR_Send("\r\n", 2, TCPF_NONE) <= 0)
+                {
+                  E(DBF_NET, "couldn't send CRLF to SMTP server");
+
+                  ER_NewError(tr(MSG_ER_CONNECTIONBROKEN), C->SMTP_Server, (char *)SMTPcmd[SMTP_DATA]);
+                  break;
+                }
+                else
+                  sentbytes += 2;
               }
 
-              TR_TransStat_Update(ts, cpos);
+              TR_TransStat_Update(ts, proclen);
             }
 
-            D(DBF_NET, "transfered %ld bytes (raw: %ld bytes)", sentbytes, mail->Size);
+            D(DBF_NET, "transfered %ld bytes (raw: %ld bytes) error: %ld/%ld", sentbytes, mail->Size, G->TR->Abort, G->Error);
 
-            // if buf == NULL when we arrive here, then the fgets()
-            // at the top exited with an error
-            if(buf == NULL)
+            if(G->TR->Abort == FALSE && G->Error == FALSE)
             {
-              ER_NewError(tr(MSG_ER_ErrorReadMailfile), mf);
-              result = -1; // signal error
-            }
-            else if(G->TR->Abort == FALSE && G->Error == FALSE)
-            {
-              // we have to flush the write buffer if this wasn't a error or
-              // abort situation
-              TR_WriteFlush();
-
-              // send a CRLF+octet "\r\n." to signal that the data is finished.
-              // we do it here because if there was an error and we send it, the message
-              // will be send incomplete.
-              if(TR_SendSMTPCmd(SMTP_FINISH, NULL, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)
+              // check if any of the above getline() operations caused a ferror or
+              // if we didn't walk until the end of the mail file
+              if(ferror(fh) != 0 || feof(fh) == 0)
               {
-                // put the transferStat to 100%
-                TR_TransStat_Update(ts, TS_SETMAX);
+                E(DBF_NET, "input mail file returned error state: ferror(fh)=%ld feof(fh)=%ld", ferror(fh), feof(fh));
 
-                // now that we are at 100% we have to set the transfer Date of the message
-                GetSysTimeUTC(&mail->Reference->transDate);
+                ER_NewError(tr(MSG_ER_ErrorReadMailfile), mf);
+                result = -1; // signal error
+              }
+              else
+              {
+                // we have to flush the write buffer if this wasn't a error or
+                // abort situation
+                TR_WriteFlush();
 
-                result = email->DelSend ? 2 : 1;
-                AppendToLogfile(LF_VERBOSE, 42, tr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, mail->Size);
+                // send a CRLF+octet "\r\n." to signal that the data is finished.
+                // we do it here because if there was an error and we send it, the message
+                // will be send incomplete.
+                if(TR_SendSMTPCmd(SMTP_FINISH, NULL, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)
+                {
+                  // put the transferStat to 100%
+                  TR_TransStat_Update(ts, TS_SETMAX);
+
+                  // now that we are at 100% we have to set the transfer Date of the message
+                  GetSysTimeUTC(&mail->Reference->transDate);
+
+                  result = email->DelSend ? 2 : 1;
+                  AppendToLogfile(LF_VERBOSE, 42, tr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, mail->Size);
+                }
               }
             }
 
@@ -5492,8 +5526,11 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
     fclose(fh);
   }
-  else
+  else if(buf != NULL)
     ER_NewError(tr(MSG_ER_CantOpenFile), mf);
+
+  if(buf != NULL)
+    free(buf);
 
   RETURN(result);
   return result;

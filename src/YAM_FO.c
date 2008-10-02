@@ -387,11 +387,12 @@ BOOL FO_LoadConfig(struct Folder *fo)
   AddPath(fname, GetFolderDir(fo), ".fconfig", sizeof(fname));
   if((fh = fopen(fname, "r")) != NULL)
   {
-    char *buffer = NULL;
+    char *buf = NULL;
+    size_t buflen = 0;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    if(NGetLine(fh, &buffer) != NULL && strnicmp(buffer, "YFC", 3) == 0)
+    if(getline(&buf, &buflen, fh) >= 3 && strnicmp(buf, "YFC", 3) == 0)
     {
       BOOL statsproc = FALSE;
 
@@ -399,37 +400,45 @@ BOOL FO_LoadConfig(struct Folder *fo)
       fo->MLSignature  = 1;
       fo->MLSupport    = TRUE;
 
-      while(NGetLine(fh, &buffer) != NULL)
+      while(getline(&buf, &buflen, fh) > 0)
       {
         char *p;
         char *value;
 
-        if((value = strchr(buffer, '=')) != NULL)
-          for(++value; isspace(*value); value++);
+        if((value = strchr(buf, '=')) != NULL)
+        {
+          for(++value; isspace(*value); value++)
+            ;
+        }
 
-        for(p = buffer; *p != '\0' && isspace(*p) == FALSE; p++);
+        if((p = strpbrk(buf, "\r\n")) != NULL)
+          *p = '\0';
+
+        for(p = buf; *p != '\0' && isspace(*p) == FALSE; p++)
+          ;
+
         *p = '\0';
 
-        if(*buffer != '\0' && value != NULL)
+        if(*buf != '\0' && value != NULL)
         {
-          if(!stricmp(buffer, "Name"))                strlcpy(fo->Name, value, sizeof(fo->Name));
-          else if(!stricmp(buffer, "MaxAge"))         fo->MaxAge = atoi(value);
-          else if(!stricmp(buffer, "Password"))       strlcpy(fo->Password, Decrypt(value), sizeof(fo->Password));
-          else if(!stricmp(buffer, "Type"))           fo->Type = atoi(value);
-          else if(!stricmp(buffer, "XPKType"))        fo->Mode = atoi(value); // valid < v2.4
-          else if(!stricmp(buffer, "Mode"))           fo->Mode = atoi(value);
-          else if(!stricmp(buffer, "Sort1"))          fo->Sort[0] = atoi(value);
-          else if(!stricmp(buffer, "Sort2"))          fo->Sort[1] = atoi(value);
-          else if(!stricmp(buffer, "Stats"))          { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
-          else if(!stricmp(buffer, "ExpireUnread"))   fo->ExpireUnread = Txt2Bool(value);
-          else if(!stricmp(buffer, "MLSupport"))      fo->MLSupport = Txt2Bool(value);
-          else if(!stricmp(buffer, "MLFromAddr"))     strlcpy(fo->MLFromAddress, value, sizeof(fo->MLFromAddress));
-          else if(!stricmp(buffer, "MLRepToAddr"))    strlcpy(fo->MLReplyToAddress, value, sizeof(fo->MLReplyToAddress));
-          else if(!stricmp(buffer, "MLAddress"))      strlcpy(fo->MLAddress, value, sizeof(fo->MLAddress));
-          else if(!stricmp(buffer, "MLPattern"))      strlcpy(fo->MLPattern, value, sizeof(fo->MLPattern));
-          else if(!stricmp(buffer, "MLSignature"))    fo->MLSignature = atoi(value);
-          else if(!stricmp(buffer, "WriteIntro"))     strlcpy(fo->WriteIntro, value, sizeof(fo->WriteIntro));
-          else if(!stricmp(buffer, "WriteGreetings")) strlcpy(fo->WriteGreetings, value, sizeof(fo->WriteGreetings));
+          if(stricmp(buf, "Name") == 0)                strlcpy(fo->Name, value, sizeof(fo->Name));
+          else if(stricmp(buf, "MaxAge") == 0)         fo->MaxAge = atoi(value);
+          else if(stricmp(buf, "Password") == 0)       strlcpy(fo->Password, Decrypt(value), sizeof(fo->Password));
+          else if(stricmp(buf, "Type") == 0)           fo->Type = atoi(value);
+          else if(stricmp(buf, "XPKType") == 0)        fo->Mode = atoi(value); // valid < v2.4
+          else if(stricmp(buf, "Mode") == 0)           fo->Mode = atoi(value);
+          else if(stricmp(buf, "Sort1") == 0)          fo->Sort[0] = atoi(value);
+          else if(stricmp(buf, "Sort2") == 0)          fo->Sort[1] = atoi(value);
+          else if(stricmp(buf, "Stats") == 0)          { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
+          else if(stricmp(buf, "ExpireUnread") == 0)   fo->ExpireUnread = Txt2Bool(value);
+          else if(stricmp(buf, "MLSupport") == 0)      fo->MLSupport = Txt2Bool(value);
+          else if(stricmp(buf, "MLFromAddr") == 0)     strlcpy(fo->MLFromAddress, value, sizeof(fo->MLFromAddress));
+          else if(stricmp(buf, "MLRepToAddr") == 0)    strlcpy(fo->MLReplyToAddress, value, sizeof(fo->MLReplyToAddress));
+          else if(stricmp(buf, "MLAddress") == 0)      strlcpy(fo->MLAddress, value, sizeof(fo->MLAddress));
+          else if(stricmp(buf, "MLPattern") == 0)      strlcpy(fo->MLPattern, value, sizeof(fo->MLPattern));
+          else if(stricmp(buf, "MLSignature") == 0)    fo->MLSignature = atoi(value);
+          else if(stricmp(buf, "WriteIntro") == 0)     strlcpy(fo->WriteIntro, value, sizeof(fo->WriteIntro));
+          else if(stricmp(buf, "WriteGreetings") == 0) strlcpy(fo->WriteGreetings, value, sizeof(fo->WriteGreetings));
         }
       }
 
@@ -453,11 +462,13 @@ BOOL FO_LoadConfig(struct Folder *fo)
       if(fo->Type == FT_SPAM && C->SpamFilterEnabled == FALSE)
         fo->Type = FT_CUSTOM;
     }
-
-    if(buffer != NULL)
-      free(buffer);
+    else
+      E(DBF_FOLDER, "couldn't find folder config header");
 
     fclose(fh);
+
+    if(buf != NULL)
+      free(buf);
   }
 
   RETURN(success);

@@ -1445,7 +1445,6 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
     {
       struct Part *part;
       char *cmsg;
-      char buf[SIZE_LINE];
       char fname[SIZE_PATHFILE];
       char tfname[SIZE_PATHFILE];
 
@@ -1470,11 +1469,8 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
               if(part == headerPart)
               {
                 FILE *in;
-                char stopBoundary[SIZE_DEFAULT];
 
                 D(DBF_MAIL, "keeping header part '%s'", part->Filename);
-
-                snprintf(stopBoundary, sizeof(stopBoundary), "--%s\n", headerPart->CParBndr);
 
                 // For the header part we simply copy from the raw mail file instead of the
                 // parsed mail part file, because the raw file may contain additonal MIME
@@ -1482,20 +1478,33 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
                 // mail.
                 if((in = fopen(rmData->readFile, "r")) != NULL)
                 {
+                  char stopBoundary[SIZE_DEFAULT];
+                  int stopBoundaryLen = 0;
+                  char *buf = NULL;
+                  size_t buflen = 0;
+                  ssize_t curlen;
+
                   setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
 
-                  while(fgets(buf, sizeof(buf), in) != NULL)
+                  stopBoundaryLen = snprintf(stopBoundary, sizeof(stopBoundary), "--%s", headerPart->CParBndr);
+
+                  while((curlen = getline(&buf, &buflen, in)) > 0)
                   {
                     // copy all lines until we find the first boundary marker which terminates
                     // the first mail part
-                    if(strcmp(buf, stopBoundary) == 0)
+                    if(strncmp(buf, stopBoundary, stopBoundaryLen) == 0)
                       break;
                     else
-                      fputs(buf, out);
+                      fwrite(buf, curlen, 1, out);
                   }
-                  fprintf(out, "--%s", headerPart->CParBndr);
 
                   fclose(in);
+
+                  // write out the boundary
+                  fwrite(stopBoundary, stopBoundaryLen, 1, out);
+
+                  if(buf != NULL)
+                    free(buf);
                 }
               }
               else
@@ -1557,14 +1566,21 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
 
                     if((in = fopen(part->Filename, "r")) != NULL)
                     {
+                      char *buf = NULL;
+                      size_t buflen = 0;
+                      ssize_t curlen = 0;
+
                       setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
 
                       fputc('\n', out);
-                      while(fgets(buf, sizeof(buf), in) != NULL)
-                        fputs(buf, out);
+                      while((curlen = getline(&buf, &buflen, in)) > 0)
+                        fwrite(buf, curlen, 1, out);
 
                       fclose(in);
                       fprintf(out, "\n--%s", headerPart->CParBndr);
+
+                      if(buf != NULL)
+                        free(buf);
                     }
                   }
 
@@ -2935,7 +2951,8 @@ BOOL MA_ImportMessages(const char *fname)
     if((fh = fopen(fname, "r")) != NULL)
     {
       int i=0;
-      char buffer[SIZE_LINE];
+      char *buf = NULL;
+      size_t buflen = 0;
 
       setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -2947,9 +2964,9 @@ BOOL MA_ImportMessages(const char *fname)
       // to find a line starting with "From " in the first 10
       // successive lines.
       D(DBF_IMPORT, "processing MBOX file identification");
-      while(i < 10 && fgets(buffer, SIZE_LINE, fh))
+      while(i < 10 && getline(&buf, &buflen, fh) > 0)
       {
-        if(strncmp(buffer, "From ", 5) == 0)
+        if(strncmp(buf, "From ", 5) == 0)
         {
           foundFormat = IMF_MBOX;
           break;
@@ -3006,11 +3023,11 @@ BOOL MA_ImportMessages(const char *fname)
         // seek the file pointer back
         fseek(fh, 0, SEEK_SET);
 
-        while(fgets(buffer, SIZE_LINE, fh) && foundTokens < 2)
+        while(getline(&buf, &buflen, fh) > 0 && foundTokens < 2)
         {
-          if(strnicmp(buffer, "From:", 5) == 0)
+          if(strnicmp(buf, "From:", 5) == 0)
             foundTokens = 1;
-          else if(strnicmp(buffer, "Subject:", 8) == 0)
+          else if(strnicmp(buf, "Subject:", 8) == 0)
             foundTokens = 2;
         }
 
@@ -3022,6 +3039,9 @@ BOOL MA_ImportMessages(const char *fname)
       }
 
       fclose(fh);
+
+      if(buf != NULL)
+        free(buf);
     }
 
     SHOWVALUE(DBF_IMPORT, foundFormat);
@@ -3148,6 +3168,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
 
       snprintf(tfname, sizeof(tfname), "YAMt%08lx.tmp", GetUniqueID());
       AddPath(newfile, GetFolderDir(fo), tfname, sizeof(newfile));
+
       if((newfh = fopen(newfile, "w")) != NULL)
       {
         FILE *oldfh;
@@ -3157,20 +3178,23 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
 
         if((oldfh = fopen(fullfile, "r")) != NULL)
         {
-          char buf[SIZE_LINE];
+          char *buf = NULL;
+          size_t buflen = 0;
           BOOL infield = FALSE;
           BOOL inbody = FALSE;
           BOOL hasorigsubj = FALSE;
 
           setvbuf(oldfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-          while(fgets(buf, SIZE_LINE, oldfh))
+          while(getline(&buf, &buflen, oldfh) > 0)
           {
             if(*buf == '\n' && inbody == FALSE)
             {
               inbody = TRUE;
+
               if(hasorigsubj == FALSE)
                 EmitHeader(newfh, "X-Original-Subject", mail->Subject);
+
               EmitHeader(newfh, "Subject", subj);
             }
 
@@ -3180,11 +3204,16 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
               if(strnicmp(buf, "x-original-subject:", 19) == 0)
                 hasorigsubj = TRUE;
             }
+
             if(infield == FALSE || inbody == TRUE)
               fputs(buf, newfh);
           }
+
           fclose(oldfh);
           DeleteFile(oldfile);
+
+          if(buf != NULL)
+            free(buf);
         }
         fclose(newfh);
 

@@ -609,17 +609,18 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
       if((fh = fopen(fname, "r")) != NULL)
       {
         Object *lv = G->CO->GUI.LV_MIME;
-        char *buffer = NULL;
+        char *buf = NULL;
+        size_t buflen = 0;
 
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
         set(lv, MUIA_NList_Quiet, TRUE);
 
-        while(NGetLine(fh, &buffer) != NULL)
+        while(getline(&buf, &buflen, fh) > 0)
         {
           struct MimeTypeNode *mt = NULL;
           struct MinNode *curNode;
-          char *ctype = buffer;
+          char *ctype = buf;
           const char *ext = "";
           const char *command = "";
           char *p;
@@ -717,10 +718,10 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
           }
         }
 
-        if(buffer != NULL)
-          free(buffer);
-
         fclose(fh);
+
+        if(buf != NULL)
+          free(buf);
 
         set(lv, MUIA_NList_Quiet, FALSE);
         DoMethod(lv, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
@@ -2624,7 +2625,11 @@ Object *CO_PageRead(struct CO_ClassData *data)
                   MUIA_CycleChain, TRUE,
                 End,
               End,
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTSTYLES, tr(MSG_CO_UseTextstyles)),
+              Child, RectangleObject,
+                MUIA_VertWeight,          0,
+                MUIA_Rectangle_HBar,      TRUE,
+                MUIA_Rectangle_BarTitle,  tr(MSG_CO_FONTSETTINGS),
+              End,
 
               Child, Label1(tr(MSG_CO_ColoredText)),
               Child, data->GUI.CA_COLTEXT = PoppenObject,
@@ -2647,17 +2652,18 @@ Object *CO_PageRead(struct CO_ClassData *data)
                   MUIA_CycleChain, TRUE,
                 End,
               End,
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_ALLTEXTS, tr(MSG_CO_DisplayAll)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTCOLORS_READ, tr(MSG_CO_TEXTCOLORS_READ)),
 
               Child, Label1(tr(MSG_CO_URLCOLOR)),
               Child, data->GUI.CA_COLURL = PoppenObject,
                 MUIA_CycleChain, TRUE,
               End,
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_SHOWALTPARTS, tr(MSG_CO_SHOWALTPARTS)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTSTYLES_READ, tr(MSG_CO_TEXTSTYLES_READ)),
 
               Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
               Child, MakeCharsetPop((Object **)&data->GUI.TX_DEFCHARSET_READ, &charsetPopButton),
               Child, HSpace(1),
+
             End,
 
             Child, VGroup, GroupFrameT(tr(MSG_CO_MDN_TITLE)),
@@ -2719,6 +2725,8 @@ Object *CO_PageRead(struct CO_ClassData *data)
               Child, MakeCheckGroup((Object **)&data->GUI.CH_CONVERTHTML, tr(MSG_CO_CONVERTHTML)),
               Child, MakeCheckGroup((Object **)&data->GUI.CH_MAPFOREIGNCHARS, tr(MSG_CO_MAPFOREIGNCHARS)),
               Child, MakeCheckGroup((Object **)&data->GUI.CH_DETECTCYRILLIC, tr(MSG_CO_DETECT_CYRILLIC)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_ALLTEXTS, tr(MSG_CO_DisplayAll)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_SHOWALTPARTS, tr(MSG_CO_SHOWALTPARTS)),
             End,
 
             Child, HVSpace,
@@ -2748,7 +2756,8 @@ Object *CO_PageRead(struct CO_ClassData *data)
     SetHelp(data->GUI.CY_SIGSEPLINE,      MSG_HELP_CO_CY_SIGSEPLINE);
     SetHelp(data->GUI.CH_FIXFEDIT,        MSG_HELP_CO_CH_FIXFEDIT);
     SetHelp(data->GUI.CH_WRAPHEAD,        MSG_HELP_CO_CH_WRAPHEAD);
-    SetHelp(data->GUI.CH_TEXTSTYLES,      MSG_HELP_CO_CH_TEXTSTYLES);
+    SetHelp(data->GUI.CH_TEXTSTYLES_READ, MSG_HELP_CO_CH_TEXTSTYLES_READ);
+    SetHelp(data->GUI.CH_TEXTCOLORS_READ, MSG_HELP_CO_CH_TEXTCOLORS_READ);
     SetHelp(data->GUI.CH_SHOWALTPARTS,    MSG_HELP_CO_CH_SHOWALTPARTS);
     SetHelp(data->GUI.CH_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
     SetHelp(data->GUI.NB_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
@@ -2765,7 +2774,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_GLOBALMAILTHREADS, MSG_HELP_CO_CH_GLOBALMAILTHREADS);
 
     // disable all poppen objects in case the textstyles checkbox is disabled
-    DoMethod(data->GUI.CH_TEXTSTYLES, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
+    DoMethod(data->GUI.CH_TEXTCOLORS_READ, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
              MUIV_Notify_Application, 11, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.CA_COLSIG,
                                                                                               data->GUI.CA_COLTEXT,
                                                                                               data->GUI.CA_COL1QUOT,
@@ -2847,16 +2856,26 @@ Object *CO_PageWrite(struct CO_ClassData *data)
               Child, VGroup, GroupFrameT(tr(MSG_CO_Editor)),
                 Child, ColGroup(3),
                   Child, Label2(tr(MSG_CO_WordWrap)),
-                  Child, data->GUI.ST_EDWRAP = MakeInteger(3, tr(MSG_CO_WordWrap)),
-                  Child, data->GUI.CY_EDWRAP = MakeCycle(wrapmode, ""),
+                  Child, HGroup,
+                    Child, data->GUI.ST_EDWRAP = MakeInteger(3, tr(MSG_CO_WordWrap)),
+                    Child, data->GUI.CY_EDWRAP = MakeCycle(wrapmode, ""),
+                  End,
+                  Child, RectangleObject,
+                    MUIA_VertWeight,          0,
+                    MUIA_Rectangle_HBar,      TRUE,
+                    MUIA_Rectangle_BarTitle,  tr(MSG_CO_FONTSETTINGS),
+                  End,
 
                   Child, Label2(tr(MSG_CO_ExternalEditor)),
-                  Child, PopaslObject,
-                    MUIA_Popasl_Type     ,ASL_FileRequest,
-                    MUIA_Popstring_String,data->GUI.ST_EDITOR = MakeString(SIZE_PATHFILE,tr(MSG_CO_ExternalEditor)),
-                    MUIA_Popstring_Button,PopButton(MUII_PopFile),
+                  Child, HGroup,
+                    Child, PopaslObject,
+                      MUIA_Popasl_Type     ,ASL_FileRequest,
+                      MUIA_Popstring_String,data->GUI.ST_EDITOR = MakeString(SIZE_PATHFILE,tr(MSG_CO_ExternalEditor)),
+                      MUIA_Popstring_Button,PopButton(MUII_PopFile),
+                    End,
+                    Child, MakeCheckGroup((Object **)&data->GUI.CH_LAUNCH, tr(MSG_CO_Launch)),
                   End,
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_LAUNCH, tr(MSG_CO_Launch)),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXEDFONT_WRITE, tr(MSG_CO_FIXEDFONT_WRITE)),
 
                   Child, Label2(tr(MSG_CO_NB_EMAILCACHE)),
                   Child, HGroup,
@@ -2868,7 +2887,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
                     End,
                     Child, HSpace(0),
                   End,
-                  Child, HSpace(0),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTCOLORS_WRITE, tr(MSG_CO_TEXTCOLORS_WRITE)),
 
                   Child, Label2(tr(MSG_CO_NB_AUTOSAVE)),
                   Child, HGroup,
@@ -2880,7 +2899,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
                     End,
                     Child, HSpace(0),
                   End,
-                  Child, HSpace(0),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTSTYLES_WRITE, tr(MSG_CO_TEXTSTYLES_WRITE)),
 
                   Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
                   Child, MakeCharsetPop((Object **)&data->GUI.TX_DEFCHARSET_WRITE, &charsetPopButton),
@@ -2921,6 +2940,8 @@ Object *CO_PageWrite(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_REQUESTMDN,       MSG_HELP_CO_CH_REQUESTMDN);
     SetHelp(data->GUI.CH_SAVESENT,         MSG_HELP_CO_CH_SAVESENT);
     SetHelp(data->GUI.TX_DEFCHARSET_WRITE, MSG_HELP_CO_TX_DEFAULTCHARSET);
+    SetHelp(data->GUI.CH_TEXTSTYLES_WRITE, MSG_HELP_CO_CH_TEXTSTYLES_WRITE);
+    SetHelp(data->GUI.CH_TEXTCOLORS_WRITE, MSG_HELP_CO_CH_TEXTCOLORS_WRITE);
 
     DoMethod(data->GUI.CY_EDWRAP, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, data->GUI.ST_EDWRAP, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
   }

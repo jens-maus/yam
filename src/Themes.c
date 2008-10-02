@@ -358,27 +358,28 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
 
   if((fh = fopen(themeFile, "r")) != NULL)
   {
-    char buffer[SIZE_LARGE];
+    char *buf = NULL;
+    size_t buflen = 0;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    if(fgets(buffer, sizeof(buffer), fh) && strnicmp(buffer, "YTH", 3) == 0)
+    if(getline(&buf, &buflen, fh) >= 3 && strnicmp(buf, "YTH", 3) == 0)
     {
-      int version = buffer[3]-'0';
+      int version = buf[3]-'0';
 
       // check if the these has the correct version
       if(version == THEME_REQVERSION)
       {
-        while(fgets(buffer, sizeof(buffer), fh))
+        while(getline(&buf, &buflen, fh) > 0)
         {
           char *p;
           char *id;
           char *value;
 
-          if((p = strpbrk(buffer, ";#\r\n")) != NULL)
+          if((p = strpbrk(buf, ";#\r\n")) != NULL)
             *p = '\0';
 
-          if((value = strchr(buffer, '=')) != NULL)
+          if((value = strchr(buf, '=')) != NULL)
           {
             *value++ = '\0';
             value = Trim(value);
@@ -389,7 +390,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
             value = (char *)"";
           }
 
-          id = Trim(buffer);
+          id = Trim(buf);
           if(id[0] != '\0')
           {
             int i;
@@ -580,6 +581,9 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
     }
     else
       W(DBF_THEME, "invalid header in .theme file found");
+
+    if(buf != NULL)
+      free(buf);
   }
   else
     W(DBF_THEME, "couldn't open .theme file '%s'", themeFile);

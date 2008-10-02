@@ -123,41 +123,65 @@ static void DI_Save(void)
 //  Load glossary from disk
 static int DI_Load(void)
 {
-   int entries = 0;
-   FILE *fh;
-   char buffer[SIZE_LARGE], *p;
-   struct Dict entry;
+  int entries = 0;
+  FILE *fh;
 
-   if((fh = fopen(G->DI_Filename, "r")))
-   {
-      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+  ENTER();
 
-      BusyText(tr(MSG_BusyLoadingDI), "");
-      GetLine(fh, buffer, sizeof(buffer));
-      if (!strncmp(buffer,"YDI",3))
+  if((fh = fopen(G->DI_Filename, "r")))
+  {
+    char buffer[SIZE_LARGE];
+
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    BusyText(tr(MSG_BusyLoadingDI), "");
+
+    GetLine(fh, buffer, sizeof(buffer));
+    if(strncmp(buffer, "YDI", 3) == 0)
+    {
+      struct Dict entry;
+
+      set(G->DI->GUI.LV_ENTRIES, MUIA_List_Quiet, TRUE);
+
+      while(GetLine(fh, buffer, sizeof(buffer)))
       {
-         set(G->DI->GUI.LV_ENTRIES, MUIA_List_Quiet, TRUE);
-         while (GetLine(fh, buffer, sizeof(buffer)))
-         {
-            memset(&entry, 0, sizeof(struct Dict));
-            if (!strncmp(buffer, "@ENTRY", 6))
-            {
-               strlcpy(entry.Alias, Trim(&buffer[7]), sizeof(entry.Alias));
-               entry.Text = AllocStrBuf(80);
+        memset(&entry, 0, sizeof(struct Dict));
+        if(strncmp(buffer, "@ENTRY", 6) == 0)
+        {
+          char *p;
 
-               while (fgets(buffer, SIZE_LARGE, fh))
-                  if ((p = strstr(buffer, "@ENDENTRY\n"))) { *p = 0; entry.Text = StrBufCat(entry.Text, buffer); break; }
-                  else entry.Text = StrBufCat(entry.Text, buffer);
-               DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_InsertSingle, &entry, MUIV_List_Insert_Bottom);
-               entries++;
+          strlcpy(entry.Alias, Trim(&buffer[7]), sizeof(entry.Alias));
+          entry.Text = AllocStrBuf(80);
+
+          while(GetLine(fh, buffer, sizeof(buffer)))
+          {
+            if((p = strstr(buffer, "@ENDENTRY")))
+            {
+              *p = 0;
+              entry.Text = StrBufCat(entry.Text, buffer);
+              break;
             }
-         }
-         set(G->DI->GUI.LV_ENTRIES, MUIA_List_Quiet, FALSE);
+            else
+            {
+              entry.Text = StrBufCat(entry.Text, buffer);
+              entry.Text = StrBufCat(entry.Text, "\n");
+            }
+          }
+
+          DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_InsertSingle, &entry, MUIV_List_Insert_Bottom);
+          entries++;
+        }
       }
-      fclose(fh);
-      BusyEnd();
-   }
-   return entries;
+
+      set(G->DI->GUI.LV_ENTRIES, MUIA_List_Quiet, FALSE);
+    }
+
+    fclose(fh);
+    BusyEnd();
+  }
+
+  RETURN(entries);
+  return entries;
 }
 
 ///

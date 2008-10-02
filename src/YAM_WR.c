@@ -613,6 +613,8 @@ BOOL EncodePart(FILE *ofh, const struct WritePart *part)
 
       default:
       {
+        D(DBF_MIME, "doing raw copy...");
+
         if(CopyFile(NULL, ofh, NULL, ifh) == TRUE)
           result = TRUE;
         else
@@ -790,11 +792,12 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
     if((oldfh = fopen(xpkPacked ? unpFile : mailfile, "r")))
     {
       BOOL infield = FALSE;
-      char buf[SIZE_LINE];
+      char *buf = NULL;
+      size_t buflen = 0;
 
       setvbuf(oldfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      while(fgets(buf, SIZE_LINE, oldfh))
+      while(getline(&buf, &buflen, oldfh) > 0)
       {
         if(*buf == '\n')
         {
@@ -815,6 +818,9 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
 
       fclose(oldfh);
       result = TRUE;
+
+      if(buf != NULL)
+        free(buf);
     }
 
     // if we temporary unpacked the file we delete it now
