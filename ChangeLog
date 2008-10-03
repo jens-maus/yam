@@ -7,6 +7,8 @@ $URL$
 
 2008-10-03  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Debug.c: minor cosmetic change where we output a header in front of the
+    final memory tracking cleanup process.
   * UpdateCheck.c: fixed a minor bug where the wrong buffer has been check
     and therefore the changelog display in the update check always showed
     the internal tags.

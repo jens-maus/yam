@@ -784,6 +784,8 @@ static void CleanupDbgMalloc(void)
 
   if(isFlagSet(debug_classes, DBC_MTRACK))
   {
+    _DBPRINTF("** Cleaning up memory tracking *************************************\n");
+
     ObtainSemaphore(&DbgMallocListSema);
 
     if(DbgMallocCount != 0)
