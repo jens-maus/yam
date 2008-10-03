@@ -606,7 +606,7 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
 
         // now that we have our converted string we can go and
         // copy it over our destination buffer
-        if(str)
+        if(str != NULL && dstLen > 0)
         {
           // before we go on we check whether we have enough space
           // to put the txt in our destination

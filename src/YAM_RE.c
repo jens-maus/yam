@@ -1222,39 +1222,46 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
         // help of the functions codesets.library provides.
         if(srcCodeset != NULL && skipCodesets == FALSE)
         {
+          ULONG dstlen = 0;
+
           // convert from the srcCodeset to the destination one.
           char *str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
                                          CSA_DestCodeset,     G->readCharset,
                                          CSA_Source,          buf,
                                          CSA_SourceLen,       curlen,
+                                         CSA_DestLenPtr,      &dstlen,
                                          CSA_MapForeignChars, C->MapForeignChars,
                                          TAG_DONE);
 
-          // now write back exactly the same amount of bytes we have read
-          // previously
-          if(fwrite(str != NULL ? str : buf, curlen, 1, out) <= 0)
+          // check if operations succeeded
+          if(str != NULL && dstlen > 0)
           {
-            E(DBF_MAIL, "error during write operation!");
+            // now write back exactly the amount of bytes the CodesetsConvertStr()
+            // function tells us.
+            if(fwrite(str, dstlen, 1, out) <= 0)
+            {
+              E(DBF_MAIL, "error during write operation!");
 
-            // no success, return false
-            break;
-          }
+              // no success, return false
+              break;
+            }
 
-          if(str != NULL)
             CodesetsFreeA(str, NULL);
-          else
-            W(DBF_MAIL, "couldn't convert str with CodesetsConvertStr()");
-        }
-        else
-        {
-          // now write back exactly the same amount of bytes we read previously
-          if(fwrite(buf, curlen, 1, out) <= 0)
-          {
-            E(DBF_MAIL, "error during write operation! buf: (%ld) '%s'", curlen, buf);
 
-            // no success, return false
-            break;
+            // continue with next iteration
+            continue;
           }
+          else
+            W(DBF_MAIL, "couldn't convert buf with CodesetsConvertStr()");
+        }
+
+        // now write back exactly the same amount of bytes we read previously
+        if(fwrite(buf, curlen, 1, out) <= 0)
+        {
+          E(DBF_MAIL, "error during write operation! buf: (%ld) '%s'", curlen, buf);
+
+          // no success, return false
+          break;
         }
       }
     }

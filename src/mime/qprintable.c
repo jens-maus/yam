@@ -389,6 +389,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
         if(srcCodeset)
         {
           ULONG strLen = 0;
+
           STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
                                           CSA_DestCodeset,     G->readCharset,
                                           CSA_Source,          dptr,
@@ -397,7 +398,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
                                           CSA_MapForeignChars, C->MapForeignChars,
                                           TAG_DONE);
 
-          if(str && strLen > 0)
+          if(str != NULL && strLen > 0)
           {
             // if we end up here we successfully converted the
             // sourcebuffer to a destination buffer which complies to our local
@@ -462,6 +463,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
     if(srcCodeset)
     {
       ULONG strLen = 0;
+
       STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
                                       CSA_DestCodeset,     G->readCharset,
                                       CSA_Source,          dptr,
@@ -470,7 +472,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
                                       CSA_MapForeignChars, C->MapForeignChars,
                                       TAG_DONE);
 
-      if(str && strLen > 0)
+      if(str != NULL && strLen > 0)
       {
         // if we end up here we successfully converted the
         // sourcebuffer to a destination buffer which complies to our local
