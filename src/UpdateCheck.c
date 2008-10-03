@@ -394,7 +394,7 @@ BOOL CheckForUpdates(void)
                       {
                         D(DBF_UPDATE, "%s", buffer);
 
-                        if(stricmp(buf, "</changelog>") == 0)
+                        if(stricmp(buffer, "</changelog>") == 0)
                         {
                           // break out
                           break;
