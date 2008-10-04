@@ -675,6 +675,7 @@ static void AddTagline(FILE *fh_mail)
           // calculate a random offset
           fpos = (((long)rand()) % hsize) * sizeof(long);
           fseek(fh_hash, fpos, SEEK_SET);
+
           // read the offset to the tagline from the hash file
           if(ReadUInt32(fh_hash, (ULONG *)&fpos) == 1)
           {
@@ -701,10 +702,12 @@ static void AddTagline(FILE *fh_mail)
           }
         }
 
-        fclose(fh_tag);
+        fclose(fh_hash);
       }
       else
         ER_NewError(tr(MSG_ER_CantOpenFile), hashfile);
+
+      fclose(fh_tag);
     }
     else
       ER_NewError(tr(MSG_ER_CantOpenFile), C->TagsFile);

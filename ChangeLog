@@ -7,6 +7,10 @@ $URL$
 
 2008-10-04  Jens Langner <Jens.Langner@light-speed.de>
 
+  * WriteWindow.c, Themes.c: fixed two situations where file handles 
+    having been closed correctly and so might have ended up in locked files.
+    The new memory tracking framing is really a huge improvement in terms of
+    such situations.
   * YAM_utilities.h, WriteWindow.c, ReadWindow.c, YAM_CO.c, YAM_UT.c,
     YAM_COs.c: implemented the still missing functionality to finally fix
     bug #2056658. Now it is possible to set the Textstyle and Textcolor

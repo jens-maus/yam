@@ -584,6 +584,8 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
 
     if(buf != NULL)
       free(buf);
+
+    fclose(fh);
   }
   else
     W(DBF_THEME, "couldn't open .theme file '%s'", themeFile);
