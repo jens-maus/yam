@@ -284,9 +284,16 @@ void W(unsigned long f, const char *format, ...);
 		, GRAPHICS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
 })
 
-#define ObtainDirContext(t)       ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
-#define ObtainDirContextTags(...) ({APTR P = ObtainDirContextTags(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
-#define ReleaseDirContext(p)      ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
+#define ObtainDirContext(t) ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
+
+#define ObtainDirContextTags(...) ({ \
+   ULONG _tags[] = { __VA_ARGS__ }; \
+   APTR P = ObtainDirContext((struct TagItem *)_tags); \
+   _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); \
+   P; \
+})
+
+#define ReleaseDirContext(p) ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
 
 #else // AmigaOS 3
 

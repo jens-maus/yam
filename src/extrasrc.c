@@ -90,6 +90,7 @@
 #undef AllocDosObject
 #undef FreeDosObject
 #undef ObtainDirContext
+#undef ObtainDirContextTags
 #undef ReleaseDirContext
 #endif
 
