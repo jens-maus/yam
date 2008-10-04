@@ -7,6 +7,13 @@ $URL$
 
 2008-10-04  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_utilities.h, WriteWindow.c, ReadWindow.c, YAM_CO.c, YAM_UT.c,
+    YAM_COs.c: implemented the still missing functionality to finally fix
+    bug #2056658. Now it is possible to set the Textstyle and Textcolor
+    setting for the write window and read window separately as well as
+    switching between the individual settings in each write window. However,
+    the only thing missing seems to be the possibility to switch the font
+    settings on demand, but this requires changes to TE.mcc.
   * Debug.h: added the fopen/fclose functions to our memory tracking
     framework. Now the fopen and fclose calls are also tracked to find
     potential unclosed file handles.

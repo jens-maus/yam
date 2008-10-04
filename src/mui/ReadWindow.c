@@ -1466,7 +1466,9 @@ DECLARE(StyleOptionsChanged)
   if((tmp = xget(data->MI_FFONT, MUIA_Menuitem_Checked)) != rmData->useFixedFont)
   {
     rmData->useFixedFont = tmp;
-    updateText = TRUE;
+
+    // update the font settings of TE_EDIT
+    set(data->readMailGroup, MUIA_TextEditor_FixedFont, rmData->useFixedFont);
   }
 
   // issue an update of the readMailGroup's components

@@ -301,7 +301,7 @@ BOOL     ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef);
 char *   BuildAddress(char *buffer, size_t buflen, const char *address, const char *name);
 void     ExtractAddress(const char *line, struct Person *pe);
 char *   FileToBuffer(const char *file);
-BOOL     FileToEditor(char *file, Object *editor, BOOL changed);
+BOOL     FileToEditor(const char *file, Object *editor, const BOOL changed, const BOOL useStyles, const BOOL useColors);
 LONG     FileCount(const char *directory, const char *pattern);
 char *   AddPath(char *dst, const char *src, const char *add, size_t size);
 void     FinishUnpack(char *file);

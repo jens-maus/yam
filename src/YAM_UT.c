@@ -3734,7 +3734,8 @@ BOOL EditorToFile(Object *editor, char *file)
 ///
 /// FileToEditor
 //  Loads a file into a texteditor object
-BOOL FileToEditor(char *file, Object *editor, BOOL changed)
+BOOL FileToEditor(const char *file, Object *editor,
+                  const BOOL changed, const BOOL useStyles, const BOOL useColors)
 {
   char *text;
   BOOL res = FALSE;
@@ -3746,8 +3747,7 @@ BOOL FileToEditor(char *file, Object *editor, BOOL changed)
     char *parsedText;
 
     // parse the text and do some highlighting and stuff
-    #warning TODO: API of FileToEditor() should be changed to reflect API changes in ParseEmailText
-    if((parsedText = ParseEmailText(text, FALSE, TRUE, TRUE)) != NULL)
+    if((parsedText = ParseEmailText(text, FALSE, useStyles, useColors)) != NULL)
     {
       // set the new text and tell the editor that its content has changed
       xset(editor, MUIA_TextEditor_Contents,   parsedText,

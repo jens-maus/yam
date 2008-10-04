@@ -2338,7 +2338,7 @@ void CO_SetConfig(void)
       setstring(gui->ST_TAGFILE, CE->TagsFile);
       setstring(gui->ST_TAGSEP, CE->TagsSeparator);
       setcycle(gui->CY_SIGNAT, G->CO->LastSig);
-      FileToEditor(CreateFilename(SigNames[G->CO->LastSig]), gui->TE_SIGEDIT, FALSE);
+      FileToEditor(CreateFilename(SigNames[G->CO->LastSig]), gui->TE_SIGEDIT, FALSE, TRUE, TRUE);
       DoMethod(G->App, MUIM_CallHook, &CO_SwitchSignatHook, !CE->UseSignature);
     }
     break;

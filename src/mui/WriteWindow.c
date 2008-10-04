@@ -108,6 +108,10 @@ struct Data
   int windowNumber; // the unique window number
   BOOL autoSaved;   // was this mail automatically saved?
 
+  BOOL useFixedFont;   // use a fixed font for displaying the mail
+  BOOL useTextColors;  // use Textcolors for displaying the mail
+  BOOL useTextStyles;  // use Textstyles for displaying the mail
+
   char cursorPos[SIZE_SMALL];
   char windowTitle[SIZE_SUBJECT+1]; // string for the title text of the window
 };
@@ -944,6 +948,11 @@ OVERLOAD(OM_NEW)
     signat[4] = NULL;
   }
 
+  // set some default values
+  data->useFixedFont = C->UseFixedFontWrite;
+  data->useTextColors = C->UseTextColorsWrite;
+  data->useTextStyles = C->UseTextStylesWrite;
+
   // before we create all objects of this new write window we have to
   // check which number we can set for this window. Therefore we search in our
   // current WriteMailData list and check which number we can give this window
@@ -1153,9 +1162,9 @@ OVERLOAD(OM_NEW)
             MenuChild, MenuitemCheck(security[SEC_DEFAULTS], NULL, TRUE, TRUE, TRUE, 0x1F, WMEN_SECUR5),
           End,
           MenuChild, MenuBarLabel,
-          MenuChild, data->MI_FFONT  = MenuitemCheck(tr(MSG_WR_FIXEDFONT),  NULL, TRUE, C->UseFixedFontWrite,  TRUE, 0, WMEN_FFONT),
-          MenuChild, data->MI_TCOLOR = MenuitemCheck(tr(MSG_WR_TEXTCOLORS), "T",  TRUE, C->UseTextColorsWrite, TRUE, 0, WMEN_TCOLOR),
-          MenuChild, data->MI_TSTYLE = MenuitemCheck(tr(MSG_WR_TEXTSTYLES), NULL, TRUE, C->UseTextStylesWrite, TRUE, 0, WMEN_TSTYLE),
+          MenuChild, data->MI_FFONT  = MenuitemCheck(tr(MSG_WR_FIXEDFONT),  NULL, TRUE, data->useFixedFont,  TRUE, 0, WMEN_FFONT),
+          MenuChild, data->MI_TCOLOR = MenuitemCheck(tr(MSG_WR_TEXTCOLORS), "T",  TRUE, data->useTextColors, TRUE, 0, WMEN_TCOLOR),
+          MenuChild, data->MI_TSTYLE = MenuitemCheck(tr(MSG_WR_TEXTSTYLES), NULL, TRUE, data->useTextStyles, TRUE, 0, WMEN_TSTYLE),
         End,
       End;
 
@@ -1559,6 +1568,9 @@ OVERLOAD(OM_NEW)
         DoMethod(data->MI_ADDINFO,   MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_ADDINFO,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
         DoMethod(data->RA_SECURITY,  MUIM_Notify, MUIA_Radio_Active,       4,              data->RA_SIGNATURE,      3, MUIM_Set,      MUIA_Radio_Active, 0);
         DoMethod(data->RA_SECURITY,  MUIM_Notify, MUIA_Radio_Active,       4,              data->CH_ADDINFO,        3, MUIM_Set,      MUIA_Selected, FALSE);
+        DoMethod(data->MI_FFONT,     MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, MUIM_WriteWindow_StyleOptionsChanged);
+        DoMethod(data->MI_TCOLOR,    MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, MUIM_WriteWindow_StyleOptionsChanged);
+        DoMethod(data->MI_TSTYLE,    MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, MUIM_WriteWindow_StyleOptionsChanged);
 
         // set the notifies for the importance cycle gadget
         DoMethod(data->CY_IMPORTANCE, MUIM_Notify, MUIA_Cycle_Active,      0,              menuStripObject,         4, MUIM_SetUData, WMEN_IMPORT0, MUIA_Menuitem_Checked, TRUE);
@@ -2570,7 +2582,8 @@ DECLARE(ChangeSignature) // LONG signature
           free(buf);
 
         // put everything in the editor.
-        FileToEditor(tfout->Filename, editor, xget(editor, MUIA_TextEditor_HasChanged));
+        FileToEditor(tfout->Filename, editor, xget(editor, MUIA_TextEditor_HasChanged),
+                     data->useTextStyles, data->useTextColors);
 
         // make sure the temp file is deleted
         CloseTempFile(tfout);
@@ -2776,7 +2789,7 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm
 
                 case SSM_BOLD:
                 {
-                  xset(data->TE_EDIT, MUIA_TextEditor_StyleBold,      TRUE,
+                  xset(data->TE_EDIT, MUIA_TextEditor_StyleBold,      data->useTextStyles,
                                       MUIA_TextEditor_StyleItalic,    FALSE,
                                       MUIA_TextEditor_StyleUnderline, FALSE,
                                       MUIA_TextEditor_Pen,            0);
@@ -2786,7 +2799,7 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm
                 case SSM_ITALIC:
                 {
                   xset(data->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
-                                      MUIA_TextEditor_StyleItalic,    TRUE,
+                                      MUIA_TextEditor_StyleItalic,    data->useTextStyles,
                                       MUIA_TextEditor_StyleUnderline, FALSE,
                                       MUIA_TextEditor_Pen,            0);
                 }
@@ -2796,7 +2809,7 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm
                 {
                   xset(data->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
                                       MUIA_TextEditor_StyleItalic,    FALSE,
-                                      MUIA_TextEditor_StyleUnderline, TRUE,
+                                      MUIA_TextEditor_StyleUnderline, data->useTextStyles,
                                       MUIA_TextEditor_Pen,            0);
                 }
                 break;
@@ -2806,7 +2819,7 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm
                   xset(data->TE_EDIT, MUIA_TextEditor_StyleBold,      FALSE,
                                       MUIA_TextEditor_StyleItalic,    FALSE,
                                       MUIA_TextEditor_StyleUnderline, FALSE,
-                                      MUIA_TextEditor_Pen,            7);
+                                      MUIA_TextEditor_Pen,            data->useTextColors == TRUE ? 7 : 0);
                 }
                 break;
               }
@@ -2855,6 +2868,69 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm
   return 0;
 }
 
+///
+/// DECLARE(StyleOptionsChanged)
+DECLARE(StyleOptionsChanged)
+{
+  GETDATA;
+  BOOL updateText = FALSE;
+  BOOL tmp;
+
+  ENTER();
+
+  // check useTextcolors diff
+  if((tmp = xget(data->MI_TCOLOR, MUIA_Menuitem_Checked)) != data->useTextColors)
+  {
+    data->useTextColors = tmp;
+    updateText = TRUE;
+  }
+
+  // check useTextstyles diff
+  if((tmp = xget(data->MI_TSTYLE, MUIA_Menuitem_Checked)) != data->useTextStyles)
+  {
+    data->useTextStyles = tmp;
+    updateText = TRUE;
+  }
+
+  // check useFixedFont diff
+  if((tmp = xget(data->MI_FFONT, MUIA_Menuitem_Checked)) != data->useFixedFont)
+  {
+    data->useFixedFont = tmp;
+
+    // update the font settings of TE_EDIT
+    set(data->TE_EDIT, MUIA_TextEditor_FixedFont, data->useFixedFont);
+  }
+
+  // issue an update of the readMailGroup's components
+  if(updateText == TRUE)
+  {
+    char *orgtext;
+
+    // get the original text from TE_EDIT
+    orgtext = (char *)DoMethod(data->TE_EDIT, MUIM_TextEditor_ExportText);
+
+    if(orgtext != NULL)
+    {
+      char *parsedText;
+
+      // parse the text and do some highlighting and stuff
+      if((parsedText = ParseEmailText(orgtext, FALSE, data->useTextStyles, data->useTextColors)) != NULL)
+      {
+        // set the new text and preserve the changed status
+        set(data->TE_EDIT, MUIA_TextEditor_Contents, parsedText);
+
+        free(parsedText);
+      }
+
+      FreeVec(orgtext); // use FreeVec() because TextEditor.mcc uses AllocVec()
+    }
+    else
+      E(DBF_GUI, "couldn't export text from TE_EDIT");
+  }
+
+  RETURN(0);
+  return 0;
+}
 ///
 
 /* Public Methods */
@@ -3371,7 +3447,8 @@ DECLARE(ReloadText) // ULONG changed
   BOOL result;
   ENTER();
 
-  result = FileToEditor(data->wmData->filename, data->TE_EDIT, msg->changed);
+  result = FileToEditor(data->wmData->filename, data->TE_EDIT,
+                        msg->changed, data->useTextStyles, data->useTextColors);
 
   RETURN(result);
   return (ULONG)result;
@@ -3386,7 +3463,8 @@ DECLARE(LoadText) // char *filename, ULONG changed
   BOOL result;
   ENTER();
 
-  result = FileToEditor(msg->filename, data->TE_EDIT, msg->changed);
+  result = FileToEditor(msg->filename, data->TE_EDIT,
+                        msg->changed, data->useTextStyles, data->useTextColors);
 
   RETURN(result);
   return (ULONG)result;
