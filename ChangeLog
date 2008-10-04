@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-10-04  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Debug.h: added the fopen/fclose functions to our memory tracking
+    framework. Now the fopen and fclose calls are also tracked to find
+    potential unclosed file handles.
+
 2008-10-04  Thore Böckelmann <tboeckel@gmx.de>
 
   * Debug.h: fixed slightly wrong memory tracking for ExamineObject(),

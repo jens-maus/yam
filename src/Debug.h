@@ -149,12 +149,17 @@ void W(unsigned long f, const char *format, ...);
 
 #if !defined(DEBUG_USE_MALLOC_REDEFINE) && !defined(__SASC) && !defined(__VBCC__)
 
+// standard C-library memory functions
 #define malloc(s)               ({void *P = malloc(s);     _MEMTRACK(__FILE__, __LINE__, "malloc", P, s); P;})
 #define calloc(n, s)            ({void *P = calloc(n, s);  _MEMTRACK(__FILE__, __LINE__, "calloc", P, s); P;})
 #define realloc(p, s)           ({void *P; _UNMEMTRACK(__FILE__, __LINE__, p); P = realloc(p, s); _MEMTRACK(__FILE__, __LINE__, "realloc", P, s); P;})
 #define strdup(s)               ({char *P = strdup(s);     _MEMTRACK(__FILE__, __LINE__, "strdup", P, strlen(s)+1); P;})
 #define memdup(p, s)            ({void *P = memdup(p, s);  _MEMTRACK(__FILE__, __LINE__, "memdup", P, s); P;})
 #define free(p)                 ({_UNMEMTRACK(__FILE__, __LINE__, p); free(p);})
+
+// standard C-library IO functions
+#define fopen(f, m)             ({FILE *P = fopen(f, m); _MEMTRACK(__FILE__, __LINE__, "fopen", P, 1); P;})
+#define fclose(p)               ({int P; _UNMEMTRACK(__FILE__, __LINE__, p); P = fclose(p); P;})
 
 // memory tracking of internal AmigaOS functions
 #undef AllocPooled
