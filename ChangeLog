@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-10-04  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Debug.h: fixed slightly wrong memory tracking for ExamineObject(),
+    ObtainDirContext() and ObtainDirContextTags().
+
 2008-10-03  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c, misc: fixed a bug in the use of CodesetsConvertStr() where we

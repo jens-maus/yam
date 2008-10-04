@@ -172,6 +172,7 @@ void W(unsigned long f, const char *format, ...);
 #undef AllocBitMap
 #undef FreeBitMap
 #undef ObtainDirContext
+#undef ObtainDirContextTags
 #undef ReleaseDirContext
 
 #if defined(__amigaos4__)
@@ -182,15 +183,16 @@ void W(unsigned long f, const char *format, ...);
 #define FreeVecPooled(p, m)           ({_UNMEMTRACK(__FILE__, __LINE__, m); IExec->FreeVecPooled(p, m);})
 #define AllocDosObject(t, p)          ({APTR P = IDOS->AllocDosObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocDosObject", P, t+1); P;})
 #define AllocDosObjectTags(t, ...)    ({APTR P = IDOS->AllocDosObjectTags(t, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "AllocDosObjectTags", P, t+1); P;})
-#define ExamineObject(t)              ({APTR P = IDOS->ExamineObject(t); _MEMTRACK(__FILE__, __LINE__, "ExamineObject", P, t); P;})
-#define ExamineObjectTags(t, ...)     ({APTR P = IDOS->ExamineObjectTags(t, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ExamineObjectTags", P, t); P;})
+#define ExamineObject(t)              ({APTR P = IDOS->ExamineObject(t); _MEMTRACK(__FILE__, __LINE__, "ExamineObject", P, 1); P;})
+#define ExamineObjectTags(t, ...)     ({APTR P = IDOS->ExamineObjectTags(t, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ExamineObjectTags", P, 1); P;})
 #define FreeDosObject(t, p)           ({_UNMEMTRACK(__FILE__, __LINE__, p); IDOS->FreeDosObject(t, p);})
 #define AllocSysObject(t, p)          ({APTR P = IExec->AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
 #define AllocSysObjectTags(t, ...)    ({APTR P = IExec->AllocSysObjectTags(t, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "AllocSysObjectTags", P, t+1); P;})
 #define FreeSysObject(t, p)           ({_UNMEMTRACK(__FILE__, __LINE__, p); IExec->FreeSysObject(t, p);})
 #define AllocBitMap(sx, sy, d, f, bm) ({APTR P = IGraphics->AllocBitMap(sx, sy, d, f, bm); _MEMTRACK(__FILE__, __LINE__, "AllocBitMap", P, sx); P;})
 #define FreeBitMap(p)                 ({_UNMEMTRACK(__FILE__, __LINE__, p); IGraphics->FreeBitMap(p);})
-#define ObtainDirContext(...)         ({APTR P = IDOS->ObtainDirContext(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContext", P, 1); P;})
+#define ObtainDirContext(t)           ({APTR P = IDOS->ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
+#define ObtainDirContextTags(...)     ({APTR P = IDOS->ObtainDirContextTags(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
 #define ReleaseDirContext(p)          ({_UNMEMTRACK(__FILE__, __LINE__, p); IDOS->ReleaseDirContext(p);})
 
 #elif defined(__MORPHOS__)
@@ -277,8 +279,9 @@ void W(unsigned long f, const char *format, ...);
 		, GRAPHICS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
 })
 
-#define ObtainDirContext(...) ({APTR P = ObtainDirContext(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContext", P, 1); P;})
-#define ReleaseDirContext(p)  ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
+#define ObtainDirContext(t)       ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
+#define ObtainDirContextTags(...) ({APTR P = ObtainDirContextTags(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
+#define ReleaseDirContext(p)      ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
 
 #else // AmigaOS 3
 
@@ -397,8 +400,9 @@ void W(unsigned long f, const char *format, ...);
   } \
 }})
 
-#define ObtainDirContext(...) ({APTR P = ObtainDirContext(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContext", P, 1); P;})
-#define ReleaseDirContext(p)  ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
+#define ObtainDirContext(t)       ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
+#define ObtainDirContextTags(...) ({APTR P = ObtainDirContextTags(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
+#define ReleaseDirContext(p)      ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
 
 #endif // amigaos4
 
