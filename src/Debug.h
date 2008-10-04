@@ -155,6 +155,7 @@ void W(unsigned long f, const char *format, ...);
 #define realloc(p, s)           ({void *P; _UNMEMTRACK(__FILE__, __LINE__, p); P = realloc(p, s); _MEMTRACK(__FILE__, __LINE__, "realloc", P, s); P;})
 #define strdup(s)               ({char *P = strdup(s);     _MEMTRACK(__FILE__, __LINE__, "strdup", P, strlen(s)+1); P;})
 #define memdup(p, s)            ({void *P = memdup(p, s);  _MEMTRACK(__FILE__, __LINE__, "memdup", P, s); P;})
+#define asprintf(p, f, ...)     ({int P = asprintf(p, f, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "asprintf", *(p), 1); P;})
 #define free(p)                 ({_UNMEMTRACK(__FILE__, __LINE__, p); free(p);})
 
 // standard C-library IO functions

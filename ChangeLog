@@ -7,6 +7,8 @@ $URL$
 
 2008-10-04  Jens Langner <Jens.Langner@light-speed.de>
 
+  * Debug.h: added asprintf() to the functions monitored by our new memory
+    tracking framework.
   * Debug.h, extrasrc.c: fixed memory tracking for OS3 and MOS build.
   * WriteWindow.c, Themes.c: fixed two situations where file handles 
     having been closed correctly and so might have ended up in locked files.
