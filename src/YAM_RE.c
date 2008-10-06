@@ -4336,6 +4336,21 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 }
 
 ///
+/// FreeHeaderNode()
+// free a single header node
+void FreeHeaderNode(struct HeaderNode *hdrNode)
+{
+  ENTER();
+
+  FreeStrBuf(hdrNode->name);
+  FreeStrBuf(hdrNode->content);
+
+  free(hdrNode);
+
+  LEAVE();
+}
+
+///
 /// FreeHeaderList()
 // Free all items of an existing header list
 void FreeHeaderList(struct MinList *headerList)
@@ -4351,11 +4366,7 @@ void FreeHeaderList(struct MinList *headerList)
     {
       struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
 
-      // Free everything of the node
-      FreeStrBuf(hdrNode->name);
-      FreeStrBuf(hdrNode->content);
-
-      free(hdrNode);
+      FreeHeaderNode(hdrNode);
     }
   }
 

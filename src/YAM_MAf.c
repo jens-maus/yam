@@ -1389,8 +1389,8 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
           }
 
           // if we end up here then something went wrong and we have to clear
-          // the header Node and stuff
-          free(hdrNode);
+          // the header node and stuff
+          FreeHeaderNode(hdrNode);
           hdrNode = NULL;
         }
         else

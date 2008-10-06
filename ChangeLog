@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-10-06  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c, YAM_MAf.c: fixed another memory leak which occured when a mail
+    header could not be parsed successfully.
+
 2008-10-04  Jens Langner <Jens.Langner@light-speed.de>
 
   * Debug.h: added asprintf() to the functions monitored by our new memory

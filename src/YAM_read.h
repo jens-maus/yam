@@ -160,6 +160,7 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow);
 struct ReadMailData *AllocPrivateRMData(struct Mail *mail, short parseFlags);
 void FreePrivateRMData(struct ReadMailData *rmData);
 BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup);
+void FreeHeaderNode(struct HeaderNode *hdrNode);
 void FreeHeaderList(struct MinList *headerList);
 struct ReadMailData *GetReadMailData(const struct Mail *mail);
 BOOL UpdateReadMailDataStatus(const struct Mail *mail);
