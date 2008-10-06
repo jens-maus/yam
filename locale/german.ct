@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner, Thore Böckelmann
-## version $VER: YAM.catalog 6.0 (13.08.2008)
+## version $VER: YAM.catalog 6.0 (6.10.2008)
 ## language deutsch
 ## codeset 0
 ;
@@ -1524,10 +1524,6 @@ MSG_CO_OldQuotes
 Altes Zitat
 ; Old quotes
 ;
-MSG_CO_UseTextstyles
-F_ormatierungen
-; Use te_xt styles
-;
 MSG_CO_Header
 _Kopfzeilen
 ; _Headers
@@ -2328,12 +2324,6 @@ MSG_HELP_CO_CH_WRAPHEAD
 Lange Kopfzeilen auf mehrere\n\
 Zeilen aufgeteilt anzeigen.
 ; Display long headers on multiple lines
-;
-MSG_HELP_CO_CH_TEXTSTYLES
-/ * _ und # werden als Kontrollzeichen\n\
-für Textformatierungen interpretiert.
-; Interpret / * _ and # as\n\
-; control codes for text styles
 ;
 MSG_HELP_CO_CY_HEADER
 Welche Kopfzeilen einer Nachricht\n\
@@ -3675,7 +3665,7 @@ Kopfzeilen umbrechen
 ; Wrap headers
 ;
 MSG_RE_Textstyles
-Textformatierungen
+Textstile
 ; Text styles
 ;
 ;
@@ -5530,7 +5520,7 @@ Fehler beim Erzeugen der mehrteiligen PGP-Nachricht. Verschlüsseln/Signieren dea
 ; Error creating multipart PGP message. Encrypting/signing disabled!
 ;
 MSG_RE_FixedFont
-Feste Schrift
+Schrift fester Breite
 ; Fixed font
 ;
 MSG_CO_UseSMTPAUTH
@@ -8475,4 +8465,50 @@ Soll sie überschrieben werden?
 ;
 MSG_ER_USER_DIR_MISSING
 Das Verzeichnis '%s' des Benutzers '%s' existiert nicht!
+;
+MSG_CO_TEXTCOLORS_READ
+Te_xtfarben benutzen
+;
+MSG_HELP_CO_CH_TEXTCOLORS_READ
+Textfarben benutzen, um spezielle Textpassagen\n\
+hervorzuheben (z.B. Zitate, etc.)
+;
+MSG_CO_TEXTSTYLES_READ
+Textstile benut_zen
+;
+MSG_HELP_CO_CH_TEXTSTYLES_READ
+Zeichen '/', '*', '_' und '#' als\n\
+Sonderzeichen für Textstile interpretieren.
+;
+MSG_CO_TEXTCOLORS_WRITE
+Textfa_rben benutzen
+;
+MSG_HELP_CO_CH_TEXTCOLORS_WRITE
+Textfarben benutzen, um spezielle Textpassagen\n\
+hervorzuheben (z.B. Zitate, etc.)
+;
+MSG_CO_TEXTSTYLES_WRITE
+Textstile benut_zen
+;
+MSG_HELP_CO_CH_TEXTSTYLES_WRITE
+Zeichen '/', '*', '_' und '#' als\n\
+Sonderzeichen für Textstile interpretieren.
+;
+MSG_CO_FONTSETTINGS
+Font settings
+;
+MSG_CO_FIXEDFONT_WRITE
+Schrift fester Breite
+;
+MSG_RE_TEXTCOLORS
+Textfarben?
+;
+MSG_WR_TEXTSTYLES
+Textstile
+;
+MSG_WR_TEXTCOLORS
+Textfarben
+;
+MSG_WR_FIXEDFONT
+Schrift fester Breite
 ;
