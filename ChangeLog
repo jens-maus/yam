@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-10-08  Thore Böckelmann <tboeckel@gmx.de>
+
+  * FileInfo.c: fixed wrong duplication of date stamp in the OS3 and MOS builds.
+
 2008-10-06  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/german.ct: adapted catalog translation to latest changes and

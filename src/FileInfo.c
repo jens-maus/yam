@@ -158,8 +158,8 @@ BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr)
 
             case FI_DATE:
             {
-              if((*((struct DateStamp **)valuePtr) = memdup(&fib->fib_Date, sizeof(struct DateStamp))) != NULL)
-                result = TRUE;
+              memcpy((struct DateStamp *)valuePtr, &fib->fib_Date, sizeof(struct DateStamp));
+              result = TRUE;
             }
             break;
 
