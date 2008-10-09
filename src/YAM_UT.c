@@ -1154,7 +1154,7 @@ void SimpleWordWrap(char *filename, int wrapsize)
       if(p - sol > wrapsize && lsp >= 0)
       {
         ch = '\n';
-        Seek(fh, (LONG)lsp - p - 1, OFFSET_CURRENT);
+        ChangeFilePosition(fh, (LONG)lsp - p - 1, OFFSET_CURRENT);
         p = lsp;
         Write(fh, &ch, 1);
       }

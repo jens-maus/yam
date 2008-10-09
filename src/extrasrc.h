@@ -151,6 +151,7 @@ struct IClass;
 #define HAVE_SETPROCWINDOW
 #define HAVE_EXAMINEDIR
 #define HAVE_ALLOCSYSOBJECT
+#define HAVE_CHANGEFILEPOSITION
 #endif
 
 #if !defined(HAVE_SETPROCWINDOW)
@@ -163,6 +164,10 @@ struct IClass;
 
 #if !defined(HAVE_ALLOCSYSOBJECT)
 #define NEED_ALLOCSYSOBJECT
+#endif
+
+#if !defined(HAVE_CHANGEFILEPOSITION)
+#define NEED_CHANGEFILEPOSITION
 #endif
 
 /*
@@ -278,6 +283,10 @@ APTR AllocVecPooled(APTR poolHeader, ULONG memSize);
 
 #if defined(NEED_FREEVECPOOLED)
 void FreeVecPooled(APTR poolHeader, APTR memory);
+#endif
+
+#if defined(NEED_CHANGEFILEPOSITION)
+#define ChangeFilePosition(fh, pos, mode)   Seek(fh, pos, mode)
 #endif
 
 /*

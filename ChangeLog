@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-10-09  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: replaced the deprecated Seek() call by the new 64bit aware
+    ChangeFilePosition() call in the OS4 build. All other builds will still use
+    the old Seek() function.
+
 2008-10-08  Thore Böckelmann <tboeckel@gmx.de>
 
   * FileInfo.c: fixed wrong duplication of date stamp in the OS3 and MOS builds.
