@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.32 (13.08.08)
+## version $VER: YAM.ct 6.33 (10.10.08)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -1397,10 +1397,6 @@ MSG_CO_OldQuotes
 Gamla citat
 ;#DEF Old quotes
 ;#SET (414//)
-MSG_CO_UseTextstyles
-Använd te_xtstilar
-;#DEF Use te_xt styles
-;#SET (415//)
 MSG_CO_Header
 Brev_huvuden
 ;#DEF _Headers
@@ -2105,10 +2101,6 @@ MSG_HELP_CO_CH_WRAPHEAD
 Dela upp långa brevhuvuden\npå flera rader.
 ;#DEF Split long headers\non multiple lines.
 ;#SET (604//)
-MSG_HELP_CO_CH_TEXTSTYLES
-Tolka / * _ och # som\nkontrollkoder för textstilar.
-;#DEF Interpret / * _ and # as\ncontrol codes for text styles.
-;#SET (605//)
 MSG_HELP_CO_CY_HEADER
 Vilka meddelandehuvuden vill du YAM\nska visa som förval i läsfönstret?
 ;#DEF Which message headers do you want YAM\nto display by default in the Read window?
@@ -3142,7 +3134,7 @@ Radbryt brevhuvuden?
 ;#DEF Wrap headers?
 ;#SET (890//)
 MSG_RE_Textstyles
-Textstilar?
+Text stilar?
 ;#DEF Text styles?
 ;#SET (891//)
 MSG_RE_TBPrev
@@ -5494,7 +5486,7 @@ Systeminställningar
 ;#DEF System settings
 ;#SET (1610//)
 MSG_CO_DEFAULTCHARSET
-Te_ckenuppsättning
+Teckenuppsättning
 ;#DEF C_harset
 ;#SET (1611//)
 MSG_CO_CHARSETUNKNOWNWARN
@@ -6467,19 +6459,19 @@ Välj allt
 ;#SET (1861//)
 MSG_RE_MDN_ACCEPT_LATER
 Acceptera och\nskicka senare
-;#DEF Accept and\nsend later
+;#DEF Accept and\nsend _later
 ;#SET (1862//)
 MSG_RE_MDN_ACCEPT_NOW
 Acceptera och\nskicka nu
-;#DEF Accept and\nsend now
+;#DEF Accept and\nsend _now
 ;#SET (1863//)
 MSG_RE_MDN_IGNORE
 Ignorera
-;#DEF Ignore
+;#DEF _Ignore
 ;#SET (1864//)
 MSG_RE_MDN_IGNORE_ALL
 Ignorera alla
-;#DEF Ignore all
+;#DEF Ignore _all
 ;#SET (1865//)
 MSG_CO_MDN_ACTION_IGNORE
 Skicka aldrig
@@ -7457,3 +7449,59 @@ MSG_ER_USER_DIR_MISSING
 Hemmamappen '%'s för användare '%s' existerar inte!
 ;#DEF The home directory '%s' of user '%s' does not exist!
 ;#SET (2124//)
+MSG_CO_TEXTCOLORS_READ
+Visa te_xt färger
+;#DEF Show te_xt colors
+;#SET (2125//)
+MSG_HELP_CO_CH_TEXTCOLORS_READ
+Använd text färger för att signalera\nspeciella texter, (t.ex. citeringar, etc.)
+;#DEF Use text colors to signal special\ntext passages, (e.g. quotations, etc.)
+;#SET (2126//)
+MSG_CO_TEXTSTYLES_READ
+Visa text stilar
+;#DEF Show te_xt styles
+;#SET (2127//)
+MSG_HELP_CO_CH_TEXTSTYLES_READ
+Tolka '/', '*', '_' och '#' som\nkontroll tecken för text stilar.
+;#DEF Interpret '/', '*', '_' and '#' as\ncontrol characters for text styles.
+;#SET (2128//)
+MSG_CO_TEXTCOLORS_WRITE
+Visa tex_t färger
+;#DEF Show tex_t colors
+;#SET (2129//)
+MSG_HELP_CO_CH_TEXTCOLORS_WRITE
+Använd text färger för att signalera\nspeciella texter, (t.ex. citeringar, etc.)
+;#DEF Use text colors to signal special\ntext passages, (e.g. quotations, etc.)
+;#SET (2130//)
+MSG_CO_TEXTSTYLES_WRITE
+Visa text stilar
+;#DEF Show te_xt styles
+;#SET (2131//)
+MSG_HELP_CO_CH_TEXTSTYLES_WRITE
+Tolka '/', '*', '_' och '#' som\nkontroll tecken för text stilar.
+;#DEF Interpret '/', '*', '_' and '#' as\ncontrol characters for text styles.
+;#SET (2132//)
+MSG_CO_FONTSETTINGS
+Typsnittsinställn.
+;#DEF Font settings
+;#SET (2133//)
+MSG_CO_FIXEDFONT_WRITE
+Använd _fast typsnitt
+;#DEF Use _fixed font
+;#SET (2134//)
+MSG_RE_TEXTCOLORS
+Text färger?
+;#DEF Text colors?
+;#SET (2135//)
+MSG_WR_TEXTSTYLES
+Text stilar?
+;#DEF Text styles?
+;#SET (2136//)
+MSG_WR_TEXTCOLORS
+Text färger?
+;#DEF Text colors?
+;#SET (2137//)
+MSG_WR_FIXEDFONT
+Fast typsnitt?
+;#DEF Fixed font?
+;#SET (2138//)
