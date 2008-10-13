@@ -487,7 +487,7 @@ int AB_SearchEntry(char *text, int mode, struct ABEntry **ab)
 
     // now we set the AB_Entry
     ab_found = tn->tn_User;
-    if(!ab_found)
+    if(ab_found == NULL)
       break;
 
     // now we check if this entry is one of the not wished entry types
@@ -513,14 +513,14 @@ int AB_SearchEntry(char *text, int mode, struct ABEntry **ab)
     {
       // Now we check for the ALIAS->REALNAME->ADDRESS, so only ONE mode is allowed at a time
       if(isAliasSearch(mode_type))
-        found = !Stricmp(ab_found->Alias,   text);
+        found = !Stricmp(ab_found->Alias,    text);
       else if(isRealNameSearch(mode_type))
-        found = !Stricmp(ab_found->RealName,text);
+        found = !Stricmp(ab_found->RealName, text);
       else if(isAddressSearch(mode_type))
-        found = !Stricmp(ab_found->Address, text);
+        found = !Stricmp(ab_found->Address,  text);
     }
 
-    if(found)
+    if(found == TRUE)
     {
       *ab = ab_found;
       hits++;
@@ -674,15 +674,10 @@ MakeStaticHook(AB_FromAddrBookHook, AB_FromAddrBook);
 //  Loads the address book from a file
 BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
 {
-  struct ABEntry addr;
-  struct MUI_NListtree_TreeNode *parent[8];
   FILE *fh;
-  int len, nested = 0;
   BOOL result = FALSE;
 
   ENTER();
-
-  parent[nested] = MUIV_NListtree_Insert_ListNode_Root;
 
   if((fh = fopen(fname, "r")) != NULL)
   {
@@ -693,6 +688,11 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
 
     if(GetLine(&buffer, &size, fh) >= 0)
     {
+      int nested = 0;
+      struct MUI_NListtree_TreeNode *parent[8];
+
+      parent[0] = MUIV_NListtree_Insert_ListNode_Root;
+
       if(strncmp(buffer,"YAB",3) == 0)
       {
         int version = buffer[3] - '0';
@@ -705,7 +705,10 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
 
         while(GetLine(&buffer, &size, fh) >= 0)
         {
+          struct ABEntry addr;
+
           memset(&addr, 0, sizeof(struct ABEntry));
+
           if(strncmp(buffer, "@USER", 5) == 0)
           {
             addr.Type = AET_USER;
@@ -778,10 +781,8 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
               members = StrBufCat(members, buffer);
               members = StrBufCat(members, "\n");
             }
-            len = strlen(members)+1;
-            if((addr.Members = malloc(len)) != NULL)
+            if((addr.Members = strdup(members)) != NULL)
             {
-              strlcpy(addr.Members, members, len);
               FreeStrBuf(members);
               DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
               free(addr.Members);
@@ -820,6 +821,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
           fseek(fh, 0, SEEK_SET);
           while(GetLine(&buffer, &size, fh) >= 0)
           {
+            struct ABEntry addr;
             char *p, *p2;
 
             memset(&addr, 0, sizeof(struct ABEntry));
@@ -868,7 +870,6 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
 static STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *list)
 {
   struct MUI_NListtree_TreeNode *tn;
-  struct ABEntry *ab;
   int i;
 
   ENTER();
@@ -877,7 +878,8 @@ static STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *li
   {
     if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
     {
-      ab = tn->tn_User;
+      struct ABEntry *ab = tn->tn_User;
+
       switch(ab->Type)
       {
         case AET_USER:
