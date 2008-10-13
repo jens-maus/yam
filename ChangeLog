@@ -7,6 +7,8 @@ $URL$
 
 2008-10-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * rexx/addredit.c, rexx/addrresolve.c: removed some superflous preallocs and
+    cleaned up the code a bit.
   * YAM_WR.c: fixed a possible NULL pointer access in case AllocStrBuf() failed
     for any reason.
   * YAM_WR.c: fixed a memory leak when composing a PGP signed/encrypted mail

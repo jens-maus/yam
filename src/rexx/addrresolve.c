@@ -89,8 +89,8 @@ void rx_addrresolve(UNUSED struct RexxHost *host, struct RexxParams *params, enu
         // did the string change?
         if(res != NULL && strcmp(args->alias, res) != 0)
         {
-          if((results->recpt = optional->string = AllocStrBuf(strlen(res)+1)) != NULL)
-            strlcpy(optional->string, res, strlen(res)+1);
+          optional->string = StrBufCpy(NULL, res);
+          results->recpt = optional->string;
         }
         else
           params->rc = RETURN_WARN;

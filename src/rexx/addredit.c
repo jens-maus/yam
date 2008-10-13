@@ -81,23 +81,35 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
       {
         struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
 
-        if(args->alias)    strlcpy(ab->Alias, args->alias, sizeof(ab->Alias));
-        if(args->name)     strlcpy(ab->RealName, args->name, sizeof(ab->RealName));
-        if(args->email)    strlcpy(ab->Address, args->email, sizeof(ab->Address));
-        if(args->pgp)      strlcpy(ab->PGPId, args->pgp, sizeof(ab->PGPId));
-        if(args->homepage) strlcpy(ab->Homepage, args->homepage, sizeof(ab->Homepage));
-        if(args->street)   strlcpy(ab->Street, args->street, sizeof(ab->Street));
-        if(args->city)     strlcpy(ab->City, args->city, sizeof(ab->City));
-        if(args->country)  strlcpy(ab->Country, args->country, sizeof(ab->Country));
-        if(args->phone)    strlcpy(ab->Phone, args->phone, sizeof(ab->Phone));
-        if(args->comment)  strlcpy(ab->Comment, args->comment, sizeof(ab->Comment));
+        if(args->alias != NULL)
+          strlcpy(ab->Alias, args->alias, sizeof(ab->Alias));
+        if(args->name != NULL)
+          strlcpy(ab->RealName, args->name, sizeof(ab->RealName));
+        if(args->email != NULL)
+          strlcpy(ab->Address, args->email, sizeof(ab->Address));
+        if(args->pgp != NULL)
+          strlcpy(ab->PGPId, args->pgp, sizeof(ab->PGPId));
+        if(args->homepage != NULL)
+          strlcpy(ab->Homepage, args->homepage, sizeof(ab->Homepage));
+        if(args->street != NULL)
+          strlcpy(ab->Street, args->street, sizeof(ab->Street));
+        if(args->city != NULL)
+          strlcpy(ab->City, args->city, sizeof(ab->City));
+        if(args->country != NULL)
+          strlcpy(ab->Country, args->country, sizeof(ab->Country));
+        if(args->phone != NULL)
+          strlcpy(ab->Phone, args->phone, sizeof(ab->Phone));
+        if(args->comment != NULL)
+          strlcpy(ab->Comment, args->comment, sizeof(ab->Comment));
 
-        if(args->birthdate)
+        if(args->birthdate != NULL)
         {
           // if the user supplied 0 as the birthdate, he wants to "delete" the current
           // birthdate
-          if(*args->birthdate == 0) ab->BirthDay = 0;
-          else if(AB_ExpandBD(*args->birthdate)[0]) ab->BirthDay = *args->birthdate;
+          if(*args->birthdate == 0)
+            ab->BirthDay = 0;
+          else if(AB_ExpandBD(*args->birthdate)[0])
+            ab->BirthDay = *args->birthdate;
           else
           {
             params->rc = RETURN_ERROR;
@@ -105,17 +117,28 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           }
         }
 
-        if(args->image)
+        if(args->image != NULL)
           strlcpy(ab->Photo, args->image, sizeof(ab->Photo));
 
         if(args->member && ab->Type == AET_LIST)
         {
-           char **p, *memb = AllocStrBuf(SIZE_DEFAULT);
-           if (args->add && ab->Members) memb = StrBufCpy(memb, ab->Members);
-           for (p = args->member; *p; p++) { memb = StrBufCat(memb, *p); memb = StrBufCat(memb, "\n"); }
-           if (ab->Members) free(ab->Members);
-           ab->Members = strdup(memb);
-           FreeStrBuf(memb);
+          char *memb = NULL;
+          char **p;
+
+          if(args->add && ab->Members != NULL)
+            memb = StrBufCpy(NULL, ab->Members);
+
+          for(p = args->member; *p; p++)
+          {
+            memb = StrBufCat(memb, *p);
+            memb = StrBufCat(memb, "\n");
+          }
+
+          if(ab->Members != NULL)
+            free(ab->Members);
+          ab->Members = strdup(memb);
+
+          FreeStrBuf(memb);
         }
 
         DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
