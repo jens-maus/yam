@@ -7,6 +7,8 @@ $URL$
 
 2008-10-13  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_WR.c: fixed a possible NULL pointer access in case AllocStrBuf() failed
+    for any reason.
   * YAM_WR.c: fixed a memory leak when composing a PGP signed/encrypted mail
     failed for any reason.
 

@@ -1536,12 +1536,15 @@ static void InsertIntroText(FILE *fh, char *text, struct ExpandTextData *etd)
 {
   ENTER();
 
-  if(*text)
+  if(text[0] != '\0')
   {
-    char *sbuf = ExpandText(text, etd);
+    char *sbuf;
 
-    fprintf(fh, "%s\n", sbuf);
-    FreeStrBuf(sbuf);
+    if((sbuf = ExpandText(text, etd)) != NULL)
+    {
+      fprintf(fh, "%s\n", sbuf);
+      FreeStrBuf(sbuf);
+    }
   }
 
   LEAVE();
@@ -1563,7 +1566,7 @@ static void SetupExpandTextData(struct ExpandTextData *etd, struct Mail *mail)
 
   // we have to copy the datestamp and eventually convert it
   // according to the timezone
-  if(mail)
+  if(mail != NULL)
   {
     // the mail time is in UTC, so we have to convert it to the
     // actual time of the mail as we don't do any conversion
@@ -1609,7 +1612,7 @@ struct WriteMailData *CreateWriteWindow(const enum NewMailMode mailMode, const B
                      MUIA_WriteWindow_Quiet, quietMode,
                    End;
 
-  if(newWriteWindow)
+  if(newWriteWindow != NULL)
   {
     // get the WriteMailData and check that it is the same like created
     struct WriteMailData *wmData = (struct WriteMailData *)xget(newWriteWindow, MUIA_WriteWindow_WriteMailData);
