@@ -960,9 +960,7 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
        {
          CloseTempFile(tf);
          CloseTempFile(tf2);
-
-         RETURN(FALSE);
-         return FALSE;
+         goto out;
        }
 
        fclose(tf->FP);
@@ -988,9 +986,7 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
            if(EncodePart(fh, firstpart) == FALSE)
            {
              CloseTempFile(tf2);
-
-             RETURN(FALSE);
-             return FALSE;
+             goto out;
            }
 
            fprintf(fh, "\n--%s\nContent-Type: application/pgp-signature\n\n", boundary);
@@ -1050,9 +1046,7 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
         if(EncodePart(fh, &pgppart) == FALSE)
         {
           CloseTempFile(tf2);
-
-          RETURN(FALSE);
-          return FALSE;
+          goto out;
         }
       }
     }
@@ -1063,6 +1057,8 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
     DeleteFile(pgpfile);
 
   fprintf(fh, "\n--%s--\n\n", boundary);
+
+out:
   FreeStrBuf(ids);
   PGPClearPassPhrase(!success);
 

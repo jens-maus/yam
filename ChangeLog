@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-10-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: fixed a memory leak when composing a PGP signed/encrypted mail
+    failed for any reason.
+
 2008-10-10  Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated according to changes.
