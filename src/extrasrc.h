@@ -253,9 +253,7 @@ APTR SetProcWindow(const void *newWindowPtr);
 #if defined(NEED_EXAMINEDIR)
 APTR ObtainDirContext(struct TagItem *tags);
 #if defined(PPC)
-#define ObtainDirContextTags(...) \
-    ({ULONG _tags[] = { __VA_ARGS__ }; \
-    ObtainDirContext((struct TagItem *)_tags);})
+#define ObtainDirContextTags(...) ({ULONG _tags[] = { __VA_ARGS__ }; ObtainDirContext((struct TagItem *)_tags);})
 #else
 APTR VARARGS68K ObtainDirContextTags(ULONG tag1, ...);
 #endif
@@ -267,9 +265,7 @@ struct ExamineData *ExamineDir(APTR context);
 #if defined(NEED_ALLOCSYSOBJECT)
 APTR AllocSysObject(ULONG type, struct TagItem *tags);
 #if defined(PPC)
-#define AllocSysObjectTags(type, ...) \
-    ({ULONG _tags[] = { __VA_ARGS__ }; \
-    AllocSysObject(type, (struct TagItem *)_tags);})
+#define AllocSysObjectTags(type, ...) ({ULONG _tags[] = { __VA_ARGS__ }; AllocSysObject(type, (struct TagItem *)_tags);})
 #else
 APTR VARARGS68K AllocSysObjectTags(ULONG type, ...);
 #endif

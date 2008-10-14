@@ -7,6 +7,7 @@ $URL$
 
 2008-10-14  Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc.h: fixed bad #define's which broke the MOS build.
   * YAM_AB.c, mui/AddrBookToolbar.c: reworked the address book window to be
     opened with no active entry. This partly fulfills feature request #2165214,
     as clicking on CC or BCC by accident will add the active entry to the
