@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-10-14  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c, mui/AddrBookToolbar.c: reworked the address book window to be
+    opened with no active entry. This partly fulfills feature request #2165214,
+    as clicking on CC or BCC by accident will add the active entry to the
+    normally invisible CC/BCC fields of the write window and hence may cause
+    unwanted things to happen. Additionally the toolbars "Modify" and "Delete"
+    button will now be disabled aswell, if no entry is selected.
+
 2008-10-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * rexx/addredit.c, rexx/addrresolve.c: removed some superflous preallocs and

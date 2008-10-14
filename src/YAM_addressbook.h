@@ -67,6 +67,7 @@ struct AB_GUIData
   Object *BT_TO;
   Object *BT_CC;
   Object *BT_BCC;
+  Object *TB_TOOLBAR;
 };
 
 struct AB_ClassData  /* address book window */

@@ -33,6 +33,7 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "ImageCache.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 
@@ -179,3 +180,20 @@ OVERLOAD(OM_NEW)
 ///
 
 /* Public Methods */
+/// DECLARE(UpdateControls)
+DECLARE(UpdateControls)
+{
+  BOOL disabled;
+
+  ENTER();
+
+  disabled = ((Object *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active) == NULL);
+
+  DoMethod(obj, MUIM_TheBar_SetAttr, TB_ABOOK_EDIT,   MUIA_TheBar_Attr_Disabled, disabled);
+  DoMethod(obj, MUIM_TheBar_SetAttr, TB_ABOOK_DELETE, MUIA_TheBar_Attr_Disabled, disabled);
+
+  RETURN(0);
+  return 0;
+}
+
+///

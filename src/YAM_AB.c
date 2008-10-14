@@ -613,7 +613,7 @@ HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
   ENTER();
 
   if(arg[0] != ABM_NONE &&
-     (active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
+     (active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
   {
     Object *writeWindow = NULL;
     struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
@@ -2063,7 +2063,7 @@ HOOKPROTONHNONP(AB_EditFunc, void)
 
   ENTER();
 
-  if((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
+  if((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
   {
     struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
     int winnum = EA_Init(ab->Type, ab);
@@ -2083,17 +2083,28 @@ HOOKPROTONHNONP(AB_ActiveChange, void)
 {
   struct AB_GUIData *gui = &G->AB->GUI;
   struct MUI_NListtree_TreeNode *active;
+  BOOL disabled;
 
   ENTER();
 
   if((active = (struct MUI_NListtree_TreeNode *)xget(gui->LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
   {
+    // disable the buttons for groups only
     struct ABEntry *addr = (struct ABEntry *)active->tn_User;
 
-    set(gui->BT_TO, MUIA_Disabled, addr->Type == AET_GROUP);
-    set(gui->BT_CC, MUIA_Disabled, addr->Type == AET_GROUP);
-    set(gui->BT_BCC, MUIA_Disabled, addr->Type == AET_GROUP);
+    disabled = (addr->Type == AET_GROUP);
   }
+  else
+  {
+    // no active entry
+    disabled = TRUE;
+  }
+
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, disabled, gui->BT_TO,
+                                                           gui->BT_CC,
+                                                           gui->BT_BCC,
+                                                           NULL);
+  DoMethod(gui->TB_TOOLBAR, MUIM_AddrBookToolbar_UpdateControls);
 
   LEAVE();
 }
@@ -2118,7 +2129,7 @@ HOOKPROTONHNONP(AB_DoubleClick, void)
     {
       struct MUI_NListtree_TreeNode *active;
 
-      if((active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
+      if((active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
       {
         struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
 
@@ -2839,14 +2850,17 @@ HOOKPROTONHNO(AB_OpenFunc, void, LONG *arg)
   ab->winNumber = (*md != '\0' ? arg[1] : -1);
   ab->Modified = FALSE;
 
-  // disable some GUI components if necessary.
-  set(ab->GUI.BT_TO, MUIA_Disabled, ab->Mode == ABM_CONFIG);
-  set(ab->GUI.BT_CC, MUIA_Disabled, ab->Mode == ABM_CONFIG);
-  set(ab->GUI.BT_BCC,MUIA_Disabled, ab->Mode == ABM_CONFIG);
+  // disable the To/CC/BCC buttons regardless of the config mode, because we start
+  // with no active tree entry
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, ab->GUI.BT_TO,
+                                                       ab->GUI.BT_CC,
+                                                       ab->GUI.BT_BCC,
+                                                       NULL);
+  DoMethod(ab->GUI.TB_TOOLBAR, MUIM_AddrBookToolbar_UpdateControls);
+
 
   snprintf(ab->WTitle, sizeof(ab->WTitle), "%s %s", tr(MSG_MA_MAddrBook), md);
   set(ab->GUI.WI, MUIA_Window_Title, ab->WTitle);
-  set(ab->GUI.LV_ADDRESSES, MUIA_NListtree_Active, MUIV_NListtree_Active_First);
 
   SafeOpenWindow(ab->GUI.WI);
 
@@ -3183,7 +3197,7 @@ struct AB_ClassData *AB_New(void)
                    Child, HVSpace,
                 End,
                 Child, MUI_MakeObject(MUIO_VBar, 12),
-                Child, AddrBookToolbarObject,
+                Child, data->GUI.TB_TOOLBAR = AddrBookToolbarObject,
                 End,
              End),
           Child, NListviewObject,
@@ -3211,6 +3225,10 @@ struct AB_ClassData *AB_New(void)
       AB_MakeABFormat(data->GUI.LV_ADDRESSES);
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
       set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.LV_ADDRESSES);
+      DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.BT_TO,
+                                                           data->GUI.BT_CC,
+                                                           data->GUI.BT_BCC,
+                                                           NULL);
       SetHelp(data->GUI.BT_TO ,MSG_HELP_AB_BT_TO );
       SetHelp(data->GUI.BT_CC ,MSG_HELP_AB_BT_CC );
       SetHelp(data->GUI.BT_BCC,MSG_HELP_AB_BT_BCC);
