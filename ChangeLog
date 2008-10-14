@@ -7,6 +7,9 @@ $URL$
 
 2008-10-14  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: slightly improved the speed of the AppendToBuffer() function. The
+    index is no longer constantly updated while performing a hand crafted clone
+    of strcpy().
   * extrasrc.h: fixed bad #define's which broke the MOS build.
   * YAM_AB.c, mui/AddrBookToolbar.c: reworked the address book window to be
     opened with no active entry. This partly fulfills feature request #2165214,

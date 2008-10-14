@@ -515,12 +515,19 @@ char *AppendToBuffer(char *buf, int *wptr, int *len, const char *add)
     nlen = (nlen*3)/2;
 
   if(nlen != *len)
-    buf = realloc(buf, *len = nlen);
+  {
+    // allocate a new buffer and adapt the buffer size information
+    buf = realloc(buf, nlen);
+    *len = nlen;
+  }
 
   if(buf != NULL)
   {
-    while (*add) buf[(*wptr)++] = *add++;
-    buf[*wptr] = '\0'; // we have to make sure that the string is null terminated
+    // it is save to call strcpy() instead of strlcpy(), because we just
+    // made sure to have space for at least the complete <add> string
+    strcpy(&buf[*wptr], add);
+    // finally update the "end of string" information
+    *wptr = npos;
   }
 
   RETURN(buf);
