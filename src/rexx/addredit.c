@@ -77,7 +77,7 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     {
       struct MUI_NListtree_TreeNode *tn;
 
-      if((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
+      if((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
       {
         struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
 
@@ -120,7 +120,7 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         if(args->image != NULL)
           strlcpy(ab->Photo, args->image, sizeof(ab->Photo));
 
-        if(args->member && ab->Type == AET_LIST)
+        if(args->member != NULL && ab->Type == AET_LIST)
         {
           char *memb = NULL;
           char **p;
