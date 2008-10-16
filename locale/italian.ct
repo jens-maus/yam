@@ -1731,7 +1731,7 @@ Inserisci Tagline _casuale
 ; Insert _random tagline
 ;
 MSG_CO_InsertENV
-Inserisci E_NV:Firma
+Inserisci E_NV:Signature
 ; Insert E_NV:Signature
 ;
 MSG_CO_Taglines

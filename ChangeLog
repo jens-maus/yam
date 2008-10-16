@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-10-16  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/italian.ct: fixed a definitely wrong translation. ENV:Signature is a
+    fixed file name which *MUST* *NOT* be modified, otherwise the users will be
+    confused about the correct name. Also removed the old translation. If a
+    translator needs an old version of the translation (s)he must keep it local
+    on his/her machine or use SVN's excellent possibility to restore old
+    revisions.
+
 2008-10-14  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: slightly improved the speed of the AppendToBuffer() function. The
