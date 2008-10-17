@@ -1808,9 +1808,9 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
           // if we have more addresses waiting we
           // go and process them yet
-          if(p)
+          if(p != NULL)
           {
-            if(deep)
+            if(deep == TRUE)
             {
               if(email->NoSFrom == 0)
                 email->NoSFrom = MA_GetRecipients(p, &(email->SFrom));
@@ -1829,7 +1829,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           foundReplyTo = TRUE;
 
           // find out if there are more than one ReplyTo: address
-          if((p = MyStrChr(value, ',')))
+          if((p = MyStrChr(value, ',')) != NULL)
            *p++ = '\0';
 
           ExtractAddress(value, &pe);
@@ -1837,9 +1837,9 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
           // if we have more addresses waiting we
           // go and process them yet
-          if(p)
+          if(p != NULL)
           {
-            if(deep)
+            if(deep == TRUE)
             {
               if(email->NoSReplyTo == 0)
                 email->NoSReplyTo = MA_GetRecipients(p, &(email->SReplyTo));
@@ -1883,7 +1883,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             mail->To = pe;
             if(p != NULL)
             {
-              if(deep)
+              if(deep == TRUE)
               {
                 if(email->NoSTo == 0)
                   email->NoSTo = MA_GetRecipients(p, &(email->STo));
@@ -1915,7 +1915,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         }
         else if(stricmp(field, "bcc") == 0)
         {
-          if(deep)
+          if(deep == TRUE)
           {
             if(email->NoBCC == 0)
               email->NoBCC = MA_GetRecipients(value, &(email->BCC));
@@ -1941,17 +1941,17 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         }
         else if(stricmp(field, "message-id") == 0)
         {
-          email->messageID = StrBufCpy(NULL, Trim(value));
+          email->messageID = StrBufCpy(email->messageID, Trim(value));
           mail->cMsgID = CompressMsgID(email->messageID);
         }
         else if(stricmp(field, "in-reply-to") == 0)
         {
-          email->inReplyToMsgID = StrBufCpy(NULL, Trim(value));
+          email->inReplyToMsgID = StrBufCpy(email->inReplyToMsgID, Trim(value));
           mail->cIRTMsgID = CompressMsgID(email->inReplyToMsgID);
         }
         else if(stricmp(field, "references") == 0)
         {
-          email->references = StrBufCpy(NULL, Trim(value));
+          email->references = StrBufCpy(email->references, Trim(value));
         }
         else if(stricmp(field, "date") == 0)
         {
@@ -1962,9 +1962,9 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           if(getImportanceLevel(mail) == IMP_NORMAL)
           {
             p = Trim(value);
-            if(!stricmp(p, "high"))
+            if(stricmp(p, "high") == 0)
               setImportanceLevel(mail, IMP_HIGH);
-            else if(!stricmp(p, "low"))
+            else if(stricmp(p, "low") == 0)
               setImportanceLevel(mail, IMP_LOW);
           }
         }
@@ -2014,10 +2014,10 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         else if(stricmp(field, "x-senderinfo") == 0)
         {
           SET_FLAG(mail->mflags, MFLAG_SENDERINFO);
-          if(deep)
+          if(deep == TRUE)
             email->SenderInfo = StrBufCpy(email->SenderInfo, value);
         }
-        else if(deep) // and if we end up here we check if we really have to go further
+        else if(deep == TRUE) // and if we end up here we check if we really have to go further
         {
           if(stricmp(field, "x-yam-options") == 0)
           {
@@ -2031,7 +2031,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
             for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
             {
-              if(strstr(value, SecCodes[sec]))
+              if(strstr(value, SecCodes[sec]) != NULL)
                 email->Security = sec;
             }
           }
@@ -2045,7 +2045,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
      }
 
      // if now the mail is still not MULTIPART we have to check for uuencoded attachments
-     if(!isMP_MixedMail(mail) && MA_DetectUUE(fh))
+     if(!isMP_MixedMail(mail) && MA_DetectUUE(fh) == TRUE)
        SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
 
      // And now we close the Mailfile and clear the temporary headerList again
@@ -2055,7 +2055,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
      // in case the replyTo recipient doesn't have a realname yet and it is
      // completly the same like the from address we go and copy the realname as both
      // are the same.
-     if(foundReplyTo == TRUE && !mail->ReplyTo.RealName[0] && !stricmp(mail->ReplyTo.Address, mail->From.Address))
+     if(foundReplyTo == TRUE && mail->ReplyTo.RealName[0] != '\0' && stricmp(mail->ReplyTo.Address, mail->From.Address) == 0)
        strlcpy(mail->ReplyTo.RealName, mail->From.RealName, sizeof(mail->ReplyTo.RealName));
 
      // if this function call has a folder of NULL then we are examining a virtual mail
@@ -2072,7 +2072,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
        // the not allowed "/" to "-" to make it possible to use base64 for
        // the timeval encoding
        ptr = dateFilePart;
-       while((ptr = strchr(ptr, '-')))
+       while((ptr = strchr(ptr, '-')) != NULL)
          *ptr = '/';
 
        // lets decode the base64 encoded timestring in a temporary buffer
@@ -2201,7 +2201,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
   FinishUnpack(fullfile);
 
   // finish up everything before we exit with an error
-  if(fh)
+  if(fh != NULL)
    fclose(fh);
 
   free(email);
