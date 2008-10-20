@@ -105,6 +105,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
     {
       ULONG size = sizeof(struct IORequest);
       APTR port = NULL;
+      struct IORequest *duplicate = NULL;
 
       if(tags != NULL)
       {
@@ -119,12 +120,23 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
             case ASOIOR_ReplyPort:
               port = (APTR)tag->ti_Data;
             break;
+
+            case ASOIOR_Duplicate:
+              duplicate = (struct IORequest *)tag->ti_DataM
+            break;
           }
         }
       }
 
       // just create the IO request the usual way
       object = CreateIORequest(port, size);
+      if(object != NULL && duplicate != NULL)
+      {
+        CopyMem(duplicate, object, size);
+        // set the reply port, if one is specified
+        if(port != NULL)
+          ((struct IORuest *)object)->io_Message.mn_ReplyPort = port;
+      }
     }
     break;
 

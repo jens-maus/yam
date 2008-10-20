@@ -10,6 +10,7 @@
 
 #define ASOIOR_Size         (TAG_USER + 10)
 #define ASOIOR_ReplyPort    (TAG_USER + 11)
+#define ASOIOR_Duplicate    (TAG_USER + 12)
 
 #define ASOHOOK_Size        (TAG_USER + 10)
 #define ASOHOOK_Entry       (TAG_USER + 11)
