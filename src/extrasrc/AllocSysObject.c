@@ -122,7 +122,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
             break;
 
             case ASOIOR_Duplicate:
-              duplicate = (struct IORequest *)tag->ti_DataM
+              duplicate = (struct IORequest *)tag->ti_Data;
             break;
           }
         }
@@ -135,7 +135,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         CopyMem(duplicate, object, size);
         // set the reply port, if one is specified
         if(port != NULL)
-          ((struct IORuest *)object)->io_Message.mn_ReplyPort = port;
+          ((struct IORequest *)object)->io_Message.mn_ReplyPort = port;
       }
     }
     break;
