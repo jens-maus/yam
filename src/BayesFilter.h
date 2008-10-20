@@ -77,9 +77,12 @@ void BayesFilterCleanup(void);
 BOOL BayesFilterClassifyMessage(struct Mail *mail);
 void BayesFilterSetClassification(struct Mail *mail, enum BayesClassification newClass);
 ULONG BayesFilterNumberOfSpamClassifiedMails(void);
+ULONG BayesFilterNumberOfSpamClassifiedWords(void);
 ULONG BayesFilterNumberOfHamClassifiedMails(void);
+ULONG BayesFilterNumberOfHamClassifiedWords(void);
 void BayesFilterFlushTrainingData(void);
 void BayesFilterResetTrainingData(void);
+void BayesFilterTruncateTrainingData(void);
 
 #endif /* BAYES_FILTER_H */
 

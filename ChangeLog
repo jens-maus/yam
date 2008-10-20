@@ -7,6 +7,12 @@ $URL$
 
 2008-10-20  Thore Böckelmann <tboeckel@gmx.de>
 
+  * BayesFilter.c, YAM_COg.c, YAM_COs.c, locale/YAM.cd, locale/german.ct: added
+    a button to strip rarely occuring words from the spam training data. This
+    will remove all words which occured only once so far and hence have very
+    little influence on the spam recognition process. As a nice side effect the
+    training data will be loaded much faster and spam recognition will become
+    faster, too, because less words have to be taken into account.
   * Timer.c: use the new ASOIOR_Duplicate tag to create the duplicated timer
     requests.
   * extrasrc/AllocSysObject.c: implemented the ASOIOR_Duplicate tag item to

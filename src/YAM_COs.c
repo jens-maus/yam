@@ -2222,7 +2222,7 @@ void CO_SetConfig(void)
 
     case cp_Spam:
     {
-      char buf[SIZE_SMALL];
+      char buf[SIZE_DEFAULT];
 
       setcheckmark(gui->CH_SPAMFILTERENABLED, CE->SpamFilterEnabled);
       setcheckmark(gui->CH_SPAMFILTERFORNEWMAIL, CE->SpamFilterForNewMail);
@@ -2231,9 +2231,9 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_SPAMABOOKISWHITELIST, CE->SpamAddressBookIsWhiteList);
       setcheckmark(gui->CH_MOVEHAMTOINCOMING, CE->MoveHamToIncoming);
       setcheckmark(gui->CH_FILTERHAM, CE->FilterHam);
-      snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfHamClassifiedMails());
+      snprintf(buf, sizeof(buf), tr(MSG_CO_SPAM_STATISTICS), BayesFilterNumberOfHamClassifiedMails(), BayesFilterNumberOfHamClassifiedWords());
       set(gui->TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);
-      snprintf(buf, sizeof(buf), "%ld", BayesFilterNumberOfSpamClassifiedMails());
+      snprintf(buf, sizeof(buf), tr(MSG_CO_SPAM_STATISTICS), BayesFilterNumberOfSpamClassifiedMails(), BayesFilterNumberOfSpamClassifiedWords());
       set(gui->TX_SPAMBADCOUNT, MUIA_Text_Contents, buf);
     }
     break;

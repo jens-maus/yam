@@ -1206,6 +1206,7 @@ HOOKPROTONHNO(ToggleSpamFilterFunc, void, int *arg)
   if(active)
   {
     DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, FALSE, gui->BT_SPAMRESETTRAININGDATA,
+                                                          gui->BT_TRUNCATETRAININGDATA,
                                                           gui->CH_SPAMFILTERFORNEWMAIL,
                                                           gui->CH_SPAMABOOKISWHITELIST,
                                                           gui->CH_SPAMMARKONMOVE,
@@ -1218,6 +1219,7 @@ HOOKPROTONHNO(ToggleSpamFilterFunc, void, int *arg)
   {
     // disable all spam filter controls
     DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, gui->BT_SPAMRESETTRAININGDATA,
+                                                         gui->BT_TRUNCATETRAININGDATA,
                                                          gui->CH_SPAMFILTERFORNEWMAIL,
                                                          gui->CH_SPAMABOOKISWHITELIST,
                                                          gui->CH_SPAMMARKONMOVE,
@@ -1238,18 +1240,48 @@ HOOKPROTONHNONP(ResetSpamTrainingDataFunc, void)
 {
   ENTER();
 
-  if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_SPAM_RESETTRAININGDATAASK)))
+  if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_SPAM_RESETTRAININGDATAASK)) != 0)
   {
+    char buf[SIZE_DEFAULT];
+
     BayesFilterResetTrainingData();
 
-    // good/bad count can only be zero after a reset
-    set(G->CO->GUI.TX_SPAMGOODCOUNT, MUIA_Text_Contents, "0");
-    set(G->CO->GUI.TX_SPAMBADCOUNT, MUIA_Text_Contents, "0");
+    snprintf(buf, sizeof(buf), tr(MSG_CO_SPAM_STATISTICS), BayesFilterNumberOfHamClassifiedMails(), BayesFilterNumberOfHamClassifiedWords());
+    set(G->CO->GUI.TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);
+    snprintf(buf, sizeof(buf), tr(MSG_CO_SPAM_STATISTICS), BayesFilterNumberOfSpamClassifiedMails(), BayesFilterNumberOfSpamClassifiedWords());
+    set(G->CO->GUI.TX_SPAMBADCOUNT, MUIA_Text_Contents, buf);
   }
 
   LEAVE();
 }
 MakeStaticHook(ResetSpamTrainingDataHook, ResetSpamTrainingDataFunc);
+
+///
+/// TruncateSpamTrainingData
+//  truncates the spam training data
+HOOKPROTONHNONP(TruncateSpamTrainingDataFunc, void)
+{
+  ENTER();
+
+  if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_SPAM_TRUNCATETRAININGDATAASK)) != 0)
+  {
+    char buf[SIZE_DEFAULT];
+
+    set(G->App, MUIA_Application_Sleep, TRUE);
+
+    BayesFilterTruncateTrainingData();
+
+    snprintf(buf, sizeof(buf), tr(MSG_CO_SPAM_STATISTICS), BayesFilterNumberOfHamClassifiedMails(), BayesFilterNumberOfHamClassifiedWords());
+    set(G->CO->GUI.TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);
+    snprintf(buf, sizeof(buf), tr(MSG_CO_SPAM_STATISTICS), BayesFilterNumberOfSpamClassifiedMails(), BayesFilterNumberOfSpamClassifiedWords());
+    set(G->CO->GUI.TX_SPAMBADCOUNT, MUIA_Text_Contents, buf);
+
+    set(G->App, MUIA_Application_Sleep, FALSE);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(TruncateSpamTrainingDataHook, TruncateSpamTrainingDataFunc);
 
 ///
 /// AddNewFilterToList
@@ -2507,7 +2539,7 @@ Object *CO_PageSpam(struct CO_ClassData *data)
 
                   Child, HSpace(0),
                   Child, data->GUI.BT_SPAMRESETTRAININGDATA = MakeButton(tr(MSG_CO_SPAM_RESETTRAININGDATA)),
-                  Child, HSpace(0),
+                  Child, data->GUI.BT_TRUNCATETRAININGDATA = MakeButton(tr(MSG_CO_SPAM_TRUNCATETRAININGDATA)),
                   Child, HSpace(0),
                 End,
               End,
@@ -2533,18 +2565,21 @@ Object *CO_PageSpam(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    nnset(data->GUI.BT_SPAMRESETTRAININGDATA, MUIA_Disabled, TRUE);
-    nnset(data->GUI.CH_SPAMFILTERFORNEWMAIL,  MUIA_Disabled, TRUE);
-    nnset(data->GUI.CH_SPAMABOOKISWHITELIST,  MUIA_Disabled, TRUE);
-    nnset(data->GUI.CH_SPAMMARKONMOVE,        MUIA_Disabled, TRUE);
-    nnset(data->GUI.CH_SPAMMARKASREAD,        MUIA_Disabled, TRUE);
-    nnset(data->GUI.CH_MOVEHAMTOINCOMING,     MUIA_Disabled, TRUE);
-    nnset(data->GUI.CH_FILTERHAM,             MUIA_Disabled, TRUE);
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.BT_SPAMRESETTRAININGDATA,
+                                                         data->GUI.BT_TRUNCATETRAININGDATA,
+                                                         data->GUI.CH_SPAMFILTERFORNEWMAIL,
+                                                         data->GUI.CH_SPAMABOOKISWHITELIST,
+                                                         data->GUI.CH_SPAMMARKONMOVE,
+                                                         data->GUI.CH_SPAMMARKASREAD,
+                                                         data->GUI.CH_MOVEHAMTOINCOMING,
+                                                         data->GUI.CH_FILTERHAM,
+                                                         NULL);
 
     SetHelp(data->GUI.CH_SPAMFILTERENABLED,     MSG_HELP_CH_SPAMFILTERENABLED);
     SetHelp(data->GUI.TX_SPAMBADCOUNT,          MSG_HELP_TX_SPAMBADCOUNT);
     SetHelp(data->GUI.TX_SPAMGOODCOUNT,         MSG_HELP_TX_SPAMGOODCOUNT);
     SetHelp(data->GUI.BT_SPAMRESETTRAININGDATA, MSG_HELP_BT_SPAMRESETTRAININGDATA);
+    SetHelp(data->GUI.BT_TRUNCATETRAININGDATA,  MSG_HELP_BT_TRUNCATETRAININGDATA);
     SetHelp(data->GUI.CH_SPAMFILTERFORNEWMAIL,  MSG_HELP_CH_SPAMFILTERFORNEWMAIL);
     SetHelp(data->GUI.CH_SPAMABOOKISWHITELIST,  MSG_HELP_CH_SPAMABOOKISWHITELIST);
     SetHelp(data->GUI.CH_SPAMMARKONMOVE,        MSG_HELP_CH_SPAMMARKONMOVE);
@@ -2558,6 +2593,8 @@ Object *CO_PageSpam(struct CO_ClassData *data)
                                              data->GUI.CH_FILTERHAM, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
     DoMethod(data->GUI.BT_SPAMRESETTRAININGDATA, MUIM_Notify, MUIA_Pressed,  FALSE,
                                                  MUIV_Notify_Application, 2, MUIM_CallHook, &ResetSpamTrainingDataHook);
+    DoMethod(data->GUI.BT_TRUNCATETRAININGDATA, MUIM_Notify, MUIA_Pressed,  FALSE,
+                                                MUIV_Notify_Application, 2, MUIM_CallHook, &TruncateSpamTrainingDataHook);
   }
 
   RETURN(obj);
