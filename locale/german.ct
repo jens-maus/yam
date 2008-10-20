@@ -8512,18 +8512,18 @@ Textfarben
 MSG_WR_FIXEDFONT
 Schrift fester Breite
 ;
-MSG_CO_SPAM_TRUNCATETRAININGDATA
-_Trainingsdaten aufräumen
+MSG_CO_SPAM_OPTIMIZE_TRAININGDATA
+_Trainingsdaten optimieren
 ;
-MSG_HELP_BT_TRUNCATETRAININGDATA
+MSG_HELP_BT_OPTIMIZE_TRAININGDATA
 Entfernt sehr seltene Wörter aus den Trainings-\n\
 daten, um die Ladegeschwindigkeit der Daten und\n\
 die Verarbeitungsgeschwindigkeit von Spam-\n\
 Nachrichten zu erhöhen.
 ;
-MSG_CO_SPAM_TRUNCATETRAININGDATAASK
+MSG_CO_SPAM_OPTIMIZE_TRAININGDATA_ASK
 Wollen Sie wirklich die Trainingsdaten des\n\
-Spam-Filters aufräumen?\n\
+Spam-Filters optimieren?\n\
 \n\
 Der Spam-Filter wird danach eventuell weniger\n\
 Spam-Nachrichten erkennen, arbeitet dafür aber\n\

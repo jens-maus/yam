@@ -82,7 +82,7 @@ ULONG BayesFilterNumberOfHamClassifiedMails(void);
 ULONG BayesFilterNumberOfHamClassifiedWords(void);
 void BayesFilterFlushTrainingData(void);
 void BayesFilterResetTrainingData(void);
-void BayesFilterTruncateTrainingData(void);
+void BayesFilterOptimizeTrainingData(void);
 
 #endif /* BAYES_FILTER_H */
 

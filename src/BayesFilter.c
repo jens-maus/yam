@@ -126,9 +126,9 @@ static BOOL tokenizerClearTokens(struct Tokenizer *t)
 }
 
 ///
-/// truncateToken()
-/// truncate a token table
-static enum HashTableOperator truncateToken(UNUSED struct HashTable *table,
+///optimizeToken()
+/// optimize a token table
+static enum HashTableOperator optimizeToken(UNUSED struct HashTable *table,
                                             struct HashEntryHeader *entry,
                                             UNUSED ULONG number,
                                             void *arg)
@@ -150,16 +150,16 @@ static enum HashTableOperator truncateToken(UNUSED struct HashTable *table,
 }
 
 ///
-/// tokenizerTruncateTokens()
-// truncate a token table and return the number of truncated words
-static ULONG tokenizerTruncateTokens(struct Tokenizer *t,
+/// tokenizerOptimizeTokens()
+// Optimize a token table and return the number of removed words
+static ULONG tokenizerOptimizeTokens(struct Tokenizer *t,
                                     ULONG maxCount)
 {
   ULONG num;
 
   ENTER();
 
-  num = HashTableEnumerate(&t->tokenTable, truncateToken, (void *)maxCount);
+  num = HashTableEnumerate(&t->tokenTable, optimizeToken, (void *)maxCount);
 
   RETURN(num);
   return num;
@@ -895,17 +895,17 @@ static void tokenAnalyzerResetTrainingData(void)
 }
 
 ///
-/// tokenAnalyzerTruncateTrainingData()
-// truncate the training data by filtering out words which occured only once so far
-static void tokenAnalyzerTruncateTrainingData(void)
+/// tokenAnalyzerOptimizeTrainingData()
+// Optimize the training data by filtering out words which occured only once so far
+static void tokenAnalyzerOptimizeTrainingData(void)
 {
   ENTER();
 
   if(G->spamFilter.goodTokens.tokenTable.entryCount != 0)
-    G->spamFilter.numDirtyingMessages += tokenizerTruncateTokens(&G->spamFilter.goodTokens, 1);
+    G->spamFilter.numDirtyingMessages += tokenizerOptimizeTokens(&G->spamFilter.goodTokens, 1);
 
   if(G->spamFilter.badTokens.tokenTable.entryCount != 0)
-    G->spamFilter.numDirtyingMessages += tokenizerTruncateTokens(&G->spamFilter.badTokens, 1);
+    G->spamFilter.numDirtyingMessages += tokenizerOptimizeTokens(&G->spamFilter.badTokens, 1);
 
   LEAVE();
 }
@@ -1759,13 +1759,13 @@ void BayesFilterResetTrainingData(void)
 }
 
 ///
-/// BayesFilterTruncateTrainingData()
-// truncate the training data
-void BayesFilterTruncateTrainingData(void)
+/// BayesFilterOptimizeTrainingData()
+// Optimize the training data
+void BayesFilterOptimizeTrainingData(void)
 {
   ENTER();
 
-  tokenAnalyzerTruncateTrainingData();
+  tokenAnalyzerOptimizeTrainingData();
 
   LEAVE();
 }

@@ -6906,16 +6906,16 @@ Text colors?
 MSG_WR_FIXEDFONT (2138//)
 Fixed font?
 ;
-MSG_CO_SPAM_TRUNCATETRAININGDATA (2139//)
-_Truncate training data
+MSG_CO_SPAM_OPTIMIZE_TRAININGDATA (2139//)
+_Optimize training data
 ;
-MSG_HELP_BT_TRUNCATETRAININGDATA (2140//)
+MSG_HELP_BT_OPTIMIZE_TRAININGDATA (2140//)
 Removes very infrequent words from the training\n\
 data to speed up loading of training data and\n\
 increase processing speed of spam mails.
 ;
-MSG_CO_SPAM_TRUNCATETRAININGDATAASK (2141//)
-Do you really want to truncate the spam filter's\n\
+MSG_CO_SPAM_OPTIMIZE_TRAININGDATA_ASK (2141//)
+Do you really want to optimize the spam filter's\n\
 training data?\n\
 \n\
 The spam filter's efficency might decrease slightly\n\
