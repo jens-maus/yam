@@ -319,14 +319,11 @@ BOOL InitTimers(void)
             // free the data in case YAM crashes (only available on OS4)
             if((G->timerData.timer[tid].tr = AllocSysObjectTags(ASOT_IOREQUEST,
                                                           ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                          ASOIOR_ReplyPort, (ULONG)G->timerData.port,
+                                                          ASOIOR_Duplicate, (ULONG)G->timerData.timer[0].tr,
                                                           TAG_DONE)) == NULL)
             {
               break;
             }
-
-            // copy the data of timerIO[0] to the new one
-            CopyMem(G->timerData.timer[0].tr, G->timerData.timer[tid].tr, sizeof(struct TimeRequest));
           }
         }
       }

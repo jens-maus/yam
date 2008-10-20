@@ -7,6 +7,8 @@ $URL$
 
 2008-10-20  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Timer.c: use the new ASOIOR_Duplicate tag to create the duplicated timer
+    requests.
   * extrasrc/AllocSysObject.c: implemented the ASOIOR_Duplicate tag item to
     create a clone of a given IO request.
 
