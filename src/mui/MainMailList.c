@@ -92,192 +92,195 @@ MakeStaticHook(CompareHook, CompareFunc);
 /// DisplayHook
 HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 {
-  struct Mail *entry;
-  char **array;
-  BOOL searchWinHook = FALSE;
-
-  if(!msg)
-    return 0;
-
-  // now we set our local variables to the DisplayMessage structure ones
-  entry = (struct Mail *)msg->entry;
-  array = msg->strings;
-
-  // now we check who is the parent of this DisplayHook
-  if(G->FI && obj == G->FI->GUI.LV_MAILS)
+  if(msg != NULL && G->MA != NULL)
   {
-    searchWinHook = TRUE;
-  }
-  else if(!G->MA)
-    return 0;
+    struct Mail *entry;
+    char **array;
+    BOOL searchWinHook = FALSE;
 
-  if(entry)
-  {
-    if(entry->Folder)
+    // now we set our local variables to the DisplayMessage structure ones
+    entry = (struct Mail *)msg->entry;
+    array = msg->strings;
+
+    // now we check who is the parent of this DisplayHook
+    if(G->FI != NULL && obj == G->FI->GUI.LV_MAILS)
+      searchWinHook = TRUE;
+
+    if(entry != NULL)
     {
-      static char dispsta[SIZE_DEFAULT];
-      static char dispsiz[SIZE_SMALL];
-      struct Person *pe;
-      STRPTR addr;
-
-      // prepare the status char buffer
-      dispsta[0] = '\0';
-      array[0] = dispsta;
-
-      // first we check which main status this mail has
-      // and put the leftmost mail icon accordingly.
-      if(hasStatusError(entry) || isPartialMail(entry)) strlcat(dispsta, SI_STR(si_Error), sizeof(dispsta));
-      else if(hasStatusQueued(entry))  strlcat(dispsta, SI_STR(si_WaitSend), sizeof(dispsta));
-      else if(hasStatusSent(entry))    strlcat(dispsta, SI_STR(si_Sent), sizeof(dispsta));
-      else if(hasStatusNew(entry))     strlcat(dispsta, SI_STR(si_New), sizeof(dispsta));
-      else if(hasStatusHold(entry))    strlcat(dispsta, SI_STR(si_Hold), sizeof(dispsta));
-      else if(hasStatusRead(entry))    strlcat(dispsta, SI_STR(si_Old), sizeof(dispsta));
-      else                             strlcat(dispsta, SI_STR(si_Unread), sizeof(dispsta));
-
-      // then we add the 2. level if icons with the additional mail information
-      // like importance, signed/crypted, report and attachment information
-      if(C->SpamFilterEnabled && hasStatusSpam(entry)) strlcat(dispsta, SI_STR(si_Spam), sizeof(dispsta));
-      if(getImportanceLevel(entry) == IMP_HIGH)  strlcat(dispsta, SI_STR(si_Urgent), sizeof(dispsta));
-      if(isMP_CryptedMail(entry))                strlcat(dispsta, SI_STR(si_Crypt), sizeof(dispsta));
-      else if(isMP_SignedMail(entry))            strlcat(dispsta, SI_STR(si_Signed), sizeof(dispsta));
-      if(isMP_ReportMail(entry))                 strlcat(dispsta, SI_STR(si_Report), sizeof(dispsta));
-      if(isMP_MixedMail(entry))                  strlcat(dispsta, SI_STR(si_Attach), sizeof(dispsta));
-
-      // and as the 3rd level of icons we put information on the secondary status
-      // like marked, replied, forwarded
-      if(hasStatusMarked(entry))     strlcat(dispsta, SI_STR(si_Mark), sizeof(dispsta));
-      if(hasStatusReplied(entry))    strlcat(dispsta, SI_STR(si_Reply), sizeof(dispsta));
-      if(hasStatusForwarded(entry))  strlcat(dispsta, SI_STR(si_Forward), sizeof(dispsta));
-
-      // now we generate the proper string for the mailaddress
-      if(hasMColSender(C->MessageCols) || searchWinHook)
+      if(entry->Folder != NULL)
       {
-        static char dispfro[SIZE_DEFAULT];
-        BOOL toPrefix = FALSE;
+        static char dispsta[SIZE_DEFAULT];
+        static char dispsiz[SIZE_SMALL];
 
-        if(((isCustomMixedFolder(entry->Folder) || isTrashFolder(entry->Folder) || isSpamFolder(entry->Folder)) &&
-            (hasStatusSent(entry) || hasStatusQueued(entry) || hasStatusHold(entry) ||
-             hasStatusError(entry))) || (searchWinHook && isSentMailFolder(entry->Folder)))
+        // prepare the status char buffer
+        dispsta[0] = '\0';
+        array[0] = dispsta;
+
+        // first we check which main status this mail has
+        // and put the leftmost mail icon accordingly.
+        if(hasStatusError(entry) || isPartialMail(entry)) strlcat(dispsta, SI_STR(si_Error), sizeof(dispsta));
+        else if(hasStatusQueued(entry))  strlcat(dispsta, SI_STR(si_WaitSend), sizeof(dispsta));
+        else if(hasStatusSent(entry))    strlcat(dispsta, SI_STR(si_Sent), sizeof(dispsta));
+        else if(hasStatusNew(entry))     strlcat(dispsta, SI_STR(si_New), sizeof(dispsta));
+        else if(hasStatusHold(entry))    strlcat(dispsta, SI_STR(si_Hold), sizeof(dispsta));
+        else if(hasStatusRead(entry))    strlcat(dispsta, SI_STR(si_Old), sizeof(dispsta));
+        else                             strlcat(dispsta, SI_STR(si_Unread), sizeof(dispsta));
+
+        // then we add the 2. level if icons with the additional mail information
+        // like importance, signed/crypted, report and attachment information
+        if(C->SpamFilterEnabled == TRUE && hasStatusSpam(entry)) strlcat(dispsta, SI_STR(si_Spam), sizeof(dispsta));
+        if(getImportanceLevel(entry) == IMP_HIGH)  strlcat(dispsta, SI_STR(si_Urgent), sizeof(dispsta));
+        if(isMP_CryptedMail(entry))                strlcat(dispsta, SI_STR(si_Crypt), sizeof(dispsta));
+        else if(isMP_SignedMail(entry))            strlcat(dispsta, SI_STR(si_Signed), sizeof(dispsta));
+        if(isMP_ReportMail(entry))                 strlcat(dispsta, SI_STR(si_Report), sizeof(dispsta));
+        if(isMP_MixedMail(entry))                  strlcat(dispsta, SI_STR(si_Attach), sizeof(dispsta));
+
+        // and as the 3rd level of icons we put information on the secondary status
+        // like marked, replied, forwarded
+        if(hasStatusMarked(entry))     strlcat(dispsta, SI_STR(si_Mark), sizeof(dispsta));
+        if(hasStatusReplied(entry))    strlcat(dispsta, SI_STR(si_Reply), sizeof(dispsta));
+        if(hasStatusForwarded(entry))  strlcat(dispsta, SI_STR(si_Forward), sizeof(dispsta));
+
+        // now we generate the proper string for the mailaddress
+        if(hasMColSender(C->MessageCols) || searchWinHook == TRUE)
         {
-          pe = &entry->To;
+          static char dispfro[SIZE_DEFAULT];
+          BOOL toPrefix = FALSE;
+          struct Person *pe;
+          char *addr = NULL;
 
-          // put a To: prefix before our sender name
-          toPrefix = TRUE;
-        }
-        else
-          pe = isSentMailFolder(entry->Folder) ? &entry->To : &entry->From;
-
-        // in case the user wants to take the additional pain
-        // of performing an addressbook lookup for every entry in the
-        // list we do it right here.
-        if(C->ABookLookup)
-        {
-          struct MUI_NListtree_TreeNode *tn;
-
-          set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
-
-          if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE)))
+          if(((isCustomMixedFolder(entry->Folder) || isTrashFolder(entry->Folder) || isSpamFolder(entry->Folder)) &&
+              (hasStatusSent(entry) || hasStatusQueued(entry) || hasStatusHold(entry) ||
+               hasStatusError(entry))) || (searchWinHook && isSentMailFolder(entry->Folder)))
           {
-            addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName(*pe);
+            pe = &entry->To;
+
+            // put a To: prefix before our sender name
+            toPrefix = TRUE;
           }
           else
+            pe = isSentMailFolder(entry->Folder) ? &entry->To : &entry->From;
+
+          // in case the user wants to take the additional pain
+          // of performing an addressbook lookup for every entry in the
+          // list we do it right here.
+          if(C->ABookLookup == TRUE)
+          {
+            struct MUI_NListtree_TreeNode *tn;
+
+            set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
+
+            if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE)) != NULL)
+            {
+              struct ABEntry *ab = (struct ABEntry *)tn->tn_User;
+
+              if(ab->RealName[0] != '\0')
+                addr = ab->RealName;
+            }
+          }
+
+          // if we didn't perform an address book lookup then we
+          // extract the address from the given information
+          if(addr == NULL)
             addr = AddrName(*pe);
+
+          // lets put the string together
+          snprintf(dispfro, sizeof(dispfro), "%s%s%s%s", isMultiRCPTMail(entry) ? SI_STR(si_Group) : "",
+                                                         toPrefix ? tr(MSG_MA_ToPrefix) : "",
+                                                         addr,
+                                                         isMultiSenderMail(entry) && toPrefix == FALSE ? ", ..." : "");
+
+          array[1] = dispfro;
         }
-        else
-          addr = AddrName(*pe);
 
-        // lets put the string together
-        snprintf(dispfro, sizeof(dispfro), "%s%s%s%s", isMultiRCPTMail(entry) ? SI_STR(si_Group) : "",
-                                                       toPrefix ? tr(MSG_MA_ToPrefix) : "",
-                                                       addr,
-                                                       isMultiSenderMail(entry) && toPrefix == FALSE ? ", ..." : "");
-
-        array[1] = dispfro;
-      }
-
-      // lets set all other fields now
-      if(!searchWinHook && hasMColReplyTo(C->MessageCols))
-      {
-        if(isMultiReplyToMail(entry))
+        // lets set all other fields now
+        if(searchWinHook == FALSE && hasMColReplyTo(C->MessageCols))
         {
-          static char dispreplyto[SIZE_DEFAULT];
+          if(isMultiReplyToMail(entry))
+          {
+            static char dispreplyto[SIZE_DEFAULT];
 
-          snprintf(dispreplyto, sizeof(dispreplyto), "%s, ...", AddrName(entry->ReplyTo));
-          array[2] = dispreplyto;
+            snprintf(dispreplyto, sizeof(dispreplyto), "%s, ...", AddrName(entry->ReplyTo));
+            array[2] = dispreplyto;
+          }
+          else
+            array[2] = AddrName(entry->ReplyTo);
+        }
+
+        // then the Subject
+        array[3] = entry->Subject;
+
+        // we first copy the Date Received/sent because this would probably be not
+        // set by all ppl and strcpy() is costy ;)
+        if((hasMColTransDate(C->MessageCols) && entry->transDate.Seconds > 0) || searchWinHook == TRUE)
+        {
+          static char datstr[64]; // we don't use LEN_DATSTRING as OS3.1 anyway ignores it.
+
+          TimeVal2String(datstr, sizeof(datstr), &entry->transDate, C->DSListFormat, TZC_LOCAL);
+          array[7] = datstr;
         }
         else
-          array[2] = AddrName(entry->ReplyTo);
+          array[7] = (STRPTR)"";
+
+        if(hasMColDate(C->MessageCols) || searchWinHook == TRUE)
+        {
+          static char datstr[64]; // we don't use LEN_DATSTRING as OS3.1 anyway ignores it.
+
+          DateStamp2String(datstr, sizeof(datstr), &entry->Date, C->DSListFormat, TZC_LOCAL);
+          array[4] = datstr;
+        }
+
+        if(hasMColSize(C->MessageCols) || searchWinHook == TRUE)
+          FormatSize(entry->Size, array[5] = dispsiz, sizeof(dispsiz), SF_AUTO);
+
+        array[6] = entry->MailFile;
+        array[8] = entry->Folder->Name;
+
+        // depending on the mail status we set the font to bold or plain
+        if(hasStatusUnread(entry) || hasStatusNew(entry))
+          msg->preparses[1] = msg->preparses[2] = msg->preparses[3] = msg->preparses[4] = msg->preparses[5] = C->StyleMailUnread;
+        else
+          msg->preparses[1] = msg->preparses[2] = msg->preparses[3] = msg->preparses[4] = msg->preparses[5] = C->StyleMailRead;
       }
-
-      // then the Subject
-      array[3] = entry->Subject;
-
-      // we first copy the Date Received/sent because this would probably be not
-      // set by all ppl and strcpy() is costy ;)
-      if((hasMColTransDate(C->MessageCols) && entry->transDate.Seconds > 0) || searchWinHook)
-      {
-        static char datstr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
-        TimeVal2String(datstr, sizeof(datstr), &entry->transDate, C->DSListFormat, TZC_LOCAL);
-        array[7] = datstr;
-      }
-      else
-        array[7] = (STRPTR)"";
-
-      if(hasMColDate(C->MessageCols) || searchWinHook)
-      {
-        static char datstr[64];
-        DateStamp2String(datstr, sizeof(datstr), &entry->Date, C->DSListFormat, TZC_LOCAL);
-        array[4] = datstr;
-      }
-
-      if(hasMColSize(C->MessageCols) || searchWinHook)
-        FormatSize(entry->Size, array[5] = dispsiz, sizeof(dispsiz), SF_AUTO);
-
-      array[6] = entry->MailFile;
-      array[8] = entry->Folder->Name;
-
-      // depending on the mail status we set the font to bold or plain
-      if(hasStatusUnread(entry) || hasStatusNew(entry))
-        msg->preparses[1] = msg->preparses[2] = msg->preparses[3] = msg->preparses[4] = msg->preparses[5] = C->StyleMailUnread;
-      else
-        msg->preparses[1] = msg->preparses[2] = msg->preparses[3] = msg->preparses[4] = msg->preparses[5] = C->StyleMailRead;
-    }
-  }
-  else
-  {
-    struct Folder *folder = NULL;
-
-    // first we have to make sure that the mail window has a valid folder
-    if(!searchWinHook && !(folder = FO_GetCurrentFolder()))
-      return 0;
-
-    array[0] = (STRPTR)tr(MSG_MA_TitleStatus);
-
-    // depending on the current folder and the parent object we
-    // display different titles for different columns
-    if(!searchWinHook && isSentMailFolder(folder))
-    {
-      array[1] = (STRPTR)tr(MSG_To);
-      array[7] = (STRPTR)tr(MSG_DATE_SENT);
-    }
-    else if(searchWinHook || isCustomMixedFolder(folder) || isTrashFolder(folder) || isSpamFolder(folder))
-    {
-      array[1] = (STRPTR)tr(MSG_FROMTO);
-      array[7] = (STRPTR)tr(MSG_DATE_SNTRCVD);
     }
     else
     {
-      array[1] = (STRPTR)tr(MSG_From);
-      array[7] = (STRPTR)tr(MSG_DATE_RECEIVED);
+      struct Folder *folder;
+
+      // first we have to make sure that the mail window has a valid folder
+      if(searchWinHook == TRUE || (folder = FO_GetCurrentFolder()) != NULL)
+      {
+        array[0] = (STRPTR)tr(MSG_MA_TitleStatus);
+
+        // depending on the current folder and the parent object we
+        // display different titles for different columns
+        if(searchWinHook == FALSE && isSentMailFolder(folder))
+        {
+          array[1] = (STRPTR)tr(MSG_To);
+          array[7] = (STRPTR)tr(MSG_DATE_SENT);
+        }
+        else if(searchWinHook == TRUE || isCustomMixedFolder(folder) || isTrashFolder(folder) || isSpamFolder(folder))
+        {
+          array[1] = (STRPTR)tr(MSG_FROMTO);
+          array[7] = (STRPTR)tr(MSG_DATE_SNTRCVD);
+        }
+        else
+        {
+          array[1] = (STRPTR)tr(MSG_From);
+          array[7] = (STRPTR)tr(MSG_DATE_RECEIVED);
+        }
+
+        array[2] = (STRPTR)tr(MSG_ReturnAddress);
+        array[3] = (STRPTR)tr(MSG_Subject);
+        array[4] = (STRPTR)tr(MSG_Date);
+        array[5] = (STRPTR)tr(MSG_Size);
+        array[6] = (STRPTR)tr(MSG_Filename);
+
+        // The Folder is just a dummy entry to serve the SearchWindowDisplayHook
+        array[8] = (STRPTR)tr(MSG_Folder);
+      }
     }
-
-    array[2] = (STRPTR)tr(MSG_ReturnAddress);
-    array[3] = (STRPTR)tr(MSG_Subject);
-    array[4] = (STRPTR)tr(MSG_Date);
-    array[5] = (STRPTR)tr(MSG_Size);
-    array[6] = (STRPTR)tr(MSG_Filename);
-
-    array[8] = (STRPTR)tr(MSG_Folder); // The Folder is just a dummy entry to serve the SearchWindowDisplayHook
   }
 
   return 0;
