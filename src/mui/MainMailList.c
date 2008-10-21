@@ -246,10 +246,10 @@ HOOKPROTONH(DisplayFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
     }
     else
     {
-      struct Folder *folder;
+      struct Folder *folder = FO_GetCurrentFolder();
 
       // first we have to make sure that the mail window has a valid folder
-      if(searchWinHook == TRUE || (folder = FO_GetCurrentFolder()) != NULL)
+      if(searchWinHook == TRUE || folder != NULL)
       {
         array[0] = (STRPTR)tr(MSG_MA_TitleStatus);
 
