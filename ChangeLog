@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-10-28  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: fixed a duplicate shortcut. This fixes bug #2201768.
+
 2008-10-20  Thore Böckelmann <tboeckel@gmx.de>
 
   * BayesFilter.c, YAM_COg.c, YAM_COs.c, locale/YAM.cd, locale/german.ct: added
