@@ -126,8 +126,8 @@ static BOOL tokenizerClearTokens(struct Tokenizer *t)
 }
 
 ///
-///optimizeToken()
-/// optimize a token table
+/// optimizeToken()
+// optimize a token table
 static enum HashTableOperator optimizeToken(UNUSED struct HashTable *table,
                                             struct HashEntryHeader *entry,
                                             UNUSED ULONG number,
