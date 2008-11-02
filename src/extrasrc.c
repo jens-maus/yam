@@ -92,6 +92,10 @@
 #undef ObtainDirContext
 #undef ObtainDirContextTags
 #undef ReleaseDirContext
+#undef AllocSignal
+#undef FreeSignal
+#undef StartNotify
+#undef EndNotify
 #endif
 
 #if defined(NEED_NEWREADARGS)

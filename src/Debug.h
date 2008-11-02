@@ -180,6 +180,10 @@ void W(unsigned long f, const char *format, ...);
 #undef ObtainDirContext
 #undef ObtainDirContextTags
 #undef ReleaseDirContext
+#undef AllocSignal
+#undef FreeSignal
+#undef StartNotify
+#undef EndNotify
 
 #if defined(__amigaos4__)
 
@@ -200,6 +204,10 @@ void W(unsigned long f, const char *format, ...);
 #define ObtainDirContext(t)           ({APTR P = IDOS->ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
 #define ObtainDirContextTags(...)     ({APTR P = IDOS->ObtainDirContextTags(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
 #define ReleaseDirContext(p)          ({_UNMEMTRACK(__FILE__, __LINE__, p); IDOS->ReleaseDirContext(p);})
+#define AllocSignal(s)                ({BYTE P = IExec->AllocSignal(s); _MEMTRACK(__FILE__, __LINE__, "AllocSignal", (APTR)(LONG)P, (size_t)s); P;})
+#define FreeSignal(s)                 ({_UNMEMTRACK(__FILE__, __LINE__, (APTR)s); IExec->FreeSignal(s);})
+#define StartNotify(p)                ({LONG P = IDOS->StartNotify(p); _MEMTRACK(__FILE__, __LINE__, "StartNotify", p, (size_t)p); P;})
+#define EndNotify(p)                  ({_UNMEMTRACK(__FILE__, __LINE__, p); IDOS->EndNotify(p);})
 
 #elif defined(__MORPHOS__)
 
@@ -295,6 +303,36 @@ void W(unsigned long f, const char *format, ...);
 })
 
 #define ReleaseDirContext(p) ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
+
+#define AllocSignal(__p0) ({ \
+   BYTE P = LP1(330, BYTE , AllocSignal, \
+      LONG , __p0, d0, \
+      , EXEC_BASE_NAME, 0, 0, 0, 0, 0, 0); \
+   _MEMTRACK(__FILE__, __LINE__, "AllocSignal", (APTR)(LONG)P, (size_t)__p0); \
+   P; \
+})
+
+#define FreeSignal(__p0) ({ \
+   _UNMEMTRACK(__FILE__, __LINE__, (APTR)__p0); \
+   LP1NR(336, FreeSignal, \
+      LONG , __p0, d0, \
+      , EXEC_BASE_NAME, 0, 0, 0, 0, 0, 0); \
+})
+
+#define StartNotify(__p0) ({ \
+   BOOL P = LP1(888, BOOL , StartNotify, \
+      struct NotifyRequest *, __p0, d1, \
+      , DOS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
+   _MEMTRACK(__FILE__, __LINE__, "StartNotify", __p0, (size_t)__p0); \
+   P; \
+})
+
+#define EndNotify(__p0) ({ \
+   _UNMEMTRACK(__FILE__, __LINE__, __p0); \
+   LP1NR(894, EndNotify, \
+      struct NotifyRequest *, __p0, d1, \
+      , DOS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
+})
 
 #else // AmigaOS 3
 
@@ -416,6 +454,64 @@ void W(unsigned long f, const char *format, ...);
 #define ObtainDirContext(t)       ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
 #define ObtainDirContextTags(...) ({APTR P = ObtainDirContextTags(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
 #define ReleaseDirContext(p)      ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
+
+#define AllocSignal(signalNum) ({ \
+  LONG _AllocSignal_signalNum = (signalNum); \
+  BYTE _AllocSignal__re = \
+  ({ \
+  register struct ExecBase * const __AllocSignal__bn __asm("a6") = (struct ExecBase *) (EXEC_BASE_NAME);\
+  register BYTE __AllocSignal__re __asm("d0"); \
+  register LONG __AllocSignal_signalNum __asm("d0") = (_AllocSignal_signalNum); \
+  __asm volatile ("jsr a6@(-330:W)" \
+  : "=r"(__AllocSignal__re) \
+  : "r"(__AllocSignal__bn), "r"(__AllocSignal_signalNum)  \
+  : "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
+  __AllocSignal__re; \
+  }); \
+  _MEMTRACK(__FILE__, __LINE__, "AllocSignal", (APTR)(LONG)_AllocSignal__re, (size_t)signalNum); \
+  _AllocSignal__re; \
+})
+   
+#define FreeSignal(signalNum) ({ _UNMEMTRACK(__FILE__, __LINE__, (APTR)signalNum); { \
+  LONG _FreeSignal_signalNum = (signalNum); \
+  { \
+  register struct ExecBase * const __FreeSignal__bn __asm("a6") = (struct ExecBase *) (EXEC_BASE_NAME);\
+  register LONG __FreeSignal_signalNum __asm("d0") = (_FreeSignal_signalNum); \
+  __asm volatile ("jsr a6@(-336:W)" \
+  : \
+  : "r"(__FreeSignal__bn), "r"(__FreeSignal_signalNum)  \
+  : "d0", "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
+  } \
+}})
+
+#define StartNotify(notify) ({ \
+  struct NotifyRequest * _StartNotify_notify = (notify); \
+  BOOL _StartNotify__re = \
+  ({ \
+  register struct DosLibrary * const __StartNotify__bn __asm("a6") = (struct DosLibrary *) (DOS_BASE_NAME);\
+  register BOOL __StartNotify__re __asm("d0"); \
+  register struct NotifyRequest * __StartNotify_notify __asm("d1") = (_StartNotify_notify); \
+  __asm volatile ("jsr a6@(-888:W)" \
+  : "=r"(__StartNotify__re) \
+  : "r"(__StartNotify__bn), "r"(__StartNotify_notify)  \
+  : "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
+  __StartNotify__re; \
+  }); \
+  _MEMTRACK(__FILE__, __LINE__, "StartNotify", _StartNotify_notify, (size_t)_StartNotify_notify); \
+  _StartNotify__re; \
+})
+
+#define EndNotify(notify) ({ _UNMEMTRACK(__FILE__, __LINE__, notify); { \
+  struct NotifyRequest * _EndNotify_notify = (notify); \
+  { \
+  register struct DosLibrary * const __EndNotify__bn __asm("a6") = (struct DosLibrary *) (DOS_BASE_NAME);\
+  register struct NotifyRequest * __EndNotify_notify __asm("d1") = (_EndNotify_notify); \
+  __asm volatile ("jsr a6@(-894:W)" \
+  : \
+  : "r"(__EndNotify__bn), "r"(__EndNotify_notify)  \
+  : "d0", "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
+  } \
+}})
 
 #endif // amigaos4
 
