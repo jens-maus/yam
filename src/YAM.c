@@ -150,7 +150,7 @@ enum ADSTmethod { ADST_NONE=0, ADST_TZLIB, ADST_SETDST, ADST_FACTS, ADST_SGUARD,
 static const char *const ADSTfile[] = { "", "ENV:TZONE", "ENV:TZONE", "ENV:FACTS/DST", "ENV:SUMMERTIME", "ENV:IXGMTOFFSET" };
 static struct ADST_Data
 {
-  struct NotifyRequest nRequest;
+  struct NotifyRequest *nRequest;
   enum ADSTmethod method;
 } ADSTdata;
 
@@ -450,6 +450,10 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 //  AutoDST Notify start function
 static BOOL ADSTnotify_start(void)
 {
+  BOOL result = FALSE;
+
+  ENTER();
+
   if(ADSTdata.method != ADST_NONE)
   {
     // prepare the NotifyRequest structure
@@ -457,24 +461,46 @@ static BOOL ADSTnotify_start(void)
 
     if((signalAlloc = AllocSignal(-1)) >= 0)
     {
-      struct NotifyRequest *nr = &ADSTdata.nRequest;
+      #if defined(__amigaos4__)
 
-      nr->nr_Name  = (STRPTR)ADSTfile[ADSTdata.method];
-      nr->nr_Flags = NRF_SEND_SIGNAL;
+      // we don't use NotifyVar() here on purpose but a direct file notification on ENV:TZONE.
+      // This is because timezone.library has a slight problem because of first setting the environment
+      // variable and then its internal data structures and the hook of NotifyVar() is executed in the
+      // context of timezone.lib which in fact might also cause inexpected results in our code.
 
-      // prepare the nr_Signal now
-      nr->nr_stuff.nr_Signal.nr_Task      = FindTask(NULL);
-      nr->nr_stuff.nr_Signal.nr_SignalNum = signalAlloc;
+      ADSTdata.nRequest = AllocDosObjectTags(DOS_NOTIFYREQUEST, ADO_NotifyName,         ADSTfile[ADSTdata.method],
+                                                                ADO_NotifyMethod,       NRF_SEND_SIGNAL,
+                                                                ADO_NotifySignalNumber, (uint8)signalAlloc,
+                                                                ADO_NotifyTask,         FindTask(NULL),
+                                                                TAG_DONE);
+      #else
+      if((ADSTdata.nRequest = AllocVecPooled(G->SharedMemPool, sizeof(*ADSTdata.nRequest))) != NULL)
+      {
+        memset(&ADSTdata.nRequest, 0, sizeof(*ADSTdata.nRequest));
 
-      return StartNotify(nr);
+        ADSTdata.nRequest->nr_Name  = (STRPTR)ADSTfile[ADSTdata.method];
+        ADSTdata.nRequest->nr_Flags = NRF_SEND_SIGNAL;
+        ADSTdata.nRequest->nr_stuff.nr_Signal.nr_Task      = FindTask(NULL);
+        ADSTdata.nRequest->nr_stuff.nr_Signal.nr_SignalNum = signalAlloc;
+      }
+      #endif
+
+      if(ADSTdata.nRequest != NULL)
+        result = (StartNotify(ADSTdata.nRequest) != 0);
     }
     else
-    {
       memset(&ADSTdata, 0, sizeof(struct ADST_Data));
-    }
   }
 
-  return FALSE;
+  #if defined(DEBUG)
+  if(result == TRUE)
+    D(DBF_STARTUP, "initialised ADST notify request on file '%s'", ADSTfile[ADSTdata.method]);
+  else
+    W(DBF_STARTUP, "couldn't initialise ADST notify for file '%s'", ADSTfile[ADSTdata.method]);
+  #endif
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -482,17 +508,23 @@ static BOOL ADSTnotify_start(void)
 //  AutoDST Notify stop function
 static void ADSTnotify_stop(void)
 {
-  if(ADSTdata.method != ADST_NONE)
-  {
-    // stop the NotifyRequest
-    struct NotifyRequest *nr = &ADSTdata.nRequest;
+  ENTER();
 
-    if(nr->nr_Name != NULL)
-    {
-      EndNotify(nr);
-      FreeSignal((LONG)nr->nr_stuff.nr_Signal.nr_SignalNum);
-    }
+  if(ADSTdata.nRequest != NULL)
+  {
+    EndNotify(ADSTdata.nRequest);
+    FreeSignal((LONG)ADSTdata.nRequest->nr_stuff.nr_Signal.nr_SignalNum);
+
+    #if defined(__amigaos4__)
+    FreeDosObject(DOS_NOTIFYREQUEST, ADSTdata.nRequest);
+    #else
+    FreeVecPooled(G->SharedMemPool, ADSTdata.nRequest);
+    #endif
+
+    ADSTdata.nRequest = NULL;
   }
+
+  LEAVE();
 }
 
 ///
@@ -503,8 +535,10 @@ static void ADSTnotify_stop(void)
 //         2 if DST is set (summertime)
 static int GetDST(BOOL update)
 {
+  #if !defined(__amigaos4__)
   char buffer[50];
   char *tmp;
+  #endif
   int result = 0;
 
   ENTER();
@@ -538,7 +572,7 @@ static int GetDST(BOOL update)
         else
           result = 1;
 
-        D(DBF_STARTUP, "Found timezone.library with DST flag: %ld", result);
+        D(DBF_STARTUP, "Found timezone.library with DST flag %s", result == 2 ? "ON" : "OFF");
 
         ADSTdata.method = ADST_TZLIB;
       }
@@ -546,7 +580,8 @@ static int GetDST(BOOL update)
       CLOSELIB(TimezoneBase, ITimezone);
     }
   }
-  #endif
+
+  #else
 
   // SetDST saves the DST settings in the TZONE env-variable which
   // is a bit more complex than the others, so we need to do some advance parsing
@@ -616,11 +651,13 @@ static int GetDST(BOOL update)
     D(DBF_STARTUP, "Found '%s' (IXGMT) with DST flag: %ld", ADSTfile[ADST_IXGMT], result);
   }
 
+  #endif
+
   if(update == FALSE && result == 0)
   {
     ADSTdata.method = ADST_NONE;
 
-    W(DBF_STARTUP, "Didn't find any AutoDST facility active!");
+    W(DBF_STARTUP, "didn't find any valid AutoDST facility active!");
   }
 
   // No correctly installed AutoDST tool was found
@@ -2514,8 +2551,8 @@ int main(int argc, char **argv)
     AppendToLogfile(LF_VERBOSE, 2, tr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir);
 
     // Now start the NotifyRequest for the AutoDST file
-    if(ADSTnotify_start() == TRUE)
-      adstsig = 1UL << ADSTdata.nRequest.nr_stuff.nr_Signal.nr_SignalNum;
+    if(ADSTnotify_start() == TRUE && ADSTdata.nRequest != NULL)
+      adstsig = 1UL << ADSTdata.nRequest->nr_stuff.nr_Signal.nr_SignalNum;
     else
       adstsig = 0;
 
@@ -2633,9 +2670,37 @@ int main(int argc, char **argv)
         // check for the AutoDST signal
         if(adstsig != 0 && isFlagSet(signals, adstsig))
         {
-          // check the DST file and validate the configuration once more.
+          D(DBF_STARTUP, "received ADST change signal, rereading DST settings");
+
+          // delay our process for one second before we go on so that we give
+          // the process like timezone.library time to refresh its data structures
+          // to the new DST setting
+          Delay(100);
+
+          // check the current DST settings of the OS
           G->CO_DST = GetDST(TRUE);
-          CO_Validate(C, FALSE);
+
+          // check if the DST settings changed
+          if(C->AutoDSTCheck == TRUE)
+          {
+            if(C->DaylightSaving != (G->CO_DST == 2))
+            {
+              // also set the dst settings in the configuration
+              C->DaylightSaving = (G->CO_DST == 2);
+
+              // make sure to save the configuration
+              CO_SaveConfig(C, G->CO_PrefsFile);
+
+              D(DBF_STARTUP, "set config DST setting to %s", C->DaylightSaving == TRUE ? "ON" : "OFF");
+            }
+          }
+          else if(G->CO_DST > 0 && C->DaylightSaving == (G->CO_DST == 2))
+          {
+            C->AutoDSTCheck = TRUE;
+
+            // make sure to save the configuration
+            CO_SaveConfig(C, G->CO_PrefsFile);
+          }
         }
       }
     }

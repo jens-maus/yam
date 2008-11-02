@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-11-02  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: reworked the AutoDST check and notification framework to work a bit
+    more reliable. Now AllocDosObject() is used on OS4 and also a slight delay
+    has been put before requerying timezone.library for the current DST
+    setting. This should make the whole AutoDST stuff more reliable and
+    working as expected. In addition, no requester will now be raised in case
+    of the automatic DST notification.
+  * Debug.h, extrasrc.c: added AllocSignal/FreeSignal and StartNotify/EndNotify
+    to our resource tracking framework.
+
 2008-10-28  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/german.ct: fixed a duplicate shortcut. This fixes bug #2201768.
