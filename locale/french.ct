@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 6.0 (26.08.2008)
+## version $VER: YAM.catalog 6.0 (06.11.2008)
 ## language français
 ## codeset 0
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 4098 2008-08-12 07:50:15Z
+; based on YAM.cd 4214 2008-10-20 14:34:27Z
 ;
 ;#version 6
 ;#language english
@@ -1538,10 +1538,6 @@ MSG_CO_OldQuotes
 Anciennes citations
 ; Old quotes
 ;
-MSG_CO_UseTextstyles
-Formatage du te_xte
-; Use te_xt styles
-;
 MSG_CO_Header
 En_-têtes
 ; _Headers
@@ -2350,12 +2346,6 @@ Réparti les longs en-têtes\n\
 sur plusieurs lignes
 ; Split long headers\n\
 ; on multiple lines.
-;
-MSG_HELP_CO_CH_TEXTSTYLES
-Interpréter les caractères « / * _ et # »\n\
-comme signes de formatage du texte
-; Interpret / * _ and # as\n\
-; control codes for text styles.
 ;
 MSG_HELP_CO_CY_HEADER
 Les en-têtes de messages que vous voulez\n\
@@ -8046,20 +8036,20 @@ Tout sélectionner
 MSG_RE_MDN_ACCEPT_LATER
 Accepter et\nenvoyer plus tard
 ; Accept and\n\
-; send later
+; send _later
 ;
 MSG_RE_MDN_ACCEPT_NOW
 Accepter et\nenvoyer maintenant
 ; Accept and\n\
-; send now
+; send _now
 ;
 MSG_RE_MDN_IGNORE
 Ignorer
-; Ignore
+; _Ignore
 ;
 MSG_RE_MDN_IGNORE_ALL
 Ignorer tout
-; Ignore all
+; Ignore _all
 ;
 MSG_CO_MDN_ACTION_IGNORE
 Ne jamais envoyer
@@ -9681,12 +9671,103 @@ Voulez-vous l'écraser ?
 ; File '%s' already exists.\n\
 ; \n\
 ; Do you want to overwrite it?
-;
 ; FILENAME
 ;
 MSG_ER_USER_DIR_MISSING
 Le répertoire personnel « %s » de l'utilisateur « %s » n'existe pas !
 ; The home directory '%s' of user '%s' does not exist!
-;
 ; PATH, USERNAME
+;
+MSG_CO_TEXTCOLORS_READ
+Afficher te_xte coloré
+; Show te_xt colors
+;
+MSG_HELP_CO_CH_TEXTCOLORS_READ
+Utiliser des couleurs de texte pour\n\
+indiquer des passages de texte spéciaux\n\
+(p. ex. citation, etc.)
+; Use text colors to signal special\n\
+; text passages, (e.g. quotations, etc.)
+;
+MSG_CO_TEXTSTYLES_READ
+Affic_her texte formaté
+; Show te_xt styles
+;
+MSG_HELP_CO_CH_TEXTSTYLES_READ
+Interpréter les caractères « / * _ et # »\n\
+comme signes de formatage du texte.
+; Interpret '/', '*', '_' and '#' as\n\
+; control characters for text styles.
+;
+MSG_CO_TEXTCOLORS_WRITE
+Afficher tex_te coloré
+; Show tex_t colors
+;
+MSG_HELP_CO_CH_TEXTCOLORS_WRITE
+Utiliser des couleurs de texte pour\n\
+indiquer des passages de texte spéciaux\n\
+(p. ex. citation, etc.)
+; Use text colors to signal special\n\
+; text passages, (e.g. quotations, etc.)
+;
+MSG_CO_TEXTSTYLES_WRITE
+Afficher te_xte formaté
+; Show te_xt styles
+;
+MSG_HELP_CO_CH_TEXTSTYLES_WRITE
+Interpréter les caractères « / * _ et # »\n\
+comme signes de formatage du texte.
+; Interpret '/', '*', '_' and '#' as\n\
+; control characters for text styles.
+;
+MSG_CO_FONTSETTINGS
+Réglages de police
+; Font settings
+;
+MSG_CO_FIXEDFONT_WRITE
+Utiliser police _fixe
+; Use _fixed font
+;
+MSG_RE_TEXTCOLORS
+Texte coloré
+; Text colors?
+;
+MSG_WR_TEXTSTYLES
+Texte formaté
+; Text styles?
+;
+MSG_WR_TEXTCOLORS
+Texte coloré
+; Text colors?
+;
+MSG_WR_FIXEDFONT
+Police fixe
+; Fixed font?
+;
+MSG_CO_SPAM_OPTIMIZE_TRAININGDATA
+_Optimiser les données d'apprentissage
+; _Optimize training data
+;
+MSG_HELP_BT_OPTIMIZE_TRAININGDATA
+Supprime les mots peu fréquents des données\n\
+d'apprentissage pour accélérer le chargement\n\
+des données d'apprentissage et le traitement\n\
+des courriers indésirables.
+; Removes very infrequent words from the training\n\
+; data to speed up loading of training data and\n\
+; increase processing speed of spam mails.
+;
+MSG_CO_SPAM_OPTIMIZE_TRAININGDATA_ASK
+Voulez-vous réellement optimiser les données\n\
+d'apprentissage du filtre des courriers indésirables ?
+; Do you really want to optimize the spam filter's\n\
+; training data?\n\
+; \n\
+; The spam filter's efficency might decrease slightly\n\
+; afterwards, but the filter process will be faster and\n\
+; use less memory.
+;
+MSG_CO_SPAM_STATISTICS
+%ld (%ld mots)
+; %ld (%ld words)
 ;

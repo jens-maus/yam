@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-11-05  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/french.ct: updated french translation according to latest changes.
+
 2008-11-02  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: reworked the AutoDST check and notification framework to work a bit
