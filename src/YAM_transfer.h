@@ -128,6 +128,7 @@ struct TR_ClassData
   struct MinNode       *GMD_Mail;
   struct Folder *       ImportFolder;
   struct HashTable *    UIDLhashTable; // for maintaining all UIDLs
+  struct MailList *     downloadedMails;
 
   long                  Abort;
   long                  Pause;

@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-11-10  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c, YAM_TR.c: splitted the ApplyFiltersHook() function into two
+    separate functions. One does the actual filtering based on a list of mails,
+    the other one performs the usual preparation to do the filtering when the
+    user presses the toolbar button, for example. The new function is used
+    directly to filter only those mails which just have been downloaded, regard-
+    less of the NEW state of previously downloaded mails. This fixes bug
+    #2229477.
+
 2008-11-05  Alexandre Balaban <abalaban@free.fr>
 
   * locale/french.ct: updated french translation according to latest changes.

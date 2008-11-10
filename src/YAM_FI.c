@@ -1637,13 +1637,130 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
   RETURN(success);
   return success;
 }
+
+///
+/// FilterMails
+// Apply filters
+void FilterMails(struct Folder *folder, struct MailList *mlist, int mode)
+{
+  struct Folder *spamfolder = FO_GetFolderByType(FT_SPAM, NULL);
+  struct MailNode *mnode;
+  ULONG m;
+  int scnt;
+  int matches = 0;
+
+  ENTER();
+
+  memset(&G->RuleResults, 0, sizeof(G->RuleResults));
+  set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
+  G->AppIconQuiet = TRUE;
+
+  // for simple spam classification this will result in zero
+  scnt = AllocFilterSearch(mode);
+
+  // we use another Busy Gauge information if this is
+  // a spam classification session. And we build an interruptable
+  // Gauge which will report back if the user pressed the stop button
+  if(mode != APPLY_SPAM)
+    BusyGaugeInt(tr(MSG_BusyFiltering), "", mlist->count);
+  else
+    BusyGaugeInt(tr(MSG_FI_BUSYCHECKSPAM), "", mlist->count);
+
+  m = 0;
+  ForEachMailNode(mlist, mnode)
+  {
+    struct Mail *mail = mnode->mail;
+    BOOL wasSpam = FALSE;
+
+    if(mail != NULL)
+    {
+      if(C->SpamFilterEnabled == TRUE && (mode == APPLY_AUTO || mode == APPLY_SPAM))
+      {
+        BOOL doClassification;
+
+        D(DBF_FILTER, "About to apply SPAM filter to message with subject \"%s\"", mail->Subject);
+
+        if(mode == APPLY_AUTO && C->SpamFilterForNewMail == TRUE)
+        {
+          // classify this mail if we are allowed to check new mails automatically
+          doClassification = TRUE;
+        }
+        else if(mode == APPLY_SPAM && hasStatusSpam(mail) == FALSE && hasStatusHam(mail) == FALSE)
+        {
+          // classify mails if the user triggered this and the mail is not yet classified
+          doClassification = TRUE;
+        }
+        else
+        {
+          // don't try to classify this mail
+          doClassification = FALSE;
+        }
+
+        if(doClassification == TRUE)
+        {
+          D(DBF_FILTER, "Classifying message with subject \"%s\"", mail->Subject);
+
+          if(BayesFilterClassifyMessage(mail) == TRUE)
+          {
+            D(DBF_FILTER, "Message was classified as spam");
+
+            // set the SPAM flags, but clear the NEW and READ flags only if desired
+            if(C->SpamMarkAsRead == TRUE)
+              setStatusToReadAutoSpam(mail);
+            else
+              setStatusToAutoSpam(mail);
+
+            // move newly recognized spam to the spam folder
+            MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
+            wasSpam = TRUE;
+
+            // update the stats
+            G->RuleResults.Spam++;
+            // we just checked the mail
+            G->RuleResults.Checked++;
+          }
+        }
+      }
+
+      if(scnt > 0 && wasSpam == FALSE)
+      {
+        // apply all other user defined filters (if they exist) for non-spam mails
+        // or if the spam filter is disabled
+        G->RuleResults.Checked++;
+
+        // now we process the search
+        FI_FilterSingleMail(mail, &matches);
+      }
+
+      // we update the busy gauge and
+      // see if we have to exit/abort in case it returns FALSE
+      if(BusySet(++m) == FALSE)
+        break;
+    }
+  }
+
+  FreeFilterSearch();
+
+  if(G->RuleResults.Checked != 0)
+    AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_Filtering), G->RuleResults.Checked, folder->Name, matches);
+
+  BusyEnd();
+
+  set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
+  G->AppIconQuiet = FALSE;
+
+  if(mode != APPLY_AUTO)
+    DisplayStatistics(NULL, TRUE);
+
+  LEAVE();
+}
+
 ///
 /// ApplyFiltersFunc
 //  Apply filters
 HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 {
   struct Folder *folder;
-  struct Folder *spamfolder = NULL;
   enum ApplyFilterMode mode = arg[0];
 
   ENTER();
@@ -1651,9 +1768,8 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
   D(DBF_FILTER, "About to apply SPAM and user defined filters...");
 
   if((folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder()) != NULL &&
-     (C->SpamFilterEnabled == FALSE || (spamfolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL))
+     (C->SpamFilterEnabled == FALSE || FO_GetFolderByType(FT_SPAM, NULL) != NULL))
   {
-    Object *lv = G->MA->GUI.PG_MAILLIST;
     struct MailList *mlist = NULL;
     BOOL processAllMails = TRUE;
 
@@ -1662,7 +1778,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
     {
       ULONG minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
 
-      if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) != NULL)
+      if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, mode == APPLY_RX)) != NULL)
       {
         if(mlist->count < minselected)
         {
@@ -1704,111 +1820,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
       // the user has not cancelled the filter process
       if(applyFilters == TRUE)
       {
-        struct MailNode *mnode;
-        ULONG m;
-        int scnt;
-        int matches = 0;
-
-        memset(&G->RuleResults, 0, sizeof(G->RuleResults));
-        set(lv, MUIA_NList_Quiet, TRUE);
-        G->AppIconQuiet = TRUE;
-
-        // for simple spam classification this will result in zero
-        scnt = AllocFilterSearch(mode);
-
-        // we use another Busy Gauge information if this is
-        // a spam classification session. And we build an interruptable
-        // Gauge which will report back if the user pressed the stop button
-        if(mode != APPLY_SPAM)
-          BusyGaugeInt(tr(MSG_BusyFiltering), "", mlist->count);
-        else
-          BusyGaugeInt(tr(MSG_FI_BUSYCHECKSPAM), "", mlist->count);
-
-        m = 0;
-        ForEachMailNode(mlist, mnode)
-        {
-          struct Mail *mail = mnode->mail;
-          BOOL wasSpam = FALSE;
-
-          if(mail != NULL)
-          {
-            if(C->SpamFilterEnabled == TRUE && (mode == APPLY_AUTO || mode == APPLY_SPAM))
-            {
-              BOOL doClassification;
-
-              D(DBF_FILTER, "About to apply SPAM filter to message with subject \"%s\"", mail->Subject);
-
-              if(mode == APPLY_AUTO && C->SpamFilterForNewMail == TRUE)
-              {
-                // classify this mail if we are allowed to check new mails automatically
-                doClassification = TRUE;
-              }
-              else if(mode == APPLY_SPAM && hasStatusSpam(mail) == FALSE && hasStatusHam(mail) == FALSE)
-              {
-                // classify mails if the user triggered this and the mail is not yet classified
-                doClassification = TRUE;
-              }
-              else
-              {
-                // don't try to classify this mail
-                doClassification = FALSE;
-              }
-
-              if(doClassification == TRUE)
-              {
-                D(DBF_FILTER, "Classifying message with subject \"%s\"", mail->Subject);
-
-                if(BayesFilterClassifyMessage(mail) == TRUE)
-                {
-                  D(DBF_FILTER, "Message was classified as spam");
-
-                  // set the SPAM flags, but clear the NEW and READ flags only if desired
-                  if(C->SpamMarkAsRead == TRUE)
-                    setStatusToReadAutoSpam(mail);
-                  else
-                    setStatusToAutoSpam(mail);
-
-                  // move newly recognized spam to the spam folder
-                  MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
-                  wasSpam = TRUE;
-
-                  // update the stats
-                  G->RuleResults.Spam++;
-                  // we just checked the mail
-                  G->RuleResults.Checked++;
-                }
-              }
-            }
-
-            if(scnt > 0 && wasSpam == FALSE)
-            {
-              // apply all other user defined filters (if they exist) for non-spam mails
-              // or if the spam filter is disabled
-              G->RuleResults.Checked++;
-
-              // now we process the search
-              FI_FilterSingleMail(mail, &matches);
-            }
-
-            // we update the busy gauge and
-            // see if we have to exit/abort in case it returns FALSE
-            if(BusySet(++m) == FALSE)
-              break;
-          }
-        }
-
-        FreeFilterSearch();
-
-        if(G->RuleResults.Checked != 0)
-          AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_Filtering), G->RuleResults.Checked, folder->Name, matches);
-
-        BusyEnd();
-
-        set(lv, MUIA_NList_Quiet, FALSE);
-        G->AppIconQuiet = FALSE;
-
-        if(mode != APPLY_AUTO)
-          DisplayStatistics(NULL, TRUE);
+        FilterMails(folder, mlist, mode);
 
         if(G->RuleResults.Checked != 0 && mode == APPLY_USER)
         {

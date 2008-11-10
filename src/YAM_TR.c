@@ -3889,7 +3889,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     {
       struct Folder *folder;
 
-      DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, APPLY_AUTO, 0);
+      FilterMails(FO_GetFolderByType(FT_INCOMING, NULL), G->TR->downloadedMails, APPLY_AUTO);
 
       // Now we jump to the first new mail we received if the number of messages has changed
       // after the mail transfer
@@ -3897,8 +3897,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
         MA_JumpToNewMsg();
 
       // only call the DisplayStatistics() function if the actual folder wasn't already the INCOMING
-      // one or we would hav refreshed it twice
-      if((folder = FO_GetCurrentFolder()) && !isIncomingFolder(folder))
+      // one or we would have refreshed it twice
+      if((folder = FO_GetCurrentFolder()) != NULL && !isIncomingFolder(folder))
         DisplayStatistics((struct Folder *)-1, TRUE);
       else
         UpdateAppIcon();
@@ -3913,6 +3913,9 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     memcpy(&G->LastDL, &G->TR->Stats, sizeof(struct DownloadResult));
 
     MA_ChangeTransfer(TRUE);
+
+    DeleteMailList(G->TR->downloadedMails);
+    G->TR->downloadedMails = NULL;
 
     DisposeModulePush(&G->TR);
 
@@ -4710,6 +4713,10 @@ static void TR_AbortnClose(void)
   set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
   TR_Cleanup();
   MA_ChangeTransfer(TRUE);
+
+  DeleteMailList(G->TR->downloadedMails);
+  G->TR->downloadedMails = NULL;
+
   DisposeModulePush(&G->TR);
 
   LEAVE();
@@ -6888,6 +6895,8 @@ static BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const 
           newMail->sflags = SFLAG_NEW;
           MA_UpdateMailFile(newMail);
 
+          AddNewMailNode(G->TR->downloadedMails, newMail);
+
           // if the current folder is the inbox we
           // can go and add the mail instantly to the maillist
           if(FO_GetCurrentFolder() == infolder)
@@ -7286,162 +7295,171 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
 
   if((data = calloc(1, sizeof(struct TR_ClassData))) != NULL)
   {
-    Object *bt_all = NULL, *bt_none = NULL, *bt_loadonly = NULL, *bt_loaddel = NULL, *bt_delonly = NULL, *bt_leave = NULL;
-    Object *gr_sel, *gr_proc, *gr_win;
-    BOOL fullwin = (TRmode == TR_GET_USER || TRmode == TR_GET_AUTO || TRmode == TR_IMPORT);
-    static char status_label[SIZE_DEFAULT];
-    static char size_gauge_label[SIZE_DEFAULT];
-    static char msg_gauge_label[SIZE_DEFAULT];
-    static char str_size_done[SIZE_SMALL];
-    static char str_size_tot[SIZE_SMALL];
-    static char str_speed[SIZE_SMALL];
-    static char str_size_curr[SIZE_SMALL];
-    static char str_size_curr_max[SIZE_SMALL];
-
-    NewList((struct List *)&data->transferList);
-
-    // prepare the initial text object content
-    FormatSize(0, str_size_done, sizeof(str_size_done), SF_MIXED);
-    FormatSize(0, str_size_tot, sizeof(str_size_tot), SF_MIXED);
-    FormatSize(0, str_speed, sizeof(str_speed), SF_MIXED);
-    snprintf(status_label, sizeof(status_label), tr(MSG_TR_TRANSFERSTATUS),
-                                    str_size_done, str_size_tot, str_speed, 0, 0, 0, 0);
-
-    snprintf(msg_gauge_label, sizeof(msg_gauge_label), tr(MSG_TR_MESSAGEGAUGE), 0);
-
-    FormatSize(0, str_size_curr, sizeof(str_size_curr), SF_AUTO);
-    FormatSize(0, str_size_curr_max, sizeof(str_size_curr_max), SF_AUTO);
-    snprintf(size_gauge_label, sizeof(size_gauge_label), tr(MSG_TR_TRANSFERSIZE),
-                                                         str_size_curr, str_size_curr_max);
-
-    gr_proc = ColGroup(2), GroupFrameT(tr(MSG_TR_Status)),
-       Child, data->GUI.TX_STATS = TextObject,
-          MUIA_Text_Contents, status_label,
-          MUIA_Background,    MUII_TextBack,
-          MUIA_Frame,         MUIV_Frame_Text,
-          MUIA_Text_PreParse, MUIX_C,
-       End,
-       Child, VGroup,
-          Child, data->GUI.GA_COUNT = GaugeObject,
-             GaugeFrame,
-             MUIA_Gauge_Horiz,    TRUE,
-             MUIA_Gauge_InfoText, msg_gauge_label,
-          End,
-          Child, data->GUI.GA_BYTES = GaugeObject,
-             GaugeFrame,
-             MUIA_Gauge_Horiz,    TRUE,
-             MUIA_Gauge_InfoText, size_gauge_label,
-          End,
-       End,
-       Child, data->GUI.TX_STATUS = TextObject,
-          MUIA_Background,MUII_TextBack,
-          MUIA_Frame     ,MUIV_Frame_Text,
-       End,
-       Child, data->GUI.BT_ABORT = MakeButton(tr(MSG_TR_Abort)),
-    End;
-
-    if(fullwin == TRUE)
+    if((data->downloadedMails = CreateMailList()) != NULL)
     {
-      data->GUI.GR_LIST = VGroup, GroupFrameT(TRmode==TR_IMPORT ? tr(MSG_TR_MsgInFile) : tr(MSG_TR_MsgOnServer)),
-         MUIA_ShowMe, TRmode==TR_IMPORT || C->PreSelection >= PSM_ALWAYS,
-         Child, NListviewObject,
-            MUIA_CycleChain, TRUE,
-            MUIA_NListview_NList, data->GUI.LV_MAILS = TransferMailListObject,
-               MUIA_NList_MultiSelect, MUIV_NList_MultiSelect_Default,
-               MUIA_NList_Format        , "W=-1 BAR,W=-1 MACW=9 P=\33r BAR,MICW=20 BAR,MICW=16 BAR,MICW=9 MACW=15",
-               MUIA_NList_DisplayHook   , &TR_LV_DspFuncHook,
-               MUIA_NList_AutoVisible   , TRUE,
-               MUIA_NList_Title         , TRUE,
-               MUIA_NList_TitleSeparator, TRUE,
-               MUIA_NList_DoubleClick   , TRUE,
-               MUIA_NList_MinColSortable, 0,
-               MUIA_Font, C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
-               MUIA_ContextMenu         , NULL,
-               MUIA_NList_Exports, MUIV_NList_Exports_Cols,
-               MUIA_NList_Imports, MUIV_NList_Imports_Cols,
-               MUIA_ObjectID, MAKE_ID('N','L','0','4'),
+      Object *bt_all = NULL, *bt_none = NULL, *bt_loadonly = NULL, *bt_loaddel = NULL, *bt_delonly = NULL, *bt_leave = NULL;
+      Object *gr_sel, *gr_proc, *gr_win;
+      BOOL fullwin = (TRmode == TR_GET_USER || TRmode == TR_GET_AUTO || TRmode == TR_IMPORT);
+      static char status_label[SIZE_DEFAULT];
+      static char size_gauge_label[SIZE_DEFAULT];
+      static char msg_gauge_label[SIZE_DEFAULT];
+      static char str_size_done[SIZE_SMALL];
+      static char str_size_tot[SIZE_SMALL];
+      static char str_speed[SIZE_SMALL];
+      static char str_size_curr[SIZE_SMALL];
+      static char str_size_curr_max[SIZE_SMALL];
+
+      NewList((struct List *)&data->transferList);
+
+      // prepare the initial text object content
+      FormatSize(0, str_size_done, sizeof(str_size_done), SF_MIXED);
+      FormatSize(0, str_size_tot, sizeof(str_size_tot), SF_MIXED);
+      FormatSize(0, str_speed, sizeof(str_speed), SF_MIXED);
+      snprintf(status_label, sizeof(status_label), tr(MSG_TR_TRANSFERSTATUS),
+                                      str_size_done, str_size_tot, str_speed, 0, 0, 0, 0);
+
+      snprintf(msg_gauge_label, sizeof(msg_gauge_label), tr(MSG_TR_MESSAGEGAUGE), 0);
+
+      FormatSize(0, str_size_curr, sizeof(str_size_curr), SF_AUTO);
+      FormatSize(0, str_size_curr_max, sizeof(str_size_curr_max), SF_AUTO);
+      snprintf(size_gauge_label, sizeof(size_gauge_label), tr(MSG_TR_TRANSFERSIZE),
+                                                           str_size_curr, str_size_curr_max);
+
+      gr_proc = ColGroup(2), GroupFrameT(tr(MSG_TR_Status)),
+         Child, data->GUI.TX_STATS = TextObject,
+            MUIA_Text_Contents, status_label,
+            MUIA_Background,    MUII_TextBack,
+            MUIA_Frame,         MUIV_Frame_Text,
+            MUIA_Text_PreParse, MUIX_C,
+         End,
+         Child, VGroup,
+            Child, data->GUI.GA_COUNT = GaugeObject,
+               GaugeFrame,
+               MUIA_Gauge_Horiz,    TRUE,
+               MUIA_Gauge_InfoText, msg_gauge_label,
+            End,
+            Child, data->GUI.GA_BYTES = GaugeObject,
+               GaugeFrame,
+               MUIA_Gauge_Horiz,    TRUE,
+               MUIA_Gauge_InfoText, size_gauge_label,
             End,
          End,
-      End;
-      gr_sel = VGroup, GroupFrameT(tr(MSG_TR_Control)),
-         Child, ColGroup(5),
-            Child, bt_all = MakeButton(tr(MSG_TR_All)),
-            Child, bt_loaddel = MakeButton(tr(MSG_TR_DownloadDelete)),
-            Child, bt_leave = MakeButton(tr(MSG_TR_Leave)),
-            Child, HSpace(0),
-            Child, data->GUI.BT_PAUSE = MakeButton(tr(MSG_TR_Pause)),
-            Child, bt_none = MakeButton(tr(MSG_TR_Clear)),
-            Child, bt_loadonly = MakeButton(tr(MSG_TR_DownloadOnly)),
-            Child, bt_delonly = MakeButton(tr(MSG_TR_DeleteOnly)),
-            Child, HSpace(0),
-            Child, data->GUI.BT_RESUME = MakeButton(tr(MSG_TR_Resume)),
+         Child, data->GUI.TX_STATUS = TextObject,
+            MUIA_Background,MUII_TextBack,
+            MUIA_Frame     ,MUIV_Frame_Text,
          End,
-         Child, ColGroup(2),
-            Child, data->GUI.BT_START = MakeButton(tr(MSG_TR_Start)),
-            Child, data->GUI.BT_QUIT = MakeButton(tr(MSG_TR_Abort)),
-         End,
+         Child, data->GUI.BT_ABORT = MakeButton(tr(MSG_TR_Abort)),
       End;
-      gr_win = VGroup,
-         Child, data->GUI.GR_LIST,
-         Child, data->GUI.GR_PAGE = PageGroup,
-            Child, gr_sel,
-            Child, gr_proc,
-         End,
-      End;
-    }
-    else
-    {
-      gr_win = VGroup, MUIA_Frame, MUIV_Frame_None,
-         Child, gr_proc,
-      End;
-    }
-
-    data->GUI.WI = WindowObject,
-       MUIA_Window_ID, MAKE_ID('T','R','A','0'+TRmode),
-       MUIA_Window_CloseGadget, FALSE,
-       MUIA_Window_Activate, (TRmode == TR_IMPORT || TRmode == TR_EXPORT || TRmode == TR_GET_USER || TRmode == TR_SEND_USER),
-       MUIA_HelpNode, "TR_W",
-       WindowContents, gr_win,
-    End;
-
-    if(data->GUI.WI != NULL)
-    {
-      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-      SetHelp(data->GUI.TX_STATUS,MSG_HELP_TR_TX_STATUS);
-      SetHelp(data->GUI.BT_ABORT ,MSG_HELP_TR_BT_ABORT);
 
       if(fullwin == TRUE)
       {
-        set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.LV_MAILS);
-        set(data->GUI.BT_RESUME, MUIA_Disabled, TRUE);
-
-        if(TRmode == TR_IMPORT)
-        {
-          set(data->GUI.BT_PAUSE, MUIA_Disabled, TRUE);
-          set(bt_delonly        , MUIA_Disabled, TRUE);
-          set(bt_loaddel        , MUIA_Disabled, TRUE);
-          DoMethod(data->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_ProcessIMPORTHook);
-          DoMethod(data->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_AbortIMPORTHook);
-        }
-        else
-        {
-          set(data->GUI.GR_PAGE, MUIA_Group_ActivePage, 1);
-          DoMethod(data->GUI.BT_RESUME,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook, FALSE);
-          DoMethod(data->GUI.BT_PAUSE ,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook, TRUE);
-          DoMethod(data->GUI.BT_PAUSE, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Pause));
-          DoMethod(data->GUI.LV_MAILS ,MUIM_Notify, MUIA_NList_DoubleClick,TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_GetMessageInfoHook);
-          DoMethod(bt_delonly,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_DELETE);
-          DoMethod(bt_loaddel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, (TRF_LOAD|TRF_DELETE));
-          DoMethod(data->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Start));
-          DoMethod(data->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
-        }
-        DoMethod(bt_loadonly,        MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_LOAD);
-        DoMethod(bt_leave,           MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_NONE);
-        DoMethod(bt_all,             MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
-        DoMethod(bt_none,            MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
+        data->GUI.GR_LIST = VGroup, GroupFrameT(TRmode==TR_IMPORT ? tr(MSG_TR_MsgInFile) : tr(MSG_TR_MsgOnServer)),
+           MUIA_ShowMe, TRmode==TR_IMPORT || C->PreSelection >= PSM_ALWAYS,
+           Child, NListviewObject,
+              MUIA_CycleChain, TRUE,
+              MUIA_NListview_NList, data->GUI.LV_MAILS = TransferMailListObject,
+                 MUIA_NList_MultiSelect, MUIV_NList_MultiSelect_Default,
+                 MUIA_NList_Format        , "W=-1 BAR,W=-1 MACW=9 P=\33r BAR,MICW=20 BAR,MICW=16 BAR,MICW=9 MACW=15",
+                 MUIA_NList_DisplayHook   , &TR_LV_DspFuncHook,
+                 MUIA_NList_AutoVisible   , TRUE,
+                 MUIA_NList_Title         , TRUE,
+                 MUIA_NList_TitleSeparator, TRUE,
+                 MUIA_NList_DoubleClick   , TRUE,
+                 MUIA_NList_MinColSortable, 0,
+                 MUIA_Font, C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
+                 MUIA_ContextMenu         , NULL,
+                 MUIA_NList_Exports, MUIV_NList_Exports_Cols,
+                 MUIA_NList_Imports, MUIV_NList_Imports_Cols,
+                 MUIA_ObjectID, MAKE_ID('N','L','0','4'),
+              End,
+           End,
+        End;
+        gr_sel = VGroup, GroupFrameT(tr(MSG_TR_Control)),
+           Child, ColGroup(5),
+              Child, bt_all = MakeButton(tr(MSG_TR_All)),
+              Child, bt_loaddel = MakeButton(tr(MSG_TR_DownloadDelete)),
+              Child, bt_leave = MakeButton(tr(MSG_TR_Leave)),
+              Child, HSpace(0),
+              Child, data->GUI.BT_PAUSE = MakeButton(tr(MSG_TR_Pause)),
+              Child, bt_none = MakeButton(tr(MSG_TR_Clear)),
+              Child, bt_loadonly = MakeButton(tr(MSG_TR_DownloadOnly)),
+              Child, bt_delonly = MakeButton(tr(MSG_TR_DeleteOnly)),
+              Child, HSpace(0),
+              Child, data->GUI.BT_RESUME = MakeButton(tr(MSG_TR_Resume)),
+           End,
+           Child, ColGroup(2),
+              Child, data->GUI.BT_START = MakeButton(tr(MSG_TR_Start)),
+              Child, data->GUI.BT_QUIT = MakeButton(tr(MSG_TR_Abort)),
+           End,
+        End;
+        gr_win = VGroup,
+           Child, data->GUI.GR_LIST,
+           Child, data->GUI.GR_PAGE = PageGroup,
+              Child, gr_sel,
+              Child, gr_proc,
+           End,
+        End;
       }
-      DoMethod(data->GUI.BT_ABORT, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
-      MA_ChangeTransfer(FALSE);
+      else
+      {
+        gr_win = VGroup, MUIA_Frame, MUIV_Frame_None,
+           Child, gr_proc,
+        End;
+      }
+
+      data->GUI.WI = WindowObject,
+         MUIA_Window_ID, MAKE_ID('T','R','A','0'+TRmode),
+         MUIA_Window_CloseGadget, FALSE,
+         MUIA_Window_Activate, (TRmode == TR_IMPORT || TRmode == TR_EXPORT || TRmode == TR_GET_USER || TRmode == TR_SEND_USER),
+         MUIA_HelpNode, "TR_W",
+         WindowContents, gr_win,
+      End;
+
+      if(data->GUI.WI != NULL)
+      {
+        DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+        SetHelp(data->GUI.TX_STATUS,MSG_HELP_TR_TX_STATUS);
+        SetHelp(data->GUI.BT_ABORT ,MSG_HELP_TR_BT_ABORT);
+
+        if(fullwin == TRUE)
+        {
+          set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.LV_MAILS);
+          set(data->GUI.BT_RESUME, MUIA_Disabled, TRUE);
+
+          if(TRmode == TR_IMPORT)
+          {
+            set(data->GUI.BT_PAUSE, MUIA_Disabled, TRUE);
+            set(bt_delonly        , MUIA_Disabled, TRUE);
+            set(bt_loaddel        , MUIA_Disabled, TRUE);
+            DoMethod(data->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_ProcessIMPORTHook);
+            DoMethod(data->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_AbortIMPORTHook);
+          }
+          else
+          {
+            set(data->GUI.GR_PAGE, MUIA_Group_ActivePage, 1);
+            DoMethod(data->GUI.BT_RESUME,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook, FALSE);
+            DoMethod(data->GUI.BT_PAUSE ,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook, TRUE);
+            DoMethod(data->GUI.BT_PAUSE, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Pause));
+            DoMethod(data->GUI.LV_MAILS ,MUIM_Notify, MUIA_NList_DoubleClick,TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_GetMessageInfoHook);
+            DoMethod(bt_delonly,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_DELETE);
+            DoMethod(bt_loaddel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, (TRF_LOAD|TRF_DELETE));
+            DoMethod(data->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Start));
+            DoMethod(data->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
+          }
+          DoMethod(bt_loadonly,        MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_LOAD);
+          DoMethod(bt_leave,           MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_NONE);
+          DoMethod(bt_all,             MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
+          DoMethod(bt_none,            MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
+        }
+        DoMethod(data->GUI.BT_ABORT, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
+        MA_ChangeTransfer(FALSE);
+      }
+      else
+      {
+        DeleteMailList(data->downloadedMails);
+        free(data);
+        data = NULL;
+      }
     }
     else
     {
