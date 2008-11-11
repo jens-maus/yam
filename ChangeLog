@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-11-11  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: fixed a memory trashing bug which was introduced during the latest
+    changes to the AutoDST check and caused tons of hits on OS3 and MOS. Thanks
+    to Christoph Poelzl for the hint!
+
 2008-11-10  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c, YAM_TR.c: splitted the ApplyFiltersHook() function into two

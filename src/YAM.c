@@ -476,8 +476,7 @@ static BOOL ADSTnotify_start(void)
       #else
       if((ADSTdata.nRequest = AllocVecPooled(G->SharedMemPool, sizeof(*ADSTdata.nRequest))) != NULL)
       {
-        memset(&ADSTdata.nRequest, 0, sizeof(*ADSTdata.nRequest));
-
+        // no need to clear the allocation manually, because the pool is set to MEMF_CLEAR
         ADSTdata.nRequest->nr_Name  = (STRPTR)ADSTfile[ADSTdata.method];
         ADSTdata.nRequest->nr_Flags = NRF_SEND_SIGNAL;
         ADSTdata.nRequest->nr_stuff.nr_Signal.nr_Task      = FindTask(NULL);
