@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.37 (24.9.2008)
+## version $VER: YAM.catalog 6.38 (11.11.2008)
 ## language czech
 ## codeset 5
 ;
@@ -1550,10 +1550,6 @@ MSG_CO_OldQuotes
 Pùvodní text
 ; Old quotes
 ;
-MSG_CO_UseTextstyles
-Pou¾ít te_xtové styly
-; Use te_xt styles
-;
 MSG_CO_Header
 V _hlavièce zobrazit
 ; _Headers
@@ -2348,12 +2344,6 @@ MSG_HELP_CO_CH_WRAPHEAD
 Rozdìlí text dlouhé hlavièky do více øádkù.
 ; Split long headers\n\
 ; on multiple lines.
-;
-MSG_HELP_CO_CH_TEXTSTYLES
-Zapne zpracování párových znakù typu / * _ a #\n\
-jako formu øídicích kódù definujích textový styl.
-; Interpret / * _ and # as\n\
-; control codes for text styles.
 ;
 MSG_HELP_CO_CY_HEADER
 Definuje zpùsob zobrazení hlavièky zprávy v oknì\n\
@@ -4138,7 +4128,7 @@ Barevný
 ; Alternative color
 ;
 MSG_WR_Emoticons
-Indikace nálady
+Smajlíci
 ; Emoticons
 ;
 MSG_WR_Happy
@@ -7925,22 +7915,22 @@ Vybrat v¹e
 ; Select all
 ;
 MSG_RE_MDN_ACCEPT_LATER
-Poslat pozdìji
+Pos_lat pozdìji
 ; Accept and\n\
-; send later
+; send _later
 ;
 MSG_RE_MDN_ACCEPT_NOW
-Poslat ihned
+Poslat ih_ned
 ; Accept and\n\
-; send now
+; send _now
 ;
 MSG_RE_MDN_IGNORE
-Ignorovat
-; Ignore
+_Ignorovat
+; _Ignore
 ;
 MSG_RE_MDN_IGNORE_ALL
-Ignorovat v¹e
-; Ignore all
+Ignorov_at v¹e
+; Ignore _all
 ;
 MSG_CO_MDN_ACTION_IGNORE
 Poka¾dé ignorovat
@@ -9513,4 +9503,98 @@ MSG_ER_USER_DIR_MISSING
 Nelze najít domovský adresáø '%s' u¾ivatele '%s'!
 ; The home directory '%s' of user '%s' does not exist!
 ; PATH, USERNAME
+;
+MSG_CO_TEXTCOLORS_READ
+Zapnout obarvování tex_tu
+; Show te_xt colors
+;
+MSG_HELP_CO_CH_TEXTCOLORS_READ
+Umo¾ní obarvení vybraných pasá¾í v textu.
+; Use text colors to signal special\n\
+; text passages, (e.g. quotations, etc.)
+;
+MSG_CO_TEXTSTYLES_READ
+Zapnout te_xtové styly
+; Show te_xt styles
+;
+MSG_HELP_CO_CH_TEXTSTYLES_READ
+Zapne zpracování párových znaèek typu '/', '*', '_'\n\
+a '#', které definují styl a barvu textu.
+; Interpret '/', '*', '_' and '#' as\n\
+; control characters for text styles.
+;
+MSG_CO_TEXTCOLORS_WRITE
+Zapnout obarvování tex_tu
+; Show tex_t colors
+;
+MSG_HELP_CO_CH_TEXTCOLORS_WRITE
+Umo¾ní obarvení vybraných pasá¾í v textu.
+; Use text colors to signal special\n\
+; text passages, (e.g. quotations, etc.)
+;
+MSG_CO_TEXTSTYLES_WRITE
+Zapnout te_xtové styly
+; Show te_xt styles
+;
+MSG_HELP_CO_CH_TEXTSTYLES_WRITE
+Zapne zpracování párových znaèek typu '/', '*', '_'\n\
+a '#', které definují styl a barvu textu.
+; Interpret '/', '*', '_' and '#' as\n\
+; control characters for text styles.
+;
+MSG_CO_FONTSETTINGS
+Písma
+; Font settings
+;
+MSG_CO_FIXEDFONT_WRITE
+Pou¾ít _fixní písmo
+; Use _fixed font
+;
+MSG_RE_TEXTCOLORS
+Obarvený text?
+; Text colors?
+;
+MSG_WR_TEXTSTYLES
+Textové styly?
+; Text styles?
+;
+MSG_WR_TEXTCOLORS
+Obarvený text?
+; Text colors?
+;
+MSG_WR_FIXEDFONT
+Fixní písmo?
+; Fixed font?
+;
+MSG_CO_SPAM_OPTIMIZE_TRAININGDATA
+_Optimalizovat získaná data
+; _Optimize training data
+;
+MSG_HELP_BT_OPTIMIZE_TRAININGDATA
+Odstraní velmi málo pou¾ívaná klíèová slova z dat,\n\
+získaných pøi rozpoznávání spamu. Tato operace by\n\
+mìla zrychlit naèítání tìchto dat a také zpracování\n\
+spamu.
+; Removes very infrequent words from the training\n\
+; data to speed up loading of training data and\n\
+; increase processing speed of spam mails.
+;
+MSG_CO_SPAM_OPTIMIZE_TRAININGDATA_ASK
+Opravdu chcete optimalizovat data získaná bìhem\n\
+procesu rozpoznávání spamu?\n\
+\n\
+Po dokonèení této operace mù¾e dojít ke sní¾ení\n\
+úèinnosti filtru, ale na druhou stranu se zrychlí\n\
+zpracování i rozpoznávání spamu a zmen¹í nároky\n\
+na pamì».
+; Do you really want to optimize the spam filter's\n\
+; training data?\n\
+; \n\
+; The spam filter's efficency might decrease slightly\n\
+; afterwards, but the filter process will be faster and\n\
+; use less memory.
+;
+MSG_CO_SPAM_STATISTICS
+%ld (%ld slov)
+; %ld (%ld words)
 ;

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-11-11  Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2008-11-11  Thore Böckelmann <tboeckel@gmx.de>
 
   * InfoBar.c: moved some static char arrays into the instance data to avoid the
