@@ -47,21 +47,22 @@ struct Data
   Object *actualImage;
   BOOL stopButtonPressed;
   struct TimeVal last_gaugemove;
+  char infoText[SIZE_SMALL];
+  char folderInfo[SIZE_DEFAULT / 2];
 };
 */
 
 /* Private Functions */
 /// GetFolderInfo()
 // this function creates a folder string and returns it
-static char *GetFolderInfo(struct Folder *folder)
+static void GetFolderInfo(struct Data *data, struct Folder *folder)
 {
-  static char barText[SIZE_DEFAULT / 2];
   char *src;
 
   ENTER();
 
   // clear the bar text first
-  barText[0] = '\0';
+  data->folderInfo[0] = '\0';
 
   // Lets create the label of the AppIcon now
   for(src = C->InfoBarText; *src; src++)
@@ -83,11 +84,10 @@ static char *GetFolderInfo(struct Folder *folder)
     else
       snprintf(dst, sizeof(dst), "%c", *src);
 
-    strlcat(barText, dst, sizeof(barText));
+    strlcat(data->folderInfo, dst, sizeof(data->folderInfo));
   }
 
-  RETURN(barText);
-  return barText;
+  LEAVE();
 }
 
 ///
@@ -207,11 +207,12 @@ DECLARE(SetFolder) // struct Folder *newFolder
 
   if(folder != NULL)
   {
+    GetFolderInfo(data, folder);
+
     // set the name of the folder as the info text
     nnset(data->TX_FOLDER, MUIA_Text_Contents, folder->Name);
-
     // now we are going to set some status field at the right side of the folder name
-    nnset(data->TX_FINFO, MUIA_Text_Contents, GetFolderInfo(folder));
+    nnset(data->TX_FINFO, MUIA_Text_Contents, data->folderInfo);
 
     // prepare the object for a change
     if(DoMethod(obj, MUIM_Group_InitChange))
@@ -287,13 +288,11 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
 
   if(msg->gaugeText != NULL)
   {
-    static char infoText[256];
-
     nnset(data->GA_LABEL, MUIA_Text_Contents, msg->gaugeText);
 
-    snprintf(infoText, sizeof(infoText), "%%ld/%ld", msg->max);
+    snprintf(data->infoText, sizeof(data->infoText), "%%ld/%ld", msg->max);
 
-    xset(data->GA_INFO, MUIA_Gauge_InfoText,  infoText,
+    xset(data->GA_INFO, MUIA_Gauge_InfoText,  data->infoText,
                         MUIA_Gauge_Current,   msg->perc > 0 ? msg->perc : 0,
                         MUIA_Gauge_Max,       msg->max);
 
