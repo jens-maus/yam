@@ -5205,9 +5205,6 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
             // let us put out the X-Status: header field
             fprintf(fh, "X-Status: %s\n", MA_ToXStatusHeader(mail));
 
-            // initialize buf first
-            buf[0] = '\0';
-
             // now we iterate through every line of our mail and try to substitute
             // found "From " line with quoted ones
             while(G->TR->Abort == FALSE &&

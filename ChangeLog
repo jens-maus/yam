@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-11-22  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: fixed a NULL pointer access. This fixes bug #2311142.
+
 2008-11-11  Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.
