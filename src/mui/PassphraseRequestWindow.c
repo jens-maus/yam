@@ -124,10 +124,10 @@ OVERLOAD(OM_NEW)
     data->maxLength = maxLength;
     data->result = 0;
 
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_StringRequestWindow_FinishInput, 0);
-    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_StringRequestWindow_FinishInput, 1);
-    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_StringRequestWindow_FinishInput, 0);
-    DoMethod(stringObj, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, MUIM_StringRequestWindow_FinishInput, 1);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_PassphraseRequestWindow_FinishInput, 0);
+    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_PassphraseRequestWindow_FinishInput, 1);
+    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_PassphraseRequestWindow_FinishInput, 0);
+    DoMethod(stringObj, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, MUIM_PassphraseRequestWindow_FinishInput, 1);
 
     set(stringObj, MUIA_String_Contents, stringContents);
     set(rememberObj, MUIA_Selected, C->PGPPassInterval > 0);
