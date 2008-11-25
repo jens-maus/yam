@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-11-25  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COs.c: updates to the TCP/IP config page no longer trigger notifications
+    when setting the security mode (TLSv1, SSLv3). This effectively makes it
+    possible to use custom port numbers for the SMTP server instead of the
+    built-in default numbers (25 for TLSv1 and 465 for SSLv3). However, changing
+    the security settings will still set the default numbers. This fixes bug
+    #2340660.
+
 2008-11-22  Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/PassphraseRequestWindow.c: the wrong method names were used and hence

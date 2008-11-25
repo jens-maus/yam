@@ -2150,12 +2150,13 @@ void CO_SetConfig(void)
       setstring(gui->ST_SMTPHOST, CE->SMTP_Server);
       set(gui->ST_SMTPPORT, MUIA_String_Integer, CE->SMTP_Port);
       setstring(gui->ST_DOMAIN, CE->SMTP_Domain);
-      setmutex(gui->RA_SMTPSECURE, CE->SMTP_SecureMethod);
-      nnset(gui->RA_SMTPSECURE, MUIA_Disabled, G->TR_UseableTLS == FALSE);
-      setcheckmark(gui->CH_SMTP8BIT  ,CE->Allow8bit);
-      setcheckmark(gui->CH_USESMTPAUTH,CE->Use_SMTP_AUTH);
-      setstring(gui->ST_SMTPAUTHUSER,CE->SMTP_AUTH_User);
-      setstring(gui->ST_SMTPAUTHPASS,CE->SMTP_AUTH_Pass);
+      xset(gui->RA_SMTPSECURE, MUIA_NoNotify, TRUE,
+                               MUIA_Radio_Active, CE->SMTP_SecureMethod,
+                               MUIA_Disabled, G->TR_UseableTLS == FALSE);
+      setcheckmark(gui->CH_SMTP8BIT, CE->Allow8bit);
+      setcheckmark(gui->CH_USESMTPAUTH, CE->Use_SMTP_AUTH);
+      setstring(gui->ST_SMTPAUTHUSER, CE->SMTP_AUTH_User);
+      setstring(gui->ST_SMTPAUTHPASS, CE->SMTP_AUTH_Pass);
       setcycle(gui->CY_SMTPAUTHMETHOD, CE->SMTP_AUTH_Method);
       setcycle(gui->CY_EXCHANGEORDER, CE->MailExchangeOrder);
 
