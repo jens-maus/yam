@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-11-29  Jens Langner <Jens.Langner@light-speed.de>
+
+  * WriteWindow.c: fixed slight problem in WhichEncodingForFile() which caused
+    files with a CRLF to be plainly attached rather than encoded via B64 or QP.
+    This caused the attached file to be incorrect when saving it.
+
 2008-11-25  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs.c: updates to the TCP/IP config page no longer trigger notifications

@@ -195,7 +195,7 @@ static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
       }
       else if (c > 127)
         ++unsafechars; // count the number of unprintable >7bit characters
-      else if (c < 32 && c != '\t' && c != '\r')
+      else if (c < 32 && c != '\t')
         ++binarychars; // count the number of chars used in binaries.
 
       // if we successfully scanned 4000 bytes out of the file and found enough
