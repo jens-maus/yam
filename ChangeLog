@@ -7,6 +7,9 @@ $URL$
 
 2008-11-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_RE.c: fixed bug #2349683 where an additional LF was always inserted when
+    saving text-based attachments. This was caused by a wrong boundary check
+    mechanism.
   * WriteWindow.c: fixed slight problem in WhichEncodingForFile() which caused
     files with a CRLF to be plainly attached rather than encoded via B64 or QP.
     This caused the attached file to be incorrect when saving it.

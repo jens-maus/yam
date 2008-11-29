@@ -1149,6 +1149,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
     size_t buflen = 0;
     ssize_t curlen = 0;
     int boundaryLen = 0;
+    int numLines = 0;
     BOOL skipCodesets = FALSE;
 
     // if a part was specified we go and extract some information from
@@ -1169,11 +1170,14 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
 
     // we process the file line-by-line, analyze it if it is between the boundary
     // do an eventually existing charset translation and write it out again.
-    while((curlen = getline(&buf, &buflen, in)) > 0)
+    while((curlen = GetLine(&buf, &buflen, in)) >= 0)
     {
+      // count number of lines
+      numLines++;
+
       #if defined(DEBUG)
-      if(curlen > 1000) // 998+2 for string+CRLF
-        W(DBF_MIME, "RFC2822 violation: line length %ld in MIME part found to be > 1000", curlen);
+      if(curlen > 998) // CRLF has been stripped!
+        W(DBF_MIME, "RFC2822 violation: line length %ld in MIME part found to be > 998 @ line %ld", curlen, numLines);
       #endif
 
       // first we check if we reached a MIME boundary yet.
@@ -1181,7 +1185,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
          buf[0] == '-' && buf[1] == '-' && strncmp(buf+2, rp->CParBndr, boundaryLen) == 0)
       {
         if(buf[boundaryLen+2] == '-' && buf[boundaryLen+3] == '-' &&
-           (buf[boundaryLen+4] == '\n' || buf[boundaryLen+4] == '\r'))
+           buf[boundaryLen+4] == '\0')
         {
           D(DBF_MAIL, "found end boundary of MIME part");
 
@@ -1202,6 +1206,17 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
       // immediately or not
       if(out != NULL)
       {
+        // as we use GetLine() above (with no LF) we have to output a LF before we
+        // go on. This will in fact strip the last newline right where the mime boundary
+        // comes.
+        if(numLines > 1 && fputc('\n', out) == EOF)
+        {
+          E(DBF_MAIL, "error during '\n' write operation! buf: (%ld) '%s'", curlen, buf);
+
+          // no success, return false
+          break;
+        }
+
         // in case the user wants us to detect the correct cyrillic codeset
         // we do it now
         if(skipCodesets == FALSE &&
