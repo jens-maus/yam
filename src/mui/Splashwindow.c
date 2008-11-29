@@ -75,7 +75,7 @@ OVERLOAD(OM_NEW)
     MUIA_Window_LeftEdge,       MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,        MUIV_Window_TopEdge_Centered,
     MUIA_Window_ActiveObject,   NULL,
-    MUIA_Window_DefaultObject,   NULL,
+    MUIA_Window_DefaultObject,  NULL,
     WindowContents, windowGroup = VGroup,
       MUIA_Background, MUII_GroupBack,
       Child, imageGroup = HGroup,

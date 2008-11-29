@@ -1765,7 +1765,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
   ENTER();
 
-  D(DBF_FILTER, "About to apply SPAM and user defined filters...");
+  D(DBF_FILTER, "About to apply SPAM and user defined filters in mode %ld...", mode);
 
   if((folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder()) != NULL &&
      (C->SpamFilterEnabled == FALSE || FO_GetFolderByType(FT_SPAM, NULL) != NULL))
