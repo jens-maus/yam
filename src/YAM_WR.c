@@ -447,37 +447,51 @@ const char *EncodingName(enum Encoding enc)
 //  Outputs content type header including parameters
 void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
 {
-  char *p;
+  BOOL isPrintable = FALSE;
 
   ENTER();
 
+  // identify if the contenttype is printable or not
+  if(strnicmp(part->ContentType, "text", 4) == 0 ||
+     strnicmp(part->ContentType, "message", 7) == 0)
+  {
+    isPrintable = TRUE;
+  }
+
   // output the "Content-Type:
   fprintf(fh, "Content-Type: %s", part->ContentType);
-  if(part->EncType != ENC_7BIT && strncmp(part->ContentType, "text/", 5) == 0)
+  if(part->EncType != ENC_7BIT && isPrintable == TRUE)
     fprintf(fh, "; charset=%s", strippedCharsetName(part->charset));
 
   // output the "name" and Content-Disposition as well
   // as the "filename" parameter to the mail
-  if((p = part->Name) && *p)
+  if(part->Name != NULL && part->Name[0] != '\0')
   {
     fputc(';', fh);
-    // output and do rfc2231 encoding
-    HeaderFputs(fh, p, "name", 0);
-    fputs("\nContent-Disposition: attachment;", fh);
-    // output and do rfc2231 encoding, strip any path from the file name
-    HeaderFputs(fh, FilePart(part->Filename), "filename", 0);
+    HeaderFputs(fh, part->Name, "name", 0);
+
+    // output the Content-Disposition (RFC 2183)
+    if(isPrintable == TRUE)
+      fprintf(fh, "\nContent-Disposition: inline");
+    else
+      fprintf(fh, "\nContent-Disposition: attachment");
+
+    // add the filename parameter to the Content-Disposition
+    if(part->Filename != NULL && part->Filename[0] != '\0')
+    {
+      fputc(';', fh);
+      HeaderFputs(fh, FilePart(part->Filename), "filename", 0);
+    }
   }
   fputc('\n', fh);
 
-  // output the Content-Transfer-Encoding:
+  // output the Content-Transfer-Encoding
   if(part->EncType != ENC_7BIT)
-  {
     fprintf(fh, "Content-Transfer-Encoding: %s\n", EncodingName(part->EncType));
-  }
 
   // output the Content-Description if appropriate
-  if((p = part->Description) != NULL && p[0] != '\0')
-    EmitHeader(fh, "Content-Description", p);
+  if(part->Description != NULL && part->Description[0] != '\0')
+    EmitHeader(fh, "Content-Description", part->Description);
 
   LEAVE();
 }
