@@ -157,96 +157,96 @@ enum
 static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
 {
   enum Encoding encoding = ENC_B64;
-  FILE *fh;
 
   ENTER();
 
-  if((fh = fopen(fname, "r")) != NULL)
+  // we make sure that the following content-types get always encoded via base64
+  if(strnicmp(ctype, "image/", 6) != 0 &&
+     strnicmp(ctype, "audio/", 6) != 0 &&
+     strnicmp(ctype, "video/", 6) != 0)
   {
-    int c;
-    int linesize = 0;
-    int total = 0;
-    int unsafechars = 0;
-    int binarychars = 0;
-    int longlines = 0;
+    FILE *fh;
 
-    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-    // if there is no special stuff within the file we can break out
-    // telling the caller that there is no encoding needed.
-    encoding = ENC_7BIT;
-
-    // scan until end of file
-    while((c = fgetc(fh)) != EOF)
+    if((fh = fopen(fname, "r")) != NULL)
     {
-      linesize++; // count the characters to get linelength
-      total++;    // count the total number of scanned characters
+      int c;
+      int linesize = 0;
+      int total = 0;
+      int unsafechars = 0;
+      int binarychars = 0;
+      int longlines = 0;
 
-      // first we check if this is a linebreak
-      if(c == '\n')
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+      // if there is no special stuff within the file we can break out
+      // telling the caller that there is no encoding needed.
+      encoding = ENC_7BIT;
+
+      // scan until end of file
+      while((c = fgetc(fh)) != EOF)
       {
-        // (RFC 821) restricts 7bit lines to a maximum of 1000 characters
-        // so we have to use QP or base64 later on.
-        // but RFC 2822 says that lines shouldn`t be longer than 998 chars, so we take this one
-        if(linesize > 998)
-          ++longlines;
+        linesize++; // count the characters to get linelength
+        total++;    // count the total number of scanned characters
 
-        linesize = 0;
+        // first we check if this is a linebreak
+        if(c == '\n')
+        {
+          // (RFC 821) restricts 7bit lines to a maximum of 1000 characters
+          // so we have to use QP or base64 later on.
+          // but RFC 2822 says that lines shouldn`t be longer than 998 chars, so we take this one
+          if(linesize > 998)
+            ++longlines;
+
+          linesize = 0;
+        }
+        else if (c > 127)
+          ++unsafechars; // count the number of unprintable >7bit characters
+        else if (c < 32 && c != '\t')
+          ++binarychars; // count the number of chars used in binaries.
+
+        // if we successfully scanned 4000 bytes out of the file and found enough
+        // data we break out here. we have to at least find some longlines or
+        // we have to scan the whole part.
+        if(total > 4000 && longlines > 0)
+          break;
       }
-      else if (c > 127)
-        ++unsafechars; // count the number of unprintable >7bit characters
-      else if (c < 32 && c != '\t')
-        ++binarychars; // count the number of chars used in binaries.
 
-      // if we successfully scanned 4000 bytes out of the file and found enough
-      // data we break out here. we have to at least find some longlines or
-      // we have to scan the whole part.
-      if(total > 4000 && longlines > 0)
-        break;
-    }
+      fclose(fh);
 
-    fclose(fh);
+      D(DBF_MIME, "EncodingTest [%s] t:%ld l:%ld u:%ld b:%ld", fname, total, longlines, unsafechars, binarychars);
 
-    D(DBF_MIME, "EncodingTest [%s] t:%ld l:%ld u:%ld b:%ld", fname, total, longlines, unsafechars, binarychars);
-
-    // now that we analyzed the file we have to decide which encoding to take
-    if(longlines != 0 || unsafechars != 0 || binarychars != 0)
-    {
-      // we make sure that the following content-types get always encoded via base64
-      if(strnicmp(ctype, "image/", 6) == 0 ||
-         strnicmp(ctype, "audio/", 6) == 0 ||
-         strnicmp(ctype, "video/", 6) == 0)
+      // now that we analyzed the file we have to decide which encoding to take
+      if(longlines != 0 || unsafechars != 0 || binarychars != 0)
       {
-        encoding = ENC_B64;
-      }
-      else if(unsafechars == 0 && binarychars == 0)
-      {
-        // if we are here just because of long lines we have to use quoted-printable
-        // encoding or otherwise we have too long lines in our final mail
-        encoding = ENC_QP;
-      }
-      else if(binarychars == 0 && longlines == 0 && C->Allow8bit == TRUE)
-      {
-        // if there are no binary chars and no long lines in the file and if
-        // our SMTP server support 8bit character we can go and encode it via 8bit
-        encoding = ENC_8BIT;
-      }
-      else if(total / (unsafechars+binarychars+1) < 16 || strnicmp(ctype, "application/", 12) == 0)
-      {
-        // if we end up here we have a file with just unprintable characters
-        // and we have to decide if we take base64 or quoted-printable.
-        // base64 is more compact if there are many unprintable characters, as
-        // when sending a graphics file or such. see (RFC 1521)
-        encoding = ENC_B64;
-      }
-      else
-      {
-        encoding = ENC_QP;
+        if(unsafechars == 0 && binarychars == 0)
+        {
+          // if we are here just because of long lines we have to use quoted-printable
+          // encoding or otherwise we have too long lines in our final mail
+          encoding = ENC_QP;
+        }
+        else if(binarychars == 0 && longlines == 0 && C->Allow8bit == TRUE)
+        {
+          // if there are no binary chars and no long lines in the file and if
+          // our SMTP server support 8bit character we can go and encode it via 8bit
+          encoding = ENC_8BIT;
+        }
+        else if(total / (unsafechars+binarychars+1) < 16 || strnicmp(ctype, "application/", 12) == 0)
+        {
+          // if we end up here we have a file with just unprintable characters
+          // and we have to decide if we take base64 or quoted-printable.
+          // base64 is more compact if there are many unprintable characters, as
+          // when sending a graphics file or such. see (RFC 1521)
+          encoding = ENC_B64;
+        }
+        else
+        {
+          encoding = ENC_QP;
+        }
       }
     }
-
-    D(DBF_MIME, "identified suitable MIME encoding: %ld", encoding);
   }
+
+  D(DBF_MIME, "identified suitable MIME encoding %ld for file [%s]", encoding, fname);
 
   RETURN(encoding);
   return encoding;

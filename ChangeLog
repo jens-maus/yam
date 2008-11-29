@@ -7,6 +7,9 @@ $URL$
 
 2008-11-29  Jens Langner <Jens.Langner@light-speed.de>
 
+  * WriteWindow.c: implemented change request #2358975 by moving the content-type
+    comparison to the top of WhichEncodingForFile(). This should speed up the
+    encoding type scanning for image and video files mainly.
   * YAM_WR.c: improved compatibility to RFC 2183 by setting the content
     disposition to "inline" for printable mime parts.
   * YAM_RE.c: fixed bug #2349683 where an additional LF was always inserted when
