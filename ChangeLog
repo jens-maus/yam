@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-11-30  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: fixed bug #2363789 where the implementation of fwrite() in newlib
+    and clib2 slightly differed and thus caused me to overlook the case where
+    size could be equal zero. This caused the OS3 builds to fail.
+
 2008-11-29  Jens Langner <Jens.Langner@light-speed.de>
 
   * WriteWindow.c: implemented change request #2358975 by moving the content-type
