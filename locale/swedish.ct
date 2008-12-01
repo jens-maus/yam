@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.33 (10.10.08)
+## version $VER: YAM.ct 6.34 (01.12.08)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -7505,3 +7505,19 @@ MSG_WR_FIXEDFONT
 Fast typsnitt?
 ;#DEF Fixed font?
 ;#SET (2138//)
+MSG_CO_SPAM_OPTIMIZE_TRAININGDATA
+_Optimera träningsdata
+;#DEF _Optimize training data
+;#SET (2139//)
+MSG_HELP_BT_OPTIMIZE_TRAININGDATA
+Tar bort sällan använda ord från träningsdatan\nför att snabba upp laddningen och öka hastigheten\nvid genomgång av skräppost
+;#DEF Removes very infrequent words from the training\ndata to speed up loading of training data and\nincrease processing speed of spam mails.
+;#SET (2140//)
+MSG_CO_SPAM_OPTIMIZE_TRAININGDATA_ASK
+Vill du verkligen optimera skräppostfiltrets\nträningsdata?\n\nSkräppostfiltrets effektivitet kan minska lite efteråt,\nmen filtreringsprocessen blir snabbare och använder\nmindre minne.
+;#DEF Do you really want to optimize the spam filter's\ntraining data?\n\nThe spam filter's efficency might decrease slightly\nafterwards, but the filter process will be faster and\nuse less memory.
+;#SET (2141//)
+MSG_CO_SPAM_STATISTICS
+%ld (%ld ord)
+;#DEF %ld (%ld words)
+;#SET (2142//)

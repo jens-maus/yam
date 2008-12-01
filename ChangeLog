@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-12-01  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated according to changes.
+
 2008-11-30  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c: fixed bug #2363789 where the implementation of fwrite() in newlib
