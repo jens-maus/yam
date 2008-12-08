@@ -286,7 +286,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
     // behaviour is suggested in RFC 2045 on page 22.
     iptr = inbuffer;
 
-    while(read)
+    while(read != 0)
     {
       c = *iptr++;
       read--;
@@ -295,7 +295,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
       {
         // check if the next char is a newline so that
         // we can skip the current =
-        if(read && *iptr == '\n')
+        if(read != 0 && *iptr == '\n')
         {
           // skip the newline..
           iptr++;
@@ -353,6 +353,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
       {
         // we found some not allowed char, so lets ignore it
         // but warn the user
+        W(DBF_MIME, "nonallowed character '%lc' (%02lx) found", c, c);
         result = -4; // indicate a "unallowed control chars" warning
       }
       else
@@ -371,7 +372,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
         // in case the user wants us to detect the correct cyrillic codeset
         // we do it now
-        if(C->DetectCyrillic &&
+        if(C->DetectCyrillic == TRUE &&
            (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
         {
           struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
@@ -386,7 +387,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
         // if the caller supplied a source codeset, we have to
         // make sure we convert our outbuffer before writing it out
         // to the file into our local charset
-        if(srcCodeset)
+        if(srcCodeset != NULL)
         {
           ULONG strLen = 0;
 
@@ -445,7 +446,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
     // in case the user wants us to detect the correct cyrillic codeset
     // we do it now
-    if(C->DetectCyrillic &&
+    if(C->DetectCyrillic == TRUE &&
        (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
     {
       struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
@@ -460,7 +461,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
     // if the caller supplied a source codeset, we have to
     // make sure we convert our outbuffer before writing it out
     // to the file into our local charset
-    if(srcCodeset)
+    if(srcCodeset != NULL)
     {
       ULONG strLen = 0;
 
