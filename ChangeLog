@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-12-15  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: added some debug output to the date formatting code to track down
+    a possible bug in the MOS build.
+
 2008-12-08  Thore Böckelmann <tboeckel@gmx.de>
 
   * mime/qprintable.c: added a warning message for the debug build in case non-

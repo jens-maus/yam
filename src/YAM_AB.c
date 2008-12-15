@@ -383,12 +383,16 @@ char *AB_ExpandBD(long date)
   else
   {
     struct tm tm;
+    STRPTR dateFormat;
 
     tm.tm_mday = day;
     tm.tm_mon = month - 1;
     tm.tm_year = year - 1900;
 
-    strftime(datestr, sizeof(datestr), G->Locale != NULL ? G->Locale->loc_ShortDateFormat : (STRPTR)"%d.%m.%Y", &tm);
+    dateFormat = G->Locale != NULL ? G->Locale->loc_ShortDateFormat : (STRPTR)"%d.%m.%Y";
+    D(DBF_GUI, "formatting date %ld as %ld/%ld/%ld -> '%s'", date, day, month, year, dateFormat);
+    strftime(datestr, sizeof(datestr), dateFormat, &tm);
+    D(DBF_GUI, "formatted date string is '%s'", datestr);
   }
 
   RETURN(datestr);
