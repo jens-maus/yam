@@ -366,8 +366,6 @@ static void tokenizerTokenizeAttachment(struct Tokenizer *t,
   {
     if((tmpFileName = strdup(fileName)) != NULL)
     {
-      ToLowerCase(tmpContentType);
-      ToLowerCase(tmpFileName);
       tokenizerAddTokenForHeader(t, "attachment/filename", tmpFileName, FALSE);
       tokenizerAddTokenForHeader(t, "attachment/content-type", tmpContentType, FALSE);
 
@@ -393,12 +391,6 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
 
   contentType = (part->ContentType != NULL) ? strdup(part->ContentType) : NULL;
   charSet = (part->CParCSet != NULL) ? strdup(part->CParCSet) : NULL;
-
-  if(contentType != NULL)
-    ToLowerCase(contentType);
-
-  if(charSet != NULL)
-    ToLowerCase(charSet);
 
   for(node = part->headerList->mlh_Head; node->mln_Succ != NULL; node = node->mln_Succ)
   {
@@ -471,8 +463,10 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
           }
           break;
         }
+
         free(content);
       }
+
       free(name);
     }
   }
@@ -578,9 +572,9 @@ static void tokenizerTokenize(struct Tokenizer *t,
     if((next = strpbrk(word, BAYES_TOKEN_DELIMITERS)) != NULL)
       *next++ = '\0';
 
-    if(word[0] != '\0' && !isDecimalNumber(word))
+    if(word[0] != '\0' && isDecimalNumber(word) == FALSE)
     {
-      if(isASCII(word))
+      if(isASCII(word) == TRUE)
         tokenizerTokenizeASCIIWord(t, word);
       else
         tokenizerAdd(t, word, NULL, 1);

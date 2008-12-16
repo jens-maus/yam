@@ -7,6 +7,7 @@ $URL$
 
 2008-12-16  Thore Böckelmann <tboeckel@gmx.de>
 
+  * BayesFilter.c: removed some double ToLowerCase() calls.
   * BayesFilter.c: a constant string could be modified while examining a mail
     for spam content. On OS4 this will lead to instant crashes, because constant
     strings are read-only here.
