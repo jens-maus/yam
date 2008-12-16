@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-12-16  Thore Böckelmann <tboeckel@gmx.de>
+
+  * BayesFilter.c: a constant string could be modified while examining a mail
+    for spam content. On OS4 this will lead to instant crashes, because constant
+    strings are read-only here.
+
 2008-12-15  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c: added some debug output to the date formatting code to track down

@@ -325,7 +325,7 @@ static void tokenizerAddTokenForHeader(struct Tokenizer *t,
   if(value != NULL && strlen(value) > 0)
   {
     ToLowerCase(value);
-    if(!tokenizeValue)
+    if(tokenizeValue == FALSE)
       tokenizerAdd(t, value, prefix, 1);
     else
     {
@@ -338,7 +338,7 @@ static void tokenizerAddTokenForHeader(struct Tokenizer *t,
           *next++ = '\0';
 
         // add all non-empty and non-number words to the tokenizer
-        if(word[0] != '\0' && !isDecimalNumber(word) && isASCII(word))
+        if(word[0] != '\0' && isDecimalNumber(word) == FALSE && isASCII(word) == TRUE)
           tokenizerAdd(t, word, prefix, 1);
 
         word = next;
@@ -362,9 +362,9 @@ static void tokenizerTokenizeAttachment(struct Tokenizer *t,
 
   ENTER();
 
-  if((tmpContentType = strdup(contentType)))
+  if((tmpContentType = strdup(contentType)) != NULL)
   {
-    if((tmpFileName = strdup(fileName)))
+    if((tmpFileName = strdup(fileName)) != NULL)
     {
       ToLowerCase(tmpContentType);
       ToLowerCase(tmpFileName);
@@ -434,7 +434,12 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
             if(strcmp(name, "received") == 0 &&
                strstr(content, "may be forged") != NULL)
             {
-              tokenizerAddTokenForHeader(t, name, (STRPTR)"may be forged", FALSE);
+              char tmpForged[16];
+
+              // copy the constant string to a variable which may be modified in tokenizerAddTokenForHeader(),
+              // otherwise we risk crashes on OS4 because we would modify a read-only string
+              strlcpy(tmpForged, "may be forged", sizeof(tmpForged));
+              tokenizerAddTokenForHeader(t, name, tmpForged, FALSE);
             }
 
             // leave out reply-to
@@ -545,7 +550,7 @@ static void tokenizerTokenizeASCIIWord(struct Tokenizer *t,
 
     // there is value in generating a token indicating the number of characters we are skipping
     // we'll round to the nearest of 10
-    if(skipped)
+    if(skipped == TRUE)
     {
       TEXT buffer[40];
 
