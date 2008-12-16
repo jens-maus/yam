@@ -1372,7 +1372,7 @@ BOOL DeleteZombieFiles(BOOL force)
       D(DBF_UTIL, "trying to delete zombie file '%s'", zombie->fileName);
 
       // try again to delete the file, if it still exists
-      if(force == FALSE && FileExists(zombie->fileName) && DeleteFile(zombie->fileName) == 0)
+      if(force == FALSE && FileExists(zombie->fileName) == TRUE && DeleteFile(zombie->fileName) == 0)
       {
         // deleting failed again, but we are allowed to retry
         listCleared = FALSE;
@@ -1401,7 +1401,7 @@ struct TempFile *OpenTempFile(const char *mode)
 
   ENTER();
 
-  if((tf = calloc(1, sizeof(struct TempFile))))
+  if((tf = calloc(1, sizeof(struct TempFile))) != NULL)
   {
     // the tempfile MUST be SIZE_MFILE long because we
     // also use this tempfile routine for showing temporary mails which
@@ -1440,12 +1440,12 @@ void CloseTempFile(struct TempFile *tf)
 {
   ENTER();
 
-  if(tf)
+  if(tf != NULL)
   {
-    if(tf->FP)
+    if(tf->FP != NULL)
       fclose(tf->FP);
 
-    D(DBF_UTIL, "DeleteTempFile: %s\n", tf->Filename);
+    D(DBF_UTIL, "DeleteTempFile: %s", tf->Filename);
     if(DeleteFile(tf->Filename) == 0)
       AddZombieFile(tf->Filename);
 
