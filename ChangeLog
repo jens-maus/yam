@@ -7,6 +7,9 @@ $URL$
 
 2008-12-16  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_AB.c: the date scanning function now also accepts %y as 4 digit year
+    placeholder, although %Y is the correct one. But MorphOS doesn't seem to
+    know this fact... This fixes bug #2431196.
   * BayesFilter.c: removed some double ToLowerCase() calls.
   * BayesFilter.c: a constant string could be modified while examining a mail
     for spam content. On OS4 this will lead to instant crashes, because constant

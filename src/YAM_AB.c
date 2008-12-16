@@ -222,7 +222,11 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
           }
           break;
 
+          // MorphOS incorrectly uses %y (2 digit year without century) instead of
+          // %Y (4 digit year including century) for the year placeholder, hence we
+          // must accept this one, too.
           case 'Y':
+          case 'y':
           {
             flags |= FLG_YEAR;
             state = SDS_YEAR;
