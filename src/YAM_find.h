@@ -160,7 +160,7 @@ void FreeRuleSearchData(struct RuleNode *rule);
 int AllocFilterSearch(enum ApplyFilterMode mode);
 void FreeFilterSearch(void);
 BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail);
-void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter);
+BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter);
 void FreeFilterRuleList(struct FilterNode *filter);
 struct FilterNode *CreateNewFilter(void);
 void FreeFilterNode(struct FilterNode *filter);

@@ -69,7 +69,7 @@
 
 /* local protos */
 static struct FI_ClassData *FI_New(void);
-static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch);
+static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch);
 static void FreeSearchPatternList(struct Search *search);
 
 /***************************************************************************
@@ -1860,8 +1860,10 @@ MakeHook(ApplyFiltersHook, ApplyFiltersFunc);
 ///
 /// CopyFilterData
 // copy all data of a filter node (deep copy)
-void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
+BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
 {
+  BOOL success = TRUE;
+
   ENTER();
 
   SHOWSTRING(DBF_FILTER, srcFilter->name);
@@ -1889,7 +1891,20 @@ void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
         if(rule->search != NULL)
         {
           if((newRule->search = calloc(1, sizeof(struct Search))) != NULL)
-            CopySearchData(newRule->search, rule->search);
+          {
+            if(CopySearchData(newRule->search, rule->search) == FALSE)
+            {
+              success = FALSE;
+              // bail out, no need to copy further data
+              break;
+            }
+          }
+          else
+          {
+            success = FALSE;
+            // bail out, no need to copy further data
+            break;
+          }
         }
         else
           newRule->search = NULL;
@@ -1897,16 +1912,24 @@ void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
         // add the rule to the ruleList of our desitionation filter
         AddTail((struct List *)&dstFilter->ruleList, (struct Node *)newRule);
       }
+      else
+      {
+        success = FALSE;
+        // bail out, no need to copy further data
+        break;
+      }
     }
   }
 
-  LEAVE();
+  RETURN(success);
+  return success;
 }
 ///
 /// CopySearchData
 // copy all data of a search structure (deep copy)
-static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
+static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
 {
+  BOOL success = TRUE;
   struct MinNode *curNode;
 
   ENTER();
@@ -1929,9 +1952,16 @@ static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
 
     if((dstNode = memdup(srcNode, sizeof(*srcNode))) != NULL)
       AddTail((struct List *)&dstSearch->patternList, (struct Node *)dstNode);
+    else
+    {
+      success = FALSE;
+      // bail out, no need to copy further data
+      break;
+    }
   }
 
-  LEAVE();
+  RETURN(success);
+  return success;
 }
 
 ///

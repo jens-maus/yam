@@ -1063,10 +1063,11 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 ///
 /// CopyConfigData
 //  Copies a configuration structure (deep copy)
-static void CopyConfigData(struct Config *dco, const struct Config *sco)
+static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 {
   int i;
   struct MinNode *curNode;
+  BOOL success = TRUE;
 
   ENTER();
   SHOWVALUE(DBF_CONFIG, sco);
@@ -1079,7 +1080,14 @@ static void CopyConfigData(struct Config *dco, const struct Config *sco)
   for(i = 0; i < MAXP3; i++)
   {
     if(sco->P3[i] != NULL)
-      dco->P3[i] = memdup(sco->P3[i], sizeof(struct POP3));
+    {
+      if((dco->P3[i] = memdup(sco->P3[i], sizeof(struct POP3))) == NULL)
+      {
+        success = FALSE;
+        // don't bail out here, because we did a raw copy of the source config
+        // before and didn't adjust all pointers yet
+      }
+    }
     else
       dco->P3[i] = NULL;
   }
@@ -1087,35 +1095,60 @@ static void CopyConfigData(struct Config *dco, const struct Config *sco)
   // for copying the mimetype list we have to do a deep copy of the list
   NewList((struct List *)&dco->mimeTypeList);
 
-  for(curNode = sco->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  if(success == TRUE)
   {
-    struct MimeTypeNode *srcNode = (struct MimeTypeNode *)curNode;
-    struct MimeTypeNode *dstNode;
+    for(curNode = sco->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct MimeTypeNode *srcNode = (struct MimeTypeNode *)curNode;
+      struct MimeTypeNode *dstNode;
 
-    if((dstNode = memdup(srcNode, sizeof(struct MimeTypeNode))) != NULL)
-      AddTail((struct List *)&dco->mimeTypeList, (struct Node *)dstNode);
+      if((dstNode = memdup(srcNode, sizeof(struct MimeTypeNode))) != NULL)
+        AddTail((struct List *)&dco->mimeTypeList, (struct Node *)dstNode);
+      else
+      {
+        success = FALSE;
+        // bail out, no need to copy further data
+        break;
+      }
+    }
   }
 
   // for copying the filters we do have to do another deep copy
   NewList((struct List *)&dco->filterList);
 
-  for(curNode = sco->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  if(success == TRUE)
   {
-    struct FilterNode *srcFilter = (struct FilterNode *)curNode;
-    struct FilterNode *dstFilter;
-
-    if((dstFilter = malloc(sizeof(struct FilterNode))) != NULL)
+    for(curNode = sco->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
-      CopyFilterData(dstFilter, srcFilter);
+      struct FilterNode *srcFilter = (struct FilterNode *)curNode;
+      struct FilterNode *dstFilter;
 
-      AddTail((struct List *)&dco->filterList, (struct Node *)dstFilter);
+      if((dstFilter = malloc(sizeof(struct FilterNode))) != NULL)
+      {
+        if(CopyFilterData(dstFilter, srcFilter) == FALSE)
+        {
+          success = FALSE;
+          // bail out, no need to copy further data
+          break;
+        }
+
+        AddTail((struct List *)&dco->filterList, (struct Node *)dstFilter);
+      }
+      else
+      {
+        success = FALSE;
+        // bail out, no need to copy further data
+        break;
+      }
     }
   }
 
   // remember that this configuration is not yet saved
   dco->ConfigIsSaved = FALSE;
 
-  LEAVE();
+  // return if everything could be duplicated successfully
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -2151,23 +2184,24 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
 
   // check if we should copy our edited configuration
   // to the real one or if we should just free/drop it
-  if(*arg >= 1)
+  if(arg != NULL && arg[0] >= 1)
   {
     // get the current state of the configuration
-    CO_GetConfig(*arg == 2);
+    CO_GetConfig(arg[0] == 2);
 
     // before we copy over the configuration, we
     // check if it was changed at all
     if(CompareConfigData(C, CE) == FALSE)
     {
+      struct Config *tmpC;
+
       D(DBF_CONFIG, "configuration found to be different");
 
-      // clear all content of our old config
-      CO_ClearConfig(C);
-
-      // the configuration changed so lets copy
-      // it over from CE to C (the real one)
-      CopyConfigData(C, CE);
+      // just swap the pointers instead of clearing and copying the whole stuff
+      tmpC = C;
+      C = CE;
+      CE = tmpC;
+      // the up to now "current" configuration will be freed below
     }
     else
       D(DBF_CONFIG, "config wasn't altered, skipped copy operations.");
@@ -2177,7 +2211,7 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
 
     // we save the configuration if the user
     // has pressed on 'Save' only.
-    if(*arg == 2)
+    if(arg[0] == 2)
     {
       // save the signature if it has been modified
       if(xget(G->CO->GUI.TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE)
@@ -2197,7 +2231,7 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
 
   LEAVE();
 }
-MakeStaticHook(CO_CloseHook,CO_CloseFunc);
+MakeStaticHook(CO_CloseHook, CO_CloseFunc);
 
 ///
 /// CO_OpenFunc
@@ -2210,28 +2244,40 @@ HOOKPROTONHNONP(CO_OpenFunc, void)
   // open
   if(G->CO == NULL)
   {
-    if((G->CO = CO_New()) != NULL)
+    // first duplicate the configuration
+    if((CE = malloc(sizeof(struct Config))) != NULL)
     {
-      if((CE = malloc(sizeof(struct Config))) != NULL)
+      if(CopyConfigData(CE, C) == TRUE)
       {
-        CopyConfigData(CE, C);
-        CO_SetConfig();
-        CO_NewPrefsFile(G->CO_PrefsFile);
+        // then create the config window
+        if((G->CO = CO_New()) != NULL)
+        {
+          CO_SetConfig();
+          CO_NewPrefsFile(G->CO_PrefsFile);
+        }
+      }
+
+      if(G->CO == NULL)
+      {
+        // free the duplicated configuration on failure
+        CO_ClearConfig(CE);
+        free(CE);
+        CE = NULL;
       }
     }
   }
 
   // only try to open the window if everything above succeeded
-  if(G->CO != NULL)
+  if(G->CO != NULL && CE != NULL)
   {
     // make sure the configuration window is open
     if(SafeOpenWindow(G->CO->GUI.WI) == FALSE)
-    {
-      int zero = 0;
-
-      // the close hook must be called with a *pointer* to the argument, not with the argument itself!
-      CallHookPkt(&CO_CloseHook, 0, &zero);
-    }
+      CallHookPkt(&CO_CloseHook, 0, NULL);
+  }
+  else
+  {
+    // inform the user by chiming the bells about the failure
+    DisplayBeep(NULL);
   }
 
   BusyEnd();
