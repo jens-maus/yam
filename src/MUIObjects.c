@@ -583,6 +583,8 @@ static BOOL isChildOfList(struct List *list, Object *child)
 {
   BOOL isChild = FALSE;
 
+  ENTER();
+
   if(list != NULL)
   {
     Object *curchild;

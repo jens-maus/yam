@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-12-18  Thore Böckelmann <tboeckel@gmx.de>
+
+  * MUIObjects.c: added missing ENTER() call.
+
 2008-12-17  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c, YAM_FI.c: if the configuration window could be created but the
