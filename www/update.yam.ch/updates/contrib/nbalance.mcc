@@ -1,0 +1,20 @@
+NAME: NBalance.mcc
+VERSION: 15.2
+BUILDDATE: 24.06.2008
+URL: * http://downloads.sourceforge.net/nlist-classes/MCC_NList-0.102.lha
+CHANGES:
+---------------------------------------------------------------------------
+                          NBalance.mcc - 15.2
+---------------------------------------------------------------------------
+
+NBalance.mcc is a MUI custom class used as a replacement for the builtin
+Balance class which allows to dynamically resize groups. NBalance is
+based on the internal Balance class of MUI, but enhances it with some
+important features such as custom mouse pointers.
+
+The version that is advertised here is an important bugfixing update and
+every YAM user is adviced to use this new version instead of the original
+version supplied with the original YAM distribution.
+
+For more information about the detail of changes in this version please
+consult the ChangeLog file within the lha archive of NBalance.mcc.

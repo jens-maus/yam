@@ -1,0 +1,19 @@
+NAME: NFloattext.mcc
+VERSION: 19.57
+BUILDDATE: 24.06.2008
+URL: * http://downloads.sourceforge.net/nlist-classes/MCC_NList-0.102.lha
+CHANGES:
+---------------------------------------------------------------------------
+                         NFloattext.mcc - 19.57
+---------------------------------------------------------------------------
+
+NFloattext.mcc is a MUI custom class for managing multi-line text similar
+to the builtin floattext class in MUI. It however has some advanced
+features which make it a complete replacement of the builtin class.
+
+The version that is advertised here is an important bugfixing update and
+every YAM user is adviced to use this new version instead of the original
+version supplied with the original YAM distribution.
+
+For more information about the detail of changes in this version please
+consult the ChangeLog file within the lha archive of NFloattext.mcc.

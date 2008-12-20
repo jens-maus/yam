@@ -1,0 +1,20 @@
+NAME: codesets.library
+VERSION: 6.7
+BUILDDATE: 20.12.2008
+URL: * http://downloads.sourceforge.net/codesetslib/codesets-6.7.lha
+CHANGES:
+---------------------------------------------------------------------------
+                          codesets.library - 6.7
+---------------------------------------------------------------------------
+
+codesets.library is a generic codesets conversion library commonly used
+for converting characters from one codeset to another. It also provides
+UTF8 support to YAM and allows to read UTF8 mails by converting the mail
+text into the local charset configured.
+
+The version that is advertised here is an important bugfixing update and
+every YAM user is adviced to use this new version instead of the original
+version supplied with the original YAM distribution.
+
+For more information about the detail of changes in this version please
+consult the ChangeLog file within the lha archive of codesets.library.

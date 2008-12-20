@@ -1,10 +1,10 @@
 NAME: TheBar.mcc
-VERSION: 26.1
-BUILDDATE: 02.03.2008
-URL: * http://downloads.sourceforge.net/thebar/MCC_TheBar-26.1.lha
+VERSION: 26.2
+BUILDDATE: 19.06.2008
+URL: * http://downloads.sourceforge.net/thebar/MCC_TheBar-26.2.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                          TheBar.mcc - 26.1
+                          TheBar.mcc - 26.2
 ---------------------------------------------------------------------------
 
 TheBar.mcc is the MUI custom class used for managing the toolbars in YAM.

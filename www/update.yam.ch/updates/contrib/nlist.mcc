@@ -1,0 +1,19 @@
+NAME: NList.mcc
+VERSION: 20.121
+BUILDDATE: 24.06.2008
+URL: * http://downloads.sourceforge.net/nlist-classes/MCC_NList-0.102.lha
+CHANGES:
+---------------------------------------------------------------------------
+                           NList.mcc - 20.121
+---------------------------------------------------------------------------
+
+NList.mcc is a MUI custom class used for managing large amount of data in
+a list-type format. Together with other classes (e.g. NListviews.mcc) it
+complements to a complete replacement for the builtin List classes of MUI.
+
+The version that is advertised here is an important bugfixing update and
+every YAM user is adviced to use this new version instead of the original
+version supplied with the original YAM distribution.
+
+For more information about the detail of changes in this version please
+consult the ChangeLog file within the lha archive of NList.mcc.
