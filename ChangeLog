@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-12-21  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: bumped the required version of codesets.library to 6.7, because this
+    version fixes a bug which caused serious memory trashing.
+
 2008-12-18  Thore Böckelmann <tboeckel@gmx.de>
 
   * MUIObjects.c: added missing ENTER() call.

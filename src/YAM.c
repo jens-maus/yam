@@ -1850,7 +1850,7 @@ static void InitBeforeLogin(BOOL hidden)
   INITLIB("openurl.library",        1, 0, &OpenURLBase,   "main", &IOpenURL,   FALSE, NULL);
 
   // try to open the mandatory codesets.library
-  INITLIB("codesets.library",       6, 6, &CodesetsBase,  "main", &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
+  INITLIB("codesets.library",       6, 7, &CodesetsBase,  "main", &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
 
   // try to open expat.library for our XML import stuff
   INITLIB("expat.library", XML_MAJOR_VERSION, 0, &ExpatBase, "main", &IExpat, FALSE, NULL);
