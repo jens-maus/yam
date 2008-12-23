@@ -7,6 +7,9 @@ $URL$
 
 2008-12-23  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: the current selection of mails in the main window will now be
+    cleared before any new mails are selected when clicking on "Select matched"
+    button in the search window. This fixes bug #2220386.
   * YAM.c: changed the required version of codesets.library back to 6.6, because
     the MOS build of this library is completely broken by the latest changes and
     a fixed version will not be released before 2009.

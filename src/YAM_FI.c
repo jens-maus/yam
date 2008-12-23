@@ -1240,6 +1240,8 @@ HOOKPROTONHNONP(FI_SelectFunc, void)
   {
     int i;
 
+    // unselect the currently selected mails first
+    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, MUIV_NList_Active_Off);
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
 
     for(i=0; ;i++)
