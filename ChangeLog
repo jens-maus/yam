@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-12-23  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: changed the required version of codesets.library back to 6.6, because
+    the MOS build of this library is completely broken by the latest changes and
+    a fixed version will not be released before 2009.
+
 2008-12-21  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: bumped the required version of codesets.library to 6.7, because this
