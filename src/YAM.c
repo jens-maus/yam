@@ -1894,7 +1894,7 @@ static void InitBeforeLogin(BOOL hidden)
   CheckMCC(MUIC_NBalance,   15,  2,  TRUE, "http://www.sf.net/projects/nlist-classes/");
 
   // Lets check for the correct TextEditor.mcc version
-  CheckMCC(MUIC_TextEditor, 15, 27, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+  CheckMCC(MUIC_TextEditor, 15, 28, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
   // initialize the thread system of YAM
   if(InitThreads() == FALSE)

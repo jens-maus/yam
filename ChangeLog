@@ -7,6 +7,8 @@ $URL$
 
 2009-01-04  Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: bumped minimum required version of TextEditor.mcc to 15.28 because
+    this new release fixes some important bugs.
   * misc: we welcome the new year by bumping all copyright notices to 2009.
   * YAM.c: bumped the required version of codesets.library to 6.8, because this
     version fixes a bug which caused serious memory trashing and which should
