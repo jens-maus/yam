@@ -1,10 +1,10 @@
 NAME: TextEditor.mcc
-VERSION: 15.27
-BUILDDATE: 22.06.2008
-URL: * http://downloads.sourceforge.net/texteditor-mcc/MCC_TextEditor-15.27.lha
+VERSION: 15.28
+BUILDDATE: 04.01.2009
+URL: * http://downloads.sourceforge.net/texteditor-mcc/MCC_TextEditor-15.28.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                        TextEditor.mcc - 15.27
+                        TextEditor.mcc - 15.28
 ---------------------------------------------------------------------------
 
 TextEditor.mcc is the MUI custom class used for creating/editing and
