@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-01-04  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: bumped the required version of codesets.library to 6.8, because this
+    version fixes a bug which caused serious memory trashing and which should
+    also finally work on MorphOS.
+
 2008-12-23  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: the current selection of mails in the main window will now be
