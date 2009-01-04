@@ -1270,7 +1270,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
               continue;
             }
             else
-              W(DBF_MAIL, "couldn't convert buf with CodesetsConvertStr()");
+              W(DBF_MAIL, "couldn't convert buf with CodesetsConvertStr(), %lx %ld %ld", str, dstlen, curlen);
           }
 
           // now write back exactly the same amount of bytes we read previously

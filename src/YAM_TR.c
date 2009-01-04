@@ -2102,7 +2102,7 @@ static int TR_Send(const char *ptr, int len, int flags)
   {
     // perform some debug output on the console if requested
     // by the user
-    if(G->TR_Debug ==TRUE && ptr != NULL)
+    if(G->TR_Debug == TRUE && ptr != NULL)
       printf("CLIENT[%04d]: %s", len, ptr);
 
     // we call the WriteBuffered() function to write this characters
