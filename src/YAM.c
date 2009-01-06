@@ -486,17 +486,20 @@ static BOOL ADSTnotify_start(void)
 
       if(ADSTdata.nRequest != NULL)
         result = (StartNotify(ADSTdata.nRequest) != 0);
+
+      #if defined(DEBUG)
+      if(result == TRUE)
+        D(DBF_STARTUP, "initialised ADST notify request on file '%s'", ADSTfile[ADSTdata.method]);
+      else
+        W(DBF_STARTUP, "couldn't initialise ADST notify for file '%s'", ADSTfile[ADSTdata.method]);
+      #endif
     }
     else
+    {
+      W(DBF_STARTUP, "couldn't allocate a signal for ADST notification");
       memset(&ADSTdata, 0, sizeof(struct ADST_Data));
+    }
   }
-
-  #if defined(DEBUG)
-  if(result == TRUE)
-    D(DBF_STARTUP, "initialised ADST notify request on file '%s'", ADSTfile[ADSTdata.method]);
-  else
-    W(DBF_STARTUP, "couldn't initialise ADST notify for file '%s'", ADSTfile[ADSTdata.method]);
-  #endif
 
   RETURN(result);
   return result;

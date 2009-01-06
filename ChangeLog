@@ -7,6 +7,8 @@ $URL$
 
 2008-01-06  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: moved the debug messages for a failed ADST notification to a better
+    place to avoid false messages.
   * YAM_AB.c: changed the class of an debug output to match a similar one.
 
 2009-01-04  Jens Langner <Jens.Langner@light-speed.de>
