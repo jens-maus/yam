@@ -394,9 +394,9 @@ char *AB_ExpandBD(long date)
     tm.tm_year = year - 1900;
 
     dateFormat = G->Locale != NULL ? G->Locale->loc_ShortDateFormat : (STRPTR)"%d.%m.%Y";
-    D(DBF_GUI, "formatting date %ld as %ld/%ld/%ld -> '%s'", date, day, month, year, dateFormat);
+    D(DBF_UTIL, "formatting date %ld as %ld/%ld/%ld -> '%s'", date, day, month, year, dateFormat);
     strftime(datestr, sizeof(datestr), dateFormat, &tm);
-    D(DBF_GUI, "formatted date string is '%s'", datestr);
+    D(DBF_UTIL, "formatted date string is '%s'", datestr);
   }
 
   RETURN(datestr);

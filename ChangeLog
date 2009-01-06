@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-06  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: changed the class of an debug output to match a similar one.
+
 2009-01-04  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: bumped minimum required version of TextEditor.mcc to 15.28 because
