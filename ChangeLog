@@ -7,6 +7,9 @@ $URL$
 
 2008-01-07  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_EA.c, locale/YAM.cd: the error message in case of a wrong formatted
+    date of birth now includes the formatting being used as well as a short
+    description of the placeholders.
   * YAM_AB.c: reworked the date scanning function to correctly distinguish
     between 2 digit and 4 digit year numbers. Too large numbers for the %y
     placeholder will now be rejected as invalid. Only %Y (upper case!!) is

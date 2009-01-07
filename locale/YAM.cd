@@ -3415,10 +3415,6 @@ You must specify an alias to identify this entry!
 MSG_ER_ErrorNoAddress (1103//)
 You must specify an address for this entry!
 ;
-MSG_ER_ErrorDOBformat (1104//)
-Date of birth uses a wrong format. The correct format is \
-DD-MMM-YYYY (month names in English).
-;
 MSG_ER_ErrorDateFormat (1107//)
 Invalid date/time format.\n\
 \n\
@@ -6925,3 +6921,10 @@ use less memory.
 MSG_CO_SPAM_STATISTICS (2142//)
 %ld (%ld words)
 ;
+MSG_ER_WRONG_DOB_FORMAT (2143//)
+Date of birth uses a wrong format. The correct format is '%s'.\n\
+%%d - day\n\
+%%m - month\n\
+%%y - year (2 digits)\n\
+%%Y - year (4 digits)
+; DOBFORMAT

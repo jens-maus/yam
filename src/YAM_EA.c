@@ -437,7 +437,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
     str = (char *)xget(gui->ST_BIRTHDAY, MUIA_String_Contents);
     if(str[0] != '\0' && (bdate = AB_CompressBD(str)) == 0)
     {
-      ER_NewError(tr(MSG_ER_ErrorDOBformat));
+      ER_NewError(tr(MSG_ER_WRONG_DOB_FORMAT), G->Locale != NULL ? G->Locale->loc_ShortDateFormat : (STRPTR)"%d.%m.%Y");
       LEAVE();
       return;
     }

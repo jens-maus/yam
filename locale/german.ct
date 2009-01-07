@@ -4628,11 +4628,6 @@ MSG_ER_ErrorNoAddress
 Sie müssen für diesen Eintrag eine Adresse angeben!
 ; You must specify an address for this entry!
 ;
-MSG_ER_ErrorDOBformat
-Das Geburtsdatum ist im falschen Format. Das korrekte Format ist TT-MMM-JJJJ (englische Monatsnamen).
-; Date of birth is in wrong format. The correct format is \
-; DD-MMM-YYYY (month names in English).
-;
 MSG_ER_ErrorDateFormat
 Ungültiges Datum/Zeit-Format.\n\
 \n\
@@ -8531,4 +8526,11 @@ schneller und braucht weniger Speicher.
 ;
 MSG_CO_SPAM_STATISTICS
 %ld (%ld Wörter)
+;
+MSG_ER_WRONG_DOB_FORMAT
+Das Geburtstagsdatum ist im falschen Format. Das korrekte Format ist '%s'.\n\
+%%d - Tag\n\
+%%m - Monat\n\
+%%y - Jahr (2-stellig)\n\
+%%Y - Jahr (4-stellig)
 ;
