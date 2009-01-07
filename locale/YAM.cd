@@ -6926,5 +6926,6 @@ Date of birth uses a wrong format. The correct format is '%s'.\n\
 %%d - day\n\
 %%m - month\n\
 %%y - year (2 digits)\n\
-%%Y - year (4 digits)
+%%Y - year (4 digits)\n\
+The year number must be greater or equal 1900!
 ; DOBFORMAT

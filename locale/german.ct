@@ -1,5 +1,5 @@
 ## chunk AUTH Jens Langner, Thore Böckelmann
-## version $VER: YAM.catalog 6.0 (6.10.2008)
+## version $VER: YAM.catalog 6.0 (7.1.2009)
 ## language deutsch
 ## codeset 0
 ;
@@ -8532,5 +8532,6 @@ Das Geburtstagsdatum ist im falschen Format. Das korrekte Format ist '%s'.\n\
 %%d - Tag\n\
 %%m - Monat\n\
 %%y - Jahr (2-stellig)\n\
-%%Y - Jahr (4-stellig)
+%%Y - Jahr (4-stellig)\n\
+Die Jahreszahl muss größer oder gleich 1900 sein!
 ;
