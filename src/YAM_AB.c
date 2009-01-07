@@ -161,6 +161,7 @@ enum ScanDateState
 #define FLG_WDAY        (1<<6)
 #define FLG_YDAY        (1<<7)
 #define FLG_ISDST       (1<<8)
+#define FLG_4DIGIT_YEAR (1<<9)
 
 static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
 {
@@ -208,7 +209,7 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
         {
           case 'd':
           {
-            flags |= FLG_MDAY;
+            SET_FLAG(flags, FLG_MDAY);
             state = SDS_DAY_OF_MONTH;
             fc = *fmt++;
           }
@@ -216,19 +217,21 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
 
           case 'm':
           {
-            flags |= FLG_MON;
+            SET_FLAG(flags, FLG_MON);
             state = SDS_MONTH;
             fc = *fmt++;
           }
           break;
 
-          // MorphOS incorrectly uses %y (2 digit year without century) instead of
-          // %Y (4 digit year including century) for the year placeholder, hence we
-          // must accept this one, too.
           case 'Y':
+          {
+            SET_FLAG(flags, FLG_4DIGIT_YEAR);
+          }
+          // we fall through here
+
           case 'y':
           {
-            flags |= FLG_YEAR;
+            SET_FLAG(flags, FLG_YEAR);
             state = SDS_YEAR;
             fc = *fmt++;
           }
@@ -321,7 +324,7 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
 
   // finally check if the calculated values are correct, but only those which
   // were specified in the format string
-  if(flags & FLG_MDAY)
+  if(isFlagSet(flags, FLG_MDAY))
   {
     if(res->tm_mday >= 1 && res->tm_mday <= 31)
     {
@@ -329,10 +332,11 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
     }
     else
     {
+      W(DBF_UTIL, "bad day number %ld", res->tm_mday);
       result = FALSE;
     }
   }
-  if(flags & FLG_MON)
+  if(isFlagSet(flags, FLG_MON))
   {
     if(res->tm_mon >= 1 && res->tm_mon <= 12)
     {
@@ -341,19 +345,45 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
     }
     else
     {
+      W(DBF_UTIL, "bad month number %ld", res->tm_mon);
       result = FALSE;
     }
   }
-  if(flags & FLG_YEAR)
+  if(isFlagSet(flags, FLG_YEAR))
   {
-    if(res->tm_year >= 1900)
-    {
-      // tm_year counts the years from 1900
-      res->tm_year -= 1900;
+  	if(isFlagSet(flags, FLG_4DIGIT_YEAR))
+  	{
+  	  if(res->tm_year >= 1900)
+      {
+        // tm_year counts the years from 1900
+        res->tm_year -= 1900;
+      }
+      else
+      {
+        // year numbers less than 1900 are not supported
+        W(DBF_UTIL, "bad year number %ld", res->tm_year);
+        result = FALSE;
+      }
     }
     else
     {
-      result = FALSE;
+      // 2 digit year number, must be less than 100
+      if(res->tm_year < 100)
+      {
+        if(res->tm_year < 40)
+        {
+          // tm_year counts the years from 1900
+          // if the year number is less than 40 we assume a year between
+          // 2000 and 2039 instead of between 1900 and 1939 to allow a user
+          // age of at least ~70 years.
+          res->tm_year += 100;
+        }
+      }
+      else
+      {
+        W(DBF_UTIL, "bad year number %ld", res->tm_year);
+        result = FALSE;
+      }
     }
   }
 

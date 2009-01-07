@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2008-01-07  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: reworked the date scanning function to correctly distinguish
+    between 2 digit and 4 digit year numbers. Too large numbers for the %y
+    placeholder will now be rejected as invalid. Only %Y (upper case!!) is
+    the correct placeholder for 4 digit year numbers. This fixes bug #2488443.
+
 2008-01-06  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: moved the debug messages for a failed ADST notification to a better
