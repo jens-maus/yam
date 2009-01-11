@@ -5,7 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2008-01-07  Thore Böckelmann <tboeckel@gmx.de>
+2009-01-11  Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/QuickSearchBar.c: set the new MUIA_BetterString_SelectOnActive attribute
+    on the search string object as a TAB cycle or mouse selection should
+    always result in a selection of all text.
+  * YAM.c, misc: bumped the minimum required BetterString.mcc version to 11.16
+    as this update fixes some important bugs. Also bumped the suggested
+    version for the 2.5+ releases to 11.16 so that an updatecheck will suggest
+    that new version to every user.
+
+2009-01-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_EA.c, locale/YAM.cd: the error message in case of a wrong formatted
     date of birth now includes the formatting being used as well as a short
@@ -15,7 +25,7 @@ $URL$
     placeholder will now be rejected as invalid. Only %Y (upper case!!) is
     the correct placeholder for 4 digit year numbers. This fixes bug #2488443.
 
-2008-01-06  Thore Böckelmann <tboeckel@gmx.de>
+2009-01-06  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: moved the debug messages for a failed ADST notification to a better
     place to avoid false messages.
