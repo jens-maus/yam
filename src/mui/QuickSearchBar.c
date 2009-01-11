@@ -414,6 +414,7 @@ OVERLOAD(OM_NEW)
         MUIA_String_AdvanceOnCR,            FALSE,
         MUIA_BetterString_InactiveContents, tr(MSG_QUICKSEARCH_SO_SUBJORSENDER),
         MUIA_BetterString_NoShortcuts,      TRUE,
+        MUIA_BetterString_SelectOnActive,   TRUE,
       End,
       Child, clearButton = TextObject,
         ButtonFrame,
