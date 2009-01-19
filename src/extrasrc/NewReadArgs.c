@@ -217,30 +217,27 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       MaxArgs += FileArgs;
 
       #if defined(COMPILE_V39)
-      if(!(pool = nrdargs->Pool = CreatePool(MEMF_SHARED|MEMF_CLEAR, 1024, 1024)) || !(Args = AllocPooled(pool, MaxArgs*sizeof(STRPTR)*2)))
-      {
-        RETURN(ERROR_NO_FREE_STORE);
-        return(ERROR_NO_FREE_STORE);
-      }
-
-      for(num = 0L; num < (MaxArgs*2); num++)
-        Args[num] = 0L;
+      pool = nrdargs->Pool = CreatePool(MEMF_CLEAR, 1024, 1024);
       #elif defined(COMPILE_V52)
-      if(!(pool = nrdargs->Pool = AllocSysObjectTags(ASOT_MEMPOOL, TAG_DONE)) || !(Args = AllocPooled(pool, MaxArgs*sizeof(STRPTR)*2)))
+      pool = nrdargs->Pool = AllocSysObjectTags(ASOT_MEMPOOL, ASOPOOL_MFlags, MEMF_SHARED|MEMF_CLEAR,
+                                                              ASOPOOL_Puddle, 1024,
+                                                              ASOPOOL_Threshold, 1024,
+                                                              TAG_DONE);
+      #else
+      pool = NULL;
+      #endif
+
+      #if defined(COMPILE_V39) || defined(COMPILE_V52)
+      if(pool == NULL || (Args = AllocPooled(pool, MaxArgs*sizeof(STRPTR)*2)) == NULL)
+      #else
+      if((Args = AllocRemember(remember, MaxArgs*sizeof(STRPTR)*2, MEMF_CLEAR)) == NULL)
+      #endif
       {
         RETURN(ERROR_NO_FREE_STORE);
         return(ERROR_NO_FREE_STORE);
       }
 
-      for(num = 0L; num < (MaxArgs*2); num++)
-        Args[num] = 0L;
-      #else
-      if(!(Args = AllocRemember(remember, MaxArgs*sizeof(STRPTR)*2, MEMF_SHARED|MEMF_CLEAR)))
-      {
-        RETURN(ERROR_NO_FREE_STORE);
-        return(ERROR_NO_FREE_STORE);
-      }
-      #endif
+      // no need to clear the Args array here, because the pool is of type MEMF_CLEAR
 
       ArgLen = (LONG *)&Args[MaxArgs];
 

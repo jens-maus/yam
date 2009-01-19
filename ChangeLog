@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-01-19  Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/NewReadArgs.c: added missing puddle and threshold values for the
+    AllocSysObject() call. Also simplified the code a bit and removed dead and
+    unnecessary sections.
+
 2009-01-11  Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/QuickSearchBar.c: set the new MUIA_BetterString_SelectOnActive attribute
