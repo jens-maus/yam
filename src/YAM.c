@@ -1537,7 +1537,7 @@ static void InitAfterLogin(void)
 
   // Create a new Main & Addressbook Window
   if((G->MA = MA_New()) == NULL || (G->AB = AB_New()) == NULL)
-     Abort(tr(MSG_ErrorMuiApp));
+    Abort(tr(MSG_ErrorMuiApp));
 
   // make sure the GUI objects for the embedded read pane are created
   MA_SetupEmbeddedReadPane();
@@ -1545,7 +1545,7 @@ static void InitAfterLogin(void)
   // Now we have to check on which position we should display the InfoBar and if it's not
   // center or off we have to resort the main group
   if(C->InfoBar != IB_POS_CENTER && C->InfoBar != IB_POS_OFF)
-     MA_SortWindow();
+    MA_SortWindow();
 
   // load the main window GUI layout from the ENV: variable
   LoadLayout();
@@ -1771,7 +1771,7 @@ static void InitAfterLogin(void)
   SplashProgress(tr(MSG_LoadingABook), 90);
   AB_LoadTree(G->AB_Filename, FALSE, FALSE);
   if((G->RexxHost = SetupARexxHost("YAM", NULL)) == NULL)
-     Abort(tr(MSG_ErrorARexx));
+    Abort(tr(MSG_ErrorARexx));
 
   SplashProgress(tr(MSG_OPENGUI), 100);
   G->InStartupPhase = FALSE;

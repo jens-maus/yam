@@ -2695,7 +2695,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
     for(part = first->Next; part; part = part->Next)
     {
       BOOL dodisp = (part->Nr == PART_RAW || part->Nr == rmData->letterPartNum) ||
-                    (isPrintable(part) && C->DisplayAllTexts && isDecoded(part));
+                    (isPrintable(part) && C->DisplayAllTexts == TRUE && isDecoded(part));
 
       // before we go on we check whether this is an alternative multipart
       // and if so we check that we only display the plain text one
@@ -2737,8 +2737,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
           cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
 
-          *buffer = 0;
-          if(*part->Description != '\0')
+          buffer[0] = '\0';
+          if(part->Description[0] != '\0')
             snprintf(buffer, sizeof(buffer), "\033b%s:\033n %s\n", tr(MSG_RE_Description), part->Description);
 
           strlcat(buffer, "\033[s:2]\n", sizeof(buffer));

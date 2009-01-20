@@ -447,7 +447,7 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData)
           np->IsTemp      = att->IsTemp;
 
           // find out which encoding we use for the attachment
-          if(att->IsMIME)
+          if(att->IsMIME == TRUE)
             np->EncType = WhichEncodingForFile(np->Filename, np->ContentType);
           else
             np->EncType = ENC_UUE;
@@ -1736,7 +1736,7 @@ OVERLOAD(OM_DISPOSE)
       if(att == NULL)
         break;
 
-      if(att->IsTemp)
+      if(att->IsTemp == TRUE)
         DeleteFile(att->FilePath);
     }
 
@@ -2451,7 +2451,7 @@ DECLARE(DeleteAttachment)
     DoMethod(data->LV_ATTACH, MUIM_NList_Remove, MUIV_NList_Remove_Active);
 
     // delete the temporary file if exists
-    if(attach->IsTemp)
+    if(attach->IsTemp == TRUE)
       DeleteFile(attach->FilePath);
   }
 

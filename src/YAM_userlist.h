@@ -68,7 +68,7 @@ struct User
    char Password[SIZE_USERID];
    char MailDir[SIZE_PATH];
 };
- 
+
 struct Users
 {
    int         Num;

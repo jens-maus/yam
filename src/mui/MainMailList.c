@@ -539,7 +539,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   Object *afterThis;
 
   // dispose the old context_menu if it still exists
-  if(data->context_menu)
+  if(data->context_menu != NULL)
   {
     MUI_DisposeObject(data->context_menu);
     data->context_menu = NULL;
@@ -569,7 +569,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     return (ULONG)data->context_menu;
   }
 
-  if(!fo)
+  if(fo == NULL)
     return(0);
 
   // Now lets find out which entry is under the mouse pointer
@@ -592,7 +592,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   }
 
   // now we create the menu title of the context menu
-  if(mail)
+  if(mail != NULL)
   {
     struct Person *pers = isSentMail ? &mail->To : &mail->From;
     char address[SIZE_LARGE];
@@ -647,7 +647,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     End,
   End;
 
-  if(data->context_menu != NULL && mail != NULL && C->SpamFilterEnabled)
+  if(data->context_menu != NULL && mail != NULL && C->SpamFilterEnabled == TRUE)
   {
     Object *spamItem;
     Object *hamItem;

@@ -76,6 +76,7 @@ OVERLOAD(OM_SET)
 OVERLOAD(MUIM_Window_Snapshot)
 {
   ULONG result;
+
   ENTER();
 
   // get the weights according to their GUI elements
