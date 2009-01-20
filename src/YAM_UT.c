@@ -3144,6 +3144,24 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 
   UnlockMailList(folder->messages);
 
+  // now check if the mail to be removed has just been downloaded, but not yet filtered
+  if(G->TR != NULL && G->TR->downloadedMails != NULL && G->TR->Checking == TRUE && folder == FO_GetFolderByType(FT_INCOMING, NULL))
+  {
+    LockMailList(G->TR->downloadedMails);
+
+    if((mnode = FindMailInList(G->TR->downloadedMails, mail)) != NULL)
+    {
+      // remove the mail from the list of just downloaded mails,
+      // so it will not be filtered anymore when the download
+      // process finishes
+      D(DBF_UTIL, "removing mail with subject '%s' from download list", mail->Subject);
+      RemoveMailNode(G->TR->downloadedMails, mnode);
+      DeleteMailNode(mnode);
+    }
+
+    UnlockMailList(G->TR->downloadedMails);
+  }
+
   // then we have to mark the folder index as expired so
   // that it will be saved next time.
   MA_ExpireIndex(folder);

@@ -10,6 +10,11 @@ $URL$
   * MailList.c: added new function FindMailInList() to simply find a mail in a
     list of mails.
   * misc: use the new FindMailInList() function all over the place.
+  * YAM_UT.c: in case a mail is deleted/moved from the incoming folder while the
+    download is still in progress it will be removed from the list of downloaded
+    mails, too. This must be done to prevent the following filter process
+    handling then invalid mail pointers and causing crashes. This should fix bug
+    #2514895.
 
 2009-01-19  Thore Böckelmann <tboeckel@gmx.de>
 
