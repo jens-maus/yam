@@ -408,6 +408,33 @@ struct Mail **MailListToMailArray(struct MailList *mlist)
 }
 
 ///
+/// FindMailInList
+// find a mail in an already locked list and return its MailNode or NULL
+struct MailNode *FindMailInList(struct MailList *mlist, struct Mail *mail)
+{
+  struct MailNode *foundNode = NULL;
+
+  ENTER();
+
+  if(IsMailListEmpty(mlist) == FALSE)
+  {
+    struct MailNode *mnode;
+
+    ForEachMailNode(mlist, mnode)
+    {
+      if(mnode->mail == mail)
+      {
+        foundNode = mnode;
+        break;
+      }
+    }
+  }
+
+  RETURN(foundNode);
+  return foundNode;
+}
+
+///
 
 #if defined(DEBUG)
 static LONG mailLocks = 0;

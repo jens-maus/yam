@@ -60,6 +60,7 @@ void RemoveMailNode(struct MailList *mlist, struct MailNode *mnode);
 void DeleteMailNode(struct MailNode *mnode);
 void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1, const struct Mail *m2));
 struct Mail **MailListToMailArray(struct MailList *mlist);
+struct MailNode *FindMailInList(struct MailList *mlist, struct Mail *mail);
 
 // check if a mail list is empty
 #define IsMailListEmpty(mlist)                    IsListEmpty((struct List *)(mlist))

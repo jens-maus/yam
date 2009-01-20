@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-01-20  Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailList.c: added new function FindMailInList() to simply find a mail in a
+    list of mails.
+
 2009-01-19  Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/NewReadArgs.c: added missing puddle and threshold values for the
