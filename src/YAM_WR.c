@@ -2912,13 +2912,10 @@ BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRe
 
         LockMailListShared(wmData->refMailList);
 
-        ForEachMailNode(wmData->refMailList, mnode)
+        if((mnode = FindMailInList(wmData->refMailList, (struct Mail *)search)) != NULL)
         {
-          if(mnode->mail == search)
-          {
-            mnode->mail = (struct Mail *)newRef;
-            result = TRUE;
-          }
+          mnode->mail = (struct Mail *)newRef;
+          result = TRUE;
         }
 
         UnlockMailList(wmData->refMailList);

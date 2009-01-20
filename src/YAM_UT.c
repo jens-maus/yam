@@ -3008,7 +3008,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
 //  Checks if a message still exists
 BOOL MailExists(struct Mail *mailptr, struct Folder *folder)
 {
-  BOOL exists = FALSE;
+  BOOL exists;
 
   ENTER();
 
@@ -3023,19 +3023,7 @@ BOOL MailExists(struct Mail *mailptr, struct Folder *folder)
 
     LockMailListShared(folder->messages);
 
-    if(IsMailListEmpty(folder->messages) == FALSE)
-    {
-      struct MailNode *mnode;
-
-      ForEachMailNode(folder->messages, mnode)
-      {
-        if(mnode->mail == mailptr)
-        {
-          exists = TRUE;
-          break;
-        }
-      }
-    }
+    exists = (FindMailInList(folder->messages, mailptr) != NULL);
 
     UnlockMailList(folder->messages);
   }
@@ -3119,6 +3107,7 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
 void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 {
   struct Folder *folder = mail->Folder;
+  struct MailNode *mnode;
 
   ENTER();
 
@@ -3145,21 +3134,12 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 
   LockMailList(folder->messages);
 
-  if(IsMailListEmpty(folder->messages) == FALSE)
+  if((mnode = FindMailInList(folder->messages, mail)) != NULL)
   {
-    struct MailNode *mnode;
-
-    ForEachMailNode(folder->messages, mnode)
-    {
-      if(mnode->mail == mail)
-      {
-        // remove the mail from the folder's mail list
-        RemoveMailNode(folder->messages, mnode);
-        DeleteMailNode(mnode);
-        // and leave the loop
-        break;
-      }
-    }
+    // remove the mail from the folder's mail list
+    D(DBF_UTIL, "removing mail with subject '%s' from folder '%s'", mail->Subject, folder->Name);
+    RemoveMailNode(folder->messages, mnode);
+    DeleteMailNode(mnode);
   }
 
   UnlockMailList(folder->messages);

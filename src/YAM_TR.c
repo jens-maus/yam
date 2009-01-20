@@ -3515,7 +3515,7 @@ static void TR_DisplayMailList(BOOL largeonly)
     }
 
     xset(lv, MUIA_NList_Active, MUIV_NList_Active_Top,
-             MUIA_NList_Quiet,  FALSE);
+             MUIA_NList_Quiet, FALSE);
   }
 
   LEAVE();
@@ -3699,7 +3699,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
         // we exit immediatly with deleting the temp file also.
         if(G->Error == TRUE || G->TR->Abort == TRUE || done == FALSE)
           lline = -1;
-        else if((email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)))
+        else if((email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)) != NULL)
         {
           memcpy(&mail->From, &email->Mail.From, sizeof(mail->From));
           memcpy(&mail->To, &email->Mail.To, sizeof(mail->To));
@@ -3708,7 +3708,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
           strlcpy(mail->MailFile, email->Mail.MailFile, sizeof(mail->MailFile));
           memcpy(&mail->Date, &email->Mail.Date, sizeof(mail->Date));
 
-          // if thie function was called with -1, then the POP3 server
+          // if this function was called with -1, then the POP3 server
           // doesn't have the UIDL command and we have to generate our
           // own one by using the MsgID and the Serverstring for the POP3
           // server.
@@ -3889,6 +3889,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     {
       struct Folder *folder;
 
+      D(DBF_UTIL, "filter %ld/%ld downloaded mails", G->TR->downloadedMails->count, G->TR->Stats.Downloaded);
       FilterMails(FO_GetFolderByType(FT_INCOMING, NULL), G->TR->downloadedMails, APPLY_AUTO);
 
       // Now we jump to the first new mail we received if the number of messages has changed
@@ -6892,7 +6893,9 @@ static BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const 
           newMail->sflags = SFLAG_NEW;
           MA_UpdateMailFile(newMail);
 
+          LockMailList(G->TR->downloadedMails);
           AddNewMailNode(G->TR->downloadedMails, newMail);
+          UnlockMailList(G->TR->downloadedMails);
 
           // if the current folder is the inbox we
           // can go and add the mail instantly to the maillist
@@ -7120,11 +7123,16 @@ MakeHook(TR_ProcessGETHook, TR_ProcessGETFunc);
 //  Requests message header of a message selected by the user
 HOOKPROTONHNONP(TR_GetMessageInfoFunc, void)
 {
-   int line;
-   struct MailTransferNode *mtn;
-   line = xget(G->TR->GUI.LV_MAILS, MUIA_NList_Active);
-   DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, line, &mtn);
-   TR_GetMessageDetails(mtn, line);
+  int line;
+  struct MailTransferNode *mtn;
+
+  ENTER();
+
+  line = xget(G->TR->GUI.LV_MAILS, MUIA_NList_Active);
+  DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, line, &mtn);
+  TR_GetMessageDetails(mtn, line);
+
+  LEAVE();
 }
 MakeStaticHook(TR_GetMessageInfoHook, TR_GetMessageInfoFunc);
 ///
@@ -7227,6 +7235,8 @@ MakeStaticHook(TR_PauseHook, TR_PauseFunc);
 //  Message listview display hook
 HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
 {
+  ENTER();
+
   if(entry != NULL)
   {
     static char dispfro[SIZE_DEFAULT];
@@ -7235,7 +7245,6 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
     static char dispdate[64];
     struct Mail *mail = entry->mail;
     struct Person *pe = &mail->From;
-
 
     array[0] = dispsta;
     // status icon display
@@ -7278,6 +7287,7 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
     array[4] = (STRPTR)tr(MSG_Date);
   }
 
+  LEAVE();
   return 0;
 }
 MakeStaticHook(TR_LV_DspFuncHook,TR_LV_DspFunc);
