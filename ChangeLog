@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-01-24  Thore Böckelmann <tboeckel@gmx.de>
+
+  * ReadMailGroup.c: added file: URL specifier to the list of URLs which are
+    handled by openurl.library. This partly fixes bug #2533364.
+
 2009-01-20  Thore Böckelmann <tboeckel@gmx.de>
 
   * MailList.c: added new function FindMailInList() to simply find a mail in a

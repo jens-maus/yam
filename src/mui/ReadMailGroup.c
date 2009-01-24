@@ -169,7 +169,6 @@ MakeStaticHook(HeaderCompareHook, HeaderCompareFunc);
 //  Handles double-clicks on an URL
 HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *clickmsg)
 {
-  char *p;
   BOOL result = FALSE;
 
   D(DBF_GUI, "DoubleClick: %ld - [%s]", clickmsg->ClickPosition, clickmsg->LineContents);
@@ -177,7 +176,7 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
   DoMethod(G->App, MUIM_Application_InputBuffered);
 
   // for safety reasons
-  if(!clickmsg->LineContents)
+  if(clickmsg->LineContents == NULL)
     return FALSE;
 
   // if the user clicked on space we skip the following
@@ -187,10 +186,11 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
     int pos = clickmsg->ClickPosition;
     char *line, *surl;
     static char url[SIZE_URL];
+    char *p;
     enum tokenType type;
 
     // then we make a copy of the LineContents
-    if(!(line = StrBufCpy(NULL, clickmsg->LineContents)))
+    if((line = StrBufCpy(NULL, clickmsg->LineContents)) == NULL)
       return FALSE;
 
     // find the beginning of the word we clicked at
@@ -207,7 +207,7 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
 
     // now we start our quick lexical analysis to find a clickable element within
     // the doubleclick area
-    if((type = ExtractURL(surl, url)))
+    if((type = ExtractURL(surl, url)) != 0)
     {
       switch(type)
       {
@@ -226,6 +226,7 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
         case tHTTP:
         case tHTTPS:
         case tFTP:
+        case tFILE:
         case tGOPHER:
         case tTELNET:
         case tNEWS:
