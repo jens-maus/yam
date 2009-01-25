@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-01-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * ParseEmail.l: the tilde character is now a valid character within an http://
+    style URL. I hope this doesn't break anything. This finally fixes bug
+    #2533364.
+
 2009-01-24  Thore Böckelmann <tboeckel@gmx.de>
 
   * ReadMailGroup.c: added file: URL specifier to the list of URLs which are
