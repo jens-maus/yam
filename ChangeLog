@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-01-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * ParseEmail.l: slightly modified the recent fix for bug #2533364 so that the
+    tilde character is catched for a valid position in an URL only.
+
 2009-01-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * ParseEmail.l: the tilde character is now a valid character within an http://

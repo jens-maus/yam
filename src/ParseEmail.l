@@ -95,8 +95,8 @@ FILEURL     "file://"{AUTHORITY}?"/"{FPATH}{NOTATEOL}
 HTTPURL     "http://"{AUTHORITY}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
 HTTPSURL    "https://"{AUTHORITY}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
 PLAINURL    ("www"|"ftp")"."{HOSTNAME}"."[[:alpha:]]{1,4}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
-HPATH       "~"?{HSEGMENT}("/"{HSEGMENT})*
-HSEGMENT    ({UCHAR}|";"|":"|"@"|"&"|"="|"#"|"~")*
+HPATH       "~"?{HSEGMENT}("/""~"?{HSEGMENT})*
+HSEGMENT    ({UCHAR}|";"|":"|"@"|"&"|"="|"#")*
 SEARCH      ({UCHAR}|";"|":"|"@"|"&"|"="|"#"|"/")*
 
 /* GOPHER (see also RFC1436) */
