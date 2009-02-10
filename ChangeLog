@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-02-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile: added -mstrict-align to the default compile options of the OS4 build
+    as this option enforces a correct alignment.
+
 2009-01-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * ParseEmail.l: slightly modified the recent fix for bug #2533364 so that the
