@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-03-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: before trying to read a folder's index file its size is checked
+    now. Non-existent and zero sized files will cause an instant rescan of that
+    folder, while files with a size less than sizeof(struct FIndex) will be
+    treated as corrupted. This fixes bug #2684907.
+
 2009-02-10  Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile: added -mstrict-align to the default compile options of the OS4 build
