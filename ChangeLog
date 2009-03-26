@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-03-26  Jens Langner <Jens.Langner@light-speed.de>
+
+  * include: updated SDI headers to their very latest versions.
+
 2009-03-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: before trying to read a folder's index file its size is checked
