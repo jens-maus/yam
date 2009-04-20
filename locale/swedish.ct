@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.34 (01.12.08)
+## version $VER: YAM.ct 6.35 (20.04.09)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -3913,10 +3913,6 @@ MSG_ER_ErrorNoAddress
 Du måste ange en adress för denna post!
 ;#DEF You must specify an address for this entry!
 ;#SET (1103//)
-MSG_ER_ErrorDOBformat
-Födelsedatumet har fel format. Korrekt format är DD-MMM-ÅÅÅÅ (månadsnamn i engelska).
-;#DEF Date of birth uses a wrong format. The correct format is DD-MMM-YYYY (month names in English).
-;#SET (1104//)
 MSG_ER_ErrorDateFormat
 Felaktigt datum-/tidformat.\n\nDatumet måste vara i AmigaDOS-format.\nT.ex: %s
 ;#DEF Invalid date/time format.\n\nThe date and time has to be specified in a compatible format.\nExample: %s
@@ -7521,3 +7517,7 @@ MSG_CO_SPAM_STATISTICS
 %ld (%ld ord)
 ;#DEF %ld (%ld words)
 ;#SET (2142//)
+MSG_ER_WRONG_DOB_FORMAT
+Födelsedagsdatumet är i fel format. Det korrekta formatet är '%s'.\n%%d - dag\n%%m - månad\n%%y - år (2 siffror)\n%%Y - år (4 siffror)\nÅr nummret måste vara större än eller lika med 1900!
+;#DEF Date of birth uses a wrong format. The correct format is '%s'.\n%%d - day\n%%m - month\n%%y - year (2 digits)\n%%Y - year (4 digits)\nThe year number must be greater or equal 1900!
+;#SET (2143//)

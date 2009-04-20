@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-04-20  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated according to changes.
+
 2009-03-26  Jens Langner <Jens.Langner@light-speed.de>
 
   * include: updated SDI headers to their very latest versions.
