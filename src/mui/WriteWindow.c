@@ -833,6 +833,8 @@ HOOKPROTONH(DisplayFunc, LONG, char **array, struct Attach *entry)
 {
   static char dispsz[SIZE_SMALL];
 
+  ENTER();
+
   if(entry != NULL)
   {
     array[0] = entry->Name;
@@ -872,18 +874,23 @@ HOOKPROTONHNO(AppMessageFunc, LONG, ULONG *arg)
   {
     int i;
 
-    // lets walk through all arguments in the appMessage
+    // let's walk through all arguments in the appMessage
     for(i=0; i < amsg->am_NumArgs; i++)
     {
-      char buf[SIZE_PATHFILE];
       struct WBArg *ap = &amsg->am_ArgList[i];
 
-      NameFromLock(ap->wa_Lock, buf, sizeof(buf));
-      AddPart(buf, (char *)ap->wa_Name, sizeof(buf));
+      // accept files only
+      if(ap->wa_Name != NULL && strlen(ap->wa_Name) > 0)
+      {
+        char buf[SIZE_PATHFILE];
 
-      // call WR_App to let it put in the text of the file
-      // to the write window
-      DoMethod(writeWindow, MUIM_WriteWindow_DroppedFile, buf);
+        NameFromLock(ap->wa_Lock, buf, sizeof(buf));
+        AddPart(buf, (char *)ap->wa_Name, sizeof(buf));
+
+        // call WR_App to let it put in the text of the file
+        // to the write window
+        DoMethod(writeWindow, MUIM_WriteWindow_DroppedFile, buf);
+      }
     }
   }
 
