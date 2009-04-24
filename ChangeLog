@@ -7,6 +7,8 @@ $URL$
 
 2009-04-24 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c: extended some debug messages to output the files names which are
+    affected.
   * mui/ReadWindowStatusBar.c: merged duplicate code into a common function.
   * mui/AttachmentImage.c: added missing ENTER() call.
 

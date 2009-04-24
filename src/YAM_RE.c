@@ -1515,7 +1515,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 
     default:
     {
-      if(sourceCodeset || C->DetectCyrillic)
+      if(sourceCodeset != NULL || C->DetectCyrillic)
       {
         if(RE_ConsumeRestOfPart(in, out, sourceCodeset, NULL, TRUE))
           decodeResult = 1;
@@ -2225,7 +2225,7 @@ BOOL RE_DecodePart(struct Part *rp)
           // the file
           if(decodeResult == 2)
           {
-            D(DBF_MAIL, "no decode required. renaming file.");
+            D(DBF_MAIL, "no decode required, renaming file '%s' to '%s'", rp->Filename, filepath);
 
             DeleteFile(filepath); // delete the temporary file again.
 
