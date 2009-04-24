@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-04-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AttachmentImage.c: added missing ENTER() call.
+
 2009-04-20  Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated according to changes.

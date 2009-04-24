@@ -778,6 +778,8 @@ OVERLOAD(MUIM_Draw)
 {
   GETDATA;
 
+  ENTER();
+
   // call the super method first
   DoSuperMethodA(cl, obj, msg);
 
