@@ -56,6 +56,7 @@ struct Data
 HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 {
   struct Data *data = (struct Data *)xget(obj, MUIA_UserData);
+  ULONG result = MUILM_UNKNOWN;
 
   ENTER();
 
@@ -86,8 +87,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
       lm->lm_MinMax.MaxWidth  = MUI_MAXMAX;
       lm->lm_MinMax.MaxHeight = minHeight;
 
-      RETURN(0);
-      return 0;
+      result = 0;
     }
     break;
 
@@ -96,7 +96,6 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
     // components at the right position.
     case MUILM_LAYOUT:
     {
-      BOOL result = TRUE;
       Object *cstate;
       Object *child;
       LONG left = 0;
@@ -108,6 +107,9 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
       // our children. MUI wants us to place them in a rectangle
       // defined by (0,0,lm->lm_Layout.Width-1,lm->lm_Layout.Height-1)
       // We are free to put the children anywhere in this rectangle.
+
+      // start with "success"
+      result = TRUE;
 
       // layout the left-aligned folder image and label
       if(data->folderImage != NULL)
@@ -137,20 +139,48 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
                                      _minwidth(child), _minheight(child), 0);
         }
       }
-
-      RETURN(result);
-      return result;
     }
     break;
   }
 
-  RETURN(MUILM_UNKNOWN);
-  return MUILM_UNKNOWN;
+  RETURN(result);
+  return result;
 }
 MakeStaticHook(LayoutHook, LayoutFunc);
 ///
 
 /* Private Functions */
+/// RemoveAllChildren
+// remove all children from an object
+static void RemoveAllChildren(struct Data *data, Object *obj)
+{
+  struct List *childList;
+
+  ENTER();
+
+  // we first remove all childs from our statusGroup
+  if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
+  {
+    Object *cstate = (Object *)childList->lh_Head;
+    Object *child;
+
+    while((child = NextObject(&cstate)) != NULL)
+    {
+      ULONG i;
+
+      for(i=0; i < ARRAY_SIZE(data->statusImage); i++)
+      {
+        if(data->statusImage[i] == child)
+        {
+          DoMethod(obj, OM_REMMEMBER, child);
+          break;
+        }
+      }
+    }
+  }
+
+  LEAVE();
+}
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -236,27 +266,7 @@ OVERLOAD(OM_DISPOSE)
   // clear all children of the statusGroup first
   if(DoMethod(obj, MUIM_Group_InitChange))
   {
-    struct List *childList;
-
-    // we first remove all childs from our statusGroup
-    if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
-    {
-      Object *cstate = (Object *)childList->lh_Head;
-      Object *child;
-
-      while((child = NextObject(&cstate)))
-      {
-        for(i=0; i < si_Max; i++)
-        {
-          if(data->statusImage[i] == child)
-          {
-            DoMethod(obj, OM_REMMEMBER, child);
-            continue;
-          }
-        }
-      }
-    }
-
+    RemoveAllChildren(data, obj);
     DoMethod(obj, MUIM_Group_ExitChange);
   }
 
@@ -289,137 +299,115 @@ OVERLOAD(OM_DISPOSE)
 DECLARE(Update) // struct Mail *mail
 {
   GETDATA;
-  struct Mail *mail = msg->mail;
 
   ENTER();
 
   // update the statusgroup by removing/adding items accordingly
   if(DoMethod(obj, MUIM_Group_InitChange))
   {
+    struct Mail *mail = msg->mail;
     struct Folder *folder = mail->Folder;
 
-    struct List *childList;
-
     // we first remove all childs from our statusGroup
-    if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
+    RemoveAllChildren(data, obj);
+
+    // now we can add the status icons depending on the set status flags of
+    // the mail (sort upside-down)
+
+    // StatusGroup 8 (Spam status)
+    if(hasStatusSpam(mail) && data->statusImage[si_Spam] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Spam]);
+
+    // StatusGroup 7 (Forwarded status)
+    if(hasStatusForwarded(mail) && data->statusImage[si_Forward] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Forward]);
+
+    // StatusGroup 6 (Replied status)
+    if(hasStatusReplied(mail) && data->statusImage[si_Reply] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Reply]);
+
+    // StatusGroup 5 (marked flag)
+    if(hasStatusMarked(mail) && data->statusImage[si_Mark] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Mark]);
+
+    // StatusGroup 4 (multipart info)
+    if(isMP_MixedMail(mail) && data->statusImage[si_Attach] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Attach]);
+
+    // StatusGroup 3 (report mail info)
+    if(isMP_ReportMail(mail) && data->statusImage[si_Report] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Report]);
+
+    // StatusGroup 2 (signed/crypted status)
+    if(isMP_CryptedMail(mail) && data->statusImage[si_Crypt] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Crypt]);
+    else if(isMP_SignedMail(mail) && data->statusImage[si_Signed] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Signed]);
+
+    // StatusGroup 1 (importance level)
+    if(getImportanceLevel(mail) == IMP_HIGH && data->statusImage[si_Urgent] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Urgent]);
+
+    // StatusGroup 0 (main mail status)
+    if((hasStatusError(mail) || isPartialMail(mail)) && data->statusImage[si_Error] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Error]);
+    else if(hasStatusQueued(mail) && data->statusImage[si_WaitSend] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_WaitSend]);
+    else if(hasStatusSent(mail) && data->statusImage[si_Sent] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Sent]);
+    else if(hasStatusNew(mail) && data->statusImage[si_New] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_New]);
+    else if(hasStatusHold(mail) && data->statusImage[si_Hold] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Hold]);
+    else if(hasStatusRead(mail) && data->statusImage[si_Old] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Old]);
+    else if(data->statusImage[si_Unread] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Unread]);
+
+    // cleanup an eventually existing folder image
+    if(data->folderImage != NULL)
     {
-      Object *cstate = (Object *)childList->lh_Head;
-      Object *child;
+      DoMethod(obj, OM_REMMEMBER, data->folderImage);
+      MUI_DisposeObject(data->folderImage);
+      data->folderImage = NULL;
+    }
 
-      while((child = NextObject(&cstate)) != NULL)
+    // in case the mail is part of a folder we go and
+    // catch the folder image and name
+    if(folder != NULL)
+    {
+      // set the folderLabel
+      xset(data->folderLabel, MUIA_Text_PreParse, "\033l",
+                              MUIA_Text_Contents, folder->Name);
+
+      // get/create the folder image
+      if(folder->imageObject)
       {
-        ULONG i;
+        char *imageID = (char *)xget(folder->imageObject, MUIA_ImageArea_ID);
+        char *imageName = (char *)xget(folder->imageObject, MUIA_ImageArea_Filename);
 
-        for(i = 0; i < ARRAY_SIZE(data->statusImage); i++)
-        {
-          if(data->statusImage[i] == child)
-          {
-            DoMethod(obj, OM_REMMEMBER, child);
+        data->folderImage = MakeImageObject(imageID, imageName);
+        D(DBF_GUI, "init imagearea: id '%s', file '%s'", imageID, imageName);
+      }
+      else if(folder->ImageIndex >= 0 && folder->ImageIndex <= MAX_FOLDERIMG)
+      {
+        Object **imageArray = (Object **)xget(G->MA->GUI.NL_FOLDERS, MUIA_MainFolderListtree_ImageArray);
 
-            continue;
-          }
-        }
+        D(DBF_GUI, "init imagearea: 0x%08lx[%ld]", imageArray, folder->ImageIndex);
 
+        if(imageArray != NULL && imageArray[folder->ImageIndex] != NULL)
+          data->folderImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_ID), xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
       }
 
-      // now we can add the status icons depending on the set status flags of
-      // the mail (sort upside-down)
-
-      // StatusGroup 8 (Spam status)
-      if(hasStatusSpam(mail) && data->statusImage[si_Spam] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Spam]);
-
-      // StatusGroup 7 (Forwarded status)
-      if(hasStatusForwarded(mail) && data->statusImage[si_Forward] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Forward]);
-
-      // StatusGroup 6 (Replied status)
-      if(hasStatusReplied(mail) && data->statusImage[si_Reply] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Reply]);
-
-      // StatusGroup 5 (marked flag)
-      if(hasStatusMarked(mail) && data->statusImage[si_Mark] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Mark]);
-
-      // StatusGroup 4 (multipart info)
-      if(isMP_MixedMail(mail) && data->statusImage[si_Attach] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Attach]);
-
-      // StatusGroup 3 (report mail info)
-      if(isMP_ReportMail(mail) && data->statusImage[si_Report] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Report]);
-
-      // StatusGroup 2 (signed/crypted status)
-      if(isMP_CryptedMail(mail) && data->statusImage[si_Crypt] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Crypt]);
-      else if(isMP_SignedMail(mail) && data->statusImage[si_Signed] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Signed]);
-
-      // StatusGroup 1 (importance level)
-      if(getImportanceLevel(mail) == IMP_HIGH && data->statusImage[si_Urgent] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Urgent]);
-
-      // StatusGroup 0 (main mail status)
-      if((hasStatusError(mail) || isPartialMail(mail)) && data->statusImage[si_Error] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Error]);
-      else if(hasStatusQueued(mail) && data->statusImage[si_WaitSend] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_WaitSend]);
-      else if(hasStatusSent(mail) && data->statusImage[si_Sent] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Sent]);
-      else if(hasStatusNew(mail) && data->statusImage[si_New] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_New]);
-      else if(hasStatusHold(mail) && data->statusImage[si_Hold] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Hold]);
-      else if(hasStatusRead(mail) && data->statusImage[si_Old] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Old]);
-      else if(data->statusImage[si_Unread] != NULL)
-        DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Unread]);
-
-      // cleanup an eventually existing folder image
       if(data->folderImage != NULL)
-      {
-        DoMethod(obj, OM_REMMEMBER, data->folderImage);
-        MUI_DisposeObject(data->folderImage);
-        data->folderImage = NULL;
-      }
+        DoMethod(obj, OM_ADDMEMBER, data->folderImage);
 
-      // in case the mail is part of a folder we go and
-      // catch the folder image and name
-      if(folder != NULL)
-      {
-        // set the folderLabel
-        xset(data->folderLabel, MUIA_Text_PreParse, "\033l",
-                                MUIA_Text_Contents, folder->Name);
-
-        // get/create the folder image
-        if(folder->imageObject)
-        {
-          char *imageID = (char *)xget(folder->imageObject, MUIA_ImageArea_ID);
-          char *imageName = (char *)xget(folder->imageObject, MUIA_ImageArea_Filename);
-
-          data->folderImage = MakeImageObject(imageID, imageName);
-          D(DBF_GUI, "init imagearea: id '%s', file '%s'", imageID, imageName);
-        }
-        else if(folder->ImageIndex >= 0 && folder->ImageIndex <= MAX_FOLDERIMG)
-        {
-          Object **imageArray = (Object **)xget(G->MA->GUI.NL_FOLDERS, MUIA_MainFolderListtree_ImageArray);
-
-          D(DBF_GUI, "init imagearea: 0x%08lx[%ld]", imageArray, folder->ImageIndex);
-
-          if(imageArray != NULL && imageArray[folder->ImageIndex] != NULL)
-            data->folderImage = MakeImageObject(xget(imageArray[folder->ImageIndex], MUIA_ImageArea_ID), xget(imageArray[folder->ImageIndex], MUIA_ImageArea_Filename));
-        }
-
-        if(data->folderImage != NULL)
-          DoMethod(obj, OM_ADDMEMBER, data->folderImage);
-
-        D(DBF_GUI, "init finished..: 0x%08lx %ld", data->folderImage, folder->ImageIndex);
-      }
-      else
-      {
-        xset(data->folderLabel, MUIA_Text_PreParse, "\033l\033i",
-                                MUIA_Text_Contents, tr(MSG_RE_VIRTUALMAIL));
-      }
+      D(DBF_GUI, "init finished..: 0x%08lx %ld", data->folderImage, folder->ImageIndex);
+    }
+    else
+    {
+      xset(data->folderLabel, MUIA_Text_PreParse, "\033l\033i",
+                              MUIA_Text_Contents, tr(MSG_RE_VIRTUALMAIL));
     }
 
     // signal that we have added/modified the status Group successfully

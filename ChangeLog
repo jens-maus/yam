@@ -7,6 +7,7 @@ $URL$
 
 2009-04-24 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/ReadWindowStatusBar.c: merged duplicate code into a common function.
   * mui/AttachmentImage.c: added missing ENTER() call.
 
 2009-04-20  Pär Boberg <pbobbenb@spray.se>
