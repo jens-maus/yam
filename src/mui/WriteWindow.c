@@ -877,19 +877,23 @@ HOOKPROTONHNO(AppMessageFunc, LONG, ULONG *arg)
     // let's walk through all arguments in the appMessage
     for(i=0; i < amsg->am_NumArgs; i++)
     {
-      struct WBArg *ap = &amsg->am_ArgList[i];
+      struct WBArg *wa = &amsg->am_ArgList[i];
+      char buf[SIZE_PATHFILE];
 
-      // accept files only
-      if(ap->wa_Name != NULL && strlen(ap->wa_Name) > 0)
+      NameFromLock(wa->wa_Lock, buf, sizeof(buf));
+
+      if(wa->wa_Name != NULL && strlen(wa->wa_Name) > 0)
       {
-        char buf[SIZE_PATHFILE];
-
-        NameFromLock(ap->wa_Lock, buf, sizeof(buf));
-        AddPart(buf, (char *)ap->wa_Name, sizeof(buf));
+        AddPart(buf, (char *)wa->wa_Name, sizeof(buf));
 
         // call WR_App to let it put in the text of the file
         // to the write window
         DoMethod(writeWindow, MUIM_WriteWindow_DroppedFile, buf);
+      }
+      else
+      {
+        // open the usual requester, but let it point to the dropped drawer
+        DoMethod(writeWindow, MUIM_WriteWindow_RequestAttachment, buf);
       }
     }
   }
@@ -1485,7 +1489,7 @@ OVERLOAD(OM_NEW)
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DICT,       MUIV_Notify_Application, 3, MUIM_CallHook, &DI_OpenHook, obj);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_UNDO,       obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_UNDO);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_REDO,       obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_REDO);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDFILE,    obj, 1, MUIM_WriteWindow_RequestAttachment);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDFILE,    obj, 2, MUIM_WriteWindow_RequestAttachment, C->AttachDir);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDCLIP,    obj, 1, MUIM_WriteWindow_AddClipboard);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDPGP,     obj, 1, MUIM_WriteWindow_AddPGPKey);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTALL,  obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_SELECTALL);
@@ -1557,7 +1561,7 @@ OVERLOAD(OM_NEW)
         DoMethod(data->RG_PAGE,      MUIM_Notify, MUIA_Group_ActivePage,   1, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->LV_ATTACH);
         DoMethod(data->ST_SUBJECT,   MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
         DoMethod(data->ST_SUBJECT,   MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, MUIM_WriteWindow_UpdateWindowTitle);
-        DoMethod(data->BT_ADD,       MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, MUIM_WriteWindow_RequestAttachment);
+        DoMethod(data->BT_ADD,       MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 2, MUIM_WriteWindow_RequestAttachment, C->AttachDir);
         DoMethod(data->BT_ADDPACK,   MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, MUIM_WriteWindow_AddArchive);
         DoMethod(data->BT_DEL,       MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, MUIM_WriteWindow_DeleteAttachment);
         DoMethod(data->BT_DISPLAY,   MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, MUIM_WriteWindow_DisplayAttachment);
@@ -2152,13 +2156,13 @@ DECLARE(EditActionPerformed) // enum EditAction action
 ///
 /// DECLARE(RequestAttachment)
 // Requests to enter a filename and add one or more files to the attachment list
-DECLARE(RequestAttachment)
+DECLARE(RequestAttachment) // STRPTR drawer
 {
   struct FileReqCache *frc;
 
   ENTER();
 
-  if((frc = ReqFile(ASL_ATTACH, obj, tr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, "")))
+  if((frc = ReqFile(ASL_ATTACH, obj, tr(MSG_WR_AddFile), REQF_MULTISELECT, msg->drawer, "")))
   {
     char filename[SIZE_PATHFILE];
 
