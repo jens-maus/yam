@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-04-30  Thore Böckelmann <tboeckel@gmx.de>
+
+  * updated the SDI headers to their latest fixed versions.
+
 2009-04-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: dropping a drawer on the write window will now open a
