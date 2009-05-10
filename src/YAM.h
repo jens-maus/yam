@@ -30,7 +30,11 @@
 
 #include <xpk/xpk.h>
 
-#include "netinet/in.h"
+#if defined(__AROS__)
+#include <sys/types.h>
+#endif
+
+#include <netinet/in.h>
 
 #include "YAM_stringsizes.h"
 #include "YAM_transfer.h"    // struct DownloadResult

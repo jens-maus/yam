@@ -1834,7 +1834,7 @@ static void InitBeforeLogin(BOOL hidden)
   INITLIB("workbench.library",     36, 0, &WorkbenchBase, "main", &IWorkbench, TRUE,  NULL);
   INITLIB("keymap.library",        36, 0, &KeymapBase,    "main", &IKeymap,    TRUE,  NULL);
   INITLIB("iffparse.library",      36, 0, &IFFParseBase,  "main", &IIFFParse,  TRUE,  NULL);
-  INITLIB(RXSNAME,                 36, 0, &RexxSysBase,   "main", &IRexxSys,   TRUE,  NULL);
+  INITLIB("rexxsyslib.library",    36, 0, &RexxSysBase,   "main", &IRexxSys,   TRUE,  NULL);
   INITLIB("datatypes.library",     39, 0, &DataTypesBase, "main", &IDataTypes, TRUE,  NULL);
 
   // try to open the cybergraphics.library on non-OS4 systems as on OS4 we use the

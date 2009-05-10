@@ -31,6 +31,10 @@
 #include <stdio.h>
 #include <time.h>
 
+#if defined(__AROS__)
+#include <sys/types.h>
+#endif
+
 #include <dos/dos.h>
 #include <intuition/classusr.h>
 

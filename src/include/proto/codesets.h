@@ -5,7 +5,7 @@
 
  codesets.library - Amiga shared library for handling different codesets
  Copyright (C) 2001-2005 by Alfonso [alfie] Ranieri <alforan@tin.it>.
- Copyright (C) 2005-2006 by codesets.library Open Source Team
+ Copyright (C) 2005-2007 by codesets.library Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 
  codesets.library project: http://sourceforge.net/projects/codesetslib/
 
- $Id: codesets.h 2024 2006-03-05 10:27:25Z damato $
+ $Id: codesets.h 161 2009-03-20 08:31:52Z sonic_amiga $
 
 ***************************************************************************/
 
@@ -55,11 +55,15 @@
   #include <clib/codesets_protos.h>
  #endif /* CLIB_CODESETS_PROTOS_H */
  #if defined(__GNUC__)
-  #ifndef __PPC__
-   #include <inline/codesets.h>
+  #ifdef __AROS__
+   #include <defines/codesets.h>
   #else
-   #include <ppcinline/codesets.h>
-  #endif /* __PPC__ */
+   #ifndef __PPC__
+    #include <inline/codesets.h>
+   #else
+    #include <ppcinline/codesets.h>
+   #endif /* __PPC__ */
+  #endif /* __AROS__ */
  #elif defined(__VBCC__)
   #ifndef __PPC__
    #include <inline/codesets_protos.h>

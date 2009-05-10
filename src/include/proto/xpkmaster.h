@@ -42,11 +42,15 @@ extern struct Library * XpkBase;
   #include <clib/xpkmaster_protos.h>
  #endif /* CLIB_XPKMASTER_PROTOS_H */
  #if defined(__GNUC__)
-  #ifndef __PPC__
-   #include <inline/xpkmaster.h>
+  #ifdef __AROS__
+   #include <defines/xpkmaster.h>
   #else
-   #include <ppcinline/xpkmaster.h>
-  #endif /* __PPC__ */
+   #ifndef __PPC__
+    #include <inline/xpkmaster.h>
+   #else
+    #include <ppcinline/xpkmaster.h>
+   #endif /* __PPC__ */
+  #endif /* __AROS__ */
  #elif defined(__VBCC__)
   #ifndef __PPC__
    #include <inline/xpkmaster_protos.h>

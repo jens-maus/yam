@@ -30,15 +30,26 @@
 #include <string.h>
 #include <time.h>
 
+#if defined(__AROS__)
+#include <sys/types.h>
+#else
+#include <sys/filio.h>
+#endif
+
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
 #include <sys/socket.h>
-#include <sys/filio.h>
 
 #include <clib/alib_protos.h>
 #include <clib/macros.h>
 #include <libraries/iffparse.h>
 #include <libraries/genesis.h>
+#if defined(__AROS__)
+#define _SYS_MBUF_H_
+#include <libraries/bsdsocket.h>
+#include <netdb.h>
+#include <sys/ioctl.h>
+#endif
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/NListtree_mcc.h>
@@ -51,7 +62,7 @@
 #include <proto/timer.h>
 #include <proto/utility.h>
 
-#if !defined(__amigaos4__)
+#if !defined(__amigaos4__) && !defined(__AROS__)
 #include <proto/miami.h>
 #include <proto/genesis.h>
 #endif
@@ -1252,6 +1263,7 @@ BOOL TR_IsOnline(void)
     }
   }
   #else
+  #if !defined(__AROS__)
   if(C->IsOnlineCheck)
   {
     struct Library *MiamiBase;
@@ -1287,7 +1299,9 @@ BOOL TR_IsOnline(void)
     else if(SocketBase->lib_Version >= 2)
       isonline = TRUE;
   }
-  else if(SocketBase == NULL)
+  else
+  #endif
+  if(SocketBase == NULL)
   {
     // if no online check was selected, we just do a simple library exists
     // check and see if we are able to open a bsdsocket.library with a
@@ -1431,7 +1445,16 @@ static void TR_SetSocketOpts(void)
   ENTER();
 
   // disable CTRL-C checking
+  #if !defined(__AROS__)
   SocketBaseTags(SBTM_SETVAL(SBTC_BREAKMASK), 0, TAG_END);
+  #else
+  {
+    struct TagItem tags = { { SBTM_SETVAL(SBTC_BREAKMASK), 0 },
+                          { TAG_END,                     0 } };
+
+    SocketBaseTagList(&tags);
+  }
+  #endif
 
   if(C->SocketOptions.KeepAlive)
   {

@@ -61,11 +61,15 @@ OpenURLBase;
   #include <clib/openurl_protos.h>
  #endif /* CLIB_OPENURL_PROTOS_H */
  #if defined(__GNUC__)
-  #ifndef __PPC__
-#include <inline/openurl.h>
+  #ifdef __AROS__
+   #include <defines/openurl.h>
   #else
-   #include <ppcinline/openurl.h>
-  #endif /* __PPC__ */
+   #ifndef __PPC__
+    #include <inline/openurl.h>
+   #else
+    #include <ppcinline/openurl.h>
+   #endif /* __PPC__ */
+  #endif /* __AROS__ */
  #elif defined(__VBCC__)
   #ifndef __PPC__
    #include <inline/openurl_protos.h>

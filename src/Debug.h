@@ -334,7 +334,7 @@ void W(unsigned long f, const char *format, ...);
       , DOS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
 })
 
-#else // AmigaOS 3
+#elif !defined(__AROS__) // AmigaOS 3
 
 #define AllocPooled(poolHeader, memSize) ({ \
   APTR _AllocPooled_poolHeader = (poolHeader); \

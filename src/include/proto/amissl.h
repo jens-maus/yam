@@ -32,11 +32,15 @@ extern struct Library *AmiSSLBase;
   #include <clib/amissl_protos.h>
  #endif /* CLIB_AMISSL_PROTOS_H */
  #if defined(__GNUC__)
-  #ifndef __PPC__
-   #include <inline/amissl.h>
+  #ifdef __AROS__
+   #include <defines/amissl.h>
   #else
-   #include <ppcinline/amissl.h>
-  #endif /* __PPC__ */
+   #ifndef __PPC__
+    #include <inline/amissl.h>
+   #else
+    #include <ppcinline/amissl.h>
+   #endif /* __PPC__ */
+  #endif /* __AROS__ */
  #elif defined(__VBCC__)
   #ifndef __PPC__
    #include <inline/amissl_protos.h>

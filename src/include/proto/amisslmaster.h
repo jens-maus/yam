@@ -29,11 +29,15 @@ extern struct Library *AmiSSLMasterBase;
   #include <clib/amisslmaster_protos.h>
  #endif /* CLIB_AMISSLMASTER_PROTOS_H */
  #if defined(__GNUC__)
-  #ifndef __PPC__
-   #include <inline/amisslmaster.h>
+  #ifdef __AROS__
+   #include <defines/amisslmaster.h>
   #else
-   #include <ppcinline/amisslmaster.h>
-  #endif /* __PPC__ */
+   #ifndef __PPC__
+    #include <inline/amisslmaster.h>
+   #else
+    #include <ppcinline/amisslmaster.h>
+   #endif /* __PPC__ */
+  #endif /* __AROS__ */
  #elif defined(__VBCC__)
   #ifndef __PPC__
    #include <inline/amisslmaster_protos.h>

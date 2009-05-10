@@ -43,11 +43,15 @@
   #include <clib/expat_protos.h>
  #endif /* CLIB_EXPAT_PROTOS_H */
  #if defined(__GNUC__)
-  #ifndef __PPC__
-   #include <inline/expat.h>
+  #ifdef __AROS__
+   #include <defines/expat.h>
   #else
-   #include <ppcinline/expat.h>
-  #endif /* __PPC__ */
+   #ifndef __PPC__
+    #include <inline/expat.h>
+   #else
+    #include <ppcinline/expat.h>
+   #endif /* __PPC__ */
+  #endif /* __AROS__ */
  #elif defined(__VBCC__)
   #ifndef __PPC__
    #include <inline/expat_protos.h>

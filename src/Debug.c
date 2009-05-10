@@ -49,6 +49,8 @@
 
 #if defined(__MORPHOS__)
 #include <exec/rawfmt.h>
+#elif defined(__AROS__)
+#include <proto/arossupport.h>
 #else
 #include <clib/debug_protos.h>
 #endif

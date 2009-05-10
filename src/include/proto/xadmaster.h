@@ -46,11 +46,15 @@
   #include <clib/xadmaster_protos.h>
  #endif /* CLIB_XADMASTER_PROTOS_H */
  #if defined(__GNUC__)
-  #ifndef __PPC__
-   #include <inline/xadmaster.h>
+  #ifdef __AROS__
+   #include <defines/xadmaster.h>
   #else
-   #include <ppcinline/xadmaster.h>
-  #endif /* __PPC__ */
+   #ifndef __PPC__
+    #include <inline/xadmaster.h>
+   #else
+    #include <ppcinline/xadmaster.h>
+   #endif /* __PPC__ */
+  #endif /* __AROS__ */
  #elif defined(__VBCC__)
   #ifndef __PPC__
    #include <inline/xadmaster_protos.h>

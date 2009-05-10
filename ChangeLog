@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-05-10  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile, misc: adapted Makefile and whole build system to make it
+    possible to compile YAM for AROS. Compilation now seems to work. However,
+    the linker is still missing a few symbols before we can run our first
+    tests of an AROS compiled YAM version. Stay tuned.. :)
+
 2009-04-30  Thore Böckelmann <tboeckel@gmx.de>
 
   * updated the SDI headers to their latest fixed versions.

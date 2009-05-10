@@ -34,8 +34,8 @@
    requires a linear stack layout!
 */
 
-#if defined(__VBCC__) || defined(NO_INLINE_STDARG)
-#if !defined(__PPC__)
+#if !defined(__AROS__) && (defined(__VBCC__) || defined(NO_INLINE_STDARG))
+#if defined(_M68000) || defined(__M68000) || defined(__mc68000)
 
 #include <exec/types.h>
 

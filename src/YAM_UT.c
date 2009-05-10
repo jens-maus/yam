@@ -31,6 +31,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(__AROS__)
+#include <sys/types.h>
+#endif
+
 #include <netinet/in.h>
 
 #include <clib/alib_protos.h>

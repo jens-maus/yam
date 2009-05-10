@@ -173,7 +173,7 @@ struct IClass;
 /*
  * Stuff that exists in OS4 and MOS already, but not in OS3
  */
-#if defined(__amigaos4__) || defined(__MORPHOS__)
+#if defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
 #define HAVE_ALLOCVECPOOLED
 #define HAVE_FREEVECPOOLED
 #endif
