@@ -534,9 +534,9 @@ $(OBJDIR)/$(MIMEDIR): $(OBJDIR)
 	@$(MKDIR) $(OBJDIR)/$(MIMEDIR)
 
 # for compiling single .c files
-%.o: %.c
+$(OBJDIR)/%.o: %.c
 	@echo "  CC $<"
-	@$(CC) $(CFLAGS) -c $< -o $(OBJDIR)/$@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 # for making .c file out of .l lexer files
 %.c: %.l
@@ -575,21 +575,21 @@ distclean: cleanall
 
 ## SPECIAL COMPILE RULES ##############
 
-YAM_global.o: YAM_global.c
+$(OBJDIR)/YAM_global.o: YAM_global.c
 	@echo "  CC $<"
-	@$(CC) $(YAMVERID) $(CFLAGS) -c $< -o $(OBJDIR)/$@
+	@$(CC) $(YAMVERID) $(CFLAGS) -c $< -o $@
 
-YAM.o: YAM.c
+$(OBJDIR)/YAM.o: YAM.c
 	@echo "  CC $<"
-	@$(CC) $(DEVFLAGS) $(CFLAGS) -c $< -o $(OBJDIR)/$@
+	@$(CC) $(DEVFLAGS) $(CFLAGS) -c $< -o $@
 
-ParseEmail.o: ParseEmail.c
+$(OBJDIR)/ParseEmail.o: ParseEmail.c
 	@echo "  CC $<"
-	@$(CC) $(CFLAGS) -Wno-sign-compare -c $< -o $(OBJDIR)/$@
+	@$(CC) $(CFLAGS) -Wno-sign-compare -c $< -o $@
 
-HTML2Mail.o: HTML2Mail.c
+$(OBJDIR)/HTML2Mail.o: HTML2Mail.c
 	@echo "  CC $<"
-	@$(CC) $(CFLAGS) -Wno-sign-compare -c $< -o $(OBJDIR)/$@
+	@$(CC) $(CFLAGS) -Wno-sign-compare -c $< -o $@
 
 ## DEPENDENCY GENERATION ##############
 
