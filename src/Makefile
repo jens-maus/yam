@@ -544,7 +544,7 @@ $(OBJDIR)/$(MIMEDIR): $(OBJDIR)
 	@$(FLEX) -Cfe -i -o$@ $<
 
 # for linking the target
-$(TARGET): $(OBJS)
+$(TARGET): $(addprefix $(OBJDIR)/,$(OBJS))
 	@echo "  LD $@.debug"
 	@$(CC) $(LDFLAGS) -o $@.debug $(addprefix $(OBJDIR)/,$(OBJS)) $(LDLIBS) -Wl,--cref,-M,-Map=$@.map
 	@echo "  LD $@"
