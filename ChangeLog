@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-05-11  Jens Langner <Jens.Langner@light-speed.de>
+
+  * .c,.h: replaced all tabs to spaces.
+
 2009-05-10  Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile, misc: adapted Makefile and whole build system to make it

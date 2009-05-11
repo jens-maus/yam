@@ -351,9 +351,9 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
   }
   if(isFlagSet(flags, FLG_YEAR))
   {
-  	if(isFlagSet(flags, FLG_4DIGIT_YEAR))
-  	{
-  	  if(res->tm_year >= 1900)
+    if(isFlagSet(flags, FLG_4DIGIT_YEAR))
+    {
+      if(res->tm_year >= 1900)
       {
         // tm_year counts the years from 1900
         res->tm_year -= 1900;

@@ -36,25 +36,25 @@ struct TimeRequest;
 
 struct Thread
 {
-	struct Process *process;
-	BOOL isMain;                          // is this the main thread
-	BOOL isDefault;                       // is this the default thread
+  struct Process *process;
+  BOOL isMain;                          // is this the main thread
+  BOOL isDefault;                       // is this the default thread
 
-	struct MsgPort *thread_port;
+  struct MsgPort *thread_port;
 
-	struct Library *socketlib;
+  struct Library *socketlib;
   #if defined(__amigaos4__)
-	struct SocketIFace *isocket;
+  struct SocketIFace *isocket;
   #endif
-	int socketlib_opencnt;
+  int socketlib_opencnt;
 
-	// List of pushed functions
-	struct MinList push_list;
+  // List of pushed functions
+  struct MinList push_list;
 
-	// Timer support
-	struct MsgPort *timer_port;
-	struct TimeRequest *timer_req;
-	struct MinList timer_request_list;
+  // Timer support
+  struct MsgPort *timer_port;
+  struct TimeRequest *timer_req;
+  struct MinList timer_request_list;
 };
 
 

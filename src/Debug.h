@@ -212,10 +212,10 @@ void W(unsigned long f, const char *format, ...);
 #elif defined(__MORPHOS__)
 
 #define AllocPooled(__p0, __p1) ({ \
-	APTR P = LP2(708, APTR , AllocPooled, \
-		APTR , __p0, a0, \
-		ULONG , __p1, d0, \
-		, EXEC_BASE_NAME, 0, 0, 0, 0, 0, 0); \
+  APTR P = LP2(708, APTR , AllocPooled, \
+    APTR , __p0, a0, \
+    ULONG , __p1, d0, \
+    , EXEC_BASE_NAME, 0, 0, 0, 0, 0, 0); \
    _MEMTRACK(__FILE__, __LINE__, "AllocPooled", P, __p1); \
    P; \
 })
@@ -230,37 +230,37 @@ void W(unsigned long f, const char *format, ...);
 })
 
 #define AllocVecPooled(__p0, __p1) ({ \
-	APTR P = LP2(894, APTR , AllocVecPooled, \
-		APTR , __p0, a0, \
-		ULONG , __p1, d0, \
-		, EXEC_BASE_NAME, 0, 0, 0, 0, 0, 0); \
+  APTR P = LP2(894, APTR , AllocVecPooled, \
+    APTR , __p0, a0, \
+    ULONG , __p1, d0, \
+    , EXEC_BASE_NAME, 0, 0, 0, 0, 0, 0); \
    _MEMTRACK(__FILE__, __LINE__, "AllocVecPooled", P, __p1); \
    P; \
 })
 
 #define FreeVecPooled(__p0, __p1) ({ \
    _UNMEMTRACK(__FILE__, __LINE__, __p1); \
-	LP2NR(900, FreeVecPooled, \
-		APTR , __p0, a0, \
-		APTR , __p1, a1, \
-		, EXEC_BASE_NAME, 0, 0, 0, 0, 0, 0); \
+  LP2NR(900, FreeVecPooled, \
+    APTR , __p0, a0, \
+    APTR , __p1, a1, \
+    , EXEC_BASE_NAME, 0, 0, 0, 0, 0, 0); \
 })
 
 #define AllocDosObject(__p0, __p1) ({ \
-	APTR P = LP2(228, APTR , AllocDosObject, \
-		ULONG , __p0, d1, \
-		CONST struct TagItem *, __p1, d2, \
-		, DOS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
+  APTR P = LP2(228, APTR , AllocDosObject, \
+    ULONG , __p0, d1, \
+    CONST struct TagItem *, __p1, d2, \
+    , DOS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
   _MEMTRACK(__FILE__, __LINE__, "AllocDosObject", P, __p0); \
   P; \
 })
 
 #define FreeDosObject(__p0, __p1) ({ \
    _UNMEMTRACK(__FILE__, __LINE__, __p1); \
-	LP2NR(234, FreeDosObject, \
-		ULONG , __p0, d1, \
-		APTR , __p1, d2, \
-		, DOS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
+  LP2NR(234, FreeDosObject, \
+    ULONG , __p0, d1, \
+    APTR , __p1, d2, \
+    , DOS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
 })
 
 #define AllocSysObject(t, p) ({APTR P = AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
@@ -275,22 +275,22 @@ void W(unsigned long f, const char *format, ...);
 #define FreeSysObject(t, p) ({_UNMEMTRACK(__FILE__, __LINE__, p); FreeSysObject(t, p);})
 
 #define AllocBitMap(__p0, __p1, __p2, __p3, __p4) ({ \
-	APTR P = LP5(918, struct BitMap *, AllocBitMap, \
-		ULONG , __p0, d0, \
-		ULONG , __p1, d1, \
-		ULONG , __p2, d2, \
-		ULONG , __p3, d3, \
-		CONST struct BitMap *, __p4, a0, \
-		, GRAPHICS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
+  APTR P = LP5(918, struct BitMap *, AllocBitMap, \
+    ULONG , __p0, d0, \
+    ULONG , __p1, d1, \
+    ULONG , __p2, d2, \
+    ULONG , __p3, d3, \
+    CONST struct BitMap *, __p4, a0, \
+    , GRAPHICS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
    _MEMTRACK(__FILE__, __LINE__, "AllocBitMap", P, __p0); \
    P; \
 })
 
 #define FreeBitMap(__p0) ({ \
    _UNMEMTRACK(__FILE__, __LINE__, __p0); \
-	LP1NR(924, FreeBitMap, \
-		struct BitMap *, __p0, a0, \
-		, GRAPHICS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
+  LP1NR(924, FreeBitMap, \
+    struct BitMap *, __p0, a0, \
+    , GRAPHICS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
 })
 
 #define ObtainDirContext(t) ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
