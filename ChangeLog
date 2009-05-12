@@ -5,6 +5,43 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-05-12  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Rexx.c,h, rexx/mailfullinfo.c: added new ARexx command MAILFULLINFO to
+    obtain all informations about a mail. The MAILINFO command just queries
+    single senders and receivers, while MAILFULLINFO queries even multiple
+    senders and receivers as well as all CCs and BCCs. This fullfils feature
+    request #577148. Use this tiny script to test the new command:
+
+        /* */
+        OPTIONS RESULTS
+        ADDRESS YAM
+        MailFullInfo STEM info.
+        say "Index: " info.INDEX
+        say "Status: " info.STATUS
+        DO i = 0 TO info.FROM.COUNT-1
+           say "From: " info.FROM.i
+        END
+        DO i = 0 TO info.TO.COUNT-1
+           say "To: " info.TO.i
+        END
+        DO i = 0 TO info.REPLYTO.COUNT-1
+           say "ReplyTo: " info.REPLYTO.i
+        END
+        DO i = 0 TO info.CC.COUNT-1
+           say "CC: " info.CC.i
+        END
+        DO i = 0 TO info.BCC.COUNT-1
+           say "BCC: " info.BCC.i
+        END
+        DO i = 0 TO info.RESENTTO.COUNT-1
+           say "CC: " info.RESENTTO.i
+        END
+        say "Subject: " info.SUBJECT
+        say "Date: " info.DATE
+        say "Flags: " info.FLAGS
+        say "MsgID: " info.MSGID
+
 2009-05-11  Jens Langner <Jens.Langner@light-speed.de>
 
   * .c,.h: replaced all tabs to spaces.

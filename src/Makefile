@@ -394,6 +394,7 @@ REXX = \
 	mailexport.o \
 	mailfilter.o \
 	mailforward.o \
+	mailfullinfo.o \
 	mailimport.o \
 	mailinfo.o \
 	mailmove.o \
