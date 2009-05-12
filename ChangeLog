@@ -14,48 +14,12 @@ $URL$
     part will just contain the very first address/name information (i.e. FROM
     will contain the first From: entry only), as it was before with the MAILINFO
     command. The new "ALL" variables will contain all address/name informations.
-    Also adapted the example script below accordingly.
   * YAM_MAf.c: fixed long standing memory leak.
   * Rexx.c,h, rexx/mailfullinfo.c: added new ARexx command MAILFULLINFO to
     obtain all informations about a mail. The MAILINFO command just queries
     single senders and receivers, while MAILFULLINFO queries even multiple
     senders and receivers as well as all CCs and BCCs. This fullfils feature
-    request #577148. Use this tiny script to test the new command:
-
-        /* */
-        OPTIONS RESULTS
-        ADDRESS YAM
-        MailInfo STEM info.
-        say "Index: " info.INDEX
-        say "Status: " info.STATUS
-        say "From: " info.FROM
-        DO i = 0 TO info.FROMALL.COUNT-1
-           say "FromAll: " info.FROMALL.i
-        END
-        say "To: " info.TO
-        DO i = 0 TO info.TOALL.COUNT-1
-           say "ToAll: " info.TOALL.i
-        END
-        say "ReplyTo: " info.REPLYTO
-        DO i = 0 TO info.REPLYTOALL.COUNT-1
-           say "ReplyToAll: " info.REPLYTOALL.i
-        END
-        say "CC: " info.CC
-        DO i = 0 TO info.CCALL.COUNT-1
-           say "CCAll: " info.CCALL.i
-        END
-        say "BCC: " info.BCC
-        DO i = 0 TO info.BCCALL.COUNT-1
-           say "BCCAll: " info.BCCALL.i
-        END
-        say "ResentTo: " info.RESENTTO
-        DO i = 0 TO info.RESENTTOALL.COUNT-1
-           say "ResentToAll: " info.RESENTTOALL.i
-        END
-        say "Subject: " info.SUBJECT
-        say "Date: " info.DATE
-        say "Flags: " info.FLAGS
-        say "MsgID: " info.MSGID
+    request #577148.
 
 2009-05-11  Jens Langner <Jens.Langner@light-speed.de>
 
