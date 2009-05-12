@@ -157,11 +157,11 @@ void rx_mailfullinfo(UNUSED struct RexxHost *host, struct RexxParams *params, en
 
           if((results->to = calloc(email->NoSTo+2, sizeof(char *))) != NULL)
           {
-            if((results->to[0] = strdup(BuildAddress(optional->address, sizeof(optional->address), mail->To.Address, mail->To.RealName));
+            if((results->to[0] = strdup(BuildAddress(optional->address, sizeof(optional->address), mail->To.Address, mail->To.RealName))) == NULL)
               params->rc = RETURN_ERROR;
             for(i = 0; i < email->NoSTo; i++)
             {
-              if((results->to[i+1] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->STo[i].Address, email->STo[i].RealName));#
+              if((results->to[i+1] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->STo[i].Address, email->STo[i].RealName))) == NULL)
                 params->rc = RETURN_ERROR;
             }
           }
