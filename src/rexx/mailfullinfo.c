@@ -229,7 +229,7 @@ void rx_mailfullinfo(UNUSED struct RexxHost *host, struct RexxParams *params, en
                     hasStatusMarked(mail) ? 'M' : '-'
                  );
 
-          free(email);
+          MA_FreeEMailStruct(email);
         }
         else
           params->rc = RETURN_ERROR;
