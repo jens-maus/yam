@@ -7,6 +7,12 @@ $URL$
 
 2009-05-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * rexx/mailinfo.c: merged MAILINFO and MAILFULLINFO into the old MAILINFO
+    command and removed MAILFULLINFO again. Every variable without the "ALL"
+    part will just contain the very first address/name information (i.e. FROM
+    will contain the first From: entry only), as it was before with the MAILINFO
+    command. The new "ALL" variables will contain all address/name informations.
+    Also adapted the example script below accordingly.
   * YAM_MAf.c: fixed long standing memory leak.
   * Rexx.c,h, rexx/mailfullinfo.c: added new ARexx command MAILFULLINFO to
     obtain all informations about a mail. The MAILINFO command just queries
@@ -17,26 +23,32 @@ $URL$
         /* */
         OPTIONS RESULTS
         ADDRESS YAM
-        MailFullInfo STEM info.
+        MailInfo STEM info.
         say "Index: " info.INDEX
         say "Status: " info.STATUS
-        DO i = 0 TO info.FROM.COUNT-1
-           say "From: " info.FROM.i
+        say "From: " info.FROM
+        DO i = 0 TO info.FROMALL.COUNT-1
+           say "FromAll: " info.FROMALL.i
         END
-        DO i = 0 TO info.TO.COUNT-1
-           say "To: " info.TO.i
+        say "To: " info.TO
+        DO i = 0 TO info.TOALL.COUNT-1
+           say "ToAll: " info.TOALL.i
         END
-        DO i = 0 TO info.REPLYTO.COUNT-1
-           say "ReplyTo: " info.REPLYTO.i
+        say "ReplyTo: " info.REPLYTO
+        DO i = 0 TO info.REPLYTOALL.COUNT-1
+           say "ReplyToAll: " info.REPLYTOALL.i
         END
-        DO i = 0 TO info.CC.COUNT-1
-           say "CC: " info.CC.i
+        say "CC: " info.CC
+        DO i = 0 TO info.CCALL.COUNT-1
+           say "CCAll: " info.CCALL.i
         END
-        DO i = 0 TO info.BCC.COUNT-1
-           say "BCC: " info.BCC.i
+        say "BCC: " info.BCC
+        DO i = 0 TO info.BCCALL.COUNT-1
+           say "BCCAll: " info.BCCALL.i
         END
-        DO i = 0 TO info.RESENTTO.COUNT-1
-           say "CC: " info.RESENTTO.i
+        say "ResentTo: " info.RESENTTO
+        DO i = 0 TO info.RESENTTOALL.COUNT-1
+           say "ResentToAll: " info.RESENTTOALL.i
         END
         say "Subject: " info.SUBJECT
         say "Date: " info.DATE

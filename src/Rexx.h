@@ -128,7 +128,6 @@ void rx_mailedit(struct RexxHost *, struct RexxParams *, enum RexxAction, struct
 void rx_mailexport(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_mailfilter(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_mailforward(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
-void rx_mailfullinfo(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_mailimport(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_mailinfo(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_mailmove(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);

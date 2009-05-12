@@ -54,20 +54,27 @@ struct results
   char *from;
   char *to;
   char *replyto;
+  char *cc;
+  char *bcc;
+  char *resentto;
   char *subject;
   char *filename;
   long *size;
   char *date;
   char *flags;
   char *msgid;
+  char **fromall;
+  char **toall;
+  char **replytoall;
+  char **ccall;
+  char **bccall;
+  char **resenttoall;
 };
 
 struct optional
 {
   long active;
-  char from[SIZE_ADDRESS];
-  char to[SIZE_ADDRESS];
-  char replyto[SIZE_ADDRESS];
+  char address[SIZE_ADDRESS];
   char flags[SIZE_SMALL];
   char filename[SIZE_PATHFILE];
   char date[64];
@@ -97,7 +104,7 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
       struct Mail *mail = NULL;
       struct Folder *folder = NULL;
 
-      if(args->index)
+      if(args->index != 0)
       {
         Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
         optional->active = *args->index;
@@ -106,55 +113,138 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
       else
         mail = MA_GetActiveMail(NULL, &folder, (LONG *)&optional->active);
 
-      if(mail)
+      if(mail != NULL)
       {
-        int pf = getPERValue(mail);
-        int vf = getVOLValue(mail);
+        struct ExtendedMail *email;
 
-        GetMailFile(results->filename = optional->filename, folder, mail);
-        results->index = &optional->active;
-
-        if(hasStatusError(mail))
-          results->status = "E"; // Error status
-        else if(hasStatusQueued(mail))
-          results->status = "W"; // Queued (WaitForSend) status
-        else if(hasStatusHold(mail))
-          results->status = "H"; // Hold status
-        else if(hasStatusSent(mail))
-          results->status = "S"; // Sent status
-        else if(hasStatusReplied(mail))
-          results->status = "R"; // Replied status
-        else if(hasStatusForwarded(mail))
-          results->status = "F"; // Forwarded status
-        else if(!hasStatusRead(mail))
+        if((email = MA_ExamineMail(folder, mail->MailFile, TRUE)) != NULL)
         {
-          if(hasStatusNew(mail))
-            results->status = "N"; // New status
+          int pf = getPERValue(mail);
+          int vf = getVOLValue(mail);
+          int i;
+
+          GetMailFile(results->filename = optional->filename, folder, mail);
+          results->index = &optional->active;
+
+          if(hasStatusError(mail))
+            results->status = "E"; // Error status
+          else if(hasStatusQueued(mail))
+            results->status = "W"; // Queued (WaitForSend) status
+          else if(hasStatusHold(mail))
+            results->status = "H"; // Hold status
+          else if(hasStatusSent(mail))
+            results->status = "S"; // Sent status
+          else if(hasStatusReplied(mail))
+            results->status = "R"; // Replied status
+          else if(hasStatusForwarded(mail))
+            results->status = "F"; // Forwarded status
+          else if(!hasStatusRead(mail))
+          {
+            if(hasStatusNew(mail))
+              results->status = "N"; // New status
+            else
+              results->status = "U"; // Unread status
+          }
+          else if(!hasStatusNew(mail))
+            results->status = "O"; // Old status
+
+          if((results->fromall = calloc(email->NoSFrom+2, sizeof(char *))) != NULL)
+          {
+            if((results->fromall[0] = strdup(BuildAddress(optional->address, sizeof(optional->address), mail->From.Address, mail->From.RealName))) == NULL)
+              params->rc = RETURN_ERROR;
+            for(i = 0; i < email->NoSFrom; i++)
+            {
+              if((results->fromall[i+1] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->SFrom[i].Address, email->SFrom[i].RealName))) == NULL)
+                params->rc = RETURN_ERROR;
+            }
+            results->from = results->fromall[0];
+          }
           else
-            results->status = "U"; // Unread status
+            params->rc = RETURN_ERROR;
+
+          if((results->toall = calloc(email->NoSTo+2, sizeof(char *))) != NULL)
+          {
+            if((results->toall[0] = strdup(BuildAddress(optional->address, sizeof(optional->address), mail->To.Address, mail->To.RealName))) == NULL)
+              params->rc = RETURN_ERROR;
+            for(i = 0; i < email->NoSTo; i++)
+            {
+              if((results->toall[i+1] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->STo[i].Address, email->STo[i].RealName))) == NULL)
+                params->rc = RETURN_ERROR;
+            }
+            results->to = results->toall[0];
+          }
+          else
+            params->rc = RETURN_ERROR;
+
+          if((results->replytoall = calloc(email->NoSReplyTo+2, sizeof(char *))) != NULL)
+          {
+            if((results->replytoall[0] = strdup(BuildAddress(optional->address, sizeof(optional->address), mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.Address : mail->From.Address, mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.RealName : mail->From.RealName))) == NULL)
+              params->rc = RETURN_ERROR;
+            for(i = 0; i < email->NoSReplyTo; i++)
+            {
+              if((results->replytoall[i+1] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->SReplyTo[i].Address, email->SReplyTo[i].RealName))) == NULL)
+                params->rc = RETURN_ERROR;
+            }
+            results->replyto = results->replytoall[0];
+          }
+          else
+            params->rc = RETURN_ERROR;
+
+          if((results->ccall = calloc(email->NoCC+1, sizeof(char *))) != NULL)
+          {
+            for(i = 0; i < email->NoCC; i++)
+            {
+              if((results->ccall[i] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->CC[i].Address, email->CC[i].RealName))) == NULL)
+                params->rc = RETURN_ERROR;
+            }
+            results->cc = results->ccall[0];
+          }
+          else
+            params->rc = RETURN_ERROR;
+
+          if((results->bccall = calloc(email->NoBCC+1, sizeof(char *))) != NULL)
+          {
+            for(i = 0; i < email->NoBCC; i++)
+            {
+              if((results->bccall[i] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->BCC[i].Address, email->BCC[i].RealName))) == NULL)
+                params->rc = RETURN_ERROR;
+            }
+            results->bcc = results->bccall[0];
+          }
+          else
+            params->rc = RETURN_ERROR;
+
+          if((results->resenttoall = calloc(email->NoResentTo+1, sizeof(char *))) != NULL)
+          {
+            for(i = 0; i < email->NoResentTo; i++)
+            {
+              if((results->resenttoall[i] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->ResentTo[i].Address, email->ResentTo[i].RealName))) == NULL)
+                params->rc = RETURN_ERROR;
+            }
+            results->resentto = results->resenttoall[0];
+          }
+          else
+            params->rc = RETURN_ERROR;
+
+          DateStamp2String(results->date = optional->date, sizeof(optional->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
+          results->subject = mail->Subject;
+          results->size = &mail->Size;
+          snprintf(results->msgid = optional->msgid, sizeof(optional->msgid), "%lX", mail->cMsgID);
+          snprintf(results->flags = optional->flags, sizeof(optional->flags), "%c%c%c%c%c-%c%c%c",
+                    isMultiRCPTMail(mail) ? 'M' : '-',
+                    isMP_MixedMail(mail)  ? 'A' : '-',
+                    isMP_ReportMail(mail) ? 'R' : '-',
+                    isMP_CryptedMail(mail)? 'C' : '-',
+                    isMP_SignedMail(mail) ? 'S' : '-',
+                    pf ? pf+'0' : '-',
+                    vf ? vf+'0' : '-',
+                    hasStatusMarked(mail) ? 'M' : '-'
+                 );
+
+          MA_FreeEMailStruct(email);
         }
-        else if(!hasStatusNew(mail))
-          results->status = "O"; // Old status
-
-        results->from = BuildAddress(optional->from, sizeof(optional->from), mail->From.Address, mail->From.RealName);
-        results->to = BuildAddress(optional->to, sizeof(optional->to), mail->To.Address, mail->To.RealName);
-        results->replyto = BuildAddress(optional->replyto, sizeof(optional->replyto), mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.Address : mail->From.Address,
-                                                                            mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.RealName : mail->From.RealName);
-
-        DateStamp2String(results->date = optional->date, sizeof(optional->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
-        results->subject = mail->Subject;
-        results->size = &mail->Size;
-        snprintf(results->msgid = optional->msgid, sizeof(optional->msgid), "%lX", mail->cMsgID);
-        snprintf(results->flags = optional->flags, sizeof(optional->flags), "%c%c%c%c%c-%c%c%c",
-                  isMultiRCPTMail(mail) ? 'M' : '-',
-                  isMP_MixedMail(mail)  ? 'A' : '-',
-                  isMP_ReportMail(mail) ? 'R' : '-',
-                  isMP_CryptedMail(mail)? 'C' : '-',
-                  isMP_SignedMail(mail) ? 'S' : '-',
-                  pf ? pf+'0' : '-',
-                  vf ? vf+'0' : '-',
-                  hasStatusMarked(mail) ? 'M' : '-'
-               );
+        else
+          params->rc = RETURN_ERROR;
       }
       else
         params->rc = RETURN_ERROR;
@@ -166,7 +256,71 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
       if(args != NULL)
         FreeVecPooled(G->SharedMemPool, args);
       if(results != NULL)
+      {
+        int i;
+
+        if(results->fromall != NULL)
+        {
+          i = 0;
+          while(results->fromall[i] != NULL)
+          {
+            free(results->fromall[i]);
+            i++;
+          }
+          free(results->fromall);
+        }
+        if(results->toall != NULL)
+        {
+          i = 0;
+          while(results->toall[i] != NULL)
+          {
+            free(results->toall[i]);
+            i++;
+          }
+          free(results->toall);
+        }
+        if(results->replytoall != NULL)
+        {
+          i = 0;
+          while(results->replytoall[i] != NULL)
+          {
+            free(results->replytoall[i]);
+            i++;
+          }
+          free(results->replytoall);
+        }
+        if(results->ccall != NULL)
+        {
+          i = 0;
+          while(results->ccall[i] != NULL)
+          {
+            free(results->ccall[i]);
+            i++;
+          }
+          free(results->ccall);
+        }
+        if(results->bccall != NULL)
+        {
+          i = 0;
+          while(results->bccall[i] != NULL)
+          {
+            free(results->bccall[i]);
+            i++;
+          }
+          free(results->bccall);
+        }
+        if(results->resenttoall != NULL)
+        {
+          i = 0;
+          while(results->resenttoall[i] != NULL)
+          {
+            free(results->resenttoall[i]);
+            i++;
+          }
+          free(results->resenttoall);
+        }
         FreeVecPooled(G->SharedMemPool, results);
+      }
       if(optional != NULL)
         FreeVecPooled(G->SharedMemPool, optional);
     }
