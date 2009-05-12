@@ -7,6 +7,7 @@ $URL$
 
 2009-05-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MAf.c: fixed long standing memory leak.
   * Rexx.c,h, rexx/mailfullinfo.c: added new ARexx command MAILFULLINFO to
     obtain all informations about a mail. The MAILINFO command just queries
     single senders and receivers, while MAILFULLINFO queries even multiple

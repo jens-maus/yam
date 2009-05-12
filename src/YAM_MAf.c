@@ -1501,6 +1501,14 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
       email->BCC = NULL;
     }
 
+    if(email->ResentTo != NULL)
+    {
+      ASSERT(email->NoResentTo > 0);
+
+      free(email->ResentTo);
+      email->ResentTo = NULL;
+    }
+
     free(email);
   }
 
