@@ -7,6 +7,8 @@ $URL$
 
 2009-05-12  Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/YAM_english.guide: updated the manual according to the latest changes
+    to the MAILINFO command.
   * rexx/mailinfo.c: merged MAILINFO and MAILFULLINFO into the old MAILINFO
     command and removed MAILFULLINFO again. Every variable without the "ALL"
     part will just contain the very first address/name information (i.e. FROM

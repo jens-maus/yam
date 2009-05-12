@@ -68,7 +68,7 @@
       @{" Support         " link "INFO"}  - Some useful contact links
       @{" The future      " link "PLAN"}  - Planned improvements
       @{" Credits         " link "CRED"}  - Those who supported the development of YAM
- 
+
 @endnode
 
 @node "COPY" "Legal stuff"
@@ -450,10 +450,10 @@ such as Compuserve and T-Online, are connected to the Internet through
 
    Related topics:
 
- @{" Make up of a message header    " link "HEAD"}  
- @{" Mail protocols (POP3 and SMTP) " link "PROT"}  
- @{" What is MIME?                  " link "MIME"}  
- @{" Encrypting with PGP            " link "PGP"}  
+ @{" Make up of a message header    " link "HEAD"}
+ @{" Mail protocols (POP3 and SMTP) " link "PROT"}
+ @{" What is MIME?                  " link "MIME"}
+ @{" Encrypting with PGP            " link "PGP"}
  @{" Golden rules (Netiquette)      " link "NETI"}
 
 @endnode
@@ -3518,18 +3518,18 @@ Main window - Settings menu
 
         NListviews: some of the lists in YAM, e.g. the message list
            Options: colors, fonts, miscellaneous, scrollbars.
-     
+
            Toolbar: icon buttons in the YAM windows.
            Options: labels, spacing, fonts.
-     
+
         TextEditor: internal editor as well as message display in the
                     Read window
            Options: fonts, colors, cursor, separator, keybindings, spell
                     checker.
-     
+
          NListtree: structured lists: address book, folder list
            Options: appearance of lines and group icons.
-     
+
       BetterString: general one-line text input field.
            Options: font, palette, cursor.
 
@@ -3565,7 +3565,7 @@ as shown below.  The menu bar is the same for each sheet.
 
 
    @{" Text " link "WRM1"} @{" Edit " link "WRM2"} @{" Attachments " link "WRM3"} @{" Options " link "WR02"}
-  
+
   .-----------------------. .------------------.   .--------------------.
   |      @{"  Message  " link "WR00"}     | |  @{" Attachments " link "WR01"}   |  |    @{"  Options  " link "WR02"}     |
   |                       |_|__________________|___|____________________|
@@ -3615,10 +3615,10 @@ as shown below.  The menu bar is the same for each sheet.
      you have made.  (It won't show up if you haven't made any
      modifications in the message itself, though).
 
-                      
-   Related topics:                      
 
- @{" The internal editor   " link "EDIT"}  
+   Related topics:
+
+ @{" The internal editor   " link "EDIT"}
  @{" The glossary          " link "DI_W"}
 
 @endnode
@@ -4612,15 +4612,15 @@ settings window will open with the following options:
                                + fast
                                - no protection of your e-mail from third persons
                                  with access to your computer
-     
+
      simple protection         simple password protection, no compression
                                + fast
                                - your e-mails are protected within YAM only
-     
+
      compressed                XPK compression without password protection
                                + saves hard disk space
                                - slow, no protection for your e-mail
-     
+
      compressed with password  XPK compression with password protection
                                + saves hard disk space, good protection
                                - slow
@@ -4703,7 +4703,7 @@ settings window will open with the following options:
 
      Examples on how to use the mailing list support settings are given
      in the @{" Tips & tricks " link "TIP4"} chapter.
- 
+
 @endnode
 
 @node "AB_W" "Address book"
@@ -4865,7 +4865,7 @@ Address book - Menus
      because names are optional.  YAM will automatically create aliases
      for the new items.
 
-    
+
 @{b}Address book/Append...@{ub}
      Loads another address book from your hard disk and appends its
      contents to the address book currently resident in RAM.  See
@@ -5971,7 +5971,7 @@ ADDREDIT
          /* Select an entry */
 
          ADDRGOTO YAM_ml
- 
+
          /* Edit this entry */
 
          'ADDREDIT EMAIL "yam\@freelists.org" COMMENT "The place to be"'
@@ -6805,7 +6805,7 @@ GETSELECTED
      VAR/K    - alternative variable to put the results into instead of
                 RESULT
      STEM/K   - base name used for the stems where the returned data
-                will be stored 
+                will be stored
 
 @{b}RETURNS@{ub}
      VAR             - space separated list of results
@@ -7677,56 +7677,73 @@ MAILINFO
                  is specified, the current message will be used
 
 @{b}RETURNS@{ub}
-     VAR            - info returned by the query
-     <STEM>INDEX    - position of the message in the list; the message
-                      at the top occupies position 0
-     <STEM>STATUS   - status of the message; possible values are
+     VAR               - info returned by the query
+     <STEM>INDEX       - position of the message in the list; the message
+                         at the top occupies position 0
+     <STEM>STATUS      - status of the message; possible values are
 
-                         N - new
-                         O - read
-                         U - unread
-                         R - replied
-                         F - forwarded
-                         S - sent
-                         W - pending
-                         H - hold
-                         E - error sending
+                            N - new
+                            O - read
+                            U - unread
+                            R - replied
+                            F - forwarded
+                            S - sent
+                            W - pending
+                            H - hold
+                            E - error sending
 
-     <STEM>FROM     - sender of the message; specifically, the first sender
-                      noted in the "From:" header
-     <STEM>TO       - recipient of the message; actually, the first recipient
-                      noted in the "To:" header
-     <STEM>REPLYTO  - return address of the message; this will be either the
-                      first recipient in the "Reply-To:" header, or the first
-                      sender in the "From:" header if no "Reply-To:" header
-                      exists
-     <STEM>SUBJECT  - subject of the message (contents of the "Subject:"
-                      header)
-     <STEM>FILENAME - filename where the message is stored, including
-                      path
-     <STEM>SIZE     - size of the message, in bytes
-     <STEM>DATE     - date of the message, in "MM-DD-YY HH:MM:SS" format
-     <STEM>FLAGS    - a 9 byte string in "MARCS-77M" format:
+     <STEM>FROM        - sender of the message; specifically, the first sender
+                         noted in the "From:" header
+     <STEM>TO          - recipient of the message; actually, the first recipient
+                         noted in the "To:" header
+     <STEM>REPLYTO     - return address of the message; this will be either the
+                         first recipient in the "Reply-To:" header, or the first
+                         sender in the "From:" header if no "Reply-To:" header
+                         exists
+     <STEM>CC          - first entry in the CC: field, if any
+     <STEM>BCC         - first entry in the BCC: field, if any
+     <STEM>RESENTTO    - first entry in the ResentTo: field, if any
+     <STEM>SUBJECT     - subject of the message (contents of the "Subject:"
+                         header)
+     <STEM>FILENAME    - filename where the message is stored, including
+                         path
+     <STEM>SIZE        - size of the message, in bytes
+     <STEM>DATE        - date of the message, in "MM-DD-YY HH:MM:SS" format
+     <STEM>FLAGS       - a 9 byte string in "MARCS-77M" format:
 
-                         MARCS-77M
-                         ||||| |||
-                         ||||| ||`--------- @{b}M@{ub}arked flag  (V2.4)
-                         ||||| |`---------- volatile flag (see @{" SETFLAG " link "RX_SETFLAG"})
-                         ||||| `----------- permanent flag (see @{" SETFLAG " link "RX_SETFLAG"})
-                         ||||`------------- PGP @{b}S@{ub}igned
-                         |||`-------------- PGP en@{b}C@{ub}rypted
-                         ||`--------------- status @{b}R@{ub}eport
-                         |`---------------- contains @{b}A@{ub}ttachments
-                         `----------------- @{b}M@{ub}ultiple recipients
+                            MARCS-77M
+                            ||||| |||
+                            ||||| ||`--------- @{b}M@{ub}arked flag  (V2.4)
+                            ||||| |`---------- volatile flag (see @{" SETFLAG " link "RX_SETFLAG"})
+                            ||||| `----------- permanent flag (see @{" SETFLAG " link "RX_SETFLAG"})
+                            ||||`------------- PGP @{b}S@{ub}igned
+                            |||`-------------- PGP en@{b}C@{ub}rypted
+                            ||`--------------- status @{b}R@{ub}eport
+                            |`---------------- contains @{b}A@{ub}ttachments
+                            `----------------- @{b}M@{ub}ultiple recipients
 
-     <STEM>MSGID    - compressed hexadecimal 32 bit representation of the
-                      "Message-ID:" header contents, e.g. BBC62595  (V2.1)
+     <STEM>MSGID       - compressed hexadecimal 32 bit representation of the
+                         "Message-ID:" header contents, e.g. BBC62595  (V2.1)
+     <STEM>FROMALL     - all entries from the From: field, the first entry will be
+                         the same as for FROM
+     <STEM>TOALL       - all entries from the To: field, the first entry will be
+                         the same as for TO
+     <STEM>REPLYTOALL  - all entries from the ReplyTo: field, the first entry will
+                         be the same as for REPLYTO
+     <STEM>CCALL       - all entries from the CC: field, the first entry will be
+                         the same as for CC
+     <STEM>BCCALL      - all entries from the BCC: field, the first entry will be
+                         the same as for BCC
+     <STEM>RESENTTOALL - all entries from the ResentTo: field, the first entry will
+                         be the same as for RESENTTO
 
      RC is set to 10 if INDEX is out of the range of messages available in
      the folder.
 
 @{b}NOTES@{ub}
      Starting with V2.4, <STEM>MSGID returns an hexadecimal value.
+     Starting with V2.6, the "ALL" variables will return all addresses/names from the
+        corresponding header field.
 
 @{b}EXAMPLE@{ub}
          /* Enable result codes */
@@ -7755,6 +7772,9 @@ MAILINFO
          SAY 'Status:     'status
          SAY 'From:       'st.from
          SAY 'To:         'st.to
+         DO i = 0 TO info.TOALL.COUNT-1
+            say 'To:         'st.TOALL.i
+         END
          SAY 'Reply-To:   'st.replyto
          SAY 'Subject:    'st.subject
          SAY 'Filename:   'st.filename
@@ -8377,7 +8397,7 @@ READINFO
          OPTIONS RESULTS
 
          /* Silently decode the current message */
-        
+
          MAILREAD QUIET
 
          /* Get info about the message, then close the window */
@@ -8442,7 +8462,7 @@ READPRINT
          OPTIONS RESULTS
 
          /* Silently decode the current message */
-        
+
          MAILREAD QUIET
 
          /* Print the body, then close the message */
@@ -8500,7 +8520,7 @@ READSAVE
          OPTIONS RESULTS
 
          /* Silently decode the current message */
-        
+
          MAILREAD QUIET
 
          /* Save the body to a file, then close the message */
@@ -8571,7 +8591,7 @@ REQUEST
 
          /* Prepare the text for our requester.
           * Here we have to escape the single '*' (asterisk) via
-          * an additional asterisk sign because an asterisk is 
+          * an additional asterisk sign because an asterisk is
           * a reserved character for ARexx itself
           */
          body = '"Isn't YAM just great?"'
@@ -9769,7 +9789,7 @@ Graphical User Interface.  There are several kinds of icons:
      empty.info     the mailbox is empty
      new.info       the mailbox has at least one new message
      old.info       the mailbox only holds "old" mail
-     
+
 
 @{b}status/status_#?@{ub}
      These are the @{" status icons " link "MA0S"} displayed by YAM to show the status
@@ -11348,7 +11368,7 @@ local bulletin boards or on public domain disks.
    @{" Tracking, Message " link "CO14"}
    @{" Transfer window " link "CO02"}
    @{" Transfers, Mail " link "TR_W"}
-   
+
    U...
 
    @{" Updates, Checking for " link "MAM1"}
