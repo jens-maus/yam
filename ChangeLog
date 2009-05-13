@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-05-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c: a search was only aborted after the current folder has completely
+    been searched. Now it is aborted as soon as the button was clicked. This
+    fixes bug #2790981.
+
 2009-05-12  Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/YAM_english.guide: updated the manual according to the latest changes

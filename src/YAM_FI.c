@@ -352,7 +352,7 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
 
     rptr = cmsg = RE_ReadInMessage(rmData, RIM_QUIET);
 
-    while(*rptr && !found && (G->FI ? !G->FI->Abort : TRUE))
+    while(*rptr != '\0' && found == FALSE && (G->FI != NULL ? !G->FI->Abort : TRUE))
     {
       for(ptr = rptr; *ptr && *ptr != '\n'; ptr++);
 
@@ -362,6 +362,9 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
 
       rptr = ++ptr;
     }
+
+    if(G->FI != NULL && G->FI->Abort != FALSE)
+      D(DBF_FILTER, "search was aborted");
 
     free(cmsg);
     FreePrivateRMData(rmData);
@@ -961,6 +964,10 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
               fndmsg++;
             }
 
+            // bail out if the search was aborted
+            if(G->FI->Abort != FALSE)
+              break;
+
             // increase the progress counter
             progress++;
 
@@ -998,7 +1005,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
         UnlockMailList(folder->messages);
 
         // bail out if the search was aborted
-        if(G->FI->Abort == TRUE)
+        if(G->FI->Abort != FALSE)
           break;
       }
 
