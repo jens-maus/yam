@@ -462,6 +462,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "\n[Security]\n");
     fprintf(fh, "PGPCmdPath       = %s\n", co->PGPCmdPath);
     fprintf(fh, "MyPGPID          = %s\n", co->MyPGPID);
+    fprintf(fh, "PGPURL           = %s\n", co->PGPURL);
     fprintf(fh, "EncryptToSelf    = %s\n", Bool2Txt(co->EncryptToSelf));
     fprintf(fh, "PGPPassInterval  = %d\n", co->PGPPassInterval);
     fprintf(fh, "ReMailer         = %s\n", co->ReMailer);
@@ -1160,6 +1161,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 /* Security */
           else if(stricmp(buf, "PGPCmdPath") == 0)      strlcpy(co->PGPCmdPath, value, sizeof(co->PGPCmdPath));
           else if(stricmp(buf, "MyPGPID") == 0)         strlcpy(co->MyPGPID, value, sizeof(co->MyPGPID));
+          else if(stricmp(buf, "PGPURL") == 0)          strlcpy(co->PGPURL, value, sizeof(co->PGPURL));
           else if(stricmp(buf, "EncryptToSelf") == 0)   co->EncryptToSelf = Txt2Bool(value);
           else if(stricmp(buf, "PGPPassInterval") == 0) co->PGPPassInterval = atoi(value);
           else if(stricmp(buf, "ReMailer") == 0)        strlcpy(co->ReMailer, value, sizeof(co->ReMailer));
@@ -1963,6 +1965,7 @@ void CO_GetConfig(BOOL saveConfig)
       {
         GetMUIString(CE->PGPCmdPath, gui->ST_PGPCMD, sizeof(CE->PGPCmdPath));
         GetMUIString(CE->MyPGPID, gui->ST_MYPGPID, sizeof(CE->MyPGPID));
+        GetMUIString(CE->PGPURL, gui->ST_PGPURL, sizeof(CE->PGPURL));
         CE->EncryptToSelf = GetMUICheck(gui->CH_ENCSELF);
         GetMUIString(CE->ReMailer, gui->ST_REMAILER, sizeof(CE->ReMailer));
         GetMUIString(CE->RMCommands, gui->ST_FIRSTLINE, sizeof(CE->RMCommands));
@@ -2371,6 +2374,7 @@ void CO_SetConfig(void)
     {
       setstring(gui->ST_PGPCMD, CE->PGPCmdPath);
       setstring(gui->ST_MYPGPID, CE->MyPGPID);
+      setstring(gui->ST_PGPURL, CE->PGPURL);
       setcheckmark(gui->CH_ENCSELF, CE->EncryptToSelf);
       setstring(gui->ST_REMAILER, CE->ReMailer);
       setstring(gui->ST_FIRSTLINE, CE->RMCommands);

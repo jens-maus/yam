@@ -6929,3 +6929,13 @@ Date of birth uses a wrong format. The correct format is '%s'.\n\
 %%Y - year (4 digits)\n\
 The year number must be greater or equal 1900!
 ; DOBFORMAT
+;
+MSG_CO_PGPURL (2144//)
+URL to public PGP key
+;
+MSG_HELP_CO_ST_PGPURL (2145//)
+You can specify an URL where your public\n\
+PGP key can be downloaded from. This URL\n\
+will then placed into a separate header\n\
+entry in every mail.
+;

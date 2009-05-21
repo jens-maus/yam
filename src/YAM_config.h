@@ -178,6 +178,7 @@ struct CO_GUIData
   Object *CY_SIZE;
   Object *ST_PGPCMD;
   Object *ST_MYPGPID;
+  Object *ST_PGPURL;
   Object *CH_ENCSELF;
   Object *ST_REMAILER;
   Object *ST_FIRSTLINE;
@@ -596,6 +597,7 @@ struct Config
   char TagsSeparator[SIZE_SMALL];
   char PGPCmdPath[SIZE_PATH];
   char MyPGPID[SIZE_DEFAULT];
+  char PGPURL[SIZE_URL];
   char ReMailer[SIZE_ADDRESS];
   char RMCommands[SIZE_INTRO];
   char LogfilePath[SIZE_PATH];

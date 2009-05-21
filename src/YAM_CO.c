@@ -909,6 +909,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       strlcpy(co->PGPCmdPath, "PGP:", sizeof(co->PGPCmdPath));
 
     co->MyPGPID[0] = '\0';
+    co->PGPURL[0] = '\0';
     co->EncryptToSelf = TRUE;
     co->LogAllEvents = TRUE;
     co->PGPPassInterval = 10; // 10 min per default
@@ -1420,6 +1421,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      strcmp(c1->TagsSeparator,      c2->TagsSeparator) == 0 &&
      strcmp(c1->PGPCmdPath,         c2->PGPCmdPath) == 0 &&
      strcmp(c1->MyPGPID,            c2->MyPGPID) == 0 &&
+     strcmp(c1->PGPURL,             c2->PGPURL) == 0 &&
      strcmp(c1->ReMailer,           c2->ReMailer) == 0 &&
      strcmp(c1->RMCommands,         c2->RMCommands) == 0 &&
      strcmp(c1->LogfilePath,        c2->LogfilePath) == 0 &&

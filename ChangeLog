@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-05-21  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, YAM_COg.c, misc: a new "OpenPGP:" header is now added to every
+    new mail when the PGP ID is specified. This header field is added in
+    accordance to its definition at http://josefsson.org/openpgp-header/
+    In addition, a user can now specify an URL to a text version of his
+    public PGP key. This URL will then also be added to the OpenPGP header
+    and thus clients may allow to directly download this key via internal
+    methods.
+
 2009-05-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: a search was only aborted after the current folder has completely

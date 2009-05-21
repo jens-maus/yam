@@ -264,6 +264,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
   else if(param != NULL)
   {
     D(DBF_MAIL, "writing quoted content '%s'='%s'", param, s);
+
     // output the parameter name right before
     // the resulting parameter value
     fprintf(fh, "\n\t%s=\"%s\"", param, s);
@@ -1125,8 +1126,7 @@ BOOL WriteOutMessage(struct Compose *comp)
   struct TempFile *tf=NULL;
   FILE *fh = comp->FH;
   struct WritePart *firstpart = comp->FirstPart;
-  char boundary[SIZE_DEFAULT];
-  char options[SIZE_DEFAULT];
+  char buf[SIZE_DEFAULT];
   char *rcptto;
 
   ENTER();
@@ -1218,11 +1218,12 @@ BOOL WriteOutMessage(struct Compose *comp)
     }
   }
 
-  *options = '\0';
-  if(comp->DelSend) strlcat(options, ",delsent", sizeof(options));
-  if(comp->Security) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",%s", SecCodes[comp->Security]);
-  if(comp->Signature) snprintf(&options[strlen(options)], sizeof(options)-strlen(options), ",sigfile%d", comp->Signature-1);
-  if(*options) EmitHeader(fh, "X-YAM-Options", &options[1]);
+  *buf = '\0';
+  if(comp->DelSend) strlcat(buf, ",delsent", sizeof(buf));
+  if(comp->Security) snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), ",%s", SecCodes[comp->Security]);
+  if(comp->Signature) snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), ",sigfile%d", comp->Signature-1);
+  if(buf[0] != '\0')
+    EmitHeader(fh, "X-YAM-Options", &buf[1]);
 
   if(comp->From != NULL)
     EmitRcptHeader(fh, "From", comp->From);
@@ -1248,29 +1249,59 @@ BOOL WriteOutMessage(struct Compose *comp)
   rcptto = comp->ReplyTo ? comp->ReplyTo : (comp->From ? comp->From : C->EmailAddress);
   if(comp->RequestMDN) EmitRcptHeader(fh, "Disposition-Notification-To", rcptto);
   if(comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
+
   fprintf(fh, "User-Agent: %s\n", yamuseragent);
-  if(comp->UserInfo) WR_WriteUserInfo(fh, comp->From);
-  if(*C->Organization) EmitHeader(fh, "Organization", C->Organization);
-  if(*comp->Subject) EmitHeader(fh, "Subject", comp->Subject);
-  if(comp->ExtHeader) WR_EmitExtHeader(fh, comp);
+
+  if(comp->UserInfo)
+    WR_WriteUserInfo(fh, comp->From);
+
+  // if the PGP key ID is set we go and output the OpenPGP header
+  // field which is defined at http://josefsson.org/openpgp-header/
+  if(C->MyPGPID[0] != '\0')
+  {
+    char *p = strchr(C->MyPGPID, 'x');
+    if(p == NULL)
+      p = C->MyPGPID;
+    else
+      p++;
+
+    fprintf(fh, "OpenPGP: id=%s", p);
+
+    if(C->PGPURL[0] != '\0')
+    {
+      fputc(';', fh);
+      HeaderFputs(fh, C->PGPURL, "url", 0);
+    }
+
+    fputc('\n', fh);
+  }
+
+  if(C->Organization[0] != '\0')
+    EmitHeader(fh, "Organization", C->Organization);
+
+  if(comp->Subject[0] != '\0')
+    EmitHeader(fh, "Subject", comp->Subject);
+
+  if(comp->ExtHeader)
+    WR_EmitExtHeader(fh, comp);
 
 mimebody:
 
   fputs("MIME-Version: 1.0\n", fh); // RFC 2049 requires that
 
-  strlcpy(boundary, NewBoundaryID(), sizeof(boundary));
+  strlcpy(buf, NewBoundaryID(), sizeof(buf));
 
   if(comp->GenerateMDN == TRUE)
   {
-    success = WR_ComposeReport(fh, comp, boundary);
+    success = WR_ComposeReport(fh, comp, buf);
   }
   else if(comp->Security > SEC_NONE && comp->Security <= SEC_BOTH)
   {
-    success = WR_ComposePGP(fh, comp, boundary);
+    success = WR_ComposePGP(fh, comp, buf);
   }
   else if(firstpart->Next != NULL)
   {
-    success = WR_ComposeMulti(fh, comp, boundary);
+    success = WR_ComposeMulti(fh, comp, buf);
   }
   else
   {

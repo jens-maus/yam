@@ -3315,7 +3315,7 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
             MUIA_Scrollgroup_FreeHoriz, FALSE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
-              Child, VGroup, GroupFrameT("PGP"),
+              Child, VGroup, GroupFrameT("PGP (Pretty Good Privacy)"),
                 Child, ColGroup(2),
                   Child, Label2(tr(MSG_CO_PGPExe)),
                   Child, PopaslObject,
@@ -3332,6 +3332,10 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
                     Child, data->GUI.CH_ENCSELF = MakeCheck(tr(MSG_CO_EncryptToSelf)),
                     Child, Label1(tr(MSG_CO_EncryptToSelf)),
                   End,
+
+                  Child, Label2(tr(MSG_CO_PGPURL)),
+                  Child, data->GUI.ST_PGPURL = MakeString(SIZE_URL, tr(MSG_CO_PGPURL)),
+
                 End,
                 Child, HGroup,
                   Child, data->GUI.CH_PGPPASSINTERVAL = MakeCheck(tr(MSG_CO_PGPPASSINTERVAL1)),
@@ -3381,6 +3385,7 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
   {
     SetHelp(data->GUI.ST_PGPCMD    ,MSG_HELP_CO_ST_PGPCMD   );
     SetHelp(data->GUI.ST_MYPGPID   ,MSG_HELP_CO_ST_MYPGPID  );
+    SetHelp(data->GUI.ST_PGPURL,    MSG_HELP_CO_ST_PGPURL   );
     SetHelp(data->GUI.CH_ENCSELF   ,MSG_HELP_CO_CH_ENCSELF  );
     SetHelp(data->GUI.CH_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
     SetHelp(data->GUI.NB_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
@@ -3396,6 +3401,7 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
                                                                                                                                                                    data->GUI.CH_SPLITLOG,
                                                                                                                                                                    data->GUI.CH_LOGALL,
                                                                                                                                                                    NULL);
+
     DoMethod(data->GUI.CH_PGPPASSINTERVAL, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.NB_PGPPASSINTERVAL, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
   }
 
