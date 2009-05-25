@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-05-25  Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/YAM.cd, locale/german.ct: fixed slightly broken language.
+
 2009-05-21  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, YAM_COg.c, misc: a new "OpenPGP:" header is now added to every

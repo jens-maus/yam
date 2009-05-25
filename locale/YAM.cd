@@ -4889,7 +4889,7 @@ C_harset
 ;
 MSG_CO_CHARSETUNKNOWNWARN (1612//)
 The charset configured for YAM is '%s' but isn't\n\
-supported by the installed codesets.library version.\n\
+supported by the installed version of codesets.library.\n\
 \n\
 How do you want to proceed?
 ; LOCALCHARSET

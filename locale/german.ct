@@ -6496,8 +6496,8 @@ Zeic_henkodierung
 ;
 MSG_CO_CHARSETUNKNOWNWARN
 Die eingestellte Zeichenkodierung ist '%s' und wird\n\
-leider von der installierten codesets.library version\n\
-nicht unterstützt.\n\
+von der installierten Version der codesets.library\n\
+leider nicht unterstützt.\n\
 \n\
 Wie möchten Sie fortfahren?
 ; LOCALCHARSET
