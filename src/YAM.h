@@ -91,7 +91,6 @@ struct Global
   Object *                 NewMailSound_Obj;
   Object *                 SplashWinObject;
   Object *                 AboutWinObject;
-  Object *                 AboutMUIObject;
   Object *                 UpdateNotifyWinObject;
   Object *                 ReadToolbarCacheObject;
   Object *                 WriteToolbarCacheObject;

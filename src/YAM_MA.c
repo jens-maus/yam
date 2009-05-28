@@ -3311,28 +3311,6 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
 MakeHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
 
 ///
-/// MA_AboutMUIFunc
-//  Displays 'About MUI' window
-HOOKPROTONHNONP(MA_AboutMUIFunc, void)
-{
-  ENTER();
-
-  if(G->AboutMUIObject == NULL)
-  {
-    // create the about MUI object and open it
-    G->AboutMUIObject = AboutmuiObject,
-      MUIA_Window_RefWindow,     G->MA->GUI.WI,
-      MUIA_Aboutmui_Application, G->App,
-    End;
-  }
-
-  SafeOpenWindow(G->AboutMUIObject);
-
-  LEAVE();
-}
-MakeStaticHook(MA_AboutMUIHook, MA_AboutMUIFunc);
-
-///
 /// MA_DisposeAboutWindowFunc
 //  Displays 'About' window
 HOOKPROTONHNONP(MA_DisposeAboutWindowFunc, void)
@@ -4422,7 +4400,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CONFIG,    MUIV_Notify_Application, 2, MUIM_CallHook,             &CO_OpenHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_USER,      MUIV_Notify_Application, 2, MUIM_CallHook,             &US_OpenHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MUI,       MUIV_Notify_Application, 3, MUIM_Application_OpenConfigWindow, MUIF_NONE, NULL);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUTMUI,  MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_AboutMUIHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUTMUI,  MUIV_Notify_Application, 2, MUIM_Application_AboutMUI, data->GUI.WI);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SCRIPT,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_CallRexxHook, -1);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_PREVTH,    MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, -1);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEXTTH,    MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, +1);
