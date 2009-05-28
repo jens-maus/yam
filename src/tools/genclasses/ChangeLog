@@ -4,6 +4,11 @@ GenClasses Tool - ChangeLog
 
 $Id$
 
+2009-05-28  Jens Langner <Jens.Langner@light-speed.de>
+
+    * gc.c: changed to use the new SDISPATCHER() macro which creates
+      static dispatchers instead.
+
 2008-03-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * gc.c,lists.c: fixed a bug in the list_findname() function where

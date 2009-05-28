@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-05-28  Jens Langner <Jens.Langner@light-speed.de>
+
+  * tools/genclasses: updated the auto-generated sources to use the new
+    static SDISPATCHER macro of SDI instead. This should generate static
+    dispatcher functions instead of global ones and thus keep the
+    symbols more where they belong to.
+  * include: updated SDI headers to their very latest versions.
+
 2009-05-25  Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/YAM.cd, locale/german.ct: fixed slightly broken language.

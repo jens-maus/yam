@@ -4,7 +4,7 @@
  Copyright (C) 2001 by Andrew Bell <mechanismx@lineone.net>
 
  Contributed to the YAM Open Source Team as a special version
- Copyright (C) 2001-2005 by YAM Open Source Team
+ Copyright (C) 2001-2009 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -63,6 +63,9 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  * History
  * -------
+ * 0.28 - changed to use the new ЅDISPATCHER macros instead which are generating
+ *        static dispatcher functions instead of global ones.
+ *
  * 0.27 - added warning in case a BOOL parameter type is used in a DECLARE()
  *        statement as this type is known to case trouble.
  *
@@ -176,7 +179,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  */
 
-static const char * const verstr = "0.27";
+static const char * const verstr = "0.28";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -894,7 +897,7 @@ int gen_source( char *destfile, struct list *classlist )
   for(nn = NULL; (nn = list_getnext(classlist, nn, (void **) &nextcd)); )
   {
     if (arg_storm) fprintf(fp, "/// %sDispatcher()\n", nextcd->name);
-    fprintf(fp, "DISPATCHER(%sDispatcher)\n"
+    fprintf(fp, "SDISPATCHER(%sDispatcher)\n"
       "{\n  switch(msg->MethodID)\n  {\n", nextcd->name);
     /* Write OVERLOADs */
     for(n = NULL; (n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod)); )
