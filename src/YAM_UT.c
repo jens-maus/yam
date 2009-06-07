@@ -5021,6 +5021,7 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
   #if defined(__amigaos4__)
   BPTR err = 0;
   #endif
+  LONG result;
 
   ENTER();
   SHOWSTRING(DBF_UTIL, cmd);
@@ -5052,28 +5053,28 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
   // is done by SystemTags/CreateNewProc itself.
   path = CloneSearchPath();
 
-  if(SystemTags(cmd,
-                SYS_Input,    in,
-                SYS_Output,   out,
-                #if defined(__amigaos4__)
-                SYS_Error,    err,
-                NP_Child,     TRUE,
-                #endif
-                NP_Name,      "YAM command process",
-                NP_Path,      path,
-                NP_StackSize, C->StackSize,
-                NP_WindowPtr, -1,           // show no requesters at all
-                SYS_Asynch,   asynch,
-                TAG_DONE) != 0)
+  if((result = SystemTags(cmd, SYS_Input,    in,
+                               SYS_Output,   out,
+                               #if defined(__amigaos4__)
+                               SYS_Error,    err,
+                               NP_Child,     TRUE,
+                               #endif
+                               NP_Name,      "YAM command process",
+                               NP_Path,      path,
+                               NP_StackSize, C->StackSize,
+                               NP_WindowPtr, -1,           // show no requesters at all
+                               SYS_Asynch,   asynch,
+                               TAG_DONE)) != 0)
   {
     // an error occurred as SystemTags should always
     // return zero on success, no matter what.
     E(DBF_UTIL, "execution of command '%s' failed, IoErr()=%ld", cmd, IoErr());
 
-    // manually free our search path
-    // as SystemTags() shouldn't have freed
-    // it itself.
-    if(path != 0)
+    // manually free our search path as SystemTags() shouldn't have freed
+    // it itself, but only if the result is equal to -1. All other values
+    // stem from the launched command itself and SystemTags() already freed
+    // everything.
+    if(result == -1 && path != 0)
       FreeSearchPath(path);
 
     result = FALSE;

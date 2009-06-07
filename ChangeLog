@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-07  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: the command search path is freed only if SystemTags() returns
+    -1 (i.e. the supplied command was not found at all). This fixes bug
+    #2802287.
+
 2009-05-28  Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c, YAM.h: removed the MA_AboutMUIFunc and changed the AboutMUI
