@@ -133,8 +133,16 @@
 #define MUIM_Group_MoveMember				 0x8042ff4e /* V16 */
 #endif
 #if (MUIMASTER_VMIN < 18)
+#ifndef MUIM_DoDrag
 #define MUIM_DoDrag 0x804216bb /* private */ /* V18 */
 struct  MUIP_DoDrag { ULONG MethodID; LONG touchx; LONG touchy; ULONG flags; }; /* private */
+#endif
+#endif
+#ifndef MUIA_Text_Copy
+#define MUIA_Text_Copy                      0x80427727 /* V20 i.. BOOL              */
+#endif
+#ifndef MUIO_Label_Tiny
+#define MUIO_Label_Tiny          (1<<13)
 #endif
 
 enum { IECODE_SPACE = 64,

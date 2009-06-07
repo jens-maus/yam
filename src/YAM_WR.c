@@ -31,6 +31,7 @@
 
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <clib/alib_protos.h>
 #include <proto/dos.h>

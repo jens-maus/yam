@@ -4,7 +4,7 @@
  Registered MUI class, Serial Number: 1d51 (0x9d5100a1 to 0x9d5100aF)
 
  Copyright (C) 1996-2001 by Gilles Masson
- Copyright (C) 2001-2005 by NList Open Source Team
+ Copyright (C) 2001-2009 by NList Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NFloattext_mcc.h 159 2007-06-10 12:29:34Z damato $
+ $Id: NFloattext_mcc.h 336 2009-06-06 21:35:40Z damato $
 
 ***************************************************************************/
 
@@ -33,17 +33,33 @@
 #include <mui/NListview_mcc.h>
 #endif
 
-#ifdef __GNUC__
-  #ifdef __PPC__
-    #pragma pack(2)
-  #endif
-#elif defined(__VBCC__)
-  #pragma amiga-align
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#define MUIC_NFloattext "NFloattext.mcc"
-#define NFloattextObject MUI_NewObject(MUIC_NFloattext
+#if !defined(__AROS__) && defined(__PPC__)
+  #if defined(__GNUC__)
+    #pragma pack(2)
+  #elif defined(__VBCC__)
+    #pragma amiga-align
+  #endif
+#endif
 
+/***********************************************************************/
+
+// STACKED ensures proper alignment on AROS 64 bit systems
+#if !defined(__AROS__) && !defined(STACKED)
+#define STACKED
+#endif
+
+/***********************************************************************/
+
+#define MUIC_NFloattext "NFloattext.mcc"
+#if defined(__AROS__) && !defined(NO_INLINE_STDARG)
+#define NFloattextObject MUIOBJMACRO_START(MUIC_NFloattext)
+#else
+#define NFloattextObject MUI_NewObject(MUIC_NFloattext
+#endif
 
 /* Attributes */
 
@@ -54,14 +70,18 @@
 #define MUIA_NFloattext_Align               0x9d5100a5 /* GM  isg LONG               */
 
 #define MUIM_NFloattext_GetEntry            0x9d5100aF /* GM */
-struct  MUIP_NFloattext_GetEntry            { ULONG MethodID; LONG pos; APTR *entry; };
+struct  MUIP_NFloattext_GetEntry            { STACKED ULONG MethodID; STACKED LONG pos; STACKED APTR *entry; };
 
-#ifdef __GNUC__
-  #ifdef __PPC__
+#if !defined(__AROS__) && defined(__PPC__)
+  #if defined(__GNUC__)
     #pragma pack()
+  #elif defined(__VBCC__)
+    #pragma default-align
   #endif
-#elif defined(__VBCC__)
-  #pragma default-align
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* MUI_NFloattext_MCC_H */

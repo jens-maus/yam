@@ -5,7 +5,7 @@
 
  TextEditor.mcc - Textediting MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005-2007 by TextEditor.mcc Open Source Team
+ Copyright (C) 2005-2009 by TextEditor.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 
  TextEditor class Support Site:  http://www.sf.net/projects/texteditor-mcc
 
- $Id: TextEditor_mcc.h 441 2008-01-04 10:45:21Z thboeckel $
+ $Id: TextEditor_mcc.h 513 2009-06-06 12:05:38Z damato $
 
 ***************************************************************************/
 
@@ -31,18 +31,32 @@
 extern "C" {
 #endif
 
-#ifdef __GNUC__
-  #ifdef __PPC__
+#if !defined(__AROS__) && defined(__PPC__)
+  #if defined(__GNUC__)
     #pragma pack(2)
+  #elif defined(__VBCC__)
+    #pragma amiga-align
   #endif
-#elif defined(__VBCC__)
-  #pragma amiga-align
 #endif
 
-#define MUIC_TextEditor     "TextEditor.mcc"
-#define TextEditorObject    MUI_NewObject(MUIC_TextEditor
+/***********************************************************************/
 
-#define TextEditor_Dummy   (0xad000000)
+// STACKED ensures proper alignment on AROS 64 bit systems
+#if !defined(__AROS__) && !defined(STACKED)
+#define STACKED
+#endif
+
+/***********************************************************************/
+
+#define MUIC_TextEditor     "TextEditor.mcc"
+
+#if defined(__AROS__) && !defined(NO_INLINE_STDARG)
+#define TextEditorObject    MUIOBJMACRO_START(MUIC_TextEditor)
+#else
+#define TextEditorObject    MUI_NewObject(MUIC_TextEditor
+#endif
+
+#define TextEditor_Dummy   (0xad000000UL)
 
 #define MUIA_TextEditor_AreaMarked            (TextEditor_Dummy + 0x14)
 #define MUIA_TextEditor_ColorMap              (TextEditor_Dummy + 0x2f)
@@ -103,17 +117,17 @@ extern "C" {
 #define MUIM_TextEditor_MarkText              (TextEditor_Dummy + 0x2c)
 #define MUIM_TextEditor_QueryKeyAction        (TextEditor_Dummy + 0x2d)
 
-struct MUIP_TextEditor_ARexxCmd          { ULONG MethodID; STRPTR command; };
-struct MUIP_TextEditor_BlockInfo         { ULONG MethodID; ULONG *startx; ULONG *starty; ULONG *stopx; ULONG *stopy; };
-struct MUIP_TextEditor_ClearText         { ULONG MethodID; };
-struct MUIP_TextEditor_ExportBlock       { ULONG MethodID; ULONG flags; };
-struct MUIP_TextEditor_ExportText        { ULONG MethodID; };
-struct MUIP_TextEditor_HandleError       { ULONG MethodID; ULONG errorcode; }; /* See below for error codes */
-struct MUIP_TextEditor_InsertText        { ULONG MethodID; STRPTR text; LONG pos; }; /* See below for positions */
-struct MUIP_TextEditor_Replace           { ULONG MethodID; STRPTR NewString; ULONG Flags; };
-struct MUIP_TextEditor_Search            { ULONG MethodID; STRPTR SearchString; ULONG Flags; };
-struct MUIP_TextEditor_MarkText          { ULONG MethodID; ULONG start_crsr_x; ULONG start_crsr_y; ULONG stop_crsr_x; ULONG stop_crsr_y; };
-struct MUIP_TextEditor_QueryKeyAction    { ULONG MethodID; ULONG keyAction; };
+struct MUIP_TextEditor_ARexxCmd          { STACKED ULONG MethodID; STACKED STRPTR command; };
+struct MUIP_TextEditor_BlockInfo         { STACKED ULONG MethodID; STACKED ULONG *startx; STACKED ULONG *starty; STACKED ULONG *stopx; STACKED ULONG *stopy; };
+struct MUIP_TextEditor_ClearText         { STACKED ULONG MethodID; };
+struct MUIP_TextEditor_ExportBlock       { STACKED ULONG MethodID; STACKED ULONG flags; };
+struct MUIP_TextEditor_ExportText        { STACKED ULONG MethodID; };
+struct MUIP_TextEditor_HandleError       { STACKED ULONG MethodID; STACKED ULONG errorcode; }; /* See below for error codes */
+struct MUIP_TextEditor_InsertText        { STACKED ULONG MethodID; STACKED STRPTR text; STACKED LONG pos; }; /* See below for positions */
+struct MUIP_TextEditor_Replace           { STACKED ULONG MethodID; STACKED STRPTR NewString; STACKED ULONG Flags; };
+struct MUIP_TextEditor_Search            { STACKED ULONG MethodID; STACKED STRPTR SearchString; STACKED ULONG Flags; };
+struct MUIP_TextEditor_MarkText          { STACKED ULONG MethodID; STACKED ULONG start_crsr_x; STACKED ULONG start_crsr_y; STACKED ULONG stop_crsr_x; STACKED ULONG stop_crsr_y; };
+struct MUIP_TextEditor_QueryKeyAction    { STACKED ULONG MethodID; STACKED ULONG keyAction; };
 
 #define MUIV_TextEditor_ExportHook_Plain       0x00000000
 #define MUIV_TextEditor_ExportHook_EMail       0x00000001
@@ -168,9 +182,9 @@ struct MUIP_TextEditor_QueryKeyAction    { ULONG MethodID; ULONG keyAction; };
 
 struct ClickMessage
 {
-  STRPTR  LineContents;  /* This field is ReadOnly!!! */
-  ULONG   ClickPosition;
-  ULONG   Qualifier;     /* V15.26+, a possible qualifier that was pressed during the double click */
+  STACKED STRPTR  LineContents;  /* This field is ReadOnly!!! */
+  STACKED ULONG   ClickPosition;
+  STACKED ULONG   Qualifier;     /* V15.26+, a possible qualifier that was pressed during the double click */
 };
 
 /* Definitions for Separator type */
@@ -231,17 +245,17 @@ struct ClickMessage
 /* result structure for MUIM_TextEditor_QueryKeyAction */
 struct MUIP_TextEditor_Keybinding
 {
-  const UWORD code;       // the RAWKEY code      read only
-  const ULONG qualifier;  // the Qualifier flags  read only
-  const UWORD action;     // the keyaction        read only
+  STACKED const UWORD code;       // the RAWKEY code      read only
+  STACKED const ULONG qualifier;  // the Qualifier flags  read only
+  STACKED const UWORD action;     // the keyaction        read only
 };
 
-#ifdef __GNUC__
-  #ifdef __PPC__
+#if !defined(__AROS__) && defined(__PPC__)
+  #if defined(__GNUC__)
     #pragma pack()
+  #elif defined(__VBCC__)
+    #pragma default-align
   #endif
-#elif defined(__VBCC__)
-  #pragma default-align
 #endif
 
 #ifdef __cplusplus

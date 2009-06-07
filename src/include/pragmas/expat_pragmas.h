@@ -1,15 +1,8 @@
-#ifndef _INCLUDE_PRAGMA_EXPAT_LIB_H
-#define _INCLUDE_PRAGMA_EXPAT_LIB_H
+#ifndef PRAGMAS_AEXPAT_PRAGMAS_H
+#define PRAGMAS_AEXPAT_PRAGMAS_H
 
-#ifndef CLIB_EXPAT_PROTOS_H
+#ifndef CLIB_AEXPAT_PROTOS_H
 #include <clib/expat_protos.h>
-#endif
-
-#ifdef __GNUC__
-#ifdef NO_OBSOLETE
-#error "Please include the proto file and not the compiler specific file!"
-#endif
-#include <inline/expat.h>
 #endif
 
 #if defined(AZTEC_C) || defined(__MAXON__) || defined(__STORM__)
@@ -63,7 +56,7 @@
 #pragma amicall(ExpatBase,0x138,XML_GetSpecifiedAttributeCount(a0))
 #pragma amicall(ExpatBase,0x13e,XML_GetIdAttributeIndex(a0))
 #pragma amicall(ExpatBase,0x144,XML_SetEncoding(a0,a1))
-#pragma amicall(ExpatBase,0x14a,XML_SetParamEntityParsing(a0,a1))
+#pragma amicall(ExpatBase,0x14a,XML_SetParamEntityParsing(a0,d0))
 #pragma amicall(ExpatBase,0x150,XML_SetReturnNSTriplet(a0,d0))
 #pragma amicall(ExpatBase,0x156,XML_ExpatVersion())
 #pragma amicall(ExpatBase,0x15c,XML_ExpatVersionInfo())
@@ -71,6 +64,13 @@
 #pragma amicall(ExpatBase,0x168,XML_SetSkippedEntityHandler(a0,a1))
 #pragma amicall(ExpatBase,0x16e,XML_UseForeignDTD(a0,d0))
 #pragma amicall(ExpatBase,0x174,XML_GetFeatureList())
+#pragma amicall(ExpatBase,0x17a,XML_StopParser(a0,d0))
+#pragma amicall(ExpatBase,0x180,XML_ResumeParser(a0))
+#pragma amicall(ExpatBase,0x186,XML_GetParsingStatus(a0,a1))
+#pragma amicall(ExpatBase,0x18c,XML_FreeContentModel(a0,a1))
+#pragma amicall(ExpatBase,0x192,XML_MemMalloc(a0,d0))
+#pragma amicall(ExpatBase,0x198,XML_MemRealloc(a0,a1,d0))
+#pragma amicall(ExpatBase,0x19e,XML_MemFree(a0,a1))
 #endif
 #if defined(_DCC) || defined(__SASC)
 #pragma  libcall ExpatBase XML_ParserCreate       01e 801
@@ -123,7 +123,7 @@
 #pragma  libcall ExpatBase XML_GetSpecifiedAttributeCount 138 801
 #pragma  libcall ExpatBase XML_GetIdAttributeIndex 13e 801
 #pragma  libcall ExpatBase XML_SetEncoding        144 9802
-#pragma  libcall ExpatBase XML_SetParamEntityParsing 14a 9802
+#pragma  libcall ExpatBase XML_SetParamEntityParsing 14a 0802
 #pragma  libcall ExpatBase XML_SetReturnNSTriplet 150 0802
 #pragma  libcall ExpatBase XML_ExpatVersion       156 00
 #pragma  libcall ExpatBase XML_ExpatVersionInfo   15c 00
@@ -131,6 +131,13 @@
 #pragma  libcall ExpatBase XML_SetSkippedEntityHandler 168 9802
 #pragma  libcall ExpatBase XML_UseForeignDTD      16e 0802
 #pragma  libcall ExpatBase XML_GetFeatureList     174 00
+#pragma  libcall ExpatBase XML_StopParser         17a 0802
+#pragma  libcall ExpatBase XML_ResumeParser       180 801
+#pragma  libcall ExpatBase XML_GetParsingStatus   186 9802
+#pragma  libcall ExpatBase XML_FreeContentModel   18c 9802
+#pragma  libcall ExpatBase XML_MemMalloc          192 0802
+#pragma  libcall ExpatBase XML_MemRealloc         198 09803
+#pragma  libcall ExpatBase XML_MemFree            19e 9802
 #endif
 
-#endif	/*  _INCLUDE_PRAGMA_EXPAT_LIB_H  */
+#endif /* PRAGMAS_AEXPAT_PRAGMAS_H */

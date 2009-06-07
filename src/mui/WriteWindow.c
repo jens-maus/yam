@@ -30,6 +30,8 @@
 
 #include "WriteWindow_cl.h"
 
+#include <string.h>
+
 #include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/wb.h>

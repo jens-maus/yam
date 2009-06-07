@@ -163,6 +163,7 @@ void W(unsigned long f, const char *format, ...);
 #define fclose(p)               ({int P; _UNMEMTRACK(__FILE__, __LINE__, p); P = fclose(p); P;})
 
 // memory tracking of internal AmigaOS functions
+#if !defined(__AROS__)
 #undef AllocPooled
 #undef FreePooled
 #undef AllocVecPooled
@@ -184,6 +185,7 @@ void W(unsigned long f, const char *format, ...);
 #undef FreeSignal
 #undef StartNotify
 #undef EndNotify
+#endif
 
 #if defined(__amigaos4__)
 

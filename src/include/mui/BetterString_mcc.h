@@ -16,7 +16,7 @@
 
  BetterString class Support Site:  http://www.sf.net/projects/bstring-mcc/
 
- $Id: BetterString_mcc.h 159 2009-01-11 17:06:49Z damato $
+ $Id: BetterString_mcc.h 513 2009-06-06 12:05:38Z damato $
 
 ***************************************************************************/
 
@@ -27,20 +27,34 @@
 extern "C" {
 #endif
 
-#ifdef __GNUC__
-  #ifdef __PPC__
-    #pragma pack(2)
-  #endif
-#elif defined(__VBCC__)
-  #pragma amiga-align
-#endif
-
 #ifndef EXEC_TYPES_H
 #include <exec/types.h>
 #endif
 
-#define MUIC_BetterString     "BetterString.mcc"
-#define BetterStringObject    MUI_NewObject(MUIC_BetterString
+#if !defined(__AROS__) && defined(__PPC__)
+  #if defined(__GNUC__)
+    #pragma pack(2)
+  #elif defined(__VBCC__)
+    #pragma amiga-align
+  #endif
+#endif
+
+/***********************************************************************/
+
+// STACKED ensures proper alignment on AROS 64 bit systems
+#if !defined(__AROS__) && !defined(STACKED)
+#define STACKED
+#endif
+
+/***********************************************************************/
+
+#define MUIC_BetterString  "BetterString.mcc"
+
+#if defined(__AROS__) && !defined(NO_INLINE_STDARG)
+#define BetterStringObject MUIOBJMACRO_START(MUIC_BetterString)
+#else
+#define BetterStringObject MUI_NewObject(MUIC_BetterString
+#endif
 
 // attributes
 #define MUIA_BetterString_SelectSize            0xad001001
@@ -90,17 +104,17 @@ enum MUIV_BetterString_DoActions
 };
 
 // parameter structures for methods
-struct MUIP_BetterString_Insert        { ULONG MethodID; STRPTR text; LONG pos; };
-struct MUIP_BetterString_ClearSelected { ULONG MethodID; };
-struct MUIP_BetterString_FileNameStart { ULONG MethodID; STRPTR buffer; LONG pos; };
-struct MUIP_BetterString_DoAction      { ULONG MethodID; enum MUIV_BetterString_DoActions action; };
+struct MUIP_BetterString_Insert        { STACKED ULONG MethodID; STACKED STRPTR text; STACKED LONG pos; };
+struct MUIP_BetterString_ClearSelected { STACKED ULONG MethodID; };
+struct MUIP_BetterString_FileNameStart { STACKED ULONG MethodID; STACKED STRPTR buffer; STACKED LONG pos; };
+struct MUIP_BetterString_DoAction      { STACKED ULONG MethodID; STACKED enum MUIV_BetterString_DoActions action; };
 
-#ifdef __GNUC__
-  #ifdef __PPC__
+#if !defined(__AROS__) && defined(__PPC__)
+  #if defined(__GNUC__)
     #pragma pack()
+  #elif defined(__VBCC__)
+    #pragma default-align
   #endif
-#elif defined(__VBCC__)
-  #pragma default-align
 #endif
 
 #ifdef __cplusplus

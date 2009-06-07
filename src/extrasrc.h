@@ -69,7 +69,7 @@ struct IClass;
 
 #endif /* (m68k && !clib2) || __SASC */
 
-#if defined(__libnix) || defined(__SASC)
+#if defined(__libnix) || defined(__SASC) || defined(__AROS__)
 
 #if !defined(HAVE_VASPRINTF)
 #define NEED_VASPRINTF
@@ -79,7 +79,7 @@ struct IClass;
 #define NEED_ASPRINTF
 #endif
 
-#endif /* libnix || __SASC */
+#endif /* libnix || __SASC || __AROS__ */
 
 #if !defined(__MORPHOS__) || !defined(__libnix)
 
@@ -92,6 +92,14 @@ struct IClass;
 #endif
 
 #endif /* !__MORPHOS__ || !__libnix */
+
+#if defined(__AROS__)
+
+#if !defined(HAVE_STRTOK_R)
+#define NEED_STRTOK_R
+#endif
+
+#endif /* __AROS__ */
 
 /*
  * Differentations between compilers
@@ -235,7 +243,7 @@ ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream);
 #endif
 
 #if defined(NEED_XGET)
-ULONG xget(Object *obj, const ULONG attr);
+ULONG xget(Object *obj, const IPTR attr);
 #endif
 
 #if defined(NEED_XSET)

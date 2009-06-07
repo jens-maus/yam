@@ -25,6 +25,8 @@
 
 ***************************************************************************/
 
+#include <string.h>
+
 #include <libraries/mui.h>
 #include <proto/exec.h>
 

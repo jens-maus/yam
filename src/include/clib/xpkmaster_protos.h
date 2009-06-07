@@ -22,9 +22,9 @@
 LONG  XpkExamine	(struct XpkFib *fib, struct TagItem *tags);
 LONG  XpkExamineTags	(struct XpkFib *fib, ULONG tag1Type, ...);
 LONG  XpkPack		(struct TagItem *tags);
-LONG  XpkPackTags	(ULONG tag1Type, ...);
+LONG  XpkPackTags	(Tag tag1, ...);
 LONG  XpkUnpack		(struct TagItem *tags);
-LONG  XpkUnpackTags	(ULONG tag1Type, ...);
+LONG  XpkUnpackTags	(Tag tag1, ...);
 LONG  XpkOpen		(struct XpkFib **fib, struct TagItem *tags);
 LONG  XpkOpenTags	(struct XpkFib **fib, ULONG tag1Type, ...);
 LONG  XpkRead		(struct XpkFib *fib, STRPTR buf, ULONG len);
@@ -32,7 +32,7 @@ LONG  XpkWrite		(struct XpkFib *fib, STRPTR buf, LONG ulen);
 LONG  XpkSeek		(struct XpkFib *fib, LONG dist, LONG mode);
 LONG  XpkClose		(struct XpkFib *fib);
 LONG  XpkQuery		(struct TagItem *tags);
-LONG  XpkQueryTags	(ULONG tag1Type, ...);
+LONG  XpkQueryTags	(Tag tag1, ...);
 
 /* here start version 4 functions */
 
@@ -42,6 +42,6 @@ void  XpkFreeObject	(ULONG type, APTR object);
 BOOL  XpkPrintFault	(LONG code, STRPTR header);
 ULONG XpkFault		(LONG code, STRPTR header, STRPTR buffer, ULONG size);
 LONG  XpkPassRequest	(struct TagItem *tags);
-LONG  XpkPassRequestTags(ULONG tag1Type, ...);
+LONG  XpkPassRequestTags(Tag tag1, ...);
 
 #endif	/* CLIB_XPKMASTER_PROTOS_H */

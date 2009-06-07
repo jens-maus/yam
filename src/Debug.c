@@ -88,6 +88,8 @@ void _DBPRINTF(const char *format, ...)
     static char buf[1024];
     vsnprintf(buf, 1024, format, args);
     DebugPrintF("%s", buf);
+    #elif defined(__AROS__)
+    vkprintf(format, args);
     #else
     KPutFmt(format, args);
     #endif

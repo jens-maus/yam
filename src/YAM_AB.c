@@ -1267,7 +1267,7 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
 ///
 /// XMLStartHandler
 // handle an XML start tag
-static void XMLCALL XMLStartHandler(void *userData, const XML_Char *name, UNUSED const XML_Char **atts)
+static void XMLStartHandler(void *userData, const XML_Char *name, UNUSED const XML_Char **atts)
 {
   struct XMLUserData *xmlUserData = userData;
 
@@ -1364,7 +1364,7 @@ static void XMLCALL XMLStartHandler(void *userData, const XML_Char *name, UNUSED
 ///
 /// XMLEndHandler
 // handle an XML end tag
-static void XMLCALL XMLEndHandler(void *userData, const XML_Char *name)
+static void XMLEndHandler(void *userData, const XML_Char *name)
 {
   struct XMLUserData *xmlUserData = userData;
   struct ABEntry *entry = &xmlUserData->entry;
@@ -1552,7 +1552,7 @@ static void XMLCALL XMLEndHandler(void *userData, const XML_Char *name)
 ///
 /// XMLCharacterDataHandler
 // handle the XML character data
-static void XMLCALL XMLCharacterDataHandler(void *userData, const XML_Char *s, int len)
+static void XMLCharacterDataHandler(void *userData, const XML_Char *s, int len)
 {
   struct XMLUserData *xmlUserData = userData;
 

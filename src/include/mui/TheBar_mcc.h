@@ -1,34 +1,34 @@
-#ifndef _THEBAR_MCC_H_
-#define _THEBAR_MCC_H_
+#ifndef THEBAR_MCC_H
+#define THEBAR_MCC_H
 
-/***************************************************************************
-
- TheBar.mcc - Next Generation Toolbar MUI Custom Class
- Copyright (C) 2003-2005 Alfonso Ranieri
- Copyright (C) 2005-2007 by TheBar.mcc Open Source Team
-
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
-
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
-
- TheBar class Support Site:  http://www.sf.net/projects/thebar
-
- $Id: TheBar_mcc.h 97 2007-08-29 08:30:25Z thboeckel $
- $URL: https://thebar.svn.sourceforge.net/svnroot/thebar/trunk/include/mui/TheBar_mcc.h $
-
-***************************************************************************/
+/*
+** TheBar.mcc - Next Generation Toolbar MUI Custom Class
+** Copyright (C) 2003-2008 Alfonso Ranieri
+**
+** TheBar is developed by TheBar.mcc Open Source Team
+**
+** This library is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License as published by the Free Software Foundation; either
+** version 2.1 of the License, or (at your option) any later version.
+**
+** This library is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+** Lesser General Public License for more details.
+**
+** TheBar class Support Site: http://www.sf.net/projects/thebar
+**
+** $Id: TheBar_mcc.h 295 2009-05-23 12:02:04Z marust $
+** $URL: https://thebar.svn.sourceforge.net/svnroot/thebar/trunk/include/mui/TheBar_mcc.h $
+**
+**/
 
 #ifndef LIBRARIES_MUI_H
 #include <libraries/mui.h>
 #endif
 
-#if defined(__PPC__)
+#if !defined(__AROS__) && defined(__PPC__)
   #if defined(__GNUC__)
     #pragma pack(2)
   #elif defined(__VBCC__)
@@ -38,14 +38,26 @@
 
 /***********************************************************************/
 
+#ifndef STACKED
+// STACKED ensures proper alignment on AROS 64 bit systems
+#define STACKED
+#endif
+
+/***********************************************************************/
+
 #define MUIC_TheButton    "TheButton.mcc"
-#define TheButtonObject   MUI_NewObject(MUIC_TheButton
-
 #define MUIC_TheBar       "TheBar.mcc"
-#define TheBarObject      MUI_NewObject(MUIC_TheBar
-
 #define MUIC_TheBarVirt   "TheBarVirt.mcc"
+
+#if defined(__AROS__) && !defined(NO_INLINE_STDARG)
+#define TheButtonObject   MUIOBJMACRO_START(MUIC_TheButton)
+#define TheBarObject      MUIOBJMACRO_START(MUIC_TheBar)
+#define TheBarVirtObject  MUIOBJMACRO_START(MUIC_TheBarVirt)
+#else
+#define TheButtonObject   MUI_NewObject(MUIC_TheButton
+#define TheBarObject      MUI_NewObject(MUIC_TheBar
 #define TheBarVirtObject  MUI_NewObject(MUIC_TheBarVirt
+#endif
 
 #define THEBAR_VERSION     21
 #define THEBARVIRT_VERSION 21
@@ -53,8 +65,8 @@
 
 /***********************************************************************/
 
-#define TBUTTAGBASE 0xF76B01C8
-#define TBTAGBASE   0xF76B022C
+#define TBUTTAGBASE 0xF76B01C8UL
+#define TBTAGBASE   0xF76B022CUL
 
 /***********************************************************************/
 /*
@@ -81,25 +93,37 @@
 ** TheBar.mcc Methods structures
 */
 
-struct MUIP_TheBar_AddButton       { ULONG MethodID; struct MUIS_TheBar_Button *button; };
-struct MUIP_TheBar_AddSpacer       { ULONG MethodID; ULONG ID; ULONG type; };
-struct MUIP_TheBar_GetObject       { ULONG MethodID; ULONG ID; };
-struct MUIP_TheBar_DoOnButton      { ULONG MethodID; ULONG ID; ULONG method; /* ...args... */ };
-struct MUIP_TheBar_SetAttr         { ULONG MethodID; ULONG ID; Tag attr; ULONG value; };
-struct MUIP_TheBar_GetAttr         { ULONG MethodID; ULONG ID; Tag attr; ULONG *storage; };
-struct MUIP_TheBar_Sort            { ULONG MethodID; LONG obj[1]; };
-struct MUIP_TheBar_Remove          { ULONG MethodID; ULONG ID; };
-struct MUIP_TheBar_GetDragImage    { ULONG MethodID; ULONG horiz; ULONG flags; };
-struct MUIP_TheBar_Notify          { ULONG MethodID; ULONG ID; Tag attr; ULONG value; Object *dest; ULONG followParams; /* ... */ };
-struct MUIP_TheBar_KillNotify      { ULONG MethodID; ULONG ID; Tag attr; Object *dest; };
+struct MUIP_TheBar_AddButton       { STACKED ULONG MethodID; STACKED struct MUIS_TheBar_Button *button; };
+struct MUIP_TheBar_AddSpacer       { STACKED ULONG MethodID; STACKED ULONG ID; STACKED ULONG type; };
+struct MUIP_TheBar_GetObject       { STACKED ULONG MethodID; STACKED ULONG ID; };
+struct MUIP_TheBar_DoOnButton      { STACKED ULONG MethodID; STACKED ULONG ID; STACKED ULONG method; /* ...args... */ };
+struct MUIP_TheBar_SetAttr         { STACKED ULONG MethodID; STACKED ULONG ID; STACKED Tag attr; STACKED ULONG value; };
+struct MUIP_TheBar_GetAttr         { STACKED ULONG MethodID; STACKED ULONG ID; STACKED Tag attr; STACKED ULONG *storage; };
+struct MUIP_TheBar_Sort            { STACKED ULONG MethodID; STACKED LONG obj[1]; };
+struct MUIP_TheBar_Remove          { STACKED ULONG MethodID; STACKED ULONG ID; };
+struct MUIP_TheBar_GetDragImage    { STACKED ULONG MethodID; STACKED ULONG horiz; STACKED ULONG flags; };
+struct MUIP_TheBar_Notify          { STACKED ULONG MethodID; STACKED ULONG ID; STACKED Tag attr; STACKED ULONG value; STACKED Object *dest; STACKED ULONG followParams; /* ... */ };
+struct MUIP_TheBar_KillNotify      { STACKED ULONG MethodID; STACKED ULONG ID; STACKED Tag attr; STACKED Object *dest; };
 
 /* MUIM_TheBar_SetAttr, MUIM_TheBar_GetAttr attributes */
-#define MUIA_TheBar_Attr_Hide      (TBTAGBASE+0) /* v11 */
-#define MUIA_TheBar_Attr_Sleep     (TBTAGBASE+1) /* v11 */
-#define MUIA_TheBar_Attr_Disabled  (TBTAGBASE+2) /* v11 */
-#define MUIA_TheBar_Attr_Selected  (TBTAGBASE+3) /* v11 */
+#define MUIV_TheBar_Attr_Hide      (TBTAGBASE+0) /* v11 */
+#define MUIV_TheBar_Attr_Sleep     (TBTAGBASE+1) /* v11 */
+#define MUIV_TheBar_Attr_Disabled  (TBTAGBASE+2) /* v11 */
+#define MUIV_TheBar_Attr_Selected  (TBTAGBASE+3) /* v11 */
+
+/*
+** Compatibility: the above are not "real" attributes,
+** but just arguments of a method, so they must be MUIV_
+*/
+#define MUIA_TheBar_Attr_Hide      MUIV_TheBar_Attr_Hide
+#define MUIA_TheBar_Attr_Sleep     MUIV_TheBar_Attr_Sleep
+#define MUIA_TheBar_Attr_Disabled  MUIV_TheBar_Attr_Disabled
+#define MUIA_TheBar_Attr_Selected  MUIV_TheBar_Attr_Selected
 
 /* MUIM_Notify special Qualifier value */
+/*
+** This was a bad idea. Don't use it!
+*/
 #define MUIV_TheBar_Qualifier      (0x49893135)  /* v21 */
 
 /***********************************************************************/
@@ -242,6 +266,8 @@ enum
   MUIV_TheBar_DisMode_Grid,
   MUIV_TheBar_DisMode_FullGrid,
   MUIV_TheBar_DisMode_Sunny,
+  MUIV_TheBar_DisMode_Blend,
+  MUIV_TheBar_DisMode_BlendGrey,
 
   MUIV_TheBar_DisMode_Last,
 };
@@ -252,9 +278,18 @@ enum
   MUIV_TheBar_SpacersSize_Quarter,
   MUIV_TheBar_SpacersSize_Half,
   MUIV_TheBar_SpacersSize_One,
+  MUIV_TheBar_SpacersSize_None,
+  MUIV_TheBar_SpacersSize_OnePoint,
+  MUIV_TheBar_SpacersSize_TwoPoint,
 
   MUIV_TheBar_SpacersSize_Last,
 };
+
+/* These are private for now */
+#define MUIV_TheBar_SpacersSize_PointsFlag   0x40
+#define MUIV_TheBar_SpacersSize_Points(x)    (MUIV_TheBar_SpacersSize_PointsFlag | (((ULONG)x) & 0x3f))
+#define MUIV_TheBar_SpacersSize_GetPoints(x) (((ULONG)x) & 0x3f)
+#define MUIV_TheBar_SpacersSize_IsValid(x)   ((((ULONG)x) & MUIV_TheBar_SpacersSize_PointsFlag) ? ((((ULONG)x) & 0xffffffbf)<=0x3f) : (((ULONG)x)<MUIV_TheBar_SpacersSize_Last))
 
 #define MUIV_TheBar_SkipPic ((STRPTR)(-1))
 
@@ -291,8 +326,11 @@ enum
   BRFLG_AlphaMask = 1<<1,
   BRFLG_ColorRGB8 = 1<<2,
 
-  BRFLG_EmpytAlpha = 1<<16,
+  BRFLG_EmptyAlpha = 1<<16,
 };
+
+// typo in previous versions
+#define BRFLG_EmpytAlpha BRFLG_EmptyAlpha
 
 /*
 ** MUIA_TheButton_Strip is a pointer to this.
@@ -391,7 +429,7 @@ enum
 #define MUIM_TheButton_Build               (TBUTTAGBASE+0)   /* v13         */
 #define MUIM_TheButton_SendNotify          (TBUTTAGBASE+1)   /* v21 PRIVATE */
 
-struct MUIP_TheButton_SendNotify           { ULONG MethodID; APTR notify; };
+struct MUIP_TheButton_SendNotify           { STACKED ULONG MethodID; STACKED APTR notify; STACKED ULONG trigVal;};
 
 /***********************************************************************/
 /*
@@ -512,6 +550,8 @@ enum
   MUIV_TheButton_DisMode_Grid,
   MUIV_TheButton_DisMode_FullGrid,
   MUIV_TheButton_DisMode_Sunny,
+  MUIV_TheButton_DisMode_Blend,
+  MUIV_TheButton_DisMode_BlendGrey,
 
   MUIV_TheButton_DisMode_Last,
 };
@@ -526,8 +566,7 @@ enum
 
 /***********************************************************************/
 
-
-#if defined(__PPC__)
+#if !defined(__AROS__) && defined(__PPC__)
   #if defined(__GNUC__)
     #pragma pack()
   #elif defined(__VBCC__)
@@ -535,4 +574,4 @@ enum
   #endif
 #endif
 
-#endif /* _THEBAR_MCC_H_ */
+#endif /* THEBAR_MCC_H */

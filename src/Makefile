@@ -185,7 +185,7 @@ OBJDIR    = .obj_$(OS)
 VPATH     = $(OBJDIR)
 
 # Common compiler/linker flags
-WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare
+WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare #-Wunreachable-code
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG #-O0
 DEBUGSYM = -gstabs

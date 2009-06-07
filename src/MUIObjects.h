@@ -100,13 +100,13 @@ BOOL isChildOfFamily(Object *family, Object *child);
 
 /// xget()
 //  Gets an attribute value from a MUI object
-ULONG xget(Object *obj, const ULONG attr);
+IPTR xget(Object *obj, const IPTR attr);
 #if defined(__GNUC__)
   // please note that we do not evaluate the return value of GetAttr()
   // as some attributes (e.g. MUIA_Selected) always return FALSE, even
   // when they are supported by the object. But setting b=0 right before
   // the GetAttr() should catch the case when attr doesn't exist at all
-  #define xget(OBJ, ATTR) ({ULONG b=0; GetAttr(ATTR, OBJ, &b); b;})
+  #define xget(OBJ, ATTR) ({IPTR b=0; GetAttr(ATTR, OBJ, &b); b;})
 #endif
 ///
 /// xset()

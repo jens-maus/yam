@@ -25,6 +25,8 @@
 
 ***************************************************************************/
 
+#include <string.h>
+
 #include <clib/alib_protos.h>
 #include <mui/NList_mcc.h>
 #include <proto/dos.h>

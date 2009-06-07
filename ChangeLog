@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-08  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: adapted the whole build system once more to finally link for
+    AROS i386. Now YAM should at least compile and link for AROS/i386.
+    Please note however that the build is completly untested yet and
+    that there is a high possibility that it won't run at all. We still
+    have to fix all remaining compiler warnings and get the build
+    verified by some AROS people. But at least AROS people might now play
+    around with the AROS nightly builds ;)
+
 2009-06-07  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: the command search path is freed only if SystemTags() returns

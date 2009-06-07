@@ -28,6 +28,10 @@
 
 ***************************************************************************/
 
+#if defined(__AROS__)
+#define MUI_OBSOLETE 1
+#endif
+
 #include "SearchControlGroup_cl.h"
 
 #include <proto/asl.h>

@@ -4,7 +4,7 @@
 /***************************************************************************
 
  NBalance.mcc - New Balance MUI Custom Class
- Copyright (C) 2008 by NList Open Source Team
+ Copyright (C) 2008-2009 by NList Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NBalance_mcc.h 302 2008-06-23 07:08:25Z damato $
+ $Id: NBalance_mcc.h 336 2009-06-06 21:35:40Z damato $
 
 ***************************************************************************/
 
@@ -26,11 +26,15 @@
 #include <exec/types.h>
 #endif
 
-#define MUIC_NBalance                   "NBalance.mcc"
-#define NBalanceObject                  MUI_NewObject(MUIC_NBalance
+#define MUIC_NBalance  "NBalance.mcc"
+#if defined(__AROS__) && !defined(NO_INLINE_STDARG)
+#define NBalanceObject MUIOBJMACRO_START(MUIC_NBalance)
+#else
+#define NBalanceObject MUI_NewObject(MUIC_NBalance
+#endif
 
 /* attributes */
-#define MUIA_NBalance_Pointer           0xa95f0000
+#define MUIA_NBalance_Pointer           0xa95f0000UL
 
 /* attribute values */
 #define MUIV_NBalance_Pointer_Off       0

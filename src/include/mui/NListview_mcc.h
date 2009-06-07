@@ -4,7 +4,7 @@
  Registered MUI class, Serial Number: 1d51 (0x9d510020 to 0x9d51002F)
 
  Copyright (C) 1996-2001 by Gilles Masson
- Copyright (C) 2001-2005 by NList Open Source Team
+ Copyright (C) 2001-2009 by NList Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NListview_mcc.h 159 2007-06-10 12:29:34Z damato $
+ $Id: NListview_mcc.h 336 2009-06-06 21:35:40Z damato $
 
 ***************************************************************************/
 
@@ -33,33 +33,28 @@
 #include <mui/NList_mcc.h>
 #endif
 
-#ifdef __GNUC__
-  #ifdef __PPC__
-    #pragma pack(2)
-  #endif
-#elif defined(__VBCC__)
-  #pragma amiga-align
-#endif
-
 #define MUIC_NListview "NListview.mcc"
+#if defined(__AROS__) && !defined(NO_INLINE_STDARG)
+#define NListviewObject MUIOBJMACRO_START(MUIC_NListview)
+#else
 #define NListviewObject MUI_NewObject(MUIC_NListview
-
+#endif
 
 /* Attributes */
 
-#define MUIA_NListview_NList                0x9d510020 /* GM  i.g Object *          */
+#define MUIA_NListview_NList                0x9d510020UL /* GM  i.g Object *          */
 
-#define MUIA_NListview_Vert_ScrollBar       0x9d510021 /* GM  isg LONG              */
-#define MUIA_NListview_Horiz_ScrollBar      0x9d510022 /* GM  isg LONG              */
-#define MUIA_NListview_VSB_Width            0x9d510023 /* GM  ..g LONG              */
-#define MUIA_NListview_HSB_Height           0x9d510024 /* GM  ..g LONG              */
+#define MUIA_NListview_Vert_ScrollBar       0x9d510021UL /* GM  isg LONG              */
+#define MUIA_NListview_Horiz_ScrollBar      0x9d510022UL /* GM  isg LONG              */
+#define MUIA_NListview_VSB_Width            0x9d510023UL /* GM  ..g LONG              */
+#define MUIA_NListview_HSB_Height           0x9d510024UL /* GM  ..g LONG              */
 
 #define MUIV_Listview_ScrollerPos_Default 0
-#define MUIV_Listview_ScrollerPos_Left 1
-#define MUIV_Listview_ScrollerPos_Right 2
-#define MUIV_Listview_ScrollerPos_None 3
+#define MUIV_Listview_ScrollerPos_Left    1
+#define MUIV_Listview_ScrollerPos_Right   2
+#define MUIV_Listview_ScrollerPos_None    3
 
-#define MUIM_NListview_QueryBeginning       MUIM_NList_QueryBeginning /* obsolete */
+#define MUIM_NListview_QueryBeginning     MUIM_NList_QueryBeginning /* obsolete */
 
 #define MUIV_NListview_VSB_Always      1
 #define MUIV_NListview_VSB_Auto        2
@@ -79,13 +74,5 @@
 
 #define MUIV_NListview_HSB_On          0x0300
 #define MUIV_NListview_HSB_Off         0x0100
-
-#ifdef __GNUC__
-  #ifdef __PPC__
-    #pragma pack()
-  #endif
-#elif defined(__VBCC__)
-  #pragma default-align
-#endif
 
 #endif /* MUI_NListview_MCC_H */

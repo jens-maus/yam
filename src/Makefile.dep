@@ -133,7 +133,7 @@ AddrBookToolbar.o: mui/AddrBookToolbar.c mui/AddrBookToolbar_cl.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
-  ImageCache.h Debug.h
+  ImageCache.h MUIObjects.h Debug.h
 Addrmatchlist.o: mui/Addrmatchlist.c mui/Addrmatchlist_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \

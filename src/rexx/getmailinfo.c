@@ -25,6 +25,8 @@
 
 ***************************************************************************/
 
+#include <string.h>
+
 #include <proto/exec.h>
 
 #include "extrasrc.h"

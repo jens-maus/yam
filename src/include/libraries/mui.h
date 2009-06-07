@@ -1,3 +1,7 @@
+#ifdef __AROS__
+#include "muiaros.h"
+#else
+
 /***************************************************************************
 **
 ** MUI - MagicUserInterface
@@ -3461,3 +3465,5 @@ struct MUI_CustomClass
 #endif
 
 #endif /* MUI_H */
+
+#endif /* !__AROS__ */
