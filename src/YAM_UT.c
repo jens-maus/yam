@@ -5021,7 +5021,7 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
   #if defined(__amigaos4__)
   BPTR err = 0;
   #endif
-  LONG result;
+  LONG success;
 
   ENTER();
   SHOWSTRING(DBF_UTIL, cmd);
@@ -5053,7 +5053,7 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
   // is done by SystemTags/CreateNewProc itself.
   path = CloneSearchPath();
 
-  if((result = SystemTags(cmd, SYS_Input,    in,
+  if((success = SystemTags(cmd, SYS_Input,    in,
                                SYS_Output,   out,
                                #if defined(__amigaos4__)
                                SYS_Error,    err,
@@ -5068,13 +5068,13 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
   {
     // an error occurred as SystemTags should always
     // return zero on success, no matter what.
-    E(DBF_UTIL, "execution of command '%s' failed, IoErr()=%ld", cmd, IoErr());
+    E(DBF_UTIL, "execution of command '%s' failed, success=%ld, IoErr()=%ld", cmd, success, IoErr());
 
     // manually free our search path as SystemTags() shouldn't have freed
     // it itself, but only if the result is equal to -1. All other values
     // stem from the launched command itself and SystemTags() already freed
     // everything.
-    if(result == -1 && path != 0)
+    if(success == -1 && path != 0)
       FreeSearchPath(path);
 
     result = FALSE;
