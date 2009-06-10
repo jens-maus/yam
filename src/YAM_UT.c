@@ -174,13 +174,15 @@ static struct PathNode *CopyPathList(struct PathNode *src)
 
   ENTER();
 
+  // prevent any error requesters from popping up during the copy process,
+  // the DupLock() call might cause this
   oldwin = SetProcWindow((APTR)-1);
 
   for(; src; src = BADDR(src->pn_Next))
   {
     if((this = AllocVec(sizeof(*this), MEMF_SHARED)) != NULL)
     {
-      // a failed DupLock() causes no harm
+      // duplicate the path node, a failed DupLock() causes *NO* harm
       this->pn_Lock = DupLock(src->pn_Lock);
       this->pn_Next = 0;
 
@@ -201,6 +203,7 @@ static struct PathNode *CopyPathList(struct PathNode *src)
     }
   }
 
+  // restore the old error requester behaviour
   SetProcWindow(oldwin);
 
   RETURN(first);
