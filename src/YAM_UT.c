@@ -125,6 +125,12 @@ int BusyLevel = 0;
  Utilities
 ***************************************************************************/
 
+struct ZombieFile
+{
+  struct MinNode node;
+  char *fileName;
+};
+
 #if !defined(__amigaos4__) || (INCLUDE_VERSION < 50)
 struct PathNode
 {
@@ -133,23 +139,89 @@ struct PathNode
 };
 #endif
 
-struct ZombieFile
+/// FreePathList
+// free a previously copied list of PathNodes
+#if !defined(__amigaos4__)
+static void FreePathList(struct PathNode *pn)
 {
-  struct MinNode node;
-  char *fileName;
-};
+  ENTER();
 
-/// CloneSearchPath
+  while(pn != NULL)
+  {
+    struct PathNode *next = BADDR(pn->pn_Next);
+
+    UnLock(pn->pn_Lock);
+    FreeVec(pn);
+
+    pn = next;
+  }
+
+  LEAVE();
+}
+#endif
+
+///
+/// CopyPathList
+// create a copied list of PathNodes
+// based on what OS4 does to copy a list of PathNodes
+#if !defined(__amigaos4__)
+static struct PathNode *CopyPathList(struct PathNode *src)
+{
+  struct PathNode *this;
+  struct PathNode *first = NULL;
+  struct PathNode *prev = NULL;
+  APTR oldwin;
+
+  ENTER();
+
+  oldwin = SetProcWindow((APTR)-1);
+
+  for(; src; src = BADDR(src->pn_Next))
+  {
+    if((this = AllocVec(sizeof(*this), MEMF_SHARED)) != NULL)
+    {
+      // a failed DupLock() causes no harm
+      this->pn_Lock = DupLock(src->pn_Lock);
+      this->pn_Next = 0;
+
+      if(first == NULL)
+        first = this;
+
+      // link the new node into the list
+      if(prev != NULL)
+        prev->pn_Next = MKBADDR(this);
+
+      prev = this;
+    }
+    else
+    {
+      FreePathList(first);
+      first = NULL;
+      break;
+    }
+  }
+
+  SetProcWindow(oldwin);
+
+  RETURN(first);
+  return first;
+}
+#endif
+
+///
+/// ObtainSearchPath
 // This returns a duplicated search path (preferable the workbench
-// searchpath) usable for NP_Path of SystemTagList().
-static BPTR CloneSearchPath(void)
+// search path) usable for NP_Path of SystemTagList().
+static BPTR ObtainSearchPath(void)
 {
   BPTR path = 0;
 
   ENTER();
 
+  #if !defined(__MORPHOS__)
   if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
     WorkbenchControl(NULL, WBCTRLA_DuplicateSearchPath, &path, TAG_DONE);
+  #endif
 
   #if !defined(__amigaos4__)
   // if we couldn't obtain a duplicate copy of the workbench search
@@ -157,42 +229,15 @@ static BPTR CloneSearchPath(void)
   // workbench.library < 44 or on MorphOS with an old workbench.lib.
   if(path == 0)
   {
-    struct Process *pr = (struct Process*)FindTask(NULL);
+    struct Task *me = FindTask(NULL);
 
-    if(pr->pr_Task.tc_Node.ln_Type == NT_PROCESS)
+    // make sure we are a process, otherwise we are not allowed to call Cli()
+    if(me->tc_Node.ln_Type == NT_PROCESS)
     {
-      struct CommandLineInterface *cli = BADDR(pr->pr_CLI);
+      struct CommandLineInterface *cli;
 
-      if(cli)
-      {
-        BPTR *p = &path;
-        BPTR dir = cli->cli_CommandDir;
-
-        while (dir)
-        {
-          BPTR dir2;
-          struct FileLock *lock = BADDR(dir);
-          struct PathNode *node;
-
-          dir = lock->fl_Link;
-          dir2 = DupLock(lock->fl_Key);
-          if(!dir2)
-            break;
-
-          // Use AllocVec(), because this memory is freed by FreeVec()
-          // by the system later
-          if(!(node = AllocVec(sizeof(struct PathNode), MEMF_PUBLIC)))
-          {
-            UnLock(dir2);
-            break;
-          }
-
-          node->pn_Next = 0;
-          node->pn_Lock = dir2;
-          *p = MKBADDR(node);
-          p = &node->pn_Next;
-        }
-      }
+      if((cli = Cli()) != NULL)
+        path = MKBADDR(CopyPathList(BADDR(cli->cli_CommandDir)));
     }
   }
   #endif
@@ -202,32 +247,26 @@ static BPTR CloneSearchPath(void)
 }
 
 ///
-/// FreeSearchPath
-// Free the memory returned by CloneSearchPath
-static void FreeSearchPath(BPTR path)
+/// ReleaseSearchPath
+// Free the memory returned by ObtainSearchPath
+static void ReleaseSearchPath(BPTR path)
 {
   ENTER();
 
   if(path != 0)
   {
-    #ifndef __MORPHOS__
+    #if !defined(__MORPHOS__)
     if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
-      WorkbenchControl(NULL, WBCTRLA_FreeSearchPath, path, TAG_DONE);
-    else
-    #endif
     {
-      #ifndef __amigaos4__
-      // This is also compatible with WorkenchControl(NULL, WBCTRLA_FreeSearchPath, ...)
-      // in MorphOS/Ambient environments.
-      while(path)
-      {
-        struct PathNode *node = BADDR(path);
-        path = node->pn_Next;
-        UnLock(node->pn_Lock);
-        FreeVec(node);
-      }
-      #endif
+      if(WorkbenchControl(NULL, WBCTRLA_FreeSearchPath, path, TAG_DONE))
+        path = 0;
     }
+    #endif
+
+    #if !defined(__amigaos4__)
+    if(path != 0)
+      FreePathList(BADDR(path));
+    #endif
   }
 
   LEAVE();
@@ -5051,7 +5090,7 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
   // path may return 0, but that's fine.
   // and we also don't free it manually as this
   // is done by SystemTags/CreateNewProc itself.
-  path = CloneSearchPath();
+  path = ObtainSearchPath();
 
   if((success = SystemTags(cmd, SYS_Input,    in,
                                SYS_Output,   out,
@@ -5075,7 +5114,7 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
     // stem from the launched command itself and SystemTags() already freed
     // everything.
     if(success == -1 && path != 0)
-      FreeSearchPath(path);
+      ReleaseSearchPath(path);
 
     result = FALSE;
   }

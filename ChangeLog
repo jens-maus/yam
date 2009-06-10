@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-10  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: cleaned up the path cloning and splitted everything in two parts.
+    The actual clone process is now based on what OS4 is doing. Thanks to Colin
+    Wenzel for the tips!
+
 2009-06-08  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: adapted the whole build system once more to finally link for
