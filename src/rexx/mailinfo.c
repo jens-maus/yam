@@ -104,11 +104,13 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
       struct Mail *mail = NULL;
       struct Folder *folder = NULL;
 
-      if(args->index != 0)
+      if(args->index != NULL)
       {
         Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
-        optional->active = *args->index;
+
+        optional->active = args->index[0];
         DoMethod(lv, MUIM_NList_GetEntry, optional->active, &mail);
+        folder = mail->Folder;
       }
       else
         mail = MA_GetActiveMail(NULL, &folder, (LONG *)&optional->active);

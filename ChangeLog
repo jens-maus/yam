@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-13  Thore Böckelmann <tboeckel@gmx.de>
+
+  * rexx/mailinfo.c: no folder was determined in case a specific mail was to be
+    examined instead of the active one. Hence examining the mail file failed and
+    let the command itself fail.
+
 2009-06-10  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: cleaned up the path cloning and splitted everything in two parts.
