@@ -766,6 +766,8 @@ void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg)
     strlcat(cargstr, rxc->args, carglen);
   }
 
+  D(DBF_REXX, "using template '%s' to parse string '%s'", cargstr, arg);
+
   if(cargstr[0] != '\0')
   {
     host->rdargs->RDA_Source.CS_Buffer = arg;
