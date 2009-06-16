@@ -64,7 +64,7 @@ OVERLOAD(OM_NEW)
     // set the colormap
     set(obj, MUIA_TextEditor_ColorMap, data->colorMap);
 
-    while((tag = NextTagItem(&tags)))
+    while((tag = NextTagItem((APTR)&tags)))
     {
       switch(tag->ti_Tag)
       {

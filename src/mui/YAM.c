@@ -528,7 +528,7 @@ OVERLOAD(OM_NEW)
   AddPath(filebuf, G->ProgDir, G->ProgName, sizeof(filebuf));
 
   if(IconBase->lib_Version >= 44)
-   G->HideIcon = GetIconTags(filebuf, TAG_DONE);
+   G->HideIcon = (struct DiskObject *)GetIconTags(filebuf, TAG_DONE);
   else
    G->HideIcon = GetDiskObject(filebuf);
 
@@ -570,7 +570,7 @@ OVERLOAD(OM_NEW)
     // compiled with different versions and types of compilers
     strlcat(&data->compileInfo[strlen(data->compileInfo)], yamcompiler, sizeof(data->compileInfo)-strlen(data->compileInfo));
 
-    while((tag = NextTagItem(&tags)))
+    while((tag = NextTagItem((APTR)&tags)))
     {
       switch(tag->ti_Tag)
       {
@@ -606,7 +606,7 @@ OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_GET)
 {
   GETDATA;
-  ULONG *store = ((struct opGet *)msg)->opg_Storage;
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
@@ -621,7 +621,7 @@ OVERLOAD(OM_SET)
 {
   struct TagItem *tags = inittags(msg), *tag;
 
-  while((tag = NextTagItem(&tags)))
+  while((tag = NextTagItem((APTR)&tags)))
   {
     switch(tag->ti_Tag)
     {

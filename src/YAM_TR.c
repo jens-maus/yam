@@ -900,7 +900,7 @@ static BOOL TR_InitSMTPAUTH(void)
 
         // let us now generate a more or less random and unique cnonce
         // identifier which we can supply to our SMTP server.
-        snprintf(cnonce, sizeof(cnonce), "%08lx%08lx", (ULONG)rand(), (ULONG)rand());
+        snprintf(cnonce, sizeof(cnonce), "%08x%08x", (ULONG)rand(), (ULONG)rand());
 
         // the we generate the response according to RFC 2831 with A1
         // and A2 as MD5 encoded strings
@@ -929,7 +929,7 @@ static BOOL TR_InitSMTPAUTH(void)
           md5init(&context);
           md5update(&context, (unsigned char *)buf, A1_len);
           md5final((UBYTE *)digest_hex, &context);
-          snprintf(A1, sizeof(A1), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
+          snprintf(A1, sizeof(A1), "%08x%08x%08x%08x", digest_hex[0], digest_hex[1],
                                                            digest_hex[2], digest_hex[3]);
           D(DBF_NET, "encoded   A1: '%s'", A1);
 
@@ -944,7 +944,7 @@ static BOOL TR_InitSMTPAUTH(void)
           md5init(&context);
           md5update(&context, (unsigned char *)buf, strlen(buf));
           md5final((UBYTE *)digest_hex, &context);
-          snprintf(A2, sizeof(A2), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
+          snprintf(A2, sizeof(A2), "%08x%08x%08x%08x", digest_hex[0], digest_hex[1],
                                                            digest_hex[2], digest_hex[3]);
           D(DBF_NET, "encoded   A2: '%s'", A2);
 
@@ -962,7 +962,7 @@ static BOOL TR_InitSMTPAUTH(void)
           md5init(&context);
           md5update(&context, (unsigned char *)buf, strlen(buf));
           md5final((UBYTE *)digest_hex, &context);
-          snprintf(response, sizeof(response), "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
+          snprintf(response, sizeof(response), "%08x%08x%08x%08x", digest_hex[0], digest_hex[1],
                                                                        digest_hex[2], digest_hex[3]);
           D(DBF_NET, "encoded   resp: '%s'", response);
         }
@@ -1057,7 +1057,7 @@ static BOOL TR_InitSMTPAUTH(void)
 
         // compose the md5 challenge
         md5hmac((unsigned char *)challenge, strlen(challenge), (unsigned char *)password, strlen(password), (unsigned char *)digest);
-        snprintf(buf, sizeof(buf), "%s %08lx%08lx%08lx%08lx", login, digest[0], digest[1], digest[2], digest[3]);
+        snprintf(buf, sizeof(buf), "%s %08x%08x%08x%08x", login, digest[0], digest[1], digest[2], digest[3]);
 
         D(DBF_NET, "prepared CRAM-MD5 reponse..: '%s'", buf);
         // lets base64 encode the md5 challenge for the answer
@@ -1449,10 +1449,10 @@ static void TR_SetSocketOpts(void)
   SocketBaseTags(SBTM_SETVAL(SBTC_BREAKMASK), 0, TAG_END);
   #else
   {
-    struct TagItem tags = { { SBTM_SETVAL(SBTC_BREAKMASK), 0 },
+    struct TagItem tags[] = { { SBTM_SETVAL(SBTC_BREAKMASK), 0 },
                           { TAG_END,                     0 } };
 
-    SocketBaseTagList(&tags);
+    SocketBaseTagList(tags);
   }
   #endif
 
@@ -6352,7 +6352,7 @@ BOOL TR_GetMessageList_IMPORT(void)
     NewList((struct List *)&G->TR->transferList);
 
     // prepare the temporary filename buffers
-    snprintf(tfname, sizeof(tfname), "YAMi%08lx.tmp", GetUniqueID());
+    snprintf(tfname, sizeof(tfname), "YAMi%08x.tmp", GetUniqueID());
     AddPath(fname, C->TempDir, tfname, sizeof(fname));
 
     // before this function is called the MA_ImportMessages() function

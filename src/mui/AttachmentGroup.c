@@ -227,7 +227,7 @@ OVERLOAD(OM_SET)
 {
   struct TagItem *tags = inittags(msg), *tag;
 
-  while((tag = NextTagItem(&tags)))
+  while((tag = NextTagItem((APTR)&tags)))
   {
     switch(tag->ti_Tag)
     {

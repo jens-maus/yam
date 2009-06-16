@@ -1588,7 +1588,7 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     newPart->CParBndr = strdup(first ? first->CParBndr : (prev ? prev->CParBndr : ""));
 
     newPart->rmData = rmData;
-    snprintf(file, sizeof(file), "YAMr%08lx-p%d.txt", rmData->uniqueID, newPart->Nr);
+    snprintf(file, sizeof(file), "YAMr%08x-p%d.txt", rmData->uniqueID, newPart->Nr);
     AddPath(newPart->Filename, C->TempDir, file, sizeof(newPart->Filename));
 
     D(DBF_MAIL, "New Part #%ld [%lx]", newPart->Nr, newPart);
@@ -2199,7 +2199,7 @@ BOOL RE_DecodePart(struct Part *rp)
       }
 
       // lets generate the destination file name for the decoded part
-      snprintf(file, sizeof(file), "YAMm%08lx-p%d.%s", rp->rmData->uniqueID, rp->Nr, ext[0] != '\0' ? ext : "tmp");
+      snprintf(file, sizeof(file), "YAMm%08x-p%d.%s", rp->rmData->uniqueID, rp->Nr, ext[0] != '\0' ? ext : "tmp");
       AddPath(filepath, C->TempDir, file, sizeof(filepath));
 
       D(DBF_MAIL, "decoding '%s' to '%s'", rp->Filename, filepath);
@@ -2554,7 +2554,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
         char file[SIZE_FILE];
 
         part->Nr = i;
-        snprintf(file, sizeof(file), "YAMm%08lx-p%d%s", rmData->uniqueID, i, strchr(part->Filename, '.'));
+        snprintf(file, sizeof(file), "YAMm%08x-p%d%s", rmData->uniqueID, i, strchr(part->Filename, '.'));
         AddPath(tmpFile, C->TempDir, file, sizeof(tmpFile));
 
         D(DBF_MAIL, "renaming '%s' to '%s'", part->Filename, tmpFile);
@@ -4058,7 +4058,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
       type = disposition;
 
     // now we generate the translated MDN report
-    snprintf(file, sizeof(file), "YAMm%08lx-p%d.txt", rp[0]->rmData->uniqueID, rp[0]->Nr);
+    snprintf(file, sizeof(file), "YAMm%08x-p%d.txt", rp[0]->rmData->uniqueID, rp[0]->Nr);
     AddPath(buf, C->TempDir, file, sizeof(buf));
 
     D(DBF_MAIL, "creating MDN report in '%s'", buf);

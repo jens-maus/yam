@@ -25,6 +25,9 @@
 
 ***************************************************************************/
 
+#include <strings.h>
+#include <stdlib.h>
+
 #include <clib/alib_protos.h>
 #include <proto/exec.h>
 #include <proto/muimaster.h>

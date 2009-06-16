@@ -109,7 +109,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if(tags != NULL)
       {
-        while((tag = NextTagItem(&tstate)) != NULL)
+        while((tag = NextTagItem((APTR)&tstate)) != NULL)
         {
           switch(tag->ti_Tag)
           {
@@ -149,7 +149,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if(tags != NULL)
       {
-        while((tag = NextTagItem(&tstate)) != NULL)
+        while((tag = NextTagItem((APTR)&tstate)) != NULL)
         {
           switch(tag->ti_Tag)
           {
@@ -174,8 +174,8 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
-        ((struct Hook *)object)->h_Entry = (ULONG (*)())entry;
-        ((struct Hook *)object)->h_SubEntry = (ULONG (*)())subentry;
+        ((struct Hook *)object)->h_Entry = (HOOKFUNC)entry;
+        ((struct Hook *)object)->h_SubEntry = (HOOKFUNC)subentry;
         ((struct Hook *)object)->h_Data = data;
       }
     }
@@ -189,7 +189,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if(tags != NULL)
       {
-        while((tag = NextTagItem(&tstate)) != NULL)
+        while((tag = NextTagItem((APTR)&tstate)) != NULL)
         {
           switch(tag->ti_Tag)
           {
@@ -228,7 +228,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if(tags != NULL)
       {
-        while((tag = NextTagItem(&tstate)) != NULL)
+        while((tag = NextTagItem((APTR)&tstate)) != NULL)
         {
           switch(tag->ti_Tag)
           {
@@ -281,7 +281,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if(tags != NULL)
       {
-        while((tag = NextTagItem(&tstate)) != NULL)
+        while((tag = NextTagItem((APTR)&tstate)) != NULL)
         {
           switch (tag->ti_Tag)
           {
@@ -381,7 +381,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if(tags != NULL)
       {
-        while((tag = NextTagItem(&tstate)) != NULL)
+        while((tag = NextTagItem((APTR)&tstate)) != NULL)
         {
           switch(tag->ti_Tag)
           {
@@ -423,7 +423,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if(tags != NULL)
       {
-        while((tag = NextTagItem(&tstate)) != NULL)
+        while((tag = NextTagItem((APTR)&tstate)) != NULL)
         {
           switch(tag->ti_Tag)
           {
@@ -488,7 +488,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if(tags != NULL)
       {
-        while((tag = NextTagItem(&tstate)) != NULL)
+        while((tag = NextTagItem((APTR)&tstate)) != NULL)
         {
           switch(tag->ti_Tag)
           {
@@ -511,7 +511,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if(tags != NULL)
       {
-        while((tag = NextTagItem(&tstate)) != NULL)
+        while((tag = NextTagItem((APTR)&tstate)) != NULL)
         {
           switch(tag->ti_Tag)
           {

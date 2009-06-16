@@ -25,6 +25,8 @@
 
 ***************************************************************************/
 
+#include <stdlib.h>
+#include <strings.h>
 #include <ctype.h>
 #include <math.h>
 #include <float.h>
@@ -548,7 +550,7 @@ static void tokenizerTokenizeASCIIWord(struct Tokenizer *t,
     {
       TEXT buffer[40];
 
-      snprintf(buffer, sizeof(buffer), "%c %ld", word[0], (length / 10) * 10);
+      snprintf(buffer, sizeof(buffer), "%c %d", word[0], (length / 10) * 10);
       tokenizerAdd(t, buffer, "skip", 1);
     }
   }

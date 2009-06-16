@@ -25,6 +25,9 @@
 
 ***************************************************************************/
 
+#include <stdlib.h>
+#include <strings.h>
+
 #include <clib/alib_protos.h>
 #include <mui/NListtree_mcc.h>
 #include <proto/exec.h>

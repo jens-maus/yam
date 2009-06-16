@@ -1110,7 +1110,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
       }
 
       // let us now try it again to rename the file
-      snprintf(newFileName, sizeof(newFileName), "%s.%03ld,%s", dateFilePart, ++mailCounter, statusFilePart);
+      snprintf(newFileName, sizeof(newFileName), "%s.%03d,%s", dateFilePart, ++mailCounter, statusFilePart);
 
       if(AddPath(newFilePath, GetFolderDir(folder), newFileName, sizeof(newFilePath)) == NULL)
       {

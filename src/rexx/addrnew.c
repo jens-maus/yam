@@ -25,7 +25,9 @@
 
 ***************************************************************************/
 
+#include <strings.h>
 #include <ctype.h>
+
 #include <proto/exec.h>
 
 #include "extrasrc.h"

@@ -81,7 +81,7 @@ OVERLOAD(OM_NEW)
 
   ENTER();
 
-  while((tag = NextTagItem(&tags)) != NULL)
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {
@@ -191,7 +191,7 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_GET)
 {
   GETDATA;
-  ULONG *store = ((struct opGet *)msg)->opg_Storage;
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {

@@ -67,7 +67,7 @@ struct NewRDArgs
   STRPTR Template;      // ReadArgs() template
   STRPTR ExtHelp;       // ExtHelp string
   STRPTR Window;        // workbench window -> eg. "CON:////Test"
-  LONG *Parameters;     // where to store the data
+  IPTR *Parameters;     // where to store the data
   LONG FileParameter;   // -1 = none, 0 = all
   LONG PrgToolTypesOnly;
 

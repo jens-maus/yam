@@ -1456,7 +1456,7 @@ struct TempFile *OpenTempFile(const char *mode)
 
     // now format our temporary filename according to our Application data
     // this format tries to make the temporary filename kinda unique.
-    snprintf(buf, sizeof(buf), "YAMt%08lx.tmp", GetUniqueID());
+    snprintf(buf, sizeof(buf), "YAMt%08x.tmp", GetUniqueID());
 
     // now add the temporary path to the filename
     AddPath(tf->Filename, C->TempDir, buf, sizeof(tf->Filename));
@@ -2446,9 +2446,9 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
       LONG beat = (((date->ds_Minute-C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
 
       if(mode == DSS_DATEBEAT || mode == DSS_RELDATEBEAT)
-        snprintf(dst, dstlen, "%s @%03ld", datestr, beat);
+        snprintf(dst, dstlen, "%s @%03d", datestr, beat);
       else
-        snprintf(dst, dstlen, "@%03ld", beat);
+        snprintf(dst, dstlen, "@%03d", beat);
     }
     break;
   }
@@ -2969,7 +2969,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     */
     case SF_1PREC:
     {
-      if(size < KB)       snprintf(buf, buflen, "%ld B", size);
+      if(size < KB)       snprintf(buf, buflen, "%d B", size);
       else if(size < MB)  snprintf(buf, buflen, "%.1f KB", dsize/KB);
       else if(size < GB)  snprintf(buf, buflen, "%.1f MB", dsize/MB);
       else                snprintf(buf, buflen, "%.1f GB", dsize/GB);
@@ -2985,7 +2985,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     */
     case SF_2PREC:
     {
-      if(size < KB)       snprintf(buf, buflen, "%ld B", size);
+      if(size < KB)       snprintf(buf, buflen, "%d B", size);
       else if(size < MB)  snprintf(buf, buflen, "%.2f KB", dsize/KB);
       else if(size < GB)  snprintf(buf, buflen, "%.2f MB", dsize/MB);
       else                snprintf(buf, buflen, "%.2f GB", dsize/GB);
@@ -3001,7 +3001,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     */
     case SF_3PREC:
     {
-      if(size < KB)       snprintf(buf, buflen, "%ld B", size);
+      if(size < KB)       snprintf(buf, buflen, "%d B", size);
       else if(size < MB)  snprintf(buf, buflen, "%.3f KB", dsize/KB);
       else if(size < GB)  snprintf(buf, buflen, "%.3f MB", dsize/MB);
       else                snprintf(buf, buflen, "%.3f GB", dsize/GB);
@@ -3017,7 +3017,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     */
     case SF_MIXED:
     {
-      if(size < KB)       snprintf(buf, buflen, "%ld B", size);
+      if(size < KB)       snprintf(buf, buflen, "%d B", size);
       else if(size < MB)  snprintf(buf, buflen, "%.1f KB", dsize/KB);
       else if(size < GB)  snprintf(buf, buflen, "%.2f MB", dsize/MB);
       else                snprintf(buf, buflen, "%.3f GB", dsize/GB);
@@ -3039,10 +3039,10 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
       // as we just split the size to another value, we redefine the KB/MB/GB values to base 10 variables
       enum { KB = 1000, MB = 1000 * 1000, GB = 1000 * 1000 * 1000 };
 
-      if(size < KB)      snprintf(buf, buflen, "%ld", size);
-      else if(size < MB) snprintf(buf, buflen, "%ld%s%03ld", size/KB, gs, size%KB);
-      else if(size < GB) snprintf(buf, buflen, "%ld%s%03ld%s%03ld", size/MB, gs, (size%MB)/KB, gs, size%KB);
-      else               snprintf(buf, buflen, "%ld%s%03ld%s%03ld%s%03ld", size/GB, gs, (size%GB)/MB, gs, (size%MB)/KB, gs, size%KB);
+      if(size < KB)      snprintf(buf, buflen, "%d", size);
+      else if(size < MB) snprintf(buf, buflen, "%d%s%03d", size/KB, gs, size%KB);
+      else if(size < GB) snprintf(buf, buflen, "%d%s%03d%s%03d", size/MB, gs, (size%MB)/KB, gs, size%KB);
+      else               snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d", size/GB, gs, (size%GB)/MB, gs, (size%MB)/KB, gs, size%KB);
     }
     break;
   }
@@ -3699,7 +3699,7 @@ char *StartUnpack(const char *file, char *newfile, const struct Folder *folder)
     {
       char nfile[SIZE_FILE];
 
-      snprintf(nfile, sizeof(nfile), "YAMu%08lx.unp", GetUniqueID());
+      snprintf(nfile, sizeof(nfile), "YAMu%08x.unp", GetUniqueID());
       AddPath(newfile, C->TempDir, nfile, SIZE_PATHFILE);
 
       // check that the destination filename
@@ -4060,7 +4060,7 @@ void SaveLayout(BOOL permanent)
   // 10: Vertical weight of top object (headerlist) in a read window
   // 11: Vertical weight of bottom object (texteditor) in a read window
 
-  snprintf(buf, sizeof(buf), "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld", G->Weights[0],
+  snprintf(buf, sizeof(buf), "%d %d %d %d %d %d %d %d %d %d %d %d", G->Weights[0],
                                                                                 G->Weights[1],
                                                                                 G->Weights[2],
                                                                                 G->Weights[3],
@@ -4151,9 +4151,9 @@ static void MyBltMaskBitMap(const struct BitMap *srcBitMap, LONG xSrc, LONG ySrc
 {
   ENTER();
 
-  BltBitMap(srcBitMap,xSrc,ySrc,destBitMap, xDest, yDest, xSize, ySize, 0x99,~0,NULL);
+  BltBitMap((struct BitMap *)srcBitMap,xSrc,ySrc,destBitMap, xDest, yDest, xSize, ySize, 0x99,~0,NULL);
   BltBitMap(maskBitMap,xSrc,ySrc,destBitMap, xDest, yDest, xSize, ySize, 0xe2,~0,NULL);
-  BltBitMap(srcBitMap,xSrc,ySrc,destBitMap, xDest, yDest, xSize, ySize, 0x99,~0,NULL);
+  BltBitMap((struct BitMap *)srcBitMap,xSrc,ySrc,destBitMap, xDest, yDest, xSize, ySize, 0x99,~0,NULL);
 
   LEAVE();
 }

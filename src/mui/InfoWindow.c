@@ -54,7 +54,7 @@ OVERLOAD(OM_NEW)
 
   ENTER();
 
-  while((tag = NextTagItem(&tags)) != NULL)
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {

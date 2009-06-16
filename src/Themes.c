@@ -831,7 +831,7 @@ void LoadTheme(struct Theme *theme, const char *themeName)
       // depending on the icon.library version we use either GetIconTags()
       // or the older GetDiskObject() function
       if(IconBase->lib_Version >= 44)
-        theme->icons[i] = GetIconTags(image, TAG_DONE);
+        theme->icons[i] = (struct DiskObject *)GetIconTags(image, TAG_DONE);
       else
         theme->icons[i] = GetDiskObject(image);
 

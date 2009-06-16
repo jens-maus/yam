@@ -3166,7 +3166,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
       char newfile[SIZE_PATHFILE];
       FILE *newfh;
 
-      snprintf(tfname, sizeof(tfname), "YAMt%08lx.tmp", GetUniqueID());
+      snprintf(tfname, sizeof(tfname), "YAMt%08x.tmp", GetUniqueID());
       AddPath(newfile, GetFolderDir(fo), tfname, sizeof(newfile));
 
       if((newfh = fopen(newfile, "w")) != NULL)
@@ -3471,7 +3471,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
                   FreeRexxCommand(rm);
                   --G->RexxHost->replies;
                 }
-                else if(rm->rm_Args[0] != NULL)
+                else if(rm->rm_Args[0] != 0)
                   DoRXCommand(G->RexxHost, rm);
                 else
                   ReplyMsg((struct Message *)rm);

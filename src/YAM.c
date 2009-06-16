@@ -137,7 +137,7 @@ struct Args
 
 static struct NewRDArgs nrda;
 static struct Args args;
-static BPTR olddirlock = -1; /* -1 is an unset indicator */
+static BPTR olddirlock = (BPTR)-1; /* -1 is an unset indicator */
 
 /**************************************************************************/
 
@@ -1176,7 +1176,7 @@ static void yam_exitfunc(void)
 
   D(DBF_STARTUP, "cleaning up in 'yam_exitfunc'...");
 
-  if(olddirlock != -1)
+  if(olddirlock != (BPTR)-1)
   {
     Terminate();
     CurrentDir(olddirlock);
@@ -1915,7 +1915,7 @@ static void InitBeforeLogin(BOOL hidden)
   // the Port of DefIcons. Alternatively the Ambient desktop
   // should provide the same functionallity.
   Forbid();
-  G->DefIconsAvailable = (FindPort("DEFICONS") != NULL || FindPort("AMBIENT") != NULL);
+  G->DefIconsAvailable = (FindPort((UBYTE *)"DEFICONS") != NULL || FindPort((UBYTE *)"AMBIENT") != NULL);
   Permit();
 
   // Initialise and Setup our own MUI custom classes before we go on
@@ -1930,7 +1930,7 @@ static void InitBeforeLogin(BOOL hidden)
     BOOL activeYAM;
 
     Forbid();
-    activeYAM = (FindPort("YAM") != NULL);
+    activeYAM = (FindPort((UBYTE *)"YAM") != NULL);
     Permit();
 
     Abort(activeYAM ? NULL : tr(MSG_ErrorMuiApp));
@@ -2190,7 +2190,7 @@ static LONG ParseCommandArgs(void)
 
     // set rest of new read args structure elements
     nrda.Window = NULL;
-    nrda.Parameters = (LONG *)&args;
+    nrda.Parameters = (IPTR *)&args;
     nrda.FileParameter = -1;
     nrda.PrgToolTypesOnly = FALSE;
 

@@ -233,9 +233,9 @@ static struct RexxMsg *CreateRexxCommand(struct RexxHost *host, char *buff, BPTR
 
   ENTER();
 
-  if((rexx_command_message = CreateRexxMsg(host->port, RexxMsgExtension, host->port->mp_Node.ln_Name)) != NULL)
+  if((rexx_command_message = CreateRexxMsg(host->port, (UBYTE *)RexxMsgExtension, host->port->mp_Node.ln_Name)) != NULL)
   {
-    if((rexx_command_message->rm_Args[0] = (APTR)CreateArgstring(buff, strlen(buff))) != NULL)
+    if((rexx_command_message->rm_Args[0] = (APTR)CreateArgstring(buff, strlen(buff))) != 0)
     {
       rexx_command_message->rm_Action = RXCOMM | RXFF_RESULT | addFlags;
       rexx_command_message->rm_Stdin  = fh;
@@ -263,7 +263,7 @@ static struct RexxMsg *CommandToRexx(struct RexxHost *host, struct RexxMsg *rexx
 
   Forbid();
 
-  if((rexxport = FindPort(RXSDIR)) != NULL)
+  if((rexxport = FindPort((UBYTE *)RXSDIR)) != NULL)
   {
     PutMsg(rexxport, &rexx_command_message->rm_Node);
     host->replies++;
@@ -323,7 +323,7 @@ void CloseDownARexxHost(struct RexxHost *host)
       {
         if(rexxmsg->rm_Node.mn_Node.ln_Type == NT_REPLYMSG)
         {
-          if(rexxmsg->rm_Args[15] == NULL)
+          if(rexxmsg->rm_Args[15] == 0)
           {
             // it was a reply to a SendRexxCommand() call
             if(ARexxResultHook != NULL)
@@ -607,7 +607,7 @@ static BOOL CreateSTEM(struct MinList *stemList, struct rxs_command *rxc, LONG *
         AddTail((struct List *)stemList, (struct Node *)countNode);
 
         // the elements
-        while((r = *subarray++) != NULL && success == TRUE)
+        while((r = (long *)*subarray++) != NULL && success == TRUE)
         {
           struct StemNode *stemNode;
 

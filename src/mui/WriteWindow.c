@@ -1012,7 +1012,7 @@ OVERLOAD(OM_NEW)
     struct TagItem *tag;
 
     // check for some tags present at OM_NEW
-    while((tag = NextTagItem(&tags)) != NULL)
+    while((tag = NextTagItem((APTR)&tags)) != NULL)
     {
       switch(tag->ti_Tag)
       {
@@ -1650,7 +1650,7 @@ OVERLOAD(OM_NEW)
       DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 1, MUIM_WriteWindow_CancelAction);
 
       // prepare the temporary filename of that new write window
-      snprintf(filename, sizeof(filename), "YAMw%08lx-%d.tmp", (LONG)FindTask(NULL), data->windowNumber);
+      snprintf(filename, sizeof(filename), "YAMw%08x-%d.tmp", (LONG)FindTask(NULL), data->windowNumber);
       AddPath(data->wmData->filename, C->TempDir, filename, sizeof(data->wmData->filename));
 
       // set the global charset as the default one
@@ -1791,7 +1791,7 @@ OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_GET)
 {
   GETDATA;
-  ULONG *store = ((struct opGet *)msg)->opg_Storage;
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
@@ -1811,7 +1811,7 @@ OVERLOAD(OM_SET)
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
 
-  while((tag = NextTagItem(&tags)))
+  while((tag = NextTagItem((APTR)&tags)))
   {
     switch(tag->ti_Tag)
     {

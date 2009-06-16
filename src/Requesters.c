@@ -25,6 +25,8 @@
 
 ***************************************************************************/
 
+#include <stdlib.h>
+#include <strings.h>
 #include <ctype.h>
 
 #include <clib/alib_protos.h>

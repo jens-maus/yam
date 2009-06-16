@@ -27,7 +27,7 @@ struct NewRDArgs {
 	STRPTR	Template;	/* ReadArgs template */
 	STRPTR	ExtHelp;	/* ExtHelp string or NULL, shell ONLY */
 	STRPTR	Window; 	/* WB window descriptor, eg. "CON:////Test" */
-	LONG   *Parameters;	/* array to store parsed parameters */
+	IPTR   *Parameters;	/* array to store parsed parameters */
 	LONG	FileParameter;	/* -1 means none, 0 means all */
 	LONG	PrgToolTypesOnly;
 	/* private !!! */

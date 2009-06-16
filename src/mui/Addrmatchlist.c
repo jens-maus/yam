@@ -154,7 +154,7 @@ OVERLOAD(OM_NEW)
     GETDATA;
 
     struct TagItem *tags = inittags(msg), *tag;
-    while((tag = NextTagItem(&tags)))
+    while((tag = NextTagItem((APTR)&tags)))
     {
       switch(tag->ti_Tag)
       {
@@ -220,7 +220,7 @@ OVERLOAD(OM_SET)
   ENTER();
 
   tags = inittags(msg);
-  while((tag = NextTagItem(&tags)))
+  while((tag = NextTagItem((APTR)&tags)))
   {
     switch(tag->ti_Tag)
     {

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-16  Matthias Rustler <mrustler@gmx.de>
+
+  * Lots of compiler warnings fixed.
+
 2009-06-13  Thore Böckelmann <tboeckel@gmx.de>
 
   * rexx/mailinfo.c: no folder was determined in case a specific mail was to be

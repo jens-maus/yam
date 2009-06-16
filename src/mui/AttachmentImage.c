@@ -220,7 +220,7 @@ static void LoadImage(Object *obj, struct Data *data)
     {
       D(DBF_GUI, "retrieving diskicon via DEFICONS for '%s'", mailPart->Filename);
 
-      diskObject = GetIconTags(mailPart->Filename,
+      diskObject = (struct DiskObject *)GetIconTags(mailPart->Filename,
                                ICONGETA_FailIfUnavailable, FALSE,
                                ICONGETA_Screen,            _screen(obj),
                                TAG_DONE);
@@ -263,7 +263,7 @@ static void LoadImage(Object *obj, struct Data *data)
           def = "attach";
 
         // try to retrieve the icon for that type
-        diskObject = GetIconTags(NULL,
+        diskObject = (struct DiskObject *)GetIconTags(NULL,
                                  ICONGETA_GetDefaultName, def,
                                  ICONGETA_Screen,         _screen(obj),
                                  TAG_DONE);
@@ -272,7 +272,7 @@ static void LoadImage(Object *obj, struct Data *data)
         // obtain the standard project icon
         if(diskObject == NULL)
         {
-          diskObject = GetIconTags(NULL,
+          diskObject = (struct DiskObject *)GetIconTags(NULL,
                                    ICONGETA_GetDefaultType, WBPROJECT,
                                    ICONGETA_Screen,         _screen(obj),
                                    TAG_DONE);
@@ -586,7 +586,7 @@ OVERLOAD(OM_NEW)
     struct TagItem *tags = inittags(msg);
     struct TagItem *tag;
 
-    while((tag = NextTagItem(&tags)))
+    while((tag = NextTagItem((APTR)&tags)))
     {
       switch(tag->ti_Tag)
       {
@@ -637,7 +637,7 @@ OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_GET)
 {
   GETDATA;
-  ULONG *store = ((struct opGet *)msg)->opg_Storage;
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
@@ -657,7 +657,7 @@ OVERLOAD(OM_SET)
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
 
-  while((tag = NextTagItem(&tags)) != NULL)
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {
