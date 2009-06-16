@@ -5,9 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-16  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: the last AROS change added some compiler warnings when compiling for all
+    the other targets, especially when using format functions like snprintf().
+    Now the proper type casts are added to avoid these compiler warning
+    conflicts.
+
 2009-06-16  Matthias Rustler <mrustler@gmx.de>
 
-  * Lots of compiler warnings fixed.
+  * misc: lots of compiler warnings fixed.
 
 2009-06-13  Thore Böckelmann <tboeckel@gmx.de>
 

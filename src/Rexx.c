@@ -233,7 +233,7 @@ static struct RexxMsg *CreateRexxCommand(struct RexxHost *host, char *buff, BPTR
 
   ENTER();
 
-  if((rexx_command_message = CreateRexxMsg(host->port, (UBYTE *)RexxMsgExtension, host->port->mp_Node.ln_Name)) != NULL)
+  if((rexx_command_message = CreateRexxMsg(host->port, (APTR)RexxMsgExtension, host->port->mp_Node.ln_Name)) != NULL)
   {
     if((rexx_command_message->rm_Args[0] = (APTR)CreateArgstring(buff, strlen(buff))) != 0)
     {
@@ -263,7 +263,7 @@ static struct RexxMsg *CommandToRexx(struct RexxHost *host, struct RexxMsg *rexx
 
   Forbid();
 
-  if((rexxport = FindPort((UBYTE *)RXSDIR)) != NULL)
+  if((rexxport = FindPort((APTR)RXSDIR)) != NULL)
   {
     PutMsg(rexxport, &rexx_command_message->rm_Node);
     host->replies++;

@@ -290,7 +290,7 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
   {
     nnset(data->GA_LABEL, MUIA_Text_Contents, msg->gaugeText);
 
-    snprintf(data->infoText, sizeof(data->infoText), "%%ld/%d", msg->max);
+    snprintf(data->infoText, sizeof(data->infoText), "%%ld/%d", (unsigned int)msg->max);
 
     xset(data->GA_INFO, MUIA_Gauge_InfoText,  data->infoText,
                         MUIA_Gauge_Current,   msg->perc > 0 ? msg->perc : 0,

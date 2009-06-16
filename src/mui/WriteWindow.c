@@ -1650,7 +1650,7 @@ OVERLOAD(OM_NEW)
       DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 1, MUIM_WriteWindow_CancelAction);
 
       // prepare the temporary filename of that new write window
-      snprintf(filename, sizeof(filename), "YAMw%08x-%d.tmp", (LONG)FindTask(NULL), data->windowNumber);
+      snprintf(filename, sizeof(filename), "YAMw%08x-%d.tmp", (unsigned int)FindTask(NULL), data->windowNumber);
       AddPath(data->wmData->filename, C->TempDir, filename, sizeof(data->wmData->filename));
 
       // set the global charset as the default one

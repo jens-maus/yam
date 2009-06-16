@@ -104,7 +104,7 @@ static char *GetDateTime(void)
 static char *NewMessageID(void)
 {
   static char idbuf[SIZE_MSGID];
-  ULONG seconds;
+  unsigned int seconds;
   struct DateStamp ds;
 
   ENTER();
@@ -116,7 +116,7 @@ static char *NewMessageID(void)
   // Here we try to generate a unique MessageID.
   // We try to be as much conform to the Recommandations for generating
   // unique Message IDs as we can: http://www.jwz.org/doc/mid.html
-  snprintf(idbuf, sizeof(idbuf), "<%x%x.%x@%s>", seconds, ds.ds_Tick, (ULONG)rand(), C->SMTP_Server);
+  snprintf(idbuf, sizeof(idbuf), "<%x%x.%x@%s>", seconds, (unsigned int)ds.ds_Tick, (unsigned int)rand(), C->SMTP_Server);
 
   RETURN(idbuf);
   return idbuf;
@@ -134,7 +134,7 @@ static char *NewBoundaryID(void)
 
   // Generate a unique Boundary ID which conforms to RFC 2045 and includes
   // a "=_" sequence to make it safe for quoted printable encoded parts
-  snprintf(idbuf, sizeof(idbuf), "--=_BOUNDARY.%lx%x.%02x", (IPTR)FindTask(NULL), (ULONG)rand(), ++ctr);
+  snprintf(idbuf, sizeof(idbuf), "--=_BOUNDARY.%lx%x.%02x", (IPTR)FindTask(NULL), (unsigned int)rand(), ++ctr);
 
   RETURN(idbuf);
   return idbuf;
@@ -623,7 +623,7 @@ BOOL EncodePart(FILE *ofh, const struct WritePart *part)
         else
           ER_NewError(tr(MSG_ER_UUFILEENCODE), part->Filename);
 
-        fprintf(ofh, "``\nend\nsize %d\n", size);
+        fprintf(ofh, "``\nend\nsize %d\n", (int)size);
       }
       break;
 

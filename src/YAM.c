@@ -1915,7 +1915,7 @@ static void InitBeforeLogin(BOOL hidden)
   // the Port of DefIcons. Alternatively the Ambient desktop
   // should provide the same functionallity.
   Forbid();
-  G->DefIconsAvailable = (FindPort((UBYTE *)"DEFICONS") != NULL || FindPort((UBYTE *)"AMBIENT") != NULL);
+  G->DefIconsAvailable = (FindPort((APTR)"DEFICONS") != NULL || FindPort((APTR)"AMBIENT") != NULL);
   Permit();
 
   // Initialise and Setup our own MUI custom classes before we go on
@@ -1930,7 +1930,7 @@ static void InitBeforeLogin(BOOL hidden)
     BOOL activeYAM;
 
     Forbid();
-    activeYAM = (FindPort((UBYTE *)"YAM") != NULL);
+    activeYAM = (FindPort((APTR)"YAM") != NULL);
     Permit();
 
     Abort(activeYAM ? NULL : tr(MSG_ErrorMuiApp));

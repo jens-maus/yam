@@ -115,11 +115,10 @@
 
 struct UniversalClassData
 {
-   struct UniversalGUIData { APTR WI; } GUI;
+  struct UniversalGUIData { Object *WI; } GUI;
 };
 
 int BusyLevel = 0;
-
 
 /***************************************************************************
  Utilities
@@ -1456,7 +1455,7 @@ struct TempFile *OpenTempFile(const char *mode)
 
     // now format our temporary filename according to our Application data
     // this format tries to make the temporary filename kinda unique.
-    snprintf(buf, sizeof(buf), "YAMt%08x.tmp", GetUniqueID());
+    snprintf(buf, sizeof(buf), "YAMt%08x.tmp", (unsigned int)GetUniqueID());
 
     // now add the temporary path to the filename
     AddPath(tf->Filename, C->TempDir, buf, sizeof(tf->Filename));
@@ -2443,7 +2442,7 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
     case DSS_RELDATEBEAT:
     {
       // calculate the beat time
-      LONG beat = (((date->ds_Minute-C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+      unsigned int beat = (((date->ds_Minute-C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
 
       if(mode == DSS_DATEBEAT || mode == DSS_RELDATEBEAT)
         snprintf(dst, dstlen, "%s @%03d", datestr, beat);
@@ -2969,7 +2968,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     */
     case SF_1PREC:
     {
-      if(size < KB)       snprintf(buf, buflen, "%d B", size);
+      if(size < KB)       snprintf(buf, buflen, "%d B", (unsigned int)size);
       else if(size < MB)  snprintf(buf, buflen, "%.1f KB", dsize/KB);
       else if(size < GB)  snprintf(buf, buflen, "%.1f MB", dsize/MB);
       else                snprintf(buf, buflen, "%.1f GB", dsize/GB);
@@ -2985,7 +2984,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     */
     case SF_2PREC:
     {
-      if(size < KB)       snprintf(buf, buflen, "%d B", size);
+      if(size < KB)       snprintf(buf, buflen, "%d B", (unsigned int)size);
       else if(size < MB)  snprintf(buf, buflen, "%.2f KB", dsize/KB);
       else if(size < GB)  snprintf(buf, buflen, "%.2f MB", dsize/MB);
       else                snprintf(buf, buflen, "%.2f GB", dsize/GB);
@@ -3001,7 +3000,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     */
     case SF_3PREC:
     {
-      if(size < KB)       snprintf(buf, buflen, "%d B", size);
+      if(size < KB)       snprintf(buf, buflen, "%d B", (unsigned int)size);
       else if(size < MB)  snprintf(buf, buflen, "%.3f KB", dsize/KB);
       else if(size < GB)  snprintf(buf, buflen, "%.3f MB", dsize/MB);
       else                snprintf(buf, buflen, "%.3f GB", dsize/GB);
@@ -3017,7 +3016,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     */
     case SF_MIXED:
     {
-      if(size < KB)       snprintf(buf, buflen, "%d B", size);
+      if(size < KB)       snprintf(buf, buflen, "%d B", (unsigned int)size);
       else if(size < MB)  snprintf(buf, buflen, "%.1f KB", dsize/KB);
       else if(size < GB)  snprintf(buf, buflen, "%.2f MB", dsize/MB);
       else                snprintf(buf, buflen, "%.3f GB", dsize/GB);
@@ -3039,10 +3038,10 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
       // as we just split the size to another value, we redefine the KB/MB/GB values to base 10 variables
       enum { KB = 1000, MB = 1000 * 1000, GB = 1000 * 1000 * 1000 };
 
-      if(size < KB)      snprintf(buf, buflen, "%d", size);
-      else if(size < MB) snprintf(buf, buflen, "%d%s%03d", size/KB, gs, size%KB);
-      else if(size < GB) snprintf(buf, buflen, "%d%s%03d%s%03d", size/MB, gs, (size%MB)/KB, gs, size%KB);
-      else               snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d", size/GB, gs, (size%GB)/MB, gs, (size%MB)/KB, gs, size%KB);
+      if(size < KB)      snprintf(buf, buflen, "%d", (unsigned int)size);
+      else if(size < MB) snprintf(buf, buflen, "%d%s%03d", (unsigned int)size/KB, gs, (unsigned int)size%KB);
+      else if(size < GB) snprintf(buf, buflen, "%d%s%03d%s%03d", (unsigned int)size/MB, gs, (unsigned int)(size%MB)/KB, gs, (unsigned int)size%KB);
+      else               snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d", (unsigned int)size/GB, gs, (unsigned int)(size%GB)/MB, gs, (unsigned int)(size%MB)/KB, gs, (unsigned int)size%KB);
     }
     break;
   }
@@ -3699,7 +3698,7 @@ char *StartUnpack(const char *file, char *newfile, const struct Folder *folder)
     {
       char nfile[SIZE_FILE];
 
-      snprintf(nfile, sizeof(nfile), "YAMu%08x.unp", GetUniqueID());
+      snprintf(nfile, sizeof(nfile), "YAMu%08x.unp", (unsigned int)GetUniqueID());
       AddPath(newfile, C->TempDir, nfile, SIZE_PATHFILE);
 
       // check that the destination filename
@@ -4060,18 +4059,18 @@ void SaveLayout(BOOL permanent)
   // 10: Vertical weight of top object (headerlist) in a read window
   // 11: Vertical weight of bottom object (texteditor) in a read window
 
-  snprintf(buf, sizeof(buf), "%d %d %d %d %d %d %d %d %d %d %d %d", G->Weights[0],
-                                                                                G->Weights[1],
-                                                                                G->Weights[2],
-                                                                                G->Weights[3],
-                                                                                G->Weights[4],
-                                                                                G->Weights[5],
-                                                                                G->Weights[6],
-                                                                                G->Weights[7],
-                                                                                G->Weights[8],
-                                                                                G->Weights[9],
-                                                                                G->Weights[10],
-                                                                                G->Weights[11]);
+  snprintf(buf, sizeof(buf), "%d %d %d %d %d %d %d %d %d %d %d %d", (int)G->Weights[0],
+                                                                    (int)G->Weights[1],
+                                                                    (int)G->Weights[2],
+                                                                    (int)G->Weights[3],
+                                                                    (int)G->Weights[4],
+                                                                    (int)G->Weights[5],
+                                                                    (int)G->Weights[6],
+                                                                    (int)G->Weights[7],
+                                                                    (int)G->Weights[8],
+                                                                    (int)G->Weights[9],
+                                                                    (int)G->Weights[10],
+                                                                    (int)G->Weights[11]);
 
   setstring(G->MA->GUI.ST_LAYOUT, buf);
   DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);

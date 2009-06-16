@@ -86,7 +86,7 @@ void rx_getmailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enu
         key = args->item;
 
         if(!strnicmp(key, "ACT", 3))
-          snprintf(optional->result, sizeof(optional->result), "%d", active);
+          snprintf(optional->result, sizeof(optional->result), "%d", (unsigned int)active);
         else if(!strnicmp(key, "STA", 3))
         {
           if(hasStatusError(mail))

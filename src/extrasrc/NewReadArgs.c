@@ -460,13 +460,14 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
     /*- call ReadArgs() -*/
     nrdargs->RDArgs->RDA_ExtHelp = nrdargs->ExtHelp;
-    if((nrdargs->FreeArgs = ReadArgs(nrdargs->Template, nrdargs->Parameters, nrdargs->RDArgs)) == NULL)
+    if((nrdargs->FreeArgs = ReadArgs(nrdargs->Template, (APTR)nrdargs->Parameters, nrdargs->RDArgs)) == NULL)
     {
       E(DBF_STARTUP, "ReadArgs() error");
 
       RETURN(IoErr());
       return(IoErr());
     }
+
     if(SetSignal(0, SIGBREAKF_CTRL_C) & SIGBREAKF_CTRL_C)
     {
       E(DBF_STARTUP, "ReadArgs() aborted by CTRL-C");

@@ -508,7 +508,7 @@ static ULONG countChars(STRPTR str, TEXT c)
 static void tokenizerTokenizeASCIIWord(struct Tokenizer *t,
                                        STRPTR word)
 {
-  ULONG length;
+  size_t length;
 
   ENTER();
 

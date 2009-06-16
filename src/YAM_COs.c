@@ -578,17 +578,17 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     if(co->SocketOptions.LowDelay)
       strlcat(buf, " IPTOS_LOWDELAY", sizeof(buf));
     if(co->SocketOptions.SendBuffer > -1)
-      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_SNDBUF=%d", co->SocketOptions.SendBuffer);
+      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_SNDBUF=%d", (int)co->SocketOptions.SendBuffer);
     if(co->SocketOptions.RecvBuffer > -1)
-      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_RCVBUF=%d", co->SocketOptions.RecvBuffer);
+      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_RCVBUF=%d", (int)co->SocketOptions.RecvBuffer);
     if(co->SocketOptions.SendLowAt > -1)
-      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_SNDLOWAT=%d", co->SocketOptions.SendLowAt);
+      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_SNDLOWAT=%d", (int)co->SocketOptions.SendLowAt);
     if(co->SocketOptions.RecvLowAt > -1)
-      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_RCVLOWAT=%d", co->SocketOptions.RecvLowAt);
+      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_RCVLOWAT=%d", (int)co->SocketOptions.RecvLowAt);
     if(co->SocketOptions.SendTimeOut > -1)
-      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_SNDTIMEO=%d", co->SocketOptions.SendTimeOut);
+      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_SNDTIMEO=%d", (int)co->SocketOptions.SendTimeOut);
     if(co->SocketOptions.RecvTimeOut > -1)
-      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_RCVTIMEO=%d", co->SocketOptions.RecvTimeOut);
+      snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), " SO_RCVTIMEO=%d", (int)co->SocketOptions.RecvTimeOut);
 
     fprintf(fh, "SocketOptions    =%s\n", buf);
     fprintf(fh, "SocketTimeout    = %d\n", co->SocketTimeout);
