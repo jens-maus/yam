@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-18  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: implemented feature request #1468796. Specifying NOSPLASHWINDOW via
+    either the tooltypes or on the command line will YAM start up and shut down
+    silently. However, if you have multiple users configured the splash window
+    will still appear for user selection.
+
 2009-06-16  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: the last AROS change added some compiler warnings when compiling for all

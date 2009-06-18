@@ -133,6 +133,7 @@ struct Args
   char **attach;
   LONG   noImgWarning;
   LONG   noCatalog;
+  LONG   noSplashWindow;
 };
 
 static struct NewRDArgs nrda;
@@ -1473,7 +1474,7 @@ static BOOL Root_New(BOOL hidden)
     {
       G->InStartupPhase = TRUE;
 
-      set(G->SplashWinObject, MUIA_Window_Open, !hidden);
+      set(G->SplashWinObject, MUIA_Window_Open, !(hidden || args.noSplashWindow));
 
       result = TRUE;
     }
@@ -1784,7 +1785,8 @@ static void InitAfterLogin(void)
 
   // close the splash window right before we open our main YAM window
   // but ask it before closing if it was activated or not.
-  splashWasActive = xget(G->SplashWinObject, MUIA_Window_Activate);
+
+  splashWasActive = (args.noSplashWindow) ? TRUE : xget(G->SplashWinObject, MUIA_Window_Activate);
   set(G->SplashWinObject, MUIA_Window_Open, FALSE);
 
   // cleanup the splash window object immediately
@@ -2153,7 +2155,8 @@ static LONG ParseCommandArgs(void)
                             "LETTER/K,"
                             "ATTACH/M,"
                             "NOIMGWARNING/S,"
-                            "NOCATALOG/S";
+                            "NOCATALOG/S,"
+                            "NOSPLASHWINDOW/S";
 
     // now we build an extended help page text
     snprintf(extHelp, SIZE_EXTHELP, "%s (%s)\n%s\n\nUsage: YAM <options>\nOptions/Tooltypes:\n"
@@ -2180,6 +2183,8 @@ static LONG ParseCommandArgs(void)
                                     "                        image files.\n"
                                     "  NOCATALOG           : Starts YAM without loading any catalog\n"
                                     "                        translation (english).\n"
+                                    "  NOSPLASHWINDOW      : Starts YAM without opening the splash\n"
+                                    "                        and shutdown windows."
                                     "\n%s: ", yamversion,
                                               yamversiondate,
                                               yamcopyright,
@@ -2725,7 +2730,7 @@ int main(int argc, char **argv)
       // Create the shutdown window object, but only show it if the application is visible, too.
       // This window will be closed and disposed automatically as soon as the application itself
       // is disposed.
-      if(G->App != NULL && xget(G->App, MUIA_Application_Iconified) == FALSE)
+      if(G->App != NULL && xget(G->App, MUIA_Application_Iconified) == FALSE && !args.noSplashWindow)
         ShutdownWindowObject, End;
 
       SetIoErr(RETURN_OK);
