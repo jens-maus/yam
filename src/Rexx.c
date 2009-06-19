@@ -235,7 +235,7 @@ static struct RexxMsg *CreateRexxCommand(struct RexxHost *host, char *buff, BPTR
 
   if((rexx_command_message = CreateRexxMsg(host->port, (APTR)RexxMsgExtension, host->port->mp_Node.ln_Name)) != NULL)
   {
-    if((rexx_command_message->rm_Args[0] = (IPTR)CreateArgstring(buff, strlen(buff))) != 0)
+    if((rexx_command_message->rm_Args[0] = (APTR)CreateArgstring(buff, strlen(buff))) != 0)
     {
       rexx_command_message->rm_Action = RXCOMM | RXFF_RESULT | addFlags;
       rexx_command_message->rm_Stdin  = fh;
@@ -712,7 +712,7 @@ void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg)
     if((rm = CreateRexxCommand(host, (char *)ARG0(rexxmsg), 0, 0)) != NULL)
     {
       // remember original message
-      rm->rm_Args[15] = (IPTR)rexxmsg;
+      rm->rm_Args[15] = (APTR)rexxmsg;
 
       if(CommandToRexx(host, rm) != NULL)
       {

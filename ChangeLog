@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * Rexx.c: reverted some of the recent changes to fix compiler warnings for
+    the AROS target as these changes caused compiler warnings on the other
+    non-AROS targets. Somehow we can't seem to fix all of them ;)
+
 2009-06-19  Matthias Rustler <mrustler@gmx.de>
 
   * misc: allmost all remaining compiler warnings removed on AROS.
