@@ -116,7 +116,7 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         folder = mail->Folder;
       }
       else
-        mail = MA_GetActiveMail(NULL, &folder, (LONG *)&optional->active);
+        mail = MA_GetActiveMail(NULL, &folder, (APTR)&optional->active);
 
       if(mail != NULL)
       {

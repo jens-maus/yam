@@ -157,7 +157,7 @@ struct TimeRequest
   struct TimeVal   Time;
 };
 
-#define TIMEVAL(x)  (struct timeval *)(x)
+#define TIMEVAL(x)  (APTR)(x)
 
 #else
 

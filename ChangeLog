@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-19  Matthias Rustler <mrustler@gmx.de>
+
+  * misc: allmost all remaining compiler warnings removed on AROS.
+
 2009-06-18  Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: implemented feature request #1468796. Specifying NOSPLASHWINDOW via

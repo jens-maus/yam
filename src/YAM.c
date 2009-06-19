@@ -2195,7 +2195,7 @@ static LONG ParseCommandArgs(void)
 
     // set rest of new read args structure elements
     nrda.Window = NULL;
-    nrda.Parameters = (IPTR *)&args;
+    nrda.Parameters = (APTR)&args;
     nrda.FileParameter = -1;
     nrda.PrgToolTypesOnly = FALSE;
 

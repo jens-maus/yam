@@ -73,7 +73,7 @@ Object *MakeButton(const char *txt)
 {
    Object *obj;
 
-   if((obj = MUI_MakeObject(MUIO_Button,txt)) != NULL)
+   if((obj = MUI_MakeObject(MUIO_Button,(IPTR)txt)) != NULL)
      set(obj, MUIA_CycleChain, TRUE);
 
    return obj;

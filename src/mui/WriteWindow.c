@@ -679,7 +679,7 @@ static void AddTagline(FILE *fh_mail)
           fseek(fh_hash, fpos, SEEK_SET);
 
           // read the offset to the tagline from the hash file
-          if(ReadUInt32(fh_hash, (ULONG *)&fpos) == 1)
+          if(ReadUInt32(fh_hash, (APTR)&fpos) == 1)
           {
             char *buf = NULL;
             size_t bufsize = 0;

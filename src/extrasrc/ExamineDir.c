@@ -116,7 +116,7 @@ APTR ObtainDirContext(struct TagItem *tags)
 #if !defined(PPC)
 APTR VARARGS68K ObtainDirContextTags(ULONG tag1, ...)
 {
-  return ObtainDirContext((struct TagItem *)&tag1);
+  return ObtainDirContext((APTR)&tag1);
 }
 #endif
 
