@@ -435,8 +435,8 @@ OVERLOAD(OM_NEW)
     }
   }
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 ///
 /// OVERLOAD(OM_DISPOSE)
@@ -473,8 +473,8 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(ID): *store = (ULONG)data->id; return TRUE;
-    ATTR(Filename): *store = (ULONG)data->filename; return TRUE;
+    ATTR(ID): *store = (IPTR)data->id; return TRUE;
+    ATTR(Filename): *store = (IPTR)data->filename; return TRUE;
 
     // return the raw image width
     ATTR(RawWidth):
@@ -641,7 +641,7 @@ OVERLOAD(OM_SET)
 OVERLOAD(MUIM_Setup)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 

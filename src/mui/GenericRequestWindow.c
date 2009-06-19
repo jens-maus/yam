@@ -233,7 +233,7 @@ OVERLOAD(OM_NEW)
   }
 
   RETURN(obj);
-  return (ULONG)obj;
+  return (IPTR)obj;
 }
 
 ///

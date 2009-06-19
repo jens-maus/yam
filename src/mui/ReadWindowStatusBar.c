@@ -250,8 +250,8 @@ OVERLOAD(OM_NEW)
     set(obj, MUIA_UserData, data);
   }
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 ///
 /// OVERLOAD(OM_DISPOSE)
@@ -259,7 +259,7 @@ OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
   int i;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 

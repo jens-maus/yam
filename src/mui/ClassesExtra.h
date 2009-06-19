@@ -78,85 +78,85 @@
 
 #define MenuChild										MUIA_Family_Child
 #define Menuitem(t,s,e,c,u)					MenuitemObject, 										\
-																			MUIA_Menuitem_Title,					(t),\
-																			MUIA_Menuitem_Shortcut,				(s),\
-																			MUIA_Menuitem_Enabled,				(e),\
-																			MUIA_Menuitem_CommandString,	(c),\
-																			MUIA_UserData,								(u),\
-																		End
+                                      MUIA_Menuitem_Title,					(t),\
+                                      MUIA_Menuitem_Shortcut,				(s),\
+                                      MUIA_Menuitem_Enabled,				(e),\
+                                      MUIA_Menuitem_CommandString,	(c),\
+                                      MUIA_UserData,								(u),\
+                                    End
 
 #define MenuitemCheck(t,s,e,c,g,x,u)	MenuitemObject,											\
-  																			MUIA_Menuitem_Checkit,			 TRUE,\
-	  																		MUIA_Menuitem_Title,					(t),\
-		  																	MUIA_Menuitem_Shortcut,				(s),\
-			  																MUIA_Menuitem_Checked,				(c),\
-				  															MUIA_Menuitem_Toggle,					(g),\
-					  														MUIA_Menuitem_Exclude,				(x),\
-						  													MUIA_Menuitem_Enabled,				(e),\
-							  												MUIA_UserData,								(u),\
-								  										End
+                                        MUIA_Menuitem_Checkit,			 TRUE,\
+                                        MUIA_Menuitem_Title,					(t),\
+                                        MUIA_Menuitem_Shortcut,				(s),\
+                                        MUIA_Menuitem_Checked,				(c),\
+                                        MUIA_Menuitem_Toggle,					(g),\
+                                        MUIA_Menuitem_Exclude,				(x),\
+                                        MUIA_Menuitem_Enabled,				(e),\
+                                        MUIA_UserData,								(u),\
+                                      End
 
 #define MenuBarLabel								MenuitemObject,											\
-																			MUIA_Menuitem_Title,  NM_BARLABEL,\
-																		End
+                                      MUIA_Menuitem_Title,  NM_BARLABEL,\
+                                    End
 
 
 // some private (mostly undocumented) MUI stuff...
 #ifndef MUIM_GoActive
-#define MUIM_GoActive                0x8042491a /* V8  */
+#define MUIM_GoActive                0x8042491aUL /* V8  */
 #endif
 #ifndef MUIM_GoInactive
-#define MUIM_GoInactive              0x80422c0c /* V8  */
+#define MUIM_GoInactive              0x80422c0cUL /* V8  */
 #endif
 #ifndef MUIA_Window_DisableKeys
-#define MUIA_Window_DisableKeys      0x80424c36 /* V15 isg ULONG    */
+#define MUIA_Window_DisableKeys      0x80424c36UL /* V15 isg ULONG    */
 #endif
 #ifndef MUIA_Application_UsedClasses
-#define MUIA_Application_UsedClasses 0x8042e9a7 /* V20 isg STRPTR * */
+#define MUIA_Application_UsedClasses 0x8042e9a7UL /* V20 isg STRPTR * */
 #endif
 #ifndef MUIA_String_Popup
-#define MUIA_String_Popup            0x80420d71 /* V9  i.. Object * */
+#define MUIA_String_Popup            0x80420d71UL /* V9  i.. Object * */
 #endif
 #ifndef MUIA_List_CursorType
-#define MUIA_List_CursorType         0x8042c53e /* V4  is. LONG     */
+#define MUIA_List_CursorType         0x8042c53eUL /* V4  is. LONG     */
 #endif
 #ifndef MUIV_List_CursorType_Bar
 #define MUIV_List_CursorType_Bar 		 1
 #endif
 #ifndef MUIA_Text_HiIndex
-#define MUIA_Text_HiIndex            0x804214f5 /* V11 i.. LONG     */
+#define MUIA_Text_HiIndex            0x804214f5UL /* V11 i.. LONG     */
 #endif
 #ifndef MUIM_DeleteDragImage
-#define MUIM_DeleteDragImage 				 0x80423037
+#define MUIM_DeleteDragImage 				 0x80423037UL
 #endif
 #ifndef MUIM_Group_MoveMember
-#define MUIM_Group_MoveMember				 0x8042ff4e /* V16 */
+#define MUIM_Group_MoveMember				 0x8042ff4eUL /* V16 */
 #endif
 #if (MUIMASTER_VMIN < 18)
 #ifndef MUIM_DoDrag
-#define MUIM_DoDrag 0x804216bb /* private */ /* V18 */
-struct  MUIP_DoDrag { ULONG MethodID; LONG touchx; LONG touchy; ULONG flags; }; /* private */
+#define MUIM_DoDrag 0x804216bbUL /* private */ /* V18 */
+struct  MUIP_DoDrag { STACKED ULONG MethodID; STACKED LONG touchx; STACKED LONG touchy; STACKED ULONG flags; }; /* private */
 #endif
 #endif
 #ifndef MUIA_Text_Copy
-#define MUIA_Text_Copy                      0x80427727 /* V20 i.. BOOL              */
+#define MUIA_Text_Copy                      0x80427727UL /* V20 i.. BOOL              */
 #endif
 #ifndef MUIO_Label_Tiny
 #define MUIO_Label_Tiny          (1<<13)
 #endif
 
 enum { IECODE_SPACE = 64,
-			 IECODE_TAB = 66,
-			 IECODE_RETURN = 68,
-			 IECODE_ESCAPE = 69,
-			 IECODE_HELP = 95,
-			 IECODE_BACKSPACE = 65,
-			 IECODE_DEL = 70,
-			 IECODE_UP = 76,
-			 IECODE_DOWN = 77,
-			 IECODE_RIGHT = 78,
-			 IECODE_LEFT = 79
-		 };
+       IECODE_TAB = 66,
+       IECODE_RETURN = 68,
+       IECODE_ESCAPE = 69,
+       IECODE_HELP = 95,
+       IECODE_BACKSPACE = 65,
+       IECODE_DEL = 70,
+       IECODE_UP = 76,
+       IECODE_DOWN = 77,
+       IECODE_RIGHT = 78,
+       IECODE_LEFT = 79
+     };
 
 // some own usefull MUI-style macros to check mouse positions in objects
 #define _between(a,x,b) 					((x)>=(a) && (x)<=(b))

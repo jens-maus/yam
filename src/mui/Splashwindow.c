@@ -147,7 +147,7 @@ OVERLOAD(OM_NEW)
 
   set(obj, MUIA_Window_Activate, TRUE);
 
-  return (ULONG)obj;
+  return (IPTR)obj;
 }
 
 ///

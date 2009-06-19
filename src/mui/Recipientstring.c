@@ -236,8 +236,8 @@ OVERLOAD(OM_NEW)
               MUIA_String_Reject, data->MultipleRecipients ? NULL : ",");
   }
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 ///
 /// OVERLOAD(OM_DISPOSE)
@@ -347,7 +347,7 @@ OVERLOAD(OM_SET)
 OVERLOAD(MUIM_Setup)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 
@@ -388,7 +388,7 @@ OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Show)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 
@@ -403,7 +403,7 @@ OVERLOAD(MUIM_Show)
 OVERLOAD(MUIM_GoActive)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 
@@ -425,7 +425,7 @@ OVERLOAD(MUIM_GoActive)
 OVERLOAD(MUIM_GoInactive)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 
@@ -461,7 +461,7 @@ OVERLOAD(MUIM_GoInactive)
 OVERLOAD(MUIM_DragQuery)
 {
   struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
-  ULONG result = MUIV_DragQuery_Refuse;
+  IPTR result = MUIV_DragQuery_Refuse;
 
   ENTER();
 
@@ -530,7 +530,7 @@ OVERLOAD(MUIM_Popstring_Open)
 OVERLOAD(MUIM_HandleEvent)
 {
   GETDATA;
-  ULONG result = 0;
+  IPTR result = 0;
   struct IntuiMessage *imsg;
 
   ENTER();

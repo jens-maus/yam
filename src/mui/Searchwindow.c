@@ -101,8 +101,8 @@ OVERLOAD(OM_NEW)
     DoMethod(obj,            MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 1, MUIM_Searchwindow_Close);
   }
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///

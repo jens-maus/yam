@@ -83,8 +83,8 @@ OVERLOAD(OM_NEW)
     set(obj, MUIA_Window_Open, TRUE);
   }
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///

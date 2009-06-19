@@ -492,7 +492,7 @@ OVERLOAD(MUIM_NListtree_Insert)
   }
 
   RETURN(thisTreeNode);
-  return (ULONG)thisTreeNode;
+  return (IPTR)thisTreeNode;
 }
 
 ///
@@ -580,8 +580,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       End,
     End;
 
-    RETURN((ULONG)data->context_menu);
-    return (ULONG)data->context_menu;
+    RETURN((IPTR)data->context_menu);
+    return (IPTR)data->context_menu;
   }
 
   // Now lets find out which entry is under the mouse pointer
@@ -661,8 +661,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     }
   }
 
-  RETURN((ULONG)data->context_menu);
-  return (ULONG)data->context_menu;
+  RETURN((IPTR)data->context_menu);
+  return (IPTR)data->context_menu;
 }
 
 ///

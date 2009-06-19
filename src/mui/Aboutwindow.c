@@ -277,8 +277,8 @@ OVERLOAD(OM_NEW)
               MUIA_Window_DefaultObject, bt_okay);
   }
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///
@@ -286,7 +286,7 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 

@@ -14,6 +14,7 @@ $URL$
 2009-06-19  Matthias Rustler <mrustler@gmx.de>
 
   * misc: allmost all remaining compiler warnings removed on AROS.
+  * mics: 64-bit fixes (IPTR, STACKED, UL)
 
 2009-06-18  Thore Böckelmann <tboeckel@gmx.de>
 

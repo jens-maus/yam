@@ -215,7 +215,7 @@ OVERLOAD(OM_SET)
 {
   GETDATA;
   struct TagItem *tags, *tag;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 
@@ -288,7 +288,7 @@ DECLARE(ChangeWindow)
 DECLARE(Event) // struct IntuiMessage *imsg
 {
   GETDATA;
-  ULONG result = FALSE;
+  IPTR result = FALSE;
 
   ENTER();
 
@@ -376,7 +376,7 @@ DECLARE(Open) // char *str
   set(data->Matchlist, MUIA_NList_Quiet, FALSE);
 
   RETURN(result);
-  return (ULONG)result;
+  return (IPTR)result;
 }
 ///
 /// DECLARE(ActiveChange)

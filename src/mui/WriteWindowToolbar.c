@@ -172,8 +172,8 @@ OVERLOAD(OM_NEW)
     E(DBF_STARTUP, "couldn't create WriteWindowToolbar!");
 
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///

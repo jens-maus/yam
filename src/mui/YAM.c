@@ -412,7 +412,7 @@ DECLARE(FindEmailCacheMatch) // STRPTR matchText
   }
 
   RETURN(foundentry);
-  return (ULONG)foundentry;
+  return (IPTR)foundentry;
 }
 
 ///
@@ -581,7 +581,7 @@ OVERLOAD(OM_NEW)
     LoadEMailCache(data->EMailCacheName, &data->EMailCache);
   }
 
-  return (ULONG)obj;
+  return (IPTR)obj;
 }
 
 ///
@@ -610,7 +610,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(CompileInfo) : *store = (ULONG)data->compileInfo; return TRUE;
+    ATTR(CompileInfo) : *store = (IPTR)data->compileInfo; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);

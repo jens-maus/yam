@@ -128,8 +128,8 @@ OVERLOAD(OM_NEW)
 
   }
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///
@@ -241,7 +241,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
   }
 
   RETURN(data->contextMenu);
-  return (ULONG)data->contextMenu;
+  return (IPTR)data->contextMenu;
 }
 
 ///

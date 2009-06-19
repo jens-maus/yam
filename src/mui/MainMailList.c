@@ -496,8 +496,8 @@ OVERLOAD(OM_NEW)
   DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark,  MUIV_TriggerValue);
   DoMethod(obj, MUIM_Notify, MUIA_NList_SortType2,   MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark2, MUIV_TriggerValue);
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///
@@ -659,7 +659,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     DoMethod(data->context_menu, MUIM_Family_Insert, spamItem, afterThis);
   }
 
-  return (ULONG)data->context_menu;
+  return (IPTR)data->context_menu;
 }
 
 ///
@@ -776,7 +776,7 @@ DECLARE(MakeFormat)
 // removes a mail visibly from the message listview
 DECLARE(RemoveMail) // struct Mail* mail
 {
-  ULONG result = 0;
+  IPTR result = 0;
 
   ENTER();
 

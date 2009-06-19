@@ -100,7 +100,7 @@ OVERLOAD(OM_NEW)
     DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj,                     2, MUIM_MainMailListGroup_DoubleClicked, MUIV_TriggerValue);
   }
 
-  return (ULONG)obj;
+  return (IPTR)obj;
 }
 
 ///
@@ -203,7 +203,7 @@ OVERLOAD(MUIM_GoActive)
 OVERLOAD(MUIM_NList_Clear)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   // delegate this method to the currently active NList only
   result = DoMethodA(data->mainListObjects[data->activeList], msg);
@@ -216,7 +216,7 @@ OVERLOAD(MUIM_NList_Clear)
 OVERLOAD(MUIM_NList_GetEntry)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   // delegate this method to the currently active NList only
   result = DoMethodA(data->mainListObjects[data->activeList], msg);
@@ -229,7 +229,7 @@ OVERLOAD(MUIM_NList_GetEntry)
 OVERLOAD(MUIM_NList_GetPos)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   // delegate this method to the currently active NList only
   result = DoMethodA(data->mainListObjects[data->activeList], msg);
@@ -242,7 +242,7 @@ OVERLOAD(MUIM_NList_GetPos)
 OVERLOAD(MUIM_NList_Insert)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   // delegate this method to the currently active NList only
   result = DoMethodA(data->mainListObjects[data->activeList], msg);
@@ -255,7 +255,7 @@ OVERLOAD(MUIM_NList_Insert)
 OVERLOAD(MUIM_NList_InsertSingle)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   // we always add the mail to the main list
   result = DoMethodA(data->mainListObjects[LT_MAIN], msg);
@@ -286,7 +286,7 @@ OVERLOAD(MUIM_NList_InsertSingle)
 OVERLOAD(MUIM_NList_NextSelected)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   // delegate this method to the currently active NList only
   result = DoMethodA(data->mainListObjects[data->activeList], msg);
@@ -299,7 +299,7 @@ OVERLOAD(MUIM_NList_NextSelected)
 OVERLOAD(MUIM_NList_Redraw)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   // delegate this method to the currently active NList only
   result = DoMethodA(data->mainListObjects[data->activeList], msg);
@@ -312,7 +312,7 @@ OVERLOAD(MUIM_NList_Redraw)
 OVERLOAD(MUIM_NList_Select)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   // delegate this method to the currently active NList only
   result = DoMethodA(data->mainListObjects[data->activeList], msg);
@@ -469,7 +469,7 @@ DECLARE(AddMailToList) // enum MainListType type, struct Mail* mail
 DECLARE(RemoveMail) // struct Mail* mail
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 

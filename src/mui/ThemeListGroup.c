@@ -238,8 +238,8 @@ OVERLOAD(OM_NEW)
     DoMethod(activateButtonObject, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_ThemeListGroup_ActivateTheme);
   }
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 ///
 

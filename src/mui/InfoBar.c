@@ -189,8 +189,8 @@ OVERLOAD(OM_NEW)
     DoMethod(data->BT_STOP, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_WriteLong, MUIV_NotTriggerValue, &(data->stopButtonPressed));
   }
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 ///
 
@@ -201,7 +201,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
 {
   GETDATA;
   struct Folder *folder = msg->newFolder;
-  ULONG result = (ULONG)-1;
+  IPTR result = -1;
 
   ENTER();
 

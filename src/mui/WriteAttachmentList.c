@@ -47,7 +47,7 @@ struct Data
 /// OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Setup)
 {
-  ULONG result;
+  IPTR result;
 
   ENTER();
 
@@ -64,7 +64,7 @@ OVERLOAD(MUIM_Setup)
 /// OVERLOAD(MUIM_Cleanup)
 OVERLOAD(MUIM_Cleanup)
 {
-  ULONG result;
+  IPTR result;
 
   ENTER();
 
@@ -81,7 +81,7 @@ OVERLOAD(MUIM_Cleanup)
 OVERLOAD(MUIM_DragQuery)
 {
   struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 
@@ -103,7 +103,7 @@ OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragDrop)
 {
   struct MUIP_DragDrop *d = (struct MUIP_DragDrop *)msg;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 

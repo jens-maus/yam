@@ -319,7 +319,7 @@ OVERLOAD(OM_NEW)
   // free the temporary mem we allocated before
   free(tmpData);
 
-  return (ULONG)obj;
+  return (IPTR)obj;
 }
 ///
 /// OVERLOAD(OM_SET)

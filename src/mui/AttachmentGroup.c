@@ -204,8 +204,8 @@ OVERLOAD(OM_NEW)
                     MUIA_ContextMenu,      TRUE,
                   TAG_MORE, inittags(msg));
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///
@@ -250,7 +250,7 @@ OVERLOAD(OM_SET)
 OVERLOAD(MUIM_Setup)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 
@@ -277,7 +277,7 @@ OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Cleanup)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 
@@ -321,7 +321,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
   End;
 
   RETURN(data->contextMenu);
-  return (ULONG)data->contextMenu;
+  return (IPTR)data->contextMenu;
 }
 
 ///
@@ -360,7 +360,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
 OVERLOAD(MUIM_HandleEvent)
 {
   struct IntuiMessage *imsg = ((struct MUIP_HandleEvent *)msg)->imsg;
-  ULONG result = 0;
+  IPTR result = 0;
 
   ENTER();
 

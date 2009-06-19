@@ -621,8 +621,8 @@ OVERLOAD(OM_NEW)
       free(rmData);
   }
 
-  RETURN((ULONG)result);
-  return (ULONG)result;
+  RETURN((IPTR)result);
+  return (IPTR)result;
 }
 ///
 /// OVERLOAD(OM_DISPOSE)
@@ -817,8 +817,8 @@ OVERLOAD(MUIM_ContextMenuBuild)
     End;
   }
 
-  RETURN((ULONG)data->contextMenu);
-  return (ULONG)data->contextMenu;
+  RETURN((IPTR)data->contextMenu);
+  return (IPTR)data->contextMenu;
 }
 ///
 /// OVERLOAD(MUIM_ContextMenuChoice)
@@ -830,7 +830,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
   BOOL updateHeader = FALSE;
   BOOL updateText = FALSE;
   BOOL checked = xget(m->item, MUIA_Menuitem_Checked);
-  ULONG result = 0;
+  IPTR result = 0;
 
   switch(xget(m->item, MUIA_UserData))
   {

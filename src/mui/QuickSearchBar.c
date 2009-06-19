@@ -458,7 +458,7 @@ OVERLOAD(OM_NEW)
   DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 3, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue, TRUE);
   DoMethod(data->BT_CLEARBUTTON,  MUIM_Notify, MUIA_Pressed, FALSE, data->ST_SEARCHSTRING, 3, MUIM_Set, MUIA_String_Contents, "");
 
-  return (ULONG)obj;
+  return (IPTR)obj;
 }
 ///
 /// OVERLOAD(OM_SET)

@@ -105,8 +105,8 @@ OVERLOAD(OM_NEW)
       DoMethod(obj, MUIM_NList_UseImage, data->configIcon[i], i, MUIF_NONE);
   }
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///

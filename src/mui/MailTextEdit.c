@@ -74,8 +74,8 @@ OVERLOAD(OM_NEW)
     }
   }
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///
@@ -119,7 +119,7 @@ OVERLOAD(MUIM_DragDrop)
 OVERLOAD(MUIM_Show)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 
@@ -174,7 +174,7 @@ OVERLOAD(MUIM_Hide)
 OVERLOAD(MUIM_Setup)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 
@@ -200,7 +200,7 @@ OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Cleanup)
 {
   GETDATA;
-  ULONG result;
+  IPTR result;
 
   ENTER();
 

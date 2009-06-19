@@ -65,8 +65,8 @@ OVERLOAD(OM_NEW)
   data->listImage = MakeImageObject("status_group", G->theme.statusImages[si_Group]);
   DoMethod(obj, MUIM_NList_UseImage, data->listImage, 0, MUIF_NONE);
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///

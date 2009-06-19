@@ -45,7 +45,7 @@ struct Data
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
 {
-  ULONG result = 0;
+  IPTR result = 0;
   struct TagItem *tags = inittags(msg), *tag;
 
   ENTER();
@@ -75,7 +75,7 @@ OVERLOAD(OM_SET)
 /// OVERLOAD(MUIM_Window_Snapshot)
 OVERLOAD(MUIM_Window_Snapshot)
 {
-  ULONG result;
+  IPTR result;
 
   ENTER();
 

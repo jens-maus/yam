@@ -66,8 +66,8 @@ OVERLOAD(OM_NEW)
   DoMethod(obj, MUIM_NList_UseImage, data->downloadImage, si_Download, MUIF_NONE);
   DoMethod(obj, MUIM_NList_UseImage, data->deleteImage, si_Delete, MUIF_NONE);
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///
