@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-21  Thore Böckelmann <tboeckel@gmx.de>
+
+  * HTML2Mail.l, ParseEMail.l: lowered the minimum required flex version from
+    2.5.35 to 2.5.27 to be able to build YAM natively, at least on OS4. This
+    version is the last one which doesn't depend on any fork() implementation.
+
 2009-06-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * Rexx.c: reverted some of the recent changes to fix compiler warnings for
