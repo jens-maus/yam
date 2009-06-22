@@ -59,6 +59,14 @@
                                         (YY_FLEX_MINOR_VERSION == 5 && YY_FLEX_SUBMINOR_VERSION < 27)))
     #error "minimum flex version 2.5.27 is required to build"
     #endif
+
+    // now we check the recommended flex version and
+    // output a warning instead.
+    #if YY_FLEX_MAJOR_VERSION < 2 || \
+        (YY_FLEX_MAJOR_VERSION == 2 && (YY_FLEX_MINOR_VERSION < 5 || \
+                                        (YY_FLEX_MINOR_VERSION == 5 && YY_FLEX_SUBMINOR_VERSION < 35)))
+    #warning "YAM is compiled with a flex version < 2.5.35. This might cause unexpected problems or performance issues."
+    #endif
 %}
 
 /*
