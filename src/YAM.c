@@ -945,9 +945,11 @@ static void Terminate(void)
   {
     MA_UpdateIndexes(FALSE);
     set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
+  }
 
-    // delete our list of folders
-    D(DBF_STARTUP, "freeing folders...");
+  D(DBF_STARTUP, "freeing folders...");
+  if(G->folders != NULL)
+  {
     LockFolderList(G->folders);
     if(IsFolderListEmpty(G->folders) == FALSE)
     {

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-23  Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: fixed a memory leak which happend when YAM was started a second time.
+    The folder list of the second instance was never freed again, because that
+    depended on an opened main window.
+
 2009-06-22  Jens Langner <Jens.Langner@light-speed.de>
 
   * HTML2Mail.l, ParseEmail.l: added a warning in case YAM is compiled with
@@ -13,7 +19,7 @@ $URL$
   * Makefile: added "FORCE" option to the AmigaOS native execution of makedir.
     This should fix issues when trying to compile YAM natively on AmigaOS
     systems.
-  
+
 2009-06-21  Thore Böckelmann <tboeckel@gmx.de>
 
   * HTML2Mail.l, ParseEMail.l: lowered the minimum required flex version from
