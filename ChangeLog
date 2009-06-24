@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-16  Matthias Rustler <mrustler@gmx.de>
+
+  * defines/muimaster.h: fixed the LVO's for AROS. Otherwise wrong functions
+    from muimaster.library were called.
+
 2009-06-24  Thore Böckelmann <tboeckel@gmx.de>
 
   * MailTextEdit.c: move the pen allocation from MUIM_Show to the MUIM_Setup
