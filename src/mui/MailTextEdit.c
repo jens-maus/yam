@@ -61,9 +61,6 @@ OVERLOAD(OM_NEW)
     GETDATA;
     struct TagItem *tags = inittags(msg), *tag;
 
-    // set the colormap
-    set(obj, MUIA_TextEditor_ColorMap, data->colorMap);
-
     while((tag = NextTagItem((APTR)&tags)))
     {
       switch(tag->ti_Tag)
@@ -115,59 +112,6 @@ OVERLOAD(MUIM_DragDrop)
 }
 
 ///
-/// OVERLOAD(MUIM_Show)
-OVERLOAD(MUIM_Show)
-{
-  GETDATA;
-  IPTR result;
-
-  ENTER();
-
-  data->colorMap[6] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColoredText, 0);
-  data->colorMap[7] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color1stLevel, 0);
-  data->colorMap[8] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color2ndLevel, 0);
-  data->colorMap[9] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color3rdLevel, 0);
-  data->colorMap[10] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
-  data->colorMap[11] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
-  data->colorMap[12] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorSignature, 0);
-
-  // call the supermethod
-  result = DoSuperMethodA(cl, obj, msg);
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// OVERLOAD(MUIM_Hide)
-OVERLOAD(MUIM_Hide)
-{
-  GETDATA;
-  ULONG result;
-
-  ENTER();
-
-  // call the super method first
-  if((result = DoSuperMethodA(cl, obj, msg)) == 0)
-  {
-    int i;
-
-    // release all pens of our own colorMap
-    for(i=6; i <= 12; i++)
-    {
-      if(data->colorMap[i] >= 0)
-      {
-        MUI_ReleasePen(muiRenderInfo(obj), data->colorMap[i]);
-        data->colorMap[i] = -1;
-      }
-    }
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///
 /// OVERLOAD(MUIM_Setup)
 // On the Setup of the TextEditor gadget we prepare the evenhandlernode
 // for adding it later on a GoActive Method call.
@@ -188,6 +132,17 @@ OVERLOAD(MUIM_Setup)
 
     DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
     data->eventHandlerAdded = TRUE;
+
+    data->colorMap[6] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColoredText, 0);
+    data->colorMap[7] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color1stLevel, 0);
+    data->colorMap[8] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color2ndLevel, 0);
+    data->colorMap[9] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color3rdLevel, 0);
+    data->colorMap[10] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
+    data->colorMap[11] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
+    data->colorMap[12] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorSignature, 0);
+
+    // set the colormap
+    set(obj, MUIA_TextEditor_ColorMap, data->colorMap);
   }
 
   RETURN(result);
@@ -201,6 +156,7 @@ OVERLOAD(MUIM_Cleanup)
 {
   GETDATA;
   IPTR result;
+  int i;
 
   ENTER();
 
@@ -208,6 +164,19 @@ OVERLOAD(MUIM_Cleanup)
   {
     DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
     data->eventHandlerAdded = FALSE;
+  }
+
+  // unset the colormap
+  set(obj, MUIA_TextEditor_ColorMap, NULL);
+
+  // release all pens of our own colorMap
+  for(i=6; i <= 12; i++)
+  {
+    if(data->colorMap[i] >= 0)
+    {
+      MUI_ReleasePen(muiRenderInfo(obj), data->colorMap[i]);
+      data->colorMap[i] = -1;
+    }
   }
 
   result = DoSuperMethodA(cl, obj, msg);
