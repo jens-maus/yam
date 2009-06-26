@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.2 (10.10.2008)
+## version $VER: YAM.catalog 6.3 (27.5.2009)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.6 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 3864 2008-10-3 02:44:15Z
+; based on YAM.cd 3864 2009-5-26 03:10:26Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -2654,7 +2654,7 @@ l'eseguibile PGP.
 ; executable can be found.
 ;
 MSG_HELP_CO_ST_MYPGPID
-L'ID della chiave di PGP usata per\n\
+L'ID della chiave PGP usata per\n\
 firmare e criptare i messaggi.
 ; The ID of your PGP key that is used\n\
 ; to sign and encrypt messages.
@@ -4694,13 +4694,6 @@ E' necessario specificare uno pseudonimo per identificare questa voce!
 MSG_ER_ErrorNoAddress
 E' necessario specificare un indirizzo per questa voce!
 ; You must specify an address for this entry!
-;
-MSG_ER_ErrorDOBformat
-La data di nascita è scritta in un formato errato.\n\
-Il formato corretto è GG-MMM-AAAA\n\
-(Il mese deve essere scritto in inglese).
-; Date of birth uses a wrong format. The correct format is \
-; DD-MMM-YYYY (month names in English).
 ;
 MSG_ER_ErrorDateFormat
 Formato errato data/ora.\n\
@@ -7219,11 +7212,11 @@ Componente
 ; Component
 ;
 MSG_UPD_NOTIFICATION_RECENT
-Ultimo
+Ultima versione
 ; Recent
 ;
 MSG_UPD_NOTIFICATION_INSTALLED
-Installati
+Installata
 ; Installed
 ;
 MSG_UPD_NOTIFICATION_URL
@@ -9861,4 +9854,65 @@ Colori testo?
 MSG_WR_FIXEDFONT
 Spaziatura fissa?
 ; Fixed font?
+;
+MSG_CO_SPAM_OPTIMIZE_TRAININGDATA
+_Ottimizza dati di riconoscimento
+; _Optimize training data
+;
+MSG_HELP_BT_OPTIMIZE_TRAININGDATA
+Rimuove alcune parole piuttosto infrequenti dai dati di\n\
+riconoscimento in modo da velocizzare il caricamento\n\
+dei dati e per aumentare la velocità di processamento\n\
+dagli eventuali messaggi spam attraverso l'uso del filtro.
+; Removes very infrequent words from the training\n\
+; data to speed up loading of training data and\n\
+; increase processing speed of spam mails.
+;
+MSG_CO_SPAM_OPTIMIZE_TRAININGDATA_ASK
+Si desidera veramente ottimizzare i dati di riconoscimento\n\
+del filtro Antispam?\n\
+\n\
+L'efficienza del filtro potrebbe risultare compromessa\n\
+ma il processo del filtro verrà velocizzato e utilizzerà\n\
+una quantità inferiore di memoria.
+; Do you really want to optimize the spam filter's\n\
+; training data?\n\
+; \n\
+; The spam filter's efficency might decrease slightly\n\
+; afterwards, but the filter process will be faster and\n\
+; use less memory.
+;
+MSG_CO_SPAM_STATISTICS
+%ld (%ld parole)
+; %ld (%ld words)
+;
+MSG_ER_WRONG_DOB_FORMAT
+La data di nascita utilizza un formato errato. Il formato corretto è '%s'.\n\
+%%d - giorno\n\
+%%m - mese\n\
+%%y - anno (2 caratteri)\n\
+%%Y - anno (4 caratteri)\n\
+L'anno di nascita deve essere almeno superiore o uguale a 1900!
+; DOBFORMAT
+; Date of birth uses a wrong format. The correct format is '%s'.\n\
+; %%d - day\n\
+; %%m - month\n\
+; %%y - year (2 digits)\n\
+; %%Y - year (4 digits)\n\
+; The year number must be greater or equal 1900!
+; DOBFORMAT
+;
+MSG_CO_PGPURL
+URL su chiave pubblica PGP
+; URL to public PGP key
+;
+MSG_HELP_CO_ST_PGPURL
+E' possibile specificare un URL dove poter\n\
+scaricare la propria chiave PGP.\n\
+L'URL verrà poi inserito in una intestazione\n\
+separata per ogni messaggio di posta.
+; You can specify an URL where your public\n\
+; PGP key can be downloaded from. This URL\n\
+; will then placed into a separate header\n\
+; entry in every mail.
 ;
