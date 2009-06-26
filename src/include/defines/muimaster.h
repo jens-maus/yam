@@ -3,6 +3,10 @@
 #ifndef _INLINE_MUIMASTER_H
 #define _INLINE_MUIMASTER_H
 
+#ifndef __AROS__
+    #warning "this include file is for AROS only"
+#endif
+
 #ifndef _SFDC_VARARG_DEFINED
 #define _SFDC_VARARG_DEFINED
 #ifdef __HAVE_IPTR_ATTR__
@@ -151,8 +155,6 @@ typedef ULONG _sfdc_vararg;
 	AROS_LCA(ULONG, (___last), D4), \
 	struct Library *, MUIMASTER_BASE_NAME, 21, Muimaster)
 
-#if defined(__AROS__)
-/* Zune has the LVO's wrong */
 #define MUI_ObtainPen(___par1, ___par2, ___last) \
 	AROS_LC3(LONG, MUI_ObtainPen, \
 	AROS_LCA(struct MUI_RenderInfo *, (___par1), A0), \
@@ -204,60 +206,5 @@ typedef ULONG _sfdc_vararg;
 	AROS_LCA(struct MUI_RenderInfo *, (___par1), A0), \
 	AROS_LCA(ULONG, (___last), D0), \
 	struct Library *, MUIMASTER_BASE_NAME, 29, Muimaster)
-
-#else /* __AROS__ */
-#define MUI_ObtainPen(___par1, ___par2, ___last) \
-	AROS_LC3(LONG, MUI_ObtainPen, \
-	AROS_LCA(struct MUI_RenderInfo *, (___par1), A0), \
-	AROS_LCA(struct MUI_PenSpec *, (___par2), A1), \
-	AROS_LCA(ULONG, (___last), D0), \
-	struct Library *, MUIMASTER_BASE_NAME, 26, Muimaster)
-
-#define MUI_ReleasePen(___par1, ___last) \
-	AROS_LC2(VOID, MUI_ReleasePen, \
-	AROS_LCA(struct MUI_RenderInfo *, (___par1), A0), \
-	AROS_LCA(LONG, (___last), D0), \
-	struct Library *, MUIMASTER_BASE_NAME, 27, Muimaster)
-
-#define MUI_AddClipping(___par1, ___par2, ___par3, ___par4, ___last) \
-	AROS_LC5(APTR, MUI_AddClipping, \
-	AROS_LCA(struct MUI_RenderInfo *, (___par1), A0), \
-	AROS_LCA(WORD, (___par2), D0), \
-	AROS_LCA(WORD, (___par3), D1), \
-	AROS_LCA(WORD, (___par4), D2), \
-	AROS_LCA(WORD, (___last), D3), \
-	struct Library *, MUIMASTER_BASE_NAME, 28, Muimaster)
-
-#define MUI_RemoveClipping(___par1, ___last) \
-	AROS_LC2(VOID, MUI_RemoveClipping, \
-	AROS_LCA(struct MUI_RenderInfo *, (___par1), A0), \
-	AROS_LCA(APTR, (___last), A1), \
-	struct Library *, MUIMASTER_BASE_NAME, 29, Muimaster)
-
-#define MUI_AddClipRegion(___par1, ___last) \
-	AROS_LC2(APTR, MUI_AddClipRegion, \
-	AROS_LCA(struct MUI_RenderInfo *, (___par1), A0), \
-	AROS_LCA(struct Region *, (___last), A1), \
-	struct Library *, MUIMASTER_BASE_NAME, 30, Muimaster)
-
-#define MUI_RemoveClipRegion(___par1, ___last) \
-	AROS_LC2(VOID, MUI_RemoveClipRegion, \
-	AROS_LCA(struct MUI_RenderInfo *, (___par1), A0), \
-	AROS_LCA(APTR, (___last), A1), \
-	struct Library *, MUIMASTER_BASE_NAME, 31, Muimaster)
-
-#define MUI_BeginRefresh(___par1, ___last) \
-	AROS_LC2(BOOL, MUI_BeginRefresh, \
-	AROS_LCA(struct MUI_RenderInfo *, (___par1), A0), \
-	AROS_LCA(ULONG, (___last), D0), \
-	struct Library *, MUIMASTER_BASE_NAME, 32, Muimaster)
-
-#define MUI_EndRefresh(___par1, ___last) \
-	AROS_LC2(VOID, MUI_EndRefresh, \
-	AROS_LCA(struct MUI_RenderInfo *, (___par1), A0), \
-	AROS_LCA(ULONG, (___last), D0), \
-	struct Library *, MUIMASTER_BASE_NAME, 33, Muimaster)
-
-#endif /* __AROS__ */
 
 #endif /* !_INLINE_MUIMASTER_H */

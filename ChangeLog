@@ -5,7 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2009-06-16  Matthias Rustler <mrustler@gmx.de>
+2009-06-24  Matthias Rustler <mrustler@gmx.de>
+
+  * defines/muimaster.h: Removed AROS specific handling because that
+    file is already AROS only.
+  * src/Makefile: disabled -fomit-frame-pointer because this makes
+    debugging difficult.
+
+2009-06-24  Matthias Rustler <mrustler@gmx.de>
 
   * defines/muimaster.h: fixed the LVO's for AROS. Otherwise wrong functions
     from muimaster.library were called.
