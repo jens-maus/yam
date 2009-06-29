@@ -1,9 +1,22 @@
-## version $VER: YAM.catalog 6.0 (06.11.2008)
+## version $VER: YAM.catalog 6.0 (29.06.2009)
 ## language français
-## codeset 0
+## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban
-; based on YAM.cd 4214 2008-10-20 14:34:27Z
+; YAM.cd - YAM 2.5 catalog description file
+; $Id$
+;
+; Please note that all catalog strings have to carry a proper
+; identifier number in the (X//) string part of the MSG_ identifier
+; field and that those numbers have to be unique and continuous over
+; all different YAM versions. This allows to remove some obsolete
+; strings later on without having to worry about identifier clashes.
+; This however means that if an entry is being deleted here its
+; identifier should NEVER be reused later on. So, if you are going to
+; add new strings here do that always at the bottom of the file
+; and increase the last listed identifier number by one for your
+; new entries. And if you delete an entry NEVER reorder or resort
+; the ID numbers accordingly.
 ;
 ;#version 6
 ;#language english
@@ -4697,12 +4710,6 @@ MSG_ER_ErrorNoAddress
 Vous devez spécifier une adresse dans cette zone !
 ; You must specify an address for this entry!
 ;
-MSG_ER_ErrorDOBformat
-La date de naissance n'est pas au bon format. \
-Il faut utiliser JJ-MMM-AAAA. (Noms des mois en Anglais).
-; Date of birth uses a wrong format. The correct format is \
-; DD-MMM-YYYY (month names in English).
-;
 MSG_ER_ErrorDateFormat
 Format date/heure invalide.\n\
 \n\
@@ -6708,7 +6715,7 @@ doit être recherché dans le courrier.
 ; should be searched in the mail.
 ;
 MSG_BUSY_SEARCHINGFOLDER
-Recherche des messages dans le dossier « %s »...
+Recherche de messages dans « %s »...
 ; Searching messages in folder '%s'...
 ; FOLDERNAME
 ;
@@ -6773,7 +6780,7 @@ pas supporté par la version installée de codesets.library.\n\
 \n\
 Comment voulez-vous procéder ?
 ; The charset configured for YAM is '%s' but isn't\n\
-; supported by the installed codesets.library version.\n\
+; supported by the installed version of codesets.library.\n\
 ; \n\
 ; How do you want to proceed?
 ; LOCALCHARSET
@@ -7488,8 +7495,7 @@ de mémoire libre.
 MSG_MA_CONFIRMDELETION
 %ld message(s) sont sélectionnés.\n\
 \n\
-Voulez-vous réellement supprimer ces\n\
-messages ?
+Voulez-vous réellement les supprimer ?
 ; %ld message(s) are selected.\n\
 ; \n\
 ; Do you really want to delete\n\
@@ -7785,9 +7791,9 @@ Chargement de l'état des mises à jour...
 ; Loading update state data...
 ;
 MSG_CO_ASK_SAVE_SIGNATURE
-Les modifications des signatures doivent être enregistrées \
-indépendamment de la configuration globale, sinon \
-elles seront perdues !\n\
+Les modifications des signatures doivent être\n\
+enregistrées indépendamment de la configuration\n\
+globale, sinon elles seront perdues !\n\
 \n\
 Voulez-vous enregistrer les signatures maintenant ?
 ; Changes to the signatures must be saved separately\n\
@@ -9075,7 +9081,7 @@ Redémarrage de YAM nécessaire
 ;
 MSG_ER_THEME_ACTIVATED
 Avant que le thème sélectionné ne puisse être activé, \
-vous devez la configuration et redémarrer YAM.
+vous devez enregistrer la configuration et redémarrer YAM.
 ; Before the selected theme can be applied, you have\n\
 ; to save the configuration and restart YAM.
 ;
@@ -9770,4 +9776,34 @@ d'apprentissage du filtre des courriers indésirables ?
 MSG_CO_SPAM_STATISTICS
 %ld (%ld mots)
 ; %ld (%ld words)
+;
+MSG_ER_WRONG_DOB_FORMAT
+La date de naissance spécifiée utilise un mauvais format.\n\
+Le format correct est « %s ».\n\
+%%d - jour\n\
+%%m - mois\n\
+%%y - année (deux chiffres)\n\
+%%Y - année (quatre chiffres)\n\
+L'année doit être supérieure ou égale à 1900 !
+; Date of birth uses a wrong format. The correct format is '%s'.\n\
+; %%d - day\n\
+; %%m - month\n\
+; %%y - year (2 digits)\n\
+; %%Y - year (4 digits)\n\
+; The year number must be greater or equal 1900!
+; DOBFORMAT
+;
+MSG_CO_PGPURL
+URL vers la clef PGP publique
+; URL to public PGP key
+;
+MSG_HELP_CO_ST_PGPURL
+Vous pouvez spécifier une URL depuis laquelle\n\
+votre ckef PGP publique peut être téléchargée.\n\
+Cette URL sera alors placée dans une entrée de\n\
+l'entête séparée dans chaque message.\n\
+; You can specify an URL where your public\n\
+; PGP key can be downloaded from. This URL\n\
+; will then placed into a separate header\n\
+; entry in every mail.
 ;
