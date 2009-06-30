@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-06-30  Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc/vasprintf.c: added the VA_COPY definition for the AROS targets
+    to equal to calling the va_copy() macros.
+
 2008-06-29  Alexandre Balaban <abalaban@free.fr>
 
   * locale/french.ct: updated french translation according to latest changes.

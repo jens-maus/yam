@@ -29,13 +29,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if defined(__MORPHOS__)
-#define HAVE_VA_COPY
-#endif
-
 #ifndef VA_COPY
-#ifdef HAVE_VA_COPY
+#if defined(__MORPHOS__)
 #define VA_COPY(dest, src) __va_copy(dest, src)
+#elif defined(__AROS__)
+#define VA_COPY(dest, src) va_copy(dest, src)
 #else
 #define VA_COPY(dest, src) (dest) = (src)
 #endif
