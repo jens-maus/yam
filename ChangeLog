@@ -9,6 +9,7 @@ $URL$
 
   * YAM.c: added a fix for the problem that for some unknown reason the
     function installed by atexit() isn't called on AROS.
+  * YAM_CO.c: use sys:Tools/Editor as default editor for AROS.
 
 2009-06-30  Jens Langner <Jens.Langner@light-speed.de>
 
