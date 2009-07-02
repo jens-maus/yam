@@ -2394,7 +2394,9 @@ int main(int argc, char **argv)
 
   // signal that on a exit() the 'yam_exitfunc' function
   // should be called.
+#ifndef __AROS__
   atexit(yam_exitfunc);
+#endif
 
   WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
 
@@ -2751,3 +2753,7 @@ int main(int argc, char **argv)
 }
 ///
 
+#ifdef __AROS__
+#include <aros/symbolsets.h>
+ADD2EXIT(yam_exitfunc, 100);
+#endif

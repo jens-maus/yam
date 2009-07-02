@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-07-02  Matthias Rustler <mrustler@gmx.de>
+
+  * YAM.c: added a fix for the problem that for some unknown reason the
+    function installed by atexit() isn't called on AROS.
+
 2009-06-30  Jens Langner <Jens.Langner@light-speed.de>
 
   * extrasrc/vasprintf.c: added the VA_COPY definition for the AROS targets
