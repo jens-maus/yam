@@ -82,6 +82,15 @@ extern struct Library *AmiSSLMasterBase;
 struct Config *C = NULL;
 struct Config *CE = NULL;
 
+/* local defines */
+#if defined(__amigaos4__)
+#define SYS_EDITOR "SYS:Tools/NotePad"
+#elif defined(__AROS__)
+#define SYS_EDITOR "SYS:Tools/Editor"
+#else
+#define SYS_EDITOR "C:Ed"
+#endif
+
 /* local protos */
 static struct CO_ClassData *CO_New(void);
 
@@ -848,11 +857,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->UseFixedFontWrite = TRUE;
     co->UseTextStylesWrite = TRUE;
     co->UseTextColorsWrite = TRUE;
-#ifdef __AROS__
-    strlcpy(co->Editor, "sys:Tools/Editor", sizeof(co->Editor));
-#else
-    strlcpy(co->Editor, "C:Ed", sizeof(co->Editor));
-#endif
+    strlcpy(co->Editor, SYS_EDITOR, sizeof(co->Editor));
     co->LaunchAlways = FALSE;
     co->EmailCache = 10;
     co->AutoSave = 120;

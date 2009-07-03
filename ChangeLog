@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-07-03  Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_CO.c: added a SYS_EDITOR define which should contain the full path
+    to the standard editor tool used on the platform YAM is compiled for.
+    Currently this define defaults to SYS:Tools/NotePad for AmigaOS4, to
+    SYS:Tools/Editor for AROS and to C:Ed for the other supported
+    platforms. Please note that this define should NOT point to any
+    third-party application for editing text files but to an editor
+    that is shipped with the operating system per default.
+  
 2009-07-02  Matthias Rustler <mrustler@gmx.de>
 
   * YAM.c: added a fix for the problem that for some unknown reason the
