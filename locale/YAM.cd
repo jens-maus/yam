@@ -1504,7 +1504,7 @@ MSG_CO_ScriptPostWriteMsg (539//)
 After writing a message
 ;
 MSG_CO_ScriptClickURL (540//)
-When double-clicking a URL
+When double-clicking an URL
 ;
 MSG_CO_Script (541//)
 Sc_ript
