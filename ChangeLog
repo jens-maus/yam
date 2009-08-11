@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-08-11  Thore Böckelmann <tboeckel@gmx.de>
+
+  * Debug.h: The memory debug version of FreePooled() used the pool address
+    stead of the address of the memory block to be freed upon untracking the
+    allocation and hence caused invalid "free of untracked memory area"
+    messages.
+
 2009-07-20  Matthias Rustler <mrustler@gmx.de>
 
   * Makefile: use correct linker libs for AROS. Librom.a is only a
@@ -19,7 +26,7 @@ $URL$
     platforms. Please note that this define should NOT point to any
     third-party application for editing text files but to an editor
     that is shipped with the operating system per default.
-  
+
 2009-07-02  Matthias Rustler <mrustler@gmx.de>
 
   * YAM.c: added a fix for the problem that for some unknown reason the

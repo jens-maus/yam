@@ -358,7 +358,7 @@ void W(unsigned long f, const char *format, ...);
 })
 
 #define FreePooled(poolHeader, memory, memSize) ({ \
-  _UNMEMTRACK(__FILE__, __LINE__, poolHeader); { \
+  _UNMEMTRACK(__FILE__, __LINE__, memory); { \
   APTR _FreePooled_poolHeader = (poolHeader); \
   APTR _FreePooled_memory = (memory); \
   ULONG _FreePooled_memSize = (memSize); \
@@ -473,7 +473,7 @@ void W(unsigned long f, const char *format, ...);
   _MEMTRACK(__FILE__, __LINE__, "AllocSignal", (APTR)(LONG)_AllocSignal__re, (size_t)signalNum); \
   _AllocSignal__re; \
 })
-   
+
 #define FreeSignal(signalNum) ({ _UNMEMTRACK(__FILE__, __LINE__, (APTR)signalNum); { \
   LONG _FreeSignal_signalNum = (signalNum); \
   { \
