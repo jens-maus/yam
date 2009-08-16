@@ -54,6 +54,7 @@
 #include <mui/NListview_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <proto/amissl.h>
+#include <proto/application.h>
 #include <proto/bsdsocket.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -3902,6 +3903,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
 
     FreeFilterSearch();
     G->TR->SearchCount = 0;
+
     MA_StartMacro(MACRO_POSTGET, itoa((int)G->TR->Stats.Downloaded));
 
     // tell the appicon that we are finished with checking mail
@@ -7033,6 +7035,26 @@ static void TR_NewMailAlert(void)
         MUIA_InfoWindow_Body, buffer,
       End;
     }
+
+    #if defined(__amigaos4__)
+    if(hasRinghioNotify(C->NotifyType))
+    {
+      // Notify() is V53.2+
+      if(G->applicationID > 0 && LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2))
+      {
+        // 128 chars is the current maximum :(
+        char message[128];
+
+        snprintf(message, sizeof(message), tr(MSG_TR_NEW_MAIL_NOTIFY), stats->Downloaded - rr->Spam);
+        IApplication->Notify(G->applicationID, APPNOTIFY_Title, "YAM",
+                                               APPNOTIFY_Screen, "FRONT",
+                                               APPNOTIFY_Text, message,
+                                               APPNOTIFY_CloseOnDC, TRUE,
+                                               APPNOTIFY_BackMsg, "POPUP",
+                                               TAG_DONE);
+      }
+    }
+    #endif // __amigaos4__
 
     if(hasCommandNotify(C->NotifyType))
       ExecuteCommand(C->NotifyCommand, FALSE, OUT_DOS);

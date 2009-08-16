@@ -7,6 +7,9 @@ $URL$
 
 2009-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: implemented new mail notification by OS4.1's new system based Ringhio
+    notification system. This option is only available on OS4.1 with at least
+    application.library 53.2 (not yet released to the public).
   * locale/german.ct: fixed some translation inconsistencies.
 
 2009-08-14 Thore Böckelmann <tboeckel@gmx.de>

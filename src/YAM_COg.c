@@ -36,6 +36,7 @@
 #include <mui/NBalance_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <proto/application.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
@@ -2204,9 +2205,14 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
                 End,
                 Child, MakeCheckGroup((Object **)&data->GUI.CH_DLLARGE, tr(MSG_CO_DownloadLarge)),
               End,
+
               Child, ColGroup(3), GroupFrameT(tr(MSG_CO_Notification)),
-                Child, data->GUI.CH_NOTIREQ = MakeCheck(tr(MSG_CO_NotiReq)),
+                Child, data->GUI.CH_NOTIREQ =  MakeCheck(tr(MSG_CO_NotiReq)),
                 Child, LLabel(tr(MSG_CO_NotiReq)),
+                Child, HSpace(0),
+
+                Child, data->GUI.CH_NOTIRINGHIO = MakeCheck(tr(MSG_CO_NOTIRINGHIO)),
+                Child, LLabel(tr(MSG_CO_NOTIRINGHIO)),
                 Child, HSpace(0),
 
                 Child, data->GUI.CH_NOTISOUND = MakeCheck(tr(MSG_CO_NotiSound)),
@@ -2239,20 +2245,27 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.CH_AVOIDDUP  ,MSG_HELP_CO_CH_AVOIDDUP  );
-    SetHelp(data->GUI.CY_TRANSWIN  ,MSG_HELP_CO_CH_TRANSWIN  );
-    SetHelp(data->GUI.CY_MSGSELECT ,MSG_HELP_CO_CY_MSGSELECT );
-    SetHelp(data->GUI.CH_UPDSTAT   ,MSG_HELP_CO_CH_UPDSTAT   );
-    SetHelp(data->GUI.ST_WARNSIZE  ,MSG_HELP_CO_ST_WARNSIZE  );
-    SetHelp(data->GUI.NM_INTERVAL  ,MSG_HELP_CO_ST_INTERVAL  );
-    SetHelp(data->GUI.CH_DLLARGE   ,MSG_HELP_CO_CH_DLLARGE   );
-    SetHelp(data->GUI.CH_NOTIREQ   ,MSG_HELP_CO_CH_NOTIREQ   );
-    SetHelp(data->GUI.CH_NOTISOUND ,MSG_HELP_CO_CH_NOTISOUND );
-    SetHelp(data->GUI.CH_NOTICMD   ,MSG_HELP_CO_CH_NOTICMD   );
-    SetHelp(data->GUI.ST_NOTICMD   ,MSG_HELP_CO_ST_NOTICMD   );
-    SetHelp(data->GUI.ST_NOTISOUND ,MSG_HELP_CO_ST_NOTISOUND );
+    SetHelp(data->GUI.CH_AVOIDDUP    ,MSG_HELP_CO_CH_AVOIDDUP    );
+    SetHelp(data->GUI.CY_TRANSWIN    ,MSG_HELP_CO_CH_TRANSWIN    );
+    SetHelp(data->GUI.CY_MSGSELECT   ,MSG_HELP_CO_CY_MSGSELECT   );
+    SetHelp(data->GUI.CH_UPDSTAT     ,MSG_HELP_CO_CH_UPDSTAT     );
+    SetHelp(data->GUI.ST_WARNSIZE    ,MSG_HELP_CO_ST_WARNSIZE    );
+    SetHelp(data->GUI.NM_INTERVAL    ,MSG_HELP_CO_ST_INTERVAL    );
+    SetHelp(data->GUI.CH_DLLARGE     ,MSG_HELP_CO_CH_DLLARGE     );
+    SetHelp(data->GUI.CH_NOTIREQ     ,MSG_HELP_CO_CH_NOTIREQ     );
+    SetHelp(data->GUI.CH_NOTISOUND   ,MSG_HELP_CO_CH_NOTISOUND   );
+    SetHelp(data->GUI.CH_NOTICMD     ,MSG_HELP_CO_CH_NOTICMD     );
+    SetHelp(data->GUI.ST_NOTICMD     ,MSG_HELP_CO_ST_NOTICMD     );
+    SetHelp(data->GUI.ST_NOTISOUND   ,MSG_HELP_CO_ST_NOTISOUND   );
+    SetHelp(data->GUI.CH_NOTIRINGHIO ,MSG_HELP_CO_CH_NOTIRINGHIO );
 
     DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, pa_notisound, bt_notisound, pa_noticmd, NULL);
+    #if defined(__amigaos4__)
+    set(data->GUI.CH_NOTIRINGHIO, MUIA_Disabled, G->applicationID == 0 || !LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2));
+    #else // __amigaos4__
+    set(data->GUI.CH_NOTIRINGHIO, MUIA_Disabled, TRUE);
+    #endif // __amigaos4__
+
     set(bt_notisound,MUIA_CycleChain,1);
     DoMethod(bt_notisound          ,MUIM_Notify,MUIA_Pressed ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_PlaySoundHook,data->GUI.ST_NOTISOUND);
     DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
@@ -3905,9 +3918,10 @@ Object *CO_PageMixed(struct CO_ClassData *data)
     DoMethod(data->GUI.CH_CONFIRM, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.NB_CONFIRMDEL, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
 
     #if defined(__amigaos4__)
-    if(G->applicationID == 0)
+    set(data->GUI.CH_DOCKYICON, MUIA_Disabled, G->applicationID == 0);
+    #else
+    set(data->GUI.CH_DOCKYICON, MUIA_Disabled, TRUE);
     #endif
-      set(data->GUI.CH_DOCKYICON, MUIA_Disabled, TRUE);
 
     // disable the XPK popups if xpkmaster.library is not available
     if(XpkBase == NULL)

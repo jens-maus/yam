@@ -311,7 +311,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
       MUI_DisposeObject(obj);
 
-      if(ver > minver || (ver == minver && rev >= minrev))
+      if(VERSION_IS_AT_LEAST(ver, rev, minver, minrev))
       {
         D(DBF_STARTUP, "%s v%ld.%ld found through MUIA_Version/Revision", name, ver, rev);
 
@@ -334,7 +334,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
         // we add some additional check here so that eventual broken .mcc also have
         // a chance to pass this test (e.g. _very_ old versions of Toolbar.mcc are broken)
-        if(ver > minver || (ver == minver && rev >= minrev))
+        if(VERSION_IS_AT_LEAST(ver, rev, minver, minrev))
         {
           D(DBF_STARTUP, "%s v%ld.%ld found through OpenLibrary()", name, ver, rev);
 

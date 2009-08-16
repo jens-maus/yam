@@ -237,6 +237,17 @@ BOOL HandleDockyIcon(void)
         NewWriteMailWindow(NULL, 0);
       }
       break;
+
+      // probably a message from the notification window to
+      // let YAM show itself.
+      case APPLIBMT_CustomMsg:
+      {
+        struct ApplicationCustomMsg* appmsg = (struct ApplicationCustomMsg*)msg;
+
+        if(appmsg->customMsg != NULL && strcmp(appmsg->customMsg, "POPUP") == 0)
+          PopUp();
+      }
+      break;
     }
 
     ReplyMsg((struct Message *)msg);
