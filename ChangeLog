@@ -7,6 +7,8 @@ $URL$
 
 2009-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
+  * DockyIcon.c: added a description string for Ringhio and made the application
+    registration unique, similar to the uniqueness of the commodity part.
   * misc: implemented new mail notification by OS4.1's new system based Ringhio
     notification system. This option is only available on OS4.1 with at least
     application.library 53.2 (not yet released to the public).

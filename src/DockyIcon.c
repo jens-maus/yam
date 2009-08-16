@@ -25,6 +25,7 @@
 
 ***************************************************************************/
 
+#include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/utility.h>
 #if defined(__amigaos4__)
@@ -37,6 +38,7 @@
 #include "mui/Classes.h"
 
 #include "DockyIcon.h"
+#include "Locale.h"
 #include "MUIObjects.h"
 
 #include "Debug.h"
@@ -47,7 +49,7 @@ void InitDockyIcon(void)
 {
   ENTER();
 
-   #if defined(__amigaos4__)
+  #if defined(__amigaos4__)
   G->AppLibPort = NULL;
   G->applicationID = 0;
 
@@ -59,9 +61,11 @@ void InitDockyIcon(void)
     aii.info.customIcon = G->HideIcon;
 
     // register YAM to application.library
-    if((G->applicationID = RegisterApplication("YAM", REGAPP_URLIdentifier, "yam.ch",
-                                                      REGAPP_AppIconInfo,   (uint32)&aii,
-                                                      REGAPP_Hidden,        xget(G->App, MUIA_Application_Iconified),
+    if((G->applicationID = RegisterApplication("YAM", REGAPP_UniqueApplication, TRUE,
+                                                      REGAPP_URLIdentifier,     "yam.ch",
+                                                      REGAPP_AppIconInfo,       (uint32)&aii,
+                                                      REGAPP_Hidden,            xget(G->App, MUIA_Application_Iconified),
+                                                      REGAPP_Description,       tr(MSG_APP_DESCRIPTION),
                                                       TAG_DONE)) != 0)
     {
       GetApplicationAttrs(G->applicationID,
@@ -259,3 +263,4 @@ BOOL HandleDockyIcon(void)
 }
 
 ///
+
