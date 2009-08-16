@@ -6465,7 +6465,7 @@ MSG_HELP_CO_CH_DOCKYICON
 Wenn ausgewählt, wird innerhalb von\n\
 AmiDock ein sog. DockyIcon über den\n\
 momentanen Status von YAM angezeigt.\n\
-(nur für AmigaOS4.x Systemen verfügbar)
+(nur auf AmigaOS4.x Systemen verfügbar)
 ;
 MSG_MA_MessageImport
 Nachrichtenimport
@@ -7350,7 +7350,7 @@ E-Mails an.
 ;
 MSG_HELP_TX_SPAMGOODCOUNT
 Zeigt die Menge manuell klassifizierter\n\
-"Nicht-Spam" E-Mails (sog. "Ham") an.
+"Nicht-Spam" Nachrichten (sog. "Ham") an.
 ;
 MSG_HELP_BT_SPAMRESETTRAININGDATA
 Erlaubt es die Spam-Filter Trainingsdaten manuell\n\
@@ -7620,7 +7620,7 @@ aktuelle Position des AppIcon\n\
 von der Workbench auszulesen.
 ;
 MSG_CO_MOVE_HAM_TO_INCOMING
-"Nicht-Spam" E-Mails zurück in den Poste_ingang verschieben
+"Nicht-Spam" Nachrichten zurück in den Poste_ingang verschieben
 ;
 MSG_HELP_CH_MOVE_HAM_TO_INCOMING
 Wenn ausgewählt, werden Nachrichten, die falsch als\n\
@@ -8534,4 +8534,25 @@ Das Geburtstagsdatum ist im falschen Format. Das korrekte Format ist '%s'.\n\
 %%y - Jahr (2-stellig)\n\
 %%Y - Jahr (4-stellig)\n\
 Die Jahreszahl muss größer oder gleich 1900 sein!
+;
+MSG_CO_PGPURL
+URL des öffentliches PGP-Schlüssels
+;
+MSG_HELP_CO_ST_PGPURL
+Hier können Sie die URL angeben, von der\n\
+Ihr öffentlicher PGP-Schlüssel herunterge-\n\
+laden werden kann. Diese URL wird in einer\n\
+separaten Kopfzeile in jeder Mail angegeben.
+;
+MSG_CO_RINGHIONOTIFY
+Nutze Ringhio-Benachrichtung
+;
+MSG_HELP_CO_CH_RINGHIONOTIFY
+Wenn ausgewählt, werden neu empfangene Nachrichten\n\
+über das Ringhio-Nachrichtensystem gemeldet.\n\
+Hierfür wird mindesten AmigaOS4.1 und application.library\n\
+V53.2 benötigt.
+;
+MSG_TR_NEW_MAIL_NOTIFY
+%ld neue Nachrichten empfangen!
 ;

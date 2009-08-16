@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-08-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: fixed some translation inconsistencies.
+
 2009-08-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * Makefiles: added "-g" to the debug flags. It seems the OS3 GCC 2.95.3 cross
