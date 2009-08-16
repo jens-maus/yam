@@ -54,7 +54,9 @@
 #include <mui/NListview_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <proto/amissl.h>
+#if defined(__amigaos4__)
 #include <proto/application.h>
+#endif
 #include <proto/bsdsocket.h>
 #include <proto/dos.h>
 #include <proto/exec.h>

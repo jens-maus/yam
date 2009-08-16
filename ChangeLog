@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-08-16 Matthias Rustler <mrustler@gmx.de>
+
+  * YAM.c: AROS hack for atexit() removed. This means that current YAM
+    works only with a very recent version of AROS.
+  * misc: include <proto/application.h> only on amigaos4.
+
 2009-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * DockyIcon.c: added a description string for Ringhio and made the application

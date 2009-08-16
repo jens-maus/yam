@@ -36,7 +36,9 @@
 #include <mui/NBalance_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#if defined(__amigaos4__)
 #include <proto/application.h>
+#endif
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
