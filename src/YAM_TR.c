@@ -1060,7 +1060,7 @@ static BOOL TR_InitSMTPAUTH(void)
 
         // compose the md5 challenge
         md5hmac((unsigned char *)challenge, strlen(challenge), (unsigned char *)password, strlen(password), (unsigned char *)digest);
-        snprintf(buf, sizeof(buf), "%s %08x%08x%08x%08x", login, (unsigned int)digest[0], (unsigned int)digest[1], 
+        snprintf(buf, sizeof(buf), "%s %08x%08x%08x%08x", login, (unsigned int)digest[0], (unsigned int)digest[1],
                                                                  (unsigned int)digest[2], (unsigned int)digest[3]);
 
         D(DBF_NET, "prepared CRAM-MD5 reponse..: '%s'", buf);
@@ -7039,7 +7039,7 @@ static void TR_NewMailAlert(void)
     }
 
     #if defined(__amigaos4__)
-    if(hasRinghioNotify(C->NotifyType))
+    if(hasOS41SystemNotify(C->NotifyType))
     {
       // Notify() is V53.2+
       if(G->applicationID > 0 && LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2))

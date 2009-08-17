@@ -7,6 +7,7 @@ $URL$
 
 2009-08-17 Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: renamed "Ringhio" to "AmigaOS4.1 notification system"
   * locale/YAM.cd, locale/german.ct: added a keyboard shortcut to the new
     Ringhio checkmark.
 

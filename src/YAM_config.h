@@ -303,7 +303,7 @@ struct CO_GUIData
   Object *CH_FIXEDFONT_WRITE;
   Object *CH_TEXTSTYLES_WRITE;
   Object *CH_TEXTCOLORS_WRITE;
-  Object *CH_NOTIRINGHIO;
+  Object *CH_NOTIOS41SYSTEM;
 };
 
 enum ConfigPage
@@ -376,14 +376,14 @@ struct RxHook
 #define hasHideToolBarFlag(f) (isFlagSet((f), HIDE_TBAR))
 
 // notify flags for the notifiying method for new messages
-#define NOTIFY_REQ     (1<<0)
-#define NOTIFY_SOUND   (1<<1)
-#define NOTIFY_CMD     (1<<2)
-#define NOTIFY_RINGHIO (1<<3)
-#define hasRequesterNotify(f) (isFlagSet((f), NOTIFY_REQ))
-#define hasSoundNotify(f)     (isFlagSet((f), NOTIFY_SOUND))
-#define hasCommandNotify(f)   (isFlagSet((f), NOTIFY_CMD))
-#define hasRinghioNotify(f)   (isFlagSet((f), NOTIFY_RINGHIO))
+#define NOTIFY_REQ        (1<<0)
+#define NOTIFY_SOUND      (1<<1)
+#define NOTIFY_CMD        (1<<2)
+#define NOTIFY_OS41SYSTEM (1<<3)
+#define hasRequesterNotify(f)  (isFlagSet((f), NOTIFY_REQ))
+#define hasSoundNotify(f)      (isFlagSet((f), NOTIFY_SOUND))
+#define hasCommandNotify(f)    (isFlagSet((f), NOTIFY_CMD))
+#define hasOS41SystemNotify(f) (isFlagSet((f), NOTIFY_OS41SYSTEM))
 
 enum PrintMethod
 {

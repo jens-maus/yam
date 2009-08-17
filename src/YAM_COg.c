@@ -2213,8 +2213,8 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
                 Child, LLabel(tr(MSG_CO_NotiReq)),
                 Child, HSpace(0),
 
-                Child, data->GUI.CH_NOTIRINGHIO = MakeCheck(tr(MSG_CO_NOTIRINGHIO)),
-                Child, LLabel(tr(MSG_CO_NOTIRINGHIO)),
+                Child, data->GUI.CH_NOTIOS41SYSTEM = MakeCheck(tr(MSG_CO_NOTIOS41SYSTEM)),
+                Child, LLabel(tr(MSG_CO_NOTIOS41SYSTEM)),
                 Child, HSpace(0),
 
                 Child, data->GUI.CH_NOTISOUND = MakeCheck(tr(MSG_CO_NotiSound)),
@@ -2247,25 +2247,25 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.CH_AVOIDDUP    ,MSG_HELP_CO_CH_AVOIDDUP    );
-    SetHelp(data->GUI.CY_TRANSWIN    ,MSG_HELP_CO_CH_TRANSWIN    );
-    SetHelp(data->GUI.CY_MSGSELECT   ,MSG_HELP_CO_CY_MSGSELECT   );
-    SetHelp(data->GUI.CH_UPDSTAT     ,MSG_HELP_CO_CH_UPDSTAT     );
-    SetHelp(data->GUI.ST_WARNSIZE    ,MSG_HELP_CO_ST_WARNSIZE    );
-    SetHelp(data->GUI.NM_INTERVAL    ,MSG_HELP_CO_ST_INTERVAL    );
-    SetHelp(data->GUI.CH_DLLARGE     ,MSG_HELP_CO_CH_DLLARGE     );
-    SetHelp(data->GUI.CH_NOTIREQ     ,MSG_HELP_CO_CH_NOTIREQ     );
-    SetHelp(data->GUI.CH_NOTISOUND   ,MSG_HELP_CO_CH_NOTISOUND   );
-    SetHelp(data->GUI.CH_NOTICMD     ,MSG_HELP_CO_CH_NOTICMD     );
-    SetHelp(data->GUI.ST_NOTICMD     ,MSG_HELP_CO_ST_NOTICMD     );
-    SetHelp(data->GUI.ST_NOTISOUND   ,MSG_HELP_CO_ST_NOTISOUND   );
-    SetHelp(data->GUI.CH_NOTIRINGHIO ,MSG_HELP_CO_CH_NOTIRINGHIO );
+    SetHelp(data->GUI.CH_AVOIDDUP       ,MSG_HELP_CO_CH_AVOIDDUP       );
+    SetHelp(data->GUI.CY_TRANSWIN       ,MSG_HELP_CO_CH_TRANSWIN       );
+    SetHelp(data->GUI.CY_MSGSELECT      ,MSG_HELP_CO_CY_MSGSELECT      );
+    SetHelp(data->GUI.CH_UPDSTAT        ,MSG_HELP_CO_CH_UPDSTAT        );
+    SetHelp(data->GUI.ST_WARNSIZE       ,MSG_HELP_CO_ST_WARNSIZE       );
+    SetHelp(data->GUI.NM_INTERVAL       ,MSG_HELP_CO_ST_INTERVAL       );
+    SetHelp(data->GUI.CH_DLLARGE        ,MSG_HELP_CO_CH_DLLARGE        );
+    SetHelp(data->GUI.CH_NOTIREQ        ,MSG_HELP_CO_CH_NOTIREQ        );
+    SetHelp(data->GUI.CH_NOTISOUND      ,MSG_HELP_CO_CH_NOTISOUND      );
+    SetHelp(data->GUI.CH_NOTICMD        ,MSG_HELP_CO_CH_NOTICMD        );
+    SetHelp(data->GUI.ST_NOTICMD        ,MSG_HELP_CO_ST_NOTICMD        );
+    SetHelp(data->GUI.ST_NOTISOUND      ,MSG_HELP_CO_ST_NOTISOUND      );
+    SetHelp(data->GUI.CH_NOTIOS41SYSTEM ,MSG_HELP_CO_CH_NOTIOS41SYSTEM );
 
     DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, pa_notisound, bt_notisound, pa_noticmd, NULL);
     #if defined(__amigaos4__)
-    set(data->GUI.CH_NOTIRINGHIO, MUIA_Disabled, G->applicationID == 0 || !LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2));
+    set(data->GUI.CH_NOTIOS41SYSTEM, MUIA_Disabled, G->applicationID == 0 || !LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2));
     #else // __amigaos4__
-    set(data->GUI.CH_NOTIRINGHIO, MUIA_Disabled, TRUE);
+    set(data->GUI.CH_NOTIOS41SYSTEM, MUIA_Disabled, TRUE);
     #endif // __amigaos4__
 
     set(bt_notisound,MUIA_CycleChain,1);

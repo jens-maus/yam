@@ -8544,15 +8544,14 @@ Ihr öffentlicher PGP-Schlüssel herunterge-\n\
 laden werden kann. Diese URL wird in einer\n\
 separaten Kopfzeile in jeder Mail angegeben.
 ;
-MSG_CO_NOTIRINGHIO
-R_inghio
-;
-MSG_HELP_CO_CH_NOTIRINGHIO
-Wenn ausgewählt, werden neu empfangene Nachrichten\n\
-über das Ringhio-Nachrichtensystem gemeldet.\n\
-Hierfür wird mindesten AmigaOS4.1 und application.library\n\
-V53.2 benötigt.
-;
 MSG_TR_NEW_MAIL_NOTIFY
 %ld neue Nachrichten empfangen!
+;
+MSG_CO_NOTIOS41SYSTEM
+AmigaOS_4.1 Systembenachrichtigung
+;
+MSG_HELP_CO_CH_NOTIOS41SYSTEM
+Wenn ausgewählt, werden neu empfangene Nachrichten\n\
+über das Benachrichtungssystem von AmigaOS4.1 gemeldet.\n\
+Hierfür wird mindestens application.library V53.2 benötigt.
 ;

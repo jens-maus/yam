@@ -6939,15 +6939,15 @@ PGP key can be downloaded from. This URL\n\
 will then placed into a separate header\n\
 entry in every mail.
 ;
-MSG_CO_NOTIRINGHIO (2146//)
-R_inghio
-;
-MSG_HELP_CO_CH_NOTIRINGHIO (2147//)
-If checked, YAM will use the Ringhio notification\n\
-system to notify the user about new received mails.\n\
-This requires at least AmigaOS4.1 and application.library V53.2.
-;
 MSG_TR_NEW_MAIL_NOTIFY (2148//)
 Received %ld new mails!
 ; COUNT
+;
+MSG_CO_NOTIOS41SYSTEM (2149//)
+AmigaOS_4.1 notification system
+;
+MSG_HELP_CO_CH_NOTIOS41SYSTEM (2150//)
+If checked, YAM will use AmigaOS4.1's notification\n\
+system to notify the user about new received mails.\n\
+This requires at least application.library V53.2.
 ;
