@@ -6940,7 +6940,7 @@ will then placed into a separate header\n\
 entry in every mail.
 ;
 MSG_CO_NOTIRINGHIO (2146//)
-Ringhio
+R_inghio
 ;
 MSG_HELP_CO_CH_NOTIRINGHIO (2147//)
 If checked, YAM will use the Ringhio notification\n\
