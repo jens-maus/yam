@@ -7,6 +7,9 @@ $URL$
 
 2009-08-17 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c, YAM_COs.c: completely removed the OS4.1 only notification
+    mechanism from the non-OS4 builds, because having a permantenly unavailable
+    and disabled option around is quite senseless.
   * YAM_COg.c: modified the layout of the notification group to match the
     previous layout even with the long new "AmigaOS4.1 notification system"
     string.

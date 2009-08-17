@@ -2214,9 +2214,11 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
                   Child, LLabel(tr(MSG_CO_NotiReq)),
                   Child, HSpace(0),
 
+                  #if defined(__amigaos4__)
                   Child, data->GUI.CH_NOTIOS41SYSTEM = MakeCheck(tr(MSG_CO_NOTIOS41SYSTEM)),
                   Child, LLabel(tr(MSG_CO_NOTIOS41SYSTEM)),
                   Child, HSpace(0),
+                  #endif
                 End,
 
                 Child, ColGroup(3),
@@ -2263,13 +2265,12 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_NOTICMD        ,MSG_HELP_CO_CH_NOTICMD        );
     SetHelp(data->GUI.ST_NOTICMD        ,MSG_HELP_CO_ST_NOTICMD        );
     SetHelp(data->GUI.ST_NOTISOUND      ,MSG_HELP_CO_ST_NOTISOUND      );
-    SetHelp(data->GUI.CH_NOTIOS41SYSTEM ,MSG_HELP_CO_CH_NOTIOS41SYSTEM );
 
     DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, pa_notisound, bt_notisound, pa_noticmd, NULL);
+
     #if defined(__amigaos4__)
     set(data->GUI.CH_NOTIOS41SYSTEM, MUIA_Disabled, G->applicationID == 0 || !LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2));
-    #else // __amigaos4__
-    set(data->GUI.CH_NOTIOS41SYSTEM, MUIA_Disabled, TRUE);
+    SetHelp(data->GUI.CH_NOTIOS41SYSTEM, MSG_HELP_CO_CH_NOTIOS41SYSTEM);
     #endif // __amigaos4__
 
     set(bt_notisound,MUIA_CycleChain,1);
