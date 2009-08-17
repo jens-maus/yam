@@ -1518,9 +1518,7 @@ void CO_GetConfig(BOOL saveConfig)
         CE->CheckMailDelay    = GetMUINumer  (gui->NM_INTERVAL);
         CE->DownloadLarge     = GetMUICheck  (gui->CH_DLLARGE);
         CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ)        ? NOTIFY_REQ        : 0)
-                              #if defined(__amigaos4__)
                               + (GetMUICheck(gui->CH_NOTIOS41SYSTEM) ? NOTIFY_OS41SYSTEM : 0)
-                              #endif
                               + (GetMUICheck(gui->CH_NOTISOUND)      ? NOTIFY_SOUND      : 0)
                               + (GetMUICheck(gui->CH_NOTICMD)        ? NOTIFY_CMD        : 0);
         GetMUIString(CE->NotifySound, gui->ST_NOTISOUND, sizeof(CE->NotifySound));
@@ -2203,9 +2201,7 @@ void CO_SetConfig(void)
       set(gui->NM_INTERVAL, MUIA_Numeric_Value, CE->CheckMailDelay);
       setcheckmark(gui->CH_DLLARGE, CE->DownloadLarge);
       setcheckmark(gui->CH_NOTIREQ, hasRequesterNotify(CE->NotifyType));
-      #if defined(__amigaos4__)
       setcheckmark(gui->CH_NOTIOS41SYSTEM, hasOS41SystemNotify(CE->NotifyType));
-      #endif
       setcheckmark(gui->CH_NOTISOUND, hasSoundNotify(CE->NotifyType));
       setcheckmark(gui->CH_NOTICMD, hasCommandNotify(CE->NotifyType));
       setstring(gui->ST_NOTISOUND ,CE->NotifySound);

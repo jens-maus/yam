@@ -303,9 +303,7 @@ struct CO_GUIData
   Object *CH_FIXEDFONT_WRITE;
   Object *CH_TEXTSTYLES_WRITE;
   Object *CH_TEXTCOLORS_WRITE;
-  #if defined(__amigaos4__)
   Object *CH_NOTIOS41SYSTEM;
-  #endif
 };
 
 enum ConfigPage
