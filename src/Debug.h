@@ -372,7 +372,7 @@ void W(unsigned long f, const char *format, ...);
   : "r"(__FreePooled__bn), "r"(__FreePooled_poolHeader), "r"(__FreePooled_memory), "r"(__FreePooled_memSize) \
   : "d0", "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
   } \
-})
+}})
 
 #define AllocVecPooled(p, s) ({APTR P = AllocVecPooled(p, s); _MEMTRACK(__FILE__, __LINE__, "AllocVecPooled", P, s); P;})
 #define FreeVecPooled(p, m)  ({_UNMEMTRACK(__FILE__, __LINE__, m); FreeVecPooled(p, m);})
