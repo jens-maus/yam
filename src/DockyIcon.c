@@ -68,9 +68,8 @@ void InitDockyIcon(void)
                                                       REGAPP_Description,       tr(MSG_APP_DESCRIPTION),
                                                       TAG_DONE)) != 0)
     {
-      GetApplicationAttrs(G->applicationID,
-                          APPATTR_Port,     (uint32)&G->AppLibPort,
-                          TAG_DONE);
+      GetApplicationAttrs(G->applicationID, APPATTR_Port, (uint32)&G->AppLibPort,
+                                            TAG_DONE);
       if(G->AppLibPort == NULL)
         E(DBF_STARTUP, "Error on trying to retrieve application libraries MsgPort for YAM.");
     }
@@ -169,6 +168,7 @@ BOOL HandleDockyIcon(void)
   #if defined(__amigaos4__)
   while((msg = (struct ApplicationMsg *)GetMsg(G->AppLibPort)) != NULL)
   {
+    D(DBF_GUI, "got ApplicationMsg %08lx of type %ld", msg, (msg != NULL) ? msg->type : 0);
     switch(msg->type)
     {
       // ask the user if he really wants to quit the application
