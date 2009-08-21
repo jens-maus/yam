@@ -7,6 +7,12 @@ $URL$
 
 2009-08-21 Thore Böckelmann <tboeckel@gmx.de>
 
+  * DockyIcon.c: it seems application.library 52.1 has a severe bug and cannot
+    handle unknown or future TagItems correctly. Unfortunately YAM didn't
+    fully check for a successful registration and used a NULL MsgPort after-
+    wards. Hence I removed the new description string again, as passing in this
+    script causes the registration process to fail completely. This fixes bug
+    #2841885.
   * DockyIcon.c: added some debug output when receiving a message from
     application.library.
 

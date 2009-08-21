@@ -65,7 +65,7 @@ void InitDockyIcon(void)
                                                       REGAPP_URLIdentifier,     "yam.ch",
                                                       REGAPP_AppIconInfo,       (uint32)&aii,
                                                       REGAPP_Hidden,            xget(G->App, MUIA_Application_Iconified),
-                                                      REGAPP_Description,       tr(MSG_APP_DESCRIPTION),
+                                                      //REGAPP_Description,       tr(MSG_APP_DESCRIPTION),
                                                       TAG_DONE)) != 0)
     {
       GetApplicationAttrs(G->applicationID, APPATTR_Port, (uint32)&G->AppLibPort,
@@ -166,95 +166,99 @@ BOOL HandleDockyIcon(void)
   ENTER();
 
   #if defined(__amigaos4__)
-  while((msg = (struct ApplicationMsg *)GetMsg(G->AppLibPort)) != NULL)
+  D(DBF_GUI, "trying to get ApplicationMsg from AppLibPort %08lx", G->AppLibPort);
+  if(G->AppLibPort != NULL)
   {
-    D(DBF_GUI, "got ApplicationMsg %08lx of type %ld", msg, (msg != NULL) ? msg->type : 0);
-    switch(msg->type)
+    while((msg = (struct ApplicationMsg *)GetMsg(G->AppLibPort)) != NULL)
     {
-      // ask the user if he really wants to quit the application
-      case APPLIBMT_Quit:
+      D(DBF_GUI, "got ApplicationMsg %08lx of type %ld", msg, (msg != NULL) ? msg->type : 0);
+      switch(msg->type)
       {
-        quit = !StayInProg();
-      }
-      break;
+        // ask the user if he really wants to quit the application
+        case APPLIBMT_Quit:
+        {
+          quit = !StayInProg();
+        }
+        break;
 
-      // exit without bothering the user at all.
-      case APPLIBMT_ForceQuit:
-      {
-        quit = TRUE;
-      }
-      break;
+        // exit without bothering the user at all.
+        case APPLIBMT_ForceQuit:
+        {
+          quit = TRUE;
+        }
+        break;
 
-      // simply make sure YAM will be iconified/hidden
-      case APPLIBMT_Hide:
-      {
-        set(G->App, MUIA_Application_Iconified, TRUE);
-      }
-      break;
+        // simply make sure YAM will be iconified/hidden
+        case APPLIBMT_Hide:
+        {
+          set(G->App, MUIA_Application_Iconified, TRUE);
+        }
+        break;
 
-      // simply make sure YAM will be uniconified
-      case APPLIBMT_Unhide:
-      {
-        set(G->App, MUIA_Application_Iconified, FALSE);
-      }
-      break;
+        // simply make sure YAM will be uniconified
+        case APPLIBMT_Unhide:
+        {
+          set(G->App, MUIA_Application_Iconified, FALSE);
+        }
+        break;
 
-      // make sure the GUI of YAM is in front
-      // and open with the latest document.
-      case APPLIBMT_ToFront:
-      {
-        PopUp();
-      }
-      break;
-
-      // make sure YAM is in front and open
-      // the configuration window
-      case APPLIBMT_OpenPrefs:
-      {
-        PopUp();
-        CallHookPkt(&CO_OpenHook, 0, 0);
-      }
-      break;
-
-      // open YAM in front of everyone and
-      // import the passed document in
-      // a new or existing write window.
-      case APPLIBMT_OpenDoc:
-      {
-        struct ApplicationOpenPrintDocMsg* appmsg = (struct ApplicationOpenPrintDocMsg*)msg;
-        struct WriteMailData *wmData;
-
-        // open a new write window
-        if((wmData = NewWriteMailWindow(NULL, 0)) != NULL)
+        // make sure the GUI of YAM is in front
+        // and open with the latest document.
+        case APPLIBMT_ToFront:
         {
           PopUp();
-          DoMethod(wmData->window, MUIM_WriteWindow_DroppedFile, appmsg->fileName);
         }
-      }
-      break;
+        break;
 
-      // make sure YAM is in front and open
-      // a new write window.
-      case APPLIBMT_NewBlankDoc:
-      {
-        PopUp();
-        NewWriteMailWindow(NULL, 0);
-      }
-      break;
-
-      // probably a message from the notification window to
-      // let YAM show itself.
-      case APPLIBMT_CustomMsg:
-      {
-        struct ApplicationCustomMsg* appmsg = (struct ApplicationCustomMsg*)msg;
-
-        if(appmsg->customMsg != NULL && strcmp(appmsg->customMsg, "POPUP") == 0)
+        // make sure YAM is in front and open
+        // the configuration window
+        case APPLIBMT_OpenPrefs:
+        {
           PopUp();
-      }
-      break;
-    }
+          CallHookPkt(&CO_OpenHook, 0, 0);
+        }
+        break;
 
-    ReplyMsg((struct Message *)msg);
+        // open YAM in front of everyone and
+        // import the passed document in
+        // a new or existing write window.
+        case APPLIBMT_OpenDoc:
+        {
+          struct ApplicationOpenPrintDocMsg* appmsg = (struct ApplicationOpenPrintDocMsg*)msg;
+          struct WriteMailData *wmData;
+
+          // open a new write window
+          if((wmData = NewWriteMailWindow(NULL, 0)) != NULL)
+          {
+            PopUp();
+            DoMethod(wmData->window, MUIM_WriteWindow_DroppedFile, appmsg->fileName);
+          }
+        }
+        break;
+
+        // make sure YAM is in front and open
+        // a new write window.
+        case APPLIBMT_NewBlankDoc:
+        {
+          PopUp();
+          NewWriteMailWindow(NULL, 0);
+        }
+        break;
+
+        // probably a message from the notification window to
+        // let YAM show itself.
+        case APPLIBMT_CustomMsg:
+        {
+          struct ApplicationCustomMsg* appmsg = (struct ApplicationCustomMsg*)msg;
+
+          if(appmsg->customMsg != NULL && strcmp(appmsg->customMsg, "POPUP") == 0)
+            PopUp();
+        }
+        break;
+      }
+
+      ReplyMsg((struct Message *)msg);
+    }
   }
   #endif
 
