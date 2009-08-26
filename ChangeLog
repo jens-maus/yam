@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-08-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * DockyIcon.c: added the application description string again, but only if
+    application.lib V53.3+ is available. All other version have problems with
+    this tag.
+
 2009-08-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * DockyIcon.c: it seems application.library 52.1 has a severe bug and cannot

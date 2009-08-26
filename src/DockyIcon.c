@@ -61,11 +61,14 @@ void InitDockyIcon(void)
     aii.info.customIcon = G->HideIcon;
 
     // register YAM to application.library
+    // application.lib V52.1 crashes if it sees REGAPP_Description and V53.2
+    // misinterprets german umlauts, hence we require at least V53.3 for the
+    // description string.
     if((G->applicationID = RegisterApplication("YAM", REGAPP_UniqueApplication, TRUE,
                                                       REGAPP_URLIdentifier,     "yam.ch",
                                                       REGAPP_AppIconInfo,       (uint32)&aii,
                                                       REGAPP_Hidden,            xget(G->App, MUIA_Application_Iconified),
-                                                      //REGAPP_Description,       tr(MSG_APP_DESCRIPTION),
+                                                      LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 3) ? REGAPP_Description : TAG_IGNORE, tr(MSG_APP_DESCRIPTION),
                                                       TAG_DONE)) != 0)
     {
       GetApplicationAttrs(G->applicationID, APPATTR_Port, (uint32)&G->AppLibPort,
