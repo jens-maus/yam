@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-08-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: translated a not yet translated string.
+
 2009-08-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * DockyIcon.c: added the application description string again, but only if
