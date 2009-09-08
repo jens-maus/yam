@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-09-08 Matthias Rustler <mrustler@gmx.de>
+
+  * YAM.c: Re-introduced the AROS specific workaround for the problem
+    with atexit() because the build-machine still has old libs/headers.
+
 2009-08-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/german.ct: translated a not yet translated string.
