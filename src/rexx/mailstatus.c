@@ -58,15 +58,45 @@ void rx_mailstatus(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
     case RXIF_ACTION:
     {
-      switch (tolower(args->status[0]))
+      switch(toupper(args->status[0]))
       {
-        case 'o': MA_SetStatusTo(SFLAG_READ,              SFLAG_NEW, FALSE);                         break;
-        case 'u': MA_SetStatusTo(SFLAG_NONE,              SFLAG_NEW|SFLAG_READ, FALSE);              break;
-        case 'h': MA_SetStatusTo(SFLAG_HOLD|SFLAG_READ,   SFLAG_QUEUED|SFLAG_ERROR, FALSE);          break;
-        case 'w': MA_SetStatusTo(SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR, FALSE); break;
+        case 'N': // new
+        {
+          MA_SetStatusTo(SFLAG_NEW, SFLAG_READ, FALSE);
+        }
+        break;
+
+        case 'O': // old
+        case 'R': // read
+        {
+          MA_SetStatusTo(SFLAG_READ, SFLAG_NEW, FALSE);
+        }
+        break;
+
+        case 'U': // unread
+        {
+          MA_SetStatusTo(SFLAG_NONE, SFLAG_NEW|SFLAG_READ, FALSE);
+        }
+        break;
+
+        case 'H': // hold
+        {
+          MA_SetStatusTo(SFLAG_HOLD|SFLAG_READ, SFLAG_QUEUED|SFLAG_ERROR, FALSE);
+        }
+        break;
+
+        case 'Q': // queued
+        case 'W': // wait to be sent
+        {
+          MA_SetStatusTo(SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR, FALSE);
+        }
+        break;
 
         default:
+        {
           params->rc = RETURN_WARN;
+        }
+        break;
       }
     }
     break;

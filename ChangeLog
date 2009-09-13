@@ -7,6 +7,15 @@ $URL$
 
 2009-09-13 Thore Böckelmann <tboeckel@gmx.de>
 
+  * rexx/mailstatus.c: slightly extended the capabilities to modify a mail's
+    status. Now a mail can be set back to NEW state, just as it was received.
+    This fulfils feature request #875164. Now the MAILSTATUS command accepts
+    these letter to modify the status:
+      N       set status to new/unread
+      O or R  set status to old/read
+      U       set status to old/unread
+      H       set status to hold
+      Q or W  set status to queued/waiting to be sent
   * rexx/mailimport.c, YAM_MA.c: added a QUIET option to the MAILIMPORT ARexx
     command. This makes it possible to import mails automatically without any
     progress window. This fulfils feature request #635953.
