@@ -3768,7 +3768,7 @@ BOOL EditorToFile(Object *editor, char *file)
 
   if((fh = fopen(file, "w")) != NULL)
   {
-    char *text = (char *)DoMethod((Object *)editor, MUIM_TextEditor_ExportText);
+    char *text = (char *)DoMethod(editor, MUIM_TextEditor_ExportText);
 
     // write out the whole text to the file
     if(fwrite(text, strlen(text), 1, fh) == 1)
