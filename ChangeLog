@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-09-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * rexx/mailimport.c, YAM_MA.c: added a QUIET option to the MAILIMPORT ARexx
+    command. This makes it possible to import mails automatically without any
+    progress window. This fulfils feature request #635953.
+
 2009-09-08 Matthias Rustler <mrustler@gmx.de>
 
   * YAM.c: Re-introduced the AROS specific workaround for the problem

@@ -40,6 +40,7 @@
 struct args
 {
   char *filename;
+  long quiet;
   long wait;
 };
 
@@ -59,10 +60,15 @@ void rx_mailimport(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
     case RXIF_ACTION:
     {
-      if(!MA_ImportMessages(args->filename))
+      if(MA_ImportMessages(args->filename, args->quiet != 0) == TRUE)
+      {
+        // import the messages immediately if we are not instructed
+        // to wait or to make any noise at all
+        if(args->quiet != 0 || args->wait == 0)
+          CallHookPkt(&TR_ProcessIMPORTHook, 0, 0);
+      }
+      else
         params->rc = RETURN_ERROR;
-      else if(!args->wait)
-        CallHookPkt(&TR_ProcessIMPORTHook, 0, 0);
     }
     break;
 

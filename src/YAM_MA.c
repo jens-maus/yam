@@ -2874,48 +2874,45 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
   ENTER();
 
   // check that a real folder is active
-  if(actfo == NULL || isGroupFolder(actfo))
+  if(actfo != NULL && isGroupFolder(actfo) == FALSE)
   {
-    RETURN(FALSE);
-    return FALSE;
-  }
+    if(all == TRUE)
+      mlist = MA_CreateFullList(actfo, FALSE);
+    else
+      mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
 
-  if(all == TRUE)
-    mlist = MA_CreateFullList(actfo, FALSE);
-  else
-    mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
-
-  if(mlist != NULL)
-  {
-    struct FileReqCache *frc;
-
-    if(filename == NULL && (frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, tr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, "")) != NULL)
+    if(mlist != NULL)
     {
-      filename = AddPath(outname, frc->drawer, frc->file, sizeof(outname));
-      if(FileExists(filename) == TRUE)
+      struct FileReqCache *frc;
+
+      if(filename == NULL && (frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, tr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, "")) != NULL)
       {
-        switch(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_MESSAGEEXPORT), tr(MSG_MA_ExportAppendOpts), tr(MSG_MA_ExportAppendReq)))
+        filename = AddPath(outname, frc->drawer, frc->file, sizeof(outname));
+        if(FileExists(filename) == TRUE)
         {
-          case 1: append = FALSE; break;
-          case 2: append = TRUE; break;
-          case 0: filename = NULL;
+          switch(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_MESSAGEEXPORT), tr(MSG_MA_ExportAppendOpts), tr(MSG_MA_ExportAppendReq)))
+          {
+            case 1: append = FALSE; break;
+            case 2: append = TRUE; break;
+            case 0: filename = NULL;
+          }
         }
       }
-    }
 
-    if(filename != NULL && (G->TR = TR_New(TR_EXPORT)) != NULL)
-    {
-      if(SafeOpenWindow(G->TR->GUI.WI))
-        success = TR_ProcessEXPORT(filename, mlist, append);
-
-      if(success == FALSE)
+      if(filename != NULL && (G->TR = TR_New(TR_EXPORT)) != NULL)
       {
-        MA_ChangeTransfer(TRUE);
-        DisposeModulePush(&G->TR);
-      }
-    }
+        if(SafeOpenWindow(G->TR->GUI.WI))
+          success = TR_ProcessEXPORT(filename, mlist, append);
 
-    DeleteMailList(mlist);
+        if(success == FALSE)
+        {
+          MA_ChangeTransfer(TRUE);
+          DisposeModulePush(&G->TR);
+        }
+      }
+
+      DeleteMailList(mlist);
+    }
   }
 
   RETURN(success);
@@ -2933,7 +2930,7 @@ MakeHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 ///
 /// MA_ImportMessages
 //  Imports messages from a MBOX mailbox file
-BOOL MA_ImportMessages(const char *fname)
+BOOL MA_ImportMessages(const char *fname, BOOL quiet)
 {
   BOOL result = FALSE;
   struct Folder *actfo = FO_GetCurrentFolder();
@@ -3059,11 +3056,14 @@ BOOL MA_ImportMessages(const char *fname)
       G->TR->ImportFolder = actfo;
       G->TR->ImportFormat = foundFormat;
 
-      // call GetMessageList_IMPORT() to parse the file once again
+      // call TR_GetMessageList_IMPORT() to parse the file once again
       // and present the user with a selectable list of mails the file
       // contains.
-      if(TR_GetMessageList_IMPORT() == TRUE && SafeOpenWindow(G->TR->GUI.WI) == TRUE)
-        result = TRUE;
+      if(TR_GetMessageList_IMPORT() == TRUE)
+      {
+        if(quiet == TRUE || SafeOpenWindow(G->TR->GUI.WI) == TRUE)
+          result = TRUE;
+      }
       else
       {
         MA_ChangeTransfer(TRUE);
@@ -3096,7 +3096,7 @@ HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
       AddPath(inname, frc->drawer, frc->file, sizeof(inname));
 
       // now start the actual importing of the messages
-      if(MA_ImportMessages(inname) == FALSE)
+      if(MA_ImportMessages(inname, FALSE) == FALSE)
         ER_NewError(tr(MSG_ER_MESSAGEIMPORT), inname);
     }
   }
@@ -3561,7 +3561,7 @@ char *MA_GetRealSubject(char *sub)
     // and return only the real subject after the last bracket.
     else if(sub[0] == '[' && (p = strchr(sub, ']')) && p < (&sub[sublen])-3 && p < &sub[20])
     {
-     // if the following char isn`t a whitespace we return the real
+     // if the following char isn't a whitespace we return the real
      // subject directly after the last bracket
      if(isspace(p[1]))
        result = MA_GetRealSubject(p+2);
@@ -3614,7 +3614,7 @@ HOOKPROTONHNO(MA_FolderKeyFunc, void, int *idx)
     if(count == 0)
       count = 10;
 
-    // we get the first entry and if it`s a LIST we have to get the next one
+    // we get the first entry and if it's a LIST we have to get the next one
     // and so on, until we have a real entry for that key or we set nothing active
     for(i=count; i <= count; i++)
     {
