@@ -155,7 +155,7 @@ struct Folder *FO_GetFolderRexx(const char *arg, int *pos)
     const char *p = arg;
     BOOL numeric = TRUE;
 
-    // lets find out if the user wants to have the folder identified by it`s position
+    // lets find out if the user wants to have the folder identified by it's position
     while(*p != '\0')
     {
       int c = (int)*p++;
@@ -451,7 +451,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
         fo->ExpireUnread = TRUE;
 
       // check for non custom folder
-      // and set some values which shouldn`t be changed
+      // and set some values which shouldn't be changed
       if(isDefaultFolder(fo))
       {
         fo->MLSignature  = -1;
@@ -879,7 +879,7 @@ BOOL FO_LoadTree(char *fname)
             struct FolderNode *fnode;
 
             // SEPARATOR support is obsolete since the folder hierachical order
-            // that`s why we handle SEPARATORs as GROUPs now for backward compatibility
+            // that's why we handle SEPARATORs as GROUPs now for backward compatibility
             fo->Type = FT_GROUP;
             strlcpy(fo->Name, Trim(&buffer[11]), sizeof(fo->Name));
             do
@@ -1051,7 +1051,7 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
     // we are going to print ENDGROUP and return
     if(tn == NULL || tn_parent != subtree)
     {
-      // if we reach here it`s just the end of a GROUP
+      // if we reach here it's just the end of a GROUP
       if(noendgroup == FALSE)
         fputs("@ENDGROUP\n", fh);
 
@@ -1062,6 +1062,7 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
       fo = ((struct FolderNode *)tn->tn_User)->folder;
       if(fo == NULL)
         break;
+
       fo->SortIndex = i;
 
       if(isGroupFolder(fo))
@@ -1368,7 +1369,7 @@ static void FO_PutFolder(struct Folder *folder)
   GetMUIString(folder->Name, gui->ST_FNAME, sizeof(folder->Name));
   GetMUIString(folder->Path, gui->ST_FPATH, sizeof(folder->Path));
 
-  // we have to correct the folder path because we shouldn`t allow a last / in the
+  // we have to correct the folder path because we shouldn't allow a last / in the
   // path
   if(folder->Path[strlen(folder->Path) - 1] == '/')
     folder->Path[strlen(folder->Path) - 1] = '\0';
@@ -1626,15 +1627,15 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
           ClearMailList(folder, TRUE);
 
           // Here we dispose the folderimage Object because the destructor
-          // of the Folder Listtree can`t do this without throwing enforcer hits
+          // of the Folder Listtree can't do this without throwing enforcer hits
           if(folder->imageObject != NULL)
           {
-            // we make sure that the NList also doesn`t use the image in future anymore
+            // we make sure that the NList also doesn't use the image in future anymore
             DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
 
             // and last, but not least we free the BC object here, so that this Object is also gone
             MUI_DisposeObject(folder->imageObject);
-            folder->imageObject = NULL; // let`s set it to NULL so that the destructor doesn`t do the work again.
+            folder->imageObject = NULL; // let's set it to NULL so that the destructor doesn't do the work again.
           }
         }
       }
@@ -1750,7 +1751,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     }
 
     // lets first check for a valid folder name
-    // if the foldername is empty or it was changed and the new name already exists it`s invalid
+    // if the foldername is empty or it was changed and the new name already exists it's invalid
     if(folder.Name[0] == '\0' || (stricmp(oldfolder->Name, folder.Name) != 0 && FO_GetFolderByName(folder.Name, NULL) != NULL))
     {
       MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
@@ -1771,7 +1772,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       strlcpy(realpath_old, GetRealPath(oldfolder->Path), sizeof(realpath_old));
       strlcpy(realpath_new, GetRealPath(folder.Path), sizeof(realpath_new));
 
-      // then let`s check if the realPathes (after lock/unlock) is also different
+      // then let's check if the realPathes (after lock/unlock) is also different
       if(stricmp(realpath_old, realpath_new) != 0)
       {
         int result;
@@ -1908,7 +1909,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       D(DBF_FOLDER, "new folder '%s'", folder.Name);
 
       // lets first check for a valid folder name
-      // if the foldername is empty or the new name already exists it`s invalid
+      // if the foldername is empty or the new name already exists it's invalid
       if(folder.Name[0] == '\0' || FO_GetFolderByName(folder.Name, NULL) != NULL)
       {
         MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
@@ -2064,7 +2065,7 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
           // have to free the FImage of the folder if it exists
           if(folder->imageObject != NULL)
           {
-            // we make sure that the NList also doesn`t use the image in future anymore
+            // we make sure that the NList also doesn't use the image in future anymore
             DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
 
             // and last, but not least we free the BC object here, so that this Object is also gone

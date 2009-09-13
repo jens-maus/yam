@@ -1656,7 +1656,7 @@ static void RE_UndoPart(struct Part *rp)
     while(trp->Next != NULL);
 
     // now go from the end to the start again and copy
-    // the filenames strings as we couldn`t do that in the previous
+    // the filenames strings as we couldn't do that in the previous
     // loop also
     //
     // p5->p4->p3->p2
@@ -1857,11 +1857,11 @@ static void RE_SetPartInfo(struct Part *rp)
   }
   rp->Size = size;
 
-  // if this part hasn`t got any name, we place the CParName as the normal name
+  // if this part hasn't got any name, we place the CParName as the normal name
   if(rp->Name[0] == '\0' && (rp->CParName != NULL || rp->CParFileName != NULL))
     strlcpy(rp->Name, (rp->CParName != NULL) ? rp->CParName : rp->CParFileName, sizeof(rp->Name));
 
-  // let`s set if this is a printable (readable part)
+  // let's set if this is a printable (readable part)
   if(rp->Nr == PART_RAW ||
      strnicmp(rp->ContentType, "text", 4) == 0 ||
      strnicmp(rp->ContentType, "message", 7) == 0)
@@ -2081,7 +2081,7 @@ BOOL RE_DecodePart(struct Part *rp)
     {
       setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
 
-      // if this part has some headers, let`s skip them so that
+      // if this part has some headers, let's skip them so that
       // we just decode the raw data.
       if(hasSubHeaders(rp) == TRUE)
       {
@@ -2101,7 +2101,7 @@ BOOL RE_DecodePart(struct Part *rp)
           free(buf);
 
         // we only go on if we are not in an ferror() condition
-        // as we shouldn`t have a EOF or real error here.
+        // as we shouldn't have a EOF or real error here.
         if(ferror(in) || feof(in) || buflen == 0)
         {
           E(DBF_MAIL, "ferror()=%ld,feof()=%ld,buflen=%ld while parsing through PartHeader.", ferror(in), feof(in), buflen);
@@ -2253,7 +2253,7 @@ BOOL RE_DecodePart(struct Part *rp)
       }
       else if((out = fopen(filepath, "r")) != NULL)
       {
-        // if we couldn`t open that file for writing we check if it exists
+        // if we couldn't open that file for writing we check if it exists
         // and if so we use it because it is locked actually and already decoded
         fclose(out);
         fclose(in);
@@ -2659,12 +2659,12 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   {
     int wptr=0, prewptr;
 
-    // if this function wasn`t called with QUIET we place a BusyText into the Main Window
+    // if this function wasn't called with QUIET we place a BusyText into the Main Window
     if(mode != RIM_QUIET)
       BusyText(tr(MSG_BusyDisplaying), "");
 
     // then we copy the first part (which is the header of the mail
-    // into our final buffer because we don`t need to preparse it. However, we just
+    // into our final buffer because we don't need to preparse it. However, we just
     // have to do it in RIM_PRINT mode because all other modes do take
     // respect of the headerList
     if(mode == RIM_PRINT)
@@ -2714,7 +2714,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
       // if we are in READ mode and other parts than the LETTER part
       // should be displayed in the texteditor as well, we drop a simple separator bar with info.
-      // This is used for attachments and here escape sequences are allowed as we don`t want them
+      // This is used for attachments and here escape sequences are allowed as we don't want them
       // to get stripped if the user selects "NoTextStyles"
       if(part->Nr != PART_RAW && part->Nr != rmData->letterPartNum)
       {
@@ -2749,7 +2749,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
       D(DBF_MAIL, "Checking if part #%ld [%ld] (%ld) should be displayed", part->Nr, part->Size, dodisp);
 
       // only continue of this part should be displayed
-      // and is greater than zero, or else we don`t have
+      // and is greater than zero, or else we don't have
       // to parse anything at all.
       if(dodisp == TRUE && part->Size > 0)
       {
@@ -3281,7 +3281,7 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
     {
       tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, C->NewAddrGroup, MUIF_NONE);
 
-      // only if the group doesn`t exist yet
+      // only if the group doesn't exist yet
       if(tn == NULL || ((struct ABEntry *)tn->tn_User)->Type != AET_GROUP)
       {
         memset(&ab_new, 0, sizeof(struct ABEntry));
@@ -3704,7 +3704,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
 
           // check that our address is either in the To:
           // or Cc of the MDN requesting mail
-          if(cont)
+          if(cont == TRUE)
           {
             BOOL found;
 
@@ -3758,7 +3758,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
 
           // try to find out if the sender is outside of the
           // domain of the current user
-          if(cont && (p = strchr(C->EmailAddress, '@')))
+          if(cont == TRUE && (p = strchr(C->EmailAddress, '@')) != NULL)
           {
             BOOL outsideDomain = FALSE;
             int domainLen = strlen(p);
@@ -3790,7 +3790,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
             // in case we found that there is a sender in
             // the 'From:' which is outside our domain, we
             // process the action accordingly
-            if(outsideDomain)
+            if(outsideDomain == TRUE)
             {
               action = C->MDN_NoDomain;
 
@@ -3802,7 +3802,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
 
           // in case this is a delete operation we go and
           // use the defined action immediately
-          if(cont && mode == MDN_MODE_DELETE)
+          if(cont == TRUE && mode == MDN_MODE_DELETE)
           {
             action = C->MDN_OnDelete;
 
@@ -3813,7 +3813,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
 
           // if this no action was found we use the one the user
           // configured for "Other"
-          if(cont)
+          if(cont == TRUE)
           {
             action = C->MDN_Other;
 
@@ -3845,7 +3845,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
 
           // make sure we ask the user in case the Return-Path
           // doesn't match the ReceiptTo address
-          if(retPathWarning)
+          if(retPathWarning == TRUE)
           {
             action = MDN_ACTION_ASK;
 
@@ -3887,7 +3887,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
 
             // in case the user is only we can ask him to send the MDN
             // immediately if wanted.
-            if(isonline)
+            if(isonline == TRUE)
               snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_ACCEPT_NOW));
 
             // he can also ignore the MDN, if required
@@ -3895,7 +3895,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
 
             // in case we have multiple MDNs waiting we go and provide
             // an 'ignore all' answer as well
-            if(multi)
+            if(multi == TRUE)
               snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_IGNORE_ALL));
 
             // now ask the user
@@ -3910,7 +3910,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
               // accept and send now or ignore
               case 2:
               {
-                if(isonline)
+                if(isonline == TRUE)
                   RE_SendMDN(mode, mail, &email->ReceiptTo, TRUE, autoAction, FALSE);
                 else
                   D(DBF_MAIL, "user wants to ignore the MDN request");
@@ -4291,7 +4291,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   D(DBF_MAIL, "isXPK: %ld", mail != NULL && mail->Folder != NULL ? isXPKFolder(mail->Folder) : FALSE);
 
   // now we have to check whether there is a .unp (unpack) file and delete
-  // it acoordingly (we can`t use the FinishUnpack() function because the
+  // it acoordingly (we can't use the FinishUnpack() function because the
   // window still refers to the file which will prevent the deletion.
   if(mail != NULL && isVirtualMail(mail) == FALSE &&
      mail->Folder != NULL && isXPKFolder(mail->Folder))

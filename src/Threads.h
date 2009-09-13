@@ -57,7 +57,6 @@ struct Thread
   struct MinList timer_request_list;
 };
 
-
 /*** Thread system init/cleanup functions ***/
 BOOL InitThreads(void);
 void CleanupThreads(void);
@@ -65,3 +64,4 @@ ULONG CurrentThreadMask(void);
 void HandleThreadEvent(ULONG mask);
 
 #endif /* THREADS_H */
+

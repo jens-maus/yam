@@ -778,10 +778,10 @@ static void WriteSignature(FILE *out, int signat)
 
 /* Hooks */
 /// CloseWriteWindowHook()
-//  Hook that will be called as soon as a read window is closed
+//  Hook that will be called as soon as a write window is closed
 HOOKPROTONHNO(CloseWriteWindowFunc, void, struct WriteMailData **arg)
 {
-  struct WriteMailData *wmData = *arg;
+  struct WriteMailData *wmData = arg[0];
 
   ENTER();
 

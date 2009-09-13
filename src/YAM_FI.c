@@ -879,7 +879,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
 
   ENTER();
 
-  // by default we don`t dispose on end
+  // by default we don't dispose on end
   G->FI->ClearOnEnd   = FALSE;
   G->FI->SearchActive = TRUE;
   G->FI->Abort        = FALSE;
@@ -1441,7 +1441,7 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
               int stat = sizeof(mailStatusCycleMap);
 
               // we check the status field first and if we find a match
-              // we can immediatly break up here because we don`t need to prepare the search
+              // we can immediatly break up here because we don't need to prepare the search
               if(rule->searchMode == SM_STATUS)
               {
                 for(stat=0; stat <= (int)sizeof(mailStatusCycleMap) - 1; stat++)
