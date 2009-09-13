@@ -7619,7 +7619,7 @@ MAILIMPORT
                    folder.  (V1.3.2)
 
 @{b}TEMPLATE@{ub}
-     FILENAME/A,WAIT/S
+     FILENAME/A,QUIET/S,WAIT/S
 
 @{b}FUNCTION@{ub}
      Imports messages from a file on disk into the current folder.
@@ -7627,6 +7627,8 @@ MAILIMPORT
 
 @{b}INPUTS@{ub}
      FILENAME/A   - file to import messages from
+     QUIET/S      - don't open the transfer window and import all mails
+                    silently
      WAIT/S       - open the transfer window to enable user interaction,
                     i.e. message preselection  (V2.0)
 
@@ -8043,10 +8045,13 @@ MAILSTATUS
 @{b}INPUTS@{ub}
      STATUS/A   - may be one of
 
-                     O - read
-                     U - unread
                      H - on hold
-                     W - ready to send
+                     N - new and unread
+                     O - old and read
+                     Q - queued for sending
+                     R - the same as O
+                     U - old unread
+                     W - the same as Q
 
 @{b}RETURNS@{ub}
      RC is set to 5 if no valid STATUS is supplied, or to 10 if it is

@@ -7,6 +7,7 @@ $URL$
 
 2009-09-13 Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/YAM_english.guide: adapted the guide according to the latest changes.
   * rexx/mailstatus.c: slightly extended the capabilities to modify a mail's
     status. Now a mail can be set back to NEW state, just as it was received.
     This fulfils feature request #875164. Now the MAILSTATUS command accepts
