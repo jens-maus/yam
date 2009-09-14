@@ -41,6 +41,7 @@ struct args
   char *filename;
   long all;
   long append;
+  long quiet;
 };
 
 void rx_mailexport(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
@@ -59,7 +60,7 @@ void rx_mailexport(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
     case RXIF_ACTION:
     {
-      if(!MA_ExportMessages((BOOL)args->all, args->filename, (BOOL)args->append))
+      if(MA_ExportMessages(args->filename, args->all != 0, args->append != 0, args->quiet != 0) == FALSE)
         params->rc = RETURN_ERROR;
     }
     break;

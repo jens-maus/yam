@@ -113,7 +113,7 @@ struct rxs_command rxs_commandlist[] =
   { "MAILCOPY", "FOLDER/A", NULL, rx_mailcopy},
   { "MAILDELETE", "ATONCE/S,FORCE/S", NULL, rx_maildelete},
   { "MAILEDIT", "QUIET/S", "WINDOW/N", rx_mailedit},
-  { "MAILEXPORT", "FILENAME/A,ALL/S,APPEND/S", NULL, rx_mailexport},
+  { "MAILEXPORT", "FILENAME/A,ALL/S,APPEND/S,QUIET/S", NULL, rx_mailexport},
   { "MAILFILTER", "ALL/S", "CHECKED/N,BOUNCED/N,FORWARDED/N,REPLIED/N,EXECUTED/N,MOVED/N,DELETED/N", rx_mailfilter},
   { "MAILFORWARD", "QUIET/S", "WINDOW/N", rx_mailforward},
   { "MAILIMPORT", "FILENAME/A,QUIET/S,WAIT/S", NULL, rx_mailimport},

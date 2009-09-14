@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-09-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * rexx/mailexport.c, YAM_MA.c, doc/YAM_english.guide: added a QUIET option
+    to the MAILEXPORT command. This fulfils feature request #2858240. Also
+    adapted the english guide accordingly.
+
 2009-09-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/YAM_english.guide: adapted the guide according to the latest changes.

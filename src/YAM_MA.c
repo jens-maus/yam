@@ -2864,7 +2864,7 @@ MakeHook(MA_RescanIndexHook, MA_RescanIndexFunc);
 ///
 /// MA_ExportMessages
 //  Saves messages to a MBOX mailbox file
-BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
+BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
 {
   BOOL success = FALSE;
   char outname[SIZE_PATHFILE];
@@ -2883,31 +2883,37 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
 
     if(mlist != NULL)
     {
-      struct FileReqCache *frc;
-
-      if(filename == NULL && (frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, tr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, "")) != NULL)
+      if(filename == NULL)
       {
-        filename = AddPath(outname, frc->drawer, frc->file, sizeof(outname));
-        if(FileExists(filename) == TRUE)
+        struct FileReqCache *frc;
+
+        if((frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, tr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, "")) != NULL)
         {
-          switch(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_MESSAGEEXPORT), tr(MSG_MA_ExportAppendOpts), tr(MSG_MA_ExportAppendReq)))
+          filename = AddPath(outname, frc->drawer, frc->file, sizeof(outname));
+          if(FileExists(filename) == TRUE)
           {
-            case 1: append = FALSE; break;
-            case 2: append = TRUE; break;
-            case 0: filename = NULL;
+            switch(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_MESSAGEEXPORT), tr(MSG_MA_ExportAppendOpts), tr(MSG_MA_ExportAppendReq)))
+            {
+              case 1: append = FALSE; break;
+              case 2: append = TRUE; break;
+              case 0: filename = NULL;
+            }
           }
         }
       }
 
-      if(filename != NULL && (G->TR = TR_New(TR_EXPORT)) != NULL)
+      if(filename != NULL)
       {
-        if(SafeOpenWindow(G->TR->GUI.WI))
-          success = TR_ProcessEXPORT(filename, mlist, append);
-
-        if(success == FALSE)
+        if((G->TR = TR_New(TR_EXPORT)) != NULL)
         {
-          MA_ChangeTransfer(TRUE);
-          DisposeModulePush(&G->TR);
+          if(quiet == TRUE || SafeOpenWindow(G->TR->GUI.WI) == TRUE)
+            success = TR_ProcessEXPORT(filename, mlist, append);
+
+          if(success == FALSE)
+          {
+            MA_ChangeTransfer(TRUE);
+            DisposeModulePush(&G->TR);
+          }
         }
       }
 
@@ -2923,7 +2929,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
 /// MA_ExportMessagesFunc
 HOOKPROTONHNO(MA_ExportMessagesFunc, void, int *arg)
 {
-   MA_ExportMessages((BOOL)*arg, NULL, FALSE);
+   MA_ExportMessages(NULL, (BOOL)arg[0], FALSE, FALSE);
 }
 MakeHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 
@@ -3046,28 +3052,31 @@ BOOL MA_ImportMessages(const char *fname, BOOL quiet)
     // if we found that the file contains a valid import format
     // we go and create a transfer window object and let the user
     // choose which mail he wants to actually import.
-    if(foundFormat != IMF_UNKNOWN && (G->TR = TR_New(TR_IMPORT)) != NULL)
+    if(foundFormat != IMF_UNKNOWN)
     {
-      TR_SetWinTitle(TRUE, (char *)FilePart(fname));
-
-      // put some import relevant data into variables of our
-      // transfer window object
-      strlcpy(G->TR->ImportFile, fname, sizeof(G->TR->ImportFile));
-      G->TR->ImportFolder = actfo;
-      G->TR->ImportFormat = foundFormat;
-
-      // call TR_GetMessageList_IMPORT() to parse the file once again
-      // and present the user with a selectable list of mails the file
-      // contains.
-      if(TR_GetMessageList_IMPORT() == TRUE)
+      if((G->TR = TR_New(TR_IMPORT)) != NULL)
       {
-        if(quiet == TRUE || SafeOpenWindow(G->TR->GUI.WI) == TRUE)
-          result = TRUE;
-      }
-      else
-      {
-        MA_ChangeTransfer(TRUE);
-        DisposeModulePush(&G->TR);
+        TR_SetWinTitle(TRUE, (char *)FilePart(fname));
+
+        // put some import relevant data into variables of our
+        // transfer window object
+        strlcpy(G->TR->ImportFile, fname, sizeof(G->TR->ImportFile));
+        G->TR->ImportFolder = actfo;
+        G->TR->ImportFormat = foundFormat;
+
+        // call TR_GetMessageList_IMPORT() to parse the file once again
+        // and present the user with a selectable list of mails the file
+        // contains.
+        if(TR_GetMessageList_IMPORT() == TRUE)
+        {
+          if(quiet == TRUE || SafeOpenWindow(G->TR->GUI.WI) == TRUE)
+            result = TRUE;
+        }
+        else
+        {
+          MA_ChangeTransfer(TRUE);
+          DisposeModulePush(&G->TR);
+        }
       }
     }
   }
