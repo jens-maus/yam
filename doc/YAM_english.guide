@@ -7465,6 +7465,8 @@ MAILEXPORT
      FILENAME/A   - filename to use
      ALL/S        - export the whole folder
      APPEND/S     - append the data to an (already existing) file
+     QUIET/S      - don't open the transfer window and export all mails
+                    silently
 
 @{b}RETURNS@{ub}
      RC is set to 10 if no message is selected or if the output file
