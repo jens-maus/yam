@@ -7,6 +7,9 @@ $URL$
 
 2009-09-14 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: added some error checks for the write operations during a mail
+    export to catch errors like "disk full". The export will be canceled then
+    instead of constantly retrying until all mails have been finished.
   * rexx/mailexport.c, YAM_MA.c, doc/YAM_english.guide: added a QUIET option
     to the MAILEXPORT command. This fulfils feature request #2858240. Also
     adapted the english guide accordingly.

@@ -5247,7 +5247,12 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
               {
                 inHeader = FALSE;
 
-                fwrite(buf, curlen, 1, fh);
+                if(fwrite(buf, curlen, 1, fh) != 1)
+                {
+                  // write error, bail out
+                  break;
+                }
+
                 continue;
               }
 
@@ -5259,7 +5264,11 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
 
               if(strncmp(tmp, "From ", 5) == 0)
               {
-                fputc('>', fh);
+                if(fputc('>', fh) == EOF)
+                {
+                  // write error, bail out
+                  break;
+                }
               }
               else if(inHeader == TRUE)
               {
@@ -5268,29 +5277,45 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
                 if(strncmp(buf, "Status: ", 8) == 0 ||
                    strncmp(buf, "X-Status: ", 10) == 0)
                 {
-                   // skip line
-                   continue;
+                  // skip line
+                  continue;
                 }
               }
 
               // write the line to our destination file
-              fwrite(buf, curlen, 1, fh);
+              if(fwrite(buf, curlen, 1, fh) != 1)
+              {
+                // write error, bail out
+                break;
+              }
 
               // make sure we have a newline at the end of the line
               if(buf[curlen-1] != '\n')
-                fputc('\n', fh);
+              {
+                if(fputc('\n', fh) == EOF)
+                {
+                  // write error, bail out
+                  break;
+                }
+              }
 
               // update the transfer status
               TR_TransStat_Update(&ts, curlen);
             }
 
-            // check why we exited the while() loop and
-            // if everything is fine
-            if(ferror(mfh) != 0 || feof(mfh) == 0)
+            // check why we exited the while() loop and if everything is fine
+            if(ferror(fh) != 0)
+            {
+              E(DBF_NET, "error on writing data! ferror(fh)=%ld", ferror(fh));
+
+              // an error occurred, lets return failure
+              success = FALSE;
+            }
+            else if(ferror(mfh) != 0 || feof(mfh) == 0)
             {
               E(DBF_NET, "error on reading data! ferror(mfh)=%ld feof(mfh)=%ld", ferror(mfh), feof(mfh));
 
-              // an error occurred, lets return -1
+              // an error occurred, lets return failure
               success = FALSE;
             }
 
