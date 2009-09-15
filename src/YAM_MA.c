@@ -131,7 +131,7 @@ void MA_SetSortFlag(void)
 void MA_ChangeTransfer(BOOL on)
 {
   struct MA_GUIData *gui = &G->MA->GUI;
-  struct MinNode *curNode;
+  struct Node *curNode;
 
   ENTER();
 
@@ -153,7 +153,7 @@ void MA_ChangeTransfer(BOOL on)
                                                                      NULL);
 
   // modify the write window's "Send now" buttons
-  for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  IterateList(&G->writeMailDataList, curNode)
   {
     struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
@@ -600,6 +600,8 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
     // then rename it
     if(Rename(oldFilePath, newFilePath) != 0)
     {
+      struct Node *curNode;
+
       D(DBF_MAIL, "renamed '%s' to '%s'", oldFilePath, newFilePath);
 
       strlcpy(mail->MailFile, newFileName, sizeof(mail->MailFile));
@@ -609,18 +611,12 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
       // they contain the mail we have changed the status, so
       // that we can update the filename in the read window structure
       // aswell
-      if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+      IterateList(&G->readMailDataList, curNode)
       {
-        // search through our ReadDataList
-        struct MinNode *curNode;
+        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-        for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-        {
-          struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
-          if(rmData->mail == mail && strcmp(rmData->readFile, oldFilePath) == 0)
-            strlcpy(rmData->readFile, newFilePath, sizeof(rmData->readFile));
-        }
+        if(rmData->mail == mail && strcmp(rmData->readFile, oldFilePath) == 0)
+          strlcpy(rmData->readFile, newFilePath, sizeof(rmData->readFile));
       }
     }
     else
@@ -1350,27 +1346,22 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
   if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
   {
     struct ReadMailData *rmData;
+    struct Node *curNode;
 
     // Check if this mail is already in a readwindow
-    if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+    IterateList(&G->readMailDataList, curNode)
     {
-      // search through our ReadDataList
-      struct MinNode *curNode;
+      rmData = (struct ReadMailData *)curNode;
 
-      for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      // check if the active mail is already open in another read
+      // window, and if so we just bring it to the front.
+      if(rmData != G->ActiveRexxRMData &&
+         rmData->readWindow != NULL &&
+         rmData->mail == mail)
       {
-        rmData = (struct ReadMailData *)curNode;
-
-        // check if the active mail is already open in another read
-        // window, and if so we just bring it to the front.
-        if(rmData != G->ActiveRexxRMData &&
-           rmData->readWindow &&
-           rmData->mail == mail)
-        {
-          DoMethod(rmData->readWindow, MUIM_Window_ToFront);
-          set(rmData->readWindow, MUIA_Window_Activate, TRUE);
-          return;
-        }
+        DoMethod(rmData->readWindow, MUIM_Window_ToFront);
+        set(rmData->readWindow, MUIA_Window_Activate, TRUE);
+        return;
       }
     }
 

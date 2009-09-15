@@ -1400,37 +1400,32 @@ void AddZombieFile(const char *fileName)
 BOOL DeleteZombieFiles(BOOL force)
 {
   BOOL listCleared = TRUE;
+  struct Node *curNode;
+  struct Node *nextNode;
 
   ENTER();
 
-  if(IsListEmpty((struct List *)&G->zombieFileList) == FALSE)
+  // save the pointer to the next zombie first, as we probably are going to Remove() this node later
+  IterateListSafe(&G->zombieFileList, curNode, nextNode)
   {
-    struct MinNode *curNode;
+    struct ZombieFile *zombie = (struct ZombieFile *)curNode;
 
-    for(curNode = G->zombieFileList.mlh_Head; curNode->mln_Succ; )
+    D(DBF_UTIL, "trying to delete zombie file '%s'", zombie->fileName);
+
+    // try again to delete the file, if it still exists
+    if(force == FALSE && FileExists(zombie->fileName) == TRUE && DeleteFile(zombie->fileName) == 0)
     {
-      struct ZombieFile *zombie = (struct ZombieFile *)curNode;
+      // deleting failed again, but we are allowed to retry
+      listCleared = FALSE;
 
-      // save the pointer to the next zombie first, as we probably are going to Remove() this node later
-      curNode = curNode->mln_Succ;
-
-      D(DBF_UTIL, "trying to delete zombie file '%s'", zombie->fileName);
-
-      // try again to delete the file, if it still exists
-      if(force == FALSE && FileExists(zombie->fileName) == TRUE && DeleteFile(zombie->fileName) == 0)
-      {
-        // deleting failed again, but we are allowed to retry
-        listCleared = FALSE;
-
-        W(DBF_UTIL, "zombie file '%s' cannot be deleted, leaving in list", zombie->fileName);
-      }
-      else
-      {
-        // remove and free this node
-        Remove((struct Node *)zombie);
-        free(zombie->fileName);
-        free(zombie);
-      }
+      W(DBF_UTIL, "zombie file '%s' cannot be deleted, leaving in list", zombie->fileName);
+    }
+    else
+    {
+      // remove and free this node
+      Remove((struct Node *)zombie);
+      free(zombie->fileName);
+      free(zombie);
     }
   }
 
@@ -2159,10 +2154,10 @@ const char *DescribeCT(const char *ct)
     ret = tr(MSG_CTunknown);
   else
   {
-    struct MinNode *curNode;
+    struct Node *curNode;
 
     // first we search through the users' own MIME type list
-    for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    IterateList(&C->mimeTypeList, curNode)
     {
       struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
       char *type;
@@ -3153,6 +3148,8 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 {
   struct Folder *folder = mail->Folder;
   struct MailNode *mnode;
+  struct Node *curNode;
+  struct Node *nextNode;
 
   ENTER();
 
@@ -3213,36 +3210,30 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 
   // Now we check if there is any read window with that very same
   // mail currently open and if so we have to close it.
-  if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+  IterateListSafe(&G->readMailDataList, curNode, nextNode)
   {
-    // search through our ReadDataList
-    struct MinNode *curNode;
+    struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    if(rmData->mail == mail)
     {
-      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
-      if(rmData->mail == mail)
+      if(closeWindows == TRUE && rmData->readWindow != NULL)
       {
-        if(closeWindows == TRUE && rmData->readWindow != NULL)
-        {
-          // Just ask the window to close itself, this will effectively clear the pointer.
-          // We cannot set the attribute directly, because a DoMethod() call is synchronous
-          // and then the read window would modify the list we are currently walking through
-          // by calling CleanupReadMailData(). Hence we just let the application do the dirty
-          // work as soon as it has the possibility to do that, but not before this loop is
-          // finished. This works, because the ReadWindow class catches any modification to
-          // MUIA_Window_CloseRequest itself. A simple set(win, MUIA_Window_Open, FALSE) would
-          // visibly close the window, but it would not invoke the associated hook which gets
-          // invoked when you close the window by clicking on the close gadget.
-          DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
-        }
-        else
-        {
-          // Just clear pointer to this mail if we don't want to close the window or if
-          // there is no window to close at all.
-          rmData->mail = NULL;
-        }
+        // Just ask the window to close itself, this will effectively clear the pointer.
+        // We cannot set the attribute directly, because a DoMethod() call is synchronous
+        // and then the read window would modify the list we are currently walking through
+        // by calling CleanupReadMailData(). Hence we just let the application do the dirty
+        // work as soon as it has the possibility to do that, but not before this loop is
+        // finished. This works, because the ReadWindow class catches any modification to
+        // MUIA_Window_CloseRequest itself. A simple set(win, MUIA_Window_Open, FALSE) would
+        // visibly close the window, but it would not invoke the associated hook which gets
+        // invoked when you close the window by clicking on the close gadget.
+        DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
+      }
+      else
+      {
+        // Just clear pointer to this mail if we don't want to close the window or if
+        // there is no window to close at all.
+        rmData->mail = NULL;
       }
     }
   }
@@ -3274,21 +3265,17 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
     while((mnode = (struct MailNode *)RemHead((struct List *)&folder->messages->list)) != NULL)
     {
       struct Mail *mail = mnode->mail;
+      struct Node *curNode;
+      struct Node *nextNode;
 
       // Now we check if there is any read window with that very same
       // mail currently open and if so we have to clean it.
-      if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+      IterateListSafe(&G->readMailDataList, curNode, nextNode)
       {
-        // search through our ReadDataList
-        struct MinNode *curNode;
+        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-        for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-        {
-          struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
-          if(rmData->mail == mail)
-            CleanupReadMailData(rmData, TRUE);
-        }
+        if(rmData->mail == mail)
+          CleanupReadMailData(rmData, TRUE);
       }
 
       DeleteMailNode(mnode);
@@ -3729,22 +3716,18 @@ void FinishUnpack(char *file)
   stcgfe(ext, file);
   if(strcmp(ext, "unp") == 0)
   {
-    if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+    struct Node *curNode;
+
+    IterateList(&G->readMailDataList, curNode)
     {
-      // search through our ReadDataList
-      struct MinNode *curNode;
+      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-      for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      // check if the file is still in use and if so we quit immediately
+      // leaving the file untouched.
+      if(stricmp(file, rmData->readFile) == 0)
       {
-        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
-        // check if the file is still in use and if so we quit immediately
-        // leaving the file untouched.
-        if(stricmp(file, rmData->readFile) == 0)
-        {
-          LEAVE();
-          return;
-        }
+        LEAVE();
+        return;
       }
     }
 
@@ -4864,11 +4847,11 @@ const char *IdentifyFile(const char *fname)
   // now we try to identify the file by the extension first
   if(ext[0] != '\0')
   {
-    struct MinNode *curNode;
+    struct Node *curNode;
 
     D(DBF_MIME, "identifying file by extension (mimeTypeList)");
     // identify by the user specified mime types
-    for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    IterateList(&C->mimeTypeList, curNode)
     {
       struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
 
@@ -5506,11 +5489,13 @@ void GetPubScreenName(struct Screen *screen, char *pubName, ULONG pubNameSize)
     // first get the list of all public screens
     if((pubScreenList = LockPubScreenList()) != NULL)
     {
-      struct PubScreenNode *psn;
+      struct Node *curNode;
 
       // then iterate through this list
-      for(psn = (struct PubScreenNode *)pubScreenList->lh_Head; psn->psn_Node.ln_Succ != NULL; psn = (struct PubScreenNode *)psn->psn_Node.ln_Succ)
+      IterateList(pubScreenList, curNode)
       {
+        struct PubScreenNode *psn = (struct PubScreenNode *)curNode;
+
         // check if we found the given screen
         if(psn->psn_Screen == screen)
         {

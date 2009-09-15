@@ -297,4 +297,5 @@ DECLARE(UpdateSpamControls)
   RETURN(0);
   return 0;
 }
+
 ///

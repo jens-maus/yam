@@ -40,6 +40,7 @@
 #include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
+#include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
@@ -664,24 +665,19 @@ HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
     }
     else
     {
+      struct Node *curNode;
+
       // find the write window object by iterating through the
       // global write window list and identify it via its window number
-      if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+      IterateList(&G->writeMailDataList, curNode)
       {
-        // search through our WriteDataList
-        struct MinNode *curNode;
+        struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
-        for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        if(wmData->window != NULL &&
+           (int)xget(wmData->window, MUIA_WriteWindow_Num) == G->AB->winNumber)
         {
-          struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-          if(wmData->window != NULL &&
-             (int)xget(wmData->window, MUIA_WriteWindow_Num) == G->AB->winNumber)
-          {
-            writeWindow = wmData->window;
-
-            break;
-          }
+          writeWindow = wmData->window;
+          break;
         }
       }
     }

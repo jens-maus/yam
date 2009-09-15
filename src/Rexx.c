@@ -479,21 +479,29 @@ static char *CreateVAR(struct MinList *stemList)
   if(IsListEmpty((struct List *)stemList) == FALSE)
   {
     long size = 0;
-    struct StemNode *stemNode;
+    struct Node *curNode;
 
     // count the length of all variable names
-    for(stemNode = (struct StemNode *)stemList->mlh_Head; stemNode->node.mln_Succ != NULL; stemNode = (struct StemNode *)stemNode->node.mln_Succ)
+    IterateList(stemList, curNode)
+    {
+      struct StemNode *stemNode = (struct StemNode *)curNode;
+
       size += strlen(stemNode->value) + 1;
+    }
 
     // one byte more for the trailing NUL byte
     size++;
 
     if((var = AllocVecPooled(G->SharedMemPool, size)) != NULL)
     {
+      struct Node *curNode;
+
       var[0] = '\0';
 
-      for(stemNode = (struct StemNode *)stemList->mlh_Head; stemNode->node.mln_Succ != NULL; stemNode = (struct StemNode *)stemNode->node.mln_Succ)
+      IterateList(stemList, curNode)
       {
+        struct StemNode *stemNode = (struct StemNode *)curNode;
+
         // append an additional space except for the first variable
         if(var[0] != '\0')
            strlcat(var, " ", size);
@@ -823,10 +831,14 @@ void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg)
         if(params.rc == 0 && varStem->stem != NULL)
         {
           // STEM
-          struct StemNode *stemNode;
+          struct Node *curNode;
 
-          for(stemNode = (struct StemNode *)stemList.mlh_Head; stemNode->node.mln_Succ != NULL; stemNode = (struct StemNode *)stemNode->node.mln_Succ)
+          IterateList(&stemList, curNode)
+          {
+            struct StemNode *stemNode = (struct StemNode *)curNode;
+
             params.rc |= SetRexxVar(REXXMSG(rexxmsg), stemNode->name, stemNode->value, strlen(stemNode->value));
+          }
 
           if(params.rc != 0)
           {

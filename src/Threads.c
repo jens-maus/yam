@@ -122,12 +122,12 @@ void AbortThread(struct Thread *thread)
 // Remove the thread which has replied to the given tmsg
 static void RemoveThread(struct ThreadMessage *tmsg)
 {
-  struct MinNode *curNode;
+  struct Node *curNode;
 
   ENTER();
 
   // search through our subThreadList
-  for(curNode = G->subThreadList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  IterateList(&G->subThreadList, curNode)
   {
     struct ThreadNode *node = (struct ThreadNode *)curNode;
 
@@ -946,11 +946,11 @@ void CleanupThreads(void)
       ULONG thread_m;
       ULONG timer_m;
       struct TimerMessage *timeout = NULL;
-      struct MinNode *curNode;
+      struct Node *curNode;
 
       // search through our subThreadList and signal all threads
       // to abort
-      for(curNode = G->subThreadList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      IterateList(&G->subThreadList, curNode)
       {
         struct ThreadNode *node = (struct ThreadNode *)curNode;
 
@@ -965,7 +965,7 @@ void CleanupThreads(void)
 
       // now iterate again through our subThreadList and
       // wait until the subthread have finished.
-      for(curNode = G->subThreadList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      IterateList(&G->subThreadList, curNode)
       {
         struct ThreadNode *node = (struct ThreadNode *)curNode;
         struct ThreadMessage *tmsg;

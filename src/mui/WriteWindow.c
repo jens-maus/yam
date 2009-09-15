@@ -974,23 +974,24 @@ OVERLOAD(OM_NEW)
   // current WriteMailData list and check which number we can give this window
   do
   {
-    struct MinNode *curNode = G->writeMailDataList.mlh_Head;
+    struct Node *curNode;
+    BOOL found = FALSE;
 
-    for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    IterateList(&G->writeMailDataList, curNode)
     {
       struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
       if(wmData->window != NULL &&
          xget(wmData->window, MUIA_WriteWindow_Num) == i)
       {
+        found = TRUE;
         break;
       }
     }
 
-    // if the curNode successor is NULL we traversed through the whole
-    // list without finding the proposed ID, so we can choose it as
-    // our writeWindow ID
-    if(curNode->mln_Succ == NULL)
+    // if we didn't find a window with the current ID then we can choose it as
+    // our WriteWindow ID
+    if(found == FALSE)
     {
       D(DBF_GUI, "Free write window number %ld found.", i);
       data->windowNumber = i;
@@ -3886,12 +3887,12 @@ DECLARE(ComposeMail) // enum WriteMode mode
         // references and update them accordingly.
         if(wmData->mode == NMM_EDIT && wmData->refMail != NULL)
         {
-          struct MinNode *curNode;
+          struct Node *curNode;
 
           // now we search through our existing readMailData
           // objects and see some of them are pointing to the old mail
           // and if so we signal them to display the new revised mail instead
-          for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          IterateList(&G->readMailDataList, curNode)
           {
             struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 

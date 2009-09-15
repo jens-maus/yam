@@ -62,17 +62,17 @@ void MoveFolderNode(struct FolderList *flist, struct FolderNode *fnode, struct F
 // check if a folder list is empty
 #define IsFolderListEmpty(flist)                  IsListEmpty((struct List *)(flist))
 
+// navigate in the list
+#define FirstFolderNode(flist)                    (struct FolderNode *)GetHead((struct List *)flist)
+#define LastFolderNode(flist)                     (struct FolderNode *)GetTail((struct List *)flist)
+#define NextFolderNode(fnode)                     (struct FolderNode *)GetSucc((struct Node *)fnode)
+#define PreviousFolderNode(fnode)                 (struct FolderNode *)GetPred((struct Node *)fnode)
+
 // iterate through the list, the list must *NOT* be modified!
-#define ForEachFolderNode(flist, fnode)           for(fnode = (struct FolderNode *)(flist)->list.mlh_Head; fnode->node.mln_Succ != NULL; fnode = (struct FolderNode *)fnode->node.mln_Succ)
+#define ForEachFolderNode(flist, fnode)           for(fnode = FirstFolderNode(flist); fnode != NULL; fnode = NextFolderNode(fnode))
 
 // same as above, but the list may be modified
-#define ForEachFolderNodeSafe(flist, fnode, next) for(fnode = (struct FolderNode *)(flist)->list.mlh_Head; (next = (struct FolderNode *)fnode->node.mln_Succ) != NULL; fnode = next)
-
-// navigate in the list
-#define FirstFolderNode(flist)                    (struct FolderNode *)(flist)->list.mlh_Head
-#define LastFolderNode(flist)                     (struct FolderNode *)(flist)->list.mlh_TailPred
-#define NextFolderNode(fnode)                     (((fnode)->node.mln_Succ != NULL && (fnode)->node.mln_Succ->mln_Succ != NULL) ? (struct FolderNode *)(fnode)->node.mln_Succ : NULL)
-#define PreviousFolderNode(fnode)                 (((fnode)->node.mln_Pred != NULL && (fnode)->node.mln_Pred->mln_Pred != NULL) ? (struct FolderNode *)(fnode)->node.mln_Pred : NULL)
+#define ForEachFolderNodeSafe(flist, fnode, next) for(fnode = FirstFolderNode(flist); (next = NextFolderNode(fnode)) != NULL; fnode = next)
 
 // lock and unlock a folder list via its semaphore
 #if defined(DEBUG)

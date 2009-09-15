@@ -108,35 +108,29 @@ void rx_mailwrite(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
       }
       else
       {
-        if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+        BOOL found = FALSE;
+        struct Node *curNode;
+
+        IterateList(&G->writeMailDataList, curNode)
         {
-          // search through our WriteDataList
-          struct MinNode *curNode;
-          BOOL found = FALSE;
+          struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
-          for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          if(wmData->window != NULL)
           {
-            struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-            if(wmData->window != NULL)
+            if(winNumber == (int)xget(wmData->window, MUIA_WriteWindow_Num))
             {
-              if(winNumber == (int)xget(wmData->window, MUIA_WriteWindow_Num))
-              {
-                G->ActiveRexxWMData = wmData;
-                found = TRUE;
+              G->ActiveRexxWMData = wmData;
+              found = TRUE;
 
-                if(args->quiet == FALSE)
-                  set(wmData->window, MUIA_Window_Activate, TRUE);
+              if(args->quiet == FALSE)
+                set(wmData->window, MUIA_Window_Activate, TRUE);
 
-                break;
-              }
+              break;
             }
           }
-
-          if(found == FALSE)
-            params->rc = RETURN_WARN;
         }
-        else
+
+        if(found == FALSE)
           params->rc = RETURN_ERROR;
       }
     }

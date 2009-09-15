@@ -413,26 +413,21 @@ static void TimerDispatcher(const enum Timer tid)
     case TIMER_WRINDEX:
     {
       BOOL updateIndex = TRUE;
+      struct Node *curNode;
 
       D(DBF_TIMER, "timer[%ld]: TIMER_WRINDEX fired @ %s", tid, dateString);
 
       // only write the indexes if no Editor is actually in use
-      if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+      IterateList(&G->writeMailDataList, curNode)
       {
-        // search through our WriteDataList
-        struct MinNode *curNode;
+        struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
-        for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        if(wmData->window != NULL)
         {
-          struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-          if(wmData->window != NULL)
+          if(DoMethod(wmData->window, MUIM_WriteWindow_IsEditorActive) == TRUE)
           {
-            if(DoMethod(wmData->window, MUIM_WriteWindow_IsEditorActive) == TRUE)
-            {
-              updateIndex = FALSE;
-              break;
-            }
+            updateIndex = FALSE;
+            break;
           }
         }
       }
@@ -453,25 +448,20 @@ static void TimerDispatcher(const enum Timer tid)
     case TIMER_CHECKMAIL:
     {
       BOOL writeWindowActive = FALSE;
+      struct Node *curNode;
 
       D(DBF_TIMER, "timer[%ld]: TIMER_CHECKMAIL fired @ %s", tid, dateString);
 
       // only if there is currently no write window open we
       // check for new mail.
-      if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+      IterateList(&G->writeMailDataList, curNode)
       {
-        // search through our WriteDataList
-        struct MinNode *curNode;
+        struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
-        for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        if(wmData->window != NULL && xget(wmData->window, MUIA_Window_Open) == TRUE)
         {
-          struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-          if(wmData->window != NULL && xget(wmData->window, MUIA_Window_Open) == TRUE)
-          {
-            writeWindowActive = TRUE;
-            break;
-          }
+          writeWindowActive = TRUE;
+          break;
         }
       }
 
@@ -493,20 +483,16 @@ static void TimerDispatcher(const enum Timer tid)
     // of the currently used editors.
     case TIMER_AUTOSAVE:
     {
+      struct Node *curNode;
+
       D(DBF_TIMER, "timer[%ld]: TIMER_AUTOSAVE fired @ %s", tid, dateString);
 
-      if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+      IterateList(&G->writeMailDataList, curNode)
       {
-        // search through our WriteDataList
-        struct MinNode *curNode;
+        struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
-        for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-        {
-          struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-          if(wmData->window != NULL)
-            DoMethod(wmData->window, MUIM_WriteWindow_DoAutoSave);
-        }
+        if(wmData->window != NULL)
+          DoMethod(wmData->window, MUIM_WriteWindow_DoAutoSave);
       }
 
       // prepare the timer to get fired again

@@ -144,25 +144,20 @@ MakeStaticHook(SelectionHook, SelectionFunc);
 static BOOL FindWriteWindow(struct Window *win)
 {
   BOOL found = FALSE;
+  struct Node *curNode;
 
   ENTER();
 
-  if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+  IterateList(&G->writeMailDataList, curNode)
   {
-    // search through our WriteDataList
-    struct MinNode *curNode;
+    struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
-    for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    if(wmData->window != NULL &&
+       xget(wmData->window, MUIA_Window_Open) == TRUE &&
+       (struct Window *)xget(wmData->window, MUIA_Window_Window) == win)
     {
-      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-      if(wmData->window != NULL &&
-         xget(wmData->window, MUIA_Window_Open) == TRUE &&
-         (struct Window *)xget(wmData->window, MUIA_Window_Window) == win)
-      {
-        found = TRUE;
-        break;
-      }
+      found = TRUE;
+      break;
     }
   }
 
@@ -1090,7 +1085,7 @@ OVERLOAD(MUIM_DeleteDragImage)
               // initialise the selection hook with our data
               InitHook(&hook, SelectionHook, &selMsg);
 
-              for(n = path_list->lh_Head; n->ln_Succ; n = n->ln_Succ)
+              IterateList(path_list, n)
               {
                 if((selMsg.drawer = strdup(n->ln_Name)) != NULL)
                 {

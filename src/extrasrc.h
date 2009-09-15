@@ -160,6 +160,10 @@ struct IClass;
 #define HAVE_EXAMINEDIR
 #define HAVE_ALLOCSYSOBJECT
 #define HAVE_CHANGEFILEPOSITION
+#define HAVE_GETHEAD
+#define HAVE_GETPRED
+#define HAVE_GETSUCC
+#define HAVE_GETTAIL
 #endif
 
 #if !defined(HAVE_SETPROCWINDOW)
@@ -176,6 +180,22 @@ struct IClass;
 
 #if !defined(HAVE_CHANGEFILEPOSITION)
 #define NEED_CHANGEFILEPOSITION
+#endif
+
+#if !defined(HAVE_GETHEAD)
+#define NEED_GETHEAD
+#endif
+
+#if !defined(HAVE_GETPRED)
+#define NEED_GETPRED
+#endif
+
+#if !defined(HAVE_GETSUCC)
+#define NEED_GETSUCC
+#endif
+
+#if !defined(HAVE_GETTAIL)
+#define NEED_GETTAIL
 #endif
 
 /*
@@ -279,6 +299,22 @@ APTR VARARGS68K AllocSysObjectTags(ULONG type, ...);
 #endif
 void FreeSysObject(ULONG type, APTR object);
 #include "extrasrc/AllocSysObject.h"
+#endif
+
+#if defined(NEED_GETHEAD)
+struct Node *GetHead(struct List *list);
+#endif
+
+#if defined(NEED_GETPRED)
+struct Node *GetPred(struct Node *node);
+#endif
+
+#if defined(NEED_GETSUCC)
+struct Node *GetSucc(struct Node *node);
+#endif
+
+#if defined(NEED_GETTAIL)
+struct Node *GetTail(struct List *list);
 #endif
 
 #if defined(NEED_ALLOCVECPOOLED)

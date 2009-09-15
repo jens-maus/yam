@@ -851,6 +851,8 @@ static void DeleteStartupSemaphore(void)
 static void Terminate(void)
 {
   int i;
+  struct Node *curNode;
+  struct Node *nextNode;
 
   ENTER();
 
@@ -873,40 +875,20 @@ static void Terminate(void)
 
   D(DBF_STARTUP, "freeing readMailData...");
   // cleanup the still existing readmailData objects
-  if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+  IterateListSafe(&G->readMailDataList, curNode, nextNode)
   {
-    // search through our ReadDataList
-    struct MinNode *curNode;
+    struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ;)
-    {
-      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
-      // already iterate to the next node as the cleanup
-      // will free the memory area
-      curNode = curNode->mln_Succ;
-
-      CleanupReadMailData(rmData, TRUE);
-    }
+    CleanupReadMailData(rmData, TRUE);
   }
 
   D(DBF_STARTUP, "freeing writeMailData...");
   // cleanup the still existing writemailData objects
-  if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+  IterateListSafe(&G->writeMailDataList, curNode, nextNode)
   {
-    // search through our WriteMailDataList
-    struct MinNode *curNode;
+    struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
-    for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ;)
-    {
-      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-      // already iterate to the next node as the cleanup
-      // will free the memory area
-      curNode = curNode->mln_Succ;
-
-      CleanupWriteMailData(wmData);
-    }
+    CleanupWriteMailData(wmData);
   }
 
   D(DBF_STARTUP, "freeing tcp/ip stuff...");
@@ -1220,6 +1202,7 @@ static void SplashProgress(const char *txt, int percent)
 void PopUp(void)
 {
   Object *window = G->MA->GUI.WI;
+  struct Node *curNode;
 
   ENTER();
 
@@ -1234,39 +1217,27 @@ void PopUp(void)
 
   // Now we check if there is any read window open and bring it also
   // to the front
-  if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+  IterateList(&G->readMailDataList, curNode)
   {
-    // search through our ReadDataList
-    struct MinNode *curNode;
+    struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    if(rmData->readWindow != NULL)
     {
-      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
-      if(rmData->readWindow != NULL)
-      {
-        DoMethod(rmData->readWindow, MUIM_Window_ToFront);
-        window = rmData->readWindow;
-      }
+      DoMethod(rmData->readWindow, MUIM_Window_ToFront);
+      window = rmData->readWindow;
     }
   }
 
   // Now we check if there is any write window open and bring it also
   // to the front
-  if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+  IterateList(&G->writeMailDataList, curNode)
   {
-    // search through our WriteDataList
-    struct MinNode *curNode;
+    struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
-    for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    if(wmData->window != NULL)
     {
-      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-      if(wmData->window != NULL)
-      {
-        DoMethod(wmData->window, MUIM_Window_ToFront);
-        window = wmData->window;
-      }
+      DoMethod(wmData->window, MUIM_Window_ToFront);
+      window = wmData->window;
     }
   }
 
@@ -1370,13 +1341,12 @@ BOOL StayInProg(void)
     }
 
     // check if there exists an active write window
-    if(req == FALSE &&
-       IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+    if(req == FALSE)
     {
       // search through our WriteDataList
-      struct MinNode *curNode;
+      struct Node *curNode;
 
-      for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      IterateList(&G->writeMailDataList, curNode)
       {
         struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 

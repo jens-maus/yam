@@ -408,9 +408,9 @@ void RE_DisplayMIME(char *fname, const char *ctype)
   // MIME types matches or not.
   if(ctype != NULL)
   {
-    struct MinNode *curNode;
+    struct Node *curNode;
 
-    for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    IterateList(&C->mimeTypeList, curNode)
     {
       struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
 
@@ -501,11 +501,11 @@ void RE_DisplayMIME(char *fname, const char *ctype)
 
         if((ctype = IdentifyFile(fname)))
         {
-          struct MinNode *curNode;
+          struct Node *curNode;
 
           D(DBF_MIME, "identified file as '%s'", ctype);
 
-          for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          IterateList(&C->mimeTypeList, curNode)
           {
             struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
 
@@ -995,7 +995,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 //  Parses the header of the message or of a message part
 static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderMode mode)
 {
-  struct MinNode *curNode;
+  struct Node *curNode;
 
   ENTER();
 
@@ -1033,7 +1033,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
     SET_FLAG(rp->Flags, PFLAG_SUBHEADERS);
 
   // Now we process the read header to set all flags accordingly
-  for(curNode = rp->headerList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  IterateList(rp->headerList, curNode)
   {
     struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
     char *field = hdrNode->name;
@@ -2121,9 +2121,9 @@ BOOL RE_DecodePart(struct Part *rp)
         // definable MIME type list configuration.
         if(rp->ContentType != NULL && rp->ContentType[0] != '\0')
         {
-          struct MinNode *curNode;
+          struct Node *curNode;
 
-          for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          IterateList(&C->mimeTypeList, curNode)
           {
             struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
 
@@ -3996,9 +3996,9 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
 
           if(IsListEmpty((struct List *)headerList) == FALSE)
           {
-            struct MinNode *curNode;
+            struct Node *curNode;
 
-            for(curNode = headerList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+            IterateList(headerList, curNode)
             {
               char buf[SIZE_LINE];
               struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
@@ -4023,7 +4023,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
               else if(!stricmp(field, "disposition"))
                 strlcpy(disposition, Trim(value), sizeof(disposition));
 
-              if(msg)
+              if(msg != NULL)
               {
                 snprintf(buf, sizeof(buf), "%s %s", msg, value);
                 msgdesc = StrBufCat(msgdesc, buf);
@@ -4106,15 +4106,14 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
   // if MultipleWindows support if off we try to reuse an already existing
   // readWindow
   if(forceNewWindow == FALSE &&
-     C->MultipleReadWindows == FALSE &&
-     IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+     C->MultipleReadWindows == FALSE)
   {
-    struct MinNode *curNode = G->readMailDataList.mlh_Head;
+    struct Node *curNode;
 
     D(DBF_GUI, "No MultipleReadWindows support, trying to reuse a window.");
 
     // search through our ReadDataList
-    for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    IterateList(&G->readMailDataList, curNode)
     {
       struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
@@ -4398,23 +4397,18 @@ void FreeHeaderList(struct MinList *headerList)
 struct ReadMailData *GetReadMailData(const struct Mail *mail)
 {
   struct ReadMailData *result = NULL;
+  struct Node *curNode;
 
   ENTER();
 
-  if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+  IterateList(&G->readMailDataList, curNode)
   {
-    // search through our ReadDataList
-    struct MinNode *curNode;
+    struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    if(rmData->mail == mail)
     {
-      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
-      if(rmData->mail == mail)
-      {
-        result = rmData;
-        break;
-      }
+      result = rmData;
+      break;
     }
   }
 
@@ -4428,26 +4422,21 @@ struct ReadMailData *GetReadMailData(const struct Mail *mail)
 BOOL UpdateReadMailDataStatus(const struct Mail *mail)
 {
   BOOL result = FALSE;
+  struct Node *curNode;
 
   ENTER();
 
-  if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+  IterateList(&G->readMailDataList, curNode)
   {
-    // search through our ReadDataList
-    struct MinNode *curNode;
+    struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    if(rmData->mail == mail)
     {
-      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+      // update the status bar information
+      if(rmData->readWindow != NULL)
+        DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateStatusBar);
 
-      if(rmData->mail == mail)
-      {
-        // update the status bar information
-        if(rmData->readWindow != NULL)
-          DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateStatusBar);
-
-        result = TRUE;
-      }
+      result = TRUE;
     }
   }
 

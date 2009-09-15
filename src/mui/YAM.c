@@ -126,12 +126,17 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
   if((fh = Open(name, MODE_NEWFILE)))
   {
     int i;
-    struct EMailCacheNode *node = (struct EMailCacheNode *)(list->lh_Head);
     char line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
+    struct Node *curNode;
 
-    for(i = 0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node = (struct EMailCacheNode *)node->ecn_Node.ln_Succ)
+    i = 0;
+    IterateList(list, curNode)
     {
+      struct EMailCacheNode *node = (struct EMailCacheNode *)curNode;
       struct ABEntry *entry = &node->ecn_Person;
+
+      if(i >= C->EmailCache)
+        break;
 
       if(entry->RealName[0])
       {
@@ -153,6 +158,8 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
       }
 
       FPuts(fh, line);
+
+      i++;
     }
 
     Close(fh);
@@ -334,7 +341,7 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 
   ENTER();
 
-  if(msg->matchText && msg->matchText[0] != '\0')
+  if(msg->matchText != NULL && msg->matchText[0] != '\0')
   {
     // We first try to find matches in the Addressbook
     // and add them to the MUI list
@@ -342,16 +349,21 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 
     // If the user has selected the EmailCache feature we also have to check this
     // list and add matches to the MUI List too
-    if(C->EmailCache > 0 && !IsListEmpty(&data->EMailCache))
+    if(C->EmailCache > 0)
     {
       int i;
       LONG tl = strlen(msg->matchText);
-      struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
+      struct Node *curNode;
 
-      for(i = 0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node = (struct EMailCacheNode *)node->ecn_Node.ln_Succ)
+      i = 0;
+      IterateList(&data->EMailCache, curNode)
       {
+        struct EMailCacheNode *node = (struct EMailCacheNode *)curNode;
         struct ABEntry *entry = &node->ecn_Person;
         struct CustomABEntry e = { -1, -1, NULL, NULL };
+
+        if(i >= C->EmailCache)
+          break;
 
         if(MatchRealName(entry->RealName, msg->matchText, tl, &e.RealNameMatchPart) == TRUE)
         {
@@ -370,6 +382,8 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
           e.MatchEntry = entry;
           DoMethod(msg->list, MUIM_NList_InsertSingle, &e, MUIV_NList_Insert_Bottom);
         }
+
+        i++;
       }
     }
   }
@@ -388,15 +402,20 @@ DECLARE(FindEmailCacheMatch) // STRPTR matchText
 
   ENTER();
 
-  if(C->EmailCache && !IsListEmpty(&data->EMailCache) && msg->matchText && msg->matchText[0] != '\0')
+  if(C->EmailCache > 0 && msg->matchText && msg->matchText[0] != '\0')
   {
     int i, matches = 0;
     LONG tl = strlen(msg->matchText);
-    struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
+    struct Node *curNode;
 
-    for(i = 0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node = (struct EMailCacheNode *)node->ecn_Node.ln_Succ)
+    i = 0;
+    IterateList(&data->EMailCache, curNode)
     {
+      struct EMailCacheNode *node = (struct EMailCacheNode *)curNode;
       struct ABEntry *entry = &node->ecn_Person;
+
+      if(i >= C->EmailCache)
+        break;
 
       if(MatchRealName(entry->RealName, msg->matchText, tl, NULL) == TRUE ||
          Strnicmp(entry->Address,  msg->matchText, tl) == 0)
@@ -408,6 +427,8 @@ DECLARE(FindEmailCacheMatch) // STRPTR matchText
         }
         foundentry = entry;
       }
+
+      i++;
     }
   }
 
@@ -438,13 +459,18 @@ DECLARE(AddToEmailCache) // struct Person *person
   {
     int i;
     BOOL found = FALSE;
-    struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
+    struct Node *curNode;
 
     // Ok, it doesn`t exists in the AB, now lets check the cache list
     // itself
-    for(i=0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node = (struct EMailCacheNode *)node->ecn_Node.ln_Succ)
+    i = 0;
+    IterateList(&data->EMailCache, curNode)
     {
+      struct EMailCacheNode *node = (struct EMailCacheNode *)curNode;
       struct ABEntry *entry = &node->ecn_Person;
+
+      if(i >= C->EmailCache)
+        break;
 
       // If we find the same entry already in the list we just move it
       // up to the top
@@ -456,11 +482,13 @@ DECLARE(AddToEmailCache) // struct Person *person
         found = TRUE;
         break;
       }
+
+      i++;
     }
 
     // if we didn`t find the person already in the list
     // we have to add it after the last node
-    if(!found)
+    if(found == FALSE)
     {
       struct EMailCacheNode *newnode;
 

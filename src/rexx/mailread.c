@@ -118,10 +118,11 @@ void rx_mailread(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         // if a window number was specified with the command we have to search
         // through our ReadDataList and find the window with this particular
         // number
+        BOOL found = FALSE;
         int winnr = *args->window;
-        struct MinNode *curNode = G->readMailDataList.mlh_Head;
+        struct Node *curNode;
 
-        for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        IterateList(&G->readMailDataList, curNode)
         {
           struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
@@ -129,6 +130,7 @@ void rx_mailread(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
              (int)xget(rmData->readWindow, MUIA_ReadWindow_Num) == winnr)
           {
             G->ActiveRexxRMData = rmData;
+            found = TRUE;
             winNumber = winnr;
 
             // bring the window to the user's attention
@@ -141,7 +143,7 @@ void rx_mailread(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
         // check if we successfully found the window with that
         // number or if we have to return an error message
-        if(curNode->mln_Succ == NULL)
+        if(found == FALSE)
           params->rc = RETURN_ERROR;
       }
     }

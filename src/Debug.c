@@ -664,8 +664,6 @@ static struct MinList DbgMallocList[256];
 static struct SignalSemaphore DbgMallocListSema;
 static ULONG DbgMallocCount;
 
-#define ForEachNode(idx)      for(dmn = (struct DbgMallocNode *)DbgMallocList[idx].mlh_Head; dmn->node.mln_Succ != NULL; dmn = (struct DbgMallocNode *)dmn->node.mln_Succ)
-
 // a very simple hashing function to spread the allocations across the lists
 // Since AmigaOS memory allocation has a granularity of at least 8 bytes we simple ignore the
 // lower 4 bits (=16 Bytes) and take the next 8 bits as hash value. Not very sophisticated, but
@@ -677,18 +675,16 @@ static ULONG DbgMallocCount;
 static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
 {
   struct DbgMallocNode *result = NULL;
+  struct Node *curNode;
 
-  if(IsListEmpty((struct List *)&DbgMallocList[ptr2hash(ptr)]) == FALSE)
+  IterateList(&DbgMallocList[ptr2hash(ptr)], curNode)
   {
-    struct DbgMallocNode *dmn;
+    struct DbgMallocNode *dmn = (struct DbgMallocNode *)curNode;
 
-    ForEachNode(ptr2hash(ptr))
+    if(dmn->memory == ptr)
     {
-      if(dmn->memory == ptr)
-      {
-        result = dmn;
-        break;
-      }
+      result = dmn;
+      break;
     }
   }
 
@@ -718,7 +714,7 @@ void _MEMTRACK(const char *file, const int line, const char *func, void *ptr, si
 
         AddTail((struct List *)&DbgMallocList[ptr2hash(ptr)], (struct Node *)&dmn->node);
         DbgMallocCount++;
-        
+
         ReleaseSemaphore(&DbgMallocListSema);
       }
     }
@@ -839,10 +835,12 @@ void DumpDbgMalloc(void)
     D(DBF_ALWAYS, "%ld memory areas tracked", DbgMallocCount);
     for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
     {
-      struct DbgMallocNode *dmn;
+      struct Node *curNode;
 
-      ForEachNode(i)
+      IterateList(&DbgMallocList[i], curNode)
       {
+        struct DbgMallocNode *dmn = (struct DbgMallocNode *)curNode;
+
         _DPRINTF(DBC_MTRACK, DBF_ALWAYS, dmn->file, dmn->line, "memarea 0x%08lx, size/type %ld, func (%s)", dmn->memory, dmn->size, dmn->func);
       }
     }

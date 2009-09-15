@@ -65,14 +65,17 @@ struct MailNode *FindMailInList(struct MailList *mlist, struct Mail *mail);
 // check if a mail list is empty
 #define IsMailListEmpty(mlist)                    IsListEmpty((struct List *)(mlist))
 
+// navigate in the list
+#define FirstMailNode(mlist)                      (struct MailNode *)GetHead((struct List *)mlist)
+#define LastMailNode(mlist)                       (struct MailNode *)GetTail((struct List *)mlist)
+#define NextMailNode(mnode)                       (struct MailNode *)GetSucc((struct Node *)mnode)
+#define PreviousMailNode(mnode)                   (struct MailNode *)GetPred((struct Node *)mnode)
+
 // iterate through the list, the list must *NOT* be modified!
-#define ForEachMailNode(mlist, mnode)             for(mnode = (struct MailNode *)(mlist)->list.mlh_Head; mnode->node.mln_Succ != NULL; mnode = (struct MailNode *)mnode->node.mln_Succ)
+#define ForEachMailNode(mlist, mnode)             for(mnode = FirstMailNode(mlist); mnode != NULL; mnode = NextMailNode(mnode))
 
 // same as above, but the list may be modified
-#define ForEachMailNodeSafe(mlist, mnode, next)   for(mnode = (struct MailNode *)(mlist)->list.mlh_Head; (next = (struct MailNode *)mnode->node.mln_Succ) != NULL; mnode = next)
-
-// get the first mail node of a list
-#define FirstMailNode(mlist)                      (((mlist) != NULL && (mlist)->list.mlh_Head != NULL) ? (struct MailNode *)(mlist)->list.mlh_Head : (struct MailNode *)NULL)
+#define ForEachMailNodeSafe(mlist, mnode, next)   for(mnode = FirstMailNode(mlist); (next = NextMailNode(mnode)) != NULL; mnode = next)
 
 // lock and unlock a mail list via its semaphore
 #if defined(DEBUG)

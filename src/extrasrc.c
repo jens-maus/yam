@@ -131,6 +131,22 @@
   #include "extrasrc/AllocSysObject.c"
 #endif
 
+#if defined(NEED_GETHEAD)
+  #include "extrasrc/GetHead.c"
+#endif
+
+#if defined(NEED_GETPRED)
+  #include "extrasrc/GetPred.c"
+#endif
+
+#if defined(NEED_GETSUCC)
+  #include "extrasrc/GetSucc.c"
+#endif
+
+#if defined(NEED_GETTAIL)
+  #include "extrasrc/GetTail.c"
+#endif
+
 #if defined(NEED_ALLOCVECPOOLED)
   #include "extrasrc/AllocVecPooled.c"
 #endif

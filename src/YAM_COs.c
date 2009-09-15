@@ -246,7 +246,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
   {
     int i;
     char buf[SIZE_LARGE];
-    struct MinNode *curNode;
+    struct Node *curNode;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -302,11 +302,12 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
     // we iterate through our filter list and save out the whole filter
     // configuration accordingly.
-    for(i=0, curNode = co->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
+    i = 0;
+    IterateList(&co->filterList, curNode)
     {
       int j;
       struct FilterNode *filter = (struct FilterNode *)curNode;
-      struct MinNode *curRuleNode;
+      struct Node *curRuleNode;
 
       fprintf(fh, "FI%02d.Name        = %s\n", i, filter->name);
       fprintf(fh, "FI%02d.Remote      = %s\n", i, Bool2Txt(filter->remote));
@@ -315,7 +316,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "FI%02d.ApplyOnReq  = %s\n", i, Bool2Txt(filter->applyOnReq));
 
       // now we do have to iterate through our ruleList
-      for(j=0, curRuleNode = filter->ruleList.mlh_Head; curRuleNode->mln_Succ; curRuleNode = curRuleNode->mln_Succ, j++)
+      j = 0;
+      IterateList(&filter->ruleList, curRuleNode)
       {
         struct RuleNode *rule = (struct RuleNode *)curRuleNode;
 
@@ -348,6 +350,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
           fprintf(fh, "FI%02d.CaseSens%d   = %s\n", i, j+1, Bool2Txt(rule->caseSensitive));
           fprintf(fh, "FI%02d.Substring%d  = %s\n", i, j+1, Bool2Txt(rule->subString));
         }
+
+        j++;
       }
 
       fprintf(fh, "FI%02d.Actions     = %d\n", i, filter->actions);
@@ -357,6 +361,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "FI%02d.ExecuteCmd  = %s\n", i, filter->executeCmd);
       fprintf(fh, "FI%02d.PlaySound   = %s\n", i, filter->playSound);
       fprintf(fh, "FI%02d.MoveTo      = %s\n", i, filter->moveTo);
+
+      i++;
     }
 
     fprintf(fh, "\n[Spam filter]\n");
@@ -488,7 +494,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "MV00.ContentType = Default\n");
     fprintf(fh, "MV00.Command     = %s\n", C->DefaultMimeViewer);
 
-    for(i=1, curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
+    i = 1;
+    IterateList(&C->mimeTypeList, curNode)
     {
       struct MimeTypeNode *mtNode = (struct MimeTypeNode *)curNode;
 
@@ -496,6 +503,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "MV%02d.Extension   = %s\n", i, mtNode->Extension);
       fprintf(fh, "MV%02d.Command     = %s\n", i, mtNode->Command);
       fprintf(fh, "MV%02d.Description = %s\n", i, mtNode->Description);
+
+      i++;
     }
 
     fprintf(fh, "\n[Address book]\n");
@@ -770,7 +779,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 strlcpy(filter->name, p2, sizeof(filter->name));
 
                 // get the first rule (always existent) and fill in data
-                rule = (struct RuleNode *)filter->ruleList.mlh_Head;
+                rule = (struct RuleNode *)GetHead((struct List *)&filter->ruleList);
                 if((rule->searchMode = atoi(p)) == 2)
                   rule->searchMode = SM_SUBJECT;
 
@@ -916,7 +925,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
               if(lastFilter != NULL && lastFilterID != curFilterID)
               {
                 int i;
-                struct MinNode *curNode;
+                struct Node *curNode;
 
                 // reset the lastFilter
                 lastFilter = NULL;
@@ -924,7 +933,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
                 // try to get the filter with that particular filter ID out of our
                 // filterList
-                for(i=0, curNode = co->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
+                i = 0;
+                IterateList(&co->filterList, curNode)
                 {
                   if(i == curFilterID)
                   {
@@ -932,6 +942,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                     lastFilterID = i;
                     break;
                   }
+
+                  i++;
                 }
               }
 
@@ -1197,7 +1209,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
               if(lastType != NULL && lastTypeID != curTypeID)
               {
                 int i;
-                struct MinNode *curNode;
+                struct Node *curNode;
 
                 // reset the lastType
                 lastType = NULL;
@@ -1205,7 +1217,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
                 // try to get the mimeType with that particular filter ID out of our
                 // filterList
-                for(i=0, curNode = co->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
+                i = 0;
+                IterateList(&co->mimeTypeList, curNode)
                 {
                   if(i == curTypeID)
                   {
@@ -1213,6 +1226,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                     lastTypeID = i;
                     break;
                   }
+
+                  i++;
                 }
               }
 
@@ -2211,14 +2226,14 @@ void CO_SetConfig(void)
 
     case cp_Filters:
     {
-      struct MinNode *curNode;
+      struct Node *curNode;
 
       // clear the filter list first
       DoMethod(gui->LV_RULES, MUIM_NList_Clear);
 
       // iterate through our filter list and add it to our
       // MUI List
-      for(curNode = CE->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      IterateList(&CE->filterList, curNode)
         DoMethod(gui->LV_RULES, MUIM_NList_InsertSingle, curNode, MUIV_NList_Insert_Bottom);
 
       // make sure the first entry is selected per default
@@ -2413,7 +2428,7 @@ void CO_SetConfig(void)
 
     case cp_MIME:
     {
-      struct MinNode *curNode;
+      struct Node *curNode;
 
       // clear the filter list first
       set(gui->LV_MIME, MUIA_NList_Quiet, TRUE);
@@ -2421,7 +2436,7 @@ void CO_SetConfig(void)
 
       // iterate through our filter list and add it to our
       // MUI List
-      for(curNode = CE->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      IterateList(&CE->mimeTypeList, curNode)
         DoMethod(gui->LV_MIME, MUIM_NList_InsertSingle, curNode, MUIV_NList_Insert_Bottom);
 
       // sort the list after inserting all entries

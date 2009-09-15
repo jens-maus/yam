@@ -135,25 +135,19 @@ static BOOL FI_MatchString(struct Search *search, char *string)
 static BOOL FI_MatchListPattern(struct Search *search, char *string)
 {
   BOOL match = FALSE;
-  struct MinList *patternList = &search->patternList;
+  struct Node *curNode;
 
   ENTER();
 
-  if(IsListEmpty((struct List *)patternList) == FALSE)
+  IterateList(&search->patternList, curNode)
   {
-    struct MinNode *curNode;
+    struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
 
-    // Now we process the read header to set all flags accordingly
-    for(curNode = patternList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    if(search->CaseSens ? MatchPattern(patternNode->pattern, string)
+                        : MatchPatternNoCase(patternNode->pattern, string))
     {
-      struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
-
-      if(search->CaseSens ? MatchPattern(patternNode->pattern, string)
-                          : MatchPatternNoCase(patternNode->pattern, string))
-      {
-        match = TRUE;
-        break;
-      }
+      match = TRUE;
+      break;
     }
   }
 
@@ -399,10 +393,9 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 
         if(MA_ReadHeader(mailfile, fh, headerList, RHM_MAINHEADER) == TRUE)
         {
-          struct MinNode *curNode = headerList->mlh_Head;
+          struct Node *curNode;
 
-          // search through our headerList
-          for(; curNode->mln_Succ && !found; curNode = curNode->mln_Succ)
+          IterateList(headerList, curNode)
           {
             struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
 
@@ -806,60 +799,56 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail)
 {
   BOOL lastCond = FALSE;
+  int i = 0;
+  struct Node *curNode;
 
   ENTER();
 
-  if(IsListEmpty((struct List *)&filter->ruleList) == FALSE)
+  D(DBF_FILTER, "checking rules of filter '%s' for mail '%s'...", filter->name, mail->Subject);
+
+  // we have to iterate through our ruleList and depending on the combine
+  // operation we evaluate if the filter hits any mail criteria or not.
+  IterateList(&filter->ruleList, curNode)
   {
-    int i = 0;
-    struct MinNode *curNode;
+    struct RuleNode *rule = (struct RuleNode *)curNode;
 
-    D(DBF_FILTER, "checking rules of filter '%s' for mail '%s'...", filter->name, mail->Subject);
-
-    // we have to iterate through our ruleList and depending on the combine
-    // operation we evaluate if the filter hits any mail criteria or not.
-    for(curNode = filter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    if(rule->search)
     {
-      struct RuleNode *rule = (struct RuleNode *)curNode;
+      BOOL actCond = FI_DoSearch(rule->search, mail);
 
-      if(rule->search)
+      if(i == 0)
+        rule->combine = CB_NONE;
+
+      // if this isn't the first rule we do a compare
+      switch(rule->combine)
       {
-        BOOL actCond = FI_DoSearch(rule->search, mail);
-
-        if(i == 0)
-          rule->combine = CB_NONE;
-
-        // if this isn't the first rule we do a compare
-        switch(rule->combine)
+        case CB_OR:
         {
-          case CB_OR:
-          {
-            lastCond = (actCond || lastCond);
-          }
-          break;
-
-          case CB_AND:
-          {
-            lastCond = (actCond && lastCond);
-          }
-          break;
-
-          case CB_XOR:
-          {
-            lastCond = (actCond+lastCond) % 2;
-          }
-          break;
-
-          case CB_NONE:
-          {
-            lastCond = actCond;
-          }
-          break;
+          lastCond = (actCond || lastCond);
         }
-      }
+        break;
 
-      i++;
+        case CB_AND:
+        {
+          lastCond = (actCond && lastCond);
+        }
+        break;
+
+        case CB_XOR:
+        {
+          lastCond = (actCond+lastCond) % 2;
+        }
+        break;
+
+        case CB_NONE:
+        {
+          lastCond = actCond;
+        }
+        break;
+      }
     }
+
+    i++;
   }
 
   RETURN(lastCond);
@@ -1312,16 +1301,16 @@ MakeStaticHook(FI_CloseHook, FI_Close);
 BOOL FI_FilterSingleMail(struct Mail *mail, int *matches)
 {
   BOOL success = TRUE;
-  struct MinNode *curNode;
+  struct Node *curNode;
   int match = 0;
 
   ENTER();
 
-  for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  IterateList(&C->filterList, curNode)
   {
     struct FilterNode *filter = (struct FilterNode *)curNode;
 
-    if(DoFilterSearch(filter, mail))
+    if(DoFilterSearch(filter, mail) == TRUE)
     {
       match++;
 
@@ -1388,86 +1377,80 @@ void FreeRuleSearchData(struct RuleNode *rule)
 //  the number of active filters/search structures allocated.
 int AllocFilterSearch(enum ApplyFilterMode mode)
 {
-  int active=0;
+  int active = 0;
+  struct Node *curNode;
 
   ENTER();
 
-  if(IsListEmpty((struct List *)&C->filterList) == FALSE)
+  // iterate through our filter List
+  IterateList(&C->filterList, curNode)
   {
-    struct MinNode *curNode;
+    struct FilterNode *filter = (struct FilterNode *)curNode;
 
-    // iterate through our filter List
-    for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    // let's check if we can skip some filters because of the ApplyMode
+    // and filter relation.
+    // For spam recognition we just clear all filters and don't allocate
+    // anything.
+    if((mode == APPLY_AUTO && (!filter->applyToNew || filter->remote)) ||
+       (mode == APPLY_USER && (!filter->applyOnReq || filter->remote)) ||
+       (mode == APPLY_SENT && (!filter->applyToSent || filter->remote)) ||
+       (mode == APPLY_REMOTE && !filter->remote) ||
+       (mode == APPLY_SPAM))
     {
-      struct FilterNode *filter = (struct FilterNode *)curNode;
-      struct MinNode *curRuleNode;
+      struct Node *curRuleNode;
+      struct Node *nextRuleNode;
 
-      // let's check if we can skip some filters because of the ApplyMode
-      // and filter relation.
-      // For spam recognition we just clear all filters and don't allocate
-      // anything.
-      if((mode == APPLY_AUTO && (!filter->applyToNew || filter->remote)) ||
-         (mode == APPLY_USER && (!filter->applyOnReq || filter->remote)) ||
-         (mode == APPLY_SENT && (!filter->applyToSent || filter->remote)) ||
-         (mode == APPLY_REMOTE && !filter->remote) ||
-         (mode == APPLY_SPAM))
+      IterateListSafe(&filter->ruleList, curRuleNode, nextRuleNode)
       {
-        if(IsListEmpty((struct List *)&filter->ruleList) == FALSE)
-        {
-          // make sure the current search structures of the rules of the filter
-          // are freed
-          for(curRuleNode = filter->ruleList.mlh_Head; curRuleNode->mln_Succ; curRuleNode = curRuleNode->mln_Succ)
-          {
-            struct RuleNode *rule = (struct RuleNode *)curRuleNode;
+        // make sure the current search structures of the rules of the filter
+        // are freed
+        struct RuleNode *rule = (struct RuleNode *)curRuleNode;
 
-            // now we do free our search structure if it exists
-            FreeRuleSearchData(rule);
-          }
-        }
+        // now we do free our search structure if it exists
+        FreeRuleSearchData(rule);
       }
-      else
+    }
+    else
+    {
+      struct Node *curRuleNode;
+
+      IterateList(&filter->ruleList, curRuleNode)
       {
-        if(IsListEmpty((struct List *)&filter->ruleList) == FALSE)
+        // check if the search structures are already allocated or not
+        struct RuleNode *rule = (struct RuleNode *)curRuleNode;
+
+        // check if that search structure already exists or not
+        if(rule->search == NULL &&
+           (rule->search = calloc(1, sizeof(struct Search))))
         {
-          // check if the search structures are already allocated or not
-          for(curRuleNode = filter->ruleList.mlh_Head; curRuleNode->mln_Succ; curRuleNode = curRuleNode->mln_Succ)
+          int stat = sizeof(mailStatusCycleMap);
+
+          // we check the status field first and if we find a match
+          // we can immediatly break up here because we don't need to prepare the search
+          if(rule->searchMode == SM_STATUS)
           {
-            struct RuleNode *rule = (struct RuleNode *)curRuleNode;
-
-            // check if that search structure already exists or not
-            if(rule->search == NULL &&
-               (rule->search = calloc(1, sizeof(struct Search))))
+            for(stat=0; stat <= (int)sizeof(mailStatusCycleMap) - 1; stat++)
             {
-              int stat = sizeof(mailStatusCycleMap);
-
-              // we check the status field first and if we find a match
-              // we can immediatly break up here because we don't need to prepare the search
-              if(rule->searchMode == SM_STATUS)
-              {
-                for(stat=0; stat <= (int)sizeof(mailStatusCycleMap) - 1; stat++)
-                {
-                  if(*rule->matchPattern == mailStatusCycleMap[stat])
-                    break;
-                }
-              }
-
-              FI_PrepareSearch(rule->search,
-                               rule->searchMode,
-                               rule->caseSensitive,
-                               rule->subSearchMode,
-                               rule->comparison,
-                               mailStatusCycleMap[stat],
-                               rule->subString,
-                               rule->matchPattern,
-                               rule->customField);
-
-              // save a pointer to the filter in the search structure as well.
-              rule->search->filter = filter;
+              if(*rule->matchPattern == mailStatusCycleMap[stat])
+                break;
             }
           }
 
-          active++;
+          FI_PrepareSearch(rule->search,
+                           rule->searchMode,
+                           rule->caseSensitive,
+                           rule->subSearchMode,
+                           rule->comparison,
+                           mailStatusCycleMap[stat],
+                           rule->subString,
+                           rule->matchPattern,
+                           rule->customField);
+
+          // save a pointer to the filter in the search structure as well.
+          rule->search->filter = filter;
         }
+
+        active++;
       }
     }
   }
@@ -1481,26 +1464,23 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
 //  Frees filter search structures
 void FreeFilterSearch(void)
 {
-  struct MinNode *curNode;
+  struct Node *curNode;
 
   ENTER();
 
   // Now we process the read header to set all flags accordingly
-  for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  IterateList(&C->filterList, curNode)
   {
     struct FilterNode *filter = (struct FilterNode *)curNode;
+    struct Node *curRuleNode;
+    struct Node *nextRuleNode;
 
-    if(IsListEmpty((struct List *)&filter->ruleList) == FALSE)
+    IterateListSafe(&filter->ruleList, curRuleNode, nextRuleNode)
     {
-      struct MinNode *curRuleNode;
+      struct RuleNode *rule = (struct RuleNode *)curRuleNode;
 
-      for(curRuleNode = filter->ruleList.mlh_Head; curRuleNode->mln_Succ; curRuleNode = curRuleNode->mln_Succ)
-      {
-        struct RuleNode *rule = (struct RuleNode *)curRuleNode;
-
-        // now we do free our search structure if it exists
-        FreeRuleSearchData(rule);
-      }
+      // now we do free our search structure if it exists
+      FreeRuleSearchData(rule);
     }
   }
 
@@ -1872,6 +1852,7 @@ MakeHook(ApplyFiltersHook, ApplyFiltersFunc);
 BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
 {
   BOOL success = TRUE;
+  struct Node *curNode;
 
   ENTER();
 
@@ -1883,32 +1864,21 @@ BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
   // then iterate through our ruleList and copy it as well
   NewList((struct List *)&dstFilter->ruleList);
 
-  if(IsListEmpty((struct List *)&srcFilter->ruleList) == FALSE)
+  IterateList(&srcFilter->ruleList, curNode)
   {
-    struct MinNode *curNode;
+    struct RuleNode *rule = (struct RuleNode *)curNode;
+    struct RuleNode *newRule;
 
-    for(curNode = srcFilter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    // do a raw copy of the rule contents first
+    if((newRule = memdup(rule, sizeof(struct RuleNode))) != NULL)
     {
-      struct RuleNode *rule = (struct RuleNode *)curNode;
-      struct RuleNode *newRule;
-
-      // do a raw copy of the rule contents first
-      if((newRule = memdup(rule, sizeof(struct RuleNode))) != NULL)
+      // check if the search structure exists and if so
+      // so start another deep copy
+      if(rule->search != NULL)
       {
-        // check if the search structure exists and if so
-        // so start another deep copy
-        if(rule->search != NULL)
+        if((newRule->search = calloc(1, sizeof(struct Search))) != NULL)
         {
-          if((newRule->search = calloc(1, sizeof(struct Search))) != NULL)
-          {
-            if(CopySearchData(newRule->search, rule->search) == FALSE)
-            {
-              success = FALSE;
-              // bail out, no need to copy further data
-              break;
-            }
-          }
-          else
+          if(CopySearchData(newRule->search, rule->search) == FALSE)
           {
             success = FALSE;
             // bail out, no need to copy further data
@@ -1916,17 +1886,23 @@ BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
           }
         }
         else
-          newRule->search = NULL;
-
-        // add the rule to the ruleList of our desitionation filter
-        AddTail((struct List *)&dstFilter->ruleList, (struct Node *)newRule);
+        {
+          success = FALSE;
+          // bail out, no need to copy further data
+          break;
+        }
       }
       else
-      {
-        success = FALSE;
-        // bail out, no need to copy further data
-        break;
-      }
+        newRule->search = NULL;
+
+      // add the rule to the ruleList of our desitionation filter
+      AddTail((struct List *)&dstFilter->ruleList, (struct Node *)newRule);
+    }
+    else
+    {
+      success = FALSE;
+      // bail out, no need to copy further data
+      break;
     }
   }
 
@@ -1939,7 +1915,7 @@ BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
 static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
 {
   BOOL success = TRUE;
-  struct MinNode *curNode;
+  struct Node *curNode;
 
   ENTER();
 
@@ -1954,7 +1930,7 @@ static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
 
   // now we have to copy the patternList as well
   NewList((struct List *)&dstSearch->patternList);
-  for(curNode = srcSearch->patternList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  IterateList(&srcSearch->patternList, curNode)
   {
     struct SearchPatternNode *srcNode = (struct SearchPatternNode *)curNode;
     struct SearchPatternNode *dstNode;
@@ -2008,12 +1984,15 @@ void FreeFilterRuleList(struct FilterNode *filter)
 static BOOL CompareRuleLists(const struct MinList *rl1, const struct MinList *rl2)
 {
   BOOL equal = TRUE;
-  struct MinNode *mln1 = rl1->mlh_Head;
-  struct MinNode *mln2 = rl2->mlh_Head;
+  struct Node *mln1;
+  struct Node *mln2;
 
   ENTER();
 
-  while(mln1->mln_Succ != NULL && mln2->mln_Succ != NULL)
+  mln1 = GetHead((struct List *)rl1);
+  mln2 = GetHead((struct List *)rl2);
+
+  while(mln1 != NULL && mln2 != NULL)
   {
     struct RuleNode *rn1 = (struct RuleNode *)mln1;
     struct RuleNode *rn2 = (struct RuleNode *)mln2;
@@ -2031,12 +2010,13 @@ static BOOL CompareRuleLists(const struct MinList *rl1, const struct MinList *rl
       equal = FALSE;
       break;
     }
-    mln1 = mln1->mln_Succ;
-    mln2 = mln2->mln_Succ;
+
+    mln1 = GetSucc(mln1);
+    mln2 = GetSucc(mln2);
   }
 
   // if there are any nodes left then the two lists cannot be equal
-  if(mln1->mln_Succ != NULL || mln2->mln_Succ != NULL)
+  if(GetSucc(mln1) != NULL || GetSucc(mln2) != NULL)
   {
     equal = FALSE;
   }
@@ -2052,13 +2032,16 @@ static BOOL CompareRuleLists(const struct MinList *rl1, const struct MinList *rl
 BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2)
 {
   BOOL equal = TRUE;
-  struct MinNode *mln1 = fl1->mlh_Head;
-  struct MinNode *mln2 = fl2->mlh_Head;
+  struct Node *mln1;
+  struct Node *mln2;
 
   ENTER();
 
+  mln1 = GetHead((struct List *)fl1);
+  mln2 = GetHead((struct List *)fl2);
+
   // walk through both lists in parallel and compare the single nodes
-  while(mln1->mln_Succ != NULL && mln2->mln_Succ != NULL)
+  while(mln1 != NULL && mln2 != NULL)
   {
     struct FilterNode *fn1 = (struct FilterNode *)mln1;
     struct FilterNode *fn2 = (struct FilterNode *)mln2;
@@ -2083,12 +2066,12 @@ BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2)
       break;
     }
 
-    mln1 = mln1->mln_Succ;
-    mln2 = mln2->mln_Succ;
+    mln1 = GetSucc(mln1);
+    mln2 = GetSucc(mln2);
   }
 
   // if there are any nodes left then the two lists cannot be equal
-  if(mln1->mln_Succ != NULL || mln2->mln_Succ != NULL)
+  if(GetSucc(mln1) != NULL || GetSucc(mln2) != NULL)
   {
     equal = FALSE;
   }
@@ -2198,26 +2181,21 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter)
 struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos)
 {
   struct RuleNode *rule = NULL;
+  struct Node *curNode;
+  int i = 0;
 
   ENTER();
 
-  if(IsListEmpty((struct List *)&filter->ruleList) == FALSE)
+  // we do have to iterate through the ruleList of the filter
+  // and count for rule at position 'pos'
+  IterateList(&filter->ruleList, curNode)
   {
-    // we do have to iterate through the ruleList of the filter
-    // and count for rule at position 'pos'
-    struct MinNode *curNode;
-    int i;
-
-    i = 0;
-    for(curNode = filter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    if(i == pos)
     {
-      if(i == pos)
-      {
-        rule = (struct RuleNode *)curNode;
-        break;
-      }
-      i++;
+      rule = (struct RuleNode *)curNode;
+      break;
     }
+    i++;
   }
 
   RETURN(rule);
@@ -2231,13 +2209,13 @@ struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos)
 //  Creates a popup list of configured filters
 HOOKPROTONHNP(InitFilterPopupList, ULONG, Object *pop)
 {
-  struct MinNode *curNode;
+  struct Node *curNode;
 
   // clear the popup list first
   DoMethod(pop, MUIM_List_Clear);
 
   // Now we process the read header to set all flags accordingly
-  for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  IterateList(&C->filterList, curNode)
   {
     DoMethod(pop, MUIM_List_InsertSingle, curNode, MUIV_List_Insert_Bottom);
   }

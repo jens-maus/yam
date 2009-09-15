@@ -171,23 +171,24 @@ OVERLOAD(OM_NEW)
   // current ReadMailData list and check which number we can give this window
   do
   {
-    struct MinNode *curNode = G->readMailDataList.mlh_Head;
+    struct Node *curNode;
+    BOOL found = FALSE;
 
-    for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    IterateList(&G->readMailDataList, curNode)
     {
       struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-      if(rmData->readWindow &&
+      if(rmData->readWindow != NULL &&
          xget(rmData->readWindow, MUIA_ReadWindow_Num) == i)
       {
+        found = TRUE;
         break;
       }
     }
 
-    // if the curNode successor is NULL we traversed through the whole
-    // list without finding the proposed ID, so we can choose it as
-    // our readWindow ID
-    if(curNode->mln_Succ == NULL)
+    // if we didn't find a window with the current ID then we can choose it as
+    // our ReadWindow ID
+    if(found == FALSE)
     {
       D(DBF_GUI, "Free window number %ld found.", i);
       data->windowNumber = i;
@@ -197,7 +198,7 @@ OVERLOAD(OM_NEW)
 
     i++;
   }
-  while(1);
+  while(TRUE);
 
   //
   // now we create the Menustrip object with all the menu items

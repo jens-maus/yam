@@ -1811,11 +1811,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
      char *ptr;
      char dateFilePart[12+1];
      char timebuf[sizeof(struct TimeVal)+1]; // +1 because the b64decode does set a NUL byte
-     struct MinNode *curNode;
+     struct Node *curNode;
      LONG size;
 
      // Now we process the read header to set all flags accordingly
-     for(curNode = headerList.mlh_Head; curNode->mln_Succ != NULL; curNode = curNode->mln_Succ)
+     IterateList(&headerList, curNode)
      {
        struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
        char *field = hdrNode->name;

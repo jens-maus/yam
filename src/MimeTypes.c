@@ -36,6 +36,8 @@
 
 #include "YAM_stringsizes.h"
 
+#include "extrasrc.h"
+
 #include "Locale.h"
 #include "MimeTypes.h"
 
@@ -140,13 +142,16 @@ void FreeMimeTypeList(struct MinList *mimeTypeList)
 BOOL CompareMimeTypeLists(const struct MinList *mtl1, const struct MinList *mtl2)
 {
   BOOL equal = TRUE;
-  struct MinNode *mln1 = mtl1->mlh_Head;
-  struct MinNode *mln2 = mtl2->mlh_Head;
+  struct Node *mln1;
+  struct Node *mln2;
 
   ENTER();
 
+  mln1 = GetHead((struct List *)mtl1);
+  mln2 = GetHead((struct List *)mtl2);
+
   // walk through both lists in parallel and compare the single nodes
-  while(mln1->mln_Succ != NULL && mln2->mln_Succ != NULL)
+  while(mln1 != NULL && mln2 != NULL)
   {
     struct MimeTypeNode *mtn1 = (struct MimeTypeNode *)mln1;
     struct MimeTypeNode *mtn2 = (struct MimeTypeNode *)mln2;
@@ -161,12 +166,13 @@ BOOL CompareMimeTypeLists(const struct MinList *mtl1, const struct MinList *mtl2
       equal = FALSE;
       break;
     }
-    mln1 = mln1->mln_Succ;
-    mln2 = mln2->mln_Succ;
+
+    mln1 = GetSucc(mln1);
+    mln2 = GetSucc(mln2);
   }
 
   // if there are any nodes left then the two lists cannot be equal
-  if(mln1->mln_Succ != NULL || mln2->mln_Succ != NULL)
+  if(GetSucc(mln1) != NULL || GetSucc(mln2) != NULL)
   {
     equal = FALSE;
   }

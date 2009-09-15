@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-09-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * all: introduced OS4's GetHead/Pred/Succ/Tail functions to navigate within
+    a standard Exec list. This made it possible to replace all custom list
+    iterations by a macro call using these functions. The big advantage of these
+    functions is that they perform certain checks, like NULL pointers or empty
+    lists.
+
 2009-09-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: added some error checks for the write operations during a mail

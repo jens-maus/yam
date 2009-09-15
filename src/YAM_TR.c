@@ -3505,45 +3505,43 @@ out:
 //  Displays a list of messages ready for download
 static void TR_DisplayMailList(BOOL largeonly)
 {
+  Object *lv = G->TR->GUI.LV_MAILS;
+  struct Node *curNode;
+  int pos=0;
+
   ENTER();
 
-  if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
+  set(lv, MUIA_NList_Quiet, TRUE);
+
+  // search through our transferList
+  IterateList(&G->TR->transferList, curNode)
   {
-    // search through our transferList
-    Object *lv = G->TR->GUI.LV_MAILS;
-    struct MinNode *curNode;
-    int pos=0;
+    struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+    #if defined(DEBUG)
+    struct Mail *mail = mtn->mail;
+    #endif
 
-    set(lv, MUIA_NList_Quiet, TRUE);
-    for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    // only display mails to be downloaded
+    if(hasTR_LOAD(mtn) || hasTR_PRESELECT(mtn))
     {
-      struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-      #if defined(DEBUG)
-      struct Mail *mail = mtn->mail;
-      #endif
-
-      // only display mails to be downloaded
-      if(hasTR_LOAD(mtn) || hasTR_PRESELECT(mtn))
+      // add this mail to the transfer list in case we either
+      // should show ALL mails or the mail size is >= the warning size
+      if(largeonly == FALSE || hasTR_PRESELECT(mtn))
       {
-        // add this mail to the transfer list in case we either
-        // should show ALL mails or the mail size is >= the warning size
-        if(largeonly == FALSE || hasTR_PRESELECT(mtn))
-        {
-          mtn->position = pos++;
+        mtn->position = pos++;
 
-          DoMethod(lv, MUIM_NList_InsertSingle, mtn, MUIV_NList_Insert_Bottom);
-          D(DBF_GUI, "added mail with subject '%s' and size %ld to preselection list", mail->Subject, mail->Size);
-        }
-        else
-          D(DBF_GUI, "skipped mail with subject '%s' and size %ld", mail->Subject, mail->Size);
+        DoMethod(lv, MUIM_NList_InsertSingle, mtn, MUIV_NList_Insert_Bottom);
+        D(DBF_GUI, "added mail with subject '%s' and size %ld to preselection list", mail->Subject, mail->Size);
       }
       else
         D(DBF_GUI, "skipped mail with subject '%s' and size %ld", mail->Subject, mail->Size);
     }
-
-    xset(lv, MUIA_NList_Active, MUIV_NList_Active_Top,
-             MUIA_NList_Quiet, FALSE);
+    else
+      D(DBF_GUI, "skipped mail with subject '%s' and size %ld", mail->Subject, mail->Size);
   }
+
+  xset(lv, MUIA_NList_Active, MUIV_NList_Active_Top,
+           MUIA_NList_Quiet, FALSE);
 
   LEAVE();
 }
@@ -3651,10 +3649,10 @@ static void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
   // if there is no search count we can break out immediatly
   if(G->TR->SearchCount > 0)
   {
-    struct MinNode *curNode;
+    struct Node *curNode;
 
     // Now we process the read header to set all flags accordingly
-    for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    IterateList(&C->filterList, curNode)
     {
       struct FilterNode *filter = (struct FilterNode *)curNode;
 
@@ -4000,10 +3998,10 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
         // do we have to do some remote filter actions?
         if(G->TR->SearchCount > 0)
         {
-          struct MinNode *curNode;
+          struct Node *curNode;
 
           set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_ApplyFilters));
-          for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          IterateList(&G->TR->transferList, curNode)
             TR_GetMessageDetails((struct MailTransferNode *)curNode, -2);
         }
 
@@ -4026,9 +4024,9 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
           {
             // ...or any sort of preselection and there is a maximum size
 
-            struct MinNode *curNode;
+            struct Node *curNode;
 
-            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+            IterateList(&G->TR->transferList, curNode)
             {
               struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
               #if defined(DEBUG)
@@ -4069,7 +4067,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
           set(G->TR->GUI.WI, MUIA_Window_Activate, xget(G->MA->GUI.WI, MUIA_Window_Activate));
 
           set(G->TR->GUI.GR_PAGE, MUIA_Group_ActivePage, 0);
-          G->TR->GMD_Mail = G->TR->transferList.mlh_Head;
+          G->TR->GMD_Mail = (struct MinNode *)GetHead((struct List *)&G->TR->transferList);
           G->TR->GMD_Line = 0;
           TR_CompleteMsgList();
         }
@@ -4489,9 +4487,9 @@ static void TR_TransStat_Init(struct TransStat *ts)
   if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
   {
     // search through our transferList
-    struct MinNode *curNode;
+    struct Node *curNode;
 
-    for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    IterateList(&G->TR->transferList, curNode)
     {
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
@@ -4763,10 +4761,10 @@ static BOOL TR_ApplySentFilters(struct Mail *mail)
   // our filtering at all, otherwise we return immediatly
   if(G->TR->SearchCount > 0)
   {
-    struct MinNode *curNode;
+    struct Node *curNode;
 
     // Now we process the read header to set all flags accordingly
-    for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    IterateList(&C->filterList, curNode)
     {
       struct FilterNode *filter = (struct FilterNode *)curNode;
 
@@ -4971,7 +4969,7 @@ static BOOL FilterDuplicates(void)
           {
             int num;
             char uidl[SIZE_DEFAULT+SIZE_HOST];
-            struct MinNode *curNode;
+            struct Node *curNode;
 
             // now parse the line and get the message number and UIDL
             sscanf(buf, "%d %s", &num, uidl);
@@ -4982,7 +4980,7 @@ static BOOL FilterDuplicates(void)
             strlcat(uidl, C->P3[G->TR->POP_Nr]->Server, sizeof(uidl));
 
             // search through our transferList
-            for(curNode = G->TR->transferList.mlh_Head; G->TR->Abort == FALSE && G->Error == FALSE && curNode->mln_Succ; curNode = curNode->mln_Succ)
+            IterateList(&G->TR->transferList, curNode)
             {
               struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
@@ -5013,6 +5011,9 @@ static BOOL FilterDuplicates(void)
 
                 break;
               }
+
+              if(G->TR->Abort == TRUE || G->Error == TRUE)
+                break;
             }
 
             // now read the next Line
@@ -5028,12 +5029,12 @@ static BOOL FilterDuplicates(void)
       }
       else
       {
-        struct MinNode *curNode;
+        struct Node *curNode;
 
         W(DBF_UIDL, "POP3 server '%s' doesn't support UIDL command!", C->P3[G->TR->POP_Nr]->Server);
 
         // search through our transferList
-        for(curNode = G->TR->transferList.mlh_Head; G->TR->Abort == FALSE && G->Error == FALSE && curNode->mln_Succ; curNode = curNode->mln_Succ)
+        IterateList(&G->TR->transferList, curNode)
         {
           struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
@@ -5060,6 +5061,9 @@ static BOOL FilterDuplicates(void)
               D(DBF_UIDL, "mail %ld: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
             }
           }
+
+          if(G->TR->Abort == TRUE || G->Error == TRUE)
+            break;
         }
       }
 
@@ -5195,13 +5199,13 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
     // write mode.
     if((fh = fopen(fname, append ? "a" : "w")) != NULL)
     {
-      struct MinNode *curNode;
+      struct Node *curNode;
 
       setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
       success = TRUE;
 
-      for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && G->TR->Abort == FALSE && success; curNode = curNode->mln_Succ)
+      IterateList(&G->TR->transferList, curNode)
       {
         struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
         struct Mail *mail = mtn->mail;
@@ -5335,6 +5339,9 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
         }
         else
           success = FALSE;
+
+        if(G->TR->Abort == TRUE || success == FALSE)
+          break;
       }
 
       // close file pointer
@@ -5758,14 +5765,14 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
               {
                 struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
                 struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
-                struct MinNode *curNode;
+                struct Node *curNode;
 
                 // set the success to TRUE as everything worked out fine
                 // until here.
                 success = TRUE;
                 AppendToLogfile(LF_VERBOSE, 41, tr(MSG_LOG_ConnectSMTP), host);
 
-                for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+                IterateList(&G->TR->transferList, curNode)
                 {
                   struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
                   struct Mail *mail = mtn->mail;
@@ -6623,13 +6630,13 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
           if((ifh = fopen(G->TR->ImportFile, "r")) != NULL)
           {
-            struct MinNode *curNode;
+            struct Node *curNode;
 
             setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
             // iterate through our transferList and seek to
             // each position/address of a mail
-            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && G->TR->Abort == FALSE; curNode = curNode->mln_Succ)
+            IterateList(&G->TR->transferList, curNode)
             {
               struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
               struct Mail *mail = mtn->mail;
@@ -6761,6 +6768,9 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                 // put the transferStat to 100%
                 TR_TransStat_Update(&ts, TS_SETMAX);
               }
+
+              if(G->TR->Abort == TRUE)
+                break;
             }
 
             fclose(ifh);
@@ -6776,13 +6786,13 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
           if((ifh = fopen(G->TR->ImportFile, "rb")) != NULL)
           {
-            struct MinNode *curNode;
+            struct Node *curNode;
 
             setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
             // iterate through our transferList and seek to
             // each position/address of a mail
-            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && G->TR->Abort == FALSE; curNode = curNode->mln_Succ)
+            IterateList(&G->TR->transferList, curNode)
             {
               struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
               struct Mail *mail = mtn->mail;
@@ -6848,6 +6858,9 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                 // put the transferStat to 100%
                 TR_TransStat_Update(&ts, TS_SETMAX);
               }
+
+              if(G->TR->Abort == TRUE)
+                break;
             }
 
             fclose(ifh);
@@ -7111,7 +7124,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
   if(ts.Msgs_Tot > 0)
   {
     struct Folder *infolder = FO_GetFolderByType(FT_INCOMING, NULL);
-    struct MinNode *curNode;
+    struct Node *curNode;
     struct MUI_NListtree_TreeNode *incomingTreeNode = FO_GetFolderTreeNode(infolder);
 
     if(C->TransferWindow == TWM_SHOW && xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
@@ -7119,7 +7132,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 
     TR_TransStat_Start(&ts);
 
-    for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && G->TR->Abort == FALSE && G->Error == FALSE; curNode = curNode->mln_Succ)
+    IterateList(&G->TR->transferList, curNode)
     {
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
       struct Mail *mail = mtn->mail;
@@ -7174,6 +7187,9 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       }
       else
         D(DBF_NET, "leaving mail with subject '%s' and size %ld on server to be downloaded again", mail->Subject, mail->Size);
+
+      if(G->TR->Abort == TRUE || G->Error == TRUE)
+        break;
     }
 
     DisplayStatistics(infolder, TRUE);

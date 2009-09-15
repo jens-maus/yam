@@ -331,7 +331,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
         if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
         {
           int i;
-          struct MinNode *curNode;
+          struct Node *curNode;
           Object *cstate = (Object *)childList->lh_Head;
           Object *child;
 
@@ -344,7 +344,8 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
 
           // Now we should have a clean SGROUP and can populate with new SearchControlGroup
           // objects
-          for(i=0, curNode = filter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
+          i = 0;
+          IterateList(&filter->ruleList, curNode)
           {
             Object *newSearchGroup = SearchControlGroupObject,
                                        MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
@@ -363,6 +364,8 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
 
             // add it to our searchGroupList
             DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
+
+            i++;
           }
         }
         DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
@@ -1076,7 +1079,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 {
   int i;
-  struct MinNode *curNode;
   BOOL success = TRUE;
 
   ENTER();
@@ -1107,7 +1109,9 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 
   if(success == TRUE)
   {
-    for(curNode = sco->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    struct Node *curNode;
+
+    IterateList(&sco->mimeTypeList, curNode)
     {
       struct MimeTypeNode *srcNode = (struct MimeTypeNode *)curNode;
       struct MimeTypeNode *dstNode;
@@ -1128,7 +1132,9 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 
   if(success == TRUE)
   {
-    for(curNode = sco->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    struct Node *curNode;
+
+    IterateList(&sco->filterList, curNode)
     {
       struct FilterNode *srcFilter = (struct FilterNode *)curNode;
       struct FilterNode *dstFilter;
@@ -1953,33 +1959,29 @@ void CO_Validate(struct Config *co, BOOL update)
   // finally update possibly open read windows
   if(updateReadWindows == TRUE || updateHeaderMode == TRUE || updateSenderInfo == TRUE)
   {
-    if(IsListEmpty((struct List *)&G->readMailDataList) == FALSE)
+    struct Node *curNode;
+
+    IterateList(&G->readMailDataList, curNode)
     {
-      // search through our ReadDataList
-      struct MinNode *curNode;
+      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-      for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      if(rmData->mail != NULL)
       {
-        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
-        if(rmData->mail != NULL)
+        // we use PushMethod for the case the read window modifies we list we are currently walking through
+        if(rmData->readMailGroup != NULL && (updateHeaderMode == TRUE || updateSenderInfo == TRUE))
         {
-          // we use PushMethod for the case the read window modifies we list we are currently walking through
-          if(rmData->readMailGroup != NULL && (updateHeaderMode == TRUE || updateSenderInfo == TRUE))
-          {
-            // forward the modified information directly to the read mail group
-            if(updateHeaderMode == TRUE)
-              DoMethod(G->App, MUIM_Application_PushMethod, rmData->readMailGroup, 2, MUIM_ReadMailGroup_ChangeHeaderMode, co->ShowHeader);
+          // forward the modified information directly to the read mail group
+          if(updateHeaderMode == TRUE)
+            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readMailGroup, 2, MUIM_ReadMailGroup_ChangeHeaderMode, co->ShowHeader);
 
-            if(updateSenderInfo == TRUE)
-              DoMethod(G->App, MUIM_Application_PushMethod, rmData->readMailGroup, 2, MUIM_ReadMailGroup_ChangeSenderInfoMode, co->ShowSenderInfo);
-          }
-          else if(rmData->readWindow != NULL && updateReadWindows == TRUE)
-          {
-            // forward the modifed information to the window, because a read mail group has no toolbar
-            if(updateReadWindows == TRUE)
-              DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
-          }
+          if(updateSenderInfo == TRUE)
+            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readMailGroup, 2, MUIM_ReadMailGroup_ChangeSenderInfoMode, co->ShowSenderInfo);
+        }
+        else if(rmData->readWindow != NULL && updateReadWindows == TRUE)
+        {
+          // forward the modifed information to the window, because a read mail group has no toolbar
+          if(updateReadWindows == TRUE)
+            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
         }
       }
     }

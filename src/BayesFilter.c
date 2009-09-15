@@ -31,6 +31,7 @@
 #include <math.h>
 #include <float.h>
 
+#include <proto/exec.h>
 #include <proto/dos.h>
 
 #include "YAM.h"
@@ -386,7 +387,7 @@ static void tokenizerTokenizeAttachment(struct Tokenizer *t,
 static void tokenizerTokenizeHeaders(struct Tokenizer *t,
                                      struct Part *part)
 {
-  struct MinNode *node;
+  struct Node *curNode;
   STRPTR contentType, charSet;
 
   ENTER();
@@ -394,9 +395,9 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
   contentType = (part->ContentType != NULL) ? strdup(part->ContentType) : NULL;
   charSet = (part->CParCSet != NULL) ? strdup(part->CParCSet) : NULL;
 
-  for(node = part->headerList->mlh_Head; node->mln_Succ != NULL; node = node->mln_Succ)
+  IterateList(part->headerList, curNode)
   {
-    struct HeaderNode *hdr = (struct HeaderNode *)node;
+    struct HeaderNode *hdr = (struct HeaderNode *)curNode;
     STRPTR name;
 
     if((name = strdup(hdr->name)) != NULL)

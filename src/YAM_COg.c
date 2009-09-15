@@ -318,7 +318,6 @@ HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *list, Object *str)
 
   if((s = (char *)xget(str, MUIA_String_Contents)) != NULL)
   {
-    struct MinNode *curNode;
     int i;
 
     // we build the list totally from ground up.
@@ -328,7 +327,9 @@ HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *list, Object *str)
     // string isn't the one in the YAM config window.
     if(G->CO == NULL || str != G->CO->GUI.ST_CTYPE)
     {
-      for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      struct Node *curNode;
+
+      IterateList(&C->mimeTypeList, curNode)
       {
         struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
 
@@ -344,7 +345,9 @@ HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *list, Object *str)
 
       if(G->CO == NULL || str != G->CO->GUI.ST_CTYPE)
       {
-        for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        struct Node *curNode;
+
+        IterateList(&C->mimeTypeList, curNode)
         {
           struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
 
@@ -622,7 +625,7 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
         while(getline(&buf, &buflen, fh) > 0)
         {
           struct MimeTypeNode *mt = NULL;
-          struct MinNode *curNode;
+          struct Node *curNode;
           char *ctype = buf;
           const char *ext = "";
           const char *command = "";
@@ -685,7 +688,7 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
           }
 
           // now we try to find the content-type in our mimeTypeList
-          for(curNode = C->mimeTypeList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          IterateList(&C->mimeTypeList, curNode)
           {
             struct MimeTypeNode *mtNode = (struct MimeTypeNode *)curNode;
 
@@ -1533,9 +1536,9 @@ static Object *MakeXPKPop(Object **text, BOOL encrypt)
     }
     else
     {
-      struct MinNode *curNode;
+      struct Node *curNode;
 
-      for(curNode = G->xpkPackerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      IterateList(&G->xpkPackerList, curNode)
       {
         struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
         BOOL suits = TRUE;

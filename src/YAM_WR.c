@@ -1832,13 +1832,12 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
   // check if the mail in question resists in the outgoing
   // folder
-  if(isOutgoingFolder(folder) &&
-     IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+  if(isOutgoingFolder(folder))
   {
     // search through our WriteMailDataList
-    struct MinNode *curNode;
+    struct Node *curNode;
 
-    for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    IterateList(&G->writeMailDataList, curNode)
     {
       struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
@@ -2920,38 +2919,33 @@ BOOL CleanupWriteMailData(struct WriteMailData *wmData)
 BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRef)
 {
   BOOL result = FALSE;
+  struct Node *curNode;
 
   ENTER();
 
-  if(IsListEmpty((struct List *)&G->writeMailDataList) == FALSE)
+  IterateList(&G->writeMailDataList, curNode)
   {
-    // search through our WriteMailDataList
-    struct MinNode *curNode;
+    struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
-    for(curNode = G->writeMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    if(wmData->refMail == search)
     {
-      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+      wmData->refMail = (struct Mail *)newRef;
+      result = TRUE;
+    }
 
-      if(wmData->refMail == search)
+    if(wmData->refMailList != NULL && IsMailListEmpty(wmData->refMailList) == FALSE)
+    {
+      struct MailNode *mnode;
+
+      LockMailListShared(wmData->refMailList);
+
+      if((mnode = FindMailInList(wmData->refMailList, (struct Mail *)search)) != NULL)
       {
-        wmData->refMail = (struct Mail *)newRef;
+        mnode->mail = (struct Mail *)newRef;
         result = TRUE;
       }
 
-      if(wmData->refMailList != NULL && IsMailListEmpty(wmData->refMailList) == FALSE)
-      {
-        struct MailNode *mnode;
-
-        LockMailListShared(wmData->refMailList);
-
-        if((mnode = FindMailInList(wmData->refMailList, (struct Mail *)search)) != NULL)
-        {
-          mnode->mail = (struct Mail *)newRef;
-          result = TRUE;
-        }
-
-        UnlockMailList(wmData->refMailList);
-      }
+      UnlockMailList(wmData->refMailList);
     }
   }
 
