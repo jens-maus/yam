@@ -4473,6 +4473,8 @@ MakeStaticHook(TR_ChangeTransFlagsHook, TR_ChangeTransFlagsFunc);
 //  Initializes transfer statistics
 static void TR_TransStat_Init(struct TransStat *ts)
 {
+  struct Node *curNode;
+
   ENTER();
 
   ts->Msgs_Tot = 0;
@@ -4484,20 +4486,15 @@ static void TR_TransStat_Init(struct TransStat *ts)
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
   }
 
-  if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
+  // search through our transferList
+  IterateList(&G->TR->transferList, curNode)
   {
-    // search through our transferList
-    struct Node *curNode;
+    struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
-    IterateList(&G->TR->transferList, curNode)
-    {
-      struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+    ts->Msgs_Tot++;
 
-      ts->Msgs_Tot++;
-
-      if(hasTR_LOAD(mtn))
-        ts->Size_Tot += mtn->mail->Size;
-    }
+    if(hasTR_LOAD(mtn))
+      ts->Size_Tot += mtn->mail->Size;
   }
 
   LEAVE();

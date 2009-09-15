@@ -3988,46 +3988,43 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
 
         if((headerList = calloc(1, sizeof(struct MinList))) != NULL)
         {
+          struct Node *curNode;
+
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
           // read in the header into the headerList
           MA_ReadHeader(frp->rmData->readFile, fh, headerList, RHM_SUBHEADER);
           fclose(fh);
 
-          if(IsListEmpty((struct List *)headerList) == FALSE)
+          IterateList(headerList, curNode)
           {
-            struct Node *curNode;
+            char buf[SIZE_LINE];
+            struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
+            char *field = hdrNode->name;
+            char *value = hdrNode->content;
+            const char *msg = NULL;
 
-            IterateList(headerList, curNode)
+            if(!stricmp(field, "from"))
+              msg = tr(MSG_RE_MDNFrom);
+            else if(!stricmp(field, "to"))
+              msg = tr(MSG_RE_MDNTo);
+            else if(!stricmp(field, "subject"))
+              msg = tr(MSG_RE_MDNSubject);
+            else if(!stricmp(field, "original-message-id"))
+              msg = tr(MSG_RE_MDNMessageID);
+            else if(!stricmp(field, "date"))
+              msg = tr(MSG_RE_MDNDate);
+            else if(!stricmp(field, "original-recipient"))
+              msg = tr(MSG_RE_MDNOrigRecpt);
+            else if(!stricmp(field, "final-recipient"))
+              msg = tr(MSG_RE_MDNFinalRecpt);
+            else if(!stricmp(field, "disposition"))
+              strlcpy(disposition, Trim(value), sizeof(disposition));
+
+            if(msg != NULL)
             {
-              char buf[SIZE_LINE];
-              struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
-              char *field = hdrNode->name;
-              char *value = hdrNode->content;
-              const char *msg = NULL;
-
-              if(!stricmp(field, "from"))
-                msg = tr(MSG_RE_MDNFrom);
-              else if(!stricmp(field, "to"))
-                msg = tr(MSG_RE_MDNTo);
-              else if(!stricmp(field, "subject"))
-                msg = tr(MSG_RE_MDNSubject);
-              else if(!stricmp(field, "original-message-id"))
-                msg = tr(MSG_RE_MDNMessageID);
-              else if(!stricmp(field, "date"))
-                msg = tr(MSG_RE_MDNDate);
-              else if(!stricmp(field, "original-recipient"))
-                msg = tr(MSG_RE_MDNOrigRecpt);
-              else if(!stricmp(field, "final-recipient"))
-                msg = tr(MSG_RE_MDNFinalRecpt);
-              else if(!stricmp(field, "disposition"))
-                strlcpy(disposition, Trim(value), sizeof(disposition));
-
-              if(msg != NULL)
-              {
-                snprintf(buf, sizeof(buf), "%s %s", msg, value);
-                msgdesc = StrBufCat(msgdesc, buf);
-              }
+              snprintf(buf, sizeof(buf), "%s %s", msg, value);
+              msgdesc = StrBufCat(msgdesc, buf);
             }
           }
 
