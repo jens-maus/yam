@@ -1248,94 +1248,99 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
     "#?.csv",                              // ASL_ABOOK_CSV
     "#?.(tab|txt)",                        // ASL_ABOOK_TAB
     "#?.xml",                              // ASL_ABOOK_XML
+    "#?",                                  // ASL_GENERIC
   };
 
-  struct FileRequester *fileReq;
   struct FileReqCache *result = NULL;
 
   ENTER();
 
-  // allocate the required data for our file requester
-  if((fileReq = MUI_AllocAslRequest(ASL_FileRequest, NULL)) != NULL)
+  if(num < ASL_MAX)
   {
-    const char *pattern = acceptPattern[num];
-    struct FileReqCache *frc = G->FileReqCache[num];
-    BOOL reqResult;
-    BOOL usefrc = frc->used;
+    struct FileRequester *fileReq;
 
-    // do the actual file request now
-    reqResult = MUI_AslRequestTags(fileReq,
-                                   ASLFR_Window,         xget(win, MUIA_Window_Window),
-                                   ASLFR_TitleText,      title,
-                                   ASLFR_PositiveText,   hasSaveModeFlag(mode) ? tr(MSG_UT_Save) : tr(MSG_UT_Load),
-                                   ASLFR_DoSaveMode,     hasSaveModeFlag(mode),
-                                   ASLFR_DoMultiSelect,  hasMultiSelectFlag(mode),
-                                   ASLFR_DrawersOnly,    hasDrawersOnlyFlag(mode),
-                                   ASLFR_RejectIcons,    FALSE,
-                                   ASLFR_DoPatterns,     pattern != NULL,
-                                   ASLFR_InitialFile,    file,
-                                   ASLFR_InitialDrawer,  usefrc ? frc->drawer : drawer,
-                                   ASLFR_InitialPattern, pattern ? pattern : "#?",
-                                   usefrc ? ASLFR_InitialLeftEdge : TAG_IGNORE, frc->left_edge,
-                                   usefrc ? ASLFR_InitialTopEdge  : TAG_IGNORE, frc->top_edge,
-                                   usefrc ? ASLFR_InitialWidth    : TAG_IGNORE, frc->width,
-                                   usefrc ? ASLFR_InitialHeight   : TAG_IGNORE, frc->height,
-                                   TAG_DONE);
-
-    // copy the data out of our fileRequester into our
-    // own cached structure we return to the user
-    if(reqResult)
+    // allocate the required data for our file requester
+    if((fileReq = MUI_AllocAslRequest(ASL_FileRequest, NULL)) != NULL)
     {
-      // free previous resources
-      FreeFileReqCache(frc);
+      const char *pattern = acceptPattern[num];
+      struct FileReqCache *frc = G->FileReqCache[num];
+      BOOL reqResult;
+      BOOL usefrc = frc->used;
 
-      // copy all necessary data from the ASL filerequester structure
-      // to our cache
-      frc->file     = strdup(fileReq->fr_File);
-      frc->drawer   = strdup(fileReq->fr_Drawer);
-      frc->pattern  = strdup(fileReq->fr_Pattern);
-      frc->numArgs  = fileReq->fr_NumArgs;
-      frc->left_edge= fileReq->fr_LeftEdge;
-      frc->top_edge = fileReq->fr_TopEdge;
-      frc->width    = fileReq->fr_Width;
-      frc->height   = fileReq->fr_Height;
-      frc->used     = TRUE;
+      // do the actual file request now
+      reqResult = MUI_AslRequestTags(fileReq,
+                                     ASLFR_Window,         xget(win, MUIA_Window_Window),
+                                     ASLFR_TitleText,      title,
+                                     ASLFR_PositiveText,   hasSaveModeFlag(mode) ? tr(MSG_UT_Save) : tr(MSG_UT_Load),
+                                     ASLFR_DoSaveMode,     hasSaveModeFlag(mode),
+                                     ASLFR_DoMultiSelect,  hasMultiSelectFlag(mode),
+                                     ASLFR_DrawersOnly,    hasDrawersOnlyFlag(mode),
+                                     ASLFR_RejectIcons,    FALSE,
+                                     ASLFR_DoPatterns,     pattern != NULL,
+                                     ASLFR_InitialFile,    file,
+                                     ASLFR_InitialDrawer,  usefrc ? frc->drawer : drawer,
+                                     ASLFR_InitialPattern, pattern ? pattern : "#?",
+                                     usefrc ? ASLFR_InitialLeftEdge : TAG_IGNORE, frc->left_edge,
+                                     usefrc ? ASLFR_InitialTopEdge  : TAG_IGNORE, frc->top_edge,
+                                     usefrc ? ASLFR_InitialWidth    : TAG_IGNORE, frc->width,
+                                     usefrc ? ASLFR_InitialHeight   : TAG_IGNORE, frc->height,
+                                     TAG_DONE);
 
-      // now we copy the optional arglist
-      if(fileReq->fr_NumArgs > 0)
+      // copy the data out of our fileRequester into our
+      // own cached structure we return to the user
+      if(reqResult)
       {
-        if((frc->argList = calloc(sizeof(char*), fileReq->fr_NumArgs)) != NULL)
+        // free previous resources
+        FreeFileReqCache(frc);
+
+        // copy all necessary data from the ASL filerequester structure
+        // to our cache
+        frc->file     = strdup(fileReq->fr_File);
+        frc->drawer   = strdup(fileReq->fr_Drawer);
+        frc->pattern  = strdup(fileReq->fr_Pattern);
+        frc->numArgs  = fileReq->fr_NumArgs;
+        frc->left_edge= fileReq->fr_LeftEdge;
+        frc->top_edge = fileReq->fr_TopEdge;
+        frc->width    = fileReq->fr_Width;
+        frc->height   = fileReq->fr_Height;
+        frc->used     = TRUE;
+
+        // now we copy the optional arglist
+        if(fileReq->fr_NumArgs > 0)
         {
-          int i;
+          if((frc->argList = calloc(sizeof(char*), fileReq->fr_NumArgs)) != NULL)
+          {
+            int i;
 
-          for(i=0; i < fileReq->fr_NumArgs; i++)
-            frc->argList[i] = strdup(fileReq->fr_ArgList[i].wa_Name);
+            for(i=0; i < fileReq->fr_NumArgs; i++)
+              frc->argList[i] = strdup(fileReq->fr_ArgList[i].wa_Name);
+          }
         }
+        else
+          frc->argList = NULL;
+
+        // everything worked out fine, so lets return
+        // our globally cached filereq structure.
+        result = frc;
       }
-      else
-        frc->argList = NULL;
+      else if(IoErr() != 0)
+      {
+        // and IoErr() != 0 signals that something
+        // serious happend and that we have to inform the
+        // user
+        ER_NewError(tr(MSG_ER_CANTOPENASL));
 
-      // everything worked out fine, so lets return
-      // our globally cached filereq structure.
-      result = frc;
+        // beep the display as well
+        DisplayBeep(NULL);
+      }
+
+
+      // free the ASL request structure again.
+      MUI_FreeAslRequest(fileReq);
     }
-    else if(IoErr() != 0)
-    {
-      // and IoErr() != 0 signals that something
-      // serious happend and that we have to inform the
-      // user
-      ER_NewError(tr(MSG_ER_CANTOPENASL));
-
-      // beep the display as well
-      DisplayBeep(NULL);
-    }
-
-
-    // free the ASL request structure again.
-    MUI_FreeAslRequest(fileReq);
+    else
+      ER_NewError(tr(MSG_ErrorAslStruct));
   }
-  else
-    ER_NewError(tr(MSG_ErrorAslStruct));
 
   RETURN(result);
   return result;

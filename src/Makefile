@@ -411,6 +411,7 @@ REXX = \
 	readprint.o \
 	readsave.o \
 	request.o \
+	requestfile.o \
 	requestfolder.o \
 	requeststring.o \
 	screentoback.o \

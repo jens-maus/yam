@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-09-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Rexx.c, requestfile.c, doc/YAM_english.guide: implemented the REQUESTFILE
+    function to open a file requester to let the user choose one or more files.
+    This fulfils feature request #2858725.
+
 2009-09-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * all: introduced OS4's GetHead/Pred/Succ/Tail functions to navigate within

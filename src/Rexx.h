@@ -145,6 +145,7 @@ void rx_readinfo(struct RexxHost *, struct RexxParams *, enum RexxAction, struct
 void rx_readprint(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_readsave(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_request(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
+void rx_requestfile(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_requestfolder(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_requeststring(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_screentoback(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);

@@ -88,6 +88,7 @@ enum ReqFileType
   ASL_ABOOK_CSV,
   ASL_ABOOK_TAB,
   ASL_ABOOK_XML,
+  ASL_GENERIC,
   ASL_MAX
 };
 

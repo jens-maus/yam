@@ -5719,6 +5719,7 @@ Alphabetical list of all ARexx commands
  @{" READPRINT         " link "RX_READPRINT"}  - Print an attachment
  @{" READSAVE          " link "RX_READSAVE"}  - Save an attachment
  @{" REQUEST           " link "RX_REQUEST"}  - Request a choice from the user
+ @{" REQUESTFILE       " link "RX_REQUESTFILE"}  - Request the user to select a file
  @{" REQUESTFOLDER     " link "RX_REQUESTFOLDER"}  - Request the user to select a folder
  @{" REQUESTSTRING     " link "RX_REQUESTSTRING"}  - Request the user for a string
  @{" SCREENTOBACK      " link "RX_SCREENTOBACK"}  - Bring the YAM screen to the background
@@ -5846,6 +5847,7 @@ Request info from user
 
  @{" GETCONFIGINFO     " link "RX_GETCONFIGINFO"}  - Return information about the current user
  @{" REQUEST           " link "RX_REQUEST"}  - Request a choice from the user
+ @{" REQUESTFILE       " link "RX_REQUESTFILE"}  - Request the user to select a file
  @{" REQUESTFOLDER     " link "RX_REQUESTFOLDER"}  - Request the user to select a folder
  @{" REQUESTSTRING     " link "RX_REQUESTSTRING"}  - Request the user for a string
  @{" USERINFO          " link "RX_USERINFO"}  - Return information about the current user
@@ -8546,7 +8548,7 @@ READSAVE
 @endnode
 
 @node "RX_REQUEST" "ARexx command: REQUEST"
-@next "RX_REQUESTFOLDER"
+@next "RX_REQUESTFILE"
 @prev "RX_READSAVE"
 @toc "REXX"
 
@@ -8613,9 +8615,67 @@ REQUEST
 
 @endnode
 
+@node "RX_REQUESTFILE" "ARexx command: REQUESTFILE"
+@next "RX_REQUESTFILE"
+@prev "RX_REQUEST"
+@toc "REXX"
+
+REQUESTFILE
+-------------
+
+@{b}NAME@{ub}
+     RequestFile -- Request the user to select a file.  (V2.6)
+
+@{b}TEMPLATE@{ub}
+     VAR/K,STEM/K,TITLE/A,DRAWER,FILE,MULTISELECT/S,DRAWERSONLY/S,SAVEMODE/S
+
+@{b}FUNCTION@{ub}
+     Requests the user to select a file.
+
+@{b}INPUTS@{ub}
+     VAR/K             - alternative variable to put the results into
+                         instead of RESULT
+     STEM/K            - base name used for the stem where the result
+                         will be stored
+     TITLE/A           - the title of the file requester
+     DRAWER            - initial drawer when opening the requester
+     FILE              - initial file when opening the requester
+     MULTISELECT/S     - enable multiselection
+     DRAWERSONLY/S     - exclude files from selection
+     SAVEMODE/S        - set requester to "save mode", no selection via
+                         doubleclick will be possible then
+
+@{b}RETURNS@{ub}
+     VAR          - info returned by the query
+     <STEM>DRAWER - name of the selected drawer
+     <STEM>FILES  - names of the selected files
+
+     RC is set to 1 if the user cancels the requester.
+
+@{b}NOTES@{ub}
+
+@{b}EXAMPLE@{ub}
+         /* Enable result codes */
+         OPTIONS RESULTS
+
+         REQUESTFILE title="Please select a file" drawer="RAM:" STEM files.
+
+         IF RC~= 0 THEN EXIT
+
+         SAY "selected drawer is '" files.drawer "'"
+         DO i=0 to files.COUNT-1
+           SAY "selected file '" files.files.i "'"
+         END
+
+@{b}BUGS@{ub}
+
+@{b}SEE ALSO@{ub}
+
+@endnode
+
 @node "RX_REQUESTFOLDER" "ARexx command: REQUESTFOLDER"
 @next "RX_REQUESTSTRING"
-@prev "RX_REQUEST"
+@prev "RX_REQUESTFILE"
 @toc "REXX"
 
 REQUESTFOLDER
@@ -11324,6 +11384,7 @@ local bulletin boards or on public domain disks.
    @{" Remote filters " link "CO03"}
    @{" Reply-To: address " link "CO05"}
    @{" REQUEST, ARexx command " link "RX_REQUEST"}
+   @{" REQUESTFILE, ARexx command " link "RX_REQUESTFILE"}
    @{" REQUESTFOLDER, ARexx command " link "RX_REQUESTFOLDER"}
    @{" REQUESTSTRING, ARexx command " link "RX_REQUESTSTRING"}
    @{" Requirements " link "REQS"}
