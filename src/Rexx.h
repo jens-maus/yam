@@ -117,7 +117,9 @@ void rx_help(struct RexxHost *, struct RexxParams *, enum RexxAction, struct Rex
 void rx_hide(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_info(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_isonline(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
+void rx_listfreeze(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_listselect(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
+void rx_listunfreeze(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_mailarchive(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_mailbounce(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_mailchangesubject(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);

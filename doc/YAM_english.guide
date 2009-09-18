@@ -5691,7 +5691,9 @@ Alphabetical list of all ARexx commands
  @{" HIDE              " link "RX_HIDE"}  - Iconify YAM
  @{" INFO              " link "RX_INFO"}  - Return information about the program
  @{" ISONLINE          " link "RX_ISONLINE"}  - Detect whether YAM is currently transfering email
+ @{" LISTFREEZE        " link "RX_LISTFREEZE"}  - Forbid graphical updates to a list
  @{" LISTSELECT        " link "RX_LISTSELECT"}  - Select messages in the current folder
+ @{" LISTUNFREZE       " link "RX_LISTUNFREEZE"}  - Permit graphical updates to a list
  @{" MAILARCHIVE       " link "RX_MAILARCHIVE"}  - Move the selected messages to another folder
  @{" MAILBOUNCE        " link "RX_MAILBOUNCE"}  - Bounce the current message
  @{" MAILCHANGESUBJECT " link "RX_MAILCHANGESUBJECT"}  - Change the subject of the selected message(s)
@@ -5796,6 +5798,8 @@ GUI handling
 
  @{" APPBUSY           " link "RX_APPBUSY"}  - Switch YAM to busy mode
  @{" APPNOBUSY         " link "RX_APPNOBUSY"}  - Bring YAM out of busy mode
+ @{" LISTFREEZE        " link "RX_LISTFREEZE"}  - Forbid graphical updates to a list
+ @{" LISTUNFREEZE      " link "RX_LISTUNFREEZE"}  - Permit graphical updates to a list
  @{" READCLOSE         " link "RX_READCLOSE"}  - Close the active Read window
 
 
@@ -7017,7 +7021,7 @@ INFO
 @endnode
 
 @node "RX_ISONLINE" "ARexx command: ISONLINE"
-@next "RX_LISTSELECT"
+@next "RX_LISTFREEZE"
 @prev "RX_INFO"
 @toc "REXX"
 
@@ -7056,9 +7060,44 @@ ISONLINE
 
 @endnode
 
-@node "RX_LISTSELECT" "ARexx command: LISTSELECT"
-@next "RX_MAILARCHIVE"
+@node "RX_LISTFREEZE" "ARexx command: LISTFREEZE"
+@next "RX_LISTSELECT"
 @prev "RX_ISONLINE"
+@toc "REXX"
+
+LISTFREEZE
+----------
+
+@{b}NAME@{ub}
+     ListFreeze -- Forbid graphical changes to a list.  (V2.6)
+
+@{b}TEMPLATE@{ub}
+     LIST/A
+
+@{b}FUNCTION@{ub}
+     Forbids graphical changes to a list, i.e. during a long running command.
+
+@{b}INPUTS@{ub}
+     LIST/A   - name of the list to be frozen. Currently these lists may be
+                frozen:
+                   MAILS - the main mail list
+
+@{b}RETURNS@{ub}
+
+@{b}NOTES@{ub}
+
+@{b}EXAMPLE@{ub}
+
+@{b}BUGS@{ub}
+
+@{b}SEE ALSO@{ub}
+     @{" LISTUNFREEZE " link "RX_LISTUNFREEZE"}
+
+@endnode
+
+@node "RX_LISTSELECT" "ARexx command: LISTSELECT"
+@next "RX_LISTUNFREEZE"
+@prev "RX_LISTFREEZE"
 @toc "REXX"
 
 LISTSELECT
@@ -7095,9 +7134,44 @@ LISTSELECT
 
 @endnode
 
+@node "RX_LISTUNFREEZE" "ARexx command: LISTUNFREEZE"
+@next "RX_MAILARCHIVE"
+@prev "RX_LISTSELECT"
+@toc "REXX"
+
+LISTUNFREEZE
+----------
+
+@{b}NAME@{ub}
+     ListUnfreeze -- Permit graphical changes to a list.  (V2.6)
+
+@{b}TEMPLATE@{ub}
+     LIST/A
+
+@{b}FUNCTION@{ub}
+     Permits graphical changes to a list that was frozen before.
+
+@{b}INPUTS@{ub}
+     LIST/A   - name of the list to be unfrozen. Currently these lists may be
+                unfrozen:
+                   MAILS - the main mail list
+
+@{b}RETURNS@{ub}
+
+@{b}NOTES@{ub}
+
+@{b}EXAMPLE@{ub}
+
+@{b}BUGS@{ub}
+
+@{b}SEE ALSO@{ub}
+     @{" LISTFREEZE " link "RX_LISTFREEZE"}
+
+@endnode
+
 @node "RX_MAILARCHIVE" "ARexx command: MAILARCHIVE"
 @next "RX_MAILBOUNCE"
-@prev "RX_LISTSELECT"
+@prev "RX_LISTUNFREEZE"
 @toc "REXX"
 
 MAILARCHIVE

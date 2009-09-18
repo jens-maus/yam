@@ -7,6 +7,9 @@ $URL$
 
 2009-09-18 Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: implemented the LISTFREEZE and LISTUNFREEZE ARexx commands to forbid
+    and permit graphical changes to a specific list. Currently only the main
+    mail list may be frozen. This fulfils feature request #2860253.
   * misc: replaced some variables being passed directly to BOOL parameter by
     proper boolean checks. This could make a difference since we are checking
     for TRUE and FALSE explictly.

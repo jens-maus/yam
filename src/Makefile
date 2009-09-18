@@ -383,7 +383,9 @@ REXX = \
 	hide.o \
 	info.o \
 	isonline.o \
+	listfreeze.o \
 	listselect.o \
+	listunfreeze.o \
 	mailarchive.o \
 	mailbounce.o \
 	mailchangesubject.o \
