@@ -2920,7 +2920,7 @@ BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
 /// MA_ExportMessagesFunc
 HOOKPROTONHNO(MA_ExportMessagesFunc, void, int *arg)
 {
-   MA_ExportMessages(NULL, (BOOL)arg[0], FALSE, FALSE);
+   MA_ExportMessages(NULL, arg[0] != 0, FALSE, FALSE);
 }
 MakeHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 

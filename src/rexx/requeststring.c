@@ -84,7 +84,7 @@ void rx_requeststring(UNUSED struct RexxHost *host, struct RexxParams *params, e
       if(args->string)
         strlcpy(optional->string, args->string, sizeof(optional->string));
 
-      params->rc = !StringRequest(optional->string, SIZE_DEFAULT, NULL, reqtext, tr(MSG_Okay), NULL, tr(MSG_Cancel), (BOOL)args->secret, G->MA->GUI.WI);
+      params->rc = !StringRequest(optional->string, SIZE_DEFAULT, NULL, reqtext, tr(MSG_Okay), NULL, tr(MSG_Cancel), args->secret != 0, G->MA->GUI.WI);
       results->string = optional->string;
 
       free(reqtext);

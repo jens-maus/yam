@@ -58,7 +58,7 @@ void rx_maildelete(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
     case RXIF_ACTION:
     {
-      MA_DeleteMessage((BOOL)args->atonce, (BOOL)args->force);
+      MA_DeleteMessage(args->atonce != 0, args->force != 0);
     }
     break;
 

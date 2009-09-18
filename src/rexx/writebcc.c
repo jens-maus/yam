@@ -62,7 +62,7 @@ void rx_writebcc(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     case RXIF_ACTION:
     {
       if(G->ActiveRexxWMData != NULL && G->ActiveRexxWMData->window != NULL)
-        DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_InsertAddresses, MUIV_WriteWindow_RcptType_BCC, args->address, (BOOL)args->add);
+        DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_InsertAddresses, MUIV_WriteWindow_RcptType_BCC, args->address, args->add != 0);
       else
         params->rc = RETURN_ERROR;
     }

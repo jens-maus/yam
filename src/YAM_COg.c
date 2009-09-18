@@ -1205,7 +1205,7 @@ MakeHookWithData(MimeCommandReqStopHook,   FileRequestStopFunc, VPM_MIME_COMMAND
 HOOKPROTONHNO(ToggleSpamFilterFunc, void, int *arg)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
-  BOOL active = (BOOL)*arg;
+  BOOL active = (arg[0] != 0);
 
   ENTER();
 
@@ -1464,7 +1464,7 @@ MakeStaticHook(GetAppIconPosHook, GetAppIconPos);
 HOOKPROTONHNO(MDNRequestFunc, void, int *arg)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
-  BOOL active = (BOOL)*arg;
+  BOOL active = (arg[0] != 0);
 
   ENTER();
 
@@ -1485,7 +1485,7 @@ MakeStaticHook(MDNRequestHook, MDNRequestFunc);
 HOOKPROTONHNO(InfoBarPosFunc, void, int *arg)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
-  BOOL inactive = (BOOL)(*arg == IB_POS_OFF);
+  BOOL inactive = (arg[0] == IB_POS_OFF);
 
   ENTER();
 

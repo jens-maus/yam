@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-09-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: replaced some variables being passed directly to BOOL parameter by
+    proper boolean checks. This could make a difference since we are checking
+    for TRUE and FALSE explictly.
+
 2009-09-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * Rexx.c, requestfile.c, doc/YAM_english.guide: implemented the REQUESTFILE

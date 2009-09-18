@@ -89,7 +89,7 @@ void rx_readsave(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
                                   part->Name,
                                   part->Nr,
                                   TRUE,
-                                  (BOOL)args->overwrite,
+                                  args->overwrite != 0,
                                   part->ContentType);
             }
           }
@@ -107,7 +107,7 @@ void rx_readsave(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
                               "",
                               0,
                               TRUE,
-                              (BOOL)args->overwrite,
+                              args->overwrite != 0,
                               IntMimeTypeArray[MT_TX_PLAIN].ContentType);
 
           CloseTempFile(tf);

@@ -1996,7 +1996,7 @@ void CO_Validate(struct Config *co, BOOL update)
 HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
 {
   int sig = GetMUICycle(G->CO->GUI.CY_SIGNAT);
-  BOOL editSig = (BOOL)*arg;
+  BOOL editSig = (arg[0] != 0);
   BOOL refresh;
   char buffer[SIZE_COMMAND+SIZE_PATHFILE];
   Object *ed = G->CO->GUI.TE_SIGEDIT;
