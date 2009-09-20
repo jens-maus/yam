@@ -5693,7 +5693,7 @@ Alphabetical list of all ARexx commands
  @{" ISONLINE          " link "RX_ISONLINE"}  - Detect whether YAM is currently transfering email
  @{" LISTFREEZE        " link "RX_LISTFREEZE"}  - Forbid graphical updates to a list
  @{" LISTSELECT        " link "RX_LISTSELECT"}  - Select messages in the current folder
- @{" LISTUNFREZE       " link "RX_LISTUNFREEZE"}  - Permit graphical updates to a list
+ @{" LISTUNFREEZE      " link "RX_LISTUNFREEZE"}  - Permit graphical updates to a list
  @{" MAILARCHIVE       " link "RX_MAILARCHIVE"}  - Move the selected messages to another folder
  @{" MAILBOUNCE        " link "RX_MAILBOUNCE"}  - Bounce the current message
  @{" MAILCHANGESUBJECT " link "RX_MAILCHANGESUBJECT"}  - Change the subject of the selected message(s)
