@@ -5520,6 +5520,38 @@ void GetPubScreenName(struct Screen *screen, char *pubName, ULONG pubNameSize)
 }
 
 ///
+/// TimeHasElapsed
+// check wheter the given number of microsecond has passed since the last
+// check specified by <last>. If yes, then <last> will be set to the current
+// time
+BOOL TimeHasElapsed(struct TimeVal *last, ULONG micros)
+{
+  struct TimeVal now;
+  struct TimeVal delta;
+  BOOL elapsed = FALSE;
+
+  ENTER();
+
+  // get the current time
+  GetSysTime(TIMEVAL(&now));
+  delta = now;
+
+  // substract the known last time
+  SubTime(TIMEVAL(&delta), TIMEVAL(last));
+
+  // check whether either one second or the number of microseconds has passed
+  if(delta.Seconds > 0 || delta.Microseconds > micros)
+  {
+    // remember the current time and signal success
+    *last = now;
+    elapsed = TRUE;
+  }
+
+  RETURN(elapsed);
+  return elapsed;
+}
+
+///
 
 /*** REXX interface support ***/
 /// AllocReqText

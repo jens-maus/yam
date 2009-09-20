@@ -809,33 +809,14 @@ DECLARE(UpdateStats) // ULONG force
 
   // now we check whether the user forces the update or if
   // we have to check that the display is not update too often
-  if(msg->force == FALSE)
+  if(msg->force == TRUE)
+    doUpdate = TRUE;
+  else
   {
-    // now we check that we don't update the text too often
-    struct TimeVal now;
-
     // then we update the gauge, but we take also care of not refreshing
     // it too often or otherwise it slows down the whole search process.
-    GetSysTime(TIMEVAL(&now));
-    if(-CmpTime(TIMEVAL(&now), TIMEVAL(&data->last_statusupdate)) > 0)
-    {
-      struct TimeVal delta;
-
-      // how much time has passed exactly?
-      memcpy(&delta, &now, sizeof(struct TimeVal));
-      SubTime(TIMEVAL(&delta), TIMEVAL(&data->last_statusupdate));
-
-      // update the display at least twice a second
-      if(delta.Seconds > 0 || delta.Microseconds > 250000)
-      {
-        doUpdate = TRUE;
-        memcpy(&data->last_statusupdate, &now, sizeof(struct TimeVal));
-      }
-    }
-
+    doUpdate = TimeHasElapsed(&data->last_statusupdate, 250000);
   }
-  else
-    doUpdate = TRUE;
 
   if(doUpdate == TRUE)
   {

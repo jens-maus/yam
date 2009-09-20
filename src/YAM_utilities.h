@@ -307,6 +307,7 @@ BOOL     DumpClipboard(FILE *out);
 BOOL     EditorToFile(Object *editor, char *file);
 char *   Encrypt(const char *source);
 void     GetPubScreenName(struct Screen *screen, char *pubName, ULONG pubNameSize);
+BOOL     TimeHasElapsed(struct TimeVal *last, ULONG micros);
 char *   GetRealPath(char *path);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef);
 char *   BuildAddress(char *buffer, size_t buflen, const char *address, const char *name);

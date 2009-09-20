@@ -4513,6 +4513,8 @@ static void TR_TransStat_Start(struct TransStat *ts)
   GetSysTime(TIMEVAL(&ts->Clock_Last));
   ts->Clock_Start = ts->Clock_Last.Seconds;
 
+  memset(&ts->Clock_Last, 0, sizeof(ts->Clock_Last));
+
   snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
   xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
                             MUIA_Gauge_Max,      ts->Msgs_Tot,
@@ -4533,9 +4535,6 @@ static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, L
   // if the window isn't open we don't need to update it, do we?
   if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
   {
-    // get the new time since the last nextmsg start
-    GetSysTime(TIMEVAL(&ts->Clock_Last));
-
     // if we have a preselection window, update it.
     if(G->TR->GUI.GR_LIST != NULL && listpos >= 0)
       set(G->TR->GUI.LV_MAILS, MUIA_NList_Active, listpos);
@@ -4565,74 +4564,52 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
 
   if(size_incr > 0)
   {
-    struct TimeVal now;
-
     ts->Size_Curr += size_incr;
     ts->Size_Done += size_incr;
 
     // if the window isn't open we don't need to update it, do we?
-    if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
+    if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE && TimeHasElapsed(&ts->Clock_Last, 250000) == TRUE)
     {
-      // now we check if should really update our
-      // transfer display or if it will be overkill
-      // we shouldn't update it more than twice a second.
-      GetSysTime(TIMEVAL(&now));
-      if(-CmpTime(TIMEVAL(&now), TIMEVAL(&ts->Clock_Last)) > 0)
-      {
-        struct TimeVal delta;
+      ULONG deltatime = ts->Clock_Last.Seconds - ts->Clock_Start;
+      ULONG speed = 0;
+      LONG remclock = 0;
 
-        // how much time has passed exactly?
-        delta = now;
-        SubTime(TIMEVAL(&delta), TIMEVAL(&ts->Clock_Last));
+      // first we calculate the speed in bytes/sec
+      // to display to the user
+      if(deltatime != 0)
+        speed = ts->Size_Done / deltatime;
 
-        // update the display at least twice a second
-        if(delta.Seconds > 0 || delta.Microseconds > 250000)
-        {
-          ULONG deltatime = now.Seconds - ts->Clock_Start;
-          ULONG speed = 0;
-          LONG remclock = 0;
+      // calculate the estimated remaining time
+      if(speed != 0 && ((remclock = (ts->Size_Tot / speed) - deltatime) < 0))
+        remclock = 0;
 
-          // first we calculate the speed in bytes/sec
-          // to display to the user
-          if(deltatime != 0)
-            speed = ts->Size_Done / deltatime;
+      // format the size done and size total strings
+      FormatSize(ts->Size_Done, ts->str_size_done, sizeof(ts->str_size_done), SF_MIXED);
+      FormatSize(ts->Size_Tot, ts->str_size_tot, sizeof(ts->str_size_tot), SF_MIXED);
+      FormatSize(speed, ts->str_speed, sizeof(ts->str_speed), SF_MIXED);
 
-          // calculate the estimated remaining time
-          if(speed != 0 && ((remclock = (ts->Size_Tot / speed) - deltatime) < 0))
-            remclock = 0;
+      // now format the StatsLabel and update it
+      snprintf(G->TR->StatsLabel, sizeof(G->TR->StatsLabel), tr(MSG_TR_TRANSFERSTATUS),
+                                  ts->str_size_done, ts->str_size_tot, ts->str_speed,
+                                  deltatime / 60, deltatime % 60,
+                                  remclock / 60, remclock % 60);
 
-          // format the size done and size total strings
-          FormatSize(ts->Size_Done, ts->str_size_done, sizeof(ts->str_size_done), SF_MIXED);
-          FormatSize(ts->Size_Tot, ts->str_size_tot, sizeof(ts->str_size_tot), SF_MIXED);
-          FormatSize(speed, ts->str_speed, sizeof(ts->str_speed), SF_MIXED);
+      set(G->TR->GUI.TX_STATS, MUIA_Text_Contents, G->TR->StatsLabel);
 
-          // now format the StatsLabel and update it
-          snprintf(G->TR->StatsLabel, sizeof(G->TR->StatsLabel), tr(MSG_TR_TRANSFERSTATUS),
-                                      ts->str_size_done, ts->str_size_tot, ts->str_speed,
-                                      deltatime / 60, deltatime % 60,
-                                      remclock / 60, remclock % 60);
+      // update the gauge
+      FormatSize(ts->Size_Curr, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
+      snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
+                                                             ts->str_size_curr, ts->str_size_curr_max);
+      xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
+                                MUIA_Gauge_Current,  ts->Size_Curr / 1024,
+                                MUIA_Gauge_InfoText, G->TR->BytesLabel);
 
-          set(G->TR->GUI.TX_STATS, MUIA_Text_Contents, G->TR->StatsLabel);
-
-          // update the gauge
-          FormatSize(ts->Size_Curr, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
-          snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
-                                                                 ts->str_size_curr, ts->str_size_curr_max);
-          xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
-                                    MUIA_Gauge_Current,  ts->Size_Curr / 1024,
-                                    MUIA_Gauge_InfoText, G->TR->BytesLabel);
-
-          // signal the application to update now
-          DoMethod(G->App, MUIM_Application_InputBuffered);
-
-          ts->Clock_Last = now;
-        }
-      }
+      // signal the application to update now
+      DoMethod(G->App, MUIM_Application_InputBuffered);
     }
   }
   else if(size_incr == TS_SETMAX)
   {
-    struct TimeVal now;
     ULONG deltatime;
     ULONG speed = 0;
     LONG remclock = 0;
@@ -4650,8 +4627,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
       char speed_str[SIZE_SMALL];
 
       // we make sure that we, at least update the gauge at the end
-      GetSysTime(TIMEVAL(&now));
-      deltatime = now.Seconds - ts->Clock_Start;
+      deltatime = ts->Clock_Last.Seconds - ts->Clock_Start;
 
       // first we calculate the speed in bytes/sec
       // to display to the user
@@ -7083,12 +7059,12 @@ static void TR_NewMailAlert(void)
         char message[128];
 
         snprintf(message, sizeof(message), tr(MSG_TR_NEW_MAIL_NOTIFY), stats->Downloaded - rr->Spam);
-        IApplication->Notify(G->applicationID, APPNOTIFY_Title, "YAM",
-                                               APPNOTIFY_Screen, "FRONT",
-                                               APPNOTIFY_Text, message,
-                                               APPNOTIFY_CloseOnDC, TRUE,
-                                               APPNOTIFY_BackMsg, "POPUP",
-                                               TAG_DONE);
+        Notify(G->applicationID, APPNOTIFY_Title, "YAM",
+                                 APPNOTIFY_Screen, "FRONT",
+                                 APPNOTIFY_Text, message,
+                                 APPNOTIFY_CloseOnDC, TRUE,
+                                 APPNOTIFY_BackMsg, "POPUP",
+                                 TAG_DONE);
       }
     }
     #endif // __amigaos4__

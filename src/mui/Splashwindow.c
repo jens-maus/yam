@@ -210,7 +210,7 @@ DECLARE(ProgressChange) // char *txt, LONG percent, LONG max
 
   ENTER();
 
-  if(msg->txt)
+  if(msg->txt != NULL)
   {
     set(data->progressGauge, MUIA_Gauge_InfoText, msg->txt);
 
@@ -222,28 +222,12 @@ DECLARE(ProgressChange) // char *txt, LONG percent, LONG max
 
   if(msg->percent >= 0)
   {
-    struct TimeVal now;
-
     // then we update the gauge, but we take also care of not refreshing
     // it too often or otherwise it slows down the whole search process.
-    GetSysTime(TIMEVAL(&now));
-    if(-CmpTime(TIMEVAL(&now), TIMEVAL(&data->last_gaugemove)) > 0)
+    if(TimeHasElapsed(&data->last_gaugemove, 250000) == TRUE)
     {
-      struct TimeVal delta;
-
-      // how much time has passed exactly?
-      memcpy(&delta, &now, sizeof(struct TimeVal));
-      SubTime(TIMEVAL(&delta), TIMEVAL(&data->last_gaugemove));
-
-      // update the display at least twice a second
-      if(delta.Seconds > 0 || delta.Microseconds > 250000)
-      {
-        set(data->progressGauge, MUIA_Gauge_Current, msg->percent);
-
-        memcpy(&data->last_gaugemove, &now, sizeof(struct TimeVal));
-
-        updateStatus = TRUE;
-      }
+      set(data->progressGauge, MUIA_Gauge_Current, msg->percent);
+      updateStatus = TRUE;
     }
   }
 

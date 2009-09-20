@@ -305,27 +305,10 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
   }
   else
   {
-    struct TimeVal now;
-
     // then we update the gauge, but we take also care of not refreshing
     // it too often or otherwise it slows down the whole search process.
-    GetSysTime(TIMEVAL(&now));
-    if(-CmpTime(TIMEVAL(&now), TIMEVAL(&data->last_gaugemove)) > 0)
-    {
-      struct TimeVal delta;
-
-      // how much time has passed exactly?
-      memcpy(&delta, &now, sizeof(struct TimeVal));
-      SubTime(TIMEVAL(&delta), TIMEVAL(&data->last_gaugemove));
-
-      // update the display at least twice a second
-      if(delta.Seconds > 0 || delta.Microseconds > 250000)
-      {
-        set(data->GA_INFO, MUIA_Gauge_Current, msg->perc);
-
-        memcpy(&data->last_gaugemove, &now, sizeof(struct TimeVal));
-      }
-    }
+    if(TimeHasElapsed(&data->last_gaugemove, 250000) == TRUE)
+      set(data->GA_INFO, MUIA_Gauge_Current, msg->perc);
 
     // give the application the chance to clear its event loop
     DoMethod(G->App, MUIM_Application_InputBuffered);

@@ -914,7 +914,6 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
     {
       struct Search search;
       static char gauge[40];
-      struct TimeVal now;
       struct TimeVal last;
       Object *ga = gui->GA_PROGRESS;
       Object *lv = gui->LV_MAILS;
@@ -962,31 +961,18 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
 
             // then we update the gauge, but we take also care of not refreshing
             // it too often or otherwise it slows down the whole search process.
-            GetSysTime(TIMEVAL(&now));
-            if(-CmpTime(TIMEVAL(&now), TIMEVAL(&last)) > 0)
+            if(TimeHasElapsed(&last, 250000) == TRUE)
             {
-              struct TimeVal delta;
+              // update the gauge
+              set(ga, MUIA_Gauge_Current, progress);
+              // let the list show the found mails so far
+              set(lv, MUIA_NList_Quiet, FALSE);
 
-              // how much time has passed exactly?
-              memcpy(&delta, &now, sizeof(struct TimeVal));
-              SubTime(TIMEVAL(&delta), TIMEVAL(&last));
+              // signal the application to update now
+              DoMethod(G->App, MUIM_Application_InputBuffered);
 
-              // update the display at least twice a second
-              if(delta.Seconds > 0 || delta.Microseconds > 250000)
-              {
-                // update the gauge
-                set(ga, MUIA_Gauge_Current, progress);
-                // let the list show the found mails so far
-                set(lv, MUIA_NList_Quiet, FALSE);
-
-                // signal the application to update now
-                DoMethod(G->App, MUIM_Application_InputBuffered);
-
-                memcpy(&last, &now, sizeof(struct TimeVal));
-
-                // forbid immediate display again
-                set(lv, MUIA_NList_Quiet, TRUE);
-              }
+              // forbid immediate display again
+              set(lv, MUIA_NList_Quiet, TRUE);
             }
           }
         }
