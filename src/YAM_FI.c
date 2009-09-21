@@ -812,7 +812,7 @@ BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail)
   {
     struct RuleNode *rule = (struct RuleNode *)curNode;
 
-    if(rule->search)
+    if(rule->search != NULL)
     {
       BOOL actCond = FI_DoSearch(rule->search, mail);
 
@@ -1321,21 +1321,16 @@ BOOL FI_FilterSingleMail(struct Mail *mail, int *matches)
 // Function to make the whole pattern list is correctly cleaned up
 static void FreeSearchPatternList(struct Search *search)
 {
-  struct MinList *patternList = &search->patternList;
+  struct Node *curNode;
 
   ENTER();
 
-  if(IsListEmpty((struct List *)patternList) == FALSE)
+  // Now we process the read header to set all flags accordingly
+  while((curNode = RemHead((struct List *)&search->patternList)) != NULL)
   {
-    struct MinNode *curNode;
+    struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
 
-    // Now we process the read header to set all flags accordingly
-    while((curNode = (struct MinNode *)RemHead((struct List *)patternList)) != NULL)
-    {
-      struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
-
-      free(patternNode);
-    }
+    free(patternNode);
   }
 
   LEAVE();
@@ -1385,7 +1380,7 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
     {
       struct Node *curRuleNode;
 
-      while((curRuleNode = RemHead((struct List *)&filter->ruleList)) != NULL)
+      IterateList(&filter->ruleList, curRuleNode)
       {
         // make sure the current search structures of the rules of the filter
         // are freed
@@ -1459,7 +1454,7 @@ void FreeFilterSearch(void)
     struct FilterNode *filter = (struct FilterNode *)curNode;
     struct Node *curRuleNode;
 
-    while((curRuleNode = RemHead((struct List *)&filter->ruleList)) != NULL)
+    IterateList(&filter->ruleList, curRuleNode)
     {
       struct RuleNode *rule = (struct RuleNode *)curRuleNode;
 
@@ -1937,23 +1932,20 @@ static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
 /// FreeFilterRuleList
 void FreeFilterRuleList(struct FilterNode *filter)
 {
+  struct Node *curNode;
+
   ENTER();
 
-  if(IsListEmpty((struct List *)&filter->ruleList) == FALSE)
+  // we do have to iterate through our ruleList and
+  // free them as well
+  while((curNode = RemHead((struct List *)&filter->ruleList)) != NULL)
   {
-    struct MinNode *curNode;
+    struct RuleNode *rule = (struct RuleNode *)curNode;
 
-    // we do have to iterate through our ruleList and
-    // free them as well
-    while((curNode = (struct MinNode *)RemHead((struct List *)&filter->ruleList)) != NULL)
-    {
-      struct RuleNode *rule = (struct RuleNode *)curNode;
+    // now we do free our search structure if it exists
+    FreeRuleSearchData(rule);
 
-      // now we do free our search structure if it exists
-      FreeRuleSearchData(rule);
-
-      free(rule);
-    }
+    free(rule);
   }
 
   // initialize the ruleList as well
@@ -2116,22 +2108,19 @@ void FreeFilterNode(struct FilterNode *filter)
 // frees a complete filter list with all embedded filters
 void FreeFilterList(struct MinList *filterList)
 {
+  struct Node *curNode;
+
   ENTER();
 
-  if(IsListEmpty((struct List *)filterList) == FALSE)
+  // we have to free the filterList
+  while((curNode = RemHead((struct List *)filterList)) != NULL)
   {
-    struct MinNode *curNode;
+    struct FilterNode *filter = (struct FilterNode *)curNode;
 
-    // we have to free the filterList
-    while((curNode = (struct MinNode *)RemHead((struct List *)filterList)) != NULL)
-    {
-      struct FilterNode *filter = (struct FilterNode *)curNode;
-
-      FreeFilterNode(filter);
-    }
-
-    NewList((struct List *)filterList);
+    FreeFilterNode(filter);
   }
+
+  NewList((struct List *)filterList);
 
   LEAVE();
 }

@@ -7,6 +7,9 @@ $URL$
 
 2009-09-21 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: some of the latest changes to the filters where done a bit over-
+    hasty and destroyed lists which were not meant to be destroyed. I really
+    should drink more coffee :)
   * misc: fixed various list iterations which omitted the last (or even the
     only) element in the list. This fixes bug #2862754.
   * YAM.c: the current layout (column width of mail list, etc) is now saved to
