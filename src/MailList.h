@@ -74,8 +74,7 @@ struct MailNode *FindMailInList(struct MailList *mlist, struct Mail *mail);
 // iterate through the list, the list must *NOT* be modified!
 #define ForEachMailNode(mlist, mnode)             for(mnode = FirstMailNode(mlist); mnode != NULL; mnode = NextMailNode(mnode))
 
-// same as above, but the list may be modified
-#define ForEachMailNodeSafe(mlist, mnode, next)   for(mnode = FirstMailNode(mlist); (next = NextMailNode(mnode)) != NULL; mnode = next)
+#define TakeMailNode(mlist)                       (struct MailNode *)RemHead((struct List *)mlist)
 
 // lock and unlock a mail list via its semaphore
 #if defined(DEBUG)

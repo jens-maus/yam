@@ -2613,33 +2613,30 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
 
         if(isGroupFolder(folder) == FALSE && folder->MaxAge > 0 && MA_GetIndex(folder) == TRUE)
         {
+          struct MailNode *mnode;
+
           LockMailList(folder->messages);
 
-          if(IsMailListEmpty(folder->messages) == FALSE)
+          // initialize the list of mails to be deleted
+          InitMailList(toBeDeletedList);
+
+          ForEachMailNode(folder->messages, mnode)
           {
-            struct MailNode *mnode;
+            struct Mail *mail = mnode->mail;
 
-            // initialize the list of mails to be deleted
-            InitMailList(toBeDeletedList);
+            today.ds_Days = today_days - folder->MaxAge;
 
-            ForEachMailNode(folder->messages, mnode)
+            if(CompareDates(&today, &mail->Date) < 0)
             {
-              struct Mail *mail = mnode->mail;
-
-              today.ds_Days = today_days - folder->MaxAge;
-
-              if(CompareDates(&today, &mail->Date) < 0)
+              // delete any message from trash and spam folder automatically
+              // or if the message is read already (keep unread messages)
+              if(isTrashFolder(folder) ||
+                 isSpamFolder(folder) ||
+                 (!hasStatusNew(mail) && hasStatusRead(mail)) ||
+                 folder->ExpireUnread == TRUE)
               {
-                // delete any message from trash and spam folder automatically
-                // or if the message is read already (keep unread messages)
-                if(isTrashFolder(folder) ||
-                   isSpamFolder(folder) ||
-                   (!hasStatusNew(mail) && hasStatusRead(mail)) ||
-                   folder->ExpireUnread == TRUE)
-                {
-                  // put the mail in the "to be deleted" list
-                  AddNewMailNode(toBeDeletedList, mail);
-                }
+                // put the mail in the "to be deleted" list
+                AddNewMailNode(toBeDeletedList, mail);
               }
             }
           }
@@ -2647,22 +2644,18 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
           UnlockMailList(folder->messages);
 
           // no need to lock the "to be deleted" list as this is known in this function only
-          if(IsMailListEmpty(toBeDeletedList) == FALSE)
+          // iterate through the list "by foot" as we remove the nodes, ForEachMailNode() is
+          // not safe to call here!
+          while((mnode = TakeMailNode(toBeDeletedList)) != NULL)
           {
-            struct MailNode *mnode;
-            struct MailNode *next;
+            // Finally delete the mail. Removing/freeing the mail from the folder's list of mails
+            // is in fact done by the MA_DeleteSingle() function itself.
+            MA_DeleteSingle(mnode->mail, delFlags);
+            mailsDeleted = TRUE;
 
-            ForEachMailNodeSafe(toBeDeletedList, mnode, next)
-            {
-              // Finally delete the mail. Removing/freeing the mail from the folder's list of mails
-              // is in fact done by the MA_DeleteSingle() function itself.
-              MA_DeleteSingle(mnode->mail, delFlags);
-              mailsDeleted = TRUE;
-
-              // remove the node from the "to be deleted" list
-              RemoveMailNode(toBeDeletedList, mnode);
-              DeleteMailNode(mnode);
-            }
+            // remove the node from the "to be deleted" list
+            RemoveMailNode(toBeDeletedList, mnode);
+            DeleteMailNode(mnode);
           }
 
           DisplayStatistics(folder, FALSE);

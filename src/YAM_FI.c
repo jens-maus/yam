@@ -1384,9 +1384,8 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
        (mode == APPLY_SPAM))
     {
       struct Node *curRuleNode;
-      struct Node *nextRuleNode;
 
-      IterateListSafe(&filter->ruleList, curRuleNode, nextRuleNode)
+      while((curRuleNode = RemHead((struct List *)&filter->ruleList)) != NULL)
       {
         // make sure the current search structures of the rules of the filter
         // are freed
@@ -1459,9 +1458,8 @@ void FreeFilterSearch(void)
   {
     struct FilterNode *filter = (struct FilterNode *)curNode;
     struct Node *curRuleNode;
-    struct Node *nextRuleNode;
 
-    IterateListSafe(&filter->ruleList, curRuleNode, nextRuleNode)
+    while((curRuleNode = RemHead((struct List *)&filter->ruleList)) != NULL)
     {
       struct RuleNode *rule = (struct RuleNode *)curRuleNode;
 

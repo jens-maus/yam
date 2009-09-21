@@ -71,8 +71,7 @@ void MoveFolderNode(struct FolderList *flist, struct FolderNode *fnode, struct F
 // iterate through the list, the list must *NOT* be modified!
 #define ForEachFolderNode(flist, fnode)           for(fnode = FirstFolderNode(flist); fnode != NULL; fnode = NextFolderNode(fnode))
 
-// same as above, but the list may be modified
-#define ForEachFolderNodeSafe(flist, fnode, next) for(fnode = FirstFolderNode(flist); (next = NextFolderNode(fnode)) != NULL; fnode = next)
+#define TakeFolderNode(flist)                     (struct FolderNode *)RemHead((struct List *)flist)
 
 // lock and unlock a folder list via its semaphore
 #if defined(DEBUG)

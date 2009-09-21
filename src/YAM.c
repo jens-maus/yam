@@ -852,7 +852,6 @@ static void Terminate(void)
 {
   int i;
   struct Node *curNode;
-  struct Node *nextNode;
 
   ENTER();
 
@@ -875,18 +874,20 @@ static void Terminate(void)
 
   D(DBF_STARTUP, "freeing readMailData...");
   // cleanup the still existing readmailData objects
-  IterateListSafe(&G->readMailDataList, curNode, nextNode)
+  while((curNode = RemHead((struct List *)&G->readMailDataList)) != NULL)
   {
     struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+    SHOWVALUE(DBF_STARTUP, rmData);
 
     CleanupReadMailData(rmData, TRUE);
   }
 
   D(DBF_STARTUP, "freeing writeMailData...");
   // cleanup the still existing writemailData objects
-  IterateListSafe(&G->writeMailDataList, curNode, nextNode)
+  while((curNode = RemHead((struct List *)&G->writeMailDataList)) != NULL)
   {
     struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+    SHOWVALUE(DBF_STARTUP, wmData);
 
     CleanupWriteMailData(wmData);
   }

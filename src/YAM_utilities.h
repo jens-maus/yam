@@ -245,7 +245,6 @@ struct TimeRequest
 #define Txt2Bool(t)           (BOOL)(toupper((int)*(t)) == 'Y' || (int)*(t) == '1')
 
 #define IterateList(list, node)           for((node) = GetHead((struct List *)(list)); (node) != NULL; (node) = GetSucc(node))
-#define IterateListSafe(list, node, next) for((node) = GetHead((struct List *)(list)); ((next) = GetSucc(node)) != NULL; node = next)
 
 // LogFile enums and macros
 enum LFMode

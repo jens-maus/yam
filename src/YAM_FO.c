@@ -2044,45 +2044,41 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
 
     case SO_RESET:
     {
+      struct FolderNode *fnode;
+
       // before we reset/reload the foldertree we have to
       // make sure everything is freed correctly.
       LockFolderList(G->folders);
 
-      if(IsFolderListEmpty(G->folders) == FALSE)
+      while((fnode = TakeFolderNode(G->folders)) != NULL)
       {
-        struct FolderNode *fnode;
-        struct FolderNode *next;
+        struct Folder *folder = fnode->folder;
 
-        ForEachFolderNodeSafe(G->folders, fnode, next)
+        if(folder == NULL)
+          break;
+
+        // we do not have to call FreeFolder manually, because the
+        // destructor of the Listtree will do this for us. But we
+        // have to free the FImage of the folder if it exists
+        if(folder->imageObject != NULL)
         {
-          struct Folder *folder = fnode->folder;
+          // we make sure that the NList also doesn't use the image in future anymore
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
 
-          if(folder == NULL)
-            break;
-
-          // we do not have to call FreeFolder manually, because the
-          // destructor of the Listtree will do this for us. But we
-          // have to free the FImage of the folder if it exists
-          if(folder->imageObject != NULL)
-          {
-            // we make sure that the NList also doesn't use the image in future anymore
-            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
-
-            // and last, but not least we free the BC object here, so that this Object is also gone
-            MUI_DisposeObject(folder->imageObject);
-            // let's set it to NULL so that the destructor doesn't do the work again.
-            folder->imageObject = NULL;
-          }
-
-          // free this folder
-          FO_FreeFolder(folder);
-          // and free its node
-          DeleteFolderNode(fnode);
+          // and last, but not least we free the BC object here, so that this Object is also gone
+          MUI_DisposeObject(folder->imageObject);
+          // let's set it to NULL so that the destructor doesn't do the work again.
+          folder->imageObject = NULL;
         }
 
-        // all folder nodes have been freed, now initialize the list again
-        InitFolderList(G->folders);
+        // free this folder
+        FO_FreeFolder(folder);
+        // and free its node
+        DeleteFolderNode(fnode);
       }
+
+      // all folder nodes have been freed, now initialize the list again
+      InitFolderList(G->folders);
 
       UnlockFolderList(G->folders);
 

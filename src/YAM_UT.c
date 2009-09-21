@@ -1406,12 +1406,11 @@ BOOL DeleteZombieFiles(BOOL force)
 {
   BOOL listCleared = TRUE;
   struct Node *curNode;
-  struct Node *nextNode;
 
   ENTER();
 
   // save the pointer to the next zombie first, as we probably are going to Remove() this node later
-  IterateListSafe(&G->zombieFileList, curNode, nextNode)
+  while((curNode = RemHead((struct List *)&G->zombieFileList)) != NULL)
   {
     struct ZombieFile *zombie = (struct ZombieFile *)curNode;
 
@@ -3131,7 +3130,7 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
 
     // lets summarize the stats
     folder->Total++;
-    folder->Size += mail->Size;
+    folder->Size+= mail->Size;
 
     if(hasStatusNew(mail))
       folder->New++;
@@ -3154,7 +3153,6 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
   struct Folder *folder = mail->Folder;
   struct MailNode *mnode;
   struct Node *curNode;
-  struct Node *nextNode;
 
   ENTER();
 
@@ -3215,9 +3213,11 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 
   // Now we check if there is any read window with that very same
   // mail currently open and if so we have to close it.
-  IterateListSafe(&G->readMailDataList, curNode, nextNode)
+  curNode = GetHead((struct List *)&G->readMailDataList);
+  while(curNode != NULL)
   {
     struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+    struct Node *nextNode = GetSucc(curNode);
 
     if(rmData->mail == mail)
     {
@@ -3241,6 +3241,8 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
         rmData->mail = NULL;
       }
     }
+
+    curNode = nextNode;
   }
 
   // and last, but not least, we have to free the mail
@@ -3271,16 +3273,19 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
     {
       struct Mail *mail = mnode->mail;
       struct Node *curNode;
-      struct Node *nextNode;
 
       // Now we check if there is any read window with that very same
       // mail currently open and if so we have to clean it.
-      IterateListSafe(&G->readMailDataList, curNode, nextNode)
+      curNode = GetHead((struct List *)&G->readMailDataList);
+      while(curNode != NULL)
       {
         struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+        struct Node *nextNode = GetSucc(curNode);
 
         if(rmData->mail == mail)
           CleanupReadMailData(rmData, TRUE);
+
+        curNode = nextNode;
       }
 
       DeleteMailNode(mnode);
@@ -4755,6 +4760,7 @@ BOOL PlaySound(const char *filename)
     {
       // create a datatype trigger
       struct dtTrigger dtt;
+      ULONG error;
 
       // Fill the trigger
       dtt.MethodID     = DTM_TRIGGER;
@@ -4763,10 +4769,10 @@ BOOL PlaySound(const char *filename)
       dtt.dtt_Data     = NULL;
 
       // Play the sound by calling DoMethodA()
-      if(DoMethodA(G->NewMailSound_Obj, (APTR)&dtt) == 1)
+      if((error = DoMethodA(G->NewMailSound_Obj, (APTR)&dtt)) == 1)
         result = TRUE;
 
-      D(DBF_UTIL, "started playback of '%s' returned %ld", filename, result);
+      D(DBF_UTIL, "started playback of '%s' returned %ld/%ld", filename, error, result);
     }
     else
       W(DBF_UTIL, "failed to create sound DT object from '%s'", filename);
