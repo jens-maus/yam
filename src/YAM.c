@@ -877,7 +877,6 @@ static void Terminate(void)
   while((curNode = RemHead((struct List *)&G->readMailDataList)) != NULL)
   {
     struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-    SHOWVALUE(DBF_STARTUP, rmData);
 
     CleanupReadMailData(rmData, TRUE);
   }
@@ -887,7 +886,6 @@ static void Terminate(void)
   while((curNode = RemHead((struct List *)&G->writeMailDataList)) != NULL)
   {
     struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-    SHOWVALUE(DBF_STARTUP, wmData);
 
     CleanupWriteMailData(wmData);
   }
