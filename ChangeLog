@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-09-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: the current layout (column width of mail list, etc) is now saved to
+    ENV: when YAM is shut down be able to restore the former layout upon the
+    next start. However, to make the layout permanent you still have to snap-
+    shot either the main window or the read window. Otherwise any layout changes
+    will be lost after a reboot!
+
 2009-09-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: introduced TimeHasElapsed() function to check whether a certain number

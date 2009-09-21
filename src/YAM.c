@@ -926,6 +926,8 @@ static void Terminate(void)
   if(G->MA != NULL)
   {
     MA_UpdateIndexes(FALSE);
+    // remember the current layout, but don't make that permanent yet
+    SaveLayout(FALSE);
     set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
   }
 
