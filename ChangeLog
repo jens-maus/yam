@@ -7,6 +7,9 @@ $URL$
 
 2009-09-22 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: largely sped up every mail transfer (download, import, export) by
+    updating the statistics at most 4 times per second. Thus you won't get a
+    100% exact display but a *much* faster processing of single mails.
   * YAM_TR.c: readded an accidentally removed "IApplication->" interface call.
     Jens, please update the OS4 SDK on your build machine!!
 

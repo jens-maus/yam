@@ -103,6 +103,8 @@ struct TransStat
 {
   int   Msgs_Tot;
   int   Msgs_Done;
+  int   Msgs_Curr;
+  int   Msgs_ListPos;
   ULONG Size_Tot;
   ULONG Size_Done;
   ULONG Size_Curr;
@@ -4502,7 +4504,7 @@ static void TR_TransStat_Init(struct TransStat *ts)
 ///
 /// TR_TransStat_Start
 //  Resets statistics display
-static void TR_TransStat_Start(struct TransStat *ts)
+static void TR_TransStat_Start(struct TransStat *ts, const char *status)
 {
   ENTER();
 
@@ -4515,6 +4517,8 @@ static void TR_TransStat_Start(struct TransStat *ts)
 
   memset(&ts->Clock_Last, 0, sizeof(ts->Clock_Last));
 
+  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, status);
+
   snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
   xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
                             MUIA_Gauge_Max,      ts->Msgs_Tot,
@@ -4525,32 +4529,22 @@ static void TR_TransStat_Start(struct TransStat *ts)
 ///
 /// TR_TransStat_NextMsg
 //  Updates statistics display for next message
-static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size, const char *status)
+static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size)
 {
   ENTER();
 
+  ts->Msgs_Curr = index;
+  ts->Msgs_ListPos = listpos;
   ts->Size_Curr = 0;
   ts->Size_Curr_Max = size;
 
   // if the window isn't open we don't need to update it, do we?
   if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
   {
-    // if we have a preselection window, update it.
-    if(G->TR->GUI.GR_LIST != NULL && listpos >= 0)
-      set(G->TR->GUI.LV_MAILS, MUIA_NList_Active, listpos);
-
-    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, status);
-    set(G->TR->GUI.GA_COUNT, MUIA_Gauge_Current, index);
-
-    // and last, but not least update the gauge.
-    FormatSize(0, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
+    // format the current mail's size ahead of any refresh
     FormatSize(size, ts->str_size_curr_max, sizeof(ts->str_size_curr_max), SF_AUTO);
-    snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
-                                                            ts->str_size_curr, ts->str_size_curr_max);
 
-    xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      0,
-                              MUIA_Gauge_Current,  0,
-                              MUIA_Gauge_InfoText, G->TR->BytesLabel);
+    TR_TransStat_Update(ts, 0);
   }
 
   LEAVE();
@@ -4564,15 +4558,30 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
 
   if(size_incr > 0)
   {
-    ts->Size_Curr += size_incr;
     ts->Size_Done += size_incr;
+    ts->Size_Curr += size_incr;
+  }
+  else if(size_incr == TS_SETMAX)
+  {
+    // first update the total transferred size
+    ts->Size_Done += ts->Size_Curr_Max - ts->Size_Curr;
+    // we are done with this mail, so make sure the current size equals the final size
+    ts->Size_Curr = ts->Size_Curr_Max;
+  }
 
-    // if the window isn't open we don't need to update it, do we?
-    if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE && TimeHasElapsed(&ts->Clock_Last, 250000) == TRUE)
+  // if the window isn't open we don't need to update it, do we?
+  if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
+  {
+    // update the stats at most 4 times per second
+    if(TimeHasElapsed(&ts->Clock_Last, 250000) == TRUE)
     {
       ULONG deltatime = ts->Clock_Last.Seconds - ts->Clock_Start;
       ULONG speed = 0;
       LONG remclock = 0;
+
+      // if we have a preselection window, update it.
+      if(G->TR->GUI.GR_LIST != NULL && ts->Msgs_ListPos >= 0)
+        set(G->TR->GUI.LV_MAILS, MUIA_NList_Active, ts->Msgs_ListPos);
 
       // first we calculate the speed in bytes/sec
       // to display to the user
@@ -4583,9 +4592,14 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
       if(speed != 0 && ((remclock = (ts->Size_Tot / speed) - deltatime) < 0))
         remclock = 0;
 
+      // show the current message index
+      set(G->TR->GUI.GA_COUNT, MUIA_Gauge_Current, ts->Msgs_Curr);
+
       // format the size done and size total strings
       FormatSize(ts->Size_Done, ts->str_size_done, sizeof(ts->str_size_done), SF_MIXED);
       FormatSize(ts->Size_Tot, ts->str_size_tot, sizeof(ts->str_size_tot), SF_MIXED);
+      FormatSize(ts->Size_Curr, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
+
       FormatSize(speed, ts->str_speed, sizeof(ts->str_speed), SF_MIXED);
 
       // now format the StatsLabel and update it
@@ -4597,68 +4611,10 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
       set(G->TR->GUI.TX_STATS, MUIA_Text_Contents, G->TR->StatsLabel);
 
       // update the gauge
-      FormatSize(ts->Size_Curr, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
       snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                              ts->str_size_curr, ts->str_size_curr_max);
       xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
                                 MUIA_Gauge_Current,  ts->Size_Curr / 1024,
-                                MUIA_Gauge_InfoText, G->TR->BytesLabel);
-
-      // signal the application to update now
-      DoMethod(G->App, MUIM_Application_InputBuffered);
-    }
-  }
-  else if(size_incr == TS_SETMAX)
-  {
-    ULONG deltatime;
-    ULONG speed = 0;
-    LONG remclock = 0;
-
-    // first update the total transferred size
-    ts->Size_Done += ts->Size_Curr_Max - ts->Size_Curr;
-    // we are done with this mail, so make sure the current size equals the final size
-    ts->Size_Curr = ts->Size_Curr_Max;
-
-    // if the window isn't open we don't need to update it, do we?
-    if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
-    {
-      char size_done[SIZE_SMALL];
-      char size_total[SIZE_SMALL];
-      char speed_str[SIZE_SMALL];
-
-      // we make sure that we, at least update the gauge at the end
-      deltatime = ts->Clock_Last.Seconds - ts->Clock_Start;
-
-      // first we calculate the speed in bytes/sec
-      // to display to the user
-      if(deltatime != 0)
-        speed = ts->Size_Done / deltatime;
-
-      // calculate the estimated remaining time
-      if(speed != 0 && ((remclock = (ts->Size_Tot / speed)-deltatime) < 0))
-        remclock = 0;
-
-      // format the size done and size total strings
-      FormatSize(ts->Size_Done, size_done, sizeof(size_done), SF_MIXED);
-      FormatSize(ts->Size_Tot, size_total, sizeof(size_total), SF_MIXED);
-      FormatSize(speed, speed_str, sizeof(speed_str), SF_MIXED);
-
-      // now format the StatsLabel and update it
-      snprintf(G->TR->StatsLabel, sizeof(G->TR->StatsLabel), tr(MSG_TR_TRANSFERSTATUS),
-                                  size_done, size_total, speed_str,
-                                  deltatime / 60, deltatime % 60,
-                                  remclock / 60, remclock % 60);
-
-      set(G->TR->GUI.TX_STATS, MUIA_Text_Contents, G->TR->StatsLabel);
-
-      // if size_increment is a negative number it is
-      // a signal that we are at the end of the transfer, so we can put up
-      // the gauge to maximum and show 100% size progress
-      FormatSize(ts->Size_Curr, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
-      snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
-                                                             ts->str_size_curr, ts->str_size_curr_max);
-      xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,     100,
-                                MUIA_Gauge_Current, 100,
                                 MUIA_Gauge_InfoText, G->TR->BytesLabel);
 
       // signal the application to update now
@@ -4673,30 +4629,27 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
 //  Free temporary message and UIDL lists
 void TR_Cleanup(void)
 {
+  struct Node *curNode;
+
   ENTER();
 
   if(G->TR->GUI.LV_MAILS != NULL)
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Clear);
 
-  if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
+  while((curNode = RemHead((struct List *)&G->TR->transferList)) != NULL)
   {
-    struct MinNode *curNode;
+    struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
-    while((curNode = (struct MinNode *)RemHead((struct List *)&G->TR->transferList)) != NULL)
-    {
-      struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+    // free the mail pointer
+    if(mtn->mail != NULL)
+      free(mtn->mail);
 
-      // free the mail pointer
-      if(mtn->mail != NULL)
-        free(mtn->mail);
+    // free the UIDL
+    if(mtn->UIDL != NULL)
+      free(mtn->UIDL);
 
-      // free the UIDL
-      if(mtn->UIDL != NULL)
-        free(mtn->UIDL);
-
-      // free the node itself
-      free(mtn);
-    }
+    // free the node itself
+    free(mtn);
   }
 
   NewList((struct List *)&G->TR->transferList);
@@ -5166,7 +5119,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
 
     TR_SetWinTitle(FALSE, (char *)FilePart(fname));
     TR_TransStat_Init(&ts);
-    TR_TransStat_Start(&ts);
+    TR_TransStat_Start(&ts, tr(MSG_TR_Exporting));
 
     // open our final destination file either in append or in a fresh
     // write mode.
@@ -5186,7 +5139,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
 
         // update the transfer status
         ts.Msgs_Done++;
-        TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, tr(MSG_TR_Exporting));
+        TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size);
 
         if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder))
         {
@@ -5663,7 +5616,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
 
             G->TR->SearchCount = AllocFilterSearch(APPLY_SENT);
             TR_TransStat_Init(&ts);
-            TR_TransStat_Start(&ts);
+            TR_TransStat_Start(&ts, tr(MSG_TR_Sending));
             strlcpy(host, C->SMTP_Server, sizeof(host));
 
             // If the hostname has a explicit :xxxxx port statement at the end we
@@ -5754,7 +5707,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
                     break;
 
                   ts.Msgs_Done++;
-                  TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, tr(MSG_TR_Sending));
+                  TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size);
 
                   switch(TR_SendMessage(&ts, mail))
                   {
@@ -6587,7 +6540,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
       struct Folder *folder = G->TR->ImportFolder;
       enum FolderType ftype = folder->Type;
 
-      TR_TransStat_Start(&ts);
+      TR_TransStat_Start(&ts, tr(MSG_TR_Importing));
 
       // now we distinguish between the different import format
       // and import the mails out of it
@@ -6630,7 +6583,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
                 break;
 
-              TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
+              TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size);
 
               if((ofh = fopen(MA_NewMailFile(folder, mfile), "w")) == NULL)
                 break;
@@ -6781,7 +6734,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
                 break;
 
-              TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
+              TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size);
 
               if((ofh = fopen(MA_NewMailFile(folder, mfile), "wb")) == NULL)
                 break;
@@ -7103,7 +7056,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
     if(C->TransferWindow == TWM_SHOW && xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
       set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
 
-    TR_TransStat_Start(&ts);
+    TR_TransStat_Start(&ts, tr(MSG_TR_Downloading));
 
     IterateList(&G->TR->transferList, curNode)
     {
@@ -7113,7 +7066,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       if(hasTR_LOAD(mtn))
       {
         D(DBF_NET, "downloading mail with subject '%s' and size %ld", mail->Subject, mail->Size);
-        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
+        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size);
 
         if(TR_LoadMessage(infolder, &ts, mtn->index) == TRUE)
         {
@@ -7149,7 +7102,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       else if(hasTR_DELETE(mtn))
       {
         D(DBF_NET, "deleting mail with subject '%s' on server", mail->Subject);
-        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
+        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size);
 
         if(TR_DeleteMessage(mtn->index) == TRUE && G->TR->DuplicatesChecking == TRUE)
         {
