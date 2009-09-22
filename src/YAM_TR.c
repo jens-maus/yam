@@ -7059,7 +7059,7 @@ static void TR_NewMailAlert(void)
         char message[128];
 
         snprintf(message, sizeof(message), tr(MSG_TR_NEW_MAIL_NOTIFY), stats->Downloaded - rr->Spam);
-        Notify(G->applicationID, APPNOTIFY_Title, "YAM",
+        IApplication->Notify(G->applicationID, APPNOTIFY_Title, "YAM",
                                  APPNOTIFY_Screen, "FRONT",
                                  APPNOTIFY_Text, message,
                                  APPNOTIFY_CloseOnDC, TRUE,

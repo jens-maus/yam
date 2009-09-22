@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-09-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: readded an accidentally removed "IApplication->" interface call.
+    Jens, please update the OS4 SDK on your build machine!!
+
 2009-09-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: some of the latest changes to the filters where done a bit over-
