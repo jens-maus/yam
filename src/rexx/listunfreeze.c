@@ -33,6 +33,7 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
+#include "YAM_config.h"
 #include "mui/Classes.h"
 
 #include "Rexx.h"
@@ -60,13 +61,15 @@ void rx_listunfreeze(UNUSED struct RexxHost *host, struct RexxParams *params, en
 
     case RXIF_ACTION:
     {
-      Object *list = NULL;
-
       if(stricmp(args->list, "MAILS") == 0)
-        list = G->MA->GUI.PG_MAILLIST;
-
-      if(list != NULL)
-        set(list, MUIA_NList_Quiet, FALSE);
+      {
+        if(C->EmbeddedReadPane == TRUE)
+        {
+          // force an update of the read pane
+          MA_ChangeSelected(TRUE);
+        }
+        set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
+      }
       else
         params->rc = RETURN_ERROR;
     }

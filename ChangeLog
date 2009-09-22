@@ -7,6 +7,9 @@ $URL$
 
 2009-09-22 Thore Böckelmann <tboeckel@gmx.de>
 
+  * rexx/listunfreeze.c: unfreezing the mail list now forces a refresh of the
+    embedded read pane to make sure that the currently active mail is really
+    displayed. This fixes bug #2862758.
   * YAM_TR.c: YAM will now show a busy pointer while scanning a file to be
     imported to let the user know something is happening.
   * YAM_TR.c: largely sped up every mail transfer (download, import, export) by
