@@ -7,6 +7,8 @@ $URL$
 
 2009-09-22 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: YAM will now show a busy pointer while scanning a file to be
+    imported to let the user know something is happening.
   * YAM_TR.c: largely sped up every mail transfer (download, import, export) by
     updating the statistics at most 4 times per second. Thus you won't get a
     100% exact display but a *much* faster processing of single mails.

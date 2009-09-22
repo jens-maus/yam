@@ -6311,6 +6311,9 @@ BOOL TR_GetMessageList_IMPORT(void)
     char fname[SIZE_PATHFILE];
     int c = 0;
 
+    // let the application sleep while we parse the file
+    set(G->App, MUIA_Application_Sleep, TRUE);
+
     // clear the found mail list per default
     NewList((struct List *)&G->TR->transferList);
 
@@ -6508,6 +6511,9 @@ BOOL TR_GetMessageList_IMPORT(void)
     // if everything went fine but we didn't find any mail to import we signal failure
     if(c == 0)
       result = FALSE;
+
+    // wake up the application again
+    set(G->App, MUIA_Application_Sleep, FALSE);
   }
 
   RETURN(result);
