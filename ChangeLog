@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-09-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: due to the latest changes to the progress display an additional
+    function was necessary to make sure that at the end of a transfer the final
+    statistics are displayed and not something from the last graphical update.
+
 2009-09-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * rexx/listunfreeze.c: unfreezing the mail list now forces a refresh of the

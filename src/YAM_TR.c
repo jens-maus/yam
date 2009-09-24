@@ -118,7 +118,7 @@ struct TransStat
   char str_speed[SIZE_SMALL];
 };
 
-#define TS_SETMAX (-1)
+#define TS_SETMAX   (-1)
 
 /**************************************************************************/
 // SMTP commands (RFC 821) and extended ESMTP.
@@ -3969,9 +3969,9 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
 
     // reset the statistics display
     snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), 0);
-    xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_Max,      0,
-                              MUIA_Gauge_Current,  0,
-                              MUIA_Gauge_InfoText, G->TR->CountLabel);
+    xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
+                              MUIA_Gauge_Max,      0,
+                              MUIA_Gauge_Current,  0);
 
     // and last, but not least update the gauge.
     FormatSize(0, str_size_curr, sizeof(str_size_curr), SF_AUTO);
@@ -3979,9 +3979,9 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                            str_size_curr, str_size_curr_max);
 
-    xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      0,
-                              MUIA_Gauge_Current,  0,
-                              MUIA_Gauge_InfoText, G->TR->BytesLabel);
+    xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_InfoText, G->TR->BytesLabel,
+                              MUIA_Gauge_Max,      0,
+                              MUIA_Gauge_Current,  0);
   }
 
   if((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)
@@ -4527,6 +4527,33 @@ static void TR_TransStat_Start(struct TransStat *ts, const char *status)
   LEAVE();
 }
 ///
+/// TR_TransStat_Finish
+//  updates statistics display to represent the final state
+static void TR_TransStat_Finish(struct TransStat *ts)
+{
+  ENTER();
+
+  if(ts->Msgs_Done > 0)
+  {
+    // make sure we have valid strings to display
+    FormatSize(ts->Size_Curr_Max, ts->str_size_curr_max, sizeof(ts->str_size_curr_max), SF_AUTO);
+
+    // show the final statistics
+    snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
+    xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
+                              MUIA_Gauge_Max,      ts->Msgs_Tot,
+                              MUIA_Gauge_Current,  ts->Msgs_Tot);
+
+    snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
+                                                         ts->str_size_curr_max, ts->str_size_curr_max);
+    xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_InfoText, G->TR->BytesLabel,
+                              MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
+                              MUIA_Gauge_Current,  ts->Size_Curr_Max / 1024);
+  }
+
+  LEAVE();
+}
+///
 /// TR_TransStat_NextMsg
 //  Updates statistics display for next message
 static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size)
@@ -4613,9 +4640,9 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
       // update the gauge
       snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                              ts->str_size_curr, ts->str_size_curr_max);
-      xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
-                                MUIA_Gauge_Current,  ts->Size_Curr / 1024,
-                                MUIA_Gauge_InfoText, G->TR->BytesLabel);
+      xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_InfoText, G->TR->BytesLabel,
+                                MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
+                                MUIA_Gauge_Current,  ts->Size_Curr / 1024);
 
       // signal the application to update now
       DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -5277,6 +5304,8 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
       mnode = FirstMailNode(mlist);
       AppendToLogfile(LF_ALL, 51, tr(MSG_LOG_Exporting), ts.Msgs_Done, mnode->mail->Folder->Name, fname);
     }
+
+    TR_TransStat_Finish(&ts);
   }
 
   TR_AbortnClose();
@@ -5781,6 +5810,8 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
               // and all possible SSL connection stuff
               TR_Disconnect();
             }
+
+            TR_TransStat_Finish(&ts);
 
             // if we got an error here, let's throw it
             switch(err)
@@ -6805,6 +6836,8 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
         break;
       }
 
+      TR_TransStat_Finish(&ts);
+
       AppendToLogfile(LF_ALL, 50, tr(MSG_LOG_Importing), ts.Msgs_Done, G->TR->ImportFile, folder->Name);
       DisplayStatistics(folder, TRUE);
       MA_ChangeFolder(NULL, FALSE);
@@ -7123,6 +7156,8 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       if(G->TR->Abort == TRUE || G->Error == TRUE)
         break;
     }
+
+    TR_TransStat_Finish(&ts);
 
     DisplayStatistics(infolder, TRUE);
 
