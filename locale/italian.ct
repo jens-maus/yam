@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.3 (15.09.2009)
+## version $VER: YAM.catalog 6.4 (25.09.2009)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -917,8 +917,8 @@ cartella al server di posta.
 ;
 MSG_HELP_MA_BT_FILTER
 Applica i filtri per tutti i messaggi di questa cartella.\n\
-Nota bene che nel caso vengano selezionati due\n\
-o più messaggi, solo questi verranno filtrati.
+Nota bene che nel caso vengano selezionati due o\n\
+più messaggi, solo questi verranno filtrati.
 ; Apply filters to the messages\n\
 ; in this folder.\n\
 ; \n\
@@ -957,7 +957,7 @@ Sei sicuro di volerli cancellare?
 ;
 MSG_CO_InvalidConf
 Configurazione errata!\n\
-(Hostname, Indirizzo E-Mail e/o password mancanti).\n\
+(Nome host, Indirizzo E-Mail e/o password mancanti).\n\
 \n\
 Per favore, riempi questi campi e riprova!
 ; Invalid configuration (missing SMTP/POP3\n\
@@ -1027,7 +1027,7 @@ Il %c, %n scrisse:\\\\n\
 ; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
-Ossequi
+Saluti
 ; Regards
 ;
 MSG_CO_LineBreak
@@ -1171,11 +1171,11 @@ _Annulla
 ; _Cancel
 ;
 MSG_CO_TZoneM12
-(GMT-12:00) Kwajalein Islands (IDLW)
+(GMT-12:00) Isole Kwajalein (IDLW)
 ; (GMT-12:00) Kwajalein Islands (IDLW)
 ;
 MSG_CO_TZoneM11
-(GMT-11:00) Midway Islands, Samoa (NT)
+(GMT-11:00) Isole Midway, Samoa (NT)
 ; (GMT-11:00) Midway Islands, Samoa (NT)
 ;
 MSG_CO_TZoneM10
@@ -1211,27 +1211,27 @@ MSG_CO_TZoneM3
 ; (GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
 ;
 MSG_CO_TZoneM2
-(GMT-02:00) Brazil East (FNT)
+(GMT-02:00) Brasile Orientale (FNT)
 ; (GMT-02:00) Brazil East (FNT)
 ;
 MSG_CO_TZoneM1
-(GMT-01:00) Azores (WAT)
+(GMT-01:00) Azzorre (WAT)
 ; (GMT-01:00) Azores (WAT)
 ;
 MSG_CO_TZone0
-(GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
+(GMT 00:00) Dublino, Lisbona, Londra (GMT/UTC)
 ; (GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
 ;
 MSG_CO_TZone1
-(GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
+(GMT+01:00) Berlino, Parigi, Madrid, Oslo (CET)
 ; (GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
 ;
 MSG_CO_TZone2
-(GMT+02:00) Athens, Cairo, Helsinki (EET)
+(GMT+02:00) Atene, Cairo, Helsinki (EET)
 ; (GMT+02:00) Athens, Cairo, Helsinki (EET)
 ;
 MSG_CO_TZone3
-(GMT+03:00) Baghdad, Kuwait, Moscow, Nairobi (EEST)
+(GMT+03:00) Baghdad, Kuwait, Mosca, Nairobi (EEST)
 ; (GMT+03:00) Baghdad, Kuwait, Moscow, Nairobi (EEST)
 ;
 MSG_CO_TZone4
@@ -1263,7 +1263,7 @@ MSG_CO_TZone10
 ; (GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
 ;
 MSG_CO_TZone11
-(GMT+11:00) New Caldonia (AEDT)
+(GMT+11:00) Nuova Caledonia (AEDT)
 ; (GMT+11:00) New Caldonia (AEDT)
 ;
 MSG_CO_TZone12
@@ -1295,7 +1295,7 @@ Fuso _orario
 ; Time _zone
 ;
 MSG_CO_SendMail
-Invia posta (SMTP)
+Invio posta (SMTP)
 ; Send mail (SMTP)
 ;
 MSG_CO_Domain
@@ -1527,11 +1527,11 @@ nessuna firma
 ; no signature
 ;
 MSG_CO_HeaderLayout
-Configurazione intestazione
+Configurazione dell'intestazione
 ; Header layout
 ;
 MSG_CO_BodyLayout
-Configurazione corpo del messaggio
+Configurazione del corpo del messaggio
 ; Message body layout
 ;
 MSG_CO_OtherOptions
@@ -1591,7 +1591,7 @@ Visualizzatore prede_finito
 ; De_fault viewer
 ;
 MSG_CO_MessageHeader
-Intestazione messaggi
+Intestazione dei messaggi
 ; Message headers
 ;
 MSG_CO_ReplyTo
@@ -1867,7 +1867,7 @@ sempre
 ; always
 ;
 MSG_CO_InfoExc
-Scambia dati personali
+Scambio dei dati personali
 ; Personal data exchange
 ;
 MSG_CO_Gallery
@@ -1911,7 +1911,7 @@ _Directory file temporanei
 ; For _temporary files
 ;
 MSG_CO_AppIcon
-Appicon stato mailbox
+AppIcon stato mailbox
 ; Mailbox status
 ;
 MSG_CO_PositionX
@@ -1923,7 +1923,7 @@ Chiusura con iconifica_zione del programma
 ; Close _gadget iconifies program
 ;
 MSG_CO_SaveDelete
-Salva/cancella messaggi
+Salvataggio/cancellazione dei messaggi
 ; Save/delete messages
 ;
 MSG_CO_ConfirmDelPart1
@@ -4517,7 +4517,7 @@ Cancellazione della posta sul server...
 MSG_TR_NewMailReq
 \e8C'è nuova posta!\e2\n\
 \n\
-%3ld messaggi prelevati,\n\
+%3ld messaggi prelevati\n\
 %3ld lasciati nel server\n\
 %3ld duplicati saltati\n
 ; \e8You have new mail!\e2\n\
@@ -4529,14 +4529,14 @@ MSG_TR_NewMailReq
 ;
 MSG_TR_FilterStats
 \n\
-Filtraggio eseguito:\n\
+Filtraggio eseguito su:\n\
 \n\
-%3ld messaggi controllati,\n\
-%3ld rediretti,\n\
-%3ld inoltrati,\n\
-%3ld auto-risposti,\n\
-%3ld comandi attivati,\n\
-%3ld spostati,\n\
+%3ld messaggi controllati\n\
+%3ld rediretti\n\
+%3ld inoltrati\n\
+%3ld auto-risposti\n\
+%3ld comandi attivati\n\
+%3ld spostati\n\
 %3ld cancellati
 ; \n\
 ; Filtering done:\n\
@@ -4981,7 +4981,7 @@ Inviati
 ; Sent
 ;
 MSG_FI_OtherField
-altri campi:
+Altri campi:
 ; other field:
 ;
 MSG_FI_MessageSize
@@ -5019,7 +5019,7 @@ Trova messaggi
 ; Find messages
 ;
 MSG_FI_AllFolders
-_ovunque
+_Ovunque
 ; _everywhere
 ;
 MSG_FI_FindIn
@@ -5659,7 +5659,7 @@ Impostazioni generali
 ; General settings
 ;
 MSG_CO_FIELDLISTCFG
-Impostazioni campo
+Impostazioni dei campi
 ; Field settings
 ;
 MSG_CO_SIZEFORMAT
@@ -6765,7 +6765,7 @@ usando la application.library\n\
 ; AmiDock. This requires AmigaOS 4.x.
 ;
 MSG_MA_MessageImport
-Importa messaggi da MBOX, DBX o altro.
+Importa messaggi da MBOX, DBX o altro
 ; Import messages
 ;
 MSG_ER_MESSAGEIMPORT
@@ -7059,7 +7059,7 @@ Avviso per le impostazioni del fuso orario
 ;
 MSG_CO_TIMEZONEWARN
 Le impostazioni del fuso orario in YAM non\n\
-combaciano con il fuso orario di sistema.\n\
+coincidono con il fuso orario di sistema.\n\
 \n\
 Come si desidera procedere?
 ; The time zone setting in YAM doesn't match\n\
@@ -7072,7 +7072,7 @@ MSG_CO_TIMEZONEWARN_BT
 ; *_Change|Ignore _always|_Ignore
 ;
 MSG_CO_AUTODSTWARN_TITLE
-Avviso impostazione automatica ora legale/solare
+Avviso settaggio automatico ora legale/solare
 ; AutoDST warning
 ;
 MSG_CO_AUTODSTWARN
@@ -7140,7 +7140,7 @@ Impossibile interrogare il server per gli aggiornamenti.
 ; Couldn't query server for updates.
 ;
 MSG_CO_LASTSTATUS_UPDATESUCCESS
-Sono stati trovati e notificati con successo dei nuovi aggiornamenti.
+Sono stati trovati e notificati con successo dei nuovi aggiornamenti!
 ; Successfully found and notified user on new updates.
 ;
 MSG_WR_SECURITYREQ
@@ -7397,7 +7397,7 @@ Si desidera continuare?
 ;
 MSG_TR_TRANSFERSTATUS
 %s di %s @ %s/s\n\
-%02ld'%02ld'' trasferiti - %02ld'%02ld'' rimasti
+%02ld'%02ld'' trasferiti - %02ld'%02ld'' restanti
 ; %s of %s @ %s/s\n\
 ; %02ld'%02ld'' running - %02ld'%02ld'' left
 ; SIZE, SIZE, SPEED, MINS, SECS, MINS, SECS
@@ -8388,7 +8388,7 @@ _Riprova|_Ignora
 ; _Retry|_Ignore
 ;
 MSG_ER_ZOMBIE_FILES_EXIST_TITLE
-Avviso pulitura YAM
+Avviso pulitura di YAM
 ; YAM cleanup warning
 ;
 MSG_CO_SHOWALTPARTS
@@ -9385,7 +9385,7 @@ L'ordine dello scambio messaggi.
 ; The order of the mail exchange.
 ;
 MSG_FCHANGE_WARN_TITLE
-Avviso modifica file
+Avviso di modifica del file
 ; Filechange warning
 ;
 MSG_FCHANGE_WARN
