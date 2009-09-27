@@ -4,6 +4,12 @@ YAM Open Source - ChangeLog
 
 $Id$
 $URL$
+ 
+2009-09-27 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: after having updated the SDK of the nightly build machine the
+    additional IApplication-> pointer is not required anymore because we
+    build YAM with __USE_INLINE__ for OS4.
 
 2009-09-24 Thore Böckelmann <tboeckel@gmx.de>
 
@@ -146,7 +152,7 @@ $URL$
   * Makefiles: added "-g" to the debug flags. It seems the OS3 GCC 2.95.3 cross
     compiler needs this to generate debug infos at all.
 
-2009-08-11  Thore Böckelmann <tboeckel@gmx.de>
+2009-08-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * Debug.h: The memory debug version of FreePooled() used the pool address
     stead of the address of the memory block to be freed upon untracking the
