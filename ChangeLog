@@ -7,6 +7,10 @@ $URL$
  
 2009-09-27 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: now that also the AROS sdk on our build machines are updated we
+    don't need the atexit() workaround for our AROS builds anymore.
+  * extrasrc.h: an AROS system already seem to have GetHead&Co so we define
+    that we don't need our substituion functions.
   * YAM_TR.c: after having updated the SDK of the nightly build machine the
     additional IApplication-> pointer is not required anymore because we
     build YAM with __USE_INLINE__ for OS4.

@@ -166,6 +166,16 @@ struct IClass;
 #define HAVE_GETTAIL
 #endif
 
+/*
+ * Stuff that exists on AROS
+ */
+#if defined(__AROS__)
+#define HAVE_GETHEAD
+#define HAVE_GETPRED
+#define HAVE_GETSUCC
+#define HAVE_GETTAIL
+#endif
+
 #if !defined(HAVE_SETPROCWINDOW)
 #define NEED_SETPROCWINDOW
 #endif
