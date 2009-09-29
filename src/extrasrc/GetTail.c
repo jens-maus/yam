@@ -29,7 +29,7 @@
 
 #include "Debug.h"
 
-// GetHead()
+// GetTail()
 // get the tail element of a list
 
 struct Node *GetTail(struct List *list)

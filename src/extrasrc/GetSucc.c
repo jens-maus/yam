@@ -29,7 +29,7 @@
 
 #include "Debug.h"
 
-// GetPred()
+// GetSucc()
 // get a node's sucessor
 
 struct Node *GetSucc(struct Node *node)
