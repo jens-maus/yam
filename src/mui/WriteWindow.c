@@ -839,8 +839,9 @@ HOOKPROTONH(DisplayFunc, LONG, char **array, struct Attach *entry)
 
   if(entry != NULL)
   {
+    snprintf(dispsz, sizeof(dispsz), "%d", entry->Size);
     array[0] = entry->Name;
-    snprintf(array[1] = dispsz, sizeof(dispsz), "%d", entry->Size);
+    array[1] = dispsz;
     array[2] = (STRPTR)DescribeCT(entry->ContentType);
     array[3] = (STRPTR)(entry->IsMIME ? "MIME" : "UU");
     array[4] = entry->Description;
@@ -1527,20 +1528,21 @@ OVERLOAD(OM_NEW)
           DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_SEARCH,    MUIA_Pressed, FALSE, obj, 2, MUIM_WriteWindow_Search, MUIF_NONE);
 
           // connect attributes to button disables
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_AreaMarked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_CUT, MUIA_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_AreaMarked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_COPY, MUIA_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_UndoAvailable, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDO, MUIA_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_AreaMarked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_CUT, MUIA_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_AreaMarked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_COPY, MUIA_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_UndoAvailable, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDO, MUIA_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
 
           // connect attributes to button selections
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleBold, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_BOLD, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleItalic, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_ITALIC, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDERLINE, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen, 7, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED, MUIA_TheBar_Attr_Selected, TRUE);
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen, 0, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED, MUIA_TheBar_Attr_Selected, FALSE);
-          DoMethod(data->MI_BOLD, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_BOLD, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->MI_ITALIC, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_ITALIC, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDERLINE, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->MI_COLORED, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_BOLD,      MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_ITALIC,    MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDERLINE, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            7,              data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, TRUE);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            0,              data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, FALSE);
+
+          DoMethod(data->MI_BOLD,      MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_BOLD,      MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->MI_ITALIC,    MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_ITALIC,    MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDERLINE, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->MI_COLORED,   MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
         }
 
         if(data->TX_POSI != NULL)
