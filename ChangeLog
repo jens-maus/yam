@@ -7,6 +7,9 @@ $URL$
 
 2009-10-06 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/WriteWindow.c: added an origin indicator to the menu and toolbar
+    notifications to be able to uniquely identify the triggering object for
+    style changes.
   * mui/WriteWindow.c: fixed the broken notifications when the text editor
     signalled style and color changes.
 
