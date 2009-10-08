@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-10-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: fixed some inconsistencies regarding the mail transfer status
+    display which could lead to incorrect final stats.
+
 2009-10-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: added an origin indicator to the menu and toolbar

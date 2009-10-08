@@ -4562,17 +4562,14 @@ static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, L
 
   ts->Msgs_Curr = index;
   ts->Msgs_ListPos = listpos;
+  ts->Msgs_Done++;
   ts->Size_Curr = 0;
   ts->Size_Curr_Max = size;
 
-  // if the window isn't open we don't need to update it, do we?
-  if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
-  {
-    // format the current mail's size ahead of any refresh
-    FormatSize(size, ts->str_size_curr_max, sizeof(ts->str_size_curr_max), SF_AUTO);
+  // format the current mail's size ahead of any refresh
+  FormatSize(size, ts->str_size_curr_max, sizeof(ts->str_size_curr_max), SF_AUTO);
 
-    TR_TransStat_Update(ts, 0);
-  }
+  TR_TransStat_Update(ts, 0);
 
   LEAVE();
 }
@@ -5165,10 +5162,9 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
         char fullfile[SIZE_PATHFILE];
 
         // update the transfer status
-        ts.Msgs_Done++;
         TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size);
 
-        if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder))
+        if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder) != NULL)
         {
           FILE *mfh;
 
@@ -5735,7 +5731,6 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
                   if(G->TR->Abort == TRUE || G->Error == TRUE)
                     break;
 
-                  ts.Msgs_Done++;
                   TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size);
 
                   switch(TR_SendMessage(&ts, mail))
@@ -7105,6 +7100,8 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       if(hasTR_LOAD(mtn))
       {
         D(DBF_NET, "downloading mail with subject '%s' and size %ld", mail->Subject, mail->Size);
+
+        // update the transfer status
         TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size);
 
         if(TR_LoadMessage(infolder, &ts, mtn->index) == TRUE)
@@ -7112,7 +7109,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
           // redraw the folderentry in the listtree
           DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, incomingTreeNode, MUIF_NONE);
 
-          // put the transferStat to 100%
+          // put the transferStat for this mail to 100%
           TR_TransStat_Update(&ts, TS_SETMAX);
 
           G->TR->Stats.Downloaded++;
