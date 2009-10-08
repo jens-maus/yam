@@ -1782,7 +1782,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       fclose(fh);
 
       // then unpack the file with XPK routines.
-      if(!StartUnpack(GetMailFile(NULL, folder, mail), fullfile, folder))
+      if(StartUnpack(GetMailFile(NULL, folder, mail), fullfile, folder) == NULL)
       {
         free(email);
 

@@ -2528,7 +2528,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
   {
     char tmpFile[SIZE_PATHFILE];
 
-    if(StartUnpack(rmData->readFile, tmpFile, folder) == FALSE)
+    if(StartUnpack(rmData->readFile, tmpFile, folder) == NULL)
     {
       if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
         BusyEnd();
@@ -3537,7 +3537,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
           p3->ContentType = "text/rfc822-headers";
           p3->Filename = tf3->Filename;
-          if(StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
+          if(StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder) != NULL)
           {
             FILE *fh;
 

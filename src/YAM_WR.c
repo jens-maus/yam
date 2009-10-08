@@ -793,7 +793,7 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
     if(isXPKFolder(comp->refMail->Folder))
     {
       // so, this mail seems to be packed, so we need to unpack it to a temporary file
-      if(StartUnpack(mailfile, unpFile, comp->refMail->Folder) &&
+      if(StartUnpack(mailfile, unpFile, comp->refMail->Folder) != NULL &&
          stricmp(mailfile, unpFile) != 0)
       {
         xpkPacked = TRUE;

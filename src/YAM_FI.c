@@ -379,7 +379,7 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 
   ENTER();
 
-  if(StartUnpack(mailfile, fullfile, mail->Folder))
+  if(StartUnpack(mailfile, fullfile, mail->Folder) != NULL)
   {
     FILE *fh;
 
