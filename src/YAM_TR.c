@@ -271,7 +271,7 @@ static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext
 static int  TR_ReadLine(LONG socket, char *vptr, int maxlen);
 static int  TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags);
 static int  TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags);
-static void TR_TransStat_Update(struct TransStat *ts, int size_incr);
+static void TR_TransStat_Update(struct TransStat *ts, int size_incr, const char *status);
 
 #define TR_WriteLine(buf)       (TR_Send((buf), strlen(buf), TCPF_FLUSH))
 #define TR_WriteFlush()         (TR_Send(NULL,  0, TCPF_FLUSHONLY))
@@ -1961,7 +1961,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
       {
         // update the transfer status
         if(ts != NULL)
-          TR_TransStat_Update(ts, l);
+          TR_TransStat_Update(ts, l, tr(MSG_TR_Downloading));
 
         // write the line to the file now
         if(fwrite(line, 1, l, fh) != (size_t)l)
@@ -4504,7 +4504,7 @@ static void TR_TransStat_Init(struct TransStat *ts)
 ///
 /// TR_TransStat_Start
 //  Resets statistics display
-static void TR_TransStat_Start(struct TransStat *ts, const char *status)
+static void TR_TransStat_Start(struct TransStat *ts)
 {
   ENTER();
 
@@ -4516,8 +4516,6 @@ static void TR_TransStat_Start(struct TransStat *ts, const char *status)
   ts->Clock_Start = ts->Clock_Last.Seconds;
 
   memset(&ts->Clock_Last, 0, sizeof(ts->Clock_Last));
-
-  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, status);
 
   snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
   xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
@@ -4533,30 +4531,26 @@ static void TR_TransStat_Finish(struct TransStat *ts)
 {
   ENTER();
 
-  if(ts->Msgs_Done > 0)
-  {
-    // make sure we have valid strings to display
-    FormatSize(ts->Size_Curr_Max, ts->str_size_curr_max, sizeof(ts->str_size_curr_max), SF_AUTO);
+  // make sure we have valid strings to display
+  FormatSize(ts->Size_Curr_Max, ts->str_size_curr_max, sizeof(ts->str_size_curr_max), SF_AUTO);
 
-    // show the final statistics
-    snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
-    xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
-                              MUIA_Gauge_Max,      ts->Msgs_Tot,
-                              MUIA_Gauge_Current,  ts->Msgs_Tot);
+  // show the final statistics
+  snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
+  xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
+                            MUIA_Gauge_Max,      ts->Msgs_Tot,
+                            MUIA_Gauge_Current,  ts->Msgs_Tot);
 
-    snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
+  snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                          ts->str_size_curr_max, ts->str_size_curr_max);
-    xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                              MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
-                              MUIA_Gauge_Current,  ts->Size_Curr_Max / 1024);
-  }
-
+  xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_InfoText, G->TR->BytesLabel,
+                            MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
+                            MUIA_Gauge_Current,  ts->Size_Curr_Max / 1024);
   LEAVE();
 }
 ///
 /// TR_TransStat_NextMsg
 //  Updates statistics display for next message
-static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size)
+static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size, const char *status)
 {
   ENTER();
 
@@ -4569,14 +4563,14 @@ static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, L
   // format the current mail's size ahead of any refresh
   FormatSize(size, ts->str_size_curr_max, sizeof(ts->str_size_curr_max), SF_AUTO);
 
-  TR_TransStat_Update(ts, 0);
+  TR_TransStat_Update(ts, 0, status);
 
   LEAVE();
 }
 ///
 /// TR_TransStat_Update
 //  Updates statistics display for next block of data
-static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
+static void TR_TransStat_Update(struct TransStat *ts, int size_incr, const char *status)
 {
   ENTER();
 
@@ -4602,6 +4596,8 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
       ULONG deltatime = ts->Clock_Last.Seconds - ts->Clock_Start;
       ULONG speed = 0;
       LONG remclock = 0;
+      ULONG max;
+      ULONG current;
 
       // if we have a preselection window, update it.
       if(G->TR->GUI.GR_LIST != NULL && ts->Msgs_ListPos >= 0)
@@ -4615,6 +4611,9 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
       // calculate the estimated remaining time
       if(speed != 0 && ((remclock = (ts->Size_Tot / speed) - deltatime) < 0))
         remclock = 0;
+
+      // show the current status
+      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, status);
 
       // show the current message index
       set(G->TR->GUI.GA_COUNT, MUIA_Gauge_Current, ts->Msgs_Curr);
@@ -4637,9 +4636,24 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
       // update the gauge
       snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                              ts->str_size_curr, ts->str_size_curr_max);
+      if(size_incr == TS_SETMAX)
+      {
+        max = 100;
+        current = 100;
+      }
+      else if(ts->Size_Curr_Max <= 1024)
+      {
+        max = ts->Size_Curr_Max;
+        current = ts->Size_Curr;
+      }
+      else
+      {
+        max = ts->Size_Curr_Max / 1024;
+        current = ts->Size_Curr / 1024;
+      }
       xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                                MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
-                                MUIA_Gauge_Current,  ts->Size_Curr / 1024);
+                                MUIA_Gauge_Max,      max,
+                                MUIA_Gauge_Current,  current);
 
       // signal the application to update now
       DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -5143,7 +5157,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
 
     TR_SetWinTitle(FALSE, (char *)FilePart(fname));
     TR_TransStat_Init(&ts);
-    TR_TransStat_Start(&ts, tr(MSG_TR_Exporting));
+    TR_TransStat_Start(&ts);
 
     // open our final destination file either in append or in a fresh
     // write mode.
@@ -5162,7 +5176,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
         char fullfile[SIZE_PATHFILE];
 
         // update the transfer status
-        TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size);
+        TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, tr(MSG_TR_Exporting));
 
         if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder) != NULL)
         {
@@ -5253,7 +5267,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
               }
 
               // update the transfer status
-              TR_TransStat_Update(&ts, curlen);
+              TR_TransStat_Update(&ts, curlen, tr(MSG_TR_Exporting));
             }
 
             // check why we exited the while() loop and if everything is fine
@@ -5279,7 +5293,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
               free(buf);
 
             // put the transferStat to 100%
-            TR_TransStat_Update(&ts, TS_SETMAX);
+            TR_TransStat_Update(&ts, TS_SETMAX, tr(MSG_TR_Exporting));
           }
           else
            success = FALSE;
@@ -5494,7 +5508,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                   sentbytes += 2;
               }
 
-              TR_TransStat_Update(ts, proclen);
+              TR_TransStat_Update(ts, proclen, tr(MSG_TR_Sending));
             }
 
             D(DBF_NET, "transfered %ld bytes (raw: %ld bytes) error: %ld/%ld", sentbytes, mail->Size, G->TR->Abort, G->Error);
@@ -5522,7 +5536,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                 if(TR_SendSMTPCmd(SMTP_FINISH, NULL, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)
                 {
                   // put the transferStat to 100%
-                  TR_TransStat_Update(ts, TS_SETMAX);
+                  TR_TransStat_Update(ts, TS_SETMAX, tr(MSG_TR_Sending));
 
                   // now that we are at 100% we have to set the transfer Date of the message
                   GetSysTimeUTC(&mail->Reference->transDate);
@@ -5641,7 +5655,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
 
             G->TR->SearchCount = AllocFilterSearch(APPLY_SENT);
             TR_TransStat_Init(&ts);
-            TR_TransStat_Start(&ts, tr(MSG_TR_Sending));
+            TR_TransStat_Start(&ts);
             strlcpy(host, C->SMTP_Server, sizeof(host));
 
             // If the hostname has a explicit :xxxxx port statement at the end we
@@ -5731,7 +5745,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
                   if(G->TR->Abort == TRUE || G->Error == TRUE)
                     break;
 
-                  TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size);
+                  TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, tr(MSG_TR_Sending));
 
                   switch(TR_SendMessage(&ts, mail))
                   {
@@ -6572,7 +6586,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
       struct Folder *folder = G->TR->ImportFolder;
       enum FolderType ftype = folder->Type;
 
-      TR_TransStat_Start(&ts, tr(MSG_TR_Importing));
+      TR_TransStat_Start(&ts);
 
       // now we distinguish between the different import format
       // and import the mails out of it
@@ -6615,7 +6629,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
                 break;
 
-              TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size);
+              TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
 
               if((ofh = fopen(MA_NewMailFile(folder, mfile), "w")) == NULL)
                 break;
@@ -6680,7 +6694,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                 }
 
                 // update the transfer statistics
-                TR_TransStat_Update(&ts, strlen(buffer)+1);
+                TR_TransStat_Update(&ts, strlen(buffer)+1, tr(MSG_TR_Importing));
               }
 
               fclose(ofh);
@@ -6724,7 +6738,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                 MA_UpdateMailFile(mail);
 
                 // put the transferStat to 100%
-                TR_TransStat_Update(&ts, TS_SETMAX);
+                TR_TransStat_Update(&ts, TS_SETMAX, tr(MSG_TR_Importing));
               }
 
               if(G->TR->Abort == TRUE)
@@ -6766,7 +6780,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
                 break;
 
-              TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size);
+              TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
 
               if((ofh = fopen(MA_NewMailFile(folder, mfile), "wb")) == NULL)
                 break;
@@ -6814,7 +6828,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                 MA_UpdateMailFile(mail);
 
                 // put the transferStat to 100%
-                TR_TransStat_Update(&ts, TS_SETMAX);
+                TR_TransStat_Update(&ts, TS_SETMAX, tr(MSG_TR_Importing));
               }
 
               if(G->TR->Abort == TRUE)
@@ -6955,7 +6969,7 @@ static BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const 
 ///
 /// TR_DeleteMessage
 //  Deletes a message on the POP3 server
-static BOOL TR_DeleteMessage(int number)
+static BOOL TR_DeleteMessage(struct TransStat *ts, int number)
 {
   BOOL result = FALSE;
   char msgnum[SIZE_SMALL];
@@ -6964,8 +6978,7 @@ static BOOL TR_DeleteMessage(int number)
 
   snprintf(msgnum, sizeof(msgnum), "%d", number);
 
-  // inform others of the delete operation
-  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_DeletingServerMail));
+  TR_TransStat_Update(ts, TS_SETMAX, tr(MSG_TR_DeletingServerMail));
 
   if(TR_SendPOP3Cmd(POPCMD_DELE, msgnum, tr(MSG_ER_BADRESPONSE_POP3)) != NULL)
   {
@@ -7090,7 +7103,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
     if(C->TransferWindow == TWM_SHOW && xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
       set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
 
-    TR_TransStat_Start(&ts, tr(MSG_TR_Downloading));
+    TR_TransStat_Start(&ts);
 
     IterateList(&G->TR->transferList, curNode)
     {
@@ -7102,7 +7115,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
         D(DBF_NET, "downloading mail with subject '%s' and size %ld", mail->Subject, mail->Size);
 
         // update the transfer status
-        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size);
+        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
 
         if(TR_LoadMessage(infolder, &ts, mtn->index) == TRUE)
         {
@@ -7110,14 +7123,15 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
           DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, incomingTreeNode, MUIF_NONE);
 
           // put the transferStat for this mail to 100%
-          TR_TransStat_Update(&ts, TS_SETMAX);
+          TR_TransStat_Update(&ts, TS_SETMAX, tr(MSG_TR_Downloading));
 
           G->TR->Stats.Downloaded++;
 
           if(hasTR_DELETE(mtn))
           {
             D(DBF_NET, "deleting mail with subject '%s' on server", mail->Subject);
-            if(TR_DeleteMessage(mtn->index) == TRUE && G->TR->DuplicatesChecking == TRUE)
+
+            if(TR_DeleteMessage(&ts, mtn->index) == TRUE && G->TR->DuplicatesChecking == TRUE)
             {
               // remove the UIDL from the hash table and remember that change
               RemoveUIDLfromHash(mtn->UIDL);
@@ -7138,9 +7152,9 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       else if(hasTR_DELETE(mtn))
       {
         D(DBF_NET, "deleting mail with subject '%s' on server", mail->Subject);
-        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size);
+        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_DeletingServerMail));
 
-        if(TR_DeleteMessage(mtn->index) == TRUE && G->TR->DuplicatesChecking == TRUE)
+        if(TR_DeleteMessage(&ts, mtn->index) == TRUE && G->TR->DuplicatesChecking == TRUE)
         {
           // remove the UIDL from the hash table and remember that change
           RemoveUIDLfromHash(mtn->UIDL);

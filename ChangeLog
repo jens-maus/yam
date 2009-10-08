@@ -7,6 +7,8 @@ $URL$
 
 2009-10-08 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: slightly modified the transfer status display again to be more
+    accurate for small mail sizes.
   * YAM_TR.c: fixed some inconsistencies regarding the mail transfer status
     display which could lead to incorrect final stats.
 
