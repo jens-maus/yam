@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.4 (25.09.2009)
+## version $VER: YAM.catalog 6.4 (10.10.2009)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -970,11 +970,11 @@ Importa le configurazioni da...
 ; Import settings from...
 ;
 MSG_CO_ImportMIMEGads
-*_MIME.prefs|mai_lcap|m_ime.types|_Annulla
+*_MIME.prefs|Mai_lcap|M_ime.type|_Annulla
 ; *_MIME.prefs|m_ailcap|m_ime.types|_Cancel
 ;
 MSG_CO_NewIntroDef
-Salve,
+Salve,\\\\n\
 ; Hello,\\\\n\
 ;
 MSG_CO_AltRepIntroDef
@@ -1065,7 +1065,7 @@ MSG_CO_SenderDOW
 ; %w  Original message: Day of week
 ;
 MSG_CO_SenderMsgID
-Messaggio originario: ID messaggio
+Messaggio originario: ID Messaggio
 ;  Original message: Message ID
 ;
 MSG_CO_RecptName
@@ -1223,7 +1223,7 @@ MSG_CO_TZone0
 ; (GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
 ;
 MSG_CO_TZone1
-(GMT+01:00) Berlino, Parigi, Madrid, Oslo (CET)
+(GMT+01:00) Roma, Berlino, Parigi, Madrid, Oslo (CET)
 ; (GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
 ;
 MSG_CO_TZone2
@@ -3972,7 +3972,7 @@ Alt. #2
 ; Alt. #2
 ;
 MSG_WR_WriteWT
-Scrivi messaggio
+Componi un messaggio
 ; Write message
 ;
 MSG_WR_Subject
@@ -4028,7 +4028,7 @@ Intesta_zione aggiuntiva
 ; _Additional headers
 ;
 MSG_WR_SendOpt
-Opzioni spedizione
+Opzioni di spedizione
 ; Send options
 ;
 MSG_WR_DelSend
@@ -4551,7 +4551,7 @@ Filtraggio eseguito su:\n\
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_NewMail
-Nuova posta
+Sommario
 ; New mail
 ;
 MSG_TR_Downloading
@@ -6066,11 +6066,11 @@ Nuovi: %n Totali: %t
 ; New: %n Total: %t
 ;
 MSG_DATE_RECEIVED
-Ricevuti
+Ricevuto
 ; Received
 ;
 MSG_DATE_SENT
-Inviati
+Inviato
 ; Sent
 ;
 MSG_DATE_SNTRCVD
@@ -6509,11 +6509,11 @@ MSG_CO_CHARSETWARN_BT
 ; *_Change|Ignore _always|_Ignore
 ;
 MSG_CO_SenderRFCDateTime
-%c  Mittente originale: RFC2822 Data & Ora
+%c  Mittente originario: RFC2822 Data & Ora
 ; %c  Original sender: RFC 2822 date & time
 ;
 MSG_CO_SenderTimeZone
-%z  Mittente originale: TimeZone (+0000)
+%z  Mittente originario: TimeZone (+0000)
 ; %z  Original sender: Time zone (+0000)
 ;
 MSG_CO_Filter_Name
@@ -7897,11 +7897,11 @@ Leggi
 ; Read
 ;
 MSG_MA_TOUNREAD
-Non letti
+Non letto
 ; Unread
 ;
 MSG_MA_TOREAD
-Letti
+Letto
 ; Read
 ;
 MSG_MA_TOHOLD

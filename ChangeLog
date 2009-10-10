@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-10-10 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italiano.ct: Update italian catalog according to the latest changes
+  * doc/Install-YAM: fixed some inconsistencies regarding italian strings
+
 2009-10-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: slightly modified the transfer status display again to be more
