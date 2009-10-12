@@ -4543,8 +4543,8 @@ static void TR_TransStat_Finish(struct TransStat *ts)
   snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
                                                          ts->str_size_curr_max, ts->str_size_curr_max);
   xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                            MUIA_Gauge_Max,      ts->Size_Curr_Max / 1024,
-                            MUIA_Gauge_Current,  ts->Size_Curr_Max / 1024);
+                            MUIA_Gauge_Max,      100,
+                            MUIA_Gauge_Current,  100);
   LEAVE();
 }
 ///
@@ -4641,7 +4641,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr, const char 
         max = 100;
         current = 100;
       }
-      else if(ts->Size_Curr_Max <= 1024)
+      else if(ts->Size_Curr_Max <= 65536)
       {
         max = ts->Size_Curr_Max;
         current = ts->Size_Curr;

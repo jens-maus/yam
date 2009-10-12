@@ -220,21 +220,23 @@ DECLARE(ProgressChange) // char *txt, LONG percent, LONG max
     updateStatus = TRUE;
   }
 
-  if(msg->percent >= 0)
-  {
-    // then we update the gauge, but we take also care of not refreshing
-    // it too often or otherwise it slows down the whole search process.
-    if(TimeHasElapsed(&data->last_gaugemove, 250000) == TRUE)
-    {
-      set(data->progressGauge, MUIA_Gauge_Current, msg->percent);
-      updateStatus = TRUE;
-    }
-  }
-
+  // set the maximum value ahead of the current value
   if(msg->max >= 0)
   {
     set(data->progressGauge, MUIA_Gauge_Max, msg->max);
     updateStatus = TRUE;
+  }
+
+  if(msg->percent >= 0)
+  {
+    // then we update the gauge, but we take also care of not refreshing
+    // it too often or otherwise it slows down the whole update process,
+    // but make sure to display the final status.
+    if(msg->percent == msg->max || TimeHasElapsed(&data->last_gaugemove, 250000) == TRUE)
+    {
+      set(data->progressGauge, MUIA_Gauge_Current, msg->percent);
+      updateStatus = TRUE;
+    }
   }
 
   // lets add the progress Gauge to our splashwindow now
@@ -250,7 +252,7 @@ DECLARE(ProgressChange) // char *txt, LONG percent, LONG max
 
     DoMethod(G->App, MUIM_Application_InputBuffered);
   }
-  else if(updateStatus)
+  else if(updateStatus == TRUE)
     DoMethod(G->App, MUIM_Application_InputBuffered);
 
   RETURN(0);

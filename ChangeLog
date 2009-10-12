@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-10-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c, mui/InfoBar.c, mui/Splashwindow.c: some minor changes to make sure
+    that gauges display the correct final values and calculate the percentage
+    correctly.
+
 2009-10-10 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italiano.ct: Update italian catalog according to the latest changes

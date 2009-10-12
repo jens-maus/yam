@@ -293,8 +293,8 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
     snprintf(data->infoText, sizeof(data->infoText), "%%ld/%d", (unsigned int)msg->max);
 
     xset(data->GA_INFO, MUIA_Gauge_InfoText,  data->infoText,
-                        MUIA_Gauge_Current,   msg->perc > 0 ? msg->perc : 0,
-                        MUIA_Gauge_Max,       msg->max);
+                        MUIA_Gauge_Max,       msg->max,
+                        MUIA_Gauge_Current,   msg->perc > 0 ? msg->perc : 0);
 
     // make sure the stop button is shown or hiden, dependent
     // on msg->perc
