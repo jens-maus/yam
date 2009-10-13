@@ -2019,6 +2019,8 @@ void ExtractAddress(const char *line, struct Person *pe)
   pe->Address[0] = '\0';
   pe->RealName[0] = '\0';
 
+  SHOWSTRING(DBF_MIME, line);
+
   // create a temp copy of our source
   // string so that we don't have to alter it.
   if((save = strdup(line)) != NULL)
@@ -2037,7 +2039,7 @@ void ExtractAddress(const char *line, struct Person *pe)
     // the email is in < > brackets (see RFC2822)
     //
     // something like: "Realname <mail@address.net>"
-    if((start = MyStrChr(p, '<')) && (end = MyStrChr(start, '>')))
+    if((start = MyStrChr(p, '<')) != NULL && (end = MyStrChr(start, '>')) != NULL)
     {
       *start = '\0';
       *end = '\0';
@@ -2056,7 +2058,7 @@ void ExtractAddress(const char *line, struct Person *pe)
     if(address == NULL)
     {
       // extract the mail address first
-      for(start=end=p; *end && !isspace(*end) && *end != ',' && *end != '('; end++);
+      for(start=end=p; *end != '\0' && !isspace(*end) && *end != ',' && *end != '('; end++);
 
       // now we should have the email address
       if(end > start)
@@ -2074,13 +2076,13 @@ void ExtractAddress(const char *line, struct Person *pe)
 
         // we should have the email address now so we go and extract
         // the realname encapsulated in ( )
-        if(s && (s = strchr(s, '(')))
+        if(s != NULL && (s = strchr(s, '(')) != NULL)
         {
           start = ++s;
 
           // now we search for the last closing )
           end = strrchr(start, ')');
-          if(end)
+          if(end != NULL)
             *end = '\0';
           else
             end = start+strlen(start);
@@ -2092,12 +2094,12 @@ void ExtractAddress(const char *line, struct Person *pe)
 
     // we successfully found an email adress, so we go
     // and copy it into our person's structure.
-    if(address)
-      strlcpy(pe->Address,  Trim(address), sizeof(pe->Address));
+    if(address != NULL)
+      strlcpy(pe->Address, Trim(address), sizeof(pe->Address));
 
     // in case we found a descriptive realname we go and
     // parse it for quoted and escaped passages.
-    if(realname)
+    if(realname != NULL)
     {
       unsigned int i;
       BOOL quoted = FALSE;
@@ -2113,7 +2115,7 @@ void ExtractAddress(const char *line, struct Person *pe)
         p++;
       }
 
-      for(i=0; *p && i < sizeof(pe->RealName); i++, p++)
+      for(i=0; *p != '\0' && i < sizeof(pe->RealName); i++, p++)
       {
         if(quoted)
         {
@@ -2123,7 +2125,7 @@ void ExtractAddress(const char *line, struct Person *pe)
             break;
         }
 
-        if(*p)
+        if(*p != '\0')
           pe->RealName[i] = *p;
         else
           break;

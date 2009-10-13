@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-10-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: added an experimental workaround for invalid addresses. Usually
+    these addresses are created by Microsoft software and are in RFC2047 format.
+    The bug appears if the decoded string contains a comma within the real name
+    part and this real name is not surrounded by quotes. The workaround tries to
+    add these missing quotes. Otherwise replying to such a mail will result in
+    one additional recipient which just consists of a name but no address. The
+    only "good" thing about this is that even ThunderBird does not handle such
+    mail correctly and traps into the very same pit. Thanks to Christoph Poelzl
+    for an example mail. I hope this workaround doesn't brake anything...
+
 2009-10-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c, mui/InfoBar.c, mui/Splashwindow.c: some minor changes to make sure

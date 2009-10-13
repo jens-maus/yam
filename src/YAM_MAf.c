@@ -1354,8 +1354,108 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
               *ptr = ' ';
           }
 
+          if(stricmp(hdrNode->name, "from") == 0     ||
+             stricmp(hdrNode->name, "to") == 0       ||
+             stricmp(hdrNode->name, "reply-to") == 0 ||
+             stricmp(hdrNode->name, "cc") == 0       ||
+             stricmp(hdrNode->name, "bcc") == 0)
+          {
+            // Check whether potential EMail address are valid.
+            // Buggy Microsoft software very often creates invalid addresses,
+            // i.e 'lastname, firstname <address>' without the necessary quotes around the name
+            char *comma;
+            char *replacement = NULL;
+
+            ptr = hdrNode->content;
+            do
+            {
+              BOOL replacedSomething = FALSE;
+
+              if((comma = strchr(ptr, ',')) != NULL)
+              {
+                char *at;
+
+                if((at = strchr(ptr, '@')) != NULL && comma < at)
+                {
+                  // the '@' of the address occurs after a comma, this is suspicious
+                  char *firstQuote;
+
+                  firstQuote = strchr(ptr, '"');
+                  if(firstQuote == NULL)
+                  {
+                    char *addressStart;
+                    char *addressEnd;
+
+                    // a comma but no quote, this is really bad
+                    W(DBF_MIME, "comma in unquoted name found '%s'", ptr);
+
+                    if((addressStart = strstr(ptr, " <")) != NULL && (addressEnd = strchr(ptr, '>')) != NULL)
+                    {
+                      if(replacement != NULL)
+                        replacement = StrBufCat(replacement, ", ");
+
+                      // skip the space and the opening bracket ahead of the address
+                      *addressStart = '\0';
+                      addressStart++;
+                      addressStart++;
+
+                      // skip the closing bracket
+                      *addressEnd = '\0';
+                      addressEnd++;
+
+                      // set up the new address from scratch
+                      replacement = StrBufCat(replacement, "\"");
+                      replacement = StrBufCat(replacement, ptr);
+                      replacement = StrBufCat(replacement, "\" <");
+                      replacement = StrBufCat(replacement, addressStart);
+                      replacement = StrBufCat(replacement, ">");
+
+                      replacedSomething = TRUE;
+
+                      comma = addressEnd;
+
+                      // skip the comma
+                      if(*comma == ',')
+                        comma++;
+                    }
+                  }
+                }
+
+                // add the remaining string if we replaced anything so far
+                if(replacedSomething == FALSE && replacement != NULL)
+                {
+                  replacement = StrBufCat(replacement, ", ");
+                  replacement = StrBufCat(replacement, ptr);
+                }
+
+                // continue right after the comma
+                ptr = comma+1;
+              }
+              else
+              {
+                // no more commas, we are finished
+                // add the remaining string if we replaced anything at all
+                if(replacement != NULL)
+                {
+                  replacement = StrBufCat(replacement, ", ");
+                  replacement = StrBufCat(replacement, ptr);
+                }
+                break;
+              }
+            }
+            while(TRUE);
+
+            if(replacement != NULL)
+            {
+              // replace the old content string with the new replacement
+              FreeStrBuf(hdrNode->content);
+              hdrNode->content = replacement;
+            }
+          }
+
           // the headerNode seems to be finished so we put it into our
           // headerList
+          D(DBF_MIME, "add header '%s' with content '%s'", hdrNode->name, hdrNode->content);
           AddTail((struct List *)headerList, (struct Node *)hdrNode);
         }
 
