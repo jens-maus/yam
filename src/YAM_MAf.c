@@ -1420,22 +1420,24 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
                     }
                   }
                 }
+                else
+                  comma++;
+
+                // continue right after the comma
+                ptr = comma;
 
                 // add the remaining string if we replaced anything so far
-                if(replacedSomething == FALSE && replacement != NULL)
+                if(replacedSomething == FALSE && replacement != NULL && *ptr != '\0')
                 {
                   replacement = StrBufCat(replacement, ", ");
                   replacement = StrBufCat(replacement, ptr);
                 }
-
-                // continue right after the comma
-                ptr = comma+1;
               }
               else
               {
                 // no more commas, we are finished
                 // add the remaining string if we replaced anything at all
-                if(replacement != NULL)
+                if(replacement != NULL && *ptr != '\0')
                 {
                   replacement = StrBufCat(replacement, ", ");
                   replacement = StrBufCat(replacement, ptr);
