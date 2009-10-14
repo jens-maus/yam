@@ -1366,12 +1366,14 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
             char *comma;
             char *replacement = NULL;
 
+            D(DBF_MIME, "checking header '%s' with content '%s'", hdrNode->name, hdrNode->content);
+
             ptr = hdrNode->content;
             do
             {
               BOOL replacedSomething = FALSE;
 
-              if((comma = strchr(ptr, ',')) != NULL)
+              if((comma = MyStrChr(ptr, ',')) != NULL)
               {
                 char *at;
 
@@ -1421,7 +1423,10 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
                   }
                 }
                 else
+                {
+                  // continue with the next recipient
                   comma++;
+                }
 
                 // continue right after the comma
                 ptr = comma;
@@ -1429,7 +1434,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
                 // add the remaining string if we replaced anything so far
                 if(replacedSomething == FALSE && replacement != NULL && *ptr != '\0')
                 {
-                  replacement = StrBufCat(replacement, ", ");
+                  replacement = StrBufCat(replacement, ",");
                   replacement = StrBufCat(replacement, ptr);
                 }
               }
@@ -1439,7 +1444,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
                 // add the remaining string if we replaced anything at all
                 if(replacement != NULL && *ptr != '\0')
                 {
-                  replacement = StrBufCat(replacement, ", ");
+                  replacement = StrBufCat(replacement, ",");
                   replacement = StrBufCat(replacement, ptr);
                 }
                 break;

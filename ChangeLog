@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-10-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: fixed a possible endless loop in the recently added workaround.
+
 2009-10-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: added an experimental workaround for invalid addresses. Usually
