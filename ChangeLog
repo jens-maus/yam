@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-10-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mime/rfc2047.c, mime/rfc2231.c: in case a conversion fails the source and
+    destination codeset name will now be printed out in the debug log as well.
+
 2009-10-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: fixed a possible endless loop in the recently added workaround.

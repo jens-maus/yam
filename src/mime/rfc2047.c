@@ -409,7 +409,7 @@ static char *rfc2047_encode_str(const char *str, const char *charset,
   if((s = malloc(i)) != NULL)
   {
     char *p = s;
-  
+
     // now do the real work
     rfc2047_encode_callback(str, charset, qp_allow, &rfc2047_save_char, &p);
     *p = '\0';
@@ -636,7 +636,7 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
           return 0;
         }
         else
-          W(DBF_MIME, "couldn't convert src str via CodesetsConvertStr()!");
+          W(DBF_MIME, "couldn't convert src str via CodesetsConvertStr(), codesets '%s' -> '%s'!", (srcCodeset->name != NULL) ? srcCodeset->name : "NULL", (G->readCharset->name != NULL) ? G->readCharset->name : NULL);
       }
       else
         W(DBF_MIME, "couldn't find charset '%s' in codesets.library!", chset);
