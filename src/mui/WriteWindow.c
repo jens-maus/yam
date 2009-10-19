@@ -2339,7 +2339,7 @@ DECLARE(AddArchive)
     // get the basename of the first selected file and prepare it to the user
     // as a suggestion for an archive name
     strlcpy(arcname, FilePart(frc->argList[0]), sizeof(arcname));
-    if((p = strrchr(arcname, '.')))
+    if((p = strrchr(arcname, '.')) != NULL)
       *p = '\0';
 
     // now ask the user for the choosen archive name
@@ -2352,11 +2352,11 @@ DECLARE(AddArchive)
 
       // create the destination archive name
       AddPath(filename, C->TempDir, arcname, sizeof(filename));
-      snprintf(arcpath, sizeof(arcpath), strchr(filename, ' ') ? "\"%s\"" : "%s", filename);
+      snprintf(arcpath, sizeof(arcpath), strchr(filename, ' ') != NULL ? "\"%s\"" : "%s", filename);
 
       // now we generate the temporary file containing the file names
       // which we are going to put in the archive.
-      if(strstr(C->PackerCommand, "%l") && (tf = OpenTempFile("w")))
+      if(strstr(C->PackerCommand, "%l") != NULL && (tf = OpenTempFile("w")) != NULL)
       {
         int i;
 
@@ -2375,15 +2375,46 @@ DECLARE(AddArchive)
         char *src;
         BPTR filedir;
 
-        for(src = C->PackerCommand; *src; src++)
+        for(src = C->PackerCommand; *src != '\0'; src++)
         {
           if(*src == '%')
           {
-            switch (*(++src))
+            src++;
+            switch(*src)
             {
-              case '%': command = StrBufCat(command, "%"); break;
-              case 'a': command = StrBufCat(command, arcpath); break;
-              case 'l': command = StrBufCat(command, tf->Filename); break;
+              case '%':
+              {
+                command = StrBufCat(command, "%");
+              }
+              break;
+
+              case 'a':
+              {
+                if(strchr(arcpath, ' ') != NULL)
+                {
+                  // surround the file name by quotes if it contains spaces
+                  command = StrBufCat(command, "\"");
+                  command = StrBufCat(command, arcpath);
+                  command = StrBufCat(command, "\"");
+                }
+                else
+                  command = StrBufCat(command, arcpath);
+              }
+              break;
+
+              case 'l':
+              {
+                if(strchr(tf->Filename, ' ') != NULL)
+                {
+                  // surround the file name by quotes if it contains spaces
+                  command = StrBufCat(command, "\"");
+                  command = StrBufCat(command, tf->Filename);
+                  command = StrBufCat(command, "\"");
+                }
+                else
+                  command = StrBufCat(command, tf->Filename);
+              }
+              break;
 
               case 'f':
               {
@@ -2402,6 +2433,7 @@ DECLARE(AddArchive)
           else
           {
             char chr[2];
+
             chr[0] = *src;
             chr[1] = '\0';
 
@@ -2410,7 +2442,7 @@ DECLARE(AddArchive)
         }
 
         // now we make the request drawer the current one temporarly.
-        if((filedir = Lock(frc->drawer, ACCESS_READ)))
+        if((filedir = Lock(frc->drawer, ACCESS_READ)) != 0)
         {
           BPTR olddir = CurrentDir(filedir);
 

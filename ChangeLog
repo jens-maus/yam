@@ -7,6 +7,8 @@ $URL$
 
 2009-10-17 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/WriteWindow.c: all filenames containing spaces which may be passed to
+    external commands will now correctly be sourrounded with quotes.
   * YAM_CO.c: added ".lha" to the %a paramter of the default packer command
     string.
   * extrasrc/Get#?.c: removed the ENTER()/RETURN() macros from the list/node
