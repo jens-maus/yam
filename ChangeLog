@@ -7,6 +7,8 @@ $URL$
 
 2009-10-17 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_WR.c: added some debug output to the address generation function when
+    replying to a mail to track down a bug with slightly broken addresses.
   * mui/WriteWindow.c: all filenames containing spaces which may be passed to
     external commands will now correctly be sourrounded with quotes.
   * YAM_CO.c: added ".lha" to the %a paramter of the default packer command

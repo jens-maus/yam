@@ -1350,7 +1350,7 @@ static char *AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
     char *ins;
     BOOL skip = FALSE;
 
-    if(strchr(pe->Address,'@'))
+    if(strchr(pe->Address,'@') != NULL)
       ins = BuildAddress(address, sizeof(address), pe->Address, pe->RealName);
     else
     {
@@ -1364,18 +1364,20 @@ static char *AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
     if(ins != NULL)
     {
       // exclude the given person if it is ourself
-      if(excludeme && stricmp(pe->Address, C->EmailAddress) == 0)
+      if(excludeme == TRUE && stricmp(pe->Address, C->EmailAddress) == 0)
         skip = TRUE;
 
       // if the string already contains this person then skip it
-      if(stristr(sbuf, ins))
+      if(stristr(sbuf, ins) != NULL)
         skip = TRUE;
 
       if(skip == FALSE)
       {
+        D(DBF_MAIL, "adding recipient '%s'", ins);
+
         // lets prepend a ", " sequence in case sbuf
         // is not empty
-        if(*sbuf)
+        if(*sbuf != '\0')
           sbuf = StrBufCat(sbuf, ", ");
 
         sbuf = StrBufCat(sbuf, ins);
@@ -2637,8 +2639,8 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         }
         else
         {
-          // user wants to replyd to all senders and recipients
-          // so lets add
+          // user wants to reply to all senders and recipients
+          // so let's add them
           if(repmode == 2)
           {
             if(mail->ReplyTo.Address[0] != '\0')
@@ -2676,7 +2678,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         if((domain = strchr(pe.Address, '@')) == NULL)
           domain = strchr(C->EmailAddress, '@');
 
-        if(C->AltReplyPattern[0] != '\0' && domain && MatchNoCase(domain, C->AltReplyPattern))
+        if(C->AltReplyPattern[0] != '\0' && domain != NULL && MatchNoCase(domain, C->AltReplyPattern))
           altpat = TRUE;
         else
           altpat = FALSE;
@@ -2685,7 +2687,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         // this is our first iteration
         if(j == 0)
         {
-          if(foundMLFolder)
+          if(foundMLFolder == TRUE)
           {
             signature = folder->MLSignature;
             mlIntro = TRUE;
@@ -2720,7 +2722,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             // put some introduction right before the quoted text.
             InsertIntroText(out, foundMLFolder ? C->MLReplyIntro : (altpat ? C->AltReplyIntro : C->ReplyIntro), &etd);
 
-            if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)))
+            if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)) != NULL)
             {
               // make sure we quote the text in question.
               QuoteText(out, cmsg, strlen(cmsg), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);
