@@ -9883,12 +9883,12 @@ Reference - Message storage
 ===========================
 
 
-   Each message is saved as a separate file of which the filename is
-constructed by joining (with a dot) the number of days since 1.1.1978
-and a running number for that day.  The mail status is stored in the
-comment field.  Every folder contains an @{b}.index@{ub} file with the headers of
-every message in the directory.  There is also a configuration file
-called @{b}.fconfig@{ub} which holds the settings for that particular folder.
+   Each message is saved as a separate file of which the filename is constructed
+by encoding certain information about the mail (date, status, etc) using the Base64
+standard encoding. The resulting name is compatible to any filesystem. Every folder
+contains an @{b}.index@{ub} file with the headers of every message in the
+directory. There is also a configuration file called @{b}.fconfig@{ub} which holds
+the settings for that particular folder.
 
 @endnode
 

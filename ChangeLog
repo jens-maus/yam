@@ -7,6 +7,8 @@ $URL$
 
 2009-10-17 Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/YAM_english.guide: rewrote the section about the single mail file names.
+    This fixes bug #2869911.
   * Debug.c: the debug log now contains the build date instead of the
     (currently) empty build ID.
   * YAM_UT.c: added some debug output to the address generation function when
