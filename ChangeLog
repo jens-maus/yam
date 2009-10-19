@@ -7,6 +7,8 @@ $URL$
 
 2009-10-17 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c: added ".lha" to the %a paramter of the default packer command
+    string.
   * extrasrc/Get#?.c: removed the ENTER()/RETURN() macros from the list/node
     functions, because a @ctrace log become far too huge and unmaintainable
     with these.
