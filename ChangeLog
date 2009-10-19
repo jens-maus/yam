@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-10-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/Get#?.c: removed the ENTER()/RETURN() macros from the list/node
+    functions, because a @ctrace log become far too huge and unmaintainable
+    with these.
+
 2009-10-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * mime/rfc2047.c, mime/rfc2231.c: in case a conversion fails the source and

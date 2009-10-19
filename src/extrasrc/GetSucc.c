@@ -27,20 +27,14 @@
 
 #include "SDI_compiler.h"
 
-#include "Debug.h"
-
 // GetSucc()
 // get a node's sucessor
-
 struct Node *GetSucc(struct Node *node)
 {
   struct Node *result = NULL;
 
-  ENTER();
-
   if(node != NULL && node->ln_Succ != NULL && node->ln_Succ->ln_Succ != NULL)
     result = node->ln_Succ;
 
-  RETURN(result);
   return result;
 }

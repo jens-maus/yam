@@ -27,20 +27,14 @@
 
 #include "SDI_compiler.h"
 
-#include "Debug.h"
-
 // GetTail()
 // get the tail element of a list
-
 struct Node *GetTail(struct List *list)
 {
   struct Node *result = NULL;
 
-  ENTER();
-
   if(list != NULL && IsListEmpty(list) == FALSE)
     result = list->lh_TailPred;
 
-  RETURN(result);
   return result;
 }

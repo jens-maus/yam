@@ -27,20 +27,14 @@
 
 #include "SDI_compiler.h"
 
-#include "Debug.h"
-
 // GetPred()
 // get a node's predecessor
-
 struct Node *GetPred(struct Node *node)
 {
   struct Node *result = NULL;
 
-  ENTER();
-
   if(node != NULL && node->ln_Pred != NULL && node->ln_Pred->ln_Pred != NULL)
     result = node->ln_Pred;
 
-  RETURN(result);
   return result;
 }

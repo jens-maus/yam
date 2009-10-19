@@ -27,20 +27,14 @@
 
 #include "SDI_compiler.h"
 
-#include "Debug.h"
-
 // GetHead()
 // get the head element of a list
-
 struct Node *GetHead(struct List *list)
 {
   struct Node *result = NULL;
 
-  ENTER();
-
   if(list != NULL && IsListEmpty(list) == FALSE)
     result = list->lh_Head;
 
-  RETURN(result);
   return result;
 }
