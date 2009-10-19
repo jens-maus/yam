@@ -241,7 +241,7 @@ static int rfc2231_decode_int(char *dst, const char *src, struct codeset *srcCod
       CodesetsFreeA(str, NULL);
     }
     else
-      W(DBF_MIME, "error while trying to convert rfc2231 decoded string to local charset, codesets '%s' -> '%s'!", (srcCodeset->name != NULL) ? srcCodeset->name : "NULL", (G->readCharset->name != NULL) ? G->readCharset->name : NULL);
+      W(DBF_MIME, "error while trying to convert rfc2231 decoded string to local charset, codesets '%s' -> '%s'!", (srcCodeset->name != NULL) ? srcCodeset->name : "<NULL>", (G->readCharset->name != NULL) ? G->readCharset->name : "<NULL>");
   }
 
   RETURN((int)(p-src));
