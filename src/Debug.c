@@ -182,7 +182,7 @@ void SetupDebug(void)
     }
 
     // output information on the debugging settings
-    _DBPRINTF("** %s build: %s startup **********************\n", yamversion, yambuildid);
+    _DBPRINTF("** %s build: %s startup **********************\n", yamversion, yamversiondate);
     _DBPRINTF("Exec version: v%ld.%ld\n", (unsigned long)((struct Library *)SysBase)->lib_Version, (unsigned long)((struct Library *)SysBase)->lib_Revision);
     _DBPRINTF("Initializing runtime debugging:\n");
 
