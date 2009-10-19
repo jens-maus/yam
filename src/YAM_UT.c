@@ -361,8 +361,8 @@ char *TrimStart(char *s)
 {
   ENTER();
 
-  while(*s && isspace(*s))
-    ++s;
+  while(*s != '\0' && isspace(*s))
+    s++;
 
   RETURN(s);
   return s;
@@ -408,7 +408,7 @@ char *stristr(const char *a, const char *b)
 
   ENTER();
 
-  for (; *a; a++)
+  for(; *a; a++)
   {
     if(strnicmp(a, b, l) == 0)
     {
@@ -1930,6 +1930,8 @@ char *BuildAddress(char *buffer, size_t buflen, const char *address, const char 
   // check that buffer is != NULL
   if(buffer != NULL)
   {
+    D(DBF_MAIL, "build full address from address '%s' and name '%s'", address != NULL ? address : "<NULL>", name != NULL ? name : "<NULL>");
+
     // check if a real name is given at all
     // or not
     if(name != NULL && name[0] != '\0')
@@ -1999,6 +2001,8 @@ char *BuildAddress(char *buffer, size_t buflen, const char *address, const char 
     }
     else
       strlcpy(buffer, address, buflen);
+
+    D(DBF_MAIL, "built full address '%s'", buffer);
   }
   else
     E(DBF_UTIL, "BuildAddress buffer==NULL error!");

@@ -9,6 +9,8 @@ $URL$
 
   * Debug.c: the debug log now contains the build date instead of the
     (currently) empty build ID.
+  * YAM_UT.c: added some debug output to the address generation function when
+    replying to a mail to track down a bug with slightly broken addresses.
   * YAM_WR.c: added some debug output to the address generation function when
     replying to a mail to track down a bug with slightly broken addresses.
   * mui/WriteWindow.c: all filenames containing spaces which may be passed to
