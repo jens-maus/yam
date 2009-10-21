@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-10-21 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+* locale/italiano.ct: Added missing string (MSG_CO_TEXTCOLORS_READ), this should
+  fix bugs #2874442 and #2874431
+* doc/Install-YAM: Added italian language as "Setting up" option, this need some
+  more testing before 2.6 final release.
+* doc/YAM_english.guide: Add Samir Hawamdeh and Luca Longone as contributors for
+  the italian translation :-) 
+
 2009-10-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/YAM_english.guide: rewrote the section about the single mail file names.

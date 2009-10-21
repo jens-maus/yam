@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.4 (10.10.2009)
+## version $VER: YAM.catalog 6.4 (21.10.2009)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -272,7 +272,7 @@ Inizializzazione delle librerie e delle classi...
 ; Initializing libraries and classes...
 ;
 MSG_ErrorClasses
-Impossibile creare le classi MUI personali
+Impossibile creare le classi MUI interne
 ; Can't create MUI custom classes
 ;
 MSG_ErrorAslStruct
@@ -637,7 +637,7 @@ _Sposta
 ; _Move
 ;
 MSG_MA_CopyMsg
-Copiatura dei/del messaggi(o)
+Copia dei/del messaggi(o)
 ; Copy message(s)
 ;
 MSG_MA_CopyGad
@@ -799,7 +799,7 @@ Cancella
 ; Delete
 ;
 MSG_MA_MMove
-Muovi...
+Sposta...
 ; Move...
 ;
 MSG_MA_MCopy
@@ -848,7 +848,7 @@ Rubrica
 ; This is the title of the address book window, not the menu item.
 ;
 MSG_MA_MConfig
-Configurazione
+Configurazione di YAM
 ; Configuration
 ; This is the title of the configuration window, not the menu item.
 ;
@@ -1327,7 +1327,7 @@ _Connessione tramite APOP
 ; _Log in using APOP
 ;
 MSG_CO_PSNever
-mai
+disattivata
 ; never
 ;
 MSG_CO_PSLarge
@@ -1347,7 +1347,7 @@ nascondi sempre
 ; hide always
 ;
 MSG_CO_TWAuto
-automatico
+automatica
 ; automatic
 ;
 MSG_CO_TWAlways
@@ -1919,7 +1919,7 @@ Posizione _X
 ; Position _X
 ;
 MSG_CO_CloseGadget
-Chiusura con iconifica_zione del programma
+_Iconifica il programma usando il gadget di chiusura di YAM
 ; Close _gadget iconifies program
 ;
 MSG_CO_SaveDelete
@@ -3976,11 +3976,11 @@ Componi un messaggio
 ; Write message
 ;
 MSG_WR_Subject
-O_ggetto
+O_ggetto:
 ; Sub_ject
 ;
 MSG_WR_To
-_Per
+_A:
 ; _To
 ;
 MSG_WR_Add
@@ -4765,17 +4765,17 @@ difettoso oppure il messaggio risulta troncato.
 ; SIZE, SIZE
 ;
 MSG_ER_DocNotFound
-Documento HTML '%s' non trovato.\n\
+Il documento HTML '%s' non è stato trovato.\n\
 \n\
-Il file non esiste sul server WWW.
+Il file ricercato è inesistente sul server.
 ; HTML document '%s' not found.\n\
 ; \n\
 ; The file doesn't exist on the WWW server.
 ; FILENAME
 ;
 MSG_ER_SendHTTP
-Impossibile inviare una richiesta HTTP.\n\
-Richiesta del documento al server WWW fallita..
+Impossibile inviare una valida richiesta HTTP.\n\
+Richiesta del documento al server WWW fallita!
 ; Couldn't send HTTP request. Requesting a document from the WWW server
 ; failed.
 ;
@@ -6074,7 +6074,7 @@ Inviato
 ; Sent
 ;
 MSG_DATE_SNTRCVD
-Inviati/Ricevuti
+Inviato/Ricevuto
 ; Sent/Received
 ;
 MSG_CO_DATE_SNTRCVD
@@ -6109,7 +6109,7 @@ livello.
 ; 4th level quotes.
 ;
 MSG_CO_URLCOLOR
-URL Colore
+Colore URL
 ; URL color
 ;
 MSG_HELP_CO_CA_COLURL
@@ -6917,11 +6917,11 @@ Comportamento alla ricezione di nuovi messaggi...
 ; How to handle and react upon incoming mail...
 ;
 MSG_CO_FILTER_TITLE
-Impostazioni dei filtri della posta
+Impostazioni dei filtri di posta
 ; Mail Filter Settings
 ;
 MSG_CO_FILTER_SUMMARY
-Definizione dei filtri della posta...
+Definizione dei filtri di posta...
 ; Define own mail filters you need...
 ;
 MSG_CO_READ_TITLE
@@ -8407,7 +8407,7 @@ come degli allegati.
 ; displayed as attachments instead.
 ;
 MSG_US_DIRECTORY_DOESNT_EXIST
-La directory posta '%s' per l'utente '%s' non esiste.\n\
+La directory di posta '%s' per l'utente '%s' è inesistente.\n\
 \n\
 Si desidera crearne una adesso?
 ; Mail directory '%s' for user '%s' does not exist.\n\
@@ -8556,8 +8556,8 @@ MSG_HELP_CO_CY_FORWARDMODE
 Seleziona qui la modalità con la quale il messaggio\n\
 dovrà essere inoltrato.\n\
 Il messaggio potrà essere inoltrato sia sotto forma\n\
-di semplice allegato, sia come normale messaggio di\n\
-testo inserito all'interno del nuovo messaggio.
+di semplice allegato, sia come normale messaggio\n\
+di testo inserito all'interno del nuovo messaggio.
 ; Select here the way messages should be\n\
 ; forwarded by default. Either a message\n\
 ; can be forwarded as an attachment or the\n\
@@ -9279,7 +9279,7 @@ k
 ; k
 ;
 MSG_CO_UPDATE_NEVER
-Mai
+Disattivata
 ; Never
 ;
 MSG_MA_EXECUTESCRIPT_TITLE
@@ -9788,12 +9788,16 @@ Si desidera sovrascriverlo?
 ; FILENAME
 ;
 MSG_ER_USER_DIR_MISSING
-La directory base '%s' dell'utente '%s' non esiste!
+La directory base '%s' dell'utente '%s' è inesistente!
 ; The home directory '%s' of user '%s' does not exist!
 ; PATH, USERNAME
 ;
+MSG_CO_TEXTCOLORS_READ
+Visualizza colori tes_to
+; Show te_xt colors
+;
 MSG_HELP_CO_CH_TEXTCOLORS_READ
-Usa colori testo per contrassegnare speciali\n\
+Usa colori del testo per contrassegnare speciali\n\
 passaggi nei testi (ad esempio per le citazioni)
 ; Use text colors to signal special\n\
 ; text passages, (e.g. quotations, etc.)
@@ -9813,7 +9817,7 @@ Visualizza colori tes_to
 ; Show tex_t colors
 ;
 MSG_HELP_CO_CH_TEXTCOLORS_WRITE
-Usa colori testo per contrassegnare speciali\n\
+Usa colori del testo per contrassegnare speciali\n\
 passaggi nei testi (ad esempio per le citazioni)
 ; Use text colors to signal special\n\
 ; text passages, (e.g. quotations, etc.)

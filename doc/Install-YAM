@@ -11,6 +11,7 @@
 (set #def_lang_Deutsch              1)
 (set #def_lang_Svenska              2)
 (set #def_lang_Czech                4)
+(set #def_lang_Italiano             5)
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only OS4 can handle them.
 (set #def_lang_English_British      8)
@@ -18,8 +19,9 @@
 
 (set #def_doc_English               0)
 ;(set #def_doc_French               1) I don't know if this is the right place
-
+;(set #def_doc_Italian              2) I don't know if this is the right place
 ; ///
+
 ;----------------------------------------------------------------------------
 ;/// ***** English
 (set #def_cat_lang #def_lang_English)
@@ -241,20 +243,20 @@
 ; ///
 ;/// ***** Italiano
 (set #def_cat_lang #def_lang_Italiano)
-(set #def_doc_lang #def_doc_Italiano)
-(set #wrongOS  "YAM richiede almeno AmigaOS 3.0 per girare!\n")
-(set #wrongMUI "YAM richiede almeno MUI 3.8 per girare!\n")
-(set #wrongCPU "YAM richiede almeno una CPU 68020 per girare!\n")
+(set #def_doc_lang #def_doc_Italian)
+(set #wrongOS  "YAM richiede almeno AmigaOS 3.0 per girare correttamente!\n")
+(set #wrongMUI "YAM richiede almeno MUI 3.8 per girare correttamente!\n")
+(set #wrongCPU "YAM richiede almeno una CPU 68020 per girare correttamente!\n")
 (set #YAM_dir  (cat "Per favore seleziona una directory per YAM\n"
                     "(Non verrà creata nessuna cartella extra!)"))
-(set #lang_catalog (cat "Quale catalogo si desidera installare?\n"
+(set #lang_catalog (cat "Quale catalogo di lingua si desidera installare?\n"
                         "(La lingua inglese è quella predefinita)"))
 (set #lang_manual "Seleziona la lingua da installare per la guida in linea AmigaGuide")
 (set #no_way_back_warning (cat "\n"
                                "ATTENZIONE!!\n"
                                "(Nel caso si desideri aggiornare il programma\n"
                                "da una precedente installazione di YAM)\n\n"
-                               "Lo schema dei nomi dei messaggi è stato modificato, perciò quando viene lanciata"
+                               "Lo schema dei nomi dei messaggi è stato modificato, perciò quando verrà lanciata"
                                " questa nuova versione per la prima volta tutti i precedenti messaggi verranno"
                                " automaticamente convertiti al nuovo schema.\n"
                                "Si consiglia di effettuare un backup di TUTTI i messaggi PRIMA di procedere.\n\n"
