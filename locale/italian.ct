@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.4 (21.10.2009)
+## version $VER: YAM.catalog 6.4 (25.10.2009)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -318,7 +318,7 @@ file binario
 ; binary file
 ;
 MSG_CTapplicationpostscript
-Documento Postscript
+Documento PostScript
 ; Postscript document
 ;
 MSG_CTapplicationrtf
@@ -602,9 +602,9 @@ MSG_MA_FilterStats
 Filtraggio eseguito:\n\
 \n\
 %3ld messaggi controllati,\n\
-%3ld inoltrati,\n\
-%3ld archiviati,\n\
-%3ld cancellati
+%3ld messaggi inoltrati,\n\
+%3ld messaggi archiviati,\n\
+%3ld messaggi cancellati
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
@@ -1032,81 +1032,81 @@ Saluti
 ;
 MSG_CO_LineBreak
 \\\\n\
-  Linea d'interruzione
+  Interruzione di linea
 ;  \\\\n\
 ;  Line break
 ;
 MSG_CO_SenderName
-Mittente originario: Nome completo
-; Original sender: Name
+%n Mittente originale: Nome completo
+; %n Original sender: Name
 ;
 MSG_CO_SenderFirstname
-%f  Mittente originario: Nome
-; %f  Original sender: First name
+%f Mittente originale: Nome
+; %f Original sender: First name
 ;
 MSG_CO_SenderAddress
-%e  Mittente originario: Indirizzo
-; %e  Original sender: Address
+%e Mittente originale: Indirizzo
+; %e Original sender: Address
 ;
 MSG_CO_SenderSubject
-Messaggio originario: Oggetto
-; Original message: Subject
+%s Messaggio originale: Oggetto
+; %s Original message: Subject
 ;
 MSG_CO_SenderDate
-%d  Messaggio originario: Data
+%d  Messaggio originale: Data
 ; %d  Original message: Date
 ;
 MSG_CO_SenderTime
-%t  Messaggio originario: Ora
-; %t  Original message: Time
+%t Messaggio originale: Ora
+; %t Original message: Time
 ;
 MSG_CO_SenderDOW
-%w  Messaggio originario: Giorno della settimana
-; %w  Original message: Day of week
+%w Messaggio originale: Giorno della settimana
+; %w Original message: Day of week
 ;
 MSG_CO_SenderMsgID
-Messaggio originario: ID Messaggio
-;  Original message: Message ID
+%m Messaggio originale: ID Messaggio
+; %m Original message: Message ID
 ;
 MSG_CO_RecptName
 %r Destinatario: Nome completo
 ; %r  Recipient: Name
 ;
 MSG_CO_RecptFirstname
-%v  Destinatario: Nome
-; %v  Recipient: First name
+%v Destinatario: Nome
+; %v Recipient: First name
 ;
 MSG_CO_RecptAddress
-%a  Destinatario: Indirizzo
-; %a  Recipient: Address
+%a Destinatario: Indirizzo
+; %a Recipient: Address
 ;
 MSG_CO_ORecptName
-Destinatario originario: Nome completo
-; Original recipient: Name
+%r Destinatario originale: Nome completo
+; %r Original recipient: Name
 ;
 MSG_CO_ORecptFirstname
-Destinatario originario: Nome
-; Original recipient: First name
+%v Destinatario originale: Nome
+; %v Original recipient: First name
 ;
 MSG_CO_ORecptAddress
-%a  Destinatario originario: Indirizzo
-; %a  Original recipient: Address
+%a Destinatario originale: Indirizzo
+; %a Original recipient: Address
 ;
 MSG_CO_CompleteHeader
-%h  Intestazione completa
+%h Intestazione completa
 ; %h Complete header
 ;
 MSG_CO_ArchiveName
-%a  Nome file dell'archivio
-; %a  Filename of archive
+%a Nome file dell'archivio
+; %a Filename of archive
 ;
 MSG_CO_ArchiveFiles
-%f  File da archiviare
-; %f  Files to be archived
+%f File da archiviare
+; %f Files to be archived
 ;
 MSG_CO_ArchiveFilelist
-%l  Lista contenente i nomi dei file
-; %l  List containing filenames
+%l Lista contenente i nomi dei file
+; %l List containing filenames
 ;
 ; Module CO - Window
 ;
@@ -2868,8 +2868,8 @@ Tipologia di script\n\
 ; (ARexx or AmigaDOS).
 ;
 MSG_HELP_CO_CH_CONSOLE
-Apre una console in moda da permettere allo script\n\
-la gestione dei flussi di dati in ingresso e in uscita.
+Apre una console in moda da permettere allo script la\n\
+gestione dei flussi di dati in ingresso e in uscita.
 ; Open a console window to allow input\n\
 ; and output from the script.
 ;
@@ -2890,7 +2890,7 @@ Usa le impostazioni correnti.
 ;
 MSG_HELP_CO_BT_CANCEL
 Chiude la finestra di configurazione\n\
-e usa le precedenti impostazioni.
+ed usa le precedenti impostazioni.
 ; Close configuration\n\
 ; window and use the old\n\
 ; settings.
@@ -2940,8 +2940,8 @@ Pseudonimo
 MSG_AB_FoundEntry
 Voce trovata!\n\
 \n\
-Pseudonimo: %s\n\
-Nome: %s
+Pseudonimo: \eb%s\en\n\
+Nome: \eb%s\en
 ; Found matching entry!\n\
 ; \n\
 ; Alias: \eb%s\en\n\
@@ -3084,15 +3084,15 @@ Per indirizzo
 ; By address
 ;
 MSG_AB_View
-Vedi
+Visualizza
 ; View
 ;
 MSG_AB_Fold
-Chiudi tutto
+Raggruppa tutto
 ; Fold all
 ;
 MSG_AB_Unfold
-Apri tutto
+Espandi tutto
 ; Unfold all
 ;
 ; Module AB - Toolbar
@@ -3130,18 +3130,17 @@ Sta_mpa
 ; P_rint
 ;
 MSG_AB_TBOpenTree
-_Apri
+_Espandi
 ; _Unfold
 ;
 MSG_AB_TBCloseTree
-C_hiudi
+R_agg.
 ; F_old
 ;
 ; Module AB - Bubblehelp
 ;
 MSG_HELP_AB_BT_SAVE
-Salva le modifiche effettuate\n\
-e chiude questa finestra.
+Salva le modifiche effettuate.
 ; Save current changes.
 ;
 MSG_HELP_AB_BT_SEARCH
@@ -3547,7 +3546,7 @@ Data:
 ;
 MSG_RE_MDNOrigRecpt
 \n\
-Mittente originario:
+Mittente originale:
 ; \n\
 ; Original recipient:
 ;
@@ -3725,7 +3724,7 @@ Nessuna info sul mittente
 ; No sender info
 ;
 MSG_RE_SInfo
-Solo i campi di dati
+Solo i campi dei dati
 ; Data fields only
 ;
 MSG_RE_SInfoImage
@@ -4518,8 +4517,8 @@ MSG_TR_NewMailReq
 \e8C'è nuova posta!\e2\n\
 \n\
 %3ld messaggi prelevati\n\
-%3ld lasciati nel server\n\
-%3ld duplicati saltati\n
+%3ld messaggi lasciati nel server\n\
+%3ld messaggi duplicati saltati\n
 ; \e8You have new mail!\e2\n\
 ; \n\
 ; %3ld messages downloaded,\n\
@@ -4532,12 +4531,12 @@ MSG_TR_FilterStats
 Filtraggio eseguito su:\n\
 \n\
 %3ld messaggi controllati\n\
-%3ld rediretti\n\
-%3ld inoltrati\n\
-%3ld auto-risposti\n\
+%3ld messaggi rediretti\n\
+%3ld messaggi inoltrati\n\
+%3ld messaggi in risposta automatica\n\
 %3ld comandi attivati\n\
-%3ld spostati\n\
-%3ld cancellati
+%3ld messaggi spostati\n\
+%3ld messaggi cancellati
 ; \n\
 ; Filtering done:\n\
 ; \n\
@@ -5282,8 +5281,8 @@ Rimuovi l'account selezionato.
 ;
 MSG_FO_NewFolderReq
 Quali impostazioni si desidera usare per la nuova cartella?\n\
-Selezionare 'directory esistente' nel caso la cartella sia\n\
-già esistente sul disco.
+Selezionare 'directory esistente' nel caso la cartella sia già\n\
+esistente sul disco.
 ; What settings do you want to use for the new folder?\n\
 ; Select 'Existing directory' if you want to re-use an\n\
 ; already existing directory.
@@ -5549,7 +5548,7 @@ Modifica...
 ; Edit...
 ;
 MSG_FOLDER_DELETE
-Cancella
+Elimina
 ; Delete
 ;
 MSG_FOLDER_IMPORT
@@ -6509,11 +6508,11 @@ MSG_CO_CHARSETWARN_BT
 ; *_Change|Ignore _always|_Ignore
 ;
 MSG_CO_SenderRFCDateTime
-%c  Mittente originario: RFC2822 Data & Ora
+%c  Mittente originale: RFC2822 Data & Ora
 ; %c  Original sender: RFC 2822 date & time
 ;
 MSG_CO_SenderTimeZone
-%z  Mittente originario: TimeZone (+0000)
+%z  Mittente originale: TimeZone (+0000)
 ; %z  Original sender: Time zone (+0000)
 ;
 MSG_CO_Filter_Name
@@ -6697,7 +6696,7 @@ Conoscenti o amici
 ; People I Know
 ;
 MSG_QUICKSEARCH_VO_HASATTACHMENTS
-Con Allegato
+Con Allegati
 ; Has Attachments
 ;
 MSG_QUICKSEARCH_VO_MINSIZE
@@ -6718,22 +6717,21 @@ _Nessuna parte
 ; n_owhere
 ;
 MSG_HELP_QUICKSEARCH_VIEWOPTIONS
-Solo i messaggi che combaciano con i criteri\n\
-selezionati verranno mostrati.
+Selezionando questa opzione verranno mostrati solo i messaggi\n\
+che combaciano con i criteri di ricerca selezionati.
 ; Only mail matching this criterion\n\
 ; will be displayed.
 ;
 MSG_HELP_QUICKSEARCH_SEARCHSTRING
-Il testo inserito qui sarà utilizzato come criterio di\n\
-ricerca in modo da mostrare i messaggi nella cartella\n\
-corrente.
+Il testo inserito qui sarà utilizzato come criterio di ricerca\n\
+in modo da mostrare i messaggi nella cartella corrente.
 ; Text inserted here will be used as the search\n\
 ; criterion to display mail in this folder.
 ;
 MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
 Selezionando questa opzione sarà possibile\n\
-selezionare un criterio di ricerca per il\n\
-testo specificato.
+selezionare un criterio di ricerca per il testo\n\
+specificato.
 ; Select here where the string at the right\n\
 ; should be searched in the mail.
 ;
@@ -7029,14 +7027,15 @@ AmiSSL non disponibile
 ; AmiSSL not available
 ;
 MSG_CO_AMISSLWARN
-YAM non ha trovato disponibile AmiSSL per le sue\n\
-funzionalità interne relative a SSLv3/TLSv1.\n\
-Perciò tutte le connessioni sicure sono state al\n\
-momento disabilitate fino a che AmiSSL non verrà\n\
-correttamente installato e rilevato dal programma.\n\
+Attenzione, YAM non ha trovato disponibile nessuna versione di\n\
+AmiSSL per le sue funzionalità interne relative a (SSLv3/TLSv1)\n\
 \n\
-Per favore assicurati di aver installato correttamente\n\
-AmiSSL v%lu.%lu sul tuo sistema, dopodichè riavvia YAM.
+Tutte le connessioni sicure verranno al momento disabilitate fino\n\
+a che AmiSSL non verrà correttamente installato e rilevato dal\n\
+programma.\n\
+\n\
+Per favore assicurati di aver installato correttamente AmiSSL v%lu.%lu\n\
+sul tuo sistema, dopodichè riavvia YAM.
 ; AmiSSL was found to be unavailable. Therefore,\n\
 ; all secure connections (SSL/TLS) are disabled\n\
 ; until AmiSSL is found to be installed correctly.\n\
@@ -9326,10 +9325,10 @@ MSG_MA_FILTER_STATS_SPAM
 Filtraggio eseguito:\n\
 \n\
 %3ld messaggi verificati,\n\
-%3ld inoltrati,\n\
-%3ld archiviati,\n\
-%3ld cancellati,\n\
-%3ld classificati come Spam
+%3ld messaggi inoltrati,\n\
+%3ld messaggi archiviati,\n\
+%3ld messaggi cancellati,\n\
+%3ld messaggi classificati come spam
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
@@ -9344,13 +9343,13 @@ MSG_TR_FILTER_STATS_SPAM
 Filtraggio eseguito:\n\
 \n\
 %3ld messaggi verificati,\n\
-%3ld respinti,\n\
-%3ld inoltrati,\n\
-%3ld risposti-automicamente,\n\
-%3ld comando attivato,\n\
-%3ld spostati,\n\
-%3ld cancellati,\n\
-%3ld classificati come Spam
+%3ld messaggi respinti,\n\
+%3ld messaggi inoltrati,\n\
+%3ld messaggi di risposta automatica,\n\
+%3ld messaggi comando attivati,\n\
+%3ld messaggi spostati,\n\
+%3ld messaggi cancellati,\n\
+%3ld messaggi classificati come spam
 ; \n\
 ; Filtering done:\n\
 ; \n\

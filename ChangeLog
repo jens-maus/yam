@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-10-25 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italiano.ct: Various minor changes on the italian translation.
+
 2009-10-21 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italiano.ct: Added missing string (MSG_CO_TEXTCOLORS_READ), this should
