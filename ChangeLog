@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-10-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: YAM complained about an unknown file format when trying to import
+    plain .mbox files which contained a mail without subject as the very first
+    mail. Now at least 2 out of 3 known header lines (From, To, Subject) will
+    suffice to make YAM recognize such a file as a valid .mbox file.
+
 2009-10-26  Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated according to changes.
@@ -20,7 +27,7 @@ $URL$
   * doc/Install-YAM: Added italian language as "Setting up" option, this need some
     more testing before 2.6 final release.
   * doc/YAM_english.guide: Add Samir Hawamdeh and Luca Longone as contributors for
-    the italian translation :-) 
+    the italian translation :-)
 
 2009-10-17 Thore Böckelmann <tboeckel@gmx.de>
 
