@@ -3014,7 +3014,7 @@ BOOL MA_ImportMessages(const char *fname, BOOL quiet)
         // 100 lines which might indicate a valid .mbox file. If we find at
         // least 2 of these this will satisfy us.
         i = 0;
-        while(i < 100 && getline(&buf, &buflen, fh) > 0)
+        while(i < 100 && foundTokens < 2 && getline(&buf, &buflen, fh) > 0)
         {
           if(strnicmp(buf, "From:", 5) == 0)
             foundTokens++;
