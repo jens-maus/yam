@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.35 (20.04.09)
+## version $VER: YAM.ct 6.36 (26.10.09)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -1854,8 +1854,8 @@ Efter ett meddelande har skrivits
 ;#DEF After writing a message
 ;#SET (539//)
 MSG_CO_ScriptClickURL
-Vid dubbelklickning av URL-address
-;#DEF When double-clicking a URL
+Vid dubbelklickning av URL
+;#DEF When double-clicking an URL
 ;#SET (540//)
 MSG_CO_Script
 Sk_ript
@@ -5486,8 +5486,8 @@ Teckenuppsättning
 ;#DEF C_harset
 ;#SET (1611//)
 MSG_CO_CHARSETUNKNOWNWARN
-Teckenuppsättningen för YAM är '%s' men stödjs\ninte av den installerade codesets.library versionen.\n\nHur vill du fortsätta?
-;#DEF The charset configured for YAM is '%s' but isn't\nsupported by the installed codesets.library version.\n\nHow do you want to proceed?
+Teckenuppsättningen för YAM är '%s' men stödjs\ninte av den installerade versionen av codesets.library versionen.\n\nHur vill du fortsätta?
+;#DEF The charset configured for YAM is '%s' but isn't\nsupported by the installed version of codesets.library.\n\nHow do you want to proceed?
 ;#SET (1612//)
 MSG_CO_CHARSETUNKNOWNWARN_BT
 *_Ändra till förvalt|_Ignorera
@@ -7521,3 +7521,23 @@ MSG_ER_WRONG_DOB_FORMAT
 Födelsedagsdatumet är i fel format. Det korrekta formatet är '%s'.\n%%d - dag\n%%m - månad\n%%y - år (2 siffror)\n%%Y - år (4 siffror)\nÅr nummret måste vara större än eller lika med 1900!
 ;#DEF Date of birth uses a wrong format. The correct format is '%s'.\n%%d - day\n%%m - month\n%%y - year (2 digits)\n%%Y - year (4 digits)\nThe year number must be greater or equal 1900!
 ;#SET (2143//)
+MSG_CO_PGPURL
+URL till pubilk PGP-nyckel
+;#DEF URL to public PGP key
+;#SET (2144//)
+MSG_HELP_CO_ST_PGPURL
+Du kan specifiera en URL där din publika\nPGP-nyckel kan laddas ned från. Denna URL\nkommer sedan att placeras i en separat\nhuvudpost i varje brev.
+;#DEF You can specify an URL where your public\nPGP key can be downloaded from. This URL\nwill then placed into a separate header\nentry in every mail.
+;#SET (2145//)
+MSG_TR_NEW_MAIL_NOTIFY
+Tog emot %ld nya brev!
+;#DEF Received %ld new mails!
+;#SET (2148//)
+MSG_CO_NOTIOS41SYSTEM
+AmigaOS_4.1 notifieringssystem
+;#DEF AmigaOS_4.1 notification system
+;#SET (2149//)
+MSG_HELP_CO_CH_NOTIOS41SYSTEM
+Om vald, kommer YAM att använda AmigaOS4.1's\nnotifieringssystem för att notifiera användaren om\nnya mottagna brev. Detta kräver minst version\nV53.2 av application.library.
+;#DEF If checked, YAM will use AmigaOS4.1's notification\nsystem to notify the user about new received mails.\nThis requires at least application.library V53.2.
+;#SET (2150//)
