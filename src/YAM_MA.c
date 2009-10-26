@@ -3010,7 +3010,7 @@ BOOL MA_ImportMessages(const char *fname, BOOL quiet)
         // seek the file pointer back
         fseek(fh, 0, SEEK_SET);
 
-        // Let's try to find up to three known header lines within the first
+        // Let's try to find up to 4 known header lines within the first
         // 100 lines which might indicate a valid .mbox file. If we find at
         // least 2 of these this will satisfy us.
         i = 0;
@@ -3019,6 +3019,8 @@ BOOL MA_ImportMessages(const char *fname, BOOL quiet)
           if(strnicmp(buf, "From:", 5) == 0)
             foundTokens++;
           else if(strnicmp(buf, "To:", 3) == 0)
+            foundTokens++;
+          else if(strnicmp(buf, "Date:", 5) == 0)
             foundTokens++;
           else if(strnicmp(buf, "Subject:", 8) == 0)
             foundTokens++;
