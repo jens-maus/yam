@@ -1346,41 +1346,48 @@ static char *AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 
   if(pe != NULL)
   {
-    char address[SIZE_LARGE];
-    char *ins;
-    BOOL skip = FALSE;
-
-    if(strchr(pe->Address,'@') != NULL)
-      ins = BuildAddress(address, sizeof(address), pe->Address, pe->RealName);
-    else
+    // Make sure that the person has at least either name or address and
+    // that these are non-empty strings. Otherwise we will add invalid
+    // recipients like '@domain' without any real name and user name.
+    if((pe->Address != NULL && pe->Address[0] != '\0') ||
+       (pe->RealName != NULL && pe->RealName[0] != '\0'))
     {
-      char addr[SIZE_ADDRESS];
-      char *p = strchr(C->EmailAddress, '@');
+      char address[SIZE_LARGE];
+      char *ins;
+      BOOL skip = FALSE;
 
-      snprintf(addr, sizeof(addr), "%s%s", pe->Address, p ? p : "");
-      ins = BuildAddress(address, sizeof(address), addr, pe->RealName);
-    }
-
-    if(ins != NULL)
-    {
-      // exclude the given person if it is ourself
-      if(excludeme == TRUE && stricmp(pe->Address, C->EmailAddress) == 0)
-        skip = TRUE;
-
-      // if the string already contains this person then skip it
-      if(stristr(sbuf, ins) != NULL)
-        skip = TRUE;
-
-      if(skip == FALSE)
+      if(strchr(pe->Address, '@') != NULL)
+        ins = BuildAddress(address, sizeof(address), pe->Address, pe->RealName);
+      else
       {
-        D(DBF_MAIL, "adding recipient '%s'", ins);
+        char addr[SIZE_ADDRESS];
+        char *p = strchr(C->EmailAddress, '@');
 
-        // lets prepend a ", " sequence in case sbuf
-        // is not empty
-        if(*sbuf != '\0')
-          sbuf = StrBufCat(sbuf, ", ");
+        snprintf(addr, sizeof(addr), "%s%s", pe->Address, p ? p : "");
+        ins = BuildAddress(address, sizeof(address), addr, pe->RealName);
+      }
 
-        sbuf = StrBufCat(sbuf, ins);
+      if(ins != NULL)
+      {
+        // exclude the given person if it is ourself
+        if(excludeme == TRUE && stricmp(pe->Address, C->EmailAddress) == 0)
+          skip = TRUE;
+
+        // if the string already contains this person then skip it
+        if(stristr(sbuf, ins) != NULL)
+          skip = TRUE;
+
+        if(skip == FALSE)
+        {
+          D(DBF_MAIL, "adding recipient '%s'", ins);
+
+          // lets prepend a ", " sequence in case sbuf
+          // is not empty
+          if(*sbuf != '\0')
+            sbuf = StrBufCat(sbuf, ", ");
+
+          sbuf = StrBufCat(sbuf, ins);
+        }
       }
     }
   }

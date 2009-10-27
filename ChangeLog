@@ -7,6 +7,11 @@ $URL$
 
 2009-10-27 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_WR.c: when constructing a fully qualified mail address from given person
+    data YAM now makes sure that at least either the real name or the address
+    string exist. Before empty strings resulted in "half" addresses only like
+    "@domain" instead of "name <user@domain>". Thanks to Christoph Poelzl for all
+    his hints and testing.
   * YAM_MAf.c: fixed some NULL pointer accesses when one of the header lines was
     empty.
   * YAM_MAf.c: rewrote the address handling when parsing the header lines again
