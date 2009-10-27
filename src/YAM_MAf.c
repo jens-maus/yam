@@ -1384,12 +1384,14 @@ static char *ValidateAddressLine(const char *line)
   // In this case the complete name will be encoded as quoted printable *without* being
   // enclosed in quotes.
   // For example a mail contains this address line:
-  // =?iso-8859-1?Q?Carraz=2C_B=E9n=E9dicte?= <benedicte.carraz@hirslanden.ch>
+  // =?iso-8859-1?Q?_DoE9=2C_John= <john.doe@anonymous.com>
   // After decoding the string looks like this (note the missing quotes):
-  // Carraz, Bénédicte <benedicte.carraz@hirslanden.ch>
+  // Doé, John <john.doe@anonymous.com>
   // If such a line is parsed as usual assuming that two full addresses are separated
-  // by a comma then we will get two false recipients "Carraz" and
-  // "Bénédicte <benedicte.carraz@hirslanden.ch>" none of which is really correct.
+  // by a comma then we will get two false recipients:
+  // 1. "Doé"
+  // 2. "John <john.doe@anonymous.com>"
+  // none of which is really correct.
   // Therefore we split the complete string into parts separated by commas while respecting
   // correctly quoted commas. After that the parts are combined again to an address line
   // and any missing quotes will be inserted as necessary.
