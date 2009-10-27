@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-10-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: rewrote the address handling when parsing the header lines again
+    from scratch. The new approach correctly handles multiple possibly broken
+    recipient addresses which the old one didn't. I hate this broken Microsuck
+    stuff :(
+
 2009-10-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: YAM complained about an unknown file format when trying to import

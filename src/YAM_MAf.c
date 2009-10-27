@@ -1268,6 +1268,194 @@ static BOOL MA_DetectUUE(FILE *fh)
 }
 
 ///
+/// SplitAddressLine
+// split a line of addresses into its parts
+static char **SplitAddressLine(const char *line)
+{
+  char **parts = NULL;
+  int numCommas;
+  const char *cptr;
+  char *lineCopy;
+
+  ENTER();
+
+  // Count the number of commas in the given line. This is a rough estimation
+  // about how many recipients may exist at most.
+  numCommas = 0;
+  cptr = line;
+  do
+  {
+    if((cptr = MyStrChr(cptr, ',')) != NULL)
+    {
+      cptr++;
+      numCommas++;
+    }
+  }
+  while(cptr != NULL);
+
+  // we must duplicate the line as we are going to modify it
+  if((lineCopy = strdup(line)) != NULL)
+  {
+    // Get some memory for the part pointers. We allocate two more than we
+    // counted before, because there is one more recipient than we counted
+    // and we want to NULL terminate the array.
+    if((parts = calloc(numCommas+2, sizeof(char *))) != NULL)
+    {
+      char *ptr = lineCopy;
+      int i = 0;
+
+      // split the line into the individual parts separated by commas
+      do
+      {
+        char *e;
+
+        if((e = MyStrChr(ptr, ',')) != NULL)
+        {
+          // terminate the part string
+          *e++ = '\0';
+        }
+
+        // remember this duplicated part
+        if((parts[i] = strdup(TrimStart(ptr))) == NULL)
+        {
+          // abort in case we couldn't copy the string
+          break;
+        }
+        i++;
+
+        ptr = e;
+        if(ptr != NULL)
+          ptr = TrimStart(ptr);
+      }
+      while(ptr != NULL);
+    }
+
+    // the duplicated line can be freed again
+    free(lineCopy);
+  }
+
+  RETURN(parts);
+  return parts;
+}
+
+///
+/// FreeStrArray
+// free a NULL terminated array of strings
+static void FreeStrArray(char **array)
+{
+  int i = 0;
+
+  ENTER();
+
+  while(array[i] != NULL)
+  {
+    free(array[i]);
+    i++;
+  }
+
+  free(array);
+
+  LEAVE();
+}
+
+///
+/// IsValidAddressLine
+// check whether the given line of addresses is valid, i.e. all name+address
+// parts are correctly quoted
+static char *ValidateAddressLine(const char *line)
+{
+  char *validLine = NULL;
+  char **parts;
+
+  ENTER();
+
+  // split the line into its parts
+  if((parts = SplitAddressLine(line)) != NULL)
+  {
+    int i = 0;
+    char *part;
+
+    // now check if each part contains at least the @ character to make
+    // it a valid address
+    do
+    {
+      part = parts[i];
+      i++;
+      SHOWSTRING(DBF_MIME, part);
+
+      if(validLine != NULL)
+        validLine = StrBufCat(validLine, ", ");
+
+      if(strchr(part, '@') == NULL)
+      {
+        BOOL atAppended = FALSE;
+
+        D(DBF_MIME, "line part '%s' contains no '@' character", part);
+
+        // Now we combine a new recipient of the current and the following parts
+        // until we finally find a part which contains the @ character.
+
+        // Most probably the @-less part was created because there was an unquoted
+        // comma, so we add the missing quotes. They cause no harm.
+        validLine = StrBufCat(validLine, "\"");
+        validLine = StrBufCat(validLine, part);
+
+        do
+        {
+          validLine = StrBufCat(validLine, ", ");
+
+          part = parts[i];
+          i++;
+          if(part != NULL)
+          {
+            SHOWSTRING(DBF_MIME, part);
+
+            // check whether this is the part containing the address
+            if(strchr(part, '@') != NULL)
+            {
+              char *addrStart;
+
+              // look for the beginning of the address
+              if((addrStart = strstr(part, " <")) != NULL)
+              {
+                // temporarily terminate the part before the address and add it to the line
+                *addrStart = '\0';
+
+                // append the first part
+                validLine = StrBufCat(validLine, part);
+
+                // add the closing quote
+                validLine = StrBufCat(validLine, "\"");
+
+                // restore the space and continue with the remaining part
+                *addrStart = ' ';
+                part = addrStart;
+              }
+              atAppended = TRUE;
+            }
+
+            validLine = StrBufCat(validLine, part);
+          }
+        }
+        while(part != NULL && atAppended == FALSE);
+      }
+      else
+      {
+        // this is a valid part, just append it
+        validLine = StrBufCat(validLine, part);
+      }
+    }
+    while(parts[i] != NULL);
+
+    // free the array of parts
+    FreeStrArray(parts);
+  }
+
+  RETURN(validLine);
+  return validLine;
+}
+
+///
 /// MA_ReadHeader
 //  Reads header lines of a message into memory
 BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, enum ReadHeaderMode mode)
@@ -1363,100 +1551,12 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
             // Check whether potential EMail address are valid.
             // Buggy Microsoft software very often creates invalid addresses,
             // i.e 'lastname, firstname <address>' without the necessary quotes around the name
-            char *comma;
-            char *replacement = NULL;
+            char *validLine;
 
-            D(DBF_MIME, "checking header '%s' with content '%s'", hdrNode->name, hdrNode->content);
-
-            ptr = hdrNode->content;
-            do
+            if((validLine = ValidateAddressLine(hdrNode->content)) != NULL)
             {
-              BOOL replacedSomething = FALSE;
-
-              if((comma = MyStrChr(ptr, ',')) != NULL)
-              {
-                char *at;
-
-                if((at = strchr(ptr, '@')) != NULL && comma < at)
-                {
-                  // the '@' of the address occurs after a comma, this is suspicious
-                  char *firstQuote;
-
-                  firstQuote = strchr(ptr, '"');
-                  if(firstQuote == NULL)
-                  {
-                    char *addressStart;
-                    char *addressEnd;
-
-                    // a comma but no quote, this is really bad
-                    W(DBF_MIME, "comma in unquoted name found '%s'", ptr);
-
-                    if((addressStart = strstr(ptr, " <")) != NULL && (addressEnd = strchr(ptr, '>')) != NULL)
-                    {
-                      if(replacement != NULL)
-                        replacement = StrBufCat(replacement, ", ");
-
-                      // skip the space and the opening bracket ahead of the address
-                      *addressStart = '\0';
-                      addressStart++;
-                      addressStart++;
-
-                      // skip the closing bracket
-                      *addressEnd = '\0';
-                      addressEnd++;
-
-                      // set up the new address from scratch
-                      replacement = StrBufCat(replacement, "\"");
-                      replacement = StrBufCat(replacement, ptr);
-                      replacement = StrBufCat(replacement, "\" <");
-                      replacement = StrBufCat(replacement, addressStart);
-                      replacement = StrBufCat(replacement, ">");
-
-                      replacedSomething = TRUE;
-
-                      comma = addressEnd;
-
-                      // skip the comma
-                      if(*comma == ',')
-                        comma++;
-                    }
-                  }
-                }
-                else
-                {
-                  // continue with the next recipient
-                  comma++;
-                }
-
-                // continue right after the comma
-                ptr = comma;
-
-                // add the remaining string if we replaced anything so far
-                if(replacedSomething == FALSE && replacement != NULL && *ptr != '\0')
-                {
-                  replacement = StrBufCat(replacement, ",");
-                  replacement = StrBufCat(replacement, ptr);
-                }
-              }
-              else
-              {
-                // no more commas, we are finished
-                // add the remaining string if we replaced anything at all
-                if(replacement != NULL && *ptr != '\0')
-                {
-                  replacement = StrBufCat(replacement, ",");
-                  replacement = StrBufCat(replacement, ptr);
-                }
-                break;
-              }
-            }
-            while(TRUE);
-
-            if(replacement != NULL)
-            {
-              // replace the old content string with the new replacement
               FreeStrBuf(hdrNode->content);
-              hdrNode->content = replacement;
+              hdrNode->content = validLine;
             }
           }
 
