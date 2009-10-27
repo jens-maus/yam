@@ -1379,6 +1379,21 @@ static char *ValidateAddressLine(const char *line)
 
   ENTER();
 
+  // Certain MS software creates invalid address lines if the recipients name contains
+  // accented characters and has reversed first and last name separated by a comma.
+  // In this case the complete name will be encoded as quoted printable *without* being
+  // enclosed in quotes.
+  // For example a mail contains this address line:
+  // =?iso-8859-1?Q?Carraz=2C_B=E9n=E9dicte?= <benedicte.carraz@hirslanden.ch>
+  // After decoding the string looks like this (note the missing quotes):
+  // Carraz, Bénédicte <benedicte.carraz@hirslanden.ch>
+  // If such a line is parsed as usual assuming that two full addresses are separated
+  // by a comma then we will get two false recipients "Carraz" and
+  // "Bénédicte <benedicte.carraz@hirslanden.ch>" none of which is really correct.
+  // Therefore we split the complete string into parts separated by commas while respecting
+  // correctly quoted commas. After that the parts are combined again to an address line
+  // and any missing quotes will be inserted as necessary.
+
   SHOWSTRING(DBF_MIME, line);
 
   // split the line into its parts
@@ -1747,10 +1762,10 @@ static int MA_GetRecipients(char *h, struct Person **per)
 
   ENTER();
 
-  while(*p)
+  while(*p != '\0')
   {
     cnt++;
-    if((p = MyStrChr(p, ',')))
+    if((p = MyStrChr(p, ',')) != NULL)
       p++;
     else
       break;
