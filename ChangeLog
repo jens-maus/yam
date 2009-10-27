@@ -7,6 +7,8 @@ $URL$
 
 2009-10-27 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MAf.c: fixed some NULL pointer accesses when one of the header lines was
+    empty.
   * YAM_MAf.c: rewrote the address handling when parsing the header lines again
     from scratch. The new approach correctly handles multiple possibly broken
     recipient addresses which the old one didn't. I hate this broken Microsuck

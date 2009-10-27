@@ -1293,9 +1293,13 @@ static char **SplitAddressLine(const char *line)
   }
   while(cptr != NULL);
 
+  SHOWVALUE(DBF_MIME, numCommas);
+
   // we must duplicate the line as we are going to modify it
   if((lineCopy = strdup(line)) != NULL)
   {
+    SHOWSTRING(DBF_MIME, lineCopy);
+
     // Get some memory for the part pointers. We allocate two more than we
     // counted before, because there is one more recipient than we counted
     // and we want to NULL terminate the array.
@@ -1308,6 +1312,7 @@ static char **SplitAddressLine(const char *line)
       do
       {
         char *e;
+        char *p;
 
         if((e = MyStrChr(ptr, ',')) != NULL)
         {
@@ -1315,13 +1320,18 @@ static char **SplitAddressLine(const char *line)
           *e++ = '\0';
         }
 
-        // remember this duplicated part
-        if((parts[i] = strdup(TrimStart(ptr))) == NULL)
+        p = TrimStart(ptr);
+        if(*p != '\0')
         {
-          // abort in case we couldn't copy the string
-          break;
+          // remember the duplicated non-empty part
+          if((parts[i] = strdup(p)) == NULL)
+          {
+            // abort in case we couldn't duplicate the string
+            break;
+          }
+          SHOWSTRING(DBF_ALWAYS, parts[i]);
+          i++;
         }
-        i++;
 
         ptr = e;
         if(ptr != NULL)
@@ -1369,6 +1379,8 @@ static char *ValidateAddressLine(const char *line)
 
   ENTER();
 
+  SHOWSTRING(DBF_MIME, line);
+
   // split the line into its parts
   if((parts = SplitAddressLine(line)) != NULL)
   {
@@ -1381,68 +1393,71 @@ static char *ValidateAddressLine(const char *line)
     {
       part = parts[i];
       i++;
-      SHOWSTRING(DBF_MIME, part);
-
-      if(validLine != NULL)
-        validLine = StrBufCat(validLine, ", ");
-
-      if(strchr(part, '@') == NULL)
+      if(part != NULL)
       {
-        BOOL atAppended = FALSE;
+        SHOWSTRING(DBF_MIME, part);
 
-        D(DBF_MIME, "line part '%s' contains no '@' character", part);
-
-        // Now we combine a new recipient of the current and the following parts
-        // until we finally find a part which contains the @ character.
-
-        // Most probably the @-less part was created because there was an unquoted
-        // comma, so we add the missing quotes. They cause no harm.
-        validLine = StrBufCat(validLine, "\"");
-        validLine = StrBufCat(validLine, part);
-
-        do
-        {
+        if(validLine != NULL)
           validLine = StrBufCat(validLine, ", ");
 
-          part = parts[i];
-          i++;
-          if(part != NULL)
+        if(strchr(part, '@') == NULL)
+        {
+          BOOL atAppended = FALSE;
+
+          D(DBF_MIME, "line part '%s' contains no '@' character", part);
+
+          // Now we combine a new recipient of the current and the following parts
+          // until we finally find a part which contains the @ character.
+
+          // Most probably the @-less part was created because there was an unquoted
+          // comma, so we add the missing quotes. They cause no harm.
+          validLine = StrBufCat(validLine, "\"");
+          validLine = StrBufCat(validLine, part);
+
+          do
           {
-            SHOWSTRING(DBF_MIME, part);
+            validLine = StrBufCat(validLine, ", ");
 
-            // check whether this is the part containing the address
-            if(strchr(part, '@') != NULL)
+            part = parts[i];
+            i++;
+            if(part != NULL)
             {
-              char *addrStart;
+              SHOWSTRING(DBF_MIME, part);
 
-              // look for the beginning of the address
-              if((addrStart = strstr(part, " <")) != NULL)
+              // check whether this is the part containing the address
+              if(strchr(part, '@') != NULL)
               {
-                // temporarily terminate the part before the address and add it to the line
-                *addrStart = '\0';
+                char *addrStart;
 
-                // append the first part
-                validLine = StrBufCat(validLine, part);
+                // look for the beginning of the address
+                if((addrStart = strstr(part, " <")) != NULL)
+                {
+                  // temporarily terminate the part before the address and add it to the line
+                  *addrStart = '\0';
 
-                // add the closing quote
-                validLine = StrBufCat(validLine, "\"");
+                  // append the first part
+                  validLine = StrBufCat(validLine, part);
 
-                // restore the space and continue with the remaining part
-                *addrStart = ' ';
-                part = addrStart;
+                  // add the closing quote
+                  validLine = StrBufCat(validLine, "\"");
+
+                  // restore the space and continue with the remaining part
+                  *addrStart = ' ';
+                  part = addrStart;
+                }
+                atAppended = TRUE;
               }
-              atAppended = TRUE;
-            }
 
-            validLine = StrBufCat(validLine, part);
+              validLine = StrBufCat(validLine, part);
+            }
           }
+          while(part != NULL && atAppended == FALSE);
         }
-        while(part != NULL && atAppended == FALSE);
-      }
-      else
-      {
-        // this is a valid part, just append it
-        validLine = StrBufCat(validLine, part);
+        else
+        {
+          // this is a valid part, just append it
+          validLine = StrBufCat(validLine, part);
+        }
       }
     }
     while(parts[i] != NULL);
