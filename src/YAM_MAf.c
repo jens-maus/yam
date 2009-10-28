@@ -1302,8 +1302,9 @@ static char **SplitAddressLine(const char *line, ULONG *numParts)
   {
     SHOWSTRING(DBF_MIME, lineCopy);
 
-    // Get some memory for the part pointers. We allocate two more than we
-    // counted before, because there is one more recipient than we counted.
+    // Get some memory for the part pointers. We allocate one more than we
+    // counted before, because there is one more recipient than the number
+    // of commas.
     if((parts = calloc(numCommas+1, sizeof(char *))) != NULL)
     {
       char *ptr = lineCopy;
@@ -1315,6 +1316,7 @@ static char **SplitAddressLine(const char *line, ULONG *numParts)
         char *e;
         char *p;
 
+        // find the next comma, but respect quotes
         if((e = MyStrChr(ptr, ',')) != NULL)
         {
           // terminate the part string
@@ -1346,6 +1348,8 @@ static char **SplitAddressLine(const char *line, ULONG *numParts)
     // the duplicated line can be freed again
     free(lineCopy);
   }
+
+  D(DBF_MIME, "splitted line into %ld parts", *numParts);
 
   RETURN(parts);
   return parts;
