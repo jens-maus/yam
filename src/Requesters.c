@@ -134,7 +134,15 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
           }
 
           if(signals != 0)
-            signals = Wait(signals);
+            signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F);
+
+          // bail out if we receive a CTRL-C
+          if(isFlagSet(signals, SIGBREAKF_CTRL_C))
+            break;
+
+          // show ourselves if we receive a CTRL-F
+          if(isFlagSet(signals, SIGBREAKF_CTRL_F))
+            PopUp();
         }
         while(TRUE);
       }
@@ -205,7 +213,15 @@ int StringRequest(char *string, int size, const char *title, const char *body,
         }
 
         if(signals != 0)
-          signals = Wait(signals);
+          signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F);
+
+        // bail out if we receive a CTRL-C
+        if(isFlagSet(signals, SIGBREAKF_CTRL_C))
+          break;
+
+        // show ourselves if we receive a CTRL-F
+        if(isFlagSet(signals, SIGBREAKF_CTRL_F))
+          PopUp();
       }
       while(TRUE);
     }
@@ -265,7 +281,15 @@ int PassphraseRequest(char *string, int size, Object *parent)
         }
 
         if(signals != 0)
-          signals = Wait(signals);
+          signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F);
+
+        // bail out if we receive a CTRL-C
+        if(isFlagSet(signals, SIGBREAKF_CTRL_C))
+          break;
+
+        // show ourselves if we receive a CTRL-F
+        if(isFlagSet(signals, SIGBREAKF_CTRL_F))
+          PopUp();
       }
       while(TRUE);
     }
@@ -329,7 +353,15 @@ struct Folder *FolderRequest(const char *title, const char *body, const char *ye
         }
 
         if(signals != 0)
-          signals = Wait(signals);
+          signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F);
+
+        // bail out if we receive a CTRL-C
+        if(isFlagSet(signals, SIGBREAKF_CTRL_C))
+          break;
+
+        // show ourselves if we receive a CTRL-F
+        if(isFlagSet(signals, SIGBREAKF_CTRL_F))
+          PopUp();
       }
       while(TRUE);
     }
@@ -389,7 +421,15 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
         }
 
         if(signals != 0)
-          signals = Wait(signals);
+          signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F);
+
+        // bail out if we receive a CTRL-C
+        if(isFlagSet(signals, SIGBREAKF_CTRL_C))
+          break;
+
+        // show ourselves if we receive a CTRL-F
+        if(isFlagSet(signals, SIGBREAKF_CTRL_F))
+          PopUp();
       }
       while(TRUE);
     }
@@ -462,7 +502,15 @@ LONG CheckboxRequest(Object *parent, const char *tit, ULONG numBoxes, const char
           }
 
           if(signals != 0)
-            signals = Wait(signals);
+            signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F);
+
+          // bail out if we receive a CTRL-C
+          if(isFlagSet(signals, SIGBREAKF_CTRL_C))
+            break;
+
+          // show ourselves if we receive a CTRL-F
+          if(isFlagSet(signals, SIGBREAKF_CTRL_F))
+            PopUp();
         }
         while(TRUE);
       }
