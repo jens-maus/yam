@@ -636,7 +636,7 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
           return 0;
         }
         else
-          W(DBF_MIME, "couldn't convert src str via CodesetsConvertStr(), codesets '%s' -> '%s'!", (srcCodeset->name != NULL) ? srcCodeset->name : "<NULL>", (G->readCharset->name != NULL) ? G->readCharset->name : "<NULL>");
+          W(DBF_MIME, "couldn't convert src str via CodesetsConvertStr(), codesets '%s' -> '%s'!", SafeStr(srcCodeset->name), SafeStr(G->readCharset->name));
       }
       else
         W(DBF_MIME, "couldn't find charset '%s' in codesets.library!", chset);

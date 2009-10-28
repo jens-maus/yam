@@ -2038,8 +2038,8 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
       D(DBF_MAIL, "Part[%lx]:#%ld%s", rp, rp->Nr, rp->Nr == rp->rmData->letterPartNum ? ":LETTERPART" : "");
       D(DBF_MAIL, "  Name.......: [%s]", rp->Name);
       D(DBF_MAIL, "  ContentType: [%s]", rp->ContentType);
-      D(DBF_MAIL, "  Boundary...: [%s]", rp->CParBndr ? rp->CParBndr : "<NULL>");
-      D(DBF_MAIL, "  Charset....: [%s]", rp->CParCSet ? rp->CParCSet : "<NULL>");
+      D(DBF_MAIL, "  Boundary...: [%s]", SafeStr(rp->CParBndr));
+      D(DBF_MAIL, "  Charset....: [%s]", SafeStr(rp->CParCSet));
       D(DBF_MAIL, "  IsAltPart..: %ld",  isAlternativePart(rp));
       D(DBF_MAIL, "  Printable..: %ld",  isPrintable(rp));
       D(DBF_MAIL, "  Encoding...: %ld",  rp->EncodingCode);

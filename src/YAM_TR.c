@@ -3225,7 +3225,7 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
     else
       snprintf(buf, sizeof(buf), "%s %s\r\n", POPcmd[command], parmtext);
 
-    D(DBF_NET, "TCP: POP3 cmd '%s' with param '%s'", POPcmd[command], parmtext != NULL ? (command == POPCMD_PASS ? "XXX" : parmtext) : "<NULL>");
+    D(DBF_NET, "TCP: POP3 cmd '%s' with param '%s'", POPcmd[command], (command == POPCMD_PASS) ? "XXX" : SafeStr(parmtext));
 
     // send the pop command to the server and see if it was received somehow
     // and for a connect we don't send something or the server will get
@@ -4144,7 +4144,7 @@ static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext
     else
       snprintf(buf, sizeof(buf), "%s %s\r\n", SMTPcmd[command], parmtext);
 
-    D(DBF_NET, "TCP: SMTP cmd '%s' with param '%s'", SMTPcmd[command], parmtext != NULL ? parmtext : "<NULL>");
+    D(DBF_NET, "TCP: SMTP cmd '%s' with param '%s'", SMTPcmd[command], SafeStr(parmtext));
 
     // lets send the command via TR_WriteLine, but not if we are in connection
     // state

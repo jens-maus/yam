@@ -1346,6 +1346,8 @@ static char *AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 
   if(pe != NULL)
   {
+    D(DBF_MAIL, "add recipient for person named '%s', address '%s'", SafeStr(pe->RealName), SafeStr(pe->Address));
+
     // Make sure that the person has at least either name or address and
     // that these are non-empty strings. Otherwise we will add invalid
     // recipients like '@domain' without any real name and user name.

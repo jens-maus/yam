@@ -1930,7 +1930,7 @@ char *BuildAddress(char *buffer, size_t buflen, const char *address, const char 
   // check that buffer is != NULL
   if(buffer != NULL)
   {
-    D(DBF_MAIL, "build full address from address '%s' and name '%s'", address != NULL ? address : "<NULL>", name != NULL ? name : "<NULL>");
+    D(DBF_MAIL, "build full address from address '%s' and name '%s'", SafeStr(address), SafeStr(name));
 
     // check if a real name is given at all
     // or not

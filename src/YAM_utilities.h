@@ -243,6 +243,7 @@ struct TimeRequest
 #define isValidMailFile(file) (!(strlen(file) < 17 || file[12] != '.' || file[16] != ',' || !isdigit(file[13])))
 #define Bool2Txt(b)           ((b) ? "Y" : "N")
 #define Txt2Bool(t)           (BOOL)(toupper((int)*(t)) == 'Y' || (int)*(t) == '1')
+#define SafeStr(str)          (((str) != NULL) ? (str) : "<NULL>")
 
 #define IterateList(list, node)           for((node) = GetHead((struct List *)(list)); (node) != NULL; (node) = GetSucc(node))
 
