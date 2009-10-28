@@ -3436,6 +3436,10 @@ static int TR_ConnectPOP(int guilevel)
 
   if(passwd[0] == '\0')
   {
+    // make sure the application isn't iconified
+    if(xget(G->App, MUIA_Application_Iconified) == TRUE)
+      PopUp();
+
     snprintf(buf, sizeof(buf), tr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
     if(StringRequest(passwd, SIZE_PASSWORD, tr(MSG_TR_PopLogin), buf, tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->TR->GUI.WI) == 0)
       goto out;

@@ -7,6 +7,9 @@ $URL$
 
 2009-10-28 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: if no password is given for a POP3 account YAM will make sure the
+    application is visible before prompting for a password. Otherwise there is
+    no way to uniconify YAM and enter the password.
   * misc: added a convenience macro to make sure that NULL strings can safely be
     printed out.
 
