@@ -3216,17 +3216,53 @@ void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
 
   ENTER();
 
-  if(!*old->RealName && *new->RealName) { strlcpy(old->RealName, new->RealName, sizeof(old->RealName)); changed = TRUE; }
-  if(!*old->Address  && *new->Address ) { strlcpy(old->Address,  new->Address,  sizeof(old->Address));  changed = TRUE; }
-  if(!*old->Street   && *new->Street  ) { strlcpy(old->Street,   new->Street,   sizeof(old->Street));   changed = TRUE; }
-  if(!*old->Country  && *new->Country ) { strlcpy(old->Country,  new->Country,  sizeof(old->Country));  changed = TRUE; }
-  if(!*old->City     && *new->City    ) { strlcpy(old->City,     new->City,     sizeof(old->City));     changed = TRUE; }
-  if(!*old->Phone    && *new->Phone   ) { strlcpy(old->Phone,    new->Phone,    sizeof(old->Phone));    changed = TRUE; }
-  if(!*old->Homepage && *new->Homepage) { strlcpy(old->Homepage, new->Homepage, sizeof(old->Homepage)); changed = TRUE; }
-  if(!old->BirthDay  && new->BirthDay ) { old->BirthDay = new->BirthDay; changed = TRUE; }
+  // don't do anything if we get the same entry passed in twice
+  if(old != new)
+  {
+    if(old->RealName[0] == '\0' && new->RealName[0] != '\0')
+    {
+      strlcpy(old->RealName, new->RealName, sizeof(old->RealName));
+      changed = TRUE;
+    }
+    if(old->Address[0] == '\0' && new->Address[0] != '\0')
+    {
+      strlcpy(old->Address, new->Address, sizeof(old->Address));
+      changed = TRUE;
+    }
+    if(old->Street[0] == '\0' && new->Street[0] != '\0')
+    {
+      strlcpy(old->Street, new->Street, sizeof(old->Street));
+      changed = TRUE;
+    }
+    if(old->Country[0] == '\0' && new->Country[0] != '\0')
+    {
+      strlcpy(old->Country, new->Country, sizeof(old->Country));
+      changed = TRUE;
+    }
+    if(old->City[0] == '\0' && new->City[0] != '\0')
+    {
+      strlcpy(old->City, new->City, sizeof(old->City));
+      changed = TRUE;
+    }
+    if(old->Phone[0] == '\0' && new->Phone[0] != '\0')
+    {
+      strlcpy(old->Phone, new->Phone, sizeof(old->Phone));
+      changed = TRUE;
+    }
+    if(old->Homepage[0] == '\0' && new->Homepage[0] != '\0')
+    {
+      strlcpy(old->Homepage, new->Homepage, sizeof(old->Homepage));
+      changed = TRUE;
+    }
+    if(old->BirthDay == 0 && new->BirthDay != 0)
+    {
+      old->BirthDay = new->BirthDay;
+      changed = TRUE;
+    }
 
-  if(changed)
-    CallHookPkt(&AB_SaveABookHook, 0, 0);
+    if(changed == TRUE)
+      CallHookPkt(&AB_SaveABookHook, 0, 0);
+  }
 
   LEAVE();
 }
@@ -3244,7 +3280,7 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
   {
     case 1:
     {
-      if(!templ->Type)
+      if(templ->Type == AET_USER)
         break;
     }
     // continue
@@ -3253,6 +3289,7 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
     {
       char buf[SIZE_LARGE];
       char address[SIZE_LARGE];
+
       snprintf(buf, sizeof(buf), tr(MSG_RE_AddSender), BuildAddress(address, sizeof(address), templ->Address, templ->RealName));
       doit = MUI_Request(G->App, win, 0, NULL, tr(MSG_YesNoReq), buf);
     }
@@ -3260,17 +3297,19 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
 
     case 3:
     {
-      if(!templ->Type)
+      if(templ->Type == AET_USER)
         break;
     }
     // continue
 
     case 4:
+    {
       doit = TRUE;
+    }
     break;
   }
 
-  if(doit)
+  if(doit == TRUE)
   {
     struct ABEntry ab_new;
     struct MUI_NListtree_TreeNode *tn = NULL;
