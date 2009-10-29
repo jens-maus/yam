@@ -2346,13 +2346,11 @@ DECLARE(AddArchive)
     if(StringRequest(arcname, SIZE_FILE, tr(MSG_WR_CreateArc), tr(MSG_WR_CreateArcReq), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, obj))
     {
       char *command;
-      char filename[SIZE_PATHFILE];
       char arcpath[SIZE_PATHFILE];
       struct TempFile *tf = NULL;
 
       // create the destination archive name
-      AddPath(filename, C->TempDir, arcname, sizeof(filename));
-      snprintf(arcpath, sizeof(arcpath), strchr(filename, ' ') != NULL ? "\"%s\"" : "%s", filename);
+      AddPath(arcpath, C->TempDir, arcname, sizeof(arcpath));
 
       // now we generate the temporary file containing the file names
       // which we are going to put in the archive.
@@ -2370,10 +2368,11 @@ DECLARE(AddArchive)
 
       // now we create the command we are going to
       // execute for generating the archive.
-      if((command = AllocStrBuf(SIZE_DEFAULT)))
+      if((command = AllocStrBuf(SIZE_DEFAULT)) != NULL)
       {
         char *src;
         BPTR filedir;
+        BOOL mustCloseQuote = FALSE;
 
         for(src = C->PackerCommand; *src != '\0'; src++)
         {
@@ -2390,12 +2389,14 @@ DECLARE(AddArchive)
 
               case 'a':
               {
+                D(DBF_UTIL, "insert archive name '%s'", arcpath);
                 if(strchr(arcpath, ' ') != NULL)
                 {
                   // surround the file name by quotes if it contains spaces
                   command = StrBufCat(command, "\"");
                   command = StrBufCat(command, arcpath);
-                  command = StrBufCat(command, "\"");
+                  // remember to add the closing quotes
+                  mustCloseQuote = TRUE;
                 }
                 else
                   command = StrBufCat(command, arcpath);
@@ -2404,12 +2405,14 @@ DECLARE(AddArchive)
 
               case 'l':
               {
+                D(DBF_UTIL, "insert filename '%s'", tf->Filename);
                 if(strchr(tf->Filename, ' ') != NULL)
                 {
                   // surround the file name by quotes if it contains spaces
                   command = StrBufCat(command, "\"");
                   command = StrBufCat(command, tf->Filename);
-                  command = StrBufCat(command, "\"");
+                  // remember to add the closing quotes
+                  mustCloseQuote = TRUE;
                 }
                 else
                   command = StrBufCat(command, tf->Filename);
@@ -2422,12 +2425,29 @@ DECLARE(AddArchive)
 
                 for(i=0; i < frc->numArgs; i++)
                 {
+                  char filename[SIZE_PATHFILE];
+
                   snprintf(filename, sizeof(filename), "\"%s\" ", frc->argList[i]);
                   command = StrBufCat(command, filename);
                 }
                 break;
               }
               break;
+            }
+          }
+          else if(*src == ' ')
+          {
+            // if we are to insert a space character and there are quotes
+            // to be closed we do it now and forget about the quotes afterwards.
+            if(mustCloseQuote == TRUE)
+            {
+              command = StrBufCat(command, "\" ");
+              mustCloseQuote = FALSE;
+            }
+            else
+            {
+              // no quotes to be closed, just add the space character
+              command = StrBufCat(command, " ");
             }
           }
           else
@@ -2440,6 +2460,10 @@ DECLARE(AddArchive)
             command = StrBufCat(command, chr);
           }
         }
+
+        // if there are still quotes to be closed do it now
+        if(mustCloseQuote == TRUE)
+          command = StrBufCat(command, "\"");
 
         // now we make the request drawer the current one temporarly.
         if((filedir = Lock(frc->drawer, ACCESS_READ)) != 0)
@@ -2462,7 +2486,12 @@ DECLARE(AddArchive)
         // and find out the real final attachment name
         if(result == TRUE)
         {
+          APTR oldwin;
           LONG size;
+          char filename[SIZE_PATHFILE];
+
+          // don't let DOS bother us with requesters while we check some files
+          oldwin = SetProcWindow((APTR)-1);
 
           strlcpy(filename, arcpath, sizeof(filename));
           if(ObtainFileInfo(filename, FI_SIZE, &size) == FALSE)
@@ -2475,6 +2504,9 @@ DECLARE(AddArchive)
                 snprintf(filename, sizeof(filename), "%s.zip", arcpath);
             }
           }
+
+          // allow requesters from DOS again
+          SetProcWindow(oldwin);
 
           DoMethod(obj, MUIM_WriteWindow_AddAttachment, filename, NULL, TRUE);
         }

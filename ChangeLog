@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-10-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: enhanced the command placeholder expansion such that it
+    is now able to add closing quotes at the correct place even if the place-
+    holder is followed by some other characters. For example '%a.lha' will be
+    expanded to '"foo bar.lha"' instead of '"foo bar".lha' if 'foo bar' is to
+    be inserted.
+
 2009-10-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * Requesters.c: all requesters can now be aborted by sending a CTRL-C and YAM
