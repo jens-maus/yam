@@ -1268,6 +1268,32 @@ static BOOL MA_DetectUUE(FILE *fh)
 }
 
 ///
+/// FindHeader
+// search for a specific header line
+static struct HeaderNode *FindHeader(struct MinList *headerList, const char *name)
+{
+  struct HeaderNode *result = NULL;
+  struct Node *node;
+
+  ENTER();
+
+  IterateList(headerList, node)
+  {
+    struct HeaderNode *hdrNode = (struct HeaderNode *)node;
+
+    // compare the names
+    if(stricmp(hdrNode->name, name) == 0)
+    {
+      result = hdrNode;
+      break;
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// SplitAddressLine
 // split a line of addresses into its parts
 static char **SplitAddressLine(const char *line, ULONG *numParts)
@@ -1418,6 +1444,7 @@ static char *ValidateAddressLine(const char *line)
     {
       ULONG i = 0;
       char *part;
+      BOOL openQuotePending = FALSE;
 
       // now check if each part contains at least the @ character to make
       // it a valid address
@@ -1445,6 +1472,7 @@ static char *ValidateAddressLine(const char *line)
             // comma, so we add the missing quotes. They cause no harm.
             validLine = StrBufCat(validLine, "\"");
             validLine = StrBufCat(validLine, part);
+            openQuotePending = TRUE;
 
             do
             {
@@ -1472,6 +1500,7 @@ static char *ValidateAddressLine(const char *line)
 
                     // add the closing quote
                     validLine = StrBufCat(validLine, "\"");
+                    openQuotePending = FALSE;
 
                     // restore the space and continue with the remaining part
                     *addrStart = ' ';
@@ -1483,7 +1512,7 @@ static char *ValidateAddressLine(const char *line)
                 validLine = StrBufCat(validLine, part);
               }
             }
-            while(part != NULL && atAppended == FALSE);
+            while(i < numParts && atAppended == FALSE);
           }
           else
           {
@@ -1492,6 +1521,10 @@ static char *ValidateAddressLine(const char *line)
           }
         }
       }
+
+      // close any still opened quote
+      if(openQuotePending == TRUE)
+        validLine = StrBufCat(validLine, "\"");
     }
 
     // free the array of parts
@@ -1589,24 +1622,6 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
               *ptr = ' ';
           }
 
-          if(stricmp(hdrNode->name, "from") == 0     ||
-             stricmp(hdrNode->name, "to") == 0       ||
-             stricmp(hdrNode->name, "reply-to") == 0 ||
-             stricmp(hdrNode->name, "cc") == 0       ||
-             stricmp(hdrNode->name, "bcc") == 0)
-          {
-            // Check whether potential EMail address are valid.
-            // Buggy Microsoft software very often creates invalid addresses,
-            // i.e 'lastname, firstname <address>' without the necessary quotes around the name
-            char *validLine;
-
-            if((validLine = ValidateAddressLine(hdrNode->content)) != NULL)
-            {
-              FreeStrBuf(hdrNode->content);
-              hdrNode->content = validLine;
-            }
-          }
-
           // the headerNode seems to be finished so we put it into our
           // headerList
           D(DBF_MIME, "add header '%s' with content '%s'", hdrNode->name, hdrNode->content);
@@ -1685,6 +1700,46 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
 
     if(buffer != NULL)
       free(buffer);
+  }
+
+  if(success == TRUE)
+  {
+    struct HeaderNode *microsuckHeader;
+
+    // So far only Microsoft Exchange seems to generate broken address lines.
+    // Time will show if this will become an longer list...
+    if((microsuckHeader = FindHeader(headerList, "x-mimeole")) != NULL && strstr(microsuckHeader->content, "Microsoft Exchange") != NULL)
+    {
+      const char *addressLineNames[] =
+      {
+        "from", "to", "reply-to", "cc", "bcc"
+      };
+      ULONG i;
+
+      D(DBF_MIME, "mail was created by possibly broken Microsoft software ('%s'), validating address lines", microsuckHeader->content);
+
+      // iterate over the possibly malformed header lines
+      for(i = 0; i < ARRAY_SIZE(addressLineNames); i++)
+      {
+        struct HeaderNode *addressHeader;
+
+        if((addressHeader = FindHeader(headerList, addressLineNames[i])) != NULL)
+        {
+          // Check whether potential EMail address are valid.
+          // Buggy Microsoft software very often creates invalid addresses,
+          // i.e 'lastname, firstname <address>' without the necessary quotes around the name
+          char *validLine;
+
+          D(DBF_MIME, "validating '%s' header with content '%s'", addressHeader->name, addressHeader->content);
+
+          if((validLine = ValidateAddressLine(addressHeader->content)) != NULL)
+          {
+            FreeStrBuf(addressHeader->content);
+            addressHeader->content = validLine;
+          }
+        }
+      }
+    }
   }
 
   RETURN(success);
