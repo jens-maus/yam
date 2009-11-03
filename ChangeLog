@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-11-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: raised minimum required version of application.library for the
+    new notification system to 53.7 due to recent SDK changes.
+
 2009-10-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: modified the address line validation once more to perform the

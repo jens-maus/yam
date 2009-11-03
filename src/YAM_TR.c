@@ -7056,15 +7056,15 @@ static void TR_NewMailAlert(void)
     #if defined(__amigaos4__)
     if(hasOS41SystemNotify(C->NotifyType))
     {
-      // Notify() is V53.2+
-      if(G->applicationID > 0 && LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2))
+      // Notify() is V53.2+, 53.7 fixes some serious issues
+      if(G->applicationID > 0 && LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 7))
       {
         // 128 chars is the current maximum :(
         char message[128];
 
         snprintf(message, sizeof(message), tr(MSG_TR_NEW_MAIL_NOTIFY), stats->Downloaded - rr->Spam);
         Notify(G->applicationID, APPNOTIFY_Title, "YAM",
-                                 APPNOTIFY_Screen, "FRONT",
+                                 APPNOTIFY_PubScreenName, "FRONT",
                                  APPNOTIFY_Text, message,
                                  APPNOTIFY_CloseOnDC, TRUE,
                                  APPNOTIFY_BackMsg, "POPUP",
