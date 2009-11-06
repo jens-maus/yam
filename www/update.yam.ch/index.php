@@ -449,6 +449,7 @@ $outsize = filesize($outfile);
 if($out = fopen($outfile, 'r'))
 {
   printf("%s", fread($out, $outsize));
+  fclose($out);
 }
 
 unlink($outfile);
