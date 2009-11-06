@@ -3130,7 +3130,7 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
 
       // now we read out the very first line to see if the
       // response code matches and is fine
-      len = TR_ReadLine(G->TR_Socket, serverResponse, SIZE_LINE);
+      len = TR_ReadLine(G->TR_Socket, serverResponse, sizeof(serverResponse));
 
       SHOWSTRING(DBF_NET, serverResponse);
 
@@ -3143,7 +3143,7 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
         // we can request all further lines from our socket
         // until we reach the entity body
         while(G->Error == FALSE &&
-              (len = TR_ReadLine(G->TR_Socket, serverResponse, SIZE_LINE)) > 0)
+              (len = TR_ReadLine(G->TR_Socket, serverResponse, sizeof(serverResponse))) > 0)
         {
           // RFC 2616 section 4.4 requires Content-Length:
           if(strnicmp(serverResponse, "Content-Length:", 15) == 0)
@@ -3165,7 +3165,7 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
               // we seem to have reached the entity body, so
               // we can write the rest out immediately.
               while(G->Error == FALSE && retrieved < contentLength &&
-                    (len = TR_Recv(serverResponse, SIZE_LINE)) > 0)
+                    (len = TR_Recv(serverResponse, sizeof(serverResponse))) > 0)
               {
                 if(fwrite(serverResponse, len, 1, out) != 1)
                 {
@@ -3174,6 +3174,7 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
                 }
 
                 retrieved += len;
+                D(DBF_NET, "received %ld of %ld bytes", retrieved, contentLength);
               }
 
               // check if we retrieved everything required
