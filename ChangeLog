@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-11-07 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: fixed bug #2893236 in the TR_DownloadURL() function where we did
+    send an incorrect HTTP/1.1 request without being able to deal with
+    reponses using Transfer-Encoding. Now we will use HTTP/1.0 for the request
+    instead to conform to the RFC. In addition, we incorrectly expected a
+    Content-Length: header to be present at all times which according to the
+    RFC may not always be the case. Thus, we are now simply receiving the
+    answer until the connection is dropped.
+
 2009-11-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: raised minimum required version of application.library for the

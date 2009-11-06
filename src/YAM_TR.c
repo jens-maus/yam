@@ -3110,9 +3110,13 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
     }
 
     // construct the HTTP request
-    snprintf(httpRequest, sizeof(httpRequest), "GET %s HTTP/1.1\r\n"
+    // we send a HTTP/1.0 request because 1.1 implies that we have to be able
+    // to deal with e.g. "Transfer-Encoding: chunked" responses which we can't handle
+    // right now.
+    snprintf(httpRequest, sizeof(httpRequest), "GET %s HTTP/1.0\r\n"
                                                "Host: %s\r\n"
                                                "User-Agent: %s\r\n"
+                                               "Connection: close\r\n"
                                                "Accept: */*\r\n"
                                                "\r\n", serverPath, serverHost, yamuseragent);
 
@@ -3138,36 +3142,29 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
       if(len > 0 && strnicmp(serverResponse, "HTTP/", 5) == 0 &&
          (p = strchr(serverResponse, ' ')) != NULL && atoi(TrimStart(p)) == 200)
       {
-        LONG contentLength = -1; // -1 means no Content-Length found
-
         // we can request all further lines from our socket
         // until we reach the entity body
         while(G->Error == FALSE &&
               (len = TR_ReadLine(G->TR_Socket, serverResponse, sizeof(serverResponse))) > 0)
         {
-          // RFC 2616 section 4.4 requires Content-Length:
-          if(strnicmp(serverResponse, "Content-Length:", 15) == 0)
-          {
-            contentLength = atoi(TrimStart(&serverResponse[15]));
-            SHOWVALUE(DBF_NET, contentLength);
-          }
-
-          // if we are still scanning for the end of the
-          // response header we go on searching for the empty '\r\n' line
-          if(contentLength >= 0 && strcmp(serverResponse, "\r\n") == 0)
+          // we scan for the end of the
+          // response header by searching for the first '\r\n'
+          // line
+          if(strcmp(serverResponse, "\r\n") == 0)
           {
             FILE *out;
 
             // prepare the output file.
             if((out = fopen(filename, "w")) != NULL)
             {
-              LONG retrieved = 0;
+              LONG retrieved = -1;
 
               setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
               // we seem to have reached the entity body, so
-              // we can write the rest out immediately.
-              while(G->Error == FALSE && retrieved < contentLength &&
+              // from here we retrieve everything we can get and
+              // immediately write it out to a file. that's it :)
+              while(G->Error == FALSE &&
                     (len = TR_Recv(serverResponse, sizeof(serverResponse))) > 0)
               {
                 if(fwrite(serverResponse, len, 1, out) != 1)
@@ -3177,11 +3174,12 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
                 }
 
                 retrieved += len;
-                D(DBF_NET, "received %ld of %ld bytes", retrieved, contentLength);
               }
 
-              // check if we retrieved everything required
-              if(retrieved >= contentLength)
+              D(DBF_NET, "received %ld bytes", retrieved);
+
+              // check if we retrieved anything
+              if(G->Error == FALSE && retrieved >= 0)
                 result = TRUE;
 
               fclose(out);
