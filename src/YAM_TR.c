@@ -3147,7 +3147,10 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
         {
           // RFC 2616 section 4.4 requires Content-Length:
           if(strnicmp(serverResponse, "Content-Length:", 15) == 0)
+          {
             contentLength = atoi(TrimStart(&serverResponse[15]));
+            SHOWVALUE(DBF_NET, contentLength);
+          }
 
           // if we are still scanning for the end of the
           // response header we go on searching for the empty '\r\n' line
