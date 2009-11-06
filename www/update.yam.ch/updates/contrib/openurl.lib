@@ -1,0 +1,20 @@
+NAME: openurl.library
+VERSION: 7.6
+BUILDDATE: 24.10.2009
+URL: * http://downloads.sourceforge.net/openurllib/OpenURL-7.6.lha
+CHANGES:
+---------------------------------------------------------------------------
+                          openurl.library - 7.6
+---------------------------------------------------------------------------
+
+openurl.library is a library to make it easier for application programmers
+to include clickable URLs in their applications. It solves the problem by
+giving application programmers a very simple API to handle (one function)
+and the user gets configurability with the included preferences program.
+
+The version that is advertised here is an important bugfixing update and
+every YAM user is adviced to use this new version instead of the original
+version supplied with the original YAM distribution.
+
+For more information about the detail of changes in this version please
+consult the ChangeLog file within the lha archive of openurl.library.

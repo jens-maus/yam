@@ -3,7 +3,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2007 by YAM Open Source Team
+ Copyright (C) 2000-2009 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -92,338 +92,365 @@ if($fh = fopen($LOGFILE, 'a+'))
    fclose($fh);
 }
 
-// print out some initial output (version of php script and timestamp
-printf("<updatecheck>\n");
-printf("\$VER: updatecheck 1.1 (12.02.2008)\n");
-printf("TIME: %s\n", $datetime);
-
-// what we have to do now is: check each single component of YAM for
-// an eventually existing update and report it to the user
-
-// 1. Check if the user uses a nightly build or not
-if(ereg("(dev|nightly)", $userVERSTR) && (ereg("^[0-9]+$", $userBUILDID) || $userBUILDID == ""))
-  $nightly=true;
-else
-  $nightly=false;
-
-// 2. Check for "YAM" update itself
-list($prog, $ver, $system) = split(" ", trim($userVERSTR), 3);
-if($nightly == true)
-  $updateDir = $NIGHTLYDIR;
-else
-  $updateDir = $STABLEDIR;
-
-// extract the real userversion, userrevision and
-// patchlevel numbers
-list($userVER, $userREV, $userPL) = split("(\.|p|-)", trim($ver), 3);
-$userVER = intval($userVER);
-$userREV = intval($userREV);
-$userPL = intval($userPL);
-
-// analyze the target specification (if present)
-if(ereg("os4/ppc", $userVERSTR))
-  $userTARGET = "ppc-amigaos";
-elseif(ereg("mos/ppc", $userVERSTR))
-  $userTARGET = "ppc-morphos";
-else
-  $userTARGET = "m68k-amigaos";
-
-// now we should know all major stuff like the version/revision and
-// if the user version is a nightly build or not. So what we do now is, that
-// we go and check the 'LATEST' file of the stable tree first and in case the
-// user is using a nightly build we check against that latest stable version
-// as well.
-$fh=fopen($STABLEDIR . "/LATEST", 'r');
-if($fh)
+// now open a temporary file to which we output all the stuff here
+// and afterwards we send it over to the users
+$outfile = tempnam("/tmp", "yam");
+if($out = fopen($outfile, 'w'))
 {
-  while(!feof($fh))
+  // print out some initial output (version of php script and timestamp
+  fprintf($out, "<updatecheck>\n");
+  fprintf($out, "\$VER: updatecheck 1.2 (06.11.2009)\n");
+  fprintf($out, "TIME: %s\n", $datetime);
+  
+  // what we have to do now is: check each single component of YAM for
+  // an eventually existing update and report it to the user
+  
+  // 1. Check if the user uses a nightly build or not
+  if(ereg("(dev|nightly)", $userVERSTR) && (ereg("^[0-9]+$", $userBUILDID) || $userBUILDID == ""))
+    $nightly=true;
+  else
+    $nightly=false;
+  
+  // 2. Check for "YAM" update itself
+  list($prog, $ver, $system) = split(" ", trim($userVERSTR), 3);
+  if($nightly == true)
+    $updateDir = $NIGHTLYDIR;
+  else
+    $updateDir = $STABLEDIR;
+  
+  // extract the real userversion, userrevision and
+  // patchlevel numbers
+  list($userVER, $userREV, $userPL) = split("(\.|p|-)", trim($ver), 3);
+  $userVER = intval($userVER);
+  $userREV = intval($userREV);
+  $userPL = intval($userPL);
+  
+  // analyze the target specification (if present)
+  if(ereg("os4/ppc", $userVERSTR))
+    $userTARGET = "ppc-amigaos";
+  elseif(ereg("mos/ppc", $userVERSTR))
+    $userTARGET = "ppc-morphos";
+  else
+    $userTARGET = "m68k-amigaos";
+  
+  // now we should know all major stuff like the version/revision and
+  // if the user version is a nightly build or not. So what we do now is, that
+  // we go and check the 'LATEST' file of the stable tree first and in case the
+  // user is using a nightly build we check against that latest stable version
+  // as well.
+  $fh=fopen($STABLEDIR . "/LATEST", 'r');
+  if($fh)
   {
-    $line = fgets($fh);
-    list($stableTarget, $stableYAM) = split(": ", trim($line), 2);
-
-    // check if we found the target 
-    if($userTARGET == $stableTarget)
+    while(!feof($fh))
     {
-      // split the stableYAM by version/revision
-      list($stableVER, $stableREV, $stablePL) = split("(\.|p|-)", trim($stableYAM), 3);
-      $stableVER = intval($stableVER);
-      $stableREV = intval($stableREV);
-      $stablePL = intval($stablePL);
-
-      // now break out
-      break;
+      $line = fgets($fh);
+      list($stableTarget, $stableYAM) = split(": ", trim($line), 2);
+  
+      // check if we found the target 
+      if($userTARGET == $stableTarget)
+      {
+        // split the stableYAM by version/revision
+        list($stableVER, $stableREV, $stablePL) = split("(\.|p|-)", trim($stableYAM), 3);
+        $stableVER = intval($stableVER);
+        $stableREV = intval($stableREV);
+        $stablePL = intval($stablePL);
+  
+        // now break out
+        break;
+      }
     }
+  
+    fclose($fh);
   }
-
-  fclose($fh);
-}
-
-#printf("%d %d %d : %d %d %d\n", $userVER, $userREV, $userPL, $stableVER, $stableREV, $stablePL);
-
-// now we should know what the very latest stable version is and all the necessary USER
-// version information as well. Here we check first for plausible values first or
-// something went definitly wrong.
-if($userVER >= 2 && $userREV >= 4 && $userPL >= 0 &&
-   $stableVER >= 2 && $stableREV >= 4 && $stablePL >= 0)
-{
-   // check if the user version is a nightly build and if so we check
-   // the stable version against the user version and in case the stable version is
-   // higher than the users' one we suggest the user to update to the very latest
-   // stable one instead of cross migrating to the next nightly's of the next version
-   if($nightly == true && ($stableVER < $userVER || 
-                           ($stableVER == $userVER && $stableREV < $userREV)))
-   {
-      // now we can update the nightly build of the user because the versions
-      // match each other.
-      if(file_exists($updateDir . "/" . $userVER . "." . $userREV) &&
-         $fh = fopen($updateDir . "/" . $userVER . "." . $userREV, 'r'))
-      {
-         $updateFound = false;
-         $changelog = false;
-
-         while(!feof($fh))
-         {
-            $line = fgets($fh);
-            list($tag, $value1, $value2, $value3) = split(" ", trim($line), 4);
-
-            if($changelog == true)
-               print $line;
-            elseif($tag == "VERSION:")
-               $updateVER = $value1;
-            elseif($tag == "BUILDID:")
-               $updateBUILDID = $value1;
-            elseif($tag == "BUILDDATE:")
-            {
-               $updateBUILDDATE = $value1;
-
-               // we now check if this update file really carries newer stuff
-               // or if we simply have to break out here.
-               if($userBUILDDATE != "" && strtotime($userBUILDDATE) >= strtotime($updateBUILDDATE))
-                  break;
-            }
-            elseif($tag == "URL:" && ($value1 == $userTARGET || $value1 == "*"))
-            {
-               // output the initial [UPDATE] header only once
-               if($updateFound == false)
-               {
-                  printf("<component>\n");
-                  printf("NAME: YAM\n");
-                  printf("TARGET: $userTARGET\n");
-
-                  if($updateBUILDID != "")
-                     printf("RECENT: %s-%s\n", $updateVER, $updateBUILDID);
-                  else
-                     printf("RECENT: %s\n", $updateVER);
-
-                  if($userBUILDID != "")
-                     printf("INSTALLED: %s-%s\n", $ver, $userBUILDID);
-                  else
-                     printf("INSTALLED: %s\n", $ver);
-
-                  $updateFound = true;
-               }
-               
-               // now we output the "URL:" line
-               printf("URL: %s\n", trim($value2 . " " . $value3));
-            }
-            elseif($tag == "CHANGES:")
-            {
-               printf("<changelog>\n");
-               $changelog = true;
-            }
-         }
-
-         if($changelog == true)
-            printf("</changelog>\n");
-
-         if($updateFound == true)
-            printf("</component>\n");
- 
-         fclose($fh);
-      }
-   }
-   else
-   {
-      // now we have to check if we should suggest the user to update to the very
-      // latest stable version available instead
-      if(file_exists($STABLEDIR . "/" . $stableYAM) &&
-         $fh = fopen($STABLEDIR . "/" . $stableYAM, 'r'))
-      {
-         $updateFound = false;
-         $changelog = false;
-
-         while(!feof($fh))
-         {
-            $line = fgets($fh);
-            list($tag, $value1, $value2, $value3) = split(" ", trim($line), 4);
-
-            if($changelog == true)
-               print $line;
-            elseif($tag == "VERSION:")
-            {
-               $updateVER = $value1;
-
-               // check if the version is really newer or equal to the user one
-               list($updateVERSION, $updateREVISION, $updatePL) = split("(\.|p|-)", trim($updateVER), 3);
-               $updateVERSION = intval($updateVERSION);
-               $updateREVISION = intval($updateREVISION);
-               $updatePL = intval($updatePL);
-
-               if($userVER > $updateVERSION || 
-                  ($userVER == $updateVERSION && $userREV > $updateREVISION) ||
-                  ($userVER == $updateVERSION && $userREV == $updateREVISION && $userPL > $updatePL))
-               {
-                  break;
-               }
-            }
-            elseif($tag == "BUILDID:")
-               $updateBUILDID = $value1;
-            elseif($tag == "BUILDDATE:")
-            {
-               $updateBUILDDATE = $value1;
-
-               // we now check if this update file really carries newer stuff
-               // or if we simply have to break out here.
-               if($userBUILDDATE != "" && strtotime($userBUILDDATE) >= strtotime($updateBUILDDATE))
-                  break;
-            }
-            elseif($tag == "URL:" && ($value1 == $userTARGET || $value1 == "*"))
-            {
-               // output the initial [UPDATE] header only once
-               if($updateFound == false)
-               {
-                  printf("<component>\n");
-                  printf("NAME: YAM\n");
-                  printf("TARGET: $userTARGET\n");
-
-                  if($updateBUILDID != "")
-                     printf("RECENT: %s-%s\n", $updateVER, $updateBUILDID);
-                  else
-                     printf("RECENT: %s\n", $updateVER);
-
-                  if($userBUILDID != "")
-                     printf("INSTALLED: %s-%s\n", $ver, $userBUILDID);
-                  else
-                     printf("INSTALLED: %s\n", $ver);
-
-                  $updateFound = true;
-               }
-               
-               // now we output the "URL:" line
-               printf("URL: %s\n", trim($value2 . " " . $value3));
-            }
-            elseif($tag == "CHANGES:")
-            {
-               printf("<changelog>\n");
-               $changelog = true;
-            }
-         }
-
-         if($changelog == true)
-            printf("</changelog>\n");
-
-         if($updateFound == true)
-            printf("</component>\n");
- 
-         fclose($fh);
-      }
-   }
-}
-
-/////////////////////
-// now that we have checked/analyzed the update status of YAM itself, we can now
-// analyze the update status of the contributions including the version of the
-// used catalog translations (locale).
-
-// first we check all 'mcc' variables and then the 'lib' variables
-// of the update request
-for($i=0; $i < 2; $i++)
-{
-   // first check for mcc's then for libraries
-   if($i == 0)
-     $var = "mcc";
-   elseif($i == 1)
-     $var = "lib";
-
-   $j=0;
-   while(($lib=trim(strtolower($_GET["$var$j"]))) != "")
-   {
-     // extract the name and version
-     list($name, $verstr) = split("(-)", $lib, 2);
-
-     // open the version file
-     if(file_exists($CONTRIBDIR . "/" . $name . ".$var") &&
-        $fh = fopen($CONTRIBDIR . "/" . $name . ".$var", 'r'))
+  
+  #printf("%d %d %d : %d %d %d\n", $userVER, $userREV, $userPL, $stableVER, $stableREV, $stablePL);
+  
+  // now we should know what the very latest stable version is and all the necessary USER
+  // version information as well. Here we check first for plausible values first or
+  // something went definitly wrong.
+  if($userVER >= 2 && $userREV >= 4 && $userPL >= 0 &&
+     $stableVER >= 2 && $stableREV >= 4 && $stablePL >= 0)
+  {
+     // check if the user version is a nightly build and if so we check
+     // the stable version against the user version and in case the stable version is
+     // higher than the users' one we suggest the user to update to the very latest
+     // stable one instead of cross migrating to the next nightly's of the next version
+     if($nightly == true && ($stableVER < $userVER || 
+                             ($stableVER == $userVER && $stableREV < $userREV)))
      {
-       // extract the correct version/revision parts of verstr
-       list($version, $revision) = split("(\.)", $verstr, 2);
-       $version = intval($version);
-       $revision = intval($revision);
-       $changelog = false;
+        // now we can update the nightly build of the user because the versions
+        // match each other.
+        if(file_exists($updateDir . "/" . $userVER . "." . $userREV) &&
+           $fh = fopen($updateDir . "/" . $userVER . "." . $userREV, 'r'))
+        {
+           $updateFound = false;
+           $changelog = false;
+  
+           while(!feof($fh))
+           {
+              $line = fgets($fh);
+              list($tag, $value1, $value2, $value3) = split(" ", trim($line), 4);
+  
+              if($changelog == true)
+                 fputs($out, $line);
+              elseif($tag == "VERSION:")
+                 $updateVER = $value1;
+              elseif($tag == "BUILDID:")
+                 $updateBUILDID = $value1;
+              elseif($tag == "BUILDDATE:")
+              {
+                 $updateBUILDDATE = $value1;
+  
+                 // we now check if this update file really carries newer stuff
+                 // or if we simply have to break out here.
+                 if($userBUILDDATE != "" && strtotime($userBUILDDATE) >= strtotime($updateBUILDDATE))
+                    break;
+              }
+              elseif($tag == "URL:" && ($value1 == $userTARGET || $value1 == "*"))
+              {
+                 // output the initial [UPDATE] header only once
+                 if($updateFound == false)
+                 {
+                    fprintf($out, "<component>\n");
+                    fprintf($out, "NAME: YAM\n");
+                    fprintf($out, "TARGET: $userTARGET\n");
+  
+                    if($updateBUILDID != "")
+                       fprintf($out, "RECENT: %s-%s\n", $updateVER, $updateBUILDID);
+                    else
+                       fprintf($out, "RECENT: %s\n", $updateVER);
+  
+                    if($userBUILDID != "")
+                       fprintf($out, "INSTALLED: %s-%s\n", $ver, $userBUILDID);
+                    else
+                       fprintf($out, "INSTALLED: %s\n", $ver);
+  
+                    $updateFound = true;
+                 }
+                 
+                 // now we output the "URL:" line
+                 fprintf($out, "URL: %s\n", trim($value2 . " " . $value3));
+              }
+              elseif($tag == "CHANGES:")
+              {
+                 fprintf($out, "<changelog>\n");
+                 $changelog = true;
+              }
+           }
+  
+           if($changelog == true)
+              fprintf($out, "</changelog>\n");
+  
+           if($updateFound == true)
+              fprintf($out, "</component>\n");
    
-       while(!feof($fh))
-       {
-          $line = fgets($fh);
-          list($tag, $value1, $value2, $value3) = split(" ", trim($line), 4);
-   
-          if($changelog == true)
-             print $line;
-          elseif($tag == "NAME:")
-             $updateNAME = trim($value1);
-          elseif($tag == "VERSION:")
-          {
-             $updateVER = trim($value1);
-   
-             // split the VERSION string into version and revision
-             list($libVersion, $libRevision) = split("(\.)", $updateVER, 2);
-             $libVersion = intval($libVersion);
-             $libRevision = intval($libRevision);
-   
-             // we now check if this update file really carries newer stuff
-             // or if we simply have to break out here.
-             if($updateVER == "" || 
-                $libVersion < $version ||
-                ($libVersion == $version && $libRevision <= $revision))
-             {
-                // no update required
-                $updateFound = false;
-                break;
-             }
-   
-             // issue a new component header
-             printf("<component>\n");
-             printf("NAME: $updateNAME\n");
-             printf("TARGET: $userTARGET\n");
-             printf("RECENT: $libVersion.$libRevision\n");
-             printf("INSTALLED: $version.$revision\n");
-   
-             // this component requires an update lets notify the user
-             $updateFound = true;
-          }
-          elseif($tag == "BUILDDATE:")
-             printf("BUILDDATE: $value1\n");
-          elseif($tag == "URL:" && ($value1 == $userTARGET || $value1 == "*"))
-             printf("URL: %s\n", trim($value2 . " " . $value3));
-          elseif($tag == "CHANGES:")
-          {
-             printf("<changelog>\n");
-             $changelog = true;
-          }
-       }
-   
-       if($changelog == true)
-          printf("</changelog>\n");
-   
-       if($updateFound == true)
-          printf("</component>\n");
-   
-       fclose($fh);
+           fclose($fh);
+        }
      }
+     else
+     {
+        // now we have to check if we should suggest the user to update to the very
+        // latest stable version available instead
+        if(file_exists($STABLEDIR . "/" . $stableYAM) &&
+           $fh = fopen($STABLEDIR . "/" . $stableYAM, 'r'))
+        {
+           $updateFound = false;
+           $changelog = false;
+  
+           while(!feof($fh))
+           {
+              $line = fgets($fh);
+              list($tag, $value1, $value2, $value3) = split(" ", trim($line), 4);
+  
+              if($changelog == true)
+                 fputs($out, $line);
+              elseif($tag == "VERSION:")
+              {
+                 $updateVER = $value1;
+  
+                 // check if the version is really newer or equal to the user one
+                 list($updateVERSION, $updateREVISION, $updatePL) = split("(\.|p|-)", trim($updateVER), 3);
+                 $updateVERSION = intval($updateVERSION);
+                 $updateREVISION = intval($updateREVISION);
+                 $updatePL = intval($updatePL);
+  
+                 if($userVER > $updateVERSION || 
+                    ($userVER == $updateVERSION && $userREV > $updateREVISION) ||
+                    ($userVER == $updateVERSION && $userREV == $updateREVISION && $userPL > $updatePL))
+                 {
+                    break;
+                 }
+              }
+              elseif($tag == "BUILDID:")
+                 $updateBUILDID = $value1;
+              elseif($tag == "BUILDDATE:")
+              {
+                 $updateBUILDDATE = $value1;
+  
+                 // we now check if this update file really carries newer stuff
+                 // or if we simply have to break out here.
+                 if($userBUILDDATE != "" && strtotime($userBUILDDATE) >= strtotime($updateBUILDDATE))
+                    break;
+              }
+              elseif($tag == "URL:" && ($value1 == $userTARGET || $value1 == "*"))
+              {
+                 // output the initial [UPDATE] header only once
+                 if($updateFound == false)
+                 {
+                    fprintf($out, "<component>\n");
+                    fprintf($out, "NAME: YAM\n");
+                    fprintf($out, "TARGET: $userTARGET\n");
+  
+                    if($updateBUILDID != "")
+                       fprintf($out, "RECENT: %s-%s\n", $updateVER, $updateBUILDID);
+                    else
+                       fprintf($out, "RECENT: %s\n", $updateVER);
+  
+                    if($userBUILDID != "")
+                       fprintf($out, "INSTALLED: %s-%s\n", $ver, $userBUILDID);
+                    else
+                       fprintf($out, "INSTALLED: %s\n", $ver);
+  
+                    $updateFound = true;
+                 }
+                 
+                 // now we output the "URL:" line
+                 fprintf($out, "URL: %s\n", trim($value2 . " " . $value3));
+              }
+              elseif($tag == "CHANGES:")
+              {
+                 fprintf($out, "<changelog>\n");
+                 $changelog = true;
+              }
+           }
+  
+           if($changelog == true)
+              fprintf($out, "</changelog>\n");
+  
+           if($updateFound == true)
+              fprintf($out, "</component>\n");
    
-     $j++;
-   }
+           fclose($fh);
+        }
+     }
+  }
+  
+  /////////////////////
+  // now that we have checked/analyzed the update status of YAM itself, we can now
+  // analyze the update status of the contributions including the version of the
+  // used catalog translations (locale).
+  
+  // first we check all 'mcc' variables and then the 'lib' variables
+  // of the update request
+  for($i=0; $i < 2; $i++)
+  {
+     // first check for mcc's then for libraries
+     if($i == 0)
+       $var = "mcc";
+     elseif($i == 1)
+       $var = "lib";
+  
+     $j=0;
+     while(($lib=trim(strtolower($_GET["$var$j"]))) != "")
+     {
+       // extract the name and version
+       list($name, $verstr) = split("(-)", $lib, 2);
+  
+       // open the version file
+       if(file_exists($CONTRIBDIR . "/" . $name . ".$var") &&
+          $fh = fopen($CONTRIBDIR . "/" . $name . ".$var", 'r'))
+       {
+         // extract the correct version/revision parts of verstr
+         list($version, $revision) = split("(\.)", $verstr, 2);
+         $version = intval($version);
+         $revision = intval($revision);
+         $changelog = false;
+     
+         while(!feof($fh))
+         {
+            $line = fgets($fh);
+            list($tag, $value1, $value2, $value3) = split(" ", trim($line), 4);
+     
+            if($changelog == true)
+               fputs($out, $line);
+            elseif($tag == "NAME:")
+               $updateNAME = trim($value1);
+            elseif($tag == "VERSION:")
+            {
+               $updateVER = trim($value1);
+     
+               // split the VERSION string into version and revision
+               list($libVersion, $libRevision) = split("(\.)", $updateVER, 2);
+               $libVersion = intval($libVersion);
+               $libRevision = intval($libRevision);
+     
+               // we now check if this update file really carries newer stuff
+               // or if we simply have to break out here.
+               if($updateVER == "" || 
+                  $libVersion < $version ||
+                  ($libVersion == $version && $libRevision <= $revision))
+               {
+                  // no update required
+                  $updateFound = false;
+                  break;
+               }
+     
+               // issue a new component header
+               fprintf($out, "<component>\n");
+               fprintf($out, "NAME: $updateNAME\n");
+               fprintf($out, "TARGET: $userTARGET\n");
+               fprintf($out, "RECENT: $libVersion.$libRevision\n");
+               fprintf($out, "INSTALLED: $version.$revision\n");
+     
+               // this component requires an update lets notify the user
+               $updateFound = true;
+            }
+            elseif($tag == "BUILDDATE:")
+               fprintf($out, "BUILDDATE: $value1\n");
+            elseif($tag == "URL:" && ($value1 == $userTARGET || $value1 == "*"))
+               fprintf($out, "URL: %s\n", trim($value2 . " " . $value3));
+            elseif($tag == "CHANGES:")
+            {
+               fprintf($out, "<changelog>\n");
+               $changelog = true;
+            }
+         }
+     
+         if($changelog == true)
+            fprintf($out, "</changelog>\n");
+     
+         if($updateFound == true)
+            fprintf($out, "</component>\n");
+     
+         fclose($fh);
+       }
+     
+       $j++;
+     }
+  }
+  
+  // now close the update information with an </updatecheck> tag.
+  fprintf($out, "</updatecheck>\n");
+  
+  fclose($out);
 }
 
-// now close the update information with an </updatecheck> tag.
-printf("</updatecheck>\n");
+// now we should have prepared the temporary file. let's get its
+// file size
+$outsize = filesize($outfile);
+
+// as YAM 2.5's update check mechanism seems to be broken we
+// need to manually add a Content-Length: header with the number 
+// of bytes the request will sent.
+//if(strncasecmp($useragent, "YAM/2.5", 7) == 0)
+  header("Content-Length: " . $outsize);
+
+// now we open the file again and output it step by step
+if($out = fopen($outfile, 'r'))
+{
+  printf("%s", fread($out, $outsize));
+}
+
+unlink($outfile);
+
 ?>

@@ -1,110 +1,113 @@
 VERSION: 2.6-dev
-BUILDID: 20080228
-BUILDDATE: 28.02.2008
-URL: m68k-amigaos http://nightly.yam.ch/2008-02-28-dev/YAM26dev-AmigaOS3.lha
-URL: ppc-amigaos http://nightly.yam.ch/2008-02-28-dev/YAM26dev-AmigaOS4.lha
-URL: ppc-morphos http://nightly.yam.ch/2008-02-28-dev/YAM26dev-MorphOS.lha
+BUILDID: 20091104
+BUILDDATE: 04.11.2009
+URL: m68k-amigaos http://nightly.yam.ch/2009-11-04-dev/YAM26dev-AmigaOS3.lha
+URL: ppc-amigaos http://nightly.yam.ch/2009-11-04-dev/YAM26dev-AmigaOS4.lha
+URL: ppc-morphos http://nightly.yam.ch/2009-11-04-dev/YAM26dev-MorphOS.lha
+URL: i386-aros http://nightly.yam.ch/2009-11-04-dev/YAM26dev-AROSi386.lha
+URL: ppc-aros http://nightly.yam.ch/2009-11-04-dev/YAM26dev-AROSppc.lha
+URL: x86_64-aros http://nightly.yam.ch/2009-11-04-dev/YAM26dev-AROSx86_64.lha
 CHANGES:
 ---------------------------
 YAM Open Source - ChangeLog
 ---------------------------
 
-$Id: ChangeLog 3892 2008-02-27 20:11:27Z thboeckel $
+$Id: ChangeLog 4412 2009-11-03 07:14:49Z thboeckel $
 $URL: https://yamos.svn.sourceforge.net/svnroot/yamos/trunk/ChangeLog $
 
-2008-02-27  Thore Böckelmann <tboeckel@gmx.de>
+2009-11-02 Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_TR.c: the incoming folder's treenode is now redrawn after each received
-    mail. First of all this is consistent to sending mails and redrawing the
-    outgoing folder's treenode, and it gives instant feedback even without a
-    transfer window. Scrolling in folder treeview while a transfer was in
-    progress did this redraw already as well as making the folder treeview
-    inactive and active again.
+  * YAM_TR.c: raised minimum required version of application.library for the
+    new notification system to 53.7 due to recent SDK changes.
 
-2008-02-27  Jens Langner <Jens.Langner@light-speed.de>
+2009-10-30 Thore Böckelmann <tboeckel@gmx.de>
 
-  * ParseEmail.l, HTML2Mail.l: added a minimum flex version requirement check
-    to the lexer files. This is requires so that on one hand we have a unified
-    build environment throughout our developers and because the latest official
-    flex version (2.5.35) fixes some important issues. This should prevent
-    building YAM with ancient flex versions known to be buggy.
+  * YAM_MAf.c: modified the address line validation once more to perform the
+    validation only if the mail was created by certain Microsuck products.
 
-2008-02-26  Thore Böckelmann <tboeckel@gmx.de>
+2009-10-29 Thore Böckelmann <tboeckel@gmx.de>
 
-  * misc classes: added the same "event handler added" check to all other
-    classes which could possibly walk into the same trap as AttachmentImage.
-  * AttachmentImage.c: fixed a potential crash in case a mail had a yet
-    undecoded attachment and YAM was iconified and uniconfied while this mail
-    was currently being displayed. In this case the event handler was not added
-    during MUIM_Setup, but removed in MUIM_Cleanup, which can cause any kind of
-    funny things to happen. Most probably this fixes bug #1899484.
-  * misc: various little code cleanups, no functional changes.
+  * mui/WriteWindow.c: enhanced the command placeholder expansion such that it
+    is now able to add closing quotes at the correct place even if the place-
+    holder is followed by some other characters. For example '%a.lha' will be
+    expanded to '"foo bar.lha"' instead of '"foo bar".lha' if 'foo bar' is to
+    be inserted.
 
-2008-02-24  Thore Böckelmann <tboeckel@gmx.de>
+2009-10-28 Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_FO.c: the last fix didn't work exactly as intended.
-  * YAM_FO.c: searching for a folder no longer relys on the graphical represen-
-    tation by the folder listtree, but uses the list of folders directly.
+  * Requesters.c: all requesters can now be aborted by sending a CTRL-C and YAM
+    can be uniconified by sending a CTRL-F while a requester is active.
+  * YAM_TR.c: if no password is given for a POP3 account YAM will make sure the
+    application is visible before prompting for a password. Otherwise there is
+    no way to uniconify YAM and enter the password.
+  * misc: added a convenience macro to make sure that NULL strings can safely be
+    printed out.
 
-2008-02-23  Jens Langner <Jens.Langner@light-speed.de>
+2009-10-27 Thore Böckelmann <tboeckel@gmx.de>
 
-  * Makefile: reworked the compilation output to not use any ANSI color output
-    as that messes with some terminals not properly supporting ANSI. In
-    addition we use "make -C" from now on to walk into subdirectory
-    compilation. Furthermore, the Arexx date calculation routines are now
-    used for native OS4 hosted compiles as the gdate based calculation didn't
-    work out as it seems.
+  * YAM_WR.c: when constructing a fully qualified mail address from given person
+    data YAM now makes sure that at least either the real name or the address
+    string exist. Before empty strings resulted in "half" addresses only like
+    "@domain" instead of "name <user@domain>". Thanks to Christoph Poelzl for all
+    his hints and testing.
+  * YAM_MAf.c: fixed some NULL pointer accesses when one of the header lines was
+    empty.
+  * YAM_MAf.c: rewrote the address handling when parsing the header lines again
+    from scratch. The new approach correctly handles multiple possibly broken
+    recipient addresses which the old one didn't. I hate this broken Microsuck
+    stuff :(
 
-2008-02-22  Thore Böckelmann <tboeckel@gmx.de>
+2009-10-26 Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_COs.c: make sure the first entry of the MIME list is really visible and
-    not just active.
-  * Threads.c: in case YAM was aborted early (i.e. a missing .mcc) the thread
-    subsystem was cleaned up nevertheless and caused crashes, because
-    uninitialized lists were accessed. Now a proper check is done before then
-    cleanup. This fixes bug #1899531.
+  * YAM_MA.c: YAM complained about an unknown file format when trying to import
+    plain .mbox files which contained a mail without subject as the very first
+    mail. Now at least 2 out of 3 known header lines (From, To, Subject) will
+    suffice to make YAM recognize such a file as a valid .mbox file.
 
-2008-02-21  Thore Böckelmann <tboeckel@gmx.de>
+2009-10-26  Pär Boberg <pbobbenb@spray.se>
 
-  * MailList.c, YAM_UT.c: moved the locking of the mail list in some functions
-    more to the front to avoid accessing a non-locked list. Also moved the list
-    locking into MailListToMailArray().
-  * YAM_MA.c: added a warning/error message when no active/selected or new mail
-    could be found upon creating such a list of mails.
-  * YAM_MA.c: slightly changed how the number of actually deleted mails is
-    counted to be more obvious.
-  * YAM_MA.c: added some more debug code when deleting mails.
-  * YAM_MAf.c: changed two debugging macros to the correct class.
+  * locale/swedish.ct: updated according to changes.
 
-2008-02-20  Thore Böckelmann <tboeckel@gmx.de>
+2009-10-25 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * YAM.c: changing the active mail, which requires the active folder to be set,
-    doesn't make any sense before the folder list is loaded at all. This caused
-    the "Spam" button to be shown in disabled state right after starting YAM,
-    because there was no active mail nor an active folder.
+  * locale/italiano.ct: Various minor changes on the italian translation.
 
-2008-02-20  Jens Langner <Jens.Langner@light-speed.de>
+2009-10-21 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * Mime.c: fixed bug #1897222 where under certain circumstances the RFC2047
-    header encoding routines failed when line wrapping occurred due to the
-    encoding word limits.
+  * locale/italiano.ct: Added missing string (MSG_CO_TEXTCOLORS_READ), this should
+    fix bugs #2874442 and #2874431
+  * doc/Install-YAM: Added italian language as "Setting up" option, this need some
+    more testing before 2.6 final release.
+  * doc/YAM_english.guide: Add Samir Hawamdeh and Luca Longone as contributors for
+    the italian translation :-)
 
-2008-02-18  Thore Böckelmann <tboeckel@gmx.de>
+2009-10-17 Thore Böckelmann <tboeckel@gmx.de>
 
-  * BayesFilter.c: having rethought the stuff, the address book is not longer
-    searched for the real name of a mail's sender as this is too easy to forge.
+  * doc/YAM_english.guide: rewrote the section about the single mail file names.
+    This fixes bug #2869911.
+  * Debug.c: the debug log now contains the build date instead of the
+    (currently) empty build ID.
+  * YAM_UT.c: added some debug output to the address generation function when
+    replying to a mail to track down a bug with slightly broken addresses.
+  * YAM_WR.c: added some debug output to the address generation function when
+    replying to a mail to track down a bug with slightly broken addresses.
+  * mui/WriteWindow.c: all filenames containing spaces which may be passed to
+    external commands will now correctly be sourrounded with quotes.
+  * YAM_CO.c: added ".lha" to the %a paramter of the default packer command
+    string.
+  * extrasrc/Get#?.c: removed the ENTER()/RETURN() macros from the list/node
+    functions, because a @ctrace log become far too huge and unmaintainable
+    with these.
 
-2008-02-17  Thore Böckelmann <tboeckel@gmx.de>
+2009-10-15 Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_MA.c: old mails are no longer deleted immediately but copied over to a
-    temporary "to be deleted" list first. This avoids locking a folder's mail
-    list twice (or even more often), which seems to produce deadlocks for some
-    users. Also added some more debugging informations about mails to be
-    deleted.
-  * YAM_UT.c: some minor optimizations.
-  * BayesFilter.c: in case the address book is considered as white list the
-    sender's real name and address are now searched in the address book. This
-    should improve the white listing a bit.
+  * mime/rfc2047.c, mime/rfc2231.c: in case a conversion fails the source and
+    destination codeset name will now be printed out in the debug log as well.
+
+2009-10-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: fixed a possible endless loop in the recently added workaround.
+
 
 
 THIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG
