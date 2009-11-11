@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-11-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainFolderListtree.c: folders without valid indices were not displayed
+    correctly in italic style.
+
 2009-11-07 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c: fixed bug #2893236 in the TR_DownloadURL() function where we did

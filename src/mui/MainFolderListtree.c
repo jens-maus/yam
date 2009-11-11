@@ -177,7 +177,7 @@ HOOKPROTONHNO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
         {
           FormatFolderInfo(folderStr, sizeof(folderStr), entry);
 
-          if(entry->LoadedMode != LM_UNLOAD && entry->LoadedMode != LM_REBUILD)
+          if(entry->LoadedMode == LM_VALID)
           {
             if(entry->New != 0)
               msg->Preparse[0] = C->StyleFolderNew;
@@ -228,12 +228,9 @@ MakeStaticHook(DisplayHook, DisplayFunc);
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct Data *data;
-  ULONG i;
-
   ENTER();
 
-  if(!(obj = DoSuperNew(cl, obj,
+  if((obj = DoSuperNew(cl, obj,
 
     InputListFrame,
     MUIA_ObjectID,                    MAKE_ID('N','L','0','1'),
@@ -250,29 +247,27 @@ OVERLOAD(OM_NEW)
     MUIA_NListtree_Title,             TRUE,
     MUIA_NListtree_DoubleClick,       MUIV_NListtree_DoubleClick_All,
 
-    TAG_MORE, inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
-    RETURN(0);
-    return 0;
+    GETDATA;
+    ULONG i;
+
+    // prepare the folder images
+    data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[fi_Fold]);
+    data->folderImage[FICON_ID_UNFOLD]      = MakeImageObject("folder_unfold",       G->theme.folderImages[fi_Unfold]);
+    data->folderImage[FICON_ID_INCOMING]    = MakeImageObject("folder_incoming",     G->theme.folderImages[fi_Incoming]);
+    data->folderImage[FICON_ID_INCOMING_NEW]= MakeImageObject("folder_incoming_new", G->theme.folderImages[fi_IncomingNew]);
+    data->folderImage[FICON_ID_OUTGOING]    = MakeImageObject("folder_outgoing",     G->theme.folderImages[fi_Outgoing]);
+    data->folderImage[FICON_ID_OUTGOING_NEW]= MakeImageObject("folder_outgoing_new", G->theme.folderImages[fi_OutgoingNew]);
+    data->folderImage[FICON_ID_TRASH]       = MakeImageObject("folder_trash",        G->theme.folderImages[fi_Trash]);
+    data->folderImage[FICON_ID_TRASH_NEW]   = MakeImageObject("folder_trash_new",    G->theme.folderImages[fi_TrashNew]);
+    data->folderImage[FICON_ID_SENT]        = MakeImageObject("folder_sent",         G->theme.folderImages[fi_Sent]);
+    data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt",        G->theme.statusImages[si_Crypt]);
+    data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam",         G->theme.folderImages[fi_Spam]);
+    data->folderImage[FICON_ID_SPAM_NEW]    = MakeImageObject("folder_spam_new",     G->theme.folderImages[fi_SpamNew]);
+    for(i = 0; i < ARRAY_SIZE(data->folderImage); i++)
+      DoMethod(obj, MUIM_NList_UseImage, data->folderImage[i], i, MUIF_NONE);
   }
-
-  data = (struct Data *)INST_DATA(cl,obj);
-
-  // prepare the folder images
-  data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[fi_Fold]);
-  data->folderImage[FICON_ID_UNFOLD]      = MakeImageObject("folder_unfold",       G->theme.folderImages[fi_Unfold]);
-  data->folderImage[FICON_ID_INCOMING]    = MakeImageObject("folder_incoming",     G->theme.folderImages[fi_Incoming]);
-  data->folderImage[FICON_ID_INCOMING_NEW]= MakeImageObject("folder_incoming_new", G->theme.folderImages[fi_IncomingNew]);
-  data->folderImage[FICON_ID_OUTGOING]    = MakeImageObject("folder_outgoing",     G->theme.folderImages[fi_Outgoing]);
-  data->folderImage[FICON_ID_OUTGOING_NEW]= MakeImageObject("folder_outgoing_new", G->theme.folderImages[fi_OutgoingNew]);
-  data->folderImage[FICON_ID_TRASH]       = MakeImageObject("folder_trash",        G->theme.folderImages[fi_Trash]);
-  data->folderImage[FICON_ID_TRASH_NEW]   = MakeImageObject("folder_trash_new",    G->theme.folderImages[fi_TrashNew]);
-  data->folderImage[FICON_ID_SENT]        = MakeImageObject("folder_sent",         G->theme.folderImages[fi_Sent]);
-  data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt",        G->theme.statusImages[si_Crypt]);
-  data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam",         G->theme.folderImages[fi_Spam]);
-  data->folderImage[FICON_ID_SPAM_NEW]    = MakeImageObject("folder_spam_new",     G->theme.folderImages[fi_SpamNew]);
-  for(i = 0; i < ARRAY_SIZE(data->folderImage); i++)
-    DoMethod(obj, MUIM_NList_UseImage, data->folderImage[i], i, MUIF_NONE);
 
   RETURN((ULONG)obj);
   return (ULONG)obj;
@@ -283,13 +278,13 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
-  int i;
+  ULONG i;
 
   // make sure that our context menus are also disposed
   if(data->context_menu != NULL)
     MUI_DisposeObject(data->context_menu);
 
-  for(i=0; i < MAX_FOLDERIMG+1; i++)
+  for(i = 0; i < ARRAY_SIZE(data->folderImage); i++)
   {
     DoMethod(obj, MUIM_NList_UseImage, NULL, i, MUIF_NONE);
     if(data->folderImage[i] != NULL)
@@ -358,7 +353,9 @@ OVERLOAD(MUIM_DragQuery)
   {
     data->draggingMails = TRUE;
     result = MUIV_DragQuery_Accept;
-  } else {
+  }
+  else
+  {
     data->draggingMails = FALSE;
     result = DoSuperMethodA(cl, obj, msg);
   }
@@ -548,7 +545,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   struct MA_GUIData *gui = &G->MA->GUI;
   Object *lastItem;
   BOOL disable_delete = FALSE;
-  BOOL disable_edit   = FALSE;
+  BOOL disable_edit = FALSE;
   BOOL disable_update = FALSE;
   BOOL disable_alltoread = FALSE;
   BOOL disable_search = FALSE;
