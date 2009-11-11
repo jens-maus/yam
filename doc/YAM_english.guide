@@ -5681,6 +5681,7 @@ Alphabetical list of all ARexx commands
  @{" ADDRSAVE          " link "RX_ADDRSAVE"}  - Save the address book under a given filename
  @{" APPBUSY           " link "RX_APPBUSY"}  - Switch YAM to busy mode
  @{" APPNOBUSY         " link "RX_APPNOBUSY"}  - Bring YAM out of busy mode
+ @{" FLUSHINDEXES      " link "RX_FLUSHINDEXES"}  - Flush the index of all folders
  @{" FOLDERINFO        " link "RX_FOLDERINFO"}  - Return information about a given folder
  @{" GETFOLDERINFO     " link "RX_GETFOLDERINFO"}  - Return information about the current folder
  @{" GETCONFIGINFO     " link "RX_GETCONFIGINFO"}  - Return information about the current user
@@ -5786,6 +5787,7 @@ Address book handling
 Folder wide operations
 ----------------------
 
+ @{" FLUSHINDEXES      " link "RX_FLUSHINDEXES"}  - Flush the index of all folders
  @{" FOLDERINFO        " link "RX_FOLDERINFO"}  - Return information about a given folder
  @{" GETFOLDERINFO     " link "RX_GETFOLDERINFO"}  - Return information about the current folder
  @{" MAILFILTER        " link "RX_MAILFILTER"}  - Filter messages in the current folder
@@ -6467,7 +6469,7 @@ APPBUSY
 @endnode
 
 @node "RX_APPNOBUSY" "ARexx command: APPNOBUSY"
-@next "RX_FOLDERINFO"
+@next "RX_FLUSHINDEXES"
 @prev "RX_APPBUSY"
 @toc "REXX"
 
@@ -6502,6 +6504,36 @@ APPNOBUSY
 
 @{b}SEE ALSO@{ub}
      @{" APPBUSY " link "RX_APPBUSY"}
+
+@endnode
+
+@node "RX_FLUSHINDEXES" "ARexx command: FLUSHINDEXES"
+@next "RX_FOLDERINFO"
+@prev "RX_APPNOBUSY"
+@toc "REXX"
+
+FLUSHINDEXES
+------------
+
+@{b}NAME@{ub}
+     FLUSHINDEXES -- Flush the index of all folders.  (V2.6)
+
+@{b}TEMPLATE@{ub}
+
+@{b}FUNCTION@{ub}
+     Frees the memory occupied by the folders' index structure.
+
+@{b}INPUTS@{ub}
+
+@{b}RETURNS@{ub}
+
+@{b}NOTES@{ub}
+
+@{b}EXAMPLE@{ub}
+
+@{b}BUGS@{ub}
+
+@{b}SEE ALSO@{ub}
 
 @endnode
 
@@ -11310,6 +11342,7 @@ local bulletin boards or on public domain disks.
    @{" Finding messages - Search criteria " link "FI_K"}
    @{" Folder list, Main window " link "MA00"}
    @{" Folder settings " link "FO_W"}
+   @{" FLUSHINDEXES, ARexx command " link "RX_FLUSHINDEXES"}
    @{" FOLDERINFO, ARexx command " link "RX_FOLDERINFO"}
    @{" Format, Size " link "CO08"}
    @{" Forward settings " link "CO06"}

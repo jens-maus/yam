@@ -373,6 +373,7 @@ REXX = \
 	addrsave.o \
 	appbusy.o \
 	appnobusy.o \
+	flushindexes.o \
 	folderinfo.o \
 	getconfiginfo.o \
 	getfolderinfo.o \

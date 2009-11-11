@@ -790,6 +790,12 @@ appnobusy.o: rexx/appnobusy.c include/proto/muimaster.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h Rexx.h \
   Debug.h
+flushindexes.o: rexx/flushindexes.c extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
+  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
+  YAM_mainFolder.h Rexx.h Debug.h
 folderinfo.o: rexx/folderinfo.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -853,6 +859,14 @@ isonline.o: rexx/isonline.c extrasrc.h include/SDI_compiler.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h Rexx.h \
   Debug.h
+listfreeze.o: rexx/listfreeze.c include/mui/NList_mcc.h \
+  include/libraries/mui.h extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
+  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
+  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h Rexx.h Debug.h
 listselect.o: rexx/listselect.c include/mui/NList_mcc.h \
   include/libraries/mui.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
@@ -861,6 +875,15 @@ listselect.o: rexx/listselect.c include/mui/NList_mcc.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
   mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
   YAM_main.h BayesFilter.h MUIObjects.h Rexx.h Debug.h
+listunfreeze.o: rexx/listunfreeze.c include/mui/NList_mcc.h \
+  include/libraries/mui.h extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
+  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
+  YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
+  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  Rexx.h Debug.h
 mailarchive.o: rexx/mailarchive.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -1043,6 +1066,13 @@ request.o: rexx/request.c extrasrc.h include/SDI_compiler.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
   Requesters.h Rexx.h Debug.h
+requestfile.o: rexx/requestfile.c extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
+  BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
+  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h Locale.h Rexx.h Debug.h
 requestfolder.o: rexx/requestfolder.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -1526,7 +1556,7 @@ DockyIcon.o: DockyIcon.c YAM.h include/xpk/xpk.h include/amiga-align.h \
   HashTable.h Rexx.h Themes.h Timer.h Threads.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
-  DockyIcon.h MUIObjects.h Debug.h
+  DockyIcon.h Locale.h MUIObjects.h Debug.h
 FileInfo.o: FileInfo.c FileInfo.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h Debug.h
 FolderList.o: FolderList.c extrasrc.h include/SDI_compiler.h \
@@ -1552,7 +1582,9 @@ Locale.o: Locale.c YAM.h include/xpk/xpk.h include/amiga-align.h \
   HashTable.h Rexx.h Themes.h Timer.h Threads.h Debug.h
 MailList.o: MailList.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h MailList.h Debug.h
-MimeTypes.o: MimeTypes.c YAM_stringsizes.h Locale.h MimeTypes.h Debug.h
+MimeTypes.o: MimeTypes.c YAM_stringsizes.h extrasrc.h \
+  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
+  Locale.h MimeTypes.h Debug.h
 MUIObjects.o: MUIObjects.c include/mui/BetterString_mcc.h \
   include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListtree_mcc.h include/mui/NListview_mcc.h \

@@ -107,6 +107,7 @@ void rx_addrresolve(struct RexxHost *, struct RexxParams *, enum RexxAction, str
 void rx_addrsave(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_appbusy(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_appnobusy(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
+void rx_flushindexes(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_folderinfo(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_getconfiginfo(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_getfolderinfo(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);

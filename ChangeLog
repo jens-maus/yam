@@ -7,6 +7,10 @@ $URL$
 
 2009-11-11 Thore Böckelmann <tboeckel@gmx.de>
 
+  * Rexx.c, rexx/flushindexes.c, doc/YAM_english.guide: implemented the ARexx
+    command FLUSHINDEXES to flush the index of all folders. This command does
+    the same as selecting "Flush indexes" from the Folder menu. This fulfils
+    feature request #2895896.
   * mui/MainFolderListtree.c: folders without valid indices were not displayed
     correctly in italic style.
 
