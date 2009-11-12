@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-11-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Rexx.c: the command table no longer needs to be NULL terminated, but the
+    binary search still took the no longer existent NULL termination into
+    account and hence failed on the last command, namely WRITETO. Thanks to
+    Christer Oldhoff for the hint.
+
 2009-11-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * Rexx.c, rexx/flushindexes.c, doc/YAM_english.guide: implemented the ARexx
