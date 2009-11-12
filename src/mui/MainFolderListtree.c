@@ -177,7 +177,7 @@ HOOKPROTONHNO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
         {
           FormatFolderInfo(folderStr, sizeof(folderStr), entry);
 
-          if(entry->LoadedMode == LM_VALID)
+          if(entry->LoadedMode != LM_UNLOAD && entry->LoadedMode != LM_REBUILD)
           {
             if(entry->New != 0)
               msg->Preparse[0] = C->StyleFolderNew;
