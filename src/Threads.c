@@ -70,6 +70,7 @@ struct ThreadMessage
   void *arg[MAX_ARGS];    // the argument pointers
   int result;
   BOOL called;            // function was called
+  BOOL parentCanContinue;
 };
 
 /*** TimerMessage ***/
@@ -364,10 +365,10 @@ BOOL ParentThreadCanContinue(void)
 
   if(msg != NULL)
   {
-    struct Process *p = (struct Process*)FindTask(NULL);
-
-    msg->msg.mn_ReplyPort = &p->pr_MsgPort;
+  	// No reply port needed as this message is async
     msg->msg.mn_Length = sizeof(struct ThreadMessage);
+    msg->async = 1;
+    msg->parentCanContinue = TRUE;
 
     PutMsg(G->mainThread.thread_port, &msg->msg);
 
@@ -415,52 +416,71 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
 
       if(in != 0 && out != 0)
       {
-        thread->process = CreateNewProcTags(
-              NP_Entry,      ThreadEntry, // entry function
-              NP_StackSize,  16384,       // stack size
-              NP_Name,       thread_name,
-              NP_Priority,   -1,
-              NP_Input,      in,
-              NP_Output,     out,
-              #if defined(__amigaos4__)
-              NP_Child,      TRUE,
-              #elif defined(__MORPHOS__)
-              NP_CodeType,   MACHINE_PPC,
-              #endif
-              TAG_DONE,      0);
-
-        if(thread->process != NULL)
+        if((thread->process = CreateNewProcTags(NP_Entry,      ThreadEntry, // entry function
+                                                NP_StackSize,  16384,       // stack size
+                                                NP_Name,       thread_name,
+                                                NP_Priority,   -1,
+                                                NP_Input,      in,
+                                                NP_Output,     out,
+                                                #if defined(__amigaos4__)
+                                                NP_Child,      TRUE,
+                                                #elif defined(__MORPHOS__)
+                                                NP_CodeType,   MACHINE_PPC,
+                                                #endif
+                                                TAG_DONE,      0)) != NULL)
         {
-          struct ThreadMessage *thread_msg;
-
-          D(DBF_THREAD, "Thread started at 0x%lx", thread);
-
-          PutMsg(&thread->process->pr_MsgPort, (struct Message*)msg);
-          WaitPort(G->mainThread.thread_port);
-
-          thread_msg = (struct ThreadMessage *)GetMsg(G->mainThread.thread_port);
-          if(thread_msg == msg)
+          do
           {
-            /* This was the startup message, so something has failed */
-            D(DBF_THREAD, "Got startup message back. Something went wrong");
+            struct Node *node;
 
-            FreeVecPooled(G->SharedMemPool, thread_msg);
-            FreeVecPooled(G->SharedMemPool, thread);
+            Wait(1UL << G->mainThread.thread_port->mp_SigBit);
 
-            RETURN(NULL);
-            return NULL;
+            // Warning: We are accessing the message port directly and scan through all messages (without
+            // removing them), this may not be merely ugly but also a hack
+            Forbid();
+
+            IterateList(G->mainThread.thread_port, node)
+            {
+              struct ThreadMessage *tmsg = (struct ThreadMessage*)node;
+
+              if(tmsg == msg)
+              {
+                Remove(node);
+                Permit();
+
+                // This was the startup message, so something has failed
+                D(DBF_THREAD, "Got startup message back. Something went wrong");
+                FreeVecPooled(G->SharedMemPool, tmsg);
+                FreeVecPooled(G->SharedMemPool, thread);
+
+                // Set the state of this message port to "hot" again
+                SetSignal((1UL << G->mainThread.thread_port->mp_SigBit), (1UL << G->mainThread.thread_port->mp_SigBit));
+
+                RETURN(NULL);
+                return NULL;
+              }
+
+              if(tmsg->parentCanContinue == TRUE)
+              {
+                Remove(node);
+                Permit();
+
+                // This was the "parent task can continue message", we don't reply it
+                // but we free it here (although it wasn't allocated by this task)
+                D(DBF_THREAD, "Got 'parent can continue' message");
+                FreeVecPooled(G->SharedMemPool, tmsg);
+
+                // Set the state of this message port to "hot" again
+                SetSignal((1UL << G->mainThread.thread_port->mp_SigBit), (1UL << G->mainThread.thread_port->mp_SigBit));
+
+                RETURN(thread);
+                return thread;
+              }
+            }
+
+            Permit();
           }
-          else
-          {
-            /* This was the "parent task can continue message", we don't reply it
-             * but we free it here (although it wasn't allocated by this task) */
-            D(DBF_THREAD, "Got 'parent can continue'");
-
-            FreeVecPooled(G->SharedMemPool, thread_msg);
-
-            RETURN(thread);
-            return thread;
-          }
+          while(TRUE);
         }
       }
 
@@ -684,12 +704,11 @@ int CallParentThreadFunctionAsync(void *function, int argcount, ...)
 
   if((tmsg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage))) != NULL)
   {
-    struct Process *p = (struct Process*)FindTask(NULL);
     va_list argptr;
 
     va_start(argptr, argcount);
 
-    tmsg->msg.mn_ReplyPort = &p->pr_MsgPort;
+    // Note that async messages are never replied, therefore no reply port is necessary
     tmsg->msg.mn_Length = sizeof(struct ThreadMessage);
     tmsg->function = (int (*)(void))function;
     tmsg->argcount = argcount;
@@ -721,12 +740,11 @@ int CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
 
   if((tmsg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage))) != NULL)
   {
-    struct Process *p = (struct Process*)FindTask(NULL);
     va_list argptr;
 
     va_start(argptr, argcount);
 
-    tmsg->msg.mn_ReplyPort = &p->pr_MsgPort;
+    // Note that async messages are never replied, therefore no reply port is necessary
     tmsg->msg.mn_Length = sizeof(struct ThreadMessage);
     tmsg->function = (int (*)(void))function;
     tmsg->argcount = argcount;
