@@ -172,7 +172,7 @@ BOOL CompareMimeTypeLists(const struct MinList *mtl1, const struct MinList *mtl2
   }
 
   // if there are any nodes left then the two lists cannot be equal
-  if(GetSucc(mln1) != NULL || GetSucc(mln2) != NULL)
+  if((mln1 != NULL && GetSucc(mln1) != NULL) || (mln2 != NULL && GetSucc(mln2) != NULL))
   {
     equal = FALSE;
   }
