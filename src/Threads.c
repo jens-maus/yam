@@ -642,7 +642,7 @@ static void HandleThreadMessage(struct ThreadMessage *tmsg)
 // Call a function in context of the parent task synchronly. The contents of
 // success is set to 1, if the call was successful otherwise to 0.
 // success may be NULL. If success would be 0, the call returns 0 as well.
-int CallParentThreadFunctionSync(int *success, void *function, int argcount, ...)
+int CallParentThreadFunctionSync(BOOL *success, void *function, int argcount, ...)
 {
   va_list argptr;
   int rc = 0;
@@ -683,7 +683,7 @@ int CallParentThreadFunctionSync(int *success, void *function, int argcount, ...
   else
   {
     if(success != NULL)
-      *success = 0;
+      *success = FALSE;
   }
 
   va_end(argptr);
@@ -695,10 +695,10 @@ int CallParentThreadFunctionSync(int *success, void *function, int argcount, ...
 ///
 /// CallParentThreadFunctionAsync()
 // Call the function asynchron
-int CallParentThreadFunctionAsync(void *function, int argcount, ...)
+BOOL CallParentThreadFunctionAsync(void *function, int argcount, ...)
 {
   struct ThreadMessage *tmsg;
-  int result = 0;
+  BOOL result = FALSE;
 
   ENTER();
 
@@ -722,7 +722,7 @@ int CallParentThreadFunctionAsync(void *function, int argcount, ...)
 
     PutMsg(G->mainThread.thread_port, &tmsg->msg);
 
-    result = 1;
+    result = TRUE;
   }
 
   RETURN(result);
@@ -733,14 +733,15 @@ int CallParentThreadFunctionAsync(void *function, int argcount, ...)
 /// CallParentThreadFunctionAsyncString()
 // Call the function asynchron and duplicate the first argument which us
 // threaded at a string
-int CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
+BOOL CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
 {
   struct ThreadMessage *tmsg;
-  int result = 0;
+  BOOL result = FALSE;
 
   if((tmsg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage))) != NULL)
   {
     va_list argptr;
+    BOOL sendMsg = FALSE;
 
     va_start(argptr, argcount);
 
@@ -758,16 +759,23 @@ int CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
 
     if(tmsg->arg[0] != NULL && argcount >= 1)
     {
-      if((tmsg->arg[0] = strdup((char *)tmsg->arg[0])) == NULL)
+      // duplicate the parameter string if there is one
+      if((tmsg->arg[0] = strdup((char *)tmsg->arg[0])) != NULL)
       {
-        RETURN(0);
-        return 0;
+        sendMsg = TRUE;
       }
     }
+    else
+    {
+      // send a message without parameter string
+      sendMsg = TRUE;
+    }
 
-    PutMsg(G->mainThread.thread_port, &tmsg->msg);
-
-    result = 1;
+    if(sendMsg == TRUE)
+    {
+      PutMsg(G->mainThread.thread_port, &tmsg->msg);
+      result = TRUE;
+    }
   }
 
   RETURN(result);
@@ -822,10 +830,9 @@ int CallThreadFunctionSync(struct Thread *thread, void *function, int argcount, 
 ///
 /// PushThreadFunction()
 // Pushes a function call in the function queue of the callers task context.
-// Return 1 for success else 0.
-int PushThreadFunction(void *function, int argcount, ...)
+BOOL PushThreadFunction(void *function, int argcount, ...)
 {
-  int rc = 0;
+  BOOL success = FALSE;
   struct ThreadMessage *tmsg;
   va_list argptr;
 
@@ -838,23 +845,22 @@ int PushThreadFunction(void *function, int argcount, ...)
     struct Thread *this_thread = ((struct Thread *)(FindTask(NULL)->tc_UserData));
 
     AddTail((struct List *)&this_thread->push_list, &tmsg->msg.mn_Node);
-    rc = 1;
+    success = TRUE;
   }
 
   va_end(argptr);
 
-  RETURN(rc);
-  return rc;
+  RETURN(success);
+  return success;
 }
 
 ///
 /// PushThreadFunctionDelayed()
 // Pushes a function call in the function queue of the callers task context
 // but only after a given amount of time.
-// Return 1 for success else 0.
-int PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
+BOOL PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
 {
-  int rc = 0;
+  BOOL success = FALSE;
   struct ThreadMessage *tmsg;
   va_list argptr;
 
@@ -885,7 +891,7 @@ int PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
       // then start the timer
       SendIO(&timer_msg->time_req.Request);
 
-      rc = 1;
+      success = TRUE;
     }
     else
       FreeVecPooled(G->SharedMemPool, tmsg);
@@ -893,19 +899,23 @@ int PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
 
   va_end(argptr);
 
-  RETURN(rc);
-  return rc;
+  RETURN(success);
+  return success;
 }
 
 ///
 /// IsThreadAborted()
 // Check if thread is aborted and return 1 if so
-int IsThreadAborted(void)
+BOOL IsThreadAborted(void)
 {
-  int aborted = !!CheckSignal(SIGBREAKF_CTRL_C);
+  BOOL aborted;
 
+  ENTER();
+
+  aborted = !!CheckSignal(SIGBREAKF_CTRL_C);
   D(DBF_THREAD, "Aborted=%ld", aborted);
 
+  RETURN(aborted);
   return aborted;
 }
 
