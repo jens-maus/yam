@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-11-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: external programs are no longer created as a child process of YAM
+    to prevent error messages from DOS if YAM is shut down before the child
+    process. This fixes bug #2898332.
+
+2009-11-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c, MimeTypes.c: added some additional NULL pointer checks, because
+    the AROS implementation of GetSucc() is not NULL pointer safe.
+
 2009-11-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainFolderListtree.c: reverted yesterdays change. Only folders without

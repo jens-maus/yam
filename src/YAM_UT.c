@@ -5098,7 +5098,6 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
                                SYS_Output,   out,
                                #if defined(__amigaos4__)
                                SYS_Error,    err,
-                               NP_Child,     TRUE,
                                #endif
                                NP_Name,      "YAM command process",
                                NP_Path,      path,
