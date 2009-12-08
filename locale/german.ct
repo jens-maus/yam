@@ -6280,7 +6280,7 @@ Zeichenk_odierungswarnung
 ;
 MSG_CO_CHARSETWARN
 Die Zeichenkodierung von YAM ist momentan auf '%s'\n\
-eingestellt und stimmt nicht mit der des Systemes\n\
+eingestellt und stimmt nicht mit der des Systems\n\
 ('%s') überein.\n\
 \n\
 Wie möchten Sie fortfahren?

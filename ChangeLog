@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-12-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: fixed a typo.
+
 2009-11-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: external programs are no longer created as a child process of YAM
