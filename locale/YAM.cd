@@ -6951,3 +6951,11 @@ If checked, YAM will use AmigaOS4.1's notification\n\
 system to notify the user about new received mails.\n\
 This requires at least application.library V53.2.
 ;
+MSG_NO_OPENURL_LIB (2151//)
+openurl.library not installed on your system.\n\
+Thus YAM is not able to open the requested link itself.\n\
+\n\
+Please launch your internet browser yourself and enter this link:\n\
+'%s'
+; URL
+;

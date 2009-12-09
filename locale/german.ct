@@ -8555,3 +8555,10 @@ Wenn ausgewählt, werden neu empfangene Nachrichten\n\
 über das Benachrichtungssystem von AmigaOS4.1 gemeldet.\n\
 Hierfür wird mindestens application.library V53.2 benötigt.
 ;
+MSG_NO_OPENURL_LIB
+Die openurl.library ist auf Ihrem System nicht installiert.\n\
+YAM ist daher nicht in der Lage den gewünschten Link selbst zu öffnen.\n\
+\n\
+Bitte starten Sie ihren Internetbrowser selbst und geben diese Linkadresse ein:\n\
+'%s'
+;

@@ -30,6 +30,7 @@
 
 #include "UpdateNotifyWindow_cl.h"
 
+#include <proto/openurl.h>
 #include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NFloattext_mcc.h>
@@ -38,6 +39,7 @@
 
 #include "FileInfo.h"
 #include "MUIObjects.h"
+#include "Requesters.h"
 
 #include "Debug.h"
 
@@ -47,6 +49,7 @@ struct Data
   Object *ComponentList;
   Object *ComponentHistory;
   Object *SkipInFutureCheckBox;
+  Object *VisitURLButton;
   char *ChangeLogText;
   char WindowTitle[SIZE_DEFAULT];
 };
@@ -213,6 +216,10 @@ OVERLOAD(OM_NEW)
     data->ComponentList = nl_componentlist;
     data->ComponentHistory = nf_componenthistory;
     data->SkipInFutureCheckBox = ch_skipinfuture;
+    data->VisitURLButton = bt_visit;
+
+    // start with a disabled "Visit URL" button
+    set(bt_visit, MUIA_Disabled, TRUE);
 
     DoMethod(obj,               MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_UpdateNotifyWindow_Close);
     DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, MUIM_UpdateNotifyWindow_Select, MUIV_TriggerValue);
@@ -306,12 +313,16 @@ DECLARE(Clear)
 DECLARE(Select) // ULONG num
 {
   GETDATA;
-  struct UpdateComponent* comp = NULL;
+  struct UpdateComponent *comp = NULL;
 
   ENTER();
 
   DoMethod(data->ComponentList, MUIM_NList_GetEntry, msg->num, &comp);
-  if(comp != NULL && comp->changeLogFile)
+
+  // disable the "Visit URL" button in case we found no valid component
+  set(data->VisitURLButton, MUIA_Disabled, comp == NULL);
+
+  if(comp != NULL && comp->changeLogFile != NULL)
   {
     LONG size;
 
@@ -363,13 +374,24 @@ DECLARE(AddComponent) // struct UpdateComponent *comp
 DECLARE(VisitURL)
 {
   GETDATA;
-  struct UpdateComponent* comp = NULL;
+  struct UpdateComponent *comp = NULL;
 
   ENTER();
 
   DoMethod(data->ComponentList, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &comp);
   if(comp != NULL)
-    GotoURL(comp->url, FALSE);
+  {
+    if(OpenURLBase != NULL)
+    {
+      // openurl.library is available, so let openurl.library open the link
+      GotoURL(comp->url, FALSE);
+    }
+    else
+    {
+      // no openurl.library, just open a requester telling the user what to do
+      MUI_Request(G->App, obj, 0L, NULL, tr(MSG_OkayReq), tr(MSG_NO_OPENURL_LIB), comp->url);
+    }
+  }
 
   RETURN(0);
   return 0;

@@ -8,6 +8,10 @@ $URL$
 2009-12-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: openurl.library was never closed and hence caused a memory leak.
+  * mui/UpdateNotifyWindow.c, locale/YAM.cd, locale/german.ct: in case the
+    openurl.library is not installed the user will now get a requester with
+    instructions displayed on how to perform the download manually. This
+    effectively fulfils feature request #2911128.
 
 2009-12-08 Thore Böckelmann <tboeckel@gmx.de>
 
