@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-12-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: openurl.library was never closed and hence caused a memory leak.
+
 2009-12-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/german.ct: fixed a typo.

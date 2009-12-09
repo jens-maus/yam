@@ -1080,6 +1080,7 @@ static void Terminate(void)
   CLOSELIB(CyberGfxBase,    ICyberGfx);
   #endif
   CLOSELIB(ExpatBase,       IExpat);
+  CLOSELIB(OpenURLBase,     IOpenURL);
   CLOSELIB(CodesetsBase,    ICodesets);
   CLOSELIB(DataTypesBase,   IDataTypes);
   CLOSELIB(MUIMasterBase,   IMUIMaster);
