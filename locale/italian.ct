@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.4 (25.10.2009)
+## version $VER: YAM.catalog 6.4 (10.12.2009)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.6 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 3864 2009-08-18 03:10:26Z
+; based on YAM.cd 3864 2009-12-09 11:15:31Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1719,7 +1719,7 @@ Firma
 ; Signature
 ;
 MSG_CO_UseSig
-Usa fi_rma
+Usa fi_rme
 ; Use s_ignatures
 ;
 MSG_CO_EditSig
@@ -2750,7 +2750,7 @@ L'indirizzo WWW della propria immagine.
 ;
 MSG_HELP_CO_CY_ATAB
 Crea automaticamente una nuova voce nella rubrica per\n\
-il mittente al momento della lettura del suo messaggio\n\
+il mittente al momento della lettura del suo messaggio.
 ; Automatically create an address book entry\n\
 ; for the sender when you read his/her message?
 ;
@@ -3150,19 +3150,19 @@ nella rubrica.
 ; the address book.
 ;
 MSG_HELP_AB_BT_ADDUSER
-Aggiungi un nuovo utente\n\
+Aggiunge un nuovo utente\n\
 nella rubrica indirizzi.
 ; Add a new person to\n\
 ; your address book.
 ;
 MSG_HELP_AB_BT_ADDGROUP
-Aggiungi un nuovo gruppo\n\
+Aggiunge un nuovo gruppo\n\
 nella rubrica indirizzi.
 ; Add a new group (directory)\n\
 ; to the address book.
 ;
 MSG_HELP_AB_BT_ADDMLIST
-Aggiungi una nuova lista\n\
+Aggiunge una nuova lista\n\
 nella rubrica indirizzi.
 ; Add a new distribution list\n\
 ; to the address book.
@@ -3407,7 +3407,7 @@ pseudonimo dei membri.
 ; alias of a member.
 ;
 MSG_HELP_EA_BT_ADD
-Aggiungi dei nuovi membri\n\
+Aggiunge dei nuovi membri\n\
 alla lista di distribuzione.
 ; Add a new member\n\
 ; to the list.
@@ -4307,7 +4307,7 @@ Colora il testo selezionato.\n\
 ; (whole words only).
 ;
 MSG_HELP_WR_BT_ADD
-Aggiungi un allegato alla lista.
+Aggiunge allegati alla lista.
 ; Add attachments\n\
 ; to the list.
 ;
@@ -4332,8 +4332,8 @@ in moda da mostrare questo allegato.
 ; to display this attachment.
 ;
 MSG_HELP_WR_RA_ENCODING
-Tipo di codifica usata per l'allegato selezionato.\n\
-Usa UUencode nel caso il destinatario non possieda\n\
+Tipo di codifica utilizzata per l'allegato selezionato.\n\
+Usare UUencode nel caso il destinatario non possieda\n\
 un programma che supporti la codifica MIME.
 ; Type of encoding used for the selected attachment.\n\
 ; Select UUencode only if the recipient is not using\n\
@@ -4444,7 +4444,7 @@ In uscita e lo spedisce immediatamente.
 ; it immediately.
 ;
 MSG_HELP_WR_BT_CANCEL
-Cancella il messaggio creato.
+Annulla il messaggio creato.
 ; Discard the\n\
 ; created message.
 ;
@@ -5376,8 +5376,8 @@ Nome cartella.
 ; Folder name.
 ;
 MSG_HELP_FO_TX_FPATH
-Directory dove i messaggi della cartella\n\
-selezionata verranno immagazzinati.
+Directory dove immagazzinare i messaggi\n\
+della cartella selezionata.
 ; Directory where the messages of\n\
 ; the selected folder are stored.
 ;
@@ -9268,8 +9268,8 @@ aggiornamenti adesso.
 ; for updates now.
 ;
 MSG_HELP_WR_LV_ATTACH
-Lista degli allegati\n\
-in questo messaggio.
+Lista degli allegati in\n\
+questo messaggio.
 ; List of attachments\n\
 ; in this message.
 ;
@@ -9933,4 +9933,18 @@ Per attivarlo è necessaria la presenza della libreria application.library V53.2
 ; If checked, YAM will use AmigaOS4.1's notification\n\
 ; system to notify the user about new received mails.\n\
 ; This requires at least application.library V53.2.
+;
+MSG_NO_OPENURL_LIB
+La libreria openurl.library non è stata rilevata oppure non è\n\
+stata configurata correttamente.\n\
+YAM non sarà in grado di aprire automaticamente il link richiesto.\n\
+\n\
+Per favore scarica la libreria da questo indirizzo:\n\
+'%s'
+; openurl.library not installed on your system.\n\
+; Thus YAM is not able to open the requested link itself.\n\
+; \n\
+; Please launch your internet browser yourself and enter this link:\n\
+; '%s'
+; URL
 ;

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-12-09 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italiano.ct: Various changes on the italian translation.
+
 2009-12-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: openurl.library was never closed and hence caused a memory leak.
