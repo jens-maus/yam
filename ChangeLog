@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-12-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: the bounce window had no menu strip and hence copying and
+    pasting in the recipient string object did not work. A minimal menu strip is
+    now added which just consists of the standard editing options. This fixes
+    bug #2915918.
+
 2009-12-09 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italiano.ct: Various changes on the italian translation.

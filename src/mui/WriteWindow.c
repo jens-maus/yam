@@ -1034,11 +1034,40 @@ OVERLOAD(OM_NEW)
     // a slightly different graphical interface and hide all other things
     if(data->wmData->mode == NMM_BOUNCE)
     {
+      // create a minimal menu strip for the bounce window which just consists
+      // of the standard editing operations and shortcuts for the 4 buttons
+      // in this window. Without this menu strip copying and pasteing would be
+      // impossible, as the BetterString objects do NOT handle key presses
+      // themselves anymore.
+      // A list of all currently used shortcuts follows below for the full
+      // menu.
+      menuStripObject = MenustripObject,
+        MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Text),
+          MenuChild, Menuitem(tr(MSG_WR_MSENDNOW), "S", TRUE, FALSE, WMEN_SENDNOW),
+          MenuChild, Menuitem(tr(MSG_WR_MSENDLATER), "L", TRUE, FALSE, WMEN_QUEUE),
+          MenuChild, Menuitem(tr(MSG_WR_MHOLD), "H", TRUE, FALSE, WMEN_HOLD),
+          MenuChild, Menuitem(tr(MSG_WR_MCANCEL), "W", TRUE, FALSE, WMEN_CANCEL),
+        End,
+        MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Edit),
+          MenuChild, Menuitem(tr(MSG_WR_MUndo), "Z", TRUE, FALSE, WMEN_UNDO),
+          MenuChild, Menuitem(tr(MSG_WR_Redo), "Y", TRUE, FALSE, WMEN_REDO),
+          MenuChild, MenuBarLabel,
+          MenuChild, Menuitem(tr(MSG_WR_MCut), "X", TRUE, FALSE, WMEN_CUT),
+          MenuChild, Menuitem(tr(MSG_WR_MCopy), "C", TRUE, FALSE, WMEN_COPY),
+          MenuChild, Menuitem(tr(MSG_WR_MPaste), "V", TRUE, FALSE, WMEN_PASTE),
+          MenuChild, Menuitem(tr(MSG_WR_DELETE), NULL, TRUE, FALSE, WMEN_DELETE),
+          MenuChild, MenuBarLabel,
+          MenuChild, Menuitem(tr(MSG_WR_SELECTALL), "A", TRUE, FALSE, WMEN_SELECTALL),
+          MenuChild, Menuitem(tr(MSG_WR_SELECTNONE), NULL, TRUE, FALSE, WMEN_SELECTNONE),
+        End,
+      End;
+
       obj = DoSuperNew(cl, obj,
         MUIA_Window_Title,     tr(MSG_WR_BounceWT),
         MUIA_HelpNode,         "WR_W",
         MUIA_Window_ID,        MAKE_ID('W','R','I','B'),
         MUIA_Window_AppWindow, FALSE,
+        MUIA_Window_Menustrip, menuStripObject,
         WindowContents, VGroup,
           Child, ColGroup(2),
             Child, Label2(tr(MSG_WR_BounceTo)),
@@ -1052,6 +1081,20 @@ OVERLOAD(OM_NEW)
           End,
         End,
       TAG_MORE, (ULONG)inittags(msg));
+
+      if(obj != NULL)
+      {
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,    obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_SEND);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,      obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_HOLD,       obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_HOLD);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CANCEL,     obj, 1, MUIM_WriteWindow_CancelAction);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,        obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_CUT);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,       obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_COPY);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASTE,      obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_PASTE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DELETE,     obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_DELETE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTALL,  obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_SELECTALL);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTNONE, obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_SELECTNONE);
+      }
     }
     else
     {
