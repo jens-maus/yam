@@ -61,6 +61,7 @@ void DeleteMailNode(struct MailNode *mnode);
 void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1, const struct Mail *m2));
 struct Mail **MailListToMailArray(struct MailList *mlist);
 struct MailNode *FindMailInList(struct MailList *mlist, struct Mail *mail);
+struct MailNode *TakeMailNode(struct MailList *mlist);
 
 // check if a mail list is empty
 #define IsMailListEmpty(mlist)                    IsListEmpty((struct List *)(mlist))
@@ -73,8 +74,6 @@ struct MailNode *FindMailInList(struct MailList *mlist, struct Mail *mail);
 
 // iterate through the list, the list must *NOT* be modified!
 #define ForEachMailNode(mlist, mnode)             for(mnode = FirstMailNode(mlist); mnode != NULL; mnode = NextMailNode(mnode))
-
-#define TakeMailNode(mlist)                       (struct MailNode *)RemHead((struct List *)mlist)
 
 // lock and unlock a mail list via its semaphore
 #if defined(DEBUG)

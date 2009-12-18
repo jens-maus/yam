@@ -435,6 +435,28 @@ struct MailNode *FindMailInList(struct MailList *mlist, struct Mail *mail)
 }
 
 ///
+/// TakeMailNode()
+struct MailNode *TakeMailNode(struct MailList *mlist)
+{
+  struct MailNode *mnode = NULL;
+
+  ENTER();
+
+  if(mlist != NULL)
+  {
+    // try to remove the first node from the list
+    if((mnode = (struct MailNode *)RemHead((struct List *)&mlist->list)) != NULL)
+    {
+      // decrease the counter
+      mlist->count--;
+    }
+  }
+
+  RETURN(mnode);
+  return mnode;
+}
+
+///
 
 #if defined(DEBUG)
 static LONG mailLocks = 0;

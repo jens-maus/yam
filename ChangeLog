@@ -12,6 +12,8 @@ $URL$
     feature request #2907807.
     Furthermore the mail node is no longer removed from its list twice, which
     might have caused arbitrary funny things to happen.
+  * MailList.c: implemented TakeMailNode() as a function instead of a macro to
+    be able to update the list's counter accordingly.
 
 2009-12-17 Thore Böckelmann <tboeckel@gmx.de>
 
