@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-12-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: setting a mail's status to "marked" will now prevent this mail
+    from being deleted automatically when deleting old mails. This fulfils
+    feature request #2907807.
+    Furthermore the mail node is no longer removed from its list twice, which
+    might have caused arbitrary funny things to happen.
+
 2009-12-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: the bounce window had no menu strip and hence copying and

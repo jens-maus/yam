@@ -2615,6 +2615,9 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
         {
           struct MailNode *mnode;
 
+          // calculate the maximum age for this folder
+          today.ds_Days = today_days - folder->MaxAge;
+
           LockMailList(folder->messages);
 
           // initialize the list of mails to be deleted
@@ -2624,20 +2627,38 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
           {
             struct Mail *mail = mnode->mail;
 
-            today.ds_Days = today_days - folder->MaxAge;
-
             if(CompareDates(&today, &mail->Date) < 0)
             {
-              // delete any message from trash and spam folder automatically
-              // or if the message is read already (keep unread messages)
-              if(isTrashFolder(folder) ||
-                 isSpamFolder(folder) ||
-                 (!hasStatusNew(mail) && hasStatusRead(mail)) ||
-                 folder->ExpireUnread == TRUE)
+              BOOL deleteMail;
+
+              // Delete any message from trash and spam folder automatically
+              // or if the message is read already (keep unread messages).
+              // "Marked" messages will never be deleted automatically.
+              if(isTrashFolder(folder) || isSpamFolder(folder))
               {
-                // put the mail in the "to be deleted" list
-                AddNewMailNode(toBeDeletedList, mail);
+                // old mails in the trash and spam folders are deleted in any case
+                deleteMail = TRUE;
               }
+              else if(!hasStatusNew(mail) && !hasStatusMarked(mail) && hasStatusRead(mail))
+              {
+                // delete old mails if they are read already, but respect marked mails
+                deleteMail = TRUE;
+              }
+              else if(folder->ExpireUnread == TRUE && !hasStatusMarked(mail))
+              {
+                // delete old mails if the folder's configuration allows us to do that, but
+                // respect marked mails
+                deleteMail = TRUE;
+              }
+              else
+              {
+                // keep the mail if it is either unread, marked or not yet old enough
+                deleteMail = FALSE;
+              }
+
+              // put the mail in the "to be deleted" list if it may be deleted
+              if(deleteMail == TRUE)
+                AddNewMailNode(toBeDeletedList, mail);
             }
           }
 
@@ -2651,10 +2672,11 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
             // Finally delete the mail. Removing/freeing the mail from the folder's list of mails
             // is in fact done by the MA_DeleteSingle() function itself.
             MA_DeleteSingle(mnode->mail, delFlags);
+
+            // remember that we deleted at least one mail
             mailsDeleted = TRUE;
 
-            // remove the node from the "to be deleted" list
-            RemoveMailNode(toBeDeletedList, mnode);
+            // delete the mail node itself
             DeleteMailNode(mnode);
           }
 
