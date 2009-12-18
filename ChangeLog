@@ -14,6 +14,8 @@ $URL$
     might have caused arbitrary funny things to happen.
   * MailList.c: implemented TakeMailNode() as a function instead of a macro to
     be able to update the list's counter accordingly.
+  * FolderList.c: implemented TakeFolderNode() as a function instead of a macro
+    to be able to update the list's counter accordingly.
 
 2009-12-17 Thore Böckelmann <tboeckel@gmx.de>
 
