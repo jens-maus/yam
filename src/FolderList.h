@@ -58,6 +58,7 @@ void AddFolderNode(struct FolderList *flist, struct FolderNode *fnode);
 void RemoveFolderNode(struct FolderList *flist, struct FolderNode *fnode);
 void DeleteFolderNode(struct FolderNode *fnode);
 void MoveFolderNode(struct FolderList *flist, struct FolderNode *fnode, struct FolderNode *afterThis);
+struct FolderNode *TakeFolderNode(struct FolderList *flist);
 
 // check if a folder list is empty
 #define IsFolderListEmpty(flist)                  IsListEmpty((struct List *)(flist))
@@ -70,8 +71,6 @@ void MoveFolderNode(struct FolderList *flist, struct FolderNode *fnode, struct F
 
 // iterate through the list, the list must *NOT* be modified!
 #define ForEachFolderNode(flist, fnode)           for(fnode = FirstFolderNode(flist); fnode != NULL; fnode = NextFolderNode(fnode))
-
-#define TakeFolderNode(flist)                     (struct FolderNode *)RemHead((struct List *)flist)
 
 // lock and unlock a folder list via its semaphore
 #if defined(DEBUG)

@@ -215,6 +215,28 @@ void MoveFolderNode(struct FolderList *flist, struct FolderNode *fnode, struct F
 }
 
 ///
+/// TakeFolderNode()
+struct FolderNode *TakeFolderNode(struct FolderList *flist)
+{
+  struct FolderNode *fnode = NULL;
+
+  ENTER();
+
+  if(flist != NULL)
+  {
+    // try to remove the first node from the list
+    if((fnode = (struct FolderNode *)RemHead((struct List *)&flist->list)) != NULL)
+    {
+      // decrease the counter
+      flist->count--;
+    }
+  }
+
+  RETURN(fnode);
+  return fnode;
+}
+
+///
 
 #if defined(DEBUG)
 static LONG folderLocks = 0;
