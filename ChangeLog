@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-12-19  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated according to changes.
+
 2009-12-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: setting a mail's status to "marked" will now prevent this mail

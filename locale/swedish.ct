@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 6.36 (26.10.09)
+## version $VER: YAM.ct 6.37 (19.12.09)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -7541,3 +7541,7 @@ MSG_HELP_CO_CH_NOTIOS41SYSTEM
 Om vald, kommer YAM att använda AmigaOS4.1's\nnotifieringssystem för att notifiera användaren om\nnya mottagna brev. Detta kräver minst version\nV53.2 av application.library.
 ;#DEF If checked, YAM will use AmigaOS4.1's notification\nsystem to notify the user about new received mails.\nThis requires at least application.library V53.2.
 ;#SET (2150//)
+MSG_NO_OPENURL_LIB
+openurl.library är inte installerat.\nDetta gör att YAM inte kan öppna den begärda länken själv.\n\nVar god starta din webbläsare och skriv in denna länk:\n'%s'
+;#DEF openurl.library not installed on your system.\nThus YAM is not able to open the requested link itself.\n\nPlease launch your internet browser yourself and enter this link:\n'%s'
+;#SET (2151//)
