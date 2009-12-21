@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-12-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: fixed some inconsistent strings.
+
 2009-12-19  Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated according to changes.

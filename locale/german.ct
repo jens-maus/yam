@@ -4708,7 +4708,7 @@ Kann HTTP-Anfrage nicht senden. Ein Dokument konnte nicht vom WWW-Server angefor
 MSG_ER_ConnectHTTP
 Keine Verbindung mit WWW-Server '%s'.\n\
 \n\
-Mögliche Gründe: TCP/IP offline, ungültige Adresse, Server läuft momentan nicht oder unterstützt kein HTTP.
+Mögliche Gründe: TCP/IP-Stack inaktiv, ungültige Adresse, Server läuft momentan nicht oder unterstützt kein HTTP.
 ; Couldn't connect to WWW server '%s'.\n\
 ; \n\
 ; Possible reasons: TCP/IP offline, invalid address, \
@@ -6107,7 +6107,7 @@ Verabsch_iedung
 MSG_ER_SOCKETOPTION
 Warnung: Die Socketoption '%s' konnte nicht gesetzt werden.\n\
 \n\
-Diese kann mitunter von Ihrem laufenden TCP/IP stack nicht \
+Diese kann mitunter von Ihrem laufenden TCP/IP-Stack nicht \
 unterstützt werden oder ist falsch in der Konfiguration angegeben.
 ; OPTIONNAME
 ;
@@ -6744,11 +6744,11 @@ MSG_WR_SECURITYREQ_GADS
 ;
 MSG_ER_OPENTCPIP
 YAM konnte die notwendige bsdsocket.library Schnittstelle \
-für TCP/IP Verbindungen nicht öffnen.\n\
+für TCP/IP-Verbindungen nicht öffnen.\n\
 \n\
-Bitte stellen Sie sicher, dass Sie einen kompatiblen TCP/IP \
-stack installiert haben, dieser korrekt konfiguriert und \
-zur Zeit auch aktiviert ist.
+Bitte stellen Sie sicher, dass Sie einen kompatiblen TCP/IP-\
+Stack installiert haben, dieser korrekt konfiguriert und \
+zur Zeit auch aktiv ist.
 ;
 MSG_WR_UUCODE
 UUencoded Text
@@ -8284,7 +8284,7 @@ MSG_ABOUTYAM
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Verbindung zu '%s' von Konto '%s' konnte nicht aufgebaut werden.\n\
 \n\
-Die TCP/IP Socket-Verbindung scheint schon aktiv zu sein. \
+Die TCP/IP-Socket-Verbindung scheint schon aktiv zu sein. \
 Bitte beenden Sie alle anderen existierenden Verbindungen.
 ;
 MSG_ER_CONNECTERR_TIMEDOUT_POP3
@@ -8309,7 +8309,7 @@ der Lage ist nicht blockierende Verbindungen aufzubauen.
 MSG_ER_UNKNOWN_HOST_POP3
 Unbekannter POP3-Server '%s' von Konto '%s'.\n\
 \n\
-TCP/IP ist offline oder die Serveradresse ist ungültig.
+Der TCP/IP-Stack ist inaktiv oder die Serveradresse ist ungültig.
 MSG_ER_CANNOT_CONNECT_POP3
 Keine Verbindung mit '%s' von Konto '%s'.\n\
 \n\
@@ -8337,7 +8337,7 @@ Schalten Sie die APOP-Option in der YAM-Konfiguration aus.
 MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP
 Verbindung zu '%s' konnte nicht aufgebaut werden.\n\
 \n\
-Die TCP/IP Socket-Verbindung scheint schon aktiv zu sein. \
+Die TCP/IP-Socket-Verbindung scheint schon aktiv zu sein. \
 Bitte beenden Sie alle anderen existierenden Verbindungen.
 ;
 MSG_ER_CONNECTERR_TIMEDOUT_SMTP
@@ -8381,7 +8381,7 @@ Der Postserver ist zur Zeit nicht verfügbar oder er unterstützt das SMTP-Protoko
 MSG_ER_UNKNOWN_HOST_SMTP
 Unbekannter SMTP-Server '%s'.\n\
 \n\
-TCP/IP ist offline oder die Serveradresse ist ungültig.
+Der TCP/IP-Stack ist inaktiv oder die Serveradresse ist ungültig.
 ;
 MSG_ER_NO8BITMIME_SMTP
 Während des Verbindungsversuches mit dem SMTP Server '%s' \
