@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-12-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c, DockyIcon.c: disabling and reenabling the Docky icon while YAM was
+    running caused a crash because the message port pointer was not updated when
+    reregistering YAM at application.library. All in all reregistering is not
+    necessary at all and hence was dropped. Instead only the Docky icon is
+    (re)enabled. This fixes bug #2919018.
+
 2009-12-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/german.ct: fixed some inconsistent strings.

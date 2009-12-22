@@ -77,12 +77,12 @@ void InitDockyIcon(void)
         E(DBF_STARTUP, "Error on trying to retrieve application libraries MsgPort for YAM.");
     }
 
-    D(DBF_STARTUP, "Registered YAM to application.library with appID: %ld", G->applicationID);
+    D(DBF_STARTUP, "registered YAM to application.library with appID: %ld", G->applicationID);
   }
 
   // reset the docky icon id to some sensible default
   // upon restart this makes sure that the docky icon is set to the correct state
-  G->LastIconID = -1;
+  G->LastIconID = ii_Max;
   #endif
 
   LEAVE();
@@ -99,8 +99,18 @@ void FreeDockyIcon(void)
   D(DBF_STARTUP, "unregister from application.library...");
   if(G->applicationID > 0)
   {
+    struct ApplicationIconInfo aii;
+
+    aii.iconType = APPICONT_None;
+    aii.info.customIcon = NULL;
+
+    SetApplicationAttrs(G->applicationID, APPATTR_IconType, (uint32)&aii,
+                        TAG_DONE);
+
     UnregisterApplication(G->applicationID, NULL);
     G->applicationID = 0;
+    G->AppLibPort = NULL;
+    G->LastIconID = ii_Max;
   }
   #endif
 
@@ -117,19 +127,36 @@ void UpdateDockyIcon(void)
   #if defined(__amigaos4__)
   // check if application.library is used and then
   // we also notify it about the AppIcon change
-  if(G->applicationID > 0 && C->DockyIcon == TRUE)
+  if(G->applicationID > 0 && G->LastIconID != G->currentAppIcon)
   {
-    if(G->LastIconID != G->currentAppIcon)
-    {
-      struct ApplicationIconInfo aii;
+    struct ApplicationIconInfo aii;
 
+    if(C->DockyIcon == FALSE)
+    {
+      aii.iconType = APPICONT_None;
+      aii.info.customIcon = NULL;
+    }
+    else if(G->currentAppIcon == ii_Max)
+    {
+      aii.iconType = APPICONT_CustomIcon;
+      aii.info.customIcon = G->HideIcon;
+    }
+    else
+    {
       aii.iconType = APPICONT_CustomIcon;
       aii.info.customIcon = G->theme.icons[G->currentAppIcon];
+    }
 
-      if(SetApplicationAttrs(G->applicationID, APPATTR_IconType, (uint32)&aii, TAG_DONE))
+    if(SetApplicationAttrs(G->applicationID, APPATTR_IconType, (uint32)&aii, TAG_DONE))
+    {
+      if(C->DockyIcon == TRUE)
       {
         // remember the new docky icon state
         G->LastIconID = G->currentAppIcon;
+      }
+      else
+      {
+        G->LastIconID = ii_Max;
       }
     }
   }
@@ -162,9 +189,6 @@ ULONG DockyIconSignal(void)
 BOOL HandleDockyIcon(void)
 {
   BOOL quit = FALSE;
-  #if defined(__amigaos4__)
-  struct ApplicationMsg *msg;
-  #endif
 
   ENTER();
 
@@ -172,6 +196,8 @@ BOOL HandleDockyIcon(void)
   D(DBF_GUI, "trying to get ApplicationMsg from AppLibPort %08lx", G->AppLibPort);
   if(G->AppLibPort != NULL)
   {
+    struct ApplicationMsg *msg;
+
     while((msg = (struct ApplicationMsg *)GetMsg(G->AppLibPort)) != NULL)
     {
       D(DBF_GUI, "got ApplicationMsg %08lx of type %ld", msg, (msg != NULL) ? msg->type : 0);

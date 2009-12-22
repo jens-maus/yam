@@ -68,6 +68,7 @@
 #include "YAM_utilities.h"
 #include "mui/Classes.h"
 
+#include "DockyIcon.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MimeTypes.h"
@@ -1888,57 +1889,15 @@ void CO_Validate(struct Config *co, BOOL update)
 
     if(G->CO->Visited[cp_Mixed] == TRUE || G->CO->UpdateAll == TRUE)
     {
-      // in case the DockyIcon should be enabled we have reregister YAM
-      // to application library for the DockyIcon to reappear
       #if defined(__amigaos4__)
-      if(G->applicationID && C->DockyIcon == TRUE)
-      {
-        struct ApplicationIconInfo aii;
-
-        GetApplicationAttrs(G->applicationID,
-                            APPATTR_IconType, (uint32)&aii,
-                            TAG_DONE);
-
-        // if the iconType is currently none,
-        // we have to unregister and register YAM again to
-        // application.library
-        if(aii.iconType == APPICONT_None)
-        {
-          UnregisterApplication(G->applicationID, TAG_DONE);
-
-          aii.iconType = APPICONT_CustomIcon;
-          aii.info.customIcon = G->HideIcon;
-
-          // register YAM to application.library
-          G->applicationID = RegisterApplication("YAM",
-                                                 REGAPP_URLIdentifier, "yam.ch",
-                                                 REGAPP_AppIconInfo,   (uint32)&aii,
-                                                 REGAPP_Hidden,        xget(G->App, MUIA_Application_Iconified),
-                                                 TAG_DONE);
-
-          D(DBF_STARTUP, "reregistered YAM to application as appId: %ld", G->applicationID);
-        }
-      }
+      // make sure we update the Docky icon according to the configuration
+      G->LastIconID = ii_Max;
       #endif
 
       // setup the appIcon positions and display all statistics
       // accordingly.
       DisplayStatistics((struct Folder *)-1, TRUE);
-
-      // make sure we remove an eventually existing DockyIcon
-      #if defined(__amigaos4__)
-      if(G->applicationID && C->DockyIcon == FALSE)
-      {
-        struct ApplicationIconInfo aii;
-
-        aii.iconType = APPICONT_None;
-        aii.info.customIcon = NULL;
-
-        SetApplicationAttrs(G->applicationID,
-                            APPATTR_IconType, (uint32)&aii,
-                            TAG_DONE);
-      }
-      #endif
+      UpdateDockyIcon();
     }
 
     if(G->CO->Visited[cp_Update] == TRUE || G->CO->UpdateAll == TRUE)
