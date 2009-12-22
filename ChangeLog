@@ -12,6 +12,8 @@ $URL$
     reregistering YAM at application.library. All in all reregistering is not
     necessary at all and hence was dropped. Instead only the Docky icon is
     (re)enabled. This fixes bug #2919018.
+  * DockyIcon.c: the default docky icon is now automatically taken from the
+    program's icon file by application.library.
 
 2009-12-21 Thore Böckelmann <tboeckel@gmx.de>
 

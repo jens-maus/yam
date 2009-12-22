@@ -133,22 +133,24 @@ void UpdateDockyIcon(void)
 
     if(C->DockyIcon == FALSE)
     {
+      D(DBF_GUI, "remove Docky icon");
       aii.iconType = APPICONT_None;
-      aii.info.customIcon = NULL;
     }
     else if(G->currentAppIcon == ii_Max)
     {
-      aii.iconType = APPICONT_CustomIcon;
-      aii.info.customIcon = G->HideIcon;
+      D(DBF_GUI, "set default Docky icon");
+      aii.iconType = APPICONT_ProgramIcon;
     }
     else
     {
+      D(DBF_GUI, "set custom Docky icon %ld %p", G->currentAppIcon, G->theme.icons[G->currentAppIcon]);
       aii.iconType = APPICONT_CustomIcon;
       aii.info.customIcon = G->theme.icons[G->currentAppIcon];
     }
 
     if(SetApplicationAttrs(G->applicationID, APPATTR_IconType, (uint32)&aii, TAG_DONE))
     {
+      D(DBF_GUI, "Docky icon changed");
       if(C->DockyIcon == TRUE)
       {
         // remember the new docky icon state
