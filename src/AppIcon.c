@@ -224,7 +224,7 @@ static void SnapshotAppIcon(void)
 
   ENTER();
 
-  if((dobj = G->theme.icons[G->currentAppIcon]) != NULL)
+  if(G->currentAppIcon != ii_Max && (dobj = G->theme.icons[G->currentAppIcon]) != NULL)
   {
     // remember the position.
     C->IconPositionX = dobj->do_CurrentX;
@@ -241,8 +241,9 @@ static void SnapshotAppIcon(void)
   LEAVE();
 }
 
+///
 /// UnsnapshotAppIcon
-/// UnsnapshotAppIcon
+// UnsnapshotAppIcon
 // set the AppIcon's position to no specific position
 static void UnsnapshotAppIcon(void)
 {
