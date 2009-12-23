@@ -658,11 +658,24 @@ MakeHook(CO_GetDefaultPOPHook,CO_GetDefaultPOPFunc);
 //  Verifies if the required settings have been made
 BOOL CO_IsValid(void)
 {
-   if (G->CO_Valid) return TRUE;
-   if (G->CO) set(G->CO->GUI.WI,MUIA_Window_Open,TRUE);
-   else DoMethod(G->App, MUIM_CallHook, &CO_OpenHook);
-   MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_CO_InvalidConf));
-   return FALSE;
+  BOOL valid = TRUE;
+
+  ENTER();
+
+  if(G->CO_Valid == FALSE)
+  {
+    valid = FALSE;
+
+    if(G->CO != NULL)
+      set(G->CO->GUI.WI,MUIA_Window_Open,TRUE);
+    else
+      DoMethod(G->App, MUIM_CallHook, &CO_OpenHook);
+
+    MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_CO_InvalidConf));
+  }
+
+  RETURN(valid);
+  return valid;
 }
 
 ///
@@ -1889,14 +1902,23 @@ void CO_Validate(struct Config *co, BOOL update)
 
     if(G->CO->Visited[cp_Mixed] == TRUE || G->CO->UpdateAll == TRUE)
     {
-      #if defined(__amigaos4__)
-      // make sure we update the Docky icon according to the configuration
-      G->LastIconID = ii_Max;
-      #endif
-
       // setup the appIcon positions and display all statistics
       // accordingly.
       DisplayStatistics((struct Folder *)-1, TRUE);
+
+      // in case the Docky icon was just enabled we must register YAM again
+      // as an application.lib aware program, because application.lib seems
+      // to be a bit buggy when it should change a not yet existing icon to
+      // a custom one. Removing the Docky icon in case it was disabled is no
+      // problem at all.
+      // Don't get confused by the C and CE pointers. These have been swapped
+      // before, thus C points to the current configuration while CE points
+      // to the old configuration.
+      if(C->DockyIcon == TRUE  && CE->DockyIcon == FALSE)
+      {
+        FreeDockyIcon();
+        InitDockyIcon();
+      }
       UpdateDockyIcon();
     }
 

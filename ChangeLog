@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-12-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c, DockyIcon.c: disabling and reenabling the Docky icon while YAM was
+    running still had some issues, because application.lib seems to be unable to
+    add a docky icon on the fly if there hasn't been any before. Thus we must
+    unregister and reregister YAM (as it was before) to get the change working.
+
 2009-12-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c, DockyIcon.c: disabling and reenabling the Docky icon while YAM was

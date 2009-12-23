@@ -57,8 +57,17 @@ void InitDockyIcon(void)
   {
     struct ApplicationIconInfo aii;
 
-    aii.iconType = C->DockyIcon ? APPICONT_CustomIcon : APPICONT_None;
-    aii.info.customIcon = G->HideIcon;
+    if(C->DockyIcon == TRUE)
+    {
+      D(DBF_STARTUP, "registering with custom Docky icon");
+      aii.iconType = APPICONT_CustomIcon;
+      aii.info.customIcon = G->HideIcon;
+    }
+    else
+    {
+      D(DBF_STARTUP, "registering without Docky icon");
+      aii.iconType = APPICONT_None;
+    }
 
     // register YAM to application.library
     // application.lib V52.1 crashes if it sees REGAPP_Description and V53.2
@@ -74,7 +83,7 @@ void InitDockyIcon(void)
       GetApplicationAttrs(G->applicationID, APPATTR_Port, (uint32)&G->AppLibPort,
                                             TAG_DONE);
       if(G->AppLibPort == NULL)
-        E(DBF_STARTUP, "Error on trying to retrieve application libraries MsgPort for YAM.");
+        E(DBF_STARTUP, "error on trying to retrieve application libraries MsgPort for YAM.");
     }
 
     D(DBF_STARTUP, "registered YAM to application.library with appID: %ld", G->applicationID);
@@ -99,14 +108,6 @@ void FreeDockyIcon(void)
   D(DBF_STARTUP, "unregister from application.library...");
   if(G->applicationID > 0)
   {
-    struct ApplicationIconInfo aii;
-
-    aii.iconType = APPICONT_None;
-    aii.info.customIcon = NULL;
-
-    SetApplicationAttrs(G->applicationID, APPATTR_IconType, (uint32)&aii,
-                        TAG_DONE);
-
     UnregisterApplication(G->applicationID, NULL);
     G->applicationID = 0;
     G->AppLibPort = NULL;
