@@ -1914,7 +1914,8 @@ void CO_Validate(struct Config *co, BOOL update)
       // Don't get confused by the C and CE pointers. These have been swapped
       // before, thus C points to the current configuration while CE points
       // to the old configuration.
-      if(C->DockyIcon == TRUE  && CE->DockyIcon == FALSE)
+      if((C->DockyIcon == TRUE  && CE->DockyIcon == FALSE) ||
+         (C->DockyIcon == FALSE && CE->DockyIcon == TRUE))
       {
         FreeDockyIcon();
         InitDockyIcon();

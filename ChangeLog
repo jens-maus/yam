@@ -8,6 +8,7 @@ $URL$
 2009-12-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: changed the name of the shared pool for OS4.
+  * YAM_CO.c: hopefully fixed the nasty Docky icon issue at last.
 
 2009-12-23 Thore Böckelmann <tboeckel@gmx.de>
 
