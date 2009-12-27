@@ -393,9 +393,6 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
           if(node->depth > 8 && GetBitMapAttr(scr->RastPort.BitMap, BMA_DEPTH) <= 8)
             node->depth = 8;
 
-          // The lower line should be used for 24bit images as well.
-          // Unfortunately this doesn't give the desired result on OS4, so
-          // we restrict this to 32bit image until we have a solution.
           #if defined(__amigaos4__) || defined(__MORPHOS__)
           // OS4 and MorphOS can handle the alpha channel correctly
           if(node->pixelArray == NULL)

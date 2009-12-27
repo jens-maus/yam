@@ -2385,7 +2385,7 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
     {
       // first we copy our encrypted part because the DecryptPGP()
       // function will overwrite it
-      if(CopyFile(NULL, tf->FP, encrPart->Filename, NULL))
+      if(CopyFile(NULL, tf->FP, encrPart->Filename, NULL) == TRUE)
       {
         int decryptResult;
 
@@ -2506,7 +2506,6 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
   struct Folder *folder = mail->Folder;
   struct Part *part;
   BOOL result = FALSE;
-
 
   ENTER();
 

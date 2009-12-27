@@ -117,14 +117,23 @@ void NewFreeArgs(struct NewRDArgs *rdargs)
   }
 
   #if defined(COMPILE_V39)
-  if(rdargs->Pool)
+  if(rdargs->Pool != NULL)
+  {
     DeletePool(rdargs->Pool);
+    rdargs->Pool = NULL;
+  }
   #elif defined(COMPILE_V52)
-  if(rdargs->Pool)
+  if(rdargs->Pool != NULL)
+  {
     FreeSysObject(ASOT_MEMPOOL, rdargs->Pool);
+    rdargs->Pool = NULL;
+  }
   #else
-  if(rdargs->Remember)
+  if(rdargs->Remember != NULL)
+  {
     FreeRemember(&rdargs->Remember, TRUE);
+    rdargs->Remember = NULL;
+  }
   #endif
 
   D(DBF_STARTUP, "memory freed");
@@ -222,6 +231,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       pool = nrdargs->Pool = AllocSysObjectTags(ASOT_MEMPOOL, ASOPOOL_MFlags, MEMF_SHARED|MEMF_CLEAR,
                                                               ASOPOOL_Puddle, 1024,
                                                               ASOPOOL_Threshold, 1024,
+                                                              ASOPOOL_Name, "YAM readargs pool",
                                                               TAG_DONE);
       #else
       pool = NULL;
@@ -496,21 +506,21 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
     }
 
     #if defined(COMPILE_V39)
-    if(pool)
+    if(pool != NULL)
     {
       DeletePool( pool );
       nrdargs->Pool = NULL;
     }
     #elif defined(COMPILE_V52)
-    if(pool)
+    if(pool != NULL)
     {
       FreeSysObject(ASOT_MEMPOOL, pool);
       nrdargs->Pool = NULL;
     }
     #else
-    if(*remember)
+    if(*remember != NULL)
     {
-      FreeRemember( remember, TRUE );
+      FreeRemember(remember, TRUE);
       nrdargs->Remember = NULL;
     }
     #endif
