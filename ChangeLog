@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-12-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: changed the name of the shared pool for OS4.
+
 2009-12-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c, DockyIcon.c: disabling and reenabling the Docky icon while YAM was

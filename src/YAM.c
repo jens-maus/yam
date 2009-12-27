@@ -2417,7 +2417,7 @@ int main(int argc, char **argv)
                                               ASOPOOL_MFlags,    MEMF_SHARED|MEMF_CLEAR,
                                               ASOPOOL_Puddle,    2048,
                                               ASOPOOL_Threshold, 1024,
-                                              ASOPOOL_Name,      (ULONG)"YAM Shared Pool",
+                                              ASOPOOL_Name,      (ULONG)"YAM shared pool",
                                               TAG_DONE)) == NULL)
     {
       // break out immediately to signal an error!
