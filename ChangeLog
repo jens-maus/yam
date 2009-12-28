@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-12-27 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italiano.ct: minor correction in the italian translation.
+
 2009-12-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: changed the name of the shared pool for OS4.

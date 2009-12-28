@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.4 (10.12.2009)
+## version $VER: YAM.catalog 6.4 (28.12.2009)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -489,17 +489,17 @@ Risposto al messaggio di '%s' relativo a '%s'
 ; SENDER, SUBJECT
 ;
 MSG_LOG_Bouncing
-Respinto il messaggio di '%s' relativo a '%s' a '%s'
+Respinto il messaggio di '%s' relativo a '%s' in '%s'
 ; Bounced message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Forwarding
-Inoltrato il messaggio di '%s' relativo a '%s' a '%s'
+Inoltrato il messaggio di '%s' relativo a '%s' in '%s'
 ; Forwarded message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Filtering
-Filtrati(o) %ld messaggi(o) nella cartella '%s': %ld riscontri
+Filtrati(o) %ld messaggi(o) nella cartella '%s': %ld riscontro(i)
 ; Filtered %ld message(s) in folder '%s': %ld match(es)
 ; COUNT, FOLDER, COUNT
 ;
@@ -1375,7 +1375,7 @@ Aggiorna stato m_essaggio
 ; Update m_essage status
 ;
 MSG_CO_WarnSize1
-_Dimensione limite
+Dimensione _limite
 ; Size _limit
 ;
 MSG_CO_WarnSize2
@@ -2197,10 +2197,10 @@ soglia verranno considerati come 'grandi'.
 ; will be considered as 'large'.
 ;
 MSG_HELP_CO_ST_INTERVAL
-Imposta il periodo di verifica della presenza\n\
-automatica dei nuovi messaggi di posta.\n\
-(Digita 0 o lascia questo campo vuoto nel\n\
-caso si desideri disattivare questa opzione)
+Imposta un periodo di tempo durante il quale verificare la\n\
+presenza automatica di nuovi messaggi di posta.\n\
+Digita '0' o lascia questo campo vuoto nel caso si desideri\n\
+desideri disattivare questa opzione.
 ; How often do you want YAM to automatically check for new mail?\n\
 ; Use '0' if you don't want YAM to do this.
 ;
@@ -2428,8 +2428,8 @@ tramite il pulsante destro del mouse.
 MSG_HELP_CO_ST_COMMAND
 Percorso ed argomento opzionale del comando\n\
 visualizzatore.\n\
-Clicca sul menu a comparsa per visualizzare.\n\
-la lista delle variabili supportate.
+Clicca sul menu a comparsa per visualizzare la\n\
+lista delle variabili supportate.
 ; Path and optional arguments of\n\
 ; the viewer command. Click the popup\n\
 ; button to see the list of supported\n\
@@ -2457,7 +2457,7 @@ con gli allegati di tipo sconosciuto.
 ; attachments of unknown type.
 ;
 MSG_HELP_CO_ST_REPLYTO
-Inserisce l'indirizzo predefinito dove ottenere una\n\
+Inserisce l'indirizzo predefinito dove ottenere la\n\
 risposta nel caso venga utilizzato un differente\n\
 indirizzo E-Mail.
 ; Should replies to your messages need to be sent by\n\
@@ -5695,7 +5695,7 @@ MSG_HELP_CO_CH_USESMTPAUTH
 Seleziona questa opzione se si desidera autenticare\n\
 la propria persona su di un server SMTP sconosciuto\n\
 (generalmente al di fuori del tuo dominio ISP).\n\
-In caso di dubbio, non attivare questa opzione.
+In caso di dubbio non attivare questa opzione.
 ; Select if you wish to authenticate\n\
 ; yourself to a foreign SMTP server\n\
 ; (usually outside your ISP's domain).\n\
@@ -9935,11 +9935,11 @@ Per attivarlo è necessaria la presenza della libreria application.library V53.2
 ; This requires at least application.library V53.2.
 ;
 MSG_NO_OPENURL_LIB
-La libreria openurl.library non è stata rilevata oppure non è\n\
-stata configurata correttamente.\n\
+La libreria openurl.library non è stata rilevata oppure non è stata\n\
+configurata correttamente.\n\
 YAM non sarà in grado di aprire automaticamente il link richiesto.\n\
 \n\
-Per favore scarica la libreria da questo indirizzo:\n\
+Per favore scaricalo manualmente da questo indirizzo:\n\
 '%s'
 ; openurl.library not installed on your system.\n\
 ; Thus YAM is not able to open the requested link itself.\n\
