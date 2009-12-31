@@ -13,6 +13,9 @@ $URL$
     numbers checks if the format string contains the placeholders and then
     checks if the numbers are correct no matter if that part of the string has
     been parsed or not. This fixes bug #2923855.
+  * YAM_AB.c: importing an alien address book with multiple postal addresses will
+    now keep all street informations instead of the last one only like it is done
+    with cities, states, countries, etc. This fixes bug #2923894.
 
 2009-12-27 Samir Hawamdeh <s.hawamdeh@tin.it>
 

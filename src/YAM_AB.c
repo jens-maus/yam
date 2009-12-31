@@ -1484,7 +1484,14 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
 
         case xd_Street:
         {
-          strlcpy(entry->Street, isoStr, sizeof(entry->Street));
+          if(entry->Street[0] == '\0')
+          {
+            strlcpy(entry->Street, isoStr, sizeof(entry->Street));
+          }
+          else
+          {
+            snprintf(entry->Street, sizeof(entry->Street), "%s %s", entry->Street, isoStr);
+          }
         }
         break;
 
