@@ -325,7 +325,7 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
 
   // finally check if the calculated values are correct, but only those which
   // were specified in the format string
-  if(isFlagSet(flags, FLG_MDAY))
+  if(isFlagSet(flags, FLG_MDAY) || strstr(fmt, "%d") != NULL)
   {
     if(res->tm_mday >= 1 && res->tm_mday <= 31)
     {
@@ -337,7 +337,7 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
       result = FALSE;
     }
   }
-  if(isFlagSet(flags, FLG_MON))
+  if(isFlagSet(flags, FLG_MON) || strstr(fmt, "%m") != NULL)
   {
     if(res->tm_mon >= 1 && res->tm_mon <= 12)
     {
@@ -350,9 +350,9 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
       result = FALSE;
     }
   }
-  if(isFlagSet(flags, FLG_YEAR))
+  if(isFlagSet(flags, FLG_YEAR) || strstr(fmt, "%y") != NULL || strstr(fmt, "%Y") != NULL)
   {
-    if(isFlagSet(flags, FLG_4DIGIT_YEAR))
+    if(isFlagSet(flags, FLG_4DIGIT_YEAR) || strstr(fmt, "%Y") != NULL)
     {
       if(res->tm_year >= 1900)
       {
@@ -387,6 +387,34 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
       }
     }
   }
+
+  // finally check if the day value is correct
+  if(result == TRUE && isFlagSet(flags, FLG_MDAY))
+  {
+    if(res->tm_mon == 1)
+    {
+      // February has 29 days at most, but we don't check for leap years here
+      if(res->tm_mday > 29)
+      {
+        W(DBF_UTIL, "wrong number of days (%ld) for February", res->tm_mday);
+        result = FALSE;
+      }
+    }
+    else if(res->tm_mon ==  3 ||
+            res->tm_mon ==  5 ||
+            res->tm_mon ==  8 ||
+            res->tm_mon == 10)
+    {
+      // April, June, September and November have 30 days
+      if(res->tm_mday > 30)
+      {
+        W(DBF_UTIL, "wrong number of days (%ld) for April, June, September or November", res->tm_mday);
+        result = FALSE;
+      }
+    }
+  }
+
+  D(DBF_UTIL, "scaned date day=%ld month=%ld year=%ld", res->tm_mday, res->tm_mon, res->tm_year);
 
   RETURN(result);
   return result;

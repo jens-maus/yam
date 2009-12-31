@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2009-12-31 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: the date scanning function didn't take into account that the
+    entered separator did not match the required one from the locale settings
+    and incorrectly accepted the date string as valid. Now the check for valid
+    numbers checks if the format string contains the placeholders and then
+    checks if the numbers are correct no matter if that part of the string has
+    been parsed or not. This fixes bug #2923855.
+
 2009-12-27 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italiano.ct: minor correction in the italian translation.
