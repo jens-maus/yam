@@ -5202,15 +5202,22 @@ BOOL GotoURL(const char *url, BOOL newWindow)
   if(wentToURL == FALSE && LIB_VERSION_IS_AT_LEAST(DOSBase, 53, 48))
   {
     char newurl[SIZE_LARGE];
+    APTR oldWinPtr;
     BPTR urlFH;
 
     snprintf(newurl, sizeof(newurl), "URL:%s", url);
+
+    // disable requesters
+    oldWinPtr = SetProcWindow((APTR)-1);
 
     if((urlFH = Open(newurl, MODE_OLDFILE)) != (BPTR)NULL)
     {
       Close(urlFH);
       wentToURL = TRUE;
     }
+
+    // enable requesters again
+    SetProcWindow(oldWinPtr);
   }
   #endif
 
