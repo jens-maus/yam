@@ -381,7 +381,7 @@ DECLARE(VisitURL)
   DoMethod(data->ComponentList, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &comp);
   if(comp != NULL)
   {
-    if(data->gotoURLPossible == TRUE)
+    if(GotoURLPossible() == TRUE)
     {
       // openurl.library is available, so let openurl.library or URL: open the link
       GotoURL(comp->url, TRUE);
