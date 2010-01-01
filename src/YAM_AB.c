@@ -380,8 +380,17 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
           res->tm_year += 100;
         }
       }
+      // Although we expect a two digit year number for %y we got one with more digits.
+      // Better not fail at this even if the entered string is wrong. People tend to
+      // forget the correct formatting.
+      else if(res->tm_year >= 1900)
+      {
+        // tm_year counts the years from 1900
+        res->tm_year -= 1900;
+      }
       else
       {
+        // numbers between 100 and 1899 are definitely not allowed
         W(DBF_UTIL, "bad year number %ld", res->tm_year);
         result = FALSE;
       }

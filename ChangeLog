@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: YAM will now accept numbers greater or equal to 1900 for %y year
+    placeholders, even if the standard allows two digits only. However, please
+    note that YAM will convert any year number back to two digits if the locale
+    formatting string contains a %y instead of %Y and hence may produce non
+    unique date strings. Sorry, but if your locale country file still contains
+    such ancient placeholders it is really time to upgrade or to live with the
+    consequences. Especially OS3 will at some point suffer from this. This
+    finally fixes bug #2923855.
+
 2010-01-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * Happy New Year, YAMmers! :)
