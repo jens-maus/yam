@@ -283,6 +283,7 @@ static BOOL InitLib(const char *libname,
   RETURN((BOOL)(base != NULL));
   return (BOOL)(base != NULL);
 }
+
 ///
 /// CheckMCC
 //  Checks if a certain version of a MCC is available
@@ -315,7 +316,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
       MUI_DisposeObject(obj);
 
-      if(VERSION_IS_AT_LEAST(ver, rev, minver, minrev))
+      if(VERSION_IS_AT_LEAST(ver, rev, minver, minrev) == TRUE)
       {
         D(DBF_STARTUP, "%s v%ld.%ld found through MUIA_Version/Revision", name, ver, rev);
 
@@ -338,7 +339,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
         // we add some additional check here so that eventual broken .mcc also have
         // a chance to pass this test (e.g. _very_ old versions of Toolbar.mcc are broken)
-        if(VERSION_IS_AT_LEAST(ver, rev, minver, minrev))
+        if(VERSION_IS_AT_LEAST(ver, rev, minver, minrev) == TRUE)
         {
           D(DBF_STARTUP, "%s v%ld.%ld found through OpenLibrary()", name, ver, rev);
 
@@ -448,6 +449,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
   RETURN(success);
   return success;
 }
+
 ///
 
 /*** Auto-DST management routines ***/
@@ -467,7 +469,6 @@ static BOOL ADSTnotify_start(void)
     if((signalAlloc = AllocSignal(-1)) >= 0)
     {
       #if defined(__amigaos4__)
-
       // we don't use NotifyVar() here on purpose but a direct file notification on ENV:TZONE.
       // This is because timezone.library has a slight problem because of first setting the environment
       // variable and then its internal data structures and the hook of NotifyVar() is executed in the
@@ -672,6 +673,7 @@ static int GetDST(BOOL update)
   RETURN(result);
   return result;
 }
+
 ///
 
 /*** XPK Packer initialization routines ***/
@@ -810,6 +812,7 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
   RETURN(semaphore);
   return semaphore;
 }
+
 ///
 /// DeleteStartupSemaphore
 //  delete a public semaphore, removing it from the system if it is no longer in use
@@ -847,6 +850,7 @@ static void DeleteStartupSemaphore(void)
 
   LEAVE();
 }
+
 ///
 
 /*** Application Abort/Termination routines ***/
@@ -1113,6 +1117,7 @@ static void Terminate(void)
 
   LEAVE();
 }
+
 ///
 /// Abort
 //  Shows error requester, then terminates the program
@@ -1158,6 +1163,7 @@ static void Abort(const char *message, ...)
 
   LEAVE();
 }
+
 ///
 /// yam_exitfunc()
 /* This makes it possible to leave YAM without explicitely calling cleanup procedure */
@@ -1202,6 +1208,7 @@ static void SplashProgress(const char *txt, int percent)
 
   LEAVE();
 }
+
 ///
 /// PopUp
 //  Un-iconify YAM
@@ -1252,6 +1259,7 @@ void PopUp(void)
 
   LEAVE();
 }
+
 ///
 /// DoublestartHook
 //  A second copy of YAM was started
@@ -1374,6 +1382,7 @@ BOOL StayInProg(void)
   RETURN(stayIn);
   return stayIn;
 }
+
 ///
 /// Root_GlobalDispatcher
 //  Processes return value of MUI_Application_NewInput
@@ -1425,6 +1434,7 @@ static int Root_GlobalDispatcher(ULONG app_input)
   RETURN(ret);
   return ret;
 }
+
 ///
 /// Root_New
 //  Creates MUI application
@@ -1468,6 +1478,7 @@ static BOOL Root_New(BOOL hidden)
   RETURN(result);
   return result;
 }
+
 ///
 
 /// InitAfterLogin
@@ -1783,6 +1794,7 @@ static void InitAfterLogin(void)
 
   LEAVE();
 }
+
 ///
 /// InitBeforeLogin
 //  Phase 1 of program initialization (before user logs in)
@@ -1874,7 +1886,7 @@ static void InitBeforeLogin(BOOL hidden)
   CheckMCC(MUIC_NListview,  19,  76, TRUE, "http://www.sf.net/projects/nlist-classes/");
   CheckMCC(MUIC_NFloattext, 19,  57, TRUE, "http://www.sf.net/projects/nlist-classes/");
   CheckMCC(MUIC_NListtree,  18,  28, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NBalance,   15,  2,  TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NBalance,   15,   2, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
   // Lets check for the correct TextEditor.mcc version
   CheckMCC(MUIC_TextEditor, 15, 28, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
@@ -1951,6 +1963,7 @@ static void InitBeforeLogin(BOOL hidden)
 
   LEAVE();
 }
+
 ///
 /// SendWaitingMail
 //  Sends pending mail on startup
@@ -2002,6 +2015,7 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
   RETURN(sendableMail);
   return(sendableMail);
 }
+
 ///
 /// DoStartup
 //  Performs different checks/cleanup operations on startup
@@ -2085,6 +2099,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
 
   LEAVE();
 }
+
 ///
 /// Login
 //  Log in a given user or prompt for user and password
@@ -2101,6 +2116,7 @@ static void Login(const char *user, const char *password,
 
   LEAVE();
 }
+
 ///
 
 /*** Command-Line Argument parsing routines ***/
@@ -2201,14 +2217,13 @@ int main(int argc, char **argv)
   LONG err;
 
   // obtain the MainInterface of Exec before anything else.
-  #ifdef __amigaos4__
+  #if defined(__amigaos4__)
   IExec = (struct ExecIFace *)((struct ExecBase *)SysBase)->MainInterface;
 
   // check the exec version first and force be at least an 52.2 version
   // from AmigaOS4 final. This should assure we are are using the very
   // latest stable version.
-  if(SysBase->lib_Version < 52 ||
-     (SysBase->lib_Version == 52 && SysBase->lib_Revision < 2))
+  if(LIB_VERSION_IS_AT_LEAST(SysBase, 52, 2) == FALSE)
   {
     if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) != NULL &&
        GETINTERFACE("main", IIntuition, IntuitionBase))
@@ -2229,12 +2244,12 @@ int main(int argc, char **argv)
 
     exit(RETURN_WARN);
   }
-  #endif
+  #endif // __amigaos4__
 
   // we make sure that if this is a build for 68k processors and for 68020+
   // that this is really a 68020+ machine
   #if _M68060 || _M68040 || _M68030 || _M68020 || __mc68020 || __mc68030 || __mc68040 || __mc68060
-  if((SysBase->AttnFlags & AFF_68020) == 0)
+  if(isFlagClear(SysBase->AttnFlags, AFF_68020))
   {
     if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) != NULL)
     {
@@ -2254,10 +2269,10 @@ int main(int argc, char **argv)
 
    exit(RETURN_WARN);
   }
-  #endif
+  #endif // _M680x0
 
 
-#if defined(DEVWARNING)
+  #if defined(DEVWARNING)
   {
     BOOL goon = TRUE;
 
@@ -2270,6 +2285,11 @@ int main(int argc, char **argv)
         char var;
         struct EasyStruct ErrReq;
         struct DateStamp ds;
+
+        // try to open openurl.library to make GotoURL() work at this early stage
+        if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL)
+           GETINTERFACE("main", IOpenURL, OpenURLBase);
+
         DateStamp(&ds); // get actual time/date
 
         ErrReq.es_StructSize = sizeof(struct EasyStruct);
@@ -2288,11 +2308,9 @@ int main(int argc, char **argv)
                                    "that no old versions are floating around causing\n"
                                    "users to report bugs on old versions.\n\n"
                                    "Thanks for your help in improving YAM!";
-          if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
-             GETINTERFACE("main", IOpenURL, OpenURLBase))
-          {
+
+          if(GotoURLPossible() == TRUE)
             ErrReq.es_GadgetFormat = (STRPTR)"Visit homepage|Exit";
-          }
           else
             ErrReq.es_GadgetFormat = (STRPTR)"Exit";
 
@@ -2303,10 +2321,9 @@ int main(int argc, char **argv)
             GotoURL("http://nightly.yam.ch/", FALSE);
           }
 
-          CLOSELIB(OpenURLBase, IOpenURL);
           goon = FALSE;
         }
-        #endif
+        #endif // EXPDATE
 
         if(goon == TRUE && GetVar("I_KNOW_YAM_IS_UNDER_DEVELOPMENT", &var, sizeof(var), 0) == -1)
         {
@@ -2321,7 +2338,7 @@ int main(int argc, char **argv)
                                            #if defined(EXPDATE)
                                            "In addition, this version will automatically\n"
                                            "expire after a certain time interval.\n\n"
-                                           #endif
+                                           #endif // EXPDATE
                                            "So, if you're unsure and prefer to have a stable\n"
                                            "installation instead of a potentially dangerous\n"
                                            "version, please consider to use the current\n"
@@ -2329,11 +2346,8 @@ int main(int argc, char **argv)
                                            "http://www.yam.ch/\n\n"
                                            "Thanks for your help in improving YAM!";
 
-          if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL &&
-             GETINTERFACE("main", IOpenURL, OpenURLBase))
-          {
+          if(GotoURLPossible() == TRUE)
             ErrReq.es_GadgetFormat = (STRPTR)"Go on|Visit homepage|Exit";
-          }
           else
             ErrReq.es_GadgetFormat = (STRPTR)"Go on|Exit";
 
@@ -2349,9 +2363,9 @@ int main(int argc, char **argv)
             // visit YAM's home page and continue normally
             GotoURL("http://www.yam.ch/", FALSE);
           }
-
-          CLOSELIB(OpenURLBase, IOpenURL);
         }
+
+        CLOSELIB(OpenURLBase, IOpenURL);
       }
 
       CLOSELIB(UtilityBase, IUtility);
@@ -2361,12 +2375,12 @@ int main(int argc, char **argv)
     if(goon == FALSE)
       exit(RETURN_WARN);
   }
-#endif
+  #endif // DEVWARNING
 
   // initialize our debugging system.
   #if defined(DEBUG)
   SetupDebug();
-  #endif
+  #endif // DEBUG
 
   // signal that on a exit() the 'yam_exitfunc' function
   // should be called.
@@ -2604,7 +2618,7 @@ int main(int argc, char **argv)
 
           DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
           D(DBF_TIMER, "timer signal received @ %s", dateString);
-          #endif
+          #endif // DEBUG
 
           // call ProcessTimerEvent() to check all our
           // timers are process accordingly.
@@ -2627,7 +2641,7 @@ int main(int argc, char **argv)
           if(HandleDockyIcon() == TRUE)
             break;
         }
-        #endif
+        #endif // __amigaos4__
 
         // handle thread messages
         HandleThreadEvent(signals);
@@ -2725,4 +2739,6 @@ int main(int argc, char **argv)
   SetIoErr(RETURN_OK);
   return RETURN_OK;
 }
+
 ///
+

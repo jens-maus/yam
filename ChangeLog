@@ -10,6 +10,8 @@ $URL$
   * Happy New Year, YAMmers! :)
   * YAM_UT.c, YAM.c, UpdateNotifyWindow.c: with OS4.1 the new URL: device is now
     favoured over openurl.library if available.
+  * YAM.c: changed the early startup to make use of the URL: device too, instead of
+    openurl.library only.
 
 2009-12-31 Thore Böckelmann <tboeckel@gmx.de>
 
