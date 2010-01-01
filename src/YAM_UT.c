@@ -5169,7 +5169,7 @@ BOOL GotoURLPossible(void)
   #endif
 
   // check whether openurl.library is available
-  if(OpenURLBase != NULL)
+  if(gotoURLPossible == FALSE && OpenURLBase != NULL)
   {
     gotoURLPossible = TRUE;
     D(DBF_UTIL, "found openurl.library");
@@ -5197,38 +5197,41 @@ BOOL GotoURL(const char *url, BOOL newWindow)
     snprintf(newurl, sizeof(newurl), "\"%s\"", url);
     wentToURL = MA_StartMacro(MACRO_URL, newurl);
   }
-
-  #if defined(__amigaos4__)
-  if(wentToURL == FALSE && LIB_VERSION_IS_AT_LEAST(DOSBase, 53, 48))
+  else
   {
-    char newurl[SIZE_LARGE];
-    APTR oldWinPtr;
-    BPTR urlFH;
-
-    snprintf(newurl, sizeof(newurl), "URL:%s", url);
-
-    // disable requesters
-    oldWinPtr = SetProcWindow((APTR)-1);
-
-    if((urlFH = Open(newurl, MODE_OLDFILE)) != (BPTR)NULL)
+    #if defined(__amigaos4__)
+    // try URL: device at first
+    if(wentToURL == FALSE)
     {
-      Close(urlFH);
-      wentToURL = TRUE;
+      char newurl[SIZE_LARGE];
+      APTR oldWinPtr;
+      BPTR urlFH;
+
+      snprintf(newurl, sizeof(newurl), "URL:%s", url);
+
+      // disable requesters
+      oldWinPtr = SetProcWindow((APTR)-1);
+
+      if((urlFH = Open(newurl, MODE_OLDFILE)) != (BPTR)NULL)
+      {
+        Close(urlFH);
+        wentToURL = TRUE;
+      }
+
+      // enable requesters again
+      SetProcWindow(oldWinPtr);
     }
+    #endif
 
-    // enable requesters again
-    SetProcWindow(oldWinPtr);
-  }
-  #endif
-
-  if(wentToURL == FALSE && OpenURLBase != NULL)
-  {
-    // open the URL in a defined web browser and
-    // let the user decide himself if he wants to see
-    // it popping up in a new window or not (via OpenURL
-    // prefs)
-    wentToURL = URL_Open((STRPTR)url, URL_NewWindow, newWindow,
-                                      TAG_DONE);
+    if(wentToURL == FALSE && OpenURLBase != NULL)
+    {
+      // open the URL in a defined web browser and
+      // let the user decide himself if he wants to see
+      // it popping up in a new window or not (via OpenURL
+      // prefs)
+      wentToURL = URL_Open((STRPTR)url, URL_NewWindow, newWindow,
+                                        TAG_DONE);
+    }
   }
 
   RETURN(wentToURL);
