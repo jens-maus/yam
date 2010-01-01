@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Happy New Year, YAMmers! :)
+  * YAM_UT.c, YAM.c, UpdateNotifyWindow.c: with OS4.1 the new URL: device is now
+    favoured over openurl.library if available.
+
 2009-12-31 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c: the date scanning function didn't take into account that the

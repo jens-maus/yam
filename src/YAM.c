@@ -239,13 +239,14 @@ static BOOL InitLib(const char *libname,
       if(homepage != NULL)
       {
         char error[SIZE_LINE];
+        BOOL gotoURLPossible = GotoURLPossible();
         LONG answer;
 
         snprintf(error, sizeof(error), tr(MSG_ER_LIB_URL), libname, version, revision, homepage);
 
         if(MUIMasterBase != NULL && G != NULL && G->App != NULL)
         {
-          answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), OpenURLBase != NULL ? tr(MSG_HOMEPAGE_QUIT_GAD) : tr(MSG_Quit), error);
+          answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_HOMEPAGE_QUIT_GAD) : tr(MSG_Quit), error);
         }
         else if(IntuitionBase != NULL)
         {
@@ -255,7 +256,7 @@ static BOOL InitLib(const char *libname,
           ErrReq.es_Flags        = 0;
           ErrReq.es_Title        = (STRPTR)tr(MSG_ErrorStartup);
           ErrReq.es_TextFormat   = error;
-          ErrReq.es_GadgetFormat = OpenURLBase != NULL ? (STRPTR)tr(MSG_HOMEPAGE_QUIT_GAD) : (STRPTR)tr(MSG_Quit);
+          ErrReq.es_GadgetFormat = (gotoURLPossible == TRUE) ? (STRPTR)tr(MSG_HOMEPAGE_QUIT_GAD) : (STRPTR)tr(MSG_Quit);
 
           answer = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
         }
@@ -289,10 +290,13 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 {
   BOOL success = FALSE;
   BOOL flush = TRUE;
+  BOOL gotoURLPossible;
 
   ENTER();
 
   D(DBF_STARTUP, "checking for v%ld.%ld+ of '%s'", minver, minrev, name);
+
+  gotoURLPossible = GotoURLPossible();
 
   for(;;)
   {
@@ -348,7 +352,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
           {
             LONG answer;
 
-            answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), OpenURLBase != NULL ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url);
+            answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url);
             if(answer == 0)
             {
               // cancel
@@ -392,7 +396,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
           {
             LONG answer;
 
-            answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), OpenURLBase != NULL ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url);
+            answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url);
             if(answer == 0)
             {
               // cancel
@@ -421,7 +425,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
       // No MCC at all - no need to attempt flush
       flush = FALSE;
-      answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), OpenURLBase != NULL ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url);
+      answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url);
 
       if(answer == 0)
       {

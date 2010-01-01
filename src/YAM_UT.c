@@ -5139,10 +5139,53 @@ int GetSimpleID(void)
   return ++num;
 }
 ///
+/// GotoURLPossible
+//  Check whether there is some kind of openurl.library or OS4.1's URL: device available
+BOOL GotoURLPossible(void)
+{
+  BOOL gotoURLPossible = FALSE;
+  #if defined(__amigaos4__)
+  APTR oldWinPtr;
+  struct DevProc *urlDevProc;
+  #endif
+
+  ENTER();
+
+  #if defined(__amigaos4__)
+  // disable requesters
+  oldWinPtr = SetProcWindow((APTR)-1);
+
+  // check whether URL: is mounted, this is OS4.1 only
+  if((urlDevProc = GetDeviceProcFlags("URL:", NULL, LDF_DEVICES)) != NULL)
+  {
+    // yes it is, free the structure again
+    FreeDeviceProc(urlDevProc);
+    gotoURLPossible = TRUE;
+    D(DBF_UTIL, "found URL: device");
+  }
+
+  // enable requesters again
+  SetProcWindow(oldWinPtr);
+  #endif
+
+  // check whether openurl.library is available
+  if(OpenURLBase != NULL)
+  {
+    gotoURLPossible = TRUE;
+    D(DBF_UTIL, "found openurl.library");
+  }
+
+  RETURN(gotoURLPossible);
+  return gotoURLPossible;
+}
+
+///
 /// GotoURL
 //  Loads an URL using an ARexx script or openurl.library
-void GotoURL(const char *url, BOOL newWindow)
+BOOL GotoURL(const char *url, BOOL newWindow)
 {
+  BOOL wentToURL = FALSE;
+
   ENTER();
 
   // The ARexx macro to open a URL is only possible after the startup phase
@@ -5152,22 +5195,39 @@ void GotoURL(const char *url, BOOL newWindow)
     char newurl[SIZE_LARGE];
 
     snprintf(newurl, sizeof(newurl), "\"%s\"", url);
-    MA_StartMacro(MACRO_URL, newurl);
+    wentToURL = MA_StartMacro(MACRO_URL, newurl);
   }
-  else if(OpenURLBase != NULL)
+
+  #if defined(__amigaos4__)
+  if(wentToURL == FALSE && LIB_VERSION_IS_AT_LEAST(DOSBase, 53, 48))
+  {
+    char newurl[SIZE_LARGE];
+    BPTR urlFH;
+
+    snprintf(newurl, sizeof(newurl), "URL:%s", url);
+
+    if((urlFH = Open(newurl, MODE_OLDFILE)) != (BPTR)NULL)
+    {
+      Close(urlFH);
+      wentToURL = TRUE;
+    }
+  }
+  #endif
+
+  if(wentToURL == FALSE && OpenURLBase != NULL)
   {
     // open the URL in a defined web browser and
     // let the user decide himself if he wants to see
     // it popping up in a new window or not (via OpenURL
     // prefs)
-    URL_Open((STRPTR)url, URL_NewWindow, newWindow,
-                          TAG_DONE);
+    wentToURL = URL_Open((STRPTR)url, URL_NewWindow, newWindow,
+                                      TAG_DONE);
   }
-  else
-    W(DBF_HTML, "No openurl.library v1+ found");
 
-  LEAVE();
+  RETURN(wentToURL);
+  return wentToURL;
 }
+
 ///
 /// SWSSearch
 // Smith&Waterman 1981 extended string similarity search algorithm

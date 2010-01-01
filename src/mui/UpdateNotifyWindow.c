@@ -381,14 +381,14 @@ DECLARE(VisitURL)
   DoMethod(data->ComponentList, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &comp);
   if(comp != NULL)
   {
-    if(OpenURLBase != NULL)
+    if(data->gotoURLPossible == TRUE)
     {
-      // openurl.library is available, so let openurl.library open the link
-      GotoURL(comp->url, FALSE);
+      // openurl.library is available, so let openurl.library or URL: open the link
+      GotoURL(comp->url, TRUE);
     }
     else
     {
-      // no openurl.library, just open a requester telling the user what to do
+      // no openurl.library or URL: device, just open a requester telling the user what to do
       MUI_Request(G->App, obj, 0L, NULL, tr(MSG_OkayReq), tr(MSG_NO_OPENURL_LIB), comp->url);
     }
   }
