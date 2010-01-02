@@ -6276,7 +6276,7 @@ MSG_RE_SImageOnly
 Nur Bild
 ;
 MSG_CO_CHARSETWARN_TITLE
-Zeichenk_odierungswarnung
+Zeichenkodierungswarnung
 ;
 MSG_CO_CHARSETWARN
 Die Zeichenkodierung von YAM ist momentan auf '%s'\n\

@@ -16,6 +16,8 @@ $URL$
     consequences. Especially OS3 will at some point suffer from this. This
     finally fixes bug #2923855.
   * locale/german.ct: fixed some really badly translated strings.
+  * locale/german.ct: removed a wrong underscore character in a window title
+    string.
 
 2010-01-01 Thore Böckelmann <tboeckel@gmx.de>
 
