@@ -6112,17 +6112,17 @@ unterstützt werden oder ist falsch in der Konfiguration angegeben.
 ; OPTIONNAME
 ;
 MSG_ER_B64FILEENCODE
-Ein unerwarteter Fehler trat bei dem Versuch die Datei '%s' \
+Ein unerwarteter Fehler ist aufgetreten bei dem Versuch die Datei '%s' \
 mit Base64 zu kodieren.
 ; FILENAME
 ;
 MSG_ER_QPFILEENCODE
-Ein unerwarteter Fehler trat bei dem Versuch die Datei '%s' \
+Ein unerwarteter Fehler ist aufgetreten bei dem Versuch die Datei '%s' \
 mit Quoted-Printable (QP) zu kodieren.
 ; FILENAME
 ;
 MSG_ER_UUFILEENCODE
-Ein unerwarteter Fehler trat bei dem Versuch die Datei '%s' \
+Ein unerwarteter Fehler ist aufgetreten bei dem Versuch die Datei '%s' \
 mit UUcode zu kodieren.
 ; FILENAME
 ;
@@ -6131,7 +6131,7 @@ Ein Ein/Ausgabefehler ist aufgetreten bei dem Versuch die Datei '%s' \
 mit Quoted-Printable (QP) zu dekodieren.
 ;
 MSG_ER_QPDEC_UNEXP
-Ein unerwarteter Fehler trat bei dem Versuch die Datei '%s' \
+Ein unerwarteter Fehler ist aufgetreten bei dem Versuch die Datei '%s' \
 mit Quoted-Printable (QP) zu dekodieren.
 ; FILENAME
 ;

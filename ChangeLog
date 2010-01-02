@@ -15,6 +15,7 @@ $URL$
     such ancient placeholders it is really time to upgrade or to live with the
     consequences. Especially OS3 will at some point suffer from this. This
     finally fixes bug #2923855.
+  * locale/german.ct: fixed some really badly translated strings.
 
 2010-01-01 Thore Böckelmann <tboeckel@gmx.de>
 
