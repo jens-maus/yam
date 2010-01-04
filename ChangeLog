@@ -11,6 +11,9 @@ $URL$
     into a scrollable virtual group where they really belong as subclasses of
     TheBarVirt.mcc. This makes it possible to resize the corresponding windows
     smaller than the toolbar's size. This partly fixes bug #2925005.
+  * YAM_AB.c: upon importing XML address books multiple street, city, state and
+    country informations will now be separated by commas. This finally fixes bug
+    #2923894.
 
 2010-01-02 Thore Böckelmann <tboeckel@gmx.de>
 

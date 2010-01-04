@@ -1499,7 +1499,7 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
           }
           else
           {
-            snprintf(entry->Street, sizeof(entry->Street), "%s %s", entry->Street, isoStr);
+            snprintf(entry->Street, sizeof(entry->Street), "%s, %s", entry->Street, isoStr);
           }
         }
         break;
@@ -1512,7 +1512,7 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
           }
           else
           {
-            snprintf(entry->City, sizeof(entry->City), "%s %s", entry->City, isoStr);
+            snprintf(entry->City, sizeof(entry->City), "%s, %s", entry->City, isoStr);
           }
         }
         break;
@@ -1542,7 +1542,7 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
           }
           else
           {
-            snprintf(entry->Country, sizeof(entry->Country), "%s %s", entry->Country, isoStr);
+            snprintf(entry->Country, sizeof(entry->Country), "%s, %s", entry->Country, isoStr);
           }
         }
         break;
