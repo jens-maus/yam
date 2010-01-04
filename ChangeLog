@@ -14,6 +14,16 @@ $URL$
   * YAM_AB.c: upon importing XML address books multiple street, city, state and
     country informations will now be separated by commas. This finally fixes bug
     #2923894.
+  * YAM.c, YAM_US.c: a directory passed to YAM via the MAILDIR command line
+    option or ToolType will now be reused upon a restart to make sure that the
+    same directory is used everytime. Additionally the first and main user's
+    mail directory can now be changed from within YAM. Please note however that
+    using MAILDIR is not recommended with multiple users as all users will share
+    the same configuration and mails, which most probably might not be what you
+    really intended. All in all this fixes bug #2923953, where different
+    directories (one configured but up to now unchangeable, another passed via
+    MAILDIR) for the main user resulted in a default configuration upon a
+    restart.
 
 2010-01-02 Thore Böckelmann <tboeckel@gmx.de>
 

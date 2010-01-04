@@ -2497,7 +2497,7 @@ int main(int argc, char **argv)
     else
     {
       InitBeforeLogin(FALSE);
-      Login(NULL, NULL, NULL, NULL);
+      Login(NULL, NULL, args.maildir, NULL);
       InitAfterLogin();
     }
 

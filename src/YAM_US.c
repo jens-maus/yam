@@ -103,7 +103,7 @@ static void US_SaveUsers(void)
   // search for the first user with manager privileges
   for(i = 0; i < G->Users.Num; i++)
   {
-    if(!G->Users.User[i].Limited)
+    if(G->Users.User[i].Limited == FALSE)
       break;
   }
 
@@ -122,11 +122,11 @@ static void US_SaveUsers(void)
 
       flags = 0;
       if(user->Limited)
-        flags |= UFLAG_LIMITED_USER;
+        SET_FLAG(flags, UFLAG_LIMITED_USER);
       if(user->UseAddr)
-        flags |= UFLAG_USE_GLOBAL_ADDRESSBOOK;
+        SET_FLAG(flags, UFLAG_USE_GLOBAL_ADDRESSBOOK);
       if(user->UseDict)
-        flags |= UFLAG_USE_GLOBAL_DICTIONARY;
+        SET_FLAG(flags, UFLAG_USE_GLOBAL_DICTIONARY);
 
       if(user->Name != NULL)
         fprintf(fh, "@USER %s\n%s\n%d\n%s\n@ENDUSER\n", user->Name, user->MailDir, flags, Encrypt(user->Password));
@@ -583,13 +583,13 @@ HOOKPROTONHNONP(US_GetUSEntryFunc, void)
     nnset(gui->CH_ROOT,    MUIA_Selected, !user->Limited);
     nnset(gui->CH_CLONE,   MUIA_Selected, user->Clone);
     set(gui->ST_USER,    MUIA_Disabled, notallowed);
-    set(gui->CH_USEDICT, MUIA_Disabled, notallowed || !act);
-    set(gui->CH_USEADDR, MUIA_Disabled, notallowed || !act);
-    set(gui->CH_CLONE,   MUIA_Disabled, !user->IsNew || !act);
-    set(gui->PO_MAILDIR, MUIA_Disabled, limited || !act);
+    set(gui->CH_USEDICT, MUIA_Disabled, notallowed || act == 0);
+    set(gui->CH_USEADDR, MUIA_Disabled, notallowed || act == 0);
+    set(gui->CH_CLONE,   MUIA_Disabled, !user->IsNew || act == 0);
+    set(gui->PO_MAILDIR, MUIA_Disabled, limited);
     set(gui->CH_ROOT,    MUIA_Disabled, limited);
     set(gui->ST_PASSWD,  MUIA_Disabled, notallowed);
-    set(gui->BT_DEL,     MUIA_Disabled, !act || iscurrent);
+    set(gui->BT_DEL,     MUIA_Disabled, act == 0 || iscurrent);
    }
    else
      DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, gui->ST_USER,
