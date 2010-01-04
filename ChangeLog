@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c, YAM_MA.c, ReadWindow.c, WriteWindow.c: all toolbars are now placed
+    into a scrollable virtual group where they really belong as subclasses of
+    TheBarVirt.mcc. This makes it possible to resize the corresponding windows
+    smaller than the toolbar's size. This partly fixes bug #2925005.
+
 2010-01-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c: YAM will now accept numbers greater or equal to 1900 for %y year

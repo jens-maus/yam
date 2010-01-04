@@ -1063,9 +1063,9 @@ OVERLOAD(OM_NEW)
       End;
 
       obj = DoSuperNew(cl, obj,
-        MUIA_Window_Title,     tr(MSG_WR_BounceWT),
-        MUIA_HelpNode,         "WR_W",
-        MUIA_Window_ID,        MAKE_ID('W','R','I','B'),
+        MUIA_Window_Title, tr(MSG_WR_BounceWT),
+        MUIA_HelpNode, "WR_W",
+        MUIA_Window_ID, MAKE_ID('W','R','I','B'),
         MUIA_Window_AppWindow, FALSE,
         MUIA_Window_Menustrip, menuStripObject,
         WindowContents, VGroup,
@@ -1244,9 +1244,9 @@ OVERLOAD(OM_NEW)
       {
         obj = DoSuperNew(cl, obj,
 
-          MUIA_Window_Title,     "",
-          MUIA_HelpNode,         "WR_W",
-          MUIA_Window_ID,        MAKE_ID('W','R','W',data->windowNumber),
+          MUIA_Window_Title, "",
+          MUIA_HelpNode, "WR_W",
+          MUIA_Window_ID, MAKE_ID('W','R','W', data->windowNumber),
           MUIA_Window_AppWindow, TRUE,
           MUIA_Window_Menustrip, menuStripObject,
           WindowContents, VGroup,
@@ -1274,7 +1274,9 @@ OVERLOAD(OM_NEW)
                 Child, hasHideToolBarFlag(C->HideGUIElements) ?
                   (RectangleObject, MUIA_ShowMe, FALSE, End) :
                   (HGroup, GroupSpacing(0),
-                    Child, data->TO_TOOLBAR = WriteWindowToolbarObject,
+                    Child, HGroupV,
+                      Child, data->TO_TOOLBAR = WriteWindowToolbarObject,
+                      End,
                     End,
 
                     Child, hasHideXYFlag(C->HideGUIElements) ?

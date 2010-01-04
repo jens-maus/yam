@@ -4304,8 +4304,10 @@ struct MA_ClassData *MA_New(void)
       WindowContents, data->GUI.GR_MAIN = VGroup,
         Child, data->GUI.GR_TOP = hasHideToolBarFlag(C->HideGUIElements) ?
         VSpace(1) :
-        (data->GUI.TO_TOOLBAR = MainWindowToolbarObject,
-          MUIA_HelpNode, "MA02",
+        (HGroupV,
+          Child, data->GUI.TO_TOOLBAR = MainWindowToolbarObject,
+            MUIA_HelpNode, "MA02",
+          End,
         End),
         Child, data->GUI.GR_HIDDEN = HGroup,
           MUIA_ShowMe, FALSE,

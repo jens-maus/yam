@@ -329,16 +329,18 @@ OVERLOAD(OM_NEW)
   // create the read window object
   if(menuStripObject != NULL && (obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title,  "",
-    MUIA_HelpNode,      "RE_W",
-    MUIA_Window_ID,     MAKE_ID('R','D','W',data->windowNumber),
+    MUIA_Window_Title, "",
+    MUIA_HelpNode, "RE_W",
+    MUIA_Window_ID, MAKE_ID('R','D','W', data->windowNumber),
     MUIA_Window_Menustrip, menuStripObject,
     WindowContents, VGroup,
       Child, hasHideToolBarFlag(C->HideGUIElements) ?
         (RectangleObject, MUIA_ShowMe, FALSE, End) :
         (VGroup,
-          Child, data->windowToolbar = ReadWindowToolbarObject,
-            MUIA_HelpNode, "RE_B",
+          Child, HGroupV,
+            data->windowToolbar = ReadWindowToolbarObject,
+              MUIA_HelpNode, "RE_B",
+            End,
           End,
           Child, data->statusBar = ReadWindowStatusBarObject,
           End,
