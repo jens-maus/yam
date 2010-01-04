@@ -11,6 +11,7 @@ $URL$
     into a scrollable virtual group where they really belong as subclasses of
     TheBarVirt.mcc. This makes it possible to resize the corresponding windows
     smaller than the toolbar's size. This partly fixes bug #2925005.
+  * locale/german.ct: added some dots to abbreviated words to be consistent.
 
 2010-01-02 Thore Böckelmann <tboeckel@gmx.de>
 
