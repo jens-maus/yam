@@ -338,7 +338,7 @@ OVERLOAD(OM_NEW)
         (RectangleObject, MUIA_ShowMe, FALSE, End) :
         (VGroup,
           Child, HGroupV,
-            data->windowToolbar = ReadWindowToolbarObject,
+            Child, data->windowToolbar = ReadWindowToolbarObject,
               MUIA_HelpNode, "RE_B",
             End,
           End,
