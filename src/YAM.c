@@ -2288,7 +2288,11 @@ int main(int argc, char **argv)
 
         // try to open openurl.library to make GotoURL() work at this early stage
         if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL)
-           GETINTERFACE("main", IOpenURL, OpenURLBase);
+        {
+          #if defined(__amigaos4__)
+          GETINTERFACE("main", IOpenURL, OpenURLBase);
+          #endif
+        }
 
         DateStamp(&ds); // get actual time/date
 
