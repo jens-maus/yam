@@ -7158,7 +7158,6 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       else if(hasTR_DELETE(mtn))
       {
         D(DBF_NET, "deleting mail with subject '%s' on server", mail->Subject);
-        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_DeletingServerMail));
 
         if(TR_DeleteMessage(&ts, mtn->index) == TRUE && G->TR->DuplicatesChecking == TRUE)
         {

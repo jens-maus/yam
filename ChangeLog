@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Happy Birthday, damato! :)
+  * YAM_TR.c: when deleting a mail on the server which was not selected to be
+    downloaded still increased the downloaded number of bytes by its own size
+    and thus lead to an incorrect size display.
+
 2010-01-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c, YAM_MA.c, ReadWindow.c, WriteWindow.c: all toolbars are now placed
