@@ -108,9 +108,9 @@ FLEX    = flex
 FC      = flexcat
 EXPR    = expr
 DATE    = date
-RM      = delete force
-RMDIR   = delete force all
-MKDIR   = makedir force
+RM      = rm -f #delete force
+RMDIR   = rm -rf #delete force all
+MKDIR   = mkdir -p #makedir force
 CHMOD   = protect FLAGS=rwed
 CP      = copy
 CC      = gcc
@@ -215,6 +215,8 @@ ifeq ($(OS), os4)
   CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
               $(REDEFINE) -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
+  CDUP     = ../
+  CDTHIS   = ./
 
 else
 ifeq ($(OS), os3)
@@ -500,13 +502,12 @@ CATALOGS = \
 	$(LOCALE)/english-british.catalog \
 	$(LOCALE)/french.catalog \
 	$(LOCALE)/german.catalog \
+	$(LOCALE)/greek.catalog \
 	$(LOCALE)/italian.catalog \
 	$(LOCALE)/swedish.catalog \
 	# $(LOCALE)/bosnian.catalog \
 	# $(LOCALE)/danish.catalog \
 	# $(LOCALE)/finnish.catalog \
-	# $(LOCALE)/greek.catalog \
-	# $(LOCALE)/italian.catalog \
 	# $(LOCALE)/hungarian.catalog \
 	# $(LOCALE)/norwegian.catalog \
 	# $(LOCALE)/polish.catalog \

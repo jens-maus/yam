@@ -11,6 +11,8 @@ $URL$
   * YAM_TR.c: when deleting a mail on the server which was not selected to be
     downloaded still increased the downloaded number of bytes by its own size
     and thus lead to an incorrect size display.
+  * locale/greek.ct: updated the greek translation kindly provided by Antonis
+    'Phantom' Iliakis.
 
 2010-01-04 Thore Böckelmann <tboeckel@gmx.de>
 
