@@ -847,11 +847,11 @@ Hej,\\n
 ;#SET (268//)
 MSG_CO_AltRepIntroDef
 
-;#DEF 
+;#DEF
 ;#SET (269//)
 MSG_CO_AltRepPatternDef
 
-;#DEF 
+;#DEF
 ;#SET (270//)
 MSG_CO_ForwardIntroDef
 *** Detta är ett vidarebefordrat meddelande ***\\n\\nDatum: %c\\nFrån: %n <%e>\\nÄrende: %s\\n\\n--- Vidarebefordrat meddelande följer ---\\n\\n
@@ -867,15 +867,15 @@ Med vänliga hälsningar
 ;#SET (273//)
 MSG_CO_AltRepHelloDef
 
-;#DEF 
+;#DEF
 ;#SET (274//)
 MSG_CO_AltRepByeDef
 
-;#DEF 
+;#DEF
 ;#SET (275//)
 MSG_CO_MLRepHelloDef
 
-;#DEF 
+;#DEF
 ;#SET (276//)
 MSG_CO_MLRepIntroDef
 Den %c skrev %n:\\n
@@ -2898,8 +2898,8 @@ Avsändaren vill ha ett statusmeddelande\ntillbaks (MDN).\n\nVad vill du göra?
 ;#DEF The sender of this message requests\na return receipt.\n\nWhat do you want to do?
 ;#SET (826//)
 MSG_RE_SaveMessage
-Spara meddelande
-;#DEF Save message
+Spara meddelande...
+;#DEF Save message...
 ;#SET (827//)
 MSG_RE_PrintMsg
 Skriv ut meddelande
@@ -7290,8 +7290,8 @@ Använd popup knappen för att välja den tecken-\nuppsättning du vill YAM ska anvä
 ;#DEF Use the popup button to select the character set\nyou would like YAM to use for this mail. This\ndefaults to the global character set.
 ;#SET (2085//)
 MSG_ABOUTYAM
-Om YAM
-;#DEF About YAM
+Om YAM...
+;#DEF About YAM...
 ;#SET (2086//)
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Kunde inte ansluta till värd '%s' för konto '%s'.\n\nEn TCP/IP socket anslutning verkar redan vara aktiv. Var god stäng ned andra aktiva överföringar.

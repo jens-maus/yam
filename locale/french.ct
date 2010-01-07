@@ -982,11 +982,11 @@ Salut,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-; 
+;
 ;
 MSG_CO_AltRepPatternDef
 
-; 
+;
 ;
 MSG_CO_ForwardIntroDef
 *** Message retransmis ***\\\\n\
@@ -1016,15 +1016,15 @@ Mes salutations
 ;
 MSG_CO_AltRepHelloDef
 Bonjour,\\n
-; 
+;
 ;
 MSG_CO_AltRepByeDef
 
-; 
+;
 ;
 MSG_CO_MLRepHelloDef
 
-; 
+;
 ;
 MSG_CO_MLRepIntroDef
 Le %c, %n a écrit :\\\\n
@@ -3445,7 +3445,7 @@ Que voulez-vous faire ?
 ;
 MSG_RE_SaveMessage
 Sauver un message...
-; Save message
+; Save message...
 ;
 MSG_RE_PrintMsg
 Imprime le message
@@ -3468,7 +3468,7 @@ _Sauver
 ; _Save
 ;
 MSG_RE_DisplayMsg
-Afficher un message...
+Afficher un message
 ; Display message
 ;
 MSG_RE_SelectDisplayPart
@@ -3887,7 +3887,7 @@ Sauver texte sous
 ; Save text as
 ;
 MSG_WR_AddFile
-Choisir les fichiers à joindre...
+Choisir les fichiers à joindre
 ; Select files to attach
 ;
 MSG_WR_CreateArc
@@ -3899,7 +3899,7 @@ Donnez un nom à cette nouvelle archive
 ; Please enter a filename for the new archive
 ;
 MSG_WR_InsertFile
-Insère un fichier...
+Insère un fichier
 ; Insert file
 ;
 ;
@@ -4653,7 +4653,7 @@ de la transmission
 ;
 MSG_HELP_TR_BT_ABORT
 Interrompt le transfert\n\
-dès que possible...
+dès que possible.
 ; Abort mail transfer\n\
 ; as soon as possible.
 ;
@@ -5300,7 +5300,7 @@ MSG_FO_NewFolderGads
 ; *_Internal defaults|_Like current|_Existing directory|_Cancel
 ;
 MSG_FO_SelectDir
-Sélectionner répertoire...
+Sélectionner répertoire
 ; Select directory
 ;
 ;
@@ -6688,7 +6688,7 @@ _Voir :
 ; _View:
 ;
 MSG_QUICKSEARCH_SHOWNMSGS
-%ld affiché(s) sur %ld 
+%ld affiché(s) sur %ld
 ; %ld of %ld shown
 ; COUNT, COUNT
 ;
@@ -8078,7 +8078,7 @@ Accusés réception
 ; Return receipts
 ;
 MSG_CO_MDN_DESCRIPTION
-Lorsque je reçois une demande d'accusé de réception :
+Lorsque je reçois une demande d'accusé de réception...
 ; When I receive a request for a return receipt...
 ;
 MSG_CO_MDN_DISABLED
@@ -9362,7 +9362,7 @@ caractères global est utilisé.
 ;
 MSG_ABOUTYAM
 À propos de YAM...
-; About YAM
+; About YAM...
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\

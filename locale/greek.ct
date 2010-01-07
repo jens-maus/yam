@@ -2241,7 +2241,7 @@ MSG_HELP_CO_ST_DEFVIEWER
 ; Program used to display\nattachments of unknown type.
 ;
 MSG_HELP_CO_ST_REPLYTO
-Αν θέλετε οι απαντήσεις των μηνυμάτων σας να στέλνονται\nπροκαθορισμένα κάπου αλλού επιπλεόν (ή αντί) της διεύθυνσης e-mail σας, καθορίστε\nαυτές τις διευθύνσεις εδώ. 
+Αν θέλετε οι απαντήσεις των μηνυμάτων σας να στέλνονται\nπροκαθορισμένα κάπου αλλού επιπλεόν (ή αντί) της διεύθυνσης e-mail σας, καθορίστε\nαυτές τις διευθύνσεις εδώ.
 ; Should replies to your messages need to be sent by\ndefault somewhere else besides (or instead of) your\ne-mail address, specify those other addresses here.
 ;
 MSG_HELP_CO_ST_ORGAN
@@ -3010,8 +3010,8 @@ MSG_RE_MDNReq
 ; The sender of this message requests\na return receipt.\n\nWhat do you want to do?
 ;
 MSG_RE_SaveMessage
-Αποθήκευση μηνύματος
-; Save message
+Αποθήκευση μηνύματος...
+; Save message...
 ;
 MSG_RE_PrintMsg
 Εκτύπωση μηνύματος
@@ -5416,7 +5416,7 @@ MSG_MA_YESNOTOALL
 ; *_Yes|Y_es to all|_No|N_o to all
 ;
 MSG_ER_CONVERTMFILE
-Ένα σφάλμα συνέβει κατά την προσπάθεια ενημέρωσης του αρχείου '%s' στον φάκελο '%s' στην τρέχουσα μορφή αλληλογραφίας.\n\nΕλέγξτε αν ο κατάλογος φακέλου έχει αρκετό χώρο ή είναι μη προστατευμένος από εγγραφή. 
+Ένα σφάλμα συνέβει κατά την προσπάθεια ενημέρωσης του αρχείου '%s' στον φάκελο '%s' στην τρέχουσα μορφή αλληλογραφίας.\n\nΕλέγξτε αν ο κατάλογος φακέλου έχει αρκετό χώρο ή είναι μη προστατευμένος από εγγραφή.
 ; An error occurred while trying to upgrade file '%s' in folder '%s' to the current mail format.\n\nPlease check that the folder directory has enough space and is not write protected.
 ; FILENAME, FOLDER
 ;
@@ -5755,22 +5755,22 @@ MSG_CO_CHARSETUNKNOWNWARN_BT
 ; *_Change to default|_Ignore
 ;
 MSG_ER_LIB
-Αδυναμία ανοίγματος της απαιτούμενης '%s', έκδοση v%lu.%lu\n\nΠαρακαλώ βεβαιωθείτε ότι έχετε τουλάχιστον\nαυτή την μικρ 
+Αδυναμία ανοίγματος της απαιτούμενης '%s', έκδοση v%lu.%lu\n\nΠαρακαλώ βεβαιωθείτε ότι έχετε τουλάχιστον\nαυτή την μικρ
 ; Couldn't open required '%s', version v%lu.%lu\n\nPlease make sure you have at least this\nminimum version correctly installed.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
 ;
 MSG_ER_LIB_URL
-Αδυναμία ανοίγματος της απαιτούμενης '%s', έκδοση v%lu.%lu\n\nΠαρακαλώ επισκεφτείτε την διεύθυνση '%s',\nκατεβάστε την  
+Αδυναμία ανοίγματος της απαιτούμενης '%s', έκδοση v%lu.%lu\n\nΠαρακαλώ επισκεφτείτε την διεύθυνση '%s',\nκατεβάστε την
 ; Couldn't open required '%s', version v%lu.%lu\n\nPlease visit '%s',\ndownload the most recent version and make\nsure you have it correctly installed.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
 ;
 MSG_ER_NO_MCC
-Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΠαρακαλώ επισκεφτείτε την διεύθυνση'%s',\nκατ 
+Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΠαρακαλώ επισκεφτείτε την διεύθυνση'%s',\nκατ
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\nPlease visit '%s',\ndownload the most recent version and make\nsure you have it correctly installed.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_OLD
-Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΗ τρέχουσα εγκατεστημένη είναι η v%lu.%lu. Πα 
+Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΗ τρέχουσα εγκατεστημένη είναι η v%lu.%lu. Πα
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\nCurrently installed is v%lu.%lu. Please upgrade by downloading\nthe latest version from 's%'.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
@@ -7156,7 +7156,7 @@ MSG_AB_INVALIDSECURITY_TITLE
 ; Security warning
 ;
 MSG_AB_INVALIDSECURITY
-Αυτή η καταχώρηση του βιβλίου διευθύνσεων ορίστηκε προεπιλεγμένα\nνα είναι είτε υπογεγραμμένη και/ή κρυπτογραφημένη, αλλά η\nαπαραίτητη εγκατάσταση PGP δεν βρέθηκε.\n\nΘέλετε να επαναφέρετε τις προεπιλεγμένες\nρυθμίσεις ασφαλείας για αυτή την καταχώρηση; 
+Αυτή η καταχώρηση του βιβλίου διευθύνσεων ορίστηκε προεπιλεγμένα\nνα είναι είτε υπογεγραμμένη και/ή κρυπτογραφημένη, αλλά η\nαπαραίτητη εγκατάσταση PGP δεν βρέθηκε.\n\nΘέλετε να επαναφέρετε τις προεπιλεγμένες\nρυθμίσεις ασφαλείας για αυτή την καταχώρηση;
 ; This address book entry was set to default to\neither signed and/or encrypted messages, but the\nrequired PGP installation couldn't be found.\n\nDo you want to reset the default security\nsetting for this entry?
 ;
 MSG_AB_INVALIDSECURITY_GADS
@@ -7371,7 +7371,7 @@ MSG_ER_B64DEC_FILEIO
 ; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_WARN
-Βρέθηκαν μερικοί μη έγκυροι χαρακτήρες κατά την αποκωδικοποίηση Base64 μέρους του ΜΙΜΕ %ld του αρχείου αλληλογραφίας '%s'. Συνεπώς το δημιουργημένο αρχείο εξόδου μπορεί να περιέχει μη έγκυρα δεδομένα ή να είναι αλλοιωμένο.\n\nΑυτό μπορεί να προκλήθηκε από μια λανθασμένη κωδικοποίηση που έγινε από την εφαρμογή αποστολής αλληλογραφίας ή επειδή μέρος του Base64 έχει γίνει ακατάλληλο κατά την μεταφορά. 
+Βρέθηκαν μερικοί μη έγκυροι χαρακτήρες κατά την αποκωδικοποίηση Base64 μέρους του ΜΙΜΕ %ld του αρχείου αλληλογραφίας '%s'. Συνεπώς το δημιουργημένο αρχείο εξόδου μπορεί να περιέχει μη έγκυρα δεδομένα ή να είναι αλλοιωμένο.\n\nΑυτό μπορεί να προκλήθηκε από μια λανθασμένη κωδικοποίηση που έγινε από την εφαρμογή αποστολής αλληλογραφίας ή επειδή μέρος του Base64 έχει γίνει ακατάλληλο κατά την μεταφορά.
 ; Some invalid characters were found while Base64 decoding MIME part %ld of mail file '%s'. The generated output may therefore contain invalid data or may be corrupted.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the Base64 part has been malformed during transmission.
 ; PARTNR, MSGFILE
 ;
@@ -7418,7 +7418,7 @@ MSG_ER_THEME_FATAL
 ; YAM was unable to load the default theme and aborted the theme loading completly.\n\nPlease make sure that your themes directory is readable and contains the correct default theme distributed with YAM.
 ;
 MSG_ER_THEME_FALLBACK
-Το τρέχων ενεργό θέμα '%s' είναι είτε μη προσπελάσιμο ή αλλοιωμένο. Συνεπώς ενεργοποιήθηκε το προεπιλεγμένο θέμα αντί αυτόυ.\n\nΒεβαιωθείτε ότι το επιλεγμένο θέμα είναι αναγνώσιμο και ένα έγκυρο θέμα ΥΑΜ. 
+Το τρέχων ενεργό θέμα '%s' είναι είτε μη προσπελάσιμο ή αλλοιωμένο. Συνεπώς ενεργοποιήθηκε το προεπιλεγμένο θέμα αντί αυτόυ.\n\nΒεβαιωθείτε ότι το επιλεγμένο θέμα είναι αναγνώσιμο και ένα έγκυρο θέμα ΥΑΜ.
 ; The currently activated theme '%s' is either inaccesible or it is corrupt. The default theme was therefore activated as a fallback.\n\nPlease make sure your selected theme is readable and a valid YAM theme.
 ;
 MSG_ER_THEME_ACTIVATED_TITLE
@@ -7593,8 +7593,8 @@ MSG_HELP_WR_PO_CHARSET
 ; Use the popup button to select the character set\nyou would like YAM to use for this mail. This\ndefaults to the global character set.
 ;
 MSG_ABOUTYAM
-Περί YAM
-; About YAM
+Περί YAM...
+; About YAM...
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Αδύνατη η σύνδεση με τον κόμβο '%s' του λογαριασμού '%s'.\n\nΜια σύνδεση TCP/IP φαίνεται να είναι ήδη ενεργή. Κλείστε όλες τις άλλες υπάρχουσες μεταφορές.

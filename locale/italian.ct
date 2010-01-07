@@ -3445,8 +3445,8 @@ Cosa si desidera fare?
 ; What do you want to do?
 ;
 MSG_RE_SaveMessage
-Salva il messaggio
-; Save message
+Salva il messaggio...
+; Save message...
 ;
 MSG_RE_PrintMsg
 Stampa messaggio
@@ -9447,8 +9447,8 @@ set di caratteri globale.
 ; defaults to the global character set.
 ;
 MSG_ABOUTYAM
-Informazioni su YAM
-; About YAM
+Informazioni su YAM...
+; About YAM...
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Impossibile connettersi all'host '%s' dell'account '%s'.\n\

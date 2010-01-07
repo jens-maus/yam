@@ -2502,7 +2502,7 @@ a return receipt.\n\
 What do you want to do?
 ;
 MSG_RE_SaveMessage (827//)
-Save message
+Save message...
 ;
 MSG_RE_PrintMsg (829//)
 Print message
@@ -6643,7 +6643,7 @@ you would like YAM to use for this mail. This\n\
 defaults to the global character set.
 ;
 MSG_ABOUTYAM (2086//)
-About YAM
+About YAM...
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3 (2087//)
 Couldn't connect to host '%s' of account '%s'.\n\

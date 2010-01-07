@@ -3379,7 +3379,7 @@ eine Empfangsbestätigung erhalten.\n\
 Wie wollen Sie reagieren?
 ;
 MSG_RE_SaveMessage
-Nachricht speichern
+Nachricht speichern...
 ;
 MSG_RE_PrintMsg
 Nachricht drucken
@@ -3824,7 +3824,7 @@ für das neue Archiv ein
 ;
 MSG_WR_InsertFile
 Datei einfügen
-; Insert file...
+; Insert file
 ;
 ;
 ; Module WR - Hooks
@@ -8279,7 +8279,7 @@ verwenden soll. Standardmäßig wird die globale\n\
 Zeichenkodierung verwendet.
 ;
 MSG_ABOUTYAM
-Über YAM
+Über YAM...
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Verbindung zu '%s' von Konto '%s' konnte nicht aufgebaut werden.\n\
