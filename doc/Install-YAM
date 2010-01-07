@@ -536,7 +536,7 @@
 )
 
 ; italian catalog file
-(if (bitand Catalog_lang #def_lang_italiano)
+(if (bitand Catalog_lang #def_lang_italian)
    (
       (makedir (tackon Cat_dir #cat_name_italian))
 
@@ -555,6 +555,18 @@
       (copyfiles (source "/Catalogs/french")
          (choices "YAM.catalog")
          (dest (tackon Cat_dir #cat_name_french))
+      )
+   )
+)
+
+; greek catalog file
+(if (bitand Catalog_lang #def_lang_greek)
+   (
+      (makedir (tackon Cat_dir #cat_name_greek))
+
+      (copyfiles (source "/Catalogs/greek")
+         (choices "YAM.catalog")
+         (dest (tackon Cat_dir #cat_name_greek))
       )
    )
 )
