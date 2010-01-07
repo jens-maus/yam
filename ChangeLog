@@ -9,6 +9,7 @@ $URL$
 
   * locale/misc: updated all translations to get rid of the "trailing ellipsis"
     warnings of FlexCat. I hope all string conform to C='s style guide now.
+  * doc/Install-YAM: added copying of greek catalog to the install script.
 
 2010-01-06 Thore Böckelmann <tboeckel@gmx.de>
 

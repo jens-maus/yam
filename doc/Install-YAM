@@ -1,5 +1,5 @@
 ;
-; $VER: Installer script 1.7 for YAM 2.5 (21.12.2007) (c) 2000-2007 by YAM Open Source Team
+; $VER: Installer script 1.8 for YAM 2.6 (07.01.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -7,25 +7,26 @@
 ;
 ;
 ; /// Setting up
-(set #def_lang_English              0)
-(set #def_lang_Deutsch              1)
-(set #def_lang_Svenska              2)
-(set #def_lang_Czech                4)
-(set #def_lang_Italiano             8)
-(set #def_lang_French              16)
+(set #def_lang_english              0)
+(set #def_lang_german               1)
+(set #def_lang_swedish              2)
+(set #def_lang_czech                4)
+(set #def_lang_italian              8)
+(set #def_lang_french              16)
+(set #def_lang_greek               32)
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only OS4 can handle them.
-(set #def_lang_English_British     32)
+(set #def_lang_english_british     64)
 
-(set #def_doc_English               0)
-;(set #def_doc_French               1)
-;(set #def_doc_Italian              2)
+(set #def_doc_english               0)
+;(set #def_doc_french               1)
+;(set #def_doc_italian              2)
 ; ///
 
 ;----------------------------------------------------------------------------
 ;/// ***** English
-(set #def_cat_lang #def_lang_English)
-(set #def_doc_lang #def_doc_English)
+(set #def_cat_lang #def_lang_english)
+(set #def_doc_lang #def_doc_english)
 (set #wrongOS  "YAM needs at least AmigaOS 3.0 to run!\n")
 (set #wrongMUI "YAM needs at least MUI 3.8 to run!\n")
 (set #wrongCPU "YAM needs at least a 68020 CPU to run!\n")
@@ -40,15 +41,15 @@
                                "YAM 2.4 installation)\n"
                                "\n"
                                "The mail naming scheme has been changed completely.\n"
-                               "When you run YAM 2.5 for the first time all your\n"
+                               "When you run YAM 2.6 for the first time all your\n"
                                "existing mails will be converted automatically to\n"
                                "the new scheme. After that YAM 2.4 will not be able\n"
                                "to handle them anymore\n"
                                "So better backup ALL your mails BEFORE running\n"
-                               "YAM 2.5.\n"
+                               "YAM 2.6.\n"
                                "\n"
                                "However, it is absolutely NO problem to install"
-                               "YAM 2.4 and YAM 2.5 in separate directories."))
+                               "YAM 2.4 and YAM 2.6 in separate directories."))
 (set #faq_and_bugtracker (cat "\n"
                               "If you have any questions concerning YAM\n"
                               "you can ask these in the YAM forum:\n"
@@ -74,7 +75,7 @@
 ; /// ***** Deutsch
 (if (= @language "deutsch")
 (
-(set #def_cat_lang #def_lang_Deutsch)
+(set #def_cat_lang #def_lang_german)
 (set #wrongOS  "YAM benötigt AmigaOS 3.0 oder höher\n")
 (set #wrongMUI "YAM benötigt MUI 3.8 oder höher\n")
 (set #wrongCPU "YAM läuft nur ab einer 68020 CPU\n")
@@ -101,12 +102,12 @@
                                "YAM 2.4 updaten wollen)\n"
                                "\n"
                                "Das Namensformat der EMail-Dateien wurde grundlegend geändert.\n"
-                               "Wenn Sie YAM 2.5 zum ersten Mal starten werden alle Ihre EMails\n"
+                               "Wenn Sie YAM 2.6 zum ersten Mal starten werden alle Ihre EMails\n"
                                "automatisch auf das neue Namensformat konvertiert. Danach\n"
                                "können sie NICHT mehr von YAM 2.4 verarbeitet werden.\n"
-                               "Machen Sie also besser ein Backup BEVOR Sie YAM 2.5 starten.\n"
+                               "Machen Sie also besser ein Backup BEVOR Sie YAM 2.6 starten.\n"
                                "\n"
-                               "Es ist absolut KEIN Problem YAM 2.4 und YAM 2.5 in unter-\n"
+                               "Es ist absolut KEIN Problem YAM 2.4 und YAM 2.6 in unter-\n"
                                "schiedlichen Verzeichnissen zu installieren."))
 (set #done_1   (cat "\n"
                     "YAM wurde erfolgreich installiert.\n"
@@ -122,7 +123,7 @@
 ; /// ***** Svenska
 (if (= @language "svenska")
 (
-(set #def_cat_lang #def_lang_Svenska)
+(set #def_cat_lang #def_lang_swedish)
 (set #wrongOS  "YAM kräver AmigaOS 3.0 eller senare\n")
 (set #wrongMUI "YAM kräver MUI 3.8 eller senare\n")
 (set #wrongCPU "YAM kräver 68020 processor eller bättre\n")
@@ -137,14 +138,14 @@
                                "YAM 2.4 installation)\n"
                                "\n"
                                "Namn schemat för mailfilerna har ändrats totalt.\n"
-                               "När du kör YAM 2.5 för första gången, kommer alla\n"
+                               "När du kör YAM 2.6 för första gången, kommer alla\n"
                                "dina nuvarande mailfiler att konverteras automatiskt till\n"
                                "det nya schemat. Efter det kommer inte YAM 2.4 att kunna\n"
                                "hantera dem längre.\n"
-                               "Så, backa upp ALLA dina mailfiler FÖRE du kör YAM 2.5.\n"
+                               "Så, backa upp ALLA dina mailfiler FÖRE du kör YAM 2.6.\n"
                                "\n"
                                "Men, det är absolut INGA problem att installera\n"
-                               "YAM 2.4 och YAM 2.5 i separata kataloger."))
+                               "YAM 2.4 och YAM 2.6 i separata kataloger."))
 (set #faq_and_bugtracker (cat "\n"
                               "Om du har några frågor rörande YAM\n"
                               "kan du fråga dessa i YAM's forum:\n"
@@ -171,7 +172,7 @@
 ; /// ***** Français
 (if (= @language "français")
 (
-(set #def_cat_lang #def_lang_French)
+(set #def_cat_lang #def_lang_french)
 (set #wrongOS  "YAM nécessite au moins AmigaOS 3.0 pour fonctionner !\n")
 (set #wrongMUI "YAM nécessite au moins MUI 3.8 pour fonctionner !\n")
 (set #wrongCPU "YAM nécessite au moins un processeur 68020 pour fonctionner !\n")
@@ -186,14 +187,14 @@
                                "existante de YAM 2.4)\n"
                                "\n"
                                "Le schéma de nommage des messages a complètement changé.\n"
-                               "Lorsque vous lancez YAM 2.5 pour la première fois, tous vos\n"
+                               "Lorsque vous lancez YAM 2.6 pour la première fois, tous vos\n"
                                "messages existants seront automatiquement convertis. Après\n"
                                "cela YAM 2.4 ne pourra plus les gérer.\n"
                                "Vous devriez donc faire une sauvegarde de TOUS vos messages\n"
-                               "AVANT de lancer YAM 2.5.\n"
+                               "AVANT de lancer YAM 2.6.\n"
                                "\n"
                                "Cependant, il n'y a absolument AUCUN problème à installer\n"
-                               "YAM 2.4 et 2.5 dans des répertoires différents."))
+                               "YAM 2.4 et 2.6 dans des répertoires différents."))
 (set #faq_and_bugtracker (cat "\n"
                               "Si vous avez des questions concernant YAM\n"
                               "vous pouvez les poser sur le forum :\n"
@@ -220,7 +221,7 @@
 ; /// ***** Czech
 (if (= @language "czech")
 (
-(set #def_cat_lang #def_lang_Czech)
+(set #def_cat_lang #def_lang_czech)
 (set #wrongOS  "YAM vy¾aduje AmigaOS 3.0 nebo novìj¹í!\n")
 (set #wrongMUI "YAM vy¾aduje MUI 3.8 nebo novìj¹í!\n")
 (set #wrongCPU "YAM vy¾aduje minimálnì procesor 68020!\n")
@@ -237,11 +238,11 @@
                                "byl v nové verzi úplnì pøepracován. Pøi prvním spu¹tìní\n"
                                "budou v¹echny zprávy automaticky pøevedeny do nového\n"
                                "systému a pak u¾ je nebude mo¾né pou¾ívat v YAM 2.4!\n"
-                               "Je¹tì PØED spu¹tìním verze 2.5 nebo novìj¹í proto\n"
+                               "Je¹tì PØED spu¹tìním verze 2.6 nebo novìj¹í proto\n"
                                "dùraznì doporuèujeme zazálohovat V©ECHNY zprávy.\n"
                                "\n"
                                "Pozn.: Pokud chcete, technicky není ¾ádný problém\n"
-                               "nainstalovat a pou¾ívat YAM 2.4 a YAM 2.5 ve dvou\n"
+                               "nainstalovat a pou¾ívat YAM 2.4 a YAM 2.6 ve dvou\n"
                                "rùzných adresáøích."))
 (set #faq_and_bugtracker (cat "\n"
                               "Máte-li jakékoli dotazy ohlednì programu YAM,\n"
@@ -268,7 +269,7 @@
 ; /// ***** Italiano
 (if (= @language "italiano")
 (
-(set #def_cat_lang #def_lang_Italiano)
+(set #def_cat_lang #def_lang_italian)
 (set #wrongOS  "YAM richiede almeno AmigaOS 3.0 per girare correttamente!\n")
 (set #wrongMUI "YAM richiede almeno MUI 3.8 per girare correttamente!\n")
 (set #wrongCPU "YAM richiede almeno una CPU 68020 per girare correttamente!\n")
@@ -354,20 +355,22 @@
 (if os4
   ; OS4 does use english locale names only
   (
-    (set #cat_name_Deutsch               "german")
-    (set #cat_name_Svenska               "swedish")
-    (set #cat_name_Czech                 "czech")
-    (set #cat_name_Italiano              "italian")
-    (set #cat_name_Francais              "french")
-    (set #cat_name_English_British       "english-british")
+    (set #cat_name_german                "german")
+    (set #cat_name_swedish               "swedish")
+    (set #cat_name_czech                 "czech")
+    (set #cat_name_italian               "italian")
+    (set #cat_name_french                "french")
+    (set #cat_name_greek                 "greek")
+    (set #cat_name_english_british       "english-british")
   )
   ; OS3 and MOS use localized locale names
   (
-    (set #cat_name_Deutsch               "deutsch")
-    (set #cat_name_Svenska               "svenska")
-    (set #cat_name_Czech                 "czech")
-    (set #cat_name_Italiano              "italiano")
-    (set #cat_name_Francais              "français")
+    (set #cat_name_german                "deutsch")
+    (set #cat_name_swedish               "svenska")
+    (set #cat_name_czech                 "czech")
+    (set #cat_name_italian               "italiano")
+    (set #cat_name_french                "français")
+    (set #cat_name_greek                 "greek")
   )
 )
 
@@ -405,6 +408,7 @@
                   "Czech"
                   "Italiano"
                   "Français"
+                  "Greek"
                   "English (british)"
          )
          (default #def_cat_lang)
@@ -420,6 +424,7 @@
                   "Czech"
                   "Italiano"
                   "Français"
+                  "Greek"
          )
          (default #def_cat_lang)
       )
@@ -437,7 +442,7 @@
       ; create the directory
       (makedir YAM_dir)
       ; copy the directory icon
-      (copyfiles (source "//YAM 2.5.info")
+      (copyfiles (source "//YAM 2.6.info")
                  (dest (tackon YAM_dir "/"))
                  (newname "YAM.info")
                  (infos)
@@ -495,61 +500,61 @@
 )
 
 ; german catalog file
-(if (bitand Catalog_lang #def_lang_Deutsch)
+(if (bitand Catalog_lang #def_lang_german)
    (
-      (makedir (tackon Cat_dir #cat_name_Deutsch))
+      (makedir (tackon Cat_dir #cat_name_german))
 
       (copyfiles (source "/Catalogs/german")
          (choices "YAM.catalog")
-         (dest (tackon Cat_dir #cat_name_Deutsch))
+         (dest (tackon Cat_dir #cat_name_german))
       )
    )
 )
 
 ; swedish catalog file
-(if (bitand Catalog_lang #def_lang_Svenska)
+(if (bitand Catalog_lang #def_lang_swedish)
    (
-      (makedir (tackon Cat_dir #cat_name_Svenska))
+      (makedir (tackon Cat_dir #cat_name_swedish))
 
       (copyfiles (source "/Catalogs/swedish")
          (choices "YAM.catalog")
-         (dest (tackon Cat_dir #cat_name_Svenska))
+         (dest (tackon Cat_dir #cat_name_swedish))
       )
    )
 )
 
 ; czech catalog file
-(if (bitand Catalog_lang #def_lang_Czech)
+(if (bitand Catalog_lang #def_lang_czech)
    (
-      (makedir (tackon Cat_dir #cat_name_Czech))
+      (makedir (tackon Cat_dir #cat_name_czech))
 
       (copyfiles (source "/Catalogs/czech")
          (choices "YAM.catalog")
-         (dest (tackon Cat_dir #cat_name_Czech))
+         (dest (tackon Cat_dir #cat_name_czech))
       )
    )
 )
 
 ; italian catalog file
-(if (bitand Catalog_lang #def_lang_Italiano)
+(if (bitand Catalog_lang #def_lang_italiano)
    (
-      (makedir (tackon Cat_dir #cat_name_Italiano))
+      (makedir (tackon Cat_dir #cat_name_italian))
 
       (copyfiles (source "/Catalogs/italian")
          (choices "YAM.catalog")
-         (dest (tackon Cat_dir #cat_name_Italiano))
+         (dest (tackon Cat_dir #cat_name_italian))
       )
    )
 )
 
 ; french catalog file
-(if (bitand Catalog_lang #def_lang_Francais)
+(if (bitand Catalog_lang #def_lang_french)
    (
-      (makedir (tackon Cat_dir #cat_name_Francais))
+      (makedir (tackon Cat_dir #cat_name_french))
 
       (copyfiles (source "/Catalogs/french")
          (choices "YAM.catalog")
-         (dest (tackon Cat_dir #cat_name_Francais))
+         (dest (tackon Cat_dir #cat_name_french))
       )
    )
 )
@@ -558,13 +563,13 @@
 ; NOTE: only OS4 supports these!!
 (if os4
    ; english-british catalog file
-   (if (bitand Catalog_lang #def_lang_English_British)
+   (if (bitand Catalog_lang #def_lang_english_british)
       (
-         (makedir (tackon Cat_dir #cat_name_English_British))
+         (makedir (tackon Cat_dir #cat_name_english_british))
 
          (copyfiles (source "/Catalogs/english-british")
             (choices "YAM.catalog")
-            (dest (tackon Cat_dir #cat_name_English_British))
+            (dest (tackon Cat_dir #cat_name_english_british))
          )
       )
    )
