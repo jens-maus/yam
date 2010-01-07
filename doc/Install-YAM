@@ -11,15 +11,15 @@
 (set #def_lang_Deutsch              1)
 (set #def_lang_Svenska              2)
 (set #def_lang_Czech                4)
-(set #def_lang_Italiano             5)
+(set #def_lang_Italiano             8)
+(set #def_lang_French              16)
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only OS4 can handle them.
-(set #def_lang_English_British      8)
-;(set #def_lang_French             16) I don't know if this is the right place to add it
+(set #def_lang_English_British     32)
 
 (set #def_doc_English               0)
-;(set #def_doc_French               1) I don't know if this is the right place
-;(set #def_doc_Italian              2) I don't know if this is the right place
+;(set #def_doc_French               1)
+;(set #def_doc_Italian              2)
 ; ///
 
 ;----------------------------------------------------------------------------
@@ -61,9 +61,14 @@
                               "In case you find a bug in YAM, please,\n"
                               "report it in the YAM bugtracker:\n"
                               "http://bugs.yam.ch/"))
-(set #done_1   (cat "\nYAM has been successfully installed.\n\n"
+(set #done_1   (cat "\n"
+                    "YAM has been successfully installed.\n"
+                    "\n"
                     "Double click the \"YAM\" icon in the\n"))
-(set #done_2        "\ndirectory to taste it.\n\nHave fun...")
+(set #done_2   (cat "\n"
+                    "directory to taste it.\n"
+                    "\n"
+                    "Have fun..."))
 
 ; ///
 ; /// ***** Deutsch
@@ -103,9 +108,14 @@
                                "\n"
                                "Es ist absolut KEIN Problem YAM 2.4 und YAM 2.5 in unter-\n"
                                "schiedlichen Verzeichnissen zu installieren."))
-(set #done_1   (cat "\nYAM wurde erfolgreich installiert.\n\n"
+(set #done_1   (cat "\n"
+                    "YAM wurde erfolgreich installiert.\n"
+                    "\n"
                     "Klicken Sie auf das \"YAM\"-Icon im Verzeichnis\n"))
-(set #done_2        "\nund es kann losgehen.\n\nViel Spass!")
+(set #done_2   (cat "\n"
+                    "und es kann losgehen.\n"
+                    "\n"
+                    "Viel Spass!"))
 )
 )
 ; ///
@@ -147,19 +157,21 @@
                               "Om du skulle hitta en bugg i YAM, var god\n"
                               "rapportera det i YAM's buggtracker:\n"
                               "http://bugs.yam.ch/"))
-(set #done_1   (cat "\nYAM installerades utan problem\n\n"
+(set #done_1   (cat "\n"
+                    "YAM installerades utan problem\n"
+                    "\n"
                     "Klicka på \"YAM\"-ikonen i katalogen\n"))
-(set #done_2        "\nför att pröva det.\n\nHa det så bra!")
+(set #done_2   (cat "\n"
+                    "för att pröva det.\n"
+                    "\n"
+                    "Ha det så bra!"))
 )
 )
 ; ///
 ; /// ***** Français
 (if (= @language "français")
 (
-;(set #def_cat_lang #def_doc_French) uncomment when french variables are activated
-(set #def_cat_lang #def_doc_English)
-;(set #def_doc_lang #def_doc_French) uncomment when french variables are activated
-(set #def_doc_lang #def_doc_English)
+(set #def_cat_lang #def_lang_French)
 (set #wrongOS  "YAM nécessite au moins AmigaOS 3.0 pour fonctionner !\n")
 (set #wrongMUI "YAM nécessite au moins MUI 3.8 pour fonctionner !\n")
 (set #wrongCPU "YAM nécessite au moins un processeur 68020 pour fonctionner !\n")
@@ -194,15 +206,21 @@
                               "Si vous trouvez un bug dans YAM, veuillez\n"
                               "le rapporter dans le suivi d'anomalies :\n"
                               "http://bugs.yam.ch/"))
-(set #done_1   (cat "\nYAM a été installé avec succés.\n\n"
+(set #done_1   (cat "\n"
+                    "YAM a été installé avec succés.\n"
+                    "\n"
                     "Double-cliquez the sur l'icône « YAM » dans\n"))
-(set #done_2        "\nle répertoire pour le tester.\n\nAmusez-vous bien...")
+(set #done_2   (cat "\n"
+                    "le répertoire pour le tester.\n"
+                    "\n"
+                    "Amusez-vous bien..."))
 )
 )
 ; ///
-;/// ***** Czech
+; /// ***** Czech
+(if (= @language "czech")
+(
 (set #def_cat_lang #def_lang_Czech)
-(set #def_doc_lang #def_doc_English)
 (set #wrongOS  "YAM vy¾aduje AmigaOS 3.0 nebo novìj¹í!\n")
 (set #wrongMUI "YAM vy¾aduje MUI 3.8 nebo novìj¹í!\n")
 (set #wrongCPU "YAM vy¾aduje minimálnì procesor 68020!\n")
@@ -236,14 +254,21 @@
                               "\n"
                               "Pokud najdete chybu, dejte nám prosím vìdìt:\n"
                               "http://bugs.yam.ch/"))
-(set #done_1   (cat "\nInstalace programu YAM byla úspì¹nì dokonèena.\n\n"
+(set #done_1   (cat "\n"
+                    "Instalace programu YAM byla úspì¹nì dokonèena.\n"
+                    "\n"
                     "Nyní vyhledejte ikonu \"YAM\" v adresáøi\n"))
-(set #done_2        "\n a dvojím kliknutím program spus»te.\n\nA» se Vám líbí...")
-
+(set #done_2   (cat "\n"
+                    "a dvojím kliknutím program spus»te.\n"
+                    "\n"
+                    "A» se Vám líbí..."))
+)
+)
 ; ///
-;/// ***** Italiano
+; /// ***** Italiano
+(if (= @language "italiano")
+(
 (set #def_cat_lang #def_lang_Italiano)
-(set #def_doc_lang #def_doc_Italian)
 (set #wrongOS  "YAM richiede almeno AmigaOS 3.0 per girare correttamente!\n")
 (set #wrongMUI "YAM richiede almeno MUI 3.8 per girare correttamente!\n")
 (set #wrongCPU "YAM richiede almeno una CPU 68020 per girare correttamente!\n")
@@ -255,13 +280,15 @@
 (set #no_way_back_warning (cat "\n"
                                "ATTENZIONE!!\n"
                                "(Nel caso si desideri aggiornare il programma\n"
-                               "da una precedente installazione di YAM)\n\n"
-                               "Lo schema dei nomi dei messaggi è stato modificato, perciò quando verrà lanciata"
-                               " questa nuova versione per la prima volta tutti i precedenti messaggi verranno"
-                               " automaticamente convertiti al nuovo schema.\n"
-                               "Si consiglia di effettuare un backup di TUTTI i messaggi PRIMA di procedere.\n\n"
-                               "Ricorda che è sempre possibile installare due differenti versioni di YAM"
-                               " in directory separate."))
+                               "da una precedente installazione di YAM)\n"
+                               "\n"
+                               "Lo schema dei nomi dei messaggi è stato modificato, perciò quando verrà lanciata\n"
+                               "questa nuova versione per la prima volta tutti i precedenti messaggi verranno\n"
+                               "automaticamente convertiti al nuovo schema.\n"
+                               "Si consiglia di effettuare un backup di TUTTI i messaggi PRIMA di procedere.\n"
+                               "\n"
+                               "Ricorda che è sempre possibile installare due differenti versioni di YAM\n"
+                               "in directory separate."))
 (set #faq_and_bugtracker (cat "\n"
                               "Nel caso si abbiano delle domande concernenti YAM ed il suo sviluppo\n"
                               "potete contattarci attraverso il nostro forum all'indirizzo internet:\n"
@@ -274,9 +301,16 @@
                               "Nel caso venga riscontrato qualche bug o problema su YAM,\n"
                               "potete segnalarcelo attraverso il nostro bugtracker all'indirizzo:\n"
                               "http://bugs.yam.ch/"))
-(set #done_1   (cat "\nYAM è stato installato con successo!\n\n"
+(set #done_1   (cat "\n"
+                    "YAM è stato installato con successo!\n"
+                    "\n"
                     "Doppio click sull'icona di \"YAM\" nella directory\n"))
-(set #done_2        "\nin modo da poter avviare il programma.\n\nBuon divertimento...")
+(set #done_2   (cat "\n"
+                    "in modo da poter avviare il programma.\n"
+                    "\n"
+                    "Buon divertimento..."))
+)
+)
 ; ///
 
 ;----------------------------------------------------------------------------
@@ -324,6 +358,7 @@
     (set #cat_name_Svenska               "swedish")
     (set #cat_name_Czech                 "czech")
     (set #cat_name_Italiano              "italian")
+    (set #cat_name_Francais              "french")
     (set #cat_name_English_British       "english-british")
   )
   ; OS3 and MOS use localized locale names
@@ -332,6 +367,7 @@
     (set #cat_name_Svenska               "svenska")
     (set #cat_name_Czech                 "czech")
     (set #cat_name_Italiano              "italiano")
+    (set #cat_name_Francais              "français")
   )
 )
 
@@ -368,6 +404,7 @@
                   "Svenska"
                   "Czech"
                   "Italiano"
+                  "Français"
                   "English (british)"
          )
          (default #def_cat_lang)
@@ -382,6 +419,7 @@
                   "Svenska"
                   "Czech"
                   "Italiano"
+                  "Français"
          )
          (default #def_cat_lang)
       )
@@ -480,18 +518,6 @@
    )
 )
 
-; english-british catalog file
-(if (bitand Catalog_lang #def_lang_English_British)
-   (
-      (makedir (tackon Cat_dir #cat_name_English_British))
-
-      (copyfiles (source "/Catalogs/english-british")
-         (choices "YAM.catalog")
-         (dest (tackon Cat_dir #cat_name_English_British))
-      )
-   )
-)
-
 ; czech catalog file
 (if (bitand Catalog_lang #def_lang_Czech)
    (
@@ -512,6 +538,34 @@
       (copyfiles (source "/Catalogs/italian")
          (choices "YAM.catalog")
          (dest (tackon Cat_dir #cat_name_Italiano))
+      )
+   )
+)
+
+; french catalog file
+(if (bitand Catalog_lang #def_lang_Francais)
+   (
+      (makedir (tackon Cat_dir #cat_name_Francais))
+
+      (copyfiles (source "/Catalogs/french")
+         (choices "YAM.catalog")
+         (dest (tackon Cat_dir #cat_name_Francais))
+      )
+   )
+)
+
+; new the accent languages follow
+; NOTE: only OS4 supports these!!
+(if os4
+   ; english-british catalog file
+   (if (bitand Catalog_lang #def_lang_English_British)
+      (
+         (makedir (tackon Cat_dir #cat_name_English_British))
+
+         (copyfiles (source "/Catalogs/english-british")
+            (choices "YAM.catalog")
+            (dest (tackon Cat_dir #cat_name_English_British))
+         )
       )
    )
 )
