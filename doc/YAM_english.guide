@@ -48,11 +48,11 @@
 
 
             @{b}=============================================
-             Y A M    (Yet Another Mailer)   VERSION 2.5
+             Y A M    (Yet Another Mailer)   VERSION 2.6
             =============================================@{ub}
 
                       © 1995-2000 by Marcel Beck
-                 © 2000-2007 by YAM Open Source Team
+                 © 2000-2010 by YAM Open Source Team
 
 
       @{" Legal stuff     " link "COPY"}  - Legal information
@@ -263,15 +263,15 @@ Installation
 ============
 
 
-   YAM 2.5 is distributed in three LhA archives:
+   YAM 2.6 is distributed in three LhA archives:
 
-@{b}YAM25-AmigaOS4.lha@{ub}
+@{b}YAM26-AmigaOS4.lha@{ub}
      YAM for AmigaOS 4
 
-@{b}YAM25-AmigaOS3.lha@{ub}
+@{b}YAM26-AmigaOS3.lha@{ub}
      YAM for AmigaOS 3
 
-@{b}YAM25-MorphOS.lha@{ub}
+@{b}YAM26-MorphOS.lha@{ub}
      YAM for MorphOS
 
 
@@ -281,7 +281,7 @@ Installation by using the installer
    Open the 'Install' folder, double-click the 'Install-YAM' icon and
 follow the instructions given by the installer.  If you have already
 installed an older version of YAM, please restart your Amiga after the
-installation of YAM 2.5.
+installation of YAM 2.6.
 
 
 Manual installation
@@ -290,7 +290,7 @@ Manual installation
    If you don't have the Amiga Installer or for some reason you are
 unable or unwilling to use it, proceed as follows:
 
-- Copy the whole "YAM 2.5" directory path to your destination directory.
+- Copy the whole "YAM 2.6" directory path to your destination directory.
 
 - Copy all MUI libraries (mcc/mcp) from the directory @{b}Install/MUI@{ub} to
   @{b}MUI:libs/MUI@{ub}.
@@ -298,7 +298,7 @@ unable or unwilling to use it, proceed as follows:
 - Copy all Libraries located in the @{b}Install/Libs@{ub} directory to
   @{b}LIBS:@{ub}
 
-- Delete the "Install" directory within the "YAM 2.5" path as you don't
+- Delete the "Install" directory within the "YAM 2.6" path as you don't
   need it anymore.
 
 - Reboot your Amiga and start YAM from the new path by doubleclicking its
@@ -10693,7 +10693,7 @@ when they are supposed to be part of URLs, a number of Internet
 resources, entities and users keep using the "[]" braces in unencoded
 form, and this used to make YAM stop parsing an URL as soon as such
 characters were found, as in "<http://www.example.com/files[7]/myfile>".
-As a workaround for this problem, YAM 2.5 takes these characters as
+As a workaround for this problem, YAM 2.6 takes these characters as
 part of the URL.
 
    Parenthesis are allowed in URLs in unencoded form, which again
@@ -10915,7 +10915,7 @@ points:
 
       2. Try your best to enter a meaningful "Short description" of the
          problem.  *Don't forget* to state the version of YAM to whom this
-         applies, i.e. use a template like "2.5: Doing xyz crashes YAM".
+         applies, i.e. use a template like "2.6: Doing xyz crashes YAM".
 
       3. Do not hesitate to be descriptive in your report, giving a
          step-by-step guide on how to reproduce the problem and stating
@@ -11010,7 +11010,6 @@ Future plans
 
    - HTML read mail support [optional] (via htmlview.mcc)
    - IMAPv4 protocol support
-   - Unlimited write window support
    - Completly reworked address book GUI
    - Multiple user identity support (similar to Thunderbird)
    - GnuPG support (via gpgme interface)
@@ -11019,7 +11018,6 @@ Future plans
    - User-definable toolbars
    - Multiple SMTP server support
    - Rework and simplification of the mailing-list feature
-   - Creating an AROS port (under Zune)
 
 @endnode
 
@@ -11032,7 +11030,7 @@ Credits
 *******
 
 
-   The YAM 2.5 release was brought to you by:
+   The YAM 2.6 release was brought to you by:
 
       Jens Langner <Jens.Langner\@light-speed.de>
       Thore Boeckelmann <tboeckel\@gmx.de>

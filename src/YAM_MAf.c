@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2009 by YAM Open Source Team
+ Copyright (C) 2000-2010 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -511,8 +511,7 @@ BOOL MA_GetIndex(struct Folder *folder)
 
     // check that the folder is in a valid state for
     // getting the index
-    if(folder->LoadedMode != LM_VALID &&
-       folder->LoadedMode != LM_REBUILD)
+    if(folder->LoadedMode != LM_VALID && folder->LoadedMode != LM_REBUILD)
     {
       BOOL canLoadIndex;
 

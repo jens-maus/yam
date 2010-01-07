@@ -19,7 +19,7 @@
 **
 ** TheBar class Support Site: http://www.sf.net/projects/thebar
 **
-** $Id: TheBar_mcc.h 295 2009-05-23 12:02:04Z marust $
+** $Id: TheBar_mcc.h 332 2009-10-04 11:57:03Z thboeckel $
 ** $URL: https://thebar.svn.sourceforge.net/svnroot/thebar/trunk/include/mui/TheBar_mcc.h $
 **
 **/
@@ -87,6 +87,7 @@
 #define MUIM_TheBar_GetDragImage    (TBTAGBASE+12)  /* v11         */
 #define MUIM_TheBar_Notify          (TBTAGBASE+13)  /* v21         */
 #define MUIM_TheBar_KillNotify      (TBTAGBASE+14)  /* v21         */
+#define MUIM_TheBar_NoNotifySetAttr (TBTAGBASE+15)  /* v21         */
 
 /***********************************************************************/
 /*
@@ -104,8 +105,9 @@ struct MUIP_TheBar_Remove          { STACKED ULONG MethodID; STACKED ULONG ID; }
 struct MUIP_TheBar_GetDragImage    { STACKED ULONG MethodID; STACKED ULONG horiz; STACKED ULONG flags; };
 struct MUIP_TheBar_Notify          { STACKED ULONG MethodID; STACKED ULONG ID; STACKED Tag attr; STACKED ULONG value; STACKED Object *dest; STACKED ULONG followParams; /* ... */ };
 struct MUIP_TheBar_KillNotify      { STACKED ULONG MethodID; STACKED ULONG ID; STACKED Tag attr; STACKED Object *dest; };
+struct MUIP_TheBar_NoNotifySetAttr { STACKED ULONG MethodID; STACKED ULONG ID; STACKED Tag attr; STACKED ULONG value; };
 
-/* MUIM_TheBar_SetAttr, MUIM_TheBar_GetAttr attributes */
+/* MUIM_TheBar_SetAttr, MUIM_TheBar_NoNotifySetAttr, MUIM_TheBar_GetAttr attributes */
 #define MUIV_TheBar_Attr_Hide      (TBTAGBASE+0) /* v11 */
 #define MUIV_TheBar_Attr_Sleep     (TBTAGBASE+1) /* v11 */
 #define MUIV_TheBar_Attr_Disabled  (TBTAGBASE+2) /* v11 */

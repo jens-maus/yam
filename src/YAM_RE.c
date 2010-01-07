@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2009 by YAM Open Source Team
+ Copyright (C) 2000-2010 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -141,6 +141,8 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
   char path[SIZE_PATHFILE];
 
   ENTER();
+
+  D(DBF_MAIL, "export file '%s' to '%s' as '%s' with content-type '%s'", source, dest, name, ctype);
 
   win = rmData->readWindow ? rmData->readWindow : G->MA->GUI.WI;
   mail = rmData->mail;

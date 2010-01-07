@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2009 by YAM Open Source Team
+ Copyright (C) 2000-2010 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -5095,16 +5095,16 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
   path = ObtainSearchPath();
 
   if((success = SystemTags(cmd, SYS_Input,    in,
-                               SYS_Output,   out,
-                               #if defined(__amigaos4__)
-                               SYS_Error,    err,
-                               #endif
-                               NP_Name,      "YAM command process",
-                               NP_Path,      path,
-                               NP_StackSize, C->StackSize,
-                               NP_WindowPtr, -1,           // show no requesters at all
-                               SYS_Asynch,   asynch,
-                               TAG_DONE)) != 0)
+                                SYS_Output,   out,
+                                #if defined(__amigaos4__)
+                                SYS_Error,    err,
+                                #endif
+                                NP_Name,      "YAM command process",
+                                NP_Path,      path,
+                                NP_StackSize, C->StackSize,
+                                NP_WindowPtr, -1,           // show no requesters at all
+                                SYS_Asynch,   asynch,
+                                TAG_DONE)) != 0)
   {
     // an error occurred as SystemTags should always
     // return zero on success, no matter what.
