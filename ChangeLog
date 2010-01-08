@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-08  Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated the file and fixed all problems as reported by
+    flexcat, too.
+
 2010-01-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: all NListview objects are now forced to get a vertical scrollbars

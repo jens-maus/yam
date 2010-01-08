@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.38 (11.11.2008)
+## version $VER: YAM.catalog 6.40 (8.1.2010)
 ## language czech
 ## codeset 5
 ;
@@ -699,7 +699,7 @@ Up_ravit
 ; _Edit
 ;
 MSG_MA_TBMove
-Pøes_unout
+Pøes_un.
 ; _Move
 ;
 MSG_MA_TBDelete
@@ -715,15 +715,15 @@ _Nová
 ; _New
 ;
 MSG_MA_TBReply
-_Odpovìdìt
+_Odpov.
 ; _Reply
 ;
 MSG_MA_TBForward
-Pø_eposlat
+Pø_epos.
 ; For_ward
 ;
 MSG_MA_TBGetMail
-S_táhnout
+S_táhn.
 ; _Get
 ;
 MSG_MA_TBSendAll
@@ -731,7 +731,7 @@ Ode_slat
 ; _Send
 ;
 MSG_MA_TBFilter
-F_iltrovat
+F_iltr.
 ; F_ilter
 ;
 MSG_MA_TBFind
@@ -739,11 +739,11 @@ _Hledat
 ; _Find
 ;
 MSG_MA_TBAddrBook
-Kont_akty
+_Adresáø
 ; A_book
 ;
 MSG_MA_TBConfig
-Konfi_gurace
+Konfi_g.
 ; _Config
 ;
 ;
@@ -981,11 +981,11 @@ Dobrý den,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-;
+; 
 ;
 MSG_CO_AltRepPatternDef
 
-;
+; 
 ;
 MSG_CO_ForwardIntroDef
 *** zaèátek pøeposílané zprávy ***\\\\n\
@@ -1015,15 +1015,15 @@ S pozdravem
 ;
 MSG_CO_AltRepHelloDef
 
-;
+; 
 ;
 MSG_CO_AltRepByeDef
 
-;
+; 
 ;
 MSG_CO_MLRepHelloDef
 
-;
+; 
 ;
 MSG_CO_MLRepIntroDef
 Dne %c %n napsal:\\\\n
@@ -2009,7 +2009,7 @@ Po napsání zprávy
 ;
 MSG_CO_ScriptClickURL
 Dvojím kliknutím na odkaz
-; When double-clicking a URL
+; When double-clicking an URL
 ;
 MSG_CO_Script
 Sk_ript
@@ -3069,11 +3069,11 @@ S_mazat
 ; _Delete
 ;
 MSG_AB_TBPrint
-Tisk_nout
+Tisk_n.
 ; P_rint
 ;
 MSG_AB_TBOpenTree
-Ro_zbalit
+Ro_zbal.
 ; _Unfold
 ;
 MSG_AB_TBCloseTree
@@ -3682,7 +3682,7 @@ Textové styly?
 ; Module RE - Toolbar
 ;
 MSG_RE_TBPrev
-_Pøedchozí
+_Pøedch.
 ; _Prev
 ;
 MSG_RE_TBNext
@@ -3698,7 +3698,7 @@ _Návazná
 ; NextT_hr
 ;
 MSG_RE_TBDisplay
-Zo_brazit
+Zo_braz.
 ; _Display
 ;
 MSG_RE_TBSave
@@ -3706,7 +3706,7 @@ _Ulo¾it
 ; _Save
 ;
 MSG_RE_TBPrint
-T_isknout
+T_iskn.
 ; Pr_int
 ;
 MSG_RE_TBDelete
@@ -3714,15 +3714,15 @@ S_mazat
 ; De_lete
 ;
 MSG_RE_TBMove
-Pøe_sunout
+Pøe_sun.
 ; _Move
 ;
 MSG_RE_TBReply
-_Odpovìdìt
+_Odpov.
 ; _Reply
 ;
 MSG_RE_TBForward
-Pø_eposlat
+Pø_epos.
 ; For_ward
 ;
 ;
@@ -4021,7 +4021,7 @@ Vyjmout
 ; Cut
 ;
 MSG_WR_TBCopy
-Zkopírovat
+Zkopír.
 ; Copy
 ;
 MSG_WR_TBPaste
@@ -4041,7 +4041,7 @@ Kurzíva
 ; Italic
 ;
 MSG_WR_TBUnderlined
-Podtr¾ený
+Podtr¾.
 ; ULined
 ;
 MSG_WR_TBColored
@@ -4633,12 +4633,6 @@ Zadejte prosím polo¾ku 'alias'!
 MSG_ER_ErrorNoAddress
 Zadejte prosím polo¾ku 'adresa'!
 ; You must specify an address for this entry!
-;
-MSG_ER_ErrorDOBformat
-Formát data narození je neplatný. Správný formát: \
-DD-MMM-RRRR (názvy mìsícù v angliètinì)
-; Date of birth uses a wrong format. The correct format is \
-; DD-MMM-YYYY (month names in English).
 ;
 MSG_ER_ErrorDateFormat
 Neplatný formát data a èasu.\n\
@@ -6439,10 +6433,10 @@ Odeb_rat
 ; _Less
 ;
 MSG_MA_AUTOSAVEFOUND
-Byl nalezen soubor '%s', co¾ je automaticky\n\
-ulo¾ená zpráva z døívìj¹ka. Jeden z dùvodù tohoto\n\
-pøípadu mù¾e být zatuhnutí programu pøi posledním\n\
-spu¹tìní anebo nenadálý restart poèítaèe.\n\
+Byl nalezen soubor '%s'.\n\
+Jde o automaticky ulo¾enou zprávu z døívìj¹ka. Jeden\n\
+z dùvodù tohoto pøípadu mù¾e být zatuhnutí programu\n\
+pøi posledním spu¹tìní anebo nenadálý restart poèítaèe.\n\
 \n\
 Co chcete udìlat s touto zprávou?
 ; YAM has found an autosaved message file '%s'\n\
@@ -6687,7 +6681,7 @@ neumí zpracovat nastavené kódování '%s'.\n\
 \n\
 Co si pøejete udìlat?
 ; The charset configured for YAM is '%s' but isn't\n\
-; supported by the installed codesets.library version.\n\
+; supported by the installed version of codesets.library.\n\
 ; \n\
 ; How do you want to proceed?
 ; LOCALCHARSET
@@ -7404,7 +7398,7 @@ Sp_am
 ; Sp_am
 ;
 MSG_MA_TBNOTSPAM
-Není sp_am
+Ne sp_am
 ; N.Sp_am
 ;
 MSG_HELP_MA_BT_SPAM
@@ -7420,7 +7414,7 @@ Sp_am
 ; Sp_am
 ;
 MSG_RE_TBNOTSPAM
-Není sp_am
+Ne sp_am
 ; N.Sp_am
 ;
 MSG_HELP_RE_BT_SPAM
@@ -9597,4 +9591,60 @@ na pamì».
 MSG_CO_SPAM_STATISTICS
 %ld (%ld slov)
 ; %ld (%ld words)
+;
+MSG_ER_WRONG_DOB_FORMAT
+Formát data narození je neplatný. Pou¾ijte tento: '%s'.\
+%%d - den\n\
+%%m - mìsíc\n\
+%%y - rok (2 èíslice)\n\
+%%Y - rok (4 èíslice)\n\
+Rok narození musí být vìt¹í nebo roven 1900!
+; Date of birth uses a wrong format. The correct format is '%s'.\n\
+; %%d - day\n\
+; %%m - month\n\
+; %%y - year (2 digits)\n\
+; %%Y - year (4 digits)\n\
+; The year number must be greater or equal 1900!
+; DOBFORMAT
+;
+MSG_CO_PGPURL
+Veøejný klíè PGP
+; URL to public PGP key
+;
+MSG_HELP_CO_ST_PGPURL
+Definuje odkaz na vá¹ veøejný klíè PGP. Tato adresa\n\
+bude vlo¾ena do hlavièky ka¾dé odesílané zprávy.
+; You can specify an URL where your public\n\
+; PGP key can be downloaded from. This URL\n\
+; will then placed into a separate header\n\
+; entry in every mail.
+;
+MSG_TR_NEW_MAIL_NOTIFY
+Nová po¹ta! Poèet zpráv: %ld.
+; Received %ld new mails!
+; COUNT
+;
+MSG_CO_NOTIOS41SYSTEM
+Zapnout upozornìní dle AmigaOS_4.1
+; AmigaOS_4.1 notification system
+;
+MSG_HELP_CO_CH_NOTIOS41SYSTEM
+Informace o doruèení zpráv bude prezentována pomocí\n\
+standardních prostøedkù AmigaOS 4.1.\n\
+Vy¾aduje knihovnu application.library V53.2 nebo novìj¹í.
+; If checked, YAM will use AmigaOS4.1's notification\n\
+; system to notify the user about new received mails.\n\
+; This requires at least application.library V53.2.
+;
+MSG_NO_OPENURL_LIB
+Tato funkce vy¾aduje knihovnu openurl.library, která není\n\
+k dispozici.\n\
+Spus»te prohlí¾eè ruènì a zadejte do nìj tuto adresu:\n\
+'%s'
+; openurl.library not installed on your system.\n\
+; Thus YAM is not able to open the requested link itself.\n\
+; \n\
+; Please launch your internet browser yourself and enter this link:\n\
+; '%s'
+; URL
 ;
