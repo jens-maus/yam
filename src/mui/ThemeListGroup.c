@@ -142,6 +142,7 @@ OVERLOAD(OM_NEW)
 
             Child, NListviewObject,
               MUIA_CycleChain, TRUE,
+              MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_Always,
               MUIA_NListview_NList, themeListObject = NListObject,
                 InputListFrame,
                 MUIA_NList_Format,        "",

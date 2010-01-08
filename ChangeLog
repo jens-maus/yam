@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: all NListview objects are now forced to get a vertical scrollbars
+    attached, no matter if it is required at all or configured otherwise in the
+    NListview settings. This is meant to work around certain layout issues with
+    dynamically added scrollbars.
+
 2010-01-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/misc: updated all translations to get rid of the "trailing ellipsis"

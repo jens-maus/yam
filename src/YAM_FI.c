@@ -2296,6 +2296,7 @@ static struct FI_ClassData *FI_New(void)
              MUIA_VertWeight, 100,
              Child, NListviewObject,
                 MUIA_CycleChain, TRUE,
+                MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_Always,
                 MUIA_NListview_NList, data->GUI.LV_MAILS = MainMailListObject,
                    //MUIA_ObjectID,       MAKE_ID('N','L','0','3'),
                    MUIA_ContextMenu,    NULL,

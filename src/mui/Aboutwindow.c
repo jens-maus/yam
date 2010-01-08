@@ -188,6 +188,7 @@ OVERLOAD(OM_NEW)
   {
     infoObject = NListviewObject,
 
+      MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_Always,
       MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_Off,
       MUIA_NListview_NList, NFloattextObject,
         MUIA_Font,            MUIV_Font_Tiny,

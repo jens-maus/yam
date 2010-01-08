@@ -188,6 +188,7 @@ OVERLOAD(OM_NEW)
         Child, LLabel(bodyText),
         Child, NListviewObject,
           MUIA_CycleChain, TRUE,
+          MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_Always,
           MUIA_NListview_NList, listObj = NListObject,
             InputListFrame,
             MUIA_NList_Format,               "BAR,BAR,",

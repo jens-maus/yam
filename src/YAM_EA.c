@@ -899,6 +899,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
               Child, NListviewObject,
                  MUIA_CycleChain, 1,
                  MUIA_Listview_DragType, MUIV_Listview_DragType_Immediate,
+                 MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_Always,
                  MUIA_NListview_NList, data->GUI.LV_MEMBER = AddrBookEntryListObject,
                     InputListFrame,
                     MUIA_NList_DragSortable,  TRUE,
