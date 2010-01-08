@@ -1,8 +1,8 @@
-## version $VER: YAM.catalog 6.0 (29.06.2009)
+## version $VER: YAM.catalog 6.0 (08.01.2010)
 ## language français
 ## codeset 111
 ;
-## chunk AUTH Alexandre Balaban
+## chunk AUTH Alexandre Balaban/ATO-fr
 ; YAM.cd - YAM 2.5 catalog description file
 ; $Id$
 ;
@@ -982,11 +982,11 @@ Salut,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-;
+; 
 ;
 MSG_CO_AltRepPatternDef
 
-;
+; 
 ;
 MSG_CO_ForwardIntroDef
 *** Message retransmis ***\\\\n\
@@ -1016,15 +1016,15 @@ Mes salutations
 ;
 MSG_CO_AltRepHelloDef
 Bonjour,\\n
-;
+; 
 ;
 MSG_CO_AltRepByeDef
 
-;
+; 
 ;
 MSG_CO_MLRepHelloDef
 
-;
+; 
 ;
 MSG_CO_MLRepIntroDef
 Le %c, %n a écrit :\\\\n
@@ -2010,7 +2010,7 @@ Après avoir écrit un message
 ;
 MSG_CO_ScriptClickURL
 En double-cliquant sur une URL
-; When double-clicking a URL
+; When double-clicking an URL
 ;
 MSG_CO_Script
 Sc_ript
@@ -5522,7 +5522,7 @@ Affichage des messages...
 ; Displaying messages...
 ;
 MSG_BusyPGPrunning
-Opération PGP...
+Opération PGP en cours...
 ; PGP operation...
 ;
 MSG_BusyDecPrinting
@@ -7735,7 +7735,7 @@ de place sur le disque et qu'il n'est protégé en écriture.
 ; not write protected.
 ;
 MSG_MA_CHECKSPAM
-Appliquer le filtre des indésirables
+Filtrer les indésirables
 ; Apply spam filter
 ;
 MSG_FI_BUSYCHECKSPAM
@@ -8397,7 +8397,7 @@ tous les filtres utilisteur lui seront appliqués.
 ; defined filters will be applied to it.
 ;
 MSG_SHUTDOWN_SHUTTING_DOWN
-YAM Arrêt en cours...
+YAM en cours d'arrêt...
 ; Shutting down YAM...
 ;
 MSG_HELP_CO_CY_FOLDERINFO
@@ -9799,11 +9799,46 @@ URL vers la clef PGP publique
 ;
 MSG_HELP_CO_ST_PGPURL
 Vous pouvez spécifier une URL depuis laquelle\n\
-votre ckef PGP publique peut être téléchargée.\n\
+votre clef PGP publique peut être téléchargée.\n\
 Cette URL sera alors placée dans une entrée de\n\
 l'entête séparée dans chaque message.\n\
 ; You can specify an URL where your public\n\
 ; PGP key can be downloaded from. This URL\n\
 ; will then placed into a separate header\n\
 ; entry in every mail.
+;
+MSG_TR_NEW_MAIL_NOTIFY
+%ld nouveaux courriers reçus !
+; Received %ld new mails!
+;
+; COUNT
+;
+MSG_CO_NOTIOS41SYSTEM
+System de notification AmigaOS 4.1
+; AmigaOS_4.1 notification system
+;
+MSG_HELP_CO_CH_NOTIOS41SYSTEM
+Avec cette option, YAM utilisera le système de\n\
+notification d'AmigaOS 4.1 pour signaler à\n\
+l'utilisateur la réception de nouveaux courriers.\n\
+Cela nécessite au minimum l'application.library V53.2.
+; If checked, YAM will use AmigaOS4.1's notification\n\
+; system to notify the user about new received mails.\n\
+; This requires at least application.library V53.2.
+;
+MSG_NO_OPENURL_LIB
+openurl.library n'est pas installée sur votre\n\
+système. Par conséquent YAM n'est pas capable\n\
+d'ouvrir par lui-même le lien spécifié.\n\
+\n\
+Veuillez lancer vous même votre navigateur Internet\n\
+et y saisir le lien suivant :\n\
+« %s »
+; openurl.library not installed on your system.\n\
+; Thus YAM is not able to open the requested link itself.\n\
+; \n\
+; Please launch your internet browser yourself and enter this link:\n\
+; '%s'
+;
+; URL
 ;
