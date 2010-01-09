@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.4 (28.12.2009)
+## version $VER: YAM.catalog 6.4 (08.01.2010)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.6 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 3864 2009-12-09 11:15:31Z
+; based on YAM.cd 3864 2010-01-07 11:15:31Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -3036,15 +3036,15 @@ Voce
 ; Entry
 ;
 MSG_AB_AddUser
-Nuova persona
+Nuova persona...
 ; New person
 ;
 MSG_AB_AddGroup
-Nuovo gruppo
+Nuovo gruppo...
 ; New group
 ;
 MSG_AB_AddList
-Nuova lista distribuzione
+Nuova lista distribuzione...
 ; New distribution list
 ;
 MSG_AB_Duplicate
@@ -4219,7 +4219,7 @@ Aggiungi chiave PGP
 ; Add PGP key
 ;
 MSG_WR_MDelSend
-Cancellare dopo l'invio?
+Cancella dopo l'invio?
 ; Delete after sending?
 ;
 MSG_WR_MReceipt
@@ -4686,7 +4686,7 @@ scrittura.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias
-E' necessario specificare uno pseudonimo per identificare questa voce!
+E' necessario specificare uno pseudonimo per l'identificazione di questa voce!
 ; You must specify an alias to identify this entry!
 ;
 MSG_ER_ErrorNoAddress
@@ -6790,7 +6790,7 @@ di posta elettronica.
 ; FILENAME
 ;
 MSG_MA_MESSAGEEXPORT
-Esporta messaggi da MBOX, DBX o altro.
+Esporta messaggi da MBOX, DBX o altro
 ; Export messages
 ;
 MSG_YAMINFO
@@ -8414,7 +8414,7 @@ Si desidera crearne una adesso?
 ; Do you want to create it now?
 ;
 MSG_HELP_CO_BT_APPICONGETPOS
-Cliccare qui per ottenere l'attuale\n\
+Clicca qui per ottenere l'attuale\n\
 posizione dell'AppIcon.
 ; Click to get the current\n\
 ; position of the AppIcon.

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-08 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italiano.ct: other minor corrections on the italian translation.
+
 2010-01-08  Alexandre Balaban <abalaban@free.fr>
 
   * locale/french.ct: updated french translation according to latest changes.
