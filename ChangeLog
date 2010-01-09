@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/greek.ct: updated the greek translation kindly provided by Antonis
+    'Phantom' Iliakis.
+
 2010-01-08 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italiano.ct: other minor corrections on the italian translation.
