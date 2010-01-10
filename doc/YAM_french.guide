@@ -1,5 +1,5 @@
 @database YAM.guide
-@$VER: YAM.guide 2.5 (21.12.2007)
+@$VER: YAM.guide 2.6 (13.09.2009)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -33,17 +33,17 @@
 @REMARK  - Hervé Dupont <herve.dpt@free.fr>
 @REMARK  - Jean-Marc Mossu <jeanmarc.mossu@free.fr>
 @REMARK  - Pascal Rullier <rullier@bugss.org>
-@REMARK  Mise à jour v2.5 Alexandre Balaban <alexandre@balaban.fr>
-@REMARK  Basée sur YAM_english v3669
+@REMARK  Mise à jour v2.5 et suivante Alexandre Balaban <alexandre@balaban.fr>
+@REMARK  Basée sur YAM_english v4469
 
 @NODE "Main" "YAM - Documentation en Français (ATO-Fr)"
 
               @{B}=============================================
-               Y A M    (Yet Another Mailer)   VERSION 2.5
+               Y A M    (Yet Another Mailer)   VERSION 2.6
               =============================================@{UB}
 
                           © 2000 par Marcel Beck
-                © 2000-2007 par l'équipe de YAM Open Source
+                © 2000-2010 par l'équipe de YAM Open Source
 
 
  @{" Informations légales     " link "COPY"}  - Copyright, informations légales.
@@ -71,7 +71,7 @@
 
 YAM - Yet Another Mailer
 Copyright © 1995-2000 Marcel Beck
-Copyright © 2000-2007 par l'équipe « YAM Open Source »
+Copyright © 2000-2010 par l'équipe « YAM Open Source »
 
 Ce programme a été mis sous licence « GNU » (General Public License de la
 fondation du logiciel libre) en tant que logiciel gratuit et librement
@@ -244,15 +244,15 @@ Novembre 2000
 
 @{B}INSTALLATION@{UB}
 
-   YAM 2.5 est distribué en trois archives différentes :
+   YAM 2.6 est distribué en trois archives différentes :
 
-@{b}YAM25-AmigaOS4.lha@{ub}
+@{b}YAM26-AmigaOS4.lha@{ub}
      YAM pour AmigaOS 4.
 
-@{b}YAM25-AmigaOS3.lha@{ub}
+@{b}YAM26-AmigaOS3.lha@{ub}
      YAM pour AmigaOS 3.
 
-@{b}YAM25-MorphOS.lha@{ub}
+@{b}YAM26-MorphOS.lha@{ub}
      YAM pour MorphOS.
 
 
@@ -261,7 +261,7 @@ Novembre 2000
    Ouvrez le répertoire « Install », puis double-cliquez sur l'icône
 « Install-YAM » et suivez les instructions de l'installer. Si vous
 possédez une version antérieure de YAM, redémarrez votre Amiga après
-l'installation de YAM 2.5.
+l'installation de YAM 2.6.
 
 
 @{U}Installation manuelle@{UU}
@@ -269,7 +269,7 @@ l'installation de YAM 2.5.
    Si vous ne possédez pas l'Installer d'Amiga ou que pour une raison
 quelconque vous ne vouliez pas l'utiliser, procédez comme suit :
 
-- Copiez tout le répertoire « YAM 2.5 » dans le répertoire de destination.
+- Copiez tout le répertoire « YAM 2.6 » dans le répertoire de destination.
 
 - Copiez les bibliothèques Mui (mcc,mcp) du répertoire @{b}Install/MUI@{ub}
   dans le répertoire @{b}MUI:libs/MUI@{ub}.
@@ -277,7 +277,7 @@ quelconque vous ne vouliez pas l'utiliser, procédez comme suit :
 - Copiez toutes les bibliothèques situées dans le répertoire @{b}Install/Libs@{ub}
   vers @{b}LIBS:@{ub}.
 
-- Effacez le répertoire  « Install » dans « YAM 2.5 » car vous n'en avez plus besoin.
+- Effacez le répertoire  « Install » dans « YAM 2.6 » car vous n'en avez plus besoin.
 
 - Redémarrez votre Amiga et démarrez YAM depuis le nouvel emplacement en double-
   cliquant sur son icône.
@@ -5810,6 +5810,7 @@ Liste des commandes ARexx par ordre alphabétique
  @{" ADDRSAVE          " link "RX_ADDRSAVE"}  - Sauve le carnet d'adresses sous un nom donné.
  @{" APPBUSY           " link "RX_APPBUSY"}  - Place YAM en mode occupé.
  @{" APPNOBUSY         " link "RX_APPNOBUSY"}  - Place YAM en mode disponible (non-occupé).
+ @{" FLUSHINDEXES      " link "RX_FLUSHINDEXES"}  - Libérer les indexs de tous les dossiers.
  @{" FOLDERINFO        " link "RX_FOLDERINFO"}  - Retourne les informations sur le dossier donné.
  @{" GETCONFIGINFO     " link "RX_GETCONFIGINFO"}  - Affiche les informations sur l'utilisateur en cours.
  @{" GETFOLDERINFO     " link "RX_GETFOLDERINFO"}  - Retourne les informations sur le dossier en cours.
@@ -5820,7 +5821,9 @@ Liste des commandes ARexx par ordre alphabétique
  @{" HIDE              " link "RX_HIDE"}  - Icônifie YAM.
  @{" INFO              " link "RX_INFO"}  - Affiche les informations sur le programme.
  @{" ISONLINE          " link "RX_ISONLINE"}  - Détecte quand YAM transfère des messages.
+ @{" LISTFREEZE        " link "RX_LISTFREEZE"}  - Désactive les mises à jour graphique d'une liste.
  @{" LISTSELECT        " link "RX_LISTSELECT"}  - Sélectionne les messages du dossier en cours.
+ @{" LISTUNFREEZE      " link "RX_LISTUNFREEZE"}  - Réactive les mises à jour graphique d'une liste.
  @{" MAILARCHIVE       " link "RX_MAILARCHIVE"}  - Déplace les messages sélectionnés vers un autre dossier.
  @{" MAILBOUNCE        " link "RX_MAILBOUNCE"}  - Détourne le message actuellement sélectionné.
  @{" MAILCHANGESUBJECT " link "RX_MAILCHANGESUBJECT"}  - Change le sujet du/des message(s) sélectionné(s).
@@ -5847,9 +5850,10 @@ Liste des commandes ARexx par ordre alphabétique
  @{" READINFO          " link "RX_READINFO"}  - Affiche les informations sur les documents joints dans le message lu.
  @{" READPRINT         " link "RX_READPRINT"}  - Imprime un document joint.
  @{" READSAVE          " link "RX_READSAVE"}  - Sauvegarde un document joint.
- @{" REQUEST           " link "RX_REQUEST"}  - Réclame un choix de la part d'un utilisateur.
+ @{" REQUEST           " link "RX_REQUEST"}  - Demande à l'utilisateur de faire un choix.
+ @{" REQUESTFILE       " link "RX_REQUESTFILE"}  - Demande à l'utilisateur de sélectionner un fichier.
  @{" REQUESTFOLDER     " link "RX_REQUESTFOLDER"}  - Demande à l'utilisateur de choisir un dossier.
- @{" REQUESTSTRING     " link "RX_REQUESTSTRING"}  - Demande une chaîne de caractères à l'utilisateur.
+ @{" REQUESTSTRING     " link "RX_REQUESTSTRING"}  - Demande à l'utilisateur une chaîne de caractères.
  @{" SCREENTOBACK      " link "RX_SCREENTOBACK"}  - Place l'écran de YAM en arrière plan.
  @{" SCREENTOFRONT     " link "RX_SCREENTOFRONT"}  - Place l'écran de YAM au premier plan.
  @{" SETFLAG           " link "RX_SETFLAG"}  - Active l'état PERmanent ou VOLatile d'un message.
@@ -5912,6 +5916,7 @@ Gestion du carnet d'adresses
 Opérations générales sur les dossiers
 -------------------------------------
 
+ @{" FLUSHINDEXES      " link "RX_FLUSHINDEXES"}  - Libérer les indexs de tous les dossiers.
  @{" FOLDERINFO        " link "RX_FOLDERINFO"}  - Retourne les informations sur le dossier donné.
  @{" GETFOLDERINFO     " link "RX_GETFOLDERINFO"}  - Retourne les informations sur le dossier en cours.
  @{" MAILFILTER        " link "RX_MAILFILTER"}  - Filtre les messages du dossier en cours.
@@ -5924,6 +5929,8 @@ Gestion de l'interface
 
  @{" APPBUSY           " link "RX_APPBUSY"}  - Place YAM en mode occupé.
  @{" APPNOBUSY         " link "RX_APPNOBUSY"}  - Place YAM en mode disponible (non-occupé).
+ @{" LISTFREEZE        " link "RX_LISTFREEZE"}  - Désactive les mises à jour graphique d'une liste.
+ @{" LISTUNFREEZE      " link "RX_LISTUNFREEZE"}  - Réactive les mises à jour graphique d'une liste.
  @{" READCLOSE         " link "RX_READCLOSE"}  - Ferme la fenêtre de lecture active.
 
 
@@ -5974,9 +5981,10 @@ Informations utilisateur
 ------------------------
 
  @{" GETCONFIGINFO     " link "RX_GETCONFIGINFO"}  - Affiche les informations sur l'utilisateur en cours.
- @{" REQUEST           " link "RX_REQUEST"}  - Réclame un choix de la part d'un utilisateur.
+ @{" REQUEST           " link "RX_REQUEST"}  - Demande à l'utilisateur de faire un choix.
+ @{" REQUESTFILE       " link "RX_REQUESTFILE"}  - Demande à l'utilisateur de sélectionner un fichier.
  @{" REQUESTFOLDER     " link "RX_REQUESTFOLDER"}  - Demande à l'utilisateur de choisir un dossier.
- @{" REQUESTSTRING     " link "RX_REQUESTSTRING"}  - Demande une chaîne de caractères à l'utilisateur.
+ @{" REQUESTSTRING     " link "RX_REQUESTSTRING"}  - Demande à l'utilisateur une chaîne de caractères.
  @{" USERINFO          " link "RX_USERINFO"}  - Affiche les informations concernant l'utilisateur actuel.
 
 
@@ -6576,7 +6584,7 @@ APPBUSY
 @endnode
 
 @node "RX_APPNOBUSY" "ARexx command: APPNOBUSY"
-@next "RX_FOLDERINFO"
+@next "RX_FLUSHINDEXES"
 @prev "RX_APPBUSY"
 @toc "REXX"
 
@@ -6611,6 +6619,36 @@ APPNOBUSY
 
 @{b}VOIR AUSSI@{ub}
      @{" APPBUSY " link "RX_APPBUSY"}
+
+@endnode
+
+@node "RX_FLUSHINDEXES" "ARexx command: FLUSHINDEXES"
+@next "RX_FOLDERINFO"
+@prev "RX_APPNOBUSY"
+@toc "REXX"
+
+FLUSHINDEXES
+------------
+
+@{b}NAME@{ub}
+     FLUSHINDEXES -- Flush the index of all folders.  (V2.6)
+
+@{b}TEMPLATE@{ub}
+
+@{b}FUNCTION@{ub}
+     Frees the memory occupied by the folders' index structure.
+
+@{b}INPUTS@{ub}
+
+@{b}RETURNS@{ub}
+
+@{b}NOTES@{ub}
+
+@{b}EXAMPLE@{ub}
+
+@{b}BUGS@{ub}
+
+@{b}SEE ALSO@{ub}
 
 @endnode
 
@@ -7130,7 +7168,7 @@ INFO
 @endnode
 
 @node "RX_ISONLINE" "ARexx command: ISONLINE"
-@next "RX_LISTSELECT"
+@next "RX_LISTFREEZE"
 @prev "RX_INFO"
 @toc "REXX"
 
@@ -7169,9 +7207,44 @@ ISONLINE
 
 @endnode
 
-@node "RX_LISTSELECT" "ARexx command: LISTSELECT"
-@next "RX_MAILARCHIVE"
+@node "RX_LISTFREEZE" "ARexx command: LISTFREEZE"
+@next "RX_LISTSELECT"
 @prev "RX_ISONLINE"
+@toc "REXX"
+
+LISTFREEZE
+----------
+
+@{b}NAME@{ub}
+     ListFreeze -- Forbid graphical changes to a list.  (V2.6)
+
+@{b}TEMPLATE@{ub}
+     LIST/A
+
+@{b}FUNCTION@{ub}
+     Forbids graphical changes to a list, i.e. during a long running command.
+
+@{b}INPUTS@{ub}
+     LIST/A   - name of the list to be frozen. Currently these lists may be
+                frozen:
+                   MAILS - the main mail list
+
+@{b}RETURNS@{ub}
+
+@{b}NOTES@{ub}
+
+@{b}EXAMPLE@{ub}
+
+@{b}BUGS@{ub}
+
+@{b}SEE ALSO@{ub}
+     @{" LISTUNFREEZE " link "RX_LISTUNFREEZE"}
+
+@endnode
+
+@node "RX_LISTSELECT" "ARexx command: LISTSELECT"
+@next "RX_LISTUNFREEZE"
+@prev "RX_LISTFREEZE"
 @toc "REXX"
 
 LISTSELECT
@@ -7208,9 +7281,44 @@ LISTSELECT
 
 @endnode
 
+@node "RX_LISTUNFREEZE" "ARexx command: LISTUNFREEZE"
+@next "RX_MAILARCHIVE"
+@prev "RX_LISTSELECT"
+@toc "REXX"
+
+LISTUNFREEZE
+----------
+
+@{b}NAME@{ub}
+     ListUnfreeze -- Permit graphical changes to a list.  (V2.6)
+
+@{b}TEMPLATE@{ub}
+     LIST/A
+
+@{b}FUNCTION@{ub}
+     Permits graphical changes to a list that was frozen before.
+
+@{b}INPUTS@{ub}
+     LIST/A   - name of the list to be unfrozen. Currently these lists may be
+                unfrozen:
+                   MAILS - the main mail list
+
+@{b}RETURNS@{ub}
+
+@{b}NOTES@{ub}
+
+@{b}EXAMPLE@{ub}
+
+@{b}BUGS@{ub}
+
+@{b}SEE ALSO@{ub}
+     @{" LISTFREEZE " link "RX_LISTFREEZE"}
+
+@endnode
+
 @node "RX_MAILARCHIVE" "ARexx command: MAILARCHIVE"
 @next "RX_MAILBOUNCE"
-@prev "RX_LISTSELECT"
+@prev "RX_LISTUNFREEZE"
 @toc "REXX"
 
 MAILARCHIVE
@@ -7580,6 +7688,8 @@ MAILEXPORT
      FILENAME/A   - filename to use
      ALL/S        - export the whole folder
      APPEND/S     - append the data to an (already existing) file
+     QUIET/S      - don't open the transfer window and export all mails
+                    silently
 
 @{b}RESULTAT@{ub}
      RC is set to 10 if no message is selected or if the output file
@@ -7734,7 +7844,7 @@ MAILIMPORT
                    folder.  (V1.3.2)
 
 @{b}SYNTAXE@{ub}
-     FILENAME/A,WAIT/S
+     FILENAME/A,QUIET/S,WAIT/S
 
 @{b}FONCTION@{ub}
      Imports messages from a file on disk into the current folder.
@@ -7742,6 +7852,8 @@ MAILIMPORT
 
 @{b}ENTREES@{ub}
      FILENAME/A   - file to import messages from
+     QUIET/S      - don't open the transfer window and import all mails
+                    silently
      WAIT/S       - open the transfer window to enable user interaction,
                     i.e. message preselection  (V2.0)
 
@@ -7792,56 +7904,73 @@ MAILINFO
                  is specified, the current message will be used
 
 @{b}RESULTAT@{ub}
-     VAR            - info returned by the query
-     <STEM>INDEX    - position of the message in the list; the message
-                      at the top occupies position 0
-     <STEM>STATUS   - status of the message; possible values are
+     VAR               - info returned by the query
+     <STEM>INDEX       - position of the message in the list; the message
+                         at the top occupies position 0
+     <STEM>STATUS      - status of the message; possible values are
 
-                         N - new
-                         O - read
-                         U - unread
-                         R - replied
-                         F - forwarded
-                         S - sent
-                         W - pending
-                         H - hold
-                         E - error sending
+                            N - new
+                            O - read
+                            U - unread
+                            R - replied
+                            F - forwarded
+                            S - sent
+                            W - pending
+                            H - hold
+                            E - error sending
 
-     <STEM>FROM     - sender of the message; specifically, the first sender
-                      noted in the "From:" header
-     <STEM>TO       - recipient of the message; actually, the first recipient
-                      noted in the "To:" header
-     <STEM>REPLYTO  - return address of the message; this will be either the
-                      first recipient in the "Reply-To:" header, or the first
-                      sender in the "From:" header if no "Reply-To:" header
-                      exists
-     <STEM>SUBJECT  - subject of the message (contents of the "Subject:"
-                      header)
-     <STEM>FILENAME - filename where the message is stored, including
-                      path
-     <STEM>SIZE     - size of the message, in bytes
-     <STEM>DATE     - date of the message, in "MM-DD-YY HH:MM:SS" format
-     <STEM>FLAGS    - a 9 byte string in "MARCS-77M" format:
+     <STEM>FROM        - sender of the message; specifically, the first sender
+                         noted in the "From:" header
+     <STEM>TO          - recipient of the message; actually, the first recipient
+                         noted in the "To:" header
+     <STEM>REPLYTO     - return address of the message; this will be either the
+                         first recipient in the "Reply-To:" header, or the first
+                         sender in the "From:" header if no "Reply-To:" header
+                         exists
+     <STEM>CC          - first entry in the CC: field, if any
+     <STEM>BCC         - first entry in the BCC: field, if any
+     <STEM>RESENTTO    - first entry in the ResentTo: field, if any
+     <STEM>SUBJECT     - subject of the message (contents of the "Subject:"
+                         header)
+     <STEM>FILENAME    - filename where the message is stored, including
+                         path
+     <STEM>SIZE        - size of the message, in bytes
+     <STEM>DATE        - date of the message, in "MM-DD-YY HH:MM:SS" format
+     <STEM>FLAGS       - a 9 byte string in "MARCS-77M" format:
 
-                         MARCS-77M
-                         ||||| |||
-                         ||||| ||`--------- @{b}M@{ub}arked flag  (V2.4)
-                         ||||| |`---------- volatile flag (see @{" SETFLAG " link "RX_SETFLAG"})
-                         ||||| `----------- permanent flag (see @{" SETFLAG " link "RX_SETFLAG"})
-                         ||||`------------- PGP @{b}S@{ub}igned
-                         |||`-------------- PGP en@{b}C@{ub}rypted
-                         ||`--------------- status @{b}R@{ub}eport
-                         |`---------------- contains @{b}A@{ub}ttachments
-                         `----------------- @{b}M@{ub}ultiple recipients
+                            MARCS-77M
+                            ||||| |||
+                            ||||| ||`--------- @{b}M@{ub}arked flag  (V2.4)
+                            ||||| |`---------- volatile flag (see @{" SETFLAG " link "RX_SETFLAG"})
+                            ||||| `----------- permanent flag (see @{" SETFLAG " link "RX_SETFLAG"})
+                            ||||`------------- PGP @{b}S@{ub}igned
+                            |||`-------------- PGP en@{b}C@{ub}rypted
+                            ||`--------------- status @{b}R@{ub}eport
+                            |`---------------- contains @{b}A@{ub}ttachments
+                            `----------------- @{b}M@{ub}ultiple recipients
 
-     <STEM>MSGID    - compressed hexadecimal 32 bit representation of the
-                      "Message-ID:" header contents, e.g. BBC62595  (V2.1)
+     <STEM>MSGID       - compressed hexadecimal 32 bit representation of the
+                         "Message-ID:" header contents, e.g. BBC62595  (V2.1)
+     <STEM>FROMALL     - all entries from the From: field, the first entry will be
+                         the same as for FROM
+     <STEM>TOALL       - all entries from the To: field, the first entry will be
+                         the same as for TO
+     <STEM>REPLYTOALL  - all entries from the ReplyTo: field, the first entry will
+                         be the same as for REPLYTO
+     <STEM>CCALL       - all entries from the CC: field, the first entry will be
+                         the same as for CC
+     <STEM>BCCALL      - all entries from the BCC: field, the first entry will be
+                         the same as for BCC
+     <STEM>RESENTTOALL - all entries from the ResentTo: field, the first entry will
+                         be the same as for RESENTTO
 
      RC is set to 10 if INDEX is out of the range of messages available in
      the folder.
 
 @{b}NOTES@{ub}
      Starting with V2.4, <STEM>MSGID returns an hexadecimal value.
+     Starting with V2.6, the "ALL" variables will return all addresses/names from the
+        corresponding header field.
 
 @{b}EXEMPLE@{ub}
          /* Enable result codes */
@@ -7870,6 +7999,9 @@ MAILINFO
          SAY 'Status:     'status
          SAY 'From:       'st.from
          SAY 'To:         'st.to
+         DO i = 0 TO info.TOALL.COUNT-1
+            say 'To:         'st.TOALL.i
+         END
          SAY 'Reply-To:   'st.replyto
          SAY 'Subject:    'st.subject
          SAY 'Filename:   'st.filename
@@ -8137,10 +8269,14 @@ MAILSTATUS
 @{b}ENTREES@{ub}
      STATUS/A   - may be one of
 
-                     O - read
-                     U - unread
                      H - on hold
-                     W - ready to send
+                     N - new and unread
+                     O - old and read
+                     Q - queued for sending
+                     R - the same as O
+                     U - old unread
+                     W - the same as Q
+
 
 @{b}RESULTAT@{ub}
      RC is set to 5 if no valid STATUS is supplied, or to 10 if it is
@@ -8633,7 +8769,7 @@ READSAVE
 @endnode
 
 @node "RX_REQUEST" "ARexx command: REQUEST"
-@next "RX_REQUESTFOLDER"
+@next "RX_REQUESTFILE"
 @prev "RX_READSAVE"
 @toc "REXX"
 
@@ -8701,9 +8837,67 @@ REQUEST
 
 @endnode
 
+@node "RX_REQUESTFILE" "ARexx command: REQUESTFILE"
+@next "RX_REQUESTFOLDER"
+@prev "RX_REQUEST"
+@toc "REXX"
+
+REQUESTFILE
+-------------
+
+@{b}NAME@{ub}
+     RequestFile -- Request the user to select a file.  (V2.6)
+
+@{b}TEMPLATE@{ub}
+     VAR/K,STEM/K,TITLE/A,DRAWER,FILE,MULTISELECT/S,DRAWERSONLY/S,SAVEMODE/S
+
+@{b}FUNCTION@{ub}
+     Requests the user to select a file.
+
+@{b}INPUTS@{ub}
+     VAR/K             - alternative variable to put the results into
+                         instead of RESULT
+     STEM/K            - base name used for the stem where the result
+                         will be stored
+     TITLE/A           - the title of the file requester
+     DRAWER            - initial drawer when opening the requester
+     FILE              - initial file when opening the requester
+     MULTISELECT/S     - enable multiselection
+     DRAWERSONLY/S     - exclude files from selection
+     SAVEMODE/S        - set requester to "save mode", no selection via
+                         doubleclick will be possible then
+
+@{b}RETURNS@{ub}
+     VAR          - info returned by the query
+     <STEM>DRAWER - name of the selected drawer
+     <STEM>FILES  - names of the selected files
+
+     RC is set to 1 if the user cancels the requester.
+
+@{b}NOTES@{ub}
+
+@{b}EXAMPLE@{ub}
+         /* Enable result codes */
+         OPTIONS RESULTS
+
+         REQUESTFILE title="Please select a file" drawer="RAM:" STEM files.
+
+         IF RC~= 0 THEN EXIT
+
+         SAY "selected drawer is '" files.drawer "'"
+         DO i=0 to files.COUNT-1
+           SAY "selected file '" files.files.i "'"
+         END
+
+@{b}BUGS@{ub}
+
+@{b}SEE ALSO@{ub}
+
+@endnode
+
 @node "RX_REQUESTFOLDER" "ARexx command: REQUESTFOLDER"
 @next "RX_REQUESTSTRING"
-@prev "RX_REQUEST"
+@prev "RX_REQUESTFILE"
 @toc "REXX"
 
 REQUESTFOLDER
@@ -9838,14 +10032,14 @@ les sous-répertoires suivants :
 
 Référence - Stockage d'un message
 
-   Chaque message est sauvé sous la forme d'un fichier unique, le nom du
-fichier est construit à partir du nombre de jour écoulés depuis le
-01.01.1978 suivi d'un point et d'un numéro d'ordre pour ce jour. Le statut
-du courrier est sauvé dans le commentaire du fichier.
-Dans chaque répertoire il y a un fichier d'index appelé .index qui contient
-les en-têtes de chaque message présent dans ce répertoire. Il y a également
-un fichier de configuration appelé .fconfig qui conserve les
-caractéristiques de chaque dossier (boîte aux lettres).
+   Chaque message est sauvé sous la forme d'un fichier séparé dont le nom
+est construit en encodant certaines parties du message (date, status, etc)
+en utilisant l'encodage standard Base64. Le nom resultant est comptible avec
+n'importe quel système de fichiers. Chaque dossier un fichier @{b}.index@{ub} qui
+contient les en-têtes de chaque message présent dans ce répertoire. Il y a
+également un fichier de configuration appelé @{b}.fconfig@{ub} qui conserve les
+réglages de ce dossier.
+
 
 @endnode
 
@@ -10871,8 +11065,8 @@ précisions de votre part. L'erreur en sera corrigée plus rapidement.
 
       2. Essayez de faire au mieux pour indiquer une « courte description »
          mais très explicite du problème. N'oubliez pas d'indiquer la
-         version de YAM qui cause le problème. Exemple : « 2.5 : Faire
-         xyz provoque un crash de YAM ».
+         version de YAM qui cause le problème. Exemple : « 2.6 : Faire
+         xyz provoque un plantage de YAM ».
 
       3. N'hésitez pas à bien décrire le problème dans votre rapport en
          indiquant pas à pas comment reproduire le problème et en donnant
@@ -10966,16 +11160,14 @@ version de YAM :
 
 - Lecture des messages au format HTML [optionnel] (via htmlview.mcc),
 - Support du protocole IMAP-4,
-- Nombre illimité de fenêtre de lecture,
 - Complètement retravailler l'interface du carnet d'adresse,
 - Support de plusieurs identités utilisateur (similaire à Thunderbird),
 - Support de GnuPG (via interface gpgme),
 - Transfert asynchrone des courriers (multithreading interne),
 - Menus contextuels configurables,
 - Barres d'outils configurables,
-- Supprot de plusieurs serveurs SMTP,
+- Support de plusieurs serveurs SMTP,
 - Retravailler et simplifier la fonctionnalité des liste de diffusion,
-- Créer un port AROS (sous Zune).
 
 @endnode
 
@@ -10987,7 +11179,7 @@ version de YAM :
 @{b}@{u}REMERCIEMENTS@{ub}@{uu}
 
 
-YAM 2.5 vous est proposé par :
+YAM 2.6 vous est proposé par :
 
       Jens Langner <Jens.Langner\@light-speed.de> 
       Thore Boeckelmann <tboeckel\@gmx.de> 
@@ -11012,6 +11204,8 @@ YAM 2.5 vous est proposé par :
 
       Alexandre Balaban
       Par Boberg
+      Luca Longone
+      Samir Hawamdeh
 
 
    Contributions intégrées
@@ -11355,6 +11549,7 @@ elles ont une apparence très professionnelle maintenant.
    @{" Fichiers évènements (journal) " link "CO09"}
    @{" Filtrer à distance " link "CO03"}
    @{" Filtres. Configuration " link "CO03"}
+   @{" FLUSHINDEXES, commande ARexx " link "RX_FLUSHINDEXES"}
    @{" FOLDERINFO, commande ARexx " link "RX_FOLDERINFO"}
    @{" Fonctions, commandes ARexx triées par " link "REXL"}
    @{" Format des tailles " link "CO08"}
@@ -11503,6 +11698,7 @@ elles ont une apparence très professionnelle maintenant.
    @{" Rechercher des messages - Critères de recherche " link "FI_K"}
    @{" Remerciements " link "CRED"}
    @{" REQUEST, commande ARexx " link "RX_REQUEST"}
+   @{" REQUESTFILE, commande ARexx " link "RX_REQUESTFILE"}
    @{" REQUESTFOLDER, commande ARexx " link "RX_REQUESTFOLDER"}
    @{" REQUESTSTRING, commande ARexx " link "RX_REQUESTSTRING"}
    @{" Référence " link "RF_W"}
