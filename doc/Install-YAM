@@ -1,5 +1,5 @@
 ;
-; $VER: Installer script 1.8 for YAM 2.6 (07.01.2010) (c) 2000-2010 by YAM Open Source Team
+; $VER: Installer script 1.9 for YAM 2.6 (10.01.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sφnke Tesch/ATO
 ;
 ; $Id$
@@ -19,8 +19,8 @@
 (set #def_lang_english_british     64)
 
 (set #def_doc_english               0)
-;(set #def_doc_french               1)
-;(set #def_doc_italian              2)
+(set #def_doc_french                1)
+;(set #def_doc_italian               2)
 ; ///
 
 ;----------------------------------------------------------------------------
@@ -173,6 +173,7 @@
 (if (= @language "franηais")
 (
 (set #def_cat_lang #def_lang_french)
+(set #def_doc_lang #def_doc_french)
 (set #wrongOS  "YAM nιcessite au moins AmigaOS 3.0 pour fonctionner !\n")
 (set #wrongMUI "YAM nιcessite au moins MUI 3.8 pour fonctionner !\n")
 (set #wrongCPU "YAM nιcessite au moins un processeur 68020 pour fonctionner !\n")
@@ -312,6 +313,50 @@
                     "Buon divertimento..."))
 )
 )
+; ///
+;/// ***** Greek
+(set #def_cat_lang #def_lang_greek)
+(set #wrongOS  "Το YAM χρειάζεται τουλάχιστον AmigaOS 3.0 για να τρέξει!\n")
+(set #wrongMUI "Το YAM χρειάζεται τουλάχιστον MUI 3.8 για να τρέξει!\n")
+(set #wrongCPU "Το YAM χρειάζεται τουλάχιστον μια 68020 CPU για να τρέξει!\n")
+(set #YAM_dir  (cat "Παρακαλώ επιλέξτε έναν κατάλογο για το YAM\n"
+                    "(ΔΕΝ θα δημιουργηθεί επιπλέον κατάλογος!)"))
+(set #lang_catalog (cat "Ποιό αρχείο καταλόγου θέλετε να εγκαταστήσετε;\n"
+                        "(Η Αγγλική γλώσσα είναι ενσωματομένη)"))
+(set #lang_manual "Επιλέξτε γλώσσα για την on-line βοήθεια AmigaGuide")
+(set #no_way_back_warning (cat "\n"
+                               "ΠΡΟΣΟΧΗ!!\n"
+                               "(εάν θέλετε να αναβαθμίσετε μια ήδη υπάρχουσα\n"
+                               "εγκατάσταση του YAM 2.4)\n"
+                               "\n"
+                               "Η μορφή ονομάτων αλληλογραφίας έχει αλλάξει εντελώς.\n"
+                               "Όταν τρέξετε το YAM 2.6 για πρώτη φορά όλες οι\n"
+                               "υπάρχουσες αλληλογραφίες θα μετατραπούν αυτόματα στη\n"
+                               "νέα μορφή. Μετά από αυτό, το YAM 2.4 δε θα μπορεί να\n"
+                               "τις χειριστεί πλέον.\n"
+                               "Έτσι είναι καλύτερα να κάνετε αντίγραφο ασφαλείας σε\n"
+                               "ΌΛΕΣ τις αλληλογραφίες σας ΠΡΙΝ τρέξετε το YAM 2.6.\n"
+                               "\n"
+                               "Όμως, δεν υπάρχει ΚΑΝΕΝΑ πρόβλημα να εγκαταστήσετε"
+                               " το YAM 2.4 και ΥAM 2.6 σε διαφορετικούς καταλόγους."))
+(set #faq_and_bugtracker (cat "\n"
+                              "Εάν έχετε οποιαδήποτε απορία σχετικά με το YAM\n"
+                              "μπορείτε να τις αναφέρετε στα forum του YAM:\n"
+                              "http://forum.yam.ch/\n"
+                              "\n"
+                              "Συχνές ερωτήσεις που έχουν ήδη απαντηθεί\n"
+                              "βρίσκονται στο YAM FAQ:\n"
+                              "http://faq.yam.ch/\n"
+                              "\n"
+                              "Σε περίπτωση που βρείτε κάποιο πρόβλημα στο YAM, παρακαλώ,\n"
+                              "αναφέρετέ το στο YAM bugtracker:\n"
+                              "http://bugs.yam.ch/"))
+(set #done_1   (cat "\nΤο YAM εγκαταστάθηκε επιτυχώς.\n"
+                     "\n"
+                    "Κάντε διπλό-κλίκ στο εικονίδιο \"YAM\" στον\n"))
+(set #done_2   (cat "\nκατάλογο για να το δοκιμάσετε.\n"
+                    "\n"
+                    "Καλή διασκέδαση...")
 ; ///
 
 ;----------------------------------------------------------------------------

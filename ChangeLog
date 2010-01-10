@@ -15,6 +15,8 @@ $URL$
     icons itself and get rid of doing the dirty work ourself.
   * YAM.c: starting YAM a second time while the splash window is still visible
     will no longer cause the main window to be opened.
+  * doc/Install-YAM: added greek translation to the installation script kindly
+    provided by Antonis 'Phantom' Iliakis.
 
 2010-01-09 Thore Böckelmann <tboeckel@gmx.de>
 
