@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AttachmentImage: make use of OS4.1's icon.library's ability to scale
+    icons itself and get rid of doing the dirty work ourself.
+
 2010-01-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/greek.ct: updated the greek translation kindly provided by Antonis

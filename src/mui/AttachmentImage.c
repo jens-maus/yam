@@ -176,6 +176,9 @@ static void LoadImage(Object *obj, struct Data *data)
   {
     struct Part *mailPart = data->mailPart;
     struct DiskObject *diskObject = NULL;
+    #if defined(__amigaos4__)
+    struct Rectangle sizeBounds;
+    #endif
 
     // we first make sure we have freed everything
     if(data->normalBitMap)
@@ -208,17 +211,28 @@ static void LoadImage(Object *obj, struct Data *data)
       data->diskObject = NULL;
     }
 
+    #if defined(__amigaos4__)
+    // Set up the minimum and maximum sizes for the icons to take the dirty work
+    // of scaling the icon images to the required size from us.
+    // This requires icon.library 53.7+ and will be ignored on previous versions.
+    sizeBounds.MinX = 8;
+    sizeBounds.MinY = 8;
+    sizeBounds.MaxX = data->maxWidth;
+    sizeBounds.MaxY = data->maxHeight;
+    #endif
+
     // only if we have at least icon.library >= v44 and we find deficons
     // we try to identify the file with deficons
     if(isDecoded(mailPart) == TRUE && mailPart->Filename[0] != '\0' &&
        IconBase->lib_Version >= 44 && G->DefIconsAvailable == TRUE)
     {
+
       D(DBF_GUI, "retrieving diskicon via DEFICONS for '%s'", mailPart->Filename);
 
-      diskObject = (struct DiskObject *)GetIconTags(mailPart->Filename,
-                               ICONGETA_FailIfUnavailable, FALSE,
-                               ICONGETA_Screen,            _screen(obj),
-                               TAG_DONE);
+      diskObject = (struct DiskObject *)GetIconTags(mailPart->Filename, ICONGETA_FailIfUnavailable, FALSE,
+                                                                        ICONGETA_Screen,            _screen(obj),
+                                                                        ICONGETA_SizeBounds,        &sizeBounds,
+                                                                        TAG_DONE);
 
       #if defined(DEBUG)
       if(diskObject == NULL)
@@ -258,19 +272,19 @@ static void LoadImage(Object *obj, struct Data *data)
           def = "attach";
 
         // try to retrieve the icon for that type
-        diskObject = (struct DiskObject *)GetIconTags(NULL,
-                                 ICONGETA_GetDefaultName, def,
-                                 ICONGETA_Screen,         _screen(obj),
-                                 TAG_DONE);
+        diskObject = (struct DiskObject *)GetIconTags(NULL, ICONGETA_GetDefaultName, def,
+                                                            ICONGETA_Screen,         _screen(obj),
+                                                            ICONGETA_SizeBounds,     &sizeBounds,
+                                                            TAG_DONE);
 
         // if we still have not retrieved any icon we
         // obtain the standard project icon
         if(diskObject == NULL)
         {
-          diskObject = (struct DiskObject *)GetIconTags(NULL,
-                                   ICONGETA_GetDefaultType, WBPROJECT,
-                                   ICONGETA_Screen,         _screen(obj),
-                                   TAG_DONE);
+          diskObject = (struct DiskObject *)GetIconTags(NULL, ICONGETA_GetDefaultType, WBPROJECT,
+                                                              ICONGETA_Screen,         _screen(obj),
+                                                              ICONGETA_SizeBounds,     &sizeBounds,
+                                                              TAG_DONE);
 
           D(DBF_GUI, "diskobject for '%s' retrieved from default WBPROJECT type", mailPart->Filename);
         }
@@ -350,8 +364,7 @@ static void LoadImage(Object *obj, struct Data *data)
       }
 
       // we first allocate a source bitmap with equal size to the icon size of the diskObject
-      orgBitMap = AllocBitMap(orgWidth, orgHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, screenBitMap);
-      if(orgBitMap)
+      if((orgBitMap = AllocBitMap(orgWidth, orgHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, screenBitMap)) != NULL)
       {
         LONG scaleHeightDiff = orgHeight - data->maxHeight;
         LONG scaleWidthDiff  = orgHeight - data->maxWidth;
@@ -398,8 +411,7 @@ static void LoadImage(Object *obj, struct Data *data)
         }
 
         // now we can allocate a new bitmap which should carry the scaled selected image
-        data->selectedBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, orgBitMap);
-        if(data->selectedBitMap)
+        if((data->selectedBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, orgBitMap)) != NULL)
         {
           struct BitScaleArgs args;
 
@@ -436,8 +448,8 @@ static void LoadImage(Object *obj, struct Data *data)
         }
 
         // now we also scale the selected BitMask down, if it exists
-        if(selectedBitMask &&
-           (data->selectedBitMask = AllocBitMap(newWidth, newHeight, 1L, BMF_CLEAR | BMF_MINPLANES, NULL)))
+        if(selectedBitMask != NULL &&
+           (data->selectedBitMask = AllocBitMap(newWidth, newHeight, 1L, BMF_CLEAR | BMF_MINPLANES, NULL)) != NULL)
         {
           struct BitScaleArgs args;
           struct BitMap bm;
@@ -478,8 +490,7 @@ static void LoadImage(Object *obj, struct Data *data)
           DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.GadgetRender), 0, 0);
 
         // now we can allocate a new bitmap which should carry the scaled unselected normal image
-        data->normalBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, orgBitMap);
-        if(data->normalBitMap)
+        if((data->normalBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, orgBitMap)) != NULL)
         {
           struct BitScaleArgs args;
 
@@ -516,8 +527,8 @@ static void LoadImage(Object *obj, struct Data *data)
         }
 
         // now we also scale the normal BitMask down, if it exists
-        if(normalBitMask &&
-           (data->normalBitMask = AllocBitMap(newWidth, newHeight, 1L, BMF_CLEAR | BMF_MINPLANES, NULL)))
+        if(normalBitMask != NULL &&
+           (data->normalBitMask = AllocBitMap(newWidth, newHeight, 1L, BMF_CLEAR | BMF_MINPLANES, NULL)) != NULL)
         {
           struct BitScaleArgs args;
           struct BitMap bm;
