@@ -9,6 +9,8 @@ $URL$
 
   * mui/AttachmentImage: make use of OS4.1's icon.library's ability to scale
     icons itself and get rid of doing the dirty work ourself.
+  * YAM.c: starting YAM a second time while the splash window is still visible
+    will no longer cause the main window to be opened.
 
 2010-01-09 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -1214,48 +1214,52 @@ static void SplashProgress(const char *txt, int percent)
 //  Un-iconify YAM
 void PopUp(void)
 {
-  Object *window = G->MA->GUI.WI;
-  struct Node *curNode;
-
   ENTER();
 
   nnset(G->App, MUIA_Application_Iconified, FALSE);
 
-  // avoid MUIA_Window_Open's side effect of activating the window if it was already open
-  if(xget(window, MUIA_Window_Open) == FALSE)
-    set(window, MUIA_Window_Open, TRUE);
-
-  DoMethod(window, MUIM_Window_ScreenToFront);
-  DoMethod(window, MUIM_Window_ToFront);
-
-  // Now we check if there is any read window open and bring it also
-  // to the front
-  IterateList(&G->readMailDataList, curNode)
+  // let the main window appear only if we are fully started yet
+  if(G->InStartupPhase == FALSE)
   {
-    struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+    Object *window = G->MA->GUI.WI;
+    struct Node *curNode;
 
-    if(rmData->readWindow != NULL)
+    // avoid MUIA_Window_Open's side effect of activating the window if it was already open
+    if(xget(window, MUIA_Window_Open) == FALSE)
+      set(window, MUIA_Window_Open, TRUE);
+
+    DoMethod(window, MUIM_Window_ScreenToFront);
+    DoMethod(window, MUIM_Window_ToFront);
+
+    // Now we check if there is any read window open and bring it also
+    // to the front
+    IterateList(&G->readMailDataList, curNode)
     {
-      DoMethod(rmData->readWindow, MUIM_Window_ToFront);
-      window = rmData->readWindow;
+      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+      if(rmData->readWindow != NULL)
+      {
+        DoMethod(rmData->readWindow, MUIM_Window_ToFront);
+        window = rmData->readWindow;
+      }
     }
-  }
 
-  // Now we check if there is any write window open and bring it also
-  // to the front
-  IterateList(&G->writeMailDataList, curNode)
-  {
-    struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-    if(wmData->window != NULL)
+    // Now we check if there is any write window open and bring it also
+    // to the front
+    IterateList(&G->writeMailDataList, curNode)
     {
-      DoMethod(wmData->window, MUIM_Window_ToFront);
-      window = wmData->window;
-    }
-  }
+      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
-  // now we activate the window that is on the top
-  set(window, MUIA_Window_Activate, TRUE);
+      if(wmData->window != NULL)
+      {
+        DoMethod(wmData->window, MUIM_Window_ToFront);
+        window = wmData->window;
+      }
+    }
+
+    // now we activate the window that is on the top
+    set(window, MUIA_Window_Activate, TRUE);
+  }
 
   LEAVE();
 }
