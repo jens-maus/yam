@@ -6509,7 +6509,7 @@ APPNOBUSY
 
 @node "RX_FLUSHINDEXES" "ARexx command: FLUSHINDEXES"
 @next "RX_FOLDERINFO"
-@prev "RX_APPNOBUSY"
+@prev "RX_FLUSHINDEXES"
 @toc "REXX"
 
 FLUSHINDEXES
@@ -7563,7 +7563,7 @@ MAILEXPORT
      MailExport -- Export the selected messages to a file.  (V2.0)
 
 @{b}TEMPLATE@{ub}
-     FILENAME/A,ALL/S,APPEND/S
+     FILENAME/A,ALL/S,APPEND/S,QUIET/S
 
 @{b}FUNCTION@{ub}
      Exports the selected messages to a file, in a format ready to
@@ -8722,7 +8722,7 @@ REQUEST
 @endnode
 
 @node "RX_REQUESTFILE" "ARexx command: REQUESTFILE"
-@next "RX_REQUESTFILE"
+@next "RX_REQUESTFOLDER"
 @prev "RX_REQUEST"
 @toc "REXX"
 
@@ -10693,8 +10693,8 @@ when they are supposed to be part of URLs, a number of Internet
 resources, entities and users keep using the "[]" braces in unencoded
 form, and this used to make YAM stop parsing an URL as soon as such
 characters were found, as in "<http://www.example.com/files[7]/myfile>".
-As a workaround for this problem, YAM 2.6 takes these characters as
-part of the URL.
+As a workaround for this problem, since V2.4 YAM takes these characters
+as part of the URL.
 
    Parenthesis are allowed in URLs in unencoded form, which again
 negates the use of () to delimit URLs.  You are advised to use "<"

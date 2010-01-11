@@ -6624,7 +6624,7 @@ APPNOBUSY
 
 @node "RX_FLUSHINDEXES" "ARexx command: FLUSHINDEXES"
 @next "RX_FOLDERINFO"
-@prev "RX_APPNOBUSY"
+@prev "RX_FLUSHINDEXES"
 @toc "REXX"
 
 FLUSHINDEXES
@@ -7678,7 +7678,7 @@ MAILEXPORT
      MailExport -- Export the selected messages to a file.  (V2.0)
 
 @{b}SYNTAXE@{ub}
-     FILENAME/A,ALL/S,APPEND/S
+     FILENAME/A,ALL/S,APPEND/S,QUIET/S
 
 @{b}FONCTION@{ub}
      Exports the selected messages to a file, in a format ready to
