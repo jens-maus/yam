@@ -73,286 +73,286 @@
 ; ///
 ; /// ***** Deutsch
 (if (= @language "deutsch")
-  (
-    (set #def_cat_lang #def_lang_german)
-    (set #wrongOS  "YAM benötigt AmigaOS 3.0 oder höher\n")
-    (set #wrongMUI "YAM benötigt MUI 3.8 oder höher\n")
-    (set #wrongCPU "YAM läuft nur ab einer 68020 CPU\n")
-    (set #YAM_dir  (cat "Wählen Sie ein Verzeichnis für YAM\n"
-                        "(es wird KEIN eigenes Verzeichnis erstellt!)"))
-    (set #lang_catalog (cat "Welche catalog-Datei wollen Sie installieren?\n"
-                            "(Englisch ist eingebaut)"))
-    (set #lang_manual "Wählen Sie eine Sprache für die Online-AmigaGuide-Hilfe")
-    (set #faq_and_bugtracker (cat "\n"
-                                  "Falls Sie allgemeine Fragen zu YAM haben,\n"
-                                  "können Sie diese im YAM-Forum stellen:\n"
-                                  "http://forum.yam.ch/\n"
-                                  "\n"
-                                  "Oft gestellte Fragen werden in der YAM-FAQ\n"
-                                  "beantwortet:\n"
-                                  "http://faq.yam.ch/\n"
-                                  "\n"
-                                  "Falls Sie einen Fehler in YAM finden sollten,\n"
-                                  "dann melden Sie ihn bitte im YAM-Bugtracker:\n"
-                                  "http://bugs.yam.ch/"))
-    (set #no_way_back_warning (cat "WARNUNG!!\n"
-                                   "(falls Sie eine bestehende Installation von\n"
-                                   "YAM 2.4 updaten wollen)\n"
-                                   "\n"
-                                   "Das Namensformat der EMail-Dateien wurde grundlegend geändert.\n"
-                                   "Wenn Sie YAM 2.6 zum ersten Mal starten werden alle Ihre EMails\n"
-                                   "automatisch auf das neue Namensformat konvertiert. Danach\n"
-                                   "können sie NICHT mehr von YAM 2.4 verarbeitet werden.\n"
-                                   "Machen Sie also besser ein Backup BEVOR Sie YAM 2.6 starten.\n"
-                                   "\n"
-                                   "Es ist absolut KEIN Problem YAM 2.4 und YAM 2.6 in unter-\n"
-                                   "schiedlichen Verzeichnissen zu installieren."))
-    (set #done_1   (cat "\n"
-                        "YAM wurde erfolgreich installiert.\n"
-                        "\n"
-                        "Klicken Sie auf das \"YAM\"-Icon im Verzeichnis\n"))
-    (set #done_2   (cat "\n"
-                        "und es kann losgehen.\n"
-                        "\n"
-                        "Viel Spass!"))
-  )
+    (
+        (set #def_cat_lang #def_lang_german)
+        (set #wrongOS  "YAM benötigt AmigaOS 3.0 oder höher\n")
+        (set #wrongMUI "YAM benötigt MUI 3.8 oder höher\n")
+        (set #wrongCPU "YAM läuft nur ab einer 68020 CPU\n")
+        (set #YAM_dir  (cat "Wählen Sie ein Verzeichnis für YAM\n"
+                            "(es wird KEIN eigenes Verzeichnis erstellt!)"))
+        (set #lang_catalog (cat "Welche catalog-Datei wollen Sie installieren?\n"
+                                "(Englisch ist eingebaut)"))
+        (set #lang_manual "Wählen Sie eine Sprache für die Online-AmigaGuide-Hilfe")
+        (set #faq_and_bugtracker (cat "\n"
+                                      "Falls Sie allgemeine Fragen zu YAM haben,\n"
+                                      "können Sie diese im YAM-Forum stellen:\n"
+                                      "http://forum.yam.ch/\n"
+                                      "\n"
+                                      "Oft gestellte Fragen werden in der YAM-FAQ\n"
+                                      "beantwortet:\n"
+                                      "http://faq.yam.ch/\n"
+                                      "\n"
+                                      "Falls Sie einen Fehler in YAM finden sollten,\n"
+                                      "dann melden Sie ihn bitte im YAM-Bugtracker:\n"
+                                      "http://bugs.yam.ch/"))
+        (set #no_way_back_warning (cat "WARNUNG!!\n"
+                                       "(falls Sie eine bestehende Installation von\n"
+                                       "YAM 2.4 updaten wollen)\n"
+                                       "\n"
+                                       "Das Namensformat der EMail-Dateien wurde grundlegend geändert.\n"
+                                       "Wenn Sie YAM 2.6 zum ersten Mal starten werden alle Ihre EMails\n"
+                                       "automatisch auf das neue Namensformat konvertiert. Danach\n"
+                                       "können sie NICHT mehr von YAM 2.4 verarbeitet werden.\n"
+                                       "Machen Sie also besser ein Backup BEVOR Sie YAM 2.6 starten.\n"
+                                       "\n"
+                                       "Es ist absolut KEIN Problem YAM 2.4 und YAM 2.6 in unter-\n"
+                                       "schiedlichen Verzeichnissen zu installieren."))
+        (set #done_1   (cat "\n"
+                            "YAM wurde erfolgreich installiert.\n"
+                            "\n"
+                            "Klicken Sie auf das \"YAM\"-Icon im Verzeichnis\n"))
+        (set #done_2   (cat "\n"
+                            "und es kann losgehen.\n"
+                            "\n"
+                            "Viel Spass!"))
+    )
 )
 ; ///
 ; /// ***** Svenska
 (if (= @language "svenska")
-  (
-    (set #def_cat_lang #def_lang_swedish)
-    (set #wrongOS  "YAM kräver AmigaOS 3.0 eller senare\n")
-    (set #wrongMUI "YAM kräver MUI 3.8 eller senare\n")
-    (set #wrongCPU "YAM kräver 68020 processor eller bättre\n")
-    (set #YAM_dir  (cat "Välj katalog att installera YAM i\n"
-                        "(någon underkatalog kommer INTE att skapas!)"))
-    (set #lang_catalog (cat "Vilka språkkataloger vill du installera?\n"
-                            "(Engelska är inbyggt)"))
-    (set #lang_manual "Välj språk för den AmigaGuide-baserade hjälpen")
-    (set #no_way_back_warning (cat  "VARNING!!\n"
-                                   "(om du vill uppdatera en existerande\n"
-                                   "YAM 2.4 installation)\n"
-                                   "\n"
-                                   "Namn schemat för mailfilerna har ändrats totalt.\n"
-                                   "När du kör YAM 2.6 för första gången, kommer alla\n"
-                                   "dina nuvarande mailfiler att konverteras automatiskt till\n"
-                                   "det nya schemat. Efter det kommer inte YAM 2.4 att kunna\n"
-                                   "hantera dem längre.\n"
-                                   "Så, backa upp ALLA dina mailfiler FÖRE du kör YAM 2.6.\n"
-                                   "\n"
-                                   "Men, det är absolut INGA problem att installera\n"
-                                   "YAM 2.4 och YAM 2.6 i separata kataloger."))
-    (set #faq_and_bugtracker (cat "\n"
-                                  "Om du har några frågor rörande YAM\n"
-                                  "kan du fråga dessa i YAM's forum:\n"
-                                  "http://forum.yam.ch/\n"
-                                  "\n"
-                                  "Frequently asked questions är redan\n"
-                                  "besvarade i YAM's FAQ:\n"
-                                  "http://faq.yam.ch/\n"
-                                  "\n"
-                                  "Om du skulle hitta en bugg i YAM, var god\n"
-                                  "rapportera det i YAM's buggtracker:\n"
-                                  "http://bugs.yam.ch/"))
-    (set #done_1   (cat "\n"
-                        "YAM installerades utan problem\n"
-                        "\n"
-                        "Klicka på \"YAM\"-ikonen i katalogen\n"))
-    (set #done_2   (cat "\n"
-                        "för att pröva det.\n"
-                        "\n"
-                        "Ha det så bra!"))
-  )
+    (
+        (set #def_cat_lang #def_lang_swedish)
+        (set #wrongOS  "YAM kräver AmigaOS 3.0 eller senare\n")
+        (set #wrongMUI "YAM kräver MUI 3.8 eller senare\n")
+        (set #wrongCPU "YAM kräver 68020 processor eller bättre\n")
+        (set #YAM_dir  (cat "Välj katalog att installera YAM i\n"
+                            "(någon underkatalog kommer INTE att skapas!)"))
+        (set #lang_catalog (cat "Vilka språkkataloger vill du installera?\n"
+                                "(Engelska är inbyggt)"))
+        (set #lang_manual "Välj språk för den AmigaGuide-baserade hjälpen")
+        (set #no_way_back_warning (cat  "VARNING!!\n"
+                                       "(om du vill uppdatera en existerande\n"
+                                       "YAM 2.4 installation)\n"
+                                       "\n"
+                                       "Namn schemat för mailfilerna har ändrats totalt.\n"
+                                       "När du kör YAM 2.6 för första gången, kommer alla\n"
+                                       "dina nuvarande mailfiler att konverteras automatiskt till\n"
+                                       "det nya schemat. Efter det kommer inte YAM 2.4 att kunna\n"
+                                       "hantera dem längre.\n"
+                                       "Så, backa upp ALLA dina mailfiler FÖRE du kör YAM 2.6.\n"
+                                       "\n"
+                                       "Men, det är absolut INGA problem att installera\n"
+                                       "YAM 2.4 och YAM 2.6 i separata kataloger."))
+        (set #faq_and_bugtracker (cat "\n"
+                                      "Om du har några frågor rörande YAM\n"
+                                      "kan du fråga dessa i YAM's forum:\n"
+                                      "http://forum.yam.ch/\n"
+                                      "\n"
+                                      "Frequently asked questions är redan\n"
+                                      "besvarade i YAM's FAQ:\n"
+                                      "http://faq.yam.ch/\n"
+                                      "\n"
+                                      "Om du skulle hitta en bugg i YAM, var god\n"
+                                      "rapportera det i YAM's buggtracker:\n"
+                                      "http://bugs.yam.ch/"))
+        (set #done_1   (cat "\n"
+                            "YAM installerades utan problem\n"
+                            "\n"
+                            "Klicka på \"YAM\"-ikonen i katalogen\n"))
+        (set #done_2   (cat "\n"
+                            "för att pröva det.\n"
+                            "\n"
+                            "Ha det så bra!"))
+    )
 )
 ; ///
 ; /// ***** Français
 (if (= @language "français")
-  (
-    (set #def_cat_lang #def_lang_french)
-    (set #def_doc_lang #def_doc_french)
-    (set #wrongOS  "YAM nécessite au moins AmigaOS 3.0 pour fonctionner !\n")
-    (set #wrongMUI "YAM nécessite au moins MUI 3.8 pour fonctionner !\n")
-    (set #wrongCPU "YAM nécessite au moins un processeur 68020 pour fonctionner !\n")
-    (set #YAM_dir  (cat "Veuillez sélectionner un répertoire pour YAM\n"
-                        "(AUCUN nouveau tiroir ne sera créé !)"))
-    (set #lang_catalog (cat "Quel catalogue voulez-vous installer ?\n"
-                            "(L'anglais est déjà incorporé)"))
-    (set #lang_manual "Sélectionnez la langue de l'aide en ligne AmigaGuide")
-    (set #no_way_back_warning (cat "ATTENTION !!\n"
-                                   "(si vous voulez mettre à jour une installation\n"
-                                   "existante de YAM 2.4)\n"
-                                   "\n"
-                                   "Le schéma de nommage des messages a complètement changé.\n"
-                                   "Lorsque vous lancez YAM 2.6 pour la première fois, tous vos\n"
-                                   "messages existants seront automatiquement convertis. Après\n"
-                                   "cela YAM 2.4 ne pourra plus les gérer.\n"
-                                   "Vous devriez donc faire une sauvegarde de TOUS vos messages\n"
-                                   "AVANT de lancer YAM 2.6.\n"
-                                   "\n"
-                                   "Cependant, il n'y a absolument AUCUN problème à installer\n"
-                                   "YAM 2.4 et 2.6 dans des répertoires différents."))
-    (set #faq_and_bugtracker (cat "\n"
-                                  "Si vous avez des questions concernant YAM\n"
-                                  "vous pouvez les poser sur le forum :\n"
-                                  "http://forum.yam.ch/\n"
-                                  "\n"
-                                  "Une Foire Aux Questions déjà répondues\n"
-                                  "se trouve à l'adresse :\n"
-                                  "http://faq.yam.ch/\n"
-                                  "\n"
-                                  "Si vous trouvez un bug dans YAM, veuillez\n"
-                                  "le rapporter dans le suivi d'anomalies :\n"
-                                  "http://bugs.yam.ch/"))
-    (set #done_1   (cat "\n"
-                        "YAM a été installé avec succés.\n"
-                        "\n"
-                        "Double-cliquez the sur l'icône « YAM » dans\n"))
-    (set #done_2   (cat "\n"
-                        "le répertoire pour le tester.\n"
-                        "\n"
-                        "Amusez-vous bien..."))
-  )
+    (
+        (set #def_cat_lang #def_lang_french)
+        (set #def_doc_lang #def_doc_french)
+        (set #wrongOS  "YAM nécessite au moins AmigaOS 3.0 pour fonctionner !\n")
+        (set #wrongMUI "YAM nécessite au moins MUI 3.8 pour fonctionner !\n")
+        (set #wrongCPU "YAM nécessite au moins un processeur 68020 pour fonctionner !\n")
+        (set #YAM_dir  (cat "Veuillez sélectionner un répertoire pour YAM\n"
+                            "(AUCUN nouveau tiroir ne sera créé !)"))
+        (set #lang_catalog (cat "Quel catalogue voulez-vous installer ?\n"
+                                "(L'anglais est déjà incorporé)"))
+        (set #lang_manual "Sélectionnez la langue de l'aide en ligne AmigaGuide")
+        (set #no_way_back_warning (cat "ATTENTION !!\n"
+                                       "(si vous voulez mettre à jour une installation\n"
+                                       "existante de YAM 2.4)\n"
+                                       "\n"
+                                       "Le schéma de nommage des messages a complètement changé.\n"
+                                       "Lorsque vous lancez YAM 2.6 pour la première fois, tous vos\n"
+                                       "messages existants seront automatiquement convertis. Après\n"
+                                       "cela YAM 2.4 ne pourra plus les gérer.\n"
+                                       "Vous devriez donc faire une sauvegarde de TOUS vos messages\n"
+                                       "AVANT de lancer YAM 2.6.\n"
+                                       "\n"
+                                       "Cependant, il n'y a absolument AUCUN problème à installer\n"
+                                       "YAM 2.4 et 2.6 dans des répertoires différents."))
+        (set #faq_and_bugtracker (cat "\n"
+                                      "Si vous avez des questions concernant YAM\n"
+                                      "vous pouvez les poser sur le forum :\n"
+                                      "http://forum.yam.ch/\n"
+                                      "\n"
+                                      "Une Foire Aux Questions déjà répondues\n"
+                                      "se trouve à l'adresse :\n"
+                                      "http://faq.yam.ch/\n"
+                                      "\n"
+                                      "Si vous trouvez un bug dans YAM, veuillez\n"
+                                      "le rapporter dans le suivi d'anomalies :\n"
+                                      "http://bugs.yam.ch/"))
+        (set #done_1   (cat "\n"
+                            "YAM a été installé avec succés.\n"
+                            "\n"
+                            "Double-cliquez the sur l'icône « YAM » dans\n"))
+        (set #done_2   (cat "\n"
+                            "le répertoire pour le tester.\n"
+                            "\n"
+                            "Amusez-vous bien..."))
+    )
 )
 ; ///
 ; /// ***** Czech
 (if (= @language "czech")
-  (
-    (set #def_cat_lang #def_lang_czech)
-    (set #wrongOS  "YAM vy¾aduje AmigaOS 3.0 nebo novìj¹í!\n")
-    (set #wrongMUI "YAM vy¾aduje MUI 3.8 nebo novìj¹í!\n")
-    (set #wrongCPU "YAM vy¾aduje minimálnì procesor 68020!\n")
-    (set #YAM_dir  (cat "Vyberte prosím cílový adresáø pro YAM\n"
-                        "(Instalátor ¾ádný adresáø nevytvoøí!)"))
-    (set #lang_catalog (cat "Které z pøekladù chcete nainstalovat?\n"
-                            "(Angliètinu pou¾ívá program internì.)"))
-    (set #lang_manual "Vyberte pøeklad nápovìdy k programu")
-    (set #no_way_back_warning (cat "UPOZORNÌNÍ!\n"
-                                   "(Platí pro pøípad, ¾e chcete pøejít z verze 2.4.)\n"
-                                   "\n"
-                                   "Zpùsob pojmenování souborù se zprávami a jejich formát\n"
-                                   "byl v nové verzi úplnì pøepracován. Pøi prvním spu¹tìní\n"
-                                   "budou v¹echny zprávy automaticky pøevedeny do nového\n"
-                                   "systému a pak u¾ je nebude mo¾né pou¾ívat v YAM 2.4!\n"
-                                   "Je¹tì PØED spu¹tìním verze 2.6 nebo novìj¹í proto\n"
-                                   "dùraznì doporuèujeme zazálohovat V©ECHNY zprávy.\n"
-                                   "\n"
-                                   "Pozn.: Pokud chcete, technicky není ¾ádný problém\n"
-                                   "nainstalovat a pou¾ívat YAM 2.4 a YAM 2.6 ve dvou\n"
-                                   "rùzných adresáøích."))
-    (set #faq_and_bugtracker (cat "\n"
-                                  "Máte-li jakékoli dotazy ohlednì programu YAM,\n"
-                                  "zeptejte se na tomto diskusním fóru:\n"
-                                  "http://forum.yam.ch/\n"
-                                  "\n"
-                                  "Nejèastìji kladené otázky a jejich øe¹ení najdete\n"
-                                  "na adrese:\n"
-                                  "http://faq.yam.ch/\n"
-                                  "\n"
-                                  "Pokud najdete chybu, dejte nám prosím vìdìt:\n"
-                                  "http://bugs.yam.ch/"))
-    (set #done_1   (cat "\n"
-                        "Instalace programu YAM byla úspì¹nì dokonèena.\n"
-                        "\n"
-                        "Nyní vyhledejte ikonu \"YAM\" v adresáøi\n"))
-    (set #done_2   (cat "\n"
-                        "a dvojím kliknutím program spus»te.\n"
-                        "\n"
-                        "A» se Vám líbí..."))
-  )
+    (
+        (set #def_cat_lang #def_lang_czech)
+        (set #wrongOS  "YAM vy¾aduje AmigaOS 3.0 nebo novìj¹í!\n")
+        (set #wrongMUI "YAM vy¾aduje MUI 3.8 nebo novìj¹í!\n")
+        (set #wrongCPU "YAM vy¾aduje minimálnì procesor 68020!\n")
+        (set #YAM_dir  (cat "Vyberte prosím cílový adresáø pro YAM\n"
+                            "(Instalátor ¾ádný adresáø nevytvoøí!)"))
+        (set #lang_catalog (cat "Které z pøekladù chcete nainstalovat?\n"
+                                "(Angliètinu pou¾ívá program internì.)"))
+        (set #lang_manual "Vyberte pøeklad nápovìdy k programu")
+        (set #no_way_back_warning (cat "UPOZORNÌNÍ!\n"
+                                       "(Platí pro pøípad, ¾e chcete pøejít z verze 2.4.)\n"
+                                       "\n"
+                                       "Zpùsob pojmenování souborù se zprávami a jejich formát\n"
+                                       "byl v nové verzi úplnì pøepracován. Pøi prvním spu¹tìní\n"
+                                       "budou v¹echny zprávy automaticky pøevedeny do nového\n"
+                                       "systému a pak u¾ je nebude mo¾né pou¾ívat v YAM 2.4!\n"
+                                       "Je¹tì PØED spu¹tìním verze 2.6 nebo novìj¹í proto\n"
+                                       "dùraznì doporuèujeme zazálohovat V©ECHNY zprávy.\n"
+                                       "\n"
+                                       "Pozn.: Pokud chcete, technicky není ¾ádný problém\n"
+                                       "nainstalovat a pou¾ívat YAM 2.4 a YAM 2.6 ve dvou\n"
+                                       "rùzných adresáøích."))
+        (set #faq_and_bugtracker (cat "\n"
+                                      "Máte-li jakékoli dotazy ohlednì programu YAM,\n"
+                                      "zeptejte se na tomto diskusním fóru:\n"
+                                      "http://forum.yam.ch/\n"
+                                      "\n"
+                                      "Nejèastìji kladené otázky a jejich øe¹ení najdete\n"
+                                      "na adrese:\n"
+                                      "http://faq.yam.ch/\n"
+                                      "\n"
+                                      "Pokud najdete chybu, dejte nám prosím vìdìt:\n"
+                                      "http://bugs.yam.ch/"))
+        (set #done_1   (cat "\n"
+                            "Instalace programu YAM byla úspì¹nì dokonèena.\n"
+                            "\n"
+                            "Nyní vyhledejte ikonu \"YAM\" v adresáøi\n"))
+        (set #done_2   (cat "\n"
+                            "a dvojím kliknutím program spus»te.\n"
+                            "\n"
+                            "A» se Vám líbí..."))
+    )
 )
 ; ///
 ; /// ***** Italiano
 (if (= @language "italiano")
-  (
-    (set #def_cat_lang #def_lang_italian)
-    (set #wrongOS  "YAM richiede almeno AmigaOS 3.0 per girare correttamente!\n")
-    (set #wrongMUI "YAM richiede almeno MUI 3.8 per girare correttamente!\n")
-    (set #wrongCPU "YAM richiede almeno una CPU 68020 per girare correttamente!\n")
-    (set #YAM_dir  (cat "Per favore seleziona una directory per YAM\n"
-                        "(Non verrà creata nessuna cartella extra!)"))
-    (set #lang_catalog (cat "Quale catalogo di lingua si desidera installare?\n"
-                            "(La lingua inglese è quella predefinita)"))
-    (set #lang_manual "Seleziona la lingua da installare per la guida in linea AmigaGuide")
-    (set #no_way_back_warning (cat "ATTENZIONE!!\n"
-                                   "(Nel caso si desideri aggiornare il programma\n"
-                                   "da una precedente installazione di YAM)\n"
-                                   "\n"
-                                   "Lo schema dei nomi dei messaggi è stato modificato, perciò quando verrà lanciata\n"
-                                   "questa nuova versione per la prima volta tutti i precedenti messaggi verranno\n"
-                                   "automaticamente convertiti al nuovo schema.\n"
-                                   "Si consiglia di effettuare un backup di TUTTI i messaggi PRIMA di procedere.\n"
-                                   "\n"
-                                   "Ricorda che è sempre possibile installare due differenti versioni di YAM\n"
-                                   "in directory separate."))
-    (set #faq_and_bugtracker (cat "\n"
-                                  "Nel caso si abbiano delle domande concernenti YAM ed il suo sviluppo\n"
-                                  "potete contattarci attraverso il nostro forum all'indirizzo internet:\n"
-                                  "http://forum.yam.ch/\n"
-                                  "\n"
-                                  "Nota che le domande più frequentemente risposte sono\n"
-                                  "disponibili nelle FAQ del sito di YAM all'indirizzo:\n"
-                                  "http://faq.yam.ch/\n"
-                                  "\n"
-                                  "Nel caso venga riscontrato qualche bug o problema su YAM,\n"
-                                  "potete segnalarcelo attraverso il nostro bugtracker all'indirizzo:\n"
-                                  "http://bugs.yam.ch/"))
-    (set #done_1   (cat "\n"
-                        "YAM è stato installato con successo!\n"
-                        "\n"
-                        "Doppio click sull'icona di \"YAM\" nella directory\n"))
-    (set #done_2   (cat "\n"
-                        "in modo da poter avviare il programma.\n"
-                        "\n"
-                        "Buon divertimento..."))
-  )
+    (
+        (set #def_cat_lang #def_lang_italian)
+        (set #wrongOS  "YAM richiede almeno AmigaOS 3.0 per girare correttamente!\n")
+        (set #wrongMUI "YAM richiede almeno MUI 3.8 per girare correttamente!\n")
+        (set #wrongCPU "YAM richiede almeno una CPU 68020 per girare correttamente!\n")
+        (set #YAM_dir  (cat "Per favore seleziona una directory per YAM\n"
+                            "(Non verrà creata nessuna cartella extra!)"))
+        (set #lang_catalog (cat "Quale catalogo di lingua si desidera installare?\n"
+                                "(La lingua inglese è quella predefinita)"))
+        (set #lang_manual "Seleziona la lingua da installare per la guida in linea AmigaGuide")
+        (set #no_way_back_warning (cat "ATTENZIONE!!\n"
+                                       "(Nel caso si desideri aggiornare il programma\n"
+                                       "da una precedente installazione di YAM)\n"
+                                       "\n"
+                                       "Lo schema dei nomi dei messaggi è stato modificato, perciò quando verrà lanciata\n"
+                                       "questa nuova versione per la prima volta tutti i precedenti messaggi verranno\n"
+                                       "automaticamente convertiti al nuovo schema.\n"
+                                       "Si consiglia di effettuare un backup di TUTTI i messaggi PRIMA di procedere.\n"
+                                       "\n"
+                                       "Ricorda che è sempre possibile installare due differenti versioni di YAM\n"
+                                       "in directory separate."))
+        (set #faq_and_bugtracker (cat "\n"
+                                      "Nel caso si abbiano delle domande concernenti YAM ed il suo sviluppo\n"
+                                      "potete contattarci attraverso il nostro forum all'indirizzo internet:\n"
+                                      "http://forum.yam.ch/\n"
+                                      "\n"
+                                      "Nota che le domande più frequentemente risposte sono\n"
+                                      "disponibili nelle FAQ del sito di YAM all'indirizzo:\n"
+                                      "http://faq.yam.ch/\n"
+                                      "\n"
+                                      "Nel caso venga riscontrato qualche bug o problema su YAM,\n"
+                                      "potete segnalarcelo attraverso il nostro bugtracker all'indirizzo:\n"
+                                      "http://bugs.yam.ch/"))
+        (set #done_1   (cat "\n"
+                            "YAM è stato installato con successo!\n"
+                            "\n"
+                            "Doppio click sull'icona di \"YAM\" nella directory\n"))
+        (set #done_2   (cat "\n"
+                            "in modo da poter avviare il programma.\n"
+                            "\n"
+                            "Buon divertimento..."))
+    )
 )
 ; ///
 ;/// ***** Greek
 (if (= @language "greek")
-  (
-    (set #def_cat_lang #def_lang_greek)
-    (set #wrongOS  "Ôï YAM ÷ñåéÜæåôáé ôïõëÜ÷éóôïí AmigaOS 3.0 ãéá íá ôñÝîåé!\n")
-    (set #wrongMUI "Ôï YAM ÷ñåéÜæåôáé ôïõëÜ÷éóôïí MUI 3.8 ãéá íá ôñÝîåé!\n")
-    (set #wrongCPU "Ôï YAM ÷ñåéÜæåôáé ôïõëÜ÷éóôïí ìéá 68020 CPU ãéá íá ôñÝîåé!\n")
-    (set #YAM_dir  (cat "Ðáñáêáëþ åðéëÝîôå Ýíáí êáôÜëïãï ãéá ôï YAM\n"
-                        "(ÄÅÍ èá äçìéïõñãçèåß åðéðëÝïí êáôÜëïãïò!)"))
-    (set #lang_catalog (cat "Ðïéü áñ÷åßï êáôáëüãïõ èÝëåôå íá åãêáôáóôÞóåôå\n"
-                            "(Ç ÁããëéêÞ ãëþóóá åßíáé åíóùìáôïìÝíç)"))
-    (set #lang_manual "ÅðéëÝîôå ãëþóóá ãéá ôçí on-line âïÞèåéá AmigaGuide")
-    (set #no_way_back_warning (cat "ÐÑÏÓÏ×Ç!!\n"
-                                   "(åÜí èÝëåôå íá áíáâáèìßóåôå ìéá Þäç õðÜñ÷ïõóá\n"
-                                   "åãêáôÜóôáóç ôïõ YAM 2.4)\n"
-                                   "\n"
-                                   "Ç ìïñöÞ ïíïìÜôùí áëëçëïãñáößáò Ý÷åé áëëÜîåé åíôåëþò.\n"
-                                   "¼ôáí ôñÝîåôå ôï YAM 2.6 ãéá ðñþôç öïñÜ üëåò ïé\n"
-                                   "õðÜñ÷ïõóåò áëëçëïãñáößåò èá ìåôáôñáðïýí áõôüìáôá óôç\n"
-                                   "íÝá ìïñöÞ. ÌåôÜ áðü áõôü, ôï YAM 2.4 äå èá ìðïñåß íá\n"
-                                   "ôéò ÷åéñéóôåß ðëÝïí.\n"
-                                   "¸ôóé åßíáé êáëýôåñá íá êÜíåôå áíôßãñáöï áóöáëåßáò óå\n"
-                                   "¼ËÅÓ ôéò áëëçëïãñáößåò óáò ÐÑÉÍ ôñÝîåôå ôï YAM 2.6.\n"
-                                   "\n"
-                                   "¼ìùò, äåí õðÜñ÷åé ÊÁÍÅÍÁ ðñüâëçìá íá åãêáôáóôÞóåôå"
-                                   " ôï YAM 2.4 êáé ÕAM 2.6 óå äéáöïñåôéêïýò êáôáëüãïõò."))
-    (set #faq_and_bugtracker (cat "\n"
-                                  "ÅÜí Ý÷åôå ïðïéáäÞðïôå áðïñßá ó÷åôéêÜ ìå ôï YAM\n"
-                                  "ìðïñåßôå íá ôéò áíáöÝñåôå óôá forum ôïõ YAM:\n"
-                                  "http://forum.yam.ch/\n"
-                                  "\n"
-                                  "Óõ÷íÝò åñùôÞóåéò ðïõ Ý÷ïõí Þäç áðáíôçèåß\n"
-                                  "âñßóêïíôáé óôï YAM FAQ:\n"
-                                  "http://faq.yam.ch/\n"
-                                  "\n"
-                                  "Óå ðåñßðôùóç ðïõ âñåßôå êÜðïéï ðñüâëçìá óôï YAM, ðáñáêáëþ,\n"
-                                  "áíáöÝñåôÝ ôï óôï YAM bugtracker:\n"
-                                  "http://bugs.yam.ch/"))
-    (set #done_1   (cat "\nÔï YAM åãêáôáóôÜèçêå åðéôõ÷þò.\n"
-                         "\n"
-                        "ÊÜíôå äéðëü-êëßê óôï åéêïíßäéï \"YAM\" óôïí\n"))
-    (set #done_2   (cat "\nêáôÜëïãï ãéá íá ôï äïêéìÜóåôå.\n"
-                        "\n"
-                        "ÊáëÞ äéáóêÝäáóç..."))
-  )
+    (
+        (set #def_cat_lang #def_lang_greek)
+        (set #wrongOS  "Ôï YAM ÷ñåéÜæåôáé ôïõëÜ÷éóôïí AmigaOS 3.0 ãéá íá ôñÝîåé!\n")
+        (set #wrongMUI "Ôï YAM ÷ñåéÜæåôáé ôïõëÜ÷éóôïí MUI 3.8 ãéá íá ôñÝîåé!\n")
+        (set #wrongCPU "Ôï YAM ÷ñåéÜæåôáé ôïõëÜ÷éóôïí ìéá 68020 CPU ãéá íá ôñÝîåé!\n")
+        (set #YAM_dir  (cat "Ðáñáêáëþ åðéëÝîôå Ýíáí êáôÜëïãï ãéá ôï YAM\n"
+                            "(ÄÅÍ èá äçìéïõñãçèåß åðéðëÝïí êáôÜëïãïò!)"))
+        (set #lang_catalog (cat "Ðïéü áñ÷åßï êáôáëüãïõ èÝëåôå íá åãêáôáóôÞóåôå\n"
+                                "(Ç ÁããëéêÞ ãëþóóá åßíáé åíóùìáôïìÝíç)"))
+        (set #lang_manual "ÅðéëÝîôå ãëþóóá ãéá ôçí on-line âïÞèåéá AmigaGuide")
+        (set #no_way_back_warning (cat "ÐÑÏÓÏ×Ç!!\n"
+                                       "(åÜí èÝëåôå íá áíáâáèìßóåôå ìéá Þäç õðÜñ÷ïõóá\n"
+                                       "åãêáôÜóôáóç ôïõ YAM 2.4)\n"
+                                       "\n"
+                                       "Ç ìïñöÞ ïíïìÜôùí áëëçëïãñáößáò Ý÷åé áëëÜîåé åíôåëþò.\n"
+                                       "¼ôáí ôñÝîåôå ôï YAM 2.6 ãéá ðñþôç öïñÜ üëåò ïé\n"
+                                       "õðÜñ÷ïõóåò áëëçëïãñáößåò èá ìåôáôñáðïýí áõôüìáôá óôç\n"
+                                       "íÝá ìïñöÞ. ÌåôÜ áðü áõôü, ôï YAM 2.4 äå èá ìðïñåß íá\n"
+                                       "ôéò ÷åéñéóôåß ðëÝïí.\n"
+                                       "¸ôóé åßíáé êáëýôåñá íá êÜíåôå áíôßãñáöï áóöáëåßáò óå\n"
+                                       "¼ËÅÓ ôéò áëëçëïãñáößåò óáò ÐÑÉÍ ôñÝîåôå ôï YAM 2.6.\n"
+                                       "\n"
+                                       "¼ìùò, äåí õðÜñ÷åé ÊÁÍÅÍÁ ðñüâëçìá íá åãêáôáóôÞóåôå"
+                                       " ôï YAM 2.4 êáé ÕAM 2.6 óå äéáöïñåôéêïýò êáôáëüãïõò."))
+        (set #faq_and_bugtracker (cat "\n"
+                                      "ÅÜí Ý÷åôå ïðïéáäÞðïôå áðïñßá ó÷åôéêÜ ìå ôï YAM\n"
+                                      "ìðïñåßôå íá ôéò áíáöÝñåôå óôá forum ôïõ YAM:\n"
+                                      "http://forum.yam.ch/\n"
+                                      "\n"
+                                      "Óõ÷íÝò åñùôÞóåéò ðïõ Ý÷ïõí Þäç áðáíôçèåß\n"
+                                      "âñßóêïíôáé óôï YAM FAQ:\n"
+                                      "http://faq.yam.ch/\n"
+                                      "\n"
+                                      "Óå ðåñßðôùóç ðïõ âñåßôå êÜðïéï ðñüâëçìá óôï YAM, ðáñáêáëþ,\n"
+                                      "áíáöÝñåôÝ ôï óôï YAM bugtracker:\n"
+                                      "http://bugs.yam.ch/"))
+        (set #done_1   (cat "\nÔï YAM åãêáôáóôÜèçêå åðéôõ÷þò.\n"
+                             "\n"
+                            "ÊÜíôå äéðëü-êëßê óôï åéêïíßäéï \"YAM\" óôïí\n"))
+        (set #done_2   (cat "\nêáôÜëïãï ãéá íá ôï äïêéìÜóåôå.\n"
+                            "\n"
+                            "ÊáëÞ äéáóêÝäáóç..."))
+    )
 )
 ; ///
 
@@ -374,46 +374,46 @@
 ; we use newlib.library to check whether we are running on OS4 or MorphOS
 (set NEWLIB_ver (getversion "newlib.library" (resident)))
 (if (>= NEWLIB_ver (* 4 65536))
-  (
-    (set os3 0)
-    (set os4 1)
-    (set mos 0)
-  )
-  (
-    (set os4 0)
-    (if (>= OS_VER (* 51 65536))
-      (
-        (set mos 1)
+    (
         (set os3 0)
-      )
-      (
-        (set os3 1)
+        (set os4 1)
         (set mos 0)
-      )
     )
-  )
+    (
+        (set os4 0)
+        (if (>= OS_VER (* 51 65536))
+            (
+                (set mos 1)
+                (set os3 0)
+            )
+            (
+                (set os3 1)
+                (set mos 0)
+            )
+        )
+    )
 )
 
 (if os4
-  ; OS4 does use english locale names only
-  (
-    (set #cat_name_german                "german")
-    (set #cat_name_swedish               "swedish")
-    (set #cat_name_czech                 "czech")
-    (set #cat_name_italian               "italian")
-    (set #cat_name_french                "french")
-    (set #cat_name_greek                 "greek")
-    (set #cat_name_english_british       "english-british")
-  )
-  ; OS3 and MOS use localized locale names
-  (
-    (set #cat_name_german                "deutsch")
-    (set #cat_name_swedish               "svenska")
-    (set #cat_name_czech                 "czech")
-    (set #cat_name_italian               "italiano")
-    (set #cat_name_french                "français")
-    (set #cat_name_greek                 "greek")
-  )
+    ; OS4 uses english locale names only
+    (
+        (set #cat_name_german                "german")
+        (set #cat_name_swedish               "swedish")
+        (set #cat_name_czech                 "czech")
+        (set #cat_name_italian               "italian")
+        (set #cat_name_french                "french")
+        (set #cat_name_greek                 "greek")
+        (set #cat_name_english_british       "english-british")
+    )
+    ; OS3 and MOS use localized locale names
+    (
+        (set #cat_name_german                "deutsch")
+        (set #cat_name_swedish               "svenska")
+        (set #cat_name_czech                 "czech")
+        (set #cat_name_italian               "italiano")
+        (set #cat_name_french                "français")
+        (set #cat_name_greek                 "greek")
+    )
 )
 
 ; ///
@@ -425,65 +425,65 @@
 (complete 1)
 
 (if (<> 0 (exists "YAM:" (noreq)))
-   (set YAM_def_dir (getassign "YAM"))
-   (set YAM_def_dir @default-dest)
+    (set YAM_def_dir (getassign "YAM"))
+    (set YAM_def_dir @default-dest)
 )
 
 (set YAM_dir
-   (askdir
-      (default YAM_def_dir)
-      (prompt  #YAM_dir)
-      (help    @askdir-help)
-   )
+    (askdir
+        (default YAM_def_dir)
+        (prompt  #YAM_dir)
+        (help    @askdir-help)
+    )
 )
 
 (complete 10)
 
 (if os4
-   ; OS4 can handle different accents of one language (i.e. british english)
-   (set catalog_lang
-      (askoptions
-         (prompt  #lang_catalog)
-         (help @askoptions-help)
-         (choices "Deutsch"
-                  "Svenska"
-                  "Czech"
-                  "Italiano"
-                  "Français"
-                  "Greek"
-                  "English (british)"
-         )
-         (default #def_cat_lang)
-      )
-   )
-   ; but OS3/MOS cannot
-   (set catalog_lang
-      (askoptions
-         (prompt  #lang_catalog)
-         (help @askoptions-help)
-         (choices "Deutsch"
-                  "Svenska"
-                  "Czech"
-                  "Italiano"
-                  "Français"
-                  "Greek"
-         )
-         (default #def_cat_lang)
-      )
-   )
+    ; OS4 can handle different accents of one language (i.e. british english)
+    (set catalog_lang
+        (askoptions
+            (prompt  #lang_catalog)
+            (help @askoptions-help)
+            (choices "Deutsch"
+                     "Svenska"
+                     "Czech"
+                     "Italiano"
+                     "Français"
+                     "Greek"
+                     "English (british)"
+            )
+            (default #def_cat_lang)
+        )
+    )
+    ; but OS3/MOS can not
+    (set catalog_lang
+        (askoptions
+            (prompt  #lang_catalog)
+            (help @askoptions-help)
+            (choices "Deutsch"
+                     "Svenska"
+                     "Czech"
+                     "Italiano"
+                     "Français"
+                     "Greek"
+            )
+            (default #def_cat_lang)
+        )
+    )
 )
 
 (complete 20)
 
 (set doc_lang
-  (askchoice
-     (prompt  #lang_manual)
-     (help @askchoice-help)
-     (choices "English"
-              "Français"
-     )
-     (default #def_doc_lang)
-  )
+    (askchoice
+        (prompt  #lang_manual)
+        (help @askchoice-help)
+        (choices "English"
+                 "Français"
+        )
+        (default #def_doc_lang)
+    )
 )
 ; ///
 ; /// Here we go!
@@ -491,328 +491,335 @@
 
 ; make sure the YAM dir really exists
 (if (not (exists YAM_dir))
-   (
-      ; create the directory
-      (makedir YAM_dir)
-      ; copy the directory icon
-      (copyfiles
-         (source "//YAM 2.6.info")
-         (dest (tackon YAM_dir "/"))
-         (newname "YAM.info")
-         (infos)
-         (noposition)
-         (help @copyfiles-help)
-      )
-   )
+    (
+        ; create the directory
+        (makedir YAM_dir)
+        ; copy the directory icon
+        (copyfiles
+            (source "//YAM 2.6.info")
+            (dest (tackon YAM_dir "/"))
+            (newname "YAM.info")
+            (infos)
+            (noposition)
+            (help @copyfiles-help)
+        )
+    )
 )
 
 ; copy the executable
 (copyfiles (source "/YAM") (dest YAM_dir) (help @copyfiles-help))
 (if (not (exists (tackon YAM_dir "YAM.info")))
-   (copyfiles
-      (source "/YAM.info")
-      (dest YAM_dir)
-      (infos)
-      (noposition)
-      (help @copyfiles-help)
-   )
+    (copyfiles
+        (source "/YAM.info")
+        (dest YAM_dir)
+        (infos)
+        (noposition)
+        (help @copyfiles-help)
+    )
 )
 
 (complete 40)
 
 ; copy .taglines file
 (if (not (exists (tackon YAM_dir ".taglines")))
-   (copyfiles
-      (source "/.taglines")
-      (dest YAM_dir)
-      (help @copyfiles-help)
-   )
+    (copyfiles
+        (source "/.taglines")
+        (dest YAM_dir)
+        (help @copyfiles-help)
+    )
 )
 
 ; copy .addressbook file
 (if (not (exists (tackon YAM_dir ".addressbook")))
-   (copyfiles
-      (source "/.addressbook")
-      (dest YAM_dir)
-      (help @copyfiles-help)
-   )
+    (copyfiles
+        (source "/.addressbook")
+        (dest YAM_dir)
+        (help @copyfiles-help)
+    )
 )
 
-; make sure the Catalogs directory exists
-(set Cat_dir (tackon YAM_dir "Catalogs"))
-(if (not (exists Cat_dir))  (makedir Cat_dir))
+; check if there were any catalogs selected at all
+(if (<> 0 catalog_lang)
+    (
+        ; make sure the Catalogs directory exists
+        (set Cat_dir (tackon YAM_dir "Catalogs"))
+        (if (not (exists Cat_dir))
+            (makedir Cat_dir)
+        )
 
-; copy the icon of the Catalogs directory
-(if (not (exists (tackon YAM_dir "Catalogs.info")))
-   (copyfiles
-      (source "/Catalogs.info")
-      (dest YAM_dir)
-      (infos)
-      (noposition)
-      (help @copyfiles-help)
-   )
-)
+        ; copy the icon of the Catalogs directory
+        (if (not (exists (tackon YAM_dir "Catalogs.info")))
+            (copyfiles
+                (source "/Catalogs.info")
+                (dest YAM_dir)
+                (infos)
+                (noposition)
+                (help @copyfiles-help)
+            )
+        )
 
-; copy the YAM.cd file for people wanting to translate
-(if (not (exists (tackon Cat_dir "YAM.cd")))
-   (copyfiles
-      (source "/Catalogs/YAM.cd")
-      (dest Cat_dir)
-      (infos)
-      (noposition)
-      (help @copyfiles-help)
-   )
-)
+        ; copy the YAM.cd file for people wanting to translate
+        (if (not (exists (tackon Cat_dir "YAM.cd")))
+            (copyfiles
+                (source "/Catalogs/YAM.cd")
+                (dest Cat_dir)
+                (infos)
+                (noposition)
+                (help @copyfiles-help)
+            )
+        )
 
-; german catalog file
-(if (bitand catalog_lang #def_lang_german)
-   (
-      (makedir (tackon Cat_dir #cat_name_german))
+        ; german catalog file
+        (if (bitand catalog_lang #def_lang_german)
+            (
+                (makedir (tackon Cat_dir #cat_name_german))
 
-      (copyfiles
-         (source "/Catalogs/german")
-         (choices "YAM.catalog")
-         (dest (tackon Cat_dir #cat_name_german))
-      )
-   )
-)
+                (copyfiles
+                     (source "/Catalogs/german")
+                     (choices "YAM.catalog")
+                     (dest (tackon Cat_dir #cat_name_german))
+                )
+            )
+        )
 
-; swedish catalog file
-(if (bitand catalog_lang #def_lang_swedish)
-   (
-      (makedir (tackon Cat_dir #cat_name_swedish))
+        ; swedish catalog file
+        (if (bitand catalog_lang #def_lang_swedish)
+            (
+                (makedir (tackon Cat_dir #cat_name_swedish))
 
-      (copyfiles
-         (source "/Catalogs/swedish")
-         (choices "YAM.catalog")
-         (dest (tackon Cat_dir #cat_name_swedish))
-      )
-   )
-)
+                (copyfiles
+                    (source "/Catalogs/swedish")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_swedish))
+                )
+            )
+        )
 
-; czech catalog file
-(if (bitand catalog_lang #def_lang_czech)
-   (
-      (makedir (tackon Cat_dir #cat_name_czech))
+        ; czech catalog file
+        (if (bitand catalog_lang #def_lang_czech)
+            (
+                (makedir (tackon Cat_dir #cat_name_czech))
 
-      (copyfiles
-         (source "/Catalogs/czech")
-         (choices "YAM.catalog")
-         (dest (tackon Cat_dir #cat_name_czech))
-      )
-   )
-)
+                (copyfiles
+                    (source "/Catalogs/czech")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_czech))
+                )
+            )
+        )
 
-; italian catalog file
-(if (bitand catalog_lang #def_lang_italian)
-   (
-      (makedir (tackon Cat_dir #cat_name_italian))
+        ; italian catalog file
+        (if (bitand catalog_lang #def_lang_italian)
+            (
+                (makedir (tackon Cat_dir #cat_name_italian))
 
-      (copyfiles
-         (source "/Catalogs/italian")
-         (choices "YAM.catalog")
-         (dest (tackon Cat_dir #cat_name_italian))
-      )
-   )
-)
+                (copyfiles
+                    (source "/Catalogs/italian")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_italian))
+                )
+            )
+        )
 
-; french catalog file
-(if (bitand catalog_lang #def_lang_french)
-   (
-      (makedir (tackon Cat_dir #cat_name_french))
+        ; french catalog file
+        (if (bitand catalog_lang #def_lang_french)
+            (
+                (makedir (tackon Cat_dir #cat_name_french))
 
-      (copyfiles
-         (source "/Catalogs/french")
-         (choices "YAM.catalog")
-         (dest (tackon Cat_dir #cat_name_french))
-      )
-   )
-)
+                (copyfiles
+                    (source "/Catalogs/french")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_french))
+                )
+            )
+        )
 
-; greek catalog file
-(if (bitand catalog_lang #def_lang_greek)
-   (
-      (makedir (tackon Cat_dir #cat_name_greek))
+        ; greek catalog file
+        (if (bitand catalog_lang #def_lang_greek)
+            (
+                (makedir (tackon Cat_dir #cat_name_greek))
 
-      (copyfiles
-         (source "/Catalogs/greek")
-         (choices "YAM.catalog")
-         (dest (tackon Cat_dir #cat_name_greek))
-      )
-   )
-)
+                (copyfiles
+                    (source "/Catalogs/greek")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_greek))
+                )
+            )
+        )
 
-; new the accent languages follow
-; NOTE: only OS4 supports these!!
-(if os4
-   ; english-british catalog file
-   (if (bitand catalog_lang #def_lang_english_british)
-      (
-         (makedir (tackon Cat_dir #cat_name_english_british))
+        ; new the accent languages follow
+        ; NOTE: only OS4 supports these!!
+        (if os4
+            ; english-british catalog file
+            (if (bitand catalog_lang #def_lang_english_british)
+                (
+                    (makedir (tackon Cat_dir #cat_name_english_british))
 
-         (copyfiles
-            (source "/Catalogs/english-british")
-            (choices "YAM.catalog")
-            (dest (tackon Cat_dir #cat_name_english_british))
-         )
-      )
-   )
+                    (copyfiles
+                        (source "/Catalogs/english-british")
+                        (choices "YAM.catalog")
+                        (dest (tackon Cat_dir #cat_name_english_british))
+                    )
+                )
+            )
+        )
+     )
 )
 
 (complete 50)
 
 (set Gallery_dir (tackon YAM_dir "Gallery"))
 (if (not (exists Gallery_dir))
-   (makedir Gallery_dir)
+    (makedir Gallery_dir)
 )
 (copyfiles
-   (source "/Gallery/")
-   (dest Gallery_dir)
-   (all)
+    (source "/Gallery/")
+    (dest Gallery_dir)
+    (all)
 )
 
 (if (not (exists (tackon YAM_dir "Gallery.info")))
-   (copyfiles
-      (source "/Gallery.info")
-      (dest YAM_dir)
-      (infos)
-      (noposition)
-      (help @copyfiles-help)
-   )
+    (copyfiles
+        (source "/Gallery.info")
+        (dest YAM_dir)
+        (infos)
+        (noposition)
+        (help @copyfiles-help)
+    )
 )
 
 (set Docs_dir (tackon YAM_dir "Docs"))
 (if (not (exists Docs_dir))
-   (makedir Docs_dir)
+    (makedir Docs_dir)
 )
 (copyfiles
-   (source "/Docs/")
-   (dest Docs_dir)
-   (all)
+    (source "/Docs/")
+    (dest Docs_dir)
+    (all)
 )
 
 (if (not (exists (tackon YAM_dir "Docs.info")))
-   (copyfiles
-      (source "/Docs.info")
-      (dest YAM_dir)
-      (infos)
-      (noposition)
-      (help @copyfiles-help)
-   )
+    (copyfiles
+        (source "/Docs.info")
+        (dest YAM_dir)
+        (infos)
+        (noposition)
+        (help @copyfiles-help)
+    )
 )
 
-; copy the guide to the main installation directory
+; copy the selected guide to the main installation directory
 (if (= doc_lang #def_doc_english)
-   (
-      (copyfiles
-         (source "/Docs/YAM_english.guide")
-         (dest YAM_dir)
-         (newname "YAM.guide")
-         (infos)
-         (noposition)
-      )
-   )
+    (
+        (copyfiles
+            (source "/Docs/YAM_english.guide")
+            (dest YAM_dir)
+            (newname "YAM.guide")
+            (infos)
+            (noposition)
+        )
+    )
 )
 
 (if (= doc_lang #def_doc_french)
-   (
-      (copyfiles
-         (source "/Docs/YAM_french.guide")
-         (dest YAM_dir)
-         (newname "YAM.guide")
-         (infos)
-         (noposition)
-      )
-   )
+    (
+        (copyfiles
+            (source "/Docs/YAM_french.guide")
+            (dest YAM_dir)
+            (newname "YAM.guide")
+            (infos)
+            (noposition)
+        )
+    )
 )
 
 ; copy the ReadMe file
 (copyfiles
-   (source "/ReadMe")
-   (dest YAM_dir)
-   (infos)
+    (source "/ReadMe")
+    (dest YAM_dir)
+    (infos)
 )
 
 (complete 60)
 
 (set Themes_dir (tackon YAM_dir "Themes"))
 (if (not (exists Themes_dir))
-   (makedir Themes_dir)
+    (makedir Themes_dir)
 )
 (copyfiles
-   (source "/Themes/")
-   (dest Themes_dir)
-   (all)
+    (source "/Themes/")
+    (dest Themes_dir)
+    (all)
 )
 
 (if (not (exists (tackon YAM_dir "Themes.info")))
-   (copyfiles
-      (source "/Themes.info")
-      (dest YAM_dir)
-      (infos)
-      (noposition)
-      (help @copyfiles-help)
-   )
+    (copyfiles
+        (source "/Themes.info")
+        (dest YAM_dir)
+        (infos)
+        (noposition)
+        (help @copyfiles-help)
+    )
 )
 
 (complete 70)
 
 (set ARexx_dir (tackon YAM_dir "Rexx"))
 (if (not (exists ARexx_dir))
-   (makedir ARexx_dir)
+    (makedir ARexx_dir)
 )
 (copyfiles
-   (source "/Rexx/")
-   (dest ARexx_dir)
-   (all)
+    (source "/Rexx/")
+    (dest ARexx_dir)
+    (all)
 )
 
 (if (not (exists (tackon YAM_dir "Rexx.info")))
-   (copyfiles
-      (source "/Rexx.info")
-      (dest YAM_dir)
-      (infos)
-      (noposition)
-      (help @copyfiles-help)
-   )
+    (copyfiles
+        (source "/Rexx.info")
+        (dest YAM_dir)
+        (infos)
+        (noposition)
+        (help @copyfiles-help)
+    )
 )
 
 (complete 80)
 
 (if mos
-   ; MorphOS has no MUI: assign anymore but places MUI subclasses in SYS:Classes/MUI
-   (set #MCC_dir "SYS:Classes/MUI/")
-   ; OS3 and OS4 use the MUI: assign
-   (set #MCC_dir "MUI:libs/mui/")
+    ; MorphOS has no MUI: assign anymore but places MUI subclasses in SYS:Classes/MUI
+    (set #MCC_dir "SYS:Classes/MUI/")
+    ; OS3 and OS4 use the MUI: assign
+    (set #MCC_dir "MUI:libs/mui/")
 )
 (foreach "MUI/" "#?.mc?"
-   (copylib
-      (prompt (cat "MUI - " @each-name))
-      (source (cat "MUI/" @each-name))
-      (dest #MCC_dir)
-      (confirm)
-      (help @copylib-help)
-   )
+    (copylib
+        (prompt (cat "MUI - " @each-name))
+        (source (cat "MUI/" @each-name))
+        (dest #MCC_dir)
+        (confirm)
+        (help @copylib-help)
+    )
 )
 
 (complete 90)
 
 (foreach "Libs/" "#?.library"
-   (copylib
-      (prompt @each-name)
-      (source (cat "Libs/" @each-name))
-      (dest "LIBS:")
-      (confirm)
-      (help @copylib-help)
-   )
+    (copylib
+        (prompt @each-name)
+        (source (cat "Libs/" @each-name))
+        (dest "LIBS:")
+        (confirm)
+        (help @copylib-help)
+    )
 )
 
 (if (or os3 mos)
-  (copyfiles
-     (source "Libs/Charsets/")
-     (dest "LIBS:Charsets")
-     (all)
-  )
+    (copyfiles
+        (source "Libs/Charsets/")
+        (dest "LIBS:Charsets")
+        (all)
+    )
 )
 
 (complete 99)
