@@ -97,6 +97,11 @@ struct SelectionMsg
 
   BOOL finish;
 };
+
+#ifndef ICONGETA_SizeBounds
+#define ICONGETA_SizeBounds TAG_IGNORE
+#endif
+
 ///
 /// SelectionHook
 #if !defined(__amigaos4__)
@@ -176,9 +181,7 @@ static void LoadImage(Object *obj, struct Data *data)
   {
     struct Part *mailPart = data->mailPart;
     struct DiskObject *diskObject = NULL;
-    #if defined(__amigaos4__)
     struct Rectangle sizeBounds;
-    #endif
 
     // we first make sure we have freed everything
     if(data->normalBitMap)
@@ -211,7 +214,6 @@ static void LoadImage(Object *obj, struct Data *data)
       data->diskObject = NULL;
     }
 
-    #if defined(__amigaos4__)
     // Set up the minimum and maximum sizes for the icons to take the dirty work
     // of scaling the icon images to the required size from us.
     // This requires icon.library 53.7+ and will be ignored on previous versions.
@@ -219,7 +221,6 @@ static void LoadImage(Object *obj, struct Data *data)
     sizeBounds.MinY = 8;
     sizeBounds.MaxX = data->maxWidth;
     sizeBounds.MaxY = data->maxHeight;
-    #endif
 
     // only if we have at least icon.library >= v44 and we find deficons
     // we try to identify the file with deficons

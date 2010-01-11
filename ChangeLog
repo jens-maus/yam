@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AttachmentImage: fixed the non-OS4 builds by defining the unknown
+    ICONGETA_SizeBounds tag as TAG_IGNORE.
+
 2010-01-10  Alexandre Balaban <abalaban@free.fr>
 
   * doc/YAM_french.guide: updated according to latest changes.
