@@ -97,11 +97,6 @@ struct SelectionMsg
 
   BOOL finish;
 };
-
-#ifndef ICONGETA_SizeBounds
-#define ICONGETA_SizeBounds TAG_IGNORE
-#endif
-
 ///
 /// SelectionHook
 #if !defined(__amigaos4__)
@@ -175,6 +170,10 @@ static BOOL FindWriteWindow(struct Window *win)
 // state
 static void LoadImage(Object *obj, struct Data *data)
 {
+  #ifndef ICONGETA_SizeBounds
+  #define ICONGETA_SizeBounds TAG_IGNORE
+  #endif
+
   ENTER();
 
   if(data->mailPart != NULL)
