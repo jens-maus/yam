@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2007 by YAM Open Source Team
+ Copyright (C) 2000-2010 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ Groups ought to list the total size of their contents, either if they
 are open or closed.
 
 Selecting a group should NOT disable the mail listview, but leave its
-current contents intact until another folder is selected. 
+current contents intact until another folder is selected.
 
 
 Additional config flags
