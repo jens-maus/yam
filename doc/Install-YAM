@@ -474,6 +474,17 @@
 )
 
 (complete 20)
+
+(set doc_lang
+  (askchoice
+     (prompt  #lang_manual)
+     (help @askchoice-help)
+     (choices "English"
+              "Français"
+     )
+     (default #def_doc_lang)
+  )
+)
 ; ///
 ; /// Here we go!
 (complete 30)
@@ -484,12 +495,13 @@
       ; create the directory
       (makedir YAM_dir)
       ; copy the directory icon
-      (copyfiles (source "//YAM 2.6.info")
-                 (dest (tackon YAM_dir "/"))
-                 (newname "YAM.info")
-                 (infos)
-                 (noposition)
-                 (help @copyfiles-help)
+      (copyfiles
+         (source "//YAM 2.6.info")
+         (dest (tackon YAM_dir "/"))
+         (newname "YAM.info")
+         (infos)
+         (noposition)
+         (help @copyfiles-help)
       )
    )
 )
@@ -497,11 +509,12 @@
 ; copy the executable
 (copyfiles (source "/YAM") (dest YAM_dir) (help @copyfiles-help))
 (if (not (exists (tackon YAM_dir "YAM.info")))
-   (copyfiles (source "/YAM.info")
-              (dest YAM_dir)
-              (infos)
-              (noposition)
-              (help @copyfiles-help)
+   (copyfiles
+      (source "/YAM.info")
+      (dest YAM_dir)
+      (infos)
+      (noposition)
+      (help @copyfiles-help)
    )
 )
 
@@ -509,12 +522,20 @@
 
 ; copy .taglines file
 (if (not (exists (tackon YAM_dir ".taglines")))
-   (copyfiles (source "/.taglines") (dest YAM_dir) (help @copyfiles-help))
+   (copyfiles
+      (source "/.taglines")
+      (dest YAM_dir)
+      (help @copyfiles-help)
+   )
 )
 
 ; copy .addressbook file
 (if (not (exists (tackon YAM_dir ".addressbook")))
-   (copyfiles (source "/.addressbook") (dest YAM_dir) (help @copyfiles-help))
+   (copyfiles
+      (source "/.addressbook")
+      (dest YAM_dir)
+      (help @copyfiles-help)
+   )
 )
 
 ; make sure the Catalogs directory exists
@@ -523,21 +544,23 @@
 
 ; copy the icon of the Catalogs directory
 (if (not (exists (tackon YAM_dir "Catalogs.info")))
-   (copyfiles (source "/Catalogs.info")
-              (dest YAM_dir)
-              (infos)
-              (noposition)
-              (help @copyfiles-help)
+   (copyfiles
+      (source "/Catalogs.info")
+      (dest YAM_dir)
+      (infos)
+      (noposition)
+      (help @copyfiles-help)
    )
 )
 
 ; copy the YAM.cd file for people wanting to translate
 (if (not (exists (tackon Cat_dir "YAM.cd")))
-   (copyfiles (source "/Catalogs/YAM.cd")
-              (dest Cat_dir)
-              (infos)
-              (noposition)
-              (help @copyfiles-help)
+   (copyfiles
+      (source "/Catalogs/YAM.cd")
+      (dest Cat_dir)
+      (infos)
+      (noposition)
+      (help @copyfiles-help)
    )
 )
 
@@ -546,7 +569,8 @@
    (
       (makedir (tackon Cat_dir #cat_name_german))
 
-      (copyfiles (source "/Catalogs/german")
+      (copyfiles
+         (source "/Catalogs/german")
          (choices "YAM.catalog")
          (dest (tackon Cat_dir #cat_name_german))
       )
@@ -558,7 +582,8 @@
    (
       (makedir (tackon Cat_dir #cat_name_swedish))
 
-      (copyfiles (source "/Catalogs/swedish")
+      (copyfiles
+         (source "/Catalogs/swedish")
          (choices "YAM.catalog")
          (dest (tackon Cat_dir #cat_name_swedish))
       )
@@ -570,7 +595,8 @@
    (
       (makedir (tackon Cat_dir #cat_name_czech))
 
-      (copyfiles (source "/Catalogs/czech")
+      (copyfiles
+         (source "/Catalogs/czech")
          (choices "YAM.catalog")
          (dest (tackon Cat_dir #cat_name_czech))
       )
@@ -582,7 +608,8 @@
    (
       (makedir (tackon Cat_dir #cat_name_italian))
 
-      (copyfiles (source "/Catalogs/italian")
+      (copyfiles
+         (source "/Catalogs/italian")
          (choices "YAM.catalog")
          (dest (tackon Cat_dir #cat_name_italian))
       )
@@ -594,7 +621,8 @@
    (
       (makedir (tackon Cat_dir #cat_name_french))
 
-      (copyfiles (source "/Catalogs/french")
+      (copyfiles
+         (source "/Catalogs/french")
          (choices "YAM.catalog")
          (dest (tackon Cat_dir #cat_name_french))
       )
@@ -606,7 +634,8 @@
    (
       (makedir (tackon Cat_dir #cat_name_greek))
 
-      (copyfiles (source "/Catalogs/greek")
+      (copyfiles
+         (source "/Catalogs/greek")
          (choices "YAM.catalog")
          (dest (tackon Cat_dir #cat_name_greek))
       )
@@ -621,7 +650,8 @@
       (
          (makedir (tackon Cat_dir #cat_name_english_british))
 
-         (copyfiles (source "/Catalogs/english-british")
+         (copyfiles
+            (source "/Catalogs/english-british")
             (choices "YAM.catalog")
             (dest (tackon Cat_dir #cat_name_english_british))
          )
@@ -632,81 +662,118 @@
 (complete 50)
 
 (set Gallery_dir (tackon YAM_dir "Gallery"))
-(if (not (exists Gallery_dir)) (makedir Gallery_dir))
-(copyfiles (source "/Gallery/")
-           (dest Gallery_dir)
-           (all)
+(if (not (exists Gallery_dir))
+   (makedir Gallery_dir)
+)
+(copyfiles
+   (source "/Gallery/")
+   (dest Gallery_dir)
+   (all)
 )
 
 (if (not (exists (tackon YAM_dir "Gallery.info")))
-   (copyfiles (source "/Gallery.info")
-              (dest YAM_dir)
-              (infos)
-              (noposition)
-              (help @copyfiles-help)
+   (copyfiles
+      (source "/Gallery.info")
+      (dest YAM_dir)
+      (infos)
+      (noposition)
+      (help @copyfiles-help)
    )
 )
 
 (set Docs_dir (tackon YAM_dir "Docs"))
-(if (not (exists Docs_dir)) (makedir Docs_dir))
-(copyfiles (source "/Docs/")
-           (dest Docs_dir)
-           (all)
+(if (not (exists Docs_dir))
+   (makedir Docs_dir)
+)
+(copyfiles
+   (source "/Docs/")
+   (dest Docs_dir)
+   (all)
 )
 
 (if (not (exists (tackon YAM_dir "Docs.info")))
-   (copyfiles (source "/Docs.info")
-              (dest YAM_dir)
-              (infos)
-              (noposition)
-              (help @copyfiles-help)
+   (copyfiles
+      (source "/Docs.info")
+      (dest YAM_dir)
+      (infos)
+      (noposition)
+      (help @copyfiles-help)
    )
 )
 
 ; copy the guide to the main installation directory
-(copyfiles (source "/Docs/YAM_english.guide")
-   (dest YAM_dir)
-   (newname "YAM.guide")
-   (infos)
-   (noposition)
+(if (= doc_lang #def_doc_english)
+   (
+      (copyfiles
+         (source "/Docs/YAM_english.guide")
+         (dest YAM_dir)
+         (newname "YAM.guide")
+         (infos)
+         (noposition)
+      )
+   )
+)
+
+(if (= doc_lang #def_doc_french)
+   (
+      (copyfiles
+         (source "/Docs/YAM_french.guide")
+         (dest YAM_dir)
+         (newname "YAM.guide")
+         (infos)
+         (noposition)
+      )
+   )
 )
 
 ; copy the ReadMe file
-(copyfiles (source "/ReadMe")  (dest YAM_dir) (infos))
+(copyfiles
+   (source "/ReadMe")
+   (dest YAM_dir)
+   (infos)
+)
 
 (complete 60)
 
 (set Themes_dir (tackon YAM_dir "Themes"))
-(if (not (exists Themes_dir)) (makedir Themes_dir))
-(copyfiles (source "/Themes/")
-           (dest Themes_dir)
-           (all)
+(if (not (exists Themes_dir))
+   (makedir Themes_dir)
+)
+(copyfiles
+   (source "/Themes/")
+   (dest Themes_dir)
+   (all)
 )
 
 (if (not (exists (tackon YAM_dir "Themes.info")))
-   (copyfiles (source "/Themes.info")
-              (dest YAM_dir)
-              (infos)
-              (noposition)
-              (help @copyfiles-help)
+   (copyfiles
+      (source "/Themes.info")
+      (dest YAM_dir)
+      (infos)
+      (noposition)
+      (help @copyfiles-help)
    )
 )
 
 (complete 70)
 
 (set ARexx_dir (tackon YAM_dir "Rexx"))
-(if (not (exists ARexx_dir)) (makedir ARexx_dir))
-(copyfiles (source "/Rexx/")
-           (dest ARexx_dir)
-           (all)
+(if (not (exists ARexx_dir))
+   (makedir ARexx_dir)
+)
+(copyfiles
+   (source "/Rexx/")
+   (dest ARexx_dir)
+   (all)
 )
 
 (if (not (exists (tackon YAM_dir "Rexx.info")))
-   (copyfiles (source "/Rexx.info")
-              (dest YAM_dir)
-              (infos)
-              (noposition)
-              (help @copyfiles-help)
+   (copyfiles
+      (source "/Rexx.info")
+      (dest YAM_dir)
+      (infos)
+      (noposition)
+      (help @copyfiles-help)
    )
 )
 
@@ -719,29 +786,32 @@
    (set #MCC_dir "MUI:libs/mui/")
 )
 (foreach "MUI/" "#?.mc?"
-   (copylib (prompt (cat "MUI - " @each-name))
-            (source (cat "MUI/" @each-name))
-            (dest #MCC_dir)
-            (confirm)
-            (help @copylib-help)
+   (copylib
+      (prompt (cat "MUI - " @each-name))
+      (source (cat "MUI/" @each-name))
+      (dest #MCC_dir)
+      (confirm)
+      (help @copylib-help)
    )
 )
 
 (complete 90)
 
 (foreach "Libs/" "#?.library"
-   (copylib (prompt @each-name)
-            (source (cat "Libs/" @each-name))
-            (dest "LIBS:")
-            (confirm)
-            (help @copylib-help)
+   (copylib
+      (prompt @each-name)
+      (source (cat "Libs/" @each-name))
+      (dest "LIBS:")
+      (confirm)
+      (help @copylib-help)
    )
 )
 
 (if (or os3 mos)
-  (copyfiles (source "Libs/Charsets/")
-             (dest "LIBS:Charsets")
-             (all)
+  (copyfiles
+     (source "Libs/Charsets/")
+     (dest "LIBS:Charsets")
+     (all)
   )
 )
 
@@ -756,4 +826,3 @@
 ; /// ********************
 ;----------------------------------------------------------------------------
 (exit (QUIET))
-
