@@ -42,6 +42,7 @@ struct Data
   Object *Texteditor;
   Object *ParentWindow;
   ULONG CaseSensitive;
+  BOOL CloseNotifyAdded;
 };
 */
 
@@ -117,13 +118,17 @@ DECLARE(Open) // Object *texteditor
 
   ENTER();
 
-  if(data->ParentWindow)
+  if(data->ParentWindow != NULL)
     DoMethod(obj, MUIM_Searchwindow_Close);
 
   data->Texteditor = msg->texteditor;
   data->ParentWindow = _win(msg->texteditor);
 
-  DoMethod(data->ParentWindow, MUIM_Notify, MUIA_Window_Open, FALSE, obj, 1, MUIM_Searchwindow_Close);
+  if(data->ParentWindow != NULL)
+  {
+    DoMethod(data->ParentWindow, MUIM_Notify, MUIA_Window_Open, FALSE, obj, 1, MUIM_Searchwindow_Close);
+    data->CloseNotifyAdded = TRUE;
+  }
 
   xset(data->Searchstring,  MUIA_String_BufferPos, 0,
                             MUIA_BetterString_SelectSize, strlen((STRPTR)xget(data->Searchstring, MUIA_String_Contents)));
@@ -146,8 +151,12 @@ DECLARE(Close)
   ENTER();
 
   set(obj, MUIA_Window_Open, FALSE);
-  DoMethod(data->ParentWindow, MUIM_KillNotifyObj, MUIA_Window_Open, obj);
-  data->ParentWindow = NULL;
+
+  if(data->ParentWindow != NULL && data->CloseNotifyAdded == TRUE)
+  {
+    DoMethod(data->ParentWindow, MUIM_KillNotifyObj, MUIA_Window_Open, obj);
+    data->CloseNotifyAdded = FALSE;
+  }
 
   RETURN(0);
   return 0;
@@ -159,11 +168,12 @@ DECLARE(Search) // ULONG flags
 {
   GETDATA;
   STRPTR string;
-  Object *parent = data->ParentWindow;
+
+  ENTER();
 
   DoMethod(obj, MUIM_Searchwindow_Close);
 
-  if((string = (STRPTR)xget(data->Searchstring, MUIA_String_Contents), string) && string[0] != '\0' && data->Texteditor)
+  if((string = (STRPTR)xget(data->Searchstring, MUIA_String_Contents), string) != NULL && string[0] != '\0' && data->Texteditor != NULL)
   {
     ULONG flags = 0;
 
@@ -181,9 +191,9 @@ DECLARE(Search) // ULONG flags
       // top
       if(hasFromTopFlag(msg->flags))
       {
-        MUI_Request(_app(obj), parent, 0L, tr(MSG_SEARCHNOTFOUND_TITLE),
-                                           tr(MSG_OkayReq),
-                                           tr(MSG_SEARCHNOTFOUND_MSG), string);
+        MUI_Request(_app(obj), data->ParentWindow, 0L, tr(MSG_SEARCHNOTFOUND_TITLE),
+                                                       tr(MSG_OkayReq),
+                                                       tr(MSG_SEARCHNOTFOUND_MSG), string);
       }
       else if(hasBeepOnFailureFlag(msg->flags))
       {
@@ -193,6 +203,7 @@ DECLARE(Search) // ULONG flags
     }
   }
 
+  RETURN(0);
   return 0;
 }
 

@@ -9,6 +9,11 @@ $URL$
 
   * mui/AttachmentImage: fixed the non-OS4 builds by defining the unknown
     ICONGETA_SizeBounds tag as TAG_IGNORE.
+  * mui/Searchwindow.c: performing a next search in the read window now just
+    removes a notification instead of erasing the parent window pointer. First,
+    this makes it possible to let the "not found" window to reference the
+    correct parent window, and second it fixes bug #2921931 as a NULL pointer
+    was used without check before.
 
 2010-01-10  Alexandre Balaban <abalaban@free.fr>
 
