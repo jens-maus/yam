@@ -14,6 +14,7 @@ $URL$
     this makes it possible to let the "not found" window to reference the
     correct parent window, and second it fixes bug #2921931 as a NULL pointer
     was used without check before.
+  * YAM_MA.c: aborting the printing of several mails did not abort the process.
 
 2010-01-10  Alexandre Balaban <abalaban@free.fr>
 

@@ -1821,6 +1821,9 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
 
           FreePrivateRMData(rmData);
         }
+
+        if(abort == TRUE)
+          break;
       }
 
       DeleteMailList(mlist);
