@@ -4,7 +4,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck\@yam.ch>
- Copyright (C) 2000-2007 by YAM Open Source Team
+ Copyright (C) 2000-2010 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -1073,7 +1073,7 @@ l'heure d'été dans les pays concernés. L'activer, ajoute 1 heure à la valeur
 de temps du fuseau horaire.
 
 
-   YAM effectuera la correction automatiquement si un outil de gestion 
+   YAM effectuera la correction automatiquement si un outil de gestion
 @{" d'heure d'été " link "TIP5"} tel @{b}SetDST@{ub}, @{b}FACTS@{ub} ou @{b}SummertimeGuard@{ub}
 est installé. Cela est indiqué par le grisage de cette option.
 
@@ -1606,50 +1606,50 @@ option si plusieurs personnes partagent un même compte POP3.
 @endnode
 
 @node "CO15" "Configuration - Courrier indésirable"
-@next "CO04" 
-@prev "CO03" 
-@toc "CO_W" 
- 
+@next "CO04"
+@prev "CO03"
+@toc "CO_W"
+
 Configuration du filtrage du courrier indésirable
 *************************************************
- 
- 
+
+
 @{b}Activer le filtrage des courrier indésirables@{ub}
-     Active le filtre des courriers indésirables, croyez le ou non :) 
- 
+     Active le filtre des courriers indésirables, croyez le ou non :)
+
      @{b}Réinitialiser l'apprentissage@{ub}
-      Réinitialise les données collectées pour la détéection des indésirables. 
-      N'est nécesaire qu'en de très rares circonstances. 
- 
+      Réinitialise les données collectées pour la détéection des indésirables.
+      N'est nécesaire qu'en de très rares circonstances.
+
 @{b}Filtrer les contenus indésirables des nouveaux courriers@{ub}
      Inspecte automatiquement les nouveaux courriers pour détecter le contenu
-     indésirable. 
- 
- 
+     indésirable.
+
+
 @{b}Le carnet d'adresses est une liste blanche@{ub}
      Un courrier dont l'adresse du champ « De: » est présente dans le carnet
-     d'adresses ne sera jamais considéré comme indésirable. 
- 
- 
+     d'adresses ne sera jamais considéré comme indésirable.
+
+
 @{b}Marquer comme indésirable les courriers déplacés vers le dossier « Indésirables »@{ub}
      Tout courrier déplacé manuellement dans le dossier « Indésirables » sera
-     automatiquement marqué comme étant indésirable. 
- 
- 
+     automatiquement marqué comme étant indésirable.
+
+
 @{b}Marquer les nouveaux courriers indésirables comme lus@{ub}
      Tout nouveau courrier indésriable sera marqué comme étant lu.
- 
- 
+
+
 @{b}Remettre les courriers « Acceptables » dans la boite de réception@{ub}
      Déplace les courriers détectés à tort comme indésirables ou les courriers
      manuellement marqués comme « Acceptables » vers le dossier « Arrivée ».
- 
- 
+
+
 @{b}Appliquer les filtres@{ub}
      Applique tous les filtres définis aux courriers redéplacés vers le dossier
      « Boite de réception ».
- 
-@endnode 
+
+@endnode
 
 @node "CO04" "Configuration - Lecture"
 @next "CO05"
@@ -10611,7 +10611,7 @@ Déplacer YAM sur une autre partition ou dans un autre répertoire
    place, c'est que tout semble bien fonctionner, effacer tous les
    fichiers de l'ancien répertoire ne devrait poser aucun problème.
 
-@endnode                                                
+@endnode
 
 @node "TIP3" "Éviter les excès de plantage du disque au démarrage"
 @next "TIP4"
@@ -10726,10 +10726,10 @@ réglages possibles.
 
 @endnode
 
-@node "TIP5" "Positionner correctement l'ajustement d'heure d'été (AutoDST)" 
-@next "TIP0" 
-@prev "TIP4" 
-@toc "TIPS" 
+@node "TIP5" "Positionner correctement l'ajustement d'heure d'été (AutoDST)"
+@next "TIP0"
+@prev "TIP4"
+@toc "TIPS"
 
 Positionner correctement l'ajustement d'heure d'été (AutoDST)
 -------------------------------------------------------------
@@ -10749,18 +10749,18 @@ indiquer si votre système fonctionne en heure ajustée ou non. Au lancement,
 YAM tente de trouver plusieurs variables d'environnement qui sont normalement
 générées/modifées par ces outils :
 
-   1) SetDST (ENV:TZONE) 
-      [http://www.sfxsoft.de/de/setdst.html] 
+   1) SetDST (ENV:TZONE)
+      [http://www.sfxsoft.de/de/setdst.html]
 
-   2) FACTS (ENV:FACTS/DST) 
-      [http://www.unsatisfactory.freeserve.co.uk/facts/] 
+   2) FACTS (ENV:FACTS/DST)
+      [http://www.unsatisfactory.freeserve.co.uk/facts/]
 
-   3) SummerTimeGuard (ENV:SUMMERTIME) 
-      [http://us.aminet.net/pub/aminet/utils/time/sguard.lha] 
+   3) SummerTimeGuard (ENV:SUMMERTIME)
+      [http://us.aminet.net/pub/aminet/utils/time/sguard.lha]
 
-   4) ENV:IXGMTOFFSET 
-      ixemul specific gmtoffset variable that is used/modified by the 
-      ixtimezone tools of the geekgadgets package. 
+   4) ENV:IXGMTOFFSET
+      ixemul specific gmtoffset variable that is used/modified by the
+      ixtimezone tools of the geekgadgets package.
 
    Si YAM trouve l'une de ces quatre variables d'environnement, il ajustera
 automatiquement l'option Heure d'été de la configuration et  désactivera la
@@ -10773,7 +10773,7 @@ YAM soit mise à jour conformément.
 suffit d'installer l'un de ces outils (ou similaire) et vous n'aurez plus
 jamais à vous soucier de tracas de fuseau horaire.
 
-@endnode 
+@endnode
 
 @node "PROB" "Problèmes connus"
 @next "INFO"
@@ -11181,23 +11181,23 @@ version de YAM :
 
 YAM 2.6 vous est proposé par :
 
-      Jens Langner <Jens.Langner\@light-speed.de> 
-      Thore Boeckelmann <tboeckel\@gmx.de> 
-      Gunther Nikl <gni\@gecko.de> 
-      Alexey Ivanov <amis\@amiga.org.ru> 
+      Jens Langner <Jens.Langner\@light-speed.de>
+      Thore Boeckelmann <tboeckel\@gmx.de>
+      Gunther Nikl <gni\@gecko.de>
+      Alexey Ivanov <amis\@amiga.org.ru>
 
 
-   Contributeurs 
+   Contributeurs
 
-      David Rey 
-      Dirk Stoecker 
-      Christian Hattemer 
-      Jacob Laursen 
-      Joerg Strohmayer 
-      Andrew Bell 
-      Allan Odgaard 
-      Giles Burdett 
-      Olaf Barthel 
+      David Rey
+      Dirk Stoecker
+      Christian Hattemer
+      Jacob Laursen
+      Joerg Strohmayer
+      Andrew Bell
+      Allan Odgaard
+      Giles Burdett
+      Olaf Barthel
 
 
    Contributeurs traducteurs
@@ -11280,7 +11280,7 @@ YAM 2.6 vous est proposé par :
 
 
    Icônes style ProLite
-  
+ 
       Eric van Velthooveen, Trevor Morris
 
 

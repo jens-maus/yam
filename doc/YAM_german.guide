@@ -1,28 +1,29 @@
 @database YAM.guide
 @$VER: YAM.guide 2.4 (31.12.2001)
-
 /***************************************************************************
 
  YAM - Yet Another Mailer
- Copyright (C) 1995-2000 von Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2002 von YAM Open Source Team
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck\@yam.ch>
+ Copyright (C) 2000-2010 by YAM Open Source Team
 
- Dieses Programm ist freie Software. Sie können es unter den Bedingungen
- der GNU General Public License, wie von der Free Software Foundation
- herausgegeben, weitergeben und/oder modifizieren, entweder unter Version 2
- der Lizenz oder (wenn Sie es wünschen) jeder späteren Version.
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
 
- Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, dass es
- Ihnen von Nutzen sein wird, aber OHNE JEDE GEWÄHRLEISTUNG - sogar ohne
- die implizite Gewährleistung der MARKTREIFE oder der EIGNUNG FÜR EINEN
- BESTIMMTEN ZWECK. Details finden Sie in der GNU General Public License.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
- Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
- Programm erhalten haben. Falls nicht, schreiben Sie an die Free Software
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
- YAM Offizielle Support Seite :  http://www.yam.ch/
- YAM OpenSource Projekt       :  http://sourceforge.net/projects/yamos/
+ YAM Official Support Site :  http://www.yam.ch/
+ YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+
+ $Id$
 
 ***************************************************************************/
 
@@ -181,7 +182,7 @@ Lokalisiert für mehrere Sprachen.
 
 YAM - Yet Another Mailer
 Copyright (C) 1995-2000 Marcel Beck
-Copyright (C) 2000-2002 von YAM Open Source Team
+Copyright (C) 2000-2010 by YAM Open Source Team
 
 Dieses Programm ist freie Software. Sie können es unter den Bedingungen
 der GNU General Public License, wie von der Free Software Foundation
@@ -293,10 +294,10 @@ nicht benutzen wollen oder können, gehen Sie wie folgt vor:
 - Erzeugen Sie in der 's:user-startup' eine Zuweisung YAM: auf das
   YAM-Verzeichnis, z.B. 'Assign YAM: Work:Internet/YAM'.
 
-- Falls Sie eine 68040 oder 68060 CPU besitzen, können Sie eine für 
+- Falls Sie eine 68040 oder 68060 CPU besitzen, können Sie eine für
   diese Prozessoren optimierte Version von YAM benutzen. Dazu müssen
   Sie "spatch" benutzen, welches Sie nach C: kopieren sollten, auch
-  für später. Nun, wenn sie die beiden Dateien "YAM" (020) und 
+  für später. Nun, wenn sie die beiden Dateien "YAM" (020) und
   "YAM.060.pch" nach RAM: kopiert haben, können Sie mit:
 
       1.RAM Disk:> spatch -oYAM_060 -pYAM.060.pch YAM
@@ -1324,7 +1325,7 @@ beim Senden von Nachrichten. Fragen Sie im Zweifelsfall Ihren ISP.
 [] @{u}SMTP TLSv1/SSLv3 benutzen@{uu}
 
 Aktivieren Sie dies, wenn Ihr SMTP-Server sichere Verbindungen über TLSv1/SSLv3
-unterstützt. Wenn aktiviert, verbindet YAM mittels der AmiSSL.library und 
+unterstützt. Wenn aktiviert, verbindet YAM mittels der AmiSSL.library und
 verschlüsselt jede Übertragung.
 
 
@@ -1333,7 +1334,7 @@ verschlüsselt jede Übertragung.
    Neben dem primären POP3-Server, den Sie unter @{"Erste Schritte" link "CO00" 0} angegeben
 haben, lassen sich die Zugangsdaten für weitere fünfzehn Postserver
 definieren; die Namen erscheinen in der linken Liste und das Anklicken
-eines Namens bringt die relevanten Daten auf der rechten Seite. Ein 
+eines Namens bringt die relevanten Daten auf der rechten Seite. Ein
 Benutzer kann mehrere Konten bei verschiedenen Servern besitzen, sowie
 auch mehrere Benutzer beim selben Server sein können. Die Konten können
 mit einem einzigen Klick auf neue Post überprüft werden. Mit [Neu] können
@@ -1852,7 +1853,7 @@ etc. - unter diesen Umständen wäre die oben beschriebene Zeichensatzkonver-
 tierung nicht effektiv.
 
 Diese Option ermöglicht YAM ein differenziertes Herangehen an dieses Problem.
-Es wird der Nachrichtentext, die Kopfzeilen und jede Textanlage durchsucht, 
+Es wird der Nachrichtentext, die Kopfzeilen und jede Textanlage durchsucht,
 um einen passenden Zeichensatz für jeden Teil der Nachricht auszuwählen.
 
 Diese Option ist insbesondere für Nutzer gedacht, die kyrillische Zeichensätze
@@ -1929,8 +1930,8 @@ Mehr Informationen dazu finden Sie im Abschnitt @{"LESEN" link "CO05" 0}.
 Aktivieren Sie diese Option, wenn YAM Sie warnen soll, falls Sie mal eine
 Nachricht mit leerer Betreffzeile senden sollten. Dies kann sinnvoll sein,
 wenn Sie eine Nachricht an Mailinglistenverwalter oder andere automatische
-Services senden, üblicherweise wird das Verwenden von leeren Betreffzeilen 
-jedoch als schlechte Angewohnheit angesehen. Falls Sie nur selten leere 
+Services senden, üblicherweise wird das Verwenden von leeren Betreffzeilen
+jedoch als schlechte Angewohnheit angesehen. Falls Sie nur selten leere
 Betreffzeilen nutzen, sollten Sie diese Option verwenden.
 
 
@@ -1958,7 +1959,7 @@ und Herauslöschen von Text etwas weniger komfortabel.
    Wenn Sie den internen Editor von YAM nicht schätzen (und somit auf
 Textstyles, Rechtschreibkontrolle und Glossar verzichten wollen), geben Sie
 hier Ihren bevorzugten Text-Editor an, den Sie zum Schreiben von Nachrichten
-verwenden wollen. Denken Sie daran, den vollständigen Pfad und notwendige 
+verwenden wollen. Denken Sie daran, den vollständigen Pfad und notwendige
 Parameter, z.B. '-sticky' oder '-keepio' anzugeben.
 
 @{i}Beispiele:@{ui} C:Ed
@@ -3199,7 +3200,7 @@ Die Sicherheitsstufe beim Versenden von Nachrichten an diese Person.
 @{u}Beschreibung@{uu}
 
    Ein Kommentar, welcher den aktuellen Eintrag beschreibt.
-  
+
     @{i}Beispiel:@{ui} Meine bessere Hälfte ;-)
 
 
@@ -3246,7 +3247,7 @@ verwalten möchten, müssen Sie die Antwortadressen (Reply-To) der
 ursprünglichen Nachrichten beim Umleiten korrigieren. Wenn Sie dies nicht
 tun, geht die Antwort auf eine Nachricht an den Autor und nicht an die
 Mailingliste zurück, wie Sie es möchten. Geben Sie hier die zu verwen-
-dende Antwortadresse ein bzw. benutzen Sie den PopUp-Knopf, um die 
+dende Antwortadresse ein bzw. benutzen Sie den PopUp-Knopf, um die
 Adresse aus dem Adressbuch zu holen.
 @{i}Beispiel:@{ui} diskussion\@provider.de
 
@@ -3362,7 +3363,7 @@ dem Suchbegriff. Folgende @{b}Vergleichsoperatoren@{ub} werden unterstützt:
      eine Liste von E-Mail-Adressen enthält. Die Datei kann durch Klick
      auf das Seiten-Symbol editiert werden.
 
-Die Vergleichsoperatoren '<' und '>' benutzen die alphanumerische Ordnung, 
+Die Vergleichsoperatoren '<' und '>' benutzen die alphanumerische Ordnung,
 wie in einem Telefonbuch, so ist James < Jim und 12 < 2.
 
 Der @{b}Suchbegriff@{ub} kann AmigaDOS-@{"Jokerzeichen" link "DOSW" 0} wie ?, #?, (a|b) oder [abc]
@@ -3484,13 +3485,13 @@ der Eintrag wird automatisch in das "To:" Feld Ihrer Nachricht gebracht. Um
 mehrere Empfänger zu nehmen, alle auswählen und jeweils "To:" drücken.
 
 c) letztlich gibt es noch eine neue und elegante Methode. Einfach den Alias,
-Vornamen oder die E-Mail-Adresse in das "To:"-Feld zu schreiben beginnen. 
+Vornamen oder die E-Mail-Adresse in das "To:"-Feld zu schreiben beginnen.
 Daraufhin erscheint eine Liste der dazu passenden Einträge aus dem Adress-
 buch; jetzt können Sie mit den Pfeiltasten den gewünschten Empfänger auswählen
 und mit <Return> bestätigen.
 
 Wenn Sie einen Alias oder Namen eingegeben haben und dann die RETURN-Taste
-drücken, erscheint eine Fehlermeldung, sobald Sie die Nachricht [später] 
+drücken, erscheint eine Fehlermeldung, sobald Sie die Nachricht [später]
 senden oder sperren, falls YAM die dazu gehörende E-Mail Adresse im Adress-
 buch nicht finden konnte. Bitte überprüfen Sie Ihre Schreibweise oder benutzen
 Sie eine der oben beschriebenen Methoden.
@@ -4674,7 +4675,7 @@ Passen Sie bei der Übergabe von Parametern auf, die Leerschläge enthalten:
 
  @{u}funktioniert nicht@{uu}! Es muss folgendermaßen geschrieben werden:
 
- 'WRITESUBJECT "'sub'"'  
+ 'WRITESUBJECT "'sub'"'
 
 or
 

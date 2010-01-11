@@ -1,11 +1,10 @@
 @database YAM.guide
 @$VER: YAM.guide 2.4 (22.04.2003)
-
 /***************************************************************************
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck\@yam.ch>
- Copyright (C) 2000-2007 by YAM Open Source Team
+ Copyright (C) 2000-2010 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -68,8 +67,8 @@ Información legal
 
 
 YAM - Yet Another Mailer
-Copyright (C) 1995-2000 de Marcel Beck
-Copyright (C) 2000-2003 del equipo YAM Open Source
+Copyright (C) 1995-2000 Marcel Beck
+Copyright (C) 2000-2010 by YAM Open Source Team
 
 Este programa es software libre; puede redistribuirlo y/o modificarlo bajo
 las condiciones recogidas en la Licencia Pública General de GNU tal como
@@ -1453,7 +1452,7 @@ Configuración - Correo nuevo
      en la carpeta "Entrantes" pasarán a marcarse como "No leídos"
      justo antes de recoger correo nuevo.  De esta forma puede
      reconocer al instante el correo nuevo que recibió la última vez
-     que accedió al buzón. 
+     que accedió al buzón.
 
 
 ---- Funcionamiento automático -----------------------------------------
@@ -1462,7 +1461,7 @@ Configuración - Correo nuevo
      Aquí puede indicar el intervalo de tiempo que YAM dejará
      transcurrir entre cada comprobación automática de la presencia
      de correo nuevo en su buzón.  Para desactivar esta opción,
-     indique simplemente un cero. 
+     indique simplemente un cero.
 
      Ejemplo:  15 minutos
 
@@ -1474,7 +1473,7 @@ Configuración - Correo nuevo
      esté trabajando con otro programa o que ni siquiera esté delante
      de la pantalla.  Por tanto, a menos que se active esta opción,
      los mensajes que excedan el tamaño límite indicado arriba no se
-     recogerán, y permanecerán en el servidor. 
+     recogerán, y permanecerán en el servidor.
 
 
 ---- Notificación ------------------------------------------------------
@@ -1489,7 +1488,7 @@ Configuración - Correo nuevo
      de sonido.  Para la reproducción se utiliza la "datatypes.library",
      así que el fichero de sonido puede tener cualquier formato (como
      AIFF o WAVE), mientras tenga instalados los datatypes apropiados.
-     Pulse la flechita (similar a un botón PLAY) para probar el sonido. 
+     Pulse la flechita (similar a un botón PLAY) para probar el sonido.
 
      Ejemplo:  Data:Audio/Correonuevo.snd
 
@@ -1498,7 +1497,7 @@ Configuración - Correo nuevo
      Aquí puede indicar un programa alternativo a ejecutar cuando
      llegue correo nuevo.  Inserte el comando tal como lo haría en
      una ventana shell.  Si se trata de un script ARexx, tendrá que
-     poner el comando "rx" delante del nombre del script. 
+     poner el comando "rx" delante del nombre del script.
 
      Ejemplo:  rx YAM:rexx/Correonuevo.yam
 
@@ -1672,7 +1671,7 @@ filtros que borren o muevan mensajes.
      a la cuenta de correo que utiliza en su lugar de trabajo.
 
      La dirección de correo electrónico del nuevo destinatario deberá
-     indicarse en el campo de texto situado al lado de la casilla. 
+     indicarse en el campo de texto situado al lado de la casilla.
 
      Ejemplo:  mcervantes\@example.net
 
@@ -1688,7 +1687,7 @@ filtros que borren o muevan mensajes.
      Si está activada esta opción, YAM enviará una respuesta automática
      a los mensajes que respondan a la plantilla de búsqueda.  Inserte
      el nombre del fichero que contiene la autorrespuesta en el campo
-     de texto que se encuentra al lado de la casilla. 
+     de texto que se encuentra al lado de la casilla.
 
      Ejemplo:  YAM:Auto-Textos/Respuesta1.txt
 
@@ -1700,7 +1699,7 @@ filtros que borren o muevan mensajes.
      parámetro de arranque.  Inserte la línea de comando a ejecutar
      en el campo de texto que se encuentra al lado de esta casilla.
      Tenga en cuenta que si quiere ejecutar un script ARexx, tendrá
-     que poner delante el comando "RX". 
+     que poner delante el comando "RX".
 
      Ejemplo:  rx YAM:Rexx/Suscribir.rexx
 
@@ -1711,7 +1710,7 @@ filtros que borren o muevan mensajes.
      fichero de sonido debe indicarse en el campo de texto situado
      al lado de la casilla.  YAM usa la "datatypes.library" para
      reproducir el sonido.  Pulse la pequeña flecha (similar al
-     botón PLAY de un magnetófono) para probar el sonido. 
+     botón PLAY de un magnetófono) para probar el sonido.
 
      Ejemplo:  Data:Audio/Jo_mas_publicidad_no.wav
 
@@ -1732,7 +1731,7 @@ filtros que borren o muevan mensajes.
      Si está activada esta opción, no se recogerán del servidor de
      correo los mensajes que respondan a la plantilla de búsqueda.
      Puede usar un filtro remoto con esta opción en el caso de que
-     varias personas compartan la misma cuenta POP3. 
+     varias personas compartan la misma cuenta POP3.
 
 @endnode
 
@@ -1775,7 +1774,7 @@ Configuración - Lectura
      Le permite decidir si las cabeceras largas se mostrarán en una
      sóla línea o bien se dividirán en dos o más.  En el primer caso,
      tendrá que usar el deslizador horizontal para poder ver toda la
-     información. 
+     información.
 
 
 ---- Presentación del cuerpo del mensaje -------------------------------
@@ -1786,14 +1785,14 @@ Configuración - Lectura
      esta forma de separación, puede definir otra aquí.  Aparte de la
      opción "dos guiones", puede elegir entre "barra separadora",
      "línea en blanco" o incluso "sin firma", para que no aparezca
-     firma alguna. 
+     firma alguna.
 
 
 @{b}Texto coloreado@{ub}
      Los trozos de texto encerrados entre caracteres # serán destacados
      por YAM con un color especial tanto en el editor interno como en
      la ventana de lectura.  Aquí puede definir el color utilizado para
-     este fin. 
+     este fin.
 
 
 @{b}Citas previas@{ub}
@@ -1889,7 +1888,7 @@ Configuración - Escritura
 
 @{b}Organización@{ub}
      Si quiere que el nombre de su Organización, Instituto, Club o lo
-     que sea aparezca en las cabeceras de su mensaje, insértelo aquí. 
+     que sea aparezca en las cabeceras de su mensaje, insértelo aquí.
 
      Ejemplo:  Hidalgos Asociados, S.L.
 
@@ -1901,7 +1900,7 @@ Configuración - Escritura
      insertando "\\n".
 
      Por favor, NO USE ESTA OPCIÓN a menos que tenga los conocimientos
-     necesarios acerca de la estructura del correo por Internet. 
+     necesarios acerca de la estructura del correo por Internet.
 
      Ejemplo:  Content-Language: uk\\nKeywords: Pattern, YAM, Internet
 
@@ -1911,7 +1910,7 @@ Configuración - Escritura
 @{b}Frase de bienvenida@{ub}
      YAM insertará este texto al principio de cada nuevo mensaje
      que escriba (excepto en las contestaciones y en los mensajes
-     reenviados).  Puede definir un salto de línea insertando "\\n". 
+     reenviados).  Puede definir un salto de línea insertando "\\n".
 
      Ejemplo:  Hola,\\n
 
@@ -1966,7 +1965,7 @@ Configuración - Escritura
      ello el corrector ortográfico, los estilos de texto y el glosario
      integrados en el editor interno), puede indicarlo aquí.  No olvide
      indicar la senda completa del editor y una posible opción como
-     podría ser "-sticky" o "-keepio". 
+     podría ser "-sticky" o "-keepio".
 
      Ejemplos:  C:Ed
                 C:CED -keepio
@@ -1976,7 +1975,7 @@ Configuración - Escritura
      Active esta opción si quiere que el editor externo se invoque de
      forma automática tan pronto como vaya a escribir un nuevo mensaje.
      De esta forma no tendrá que pulsar el botón [Editor] de la ventana
-     de escritura. 
+     de escritura.
 
 
 @{b}Cachear@{ub}
@@ -2020,7 +2019,7 @@ Configuración - Responder
      Este texto se insertará a continuación del mensaje reenviado,
      pero antes de la frase de despedida.  Pulse el botón instantáneo
      para elegir una variable de la lista (para el asunto, fecha,
-     remitente, etc.). 
+     remitente, etc.).
 
      Ejemplo:  *** Fin del mensaje reenviado ***\\n
 
@@ -2034,7 +2033,7 @@ Configuración - Responder
      (Epílogo).  Use el botón cíclico para elegir cada una de estas
      tres frases e introdúzcalas en el campo de la derecha.  Pulse el
      botón instantáneo para elegir una variable de la lista (para
-     asunto, fecha, remitente, etc.). 
+     asunto, fecha, remitente, etc.).
 
      Ejemplo:  [Apertura] Hola %f,\\n
                [Prólogo]  El %d, usted escribió:\\n
@@ -2049,7 +2048,7 @@ Configuración - Responder
      por el usuario.  De esta forma puede, por ejemplo, usar una
      versión alemana de las frases de respuesta para direcciones
      de Alemania, Austria y Suiza, mientras usa la versión española
-     para el resto de países. 
+     para el resto de países.
 
      Ejemplo:  [Apertura] Hallo %f,\\n
                [Prólogo]  Am %d schriebst Du:\\n
@@ -2080,7 +2079,7 @@ Configuración - Responder
      El carácter o caracteres que indique en este campo, junto con un
      espacio, se insertarán delante de cada línea del mensaje original.
      Pulse el botón instantáneo para elegir una variable para las
-     iniciales del remitente. 
+     iniciales del remitente.
 
      Ejemplo:  %i>
 
@@ -2219,7 +2218,7 @@ Configuración - Listas
      revolucionaria unidad de tiempo, inventada por Swatch, un
      fabricante de relojes suizo, divide el día en 1000 pulsaciones
      y pone fin a las diferentes zonas horarias.  El meridiano se
-     encuentra en Biel, una ciudad suiza. 
+     encuentra en Biel, una ciudad suiza.
 
 
 @{b}Tamaños en@{ub}
@@ -2264,7 +2263,7 @@ Configuración - Seguridad
      Por favor, instale PGP tal como se indica en el manual de PGP e
      inserte aquí la senda completa del directorio donde se encuentra
      el ejecutable PGP.  YAM reconoce de forma automática si está
-     usando la versión 2.6 o la 5.x. 
+     usando la versión 2.6 o la 5.x.
 
      Ejemplo:  Work:Programas/PGP/bin/
 
@@ -2275,7 +2274,7 @@ Configuración - Seguridad
      instantáneo y elija su clave.  Si no encuentra su clave PGP,
      puede ser por dos razones: o bien PGP no ha sido instalado
      correctamente en su sistema, o bien ha indicado una senda
-     incorrecta para el ejecutable PGP. 
+     incorrecta para el ejecutable PGP.
 
      Ejemplo:  0x70804A7B
 
@@ -2302,7 +2301,7 @@ Configuración - Seguridad
      en las cabeceras como en forma de firma.
 
      Encontrará direcciones de servicios de re-expedición utilizando
-     "remailer" en un buscador de Internet. 
+     "remailer" en un buscador de Internet.
 
      Ejemplo:  Remailer <remailer\@example.com>
 
@@ -2316,7 +2315,7 @@ Configuración - Seguridad
      La variable "%s" será sustituida por la dirección del destinatario.
      Por favor, consulte la documentación del servicio de re-expedición
      para más información acerca del formato correcto de la línea de
-     cabecera. 
+     cabecera.
 
      Ejemplo:  Anon-to: %s
 
@@ -2333,7 +2332,7 @@ Configuración - Seguridad
      registro cada mes.  Para distinguir los diferentes ficheros,
      YAM incluirá la fecha en el nombre del fichero, por ejemplo
      "YAM-Ene98.log".  Si prefiere usar un único gran fichero de
-     registro, deje esta opción desactivada. 
+     registro, deje esta opción desactivada.
 
 
 @{b}Modo@{ub}
@@ -2346,7 +2345,7 @@ Configuración - Seguridad
 
 @{b}Registrar todos los eventos@{ub}
      Desactive esta opción si sólo le interesa registrar los eventos
-     relacionados con la transferencia de correo (envío/recepción). 
+     relacionados con la transferencia de correo (envío/recepción).
 
 @endnode
 
@@ -2408,7 +2407,7 @@ Configuración - Inicio/salida
      Si está activada esta opción (y hay un software TCP/IP activo en
      su sistema), YAM comprobará si hay mensajes nuevos en el servidor
      de correo.  Puede evitarlo de forma temporal iniciando YAM desde
-     una ventana shell con el interruptor NOCHECK. 
+     una ventana shell con el interruptor NOCHECK.
 
 
 ---- Al salir del programa ---------------------------------------------
@@ -2428,7 +2427,7 @@ Configuración - Inicio/salida
 
 @{b}Vaciar carpeta 'Borrados'@{ub}
      Active esta opción para que YAM elimine todos los mensajes de
-     la carpeta "Borrados" antes de salir. 
+     la carpeta "Borrados" antes de salir.
 
 @endnode
 
@@ -2472,7 +2471,7 @@ ficheros con esta extensión.
 @{b}Extensión@{ub}
      Extensión (sufijo) del nombre de este tipo de ficheros.
      La extensión permite a YAM asignar el tipo de contenido
-     correcto a un fichero. 
+     correcto a un fichero.
 
      Ejemplo:  jpg jpeg jfif
 
@@ -2487,7 +2486,7 @@ ficheros con esta extensión.
 
 @{b}Visor por omisión@{ub}
      Este visor se utilizará si el anexo no coincide con ninguno de
-     los tipos definidos por el usuario (véase más arriba). 
+     los tipos definidos por el usuario (véase más arriba).
 
      Ejemplo:  SYS:Utilities/Multiview %s SCREEN
 
@@ -2511,7 +2510,7 @@ ficheros con esta extensión.
 
 @{b}Añadir ficheros desde@{ub}
      Cuando quiera añadir un fichero a un nuevo mensaje, YAM lo buscará
-     en principio en este lugar. 
+     en principio en este lugar.
 
      Ejemplo: Work:Data/Salida
 
@@ -2541,13 +2540,13 @@ Configuración - Listín
      cree su propia ficha en el listín (YAM le encontrará basándose
      en la dirección de correo electrónico).  Si el destinatario
      trabaja también con YAM, podrá crear fácilmente una ficha suya
-     en su listín y guardar en ella los datos que usted envíe. 
+     en su listín y guardar en ella los datos que usted envíe.
 
 
 @{b}Guardar dirección del remitente@{ub}
      YAM puede guardar automáticamente la dirección del remitente
      cuando está leyendo un mensaje; es decir, crear una nueva ficha
-     en el listín.  Elija uno de los modos siguientes: 
+     en el listín.  Elija uno de los modos siguientes:
 
       nunca                          No guardar direcciones
       preguntar primero              Se le preguntará siempre si
@@ -2593,7 +2592,7 @@ Configuración - Listín
      accede a Internet por medio de un servidor proxy, tendrá que
      introducir aquí la dirección de ese servidor proxy, pues de lo
      contrario no le será posible descargar las fotografías ni recibir
-     información acerca de nuevas versiones de YAM. 
+     información acerca de nuevas versiones de YAM.
 
      Ejemplo:  proxy.access.ch:8080
 
@@ -2623,7 +2622,7 @@ y luego cerrar de nuevo Miami una vez que se ha recogido todo el correo.
 @{b}Script@{ub}
      El nombre del fichero que alberga el script ARexx, junto con sus
      correspondientes parámetros (al estilo ARexx habitual, pero sin
-     llamar primero a "RX"). 
+     llamar primero a "RX").
 
      Ejemplo:  YAM:rexx/LanzarNavegador.rexx
 
@@ -2684,7 +2683,7 @@ Configuración - Varios
      Normalmente, y siguiendo el comportamiento por omisión de MUI,
      el botón de cierre (o la tecla <Esc>) hacen que el programa
      abandone el sistema.  Active esta opción para que en su lugar
-     lo iconifiquen. 
+     lo iconifiquen.
 
 
 ---- Almacenamiento/supresión de mensajes ------------------------------
@@ -2707,7 +2706,7 @@ Configuración - Varios
      Active esta opción para que YAM guarde en la carpeta "Enviados"
      todos los mensajes que vaya enviando.  También puede guardarlos
      individualmente cada vez que envíe un mensaje, utilizando el
-     apartado de opciones de la @{" ventana de escritura " link "WR02"}. 
+     apartado de opciones de la @{" ventana de escritura " link "WR02"}.
 
 
 ---- Seguimiento de mensajes -------------------------------------------
@@ -2738,7 +2737,7 @@ saltar el aviso de "Solicitud de Notificación":
 @{b}Enviar de inmediato@{ub}
      Las notificaciones serán enviadas inmediatamente si hay un
      programa TCP/IP en marcha; si no es así, se guardarán en la
-     carpeta "Salientes". 
+     carpeta "Salientes".
 
 
 ---- Configuración de XPK/LhA ------------------------------------------
@@ -2750,7 +2749,7 @@ saltar el aviso de "Solicitud de Notificación":
      conseguir en Aminet).  Puede elegir la eficacia del compresor
      utilizando la barra deslizante situada a la derecha del botón
      instantáneo: cuanto mayor es el valor, más efectivo es el
-     compresor, pero más lento el proceso de compresión. 
+     compresor, pero más lento el proceso de compresión.
 
      Ejemplo:  NUKE 100%
 
@@ -2761,7 +2760,7 @@ saltar el aviso de "Solicitud de Notificación":
      contraseña.  Sólo puede elegir librerías XPK que ofrezcan la
      posibilidad de protección con contraseña.  Elija la eficacia
      del compresor con la barra deslizante que se encuentra a la
-     derecha del botón instantáneo. 
+     derecha del botón instantáneo.
 
      Ejemplo:  HUFF 50%
 
@@ -2773,7 +2772,7 @@ saltar el aviso de "Solicitud de Notificación":
      corresponda a su archivador favorito.  Puede insertar variables
      para el archivo resultante y los ficheros origen (o una lista
      que contiene los ficheros origen) pulsando el botón instantáneo
-     del lado derecho del campo de texto. 
+     del lado derecho del campo de texto.
 
      Ejemplos:  LhA -a -m -i%l a %a
                 BIN:LZX -a -m a %a %f
@@ -2802,7 +2801,7 @@ los parámetros de la sección @{b}Advanced@{ub}.
      servidores de correo, como GeoCities, emplean la primera parte
      para sus anuncios, que entonces saldrían citados en la respuesta
      en lugar del mensaje en sí.  Con la opción @{b}LetterPart@{ub} puede
-     corregir esto. 
+     corregir esto.
 
      Ejemplo:  LetterPart = 2
 
@@ -2826,7 +2825,7 @@ los parámetros de la sección @{b}Advanced@{ub}.
      el directorio del programa.  Después de un cuelgue del sistema,
      podría cargar este fichero con la opción de menú "Texto/Insertar".
      El parámetro @{b}AutoSave@{ub} indica el intervalo de tiempo que se dejará
-     transcurrir entre dos grabaciones de estos ficheros, en segundos. 
+     transcurrir entre dos grabaciones de estos ficheros, en segundos.
 
      Ejemplo:  AutoSave = 600
 
@@ -2879,7 +2878,7 @@ los parámetros de la sección @{b}Advanced@{ub}.
      Cuando se utilizan los programas Miami o AmiTCP (Genesis), YAM
      puede comprobar si su Amiga está realmente conectado a la red.
      Desactive esta opción si está usando una pila TCP/IP distinta
-     y, pese a estar conectada, YAM le informa de que no lo está. 
+     y, pese a estar conectada, YAM le informa de que no lo está.
 
      Ejemplo:  IsOnlineCheck = N
 
@@ -2946,7 +2945,7 @@ Configuración - Menús
 
 @{b}Proyecto/Abrir...@{ub}
      Carga un fichero de configuración, permitiéndole de este modo
-     utilizar diferentes configuraciones. 
+     utilizar diferentes configuraciones.
 
 
 @{b}Proyecto/Guardar como...@{ub}
@@ -3443,7 +3442,7 @@ Ventana principal - Menú Carpeta
      Lee el directorio de la carpeta actual y construye un nuevo índice.
      Normalmente YAM actualiza este fichero de forma automática cuando
      es necesario; sin embargo, puede resultar útil actualizarlo
-     después de un fallo general del sistema u otro problema. 
+     después de un fallo general del sistema u otro problema.
 
 
 @{b}Carpeta/Eliminar índices@{ub}
@@ -3465,12 +3464,12 @@ Ventana principal - Menú Carpeta
 @{b}Carpeta/Exportar...@{ub}
      Guarda todos los mensajes de la carpeta actual conjuntamente en
      un fichero, de forma que puedan ser leídos por otro programa de
-     correo (véase el comentario de la opción anterior). 
+     correo (véase el comentario de la opción anterior).
 
 
 @{b}Carpeta/Enviar correo pendiente@{ub}
      Transmite todos los mensajes que se encuentran en la carpeta
-     "Salientes" (exceptuando los que estén "retenidos"). 
+     "Salientes" (exceptuando los que estén "retenidos").
 
 
 @{b}Carpeta/Intercambiar correo@{ub}
@@ -3490,7 +3489,7 @@ Ventana principal - Menú Carpeta
 
 @{b}Carpeta/Comprobar cuenta@{ub}
      Si ha definido varias cuentas POP3, puede usar esta opción para
-     comprobar una cuenta en concreto. 
+     comprobar una cuenta en concreto.
 
 @endnode
 
@@ -3520,7 +3519,7 @@ Ventana principal - Menú Mensaje
 
 @{b}Mensaje/Copiar...@{ub}
      Le permite duplicar un mensaje.  Las copias son idénticas al
-     original, exceptuando el nombre del fichero que las alberga. 
+     original, exceptuando el nombre del fichero que las alberga.
 
 
 @{b}Mensaje/Borrar@{ub}
@@ -3591,7 +3590,7 @@ Ventana principal - Menú Mensaje
      pero sin ningún cambio en absoluto en el texto; tan sólo se
      cambia el campo "To:" de la cabecera y se añaden un par de
      campos @{b}Resent:@{ub}.  En este caso las frases predefinidas que
-     informan de un reenvío no se utilizan. 
+     informan de un reenvío no se utilizan.
 
 
 @{b}Mensaje/Seleccionar  » Todos | Ninguno | Invertir@{ub}
@@ -3612,7 +3611,7 @@ Ventana principal - Menú Mensaje
                           Retenido | Pendiente@{ub}
      Cambia el estado de uno o más mensajes.  De esta forma puede
      liberar mensajes "retenidos" en la carpeta "Salientes", o marcar
-     como leídos mensajes que aún no han sido leídos. 
+     como leídos mensajes que aún no han sido leídos.
 
 
 @{b}Mensaje/Cambiar asunto...@{ub}
@@ -3752,7 +3751,7 @@ dispone de tres apartados, presentados tal como se muestra abajo.
 @{b}Enviar más tarde@{ub}
      Prepara el mensaje para su envío y lo copia a la carpeta
      "Salientes".  Use este botón cuando esté trabajando sin conexión
-     a la red. 
+     a la red.
 
 
 @{b}Retener@{ub}
@@ -3844,7 +3843,7 @@ cabecera y una barra de herramientas.
      Tema que trata el mensaje.  Al contestar un mensaje, se inserta
      automáticamente un @{b}Re:@{ub} delante del asunto original, mientras
      que cuando se reenvía, se añade una partícula @{b}(fwd)@{ub} al final
-     del asunto. 
+     del asunto.
 
 
 Barra de herramientas
@@ -3910,7 +3909,7 @@ Botones
 @{b}Mostrar@{ub}
      Muestra el contenido del fichero seleccionado utilizando uno
      de los programas indicados en la lista de visores MIME.  El
-     programa empleado por omisión es MultiView. 
+     programa empleado por omisión es MultiView.
 
 
 @{b}Codificación@{ub}
@@ -4066,7 +4065,7 @@ Opciones de envío
      listín basándose en su dirección de correo electrónico).  Si
      tiene alguna foto suya en la web, escriba la dirección exacta
      donde se encuentra en el apartado correspondiente de la
-     configuración del listín. 
+     configuración del listín.
 
 
 @{b}Importancia@{ub}
@@ -4088,7 +4087,7 @@ Seguridad
 =========
 
    Elija aquí las medidas de seguridad que quiere tomar con este
-mensaje. 
+mensaje.
 
  ninguna:      Transferencia normal del mensaje.
  firmar:       El mensaje será firmado con su clave PGP y grabado en
@@ -4150,7 +4149,7 @@ Ventana de escritura - Menú "Texto"
      el abecedario, pasando de la Z a la A cuando sea necesario
      (es decir, A->M, B->N, M->A).  Esta codificación tan simple
      suele utilizarse por ejemplo al escribir chistes que pudiesen
-     ofender a determinadas personas. 
+     ofender a determinadas personas.
 
 
 @{b}Texto/Guardar como...@{ub}
@@ -4299,7 +4298,7 @@ Ventana de escritura - Menú "Anexos"
 @{b}Anexos/Añadir portapapeles@{ub}
      Inserta el contenido del portapapeles como un anexo en su mensaje.
      De esta forma puede incluir fácilmente documentos procedentes de
-     otras aplicaciones. 
+     otras aplicaciones.
 
 
 @{b}Anexos/Añadir clave PGP@{ub}
@@ -4397,7 +4396,7 @@ Función de los botones
 
 @{b}Pegar@{ub}
      Pega el contenido de la definición seleccionada en la posición
-     actual del cursor situado en el editor de texto. 
+     actual del cursor situado en el editor de texto.
 
 @endnode
 
@@ -4504,7 +4503,7 @@ Ventana de lectura - Menú "Mensaje"
 
 @{b}Mensaje/Copiar...@{ub}
      Crea una copia del mensaje actual.  A excepción del nombre del
-     fichero que lo alberga, la copia es idéntica al original. 
+     fichero que lo alberga, la copia es idéntica al original.
 
 
 @{b}Mensaje/Borrar@{ub}
@@ -4542,7 +4541,7 @@ Ventana de lectura - Menú "Mensaje"
      el visor MIME especificado en el apartado @{" MIME " link "CO11"} de la
      configuración.  Puede elegir entre mostrar el mensaje original
      (para ver si hay errores) o bien mostrar uno de los anexos.
-     Si no obtiene resultado alguno, compruebe en la configuración 
+     Si no obtiene resultado alguno, compruebe en la configuración
      sus preferencias para los visores MIME.
 
 
@@ -4587,7 +4586,7 @@ Ventana de lectura - Menú "Mensaje"
      introducir una nueva cabecera "Para:", mientras que YAM añade
      un par de cabeceras @{b}Resent:@{ub} basándose en la cabecera "Para:"
      original; el texto definido en la configuración como indicativo
-     de los mensajes reenviados no se utiliza en este caso. 
+     de los mensajes reenviados no se utiliza en este caso.
 
 
 @{b}Mensaje/Guardar dirección...@{ub}
@@ -4641,7 +4640,7 @@ Ventana de lectura - Menú "Navegación"
      que no queden más mensajes sin leer en esta carpeta bajo el mensaje
      actual, pero sí los haya en una de las carpetas siguientes, se le
      brindará la posibilidad de ir a esa carpeta y seguir leyendo allí.
-     Atajo: <Mayúsculas-Cursor derecha> 
+     Atajo: <Mayúsculas-Cursor derecha>
 
 
 @{b}Navegación/Mensaje anterior no leído@{ub}
@@ -4811,7 +4810,7 @@ abrirá una ventana de configuración con las siguientes opciones:
 
 @{b}Nombre@{ub}
      El nombre de la carpeta, que aparecerá en la lista de carpetas
-     de la ventana principal. 
+     de la ventana principal.
 
      Ejemplo:  Lista YAM
 
@@ -4821,7 +4820,7 @@ abrirá una ventana de configuración con las siguientes opciones:
      @{b}.fconfig@{ub} y el fichero @{b}.index@{ub} de esta carpeta.  Normalmente es
      un subdirectorio dentro del directorio básico de las carpetas,
      pero puede indicar cualquier otro lugar, como por ejemplo una
-     partición distinta de su disco duro. 
+     partición distinta de su disco duro.
 
      Ejemplo:  YAM_ml
 
@@ -4836,7 +4835,7 @@ abrirá una ventana de configuración con las siguientes opciones:
      correo viejo".
 
      @{b}NOTA:@{ub} Los mensajes "nuevos" o "no leídos" no se borrarán
-     automáticamente. 
+     automáticamente.
 
 
 @{b}Tipo@{ub}
@@ -4848,7 +4847,7 @@ abrirá una ventana de configuración con las siguientes opciones:
 
 @{b}Modo@{ub}
      Las carpetas pueden protegerse con una contraseña y/o comprimirse
-     si es necesario.  Dispone de los siguientes modos: 
+     si es necesario.  Dispone de los siguientes modos:
 
      normal                       sin protección por contraseña ni
                                   compresión
@@ -5115,7 +5114,7 @@ Listín de direcciones - Menús
 
 @{b}Listín/Abrir...@{ub}
      Abre un listín ya existente en su disco duro, que sustituirá al
-     que se encuentra residente en RAM. 
+     que se encuentra residente en RAM.
 
      Si intenta abrir un fichero que aparenta no ser un listín válido
      de YAM, se le ofrecerá la posibilidad de cargarlo como si fuera
@@ -5143,7 +5142,7 @@ Listín de direcciones - Menús
 
 @{b}Listín/Guardar como...@{ub}
      Guarda el listín con el nombre que desee, lo que le permite
-     disponer de varios listines diferentes. 
+     disponer de varios listines diferentes.
 
 
 @{b}Listín/Buscar...@{ub}
@@ -5190,7 +5189,7 @@ Elemento/Nuevo grupo...@{ub}
      dirección de correo electrónico.  Tenga en cuenta que se tomará
      como "nombre" la primera palabra del campo "Nombre real",
      mientras que se tomará como "apellido" la última palabra de
-     este campo. 
+     este campo.
 
 @endnode
 
@@ -5243,7 +5242,7 @@ PERSONA
      con PGP.  Pulse el botón instantáneo para elegir la clave en su
      anillo de claves públicas, para lo cual el programa PGP deberá
      haber sido instalado previamente en su sistema, al tiempo que la
-     clave que busca deberá encontrarse en ese anillo de claves. 
+     clave que busca deberá encontrarse en ese anillo de claves.
 
      Ejemplo:  0x709B40C3
 
@@ -5360,7 +5359,7 @@ LISTA
      de YAM, no olvide indicar aquí el nombre de la lista de correo.
      Este nombre aparecerá en el campo @{b}Para:@{ub} para ayudar al receptor
      del mensaje a ordenar el correo de forma correcta por medio de
-     filtros. 
+     filtros.
 
      Ejemplo:  discusiones-ML
 
@@ -5370,7 +5369,7 @@ LISTA
      Puede introducir alias, nombres, o direcciones completas de correo
      electrónico.  Pulse [Nuevo] para añadir un nuevo miembro a la
      lista, [Borrar] para borrar el miembro seleccionado, o bien
-     [Ordenar] para que la lista se ordene alfabéticamente. 
+     [Ordenar] para que la lista se ordene alfabéticamente.
 
 
 GRUPO
@@ -5423,12 +5422,12 @@ Función de los botones
 @{b}Todos@{ub}
      Selecciona todos los mensajes de la lista para un posterior
      cambio conjunto de su estado.  Este botón no tiene efecto
-     alguno en la operación que se va a realizar. 
+     alguno en la operación que se va a realizar.
 
 
 @{b}Ninguno@{ub}
      Anula toda selección realizada.  Este botón no tiene efecto
-     alguno en la operación que se va a realizar. 
+     alguno en la operación que se va a realizar.
 
 
 @{b}Recoger y borrar@{ub}
@@ -5450,7 +5449,7 @@ Función de los botones
 @{b}Sólo borrar@{ub}
      Elimina el icono del disquete y hace aparecer el de la papelera
      en todos los mensajes seleccionados -> ¡no descargar, sino borrar
-     del servidor! 
+     del servidor!
 
      Este botón no está disponible al importar correo de un fichero.
 
@@ -5458,7 +5457,7 @@ Función de los botones
 @{b}Pausa/Continuar@{ub}
      Mientras se muestra la lista de pre-selección, YAM va cargando los
      detalles de los mensajes (se leen sus cabeceras en el servidor).
-     El botón [Pausa] detiene temporalmente este proceso. 
+     El botón [Pausa] detiene temporalmente este proceso.
 
      Este botón no está disponible al importar correo de un fichero.
 
@@ -5622,7 +5621,7 @@ Búsqueda de mensajes - Criterio de búsqueda
 @{b}Búsqueda con sub-cadena@{ub}
      Si la plantilla de búsqueda incluye solamente una parte del campo
      que se va a examinar, deberá activar esta opción.  De esta forma,
-     YAM completará internamente la plantilla de búsqueda con "#?". 
+     YAM completará internamente la plantilla de búsqueda con "#?".
 
 @endnode
 
@@ -5690,7 +5689,7 @@ ventana de Usuarios.
      Si está añadiendo un nuevo usuario, puede elegir esta opción y
      copiar las preferencias del usuario actual al directorio raíz
      del nuevo usuario, ahorrándole así la pesada tarea de tener que
-     crear una nueva configuración partiendo de cero. 
+     crear una nueva configuración partiendo de cero.
 
 
 @{b}Añadir usuario@{ub}
@@ -6268,7 +6267,7 @@ ADDREDIT
          /* Elegir una ficha */
 
          ADDRGOTO YAM_ml
- 
+
          /* Editar esta ficha */
 
          'ADDREDIT EMAIL "yam\@freelists.org" COMMENT "Donde hay que estar"'
@@ -8736,7 +8735,7 @@ READINFO
          OPTIONS RESULTS
 
          /* Decodificar en segundo plano el mensaje actual */
-        
+
          MAILREAD QUIET
 
          /* Obtener información sobre el mensaje y cerrar la ventana */
@@ -8803,7 +8802,7 @@ READPRINT
          OPTIONS RESULTS
 
          /* Decodificar en segundo plano el mensaje actual */
-        
+
          MAILREAD QUIET
 
          /* Imprimir el cuerpo y cerrar la ventana */
@@ -8864,7 +8863,7 @@ READSAVE
          OPTIONS RESULTS
 
          /* Decodificar en segundo plano el mensaje actual */
-        
+
          MAILREAD QUIET
 
          /* Guardar el cuerpo en un fichero y cerrar la ventana */
@@ -10040,7 +10039,7 @@ Referencia - Estructura de ficheros
 
 
    En el directorio raíz de YAM (generalmente YAM:) encontrará los
-siguientes ficheros y directorios: 
+siguientes ficheros y directorios:
 
 
  YAM               El programa en sí
@@ -10648,7 +10647,7 @@ de los botoncitos de la sección "Control" está activado.  Una vez que
 guarde las preferencias, todas las ventanas dispondrán de un botón
 adicional en la esquina superior derecha; una pulsación en este botón
 congelará el tamaño y la posición actuales de la ventana para futuras
-sesiones. 
+sesiones.
 
 @endnode
 
@@ -11501,7 +11500,7 @@ versión más reciente) en su BBS local o en discos de dominio público.
    @{" Cabecera de mensaje, Creación de una " link "HEAD"}
    @{" Cabeceras adicionales " link "CO05"}
    @{" Cabeceras, Elegir cuántas se muestran " link "CO04"}
-   @{" Cabeceras, Qué es eso " link "HEAD"} 
+   @{" Cabeceras, Qué es eso " link "HEAD"}
    @{" Caché de direcciones/mensajes " link "CO05"}
    @{" Cambios, Peticiones de " link "INF4"}
    @{" Caracteres, Conversión automática de juegos de " link "CO04"}
@@ -11514,7 +11513,7 @@ versión más reciente) en su BBS local o en discos de dominio público.
    @{" Citar líneas en blanco " link "CO06"}
    @{" Citar mensaje " link "CO06"}
    @{" Citas previas " link "CO04"}
-   @{" Coletillas " link "CO07"} 
+   @{" Coletillas " link "CO07"}
    @{" Color de URLs " link "CO04"}
    @{" Coloreado, Texto " link "CO04"}
    @{" Comandos ARexx " link "REXX"}
