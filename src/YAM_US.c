@@ -696,7 +696,6 @@ static struct US_ClassData *US_New(BOOL supervisor)
        WindowContents, VGroup,
           Child, NListviewObject,
              MUIA_CycleChain, TRUE,
-             MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_Always,
              MUIA_NListview_NList, data->GUI.LV_USERS = NListObject,
                 InputListFrame,
                 MUIA_NList_ConstructHook, &US_LV_ConHook,

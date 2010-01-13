@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-13 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: reverted the changes of revision 4473 where Thore forced all
+    NListview objects to always carry a vertical scrollbar no matter what.
+    While this fixed the graphics corruption symptoms reported lately,
+    it does not seem to be a wise decision to work around this issue in
+    YAM when the root of the problem is known to be originating from NList.
+    We really need to fix that in NList later, so to allow YAM to benefit
+    from further NList improvements it is better not to force YAM to
+    use vertical scrollers at all times.
+
 2010-01-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/AttachmentImage: fixed the non-OS4 builds by defining the unknown

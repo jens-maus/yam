@@ -397,7 +397,6 @@ OVERLOAD(OM_NEW)
       Child, searchOptionPopup = PopobjectObject,
         MUIA_Popstring_Button, PopButton(MUII_PopUp),
         MUIA_Popobject_Object, NListviewObject,
-          MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_Always,
           MUIA_NListview_NList, searchOptionsList = NListObject,
             InputListFrame,
             MUIA_NList_Active,        SO_SUBJORSENDER,

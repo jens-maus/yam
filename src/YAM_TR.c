@@ -7436,7 +7436,6 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
            MUIA_ShowMe, TRmode==TR_IMPORT || C->PreSelection >= PSM_ALWAYS,
            Child, NListviewObject,
               MUIA_CycleChain, TRUE,
-              MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_Always,
               MUIA_NListview_NList, data->GUI.LV_MAILS = TransferMailListObject,
                  MUIA_NList_MultiSelect, MUIV_NList_MultiSelect_Default,
                  MUIA_NList_Format        , "W=-1 BAR,W=-1 MACW=9 P=\33r BAR,MICW=20 BAR,MICW=16 BAR,MICW=9 MACW=15",

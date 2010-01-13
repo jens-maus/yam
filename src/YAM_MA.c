@@ -4329,7 +4329,6 @@ struct MA_ClassData *MA_New(void)
             MUIA_CycleChain,  TRUE,
             MUIA_HorizWeight, 30,
             MUIA_Listview_DragType, MUIV_Listview_DragType_Immediate,
-            MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_Always,
             MUIA_NListview_NList, data->GUI.NL_FOLDERS = MainFolderListtreeObject,
             End,
           End,

@@ -529,7 +529,6 @@ OVERLOAD(OM_NEW)
               MUIA_VertWeight, hgVertWeight,
               MUIA_ShowMe,     rmData->headerMode != HM_NOHEADER,
               Child, NListviewObject,
-                MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_Always,
                 MUIA_NListview_NList, headerList = NListObject,
                   InputListFrame,
                   MUIA_NList_DisplayHook,          &HeaderDisplayHook,

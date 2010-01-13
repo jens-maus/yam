@@ -2344,7 +2344,6 @@ static struct CO_ClassData *CO_New(void)
           Child, HGroup,
              Child, data->GUI.NLV_PAGE = NListviewObject,
                 MUIA_CycleChain,  TRUE,
-                MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_Always,
                 MUIA_NListview_NList, data->GUI.LV_PAGE = ConfigPageListObject,
                    MUIA_NList_Format,         "",
                    MUIA_NList_Title,          FALSE,
