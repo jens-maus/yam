@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-14  Vit Sindlar <sindlarv at centrum dot cz>
+
+  * doc/Install-YAM: updated Czech part of the installer script
+
 2010-01-13 Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: reverted the changes of revision 4473 where Thore forced all

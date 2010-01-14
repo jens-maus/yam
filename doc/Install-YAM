@@ -234,12 +234,12 @@
                                        "byl v nové verzi úplnì pøepracován. Pøi prvním spu¹tìní\n"
                                        "budou v¹echny zprávy automaticky pøevedeny do nového\n"
                                        "systému a pak u¾ je nebude mo¾né pou¾ívat v YAM 2.4!\n"
-                                       "Je¹tì PØED spu¹tìním verze 2.6 nebo novìj¹í proto\n"
-                                       "dùraznì doporuèujeme zazálohovat V©ECHNY zprávy.\n"
+                                       "Je¹tì PØED spu¹tìním této nové verze proto dùraznì\n"
+                                       "doporuèujeme zazálohovat V©ECHNY zprávy.\n"
                                        "\n"
-                                       "Pozn.: Pokud chcete, technicky není ¾ádný problém\n"
-                                       "nainstalovat a pou¾ívat YAM 2.4 a YAM 2.6 ve dvou\n"
-                                       "rùzných adresáøích."))
+                                       "Pozn.: Technicky není ¾ádný problém nainstalovat\n"
+                                       "a pou¾ívat YAM 2.4 i novìj¹í verzi ve dvou rùzných\n"
+                                       "adresáøích."))
         (set #faq_and_bugtracker (cat "\n"
                                       "Máte-li jakékoli dotazy ohlednì programu YAM,\n"
                                       "zeptejte se na tomto diskusním fóru:\n"
