@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.4 (08.01.2010)
+## version $VER: YAM.catalog 6.4 (15.01.2010)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -9939,7 +9939,7 @@ La libreria openurl.library non è stata rilevata oppure non è stata\n\
 configurata correttamente.\n\
 YAM non sarà in grado di aprire automaticamente il link richiesto.\n\
 \n\
-Per favore scaricalo manualmente da questo indirizzo:\n\
+Per favore scaricala manualmente da questo indirizzo:\n\
 '%s'
 ; openurl.library not installed on your system.\n\
 ; Thus YAM is not able to open the requested link itself.\n\
