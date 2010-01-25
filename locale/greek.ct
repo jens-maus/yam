@@ -1,8 +1,8 @@
-## version $VER: yam.catalog 6.00 (09.10.2009)
-## codeset 10
+## version $VER: YAM.catalog 6.1 (25.1.2010)
 ## language greek
+## codeset 10
 ## chunk AUTH Antonis Iliakis
-; YAM.cd - YAM 2.5 catalog description file
+;
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -16,7 +16,6 @@
 ; and increase the last listed identifier number by one for your
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
-;
 ;
 ; General
 ;
