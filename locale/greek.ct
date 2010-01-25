@@ -7592,8 +7592,8 @@ MSG_HELP_WR_PO_CHARSET
 ; Use the popup button to select the character set\nyou would like YAM to use for this mail. This\ndefaults to the global character set.
 ;
 MSG_ABOUTYAM
-Περί YAM...
-; About YAM...
+Περί YAM
+; About YAM
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Αδύνατη η σύνδεση με τον κόμβο '%s' του λογαριασμού '%s'.\n\nΜια σύνδεση TCP/IP φαίνεται να είναι ήδη ενεργή. Κλείστε όλες τις άλλες υπάρχουσες μεταφορές.

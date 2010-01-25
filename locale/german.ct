@@ -8291,7 +8291,7 @@ verwenden soll. Standardm‰ﬂig wird die globale\n\
 Zeichenkodierung verwendet.
 ;
 MSG_ABOUTYAM
-‹ber YAM...
+‹ber YAM
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Verbindung zu '%s' von Konto '%s' konnte nicht aufgebaut werden.\n\

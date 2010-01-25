@@ -7308,8 +7308,8 @@ Använd popup knappen för att välja den tecken-\nuppsättning du vill YAM ska anvä
 ;#DEF Use the popup button to select the character set\nyou would like YAM to use for this mail. This\ndefaults to the global character set.
 ;#SET (2085//)
 MSG_ABOUTYAM
-Om YAM...
-;#DEF About YAM...
+Om YAM
+;#DEF About YAM
 ;#SET (2086//)
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Kunde inte ansluta till värd '%s' för konto '%s'.\n\nEn TCP/IP socket anslutning verkar redan vara aktiv. Var god stäng ned andra aktiva överföringar.

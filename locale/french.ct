@@ -9357,8 +9357,8 @@ caractères global est utilisé.
 ; defaults to the global character set.
 ;
 MSG_ABOUTYAM
-À propos de YAM...
-; About YAM...
+À propos de YAM
+; About YAM
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\

@@ -9179,8 +9179,8 @@ operaèního systému.
 ; defaults to the global character set.
 ;
 MSG_ABOUTYAM
-O programu YAM...
-; About YAM...
+O programu YAM
+; About YAM
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Nelze navázat spojení se serverem '%s' (úèet: '%s').\n\
