@@ -1,8 +1,8 @@
 YTH1 - YAM Theme
-Name    = YAM default theme
-Author  = YAM Development Team
-URL     = http://www.yam.ch/
-Version = 0.3 (03.01.2008)
-
+Name                = YAM default theme
+Author              = Martin Merz
+URL                 = http://www.yam.ch/
+Version             = 1.0 (25.01.2010)
+IgnoreMissingImages = N
 ; Image file substitutions
 ; <image id> = <file path>
