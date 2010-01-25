@@ -1,9 +1,8 @@
 ;
-; $VER: Installer script 1.9 for YAM 2.6 (10.01.2010) (c) 2000-2010 by YAM Open Source Team
+; $VER: Install-YAM 1.10 (25.01.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
-;
 ;
 ;
 ; /// Setting up
@@ -14,13 +13,19 @@
 (set #def_lang_italian              8)
 (set #def_lang_french              16)
 (set #def_lang_greek               32)
+; add more languages here
+; (set #def_lang_<language name>     bitmask)
+;
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only OS4 can handle them.
 (set #def_lang_english_british     64)
+; add more accents of languages here
+; (set #def_lang_<language name>     bitmask)
 
 (set #def_doc_english               0)
 (set #def_doc_french                1)
-;(set #def_doc_italian               2)
+; add more languages here
+; (set #def_doc_<language name>       bitmask)
 ; ///
 
 ;----------------------------------------------------------------------------
@@ -358,18 +363,15 @@
 
 ;----------------------------------------------------------------------------
 ; /// Checking environment
-;(set installer_ver (/ @installer-version 65536))
-;(set installer_rev (- @installer-version (* installer_ver 65536)))
-;(if (or (< installer_ver 42) (< installer_rev 6)) (abort #wronginstaller))
-
 (set OS_ver (getversion "exec.library" (resident)))
-(if (< OS_ver (* 39 65536)) (abort #wrongOS))
-
-(set MUI_ver (getversion "MUI:libs/muimaster.library"))
-(if (and (< MUI_ver (* 19 65536)) (<> MUI_ver 0)) (abort #wrongMUI))
+(if (< OS_ver (* 39 65536))
+    (abort #wrongOS)
+)
 
 (set CPU_type (database "cpu"))
-(if (< CPU_type "68020") (abort #wrongCPU))
+(if (< CPU_type "68020")
+    (abort #wrongCPU)
+)
 
 ; we use newlib.library to check whether we are running on OS4 or MorphOS
 (set NEWLIB_ver (getversion "newlib.library" (resident)))
@@ -392,6 +394,14 @@
             )
         )
     )
+)
+
+(if mos
+    (set MUI_ver (getversion "LIBS:muimaster.library"))
+    (set MUI_ver (getversion "MUI:libs/muimaster.library"))
+)
+(if (and (< MUI_ver (* 19 65536)) (<> MUI_ver 0))
+    (abort #wrongMUI)
 )
 
 (if os4
@@ -647,7 +657,7 @@
             )
         )
 
-        ; new the accent languages follow
+        ; now the accented languages follow
         ; NOTE: only OS4 supports these!!
         (if os4
             ; english-british catalog file

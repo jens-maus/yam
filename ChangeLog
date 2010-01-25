@@ -11,6 +11,8 @@ $URL$
     update 1. This is about 99% an AISS theme without the need to install AISS.
     Many thanks to Martin 'Mason' Merz for his work!
   * locale/#?: fixed some inconsistencies with trailing dots.
+  * doc/Install-YAM: fixed the wrong path of muimaster.library for MorphOS in
+    the MUI version check.
 
 2010-01-15 Samir Hawamdeh <s.hawamdeh@tin.it>
 
