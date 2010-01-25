@@ -2898,8 +2898,8 @@ Avsändaren vill ha ett statusmeddelande\ntillbaks (MDN).\n\nVad vill du göra?
 ;#DEF The sender of this message requests\na return receipt.\n\nWhat do you want to do?
 ;#SET (826//)
 MSG_RE_SaveMessage
-Spara meddelande...
-;#DEF Save message...
+Spara meddelande
+;#DEF Save message
 ;#SET (827//)
 MSG_RE_PrintMsg
 Skriv ut meddelande

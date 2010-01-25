@@ -981,11 +981,11 @@ Dobrý den,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-; 
+;
 ;
 MSG_CO_AltRepPatternDef
 
-; 
+;
 ;
 MSG_CO_ForwardIntroDef
 *** zaèátek pøeposílané zprávy ***\\\\n\
@@ -1015,15 +1015,15 @@ S pozdravem
 ;
 MSG_CO_AltRepHelloDef
 
-; 
+;
 ;
 MSG_CO_AltRepByeDef
 
-; 
+;
 ;
 MSG_CO_MLRepHelloDef
 
-; 
+;
 ;
 MSG_CO_MLRepIntroDef
 Dne %c %n napsal:\\\\n
@@ -3382,8 +3382,8 @@ Co chcete udìlat?
 ; What do you want to do?
 ;
 MSG_RE_SaveMessage
-Ulo¾ení zprávy...
-; Save message...
+Ulo¾ení zprávy
+; Save message
 ;
 MSG_RE_PrintMsg
 Tisk zprávy

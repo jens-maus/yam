@@ -10,6 +10,7 @@ $URL$
   * themes/default: updated the default theme to use the imagery used with OS4.1
     update 1. This is about 99% an AISS theme without the need to install AISS.
     Many thanks to Martin 'Mason' Merz for his work!
+  * locale/#?: fixed some inconsistencies with trailing dots.
 
 2010-01-15 Samir Hawamdeh <s.hawamdeh@tin.it>
 

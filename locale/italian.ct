@@ -3036,15 +3036,15 @@ Voce
 ; Entry
 ;
 MSG_AB_AddUser
-Nuova persona...
+Nuova persona
 ; New person
 ;
 MSG_AB_AddGroup
-Nuovo gruppo...
+Nuovo gruppo
 ; New group
 ;
 MSG_AB_AddList
-Nuova lista distribuzione...
+Nuova lista distribuzione
 ; New distribution list
 ;
 MSG_AB_Duplicate
@@ -3445,8 +3445,8 @@ Cosa si desidera fare?
 ; What do you want to do?
 ;
 MSG_RE_SaveMessage
-Salva il messaggio...
-; Save message...
+Salva il messaggio
+; Save message
 ;
 MSG_RE_PrintMsg
 Stampa messaggio

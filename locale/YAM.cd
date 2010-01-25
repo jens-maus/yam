@@ -2502,7 +2502,7 @@ a return receipt.\n\
 What do you want to do?
 ;
 MSG_RE_SaveMessage (827//)
-Save message...
+Save message
 ;
 MSG_RE_PrintMsg (829//)
 Print message
