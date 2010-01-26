@@ -1,14 +1,14 @@
-Short:        YAM 2.5 (AmigaOS4) - A MUI Internet e-mail client
+Short:        YAM 2.6 - A MUI Internet e-mail client
 Author:       YAM Open Source Team (http://www.yam.ch/)
 Uploader:     Jens Langner <Jens.Langner@light-speed.de>
 Type:         comm/yam
-Version:      2.5
-Replaces:     comm/yam/YAM24*
+Version:      2.6
+Replaces:     comm/yam/YAM25*
 Requires:     AmigaOS V37+/MorphOS, mc68020+/PowerPC, MUI 3.8+
 Architecture: ppc-amigaos >= 4.0.0; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2
 
 ---------------------------------------------------------------------------
-                           YAM - Version 2.5
+                           YAM - Version 2.6
 ---------------------------------------------------------------------------
 
 About YAM
@@ -33,13 +33,13 @@ MorphOS.
 
 Before you start the installation
 ---------------------------------
-YAM 2.5  not only uses newer  configuration files, the files  used to store
+YAM 2.5+ not only uses newer  configuration files, the files  used to store
 separate emails are named differently  as well. Therefore, before you start
 the  installation  script to  overwrite  your  existing installation,  it's
 strongly recommended that you create a backup of your old YAM installation,
 including all folders  and configuration files. Afterwards  you can install
-the update into  your old YAM directory  if you wish. On  start-up, YAM 2.5
-will  automatically convert  your old  configuration files  to the  new 2.5
+the update into your old YAM directory  if you wish. On  start-up, YAM 2.5+
+will automatically convert  your old  configuration files  to the  new 2.5+
 format,  and after  being  started,  YAM will  rename  your  old emails  as
 necessary,  always under  your control.  It  is also  recommended that  you
 re-save your  configuration as  soon as  possible in  order to  update your
@@ -58,11 +58,11 @@ Here's a  list (in  alphabetical order)  of the  brave developers  who have
 contributed   to    this   release    since   the   last    official   one:
 
               Alexey Ivanov
-              David Rey    
+              David Rey
               Guenther Nikl
-              Jens Langner 
+              Jens Langner
               Joerg Strohmayer
-              Olaf Barthel    
+              Olaf Barthel
               Thore Boeckelmann
 
 And here's a  PARTIAL list of the  changes in this version  with respect to
@@ -75,167 +75,167 @@ the previous official update:
   Comments) standards (e.g. RFC2822, RFC2047, RFC2045, etc.).
 - new optional embedded read pane for reading emails directly in the
   main window instead of having to open separate read windows.
-- new optional search bar for quickly searching for emails or sorting       
+- new optional search bar for quickly searching for emails or sorting
   e-mails by categories directly in the main window.
 - improved GUI feedback during mail transfers (e.g. for solving the [Abort]
   button issues when transferring mails).
 - new automatic conversion of readable HTML mail parts to plain text via
   an intelligent flex scanner engine.
-- completely reworked charset (codeset) handling which now uses 
+- completely reworked charset (codeset) handling which now uses
   codesets.library instead (e.g. for full support of UTF-8 mails)
 - added support for AmiSSL v3 library (SSL/TLS encryption).
 - YAM now supports full SMTP SSLv3 compatibility and the authentication
-  method used by SMTP AUTH is now user definable to work around servers 
+  method used by SMTP AUTH is now user definable to work around servers
   that claim to support methods they can't actually handle.
-- removed the max. 100 filter limit; also, filters are no longer limited to 
+- removed the max. 100 filter limit; also, filters are no longer limited to
   2 rules each.
-- all functions that will cause the info bar to show a progress gauge will 
-  allow to abort the operation via a new "X" button now (e.g. cancel a 
+- all functions that will cause the info bar to show a progress gauge will
+  allow to abort the operation via a new "X" button now (e.g. cancel a
   filtering operation).
 - added general support for AmiDock (AmigaOS4 only).
-- forwarding an email is now possible either by inlining the mail text (old 
+- forwarding an email is now possible either by inlining the mail text (old
   way) or now per default by attaching the forwarded mail.
 - an unlimited number of read windows can now be opened in case the
-  "multiple windows" option is enabled. 
-- completely reworked TCP/IP backend which generally works with 
+  "multiple windows" option is enabled.
+- completely reworked TCP/IP backend which generally works with
   non-blocking I/O for increased performance and reliability.
-- integrated SPAM filter engine (bayesian based; ported from Thunderbird) 
+- integrated SPAM filter engine (bayesian based; ported from Thunderbird)
   which will adapt itself over the time (AKA: learning SPAM filter).
 - new themes management which allows users to create own public themes to
   easily provide YAM a completely new image set in a standardised way.
 - new automatic online update functionality to inform the user in case new
   updates for YAM are available.
-- attachments are now listed in a separate auto-sizable group at the bottom 
+- attachments are now listed in a separate auto-sizable group at the bottom
   of the Read window or embedded read pane, complete with interactive icons
-  (via DefIcons), context menus and some related data. Drag&Drop operations 
-  to Workbench also automatically decode the attachment to the dropped 
+  (via DefIcons), context menus and some related data. Drag&Drop operations
+  to Workbench also automatically decode the attachment to the dropped
   location.
 - improved context menu support for folder and mail list as well as added
-  context menu support for new embedded read pane to shield all 
+  context menu support for new embedded read pane to shield all
   functionality of a normal Read window.
-- changed keyboard shortcuts for all menus to be fixed throughout all 
-  languages. This allows to switch languages without having to learn 
+- changed keyboard shortcuts for all menus to be fixed throughout all
+  languages. This allows to switch languages without having to learn
   hotkeys again.
-- improved UIDL support to better avoid duplicate mails when downloading 
+- improved UIDL support to better avoid duplicate mails when downloading
   via POP3.
-- reworked MIME type management, removing the old internal limit of max. 
-  100 MIME types, rendering binary identification redundant and finally 
+- reworked MIME type management, removing the old internal limit of max.
+  100 MIME types, rendering binary identification redundant and finally
   making YAM fully compliant with RFC2231.
-- added support to import/export address book data via standard formats 
+- added support to import/export address book data via standard formats
   like LDIF, CSV, TSV (comma/tab separated values).
 - added support to directly import mails from Outlook Express (DBX).
-- added functionality to flag a mail as 'read' after a certain time 
+- added functionality to flag a mail as 'read' after a certain time
   interval.
-- notification sound files are played asynchronously now. 
-- changed the toolbar implementation to use TheBar.mcc instead which is 
+- notification sound files are played asynchronously now.
+- changed the toolbar implementation to use TheBar.mcc instead which is
   more user configurable and supports 32bit alpha channel images as well.
 - implemented own image caching mechanism with full support for 32bit alpha
-  channel images to be used within YAM (requires an up2date 
+  channel images to be used within YAM (requires an up2date
   picture.datatype and proper PNG datatype in your system).
-- improved autosave functionality for write windows which automatically 
-  saves backups of the currently edited message and informs a user during 
+- improved autosave functionality for write windows which automatically
+  saves backups of the currently edited message and informs a user during
   startup in case such a backuped file was found (e.g. due to a crash).
 - From: and Reply-To: headers can contain multiple e-mail addresses now.
-- updated configuration user interface to be more structured and briefly 
+- updated configuration user interface to be more structured and briefly
   list what the purpose of a config page is.
-- general speed improvements when searching for mails with the normal 
+- general speed improvements when searching for mails with the normal
   folder wide search functionality.
-- the META data of mail files are not stored in the file comments anymore, 
-  but encoded in the filename of mails instead. This shields the advantage 
-  that mail files can be stored on file systems not supporting comments now 
-  (e.g. NFS). This also makes YAM partly compatible to the 'maildir' 
+- the META data of mail files are not stored in the file comments anymore,
+  but encoded in the filename of mails instead. This shields the advantage
+  that mail files can be stored on file systems not supporting comments now
+  (e.g. NFS). This also makes YAM partly compatible to the 'maildir'
   standard.
-- added support for the proprietary "Status:" and "X-Status:" header values 
+- added support for the proprietary "Status:" and "X-Status:" header values
   when importing/exporting mails.
-- general speed improvements where a too frequent redraw of a gauge gadget 
+- general speed improvements where a too frequent redraw of a gauge gadget
   caused the application to perform badly.
-- improved deletion of temporary files upon quitting YAM. Stale temporary 
-  files should be automatically deleted now or the user will be warned 
+- improved deletion of temporary files upon quitting YAM. Stale temporary
+  files should be automatically deleted now or the user will be warned
   accordingly when quitting YAM.
 - now handles gracefully "7-bit", "8-bit" and "plain" as
-  Content-Transfer-Encoding to support flawed mailers that keep violating 
+  Content-Transfer-Encoding to support flawed mailers that keep violating
   the RFCs.
-- very large strings that don't fit in the title bar of the Read window 
-  have now trailing dots ("...") appended at the end of the displayable 
+- very large strings that don't fit in the title bar of the Read window
+  have now trailing dots ("...") appended at the end of the displayable
   part.
 - when changing the subject in a write window the title bar will
   immediately be adapted to that change.
-- the user will be now consulted when an unknown file is found in a mail 
-  folder. Useful to e.g. quickly copy a certain e-mail without resorting to 
+- the user will be now consulted when an unknown file is found in a mail
+  folder. Useful to e.g. quickly copy a certain e-mail without resorting to
   importing.
-- now checks if the "(a)rchived" bit has been set on both the .index file 
-  and on the mail directory and if so it doesn't rebuild the index despite 
-  the modified time stamps, assuming the user has simply used a backup 
+- now checks if the "(a)rchived" bit has been set on both the .index file
+  and on the mail directory and if so it doesn't rebuild the index despite
+  the modified time stamps, assuming the user has simply used a backup
   program.
 - user images in the Read window are now scaled as appropriate and thus no
   longer need a scroll bar.
-- YAM shows a short help information in case it is started with "?" from 
+- YAM shows a short help information in case it is started with "?" from
   the command-line.
-- for safety, holding the <Del> key down will only delete exactly one email 
+- for safety, holding the <Del> key down will only delete exactly one email
   now.
-- added support for "multipart/alternative" mails. Just the respective 
-  plain text  mail text is shown instead of showing both, an existing HTML 
+- added support for "multipart/alternative" mails. Just the respective
+  plain text  mail text is shown instead of showing both, an existing HTML
   and plain text part at the same time (This is what the RFC suggests).
-- by default, the folder list now uses bold and grey text to mark folders 
-  with new and unread email, respectively; in addition, if the columns 
-  listing the number of new or unread emails are turned off, this number 
-  will be shown between parentheses right after the folder name, but this 
+- by default, the folder list now uses bold and grey text to mark folders
+  with new and unread email, respectively; in addition, if the columns
+  listing the number of new or unread emails are turned off, this number
+  will be shown between parentheses right after the folder name, but this
   is all user definable.
 - improved URL highlighting in read windows according to RFC3986.
-- when the "Exchange mail" feature is invoked, YAM now first downloads new 
-  mail to avoid clashing with servers using the "SMTP-after-POP3" security 
+- when the "Exchange mail" feature is invoked, YAM now first downloads new
+  mail to avoid clashing with servers using the "SMTP-after-POP3" security
   feature.
-- removed the possibility to download user images from the old YAM user 
-  gallery as that part of the web page no longer exists and is considered 
+- removed the possibility to download user images from the old YAM user
+  gallery as that part of the web page no longer exists and is considered
   obsolete.
-- user selected headers in the "Read" page of the configuration are now 
-  printed in the same order the user typed them when the Read window is 
+- user selected headers in the "Read" page of the configuration are now
+  printed in the same order the user typed them when the Read window is
   displaying "short headers".
-- by default, the "short headers" string gadget in the Read configuration 
+- by default, the "short headers" string gadget in the Read configuration
   now also lists the CC: and BCC: headers.
-- searches in the address book don't need AmigaDOS wildcards anymore, the 
+- searches in the address book don't need AmigaDOS wildcards anymore, the
   input is always considered partial now.
-- all mail transfers speeds are now listed as KB/s rather than the 
-  old-fashioned characters per second (cps) unit, which is largely what you 
+- all mail transfers speeds are now listed as KB/s rather than the
+  old-fashioned characters per second (cps) unit, which is largely what you
   want in today's DSL times.
-- soft style markers (e.g. *bold*) in the text editor are now displayed to 
-  make it possible to correctly mark & copy the text from the editor; in 
-  addition, support for the old "<sb>" and "<tsb>" markers has been dropped 
-  as they aren't standard, though they are still interpreted if they are 
+- soft style markers (e.g. *bold*) in the text editor are now displayed to
+  make it possible to correctly mark & copy the text from the editor; in
+  addition, support for the old "<sb>" and "<tsb>" markers has been dropped
+  as they aren't standard, though they are still interpreted if they are
   detected in an e-mail. But you are suggested to not use them anymore!
-- soft styles can now be only applied on a word by word basis and never 
-  several at once to a single word. This is more the way today's e-mail 
+- soft styles can now be only applied on a word by word basis and never
+  several at once to a single word. This is more the way today's e-mail
   clients work and  expect text passages to be highlighted.
 - no longer switches to the Outgoing folder before sending e-mail.
-- double-clicking an e-mail in the Outgoing folder now opens a Write window 
+- double-clicking an e-mail in the Outgoing folder now opens a Write window
   to edit it immediately.
-- dropped the "Return-Receipt-To:" header and made YAM compliant with the 
+- dropped the "Return-Receipt-To:" header and made YAM compliant with the
   general message disposition notification (MDN) framework of RFC3798.
-- now gracefully handles SMTP servers that don't bother replying with a 
-  positive status code after getting a QUIT command from the client before 
+- now gracefully handles SMTP servers that don't bother replying with a
+  positive status code after getting a QUIT command from the client before
   actually dropping the connection (GoogleMail), clearly violating RFC2821.
-- removed support for user-definable quotation marks as this causes more 
-  trouble than it's worth; now it will always use "> " which is more or 
+- removed support for user-definable quotation marks as this causes more
+  trouble than it's worth; now it will always use "> " which is more or
   less a standard.
-- now uses the more common "[Fwd: Subject]" form instead of "Subject (fwd)" 
+- now uses the more common "[Fwd: Subject]" form instead of "Subject (fwd)"
   to mark forwarded email subjects.
-- each mail folder can now have assigned its own intro and close phrases, 
+- each mail folder can now have assigned its own intro and close phrases,
   overriding the defaults set in the configuration.
-- all the images are now loaded via system datatypes, and PNG is considered 
+- all the images are now loaded via system datatypes, and PNG is considered
   the default image format.
-- a double-click in the header list of the Read window will now toggle 
+- a double-click in the header list of the Read window will now toggle
   between short and full header view.
-- now sends STATs to the POP3 server within a defined interval of time to 
-  prevent the server from dropping the connection while using the 
+- now sends STATs to the POP3 server within a defined interval of time to
+  prevent the server from dropping the connection while using the
   preselection window.
-- added possibility to set an amount of time PGP will remember the user's 
+- added possibility to set an amount of time PGP will remember the user's
   passphrase to avoid asking for it again and again.
-- new "Text-->Insert as-->UUencoded text" menu item in the Write window to 
-  inline a file as UUcode encoded text directly embedded in the mail text. 
-  This allows to exchange binaries on mailing lists not allowing real 
+- new "Text-->Insert as-->UUencoded text" menu item in the Write window to
+  inline a file as UUcode encoded text directly embedded in the mail text.
+  This allows to exchange binaries on mailing lists not allowing real
   attachments.
 - new "Message-->Edit as new" menu item to replicate an existing message.
-- lots of other improvement we don't remember right now (keep in mind: 
+- lots of other improvement we don't remember right now (keep in mind:
   almost 5 years of development was put into YAM 2.5!) :)
 
 If  you want  to have  a more  detailed technical  information on  what was
@@ -243,18 +243,18 @@ actually  changed, please  have a  look at  the included  'ChangeLog' file.
 
 What is still missing?
 ----------------------
-- lots of translators! YAM 2.4 featured lots of different languages, but 
-  due to the large amount of changed texts these catalogs are completely 
-  outdated. Especially support for such common languages as French, 
-  Italian, Spanish, etc. is currently missing. If you are a native speaker  
+- lots of translators! YAM 2.4 featured lots of different languages, but
+  due to the large amount of changed texts these catalogs are completely
+  outdated. Especially support for such common languages as Danish,
+  Finnish, Spanish, etc. is currently missing. If you are a native speaker
   of a language that YAM does not offer (anymore), then please contact us.
-- lots of documentation! As with the translation, the documentation largely 
-  lags behind. Again, if you are a native speaker (even for English) and if 
-  you are interested in updating/writing YAM's documentation then please  
+- lots of documentation! As with the translation, the documentation largely
+  lags behind. Again, if you are a native speaker (even for English) and if
+  you are interested in updating/writing YAM's documentation then please
   contact us.
-- now that YAM 2.5 comes with a new themes management, users are free to 
-  create own themes in a fashion that allow them to exchange them with 
-  other users. So go and create your own themes and submit them via 
+- now that YAM 2.5+ comes with a new themes management, users are free to
+  create own themes in a fashion that allow them to exchange them with
+  other users. So go and create your own themes and submit them via
   AmiNET&Co! :)
 
 
@@ -293,16 +293,16 @@ resources cover your daily YAM needs:
 
    http://www.yam.ch/      - Official Support Homepage
    http://download.yam.ch/ - Direct path to the download page
-   http://faq.yam.ch/      - Online Frequently Asked Questions (FAQ) 
+   http://faq.yam.ch/      - Online Frequently Asked Questions (FAQ)
    http://bugs.yam.ch/     - Bugtracker and Feature Requests
    http://forum.yam.ch/    - Web-based online forum
 
    For Developers:
 
-   http://nightly.yam.ch/  - Access to automatic nightly developer 
+   http://nightly.yam.ch/  - Access to automatic nightly developer
                              snapshots
    http://svn.yam.ch/      - Web-based source code SVN access
-   http://stats.yam.ch/    - Daily updated development statistics 
+   http://stats.yam.ch/    - Daily updated development statistics
 
          __
         / /
