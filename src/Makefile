@@ -648,6 +648,7 @@ distribution:
 	@$(MKDIR) distribution
     ## AmigaOS3 distribution ##############
 	@echo "  MK AmigaOS3"
+	@$(MAKE) OS=os3 DEBUG= clean all
 	@$(MKDIR) "distribution/AmigaOS3"
 	@$(MKDIR) "distribution/AmigaOS3/YAM 2.6"
 	@$(CP) $(CDUP)icons/YAM_directory_os3.info "distribution/AmigaOS3/YAM 2.6.info"
@@ -701,6 +702,7 @@ distribution:
 	@$(CP) $(CDUP)icons/Themes_directory_os3.info "distribution/AmigaOS3/YAM 2.6/Themes.info"
 	@$(CP) $(CDUP)themes/ReadMe "distribution/AmigaOS3/YAM 2.6/Themes/ReadMe"
 	@$(CP) $(CDUP)icons/Themes_ReadMe_os3.info "distribution/AmigaOS3/YAM 2.6/Themes/ReadMe.info"
+	@$(CP) YAM.os3 "distribution/AmigaOS3/YAM 2.6/YAM"
 	@$(CP) $(CDUP)icons/YAM_os3.info "distribution/AmigaOS3/YAM 2.6/YAM.info"
 	@$(CP) $(CDUP)doc/ReadMe "distribution/AmigaOS3/YAM 2.6/ReadMe"
 	@$(CP) $(CDUP)icons/ReadMe_os3.info "distribution/AmigaOS3/YAM 2.6/ReadMe.info"
@@ -708,6 +710,7 @@ distribution:
 	@cd distribution/AmigaOS3 && lha -aq $(CDUP)YAM26-AmigaOS3.lha *
     ## AmigaOS4 distribution ##############
 	@echo "  MK AmigaOS4"
+	@$(MAKE) OS=os4 DEBUG= clean all
 	@$(MKDIR) "distribution/AmigaOS4"
 	@$(MKDIR) "distribution/AmigaOS4/YAM 2.6"
 	@$(CP) $(CDUP)icons/YAM_directory_os4.info "distribution/AmigaOS4/YAM 2.6.info"
@@ -761,6 +764,7 @@ distribution:
 	@$(CP) $(CDUP)icons/Themes_directory_os4.info "distribution/AmigaOS4/YAM 2.6/Themes.info"
 	@$(CP) $(CDUP)themes/ReadMe "distribution/AmigaOS4/YAM 2.6/Themes/ReadMe"
 	@$(CP) $(CDUP)icons/Themes_ReadMe_os4.info "distribution/AmigaOS4/YAM 2.6/Themes/ReadMe.info"
+	@$(CP) YAM.os4 "distribution/AmigaOS4/YAM 2.6/YAM"
 	@$(CP) $(CDUP)icons/YAM_os4.info "distribution/AmigaOS4/YAM 2.6/YAM.info"
 	@$(CP) $(CDUP)doc/ReadMe "distribution/AmigaOS4/YAM 2.6/ReadMe"
 	@$(CP) $(CDUP)icons/ReadMe_os4.info "distribution/AmigaOS4/YAM 2.6/ReadMe.info"
@@ -768,6 +772,7 @@ distribution:
 	@cd distribution/AmigaOS4 && lha -aq $(CDUP)YAM26-AmigaOS4.lha *
     ## MorphOS distribution ###############
 	@echo "  MK MorphOS"
+	@$(MAKE) OS=mos DEBUG= clean all
 	@$(MKDIR) "distribution/MorphOS"
 	@$(MKDIR) "distribution/MorphOS/YAM 2.6"
 	@$(CP) $(CDUP)icons/YAM_directory_mos.info "distribution/MorphOS/YAM 2.6.info"
@@ -821,6 +826,7 @@ distribution:
 	@$(CP) $(CDUP)icons/Themes_directory_mos.info "distribution/MorphOS/YAM 2.6/Themes.info"
 	@$(CP) $(CDUP)themes/ReadMe "distribution/MorphOS/YAM 2.6/Themes/ReadMe"
 	@$(CP) $(CDUP)icons/Themes_ReadMe_mos.info "distribution/MorphOS/YAM 2.6/Themes/ReadMe.info"
+	@$(CP) YAM.mos "distribution/MorphOS/YAM 2.6/YAM"
 	@$(CP) $(CDUP)icons/YAM_mos.info "distribution/MorphOS/YAM 2.6/YAM.info"
 	@$(CP) $(CDUP)doc/ReadMe "distribution/MorphOS/YAM 2.6/ReadMe"
 	@$(CP) $(CDUP)icons/ReadMe_mos.info "distribution/MorphOS/YAM 2.6/ReadMe.info"
