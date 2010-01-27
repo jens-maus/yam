@@ -1,9 +1,12 @@
-## version $VER: YAM.catalog 6.5 (25.1.2010)
+## version $VER: YAM.catalog 6.5 (27.1.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
 ;
+; italian.ct - YAM 2.6 catalog translation file
 ; $Id$
+;
+; based on YAM.cd 4501 2010-01-26
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -968,8 +971,8 @@ MSG_CO_ImportMIMEGads
 ; *_MIME.prefs|m_ailcap|m_ime.types|_Cancel
 ;
 MSG_CO_NewIntroDef
-Salve,\\\\n\
-; Hello,\\\\n\
+Salve,\\n
+; Hello,\\n
 ;
 MSG_CO_AltRepIntroDef
 \0
@@ -982,10 +985,10 @@ MSG_CO_AltRepPatternDef
 MSG_CO_ForwardIntroDef
 *** Inizio del messaggio inoltrato ***\\\\n\
 \\\\n\
-Data: %c\\\\n\
-Da: %n <%e>\\\\n\
-Oggetto: %s\\\\n\
-\\\\n\
+Data: %c\\n\
+Da: %n <%e>\\n\
+Oggetto: %s\\n\
+\\n\
 --- Segue messaggio inoltrato ---
 ; *** Begin of forwarded message ***\\\\n\
 ; \\\\n\
@@ -4760,7 +4763,7 @@ difettoso oppure il messaggio risulta troncato.
 MSG_ER_DocNotFound
 Il documento HTML '%s' non è stato trovato.\n\
 \n\
-Il file ricercato è inesistente sul server.
+Il file ricercato non è presente sul server.
 ; HTML document '%s' not found.\n\
 ; \n\
 ; The file doesn't exist on the WWW server.
@@ -6750,9 +6753,9 @@ Attiva icona 'D_ocky'
 ; Enable 'd_ocky' icon
 ;
 MSG_HELP_CO_CH_DOCKYICON
-Se abilitata, un'icona docky verrà mostrata\n\
-usando la application.library\n\
-(Disponibile solo su sistemi AmigaOS 4.x).
+Se selezionata, verrà mostrata un'icona docky su\n\
+AmiDock usando la libreria "application.library".\n\
+(Opzione disponibile solo su sistemi AmigaOS 4.x).
 ; If checked, YAM will add a 'docky' to\n\
 ; AmiDock. This requires AmigaOS 4.x.
 ;
@@ -6764,8 +6767,8 @@ MSG_ER_MESSAGEIMPORT
 Si è verificato un errore durante l'importazione dei\n\
 messaggi dal file '%s'.\n\
 \n\
-Assicurati che il file sia leggibile e che contenga\n\
-dei messaggi di posta basati su RFC822 o in uno dei\n\
+Assicurati che il file sia leggibile e che contenga dei\n\
+messaggi di posta basati su RFC822 o in uno dei\n\
 formati dati supportati da YAM.\n\
 YAM è al momento in grado di importare file da 'MBOX',\n\
 'DBX' (Microsoft Outlook Express) o anche messaggi\n\
@@ -9916,21 +9919,22 @@ Ricevuti %ld nuovi messaggi di posta!
 ; COUNT
 ;
 MSG_CO_NOTIOS41SYSTEM
-Gestore notifiche di AmigaOS_4.1
+Gestore notifiche di AmigaOS_4.1 - Ringhio
 ; AmigaOS_4.1 notification system
 ;
 MSG_HELP_CO_CH_NOTIOS41SYSTEM
-Se selezionato YAM utilizzerà il gestore notifiche di AmigaOS 4.1 in modo\n\
-da avvisare l'utente circa la presenza di nuovi aggiornamenti o messaggi di\n\
+Se selezionato YAM utilizzerà Ringhio, il gestore notifiche di AmigaOS 4.1 Update 1\n\
+in modo da avvisare l'utente circa la presenza di nuovi aggiornamenti o messaggi di\n\
 posta elettronica.\n\
-Per attivarlo è necessaria la presenza della libreria application.library V53.2
+Nota che questa funzionalità risulterà disabilitata qualora non sia presente la libreria\n\
+application.library versione 53.2 o superiore.
 ; If checked, YAM will use AmigaOS4.1's notification\n\
 ; system to notify the user about new received mails.\n\
 ; This requires at least application.library V53.2.
 ;
 MSG_NO_OPENURL_LIB
 La libreria openurl.library non è stata rilevata oppure non è stata\n\
-configurata correttamente.\n\
+correttamente configurata.\n\
 YAM non sarà in grado di aprire automaticamente il link richiesto.\n\
 \n\
 Per favore scaricala manualmente da questo indirizzo:\n\
