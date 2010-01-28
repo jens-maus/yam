@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/Aboutwindow.c, doc/YAM_english.guide, doc/YAM_french.guide: added
+    Matthias Rustler to the list of developers.
+
 2010-01-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * themes/default: updated the default theme to use the imagery used with OS4.1

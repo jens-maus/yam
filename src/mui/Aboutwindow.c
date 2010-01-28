@@ -77,6 +77,7 @@ OVERLOAD(OM_NEW)
                           "\033b%s\033n\n\n"
                           "Jens Langner\n"
                           "Thore Boeckelmann\n"
+                          "Matthias Rustler\n"
                           "\n"
                           "\033b%s\033n\n\n"
                           "Gunther Nikl\n"
