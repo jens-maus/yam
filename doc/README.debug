@@ -1,0 +1,7 @@
+The YAM.debug and YAM.map file you will find in this archive
+are just for debugging purposes. They are NOT meant to be used
+permanently. Just in case a YAM developer requests from you to
+run the debug version you should need to have it installed
+together with tools like 'SegTracker', 'Enforcer' and 'Sashimi'.
+With the help of the debug information we might gain from these
+debug versions our developer can more easily find and fix bugs.
