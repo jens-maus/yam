@@ -13,6 +13,9 @@ $URL$
     distribute system specific icons like the new big icons from AmigaOS4.1
     update 1 with a theme without forcing users of other systems without on-the-
     fly icon scaling to use these big icons.
+  * themes/default: added separate icons for all supported platforms. For OS4
+    the new big icons will be used, MorphOS and AROS will use dual image PNG
+    icons and OS3 will default to plain Amiga icons.
 
 2010-01-28 Thore Böckelmann <tboeckel@gmx.de>
 
