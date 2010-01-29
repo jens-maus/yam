@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-01-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Themes.c: each system now tries to obtain a system specific icon from the
+    theme (i.e. icon/new_os4.info). If that fails YAM will fall back to the
+    normal unspecific icon (i.e. icon/new.info). This makes it possible to
+    distribute system specific icons like the new big icons from AmigaOS4.1
+    update 1 with a theme without forcing users of other systems without on-the-
+    fly icon scaling to use these big icons.
+
 2010-01-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/Aboutwindow.c, doc/YAM_english.guide, doc/YAM_french.guide: added

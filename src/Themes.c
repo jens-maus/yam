@@ -828,16 +828,42 @@ void LoadTheme(struct Theme *theme, const char *themeName)
 
     if(image != NULL && image[0] != '\0')
     {
+      char osIconImage[SIZE_PATHFILE];
+
+      // first we try to obtain a system specific icon image
+      strlcpy(osIconImage, theme->iconImages[i], sizeof(osIconImage));
+      #if defined(__amigaos4__)
+      strlcat(osIconImage, "_os4", sizeof(osIconImage));
+      #elif defined(__MORPHOS__)
+      strlcat(osIconImage, "_mos", sizeof(osIconImage));
+      #elif defined(__AROS__)
+      strlcat(osIconImage, "_aros", sizeof(osIconImage));
+      #else
+      strlcat(osIconImage, "_os3", sizeof(osIconImage));
+      #endif
+
+      D(DBF_THEME, "trying to load system specific icon file '%s'", osIconImage);
       // depending on the icon.library version we use either GetIconTags()
       // or the older GetDiskObject() function
       if(IconBase->lib_Version >= 44)
-        theme->icons[i] = (struct DiskObject *)GetIconTags(image, TAG_DONE);
+        theme->icons[i] = (struct DiskObject *)GetIconTags(osIconImage, TAG_DONE);
       else
-        theme->icons[i] = GetDiskObject(image);
+        theme->icons[i] = GetDiskObject(osIconImage);
 
-      // load the diskobject and report an error if something went wrong.
-      if(theme->icons[i] == NULL && G->NoImageWarning == FALSE)
-        ER_NewError(tr(MSG_ER_ICONOBJECT_WARNING), FilePart(image), themeName);
+      // if obtaining a system specific icon image failed we try the default icon
+      if(theme->icons[i] == NULL)
+      {
+        // depending on the icon.library version we use either GetIconTags()
+        // or the older GetDiskObject() function
+        if(IconBase->lib_Version >= 44)
+          theme->icons[i] = (struct DiskObject *)GetIconTags(image, TAG_DONE);
+        else
+          theme->icons[i] = GetDiskObject(image);
+
+        // load the diskobject and report an error if something went wrong.
+        if(theme->icons[i] == NULL && G->NoImageWarning == FALSE)
+          ER_NewError(tr(MSG_ER_ICONOBJECT_WARNING), FilePart(image), themeName);
+      }
     }
   }
 
