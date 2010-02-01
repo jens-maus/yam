@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-02-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * themes/default: replaced the old planar icons for OS3 by the new icons done
+    by Martin 'Mason' Merz.
+
 2010-01-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * Themes.c: each system now tries to obtain a system specific icon from the
