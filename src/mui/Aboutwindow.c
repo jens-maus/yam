@@ -98,6 +98,7 @@ OVERLOAD(OM_NEW)
                           "Luca Longone\n"
                           "Samir Hawamdeh\n"
                           "Antonis Iliakis\n"
+                          "Vit Sindlar\n"
                           "\n"
                           "%s\n"
                           "\n"

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-02-02  Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: removed diacritics from AUTH chunk text
+  * mui/Aboutwindow.c: added myself to the list of translators; hopefully you
+    don't mind :)
+
 2010-02-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * themes/default: replaced the old planar icons for OS3 by the new icons done
