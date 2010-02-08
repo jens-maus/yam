@@ -530,13 +530,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 {
   GETDATA;
   struct MUIP_NList_ContextMenuBuild *m = (struct MUIP_NList_ContextMenuBuild *)msg;
-  struct MUI_NList_TestPos_Result res;
-  struct Mail *mail = NULL;
-  struct Folder *fo = FO_GetCurrentFolder();
-  BOOL isOutBox = isOutgoingFolder(fo);
-  BOOL isSentMail = isSentMailFolder(fo);
-  BOOL hasattach = FALSE;
-  Object *afterThis;
+  struct Folder *fo;
 
   // dispose the old context_menu if it still exists
   if(data->context_menu != NULL)
@@ -565,98 +559,100 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFORDER_ALL),  MUIA_UserData, MUIV_NList_Menu_DefOrder_All,  End,
       End,
     End;
-
-    return (ULONG)data->context_menu;
   }
-
-  if(fo == NULL)
-    return(0);
-
-  // Now lets find out which entry is under the mouse pointer
-  DoMethod(obj, MUIM_NList_TestPos, m->mx, m->my, &res);
-
-  if(res.entry >= 0)
+  else if((fo = FO_GetCurrentFolder()) != NULL)
   {
-    DoMethod(obj, MUIM_NList_GetEntry, res.entry, &mail);
-    if(mail == NULL)
-      return(0);
+    struct MUI_NList_TestPos_Result res;
 
-    fo->LastActive = xget(obj, MUIA_NList_Active);
+    // Now lets find out which entry is under the mouse pointer
+    DoMethod(obj, MUIM_NList_TestPos, m->mx, m->my, &res);
 
-    if(isMultiPartMail(mail))
-      hasattach = TRUE;
+    if(res.entry >= 0)
+    {
+      struct Mail *mail = NULL;
 
-    // Now we set this entry as activ
-    if(fo->LastActive != res.entry)
-      set(obj, MUIA_NList_Active, res.entry);
-  }
+      DoMethod(obj, MUIM_NList_GetEntry, res.entry, &mail);
+      if(mail != NULL)
+      {
+        BOOL isOutBox = isOutgoingFolder(fo);
+        BOOL isSentMail = isSentMailFolder(fo);
+        BOOL hasattach = FALSE;
+        ULONG numSelected = 0;
+        struct Person *pers = isSentMail ? &mail->To : &mail->From;
+        char address[SIZE_LARGE];
+        Object *afterThis;
 
-  // now we create the menu title of the context menu
-  if(mail != NULL)
-  {
-    struct Person *pers = isSentMail ? &mail->To : &mail->From;
-    char address[SIZE_LARGE];
+        fo->LastActive = xget(obj, MUIA_NList_Active);
+        // Now we set this entry as activ
+        if(fo->LastActive != res.entry)
+          set(obj, MUIA_NList_Active, res.entry);
 
-    snprintf(data->context_menu_title, sizeof(data->context_menu_title), "%s: ", tr(isSentMail ? MSG_To : MSG_From));
-    strlcat(data->context_menu_title, BuildAddress(address, sizeof(address), pers->Address, pers->RealName), 20-strlen(data->context_menu_title) > 0 ? 20-strlen(data->context_menu_title) : 0);
-    strlcat(data->context_menu_title, "...", sizeof(data->context_menu_title));
-  }
-  else
-    strlcpy(data->context_menu_title, tr(MSG_MAIL_NONSEL), sizeof(data->context_menu_title));
+        if(isMultiPartMail(mail))
+          hasattach = TRUE;
 
-  data->context_menu = MenustripObject,
-    Child, MenuObjectT(data->context_menu_title),
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MREAD),             MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_READ,       End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, isOutBox ? tr(MSG_MA_MEDIT) : tr(MSG_MA_MEDITASNEW), MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_EDIT,       End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MMOVE),             MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_MOVE,     End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MCOPY),             MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_COPY,     End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MDelete),           MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_DELETE,   End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MPRINT),          MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_PRINT,    End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSAVE),           MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_SAVE,     End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Attachments),        MUIA_Menuitem_Enabled, mail && hasattach,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSAVEATT),      MUIA_Menuitem_Enabled, mail && hasattach, MUIA_UserData, MMEN_DETACH, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MDELETEATT),    MUIA_Menuitem_Enabled, mail && hasattach, MUIA_UserData, MMEN_DELETEATT, End,
-      End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MESSAGE_EXPORT),     MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_EXPMSG,   End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MNEW),            MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_NEW,      End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MREPLY),            MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_REPLY,      End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MFORWARD),          MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_FORWARD,    End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MBOUNCE),           MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_BOUNCE,     End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSAVEADDRESS),    MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_SAVEADDR, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_Select),
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SELECTALL),     MUIA_UserData, MMEN_SELALL,  End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SELECTNONE),    MUIA_UserData, MMEN_SELNONE, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SELECTTOGGLE),  MUIA_UserData, MMEN_SELTOGG, End,
-      End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SetStatus),         MUIA_Menuitem_Enabled, mail,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOMARKED),        MUIA_Menuitem_Enabled, mail && !hasStatusMarked(mail), MUIA_UserData, MMEN_TOMARKED,   End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOUNMARKED),      MUIA_Menuitem_Enabled, mail &&  hasStatusMarked(mail), MUIA_UserData, MMEN_TOUNMARKED, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOREAD),          MUIA_Menuitem_Enabled, mail && !isSentMail && (hasStatusNew(mail) || hasStatusUnread(mail)), MUIA_UserData, MMEN_TOREAD,     End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOUNREAD),        MUIA_Menuitem_Enabled, mail && !isSentMail && hasStatusRead(mail), MUIA_UserData, MMEN_TOUNREAD,   End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOHOLD),          MUIA_Menuitem_Enabled, mail && isOutBox && !hasStatusHold(mail), MUIA_UserData, MMEN_TOHOLD,     End,
-        Child, afterThis = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOQUEUED),   MUIA_Menuitem_Enabled, mail && isOutBox && !hasStatusQueued(mail), MUIA_UserData, MMEN_TOQUEUED,   End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ALLTOREAD),       MUIA_Menuitem_Enabled, mail && !isSentMail,  MUIA_UserData, MMEN_ALLTOREAD,  End,
-      End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ChangeSubj),        MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_CHSUBJ,     End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSend),             MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_SEND, End,
-    End,
-  End;
+        DoMethod(obj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
 
-  if(data->context_menu != NULL && mail != NULL && C->SpamFilterEnabled == TRUE)
-  {
-    Object *spamItem;
-    Object *hamItem;
+        // now we create the menu title of the context menu
+        snprintf(data->context_menu_title, sizeof(data->context_menu_title), "%s: ", tr(isSentMail ? MSG_To : MSG_From));
+        strlcat(data->context_menu_title, BuildAddress(address, sizeof(address), pers->Address, pers->RealName), 20-strlen(data->context_menu_title) > 0 ? 20-strlen(data->context_menu_title) : 0);
+        strlcat(data->context_menu_title, "...", sizeof(data->context_menu_title));
 
-    spamItem = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOSPAM),    MUIA_Menuitem_Enabled, !hasStatusSpam(mail),  MUIA_UserData, MMEN_TOSPAM,   End;
-    hamItem =  MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TONOTSPAM), MUIA_Menuitem_Enabled, hasStatusSpam(mail),   MUIA_UserData, MMEN_TOHAM,    End;
+        data->context_menu = MenustripObject,
+          Child, MenuObjectT(data->context_menu_title),
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MREAD),             MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_READ,       End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, isOutBox ? tr(MSG_MA_MEDIT) : tr(MSG_MA_MEDITASNEW), MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_EDIT,       End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MMOVE),             MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_MOVE,     End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MCOPY),             MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_COPY,     End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MDelete),           MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_DELETE,   End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MPRINT),          MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_PRINT,    End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSAVE),           MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_SAVE,     End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Attachments),        MUIA_Menuitem_Enabled, mail && hasattach,
+              Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSAVEATT),      MUIA_Menuitem_Enabled, mail && hasattach, MUIA_UserData, MMEN_DETACH, End,
+              Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MDELETEATT),    MUIA_Menuitem_Enabled, mail && hasattach, MUIA_UserData, MMEN_DELETEATT, End,
+            End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MESSAGE_EXPORT),     MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_EXPMSG,   End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MNEW),            MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_NEW,      End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MREPLY),            MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_REPLY,      End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MFORWARD),          MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_FORWARD,    End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MBOUNCE),           MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_BOUNCE,     End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSAVEADDRESS),    MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_SAVEADDR, End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_Select),
+              Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SELECTALL),     MUIA_UserData, MMEN_SELALL,  End,
+              Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SELECTNONE),    MUIA_UserData, MMEN_SELNONE, End,
+              Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SELECTTOGGLE),  MUIA_UserData, MMEN_SELTOGG, End,
+            End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SetStatus),         MUIA_Menuitem_Enabled, mail,
+              Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOMARKED),        MUIA_Menuitem_Enabled, mail && (numSelected >= 2 || !hasStatusMarked(mail)), MUIA_UserData, MMEN_TOMARKED,   End,
+              Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOUNMARKED),      MUIA_Menuitem_Enabled, mail && (numSelected >= 2 ||  hasStatusMarked(mail)), MUIA_UserData, MMEN_TOUNMARKED, End,
+              Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOREAD),          MUIA_Menuitem_Enabled, mail && !isSentMail && (numSelected >= 2 || hasStatusNew(mail) || hasStatusUnread(mail)), MUIA_UserData, MMEN_TOREAD,     End,
+              Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOUNREAD),        MUIA_Menuitem_Enabled, mail && !isSentMail && (numSelected >= 2 || hasStatusRead(mail)), MUIA_UserData, MMEN_TOUNREAD,   End,
+              Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOHOLD),          MUIA_Menuitem_Enabled, mail && isOutBox && !hasStatusHold(mail), MUIA_UserData, MMEN_TOHOLD,     End,
+              Child, afterThis = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOQUEUED),   MUIA_Menuitem_Enabled, mail && isOutBox && !hasStatusQueued(mail), MUIA_UserData, MMEN_TOQUEUED,   End,
+              Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+              Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ALLTOREAD),       MUIA_Menuitem_Enabled, mail && !isSentMail,  MUIA_UserData, MMEN_ALLTOREAD,  End,
+            End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ChangeSubj),        MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_CHSUBJ,     End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+            Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_MSend),             MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_SEND, End,
+          End,
+        End;
 
-    DoMethod(data->context_menu, MUIM_Family_Insert, hamItem, afterThis);
-    DoMethod(data->context_menu, MUIM_Family_Insert, spamItem, afterThis);
+        if(data->context_menu != NULL && mail != NULL && C->SpamFilterEnabled == TRUE)
+        {
+          Object *spamItem;
+          Object *hamItem;
+
+          spamItem = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TOSPAM),    MUIA_Menuitem_Enabled, (numSelected >= 2 || !hasStatusSpam(mail)), MUIA_UserData, MMEN_TOSPAM, End;
+          hamItem =  MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_TONOTSPAM), MUIA_Menuitem_Enabled, (numSelected >= 2 ||  hasStatusSpam(mail)), MUIA_UserData, MMEN_TOHAM,  End;
+
+          DoMethod(data->context_menu, MUIM_Family_Insert, hamItem, afterThis);
+          DoMethod(data->context_menu, MUIM_Family_Insert, spamItem, afterThis);
+        }
+      }
+    }
   }
 
   return (IPTR)data->context_menu;

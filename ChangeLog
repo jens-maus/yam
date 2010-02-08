@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-02-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainMailList.c: the context menu's "Set status to" entries are now
+    enabled/disabled in respect to the number of selected mails. For a single
+    mail the menu items reflect the current state of the mail and opposite items
+    will be disabled. For multiple mails opposite items will both be enabled
+    (i.e. "read" and "unread") to give the user the chance to modify the status
+    independent of the clicked mail. This fixes bug #2177452.
+
 2010-02-02  Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: removed diacritics from AUTH chunk text
