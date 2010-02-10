@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-02-10 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/Aboutwindow.c: added a reference to expat.library which is used to allow
+    importing an XML addressbook file.
+
 2010-02-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainMailList.c: the context menu's "Set status to" entries are now
