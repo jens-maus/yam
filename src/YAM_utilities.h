@@ -247,6 +247,11 @@ struct TimeRequest
 
 #define IterateList(list, node)           for((node) = GetHead((struct List *)(list)); (node) != NULL; (node) = GetSucc(node))
 
+#if !defined(IsMinListEmpty)
+#define IsMinListEmpty(x) \
+    ( (struct MinList *)((x)->mlh_TailPred) == (struct MinList *)(x) )
+#endif
+
 // LogFile enums and macros
 enum LFMode
 {

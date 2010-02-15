@@ -482,7 +482,7 @@ static char *CreateVAR(struct MinList *stemList)
 
   ENTER();
 
-  if(IsListEmpty((struct List *)stemList) == FALSE)
+  if(IsMinListEmpty(stemList) == FALSE)
   {
     long size = 0;
     struct Node *curNode;

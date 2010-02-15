@@ -4915,6 +4915,7 @@ const char *IdentifyFile(const char *fname)
     {
       char buffer[SIZE_LARGE];
       int rlen;
+      long *lbuf = (long *)buffer;
 
       // we read in SIZE_LARGE into our temporary buffer without
       // checking if it worked out.
@@ -4929,7 +4930,7 @@ const char *IdentifyFile(const char *fname)
       else if(!strncmp(buffer, "%PDF-", 5))                                      ctype = IntMimeTypeArray[MT_AP_PDF].ContentType;
       else if(!strncmp(&buffer[2], "-lh5-", 5))                                  ctype = IntMimeTypeArray[MT_AP_LHA].ContentType;
       else if(!strncmp(buffer, "LZX", 3))                                        ctype = IntMimeTypeArray[MT_AP_LZX].ContentType;
-      else if(*((long *)buffer) >= HUNK_UNIT && *((long *)buffer) <= HUNK_INDEX) ctype = IntMimeTypeArray[MT_AP_AEXE].ContentType;
+      else if(*lbuf >= HUNK_UNIT && *lbuf <= HUNK_INDEX)                         ctype = IntMimeTypeArray[MT_AP_AEXE].ContentType;
       else if(!strncmp(&buffer[6], "JFIF", 4))                                   ctype = IntMimeTypeArray[MT_IM_JPG].ContentType;
       else if(!strncmp(buffer, "GIF8", 4))                                       ctype = IntMimeTypeArray[MT_IM_GIF].ContentType;
       else if(!strncmp(&buffer[1], "PNG", 3))                                    ctype = IntMimeTypeArray[MT_IM_PNG].ContentType;

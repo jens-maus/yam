@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-02-16 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, Rexx.c: fixed some compiler warnings about strict aliasing rules
+    which happen in case YAM is compiled with GCC 4.4.x.
+
 2010-02-10 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/Aboutwindow.c: added a reference to expat.library which is used to allow
