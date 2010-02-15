@@ -969,7 +969,7 @@ void CleanupThreads(void)
   // InitThreads() might not have been called yet.
   if(G->mainThread.thread_port != NULL)
   {
-    if(IsListEmpty((struct List *)&G->subThreadList) == FALSE)
+    if(IsMinListEmpty(&G->subThreadList) == FALSE)
     {
       ULONG thread_m;
       ULONG timer_m;

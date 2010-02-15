@@ -756,7 +756,7 @@ static void FreeXPKPackerList(void)
 {
   ENTER();
 
-  if(IsListEmpty((struct List *)&G->xpkPackerList) == FALSE)
+  if(IsMinListEmpty(&G->xpkPackerList) == FALSE)
   {
     struct MinNode *curNode;
 

@@ -7,6 +7,8 @@ $URL$
 
 2010-02-16 Jens Langner <Jens.Langner@light-speed.de>
 
+  * misc: replaced all IsListEmpty() occurances by IsMinListEmpty() checks when
+    a MinList is involved. This allowed to remove some unnecessary cast operations.
   * YAM_UT.c, Rexx.c: fixed some compiler warnings about strict aliasing rules
     which happen in case YAM is compiled with GCC 4.4.x.
 

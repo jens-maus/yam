@@ -4919,7 +4919,7 @@ static BOOL FilterDuplicates(void)
   if(G->TR->UIDLhashTable != NULL)
   {
     // check if there is anything to transfer at all
-    if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
+    if(IsMinListEmpty(&G->TR->transferList) == FALSE)
     {
       // inform the user of the operation
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_CHECKUIDL));
@@ -5156,7 +5156,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
   // if we have now something in our processing list,
   // lets go on
   if(abort == FALSE &&
-     IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
+     IsMinListEmpty(&G->TR->transferList) == FALSE)
   {
     FILE *fh;
     struct TransStat ts;
@@ -6582,7 +6582,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
   // if there is nothing to import we can skip
   // immediately.
-  if(IsListEmpty((struct List *)&G->TR->transferList) == FALSE)
+  if(IsMinListEmpty(&G->TR->transferList) == FALSE)
   {
     struct TransStat ts;
 

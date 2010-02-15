@@ -35,6 +35,7 @@
 #include <proto/exec.h>
 
 #include "YAM_stringsizes.h"
+#include "YAM_utilities.h"
 
 #include "extrasrc.h"
 
@@ -118,7 +119,7 @@ void FreeMimeTypeList(struct MinList *mimeTypeList)
 {
   ENTER();
 
-  if(IsListEmpty((struct List *)mimeTypeList) == FALSE)
+  if(IsMinListEmpty(mimeTypeList) == FALSE)
   {
     struct MinNode *curNode;
 

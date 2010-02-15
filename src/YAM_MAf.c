@@ -1690,7 +1690,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
     // the mail doesn't have any header at all (which may be valid)
     if(success == FALSE)
       FreeHeaderList(headerList);
-    else if(IsListEmpty((struct List *)headerList) == TRUE &&
+    else if(IsMinListEmpty(headerList) == TRUE &&
             (mode == RHM_MAINHEADER || (buffer != NULL && buffer[0] != '\0') || linesread != 1))
     {
       W(DBF_MAIL, "no required header data found while having scanned '%s'.", mailFile);

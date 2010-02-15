@@ -4412,7 +4412,7 @@ void FreeHeaderList(struct MinList *headerList)
 {
   ENTER();
 
-  if(headerList != NULL && IsListEmpty((struct List *)headerList) == FALSE)
+  if(headerList != NULL && IsMinListEmpty(headerList) == FALSE)
   {
     struct MinNode *curNode;
 

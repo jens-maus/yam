@@ -33,6 +33,8 @@
 #include <exec/types.h>
 #include <proto/exec.h>
 
+#include "YAM_utilities.h"
+
 // forward declarations
 struct SignalSemaphore;
 struct Mail;
@@ -64,7 +66,7 @@ struct MailNode *FindMailInList(struct MailList *mlist, struct Mail *mail);
 struct MailNode *TakeMailNode(struct MailList *mlist);
 
 // check if a mail list is empty
-#define IsMailListEmpty(mlist)                    IsListEmpty((struct List *)(mlist))
+#define IsMailListEmpty(mlist)                    IsMinListEmpty((struct MinList *)(mlist))
 
 // navigate in the list
 #define FirstMailNode(mlist)                      (struct MailNode *)GetHead((struct List *)mlist)
