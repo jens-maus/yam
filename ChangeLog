@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-02-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * themes/default: replaced the OS3 specific icons once more by a set which now
+    definitely includes two images per icon.
+
 2010-02-16 Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: replaced all IsListEmpty() occurances by IsMinListEmpty() checks when
