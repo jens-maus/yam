@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.5 (27.1.2010)
+## version $VER: YAM.catalog 6.5 (18.02.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -741,7 +741,7 @@ Ru_brica
 ; A_book
 ;
 MSG_MA_TBConfig
-_Config
+_Config.
 ; _Config
 ;
 ; Module MA - Menus
@@ -7092,7 +7092,7 @@ Verifica aggiornamenti
 ; Check for updates
 ;
 MSG_CO_SOFTWAREUPDATE
-Aggiornamento software
+Aggiornamenti software
 ; Update check
 ;
 MSG_CO_UPDATE_DAILY
