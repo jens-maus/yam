@@ -303,7 +303,7 @@ BOOL ImageCacheSetup(void)
 
   ENTER();
 
-  #if !defined(__amigaos4__) && !defined(__MORPHOS__)
+  #if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__AROS__)
   PictureDTBase = OpenLibrary("picture.datatype", 0);
   #endif
 
@@ -323,7 +323,7 @@ void ImageCacheCleanup(void)
   HashTableEnumerate(G->imageCacheHashTable, DeleteImageCacheNode, NULL);
   HashTableDestroy(G->imageCacheHashTable);
 
-  #if !defined(__amigaos4__) && !defined(__MORPHOS__)
+  #if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__AROS__)
   if(PictureDTBase != NULL)
   {
     CloseLibrary(PictureDTBase);
@@ -393,7 +393,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
           if(node->depth > 8 && GetBitMapAttr(scr->RastPort.BitMap, BMA_DEPTH) <= 8)
             node->depth = 8;
 
-          #if defined(__amigaos4__) || defined(__MORPHOS__)
+          #if defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
           // OS4 and MorphOS can handle the alpha channel correctly
           if(node->pixelArray == NULL)
           #else
@@ -460,7 +460,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
 
           // get the normal bitmaps supplied by datatypes.library if either this is
           // an 8bit image or we could not get the hi/truecolor pixel data
-          #if defined(__amigaos4__) || defined(__MORPHOS__)
+          #if defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
           if(node->pixelArray == NULL)
           #else
           if(node->pixelArray == NULL || CyberGfxBase == NULL)

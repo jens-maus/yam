@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-02-20 Matthias Rustler <mrustler@gmx.de>
+
+  * ImageCache.c: images were drawn on AROS with pink border instead of
+    transparent.
+
 2010-02-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * themes/default: replaced the OS3 specific icons once more by a set which now
