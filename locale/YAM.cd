@@ -13,7 +13,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ;
-#version 6
+#version 7
 #language english
 ;
 ; General
@@ -68,9 +68,6 @@ _Cancel
 ;
 MSG_OkayReq (21//)
 *_Ok
-;
-MSG_OkayCancelReq (22//)
-*_Ok|_Cancel
 ;
 MSG_YesNoReq (23//)
 *_Yes|_No
@@ -4248,9 +4245,6 @@ Do you really want to delete this group?
 MSG_FOLDER_NONSEL (1403//)
 (none selected)
 ;
-MSG_MAIL_NONSEL (1404//)
-(none selected)
-;
 MSG_FO_NEWFGROUP (1405//)
 New folder group...
 ; The item in the context menu
@@ -4739,22 +4733,6 @@ MSG_HELP_CO_NB_AUTOSAVE (1568//)
 How often YAM should write to disk a backup\n\
 of the e-mail you are currently composing.\n\
 Select 0 to disable this feature.
-;
-MSG_ER_GENESISUSER_TITLE (1569//)
-Unknown Genesis/AmiTCP user account!
-;
-MSG_ER_GENESISUSER (1570//)
-YAM has identified that you are using Genesis/AmiTCP, but\n\
-could not find a YAM user account which corresponds to\n\
-the currently active global account you have configured\n\
-in Genesis (%s).\n\
-\n\
-Please make sure that your Genesis user name and the YAM user name\n\
-are in sync, otherwise the auto-login feature will not work\n\
-correctly.
-;
-MSG_ER_CONTINUEEXIT (1571//)
-*_Continue|Exit
 ;
 MSG_ER_MOVEFOLDERDIR (1573//)
 An error occurred while trying to move the contents of folder \

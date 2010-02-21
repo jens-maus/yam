@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.5 (18.02.2010)
+## version $VER: YAM.catalog 7.1 (21.02.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -89,10 +89,6 @@ _Annulla
 MSG_OkayReq
 *_Ok
 ; *_Ok
-;
-MSG_OkayCancelReq
-*_Ok|_Annulla
-; *_Ok|_Cancel
 ;
 MSG_YesNoReq
 *_Si|_No
@@ -5851,10 +5847,6 @@ MSG_FOLDER_NONSEL
 (nessuna selezionata)
 ; (none selected)
 ;
-MSG_MAIL_NONSEL
-(nessuna selezionata)
-; (none selected)
-;
 MSG_FO_NEWFGROUP
 Nuovo gruppo di cartelle...
 ; New folder group...
@@ -6579,33 +6571,6 @@ Seleziona 0 per disabilitare questa funzione.
 ; How often YAM should write to disk a backup\n\
 ; of the e-mail you are currently composing.\n\
 ; Select 0 to disable this feature.
-;
-MSG_ER_GENESISUSER_TITLE
-Account utente Genesis/AmiTCP sconosciuto!
-; Unknown Genesis/AmiTCP user account!
-;
-MSG_ER_GENESISUSER
-YAM ha identificato la presenza di Genesis/AmiTCP,\n\
-ma si è rivelato impossibile da trovare un account\n\
-utente corrispondente a quello globale, correntemente\n\
-attivo e configurato su Genesis: (%s)\n\
-\n\
-Per favore assicurati che il nome utente impostato\n\
-su Genesis e YAM siano corrispondenti, altrimenti\n\
-potrebbero verificarsi dei problemi con la procedura\n\
-di autologin.
-; YAM has identified that you are using Genesis/AmiTCP, but\n\
-; could not find a YAM user account which corresponds to\n\
-; the currently active global account you have configured\n\
-; in Genesis (%s).\n\
-; \n\
-; Please make sure that your Genesis user name and the YAM user name\n\
-; are in sync, otherwise the auto-login feature will not work\n\
-; correctly.
-;
-MSG_ER_CONTINUEEXIT
-*_Continua|Esci
-; *_Continue|Exit
 ;
 MSG_ER_MOVEFOLDERDIR
 Si è verificato un errore durante lo spostamento della cartella\n\

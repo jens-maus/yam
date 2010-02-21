@@ -34,7 +34,7 @@ MSGTAGS=`awk '/^MSG_/ { print $1 }' $CDFILE | xargs`
 ORPHANEDTAGS=""
 for tag in $MSGTAGS; do
   grep -E "$tag[^_[:alnum:]]" $SOURCES | grep -v "_$tag" >/dev/null
-  if [ $? == 1 ]; then
+  if [ $? -ne 0 ]; then
     echo "$tag not found in source code"
     ORPHANEDTAGS="$ORPHANEDTAGS $tag "
   fi
@@ -81,7 +81,7 @@ for ctfile in $CTFILES; do
   CTTAGS=`awk '/^MSG_/ { print $1 }' $ctfile | xargs` 
   for cttag in $CTTAGS; do
     echo "$MSGTAGS " | grep -E "$cttag " >/dev/null
-    if [ $? == 1 ]; then
+    if [ $? -ne 0 ]; then
       echo "'$cttag' is orphaned"
     fi
   done
@@ -95,7 +95,7 @@ for ctfile in $CTFILES; do
   echo "Scanning $ctfile for missing catalogs IDs:"
   for tag in $MSGTAGS; do
     grep -E "$tag" $ctfile >/dev/null
-    if [ $? == 1 ]; then
+    if [ $? -ne 0 ]; then
       echo "'$tag' is missing"
     fi
   done

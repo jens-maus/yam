@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.41 (25.1.2010)
+## version $VER: YAM.catalog 7.1 (21.02.2010)
 ## language czech
 ## codeset 5
 ## chunk AUTH Vit Sindlar
@@ -86,10 +86,6 @@ _Zru¹it
 MSG_OkayReq
 *_OK
 ; *_Ok
-;
-MSG_OkayCancelReq
-*_OK|_Zru¹it
-; *_Ok|_Cancel
 ;
 MSG_YesNoReq
 *_Ano|_Ne
@@ -5765,10 +5761,6 @@ MSG_FOLDER_NONSEL
 (neoznaèeno)
 ; (none selected)
 ;
-MSG_MAIL_NONSEL
-(neoznaèeno)
-; (none selected)
-;
 MSG_FO_NEWFGROUP
 Nová skupina slo¾ek...
 ; New folder group...
@@ -6463,30 +6455,6 @@ Funkci vypnete zadáním hodnoty 0.
 ; How often YAM should write to disk a backup\n\
 ; of the e-mail you are currently composing.\n\
 ; Select 0 to disable this feature.
-;
-MSG_ER_GENESISUSER_TITLE
-Genesis/AmiTCP :: Neznámý u¾ivatelský úèet
-; Unknown Genesis/AmiTCP user account!
-;
-MSG_ER_GENESISUSER
-Výchozí u¾ivatelský úèet v softwaru pro pøipojení\n\
-k internetu (buï Genesis nebo AmiTCP, úèet '%s')\n\
-neodpovídá ¾ádnému z úètù programu YAM.\n\
-\n\
-Chcete-li pou¾ívat funkci automatického pøihlá¹ení,\n\
-musí se názvy úètù v Genesis a YAM shodovat.
-; YAM has identified that you are using Genesis/AmiTCP, but\n\
-; could not find a YAM user account which corresponds to\n\
-; the currently active global account you have configured\n\
-; in Genesis (%s).\n\
-; \n\
-; Please make sure that your Genesis user name and the YAM user name\n\
-; are in sync, otherwise the auto-login feature will not work\n\
-; correctly.
-;
-MSG_ER_CONTINUEEXIT
-*_Pokraèovat|Ukonèit
-; *_Continue|Exit
 ;
 MSG_ER_MOVEFOLDERDIR
 Chyba pøi pokusu o pøesunutí obsahu slo¾ky\n\

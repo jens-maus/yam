@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.38 (25.1.2010)
+## version $VER: YAM.catalog 7.1 (21.02.2010)
 ## language svenska
 ## codeset 0
 ## chunk AUTH Pär Boberg
@@ -87,10 +87,6 @@ MSG_OkayReq
 *_Ok
 ;#DEF *_Ok
 ;#SET (21//)
-MSG_OkayCancelReq
-*_Ok|A_vbryt
-;#DEF *_Ok|_Cancel
-;#SET (22//)
 MSG_YesNoReq
 *_Ja|_Nej
 ;#DEF *_Yes|_No
@@ -4823,10 +4819,6 @@ MSG_FOLDER_NONSEL
 (ingen vald)
 ;#DEF (none selected)
 ;#SET (1403//)
-MSG_MAIL_NONSEL
-(ingen vald)
-;#DEF (none selected)
-;#SET (1404//)
 MSG_FO_NEWFGROUP
 Ny mapp grupp...
 ;#DEF New folder group...
@@ -5343,18 +5335,6 @@ MSG_HELP_CO_NB_AUTOSAVE
 Hur ofta YAM automatiskt bör spara en\nkopia av brevet som du för närvarande skriver.\nVälj 0 för att stänga av denna funktion.
 ;#DEF How often YAM should write to disk a backup\nof the e-mail you are currently composing.\nSelect 0 to disable this feature.
 ;#SET (1568//)
-MSG_ER_GENESISUSER_TITLE
-Okänt Genesis/AmiTCP användarkonto!
-;#DEF Unknown Genesis/AmiTCP user account!
-;#SET (1569//)
-MSG_ER_GENESISUSER
-YAM har identifierat att du använder Genesis/AmiTCP, men\nkunde inte hitta ett YAM användarkonto som överrensstämmer\nmed nuvarande aktivt globalt konto som du har konfigurerat\ni Genesis: (%s)\n\nVar god kontrollera att ditt Genesis användarnamn och YAM\nanvändarnamn är lika. Annars kommer inte autologin funktionen\natt fungera korrekt.
-;#DEF YAM has identified that you are using Genesis/AmiTCP, but\ncould not find a YAM user account which corresponds to\nthe currently active global account you have configured\nin Genesis (%s).\n\nPlease make sure that your Genesis user name and the YAM user name\nare in sync, otherwise the auto-login feature will not work\ncorrectly.
-;#SET (1570//)
-MSG_ER_CONTINUEEXIT
-*_Fortsätt|Avsluta
-;#DEF *_Continue|Exit
-;#SET (1571//)
 MSG_ER_MOVEFOLDERDIR
 Ett fel inträffade vid försök att flytta innehållet i mappen '%s' till katalogen '%s'.\n\nDetta kan bero på otillräckligt med utrymme eller för att destinationen inte är giltig eller skrivbar.
 ;#DEF An error occurred while trying to move the contents of folder '%s' to directory '%s'.\n\nThis may be due to insufficient space or an invalid or not writable destination path.

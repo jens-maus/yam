@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.1 (25.1.2010)
+## version $VER: YAM.catalog 7.1 (21.02.2010)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -86,10 +86,6 @@ _Abbrechen
 MSG_OkayReq
 *_Ok
 ; *_Ok
-;
-MSG_OkayCancelReq
-*_Ok|_Abbrechen
-; *_Ok|_Cancel
 ;
 MSG_YesNoReq
 *_Ja|_Nein
@@ -5763,10 +5759,6 @@ MSG_FOLDER_NONSEL
 ; (none selected)
 ;
 ; Obsolete
-MSG_MAIL_NONSEL
-(nichts ausgewählt)
-; (none selected)
-;
 MSG_FO_NEWFGROUP
 Neue Postfachgruppe...
 ; New folder group...
@@ -6353,21 +6345,6 @@ Anzahl der Intervalminuten in denen YAM eine\n\
 Sicherungskopie Ihrer momentan editierten Nachricht\n\
 anlegen soll.\n\
 (Wählen Sie 0 für keine Sicherungskopie aus)
-;
-MSG_ER_GENESISUSER_TITLE
-Unbekannter Genesis/AmiTCP Nutzeraccount!
-;
-MSG_ER_GENESISUSER
-YAM hat festgestellt, dass Sie Genesis/AmiTCP nutzen, konnte\n\
-jedoch Ihren Genesis-Nutzernamen '%s' keinem YAM\n\
-Nutzerzugang zuordnen.\n\
-\n\
-Bitte stellen Sie sicher, dass Sie Ihren Genesis Nutzernamen\n\
-mit dem in YAM synchronisieren. Ansonsten kann YAM keinen\n\
-automatischen Login Ihres Nutzers vornehmen.
-;
-MSG_ER_CONTINUEEXIT
-*_Fortfahren|Beenden
 ;
 MSG_ER_MOVEFOLDERDIR
 Ein Fehler trat beim Versuch auf den Inhalt des Postfaches \

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 6.1 (25.1.2010)
+## version $VER: YAM.catalog 7.1 (21.02.2010)
 ## language greek
 ## codeset 10
 ## chunk AUTH Antonis Iliakis
@@ -86,10 +86,6 @@ _Ακύρωση
 MSG_OkayReq
 *_Εντάξει
 ; *_Ok
-;
-MSG_OkayCancelReq
-*_Εντάξει|_Ακύρωση
-; *_Ok|_Cancel
 ;
 MSG_YesNoReq
 *_Ναι|_Οχι
@@ -5038,10 +5034,6 @@ MSG_FOLDER_NONSEL
 (καμία επιλογή)
 ; (none selected)
 ;
-MSG_MAIL_NONSEL
-(καμία επιλογή)
-; (none selected)
-;
 MSG_FO_NEWFGROUP
 Νέα ομάδα φακέλου...
 ; New folder group...
@@ -5580,18 +5572,6 @@ MSG_CO_NB_AUTOSAVEFMT
 MSG_HELP_CO_NB_AUTOSAVE
 Πόσο συχνά θέλετε το YAM να γράφει στον δίσκο ένα αντίγραφο\nασφαλείας της αλληλογραφίας που γράφετε αυτή τη στιγμή.\nΕπιλέξτε 0 για απενεργοποίηση.
 ; How often YAM should write to disk a backup\nof the e-mail you are currently composing.\nSelect 0 to disable this feature.
-;
-MSG_ER_GENESISUSER_TITLE
-¶γνωστος λογαριασμός χρήστη Genesis/AmiTCP!
-; Unknown Genesis/AmiTCP user account!
-;
-MSG_ER_GENESISUSER
-Το YAM αναγνώρισε ότι χρησιμοποιείτε Genesis/AmiTCP, αλλά\nδεν μπορεί να βρεί κάποιον λογαριασμό χρήστη YAM που αντιστοιχεί στον\nτρέχοντα καθολικό ενεργό λογιαριασμό που έχετε ρυθμίσει\nστο Genesis (%s).\nΒεβαιωθείτε ότι το όνομα χρήστη του Genesis και του YAM\nείναι συγχρονησμένα, αλλιώς η αυτόματη είσοδος δεν θα δουλεύει σωστά.
-; YAM has identified that you are using Genesis/AmiTCP, but\ncould not find a YAM user account which corresponds to\nthe currently active global account you have configured\nin Genesis (%s).\nPlease make sure that your Genesis user name and the YAM user name\nare in sync, otherwise the auto-login feature will not work\ncorrectly.
-;
-MSG_ER_CONTINUEEXIT
-*_Συνέχεια|Έξοδος
-; *_Continue|Exit
 ;
 MSG_ER_MOVEFOLDERDIR
 Ένα σφάλμα συνέβει κατά την προσπάθεια μετακίνησης των περιεχομένων του φακέλου '%s' στον κατάλογο '%s'.\n\nΑυτό πιθανό να έγινε από μη επαρκή χώρο στο δίσκο ή μη έγκυρη ή μη εγγράψιμη διαδρομή προορισμού.
