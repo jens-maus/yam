@@ -1,11 +1,11 @@
-Short:        YAM 2.6 - A MUI Internet e-mail client
+Short:        YAM 2.6 - MUI-based E-mail client
 Author:       YAM Open Source Team (http://www.yam.ch/)
 Uploader:     Jens Langner <Jens.Langner@light-speed.de>
 Type:         comm/yam
 Version:      2.6
 Replaces:     comm/yam/YAM25*
-Requires:     AmigaOS V37+/MorphOS, mc68020+/PowerPC, MUI 3.8+
-Architecture: ppc-amigaos >= 4.0.0; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2
+Requires:     AmigaOS 3.0+, MorphOS or AROS, MUI 3.8+, 68020+/PPC604e+
+Architecture: ppc-amigaos >= 4.0.5; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2; i386-aros; ppc-aros; x86_64-aros
 
 ---------------------------------------------------------------------------
                            YAM - Version 2.6
