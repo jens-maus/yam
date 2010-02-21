@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+#### YAM 2.6 RELEASE ####################################################
+
+2010-02-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_global.c: finally bumped the YAM version to 2.6 for the upcoming
+    stable release. Cheer with us as it took 2 years for that one ;)
+  * locale: bumped the version of our catalog to version 7 and updated the
+    currently uptodate catalog translations to match that version. Also fixed
+    the cleanup script and cleaned up all catalog translations accordingly.
+
 2010-02-20 Matthias Rustler <mrustler@gmx.de>
 
   * ImageCache.c: images were drawn on AROS with pink border instead of
