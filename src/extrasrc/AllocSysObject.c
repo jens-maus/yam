@@ -183,85 +183,41 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
     case ASOT_LIST:
     {
-      ULONG size = sizeof(struct List);
-      ULONG type = 0;
-      BOOL min = FALSE;
+      BOOL min = (BOOL)GetTagData(ASOLIST_Min, FALSE, tags);
+      ULONG size;
 
-      if(tags != NULL)
-      {
-        while((tag = NextTagItem((APTR)&tstate)) != NULL)
-        {
-          switch(tag->ti_Tag)
-          {
-            case ASOLIST_Size:
-              size = MAX(size, tag->ti_Data);
-            break;
-
-            case ASOLIST_Type:
-              type = tag->ti_Data;
-            break;
-
-            case ASOLIST_Min:
-              min = tag->ti_Data;
-            break;
-          }
-        }
-      }
+      if(min == FALSE)
+        size = GetTagData(ASOLIST_Size, sizeof(struct List), tags);
+      else
+        size = GetTagData(ASOLIST_Size, sizeof(struct MinList), tags);
 
       if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
         NewList((struct List *)object);
 
         if(min == FALSE)
-          ((struct List *)object)->lh_Type = type;
+          ((struct List *)object)->lh_Type = GetTagData(ASOLIST_Size, NT_UNKNOWN, tags);
       }
     }
     break;
 
     case ASOT_NODE:
     {
-      STRPTR name = NULL;
-      ULONG size  = sizeof(struct Node);
-      ULONG type = 0;
-      LONG pri = 0;
-      BOOL min = FALSE;
+      BOOL min = (BOOL)GetTagData(ASONODE_Min, FALSE, tags);
+      ULONG size;
 
-      if(tags != NULL)
-      {
-        while((tag = NextTagItem((APTR)&tstate)) != NULL)
-        {
-          switch(tag->ti_Tag)
-          {
-            case ASONODE_Size:
-              size = MAX(size, tag->ti_Data);
-            break;
-
-            case ASONODE_Min:
-              min = tag->ti_Data;
-            break;
-
-            case ASONODE_Type:
-              type = tag->ti_Data;
-            break;
-
-            case ASONODE_Pri:
-              pri = tag->ti_Data;
-            break;
-
-            case ASONODE_Name:
-              name = (STRPTR)tag->ti_Data;
-            break;
-          }
-        }
-      }
+      if(min == FALSE)
+        size = GetTagData(ASONODE_Size, sizeof(struct Node), tags);
+      else
+        size = GetTagData(ASONODE_Size, sizeof(struct MinNode), tags);
 
       if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
         if(min == FALSE)
         {
-          ((struct Node *)object)->ln_Type = type;
-          ((struct Node *)object)->ln_Pri = pri;
-          ((struct Node *)object)->ln_Name = name;
+          ((struct Node *)object)->ln_Type = GetTagData(ASONODE_Type, NT_UNKNOWN, tags);
+          ((struct Node *)object)->ln_Pri = GetTagData(ASONODE_Pri, 0, tags);
+          ((struct Node *)object)->ln_Name = (STRPTR)GetTagData(ASONODE_Name, (IPTR)NULL, tags);
         }
       }
     }
