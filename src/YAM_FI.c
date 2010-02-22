@@ -429,7 +429,7 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
         }
 
         // free our temporary headerList
-        free(headerList);
+        FreeSysObject(ASOT_LIST, headerList);
       }
 
       // close the file
