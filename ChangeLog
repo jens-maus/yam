@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-02-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c, YAM_RE.c: changed all header list allocations to use
+    AllocSysObject() instead of calloc().
+
 #### YAM 2.6 RELEASE ####################################################
 
 2010-02-21 Jens Langner <Jens.Langner@light-speed.de>

@@ -1007,7 +1007,8 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
   else
   {
     // we do not have any headerList yet so lets allocate a new one
-    if((rp->headerList = calloc(1, sizeof(struct MinList))) == NULL)
+    if((rp->headerList = AllocSysObjectTags(ASOT_LIST, ASOLIST_Min, TRUE,
+                                                       TAG_DONE)) == NULL)
     {
       RETURN(FALSE);
       return FALSE;
@@ -1684,7 +1685,7 @@ static void RE_UndoPart(struct Part *rp)
   if(rp->headerList != NULL)
   {
     FreeHeaderList(rp->headerList);
-    free(rp->headerList);
+    FreeSysObject(ASOT_LIST, rp->headerList);
   }
 
   // free some string buffers
@@ -4026,7 +4027,8 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
       {
         struct MinList *headerList;
 
-        if((headerList = calloc(1, sizeof(struct MinList))) != NULL)
+        if((headerList = AllocSysObjectTags(ASOT_LIST, ASOLIST_Min, TRUE,
+                                                       TAG_DONE)) != NULL)
         {
           struct Node *curNode;
 
@@ -4279,7 +4281,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     if(part->headerList != NULL)
     {
       FreeHeaderList(part->headerList);
-      free(part->headerList);
+      FreeSysObject(ASOT_LIST, part->headerList);
     }
 
     if(part->ContentType != NULL)

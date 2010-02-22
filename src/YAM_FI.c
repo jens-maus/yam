@@ -387,7 +387,8 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
     {
       struct MinList *headerList;
 
-      if((headerList = calloc(1, sizeof(struct MinList))) != NULL)
+      if((headerList = AllocSysObjectTags(ASOT_LIST, ASOLIST_Min, TRUE,
+                                                     TAG_DONE)) != NULL)
       {
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
