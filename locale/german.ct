@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (21.02.2010)
+## version $VER: YAM.catalog 7.2 (23.02.2010)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8550,4 +8550,7 @@ YAM ist daher nicht in der Lage den gewünschten Link selbst zu öffnen.\n\
 \n\
 Bitte starten Sie ihren Internetbrowser selbst und geben diese Linkadresse ein:\n\
 '%s'
+;
+MSG_USERNAME_FALLBACK
+Max Mustermann
 ;

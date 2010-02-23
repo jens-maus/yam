@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-02-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_US.c: in case the first of YAM's users has no real name YAM will now
+    at first try to use the real name from the configuration. If there was no
+    name entered in the configuration then "John Doe" will be used as a simple
+    fallback.
+
 2010-02-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c, YAM_RE.c: changed all header list allocations to use

@@ -1,4 +1,4 @@
-; YAM.cd - YAM 2.5 catalog description file
+; YAM.cd - YAM 2.6 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -6936,4 +6936,7 @@ Thus YAM is not able to open the requested link itself.\n\
 Please launch your internet browser yourself and enter this link:\n\
 '%s'
 ; URL
+;
+MSG_USERNAME_FALLBACK (2152//)
+John Doe
 ;

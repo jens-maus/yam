@@ -231,6 +231,7 @@ static void US_LoadUsers(void)
   {
     struct User *user = &G->Users.User[0];
 
+    user->Name[0] = '\0';
     strlcpy(user->MailDir, G->MA_MailDir, sizeof(user->MailDir));
     user->Limited = FALSE;
     user->UseAddr = TRUE;
@@ -239,6 +240,19 @@ static void US_LoadUsers(void)
 
     // there can only be one :)
     G->Users.Num = 1;
+    save = TRUE;
+  }
+
+  // if the first user doesn't have a real name yet then copy over the name from the configuration
+  if(G->Users.User[0].Name[0] == '\0')
+  {
+    strlcpy(G->Users.User[0].Name, C->RealName, sizeof(G->Users.User[0].Name));
+
+    // if the first user still doesn't have a name then we use a fallback name
+    if(G->Users.User[0].Name[0] == '\0')
+      strlcpy(G->Users.User[0].Name, tr(MSG_USERNAME_FALLBACK), sizeof(G->Users.User[0].Name));
+
+    // make sure our modifications are saved
     save = TRUE;
   }
 
