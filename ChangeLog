@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-02-23 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update italian catalog according to latest 2.6 changes.
+
 2010-02-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/.addressbook, doc/.taglines, Makefile: added default address book and
