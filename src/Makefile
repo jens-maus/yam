@@ -710,6 +710,8 @@ release:
 	@$(CP) $(CDUP)icons/os3/YAM.info "$@/AmigaOS3/YAM 2.6/YAM.info"
 	@$(CP) $(CDUP)doc/ReadMe "$@/AmigaOS3/YAM 2.6/ReadMe"
 	@$(CP) $(CDUP)icons/os3/ReadMe.info "$@/AmigaOS3/YAM 2.6/ReadMe.info"
+	@$(CP) $(CDUP)doc/.addressbook "$@/AmigaOS3/YAM 2.6/.addressbook"
+	@$(CP) $(CDUP)doc/.taglines "$@/AmigaOS3/YAM 2.6/.taglines"
 	@echo "  MK YAM26-AmigaOS3.lha"
 	@cd $@/AmigaOS3 && lha -aq $(CDUP)YAM26-AmigaOS3.lha *
 ## AmigaOS3-debug distribution ########
@@ -781,6 +783,8 @@ release:
 	@$(CP) $(CDUP)icons/os4/YAM.info "$@/AmigaOS4/YAM 2.6/YAM.info"
 	@$(CP) $(CDUP)doc/ReadMe "$@/AmigaOS4/YAM 2.6/ReadMe"
 	@$(CP) $(CDUP)icons/os4/ReadMe.info "$@/AmigaOS4/YAM 2.6/ReadMe.info"
+	@$(CP) $(CDUP)doc/.addressbook "$@/AmigaOS4/YAM 2.6/.addressbook"
+	@$(CP) $(CDUP)doc/.taglines "$@/AmigaOS4/YAM 2.6/.taglines"
 	@echo "  MK YAM26-AmigaOS4.lha"
 	@cd $@/AmigaOS4 && lha -aq $(CDUP)YAM26-AmigaOS4.lha *
 ## AmigaOS4-debug distribution ########
@@ -852,6 +856,8 @@ release:
 	@$(CP) $(CDUP)icons/mos/YAM.info "$@/MorphOS/YAM 2.6/YAM.info"
 	@$(CP) $(CDUP)doc/ReadMe "$@/MorphOS/YAM 2.6/ReadMe"
 	@$(CP) $(CDUP)icons/mos/ReadMe.info "$@/MorphOS/YAM 2.6/ReadMe.info"
+	@$(CP) $(CDUP)doc/.addressbook "$@/MorphOS/YAM 2.6/.addressbook"
+	@$(CP) $(CDUP)doc/.taglines "$@/MorphOS/YAM 2.6/.taglines"
 	@echo "  MK YAM26-MorphOS.lha"
 	@cd $@/MorphOS && lha -aq $(CDUP)YAM26-MorphOS.lha *
 ## MorphOS-debug distribution ########
@@ -923,6 +929,8 @@ release:
 	@$(CP) $(CDUP)icons/aros/YAM.info "$@/AROS-i386/YAM 2.6/YAM.info"
 	@$(CP) $(CDUP)doc/ReadMe "$@/AROS-i386/YAM 2.6/ReadMe"
 	@$(CP) $(CDUP)icons/aros/ReadMe.info "$@/AROS-i386/YAM 2.6/ReadMe.info"
+	@$(CP) $(CDUP)doc/.addressbook "$@/AROS-i386/YAM 2.6/.addressbook"
+	@$(CP) $(CDUP)doc/.taglines "$@/AROS-i386/YAM 2.6/.taglines"
 	@echo "  MK YAM26-AROS-i386.lha"
 	@cd $@/AROS-i386 && lha -aq $(CDUP)YAM26-AROS-i386.lha *
 ## AROS-i386-debug distribution ########
@@ -994,6 +1002,8 @@ release:
 	@$(CP) $(CDUP)icons/aros/YAM.info "$@/AROS-ppc/YAM 2.6/YAM.info"
 	@$(CP) $(CDUP)doc/ReadMe "$@/AROS-ppc/YAM 2.6/ReadMe"
 	@$(CP) $(CDUP)icons/aros/ReadMe.info "$@/AROS-ppc/YAM 2.6/ReadMe.info"
+	@$(CP) $(CDUP)doc/.addressbook "$@/AROS-ppc/YAM 2.6/.addressbook"
+	@$(CP) $(CDUP)doc/.taglines "$@/AROS-ppc/YAM 2.6/.taglines"
 	@echo "  MK YAM26-AROS-ppc.lha"
 	@cd $@/AROS-ppc && lha -aq $(CDUP)YAM26-AROS-ppc.lha *
 ## AROS-ppc-debug distribution ########
@@ -1065,6 +1075,8 @@ release:
 	@$(CP) $(CDUP)icons/aros/YAM.info "$@/AROS-x86_64/YAM 2.6/YAM.info"
 	@$(CP) $(CDUP)doc/ReadMe "$@/AROS-x86_64/YAM 2.6/ReadMe"
 	@$(CP) $(CDUP)icons/aros/ReadMe.info "$@/AROS-x86_64/YAM 2.6/ReadMe.info"
+	@$(CP) $(CDUP)doc/.addressbook "$@/AROS-x86_64/YAM 2.6/.addressbook"
+	@$(CP) $(CDUP)doc/.taglines "$@/AROS-x86_64/YAM 2.6/.taglines"
 	@echo "  MK YAM26-AROS-x86_64.lha"
 	@cd $@/AROS-x86_64 && lha -aq $(CDUP)YAM26-AROS-x86_64.lha *
 ## AROS-x86_64-debug distribution ########
