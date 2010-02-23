@@ -2042,64 +2042,72 @@ static void DoStartup(BOOL nocheck, BOOL hide)
 
   // we must compare the names here instead of the IDs, because the IDs will
   // change upon every restart
-  if(currentUserName != NULL && strcmp(lastUserName, currentUserName) != 0)
+  if(currentUserName != NULL)
   {
-    // if the user wishs to delete all old mail during startup of YAM,
-    // we do it now
-    if(C->CleanupOnStartup == TRUE)
-      DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
+  	if(strcmp(lastUserName, currentUserName) != 0)
+  	{
+      // if the user wishs to delete all old mail during startup of YAM,
+      // we do it now
+      if(C->CleanupOnStartup == TRUE)
+        DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
 
-    // if the user wants to clean the trash upon starting YAM, do it
-    if(C->RemoveOnStartup == TRUE)
-      DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
+      // if the user wants to clean the trash upon starting YAM, do it
+      if(C->RemoveOnStartup == TRUE)
+        DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
 
-    // check for current birth days in our addressbook if the user
-    // selected it
-    if(C->CheckBirthdates == TRUE && nocheck == FALSE && hide == FALSE)
-      AB_CheckBirthdates();
+      // check for current birth days in our addressbook if the user
+      // selected it
+      if(C->CheckBirthdates == TRUE && nocheck == FALSE && hide == FALSE)
+        AB_CheckBirthdates();
 
-    // the rest of the startup jobs require a running TCP/IP stack,
-    // so check if it is properly running.
-    if(nocheck == FALSE && TR_IsOnline() == TRUE)
-    {
-      enum GUILevel mode;
-
-      mode = (C->PreSelection == PSM_NEVER || hide == TRUE) ? POP_START : POP_USER;
-
-      if(C->GetOnStartup == TRUE && C->SendOnStartup == TRUE)
+      // the rest of the startup jobs require a running TCP/IP stack,
+      // so check if it is properly running.
+      if(nocheck == FALSE && TR_IsOnline() == TRUE)
       {
-        // check whether there is mail to be sent and the user allows us to send it
-        if(SendWaitingMail(hide, TRUE) == TRUE)
+        enum GUILevel mode;
+
+        mode = (C->PreSelection == PSM_NEVER || hide == TRUE) ? POP_START : POP_USER;
+
+        if(C->GetOnStartup == TRUE && C->SendOnStartup == TRUE)
         {
-          // do a complete mail exchange, the order depends on the user settings
-          MA_ExchangeMail(mode);
-          // the delayed closure of any transfer window is already handled in MA_ExchangeMail()
+          // check whether there is mail to be sent and the user allows us to send it
+          if(SendWaitingMail(hide, TRUE) == TRUE)
+          {
+            // do a complete mail exchange, the order depends on the user settings
+            MA_ExchangeMail(mode);
+            // the delayed closure of any transfer window is already handled in MA_ExchangeMail()
+          }
+          else
+          {
+            // just get new mail
+            MA_PopNow(mode, -1);
+            // let MUI execute the delayed disposure of the POP3 transfer window
+            DoMethod(G->App, MUIM_Application_InputBuffered);
+          }
         }
-        else
+        else if(C->GetOnStartup == TRUE)
         {
-          // just get new mail
           MA_PopNow(mode, -1);
           // let MUI execute the delayed disposure of the POP3 transfer window
           DoMethod(G->App, MUIM_Application_InputBuffered);
         }
-      }
-      else if(C->GetOnStartup == TRUE)
-      {
-        MA_PopNow(mode, -1);
-        // let MUI execute the delayed disposure of the POP3 transfer window
-        DoMethod(G->App, MUIM_Application_InputBuffered);
-      }
-      else if(C->SendOnStartup == TRUE)
-      {
-        SendWaitingMail(hide, FALSE);
-        // let MUI execute the delayed disposure of the SMTP transfer window
-        DoMethod(G->App, MUIM_Application_InputBuffered);
+        else if(C->SendOnStartup == TRUE)
+        {
+          SendWaitingMail(hide, FALSE);
+          // let MUI execute the delayed disposure of the SMTP transfer window
+          DoMethod(G->App, MUIM_Application_InputBuffered);
+        }
       }
     }
-  }
 
-  // remember the current user name for a possible restart
-  strlcpy(lastUserName, currentUserName, sizeof(lastUserName));
+    // remember the current user name for a possible restart
+    strlcpy(lastUserName, currentUserName, sizeof(lastUserName));
+  }
+  else
+  {
+    // erase the last user name to be on the save side
+    lastUserName[0] = '\0';
+  }
 
   LEAVE();
 }
