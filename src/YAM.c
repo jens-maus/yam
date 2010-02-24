@@ -2046,6 +2046,8 @@ static void DoStartup(BOOL nocheck, BOOL hide)
   {
   	if(strcmp(lastUserName, currentUserName) != 0)
   	{
+  	  D(DBF_STARTUP, "user '%s' is differs from '%s' of the last start, performing startup actions", currentUserName, lastUserName);
+
       // if the user wishs to delete all old mail during startup of YAM,
       // we do it now
       if(C->CleanupOnStartup == TRUE)
@@ -2099,12 +2101,15 @@ static void DoStartup(BOOL nocheck, BOOL hide)
         }
       }
     }
+    else
+      D(DBF_STARTUP, "user '%s' is the same as upon last start, no startup actions done", currentUserName);
 
     // remember the current user name for a possible restart
     strlcpy(lastUserName, currentUserName, sizeof(lastUserName));
   }
   else
   {
+    E(DBF_STARTUP, "current user has no name?!?");
     // erase the last user name to be on the save side
     lastUserName[0] = '\0';
   }

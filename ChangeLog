@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-02-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: added some debug messages when checking if the current user differs
+    from the last start.
+
 2010-02-23 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update italian catalog according to latest 2.6 changes.
