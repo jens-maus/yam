@@ -7,6 +7,10 @@ $URL$
 
 2010-02-24 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c, YAM_FI.c: comparing an empty list against a non-empty list falsely
+    signaled both lists to be equal. This effectively prevented saving the
+    conifiguration when i.e. starting with an empty MIME type list and adding
+    new entries without changing anything else in the configuration.
   * doc/Install-YAM: fixed typo which might lead to a wrong system detection.
   * YAM.c: added some debug messages when checking if the current user differs
     from the last start.
