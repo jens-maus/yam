@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.10 (25.01.2010) (c) 2000-2010 by YAM Open Source Team
+; $VER: Install-YAM 1.11 (24.02.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -377,26 +377,26 @@
 (set NEWLIB_ver (getversion "newlib.library" (resident)))
 (if (>= NEWLIB_ver (* 4 65536))
     (
-        (set os3 0)
-        (set os4 1)
-        (set mos 0)
+        (set SYS_os3 0)
+        (set SYS_os4 1)
+        (set SYS_mos 0)
     )
     (
-        (set os4 0)
-        (if (>= OS_VER (* 51 65536))
+        (set SYS_os4 0)
+        (if (>= OS_ver (* 51 65536))
             (
-                (set mos 1)
-                (set os3 0)
+                (set SYS_mos 1)
+                (set SYS_os3 0)
             )
             (
-                (set os3 1)
-                (set mos 0)
+                (set SYS_os3 1)
+                (set SYS_mos 0)
             )
         )
     )
 )
 
-(if mos
+(if SYS_mos
     (set MUI_ver (getversion "LIBS:muimaster.library"))
     (set MUI_ver (getversion "MUI:libs/muimaster.library"))
 )
@@ -404,7 +404,7 @@
     (abort #wrongMUI)
 )
 
-(if os4
+(if SYS_os4
     ; OS4 uses english locale names only
     (
         (set #cat_name_german                "german")
@@ -449,7 +449,7 @@
 
 (complete 10)
 
-(if os4
+(if SYS_os4
     ; OS4 can handle different accents of one language (i.e. british english)
     (set catalog_lang
         (askoptions
@@ -659,7 +659,7 @@
 
         ; now the accented languages follow
         ; NOTE: only OS4 supports these!!
-        (if os4
+        (if SYS_os4
             ; english-british catalog file
             (if (bitand catalog_lang #def_lang_english_british)
                 (
@@ -796,7 +796,7 @@
 
 (complete 80)
 
-(if mos
+(if SYS_mos
     ; MorphOS has no MUI: assign anymore but places MUI subclasses in SYS:Classes/MUI
     (set #MCC_dir "SYS:Classes/MUI/")
     ; OS3 and OS4 use the MUI: assign
@@ -824,7 +824,7 @@
     )
 )
 
-(if (or os3 mos)
+(if (or SYS_os3 SYS_mos)
     (copyfiles
         (source "Libs/Charsets/")
         (dest "LIBS:Charsets")
