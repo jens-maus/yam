@@ -7116,6 +7116,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
       struct Mail *mail = mtn->mail;
 
+      D(DBF_NET, "download flags %08lx=%s%s%s for mail with subject '%s' and size %ld",mtn->tflags, hasTR_LOAD(mtn) ? "TR_LOAD " : "" , hasTR_DELETE(mtn) ? "TR_DELETE " : "", hasTR_PRESELECT(mtn) ? "TR_PRESELECT " : "", mail->Subject, mail->Size);
       if(hasTR_LOAD(mtn))
       {
         D(DBF_NET, "downloading mail with subject '%s' and size %ld", mail->Subject, mail->Size);
