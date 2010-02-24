@@ -58,7 +58,7 @@
 // our static variables with default values
 static int indent_level = 0;
 static BOOL ansi_output = FALSE;
-static BOOL con_output = FALSE;
+static BOOL stdout_output = FALSE;
 static FILE *file_output = NULL;
 static ULONG debug_flags = DBF_ALWAYS | DBF_STARTUP; // default debug flags
 static ULONG debug_classes = DBC_ERROR | DBC_DEBUG | DBC_WARNING | DBC_ASSERT | DBC_REPORT | DBC_MTRACK; // default debug classes
@@ -76,7 +76,7 @@ void _DBPRINTF(const char *format, ...)
 
   va_start(args, format);
 
-  if(con_output == TRUE)
+  if(stdout_output == TRUE)
     vprintf(format, args);
   else if(file_output != NULL)
     vfprintf(file_output, format, args);
@@ -159,8 +159,8 @@ void SetupDebug(void)
     if(stristr(s, "ansi") != NULL)
       ansi_output = TRUE;
 
-    if(stristr(s, "con") != NULL)
-      con_output = TRUE;
+    if(stristr(s, "stdout") != NULL)
+      stdout_output = TRUE;
 
     if((t = stristr(s, "file:")) != NULL)
     {
@@ -259,9 +259,9 @@ void SetupDebug(void)
             _DBPRINTF("ANSI output enabled\n");
             ansi_output = TRUE;
           }
-          else if(strnicmp(s, "con", 3) == 0)
+          else if(strnicmp(s, "stdout", 6) == 0)
           {
-            con_output = TRUE;
+            stdout_output = TRUE;
             _DBPRINTF("CON: output enabled\n");
           }
           else if(strnicmp(s, "file:", 5) == 0)

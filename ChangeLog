@@ -7,6 +7,8 @@ $URL$
 
 2010-02-24 Thore Böckelmann <tboeckel@gmx.de>
 
+  * Debug.c: renamed the "con" debug flag to "stdout" because it conflicted with
+    "config" and made listening to config debug messages only impossible.
   * YAM_CO.c, YAM_FI.c: comparing an empty list against a non-empty list falsely
     signaled both lists to be equal. This effectively prevented saving the
     conifiguration when i.e. starting with an empty MIME type list and adding
