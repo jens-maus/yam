@@ -479,11 +479,8 @@ void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
       fprintf(fh, "\nContent-Disposition: attachment");
 
     // add the filename parameter to the Content-Disposition
-    if(part->Filename != NULL && part->Filename[0] != '\0')
-    {
-      fputc(';', fh);
-      HeaderFputs(fh, FilePart(part->Filename), "filename", 0);
-    }
+    fputc(';', fh);
+    HeaderFputs(fh, FilePart(part->Name), "filename", 0);
   }
   fputc('\n', fh);
 
