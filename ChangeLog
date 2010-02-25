@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-02-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install-YAM: rewrote the operation system detection. Now MorphOS 1.x
+    will correctly be detected (exec.library V50+ instead of V51+). Additionally
+    the user will be asked to acknowledge the automatic detection in case our
+    assumptions were wrong. Also removed the checks for a 68020 CPU, MUI 3.8
+    and AmigaOS 3.0 as minimum system requirements. YAM's own checks are far
+    better than these rough and outdated estimations.
+
 2010-02-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: changed the mail composition to use the original file's name in
