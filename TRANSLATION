@@ -35,16 +35,16 @@ http://www.aminet.net/package.php?package=dev/misc/subversion-1.1.4.lha
 After that, you can go and do a checkout by doing something like this:
 
  cd "where you want to store the files"
- svn co https://yamos.svn.sourceforge.net/svnroot/yamos/trunk yamos
+ svn co https://svn.yam.ch/svn/yam/trunk yam
 
 This will checkout the sources from our "trunk" to your local directory
-"yamos".
+"yam".
 
 Now you can go into the "locale" subdir and change the *.ct file for your
 language in there. (Don't change the directory layout and such!)
 However, you need to make sure you keep the following in mind:
 
- 1. Always do a "svn update" in that "yamos" directory right before your
+ 1. Always do a "svn update" in that "yam" directory right before your
  next change or checkin so that you make sure you get the very
  latest changes.
  2. Always bump the revision and date of your *.ct file before you
@@ -53,22 +53,22 @@ However, you need to make sure you keep the following in mind:
  right before you checkin.
 
 After you have done your changes you might do a "svn status" in the
-"yamos" directory and subversion should tell you which files you changed.
+"yam" directory and subversion should tell you which files you changed.
 And after that you could even do a "svn diff" in the directory and
 subversion should show you a diff file with the particular local changes
 you have made.
 
 If you then add a comment to the ChangeLog you can do a "svn commit" in the
-directory "yamos" and subversion will prompt you for a log message.
+directory "yam" and subversion will prompt you for a log message.
 This should open c:Ed and here you should add a comment, same like you added
 to the ChangeLog file. It will also show you which files have been changed.
 After that you will be promted for yuor login and password and after that
 you are done!
 
 In the future you do not need to do a checkout again, all you need to do,
-to update yamos, is:
+to update yam, is:
 
- cd "your yamos directory"
+ cd "your yam directory"
  svn update
 
 Good luck translating YAM!
