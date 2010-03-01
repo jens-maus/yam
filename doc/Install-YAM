@@ -781,9 +781,21 @@
 (if (= detectedSystem "mos")
     ; MorphOS has no MUI: assign anymore but places MUI subclasses in SYS:Classes/MUI
     (set #MCC_dir "SYS:Classes/MUI/")
+    (
+        (if (= detectedSystem "aros")
+            ; AROS has no MUI: assign anymore but places MUI subclasses in SYS:Classes/Zune
+            (set #MCC_dir "SYS:Classes/Zune/")
+            ; AmigaOS 3.x and AmigaOS 4.x use the MUI: assign
+            (set #MCC_dir "MUI:libs/mui/")
+        )
+    )
+)
+(if (= detectedSysem "aros")
+    (set #MCC_dir "SYS:Classes/MUI/")
     ; AmigaOS 3.x, AmigaOS 4.x and AROS use the MUI: assign
     (set #MCC_dir "MUI:libs/mui/")
 )
+
 (foreach "MUI/" "#?.mc?"
     (copylib
         (prompt (cat "MUI - " @each-name))
