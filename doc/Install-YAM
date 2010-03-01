@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.12 (25.02.2010) (c) 2000-2010 by YAM Open Source Team
+; $VER: Install-YAM 1.13 (01.03.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -346,17 +346,25 @@
 
 ;----------------------------------------------------------------------------
 ; /// Checking environment
-; we use newlib.library to check whether we are running on AmigaOS 4.x
+(set EXEC_ver (getversion "exec.library" (resident)))
 (set NEWLIB_ver (getversion "newlib.library" (resident)))
+(set AROS_ver (getversion "aros.library" (resident)))
+
+; we use newlib.library to check whether we are running on AmigaOS 4.x
 (if (>= NEWLIB_ver (* 4 65536))
     (set detectedSystem 1)
     (
         ; we are not running on AmigaOS 4.x
-        ; now check if we are running on MorphOS (exec.library V50+) or on AmigaOS 3.x
-        (set EXEC_ver (getversion "exec.library" (resident)))
-        (if (>= EXEC_ver (* 50 65536))
-            (set detectedSystem 2)
-            (set detectedSystem 0)
+        (if (>= AROS_ver (* 40 65536))
+            (set detectedSystem 3)
+            (
+                ; we are not running on AROS
+                ; now check if we are running on MorphOS (exec.library V50+) or on AmigaOS 3.x
+                (if (>= EXEC_ver (* 50 65536))
+                    (set detectedSystem 2)
+                    (set detectedSystem 0)
+                )
+            )
         )
     )
 )
@@ -368,12 +376,17 @@
         (choices "AmigaOS 3.x"
                  "AmigaOS 4.x"
                  "MorphOS 1.x/2.x"
+                 "AROS"
         )
         (default detectedSystem)
     )
 )
+; finally convert the system number into string for easier understanding
+(set detectedSystem
+    (select detectedSystem "os3" "os4" "mos" "aros")
+)
 
-(if (= detectedSystem 1)
+(if (= detectedSystem "os4")
     ; AmigaOS 4.x uses english locale names only
     (
         (set #cat_name_german                "german")
@@ -418,7 +431,7 @@
 
 (complete 10)
 
-(if (= detectedSystem 1)
+(if (= detectedSystem "os4")
     ; AmigaOS 4.x can handle different accents of one language (i.e. british english)
     (set catalog_lang
         (askoptions
@@ -435,7 +448,7 @@
             (default #def_cat_lang)
         )
     )
-    ; but AmigaOS 3.x and MorphOS can not
+    ; but AmigaOS 3.x, MorphOS and AROS can not
     (set catalog_lang
         (askoptions
             (prompt #lang_catalog)
@@ -628,7 +641,7 @@
 
         ; now the accented languages follow
         ; NOTE: only AmigaOS 4.x supports these!!
-        (if (= detectedSystem 1)
+        (if (= detectedSystem "os4")
             ; english-british catalog file
             (if (bitand catalog_lang #def_lang_english_british)
                 (
@@ -765,10 +778,10 @@
 
 (complete 80)
 
-(if (= detectedSystem 2)
+(if (= detectedSystem "mos")
     ; MorphOS has no MUI: assign anymore but places MUI subclasses in SYS:Classes/MUI
     (set #MCC_dir "SYS:Classes/MUI/")
-    ; AmigaOS 3.x and AmigaOS 4.x use the MUI: assign
+    ; AmigaOS 3.x, AmigaOS 4.x and AROS use the MUI: assign
     (set #MCC_dir "MUI:libs/mui/")
 )
 (foreach "MUI/" "#?.mc?"
@@ -793,7 +806,7 @@
     )
 )
 
-(if (or (= detectedSystem 0) (= detectedSystem 2))
+(if (or (= detectedSystem "os3") (= detectedSystem "mos") (= detectedSystem "aros"))
     (copyfiles
         (source "Libs/Charsets/")
         (dest "LIBS:Charsets")

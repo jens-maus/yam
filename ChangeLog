@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install-YAM: added AROS system detection.
+
 2010-02-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/Install-YAM: rewrote the operation system detection. Now MorphOS 1.x
