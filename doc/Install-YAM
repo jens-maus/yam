@@ -790,11 +790,6 @@
         )
     )
 )
-(if (= detectedSysem "aros")
-    (set #MCC_dir "SYS:Classes/MUI/")
-    ; AmigaOS 3.x, AmigaOS 4.x and AROS use the MUI: assign
-    (set #MCC_dir "MUI:libs/mui/")
-)
 
 (foreach "MUI/" "#?.mc?"
     (copylib
