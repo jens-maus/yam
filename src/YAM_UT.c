@@ -635,11 +635,11 @@ char *UnquoteString(const char *s, BOOL new)
   // at all
   if(strchr(s, '"') == NULL)
   {
-    if(new)
+    if(new == TRUE)
       o = strdup(s);
 
     RETURN(o);
-    return(o);
+    return o;
   }
 
   // now start unquoting the string
@@ -662,7 +662,7 @@ char *UnquoteString(const char *s, BOOL new)
     *t = '\0';
 
     // in case the user wants to have the copy lets do it
-    if(new)
+    if(new == TRUE)
     {
       RETURN(ans);
       return ans;

@@ -422,7 +422,12 @@ OVERLOAD(MUIM_NListtree_DropType)
         // if mails are being dragged the currently active folder and group folders must be excluded.
         // All other folders are valid drop targets.
         if(*dt->Pos == (LONG)xget(obj, MUIA_NListtree_Active) || isGroupFolder(folder))
-          *dt->Type = MUIV_NListtree_DropType_None;
+        {
+          if(isFlagSet(tn->tn_Flags, TNF_LIST) && isFlagClear(tn->tn_Flags, TNF_OPEN))
+            *dt->Type = MUIV_NListtree_DropType_Onto;
+          else
+            *dt->Type = MUIV_NListtree_DropType_None;
+        }
         else
           *dt->Type = MUIV_NListtree_DropType_Onto;
       }
