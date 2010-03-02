@@ -1077,6 +1077,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
 
       strlcpy(p = buf, value, sizeof(buf));
       TrimEnd(p);
+      UnquoteString(p, FALSE);
 
       // As the content-transfer-encoding field is mostly used in
       // attachment MIME fields, we first check for common attachement encodings
