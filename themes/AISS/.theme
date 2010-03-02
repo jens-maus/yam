@@ -1,8 +1,8 @@
 YTH1 - YAM Theme
-Name    = AISS (truecolor)
+Name    = AISS 4.8 (truecolor)
 Author  = YAM Development Team
 URL     = http://www.yam.ch/
-Version = 0.1 (03.12.2007)
+Version = 1.1 (02.03.2010)
 
 ; Image file substitutions
 ; <image id> = <file path>
@@ -123,9 +123,9 @@ tb_sendall_g                  = TBImages:mailsend_g
 tb_spam                       = TBImages:mailspam
 tb_spam_s                     = TBImages:mailspam_s
 tb_spam_g                     = TBImages:mailspam_g
-tb_ham                        = toolbar/tb_ham
-tb_ham_s                      = toolbar/tb_ham_s
-tb_ham_g                      = toolbar/tb_ham_g
+tb_ham                        = TBImages:ham
+tb_ham_s                      = TBImages:tb_ham_s
+tb_ham_g                      = TBImages:tb_ham_g
 tb_filter                     = TBImages:filter
 tb_filter_s                   = TBImages:filter_s
 tb_filter_g                   = TBImages:filter_g
