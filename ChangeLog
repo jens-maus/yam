@@ -7,6 +7,11 @@ $URL$
 
 2010-03-02 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: in case a user has the preselect list configured to appear always
+    and some additional remote filters which might choose not to download
+    certain mail these mails are displayed nevertheless to give the user the
+    chance to further modify the download rules for these mails. This fixes bug
+    #2957484.
   * YAM_RE.c: possible quotes around a part's encoding name are now stripped.
     This fixes bug #2957412.
 
