@@ -8554,3 +8554,6 @@ Bitte starten Sie ihren Internetbrowser selbst und geben diese Linkadresse ein:\
 MSG_USERNAME_FALLBACK
 Max Mustermann
 ;
+MSG_RE_DEFAULT_MIMEPART_NAME
+Teil %ld.%ld
+;
