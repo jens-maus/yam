@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: fixed some typos.
+
 2010-03-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * themes/AISS: the AISS theme now requires at least AISS 4.8 to be installed.

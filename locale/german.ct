@@ -911,7 +911,7 @@ MSG_HELP_MA_BT_FILTER
 Filter auf die Nachrichten\n\
 in diesem Postfach anwenden.\n\
 \n\
-Bitte beachten Sie das wenn 2\n\
+Bitte beachten Sie, dass wenn 2\n\
 oder mehr Nachrichten ausgewählt\n\
 sind, nur diese gefilter werden.
 ; Apply filters to all\n\
@@ -8079,7 +8079,7 @@ MSG_ER_THEME_ACTIVATED_TITLE
 Neustart von YAM notwendig
 ;
 MSG_ER_THEME_ACTIVATED
-Bitte beachten Sie, dass das Sie die Konfiguration\n\
+Bitte beachten Sie, dass Sie die Konfiguration\n\
 speichern und YAM neu starten müssen, bevor das\n\
 ausgewählte Theme aktiviert werden kann.
 ;
