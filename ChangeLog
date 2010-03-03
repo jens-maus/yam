@@ -7,6 +7,8 @@ $URL$
 
 2010-03-03 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: the "avoid duplicates" option cleared too many flags which caused
+    mails not to be displayed in the preselection list.
   * YAM_RE.c: in case a MIME part has no name an aritifical name will now be
     generated from the part's index number. This avoids usage of YAM's temporary
     names When saving such parts to a file.

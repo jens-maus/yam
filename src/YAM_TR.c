@@ -4977,7 +4977,7 @@ static BOOL FilterDuplicates(void)
                     // make sure the mail is flagged as being ignoreable
                     G->TR->Stats.DupSkipped++;
                     // don't download this mail, because it has been downloaded before
-                    MASK_FLAG(mtn->tflags, TRF_DELETE);
+                    CLEAR_FLAG(mtn->tflags, TRF_LOAD);
 
                     // mark the UIDLtoken as being checked
                     token->checked = TRUE;
@@ -5033,7 +5033,7 @@ static BOOL FilterDuplicates(void)
             {
               G->TR->Stats.DupSkipped++;
               // don't download this mail, because it has been downloaded before
-              MASK_FLAG(mtn->tflags, TRF_DELETE);
+              CLEAR_FLAG(mtn->tflags, TRF_LOAD);
 
               D(DBF_UIDL, "mail %ld: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
             }
