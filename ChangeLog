@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: in case an imported mail contains both the Status and the X-Status
+    header lines the "new" state of the mail is derived from the Status header
+    line only, because the X-Status header line does not contain any explicit
+    information about the "new" state. This fixes bug ticket #118.
+
 2010-03-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: the "avoid duplicates" option cleared too many flags which caused
