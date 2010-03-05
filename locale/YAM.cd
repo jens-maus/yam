@@ -6943,3 +6943,12 @@ John Doe
 MSG_RE_DEFAULT_MIMEPART_NAME (2153//)
 Part %ld.%ld
 ; PARENTNUMBER PARTNUMER
+;
+MSG_OPEN_WRITEWINDOWS (2154//)
+There are still some write windows open!\n\
+\n\
+How do you want to proceed?
+;
+MSG_OPEN_WRITEWINDOWS_GAD (2155//)
+*_Save now|_Quit without saving|_Cancel
+;

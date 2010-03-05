@@ -7,6 +7,9 @@ $URL$
 
 2010-03-04 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c: quitting YAM while a write window is still open will open a requester
+    which explicitly ask for confirmation and allow the user to put the mails on
+    hold. This fixes #63.
   * YAM_TR.c: in case an imported mail contains both the Status and the X-Status
     header lines the "new" state of the mail is derived from the Status header
     line only, because the X-Status header line does not contain any explicit

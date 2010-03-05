@@ -1349,6 +1349,60 @@ BOOL StayInProg(void)
 
   if(stayIn == FALSE)
   {
+    // search through our WriteDataList
+    struct Node *curNode;
+    BOOL saveMails = FALSE;
+
+    IterateList(&G->writeMailDataList, curNode)
+    {
+      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+      if(wmData->window != NULL)
+      {
+        int result;
+
+        result = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OPEN_WRITEWINDOWS_GAD), tr(MSG_OPEN_WRITEWINDOWS));
+        switch(result)
+        {
+          default:
+          case 0:
+          {
+            // dont' quit
+            stayIn = TRUE;
+          }
+          break;
+
+          case 1:
+          {
+            // save and quit
+            saveMails = TRUE;
+          }
+          break;
+
+          case 2:
+          {
+            // quit without save
+          }
+          break;
+        }
+      }
+    }
+
+    if(saveMails == TRUE)
+    {
+      // put the mails of all still opened write windows on hold
+      IterateList(&G->writeMailDataList, curNode)
+      {
+        struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+        if(wmData->window != NULL)
+          DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
+      }
+    }
+  }
+
+  if(stayIn == FALSE)
+  {
     int i;
     BOOL req = FALSE;
 
@@ -1356,24 +1410,6 @@ BOOL StayInProg(void)
     {
       if(G->EA[i] != NULL)
         req = TRUE;
-    }
-
-    // check if there exists an active write window
-    if(req == FALSE)
-    {
-      // search through our WriteDataList
-      struct Node *curNode;
-
-      IterateList(&G->writeMailDataList, curNode)
-      {
-        struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-        if(wmData->window != NULL)
-        {
-          req = TRUE;
-          break;
-        }
-      }
     }
 
     if(req == TRUE || G->CO != NULL || C->ConfirmOnQuit == TRUE)

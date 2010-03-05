@@ -8557,3 +8557,11 @@ Max Mustermann
 MSG_RE_DEFAULT_MIMEPART_NAME
 Teil %ld.%ld
 ;
+MSG_OPEN_WRITEWINDOWS
+Es sind noch Schreibfenster geöffnet!\n\
+\n\
+Wie wollen Sie fortfahren?
+;
+MSG_OPEN_WRITEWINDOWS_GAD
+*Jetzt _speichern|_Beenden ohne speichern|_Abbruch
+;
