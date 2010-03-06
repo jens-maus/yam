@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * AttachmentRequestWindow.c: added an additional column to display a mail
+    part's description. This fixes #119.
+
 2010-03-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: quitting YAM while a write window is still open will open a requester
