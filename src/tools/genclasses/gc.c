@@ -560,7 +560,10 @@ struct classdef *processclasssrc( char *path )
         {
           fprintf(stderr, "WARNING: Cannot read " KEYWD_CLASSDATA " block at line %d, out of memory!\n", exlineno); break;
         }
-        fread(blk, (size_t)(epos - spos), 1, fp);
+        if (fread(blk, (size_t)(epos - spos), 1, fp) != 1)
+        {
+          fprintf(stderr, "WARNING: Cannot read " KEYWD_CLASSDATA " block at line %d, fread() fails!\n", exlineno); break;
+        }
         if ((ob = strchr(blk, '{')))
         {
           if (!(cb = strchr(ob + 1, '}'))) cb = blk + strlen(blk);
@@ -631,7 +634,10 @@ struct classdef *processclasssrc( char *path )
           {
             fprintf(stderr, "WARNING: Cannot read " KEYWD_EXPORT " block at line %d, out of memory!\n", exlineno); break;
           }
-          fread(blk, (size_t)(epos - spos), 1, fp);
+          if (fread(blk, (size_t)(epos - spos), 1, fp) != 1)
+          {
+            fprintf(stderr, "WARNING: Cannot read " KEYWD_EXPORT " block at line %d, fread fails!\n", exlineno); break;
+          }
           add_exportblk(cd, blk);
           free(blk);
           break;
