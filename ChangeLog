@@ -7,6 +7,8 @@ $URL$
 
 2010-03-09 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c, TransferMailList.c: moved the list's display hook into the class
+    source file.
   * YAM_MAf.c, MainFolderListtree.c: moved the column format generation into the
     class source file.
   * YAM_CO.c: the spam filter will now be enabled in the default settings.

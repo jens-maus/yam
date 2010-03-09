@@ -46,6 +46,26 @@ enum TransferType
   TR_SEND_AUTO     // send mails, timer/ARexx triggered
 };
 
+struct MailTransferNode
+{
+  struct MinNode node;      // required for placing it into "struct TR_ClassData"
+  struct Mail   *mail;      // pointer to the corresponding mail
+  char          *UIDL;      // an unique identifier (UIDL) in case AvoidDuplicates is used
+  unsigned char tflags;     // transfer flags
+  int           position;   // current position of the mail in the GUI NList
+  int           index;      // the index value of the mail as told by a POP3 server
+  long          importAddr; // the position (addr) within an export file to find the mail
+};
+
+// flags for the transfer preselection stuff
+#define TRF_NONE              (0)
+#define TRF_LOAD              (1<<0)
+#define TRF_DELETE            (1<<1)
+#define TRF_PRESELECT         (1<<2)
+#define hasTR_LOAD(v)         (isFlagSet((v)->tflags, TRF_LOAD))
+#define hasTR_DELETE(v)       (isFlagSet((v)->tflags, TRF_DELETE))
+#define hasTR_PRESELECT(v)    (isFlagSet((v)->tflags, TRF_PRESELECT))
+
 enum SMTPSecMethod  { SMTPSEC_NONE=0, SMTPSEC_TLS, SMTPSEC_SSL };
 enum SMTPAuthMethod { SMTPAUTH_AUTO=0, SMTPAUTH_DIGEST, SMTPAUTH_CRAM, SMTPAUTH_LOGIN, SMTPAUTH_PLAIN };
 enum TransWinMode   { TWM_HIDE=0, TWM_AUTO, TWM_SHOW };

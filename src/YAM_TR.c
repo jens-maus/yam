@@ -224,28 +224,6 @@ static const char *const POPcmd[] =
 #define hasTCP_FREEBUFFER(v)  (isFlagSet((v), TCPF_FREEBUFFER))
 
 /**************************************************************************/
-// mail transfer structure
-struct MailTransferNode
-{
-  struct MinNode node;      // required for placing it into "struct TR_ClassData"
-  struct Mail   *mail;      // pointer to the corresponding mail
-  char          *UIDL;      // an unique identifier (UIDL) in case AvoidDuplicates is used
-  unsigned char tflags;     // transfer flags
-  int           position;   // current position of the mail in the GUI NList
-  int           index;      // the index value of the mail as told by a POP3 server
-  long          importAddr; // the position (addr) within an export file to find the mail
-};
-
-// flags for the Transfer preselection stuff
-#define TRF_NONE              (0)
-#define TRF_LOAD              (1<<0)
-#define TRF_DELETE            (1<<1)
-#define TRF_PRESELECT         (1<<2)
-#define hasTR_LOAD(v)         (isFlagSet((v)->tflags, TRF_LOAD))
-#define hasTR_DELETE(v)       (isFlagSet((v)->tflags, TRF_DELETE))
-#define hasTR_PRESELECT(v)    (isFlagSet((v)->tflags, TRF_PRESELECT))
-
-/**************************************************************************/
 // general connection/transfer error enumation values
 enum ConnectError
 {
@@ -7313,67 +7291,6 @@ MakeStaticHook(TR_PauseHook, TR_PauseFunc);
 ///
 
 /*** GUI ***/
-/// TR_LV_DspFunc
-//  Message listview display hook
-HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
-{
-  ENTER();
-
-  if(entry != NULL)
-  {
-    static char dispfro[SIZE_DEFAULT];
-    static char dispsta[SIZE_DEFAULT];
-    static char dispsiz[SIZE_SMALL];
-    static char dispdate[64];
-    struct Mail *mail = entry->mail;
-    struct Person *pe = &mail->From;
-
-    array[0] = dispsta;
-    // status icon display
-    snprintf(dispsta, sizeof(dispsta), "%3d ", entry->index);
-    if(hasTR_LOAD(entry))
-      strlcat(dispsta, SI_STR(si_Download), sizeof(dispsta));
-    if(hasTR_DELETE(entry))
-      strlcat(dispsta, SI_STR(si_Delete), sizeof(dispsta));
-
-    // size display
-    array[1] = dispsiz;
-    if(C->WarnSize > 0 && mail->Size >= (C->WarnSize*1024))
-    {
-      strlcpy(dispsiz, MUIX_PH, sizeof(dispsiz));
-      FormatSize(mail->Size, dispsiz+strlen(dispsiz), sizeof(dispsiz)-strlen(dispsiz), SF_AUTO);
-    }
-    else
-      FormatSize(mail->Size, dispsiz, sizeof(dispsiz), SF_AUTO);
-
-    // from address display
-    array[2] = dispfro;
-    strlcpy(dispfro, AddrName((*pe)), sizeof(dispfro));
-
-    // mail subject display
-    array[3] = mail->Subject;
-
-    // display date
-    array[4] = dispdate;
-    *dispdate = '\0';
-
-    if(mail->Date.ds_Days != 0)
-      DateStamp2String(dispdate, sizeof(dispdate), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
-  }
-  else
-  {
-    array[0] = (STRPTR)tr(MSG_MA_TitleStatus);
-    array[1] = (STRPTR)tr(MSG_Size);
-    array[2] = (STRPTR)tr(MSG_From);
-    array[3] = (STRPTR)tr(MSG_Subject);
-    array[4] = (STRPTR)tr(MSG_Date);
-  }
-
-  LEAVE();
-  return 0;
-}
-MakeStaticHook(TR_LV_DspFuncHook,TR_LV_DspFunc);
-///
 /// TR_New
 //  Creates transfer window
 struct TR_ClassData *TR_New(enum TransferType TRmode)
@@ -7447,19 +7364,6 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
            Child, NListviewObject,
               MUIA_CycleChain, TRUE,
               MUIA_NListview_NList, data->GUI.LV_MAILS = TransferMailListObject,
-                 MUIA_NList_MultiSelect, MUIV_NList_MultiSelect_Default,
-                 MUIA_NList_Format        , "W=-1 BAR,W=-1 MACW=9 P=\33r BAR,MICW=20 BAR,MICW=16 BAR,MICW=9 MACW=15",
-                 MUIA_NList_DisplayHook   , &TR_LV_DspFuncHook,
-                 MUIA_NList_AutoVisible   , TRUE,
-                 MUIA_NList_Title         , TRUE,
-                 MUIA_NList_TitleSeparator, TRUE,
-                 MUIA_NList_DoubleClick   , TRUE,
-                 MUIA_NList_MinColSortable, 0,
-                 MUIA_Font, C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
-                 MUIA_ContextMenu         , NULL,
-                 MUIA_NList_Exports, MUIV_NList_Exports_Cols,
-                 MUIA_NList_Imports, MUIV_NList_Imports_Cols,
-                 MUIA_ObjectID, MAKE_ID('N','L','0','4'),
               End,
            End,
         End;
