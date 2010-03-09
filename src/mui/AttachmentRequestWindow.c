@@ -57,7 +57,7 @@ HOOKPROTONHNO(AttachDspFunc, LONG, struct NList_DisplayMessage *msg)
   {
     // now we set our local variables to the DisplayMessage structure ones
     struct Part *entry = (struct Part *)msg->entry;
-    STRPTR *array = msg->strings;
+    char **array = msg->strings;
 
     if(entry != NULL)
     {
