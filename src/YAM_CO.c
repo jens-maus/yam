@@ -1865,7 +1865,7 @@ void CO_Validate(struct Config *co, BOOL update)
       set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
 
       SaveLayout(FALSE);
-      MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_MakeFormat);
       DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_MakeFormat);
       LoadLayout();
 
