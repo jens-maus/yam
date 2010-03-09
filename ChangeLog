@@ -7,6 +7,8 @@ $URL$
 
 2010-03-09 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE: a header list was freed using the wrong function which then caused
+    crashes. Header lists must be freed with FreeSysObject(). This fixes #141.
   * AttachmentImage.c: a double click on an already selected attachment icon
     will now correctly invoke the associated command. This fixes #141.
   * locale/german.ct: fixed a typo. This really fixes #140.

@@ -2482,7 +2482,6 @@ static void RE_LoadMessagePart(struct ReadMailData *rmData, struct Part *part)
 
   switch(RE_RequiresSpecialHandling(part))
   {
-
     case SMT_SIGNED:
       RE_HandleSignedMessage(part);
     break;
@@ -2493,7 +2492,7 @@ static void RE_LoadMessagePart(struct ReadMailData *rmData, struct Part *part)
 
     case SMT_MDN:
     {
-      if(RE_HandleMDNReport(part))
+      if(RE_HandleMDNReport(part) == TRUE)
         break;
     }
     // continue
@@ -4017,7 +4016,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
   ENTER();
 
   // check if the message has at least 2 parts
-  if((rp[0] = frp->Next) && (rp[1] = rp[0]->Next))
+  if((rp[0] = frp->Next) != NULL && (rp[1] = rp[0]->Next) != NULL)
   {
     FILE *fh;
     const char *mode;
@@ -4065,21 +4064,21 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
             char *value = hdrNode->content;
             const char *msg = NULL;
 
-            if(!stricmp(field, "from"))
+            if(stricmp(field, "from") == 0)
               msg = tr(MSG_RE_MDNFrom);
-            else if(!stricmp(field, "to"))
+            else if(stricmp(field, "to") == 0)
               msg = tr(MSG_RE_MDNTo);
-            else if(!stricmp(field, "subject"))
+            else if(stricmp(field, "subject") == 0)
               msg = tr(MSG_RE_MDNSubject);
-            else if(!stricmp(field, "original-message-id"))
+            else if(stricmp(field, "original-message-id") == 0)
               msg = tr(MSG_RE_MDNMessageID);
-            else if(!stricmp(field, "date"))
+            else if(stricmp(field, "date") == 0)
               msg = tr(MSG_RE_MDNDate);
-            else if(!stricmp(field, "original-recipient"))
+            else if(stricmp(field, "original-recipient") == 0)
               msg = tr(MSG_RE_MDNOrigRecpt);
-            else if(!stricmp(field, "final-recipient"))
+            else if(stricmp(field, "final-recipient") == 0)
               msg = tr(MSG_RE_MDNFinalRecpt);
-            else if(!stricmp(field, "disposition"))
+            else if(stricmp(field, "disposition") == 0)
               strlcpy(disposition, Trim(value), sizeof(disposition));
 
             if(msg != NULL)
@@ -4090,7 +4089,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
           }
 
           FreeHeaderList(headerList);
-          free(headerList);
+          FreeSysObject(ASOT_LIST, headerList);
         }
         else
           fclose(fh);
@@ -4121,7 +4120,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
 
     D(DBF_MAIL, "creating MDN report in '%s'", buf);
 
-    if((fh = fopen(buf, "w")))
+    if((fh = fopen(buf, "w")) != NULL)
     {
       if(stristr(type, "displayed"))
         fprintf(fh, tr(MSG_RE_MDNdisplay), msgdesc);
