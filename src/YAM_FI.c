@@ -423,12 +423,10 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
             else
               found = FI_MatchString(search, hdrNode->content);
           }
-
-          // free our temporary header list
-          FreeHeaderList(headerList);
         }
 
         // free our temporary headerList
+        ClearHeaderList(headerList);
         FreeSysObject(ASOT_LIST, headerList);
       }
 

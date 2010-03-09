@@ -1004,7 +1004,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
 
   // check if we already have a headerList and if so we clean it first
   if(rp->headerList != NULL)
-    FreeHeaderList(rp->headerList);
+    ClearHeaderList(rp->headerList);
   else
   {
     // we do not have any headerList yet so lets allocate a new one
@@ -1686,7 +1686,7 @@ static void RE_UndoPart(struct Part *rp)
   // free an eventually existing headerList
   if(rp->headerList != NULL)
   {
-    FreeHeaderList(rp->headerList);
+    ClearHeaderList(rp->headerList);
     FreeSysObject(ASOT_LIST, rp->headerList);
   }
 
@@ -4088,7 +4088,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
             }
           }
 
-          FreeHeaderList(headerList);
+          ClearHeaderList(headerList);
           FreeSysObject(ASOT_LIST, headerList);
         }
         else
@@ -4298,7 +4298,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 
     if(part->headerList != NULL)
     {
-      FreeHeaderList(part->headerList);
+      ClearHeaderList(part->headerList);
       FreeSysObject(ASOT_LIST, part->headerList);
     }
 
@@ -4426,18 +4426,18 @@ void FreeHeaderNode(struct HeaderNode *hdrNode)
 }
 
 ///
-/// FreeHeaderList()
+/// ClearHeaderList()
 // Free all items of an existing header list
-void FreeHeaderList(struct MinList *headerList)
+void ClearHeaderList(struct MinList *headerList)
 {
   ENTER();
 
-  if(headerList != NULL && IsMinListEmpty(headerList) == FALSE)
+  if(headerList != NULL)
   {
-    struct MinNode *curNode;
+    struct Node *curNode;
 
     // Now we process the read header to set all flags accordingly
-    while((curNode = (struct MinNode *)RemHead((struct List *)headerList)) != NULL)
+    while((curNode = RemHead((struct List *)headerList)) != NULL)
     {
       struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
 

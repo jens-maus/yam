@@ -1689,7 +1689,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
     // read a single empty line it is a signal that this part of
     // the mail doesn't have any header at all (which may be valid)
     if(success == FALSE)
-      FreeHeaderList(headerList);
+      ClearHeaderList(headerList);
     else if(IsMinListEmpty(headerList) == TRUE &&
             (mode == RHM_MAINHEADER || (buffer != NULL && buffer[0] != '\0') || linesread != 1))
     {
@@ -2383,7 +2383,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
      // And now we close the Mailfile and clear the temporary headerList again
      fclose(fh);
-     FreeHeaderList(&headerList);
+     ClearHeaderList(&headerList);
 
      // in case the replyTo recipient doesn't have a realname yet and it is
      // completly the same like the from address we go and copy the realname as both

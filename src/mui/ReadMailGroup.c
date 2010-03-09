@@ -633,7 +633,7 @@ OVERLOAD(OM_DISPOSE)
   ENTER();
 
   // clear the senderInfoHeaders
-  FreeHeaderList(&data->senderInfoHeaders);
+  ClearHeaderList(&data->senderInfoHeaders);
 
   // free the readMailData pointer
   if(data->readMailData != NULL)
@@ -903,7 +903,7 @@ DECLARE(Clear) // ULONG flags
       set(data->mailTextObject, MUIA_TextEditor_Contents, "");
 
     // cleanup the senderInfoHeaders list
-    FreeHeaderList(&data->senderInfoHeaders);
+    ClearHeaderList(&data->senderInfoHeaders);
 
     // cleanup the SenderImage field as well
     if(DoMethod(data->senderImageGroup, MUIM_Group_InitChange))
@@ -1203,7 +1203,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         struct HeaderNode *newNode;
 
         // make sure we cleaned up the senderInfoHeader List beforehand
-        FreeHeaderList(&data->senderInfoHeaders);
+        ClearHeaderList(&data->senderInfoHeaders);
 
         if(*ab->RealName != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
         {

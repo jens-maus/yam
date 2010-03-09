@@ -913,8 +913,8 @@ OVERLOAD(MUIM_HandleEvent)
       }
 
       // save the seconds/micros for the next handleEvent call
-      data->selectSecs  = imsg->Seconds;
-      data->selectMicros= imsg->Micros;
+      data->selectSecs = imsg->Seconds;
+      data->selectMicros = imsg->Micros;
 
       if(WorkbenchBase->lib_Version >= 45 && data->eventHandlerAdded == TRUE)
       {
