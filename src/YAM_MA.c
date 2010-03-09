@@ -4402,7 +4402,7 @@ struct MA_ClassData *MA_New(void)
     {
       ULONG i;
 
-      MA_MakeFOFormat(data->GUI.NL_FOLDERS);
+      DoMethod(data->GUI.NL_FOLDERS, MUIM_MainFolderListtree_MakeFormat);
 
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
