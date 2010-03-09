@@ -558,6 +558,7 @@ struct Config
   BOOL  FolderDoubleClick;
   BOOL  MapForeignChars;
   BOOL  GlobalMailThreads;
+  BOOL  ShowFilterStats;
 
   struct MUI_PenSpec ColoredText;
   struct MUI_PenSpec Color1stLevel;

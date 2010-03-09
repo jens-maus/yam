@@ -1791,25 +1791,28 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
         if(G->RuleResults.Checked != 0 && mode == APPLY_USER)
         {
-          char buf[SIZE_LARGE];
+          if(C->ShowFilterStats == TRUE)
+          {
+            char buf[SIZE_LARGE];
 
-          if(C->SpamFilterEnabled == TRUE)
-          {
-            // include the number of spam classified mails
-            snprintf(buf, sizeof(buf), tr(MSG_MA_FILTER_STATS_SPAM), G->RuleResults.Checked,
-                                                                     G->RuleResults.Forwarded,
-                                                                     G->RuleResults.Moved,
-                                                                     G->RuleResults.Deleted,
-                                                                     G->RuleResults.Spam);
+            if(C->SpamFilterEnabled == TRUE)
+            {
+              // include the number of spam classified mails
+              snprintf(buf, sizeof(buf), tr(MSG_MA_FILTER_STATS_SPAM), G->RuleResults.Checked,
+                                                                       G->RuleResults.Forwarded,
+                                                                       G->RuleResults.Moved,
+                                                                       G->RuleResults.Deleted,
+                                                                       G->RuleResults.Spam);
+            }
+            else
+            {
+              snprintf(buf, sizeof(buf), tr(MSG_MA_FilterStats), G->RuleResults.Checked,
+                                                                 G->RuleResults.Forwarded,
+                                                                 G->RuleResults.Moved,
+                                                                 G->RuleResults.Deleted);
+            }
+            MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), buf);
           }
-          else
-          {
-            snprintf(buf, sizeof(buf), tr(MSG_MA_FilterStats), G->RuleResults.Checked,
-                                                               G->RuleResults.Forwarded,
-                                                               G->RuleResults.Moved,
-                                                               G->RuleResults.Deleted);
-          }
-          MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), buf);
         }
       }
       else

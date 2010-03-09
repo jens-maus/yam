@@ -1079,6 +1079,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->EmbeddedMailDelay = 200; // 200ms delay per default
     co->KeepAliveInterval = 30;  // 30s interval per default
     co->AutoClip = FALSE;
+    co->ShowFilterStats = TRUE;
 
     // set the default styles of the folder listtree and
     // mail list items.
@@ -1402,6 +1403,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->MDNEnabled                      == c2->MDNEnabled &&
      c1->RequestMDN                      == c2->RequestMDN &&
      c1->AutoClip                        == c2->AutoClip &&
+     c1->ShowFilterStats                 == c2->ShowFilterStats &&
      c1->FolderDoubleClick               == c2->FolderDoubleClick &&
 
      c1->SocketOptions.SendBuffer        == c2->SocketOptions.SendBuffer &&
