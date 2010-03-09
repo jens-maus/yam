@@ -2237,7 +2237,6 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
 
               etd.HeaderFile = rmData->firstPart->Filename;
               InsertIntroText(out, C->ForwardIntro, &etd);
-              MA_FreeEMailStruct(email);
 
               // read in the message text to cmsg.
               if((cmsg = RE_ReadInMessage(rmData, RIM_FORWARD)) != NULL)
@@ -2260,6 +2259,9 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
           }
           break;
         }
+
+        // free out temporary extended mail structure again.
+        MA_FreeEMailStruct(email);
       }
 
       // add some footer with greatings.

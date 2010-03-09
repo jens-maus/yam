@@ -2070,7 +2070,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
   ENTER();
 
   // first we generate a new ExtendedMail buffer
-  if((email = calloc(1, sizeof(struct ExtendedMail))) == NULL)
+  if((email = calloc(1, sizeof(*email))) == NULL)
   {
     RETURN(NULL);
     return NULL;
@@ -2093,7 +2093,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       // then unpack the file with XPK routines.
       if(StartUnpack(GetMailFile(NULL, folder, mail), fullfile, folder) == NULL)
       {
-        free(email);
+        MA_FreeEMailStruct(email);
 
         E(DBF_MAIL, "couldn't unpack mailfile");
 
@@ -2537,7 +2537,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
   if(fh != NULL)
    fclose(fh);
 
-  free(email);
+  MA_FreeEMailStruct(email);
 
   RETURN(NULL);
   return NULL;
