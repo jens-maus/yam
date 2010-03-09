@@ -71,6 +71,7 @@ OVERLOAD(OM_SET)
   RETURN(result);
   return result;
 }
+
 ///
 /// OVERLOAD(MUIM_Window_Snapshot)
 OVERLOAD(MUIM_Window_Snapshot)
@@ -85,7 +86,7 @@ OVERLOAD(MUIM_Window_Snapshot)
   G->Weights[6] = xget(G->MA->GUI.PG_MAILLIST, MUIA_VertWeight);
 
   // if the embedded read pane objects are currently active we save their weight values
-  if(C->EmbeddedReadPane)
+  if(C->EmbeddedReadPane == TRUE)
   {
     G->Weights[7] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight);
     G->Weights[8] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_HGVertWeight);

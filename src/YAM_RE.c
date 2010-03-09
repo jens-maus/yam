@@ -184,9 +184,9 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
       snprintf(filename, sizeof(filename), "%s.msg", suggestedName[0] != '\0' ? suggestedName : mail->MailFile);
     }
 
-    if(force)
+    if(force == TRUE)
       dest = AddPath(path, C->DetachDir, filename, sizeof(path));
-    else if((frc = ReqFile(ASL_DETACH, win, tr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, filename)))
+    else if((frc = ReqFile(ASL_DETACH, win, tr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, filename)) != NULL)
       dest = AddPath(path, frc->drawer, frc->file, sizeof(path));
     else
       dest = NULL;
@@ -194,7 +194,7 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
 
   if(dest != NULL)
   {
-    if(FileExists(dest) && !overwrite)
+    if(FileExists(dest) == TRUE && overwrite == FALSE)
     {
       if(MUI_Request(G->App, win, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), FilePart(dest)) == 0)
         dest = NULL;

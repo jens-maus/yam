@@ -1288,7 +1288,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
 
       // copy the data out of our fileRequester into our
       // own cached structure we return to the user
-      if(reqResult)
+      if(reqResult != 0)
       {
         // free previous resources
         FreeFileReqCache(frc);
