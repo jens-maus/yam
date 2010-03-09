@@ -823,13 +823,13 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_Spam || page == cp_AllPages)
   {
-    co->SpamFilterEnabled = FALSE;
-    co->SpamFilterForNewMail = FALSE;
-    co->SpamMarkOnMove = FALSE;
+    co->SpamFilterEnabled = TRUE;
+    co->SpamFilterForNewMail = TRUE;
+    co->SpamMarkOnMove = TRUE;
     co->SpamMarkAsRead = FALSE;
-    co->SpamAddressBookIsWhiteList = FALSE;
-    co->MoveHamToIncoming = FALSE;
-    co->FilterHam = FALSE;
+    co->SpamAddressBookIsWhiteList = TRUE;
+    co->MoveHamToIncoming = TRUE;
+    co->FilterHam = TRUE;
     co->SpamProbabilityThreshold = DEFAULT_SPAM_PROBABILITY_THRESHOLD;
     co->SpamFlushTrainingDataInterval = DEFAULT_FLUSH_TRAINING_DATA_INTERVAL;
     co->SpamFlushTrainingDataThreshold = DEFAULT_FLUSH_TRAINING_DATA_THRESHOLD;

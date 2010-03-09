@@ -7,7 +7,14 @@ $URL$
 
 2010-03-09 Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_RE: renamed FreeHeaderList() to ClearHeaderList() as this is what the
+  * YAM_CO.c: the spam filter will now be enabled in the default settings.
+    Furthermore the options "filter new mail", "mark on move to spam folder",
+    "addressbook is white list", "move non-spam to incoming" and "apply filters"
+    are enabled by default. Spam mails will not automatically be marked as read,
+    because an untrained spam filter will move lots of mails to the spam folder
+    and the user should be notified that the mails in the spam folder may not
+    be true spam. This fulfils #31.
+  * YAM_RE.c: renamed FreeHeaderList() to ClearHeaderList() as this is what the
     function really does.
   * YAM_RE: a header list was freed using the wrong function which then caused
     crashes. Header lists must be freed with FreeSysObject(). This fixes #141.
