@@ -2362,7 +2362,7 @@ void MA_GetAddress(struct MailList *mlist)
             DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName), MUIV_List_Insert_Bottom);
 
             if(isMultiReplyToMail(mail) &&
-               (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+               (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
             {
               int j;
 
@@ -2379,7 +2379,7 @@ void MA_GetAddress(struct MailList *mlist)
             DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), mail->From.Address, mail->From.RealName), MUIV_List_Insert_Bottom);
 
             if(isMultiSenderMail(mail) &&
-               (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+               (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
             {
               int j;
 

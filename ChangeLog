@@ -7,6 +7,7 @@ $URL$
 
 2010-03-09 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_WR.c: fixed a memory leak.
   * misc: all menus now reflect the fact that YAM is able to forward mails in
     two different modes (as attachments and inlined). For the main and read
     window the items corresponding to the configured default mode will have the
