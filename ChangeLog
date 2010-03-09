@@ -7,6 +7,7 @@ $URL$
 
 2010-03-09 Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/german.ct: fixed a typo. This really fixes #140.
   * YAM_WR.c: fixed a memory leak.
   * misc: all menus now reflect the fact that YAM is able to forward mails in
     two different modes (as attachments and inlined). For the main and read
