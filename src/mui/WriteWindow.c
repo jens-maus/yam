@@ -1042,13 +1042,15 @@ OVERLOAD(OM_NEW)
       // A list of all currently used shortcuts follows below for the full
       // menu.
       menuStripObject = MenustripObject,
-        MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Text),
+        MenuChild, MenuObject,
+          MUIA_Menu_Title, tr(MSG_WR_Text),
           MenuChild, Menuitem(tr(MSG_WR_MSENDNOW), "S", TRUE, FALSE, WMEN_SENDNOW),
           MenuChild, Menuitem(tr(MSG_WR_MSENDLATER), "L", TRUE, FALSE, WMEN_QUEUE),
           MenuChild, Menuitem(tr(MSG_WR_MHOLD), "H", TRUE, FALSE, WMEN_HOLD),
           MenuChild, Menuitem(tr(MSG_WR_MCANCEL), "W", TRUE, FALSE, WMEN_CANCEL),
         End,
-        MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Edit),
+        MenuChild, MenuObject,
+          MUIA_Menu_Title, tr(MSG_WR_Edit),
           MenuChild, Menuitem(tr(MSG_WR_MUndo), "Z", TRUE, FALSE, WMEN_UNDO),
           MenuChild, Menuitem(tr(MSG_WR_Redo), "Y", TRUE, FALSE, WMEN_REDO),
           MenuChild, MenuBarLabel,
@@ -1139,10 +1141,12 @@ OVERLOAD(OM_NEW)
       //  9   Use signature4 (WMEN_SIGN3)
 
       menuStripObject = MenustripObject,
-        MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Text),
+        MenuChild, MenuObject,
+          MUIA_Menu_Title, tr(MSG_WR_Text),
           MenuChild, Menuitem(tr(MSG_New), "N", TRUE, FALSE, WMEN_NEW),
           MenuChild, Menuitem(tr(MSG_Open), "O", TRUE, FALSE, WMEN_OPEN),
-          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_InsertAs),
+          MenuChild, MenuitemObject,
+            MUIA_Menuitem_Title, tr(MSG_WR_InsertAs),
             MenuChild, Menuitem(tr(MSG_WR_Plain), "P", TRUE, FALSE, WMEN_INSFILE),
             MenuChild, Menuitem(tr(MSG_WR_Quoted), NULL, TRUE, FALSE, WMEN_INSQUOT),
             MenuChild, Menuitem(tr(MSG_WR_AltQuoted), NULL, TRUE, FALSE, WMEN_INSALTQUOT),
@@ -1159,14 +1163,16 @@ OVERLOAD(OM_NEW)
           MenuChild, Menuitem(tr(MSG_WR_MHOLD), "H", TRUE, FALSE, WMEN_HOLD),
           MenuChild, Menuitem(tr(MSG_WR_MCANCEL), "W", TRUE, FALSE, WMEN_CANCEL),
         End,
-        MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_WR_Edit),
+        MenuChild, MenuObject,
+          MUIA_Menu_Title, tr(MSG_WR_Edit),
           MenuChild, Menuitem(tr(MSG_WR_MUndo), "Z", TRUE, FALSE, WMEN_UNDO),
           MenuChild, Menuitem(tr(MSG_WR_Redo), "Y", TRUE, FALSE, WMEN_REDO),
           MenuChild, MenuBarLabel,
           MenuChild, Menuitem(tr(MSG_WR_MCut), "X", TRUE, FALSE, WMEN_CUT),
           MenuChild, Menuitem(tr(MSG_WR_MCopy), "C", TRUE, FALSE, WMEN_COPY),
           MenuChild, Menuitem(tr(MSG_WR_MPaste), "V", TRUE, FALSE, WMEN_PASTE),
-          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_PasteAs),
+          MenuChild, MenuitemObject,
+            MUIA_Menuitem_Title, tr(MSG_WR_PasteAs),
             MenuChild, Menuitem(tr(MSG_WR_Quoted), "Q", TRUE, FALSE, WMEN_PASQUOT),
             MenuChild, Menuitem(tr(MSG_WR_AltQuoted), NULL, TRUE, FALSE, WMEN_PASALTQUOT),
             MenuChild, Menuitem(tr(MSG_WR_ROT13), NULL, TRUE, FALSE, WMEN_PASROT13),
@@ -1180,13 +1186,15 @@ OVERLOAD(OM_NEW)
           MenuChild, Menuitem(tr(MSG_WR_SEARCH_AGAIN), "G", TRUE, FALSE, WMEN_SEARCHAGAIN),
           MenuChild, MenuBarLabel,
           MenuChild, Menuitem(tr(MSG_WR_Dictionary), "D", TRUE, FALSE, WMEN_DICT),
-          MenuChild, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Textstyle),
+          MenuChild, MenuitemObject,
+            MUIA_Menuitem_Title,tr(MSG_WR_Textstyle),
             MenuChild, data->MI_BOLD = MenuitemCheck(tr(MSG_WR_Bold), "B", TRUE, FALSE, TRUE, 0, WMEN_STYLE_BOLD),
             MenuChild, data->MI_ITALIC = MenuitemCheck(tr(MSG_WR_Italic), "I", TRUE, FALSE, TRUE, 0, WMEN_STYLE_ITALIC),
             MenuChild, data->MI_UNDERLINE = MenuitemCheck(tr(MSG_WR_Underlined), "U", TRUE, FALSE, TRUE, 0, WMEN_STYLE_UNDERLINE),
             MenuChild, data->MI_COLORED = MenuitemCheck(tr(MSG_WR_Colored), "K", TRUE, FALSE, TRUE, 0, WMEN_STYLE_COLORED),
           End,
-          MenuChild, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_Emoticons),
+          MenuChild, MenuitemObject,
+            MUIA_Menuitem_Title,tr(MSG_WR_Emoticons),
             MenuChild, Menuitem(tr(MSG_WR_Happy), NULL, TRUE, FALSE, WMEN_EMOT0),
             MenuChild, Menuitem(tr(MSG_WR_Indifferent), NULL, TRUE, FALSE, WMEN_EMOT1),
             MenuChild, Menuitem(tr(MSG_WR_Sad), NULL, TRUE, FALSE, WMEN_EMOT2),
@@ -1196,32 +1204,38 @@ OVERLOAD(OM_NEW)
           MenuChild, data->MI_AUTOSPELL = MenuitemCheck(tr(MSG_WR_SpellCheck), NULL, TRUE, FALSE, TRUE, 0, WMEN_AUTOSP),
           MenuChild, data->MI_AUTOWRAP = MenuitemCheck(tr(MSG_WR_AUTOWRAP), NULL, TRUE, FALSE, TRUE, 0, WMEN_AUTOWRAP),
         End,
-        MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_Attachments),
+        MenuChild, MenuObject,
+          MUIA_Menu_Title, tr(MSG_Attachments),
           MenuChild, Menuitem(tr(MSG_WR_MAddFile), "R", TRUE, FALSE, WMEN_ADDFILE),
           MenuChild, Menuitem(tr(MSG_WR_AddCB), NULL, TRUE, FALSE, WMEN_ADDCLIP),
           MenuChild, Menuitem(tr(MSG_WR_AddKey), NULL, G->PGPVersion != 0, FALSE, WMEN_ADDPGP),
         End,
-        MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_WR_VIEW),
+        MenuChild, MenuObject,
+          MUIA_Menu_Title, tr(MSG_WR_VIEW),
           MenuChild, Menuitem(tr(MSG_WR_MSWITCH_MSG), "1", TRUE, FALSE, WMEN_SWITCH1),
           MenuChild, Menuitem(tr(MSG_WR_MSWITCH_ATT), "2", TRUE, FALSE, WMEN_SWITCH2),
           MenuChild, Menuitem(tr(MSG_WR_MSWITCH_OPT), "3", TRUE, FALSE, WMEN_SWITCH3),
         End,
-        MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_Options),
+        MenuChild, MenuObject,
+          MUIA_Menu_Title, tr(MSG_Options),
           MenuChild, data->MI_DELSEND = MenuitemCheck(tr(MSG_WR_MDelSend), NULL, TRUE, FALSE, TRUE, 0, WMEN_DELSEND),
           MenuChild, data->MI_MDN = MenuitemCheck(tr(MSG_WR_MReceipt), NULL, TRUE, FALSE, TRUE, 0, WMEN_MDN),
           MenuChild, data->MI_ADDINFO = MenuitemCheck(tr(MSG_WR_MAddInfo), NULL, TRUE, FALSE, TRUE, 0, WMEN_ADDINFO),
-          MenuChild, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_WR_MImportance),
+          MenuChild, MenuitemObject,
+            MUIA_Menuitem_Title,tr(MSG_WR_MImportance),
             MenuChild, MenuitemCheck(priority[0], NULL, TRUE, FALSE, TRUE, 0x06, WMEN_IMPORT0),
             MenuChild, MenuitemCheck(priority[1], NULL, TRUE, TRUE,  TRUE, 0x05, WMEN_IMPORT1),
             MenuChild, MenuitemCheck(priority[2], NULL, TRUE, FALSE, TRUE, 0x03, WMEN_IMPORT2),
           End,
-          MenuChild, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_CrdSignature),
+          MenuChild, MenuitemObject,
+            MUIA_Menuitem_Title,tr(MSG_CO_CrdSignature),
             MenuChild, MenuitemCheck(signat[0], "0", TRUE, C->UseSignature == FALSE, TRUE, 0x0E, WMEN_SIGN0),
             MenuChild, MenuitemCheck(signat[1], "7", TRUE, C->UseSignature == TRUE,  TRUE, 0x0D, WMEN_SIGN1),
             MenuChild, MenuitemCheck(signat[2], "8", TRUE, FALSE, TRUE, 0x0B, WMEN_SIGN2),
             MenuChild, MenuitemCheck(signat[3], "9", TRUE, FALSE, TRUE, 0x07, WMEN_SIGN3),
           End,
-          MenuChild, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_CrdSecurity),
+          MenuChild, MenuitemObject,
+            MUIA_Menuitem_Title,tr(MSG_CO_CrdSecurity),
             MenuChild, MenuitemCheck(security[SEC_NONE], NULL, TRUE, FALSE, TRUE, 0x3E, WMEN_SECUR0),
             MenuChild, MenuitemCheck(security[SEC_SIGN], NULL, G->PGPVersion != 0, FALSE, TRUE, 0x3D, WMEN_SECUR1),
             MenuChild, MenuitemCheck(security[SEC_ENCRYPT], NULL, G->PGPVersion != 0, FALSE, TRUE, 0x3B, WMEN_SECUR2),
@@ -1834,7 +1848,7 @@ OVERLOAD(OM_DISPOSE)
   if(G->AB->winNumber == data->windowNumber)
     G->AB->winNumber = -1;
 
-  // signal the super class to dipose as well
+  // signal the super class to dispose as well
   result = DoSuperMethodA(cl, obj, msg);
 
   RETURN(result);
@@ -4104,6 +4118,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
               break;
 
               case NMM_FORWARD:
+              case NMM_FORWARD_ATTACH:
+              case NMM_FORWARD_INLINE:
               case NMM_BOUNCE:
               {
                 setStatusToForwarded(mail);
@@ -4143,6 +4159,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
       break;
 
       case NMM_FORWARD:
+      case NMM_FORWARD_ATTACH:
+      case NMM_FORWARD_INLINE:
       {
         struct MailNode *mnode = FirstMailNode(wmData->refMailList);
 
@@ -4337,8 +4355,7 @@ DECLARE(CancelAction)
 
   ENTER();
 
-  if(data->wmData->mode != NMM_BOUNCE &&
-     data->wmData->quietMode == FALSE)
+  if(data->wmData->mode != NMM_BOUNCE && data->wmData->quietMode == FALSE)
   {
     // ask the user what to do if the mail text was modified
     if(xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE || data->autoSaved == TRUE)

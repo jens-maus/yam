@@ -159,25 +159,33 @@ struct Part;
 #define hasMColTransDate(v)     (isFlagSet((v), MCOL_TRANSDATE))
 
 // Mail importance levels
-enum ImportanceLevel { IMP_NORMAL=0, // normal (default)
-                       IMP_LOW,      // low
-                       IMP_HIGH      // high
-                     };
+enum ImportanceLevel
+{
+  IMP_NORMAL=0, // normal (default)
+  IMP_LOW,      // low
+  IMP_HIGH      // high
+};
 
 // Mail creation modes
-enum NewMailMode { NMM_NEW=0,     // composing a new mail
-                   NMM_REPLY,     // replying to an existing mail
-                   NMM_FORWARD,   // forwarding an existing mail
-                   NMM_BOUNCE,    // bounce an existing mail back to the sender
-                   NMM_EDIT,      // edit a mail in the outgoing folder
-                   NMM_EDITASNEW, // edit an existing sent/received mail
-                   NMM_SAVEDEC    // create a decrypted copy of a PGP mail
-                 };
+enum NewMailMode
+{
+  NMM_NEW=0,          // composing a new mail
+  NMM_REPLY,          // replying to an existing mail
+  NMM_FORWARD,        // forwarding an existing mail, automatic mode detection (toolbar only)
+  NMM_FORWARD_ATTACH, // forwarding an existing mail, as attachment (menu only)
+  NMM_FORWARD_INLINE, // forwarding an existing mail, as inlined text (menu only)
+  NMM_BOUNCE,         // bounce an existing mail back to the sender
+  NMM_EDIT,           // edit a mail in the outgoing folder
+  NMM_EDITASNEW,      // edit an existing sent/received mail
+  NMM_SAVEDEC         // create a decrypted copy of a PGP mail
+};
 
 // Mail forward modes
-enum ForwardMode { FWM_ATTACH=0, // forward mail as attachment
-                   FWM_INLINE    // forward mail inlined
-                 };
+enum ForwardMode
+{
+  FWM_ATTACH=0, // forward mail as attachment
+  FWM_INLINE    // forward mail inlined
+};
 
 // flags for MA_DeleteSingle()
 #define DELF_AT_ONCE           (1<<0)
@@ -186,18 +194,22 @@ enum ForwardMode { FWM_ATTACH=0, // forward mail as attachment
 #define DELF_UPDATE_APPICON    (1<<3)
 
 // flags and macros for creating new mails
-#define NEWF_QUIET        (1<<0)
-#define NEWF_REP_NOQUOTE  (1<<1)
-#define NEWF_REP_PRIVATE  (1<<2)
-#define NEWF_REP_MLIST    (1<<3)
-#define NEWF_FWD_NOATTACH (1<<4)
-#define NEWF_FWD_ALTMODE  (1<<5)
-#define hasQuietFlag(v)         (isFlagSet((v), NEWF_QUIET))
-#define hasNoQuoteFlag(v)       (isFlagSet((v), NEWF_REP_NOQUOTE))
-#define hasPrivateFlag(v)       (isFlagSet((v), NEWF_REP_PRIVATE))
-#define hasMListFlag(v)         (isFlagSet((v), NEWF_REP_MLIST))
-#define hasNoAttachFlag(v)      (isFlagSet((v), NEWF_FWD_NOATTACH))
-#define hasAltFwdModeFlag(v)    (isFlagSet((v), NEWF_FWD_ALTMODE))
+#define NEWF_QUIET               (1<<0)
+#define NEWF_REP_NOQUOTE         (1<<1)
+#define NEWF_REP_PRIVATE         (1<<2)
+#define NEWF_REP_MLIST           (1<<3)
+#define NEWF_FWD_NOATTACH        (1<<4) // remove any attachement from the forwared mail
+#define NEWF_FWD_ALTMODE         (1<<5)
+#define NEWF_FWD_AS_ATTACHMENT   (1<<6) // force forwarding as an attachment
+#define NEWF_FWD_INLINED         (1<<7) // force forwarding as inlined text
+#define hasQuietFlag(v)               (isFlagSet((v), NEWF_QUIET))
+#define hasNoQuoteFlag(v)             (isFlagSet((v), NEWF_REP_NOQUOTE))
+#define hasPrivateFlag(v)             (isFlagSet((v), NEWF_REP_PRIVATE))
+#define hasMListFlag(v)               (isFlagSet((v), NEWF_REP_MLIST))
+#define hasNoAttachFlag(v)            (isFlagSet((v), NEWF_FWD_NOATTACH))
+#define hasAltFwdModeFlag(v)          (isFlagSet((v), NEWF_FWD_ALTMODE))
+#define hasAsAttachmentFwdModeFlag(v) (isFlagSet((v), NEWF_FWD_AS_ATTACHMENT))
+#define hasInlinedFwdModeFlag(v)      (isFlagSet((v), NEWF_FWD_INLINED))
 
 enum Macro {
    MACRO_MEN0=0, MACRO_MEN1, MACRO_MEN2, MACRO_MEN3, MACRO_MEN4, MACRO_MEN5,
@@ -215,10 +227,10 @@ enum
   MMEN_SELALL,MMEN_SELNONE,MMEN_SELTOGG,MMEN_SEARCH,MMEN_FILTER,MMEN_CLASSIFY,MMEN_DELDEL,MMEN_DELSPAM,
   MMEN_INDEX,MMEN_FLUSH,MMEN_IMPORT,MMEN_EXPORT,MMEN_GETMAIL,MMEN_GET1MAIL,MMEN_SENDMAIL,MMEN_EXMAIL,
   MMEN_READ,MMEN_EDIT,MMEN_MOVE,MMEN_COPY,MMEN_DELETE,MMEN_PRINT,MMEN_SAVE,MMEN_DETACH,MMEN_DELETEATT,
-  MMEN_EXPMSG,MMEN_NEXTTH,MMEN_PREVTH,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD,MMEN_BOUNCE,MMEN_SAVEADDR,
-  MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOHOLD,MMEN_TOQUEUED,MMEN_TOMARKED,MMEN_TOUNMARKED,MMEN_ALLTOREAD,
-  MMEN_TOSPAM,MMEN_TOHAM,MMEN_CHSUBJ,MMEN_SEND,MMEN_ABOOK,MMEN_CONFIG,MMEN_USER,MMEN_MUI,
-  MMEN_SCRIPT,MMEN_POPHOST,MMEN_MACRO=MMEN_POPHOST+MAXP3
+  MMEN_EXPMSG,MMEN_NEXTTH,MMEN_PREVTH,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD_ATTACH,MMEN_FORWARD_INLINE,
+  MMEN_BOUNCE,MMEN_SAVEADDR,MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOHOLD,MMEN_TOQUEUED,MMEN_TOMARKED,
+  MMEN_TOUNMARKED,MMEN_ALLTOREAD,MMEN_TOSPAM,MMEN_TOHAM,MMEN_CHSUBJ,MMEN_SEND,MMEN_ABOOK,MMEN_CONFIG,
+  MMEN_USER,MMEN_MUI,MMEN_SCRIPT,MMEN_POPHOST,MMEN_MACRO=MMEN_POPHOST+MAXP3
 };
 
 // Actions for the 'Edit' submenu entries of windows
@@ -267,6 +279,8 @@ struct MA_GUIData
   Object *MI_NEW;
   Object *MI_REPLY;
   Object *MI_FORWARD;
+  Object *MI_FORWARD_ATTACH;
+  Object *MI_FORWARD_INLINE;
   Object *MI_BOUNCE;
   Object *MI_GETADDRESS;
   Object *MI_STATUS;
@@ -349,7 +363,7 @@ struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folder
 void  MA_GetAddress(struct MailList *mlist);
 BOOL MA_ImportMessages(const char *fname, BOOL quiet);
 struct MA_ClassData *MA_New(void);
-BOOL  MA_SortWindow(void);
+void  MA_SortWindow(void);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit, BOOL closeWindows);
 void  MA_ExchangeMail(enum GUILevel mode);
 void  MA_PopNow(enum GUILevel mode, int pop);

@@ -100,7 +100,8 @@ static struct Mail *MA_MoveCopySingle(struct Mail*, struct Folder*, struct Folde
 //  Calculates value for sort indicator
 static ULONG MA_GetSortType(int sort)
 {
-   static const ULONG sort2col[8] = { 0,4,7,1,1,3,5,0 };
+   static const ULONG sort2col[8] = { 0, 4, 7, 1, 1, 3, 5, 0 };
+
    if(sort > 0)
       return sort2col[sort];
    else
@@ -116,7 +117,7 @@ void MA_SetSortFlag(void)
 
   ENTER();
 
-  if((fo = FO_GetCurrentFolder()))
+  if((fo = FO_GetCurrentFolder()) != NULL)
   {
     xset(G->MA->GUI.PG_MAILLIST, MUIA_NList_SortType,  MA_GetSortType(fo->Sort[0]),
                                  MUIA_NList_SortType2, MA_GetSortType(fo->Sort[1]));
@@ -170,11 +171,11 @@ void MA_ChangeTransfer(BOOL on)
 // window and triggers an update of the embedded read pane if required.
 void MA_ChangeSelected(BOOL forceUpdate)
 {
-  struct Folder *fo = FO_GetCurrentFolder();
+  struct Folder *fo;
 
   ENTER();
 
-  if(fo != NULL)
+  if((fo = FO_GetCurrentFolder()) != NULL)
   {
     static struct Mail *lastMail = NULL;
     struct MA_GUIData *gui = &G->MA->GUI;
@@ -439,7 +440,7 @@ HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
 
   ENTER();
 
-  if((fo = FO_GetCurrentFolder()) && !isGroupFolder(fo) && fo->LoadedMode == LM_VALID)
+  if((fo = FO_GetCurrentFolder()) != NULL && !isGroupFolder(fo) && fo->LoadedMode == LM_VALID)
   {
     static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
     char sizestr[SIZE_DEFAULT];
@@ -549,7 +550,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   // for proper handling we have to remove an eventually existing "/" which
   // could be part of a base64 encoding
   ptr = dateFilePart;
-  while((ptr = strchr(ptr, '/')))
+  while((ptr = strchr(ptr, '/')) != NULL)
     *ptr = '-';
 
   // get the counter from the current mailfile
@@ -707,8 +708,7 @@ struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
   ENTER();
 
   // we first have to check whether this is a valid folder or not
-  folder = FO_GetCurrentFolder();
-  if(folder != NULL && isGroupFolder(folder) == FALSE)
+  if((folder = FO_GetCurrentFolder()) != NULL && isGroupFolder(folder) == FALSE)
   {
     LONG selected;
 
@@ -988,6 +988,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 
   LEAVE();
 }
+
 ///
 /// MA_UpdateStatus
 //  Changes status of all new messages to unread
@@ -1039,6 +1040,7 @@ static void MA_UpdateStatus(void)
 
   LEAVE();
 }
+
 ///
 /// MA_ToStatusHeader
 // Function that converts the current flags of a message
@@ -1079,6 +1081,7 @@ char *MA_ToStatusHeader(struct Mail *mail)
   RETURN(flags);
   return flags;
 }
+
 ///
 /// MA_ToXStatusHeader
 // Function that converts the current flags of a message
@@ -1120,6 +1123,7 @@ char *MA_ToXStatusHeader(struct Mail *mail)
   RETURN(flags);
   return flags;
 }
+
 ///
 /// MA_FromStatusHeader
 // Function that converts chars from the Status: headerline to a proper
@@ -1150,6 +1154,7 @@ unsigned int MA_FromStatusHeader(char *statusflags)
   RETURN(sflags);
   return sflags;
 }
+
 ///
 /// MA_FromXStatusHeader
 // Function that converts chars from the X-Status: headerline to a
@@ -1211,6 +1216,7 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags)
   RETURN(sflags);
   return sflags;
 }
+
 ///
 
 /*** Mail Thread Nagivation ***/
@@ -1368,7 +1374,7 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
     }
 
     // if not, then we create/reuse a new one
-    if((rmData = CreateReadWindow(FALSE)))
+    if((rmData = CreateReadWindow(FALSE)) != NULL)
     {
       // make sure it is opened correctly and then read in a mail
       if(SafeOpenWindow(rmData->readWindow) == FALSE ||
@@ -1870,6 +1876,8 @@ struct WriteMailData *NewMessage(enum NewMailMode mode, const int flags)
     break;
 
     case NMM_FORWARD:
+    case NMM_FORWARD_ATTACH:
+    case NMM_FORWARD_INLINE:
     {
       struct MailList *mlist;
 
@@ -1961,6 +1969,26 @@ enum NewMailMode CheckNewMailQualifier(const enum NewMailMode mode, const ULONG 
       if(hasFlag(qualifier, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
         SET_FLAG(*flags, NEWF_FWD_ALTMODE);
     }
+  }
+  else if(mode == NMM_FORWARD_ATTACH)
+  {
+    SET_FLAG(*flags, NEWF_FWD_AS_ATTACHMENT);
+
+    // flag the forward message action to not
+    // add any attachments from the original mail if
+    // the CONTROL qualifier was pressed
+    if(isFlagSet(qualifier, IEQUALIFIER_CONTROL))
+      SET_FLAG(*flags, NEWF_FWD_NOATTACH);
+  }
+  else if(mode == NMM_FORWARD_INLINE)
+  {
+    SET_FLAG(*flags, NEWF_FWD_INLINED);
+
+    // flag the forward message action to not
+    // add any attachments from the original mail if
+    // the CONTROL qualifier was pressed
+    if(isFlagSet(qualifier, IEQUALIFIER_CONTROL))
+      SET_FLAG(*flags, NEWF_FWD_NOATTACH);
   }
   else if(mode == NMM_REPLY)
   {
@@ -2459,13 +2487,9 @@ HOOKPROTONHNO(MA_PopNowFunc, void, int *arg)
   // pressed then a mail exchange is done rather than a simple
   // download of mails
   if(hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
-  {
     MA_ExchangeMail(arg[0]);
-  }
   else
-  {
     MA_PopNow(arg[0], arg[1]);
-  }
 
   LEAVE();
 }
@@ -2527,6 +2551,7 @@ HOOKPROTONHNO(MA_SendFunc, void, int *arg)
   LEAVE();
 }
 MakeHook(MA_SendHook, MA_SendFunc);
+
 ///
 
 /*** Menu options ***/
@@ -2725,6 +2750,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
   LEAVE();
 }
 MakeHook(MA_DeleteOldHook, MA_DeleteOldFunc);
+
 ///
 /// MA_DeleteDeletedFunc
 //  Removes messages from 'deleted' folder
@@ -2780,6 +2806,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
   LEAVE();
 }
 MakeHook(MA_DeleteDeletedHook, MA_DeleteDeletedFunc);
+
 ///
 /// MA_DeleteSpamFunc
 //  Removes spam messages from any folder
@@ -2842,6 +2869,7 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
   LEAVE();
 }
 MakeHook(MA_DeleteSpamHook, MA_DeleteSpamFunc);
+
 ///
 /// MA_RescanIndexFunc
 //  Updates index of current folder
@@ -3348,7 +3376,7 @@ HOOKPROTONHNONP(MA_DisposeAboutWindowFunc, void)
   ENTER();
 
   // cleanup the about window object
-  if(G->AboutWinObject)
+  if(G->AboutWinObject != NULL)
   {
     DoMethod(G->App, OM_REMMEMBER, G->AboutWinObject);
     MUI_DisposeObject(G->AboutWinObject);
@@ -3371,7 +3399,7 @@ HOOKPROTONHNONP(MA_ShowAboutWindowFunc, void)
   {
     G->AboutWinObject = AboutwindowObject, End;
 
-    if(G->AboutWinObject)
+    if(G->AboutWinObject != NULL)
     {
       DoMethod(G->AboutWinObject, MUIM_Notify, MUIA_Window_Open, FALSE, MUIV_Notify_Application, 5,
                                   MUIM_Application_PushMethod, G->App, 2, MUIM_CallHook, &MA_DisposeAboutWindowHook);
@@ -3568,6 +3596,7 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
   LEAVE();
 }
 MakeStaticHook(MA_CallRexxHook, MA_CallRexxFunc);
+
 ///
 /// MA_GetRealSubject
 //  Strips reply prefix / mailing list name from subject
@@ -3598,9 +3627,9 @@ char *MA_GetRealSubject(char *sub)
      else
        result = MA_GetRealSubject(p+1);
     }
-    else if(strchr(":[({", sub[2]))
+    else if(strchr(":[({", sub[2]) != NULL)
     {
-      if((p = strchr(sub, ':')))
+      if((p = strchr(sub, ':')) != NULL)
         result = MA_GetRealSubject(TrimStart(++p));
     }
   }
@@ -3699,7 +3728,6 @@ HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
   if(actobj == NULL || actobj == MUIV_Window_ActiveObject_None)
     actobj = (Object *)xget(G->MA->GUI.WI, MUIA_Window_DefaultObject);
 
-
   if(actobj == G->MA->GUI.LV_FOLDERS || actobj == G->MA->GUI.NL_FOLDERS)
   {
     CallHookPkt(&FO_DeleteFolderHook, 0, 0);
@@ -3790,6 +3818,18 @@ void MA_SetupDynamicMenus(void)
 {
   ENTER();
 
+  // update the "Forward" items' shortcut
+  if(C->ForwardMode == FWM_ATTACH)
+  {
+    set(G->MA->GUI.MI_FORWARD_ATTACH, MUIA_Menuitem_Shortcut, "W");
+    set(G->MA->GUI.MI_FORWARD_INLINE, MUIA_Menuitem_Shortcut, NULL);
+  }
+  else if(C->ForwardMode == FWM_INLINE)
+  {
+    set(G->MA->GUI.MI_FORWARD_ATTACH, MUIA_Menuitem_Shortcut, NULL);
+    set(G->MA->GUI.MI_FORWARD_INLINE, MUIA_Menuitem_Shortcut, "W");
+  }
+
   // generate the dynamic REXX Menu of the main window.
   // make sure we remove an old dynamic menu first
   if(G->MA->GUI.MN_REXX != NULL)
@@ -3801,19 +3841,13 @@ void MA_SetupDynamicMenus(void)
   // now we generate a new one.
   G->MA->GUI.MN_REXX = MenuObject,
     MUIA_Menu_Title, tr(MSG_MA_Scripts),
-    MUIA_Family_Child, MenuitemObject,
-      MUIA_Menuitem_Title,    tr(MSG_MA_ExecuteScript),
-      MUIA_Menuitem_Shortcut, "_",
-      MUIA_UserData,          MMEN_SCRIPT,
-    End,
-    MUIA_Family_Child, MenuitemObject,
-      MUIA_Menuitem_Title, NM_BARLABEL,
-    End,
+    MenuChild, Menuitem(tr(MSG_MA_ExecuteScript), "_", TRUE, NULL, MMEN_SCRIPT),
+    MenuChild, MenuBarLabel,
   End;
 
   if(G->MA->GUI.MN_REXX != NULL)
   {
-    static const char *const shortcuts[10] = { "1","2","3","4","5","6","7","8","9","0" };
+    static const char *const shortcuts[10] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
     int i;
 
     // the first ten entries of our user definable
@@ -3823,13 +3857,9 @@ void MA_SetupDynamicMenus(void)
     {
       if(C->RX[i].Script[0] != '\0')
       {
-        Object *newObj = MenuitemObject,
-                           MUIA_Menuitem_Title,    C->RX[i].Name,
-                           MUIA_Menuitem_Shortcut, shortcuts[i],
-                           MUIA_UserData,          MMEN_MACRO+i,
-                         End;
+        Object *newObj = Menuitem(C->RX[i].Name, shortcuts[i], TRUE, FALSE, MMEN_MACRO+i);
 
-        if(newObj)
+        if(newObj != NULL)
           DoMethod(G->MA->GUI.MN_REXX, MUIM_Family_AddTail, newObj);
       }
     }
@@ -3867,11 +3897,7 @@ void MA_SetupDynamicMenus(void)
         if(pop3->Account[0] == '\0')
           snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
 
-        newObj = MenuitemObject,
-                   MUIA_Menuitem_Title, pop3->Account,
-                   MUIA_UserData,       MMEN_POPHOST+i,
-                 End;
-
+        newObj = Menuitem(pop3->Account, NULL, TRUE, FALSE, MMEN_POPHOST+i);
         if(newObj != NULL)
           DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
       }
@@ -3953,17 +3979,18 @@ void MA_SetupDynamicMenus(void)
   {
     if(G->MA->GUI.MN_EDIT == NULL || isChildOfFamily(G->MA->GUI.MS_MAIN, G->MA->GUI.MN_EDIT) == FALSE)
     {
-      G->MA->GUI.MN_EDIT = MenuObject, MUIA_Menu_Title, tr(MSG_MA_EDIT),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_UNDO), "Z", TRUE, FALSE, MMEN_EDIT_UNDO),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_REDO), NULL, TRUE, FALSE, MMEN_EDIT_REDO),
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_CUT), "X", TRUE, FALSE, MMEN_EDIT_CUT),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_COPY), "C", TRUE, FALSE, MMEN_EDIT_COPY),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_PASTE), "V", TRUE, FALSE, MMEN_EDIT_PASTE),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_DELETE), NULL, TRUE, FALSE, MMEN_EDIT_DELETE),
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_SALL), "A", TRUE, FALSE, MMEN_EDIT_SALL),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_EDIT_SNONE), NULL, TRUE, FALSE, MMEN_EDIT_SNONE),
+      G->MA->GUI.MN_EDIT = MenuObject,
+        MUIA_Menu_Title, tr(MSG_MA_EDIT),
+        MenuChild, Menuitem(tr(MSG_MA_EDIT_UNDO), "Z", TRUE, FALSE, MMEN_EDIT_UNDO),
+        MenuChild, Menuitem(tr(MSG_MA_EDIT_REDO), NULL, TRUE, FALSE, MMEN_EDIT_REDO),
+        MenuChild, MenuBarLabel,
+        MenuChild, Menuitem(tr(MSG_MA_EDIT_CUT), "X", TRUE, FALSE, MMEN_EDIT_CUT),
+        MenuChild, Menuitem(tr(MSG_MA_EDIT_COPY), "C", TRUE, FALSE, MMEN_EDIT_COPY),
+        MenuChild, Menuitem(tr(MSG_MA_EDIT_PASTE), "V", TRUE, FALSE, MMEN_EDIT_PASTE),
+        MenuChild, Menuitem(tr(MSG_MA_EDIT_DELETE), NULL, TRUE, FALSE, MMEN_EDIT_DELETE),
+        MenuChild, MenuBarLabel,
+        MenuChild, Menuitem(tr(MSG_MA_EDIT_SALL), "A", TRUE, FALSE, MMEN_EDIT_SALL),
+        MenuChild, Menuitem(tr(MSG_MA_EDIT_SNONE), NULL, TRUE, FALSE, MMEN_EDIT_SNONE),
       End;
 
       if(G->MA->GUI.MN_EDIT != NULL)
@@ -3994,9 +4021,11 @@ void MA_SetupEmbeddedReadPane(void)
   Object *mailBalanceObj = G->MA->GUI.BL_MAILVIEW;
   Object *readPaneObj    = G->MA->GUI.MN_EMBEDDEDREADPANE;
 
+  ENTER();
+
   // check whether the embedded read pane object is already embeeded in our main
   // window so that we know what to do now
-  if(readPaneObj)
+  if(readPaneObj != NULL)
   {
     if(C->EmbeddedReadPane == FALSE)
     {
@@ -4026,13 +4055,13 @@ void MA_SetupEmbeddedReadPane(void)
       // the user want to have the embedded read pane added to the main
       // window, so lets do it now and create the object
       G->MA->GUI.BL_MAILVIEW = mailBalanceObj = NBalanceObject, End;
-      if(mailBalanceObj)
+      if(mailBalanceObj != NULL)
       {
         G->MA->GUI.MN_EMBEDDEDREADPANE = readPaneObj = ReadMailGroupObject,
                                                          MUIA_ContextMenu, TRUE,
                                                        End;
 
-        if(readPaneObj)
+        if(readPaneObj != NULL)
         {
           if(DoMethod(mailViewGroup, MUIM_Group_InitChange))
           {
@@ -4042,6 +4071,7 @@ void MA_SetupEmbeddedReadPane(void)
             DoMethod(mailViewGroup, MUIM_Group_ExitChange);
 
             // here everything worked fine so we can return immediately
+            LEAVE();
             return;
           }
 
@@ -4054,6 +4084,8 @@ void MA_SetupEmbeddedReadPane(void)
       }
     }
   }
+
+  LEAVE();
 }
 ///
 /// MA_SetupQuickSearchBar
@@ -4073,8 +4105,10 @@ void MA_SetupQuickSearchBar(void)
 ///
 /// MA_SortWindow
 //  Resorts the main window group accordingly to the InfoBar setting
-BOOL MA_SortWindow(void)
+void MA_SortWindow(void)
 {
+  ENTER();
+
   if(DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_InitChange))
   {
     BOOL showbar = TRUE;
@@ -4117,17 +4151,17 @@ BOOL MA_SortWindow(void)
       }
     }
 
-    // Here we can do a MUIA_ShowMe, TRUE because ResortWindow is encapsulated
+    // Here we can do a MUIA_ShowMe, TRUE because SortWindow is encapsulated
     // in a InitChange/ExitChange..
     set(G->MA->GUI.IB_INFOBAR, MUIA_ShowMe, showbar);
 
     DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_ExitChange);
   }
 
-  return TRUE;
+  LEAVE();
 }
-///
 
+///
 /// MA_New
 //  Creates main window
 struct MA_ClassData *MA_New(void)
@@ -4177,7 +4211,7 @@ struct MA_ClassData *MA_New(void)
     //  T   Save attachment (MMEN_DETACH)
     //  U   Save mail (MMEN_SAVE)
     //  V   reserved for 'Paste' operation (MMEN_EDIT_PASTE)
-    //  W   Forward mail (MMEN_FORWARD)
+    //  W   Forward mail (MMEN_FORWARD_ATTACH or MMEN_FORWARD_INLINE)
     //  X   reserved for 'Cut' operation (MMEN_EDIT_CUT)
     //  Y   Copy mail (MMEN_COPY)
     //  Z   reserved for 'Undo' operation (MMEN_EDIT_UNDO)
@@ -4215,89 +4249,102 @@ struct MA_ClassData *MA_New(void)
     //
 
     data->GUI.MS_MAIN = MenustripObject,
-      MUIA_Family_Child, data->GUI.MN_PROJECT = MenuObject, MUIA_Menu_Title, tr(MSG_MA_Project),
-        MUIA_Family_Child, Menuitem(tr(MSG_PROJECT_MABOUT), "?", TRUE, FALSE, MMEN_ABOUT),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_AboutMUI), NULL, TRUE, FALSE, MMEN_ABOUTMUI),
-        MUIA_Family_Child, data->GUI.MI_UPDATECHECK = Menuitem(tr(MSG_MA_UPDATECHECK), NULL, TRUE, FALSE, MMEN_VERSION),
-        MUIA_Family_Child, data->GUI.MI_ERRORS = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_LastErrors), MUIA_Menuitem_Enabled, G->ER_NumErr > 0, MUIA_UserData, MMEN_ERRORS, End,
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_Restart), NULL, TRUE, FALSE, MMEN_LOGIN),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_HIDE), "H", TRUE, FALSE, MMEN_HIDE),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_QUIT), "Q", TRUE, FALSE, MMEN_QUIT),
+      MenuChild, data->GUI.MN_PROJECT = MenuObject,
+        MUIA_Menu_Title, tr(MSG_MA_Project),
+        MenuChild, Menuitem(tr(MSG_PROJECT_MABOUT), "?", TRUE, FALSE, MMEN_ABOUT),
+        MenuChild, Menuitem(tr(MSG_MA_AboutMUI), NULL, TRUE, FALSE, MMEN_ABOUTMUI),
+        MenuChild, data->GUI.MI_UPDATECHECK = Menuitem(tr(MSG_MA_UPDATECHECK), NULL, TRUE, FALSE, MMEN_VERSION),
+        MenuChild, data->GUI.MI_ERRORS = Menuitem(tr(MSG_MA_LastErrors), NULL, G->ER_NumErr > 0, FALSE, MMEN_ERRORS),
+        MenuChild, MenuBarLabel,
+        MenuChild, Menuitem(tr(MSG_MA_Restart), NULL, TRUE, FALSE, MMEN_LOGIN),
+        MenuChild, Menuitem(tr(MSG_MA_HIDE), "H", TRUE, FALSE, MMEN_HIDE),
+        MenuChild, Menuitem(tr(MSG_MA_QUIT), "Q", TRUE, FALSE, MMEN_QUIT),
       End,
-      MenuChild, data->GUI.MI_NAVIG = MenuObject, MUIA_Menu_Title, tr(MSG_MA_NAVIGATION),
+      MenuChild, data->GUI.MI_NAVIG = MenuObject,
+        MUIA_Menu_Title, tr(MSG_MA_NAVIGATION),
         MenuChild, data->GUI.MI_NEXTTHREAD = Menuitem(tr(MSG_MA_MNEXTTH), "alt right", TRUE, TRUE, MMEN_NEXTTH),
         MenuChild, data->GUI.MI_PREVTHREAD = Menuitem(tr(MSG_MA_MPREVTH), "alt left", TRUE, TRUE, MMEN_PREVTH),
       End,
-      MUIA_Family_Child, data->GUI.MN_FOLDER = MenuObject, MUIA_Menu_Title, tr(MSG_Folder),
-        MUIA_Family_Child, Menuitem(tr(MSG_FOLDER_NEWFOLDER), NULL, TRUE, FALSE, MMEN_NEWF),
-        MUIA_Family_Child, Menuitem(tr(MSG_FOLDER_NEWFOLDERGROUP), NULL, TRUE, FALSE, MMEN_NEWFG),
-        MUIA_Family_Child, Menuitem(tr(MSG_FOLDER_EDIT), NULL, TRUE, FALSE, MMEN_EDITF),
-        MUIA_Family_Child, Menuitem(tr(MSG_FOLDER_DELETE), NULL, TRUE, FALSE, MMEN_DELETEF),
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SortOrder),
-          MUIA_Family_Child, Menuitem(tr(MSG_MA_OSave), NULL, TRUE, FALSE, MMEN_OSAVE),
-          MUIA_Family_Child, Menuitem(tr(MSG_MA_Reset), NULL, TRUE, FALSE, MMEN_ORESET),
+      MenuChild, data->GUI.MN_FOLDER = MenuObject,
+        MUIA_Menu_Title, tr(MSG_Folder),
+        MenuChild, Menuitem(tr(MSG_FOLDER_NEWFOLDER), NULL, TRUE, FALSE, MMEN_NEWF),
+        MenuChild, Menuitem(tr(MSG_FOLDER_NEWFOLDERGROUP), NULL, TRUE, FALSE, MMEN_NEWFG),
+        MenuChild, Menuitem(tr(MSG_FOLDER_EDIT), NULL, TRUE, FALSE, MMEN_EDITF),
+        MenuChild, Menuitem(tr(MSG_FOLDER_DELETE), NULL, TRUE, FALSE, MMEN_DELETEF),
+        MenuChild, MenuitemObject,
+          MUIA_Menuitem_Title, tr(MSG_MA_SortOrder),
+          MenuChild, Menuitem(tr(MSG_MA_OSave), NULL, TRUE, FALSE, MMEN_OSAVE),
+          MenuChild, Menuitem(tr(MSG_MA_Reset), NULL, TRUE, FALSE, MMEN_ORESET),
         End,
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_MSEARCH), "F", TRUE, FALSE, MMEN_SEARCH),
-        MUIA_Family_Child, data->GUI.MI_FILTER = Menuitem(tr(MSG_MA_MFILTER), "I", TRUE, FALSE, MMEN_FILTER),
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, data->GUI.MI_DELDEL = Menuitem(tr(MSG_MA_REMOVEDELETED), "K", TRUE, FALSE, MMEN_DELDEL),
-        MUIA_Family_Child, data->GUI.MI_UPDINDEX = Menuitem(tr(MSG_MA_UPDATEINDEX), NULL, TRUE, FALSE, MMEN_INDEX),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_FlushIndices), NULL, TRUE, FALSE, MMEN_FLUSH),
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, data->GUI.MI_IMPORT = Menuitem(tr(MSG_FOLDER_IMPORT), NULL, TRUE, FALSE, MMEN_IMPORT),
-        MUIA_Family_Child, data->GUI.MI_EXPORT = Menuitem(tr(MSG_FOLDER_EXPORT), NULL, TRUE, FALSE, MMEN_EXPORT),
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, data->GUI.MI_SENDALL = Menuitem(tr(MSG_MA_MSENDALL), "S", TRUE, FALSE, MMEN_SENDMAIL),
-        MUIA_Family_Child, data->GUI.MI_EXCHANGE = Menuitem(tr(MSG_MA_MEXCHANGE), "L", TRUE, FALSE, MMEN_EXMAIL),
-        MUIA_Family_Child, data->GUI.MI_GETMAIL = Menuitem(tr(MSG_MA_MGETMAIL), "G", TRUE, FALSE, MMEN_GETMAIL),
+        MenuChild, MenuBarLabel,
+        MenuChild, Menuitem(tr(MSG_MA_MSEARCH), "F", TRUE, FALSE, MMEN_SEARCH),
+        MenuChild, data->GUI.MI_FILTER = Menuitem(tr(MSG_MA_MFILTER), "I", TRUE, FALSE, MMEN_FILTER),
+        MenuChild, MenuBarLabel,
+        MenuChild, data->GUI.MI_DELDEL = Menuitem(tr(MSG_MA_REMOVEDELETED), "K", TRUE, FALSE, MMEN_DELDEL),
+        MenuChild, data->GUI.MI_UPDINDEX = Menuitem(tr(MSG_MA_UPDATEINDEX), NULL, TRUE, FALSE, MMEN_INDEX),
+        MenuChild, Menuitem(tr(MSG_MA_FlushIndices), NULL, TRUE, FALSE, MMEN_FLUSH),
+        MenuChild, MenuBarLabel,
+        MenuChild, data->GUI.MI_IMPORT = Menuitem(tr(MSG_FOLDER_IMPORT), NULL, TRUE, FALSE, MMEN_IMPORT),
+        MenuChild, data->GUI.MI_EXPORT = Menuitem(tr(MSG_FOLDER_EXPORT), NULL, TRUE, FALSE, MMEN_EXPORT),
+        MenuChild, MenuBarLabel,
+        MenuChild, data->GUI.MI_SENDALL = Menuitem(tr(MSG_MA_MSENDALL), "S", TRUE, FALSE, MMEN_SENDMAIL),
+        MenuChild, data->GUI.MI_EXCHANGE = Menuitem(tr(MSG_MA_MEXCHANGE), "L", TRUE, FALSE, MMEN_EXMAIL),
+        MenuChild, data->GUI.MI_GETMAIL = Menuitem(tr(MSG_MA_MGETMAIL), "G", TRUE, FALSE, MMEN_GETMAIL),
       End,
-      MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_Message),
-        MUIA_Family_Child, data->GUI.MI_READ = Menuitem(tr(MSG_MA_MREAD), "D", TRUE, FALSE, MMEN_READ),
-        MUIA_Family_Child, data->GUI.MI_EDIT = Menuitem(tr(MSG_MA_MEDITASNEW), "E", TRUE, FALSE, MMEN_EDIT),
-        MUIA_Family_Child, data->GUI.MI_MOVE = Menuitem(tr(MSG_MA_MMOVE), "M", TRUE, FALSE, MMEN_MOVE),
-        MUIA_Family_Child, data->GUI.MI_COPY = Menuitem(tr(MSG_MA_MCOPY), "Y", TRUE, FALSE, MMEN_COPY),
-        MUIA_Family_Child, data->GUI.MI_DELETE = Menuitem(tr(MSG_MA_MDelete), "Del", TRUE, TRUE, MMEN_DELETE),
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, data->GUI.MI_PRINT = Menuitem(tr(MSG_MA_MPRINT), "P", TRUE, FALSE, MMEN_PRINT),
-        MUIA_Family_Child, data->GUI.MI_SAVE = Menuitem(tr(MSG_MA_MSAVE), "U", TRUE, FALSE, MMEN_SAVE),
-        MUIA_Family_Child, data->GUI.MI_ATTACH = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Attachments),
-          MUIA_Family_Child, data->GUI.MI_SAVEATT = Menuitem(tr(MSG_MA_MSAVEATT), "T", TRUE, FALSE, MMEN_DETACH),
-          MUIA_Family_Child, data->GUI.MI_REMATT = Menuitem(tr(MSG_MA_MDELETEATT), "O", TRUE, FALSE, MMEN_DELETEATT),
+      MenuChild, MenuObject,
+        MUIA_Menu_Title, tr(MSG_Message),
+        MenuChild, data->GUI.MI_READ = Menuitem(tr(MSG_MA_MREAD), "D", TRUE, FALSE, MMEN_READ),
+        MenuChild, data->GUI.MI_EDIT = Menuitem(tr(MSG_MA_MEDITASNEW), "E", TRUE, FALSE, MMEN_EDIT),
+        MenuChild, data->GUI.MI_MOVE = Menuitem(tr(MSG_MA_MMOVE), "M", TRUE, FALSE, MMEN_MOVE),
+        MenuChild, data->GUI.MI_COPY = Menuitem(tr(MSG_MA_MCOPY), "Y", TRUE, FALSE, MMEN_COPY),
+        MenuChild, data->GUI.MI_DELETE = Menuitem(tr(MSG_MA_MDelete), "Del", TRUE, TRUE, MMEN_DELETE),
+        MenuChild, MenuBarLabel,
+        MenuChild, data->GUI.MI_PRINT = Menuitem(tr(MSG_MA_MPRINT), "P", TRUE, FALSE, MMEN_PRINT),
+        MenuChild, data->GUI.MI_SAVE = Menuitem(tr(MSG_MA_MSAVE), "U", TRUE, FALSE, MMEN_SAVE),
+        MenuChild, data->GUI.MI_ATTACH = MenuitemObject,
+          MUIA_Menuitem_Title, tr(MSG_Attachments),
+          MenuChild, data->GUI.MI_SAVEATT = Menuitem(tr(MSG_MA_MSAVEATT), "T", TRUE, FALSE, MMEN_DETACH),
+          MenuChild, data->GUI.MI_REMATT = Menuitem(tr(MSG_MA_MDELETEATT), "O", TRUE, FALSE, MMEN_DELETEATT),
         End,
-        MUIA_Family_Child, data->GUI.MI_EXPMSG = Menuitem(tr(MSG_MESSAGE_EXPORT), NULL, TRUE, FALSE, MMEN_EXPMSG),
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, data->GUI.MI_NEW = Menuitem(tr(MSG_MA_MNEW), "N", TRUE, FALSE, MMEN_NEW),
-        MUIA_Family_Child, data->GUI.MI_REPLY = Menuitem(tr(MSG_MA_MREPLY), "R", TRUE, FALSE, MMEN_REPLY),
-        MUIA_Family_Child, data->GUI.MI_FORWARD = Menuitem(tr(MSG_MA_MFORWARD), "W", TRUE, FALSE, MMEN_FORWARD),
-        MUIA_Family_Child, data->GUI.MI_BOUNCE = Menuitem(tr(MSG_MA_MBOUNCE), NULL, TRUE, FALSE, MMEN_BOUNCE),
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, data->GUI.MI_GETADDRESS = Menuitem(tr(MSG_MA_MSAVEADDRESS), "J", TRUE, FALSE, MMEN_SAVEADDR),
-        MUIA_Family_Child, data->GUI.MI_SELECT = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_Select),
-          MUIA_Family_Child, Menuitem(tr(MSG_MA_SELECTALL), "+", TRUE, FALSE, MMEN_SELALL),
-          MUIA_Family_Child, Menuitem(tr(MSG_MA_SELECTNONE), "-", TRUE, FALSE, MMEN_SELNONE),
-          MUIA_Family_Child, Menuitem(tr(MSG_MA_SELECTTOGGLE), "=", TRUE, FALSE, MMEN_SELTOGG),
+        MenuChild, data->GUI.MI_EXPMSG = Menuitem(tr(MSG_MESSAGE_EXPORT), NULL, TRUE, FALSE, MMEN_EXPMSG),
+        MenuChild, MenuBarLabel,
+        MenuChild, data->GUI.MI_NEW = Menuitem(tr(MSG_MA_MNEW), "N", TRUE, FALSE, MMEN_NEW),
+        MenuChild, data->GUI.MI_REPLY = Menuitem(tr(MSG_MA_MREPLY), "R", TRUE, FALSE, MMEN_REPLY),
+        MenuChild, data->GUI.MI_FORWARD = MenuitemObject,
+          MUIA_Menuitem_Title, tr(MSG_MA_MFORWARD),
+          MenuChild, data->GUI.MI_FORWARD_ATTACH = Menuitem(tr(MSG_MA_MFORWARD_ATTACH), NULL, TRUE, FALSE, MMEN_FORWARD_ATTACH),
+          MenuChild, data->GUI.MI_FORWARD_INLINE = Menuitem(tr(MSG_MA_MFORWARD_INLINE), NULL, TRUE, FALSE, MMEN_FORWARD_INLINE),
         End,
-        MUIA_Family_Child, data->GUI.MI_STATUS = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SetStatus),
-          MUIA_Family_Child, data->GUI.MI_TOMARKED = Menuitem(tr(MSG_MA_TOMARKED), ",", TRUE, FALSE, MMEN_TOMARKED),
-          MUIA_Family_Child, data->GUI.MI_TOUNMARKED = Menuitem(tr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, MMEN_TOUNMARKED),
-          MUIA_Family_Child, data->GUI.MI_TOREAD = Menuitem(tr(MSG_MA_TOREAD), "]", TRUE, FALSE, MMEN_TOREAD),
-          MUIA_Family_Child, data->GUI.MI_TOUNREAD = Menuitem(tr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, MMEN_TOUNREAD),
-          MUIA_Family_Child, data->GUI.MI_TOHOLD = Menuitem(tr(MSG_MA_TOHOLD), "{", TRUE, FALSE, MMEN_TOHOLD),
-          MUIA_Family_Child, data->GUI.MI_TOQUEUED = Menuitem(tr(MSG_MA_TOQUEUED), "}", TRUE, FALSE, MMEN_TOQUEUED),
-          MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-          MUIA_Family_Child, data->GUI.MI_ALLTOREAD = Menuitem(tr(MSG_MA_ALLTOREAD), "#", TRUE, FALSE, MMEN_ALLTOREAD),
+        MenuChild, data->GUI.MI_BOUNCE = Menuitem(tr(MSG_MA_MBOUNCE), NULL, TRUE, FALSE, MMEN_BOUNCE),
+        MenuChild, MenuBarLabel,
+        MenuChild, data->GUI.MI_GETADDRESS = Menuitem(tr(MSG_MA_MSAVEADDRESS), "J", TRUE, FALSE, MMEN_SAVEADDR),
+        MenuChild, data->GUI.MI_SELECT = MenuitemObject,
+          MUIA_Menuitem_Title, tr(MSG_MA_Select),
+          MenuChild, Menuitem(tr(MSG_MA_SELECTALL), "+", TRUE, FALSE, MMEN_SELALL),
+          MenuChild, Menuitem(tr(MSG_MA_SELECTNONE), "-", TRUE, FALSE, MMEN_SELNONE),
+          MenuChild, Menuitem(tr(MSG_MA_SELECTTOGGLE), "=", TRUE, FALSE, MMEN_SELTOGG),
         End,
-        MUIA_Family_Child, data->GUI.MI_CHSUBJ = Menuitem(tr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, MMEN_CHSUBJ),
-        MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MUIA_Family_Child, data->GUI.MI_SEND = Menuitem(tr(MSG_MA_MSend), NULL, TRUE, FALSE, MMEN_SEND),
+        MenuChild, data->GUI.MI_STATUS = MenuitemObject,
+          MUIA_Menuitem_Title, tr(MSG_MA_SetStatus),
+          MenuChild, data->GUI.MI_TOMARKED = Menuitem(tr(MSG_MA_TOMARKED), ",", TRUE, FALSE, MMEN_TOMARKED),
+          MenuChild, data->GUI.MI_TOUNMARKED = Menuitem(tr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, MMEN_TOUNMARKED),
+          MenuChild, data->GUI.MI_TOREAD = Menuitem(tr(MSG_MA_TOREAD), "]", TRUE, FALSE, MMEN_TOREAD),
+          MenuChild, data->GUI.MI_TOUNREAD = Menuitem(tr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, MMEN_TOUNREAD),
+          MenuChild, data->GUI.MI_TOHOLD = Menuitem(tr(MSG_MA_TOHOLD), "{", TRUE, FALSE, MMEN_TOHOLD),
+          MenuChild, data->GUI.MI_TOQUEUED = Menuitem(tr(MSG_MA_TOQUEUED), "}", TRUE, FALSE, MMEN_TOQUEUED),
+          MenuChild, MenuBarLabel,
+          MenuChild, data->GUI.MI_ALLTOREAD = Menuitem(tr(MSG_MA_ALLTOREAD), "#", TRUE, FALSE, MMEN_ALLTOREAD),
+        End,
+        MenuChild, data->GUI.MI_CHSUBJ = Menuitem(tr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, MMEN_CHSUBJ),
+        MenuChild, MenuBarLabel,
+        MenuChild, data->GUI.MI_SEND = Menuitem(tr(MSG_MA_MSend), NULL, TRUE, FALSE, MMEN_SEND),
       End,
-      MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Settings),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_MADDRESSBOOK), "B", TRUE, FALSE, MMEN_ABOOK),
-        MUIA_Family_Child, Menuitem(tr(MSG_MA_MCONFIG), "*", TRUE, FALSE, MMEN_CONFIG),
-        MUIA_Family_Child, Menuitem(tr(MSG_SETTINGS_USERS), NULL, TRUE, FALSE, MMEN_USER),
-        MUIA_Family_Child, Menuitem(tr(MSG_SETTINGS_MUI), NULL, TRUE, FALSE, MMEN_MUI),
+      MenuChild, MenuObject,
+        MUIA_Menu_Title, tr(MSG_MA_Settings),
+        MenuChild, Menuitem(tr(MSG_MA_MADDRESSBOOK), "B", TRUE, FALSE, MMEN_ABOOK),
+        MenuChild, Menuitem(tr(MSG_MA_MCONFIG), "*", TRUE, FALSE, MMEN_CONFIG),
+        MenuChild, Menuitem(tr(MSG_SETTINGS_USERS), NULL, TRUE, FALSE, MMEN_USER),
+        MenuChild, Menuitem(tr(MSG_SETTINGS_MUI), NULL, TRUE, FALSE, MMEN_MUI),
       End,
     End;
 
@@ -4367,75 +4414,76 @@ struct MA_ClassData *MA_New(void)
       set(data->GUI.PG_MAILLIST, MUIA_NList_KeyLeftFocus, data->GUI.NL_FOLDERS);
       set(data->GUI.NL_FOLDERS, MUIA_NList_KeyRightFocus, data->GUI.PG_MAILLIST);
 
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUT,     MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ShowAboutWindowHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_VERSION,   MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_CheckVersionHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ERRORS,    MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ShowErrorsHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_LOGIN,     MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_RESTART);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HIDE,      MUIV_Notify_Application, 3, MUIM_Set,                  MUIA_Application_Iconified, TRUE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_QUIT,      MUIV_Notify_Application, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_UNDO, MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_UNDO);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_REDO, MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_REDO);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_CUT,  MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_CUT);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_COPY, MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_COPY);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_PASTE,MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_PASTE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_DELETE,MUIV_Notify_Application,3, MUIM_CallHook,             &MA_EditActionHook, EA_DELETE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SALL, MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_SELECTALL);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SNONE,MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_SELECTNONE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWF,      MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_NewFolderHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWFG,     MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_NewFolderGroupHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDITF,     MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_EditFolderHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETEF,   MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_DeleteFolderHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_OSAVE,     MUIV_Notify_Application, 3, MUIM_CallHook,             &FO_SetOrderHook, SO_SAVE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ORESET,    MUIV_Notify_Application, 3, MUIM_CallHook,             &FO_SetOrderHook, SO_RESET);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELALL,    data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELNONE,   data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELTOGG,   data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SEARCH,    MUIV_Notify_Application, 2, MUIM_CallHook,             &FI_OpenHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FILTER,    MUIV_Notify_Application, 4, MUIM_CallHook,             &ApplyFiltersHook, APPLY_USER, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CLASSIFY,  MUIV_Notify_Application, 4, MUIM_CallHook,             &ApplyFiltersHook, APPLY_SPAM, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELDEL,    MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_DeleteDeletedHook, FALSE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELSPAM,   MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_DeleteSpamHook, FALSE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_INDEX,     MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_RescanIndexHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FLUSH,     MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_FlushIndexHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOOK,     MUIV_Notify_Application, 3, MUIM_CallHook,             &AB_OpenHook, ABM_EDIT);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXPORT,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ExportMessagesHook, TRUE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_IMPORT,    MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ImportMessagesHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_GETMAIL,   MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, POP_USER, -1, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SENDMAIL,  MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ALL_USER);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXMAIL,    MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, POP_USER, -1, IEQUALIFIER_LSHIFT);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_READ,      MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ReadMessageHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT,      MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_EDIT, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MOVE,      MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_MoveMessageHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_COPY,      MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_CopyMessageHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETE,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_DeleteMessageHook, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_PRINT,     MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SavePrintHook, TRUE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SAVE,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SavePrintHook, FALSE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DETACH,    MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_SaveAttachHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETEATT, MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_RemoveAttachHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXPMSG,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ExportMessagesHook, FALSE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEW,       MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_NEW, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_REPLY,     MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_REPLY, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FORWARD,   MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_FORWARD, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_BOUNCE,    MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_BOUNCE, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SAVEADDR,  MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_GetAddressHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CHSUBJ,    MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ChangeSubjectHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SEND,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ACTIVE_USER);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOUNREAD,  MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_NEW|SFLAG_READ);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOREAD,    MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_READ,              SFLAG_NEW);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOHOLD,    MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_HOLD|SFLAG_READ,   SFLAG_QUEUED|SFLAG_ERROR);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOQUEUED,  MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOMARKED,  MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_MARKED, SFLAG_NONE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOUNMARKED,MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_NONE,   SFLAG_MARKED);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ALLTOREAD, MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOSPAM,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ClassifyMessageHook, BC_SPAM);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOHAM,     MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ClassifyMessageHook, BC_HAM);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CONFIG,    MUIV_Notify_Application, 2, MUIM_CallHook,             &CO_OpenHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_USER,      MUIV_Notify_Application, 2, MUIM_CallHook,             &US_OpenHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MUI,       MUIV_Notify_Application, 3, MUIM_Application_OpenConfigWindow, MUIF_NONE, NULL);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUTMUI,  MUIV_Notify_Application, 2, MUIM_Application_AboutMUI, data->GUI.WI);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SCRIPT,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_CallRexxHook, -1);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_PREVTH,    MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, -1);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEXTTH,    MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, +1);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUT,          MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ShowAboutWindowHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_VERSION,        MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_CheckVersionHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ERRORS,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ShowErrorsHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_LOGIN,          MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_RESTART);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HIDE,           MUIV_Notify_Application, 3, MUIM_Set,                  MUIA_Application_Iconified, TRUE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_QUIT,           MUIV_Notify_Application, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_UNDO,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_UNDO);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_REDO,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_REDO);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_CUT,       MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_CUT);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_COPY,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_COPY);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_PASTE,     MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_PASTE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_DELETE,    MUIV_Notify_Application,3, MUIM_CallHook,             &MA_EditActionHook, EA_DELETE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SALL,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_SELECTALL);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SNONE,     MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_SELECTNONE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWF,           MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_NewFolderHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWFG,          MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_NewFolderGroupHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDITF,          MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_EditFolderHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETEF,        MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_DeleteFolderHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_OSAVE,          MUIV_Notify_Application, 3, MUIM_CallHook,             &FO_SetOrderHook, SO_SAVE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ORESET,         MUIV_Notify_Application, 3, MUIM_CallHook,             &FO_SetOrderHook, SO_RESET);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELALL,         data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELNONE,        data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELTOGG,        data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SEARCH,         MUIV_Notify_Application, 2, MUIM_CallHook,             &FI_OpenHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FILTER,         MUIV_Notify_Application, 4, MUIM_CallHook,             &ApplyFiltersHook, APPLY_USER, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CLASSIFY,       MUIV_Notify_Application, 4, MUIM_CallHook,             &ApplyFiltersHook, APPLY_SPAM, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELDEL,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_DeleteDeletedHook, FALSE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELSPAM,        MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_DeleteSpamHook, FALSE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_INDEX,          MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_RescanIndexHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FLUSH,          MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_FlushIndexHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOOK,          MUIV_Notify_Application, 3, MUIM_CallHook,             &AB_OpenHook, ABM_EDIT);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXPORT,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ExportMessagesHook, TRUE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_IMPORT,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ImportMessagesHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_GETMAIL,        MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, POP_USER, -1, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SENDMAIL,       MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ALL_USER);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXMAIL,         MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, POP_USER, -1, IEQUALIFIER_LSHIFT);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_READ,           MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ReadMessageHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT,           MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_EDIT, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MOVE,           MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_MoveMessageHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_COPY,           MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_CopyMessageHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETE,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_DeleteMessageHook, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_PRINT,          MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SavePrintHook, TRUE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SAVE,           MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SavePrintHook, FALSE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DETACH,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_SaveAttachHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETEATT,      MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_RemoveAttachHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXPMSG,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ExportMessagesHook, FALSE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEW,            MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_NEW, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_REPLY,          MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_REPLY, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FORWARD_ATTACH, MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_FORWARD_ATTACH, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FORWARD_INLINE, MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_FORWARD_INLINE, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_BOUNCE,         MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_BOUNCE, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SAVEADDR,       MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_GetAddressHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CHSUBJ,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ChangeSubjectHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SEND,           MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ACTIVE_USER);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOUNREAD,       MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_NEW|SFLAG_READ);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOREAD,         MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_READ,              SFLAG_NEW);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOHOLD,         MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_HOLD|SFLAG_READ,   SFLAG_QUEUED|SFLAG_ERROR);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOQUEUED,       MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOMARKED,       MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_MARKED, SFLAG_NONE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOUNMARKED,     MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_NONE,   SFLAG_MARKED);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ALLTOREAD,      MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOSPAM,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ClassifyMessageHook, BC_SPAM);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOHAM,          MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ClassifyMessageHook, BC_HAM);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CONFIG,         MUIV_Notify_Application, 2, MUIM_CallHook,             &CO_OpenHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_USER,           MUIV_Notify_Application, 2, MUIM_CallHook,             &US_OpenHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MUI,            MUIV_Notify_Application, 3, MUIM_Application_OpenConfigWindow, MUIF_NONE, NULL);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUTMUI,       MUIV_Notify_Application, 2, MUIM_Application_AboutMUI, data->GUI.WI);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SCRIPT,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_CallRexxHook, -1);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_PREVTH,         MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, -1);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEXTTH,         MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, +1);
 
       for(i=0; i < 10; i++)
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MACRO+i, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_CallRexxHook, i);
@@ -4456,7 +4504,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_InputEvent,    "-repeat -capslock alt left",   MUIV_Notify_Application,  3, MUIM_CallHook,             &FollowThreadHook, -1);
       DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_InputEvent,    "-repeat -capslock alt right",  MUIV_Notify_Application,  3, MUIM_CallHook,             &FollowThreadHook, +1);
 
-      // Define Notifies for ShortcutFolderKeys
+      // define notifies for ShortcutFolderKeys
       for(i = 0; i < 10; i++)
       {
         char key[] = "-repeat 0";
@@ -4464,6 +4512,12 @@ struct MA_ClassData *MA_New(void)
         key[8] = '0' + i;
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_InputEvent, key, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_FolderKeyHook, i);
       }
+
+      // define shortcut for "Forward" item
+      if(C->ForwardMode == FWM_ATTACH)
+        set(data->GUI.MI_FORWARD_ATTACH, MUIA_Menuitem_Shortcut, "W");
+      else if(C->ForwardMode == FWM_INLINE)
+        set(data->GUI.MI_FORWARD_INLINE, MUIA_Menuitem_Shortcut, "W");
     }
   }
   else
@@ -4476,5 +4530,5 @@ struct MA_ClassData *MA_New(void)
   RETURN(data);
   return data;
 }
-///
 
+///

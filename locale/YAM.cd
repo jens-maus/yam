@@ -596,29 +596,11 @@ Select
 MSG_MA_FlushIndices (219//)
 Flush indices
 ;
-MSG_MA_MEdit (226//)
-Edit...
-;
 MSG_MA_MDelete (227//)
 Delete
 ;
-MSG_MA_MMove (228//)
-Move...
-;
-MSG_MA_MCopy (229//)
-Copy...
-;
 MSG_MA_Save (230//)
 Save...
-;
-MSG_MA_MReply (232//)
-Reply...
-;
-MSG_MA_MForward (233//)
-Forward...
-;
-MSG_MA_MBounce (234//)
-Bounce...
 ;
 MSG_MA_MGetAddress (235//)
 Save address...
@@ -6951,4 +6933,10 @@ How do you want to proceed?
 ;
 MSG_OPEN_WRITEWINDOWS_GAD (2155//)
 *_Save now|_Quit without saving|_Cancel
+;
+MSG_MA_MFORWARD_ATTACH (2156//)
+as attachments
+;
+MSG_MA_MFORWARD_INLINE (2157//)
+inlined
 ;

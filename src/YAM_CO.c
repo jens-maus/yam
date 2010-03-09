@@ -110,6 +110,7 @@ static void CO_NewPrefsFile(char *fname)
 
   set(G->CO->GUI.WI, MUIA_Window_Title, wtitle);
 }
+
 ///
 
 /**** Filters ****/
@@ -175,12 +176,12 @@ HOOKPROTONHNONP(RemoveLastRule, void)
 
   // if we got an active entry lets remove it from the GUI List
   // and also from the filter's rule list
-  if(filter)
+  if(filter != NULL)
   {
     // lets remove the rule at the end of our ruleList
     struct RuleNode *rule = (struct RuleNode *)RemTail((struct List *)&filter->ruleList);
 
-    if(rule)
+    if(rule != NULL)
     {
       struct List *childList;
 
@@ -192,14 +193,14 @@ HOOKPROTONHNONP(RemoveLastRule, void)
       // Remove the GUI elements as well
       if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
       {
-        Object *cstate = (Object *)childList->lh_Head;
+        Object *cstate = (Object *)GetHead(childList);
         Object *child;
         Object *lastChild = NULL;
 
-        while((child = NextObject(&cstate)))
+        while((child = NextObject(&cstate)) != NULL)
           lastChild = child;
 
-        if(lastChild)
+        if(lastChild != NULL)
         {
           // remove the searchGroup
           DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange);
@@ -260,7 +261,7 @@ void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
   // we have to find out how many rules the filter has
   if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)) != NULL)
   {
-    Object *cstate = (Object *)childList->lh_Head;
+    Object *cstate = (Object *)GetHead(childList);
     Object *child;
 
     while((child = NextObject(&cstate)) != NULL)
@@ -299,10 +300,8 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
 
   // if we got an active entry lets set all other GUI elements from the
   // values of this filter
-  if(filter)
+  if(filter != NULL)
   {
-    struct List *childList;
-
     nnset(gui->ST_RNAME,      MUIA_String_Contents,   filter->name);
     nnset(gui->CH_REMOTE,     MUIA_Selected,          filter->remote);
     nnset(gui->CH_APPLYNEW,   MUIA_Selected,          filter->applyToNew);
@@ -329,14 +328,16 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
     {
       if(DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange))
       {
-        if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
+        struct List *childList;
+
+        if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)) != NULL)
         {
           int i;
           struct Node *curNode;
-          Object *cstate = (Object *)childList->lh_Head;
+          Object *cstate = (Object *)GetHead(childList);
           Object *child;
 
-          while((child = NextObject(&cstate)))
+          while((child = NextObject(&cstate)) != NULL)
           {
             // remove that child
             DoMethod(gui->GR_SGROUP, OM_REMMEMBER, child);
@@ -425,7 +426,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     // make sure to update all rule settings
     if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)) != NULL)
     {
-      Object *cstate = (Object *)childList->lh_Head;
+      Object *cstate = (Object *)GetHead(childList);
       Object *child;
       int i=0;
 
@@ -461,12 +462,12 @@ HOOKPROTONHNO(CO_RemoteToggleFunc, void, int *arg)
   BOOL rm = *arg;
   struct List *childList = (struct List *)xget(G->CO->GUI.GR_SGROUP, MUIA_Group_ChildList);
 
-  if(childList)
+  if(childList != NULL)
   {
-    Object *cstate = (Object *)childList->lh_Head;
+    Object *cstate = (Object *)GetHead(childList);
     Object *child;
 
-    while((child = NextObject(&cstate)))
+    while((child = NextObject(&cstate)) != NULL)
     {
       set(child, MUIA_SearchControlGroup_RemoteFilterMode, rm);
     }
@@ -475,6 +476,7 @@ HOOKPROTONHNO(CO_RemoteToggleFunc, void, int *arg)
   SetActiveFilterData();
 }
 MakeHook(CO_RemoteToggleHook,CO_RemoteToggleFunc);
+
 ///
 
 /**** POP3 servers ****/
@@ -488,7 +490,7 @@ struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
 
   if((pop3 = (struct POP3 *)calloc(1, sizeof(struct POP3))) != NULL)
   {
-    if(first)
+    if(first == TRUE)
     {
       char *p = strchr(co->EmailAddress, '@');
 
@@ -651,6 +653,7 @@ HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
   LEAVE();
 }
 MakeHook(CO_GetDefaultPOPHook,CO_GetDefaultPOPFunc);
+
 ///
 
 /**** ARexx Hooks ****/
@@ -667,7 +670,7 @@ BOOL CO_IsValid(void)
     valid = FALSE;
 
     if(G->CO != NULL)
-      set(G->CO->GUI.WI,MUIA_Window_Open,TRUE);
+      set(G->CO->GUI.WI, MUIA_Window_Open,TRUE);
     else
       DoMethod(G->App, MUIM_CallHook, &CO_OpenHook);
 
@@ -693,13 +696,13 @@ static int CO_DetectPGP(const struct Config *co)
   // 'Please insert volume' kind warnings
   oldWindowPtr = SetProcWindow((APTR)-1);
 
-  if(FileExists(AddPath(fname, co->PGPCmdPath, "pgpe", sizeof(fname))))
+  if(FileExists(AddPath(fname, co->PGPCmdPath, "pgpe", sizeof(fname))) == TRUE)
   {
     version = 5;
 
     D(DBF_STARTUP, "found PGP version 5 installed in '%s'", co->PGPCmdPath);
   }
-  else if(FileExists(AddPath(fname, co->PGPCmdPath, "pgp", sizeof(fname))))
+  else if(FileExists(AddPath(fname, co->PGPCmdPath, "pgp", sizeof(fname))) == TRUE)
   {
     version = 2;
 
@@ -760,11 +763,14 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_FirstSteps || page == cp_AllPages)
   {
-    *co->RealName = *co->EmailAddress = 0;
+    co->RealName[0] = '\0';
+    co->EmailAddress[0] = '\0';
 
     // If Locale is present, don't use the timezone from the config
-    if(G->Locale) co->TimeZone = -G->Locale->loc_GMTOffset;
-    else          co->TimeZone = 0;
+    if(G->Locale != NULL)
+      co->TimeZone = -G->Locale->loc_GMTOffset;
+    else
+      co->TimeZone = 0;
 
      co->DaylightSaving = FALSE;
   }
@@ -782,14 +788,14 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
       }
     }
 
-    *co->SMTP_Server = '\0';
-    *co->SMTP_Domain = '\0';
+    co->SMTP_Server[0] = '\0';
+    co->SMTP_Domain[0] = '\0';
     co->SMTP_Port = 25;
     co->Allow8bit = FALSE;
     co->SMTP_SecureMethod = SMTPSEC_NONE;
     co->Use_SMTP_AUTH = FALSE;
-    *co->SMTP_AUTH_User = '\0';
-    *co->SMTP_AUTH_Pass = '\0';
+    co->SMTP_AUTH_User[0] = '\0';
+    co->SMTP_AUTH_Pass[0] = '\0';
     co->SMTP_AUTH_Method = SMTPAUTH_AUTO;
     co->MailExchangeOrder = MEO_GET_FIRST;
     if((co->P3[0] = CO_NewPOP3(co, TRUE)) != NULL)
@@ -806,7 +812,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->WarnSize = 1024; // 1MB warn size
     co->CheckMailDelay = 0;
     co->NotifyType = 1;
-    *co->NotifySound = *co->NotifyCommand = 0;
+    co->NotifySound[0] = '\0';
+    co->NotifyCommand[0] = '\0';
   }
 
   if(page == cp_Filters || page == cp_AllPages)
@@ -849,7 +856,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->MultipleReadWindows = FALSE;
     co->SigSepLine = SST_BAR;
     co->StatusChangeDelayOn = TRUE;
-    co->StatusChangeDelay   = 1000; // 1s=1000ms delay by default
+    co->StatusChangeDelay = 1000; // 1s=1000ms delay by default
     co->ConvertHTML = TRUE;
     co->MDNEnabled = TRUE;
     co->MDN_NoRecipient = MDN_ACTION_ASK;
@@ -863,9 +870,9 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_Write || page == cp_AllPages)
   {
-    *co->ReplyTo = '\0';
-    *co->Organization = '\0';
-    *co->ExtraHeaders = '\0';
+    co->ReplyTo[0] = '\0';
+    co->Organization[0] = '\0';
+    co->ExtraHeaders[0] = '\0';
     strlcpy(co->NewIntro, tr(MSG_CO_NewIntroDef), sizeof(co->NewIntro));
     strlcpy(co->Greetings, tr(MSG_CO_GreetingsDef), sizeof(co->Greetings));
     co->WarnSubject = TRUE;
@@ -981,8 +988,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
     for(i = 0; i < MAXRX; i++)
     {
-      *co->RX[i].Name = '\0';
-      *co->RX[i].Script = '\0';
+      co->RX[i].Name[0] = '\0';
+      co->RX[i].Script[0] = '\0';
       co->RX[i].IsAmigaDOS = co->RX[i].UseConsole = FALSE;
       co->RX[i].WaitTerm = TRUE;
     }
@@ -1412,76 +1419,76 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      CompareMimeTypeLists(&c1->mimeTypeList, &c2->mimeTypeList) &&
      CompareRxHooks((const struct RxHook *)c1->RX, (const struct RxHook *)c2->RX) &&
 
-     strcmp(c1->ColoredText.buf,    c2->ColoredText.buf) == 0 &&
-     strcmp(c1->Color1stLevel.buf,  c2->Color1stLevel.buf) == 0 &&
-     strcmp(c1->Color2ndLevel.buf,  c2->Color2ndLevel.buf) == 0 &&
-     strcmp(c1->Color3rdLevel.buf,  c2->Color3rdLevel.buf) == 0 &&
-     strcmp(c1->Color4thLevel.buf,  c2->Color4thLevel.buf) == 0 &&
-     strcmp(c1->ColorURL.buf,       c2->ColorURL.buf) == 0 &&
-     strcmp(c1->ColorSignature.buf, c2->ColorSignature.buf) == 0 &&
-     strcmp(c1->RealName,           c2->RealName) == 0 &&
-     strcmp(c1->EmailAddress,       c2->EmailAddress) == 0 &&
-     strcmp(c1->SMTP_Server,        c2->SMTP_Server) == 0 &&
-     strcmp(c1->SMTP_Domain,        c2->SMTP_Domain) == 0 &&
-     strcmp(c1->SMTP_AUTH_User,     c2->SMTP_AUTH_User) == 0 &&
-     strcmp(c1->SMTP_AUTH_Pass,     c2->SMTP_AUTH_Pass) == 0 &&
-     strcmp(c1->NotifySound,        c2->NotifySound) == 0 &&
-     strcmp(c1->NotifyCommand,      c2->NotifyCommand) == 0 &&
-     strcmp(c1->ShortHeaders,       c2->ShortHeaders) == 0 &&
-     strcmp(c1->ReplyTo,            c2->ReplyTo) == 0 &&
-     strcmp(c1->Organization,       c2->Organization) == 0 &&
-     strcmp(c1->ExtraHeaders,       c2->ExtraHeaders) == 0 &&
-     strcmp(c1->NewIntro,           c2->NewIntro) == 0 &&
-     strcmp(c1->Greetings,          c2->Greetings) == 0 &&
-     strcmp(c1->Editor,             c2->Editor) == 0 &&
-     strcmp(c1->ReplyHello,         c2->ReplyHello) == 0 &&
-     strcmp(c1->ReplyIntro,         c2->ReplyIntro) == 0 &&
-     strcmp(c1->ReplyBye,           c2->ReplyBye) == 0 &&
-     strcmp(c1->AltReplyHello,      c2->AltReplyHello) == 0 &&
-     strcmp(c1->AltReplyIntro,      c2->AltReplyIntro) == 0 &&
-     strcmp(c1->AltReplyBye,        c2->AltReplyBye) == 0 &&
-     strcmp(c1->AltReplyPattern,    c2->AltReplyPattern) == 0 &&
-     strcmp(c1->MLReplyHello,       c2->MLReplyHello) == 0 &&
-     strcmp(c1->MLReplyIntro,       c2->MLReplyIntro) == 0 &&
-     strcmp(c1->MLReplyBye,         c2->MLReplyBye) == 0 &&
-     strcmp(c1->ForwardIntro,       c2->ForwardIntro) == 0 &&
-     strcmp(c1->ForwardFinish,      c2->ForwardFinish) == 0 &&
-     strcmp(c1->TagsFile,           c2->TagsFile) == 0 &&
-     strcmp(c1->TagsSeparator,      c2->TagsSeparator) == 0 &&
-     strcmp(c1->PGPCmdPath,         c2->PGPCmdPath) == 0 &&
-     strcmp(c1->MyPGPID,            c2->MyPGPID) == 0 &&
-     strcmp(c1->PGPURL,             c2->PGPURL) == 0 &&
-     strcmp(c1->ReMailer,           c2->ReMailer) == 0 &&
-     strcmp(c1->RMCommands,         c2->RMCommands) == 0 &&
-     strcmp(c1->LogfilePath,        c2->LogfilePath) == 0 &&
-     strcmp(c1->DetachDir,          c2->DetachDir) == 0 &&
-     strcmp(c1->AttachDir,          c2->AttachDir) == 0 &&
-     strcmp(c1->GalleryDir,         c2->GalleryDir) == 0 &&
-     strcmp(c1->MyPictureURL,       c2->MyPictureURL) == 0 &&
-     strcmp(c1->NewAddrGroup,       c2->NewAddrGroup) == 0 &&
-     strcmp(c1->ProxyServer,        c2->ProxyServer) == 0 &&
-     strcmp(c1->TempDir,            c2->TempDir) == 0 &&
-     strcmp(c1->PackerCommand,      c2->PackerCommand) == 0 &&
-     strcmp(c1->XPKPack,            c2->XPKPack) == 0 &&
-     strcmp(c1->XPKPackEncrypt,     c2->XPKPackEncrypt) == 0 &&
-     strcmp(c1->SupportSite,        c2->SupportSite) == 0 &&
-     strcmp(c1->UpdateServer,       c2->UpdateServer) == 0 &&
-     strcmp(c1->DefaultReadCharset, c2->DefaultReadCharset) == 0 &&
-     strcmp(c1->DefaultWriteCharset,c2->DefaultWriteCharset) == 0 &&
-     strcmp(c1->IOCInterface,       c2->IOCInterface) == 0 &&
-     strcmp(c1->AppIconText,        c2->AppIconText) == 0 &&
-     strcmp(c1->InfoBarText,        c2->InfoBarText) == 0 &&
-     strcmp(c1->DefaultMimeViewer,  c2->DefaultMimeViewer) == 0 &&
-     strcmp(c1->StyleFGroupUnread,  c2->StyleFGroupUnread) == 0 &&
-     strcmp(c1->StyleFGroupRead,    c2->StyleFGroupRead) == 0 &&
-     strcmp(c1->StyleFolderUnread,  c2->StyleFolderUnread) == 0 &&
-     strcmp(c1->StyleFolderRead,    c2->StyleFolderRead) == 0 &&
-     strcmp(c1->StyleFolderNew,     c2->StyleFolderNew) == 0 &&
-     strcmp(c1->StyleMailUnread,    c2->StyleMailUnread) == 0 &&
-     strcmp(c1->StyleMailRead,      c2->StyleMailRead) == 0 &&
-     strcmp(c1->QuoteChar,          c2->QuoteChar) == 0 &&
-     strcmp(c1->AltQuoteChar,       c2->AltQuoteChar) == 0 &&
-     strcmp(c1->ThemeName,          c2->ThemeName) == 0)
+     strcmp(c1->ColoredText.buf,     c2->ColoredText.buf) == 0 &&
+     strcmp(c1->Color1stLevel.buf,   c2->Color1stLevel.buf) == 0 &&
+     strcmp(c1->Color2ndLevel.buf,   c2->Color2ndLevel.buf) == 0 &&
+     strcmp(c1->Color3rdLevel.buf,   c2->Color3rdLevel.buf) == 0 &&
+     strcmp(c1->Color4thLevel.buf,   c2->Color4thLevel.buf) == 0 &&
+     strcmp(c1->ColorURL.buf,        c2->ColorURL.buf) == 0 &&
+     strcmp(c1->ColorSignature.buf,  c2->ColorSignature.buf) == 0 &&
+     strcmp(c1->RealName,            c2->RealName) == 0 &&
+     strcmp(c1->EmailAddress,        c2->EmailAddress) == 0 &&
+     strcmp(c1->SMTP_Server,         c2->SMTP_Server) == 0 &&
+     strcmp(c1->SMTP_Domain,         c2->SMTP_Domain) == 0 &&
+     strcmp(c1->SMTP_AUTH_User,      c2->SMTP_AUTH_User) == 0 &&
+     strcmp(c1->SMTP_AUTH_Pass,      c2->SMTP_AUTH_Pass) == 0 &&
+     strcmp(c1->NotifySound,         c2->NotifySound) == 0 &&
+     strcmp(c1->NotifyCommand,       c2->NotifyCommand) == 0 &&
+     strcmp(c1->ShortHeaders,        c2->ShortHeaders) == 0 &&
+     strcmp(c1->ReplyTo,             c2->ReplyTo) == 0 &&
+     strcmp(c1->Organization,        c2->Organization) == 0 &&
+     strcmp(c1->ExtraHeaders,        c2->ExtraHeaders) == 0 &&
+     strcmp(c1->NewIntro,            c2->NewIntro) == 0 &&
+     strcmp(c1->Greetings,           c2->Greetings) == 0 &&
+     strcmp(c1->Editor,              c2->Editor) == 0 &&
+     strcmp(c1->ReplyHello,          c2->ReplyHello) == 0 &&
+     strcmp(c1->ReplyIntro,          c2->ReplyIntro) == 0 &&
+     strcmp(c1->ReplyBye,            c2->ReplyBye) == 0 &&
+     strcmp(c1->AltReplyHello,       c2->AltReplyHello) == 0 &&
+     strcmp(c1->AltReplyIntro,       c2->AltReplyIntro) == 0 &&
+     strcmp(c1->AltReplyBye,         c2->AltReplyBye) == 0 &&
+     strcmp(c1->AltReplyPattern,     c2->AltReplyPattern) == 0 &&
+     strcmp(c1->MLReplyHello,        c2->MLReplyHello) == 0 &&
+     strcmp(c1->MLReplyIntro,        c2->MLReplyIntro) == 0 &&
+     strcmp(c1->MLReplyBye,          c2->MLReplyBye) == 0 &&
+     strcmp(c1->ForwardIntro,        c2->ForwardIntro) == 0 &&
+     strcmp(c1->ForwardFinish,       c2->ForwardFinish) == 0 &&
+     strcmp(c1->TagsFile,            c2->TagsFile) == 0 &&
+     strcmp(c1->TagsSeparator,       c2->TagsSeparator) == 0 &&
+     strcmp(c1->PGPCmdPath,          c2->PGPCmdPath) == 0 &&
+     strcmp(c1->MyPGPID,             c2->MyPGPID) == 0 &&
+     strcmp(c1->PGPURL,              c2->PGPURL) == 0 &&
+     strcmp(c1->ReMailer,            c2->ReMailer) == 0 &&
+     strcmp(c1->RMCommands,          c2->RMCommands) == 0 &&
+     strcmp(c1->LogfilePath,         c2->LogfilePath) == 0 &&
+     strcmp(c1->DetachDir,           c2->DetachDir) == 0 &&
+     strcmp(c1->AttachDir,           c2->AttachDir) == 0 &&
+     strcmp(c1->GalleryDir,          c2->GalleryDir) == 0 &&
+     strcmp(c1->MyPictureURL,        c2->MyPictureURL) == 0 &&
+     strcmp(c1->NewAddrGroup,        c2->NewAddrGroup) == 0 &&
+     strcmp(c1->ProxyServer,         c2->ProxyServer) == 0 &&
+     strcmp(c1->TempDir,             c2->TempDir) == 0 &&
+     strcmp(c1->PackerCommand,       c2->PackerCommand) == 0 &&
+     strcmp(c1->XPKPack,             c2->XPKPack) == 0 &&
+     strcmp(c1->XPKPackEncrypt,      c2->XPKPackEncrypt) == 0 &&
+     strcmp(c1->SupportSite,         c2->SupportSite) == 0 &&
+     strcmp(c1->UpdateServer,        c2->UpdateServer) == 0 &&
+     strcmp(c1->DefaultReadCharset,  c2->DefaultReadCharset) == 0 &&
+     strcmp(c1->DefaultWriteCharset, c2->DefaultWriteCharset) == 0 &&
+     strcmp(c1->IOCInterface,        c2->IOCInterface) == 0 &&
+     strcmp(c1->AppIconText,         c2->AppIconText) == 0 &&
+     strcmp(c1->InfoBarText,         c2->InfoBarText) == 0 &&
+     strcmp(c1->DefaultMimeViewer,   c2->DefaultMimeViewer) == 0 &&
+     strcmp(c1->StyleFGroupUnread,   c2->StyleFGroupUnread) == 0 &&
+     strcmp(c1->StyleFGroupRead,     c2->StyleFGroupRead) == 0 &&
+     strcmp(c1->StyleFolderUnread,   c2->StyleFolderUnread) == 0 &&
+     strcmp(c1->StyleFolderRead,     c2->StyleFolderRead) == 0 &&
+     strcmp(c1->StyleFolderNew,      c2->StyleFolderNew) == 0 &&
+     strcmp(c1->StyleMailUnread,     c2->StyleMailUnread) == 0 &&
+     strcmp(c1->StyleMailRead,       c2->StyleMailRead) == 0 &&
+     strcmp(c1->QuoteChar,           c2->QuoteChar) == 0 &&
+     strcmp(c1->AltQuoteChar,        c2->AltQuoteChar) == 0 &&
+     strcmp(c1->ThemeName,           c2->ThemeName) == 0)
   {
     equal = TRUE;
   }
@@ -1500,6 +1507,7 @@ void CO_Validate(struct Config *co, BOOL update)
   BOOL updateReadWindows = FALSE;
   BOOL updateHeaderMode = FALSE;
   BOOL updateSenderInfo = FALSE;
+  BOOL updateMenuShortcuts = FALSE;
   int i;
 
   ENTER();
@@ -1508,8 +1516,8 @@ void CO_Validate(struct Config *co, BOOL update)
     strlcpy(co->SMTP_Server, co->P3[0]->Server, sizeof(co->SMTP_Server));
   if(co->SMTP_Port == 0)
     co->SMTP_Port = 25;
-  if(co->SMTP_Domain[0] == '\0')
-    strlcpy(co->SMTP_Domain, p ? p + 1 : "", sizeof(co->SMTP_Domain));
+  if(co->SMTP_Domain[0] == '\0' && p != NULL)
+    strlcpy(co->SMTP_Domain, &p[1], sizeof(co->SMTP_Domain));
 
   for(i = 0; i < MAXP3; i++)
   {
@@ -1533,9 +1541,9 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // now we check whether our timezone setting is coherent to an
   // eventually set locale setting.
-  if(co->TimeZoneCheck)
+  if(co->TimeZoneCheck == TRUE)
   {
-    if(G->Locale && co->TimeZone != -(G->Locale->loc_GMTOffset))
+    if(G->Locale != NULL && co->TimeZone != -(G->Locale->loc_GMTOffset))
     {
       int res = MUI_Request(G->App, NULL, 0,
                             tr(MSG_CO_TIMEZONEWARN_TITLE),
@@ -1556,7 +1564,7 @@ void CO_Validate(struct Config *co, BOOL update)
       }
     }
   }
-  else if(G->Locale && co->TimeZone == -(G->Locale->loc_GMTOffset))
+  else if(G->Locale != NULL && co->TimeZone == -(G->Locale->loc_GMTOffset))
   {
     // enable the timezone checking again!
     co->TimeZoneCheck = TRUE;
@@ -1565,7 +1573,7 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // we also check the DST (Daylight Saving settings) in case
   // we have a AutoDST tool running.
-  if(co->AutoDSTCheck)
+  if(co->AutoDSTCheck == TRUE)
   {
     // check if we found an AutoDST tool or not.
     if(G->CO_DST > 0 && co->DaylightSaving != (G->CO_DST == 2))
@@ -1718,8 +1726,7 @@ void CO_Validate(struct Config *co, BOOL update)
   // amissl installation.
   if(co->AmiSSLCheck == TRUE)
   {
-    if(AmiSSLMasterBase == NULL || AmiSSLBase == NULL ||
-       G->TR_UseableTLS == FALSE)
+    if(AmiSSLMasterBase == NULL || AmiSSLBase == NULL || G->TR_UseableTLS == FALSE)
     {
       int res = MUI_Request(G->App, NULL, 0,
                             tr(MSG_CO_AMISSLWARN_TITLE),
@@ -1745,8 +1752,7 @@ void CO_Validate(struct Config *co, BOOL update)
   {
     // we reenable the AmiSSLCheck as soon as we found
     // the library to be working fine.
-    if(AmiSSLMasterBase != NULL && AmiSSLBase != NULL &&
-       G->TR_UseableTLS == TRUE)
+    if(AmiSSLMasterBase != NULL && AmiSSLBase != NULL && G->TR_UseableTLS == TRUE)
     {
       co->AmiSSLCheck = TRUE;
       saveAtEnd = TRUE;
@@ -1842,6 +1848,12 @@ void CO_Validate(struct Config *co, BOOL update)
       RestartTimer(TIMER_AUTOSAVE, co->AutoSave, 0);
     }
 
+    if(G->CO->Visited[cp_ReplyForward] == TRUE || G->CO->UpdateAll == TRUE)
+    {
+      // update the "Forward" shortcuts of the read window's menu
+      updateMenuShortcuts = TRUE;
+    }
+
     if(G->CO->Visited[cp_Lists] == TRUE || G->CO->UpdateAll == TRUE)
     {
       // First we set the PG_MAILLIST and NL_FOLDER Quiet
@@ -1896,7 +1908,7 @@ void CO_Validate(struct Config *co, BOOL update)
 
       // and to not let the embedded read pane be empty when it is newly created
       // we have to make sure the actual selected mail is loaded
-      if(C->EmbeddedReadPane)
+      if(C->EmbeddedReadPane == TRUE)
         MA_ChangeSelected(TRUE);
     }
 
@@ -1929,8 +1941,8 @@ void CO_Validate(struct Config *co, BOOL update)
       InitUpdateCheck(FALSE);
     }
 
-    // make sure the dynamic menus of the main window
-    // is properly refreshed.
+    // make sure the dynamic menus and some menu shortcuts of the main window
+    // are properly refreshed.
     MA_SetupDynamicMenus();
   }
 
@@ -1939,7 +1951,7 @@ void CO_Validate(struct Config *co, BOOL update)
     CO_SaveConfig(co, G->CO_PrefsFile);
 
   // finally update possibly open read windows
-  if(updateReadWindows == TRUE || updateHeaderMode == TRUE || updateSenderInfo == TRUE)
+  if(updateReadWindows == TRUE || updateHeaderMode == TRUE || updateSenderInfo == TRUE || updateMenuShortcuts == TRUE)
   {
     struct Node *curNode;
 
@@ -1959,11 +1971,14 @@ void CO_Validate(struct Config *co, BOOL update)
           if(updateSenderInfo == TRUE)
             DoMethod(G->App, MUIM_Application_PushMethod, rmData->readMailGroup, 2, MUIM_ReadMailGroup_ChangeSenderInfoMode, co->ShowSenderInfo);
         }
-        else if(rmData->readWindow != NULL && updateReadWindows == TRUE)
+        else if(rmData->readWindow != NULL && (updateReadWindows == TRUE || updateMenuShortcuts == TRUE))
         {
           // forward the modifed information to the window, because a read mail group has no toolbar
           if(updateReadWindows == TRUE)
             DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
+
+          if(updateMenuShortcuts == TRUE)
+            DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateMenuShortcuts);
         }
       }
     }
@@ -2170,6 +2185,7 @@ HOOKPROTONHNO(CO_ChangePageFunc, void, int *arg)
   LEAVE();
 }
 MakeStaticHook(CO_ChangePageHook,CO_ChangePageFunc);
+
 ///
 /// CO_CloseFunc
 //  Closes configuration window
@@ -2278,6 +2294,7 @@ HOOKPROTONHNONP(CO_OpenFunc, void)
   BusyEnd();
 }
 MakeHook(CO_OpenHook,CO_OpenFunc);
+
 ///
 
 /*** GUI ***/
@@ -2328,15 +2345,17 @@ static struct CO_ClassData *CO_New(void)
        MUIA_Window_Title, tr(MSG_MA_MConfig),
        MUIA_HelpNode,"CO_W",
        MUIA_Window_Menustrip, MenustripObject,
-          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Project),
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_Open), MUIA_Menuitem_Shortcut,"O", MUIA_UserData,CMEN_OPEN, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_SaveAs), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,CMEN_SAVEAS, End,
+          MenuChild, MenuObject,
+             MUIA_Menu_Title, tr(MSG_MA_Project),
+             MenuChild, Menuitem(tr(MSG_CO_Open), "O", TRUE, FALSE, CMEN_OPEN),
+             MenuChild, Menuitem(tr(MSG_CO_SaveAs), "A", TRUE, FALSE, CMEN_SAVEAS),
           End,
-          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, tr(MSG_CO_Edit),
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_ResetDefaults), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,CMEN_DEF, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_ResetAll), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,CMEN_DEFALL, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_LastSaved), MUIA_Menuitem_Shortcut,"L", MUIA_UserData,CMEN_LAST, End,
-             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,tr(MSG_CO_Restore), MUIA_Menuitem_Shortcut,"R", MUIA_UserData,CMEN_REST, End,
+          MenuChild, MenuObject,
+             MUIA_Menu_Title, tr(MSG_CO_Edit),
+             MenuChild, Menuitem(tr(MSG_CO_ResetDefaults), "D", TRUE, FALSE, CMEN_DEF),
+             MenuChild, Menuitem(tr(MSG_CO_ResetAll), "E", TRUE, FALSE, CMEN_DEFALL),
+             MenuChild, Menuitem(tr(MSG_CO_LastSaved), "L", TRUE, FALSE, CMEN_LAST),
+             MenuChild, Menuitem(tr(MSG_CO_Restore), "R", TRUE, FALSE, CMEN_REST),
           End,
        End,
        MUIA_Window_ID, MAKE_ID('C','O','N','F'),
@@ -2420,5 +2439,5 @@ static struct CO_ClassData *CO_New(void)
   RETURN(data);
   return data;
 }
-////
 
+////

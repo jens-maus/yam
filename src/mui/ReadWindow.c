@@ -62,6 +62,8 @@ struct Data
   Object *MI_SAVEDEC;
   Object *MI_REPLY;
   Object *MI_FORWARD;
+  Object *MI_FORWARD_ATTACH;
+  Object *MI_FORWARD_INLINE;
   Object *MI_BOUNCE;
   Object *MI_NEXTTHREAD;
   Object *MI_PREVTHREAD;
@@ -91,12 +93,12 @@ struct Data
 enum
 {
   RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,
-  RMEN_DELETEATT,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_CHSUBJ,RMEN_PREV,
-  RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
-  RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,
-  RMEN_FFONT,RMEN_SIMAGE,RMEN_TOMARKED,RMEN_TOUNMARKED,RMEN_TOUNREAD,RMEN_TOREAD,RMEN_TOHOLD,
-  RMEN_TOQUEUED,RMEN_TOSPAM,RMEN_TOHAM,RMEN_SEARCH,RMEN_SEARCHAGAIN,RMEN_EDIT_COPY,RMEN_EDIT_SALL,
-  RMEN_EDIT_SNONE,RMEN_TCOLOR
+  RMEN_DELETEATT,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD_ATTACH,RMEN_FORWARD_INLINE,RMEN_BOUNCE,
+  RMEN_SAVEADDR,RMEN_CHSUBJ,RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,
+  RMEN_NEXTTH,RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,
+  RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT,RMEN_SIMAGE,RMEN_TOMARKED,
+  RMEN_TOUNMARKED,RMEN_TOUNREAD,RMEN_TOREAD,RMEN_TOHOLD,RMEN_TOQUEUED,RMEN_TOSPAM,RMEN_TOHAM,
+  RMEN_SEARCH,RMEN_SEARCHAGAIN,RMEN_EDIT_COPY,RMEN_EDIT_SALL,RMEN_EDIT_SNONE,RMEN_TCOLOR
 };
 
 /* Private Functions */
@@ -204,7 +206,7 @@ OVERLOAD(OM_NEW)
   // now we create the Menustrip object with all the menu items
   // and corresponding shortcuts
   //
-  // The follwong shortcut list should help to identify the hard-coded
+  // The following shortcut list should help to identify the hard-coded
   // shortcuts:
   //
   //  A   Select all text (RMEN_EDIT_SALL)
@@ -229,7 +231,7 @@ OVERLOAD(OM_NEW)
   //  T   Enable/Disable Text Colors (RMEN_TCOLOR)
   //  U
   //  V   Save PGP decrypted mail (RMEN_SAVEDEC)
-  //  W   Forward mail (RMEN_FORWARD)
+  //  W   Forward mail (RMEN_FORWARD_ATTACH or RMEN_FORWARD_INLINE)
   //  X   Extract PGP key from mail (RMEN_EXTKEY)
   //  Y   Copy mail (RMEN_COPY)
   //  Z
@@ -257,30 +259,37 @@ OVERLOAD(OM_NEW)
   //
 
   menuStripObject = MenustripObject,
-    MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_Message),
-      MenuChild, data->MI_EDIT = Menuitem(tr(MSG_MA_MEdit), "E", TRUE, FALSE, RMEN_EDIT),
-      MenuChild, data->MI_MOVE = Menuitem(tr(MSG_MA_MMove), "M", TRUE, FALSE, RMEN_MOVE),
-      MenuChild, Menuitem(tr(MSG_MA_MCopy), "Y", TRUE, FALSE, RMEN_COPY),
-      MenuChild, data->MI_DELETE = Menuitem(tr(MSG_MA_MDelete), "Del", TRUE, TRUE,  RMEN_DELETE),
+    MenuChild, MenuObject,
+      MUIA_Menu_Title, tr(MSG_Message),
+      MenuChild, data->MI_EDIT = Menuitem(tr(MSG_MA_MEDIT), "E", TRUE, FALSE, RMEN_EDIT),
+      MenuChild, data->MI_MOVE = Menuitem(tr(MSG_MA_MMOVE), "M", TRUE, FALSE, RMEN_MOVE),
+      MenuChild, Menuitem(tr(MSG_MA_MCOPY), "Y", TRUE, FALSE, RMEN_COPY),
+      MenuChild, data->MI_DELETE = Menuitem(tr(MSG_MA_MDelete), "Del", TRUE, TRUE, RMEN_DELETE),
       MenuChild, MenuBarLabel,
       MenuChild, Menuitem(tr(MSG_Print), "P", TRUE, FALSE, RMEN_PRINT),
       MenuChild, Menuitem(tr(MSG_MA_Save), "S", TRUE, FALSE, RMEN_SAVE),
-      MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Attachments),
-        MenuChild, Menuitem(tr(MSG_RE_MDisplay),"D", TRUE, FALSE, RMEN_DISPLAY),
+      MenuChild, MenuitemObject,
+        MUIA_Menuitem_Title, tr(MSG_Attachments),
+        MenuChild, Menuitem(tr(MSG_RE_MDisplay), "D", TRUE, FALSE, RMEN_DISPLAY),
         MenuChild, data->MI_DETACH = Menuitem(tr(MSG_RE_SaveAll), "L", TRUE, FALSE, RMEN_DETACH),
         MenuChild, data->MI_DELETEATT = Menuitem(tr(MSG_MA_DELETEATT), "O", TRUE, FALSE, RMEN_DELETEATT),
       End,
       MenuChild, MenuBarLabel,
       MenuChild, Menuitem(tr(MSG_New), "N", TRUE, FALSE, RMEN_NEW),
-      MenuChild, data->MI_REPLY = Menuitem(tr(MSG_MA_MReply), "R", TRUE, FALSE, RMEN_REPLY),
-      MenuChild, data->MI_FORWARD = Menuitem(tr(MSG_MA_MForward), "W", TRUE, FALSE, RMEN_FORWARD),
-      MenuChild, data->MI_BOUNCE = Menuitem(tr(MSG_MA_MBounce), "B", TRUE, FALSE, RMEN_BOUNCE),
+      MenuChild, data->MI_REPLY = Menuitem(tr(MSG_MA_MREPLY), "R", TRUE, FALSE, RMEN_REPLY),
+      MenuChild, data->MI_FORWARD = MenuitemObject,
+        MUIA_Menuitem_Title, tr(MSG_MA_MFORWARD),
+        MenuChild, data->MI_FORWARD_ATTACH = Menuitem(tr(MSG_MA_MFORWARD_ATTACH), NULL, TRUE, FALSE, RMEN_FORWARD_ATTACH),
+        MenuChild, data->MI_FORWARD_INLINE = Menuitem(tr(MSG_MA_MFORWARD_INLINE), NULL, TRUE, FALSE, RMEN_FORWARD_INLINE),
+      End,
+      MenuChild, data->MI_BOUNCE = Menuitem(tr(MSG_MA_MBOUNCE), "B", TRUE, FALSE, RMEN_BOUNCE),
       MenuChild, MenuBarLabel,
       MenuChild, data->MI_SEARCH = Menuitem(tr(MSG_RE_SEARCH), "F", TRUE, FALSE, RMEN_SEARCH),
       MenuChild, data->MI_SEARCHAGAIN = Menuitem(tr(MSG_RE_SEARCH_AGAIN), "G", TRUE, FALSE, RMEN_SEARCHAGAIN),
       MenuChild, MenuBarLabel,
       MenuChild, Menuitem(tr(MSG_MA_MGetAddress), "J", TRUE, FALSE, RMEN_SAVEADDR),
-      MenuChild, data->MI_STATUS = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_SetStatus),
+      MenuChild, data->MI_STATUS = MenuitemObject,
+        MUIA_Menuitem_Title, tr(MSG_MA_SetStatus),
         MenuChild, data->MI_TOMARKED = Menuitem(tr(MSG_MA_TOMARKED), ",", TRUE, FALSE, RMEN_TOMARKED),
         MenuChild, data->MI_TOUNMARKED = Menuitem(tr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, RMEN_TOUNMARKED),
         MenuChild, data->MI_TOUNREAD = Menuitem(tr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, RMEN_TOUNREAD),
@@ -290,13 +299,15 @@ OVERLOAD(OM_NEW)
       End,
       MenuChild, data->MI_CHSUBJ = Menuitem(tr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, RMEN_CHSUBJ),
     End,
-    MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_MA_EDIT),
+    MenuChild, MenuObject,
+      MUIA_Menu_Title, tr(MSG_MA_EDIT),
       MenuChild, Menuitem(tr(MSG_MA_EDIT_COPY), "C", TRUE, FALSE, RMEN_EDIT_COPY),
       MenuChild, MenuBarLabel,
       MenuChild, Menuitem(tr(MSG_MA_EDIT_SALL), "A", TRUE, FALSE, RMEN_EDIT_SALL),
       MenuChild, Menuitem(tr(MSG_MA_EDIT_SNONE), NULL, TRUE, FALSE, RMEN_EDIT_SNONE),
     End,
-    MenuChild, data->MI_NAVIG = MenuObject, MUIA_Menu_Title, tr(MSG_RE_Navigation),
+    MenuChild, data->MI_NAVIG = MenuObject,
+      MUIA_Menu_Title, tr(MSG_RE_Navigation),
       MenuChild, Menuitem(tr(MSG_RE_MNext),    "right", TRUE, TRUE, RMEN_NEXT),
       MenuChild, Menuitem(tr(MSG_RE_MPrev),    "left",  TRUE, TRUE, RMEN_PREV),
       MenuChild, Menuitem(tr(MSG_RE_MURNext),  "shift right", TRUE, TRUE, RMEN_URNEXT),
@@ -304,12 +315,14 @@ OVERLOAD(OM_NEW)
       MenuChild, data->MI_NEXTTHREAD = Menuitem(tr(MSG_RE_MNextTh), "alt right", TRUE, TRUE, RMEN_NEXTTH),
       MenuChild, data->MI_PREVTHREAD = Menuitem(tr(MSG_RE_MPrevTh), "alt left", TRUE, TRUE, RMEN_PREVTH),
     End,
-    MenuChild, data->MI_PGP = MenuObject, MUIA_Menu_Title, "PGP",
+    MenuChild, data->MI_PGP = MenuObject,
+      MUIA_Menu_Title, "PGP",
       MenuChild, data->MI_EXTKEY = Menuitem(tr(MSG_RE_ExtractKey), "X", TRUE, FALSE, RMEN_EXTKEY),
       MenuChild, data->MI_CHKSIG = Menuitem(tr(MSG_RE_SigCheck), "K", TRUE, FALSE, RMEN_CHKSIG),
       MenuChild, data->MI_SAVEDEC = Menuitem(tr(MSG_RE_SaveDecrypted), "V", TRUE, FALSE, RMEN_SAVEDEC),
     End,
-    MenuChild, MenuObject, MUIA_Menu_Title, tr(MSG_MA_Settings),
+    MenuChild, MenuObject,
+      MUIA_Menu_Title, tr(MSG_MA_Settings),
       MenuChild, MenuitemCheck(tr(MSG_RE_NoHeaders),    "0", TRUE, C->ShowHeader==HM_NOHEADER,    FALSE, 0x06, RMEN_HNONE),
       MenuChild, MenuitemCheck(tr(MSG_RE_ShortHeaders), "1", TRUE, C->ShowHeader==HM_SHORTHEADER, FALSE, 0x05, RMEN_HSHORT),
       MenuChild, MenuitemCheck(tr(MSG_RE_FullHeaders),  "2", TRUE, C->ShowHeader==HM_FULLHEADER,  FALSE, 0x03, RMEN_HFULL),
@@ -378,63 +391,64 @@ OVERLOAD(OM_NEW)
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
     // setup the toolbar notifies
-    if(data->windowToolbar)
+    if(data->windowToolbar != NULL)
       DoMethod(data->windowToolbar, MUIM_ReadWindowToolbar_InitNotify, obj, data->readMailGroup);
 
     // set the default window object
     set(obj, MUIA_Window_DefaultObject, data->readMailGroup);
 
     // set some Notifies
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT,      obj, 3, MUIM_ReadWindow_NewMail, NMM_EDIT, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_MOVE,      obj, 1, MUIM_ReadWindow_MoveMailRequest);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_COPY,      obj, 1, MUIM_ReadWindow_CopyMailRequest);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DELETE,    obj, 2, MUIM_ReadWindow_DeleteMailRequest, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PRINT,     data->readMailGroup, 1, MUIM_ReadMailGroup_PrintMailRequest);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVE,      data->readMailGroup, 1, MUIM_ReadMailGroup_SaveMailRequest);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DISPLAY,   data->readMailGroup, 1, MUIM_ReadMailGroup_DisplayMailRequest);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DETACH,    data->readMailGroup, 1, MUIM_ReadMailGroup_SaveAllAttachments);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DELETEATT, data->readMailGroup, 1, MUIM_ReadMailGroup_DeleteAttachmentsRequest);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEW,       obj, 3, MUIM_ReadWindow_NewMail, NMM_NEW, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_REPLY,     obj, 3, MUIM_ReadWindow_NewMail, NMM_REPLY, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FORWARD,   obj, 3, MUIM_ReadWindow_NewMail, NMM_FORWARD, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_BOUNCE,    obj, 3, MUIM_ReadWindow_NewMail, NMM_BOUNCE, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVEADDR,  obj, 1, MUIM_ReadWindow_GrabSenderAddress);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SEARCH,    data->readMailGroup, 2, MUIM_ReadMailGroup_Search, MUIF_NONE);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SEARCHAGAIN, data->readMailGroup, 2, MUIM_ReadMailGroup_Search, MUIF_ReadMailGroup_Search_Again);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT,           obj, 3, MUIM_ReadWindow_NewMail, NMM_EDIT, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_MOVE,           obj, 1, MUIM_ReadWindow_MoveMailRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_COPY,           obj, 1, MUIM_ReadWindow_CopyMailRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DELETE,         obj, 2, MUIM_ReadWindow_DeleteMailRequest, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PRINT,          data->readMailGroup, 1, MUIM_ReadMailGroup_PrintMailRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVE,           data->readMailGroup, 1, MUIM_ReadMailGroup_SaveMailRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DISPLAY,        data->readMailGroup, 1, MUIM_ReadMailGroup_DisplayMailRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DETACH,         data->readMailGroup, 1, MUIM_ReadMailGroup_SaveAllAttachments);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DELETEATT,      data->readMailGroup, 1, MUIM_ReadMailGroup_DeleteAttachmentsRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEW,            obj, 3, MUIM_ReadWindow_NewMail, NMM_NEW, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_REPLY,          obj, 3, MUIM_ReadWindow_NewMail, NMM_REPLY, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FORWARD_ATTACH, obj, 3, MUIM_ReadWindow_NewMail, NMM_FORWARD_ATTACH, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FORWARD_INLINE, obj, 3, MUIM_ReadWindow_NewMail, NMM_FORWARD_INLINE, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_BOUNCE,         obj, 3, MUIM_ReadWindow_NewMail, NMM_BOUNCE, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVEADDR,       obj, 1, MUIM_ReadWindow_GrabSenderAddress);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SEARCH,         data->readMailGroup, 2, MUIM_ReadMailGroup_Search, MUIF_NONE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SEARCHAGAIN,    data->readMailGroup, 2, MUIM_ReadMailGroup_Search, MUIF_ReadMailGroup_Search_Again);
 
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOUNREAD,  obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_NONE, SFLAG_NEW|SFLAG_READ);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOREAD,    obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_READ, SFLAG_NEW);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOHOLD,    obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_HOLD|SFLAG_READ, SFLAG_QUEUED|SFLAG_ERROR);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOQUEUED,  obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOMARKED,  obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_MARKED, SFLAG_NONE);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOUNMARKED,obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_NONE, SFLAG_MARKED);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOSPAM,    obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_SPAM);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOHAM,     obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_HAM);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOUNREAD,       obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_NONE, SFLAG_NEW|SFLAG_READ);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOREAD,         obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_READ, SFLAG_NEW);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOHOLD,         obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_HOLD|SFLAG_READ, SFLAG_QUEUED|SFLAG_ERROR);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOQUEUED,       obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOMARKED,       obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_MARKED, SFLAG_NONE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOUNMARKED,     obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_NONE, SFLAG_MARKED);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOSPAM,         obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_SPAM);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOHAM,          obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_HAM);
 
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CHSUBJ,    obj, 1, MUIM_ReadWindow_ChangeSubjectRequest);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT_COPY, data->readMailGroup, 2, MUIM_ReadMailGroup_DoEditAction, EA_COPY, MUIF_NONE);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT_SALL, data->readMailGroup, 2, MUIM_ReadMailGroup_DoEditAction, EA_SELECTALL, MUIF_NONE);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT_SNONE,data->readMailGroup, 2, MUIM_ReadMailGroup_DoEditAction, EA_SELECTNONE, MUIF_NONE);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PREV,      obj, 3, MUIM_ReadWindow_SwitchMail, -1, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEXT,      obj, 3, MUIM_ReadWindow_SwitchMail, +1, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_URPREV,    obj, 3, MUIM_ReadWindow_SwitchMail, -1, IEQUALIFIER_LSHIFT);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_URNEXT,    obj, 3, MUIM_ReadWindow_SwitchMail, +1, IEQUALIFIER_LSHIFT);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PREVTH,    obj, 2, MUIM_ReadWindow_FollowThread, -1);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEXTTH,    obj, 2, MUIM_ReadWindow_FollowThread, +1);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EXTKEY,    data->readMailGroup, 1, MUIM_ReadMailGroup_ExtractPGPKey);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CHKSIG,    data->readMailGroup, 2, MUIM_ReadMailGroup_CheckPGPSignature, TRUE);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVEDEC,   data->readMailGroup, 1, MUIM_ReadMailGroup_SaveDecryptedMail);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_HNONE,     obj, 2, MUIM_ReadWindow_ChangeHeaderMode, HM_NOHEADER);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_HSHORT,    obj, 2, MUIM_ReadWindow_ChangeHeaderMode, HM_SHORTHEADER);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_HFULL,     obj, 2, MUIM_ReadWindow_ChangeHeaderMode, HM_FULLHEADER);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SNONE,     obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_OFF);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SDATA,     obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_DATA);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SFULL,     obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_ALL);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SIMAGE,    obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_IMAGE);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_WRAPH,     obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TCOLOR,    obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TSTYLE,    obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FFONT,     obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CHSUBJ,         obj, 1, MUIM_ReadWindow_ChangeSubjectRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT_COPY,      data->readMailGroup, 2, MUIM_ReadMailGroup_DoEditAction, EA_COPY, MUIF_NONE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT_SALL,      data->readMailGroup, 2, MUIM_ReadMailGroup_DoEditAction, EA_SELECTALL, MUIF_NONE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT_SNONE,     data->readMailGroup, 2, MUIM_ReadMailGroup_DoEditAction, EA_SELECTNONE, MUIF_NONE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PREV,           obj, 3, MUIM_ReadWindow_SwitchMail, -1, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEXT,           obj, 3, MUIM_ReadWindow_SwitchMail, +1, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_URPREV,         obj, 3, MUIM_ReadWindow_SwitchMail, -1, IEQUALIFIER_LSHIFT);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_URNEXT,         obj, 3, MUIM_ReadWindow_SwitchMail, +1, IEQUALIFIER_LSHIFT);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PREVTH,         obj, 2, MUIM_ReadWindow_FollowThread, -1);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEXTTH,         obj, 2, MUIM_ReadWindow_FollowThread, +1);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EXTKEY,         data->readMailGroup, 1, MUIM_ReadMailGroup_ExtractPGPKey);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CHKSIG,         data->readMailGroup, 2, MUIM_ReadMailGroup_CheckPGPSignature, TRUE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVEDEC,        data->readMailGroup, 1, MUIM_ReadMailGroup_SaveDecryptedMail);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_HNONE,          obj, 2, MUIM_ReadWindow_ChangeHeaderMode, HM_NOHEADER);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_HSHORT,         obj, 2, MUIM_ReadWindow_ChangeHeaderMode, HM_SHORTHEADER);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_HFULL,          obj, 2, MUIM_ReadWindow_ChangeHeaderMode, HM_FULLHEADER);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SNONE,          obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_OFF);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SDATA,          obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_DATA);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SFULL,          obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_ALL);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SIMAGE,         obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_IMAGE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_WRAPH,          obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TCOLOR,         obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TSTYLE,         obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FFONT,          obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-capslock del",                 obj, 2, MUIM_ReadWindow_DeleteMailRequest, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-capslock shift del",           obj, 2, MUIM_ReadWindow_DeleteMailRequest, IEQUALIFIER_LSHIFT);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock space",       data->readMailGroup, 2, MUIM_TextEditor_ARexxCmd, "Next Page");
@@ -445,6 +459,9 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock shift right", obj, 3, MUIM_ReadWindow_SwitchMail, +1, IEQUALIFIER_LSHIFT);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock alt left",    obj, 2, MUIM_ReadWindow_FollowThread, -1);
     DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock alt right",   obj, 2, MUIM_ReadWindow_FollowThread, +1);
+
+    // update the "Forward" items' shortcut
+    DoMethod(obj, MUIM_ReadWindow_UpdateMenuShortcuts);
 
     // make sure the right menus/toolbar spam button items are available
     DoMethod(obj, MUIM_ReadWindow_UpdateSpamControls);
@@ -710,7 +727,7 @@ DECLARE(NewMail) // enum NewMailMode mode, ULONG qualifier
   ENTER();
 
   // then create a new mail depending on the current mode
-  if(MailExists(mail, NULL))
+  if(MailExists(mail, NULL) == TRUE)
   {
     enum NewMailMode mode;
     int flags;
@@ -735,6 +752,20 @@ DECLARE(NewMail) // enum NewMailMode mode, ULONG qualifier
       break;
 
       case NMM_FORWARD:
+      case NMM_FORWARD_ATTACH:
+      case NMM_FORWARD_INLINE:
+      {
+        struct MailList *mlist;
+
+        if((mlist = CreateMailList()) != NULL)
+        {
+          AddNewMailNode(mlist, mail);
+          NewForwardMailWindow(mlist, flags);
+          DeleteMailList(mlist);
+        }
+      }
+      break;
+
       case NMM_REPLY:
       {
         struct MailList *mlist;
@@ -742,19 +773,14 @@ DECLARE(NewMail) // enum NewMailMode mode, ULONG qualifier
         if((mlist = CreateMailList()) != NULL)
         {
           AddNewMailNode(mlist, mail);
-
-          if(mode == NMM_FORWARD)
-            NewForwardMailWindow(mlist, flags);
-          else
-            NewReplyMailWindow(mlist, flags);
-
+          NewReplyMailWindow(mlist, flags);
           DeleteMailList(mlist);
         }
       }
       break;
 
       default:
-       // nothing
+        // nothing
       break;
     }
   }
@@ -920,7 +946,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
 
     // make sure the read window is closed in case there is no further
     // mail for deletion in this direction
-    if(closeAfter)
+    if(closeAfter == TRUE)
       DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
 
     if(delatonce || isSpamFolder(folder))
@@ -1562,6 +1588,30 @@ DECLARE(UpdateSpamControls)
   // the method call to it.
   if(data->windowToolbar != NULL)
     DoMethod(data->windowToolbar, MUIM_ReadWindowToolbar_UpdateSpamControls, mail);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(UpdateMenuShortcuts)
+DECLARE(UpdateMenuShortcuts)
+{
+  GETDATA;
+
+  ENTER();
+
+  // update the "Forward" items' shortcut
+  if(C->ForwardMode == FWM_ATTACH)
+  {
+    set(data->MI_FORWARD_ATTACH, MUIA_Menuitem_Shortcut, "W");
+    set(data->MI_FORWARD_INLINE, MUIA_Menuitem_Shortcut, NULL);
+  }
+  else if(C->ForwardMode == FWM_INLINE)
+  {
+    set(data->MI_FORWARD_ATTACH, MUIA_Menuitem_Shortcut, NULL);
+    set(data->MI_FORWARD_INLINE, MUIA_Menuitem_Shortcut, "W");
+  }
 
   RETURN(0);
   return 0;

@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: all menus now reflect the fact that YAM is able to forward mails in
+    two different modes (as attachments and inlined). For the main and read
+    window the items corresponding to the configured default mode will have the
+    known shortcut "W". All this allows to choose the forward mode even from the
+    menu and not just via the toolbar by pressing the required qualifiers. This
+    accepts #106.
+
 2010-03-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * AttachmentRequestWindow.c: added an additional column to display a mail

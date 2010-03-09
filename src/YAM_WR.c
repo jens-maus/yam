@@ -363,12 +363,13 @@ static void EmitRcptField(FILE *fh, const char *body)
       if(*part == '\0')
         break;
 
-      if((next = MyStrChr(part, ',')))
+      if((next = MyStrChr(part, ',')) != NULL)
         *next++ = '\0';
 
       HeaderFputs(fh, Trim(part), NULL, 0);
 
-      if((part = next))
+      part = next;
+      if(part != NULL)
         fputs(",\n\t", fh);
     }
 
@@ -386,7 +387,8 @@ static void EmitRcptHeader(FILE *fh, const char *hdr, const char *body)
   ENTER();
 
   fprintf(fh, "%s: ", hdr);
-  EmitRcptField(fh, body ? body : "");
+  if(body != NULL)
+    EmitRcptField(fh, body);
   fputc('\n', fh);
 
   LEAVE();
@@ -408,6 +410,7 @@ const char *EncodingName(enum Encoding enc)
       encName = "base64";
     }
     break;
+
     case ENC_QP:
     {
       encName = "quoted-printable";
@@ -506,14 +509,14 @@ static void WR_WriteUserInfo(FILE *fh, char *from)
   ENTER();
 
   // Now we extract the real email from the address string
-  if(*from)
+  if(from[0] != '\0')
     ExtractAddress(from, &pers);
 
-  if(*(pers.Address) && AB_SearchEntry(pers.Address, ASM_ADDRESS|ASM_USER, &ab))
+  if(pers.Address[0] != '\0' && AB_SearchEntry(pers.Address, ASM_ADDRESS|ASM_USER, &ab) > 0)
   {
     if(ab->Type != AET_USER)
       ab = NULL;
-    else if(!*ab->Homepage && !*ab->Phone && !*ab->Street && !*ab->City && !*ab->Country && !ab->BirthDay)
+    else if(ab->Homepage[0] == '\0' && ab->Phone[0] == '\0' && ab->Street[0] == '\0' && ab->City[0] == '\0' && ab->Country[0] == '\0' && ab->BirthDay == 0)
       ab = NULL;
   }
 
@@ -528,32 +531,32 @@ static void WR_WriteUserInfo(FILE *fh, char *from)
 
     if(ab != NULL)
     {
-      if(*ab->Homepage)
+      if(ab->Homepage[0] != '\0')
       {
         fputc(';', fh);
         HeaderFputs(fh, ab->Homepage, "homepage", 0);
       }
-      if(*ab->Street)
+      if(ab->Street[0] != '\0')
       {
         fputc(';', fh);
         HeaderFputs(fh, ab->Street, "street", 0);
       }
-      if(*ab->City)
+      if(ab->City[0] != '\0')
       {
         fputc(';', fh);
         HeaderFputs(fh, ab->City, "city", 0);
       }
-      if(*ab->Country)
+      if(ab->Country[0] != '\0')
       {
         fputc(';', fh);
         HeaderFputs(fh, ab->Country, "country", 0);
       }
-      if(*ab->Phone)
+      if(ab->Phone[0] != '\0')
       {
         fputc(';', fh);
         HeaderFputs(fh, ab->Phone, "phone", 0);
       }
-      if(ab->BirthDay)
+      if(ab->BirthDay != 0)
         fprintf(fh, ";\n\tdob=%ld", ab->BirthDay);
     }
     fputc('\n', fh);
@@ -561,6 +564,7 @@ static void WR_WriteUserInfo(FILE *fh, char *from)
 
   LEAVE();
 }
+
 ///
 /// EncodePart
 //  Encodes a message part
@@ -583,9 +587,9 @@ BOOL EncodePart(FILE *ofh, const struct WritePart *part)
 
         // let us first check if we need to convert single LF to
         // CRLF to be somewhat portable.
-        if(!strnicmp(part->ContentType, "text", 4)    ||
-           !strnicmp(part->ContentType, "message", 7) ||
-           !strnicmp(part->ContentType, "multipart", 9))
+        if(strnicmp(part->ContentType, "text", 4) == 0 ||
+           strnicmp(part->ContentType, "message", 7) == 0 ||
+           strnicmp(part->ContentType, "multipart", 9) == 0)
         {
           convLF = TRUE;
         }
@@ -698,6 +702,7 @@ static char *WR_GetPGPId(struct Person *pe)
   RETURN(pgpid);
   return pgpid;
 }
+
 ///
 /// WR_GetPGPIds
 //  Collects PGP key ids for all persons in a recipient field
@@ -732,6 +737,7 @@ static char *WR_GetPGPIds(char *source, char *ids)
   RETURN(ids);
   return ids;
 }
+
 ///
 /// WR_Bounce
 //  Bounce message: inserts resent-headers while copying the message
@@ -742,8 +748,7 @@ static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
 
   ENTER();
 
-  if(comp->refMail != NULL &&
-     (oldfh = fopen(GetMailFile(NULL, NULL, comp->refMail), "r")))
+  if(comp->refMail != NULL && (oldfh = fopen(GetMailFile(NULL, NULL, comp->refMail), "r")) != NULL)
   {
     char address[SIZE_LARGE];
 
@@ -779,7 +784,7 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
 
   ENTER();
 
-  if(comp->refMail != NULL && (mailfile = GetMailFile(NULL, NULL, comp->refMail)))
+  if(comp->refMail != NULL && (mailfile = GetMailFile(NULL, NULL, comp->refMail)) != NULL)
   {
     char unpFile[SIZE_PATHFILE];
     BOOL xpkPacked = FALSE;
@@ -802,7 +807,7 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
       }
     }
 
-    if((oldfh = fopen(xpkPacked ? unpFile : mailfile, "r")))
+    if((oldfh = fopen(xpkPacked ? unpFile : mailfile, "r")) != NULL)
     {
       BOOL infield = FALSE;
       char *buf = NULL;
@@ -812,20 +817,20 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
 
       while(getline(&buf, &buflen, oldfh) > 0)
       {
-        if(*buf == '\n')
+        if(buf[0] == '\n')
         {
           fprintf(fh, "X-YAM-Decrypted: PGP; %s\n", GetDateTime());
           break;
         }
 
-        if(!isspace(*buf))
+        if(!isspace(buf[0]))
         {
-          infield = !strnicmp(buf, "content-type:", 13) ||
-                    !strnicmp(buf, "content-transfer-encoding", 25) ||
-                    !strnicmp(buf, "mime-version:", 13);
+          infield = strnicmp(buf, "content-type:", 13) == 0 ||
+                    strnicmp(buf, "content-transfer-encoding", 25) == 0 ||
+                    strnicmp(buf, "mime-version:", 13) == 0;
         }
 
-        if(!infield)
+        if(infield == FALSE)
           fputs(buf, fh);
       }
 
@@ -837,7 +842,7 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
     }
 
     // if we temporary unpacked the file we delete it now
-    if(xpkPacked)
+    if(xpkPacked == TRUE)
       DeleteFile(unpFile);
   }
 
@@ -943,11 +948,11 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
   pgppart.EncType = ENC_7BIT;
   if(sec == SEC_ENCRYPT || sec == SEC_BOTH)
   {
-    if(comp->MailTo)
+    if(comp->MailTo != NULL)
       ids = WR_GetPGPIds(comp->MailTo, ids);
-    if(comp->MailCC)
+    if(comp->MailCC != NULL)
       ids = WR_GetPGPIds(comp->MailCC, ids);
-    if(comp->MailBCC)
+    if(comp->MailBCC != NULL)
       ids = WR_GetPGPIds(comp->MailBCC, ids);
 
     if(C->EncryptToSelf == TRUE && C->MyPGPID[0] != '\0')
@@ -1125,7 +1130,6 @@ BOOL WriteOutMessage(struct Compose *comp)
   FILE *fh = comp->FH;
   struct WritePart *firstpart = comp->FirstPart;
   char buf[SIZE_DEFAULT];
-  char *rcptto;
 
   ENTER();
 
@@ -1166,7 +1170,7 @@ BOOL WriteOutMessage(struct Compose *comp)
     {
       setvbuf(tfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      memcpy(&tcomp,comp,sizeof(tcomp));   // clone struct Compose
+      memcpy(&tcomp, comp, sizeof(tcomp));   // clone struct Compose
       tcomp.FH = tfh;                      // set new filehandle
       tcomp.Security = SEC_NONE;           // temp msg gets attachments and no security
 
@@ -1181,24 +1185,31 @@ BOOL WriteOutMessage(struct Compose *comp)
 
       if(WriteOutMessage(&tcomp) == TRUE)    /* recurse! */
       {
-        struct WritePart *tpart = comp->FirstPart; /* save parts list so we're able to recover from a calloc() error */
+        // save parts list so we're able to recover from a calloc() error
+        struct WritePart *tpart = comp->FirstPart;
 
-        /* replace with single new part */
+        // replace with single new part
         if((comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart))) != NULL)
         {
-          comp->FirstPart->EncType = tpart->EncType;          /* reuse encoding */
-          FreePartsList(tpart);                               /* free old parts list */
-          comp->FirstPart->ContentType = "message/rfc822";    /* the only part is an email message */
-          comp->FirstPart->Filename = tf->Filename;           /* set filename to tempfile */
-          comp->Signature = 0;                                /* only use sig in enclosed mail */
+          // reuse encoding
+          comp->FirstPart->EncType = tpart->EncType;
+          // free old parts list
+          FreePartsList(tpart);
+          // the only part is an email message
+          comp->FirstPart->ContentType = "message/rfc822";
+          // set filename to tempfile
+          comp->FirstPart->Filename = tf->Filename;
+          // only use sig in enclosed mail
+          comp->Signature = 0;
         }
         else
         {
-          /* no errormsg here - the window probably won't open anyway... */
+          // no errormsg here - the window probably won't open anyway...
           DisplayBeep(NULL);
-          comp->FirstPart = tpart;     /* just restore old parts list */
-          comp->Security = 0;          /* switch off security */
-          /* we'll most likely get more errors further down :( */
+          // just restore old parts list and switch off security
+          comp->FirstPart = tpart;
+          comp->Security = 0;
+          // we'll most likely get more errors further down :(
         }
       }
       else
@@ -1216,10 +1227,13 @@ BOOL WriteOutMessage(struct Compose *comp)
     }
   }
 
-  *buf = '\0';
-  if(comp->DelSend) strlcat(buf, ",delsent", sizeof(buf));
-  if(comp->Security) snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), ",%s", SecCodes[comp->Security]);
-  if(comp->Signature) snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), ",sigfile%d", comp->Signature-1);
+  buf[0] = '\0';
+  if(comp->DelSend == TRUE)
+    strlcat(buf, ",delsent", sizeof(buf));
+  if(comp->Security != 0)
+    snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), ",%s", SecCodes[comp->Security]);
+  if(comp->Signature != 0)
+    snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), ",sigfile%d", comp->Signature-1);
   if(buf[0] != '\0')
     EmitHeader(fh, "X-YAM-Options", &buf[1]);
 
@@ -1228,13 +1242,18 @@ BOOL WriteOutMessage(struct Compose *comp)
   else
   {
     char address[SIZE_LARGE];
+
     EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
   }
 
-  if(comp->ReplyTo) EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
-  if(comp->MailTo) EmitRcptHeader(fh, "To", comp->Security == 4 ? C->ReMailer : comp->MailTo);
-  if(comp->MailCC) EmitRcptHeader(fh, "CC", comp->MailCC);
-  if(comp->MailBCC) EmitRcptHeader(fh, "BCC", comp->MailBCC);
+  if(comp->ReplyTo != NULL)
+    EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
+  if(comp->MailTo != NULL)
+    EmitRcptHeader(fh, "To", comp->Security == 4 ? C->ReMailer : comp->MailTo);
+  if(comp->MailCC != NULL)
+    EmitRcptHeader(fh, "CC", comp->MailCC);
+  if(comp->MailBCC != NULL)
+    EmitRcptHeader(fh, "BCC", comp->MailBCC);
   EmitHeader(fh, "Date", GetDateTime());
 
   // output the Message-ID, In-Reply-To and References message headers
@@ -1244,13 +1263,21 @@ BOOL WriteOutMessage(struct Compose *comp)
   if(comp->references != NULL)
     EmitHeader(fh, "References", comp->references);
 
-  rcptto = comp->ReplyTo ? comp->ReplyTo : (comp->From ? comp->From : C->EmailAddress);
-  if(comp->RequestMDN) EmitRcptHeader(fh, "Disposition-Notification-To", rcptto);
-  if(comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
+  if(comp->RequestMDN == TRUE)
+  {
+    if(comp->ReplyTo != NULL)
+      EmitRcptHeader(fh, "Disposition-Notification-To", comp->ReplyTo);
+    else if(comp->From != NULL)
+      EmitRcptHeader(fh, "Disposition-Notification-To", comp->From);
+    else
+      EmitRcptHeader(fh, "Disposition-Notification-To", C->EmailAddress);
+  }
+  if(comp->Importance != 0)
+    EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
 
   fprintf(fh, "User-Agent: %s\n", yamuseragent);
 
-  if(comp->UserInfo)
+  if(comp->UserInfo == TRUE)
     WR_WriteUserInfo(fh, comp->From);
 
   // if the PGP key ID is set we go and output the OpenPGP header
@@ -1280,12 +1307,12 @@ BOOL WriteOutMessage(struct Compose *comp)
   if(comp->Subject[0] != '\0')
     EmitHeader(fh, "Subject", comp->Subject);
 
-  if(comp->ExtHeader)
+  if(comp->ExtHeader != NULL)
     WR_EmitExtHeader(fh, comp);
 
 mimebody:
-
-  fputs("MIME-Version: 1.0\n", fh); // RFC 2049 requires that
+  // RFC 2049 requires this
+  fputs("MIME-Version: 1.0\n", fh);
 
   strlcpy(buf, NewBoundaryID(), sizeof(buf));
 
@@ -1334,6 +1361,7 @@ char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length)
   RETURN(dest);
   return dest;
 }
+
 ///
 /// AppendRcpt()
 //  Appends a recipient address to a string
@@ -1356,7 +1384,9 @@ static char *AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
       BOOL skip = FALSE;
 
       if(strchr(pe->Address, '@') != NULL)
+      {
         ins = BuildAddress(address, sizeof(address), pe->Address, pe->RealName);
+      }
       else
       {
         char addr[SIZE_ADDRESS];
@@ -1462,6 +1492,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
         case 'd':
         {
           char datstr[64];
+
           DateStamp2String(datstr, sizeof(datstr), &etd->OM_Date, DSS_DATE, TZC_NONE);
           dst = StrBufCat(dst, datstr);
         }
@@ -1470,6 +1501,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
         case 't':
         {
           char datstr[64];
+
           DateStamp2String(datstr, sizeof(datstr), &etd->OM_Date, DSS_TIME, TZC_NONE);
           dst = StrBufCat(dst, datstr);
         }
@@ -1478,6 +1510,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
         case 'z':
         {
           char tzone[6];
+
           int convertedTimeZone = (etd->OM_TimeZone/60)*100 + (etd->OM_TimeZone%60);
           snprintf(tzone, sizeof(tzone), "%+05d", convertedTimeZone);
           dst = StrBufCat(dst, tzone);
@@ -1487,6 +1520,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
         case 'w':
         {
           char datstr[64];
+
           DateStamp2String(datstr, sizeof(datstr), &etd->OM_Date, DSS_WEEKDAY, TZC_NONE);
           dst = StrBufCat(dst, datstr);
         }
@@ -1495,6 +1529,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
         case 'c':
         {
           char datstr[64];
+
           DateStamp2RFCString(datstr, sizeof(datstr), &etd->OM_Date, etd->OM_TimeZone, FALSE);
           dst = StrBufCat(dst, datstr);
         }
@@ -1583,6 +1618,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
   RETURN(dst);
   return dst;
 }
+
 ///
 /// InsertIntroText()
 //  Inserts a phrase into the message text
@@ -1611,10 +1647,10 @@ static void SetupExpandTextData(struct ExpandTextData *etd, struct Mail *mail)
 {
   ENTER();
 
-  etd->OS_Name     = mail ? (*(mail->From.RealName) ? mail->From.RealName : mail->From.Address) : "";
-  etd->OS_Address  = mail ? mail->From.Address : "";
-  etd->OM_Subject  = mail ? mail->Subject : "";
-  etd->OM_TimeZone = mail ? mail->tzone : C->TimeZone;
+  etd->OS_Name     = (mail != NULL) ? ((mail->From.RealName[0] != '\0') ? mail->From.RealName : mail->From.Address) : "";
+  etd->OS_Address  = (mail != NULL) ? mail->From.Address : "";
+  etd->OM_Subject  = (mail != NULL) ? mail->Subject : "";
+  etd->OM_TimeZone = (mail != NULL) ? mail->tzone : C->TimeZone;
   etd->R_Name      = "";
   etd->R_Address   = "";
 
@@ -1633,10 +1669,18 @@ static void SetupExpandTextData(struct ExpandTextData *etd, struct Mail *mail)
 
       date->ds_Minute += mail->tzone;
 
-      // we need to check the datestamp variable that it is still in it`s borders
+      // we need to check the datestamp variable that it is still in it's borders
       // after adjustment
-      while(date->ds_Minute < 0)     { date->ds_Minute += 1440; date->ds_Days--; }
-      while(date->ds_Minute >= 1440) { date->ds_Minute -= 1440; date->ds_Days++; }
+      while(date->ds_Minute < 0)
+      {
+        date->ds_Minute += 1440;
+        date->ds_Days--;
+      }
+      while(date->ds_Minute >= 1440)
+      {
+        date->ds_Minute -= 1440;
+        date->ds_Days++;
+      }
     }
   }
   else
@@ -2063,7 +2107,15 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
 
       // if the user wants to have the alternative
       // forward mode we go and select it here
-      if(hasAltFwdModeFlag(flags))
+      if(hasAsAttachmentFwdModeFlag(flags))
+      {
+        fwdMode = FWM_ATTACH;
+      }
+      else if(hasInlinedFwdModeFlag(flags))
+      {
+        fwdMode = FWM_INLINE;
+      }
+      else if(hasAltFwdModeFlag(flags))
       {
         switch(fwdMode)
         {
@@ -2773,9 +2825,9 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       if(rrepto != NULL)
         set(wmData->window, MUIA_WriteWindow_ReplyTo, rrepto);
 
-      set(wmData->window, MUIA_WriteWindow_To, rto);
-      set(wmData->window, rto[0] != '\0' ? MUIA_WriteWindow_Cc : MUIA_WriteWindow_To, rcc);
-      set(wmData->window, MUIA_WriteWindow_Subject, rsub);
+      xset(wmData->window, MUIA_WriteWindow_To, rto,
+                           rto[0] != '\0' ? MUIA_WriteWindow_Cc : MUIA_WriteWindow_To, rcc,
+                           MUIA_WriteWindow_Subject, rsub);
 
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
@@ -2976,8 +3028,8 @@ void CheckForAutoSaveFiles(void)
 
   ENTER();
 
-  // we go and check whether there is any .autosaveXX.txt file in the
-  // maildir directory. And if so we ask the user what he would like to do with it
+  // we go and check whether there is any .autosaveXX.txt file in the maildir
+  // directory. And if so we ask the user what he would like to do with it.
   parsedPatternSize = strlen(pattern) * 2 + 2;
   if((parsedPattern = malloc(parsedPatternSize)) != NULL)
   {
@@ -3026,8 +3078,8 @@ void CheckForAutoSaveFiles(void)
             {
               // set some default receiver and subject, because the autosave file just contains
               // the message text
-              set(wmData->window, MUIA_WriteWindow_To, "no@receiver");
-              set(wmData->window, MUIA_WriteWindow_Subject, "(subject)");
+              xset(wmData->window, MUIA_WriteWindow_To, "no@receiver",
+                                   MUIA_WriteWindow_Subject, "(subject)");
 
               // load the file in the new editor gadget and flag it as changed
               DoMethod(wmData->window, MUIM_WriteWindow_LoadText, fileName, TRUE);

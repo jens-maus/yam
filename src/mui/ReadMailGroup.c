@@ -99,9 +99,9 @@ struct Data
 
 /// Menu enumerations
 enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIMAGE, RMEN_WRAPH,
-       RMEN_TSTYLE, RMEN_FFONT, RMEN_EXTKEY, RMEN_CHKSIG, RMEN_SAVEDEC, RMEN_DISPLAY, RMEN_DETACH, RMEN_DELETEATT,
-       RMEN_PRINT, RMEN_SAVE, RMEN_REPLY, RMEN_FORWARD, RMEN_MOVE, RMEN_COPY, RMEN_DELETE, RMEN_SEARCH,
-       RMEN_SEARCHAGAIN, RMEN_TCOLOR
+       RMEN_TSTYLE, RMEN_FFONT, RMEN_EXTKEY, RMEN_CHKSIG, RMEN_SAVEDEC, RMEN_DISPLAY, RMEN_DETACH,
+       RMEN_DELETEATT, RMEN_PRINT, RMEN_SAVE, RMEN_REPLY, RMEN_FORWARD_ATTACH, RMEN_FORWARD_INLINE,
+       RMEN_MOVE, RMEN_COPY, RMEN_DELETE, RMEN_SEARCH, RMEN_SEARCHAGAIN, RMEN_TCOLOR
      };
 ///
 
@@ -782,10 +782,15 @@ OVERLOAD(MUIM_ContextMenuBuild)
 
     data->contextMenu = MenustripObject,
       Child, MenuObjectT(data->menuTitle),
-        Child, Menuitem(tr(MSG_MA_MReply),   NULL, hasContent && !isSentMail, FALSE, RMEN_REPLY),
-        Child, Menuitem(tr(MSG_MA_MForward), NULL, hasContent, FALSE, RMEN_FORWARD),
-        Child, Menuitem(tr(MSG_MA_MMove),    NULL, hasContent && isRealMail, FALSE, RMEN_MOVE),
-        Child, Menuitem(tr(MSG_MA_MCopy),    NULL, hasContent, FALSE, RMEN_COPY),
+        Child, Menuitem(tr(MSG_MA_MREPLY),   NULL, hasContent && !isSentMail, FALSE, RMEN_REPLY),
+        Child, MenuitemObject,
+          MUIA_Menuitem_Title, tr(MSG_MA_MFORWARD),
+          MUIA_Menuitem_Enabled, hasContent,
+          Child, Menuitem(tr(MSG_MA_MFORWARD_ATTACH), NULL, hasContent, FALSE, RMEN_FORWARD_ATTACH),
+          Child, Menuitem(tr(MSG_MA_MFORWARD_INLINE), NULL, hasContent, FALSE, RMEN_FORWARD_INLINE),
+        End,
+        Child, Menuitem(tr(MSG_MA_MMOVE),    NULL, hasContent && isRealMail, FALSE, RMEN_MOVE),
+        Child, Menuitem(tr(MSG_MA_MCOPY),    NULL, hasContent, FALSE, RMEN_COPY),
         Child, MenuBarLabel,
         Child, Menuitem(tr(MSG_RE_MDisplay), NULL, hasContent, FALSE, RMEN_DISPLAY),
         Child, Menuitem(tr(MSG_MA_Save),     NULL, hasContent, FALSE, RMEN_SAVE),
@@ -834,21 +839,22 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
   switch(xget(m->item, MUIA_UserData))
   {
-    case RMEN_REPLY:    DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_REPLY, 0); break;
-    case RMEN_FORWARD:  DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD, 0); break;
-    case RMEN_MOVE:     DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
-    case RMEN_COPY:     DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;
-    case RMEN_DISPLAY:  DoMethod(obj, MUIM_ReadMailGroup_DisplayMailRequest); break;
-    case RMEN_SAVE:     DoMethod(obj, MUIM_ReadMailGroup_SaveMailRequest); break;
-    case RMEN_PRINT:    DoMethod(obj, MUIM_ReadMailGroup_PrintMailRequest); break;
-    case RMEN_DELETE:   DoMethod(obj, MUIM_ReadMailGroup_DeleteMail); break;
-    case RMEN_DETACH:   DoMethod(obj, MUIM_ReadMailGroup_SaveAllAttachments); break;
-    case RMEN_DELETEATT:DoMethod(obj, MUIM_ReadMailGroup_DeleteAttachmentsRequest); break;
-    case RMEN_EXTKEY:   DoMethod(obj, MUIM_ReadMailGroup_ExtractPGPKey); break;
-    case RMEN_CHKSIG:   DoMethod(obj, MUIM_ReadMailGroup_CheckPGPSignature, TRUE); break;
-    case RMEN_SAVEDEC:  DoMethod(obj, MUIM_ReadMailGroup_SaveDecryptedMail); break;
-    case RMEN_SEARCH:   DoMethod(obj, MUIM_ReadMailGroup_Search, MUIF_NONE); break;
-    case RMEN_SEARCHAGAIN: DoMethod(obj, MUIM_ReadMailGroup_Search, MUIF_ReadMailGroup_Search_Again); break;
+    case RMEN_REPLY:          DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_REPLY, 0); break;
+    case RMEN_FORWARD_ATTACH: DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_ATTACH, 0); break;
+    case RMEN_FORWARD_INLINE: DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_INLINE, 0); break;
+    case RMEN_MOVE:           DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
+    case RMEN_COPY:           DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;
+    case RMEN_DISPLAY:        DoMethod(obj, MUIM_ReadMailGroup_DisplayMailRequest); break;
+    case RMEN_SAVE:           DoMethod(obj, MUIM_ReadMailGroup_SaveMailRequest); break;
+    case RMEN_PRINT:          DoMethod(obj, MUIM_ReadMailGroup_PrintMailRequest); break;
+    case RMEN_DELETE:         DoMethod(obj, MUIM_ReadMailGroup_DeleteMail); break;
+    case RMEN_DETACH:         DoMethod(obj, MUIM_ReadMailGroup_SaveAllAttachments); break;
+    case RMEN_DELETEATT:      DoMethod(obj, MUIM_ReadMailGroup_DeleteAttachmentsRequest); break;
+    case RMEN_EXTKEY:         DoMethod(obj, MUIM_ReadMailGroup_ExtractPGPKey); break;
+    case RMEN_CHKSIG:         DoMethod(obj, MUIM_ReadMailGroup_CheckPGPSignature, TRUE); break;
+    case RMEN_SAVEDEC:        DoMethod(obj, MUIM_ReadMailGroup_SaveDecryptedMail); break;
+    case RMEN_SEARCH:         DoMethod(obj, MUIM_ReadMailGroup_Search, MUIF_NONE); break;
+    case RMEN_SEARCHAGAIN:    DoMethod(obj, MUIM_ReadMailGroup_Search, MUIF_ReadMailGroup_Search_Again); break;
 
     // now we check the checkmarks of the
     // context-menu
