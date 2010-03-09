@@ -7671,9 +7671,6 @@ Optionen
 MSG_CO_FWDMSG
 Nachrichten weite_rleiten
 ;
-MSG_CO_FWDMSG_ATTACH
-als Anhänge
-;
 MSG_CO_FWDMSG_INLINE
 eingebunden
 ;
@@ -8542,8 +8539,11 @@ MSG_OPEN_WRITEWINDOWS_GAD
 *Jetzt _speichern|_Beenden ohne speichern|_Abbruch
 ;
 MSG_MA_MFORWARD_ATTACH
-als Anhänge
+als Anhang
 ;
 MSG_MA_MFORWARD_INLINE
 eingebunden
+;
+MSG_CO_FWDMSG_ATTACH
+als Anhang
 ;

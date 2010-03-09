@@ -6041,9 +6041,6 @@ Options
 MSG_CO_FWDMSG (1959//)
 _Forward messages
 ;
-MSG_CO_FWDMSG_ATTACH (1960//)
-as attachments
-;
 MSG_CO_FWDMSG_INLINE (1961//)
 inlined
 ;
@@ -6935,8 +6932,11 @@ MSG_OPEN_WRITEWINDOWS_GAD (2155//)
 *_Save now|_Quit without saving|_Cancel
 ;
 MSG_MA_MFORWARD_ATTACH (2156//)
-as attachments
+as attachment
 ;
 MSG_MA_MFORWARD_INLINE (2157//)
 inlined
+;
+MSG_CO_FWDMSG_ATTACH (2158//)
+as attachment
 ;
