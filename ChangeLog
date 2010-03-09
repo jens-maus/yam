@@ -9,6 +9,7 @@ $URL$
 
   * YAM_config.h, YAM_CO.c, YAM_FI.c, YAM_COs.c: Added a hidden boolean option
     'ShowFilterStats' to supress the requester after a local filter action is done.
+  * TRANSLATION: Fixed a little typo.
 
 2010-03-09 Thore Böckelmann <tboeckel@gmx.de>
 
