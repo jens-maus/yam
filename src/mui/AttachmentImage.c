@@ -913,16 +913,8 @@ OVERLOAD(MUIM_HandleEvent)
       }
 
       // save the seconds/micros for the next handleEvent call
-      if(xget(obj, MUIA_Selected) == TRUE)
-      {
-        data->selectSecs  = imsg->Seconds;
-        data->selectMicros= imsg->Micros;
-      }
-      else
-      {
-        data->selectSecs  = 0;
-        data->selectMicros= 0;
-      }
+      data->selectSecs  = imsg->Seconds;
+      data->selectMicros= imsg->Micros;
 
       if(WorkbenchBase->lib_Version >= 45 && data->eventHandlerAdded == TRUE)
       {
