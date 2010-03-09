@@ -689,7 +689,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
       else
         SET_FLAG(C->FolderCols, flag);
 
-      MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);
+      DoMethod(obj, MUIM_MainFolderListtree_MakeFormat);
     }
     break;
 
@@ -718,3 +718,41 @@ OVERLOAD(MUIM_ContextMenuChoice)
 ///
 
 /* Public Methods */
+/// DECLARE(MakeFormat)
+//  Creates format definition for folder listtree
+DECLARE(MakeFormat)
+{
+  static const int defwidth[FOCOLNUM] = { -1,-1,-1,-1,-1 };
+  char format[SIZE_LARGE];
+  BOOL first = TRUE;
+  int i;
+
+  *format = '\0';
+
+  for(i = 0; i < FOCOLNUM; i++)
+  {
+    if(isFlagSet(C->FolderCols, (1<<i)))
+    {
+      int p;
+
+      if(first)
+        first = FALSE;
+      else
+        strlcat(format, " BAR,", sizeof(format));
+
+      p = strlen(format);
+      snprintf(&format[p], sizeof(format)-p, "COL=%d W=%d", i, defwidth[i]);
+
+      if(i > 0)
+        strlcat(format, " P=\033r", sizeof(format));
+    }
+  }
+  strlcat(format, " BAR", sizeof(format));
+
+  // set the new NList_Format to our object
+  set(obj, MUIA_NList_Format, format);
+
+  return 0;
+}
+
+///

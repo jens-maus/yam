@@ -101,7 +101,6 @@ void  MA_JumpToRecentMsg(VOID);
 void  MA_FreeEMailStruct(struct ExtendedMail *email);
 BOOL  MA_GetIndex(struct Folder *folder);
 enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full);
-void  MA_MakeFOFormat(Object *lv);
 char *MA_NewMailFile(const struct Folder *folder, char *mailfile);
 BOOL  MA_PromptFolderPassword(struct Folder *fo, APTR win);
 BOOL  MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, enum ReadHeaderMode mode);
