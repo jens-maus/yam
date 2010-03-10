@@ -140,6 +140,7 @@ struct rxs_command rxs_commandlist[] =
   { "REQUESTFILE", "TITLE/A,DRAWER,FILE,MULTISELECT/S,DRAWERSONLY/S,SAVEMODE/S", "DRAWER,FILES/M", rx_requestfile },
   { "REQUESTFOLDER", "BODY/A,EXCLUDEACTIVE/S", "FOLDER", rx_requestfolder },
   { "REQUESTSTRING", "BODY/A,STRING/K,SECRET/S", "STRING", rx_requeststring },
+  { "RESTART", NULL, NULL, rx_restart },
   { "SCREENTOBACK", NULL, NULL, rx_screentoback },
   { "SCREENTOFRONT", NULL, NULL, rx_screentofront },
   { "SETFLAG", "VOL/K/N,PER/K/N", NULL, rx_setflag },

@@ -151,6 +151,7 @@ void rx_request(struct RexxHost *, struct RexxParams *, enum RexxAction, struct 
 void rx_requestfile(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_requestfolder(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_requeststring(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
+void rx_restart(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_screentoback(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_screentofront(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_setflag(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);

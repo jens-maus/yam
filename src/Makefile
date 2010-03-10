@@ -419,6 +419,7 @@ REXX = \
 	requestfile.o \
 	requestfolder.o \
 	requeststring.o \
+	restart.o \
 	screentoback.o \
 	screentofront.o \
 	setflag.o \
