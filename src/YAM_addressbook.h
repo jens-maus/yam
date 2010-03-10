@@ -91,7 +91,7 @@ extern struct Hook AB_EditHook;
 extern struct Hook AB_PrintHook;
 extern struct Hook AB_FoldUnfoldHook;
 
-void   AB_CheckBirthdates(void);
+void   AB_CheckBirthdates(BOOL check);
 char * AB_CompleteAlias(char *text);
 long   AB_CompressBD(char *datestr);
 char * AB_ExpandBD(long date);

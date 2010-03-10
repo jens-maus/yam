@@ -47,6 +47,7 @@
 #include <proto/utility.h>
 #include <proto/codesets.h>
 #include <proto/expat.h>
+#include <proto/timer.h>
 
 #include "extrasrc.h"
 
@@ -493,46 +494,76 @@ long AB_CompressBD(char *datestr)
 ///
 /// AB_CheckBirthdates
 // searches the address book for todays birth days
-void AB_CheckBirthdates(void)
+void AB_CheckBirthdates(BOOL check)
 {
-  ldiv_t today;
-  struct MUI_NListtree_TreeNode *tn;
-  int i;
+  struct TimeVal nowTV;
+  struct TimeVal tomorrowTV;
+  struct DateStamp tomorrowDS;
 
   ENTER();
 
-  today = ldiv(DateStamp2Long(NULL), 10000);
-  i = 0;
-  while((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
+  // perform the check only if we are instructed to do it
+  if(check == TRUE)
   {
-    struct ABEntry *ab = tn->tn_User;
+    ldiv_t today;
+    struct MUI_NListtree_TreeNode *tn;
+    int i;
 
-    if(ab->Type == AET_USER)
+    today = ldiv(DateStamp2Long(NULL), 10000);
+    i = 0;
+    while((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
     {
-      ldiv_t birthday = ldiv(ab->BirthDay, 10000);
+      struct ABEntry *ab = tn->tn_User;
 
-      if(birthday.quot == today.quot)
+      if(ab->Type == AET_USER)
       {
-        char question[SIZE_LARGE];
-        char *name = *ab->RealName ? ab->RealName : ab->Alias;
+        ldiv_t birthday = ldiv(ab->BirthDay, 10000);
 
-        snprintf(question, sizeof(question), tr(MSG_AB_BirthdayReq), name, today.rem - birthday.rem);
-
-        if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_AB_BirthdayReminder), tr(MSG_YesNoReq), question))
+        if(birthday.quot == today.quot)
         {
-          struct WriteMailData *wmData;
+          char question[SIZE_LARGE];
+          char *name = *ab->RealName ? ab->RealName : ab->Alias;
 
-          if((wmData = NewWriteMailWindow(NULL, 0)) != NULL)
+          snprintf(question, sizeof(question), tr(MSG_AB_BirthdayReq), name, today.rem - birthday.rem);
+
+          if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_AB_BirthdayReminder), tr(MSG_YesNoReq), question))
           {
-            xset(wmData->window, MUIA_WriteWindow_To, ab->Alias,
-                                 MUIA_WriteWindow_Subject, tr(MSG_AB_HappyBirthday));
+            struct WriteMailData *wmData;
+
+            if((wmData = NewWriteMailWindow(NULL, 0)) != NULL)
+            {
+              xset(wmData->window, MUIA_WriteWindow_To, ab->Alias,
+                                   MUIA_WriteWindow_Subject, tr(MSG_AB_HappyBirthday));
+            }
           }
         }
       }
-    }
 
-    i++;
+      i++;
+    }
   }
+
+  // retrigger the birthday check for the next day at 00:01
+  DateStamp(&tomorrowDS);
+  tomorrowDS.ds_Days++;
+  tomorrowDS.ds_Minute = 1;
+  tomorrowDS.ds_Tick = 0;
+
+  #if defined(DEBUG)
+  {
+  char dateString[64];
+
+  DateStamp2String(dateString, sizeof(dateString), &tomorrowDS, DSS_DATETIME, TZC_NONE);
+  D(DBF_TIMER, "next birthday check @ %s", dateString);
+  }
+  #endif
+
+  // calculate the remaining time until tomorrow 00:01
+  DateStamp2TimeVal(&tomorrowDS, &tomorrowTV, TZC_NONE);
+  GetSysTime(TIMEVAL(&nowTV));
+  SubTime(TIMEVAL(&tomorrowTV), TIMEVAL(&nowTV));
+
+  RestartTimer(TIMER_CHECKBIRTHDAYS, tomorrowTV.Seconds, tomorrowTV.Microseconds);
 
   LEAVE();
 }

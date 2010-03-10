@@ -7,6 +7,11 @@ $URL$
 
 2010-03-10 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_AB.c, YAM.c, Timer.c: birthdays are now checked on a regular basis. This
+    means that YAM will automatically check for pending birthdays at 00:01 each
+    day if it is running over midnight. Let's see what the users think of this.
+    Maybe we need a configurable time for this check instead of the fixed 00:01.
+    This closes #138.
   * doc/YAM_english.guide: updated english documentation according to latest
     changes.
   * rexx/restart.c: added FORCE option to enforce a restart without any

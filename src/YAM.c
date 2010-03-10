@@ -2099,10 +2099,10 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       if(C->RemoveOnStartup == TRUE)
         DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
 
-      // check for current birth days in our addressbook if the user
-      // selected it
-      if(C->CheckBirthdates == TRUE && nocheck == FALSE && hide == FALSE)
-        AB_CheckBirthdates();
+      // Check for current birth days in our addressbook if the user
+      // configured it. This will also setup the timer for the repeated
+      // birthday check on the next day.
+      AB_CheckBirthdates(C->CheckBirthdates == TRUE && nocheck == FALSE && hide == FALSE);
 
       // the rest of the startup jobs require a running TCP/IP stack,
       // so check if it is properly running.

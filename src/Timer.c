@@ -6,8 +6,8 @@
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
- the Free Software Foundatidn; either version 2 of the License, or
- (at your optidn) any later version.
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
 
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,7 +16,7 @@
 
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
- Foundatidn, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
@@ -36,6 +36,7 @@
 #include <mui/TextEditor_mcc.h>
 
 #include "YAM.h"
+#include "YAM_addressbook.h"
 #include "YAM_config.h"
 #include "YAM_mainFolder.h"
 #include "YAM_write.h"
@@ -50,7 +51,7 @@
 
 #include "Debug.h"
 
-/*** Timer processing functidn ***/
+/*** Timer processing function ***/
 /// PrepareTimer
 //  prepares a timer for being started with StartTimer() later on
 void PrepareTimer(const enum Timer tid, const int seconds, const int micros)
@@ -127,7 +128,7 @@ void StartTimer(const enum Timer tid)
 ///
 /// StopTimer
 //  Stop a currently running TimerIO request
-//  Please note that this functidn may NOT be used in the eventloop after having received
+//  Please note that this function may NOT be used in the eventloop after having received
 //  a timer with GetMsg because CheckIO and friends are not defined to work there correctly.
 void StopTimer(const enum Timer tid)
 {
@@ -266,9 +267,9 @@ void ResumeTimer(const enum Timer tid)
 
 ///
 /// RestartTimer
-//  restarts a particular timer. In fact it makes sure that the timer in questidn
+//  restarts a particular timer. In fact it makes sure that the timer in question
 //  is first stopped via AbortIO() and then issues a new one. Please note that
-//  this functidn may NOT be called from the eventloop because CheckIO and friends
+//  this function may NOT be called from the eventloop because CheckIO and friends
 //  are not defined to work there.
 void RestartTimer(const enum Timer tid, const int seconds, const int micros)
 {
@@ -282,7 +283,7 @@ void RestartTimer(const enum Timer tid, const int seconds, const int micros)
 }
 ///
 
-/*** Timer management functidns ***/
+/*** Timer management functions ***/
 /// InitTimers
 //  Initializes timer resources
 BOOL InitTimers(void)
@@ -389,13 +390,13 @@ void CleanupTimers(void)
 ///
 /// TimerDispatcher
 //  Dispatcher for timer class
-//  WARNING: Do NOT use StartTimer() directly in this functidn as it is
+//  WARNING: Do NOT use StartTimer() directly in this function as it is
 //           called within the timer eventloop which is undefined!
 //           Do a PrepareTimer() instead here and a StartTimer() in the
 //           the parent eventloop at the end of the file here.
 static void TimerDispatcher(const enum Timer tid)
 {
-  // prepare some debug informatidn
+  // prepare some debug information
   #if defined(DEBUG)
   char dateString[64];
 
@@ -466,7 +467,7 @@ static void TimerDispatcher(const enum Timer tid)
       }
 
       // also the configuration window needs to be closed
-      // or we skip the pop operatidn
+      // or we skip the pop operation
       if(writeWindowActive == FALSE &&
          G->CO == NULL)
       {
@@ -569,7 +570,7 @@ static void TimerDispatcher(const enum Timer tid)
     break;
 
     // on a POP3_KEEPALIVE we make sure that a currently active, but waiting
-    // POP3 connectidn (preselectidn) doesn't die by sending NOOP commands regularly
+    // POP3 connection (preselection) doesn't die by sending NOOP commands regularly
     // to the currently connected POP3 server.
     case TIMER_POP3_KEEPALIVE:
     {
@@ -626,6 +627,15 @@ static void TimerDispatcher(const enum Timer tid)
     }
     break;
 
+    // on a CHECKBIRTHDAYS we will check the address book for currently pending birthdays
+    case TIMER_CHECKBIRTHDAYS:
+    {
+      D(DBF_TIMER, "timer[%ld]: TIMER_CHECKBIRTHDAYS fired @ %s", tid, dateString);
+
+      AB_CheckBirthdates(TRUE);
+    }
+    break;
+
     // dummy to please GCC
     case TIMER_NUM:
       // nothing
@@ -637,7 +647,7 @@ static void TimerDispatcher(const enum Timer tid)
 
 ///
 /// ProcessTimerEvent
-// functidn to check the status of all our timers via the msgport
+// function to check the status of all our timers via the msgport
 // process on them and then restart those fired accordingly.
 BOOL ProcessTimerEvent(void)
 {
@@ -709,7 +719,7 @@ BOOL ProcessTimerEvent(void)
 
   #if defined(DEBUG)
   // let us check whether all necessary maintenance timers are running
-  // because right here ALL maintenance timers should run or something is definitly wrong!
+  // because right here ALL maintenance timers should run or something is definitely wrong!
 
   if(C->WriteIndexes > 0 && G->timerData.timer[TIMER_WRINDEX].isRunning == FALSE)
     E(DBF_ALWAYS, "timer[%ld]: TIMER_WRINDEX is not running and was probably lost!", TIMER_WRINDEX);
