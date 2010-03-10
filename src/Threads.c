@@ -107,7 +107,7 @@ void AbortThread(struct Thread *thread)
 
   Forbid();
 
-  D(DBF_THREAD, "Aborting thread at %p %p", thread, thread->process);
+  D(DBF_THREAD, "Aborting thread at %08lx %08lx", thread, thread->process);
 
   // send a CTRL-C signal to signal an abort situation
   if(thread->process != NULL)
@@ -137,7 +137,7 @@ static void RemoveThread(struct ThreadMessage *tmsg)
       if(node->thread->isDefault == TRUE)
         default_thread = NULL;
 
-      D(DBF_THREAD, "Got startup message of 0x%lx back", node->thread);
+      D(DBF_THREAD, "Got startup message of 0x%08lx back", node->thread);
 
       Remove((struct Node *)node);
       FreeVecPooled(G->SharedMemPool, tmsg);
@@ -238,7 +238,7 @@ void HandleThreadEvent(ULONG mask)
 
     while((tmsg = (struct ThreadMessage *)GetMsg(thread->thread_port)) != NULL)
     {
-      D(DBF_THREAD, "Received Message: 0x%lx", tmsg);
+      D(DBF_THREAD, "Received Message: 0x%08lx", tmsg);
 
       // check if this is a startup message
       if(tmsg->startup == TRUE)
@@ -312,7 +312,7 @@ static SAVEDS void ThreadEntry(void)
   thread = msg->thread;
   if((thread->thread_port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
-    D(DBF_THREAD, "Subthreaded created port at 0x%lx", thread->thread_port);
+    D(DBF_THREAD, "Subthreaded created port at 0x%08lx", thread->thread_port);
 
     NewList((struct List *)&thread->push_list);
 
@@ -619,7 +619,7 @@ static void HandleThreadMessage(struct ThreadMessage *tmsg)
 
     if(tmsg->async != 0)
     {
-      D(DBF_THREAD, "Freeing Message at 0x%lx", tmsg);
+      D(DBF_THREAD, "Freeing Message at 0x%08lx", tmsg);
 
       if(tmsg->argcount >= 1 && tmsg->arg[0] != NULL && tmsg->async == 2)
         free(tmsg->arg[0]);
@@ -628,7 +628,7 @@ static void HandleThreadMessage(struct ThreadMessage *tmsg)
     }
     else
     {
-      D(DBF_THREAD, "Repling Message at 0x%lx", tmsg);
+      D(DBF_THREAD, "Repling Message at 0x%08lx", tmsg);
       tmsg->called = TRUE;
       ReplyMsg(&tmsg->msg);
     }

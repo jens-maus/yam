@@ -672,7 +672,7 @@ OVERLOAD(OM_SET)
     }
   }
 
-  return DoSuperMethodA(cl, obj, msg);;
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///

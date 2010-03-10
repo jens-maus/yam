@@ -4425,7 +4425,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_CUT,       MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_CUT);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_COPY,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_COPY);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_PASTE,     MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_PASTE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_DELETE,    MUIV_Notify_Application,3, MUIM_CallHook,             &MA_EditActionHook, EA_DELETE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_DELETE,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_DELETE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SALL,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_SELECTALL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SNONE,     MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_SELECTNONE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWF,           MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_NewFolderHook);

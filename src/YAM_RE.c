@@ -980,7 +980,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
       }
       else
       {
-        E(DBF_MIME, "couldn't extract a full parameter (%lx/%lx)", attribute, value);
+        E(DBF_MIME, "couldn't extract a full parameter (%08lx/%08lx)", attribute, value);
 
         if(attribute)
           free(attribute);
@@ -1065,7 +1065,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
         if(stricmp(rp->ContentType, "text/plain") == 0 ||
            rp->Parent->MainAltPart == NULL)
         {
-          D(DBF_MAIL, "setting new main alternative part in parent #%ld [%lx] to #%ld [%lx]", rp->Parent->Nr, rp->Parent, rp->Nr, rp);
+          D(DBF_MAIL, "setting new main alternative part in parent #%ld [%08lx] to #%ld [%08lx]", rp->Parent->Nr, rp->Parent, rp->Nr, rp);
 
           rp->Parent->MainAltPart = rp;
         }
@@ -1275,7 +1275,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
               continue;
             }
             else
-              W(DBF_MAIL, "couldn't convert buf with CodesetsConvertStr(), %lx %ld %ld", str, dstlen, curlen);
+              W(DBF_MAIL, "couldn't convert buf with CodesetsConvertStr(), %08lx %ld %ld", str, dstlen, curlen);
           }
 
           // now write back exactly the same amount of bytes we read previously
@@ -1599,13 +1599,13 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     snprintf(file, sizeof(file), "YAMr%08x-p%d.txt", (unsigned int)rmData->uniqueID, newPart->Nr);
     AddPath(newPart->Filename, C->TempDir, file, sizeof(newPart->Filename));
 
-    D(DBF_MAIL, "New Part #%ld [%lx]", newPart->Nr, newPart);
+    D(DBF_MAIL, "New Part #%ld [%08lx]", newPart->Nr, newPart);
     D(DBF_MAIL, "  IsAltPart..: %ld",  isAlternativePart(newPart));
     D(DBF_MAIL, "  Filename...: [%s]", newPart->Filename);
-    D(DBF_MAIL, "  Nextptr....: %lx",  newPart->Next);
-    D(DBF_MAIL, "  Prevptr....: %lx",  newPart->Prev);
-    D(DBF_MAIL, "  Parentptr..: %lx",  newPart->Parent);
-    D(DBF_MAIL, "  MainAltPart: %lx",  newPart->MainAltPart);
+    D(DBF_MAIL, "  Nextptr....: %08lx",  newPart->Next);
+    D(DBF_MAIL, "  Prevptr....: %08lx",  newPart->Prev);
+    D(DBF_MAIL, "  Parentptr..: %08lx",  newPart->Parent);
+    D(DBF_MAIL, "  MainAltPart: %08lx",  newPart->MainAltPart);
 
     if((fp = fopen(newPart->Filename, "w")) != NULL)
     {
@@ -1635,7 +1635,7 @@ static void RE_UndoPart(struct Part *rp)
 
   ENTER();
 
-  D(DBF_MAIL, "Undoing part #%ld [%lx]", rp->Nr, rp);
+  D(DBF_MAIL, "Undoing part #%ld [%08lx]", rp->Nr, rp);
 
   // lets delete the file first so that we can cleanly "undo" the part
   DeleteFile(rp->Filename);
@@ -1751,7 +1751,7 @@ static void RE_UndoPart(struct Part *rp)
   // relink the MainAltPart pointer as well
   if(rp->Parent != NULL && rp->Parent->MainAltPart == NULL)
   {
-    D(DBF_MAIL, "setting parent #%ld [%lx] MainAltPart to %lx", rp->Parent->Nr, rp->Parent, rp->MainAltPart);
+    D(DBF_MAIL, "setting parent #%ld [%08lx] MainAltPart to %08lx", rp->Parent->Nr, rp->Parent, rp->MainAltPart);
 
     rp->Parent->MainAltPart = rp->MainAltPart;
   }
@@ -2055,11 +2055,11 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
   {
     struct Part *rp;
 
-    D(DBF_MAIL, "HeaderPart: [%lx]", hrp);
+    D(DBF_MAIL, "HeaderPart: [%08lx]", hrp);
 
     for(rp = hrp; rp; rp = rp->Next)
     {
-      D(DBF_MAIL, "Part[%lx]:#%ld%s", rp, rp->Nr, rp->Nr == rp->rmData->letterPartNum ? ":LETTERPART" : "");
+      D(DBF_MAIL, "Part[%08lx]:#%ld%s", rp, rp->Nr, rp->Nr == rp->rmData->letterPartNum ? ":LETTERPART" : "");
       D(DBF_MAIL, "  Name.......: [%s]", rp->Name);
       D(DBF_MAIL, "  ContentType: [%s]", rp->ContentType);
       D(DBF_MAIL, "  Boundary...: [%s]", SafeStr(rp->CParBndr));
@@ -2069,11 +2069,11 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
       D(DBF_MAIL, "  Encoding...: %ld",  rp->EncodingCode);
       D(DBF_MAIL, "  Filename...: [%s]", rp->Filename);
       D(DBF_MAIL, "  Size.......: %ld",  rp->Size);
-      D(DBF_MAIL, "  Nextptr....: %lx",  rp->Next);
-      D(DBF_MAIL, "  Prevptr....: %lx",  rp->Prev);
-      D(DBF_MAIL, "  Parentptr..: %lx",  rp->Parent);
-      D(DBF_MAIL, "  MainAltPart: %lx",  rp->MainAltPart);
-      D(DBF_MAIL, "  headerList.: %lx",  rp->headerList);
+      D(DBF_MAIL, "  Nextptr....: %08lx",  rp->Next);
+      D(DBF_MAIL, "  Prevptr....: %08lx",  rp->Prev);
+      D(DBF_MAIL, "  Parentptr..: %08lx",  rp->Parent);
+      D(DBF_MAIL, "  MainAltPart: %08lx",  rp->MainAltPart);
+      D(DBF_MAIL, "  headerList.: %08lx",  rp->headerList);
     }
   }
   #endif

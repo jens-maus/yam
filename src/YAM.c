@@ -2779,7 +2779,7 @@ int main(int argc, char **argv)
       // Create the shutdown window object, but only show it if the application is visible, too.
       // This window will be closed and disposed automatically as soon as the application itself
       // is disposed.
-      if(G->App != NULL && xget(G->App, MUIA_Application_Iconified) == FALSE && !args.noSplashWindow)
+      if(G->App != NULL && xget(G->App, MUIA_Application_Iconified) == FALSE && args.noSplashWindow == FALSE)
         ShutdownWindowObject, End;
 
       SetIoErr(RETURN_OK);

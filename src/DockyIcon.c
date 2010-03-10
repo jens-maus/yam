@@ -144,7 +144,7 @@ void UpdateDockyIcon(void)
     }
     else
     {
-      D(DBF_GUI, "set custom Docky icon %ld %p", G->currentAppIcon, G->theme.icons[G->currentAppIcon]);
+      D(DBF_GUI, "set custom Docky icon %ld %08lx", G->currentAppIcon, G->theme.icons[G->currentAppIcon]);
       aii.iconType = APPICONT_CustomIcon;
       aii.info.customIcon = G->theme.icons[G->currentAppIcon];
     }

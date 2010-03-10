@@ -1553,7 +1553,7 @@ static void TR_SetSocketOpts(void)
     socklen_t optlen;
     socklen_t tvlen;
 
-    D(DBF_NET, "Opened socket: %lx", G->TR_Socket);
+    D(DBF_NET, "Opened socket: %08lx", G->TR_Socket);
 
     // the value of the length pointer must be updated ahead of each call, because
     // getsockopt() might have modified it.
@@ -6307,7 +6307,7 @@ static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mai
       {
         free(buf);
 
-        E(DBF_IMPORT, "Failed to read node at %p", chld);
+        E(DBF_IMPORT, "Failed to read node at %08lx", chld);
         RETURN(FALSE);
         return FALSE;
       }
