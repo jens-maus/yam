@@ -1797,7 +1797,9 @@ void CO_Validate(struct Config *co, BOOL update)
   // check for valid birthday check times
   if(co->BirthdayCheckTime.ds_Minute < 0 || co->BirthdayCheckTime.ds_Minute > 23*60+59)
   {
+    co->BirthdayCheckTime.ds_Days = 0;
     co->BirthdayCheckTime.ds_Minute = 10*60;
+    co->BirthdayCheckTime.ds_Tick = 0;
     saveAtEnd = TRUE;
   }
 
