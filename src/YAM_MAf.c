@@ -1357,7 +1357,6 @@ static char **SplitAddressLine(const char *line, ULONG *numParts)
             // abort in case we couldn't duplicate the string
             break;
           }
-          SHOWSTRING(DBF_ALWAYS, parts[cnt]);
           cnt++;
         }
 
