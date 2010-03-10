@@ -1461,6 +1461,12 @@ static int Root_GlobalDispatcher(ULONG app_input)
     }
     break;
 
+    // user initiated a 'forced restart' action
+    case ID_RESTART_FORCE:
+    {
+      ret = 2;
+    }
+    break;
 
     // the application window was iconfified (either
     // by a user or automatically)

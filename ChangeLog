@@ -7,6 +7,9 @@ $URL$
 
 2010-03-10 Thore Böckelmann <tboeckel@gmx.de>
 
+  * rexx/restart.c: added FORCE option to enforce a restart without any
+    confirmation requesters. ARexx script authors be warned!! Use this option
+    carefully or you might raise some user's wrath upon you :)
   * Rexx.c, rexx/restart.c: implemented the ARexx command "restart". This one
     will do exactly the same as choosing "Restart" from YAM's "Project" menu.
     This closes #42.

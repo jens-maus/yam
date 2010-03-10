@@ -39,7 +39,7 @@
 
 struct args
 {
-  long dummy;
+  long force;
 };
 
 void rx_restart(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
@@ -58,7 +58,7 @@ void rx_restart(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
 
     case RXIF_ACTION:
     {
-      DoMethod(G->App, MUIM_Application_ReturnID, ID_RESTART);
+      DoMethod(G->App, MUIM_Application_ReturnID, args->force ? ID_RESTART_FORCE : ID_RESTART);
     }
     break;
 
