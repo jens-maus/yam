@@ -461,7 +461,6 @@ struct Config
   int   SpamFlushTrainingDataInterval;
   int   SpamFlushTrainingDataThreshold;
   int   SocketTimeout;
-  int   BirthdayCheckTime;
 
   enum  PrintMethod        PrintMethod;
   enum  SMTPSecMethod      SMTP_SecureMethod;
@@ -570,6 +569,7 @@ struct Config
   struct MUI_PenSpec ColorSignature;
   struct RxHook      RX[MAXRX];
   struct TRSocketOpt SocketOptions;
+  struct DateStamp   BirthdayCheckTime;
 
   char RealName[SIZE_REALNAME];
   char EmailAddress[SIZE_ADDRESS];

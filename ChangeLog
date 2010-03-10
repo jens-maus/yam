@@ -7,10 +7,9 @@ $URL$
 
 2010-03-10 Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_AB.c, YAM_CO.c: added the hidden integer option "BirthdayCheckTime" to
+  * YAM_AB.c, YAM_CO.c: added the hidden string option "BirthdayCheckTime" to
     define the time at which the cyclic birthday check should be performed. This
-    value defaults to 1000 which represents the time 10:00. Valid values range
-    from 0000 to 2359 with value mod 100 <= 59.
+    value defaults to "10:00:00" (10:00 AM) and must be given as "hh:mm:ss".
   * YAM_AB.c, YAM.c, Timer.c: birthdays are now checked on a regular basis. This
     means that YAM will automatically check for pending birthdays at 00:01 each
     day if it is running over midnight. Let's see what the users think of this.

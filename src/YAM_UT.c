@@ -2554,6 +2554,8 @@ long DateStamp2Long(struct DateStamp *date)
 BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mode, enum TZConvert tzc)
 {
   char datestr[64], timestr[64]; // we don't use LEN_DATSTRING as OS3.1 anyway ignores it.
+  char *datestrPtr = datestr;
+  char *timestrPtr = timestr;
   BOOL result = FALSE;
 
   ENTER();
@@ -2568,7 +2570,7 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
 
       // we walk from the front to the back and skip the week
       // day name
-      if((p = strchr(string, ' ')))
+      if((p = strchr(string, ' ')) != NULL)
       {
         int month;
 
@@ -2583,7 +2585,7 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
           break;
 
         // extract the day
-        if((p = strchr(p, ' ')))
+        if((p = strchr(p, ' ')) != NULL)
         {
           int day = atoi(p+1);
 
@@ -2591,12 +2593,12 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
             break;
 
           // extract the timestring
-          if((p = strchr(p, ' ')))
+          if((p = strchr(p, ' ')) != NULL)
           {
             strlcpy(timestr, p+1, MIN((ULONG)8, sizeof(timestr)));
 
             // extract the year
-            if((p = strchr(p, ' ')))
+            if((p = strchr(p, ' ')) != NULL)
             {
               int year = atoi(p+1);
 
@@ -2621,7 +2623,7 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
       char *p;
 
       // copy the datestring
-      if((p = strchr(string, ' ')))
+      if((p = strchr(string, ' ')) != NULL)
       {
         strlcpy(datestr, string, MIN(sizeof(datestr), (unsigned int)(p - string + 1)));
         strlcpy(timestr, p + 1, sizeof(timestr));
@@ -2635,7 +2637,8 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
     case DSS_DATE:
     {
       strlcpy(datestr, string, sizeof(datestr));
-      timestr[0] = '\0';
+      // ignore the time part
+      timestrPtr = NULL;
       result = TRUE;
     }
     break;
@@ -2643,7 +2646,8 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
     case DSS_TIME:
     {
       strlcpy(timestr, string, sizeof(timestr));
-      datestr[0] = '\0';
+      // ignore the date part
+      datestrPtr = NULL;
       result = TRUE;
     }
     break;
@@ -2663,8 +2667,8 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
     // now we fill the DateTime structure with the data for our request.
     dt.dat_Format  = (mode == DSS_USDATETIME || mode == DSS_UNIXDATE) ? FORMAT_USA : FORMAT_DEF;
     dt.dat_Flags   = 0; // perhaps later we can add Weekday substitution
-    dt.dat_StrDate = datestr;
-    dt.dat_StrTime = timestr;
+    dt.dat_StrDate = datestrPtr;
+    dt.dat_StrTime = timestrPtr;
     dt.dat_StrDay  = NULL;
 
     // convert the string to a dateStamp

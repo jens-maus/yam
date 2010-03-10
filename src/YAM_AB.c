@@ -543,9 +543,9 @@ void AB_CheckBirthdates(BOOL check)
     }
   }
 
-  // retrigger the birthday check for the configured check time
+  // reschedule the birthday check for the configured check time
   DateStamp(&nextDS);
-  nextDS.ds_Minute = (C->BirthdayCheckTime / 100) * 60 + (C->BirthdayCheckTime % 100);
+  nextDS.ds_Minute = C->BirthdayCheckTime.ds_Minute;
   nextDS.ds_Tick = 0;
 
   DateStamp2TimeVal(&nextDS, &nextTV, TZC_NONE);

@@ -613,7 +613,9 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "StyleMailRead    = %s\n", MUIStyle2String(co->StyleMailRead));
     fprintf(fh, "AutoClip         = %s\n", Bool2Txt(co->AutoClip));
     fprintf(fh, "ShowFilterStats  = %s\n", Bool2Txt(co->ShowFilterStats));
-    fprintf(fh, "BirthdayCheckTime= %04d\n", co->BirthdayCheckTime);
+
+    DateStamp2String(buf, sizeof(buf), &co->BirthdayCheckTime, DSS_TIME, TZC_NONE);
+    fprintf(fh, "BirthdayCheckTime= %s\n", buf);
 
     // analyze if we really didn't meet an error during the
     // numerous write operations
@@ -1438,7 +1440,10 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(stricmp(buf, "StyleMailRead") == 0)     String2MUIStyle(value, co->StyleMailRead);
           else if(stricmp(buf, "AutoClip") == 0)          co->AutoClip = Txt2Bool(value);
           else if(stricmp(buf, "ShowFilterStats") == 0)   co->ShowFilterStats = Txt2Bool(value);
-          else if(stricmp(buf, "BirthdayCheckTime") == 0) co->BirthdayCheckTime = atoi(value);
+          else if(stricmp(buf, "BirthdayCheckTime") == 0)
+          {
+             String2DateStamp(&co->BirthdayCheckTime, value, DSS_TIME, TZC_NONE);
+          }
           else
             W(DBF_CONFIG, "unknown config option: '%s' = '%s'", buf, value);
         }

@@ -1075,7 +1075,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->SocketOptions.NoDelay     = FALSE;
     co->SocketOptions.LowDelay    = FALSE;
     co->SocketTimeout = 30; // 30s socket timeout per default
-    co->BirthdayCheckTime = 1000; // check birthdays at 10:00
     co->TRBufferSize = 8192; // 8K buffer per default
     co->EmbeddedMailDelay = 200; // 200ms delay per default
     co->KeepAliveInterval = 30;  // 30s interval per default
@@ -1091,6 +1090,11 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->StyleFolderNew,    MUIX_B,                sizeof(co->StyleFolderNew));
     strlcpy(co->StyleMailUnread,   MUIX_B,                sizeof(co->StyleMailUnread));
     strlcpy(co->StyleMailRead,     "",                    sizeof(co->StyleMailRead));
+
+    // check birthdays at 10:00 AM
+    co->BirthdayCheckTime.ds_Days = 0;
+    co->BirthdayCheckTime.ds_Minute = 10*60;
+    co->BirthdayCheckTime.ds_Tick = 0;
   }
 
   LEAVE();
@@ -1791,9 +1795,9 @@ void CO_Validate(struct Config *co, BOOL update)
   }
 
   // check for valid birthday check times
-  if(co->BirthdayCheckTime < 0 || co->BirthdayCheckTime > 2359 || (co->BirthdayCheckTime % 100) > 59)
+  if(co->BirthdayCheckTime.ds_Minute < 0 || co->BirthdayCheckTime.ds_Minute > 23*60+59)
   {
-    co->BirthdayCheckTime = 1000;
+    co->BirthdayCheckTime.ds_Minute = 10*60;
     saveAtEnd = TRUE;
   }
 
