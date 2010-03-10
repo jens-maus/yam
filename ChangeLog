@@ -7,6 +7,8 @@ $URL$
 
 2010-03-10 Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/YAM_english.guide: updated english documentation according to latest
+    changes.
   * rexx/restart.c: added FORCE option to enforce a restart without any
     confirmation requesters. ARexx script authors be warned!! Use this option
     carefully or you might raise some user's wrath upon you :)

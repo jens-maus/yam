@@ -5725,6 +5725,7 @@ Alphabetical list of all ARexx commands
  @{" REQUESTFILE       " link "RX_REQUESTFILE"}  - Request the user to select a file
  @{" REQUESTFOLDER     " link "RX_REQUESTFOLDER"}  - Request the user to select a folder
  @{" REQUESTSTRING     " link "RX_REQUESTSTRING"}  - Request the user for a string
+ @{" RESTART           " link "RX_RESTART"}  - Restart YAM
  @{" SCREENTOBACK      " link "RX_SCREENTOBACK"}  - Bring the YAM screen to the background
  @{" SCREENTOFRONT     " link "RX_SCREENTOFRONT"}  - Bring the YAM screen to the foreground
  @{" SETFLAG           " link "RX_SETFLAG"}  - Set the PERmanent or VOLatile flag of a message
@@ -5803,6 +5804,7 @@ GUI handling
  @{" LISTFREEZE        " link "RX_LISTFREEZE"}  - Forbid graphical updates to a list
  @{" LISTUNFREEZE      " link "RX_LISTUNFREEZE"}  - Permit graphical updates to a list
  @{" READCLOSE         " link "RX_READCLOSE"}  - Close the active Read window
+ @{" RESTART           " link "RX_RESTART"}  - Restart YAM
 
 
 Message/Folder selection
@@ -8415,6 +8417,7 @@ QUIT
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" RESTART " link "RX_RESTART"}
 
 @endnode
 
@@ -8823,7 +8826,7 @@ REQUESTFOLDER
 @endnode
 
 @node "RX_REQUESTSTRING" "ARexx command: REQUESTSTRING"
-@next "RX_SCREENTOBACK"
+@next "RX_RESTART"
 @prev "RX_REQUESTFOLDER"
 @toc "REXX"
 
@@ -8875,9 +8878,44 @@ REQUESTSTRING
 
 @endnode
 
+@node "RX_RESTART" "ARexx command: RESTART"
+@next "RX_SCREENTOBACK"
+@prev "RX_REQUESTSTRING"
+@toc "REXX"
+
+RESTART
+-------------
+
+@{b}NAME@{ub}
+     Restart -- Restart YAM (V2.7)
+
+@{b}TEMPLATE@{ub}
+     FORCE/S
+
+@{b}FUNCTION@{ub}
+     Restarts YAM, just as if the user had chosen "Restart" from the
+     "Project" menu.
+
+@{b}INPUTS@{ub}
+     FORCE/S   - skip any safety requester, except for changes in the
+                 address book done using the GUI
+
+@{b}RETURNS@{ub}
+
+@{b}NOTES@{ub}
+
+@{b}EXAMPLE@{ub}
+
+@{b}BUGS@{ub}
+
+@{b}SEE ALSO@{ub}
+     @{" QUIT " link "RX_QUIT"}
+
+@endnode
+
 @node "RX_SCREENTOBACK" "ARexx command: SCREENTOBACK"
 @next "RX_SCREENTOFRONT"
-@prev "RX_REQUESTSTRING"
+@prev "RX_RESTART"
 @toc "REXX"
 
 SCREENTOBACK
@@ -11497,6 +11535,7 @@ local bulletin boards or on public domain disks.
    @{" REQUESTFOLDER, ARexx command " link "RX_REQUESTFOLDER"}
    @{" REQUESTSTRING, ARexx command " link "RX_REQUESTSTRING"}
    @{" Requirements " link "REQS"}
+   @{" RESTART, ARexx command " link "RX_RESTART"}
 
    S...
 
