@@ -1075,6 +1075,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->SocketOptions.NoDelay     = FALSE;
     co->SocketOptions.LowDelay    = FALSE;
     co->SocketTimeout = 30; // 30s socket timeout per default
+    co->BirthdayCheckTime = 1000; // check birthdays at 10:00
     co->TRBufferSize = 8192; // 8K buffer per default
     co->EmbeddedMailDelay = 200; // 200ms delay per default
     co->KeepAliveInterval = 30;  // 30s interval per default
@@ -1786,6 +1787,13 @@ void CO_Validate(struct Config *co, BOOL update)
   {
     // a delay longer than ten seconds is not possible, either
     co->StatusChangeDelay = 10000;
+    saveAtEnd = TRUE;
+  }
+
+  // check for valid birthday check times
+  if(co->BirthdayCheckTime < 0 || co->BirthdayCheckTime > 2359 || (co->BirthdayCheckTime % 100) > 59)
+  {
+    co->BirthdayCheckTime = 1000;
     saveAtEnd = TRUE;
   }
 

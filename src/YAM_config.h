@@ -461,6 +461,7 @@ struct Config
   int   SpamFlushTrainingDataInterval;
   int   SpamFlushTrainingDataThreshold;
   int   SocketTimeout;
+  int   BirthdayCheckTime;
 
   enum  PrintMethod        PrintMethod;
   enum  SMTPSecMethod      SMTP_SecureMethod;

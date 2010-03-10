@@ -497,8 +497,8 @@ long AB_CompressBD(char *datestr)
 void AB_CheckBirthdates(BOOL check)
 {
   struct TimeVal nowTV;
-  struct TimeVal tomorrowTV;
-  struct DateStamp tomorrowDS;
+  struct TimeVal nextTV;
+  struct DateStamp nextDS;
 
   ENTER();
 
@@ -543,27 +543,34 @@ void AB_CheckBirthdates(BOOL check)
     }
   }
 
-  // retrigger the birthday check for the next day at 00:01
-  DateStamp(&tomorrowDS);
-  tomorrowDS.ds_Days++;
-  tomorrowDS.ds_Minute = 1;
-  tomorrowDS.ds_Tick = 0;
+  // retrigger the birthday check for the configured check time
+  DateStamp(&nextDS);
+  nextDS.ds_Minute = (C->BirthdayCheckTime / 100) * 60 + (C->BirthdayCheckTime % 100);
+  nextDS.ds_Tick = 0;
+
+  DateStamp2TimeVal(&nextDS, &nextTV, TZC_NONE);
+
+  GetSysTime(TIMEVAL(&nowTV));
+  if(CmpTime(TIMEVAL(&nowTV), TIMEVAL(&nextTV)) < 0)
+  {
+    // if the check time is already over for today we schedule the next check
+    // for tomorrow
+    nextDS.ds_Days++;
+    DateStamp2TimeVal(&nextDS, &nextTV, TZC_NONE);
+  }
+
+  // calculate the remaining time until the next check
+  SubTime(TIMEVAL(&nextTV), TIMEVAL(&nowTV));
 
   #if defined(DEBUG)
   {
   char dateString[64];
 
-  DateStamp2String(dateString, sizeof(dateString), &tomorrowDS, DSS_DATETIME, TZC_NONE);
+  DateStamp2String(dateString, sizeof(dateString), &nextDS, DSS_DATETIME, TZC_NONE);
   D(DBF_TIMER, "next birthday check @ %s", dateString);
   }
   #endif
-
-  // calculate the remaining time until tomorrow 00:01
-  DateStamp2TimeVal(&tomorrowDS, &tomorrowTV, TZC_NONE);
-  GetSysTime(TIMEVAL(&nowTV));
-  SubTime(TIMEVAL(&tomorrowTV), TIMEVAL(&nowTV));
-
-  RestartTimer(TIMER_CHECKBIRTHDAYS, tomorrowTV.Seconds, tomorrowTV.Microseconds);
+  RestartTimer(TIMER_CHECKBIRTHDAYS, nextTV.Seconds, nextTV.Microseconds);
 
   LEAVE();
 }
