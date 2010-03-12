@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-12 Samir Hawamdeh <s.hawamdeh@tele.it>
+
+  * locale/italian.ct: first committed for 2.7 Dev release.
+
 2010-03-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c, YAM_CO.c: added the hidden string option "BirthdayCheckTime" to

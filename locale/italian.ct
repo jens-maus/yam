@@ -1,12 +1,12 @@
-## version $VER: YAM.catalog 7.1 (24.02.2010)
+## version $VER: YAM.catalog 7.1 (10.03.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
 ;
-; italian.ct - YAM 2.6 catalog translation file
+; italian.ct - YAM 2.7 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 4546 2010-02-23
+; based on YAM.cd 4580 2010-03-9
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1768,7 +1768,7 @@ _Percorso
 ; _Path
 ;
 MSG_CO_LogSplit
-Dividi file di _log Split
+Dividi file di _log (Split)
 ; _log file
 ;
 MSG_CO_LogMode
@@ -3693,7 +3693,7 @@ Nessuna info sul mittente
 ; No sender info
 ;
 MSG_RE_SInfo
-Solo i campi dei dati
+Solo per campi dati
 ; Data fields only
 ;
 MSG_RE_SInfoImage
@@ -4485,9 +4485,9 @@ Cancellazione della posta sul server...
 MSG_TR_NewMailReq
 \e8C'è nuova posta!\e2\n\
 \n\
-%3ld messaggi prelevati\n\
-%3ld messaggi lasciati nel server\n\
-%3ld messaggi duplicati saltati\n
+%3ld messaggio(i) prelevato(i)\n\
+%3ld messaggio(i) lasciato(i) nel server\n\
+%3ld messaggio(i) duplicato(i) saltato(i)\n
 ; \e8You have new mail!\e2\n\
 ; \n\
 ; %3ld messages downloaded,\n\
@@ -4499,13 +4499,13 @@ MSG_TR_FilterStats
 \n\
 Filtraggio eseguito su:\n\
 \n\
-%3ld messaggi controllati\n\
-%3ld messaggi rediretti\n\
-%3ld messaggi inoltrati\n\
-%3ld messaggi in risposta automatica\n\
-%3ld comandi attivati\n\
-%3ld messaggi spostati\n\
-%3ld messaggi cancellati
+%3ld messaggio(i) controllato(i)\n\
+%3ld messaggio(i) rediretto(i)\n\
+%3ld messaggio(i) inoltrato(i)\n\
+%3ld messaggio(i) automatico(i) di risposta\n\
+%3ld comando(i) attivato(i)\n\
+%3ld messaggio(i) spostato(i)\n\
+%3ld messaggio(i) cancellato(i)
 ; \n\
 ; Filtering done:\n\
 ; \n\
@@ -4539,7 +4539,7 @@ Trasferimento posta a '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile
-Messaggi in file
+Messaggi nel file
 ; Messages in file
 ;
 MSG_TR_MsgOnServer
@@ -6634,7 +6634,7 @@ Conoscenti o amici
 ; People I Know
 ;
 MSG_QUICKSEARCH_VO_HASATTACHMENTS
-Con Allegati
+Con allegati
 ; Has Attachments
 ;
 MSG_QUICKSEARCH_VO_MINSIZE
@@ -7563,7 +7563,7 @@ Controlla la _nuova posta verificando potenziali contenuti Spam
 ; Check _new mails for spam content
 ;
 MSG_CO_SPAM_RESETTRAININGDATA
-_Resetta i dati di riconoscimento
+_Resetta dati di riconoscimento
 ; _Reset training data
 ;
 MSG_CO_SPAM_GOODCOUNT
@@ -8059,7 +8059,7 @@ Ricevuta di ritorno
 ; Return receipts
 ;
 MSG_CO_MDN_DESCRIPTION
-Cosa fare nel caso si riceva una richiesta per una ricevuta di ritorno...
+Cosa fare nel caso si riceva la richiesta per una ricevuta di ritorno...
 ; When I receive a request for a return receipt...
 ;
 MSG_CO_MDN_DISABLED
@@ -8480,10 +8480,6 @@ Opzioni
 MSG_CO_FWDMSG
 _Inoltra messaggi
 ; _Forward messages
-;
-MSG_CO_FWDMSG_ATTACH
-come allegati
-; as attachments
 ;
 MSG_CO_FWDMSG_INLINE
 in coda
@@ -9855,7 +9851,7 @@ separata per ogni messaggio di posta.
 ; entry in every mail.
 ;
 MSG_TR_NEW_MAIL_NOTIFY
-Ricevuti %ld nuovi messaggi di posta!
+Ricevuto(i) %ld nuovo(i) messaggio(i) di posta!
 ; Received %ld new mails!
 ; COUNT
 ;
@@ -9887,7 +9883,38 @@ Per favore scaricala manualmente da questo indirizzo:\n\
 ; '%s'
 ; URL
 ;
+; *** Added for YAM 2.7 ********************************************************
+;
 MSG_USERNAME_FALLBACK
-John Doe
+Mario Rossi
 ; John Doe
+;
+MSG_RE_DEFAULT_MIMEPART_NAME
+Parte %ld.%ld
+; Part %ld.%ld
+; PARENTNUMBER PARTNUMER
+;
+MSG_OPEN_WRITEWINDOWS
+Sono rimaste aperte delle finestre di scrittura!\n\
+\n\
+Come si desidera procedere?
+; There are still some write windows open!\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_OPEN_WRITEWINDOWS_GAD
+*_Salva ora|_Esci senza salvare|_Annulla
+; *_Save now|_Quit without saving|_Cancel
+;
+MSG_MA_MFORWARD_ATTACH
+Come allegato
+; as attachment
+;
+MSG_MA_MFORWARD_INLINE
+In coda
+; inlined
+;
+MSG_CO_FWDMSG_ATTACH
+Come allegato
+; as attachment
 ;
