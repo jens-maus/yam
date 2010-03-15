@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-15 Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc.h: fixed xget() prototype for AROS compile.
+
 2010-03-12 Samir Hawamdeh <s.hawamdeh@tele.it>
 
   * locale/italian.ct: first committed for 2.7 Dev release.
@@ -28,7 +32,7 @@ $URL$
     will do exactly the same as choosing "Restart" from YAM's "Project" menu.
     This closes #42.
 
-2010-03-09 Frank Weber <<opionline@yahoo.de>
+2010-03-09 Frank Weber <opionline@yahoo.de>
 
   * YAM_config.h, YAM_CO.c, YAM_FI.c, YAM_COs.c: Added a hidden boolean option
     'ShowFilterStats' to supress the requester after a local filter action is
