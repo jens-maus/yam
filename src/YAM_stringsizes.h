@@ -53,7 +53,6 @@
 #define SIZE_EXALLBUF 32768
 #define SIZE_FILEBUF  65535 // the buffer size for our fopen() file buffers
 
-#define MAXP3           16
 #define MAXRX           21
 
 #define MAX_FOLDERIMG   11
