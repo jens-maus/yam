@@ -227,18 +227,20 @@ static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
       // now that we analyzed the file we have to decide which encoding to take
       if(longlines != 0 || unsafechars != 0 || binarychars != 0)
       {
+      #warning "FIXME: check Allow8bit case"
         if(unsafechars == 0 && binarychars == 0)
         {
           // if we are here just because of long lines we have to use quoted-printable
           // encoding or otherwise we have too long lines in our final mail
           encoding = ENC_QP;
         }
-        else if(binarychars == 0 && longlines == 0 && C->Allow8bit == TRUE)
+        /*else if(binarychars == 0 && longlines == 0 && C->Allow8bit == TRUE)
         {
           // if there are no binary chars and no long lines in the file and if
           // our SMTP server support 8bit character we can go and encode it via 8bit
           encoding = ENC_8BIT;
         }
+        */
         else if(total / (unsafechars+binarychars+1) < 16 || strnicmp(ctype, "application/", 12) == 0)
         {
           // if we end up here we have a file with just unprintable characters
@@ -4219,7 +4221,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
   }
 
   // now we make sure we immediately send out the mail.
-  if(mode == WRITE_SEND && newMail != NULL && G->TR == NULL)
+  #warning "FIXME: check G->TR usage"
+  if(mode == WRITE_SEND && newMail != NULL)// && G->TR == NULL)
   {
     struct MailList *mlist;
 
@@ -4228,7 +4231,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
       if(AddNewMailNode(mlist, newMail) != NULL)
       {
         set(obj, MUIA_Window_Open, FALSE);
-        TR_ProcessSEND(mlist, SEND_ACTIVE_USER);
+        SendMails(mlist, SEND_ACTIVE_USER);
       }
 
       DeleteMailList(mlist);

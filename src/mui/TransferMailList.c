@@ -32,9 +32,10 @@
 
 #include "YAM_addressbookEntry.h"
 #include "YAM_mainFolder.h"
-#include "YAM_transfer.h"
 #include "YAM_utilities.h"
+
 #include "Themes.h"
+#include "Transfer.h"
 
 #include "Debug.h"
 

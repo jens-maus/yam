@@ -3200,21 +3200,28 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
   UnlockMailList(folder->messages);
 
   // now check if the mail to be removed has just been downloaded, but not yet filtered
-  if(G->TR != NULL && G->TR->downloadedMails != NULL && G->TR->Checking == TRUE && folder == FO_GetFolderByType(FT_INCOMING, NULL))
+  if(G->activeTransfer == TRUE)
   {
-    LockMailList(G->TR->downloadedMails);
+    struct MailList *downloadedMails = (struct MailList *)xget(G->transferWindowObject, MUIA_TransferWindow_DownloadedMails);
 
-    if((mnode = FindMailInList(G->TR->downloadedMails, mail)) != NULL)
+    #warning "TODO: what is this downloadedMails thing all about?"
+
+    if(downloadedMails != NULL && folder == FO_GetFolderByType(FT_INCOMING, NULL))
     {
-      // remove the mail from the list of just downloaded mails,
-      // so it will not be filtered anymore when the download
-      // process finishes
-      D(DBF_UTIL, "removing mail with subject '%s' from download list", mail->Subject);
-      RemoveMailNode(G->TR->downloadedMails, mnode);
-      DeleteMailNode(mnode);
-    }
+      LockMailList(downloadedMails);
 
-    UnlockMailList(G->TR->downloadedMails);
+      if((mnode = FindMailInList(downloadedMails, mail)) != NULL)
+      {
+        // remove the mail from the list of just downloaded mails,
+        // so it will not be filtered anymore when the download
+        // process finishes
+        D(DBF_UTIL, "removing mail with subject '%s' from download list", mail->Subject);
+        RemoveMailNode(downloadedMails, mnode);
+        DeleteMailNode(mnode);
+      }
+
+      UnlockMailList(downloadedMails);
+    }
   }
 
   // then we have to mark the folder index as expired so
@@ -3865,7 +3872,9 @@ BOOL SafeOpenWindow(Object *obj)
   if(obj != NULL)
   {
     // make sure we open the window object
-    set(obj, MUIA_Window_Open, TRUE);
+    // avoid MUIA_Window_Open's side effect of activating the window if it was already open
+    if(xget(obj, MUIA_Window_Open) == FALSE)
+      set(obj, MUIA_Window_Open, TRUE);
 
     // now we check whether the window was successfully
     // open or the application has been in iconify state

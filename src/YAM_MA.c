@@ -79,6 +79,7 @@
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
+#include "MailServers.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
@@ -2421,7 +2422,7 @@ MakeHook(MA_GetAddressHook, MA_GetAddressFunc);
 ///
 /// MA_ExchangeMail
 //  send and get mails
-void MA_ExchangeMail(enum GUILevel mode)
+void MA_ExchangeMail(enum ReceiveMode mode)
 {
   ENTER();
 
@@ -2430,16 +2431,18 @@ void MA_ExchangeMail(enum GUILevel mode)
     case MEO_GET_FIRST:
     {
       MA_PopNow(mode, -1);
+
       // the POP transfer window is not yet disposed
       // we need to process that disposure first before we can send any outstanding mail
       DoMethod(G->App, MUIM_Application_InputBuffered);
-      MA_Send(mode == POP_USER ? SEND_ALL_USER : SEND_ALL_AUTO);
+      MA_Send(mode == RECV_USER ? SEND_ALL_USER : SEND_ALL_AUTO);
     }
     break;
 
     case MEO_SEND_FIRST:
     {
-      MA_Send(mode == POP_USER ? SEND_ALL_USER : SEND_ALL_AUTO);
+      MA_Send(mode == RECV_USER ? SEND_ALL_USER : SEND_ALL_AUTO);
+
       // the SMTP transfer window is not yet disposed
       // we need to process that disposure first before we can fetch any new mail
       DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -2457,19 +2460,25 @@ void MA_ExchangeMail(enum GUILevel mode)
 ///
 /// MA_PopNow
 //  Fetches new mail from POP3 account(s)
-void MA_PopNow(enum GUILevel mode, int pop)
+void MA_PopNow(enum ReceiveMode mode, const int pop)
 {
   ENTER();
 
   // Don't proceed if another transfer is in progress
-  if(G->TR == NULL)
+  if(G->activeTransfer == FALSE)
   {
+    struct MailServerNode *msn;
+
     if(C->UpdateStatus == TRUE)
       MA_UpdateStatus();
 
-    MA_StartMacro(MACRO_PREGET, itoa(mode));
+    if(pop >= 0)
+      msn = GetMailServer(&C->mailServerList, MST_POP3, pop);
+    else
+      msn = NULL;
 
-    TR_GetMailFromNextPOP(TRUE, pop, mode);
+    if(ReceiveMails(msn, mode) == FALSE)
+      W(DBF_NET, "ReceiveMails() returned FALSE");
   }
 
   LEAVE();
@@ -2508,7 +2517,7 @@ BOOL MA_Send(enum SendMode mode)
 
   // we only proceed if there isn't already a transfer
   // window/process in action
-  if(G->TR == NULL)
+  if(G->activeTransfer == FALSE)
   {
     struct MailList *mlist = NULL;
     struct Folder *fo = FO_GetFolderByType(FT_OUTGOING, NULL);
@@ -2531,7 +2540,7 @@ BOOL MA_Send(enum SendMode mode)
 
     if(mlist != NULL)
     {
-      success = TR_ProcessSEND(mlist, mode);
+      success = SendMails(mlist, mode);
       DeleteMailList(mlist);
     }
   }
@@ -2941,22 +2950,19 @@ BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
         }
       }
 
-      if(filename != NULL)
+      if(filename != NULL && SetupTransferWindow(TR_EXPORT) == TRUE)
       {
-        if((G->TR = TR_New(TR_EXPORT)) != NULL)
+        if(quiet == TRUE || SafeOpenWindow(G->transferWindowObject))
+          success = TR_ProcessEXPORT(filename, mlist, append);
+
+        if(success == FALSE)
         {
-          if(quiet == TRUE || SafeOpenWindow(G->TR->GUI.WI) == TRUE)
-            success = TR_ProcessEXPORT(filename, mlist, append);
-
-          if(success == FALSE)
-          {
-            MA_ChangeTransfer(TRUE);
-            DisposeModulePush(&G->TR);
-          }
+          MA_ChangeTransfer(TRUE);
+          CleanupTransferWindow();
         }
-      }
 
-      DeleteMailList(mlist);
+        DeleteMailList(mlist);
+      }
     }
   }
 
@@ -2968,7 +2974,7 @@ BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
 /// MA_ExportMessagesFunc
 HOOKPROTONHNO(MA_ExportMessagesFunc, void, int *arg)
 {
-   MA_ExportMessages(NULL, arg[0] != 0, FALSE, FALSE);
+  MA_ExportMessages(NULL, arg[0] != 0, FALSE, FALSE);
 }
 MakeHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 
@@ -3101,31 +3107,27 @@ BOOL MA_ImportMessages(const char *fname, BOOL quiet)
     // if we found that the file contains a valid import format
     // we go and create a transfer window object and let the user
     // choose which mail he wants to actually import.
-    if(foundFormat != IMF_UNKNOWN)
+    if(foundFormat != IMF_UNKNOWN && SetupTransferWindow(TR_IMPORT) == TRUE)
     {
-      if((G->TR = TR_New(TR_IMPORT)) != NULL)
+      // put some import relevant data into variables of our
+      // transfer window object
+      xset(G->transferWindowObject, MUIA_TransferWindow_Title,        FilePart(fname),
+                                    MUIA_TransferWindow_ImportFile,   fname,
+                                    MUIA_TransferWindow_ImportFolder, actfo,
+                                    MUIA_TransferWindow_ImportFormat, foundFormat);
+
+      // call GetMessageList_IMPORT() to parse the file once again
+      // and present the user with a selectable list of mails the file
+      // contains.
+      if(TR_GetMessageList_IMPORT() == TRUE)
+      { 
+        if(quiet == TRUE || SafeOpenWindow(G->transferWindowObject) == TRUE)
+          result = TRUE;
+      }
+      else
       {
-        TR_SetWinTitle(TRUE, (char *)FilePart(fname));
-
-        // put some import relevant data into variables of our
-        // transfer window object
-        strlcpy(G->TR->ImportFile, fname, sizeof(G->TR->ImportFile));
-        G->TR->ImportFolder = actfo;
-        G->TR->ImportFormat = foundFormat;
-
-        // call TR_GetMessageList_IMPORT() to parse the file once again
-        // and present the user with a selectable list of mails the file
-        // contains.
-        if(TR_GetMessageList_IMPORT() == TRUE)
-        {
-          if(quiet == TRUE || SafeOpenWindow(G->TR->GUI.WI) == TRUE)
-            result = TRUE;
-        }
-        else
-        {
-          MA_ChangeTransfer(TRUE);
-          DisposeModulePush(&G->TR);
-        }
+        MA_ChangeTransfer(TRUE);
+        CleanupTransferWindow();
       }
     }
   }
@@ -3884,20 +3886,22 @@ void MA_SetupDynamicMenus(void)
   if(G->MA->GUI.MI_CSINGLE !=  NULL)
   {
     int i;
+    struct MinNode *curNode;
 
-    for(i=0; i < MAXP3; i++)
+    // we iterate through our mail server list and ouput the POP3 servers in it
+    for(i=0, curNode = C->mailServerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
-      struct POP3 *pop3 = C->P3[i];
+      struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-      if(pop3 != NULL)
+      if(msn->type == MST_POP3)
       {
         Object *newObj;
 
         // create a new default account name only if none is yet given
-        if(pop3->Account[0] == '\0')
-          snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+        if(msn->account[0] == '\0')
+          snprintf(msn->account, sizeof(msn->account), "%s@%s", msn->username, msn->hostname);
 
-        newObj = Menuitem(pop3->Account, NULL, TRUE, FALSE, MMEN_POPHOST+i);
+        newObj = Menuitem(msn->account, NULL, TRUE, FALSE, MMEN_POPHOST+i);
         if(newObj != NULL)
           DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
       }
@@ -4401,6 +4405,7 @@ struct MA_ClassData *MA_New(void)
     if(data->GUI.WI != NULL)
     {
       ULONG i;
+      struct MinNode *curNode;
 
       DoMethod(data->GUI.NL_FOLDERS, MUIM_MainFolderListtree_MakeFormat);
 
@@ -4447,9 +4452,9 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOOK,          MUIV_Notify_Application, 3, MUIM_CallHook,             &AB_OpenHook, ABM_EDIT);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXPORT,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ExportMessagesHook, TRUE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_IMPORT,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ImportMessagesHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_GETMAIL,        MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, POP_USER, -1, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_GETMAIL,        MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, RECV_USER, -1, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SENDMAIL,       MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ALL_USER);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXMAIL,         MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, POP_USER, -1, IEQUALIFIER_LSHIFT);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXMAIL,         MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, RECV_USER, -1, IEQUALIFIER_LSHIFT);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_READ,           MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ReadMessageHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT,           MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_EDIT, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MOVE,           MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_MoveMessageHook);
@@ -4488,8 +4493,18 @@ struct MA_ClassData *MA_New(void)
       for(i=0; i < 10; i++)
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MACRO+i, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_CallRexxHook, i);
 
-      for(i=0; i < MAXP3; i++)
-        DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, POP_USER, i, 0);
+      // we iterate through our mail server list and ouput the POP3 servers in it
+      for(i=0, curNode = C->mailServerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      {
+        struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+        if(msn->type == MST_POP3)
+        {
+          #warning "FIXME: what if user changes POP3 server list? where is the update to that?"
+          DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, RECV_USER, i, 0);
+          i++;
+        }
+      }
 
       DoMethod(data->GUI.NL_FOLDERS,    MUIM_Notify, MUIA_NList_DoubleClick,    MUIV_EveryTime,         MUIV_Notify_Application,  2, MUIM_CallHook,             &MA_FolderClickHook);
       //DoMethod(data->GUI.NL_FOLDERS,  MUIM_Notify, MUIA_NList_TitleClick,     MUIV_EveryTime,         MUIV_Notify_Self,         3, MUIM_NList_Sort2,          MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);

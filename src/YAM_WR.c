@@ -62,6 +62,7 @@
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
+#include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 
@@ -116,7 +117,8 @@ static char *NewMessageID(void)
   // Here we try to generate a unique MessageID.
   // We try to be as much conform to the Recommandations for generating
   // unique Message IDs as we can: http://www.jwz.org/doc/mid.html
-  snprintf(idbuf, sizeof(idbuf), "<%x%x.%x@%s>", seconds, (unsigned int)ds.ds_Tick, (unsigned int)rand(), C->SMTP_Server);
+#warning "FIXME: SMTP server hostname have to be identified correctly!"
+  snprintf(idbuf, sizeof(idbuf), "<%x%x.%x@%s>", seconds, (unsigned int)ds.ds_Tick, (unsigned int)rand(), GetMailServer(&C->mailServerList, MST_SMTP, 0)->hostname);
 
   RETURN(idbuf);
   return idbuf;

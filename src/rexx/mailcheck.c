@@ -70,12 +70,15 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
 
     case RXIF_ACTION:
     {
-      int pop;
       int popnr = -2;
 
       if(args->pop)
       {
-        if((pop = *args->pop) >= 0 && pop < MAXP3 && C->P3[pop])
+        int pop;
+
+#warning "FIXME: MAXP3 check"
+//        if((pop = *args->pop) >= 0 && pop < MAXP3 && C->P3[pop])
+        if((pop = *args->pop) >= 0)
           popnr = pop;
       }
       else
@@ -85,7 +88,7 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
       {
         static long remaining;
 
-        MA_PopNow(args->manual ? POP_USER : POP_REXX, popnr);
+        MA_PopNow(args->manual ? RECV_USER : RECV_AUTO_REXX, popnr);
 
         remaining = G->LastDL.OnServer - G->LastDL.Deleted;
 

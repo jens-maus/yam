@@ -48,8 +48,8 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
-#include "YAM_transfer.h"
 #include "YAM_utilities.h"
+
 #include "mui/Classes.h"
 
 #include "FileInfo.h"

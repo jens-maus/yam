@@ -7,11 +7,40 @@ $URL$
 
 2010-03-15 Jens Langner <Jens.Langner@light-speed.de>
 
+  WARNING: This is one of several fundamental changes to the internals of YAM.
+  The changes are *not* complete yet and the current state of the changes break
+  existing functionality. For example, with these changes the preselection window
+  will stop working until we have everything finalized. In addition, the SMTP mail
+  sending is also currently not working as well as many other functionality. So if
+  you need a fully working/stable YAM version stay away from these versions and
+  either downgrade to the official 2.6 version or keep your existing 2.7-dev as
+  long as our work isn't finalized. You have been warned.
+
+  * YAM_EA.c, YAM_RE.c, YAM_UT.c, YAM.c, YAM.h, Timer.c, AppIcon.c, UpdateCheck.c,
+    mui/TransferMailList.c, mui/WriteWindow.c, Makefile, YAM_MA.c: adapted the
+    sources to the new splitted Transfer.c/TransferWindow functionality.
+  * ReceiveMails.c,h, SendMails.c,h: splitted the new Transfer.c,h files so that
+    POP3/IMAP stuff will go into ReceiveMails.c,h in future and stuff for sending
+    mails via SMTP will be put into SendMails.c,h.
+  * YAM_TR.c, YAM_transfer.h, Transfer.c, Transfer.h, mui/TransferWindow.c: renamed
+    files to Transfer.c and Transfer.h and moved all GUI related things into an own
+    internal MUI class "TransferWindow" which will be used in future instead.
+  * YAM_WR.c, YAM_write.h, mui/MainWindowToolbar.c, mui/WriteWindow.c, 
+    rexx/mailcheck.c, YAM_MA.c, Timer.c: adapted the sources to use the new unlimited
+    mail server functionality.
+  * YAM_COs.c, YAM_COg.c, YAM_CO.c, YAM_config.h: adapted the whole configuration
+    management to allow for writing and reading an unlimited amount of mail servers
+    from the .config file.
+  * MailServers.c,h, YAM_stringsizes.h: Changed the mail server management to use
+    exec lists which are structured via "MailServerNode" and put into a List in our
+    main configuration structure. This finally provides internal facilities to manage
+    an unlimited amount of POP3 or SMTP servers. However, the graphical configuration
+    for these new possibilities is still missing. This partly addresses #41.
   * extrasrc.h: fixed xget() prototype for AROS compile.
 
 2010-03-12 Samir Hawamdeh <s.hawamdeh@tele.it>
 
-  * locale/italian.ct: first committed for 2.7 Dev release.
+  * locale/italian.ct: first commit for 2.7-dev release.
 
 2010-03-10 Thore Böckelmann <tboeckel@gmx.de>
 

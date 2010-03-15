@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include <stdio.h>
+
 #include "YAM_main.h"
 #include "YAM_stringsizes.h"
 

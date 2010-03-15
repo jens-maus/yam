@@ -72,6 +72,7 @@
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MimeTypes.h"
+#include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 
@@ -480,78 +481,44 @@ MakeHook(CO_RemoteToggleHook,CO_RemoteToggleFunc);
 ///
 
 /**** POP3 servers ****/
-/// CO_NewPOP3
-//  Initializes a new POP3 account
-struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
-{
-  struct POP3 *pop3;
-
-  ENTER();
-
-  if((pop3 = (struct POP3 *)calloc(1, sizeof(struct POP3))) != NULL)
-  {
-    if(first == TRUE)
-    {
-      char *p = strchr(co->EmailAddress, '@');
-
-      strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(pop3->User));
-      strlcpy(pop3->Server, co->SMTP_Server, sizeof(pop3->Server));
-    }
-
-    pop3->Port = 110;
-    pop3->Enabled = TRUE;
-    pop3->DeleteOnServer = TRUE;
-  }
-
-  RETURN(pop3);
-  return pop3;
-}
-
-///
-/// CO_GetP3Entry
+/// GetPOP3Entry
 //  Fills form with data from selected list entry
-HOOKPROTONHNONP(CO_GetP3Entry, void)
+HOOKPROTONHNONP(GetPOP3Entry, void)
 {
-  struct POP3 *pop3 = NULL;
+  struct MailServerNode *msn = NULL;
   struct CO_GUIData *gui = &G->CO->GUI;
   LONG pos = MUIV_NList_GetPos_Start;
 
   ENTER();
 
-  DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &pop3);
+  // get the currently selected POP3 server
+  DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &msn);
 
-  set(gui->BT_PDEL, MUIA_Disabled, pop3 == NULL || xget(gui->LV_POP3, MUIA_NList_Entries) < 2);
+  set(gui->BT_PDEL, MUIA_Disabled, msn == NULL || xget(gui->LV_POP3, MUIA_NList_Entries) < 2);
 
-  if(pop3 != NULL)
-    DoMethod(gui->LV_POP3, MUIM_NList_GetPos, pop3, &pos);
-  set(gui->BT_POPUP, MUIA_Disabled, pop3 == NULL || pos == 0);
-  set(gui->BT_POPDOWN, MUIA_Disabled, pop3 == NULL || pos == (LONG)xget(gui->LV_POP3, MUIA_NList_Entries) - 1);
+  if(msn != NULL)
+    DoMethod(gui->LV_POP3, MUIM_NList_GetPos, msn, &pos);
 
-  if(pop3 != NULL)
+  set(gui->BT_POPUP, MUIA_Disabled, msn == NULL || pos == 0);
+  set(gui->BT_POPDOWN, MUIA_Disabled, msn == NULL || pos == (LONG)xget(gui->LV_POP3, MUIA_NList_Entries) - 1);
+
+  if(msn != NULL)
   {
-    nnset(gui->ST_POPACCOUNT, MUIA_String_Contents, pop3->Account);
-    nnset(gui->ST_POPHOST,    MUIA_String_Contents, pop3->Server);
-    nnset(gui->ST_POPPORT,    MUIA_String_Integer,  pop3->Port);
-    nnset(gui->ST_POPUSERID,  MUIA_String_Contents, pop3->User);
-    nnset(gui->ST_PASSWD,     MUIA_String_Contents, pop3->Password);
-    nnset(gui->CH_POPENABLED, MUIA_Selected, pop3->Enabled);
-    nnset(gui->CH_USEAPOP,    MUIA_Selected, pop3->UseAPOP);
-    nnset(gui->CH_DELETE,     MUIA_Selected, pop3->DeleteOnServer);
+    nnset(gui->ST_POPACCOUNT, MUIA_String_Contents, msn->account);
+    nnset(gui->ST_POPHOST,    MUIA_String_Contents, msn->hostname);
+    nnset(gui->ST_POPPORT,    MUIA_String_Integer,  msn->port);
+    nnset(gui->ST_POPUSERID,  MUIA_String_Contents, msn->username);
+    nnset(gui->ST_PASSWD,     MUIA_String_Contents, msn->password);
+    nnset(gui->CH_POPENABLED, MUIA_Selected,        isServerActive(msn));
+    nnset(gui->CH_USEAPOP,    MUIA_Selected,        hasServerAPOP(msn));
+    nnset(gui->CH_DELETE,     MUIA_Selected,        hasServerPurge(msn));
 
-    switch(pop3->SSLMode)
-    {
-      case P3SSL_TLS:
-        nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 1);
-      break;
-
-      case P3SSL_SSL:
-        nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 2);
-      break;
-
-      default:
-        nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 0);
-      break;
-    }
+    if(hasServerTLS(msn))
+      nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 1);
+    else if(hasServerSSL(msn))
+      nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 2);
+    else
+      nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 0);
 
     // we have to enabled/disable the SSL support accordingly
     set(gui->RA_POP3SECURE, MUIA_Disabled, G->TR_UseableTLS == FALSE);
@@ -559,12 +526,12 @@ HOOKPROTONHNONP(CO_GetP3Entry, void)
 
   LEAVE();
 }
-MakeHook(CO_GetP3EntryHook,CO_GetP3Entry);
+MakeHook(GetPOP3EntryHook, GetPOP3Entry);
 
 ///
-/// CO_PutP3Entry
+/// PutPOP3Entry
 //  Fills form data into selected list entry
-HOOKPROTONHNONP(CO_PutP3Entry, void)
+HOOKPROTONHNONP(PutPOP3Entry, void)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
   int p;
@@ -574,55 +541,82 @@ HOOKPROTONHNONP(CO_PutP3Entry, void)
   p = xget(gui->LV_POP3, MUIA_NList_Active);
   if(p != MUIV_NList_Active_Off)
   {
-    struct POP3 *pop3 = NULL;
-    int new_ssl_mode = P3SSL_OFF;
+    struct MailServerNode *msn = NULL;
 
-    DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, p, &pop3);
-    if(pop3 != NULL)
+    DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, p, &msn);
+    if(msn != NULL)
     {
-      GetMUIString(pop3->Account, gui->ST_POPACCOUNT, sizeof(pop3->Account));
-      GetMUIString(pop3->Server, gui->ST_POPHOST, sizeof(pop3->Server));
-      GetMUIString(pop3->User, gui->ST_POPUSERID, sizeof(pop3->User));
-      GetMUIString(pop3->Password, gui->ST_PASSWD, sizeof(pop3->Password));
-      pop3->Enabled = GetMUICheck(gui->CH_POPENABLED);
-      pop3->UseAPOP = GetMUICheck(gui->CH_USEAPOP);
-      pop3->DeleteOnServer = GetMUICheck(gui->CH_DELETE);
+      unsigned int newSSLFlags = 0;
+
+      GetMUIString(msn->account,  gui->ST_POPACCOUNT, sizeof(msn->account));
+      GetMUIString(msn->hostname, gui->ST_POPHOST,    sizeof(msn->hostname));
+      GetMUIString(msn->username, gui->ST_POPUSERID,  sizeof(msn->username));
+      GetMUIString(msn->password, gui->ST_PASSWD,     sizeof(msn->password));
+
+      if(GetMUICheck(gui->CH_POPENABLED) == TRUE)
+        SET_FLAG(msn->flags, MSF_ACTIVE);
+      else
+        CLEAR_FLAG(msn->flags, MSF_ACTIVE);
+
+      if(GetMUICheck(gui->CH_USEAPOP) == TRUE)
+        SET_FLAG(msn->flags, MSF_APOP);
+      else
+        CLEAR_FLAG(msn->flags, MSF_APOP);
+
+      if(GetMUICheck(gui->CH_DELETE) == TRUE)
+        SET_FLAG(msn->flags, MSF_PURGEMESSGAES);
+      else
+        CLEAR_FLAG(msn->flags, MSF_PURGEMESSGAES);
 
       // if the user hasn't yet entered an own account name or the default
       // account name is still present we go and set an automatic generated one
-      if(pop3->Account[0] == '\0' || strcmp(pop3->Account, tr(MSG_NewEntry)) == 0)
-        snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+      if(msn->account[0] == '\0' || strcmp(msn->account, tr(MSG_NewEntry)) == 0)
+        snprintf(msn->account, sizeof(msn->account), "%s@%s", msn->username, msn->hostname);
+
+      // set newSSLFlags to msn->flags as we are going to compare
+      // later on
+      newSSLFlags = msn->flags;
 
       switch(GetMUIRadio(gui->RA_POP3SECURE))
       {
         // TLSv1 secure connection
         case 1:
-          new_ssl_mode = P3SSL_TLS;
+        {
+          SET_FLAG(newSSLFlags, MSF_SEC_TLS);
+          CLEAR_FLAG(newSSLFlags, MSF_SEC_SSL);
+        }
         break;
 
         // SSLv3 secure connection
         case 2:
-          new_ssl_mode = P3SSL_SSL;
+        {
+          SET_FLAG(newSSLFlags, MSF_SEC_SSL);
+          CLEAR_FLAG(newSSLFlags, MSF_SEC_TLS);
+        }
         break;
 
         // no secure connection
         default:
-          new_ssl_mode = P3SSL_OFF;
+        {
+          CLEAR_FLAG(newSSLFlags, MSF_SEC_TLS);
+          CLEAR_FLAG(newSSLFlags, MSF_SEC_SSL);
+        }
         break;
       }
 
-      // check if the user changed something at all
-      if(pop3->SSLMode != new_ssl_mode)
+      // check if the user changed something on the SSL/TLS
+      // options
+      if(newSSLFlags != msn->flags)
       {
-        if(new_ssl_mode == P3SSL_SSL)
+        if(hasServerSSL(msn))
           set(gui->ST_POPPORT, MUIA_String_Integer, 995);
         else
           set(gui->ST_POPPORT, MUIA_String_Integer, 110);
 
-        pop3->SSLMode = new_ssl_mode;
+        msn->flags = newSSLFlags;
       }
 
-      pop3->Port = GetMUIInteger(gui->ST_POPPORT);
+      msn->port = GetMUIInteger(gui->ST_POPPORT);
 
       DoMethod(gui->LV_POP3, MUIM_NList_Redraw, p);
     }
@@ -630,29 +624,33 @@ HOOKPROTONHNONP(CO_PutP3Entry, void)
 
   LEAVE();
 }
-MakeHook(CO_PutP3EntryHook,CO_PutP3Entry);
+MakeHook(PutPOP3EntryHook, PutPOP3Entry);
 
 ///
-/// CO_GetDefaultPOPFunc
+/// GetDefaultPOP3Func
 //  Sets values of first POP3 account
-HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
+HOOKPROTONHNONP(GetDefaultPOP3Func, void)
 {
-  struct POP3 *pop3 = CE->P3[0];
+  struct MailServerNode *msn;
 
   ENTER();
 
-  if(pop3 != NULL)
+  // get the first POP3 server out of our
+  // mail server list
+  msn = GetMailServer(&CE->mailServerList, MST_POP3, 0);
+  if(msn != NULL)
   {
-    GetMUIString(pop3->Server, G->CO->GUI.ST_POPHOST0, sizeof(pop3->Server));
-    pop3->Port = 110;
-    GetMUIString(pop3->Password, G->CO->GUI.ST_PASSWD0, sizeof(pop3->Password));
-    if(pop3->Account[0] == '\0')
-      snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+    GetMUIString(msn->hostname, G->CO->GUI.ST_POPHOST0, sizeof(msn->hostname));
+    GetMUIString(msn->password, G->CO->GUI.ST_PASSWD0, sizeof(msn->password));
+    if(msn->account[0] == '\0')
+      snprintf(msn->account, sizeof(msn->account), "%s@%s", msn->username, msn->hostname);
+
+    msn->port = 110;
   }
 
   LEAVE();
 }
-MakeHook(CO_GetDefaultPOPHook,CO_GetDefaultPOPFunc);
+MakeHook(GetDefaultPOP3Hook, GetDefaultPOP3Func);
 
 ///
 
@@ -723,18 +721,12 @@ static int CO_DetectPGP(const struct Config *co)
 //  clears the content of a configuration structure
 void CO_ClearConfig(struct Config *co)
 {
-  int i;
-
   ENTER();
 
   SHOWVALUE(DBF_CONFIG, co);
 
-  // free all config elements
-  for(i = 0; i < MAXP3; i++)
-  {
-    if(co->P3[i] != NULL)
-      free(co->P3[i]);
-  }
+  // we have to free the mailServerList
+  FreeMailServerList(&co->mailServerList);
 
   // we have to free the mimeTypeList
   FreeMimeTypeList(&co->mimeTypeList);
@@ -745,9 +737,10 @@ void CO_ClearConfig(struct Config *co)
   // clear the config
   memset(co, 0, sizeof(struct Config));
 
-  // init the filterList & stuff
-  NewList((struct List *)&co->mimeTypeList);
+  // init the embedded lists in our config structure
+  NewList((struct List *)&co->mailServerList);
   NewList((struct List *)&co->filterList);
+  NewList((struct List *)&co->mimeTypeList);
 
   LEAVE();
 }
@@ -777,29 +770,14 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_TCPIP || page == cp_AllPages)
   {
-    int i;
+    // we have to free the mailServerList
+    FreeMailServerList(&co->mailServerList);
 
-    for(i = 0; i < MAXP3; i++)
-    {
-      if(co->P3[i] != NULL)
-      {
-        free(co->P3[i]);
-        co->P3[i] = NULL;
-      }
-    }
-
-    co->SMTP_Server[0] = '\0';
-    co->SMTP_Domain[0] = '\0';
-    co->SMTP_Port = 25;
-    co->Allow8bit = FALSE;
-    co->SMTP_SecureMethod = SMTPSEC_NONE;
-    co->Use_SMTP_AUTH = FALSE;
-    co->SMTP_AUTH_User[0] = '\0';
-    co->SMTP_AUTH_Pass[0] = '\0';
-    co->SMTP_AUTH_Method = SMTPAUTH_AUTO;
     co->MailExchangeOrder = MEO_GET_FIRST;
-    if((co->P3[0] = CO_NewPOP3(co, TRUE)) != NULL)
-      co->P3[0]->DeleteOnServer = TRUE;
+
+    // fill the mailserver list with an empty POP3 and SMTP Server
+    AddTail((struct List *)&co->mailServerList, (struct Node *)CreateNewMailServer(MST_SMTP, co, TRUE));
+    AddTail((struct List *)&co->mailServerList, (struct Node *)CreateNewMailServer(MST_POP3, co, TRUE));
   }
 
   if(page == cp_NewMail || page == cp_AllPages)
@@ -1105,7 +1083,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 //  Copies a configuration structure (deep copy)
 static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 {
-  int i;
   BOOL success = TRUE;
 
   ENTER();
@@ -1116,19 +1093,27 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
   memcpy(dco, sco, sizeof(struct Config));
 
   // then we have to do a deep copy and allocate separate memory for our copy
-  for(i = 0; i < MAXP3; i++)
+  NewList((struct List *)&dco->mailServerList);
+
+  if(success == TRUE)
   {
-    if(sco->P3[i] != NULL)
+    struct MinNode *curNode;
+
+    for(curNode = sco->mailServerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
-      if((dco->P3[i] = memdup(sco->P3[i], sizeof(struct POP3))) == NULL)
+      struct MailServerNode *srcNode = (struct MailServerNode *)curNode;
+      struct MailServerNode *dstNode;
+
+      if((dstNode = memdup(srcNode, sizeof(struct MailServerNode))) != NULL)
+        AddTail((struct List *)&dco->mailServerList, (struct Node *)dstNode);
+      else
       {
         success = FALSE;
-        // don't bail out here, because we did a raw copy of the source config
-        // before and didn't adjust all pointers yet
+
+        // bail out, no need to copy further data
+        break;
       }
     }
-    else
-      dco->P3[i] = NULL;
   }
 
   // for copying the mimetype list we have to do a deep copy of the list
@@ -1192,50 +1177,6 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
   // return if everything could be duplicated successfully
   RETURN(success);
   return success;
-}
-
-///
-/// ComparePOP3Accounts
-// compare two POP3 accounts to be equal
-static BOOL ComparePOP3Accounts(const struct POP3 **pop1, const struct POP3 **pop2)
-{
-  BOOL equal = TRUE;
-  int i;
-
-  ENTER();
-
-  for(i = 0; i < MAXP3; i++)
-  {
-    const struct POP3 *p1 = pop1[i];
-    const struct POP3 *p2 = pop2[i];
-
-    if(p1 != NULL && p2 != NULL)
-    {
-      // "UIDLchecked" must not be checked, because that is not saved but
-      // modified while YAM is looking for new mails.
-      if(strcmp(p1->Account,   p2->Account) != 0 ||
-         strcmp(p1->Server,    p2->Server) != 0 ||
-         strcmp(p1->User,      p2->User) != 0 ||
-         strcmp(p1->Password,  p2->Password) != 0 ||
-         p1->Port           != p2->Port ||
-         p1->Enabled        != p2->Enabled ||
-         p1->SSLMode        != p2->SSLMode ||
-         p1->UseAPOP        != p2->UseAPOP ||
-         p1->DeleteOnServer != p2->DeleteOnServer)
-      {
-        // one POP3 account has been modified
-        equal = FALSE;
-      }
-    }
-    else if(p1 != NULL || p2 != NULL)
-    {
-      // the number of POP3 accounts differs
-      equal = FALSE;
-    }
-  }
-
-  RETURN(equal);
-  return equal;
 }
 
 ///
@@ -1305,7 +1246,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->StackSize                       == c2->StackSize &&
      c1->SizeFormat                      == c2->SizeFormat &&
      c1->EmailCache                      == c2->EmailCache &&
-     c1->SMTP_Port                       == c2->SMTP_Port &&
      c1->TRBufferSize                    == c2->TRBufferSize &&
      c1->EmbeddedMailDelay               == c2->EmbeddedMailDelay &&
      c1->StatusChangeDelay               == c2->StatusChangeDelay &&
@@ -1317,9 +1257,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->SpamFlushTrainingDataThreshold  == c2->SpamFlushTrainingDataThreshold &&
      c1->SocketTimeout                   == c2->SocketTimeout &&
      c1->PrintMethod                     == c2->PrintMethod &&
-     c1->SMTP_SecureMethod               == c2->SMTP_SecureMethod &&
      c1->LogfileMode                     == c2->LogfileMode &&
-     c1->SMTP_AUTH_Method                == c2->SMTP_AUTH_Method &&
      c1->MailExchangeOrder               == c2->MailExchangeOrder &&
      c1->MDN_NoRecipient                 == c2->MDN_NoRecipient &&
      c1->MDN_NoDomain                    == c2->MDN_NoDomain &&
@@ -1333,8 +1271,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->ForwardMode                     == c2->ForwardMode &&
      c1->InfoBar                         == c2->InfoBar &&
      c1->DaylightSaving                  == c2->DaylightSaving &&
-     c1->Allow8bit                       == c2->Allow8bit &&
-     c1->Use_SMTP_AUTH                   == c2->Use_SMTP_AUTH &&
      c1->AvoidDuplicates                 == c2->AvoidDuplicates &&
      c1->UpdateStatus                    == c2->UpdateStatus &&
      c1->DownloadLarge                   == c2->DownloadLarge &&
@@ -1421,7 +1357,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->SocketOptions.NoDelay           == c2->SocketOptions.NoDelay &&
      c1->SocketOptions.LowDelay          == c2->SocketOptions.LowDelay &&
 
-     ComparePOP3Accounts((const struct POP3 **)c1->P3, (const struct POP3 **)c2->P3) &&
+     CompareMailServerLists(&c1->mailServerList, &c2->mailServerList) &&
      CompareFilterLists(&c1->filterList, &c2->filterList) &&
      CompareMimeTypeLists(&c1->mimeTypeList, &c2->mimeTypeList) &&
      CompareRxHooks((const struct RxHook *)c1->RX, (const struct RxHook *)c2->RX) &&
@@ -1435,10 +1371,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      strcmp(c1->ColorSignature.buf,  c2->ColorSignature.buf) == 0 &&
      strcmp(c1->RealName,            c2->RealName) == 0 &&
      strcmp(c1->EmailAddress,        c2->EmailAddress) == 0 &&
-     strcmp(c1->SMTP_Server,         c2->SMTP_Server) == 0 &&
-     strcmp(c1->SMTP_Domain,         c2->SMTP_Domain) == 0 &&
-     strcmp(c1->SMTP_AUTH_User,      c2->SMTP_AUTH_User) == 0 &&
-     strcmp(c1->SMTP_AUTH_Pass,      c2->SMTP_AUTH_Pass) == 0 &&
      strcmp(c1->NotifySound,         c2->NotifySound) == 0 &&
      strcmp(c1->NotifyCommand,       c2->NotifyCommand) == 0 &&
      strcmp(c1->ShortHeaders,        c2->ShortHeaders) == 0 &&
@@ -1509,40 +1441,63 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
 //  Validates a configuration, update GUI etc.
 void CO_Validate(struct Config *co, BOOL update)
 {
-  char *p = strchr(co->EmailAddress, '@');
   BOOL saveAtEnd = FALSE;
   BOOL updateReadWindows = FALSE;
   BOOL updateHeaderMode = FALSE;
   BOOL updateSenderInfo = FALSE;
+  struct MailServerNode *firstPOP3;
+  struct MailServerNode *firstSMTP;
   BOOL updateMenuShortcuts = FALSE;
-  int i;
 
   ENTER();
 
-  if(co->SMTP_Server[0] == '\0')
-    strlcpy(co->SMTP_Server, co->P3[0]->Server, sizeof(co->SMTP_Server));
-  if(co->SMTP_Port == 0)
-    co->SMTP_Port = 25;
-  if(co->SMTP_Domain[0] == '\0' && p != NULL)
-    strlcpy(co->SMTP_Domain, &p[1], sizeof(co->SMTP_Domain));
+  // retrieve the first SMTP and POP3 server so that
+  // we can synchronize their information
+  firstPOP3 = GetMailServer(&co->mailServerList, MST_POP3, 0);
+  firstSMTP = GetMailServer(&co->mailServerList, MST_SMTP, 0);
 
-  for(i = 0; i < MAXP3; i++)
+  if(firstPOP3 != NULL && firstSMTP != NULL)
   {
-    struct POP3 *pop3 = co->P3[i];
+    char *p = strchr(co->EmailAddress, '@');
+    struct MinNode *curNode;
 
-    if(pop3 != NULL)
+    // now we walk through our mailserver list and check and fix certains
+    // things in it
+    for(curNode = co->mailServerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
-      if(pop3->Server[0] == '\0')
-        strlcpy(pop3->Server, co->SMTP_Server, sizeof(pop3->Server));
+      struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-      if(pop3->Port == 0)
-        pop3->Port = 110;
+      switch(msn->type)
+      {
+        case MST_POP3:
+        {
+          if(msn->hostname[0] == '\0')
+            strlcpy(msn->hostname, firstSMTP->hostname, sizeof(msn->hostname));
 
-      if(pop3->User[0] == '\0')
-        strlcpy(pop3->User, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(pop3->User));
+          if(msn->port == 0)
+            msn->port = 110;
 
-      if(pop3->Account[0] == '\0')
-        snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+          if(msn->username[0] == '\0')
+            strlcpy(msn->username, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(msn->username));
+
+          if(msn->account[0] == '\0')
+            snprintf(msn->account, sizeof(msn->account), "%s@%s", msn->username, msn->hostname);
+        }
+        break;
+
+        case MST_SMTP:
+        {
+          if(msn->hostname[0] == '\0')
+            strlcpy(msn->hostname, firstPOP3->hostname, sizeof(msn->hostname));
+
+          if(msn->port == 0)
+            msn->port = 25;
+
+          if(msn->domain[0] == '\0')
+            strlcpy(msn->domain, p ? p + 1 : "", sizeof(msn->domain));
+        }
+        break;
+      }
     }
   }
 
@@ -1619,7 +1574,9 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // check if the current configuration is already valid at an absolute
   // minimum.
-  G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
+  #warning "FIXME: SMTP_server?"
+  //G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
+  G->CO_Valid = (*co->EmailAddress && *co->RealName);
 
   // we try to find out the system charset and validate it with the
   // currently configured local charset
@@ -1809,17 +1766,26 @@ void CO_Validate(struct Config *co, BOOL update)
     {
       case cp_FirstSteps:
       {
-        setstring(G->CO->GUI.ST_POPHOST0, co->P3[0]->Server);
+        struct MailServerNode *msn = GetMailServer(&co->mailServerList, MST_POP3, 0);
+
+        if(msn != NULL)
+          setstring(G->CO->GUI.ST_POPHOST0, msn->hostname);
       }
       break;
 
       case cp_TCPIP:
       {
-        setstring(G->CO->GUI.ST_SMTPHOST, co->SMTP_Server);
-        set(G->CO->GUI.ST_SMTPPORT, MUIA_String_Integer, co->SMTP_Port);
-        setstring(G->CO->GUI.ST_DOMAIN, co->SMTP_Domain);
-        setstring(G->CO->GUI.ST_SMTPAUTHUSER, co->SMTP_AUTH_User);
-        setstring(G->CO->GUI.ST_SMTPAUTHPASS, co->SMTP_AUTH_Pass);
+        struct MailServerNode *msn = GetMailServer(&co->mailServerList, MST_POP3, 0);
+
+        if(msn != NULL)
+        {
+          setstring(G->CO->GUI.ST_SMTPHOST, msn->hostname);
+          set(G->CO->GUI.ST_SMTPPORT, MUIA_String_Integer, msn->port);
+          setstring(G->CO->GUI.ST_DOMAIN, msn->domain);
+          setstring(G->CO->GUI.ST_SMTPAUTHUSER, msn->username);
+          setstring(G->CO->GUI.ST_SMTPAUTHPASS, msn->password);
+        }
+
         DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
       }
       break;

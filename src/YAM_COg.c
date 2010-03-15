@@ -70,6 +70,7 @@
 #include "FolderList.h"
 #include "ImageCache.h"
 #include "Locale.h"
+#include "MailServers.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
@@ -1339,34 +1340,22 @@ MakeStaticHook(RemoveActiveFilterHook, RemoveActiveFilter);
 //  Adds a new entry to the POP3 account list
 HOOKPROTONHNONP(CO_AddPOP3, void)
 {
-  int i;
+  struct MailServerNode *msn;
 
   ENTER();
 
-  for(i=0; i < MAXP3; i++)
+  if((msn = CreateNewMailServer(MST_POP3, CE, IsListEmpty((struct List *)&CE->mailServerList))) != NULL)
   {
-    if(CE->P3[i] == NULL)
-    {
-      if((CE->P3[i] = CO_NewPOP3(CE, i == 0)) != NULL)
-      {
-        if(i != 0)
-          strlcpy(CE->P3[i]->Account, tr(MSG_NewEntry), sizeof(CE->P3[i]->Account));
+    if(IsListEmpty((struct List *)&CE->mailServerList) == FALSE)
+      strlcpy(msn->account, tr(MSG_NewEntry), sizeof(msn->account));
 
-        DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_InsertSingle, CE->P3[i], MUIV_List_Insert_Bottom);
+    DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
 
-        // set the new entry active and make sure that the host gadget will be
-        // set as the new active object of the window as that gadget will be used
-        // to automatically set the account name.
-        set(G->CO->GUI.LV_POP3, MUIA_NList_Active, i);
-        set(G->CO->GUI.WI, MUIA_Window_ActiveObject, G->CO->GUI.ST_POPHOST);
-      }
-      else
-        DisplayBeep(NULL);
-
-      break;
-    }
-    else
-      DisplayBeep(NULL);
+    // set the new entry active and make sure that the host gadget will be
+    // set as the new active object of the window as that gadget will be used
+    // to automatically set the account name.
+    set(G->CO->GUI.LV_POP3, MUIA_NList_Active, MUIV_List_Active_Bottom);
+    set(G->CO->GUI.WI, MUIA_Window_ActiveObject, G->CO->GUI.ST_POPHOST);
   }
 
   LEAVE();
@@ -1379,24 +1368,20 @@ MakeStaticHook(CO_AddPOP3Hook,CO_AddPOP3);
 HOOKPROTONHNONP(CO_DelPOP3, void)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
-  int p;
-  int e;
+  struct MailServerNode *msn = NULL;
 
   ENTER();
 
-  p = xget(gui->LV_POP3, MUIA_NList_Active);
-  e = xget(gui->LV_POP3, MUIA_NList_Entries);
+  DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &msn);
 
-  if(p != MUIV_NList_Active_Off && e > 1)
+  if(msn != NULL &&
+     xget(gui->LV_POP3, MUIA_NList_Entries) > 1)
   {
-    int i;
+    DoMethod(gui->LV_POP3, MUIM_NList_Remove, xget(gui->LV_POP3, MUIA_NList_Active));
 
-    DoMethod(gui->LV_POP3, MUIM_NList_Remove, p);
-
-    for(i = p + 1; i < MAXP3; i++)
-      CE->P3[i - 1] = CE->P3[i];
-
-    CE->P3[i - 1] = NULL;
+    // remove it from the internal mail server list as well.
+    Remove((struct Node *)msn);
+    free(msn);
   }
 
   LEAVE();
@@ -1412,17 +1397,14 @@ HOOKPROTONHNO(POP3DisplayFunc, LONG, struct NList_DisplayMessage *msg)
 
   if(msg != NULL)
   {
-    struct POP3 *pop;
+    struct MailServerNode *msn = (struct MailServerNode *)msg->entry;
 
-    // now we set our local variables to the DisplayMessage structure ones
-    pop = (struct POP3 *)msg->entry;
-
-    if(pop != NULL)
+    if(msn != NULL)
     {
-      msg->strings[0] = pop->Account;
+      msg->strings[0] = msn->account;
 
       // inactive accounts are shown in italics
-      if(pop->Enabled == FALSE)
+      if(isServerActive(msn) == FALSE)
         msg->preparses[0] = (char *)MUIX_I;
     }
   }
@@ -1857,8 +1839,8 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
     SetHelp(data->GUI.CY_TZONE,          MSG_HELP_CO_CY_TZONE);
     SetHelp(data->GUI.CH_DSTACTIVE,      MSG_HELP_CO_CH_DSTACTIVE);
 
-    DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetDefaultPOPHook, 0);
-    DoMethod(data->GUI.ST_PASSWD0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetDefaultPOPHook, 0);
+    DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &GetDefaultPOP3Hook);
+    DoMethod(data->GUI.ST_PASSWD0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &GetDefaultPOP3Hook);
   }
 
   RETURN(obj);
@@ -2102,15 +2084,15 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     SetHelp(data->GUI.RA_POP3SECURE     ,MSG_HELP_CO_RA_POP3SECURE     );
     SetHelp(data->GUI.CY_EXCHANGEORDER  ,MSG_HELP_CO_CY_EXCHANGE_ORDER );
 
-    DoMethod(data->GUI.LV_POP3        ,MUIM_Notify ,MUIA_NList_Active    ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_GetP3EntryHook,0);
-    DoMethod(data->GUI.ST_POPACCOUNT  ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.ST_POPHOST     ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.ST_POPPORT     ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.ST_POPUSERID   ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.ST_PASSWD      ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.CH_POPENABLED  ,MUIM_Notify ,MUIA_Selected        ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.CH_USEAPOP     ,MUIM_Notify ,MUIA_Selected        ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
-    DoMethod(data->GUI.CH_DELETE      ,MUIM_Notify ,MUIA_Selected        ,MUIV_EveryTime ,MUIV_Notify_Application ,3 ,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+    DoMethod(data->GUI.LV_POP3        ,MUIM_Notify ,MUIA_NList_Active    ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&GetPOP3EntryHook);
+    DoMethod(data->GUI.ST_POPACCOUNT  ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_POPHOST     ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_POPPORT     ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_POPUSERID   ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_PASSWD      ,MUIM_Notify ,MUIA_String_Contents ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_POPENABLED  ,MUIM_Notify ,MUIA_Selected        ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_USEAPOP     ,MUIM_Notify ,MUIA_Selected        ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_DELETE      ,MUIM_Notify ,MUIA_Selected        ,MUIV_EveryTime ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&PutPOP3EntryHook);
     DoMethod(data->GUI.BT_PADD        ,MUIM_Notify ,MUIA_Pressed         ,FALSE          ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&CO_AddPOP3Hook);
     DoMethod(data->GUI.BT_PDEL        ,MUIM_Notify ,MUIA_Pressed         ,FALSE          ,MUIV_Notify_Application ,2 ,MUIM_CallHook ,&CO_DelPOP3Hook);
     DoMethod(data->GUI.BT_POPUP       ,MUIM_Notify ,MUIA_Pressed         ,FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
@@ -2118,7 +2100,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     DoMethod(data->GUI.CH_USESMTPAUTH ,MUIM_Notify ,MUIA_Selected        ,MUIV_EveryTime ,MUIV_Notify_Application ,7 ,MUIM_MultiSet,MUIA_Disabled,MUIV_NotTriggerValue,data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD, NULL);
 
     // modify the POP3 port according to the security level selected.
-    DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify, MUIA_Radio_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutP3EntryHook, 0);
+    DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify, MUIA_Radio_Active, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &PutPOP3EntryHook);
 
     // modify the SMTP port according to the security level selected.
     DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 0, data->GUI.ST_SMTPPORT,   3, MUIM_Set, MUIA_String_Integer, 25);
