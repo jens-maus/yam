@@ -56,6 +56,15 @@ struct RuleResult
   long Spam;
 };
 
+struct DownloadResult
+{
+  LONG Downloaded;
+  LONG OnServer;
+  LONG DupSkipped;
+  LONG Deleted;
+  BOOL Error;
+};
+
 void ARexxDispatch(struct RexxHost *host);
 void CloseDownARexxHost(struct RexxHost *host);
 void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg);

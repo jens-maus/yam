@@ -1298,7 +1298,7 @@ static enum HashTableOperator SaveUIDLtoken(UNUSED struct HashTable *table,
     // found an orphaned UIDL.
     if((p = strrchr(token->uidl, '@')) != NULL && *(++p) != '\0')
     {
-      struct MinNode *curNode;
+      struct Node *curNode;
 
       saveUIDL = TRUE;
 
@@ -1440,7 +1440,8 @@ static BOOL FilterDuplicates(struct TransferNode *tfn)
                     struct UIDLtoken *token = (struct UIDLtoken *)entry;
 
                     // make sure the mail is flagged as being ignoreable
-                    tfn->stats.DupSkipped++;
+                    #warning "TODO: should the global DownloadResult be moved to the MailServerNode or TransferNode?"
+                    G->LastDL.DupSkipped++;
 
                     // don't download this mail, because it has been downloaded before
                     CLEAR_FLAG(mtn->tflags, TRF_LOAD);
@@ -1497,7 +1498,7 @@ static BOOL FilterDuplicates(struct TransferNode *tfn)
             // see if that hash lookup worked out fine or not.
             if(HASH_ENTRY_IS_LIVE(entry))
             {
-              tfn->stats.DupSkipped++;
+              G->LastDL.DupSkipped++;
 
               // don't download this mail, because it has been downloaded before
               CLEAR_FLAG(mtn->tflags, TRF_LOAD);
@@ -2566,7 +2567,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, enum ReceiveMode mode)
   }
   else
   {
-    struct MinNode *curNode;
+    struct Node *curNode;
 
     IterateList(&C->mailServerList, curNode)
     {
@@ -2652,7 +2653,7 @@ BOOL ProcessPOP3Transfer(struct TransferNode *tfn)
         // there are messages on the server
         if(TR_GetMessageList_GET(tfn) == TRUE)
         {
-          tfn->stats.OnServer += msgs;
+          G->LastDL.OnServer += msgs;
 
           // do we have to do some remote filter actions?
           if(tfn->processFilters == TRUE)
@@ -2755,13 +2756,12 @@ BOOL ProcessPOP3Transfer(struct TransferNode *tfn)
       {
         // we finished the POP3 transfer so let cleanup everything for the next
         // iteration
-        D(DBF_NET, "downloaded %ld mails from server '%s'", tfn->stats.Downloaded, tfn->msn->hostname);
+        D(DBF_NET, "downloaded %ld mails from server '%s'", G->LastDL.Downloaded, tfn->msn->hostname);
         TR_DisconnectPOP(tfn);
         TR_Cleanup(tfn);
 
         // output to our logfile
-        #warning "FIXME: check Stats.Downloaded value"
-        AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_Retrieving), tfn->stats.Downloaded, tfn->msn->username, tfn->msn->hostname);
+        AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_Retrieving), G->LastDL.Downloaded, tfn->msn->username, tfn->msn->hostname);
       }
     }
   }
@@ -3008,7 +3008,7 @@ static BOOL TR_DeleteMessage(struct TransferNode *tfn, const int number)
 
   if(TR_SendPOP3Cmd(tfn, POPCMD_DELE, msgnum, tr(MSG_ER_BADRESPONSE_POP3)) != NULL)
   {
-    tfn->stats.Deleted++;
+    G->LastDL.Deleted++;
     result = TRUE;
   }
 
@@ -3021,7 +3021,7 @@ static BOOL TR_DeleteMessage(struct TransferNode *tfn, const int number)
 //  Notifies user when new mail is available
 static void TR_NewMailAlert(struct TransferNode *tfn)
 {
-  struct DownloadResult *stats = &tfn->stats;
+  struct DownloadResult *stats = &G->LastDL;
   struct RuleResult *rr = &G->RuleResults;
 
   ENTER();
@@ -3156,7 +3156,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
             // put the transferStat for this mail to 100%
             DoMethod(G->transferWindowObject, MUIM_TransferWindow_TransStat_Update, TS_SETMAX, tr(MSG_TR_Downloading));
 
-            tfn->stats.Downloaded++;
+            G->LastDL.Downloaded++;
 
             if(hasTR_DELETE(mtn))
             {

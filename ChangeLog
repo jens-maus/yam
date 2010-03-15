@@ -24,6 +24,10 @@ $URL$
   either downgrade to the official 2.6 version or keep your existing 2.7-dev as
   long as our work isn't finalized. You have been warned.
 
+  * rexx/mailcheck.c, TransferWindow.c, Rexx.h: moved the "struct TransStat"
+    structure to TransferWindow.c as it is private to that one and also moved
+    the "struct DownloadResult" to Rexx.h and reenabled the MAILCHECK arexx
+    command.
   * YAM_EA.c, YAM_RE.c, YAM_UT.c, YAM.c, YAM.h, Timer.c, AppIcon.c, UpdateCheck.c,
     mui/TransferMailList.c, mui/WriteWindow.c, Makefile, YAM_MA.c: adapted the
     sources to the new splitted Transfer.c/TransferWindow functionality.

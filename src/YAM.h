@@ -109,7 +109,6 @@ struct Global
   struct CO_ClassData *    CO;
   struct AB_ClassData *    AB;
   struct EA_ClassData *    EA[MAXEA];
-//  struct TR_ClassData *    TR;
   struct ER_ClassData *    ER;
   struct FI_ClassData *    FI;
   struct FO_ClassData *    FO;
@@ -157,7 +156,7 @@ struct Global
   struct DateStamp         StartDate;
   struct Users             Users;
   struct RuleResult        RuleResults;
-  struct DownloadResult    LastDL;
+  struct DownloadResult    LastDL;                    // last mail download results (see mui/mailcheck.c)
   struct MinList           readMailDataList;
   struct MinList           writeMailDataList;
   struct MinList           xpkPackerList;

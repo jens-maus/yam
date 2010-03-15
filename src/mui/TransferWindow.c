@@ -40,6 +40,28 @@
 
 #include "Debug.h"
 
+/* EXPORT
+// structure for the transfer statistics
+struct TransStat
+{
+  int   Msgs_Tot;
+  int   Msgs_Done;
+  int   Msgs_Curr;
+  int   Msgs_ListPos;
+  ULONG Size_Tot;
+  ULONG Size_Done;
+  ULONG Size_Curr;
+  ULONG Size_Curr_Max;
+  ULONG Clock_Start;
+  struct TimeVal Clock_Last;
+  char str_size_tot[SIZE_SMALL];
+  char str_size_done[SIZE_SMALL];
+  char str_size_curr[SIZE_SMALL];
+  char str_size_curr_max[SIZE_SMALL];
+  char str_speed[SIZE_SMALL];
+};
+*/
+
 /* CLASSDATA
 struct Data
 {
@@ -79,7 +101,6 @@ struct Data
   BOOL                  SinglePOP;
   BOOL                  DuplicatesChecking; // true if we check for duplicate mail downloads
   BOOL                  UIDLhashIsDirty;
-  struct DownloadResult Stats;
   struct TransStat      transferStat;       // transferStatistics
 
   char                  windowTitle[SIZE_DEFAULT];

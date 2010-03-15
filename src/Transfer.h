@@ -64,39 +64,8 @@ enum TransferType
 enum TransWinMode   { TWM_HIDE=0, TWM_AUTO, TWM_SHOW };
 enum PreSelMode     { PSM_NEVER=0, PSM_LARGE, PSM_ALWAYS, PSM_ALWAYSLARGE };
 
-#define TCP_NO_SOCKET -1
-
-// structure for the transfer statistics
-struct TransStat
-{
-  int   Msgs_Tot;
-  int   Msgs_Done;
-  int   Msgs_Curr;
-  int   Msgs_ListPos;
-  ULONG Size_Tot;
-  ULONG Size_Done;
-  ULONG Size_Curr;
-  ULONG Size_Curr_Max;
-  ULONG Clock_Start;
-  struct TimeVal Clock_Last;
-  char str_size_tot[SIZE_SMALL];
-  char str_size_done[SIZE_SMALL];
-  char str_size_curr[SIZE_SMALL];
-  char str_size_curr_max[SIZE_SMALL];
-  char str_speed[SIZE_SMALL];
-};
-
-#warning "TODO: replace usage of DownloadResult with TransStat"
-struct DownloadResult
-{
-  LONG Downloaded;
-  LONG OnServer;
-  LONG DupSkipped;
-  LONG Deleted;
-  BOOL Error;
-};
-
-#define TS_SETMAX (-1)
+#define TCP_NO_SOCKET (-1)
+#define TS_SETMAX     (-1)
 
 // structure for managing TCP/IP transfers
 struct TransferNode
@@ -113,7 +82,6 @@ struct TransferNode
   BOOL abort;                       // abort flag that signals that the transfer should end
   BOOL pause;                       // pause flag that signals that the transfer should be paused
   BOOL start;                       // start flag that signals that the transfer should start
-  struct DownloadResult stats;      // for storing some statistics about the transfer
   BOOL duplicatesChecking;          // true if we check for duplicate mail downloads
 
   // for the SSL communication context
@@ -201,11 +169,6 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
 
 void TR_SetWinTitle(BOOL from, const char *text);
 struct TR_ClassData *TR_New(enum TransferType TRmode);
-
-void TR_TransStat_Init(struct TransferNode *tfn, struct TransStat *ts);
-void TR_TransStat_Start(struct TransStat *ts);
-void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size, const char *status);
-void TR_TransStat_Update(struct TransStat *ts, int size_incr, const char *status);
 
 int TR_Recv(struct TransferNode *tfn, char *recvdata, const int maxlen);
 int TR_Send(struct TransferNode *tfn, const char *ptr, const int len, const int flags);

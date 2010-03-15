@@ -75,10 +75,18 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
       if(args->pop)
       {
         int pop;
+        int maxpop=0;
+        struct Node *curNode;
 
-#warning "FIXME: MAXP3 check"
-//        if((pop = *args->pop) >= 0 && pop < MAXP3 && C->P3[pop])
-        if((pop = *args->pop) >= 0)
+        IterateList(&C->mailServerList, curNode)
+        {
+          struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+          if(isPOP3Server(msn))
+            maxpop++;
+        }
+
+        if((pop = *args->pop) >= 0 && pop < maxpop)
           popnr = pop;
       }
       else

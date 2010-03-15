@@ -195,7 +195,7 @@ BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *ms
 }
 
 ///
-/// GetPOP3Server
+/// GetMailServer
 // function to extract the structure of a POP3 server from our mailserver list
 struct MailServerNode *GetMailServer(struct MinList *mailServerList, enum MailServerType type, unsigned int num)
 {
