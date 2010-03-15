@@ -2119,6 +2119,7 @@ void FreeFilterNode(struct FilterNode *filter)
 
   // free this filter's rules
   FreeFilterRuleList(filter);
+
   // and finally free the filter itself
   free(filter);
 
