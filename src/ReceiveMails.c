@@ -27,6 +27,10 @@
 
 #include <string.h>
 
+#if !defined(__amigaos4__)
+#include <clib/alib_protos.h>
+#endif
+
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/utility.h>
@@ -187,6 +191,7 @@ static char *TR_SendPOP3Cmd(struct TransferNode *tfn, const enum POPCommand comm
   RETURN(result);
   return result;
 }
+
 ///
 /// TR_ConnectPOP
 //  Connects to a POP3 mail server
@@ -430,6 +435,7 @@ out:
   RETURN(msgs);
   return msgs;
 }
+
 ///
 /// TR_GetMessageList_GET
 //  Collects messages waiting on a POP3 server
@@ -532,6 +538,7 @@ static BOOL TR_GetMessageList_GET(struct TransferNode *tfn)
   RETURN(success);
   return success;
 }
+
 ///
 /// TR_ApplyRemoteFilters
 //  Applies remote filters to a message
@@ -575,6 +582,7 @@ static void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
 
   LEAVE();
 }
+
 ///
 /// TR_GetMessageDetails
 //  Gets header from a message stored on the POP3 server
@@ -658,6 +666,7 @@ void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 
   LEAVE();
 }
+
 ///
 /// TR_DisconnectPOP
 //  Terminates a POP3 session
@@ -1000,6 +1009,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
   LEAVE();
 }
 #endif
+
 ///
 /// TR_SendPOP3KeepAlive()
 // Function that sends a STAT command regularly to a POP3 to
@@ -1019,6 +1029,7 @@ BOOL TR_SendPOP3KeepAlive(struct TransferNode *tfn)
   RETURN(result);
   return result;
 }
+
 ///
 /// TR_RecvToFile()
 // function that receives data from a POP3 server until it receives a \r\n.\r\n termination
@@ -1260,6 +1271,7 @@ BOOL InitUIDLhash(void)
   RETURN(result);
   return result;
 }
+
 ///
 /// SaveUIDLtoken()
 // HashTable callback function to save an UIDLtoken
@@ -1323,6 +1335,7 @@ static enum HashTableOperator SaveUIDLtoken(UNUSED struct HashTable *table,
   RETURN(htoNext);
   return htoNext;
 }
+
 ///
 /// CleanupUIDLhash()
 // Cleanup the whole UIDL hash
@@ -1364,6 +1377,7 @@ static void CleanupUIDLhash(void)
 
   LEAVE();
 }
+
 ///
 /// FilterDuplicates()
 //
@@ -1508,6 +1522,7 @@ static BOOL FilterDuplicates(struct TransferNode *tfn)
   RETURN(result);
   return result;
 }
+
 ///
 /// AddUIDLtoHash()
 // adds the UIDL of a mail transfer node to the hash
@@ -1534,6 +1549,7 @@ static void AddUIDLtoHash(const char *uidl, BOOL checked)
 
   LEAVE();
 }
+
 ///
 /// RemoveUIDLfromHash()
 // removes the UIDL of a mail transfer node from the hash
@@ -1549,6 +1565,7 @@ static void RemoveUIDLfromHash(const char *uidl)
 
   LEAVE();
 }
+
 ///
 
 /*** IMPORT ***/
@@ -2208,6 +2225,7 @@ BOOL TR_GetMessageList_IMPORT(void)
   RETURN(result);
   return result;
 }
+
 ///
 /// TR_AbortIMPORTFunc
 //  Aborts import process
@@ -2217,6 +2235,7 @@ HOOKPROTONHNONP(TR_AbortIMPORTFunc, void)
 //  TR_AbortnClose();
 }
 MakeHook(TR_AbortIMPORTHook, TR_AbortIMPORTFunc);
+
 ///
 /// TR_ProcessIMPORTFunc
 //  Imports messages from a MBOX mailbox file
@@ -2511,6 +2530,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
   LEAVE();
 }
 MakeHook(TR_ProcessIMPORTHook, TR_ProcessIMPORTFunc);
+
 ///
 
 /*** GET ***/
@@ -2971,6 +2991,7 @@ static BOOL TR_LoadMessage(struct TransferNode *tfn, struct Folder *infolder, co
   RETURN(result);
   return result;
 }
+
 ///
 /// TR_DeleteMessage
 //  Deletes a message on the POP3 server
@@ -2994,6 +3015,7 @@ static BOOL TR_DeleteMessage(struct TransferNode *tfn, const int number)
   RETURN(result);
   return result;
 }
+
 ///
 /// TR_NewMailAlert
 //  Notifies user when new mail is available

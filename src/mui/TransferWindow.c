@@ -155,6 +155,7 @@ HOOKPROTONH(DisplayFunc, long, char **array, struct MailTransferNode *entry)
   return 0;
 }
 MakeStaticHook(DisplayHook, DisplayFunc);
+
 ///
 
 /* Overloaded Methods */
@@ -357,6 +358,7 @@ OVERLOAD(OM_GET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
 ///
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
@@ -424,6 +426,7 @@ OVERLOAD(OM_SET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
 ///
 
 /* Public Methods */
@@ -739,6 +742,7 @@ DECLARE(TransStat_Finish)
   RETURN(0);
   return 0;
 }
+
 ///
 /// DECLARE(TransStat_NextMsg)
 // Updates statistics display for next message
@@ -897,4 +901,3 @@ DECLARE(ChangeTransferFlags) // int flags
 }
 
 ///
-

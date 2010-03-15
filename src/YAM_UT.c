@@ -2371,7 +2371,7 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
   ENTER();
 
   // if this argument is not set we get the actual time
-  if(!date)
+  if(date == NULL)
     date = DateStamp(&dsnow);
 
   // now we fill the DateTime structure with the data for our request.
@@ -2456,6 +2456,8 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
     }
     break;
   }
+
+  D(DBF_UTIL, "converted DateStamp %ld,%ld,%ld to string '%s'", date->ds_Days, date->ds_Minute, date->ds_Tick, dst);
 
   RETURN(TRUE);
   return TRUE;
@@ -3200,11 +3202,9 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
   UnlockMailList(folder->messages);
 
   // now check if the mail to be removed has just been downloaded, but not yet filtered
-  if(G->activeTransfer == TRUE)
+  if(G->activeTransfer != NULL)
   {
     struct MailList *downloadedMails = (struct MailList *)xget(G->transferWindowObject, MUIA_TransferWindow_DownloadedMails);
-
-    #warning "TODO: what is this downloadedMails thing all about?"
 
     if(downloadedMails != NULL && folder == FO_GetFolderByType(FT_INCOMING, NULL))
     {

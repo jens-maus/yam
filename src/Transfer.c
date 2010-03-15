@@ -25,10 +25,19 @@
 
 ***************************************************************************/
 
+#if !defined(__amigaos4__)
+#include <clib/alib_protos.h>
+#endif
+
 #include <proto/exec.h>
 #include <proto/socket.h>
 #include <proto/timer.h>
 #include <proto/muimaster.h>
+
+#if !defined(__amigaos4__) && !defined(__AROS__)
+#include <proto/miami.h>
+#include <proto/genesis.h>
+#endif
 
 #include <netinet/tcp.h>
 #include <netinet/ip.h>
@@ -55,6 +64,8 @@
 #include "YAM_find.h"
 #include "YAM_global.h"
 #include "YAM_mainFolder.h"
+
+#include "extrasrc.h"
 
 #include "mui/Classes.h"
 
@@ -126,7 +137,7 @@ void ProcessTransferQueue(enum MailServerType mst)
         #warning "check auto/user defined TR_New() opening"
         if(SetupTransferWindow(TR_GET_USER) == TRUE)
         {
-          struct MinNode *curNode;
+          struct Node *curNode;
           BOOL preselectMode = FALSE;
           int msgs;
 
@@ -140,7 +151,7 @@ void ProcessTransferQueue(enum MailServerType mst)
 
           // we walk through the TransferQueue and process each scheduled
           // mail transfer
-          for(curNode = G->transferQueue.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+          for(curNode = GetHead((struct List *)&G->transferQueue); curNode != NULL; curNode = GetSucc(curNode))
           {
             struct TransferNode *tfn = (struct TransferNode *)curNode;
 
@@ -166,6 +177,10 @@ void ProcessTransferQueue(enum MailServerType mst)
                 {
                   transferSuccess = ProcessSMTPTransfer(tfn);
                 }
+                break;
+
+                default:
+                  // nothing to do
                 break;
               }
             }
@@ -1154,12 +1169,12 @@ BOOL TR_IsOnline(void)
   }
   #else
   #if !defined(__AROS__)
-  if(C->IsOnlineCheck)
+  if(C->IsOnlineCheck == TRUE)
   {
     struct Library *MiamiBase;
     struct Library *GenesisBase;
 
-    if((MiamiBase = OpenLibrary("miami.library", 10L)))
+    if((MiamiBase = OpenLibrary("miami.library", 10L)) != NULL)
     {
       D(DBF_NET, "identified Miami TCP/IP stack");
 
@@ -1168,7 +1183,7 @@ BOOL TR_IsOnline(void)
       CloseLibrary(MiamiBase);
       MiamiBase = NULL;
     }
-    else if((GenesisBase = OpenLibrary("genesis.library", 1L)))
+    else if((GenesisBase = OpenLibrary("genesis.library", 1L)) != NULL)
     {
       D(DBF_NET, "identified Genesis TCP/IP stack");
 
@@ -1179,7 +1194,7 @@ BOOL TR_IsOnline(void)
     }
     else if(SocketBase == NULL)
     {
-      if((SocketBase = OpenLibrary("bsdsocket.library", 2L)))
+      if((SocketBase = OpenLibrary("bsdsocket.library", 2L)) != NULL)
       {
         CloseLibrary(SocketBase);
         SocketBase = NULL;
@@ -1196,7 +1211,7 @@ BOOL TR_IsOnline(void)
     // if no online check was selected, we just do a simple library exists
     // check and see if we are able to open a bsdsocket.library with a
     // minimum version of 2 or not.
-    if((SocketBase = OpenLibrary("bsdsocket.library", 2L)))
+    if((SocketBase = OpenLibrary("bsdsocket.library", 2L)) != NULL)
     {
       CloseLibrary(SocketBase);
       SocketBase = NULL;

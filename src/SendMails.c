@@ -28,6 +28,10 @@
 #include <ctype.h>
 #include <string.h>
 
+#if !defined(__amigaos4__)
+#include <clib/alib_protos.h>
+#endif
+
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/muimaster.h>
@@ -303,6 +307,7 @@ static char *TR_SendSMTPCmd(struct TransferNode *tfn, const enum SMTPCommand com
     return buf;
   }
 }
+
 ///
 /// TR_ConnectSMTP
 //  Connects to a SMTP mail server - here we always try to do an ESMTP connection
@@ -459,6 +464,7 @@ static BOOL TR_ConnectSMTP(struct TransferNode *tfn)
   RETURN(result);
   return result;
 }
+
 ///
 /// TR_AbortnClose
 //  Aborts a transfer
@@ -475,6 +481,7 @@ static void TR_AbortnClose(struct TransferNode *tfn)
 
   LEAVE();
 }
+
 ///
 /// TR_ApplySentFilters
 //  Applies filters to a sent message
@@ -509,6 +516,7 @@ static BOOL TR_ApplySentFilters(struct MailTransferNode *mtn)
   RETURN(result);
   return result;
 }
+
 ///
 /// TR_InitSMTPAUTH()
 // function to authenticate to a ESMTP Server
@@ -1042,6 +1050,7 @@ static BOOL TR_InitSMTPAUTH(struct TransferNode *tfn)
   RETURN((BOOL)(rc == SMTP_ACTION_OK));
   return (BOOL)(rc == SMTP_ACTION_OK);
 }
+
 ///
 /// TR_InitSTARTTLS()
 // function to initiate a TLS connection to the ESMTP server via STARTTLS
@@ -1329,6 +1338,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
   RETURN(success);
   return success;
 }
+
 ///
 
 /*** SEND ***/
@@ -1575,6 +1585,7 @@ static int TR_SendMessage(struct MailTransferNode *mtn)
   RETURN(result);
   return result;
 }
+
 ///
 /// SendMails()
 //  Sends a list of messages through their corresponding SMTP servers
@@ -1655,6 +1666,9 @@ BOOL SendMails(struct MailList *mlist, enum SendMode mode)
   return success;
 }
 
+///
+/// ProcessSMTPTransfer
+//
 BOOL ProcessSMTPTransfer(struct TransferNode *tfn)
 {
   BOOL success = FALSE;
@@ -1929,3 +1943,5 @@ BOOL ProcessSMTPTransfer(struct TransferNode *tfn)
   RETURN(success);
   return success;
 }
+
+///

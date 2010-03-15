@@ -98,7 +98,7 @@ struct DownloadResult
 
 #define TS_SETMAX (-1)
 
-// structure for manageing TCP/IP transfers
+// structure for managing TCP/IP transfers
 struct TransferNode
 {
   struct MinNode node;              // for putting it into the transferQueue in struct Global
@@ -117,7 +117,7 @@ struct TransferNode
   BOOL duplicatesChecking;          // true if we check for duplicate mail downloads
 
   // for the SSL communication context
-  SSL_CTX *ssl_ctx;           
+  SSL_CTX *ssl_ctx;
   SSL     *ssl;
 };
 

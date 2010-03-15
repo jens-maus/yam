@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: some changes to make the code compilable for non-OS4 systems.
+
 2010-03-15 Jens Langner <Jens.Langner@light-speed.de>
 
   WARNING: This is one of several fundamental changes to the internals of YAM.
@@ -25,7 +29,7 @@ $URL$
   * YAM_TR.c, YAM_transfer.h, Transfer.c, Transfer.h, mui/TransferWindow.c: renamed
     files to Transfer.c and Transfer.h and moved all GUI related things into an own
     internal MUI class "TransferWindow" which will be used in future instead.
-  * YAM_WR.c, YAM_write.h, mui/MainWindowToolbar.c, mui/WriteWindow.c, 
+  * YAM_WR.c, YAM_write.h, mui/MainWindowToolbar.c, mui/WriteWindow.c,
     rexx/mailcheck.c, YAM_MA.c, Timer.c: adapted the sources to use the new unlimited
     mail server functionality.
   * YAM_COs.c, YAM_COg.c, YAM_CO.c, YAM_config.h: adapted the whole configuration

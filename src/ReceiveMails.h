@@ -30,6 +30,7 @@
 
 // forward declarations
 struct MailServerNode;
+struct MailTransferNode;
 struct TransferNode;
 
 enum ReceiveMode

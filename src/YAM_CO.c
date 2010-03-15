@@ -1459,11 +1459,11 @@ void CO_Validate(struct Config *co, BOOL update)
   if(firstPOP3 != NULL && firstSMTP != NULL)
   {
     char *p = strchr(co->EmailAddress, '@');
-    struct MinNode *curNode;
+    struct Node *curNode;
 
     // now we walk through our mailserver list and check and fix certains
     // things in it
-    for(curNode = co->mailServerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    for(curNode = GetHead((struct List *)&co->mailServerList); curNode != NULL; curNode = GetSucc(curNode))
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
@@ -1496,6 +1496,10 @@ void CO_Validate(struct Config *co, BOOL update)
           if(msn->domain[0] == '\0')
             strlcpy(msn->domain, p ? p + 1 : "", sizeof(msn->domain));
         }
+        break;
+
+        default:
+          // nothing to do
         break;
       }
     }

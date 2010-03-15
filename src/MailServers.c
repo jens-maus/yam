@@ -37,6 +37,8 @@
 #include "YAM_config.h"
 #include "YAM_utilities.h"
 
+#include "extrasrc.h"
+
 #include "MailServers.h"
 
 #include "Debug.h"
@@ -53,7 +55,7 @@ struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Conf
 
   ENTER();
 
-  if((msn = (struct MailServerNode *)calloc(1, sizeof(struct MailServerNode))) != NULL)
+  if((msn = (struct MailServerNode *)calloc(1, sizeof(msn))) != NULL)
   {
     msn->type = type;
     SET_FLAG(msn->flags, MSF_ACTIVE);
@@ -84,6 +86,10 @@ struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Conf
         msn->port = 25;
       }
       break;
+
+      default:
+        // nothing to do
+      break;
     }
   }
 
@@ -97,19 +103,19 @@ void FreeMailServerList(struct MinList *mailServerList)
 {
   ENTER();
 
-  if(IsListEmpty((struct List *)mailServerList) == FALSE)
+  if(IsMinListEmpty(mailServerList) == FALSE)
   {
-    struct MinNode *curNode;
+    struct Node *curNode;
 
     // we have to free the mimeTypeList
-    while((curNode = (struct MinNode *)RemHead((struct List *)mailServerList)) != NULL)
+    while((curNode = RemHead((struct List *)mailServerList)) != NULL)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
       free(msn);
     }
 
-    NewList((struct List *)mailServerList);
+    NewMinList(mailServerList);
   }
 
   LEAVE();
@@ -121,50 +127,65 @@ void FreeMailServerList(struct MinList *mailServerList)
 BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *msl2)
 {
   BOOL equal = TRUE;
-  struct MinNode *mln1 = msl1->mlh_Head;
-  struct MinNode *mln2 = msl2->mlh_Head;
+  BOOL empty1;
+  BOOL empty2;
 
   ENTER();
 
-  // walk through both lists in parallel and compare the single nodes
-  while(mln1->mln_Succ != NULL && mln2->mln_Succ != NULL)
+  empty1 = IsMinListEmpty(msl1);
+  empty2 = IsMinListEmpty(msl2);
+  if(empty1 == FALSE && empty2 == FALSE)
   {
-    struct MailServerNode *msn1 = (struct MailServerNode *)mln1;
-    struct MailServerNode *msn2 = (struct MailServerNode *)mln2;
+    struct Node *node1 = GetHead((struct List *)msl1);
+    struct Node *node2 = GetHead((struct List *)msl2);
 
-    // compare every single member of the structure
-    // "UIDLchecked" must not be checked, because that is not saved but
-    // modified while YAM is looking for new mails.
-    if(msn1->type != msn2->type ||
-       strcmp(msn1->account,  msn2->account) != 0 ||
-       strcmp(msn1->hostname, msn2->hostname) != 0 ||
-       strcmp(msn1->username, msn2->username) != 0 ||
-       strcmp(msn1->password, msn2->password) != 0 ||
-       msn1->port           != msn2->port ||
-       isServerActive(msn1) != isServerActive(msn2) ||
-       hasServerAPOP(msn1)  != hasServerAPOP(msn2)  ||
-       hasServerPurge(msn1) != hasServerPurge(msn2) ||
-       hasServerSSL(msn1)   != hasServerSSL(msn2)   ||
-       hasServerTLS(msn1)       != hasServerSSL(msn2)   ||
-       hasServerAuth_AUTO(msn1)   != hasServerAuth_AUTO(msn2)   ||
-       hasServerAuth_DIGEST(msn1) != hasServerAuth_DIGEST(msn2) ||
-       hasServerAuth_CRAM(msn1)   != hasServerAuth_CRAM(msn2)   ||
-       hasServerAuth_LOGIN(msn1)  != hasServerAuth_LOGIN(msn2)  ||
-       hasServerAuth_PLAIN(msn1)  != hasServerAuth_PLAIN(msn2)  ||
-       hasServer8bit(msn1)        != hasServer8bit(msn2))
+    // walk through both lists in parallel and compare the single nodes
+    while(node1 != NULL && node2 != NULL)
     {
-      // something does not match
-      equal = FALSE;
-      break;
+      struct MailServerNode *msn1 = (struct MailServerNode *)node1;
+      struct MailServerNode *msn2 = (struct MailServerNode *)node2;
+
+      // compare every single member of the structure
+      // "UIDLchecked" must not be checked, because that is not saved but
+      // modified while YAM is looking for new mails.
+      if(msn1->type != msn2->type ||
+         strcmp(msn1->account,  msn2->account) != 0 ||
+         strcmp(msn1->hostname, msn2->hostname) != 0 ||
+         strcmp(msn1->username, msn2->username) != 0 ||
+         strcmp(msn1->password, msn2->password) != 0 ||
+         msn1->port           != msn2->port ||
+         isServerActive(msn1) != isServerActive(msn2) ||
+         hasServerAPOP(msn1)  != hasServerAPOP(msn2)  ||
+         hasServerPurge(msn1) != hasServerPurge(msn2) ||
+         hasServerSSL(msn1)   != hasServerSSL(msn2)   ||
+         hasServerTLS(msn1)       != hasServerSSL(msn2)   ||
+         hasServerAuth_AUTO(msn1)   != hasServerAuth_AUTO(msn2)   ||
+         hasServerAuth_DIGEST(msn1) != hasServerAuth_DIGEST(msn2) ||
+         hasServerAuth_CRAM(msn1)   != hasServerAuth_CRAM(msn2)   ||
+         hasServerAuth_LOGIN(msn1)  != hasServerAuth_LOGIN(msn2)  ||
+         hasServerAuth_PLAIN(msn1)  != hasServerAuth_PLAIN(msn2)  ||
+         hasServer8bit(msn1)        != hasServer8bit(msn2))
+      {
+        // something does not match
+        equal = FALSE;
+        break;
+      }
+
+      node1 = GetSucc(node1);
+      node2 = GetSucc(node2);
     }
 
-    mln1 = mln1->mln_Succ;
-    mln2 = mln2->mln_Succ;
+    // if there are any nodes left then the two lists cannot be equal
+    if((node1 != NULL && GetSucc(node1) != NULL) || (node2 != NULL && GetSucc(node2) != NULL))
+    {
+      equal = FALSE;
+    }
   }
-
-  // if there are any nodes left then the two lists cannot be equal
-  if(mln1->mln_Succ != NULL || mln2->mln_Succ != NULL)
+  else if((empty1 == TRUE && empty2 == FALSE) || (empty1 == FALSE && empty2 == TRUE))
+  {
+    // if one list is empty while the other is not the two lists cannot be equal
     equal = FALSE;
+  }
 
   RETURN(equal);
   return equal;
@@ -179,12 +200,12 @@ struct MailServerNode *GetMailServer(struct MinList *mailServerList, enum MailSe
 
   ENTER();
 
-  if(IsListEmpty((struct List *)mailServerList) == FALSE)
+  if(IsMinListEmpty(mailServerList) == FALSE)
   {
     unsigned int count = 0;
-    struct MinNode *curNode;
+    struct Node *curNode;
 
-    for(curNode = mailServerList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    for(curNode = GetHead((struct List *)mailServerList); curNode != NULL; curNode = GetSucc(curNode))
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
@@ -204,5 +225,5 @@ struct MailServerNode *GetMailServer(struct MinList *mailServerList, enum MailSe
   RETURN(result);
   return result;
 }
-///
 
+///
