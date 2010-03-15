@@ -105,6 +105,7 @@ void _STARTCLOCK(const char *file, unsigned long line);
 void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, unsigned long line);
 void _MEMTRACK(const char *file, const int line, const char *func, void *ptr, size_t size);
 void _UNMEMTRACK(const char *file, const int line, const void *ptr);
+void _FLUSH(void);
 
 #if defined(__SASC)
   #define __FUNCTION__        __FUNC__
@@ -123,6 +124,7 @@ void _UNMEMTRACK(const char *file, const int line, const void *ptr);
 #define STOPCLOCK(f, m)       _STOPCLOCK(f, m, __FILE__, __LINE__)
 #define MEMTRACK(f, p, s)     _MEMTRACK(__FILE__, __LINE__, f, p, s)
 #define UNMEMTRACK(p)         _UNMEMTRACK(__FILE__, __LINE__, p)
+#define FLUSH()               _FLUSH()
 #if defined(NO_VARARG_MARCOS)
 void D(unsigned long f, const char *format, ...);
 void E(unsigned long f, const char *format, ...);

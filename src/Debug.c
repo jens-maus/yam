@@ -754,6 +754,17 @@ void _UNMEMTRACK(const char *file, const int line, const void *ptr)
 }
 
 ///
+/// _FLUSH
+// Flush any pending stdout or file debug output
+void _FLUSH(void)
+{
+  if(stdout_output == TRUE)
+    fflush(stdout);
+  else if(file_output != NULL)
+    fflush(file_output);
+}
+
+///
 /// SetupDbgMalloc
 // initialize the memory tracking framework
 static void SetupDbgMalloc(void)
@@ -765,7 +776,7 @@ static void SetupDbgMalloc(void)
     ULONG i;
 
     for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
-      NewList((struct List *)&DbgMallocList[i]);
+      NewMinList(&DbgMallocList[i]);
 
     DbgMallocCount = 0;
 
