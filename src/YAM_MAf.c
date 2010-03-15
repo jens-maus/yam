@@ -1551,7 +1551,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
     struct HeaderNode *hdrNode = NULL;
 
     // clear the headerList first
-    NewList((struct List *)headerList);
+    NewMinList(headerList);
 
     // we read out the whole header line by line and
     // concatenate lines that are belonging together.

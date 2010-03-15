@@ -528,7 +528,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
   strlcpy(search->Field, field, sizeof(search->Field));
   search->Pattern = search->PatBuf;
   search->Fast = FS_NONE;
-  NewList((struct List *)&search->patternList);
+  NewMinList(&search->patternList);
 
   switch(mode)
   {
@@ -1843,7 +1843,7 @@ BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
   memcpy(dstFilter, srcFilter, sizeof(struct FilterNode));
 
   // then iterate through our ruleList and copy it as well
-  NewList((struct List *)&dstFilter->ruleList);
+  NewMinList(&dstFilter->ruleList);
 
   IterateList(&srcFilter->ruleList, curNode)
   {
@@ -1910,7 +1910,7 @@ static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
     dstSearch->Pattern = (char *)&(dstSearch->DT.dat_Stamp);
 
   // now we have to copy the patternList as well
-  NewList((struct List *)&dstSearch->patternList);
+  NewMinList(&dstSearch->patternList);
   IterateList(&srcSearch->patternList, curNode)
   {
     struct SearchPatternNode *srcNode = (struct SearchPatternNode *)curNode;
@@ -1951,7 +1951,7 @@ void FreeFilterRuleList(struct FilterNode *filter)
   }
 
   // initialize the ruleList as well
-  NewList((struct List *)&filter->ruleList);
+  NewMinList(&filter->ruleList);
 
   LEAVE();
 }
@@ -2094,7 +2094,7 @@ struct FilterNode *CreateNewFilter(void)
     filter->applyOnReq = TRUE;
 
     // initialize the rule list
-    NewList((struct List *)&filter->ruleList);
+    NewMinList(&filter->ruleList);
 
     // and fill in the first rule as a filter can't have less than 1 rule
     // anyway
@@ -2143,7 +2143,7 @@ void FreeFilterList(struct MinList *filterList)
     FreeFilterNode(filter);
   }
 
-  NewList((struct List *)filterList);
+  NewMinList(filterList);
 
   LEAVE();
 }

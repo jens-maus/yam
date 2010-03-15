@@ -3685,7 +3685,7 @@ static void RE_SendMDN(const enum MDNMode mode,
               // in case the user wants to send the message
               // immediately we go and send it out in case everything is
               // prepared and there is no other active Transfer
-              if(sendnow == TRUE && mlist->count != 0 && G->activeTransfer == FALSE)
+              if(sendnow == TRUE && mlist->count != 0 && G->activeTransfer == NULL)
                 SendMails(mlist, autoSend ? SEND_ACTIVE_AUTO : SEND_ACTIVE_USER);
 
               // refresh the folder statistics after the transfer

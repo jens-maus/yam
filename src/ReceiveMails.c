@@ -454,7 +454,7 @@ static BOOL TR_GetMessageList_GET(struct TransferNode *tfn)
 
     success = TRUE;
 
-    NewList((struct List *)&tfn->mailTransferList);
+    NewMinList(&tfn->mailTransferList);
 
     // get the first line the pop server returns after the LINE command
     if(TR_ReadLine(tfn, buf, sizeof(buf)) > 0)
@@ -1302,7 +1302,7 @@ static enum HashTableOperator SaveUIDLtoken(UNUSED struct HashTable *table,
 
       saveUIDL = TRUE;
 
-      for(curNode = C->mailServerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      IterateList(&C->mailServerList, curNode)
       {
         struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
@@ -2568,7 +2568,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, enum ReceiveMode mode)
   {
     struct MinNode *curNode;
 
-    for(curNode = C->mailServerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    IterateList(&C->mailServerList, curNode)
     {
       msn = (struct MailServerNode *)curNode;
       if(msn->type == MST_POP3 && isServerActive(msn))

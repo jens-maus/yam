@@ -9,6 +9,9 @@ $URL$
 
   * misc: some changes to make the code compilable for non-OS4 systems.
   * Debug.c: added FLUSH() function to flush pending file output.
+  * misc: replaced lots of NewList() calls by NewMinList() to get rid of the
+    type casts. Additionally all lists are iternated using the IterateList()
+    macro.
 
 2010-03-15 Jens Langner <Jens.Langner@light-speed.de>
 

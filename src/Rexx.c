@@ -381,13 +381,14 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
   {
     strlcpy(host->portname, basename, sizeof(host->portname));
 
-    if((host->port = usrport) != NULL)
+    if(usrport != NULL)
     {
+      host->port = usrport;
       SET_FLAG(host->flags, ARB_HF_USRMSGPORT);
     }
-    else if((host->port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+    else
     {
-      host->port->mp_Node.ln_Pri = 0;
+      host->port = AllocSysObjectTags(ASOT_PORT, TAG_DONE);
     }
 
     if(host->port != NULL)
@@ -556,7 +557,7 @@ static BOOL CreateSTEM(struct MinList *stemList, struct rxs_command *rxc, LONG *
 
   ENTER();
 
-  NewList((struct List *)stemList);
+  NewMinList(stemList);
 
   // create an upper case copy of the STEM name
   rb = resb;

@@ -94,10 +94,10 @@ struct TransferNode *CreateNewTransfer(struct MailServerNode *msn)
   struct TransferNode *tfn = NULL;
   ENTER();
 
-  if((tfn = (struct TransferNode *)calloc(1, sizeof(struct TransferNode))) != NULL)
+  if((tfn = (struct TransferNode *)calloc(1, sizeof(*tfn))) != NULL)
   {
     // clear the mail list per default
-    NewList((struct List *)&tfn->mailTransferList);
+    NewMinList(&tfn->mailTransferList);
 
     // set the socket to not being connected.
     tfn->socket = TCP_NO_SOCKET;
@@ -151,7 +151,7 @@ void ProcessTransferQueue(enum MailServerType mst)
 
           // we walk through the TransferQueue and process each scheduled
           // mail transfer
-          for(curNode = GetHead((struct List *)&G->transferQueue); curNode != NULL; curNode = GetSucc(curNode))
+          IterateList(&G->transferQueue, curNode)
           {
             struct TransferNode *tfn = (struct TransferNode *)curNode;
 
@@ -1079,7 +1079,7 @@ void TR_Cleanup(struct TransferNode *tfn)
     free(mtn);
   }
 
-  NewList((struct List *)&tfn->mailTransferList);
+  NewMinList(&tfn->mailTransferList);
 
   LEAVE();
 }

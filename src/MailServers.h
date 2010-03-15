@@ -88,18 +88,18 @@ enum MailServerType { MST_UNKNOWN=0, MST_SMTP, MST_POP3, MST_IMAP };
 // mail server data structure
 struct MailServerNode
 {
-  struct MinNode node;                  // required for placing it into struct Config
+  struct MinNode node;                   // required for placing it into struct Config
 
-  enum MailServerType type;             // which type is this server? POP3 or SMTP?
+  enum MailServerType type;              // which type is this server? POP3 or SMTP?
 
-  char account[SIZE_USERID+SIZE_HOST];  // user definable account name
-  char hostname[SIZE_HOST];             // servername/IP
-  char domain[SIZE_HOST];               // [SMTP] : the mail domain
-  int  port;                            // the port
-  char username[SIZE_USERID];           // the account ID/name
-  char password[SIZE_USERID];           // the password for this account
+  char account[SIZE_USERID+SIZE_HOST+1]; // user definable account name
+  char hostname[SIZE_HOST];              // servername/IP
+  char domain[SIZE_HOST];                // [SMTP] : the mail domain
+  int  port;                             // the port
+  char username[SIZE_USERID];            // the account ID/name
+  char password[SIZE_USERID];            // the password for this account
 
-  unsigned int flags;                   // for mail server flags (MSF_#?)
+  unsigned int flags;                    // for mail server flags (MSF_#?)
 };
 
 // public functions

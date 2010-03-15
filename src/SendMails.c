@@ -1108,7 +1108,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
     int i;
 
     // reset our processing list
-    NewList((struct List *)&tfn->mailTransferList);
+    NewMinList(&tfn->mailTransferList);
 
     // temporarly copy all data out of our mlist to the
     // processing list and mark all mails to get "loaded"

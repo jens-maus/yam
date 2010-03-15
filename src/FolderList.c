@@ -41,7 +41,7 @@ void InitFolderList(struct FolderList *flist)
 {
   ENTER();
 
-  NewList((struct List *)&flist->list);
+  NewMinList(&flist->list);
   flist->count = 0;
 
   LEAVE();

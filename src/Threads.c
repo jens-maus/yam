@@ -157,7 +157,7 @@ static BOOL InitThreadTimer(struct Thread *thread)
 {
   ENTER();
 
-  NewList((struct List *)&thread->timer_request_list);
+  NewMinList(&thread->timer_request_list);
 
   if((thread->timer_port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
@@ -314,7 +314,7 @@ static SAVEDS void ThreadEntry(void)
   {
     D(DBF_THREAD, "Subthreaded created port at 0x%08lx", thread->thread_port);
 
-    NewList((struct List *)&thread->push_list);
+    NewMinList(&thread->push_list);
 
     if(InitThreadTimer(thread) == TRUE)
     {
@@ -439,7 +439,7 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
             // removing them), this may not be merely ugly but also a hack
             Forbid();
 
-            IterateList(G->mainThread.thread_port, node)
+            IterateList(&G->mainThread.thread_port->mp_MsgList, node)
             {
               struct ThreadMessage *tmsg = (struct ThreadMessage*)node;
 
@@ -939,10 +939,10 @@ BOOL InitThreads(void)
     InitThreadTimer(&G->mainThread);
 
     // prepare the threads' function push list
-    NewList((struct List *)&G->mainThread.push_list);
+    NewMinList(&G->mainThread.push_list);
 
     // initialize the subThread list
-    NewList((struct List *)&G->subThreadList);
+    NewMinList(&G->subThreadList);
 
     // set the user data of the main thread
     Forbid();

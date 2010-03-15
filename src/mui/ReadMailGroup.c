@@ -605,11 +605,11 @@ OVERLOAD(OM_NEW)
       set(data->headerList, MUIA_NList_CompareHook, &data->headerCompareHook);
 
       // prepare the senderInfoHeader list
-      NewList((struct List *)&data->senderInfoHeaders);
+      NewMinList(&data->senderInfoHeaders);
 
       // place our data in the node and add it to the readMailDataList
       rmData->readMailGroup = obj;
-      AddTail((struct List *)&(G->readMailDataList), (struct Node *)data->readMailData);
+      AddTail((struct List *)&G->readMailDataList, (struct Node *)data->readMailData);
 
       // now we connect some notifies.
       DoMethod(data->headerList, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime,

@@ -1344,9 +1344,9 @@ HOOKPROTONHNONP(CO_AddPOP3, void)
 
   ENTER();
 
-  if((msn = CreateNewMailServer(MST_POP3, CE, IsListEmpty((struct List *)&CE->mailServerList))) != NULL)
+  if((msn = CreateNewMailServer(MST_POP3, CE, IsMinListEmpty(&CE->mailServerList))) != NULL)
   {
-    if(IsListEmpty((struct List *)&CE->mailServerList) == FALSE)
+    if(IsMinListEmpty(&CE->mailServerList) == FALSE)
       strlcpy(msn->account, tr(MSG_NewEntry), sizeof(msn->account));
 
     DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);

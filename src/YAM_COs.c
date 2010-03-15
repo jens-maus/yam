@@ -924,7 +924,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(stricmp(buf, "SMTP-AUTH-User") == 0)    strlcpy(fSMTP->username, value, sizeof(fSMTP->username));
           else if(stricmp(buf, "SMTP-AUTH-Pass") == 0)    strlcpy(fSMTP->password, Decrypt(value), sizeof(fSMTP->password));
           else if(stricmp(buf, "SMTP-AUTH-Method") == 0)  SET_FLAG(fSMTP->flags, SMTPAuthMethod2MSF(atoi(value)));
-          else if(strnicmp(buf,"SMTP", 4) == 0 && isdigit(buf[4]) && isdigit(buf[5]) && strchr(buf, '.'))
+          else if(strnicmp(buf,"SMTP", 4) == 0 && isdigit(buf[4]) && isdigit(buf[5]) && strchr(buf, '.') != NULL)
           {
             int id = atoi(&buf[4]);
 
@@ -965,7 +965,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
             else
               W(DBF_CONFIG, "SMTP id < 0 : %ld", id);
           }
-          else if(strnicmp(buf,"POP", 3) == 0 && isdigit(buf[3]) && isdigit(buf[4]) && strchr(buf, '.'))
+          else if(strnicmp(buf,"POP", 3) == 0 && isdigit(buf[3]) && isdigit(buf[4]) && strchr(buf, '.') != NULL)
           {
             int id = atoi(&buf[3]);
 
@@ -2390,7 +2390,7 @@ void CO_SetConfig(void)
     case cp_TCPIP:
     {
       int numPops = 0;
-      struct MinNode *curNode;
+      struct Node *curNode;
       struct MailServerNode *msn;
 
       // try to get the mailer server structure of the first SMTP server
@@ -2419,7 +2419,8 @@ void CO_SetConfig(void)
 
       // we iterate through our mail server list and make sure to populate
       // out NList object correctly.
-      for(numPops=0, curNode = CE->mailServerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      numPops = 0;
+      IterateList(&C->mailServerList, curNode)
       {
         struct MailServerNode *msn = (struct MailServerNode *)curNode;
 

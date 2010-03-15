@@ -2465,7 +2465,7 @@ void MA_PopNow(enum ReceiveMode mode, const int pop)
   ENTER();
 
   // Don't proceed if another transfer is in progress
-  if(G->activeTransfer == FALSE)
+  if(G->activeTransfer == NULL)
   {
     struct MailServerNode *msn;
 
@@ -2517,7 +2517,7 @@ BOOL MA_Send(enum SendMode mode)
 
   // we only proceed if there isn't already a transfer
   // window/process in action
-  if(G->activeTransfer == FALSE)
+  if(G->activeTransfer == NULL)
   {
     struct MailList *mlist = NULL;
     struct Folder *fo = FO_GetFolderByType(FT_OUTGOING, NULL);
@@ -3120,7 +3120,7 @@ BOOL MA_ImportMessages(const char *fname, BOOL quiet)
       // and present the user with a selectable list of mails the file
       // contains.
       if(TR_GetMessageList_IMPORT() == TRUE)
-      { 
+      {
         if(quiet == TRUE || SafeOpenWindow(G->transferWindowObject) == TRUE)
           result = TRUE;
       }
@@ -3883,13 +3883,14 @@ void MA_SetupDynamicMenus(void)
     MUIA_Menuitem_Title, tr(MSG_MA_CheckSingle),
   End;
 
-  if(G->MA->GUI.MI_CSINGLE !=  NULL)
+  if(G->MA->GUI.MI_CSINGLE != NULL)
   {
     int i;
-    struct MinNode *curNode;
+    struct Node *curNode;
 
     // we iterate through our mail server list and ouput the POP3 servers in it
-    for(i=0, curNode = C->mailServerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    i = 0;
+    IterateList(&C->mailServerList, curNode)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
@@ -4405,7 +4406,7 @@ struct MA_ClassData *MA_New(void)
     if(data->GUI.WI != NULL)
     {
       ULONG i;
-      struct MinNode *curNode;
+      struct Node *curNode;
 
       DoMethod(data->GUI.NL_FOLDERS, MUIM_MainFolderListtree_MakeFormat);
 
@@ -4494,7 +4495,8 @@ struct MA_ClassData *MA_New(void)
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MACRO+i, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_CallRexxHook, i);
 
       // we iterate through our mail server list and ouput the POP3 servers in it
-      for(i=0, curNode = C->mailServerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      i = 0;
+      IterateList(&C->mailServerList, curNode)
       {
         struct MailServerNode *msn = (struct MailServerNode *)curNode;
 

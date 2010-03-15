@@ -738,9 +738,9 @@ void CO_ClearConfig(struct Config *co)
   memset(co, 0, sizeof(struct Config));
 
   // init the embedded lists in our config structure
-  NewList((struct List *)&co->mailServerList);
-  NewList((struct List *)&co->filterList);
-  NewList((struct List *)&co->mimeTypeList);
+  NewMinList(&co->mailServerList);
+  NewMinList(&co->filterList);
+  NewMinList(&co->mimeTypeList);
 
   LEAVE();
 }
@@ -1093,13 +1093,13 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
   memcpy(dco, sco, sizeof(struct Config));
 
   // then we have to do a deep copy and allocate separate memory for our copy
-  NewList((struct List *)&dco->mailServerList);
+  NewMinList(&dco->mailServerList);
 
   if(success == TRUE)
   {
-    struct MinNode *curNode;
+    struct Node *curNode;
 
-    for(curNode = sco->mailServerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    IterateList(&sco->mailServerList, curNode)
     {
       struct MailServerNode *srcNode = (struct MailServerNode *)curNode;
       struct MailServerNode *dstNode;
@@ -1117,7 +1117,7 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
   }
 
   // for copying the mimetype list we have to do a deep copy of the list
-  NewList((struct List *)&dco->mimeTypeList);
+  NewMinList(&dco->mimeTypeList);
 
   if(success == TRUE)
   {
@@ -1140,7 +1140,7 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
   }
 
   // for copying the filters we do have to do another deep copy
-  NewList((struct List *)&dco->filterList);
+  NewMinList(&dco->filterList);
 
   if(success == TRUE)
   {
@@ -1463,7 +1463,7 @@ void CO_Validate(struct Config *co, BOOL update)
 
     // now we walk through our mailserver list and check and fix certains
     // things in it
-    for(curNode = GetHead((struct List *)&co->mailServerList); curNode != NULL; curNode = GetSucc(curNode))
+    IterateList(&co->mailServerList, curNode)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 

@@ -55,7 +55,7 @@ struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Conf
 
   ENTER();
 
-  if((msn = (struct MailServerNode *)calloc(1, sizeof(msn))) != NULL)
+  if((msn = (struct MailServerNode *)calloc(1, sizeof(*msn))) != NULL)
   {
     msn->type = type;
     SET_FLAG(msn->flags, MSF_ACTIVE);
@@ -107,10 +107,13 @@ void FreeMailServerList(struct MinList *mailServerList)
   {
     struct Node *curNode;
 
-    // we have to free the mimeTypeList
+    // we have to free the mailServerList
     while((curNode = RemHead((struct List *)mailServerList)) != NULL)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+      D(DBF_ALWAYS, "freeing server '%s'", msn->account);
+      FLUSH();
 
       free(msn);
     }
@@ -200,12 +203,13 @@ struct MailServerNode *GetMailServer(struct MinList *mailServerList, enum MailSe
 
   ENTER();
 
+  D(DBF_ALWAYS, "find mailserver %ld", num);
   if(IsMinListEmpty(mailServerList) == FALSE)
   {
     unsigned int count = 0;
     struct Node *curNode;
 
-    for(curNode = GetHead((struct List *)mailServerList); curNode != NULL; curNode = GetSucc(curNode))
+    IterateList(mailServerList, curNode)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
@@ -214,6 +218,7 @@ struct MailServerNode *GetMailServer(struct MinList *mailServerList, enum MailSe
         if(count == num)
         {
           result = msn;
+          D(DBF_ALWAYS, "found mailserver %ld '%s'", num, result->account);
           break;
         }
 

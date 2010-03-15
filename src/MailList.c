@@ -41,7 +41,7 @@ void InitMailList(struct MailList *mlist)
 {
   ENTER();
 
-  NewList((struct List *)&mlist->list);
+  NewMinList(&mlist->list);
   mlist->count = 0;
 
   LEAVE();
@@ -364,7 +364,7 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
     }
 
     // put all the sorted nodes back into the original list
-    NewList((struct List *)&mlist->list);
+    NewMinList(&mlist->list);
     while((node = RemHead(to)) != NULL)
       AddTail((struct List *)&mlist->list, node);
   }

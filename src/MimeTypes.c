@@ -121,17 +121,17 @@ void FreeMimeTypeList(struct MinList *mimeTypeList)
 
   if(IsMinListEmpty(mimeTypeList) == FALSE)
   {
-    struct MinNode *curNode;
+    struct Node *curNode;
 
     // we have to free the mimeTypeList
-    while((curNode = (struct MinNode *)RemHead((struct List *)mimeTypeList)) != NULL)
+    while((curNode = RemHead((struct List *)mimeTypeList)) != NULL)
     {
       struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
 
       free(mt);
     }
 
-    NewList((struct List *)mimeTypeList);
+    NewMinList(mimeTypeList);
   }
 
   LEAVE();

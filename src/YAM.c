@@ -2514,14 +2514,14 @@ int main(int argc, char **argv)
       break;
 
     // prepare the exec lists in G and C
-    NewList((struct List *)&(C->mailServerList));
-    NewList((struct List *)&(C->mimeTypeList));
-    NewList((struct List *)&(C->filterList));
-    NewList((struct List *)&(G->readMailDataList));
-    NewList((struct List *)&(G->writeMailDataList));
-    NewList((struct List *)&(G->xpkPackerList));
-    NewList((struct List *)&(G->zombieFileList));
-    NewList((struct List *)&(G->transferQueue));
+    NewMinList(&C->mailServerList);
+    NewMinList(&C->mimeTypeList);
+    NewMinList(&C->filterList);
+    NewMinList(&G->readMailDataList);
+    NewMinList(&G->writeMailDataList);
+    NewMinList(&G->xpkPackerList);
+    NewMinList(&G->zombieFileList);
+    NewMinList(&G->transferQueue);
 
     // get the PROGDIR: and program name and put it into own variables
     NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
