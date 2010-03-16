@@ -681,6 +681,8 @@ static void TR_DisconnectPOP(struct TransferNode *tfn)
 
   TR_Disconnect(tfn);
 
+  BusyEnd();
+
   LEAVE();
 }
 
@@ -2604,7 +2606,8 @@ BOOL ReceiveMails(struct MailServerNode *msn, enum ReceiveMode mode)
 }
 
 ///
-
+/// ProcessPOP3Transfer
+// process a POP3 transfer
 BOOL ProcessPOP3Transfer(struct TransferNode *tfn)
 {
   BOOL success = FALSE;
@@ -2770,6 +2773,7 @@ BOOL ProcessPOP3Transfer(struct TransferNode *tfn)
   return success;
 }
 
+///
 
 #if 0
                   // anything to preselect?

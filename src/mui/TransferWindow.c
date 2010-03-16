@@ -223,6 +223,7 @@ OVERLOAD(OM_NEW)
 
       Child, data->GR_LIST = VGroup,
         GroupFrameT(tr(MSG_TR_MsgOnServer)),
+        MUIA_ShowMe, /*TRmode==TR_IMPORT ||*/ C->PreSelection >= PSM_ALWAYS,
         Child, NListviewObject,
           MUIA_CycleChain,  TRUE,
           MUIA_ContextMenu, NULL,
@@ -469,6 +470,7 @@ DECLARE(DisplayMailList) // struct TransferNode *tfn, ULONG largeonly
   GETDATA;
   struct Node *curNode;
   int pos=0;
+  BOOL showList = FALSE;
 
   ENTER();
 
@@ -495,6 +497,10 @@ DECLARE(DisplayMailList) // struct TransferNode *tfn, ULONG largeonly
 
         DoMethod(data->LV_MAILS, MUIM_NList_InsertSingle, mtn, MUIV_NList_Insert_Bottom);
         D(DBF_GUI, "added mail with subject '%s' and size %ld to preselection list", mail->Subject, mail->Size);
+
+        // show the preselection list if one of the mails requires it
+        if(hasTR_PRESELECT(mtn))
+          showList = TRUE;
       }
       else
         D(DBF_GUI, "skipped mail with subject '%s' and size %ld", mail->Subject, mail->Size);
@@ -505,6 +511,8 @@ DECLARE(DisplayMailList) // struct TransferNode *tfn, ULONG largeonly
 
   xset(data->LV_MAILS, MUIA_NList_Active, MUIV_NList_Active_Top,
                        MUIA_NList_Quiet, FALSE);
+
+  set(data->GR_LIST, MUIA_ShowMe, showList);
 
   RETURN(0);
   return 0;

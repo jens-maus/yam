@@ -183,8 +183,16 @@ void ProcessTransferQueue(enum MailServerType mst)
                   // nothing to do
                 break;
               }
+
+              // free the transfer node
+              free(tfn);
             }
           }
+
+          // close the transfer window and dispose it
+          set(G->transferWindowObject, MUIA_Window_Open, FALSE);
+          DoMethod(G->App, OM_REMMEMBER, G->transferWindowObject);
+          MUI_DisposeObject(G->transferWindowObject);
         }
       }
 
@@ -2375,9 +2383,12 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
   RETURN((BOOL)(result == TRUE && G->Error == FALSE));
   return (BOOL)(result == TRUE && G->Error == FALSE);
 }
+
 ///
 
 /*** GUI ***/
+/// SetupTransferWindow
+//
 BOOL SetupTransferWindow(enum TransferType type)
 {
   BOOL result = FALSE;
@@ -2386,12 +2397,19 @@ BOOL SetupTransferWindow(enum TransferType type)
 #warning "TODO: we should propagate the transfertype to the window (even if it is open already)"
 
   if(G->transferWindowObject == NULL)
-    G->transferWindowObject = TransferWindowObject, End;
+    G->transferWindowObject = TransferWindowObject,
+    End;
+
+  if(G->transferWindowObject != NULL)
+    result = TRUE;
 
   RETURN(result);
   return result;
 }
 
+///
+/// CleanupTransferWindow
+//
 void CleanupTransferWindow(void)
 {
   ENTER();
@@ -2405,3 +2423,5 @@ void CleanupTransferWindow(void)
 
   LEAVE();
 }
+
+///

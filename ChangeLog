@@ -12,6 +12,10 @@ $URL$
     RETURN() will now check if the indentation level becomes negative because of
     a missing ENTER() statement and output a warning in that case.
   * YAM_CO.c: iterating through the wrong list created duplicate POP3 accounts.
+  * Transfer.c, ReceiveMails.c, mui/TransferWindow.c: partly reenabled POP3
+    mail downloads. At least the transfer window is opened and the mails are
+    downloaded, but the statistics are not yet updated and the received mails
+    are not yet filtered.
 
 2010-03-15 Thore Böckelmann <tboeckel@gmx.de>
 
