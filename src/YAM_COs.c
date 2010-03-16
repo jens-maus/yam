@@ -1604,7 +1604,7 @@ void CO_GetConfig(BOOL saveConfig)
 
       case cp_TCPIP:
       {
-        int i=0;
+        int i;
         struct MailServerNode *msn;
 
         // try to get the SMTP server structure of the first SMTP server
@@ -1710,23 +1710,24 @@ void CO_GetConfig(BOOL saveConfig)
         // as the user may have changed the order of the POP3 servers
         // we have to make sure the order in the NList fits to the
         // exec list order of our POP3 server list
+        i = 0;
         do
         {
           struct MailServerNode *msn = NULL;
 
           DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, i, &msn);
-          if(msn != NULL && msn->type == MST_POP3)
-          {
-            // for resorting the POP3 list we just have to remove that particular server
-            // and add it to the tail - all other operations like adding/removing should
-            // have been done by others already - so this is just resorting
-            Remove((struct Node *)msn);
-            AddTail((struct List *)&CE->mailServerList, (struct Node *)msn);
-          }
-          else
+          if(msn == NULL || msn->type != MST_POP3)
             break;
+
+          // for resorting the POP3 list we just have to remove that particular server
+          // and add it to the tail - all other operations like adding/removing should
+          // have been done by others already - so this is just resorting
+          Remove((struct Node *)msn);
+          AddTail((struct List *)&CE->mailServerList, (struct Node *)msn);
+
+          i++;
         }
-        while(++i);
+        while(TRUE);
       }
       break;
 
@@ -1978,7 +1979,7 @@ void CO_GetConfig(BOOL saveConfig)
             }
           }
 
-          if(createSpamFolder)
+          if(createSpamFolder == TRUE)
           {
             struct Folder *spamFolder;
 
@@ -2004,7 +2005,7 @@ void CO_GetConfig(BOOL saveConfig)
             }
 
             // try to create the folder and save the new folder tree
-            if(!FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) || !FO_SaveTree(CreateFilename(".folders")))
+            if(FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) == FALSE || FO_SaveTree(CreateFilename(".folders")) == FALSE)
             {
               // something failed, so we disable the spam filter again
               ER_NewError(tr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));
@@ -2420,7 +2421,7 @@ void CO_SetConfig(void)
       // we iterate through our mail server list and make sure to populate
       // out NList object correctly.
       numPops = 0;
-      IterateList(&C->mailServerList, curNode)
+      IterateList(&CE->mailServerList, curNode)
       {
         struct MailServerNode *msn = (struct MailServerNode *)curNode;
 

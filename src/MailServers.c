@@ -112,9 +112,6 @@ void FreeMailServerList(struct MinList *mailServerList)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-      D(DBF_ALWAYS, "freeing server '%s'", msn->account);
-      FLUSH();
-
       free(msn);
     }
 
@@ -203,7 +200,6 @@ struct MailServerNode *GetMailServer(struct MinList *mailServerList, enum MailSe
 
   ENTER();
 
-  D(DBF_ALWAYS, "find mailserver %ld", num);
   if(IsMinListEmpty(mailServerList) == FALSE)
   {
     unsigned int count = 0;
@@ -218,7 +214,6 @@ struct MailServerNode *GetMailServer(struct MinList *mailServerList, enum MailSe
         if(count == num)
         {
           result = msn;
-          D(DBF_ALWAYS, "found mailserver %ld '%s'", num, result->account);
           break;
         }
 

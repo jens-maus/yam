@@ -11,6 +11,7 @@ $URL$
     to be below a certain limit. Furthermore all calls of ENTER(), LEAVE() and
     RETURN() will now check if the indentation level becomes negative because of
     a missing ENTER() statement and output a warning in that case.
+  * YAM_CO.c: iterating through the wrong list created duplicate POP3 accounts.
 
 2010-03-15 Thore Böckelmann <tboeckel@gmx.de>
 
