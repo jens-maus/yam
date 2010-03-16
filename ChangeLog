@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-16 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Transfer.c: replaced the manual MUI_DisposeObject of the TransferWindow by
+    usage of CleanupTransferWindow() instead.
+
 2010-03-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * Debug.c: added CHECKINDENT() function to check the log's indentation level

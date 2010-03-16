@@ -189,10 +189,8 @@ void ProcessTransferQueue(enum MailServerType mst)
             }
           }
 
-          // close the transfer window and dispose it
-          set(G->transferWindowObject, MUIA_Window_Open, FALSE);
-          DoMethod(G->App, OM_REMMEMBER, G->transferWindowObject);
-          MUI_DisposeObject(G->transferWindowObject);
+          // cleanup the transferwindow stuff
+          CleanupTransferWindow();
         }
       }
 
@@ -2398,7 +2396,7 @@ BOOL SetupTransferWindow(enum TransferType type)
 
   if(G->transferWindowObject == NULL)
     G->transferWindowObject = TransferWindowObject,
-    End;
+                              End;
 
   if(G->transferWindowObject != NULL)
     result = TRUE;
@@ -2417,6 +2415,7 @@ void CleanupTransferWindow(void)
   if(G->transferWindowObject != NULL)
   {
     xset(G->transferWindowObject, MUIA_Window_Open, FALSE);
+    DoMethod(G->App, OM_REMMEMBER, G->transferWindowObject);
     MUI_DisposeObject(G->transferWindowObject);
     G->transferWindowObject = NULL;
   }
