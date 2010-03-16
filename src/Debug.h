@@ -536,6 +536,7 @@ void W(unsigned long f, const char *format, ...);
 #define STOPCLOCK(f, m)       ((void)0)
 #define MEMTRACK(f, p, s)     ((void)0)
 #define UNMEMTRACK(p)         ((void)0)
+#define FLUSH(p)              ((void)0)
 #define D(f, ...)             ((void)0)
 #define E(f, ...)             ((void)0)
 #define W(f, ...)             ((void)0)
