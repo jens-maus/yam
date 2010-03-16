@@ -95,6 +95,7 @@ void DumpDbgMalloc(void);
 void _ENTER(unsigned long dclass, const char *file, unsigned long line, const char *function);
 void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const char *function);
 void _RETURN(unsigned long dclass, const char *file, unsigned long line, const char *function, unsigned long result);
+void _CHECKINDENT(long level, const char *file, unsigned long line);
 void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value, int size, const char *name, const char *file, unsigned long line);
 void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, const char *name, const char *file, unsigned long line);
 void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string, const char *name, const char *file, unsigned long line);
@@ -116,6 +117,7 @@ void _FLUSH(void);
 #define ENTER()               _ENTER(DBC_CTRACE, __FILE__, __LINE__, __FUNCTION__)
 #define LEAVE()               _LEAVE(DBC_CTRACE, __FILE__, __LINE__, __FUNCTION__)
 #define RETURN(r)             _RETURN(DBC_CTRACE, __FILE__, __LINE__, __FUNCTION__, (long)r)
+#define CHECKINDENT(l)        _CHECKINDENT(l, __FILE__, __LINE__)
 #define SHOWVALUE(f, v)       _SHOWVALUE(DBC_REPORT, f, (long)v, sizeof(v), #v, __FILE__, __LINE__)
 #define SHOWPOINTER(f, p)     _SHOWPOINTER(DBC_REPORT, f, p, #p, __FILE__, __LINE__)
 #define SHOWSTRING(f, s)      _SHOWSTRING(DBC_REPORT, f, s, #s, __FILE__, __LINE__)
@@ -125,6 +127,7 @@ void _FLUSH(void);
 #define MEMTRACK(f, p, s)     _MEMTRACK(__FILE__, __LINE__, f, p, s)
 #define UNMEMTRACK(p)         _UNMEMTRACK(__FILE__, __LINE__, p)
 #define FLUSH()               _FLUSH()
+
 #if defined(NO_VARARG_MARCOS)
 void D(unsigned long f, const char *format, ...);
 void E(unsigned long f, const char *format, ...);
@@ -528,6 +531,7 @@ void W(unsigned long f, const char *format, ...);
 #define ENTER()               ((void)0)
 #define LEAVE()               ((void)0)
 #define RETURN(r)             ((void)0)
+#define CHECKINDENT(l)        ((void)0)
 #define SHOWVALUE(f, v)       ((void)0)
 #define SHOWPOINTER(f, p)     ((void)0)
 #define SHOWSTRING(f, s)      ((void)0)

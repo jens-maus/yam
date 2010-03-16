@@ -376,6 +376,18 @@ INLINE void _INDENT(void)
 
 /****************************************************************************/
 
+#define checkIndentLevel(l) { \
+  if(indent_level < l) \
+  { \
+  	if(ansi_output) \
+      _DBPRINTF("%s%s:%ld:indent level less than %ld (%ld)%s\n", ANSI_ESC_FG_PURPLE, file, line, l, indent_level, ANSI_ESC_CLR); \
+  	else \
+      _DBPRINTF("%s:%ld:indent level less than %ld (%ld)\n", file, line, l, indent_level); \
+  } \
+}
+
+/****************************************************************************/
+
 void _ENTER(unsigned long dclass, const char *file, unsigned long line, const char *function)
 {
   if(isFlagSet(debug_classes, dclass))
@@ -387,12 +399,14 @@ void _ENTER(unsigned long dclass, const char *file, unsigned long line, const ch
       _DBPRINTF("%s:%ld:Entering %s\n", file, line, function);
   }
 
+  checkIndentLevel(0);
   indent_level++;
 }
 
 void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const char *function)
 {
   indent_level--;
+  checkIndentLevel(0);
 
   if(isFlagSet(debug_classes, dclass))
   {
@@ -407,6 +421,7 @@ void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const ch
 void _RETURN(unsigned long dclass, const char *file, unsigned long line, const char *function, unsigned long result)
 {
   indent_level--;
+  checkIndentLevel(0);
 
   if(isFlagSet(debug_classes, dclass))
   {
@@ -416,6 +431,13 @@ void _RETURN(unsigned long dclass, const char *file, unsigned long line, const c
     else
       _DBPRINTF("%s:%ld:Leaving %s (result 0x%08lx, %ld)\n", file, line, function, result, result);
   }
+}
+
+/****************************************************************************/
+
+void _CHECKINDENT(long level, const char *file, unsigned long line)
+{
+  checkIndentLevel(level);
 }
 
 /****************************************************************************/

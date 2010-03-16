@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Debug.c: added CHECKINDENT() function to check the log's indentation level
+    to be below a certain limit. Furthermore all calls of ENTER(), LEAVE() and
+    RETURN() will now check if the indentation level becomes negative because of
+    a missing ENTER() statement and output a warning in that case.
+
 2010-03-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: some changes to make the code compilable for non-OS4 systems.
