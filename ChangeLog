@@ -7,6 +7,9 @@ $URL$
 
 2010-03-16 Jens Langner <Jens.Langner@light-speed.de>
 
+  * Transfer.c: fixed crash bug where iterating through the list and removing
+    nodes at the same time didn't work with IterateList() and thus caused crashes
+    when executing ProcessTransferQueue().
   * Transfer.c: replaced the manual MUI_DisposeObject of the TransferWindow by
     usage of CleanupTransferWindow() instead.
 

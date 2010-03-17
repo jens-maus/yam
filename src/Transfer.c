@@ -138,6 +138,7 @@ void ProcessTransferQueue(enum MailServerType mst)
         if(SetupTransferWindow(TR_GET_USER) == TRUE)
         {
           struct Node *curNode;
+          struct Node *nextNode;
           BOOL preselectMode = FALSE;
           int msgs;
 
@@ -151,9 +152,13 @@ void ProcessTransferQueue(enum MailServerType mst)
 
           // we walk through the TransferQueue and process each scheduled
           // mail transfer
-          IterateList(&G->transferQueue, curNode)
+          for(curNode = GetHead((struct List *)&G->transferQueue); curNode != NULL; curNode = nextNode)
           {
             struct TransferNode *tfn = (struct TransferNode *)curNode;
+
+            // as we are going to remove the node eventually we have to
+            // get the next node immediately.
+            nextNode = GetSucc(curNode);
 
             if(mst == MST_UNKNOWN || (tfn->msn->type == mst && isServerActive(tfn->msn)))
             {
@@ -161,7 +166,7 @@ void ProcessTransferQueue(enum MailServerType mst)
 
               // before we process the transfer we have to remove it from
               // the transferQueue
-              Remove((struct Node *)tfn);
+              Remove(curNode);
 
               // depending on the mail server type we have to either send mail
               // via SMTP or receive via POP3
