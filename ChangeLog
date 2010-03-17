@@ -7,6 +7,10 @@ $URL$
 
 2010-03-16 Jens Langner <Jens.Langner@light-speed.de>
 
+  * Debug.c: the new checkIndentLevel() functionality will now only be used in
+    case the call trace is turned on because otherwise an incorrect indent
+    management causes YAM to slow down dramatically because incoming events
+    also output the warning all the time.
   * Transfer.c: fixed crash bug where iterating through the list and removing
     nodes at the same time didn't work with IterateList() and thus caused crashes
     when executing ProcessTransferQueue().

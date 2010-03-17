@@ -397,16 +397,16 @@ void _ENTER(unsigned long dclass, const char *file, unsigned long line, const ch
       _DBPRINTF("%s%s:%ld:Entering %s%s\n", ANSI_ESC_FG_BROWN, file, line, function, ANSI_ESC_CLR);
     else
       _DBPRINTF("%s:%ld:Entering %s\n", file, line, function);
+
+    checkIndentLevel(0);
   }
 
-  checkIndentLevel(0);
   indent_level++;
 }
 
 void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const char *function)
 {
   indent_level--;
-  checkIndentLevel(0);
 
   if(isFlagSet(debug_classes, dclass))
   {
@@ -415,13 +415,14 @@ void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const ch
       _DBPRINTF("%s%s:%ld:Leaving %s%s\n", ANSI_ESC_FG_BROWN, file, line, function, ANSI_ESC_CLR);
     else
       _DBPRINTF("%s:%ld:Leaving %s\n", file, line, function);
+
+    checkIndentLevel(0);
   }
 }
 
 void _RETURN(unsigned long dclass, const char *file, unsigned long line, const char *function, unsigned long result)
 {
   indent_level--;
-  checkIndentLevel(0);
 
   if(isFlagSet(debug_classes, dclass))
   {
@@ -430,6 +431,8 @@ void _RETURN(unsigned long dclass, const char *file, unsigned long line, const c
       _DBPRINTF("%s%s:%ld:Leaving %s (result 0x%08lx, %ld)%s\n", ANSI_ESC_FG_BROWN, file, line, function, result, result, ANSI_ESC_CLR);
     else
       _DBPRINTF("%s:%ld:Leaving %s (result 0x%08lx, %ld)\n", file, line, function, result, result);
+
+    checkIndentLevel(0);
   }
 }
 
