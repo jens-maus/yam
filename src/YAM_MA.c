@@ -2934,8 +2934,26 @@ BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
       if(filename == NULL)
       {
         struct FileReqCache *frc;
+        char suggestedName[SIZE_FILE];
 
-        if((frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, tr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, "")) != NULL)
+		if(mlist->count == 1)
+		{
+		  // if there is only one mail to be exported by we use single mail's subject
+		  // as filename and append ".msg"
+		  struct MailNode *mnode = FirstMailNode(mlist);
+
+	      snprintf(suggestedName, sizeof(suggestedName), "%s.msg", mnode->mail->Subject);
+	    }
+	    else
+	    {
+	      // for multiple mail we use the folder's name and append ".mbox"
+	      snprintf(suggestedName, sizeof(suggestedName), "%s.mbox", actfo->Name);
+	    }
+
+	    // remove possible invalid characters
+        ReplaceInvalidChars(suggestedName);
+
+        if((frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, tr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, suggestedName)) != NULL)
         {
           filename = AddPath(outname, frc->drawer, frc->file, sizeof(outname));
           if(FileExists(filename) == TRUE)

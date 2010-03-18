@@ -677,6 +677,32 @@ char *UnquoteString(const char *s, BOOL new)
   RETURN(o);
   return o;
 }
+
+///
+/// ReplaceInvalidChars
+// replaces invalid filename characters by "_"
+void ReplaceInvalidChars(char *name)
+{
+  unsigned char *ptr = (unsigned char *)name;
+  unsigned char c;
+
+  ENTER();
+
+  while((c = *ptr) != '\0')
+  {
+    static const char invalidChars[] = ":/#?*()[]|%'\"";
+
+    // see if we have to replace certain unallowed characters
+    // by a '_'
+    if((c <= 0x20) || (c > 0x80 && c < 0xa0) || strchr(invalidChars, c) != NULL)
+      *ptr = '_';
+
+    ptr++;
+  }
+
+  LEAVE();
+}
+
 ///
 
 /*** File related ***/

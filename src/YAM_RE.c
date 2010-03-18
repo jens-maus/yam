@@ -91,45 +91,6 @@ static BOOL RE_HandleMDNReport(const struct Part *frp);
  Module: Read
 ***************************************************************************/
 
-/// RE_SuggestName
-// Suggests a file name based on the message subject and strips characters
-// from it that are not valid for filenames.
-static void RE_SuggestName(const struct Mail *mail, char *name, const size_t length)
-{
-  const char *ptr = mail->Subject;
-  size_t i = 0;
-
-  ENTER();
-
-  // we copy until we reach length-1 as we have
-  // to reserve one space for the NUL char
-  while(*ptr != '\0' && i < length-1)
-  {
-    unsigned char c;
-    static const char invalidChars[] = ":/#?*()[]|%'\"";
-
-    // see if we have to replace certain unallowed characters
-    // by a '_'
-    c = *ptr;
-    if((c <= 0x20) || (c > 0x80 && c < 0xA0) || strchr(invalidChars, c) != NULL)
-      c = '_';
-
-    // put that character into our
-    // destination string
-    name[i] = c;
-
-    // continue
-    ptr++;
-    i++;
-  }
-
-  // make sure name is NUL terminated
-  name[i] = '\0';
-
-  LEAVE();
-}
-
-///
 /// RE_Export
 //  Saves message or attachments to disk
 BOOL RE_Export(struct ReadMailData *rmData, const char *source,
@@ -171,7 +132,8 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
       else
         extlen = 3;
 
-      RE_SuggestName(mail, suggestedName, sizeof(suggestedName)-extlen-3);
+      strlcpy(suggestedName, mail->Subject, sizeof(suggestedName)-extlen-3);
+      ReplaceInvalidChars(suggestedName);
       snprintf(filename, sizeof(filename), "%s-%d.%s", suggestedName[0] != '\0' ? suggestedName : mail->MailFile,
                                                        nr,
                                                        ext[0] != '\0' ? ext : "tmp");
@@ -180,7 +142,8 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
     {
       char suggestedName[SIZE_FILE];
 
-      RE_SuggestName(mail, suggestedName, sizeof(suggestedName)-4);
+      strlcpy(suggestedName, mail->Subject, sizeof(suggestedName)-4);
+      ReplaceInvalidChars(suggestedName);
       snprintf(filename, sizeof(filename), "%s.msg", suggestedName[0] != '\0' ? suggestedName : mail->MailFile);
     }
 

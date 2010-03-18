@@ -359,6 +359,7 @@ char *   StrBufCpy(char *strbuf, const char *source);
 char *   AppendToBuffer(char *buf, int *wptr, int *len, const char *add);
 char *   StripUnderscore(const char *label);
 char *   stristr(const char *a, const char *b);
+void     ReplaceInvalidChars(char *name);
 char *   SWSSearch(char *str1, char*str2);
 void     ToLowerCase(char *str);
 int      TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder);
