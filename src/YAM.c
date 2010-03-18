@@ -1393,10 +1393,15 @@ BOOL StayInProg(void)
 
     if(saveMails == TRUE)
     {
+      struct Node *curNode;
+      struct Node *nextNode;
+
       // put the mails of all still opened write windows on hold
-      IterateList(&G->writeMailDataList, curNode)
+      for(curNode = GetHead((struct List *)&G->writeMailDataList; curNode != NULL; curNode = nextNode)
       {
         struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+        nextNode = GetSucc(curNode);
 
         if(wmData->window != NULL)
           DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
