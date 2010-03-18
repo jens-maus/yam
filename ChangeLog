@@ -8,7 +8,7 @@ $URL$
 2010-03-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, YAM_RE.c, YAM_UT.c: exporting mails will now suggest a suitable
-    name. "<subject>.msg" will be used for a single mail and "<foldername>.mbox"
+    name. "<subject>.eml" will be used for a single mail and "<foldername>.mbox"
     for multiple mails or complete folders.
 
 2010-03-16 Jens Langner <Jens.Langner@light-speed.de>

@@ -2939,10 +2939,10 @@ BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
 		if(mlist->count == 1)
 		{
 		  // if there is only one mail to be exported by we use single mail's subject
-		  // as filename and append ".msg"
+		  // as filename and append ".eml"
 		  struct MailNode *mnode = FirstMailNode(mlist);
 
-	      snprintf(suggestedName, sizeof(suggestedName), "%s.msg", mnode->mail->Subject);
+	      snprintf(suggestedName, sizeof(suggestedName), "%s.eml", mnode->mail->Subject);
 	    }
 	    else
 	    {
