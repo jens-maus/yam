@@ -10,6 +10,12 @@ $URL$
   * tools/genclasses/gc.c: reworked the source to add the usual ENTER() and
     RETURN() statements to the generated class creation code. This makes it
     possible to output which class exactly could not be created.
+  * tools/genclasses/gc.c: it is now possible to create private classes which
+    are subclasses of other private classes. Before only public classes could
+    be used as superclasses. The special order in which the classes must be
+    created is properly respected. Possible dependency loops will not be
+    detected during the code generation, but at runtime of the created code
+    instead.
 
 2010-03-18 Thore Böckelmann <tboeckel@gmx.de>
 

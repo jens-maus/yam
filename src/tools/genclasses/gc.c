@@ -535,6 +535,8 @@ struct classdef *processclasssrc( char *path )
 
       sub += sizeof(KEYWD_SUPERCLASS) - 1;
       cd->superclass = stralloc(skipwhitespaces(sub));
+      /* assume public superclasses first */
+      cd->superclassindex = -1;
     }
     else if (!cd->desc && (sub = strstr(p, KEYWD_DESC)))
     {
@@ -738,6 +740,77 @@ int scanclasses( char *dirname, struct list *classlist )
   return 1;
 }
 
+int comparesuperclassindex( const struct node *n1, const struct node *n2 )
+{
+  const struct classdef *cd1 = (const struct classdef *)n1->data;
+  const struct classdef *cd2 = (const struct classdef *)n2->data;
+
+  return cd1->superclassindex - cd2->superclassindex;
+}
+
+void sortclasses( struct list *classlist )
+{
+  struct classdef *outercd;
+  struct node *outern;
+
+  /* iterate over all classes and check whether one class has one
+   * of our private classes as superclass
+   */
+  for(outern = NULL; (outern = list_getnext(classlist, outern, (void **)&outercd)); )
+  {
+    struct classdef *innercd;
+    struct node *innern;
+    int innerindex = -1;
+
+    for(innern = NULL; (innern = list_getnext(classlist, innern, (void **)&innercd)); )
+    {
+      innerindex++;
+
+      if(innercd != outercd)
+      {
+        /* assume that the superclass name begins with "MUIC_"
+         * and only respect nodes with a yet public superclass index (== -1)
+         */
+        if(outercd->superclassindex == -1 && strcmp(&outercd->superclass[5], innercd->name) == 0)
+        {
+          /* remember the superclass' index */
+          outercd->superclassindex = innerindex;
+        }
+      }
+    }
+  }
+
+  /* finally sort the class list by superclass index */
+  list_sort(classlist, comparesuperclassindex);
+
+  /* iterate over all classes again and update the superclass index because the sort
+   * operation most probably changed the list's order
+   */
+  for(outern = NULL; (outern = list_getnext(classlist, outern, (void **)&outercd)); )
+  {
+    struct classdef *innercd;
+    struct node *innern;
+    int innerindex = -1;
+
+    for(innern = NULL; (innern = list_getnext(classlist, innern, (void **)&innercd)); )
+    {
+      innerindex++;
+
+      if(innercd != outercd)
+      {
+        /* assume that the superclass name begins with "MUIC_"
+         * and only respect nodes with a private superclass index (>= 0)
+         */
+        if(outercd->superclassindex >= 0 && strcmp(&outercd->superclass[5], innercd->name) == 0)
+        {
+          /* remember the superclass' index */
+          outercd->superclassindex = innerindex;
+        }
+      }
+    }
+  }
+}
+
 /*******************************************************************************
  *
  * Source code generation
@@ -827,17 +900,38 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "  memset(%sClasses, 0, sizeof(%sClasses));\n", bn, bn);
   fprintf(fp, "  for (i = 0; i < NUMBEROFCLASSES; i++)\n");
   fprintf(fp, "  {\n");
-  fprintf(fp, "    struct MUI_CustomClass *superMCC = MCCInfo[i].SuperMCC == -1 ? NULL : %sClasses[MCCInfo[i].SuperMCC];\n", bn);
+  fprintf(fp, "    const char *superClassName;\n");
+  fprintf(fp, "    struct MUI_CustomClass *superMCC;\n");
   fprintf(fp, "\n");
-  fprintf(fp, "    %sClasses[i] = MUI_CreateCustomClass(NULL, MCCInfo[i].SuperClass, superMCC, (int)MCCInfo[i].GetSize(), MCCInfo[i].Dispatcher);\n", bn);
+  fprintf(fp, "    if(MCCInfo[i].SuperMCC == -1)\n");
+  fprintf(fp, "    {\n");
+  fprintf(fp, "      superClassName = MCCInfo[i].SuperClass;\n");
+  fprintf(fp, "      superMCC = NULL;\n");
+  fprintf(fp, "    }\n");
+  fprintf(fp, "    else\n");
+  fprintf(fp, "    {\n");
+  fprintf(fp, "      superClassName = NULL;\n");
+  fprintf(fp, "      superMCC = %sClasses[MCCInfo[i].SuperMCC];\n", bn);
+  fprintf(fp, "      if(superMCC == NULL)\n");
+  fprintf(fp, "      {\n");
+  fprintf(fp, "        E(DBF_STARTUP, \"superclass '%%s' of class '%%s' not yet created, possible dependency loop?\", MCCInfo[i].SuperClass, MCCInfo[i].Name);\n");
+  fprintf(fp, "        success = FALSE;\n");
+  fprintf(fp, "        break;\n");
+  fprintf(fp, "      }\n");
+  fprintf(fp, "    }\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "    D(DBF_STARTUP, \"creating class '%%s' as subclass of '%%s'\", MCCInfo[i].Name, MCCInfo[i].SuperClass);\n");
+  fprintf(fp, "    %sClasses[i] = MUI_CreateCustomClass(NULL, superClassName, superMCC, (int)MCCInfo[i].GetSize(), MCCInfo[i].Dispatcher);\n", bn);
   fprintf(fp, "    if(%sClasses[i] == NULL)\n", bn);
   fprintf(fp, "    {\n");
   fprintf(fp, "      E(DBF_STARTUP, \"failed to create class '%%s' as subclass of '%%s'\", MCCInfo[i].Name, MCCInfo[i].SuperClass);\n");
-  fprintf(fp, "      %s_CleanupClasses();\n", bn);
   fprintf(fp, "      success = FALSE;\n");
   fprintf(fp, "      break;\n");
   fprintf(fp, "    }\n");
   fprintf(fp, "  }\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  if(success == FALSE)\n");
+  fprintf(fp, "    %s_CleanupClasses();\n", bn);
   fprintf(fp, "\n");
   fprintf(fp, "  RETURN(success);\n");
   fprintf(fp, "  return success;\n");
@@ -943,8 +1037,8 @@ int gen_source( char *destfile, struct list *classlist )
 
   for(n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd)); )
   {
-    fprintf(fp, "  { MUIC_%s, %s, -1, %sGetSize, ENTRY(%sDispatcher) }",
-      nextcd->name, nextcd->superclass, nextcd->name, nextcd->name);
+    fprintf(fp, "  { MUIC_%s, %s, %d, %sGetSize, ENTRY(%sDispatcher) }",
+      nextcd->name, nextcd->superclass, nextcd->superclassindex, nextcd->name, nextcd->name);
     if (nextcd) fprintf(fp, ",\n"); else fprintf(fp, "\n");
   }
   fprintf(fp,  "};\n\n");
@@ -1396,6 +1490,8 @@ int main( int argc, char *argv[] )
 
   if (scanclasses(arg_classdir, &classlist))
   {
+    sortclasses(&classlist);
+
     myaddpart(arg_classdir, SOURCE_NAME, 255);
     gen_source(arg_classdir, &classlist);
     *mypathpart(arg_classdir) = 0;

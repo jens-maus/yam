@@ -350,6 +350,7 @@ OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
   ULONG result;
+
   ENTER();
 
   DeleteMailList(data->downloadedMails);
@@ -388,7 +389,7 @@ OVERLOAD(OM_SET)
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
 
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {
@@ -523,6 +524,7 @@ DECLARE(DisplayMailList) // struct TransferNode *tfn, ULONG largeonly
 DECLARE(CompleteMailList) // struct List *mailTransferList
 {
   GETDATA;
+
   ENTER();
 
   // make sure the correct group page
@@ -601,6 +603,7 @@ DECLARE(RedrawEntry) // int line
 {
   GETDATA;
   ULONG result;
+
   ENTER();
 
   result = DoMethod(data->LV_MAILS, MUIM_NList_Redraw, msg->line);
@@ -615,6 +618,7 @@ DECLARE(RedrawEntry) // int line
 DECLARE(PauseTransfer) // ULONG pause
 {
   GETDATA;
+
   ENTER();
 
   set(data->BT_RESUME, MUIA_Disabled, msg->pause == FALSE);
@@ -663,6 +667,7 @@ DECLARE(GetMessageInfo)
 DECLARE(AbortTransfer)
 {
   GETDATA;
+
   ENTER();
 
   // make sure the NOOP timer is definitly stopped
@@ -692,6 +697,7 @@ DECLARE(TransStat_Init)
 {
   GETDATA;
   struct Node *curNode;
+
   ENTER();
 
   data->transferStat.Msgs_Tot = 0;
@@ -724,6 +730,7 @@ DECLARE(TransStat_Init)
 DECLARE(TransStat_Start)
 {
   GETDATA;
+
   ENTER();
 
   data->transferStat.Msgs_Done = 0;
@@ -750,6 +757,7 @@ DECLARE(TransStat_Start)
 DECLARE(TransStat_Finish)
 {
   GETDATA;
+
   ENTER();
 
   // make sure we have valid strings to display
@@ -778,6 +786,7 @@ DECLARE(TransStat_Finish)
 DECLARE(TransStat_NextMsg) // int index, int listpos, LONG size, const char *status
 {
   GETDATA;
+
   ENTER();
 
   data->transferStat.Msgs_Curr = msg->index;
@@ -801,6 +810,7 @@ DECLARE(TransStat_NextMsg) // int index, int listpos, LONG size, const char *sta
 DECLARE(TransStat_Update) // int size_incr, const char *status
 {
   GETDATA;
+
   ENTER();
 
   if(msg->size_incr > 0)
@@ -823,7 +833,7 @@ DECLARE(TransStat_Update) // int size_incr, const char *status
     // update the stats at most 4 times per second
     if(TimeHasElapsed(&data->transferStat.Clock_Last, 250000) == TRUE)
     {
-      ULONG deltatime = data->transferStat.Clock_Last.Seconds - data->transferStat.Clock_Start;
+      ULONG deltatime;
       ULONG speed = 0;
       LONG remclock = 0;
       ULONG max;
@@ -835,12 +845,17 @@ DECLARE(TransStat_Update) // int size_incr, const char *status
 
       // first we calculate the speed in bytes/sec
       // to display to the user
+      deltatime = data->transferStat.Clock_Last.Seconds - data->transferStat.Clock_Start;
       if(deltatime != 0)
         speed = data->transferStat.Size_Done / deltatime;
 
       // calculate the estimated remaining time
-      if(speed != 0 && ((remclock = (data->transferStat.Size_Tot / speed) - deltatime) < 0))
-        remclock = 0;
+      if(speed != 0)
+      {
+        remclock = (data->transferStat.Size_Tot / speed) - deltatime;
+        if(remclock < 0)
+          remclock = 0;
+      }
 
       // show the current status
       set(data->TX_STATUS, MUIA_Text_Contents, msg->status);
@@ -915,7 +930,7 @@ DECLARE(ChangeTransferFlags) // int flags
     DoMethod(data->LV_MAILS, MUIM_NList_GetEntry, id, &mtn);
     if(mtn != NULL)
     {
-      //set the transferfalsg
+      // set the transferflags
       mtn->tflags = msg->flags;
 
       // redraw the nlist entry
