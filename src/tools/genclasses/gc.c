@@ -787,84 +787,82 @@ void gen_gpl( FILE *fp )
 void gen_supportroutines( FILE *fp )
 {
   char *bn = arg_basename;
-  fprintf(fp,
-"%s%s%s"
-"Object * VARARGS68K %s_NewObject(CONST_STRPTR class, ...)\n"
-"{\n"
-"  unsigned int i;\n"
-"  for(i = 0; i < NUMBEROFCLASSES; i++)\n"
-"  {\n"
-"    if(!strcmp(MCCInfo[i].Name, class))\n"
-"    {\n"
-"      Object *obj;\n"
-"      VA_LIST args;\n\n"
-"      VA_START(args, class);\n"
-"      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)VA_ARG(args, ULONG));\n"
-"      VA_END(args);\n\n"
-"      return obj;\n"
-"    }\n"
-"  }\n"
-"  return NULL;\n"
-"}\n"
-"%s"
-"\n"
-"%s%s%s",
 
-  arg_storm ? "/// "                : "",
-  arg_storm ? bn                    : "",
-  arg_storm ? "_NewObject()\n"      : "",
-  bn, bn,
-  arg_storm ? "\n///"               : "",
+  fprintf(fp, "%s%s%s", arg_storm ? "/// " : "", arg_storm ? bn : "", arg_storm ? "_NewObject()\n" : "");
+  fprintf(fp, "Object * VARARGS68K %s_NewObject(CONST_STRPTR className, ...)\n", bn);
+  fprintf(fp, "{\n");
+  fprintf(fp, "  Object *obj = NULL;\n");
+  fprintf(fp, "  unsigned int i;\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  ENTER();\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  for(i = 0; i < NUMBEROFCLASSES; i++)\n");
+  fprintf(fp, "  {\n");
+  fprintf(fp, "    if(strcmp(MCCInfo[i].Name, className) == 0)\n");
+  fprintf(fp, "    {\n");
+  fprintf(fp, "      VA_LIST args;\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "      VA_START(args, className);\n");
+  fprintf(fp, "      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)VA_ARG(args, ULONG));\n", bn);
+  fprintf(fp, "      VA_END(args);\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "      break;\n");
+  fprintf(fp, "    }\n");
+  fprintf(fp, "  }\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  RETURN(obj);\n");
+  fprintf(fp, "  return obj;\n");
+  fprintf(fp, "}\n");
+  fprintf(fp, "%s", arg_storm ? "\n///" : "");
+  fprintf(fp, "\n");
 
-  arg_storm ? "/// "                : "",
-  arg_storm ? bn                    : "",
-  arg_storm ? "_SetupClasses()\n"   : ""
-);
+  fprintf(fp, "%s%s%s", arg_storm ? "/// " : "", arg_storm ? bn : "", arg_storm ? "_SetupClasses()\n" : "");
+  fprintf(fp, "BOOL %s_SetupClasses(void)\n", bn);
+  fprintf(fp, "{\n");
+  fprintf(fp, "  BOOL success = TRUE;\n");
+  fprintf(fp, "  unsigned int i;\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  ENTER();\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  memset(%sClasses, 0, sizeof(%sClasses));\n", bn, bn);
+  fprintf(fp, "  for (i = 0; i < NUMBEROFCLASSES; i++)\n");
+  fprintf(fp, "  {\n");
+  fprintf(fp, "    struct MUI_CustomClass *superMCC = MCCInfo[i].SuperMCC == -1 ? NULL : %sClasses[MCCInfo[i].SuperMCC];\n", bn);
+  fprintf(fp, "\n");
+  fprintf(fp, "    %sClasses[i] = MUI_CreateCustomClass(NULL, MCCInfo[i].SuperClass, superMCC, (int)MCCInfo[i].GetSize(), MCCInfo[i].Dispatcher);\n", bn);
+  fprintf(fp, "    if(%sClasses[i] == NULL)\n", bn);
+  fprintf(fp, "    {\n");
+  fprintf(fp, "      E(DBF_STARTUP, \"failed to create class '%%s' as subclass of '%%s'\", MCCInfo[i].Name, MCCInfo[i].SuperClass);\n");
+  fprintf(fp, "      %s_CleanupClasses();\n", bn);
+  fprintf(fp, "      success = FALSE;\n");
+  fprintf(fp, "      break;\n");
+  fprintf(fp, "    }\n");
+  fprintf(fp, "  }\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  RETURN(success);\n");
+  fprintf(fp, "  return success;\n");
+  fprintf(fp, "}\n");
+  fprintf(fp, "%s", arg_storm ? "\n///" : "");
+  fprintf(fp, "\n");
 
-  fprintf(fp,
-"BOOL %s_SetupClasses(void)\n"
-"{\n"
-"  unsigned int i;\n"
-"  memset(%sClasses, 0, sizeof(%sClasses));\n"
-"  for (i = 0; i < NUMBEROFCLASSES; i++)\n"
-"  {\n"
-"    struct MUI_CustomClass *superMCC = MCCInfo[i].SuperMCC == -1 ? NULL : %sClasses[MCCInfo[i].SuperMCC];\n"
-"    %sClasses[i] = MUI_CreateCustomClass(NULL, MCCInfo[i].SuperClass, superMCC, (int)MCCInfo[i].GetSize(), MCCInfo[i].Dispatcher);\n"
-"    if(!%sClasses[i])\n"
-"    {\n"
-"      %s_CleanupClasses();\n"
-"      return FALSE;\n"
-"    }\n"
-"  }\n"
-"  return TRUE;\n"
-"}\n"
-"%s"
-"\n",
-
-  bn, bn, bn, bn, bn, bn, bn,
-  arg_storm ? "\n///" : ""
-);
-
-  fprintf(fp,
-"%s%s%s"
-"void %s_CleanupClasses(void)\n"
-"{\n"
-"  int i;\n"
-"  for (i = NUMBEROFCLASSES-1; i >= 0; i--)\n"
-"  {\n"
-"    if (%sClasses[i])\n"
-"      MUI_DeleteCustomClass(%sClasses[i]);\n"
-"    %sClasses[i] = NULL;\n"
-"  }\n"
-"}\n"
-"%s"
-"\n",
-
-  arg_storm ? "/// "                : "",
-  arg_storm ? bn                    : "",
-  arg_storm ? "_CleanupClasses()\n" : "",
-  bn, bn, bn, bn,
-  arg_storm ? "\n/// "              : "");
+  fprintf(fp, "%s%s%s", arg_storm ? "/// " : "", arg_storm ? bn : "", arg_storm ? "_CleanupClasses()\n" : "");
+  fprintf(fp, "void %s_CleanupClasses(void)\n", bn);
+  fprintf(fp, "{\n");
+  fprintf(fp, "  int i;\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  ENTER();\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  for(i = NUMBEROFCLASSES-1; i >= 0; i--)\n");
+  fprintf(fp, "  {\n");
+  fprintf(fp, "    if(%sClasses[i] != NULL)\n", bn);
+  fprintf(fp, "      MUI_DeleteCustomClass(%sClasses[i]);\n", bn);
+  fprintf(fp, "    %sClasses[i] = NULL;\n", bn);
+  fprintf(fp, "  }\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  LEAVE();\n");
+  fprintf(fp, "}\n");
+  fprintf(fp, "%s", arg_storm ? "\n/// " : "");
+  fprintf(fp, "\n");
 }
 
 int gen_source( char *destfile, struct list *classlist )
@@ -891,7 +889,8 @@ int gen_source( char *destfile, struct list *classlist )
   gen_gpl(fp);
   fprintf(fp, "\n /* " EDIT_WARNING " */\n\n"
     "#define INCLUDE_KITCHEN_SINK 1\n"
-    "#include \"Classes.h\"\n\n"
+    "#include \"Classes.h\"\n"
+    "#include \"Debug.h\"\n\n"
     "struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n\n",
     arg_basename);
 
@@ -1026,7 +1025,7 @@ if (0)
     "#define NUMBEROFCLASSES %ld\n"
     "\n"
     "extern struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n"
-    "Object * VARARGS68K %s_NewObject(CONST_STRPTR class, ...);\n"
+    "Object * VARARGS68K %s_NewObject(CONST_STRPTR className, ...);\n"
     "BOOL %s_SetupClasses(void);\n"
     "void %s_CleanupClasses(void);\n"
     "\n",

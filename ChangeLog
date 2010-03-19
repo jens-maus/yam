@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tools/genclasses/gc.c: reworked the source to add the usual ENTER() and
+    RETURN() statements to the generated class creation code. This makes it
+    possible to output which class exactly could not be created.
+
 2010-03-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, YAM_RE.c, YAM_UT.c: exporting mails will now suggest a suitable
