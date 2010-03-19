@@ -1397,7 +1397,7 @@ BOOL StayInProg(void)
       struct Node *nextNode;
 
       // put the mails of all still opened write windows on hold
-      for(curNode = GetHead((struct List *)&G->writeMailDataList; curNode != NULL; curNode = nextNode)
+      for(curNode = GetHead((struct List *)&G->writeMailDataList); curNode != NULL; curNode = nextNode)
       {
         struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
