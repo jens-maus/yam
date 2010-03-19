@@ -16,6 +16,11 @@ $URL$
     created is properly respected. Possible dependency loops will not be
     detected during the code generation, but at runtime of the created code
     instead.
+  * tools/genclasses/gc.c: modified the code generation once more to detect
+    possible class loops and really make sure that all classes are created in
+    the correct order (i.e. superclasses before subclasses). In case of a loop
+    the generated source will contain an "#error" statement which contains the
+    affected classes.
 
 2010-03-18 Thore Böckelmann <tboeckel@gmx.de>
 

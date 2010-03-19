@@ -70,15 +70,17 @@ struct exportdef
 
 struct classdef
 {
-  char *name;               /* i.e. Searchwindow */
-  char *superclass;         /* i.e. MUIC_Window */
-  int superclassindex;      /* -1 for public superclasses */
+  char *name;                 /* i.e. Searchwindow */
+  char *superclass;           /* i.e. MUIC_Window */
+  struct classdef *supernode; /* pointer to private superclass */
+  int index;                  /* index within the final list */
+  int finished;               /* finished marking during breadth search first */
   char *desc;
   char *classdata;
-  struct list overloadlist; /* list of extracted OVERLOAD() macros */
-  struct list declarelist;  /* list of extracted DECLARE() macros */
-  struct list attrlist;     /* list of extracted ATTR() macros */
-  struct list exportlist;   /* list of extracted EXPORT blocks */
+  struct list overloadlist;   /* list of extracted OVERLOAD() macros */
+  struct list declarelist;    /* list of extracted DECLARE() macros */
+  struct list attrlist;       /* list of extracted ATTR() macros */
+  struct list exportlist;     /* list of extracted EXPORT blocks */
 };
 
 #endif /* GC_H */

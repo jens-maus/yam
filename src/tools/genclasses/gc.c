@@ -539,7 +539,7 @@ struct classdef *processclasssrc( char *path )
       sub += sizeof(KEYWD_SUPERCLASS) - 1;
       cd->superclass = stralloc(skipwhitespaces(sub));
       /* assume public superclasses first */
-      cd->superclassindex = -1;
+      cd->index = -1;
     }
     else if (!cd->desc && (sub = strstr(p, KEYWD_DESC)))
     {
@@ -743,15 +743,7 @@ int scanclasses( char *dirname, struct list *classlist )
   return 1;
 }
 
-int comparesuperclassindex( const struct node *n1, const struct node *n2 )
-{
-  const struct classdef *cd1 = (const struct classdef *)n1->data;
-  const struct classdef *cd2 = (const struct classdef *)n2->data;
-
-  return cd1->superclassindex - cd2->superclassindex;
-}
-
-void sortclasses( struct list *classlist )
+void buildclasstree( struct list *classlist )
 {
   struct classdef *outercd;
   struct node *outern;
@@ -763,51 +755,18 @@ void sortclasses( struct list *classlist )
   {
     struct classdef *innercd;
     struct node *innern;
-    int innerindex = -1;
 
     for(innern = NULL; (innern = list_getnext(classlist, innern, (void **)&innercd)); )
     {
-      innerindex++;
-
       if(innercd != outercd)
       {
         /* assume that the superclass name begins with "MUIC_"
-         * and only respect nodes with a yet public superclass index (== -1)
+         * and only respect nodes with a yet public superclass (supernode == NULL)
          */
-        if(outercd->superclassindex == -1 && strcmp(&outercd->superclass[5], innercd->name) == 0)
+        if(outercd->supernode == NULL && strcmp(&outercd->superclass[5], innercd->name) == 0)
         {
-          /* remember the superclass' index */
-          outercd->superclassindex = innerindex;
-        }
-      }
-    }
-  }
-
-  /* finally sort the class list by superclass index */
-  list_sort(classlist, comparesuperclassindex);
-
-  /* iterate over all classes again and update the superclass index because the sort
-   * operation most probably changed the list's order
-   */
-  for(outern = NULL; (outern = list_getnext(classlist, outern, (void **)&outercd)); )
-  {
-    struct classdef *innercd;
-    struct node *innern;
-    int innerindex = -1;
-
-    for(innern = NULL; (innern = list_getnext(classlist, innern, (void **)&innercd)); )
-    {
-      innerindex++;
-
-      if(innercd != outercd)
-      {
-        /* assume that the superclass name begins with "MUIC_"
-         * and only respect nodes with a private superclass index (>= 0)
-         */
-        if(outercd->superclassindex >= 0 && strcmp(&outercd->superclass[5], innercd->name) == 0)
-        {
-          /* remember the superclass' index */
-          outercd->superclassindex = innerindex;
+          /* remember the superclass */
+          outercd->supernode = innercd;
         }
       }
     }
@@ -917,7 +876,7 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "      superMCC = %sClasses[MCCInfo[i].SuperMCC];\n", bn);
   fprintf(fp, "      if(superMCC == NULL)\n");
   fprintf(fp, "      {\n");
-  fprintf(fp, "        E(DBF_STARTUP, \"superclass '%%s' of class '%%s' not yet created, possible dependency loop?\", MCCInfo[i].SuperClass, MCCInfo[i].Name);\n");
+  fprintf(fp, "        E(DBF_STARTUP, \"superclass '%%s' of class '%%s' not yet created!\", MCCInfo[i].SuperClass, MCCInfo[i].Name);\n");
   fprintf(fp, "        success = FALSE;\n");
   fprintf(fp, "        break;\n");
   fprintf(fp, "      }\n");
@@ -969,6 +928,8 @@ int gen_source( char *destfile, struct list *classlist )
   struct overloaddef *nextod;
   struct declaredef *nextdd;
   struct node *n, *nn;
+  int goOn;
+  int listindex;
 
   if(arg_v)
     fprintf(stdout, "Creating source      : %s\n", destfile);
@@ -984,12 +945,15 @@ int gen_source( char *destfile, struct list *classlist )
   /***************************************/
 
   gen_gpl(fp);
-  fprintf(fp, "\n /* " EDIT_WARNING " */\n\n"
-    "#define INCLUDE_KITCHEN_SINK 1\n"
-    "#include \"Classes.h\"\n"
-    "#include \"Debug.h\"\n\n"
-    "struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n\n",
-    arg_basename);
+  fprintf(fp, "\n");
+  fprintf(fp, " /* " EDIT_WARNING " */\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  #define INCLUDE_KITCHEN_SINK 1\n");
+  fprintf(fp, "  #include \"Classes.h\"\n");
+  fprintf(fp, "  #include \"Debug.h\"\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n", arg_basename);
+  fprintf(fp, "\n");
 
   /***************************************/
   /*        Write dispatchers...         */
@@ -1004,7 +968,7 @@ int gen_source( char *destfile, struct list *classlist )
     /* Write OVERLOADs */
     for(n = NULL; (n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod)); )
     {
-      fprintf(fp, "    case %-40s: return m_%s_%-20s(cl, obj, msg);\n",
+      fprintf(fp, "    case %-40s: return m_%s_%-30s(cl, obj, msg);\n",
         nextod->name, nextcd->name, nextod->name);
     }
     /* Write DECLAREs */
@@ -1012,7 +976,7 @@ int gen_source( char *destfile, struct list *classlist )
     {
       char name[128];
       snprintf(name, sizeof(name), "MUIM_%s_%s", nextcd->name, nextdd->name);
-      fprintf(fp, "    case %-40s: return m_%s_%-20s(cl, obj, (APTR)msg);\n",
+      fprintf(fp, "    case %-40s: return m_%s_%-30s(cl, obj, (APTR)msg);\n",
         name, nextcd->name, nextdd->name);
     }
     fprintf(fp, "  }\n  return DoSuperMethodA(cl, obj, msg);\n}\n\n");
@@ -1038,13 +1002,60 @@ int gen_source( char *destfile, struct list *classlist )
     "} MCCInfo[NUMBEROFCLASSES] =\n"
     "{\n");
 
-  for(n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd)); )
+  /* do a breadth search first style iteration over all
+   * classes to resolve possible dependencies between
+   * private classes
+   */
+  listindex = 0;
+  do
   {
-    fprintf(fp, "  { MUIC_%s, %s, %d, %sGetSize, ENTRY(%sDispatcher) }",
-      nextcd->name, nextcd->superclass, nextcd->superclassindex, nextcd->name, nextcd->name);
-    if (nextcd) fprintf(fp, ",\n"); else fprintf(fp, "\n");
+    goOn = 0;
+
+    for(n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd)); )
+    {
+      /* handle unfinished class nodes only for which either the class is a subclass
+       * of a public class (supernode == NULL), or for which the superclass' list
+       * index in known already
+       */
+      if(nextcd->finished == 0 && (nextcd->supernode == NULL || nextcd->supernode->index != -1))
+      {
+        fprintf(fp, "  { MUIC_%s, %s, %d, %sGetSize, ENTRY(%sDispatcher) },\n", nextcd->name, nextcd->superclass, nextcd->supernode != NULL ? nextcd->supernode->index : -1, nextcd->name, nextcd->name);
+        /* remember index within the list of this class
+         * this one will be used later for depending subclasses
+         */
+        nextcd->index = listindex;
+        listindex++;
+
+        if(nextcd->supernode != NULL)
+        {
+          nextcd->supernode->index = -1;
+          goOn = 1;
+        }
+
+        /* mark this class as finished */
+        nextcd->finished = 1;
+      }
+    }
   }
-  fprintf(fp,  "};\n\n");
+  while(goOn == 1);
+
+  /* if we handled less classes than are in our list then we most probably
+   * skipped them because of a dependency loop
+   */
+  if(listindex < classlist->cnt)
+  {
+    fprintf(fp, "#error %ld unfinished classes, possible dependency loops in these classes:", classlist->cnt-listindex);
+    for(n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd)); )
+    {
+      /* handle all still unfinished class nodes with private superclasses */
+      if(nextcd->finished == 0 && nextcd->supernode != NULL)
+        fprintf(fp, " %s", nextcd->name);
+    }
+    fprintf(fp, "\n");
+  }
+
+  fprintf(fp, "};\n");
+  fprintf(fp, "\n");
 
   if(arg_storm)
     fprintf(fp, "///\n");
@@ -1486,14 +1497,14 @@ int main( int argc, char *argv[] )
 
   list_init(&classlist);
 
-  if (!doargs(argc, argv)) return 0;
+  if(!doargs(argc, argv)) return 0;
 
   /* get memory for the hash */
   if(!(collision_cnts = calloc(BUCKET_CNT, sizeof(int)))) return 0;
 
-  if (scanclasses(arg_classdir, &classlist))
+  if(scanclasses(arg_classdir, &classlist))
   {
-    sortclasses(&classlist);
+    buildclasstree(&classlist);
 
     myaddpart(arg_classdir, SOURCE_NAME, 255);
     gen_source(arg_classdir, &classlist);
