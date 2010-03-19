@@ -63,6 +63,9 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  * History
  * -------
+ * 0.29 - added support for private classes being subclassed from other private
+ *        classes.
+ *
  * 0.28 - changed to use the new SDISPATCHER macros instead which are generating
  *        static dispatcher functions instead of global ones.
  *
@@ -179,7 +182,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  */
 
-static const char * const verstr = "0.28";
+static const char * const verstr = "0.29";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
