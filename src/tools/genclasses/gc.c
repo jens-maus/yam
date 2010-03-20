@@ -865,7 +865,7 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "    const char *superClassName;\n");
   fprintf(fp, "    struct MUI_CustomClass *superMCC;\n");
   fprintf(fp, "\n");
-  fprintf(fp, "    if(MCCInfo[i].SuperMCC == -1)\n");
+  fprintf(fp, "    if(MCCInfo[i].SuperMCCIndex == -1)\n");
   fprintf(fp, "    {\n");
   fprintf(fp, "      superClassName = MCCInfo[i].SuperClass;\n");
   fprintf(fp, "      superMCC = NULL;\n");
@@ -873,7 +873,7 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "    else\n");
   fprintf(fp, "    {\n");
   fprintf(fp, "      superClassName = NULL;\n");
-  fprintf(fp, "      superMCC = %sClasses[MCCInfo[i].SuperMCC];\n", bn);
+  fprintf(fp, "      superMCC = %sClasses[MCCInfo[i].SuperMCCIndex];\n", bn);
   fprintf(fp, "      if(superMCC == NULL)\n");
   fprintf(fp, "      {\n");
   fprintf(fp, "        E(DBF_STARTUP, \"superclass '%%s' of class '%%s' not yet created!\", MCCInfo[i].SuperClass, MCCInfo[i].Name);\n");
@@ -917,7 +917,11 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "\n");
   fprintf(fp, "  LEAVE();\n");
   fprintf(fp, "}\n");
-  fprintf(fp, "%s", arg_storm ? "\n/// " : "");
+  if(arg_storm)
+  {
+    fprintf(fp, "\n");
+    fprintf(fp, "///\n");
+  }
   fprintf(fp, "\n");
 }
 
@@ -946,13 +950,13 @@ int gen_source( char *destfile, struct list *classlist )
 
   gen_gpl(fp);
   fprintf(fp, "\n");
-  fprintf(fp, " /* " EDIT_WARNING " */\n");
+  fprintf(fp, "/* " EDIT_WARNING " */\n");
   fprintf(fp, "\n");
-  fprintf(fp, "  #define INCLUDE_KITCHEN_SINK 1\n");
-  fprintf(fp, "  #include \"Classes.h\"\n");
-  fprintf(fp, "  #include \"Debug.h\"\n");
+  fprintf(fp, "#define INCLUDE_KITCHEN_SINK 1\n");
+  fprintf(fp, "#include \"Classes.h\"\n");
+  fprintf(fp, "#include \"Debug.h\"\n");
   fprintf(fp, "\n");
-  fprintf(fp, "  struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n", arg_basename);
+  fprintf(fp, "struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n", arg_basename);
   fprintf(fp, "\n");
 
   /***************************************/
@@ -962,25 +966,32 @@ int gen_source( char *destfile, struct list *classlist )
   fprintf(fp, "/*** Custom Class Dispatchers ***/\n");
   for(nn = NULL; (nn = list_getnext(classlist, nn, (void **) &nextcd)); )
   {
-    if (arg_storm) fprintf(fp, "/// %sDispatcher()\n", nextcd->name);
-    fprintf(fp, "SDISPATCHER(%sDispatcher)\n"
-      "{\n  switch(msg->MethodID)\n  {\n", nextcd->name);
+    if(arg_storm)
+      fprintf(fp, "/// %sDispatcher()\n", nextcd->name);
+
+    fprintf(fp, "SDISPATCHER(%sDispatcher)\n", nextcd->name);
+    fprintf(fp, "{\n  switch(msg->MethodID)\n  {\n");
     /* Write OVERLOADs */
     for(n = NULL; (n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod)); )
     {
-      fprintf(fp, "    case %-40s: return m_%s_%-30s(cl, obj, msg);\n",
-        nextod->name, nextcd->name, nextod->name);
+      fprintf(fp, "    case %-40s: return m_%s_%-30s(cl, obj, msg);\n", nextod->name, nextcd->name, nextod->name);
     }
     /* Write DECLAREs */
     for(n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd)); )
     {
       char name[128];
+
       snprintf(name, sizeof(name), "MUIM_%s_%s", nextcd->name, nextdd->name);
-      fprintf(fp, "    case %-40s: return m_%s_%-30s(cl, obj, (APTR)msg);\n",
-        name, nextcd->name, nextdd->name);
+      fprintf(fp, "    case %-40s: return m_%s_%-30s(cl, obj, (APTR)msg);\n", name, nextcd->name, nextdd->name);
     }
-    fprintf(fp, "  }\n  return DoSuperMethodA(cl, obj, msg);\n}\n\n");
-    if (arg_storm) fprintf(fp, "///\n");
+    fprintf(fp, "  }\n");
+    fprintf(fp, " \n");
+    fprintf(fp, "  return DoSuperMethodA(cl, obj, msg);\n");
+    fprintf(fp, "}\n");
+    fprintf(fp, "\n");
+
+    if(arg_storm)
+      fprintf(fp, "///\n");
   }
 
   /*****************************************/
@@ -996,7 +1007,7 @@ int gen_source( char *destfile, struct list *classlist )
     "{\n"
     "  CONST_STRPTR Name;\n"
     "  CONST_STRPTR SuperClass;\n"
-    "  LONG SuperMCC;\n"
+    "  LONG SuperMCCIndex;\n"
     "  ULONG (*GetSize)(void);\n"
     "  APTR Dispatcher;\n"
     "} MCCInfo[NUMBEROFCLASSES] =\n"

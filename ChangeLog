@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tools/genclasses/gc.c: renamed "SuperMCC" to "SuperMCCIndex" to make clear
+    that the value is in fact an index within the list structure. Also changed
+    the layout of the generated code a bit.
+
 2010-03-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * tools/genclasses/gc.c: reworked the source to add the usual ENTER() and
