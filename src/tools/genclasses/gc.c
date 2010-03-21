@@ -63,6 +63,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  * History
  * -------
+ * 0.30 - the classes and their code are sorted alphabetically now.
  * 0.29 - added support for private classes being subclassed from other private
  *        classes.
  *
@@ -182,7 +183,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  */
 
-static const char * const verstr = "0.29";
+static const char * const verstr = "0.30";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -692,6 +693,14 @@ void printclasslist( struct list *classlist )
   }
 }
 
+int compareclasses(const struct node *n1, const struct node *n2)
+{
+  struct classdef *cd1 = n1->data;
+  struct classdef *cd2 = n2->data;
+
+  return strcasecmp(cd1->name, cd2->name);
+}
+
 int scanclasses( char *dirname, struct list *classlist )
 {
   DIR *dir;
@@ -739,6 +748,8 @@ int scanclasses( char *dirname, struct list *classlist )
     fprintf(stderr, "ERROR: Was unable to find any sources in %s\n", dirname);
     return 0;
   }
+  /* alphabetically sort the class list */
+  list_sort(classlist, compareclasses);
   if (arg_v) printclasslist(classlist);
   return 1;
 }

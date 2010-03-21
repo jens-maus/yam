@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tools/genclasses/gc.c: the classes are now sorted alphabetically.
+
 2010-03-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * tools/genclasses/gc.c: renamed "SuperMCC" to "SuperMCCIndex" to make clear
