@@ -35,13 +35,6 @@
 
 #include "Debug.h"
 
-/* CLASSDATA
-struct Data
-{
-  ULONG dummy;
-};
-*/
-
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)

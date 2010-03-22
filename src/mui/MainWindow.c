@@ -34,13 +34,6 @@
 
 #include "Debug.h"
 
-/* CLASSDATA
-struct Data
-{
-  short dummy;
-};
-*/
-
 /* Overloaded Methods */
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)

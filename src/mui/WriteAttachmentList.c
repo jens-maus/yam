@@ -36,13 +36,6 @@
 
 #include "Debug.h"
 
-/* CLASSDATA
-struct Data
-{
-  short dummy;
-};
-*/
-
 /* Overloaded Methods */
 /// OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Setup)
