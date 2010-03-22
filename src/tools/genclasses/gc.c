@@ -63,6 +63,8 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  * History
  * -------
+ * 0.31 - classes without any instance data don't need to pecify a Data structure
+ *        with an unused dummy variable anymore.
  * 0.30 - the classes and their code are sorted alphabetically now.
  * 0.29 - added support for private classes being subclassed from other private
  *        classes.
@@ -183,7 +185,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  */
 
-static const char * const verstr = "0.30";
+static const char * const verstr = "0.31";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -654,16 +656,25 @@ struct classdef *processclasssrc( char *path )
       }
     }
   }  /* while() */
-  if (!cd->superclass)
+
+  /* a superclass is always required */
+  if(cd->superclass == NULL)
   {
     fprintf(stderr, "WARNING: Source file '%s' doesn't contain a " KEYWD_SUPERCLASS " keyword. Skipping.\n", path);
-    free_classdef(cd); cd = NULL;
+    free_classdef(cd);
+    cd = NULL;
   }
-  else if (!cd->classdata)
+  /* instance data per object are not always required and
+   * specifying a dummy structure only consumes memory
+   */
+/*
+  else if(cd->classdata == NULL)
   {
     fprintf(stderr, "WARNING: Source file '%s' doesn't contain a " KEYWD_CLASSDATA " keyword. Skipping.\n", path);
-    free_classdef(cd); cd = NULL;
+    free_classdef(cd);
+    cd = NULL;
   }
+*/
   fclose(fp);
   return cd;
 }
@@ -875,6 +886,7 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "  {\n");
   fprintf(fp, "    const char *superClassName;\n");
   fprintf(fp, "    struct MUI_CustomClass *superMCC;\n");
+  fprintf(fp, "    ULONG classdataSize;\n");
   fprintf(fp, "\n");
   fprintf(fp, "    if(MCCInfo[i].SuperMCCIndex == -1)\n");
   fprintf(fp, "    {\n");
@@ -893,8 +905,13 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "      }\n");
   fprintf(fp, "    }\n");
   fprintf(fp, "\n");
+  fprintf(fp, "    if(MCCInfo[i].GetSize != NULL)\n");
+  fprintf(fp, "      classdataSize = MCCInfo[i].GetSize();\n");
+  fprintf(fp, "    else\n");
+  fprintf(fp, "      classdataSize = 0;\n");
+  fprintf(fp, "\n");
   fprintf(fp, "    D(DBF_STARTUP, \"creating class '%%s' as subclass of '%%s'\", MCCInfo[i].Name, MCCInfo[i].SuperClass);\n");
-  fprintf(fp, "    %sClasses[i] = MUI_CreateCustomClass(NULL, superClassName, superMCC, (int)MCCInfo[i].GetSize(), MCCInfo[i].Dispatcher);\n", bn);
+  fprintf(fp, "    %sClasses[i] = MUI_CreateCustomClass(NULL, superClassName, superMCC, classdataSize, MCCInfo[i].Dispatcher);\n", bn);
   fprintf(fp, "    if(%sClasses[i] == NULL)\n", bn);
   fprintf(fp, "    {\n");
   fprintf(fp, "      E(DBF_STARTUP, \"failed to create class '%%s' as subclass of '%%s'\", MCCInfo[i].Name, MCCInfo[i].SuperClass);\n");
@@ -1009,20 +1026,20 @@ int gen_source( char *destfile, struct list *classlist )
   /*        Write MCCInfo struct           */
   /*****************************************/
 
-  fprintf(fp, "\n/*** Custom Class Support ***/\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "/*** Custom Class Support ***/\n");
   if(arg_storm)
     fprintf(fp, "/// struct MCCInfo\n");
 
-  fprintf(fp,
-    "const struct\n"
-    "{\n"
-    "  CONST_STRPTR Name;\n"
-    "  CONST_STRPTR SuperClass;\n"
-    "  LONG SuperMCCIndex;\n"
-    "  ULONG (*GetSize)(void);\n"
-    "  APTR Dispatcher;\n"
-    "} MCCInfo[NUMBEROFCLASSES] =\n"
-    "{\n");
+  fprintf(fp, "const struct\n");
+  fprintf(fp, "{\n");
+  fprintf(fp, "  CONST_STRPTR Name;\n");
+  fprintf(fp, "  CONST_STRPTR SuperClass;\n");
+  fprintf(fp, "  LONG SuperMCCIndex;\n");
+  fprintf(fp, "  ULONG (*GetSize)(void);\n");
+  fprintf(fp, "  APTR Dispatcher;\n");
+  fprintf(fp, "} MCCInfo[NUMBEROFCLASSES] =\n");
+  fprintf(fp, "{\n");
 
   /* do a breadth search first style iteration over all
    * classes to resolve possible dependencies between
@@ -1041,7 +1058,11 @@ int gen_source( char *destfile, struct list *classlist )
        */
       if(nextcd->finished == 0 && (nextcd->supernode == NULL || nextcd->supernode->index != -1))
       {
-        fprintf(fp, "  { MUIC_%s, %s, %d, %sGetSize, ENTRY(%sDispatcher) },\n", nextcd->name, nextcd->superclass, nextcd->supernode != NULL ? nextcd->supernode->index : -1, nextcd->name, nextcd->name);
+        if(nextcd->classdata != NULL)
+          fprintf(fp, "  { MUIC_%s, %s, %d, %sGetSize, ENTRY(%sDispatcher) },\n", nextcd->name, nextcd->superclass, nextcd->supernode != NULL ? nextcd->supernode->index : -1, nextcd->name, nextcd->name);
+        else
+          fprintf(fp, "  { MUIC_%s, %s, %d, NULL, ENTRY(%sDispatcher) },\n", nextcd->name, nextcd->superclass, nextcd->supernode != NULL ? nextcd->supernode->index : -1, nextcd->name);
+
         /* remember index within the list of this class
          * this one will be used later for depending subclasses
          */
@@ -1105,7 +1126,7 @@ int gen_header( char *destfile, struct list *classlist )
   if(arg_v)
     fprintf(stdout, "Creating header      : %s\n", destfile);
 
-  if (!(fp = fopen(destfile, "w")))
+  if((fp = fopen(destfile, "w")) == NULL)
   {
     fprintf(stderr, "ERROR: Unable to open %s\n", destfile);
     return 0;
@@ -1116,9 +1137,12 @@ int gen_header( char *destfile, struct list *classlist )
   /***************************************/
 
   gen_gpl(fp);
-  fprintf(fp, "\n#ifndef CLASSES_CLASSES_H\n"
-    "#define CLASSES_CLASSES_H\n"
-    "\n /* " EDIT_WARNING " */\n\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "#ifndef CLASSES_CLASSES_H\n");
+  fprintf(fp, "#define CLASSES_CLASSES_H\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "/* " EDIT_WARNING " */\n");
+  fprintf(fp, "\n");
 
   /* TODO: write class tree in header here */
 
@@ -1126,40 +1150,41 @@ int gen_header( char *destfile, struct list *classlist )
   /*          Write includes...          */
   /***************************************/
 
-if (0)
+/*
   fprintf(fp,
     "#include <clib/alib_protos.h>\n"
     "#include <libraries/mui.h>\n"
     "#include <proto/intuition.h>\n"
     "#include <proto/muimaster.h>\n"
     "#include <proto/utility.h>\n");
-  if (arg_includes[0])
+*/
+  if(arg_includes[0])
   {
     char *nx, *p = arg_includes;
+
     do
     {
-      if ((nx = strchr(p, ','))) *nx++ = 0;
+      if((nx = strchr(p, ',')) != NULL)
+        *nx++ = 0;
       fprintf(fp, "#include \"%s\"\n", p);
     }
-    while ((p = nx));
+    while ((p = nx) != NULL);
   }
 
   /***************************************/
   /*            Write misc...            */
   /***************************************/
 
-  fprintf(fp,
-    "\n"
-    "#define inittags(msg)   (((struct opSet *)msg)->ops_AttrList)\n"
-    "#define GETDATA         struct Data *data = (struct Data *)INST_DATA(cl,obj)\n"
-    "#define NUMBEROFCLASSES %ld\n"
-    "\n"
-    "extern struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n"
-    "Object * VARARGS68K %s_NewObject(CONST_STRPTR className, ...);\n"
-    "BOOL %s_SetupClasses(void);\n"
-    "void %s_CleanupClasses(void);\n"
-    "\n",
-    classlist->cnt, bn, bn, bn, bn);
+  fprintf(fp, "\n");
+  fprintf(fp, "#define inittags(msg)   (((struct opSet *)msg)->ops_AttrList)\n");
+  fprintf(fp, "#define GETDATA         struct Data *data = (struct Data *)INST_DATA(cl,obj)\n");
+  fprintf(fp, "#define NUMBEROFCLASSES %ld\n", classlist->cnt);
+  fprintf(fp, "\n");
+  fprintf(fp, "extern struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n", bn);
+  fprintf(fp, "Object * VARARGS68K %s_NewObject(CONST_STRPTR className, ...);\n", bn);
+  fprintf(fp, "BOOL %s_SetupClasses(void);\n", bn);
+  fprintf(fp, "void %s_CleanupClasses(void);\n", bn);
+  fprintf(fp, "\n");
 
   /***************************************/
   /*             Class loop              */
@@ -1173,16 +1198,15 @@ if (0)
     /* Write MUIC_, xxxObject, etc. for this class */
     /***********************************************/
 
-    fprintf(fp,
-      "/******** Class: %s (0x%08x) ********/\n"
-      "\n"
-      "#define MUIC_%s \"%s_%s\"\n"
-      "#define %sObject %s_NewObject(MUIC_%s\n",
-      cn, gettagvalue(cn, 0), cn, bn, cn, cn, bn, cn);
+    fprintf(fp, "/******** Class: %s (0x%08x) ********/\n", cn, gettagvalue(cn, 0));
+    fprintf(fp, "\n");
+    fprintf(fp, "#define MUIC_%s \"%s_%s\"\n", cn, bn, cn);
+    fprintf(fp, "#define %sObject %s_NewObject(MUIC_%s\n", cn, bn, cn);
 
-    for (n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd));)
+    for(n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd));)
     {
       char name[128];
+
       snprintf(name, sizeof(name), "MUIM_%s_%s", cn, nextdd->name);
       fprintf(fp, "#define %-45s 0x%08x\n", name, gettagvalue(cn, 1));
     }
@@ -1191,9 +1215,10 @@ if (0)
     /* Write attributes for this class     */
     /***************************************/
 
-    for (n = NULL; (n = list_getnext(&nextcd->attrlist, n, (void **) &nextad));)
+    for(n = NULL; (n = list_getnext(&nextcd->attrlist, n, (void **) &nextad));)
     {
       char name[128];
+
       snprintf(name, sizeof(name), "MUIA_%s_%s", cn, nextad->name);
       fprintf(fp, "#define %-45s 0x%08x\n", name, gettagvalue(cn, 1));
     }
@@ -1203,7 +1228,7 @@ if (0)
     /* Write exported text for this class  */
     /***************************************/
 
-    if (nextcd->exportlist.cnt)
+    if(nextcd->exportlist.cnt)
     {
       fprintf(fp, "/* Exported text */\n\n");
       for (n = NULL; (n = list_getnext(&nextcd->exportlist, n, (void **) &nexted));)
@@ -1215,12 +1240,11 @@ if (0)
     /* Write MUIP_ structures for this class */
     /*****************************************/
 
-    for (n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd));)
+    for(n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd));)
     {
-      fprintf(fp,
-        "struct MUIP_%s_%s\n"
-        "{\n"
-        "  ULONG methodID;\n", cn, nextdd->name);
+      fprintf(fp, "struct MUIP_%s_%s\n", cn, nextdd->name);
+      fprintf(fp, "{\n");
+      fprintf(fp, "  ULONG methodID;\n");
 
       if(strlen(nextdd->params) > 0)
       {
@@ -1228,7 +1252,7 @@ if (0)
 
         for(p = lp = nextdd->params;;)
         {
-          if((p = strpbrk(lp, ",;")))
+          if((p = strpbrk(lp, ",;")) != NULL)
           {
             *p++ = '\0';
 
@@ -1245,7 +1269,8 @@ if (0)
           }
         }
       }
-      fprintf(fp, "};\n\n");
+      fprintf(fp, "};\n");
+      fprintf(fp, "\n");
     }
     fprintf(fp, "\n");
 
@@ -1253,16 +1278,17 @@ if (0)
     /* Write protos for this class         */
     /***************************************/
 
-    fprintf(fp, "ULONG %sGetSize(void);\n", cn);
+    if(nextcd->classdata != NULL)
+      fprintf(fp, "ULONG %sGetSize(void);\n", cn);
 
     /* Write OVERLOADs */
-    for (n = NULL; (n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod));)
+    for(n = NULL; (n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod));)
     {
       fprintf(fp, "ULONG m_%s_%s(struct IClass *cl, Object *obj, Msg msg);\n",
         nextcd->name, nextod->name);
     }
     /* Write DECLAREs */
-    for (n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd));)
+    for(n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd));)
     {
       fprintf(fp, "ULONG m_%s_%s(struct IClass *cl, Object *obj, struct MUIP_%s_%s *msg);\n",
         nextcd->name, nextdd->name, cn, nextdd->name);
@@ -1281,65 +1307,62 @@ int gen_classheaders( struct list *classlist )
   struct classdef *nextcd;
   FILE *fp;
 
-  for (n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd));)
+  for(n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd));)
   {
     char name[128], buf[128], *p;
     char *cn = nextcd->name;
+
     snprintf(name, sizeof(name), "%s_cl.h", cn);
     myaddpart(arg_classdir, name, 255);
 
     if(arg_v)
       fprintf(stdout, "Creating class header: %s\n", arg_classdir);
 
-    if (!(fp = fopen(arg_classdir, "w")))
+    if((fp = fopen(arg_classdir, "w")) == NULL)
     {
       fprintf(stderr, "WARNING: Unable to write %s\n", name);
       *mypathpart(arg_classdir) = 0;
 
       continue;
     }
-    strncpy(buf, cn, 127); for (p = buf; *p; p++) *p = toupper(*p);
+    strncpy(buf, cn, 127);
+    for (p = buf; *p; p++)
+      *p = toupper(*p);
 
     /* write the gpl to this class header also */
     gen_gpl(fp);
-    fprintf(fp, "\n /* " EDIT_WARNING " */\n\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "/* " EDIT_WARNING " */\n");
+    fprintf(fp, "\n");
 
-    fprintf(fp,
-      "#ifndef %s_H\n"
-      "#define %s_H\n"
-      "\n"
-      "#ifndef CLASSES_CLASSES_H\n"
-      "#define INCLUDE_KITCHEN_SINK 1\n"
-      "#include \"Classes.h\"\n"
-      "#endif /* CLASSES_CLASSES_H */\n"
-      "\n",
-      buf,
-      buf
-    );
+    fprintf(fp, "#ifndef %s_H\n", buf);
+    fprintf(fp, "#define %s_H 1\n", buf);
+    fprintf(fp, "\n");
+    fprintf(fp, "#ifndef CLASSES_CLASSES_H\n");
+    fprintf(fp, "  #define INCLUDE_KITCHEN_SINK 1\n");
+    fprintf(fp, "  #include \"Classes.h\"\n");
+    fprintf(fp, "#endif /* CLASSES_CLASSES_H */\n");
+    fprintf(fp, "\n");
 
-    fprintf(fp,
-      "#define DECLARE(method)  ULONG m_%s_## method(UNUSED struct IClass *cl, UNUSED Object *obj, UNUSED struct MUIP_%s_## method *msg )\n"
-      "#define OVERLOAD(method) ULONG m_%s_## method(UNUSED struct IClass *cl, UNUSED Object *obj, UNUSED Msg msg )\n"
-      "#define ATTR(attr)       case MUIA_%s_## attr\n"
-      "\n"
-      "/* Exported CLASSDATA */\n"
-      "\n"
-      "struct Data\n"
-      "{\n"
-      "%s\n"
-      "};\n"
-      "\n"
-      "ULONG %sGetSize( void ) { return sizeof(struct Data); }\n"
-      "\n"
-      "#endif /* %s_H */\n",
-      cn,
-      cn,
-      cn,
-      cn,
-      nextcd->classdata,
-      cn,
-      buf
-    );
+    fprintf(fp, "#define DECLARE(method)  ULONG m_%s_## method(UNUSED struct IClass *cl, UNUSED Object *obj, UNUSED struct MUIP_%s_## method *msg )\n", cn, cn);
+    fprintf(fp, "#define OVERLOAD(method) ULONG m_%s_## method(UNUSED struct IClass *cl, UNUSED Object *obj, UNUSED Msg msg )\n", cn);
+    fprintf(fp, "#define ATTR(attr)       case MUIA_%s_## attr\n", cn);
+    fprintf(fp, "\n");
+
+    if(nextcd->classdata != NULL)
+    {
+      fprintf(fp, "/* Exported CLASSDATA */\n");
+      fprintf(fp, "\n");
+      fprintf(fp, "struct Data\n");
+      fprintf(fp, "{\n");
+      fprintf(fp, "%s\n", nextcd->classdata);
+      fprintf(fp, "};\n");
+      fprintf(fp, "\n");
+      fprintf(fp, "ULONG %sGetSize( void ) { return sizeof(struct Data); }\n", cn);
+    }
+
+    fprintf(fp, "\n");
+    fprintf(fp, "#endif /* %s_H */\n", buf);
 
     *mypathpart(arg_classdir) = 0;
     fclose(fp);
