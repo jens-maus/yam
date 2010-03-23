@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-23 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Transfer.c: added some missing includes to get YAM compiled for AROS again.
+    However, a NewMinList() wrapper is still missing because AROS seems to miss
+    this function.
+
 2010-03-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/misc: replaced all local attribute and method names by usage of the

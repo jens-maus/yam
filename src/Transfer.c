@@ -25,6 +25,8 @@
 
 ***************************************************************************/
 
+#include <string.h>
+
 #if !defined(__amigaos4__)
 #include <clib/alib_protos.h>
 #endif
@@ -46,6 +48,10 @@
 
 #if defined(__AROS__)
 #include <sys/types.h>
+#include <sys/socket.h>
+#include <bsdsocket/socketbasetags.h>
+#include <netdb.h>
+#include <sys/ioctl.h>
 #else
 #include <sys/filio.h>
 #endif
