@@ -40,9 +40,9 @@
 
 #define KEYWD_SUPERCLASS  "Superclass:"
 #define KEYWD_DESC        "Description:"
-#define KEYWD_CLASSDATA    "CLASSDATA"
+#define KEYWD_CLASSDATA   "CLASSDATA"
 #define KEYWD_OVERLOAD    "OVERLOAD"
-#define KEYWD_DECLARE      "DECLARE"
+#define KEYWD_DECLARE     "DECLARE"
 #define KEYWD_ATTR        "ATTR"
 #define KEYWD_EXPORT      "EXPORT"
 

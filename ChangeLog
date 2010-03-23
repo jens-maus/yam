@@ -7,6 +7,14 @@ $URL$
 
 2010-03-23 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tools/genclasses/gc.c: the ATTR() macro only creates the corresponding
+    full attribute name (i.e. MUIA_<class>_<attribute>) and no prepended
+    "case" statement anymore. This is much more intuitive if also foreign
+    attributes are handled in an OM_SET or OM_GET method. This also makes it
+    possible to use ATTR() within the class source instead of the full name
+    whenever an attribute is being used. Also added the METHOD() macro to
+    enable the same convenience as with attributes when invoking methods within
+    the class source.
   * mui/ObjectList.c, mui/ObjectListitem.c: added abstract base classes for
     objects to be displayed in a scrollable list. Only objects subclassed
     from ObjectListitem must be added to an ObjectList object, because the

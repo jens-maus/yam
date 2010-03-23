@@ -612,12 +612,12 @@ struct classdef *processclasssrc( char *path )
       if(p != NULL && strstr(p, "BOOL ") != NULL)
         fprintf(stderr, "WARNING: " KEYWD_DECLARE "() - BOOL parameter type is unsafe at line %d in file %s\n", lineno, path);
     }
-    else if (strncmp(KEYWD_ATTR, p, sizeof(KEYWD_ATTR) - 1) == 0)
+    else if ((sub = strstr(p, KEYWD_ATTR)) != NULL)
     {
       if(arg_v)
         fprintf(stdout, KEYWD_ATTR " keyword found at line %d in file %s\n", lineno, path);
 
-      p += sizeof(KEYWD_ATTR) - 1;
+      p = sub + sizeof(KEYWD_ATTR) - 1;
       if (!(ob = strchr(p, '('))) continue; /* There's no open bracket, ignore it... */
       if (!(cb = strchr(ob, ')'))) cb = p + strlen(p);
       *cb = 0; add_attr(cd, ++ob);
@@ -992,7 +992,7 @@ int gen_source( char *destfile, struct list *classlist )
   /***************************************/
 
   fprintf(fp, "/*** Custom Class Dispatchers ***/\n");
-  for(nn = NULL; (nn = list_getnext(classlist, nn, (void **) &nextcd)); )
+  for(nn = NULL; (nn = list_getnext(classlist, nn, (void **)&nextcd)); )
   {
     if(arg_storm)
       fprintf(fp, "/// %sDispatcher()\n", nextcd->name);
@@ -1000,12 +1000,12 @@ int gen_source( char *destfile, struct list *classlist )
     fprintf(fp, "SDISPATCHER(%sDispatcher)\n", nextcd->name);
     fprintf(fp, "{\n  switch(msg->MethodID)\n  {\n");
     /* Write OVERLOADs */
-    for(n = NULL; (n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod)); )
+    for(n = NULL; (n = list_getnext(&nextcd->overloadlist, n, (void **)&nextod)); )
     {
       fprintf(fp, "    case %-40s: return m_%s_%-30s(cl, obj, msg);\n", nextod->name, nextcd->name, nextod->name);
     }
     /* Write DECLAREs */
-    for(n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd)); )
+    for(n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **)&nextdd)); )
     {
       char name[128];
 
@@ -1282,16 +1282,14 @@ int gen_header( char *destfile, struct list *classlist )
       fprintf(fp, "ULONG %sGetSize(void);\n", cn);
 
     /* Write OVERLOADs */
-    for(n = NULL; (n = list_getnext(&nextcd->overloadlist, n, (void **) &nextod));)
+    for(n = NULL; (n = list_getnext(&nextcd->overloadlist, n, (void **)&nextod));)
     {
-      fprintf(fp, "ULONG m_%s_%s(struct IClass *cl, Object *obj, Msg msg);\n",
-        nextcd->name, nextod->name);
+      fprintf(fp, "ULONG m_%s_%s(struct IClass *cl, Object *obj, Msg msg);\n", nextcd->name, nextod->name);
     }
     /* Write DECLAREs */
-    for(n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd));)
+    for(n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **)&nextdd));)
     {
-      fprintf(fp, "ULONG m_%s_%s(struct IClass *cl, Object *obj, struct MUIP_%s_%s *msg);\n",
-        nextcd->name, nextdd->name, cn, nextdd->name);
+      fprintf(fp, "ULONG m_%s_%s(struct IClass *cl, Object *obj, struct MUIP_%s_%s *msg);\n", nextcd->name, nextdd->name, cn, nextdd->name);
     }
     fprintf(fp, "\n");
 
@@ -1307,7 +1305,7 @@ int gen_classheaders( struct list *classlist )
   struct classdef *nextcd;
   FILE *fp;
 
-  for(n = NULL; (n = list_getnext(classlist, n, (void **) &nextcd));)
+  for(n = NULL; (n = list_getnext(classlist, n, (void **)&nextcd));)
   {
     char name[128], buf[128], *p;
     char *cn = nextcd->name;
@@ -1346,7 +1344,8 @@ int gen_classheaders( struct list *classlist )
 
     fprintf(fp, "#define DECLARE(method)  ULONG m_%s_## method(UNUSED struct IClass *cl, UNUSED Object *obj, UNUSED struct MUIP_%s_## method *msg )\n", cn, cn);
     fprintf(fp, "#define OVERLOAD(method) ULONG m_%s_## method(UNUSED struct IClass *cl, UNUSED Object *obj, UNUSED Msg msg )\n", cn);
-    fprintf(fp, "#define ATTR(attr)       case MUIA_%s_## attr\n", cn);
+    fprintf(fp, "#define METHOD(method)   MUIM_%s_## method\n", cn);
+    fprintf(fp, "#define ATTR(attr)       MUIA_%s_## attr\n", cn);
     fprintf(fp, "\n");
 
     if(nextcd->classdata != NULL)
