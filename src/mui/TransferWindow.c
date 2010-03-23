@@ -319,17 +319,17 @@ OVERLOAD(OM_NEW)
     set(data->GR_PAGE, MUIA_Group_ActivePage, 1);
 
     // add some notifies
-    DoMethod(data->BT_RESUME, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_TransferWindow_PauseTransfer, FALSE);
-    DoMethod(data->BT_PAUSE,  MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_TransferWindow_PauseTransfer, TRUE);
+    DoMethod(data->BT_RESUME, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(PauseTransfer), FALSE);
+    DoMethod(data->BT_PAUSE,  MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(PauseTransfer), TRUE);
     DoMethod(data->BT_PAUSE,  MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Pause));
-    DoMethod(data->LV_MAILS,  MUIM_Notify, MUIA_NList_DoubleClick, TRUE, obj, 1, MUIM_TransferWindow_GetMessageInfo);
-    DoMethod(data->BT_DELONLY,MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_TransferWindow_ChangeTransferFlags, TRF_DELETE);
-    DoMethod(data->BT_LOADDEL,MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_TransferWindow_ChangeTransferFlags, (TRF_LOAD|TRF_DELETE));
+    DoMethod(data->LV_MAILS,  MUIM_Notify, MUIA_NList_DoubleClick, TRUE, obj, 1, METHOD(GetMessageInfo));
+    DoMethod(data->BT_DELONLY,MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ChangeTransferFlags), TRF_DELETE);
+    DoMethod(data->BT_LOADDEL,MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ChangeTransferFlags), (TRF_LOAD|TRF_DELETE));
     DoMethod(data->BT_START,  MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Start));
     DoMethod(data->BT_QUIT,   MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
 
-    DoMethod(data->BT_LOADONLY, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_TransferWindow_ChangeTransferFlags, TRF_LOAD);
-    DoMethod(data->BT_LEAVE,    MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_TransferWindow_ChangeTransferFlags, TRF_NONE);
+    DoMethod(data->BT_LOADONLY, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ChangeTransferFlags), TRF_LOAD);
+    DoMethod(data->BT_LEAVE,    MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ChangeTransferFlags), TRF_NONE);
     DoMethod(data->BT_ALL,      MUIM_Notify, MUIA_Pressed, FALSE, data->LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
     DoMethod(data->BT_NONE,     MUIM_Notify, MUIA_Pressed, FALSE, data->LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
 
@@ -372,11 +372,11 @@ OVERLOAD(OM_GET)
   switch(((struct opGet *)msg)->opg_AttrID)
   {
 #warning "TODO: should we use the global ImportFile/Folder/Format instead??"
-    ATTR(ImportFile):       *store = (ULONG)data->ImportFile; return TRUE;
-    ATTR(ImportFolder):     *store = (ULONG)data->ImportFolder; return TRUE;
-    ATTR(ImportFormat):     *store = data->ImportFormat; return TRUE;
-    ATTR(DownloadedMails):  *store = (ULONG)data->downloadedMails; return TRUE;
-    ATTR(TransStat_MsgsTot):*store = data->transferStat.Msgs_Tot; return TRUE;
+    case ATTR(ImportFile):        *store = (ULONG)data->ImportFile; return TRUE;
+    case ATTR(ImportFolder):      *store = (ULONG)data->ImportFolder; return TRUE;
+    case ATTR(ImportFormat):      *store = data->ImportFormat; return TRUE;
+    case ATTR(DownloadedMails):   *store = (ULONG)data->downloadedMails; return TRUE;
+    case ATTR(TransStat_MsgsTot): *store = data->transferStat.Msgs_Tot; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -393,7 +393,7 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(ImportFile):
+      case ATTR(ImportFile):
       {
         strlcpy(data->ImportFile, (char *)tag->ti_Data, sizeof(data->ImportFile));
 
@@ -402,7 +402,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(ImportFolder):
+      case ATTR(ImportFolder):
       {
         data->ImportFolder = (struct Folder *)tag->ti_Data;
 
@@ -411,7 +411,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(ImportFormat):
+      case ATTR(ImportFormat):
       {
         data->ImportFormat = (enum ImportFormat)tag->ti_Data;
 
@@ -420,7 +420,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(Title):
+      case ATTR(Title):
       {
         // compose the window title
         if(data->transferType == TR_IMPORT || data->transferType == TR_GET_USER || data->transferType == TR_GET_AUTO)
@@ -436,7 +436,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(StatusLabel):
+      case ATTR(StatusLabel):
       {
         set(data->TX_STATUS, MUIA_Text_Contents, tag->ti_Data);
 
@@ -581,10 +581,10 @@ DECLARE(CompleteMailList) // struct List *mailTransferList
   DoMethod(data->BT_START, MUIM_KillNotify, MUIA_Pressed);
   DoMethod(data->BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_ProcessGETHook);
   DoMethod(data->BT_QUIT , MUIM_KillNotify, MUIA_Pressed);
-  DoMethod(data->BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_TransferWindow_AbortTransfer);
+  DoMethod(data->BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(AbortTransfer));
 
   if(data->Abort == TRUE)
-    DoMethod(obj, MUIM_TransferWindow_AbortTransfer);
+    DoMethod(obj, METHOD(AbortTransfer));
   else
   {
     // start the timer which makes sure we send
@@ -634,7 +634,7 @@ DECLARE(PauseTransfer) // ULONG pause
   else
   {
     data->Pause = FALSE;
-    DoMethod(obj, MUIM_TransferWindow_CompleteMailList, NULL);
+    DoMethod(obj, METHOD(CompleteMailList), NULL);
   }
 
   RETURN(0);
@@ -798,7 +798,7 @@ DECLARE(TransStat_NextMsg) // int index, int listpos, LONG size, const char *sta
   // format the current mail's size ahead of any refresh
   FormatSize(msg->size, data->transferStat.str_size_curr_max, sizeof(data->transferStat.str_size_curr_max), SF_AUTO);
 
-  DoMethod(obj, MUIM_TransferWindow_TransStat_Update, 0, msg->status);
+  DoMethod(obj, METHOD(TransStat_Update), 0, msg->status);
 
   RETURN(0);
   return 0;

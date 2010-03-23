@@ -142,35 +142,35 @@ OVERLOAD(OM_NEW)
       }
       break;
 
-      ATTR(Body):
+      case ATTR(Body):
       {
         bodyText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(YesText):
+      case ATTR(YesText):
       {
         yesText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(NoText):
+      case ATTR(NoText):
       {
         noText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(Mode):
+      case ATTR(Mode):
       {
         mode = tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(ReadMailData):
+      case ATTR(ReadMailData):
       {
         rmData = (struct ReadMailData *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
@@ -247,10 +247,10 @@ OVERLOAD(OM_NEW)
       }
     }
 
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 0);
-    DoMethod(listObj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 1);
-    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 1);
-    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, METHOD(FinishInput), 0);
+    DoMethod(listObj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 2, METHOD(FinishInput), 1);
+    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 1);
+    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 0);
 
     set(obj, MUIA_Window_DefaultObject, listObj);
   }
@@ -269,13 +269,13 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(Result):
+    case ATTR(Result):
     {
       *store = data->result;
       return TRUE;
     }
 
-    ATTR(Part):
+    case ATTR(Part):
     {
       struct Part *result = NULL;
       struct Part *part;
@@ -324,7 +324,7 @@ DECLARE(FinishInput) // ULONG result
   data->result = msg->result;
 
   // trigger possible notifications
-  set(obj, MUIA_AttachmentRequestWindow_Result, msg->result);
+  set(obj, ATTR(Result), msg->result);
 
   RETURN(0);
   return 0;

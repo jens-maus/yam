@@ -71,7 +71,7 @@ OVERLOAD(OM_NEW)
     data->virtgroup = virtgroup;
     data->spacer = spacer;
     data->itemCount = 0;
-    data->disposeRemovedItems = GetTagData(MUIA_ObjectList_DisposeRemovedItems, FALSE, inittags(msg)) ? TRUE : FALSE;
+    data->disposeRemovedItems = GetTagData(ATTR(DisposeRemovedItems), FALSE, inittags(msg)) ? TRUE : FALSE;
   }
 
   RETURN((IPTR)obj);
@@ -90,15 +90,15 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(DisposeRemovedItems):
+      case ATTR(DisposeRemovedItems):
       {
         data->disposeRemovedItems = (tag->ti_Data) ? TRUE : FALSE;
       }
       break;
 
-      ATTR(ItemAdded):
-      ATTR(ItemRemoved):
-      ATTR(ItemsChanged):
+      case ATTR(ItemAdded):
+      case ATTR(ItemRemoved):
+      case ATTR(ItemsChanged):
       {
         // nothing to do, these are just here to enable the
         // notifications for these attributes
@@ -119,14 +119,14 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(DisposeRemovedItems):
+    case ATTR(DisposeRemovedItems):
     {
       *store = (IPTR)data->disposeRemovedItems;
       return TRUE;
     }
     break;
 
-    ATTR(FirstItem):
+    case ATTR(FirstItem):
     {
       struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
 
@@ -134,7 +134,7 @@ OVERLOAD(OM_GET)
       return TRUE;
     }
 
-    ATTR(LastItem):
+    case ATTR(LastItem):
     {
       struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
 
@@ -142,7 +142,7 @@ OVERLOAD(OM_GET)
       return TRUE;
     }
 
-    ATTR(ItemCount):
+    case ATTR(ItemCount):
     {
       *store = data->itemCount;
       return TRUE;
@@ -229,9 +229,9 @@ DECLARE(AddItem) // Object *item
 
     data->itemCount++;
     // trigger possible notifications
-    xset(obj, MUIA_ObjectList_ItemAdded, msg->item,
-              MUIA_ObjectList_ItemsChanged, TRUE,
-              MUIA_ObjectList_ItemCount, data->itemCount);
+    xset(obj, ATTR(ItemAdded), msg->item,
+              ATTR(ItemsChanged), TRUE,
+              ATTR(ItemCount), data->itemCount);
 
     result = TRUE;
   }
@@ -259,9 +259,9 @@ DECLARE(RemoveItem) // Object *item
 
     data->itemCount--;
     // trigger possible notifications
-    xset(obj, MUIA_ObjectList_ItemRemoved, msg->item,
-              MUIA_ObjectList_ItemsChanged, TRUE,
-              MUIA_ObjectList_ItemCount, data->itemCount);
+    xset(obj, ATTR(ItemRemoved), msg->item,
+              ATTR(ItemsChanged), TRUE,
+              ATTR(ItemCount), data->itemCount);
 
     if(data->disposeRemovedItems == TRUE)
     {

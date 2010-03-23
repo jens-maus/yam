@@ -95,11 +95,11 @@ OVERLOAD(OM_NEW)
     data = (struct Data *)INST_DATA(cl,obj);
     data->Searchstring = string;
 
-    DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, MUIF_Searchwindow_FromTop);
+    DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 2, METHOD(Search), MUIF_Searchwindow_FromTop);
     DoMethod(case_sensitive, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_WriteLong, MUIV_TriggerValue, &data->CaseSensitive);
-    DoMethod(search,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, MUIF_Searchwindow_FromTop);
-    DoMethod(cancel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 1, MUIM_Searchwindow_Close);
-    DoMethod(obj,            MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 1, MUIM_Searchwindow_Close);
+    DoMethod(search,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 2, METHOD(Search), MUIF_Searchwindow_FromTop);
+    DoMethod(cancel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 1, METHOD(Close));
+    DoMethod(obj,            MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 1, METHOD(Close));
   }
 
   RETURN((IPTR)obj);
@@ -119,14 +119,14 @@ DECLARE(Open) // Object *texteditor
   ENTER();
 
   if(data->ParentWindow != NULL)
-    DoMethod(obj, MUIM_Searchwindow_Close);
+    DoMethod(obj, METHOD(Close));
 
   data->Texteditor = msg->texteditor;
   data->ParentWindow = _win(msg->texteditor);
 
   if(data->ParentWindow != NULL)
   {
-    DoMethod(data->ParentWindow, MUIM_Notify, MUIA_Window_Open, FALSE, obj, 1, MUIM_Searchwindow_Close);
+    DoMethod(data->ParentWindow, MUIM_Notify, MUIA_Window_Open, FALSE, obj, 1, METHOD(Close));
     data->CloseNotifyAdded = TRUE;
   }
 
@@ -171,7 +171,7 @@ DECLARE(Search) // ULONG flags
 
   ENTER();
 
-  DoMethod(obj, MUIM_Searchwindow_Close);
+  DoMethod(obj, METHOD(Close));
 
   if((string = (STRPTR)xget(data->Searchstring, MUIA_String_Contents), string) != NULL && string[0] != '\0' && data->Texteditor != NULL)
   {
@@ -211,7 +211,7 @@ DECLARE(Search) // ULONG flags
 /// DECLARE(Next)
 DECLARE(Next)
 {
-  return DoMethod(obj, MUIM_Searchwindow_Search, MUIF_Searchwindow_BeepOnFailure);
+  return DoMethod(obj, METHOD(Search), MUIF_Searchwindow_BeepOnFailure);
 }
 
 ///

@@ -176,7 +176,7 @@ OVERLOAD(OM_NEW)
     // everything worked out fine.
 
     // update the SPAM controls
-    DoMethod(obj, MUIM_ReadWindowToolbar_UpdateSpamControls, NULL);
+    DoMethod(obj, METHOD(UpdateSpamControls), NULL);
   }
   else
     E(DBF_STARTUP, "couldn't create ReadWindowToolbar!");

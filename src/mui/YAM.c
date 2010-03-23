@@ -602,7 +602,7 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        ATTR(EMailCacheName) : data->EMailCacheName = (STRPTR)tag->ti_Data ; break;
+        case ATTR(EMailCacheName): data->EMailCacheName = (STRPTR)tag->ti_Data ; break;
       }
     }
 
@@ -638,7 +638,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(CompileInfo) : *store = (IPTR)data->compileInfo; return TRUE;
+    case ATTR(CompileInfo): *store = (IPTR)data->compileInfo; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);

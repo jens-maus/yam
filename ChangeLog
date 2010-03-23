@@ -7,6 +7,8 @@ $URL$
 
 2010-03-23 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/misc: replaced all local attribute and method names by usage of the
+    ATTR() and METHOD() macros.
   * tools/genclasses/gc.c: the ATTR() macro only creates the corresponding
     full attribute name (i.e. MUIA_<class>_<attribute>) and no prepended
     "case" statement anymore. This is much more intuitive if also foreign

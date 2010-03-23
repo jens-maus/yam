@@ -452,10 +452,10 @@ OVERLOAD(OM_NEW)
   SetHelp(data->PO_SEARCHOPTIONPOPUP, MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP);
 
   // set notifies
-  DoMethod(data->NL_SEARCHOPTIONS,MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_SearchOptionChanged, MUIV_TriggerValue);
-  DoMethod(data->CY_VIEWOPTIONS,  MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_ViewOptionChanged, MUIV_TriggerValue);
-  DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue, FALSE);
-  DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 3, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue, TRUE);
+  DoMethod(data->NL_SEARCHOPTIONS,MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 2, METHOD(SearchOptionChanged), MUIV_TriggerValue);
+  DoMethod(data->CY_VIEWOPTIONS,  MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 2, METHOD(ViewOptionChanged), MUIV_TriggerValue);
+  DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, METHOD(SearchContentChanged), MUIV_TriggerValue, FALSE);
+  DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 3, METHOD(SearchContentChanged), MUIV_TriggerValue, TRUE);
   DoMethod(data->BT_CLEARBUTTON,  MUIM_Notify, MUIA_Pressed, FALSE, data->ST_SEARCHSTRING, 3, MUIM_Set, MUIA_String_Contents, "");
 
   return (IPTR)obj;
@@ -499,7 +499,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(SearchStringIsActive):
+    case ATTR(SearchStringIsActive):
     {
       *store = (Object *)xget(_win(data->ST_SEARCHSTRING), MUIA_Window_ActiveObject) == data->ST_SEARCHSTRING;
       return TRUE;
@@ -600,7 +600,7 @@ DECLARE(SearchOptionChanged) // int activeSearchOption
     // immediately process the search, but make sure there is no
     // pending timerIO waiting already
     StopTimer(TIMER_PROCESSQUICKSEARCH);
-    DoMethod(obj, MUIM_QuickSearchBar_ProcessSearch);
+    DoMethod(obj, METHOD(ProcessSearch));
   }
 
   RETURN(0);
@@ -623,14 +623,14 @@ DECLARE(ViewOptionChanged) // int activeCycle
   // options is selected by the user
   if(msg->activeCycle == VO_ALL && (searchContent == NULL || searchContent[0] == '\0'))
   {
-    DoMethod(obj, MUIM_QuickSearchBar_Clear);
+    DoMethod(obj, METHOD(Clear));
   }
   else
   {
     // immediately process the search, but make sure there is no
     // pending timerIO waiting already
     StopTimer(TIMER_PROCESSQUICKSEARCH);
-    DoMethod(obj, MUIM_QuickSearchBar_ProcessSearch);
+    DoMethod(obj, METHOD(ProcessSearch));
   }
 
   RETURN(0);
@@ -718,7 +718,7 @@ DECLARE(ProcessSearch)
       LONG pos = MUIV_NList_GetPos_Start;
 
       // make sure the statistics are updated as well
-      DoMethod(obj, MUIM_QuickSearchBar_UpdateStats, TRUE);
+      DoMethod(obj, METHOD(UpdateStats), TRUE);
 
       // get the last active mail in the maillistgroup
       lastActiveMail = (struct Mail *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_LastActiveMail);

@@ -465,13 +465,13 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(HGVertWeight): hgVertWeight = tag->ti_Data; break;
-      ATTR(TGVertWeight): tgVertWeight = tag->ti_Data; break;
+      case ATTR(HGVertWeight): hgVertWeight = tag->ti_Data; break;
+      case ATTR(TGVertWeight): tgVertWeight = tag->ti_Data; break;
     }
   }
 
   // allocate the readMailData structure
-  if((rmData = calloc(1, sizeof(struct ReadMailData))))
+  if((rmData = calloc(1, sizeof(struct ReadMailData))) != NULL)
   {
     Object *headerGroup;
     Object *headerList;
@@ -612,8 +612,7 @@ OVERLOAD(OM_NEW)
       AddTail((struct List *)&G->readMailDataList, (struct Node *)data->readMailData);
 
       // now we connect some notifies.
-      DoMethod(data->headerList, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime,
-               obj, 1, MUIM_ReadMailGroup_HeaderListDoubleClicked);
+      DoMethod(data->headerList, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, METHOD(HeaderListDoubleClicked));
 
       result = obj;
     }
@@ -671,11 +670,11 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(HGVertWeight) : *store = xget(data->headerGroup, MUIA_VertWeight); return TRUE;
-    ATTR(TGVertWeight) : *store = xget(data->mailBodyGroup, MUIA_VertWeight); return TRUE;
-    ATTR(ReadMailData) : *store = (ULONG)data->readMailData; return TRUE;
-    ATTR(DefaultObject): *store = (ULONG)data->mailTextObject; return TRUE;
-    ATTR(ActiveObject):
+    case ATTR(HGVertWeight) : *store = xget(data->headerGroup, MUIA_VertWeight); return TRUE;
+    case ATTR(TGVertWeight) : *store = xget(data->mailBodyGroup, MUIA_VertWeight); return TRUE;
+    case ATTR(ReadMailData) : *store = (ULONG)data->readMailData; return TRUE;
+    case ATTR(DefaultObject): *store = (ULONG)data->mailTextObject; return TRUE;
+    case ATTR(ActiveObject):
     {
       Object *actobj = (Object *)xget(_win(obj), MUIA_Window_ActiveObject);
 
@@ -695,13 +694,13 @@ OVERLOAD(OM_GET)
 OVERLOAD(OM_SET)
 {
   GETDATA;
-
   struct TagItem *tags = inittags(msg), *tag;
+
   while((tag = NextTagItem((APTR)&tags)))
   {
     switch(tag->ti_Tag)
     {
-      ATTR(HGVertWeight):
+      case ATTR(HGVertWeight):
       {
         set(data->headerGroup, MUIA_VertWeight, tag->ti_Data);
 
@@ -710,7 +709,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(TGVertWeight):
+      case ATTR(TGVertWeight):
       {
         set(data->mailBodyGroup, MUIA_VertWeight, tag->ti_Data);
 
@@ -844,17 +843,17 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case RMEN_FORWARD_INLINE: DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_INLINE, 0); break;
     case RMEN_MOVE:           DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
     case RMEN_COPY:           DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;
-    case RMEN_DISPLAY:        DoMethod(obj, MUIM_ReadMailGroup_DisplayMailRequest); break;
-    case RMEN_SAVE:           DoMethod(obj, MUIM_ReadMailGroup_SaveMailRequest); break;
-    case RMEN_PRINT:          DoMethod(obj, MUIM_ReadMailGroup_PrintMailRequest); break;
-    case RMEN_DELETE:         DoMethod(obj, MUIM_ReadMailGroup_DeleteMail); break;
-    case RMEN_DETACH:         DoMethod(obj, MUIM_ReadMailGroup_SaveAllAttachments); break;
-    case RMEN_DELETEATT:      DoMethod(obj, MUIM_ReadMailGroup_DeleteAttachmentsRequest); break;
-    case RMEN_EXTKEY:         DoMethod(obj, MUIM_ReadMailGroup_ExtractPGPKey); break;
-    case RMEN_CHKSIG:         DoMethod(obj, MUIM_ReadMailGroup_CheckPGPSignature, TRUE); break;
-    case RMEN_SAVEDEC:        DoMethod(obj, MUIM_ReadMailGroup_SaveDecryptedMail); break;
-    case RMEN_SEARCH:         DoMethod(obj, MUIM_ReadMailGroup_Search, MUIF_NONE); break;
-    case RMEN_SEARCHAGAIN:    DoMethod(obj, MUIM_ReadMailGroup_Search, MUIF_ReadMailGroup_Search_Again); break;
+    case RMEN_DISPLAY:        DoMethod(obj, METHOD(DisplayMailRequest)); break;
+    case RMEN_SAVE:           DoMethod(obj, METHOD(SaveMailRequest)); break;
+    case RMEN_PRINT:          DoMethod(obj, METHOD(PrintMailRequest)); break;
+    case RMEN_DELETE:         DoMethod(obj, METHOD(DeleteMail)); break;
+    case RMEN_DETACH:         DoMethod(obj, METHOD(SaveAllAttachments)); break;
+    case RMEN_DELETEATT:      DoMethod(obj, METHOD(DeleteAttachmentsRequest)); break;
+    case RMEN_EXTKEY:         DoMethod(obj, METHOD(ExtractPGPKey)); break;
+    case RMEN_CHKSIG:         DoMethod(obj, METHOD(CheckPGPSignature), TRUE); break;
+    case RMEN_SAVEDEC:        DoMethod(obj, METHOD(SaveDecryptedMail)); break;
+    case RMEN_SEARCH:         DoMethod(obj, METHOD(Search), MUIF_NONE); break;
+    case RMEN_SEARCHAGAIN:    DoMethod(obj, METHOD(Search), MUIF_ReadMailGroup_Search_Again); break;
 
     // now we check the checkmarks of the
     // context-menu
@@ -875,11 +874,11 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
   if(updateText == TRUE)
   {
-    DoMethod(obj, MUIM_ReadMailGroup_ReadMail, rmData->mail, (MUIF_ReadMailGroup_ReadMail_UpdateOnly |
-                                                              MUIF_ReadMailGroup_ReadMail_UpdateTextOnly));
+    DoMethod(obj, METHOD(ReadMail), rmData->mail, (MUIF_ReadMailGroup_ReadMail_UpdateOnly |
+                                                   MUIF_ReadMailGroup_ReadMail_UpdateTextOnly));
   }
   else if(updateHeader == TRUE)
-    DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+    DoMethod(obj, METHOD(UpdateHeaderDisplay), MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
   RETURN(result);
   return result;
@@ -950,8 +949,8 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   // which should get freed first
   if(!hasUpdateTextOnlyFlag(msg->flags))
   {
-    DoMethod(obj, MUIM_ReadMailGroup_Clear, MUIF_ReadMailGroup_Clear_KeepAttachmentGroup |
-                                            (hasUpdateOnlyFlag(msg->flags) ? MUIF_ReadMailGroup_Clear_KeepText : 0));
+    DoMethod(obj, METHOD(Clear), MUIF_ReadMailGroup_Clear_KeepAttachmentGroup |
+                                (hasUpdateOnlyFlag(msg->flags) ? MUIF_ReadMailGroup_Clear_KeepText : 0));
   }
 
   // set the passed mail as the current mail read by our ReadMailData
@@ -1013,7 +1012,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 
       // make sure the header display is also updated correctly.
       if(hasUpdateTextOnlyFlag(msg->flags) == FALSE)
-        DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, msg->flags);
+        DoMethod(obj, METHOD(UpdateHeaderDisplay), msg->flags);
 
       // before we can put the message body into the TextEditor, we have to preparse the text and
       // try to set some styles, as we don`t use the buggy ImportHooks of TextEditor anymore and are anyway
@@ -1052,7 +1051,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
         if((hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData))
            && hasStatusNew(mail))
         {
-          DoMethod(obj, MUIM_ReadMailGroup_CheckPGPSignature, FALSE);
+          DoMethod(obj, METHOD(CheckPGPSignature), FALSE);
         }
 
         // second, depending on the local delayedStatusChange and the global
@@ -1637,7 +1636,7 @@ DECLARE(SaveMailRequest)
         {
           if((tf = OpenTempFile("w")) != NULL)
           {
-            DoMethod(obj, MUIM_ReadMailGroup_SaveDisplay, tf->FP);
+            DoMethod(obj, METHOD(SaveDisplay), tf->FP);
             fclose(tf->FP);
             tf->FP = NULL;
 
@@ -1695,7 +1694,7 @@ DECLARE(PrintMailRequest)
         {
           if((prttmp = OpenTempFile("w")) != NULL)
           {
-            DoMethod(obj, MUIM_ReadMailGroup_SaveDisplay, prttmp->FP);
+            DoMethod(obj, METHOD(SaveDisplay), prttmp->FP);
             fclose(prttmp->FP);
             prttmp->FP = NULL;
 
@@ -1819,7 +1818,7 @@ DECLARE(HeaderListDoubleClicked)
   else
     rmData->headerMode = HM_SHORTHEADER;
 
-  DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+  DoMethod(obj, METHOD(UpdateHeaderDisplay), MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
   RETURN(0);
   return 0;
@@ -1866,7 +1865,7 @@ DECLARE(ChangeHeaderMode) // enum HeaderMode hmode
     // change the header display mode
     data->readMailData->headerMode = msg->hmode;
     // issue an update of ourself
-    DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+    DoMethod(obj, METHOD(UpdateHeaderDisplay), MUIF_ReadMailGroup_ReadMail_UpdateOnly);
   }
 
   RETURN(0);
@@ -1885,7 +1884,7 @@ DECLARE(ChangeSenderInfoMode) // enum SInfoMode simode
     // change the sender info mode
     data->readMailData->senderInfoMode = msg->simode;
     // issue an update of ourself
-    DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
+    DoMethod(obj, METHOD(UpdateHeaderDisplay), MUIF_ReadMailGroup_ReadMail_UpdateOnly);
   }
 
   RETURN(0);

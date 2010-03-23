@@ -67,14 +67,14 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(StringContents):
+      case ATTR(StringContents):
       {
         stringContents = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(MaxLength):
+      case ATTR(MaxLength):
       {
         maxLength = tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
@@ -124,10 +124,10 @@ OVERLOAD(OM_NEW)
     data->maxLength = maxLength;
     data->result = 0;
 
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_PassphraseRequestWindow_FinishInput, 0);
-    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_PassphraseRequestWindow_FinishInput, 1);
-    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_PassphraseRequestWindow_FinishInput, 0);
-    DoMethod(stringObj, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, MUIM_PassphraseRequestWindow_FinishInput, 1);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, METHOD(FinishInput), 0);
+    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 1);
+    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 0);
+    DoMethod(stringObj, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, METHOD(FinishInput), 1);
 
     set(stringObj, MUIA_String_Contents, stringContents);
     set(rememberObj, MUIA_Selected, C->PGPPassInterval > 0);
@@ -147,9 +147,9 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(Result): *store = data->result; return TRUE;
-    ATTR(StringContents): GetMUIString((char *)store, data->stringObj, data->maxLength); return TRUE;
-    ATTR(RememberPhrase): *store = GetMUICheck(data->rememberObj); return TRUE;
+    case ATTR(Result): *store = data->result; return TRUE;
+    case ATTR(StringContents): GetMUIString((char *)store, data->stringObj, data->maxLength); return TRUE;
+    case ATTR(RememberPhrase): *store = GetMUICheck(data->rememberObj); return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -171,7 +171,7 @@ DECLARE(FinishInput) // ULONG result
   data->result = msg->result;
 
   // trigger possible notifications
-  set(obj, MUIA_PassphraseRequestWindow_Result, msg->result);
+  set(obj, ATTR(Result), msg->result);
 
   RETURN(0);
   return 0;

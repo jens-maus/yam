@@ -65,7 +65,7 @@ OVERLOAD(OM_NEW)
       }
       break;
 
-      ATTR(Body):
+      case ATTR(Body):
       {
         bodyText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;

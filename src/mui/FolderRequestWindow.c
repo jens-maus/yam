@@ -90,35 +90,35 @@ OVERLOAD(OM_NEW)
       }
       break;
 
-      ATTR(Body):
+      case ATTR(Body):
       {
         bodyText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(YesText):
+      case ATTR(YesText):
       {
         yesText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(NoText):
+      case ATTR(NoText):
       {
         noText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(Exclude):
+      case ATTR(Exclude):
       {
         excludeFolder = (struct Folder *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(Folder):
+      case ATTR(Folder):
       {
         prevFolder = (struct Folder *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
@@ -190,10 +190,10 @@ OVERLOAD(OM_NEW)
 
     UnlockFolderList(G->folders);
 
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_FolderRequestWindow_FinishInput, 0);
-    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_FolderRequestWindow_FinishInput, 1);
-    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_FolderRequestWindow_FinishInput, 0);
-    DoMethod(listviewObj, MUIM_Notify, MUIA_Listview_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_FolderRequestWindow_FinishInput, 1);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, METHOD(FinishInput), 0);
+    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 1);
+    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 0);
+    DoMethod(listviewObj, MUIM_Notify, MUIA_Listview_DoubleClick, MUIV_EveryTime, obj, 2, METHOD(FinishInput), 1);
 
     set(obj, MUIA_Window_DefaultObject, listObj);
   }
@@ -211,13 +211,13 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(Result):
+    case ATTR(Result):
     {
       *store = data->result;
       return TRUE;
     }
 
-    ATTR(Folder):
+    case ATTR(Folder):
     {
       DoMethod(data->listObj, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, store);
       return TRUE;
@@ -243,7 +243,7 @@ DECLARE(FinishInput) // ULONG result
   data->result = msg->result;
 
   // trigger possible notifications
-  set(obj, MUIA_FolderRequestWindow_Result, msg->result);
+  set(obj, ATTR(Result), msg->result);
 
   RETURN(0);
   return 0;

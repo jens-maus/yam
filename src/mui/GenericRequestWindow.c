@@ -65,14 +65,14 @@ OVERLOAD(OM_NEW)
       }
       break;
 
-      ATTR(Body):
+      case ATTR(Body):
       {
         bodyText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(Buttons):
+      case ATTR(Buttons):
       {
         buttons = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
@@ -194,11 +194,11 @@ OVERLOAD(OM_NEW)
           {
             if(i == 0)
             {
-              DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "y", obj, 2, MUIM_GenericRequestWindow_FinishInput, buttonResult);
+              DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "y", obj, 2, METHOD(FinishInput), buttonResult);
             }
             else if(i == numButtons - 1)
             {
-              DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "n", obj, 2, MUIM_GenericRequestWindow_FinishInput, buttonResult);
+              DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "n", obj, 2, METHOD(FinishInput), buttonResult);
             }
           }
 
@@ -209,10 +209,10 @@ OVERLOAD(OM_NEW)
             char fstring[13];
 
             snprintf(fstring, sizeof(fstring), "-capslock f%d", i + 1);
-            DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, fstring, obj, 2, MUIM_GenericRequestWindow_FinishInput, buttonResult);
+            DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, fstring, obj, 2, METHOD(FinishInput), buttonResult);
           }
 
-          DoMethod(button, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_GenericRequestWindow_FinishInput, buttonResult);
+          DoMethod(button, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), buttonResult);
 
           if(active == TRUE)
           {
@@ -229,7 +229,7 @@ OVERLOAD(OM_NEW)
       DoMethod(buttonGroup, MUIM_Group_ExitChange);
     }
 
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_GenericRequestWindow_FinishInput, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, METHOD(FinishInput), 0);
   }
 
   RETURN(obj);
@@ -245,7 +245,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(Result):
+    case ATTR(Result):
     {
       *store = data->result;
       return TRUE;
@@ -271,7 +271,7 @@ DECLARE(FinishInput) // ULONG result
   data->result = msg->result;
 
   // trigger possible notifications
-  set(obj, MUIA_GenericRequestWindow_Result, msg->result);
+  set(obj, ATTR(Result), msg->result);
 
   RETURN(0);
   return 0;

@@ -221,11 +221,11 @@ OVERLOAD(OM_NEW)
     // start with a disabled "Visit URL" button
     set(bt_visit, MUIA_Disabled, TRUE);
 
-    DoMethod(obj,               MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_UpdateNotifyWindow_Close);
-    DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, MUIM_UpdateNotifyWindow_Select, MUIV_TriggerValue);
-    DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, MUIM_UpdateNotifyWindow_VisitURL);
-    DoMethod(bt_visit,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_UpdateNotifyWindow_VisitURL);
-    DoMethod(bt_close,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_UpdateNotifyWindow_Close);
+    DoMethod(obj,               MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, METHOD(Close));
+    DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, METHOD(Select), MUIV_TriggerValue);
+    DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, METHOD(VisitURL));
+    DoMethod(bt_visit,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(VisitURL));
+    DoMethod(bt_close,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(Close));
 
     set(obj, MUIA_Window_Activate, TRUE);
   }
@@ -257,7 +257,7 @@ OVERLOAD(OM_SET)
           // close request wasn't issue due to an application iconification
           // request
           if(xget(G->App, MUIA_Application_Iconified) == FALSE)
-            DoMethod(obj, MUIM_UpdateNotifyWindow_Clear);
+            DoMethod(obj, METHOD(Clear));
         }
         else
         {

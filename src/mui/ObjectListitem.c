@@ -54,7 +54,7 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(ObjectList):
+      case ATTR(ObjectList):
       {
         data->objectList = (Object *)tag->ti_Data;
       }
@@ -74,7 +74,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(IsFirstItem):
+    case ATTR(IsFirstItem):
     {
       if(data->objectList != NULL)
         *store = (obj == (Object *)xget(data->objectList, MUIA_ObjectList_FirstItem));
@@ -87,7 +87,7 @@ OVERLOAD(OM_GET)
       return TRUE;
     }
 
-    ATTR(IsLastItem):
+    case ATTR(IsLastItem):
     {
       if(data->objectList != NULL)
         *store = (obj == (Object *)xget(data->objectList, MUIA_ObjectList_LastItem));

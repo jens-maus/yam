@@ -77,49 +77,49 @@ OVERLOAD(OM_NEW)
       }
       break;
 
-      ATTR(Body):
+      case ATTR(Body):
       {
         bodyText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(Secret):
+      case ATTR(Secret):
       {
         secret = tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(YesText):
+      case ATTR(YesText):
       {
         yesText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(NoText):
+      case ATTR(NoText):
       {
         noText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(AlternativeText):
+      case ATTR(AlternativeText):
       {
         altText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(StringContents):
+      case ATTR(StringContents):
       {
         stringContents = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(MaxLength):
+      case ATTR(MaxLength):
       {
         maxLength = tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
@@ -159,13 +159,13 @@ OVERLOAD(OM_NEW)
     data->maxLength = maxLength;
     data->result = 0;
 
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_StringRequestWindow_FinishInput, 0);
-    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_StringRequestWindow_FinishInput, 1);
-    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_StringRequestWindow_FinishInput, 0);
-    DoMethod(stringObj, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, MUIM_StringRequestWindow_FinishInput, 1);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, METHOD(FinishInput), 0);
+    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 1);
+    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 0);
+    DoMethod(stringObj, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, METHOD(FinishInput), 1);
 
     if(altText != NULL)
-      DoMethod(altButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_StringRequestWindow_FinishInput, 2);
+      DoMethod(altButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 2);
 
     set(stringObj, MUIA_String_Contents, stringContents);
     set(obj, MUIA_Window_ActiveObject, stringObj);
@@ -184,8 +184,8 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(Result): *store = data->result; return TRUE;
-    ATTR(StringContents): GetMUIString((char *)store, data->stringObj, data->maxLength); return TRUE;
+    case ATTR(Result): *store = data->result; return TRUE;
+    case ATTR(StringContents): GetMUIString((char *)store, data->stringObj, data->maxLength); return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -207,7 +207,7 @@ DECLARE(FinishInput) // ULONG result
   data->result = msg->result;
 
   // trigger possible notifications
-  set(obj, MUIA_StringRequestWindow_Result, msg->result);
+  set(obj, ATTR(Result), msg->result);
 
   RETURN(0);
   return 0;

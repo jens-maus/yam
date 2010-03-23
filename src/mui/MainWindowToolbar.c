@@ -166,8 +166,8 @@ OVERLOAD(OM_NEW)
                        TAG_MORE, inittags(msg))))
   {
     // update the SPAM control buttons only if the spam filter is not enabled
-    if(!C->SpamFilterEnabled)
-      DoMethod(obj, MUIM_MainWindowToolbar_UpdateSpamControls);
+    if(C->SpamFilterEnabled == FALSE)
+      DoMethod(obj, METHOD(UpdateSpamControls));
 
     // connect the buttons presses
     DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_READ,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ReadMessageHook);
