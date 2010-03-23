@@ -343,6 +343,8 @@ MUI = \
 	MainMailListGroup.o \
 	MainWindow.o \
 	MainWindowToolbar.o \
+	ObjectList.o \
+	ObjectListitem.o \
 	PassphraseRequestWindow.o \
 	QuickSearchBar.o \
 	ReadMailGroup.o \

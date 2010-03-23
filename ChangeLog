@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ObjectList.c, mui/ObjectListitem.c: added abstract base classes for
+    objects to be displayed in a scrollable list. Only objects subclassed
+    from ObjectListitem must be added to an ObjectList object, because the
+    list and item object will communicate with each other to perform certain
+    actions like self-removal from the list.
+
 2010-03-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/misc: removed all dummy class data specifications.
