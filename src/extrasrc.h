@@ -41,6 +41,7 @@
 // forward declarations
 struct TagItem;
 struct IClass;
+struct MinList;
 
 /*
  * Differentations between runtime libs and operating system
