@@ -1838,8 +1838,6 @@ static void InitAfterLogin(void)
   MUI_DisposeObject(G->SplashWinObject);
   G->SplashWinObject = NULL;
 
-  TestWindowObject, End;
-
   // Only activate the main window if the about window is active and open it immediatly.
   // We always start YAM with Window_Open=TRUE or else the hide functionality does not work as expected.
   xset(G->MA->GUI.WI,
