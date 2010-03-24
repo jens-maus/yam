@@ -4,6 +4,11 @@ GenClasses Tool - ChangeLog
 
 $Id$
 
+2010-03-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * gc.c: even *VERY* dumb mistakes like a class being its own superclass are
+    now detected as dependency loops and will generate an "#error" statement.
+
 2010-03-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * gc.c: the ATTR() macro only creates the corresponding full attribute name

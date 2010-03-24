@@ -791,6 +791,19 @@ void buildclasstree( struct list *classlist )
           outercd->supernode = innercd;
         }
       }
+      else
+      {
+        if(strcmp(&outercd->superclass[5], outercd->name) == 0)
+        {
+          /* one *VERY* dumb developer declared the class to be subclassed
+           * from itself. This of course is absolute nonsense.
+           * We just remember the class to be its own superclass. Eventually
+           * this will generate an #error statement in the generated source
+           * because of a zero sized dependency loop.
+           */
+          outercd->supernode = outercd;
+        }
+      }
     }
   }
 }
