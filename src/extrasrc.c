@@ -147,6 +147,10 @@
   #include "extrasrc/GetTail.c"
 #endif
 
+#if defined(NEED_NEWMINLIST)
+  #include "extrasrc/NewMinList.c"
+#endif
+
 #if defined(NEED_ALLOCVECPOOLED)
   #include "extrasrc/AllocVecPooled.c"
 #endif

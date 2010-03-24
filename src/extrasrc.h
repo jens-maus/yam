@@ -138,7 +138,7 @@ struct IClass;
 #endif /* !__GNUC__ */
 
 /*
- * Stuff we always require
+ * Stuff we always require on all systems
  */
 #if !defined(HAVE_NEWREADARGS)
 #define NEED_NEWREADARGS
@@ -153,7 +153,7 @@ struct IClass;
 #endif
 
 /*
- * Stuff that exists in OS4 already but not in OS3 or MOS
+ * Stuff that exists in AmigaOS4
  */
 #if defined(__amigaos4__)
 #define HAVE_SETPROCWINDOW
@@ -164,6 +164,18 @@ struct IClass;
 #define HAVE_GETPRED
 #define HAVE_GETSUCC
 #define HAVE_GETTAIL
+#define HAVE_NEWMINLIST
+#define HAVE_ALLOCVECPOOLED
+#define HAVE_FREEVECPOOLED
+#endif
+
+/*
+ * Stuff that exists on MorphOS
+ */
+#if defined(__MORPHOS__)
+#define HAVE_NEWMINLIST
+#define HAVE_ALLOCVECPOOLED
+#define HAVE_FREEVECPOOLED
 #endif
 
 /*
@@ -174,8 +186,21 @@ struct IClass;
 #define HAVE_GETPRED
 #define HAVE_GETSUCC
 #define HAVE_GETTAIL
+#define HAVE_ALLOCVECPOOLED
+#define HAVE_FREEVECPOOLED
 #endif
 
+/*
+ * Stuff that exists on AmigaOS3 (i.e. anything except AmigaOS4, MorphOS or AROS)
+ */
+#if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__AROS__)
+#define HAVE_NEWMINLIST
+#endif
+
+
+/*
+ * evaluate the HAVE_#? definitions to check which we NEED_#?
+ */
 #if !defined(HAVE_SETPROCWINDOW)
 #define NEED_SETPROCWINDOW
 #endif
@@ -208,12 +233,8 @@ struct IClass;
 #define NEED_GETTAIL
 #endif
 
-/*
- * Stuff that exists in OS4 and MOS already, but not in OS3
- */
-#if defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
-#define HAVE_ALLOCVECPOOLED
-#define HAVE_FREEVECPOOLED
+#if !defined(HAVE_NEWMINLIST)
+#define NEED_NEWMINLIST
 #endif
 
 #if !defined(HAVE_ALLOCVECPOOLED)
@@ -325,6 +346,10 @@ struct Node *GetSucc(struct Node *node);
 
 #if defined(NEED_GETTAIL)
 struct Node *GetTail(struct List *list);
+#endif
+
+#if defined(NEED_NEWMINLIST)
+void NewMinList(struct MinList *list);
 #endif
 
 #if defined(NEED_ALLOCVECPOOLED)
