@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-24 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech catalog translation.
+
 2010-03-24 Jens Langner <Jens.Langner@light-speed.de>
 
   * Transfer.c, AppIcon.c, ReceiveMails.c: the AppIcon is now correctly refreshed

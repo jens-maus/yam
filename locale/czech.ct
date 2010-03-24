@@ -1,8 +1,9 @@
-## version $VER: YAM.catalog 7.1 (21.02.2010)
+## version $VER: YAM.catalog 7.2 (24.3.2010)
 ## language czech
 ## codeset 5
 ## chunk AUTH Vit Sindlar
 ;
+; YAM.cd - YAM 2.6 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -16,6 +17,9 @@
 ; and increase the last listed identifier number by one for your
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
+;
+;#version 7
+;#language english
 ;
 ; General
 ;
@@ -945,26 +949,26 @@ MSG_CO_ImportMIMEGads
 ; *_MIME.prefs|m_ailcap|m_ime.types|_Cancel
 ;
 MSG_CO_NewIntroDef
-Dobrý den,\\\\n
+Dobrý den,\\n
 ; Hello,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-;
+; 
 ;
 MSG_CO_AltRepPatternDef
 
-;
+; 
 ;
 MSG_CO_ForwardIntroDef
-*** zaèátek pøeposílané zprávy ***\\\\n\
-\\\\n\
-Datum: %c\\\\n\
-Odesílatel: %n <%e>\\\\n\
-Pøedmìt: %s\\\\n\
-\\\\n\
---- obsah pøeposílané zprávy ---\\\\n\
-\\\\n
+*** zaèátek pøeposílané zprávy ***\\n\
+\\n\
+Datum: %c\\n\
+Odesílatel: %n <%e>\\n\
+Pøedmìt: %s\\n\
+\\n\
+--- obsah pøeposílané zprávy ---\\n\
+\\n
 ; *** Begin of forwarded message ***\\\\n\
 ; \\\\n\
 ; Date: %c\\\\n\
@@ -975,7 +979,7 @@ Pøedmìt: %s\\\\n\
 ; \\\\n
 ;
 MSG_CO_ForwardFinishDef
-*** konec pøeposílané zprávy ***\\\\n
+*** konec pøeposílané zprávy ***\\n
 ; *** End of forwarded message ***\\\\n
 ;
 MSG_CO_GreetingsDef
@@ -984,18 +988,18 @@ S pozdravem
 ;
 MSG_CO_AltRepHelloDef
 
-;
+; 
 ;
 MSG_CO_AltRepByeDef
 
-;
+; 
 ;
 MSG_CO_MLRepHelloDef
 
-;
+; 
 ;
 MSG_CO_MLRepIntroDef
-Dne %c %n napsal:\\\\n
+Dne %c %n napsal:\\n
 ; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
@@ -1003,7 +1007,7 @@ S pozdravem
 ; Regards
 ;
 MSG_CO_LineBreak
-\\\\n\
+\\n\
   nový øádek
 ; \\\\n\
 ;   Line break
@@ -8289,10 +8293,6 @@ MSG_CO_FWDMSG
 Pø_eposlat zprávu
 ; _Forward messages
 ;
-MSG_CO_FWDMSG_ATTACH
-ve formì pøílohy
-; as attachments
-;
 MSG_CO_FWDMSG_INLINE
 jako souèást nové zprávy
 ; inlined
@@ -9588,4 +9588,37 @@ Spus»te prohlí¾eè ruènì a zadejte do nìj tuto adresu:\n\
 ; Please launch your internet browser yourself and enter this link:\n\
 ; '%s'
 ; URL
+;
+MSG_USERNAME_FALLBACK
+Jan Novák
+; John Doe
+;
+MSG_RE_DEFAULT_MIMEPART_NAME
+pøíloha, èást %ld.%ld
+; Part %ld.%ld
+; PARENTNUMBER PARTNUMER
+;
+MSG_OPEN_WRITEWINDOWS
+Nìkteré z rozepsaných zpráv nejsou ulo¾eny.\n\
+\n\
+Co si pøejete udìlat?
+; There are still some write windows open!\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_OPEN_WRITEWINDOWS_GAD
+*_Ulo¾it|_Ukonèit|_Zru¹it
+; *_Save now|_Quit without saving|_Cancel
+;
+MSG_MA_MFORWARD_ATTACH
+ve formì pøílohy
+; as attachment
+;
+MSG_MA_MFORWARD_INLINE
+jako souèást nové zprávy
+; inlined
+;
+MSG_CO_FWDMSG_ATTACH
+ve formì pøílohy
+; as attachment
 ;
