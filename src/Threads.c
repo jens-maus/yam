@@ -365,7 +365,7 @@ BOOL ParentThreadCanContinue(void)
 
   if(msg != NULL)
   {
-  	// No reply port needed as this message is async
+    // No reply port needed as this message is async
     msg->msg.mn_Length = sizeof(struct ThreadMessage);
     msg->async = 1;
     msg->parentCanContinue = TRUE;

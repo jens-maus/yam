@@ -379,9 +379,9 @@ INLINE void _INDENT(void)
 #define checkIndentLevel(l) { \
   if(indent_level < l) \
   { \
-  	if(ansi_output) \
+    if(ansi_output) \
       _DBPRINTF("%s%s:%ld:indent level less than %ld (%ld)%s\n", ANSI_ESC_FG_PURPLE, file, line, l, indent_level, ANSI_ESC_CLR); \
-  	else \
+    else \
       _DBPRINTF("%s:%ld:indent level less than %ld (%ld)\n", file, line, l, indent_level); \
   } \
 }

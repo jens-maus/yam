@@ -2095,9 +2095,9 @@ static void DoStartup(BOOL nocheck, BOOL hide)
   // change upon every restart
   if(currentUserName != NULL)
   {
-  	if(strcmp(lastUserName, currentUserName) != 0)
-  	{
-  	  D(DBF_STARTUP, "user '%s' differs from '%s' of the last start, performing startup actions", currentUserName, lastUserName);
+    if(strcmp(lastUserName, currentUserName) != 0)
+    {
+      D(DBF_STARTUP, "user '%s' differs from '%s' of the last start, performing startup actions", currentUserName, lastUserName);
 
       // if the user wishs to delete all old mail during startup of YAM,
       // we do it now

@@ -2936,21 +2936,21 @@ BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
         struct FileReqCache *frc;
         char suggestedName[SIZE_FILE];
 
-		if(mlist->count == 1)
-		{
-		  // if there is only one mail to be exported by we use single mail's subject
-		  // as filename and append ".eml"
-		  struct MailNode *mnode = FirstMailNode(mlist);
+        if(mlist->count == 1)
+        {
+          // if there is only one mail to be exported by we use single mail's subject
+          // as filename and append ".eml"
+          struct MailNode *mnode = FirstMailNode(mlist);
 
-	      snprintf(suggestedName, sizeof(suggestedName), "%s.eml", mnode->mail->Subject);
-	    }
-	    else
-	    {
-	      // for multiple mail we use the folder's name and append ".mbox"
-	      snprintf(suggestedName, sizeof(suggestedName), "%s.mbox", actfo->Name);
-	    }
+          snprintf(suggestedName, sizeof(suggestedName), "%s.eml", mnode->mail->Subject);
+        }
+        else
+        {
+          // for multiple mail we use the folder's name and append ".mbox"
+          snprintf(suggestedName, sizeof(suggestedName), "%s.mbox", actfo->Name);
+        }
 
-	    // remove possible invalid characters
+        // remove possible invalid characters
         ReplaceInvalidChars(suggestedName);
 
         if((frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, tr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, suggestedName)) != NULL)
