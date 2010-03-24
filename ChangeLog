@@ -23,6 +23,9 @@ $URL$
   * extrasrc/NewMinList.c: added NewMinList() function for those systems which
     don't implement it themselves.
   * ChangeLog: moved all genclasses related entries to its own ChangeLog file.
+  * misc: added interface version parameter to the INITLIB() and GETINTERFACE()
+    macros to be able to obtain other interface versions than just the fixed
+    version 1.
 
 2010-03-23 Jens Langner <Jens.Langner@light-speed.de>
 
