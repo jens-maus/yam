@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-24 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Transfer.c, AppIcon.c, ReceiveMails.c: the AppIcon is now correctly refreshed
+    again. In addition we are not using the "mailChecking" variable anymore for
+    flagging the AppIcon for the mail transfer operation. We use the global
+    "activeTransfer" variable for that job now. Furthermore, the UIDL hash and
+    the filter search as well as the POSTGET macro are now executed and/or freed
+    again.
+
 2010-03-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/NewMinList.c: added NewMinList() function for those systems which

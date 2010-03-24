@@ -175,7 +175,6 @@ struct Global
   enum ImportFormat        importFormat;              // for using a "TransferNode" for importing mails
   char                     importFile[SIZE_PATHFILE]; // file to import
   struct Folder *          importFolder;              // in which folder to import
-  BOOL                     mailChecking;              // true while checking for new mails (POP3)
 
 
   // the data for our thread implementation

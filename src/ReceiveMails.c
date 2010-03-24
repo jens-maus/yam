@@ -108,6 +108,7 @@ static const char *const POPcmd[] =
 /**************************************************************************/
 // static function prototypes
 static int TR_RecvToFile(struct TransferNode *tfn, FILE *fh, const char *filename);
+static void TR_NewMailAlert(struct TransferNode *tfn);
 
 // static UIDL function prototypes
 static void CleanupUIDLhash(void);
@@ -1230,45 +1231,50 @@ BOOL InitUIDLhash(void)
   ENTER();
 
   // make sure no other UIDLhashTable is active
-  if(G->uidlHashTable != NULL)
-    CleanupUIDLhash();
-
-  // allocate a new hashtable for managing the UIDL data
-  if((G->uidlHashTable = HashTableNew(HashTableGetDefaultStringOps(), NULL, sizeof(struct UIDLtoken), 512)) != NULL)
+  if(G->uidlHashTable == NULL)
   {
-    FILE *fh;
-    char *filename = CreateFilename(".uidl");
-    LONG size;
-
-    // open the .uidl file and read in the UIDL/MsgIDs
-    // line-by-line
-    if(ObtainFileInfo(filename, FI_SIZE, &size) == TRUE && size > 0 && (fh = fopen(filename, "r")) != NULL)
+    // allocate a new hashtable for managing the UIDL data
+    if((G->uidlHashTable = HashTableNew(HashTableGetDefaultStringOps(), NULL, sizeof(struct UIDLtoken), 512)) != NULL)
     {
-      char *uidl = NULL;
-      size_t size = 0;
+      FILE *fh;
+      char *filename = CreateFilename(".uidl");
+      LONG size;
 
-      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+      // open the .uidl file and read in the UIDL/MsgIDs
+      // line-by-line
+      if(ObtainFileInfo(filename, FI_SIZE, &size) == TRUE && size > 0 && (fh = fopen(filename, "r")) != NULL)
+      {
+        char *uidl = NULL;
+        size_t size = 0;
 
-      while(GetLine(&uidl, &size, fh) >= 0)
-        AddUIDLtoHash(uidl, FALSE);
+        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      fclose(fh);
+        while(GetLine(&uidl, &size, fh) >= 0)
+          AddUIDLtoHash(uidl, FALSE);
 
-      if(uidl != NULL)
-        free(uidl);
+        fclose(fh);
 
-      // start with a clean and and so far unmodified hash table
-      G->uidlHashIsDirty = FALSE;
+        if(uidl != NULL)
+          free(uidl);
+
+        // start with a clean and and so far unmodified hash table
+        G->uidlHashIsDirty = FALSE;
+      }
+      else
+        W(DBF_UIDL, "no or empty .uidl file found");
+
+      SHOWVALUE(DBF_UIDL, G->uidlHashTable->entryCount);
+
+      result = TRUE;
     }
     else
-      W(DBF_UIDL, "no or empty .uidl file found");
-
-    SHOWVALUE(DBF_UIDL, G->uidlHashTable->entryCount);
-
-    result = TRUE;
+      E(DBF_UIDL, "couldn't create new Hashtable for UIDL management");
   }
   else
-    E(DBF_UIDL, "couldn't create new Hashtable for UIDL management");
+  {
+    W(DBF_UIDL, "UIDL hash is already loaded");
+    result = TRUE;
+  }
 
   RETURN(result);
   return result;
@@ -2629,9 +2635,8 @@ BOOL ProcessPOP3Transfer(struct TransferNode *tfn)
     // deal with the transferNode
     G->activeTransfer = tfn;
 
-    // signal the AppIcon that we are checking for
-    // new mails
-    G->mailChecking = TRUE;
+    // update the Appicon so that it refreshes its information
+    // and shows the network transfer icon instead
     UpdateAppIcon();
 
     // check if we have to process any remote filters
@@ -2642,9 +2647,12 @@ BOOL ProcessPOP3Transfer(struct TransferNode *tfn)
     tfn->duplicatesChecking = FALSE;
     if(C->AvoidDuplicates == TRUE)
     {
-      CLEAR_FLAG(tfn->msn->flags, MSF_UIDLCHECKED);
-      tfn->duplicatesChecking = TRUE;
-      InitUIDLhash();
+      // make sure we have the UIDL hash tables loaded and ready
+      if(InitUIDLhash() == TRUE)
+      {
+        CLEAR_FLAG(tfn->msn->flags, MSF_UIDLCHECKED);
+        tfn->duplicatesChecking = TRUE;
+      }
     }
 
     // now we connect to the POP3 server
@@ -2767,6 +2775,41 @@ BOOL ProcessPOP3Transfer(struct TransferNode *tfn)
         AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_Retrieving), G->LastDL.Downloaded, tfn->msn->username, tfn->msn->hostname);
       }
     }
+
+    // free/cleanup the UIDL hash tables
+    if(tfn->duplicatesChecking == TRUE)
+      CleanupUIDLhash();
+
+    FreeFilterSearch();
+    tfn->processFilters = FALSE;
+
+    MA_StartMacro(MACRO_POSTGET, itoa((int)G->LastDL.Downloaded));
+
+    // we only apply the filters if we downloaded something, or it's wasted
+    if(G->LastDL.Downloaded > 0)
+    {
+      struct Folder *folder;
+      struct MailList *downloadedMails = (struct MailList *)xget(G->transferWindowObject, MUIA_TransferWindow_DownloadedMails);
+
+      D(DBF_UTIL, "filter %ld/%ld downloaded mails", downloadedMails->count, G->LastDL.Downloaded);
+      FilterMails(FO_GetFolderByType(FT_INCOMING, NULL), downloadedMails, APPLY_AUTO);
+
+      // Now we jump to the first new mail we received if the number of messages has changed
+      // after the mail transfer
+      if(C->JumpToIncoming == TRUE)
+        MA_JumpToNewMsg();
+
+      // only call the DisplayStatistics() function if the actual folder wasn't already the INCOMING
+      // one or we would have refreshed it twice
+      if((folder = FO_GetCurrentFolder()) != NULL && !isIncomingFolder(folder))
+        DisplayStatistics((struct Folder *)-1, TRUE);
+      else
+        UpdateAppIcon();
+
+      TR_NewMailAlert(tfn);
+    }
+    else
+      UpdateAppIcon();
   }
 
   RETURN(success);

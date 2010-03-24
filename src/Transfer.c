@@ -151,11 +151,6 @@ void ProcessTransferQueue(enum MailServerType mst)
           // reset some global variables
           G->Error = FALSE;
 
-          // signal the AppIcon that we are checking for
-          // new mails
-          G->mailChecking = TRUE;
-          UpdateAppIcon();
-
           // we walk through the TransferQueue and process each scheduled
           // mail transfer
           for(curNode = GetHead((struct List *)&G->transferQueue); curNode != NULL; curNode = nextNode)
@@ -202,6 +197,12 @@ void ProcessTransferQueue(enum MailServerType mst)
 
           // cleanup the transferwindow stuff
           CleanupTransferWindow();
+
+          // there is no active transfer anymore.
+          G->activeTransfer = NULL;
+
+          // update the app icon again
+          UpdateAppIcon();
         }
       }
 
