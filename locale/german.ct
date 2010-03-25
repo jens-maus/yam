@@ -8547,3 +8547,9 @@ eingebunden
 MSG_CO_FWDMSG_ATTACH
 als Anhang
 ;
+MSG_CO_ScriptPreFilterMail
+Vor dem Filtern von Mails
+;
+MSG_CO_ScriptPostFilterMail
+Nach dem Filtern von Mails
+;

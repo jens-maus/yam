@@ -6940,3 +6940,9 @@ inlined
 MSG_CO_FWDMSG_ATTACH (2158//)
 as attachment
 ;
+MSG_CO_ScriptPreFilterMail (2159//)
+Before filter mail
+;
+MSG_CO_ScriptPostFilterMail (2160//)
+After filter mail
+;

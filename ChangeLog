@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-25 Frank Weber <opionline@yahoo.de>
+
+  * YAM_COg.c, YAM_FI.c, YAM_main.h, YAM_stringsizes.h, locale/YAM.cd:
+    Add 2 entries in the config script list which allow to run a script before
+    and after YAM does a filter action.
+  * locale/german.ct: updated translation according to changes above.
+    This closes #112.
+  * NOTE: The scripts are called before/after getting mails *and* if the user do
+    a local filter action (click the filter button, do a Arexx mailfilter or use
+    the menu).
+
 2010-03-24 Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech catalog translation.

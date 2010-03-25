@@ -218,6 +218,8 @@ HOOKPROTONHNO(ScriptListDisplayFunc, LONG, struct NList_DisplayMessage *msg)
           case MACRO_PREWRITE:  strlcpy(title, tr(MSG_CO_ScriptPreWriteMsg), sizeof(title)); break;
           case MACRO_POSTWRITE: strlcpy(title, tr(MSG_CO_ScriptPostWriteMsg), sizeof(title)); break;
           case MACRO_URL:       strlcpy(title, tr(MSG_CO_ScriptClickURL), sizeof(title)); break;
+          case MACRO_PREFILTER: strlcpy(title, tr(MSG_CO_ScriptPreFilterMail), sizeof(title)); break;
+          case MACRO_POSTFILTER:strlcpy(title, tr(MSG_CO_ScriptPostFilterMail), sizeof(title)); break;
 
           // the user definable macros
           default:
@@ -558,6 +560,8 @@ HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *list)
       case MACRO_QUIT:
       case MACRO_PRESEND:
       case MACRO_POSTSEND:
+      case MACRO_PREFILTER:
+      case MACRO_POSTFILTER:
       default:
         // nothing
       break;
@@ -1028,6 +1032,8 @@ HOOKPROTONHNONP(CO_GetRXEntryFunc, void)
     case MACRO_QUIT:
     case MACRO_PRESEND:
     case MACRO_POSTSEND:
+    case MACRO_PREFILTER:
+    case MACRO_POSTFILTER:
     default:
       // disable the popup button since these script don't take any parameter
       nnset(gui->PO_SCRIPT, MUIA_Disabled, TRUE);
