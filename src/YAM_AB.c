@@ -515,7 +515,7 @@ void AB_CheckBirthdates(BOOL check)
     {
       struct ABEntry *ab = tn->tn_User;
 
-      if(ab->Type == AET_USER)
+      if(ab->Type == AET_USER && ab->BirthDay != 0)
       {
         ldiv_t birthday = ldiv(ab->BirthDay, 10000);
 
@@ -538,7 +538,6 @@ void AB_CheckBirthdates(BOOL check)
           }
         }
       }
-
       i++;
     }
   }

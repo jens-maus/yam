@@ -2400,6 +2400,9 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
   if(date == NULL)
     date = DateStamp(&dsnow);
 
+  if(mode == DSS_TIME)
+    date->ds_Days = 0;
+
   // now we fill the DateTime structure with the data for our request.
   dt.dat_Stamp   = *date;
   dt.dat_Format  = (mode == DSS_USDATETIME || mode == DSS_UNIXDATE) ? FORMAT_USA : FORMAT_DEF;
@@ -2673,6 +2676,7 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
 
     case DSS_TIME:
     {
+      dst->ds_Days = 0;
       strlcpy(timestr, string, sizeof(timestr));
       // ignore the date part
       datestrPtr = NULL;

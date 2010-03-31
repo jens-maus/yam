@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-31 Frank Weber <opionline@yahoo.de>
+
+  * YAM_UT.c: Initialize the DateStamp->ds_Days in the functions
+    String2DateStamp() and DateStamp2String() if DSS_TIME is used.
+    This closes #145.
+  * YAM_AB.c: Do the birthday compare only if here is really anthing to compare.
+  * YAM_COs.c: minor cosmetic change.
+
 2010-03-25 Frank Weber <opionline@yahoo.de>
 
   * YAM_COg.c, YAM_FI.c, YAM_main.h, YAM_stringsizes.h, locale/YAM.cd:

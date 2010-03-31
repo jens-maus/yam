@@ -1541,7 +1541,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(stricmp(buf, "ShowFilterStats") == 0)   co->ShowFilterStats = Txt2Bool(value);
           else if(stricmp(buf, "BirthdayCheckTime") == 0)
           {
-             String2DateStamp(&co->BirthdayCheckTime, value, DSS_TIME, TZC_NONE);
+            String2DateStamp(&co->BirthdayCheckTime, value, DSS_TIME, TZC_NONE);
           }
           else
             W(DBF_CONFIG, "unknown config option: '%s' = '%s'", buf, value);
