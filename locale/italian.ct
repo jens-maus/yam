@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (25.03.2010)
+## version $VER: YAM.catalog 7.1 (10.04.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -681,7 +681,7 @@ In uscita
 ; Outgoing
 ;
 MSG_MA_Sent
-Inviati
+Inviato
 ; Sent
 ;
 MSG_MA_TBRead
@@ -1796,7 +1796,7 @@ Spedisci la posta della cartella In attesa
 ; Send mail in outgoing queue
 ;
 MSG_CO_PopStart
-Preleva la nuova posta
+Preleva automaticamente la nuova posta
 ; Download new mail
 ;
 MSG_CO_CheckDOB
@@ -4615,11 +4615,11 @@ Messaggio di errore
 ; Error messages
 ;
 MSG_ER_PrevError
-Errore precedente
+< Errore _precedente
 ; _Previous error
 ;
 MSG_ER_NextError
-Errore _successivo
+Errore _successivo >
 ; _Next error
 ;
 MSG_ER_Clear
@@ -4945,7 +4945,7 @@ In sospeso
 ; On hold
 ;
 MSG_FI_StatSent
-Inviati
+Inviato
 ; Sent
 ;
 MSG_FI_OtherField
@@ -5971,10 +5971,10 @@ possibile copiarlo per qualche altra ragione.
 ; MAILFILE, FOLDERNAME
 ;
 MSG_ER_ADDRBOOKLOAD
-Impossibile caricare la rubrica dal file '%s'.\n\
+Impossibile caricare la rubrica di YAM dal file '%s'.\n\
 \n\
-Il file potrebbe essere inesistente oppure non\n\
-è stato possibile aprirlo per qualche altra ragione.
+Il file potrebbe essere inesistente oppure non è\n\
+stato possibile aprirlo per qualche altra ragione.
 ; Couldn't load address book from file '%s'.\n\
 ; \n\
 ; Either the file doesn't exist or it couldn't be opened for some
@@ -9477,8 +9477,9 @@ Errato responso da parte del server di posta '%s' per l'account '%s' al comando 
 \n\
 %s\n\
 \n\
-Il server di posta non ha potuto eseguire il comando ed ha risposto con il\n\
-messaggio di errore sopra riportato.
+Il server di posta non ha potuto eseguire il\n\
+comando ed ha risposto con il messaggio di\n\
+errore sopra riportato.
 ; Bad response from mail server '%s' of account '%s' to command '%s':\n\
 ; \n\
 ; %s\n\
@@ -9588,7 +9589,14 @@ Impossibile connettersi all'host '%s'.\n\
 \n\
 Il server di posta potrebbe essere attualmente in\n\
 manutenzione oppure non è in grado di supportare\n\
-adeguatamente i protocolli SMTP.
+adeguatamente i protocolli SMTP.\n\
+\n\
+Verifica il corretto inserimento dell'ID Utente e della\n\
+Password nelle preferenze di YAM alla voce "TCP/IP"\n\
+\n\
+Questi dati devono coincidere con il nome utente\n\
+e la password con cui si è registrato l'account di\n\
+posta nel sito del proprio Provider.
 ; Couldn't connect to host '%s'.\n\
 ; \n\
 ; The mail server is currently down or doesn't support the SMTP protocols.

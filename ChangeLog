@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-09 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed italian catalog according to users request.
+
 2010-04-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: the XPK scanning duplicated the found packers in a wrong way so
