@@ -12,6 +12,10 @@ $URL$
     displayed lists in the configuration window showed the wrong packers. For
     example the IDEA packer was no longer recognized as being able to encrypt.
     This closes #152.
+  * YAM.c: scanning the XPK compressors could result in a wrong final result if
+    querying the info of one compressor failed but the next one succeeded.
+    Additionally the query structure is now allocated dynamically instead of
+    placing it on the stack.
 
 2010-03-31 Frank Weber <opionline@yahoo.de>
 
