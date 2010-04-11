@@ -54,9 +54,10 @@ struct codeset;
 // may get invalid!
 enum DateStampType
 {
-  DSS_DATE=0,       // just the date
-  DSS_TIME,         // just the time
-  DSS_WEEKDAY,      // just the weekday
+  DSS_DATE=0,       // the date (e.g. DD.MM.YYYY)
+  DSS_TIME,         // the time (e.g. HH:MM:SS)
+  DSS_SHORTTIME,    // the time without seconds (e.g. HH:MM)
+  DSS_WEEKDAY,      // the weekday (e.g. Monday, Tuesday)
   DSS_DATETIME,     // Localized date&time output (via locale.library)
   DSS_RELDATETIME,  // Localized date&time with weekday substitution
   DSS_USDATETIME,   // American date&time format (mm-dd-yy hh:mm:ss)

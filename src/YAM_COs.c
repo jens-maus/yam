@@ -653,7 +653,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "AutoClip         = %s\n", Bool2Txt(co->AutoClip));
     fprintf(fh, "ShowFilterStats  = %s\n", Bool2Txt(co->ShowFilterStats));
 
-    DateStamp2String(buf, sizeof(buf), &co->BirthdayCheckTime, DSS_TIME, TZC_NONE);
+    DateStamp2String(buf, sizeof(buf), &co->BirthdayCheckTime, DSS_SHORTTIME, TZC_NONE);
     fprintf(fh, "BirthdayCheckTime= %s\n", buf);
 
     // analyze if we really didn't meet an error during the

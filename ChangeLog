@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-11 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, YAM_COs.c: implemented DSS_SHORTTIME for DateStamp2String() functions
+    so that the time can be output without seconds. This completes the functionality
+    requested in ticket #145.
+
 2010-04-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: when exporting mails the file name returned by the file requester

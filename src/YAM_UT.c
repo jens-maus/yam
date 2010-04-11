@@ -2471,6 +2471,18 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
     }
     break;
 
+    case DSS_SHORTTIME:
+    {
+      // find the last ':' and strip the string there so
+      // that it does not include any seconds
+      char *p = strrchr(timestr, ':');
+      if(p != NULL)
+        *p = '\0';
+
+      strlcpy(dst, timestr, dstlen);
+    }
+    break;
+
     case DSS_BEAT:
     case DSS_DATEBEAT:
     case DSS_RELDATEBEAT:
@@ -2675,6 +2687,7 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
     break;
 
     case DSS_TIME:
+    case DSS_SHORTTIME:
     {
       dst->ds_Days = 0;
       strlcpy(timestr, string, sizeof(timestr));
