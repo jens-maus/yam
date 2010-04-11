@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: when exporting mails the file name returned by the file requester
+    is now checked to be non-empty. Although I could not reproduce ticket #154
+    this should fix it and thus closes #154.
+
 2010-04-09 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed italian catalog according to users request.
