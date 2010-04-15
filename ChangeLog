@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-15 Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/dutch.ct, Makefile: added dutch catalog translation kindly provided by
+    Johan Banis.
+
 2010-04-11 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c, YAM_COs.c: implemented DSS_SHORTTIME for DateStamp2String() functions

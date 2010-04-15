@@ -512,6 +512,7 @@ CATALOGS = \
 	$(LOCALE)/greek.catalog \
 	$(LOCALE)/italian.catalog \
 	$(LOCALE)/swedish.catalog \
+	$(LOCALE)/dutch.catalog \
 	# $(LOCALE)/bosnian.catalog \
 	# $(LOCALE)/danish.catalog \
 	# $(LOCALE)/finnish.catalog \
