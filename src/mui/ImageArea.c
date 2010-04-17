@@ -422,15 +422,15 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        case ATTR(ID):          if((char *)tag->ti_Data != NULL) data->id = strdup((char *)tag->ti_Data); break;
-        case ATTR(Filename):    if((char *)tag->ti_Data != NULL) data->filename = strdup((char *)tag->ti_Data); break;
-        case ATTR(Label):       if((char *)tag->ti_Data != NULL) data->label = strdup((char *)tag->ti_Data); break;
-        case ATTR(FreeVert):    data->free_vert   = (BOOL)tag->ti_Data; break;
-        case ATTR(FreeHoriz):   data->free_horiz  = (BOOL)tag->ti_Data; break;
-        case ATTR(ShowLabel):   data->show_label  = (BOOL)tag->ti_Data; break;
-        case ATTR(MaxHeight):   data->maxHeight   = (ULONG)tag->ti_Data; break;
-        case ATTR(MaxWidth):    data->maxWidth    = (ULONG)tag->ti_Data; break;
-        case ATTR(NoMinHeight): data->noMinHeight = (BOOL)tag->ti_Data; break;
+        ATTR(ID):          if((char *)tag->ti_Data != NULL) data->id = strdup((char *)tag->ti_Data); break;
+        ATTR(Filename):    if((char *)tag->ti_Data != NULL) data->filename = strdup((char *)tag->ti_Data); break;
+        ATTR(Label):       if((char *)tag->ti_Data != NULL) data->label = strdup((char *)tag->ti_Data); break;
+        ATTR(FreeVert):    data->free_vert   = (BOOL)tag->ti_Data; break;
+        ATTR(FreeHoriz):   data->free_horiz  = (BOOL)tag->ti_Data; break;
+        ATTR(ShowLabel):   data->show_label  = (BOOL)tag->ti_Data; break;
+        ATTR(MaxHeight):   data->maxHeight   = (ULONG)tag->ti_Data; break;
+        ATTR(MaxWidth):    data->maxWidth    = (ULONG)tag->ti_Data; break;
+        ATTR(NoMinHeight): data->noMinHeight = (BOOL)tag->ti_Data; break;
       }
     }
   }
@@ -473,11 +473,11 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(ID): *store = (IPTR)data->id; return TRUE;
-    case ATTR(Filename): *store = (IPTR)data->filename; return TRUE;
+    ATTR(ID): *store = (IPTR)data->id; return TRUE;
+    ATTR(Filename): *store = (IPTR)data->filename; return TRUE;
 
     // return the raw image width
-    case ATTR(RawWidth):
+    ATTR(RawWidth):
     {
       BOOL result = FALSE;
 
@@ -505,7 +505,7 @@ OVERLOAD(OM_GET)
     break;
 
     // return the raw image height
-    case ATTR(RawHeight):
+    ATTR(RawHeight):
     {
       BOOL result = FALSE;
 
@@ -551,7 +551,7 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(ShowLabel):
+      ATTR(ShowLabel):
       {
         if(data->show_label != (BOOL)tag->ti_Data)
         {
@@ -564,7 +564,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      case ATTR(ID):
+      ATTR(ID):
       {
         char *newId = (char *)tag->ti_Data;
 
@@ -592,7 +592,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      case ATTR(Filename):
+      ATTR(Filename):
       {
         char *newFilename = (char *)tag->ti_Data;
 

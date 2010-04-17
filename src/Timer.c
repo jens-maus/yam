@@ -471,7 +471,7 @@ static void TimerDispatcher(const enum Timer tid)
       if(writeWindowActive == FALSE &&
          G->CO == NULL)
       {
-        MA_PopNow(RECV_AUTO_TIMER, -1);
+        MA_PopNow(POP_TIMED, -1);
       }
 
       // prepare the timer to get fired again
@@ -577,8 +577,7 @@ static void TimerDispatcher(const enum Timer tid)
       D(DBF_TIMER, "timer[%ld]: TIMER_POP3_KEEPALIVE fired @ %s", tid, dateString);
 
       // send the POP3 server a 'NOOP'
-#warning "TODO: check activeTransfer!"
-      if(TR_SendPOP3KeepAlive(G->activeTransfer) == TRUE)
+      if(TR_SendPOP3KeepAlive() == TRUE)
       {
         // prepare the timer to get fired again
         PrepareTimer(tid, C->KeepAliveInterval, 0);

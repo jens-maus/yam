@@ -97,7 +97,7 @@ OVERLOAD(OM_NEW)
     DoMethod(data->mainListObjects[i], MUIM_MainMailList_MakeFormat);
     DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_SelectChange,TRUE,           MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeSelectedHook);
     DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_Active,      MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_SetMessageInfoHook);
-    DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj,                     2, METHOD(DoubleClicked), MUIV_TriggerValue);
+    DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj,                     2, MUIM_MainMailListGroup_DoubleClicked, MUIV_TriggerValue);
   }
 
   return (IPTR)obj;
@@ -113,10 +113,10 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(ActiveList):       *store = data->activeList; return TRUE;
-    case ATTR(ActiveListObject): *store = (ULONG)data->mainListObjects[data->activeList]; return TRUE;
-    case ATTR(MainList):         *store = (ULONG)data->mainListObjects[LT_MAIN]; return TRUE;
-    case ATTR(LastActiveMail):   *store = (ULONG)data->lastActiveMail; return TRUE;
+    ATTR(ActiveList):       *store = data->activeList; return TRUE;
+    ATTR(ActiveListObject): *store = (ULONG)data->mainListObjects[data->activeList]; return TRUE;
+    ATTR(MainList):         *store = (ULONG)data->mainListObjects[LT_MAIN]; return TRUE;
+    ATTR(LastActiveMail):   *store = (ULONG)data->lastActiveMail; return TRUE;
 
     // we also return foreign attributes
     case MUIA_NList_Active:

@@ -35,6 +35,13 @@
 
 #include "Debug.h"
 
+/* CLASSDATA
+struct Data
+{
+  ULONG dummy;
+};
+*/
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -65,7 +72,7 @@ OVERLOAD(OM_NEW)
       }
       break;
 
-      case ATTR(Body):
+      ATTR(Body):
       {
         bodyText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;

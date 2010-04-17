@@ -2397,7 +2397,7 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
   ENTER();
 
   // if this argument is not set we get the actual time
-  if(date == NULL)
+  if(!date)
     date = DateStamp(&dsnow);
 
   if(mode == DSS_TIME)
@@ -2497,8 +2497,6 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
     }
     break;
   }
-
-  D(DBF_UTIL, "converted DateStamp %ld,%ld,%ld to string '%s'", date->ds_Days, date->ds_Minute, date->ds_Tick, dst);
 
   RETURN(TRUE);
   return TRUE;
@@ -3245,26 +3243,21 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
   UnlockMailList(folder->messages);
 
   // now check if the mail to be removed has just been downloaded, but not yet filtered
-  if(G->activeTransfer != NULL)
+  if(G->TR != NULL && G->TR->downloadedMails != NULL && G->TR->Checking == TRUE && folder == FO_GetFolderByType(FT_INCOMING, NULL))
   {
-    struct MailList *downloadedMails = (struct MailList *)xget(G->transferWindowObject, MUIA_TransferWindow_DownloadedMails);
+    LockMailList(G->TR->downloadedMails);
 
-    if(downloadedMails != NULL && folder == FO_GetFolderByType(FT_INCOMING, NULL))
+    if((mnode = FindMailInList(G->TR->downloadedMails, mail)) != NULL)
     {
-      LockMailList(downloadedMails);
-
-      if((mnode = FindMailInList(downloadedMails, mail)) != NULL)
-      {
-        // remove the mail from the list of just downloaded mails,
-        // so it will not be filtered anymore when the download
-        // process finishes
-        D(DBF_UTIL, "removing mail with subject '%s' from download list", mail->Subject);
-        RemoveMailNode(downloadedMails, mnode);
-        DeleteMailNode(mnode);
-      }
-
-      UnlockMailList(downloadedMails);
+      // remove the mail from the list of just downloaded mails,
+      // so it will not be filtered anymore when the download
+      // process finishes
+      D(DBF_UTIL, "removing mail with subject '%s' from download list", mail->Subject);
+      RemoveMailNode(G->TR->downloadedMails, mnode);
+      DeleteMailNode(mnode);
     }
+
+    UnlockMailList(G->TR->downloadedMails);
   }
 
   // then we have to mark the folder index as expired so
@@ -3915,9 +3908,7 @@ BOOL SafeOpenWindow(Object *obj)
   if(obj != NULL)
   {
     // make sure we open the window object
-    // avoid MUIA_Window_Open's side effect of activating the window if it was already open
-    if(xget(obj, MUIA_Window_Open) == FALSE)
-      set(obj, MUIA_Window_Open, TRUE);
+    set(obj, MUIA_Window_Open, TRUE);
 
     // now we check whether the window was successfully
     // open or the application has been in iconify state

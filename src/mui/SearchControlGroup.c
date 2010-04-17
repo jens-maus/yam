@@ -157,8 +157,8 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(RemoteFilterMode) : data->remoteFilterMode = tag->ti_Data; break;
-      case ATTR(ShowCombineCycle) : data->showCombineCycle = tag->ti_Data; break;
+      ATTR(RemoteFilterMode) : data->remoteFilterMode = tag->ti_Data; break;
+      ATTR(ShowCombineCycle) : data->showCombineCycle = tag->ti_Data; break;
     }
   }
 
@@ -272,44 +272,44 @@ OVERLOAD(OM_NEW)
     SetHelp(data->RA_ADRMODE, MSG_HELP_FI_RA_ADRMODE);
     SetHelp(data->CY_STATUS,  MSG_HELP_FI_CY_STATUS);
 
-    DoMethod(data->CY_MODE[0], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(Update));
-    DoMethod(data->CY_MODE[1], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(Update));
-    DoMethod(data->CY_COMBINE, MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-    DoMethod(data->RA_ADRMODE, MUIM_Notify, MUIA_Radio_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-    DoMethod(data->ST_FIELD,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-    DoMethod(data->CY_STATUS,  MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+    DoMethod(data->CY_MODE[0], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, MUIM_SearchControlGroup_Update);
+    DoMethod(data->CY_MODE[1], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, MUIM_SearchControlGroup_Update);
+    DoMethod(data->CY_COMBINE, MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+    DoMethod(data->RA_ADRMODE, MUIM_Notify, MUIA_Radio_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+    DoMethod(data->ST_FIELD,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+    DoMethod(data->CY_STATUS,  MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
 
     for(i = 0; i < 5; i++)
     {
       if(data->CY_COMP[i] != NULL)
       {
-        DoMethod(data->CY_COMP[i], MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 1, METHOD(Update));
-        DoMethod(data->CY_COMP[i], MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+        DoMethod(data->CY_COMP[i], MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 1, MUIM_SearchControlGroup_Update);
+        DoMethod(data->CY_COMP[i], MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
         SetHelp(data->CY_COMP[i], MSG_HELP_FI_CY_COMP);
         set(data->CY_COMP[i], MUIA_HorizWeight, 0);
       }
 
       if(data->ST_MATCH[i] != NULL)
       {
-        DoMethod(data->ST_MATCH[i], MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+        DoMethod(data->ST_MATCH[i], MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
         SetHelp(data->ST_MATCH[i], MSG_HELP_FI_ST_MATCH);
       }
 
       if(data->CH_CASESENS[i] != NULL)
       {
-        DoMethod(data->CH_CASESENS[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+        DoMethod(data->CH_CASESENS[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
         SetHelp(data->CH_CASESENS[i], MSG_HELP_FI_CH_CASESENS);
       }
 
       if(data->CH_SUBSTR[i] != NULL)
       {
-        DoMethod(data->CH_SUBSTR[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+        DoMethod(data->CH_SUBSTR[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
         SetHelp(data->CH_SUBSTR[i], MSG_HELP_FI_CH_SUBSTR);
         nnset(data->CH_SUBSTR[i], MUIA_Selected, TRUE);
       }
 
       if(data->BT_EDIT[i] != NULL)
-        DoMethod(data->BT_EDIT[i], MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(EditFile), i);
+        DoMethod(data->BT_EDIT[i], MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_SearchControlGroup_EditFile, i);
     }
 
     // make sure all elements are enabled.
@@ -332,7 +332,7 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(RemoteFilterMode):
+      ATTR(RemoteFilterMode):
       {
         // we check if we switch the FilterMode
         if(tag->ti_Data != (ULONG)data->remoteFilterMode)
@@ -400,8 +400,8 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(Modified):     *store = 1; return TRUE;
-    case ATTR(ActiveObject): *store = (ULONG)data->activeObject; return TRUE;
+    ATTR(Modified):     *store = 1; return TRUE;
+    ATTR(ActiveObject): *store = (ULONG)data->activeObject; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -580,7 +580,7 @@ DECLARE(Update)
     set(obj, MUIA_Disabled, FALSE);
   }
 
-  set(obj, ATTR(Modified), TRUE);
+  set(obj, MUIA_SearchControlGroup_Modified, TRUE);
 
   RETURN(0);
   return 0;

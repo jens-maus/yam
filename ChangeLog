@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-17 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: moved all the new (but not yet working) transfer/preselection window
+    related stuff to a separate SVN branch "newtransfer-2.7" and removed the changes
+    from the main trunk. This should make the nightly builds actually usable again
+    for people wanting to test other things or wanting to report on other bugs.
+    So until all the new stuff isn't finished and at least tested a bit we are not
+    going to move that to the main trunk again so that the nightly builds are at
+    least a bit usable again. However, please note that nightly builds are still
+    considered "unstable". So only use them if you can deal with that and the
+    potential bugs they might still have.
+
 2010-04-15 Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/dutch.ct, Makefile: added dutch catalog translation kindly provided by
@@ -61,15 +73,6 @@ $URL$
 
   * locale/czech.ct: updated Czech catalog translation.
 
-2010-03-24 Jens Langner <Jens.Langner@light-speed.de>
-
-  * Transfer.c, AppIcon.c, ReceiveMails.c: the AppIcon is now correctly refreshed
-    again. In addition we are not using the "mailChecking" variable anymore for
-    flagging the AppIcon for the mail transfer operation. We use the global
-    "activeTransfer" variable for that job now. Furthermore, the UIDL hash and
-    the filter search as well as the POSTGET macro are now executed and/or freed
-    again.
-
 2010-03-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/NewMinList.c: added NewMinList() function for those systems which
@@ -78,26 +81,6 @@ $URL$
   * misc: added interface version parameter to the INITLIB() and GETINTERFACE()
     macros to be able to obtain other interface versions than just the fixed
     version 1.
-
-2010-03-23 Jens Langner <Jens.Langner@light-speed.de>
-
-  * Transfer.c: added some missing includes to get YAM compiled for AROS again.
-    However, a NewMinList() wrapper is still missing because AROS seems to miss
-    this function.
-
-2010-03-23 Thore Böckelmann <tboeckel@gmx.de>
-
-  * mui/misc: replaced all local attribute and method names by usage of the
-    ATTR() and METHOD() macros.
-  * mui/ObjectList.c, mui/ObjectListitem.c: added abstract base classes for
-    objects to be displayed in a scrollable list. Only objects subclassed
-    from ObjectListitem must be added to an ObjectList object, because the
-    list and item object will communicate with each other to perform certain
-    actions like self-removal from the list.
-
-2010-03-22 Thore Böckelmann <tboeckel@gmx.de>
-
-  * mui/misc: removed all dummy class data specifications.
 
 2010-03-18 Thore Böckelmann <tboeckel@gmx.de>
 
@@ -114,11 +97,6 @@ $URL$
     case the call trace is turned on because otherwise an incorrect indent
     management causes YAM to slow down dramatically because incoming events
     also output the warning all the time.
-  * Transfer.c: fixed crash bug where iterating through the list and removing
-    nodes at the same time didn't work with IterateList() and thus caused crashes
-    when executing ProcessTransferQueue().
-  * Transfer.c: replaced the manual MUI_DisposeObject of the TransferWindow by
-    usage of CleanupTransferWindow() instead.
 
 2010-03-16 Thore Böckelmann <tboeckel@gmx.de>
 
@@ -126,15 +104,9 @@ $URL$
     to be below a certain limit. Furthermore all calls of ENTER(), LEAVE() and
     RETURN() will now check if the indentation level becomes negative because of
     a missing ENTER() statement and output a warning in that case.
-  * YAM_CO.c: iterating through the wrong list created duplicate POP3 accounts.
-  * Transfer.c, ReceiveMails.c, mui/TransferWindow.c: partly reenabled POP3
-    mail downloads. At least the transfer window is opened and the mails are
-    downloaded, but the statistics are not yet updated and the received mails
-    are not yet filtered.
 
 2010-03-15 Thore Böckelmann <tboeckel@gmx.de>
 
-  * misc: some changes to make the code compilable for non-OS4 systems.
   * Debug.c: added FLUSH() function to flush pending file output.
   * misc: replaced lots of NewList() calls by NewMinList() to get rid of the
     type casts. Additionally all lists are iternated using the IterateList()
@@ -142,44 +114,11 @@ $URL$
 
 2010-03-15 Jens Langner <Jens.Langner@light-speed.de>
 
-  WARNING: This is one of several fundamental changes to the internals of YAM.
-  The changes are *not* complete yet and the current state of the changes break
-  existing functionality. For example, with these changes the preselection window
-  will stop working until we have everything finalized. In addition, the SMTP mail
-  sending is also currently not working as well as many other functionality. So if
-  you need a fully working/stable YAM version stay away from these versions and
-  either downgrade to the official 2.6 version or keep your existing 2.7-dev as
-  long as our work isn't finalized. You have been warned.
-
-  * rexx/mailcheck.c, TransferWindow.c, Rexx.h: moved the "struct TransStat"
-    structure to TransferWindow.c as it is private to that one and also moved
-    the "struct DownloadResult" to Rexx.h and reenabled the MAILCHECK arexx
-    command.
-  * YAM_EA.c, YAM_RE.c, YAM_UT.c, YAM.c, YAM.h, Timer.c, AppIcon.c, UpdateCheck.c,
-    mui/TransferMailList.c, mui/WriteWindow.c, Makefile, YAM_MA.c: adapted the
-    sources to the new splitted Transfer.c/TransferWindow functionality.
-  * ReceiveMails.c,h, SendMails.c,h: splitted the new Transfer.c,h files so that
-    POP3/IMAP stuff will go into ReceiveMails.c,h in future and stuff for sending
-    mails via SMTP will be put into SendMails.c,h.
-  * YAM_TR.c, YAM_transfer.h, Transfer.c, Transfer.h, mui/TransferWindow.c: renamed
-    files to Transfer.c and Transfer.h and moved all GUI related things into an own
-    internal MUI class "TransferWindow" which will be used in future instead.
-  * YAM_WR.c, YAM_write.h, mui/MainWindowToolbar.c, mui/WriteWindow.c,
-    rexx/mailcheck.c, YAM_MA.c, Timer.c: adapted the sources to use the new unlimited
-    mail server functionality.
-  * YAM_COs.c, YAM_COg.c, YAM_CO.c, YAM_config.h: adapted the whole configuration
-    management to allow for writing and reading an unlimited amount of mail servers
-    from the .config file.
-  * MailServers.c,h, YAM_stringsizes.h: Changed the mail server management to use
-    exec lists which are structured via "MailServerNode" and put into a List in our
-    main configuration structure. This finally provides internal facilities to manage
-    an unlimited amount of POP3 or SMTP servers. However, the graphical configuration
-    for these new possibilities is still missing. This partly addresses #41.
   * extrasrc.h: fixed xget() prototype for AROS compile.
 
 2010-03-12 Samir Hawamdeh <s.hawamdeh@tele.it>
 
-  * locale/italian.ct: first commit for 2.7-dev release.
+  * locale/italian.ct: first committed for 2.7 Dev release.
 
 2010-03-10 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -53,6 +53,7 @@
 #include "YAM_configFile.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
+#include "YAM_transfer.h"
 #include "YAM_utilities.h"
 
 #include "mui/Classes.h"
@@ -138,7 +139,7 @@ BOOL CheckForUpdates(void)
 
   // first we check if we can start a connection or if the
   // tcp/ip stuff is busy right now so that we do not interrupt something
-  if(SocketBase == NULL && G->activeTransfer == NULL)
+  if(SocketBase == NULL || G->TR_Socket == TCP_NO_SOCKET)
   {
     // disable the transfer buttons in the toolbar
     MA_ChangeTransfer(FALSE);

@@ -92,8 +92,8 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(MailPart): mailPart = (struct Part *)tag->ti_Data; break;
-      case ATTR(Group):    attGroupObject = (Object *)tag->ti_Data; break;
+      ATTR(MailPart): mailPart = (struct Part *)tag->ti_Data; break;
+      ATTR(Group):    attGroupObject = (Object *)tag->ti_Data; break;
     }
   }
 
@@ -122,9 +122,9 @@ OVERLOAD(OM_NEW)
 
     // connect some notifies which we might be interested in
     DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DoubleClick, TRUE,
-             obj, 1, METHOD(Display));
+             obj, 1, MUIM_AttachmentObject_Display);
     DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DropPath, MUIV_EveryTime,
-             obj, 2, METHOD(ImageDropped), MUIV_TriggerValue);
+             obj, 2, MUIM_AttachmentObject_ImageDropped, MUIV_TriggerValue);
 
   }
 
@@ -154,9 +154,9 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(ImageObject): *store = (ULONG)data->imageObject; return TRUE;
-    case ATTR(MailPart):    *store = (ULONG)data->mailPart;    return TRUE;
-    case MUIA_Selected:     *store = xget(data->imageObject, MUIA_Selected); return TRUE;
+    ATTR(ImageObject) : *store = (ULONG)data->imageObject; return TRUE;
+    ATTR(MailPart)    : *store = (ULONG)data->mailPart;    return TRUE;
+    case MUIA_Selected: *store = xget(data->imageObject, MUIA_Selected); return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -197,7 +197,7 @@ OVERLOAD(MUIM_Setup)
 
   if(data->mailPart != NULL && (result = DoSuperMethodA(cl, obj, msg)) != 0)
   {
-    DoMethod(obj, METHOD(UpdateDescription));
+    DoMethod(obj, MUIM_AttachmentObject_UpdateDescription);
     xset(data->imageObject, MUIA_AttachmentImage_MaxHeight, _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0,
                             MUIA_AttachmentImage_MaxWidth,  _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0);
   }
@@ -254,19 +254,19 @@ OVERLOAD(MUIM_ContextMenuChoice)
   switch(xget(m->item, MUIA_UserData))
   {
     case AMEN_DISPLAY:
-      DoMethod(obj, METHOD(Display));
+      DoMethod(obj, MUIM_AttachmentObject_Display);
     break;
 
     case AMEN_SAVEAS:
-      DoMethod(obj, METHOD(Save));
+      DoMethod(obj, MUIM_AttachmentObject_Save);
     break;
 
     case AMEN_DELETE:
-      DoMethod(obj, METHOD(Delete));
+      DoMethod(obj, MUIM_AttachmentObject_Delete);
     break;
 
     case AMEN_PRINT:
-      DoMethod(obj, METHOD(Print));
+      DoMethod(obj, MUIM_AttachmentObject_Print);
     break;
 
     case AMEN_SAVEALL:
@@ -325,7 +325,7 @@ DECLARE(Display)
         // will issue a refresh of all images as well in
         // case they have changed.
         MUI_Redraw(data->imageObject, MADF_DRAWOBJECT);
-        DoMethod(obj, METHOD(UpdateDescription));
+        DoMethod(obj, MUIM_AttachmentObject_UpdateDescription);
       }
     }
 
@@ -378,7 +378,7 @@ DECLARE(Save)
       {
         // now we know the exact size of the file and can redraw ourself
         MUI_Redraw(data->imageObject, MADF_DRAWOBJECT);
-        DoMethod(obj, METHOD(UpdateDescription));
+        DoMethod(obj, MUIM_AttachmentObject_UpdateDescription);
       }
     }
 

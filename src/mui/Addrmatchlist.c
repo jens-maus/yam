@@ -158,7 +158,7 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        case ATTR(String) : data->String = (Object *)tag->ti_Data ; break;
+        ATTR(String) : data->String = (Object *)tag->ti_Data ; break;
       }
     }
 
@@ -187,7 +187,7 @@ OVERLOAD(OM_NEW)
       // set the doubleclick notify to signal the string to resolve a entry
       DoMethod(listview, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, data->String, 2, MUIM_Recipientstring_Resolve, MUIF_NONE);
       DoMethod(listview, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-      DoMethod(list, MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, METHOD(ActiveChange), MUIV_TriggerValue);
+      DoMethod(list, MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, MUIM_Addrmatchlist_ActiveChange, MUIV_TriggerValue);
     }
   }
 
@@ -367,7 +367,7 @@ DECLARE(Open) // char *str
   // should we open the popup list (if not already shown)
   if(result != NULL && xget(obj, MUIA_Window_Open) == FALSE)
   {
-    DoMethod(obj, METHOD(ChangeWindow)); // refresh the position
+    DoMethod(obj, MUIM_Addrmatchlist_ChangeWindow); // refresh the position
     set(obj, MUIA_Window_Open, TRUE);
   }
   else if(result == NULL)

@@ -691,7 +691,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
       else
         SET_FLAG(C->MessageCols, flag);
 
-      DoMethod(obj, METHOD(MakeFormat));
+      DoMethod(obj, MUIM_MainMailList_MakeFormat);
     }
     break;
 

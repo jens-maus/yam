@@ -92,14 +92,14 @@ OVERLOAD(OM_NEW)
       }
       break;
 
-      case ATTR(Body):
+      ATTR(Body):
       {
         bodyText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      case ATTR(Entries):
+      ATTR(Entries):
       {
         entries = (char **)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
@@ -174,9 +174,9 @@ OVERLOAD(OM_NEW)
       DoMethod(checkboxGroup, MUIM_Group_ExitChange);
     }
 
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, METHOD(FinishInput), 0);
-    DoMethod(useButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 1);
-    DoMethod(cancelButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_CheckboxRequestWindow_FinishInput, 0);
+    DoMethod(useButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_CheckboxRequestWindow_FinishInput, 1);
+    DoMethod(cancelButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_CheckboxRequestWindow_FinishInput, 0);
 
     set(obj, MUIA_Window_DefaultObject, useButton);
   }
@@ -195,13 +195,13 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(Result):
+    ATTR(Result):
     {
       *store = data->result;
       return TRUE;
     }
 
-    case ATTR(Flags):
+    ATTR(Flags):
     {
       *store = data->flags;
       return TRUE;
@@ -230,7 +230,7 @@ DECLARE(FinishInput) // ULONG result
   data->result = msg->result;
 
   // trigger possible notifications
-  set(obj, ATTR(Result), msg->result);
+  set(obj, MUIA_CheckboxRequestWindow_Result, msg->result);
 
   RETURN(0);
   return 0;

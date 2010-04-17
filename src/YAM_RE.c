@@ -3531,8 +3531,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
         p2->ContentType = "message/disposition-notification";
         p2->Filename = tf2->Filename;
-        #warning "FIXME: make sure to insert the correct SMTP domain here"
-        //snprintf(buf, sizeof(buf), "%s; %s", C->SMTP_Domain, yamversion);
+        snprintf(buf, sizeof(buf), "%s; %s", C->SMTP_Domain, yamversion);
         EmitHeader(tf2->FP, "Reporting-UA", buf);
         if(email->OriginalRcpt.Address[0] != '\0')
         {
@@ -3646,10 +3645,9 @@ static void RE_SendMDN(const enum MDNMode mode,
               }
 
               // in case the user wants to send the message
-              // immediately we go and send it out in case everything is
-              // prepared and there is no other active Transfer
-              if(sendnow == TRUE && mlist->count != 0 && G->activeTransfer == NULL)
-                SendMails(mlist, autoSend ? SEND_ACTIVE_AUTO : SEND_ACTIVE_USER);
+              // immediately we go and send it out
+              if(sendnow == TRUE && mlist->count != 0 && G->TR == NULL)
+                TR_ProcessSEND(mlist, autoSend ? SEND_ACTIVE_AUTO : SEND_ACTIVE_USER);
 
               // refresh the folder statistics after the transfer
               DisplayStatistics(outfolder, TRUE);

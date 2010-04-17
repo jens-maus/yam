@@ -29,9 +29,7 @@
 ***************************************************************************/
 
 #include "YAM_stringsizes.h"
-
-#include "ReceiveMails.h"   // enum ReceiveMode
-#include "SendMails.h"      // enum SendMode
+#include "YAM_transfer.h"
 
 // forward declarations
 struct Mail;
@@ -233,7 +231,7 @@ enum
   MMEN_EXPMSG,MMEN_NEXTTH,MMEN_PREVTH,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD_ATTACH,MMEN_FORWARD_INLINE,
   MMEN_BOUNCE,MMEN_SAVEADDR,MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOHOLD,MMEN_TOQUEUED,MMEN_TOMARKED,
   MMEN_TOUNMARKED,MMEN_ALLTOREAD,MMEN_TOSPAM,MMEN_TOHAM,MMEN_CHSUBJ,MMEN_SEND,MMEN_ABOOK,MMEN_CONFIG,
-  MMEN_USER,MMEN_MUI,MMEN_SCRIPT,MMEN_MACRO,MMEN_POPHOST=MMEN_MACRO+10
+  MMEN_USER,MMEN_MUI,MMEN_SCRIPT,MMEN_POPHOST,MMEN_MACRO=MMEN_POPHOST+MAXP3
 };
 
 // Actions for the 'Edit' submenu entries of windows
@@ -368,8 +366,8 @@ BOOL MA_ImportMessages(const char *fname, BOOL quiet);
 struct MA_ClassData *MA_New(void);
 void  MA_SortWindow(void);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit, BOOL closeWindows);
-void  MA_ExchangeMail(enum ReceiveMode mode);
-void  MA_PopNow(enum ReceiveMode mode, int pop);
+void  MA_ExchangeMail(enum GUILevel mode);
+void  MA_PopNow(enum GUILevel mode, int pop);
 void  MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning);
 BOOL  MA_Send(enum SendMode sendpos);
 void  MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags);

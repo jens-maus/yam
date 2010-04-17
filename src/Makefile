@@ -343,8 +343,6 @@ MUI = \
 	MainMailListGroup.o \
 	MainWindow.o \
 	MainWindowToolbar.o \
-	ObjectList.o \
-	ObjectListitem.o \
 	PassphraseRequestWindow.o \
 	QuickSearchBar.o \
 	ReadMailGroup.o \
@@ -359,7 +357,6 @@ MUI = \
 	StringRequestWindow.o \
 	ThemeListGroup.o \
 	TransferMailList.o \
-	TransferWindow.o \
 	UpdateNotifyWindow.o \
 	WriteAttachmentList.o \
 	WriteWindow.o \
@@ -474,6 +471,7 @@ OBJS = \
 	YAM_MA.o \
 	YAM_MAf.o \
 	YAM_RE.o \
+	YAM_TR.o \
 	YAM_US.o \
 	YAM_UT.o \
 	YAM_WR.o \
@@ -487,18 +485,14 @@ OBJS = \
 	ImageCache.o \
 	Locale.o \
 	MailList.o \
-	MailServers.o \
 	MimeTypes.o \
 	MUIObjects.o \
 	ParseEmail.o \
-	ReceiveMails.o \
 	Requesters.o \
 	Rexx.o \
-	SendMails.o \
 	Themes.o \
 	Threads.o \
 	Timer.o \
-	Transfer.o \
 	UpdateCheck.o \
 	extrasrc.o \
 	Debug.o

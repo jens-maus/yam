@@ -911,15 +911,12 @@ static void Terminate(void)
   }
 
   D(DBF_STARTUP, "freeing tcp/ip stuff...");
-  #warning "FIXME: check TR_Cleanup() usage"
-  /*
   if(G->TR != NULL)
   {
     TR_Cleanup();
     TR_CloseTCPIP();
     DisposeModule(&G->TR);
   }
-  */
 
   if(G->FO != NULL)
     DisposeModule(&G->FO);
@@ -2128,9 +2125,9 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       // so check if it is properly running.
       if(nocheck == FALSE && TR_IsOnline() == TRUE)
       {
-        enum ReceiveMode mode;
+        enum GUILevel mode;
 
-        mode = (C->PreSelection == PSM_NEVER || hide == TRUE) ? RECV_AUTO_START : RECV_USER;
+        mode = (C->PreSelection == PSM_NEVER || hide == TRUE) ? POP_START : POP_USER;
 
         if(C->GetOnStartup == TRUE && C->SendOnStartup == TRUE)
         {
@@ -2152,7 +2149,6 @@ static void DoStartup(BOOL nocheck, BOOL hide)
         else if(C->GetOnStartup == TRUE)
         {
           MA_PopNow(mode, -1);
-
           // let MUI execute the delayed disposure of the POP3 transfer window
           DoMethod(G->App, MUIM_Application_InputBuffered);
         }
@@ -2531,14 +2527,12 @@ int main(int argc, char **argv)
       break;
 
     // prepare the exec lists in G and C
-    NewMinList(&C->mailServerList);
-    NewMinList(&C->mimeTypeList);
-    NewMinList(&C->filterList);
-    NewMinList(&G->readMailDataList);
-    NewMinList(&G->writeMailDataList);
-    NewMinList(&G->xpkPackerList);
-    NewMinList(&G->zombieFileList);
-    NewMinList(&G->transferQueue);
+    NewList((struct List *)&(C->mimeTypeList));
+    NewList((struct List *)&(C->filterList));
+    NewList((struct List *)&(G->readMailDataList));
+    NewList((struct List *)&(G->writeMailDataList));
+    NewList((struct List *)&(G->xpkPackerList));
+    NewList((struct List *)&(G->zombieFileList));
 
     // get the PROGDIR: and program name and put it into own variables
     NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
@@ -2561,6 +2555,8 @@ int main(int argc, char **argv)
       strlcpy(G->MA_MailDir, G->ProgDir, sizeof(G->MA_MailDir));
 
     G->TR_Debug = args.debug ? TRUE : FALSE;
+    G->TR_Socket = TCP_NO_SOCKET;
+    G->TR_Allow = TRUE;
     G->CO_DST = GetDST(FALSE);
     G->NoImageWarning = args.noImgWarning ? TRUE : FALSE;
     G->NoCatalogTranslation = args.noCatalog ? TRUE : FALSE;

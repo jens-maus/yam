@@ -162,7 +162,7 @@ void UpdateAppIcon(void)
   }
 
   // we set the mode accordingly to the status of the folder (new/check/old)
-  if(G->transferWindowObject != NULL)
+  if(G->TR != NULL && G->TR->Checking == TRUE)
     mode = ii_Check;
   else if(tot_msg == 0)
     mode = ii_Empty;

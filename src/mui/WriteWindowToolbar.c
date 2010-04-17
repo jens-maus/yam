@@ -34,6 +34,13 @@
 
 #include "Debug.h"
 
+/* CLASSDATA
+struct Data
+{
+  ULONG dummy;
+};
+*/
+
 /* EXPORT
 enum { TB_WRITE_EDITOR=0,
        TB_WRITE_INSERT,

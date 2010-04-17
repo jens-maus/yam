@@ -37,6 +37,7 @@
 #include <netinet/in.h>
 
 #include "YAM_stringsizes.h"
+#include "YAM_transfer.h"    // struct DownloadResult
 #include "YAM_userlist.h"    // struct Users
 #include "YAM_utilities.h"   // ASL_MAX
 
@@ -45,7 +46,6 @@
 #include "Themes.h"          // struct Theme
 #include "Timer.h"           // struct Timers
 #include "Threads.h"         // struct Thread
-#include "Transfer.h"        // struct DownloadResult
 
 // forward declarations
 struct DiskObject;
@@ -88,6 +88,7 @@ struct Global
   // pointers first
   APTR                     SharedMemPool; // MEMF_SHARED memory pool
   Object *                 App;
+  Object *                 WI_SEARCH;
   Object *                 NewMailSound_Obj;
   Object *                 SplashWinObject;
   Object *                 AboutWinObject;
@@ -95,7 +96,6 @@ struct Global
   Object *                 ReadToolbarCacheObject;
   Object *                 WriteToolbarCacheObject;
   Object *                 AbookToolbarCacheObject;
-  Object *                 transferWindowObject;
   char *                   ER_Message[MAXERR];
   struct DiskObject *      HideIcon;
   struct AppIcon *         AppIcon;
@@ -109,6 +109,7 @@ struct Global
   struct CO_ClassData *    CO;
   struct AB_ClassData *    AB;
   struct EA_ClassData *    EA[MAXEA];
+  struct TR_ClassData *    TR;
   struct ER_ClassData *    ER;
   struct FI_ClassData *    FI;
   struct FO_ClassData *    FO;
@@ -127,6 +128,8 @@ struct Global
   #endif
 
   LONG                     Weights[12];
+  LONG                     TR_Socket;
+  LONG                     TR_SMTPflags;
 
   int                      PGPVersion;
   int                      CO_DST;
@@ -147,7 +150,9 @@ struct Global
   BOOL                     PGPPassVolatile;
   BOOL                     CO_Valid;
   BOOL                     TR_Debug;
+  BOOL                     TR_Allow;
   BOOL                     TR_UseableTLS;
+  BOOL                     TR_UseTLS;
   BOOL                     InStartupPhase;
   BOOL                     NoImageWarning;
   BOOL                     NoCatalogTranslation;
@@ -156,7 +161,8 @@ struct Global
   struct DateStamp         StartDate;
   struct Users             Users;
   struct RuleResult        RuleResults;
-  struct DownloadResult    LastDL;                    // last mail download results (see mui/mailcheck.c)
+  struct DownloadResult    LastDL;
+  struct sockaddr_in       TR_INetSocketAddr;
   struct MinList           readMailDataList;
   struct MinList           writeMailDataList;
   struct MinList           xpkPackerList;
@@ -164,18 +170,6 @@ struct Global
   struct Theme             theme;
   struct TokenAnalyzer     spamFilter;
   struct Timers            timerData;
-
-  // for managing TCP/IP transfers we are
-  // having a queue in which TransferNodes are being
-  // placed and processed upon request.
-  struct MinList           transferQueue;
-  struct TransferNode *    activeTransfer;            // the currently active Transfer
-  struct HashTable *       uidlHashTable;             // for maintaining all UIDLs
-  BOOL                     uidlHashIsDirty;           // did the Hash change sind last reading it?
-  enum ImportFormat        importFormat;              // for using a "TransferNode" for importing mails
-  char                     importFile[SIZE_PATHFILE]; // file to import
-  struct Folder *          importFolder;              // in which folder to import
-
 
   // the data for our thread implementation
   struct Thread            mainThread;     // the main thread

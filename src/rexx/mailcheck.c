@@ -70,23 +70,12 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
 
     case RXIF_ACTION:
     {
+      int pop;
       int popnr = -2;
 
       if(args->pop)
       {
-        int pop;
-        int maxpop=0;
-        struct Node *curNode;
-
-        IterateList(&C->mailServerList, curNode)
-        {
-          struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
-          if(isPOP3Server(msn))
-            maxpop++;
-        }
-
-        if((pop = *args->pop) >= 0 && pop < maxpop)
+        if((pop = *args->pop) >= 0 && pop < MAXP3 && C->P3[pop])
           popnr = pop;
       }
       else
@@ -96,7 +85,7 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
       {
         static long remaining;
 
-        MA_PopNow(args->manual ? RECV_USER : RECV_AUTO_REXX, popnr);
+        MA_PopNow(args->manual ? POP_USER : POP_REXX, popnr);
 
         remaining = G->LastDL.OnServer - G->LastDL.Deleted;
 

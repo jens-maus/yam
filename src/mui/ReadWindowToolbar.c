@@ -36,6 +36,13 @@
 
 #include "Debug.h"
 
+/* CLASSDATA
+struct Data
+{
+  ULONG dummy;
+};
+*/
+
 /* EXPORT
 enum { TB_READ_PREV=0,
        TB_READ_NEXT,
@@ -176,7 +183,7 @@ OVERLOAD(OM_NEW)
     // everything worked out fine.
 
     // update the SPAM controls
-    DoMethod(obj, METHOD(UpdateSpamControls), NULL);
+    DoMethod(obj, MUIM_ReadWindowToolbar_UpdateSpamControls, NULL);
   }
   else
     E(DBF_STARTUP, "couldn't create ReadWindowToolbar!");

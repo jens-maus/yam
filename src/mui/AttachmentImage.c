@@ -596,10 +596,10 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        case ATTR(MailPart)  : data->mailPart = (struct Part *)tag->ti_Data; break;
-        case ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
-        case ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
-        case ATTR(Group)     : data->attachmentGroup = (Object *)tag->ti_Data; break;
+        ATTR(MailPart)  : data->mailPart = (struct Part *)tag->ti_Data; break;
+        ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
+        ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
+        ATTR(Group)     : data->attachmentGroup = (Object *)tag->ti_Data; break;
       }
     }
 
@@ -647,10 +647,10 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(DoubleClick) : *store = 1; return TRUE;
-    case ATTR(DropPath)    : *store = (ULONG)data->dropPath;   return TRUE;
-    case ATTR(MailPart)    : *store = (ULONG)data->mailPart;   return TRUE;
-    case ATTR(DiskObject)  : *store = (ULONG)data->diskObject; return TRUE;
+    ATTR(DoubleClick) : *store = 1; return TRUE;
+    ATTR(DropPath)    : *store = (ULONG)data->dropPath;   return TRUE;
+    ATTR(MailPart)    : *store = (ULONG)data->mailPart;   return TRUE;
+    ATTR(DiskObject)  : *store = (ULONG)data->diskObject; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -667,8 +667,8 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
-      case ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
+      ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
+      ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
     }
   }
 
@@ -896,7 +896,7 @@ OVERLOAD(MUIM_HandleEvent)
       // check if this has been a double click at the image
       if(DoubleClick(data->selectSecs, data->selectMicros, imsg->Seconds, imsg->Micros))
       {
-        xset(obj, ATTR(DoubleClick), TRUE,
+        xset(obj, MUIA_AttachmentImage_DoubleClick, TRUE,
                   MUIA_Selected, TRUE);
       }
       else
@@ -959,7 +959,7 @@ OVERLOAD(MUIM_HandleEvent)
       {
         if(obj == (Object *)xget(_win(obj), MUIA_Window_ActiveObject))
         {
-          set(obj, ATTR(DoubleClick), TRUE);
+          set(obj, MUIA_AttachmentImage_DoubleClick, TRUE);
 
           RETURN(MUI_EventHandlerRC_Eat);
           return MUI_EventHandlerRC_Eat;
@@ -1056,7 +1056,7 @@ OVERLOAD(MUIM_DeleteDragImage)
               if((data->dropPath = strdup(buf)) != NULL)
               {
                 D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
-                DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, ATTR(DropPath), data->dropPath);
+                DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
               }
             }
             else
@@ -1138,7 +1138,7 @@ OVERLOAD(MUIM_DeleteDragImage)
               if(data->dropPath != NULL)
               {
                 D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
-                DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, ATTR(DropPath), data->dropPath);
+                DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
               }
               else
               {

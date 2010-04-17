@@ -236,7 +236,7 @@ OVERLOAD(OM_SET)
       {
         // if the object should be hidden we clean it up also
         if(tag->ti_Data == FALSE)
-          DoMethod(obj, METHOD(Clear));
+          DoMethod(obj, MUIM_AttachmentGroup_Clear);
       }
       break;
     }
@@ -333,19 +333,19 @@ OVERLOAD(MUIM_ContextMenuChoice)
   switch(xget(m->item, MUIA_UserData))
   {
     case AMEN_SAVEALL:
-      DoMethod(obj, METHOD(SaveAll));
+      DoMethod(obj, MUIM_AttachmentGroup_SaveAll);
     break;
 
     case AMEN_SAVESEL:
-      DoMethod(obj, METHOD(SaveSelected));
+      DoMethod(obj, MUIM_AttachmentGroup_SaveSelected);
     break;
 
     case AMEN_DELETEALL:
-      DoMethod(obj, METHOD(DeleteAll));
+      DoMethod(obj, MUIM_AttachmentGroup_DeleteAll);
     break;
 
     case AMEN_DELETESEL:
-      DoMethod(obj, METHOD(DeleteSelected));
+      DoMethod(obj, MUIM_AttachmentGroup_DeleteSelected);
     break;
 
     default:
@@ -371,7 +371,7 @@ OVERLOAD(MUIM_HandleEvent)
     if((imsg->Code == SELECTDOWN || imsg->Code == SELECTUP) &&
        _isinobject(obj, imsg->MouseX, imsg->MouseY))
     {
-      DoMethod(obj, METHOD(ClearSelection));
+      DoMethod(obj, MUIM_AttachmentGroup_ClearSelection);
 
       result = MUI_EventHandlerRC_Eat;
     }
@@ -429,7 +429,7 @@ DECLARE(Refresh) // struct Part *firstPart
 
   // before we are going to add some new childs we have to clean
   // out all old children
-  DoMethod(obj, METHOD(Clear));
+  DoMethod(obj, MUIM_AttachmentGroup_Clear);
 
   // prepare the group for any change
   if(DoMethod(obj, MUIM_Group_InitChange))
