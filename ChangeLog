@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, DockyIcon.c: fixed the mixed up usage of V2 tags with a V1 interface
+    of application.library. The old V1 interface used completely broken tag
+    definitions which collided with standard tags like TAG_IGNORE or TAG_MORE.
+    This is worked around by trying to obtain the V2 interface first and fall
+    back to the V1 interface upon failure. The function calls then must be
+    adapted to use the correct tag definitions for the two possible interface
+    versions.
+
 2010-04-17 Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: moved all the new (but not yet working) transfer/preselection window

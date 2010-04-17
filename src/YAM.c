@@ -1932,7 +1932,9 @@ static void InitBeforeLogin(BOOL hidden)
   // and will be used to notify YAM of certain events and also manage
   // the docky icon accordingly.
   #if defined(__amigaos4__)
-  INITLIB("application.library", 50, 0, &ApplicationBase, "application", 1, &IApplication, FALSE, NULL);
+  // try version 2 first, if that is not available try version 1
+  if(INITLIB("application.library", 50, 0, &ApplicationBase, "application", 2, &IApplication, FALSE, NULL) == FALSE)
+    INITLIB("application.library", 50, 0, &ApplicationBase, "application", 1, &IApplication, FALSE, NULL);
   #endif
 
   // Lets check for the correct TheBar.mcc version

@@ -70,15 +70,55 @@ void InitDockyIcon(void)
     }
 
     // register YAM to application.library
-    // application.lib V52.1 crashes if it sees REGAPP_Description and V53.2
-    // misinterprets german umlauts, hence we require at least V53.3 for the
-    // description string.
-    if((G->applicationID = RegisterApplication("YAM", REGAPP_UniqueApplication, TRUE,
-                                                      REGAPP_URLIdentifier,     "yam.ch",
-                                                      REGAPP_AppIconInfo,       (uint32)&aii,
-                                                      REGAPP_Hidden,            xget(G->App, MUIA_Application_Iconified),
-                                                      LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 3) ? REGAPP_Description : TAG_IGNORE, tr(MSG_APP_DESCRIPTION),
-                                                      TAG_DONE)) != 0)
+    if(IApplication->Data.Version >= 2)
+    {
+      // the V2 interface uses regular tags
+      G->applicationID = RegisterApplication("YAM", REGAPP_UniqueApplication, TRUE,
+                                                    REGAPP_URLIdentifier,     "yam.ch",
+                                                    REGAPP_AppIconInfo,       (uint32)&aii,
+                                                    REGAPP_Hidden,            xget(G->App, MUIA_Application_Iconified),
+                                                    REGAPP_Description,       tr(MSG_APP_DESCRIPTION),
+                                                    TAG_DONE);
+    }
+    else
+    {
+      // we have the old V1 interface
+      // the V1 interface uses non-standard tags which collide with standard
+      // tags like TAG_IGNORE and TAG_MORE, thus we have to take additional
+      // care here.
+      struct TagItem tags[] =
+      {
+        { REGAPP_UniqueApplication, TRUE },
+        { REGAPP_URLIdentifier,     (uint32)"yam.ch" },
+        { REGAPP_AppIconInfo,       (uint32)&aii },
+        { REGAPP_Hidden,            xget(G->App, MUIA_Application_Iconified) },
+        { REGAPP_Description,       (uint32)tr(MSG_APP_DESCRIPTION) },
+        { TAG_DONE,                 0 }
+      };
+
+      // check whether we compile with the new V2 tag definitions, but still got
+      // an old V1 interface. If yes, then we must adapt the tag values by simply
+      // substracting TAG_USER from the new definition.
+      if(REGAPP_UniqueApplication >= TAG_USER)
+      {
+        tags[0].ti_Tag = REGAPP_UniqueApplication-TAG_USER;
+        tags[1].ti_Tag = REGAPP_URLIdentifier-TAG_USER;
+        tags[2].ti_Tag = REGAPP_AppIconInfo-TAG_USER;
+        tags[3].ti_Tag = REGAPP_Hidden-TAG_USER;
+        tags[4].ti_Tag = REGAPP_Description-TAG_USER;
+      }
+
+      // application.lib V52.1 crashes if it sees REGAPP_Description and V53.2
+      // misinterprets german umlauts, hence we require at least V53.3 for the
+      // description string.
+      if(LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 3) == FALSE)
+        tags[4].ti_Tag = TAG_DONE;
+
+      // the dirty work is done, let's register us
+      G->applicationID = RegisterApplicationA("YAM", tags);
+    }
+
+    if(G->applicationID != 0)
     {
       GetApplicationAttrs(G->applicationID, APPATTR_Port, (uint32)&G->AppLibPort,
                                             TAG_DONE);
