@@ -12,6 +12,7 @@ $URL$
     dated and still use the old V1-only tag definitions. This closes #158.
   * DockyIcon.c, YAM.c, YAM_TR.c: replaced the remaining wrong uses of V1
     application.lib tags with a V2 interface and vice versa.
+  * Makefile: added dutch translation to release target.
 
 2010-04-18 Thore Böckelmann <tboeckel@gmx.de>
 

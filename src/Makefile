@@ -500,13 +500,13 @@ OBJS = \
 # available catalog translations
 CATALOGS = \
 	$(LOCALE)/czech.catalog \
+	$(LOCALE)/dutch.catalog \
 	$(LOCALE)/english-british.catalog \
 	$(LOCALE)/french.catalog \
 	$(LOCALE)/german.catalog \
 	$(LOCALE)/greek.catalog \
 	$(LOCALE)/italian.catalog \
 	$(LOCALE)/swedish.catalog \
-	$(LOCALE)/dutch.catalog \
 	# $(LOCALE)/bosnian.catalog \
 	# $(LOCALE)/danish.catalog \
 	# $(LOCALE)/finnish.catalog \
@@ -665,6 +665,8 @@ release:
 	@$(CP) $(LOCALE)/YAM.cd "$@/AmigaOS3/YAM 2.6/Catalogs/YAM.cd"
 	@$(MKDIR) "$@/AmigaOS3/YAM 2.6/Catalogs/czech"
 	@$(CP) $(LOCALE)/czech.catalog "$@/AmigaOS3/YAM 2.6/Catalogs/czech/YAM.catalog"
+	@$(MKDIR) "$@/AmigaOS3/YAM 2.6/Catalogs/dutch"
+	@$(CP) $(LOCALE)/dutch.catalog "$@/AmigaOS3/YAM 2.6/Catalogs/dutch/YAM.catalog"
 	@$(MKDIR) "$@/AmigaOS3/YAM 2.6/Catalogs/english-british"
 	@$(CP) $(LOCALE)/english-british.catalog "$@/AmigaOS3/YAM 2.6/Catalogs/english-british/YAM.catalog"
 	@$(MKDIR) "$@/AmigaOS3/YAM 2.6/Catalogs/french"
@@ -738,6 +740,8 @@ release:
 	@$(CP) $(LOCALE)/YAM.cd "$@/AmigaOS4/YAM 2.6/Catalogs/YAM.cd"
 	@$(MKDIR) "$@/AmigaOS4/YAM 2.6/Catalogs/czech"
 	@$(CP) $(LOCALE)/czech.catalog "$@/AmigaOS4/YAM 2.6/Catalogs/czech/YAM.catalog"
+	@$(MKDIR) "$@/AmigaOS4/YAM 2.6/Catalogs/dutch"
+	@$(CP) $(LOCALE)/dutch.catalog "$@/AmigaOS4/YAM 2.6/Catalogs/dutch/YAM.catalog"
 	@$(MKDIR) "$@/AmigaOS4/YAM 2.6/Catalogs/english-british"
 	@$(CP) $(LOCALE)/english-british.catalog "$@/AmigaOS4/YAM 2.6/Catalogs/english-british/YAM.catalog"
 	@$(MKDIR) "$@/AmigaOS4/YAM 2.6/Catalogs/french"
@@ -811,6 +815,8 @@ release:
 	@$(CP) $(LOCALE)/YAM.cd "$@/MorphOS/YAM 2.6/Catalogs/YAM.cd"
 	@$(MKDIR) "$@/MorphOS/YAM 2.6/Catalogs/czech"
 	@$(CP) $(LOCALE)/czech.catalog "$@/MorphOS/YAM 2.6/Catalogs/czech/YAM.catalog"
+	@$(MKDIR) "$@/MorphOS/YAM 2.6/Catalogs/dutch"
+	@$(CP) $(LOCALE)/dutch.catalog "$@/MorphOS/YAM 2.6/Catalogs/dutch/YAM.catalog"
 	@$(MKDIR) "$@/MorphOS/YAM 2.6/Catalogs/english-british"
 	@$(CP) $(LOCALE)/english-british.catalog "$@/MorphOS/YAM 2.6/Catalogs/english-british/YAM.catalog"
 	@$(MKDIR) "$@/MorphOS/YAM 2.6/Catalogs/french"
@@ -884,6 +890,8 @@ release:
 	@$(CP) $(LOCALE)/YAM.cd "$@/AROS-i386/YAM 2.6/Catalogs/YAM.cd"
 	@$(MKDIR) "$@/AROS-i386/YAM 2.6/Catalogs/czech"
 	@$(CP) $(LOCALE)/czech.catalog "$@/AROS-i386/YAM 2.6/Catalogs/czech/YAM.catalog"
+	@$(MKDIR) "$@/AROS-i386/YAM 2.6/Catalogs/dutch"
+	@$(CP) $(LOCALE)/dutch.catalog "$@/AROS-i386/YAM 2.6/Catalogs/dutch/YAM.catalog"
 	@$(MKDIR) "$@/AROS-i386/YAM 2.6/Catalogs/english-british"
 	@$(CP) $(LOCALE)/english-british.catalog "$@/AROS-i386/YAM 2.6/Catalogs/english-british/YAM.catalog"
 	@$(MKDIR) "$@/AROS-i386/YAM 2.6/Catalogs/french"
@@ -957,6 +965,8 @@ release:
 	@$(CP) $(LOCALE)/YAM.cd "$@/AROS-ppc/YAM 2.6/Catalogs/YAM.cd"
 	@$(MKDIR) "$@/AROS-ppc/YAM 2.6/Catalogs/czech"
 	@$(CP) $(LOCALE)/czech.catalog "$@/AROS-ppc/YAM 2.6/Catalogs/czech/YAM.catalog"
+	@$(MKDIR) "$@/AROS-ppc/YAM 2.6/Catalogs/dutch"
+	@$(CP) $(LOCALE)/dutch.catalog "$@/AROS-ppc/YAM 2.6/Catalogs/dutch/YAM.catalog"
 	@$(MKDIR) "$@/AROS-ppc/YAM 2.6/Catalogs/english-british"
 	@$(CP) $(LOCALE)/english-british.catalog "$@/AROS-ppc/YAM 2.6/Catalogs/english-british/YAM.catalog"
 	@$(MKDIR) "$@/AROS-ppc/YAM 2.6/Catalogs/french"
@@ -1030,6 +1040,8 @@ release:
 	@$(CP) $(LOCALE)/YAM.cd "$@/AROS-x86_64/YAM 2.6/Catalogs/YAM.cd"
 	@$(MKDIR) "$@/AROS-x86_64/YAM 2.6/Catalogs/czech"
 	@$(CP) $(LOCALE)/czech.catalog "$@/AROS-x86_64/YAM 2.6/Catalogs/czech/YAM.catalog"
+	@$(MKDIR) "$@/AROS-x86_64/YAM 2.6/Catalogs/dutch"
+	@$(CP) $(LOCALE)/dutch.catalog "$@/AROS-x86_64/YAM 2.6/Catalogs/dutch/YAM.catalog"
 	@$(MKDIR) "$@/AROS-x86_64/YAM 2.6/Catalogs/english-british"
 	@$(CP) $(LOCALE)/english-british.catalog "$@/AROS-x86_64/YAM 2.6/Catalogs/english-british/YAM.catalog"
 	@$(MKDIR) "$@/AROS-x86_64/YAM 2.6/Catalogs/french"
