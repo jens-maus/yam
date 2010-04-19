@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * DockyIcon.c: registering YAM at application.lib didn't respect the fact that
+    even with a new V2 interface the build system's SDK could be slightly out-
+    dated and still use the old V1-only tag definitions. This closes #158.
+
 2010-04-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, DockyIcon.c: fixed the mixed up usage of V2 tags with a V1 interface
