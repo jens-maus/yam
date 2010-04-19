@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (15.04.2010)
+## version $VER: YAM.catalog 7.2 (20.04.2010)
 ## language dutch
 ## codeset 0
 ## chunk AUTH Johan Banis
@@ -489,19 +489,19 @@ MSG_MA_TBEdit
 _Bewerk
 ;
 MSG_MA_TBMove
-_Verplaats
+Move
 ;
 MSG_MA_TBDelete
 _Wis
 ;
 MSG_MA_TBGetAddr
-Pak adres
+Pak adr
 ;
 MSG_MA_TBWrite
 _Nieuw
 ;
 MSG_MA_TBReply
-_Antwoord
+_Antw
 ;
 MSG_MA_TBForward
 Verder
@@ -519,7 +519,7 @@ MSG_MA_TBFind
 _Zoek
 ;
 MSG_MA_TBAddrBook
-Adresboek
+Adrsboek
 ;
 MSG_MA_TBConfig
 _Config
@@ -2524,7 +2524,7 @@ Het mailtje %s\n\
 is weggegooid %s.\n\
 De ontvanger heeft het misschien wel of misschien niet gelezen.\n\
 De ontvanger kan later het mailtje weer uit de prullebak halen\n\
-en het dan alsnog lezen. Weet jij veel...
+en het dan alsnog lezen.
 ;
 MSG_RE_MDNunknown
 Het mailtje %s\n\
@@ -2639,10 +2639,10 @@ MSG_RE_TBNext
 _Volgend
 ;
 MSG_RE_TBPrevTh
-Vrg thread
+Vrg thrd
 ;
 MSG_RE_TBNextTh
-Vlg thread
+Vlg thrd
 ;
 MSG_RE_TBDisplay
 _Toon
@@ -2657,7 +2657,7 @@ MSG_RE_TBDelete
 Wis
 ;
 MSG_RE_TBMove
-Verplaats
+Move
 ;
 MSG_RE_TBReply
 Antwoord
@@ -2882,7 +2882,7 @@ MSG_WR_TBItalic
 Schuin
 ;
 MSG_WR_TBUnderlined
-Onderstreept
+Onderstr
 ;
 MSG_WR_TBColored
 Kleur
@@ -4723,7 +4723,7 @@ Sluit dan alle MUI-programma's zodat de oude class\n\
 uit het geheugen wordt gewist en herstart daarna YAM.
 ;
 MSG_CO_FIRSTSTEPS_TITLE
-Eerste stapjes
+Eerste stapjes...
 ;
 MSG_CO_FIRSTSTEPS_SUMMARY
 De minimale configuratie om mail te ontvangen en te sturen
@@ -4732,31 +4732,31 @@ MSG_CO_TCPIP_TITLE
 TCP/IP
 ;
 MSG_CO_TCPIP_SUMMARY
-Configureer jouw SMTP- en POP3-accounts
+Configureer jouw SMTP- en POP3-accounts...
 ;
 MSG_CO_NEWMAIL_TITLE
 Mail ontvangen
 ;
 MSG_CO_NEWMAIL_SUMMARY
-Hoe om te gaan met en reageren op binnenkomende mail
+Hoe om te gaan met en reageren op binnenkomende mail...
 ;
 MSG_CO_FILTER_TITLE
 Mail filteren
 ;
 MSG_CO_FILTER_SUMMARY
-Definieer eigen mailfilters
+Definieer eigen mailfilters...
 ;
 MSG_CO_READ_TITLE
 Mail lezen
 ;
 MSG_CO_READ_SUMMARY
-Instellingen voor het lezen van e-mail
+Instellingen voor het lezen van e-mail...
 ;
 MSG_CO_WRITE_TITLE
 Mail schrijven
 ;
 MSG_CO_WRITE_SUMMARY
-Instellingen voor het schrijven van e-mail
+Instellingen voor het schrijven van e-mail...
 ;
 MSG_CO_REPLY_TITLE
 Mail beantwoorden en verder zenden
@@ -4768,55 +4768,55 @@ MSG_CO_SIGNATURE_TITLE
 Handtekening
 ;
 MSG_CO_SIGNATURE_SUMMARY
-Configureer jouw e-mailhandtekening
+Configureer jouw e-mailhandtekening...
 ;
 MSG_CO_LISTS_TITLE
 Lijsten en kolommen
 ;
 MSG_CO_LISTS_SUMMARY
-Configureer de lijsten met mailtjes
+Configureer de lijsten met mailtjes...
 ;
 MSG_CO_SECURITY_TITLE
 Beveiliging
 ;
 MSG_CO_SECURITY_SUMMARY
-Configureer veiligheidsinstellingen
+Configureer veiligheidsinstellingen...
 ;
 MSG_CO_STARTUP_TITLE
 Bij opstarten en afsluiten
 ;
 MSG_CO_STARTUP_SUMMARY
-Configureer wat YAM moet doen bij opstarten en afsluiten
+Configureer wat YAM moet doen bij opstarten en afsluiten...
 ;
 MSG_CO_MIME_TITLE
 MIME-types
 ;
 MSG_CO_MIME_SUMMARY
-Configureer je eigen MIME-types en viewers
+Configureer je eigen MIME-types en viewers...
 ;
 MSG_CO_ABOOK_TITLE
 Adresboek
 ;
 MSG_CO_ABOOK_SUMMARY
-Configureer het adresboek
+Configureer het adresboek...
 ;
 MSG_CO_SCRIPTS_TITLE
 Scripts
 ;
 MSG_CO_SCRIPTS_SUMMARY
-Configureer ondersteunende scripts
+Configureer ondersteunende scripts...
 ;
 MSG_CO_MIXED_TITLE
 Diversen
 ;
 MSG_CO_MIXED_SUMMARY
-Instellingen die eigenlijk nergens over gaan
+Instellingen die eigenlijk nergens over gaan...
 ;
 MSG_CO_UPDATE_TITLE
 Software updates
 ;
 MSG_CO_UPDATE_SUMMARY
-In de gaten houden of er updates zijn van YAM of gerelateerde componenten
+In de gaten houden of er updates zijn van YAM of gerelateerde componenten...
 ;
 MSG_CO_CrdUpdate
 Updates
@@ -5154,7 +5154,7 @@ MSG_MA_TBSPAM
 Sp_am
 ;
 MSG_MA_TBNOTSPAM
-Geen sp_am
+Gn sp_am
 ;
 MSG_HELP_MA_BT_SPAM
 Markeer mailtje als spam
@@ -5166,7 +5166,7 @@ MSG_RE_TBSPAM
 Sp_am
 ;
 MSG_RE_TBNOTSPAM
-Geen sp_am
+Gn sp_am
 ;
 MSG_HELP_RE_BT_SPAM
 Markeer mailtje als spam
@@ -5421,7 +5421,7 @@ MSG_MA_MREPLY
 Antwoord...
 ;
 MSG_MA_MFORWARD
-Verder zenden..
+Verder zenden...
 ;
 MSG_MA_MBOUNCE
 Kaatsen...

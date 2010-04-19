@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-20 Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/dutch.ct: updated dutch catalog translation according to the latest
+    changes supplied by Johan Banis.
+
 2010-04-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * DockyIcon.c: registering YAM at application.lib didn't respect the fact that
