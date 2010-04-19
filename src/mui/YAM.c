@@ -660,11 +660,27 @@ OVERLOAD(OM_SET)
         // in case we have an applicationID we make sure
         // we notify application.library that YAM was uniconified
         #if defined(__amigaos4__)
-        if(G->applicationID)
+        if(G->applicationID != 0)
         {
-          SetApplicationAttrs(G->applicationID,
-                              APPATTR_Hidden,   tag->ti_Data,
-                              TAG_DONE);
+          struct TagItem hiddenTags[] =
+          {
+            { APPATTR_Hidden, tag->ti_Data },
+            { TAG_DONE, 0 }
+          };
+
+          // adapt the tag values for the different interface versions
+          if(IApplication->Data.Version >= 2)
+          {
+            if(APPATTR_Hidden < TAG_USER)
+              hiddenTags[0].ti_Tag += TAG_USER;
+          }
+          else
+          {
+            if(APPATTR_Hidden >= TAG_USER)
+              hiddenTags[0].ti_Tag -= TAG_USER;
+          }
+
+          SetApplicationAttrsA(G->applicationID, hiddenTags);
         }
         #endif
 
