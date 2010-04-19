@@ -19,6 +19,8 @@ $URL$
     version.
   * YAM_UT.c: slightly changed the DateStamp to string conversion and vice versa
     to correctly strip the days if only the time is of interest.
+  * Rexx.c, rexx/help.c: added terminating dummy entry to avoid a crash in the
+    ARexx HELP implementation. This closes #159.
 
 2010-04-18 Thore Böckelmann <tboeckel@gmx.de>
 

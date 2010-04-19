@@ -60,12 +60,12 @@ void rx_help(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxA
       FILE *fp = NULL;
       FILE *out = stdout;
 
-      if(args->file != NULL && (fp = fopen(args->file, "w")))
+      if(args->file != NULL && (fp = fopen(args->file, "w")) != NULL)
         out = fp;
 
       fprintf(out, "Commands for application \"YAM\"\n\nCommand              Template\n-------              --------\n");
 
-      for(rxc = rxs_commandlist; rxc->command; rxc++)
+      for(rxc = rxs_commandlist; rxc->command != NULL; rxc++)
       {
         fprintf(out, "%-20s%s%s%s%s%s%s\n", rxc->command,
                                             (rxc->results || rxc->args) ? " " : "", rxc->results ? "VAR/K,STEM/K" : "",
@@ -73,7 +73,7 @@ void rx_help(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxA
                                             rxc->results ? " => " : "", rxc->results ? rxc->results : "");
       }
 
-      if(fp)
+      if(fp != NULL)
         fclose(fp);
     }
     break;
