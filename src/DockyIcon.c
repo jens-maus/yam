@@ -65,6 +65,11 @@ void InitDockyIcon(void)
       { REGAPP_Description,       (uint32)tr(MSG_APP_DESCRIPTION) },
       { TAG_DONE,                 0 }
     };
+    struct TagItem portTags[] =
+    {
+      { APPATTR_Port, (uint32)&G->AppLibPort },
+      { TAG_DONE, 0 }
+    };
 
     if(C->DockyIcon == TRUE)
     {
@@ -87,11 +92,13 @@ void InitDockyIcon(void)
       // adding TAG_USER to the old definition.
       if(REGAPP_UniqueApplication < TAG_USER)
       {
-        registerTags[0].ti_Tag = REGAPP_UniqueApplication+TAG_USER;
-        registerTags[1].ti_Tag = REGAPP_URLIdentifier+TAG_USER;
-        registerTags[2].ti_Tag = REGAPP_AppIconInfo+TAG_USER;
-        registerTags[3].ti_Tag = REGAPP_Hidden+TAG_USER;
-        registerTags[4].ti_Tag = REGAPP_Description+TAG_USER;
+        registerTags[0].ti_Tag += TAG_USER;
+        registerTags[1].ti_Tag += TAG_USER;
+        registerTags[2].ti_Tag += TAG_USER;
+        registerTags[3].ti_Tag += TAG_USER;
+        registerTags[4].ti_Tag += TAG_USER;
+
+        portTags[0].ti_Tag += TAG_USER;
       }
     }
     else
@@ -105,11 +112,13 @@ void InitDockyIcon(void)
       // substracting TAG_USER from the new definition.
       if(REGAPP_UniqueApplication >= TAG_USER)
       {
-        registerTags[0].ti_Tag = REGAPP_UniqueApplication-TAG_USER;
-        registerTags[1].ti_Tag = REGAPP_URLIdentifier-TAG_USER;
-        registerTags[2].ti_Tag = REGAPP_AppIconInfo-TAG_USER;
-        registerTags[3].ti_Tag = REGAPP_Hidden-TAG_USER;
-        registerTags[4].ti_Tag = REGAPP_Description-TAG_USER;
+        registerTags[0].ti_Tag -= TAG_USER;
+        registerTags[1].ti_Tag -= TAG_USER;
+        registerTags[2].ti_Tag -= TAG_USER;
+        registerTags[3].ti_Tag -= TAG_USER;
+        registerTags[4].ti_Tag -= TAG_USER;
+
+        portTags[0].ti_Tag -= TAG_USER;
       }
 
       // application.lib V52.1 crashes if it sees REGAPP_Description and V53.2
@@ -123,8 +132,7 @@ void InitDockyIcon(void)
     // the dirty work is done, let's register us
     if((G->applicationID = RegisterApplicationA("YAM", registerTags)) != 0)
     {
-      GetApplicationAttrs(G->applicationID, APPATTR_Port, (uint32)&G->AppLibPort,
-                                            TAG_DONE);
+      GetApplicationAttrsA(G->applicationID, portTags);
       if(G->AppLibPort == NULL)
         E(DBF_STARTUP, "error on trying to retrieve application libraries MsgPort for YAM.");
     }
@@ -174,6 +182,11 @@ void UpdateDockyIcon(void)
   if(G->applicationID > 0 && G->LastIconID != G->currentAppIcon)
   {
     struct ApplicationIconInfo aii;
+    struct TagItem iconTags[] =
+    {
+      { APPATTR_IconType, (uint32)&aii },
+      { TAG_DONE, 0 }
+    };
 
     if(C->DockyIcon == FALSE)
     {
@@ -192,7 +205,19 @@ void UpdateDockyIcon(void)
       aii.info.customIcon = G->theme.icons[G->currentAppIcon];
     }
 
-    if(SetApplicationAttrs(G->applicationID, APPATTR_IconType, (uint32)&aii, TAG_DONE))
+    // adapt the tag values for the different interface versions
+    if(IApplication->Data.Version >= 2)
+    {
+      if(APPATTR_IconType < TAG_USER)
+        iconTags[0].ti_Tag += TAG_USER;
+    }
+    else
+    {
+      if(APPATTR_IconType >= TAG_USER)
+        iconTags[0].ti_Tag -= TAG_USER;
+    }
+
+    if(SetApplicationAttrsA(G->applicationID, iconTags))
     {
       D(DBF_GUI, "Docky icon changed");
       if(C->DockyIcon == TRUE)

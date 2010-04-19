@@ -7046,18 +7046,46 @@ static void TR_NewMailAlert(void)
     if(hasOS41SystemNotify(C->NotifyType))
     {
       // Notify() is V53.2+, 53.7 fixes some serious issues
-      if(G->applicationID > 0 && LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 7))
+      if(G->applicationID > 0 && LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 7) == TRUE)
       {
         // 128 chars is the current maximum :(
         char message[128];
+        struct TagItem notifyTags[] =
+        {
+          { APPNOTIFY_Title, (uint32)"YAM" },
+          { APPNOTIFY_PubScreenName, (uint32)"FRONT" },
+          { APPNOTIFY_Text, (uint32)message },
+          { APPNOTIFY_CloseOnDC, TRUE },
+          { APPNOTIFY_BackMsg, (uint32)"POPUP" },
+          { TAG_DONE, 0 }
+        };
+
+        // adapt the tag values for the different interface versions
+        if(IApplication->Data.Version >= 2)
+        {
+          if(APPNOTIFY_Title < TAG_USER)
+          {
+            notifyTags[0].ti_Tag += TAG_USER;
+            notifyTags[1].ti_Tag += TAG_USER;
+            notifyTags[2].ti_Tag += TAG_USER;
+            notifyTags[3].ti_Tag += TAG_USER;
+            notifyTags[4].ti_Tag += TAG_USER;
+          }
+        }
+        else
+        {
+          if(APPNOTIFY_Title >= TAG_USER)
+          {
+            notifyTags[0].ti_Tag -= TAG_USER;
+            notifyTags[1].ti_Tag -= TAG_USER;
+            notifyTags[2].ti_Tag -= TAG_USER;
+            notifyTags[3].ti_Tag -= TAG_USER;
+            notifyTags[4].ti_Tag -= TAG_USER;
+          }
+        }
 
         snprintf(message, sizeof(message), tr(MSG_TR_NEW_MAIL_NOTIFY), stats->Downloaded - rr->Spam);
-        Notify(G->applicationID, APPNOTIFY_Title, "YAM",
-                                 APPNOTIFY_PubScreenName, "FRONT",
-                                 APPNOTIFY_Text, message,
-                                 APPNOTIFY_CloseOnDC, TRUE,
-                                 APPNOTIFY_BackMsg, "POPUP",
-                                 TAG_DONE);
+        NotifyA(G->applicationID, notifyTags);
       }
     }
     #endif // __amigaos4__
