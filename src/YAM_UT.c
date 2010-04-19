@@ -331,6 +331,7 @@ char *StripUnderscore(const char *label)
   RETURN(newlabel);
   return newlabel;
 }
+
 ///
 /// GetNextLine
 //  Reads next line from a multi-line string
@@ -354,6 +355,7 @@ char *GetNextLine(char *p1)
   RETURN(p2);
   return p2;
 }
+
 ///
 /// TrimStart
 //  Strips leading spaces
@@ -367,6 +369,7 @@ char *TrimStart(char *s)
   RETURN(s);
   return s;
 }
+
 ///
 /// TrimEnd
 //  Removes trailing spaces
@@ -382,6 +385,7 @@ char *TrimEnd(char *s)
   RETURN(s);
   return s;
 }
+
 ///
 /// Trim
 // Removes leading and trailing spaces
@@ -398,6 +402,7 @@ char *Trim(char *s)
   RETURN(s);
   return s;
 }
+
 ///
 /// stristr
 //  Case insensitive version of strstr()
@@ -420,6 +425,7 @@ char *stristr(const char *a, const char *b)
   RETURN(s);
   return s;
 }
+
 ///
 /// MyStrChr
 //  Searches for a character in string, ignoring text in quotes
@@ -446,6 +452,7 @@ char *MyStrChr(const char *s, const char c)
   RETURN(result);
   return result;
 }
+
 ///
 /// AllocStrBuf
 //  Allocates a dynamic buffer
@@ -461,6 +468,7 @@ char *AllocStrBuf(size_t initlen)
   RETURN(strbuf);
   return (char *)strbuf;
 }
+
 ///
 /// StrBufCpy
 //  Fills a dynamic buffer
@@ -500,6 +508,7 @@ char *StrBufCpy(char *strbuf, const char *source)
   RETURN(newstrbuf);
   return newstrbuf;
 }
+
 ///
 /// StrBufCat
 //  String concatenation using a dynamic buffer
@@ -543,6 +552,7 @@ char *StrBufCat(char *strbuf, const char *source)
   RETURN(newstrbuf);
   return newstrbuf;
 }
+
 ///
 /// AppendToBuffer
 //  Appends a string to a dynamic-length buffer
@@ -578,6 +588,7 @@ char *AppendToBuffer(char *buf, int *wptr, int *len, const char *add)
   RETURN(buf);
   return buf;
 }
+
 ///
 /// Decrypt
 //  Decrypts passwords
@@ -599,6 +610,7 @@ char *Decrypt(char *source)
   RETURN(write);
   return write;
 }
+
 ///
 /// Encrypt
 //  Encrypts passwords
@@ -621,6 +633,7 @@ char *Encrypt(const char *source)
   RETURN(buffer);
   return buffer;
 }
+
 ///
 /// UnquoteString
 //  Removes quotes from a string, skipping "escaped" quotes
@@ -2393,14 +2406,15 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
   char datestr[64], timestr[64], daystr[64]; // we don't use LEN_DATSTRING as OS3.1 anyway ignores it.
   struct DateTime dt;
   struct DateStamp dsnow;
+  BOOL success = FALSE;
 
   ENTER();
 
   // if this argument is not set we get the actual time
-  if(!date)
+  if(date == NULL)
     date = DateStamp(&dsnow);
 
-  if(mode == DSS_TIME)
+  if(mode == DSS_TIME || mode == DSS_SHORTTIME)
     date->ds_Days = 0;
 
   // now we fill the DateTime structure with the data for our request.
@@ -2420,86 +2434,91 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
   timestr[31] = '\0';
   daystr[31]  = '\0';
 
+  // clear the destination string
+  dst[0] = '\0';
+
   // lets convert the DateStamp now to a string
-  if(DateToStr(&dt) == FALSE)
+  if(DateToStr(&dt) != DOSFALSE)
   {
-    // clear the dststring as well
-    dst[0] = '\0';
+    switch(mode)
+    {
+      case DSS_UNIXDATE:
+      {
+        int y = atoi(&datestr[6]);
 
-    RETURN(FALSE);
-    return FALSE;
+        // this is a Y2K patch
+        // if less than 8035 days have passed since 1.1.1978 then we are in the 20th century
+        if(date->ds_Days < 8035)
+          y += 1900;
+        else
+          y += 2000;
+
+        snprintf(dst, dstlen, "%s %s %02d %s %d\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(datestr)-1], atoi(&datestr[3]), timestr, y);
+      }
+      break;
+
+      case DSS_DATETIME:
+      case DSS_USDATETIME:
+      case DSS_RELDATETIME:
+      {
+        snprintf(dst, dstlen, "%s %s", datestr, timestr);
+      }
+      break;
+
+      case DSS_WEEKDAY:
+      {
+        strlcpy(dst, daystr, dstlen);
+      }
+      break;
+
+      case DSS_DATE:
+      {
+        strlcpy(dst, datestr, dstlen);
+      }
+      break;
+
+      case DSS_TIME:
+      {
+        strlcpy(dst, timestr, dstlen);
+      }
+      break;
+
+      case DSS_SHORTTIME:
+      {
+        // find the last ':' and strip the string there so
+        // that it does not include any seconds
+        char *p = strrchr(timestr, ':');
+
+        if(p != NULL)
+          *p = '\0';
+
+        strlcpy(dst, timestr, dstlen);
+      }
+      break;
+
+      case DSS_BEAT:
+      case DSS_DATEBEAT:
+      case DSS_RELDATEBEAT:
+      {
+        // calculate the beat time
+        unsigned int beat = (((date->ds_Minute-C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+
+        if(mode == DSS_DATEBEAT || mode == DSS_RELDATEBEAT)
+          snprintf(dst, dstlen, "%s @%03d", datestr, beat);
+        else
+          snprintf(dst, dstlen, "@%03d", beat);
+      }
+      break;
+    }
+
+    // in any case we succeeded
+    success = TRUE;
+
+    D(DBF_UTIL, "converted DateStamp %ld/%ld/%ld to string '%s'", date->ds_Days, date->ds_Minute, date->ds_Tick, dst);
   }
 
-  switch(mode)
-  {
-    case DSS_UNIXDATE:
-    {
-      int y = atoi(&datestr[6]);
-
-      // this is a Y2K patch
-      // if less then 8035 days has passed since 1.1.1978 then we are in the 20th century
-      if (date->ds_Days < 8035) y += 1900;
-      else y += 2000;
-
-      snprintf(dst, dstlen, "%s %s %02d %s %d\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(datestr)-1], atoi(&datestr[3]), timestr, y);
-    }
-    break;
-
-    case DSS_DATETIME:
-    case DSS_USDATETIME:
-    case DSS_RELDATETIME:
-    {
-      snprintf(dst, dstlen, "%s %s", datestr, timestr);
-    }
-    break;
-
-    case DSS_WEEKDAY:
-    {
-      strlcpy(dst, daystr, dstlen);
-    }
-    break;
-
-    case DSS_DATE:
-    {
-      strlcpy(dst, datestr, dstlen);
-    }
-    break;
-
-    case DSS_TIME:
-    {
-      strlcpy(dst, timestr, dstlen);
-    }
-    break;
-
-    case DSS_SHORTTIME:
-    {
-      // find the last ':' and strip the string there so
-      // that it does not include any seconds
-      char *p = strrchr(timestr, ':');
-      if(p != NULL)
-        *p = '\0';
-
-      strlcpy(dst, timestr, dstlen);
-    }
-    break;
-
-    case DSS_BEAT:
-    case DSS_DATEBEAT:
-    case DSS_RELDATEBEAT:
-    {
-      // calculate the beat time
-      unsigned int beat = (((date->ds_Minute-C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
-
-      if(mode == DSS_DATEBEAT || mode == DSS_RELDATEBEAT)
-        snprintf(dst, dstlen, "%s @%03d", datestr, beat);
-      else
-        snprintf(dst, dstlen, "@%03d", beat);
-    }
-    break;
-  }
-
-  RETURN(TRUE);
-  return TRUE;
+  RETURN(success);
+  return success;
 }
 ///
 /// DateStamp2RFCString
@@ -2687,7 +2706,6 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
     case DSS_TIME:
     case DSS_SHORTTIME:
     {
-      dst->ds_Days = 0;
       strlcpy(timestr, string, sizeof(timestr));
       // ignore the date part
       datestrPtr = NULL;
@@ -2715,14 +2733,20 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
     dt.dat_StrDay  = NULL;
 
     // convert the string to a dateStamp
-    if(StrToDate(&dt))
+    if(StrToDate(&dt) != DOSFALSE)
     {
       // now we check whether we have to convert the datestamp to a specific TZ or not
       if(tzc != TZC_NONE)
         DateStampTZConvert(&dt.dat_Stamp, tzc);
 
+      // strip the days if we are interested in the time only
+      if(mode == DSS_TIME || mode == DSS_SHORTTIME)
+        dt.dat_Stamp.ds_Days = 0;
+
       // now we do copy the datestamp stuff over the one from our mail
-      memcpy(dst, &dt.dat_Stamp, sizeof(struct DateStamp));
+      memcpy(dst, &dt.dat_Stamp, sizeof(*dst));
+
+      D(DBF_UTIL, "converted string '%s' to DateStamp %ld/%ld/%ld", string, dst->ds_Days, dst->ds_Minute, dst->ds_Tick, dst);
     }
     else
       result = FALSE;
@@ -2746,7 +2770,7 @@ BOOL String2TimeVal(struct TimeVal *dst, char *string, enum DateStampType mode, 
   ENTER();
 
   // we use the String2DateStamp function for conversion
-  if((result = String2DateStamp(&ds, string, mode, tzc)))
+  if((result = String2DateStamp(&ds, string, mode, tzc)) == TRUE)
   {
     // now we just have to convert the DateStamp to a struct TimeVal
     DateStamp2TimeVal(&ds, dst, TZC_NONE);

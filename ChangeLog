@@ -17,6 +17,8 @@ $URL$
   * Makefile: modified release target to no longer export certain directories
     from the repository but to copy directly from the currently checked out
     version.
+  * YAM_UT.c: slightly changed the DateStamp to string conversion and vice versa
+    to correctly strip the days if only the time is of interest.
 
 2010-04-18 Thore Böckelmann <tboeckel@gmx.de>
 
