@@ -13,6 +13,7 @@ $URL$
   * DockyIcon.c, YAM.c, YAM_TR.c: replaced the remaining wrong uses of V1
     application.lib tags with a V2 interface and vice versa.
   * Makefile: added dutch translation to release target.
+  * doc/Install-YAM: added dutch translation to Installer script.
 
 2010-04-18 Thore Böckelmann <tboeckel@gmx.de>
 

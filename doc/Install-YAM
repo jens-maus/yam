@@ -6,13 +6,14 @@
 ;
 ;
 ; /// Setting up
-(set #def_lang_english             $00)
-(set #def_lang_german              $01)
-(set #def_lang_swedish             $02)
-(set #def_lang_czech               $04)
-(set #def_lang_italian             $08)
-(set #def_lang_french              $10)
-(set #def_lang_greek               $20)
+(set #def_lang_english             $000)
+(set #def_lang_german              $001)
+(set #def_lang_swedish             $002)
+(set #def_lang_czech               $004)
+(set #def_lang_italian             $008)
+(set #def_lang_french              $010)
+(set #def_lang_greek               $020)
+(def #def_lang_dutch               $040)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
@@ -395,6 +396,7 @@
         (set #cat_name_italian               "italian")
         (set #cat_name_french                "french")
         (set #cat_name_greek                 "greek")
+        (set #cat_name_deutch                "dutch")
         (set #cat_name_english_british       "english-british")
     )
     ; AmigaOS 3.x and MorphOS use localized locale names
@@ -405,6 +407,7 @@
         (set #cat_name_italian               "italiano")
         (set #cat_name_french                "français")
         (set #cat_name_greek                 "greek")
+        (set #cat_name_dutch                 "nederlands")
     )
 )
 
@@ -443,6 +446,7 @@
                      "Italiano"
                      "Français"
                      "ÅëëçíéêÜ"
+                     "Nederlands"
                      "English (british)"
             )
             (default #def_cat_lang)
@@ -458,6 +462,7 @@
                      "Czech"
                      "Italiano"
                      "Français"
+                     "Nederlands"
                      "ÅëëçíéêÜ"
             )
             (default #def_cat_lang)
@@ -635,6 +640,19 @@
                     (source "/Catalogs/greek")
                     (choices "YAM.catalog")
                     (dest (tackon Cat_dir #cat_name_greek))
+                )
+            )
+        )
+
+        ; dutch catalog file
+        (if (bitand catalog_lang #def_lang_dutch)
+            (
+                (makedir (tackon Cat_dir #cat_name_dutch))
+
+                (copyfiles
+                    (source "/Catalogs/dutch")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_dutch))
                 )
             )
         )
