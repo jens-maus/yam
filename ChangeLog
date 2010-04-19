@@ -14,6 +14,9 @@ $URL$
     application.lib tags with a V2 interface and vice versa.
   * Makefile: added dutch translation to release target.
   * doc/Install-YAM: added dutch translation to Installer script.
+  * Makefile: modified release target to no longer export certain directories
+    from the repository but to copy directly from the currently checked out
+    version.
 
 2010-04-18 Thore Böckelmann <tboeckel@gmx.de>
 
