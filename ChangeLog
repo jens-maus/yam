@@ -13,6 +13,8 @@ $URL$
     AmigaOS 4.x).
   * doc/Install-YAM, tools/mkrelease.sh: added polish translation to Installer
     script and release build script.
+  * mui/Aboutwindow.c: added Johan Banis and Mariusz Danilewicz to the list of
+    translators.
 
 2010-04-20 Jens Langner <Jens.Langner@light-speed.de>
 
