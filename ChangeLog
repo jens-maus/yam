@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Makefile, tools/mkrelease.sh: added shell script file for building the
+    release archives for the various platforms. As usual this script takes the
+    build OS ID as single parameter (i.e. "mkrelease.sh os4" to build for
+    AmigaOS 4.x).
+
 2010-04-20 Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/dutch.ct: updated dutch catalog translation according to the latest
