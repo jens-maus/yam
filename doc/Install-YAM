@@ -14,12 +14,13 @@
 (set #def_lang_french              $010)
 (set #def_lang_greek               $020)
 (def #def_lang_dutch               $040)
+(def #def_lang_polish              $080)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only AmigaOS 4.x can handle them.
-(set #def_lang_english_british     $40)
+(set #def_lang_english_british     $100)
 ; add more accents of languages here
 ; (set #def_lang_<language name>     bitmask)
 
@@ -396,7 +397,8 @@
         (set #cat_name_italian               "italian")
         (set #cat_name_french                "french")
         (set #cat_name_greek                 "greek")
-        (set #cat_name_deutch                "dutch")
+        (set #cat_name_dutch                 "dutch")
+        (set #cat_name_polish                "polish")
         (set #cat_name_english_british       "english-british")
     )
     ; AmigaOS 3.x and MorphOS use localized locale names
@@ -408,6 +410,7 @@
         (set #cat_name_french                "français")
         (set #cat_name_greek                 "greek")
         (set #cat_name_dutch                 "nederlands")
+        (set #cat_name_polish                "polski")
     )
 )
 
@@ -653,6 +656,19 @@
                     (source "/Catalogs/dutch")
                     (choices "YAM.catalog")
                     (dest (tackon Cat_dir #cat_name_dutch))
+                )
+            )
+        )
+
+        ; polish catalog file
+        (if (bitand catalog_lang #def_lang_polish)
+            (
+                (makedir (tackon Cat_dir #cat_name_polish))
+
+                (copyfiles
+                    (source "/Catalogs/polish")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_polish))
                 )
             )
         )
