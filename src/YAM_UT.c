@@ -1281,7 +1281,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
     "#?.(yam|rexx|rx)",                    // ASL_REXX
     "#?.(gif|jpg|jpeg|png|iff|ilbm)",      // ASL_PHOTO
     "#?.((mbx|mbox|eml|dbx|msg)|#?,#?)",   // ASL_IMPORT
-    "#?.(mbx|mbox)",                       // ASL_EXPORT
+    "#?.(mbx|mbox|eml)",                   // ASL_EXPORT
     NULL,                                  // ASL_FOLDER
     "#?.(ldif|ldi)",                       // ASL_ABOOK_LIF
     "#?.csv",                              // ASL_ABOOK_CSV

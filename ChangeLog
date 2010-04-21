@@ -9,6 +9,8 @@ $URL$
 
   * YAM_RE.c: added missing NULL pointer check for output file. Having no output
     file is a valid situation. This closes #160.
+  * YAM_UT.c: added "eml" extension to the name pattern of the mail export
+    requester now that we suggest "<subject>.eml" for single exported mails.
 
 2010-04-20 Thore Böckelmann <tboeckel@gmx.de>
 
