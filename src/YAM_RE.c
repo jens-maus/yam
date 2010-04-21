@@ -1179,7 +1179,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
         // comes.
         if(numLines > 1 && fputc('\n', out) == EOF)
         {
-          E(DBF_MAIL, "error during '\n' write operation! buf: (%ld) '%s'", curlen, buf);
+          E(DBF_MAIL, "error during '\\n' write operation! buf: (%ld) '%s'", curlen, buf);
 
           // no success, return false
           break;
@@ -1259,7 +1259,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
     {
       // if we read at least one line we must add a line feed, because GetLine() strips these
       if(numLines > 1 && fputc('\n', out) == EOF)
-        E(DBF_MAIL, "error during '\n' write operation!");
+        E(DBF_MAIL, "error during '\\n' write operation!");
       else
         result = TRUE;
     }
