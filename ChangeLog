@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: added missing NULL pointer check for output file. Having no output
+    file is a valid situation. This closes #160.
+
 2010-04-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * Makefile, tools/mkrelease.sh: added shell script file for building the
