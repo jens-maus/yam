@@ -156,7 +156,7 @@ static enum HashTableOperator optimizeToken(UNUSED struct HashTable *table,
 /// tokenizerOptimizeTokens()
 // Optimize a token table and return the number of removed words
 static ULONG tokenizerOptimizeTokens(struct Tokenizer *t,
-                                    ULONG maxCount)
+                                     ULONG maxCount)
 {
   ULONG num;
 
@@ -357,8 +357,8 @@ static void tokenizerAddTokenForHeader(struct Tokenizer *t,
 /// tokenizerTokenizeAttachment
 // tokenize a mail attachment
 static void tokenizerTokenizeAttachment(struct Tokenizer *t,
-                                        STRPTR contentType,
-                                        STRPTR fileName)
+                                        CONST_STRPTR contentType,
+                                        CONST_STRPTR fileName)
 {
   STRPTR tmpContentType;
   STRPTR tmpFileName;
@@ -385,7 +385,7 @@ static void tokenizerTokenizeAttachment(struct Tokenizer *t,
 /// tokenizerTokenizeHeader()
 // tokenize all headers of a mail
 static void tokenizerTokenizeHeaders(struct Tokenizer *t,
-                                     struct Part *part)
+                                     const struct Part *part)
 {
   struct Node *curNode;
   STRPTR contentType, charSet;
@@ -486,7 +486,7 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
 ///
 /// countChars()
 // count occurences of <c> in string <str>
-static ULONG countChars(STRPTR str, TEXT c)
+static ULONG countChars(CONST_STRPTR str, TEXT c)
 {
   ULONG count = 0;
   TEXT cc;
@@ -594,7 +594,7 @@ static void tokenizerTokenize(struct Tokenizer *t,
 /// tokenEnumerationInit()
 // initialize a token enumeration
 static void tokenEnumerationInit(struct TokenEnumeration *te,
-                                 struct Tokenizer *t)
+                                 const struct Tokenizer *t)
 {
   ENTER();
 
@@ -645,7 +645,7 @@ static struct Token *tokenEnumerationNext(struct TokenEnumeration *te)
 ///
 /// tokenizerCopyTokens()
 // build a copy of the token table
-static struct Token *tokenizerCopyTokens(struct Tokenizer *t)
+static struct Token *tokenizerCopyTokens(const struct Tokenizer *t)
 {
   struct Token *tokens = NULL;
   ULONG count = t->tokenTable.entryCount;
@@ -741,7 +741,7 @@ static void tokenAnalyzerCleanup(void)
 /// writeTokens()
 // write the tokens of a token table to a stream
 static BOOL writeTokens(FILE *stream,
-                        struct Tokenizer *t)
+                        const struct Tokenizer *t)
 {
   ULONG tokenCount = t->tokenTable.entryCount;
 
@@ -1012,7 +1012,7 @@ static void tokenAnalyzerReadTrainingData(void)
 /// tokenAnalyzerSetClassification()
 // set a new classification for a token table, substract the data from the old class
 // and add them to the new class, if possible
-static void tokenAnalyzerSetClassification(struct Tokenizer *t,
+static void tokenAnalyzerSetClassification(const struct Tokenizer *t,
                                            enum BayesClassification oldClass,
                                            enum BayesClassification newClass)
 {
@@ -1341,8 +1341,8 @@ INLINE double chi2P(double chi2, double nu, int *error)
 ///
 /// tokenAnalyzerClassifyMessage()
 // classify a mail based upon the information gathered so far
-static BOOL tokenAnalyzerClassifyMessage(struct Tokenizer *t,
-                                         struct Mail *mail)
+static BOOL tokenAnalyzerClassifyMessage(const struct Tokenizer *t,
+                                         const struct Mail *mail)
 {
   BOOL isSpam;
   BOOL isInWhiteList;
@@ -1578,7 +1578,7 @@ void BayesFilterCleanup(void)
 /// tokenizeMail()
 // tokenize a complete mail, including all headers
 static void tokenizeMail(struct Tokenizer *t,
-                         struct Mail *mail)
+                         const struct Mail *mail)
 {
   struct ReadMailData *rmData;
 
@@ -1620,7 +1620,7 @@ static void tokenizeMail(struct Tokenizer *t,
 ///
 /// BayesFilterClassifyMessage()
 // classify a given message based upon the information gathered so far
-BOOL BayesFilterClassifyMessage(struct Mail *mail)
+BOOL BayesFilterClassifyMessage(const struct Mail *mail)
 {
   BOOL isSpam = FALSE;
   struct Tokenizer t;
@@ -1643,7 +1643,7 @@ BOOL BayesFilterClassifyMessage(struct Mail *mail)
 ///
 /// BayesFilterSetClassification()
 // change the classification of a message
-void BayesFilterSetClassification(struct Mail *mail,
+void BayesFilterSetClassification(const struct Mail *mail,
                                   enum BayesClassification newClass)
 {
   struct Tokenizer t;

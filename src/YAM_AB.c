@@ -116,7 +116,7 @@ struct XMLUserData
 
 /// AB_GotoEntry
 //  Searches an entry by alias and activates it
-APTR AB_GotoEntry(char *alias)
+APTR AB_GotoEntry(const char *alias)
 {
   struct MUI_NListtree_TreeNode *tn = NULL;
 
@@ -475,7 +475,7 @@ char *AB_ExpandBD(long date)
 ///
 /// AB_CompressBD
 //  Connverts date from textual into numeric format
-long AB_CompressBD(char *datestr)
+long AB_CompressBD(const char *datestr)
 {
   long result = 0;
   struct tm tm;
@@ -578,7 +578,7 @@ void AB_CheckBirthdates(BOOL check)
 /// AB_SearchEntry
 //  Searches the address book by alias, name or address
 //  it will break if there is more then one entry
-int AB_SearchEntry(char *text, int mode, struct ABEntry **ab)
+int AB_SearchEntry(const char *text, int mode, struct ABEntry **ab)
 {
   struct MUI_NListtree_TreeNode *tn;
   struct ABEntry *ab_found;
@@ -647,7 +647,7 @@ int AB_SearchEntry(char *text, int mode, struct ABEntry **ab)
 ///
 /// AB_CompleteAlias
 //  Auto-completes alias or name in recipient field
-char *AB_CompleteAlias(char *text)
+char *AB_CompleteAlias(const char *text)
 {
   char *compl = NULL;
   struct ABEntry *ab = NULL;
@@ -677,7 +677,7 @@ char *AB_CompleteAlias(char *text)
 ///
 /// AB_InsertAddress
 //  Adds a new recipient to a recipient field
-void AB_InsertAddress(APTR string, const char *alias, const char *name, const char *address)
+void AB_InsertAddress(Object *string, const char *alias, const char *name, const char *address)
 {
   char *p;
 
@@ -780,7 +780,7 @@ MakeStaticHook(AB_FromAddrBookHook, AB_FromAddrBook);
 ///
 /// AB_LoadTree
 //  Loads the address book from a file
-BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
+BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1014,7 +1014,7 @@ static STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *li
 ///
 /// AB_SaveTree
 //  Saves the address book to a file
-BOOL AB_SaveTree(char *fname)
+BOOL AB_SaveTree(const char *fname)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1042,7 +1042,7 @@ BOOL AB_SaveTree(char *fname)
 ///
 /// AB_ImportTreeLDIF
 //  Imports an address book in LDIF format
-BOOL AB_ImportTreeLDIF(char *fname, BOOL append, BOOL sorted)
+static BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1649,7 +1649,7 @@ static void XMLCharacterDataHandler(void *userData, const XML_Char *s, int len)
 ///
 /// AB_ImportTreeXML
 // imports an address book in XML format (i.e. from SimpleMail)
-BOOL AB_ImportTreeXML(char *fname, BOOL append, BOOL sorted)
+static BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1789,7 +1789,7 @@ static STACKEXT void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNo
 ///
 /// AB_ExportTreeLDIF
 //  Exports an address book as LDIF file
-BOOL AB_ExportTreeLDIF(char *fname)
+static BOOL AB_ExportTreeLDIF(const char *fname)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1815,7 +1815,7 @@ BOOL AB_ExportTreeLDIF(char *fname)
 ///
 /// AB_ImportTreeTabCSV
 //  Imports an address book with comma or tab separated entries
-BOOL AB_ImportTreeTabCSV(char *fname, BOOL append, BOOL sorted, char delim)
+static BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, char delim)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -2146,7 +2146,7 @@ static STACKEXT void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_Tree
 ///
 /// AB_ExportTreeTabCSV
 //  Exports an address book with comma or tab separated entries
-BOOL AB_ExportTreeTabCSV(char *fname, char delim)
+static BOOL AB_ExportTreeTabCSV(const char *fname, char delim)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -2795,7 +2795,7 @@ MakeStaticHook(AB_DuplicateHook, AB_DuplicateFunc);
 ///
 /// AB_FindEntry
 // Searches an address book node for a given pattern
-int AB_FindEntry(char *pattern, enum AddressbookFind mode, char **result)
+int AB_FindEntry(const char *pattern, enum AddressbookFind mode, char **result)
 {
   Object *lv = G->AB->GUI.LV_ADDRESSES;
   int res = 0;
@@ -3402,5 +3402,6 @@ struct AB_ClassData *AB_New(void)
   RETURN(data);
   return data;
 }
+
 ///
 

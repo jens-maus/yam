@@ -164,7 +164,7 @@ static void FreePathList(struct PathNode *pn)
 // create a copied list of PathNodes
 // based on what OS4 does to copy a list of PathNodes
 #if !defined(__amigaos4__)
-static struct PathNode *CopyPathList(struct PathNode *src)
+static struct PathNode *CopyPathList(const struct PathNode *src)
 {
   struct PathNode *this;
   struct PathNode *first = NULL;
@@ -359,7 +359,7 @@ char *GetNextLine(char *p1)
 ///
 /// TrimStart
 //  Strips leading spaces
-char *TrimStart(char *s)
+char *TrimStart(const char *s)
 {
   ENTER();
 
@@ -367,7 +367,7 @@ char *TrimStart(char *s)
     s++;
 
   RETURN(s);
-  return s;
+  return (char *)s;
 }
 
 ///
@@ -592,7 +592,7 @@ char *AppendToBuffer(char *buf, int *wptr, int *len, const char *add)
 ///
 /// Decrypt
 //  Decrypts passwords
-char *Decrypt(char *source)
+char *Decrypt(const char *source)
 {
   static char buffer[SIZE_PASSWORD+2];
   char *write = &buffer[SIZE_PASSWORD];
@@ -974,7 +974,7 @@ static int Quoting_Chars(char *buf, const int len, const char *text, int *post_s
 
   ENTER();
 
-  (*post_spaces) = 0;
+  *post_spaces = 0;
 
   while((c = *text++) && i < len-1)
   {
@@ -1043,7 +1043,7 @@ void QuoteText(FILE *out, const char *src, const int len, const int line_max)
   ENTER();
 
   // make sure the output file handle is valid
-  if(out)
+  if(out != NULL)
   {
     char temp_buf[128];
     int temp_len;
@@ -1227,7 +1227,7 @@ void QuoteText(FILE *out, const char *src, const int len, const int line_max)
 ///
 /// SimpleWordWrap
 //  Reformats a file to a new line length
-void SimpleWordWrap(char *filename, int wrapsize)
+void SimpleWordWrap(const char *filename, int wrapsize)
 {
   BPTR fh;
 
@@ -2582,7 +2582,7 @@ long DateStamp2Long(struct DateStamp *date)
 
   ENTER();
 
-  if(!date)
+  if(date == NULL)
     date = DateStamp(&dsnow);
 
   memset(&dt, 0, sizeof(struct DateTime));
@@ -2611,7 +2611,7 @@ long DateStamp2Long(struct DateStamp *date)
 ///
 /// String2DateStamp
 //  Tries to converts a string into a datestamp via StrToDate()
-BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mode, enum TZConvert tzc)
+BOOL String2DateStamp(struct DateStamp *dst, const char *string, enum DateStampType mode, enum TZConvert tzc)
 {
   char datestr[64], timestr[64]; // we don't use LEN_DATSTRING as OS3.1 anyway ignores it.
   char *datestrPtr = datestr;
@@ -2762,7 +2762,7 @@ BOOL String2DateStamp(struct DateStamp *dst, char *string, enum DateStampType mo
 ///
 /// String2TimeVal
 // converts a string to a struct TimeVal, if possible.
-BOOL String2TimeVal(struct TimeVal *dst, char *string, enum DateStampType mode, enum TZConvert tzc)
+BOOL String2TimeVal(struct TimeVal *dst, const char *string, enum DateStampType mode, enum TZConvert tzc)
 {
   struct DateStamp ds;
   BOOL result;
@@ -2784,7 +2784,7 @@ BOOL String2TimeVal(struct TimeVal *dst, char *string, enum DateStampType mode, 
 /// TZtoMinutes
 //  Converts time zone into a numeric offset also using timezone abbreviations
 //  Refer to http://www.cise.ufl.edu/~sbeck/DateManip.html#TIMEZONES
-int TZtoMinutes(char *tzone)
+int TZtoMinutes(const char *tzone)
 {
   /*
     The following timezone names are currently understood (and can be used in parsing dates).
@@ -2968,11 +2968,13 @@ int TZtoMinutes(char *tzone)
 
         // then check if we have a : to seperate HH:MM and add the minutes
         // to tzcorr
-        if((c = strchr(tzone, ':'))) tzcorr += atoi(c);
+        if((c = strchr(tzone, ':')))
+          tzcorr += atoi(c);
       }
 
       // now we have to distingush between + and -
-      if(tzone[0] == '-') tzcorr = -tzcorr;
+      if(tzone[0] == '-')
+        tzcorr = -tzcorr;
    }
    else if(isalpha(tzone[0]))
    {
@@ -3127,7 +3129,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
 ///
 /// MailExists
 //  Checks if a message still exists
-BOOL MailExists(struct Mail *mailptr, struct Folder *folder)
+BOOL MailExists(const struct Mail *mailptr, struct Folder *folder)
 {
   BOOL exists;
 
@@ -3190,13 +3192,13 @@ void DisplayMailList(struct Folder *fo, Object *lv)
 ///
 /// AddMailToList
 //  Adds a message to a folder
-struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
+struct Mail *AddMailToList(const struct Mail *mail, struct Folder *folder)
 {
   struct Mail *new;
 
   ENTER();
 
-  if((new = memdup(mail, sizeof(struct Mail))) != NULL)
+  if((new = memdup(mail, sizeof(*mail))) != NULL)
   {
     new->Folder = folder;
 
@@ -3428,7 +3430,7 @@ static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff)
 ///
 /// CompressMailFile
 //  Shrinks a message file
-static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff)
+static BOOL CompressMailFile(const char *src, const char *dst, const char *passwd, const char *method, int eff)
 {
   long error = -1;
 
@@ -3630,7 +3632,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 //  (Re/Un)Compresses a message file
 //  Note: If dstMode is -1 and passwd is NULL, then this function packs
 //        the current mail. It will assume it is plaintext and needs to be packed now
-BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
+BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, const char *passwd)
 {
   char *pmeth = NULL;
   char srcbuf[SIZE_PATHFILE];
@@ -3723,7 +3725,7 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
 ///
 /// DoPack
 //  Compresses a file
-BOOL DoPack(char *file, char *newfile, struct Folder *folder)
+BOOL DoPack(const char *file, const char *newfile, const struct Folder *folder)
 {
   char *pmeth = NULL;
   int peff = 0;
@@ -3793,7 +3795,7 @@ char *StartUnpack(const char *file, char *newfile, const struct Folder *folder)
 ///
 /// FinishUnpack
 //  Deletes temporary unpacked file
-void FinishUnpack(char *file)
+void FinishUnpack(const char *file)
 {
   char ext[SIZE_FILE];
 
@@ -3829,7 +3831,7 @@ void FinishUnpack(char *file)
 /*** Editor related ***/
 /// EditorToFile
 //  Saves contents of a texteditor object to a file
-BOOL EditorToFile(Object *editor, char *file)
+BOOL EditorToFile(Object *editor, const char *file)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -3904,7 +3906,7 @@ MakeHook(GeneralDesHook, GeneralDesFunc);
 // ones. So we have to do the dirty work ourself. This bug has been fixed
 // since dos.library 52.17.
 #if defined(__amigaos4__)
-HOOKPROTONH(ExamineDirMatchFunc, LONG, STRPTR matchString, struct ExamineData *ed)
+HOOKPROTONH(ExamineDirMatchFunc, LONG, CONST_STRPTR matchString, const struct ExamineData *ed)
 {
   LONG accept = TRUE;
 
@@ -5094,7 +5096,7 @@ const char *IdentifyFile(const char *fname)
 ///
 /// GetRealPath
 //  Function that gets the real path out of a supplied path. It will correctly resolve pathes like PROGDIR: aso.
-char *GetRealPath(char *path)
+char *GetRealPath(const char *path)
 {
   char *realPath;
   BPTR lock;
@@ -5116,7 +5118,7 @@ char *GetRealPath(char *path)
   }
 
   // only on success we return the realpath.
-  realPath = success ? buf : path;
+  realPath = success ? buf : (char *)path;
 
   RETURN(realPath);
   return realPath;
@@ -5125,7 +5127,7 @@ char *GetRealPath(char *path)
 ///
 /// ExecuteCommand
 //  Executes a DOS command
-BOOL ExecuteCommand(char *cmd, BOOL asynch, enum OutputDefType outdef)
+BOOL ExecuteCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
 {
   BOOL result = TRUE;
   BPTR path;
@@ -5316,7 +5318,7 @@ BOOL GotoURL(const char *url, BOOL newWindow)
 // X, Y are the two strings that will be compared for similarity
 // It will return a pattern which will reflect the similarity of str1 and str2
 // in a Amiga suitable format. This is case-insensitive !
-char *SWSSearch(char *str1, char *str2)
+char *SWSSearch(const char *str1, const char *str2)
 {
   char *similar;
   static char *Z = NULL;    // the destination string (result)
@@ -5623,7 +5625,7 @@ char *strippedCharsetName(const struct codeset* codeset)
 ///
 /// GetPubScreenName
 // return the name of a public screen, if the screen is public
-void GetPubScreenName(struct Screen *screen, char *pubName, ULONG pubNameSize)
+void GetPubScreenName(const struct Screen *screen, char *pubName, ULONG pubNameSize)
 {
   ENTER();
 
@@ -5635,7 +5637,7 @@ void GetPubScreenName(struct Screen *screen, char *pubName, ULONG pubNameSize)
     // try to get the public screen name
     #if defined(__amigaos4__)
     // this very handy function is OS4 only
-    if(GetScreenAttr(screen, SA_PubName, pubName, pubNameSize) == 0)
+    if(GetScreenAttr((struct Screen *)screen, SA_PubName, pubName, pubNameSize) == 0)
     {
       // GetScreenAttr() failed, copy the default name again, in case it was changed
       strlcpy(pubName, "Workbench", pubNameSize);
@@ -5709,7 +5711,7 @@ BOOL TimeHasElapsed(struct TimeVal *last, ULONG micros)
 /*** REXX interface support ***/
 /// AllocReqText
 //  Prepare multi-line text for requesters, converts \n to line breaks
-char *AllocReqText(char *s)
+char *AllocReqText(const char *s)
 {
   char *reqtext;
 
@@ -5735,6 +5737,7 @@ char *AllocReqText(char *s)
   RETURN(reqtext);
   return reqtext;
 }
+
 ///
 /// ToLowerCase
 //  Change a complete string to lower case
@@ -5749,6 +5752,7 @@ void ToLowerCase(char *str)
 
   LEAVE();
 }
+
 ///
 /// WriteUInt32
 //  write a 32bit variable to a stream, big endian style
@@ -5766,6 +5770,7 @@ int WriteUInt32(FILE *stream, ULONG value)
   RETURN(n);
   return n;
 }
+
 ///
 /// ReadUInt32
 //  read a 32bit variable from a stream, big endian style
@@ -5784,4 +5789,5 @@ int ReadUInt32(FILE *stream, ULONG *value)
   RETURN(n);
   return n;
 }
+
 ///

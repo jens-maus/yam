@@ -4180,7 +4180,7 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
 /*** ReadMailData ***/
 /// AllocPrivateRMData()
 //  Allocates resources for background message parsing
-struct ReadMailData *AllocPrivateRMData(struct Mail *mail, short parseFlags)
+struct ReadMailData *AllocPrivateRMData(const struct Mail *mail, short parseFlags)
 {
   struct ReadMailData *rmData;
 
@@ -4188,7 +4188,7 @@ struct ReadMailData *AllocPrivateRMData(struct Mail *mail, short parseFlags)
 
   if((rmData = calloc(1, sizeof(struct ReadMailData))) != NULL)
   {
-    rmData->mail = mail;
+    rmData->mail = (struct Mail *)mail;
     rmData->parseFlags = parseFlags;
 
     if(RE_LoadMessage(rmData) == FALSE)

@@ -74,8 +74,8 @@ struct TokenAnalyzer
 /*** Public functions ***/
 BOOL BayesFilterInit(void);
 void BayesFilterCleanup(void);
-BOOL BayesFilterClassifyMessage(struct Mail *mail);
-void BayesFilterSetClassification(struct Mail *mail, enum BayesClassification newClass);
+BOOL BayesFilterClassifyMessage(const struct Mail *mail);
+void BayesFilterSetClassification(const struct Mail *mail, enum BayesClassification newClass);
 ULONG BayesFilterNumberOfSpamClassifiedMails(void);
 ULONG BayesFilterNumberOfSpamClassifiedWords(void);
 ULONG BayesFilterNumberOfHamClassifiedMails(void);

@@ -117,7 +117,7 @@ void DeleteFolderList(struct FolderList *flist)
 /// AddNewFolderNode
 // add a new folder to an existing list
 // if locking of the list is needed this must be done by the calling function
-struct FolderNode *AddNewFolderNode(struct FolderList *flist, struct Folder *folder)
+struct FolderNode *AddNewFolderNode(struct FolderList *flist, const struct Folder *folder)
 {
   struct FolderNode *fnode = NULL;
 
@@ -131,7 +131,7 @@ struct FolderNode *AddNewFolderNode(struct FolderList *flist, struct Folder *fol
                                               TAG_DONE)) != NULL)
     {
       // initialize the node's contents
-      fnode->folder = folder;
+      fnode->folder = (struct Folder *)folder;
 
       // add the new folder node to the end of the list
       AddTail((struct List *)&flist->list, (struct Node *)&fnode->node);
@@ -242,7 +242,7 @@ struct FolderNode *TakeFolderNode(struct FolderList *flist)
 static LONG folderLocks = 0;
 
 /// LockFolderList()
-void LockFolderList(struct FolderList *flist)
+void LockFolderList(const struct FolderList *flist)
 {
   ENTER();
 
@@ -260,7 +260,7 @@ void LockFolderList(struct FolderList *flist)
 
 ///
 /// LockFolderListShared()
-void LockFolderListShared(struct FolderList *flist)
+void LockFolderListShared(const struct FolderList *flist)
 {
   ENTER();
 
@@ -278,7 +278,7 @@ void LockFolderListShared(struct FolderList *flist)
 
 ///
 /// UnlockFolderList()
-void UnlockFolderList(struct FolderList *flist)
+void UnlockFolderList(const struct FolderList *flist)
 {
   ENTER();
 

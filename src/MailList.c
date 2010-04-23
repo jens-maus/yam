@@ -114,7 +114,7 @@ void DeleteMailList(struct MailList *mlist)
 ///
 /// CloneMailList
 // create a clone copy of a mail list
-struct MailList *CloneMailList(struct MailList *mlist)
+struct MailList *CloneMailList(const struct MailList *mlist)
 {
   struct MailList *clone = NULL;
 
@@ -155,7 +155,7 @@ struct MailList *CloneMailList(struct MailList *mlist)
 /// AddNewMailNode
 // add a new mail to an existing list
 // if locking of the list is needed this must be done by the calling function
-struct MailNode *AddNewMailNode(struct MailList *mlist, struct Mail *mail)
+struct MailNode *AddNewMailNode(struct MailList *mlist, const struct Mail *mail)
 {
   struct MailNode *mnode = NULL;
 
@@ -169,7 +169,7 @@ struct MailNode *AddNewMailNode(struct MailList *mlist, struct Mail *mail)
                                               TAG_DONE)) != NULL)
     {
       // initialize the node's contents
-      mnode->mail = mail;
+      mnode->mail = (struct Mail *)mail;
 
       // add the new mail node to the end of the list
       AddTail((struct List *)&mlist->list, (struct Node *)&mnode->node);
@@ -375,7 +375,7 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
 ///
 /// MailListToMailArray
 // convert a mail list to a mail array
-struct Mail **MailListToMailArray(struct MailList *mlist)
+struct Mail **MailListToMailArray(const struct MailList *mlist)
 {
   struct Mail **marray = NULL;
 
@@ -410,7 +410,7 @@ struct Mail **MailListToMailArray(struct MailList *mlist)
 ///
 /// FindMailInList
 // find a mail in an already locked list and return its MailNode or NULL
-struct MailNode *FindMailInList(struct MailList *mlist, struct Mail *mail)
+struct MailNode *FindMailInList(const struct MailList *mlist, const struct Mail *mail)
 {
   struct MailNode *foundNode = NULL;
 
@@ -462,7 +462,7 @@ struct MailNode *TakeMailNode(struct MailList *mlist)
 static LONG mailLocks = 0;
 
 /// LockMailList()
-void LockMailList(struct MailList *mlist)
+void LockMailList(const struct MailList *mlist)
 {
   ENTER();
 
@@ -480,7 +480,7 @@ void LockMailList(struct MailList *mlist)
 
 ///
 /// LockMailListShared()
-void LockMailListShared(struct MailList *mlist)
+void LockMailListShared(const struct MailList *mlist)
 {
   ENTER();
 
@@ -498,7 +498,7 @@ void LockMailListShared(struct MailList *mlist)
 
 ///
 /// UnlockMailList()
-void UnlockMailList(struct MailList *mlist)
+void UnlockMailList(const struct MailList *mlist)
 {
   ENTER();
 

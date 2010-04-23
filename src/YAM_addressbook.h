@@ -92,16 +92,16 @@ extern struct Hook AB_PrintHook;
 extern struct Hook AB_FoldUnfoldHook;
 
 void   AB_CheckBirthdates(BOOL check);
-char * AB_CompleteAlias(char *text);
-long   AB_CompressBD(char *datestr);
+char * AB_CompleteAlias(const char *text);
+long   AB_CompressBD(const char *datestr);
 char * AB_ExpandBD(long date);
-int    AB_FindEntry(char *pattern, enum AddressbookFind mode, char **result);
-APTR   AB_GotoEntry(char *alias);
-void   AB_InsertAddress(APTR string, const char *alias, const char *name, const char *address);
-BOOL   AB_LoadTree(char *fname, BOOL append, BOOL sorted);
+int    AB_FindEntry(const char *pattern, enum AddressbookFind mode, char **result);
+APTR   AB_GotoEntry(const char *alias);
+void   AB_InsertAddress(Object *string, const char *alias, const char *name, const char *address);
+BOOL   AB_LoadTree(const char *fname, BOOL append, BOOL sorted);
 void   AB_MakeABFormat(APTR lv);
 struct AB_ClassData *AB_New(void);
-BOOL   AB_SaveTree(char *fname);
-int    AB_SearchEntry(char *text, int mode, struct ABEntry **ab);
+BOOL   AB_SaveTree(const char *fname);
+int    AB_SearchEntry(const char *text, int mode, struct ABEntry **ab);
 
 #endif /* YAM_ADDRESSBOOK_H */

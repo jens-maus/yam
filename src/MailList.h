@@ -55,14 +55,14 @@ struct MailNode
 void InitMailList(struct MailList *mlist);
 struct MailList *CreateMailList(void);
 void DeleteMailList(struct MailList *mlist);
-struct MailList *CloneMailList(struct MailList *mlist);
-struct MailNode *AddNewMailNode(struct MailList *mlist, struct Mail *mail);
+struct MailList *CloneMailList(const struct MailList *mlist);
+struct MailNode *AddNewMailNode(struct MailList *mlist, const struct Mail *mail);
 void AddMailNode(struct MailList *mlist, struct MailNode *mnode);
 void RemoveMailNode(struct MailList *mlist, struct MailNode *mnode);
 void DeleteMailNode(struct MailNode *mnode);
 void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1, const struct Mail *m2));
-struct Mail **MailListToMailArray(struct MailList *mlist);
-struct MailNode *FindMailInList(struct MailList *mlist, struct Mail *mail);
+struct Mail **MailListToMailArray(const struct MailList *mlist);
+struct MailNode *FindMailInList(const struct MailList *mlist, const struct Mail *mail);
 struct MailNode *TakeMailNode(struct MailList *mlist);
 
 // check if a mail list is empty
@@ -79,9 +79,9 @@ struct MailNode *TakeMailNode(struct MailList *mlist);
 
 // lock and unlock a mail list via its semaphore
 #if defined(DEBUG)
-void LockMailList(struct MailList *mlist);
-void LockMailListShared(struct MailList *mlist);
-void UnlockMailList(struct MailList *mlist);
+void LockMailList(const struct MailList *mlist);
+void LockMailListShared(const struct MailList *mlist);
+void UnlockMailList(const struct MailList *mlist);
 #else
 #define LockMailList(mlist)                       ObtainSemaphore((mlist)->lockSemaphore)
 #define LockMailListShared(mlist)                 ObtainSemaphoreShared((mlist)->lockSemaphore)

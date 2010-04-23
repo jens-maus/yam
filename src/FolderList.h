@@ -53,7 +53,7 @@ struct FolderNode
 void InitFolderList(struct FolderList *flist);
 struct FolderList *CreateFolderList(void);
 void DeleteFolderList(struct FolderList *flist);
-struct FolderNode *AddNewFolderNode(struct FolderList *flist, struct Folder *folder);
+struct FolderNode *AddNewFolderNode(struct FolderList *flist, const struct Folder *folder);
 void AddFolderNode(struct FolderList *flist, struct FolderNode *fnode);
 void RemoveFolderNode(struct FolderList *flist, struct FolderNode *fnode);
 void DeleteFolderNode(struct FolderNode *fnode);
@@ -74,9 +74,9 @@ struct FolderNode *TakeFolderNode(struct FolderList *flist);
 
 // lock and unlock a folder list via its semaphore
 #if defined(DEBUG)
-void LockFolderList(struct FolderList *flist);
-void LockFolderListShared(struct FolderList *flist);
-void UnlockFolderList(struct FolderList *flist);
+void LockFolderList(const struct FolderList *flist);
+void LockFolderListShared(const struct FolderList *flist);
+void UnlockFolderList(const struct FolderList *flist);
 #else
 #define LockFolderList(flist)                     ObtainSemaphore((flist)->lockSemaphore)
 #define LockFolderListShared(flist)               ObtainSemaphoreShared((flist)->lockSemaphore)
