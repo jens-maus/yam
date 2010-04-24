@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-24 Frank Weber <opionline@yahoo.de>
+
+  * YAM_CO.c: Add a workaround for a MUI 3.8 bug to show the colors for the
+    Poppen objects on OS3.x.
+  * YAM_COs.c: Disable all Poppen objects according to the UseTextColorsRead
+    setting and do some cosmetic changes. This closes #162.
+
 2010-04-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: spread some static and const keywords.
