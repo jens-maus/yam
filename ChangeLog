@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * DockyIcon.c: the full application path is now specified when registering
+    YAM at application.lib.
+
 2010-04-24 Frank Weber <opionline@yahoo.de>
 
   * YAM_CO.c: Add a workaround for a MUI 3.8 bug to show the colors for the
