@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (10.04.2010)
+## version $VER: YAM.catalog 7.1 (28.04.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -638,7 +638,7 @@ _Copia
 ; Cop_y
 ;
 MSG_MA_ChangeSubjReq
-Inserisci un nuovo oggetto:
+Inserisci un nuovo oggetto per il messaggio:
 ; Enter a new subject:
 ;
 MSG_MA_All
@@ -764,7 +764,7 @@ Nuova cartella
 ; This is the title of the new folder window, not the menu item.
 ;
 MSG_MA_SortOrder
-Ordina
+Ordine
 ; Order
 ;
 MSG_MA_OSave
@@ -1796,7 +1796,7 @@ Spedisci la posta della cartella In attesa
 ; Send mail in outgoing queue
 ;
 MSG_CO_PopStart
-Preleva automaticamente la nuova posta
+Preleva automaticamente la nuova posta in arrivo
 ; Download new mail
 ;
 MSG_CO_CheckDOB
@@ -3259,7 +3259,7 @@ Foto
 ; Portrait
 ;
 MSG_EA_SelectPhoto
-Se_leziona
+Se_leziona...
 ; Se_lect
 ;
 MSG_EA_ReturnAddress
@@ -3325,7 +3325,7 @@ Nome strada e numero.
 ;
 MSG_HELP_EA_ST_CITY
 Indirizzo completo di posta ordinaria:\n\
-Città e codice di avviamento postale\n\
+Città e codice di avviamento postale.
 ; Postal address: city\n\
 ; and zip code.
 ;
@@ -5054,7 +5054,7 @@ questi criteri di ricerca.
 ;
 MSG_HELP_FI_BT_SEARCH
 Inizia la ricerca e mostra i risultati\n\
-nella lista sovrastante.\n\
+nella lista sovrastante.
 ; Start the search and display\n\
 ; the results in the list above.
 ;
@@ -5351,7 +5351,7 @@ della cartella selezionata.
 ; the selected folder are stored.
 ;
 MSG_HELP_FO_ST_MAXAGE
-I vecchi messaggi saranno automaticamente cancellati\n\
+I messaggi saranno automaticamente cancellati\n\
 dopo un determinato periodo di tempo (in giorni).\n\
 Digita 0 o lascia questo campo vuoto nel caso si\n\
 desideri disattivare questa opzione.
@@ -6690,7 +6690,7 @@ le statistiche delle cartelle.
 ; Workbench showing folder statistics.
 ;
 MSG_CO_DOCKYICON
-Attiva icona 'D_ocky'
+Attiva icona d_ocky su AmiDock
 ; Enable 'd_ocky' icon
 ;
 MSG_HELP_CO_CH_DOCKYICON
@@ -7718,7 +7718,7 @@ Applica filtro AntiSpam
 ; Apply spam filter
 ;
 MSG_FI_BUSYCHECKSPAM
-Applicazione filtro AntiSpam...
+Applicazione del filtro AntiSpam...
 ; Applying spam filter on folder...
 ;
 MSG_MA_REMOVESPAM
@@ -7806,7 +7806,7 @@ Ricerca...
 ; Search...
 ;
 MSG_MA_MFILTER
-Filtro
+Filtro...
 ; Filter
 ;
 MSG_MA_REMOVEDELETED
@@ -7866,7 +7866,7 @@ Copia...
 ; Copy...
 ;
 MSG_MA_MPRINT
-Stampa
+Stampa...
 ; Print
 ;
 MSG_MA_MSAVE
@@ -7878,7 +7878,7 @@ Salva...
 ; Save...
 ;
 MSG_MA_MNEW
-Nuovo
+Nuovo...
 ; New
 ;
 MSG_MA_MREPLY
@@ -7886,7 +7886,7 @@ Rispondi...
 ; Reply...
 ;
 MSG_MA_MFORWARD
-Inoltra...
+Inoltra
 ; Forward...
 ;
 MSG_MA_MBOUNCE
@@ -7936,11 +7936,11 @@ Cerca...
 ; Search...
 ;
 MSG_RE_SEARCH_AGAIN
-Cerca ancora
+Cerca ancora...
 ; Search again
 ;
 MSG_WR_SEARCH_AGAIN
-Cerca ancora
+Cerca ancora...
 ; Search again
 ;
 MSG_WR_AUTOWRAP
@@ -7948,7 +7948,7 @@ A capo?
 ; Word-wrap?
 ;
 MSG_CO_SPAM_MARK_AS_READ
-Marca il nuovo m_essaggio Spam come letto
+Marca il nuovo m_essaggio letto come Spam
 ; Mark new spam mai_ls as read
 ;
 MSG_HELP_CH_SPAMFILTERENABLED
@@ -9476,10 +9476,9 @@ MSG_ER_BADRESPONSE_POP3
 Errato responso da parte del server di posta '%s' per l'account '%s' al comando '%s':\n\
 \n\
 %s\n\
-\n\
 Il server di posta non ha potuto eseguire il\n\
-comando ed ha risposto con il messaggio di\n\
-errore sopra riportato.
+comando ed ha risposto con il messaggio\n\
+di errore sopra riportato.
 ; Bad response from mail server '%s' of account '%s' to command '%s':\n\
 ; \n\
 ; %s\n\
@@ -9573,9 +9572,9 @@ MSG_ER_BADRESPONSE_SMTP
 Errato responso da parte del server di posta '%s' al comando '%s':\n\
 \n\
 %s\n\
-\n\
-Il server di posta non ha potuto eseguire il comando ed ha\n\
-risposto con il messaggio di errore sopra riportato.
+Il server di posta non ha potuto eseguire il\n\
+comando ed ha risposto con il messaggio\n\
+di errore sopra riportato.
 ; Bad response from mail server '%s' to command '%s':\n\
 ; \n\
 ; %s\n\

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-28 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some unused space.
+
 2010-04-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * DockyIcon.c: the full application path is now specified when registering
