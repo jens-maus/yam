@@ -302,15 +302,14 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
   for(;;)
   {
-    // First we attempt to acquire the version and revision through MUI
     Object *obj;
 
+    // First we attempt to acquire the version and revision through MUI via
+    // creating an object of the mcc
     if((obj = MUI_NewObject(name, TAG_DONE)) != NULL)
     {
-      ULONG ver;
-      ULONG rev;
-      struct Library *base;
-      char libname[256];
+      ULONG ver = 0;
+      ULONG rev = 0;
 
       ver = xget(obj, MUIA_Version);
       rev = xget(obj, MUIA_Revision);
@@ -324,22 +323,43 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
         success = TRUE;
         break;
       }
+      else
+        obj = NULL;
+    }
+
+    // if we end up here the version of the .mcc couldn't either be retrieved
+    // by creating a MUI object of it (e.g. because it requires more mandatory
+    // attribute to create the object) or because the version didn't match
+    // with the minimum version required.
+    //
+    // So what we do now is to try to open the .mcc as a normal library and
+    // see if the version of the library base of it matches.
+    if(success == FALSE)
+    {
+      struct Library *base;
+      char libname[SIZE_DEFAULT];
 
       // If we did't get the version we wanted, let's try to open the
-      // libraries ourselves and see what happens...
-      snprintf(libname, sizeof(libname), "PROGDIR:mui/%s", name);
+      // MCC via OpenLibrary() ourselves and see what happens
+      snprintf(libname, sizeof(libname), "mui/%s", name);
 
-      if((base = OpenLibrary(&libname[8], 0)) != NULL || (base = OpenLibrary(&libname[0], 0)) != NULL)
+      // we check to find the mcc via querying it by "mui/XXXXX.mcc". As ramlib
+      // also automatically checks in PROGDIR: this should catch the case where
+      // the user has falsly installed the .mcc under YAM:mui
+      if((base = OpenLibrary(libname, 0)) != NULL)
       {
+        ULONG ver = base->lib_Version;
+        ULONG rev = base->lib_Revision;
         UWORD openCnt = base->lib_OpenCnt;
 
-        ver = base->lib_Version;
-        rev = base->lib_Revision;
-
+        // close the library immediately as we don't require any more
+        // information from it
         CloseLibrary(base);
+        base = NULL;
 
         // we add some additional check here so that eventual broken .mcc also have
-        // a chance to pass this test (e.g. _very_ old versions of Toolbar.mcc are broken)
+        // a chance to pass this test (e.g. _very_ old versions of Toolbar.mcc are broken
+        // and don't have any MUIA_Version/Revision attributes.
         if(VERSION_IS_AT_LEAST(ver, rev, minver, minrev) == TRUE)
         {
           D(DBF_STARTUP, "%s v%ld.%ld found through OpenLibrary()", name, ver, rev);
@@ -348,6 +368,10 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
           break;
         }
 
+        // the version still doesn't match our expectations, so let's see
+        // if the library is already opened by another application and if so
+        // we give the user the chance to select what he wants to do to solve
+        // the problem (as he might still have an old version in memory)
         if(openCnt > 1)
         {
           if(req == TRUE)
@@ -420,28 +444,27 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
             break;
         }
       }
-    }
-    else
-    {
-      LONG answer;
-
-      // No MCC at all - no need to attempt flush
-      flush = FALSE;
-      answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url);
-
-      if(answer == 0)
+      else
       {
-        // cancel
-        break;
-      }
-      else if(answer == 2)
-      {
-        // visit the home page if it is known but bail out nevertheless
-        GotoURL(url, FALSE);
-        break;
+        LONG answer;
+
+        // No MCC at all - no need to attempt flush
+        flush = FALSE;
+        answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url);
+
+        if(answer == 0)
+        {
+          // cancel
+          break;
+        }
+        else if(answer == 2)
+        {
+          // visit the home page if it is known but bail out nevertheless
+          GotoURL(url, FALSE);
+          break;
+        }
       }
     }
-
   }
 
   if(success == FALSE && req == TRUE)

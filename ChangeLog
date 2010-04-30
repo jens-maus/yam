@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-04-30 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: slightly reworked the CheckMCC() function to not only rely on
+    MUI object creation as some classes may return NULL if some attributes
+    are missing at object creation. Also PROGDIR: checking seems not required
+    as OpenLibrary() already checks PROGDIR: per default.
+
 2010-04-28 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed some unused space.
