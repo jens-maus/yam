@@ -308,13 +308,11 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
     // creating an object of the mcc
     if((obj = MUI_NewObject(name, TAG_DONE)) != NULL)
     {
-      ULONG ver = 0;
-      ULONG rev = 0;
-
-      ver = xget(obj, MUIA_Version);
-      rev = xget(obj, MUIA_Revision);
+      ULONG ver = xget(obj, MUIA_Version);
+      ULONG rev = xget(obj, MUIA_Revision);
 
       MUI_DisposeObject(obj);
+      obj = NULL;
 
       if(VERSION_IS_AT_LEAST(ver, rev, minver, minrev) == TRUE)
       {
@@ -323,8 +321,6 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
         success = TRUE;
         break;
       }
-      else
-        obj = NULL;
     }
 
     // if we end up here the version of the .mcc couldn't either be retrieved
