@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-09 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: added spanish catalog translation.
+
 2010-04-30 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: slightly reworked the CheckMCC() function to not only rely on
