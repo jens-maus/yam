@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Makefile, doc/Install-YAM: added new spanish translation to the catalog
+    generation and to the Installer script.
+
 2010-05-09 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: added spanish catalog translation.

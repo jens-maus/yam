@@ -507,6 +507,7 @@ CATALOGS = \
 	$(LOCALE)/greek.catalog \
 	$(LOCALE)/italian.catalog \
 	$(LOCALE)/polish.catalog \
+	$(LOCALE)/spanish.catalog \
 	$(LOCALE)/swedish.catalog \
 	# $(LOCALE)/bosnian.catalog \
 	# $(LOCALE)/danish.catalog \
@@ -518,7 +519,6 @@ CATALOGS = \
 	# $(LOCALE)/russian.catalog \
 	# $(LOCALE)/serbian.catalog \
 	# $(LOCALE)/slovenian.catalog \
-	# $(LOCALE)/spanish.catalog \
 	# $(LOCALE)/turkish.catalog
 
 # main target
