@@ -290,8 +290,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
 
           if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)) != NULL)
           {
-            // as we search the entire message text we can do a single
-            // stristr() call here for matching
+            // perform the search in the complete body
             foundMatch = (BoyerMooreSearch(bmContext, cmsg) != NULL);
 
             // free the allocated message text immediately
