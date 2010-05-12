@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-12 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update italian catalog.
+
 2010-05-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * BoyerMooreSearch.c, YAM_FI.c: implemented a fast string search using the

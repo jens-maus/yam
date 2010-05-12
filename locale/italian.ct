@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (28.04.2010)
+## version $VER: YAM.catalog 7.1 (12.05.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.7 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 4651 2010-03-25
+; based on YAM.cd 4694 2010-05-12
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -2691,8 +2691,8 @@ nuovi messaggi all'avvio del programma.
 ;
 MSG_HELP_CO_CH_CHECKBD
 Verifica la rubrica ed apre un memorandum nel caso\n\
-sia il compleanno o l'anniversario di qualche amico\n\
-o conoscente.
+sia il compleanno o l'anniversario di qualche amico o\n\
+conoscente.
 ; Check the address book and open a\n\
 ; reminder if it's a person's birthday.
 ;
@@ -2765,7 +2765,7 @@ MSG_HELP_CO_CH_CLGADGET
 Seleziona questa opzione se si desidera\n\
 iconificare YAM cliccando sul gadget di\n\
 chiusura del programma.\n\
-Normalmente questo gadget chiuderebbe\n\
+Di norma questo gadget chiuderebbe\n\
 completamente il programma.
 ; Do you want YAM to iconify when\n\
 ; you hit the close gadget?
@@ -2837,8 +2837,8 @@ Tipologia di script\n\
 ; (ARexx or AmigaDOS).
 ;
 MSG_HELP_CO_CH_CONSOLE
-Apre una console in moda da permettere allo script la\n\
-gestione dei flussi di dati in ingresso e in uscita.
+Apre una console in moda da permettere allo script\n\
+la gestione dei flussi di dati in ingresso e in uscita.
 ; Open a console window to allow input\n\
 ; and output from the script.
 ;
@@ -3908,7 +3908,7 @@ Firma e codifica
 ; Sign and encrypt
 ;
 MSG_WR_SecAnon
-Invia anonimamente
+Invio anonimo
 ; Send anonymously
 ;
 MSG_WR_ImpHigh
@@ -4860,7 +4860,7 @@ _Nuovo
 ; _New
 ;
 MSG_DI_AddSelect
-Agg _selezione
+Agg. _selezione
 ; Add _selection
 ;
 MSG_DI_Delete
@@ -5744,8 +5744,8 @@ Barra di stato
 ; Status bar
 ;
 MSG_HELP_CO_CH_INFOBAR
-Qui è possibile selezionare la posizione della barra\n\
-di stato che mostra le informazioni generali di YAM.
+Qui è possibile selezionare la posizione della barra di\n\
+stato che mostra le informazioni generali di YAM.
 ; Here you can select the position of the status bar\n\
 ; that shows general information in YAM.
 ;
@@ -6565,8 +6565,8 @@ Mostra _barra di ricerca nella finestra principale
 ;
 MSG_HELP_CO_CH_QUICKSEARCHBAR
 Attivando questa opzione sarà possibile aggiungere una barra\n\
-di ricerca rapida incorporata nella finestra principale in\n\
-modo da permettere una ricerca più veloce dei messaggi.
+di ricerca rapida incorporata nella finestra principale in modo da\n\
+permettere una più veloce ricerca dei messaggi.
 ; If checked, a search bar will appear\n\
 ; in the main window to let you find\n\
 ; certain e-mails more quickly.
@@ -8008,10 +8008,11 @@ automaticamente contrassegnato come 'Letto'.
 ; automatically flagged as 'read'.
 ;
 MSG_HELP_CH_UPDATECHECK
-Ogni quanto tempo si desidera che il programma si\n\
-connetta alla rete internet per cercare eventuali\n\
+Ogni quanto tempo si desidera che il programma\n\
+si connetta alla rete internet per cercare eventuali\n\
 nuovi aggiornamenti?\n\
-Seleziona 'Mai' per disattivare questa opzione.
+Imposta su disattivato per bloccare le notifiche\n\
+automatiche.
 ; How often do you want YAM to\n\
 ; automatically check for updates?\n\
 ; Select 'never' to disable this feature.
@@ -9932,4 +9933,14 @@ Prima del filtro
 MSG_CO_ScriptPostFilterMail
 Dopo il filtro
 ; After filter mail
+;
+MSG_FI_DOS_PATTERN
+Usa pattern di AmigaDOS
+; Use AmigaDOS patterns
+;
+MSG_HELP_FI_CH_DOS_PATTERN
+Attiva pattern di AmigaDOS nella\n\
+stringa di ricerca.
+; Enable AmigaDOS patterns\n\
+; in the string search.
 ;
