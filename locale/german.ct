@@ -8553,3 +8553,10 @@ Vor dem Filtern von Mails
 MSG_CO_ScriptPostFilterMail
 Nach dem Filtern von Mails
 ;
+MSG_FI_DOS_PATTERN (2161//)
+AmigaDOS-Muster benutzen
+;
+MSG_HELP_FI_CH_DOS_PATTERN (2162//)
+Erlaubt eine Zeichenkettensuche\n
+mit Hilfe von AmigaDOS-Mustern.
+;

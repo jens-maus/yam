@@ -315,6 +315,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
                                      CP_EQUAL,
                                      0,
                                      TRUE,
+                                     TRUE,
                                      searchString,
                                      ""))
         {

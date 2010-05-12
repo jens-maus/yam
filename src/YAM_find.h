@@ -34,6 +34,9 @@
 #define FORMAT_DEF 4
 #endif
 
+// forward declarations
+struct BoyerMooreContext;
+
 struct FI_GUIData
 {
   Object *WI;
@@ -96,11 +99,13 @@ struct Search
   enum FastSearch      Fast;
   BOOL                 CaseSens;
   BOOL                 SubString;
+  BOOL                 DOSPattern;
   char                 Match[SIZE_PATTERN+4];
   char                 PatBuf[(SIZE_PATTERN+4)*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
   char                 Field[SIZE_DEFAULT];
   struct DateTime      DT;
   struct MinList       patternList;                  // for storing search patterns
+  struct BoyerMooreContext *bmContext;
 };
 
 struct SearchPatternNode
@@ -121,8 +126,10 @@ struct RuleNode
   enum Comparison     comparison;                 // comparison mode to use for our query (i.e. >, <, <>, IN)
   BOOL                caseSensitive;              // case sensitive search/filtering or not.
   BOOL                subString;                  // sub string search/filtering or not.
+  BOOL                dosPattern;                 // apply DOS patterns or not.
   char                matchPattern[SIZE_PATTERN]; // user defined pattern for search/filter
   char                customField[SIZE_DEFAULT];  // user definable string to query some more information
+
 };
 
 // A filter is represented as a single filter node
@@ -152,7 +159,7 @@ extern struct Hook ApplyFiltersHook;
 extern const char mailStatusCycleMap[11];
 
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode,
-                      int compar, char stat, BOOL substr, const char *match, const char *field);
+                      int compar, char stat, BOOL substr, BOOL dosPattern, const char *match, const char *field);
 BOOL FI_DoSearch(struct Search *search, struct Mail *mail);
 BOOL FI_FilterSingleMail(struct Mail *mail, int *matches);
 

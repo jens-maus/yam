@@ -59,6 +59,7 @@
 #include "mui/Classes.h"
 
 #include "BayesFilter.h"
+#include "BoyerMooreSearch.h"
 #include "Locale.h"
 #include "MailList.h"
 #include "FolderList.h"
@@ -101,26 +102,62 @@ static BOOL FI_MatchString(struct Search *search, char *string)
 
   ENTER();
 
-  switch (search->Compare)
+  switch(search->Compare)
   {
     case 0:
-      match = (BOOL)(search->CaseSens ? MatchPattern(search->Pattern, string) : MatchPatternNoCase(search->Pattern, string));
+    {
+      if(search->DOSPattern == TRUE)
+      {
+        if(search->CaseSens == TRUE)
+           match = (BOOL)MatchPattern(search->Pattern, string);
+         else
+           match = (BOOL)MatchPatternNoCase(search->Pattern, string);
+      }
+      else
+      {
+        match = (BOOL)(BoyerMooreSearch(search->bmContext, string) != NULL);
+      }
+    }
     break;
 
     case 1:
-      match = (BOOL)(search->CaseSens ? !MatchPattern(search->Pattern, string) : !MatchPatternNoCase(search->Pattern, string));
+    {
+      if(search->DOSPattern == TRUE)
+      {
+        if(search->CaseSens == TRUE)
+           match = (BOOL)!MatchPattern(search->Pattern, string);
+         else
+           match = (BOOL)!MatchPatternNoCase(search->Pattern, string);
+      }
+      else
+      {
+        match = (BOOL)(BoyerMooreSearch(search->bmContext, string) == NULL);
+      }
+    }
     break;
 
     case 2:
-      match = (BOOL)(search->CaseSens ? strcmp(string, search->Match) < 0 : Stricmp(string, search->Match) < 0);
+    {
+      if(search->CaseSens == TRUE)
+        match = (BOOL)(strcmp(string, search->Match) < 0);
+      else
+        match = (BOOL)(Stricmp(string, search->Match) < 0);
+    }
     break;
 
     case 3:
-      match = (BOOL)(search->CaseSens ? strcmp(string, search->Match) > 0 : Stricmp(string, search->Match) > 0);
+    {
+      if(search->CaseSens == TRUE)
+        match = (BOOL)(strcmp(string, search->Match) > 0);
+      else
+        match = (BOOL)(Stricmp(string, search->Match) > 0);
+    }
     break;
 
     default:
+    {
       match = FALSE;
+    }
     break;
 
   }
@@ -143,12 +180,13 @@ static BOOL FI_MatchListPattern(struct Search *search, char *string)
   {
     struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
 
-    if(search->CaseSens ? MatchPattern(patternNode->pattern, string)
-                        : MatchPatternNoCase(patternNode->pattern, string))
-    {
-      match = TRUE;
+    if(search->CaseSens == TRUE)
+      match = (BOOL)MatchPattern(patternNode->pattern, string);
+    else
+      match = (BOOL)MatchPatternNoCase(patternNode->pattern, string);
+
+    if(match == TRUE)
       break;
-    }
   }
 
   RETURN(match);
@@ -189,13 +227,13 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
 
       if(FI_MatchPerson(search, &mail->From))
         found = TRUE;
-      else if(isMultiSenderMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+      else if(isMultiSenderMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
       {
         int i;
 
         for(i=0; i < email->NoSFrom; i++)
         {
-          if(FI_MatchPerson(search, &email->SFrom[i]))
+          if(FI_MatchPerson(search, &email->SFrom[i]) == TRUE)
           {
             found = TRUE;
             break;
@@ -214,13 +252,13 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
 
       if(FI_MatchPerson(search, &mail->To))
         found = TRUE;
-      else if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+      else if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
       {
         int i;
 
         for(i=0; i < email->NoSTo; i++)
         {
-          if(FI_MatchPerson(search, &email->STo[i]))
+          if(FI_MatchPerson(search, &email->STo[i]) == TRUE)
           {
             found = TRUE;
             break;
@@ -237,13 +275,13 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
     {
       struct ExtendedMail *email;
 
-      if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+      if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
       {
         int i;
 
         for(i=0; i < email->NoCC; i++)
         {
-          if(FI_MatchPerson(search, &email->CC[i]))
+          if(FI_MatchPerson(search, &email->CC[i]) == TRUE)
           {
             found = TRUE;
             break;
@@ -262,13 +300,13 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
 
       if(FI_MatchPerson(search, &mail->ReplyTo))
         found = TRUE;
-      else if(isMultiReplyToMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
+      else if(isMultiReplyToMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
       {
         int i;
 
         for(i=0; i < email->NoSReplyTo; i++)
         {
-          if(FI_MatchPerson(search, &email->SReplyTo[i]))
+          if(FI_MatchPerson(search, &email->SReplyTo[i]) == TRUE)
           {
             found = TRUE;
             break;
@@ -511,19 +549,20 @@ static void FI_GenerateListPatterns(struct Search *search)
 //  Initializes Search structure
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
                       BOOL casesens, int persmode, int compar,
-                      char stat, BOOL substr, const char *match, const char *field)
+                      char stat, BOOL substr, BOOL dosPattern, const char *match, const char *field)
 {
   BOOL success = TRUE;
 
   ENTER();
 
   memset(search, 0, sizeof(struct Search));
-  search->Mode      = mode;
-  search->CaseSens  = casesens;
-  search->PersMode  = persmode;
-  search->Compare   = compar;
-  search->Status    = stat;
-  search->SubString = substr;
+  search->Mode       = mode;
+  search->CaseSens   = casesens;
+  search->PersMode   = persmode;
+  search->Compare    = compar;
+  search->Status     = stat;
+  search->SubString  = substr;
+  search->DOSPattern = dosPattern;
   strlcpy(search->Match, match, sizeof(search->Match));
   strlcpy(search->Field, field, sizeof(search->Field));
   search->Pattern = search->PatBuf;
@@ -604,20 +643,30 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
       FI_GenerateListPatterns(search);
     else if (search->Fast != FS_DATE && search->Fast != FS_SIZE && mode != SM_SIZE)
     {
-      if(substr || mode == SM_HEADER || mode == SM_BODY || mode == SM_WHOLE || mode == SM_STATUS)
+      if(dosPattern == TRUE)
       {
-        char buffer[SIZE_PATTERN+1];
+        // we are told to perform AmigaDOS pattern matching
+        if(substr == TRUE || mode == SM_HEADER || mode == SM_BODY || mode == SM_WHOLE || mode == SM_STATUS)
+        {
+          char buffer[SIZE_PATTERN+1];
 
-        // if substring is selected lets generate a substring out
-        // of the current match string, but keep the string borders in mind.
-        strlcpy(buffer, search->Match, sizeof(buffer));
-        snprintf(search->Match, sizeof(search->Match), "#?%s#?", buffer);
+          // if substring is selected lets generate a substring out
+          // of the current match string, but keep the string borders in mind.
+          strlcpy(buffer, search->Match, sizeof(buffer));
+          snprintf(search->Match, sizeof(search->Match), "#?%s#?", buffer);
+        }
+
+        if(casesens == TRUE)
+          ParsePattern(search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
+        else
+          ParsePatternNoCase(search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
       }
-
-      if(casesens)
-        ParsePattern(search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
       else
-        ParsePatternNoCase(search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
+      {
+        // a simple substring search using the Boyer/Moore algorithm
+        if((search->bmContext = BoyerMooreInit(search->Match, casesens)) == NULL)
+          success = FALSE;
+      }
     }
   }
 
@@ -1324,12 +1373,19 @@ static void FreeSearchPatternList(struct Search *search)
 
   ENTER();
 
-  // Now we process the read header to set all flags accordingly
+  // free all search pattern nodes
   while((curNode = RemHead((struct List *)&search->patternList)) != NULL)
   {
     struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
 
     free(patternNode);
+  }
+
+  // free a possibly initalized Boyer-Moore search context
+  if(search->bmContext != NULL)
+  {
+    BoyerMooreCleanup(search->bmContext);
+    search->bmContext = NULL;
   }
 
   LEAVE();
@@ -1422,6 +1478,7 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
                            rule->comparison,
                            mailStatusCycleMap[stat],
                            rule->subString,
+                           rule->dosPattern,
                            rule->matchPattern,
                            rule->customField);
 

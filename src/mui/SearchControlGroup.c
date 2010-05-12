@@ -57,6 +57,7 @@ struct Data
   Object *CY_STATUS;
   Object *CH_CASESENS[5];
   Object *CH_SUBSTR[5];
+  Object *CH_DOSPATTERN[5];
   Object *CY_COMBINE;
 
   Object *activeObject;
@@ -199,6 +200,7 @@ OVERLOAD(OM_NEW)
             Child, VGroup,
               Child, MakeCheckGroup((Object **)&data->CH_CASESENS[0], tr(MSG_FI_CaseSensitive)),
               Child, MakeCheckGroup((Object **)&data->CH_SUBSTR[0], tr(MSG_FI_SubString)),
+              Child, MakeCheckGroup((Object **)&data->CH_DOSPATTERN[0], tr(MSG_FI_DOS_PATTERN)),
             End,
             Child, data->RA_ADRMODE = Radio(NULL, amode),
           End,
@@ -218,6 +220,7 @@ OVERLOAD(OM_NEW)
           Child, VGroup,
             Child, MakeCheckGroup((Object **)&data->CH_CASESENS[1], tr(MSG_FI_CaseSensitive)),
             Child, MakeCheckGroup((Object **)&data->CH_SUBSTR[1], tr(MSG_FI_SubString)),
+            Child, MakeCheckGroup((Object **)&data->CH_DOSPATTERN[1], tr(MSG_FI_DOS_PATTERN)),
           End,
         End,
         Child, VGroup, // 2  date, size
@@ -241,6 +244,7 @@ OVERLOAD(OM_NEW)
             Child, data->ST_MATCH[4] = MakeString(SIZE_PATTERN, ""),
           End,
           Child, MakeCheckGroup((Object **)&data->CH_CASESENS[4], tr(MSG_FI_CaseSensitive)),
+          Child, MakeCheckGroup((Object **)&data->CH_DOSPATTERN[4], tr(MSG_FI_DOS_PATTERN)),
           Child, HVSpace,
         End,
       End,
@@ -306,6 +310,12 @@ OVERLOAD(OM_NEW)
         DoMethod(data->CH_SUBSTR[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
         SetHelp(data->CH_SUBSTR[i], MSG_HELP_FI_CH_SUBSTR);
         nnset(data->CH_SUBSTR[i], MUIA_Selected, TRUE);
+      }
+
+      if(data->CH_DOSPATTERN[i] != NULL)
+      {
+        DoMethod(data->CH_DOSPATTERN[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+        SetHelp(data->CH_DOSPATTERN[i], MSG_HELP_FI_CH_DOSPATTERN);
       }
 
       if(data->BT_EDIT[i] != NULL)
@@ -377,6 +387,8 @@ OVERLOAD(OM_SET)
             set(data->CH_CASESENS[i], MUIA_Disabled, disabled);
           if(data->CH_SUBSTR[i] != NULL)
             set(data->CH_SUBSTR[i], MUIA_Disabled, disabled || oper == 4 || (i < 2 && oper > 1));
+          if(data->CH_DOSPATTERN[i] != NULL)
+            set(data->CH_DOSPATTERN[i], MUIA_Disabled, disabled);
           if(data->BT_FILE[i] != NULL)
             set(data->BT_FILE[i], MUIA_Disabled, disabled || oper != 4);
           if(data->BT_EDIT[i] != NULL)
@@ -430,6 +442,9 @@ DECLARE(Clear)
 
     if(data->CH_SUBSTR[m] != NULL)
       nnset(data->CH_SUBSTR[m], MUIA_Selected, FALSE);
+
+    if(data->CH_DOSPATTERN[m] != NULL)
+      nnset(data->CH_DOSPATTERN[m], MUIA_Selected, FALSE);
   }
 
   return 0;
@@ -458,6 +473,7 @@ DECLARE(PrepareSearch) // struct Search *search
                    GetMUICycle(data->CY_COMP[pg]),
                    mailStatusCycleMap[GetMUICycle(data->CY_STATUS)],
                    pg < 2 ? GetMUICheck(data->CH_SUBSTR[pg]) : (pg == 4 ? TRUE : FALSE),
+                   GetMUICheck(data->CH_DOSPATTERN[pg]),
                    match,
                    field);
 
@@ -493,6 +509,9 @@ DECLARE(SetToRule) // struct RuleNode *rule
   if(data->CH_SUBSTR[g] != NULL)
     rule->subString = GetMUICheck(data->CH_SUBSTR[g]);
 
+  if(data->CH_DOSPATTERN[g] != NULL)
+    rule->dosPattern = GetMUICheck(data->CH_DOSPATTERN[g]);
+
   return 0;
 }
 
@@ -506,7 +525,7 @@ DECLARE(GetFromRule) // struct RuleNode *rule
   int g = Mode2Group[rule->searchMode];
 
   nnset(data->CY_MODE[data->remoteFilterMode],  MUIA_Cycle_Active,      rule->searchMode);
-  nnset(data->CY_COMBINE,                        MUIA_Cycle_Active,      rule->combine>0 ? rule->combine-1 : 0);
+  nnset(data->CY_COMBINE,                       MUIA_Cycle_Active,      rule->combine>0 ? rule->combine-1 : 0);
   nnset(data->RA_ADRMODE,                       MUIA_Radio_Active,      rule->subSearchMode);
   nnset(data->ST_FIELD,                         MUIA_String_Contents,   rule->customField);
   nnset(data->PG_SRCHOPT,                       MUIA_Group_ActivePage,  g);
@@ -533,6 +552,9 @@ DECLARE(GetFromRule) // struct RuleNode *rule
 
   if(data->CH_SUBSTR[g] != NULL)
     nnset(data->CH_SUBSTR[g], MUIA_Selected, rule->subString);
+
+  if(data->CH_DOSPATTERN[g] != NULL)
+    nnset(data->CH_DOSPATTERN[g], MUIA_Selected, rule->dosPattern);
 
   return 0;
 }

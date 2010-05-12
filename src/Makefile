@@ -477,6 +477,7 @@ OBJS = \
 	YAM_WR.o \
 	AppIcon.o \
 	BayesFilter.o \
+	BoyerMooreSearch.o \
 	DockyIcon.o \
 	FileInfo.o \
 	FolderList.o \

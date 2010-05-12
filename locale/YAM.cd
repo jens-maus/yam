@@ -6946,3 +6946,10 @@ Before filter mail
 MSG_CO_ScriptPostFilterMail (2160//)
 After filter mail
 ;
+MSG_FI_DOS_PATTERN (2161//)
+Use AmigaDOS patterns
+;
+MSG_HELP_FI_CH_DOS_PATTERN (2162//)
+Enable AmigaDOS patterns\n\
+in the string search.
+;
