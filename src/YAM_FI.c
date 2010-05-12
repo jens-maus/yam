@@ -1987,6 +1987,9 @@ static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
     }
   }
 
+  // no need to handle srcSearch->bmContext as this will be allocation when
+  // performing the actual search
+
   RETURN(success);
   return success;
 }
@@ -2046,6 +2049,7 @@ static BOOL CompareRuleLists(const struct MinList *rl1, const struct MinList *rl
          rn1->comparison        != rn2->comparison ||
          rn1->caseSensitive     != rn2->caseSensitive ||
          rn1->subString         != rn2->subString ||
+         rn1->dosPattern        != rn2->dosPattern ||
          strcmp(rn1->matchPattern, rn2->matchPattern) != 0 ||
          strcmp(rn1->customField,  rn2->customField) != 0)
       {

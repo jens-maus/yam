@@ -332,6 +332,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
           fprintf(fh, "FI%02d.Match       = %s\n", i, rule->matchPattern);
           fprintf(fh, "FI%02d.CaseSens    = %s\n", i, Bool2Txt(rule->caseSensitive));
           fprintf(fh, "FI%02d.Substring   = %s\n", i, Bool2Txt(rule->subString));
+          fprintf(fh, "FI%02d.DOSPattern  = %s\n", i, Bool2Txt(rule->dosPattern));
         }
         else
         {
@@ -349,6 +350,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
           fprintf(fh, "FI%02d.Match%d      = %s\n", i, j+1, rule->matchPattern);
           fprintf(fh, "FI%02d.CaseSens%d   = %s\n", i, j+1, Bool2Txt(rule->caseSensitive));
           fprintf(fh, "FI%02d.Substring%d  = %s\n", i, j+1, Bool2Txt(rule->subString));
+          fprintf(fh, "FI%02d.DOSPattern%d = %s\n", i, j+1, Bool2Txt(rule->dosPattern));
         }
 
         j++;
@@ -1044,6 +1046,15 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                     CreateNewRule(lastFilter);
 
                   rule->subString = Txt2Bool(value);
+                }
+                else if(!strnicmp(p, "DOSPattern", 10))
+                {
+                  int n = atoi(p+9);
+
+                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                    CreateNewRule(lastFilter);
+
+                  rule->dosPattern = Txt2Bool(value);
                 }
                 else if(!strnicmp(p, "Combine", 7) && atoi(value) > CB_NONE)
                 {
