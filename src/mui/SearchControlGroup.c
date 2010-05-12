@@ -315,7 +315,7 @@ OVERLOAD(OM_NEW)
       if(data->CH_DOSPATTERN[i] != NULL)
       {
         DoMethod(data->CH_DOSPATTERN[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
-        SetHelp(data->CH_DOSPATTERN[i], MSG_HELP_FI_CH_DOSPATTERN);
+        SetHelp(data->CH_DOSPATTERN[i], MSG_HELP_FI_CH_DOS_PATTERN);
       }
 
       if(data->BT_EDIT[i] != NULL)
