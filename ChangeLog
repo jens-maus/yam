@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-12 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Aboutwindow.c: added Emilio Jimenez to the list of active translators.
+
 2010-05-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * Makefile, doc/Install-YAM: added new spanish translation to the catalog

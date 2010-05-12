@@ -102,6 +102,7 @@ OVERLOAD(OM_NEW)
                           "Vit Sindlar\n"
                           "Johan Banis\n"
                           "Mariusz Danilewicz\n"
+                          "Emilio Jimenez\n"
                           "\n"
                           "%s\n"
                           "\n"
