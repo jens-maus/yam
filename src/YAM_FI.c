@@ -1381,6 +1381,16 @@ static void FreeSearchPatternList(struct Search *search)
     free(patternNode);
   }
 
+  LEAVE();
+}
+
+///
+/// FreeSearchData
+// Function to free the search data
+void FreeSearchData(struct Search *search)
+{
+  ENTER();
+
   // free a possibly initalized Boyer-Moore search context
   if(search->bmContext != NULL)
   {
@@ -1401,12 +1411,14 @@ void FreeRuleSearchData(struct RuleNode *rule)
   if(rule->search != NULL)
   {
     FreeSearchPatternList(rule->search);
+    FreeSearchData(rule->search);
     free(rule->search);
     rule->search = NULL;
   }
 
   LEAVE();
 }
+
 ///
 /// AllocFilterSearch
 //  Allocates and initializes search structures for filters and returns

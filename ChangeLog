@@ -19,6 +19,7 @@ $URL$
     based string search is still available, but must be specified explicitly.
     The new search algorithm may also be used for YAM's filters.
   * YAM_COs.c: added loading and saving of the extended string search.
+  * mui/QuickSearchBar.c: use new Boyer/Moore search here as well.
 
 2010-05-12 Jens Langner <Jens.Langner@light-speed.de>
 

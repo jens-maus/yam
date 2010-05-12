@@ -35,6 +35,7 @@
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
 
+#include "BoyerMooreSearch.h"
 #include "MailList.h"
 #include "MUIObjects.h"
 
@@ -75,7 +76,7 @@ enum ViewOptions { VO_ALL=0, VO_UNREAD, VO_NEW, VO_MARKED, VO_IMPORTANT, VO_LAST
 // function to actually check if a struct Mail* matches
 // the currently active criteria
 static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
-                      enum SearchOptions so, char *searchString, struct TimeVal *curTimeUTC)
+                      enum SearchOptions so, const struct BoyerMooreContext *bmContext, struct TimeVal *curTimeUTC)
 {
   BOOL foundMatch = FALSE;
 
@@ -167,7 +168,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
 
   // now we do a bit more complicated search if a search string
   // is specified as well
-  if(foundMatch == TRUE && searchString != NULL)
+  if(foundMatch == TRUE && bmContext != NULL)
   {
     // we check which search option is currently choosen the matching
     switch(so)
@@ -175,15 +176,15 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
       // check if the searchstring matches any string in the mail's subject
       case SO_SUBJECT:
       {
-        foundMatch = (stristr(mail->Subject, searchString) != NULL);
+        foundMatch = (BoyerMooreSearch(bmContext, mail->Subject) != NULL);
       }
       break;
 
       // check if the searchstring matches any string in the mail's sender address
       case SO_SENDER:
       {
-        foundMatch = (stristr(mail->From.Address, searchString) != NULL ||
-                      (mail->From.RealName[0] && stristr(mail->From.RealName, searchString) != NULL));
+        foundMatch = (BoyerMooreSearch(bmContext, mail->From.Address) != NULL ||
+                      BoyerMooreSearch(bmContext, mail->From.RealName) != NULL);
 
 
         if(foundMatch == FALSE && isMultiSenderMail(mail))
@@ -198,8 +199,8 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
             {
               struct Person *pe = &email->SFrom[j];
 
-              foundMatch = (stristr(pe->Address, searchString) != NULL ||
-                           (pe->RealName[0] && stristr(pe->RealName, searchString) != NULL));
+              foundMatch = (BoyerMooreSearch(bmContext, pe->Address) != NULL ||
+                            BoyerMooreSearch(bmContext, pe->RealName) != NULL);
             }
 
             MA_FreeEMailStruct(email);
@@ -211,9 +212,9 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
       // check if the searchstring matches any string in the mail's subject or sender
       case SO_SUBJORSENDER:
       {
-        foundMatch = (stristr(mail->Subject, searchString) != NULL ||
-                      stristr(mail->From.Address, searchString) != NULL ||
-                      (mail->From.RealName[0] && stristr(mail->From.RealName, searchString) != NULL));
+        foundMatch = (BoyerMooreSearch(bmContext, mail->Subject) != NULL ||
+                      BoyerMooreSearch(bmContext, mail->From.Address) != NULL ||
+                      BoyerMooreSearch(bmContext, mail->From.RealName) != NULL);
 
         if(foundMatch == FALSE && isMultiSenderMail(mail))
         {
@@ -227,8 +228,8 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
             {
               struct Person *pe = &email->SFrom[j];
 
-              foundMatch = (stristr(pe->Address, searchString) != NULL ||
-                           (pe->RealName[0] && stristr(pe->RealName, searchString) != NULL));
+              foundMatch = (BoyerMooreSearch(bmContext, pe->Address) != NULL ||
+                            BoyerMooreSearch(bmContext, pe->RealName) != NULL);
             }
 
             MA_FreeEMailStruct(email);
@@ -240,8 +241,8 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
       // check if the searchString matches any string in the mail's TO or CC address
       case SO_TOORCC:
       {
-        foundMatch = (stristr(mail->To.Address, searchString) != NULL ||
-                      (mail->To.RealName[0] && stristr(mail->To.RealName, searchString) != NULL));
+        foundMatch = (BoyerMooreSearch(bmContext, mail->To.Address) != NULL ||
+                      BoyerMooreSearch(bmContext, mail->To.RealName) != NULL);
 
         // if we still haven't found a match with the To: string we go
         // and do a deeper search
@@ -258,16 +259,16 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
             {
               struct Person *to = &email->STo[j];
 
-              foundMatch = stristr(to->Address, searchString) != NULL ||
-                           (to->RealName[0] && stristr(to->RealName, searchString) != NULL);
+              foundMatch = (BoyerMooreSearch(bmContext, to->Address) != NULL ||
+                            BoyerMooreSearch(bmContext, to->RealName) != NULL);
             }
 
             for(j=0; j < email->NoCC && foundMatch == FALSE; j++)
             {
               struct Person *cc = &email->CC[j];
 
-              foundMatch = stristr(cc->Address, searchString) != NULL ||
-                           (cc->RealName[0] && stristr(cc->RealName, searchString) != NULL);
+              foundMatch = (BoyerMooreSearch(bmContext, cc->Address) != NULL ||
+                            BoyerMooreSearch(bmContext, cc->RealName) != NULL);
             }
 
             MA_FreeEMailStruct(email);
@@ -291,7 +292,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
           {
             // as we search the entire message text we can do a single
             // stristr() call here for matching
-            foundMatch = stristr(cmsg, searchString) != NULL;
+            foundMatch = (BoyerMooreSearch(bmContext, cmsg) != NULL);
 
             // free the allocated message text immediately
             free(cmsg);
@@ -315,12 +316,14 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
                                      CP_EQUAL,
                                      0,
                                      TRUE,
-                                     TRUE,
-                                     searchString,
+                                     FALSE,
+                                     bmContext->pattern,
                                      ""))
         {
           foundMatch = FI_DoSearch(&search, mail);
         }
+
+        FreeSearchData(&search);
       }
       break;
     }
@@ -673,6 +676,7 @@ DECLARE(ProcessSearch)
     enum SearchOptions searchOption = xget(data->NL_SEARCHOPTIONS, MUIA_NList_Active);
     char *searchString = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
     struct TimeVal curTimeUTC;
+    struct BoyerMooreContext *bmContext;
 
     // get the current time in UTC
     GetSysTimeUTC(&curTimeUTC);
@@ -680,6 +684,9 @@ DECLARE(ProcessSearch)
     // check the searchString settings for an empty string
     if(searchString != NULL && searchString[0] == '\0')
       searchString = NULL;
+
+    // initialize a case insensitive Boyer/Moore search, searchString may be NULL
+    bmContext = BoyerMooreInit(searchString, FALSE);
 
     // make sure the correct mailview list is visible and quiet
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_SwitchToList, LT_QUICKVIEW);
@@ -700,7 +707,7 @@ DECLARE(ProcessSearch)
       struct Mail *curMail = mnode->mail;
 
       // check if that mail matches the search/view criteria
-      if(MatchMail(curMail, viewOption, searchOption, searchString, &curTimeUTC) == TRUE)
+      if(MatchMail(curMail, viewOption, searchOption, bmContext, &curTimeUTC) == TRUE)
         DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_AddMailToList, LT_QUICKVIEW, curMail);
 
       DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -711,6 +718,8 @@ DECLARE(ProcessSearch)
     BusyEnd();
 
     UnlockMailList(curFolder->messages);
+
+    BoyerMooreCleanup(bmContext);
 
     // only update the GUI if this search was not aborted
     if(data->abortSearch == FALSE)
@@ -756,6 +765,8 @@ DECLARE(MatchMail) // struct Mail *mail
   enum SearchOptions searchOption = xget(data->NL_SEARCHOPTIONS, MUIA_NList_Active);
   char *searchString = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
   struct TimeVal curTimeUTC;
+  struct BoyerMooreContext *bmContext;
+  ULONG match;
 
   // get the current time in UTC
   GetSysTimeUTC(&curTimeUTC);
@@ -764,9 +775,16 @@ DECLARE(MatchMail) // struct Mail *mail
   if(searchString != NULL && searchString[0] == '\0')
     searchString = NULL;
 
+  // initialize a case insensitive Boyer/Moore search, searchString may be NULL
+  bmContext = BoyerMooreInit(searchString, FALSE);
+
   // now we check that a match is really required and if so we process it
-  return (ULONG)((viewOption != VO_ALL || searchString != NULL) &&
-                 MatchMail(msg->mail, viewOption, searchOption, searchString, &curTimeUTC) == TRUE);
+  match = (ULONG)((viewOption != VO_ALL || searchString != NULL) &&
+                  MatchMail(msg->mail, viewOption, searchOption, bmContext, &curTimeUTC) == TRUE);
+
+  BoyerMooreCleanup(bmContext);
+
+  return match;
 }
 
 ///
@@ -954,3 +972,4 @@ DECLARE(DoEditAction) // enum EditAction editAction
 }
 
 ///
+
