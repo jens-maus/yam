@@ -102,9 +102,9 @@ const char *BoyerMooreSearch(const struct BoyerMooreContext *bmc, const char *st
 
     if(bmc->patternLength <= slen)
     {
-      char *pattern = bmc->pattern;
+      const char *pattern = bmc->pattern;
       int patternLength = bmc->patternLength;
-      int *skip = bmc->skip;
+      const int *skip = bmc->skip;
       BOOL caseSensitive = bmc->caseSensitive;
       int i, j;
 
