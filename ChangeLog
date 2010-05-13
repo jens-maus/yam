@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-13 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, YAM_write.h, YAM_MA.c, ReadWindow.c, ReadMailGroup.c, YAM_FI.c:
+    when replying to a mail while some text is currently selected in the
+    corresponding read window or embedded read pane, the new reply window
+    will only contain quoted text which is based on the selected text portion.
+    This closes #164.
+
 2010-05-12 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update italian catalog.

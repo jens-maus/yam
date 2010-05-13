@@ -2302,7 +2302,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
 ///
 /// NewReplyMailWindow()
 //  Creates a reply to a list of messages
-struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags)
+struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags, const char *replytxt)
 {
   BOOL quiet = hasQuietFlag(flags);
   struct WriteMailData *wmData = NULL;
@@ -2787,7 +2787,14 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             // put some introduction right before the quoted text.
             InsertIntroText(out, foundMLFolder ? C->MLReplyIntro : (altpat ? C->AltReplyIntro : C->ReplyIntro), &etd);
 
-            if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)) != NULL)
+            // if there has been another (preferred) reply text given
+            // we use that one instead
+            if(replytxt != NULL && replytxt[0] != '\0')
+            {
+              // make sure we quote the text in question.
+              QuoteText(out, replytxt, strlen(replytxt), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);
+            }
+            else if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)) != NULL)
             {
               // make sure we quote the text in question.
               QuoteText(out, cmsg, strlen(cmsg), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);

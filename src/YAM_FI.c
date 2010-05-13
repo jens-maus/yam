@@ -1583,7 +1583,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
     {
       struct WriteMailData *wmData;
 
-      if((wmData = NewReplyMailWindow(mlist, NEWF_QUIET)) != NULL)
+      if((wmData = NewReplyMailWindow(mlist, NEWF_QUIET, NULL)) != NULL)
       {
         DoMethod(wmData->window, MUIM_WriteWindow_LoadText, filter->replyFile, TRUE);
         DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);

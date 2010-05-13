@@ -1896,8 +1896,24 @@ struct WriteMailData *NewMessage(enum NewMailMode mode, const int flags)
 
       if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
       {
-        wmData = NewReplyMailWindow(mlist, flags);
+        char *replytext = NULL;
 
+        // in case there is only one mail selected we have to check wheter there is
+        // text currently selected by the user
+        if(C->EmbeddedReadPane == TRUE &&
+           NextMailNode(FirstMailNode(mlist)) == NULL)
+        {
+          replytext = (char *)DoMethod(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_ExportSelectedText);
+        }
+
+        // now we create a new reply mail window
+        wmData = NewReplyMailWindow(mlist, flags, replytext);
+
+        // free the replytext in case we go one
+        if(replytext != NULL)
+          FreeVec(replytext);
+
+        // cleanup the temporarly created mail list
         DeleteMailList(mlist);
       }
     }

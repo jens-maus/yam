@@ -1985,4 +1985,18 @@ DECLARE(DoEditAction) // enum EditAction editAction, ULONG flags
 }
 
 ///
+/// DECLARE(ExportSelectedText)
+DECLARE(ExportSelectedText)
+{
+  GETDATA;
+  char *result = NULL;
 
+  ENTER();
+
+  result = (char *)DoMethod(data->mailTextObject, MUIM_TextEditor_ExportBlock, MUIF_NONE);
+
+  RETURN(result);
+  return (ULONG)result;
+}
+
+///

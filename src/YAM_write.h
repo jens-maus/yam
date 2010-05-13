@@ -186,7 +186,7 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags);
 struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags);
 struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags);
 struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int flags);
-struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags);
+struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags, const char *replytxt);
 BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRef);
 BOOL CleanupWriteMailData(struct WriteMailData *wmData);
 struct WritePart *NewMIMEpart(struct WriteMailData *wmData);

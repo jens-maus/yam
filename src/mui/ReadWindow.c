@@ -772,10 +772,27 @@ DECLARE(NewMail) // enum NewMailMode mode, ULONG qualifier
       {
         struct MailList *mlist;
 
+        // we create a fake mail list with only one entry
+        // (the mail showing in this window)
         if((mlist = CreateMailList()) != NULL)
         {
+          char *replytext;
+
+          // in case there is only one mail selected we have to check wheter there is
+          // text currently selected by the user
+          replytext = (char *)DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ExportSelectedText);
+
+          // we only add one mail to the fake list
           AddNewMailNode(mlist, mail);
-          NewReplyMailWindow(mlist, flags);
+
+          // now we create a new reply mail window
+          NewReplyMailWindow(mlist, flags, replytext);
+
+          // free the replytext in case we go one
+          if(replytext != NULL)
+            FreeVec(replytext);
+
+          // cleanup the temporarly created mail list
           DeleteMailList(mlist);
         }
       }
