@@ -1,7 +1,20 @@
-## version $VER: YAM.catalog 7.5 (09.05.2010)
-## language español
+## version $VER: YAM.catalog 7.6 (14.05.2010)
 ## codeset 0
+## language español
 ## chunk AUTH Emilio Jimenez
+; YAM.cd - YAM 2.6 catalog description file
+;
+; Please note that all catalog strings have to carry a proper
+; identifier number in the (X//) string part of the MSG_ identifier
+; field and that those numbers have to be unique and continuous over
+; all different YAM versions. This allows to remove some obsolete
+; strings later on without having to worry about identifier clashes.
+; This however means that if an entry is being deleted here its
+; identifier should NEVER be reused later on. So, if you are going to
+; add new strings here do that always at the bottom of the file
+; and increase the last listed identifier number by one for your
+; new entries. And if you delete an entry NEVER reorder or resort
+; the ID numbers accordingly.
 ;
 ;
 ; General
@@ -879,9 +892,11 @@ Hola,\\\\n
 MSG_CO_AltRepIntroDef
 
 ; 
+;
 MSG_CO_AltRepPatternDef
 
 ; 
+;
 MSG_CO_ForwardIntroDef
 *** Inicio de mensaje respuesta ***\\\\n\\\\nFecha: %c\\\\nDe: %n <%e>\\\\nAsunto: %s\\\\n\\\\n--- Seguimiento del mensaje reenviado ---\\\\n\\\\n
 ; *** Begin of forwarded message ***\\\\n\\\\nDate: %c\\\\nFrom: %n <%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n
@@ -895,14 +910,17 @@ Saludos Cordiales
 ; Kind regards
 ;
 MSG_CO_AltRepHelloDef
-;
+
 ; 
+;
 MSG_CO_AltRepByeDef
 
 ; 
-MSG_CO_MLRepHelloDef
 ;
+MSG_CO_MLRepHelloDef
+
 ; 
+;
 MSG_CO_MLRepIntroDef
 El %c, %n escribió:\\\\n
 ; On %c, %n wrote:\\\\n
@@ -3062,7 +3080,7 @@ MSG_RE_MDNFinalRecpt
 ;
 MSG_RE_MDNmanual
 en respuesta al comando de usuario
-; in response to a user command
+;  in response to a user command
 ;
 MSG_RE_MDNauto
  automáticamente
@@ -4258,7 +4276,7 @@ Diferenciar Mayúsculas
 ; Case sensitive
 ;
 MSG_FI_SubString
-Buscar cadena parcial
+Buscar cadena de texto parcial
 ; Substring search
 ;
 ;
@@ -4368,7 +4386,7 @@ Debería la búsqueda\ndiferenciar mayúsculas?
 ; Should the search\nbe case sensitive?
 ;
 MSG_HELP_FI_CH_SUBSTR
-Activa una búsqueda\nde cadena parcial.
+Activa una búsqueda\nde cadena de texto parcial.
 ; Enable a partial\nstring search.
 ;
 MSG_HELP_FI_CY_COMP
@@ -5203,7 +5221,6 @@ El nombre de carpeta especificado no es válido o ya existe.\nPor favor introduce
 MSG_FO_FOLDERPATHINVALID
 No has especificado una ruta válida para la nueva carpeta.
 ; You haven't specified a valid path for the new folder.
-;
 ;
 MSG_MA_CTX_DEFWIDTH_THIS
 Ancho por defecto: este
@@ -7653,7 +7670,7 @@ Respuesta errónea del servidor de correo '%s' al comando '%s':\n\n%s\n\nEl servi
 MSG_ER_CANNOT_CONNECT_SMTP
 No puedo conectar con la dirección '%s'.\n\nEl servidor de correo está actualmente caído o no soporta protocolo SMTP.
 ; Couldn't connect to host '%s'.\n\nThe mail server is currently down or doesn't support the SMTP protocols.
-; HOST
+; HOS
 ;
 MSG_ER_UNKNOWN_HOST_SMTP
 Servidor SMTP desconocido '%s'.\n\nTCP/IP está apagado o la dirección del servidor no es válida.
@@ -7879,4 +7896,12 @@ Antes del filtro de correo
 MSG_CO_ScriptPostFilterMail
 Después del filtro de correo
 ; After filter mail
+;
+MSG_FI_DOS_PATTERN
+Usar patrón AmigaDOS
+; Use AmigaDOS patterns
+;
+MSG_HELP_FI_CH_DOS_PATTERN
+Activa patrones de AmigaDOS\nen la búsqueda de cadena de texto.
+; Enable AmigaDOS patterns\nin the string search.
 ;

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-14 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: updated spanish catalog translation.
+
 2010-05-13 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, YAM_write.h, YAM_MA.c, ReadWindow.c, ReadMailGroup.c, YAM_FI.c:
