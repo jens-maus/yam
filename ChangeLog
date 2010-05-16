@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-16 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FI.c: fixed a minor memory leak where upon using the new BoyerMooreSearch
+    the temporary allocations have never been freed.
+
 2010-05-14 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: updated spanish catalog translation.

@@ -36,7 +36,7 @@
 
 /// BoyerMooreInit
 // initialize the skip table for a Boyer-Moore string search
-struct BoyerMooreContext *BoyerMooreInit(const char *pattern, BOOL caseSensitive)
+struct BoyerMooreContext *BoyerMooreInit(const char *pattern, const BOOL caseSensitive)
 {
   struct BoyerMooreContext *bmc = NULL;
 

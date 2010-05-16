@@ -1038,7 +1038,10 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
       // signal the application to update now
       DoMethod(G->App, MUIM_Application_InputBuffered);
 
+      // free the temporary memory we allocated due to our
+      // search operation
       FreeSearchPatternList(&search);
+      FreeSearchData(&search);
     }
 
     DeleteFolderList(flist);

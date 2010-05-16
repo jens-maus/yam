@@ -51,7 +51,7 @@ struct BoyerMooreContext
   int skip[256];
 };
 
-struct BoyerMooreContext *BoyerMooreInit(const char *pattern, BOOL caseSensitive);
+struct BoyerMooreContext *BoyerMooreInit(const char *pattern, const BOOL caseSensitive);
 void BoyerMooreCleanup(struct BoyerMooreContext *bmc);
 const char *BoyerMooreSearch(const struct BoyerMooreContext *bmc, const char *string);
 
