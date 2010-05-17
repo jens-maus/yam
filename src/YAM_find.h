@@ -173,7 +173,7 @@ void FreeFilterRuleList(struct FilterNode *filter);
 struct FilterNode *CreateNewFilter(void);
 void FreeFilterNode(struct FilterNode *filter);
 void FreeFilterList(struct MinList *filterList);
-struct RuleNode *CreateNewRule(struct FilterNode *filter);
+struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern);
 struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos);
 BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail);
 BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2);

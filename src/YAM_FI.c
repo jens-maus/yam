@@ -2174,7 +2174,7 @@ struct FilterNode *CreateNewFilter(void)
 
     // and fill in the first rule as a filter can't have less than 1 rule
     // anyway
-    if(CreateNewRule(filter) == NULL)
+    if(CreateNewRule(filter, FALSE) == NULL)
     {
       // creating the default rule failed, so we let this operation fail, too
       free(filter);
@@ -2227,7 +2227,7 @@ void FreeFilterList(struct MinList *filterList)
 ///
 /// CreateNewRule
 //  Initializes a new filter rule
-struct RuleNode *CreateNewRule(struct FilterNode *filter)
+struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern)
 {
   struct RuleNode *rule;
 
@@ -2235,6 +2235,9 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter)
 
   if((rule = calloc(1, sizeof(struct RuleNode))) != NULL)
   {
+    // set the default search mode (plain string search or DOS patterns)
+    rule->dosPattern = dosPattern;
+
     // if a filter was specified we immediatley add this new rule to it
     if(filter != NULL)
     {

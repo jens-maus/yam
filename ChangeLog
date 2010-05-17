@@ -9,6 +9,8 @@ $URL$
 
   * mui/WriteWindow.c: the attachment list now uses the same size formatting as
     all other classes instead of displaying the plain byte size of a file.
+  * YAM_FI, YAM_COs.c: restored the old string search behaviour when reading the
+    configuration file. Thus DOS patterns are the default again.
 
 2010-05-16 Jens Langner <Jens.Langner@light-speed.de>
 

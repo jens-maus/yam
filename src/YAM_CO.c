@@ -128,7 +128,7 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
   {
     struct RuleNode *rule;
 
-    if((rule = CreateNewRule(filter)) != NULL)
+    if((rule = CreateNewRule(filter, FALSE)) != NULL)
     {
       // add a new GUI element for that particular rule
       Object *newSearchGroup = SearchControlGroupObject,
@@ -437,7 +437,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
 
         // get the rule out of the ruleList or create a new one
         while((rule = GetFilterRule(filter, i)) == NULL)
-          CreateNewRule(filter);
+          CreateNewRule(filter, FALSE);
 
         // set the rule settings
         DoMethod(child, MUIM_SearchControlGroup_SetToRule, rule);
