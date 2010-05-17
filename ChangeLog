@@ -11,6 +11,8 @@ $URL$
     all other classes instead of displaying the plain byte size of a file.
   * YAM_FI, YAM_COs.c: restored the old string search behaviour when reading the
     configuration file. Thus DOS patterns are the default again.
+  * YAM_COs.c: fixed a small bug which prevented the DOS pattern setting to be
+    correctly recognized upon loading the configuration.
 
 2010-05-16 Jens Langner <Jens.Langner@light-speed.de>
 

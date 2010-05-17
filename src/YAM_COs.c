@@ -1049,7 +1049,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 }
                 else if(!strnicmp(p, "DOSPattern", 10))
                 {
-                  int n = atoi(p+9);
+                  int n = atoi(p+10);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                     CreateNewRule(lastFilter, TRUE);
