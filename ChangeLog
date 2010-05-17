@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: the attachment list now uses the same size formatting as
+    all other classes instead of displaying the plain byte size of a file.
+
 2010-05-16 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_FI.c: fixed a minor memory leak where upon using the new BoyerMooreSearch

@@ -840,13 +840,13 @@ MakeStaticHook(DestructHook, DestructFunc);
 // DisplayHook for the AttachmentList
 HOOKPROTONH(DisplayFunc, LONG, char **array, struct Attach *entry)
 {
-  static char dispsz[SIZE_SMALL];
-
   ENTER();
 
   if(entry != NULL)
   {
-    snprintf(dispsz, sizeof(dispsz), "%d", entry->Size);
+    static char dispsz[SIZE_SMALL];
+
+    FormatSize(entry->Size, dispsz, sizeof(dispsz), SF_AUTO);
     array[0] = entry->Name;
     array[1] = dispsz;
     array[2] = (STRPTR)DescribeCT(entry->ContentType);
