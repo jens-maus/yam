@@ -89,10 +89,10 @@ OVERLOAD(OM_NEW)
 
       { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
-      { TB_WRITE_BOLD,      TB_WRITE_BOLD,      tr(MSG_WR_TBBold),      tr(MSG_HELP_WR_BT_BOLD),      0, 0, NULL, NULL },
-      { TB_WRITE_ITALIC,    TB_WRITE_ITALIC,    tr(MSG_WR_TBItalic),    tr(MSG_HELP_WR_BT_ITALIC),    0, 0, NULL, NULL },
-      { TB_WRITE_UNDERLINE, TB_WRITE_UNDERLINE, tr(MSG_WR_TBUnderlined),tr(MSG_HELP_WR_BT_UNDERL),    0, 0, NULL, NULL },
-      { TB_WRITE_COLORED,   TB_WRITE_COLORED,   tr(MSG_WR_TBColored),   tr(MSG_HELP_WR_BT_COLOR),     0, 0, NULL, NULL },
+      { TB_WRITE_BOLD,      TB_WRITE_BOLD,      tr(MSG_WR_TBBold),      tr(MSG_HELP_WR_BT_BOLD),      MUIV_TheBar_ButtonFlag_Toggle, 0, NULL, NULL },
+      { TB_WRITE_ITALIC,    TB_WRITE_ITALIC,    tr(MSG_WR_TBItalic),    tr(MSG_HELP_WR_BT_ITALIC),    MUIV_TheBar_ButtonFlag_Toggle, 0, NULL, NULL },
+      { TB_WRITE_UNDERLINE, TB_WRITE_UNDERLINE, tr(MSG_WR_TBUnderlined),tr(MSG_HELP_WR_BT_UNDERL),    MUIV_TheBar_ButtonFlag_Toggle, 0, NULL, NULL },
+      { TB_WRITE_COLORED,   TB_WRITE_COLORED,   tr(MSG_WR_TBColored),   tr(MSG_HELP_WR_BT_COLOR),     MUIV_TheBar_ButtonFlag_Toggle, 0, NULL, NULL },
 
       { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
@@ -112,10 +112,10 @@ OVERLOAD(OM_NEW)
 
       { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
-      { TB_WRITE_BOLD,      TB_WRITE_BOLD,      NULL,                   NULL,                         0, 0, NULL, NULL },
-      { TB_WRITE_ITALIC,    TB_WRITE_ITALIC,    NULL,                   NULL,                         0, 0, NULL, NULL },
-      { TB_WRITE_UNDERLINE, TB_WRITE_UNDERLINE, NULL,                   NULL,                         0, 0, NULL, NULL },
-      { TB_WRITE_COLORED,   TB_WRITE_COLORED,   NULL,                   NULL,                         0, 0, NULL, NULL },
+      { TB_WRITE_BOLD,      TB_WRITE_BOLD,      NULL,                   NULL,                         MUIV_TheBar_ButtonFlag_Toggle, 0, NULL, NULL },
+      { TB_WRITE_ITALIC,    TB_WRITE_ITALIC,    NULL,                   NULL,                         MUIV_TheBar_ButtonFlag_Toggle, 0, NULL, NULL },
+      { TB_WRITE_UNDERLINE, TB_WRITE_UNDERLINE, NULL,                   NULL,                         MUIV_TheBar_ButtonFlag_Toggle, 0, NULL, NULL },
+      { TB_WRITE_COLORED,   TB_WRITE_COLORED,   NULL,                   NULL,                         MUIV_TheBar_ButtonFlag_Toggle, 0, NULL, NULL },
 
       { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 

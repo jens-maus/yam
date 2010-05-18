@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c, mui/WriteWindowToolbar.c: correctly declared the style
+    buttons as toggle buttons and modified some notifications to not trigger
+    any further notifications when modifying the buttons' states. All in all
+    this fixes bug #3002917. Modifying the style using the menus always worked
+    as expected. Just the buttons were not showing the correct state.
+
 2010-05-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: the attachment list now uses the same size formatting as
