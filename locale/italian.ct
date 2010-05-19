@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (12.05.2010)
+## version $VER: YAM.catalog 7.1 (18.05.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -3661,11 +3661,11 @@ Messaggio precedente non letto
 ; Previous unread message
 ;
 MSG_RE_MNextTh
-Messaggio successivo con lo stesso oggetto
+Messaggio successivo in argomento
 ; Next message in thread
 ;
 MSG_RE_MPrevTh
-Messaggio precedente con lo stesso oggetto
+Messaggio precedente in argomento
 ; Previous message in thread
 ;
 MSG_RE_ExtractKey
