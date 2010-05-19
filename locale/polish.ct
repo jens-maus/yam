@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (20.04.2010)
+## version $VER: YAM.catalog 7.3 (18.05.2010)
 ## language polski
 ## codeset 5
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
@@ -2080,7 +2080,7 @@ HELO zwróci b³±d, zmieñ zawarto¶æ tego pola.
 ; commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT
-Nie konweruj wiadomo¶ci do postaci 7-bitowej.\n\
+Nie konwertuj wiadomo¶ci do postaci 7-bitowej.\n\
 U¿ywaj tej opcji tylko wtedy, gdy Twój serwer\n\
 umo¿liwia transfer 8-bitowy. W przeciwnym razie\n\
 Twoja wiadomo¶æ zostanie uszkodzona.
@@ -9771,7 +9771,7 @@ MSG_OPEN_WRITEWINDOWS_GAD
 ; *_Save now|_Quit without saving|_Cancel
 ;
 MSG_MA_MFORWARD_ATTACH
-jako za³±czniki
+jako za³±cznik
 ; as attachment
 ;
 MSG_MA_MFORWARD_INLINE
@@ -9779,7 +9779,7 @@ w tre¶ci wiadomo¶ci
 ; inlined
 ;
 MSG_CO_FWDMSG_ATTACH
-jako za³±czniki
+jako za³±cznik
 ; as attachment
 ;
 MSG_CO_ScriptPreFilterMail
@@ -9789,4 +9789,14 @@ Przed filtrowaniem wiadomo¶ci
 MSG_CO_ScriptPostFilterMail
 Po filtrowaniu wiadomo¶ci
 ; After filter mail
+;
+MSG_FI_DOS_PATTERN
+U¿ywaj wzorców AmigaDOS
+; Use AmigaDOS patterns
+;
+MSG_HELP_FI_CH_DOS_PATTERN
+W³±cza mo¿liwo¶æ u¿ywania wzorców\n\
+w formacie AmigaDOS-u w ci±gu wyszukiwania.
+; Enable AmigaDOS patterns\n\
+; in the string search.
 ;

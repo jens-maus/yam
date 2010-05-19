@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-19 Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/polish.ct: updated polish catalog translation kindly provided by
+    Mariusz Danilewicz.
+
 2010-05-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c, mui/WriteWindowToolbar.c: correctly declared the style
