@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * include/mui: updated the mui includes to match the latest released
+    version.
+
 2010-05-19 Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/polish.ct: updated polish catalog translation kindly provided by
