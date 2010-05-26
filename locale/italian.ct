@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (18.05.2010)
+## version $VER: YAM.catalog 7.1 (26.05.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.7 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 4694 2010-05-12
+; based on YAM.cd 4714 2010-05-26
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9943,4 +9943,8 @@ Attiva pattern di AmigaDOS nella\n\
 stringa di ricerca.
 ; Enable AmigaDOS patterns\n\
 ; in the string search.
+;
+MSG_CTapplicationpgpsig
+Firma PGP
+; PGP signature
 ;
