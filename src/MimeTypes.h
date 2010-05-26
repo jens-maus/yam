@@ -73,6 +73,7 @@ enum IntMimeTypeID
   MT_AP_PS,      // application/postscript
   MT_AP_PDF,     // application/pdf
   MT_AP_PGP,     // application/pgp
+  MT_AP_PGPSIG,  // application/pgp-signature
   MT_AP_RTF,     // application/rtf
   MT_AP_BZ2,     // application/x-bzip2
   MT_AP_Z,       // application/x-compress

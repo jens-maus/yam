@@ -6953,3 +6953,6 @@ MSG_HELP_FI_CH_DOS_PATTERN (2162//)
 Enable AmigaDOS patterns\n\
 in the string search.
 ;
+MSG_CTapplicationpgpsig (2163//)
+PGP signature
+;

@@ -66,6 +66,7 @@ const struct IntMimeType IntMimeTypeArray[] =
   /* MT_AP_PS    */ { "application/postscript",         "ps eps ai",        MSG_CTapplicationpostscript },
   /* MT_AP_PDF   */ { "application/pdf",                "pdf",              MSG_CTapplicationpdf },
   /* MT_AP_PGP   */ { "application/pgp",                "pgp",              MSG_CTapplicationpgp },
+  /* MT_AP_PGPSIG*/ { "application/pgp-signature",      "asc sig",          MSG_CTapplicationpgpsig },
   /* MT_AP_RTF   */ { "application/rtf",                "rtf",              MSG_CTapplicationrtf },
   /* MT_AP_BZ2   */ { "application/x-bzip2",            "bz2",              MSG_CTapplicationbz2 },
   /* MT_AP_Z     */ { "application/x-compress",         "z",                MSG_CTapplicationz },
@@ -106,7 +107,7 @@ struct MimeTypeNode *CreateNewMimeType(void)
 
   ENTER();
 
-  if((mt = calloc(1, sizeof(struct MimeTypeNode))))
+  if((mt = calloc(1, sizeof(*mt))) != NULL)
     strlcpy(mt->ContentType, "?/?", sizeof(mt->ContentType));
 
   RETURN(mt);
