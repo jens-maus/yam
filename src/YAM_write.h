@@ -177,8 +177,8 @@ void  FreePartsList(struct WritePart *p);
 char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length);
 void  WR_NewMail(enum WriteMode mode, int winnum);
 BOOL  WriteOutMessage(struct Compose *comp);
-void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part);
-const char *EncodingName(enum Encoding encoding);
+void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part);
+const char *EncodingName(const enum Encoding encoding);
 BOOL EncodePart(FILE *ofh, const struct WritePart *part);
 
 struct WriteMailData *CreateWriteWindow(const enum NewMailMode mailMode, const BOOL quietMode);
