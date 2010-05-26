@@ -268,7 +268,9 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
 
     // output the parameter name right before
     // the resulting parameter value
-    fprintf(fh, "\n\t%s=\"%s\"", param, s);
+    fprintf(fh, "\n"
+                "\t%s=\"%s\"",
+                param, s);
   }
   else
   {
@@ -477,9 +479,11 @@ void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
 
     // output the Content-Disposition (RFC 2183)
     if(isPrintable == TRUE)
-      fprintf(fh, "\nContent-Disposition: inline");
+      fprintf(fh, "\n"
+                  "Content-Disposition: inline");
     else
-      fprintf(fh, "\nContent-Disposition: attachment");
+      fprintf(fh, "\n"
+                  "Content-Disposition: attachment");
 
     // add the filename parameter to the Content-Disposition
     fputc(';', fh);
@@ -557,7 +561,9 @@ static void WR_WriteUserInfo(FILE *fh, char *from)
         HeaderFputs(fh, ab->Phone, "phone", 0);
       }
       if(ab->BirthDay != 0)
-        fprintf(fh, ";\n\tdob=%ld", ab->BirthDay);
+        fprintf(fh, ";\n"
+                    "\tdob=%ld",
+                    ab->BirthDay);
     }
     fputc('\n', fh);
   }
@@ -624,7 +630,10 @@ BOOL EncodePart(FILE *ofh, const struct WritePart *part)
         else
           ER_NewError(tr(MSG_ER_UUFILEENCODE), part->Filename);
 
-        fprintf(ofh, "``\nend\nsize %d\n", (int)size);
+        fprintf(ofh, "``\n"
+                     "end\n"
+                     "size %d\n",
+                     (int)size);
       }
       break;
 
@@ -908,11 +917,15 @@ static BOOL WR_ComposeReport(FILE *fh, const struct Compose *comp, const char *b
 
   ENTER();
 
-  fprintf(fh, "Content-type: multipart/report; report-type=disposition-notification; boundary=\"%s\"\n\n", boundary);
+  fprintf(fh, "Content-type: multipart/report; report-type=disposition-notification; boundary=\"%s\"\n"
+              "\n",
+              boundary);
 
   for(p = comp->FirstPart; p; p = p->Next)
   {
-    fprintf(fh, "\n--%s\n", boundary);
+    fprintf(fh, "\n"
+                "--%s\n",
+                boundary);
     WriteContentTypeAndEncoding(fh, p);
     fputs("\n", fh);
 
@@ -922,7 +935,10 @@ static BOOL WR_ComposeReport(FILE *fh, const struct Compose *comp, const char *b
       return FALSE;
     }
   }
-  fprintf(fh, "\n--%s--\n\n", boundary);
+  fprintf(fh, "\n"
+              "--%s--\n"
+              "\n",
+              boundary);
 
   RETURN(TRUE);
   return TRUE;
@@ -997,7 +1013,13 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
          {
            char options[SIZE_LARGE];
 
-           fprintf(fh, "Content-type: multipart/signed; boundary=\"%s\"; micalg=pgp-md5; protocol=\"application/pgp-signature\"\n\n%s\n--%s\n", boundary, MIMEwarn, boundary);
+           fprintf(fh, "Content-type: multipart/signed; boundary=\"%s\"; micalg=pgp-md5; protocol=\"application/pgp-signature\"\n"
+                       "\n"
+                       "%s\n"
+                       "--%s\n",
+                       boundary,
+                       MIMEwarn,
+                       boundary);
            WriteContentTypeAndEncoding(fh, firstpart);
            fputc('\n', fh);
 
@@ -1007,7 +1029,11 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
              goto out;
            }
 
-           fprintf(fh, "\n--%s\nContent-Type: application/pgp-signature\n\n", boundary);
+           fprintf(fh, "\n"
+                       "--%s\n"
+                       "Content-Type: application/pgp-signature\n"
+                       "\n",
+                       boundary);
 
            snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-ab %s +batchmode=1 +force" : "-sab %s +bat +f", tf2->Filename);
            if(C->MyPGPID[0] != '\0')
@@ -1025,8 +1051,21 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
          {
            char options[SIZE_LARGE];
 
-           fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n\n%s\n--%s\n", boundary, MIMEwarn, boundary);
-           fprintf(fh, "Content-Type: application/pgp-encrypted\n\nVersion: 1\n\n%s\n--%s\nContent-Type: application/octet-stream\n\n", PGPwarn, boundary);
+           fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n"
+                       "\n"
+                       "%s\n"
+                       "--%s\n",
+                       boundary,
+                       MIMEwarn,
+                       boundary);
+           fprintf(fh, "Content-Type: application/pgp-encrypted\n\nVersion: 1\n"
+                       "\n"
+                       "%s\n"
+                       "--%s\n"
+                       "Content-Type: application/octet-stream\n"
+                       "\n",
+                       PGPwarn,
+                       boundary);
 
            snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force" : "-ea %s %s +bat +f", tf2->Filename, ids);
            if(PGPCommand((G->PGPVersion == 5) ? "pgpe" : "pgp", options, 0) == 0)
@@ -1038,8 +1077,23 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
          {
            char options[SIZE_LARGE];
 
-           fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n\n%s\n--%s\n", boundary, MIMEwarn, boundary);
-           fprintf(fh, "Content-Type: application/pgp-encrypted\n\nVersion: 1\n\n%s\n--%s\nContent-Type: application/octet-stream\n\n", PGPwarn, boundary);
+           fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n"
+                       "\n"
+                       "%s\n"
+                       "--%s\n",
+                       boundary,
+                       MIMEwarn,
+                       boundary);
+           fprintf(fh, "Content-Type: application/pgp-encrypted\n"
+                       "\n"
+                       "Version: 1\n"
+                       "\n"
+                       "%s\n"
+                       "--%s\n"
+                       "Content-Type: application/octet-stream\n"
+                       "\n",
+                       PGPwarn,
+                       boundary);
 
            snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force -s" : "-sea %s %s +bat +f", tf2->Filename, ids);
 
@@ -1074,7 +1128,10 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
   if(pgpfile[0] != '\0')
     DeleteFile(pgpfile);
 
-  fprintf(fh, "\n--%s--\n\n", boundary);
+  fprintf(fh, "\n"
+              "--%s--\n"
+              "\n",
+              boundary);
 
 out:
   FreeStrBuf(ids);
@@ -1093,12 +1150,16 @@ static BOOL WR_ComposeMulti(FILE *fh, const struct Compose *comp, const char *bo
 
   ENTER();
 
-  fprintf(fh, "Content-type: multipart/mixed; boundary=\"%s\"\n\n", boundary);
+  fprintf(fh, "Content-type: multipart/mixed; boundary=\"%s\"\n"
+              "\n",
+              boundary);
   fputs(MIMEwarn, fh);
 
   for(p = comp->FirstPart; p; p = p->Next)
   {
-    fprintf(fh, "\n--%s\n", boundary);
+    fprintf(fh, "\n"
+                "--%s\n",
+                boundary);
 
     WriteContentTypeAndEncoding(fh, p);
 
@@ -1114,7 +1175,10 @@ static BOOL WR_ComposeMulti(FILE *fh, const struct Compose *comp, const char *bo
     }
   }
 
-  fprintf(fh, "\n--%s--\n\n", boundary);
+  fprintf(fh, "\n"
+              "--%s--\n"
+              "\n",
+              boundary);
 
   RETURN(TRUE);
   return TRUE;
