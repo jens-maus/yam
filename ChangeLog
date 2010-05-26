@@ -13,6 +13,7 @@ $URL$
 
   * MimeTypes.c, locale/YAM.cd: added application/pgp-signature to the internal
     MIME type list.
+  * YAM_WR.c: added some const qualifiers.
 
 2010-05-21 Jens Langner <Jens.Langner@light-speed.de>
 

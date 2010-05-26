@@ -149,7 +149,7 @@ struct WritePart *NewMIMEpart(struct WriteMailData *wmData)
 
   ENTER();
 
-  if((p = calloc(1, sizeof(struct WritePart))) != NULL)
+  if((p = calloc(1, sizeof(*p))) != NULL)
   {
     p->ContentType = "text/plain";
     p->EncType = ENC_7BIT;
@@ -181,7 +181,7 @@ void FreePartsList(struct WritePart *p)
   for(; p; p = np)
   {
     np = p->Next;
-    if(p->IsTemp)
+    if(p->IsTemp == TRUE)
       DeleteFile(p->Filename);
 
     free(p);
@@ -399,7 +399,7 @@ static void EmitRcptHeader(FILE *fh, const char *hdr, const char *body)
 ///
 /// EncodingName
 // return the literal name for the given encoding
-const char *EncodingName(enum Encoding enc)
+const char *EncodingName(const enum Encoding enc)
 {
   const char *encName;
 
@@ -452,7 +452,7 @@ const char *EncodingName(enum Encoding enc)
 ///
 /// WriteContentTypeAndEncoding
 //  Outputs content type header including parameters
-void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
+void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
 {
   BOOL isPrintable = FALSE;
 
@@ -505,7 +505,7 @@ void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
 ///
 /// WR_WriteUserInfo
 //  Outputs X-SenderInfo header line
-static void WR_WriteUserInfo(FILE *fh, char *from)
+static void WR_WriteUserInfo(FILE *fh, const char *from)
 {
   struct ABEntry *ab = NULL;
   struct Person pers = { "", "" };
@@ -661,7 +661,7 @@ BOOL EncodePart(FILE *ofh, const struct WritePart *part)
 ///
 /// WR_Anonymize
 //  Inserts recipient header field for remailer service
-static void WR_Anonymize(FILE *fh, char *body)
+static void WR_Anonymize(FILE *fh, const char *body)
 {
   char *ptr;
 
@@ -690,7 +690,7 @@ static void WR_Anonymize(FILE *fh, char *body)
 ///
 /// WR_GetPGPId
 //  Gets PGP key id for a person
-static char *WR_GetPGPId(struct Person *pe)
+static char *WR_GetPGPId(const struct Person *pe)
 {
   char *pgpid = NULL;
   struct ABEntry *ab = NULL;
@@ -715,7 +715,7 @@ static char *WR_GetPGPId(struct Person *pe)
 ///
 /// WR_GetPGPIds
 //  Collects PGP key ids for all persons in a recipient field
-static char *WR_GetPGPIds(char *source, char *ids)
+static char *WR_GetPGPIds(const char *source, char *ids)
 {
   char *next;
 
@@ -750,7 +750,7 @@ static char *WR_GetPGPIds(char *source, char *ids)
 ///
 /// WR_Bounce
 //  Bounce message: inserts resent-headers while copying the message
-static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
+static BOOL WR_Bounce(FILE *fh, const struct Compose *comp)
 {
   BOOL result = FALSE;
   FILE *oldfh;
@@ -786,7 +786,7 @@ static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
 ///
 /// WR_SaveDec
 //  Creates decrypted copy of a PGP encrypted message
-static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
+static BOOL WR_SaveDec(FILE *fh, const struct Compose *comp)
 {
   char *mailfile;
   BOOL result = FALSE;
@@ -862,7 +862,7 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
 ///
 /// WR_EmitExtHeader
 //  Outputs special X-YAM-Header lines to remember user-defined headers
-static void WR_EmitExtHeader(FILE *fh, struct Compose *comp)
+static void WR_EmitExtHeader(FILE *fh, const struct Compose *comp)
 {
   ENTER();
 
@@ -947,7 +947,7 @@ static BOOL WR_ComposeReport(FILE *fh, const struct Compose *comp, const char *b
 ///
 /// WR_ComposePGP
 //  Creates a signed and/or encrypted PGP/MIME message
-static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
+static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, char *boundary)
 {
   enum Security sec = comp->Security;
   BOOL success = FALSE;
@@ -1429,7 +1429,7 @@ char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length)
 ///
 /// AppendRcpt()
 //  Appends a recipient address to a string
-static char *AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
+static char *AppendRcpt(char *sbuf, const struct Person *pe, const BOOL excludeme)
 {
   ENTER();
 
@@ -1494,7 +1494,7 @@ static char *AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 /*** ExpandText ***/
 /// ExpandText()
 //  Replaces variables with values
-static char *ExpandText(char *src, struct ExpandTextData *etd)
+static char *ExpandText(const char *src, struct ExpandTextData *etd)
 {
   char buf[SIZE_ADDRESS];
   char *p;
@@ -1508,7 +1508,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
     if(*src == '\\')
     {
       src++;
-      switch (*src)
+      switch(*src)
       {
         case '\\':
           dst = StrBufCat(dst, "\\");
@@ -1519,7 +1519,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
         break;
       }
     }
-    else if(*src == '%' && etd)
+    else if(*src == '%' && etd != NULL)
     {
       src++;
       switch(*src)
@@ -1532,7 +1532,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
         {
           strlcpy(buf, etd->OS_Name, sizeof(buf));
 
-          if((p = strchr(buf, ',')))
+          if((p = strchr(buf, ',')) != NULL)
             p = Trim(++p);
           else
           {
@@ -1610,7 +1610,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
         case 'v':
         {
           strlcpy(buf, etd->R_Name, sizeof(buf));
-          if((p = strchr(buf, ',')))
+          if((p = strchr(buf, ',')) != NULL)
             p = Trim(++p);
           else
           {
@@ -1686,7 +1686,7 @@ static char *ExpandText(char *src, struct ExpandTextData *etd)
 ///
 /// InsertIntroText()
 //  Inserts a phrase into the message text
-static void InsertIntroText(FILE *fh, char *text, struct ExpandTextData *etd)
+static void InsertIntroText(FILE *fh, const char *text, struct ExpandTextData *etd)
 {
   ENTER();
 
@@ -1707,7 +1707,7 @@ static void InsertIntroText(FILE *fh, char *text, struct ExpandTextData *etd)
 ///
 /// SetupExpandTextData()
 //  Creates quote string by replacing variables with values
-static void SetupExpandTextData(struct ExpandTextData *etd, struct Mail *mail)
+static void SetupExpandTextData(struct ExpandTextData *etd, const struct Mail *mail)
 {
   ENTER();
 
