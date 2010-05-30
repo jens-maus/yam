@@ -2075,12 +2075,6 @@ settings.
 ;
 ; Module AB - Routines
 ;
-MSG_AB_BirthdayReq (702//)
-Today, %s reaches age %ld.\n\
-\n\
-Do you want to send a greetings card?
-; NAME, AGE
-;
 MSG_AB_BirthdayReminder (703//)
 Birthday Reminder
 ;
@@ -6955,4 +6949,10 @@ in the string search.
 ;
 MSG_CTapplicationpgpsig (2163//)
 PGP signature
+;
+MSG_AB_BirthdayReqBody (2164//)
+Today, on %s, %s reaches age %ld.\n\
+\n\
+Do you want to send a greetings card?
+; DATE, NAME, AGE
 ;

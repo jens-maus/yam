@@ -7,6 +7,7 @@ $URL$
 
 2010-05-30 Frank Weber <opionline@yahoo.de>
 
+  * YAM_AB.c, locale/YAM.cd: Add the date to the birthday requester.
   * YAM_CO.c: Change the default BirthdayCheckTime from 10:00 AM to 00:00 AM.
   * YAM_AB.c, mui/BirthdayRequestWindow.c, Makefile: Add a nonblocking birthday
     Requester. This closes #47 and partly #16.

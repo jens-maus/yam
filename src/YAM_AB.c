@@ -523,8 +523,10 @@ void AB_CheckBirthdates(BOOL check)
         {
           char question[SIZE_LARGE];
           char *name = *ab->RealName ? ab->RealName : ab->Alias;
+          char dateString[64];
 
-          snprintf(question, sizeof(question), tr(MSG_AB_BirthdayReq), name, today.rem - birthday.rem);
+          DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATE, TZC_NONE);
+          snprintf(question, sizeof(question), tr(MSG_AB_BirthdayReqBody), dateString, name, today.rem - birthday.rem);
 
           // show the Birthday Requester
           BirthdayRequestWindowObject,
