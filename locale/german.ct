@@ -2818,14 +2818,6 @@ und benutzt die alten Einstellungen.
 ;
 ; Module AB - Routines
 ;
-MSG_AB_BirthdayReq
-Heute wird %s %ld Jahre alt.\n\
-\n\
-Wollen Sie eine Gruﬂkarte schicken?
-; Today, %s reaches age %ld!\n\
-; Do you want to send a greetings card?
-; NAME, AGE
-;
 MSG_AB_BirthdayReminder
 Geburtstagserinnerung
 ; Birthday Reminder
@@ -8563,4 +8555,9 @@ mit Hilfe von AmigaDOS-Mustern.
 ;
 MSG_CTapplicationpgpsig
 PGP-Signatur
+;
+MSG_AB_BirthdayReqBody
+Heute, am %s, wird %s %ld Jahre alt.\n\
+\n\
+Wollen Sie eine Gruﬂkarte schicken?
 ;
