@@ -7,6 +7,9 @@ $URL$
 
 2010-05-30 Frank Weber <opionline@yahoo.de>
 
+  * mui/BirthdayRequestWindow.c: Add a Window_ID to the birthday requester
+    so a user can snapshot the window position and set individual settings
+    for that window.
   * YAM_AB.c: Don't show the birthday requester twice on the same day in the
     same YAM session. This closes #166.
   * locale/german.ct: updated translation according to the latest changes.

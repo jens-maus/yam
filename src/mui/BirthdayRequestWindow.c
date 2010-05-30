@@ -22,7 +22,7 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id:$
+ $Id$
 
  Superclass:  MUIC_Window
  Description: Show the Birthday Requester
@@ -95,6 +95,7 @@ OVERLOAD(OM_NEW)
       MUIA_Window_TopEdge,     MUIV_Window_TopEdge_Centered,
       MUIA_Window_Width,       MUIV_Window_Width_MinMax(0),
       MUIA_Window_Height,      MUIV_Window_Height_MinMax(0),
+      MUIA_Window_ID,          MAKE_ID('B','R','E','Q'),
       MUIA_Window_CloseGadget, FALSE,
       MUIA_Window_SizeGadget,  FALSE,
       MUIA_Window_Activate,    TRUE,
