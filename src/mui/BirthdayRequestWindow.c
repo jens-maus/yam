@@ -131,12 +131,16 @@ OVERLOAD(OM_NEW)
       xset(obj,
            MUIA_Window_Activate, TRUE,
            MUIA_Window_Open,     TRUE);
+
       free(buf);
     }
   }
+
   RETURN(obj);
   return (IPTR)obj;
 }
+
+///
 
 /* Private Functions */
 
@@ -165,6 +169,10 @@ DECLARE(FinishInput) // char *alias
            MUIA_WriteWindow_Subject, tr(MSG_AB_HappyBirthday));
     }
   }
+
   RETURN(0);
   return 0;
 }
+
+///
+

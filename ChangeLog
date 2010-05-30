@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/BirthdayRequestWindow.c: added some missing folding markers and set the
+    svn:eol-style property.
+
 2010-05-30 Frank Weber <opionline@yahoo.de>
 
   * YAM.h, YAM_AB.c: Store the LastBirthdayCheckDay into the global struct
