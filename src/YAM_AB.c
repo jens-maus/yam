@@ -499,22 +499,21 @@ void AB_CheckBirthdates(BOOL check)
   struct TimeVal nowTV;
   struct TimeVal nextTV;
   struct DateStamp nextDS;
-  static LONG lastcheck = 0;
 
   ENTER();
 
   // perform the check only if we are instructed to do it
   // and only if we don't do the check already today in this YAM session 
-  if(check == TRUE && G->StartDate.ds_Days != lastcheck)
+  if(check == TRUE && G->StartDate.ds_Days != G->LastBirthdayCheckDay)
   {
     ldiv_t today;
     struct MUI_NListtree_TreeNode *tn;
     int i;
     struct DateStamp nowDS;
 
-    // remember the day of the last check
+    // remember the day of the last check into the global structure
     DateStamp(&nowDS);
-    lastcheck = nowDS.ds_Days;
+    G->LastBirthdayCheckDay = nowDS.ds_Days;
 
     today = ldiv(DateStamp2Long(NULL), 10000);
     i = 0;
