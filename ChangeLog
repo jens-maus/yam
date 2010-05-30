@@ -7,6 +7,8 @@ $URL$
 
 2010-05-30 Frank Weber <opionline@yahoo.de>
 
+  * YAM_AB.c: Don't show the birthday requester twice on the same day in the
+    same YAM session. This closes #166.
   * locale/german.ct: updated translation according to the latest changes.
   * YAM_AB.c, locale/YAM.cd: Add the date to the birthday requester.
   * YAM_CO.c: Change the default BirthdayCheckTime from 10:00 AM to 00:00 AM.
