@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-30 Frank Weber <opionline@yahoo.de>
+
+  * YAM_AB.c, mui/BirthdayRequestWindow.c, Makefile: Add a nonblocking birthday
+    Requester. This closes #47 and partly #16.
+
 2010-05-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update italian catalog.

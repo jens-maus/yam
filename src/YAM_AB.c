@@ -526,16 +526,11 @@ void AB_CheckBirthdates(BOOL check)
 
           snprintf(question, sizeof(question), tr(MSG_AB_BirthdayReq), name, today.rem - birthday.rem);
 
-          if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_AB_BirthdayReminder), tr(MSG_YesNoReq), question))
-          {
-            struct WriteMailData *wmData;
-
-            if((wmData = NewWriteMailWindow(NULL, 0)) != NULL)
-            {
-              xset(wmData->window, MUIA_WriteWindow_To, ab->Alias,
-                                   MUIA_WriteWindow_Subject, tr(MSG_AB_HappyBirthday));
-            }
-          }
+          // show the Birthday Requester
+          BirthdayRequestWindowObject,
+            MUIA_BirthdayRequestWindow_Body, question,
+            MUIA_BirthdayRequestWindow_Alias, ab->Alias,
+          End;
         }
       }
       i++;

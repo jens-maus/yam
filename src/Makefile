@@ -330,6 +330,7 @@ MUI = \
 	AttachmentImage.o \
 	AttachmentObject.o \
 	AttachmentRequestWindow.o \
+	BirthdayRequestWindow.o \
 	CheckboxRequestWindow.o \
 	ConfigPageList.o \
 	FolderRequestWindow.o \
