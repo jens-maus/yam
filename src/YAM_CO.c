@@ -1091,9 +1091,9 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->StyleMailUnread,   MUIX_B,                sizeof(co->StyleMailUnread));
     strlcpy(co->StyleMailRead,     "",                    sizeof(co->StyleMailRead));
 
-    // check birthdays at 10:00 AM
+    // check birthdays at 00:00 AM
     co->BirthdayCheckTime.ds_Days = 0;
-    co->BirthdayCheckTime.ds_Minute = 10*60;
+    co->BirthdayCheckTime.ds_Minute = 0;
     co->BirthdayCheckTime.ds_Tick = 0;
   }
 
