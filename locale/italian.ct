@@ -2866,14 +2866,6 @@ ed usa le precedenti impostazioni.
 ;
 ; Module AB - Routines
 ;
-MSG_AB_BirthdayReq
-Oggi, %s compie %ld anni!\n\
-Si desidera inviare gli auguri?
-; Today, %s reaches age %ld.\n\
-; \n\
-; Do you want to send a greetings card?
-; NAME, AGE
-;
 MSG_AB_BirthdayReminder
 Memorandum per il compleanno
 ; Birthday Reminder

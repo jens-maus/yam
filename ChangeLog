@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-31 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/italian.ct, locale/polish.ct: removed unused translation from
+    italian catalog and fixed missing identifier in polish catalog.
+
 2010-05-30 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update polish catalog at the latest changes.
