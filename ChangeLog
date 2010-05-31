@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-30 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update polish catalog at the latest changes.
+
 2010-05-30 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update italian catalog at the latest changes.

@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 7.3 (18.05.2010)
+## version $VER: YAM.catalog 7.4 (31.05.2010)
 ## language polski
 ## codeset 5
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ;
-; YAM.cd - YAM 2.6 catalog description file
+; YAM.ct - YAM 2.6 catalog translation file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -2853,15 +2853,6 @@ i u¿ywa starych ustawieñ.
 ;
 ;
 ; Module AB - Routines
-;
-MSG_AB_BirthdayReq
-Dzisiaj %s ukoñczy³(a) %ld lat(a).\n\
-\n\
-Czy chcesz wys³aæ ¿yczenia?
-; Today, %s reaches age %ld.\n\
-; \n\
-; Do you want to send a greetings card?
-; NAME, AGE
 ;
 MSG_AB_BirthdayReminder
 Urodziny
@@ -9800,3 +9791,17 @@ w formacie AmigaDOS-u w ci±gu wyszukiwania.
 ; Enable AmigaDOS patterns\n\
 ; in the string search.
 ;
+MSG_CTapplicationpgpsig
+Podpis PGP
+; PGP signature
+;
+MSG_AB_BirthdayReqBody
+Dzisiaj (%s) %s obchodzi %ld urodziny.\n\
+\n\
+Czy chcesz wys³aæ ¿yczenia?
+; Today, on %s, %s reaches age %ld.\n\
+; \n\
+; Do you want to send a greetings card?
+; DATE, NAME, AGE
+;
+
