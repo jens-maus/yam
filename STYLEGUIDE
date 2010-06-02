@@ -318,6 +318,10 @@ case as defined under "Functions". Generally static variables should also
 comply with this rule (when they are really meant as global, but local not
 to clutter the global namespace).
 
+As we want to introduce multithreading to YAM sooner or later please avoid
+using static Variables. Instead of that use our "struct Global" which can
+be easily locked by sempahores. 
+
 Abbreviations which normally appear in uppercase (e.g. HTML) should still
 be uppercase despite the above rules.
 

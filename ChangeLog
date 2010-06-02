@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-05-30 Frank Weber <opionline@yahoo.de>
+
+  * STYLEGUIDE: 10. Variables: Add a hint about using static Variables.
+
 2010-05-31 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/italian.ct, locale/polish.ct: removed unused translation from
