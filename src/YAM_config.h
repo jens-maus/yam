@@ -445,6 +445,7 @@ struct Config
   int   XPKPackEncryptEff;
   int   LetterPart;
   int   WriteIndexes;
+  int   ExpungeIndexes;
   int   AutoSave;
   int   HideGUIElements;
   int   StackSize;

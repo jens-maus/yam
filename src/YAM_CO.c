@@ -1045,7 +1045,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
   if(page == cp_AllPages)
   {
     co->LetterPart = 1;
-    co->WriteIndexes = 120;
+    co->WriteIndexes = 120; // 2 minutes
+    co->ExpungeIndexes = 600; // 10 minutes
     strlcpy(co->SupportSite, "http://www.yam.ch/", sizeof(co->SupportSite));
     strlcpy(co->UpdateServer, "http://update.yam.ch/", sizeof(co->UpdateServer));
     co->JumpToNewMsg = TRUE;
@@ -1300,6 +1301,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->XPKPackEncryptEff               == c2->XPKPackEncryptEff &&
      c1->LetterPart                      == c2->LetterPart &&
      c1->WriteIndexes                    == c2->WriteIndexes &&
+     c1->ExpungeIndexes                  == c2->ExpungeIndexes &&
      c1->AutoSave                        == c2->AutoSave &&
      c1->HideGUIElements                 == c2->HideGUIElements &&
      c1->StackSize                       == c2->StackSize &&

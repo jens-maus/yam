@@ -95,9 +95,9 @@ enum ReadHeaderMode
 void  MA_ChangeFolder(struct Folder *folder, BOOL set_active);
 void  MA_ExpireIndex(struct Folder *folder);
 struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *file, const BOOL deep);
-void  MA_FlushIndexes(BOOL all);
-void  MA_JumpToNewMsg(VOID);
-void  MA_JumpToRecentMsg(VOID);
+void  MA_FlushIndexes(void);
+void  MA_JumpToNewMsg(void);
+void  MA_JumpToRecentMsg(void);
 void  MA_FreeEMailStruct(struct ExtendedMail *email);
 BOOL  MA_GetIndex(struct Folder *folder);
 enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full);
@@ -106,6 +106,6 @@ BOOL  MA_PromptFolderPassword(struct Folder *fo, APTR win);
 BOOL  MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, enum ReadHeaderMode mode);
 BOOL  MA_SaveIndex(struct Folder *folder);
 void  MA_UpdateIndexes(BOOL initial);
-void  MA_UpdateInfoBar(struct Folder *);
+void  MA_UpdateInfoBar(struct Folder *folder);
 
 #endif /* YAM_MAINFOLDER_H */

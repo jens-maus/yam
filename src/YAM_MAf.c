@@ -130,6 +130,7 @@ struct FIndex
 
 /* local protos */
 static BOOL MA_ScanMailBox(struct Folder *folder);
+static void MA_FlushIndex(struct Folder *folder, time_t minAccessTime);
 
 /***************************************************************************
  Module: Main - Folder handling
@@ -545,6 +546,11 @@ BOOL MA_GetIndex(struct Folder *folder)
     else
       W(DBF_FOLDER, "skipping index loading due to LoadedMode %ld for folder '%s'", folder->LoadedMode, folder->Name);
 
+    // set the lastAccessTime of the folder to the current time
+    // so that the index expunge timer knows when to free the folder
+    // index in case it hasn't been touched for a certain time
+    folder->lastAccessTime = GetDateStamp();
+
     // check if the load status is valid or not
     result = (BOOL)(folder->LoadedMode == LM_VALID);
   }
@@ -664,8 +670,14 @@ void MA_UpdateIndexes(BOOL initial)
         }
         else
         {
-          if(folder->LoadedMode == LM_VALID && isModified(folder))
-            MA_SaveIndex(folder);
+          // flush the index of the folder. This will save the index
+          // and here in case the last access time was > 300 seconds
+          // the index will also be expunged from memory in case this
+          // folder isn't a default, sent or the current folder.
+          if(C->ExpungeIndexes == 0)
+            MA_FlushIndex(folder, 1);
+          else
+            MA_FlushIndex(folder, GetDateStamp()-C->ExpungeIndexes);
         }
       }
     }
@@ -677,9 +689,47 @@ void MA_UpdateIndexes(BOOL initial)
 }
 
 ///
+/// MA_FlushIndex
+// flushes (saves/expungs) the loaded index of a folder. You have to
+// make sure yourself to lock the folder list accordingly when you
+// use this function. The 'minAccessTime' variable can be used to
+// prevent this function from expunging the index in case the
+// folder was last accessed >= minAccessTime. Use 0 to expunge it
+// at all times.
+static void MA_FlushIndex(struct Folder *folder, time_t minAccessTime)
+{
+  ENTER();
+
+  // make sure the folder index is saved
+  if(isModified(folder))
+    MA_SaveIndex(folder);
+
+  // then we make sure we only clear the folder index of
+  // a folder where this should really be done and also not
+  // on the actual folder or otherwise we risk to run into
+  // problems.
+  if((isSentFolder(folder) || isDefaultFolder(folder) == FALSE) &&
+     folder->LoadedMode == LM_VALID && 
+     (minAccessTime == 0 || minAccessTime >= folder->lastAccessTime) &&
+     folder != FO_GetCurrentFolder())
+  {
+    if(minAccessTime != 0)
+      D(DBF_FOLDER, "Flush index of folder '%s' due to lastAccessTime (%d) < minAccessTime (%d)", folder->Name, folder->lastAccessTime, minAccessTime);
+    else
+      D(DBF_FOLDER, "Flush index of folder '%s'", folder->Name);
+
+    ClearMailList(folder, FALSE);
+    folder->LoadedMode = LM_FLUSHED;
+    CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
+  }
+ 
+  LEAVE();
+}
+
+///
 /// MA_FlushIndexes
-//  Removes loaded folder indices from memory and closes folders
-void MA_FlushIndexes(BOOL all)
+// flushes (saves/expungs) the loaded index of all folders
+void MA_FlushIndexes(void)
 {
   ENTER();
 
@@ -688,31 +738,12 @@ void MA_FlushIndexes(BOOL all)
   if(IsFolderListEmpty(G->folders) == FALSE)
   {
     struct FolderNode *fnode;
-    struct Folder *actfolder = FO_GetCurrentFolder();
 
     ForEachFolderNode(G->folders, fnode)
     {
       struct Folder *folder = fnode->folder;
 
-      // make sure the folder index is saved
-      if(isModified(folder))
-        MA_SaveIndex(folder);
-
-      // then we make sure we only clear the folder index of
-      // a folder where this should really be done and also not
-      // on the actual folder or otherwise we risk to run into
-      // problems.
-      if((isSentFolder(folder) || !isDefaultFolder(folder)) &&
-          folder->LoadedMode == LM_VALID &&
-          (all == TRUE || isFreeAccess(folder)) &&
-          folder != actfolder)
-      {
-        D(DBF_FOLDER, "Flush index of folder '%s'", folder->Name);
-
-        ClearMailList(folder, FALSE);
-        folder->LoadedMode = LM_FLUSHED;
-        CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
-      }
+      MA_FlushIndex(folder, 0);
     }
 
     // make sure to redraw the whole folder list
@@ -726,7 +757,7 @@ void MA_FlushIndexes(BOOL all)
 
 HOOKPROTONHNONP(MA_FlushIndexFunc, void)
 {
-   MA_FlushIndexes(TRUE);
+  MA_FlushIndexes();
 }
 MakeHook(MA_FlushIndexHook, MA_FlushIndexFunc);
 ///

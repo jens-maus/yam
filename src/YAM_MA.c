@@ -1006,7 +1006,7 @@ static void MA_UpdateStatus(void)
     {
       struct Folder *folder = fnode->folder;
 
-      if(!isSentMailFolder(folder) && folder->LoadedMode == LM_VALID)
+      if(isSentMailFolder(folder) == FALSE && folder->LoadedMode == LM_VALID)
       {
         BOOL updated = FALSE;
 
@@ -1276,7 +1276,8 @@ struct Mail *FindThread(struct Mail *srcMail, BOOL nextThread, Object *window)
 
   if(srcMail != NULL)
   {
-    if(srcMail->Folder->LoadedMode == LM_VALID || MA_GetIndex(srcMail->Folder) == TRUE)
+    // check that the index is successfully loaded and if not do it now.
+    if(MA_GetIndex(srcMail->Folder) == TRUE)
     {
       // first we take the folder of the srcMail as a priority in the
       // search of the next/prev thread so we have to check that we
@@ -1301,7 +1302,7 @@ struct Mail *FindThread(struct Mail *srcMail, BOOL nextThread, Object *window)
 
               // check if this folder isn't a group and that we haven't scanned
               // it already.
-              if(!isGroupFolder(fo) && fo != srcMail->Folder)
+              if(isGroupFolder(fo) == FALSE && fo != srcMail->Folder)
               {
                 if(fo->LoadedMode != LM_VALID)
                 {

@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-05 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: implemented new hidden option and functionality "ExpungeIndexes"
+    which takes number of seconds for which the index of a custom folder
+    will be automatically expunged together with the writeindexes timer.
+    This should allow to automatically free memory in case a folder hasn't
+    been used for a long time. The default for this option is 10 min.
+    This fulfills and closes #144.
+
 2010-05-30 Frank Weber <opionline@yahoo.de>
 
   * STYLEGUIDE: 10. Variables: Add a hint about using static Variables.

@@ -58,7 +58,7 @@ void rx_flushindexes(UNUSED struct RexxHost *host, struct RexxParams *params, en
     case RXIF_ACTION:
     {
       // flush the index of all folders
-      MA_FlushIndexes(TRUE);
+      MA_FlushIndexes();
     }
     break;
 

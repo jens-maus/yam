@@ -189,6 +189,8 @@ struct Folder
   enum FolderType   Type;
   enum LoadedMode   LoadedMode;
 
+  time_t            lastAccessTime;    // when the folder was last accessed/loaded
+
   char              Name[SIZE_NAME];
   char              Path[SIZE_PATH];
   char              Password[SIZE_USERID];

@@ -562,6 +562,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "\n[Advanced]\n");
     fprintf(fh, "LetterPart       = %d\n", co->LetterPart);
     fprintf(fh, "WriteIndexes     = %d\n", co->WriteIndexes);
+    fprintf(fh, "ExpungeIndexes   = %d\n", co->ExpungeIndexes);
     fprintf(fh, "SupportSite      = %s\n", co->SupportSite);
     fprintf(fh, "JumpToNewMsg     = %s\n", Bool2Txt(co->JumpToNewMsg));
     fprintf(fh, "JumpToIncoming   = %s\n", Bool2Txt(co->JumpToIncoming));
@@ -1346,6 +1347,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
               co->LetterPart = 1;
           }
           else if(stricmp(buf, "WriteIndexes") == 0)     co->WriteIndexes = atoi(value);
+          else if(stricmp(buf, "ExpungeIndexes") == 0)   co->ExpungeIndexes = atoi(value);
           else if(stricmp(buf, "SupportSite") == 0)      strlcpy(co->SupportSite, value, sizeof(co->SupportSite));
           else if(stricmp(buf, "JumpToNewMsg") == 0)     co->JumpToNewMsg = Txt2Bool(value);
           else if(stricmp(buf, "JumpToIncoming") == 0)   co->JumpToIncoming = Txt2Bool(value);
