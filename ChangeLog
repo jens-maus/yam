@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * include/SDI_compiler.h: updated to latest version.
+
 2010-06-05 Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: implemented new hidden option and functionality "ExpungeIndexes"
