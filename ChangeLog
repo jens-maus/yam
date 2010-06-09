@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: the tabs' title texts and several other static texts were
+    initialized on the very first use only. Restarting YAM by choosing "Restart"
+    from the project menu closed YAM's catalog and reopened it later. This could
+    result in invalid pointers the next time the write window was opened again.
+    Now the pointers are initialized every time. We really must get rid of these
+    static variables!! This closed #167.
+
 2010-06-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * include/SDI_compiler.h: updated to latest version.
