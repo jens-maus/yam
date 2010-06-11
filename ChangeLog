@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/Recipientstring.c: a possible "mailto:" header in front of an address
+    will now be stripped upon resolving the complete string. This closes #93.
+
 2010-06-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: the tabs' title texts and several other static texts were

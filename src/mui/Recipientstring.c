@@ -829,6 +829,12 @@ DECLARE(Resolve) // ULONG flags
         s = marks + 4;
         D(DBF_GUI, "new token: '%s'", s);
       }
+      else if(strnicmp(s, "mailto:", 7) == 0)
+      {
+        D(DBF_GUI, "stripping 'mailto:' header");
+        s = &s[7];
+        D(DBF_GUI, "new token: '%s'", s);
+      }
 
       if(checkvalids == FALSE && (tmp = strchr(s, '@')) != NULL)
       {
