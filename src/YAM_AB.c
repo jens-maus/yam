@@ -682,40 +682,35 @@ char *AB_CompleteAlias(const char *text)
 //  Adds a new recipient to a recipient field
 void AB_InsertAddress(Object *string, const char *alias, const char *name, const char *address)
 {
-  char *p;
-
   ENTER();
 
-  p = (char *)xget(string, MUIA_UserData);
-  if(p != NULL)
+  if(*alias != '\0')
   {
-    p = (char *)xget(string, MUIA_String_Contents);
-    if(*p != '\0')
-      DoMethod(string, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
+    // If we have an alias we just add this one and let the string object
+    // resolve this alias later.
+    DoMethod(string, MUIM_Recipientstring_AddRecipient, alias);
   }
   else
-    setstring(string, "");
-
-  if(*alias != '\0')
-    DoMethod(string, MUIM_BetterString_Insert, alias, MUIV_BetterString_Insert_EndOfString);
-  else
   {
-    if(*name != '\0')
-    {
-      if(strchr(name, ','))
-        DoMethod(string, MUIM_BetterString_Insert, "\"", MUIV_BetterString_Insert_EndOfString);
-      DoMethod(string, MUIM_BetterString_Insert, name, MUIV_BetterString_Insert_EndOfString);
-      if(strchr(name, ','))
-        DoMethod(string, MUIM_BetterString_Insert, "\"", MUIV_BetterString_Insert_EndOfString);
-    }
+    // Otherwise we build a string like "name <address>" based on the given
+    // informations. Names containing commas will be quoted.
+    char fullName[SIZE_REALNAME+SIZE_ADDRESS];
+
+    if(strchr(name, ',') != NULL)
+      snprintf(fullName, sizeof(fullName), "\"%s\"", name);
+    else
+      strlcpy(fullName, name, sizeof(fullName));
+
     if(*address != '\0')
     {
-      if(*name != '\0')
-        DoMethod(string, MUIM_BetterString_Insert, " <", MUIV_BetterString_Insert_EndOfString);
-      DoMethod(string, MUIM_BetterString_Insert, address, MUIV_BetterString_Insert_EndOfString);
-      if(*name != '\0')
-        DoMethod(string, MUIM_BetterString_Insert, ">", MUIV_BetterString_Insert_EndOfString);
+      if(fullName[0] != '\0')
+        strlcat(fullName, " <", sizeof(fullName));
+      strlcat(fullName, address, sizeof(fullName));
+      if(fullName[0] != '\0')
+        strlcat(fullName, ">", sizeof(fullName));
     }
+
+    DoMethod(string, MUIM_Recipientstring_AddRecipient, fullName);
   }
 }
 

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: removed the limitation that a Recipientstring object must have
+    MUIA_UserData set to be able to append recipients instead of replacing
+    everything. Furthermore the added recipient will no longer be assembled
+    manually but using the respective method of the Recipientstring class.
+
 2010-06-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/Recipientstring.c: a possible "mailto:" header in front of an address
