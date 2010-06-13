@@ -201,6 +201,44 @@ static void NormalizeSelection(Object *obj, BOOL clear)
 }
 
 ///
+/// InsertAddress
+//  Adds a new recipient to a recipient field
+static void InsertAddress(Object *obj, const char *alias, const char *name, const char *address)
+{
+  ENTER();
+
+  if(*alias != '\0')
+  {
+    // If we have an alias we just add this one and let the string object
+    // resolve this alias later.
+    DoMethod(obj, MUIM_Recipientstring_AddRecipient, alias);
+  }
+  else
+  {
+    // Otherwise we build a string like "name <address>" based on the given
+    // informations. Names containing commas will be quoted.
+    char fullName[SIZE_REALNAME+SIZE_ADDRESS];
+
+    if(strchr(name, ',') != NULL)
+      snprintf(fullName, sizeof(fullName), "\"%s\"", name);
+    else
+      strlcpy(fullName, name, sizeof(fullName));
+
+    if(*address != '\0')
+    {
+      if(fullName[0] != '\0')
+        strlcat(fullName, " <", sizeof(fullName));
+      strlcat(fullName, address, sizeof(fullName));
+      if(fullName[0] != '\0')
+        strlcat(fullName, ">", sizeof(fullName));
+    }
+
+    DoMethod(obj, MUIM_Recipientstring_AddRecipient, fullName);
+  }
+}
+
+///
+
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -496,7 +534,7 @@ OVERLOAD(MUIM_DragDrop)
     struct MUI_NListtree_TreeNode *active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active);
     struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
 
-    AB_InsertAddress(obj, addr->Alias, addr->RealName, "");
+    InsertAddress(obj, addr->Alias, addr->RealName, "");
   }
   else if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
   {
@@ -505,9 +543,9 @@ OVERLOAD(MUIM_DragDrop)
     DoMethod(d->obj, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
 
     if(isSentMailFolder(mail->Folder))
-      AB_InsertAddress(obj, "", mail->To.RealName,   mail->To.Address);
+      InsertAddress(obj, "", mail->To.RealName,   mail->To.Address);
     else
-      AB_InsertAddress(obj, "", mail->From.RealName, mail->From.Address);
+      InsertAddress(obj, "", mail->From.RealName, mail->From.Address);
   }
 
   RETURN(0);

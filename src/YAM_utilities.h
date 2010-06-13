@@ -333,7 +333,6 @@ int      GetSimpleID(void);
 BOOL     GotoURLPossible(void);
 BOOL     GotoURL(const char *url, BOOL newWindow);
 const char *IdentifyFile(const char *fname);
-void     InsertAddresses(Object *obj, char **addr, BOOL add);
 char *   itoa(int val);
 void     LoadLayout(void);
 BOOL     MailExists(const struct Mail *mailptr, struct Folder *folder);

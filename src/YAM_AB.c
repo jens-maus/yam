@@ -678,43 +678,6 @@ char *AB_CompleteAlias(const char *text)
 }
 
 ///
-/// AB_InsertAddress
-//  Adds a new recipient to a recipient field
-void AB_InsertAddress(Object *string, const char *alias, const char *name, const char *address)
-{
-  ENTER();
-
-  if(*alias != '\0')
-  {
-    // If we have an alias we just add this one and let the string object
-    // resolve this alias later.
-    DoMethod(string, MUIM_Recipientstring_AddRecipient, alias);
-  }
-  else
-  {
-    // Otherwise we build a string like "name <address>" based on the given
-    // informations. Names containing commas will be quoted.
-    char fullName[SIZE_REALNAME+SIZE_ADDRESS];
-
-    if(strchr(name, ',') != NULL)
-      snprintf(fullName, sizeof(fullName), "\"%s\"", name);
-    else
-      strlcpy(fullName, name, sizeof(fullName));
-
-    if(*address != '\0')
-    {
-      if(fullName[0] != '\0')
-        strlcat(fullName, " <", sizeof(fullName));
-      strlcat(fullName, address, sizeof(fullName));
-      if(fullName[0] != '\0')
-        strlcat(fullName, ">", sizeof(fullName));
-    }
-
-    DoMethod(string, MUIM_Recipientstring_AddRecipient, fullName);
-  }
-}
-
-///
 /// AB_FromAddrBook
 /*** AB_FromAddrBook - Inserts an address book entry into a recipient string ***/
 HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
