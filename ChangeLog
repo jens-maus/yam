@@ -5,12 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: simplyfied the recipient setup by redirecting the horse
+    work to the Recipientstring class.
+
 2010-06-13 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_AB.c, mui/Recipientstring.c: moved the AB_InsertAddress() function as
-    a private static function to the Recipientstring class as it didn't have any 
+    a private static function to the Recipientstring class as it didn't have any
     dependencies to other functionality.
- 
+
 2010-06-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c: removed the limitation that a Recipientstring object must have

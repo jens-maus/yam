@@ -3363,20 +3363,15 @@ DECLARE(InsertAddresses) // enum RcptType type, char **addr, ULONG add
 
   if(str != NULL)
   {
-    char *buf = (char *)xget(str, MUIA_String_Contents);
-
-    if(buf[0] != '\0' && msg->add == TRUE)
-      DoMethod(str, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
-    else
+    if(msg->add == FALSE)
       setstring(str, "");
 
-    DoMethod(str, MUIM_BetterString_Insert, *(msg->addr), MUIV_BetterString_Insert_EndOfString);
-
-    while(*(++msg->addr) != NULL)
+    do
     {
-      DoMethod(str, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
-      DoMethod(str, MUIM_BetterString_Insert, *(msg->addr), MUIV_BetterString_Insert_EndOfString);
+      DoMethod(str, MUIM_Recipientstring_AddRecipient, *(msg->addr));
+      ++msg->addr;
     }
+    while(*(msg->addr) != NULL);
   }
 
   RETURN(0);
