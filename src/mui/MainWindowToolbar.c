@@ -239,13 +239,13 @@ DECLARE(UpdateSpamControls)
         spamDisabled = TRUE;
         hamDisabled = TRUE;
       }
-      else if(mail != NULL && numSelected >= 1)
+      else if(mail != NULL || numSelected >= 1)
       {
         // at least one mail is selected in a regular folder
         // then show/enable the buttons depending on the mail state
-        if(hasStatusSpam(mail))
+        if(mail != NULL && hasStatusSpam(mail))
         {
-          // definitve spam mail, just show the "no Spam" button
+          // definitively a spam mail, just show the "no Spam" button
           spamHidden = TRUE;
           hamHidden = FALSE;
           spamDisabled = TRUE;
@@ -283,6 +283,7 @@ DECLARE(UpdateSpamControls)
   else
   {
     // the spam filter is not enabled, hide both buttons and the separator
+        D(DBF_ALWAYS, "case 6");
     spamHidden = TRUE;
     hamHidden = TRUE;
     spamDisabled = TRUE;
@@ -299,3 +300,4 @@ DECLARE(UpdateSpamControls)
 }
 
 ///
+
