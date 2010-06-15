@@ -1299,6 +1299,8 @@ HOOKPROTONHNONP(FI_SelectFunc, void)
           DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Select, pos, MUIV_NList_Select_On, NULL);
       }
     }
+
+    MA_ChangeSelected(TRUE);
   }
 
   LEAVE();

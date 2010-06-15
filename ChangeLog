@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * src/YAM_FI.c: clicking on "Select matched" in the search window will now
+    correctly refresh the main window's toolbar and menu items to reflect the
+    selection.
+
 2010-06-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: simplyfied the recipient setup by redirecting the horse
