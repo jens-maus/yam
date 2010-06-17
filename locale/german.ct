@@ -8564,6 +8564,6 @@ Heute, am %s, wird %s %ld Jahre alt.\n\
 Wollen Sie eine Grußkarte schicken?
 ;
 MSG_ER_AREXX_EXECUTION_ERROR
-Ausführung des ARexx-Kommandos '%s' fehlgeschlagen!\n\
-Fehler %ld
+Ausführung des ARexx-Kommandos '%s' fehlgeschlagen (Fehler %ld).\n\
+Bitte stellen Sie sicher, dass die Datei existiert und ein korrektes ARexx-Skript ist.
 ;

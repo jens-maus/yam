@@ -6957,7 +6957,7 @@ Do you want to send a greetings card?
 ; DATE, NAME, AGE
 ;
 MSG_ER_AREXX_EXECUTION_ERROR (2165//)
-Execution of the ARexx command '%s' failed!\n\
-Error code %ld
+Execution of the ARexx command '%s' failed (error code %ld).\n\
+Please make sure that the file is accessible and is a valid ARexx script.
 ; COMMANDNAME, ERRORCODE
 ;
