@@ -10,6 +10,10 @@ $URL$
   * Rexx.c, YAM_MA.c: in case an ARexx script could be successfully sent off to
     the REXX process but failed later (i.e. no real ARexx script) an error
     message will now be shown.
+  * Makefile: build mui/Classes.o as soon as the new class descriptions have
+    been created. This solves the issue of undefinied references in case a new
+    class has been added and the need of a recompile in case new class
+    attributes have been defined.
 
 2010-06-15 Thore Böckelmann <tboeckel@gmx.de>
 

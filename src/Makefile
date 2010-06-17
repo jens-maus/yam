@@ -620,6 +620,8 @@ classinfo: $(MUIDIR)/Classes.h
 $(MUIDIR)/Classes.h: $(GENCLASSES)/GenClasses $(MUIDIR)/*.c
 	@echo "  GN GenClasses"
 	@$(GENCLASSES)/GenClasses mui -bYAM -gpl -storm -iClassesExtra.h -q
+	@echo "  CC mui/Classes.c"
+	@$(CC) $(CFLAGS) -c $(MUIDIR)/Classes.c -o $(OBJDIR)/$(MUIDIR)/Classes.o
 
 $(MUIDIR)/Classes.c: $(MUIDIR)/ClassesExtra.h
 
