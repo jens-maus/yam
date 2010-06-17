@@ -3538,6 +3538,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
         {
           // if the user wants to wait for the termination
           // of the script, we do so...
+          SHOWVALUE(DBF_REXX, C->RX[num].WaitTerm);
           if(C->RX[num].WaitTerm == TRUE)
           {
             struct RexxMsg *rm;
@@ -3565,7 +3566,14 @@ BOOL MA_StartMacro(enum Macro num, char *param)
                   }
 
                   if(rm == sentrm)
+                  {
+                    if(rm->rm_Result1 == 0)
+                      result = TRUE;
+                    else
+                      ER_NewError(MSG_ER_AREXX_EXECUTION_ERROR, rm->rm_Args[0], rm->rm_Result1);
+
                     waiting = FALSE;
+                  }
 
                   FreeRexxCommand(rm);
                   --G->RexxHost->replies;
@@ -3581,6 +3589,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
           }
 
           result = TRUE;
+          D(DBF_REXX, "finished");
         }
         else
         {

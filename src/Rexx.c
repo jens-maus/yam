@@ -44,8 +44,10 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
+#include "YAM_error.h"
 #include "YAM_utilities.h"
 
+#include "Locale.h"
 #include "Rexx.h"
 
 #include "Debug.h"
@@ -302,6 +304,8 @@ struct RexxMsg *SendRexxCommand(struct RexxHost *host, char *buff, BPTR fh)
 
   if(rcm != NULL)
     result = CommandToRexx(host, rcm);
+
+  D(DBF_REXX, "executedARexx script: '%s' => %08lx", buff, result);
 
   RETURN(result);
   return result;
@@ -924,26 +928,28 @@ void ARexxDispatch(struct RexxHost *host)
 
       if((org = (struct RexxMsg *)rexxmsg->rm_Args[15]) != NULL)
       {
-         // Reply to a forwarded Msg
-         if(rexxmsg->rm_Result1 != 0)
-         {
-           // command unknown
-           ReplyRexxCommand(org, 20, ERROR_NOT_IMPLEMENTED, NULL);
-         }
-         else
-         {
-           ReplyRexxCommand(org, 0, 0, (char *)rexxmsg->rm_Result2);
-         }
-       }
-       else
-       {
-         // reply to a SendRexxCommand()-Call
-         if(ARexxResultHook != NULL)
-           ARexxResultHook(host, rexxmsg);
-       }
+        // Reply to a forwarded Msg
+        if(rexxmsg->rm_Result1 != 0)
+        {
+          // command unknown
+          ReplyRexxCommand(org, 20, ERROR_NOT_IMPLEMENTED, NULL);
+        }
+        else
+        {
+          ReplyRexxCommand(org, 0, 0, (char *)rexxmsg->rm_Result2);
+        }
+      }
+      else
+      {
+        // reply to a SendRexxCommand()-Call
+        if(ARexxResultHook != NULL)
+          ARexxResultHook(host, rexxmsg);
+        else
+          ER_NewError(MSG_ER_AREXX_EXECUTION_ERROR, rexxmsg->rm_Args[0], rexxmsg->rm_Result1);
+      }
 
-       FreeRexxCommand(rexxmsg);
-       host->replies--;
+      FreeRexxCommand(rexxmsg);
+      host->replies--;
     }
     else if(ARG0(rexxmsg) != NULL)
     {
@@ -957,5 +963,5 @@ void ARexxDispatch(struct RexxHost *host)
 
   LEAVE();
 }
-///
 
+///

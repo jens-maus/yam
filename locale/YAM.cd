@@ -6956,3 +6956,8 @@ Today, on %s, %s reaches age %ld.\n\
 Do you want to send a greetings card?
 ; DATE, NAME, AGE
 ;
+MSG_ER_AREXX_EXECUTION_ERROR (2165//)
+Execution of the ARexx command '%s' failed!\n\
+Error code %ld
+; COMMANDNAME, ERRORCODE
+;

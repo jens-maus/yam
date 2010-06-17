@@ -2726,7 +2726,7 @@ int main(int argc, char **argv)
           ProcessTimerEvent();
         }
 
-        // check for a Arexx signal
+        // check for an Arexx signal
         if(isFlagSet(signals, rexxsig))
           ARexxDispatch(G->RexxHost);
 

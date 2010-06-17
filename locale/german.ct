@@ -5170,7 +5170,9 @@ Ausgewählten Zugang entfernen.
 ; Module FO - Routines
 ;
 MSG_FO_NewFolderReq
-Welche Einstellungen wollen Sie für das neue Postfach\nverwenden? Falls das Postfach bereits auf der Festplatte\nexistiert, wählen Sie 'Vorhandenes Verzeichnis'
+Welche Einstellungen wollen Sie für das neue Postfach\n\
+verwenden? Falls das Postfach bereits auf der Festplatte\n\
+existiert, wählen Sie 'Vorhandenes Verzeichnis'.
 ; What settings do you want to use for the new folder?\n\
 ; Select 'Existing directory' if the folder already exists\n\
 ; on your disk
@@ -5740,7 +5742,7 @@ Bitte einen Namen für die neue Gruppe eingeben:
 MSG_ER_CANTMOVEMAIL
 Die Nachricht '%s' kann nicht in Postfach '%s' verschoben werden\n\
 \n\
-Ein Postfach mit diesem Namen existiert nicht. Bitte die Filtereinstellungen überprüfen.
+Ein Postfach mit diesem Namen existiert nicht. Bitte überprüfen Sie die Filtereinstellungen.
 ; Couldn't move mail '%s' to folder '%s'.\n\
 ; \n\
 ; No folder with this name could be found. \
@@ -8560,4 +8562,8 @@ MSG_AB_BirthdayReqBody
 Heute, am %s, wird %s %ld Jahre alt.\n\
 \n\
 Wollen Sie eine Grußkarte schicken?
+;
+MSG_ER_AREXX_EXECUTION_ERROR
+Ausführung des ARexx-Kommandos '%s' fehlgeschlagen!\n\
+Fehler %ld
 ;

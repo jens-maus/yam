@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Rexx.c, YAM_MA.c: in case an ARexx script could be successfully sent off to
+    the REXX process but failed later (i.e. no real ARexx script) an error
+    message will now be shown.
+
 2010-06-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * src/YAM_FI.c: clicking on "Select matched" in the search window will now
@@ -32,6 +38,7 @@ $URL$
     everything. Furthermore the added recipient will no longer be assembled
     manually but using the respective method of the Recipientstring class.
 
+>>>>>>> .r4740
 2010-06-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/Recipientstring.c: a possible "mailto:" header in front of an address
