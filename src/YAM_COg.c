@@ -3727,7 +3727,12 @@ Object *CO_PageScripts(struct CO_ClassData *data)
                    Child, Label2(tr(MSG_CO_Name)),
                    Child, HGroup,
                       Child, data->GUI.ST_RXNAME = MakeString(SIZE_NAME,tr(MSG_CO_Name)),
-                      Child, data->GUI.CY_ISADOS = MakeCycle(stype,""),
+                      Child, data->GUI.CY_ISADOS = CycleObject,
+                         MUIA_CycleChain,    TRUE,
+                         MUIA_Weight,        25,
+                         MUIA_Font,          MUIV_Font_Button,
+                         MUIA_Cycle_Entries, stype,
+                      End,
                    End,
 
                    Child, Label2(tr(MSG_CO_Script)),

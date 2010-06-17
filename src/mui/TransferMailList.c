@@ -126,7 +126,7 @@ OVERLOAD(OM_NEW)
     MUIA_Font,                 C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
     MUIA_ContextMenu,          NULL,
     MUIA_NList_MultiSelect,    MUIV_NList_MultiSelect_Default,
-    MUIA_NList_Format,         "W=-1 BAR,W=-1 MACW=9 P=\33r BAR,MICW=20 BAR,MICW=16 BAR,MICW=9 MACW=15",
+    MUIA_NList_Format,         "W=-1 BAR,W=-1 MACW=9 P=\033r BAR,MICW=10 MACW=30,BAR,MICW=16 MACW=30 BAR,MICW=9 MACW=15 BAR",
     MUIA_NList_DisplayHook2,   &DisplayHook,
     MUIA_NList_AutoVisible,    TRUE,
     MUIA_NList_Title,          TRUE,

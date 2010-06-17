@@ -945,7 +945,7 @@ void ARexxDispatch(struct RexxHost *host)
         if(ARexxResultHook != NULL)
           ARexxResultHook(host, rexxmsg);
         else
-          ER_NewError(MSG_ER_AREXX_EXECUTION_ERROR, rexxmsg->rm_Args[0], rexxmsg->rm_Result1);
+          ER_NewError(tr(MSG_ER_AREXX_EXECUTION_ERROR), rexxmsg->rm_Args[0], rexxmsg->rm_Result1);
       }
 
       FreeRexxCommand(rexxmsg);

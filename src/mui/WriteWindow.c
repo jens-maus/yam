@@ -1264,6 +1264,7 @@ OVERLOAD(OM_NEW)
               // Message
               Child, VGroup,
                 MUIA_HelpNode, "WR00",
+
                 Child, ColGroup(2),
                   Child, Label(tr(MSG_WR_To)),
                   Child, MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),

@@ -3570,7 +3570,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
                     if(rm->rm_Result1 == 0)
                       result = TRUE;
                     else
-                      ER_NewError(MSG_ER_AREXX_EXECUTION_ERROR, rm->rm_Args[0], rm->rm_Result1);
+                      ER_NewError(tr(MSG_ER_AREXX_EXECUTION_ERROR), rm->rm_Args[0], rm->rm_Result1);
 
                     waiting = FALSE;
                   }
