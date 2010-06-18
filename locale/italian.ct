@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (30.05.2010)
+## version $VER: YAM.catalog 7.1 (18.06.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -9948,4 +9948,11 @@ Si desidera inviargli una cartolina di auguri?
 ; \n\
 ; Do you want to send a greetings card?
 ; DATE, NAME, AGE
+;
+MSG_ER_AREXX_EXECUTION_ERROR
+Esecuzione del comando ARexx '%s' fallita (codice di errore %ld).\n\
+Assicurati che il file sia accessibile e che si tratti di un valido script ARexx.
+; Execution of the ARexx command '%s' failed (error code %ld).\n\
+; Please make sure that the file is accessible and is a valid ARexx script.
+; COMMANDNAME, ERRORCODE
 ;

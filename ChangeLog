@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-17 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italiano.ct: minor updates on translation.
+
 2010-06-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * Rexx.c, YAM_MA.c: in case an ARexx script could be successfully sent off to
@@ -42,7 +46,6 @@ $URL$
     everything. Furthermore the added recipient will no longer be assembled
     manually but using the respective method of the Recipientstring class.
 
->>>>>>> .r4740
 2010-06-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/Recipientstring.c: a possible "mailto:" header in front of an address
@@ -70,7 +73,7 @@ $URL$
     been used for a long time. The default for this option is 10 min.
     This fulfills and closes #144.
 
-2010-05-30 Frank Weber <opionline@yahoo.de>
+2010-05-31 Frank Weber <opionline@yahoo.de>
 
   * STYLEGUIDE: 10. Variables: Add a hint about using static Variables.
 
