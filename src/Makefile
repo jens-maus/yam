@@ -525,8 +525,7 @@ CATALOGS = \
 
 # main target
 .PHONY: all
-all: $(OBJDIR) $(OBJDIR)/$(MUIDIR) $(OBJDIR)/$(REXXDIR) \
- $(OBJDIR)/$(MIMEDIR) classinfo Locale.c ParseEmail.c HTML2Mail.c $(TARGET)
+all: $(OBJDIR) $(OBJDIR)/$(MUIDIR) $(OBJDIR)/$(REXXDIR) $(OBJDIR)/$(MIMEDIR) classinfo $(TARGET)
 
 # make the object directories
 $(OBJDIR):
