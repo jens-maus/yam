@@ -526,7 +526,7 @@ CATALOGS = \
 # main target
 .PHONY: all
 all: $(OBJDIR) $(OBJDIR)/$(MUIDIR) $(OBJDIR)/$(REXXDIR) \
- $(OBJDIR)/$(MIMEDIR) Locale.c classinfo ParseEmail.c HTML2Mail.c $(TARGET)
+ $(OBJDIR)/$(MIMEDIR) classinfo Locale.c ParseEmail.c HTML2Mail.c $(TARGET)
 
 # make the object directories
 $(OBJDIR):
@@ -617,7 +617,7 @@ depend: classinfo Locale.c ParseEmail.c HTML2Mail.c
 .PHONY: classinfo
 classinfo: $(MUIDIR)/Classes.h
 
-$(MUIDIR)/Classes.h: $(GENCLASSES)/GenClasses $(MUIDIR)/*.c
+$(MUIDIR)/Classes.h: $(GENCLASSES)/GenClasses $(MUIDIR)/*.c Locale.h
 	@echo "  GN GenClasses"
 	@$(GENCLASSES)/GenClasses mui -bYAM -gpl -storm -iClassesExtra.h -q
 	@echo "  CC mui/Classes.c"
