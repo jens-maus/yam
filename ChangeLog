@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-21 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: minor updates on translation.
+
 2010-06-17 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italiano.ct: minor updates on translation.

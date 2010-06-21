@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 7.4 (31.05.2010)
+## version $VER: YAM.catalog 7.5 (17.06.2010)
 ## language polski
 ## codeset 5
-## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ;
-; YAM.ct - YAM 2.6 catalog translation file
+## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
+; YAM.cd - YAM 2.7 catalog translation file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -9803,4 +9803,12 @@ Czy chcesz wys³aæ ¿yczenia?
 ; \n\
 ; Do you want to send a greetings card?
 ; DATE, NAME, AGE
+;
+MSG_ER_AREXX_EXECUTION_ERROR
+Wykonanie polecenia ARexx'a \"%s\" zakoñczone niepowodzeniem\n\
+(kod b³êdu %ld). Proszê upewniæ siê, ¿e plik jest dostêpny\n\
+i jest prawid³owym skryptem ARexx'a.
+; Execution of the ARexx command '%s' failed (error code %ld).\n\
+; Please make sure that the file is accessible and is a valid ARexx script.
+; COMMANDNAME, ERRORCODE
 ;
