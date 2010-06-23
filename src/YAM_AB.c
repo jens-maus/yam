@@ -503,17 +503,11 @@ void AB_CheckBirthdates(BOOL check)
   ENTER();
 
   // perform the check only if we are instructed to do it
-  // and only if we don't do the check already today in this YAM session 
-  if(check == TRUE && G->StartDate.ds_Days != G->LastBirthdayCheckDay)
+  if(check == TRUE)
   {
     ldiv_t today;
     struct MUI_NListtree_TreeNode *tn;
     int i;
-    struct DateStamp nowDS;
-
-    // remember the day of the last check into the global structure
-    DateStamp(&nowDS);
-    G->LastBirthdayCheckDay = nowDS.ds_Days;
 
     today = ldiv(DateStamp2Long(NULL), 10000);
     i = 0;

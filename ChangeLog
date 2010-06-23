@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-24 Frank Weber <opionline@yahoo.de>
+
+  * YAM_AB.c, YAM.h: Revert the changes for changeset 4725 and 4723
+    (2010-05-30) because they are not needed with the checkbox into
+    the birthday requester.
+
 2010-06-23 Frank Weber <opionline@yahoo.de>
 
   * mui/BirthdayRequestWindow.c, YAM.c, YAM.h, locale/YAM.cd:
