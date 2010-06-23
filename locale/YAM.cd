@@ -6961,3 +6961,6 @@ Execution of the ARexx command '%s' failed (error code %ld).\n\
 Please make sure that the file is accessible and is a valid ARexx script.
 ; COMMANDNAME, ERRORCODE
 ;
+MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN (2166//)
+Do not show this requester today again.
+;

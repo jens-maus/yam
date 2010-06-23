@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-23 Frank Weber <opionline@yahoo.de>
+
+  * mui/BirthdayRequestWindow.c, YAM.c, YAM.h, locale/YAM.cd:
+    Add a checkbox to the birthday requester. If the user leave the checkbox
+    enabled then the user and alias is saved to a file PROGDIR:.birthdaycheck
+    and the birthday requester for this user and alias is not displayed again
+    on the same day. This closes #16.
+  * locale/german.ct: updated translation according to the latest changes.
+
 2010-06-21 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: minor updates on translation.
@@ -77,7 +86,7 @@ $URL$
     been used for a long time. The default for this option is 10 min.
     This fulfills and closes #144.
 
-2010-05-31 Frank Weber <opionline@yahoo.de>
+2010-06-02 Frank Weber <opionline@yahoo.de>
 
   * STYLEGUIDE: 10. Variables: Add a hint about using static Variables.
 
