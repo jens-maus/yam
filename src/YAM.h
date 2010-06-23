@@ -171,6 +171,7 @@ struct Global
   struct Theme             theme;
   struct TokenAnalyzer     spamFilter;
   struct Timers            timerData;
+  struct SignalSemaphore   BirthdayCheckSemaphore;
 
   // the data for our thread implementation
   struct Thread            mainThread;     // the main thread

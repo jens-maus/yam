@@ -2582,6 +2582,9 @@ int main(int argc, char **argv)
     G->NoImageWarning = args.noImgWarning ? TRUE : FALSE;
     G->NoCatalogTranslation = args.noCatalog ? TRUE : FALSE;
 
+    // initialize the BirthdayCheckSemaphore
+    InitSemaphore(&G->BirthdayCheckSemaphore);
+
     // setup our ImageCache
     ImageCacheSetup();
 
