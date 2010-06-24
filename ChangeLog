@@ -13,6 +13,8 @@ $URL$
   * Debug.c: clear the semaphore structure before calling InitSemaphore(). The
     "CxBroker" hit is harmless as commodities.library will truncate too long
     strings automatically. This closes #171.
+  * YAM.c, mui/BirthdayRequestWindow.c: changed the embedded semaphore structure
+    into a dynamically allocated one. This supports OS4's resource tracking.
 
 2010-06-24 Frank Weber <opionline@yahoo.de>
 
