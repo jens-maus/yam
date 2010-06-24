@@ -69,7 +69,7 @@ static BOOL CheckBirthdayCheckFile(const char *alias)
     // get the current date
     DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATE, TZC_NONE);
 
-    ObtainSemaphore(&G->BirthdayCheckSemaphore);
+    ObtainSemaphore(G->birthdayCheckSemaphore);
 
     if((fh = fopen(BIRTHDAYCHECKFILE, "r")) != NULL)
     {
@@ -142,7 +142,8 @@ static BOOL CheckBirthdayCheckFile(const char *alias)
       if(buf != NULL)
         free(buf);
     }
-    ReleaseSemaphore(&G->BirthdayCheckSemaphore);
+
+    ReleaseSemaphore(G->birthdayCheckSemaphore);
   }
 
   RETURN(result);
@@ -174,7 +175,8 @@ static void SaveBirthdayCheckFile(const char *alias)
   // without a user and user name it makes no sense to search for the user
   if((user = US_GetCurrentUser()) != NULL && (userName = user->Name) != NULL)
   {
-    ObtainSemaphore(&G->BirthdayCheckSemaphore);
+    ObtainSemaphore(G->birthdayCheckSemaphore);
+
     if((buf = FileToBuffer(BIRTHDAYCHECKFILE)))
     {
       // check if we really work on a YAM BirthdayCheck file
@@ -232,7 +234,8 @@ static void SaveBirthdayCheckFile(const char *alias)
       fprintf(fh, "ALIAS= %s\n", alias);
       fclose(fh);
     }
-    ReleaseSemaphore(&G->BirthdayCheckSemaphore);
+
+    ReleaseSemaphore(G->birthdayCheckSemaphore);
   }
 
   LEAVE();

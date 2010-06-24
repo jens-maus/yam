@@ -122,6 +122,7 @@ struct Global
   struct codesetList *     codesetsList;
   struct HashTable *       imageCacheHashTable;
   struct FolderList *      folders;
+  struct SignalSemaphore * birthdayCheckSemaphore;
 
   #if defined(__amigaos4__)
   struct MsgPort *         AppLibPort;
@@ -170,7 +171,6 @@ struct Global
   struct Theme             theme;
   struct TokenAnalyzer     spamFilter;
   struct Timers            timerData;
-  struct SignalSemaphore   BirthdayCheckSemaphore;
 
   // the data for our thread implementation
   struct Thread            mainThread;     // the main thread

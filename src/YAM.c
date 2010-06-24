@@ -969,6 +969,10 @@ static void Terminate(void)
     set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
   }
 
+  D(DBF_STARTUP, "freeing birthday check semaphore...");
+  if(G->birthdayCheckSemaphore != NULL)
+    FreeSysObject(ASOT_SEMAPHORE, G->birthdayCheckSemaphore);
+
   D(DBF_STARTUP, "freeing folders...");
   if(G->folders != NULL)
   {
@@ -1140,7 +1144,8 @@ static void Terminate(void)
 
   // make sure to free the shared memory pool before
   // freeing the rest
-  FreeSysObject(ASOT_MEMPOOL, G->SharedMemPool);
+  if(G->SharedMemPool != NULL)
+    FreeSysObject(ASOT_MEMPOOL, G->SharedMemPool);
 
   // last, but not clear free the global structure
   free(G);
@@ -2532,12 +2537,11 @@ int main(int argc, char **argv)
 
     // create the MEMF_SHARED memory pool we use for our
     // own AllocVecPooled() allocations later on
-    if((G->SharedMemPool = AllocSysObjectTags(ASOT_MEMPOOL,
-                                              ASOPOOL_MFlags,    MEMF_SHARED|MEMF_CLEAR,
-                                              ASOPOOL_Puddle,    2048,
-                                              ASOPOOL_Threshold, 1024,
-                                              ASOPOOL_Name,      (ULONG)"YAM shared pool",
-                                              TAG_DONE)) == NULL)
+    if((G->SharedMemPool = AllocSysObjectTags(ASOT_MEMPOOL, ASOPOOL_MFlags,    MEMF_SHARED|MEMF_CLEAR,
+                                                            ASOPOOL_Puddle,    2048,
+                                                            ASOPOOL_Threshold, 1024,
+                                                            ASOPOOL_Name,      (ULONG)"YAM shared pool",
+                                                            TAG_DONE)) == NULL)
     {
       // break out immediately to signal an error!
       break;
@@ -2545,6 +2549,11 @@ int main(int argc, char **argv)
 
     // create a list for all the folders
     if((G->folders = CreateFolderList()) == NULL)
+      break;
+
+    // initialize the BirthdayCheckSemaphore
+    if((G->birthdayCheckSemaphore = AllocSysObjectTags(ASOT_SEMAPHORE, ASOSEM_Name, (ULONG)"YAM birthday check semaphore",
+                                                                       TAG_DONE)) == NULL)
       break;
 
     // prepare the exec lists in G and C
@@ -2581,9 +2590,6 @@ int main(int argc, char **argv)
     G->CO_DST = GetDST(FALSE);
     G->NoImageWarning = args.noImgWarning ? TRUE : FALSE;
     G->NoCatalogTranslation = args.noCatalog ? TRUE : FALSE;
-
-    // initialize the BirthdayCheckSemaphore
-    InitSemaphore(&G->BirthdayCheckSemaphore);
 
     // setup our ImageCache
     ImageCacheSetup();
