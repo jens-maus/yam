@@ -50,7 +50,7 @@ struct Data
 // for the current user and alias should be displayed again.
 //
 // The file is Semaphore protected to avoid multiple access.
-BOOL CheckBirthdayCheckFile(char * alias)
+static BOOL CheckBirthdayCheckFile(const char *alias)
 {
   struct User *user;
   char *userName = NULL;
@@ -156,7 +156,7 @@ BOOL CheckBirthdayCheckFile(char * alias)
 // with a header line and the current system date and add the user and alias.
 //
 // The file is Semaphore protected to avoid multiple access.
-void SaveBirthdayCheckFile(char * alias)
+static void SaveBirthdayCheckFile(const char *alias)
 {
   struct User *user;
   char *userName = NULL;
@@ -180,7 +180,7 @@ void SaveBirthdayCheckFile(char * alias)
       // check if we really work on a YAM BirthdayCheck file
       if(strnicmp(buf, "YBC", 3) == 0)
       {
-        if((ptr =strchr(buf, '\n')))
+        if((ptr = strchr(buf, '\n')) != NULL)
         {
           // skip to the first digit
           while(*++ptr != '\0' && !isdigit(*ptr));

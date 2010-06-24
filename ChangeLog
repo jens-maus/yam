@@ -9,6 +9,7 @@ $URL$
 
   * locale/germant.ct: added missing LF at the end of the file. FlexCat for
     Unix needs this one.
+  * mui/BirthdayRequestWindow.c: added a few 'static' and 'const' keywords.
 
 2010-06-24 Frank Weber <opionline@yahoo.de>
 
