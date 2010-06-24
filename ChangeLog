@@ -10,6 +10,9 @@ $URL$
   * locale/germant.ct: added missing LF at the end of the file. FlexCat for
     Unix needs this one.
   * mui/BirthdayRequestWindow.c: added a few 'static' and 'const' keywords.
+  * Debug.c: clear the semaphore structure before calling InitSemaphore(). The
+    "CxBroker" hit is harmless as commodities.library will truncate too long
+    strings automatically. This closes #171.
 
 2010-06-24 Frank Weber <opionline@yahoo.de>
 

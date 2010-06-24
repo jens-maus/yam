@@ -805,6 +805,8 @@ static void SetupDbgMalloc(void)
 
     DbgMallocCount = 0;
 
+    // the semaphore structure must be cleared before InitSemaphore()
+    memset(&DbgMallocListSema, 0, sizeof(DbgMallocListSema));
     InitSemaphore(&DbgMallocListSema);
   }
 
