@@ -384,7 +384,7 @@
         (default detectedSystem)
     )
 )
-; finally convert the system number into string for easier understanding
+; finally convert the system number into a string for easier understanding
 (set detectedSystem
     (select detectedSystem "os3" "os4" "mos" "aros")
 )
@@ -510,7 +510,11 @@
 )
 
 ; copy the executable
-(copyfiles (source "/YAM") (dest YAM_dir) (help @copyfiles-help))
+(copyfiles
+    (source "/YAM")
+    (dest YAM_dir)
+    (help @copyfiles-help)
+)
 (if (not (exists (tackon YAM_dir "YAM.info")))
     (copyfiles
         (source "/YAM.info")
