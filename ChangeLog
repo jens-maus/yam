@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-26 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italiano.ct: update italian translation.
+
 2010-06-26 Frank Weber <opionline@yahoo.de>
 
   * mui/BirthdayRequestWindow.c: Use the correct MSG_... for MakeCheck().
@@ -29,7 +33,7 @@ $URL$
 
 2010-06-24 Thore Böckelmann <tboeckel@gmx.de>
 
-  * locale/germant.ct: added missing LF at the end of the file. FlexCat for
+  * locale/german.ct: added missing LF at the end of the file. FlexCat for
     Unix needs this one.
   * mui/BirthdayRequestWindow.c: added a few 'static' and 'const' keywords.
   * Debug.c: clear the semaphore structure before calling InitSemaphore(). The

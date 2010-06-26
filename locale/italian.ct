@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (18.06.2010)
+## version $VER: YAM.catalog 7.1 (27.06.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.7 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 4721 2010-05-30
+; based on YAM.cd 4750 2010-06-25
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9951,8 +9951,13 @@ Si desidera inviargli una cartolina di auguri?
 ;
 MSG_ER_AREXX_EXECUTION_ERROR
 Esecuzione del comando ARexx '%s' fallita (codice di errore %ld).\n\
-Assicurati che il file sia accessibile e che si tratti di un valido script ARexx.
+Per favore assicurati che il file sia accessibile e che si tratti\n\
+di un valido script ARexx.
 ; Execution of the ARexx command '%s' failed (error code %ld).\n\
 ; Please make sure that the file is accessible and is a valid ARexx script.
 ; COMMANDNAME, ERRORCODE
+;
+MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
+Per _oggi non visualizzare nuovamente questo messaggio.
+; Do not show this requester today again.
 ;
