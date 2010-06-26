@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-26 Jens Langner <Jens.Langner@light-speed.de>
+
+  * SDI_hook.h: updated to the very latest version of the hook macros to
+    fix problems with AROS compiles.
+
 2010-06-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/germant.ct: added missing LF at the end of the file. FlexCat for
