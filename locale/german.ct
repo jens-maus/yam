@@ -1533,7 +1533,7 @@ Alle _Texte anzeigen
 ; Display _all texts
 ;
 MSG_CO_FixedFontEdit
-S_chrift fester Breite
+Schrift f_ester Breite
 ; Use _fixed font
 ;
 MSG_CO_MimeType
@@ -1901,7 +1901,7 @@ Nachrichten sofort _entfernen
 ; _Remove messages immediately
 ;
 MSG_CO_SaveSent
-_Versandte Nachrichten speichern
+Versandte _Nachrichten speichern
 ; Sa_ve sent messages
 ;
 MSG_CO_XPK
@@ -6747,7 +6747,7 @@ MSG_UPD_NOTIFICATION_URL
 URL
 ;
 MSG_CO_MIME_DESCRIPTION
-_Beschreibung
+Bes_chreibung
 ;
 MSG_CTapplicationgz
 GNU zip Archiv
@@ -7380,7 +7380,7 @@ MSG_CO_MDN_DISABLED
 _Nie eine Empfangsbestätigung senden
 ;
 MSG_CO_MDN_ENABLED
-Bei manc_hen Nachrichten Empfangsbestätigungen erlauben
+Bei manchen Nachrichten Em_pfangsbestätigungen erlauben
 ;
 MSG_CO_MDN_NORECIPIENT
 Wenn ich nicht in der An- oder _CC-Zeile der Nachricht stehe:
