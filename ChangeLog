@@ -13,7 +13,11 @@ $URL$
   * locale/german.ct: Fixed some double used shortcuts.
 
 2010-06-26 Jens Langner <Jens.Langner@light-speed.de>
-  
+ 
+  * Makefile,Makefile.dep: fixed dependency creation by reintroduction the 
+    patching of the Makefile.dep file via 'sed' so that the dependencies are
+    relative to the '.obj_XXX' directories which prevents the whole dependencies
+    from working lately.
   * mui/BIrthdayRequestWindow.c, YAM.c: removed the whole birthdayCheckSemaphore
     mechanism as a semaphore doesn't seem to be required. Please keep in mind
     that the GUI functionality will always be executed in the same process/task
