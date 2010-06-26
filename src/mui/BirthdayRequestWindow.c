@@ -227,7 +227,7 @@ static void SaveBirthdayCheckFile(const char *alias)
       }
     }
     // if the file is openend succesfully in the appropriate
-    // mode we write the user and alias to the file.
+    // mode we write the user and alias to the file
     if(fh != NULL)
     {
       fprintf(fh, "USER = %s\n", userName);
@@ -317,7 +317,7 @@ OVERLOAD(OM_NEW)
             Child, HSpace(0),
           End,
           Child, HGroup,
-            Child, skipTodayCheckbox = MakeCheck(tr(MSG_UPD_NOTIFICATION_NOUPDATE)),
+            Child, skipTodayCheckbox = MakeCheck(tr(MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN)),
             Child, LLabel1(tr(MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN)),
             Child, HVSpace,
           End,
