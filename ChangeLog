@@ -13,7 +13,13 @@ $URL$
   * locale/german.ct: Fixed some double used shortcuts.
 
 2010-06-26 Jens Langner <Jens.Langner@light-speed.de>
-
+  
+  * mui/BIrthdayRequestWindow.c, YAM.c: removed the whole birthdayCheckSemaphore
+    mechanism as a semaphore doesn't seem to be required. Please keep in mind
+    that the GUI functionality will always be executed in the same process/task
+    even if we introduce multithreading in future. This means that in even in
+    future all GUI/MUI operations are executed in the same thread and thus a
+    locking via a sempahore is unnecessary AFAICS.
   * SDI_hook.h: updated to the very latest version of the hook macros to
     fix problems with AROS compiles.
 

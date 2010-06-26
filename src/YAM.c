@@ -969,10 +969,6 @@ static void Terminate(void)
     set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
   }
 
-  D(DBF_STARTUP, "freeing birthday check semaphore...");
-  if(G->birthdayCheckSemaphore != NULL)
-    FreeSysObject(ASOT_SEMAPHORE, G->birthdayCheckSemaphore);
-
   D(DBF_STARTUP, "freeing folders...");
   if(G->folders != NULL)
   {
@@ -2549,11 +2545,6 @@ int main(int argc, char **argv)
 
     // create a list for all the folders
     if((G->folders = CreateFolderList()) == NULL)
-      break;
-
-    // initialize the BirthdayCheckSemaphore
-    if((G->birthdayCheckSemaphore = AllocSysObjectTags(ASOT_SEMAPHORE, ASOSEM_Name, (ULONG)"YAM birthday check semaphore",
-                                                                       TAG_DONE)) == NULL)
       break;
 
     // prepare the exec lists in G and C

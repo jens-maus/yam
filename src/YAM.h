@@ -122,7 +122,6 @@ struct Global
   struct codesetList *     codesetsList;
   struct HashTable *       imageCacheHashTable;
   struct FolderList *      folders;
-  struct SignalSemaphore * birthdayCheckSemaphore;
 
   #if defined(__amigaos4__)
   struct MsgPort *         AppLibPort;

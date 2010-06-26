@@ -48,8 +48,6 @@ struct Data
 /// CheckBirthdayCheckFile
 // Load the .birthdaycheck file and return TRUE if the birthday requester
 // for the current user and alias should be displayed again.
-//
-// The file is Semaphore protected to avoid multiple access.
 static BOOL CheckBirthdayCheckFile(const char *alias)
 {
   struct User *user;
@@ -68,8 +66,6 @@ static BOOL CheckBirthdayCheckFile(const char *alias)
 
     // get the current date
     DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATE, TZC_NONE);
-
-    ObtainSemaphore(G->birthdayCheckSemaphore);
 
     if((fh = fopen(BIRTHDAYCHECKFILE, "r")) != NULL)
     {
@@ -142,8 +138,6 @@ static BOOL CheckBirthdayCheckFile(const char *alias)
       if(buf != NULL)
         free(buf);
     }
-
-    ReleaseSemaphore(G->birthdayCheckSemaphore);
   }
 
   RETURN(result);
@@ -155,8 +149,6 @@ static BOOL CheckBirthdayCheckFile(const char *alias)
 // system date. If both are equal then append the user and alias to the file.
 // If the date is not equal or the file doesn't exists then create a new file
 // with a header line and the current system date and add the user and alias.
-//
-// The file is Semaphore protected to avoid multiple access.
 static void SaveBirthdayCheckFile(const char *alias)
 {
   struct User *user;
@@ -175,8 +167,6 @@ static void SaveBirthdayCheckFile(const char *alias)
   // without a user and user name it makes no sense to search for the user
   if((user = US_GetCurrentUser()) != NULL && (userName = user->Name) != NULL)
   {
-    ObtainSemaphore(G->birthdayCheckSemaphore);
-
     if((buf = FileToBuffer(BIRTHDAYCHECKFILE)))
     {
       // check if we really work on a YAM BirthdayCheck file
@@ -234,8 +224,6 @@ static void SaveBirthdayCheckFile(const char *alias)
       fprintf(fh, "ALIAS= %s\n", alias);
       fclose(fh);
     }
-
-    ReleaseSemaphore(G->birthdayCheckSemaphore);
   }
 
   LEAVE();
