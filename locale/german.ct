@@ -8568,5 +8568,5 @@ Ausführung des ARexx-Kommandos '%s' fehlgeschlagen (Fehler %ld).\n\
 Bitte stellen Sie sicher, dass die Datei existiert und ein korrektes ARexx-Skript ist.
 ;
 MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
-Dieses Fenster heute nicht nochmal anzeigen.
+_Dieses Fenster heute nicht nochmal anzeigen.
 ;

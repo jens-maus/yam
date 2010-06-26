@@ -8,6 +8,8 @@ $URL$
 2010-06-26 Frank Weber <opionline@yahoo.de>
 
   * mui/BirthdayRequestWindow.c: Use the correct MSG_... for MakeCheck().
+  * locale/german.ct: Add a shortcut in MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
+    for the checkbox in the birthday requester.
 
 2010-06-26 Jens Langner <Jens.Langner@light-speed.de>
 
