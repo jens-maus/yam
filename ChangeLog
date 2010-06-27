@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-27 Jens Langner <Jens.Langner@light-speed.de>
+ 
+  * Makefile,Makefile.dep: changed the dependency file generation once more
+    to also catch the cases where the object files are stored in subdirs of
+    our $OBJDIR hierarchy.
+    
 2010-06-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italiano.ct: update italian translation.
