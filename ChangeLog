@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-28 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update Polish translation.
+
 2010-06-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/YAM.c: set up a correct and not too long Commodity title string. This
