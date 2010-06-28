@@ -5,12 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/YAM.c: set up a correct and not too long Commodity title string. This
+    finally fixes the last PatchWork hit of #170.
+
 2010-06-27 Jens Langner <Jens.Langner@light-speed.de>
- 
+
   * Makefile,Makefile.dep: changed the dependency file generation once more
     to also catch the cases where the object files are stored in subdirs of
     our $OBJDIR hierarchy.
-    
+
 2010-06-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italiano.ct: update italian translation.
@@ -23,8 +28,8 @@ $URL$
   * locale/german.ct: Fixed some double used shortcuts.
 
 2010-06-26 Jens Langner <Jens.Langner@light-speed.de>
- 
-  * Makefile,Makefile.dep: fixed dependency creation by reintroduction the 
+
+  * Makefile,Makefile.dep: fixed dependency creation by reintroduction the
     patching of the Makefile.dep file via 'sed' so that the dependencies are
     relative to the '.obj_XXX' directories which prevents the whole dependencies
     from working lately.
