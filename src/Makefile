@@ -643,7 +643,7 @@ $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
 
 ## CATALOG GENERATION #################
 
-$(LOCALE)/%.catalog: $(LOCALE)/%.ct
+$(LOCALE)/%.catalog: $(LOCALE)/%.ct $(LOCALE)/YAM.cd
 	@echo "  MK $@"
 	@$(FC) $(LOCALE)/YAM.cd $< CATALOG $@
 
