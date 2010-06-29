@@ -4429,7 +4429,7 @@ Laat een ingebed leesvenster zien\n\
 in het hoofdvenster.
 ;
 MSG_CO_SETSTATUSDELAYED1
-Mailtjes beschouwen als zijnde gelezen na 
+Mailtjes beschouwen als zijnde gelezen na
 ;
 MSG_CO_SETSTATUSDELAYED2
 seconde(-n)
@@ -5783,12 +5783,11 @@ De mailserver kan de opdracht niet uitvoeren\n\
 en antwoordde met bovenstaande foutmelding.
 ;
 MSG_ER_POP3WELCOME
-POP3-server %s antwoordde met een foutmelding tijdens de\n\
+POP3-server '%s' '%s' antwoordde met een foutmelding tijdens de\n\
 welkomstprocedure en de verbinding werd afgesloten:\n\
 \n\
 %s\n\
-\n\
-
+\n
 ;
 MSG_FO_EXPIREUNREAD
 ook ongelezen

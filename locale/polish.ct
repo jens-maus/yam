@@ -954,11 +954,11 @@ Cze¶æ,\\n
 ;
 MSG_CO_AltRepIntroDef
 
-; 
+;
 ;
 MSG_CO_AltRepPatternDef
 
-; 
+;
 ;
 MSG_CO_ForwardIntroDef
 *** Pocz±tek podsy³anej wiadomo¶ci ***\\n\
@@ -988,15 +988,15 @@ Pozdrawiam
 ;
 MSG_CO_AltRepHelloDef
 
-; 
+;
 ;
 MSG_CO_AltRepByeDef
 
-; 
+;
 ;
 MSG_CO_MLRepHelloDef
 
-; 
+;
 ;
 MSG_CO_MLRepIntroDef
 Dnia %c, %n napisa³(a):\\\\n
@@ -9816,4 +9816,3 @@ MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 Nie pokazuj dzisiaj tego komunikatu.
 ; Do not show this requester today again.
 ;
-

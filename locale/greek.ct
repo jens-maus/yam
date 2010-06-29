@@ -5725,7 +5725,7 @@ MSG_ER_NO_MCC
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_OLD
-Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΗ τρέχουσα εγκατεστημένη είναι η v%lu.%lu. Κάντε αναβάθμιση κάνοντας\nλήψη της τελευταίας έκδοσης από 's%'.
+Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΗ τρέχουσα εγκατεστημένη είναι η v%lu.%lu. Κάντε αναβάθμιση κάνοντας\nλήψη της τελευταίας έκδοσης από '%s'.
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\nCurrently installed is v%lu.%lu. Please upgrade by downloading\nthe latest version from 's%'.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
@@ -7798,7 +7798,7 @@ MSG_CO_SPAM_STATISTICS
 ; %ld (%ld words)
 ;
 MSG_ER_WRONG_DOB_FORMAT
-Η ημερομηνία γέννησης χρησιμοποιεί μια λάθος μορφή. Η σωστή μορφή είναι '%s'.\n%%η - ημέρα\n%%μ - μήνας\n%%ε - έτος (2 ψηφία)\n%%Ε - έτος (4 ψηφία)\nΗ χρονολογία πρέπει να είναι ίση ή μεγαλύτερη από το 1900!
+Η ημερομηνία γέννησης χρησιμοποιεί μια λάθος μορφή. Η σωστή μορφή είναι '%s'.\n%%d - ημέρα\n%%m - μήνας\n%%y - έτος (2 ψηφία)\n%%Y - έτος (4 ψηφία)\nΗ χρονολογία πρέπει να είναι ίση ή μεγαλύτερη από το 1900!
 ; Date of birth uses a wrong format. The correct format is '%s'.\n%%d - day\n%%m - month\n%%y - year (2 digits)\n%%Y - year (4 digits)\nThe year number must be greater or equal 1900!
 ; DOBFORMAT
 ;

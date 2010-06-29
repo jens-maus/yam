@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/#?.ct: fixed some serious translation issues due to the improved
+    checks of the new FlexCat version.
+
 2010-06-28 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update Polish translation.
