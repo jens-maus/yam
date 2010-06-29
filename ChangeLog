@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-06-29 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile: added a top-level Makefile to allow to compile YAM without
+    having to dive into the 'src' directory.
+  * tools/mkrelease.sh: got rid of the pushd/popd combo as these commands
+    are not supported by all different shell flavours.
+
 2010-06-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/#?.ct: fixed some serious translation issues due to the improved

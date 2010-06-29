@@ -112,9 +112,9 @@ cp ../doc/.addressbook "release/$yamsys/YAM $yamver/.addressbook"
 cp ../doc/.taglines "release/$yamsys/YAM $yamver/.taglines"
 echo "  MK YAM26-$yamsys.lha"
 find release/$yamsys -nowarn -name ".svn" -exec rm -rf {} \; 2>/dev/null
-pushd release/$yamsys >/dev/null
+cd release/$yamsys
 lha -aq ../YAM26-$yamsys.lha *
-popd >/dev/null
+cd ..
 
 echo "  MK $yamsys-debug"
 make OS=$1 DEVFLAGS= clean
@@ -123,6 +123,5 @@ cp ../doc/README.debug "release/"
 cp YAM.$1.debug "release/YAM.debug"
 cp YAM.$1.map "release/YAM.debug.map"
 echo "  MK YAM26-$yamsys-debug.lha"
-pushd release >/dev/null
+cd release
 lha -aq YAM26-$yamsys-debug.lha README.debug YAM.debug YAM.debug.map
-popd >/dev/null
