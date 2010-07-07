@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: the notifications for colored text did only take changes
+    between pens 0 and 7 into account, but neglected other colored text, i.e.
+    because of being quoted.
+
 2010-06-29 Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile: added a top-level Makefile to allow to compile YAM without
