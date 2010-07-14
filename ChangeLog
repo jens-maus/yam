@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-14 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: fixed MSG_MA_ReplyReqOpt translation.
+
 2010-07-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: the notifications for colored text did only take changes
