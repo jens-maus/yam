@@ -447,7 +447,7 @@ DECLARE(ImageDropped) // char *dropPath
   BusyText(tr(MSG_BusyDecSaving), "");
 
   // make sure the drawer is opened upon the drag operation
-  if(WorkbenchBase->lib_Version >= 44)
+  if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
     OpenWorkbenchObjectA(msg->dropPath, NULL);
 
   // prepare the final path
@@ -517,7 +517,7 @@ DECLARE(ImageDropped) // char *dropPath
 
     // Now that the workbench knows about the new object we also have to make sure the icon
     // is actually visible in the window
-    if(WorkbenchBase->lib_Version >= 44)
+    if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
       MakeWorkbenchObjectVisibleA(filePathBuf, NULL);
   }
   else

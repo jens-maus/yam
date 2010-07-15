@@ -221,7 +221,7 @@ static BPTR ObtainSearchPath(void)
   ENTER();
 
   #if !defined(__MORPHOS__)
-  if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
+  if(WorkbenchBase != NULL && LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
     WorkbenchControl(NULL, WBCTRLA_DuplicateSearchPath, &path, TAG_DONE);
   #endif
 
@@ -258,7 +258,7 @@ static void ReleaseSearchPath(BPTR path)
   if(path != 0)
   {
     #if !defined(__MORPHOS__)
-    if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
+    if(WorkbenchBase != NULL && LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
     {
       if(WorkbenchControl(NULL, WBCTRLA_FreeSearchPath, path, TAG_DONE))
         path = 0;
@@ -1787,9 +1787,10 @@ LONG FileCount(const char *directory, const char *pattern)
     ParsePatternNoCase(pattern, parsedPattern, parsedPatternSize);
 
     #if defined(__amigaos4__)
+    // dos.library before 52.17 as a small bug and needs a hook for the matching process
     if((context = ObtainDirContextTags(EX_StringName,  (ULONG)directory,
                                        EX_MatchString, (ULONG)parsedPattern,
-                                       EX_MatchFunc,   (DOSBase->lib_Version == 52 && DOSBase->lib_Revision < 17) ? &ExamineDirMatchHook : NULL,
+                                       EX_MatchFunc,   LIB_VERSION_IS_AT_LEAST(DOSBase, 52, 17) ? NULL : &ExamineDirMatchHook,
                                        TAG_DONE)) != NULL)
     #else
     if((context = ObtainDirContextTags(EX_StringName,  (ULONG)directory,

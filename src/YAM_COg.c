@@ -2277,7 +2277,7 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
     DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, pa_notisound, bt_notisound, pa_noticmd, NULL);
 
     #if defined(__amigaos4__)
-    set(data->GUI.CH_NOTIOS41SYSTEM, MUIA_Disabled, G->applicationID == 0 || !LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2));
+    set(data->GUI.CH_NOTIOS41SYSTEM, MUIA_Disabled, G->applicationID == 0 || LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2) == FALSE);
     #else // __amigaos4__
     set(data->GUI.CH_NOTIOS41SYSTEM, MUIA_Disabled, TRUE);
     #endif // __amigaos4__

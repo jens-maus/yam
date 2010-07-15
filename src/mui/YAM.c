@@ -557,7 +557,7 @@ OVERLOAD(OM_NEW)
   // but we also try to take care of different icon.library versions.
   AddPath(filebuf, G->ProgDir, G->ProgName, sizeof(filebuf));
 
-  if(IconBase->lib_Version >= 44)
+  if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
    G->HideIcon = (struct DiskObject *)GetIconTags(filebuf, TAG_DONE);
   else
    G->HideIcon = GetDiskObject(filebuf);

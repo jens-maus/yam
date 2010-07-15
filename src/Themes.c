@@ -845,7 +845,7 @@ void LoadTheme(struct Theme *theme, const char *themeName)
       D(DBF_THEME, "trying to load system specific icon file '%s'", osIconImage);
       // depending on the icon.library version we use either GetIconTags()
       // or the older GetDiskObject() function
-      if(IconBase->lib_Version >= 44)
+      if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
         theme->icons[i] = (struct DiskObject *)GetIconTags(osIconImage, TAG_DONE);
       else
         theme->icons[i] = GetDiskObject(osIconImage);
@@ -855,7 +855,7 @@ void LoadTheme(struct Theme *theme, const char *themeName)
       {
         // depending on the icon.library version we use either GetIconTags()
         // or the older GetDiskObject() function
-        if(IconBase->lib_Version >= 44)
+        if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
           theme->icons[i] = (struct DiskObject *)GetIconTags(image, TAG_DONE);
         else
           theme->icons[i] = GetDiskObject(image);

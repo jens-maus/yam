@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: replaced several version checks by the LIB_VERSION_IS_AT_LEAST()
+    macro.
+
 2010-07-14 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: fixed MSG_MA_ReplyReqOpt translation.

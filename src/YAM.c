@@ -201,7 +201,7 @@ static BOOL InitLib(const char *libname,
 
     if(base != NULL && revision != 0)
     {
-      if(base->lib_Version == version && base->lib_Revision < revision)
+      if(LIB_VERSION_IS_AT_LEAST(base, version, revision) == FALSE)
       {
         CloseLibrary(base);
         base = NULL;

@@ -224,7 +224,7 @@ static void LoadImage(Object *obj, struct Data *data)
     // only if we have at least icon.library >= v44 and we find deficons
     // we try to identify the file with deficons
     if(isDecoded(mailPart) == TRUE && mailPart->Filename[0] != '\0' &&
-       IconBase->lib_Version >= 44 && G->DefIconsAvailable == TRUE)
+       LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && G->DefIconsAvailable == TRUE)
     {
 
       D(DBF_GUI, "retrieving diskicon via DEFICONS for '%s'", mailPart->Filename);
@@ -245,7 +245,7 @@ static void LoadImage(Object *obj, struct Data *data)
     if(diskObject == NULL)
     {
       // with icon.library v44+ we can use GetIconTags again.
-      if(IconBase->lib_Version >= 44 && mailPart->ContentType != NULL)
+      if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && mailPart->ContentType != NULL)
       {
         const char *def;
 
@@ -336,7 +336,7 @@ static void LoadImage(Object *obj, struct Data *data)
 
       // get some information about our diskObject like width/height
       // and the bitmask for transparency drawing
-      if(IconBase->lib_Version >= 44)
+      if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
       {
         struct Rectangle rect;
         struct TagItem iconCtrlTags[] = { { ICONCTRLA_GetImageMask1, (ULONG)NULL },
@@ -374,7 +374,7 @@ static void LoadImage(Object *obj, struct Data *data)
         // prepare the rastport for drawing the icon in it
         rp.BitMap = orgBitMap;
 
-        if(IconBase->lib_Version >= 44)
+        if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
           DrawIconStateA(&rp, diskObject, NULL, 0, 0, IDS_SELECTED, drawIconTags);
         else
         {
@@ -484,7 +484,7 @@ static void LoadImage(Object *obj, struct Data *data)
 
         // now that we have the selectedBitMap filled we have to scale down the unselected state
         // of the icon as well.
-        if(IconBase->lib_Version >= 44)
+        if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
           DrawIconStateA(&rp, diskObject, NULL, 0, 0, IDS_NORMAL, drawIconTags);
         else
           DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.GadgetRender), 0, 0);
@@ -800,7 +800,7 @@ OVERLOAD(MUIM_Draw)
     // of our mail part changed and if so we have to reload
     // the image in case
     if(data->mailPart != NULL && isDecoded(data->mailPart) == TRUE &&
-       data->lastDecodedStatus == FALSE && IconBase->lib_Version >= 44 && G->DefIconsAvailable == TRUE)
+       data->lastDecodedStatus == FALSE && LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && G->DefIconsAvailable == TRUE)
     {
       LoadImage(obj, data);
     }
@@ -916,7 +916,7 @@ OVERLOAD(MUIM_HandleEvent)
       data->selectSecs = imsg->Seconds;
       data->selectMicros = imsg->Micros;
 
-      if(WorkbenchBase->lib_Version >= 45 && data->eventHandlerAdded == TRUE)
+      if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE && data->eventHandlerAdded == TRUE)
       {
         DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
         data->ehnode.ehn_Events |= IDCMP_MOUSEMOVE;
@@ -930,7 +930,7 @@ OVERLOAD(MUIM_HandleEvent)
     // in case the image is unselected by the user
     if(imsg->Code == SELECTUP)
     {
-      if(WorkbenchBase->lib_Version >= 45)
+      if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE)
       {
         DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
         data->ehnode.ehn_Events &= ~IDCMP_MOUSEMOVE;
@@ -1069,7 +1069,7 @@ OVERLOAD(MUIM_DeleteDragImage)
           }
 #else // __amigaos4__
           // this stuff only works with Workbench v45+
-          if(WorkbenchBase->lib_Version >= 45)
+          if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE)
           {
             struct List *path_list;
 

@@ -210,24 +210,24 @@ struct TimeRequest
 #define BusyGaugeInt(t, p, m) Busy(t, p, -1, m)
 
 #ifndef MAX
-#define MAX(a,b)          (((a) > (b)) ? (a) : (b))
+#define MAX(a,b)              (((a) > (b)) ? (a) : (b))
 #endif
 #ifndef MIN
-#define MIN(a,b)          (((a) < (b)) ? (a) : (b))
+#define MIN(a,b)              (((a) < (b)) ? (a) : (b))
 #endif
 
-#define ARRAY_SIZE(x)     (sizeof(x[0]) ? sizeof(x)/sizeof(x[0]) : 0)
+#define ARRAY_SIZE(x)         (sizeof(x[0]) ? sizeof(x)/sizeof(x[0]) : 0)
 
-#define VERSION_IS_AT_LEAST(ver, rev, minver, minrev) (((ver) > (minver)) || ((ver) == (minver) && (rev) >= (minrev)))
+#define VERSION_IS_AT_LEAST(ver, rev, minver, minrev) (((ver) > (minver)) || ((ver) == (minver) && (rev) == (minrev)) || ((ver) == (minver) && (rev) > (minrev)))
 #define LIB_VERSION_IS_AT_LEAST(lib, minver, minrev)  VERSION_IS_AT_LEAST(((struct Library *)(lib))->lib_Version, ((struct Library *)(lib))->lib_Revision, minver, minrev)
 
 // special flagging macros
-#define isFlagSet(v,f)      (((v) & (f)) == (f))  // return TRUE if the flag is set
-#define hasFlag(v,f)        (((v) & (f)) != 0)    // return TRUE if one of the flags in f is set in v
-#define isFlagClear(v,f)    (((v) & (f)) == 0)    // return TRUE if flag f is not set in v
-#define SET_FLAG(v,f)       ((v) |= (f))          // set the flag f in v
-#define CLEAR_FLAG(v,f)     ((v) &= ~(f))         // clear the flag f in v
-#define MASK_FLAG(v,f)      ((v) &= (f))          // mask the variable v with flag f bitwise
+#define isFlagSet(v,f)        (((v) & (f)) == (f))  // return TRUE if the flag is set
+#define hasFlag(v,f)          (((v) & (f)) != 0)    // return TRUE if one of the flags in f is set in v
+#define isFlagClear(v,f)      (((v) & (f)) == 0)    // return TRUE if flag f is not set in v
+#define SET_FLAG(v,f)         ((v) |= (f))          // set the flag f in v
+#define CLEAR_FLAG(v,f)       ((v) &= ~(f))         // clear the flag f in v
+#define MASK_FLAG(v,f)        ((v) &= (f))          // mask the variable v with flag f bitwise
 
 // Wrapper define to be able to use the standard call of MUI_Request
 #ifdef MUI_Request

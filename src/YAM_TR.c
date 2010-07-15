@@ -1181,11 +1181,11 @@ BOOL TR_IsOnline(void)
     closeSocket = TRUE;
 
   // check if we have to open the bsdsocket.library or not
-  if(SocketBase != NULL || (SocketBase = OpenLibrary("bsdsocket.library", 4L)))
+  if(SocketBase != NULL || (SocketBase = OpenLibrary("bsdsocket.library", 4L)) != NULL)
   {
     // if we find a bsdsocket.library < v4 on OS4
     // we always assume it to be online
-    if(SocketBase->lib_Version < 4)
+    if(LIB_VERSION_IS_AT_LEAST(SocketBase, 4, 0) == FALSE)
       isonline = TRUE;
     else
     {
@@ -1280,7 +1280,7 @@ BOOL TR_IsOnline(void)
         isonline = TRUE;
       }
     }
-    else if(SocketBase->lib_Version >= 2)
+    else if(LIB_VERSION_IS_AT_LEAST(SocketBase, 2, 0) == TRUE)
       isonline = TRUE;
   }
   else
@@ -1290,14 +1290,14 @@ BOOL TR_IsOnline(void)
     // if no online check was selected, we just do a simple library exists
     // check and see if we are able to open a bsdsocket.library with a
     // minimum version of 2 or not.
-    if((SocketBase = OpenLibrary("bsdsocket.library", 2L)))
+    if((SocketBase = OpenLibrary("bsdsocket.library", 2L)) != NULL)
     {
       CloseLibrary(SocketBase);
       SocketBase = NULL;
       isonline = TRUE;
     }
   }
-  else if(SocketBase->lib_Version >= 2)
+  else if(LIB_VERSION_IS_AT_LEAST(SocketBase, 2, 0) == TRUE)
     isonline = TRUE;
   #endif
 

@@ -288,7 +288,7 @@ void HandleAppIcon(void)
       // older workbench versions doesn't seem to have the Class
       // member and may have it uninitialized, therefore we
       // check here for the v44+ workbench
-      if(WorkbenchBase != NULL && WorkbenchBase->lib_Version >= 44)
+      if(WorkbenchBase != NULL && LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
         action = apmsg->am_Class;
 
       // check the action

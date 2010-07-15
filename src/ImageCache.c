@@ -399,8 +399,8 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
           #else
           // for OS3 we check for CGX V45+ and picture.datatype V46+
           // older versions cannot handle the alpha channel correctly
-          if(CyberGfxBase != NULL && CyberGfxBase->lib_Version >= 45 &&
-             PictureDTBase != NULL && PictureDTBase->lib_Version >= 46 &&
+          if(CyberGfxBase != NULL && LIB_VERSION_IS_AT_LEAST(CyberGfxBase, 45, 0) == TRUE &&
+             PictureDTBase != NULL && LIB_VERSION_IS_AT_LEAST(PictureDTBase, 46, 0) == TRUE &&
              node->pixelArray == NULL)
           #endif
           {

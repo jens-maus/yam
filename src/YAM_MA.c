@@ -3525,11 +3525,11 @@ BOOL MA_StartMacro(enum Macro num, char *param)
       // prepare the command string
       // only RexxSysBase v45+ seems to support properly quoted
       // strings via the new RXFF_SCRIPT flag
-      if(((struct Library *)RexxSysBase)->lib_Version < 45)
+      if(LIB_VERSION_IS_AT_LEAST(RexxSysBase, 45, 0) == FALSE)
         UnquoteString(command, FALSE);
 
       // make sure to open the output console handler
-      if((fh = Open(C->RX[num].UseConsole ? "CON:////YAM ARexx Window/AUTO" : "NIL:", MODE_NEWFILE)))
+      if((fh = Open(C->RX[num].UseConsole ? "CON:////YAM ARexx Window/AUTO" : "NIL:", MODE_NEWFILE)) != (BPTR)NULL)
       {
         struct RexxMsg *sentrm;
 
@@ -3629,7 +3629,7 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
 
       // only RexxSysBase v45+ seems to support properly quoted
       // strings via the new RXFF_SCRIPT flag
-      if(((struct Library *)RexxSysBase)->lib_Version >= 45 && MyStrChr(scname, ' '))
+      if(LIB_VERSION_IS_AT_LEAST(RexxSysBase, 45, 0) == TRUE && MyStrChr(scname, ' ') != NULL)
       {
         char command[SIZE_COMMAND];
 

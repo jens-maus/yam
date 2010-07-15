@@ -297,7 +297,7 @@ struct RexxMsg *SendRexxCommand(struct RexxHost *host, char *buff, BPTR fh)
 
   // only RexxSysBase v45+ seems to support properly quoted
   // strings via the new RXFF_SCRIPT flag
-  if(((struct Library *)RexxSysBase)->lib_Version >= 45)
+  if(LIB_VERSION_IS_AT_LEAST(RexxSysBase, 45, 0) == TRUE)
     rcm = CreateRexxCommand(host, buff, fh, RXFF_SCRIPT);
   else
     rcm = CreateRexxCommand(host, buff, fh, 0);

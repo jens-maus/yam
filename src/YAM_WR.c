@@ -3114,9 +3114,10 @@ void CheckForAutoSaveFiles(void)
     ParsePatternNoCase(pattern, parsedPattern, parsedPatternSize);
 
     #if defined(__amigaos4__)
+    // dos.library before 52.17 as a small bug and needs a hook for the matching process
     if((context = ObtainDirContextTags(EX_StringName,  (ULONG)G->MA_MailDir,
                                        EX_MatchString, (ULONG)parsedPattern,
-                                       EX_MatchFunc,   (DOSBase->lib_Version == 52 && DOSBase->lib_Revision < 17) ? &ExamineDirMatchHook : NULL,
+                                       EX_MatchFunc,   LIB_VERSION_IS_AT_LEAST(DOSBase, 52, 17) ? NULL : &ExamineDirMatchHook,
                                        TAG_DONE)) != NULL)
     #else
     if((context = ObtainDirContextTags(EX_StringName,  (ULONG)G->MA_MailDir,
