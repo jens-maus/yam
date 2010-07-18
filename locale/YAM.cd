@@ -169,7 +169,7 @@ MSG_CompilationDate (61//)
 Compilation date:
 ;
 MSG_UserLogin (65//)
-Click your name to login
+Click your name to login:
 ;
 MSG_ErrorStartup (67//)
 Error during startup
