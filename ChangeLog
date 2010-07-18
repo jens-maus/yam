@@ -13,6 +13,10 @@ $URL$
     tag item values and hence these don't need to be adapted. This closes
     #171.
   * locale/german.ct: fixed a translation quirk.
+  * YAM_COs.c: disabling the spam filter resulted in an inactive filter on the
+    first sight, but internally all config items regarding to the spam filter
+    were set back to their default values, which in fact means "spam filter
+    active". Now the spam filter is correctly disabled. This closes #149.
 
 2010-07-17 Thore Böckelmann <tboeckel@gmx.de>
 

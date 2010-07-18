@@ -1618,11 +1618,16 @@ void CO_GetConfig(BOOL saveConfig)
           {
             // reset training data
             if(mask & (1 << 0))
+            {
+              D(DBF_CONFIG, "resetting spam training data");
               BayesFilterResetTrainingData();
+            }
 
             // reset spam state of all mails
             if(mask & (1 << 1))
             {
+              D(DBF_CONFIG, "resetting spam state of all mails");
+
               LockFolderListShared(G->folders);
 
               if(IsFolderListEmpty(G->folders) == FALSE)
@@ -1663,6 +1668,8 @@ void CO_GetConfig(BOOL saveConfig)
             if(mask & (1 << 2))
             {
               struct Folder *spamFolder;
+
+              D(DBF_CONFIG, "deleting spam folder");
 
               // first locate the spam folder
               if((spamFolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
@@ -1729,9 +1736,6 @@ void CO_GetConfig(BOOL saveConfig)
               }
             }
 
-            // set the spam filter specific config items back to their default values
-            CO_SetDefaults(CE, cp_Spam);
-
             // update the toolbar to the new settings
             if(G->MA->GUI.TO_TOOLBAR != NULL)
               DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
@@ -1793,7 +1797,7 @@ void CO_GetConfig(BOOL saveConfig)
             }
           }
 
-          if(createSpamFolder)
+          if(createSpamFolder == TRUE)
           {
             struct Folder *spamFolder;
 
@@ -1819,7 +1823,7 @@ void CO_GetConfig(BOOL saveConfig)
             }
 
             // try to create the folder and save the new folder tree
-            if(!FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) || !FO_SaveTree(CreateFilename(".folders")))
+            if(FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) == FALSE || FO_SaveTree(CreateFilename(".folders")) == FALSE)
             {
               // something failed, so we disable the spam filter again
               ER_NewError(tr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));
