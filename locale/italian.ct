@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (27.06.2010)
+## version $VER: YAM.catalog 7.1 (20.07.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.7 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 4750 2010-06-25
+; based on YAM.cd 4780 2010-07-19
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -225,8 +225,8 @@ Data di compilazione:
 ; Compilation date:
 ;
 MSG_UserLogin
-Clicca sul tuo nome per iniziare
-; Click your name to login
+Clicca sul tuo nome per iniziare:
+; Click your name to login:
 ;
 MSG_ErrorStartup
 Errore durante l'avvio del programma
@@ -992,7 +992,7 @@ MSG_CO_MLRepHelloDef
 ; \0
 ;
 MSG_CO_MLRepIntroDef
-Il %c, %n scrisse:\\\\n
+Il %c, %n scrisse:\\\\n\
 ; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
@@ -3529,7 +3529,7 @@ MSG_RE_MDNdisplay
 Il messaggio\n\
 %s\n\
 è stato visualizzato.\n\
-Ciò non garantisce che il contenuto sia stato letto o compreso.\n
+Ciò non garantisce che il contenuto sia stato letto o compreso.\n\
 ; The message\n\
 ; %s\n\
 ; has been displayed.\n\
@@ -3540,7 +3540,7 @@ Il messaggio\n\
 %s\n\
 è stato cancellato %s.\n\
 Il destinatario potrebbe aver visto o meno il messaggio.\n\
-Il destinatario potrebbe "recuperare" il messaggio più tardi e leggerlo.\n
+Il destinatario potrebbe "recuperare" il messaggio più tardi e leggerlo.\n\
 ; The message\n\
 ; %s\n\
 ; has been deleted %s.\n\
@@ -3550,7 +3550,7 @@ Il destinatario potrebbe "recuperare" il messaggio più tardi e leggerlo.\n
 MSG_RE_MDNunknown
 Il messaggio\n\
 %s\n\
-è stato %s%s.\n
+è stato %s%s.\n\
 ; The message\n\
 ; %s\n\
 ; has been %s%s.\n
@@ -3568,7 +3568,7 @@ PGP stesso, oppure il messaggio è stato codificato per qualcun altro.\n\
 ; the message was encrypted for someone else.\n
 ;
 MSG_RE_MsgReadOnly
-Il messaggio può esser letto solo da %s\n
+Il messaggio può esser letto solo da %s\n\
 ; The message can only be read by %s\n
 ; RECIPIENT
 ;
@@ -4627,9 +4627,7 @@ C_hiudi finestra
 MSG_ER_CantCreateFile
 Impossibile scrivere nel file '%s'.\n\
 \n\
-Assicurati che il percorso esista\n\
-e che il volume non sia protetto\n\
-da scrittura.
+Assicurati che il percorso esista e che il volume non sia protetto da scrittura.
 ; Couldn't write to file '%s'.\n\
 ; \n\
 ; Make sure that the path exists and that the volume isn't write protected.
@@ -4638,9 +4636,7 @@ da scrittura.
 MSG_ER_CantCreateDir
 Impossibile creare la directory '%s'.\n\
 \n\
-Assicurati che il percorso esista e\n\
-che il volume non sia protetto da\n\
-scrittura.
+Assicurati che il volume non sia protetto da scrittura.
 ; Couldn't create directory '%s'.\n\
 ; \n\
 ; Make sure that the volume isn't write protected.
@@ -8820,7 +8816,7 @@ MSG_ER_MIME_ERROR
 Impossibile estrarre il messaggio MIME dal file '%s'.\n\
 \n\
 Il messaggio potrebbe contenere delle parti MIME non\n\
-conformi, oppure il MIME stesso risulta vuoto o troncato.\n
+conformi, oppure il MIME stesso risulta vuoto o troncato.\n\
 ; Couldn't extract MIME message from file '%s'.\n\
 ; \n\
 ; The message contains malformed MIME parts, or it is empty or truncated.
