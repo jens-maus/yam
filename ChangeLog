@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/ExamineDir.c: the ExamineDir() reimplementation directly returned
+    the type value from the ExAll() call instead of converting it to the
+    ExamineDir() style. This confused the calling function to ignore files
+    which certainly should have been found. This closes #173.
+
 2010-07-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: fixed the wrong tag value adaption. Although the v1 interface
