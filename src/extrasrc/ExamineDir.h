@@ -40,8 +40,13 @@ struct ExamineData
   STRPTR Name;
 };
 
-#define EXD_IS_FILE(ed)              ((ed)->Type < 0)
-#define EXD_IS_DIRECTORY(ed)         ((ed)->Type >= 0 && (ed)->Type != ST_SOFTLINK)
+#define FSO_TYPE_MASK                0xff
+
+#define FSO_TYPE_FILE                1
+#define FSO_TYPE_DIRECTORY           2
+
+#define EXD_IS_FILE(exd)             (((exd)->Type & FSO_TYPE_MASK) == FSO_TYPE_FILE)
+#define EXD_IS_DIRECTORY(exd)        (((exd)->Type & FSO_TYPE_MASK) == FSO_TYPE_DIRECTORY)
 
 #define EX_Dummy                     (TAG_USER+4711)
 #define EX_StringName                (EX_Dummy+1)
