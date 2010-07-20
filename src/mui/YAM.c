@@ -566,7 +566,7 @@ OVERLOAD(OM_NEW)
   // the string MUST include the "$VER:" cookie, because this one will be stripped
   // by MUI. However, to avoid any problems with two version cookies in the final
   // executable we set up this one here in a bit more obfuscated fashion.
-  snprintf(verbuf, sizeof(verbuf), "%lcVER: YAM %s (%s)", '$', yamver, yamversiondate);
+  snprintf(verbuf, sizeof(verbuf), "%sVER: YAM %s (%s)", "$", yamver, yamversiondate);
 
   if((obj = (Object *)DoSuperNew(cl, obj,
 

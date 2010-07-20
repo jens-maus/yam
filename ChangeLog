@@ -16,6 +16,8 @@ $URL$
     sure to sync them to what is used in YAM.cd.
   * extrasrc/ExamineDir.c,h: fixed compilation by adding the missing EAD
     defines and corrected its usage accordingly.
+  * mui/YAM.c: slightly changed the $VER: string generation to fix a
+    compiler warning observed with the MOS compiles.
 
 2010-07-20 Thore Böckelmann <tboeckel@gmx.de>
 
