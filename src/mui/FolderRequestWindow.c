@@ -46,7 +46,6 @@ struct Data
 };
 */
 
-///
 /// DisplayHook
 HOOKPROTONH(DisplayFunc, LONG, char **array, struct Folder *folder)
 {
@@ -66,7 +65,7 @@ MakeStaticHook(DisplayHook, DisplayFunc);
 OVERLOAD(OM_NEW)
 {
   struct TagItem *tags = inittags(msg), *tag;
-  char *titleText = (char *)"YAM";
+  char *titleText = NULL;
   char *bodyText = NULL;
   char *yesText = (char *)tr(MSG_Okay);
   char *noText = (char *)tr(MSG_Cancel);
@@ -129,7 +128,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title,     titleText,
+    MUIA_Window_Title,     (titleText != NULL) ? titleText : (char *)"YAM",
     MUIA_Window_LeftEdge,  MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,   MUIV_Window_TopEdge_Centered,
     MUIA_Window_Height,    MUIV_Window_Height_MinMax(30),
@@ -250,3 +249,4 @@ DECLARE(FinishInput) // ULONG result
 }
 
 ///
+

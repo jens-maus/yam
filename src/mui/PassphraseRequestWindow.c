@@ -178,3 +178,4 @@ DECLARE(FinishInput) // ULONG result
 }
 
 ///
+

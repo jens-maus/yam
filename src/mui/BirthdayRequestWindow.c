@@ -144,6 +144,7 @@ static BOOL CheckBirthdayCheckFile(const char *alias)
   return result;
 }
 
+///
 /// SaveBirthdayCheckFile
 // Load the .birthdaycheck file and compare the date in the file and the
 // system date. If both are equal then append the user and alias to the file.
@@ -228,6 +229,8 @@ static void SaveBirthdayCheckFile(const char *alias)
 
   LEAVE();
 }
+
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -384,3 +387,4 @@ DECLARE(FinishInput) // Object *checkbox, char *alias, int show
 }
 
 ///
+

@@ -119,7 +119,7 @@ MakeStaticHook(AttachDspHook, AttachDspFunc);
 OVERLOAD(OM_NEW)
 {
   struct TagItem *tags = inittags(msg), *tag;
-  char *titleText = (char *)"YAM";
+  char *titleText = NULL;
   char *bodyText = NULL;
   char *yesText = (char *)tr(MSG_Okay);
   char *noText = (char *)tr(MSG_Cancel);
@@ -181,7 +181,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title,      titleText,
+    MUIA_Window_Title,      (titleText != NULL) ? titleText : (char *)"YAM",
     MUIA_Window_ID,         MAKE_ID('A','R','E','Q'),
     MUIA_Window_RefWindow,  rmData->readWindow,
     MUIA_Window_LeftEdge,   MUIV_Window_LeftEdge_Centered,
