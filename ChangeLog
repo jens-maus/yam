@@ -11,6 +11,10 @@ $URL$
     title at all if none given. "YAM" will be used as default.
   * YAM_TR.c, locale/YAM.cd: the notification message now distinguished between
     a single and multiple received mails. This closes #32.
+  * locale/italian.ct: removed some excessive "\" characters.
+    Translators, please make sure that there is NO "\" at the end of the last
+    line of a single translation. I really recomment to use FlexCat 2.7, which
+    will print lots more warnings for bugs like this.
 
 2010-07-19 Samir Hawamdeh <s.hawamdeh@tin.it>
 
