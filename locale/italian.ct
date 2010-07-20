@@ -3560,7 +3560,7 @@ MSG_RE_PGPNotAllowed
 \n\
 Impossibile visualizzare questo messaggio codificato da chiave PGP.\n\
 Il problema potrebbe essere dovuto ad un errore di configurazione di\n\
-PGP stesso, oppure il messaggio è stato codificato per qualcun altro.\n\
+PGP stesso, oppure il messaggio è stato codificato per qualcun altro.\n
 ; >PGP Error<\n\
 ; \n\
 ; You're not allowed to view this PGP encrypted message.\n\
@@ -3568,7 +3568,7 @@ PGP stesso, oppure il messaggio è stato codificato per qualcun altro.\n\
 ; the message was encrypted for someone else.\n
 ;
 MSG_RE_MsgReadOnly
-Il messaggio può esser letto solo da %s\n\
+Il messaggio può esser letto solo da %s\n
 ; The message can only be read by %s\n
 ; RECIPIENT
 ;
