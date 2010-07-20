@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.7 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 4780 2010-07-19
+; based on YAM.cd 4789 2010-07-20
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -919,20 +919,20 @@ Per favore, riscrivi la password:
 ; Please re-type the password:
 ;
 MSG_CO_ConfirmDelete
-Tutti i messaggi in questa cartella andranno perduti!\n\
+Tutti i messaggi in questa cartella andranno perduti.\n\
 Sei sicuro di volerli cancellare?
-; All messages in this folder will be lost!\n\
+; All messages in this folder will be lost.\n\
 ; Do you really want to delete it?
 ;
 MSG_CO_InvalidConf
 Configurazione errata!\n\
 (Nome host, Indirizzo E-Mail e/o password mancanti).\n\
 \n\
-Per favore, riempi questi campi e riprova!
+Per favore, riempi questi campi e riprova.
 ; Invalid configuration (missing SMTP/POP3\n\
 ; server name or e-mail address).\n\
 ; \n\
-; Please fill in these fields and try again!
+; Please fill in these fields and try again.
 ;
 MSG_CO_ImportMIMEReq
 Importa le configurazioni da...
@@ -2809,8 +2809,8 @@ comprimere le cartelle.
 ; compress folders.
 ;
 MSG_HELP_CO_NB_ENCPACK
-Efficienza di questo compattatore: 100%\n\
-è la più alta, ma anche la più lenta.
+L'efficienza al 100% di questo compattatore\n\
+risulta essere la più alta, ma anche la più lenta.
 ; Efficiency of this packer. 100% is\n\
 ; the best value, but also the slowest.
 ;
@@ -2872,7 +2872,7 @@ Memorandum per il compleanno
 ;
 MSG_AB_HappyBirthday
 Buon compleanno!
-; Happy birthday!
+; Happy birthday.
 ;
 MSG_AB_PersonAlias
 Pseudonimo (PERSONA)
@@ -2899,11 +2899,11 @@ Pseudonimo
 ; Alias
 ;
 MSG_AB_FoundEntry
-Voce trovata!\n\
+Voce trovata.\n\
 \n\
 Pseudonimo: \eb%s\en\n\
 Nome: \eb%s\en
-; Found matching entry!\n\
+; Found matching entry.\n\
 ; \n\
 ; Alias: \eb%s\en\n\
 ; Name: \eb%s\en
@@ -2929,12 +2929,12 @@ _Voce Succ.|_Modifica voce|_Annulla
 ; _Next hit|_Edit hit|_Cancel
 ;
 MSG_AB_NoneFound
-Nessuna voce trovata!
-; No matching entries found!
+Nessuna voce trovata.
+; No matching entries found.
 ;
 MSG_AB_Modified
-La rubrica è stata modificata!
-; Address book has been modified!
+La rubrica è stata modificata.
+; Address book has been modified.
 ;
 MSG_AB_ModifiedGads
 *_Salva|_Usa|_Cancella modifiche|_Annulla
@@ -3529,7 +3529,7 @@ MSG_RE_MDNdisplay
 Il messaggio\n\
 %s\n\
 è stato visualizzato.\n\
-Ciò non garantisce che il contenuto sia stato letto o compreso.\n
+Ciò non garantisce che il contenuto sia stato letto o compreso.
 ; The message\n\
 ; %s\n\
 ; has been displayed.\n\
@@ -3540,7 +3540,7 @@ Il messaggio\n\
 %s\n\
 è stato cancellato %s.\n\
 Il destinatario potrebbe aver visto o meno il messaggio.\n\
-Il destinatario potrebbe "recuperare" il messaggio più tardi e leggerlo.\n
+Il destinatario potrebbe "recuperare" il messaggio più tardi e leggerlo.
 ; The message\n\
 ; %s\n\
 ; has been deleted %s.\n\
@@ -3550,7 +3550,7 @@ Il destinatario potrebbe "recuperare" il messaggio più tardi e leggerlo.\n
 MSG_RE_MDNunknown
 Il messaggio\n\
 %s\n\
-è stato %s%s.\n
+è stato %s%s.
 ; The message\n\
 ; %s\n\
 ; has been %s%s.\n
@@ -3822,8 +3822,8 @@ messaggio.
 ; Module WR - Procedures
 ;
 MSG_WR_ErrorNoRcpt
-Il messaggio è incompleto: nessun destinatario!
-; Mail is incomplete: no recipient!
+Il messaggio è incompleto: nessun destinatario.
+; Mail is incomplete: no recipient.
 ;
 MSG_WR_NoRcptReqGad
 Agg. _destinatario dopo|*_Annulla
@@ -4475,12 +4475,12 @@ Cancellazione della posta sul server...
 ; Deleting mail on server...
 ;
 MSG_TR_NewMailReq
-\e8C'è nuova posta!\e2\n\
+\e8C'è nuova posta.\e2\n\
 \n\
 %3ld messaggio(i) prelevato(i)\n\
 %3ld messaggio(i) lasciato(i) nel server\n\
 %3ld messaggio(i) duplicato(i) saltato(i)\n
-; \e8You have new mail!\e2\n\
+; \e8You have new mail.\e2\n\
 ; \n\
 ; %3ld messages downloaded,\n\
 ; %3ld left on server\n\
@@ -4643,12 +4643,12 @@ Assicurati che il volume non sia protetto da scrittura.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias
-E' necessario specificare uno pseudonimo per l'identificazione di questa voce!
-; You must specify an alias to identify this entry!
+E' necessario specificare uno pseudonimo per l'identificazione di questa voce.
+; You must specify an alias to identify this entry.
 ;
 MSG_ER_ErrorNoAddress
-E' necessario specificare un indirizzo per questa voce!
-; You must specify an address for this entry!
+E' necessario specificare un indirizzo per questa voce.
+; You must specify an address for this entry.
 ;
 MSG_ER_ErrorDateFormat
 Formato errato data/ora.\n\
@@ -4769,12 +4769,12 @@ errore durante la sua lettura.
 ; FILENAME
 ;
 MSG_ER_MissingDirectory
-E' necessario indicare una directory per il nuovo utente!
-; You must specify a directory for the new user!
+E' necessario indicare una directory per il nuovo utente.
+; You must specify a directory for the new user.
 ;
 MSG_ER_MissingName
-E' necessario indicare un nome per il nuovo utente!
-; You must specify a name for the new user!
+E' necessario indicare un nome per il nuovo utente.
+; You must specify a name for the new user.
 ;
 MSG_ER_NoPublicKeys
 Impossibile trovare chiave la pubblica PGP.\n\
@@ -5132,11 +5132,11 @@ In attesa del login utente...
 ;
 MSG_US_RemoveReq
 ATTENZIONE tutti i messaggi, le cartelle e le configurazioni che\n\
-appartengono a questo utente andranno perdute per sempre!\n\
+appartengono a questo utente andranno perdute per sempre.\n\
 \n\
 Sei sicuro di voler rimuovere l'utente?
 ; All messages, folders and configuration\n\
-; files belonging to this user will be lost!\n\
+; files belonging to this user will be lost.\n\
 ; \n\
 ; Do you really want to remove the user?
 ;
@@ -5557,8 +5557,8 @@ Predefinita
 ;
 MSG_ER_PGPMultipart
 Errore nella creazione del messaggio multiparti PGP.\n\
-La codifica/firma è stata disattivata!
-; Error creating multipart PGP message. Encrypting/signing disabled!
+La codifica/firma è stata disattivata.
+; Error creating multipart PGP message. Encrypting/signing disabled.
 ;
 MSG_RE_FixedFont
 Spaziatura fissa?
@@ -5790,8 +5790,8 @@ MSG_SEARCHNOTFOUND_MSG
 ; '%s' not found.
 ;
 MSG_WR_ERRORNOSENDER
-Messaggio incompleto: nessun mittente!
-; Mail is incomplete: no sender!
+Messaggio incompleto: nessun mittente.
+; Mail is incomplete: no sender.
 ;
 MSG_WR_NOSENDERREQGAD
 _Usa mittente predefinito|*_Annulla
@@ -5886,8 +5886,8 @@ per il supporto Mailing list facendo un'analisi dei primi\n\
 ; first five e-mails in the folder.
 ;
 MSG_FO_NOTRECOGNIZED
-Impossibile da riconoscere!
-; Couldn't be recognized!
+Impossibile riconoscere.
+; Couldn't be recognized.
 ;
 MSG_FO_MAXAGEFMT
 %ld giorni
@@ -7874,7 +7874,7 @@ Rispondi...
 ; Reply...
 ;
 MSG_MA_MFORWARD
-Inoltra
+Inoltra...
 ; Forward...
 ;
 MSG_MA_MBOUNCE
@@ -8240,8 +8240,8 @@ MSG_ER_USER_UNKNOWN_BUTTON
 ; *_Ok
 ;
 MSG_ER_USER_UNKNOWN_ERROR
-Utente sconosciuto '%s'!
-; Unknown user '%s'!
+Utente sconosciuto '%s'.
+; Unknown user '%s'.
 ;
 MSG_HELP_CO_CA_COLSIG
 Il colore da utilizzare per la\n\
@@ -8263,8 +8263,8 @@ Si desidera disattivare nuovamente questa opzione?
 ; Do you want to disable this option again?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE
-Impossibile creare semaforo!
-; Can't create semaphore!
+Impossibile creare semaforo.
+; Can't create semaphore.
 ;
 MSG_MA_AUTOSAVEFOUND_BUTTONS
 *Sposta in _uscita|_Modifica|_Cancella|_Ignora
@@ -8816,7 +8816,7 @@ MSG_ER_MIME_ERROR
 Impossibile estrarre il messaggio MIME dal file '%s'.\n\
 \n\
 Il messaggio potrebbe contenere delle parti MIME non\n\
-conformi, oppure il MIME stesso risulta vuoto o troncato.\n
+conformi, oppure il MIME stesso risulta vuoto o troncato.
 ; Couldn't extract MIME message from file '%s'.\n\
 ; \n\
 ; The message contains malformed MIME parts, or it is empty or truncated.
@@ -9717,8 +9717,8 @@ Si desidera sovrascriverlo?
 ; FILENAME
 ;
 MSG_ER_USER_DIR_MISSING
-La directory base '%s' dell'utente '%s' è inesistente!
-; The home directory '%s' of user '%s' does not exist!
+La directory base '%s' dell'utente '%s' è inesistente.
+; The home directory '%s' of user '%s' does not exist.
 ; PATH, USERNAME
 ;
 MSG_CO_TEXTCOLORS_READ
@@ -9822,14 +9822,14 @@ La data di nascita utilizza un formato errato. Il formato corretto è '%s'.\n\
 %%m - mese\n\
 %%y - anno (2 caratteri)\n\
 %%Y - anno (4 caratteri)\n\
-L'anno di nascita deve essere almeno superiore o uguale a 1900!
+L'anno di nascita deve essere almeno superiore o uguale a 1900.
 ; DOBFORMAT
 ; Date of birth uses a wrong format. The correct format is '%s'.\n\
 ; %%d - day\n\
 ; %%m - month\n\
 ; %%y - year (2 digits)\n\
 ; %%Y - year (4 digits)\n\
-; The year number must be greater or equal 1900!
+; The year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
 MSG_CO_PGPURL
@@ -9845,11 +9845,6 @@ separata per ogni messaggio di posta.
 ; PGP key can be downloaded from. This URL\n\
 ; will then placed into a separate header\n\
 ; entry in every mail.
-;
-MSG_TR_NEW_MAIL_NOTIFY
-Ricevuto(i) %ld nuovo(i) messaggio(i) di posta!
-; Received %ld new mails!
-; COUNT
 ;
 MSG_CO_NOTIOS41SYSTEM
 Gestore notifiche di AmigaOS_4.1 - Ringhio
@@ -9891,10 +9886,10 @@ Parte %ld.%ld
 ; PARENTNUMBER PARTNUMER
 ;
 MSG_OPEN_WRITEWINDOWS
-Sono rimaste aperte delle finestre di scrittura!\n\
+Sono rimaste aperte delle finestre di scrittura.\n\
 \n\
 Come si desidera procedere?
-; There are still some write windows open!\n\
+; There are still some write windows open.\n\
 ; \n\
 ; How do you want to proceed?
 ;
@@ -9956,4 +9951,13 @@ di un valido script ARexx.
 MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 Per _oggi non visualizzare nuovamente questo messaggio.
 ; Do not show this requester today again.
+;
+MSG_TR_NEW_MAIL_NOTIFY_ONE
+Ricevuto un nuovo messaggio.
+; Received 1 new mail.
+;
+MSG_TR_NEW_MAIL_NOTIFY_MANY
+Ricevuti %ld nuovi messaggi.
+; Received %ld new mails.
+; COUNT
 ;

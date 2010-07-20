@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-20 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italiano.ct: First compile with FlexCat 2.7 OS4 PPC!
+    Fixed some errors and update to the very latest YAM.cd
+
 2010-07-20 Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/YAM.cd, locale/deutsch.ct: removed all exclamation marks from
