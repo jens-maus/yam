@@ -696,14 +696,14 @@ MSG_CO_RetypePass (263//)
 Please re-type the password:
 ;
 MSG_CO_ConfirmDelete (264//)
-All messages in this folder will be lost!\n\
+All messages in this folder will be lost.\n\
 Do you really want to delete it?
 ;
 MSG_CO_InvalidConf (265//)
 Invalid configuration (missing SMTP/POP3\n\
 server name or e-mail address).\n\
 \n\
-Please fill in these fields and try again!
+Please fill in these fields and try again.
 ;
 MSG_CO_ImportMIMEReq (266//)
 Import settings from...
@@ -2079,7 +2079,7 @@ MSG_AB_BirthdayReminder (703//)
 Birthday Reminder
 ;
 MSG_AB_HappyBirthday (704//)
-Happy birthday!
+Happy birthday.
 ;
 MSG_AB_PersonAlias (705//)
 Alias (PERSON)
@@ -2100,7 +2100,7 @@ MSG_AB_AliasFld (710//)
 Alias
 ;
 MSG_AB_FoundEntry (711//)
-Found matching entry!\n\
+Found matching entry.\n\
 \n\
 Alias: \eb%s\en\n\
 Name: \eb%s\en
@@ -2121,10 +2121,10 @@ MSG_AB_FoundEntryGads (715//)
 _Next hit|_Edit hit|_Cancel
 ;
 MSG_AB_NoneFound (716//)
-No matching entries found!
+No matching entries found.
 ;
 MSG_AB_Modified (717//)
-Address book has been modified!
+Address book has been modified.
 ;
 MSG_AB_ModifiedGads (718//)
 *_Save|_Use|_Discard changes|_Cancel
@@ -2777,7 +2777,7 @@ message.
 ; Module WR - Procedures
 ;
 MSG_WR_ErrorNoRcpt (914//)
-Mail is incomplete: no recipient!
+Mail is incomplete: no recipient.
 ;
 MSG_WR_NoRcptReqGad (915//)
 _Add recipient later|*_Cancel
@@ -3260,7 +3260,7 @@ MSG_TR_DeletingServerMail (1068//)
 Deleting mail on server...
 ;
 MSG_TR_NewMailReq (1069//)
-\e8You have new mail!\e2\n\
+\e8You have new mail.\e2\n\
 \n\
 %3ld messages downloaded,\n\
 %3ld left on server\n\
@@ -3383,10 +3383,10 @@ Make sure that the volume isn't write protected.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias (1102//)
-You must specify an alias to identify this entry!
+You must specify an alias to identify this entry.
 ;
 MSG_ER_ErrorNoAddress (1103//)
-You must specify an address for this entry!
+You must specify an address for this entry.
 ;
 MSG_ER_ErrorDateFormat (1107//)
 Invalid date/time format.\n\
@@ -3459,10 +3459,10 @@ The file exists, but there was an error while reading it.
 ; FILENAME
 ;
 MSG_ER_MissingDirectory (1137//)
-You must specify a directory for the new user!
+You must specify a directory for the new user.
 ;
 MSG_ER_MissingName (1138//)
-You must specify a name for the new user!
+You must specify a name for the new user.
 ;
 MSG_ER_NoPublicKeys (1139//)
 No public PGP keys found.\n\
@@ -3722,7 +3722,7 @@ Waiting for user login...
 ;
 MSG_US_RemoveReq (1215//)
 All messages, folders and configuration\n\
-files belonging to this user will be lost!\n\
+files belonging to this user will be lost.\n\
 \n\
 Do you really want to remove the user?
 ;
@@ -4039,7 +4039,7 @@ MSG_WR_SecDefaults (1333//)
 Default
 ;
 MSG_ER_PGPMultipart (1334//)
-Error creating multipart PGP message. Encrypting/signing disabled!
+Error creating multipart PGP message. Encrypting/signing disabled.
 ;
 MSG_RE_FixedFont (1335//)
 Fixed font?
@@ -4207,7 +4207,7 @@ MSG_SEARCHNOTFOUND_MSG (1398//)
 '%s' not found.
 ;
 MSG_WR_ERRORNOSENDER (1400//)
-Mail is incomplete: no sender!
+Mail is incomplete: no sender.
 ;
 MSG_WR_NOSENDERREQGAD (1401//)
 _Use default sender|*_Cancel
@@ -4275,7 +4275,7 @@ ML support settings by scanning the\n\
 first five e-mails in the folder.
 ;
 MSG_FO_NOTRECOGNIZED (1420//)
-Couldn't be recognized!
+Couldn't be recognized.
 ;
 MSG_FO_MAXAGEFMT (1421//)
 %ld days
@@ -5879,7 +5879,7 @@ MSG_ER_USER_UNKNOWN_BUTTON (1911//)
 *_Ok
 ;
 MSG_ER_USER_UNKNOWN_ERROR (1912//)
-Unknown user '%s'!
+Unknown user '%s'.
 ;
 MSG_HELP_CO_CA_COLSIG (1913//)
 The color that should be used to\n\
@@ -5893,7 +5893,7 @@ may lead to poor performance of the spam filter.\n\
 Do you want to disable this option again?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE (1915//)
-Can't create semaphore!
+Can't create semaphore.
 ;
 MSG_MA_AUTOSAVEFOUND_BUTTONS (1916//)
 *Move to _Outgoing|_Edit|_Delete|_Ignore
@@ -6804,7 +6804,7 @@ Do you want to overwrite it?
 ; FILENAME
 ;
 MSG_ER_USER_DIR_MISSING (2124//)
-The home directory '%s' of user '%s' does not exist!
+The home directory '%s' of user '%s' does not exist.
 ; PATH, USERNAME
 ;
 MSG_CO_TEXTCOLORS_READ (2125//)
@@ -6878,7 +6878,7 @@ Date of birth uses a wrong format. The correct format is '%s'.\n\
 %%m - month\n\
 %%y - year (2 digits)\n\
 %%Y - year (4 digits)\n\
-The year number must be greater or equal 1900!
+The year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
 MSG_CO_PGPURL (2144//)
@@ -6914,7 +6914,7 @@ Part %ld.%ld
 ; PARENTNUMBER PARTNUMER
 ;
 MSG_OPEN_WRITEWINDOWS (2154//)
-There are still some write windows open!\n\
+There are still some write windows open.\n\
 \n\
 How do you want to proceed?
 ;
@@ -6961,9 +6961,9 @@ MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN (2166//)
 Do not show this requester today again.
 ;
 MSG_TR_NEW_MAIL_NOTIFY_ONE (2167//)
-Received 1 new mail!
+Received 1 new mail.
 ;
 MSG_TR_NEW_MAIL_NOTIFY_MANY (2168//)
-Received %ld new mails!
+Received %ld new mails.
 ; COUNT
 ;

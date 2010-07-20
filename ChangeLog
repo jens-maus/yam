@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-20 Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/YAM.cd, locale/deutsch.ct: removed all exclamation marks from
+    sentences where it wasn't really necessary. We should really try to keep
+    away from ending sentences with exclamation marks as we don't want to
+    scream at our users and the importance should be better put into the
+    wording of the sentence and into the presentation of the GUI. All
+    translators should also go through their translations now and make
+    sure to sync them to what is used in YAM.cd.
+
 2010-07-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/request windows: make sure that every requester window gets a window

@@ -918,20 +918,20 @@ Bitte geben Sie das Passwort nochmals ein:
 ; Please re-type the password:
 ;
 MSG_CO_ConfirmDelete
-Alle Nachrichten in diesem Postfach gehen verloren!\n\
+Alle Nachrichten in diesem Postfach gehen verloren.\n\
 Wollen Sie es wirklich löschen?
-; All messages in this folder will be lost!\n\
+; All messages in this folder will be lost.\n\
 ; Do you really want to delete it?
 ;
 MSG_CO_InvalidConf
 Ungültige Konfiguration (fehlender SMTP/POP3\n\
 Servername oder E-Mail Adresse)\n\
 \n\
-Bitte diese Angaben korrigieren!
+Bitte diese Angaben korrigieren.
 ; Invalid configuration (missing SMTP/POP3\n\
 ; server name or email address)\n\
 ; \n\
-; Please fill in these fields and try again!
+; Please fill in these fields and try again.
 ;
 MSG_CO_ImportMIMEReq
 Einstellungen importieren von...
@@ -2823,8 +2823,8 @@ Geburtstagserinnerung
 ; Birthday Reminder
 ;
 MSG_AB_HappyBirthday
-Alles Gute zum Geburtstag!
-; Happy birthday!
+Alles Gute zum Geburtstag.
+; Happy birthday.
 ;
 MSG_AB_PersonAlias
 Alias (PERSON)
@@ -2851,10 +2851,10 @@ Alias
 ; Alias
 ;
 MSG_AB_FoundEntry
-Passenden Eintrag gefunden!\n\
+Passenden Eintrag gefunden.\n\
 Alias: \eb%s\en\n\
 Name: \eb%s\en
-; Found matching entry!\n\
+; Found matching entry.\n\
 ; Alias: \eb%s\en\n\
 ; Name: \eb%s\en
 ; ALIAS, NAME
@@ -2880,12 +2880,12 @@ _Nächster Treffer|Treffer _editieren|_Abbrechen
 ; _Next hit|_Edit hit|_Cancel
 ;
 MSG_AB_NoneFound
-Keine passenden Einträge gefunden!
-; No matching entries found!
+Keine passenden Einträge gefunden.
+; No matching entries found.
 ;
 MSG_AB_Modified
-Adressbuch wurde geändert!
-; Address book has been modified!
+Adressbuch wurde geändert.
+; Address book has been modified.
 ;
 MSG_AB_ModifiedGads
 *_Speichern|_Benutzen|_Verwerfen|_Abbrechen
@@ -3766,8 +3766,8 @@ weiterleiten.
 ; Module WR - Procedures
 ;
 MSG_WR_ErrorNoRcpt
-Nachricht ist unvollständig: Kein Empfänger!
-; Mail is incomplete: no recipient!
+Nachricht ist unvollständig: Kein Empfänger.
+; Mail is incomplete: no recipient.
 ;
 MSG_WR_NoRcptReqGad
 _Empfänger später hinzufügen|*_Abbrechen
@@ -4425,12 +4425,12 @@ Lösche Nachricht auf Server...
 ; Deleting mail on server...
 ;
 MSG_TR_NewMailReq
-\e8Sie haben neue Post!\e2\n\
+\e8Sie haben neue Post.\e2\n\
 \n\
 %3ld Nachrichten geladen,\n\
 %3ld verbleiben auf Server,\n\
 %3ld Duplikate ignoriert\n
-; \e8You have new mail!\e2\n\
+; \e8You have new mail.\e2\n\
 ; \n\
 ; %3ld messages downloaded,\n\
 ; %3ld left on server\n\
@@ -4597,12 +4597,12 @@ Versichern Sie sich, dass das Laufwerk nicht schreibgeschützt ist.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias
-Sie müssen einen Alias angeben, um diesen Eintrag zu identifizieren!
-; You must specify an alias to identify this entry!
+Sie müssen einen Alias angeben, um diesen Eintrag zu identifizieren.
+; You must specify an alias to identify this entry.
 ;
 MSG_ER_ErrorNoAddress
-Sie müssen für diesen Eintrag eine Adresse angeben!
-; You must specify an address for this entry!
+Sie müssen für diesen Eintrag eine Adresse angeben.
+; You must specify an address for this entry.
 ;
 MSG_ER_ErrorDateFormat
 Ungültiges Datum/Zeit-Format.\n\
@@ -4710,12 +4710,12 @@ Die Datei existiert zwar, aber beim Lesen trat ein Fehler auf.
 ; FILENAME
 ;
 MSG_ER_MissingDirectory
-Sie müssen ein Verzeichnis für den neuen Benutzer angeben!
-; You must specify a directory for the new user!
+Sie müssen ein Verzeichnis für den neuen Benutzer angeben.
+; You must specify a directory for the new user.
 ;
 MSG_ER_MissingName
-Sie müssen einen Namen für den neuen Benutzer angeben!
-; You must specify a name for the new user!
+Sie müssen einen Namen für den neuen Benutzer angeben.
+; You must specify a name for the new user.
 ;
 MSG_ER_NoPublicKeys
 Keine öffentlichen PGP-Schlüssel gefunden.\n\
@@ -5064,9 +5064,12 @@ Warte auf Benutzeranmeldung...
 ; Waiting for user login...
 ;
 MSG_US_RemoveReq
-Alle Nachrichten, Postfächer und Konfigurationsdateien\ndieses Benutzers gehen verloren!\n\nWollen Sie den Benutzer wirklich löschen?
+Alle Nachrichten, Postfächer und Konfigurationsdateien\n\
+dieses Benutzers gehen verloren.\n\
+\n\
+Wollen Sie den Benutzer wirklich löschen?
 ; All messages, folders and configuration\n\
-; files belonging to this user will be lost!\n\
+; files belonging to this user will be lost.\n\
 ; \n\
 ; Do you really want to remove the user?
 ;
@@ -5489,8 +5492,8 @@ Standard
 ;
 ; Obsolete
 MSG_ER_PGPMultipart
-Fehler beim Erzeugen der mehrteiligen PGP-Nachricht. Verschlüsseln/Signieren deaktiviert!
-; Error creating multipart PGP message. Encrypting/signing disabled!
+Fehler beim Erzeugen der mehrteiligen PGP-Nachricht. Verschlüsseln/Signieren deaktiviert.
+; Error creating multipart PGP message. Encrypting/signing disabled.
 ;
 MSG_RE_FixedFont
 Schrift fester Breite
@@ -5710,8 +5713,8 @@ MSG_SEARCHNOTFOUND_MSG
 ; '%s' not found.
 ;
 MSG_WR_ERRORNOSENDER
-Die Nachricht ist nicht vollständig: Kein Absender!
-; Mail is incomplete: no sender!
+Die Nachricht ist nicht vollständig: Kein Absender.
+; Mail is incomplete: no sender.
 ;
 MSG_WR_NOSENDERREQGAD
 Standardabsender _verwenden|*Abbru_ch
@@ -5803,8 +5806,8 @@ E-Mails im Postfach automatisch zu finden.
 ; first 5 emails in the folder.
 ;
 MSG_FO_NOTRECOGNIZED
-Keine Erkennung!
-; Couldn't be recognized!
+Keine Erkennung.
+; Couldn't be recognized.
 ;
 MSG_FO_MAXAGEFMT
 %ld Tage
@@ -7505,7 +7508,7 @@ MSG_ER_USER_UNKNOWN_BUTTON
 *_Ok
 ;
 MSG_ER_USER_UNKNOWN_ERROR
-Der Benutzer '%s' ist nicht bekannt!
+Der Benutzer '%s' ist nicht bekannt.
 ;
 MSG_HELP_CO_CA_COLSIG
 Die Farbe, die zum Darstellen der Signatur\n\
@@ -7521,7 +7524,7 @@ Wollen Sie das Markieren von neuen Spam-Nachrichten als\n\
 gelesen deaktivieren?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE
-Kann Semaphore nicht erstellen!
+Kann Semaphore nicht erstellen.
 ;
 MSG_MA_AUTOSAVEFOUND_BUTTONS
 *In _Postausgang legen|_Editieren|_Löschen|_Ignorieren
@@ -8416,7 +8419,7 @@ Die Datei '%s' existiert bereits.\n\
 Soll sie überschrieben werden?
 ;
 MSG_ER_USER_DIR_MISSING
-Das Verzeichnis '%s' des Benutzers '%s' existiert nicht!
+Das Verzeichnis '%s' des Benutzers '%s' existiert nicht.
 ;
 MSG_CO_TEXTCOLORS_READ
 Te_xtfarben benutzen
@@ -8490,7 +8493,7 @@ Das Geburtstagsdatum ist im falschen Format. Das korrekte Format ist '%s'.\n\
 %%m - Monat\n\
 %%y - Jahr (2-stellig)\n\
 %%Y - Jahr (4-stellig)\n\
-Die Jahreszahl muss größer oder gleich 1900 sein!
+Die Jahreszahl muss größer oder gleich 1900 sein.
 ;
 MSG_CO_PGPURL
 URL des öffentliches PGP-Schlüssels
@@ -8523,7 +8526,7 @@ MSG_RE_DEFAULT_MIMEPART_NAME
 Teil %ld.%ld
 ;
 MSG_OPEN_WRITEWINDOWS
-Es sind noch Schreibfenster geöffnet!\n\
+Es sind noch Schreibfenster geöffnet.\n\
 \n\
 Wie wollen Sie fortfahren?
 ;
@@ -8568,8 +8571,8 @@ MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 _Dieses Fenster heute nicht nochmal anzeigen.
 ;
 MSG_TR_NEW_MAIL_NOTIFY_ONE
-1 neue Nachricht empfangen!
+1 neue Nachricht empfangen.
 ;
 MSG_TR_NEW_MAIL_NOTIFY_MANY
-%ld neue Nachrichten empfangen!
+%ld neue Nachrichten empfangen.
 ;
