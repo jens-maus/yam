@@ -14,6 +14,8 @@ $URL$
     wording of the sentence and into the presentation of the GUI. All
     translators should also go through their translations now and make
     sure to sync them to what is used in YAM.cd.
+  * extrasrc/ExamineDir.c,h: fixed compilation by adding the missing EAD
+    defines and corrected its usage accordingly.
 
 2010-07-20 Thore Böckelmann <tboeckel@gmx.de>
 

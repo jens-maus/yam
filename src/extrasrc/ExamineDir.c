@@ -93,6 +93,7 @@ APTR ObtainDirContext(struct TagItem *tags)
 
             // we have no information obtained yet
             ctx->eaData = NULL;
+
             // start with a faked yet unterminated but still successful call to ExAll()
             ctx->more = 1;
             ctx->exAllError = ERROR_NO_MORE_ENTRIES;
@@ -201,13 +202,15 @@ struct ExamineData *ExamineDir(APTR context)
     // copy over the data we might be interested in
     ed->Name = isFlagSet(ctx->dataFields, EXF_NAME) ? ctx->eaData->ed_Name : NULL;
     ed->FileSize = ctx->eaData->ed_Size;
+
     // convert the ExAll() type to ExamineDir() style
-    if(EAD_IS_FILE(ctx->eaData->ed_Type))
+    if(EAD_IS_FILE(ctx->eaData))
       ed->Type = FSO_TYPE_FILE;
-    else if(EAD_IS_DRAWER(ctx->eaData->ed_Type))
+    else if(EAD_IS_DRAWER(ctx->eaData))
       ed->Type = FSO_TYPE_DIRECTORY;
-    else if(EAD_IS_SOFTLINK(ctx->eaData->ed_Type))
+    else if(EAD_IS_SOFTLINK(ctx->eaData))
       ed->Type = FSO_TYPE_SOFTLINK;
+
     SHOWVALUE(DBF_FOLDER, ed->Type);
     SHOWVALUE(DBF_FOLDER, ed->FileSize);
     SHOWSTRING(DBF_FOLDER, ed->Name);
