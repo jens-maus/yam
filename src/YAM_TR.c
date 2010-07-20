@@ -7051,8 +7051,14 @@ static void TR_NewMailAlert(void)
       {
         // 128 chars is the current maximum :(
         char message[128];
+        int count = stats->Downloaded - rr->Spam;
 
-        snprintf(message, sizeof(message), tr(MSG_TR_NEW_MAIL_NOTIFY), stats->Downloaded - rr->Spam);
+        // distinguish between single and multiple mails
+        if(count >= 2)
+          snprintf(message, sizeof(message), tr(MSG_TR_NEW_MAIL_NOTIFY_MANY), count);
+        else
+          strlcpy(message, tr(MSG_TR_NEW_MAIL_NOTIFY_ONE), sizeof(message));
+
         // We require 53.7+. From this version on proper tag values are used, hence there
         // is no need to distinguish between v1 and v2 interfaces here as we have to do for
         // other application.lib functions.

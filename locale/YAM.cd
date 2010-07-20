@@ -6890,10 +6890,6 @@ PGP key can be downloaded from. This URL\n\
 will then placed into a separate header\n\
 entry in every mail.
 ;
-MSG_TR_NEW_MAIL_NOTIFY (2148//)
-Received %ld new mails!
-; COUNT
-;
 MSG_CO_NOTIOS41SYSTEM (2149//)
 AmigaOS_4.1 notification system
 ;
@@ -6964,3 +6960,11 @@ Please make sure that the file is accessible and is a valid ARexx script.
 MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN (2166//)
 Do not show this requester today again.
 ;
+MSG_TR_NEW_MAIL_NOTIFY_ONE (2167//)
+Received 1 new mail!
+;
+MSG_TR_NEW_MAIL_NOTIFY_MANY (2168//)
+Received %ld new mails!
+; COUNT
+;
+
