@@ -13,9 +13,9 @@
 (set #def_lang_italian             $008)
 (set #def_lang_french              $010)
 (set #def_lang_greek               $020)
-(def #def_lang_dutch               $040)
-(def #def_lang_polish              $080)
-(def #def_lang_spanish             $100)
+(set #def_lang_dutch               $040)
+(set #def_lang_polish              $080)
+(set #def_lang_spanish             $100)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
