@@ -8,6 +8,8 @@ $URL$
 2010-07-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * Debug.c: added "tags" debug class to display complete tag lists.
+  * extrasrc/ExamineDir.c: make sure to set DOS' IoErr to ERROR_NO_MORE_ENTRIES
+    if that error code was not already returned by the ExAll() call.
 
 2010-07-20 Samir Hawamdeh <s.hawamdeh@tin.it>
 
