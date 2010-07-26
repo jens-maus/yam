@@ -50,6 +50,7 @@
 
 #include <stdarg.h>
 #include <stddef.h>
+#include <utility/tagitem.h>
 
 // debug classes
 #define DBC_CTRACE   (1<<0) // call tracing (ENTER/LEAVE etc.)
