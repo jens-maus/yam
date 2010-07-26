@@ -12,6 +12,9 @@ $URL$
     if that error code was not already returned by the ExAll() call.
   * YAM_MAf.c, YAM_UT.c, YAM_WR.c, mui/ThemeListGroup.c: output DOS' IoErr()
     value in case the ExamineDir() call failed.
+  * extrasrc/ExamineDir.c: added a proper ExAllEnd() call in case the looped
+    ExamineDir() call was aborted prematurely before.
+
 
 2010-07-20 Samir Hawamdeh <s.hawamdeh@tin.it>
 
