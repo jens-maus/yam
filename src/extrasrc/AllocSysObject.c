@@ -95,6 +95,8 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
   ENTER();
 
+  SHOWTAGS(tags);
+
   memFlags = GetTagData(ASO_MemoryOvr, 0, tags);
 
   tstate  = tags;
