@@ -14,7 +14,8 @@ $URL$
     value in case the ExamineDir() call failed.
   * extrasrc/ExamineDir.c: added a proper ExAllEnd() call in case the looped
     ExamineDir() call was aborted prematurely before.
-
+  * include/SDI_compiler.h: adapted IPTR and SIPTR definitions as the latest
+    MorphOS SDK already contains them.
 
 2010-07-20 Samir Hawamdeh <s.hawamdeh@tin.it>
 
