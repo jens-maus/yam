@@ -60,6 +60,7 @@
 #define DBC_ERROR    (1<<5) // error output     E()
 #define DBC_WARNING  (1<<6) // warning output   W()
 #define DBC_MTRACK   (1<<7) // memory tracking MEMTRACK/UNMEMTRACK()
+#define DBC_TAGS     (1<<8) // tag lists
 #define DBC_ALL      0xffffffff
 
 // debug flags
@@ -100,6 +101,7 @@ void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value,
 void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, const char *name, const char *file, unsigned long line);
 void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string, const char *name, const char *file, unsigned long line);
 void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const char *file, unsigned long line);
+void _SHOWTAGS(const char *file, unsigned long line, const struct TagItem *tags);
 void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, ...);
 void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, va_list args);
 void _STARTCLOCK(const char *file, unsigned long line);
@@ -122,6 +124,7 @@ void _FLUSH(void);
 #define SHOWPOINTER(f, p)     _SHOWPOINTER(DBC_REPORT, f, p, #p, __FILE__, __LINE__)
 #define SHOWSTRING(f, s)      _SHOWSTRING(DBC_REPORT, f, s, #s, __FILE__, __LINE__)
 #define SHOWMSG(f, m)         _SHOWMSG(DBC_REPORT, f, m, __FILE__, __LINE__)
+#define SHOWTAGS(t)           _SHOWTAGS(__FILE__, __LINE__, t)
 #define STARTCLOCK()          _STARTCLOCK(__FILE__, __LINE__)
 #define STOPCLOCK(f, m)       _STOPCLOCK(f, m, __FILE__, __LINE__)
 #define MEMTRACK(f, p, s)     _MEMTRACK(__FILE__, __LINE__, f, p, s)
@@ -536,6 +539,7 @@ void W(unsigned long f, const char *format, ...);
 #define SHOWPOINTER(f, p)     ((void)0)
 #define SHOWSTRING(f, s)      ((void)0)
 #define SHOWMSG(f, m)         ((void)0)
+#define SHOWTAGS(t)           ((void)0)
 #define STARTCLOCK()          ((void)0)
 #define STOPCLOCK(f, m)       ((void)0)
 #define MEMTRACK(f, p, s)     ((void)0)

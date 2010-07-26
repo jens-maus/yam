@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Debug.c: added "tags" debug class to display complete tag lists.
+
 2010-07-20 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italiano.ct: First compile with FlexCat 2.7 OS4 PPC!
