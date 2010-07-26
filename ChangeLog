@@ -16,6 +16,8 @@ $URL$
     ExamineDir() call was aborted prematurely before.
   * include/SDI_compiler.h: adapted IPTR and SIPTR definitions as the latest
     MorphOS SDK already contains them.
+  * Debug.h: modified the memory tracking macros for the MorphOS build to match
+    the non-debug definition. Otherwise wrong tag lists might be used.
 
 2010-07-20 Samir Hawamdeh <s.hawamdeh@tin.it>
 
