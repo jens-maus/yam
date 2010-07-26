@@ -264,6 +264,7 @@ DECLARE(Update)
   if((context = ObtainDirContextTags(EX_StringName, (ULONG)themesDir, TAG_DONE)) != NULL)
   {
     struct ExamineData *ed;
+    LONG error;
 
     // iterate through the entries of the Themes directory
     while((ed = ExamineDir(context)) != NULL)
@@ -307,8 +308,8 @@ DECLARE(Update)
         W(DBF_CONFIG, "unknown file '%s' in themes directory ignored", ed->Name);
     }
 
-    if(IoErr() != ERROR_NO_MORE_ENTRIES)
-      E(DBF_CONFIG, "ExamineDir() failed");
+    if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
+      E(DBF_CONFIG, "ExamineDir() failed, error %ld", error);
 
     // now we have to check which item we should set active
     if(xget(data->NL_THEMELIST, MUIA_NList_Entries) > 1)

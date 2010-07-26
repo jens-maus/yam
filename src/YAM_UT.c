@@ -1799,6 +1799,7 @@ LONG FileCount(const char *directory, const char *pattern)
     #endif
     {
       struct ExamineData *ed;
+      LONG error;
 
       while((ed = ExamineDir(context)) != NULL)
       {
@@ -1806,9 +1807,9 @@ LONG FileCount(const char *directory, const char *pattern)
         result++;
       }
 
-      if(IoErr() != ERROR_NO_MORE_ENTRIES)
+      if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
       {
-        E(DBF_ALWAYS, "FileCount failed");
+        E(DBF_ALWAYS, "FileCount() failed, error %ld", error);
         result = -1;
       }
 

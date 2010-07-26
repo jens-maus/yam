@@ -3126,6 +3126,7 @@ void CheckForAutoSaveFiles(void)
     #endif
     {
       struct ExamineData *ed;
+      LONG error;
 
       while((ed = ExamineDir(context)) != NULL)
       {
@@ -3202,8 +3203,8 @@ void CheckForAutoSaveFiles(void)
         }
       }
 
-      if(IoErr() != ERROR_NO_MORE_ENTRIES)
-        E(DBF_ALWAYS, "ExamineDir failed");
+      if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
+        E(DBF_ALWAYS, "ExamineDir() failed, error %ld", error);
 
       ReleaseDirContext(context);
     }

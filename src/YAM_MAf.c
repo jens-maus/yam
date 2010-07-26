@@ -709,7 +709,7 @@ static void MA_FlushIndex(struct Folder *folder, time_t minAccessTime)
   // on the actual folder or otherwise we risk to run into
   // problems.
   if((isSentFolder(folder) || isDefaultFolder(folder) == FALSE) &&
-     folder->LoadedMode == LM_VALID && 
+     folder->LoadedMode == LM_VALID &&
      (minAccessTime == 0 || minAccessTime >= folder->lastAccessTime) &&
      folder != FO_GetCurrentFolder())
   {
@@ -722,7 +722,7 @@ static void MA_FlushIndex(struct Folder *folder, time_t minAccessTime)
     folder->LoadedMode = LM_FLUSHED;
     CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
   }
- 
+
   LEAVE();
 }
 
@@ -2694,6 +2694,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
       if((context = ObtainDirContextTags(EX_StringName, (ULONG)GetFolderDir(folder), TAG_DONE)) != NULL)
       {
         struct ExamineData *ed;
+        LONG error;
         long processedFiles = 0;
         BOOL convertAllOld = FALSE;
         BOOL skipAllOld = FALSE;
@@ -2961,6 +2962,9 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
             }
           }
         }
+
+        if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
+          E(DBF_FOLDER, "ExamineDir() failed, error %ld", error);
 
         ReleaseDirContext(context);
       }
