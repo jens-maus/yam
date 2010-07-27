@@ -1717,6 +1717,15 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
       }
     }
 
+    // check for an error by ExamineDir() only if nothing else failed
+    if(result == TRUE)
+    {
+      LONG error;
+
+      if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
+        E(DBF_FOLDER, "ExamineDir() failed, error %ld", error);
+    }
+
     ReleaseDirContext(context);
 
     if(result == TRUE && DeleteFile(dir) == 0)
@@ -1787,7 +1796,7 @@ LONG FileCount(const char *directory, const char *pattern)
     ParsePatternNoCase(pattern, parsedPattern, parsedPatternSize);
 
     #if defined(__amigaos4__)
-    // dos.library before 52.17 as a small bug and needs a hook for the matching process
+    // dos.library before 52.17 has a small bug and needs a hook for the matching process
     if((context = ObtainDirContextTags(EX_StringName,  (ULONG)directory,
                                        EX_MatchString, (ULONG)parsedPattern,
                                        EX_MatchFunc,   LIB_VERSION_IS_AT_LEAST(DOSBase, 52, 17) ? NULL : &ExamineDirMatchHook,
