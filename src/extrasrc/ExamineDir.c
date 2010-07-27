@@ -172,36 +172,26 @@ struct ExamineData *ExamineDir(APTR context)
   ENTER();
 
   // did we reach the end of the buffer in the previous call?
-  if(ctx->eaData == NULL)
+  if(ctx->eaData == NULL && ctx->more != 0)
   {
-    if(ctx->more == 0)
-    {
-      // restore the error number of the last ExAll() call
-      SetIoErr(ctx->exAllError);
-    }
-    else
-    {
-      // then do another ExAll() call to get more data
-      ctx->more = ExAll(ctx->lock, ctx->eaBuffer, SIZE_EXALLBUF, ED_COMMENT, ctx->eaControl);
+    // then do another ExAll() call to get more data
+    ctx->more = ExAll(ctx->lock, ctx->eaBuffer, SIZE_EXALLBUF, ED_COMMENT, ctx->eaControl);
 
-      if(ctx->more == 0)
-      {
-        // preserve the error number of this last call, this will be restored later
-        // make sure to return "no more entries" in case the filesystem reported no error
-        if((ctx->exAllError = IoErr()) == 0)
-          ctx->exAllError = ERROR_NO_MORE_ENTRIES;
-      }
-      if(ctx->more != 0 || ctx->eaControl->eac_Entries > 0)
-      {
-        // either there is more outstanding data not yet fitting in our buffer (more != 0)
-        // or we got at least one entry to handle
-        ctx->eaData = ctx->eaBuffer;
-      }
+    // preserve the error number of this last call, this will be restored later
+    // make sure to return "no more entries" in case the filesystem reported no error
+    if((ctx->exAllError = IoErr()) == 0)
+      ctx->exAllError = ERROR_NO_MORE_ENTRIES;
 
-      SHOWVALUE(DBF_FOLDER, ctx->more);
-      SHOWVALUE(DBF_FOLDER, ctx->exAllError);
-      SHOWVALUE(DBF_FOLDER, ctx->eaControl->eac_Entries);
+    if(ctx->more != 0 || ctx->eaControl->eac_Entries > 0)
+    {
+      // either there is more outstanding data not yet fitting in our buffer (more != 0)
+      // or we got at least one entry to handle
+      ctx->eaData = ctx->eaBuffer;
     }
+
+    SHOWVALUE(DBF_FOLDER, ctx->more);
+    SHOWVALUE(DBF_FOLDER, ctx->exAllError);
+    SHOWVALUE(DBF_FOLDER, ctx->eaControl->eac_Entries);
   }
 
   if(ctx->eaData != NULL && ctx->eaControl->eac_Entries > 0)
@@ -227,6 +217,12 @@ struct ExamineData *ExamineDir(APTR context)
 
     // and advance to the next item for the next call
     ctx->eaData = ctx->eaData->ed_Next;
+  }
+
+  if(ctx->eaData == NULL && ctx->more == 0)
+  {
+    // restore the error number of the last ExAll() call
+    SetIoErr(ctx->exAllError);
   }
 
   RETURN(ed);
