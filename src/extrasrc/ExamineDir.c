@@ -121,7 +121,7 @@ APTR ObtainDirContext(struct TagItem *tags)
 ///
 /// ObtainDirContextTags
 // varargs implementation of ObtainDirContext()
-#if !defined(PPC)
+#if !defined(__PPC__)
 APTR VARARGS68K ObtainDirContextTags(ULONG tag1, ...)
 {
   return ObtainDirContext((APTR)&tag1);

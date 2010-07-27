@@ -507,7 +507,7 @@ done:
 ///
 /// AllocSysObjectTags
 // varargs stub for AllocSysObject() for 68k
-#if !defined(PPC)
+#if !defined(__PPC__)
 APTR VARARGS68K AllocSysObjectTags(ULONG type, ...)
 {
   VA_LIST args;

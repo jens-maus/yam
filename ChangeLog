@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-27 Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc.h, extrasrc/ExamineDir.c, extrasrc/AllocSysObject.c: replaced
+    incorrectly used "PPC" defines with the correct "__PPC__" ones. This was
+    indeed the reason why the MorphOS compile showed a strange behaviour when
+    running the index rescanning after having switched to MOS 2.5 SDK. This
+    should finally fix #173.
+
 2010-07-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/ExamineDir.c: yet another fix to make sure that the IoErr() value
