@@ -1484,7 +1484,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      strcmp(c1->UpdateServer,        c2->UpdateServer) == 0 &&
      strcmp(c1->DefaultReadCharset,  c2->DefaultReadCharset) == 0 &&
      strcmp(c1->DefaultWriteCharset, c2->DefaultWriteCharset) == 0 &&
-     strcmp(c1->IOCInterface,        c2->IOCInterface) == 0 &&
+     strcmp(c1->IOCInterfaces,       c2->IOCInterfaces) == 0 &&
      strcmp(c1->AppIconText,         c2->AppIconText) == 0 &&
      strcmp(c1->InfoBarText,         c2->InfoBarText) == 0 &&
      strcmp(c1->DefaultMimeViewer,   c2->DefaultMimeViewer) == 0 &&

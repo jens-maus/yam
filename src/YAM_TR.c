@@ -1163,6 +1163,143 @@ static BOOL TR_InitSMTPAUTH(void)
 ///
 
 /*** General connecting/disconnecting & transfer ***/
+/// CheckSingleInterface
+// checks a single interface to be online
+enum TCPIPStack
+{
+  TCPIP_Generic = 0,
+  TCPIP_RoadShow,
+  TCPIP_Miami,
+  TCPIP_Genesis
+};
+
+static BOOL CheckSingleInterface(const char *iface, const int tcpipStack, const struct Library *stackBase)
+{
+  BOOL isOnline = FALSE;
+
+  ENTER();
+
+  #if defined(__amigaos4__)
+  switch(tcpipStack)
+  {
+    case TCPIP_Generic:
+    {
+      if(stackBase != NULL)
+      {
+        D(DBF_NET, "assuming interface '%s' to be up", iface);
+        isOnline = TRUE;
+      }
+    }
+    break;
+
+    case TCPIP_RoadShow:
+    {
+      LONG onlineState = 0;
+
+      if(QueryInterfaceTags((char *)iface, IFQ_State, &onlineState, TAG_END) == 0)
+      {
+        if(onlineState == SM_Up)
+        {
+          D(DBF_NET, "found RoadShow interface '%s' to be UP", iface);
+          isOnline = TRUE;
+        }
+        else
+          W(DBF_NET, "found RoadShow interface '%s' to be DOWN", iface);
+      }
+      else
+        E(DBF_NET, "couldn't query interface status. Unknown interface.");
+    }
+    break;
+  }
+  #else
+  #if !defined(__AROS__)
+  switch(tcpipStack)
+  {
+    case TCPIP_Generic:
+    {
+      if(stackBase != NULL)
+      {
+        D(DBF_NET, "assuming interface '%s' to be up", iface);
+        isOnline = TRUE;
+      }
+    }
+    break;
+
+    case TCPIP_Miami:
+    {
+      struct Library *MiamiBase = (struct Library *)stackBase;
+
+      if(MiamiIsOnline(iface[0] != '\0' ? (char *)iface : NULL))
+      {
+        D(DBF_NET, "found Miami interface '%s' to be UP", iface);
+        isOnline = TRUE;
+      }
+      else
+        W(DBF_NET, "found Miami interface '%s' to be DOWN", iface);
+    }
+    break;
+
+    case TCPIP_Genesis:
+    {
+      struct Library *GenesisBase = (struct Library *)stackBase;
+
+      if(IsOnline(iface[0] != '\0' ? (long)iface : 0))
+      {
+        D(DBF_NET, "found Genesis interface '%s' to be UP", iface);
+        isOnline = TRUE;
+      }
+      else
+        W(DBF_NET, "found Genesis interface '%s' to be DOWN", iface);
+    }
+    break;
+  }
+  #endif // !__AROS__
+  #endif // __amigaos4__
+
+  RETURN(isOnline);
+  return isOnline;
+}
+
+///
+/// CheckAllInterfaces
+// check if any of the given interfaces is online
+static BOOL CheckAllInterfaces(const int tcpipStack, const struct Library *stackBase)
+{
+  BOOL anyIsOnline = FALSE;
+  char *ifaces;
+
+  // duplicate the interfaces setting and split it into its parts
+  if((ifaces = strdup(C->IOCInterfaces)) != NULL)
+  {
+    char *iface = ifaces;
+    char *next;
+
+    do
+    {
+      if((next = strpbrk(iface, ",")) != NULL)
+        *next++ = '\0';
+
+      // check every single interface to be online and
+      // bail out as soon as we found an active interface
+      D(DBF_NET, "checking interface '%s'", iface);
+      if(CheckSingleInterface(iface, tcpipStack, stackBase) == TRUE)
+      {
+        anyIsOnline = TRUE;
+        break;
+      }
+
+      iface = next;
+    }
+    while(iface != NULL);
+
+    free(ifaces);
+  }
+
+  RETURN(anyIsOnline);
+  return anyIsOnline;
+}
+
+///
 /// TR_IsOnline
 //  Checks if there's an online connection
 BOOL TR_IsOnline(void)
@@ -1199,7 +1336,7 @@ BOOL TR_IsOnline(void)
         // in case the user hasn't specified a specific
         // interface or set that the online check for a specific
         // interface should be disabled we just do a general query
-        if(C->IsOnlineCheck == FALSE || C->IOCInterface[0] == '\0')
+        if(C->IsOnlineCheck == FALSE || C->IOCInterfaces[0] == '\0')
         {
           ULONG status = 0;
 
@@ -1213,34 +1350,22 @@ BOOL TR_IsOnline(void)
         }
         else if(SocketBaseTags(SBTM_GETREF(SBTC_HAVE_INTERFACE_API), &hasInterfaceAPI, TAG_END) == 0)
         {
-          LONG onlineState = 0;
-
           // now that we know that we have an interface API, we can
-          // go and query the interface if it is up&running correctly.
-          if(QueryInterfaceTags(C->IOCInterface, IFQ_State, &onlineState, TAG_END) == 0)
-          {
-            if(onlineState == SM_Up)
-            {
-              D(DBF_NET, "found interface '%s' to be UP", C->IOCInterface);
-              isonline = TRUE;
-            }
-            else
-              W(DBF_NET, "found interface '%s' to be DOWN", C->IOCInterface);
-          }
-          else
-            E(DBF_NET, "couldn't query interface status. Unknown interface.");
+          // go and query the interfaces if any of these is up&running
+          // correctly.
+          isonline = CheckAllInterfaces(TCPIP_RoadShow, SocketBase);
         }
         else
           E(DBF_NET, "couldn't query TCP/IP stack's interface API.");
 
         // drop the interface if required
-        if(closeSocket)
+        if(closeSocket == TRUE)
           DROPINTERFACE(ISocket);
       }
     }
 
     // check if we have to close the socket or not.
-    if(closeSocket)
+    if(closeSocket == TRUE)
     {
       CloseLibrary(SocketBase);
       SocketBase = NULL;
@@ -1248,40 +1373,47 @@ BOOL TR_IsOnline(void)
   }
   #else
   #if !defined(__AROS__)
-  if(C->IsOnlineCheck)
+  if(C->IsOnlineCheck == TRUE)
   {
     struct Library *MiamiBase;
     struct Library *GenesisBase;
 
-    if((MiamiBase = OpenLibrary("miami.library", 10L)))
+    if((MiamiBase = OpenLibrary("miami.library", 10L)) != NULL)
     {
       D(DBF_NET, "identified Miami TCP/IP stack");
 
-      isonline = MiamiIsOnline(C->IOCInterface[0] != '\0' ? C->IOCInterface : NULL);
+      isonline = CheckAllInterfaces(TCPIP_Miami, MiamiBase);
 
       CloseLibrary(MiamiBase);
       MiamiBase = NULL;
     }
-    else if((GenesisBase = OpenLibrary("genesis.library", 1L)))
+    else if((GenesisBase = OpenLibrary("genesis.library", 1L)) != NULL)
     {
       D(DBF_NET, "identified Genesis TCP/IP stack");
 
-      isonline = IsOnline(C->IOCInterface[0] != '\0' ? (long)C->IOCInterface : 0);
+      isonline = CheckAllInterfaces(TCPIP_Genesis, GenesisBase);
 
       CloseLibrary(GenesisBase);
       GenesisBase = NULL;
     }
     else if(SocketBase == NULL)
     {
-      if((SocketBase = OpenLibrary("bsdsocket.library", 2L)))
+      if((SocketBase = OpenLibrary("bsdsocket.library", 2L)) != NULL)
       {
+        D(DBF_NET, "identified generic TCP/IP stack with bsdsocket.library v2+");
+
+        isonline = CheckAllInterfaces(TCPIP_Generic, SocketBase);
+
         CloseLibrary(SocketBase);
         SocketBase = NULL;
-        isonline = TRUE;
       }
     }
     else if(LIB_VERSION_IS_AT_LEAST(SocketBase, 2, 0) == TRUE)
-      isonline = TRUE;
+    {
+      D(DBF_NET, "identified generic TCP/IP stack with bsdsocket.library v2+");
+
+      isonline = CheckAllInterfaces(TCPIP_Generic, SocketBase);
+    }
   }
   else
   #endif
@@ -1292,16 +1424,17 @@ BOOL TR_IsOnline(void)
     // minimum version of 2 or not.
     if((SocketBase = OpenLibrary("bsdsocket.library", 2L)) != NULL)
     {
+      isonline = CheckAllInterfaces(TCPIP_Generic, SocketBase);
+
       CloseLibrary(SocketBase);
       SocketBase = NULL;
-      isonline = TRUE;
     }
   }
   else if(LIB_VERSION_IS_AT_LEAST(SocketBase, 2, 0) == TRUE)
-    isonline = TRUE;
+    isonline = CheckAllInterfaces(TCPIP_Generic, SocketBase);
   #endif
 
-  D(DBF_NET, "Found the TCP/IP stack to be %s", isonline ? "ONLINE" : "OFFLINE");
+  D(DBF_NET, "found the TCP/IP stack to be %s", isonline ? "ONLINE" : "OFFLINE");
 
   RETURN(isonline);
   return isonline;
@@ -1314,15 +1447,15 @@ void TR_CloseTCPIP(void)
 {
   ENTER();
 
-  if(AmiSSLBase)
+  if(AmiSSLBase != NULL)
     CleanupAmiSSLA(NULL);
 
   #if defined(__amigaos4__)
-  if(ISocket)
+  if(ISocket != NULL)
     DROPINTERFACE(ISocket);
   #endif
 
-  if(SocketBase)
+  if(SocketBase != NULL)
   {
     CloseLibrary(SocketBase);
     SocketBase = NULL;
@@ -1344,7 +1477,7 @@ BOOL TR_OpenTCPIP(void)
   // or not
   if(SocketBase == NULL)
   {
-    if((SocketBase = OpenLibrary("bsdsocket.library", 2L)))
+    if((SocketBase = OpenLibrary("bsdsocket.library", 2L)) != NULL)
     {
       if(GETINTERFACE("main", 1, ISocket, SocketBase))
         result = TRUE;

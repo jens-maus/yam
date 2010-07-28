@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c, YAM_CO.c, YAM_COs.c: implemented a multiple interface check to be
+    able to specify more than just a single interface to be checked to be
+    online. It is now possible to provide a comma separated list of interfaces
+    to be checked in the advanced section of YAM's config (i.e. "eth0,ppp0").
+    This closes #39.
+
 2010-07-27 Jens Langner <Jens.Langner@light-speed.de>
 
   * extrasrc.h, extrasrc/ExamineDir.c, extrasrc/AllocSysObject.c: replaced

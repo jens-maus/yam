@@ -621,7 +621,7 @@ struct Config
   char UpdateServer[SIZE_HOST];
   char DefaultReadCharset[SIZE_CTYPE+1];
   char DefaultWriteCharset[SIZE_CTYPE+1];
-  char IOCInterface[SIZE_SMALL];
+  char IOCInterfaces[SIZE_LARGE];
   char AppIconText[SIZE_COMMAND];
   char InfoBarText[SIZE_COMMAND];
   char DefaultMimeViewer[SIZE_COMMAND];
