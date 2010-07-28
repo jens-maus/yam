@@ -570,7 +570,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "AskJumpUnread    = %s\n", Bool2Txt(co->AskJumpUnread));
     fprintf(fh, "PrinterCheck     = %s\n", Bool2Txt(co->PrinterCheck));
     fprintf(fh, "IsOnlineCheck    = %s\n", Bool2Txt(co->IsOnlineCheck));
-    fprintf(fh, "IOCInterfaces    = %s\n", co->IOCInterfaces);
+    fprintf(fh, "IOCInterface     = %s\n", co->IOCInterfaces);
     fprintf(fh, "ConfirmOnQuit    = %s\n", Bool2Txt(co->ConfirmOnQuit));
     fprintf(fh, "HideGUIElements  = %d\n", co->HideGUIElements);
     fprintf(fh, "SysCharsetCheck  = %s\n", Bool2Txt(co->SysCharsetCheck));
@@ -1355,8 +1355,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(stricmp(buf, "AskJumpUnread") == 0)    co->AskJumpUnread = Txt2Bool(value);
           else if(stricmp(buf, "PrinterCheck") == 0)     co->PrinterCheck = Txt2Bool(value);
           else if(stricmp(buf, "IsOnlineCheck") == 0)    co->IsOnlineCheck = Txt2Bool(value);
-          else if(stricmp(buf, "IOCInterface") == 0 ||
-                  stricmp(buf, "IOCInterfaces") == 0)    strlcpy(co->IOCInterfaces, value, sizeof(co->IOCInterfaces));
+          else if(stricmp(buf, "IOCInterface") == 0)     strlcpy(co->IOCInterfaces, value, sizeof(co->IOCInterfaces));
           else if(stricmp(buf, "ConfirmOnQuit") == 0)    co->ConfirmOnQuit = Txt2Bool(value);
           else if(stricmp(buf, "HideGUIElements") == 0)  co->HideGUIElements = atoi(value);
           else if(stricmp(buf, "SysCharsetCheck") == 0)  co->SysCharsetCheck = Txt2Bool(value);
