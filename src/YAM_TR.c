@@ -1273,7 +1273,7 @@ static BOOL CheckAllInterfaces(const enum TCPIPStack tcpipStack, const struct Li
       // check every single interface to be online and
       // bail out as soon as we found an active interface
       D(DBF_NET, "checking interface '%s'", iface);
-      if(CheckSingleInterface(iface, tcpipStack, stackBase) == TRUE)
+      if(CheckSingleInterface(Trim(iface), tcpipStack, stackBase) == TRUE)
       {
         anyIsOnline = TRUE;
         break;
