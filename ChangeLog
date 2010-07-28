@@ -16,6 +16,8 @@ $URL$
 
 2010-07-28 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: variables passed to SocketBaseTags() must be full 32bit wide,
+    otherwise some information might get lost.
   * YAM_TR.c: allow space separated interface names aswell as the single names
     must not contain space characters at all.
   * YAM_TR.c, YAM_CO.c, YAM_COs.c: implemented a multiple interface check to be
