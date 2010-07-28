@@ -7,6 +7,8 @@ $URL$
 
 2010-07-28 Jens Langner <Jens.Langner@light-speed.de>
 
+  * STYLEGUIDE: added a section on "enum" types and the use of "const" wherever
+    possible.
   * YAM_TR.c: added Trim() operation to the execution of CheckSingleInterface().
     This addresses some latest concerns regarding the implementation, see #39. 
   * YAM_TR.c: slightly optimized the CheckSingleInterface() and all other

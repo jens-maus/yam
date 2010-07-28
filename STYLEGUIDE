@@ -163,7 +163,7 @@ or
 6. return
 ---------
 
-A function should only have an exit point at the end of that function.
+A function should only have AN exit point at the end of that function.
 An exception to this rule is resource allocation or similar sanity checks
 placed at the beginning of the function (at outermost scope). Here one can
 immediately return a failure. Example:
@@ -178,7 +178,7 @@ immediately return a failure. Example:
     return res;
   }
 
-The rule says »...*an* exit point at the end« rather than *one*. This allows
+The rule says »...*AN* exit point at the end« rather than *one*. This allows
 to make a function with several exit points all placed at the end, like this:
 
   BOOL IsWhitespace(char *character)
@@ -189,7 +189,7 @@ to make a function with several exit points all placed at the end, like this:
       return FALSE;
   }
 
-Just for the record, return is a flow-control-directive similar to case,
+Just for the record: return is a flow-control-directive similar to case,
 break, continue and goto, and therefore the value provided should not be
 enclosed between parenthesis.
 
@@ -217,8 +217,51 @@ statements in your code and keep on using the native types.
 
 ############################################################################
 
-9. switch/case
---------------
+9. Use "enum" types wherever possible
+-------------------------------------
+
+Instead of using a plain "int" type variable, enumeration types (enum)
+should be preferred. Even for local status variables enums should be
+preferred over plain "int" status variables. So, by no means you should use
+an integer to keep the status of a certain operation.
+
+So, DON'T do something like:
+
+  BOOL IsRed(int color)
+  {
+    if(color == 0)
+      return TRUE;
+  }
+    
+A proper version of the same function would be:
+
+  BOOL IsRed(enum Color color)
+  {
+    if(color == CL_Red)
+      return TRUE;
+  }
+  
+In addition you should also use enum types in function definitions and don't
+simply define them as an "int" variables.
+
+So, DON'T do something like:
+
+  BOOL IsRed(int color)
+  {
+    if(color == CL_Red)
+      return TRUE;
+  }
+
+But use "enum Color color" as shown in the second example above. By using
+enum types in your functions you make it more easy for a developer to
+understand and track the meaning of the variable. In addition, by using
+enum types in functions you will allow the compiler to warn you in case
+you may have forgotten to catch a use case (e.g. in switch statements).
+
+############################################################################
+
+10. switch/case
+---------------
 
 A switch case looks like this:
 
@@ -277,7 +320,7 @@ switch/case sequence. Example:
 
 ############################################################################
 
-10. Variables
+11. Variables
 -------------
 
 Variables should generally have as meaningful names as possible. Avoid
@@ -347,7 +390,43 @@ Some examples:
 
 ############################################################################
 
-11. Custom Class naming
+12. Use "const" on variables whereever possible
+-----------------------------------------------
+
+By using "const" on variable definitions you give the compiler an additional
+hint on the usage of these variables. For modern compilers, this allows to
+tune the optimization and not only make faster code but also provides
+a more secure environment. While this will allow the compiler to warn you
+(as the developer) on cases where you might have accidently accessed the
+variable in write mode, it will also allow the compiler to move the data
+section of that variable into the read-only part of the executable and thus
+make it secure for external modifications.
+
+Therefore, whereever possible you should use "const" on variables from which
+you know will never change their content.
+
+So, instead of doing something like:
+
+  BOOL IsRed(enum Color color)
+  {
+    if(color == CL_Red)
+      return TRUE;
+  }
+ 
+You should define the function like:
+
+  BOOL IsRed(const enum Color color)
+  {
+    if(color == CL_Red)
+      return TRUE;
+  }
+ 
+This will allow the compiler to warn you in case you are trying to
+do some local modifications to the "color" variable.
+
+############################################################################
+
+13. Custom Class naming
 -----------------------
 
 Since we manage our own MUI custom classes in the 'src/classes' directory
@@ -369,7 +448,7 @@ Example: "ReadMailGroup" instead of "ReadMailClass"
 
 ############################################################################
 
-12. Types
+14. Types
 ---------
 
 We mostly use standard C-types wherever possible. This is 'char *' for
@@ -405,7 +484,7 @@ as opposed to:
 
 ############################################################################
 
-13. Taglists
+15. Taglists
 ------------
 
 When providing taglists, one can either put all tags on the same line
@@ -429,7 +508,7 @@ example:
 
 ############################################################################
 
-14. ANSI-C vs. AmigaOS
+16. ANSI-C vs. AmigaOS
 ----------------------
 
 As a general rule: Use the ANSI-C functions like memcpy, malloc etc.
@@ -442,7 +521,7 @@ this styleguide.
 
 ############################################################################
 
-15. Comments
+17. Comments
 ------------
 
 A general rule for commenting is: Comment as much as possible while you
@@ -456,7 +535,7 @@ wherever possible.
 
 ############################################################################
 
-16. Debugging statements
+18. Debugging statements
 ------------------------
 
 As we recently implemented a very flexible runtime debugging functions in
@@ -513,7 +592,7 @@ meant to be usefull during debugging.
 
 ############################################################################
 
-17. Obsolete string functions
+19. Obsolete string functions
 -----------------------------
 
 A simple rules is: In any event, try to avoid to use one of the following
@@ -539,7 +618,7 @@ buffer overflows.
 
 ############################################################################
 
-18. Avoid the use of MUIA_ShowMe
+20. Avoid the use of MUIA_ShowMe
 --------------------------------
 
 It is known, that the use of MUIA_ShowMe may cause trouble with older MUI
@@ -555,7 +634,7 @@ removed (hided) and added (shown) by using there Group method calls instead
 
 ############################################################################
 
-19. Do NOT use GetAttr() or SetAttrs()
+21. Do NOT use GetAttr() or SetAttrs()
 ---------------------------------------
 
 A common mistake when programming BOOPSI classes is to either forget to
@@ -573,7 +652,7 @@ equivalent xget/xset calls.
 
 ############################################################################
 
-20. Prefer AllocSysObject(), AllocDosObject() like functions
+22. Prefer AllocSysObject(), AllocDosObject() like functions
 ------------------------------------------------------------
 
 As with newer operating system versions certain new functionality regarding
@@ -590,7 +669,7 @@ job!
 
 ############################################################################
 
-21. Use forward declarations - keep the header files (*.h) clean!
+23. Use forward declarations - keep the header files (*.h) clean!
 -----------------------------------------------------------------
 
 To keep the header files - and especially the way '#include' statements are
