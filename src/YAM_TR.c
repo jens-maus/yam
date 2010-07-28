@@ -1270,13 +1270,16 @@ static BOOL CheckAllInterfaces(const enum TCPIPStack tcpipStack, const struct Li
       if((next = strpbrk(iface, ", ")) != NULL)
         *next++ = '\0';
 
-      // check every single interface to be online and
-      // bail out as soon as we found an active interface
-      D(DBF_NET, "checking interface '%s'", iface);
-      if(CheckSingleInterface(iface, tcpipStack, stackBase) == TRUE)
+      if(iface[0] != '\0')
       {
-        anyIsOnline = TRUE;
-        break;
+        // check every single interface to be online and
+        // bail out as soon as we found an active interface
+        D(DBF_NET, "checking interface '%s'", iface);
+        if(CheckSingleInterface(iface, tcpipStack, stackBase) == TRUE)
+        {
+          anyIsOnline = TRUE;
+          break;
+        }
       }
 
       iface = next;
