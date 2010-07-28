@@ -10,12 +10,14 @@ $URL$
   * STYLEGUIDE: added a section on "enum" types and the use of "const" wherever
     possible.
   * YAM_TR.c: added Trim() operation to the execution of CheckSingleInterface().
-    This addresses some latest concerns regarding the implementation, see #39. 
+    This addresses some latest concerns regarding the implementation, see #39.
   * YAM_TR.c: slightly optimized the CheckSingleInterface() and all other
     corresponding functions regarding interface online checking.
 
 2010-07-28 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: allow space separated interface names aswell as the single names
+    must not contain space characters at all.
   * YAM_TR.c, YAM_CO.c, YAM_COs.c: implemented a multiple interface check to be
     able to specify more than just a single interface to be checked to be
     online. It is now possible to provide a comma separated list of interfaces
