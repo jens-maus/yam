@@ -1173,13 +1173,12 @@ enum TCPIPStack
   TCPIP_Genesis
 };
 
-static BOOL CheckSingleInterface(const char *iface, const int tcpipStack, const struct Library *stackBase)
+static BOOL CheckSingleInterface(const char *iface, const enum TCPIPStack tcpipStack, const struct Library *stackBase)
 {
   BOOL isOnline = FALSE;
 
   ENTER();
 
-  #if defined(__amigaos4__)
   switch(tcpipStack)
   {
     case TCPIP_Generic:
@@ -1194,6 +1193,7 @@ static BOOL CheckSingleInterface(const char *iface, const int tcpipStack, const 
 
     case TCPIP_RoadShow:
     {
+      #if defined(__amigaos4__)
       LONG onlineState = 0;
 
       if(QueryInterfaceTags((char *)iface, IFQ_State, &onlineState, TAG_END) == 0)
@@ -1208,25 +1208,13 @@ static BOOL CheckSingleInterface(const char *iface, const int tcpipStack, const 
       }
       else
         E(DBF_NET, "couldn't query interface status. Unknown interface.");
-    }
-    break;
-  }
-  #else
-  #if !defined(__AROS__)
-  switch(tcpipStack)
-  {
-    case TCPIP_Generic:
-    {
-      if(stackBase != NULL)
-      {
-        D(DBF_NET, "assuming interface '%s' to be up", iface);
-        isOnline = TRUE;
-      }
+      #endif
     }
     break;
 
     case TCPIP_Miami:
     {
+      #if !defined(__amigaos4__) && !defined(__AROS__)
       struct Library *MiamiBase = (struct Library *)stackBase;
 
       if(MiamiIsOnline(iface[0] != '\0' ? (char *)iface : NULL))
@@ -1236,11 +1224,13 @@ static BOOL CheckSingleInterface(const char *iface, const int tcpipStack, const 
       }
       else
         W(DBF_NET, "found Miami interface '%s' to be DOWN", iface);
+      #endif
     }
     break;
 
     case TCPIP_Genesis:
     {
+      #if !defined(__amigaos4__) && !defined(__AROS__)
       struct Library *GenesisBase = (struct Library *)stackBase;
 
       if(IsOnline(iface[0] != '\0' ? (long)iface : 0))
@@ -1250,11 +1240,10 @@ static BOOL CheckSingleInterface(const char *iface, const int tcpipStack, const 
       }
       else
         W(DBF_NET, "found Genesis interface '%s' to be DOWN", iface);
+      #endif
     }
     break;
   }
-  #endif // !__AROS__
-  #endif // __amigaos4__
 
   RETURN(isOnline);
   return isOnline;
@@ -1263,10 +1252,12 @@ static BOOL CheckSingleInterface(const char *iface, const int tcpipStack, const 
 ///
 /// CheckAllInterfaces
 // check if any of the given interfaces is online
-static BOOL CheckAllInterfaces(const int tcpipStack, const struct Library *stackBase)
+static BOOL CheckAllInterfaces(const enum TCPIPStack tcpipStack, const struct Library *stackBase)
 {
   BOOL anyIsOnline = FALSE;
   char *ifaces;
+
+  ENTER();
 
   // duplicate the interfaces setting and split it into its parts
   if((ifaces = strdup(C->IOCInterfaces)) != NULL)
@@ -1348,7 +1339,8 @@ BOOL TR_IsOnline(void)
           else
             E(DBF_NET, "couldn't query TCP/IP stack for its system status.");
         }
-        else if(SocketBaseTags(SBTM_GETREF(SBTC_HAVE_INTERFACE_API), &hasInterfaceAPI, TAG_END) == 0)
+        else if(SocketBaseTags(SBTM_GETREF(SBTC_HAVE_INTERFACE_API), &hasInterfaceAPI, TAG_END) == 0 &&
+                hasInterfaceAPI == TRUE)
         {
           // now that we know that we have an interface API, we can
           // go and query the interfaces if any of these is up&running
@@ -1371,7 +1363,11 @@ BOOL TR_IsOnline(void)
       SocketBase = NULL;
     }
   }
+  else
+    E(DBF_NET, "couldn't open bsdsocket.library v4");
+
   #else
+  
   #if !defined(__AROS__)
   if(C->IsOnlineCheck == TRUE)
   {
@@ -1416,7 +1412,7 @@ BOOL TR_IsOnline(void)
     }
   }
   else
-  #endif
+  #endif // !__AROS__
   if(SocketBase == NULL)
   {
     // if no online check was selected, we just do a simple library exists
@@ -1432,7 +1428,8 @@ BOOL TR_IsOnline(void)
   }
   else if(LIB_VERSION_IS_AT_LEAST(SocketBase, 2, 0) == TRUE)
     isonline = CheckAllInterfaces(TCPIP_Generic, SocketBase);
-  #endif
+
+  #endif // __amigaos4__
 
   D(DBF_NET, "found the TCP/IP stack to be %s", isonline ? "ONLINE" : "OFFLINE");
 

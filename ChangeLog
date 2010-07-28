@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-28 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c: slightly optimized the CheckSingleInterface() and all other
+    corresponding functions regarding interface online checking.
+
 2010-07-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c, YAM_CO.c, YAM_COs.c: implemented a multiple interface check to be
