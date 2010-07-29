@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.4 (29.07.2010)
+## version $VER: YAM.catalog 7.5 (29.07.2010)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8587,7 +8587,7 @@ Es sind keine Softwareupdates verfügbar.\n\
 %s
 ; HINT
 MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
-YAM prüft automatisch auf verfügbare Update.
+YAM prüft automatisch auf verfügbare Updates.
 ;
 MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
 Bitte versuchen Sie es später noch einmal oder\n\
