@@ -7,6 +7,9 @@ $URL$
 
 2010-07-29 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: an empty IOCInterface string caused YAM to assume that the TCP/IP
+    stack was offline. Hence empty strings are now treated as "TCP/IP online".
+    This closes #174.
   * UpdateCheck.c, YAM_MA.c: an update checktriggered by the user but without
     any new updates will no longer be quiet but instead inform the user. This
     closes #80.

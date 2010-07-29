@@ -1255,38 +1255,48 @@ static BOOL CheckSingleInterface(const char *iface, const enum TCPIPStack tcpipS
 static BOOL CheckAllInterfaces(const enum TCPIPStack tcpipStack, const struct Library *stackBase)
 {
   BOOL anyIsOnline = FALSE;
-  char *ifaces;
 
   ENTER();
 
-  // duplicate the interfaces setting and split it into its parts
-  if((ifaces = strdup(C->IOCInterfaces)) != NULL)
+  SHOWSTRING(DBF_NET, C->IOCInterfaces);
+  if(C->IOCInterfaces[0] != '\0')
   {
-    char *iface = ifaces;
-    char *next;
+    char *ifaces;
 
-    do
+    // duplicate the interfaces setting and split it into its parts
+    if((ifaces = strdup(C->IOCInterfaces)) != NULL)
     {
-      if((next = strpbrk(iface, ", ")) != NULL)
-        *next++ = '\0';
+      char *iface = ifaces;
+      char *next;
 
-      if(iface[0] != '\0')
+      do
       {
-        // check every single interface to be online and
-        // bail out as soon as we found an active interface
-        D(DBF_NET, "checking interface '%s'", iface);
-        if(CheckSingleInterface(iface, tcpipStack, stackBase) == TRUE)
+        if((next = strpbrk(iface, ", ")) != NULL)
+          *next++ = '\0';
+
+        if(iface[0] != '\0')
         {
-          anyIsOnline = TRUE;
-          break;
+          // check every single interface to be online and
+          // bail out as soon as we found an active interface
+          D(DBF_NET, "checking interface '%s'", iface);
+          if(CheckSingleInterface(iface, tcpipStack, stackBase) == TRUE)
+          {
+            anyIsOnline = TRUE;
+            break;
+          }
         }
+
+        iface = next;
       }
+      while(iface != NULL);
 
-      iface = next;
+      free(ifaces);
     }
-    while(iface != NULL);
-
-    free(ifaces);
+  }
+  else
+  {
+    // no interfaces configured, assume TCP/IP stack to be online
+    anyIsOnline = TRUE;
   }
 
   RETURN(anyIsOnline);
