@@ -1295,8 +1295,8 @@ static BOOL CheckAllInterfaces(const enum TCPIPStack tcpipStack, const struct Li
   }
   else
   {
-    // no interfaces configured, assume TCP/IP stack to be online
-    anyIsOnline = TRUE;
+    // check with no interface name
+    anyIsOnline = CheckSingleInterface("", tcpipStack, stackBase);
   }
 
   RETURN(anyIsOnline);
