@@ -7,6 +7,9 @@ $URL$
 
 2010-07-29 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MAf.c: jumping to a different entry in the mail list will now first
+    center the list view on this item before making it the active one. This
+    requires a yet unreleased version of NList.
   * YAM_TR.c: an empty IOCInterface string caused YAM to assume that the TCP/IP
     stack was offline. Hence empty strings are now treated as "TCP/IP online".
     This closes #174.

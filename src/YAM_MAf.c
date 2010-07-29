@@ -919,6 +919,7 @@ void MA_JumpToNewMsg(void)
     i += incr;
   }
 
+  DoMethod(lv, MUIM_NList_Jump, pos >= 0 ? pos : folder->LastActive);
   set(lv, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
 
   LEAVE();
@@ -957,6 +958,7 @@ void MA_JumpToRecentMsg(void)
     i++;
   }
 
+  DoMethod(lv, MUIM_NList_Jump, recentIdx >= 0 ? recentIdx : folder->LastActive);
   set(lv, MUIA_NList_Active, recentIdx >= 0 ? recentIdx : folder->LastActive);
 
   LEAVE();
