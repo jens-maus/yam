@@ -73,7 +73,6 @@
 #include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
-#include "UpdateCheck.h"
 
 #include "Debug.h"
 
@@ -812,9 +811,8 @@ HOOKPROTONHNONP(UpdateCheckFunc, void)
   // now we make sure the C and CE config structure is in sync again
   C->UpdateInterval = CE->UpdateInterval;
 
-  // perform the update check and update our open GUI
-  // elements accordingly.
-  CheckForUpdates();
+  // let the application check for updates
+  DoMethod(G->App, MUIM_YAM_UpdateCheck, FALSE);
 
   LEAVE();
 }

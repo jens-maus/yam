@@ -6688,7 +6688,7 @@ MSG_CO_LASTSTATUS_NOCHECK
 Keinerlei Updatechecks vorgenommen bis jetzt.
 ;
 MSG_CO_LASTSTATUS_NOUPDATE
-Keine neuen Software Updates waren verfügbar.
+Es waren keine neuen Softwareupdates verfügbar.
 ;
 MSG_CO_LASTSTATUS_NOQUERY
 Konnte Server nicht erreichen.
@@ -8578,4 +8578,18 @@ MSG_TR_NEW_MAIL_NOTIFY_MANY
 ;
 MSG_RE_SAVE_FILE
 Datei speichern
+;
+MSG_UPD_NO_UPDATES_FOUND_TITLE
+Keine Updates verfügbar
+;
+MSG_UPD_NO_UPDATES_FOUND
+Es sind keine Softwareupdates verfügbar.\n\
+%s
+; HINT
+MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
+YAM prüft automatisch auf verfügbare Update.
+;
+MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
+Bitte versuchen Sie es später noch einmal oder\n\
+aktivieren Sie die automatische Updateprüfung.
 ;

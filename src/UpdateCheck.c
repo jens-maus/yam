@@ -61,6 +61,7 @@
 
 #include "Locale.h"
 #include "MUIObjects.h"
+#include "Requesters.h"
 #include "UpdateCheck.h"
 
 #include "Debug.h"
@@ -78,7 +79,7 @@ static struct UpdateState LastUpdateState;
 /// InitUpdateCheck
 // initializes all update-check relevant stuff (during startup) so that
 // our autocheck is running properly.
-void InitUpdateCheck(BOOL initial)
+void InitUpdateCheck(const BOOL initial)
 {
   ENTER();
 
@@ -128,7 +129,7 @@ void InitUpdateCheck(BOOL initial)
 /// CheckForUpdates
 // contacts the 'update.yam.ch' HTTP server and asks for
 // specific updates.
-BOOL CheckForUpdates(void)
+BOOL CheckForUpdates(const BOOL quiet)
 {
   BOOL result = FALSE;
 
@@ -428,6 +429,10 @@ BOOL CheckForUpdates(void)
               {
                 // we didn't find any new updates
                 LastUpdateState.LastUpdateStatus = UST_NOUPDATE;
+
+                // show a requester if the check was triggered by the user
+                if(quiet == FALSE)
+                  MUI_Request(G->App, NULL, 0, tr(MSG_UPD_NO_UPDATES_FOUND_TITLE), tr(MSG_Okay), tr(MSG_UPD_NO_UPDATES_FOUND), (C->UpdateInterval > 0) ? tr(MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK) : tr(MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK));
               }
 
               // the updatecheck was successfull

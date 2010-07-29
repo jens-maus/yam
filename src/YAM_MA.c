@@ -72,7 +72,6 @@
 #include "mui/Classes.h"
 #include "mime/base64.h"
 
-#include "UpdateCheck.h"
 #include "HTML2Mail.h"
 #include "BayesFilter.h"
 #include "FileInfo.h"
@@ -3454,18 +3453,6 @@ HOOKPROTONHNONP(MA_ShowAboutWindowFunc, void)
 MakeStaticHook(MA_ShowAboutWindowHook, MA_ShowAboutWindowFunc);
 
 ///
-/// MA_CheckVersionFunc
-//  Checks YAM homepage for new program versions
-HOOKPROTONHNONP(MA_CheckVersionFunc, void)
-{
-  // we rather call CheckForUpdates() directly, we better
-  // issue the waiting timerequest with an interval of 1 micros so
-  // that it gets fired immediately
-  RestartTimer(TIMER_UPDATECHECK, 0, 1);
-}
-MakeStaticHook(MA_CheckVersionHook, MA_CheckVersionFunc);
-
-///
 /// MA_ShowErrorsFunc
 //  Opens error message window
 HOOKPROTONHNONP(MA_ShowErrorsFunc, void)
@@ -4465,7 +4452,7 @@ struct MA_ClassData *MA_New(void)
       set(data->GUI.NL_FOLDERS, MUIA_NList_KeyRightFocus, data->GUI.PG_MAILLIST);
 
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUT,          MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ShowAboutWindowHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_VERSION,        MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_CheckVersionHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_VERSION,        MUIV_Notify_Application, 2, MUIM_YAM_UpdateCheck,      FALSE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ERRORS,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ShowErrorsHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_LOGIN,          MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_RESTART);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HIDE,           MUIV_Notify_Application, 3, MUIM_Set,                  MUIA_Application_Iconified, TRUE);

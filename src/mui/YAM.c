@@ -38,6 +38,8 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 
+#include "UpdateCheck.h"
+
 #include "Debug.h"
 
 #define EMAILCACHENAME "PROGDIR:.emailcache"
@@ -637,6 +639,7 @@ OVERLOAD(OM_DISPOSE)
   // MUI free the rest for us.
   return DoSuperMethodA(cl, obj, msg);
 }
+
 ///
 /// OVERLOAD(OM_GET)
 OVERLOAD(OM_GET)
@@ -651,6 +654,7 @@ OVERLOAD(OM_GET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
 ///
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
@@ -708,4 +712,20 @@ OVERLOAD(OM_SET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
+///
+/// UpdateCheck
+DECLARE(UpdateCheck) // ULONG quiet
+{
+  // stop a possibly running timer
+  // the update check will reinitiate it if necessary
+  StopTimer(TIMER_UPDATECHECK);
+
+  // perform the update check and update our open GUI
+  // elements accordingly.
+  CheckForUpdates(msg->quiet);
+
+  return 0;
+}
+
 ///

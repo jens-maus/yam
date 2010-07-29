@@ -591,11 +591,10 @@ static void TimerDispatcher(const enum Timer tid)
     {
       D(DBF_TIMER, "timer[%ld]: TIMER_UPDATECHECK fired @ %s", tid, dateString);
 
-      CheckForUpdates();
+      DoMethod(G->App, MUIM_YAM_UpdateCheck, TRUE);
 
       // prepare the timer to get fired again
-      if(C->UpdateInterval > 0)
-        PrepareTimer(tid, C->UpdateInterval, 0);
+      PrepareTimer(tid, C->UpdateInterval, 0);
     }
     break;
 

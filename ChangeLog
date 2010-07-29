@@ -7,6 +7,9 @@ $URL$
 
 2010-07-29 Thore Böckelmann <tboeckel@gmx.de>
 
+  * UpdateCheck.c, YAM_MA.c: an update checktriggered by the user but without
+    any new updates will no longer be quiet but instead inform the user. This
+    closes #80.
   * YAM_RE.c, locale/YAM.cd, locale/german.ct: the title of the save attachment
     requester will now be set in respect of the content type of the file to be
     saved. This closes #24.

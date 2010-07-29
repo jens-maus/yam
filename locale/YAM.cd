@@ -6970,3 +6970,17 @@ Received %ld new mails.
 MSG_RE_SAVE_FILE (2169//)
 Save file
 ;
+MSG_UPD_NO_UPDATES_FOUND_TITLE (2170//)
+No software updates available
+;
+MSG_UPD_NO_UPDATES_FOUND (2171//)
+There are no software updates available.\n\
+%s
+; HINT
+MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK (2172//)
+YAM will check for available updates automatically.
+;
+MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK (2173//)
+Please try again later or activate the automatic\n\
+software update check.
+;
