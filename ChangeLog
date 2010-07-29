@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c, mui/MainWindow.c, mui/MainMailListGroup.c: the "active object on
+    click" feature of NList must operate on listview objects instead of the em-
+    bedded list objects. Thus we have to distinguish between these two in lots
+    of places. Together with the latest modificiations to NList itself this
+    closes #14. The bug is already fixed without the NList modifications, but
+    there will still be the annoying active borders because of a limitation of
+    the current NList release.
+
 2010-07-28 Jens Langner <Jens.Langner@light-speed.de>
 
   * STYLEGUIDE: added a section on "enum" types and the use of "const" wherever

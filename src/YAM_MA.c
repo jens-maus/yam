@@ -4457,7 +4457,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
       // set the maillist group as the active object of that window
-      set(data->GUI.WI, MUIA_Window_ActiveObject, xget(data->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject));
+      set(data->GUI.WI, MUIA_Window_ActiveObject, xget(data->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListviewObject));
 
       // make sure to set the KeyLeft/Right Focus for the mainmaillist and
       // folder listtree objects

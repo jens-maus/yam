@@ -60,7 +60,7 @@ OVERLOAD(OM_SET)
         // object would be set to NULL we make sure we set
         // it back to the default object of the readmail group
         if((Object *)tag->ti_Data == NULL)
-          tag->ti_Data = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject);
+          tag->ti_Data = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListviewObject);
       }
       break;
     }
