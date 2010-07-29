@@ -7,6 +7,9 @@ $URL$
 
 2010-07-29 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c, locale/YAM.cd, locale/german.ct: the title of the save attachment
+    requester will now be set in respect of the content type of the file to be
+    saved. This closes #24.
   * YAM_MA.c, mui/MainWindow.c, mui/MainMailListGroup.c: the "active object on
     click" feature of NList must operate on listview objects instead of the em-
     bedded list objects. Thus we have to distinguish between these two in lots

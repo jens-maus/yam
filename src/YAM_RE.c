@@ -149,10 +149,21 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
 
     if(force == TRUE)
       dest = AddPath(path, C->DetachDir, filename, sizeof(path));
-    else if((frc = ReqFile(ASL_DETACH, win, tr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, filename)) != NULL)
-      dest = AddPath(path, frc->drawer, frc->file, sizeof(path));
     else
-      dest = NULL;
+    {
+      const char *title;
+
+      // choose the requester's title depending on the content type
+      if(ctype != NULL && stricmp(ctype, "message/rfc822") == 0)
+        title = tr(MSG_RE_SaveMessage);
+      else
+        title = tr(MSG_RE_SAVE_FILE);
+
+      if((frc = ReqFile(ASL_DETACH, win, title, REQF_SAVEMODE, C->DetachDir, filename)) != NULL)
+        dest = AddPath(path, frc->drawer, frc->file, sizeof(path));
+      else
+        dest = NULL;
+    }
   }
 
   if(dest != NULL)
@@ -346,7 +357,7 @@ static void BuildCommandString(char *command, const size_t commandLen, const cha
 ///
 /// RE_DisplayMIME
 //  Displays a message part (attachment) using a MIME viewer
-void RE_DisplayMIME(char *fname, const char *ctype)
+void RE_DisplayMIME(const char *fname, const char *ctype)
 {
   struct MimeTypeNode *mt = NULL;
   BOOL triedToIdentify = FALSE;
@@ -465,7 +476,7 @@ void RE_DisplayMIME(char *fname, const char *ctype)
       {
         D(DBF_MIME, "haven't found a user action, trying to identifying via IdentifyFile()");
 
-        if((ctype = IdentifyFile(fname)))
+        if((ctype = IdentifyFile(fname)) != NULL)
         {
           struct Node *curNode;
 

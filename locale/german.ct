@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.3 (20.07.2010)
+## version $VER: YAM.catalog 7.4 (29.07.2010)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8575,4 +8575,7 @@ MSG_TR_NEW_MAIL_NOTIFY_ONE
 ;
 MSG_TR_NEW_MAIL_NOTIFY_MANY
 %ld neue Nachrichten empfangen.
+;
+MSG_RE_SAVE_FILE
+Datei speichern
 ;

@@ -1,4 +1,4 @@
-; YAM.cd - YAM 2.6 catalog description file
+; YAM.cd - YAM 2.7 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -6966,4 +6966,7 @@ Received 1 new mail.
 MSG_TR_NEW_MAIL_NOTIFY_MANY (2168//)
 Received %ld new mails.
 ; COUNT
+;
+MSG_RE_SAVE_FILE (2169//)
+Save file
 ;

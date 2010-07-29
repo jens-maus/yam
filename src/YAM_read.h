@@ -153,7 +153,7 @@ struct HeaderNode
 };
 
 BOOL RE_DecodePart(struct Part *rp);
-void RE_DisplayMIME(char *fname, const char *ctype);
+void RE_DisplayMIME(const char *fname, const char *ctype);
 BOOL RE_ProcessMDN(const enum MDNMode mode, struct Mail *mail, const BOOL multi, const BOOL autoAction);
 
 struct ReadMailData *CreateReadWindow(BOOL forceNewWindow);
