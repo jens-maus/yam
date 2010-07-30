@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (20.07.2010)
+## version $VER: YAM.catalog 7.1 (30.07.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.7 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 4789 2010-07-20
+; based on YAM.cd 4817 2010-07-30
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1876,7 +1876,7 @@ Alle_ga file da
 ; _Attach files from
 ;
 MSG_CO_TempDir
-_Directory file temporanei
+Directory file _temporanei
 ; For _temporary files
 ;
 MSG_CO_AppIcon
@@ -2809,8 +2809,8 @@ comprimere le cartelle.
 ; compress folders.
 ;
 MSG_HELP_CO_NB_ENCPACK
-L'efficienza al 100% di questo compattatore\n\
-risulta essere la più alta, ma anche la più lenta.
+Efficienza di questo compattatore: 100% è\n\
+la più alta, ma anche la più lenta.
 ; Efficiency of this packer. 100% is\n\
 ; the best value, but also the slowest.
 ;
@@ -3529,7 +3529,7 @@ MSG_RE_MDNdisplay
 Il messaggio\n\
 %s\n\
 è stato visualizzato.\n\
-Ciò non garantisce che il contenuto sia stato letto o compreso.
+Ciò non garantisce che il contenuto sia stato letto o compreso.\n
 ; The message\n\
 ; %s\n\
 ; has been displayed.\n\
@@ -3540,7 +3540,7 @@ Il messaggio\n\
 %s\n\
 è stato cancellato %s.\n\
 Il destinatario potrebbe aver visto o meno il messaggio.\n\
-Il destinatario potrebbe "recuperare" il messaggio più tardi e leggerlo.
+Il destinatario potrebbe "recuperare" il messaggio più tardi e leggerlo.\n
 ; The message\n\
 ; %s\n\
 ; has been deleted %s.\n\
@@ -3550,7 +3550,7 @@ Il destinatario potrebbe "recuperare" il messaggio più tardi e leggerlo.
 MSG_RE_MDNunknown
 Il messaggio\n\
 %s\n\
-è stato %s%s.
+è stato %s%s.\n
 ; The message\n\
 ; %s\n\
 ; has been %s%s.\n
@@ -8816,7 +8816,7 @@ MSG_ER_MIME_ERROR
 Impossibile estrarre il messaggio MIME dal file '%s'.\n\
 \n\
 Il messaggio potrebbe contenere delle parti MIME non\n\
-conformi, oppure il MIME stesso risulta vuoto o troncato.
+conformi, oppure il MIME stesso risulta vuoto o troncato.\n
 ; Couldn't extract MIME message from file '%s'.\n\
 ; \n\
 ; The message contains malformed MIME parts, or it is empty or truncated.
@@ -9960,4 +9960,29 @@ MSG_TR_NEW_MAIL_NOTIFY_MANY
 Ricevuti %ld nuovi messaggi.
 ; Received %ld new mails.
 ; COUNT
+;
+MSG_RE_SAVE_FILE
+Salva file
+; Save file
+;
+MSG_UPD_NO_UPDATES_FOUND_TITLE
+Nessun aggiornamento software disponibile.
+; No software updates available
+;
+MSG_UPD_NO_UPDATES_FOUND
+Non è stato trovato alcun nuovo aggiornamento.\n\
+%s
+; There are no software updates available.\n\
+; %s
+; HINT
+;
+MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
+YAM verificherà periodicamente la presenza dei nuovi aggiornamenti.\n\
+; YAM will check for available updates automatically.
+;
+MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
+Per favore riprova successivamente oppure dal menu a tendina attiva\n\
+l'opzione di verifica periodica degli aggiornamenti.
+; Please try again later or activate the automatic\n\
+; software update check.
 ;

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-30 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italiano.ct: fixed tons of warnings with FlexCat 2.7 caused by recent
+    modifications, then updated to the latest changes.
+  * Hey how about find a method for suppressing trailing ellipsis notifications!
+
 2010-07-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainMailListGroup.c: removed the catch of the MUIA_NList_SelectChange
