@@ -69,7 +69,10 @@ void rx_setmail(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
       if(mail < 0 || mail >= max)
         params->rc = RETURN_ERROR;
       else
+      {
+        DoMethod(lv, MUIM_NList_Jump, mail);
         set(lv, MUIA_NList_Active, mail);
+      }
     }
     break;
 

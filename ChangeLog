@@ -7,6 +7,7 @@ $URL$
 
 2010-07-30 Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: simplified the centered display within the main mail list a bit.
   * YAM_MA.c, mui/MainMailListGroup.c: use the NListview objects to set up the
     left/right key focus feature instead of the NList objects for consistency
     reasons. In any case the NListview object must become the active object

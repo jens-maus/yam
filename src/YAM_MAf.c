@@ -851,10 +851,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         else if(C->JumpToRecentMsg == TRUE)
           MA_JumpToRecentMsg();
         else if(folder->LastActive >= 0)
-        {
-          DoMethod(gui->PG_MAILLIST, MUIM_NList_Jump, folder->LastActive);
           set(gui->PG_MAILLIST, MUIA_NList_Active, folder->LastActive);
-        }
 
         // if there is still no entry active in the NList we make the first one active
         if(xget(gui->PG_MAILLIST, MUIA_NList_Active) == (ULONG)MUIV_NList_Active_Off)
@@ -922,7 +919,6 @@ void MA_JumpToNewMsg(void)
     i += incr;
   }
 
-  DoMethod(lv, MUIM_NList_Jump, pos >= 0 ? pos : folder->LastActive);
   set(lv, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
 
   LEAVE();
@@ -961,7 +957,6 @@ void MA_JumpToRecentMsg(void)
     i++;
   }
 
-  DoMethod(lv, MUIM_NList_Jump, recentIdx >= 0 ? recentIdx : folder->LastActive);
   set(lv, MUIA_NList_Active, recentIdx >= 0 ? recentIdx : folder->LastActive);
 
   LEAVE();

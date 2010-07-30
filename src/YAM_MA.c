@@ -3836,10 +3836,7 @@ HOOKPROTONHNO(FollowThreadFunc, void, int *arg)
 
     // if the mail is displayed we make it the active one
     if(pos != MUIV_NList_GetPos_End)
-    {
-      DoMethod(gui->PG_MAILLIST, MUIM_NList_Jump, pos);
       set(gui->PG_MAILLIST, MUIA_NList_Active, pos);
-    }
   }
   else
     DisplayBeep(_screen(gui->WI));

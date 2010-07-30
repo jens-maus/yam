@@ -586,7 +586,10 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         fo->LastActive = xget(obj, MUIA_NList_Active);
         // Now we set this entry as active
         if(fo->LastActive != res.entry)
+        {
+          DoMethod(obj, MUIM_NList_Jump, res.entry);
           set(obj, MUIA_NList_Active, res.entry);
+        }
 
         if(isMultiPartMail(mail))
           hasattach = TRUE;

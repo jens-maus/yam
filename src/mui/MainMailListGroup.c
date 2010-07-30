@@ -164,6 +164,8 @@ OVERLOAD(OM_SET)
       case MUIA_NList_Active:
       case MUIA_NList_SelectChange:
       {
+        // center the list on the given entry
+        DoMethod(data->mainListObjects[data->activeList], MUIM_NList_Jump, tag->ti_Data);
         set(data->mainListObjects[data->activeList], tag->ti_Tag, tag->ti_Data);
 
         // make the superMethod call ignore those tags
@@ -435,8 +437,12 @@ DECLARE(SwitchToList) // enum MainListType type
         DoMethod(data->mainListObjects[LT_MAIN], MUIM_NList_GetPos, data->lastActiveMail, &pos);
       }
 
+      if(pos == MUIV_NList_GetPos_End || pos == MUIV_NList_GetPos_Start)
+        pos = MUIV_NList_Active_Top;
+
       // make sure to set a new message so that the mail view is updated
-      xset(data->mainListObjects[LT_MAIN], MUIA_NList_Active,       pos != MUIV_NList_GetPos_End && pos != MUIV_NList_GetPos_Start ? pos : MUIV_NList_Active_Top,
+      DoMethod(data->mainListObjects[LT_MAIN], MUIM_NList_Jump, pos);
+      xset(data->mainListObjects[LT_MAIN], MUIA_NList_Active,       pos,
                                            MUIA_NList_SelectChange, TRUE);
     }
 
