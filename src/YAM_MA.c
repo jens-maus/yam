@@ -229,7 +229,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
         }
       }
 
-      // in case the currently active maillist is the mainmainlist we
+      // in case the currently active maillist is the mainmaillist we
       // have to save the lastactive mail ID
       if(xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveList) == LT_MAIN)
         fo->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);

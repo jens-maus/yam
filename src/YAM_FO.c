@@ -543,6 +543,7 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
       folder->Sort[0] = 1;
       folder->Sort[1] = 3;
       folder->Type = type;
+      folder->LastActive = -1;
 
       // set the standard icon images, or none for a custom folder
       switch(type)
@@ -768,6 +769,7 @@ BOOL FO_LoadTree(char *fname)
             fo->Type = FT_CUSTOM;
             fo->Sort[0] = 1;
             fo->Sort[1] = 3;
+            fo->LastActive = -1;
             strlcpy(fo->Name, Trim(&buffer[8]), sizeof(fo->Name));
             GetLine(&buffer, &size, fh);
             strlcpy(fo->Path, Trim(buffer), sizeof(fo->Path));
