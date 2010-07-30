@@ -162,7 +162,6 @@ OVERLOAD(OM_SET)
       break;
 
       case MUIA_NList_Active:
-      case MUIA_NList_SelectChange:
       {
         // center the list on the given entry
         DoMethod(data->mainListObjects[data->activeList], MUIM_NList_Jump, tag->ti_Data);
