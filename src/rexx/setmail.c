@@ -25,6 +25,7 @@
 
 ***************************************************************************/
 
+#include <clib/alib_protos.h>
 #include <mui/NList_mcc.h>
 #include <proto/exec.h>
 
