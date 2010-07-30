@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (29.07.2010)
+## version $VER: YAM.catalog 7.6 (30.07.2010)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -3207,7 +3207,7 @@ Porträt
 ; Portrait
 ;
 MSG_EA_SelectPhoto
-Aus_wählen
+Aus_wählen...
 ; Se_lect
 ;
 MSG_EA_ReturnAddress
@@ -7194,7 +7194,7 @@ MSG_MA_MSEARCH
 Suchen...
 ;
 MSG_MA_MFILTER
-Filtern
+Filtern...
 ;
 MSG_MA_REMOVEDELETED
 Papierkorb leeren
@@ -7239,7 +7239,7 @@ MSG_MA_MCOPY
 Kopieren...
 ;
 MSG_MA_MPRINT
-Drucken
+Drucken...
 ;
 MSG_MA_MSAVE
 Speichern...
@@ -7248,7 +7248,7 @@ MSG_MA_MSAVEATT
 Speichern...
 ;
 MSG_MA_MNEW
-Neu
+Neu...
 ;
 MSG_MA_MREPLY
 Antworten...

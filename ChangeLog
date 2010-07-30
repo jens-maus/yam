@@ -13,6 +13,7 @@ $URL$
 
 2010-07-30 Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/YAM.cd, locale/german.ct: added some ellipsises.
   * YAM_MAf.c: several active "jump on xxx" config settings will now do what
     one would expect. I.e. having "jump to new" and "jump to recent" active
     will first try to jump to the first unread message of a folder before

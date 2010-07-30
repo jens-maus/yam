@@ -2365,7 +2365,7 @@ MSG_EA_Portrait (793//)
 Portrait
 ;
 MSG_EA_SelectPhoto (794//)
-Se_lect
+Se_lect...
 ;
 MSG_EA_ReturnAddress (796//)
 _Return address
@@ -5568,7 +5568,7 @@ MSG_MA_MSEARCH (1814//)
 Search...
 ;
 MSG_MA_MFILTER (1815//)
-Filter
+Filter...
 ;
 MSG_MA_REMOVEDELETED (1816//)
 Empty trash
@@ -5613,7 +5613,7 @@ MSG_MA_MCOPY (1829//)
 Copy...
 ;
 MSG_MA_MPRINT (1830//)
-Print
+Print...
 ;
 MSG_MA_MSAVE (1831//)
 Save...
@@ -5622,7 +5622,7 @@ MSG_MA_MSAVEATT (1832//)
 Save...
 ;
 MSG_MA_MNEW (1834//)
-New
+New...
 ;
 MSG_MA_MREPLY (1835//)
 Reply...
