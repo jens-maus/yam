@@ -178,8 +178,8 @@ OVERLOAD(OM_SET)
       case MUIA_NList_SortType2:
       case MUIA_NList_KeyLeftFocus:
       {
-        set(data->mainListObjects[LT_MAIN], tag->ti_Tag, tag->ti_Data);
-        set(data->mainListObjects[LT_QUICKVIEW], tag->ti_Tag, tag->ti_Data);
+        set(data->mainListviewObjects[LT_MAIN], tag->ti_Tag, tag->ti_Data);
+        set(data->mainListviewObjects[LT_QUICKVIEW], tag->ti_Tag, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;

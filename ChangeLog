@@ -7,6 +7,10 @@ $URL$
 
 2010-07-30 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c, mui/MainMailListGroup.c: use the NListview objects to set up the
+    left/right key focus feature instead of the NList objects for consistency
+    reasons. In any case the NListview object must become the active object
+    instead of the embedded NList object.
   * YAM_MA.c, YAM_MAf.c, mui/MainMailList.c: use the new "centered jump" feature
     of NList.
 

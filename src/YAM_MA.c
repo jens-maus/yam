@@ -4451,8 +4451,8 @@ struct MA_ClassData *MA_New(void)
 
       // make sure to set the KeyLeft/Right Focus for the mainmaillist and
       // folder listtree objects
-      set(data->GUI.PG_MAILLIST, MUIA_NList_KeyLeftFocus, data->GUI.NL_FOLDERS);
-      set(data->GUI.NL_FOLDERS, MUIA_NList_KeyRightFocus, data->GUI.PG_MAILLIST);
+      set(data->GUI.PG_MAILLIST, MUIA_NList_KeyLeftFocus, data->GUI.LV_FOLDERS);
+      set(data->GUI.LV_FOLDERS, MUIA_NList_KeyRightFocus, data->GUI.PG_MAILLIST);
 
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUT,          MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ShowAboutWindowHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_VERSION,        MUIV_Notify_Application, 2, MUIM_YAM_UpdateCheck,      FALSE);
