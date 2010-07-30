@@ -19,7 +19,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NList_mcc.h 336 2009-06-06 21:35:40Z damato $
+ $Id: NList_mcc.h 454 2010-07-30 07:00:26Z thboeckel $
 
 ***************************************************************************/
 
@@ -181,6 +181,7 @@ extern "C" {
 #define MUIA_NList_KeyLeftFocus             0x9d5100C6UL /* GM  isg. Object *          */
 #define MUIA_NList_KeyRightFocus            0x9d5100C7UL /* GM  isg. Object *          */
 
+#define MUIA_NList_CenterOnJump             0x9d5100c8UL /* GM  isgn BOOL              */
 
 #define MUIA_NLIMG_EntryCurrent             MUIA_NList_First   /* LONG (special for nlist custom image object) */
 #define MUIA_NLIMG_EntryHeight              MUIA_NList_Visible /* LONG (special for nlist custom image object) */
@@ -278,8 +279,8 @@ extern "C" {
 #define MUIV_NList_Jump_Top               0
 #define MUIV_NList_Jump_Active           -1
 #define MUIV_NList_Jump_Bottom           -2
-#define MUIV_NList_Jump_Up               -4
 #define MUIV_NList_Jump_Down             -3
+#define MUIV_NList_Jump_Up               -4
 
 #define MUIV_NList_NextSelected_Start    -1
 #define MUIV_NList_NextSelected_End      -1
@@ -488,51 +489,55 @@ struct MUI_NList_GetSelectInfo
 
 /* Methods */
 
-#define MUIM_NList_Clear              0x9d510070 /* GM */
-#define MUIM_NList_CreateImage        0x9d510071 /* GM */
-#define MUIM_NList_DeleteImage        0x9d510072 /* GM */
-#define MUIM_NList_Exchange           0x9d510073 /* GM */
-#define MUIM_NList_GetEntry           0x9d510074 /* GM */
-#define MUIM_NList_Insert             0x9d510075 /* GM */
-#define MUIM_NList_InsertSingle       0x9d510076 /* GM */
-#define MUIM_NList_Jump               0x9d510077 /* GM */
-#define MUIM_NList_Move               0x9d510078 /* GM */
-#define MUIM_NList_NextSelected       0x9d510079 /* GM */
-#define MUIM_NList_Redraw             0x9d51007a /* GM */
-#define MUIM_NList_Remove             0x9d51007b /* GM */
-#define MUIM_NList_Select             0x9d51007c /* GM */
-#define MUIM_NList_Sort               0x9d51007d /* GM */
-#define MUIM_NList_TestPos            0x9d51007e /* GM */
-#define MUIM_NList_CopyToClip         0x9d51007f /* GM */
-#define MUIM_NList_UseImage           0x9d510080 /* GM */
-#define MUIM_NList_ReplaceSingle      0x9d510081 /* GM */
-#define MUIM_NList_InsertWrap         0x9d510082 /* GM */
-#define MUIM_NList_InsertSingleWrap   0x9d510083 /* GM */
-#define MUIM_NList_GetEntryInfo       0x9d510084 /* GM */
-#define MUIM_NList_QueryBeginning     0x9d510085 /* Obsolete */
-#define MUIM_NList_GetSelectInfo      0x9d510086 /* GM */
-#define MUIM_NList_CopyTo             0x9d510087 /* GM */
-#define MUIM_NList_DropType           0x9d510088 /* GM */
-#define MUIM_NList_DropDraw           0x9d510089 /* GM */
-#define MUIM_NList_RedrawEntry        0x9d51008a /* GM */
-#define MUIM_NList_DoMethod           0x9d51008b /* GM */
-#define MUIM_NList_ColWidth           0x9d51008c /* GM */
-#define MUIM_NList_ContextMenuBuild   0x9d51008d /* GM */
-#define MUIM_NList_DropEntryDrawErase 0x9d51008e /* GM */
-#define MUIM_NList_ColToColumn        0x9d51008f /* GM */
-#define MUIM_NList_ColumnToCol        0x9d510091 /* GM */
-#define MUIM_NList_Sort2              0x9d510092 /* GM */
-#define MUIM_NList_PrevSelected       0x9d510093 /* GM */
-#define MUIM_NList_SetColumnCol       0x9d510094 /* GM */
-#define MUIM_NList_Sort3              0x9d510095 /* GM */
-#define MUIM_NList_GetPos             0x9d510096 /* GM */
-#define MUIM_NList_SelectChange       0x9d5100A0 /* GM */
-#define MUIM_NList_Construct          0x9d5100A1 /* GM */
-#define MUIM_NList_Destruct           0x9d5100A2 /* GM */
-#define MUIM_NList_Compare            0x9d5100A3 /* GM */
-#define MUIM_NList_Display            0x9d5100A4 /* GM */
-#define MUIM_NList_GoActive           0x9d5100A5 /* GM */
-#define MUIM_NList_GoInactive         0x9d5100A6 /* GM */
+#define MUIM_NList_Clear              0x9d510070UL /* GM */
+#define MUIM_NList_CreateImage        0x9d510071UL /* GM */
+#define MUIM_NList_DeleteImage        0x9d510072UL /* GM */
+#define MUIM_NList_Exchange           0x9d510073UL /* GM */
+#define MUIM_NList_GetEntry           0x9d510074UL /* GM */
+#define MUIM_NList_Insert             0x9d510075UL /* GM */
+#define MUIM_NList_InsertSingle       0x9d510076UL /* GM */
+#define MUIM_NList_Jump               0x9d510077UL /* GM */
+#define MUIM_NList_Move               0x9d510078UL /* GM */
+#define MUIM_NList_NextSelected       0x9d510079UL /* GM */
+#define MUIM_NList_Redraw             0x9d51007aUL /* GM */
+#define MUIM_NList_Remove             0x9d51007bUL /* GM */
+#define MUIM_NList_Select             0x9d51007cUL /* GM */
+#define MUIM_NList_Sort               0x9d51007dUL /* GM */
+#define MUIM_NList_TestPos            0x9d51007eUL /* GM */
+#define MUIM_NList_CopyToClip         0x9d51007fUL /* GM */
+#define MUIM_NList_UseImage           0x9d510080UL /* GM */
+#define MUIM_NList_ReplaceSingle      0x9d510081UL /* GM */
+#define MUIM_NList_InsertWrap         0x9d510082UL /* GM */
+#define MUIM_NList_InsertSingleWrap   0x9d510083UL /* GM */
+#define MUIM_NList_GetEntryInfo       0x9d510084UL /* GM */
+#define MUIM_NList_QueryBeginning     0x9d510085UL /* Obsolete */
+#define MUIM_NList_GetSelectInfo      0x9d510086UL /* GM */
+#define MUIM_NList_CopyTo             0x9d510087UL /* GM */
+#define MUIM_NList_DropType           0x9d510088UL /* GM */
+#define MUIM_NList_DropDraw           0x9d510089UL /* GM */
+#define MUIM_NList_RedrawEntry        0x9d51008aUL /* GM */
+#define MUIM_NList_DoMethod           0x9d51008bUL /* GM */
+#define MUIM_NList_ColWidth           0x9d51008cUL /* GM */
+#define MUIM_NList_ContextMenuBuild   0x9d51008dUL /* GM */
+#define MUIM_NList_DropEntryDrawErase 0x9d51008eUL /* GM */
+#define MUIM_NList_ColToColumn        0x9d51008fUL /* GM */
+#define MUIM_NList_ColumnToCol        0x9d510091UL /* GM */
+#define MUIM_NList_Sort2              0x9d510092UL /* GM */
+#define MUIM_NList_PrevSelected       0x9d510093UL /* GM */
+#define MUIM_NList_SetColumnCol       0x9d510094UL /* GM */
+#define MUIM_NList_Sort3              0x9d510095UL /* GM */
+#define MUIM_NList_GetPos             0x9d510096UL /* GM */
+#define MUIM_NList_SelectChange       0x9d5100A0UL /* GM */
+#define MUIM_NList_Construct          0x9d5100A1UL /* GM */
+#define MUIM_NList_Destruct           0x9d5100A2UL /* GM */
+#define MUIM_NList_Compare            0x9d5100A3UL /* GM */
+#define MUIM_NList_Display            0x9d5100A4UL /* GM */
+#define MUIM_NList_GoActive           0x9d5100A5UL /* GM */
+#define MUIM_NList_GoInactive         0x9d5100A6UL /* GM */
+
+/*
+for future extensions, skip 0x9d5100AF as method ID, this one is already used by NFloattext
+*/
 
 struct MUIP_NList_Clear              { STACKED ULONG MethodID; };
 struct MUIP_NList_CreateImage        { STACKED ULONG MethodID; STACKED Object *obj; STACKED ULONG flags; };

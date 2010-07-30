@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-07-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c, YAM_MAf.c, mui/MainMailList.c: use the new "centered jump" feature
+    of NList.
+
 2010-07-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: jumping to a different entry in the mail list will now first
