@@ -51,11 +51,11 @@ be able to set and unset it, of course.
 
 Automation for the usual Start/Quit events
 ------------------------------------------
-These days some folks are running YAM 24/7, so the birthday check on
-startup and the old mail deletion on exit are no longer serving any
-purpose. A mechanism to trigger these events on a periodical basis
-needs to be implemented; the choice to invoke them with a menu item
-would also be nice, possibly complete with suitable ARexx commands.
+These days some folks are running YAM 24/7, so the the old mail deletion
+on exit are no longer serving any purpose. A mechanism to trigger this
+event on a periodical basis needs to be implemented; the choice to invoke
+them with a menu item would also be nice, possibly complete with suitable
+ARexx commands.
 
 
 Security against "disk full" errors
@@ -90,12 +90,6 @@ are open or closed.
 
 Selecting a group should NOT disable the mail listview, but leave its
 current contents intact until another folder is selected.
-
-
-Additional config flags
------------------------
-One should be able to turn off the requester that opens after the filters
-have done their work.
 
 
 Enhanced navigation with the keyboard

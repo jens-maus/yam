@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-02 Frank Weber <opionline@yahoo.de>
+
+  * TODO: Removed the part about a additional config flag to turn off the
+    requester that opens after the filters have done their work because it's
+    already implemented on 2010-03-09. Remove the "birthday check" part from
+    "Automation for the usual Start/Quit events". It's done since 2010-03-10.
+
 2010-08-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, YAM_UT.c, mui/MainFolderListtree.c: moved the "set folder info"
