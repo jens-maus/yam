@@ -43,6 +43,7 @@ struct Data
 {
   Object *context_menu;
   Object *folderImage[MAX_FOLDERIMG+1];
+  char bubbleInfo[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
   BOOL draggingMails;
   BOOL reorderFolderList;
 };
@@ -783,30 +784,31 @@ DECLARE(EditFolder)
 // update the folder listtree bubble help
 DECLARE(SetFolderInfo)
 {
+  GETDATA;
   struct Folder *fo;
 
   ENTER();
 
   if((fo = FO_GetCurrentFolder()) != NULL && !isGroupFolder(fo) && fo->LoadedMode == LM_VALID)
   {
-    static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
     char sizestr[SIZE_DEFAULT];
 
     FormatSize(fo->Size, sizestr, sizeof(sizestr), SF_AUTO);
 
-    snprintf(buffer, sizeof(buffer), tr(MSG_MA_FOLDERINFO), fo->Name,
-                                                            fo->Path,
-                                                            sizestr,
-                                                            fo->Total,
-                                                            fo->New,
-                                                            fo->Unread);
+    snprintf(data->bubbleInfo, sizeof(data->bubbleInfo), tr(MSG_MA_FOLDERINFO), fo->Name,
+                                                                                fo->Path,
+                                                                                sizestr,
+                                                                                fo->Total,
+                                                                                fo->New,
+                                                                                fo->Unread);
 
-    set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, buffer);
+    set(obj, MUIA_ShortHelp, data->bubbleInfo);
   }
   else
-    set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, NULL);
+    set(obj, MUIA_ShortHelp, NULL);
 
   LEAVE();
+  return 0;
 }
 
 ///
