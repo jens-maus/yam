@@ -253,6 +253,8 @@ OVERLOAD(OM_NEW)
     GETDATA;
     ULONG i;
 
+    DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainFolderListtree_EditFolder);
+
     // prepare the folder images
     data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[fi_Fold]);
     data->folderImage[FICON_ID_UNFOLD]      = MakeImageObject("folder_unfold",       G->theme.folderImages[fi_Unfold]);
@@ -753,6 +755,22 @@ DECLARE(MakeFormat)
   // set the new NList_Format to our object
   set(obj, MUIA_NList_Format, format);
 
+  return 0;
+}
+
+///
+/// DECLARE(EditFolder)
+// edit the double clicked folder
+DECLARE(EditFolder)
+{
+  struct Folder *folder = FO_GetCurrentFolder();
+
+  ENTER();
+
+  if(C->FolderDoubleClick == TRUE && folder != NULL && isGroupFolder(folder) == FALSE)
+    DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);
+
+  LEAVE();
   return 0;
 }
 

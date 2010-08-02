@@ -3737,22 +3737,6 @@ HOOKPROTONHNO(MA_FolderKeyFunc, void, int *idx)
 MakeHook(MA_FolderKeyHook, MA_FolderKeyFunc);
 
 ///
-/// MA_FolderClickFunc
-//  Handles double clicks on the folder listtree
-HOOKPROTONHNONP(MA_FolderClickFunc, void)
-{
-  struct Folder *folder = FO_GetCurrentFolder();
-
-  ENTER();
-
-  if(C->FolderDoubleClick == TRUE && folder != NULL && isGroupFolder(folder) == FALSE)
-    DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);
-
-  LEAVE();
-}
-MakeHook(MA_FolderClickHook, MA_FolderClickFunc);
-
-///
 /// MA_DelKey
 //  User pressed DEL key
 HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
@@ -4528,7 +4512,6 @@ struct MA_ClassData *MA_New(void)
       for(i=0; i < MAXP3; i++)
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, POP_USER, i, 0);
 
-      DoMethod(data->GUI.NL_FOLDERS,    MUIM_Notify, MUIA_NList_DoubleClick,    MUIV_EveryTime,         MUIV_Notify_Application,  2, MUIM_CallHook,             &MA_FolderClickHook);
       //DoMethod(data->GUI.NL_FOLDERS,  MUIM_Notify, MUIA_NList_TitleClick,     MUIV_EveryTime,         MUIV_Notify_Self,         3, MUIM_NList_Sort2,          MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
       //DoMethod(data->GUI.NL_FOLDERS,  MUIM_Notify, MUIA_NList_SortType,       MUIV_EveryTime,         MUIV_Notify_Self,         3, MUIM_Set,                  MUIA_NList_TitleMark,MUIV_TriggerValue);
       DoMethod(data->GUI.NL_FOLDERS,    MUIM_Notify, MUIA_NListtree_Active,     MUIV_EveryTime,         MUIV_Notify_Application,  2, MUIM_CallHook,             &MA_ChangeFolderHook);
