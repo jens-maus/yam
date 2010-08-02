@@ -193,7 +193,7 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
     {
       BOOL success = FALSE;
 
-      W(DBF_IMAGE, "image '%s' NOT found in cache, creating new node", id);
+      D(DBF_IMAGE, "image '%s' NOT found in cache, creating new node", id);
 
       // create a new node in the cache
       node->delayedDispose = FALSE;
@@ -654,13 +654,13 @@ BOOL ToolbarCacheInit(void)
   ENTER();
 
   G->ReadToolbarCacheObject = ReadWindowToolbarObject, End;
-  D(DBF_STARTUP, "init readwindow toolbar: %08lx", G->ReadToolbarCacheObject);
+  D(DBF_IMAGE, "init readwindow toolbar: %08lx", G->ReadToolbarCacheObject);
 
   G->WriteToolbarCacheObject = WriteWindowToolbarObject, End;
-  D(DBF_STARTUP, "init writewindow toolbar: %08lx", G->WriteToolbarCacheObject);
+  D(DBF_IMAGE, "init writewindow toolbar: %08lx", G->WriteToolbarCacheObject);
 
   G->AbookToolbarCacheObject = AddrBookToolbarObject, End;
-  D(DBF_STARTUP, "init abookwindow toolbar: %08lx", G->AbookToolbarCacheObject);
+  D(DBF_IMAGE, "init abookwindow toolbar: %08lx", G->AbookToolbarCacheObject);
 
 
   if(G->ReadToolbarCacheObject != NULL  &&
