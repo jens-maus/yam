@@ -4615,7 +4615,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
     if(fo == actfo)
     {
       CallHookPkt(&MA_SetMessageInfoHook, 0, 0);
-      CallHookPkt(&MA_SetFolderInfoHook, 0, 0);
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_SetFolderInfo);
       DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, fo);
     }
 

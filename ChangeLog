@@ -7,6 +7,8 @@ $URL$
 
 2010-08-02 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c, YAM_UT.c, mui/MainFolderListtree.c: moved the "set folder info"
+    hook to a separate method of the listtree.
   * YAM_MA.c, mui/MainFolderListtree.c: moved the folder tree double click hook
     to a separate method of the listtree.
   * ImageCache.c: changed a warning to a normal debug message to reduce the

@@ -253,7 +253,11 @@ OVERLOAD(OM_NEW)
     GETDATA;
     ULONG i;
 
-    DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainFolderListtree_EditFolder);
+    DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,   MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainFolderListtree_EditFolder);
+    //DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_NList_Sort2,          MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
+    //DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,      MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,                  MUIA_NList_TitleMark,MUIV_TriggerValue);
+    DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active,    MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeFolderHook);
+    DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active,    MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainFolderListtree_SetFolderInfo);
 
     // prepare the folder images
     data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[fi_Fold]);
@@ -772,6 +776,37 @@ DECLARE(EditFolder)
 
   LEAVE();
   return 0;
+}
+
+///
+/// DECLARE(SetFolderInfo)
+// update the folder listtree bubble help
+DECLARE(SetFolderInfo)
+{
+  struct Folder *fo;
+
+  ENTER();
+
+  if((fo = FO_GetCurrentFolder()) != NULL && !isGroupFolder(fo) && fo->LoadedMode == LM_VALID)
+  {
+    static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
+    char sizestr[SIZE_DEFAULT];
+
+    FormatSize(fo->Size, sizestr, sizeof(sizestr), SF_AUTO);
+
+    snprintf(buffer, sizeof(buffer), tr(MSG_MA_FOLDERINFO), fo->Name,
+                                                            fo->Path,
+                                                            sizestr,
+                                                            fo->Total,
+                                                            fo->New,
+                                                            fo->Unread);
+
+    set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, buffer);
+  }
+  else
+    set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, NULL);
+
+  LEAVE();
 }
 
 ///
