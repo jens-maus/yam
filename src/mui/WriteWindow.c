@@ -1336,6 +1336,7 @@ OVERLOAD(OM_NEW)
                   MUIA_NListview_NList, data->LV_ATTACH = WriteAttachmentListObject,
                     InputListFrame,
                     MUIA_NList_ActiveObjectOnClick,   TRUE,
+                    MUIA_NList_DefaultObjectOnClick,  FALSE,
                     MUIA_NList_DragType,              MUIV_NList_DragType_Immediate,
                     MUIA_NList_DragSortable,          TRUE,
                     MUIA_NList_Format,                "D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",

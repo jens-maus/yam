@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ReadMailGroup.c, mui/WriteWindow.c: disabled the "default object on
+    click" for the last to instances.
+
 2010-08-02 Frank Weber <opionline@yahoo.de>
 
   * TODO: Removed the part about a additional config flag to turn off the
