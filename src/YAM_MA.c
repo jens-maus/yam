@@ -391,46 +391,6 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
 MakeHook(MA_ChangeSelectedHook, MA_ChangeSelectedFunc);
 
 ///
-/// MA_SetMessageInfoFunc
-//  Builds help bubble for message list
-HOOKPROTONHNONP(MA_SetMessageInfoFunc, void)
-{
-  struct Mail *mail;
-
-  ENTER();
-
-  if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
-  {
-    static char buffer[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
-    char datstr[64];
-    char sizestr[SIZE_DEFAULT];
-
-    // convert the datestamp of the mail to
-    // well defined string
-    DateStamp2String(datstr, sizeof(datstr), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
-
-    // use FormatSize() to prettify the size display of the mail info
-    FormatSize(mail->Size, sizestr, sizeof(sizestr), SF_AUTO);
-
-    snprintf(buffer, sizeof(buffer), tr(MSG_MA_MESSAGEINFO), mail->From.RealName,
-                                                             mail->From.Address,
-                                                             mail->To.RealName,
-                                                             mail->To.Address,
-                                                             mail->Subject,
-                                                             datstr,
-                                                             mail->MailFile,
-                                                             sizestr);
-
-    set(G->MA->GUI.PG_MAILLIST, MUIA_ShortHelp, buffer);
-  }
-  else
-    set(G->MA->GUI.PG_MAILLIST, MUIA_ShortHelp, NULL);
-
-  LEAVE();
-}
-MakeHook(MA_SetMessageInfoHook, MA_SetMessageInfoFunc);
-
-///
 /// MA_GetActiveMail
 //  Returns pointers to the active message and folder
 struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, LONG *activep)

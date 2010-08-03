@@ -346,7 +346,6 @@ extern struct Hook MA_DeleteSpamHook;
 extern struct Hook MA_DeleteOldHook;
 extern struct Hook MA_RescanIndexHook;
 extern struct Hook MA_SendHook;
-extern struct Hook MA_SetMessageInfoHook;
 extern struct Hook PO_WindowHook;
 extern struct Hook MA_FolderKeyHook;
 extern struct Hook MA_PopNowHook;

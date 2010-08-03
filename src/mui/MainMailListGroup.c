@@ -60,7 +60,6 @@ OVERLOAD(OM_NEW)
   Object *mainList;
   Object *quickviewListview;
   Object *quickviewList;
-  int i;
 
   if(!(obj = DoSuperNew(cl, obj,
 
@@ -95,15 +94,6 @@ OVERLOAD(OM_NEW)
   data->mainListviewObjects[LT_QUICKVIEW] = quickviewListview;
   data->mainListObjects[LT_MAIN] = mainList;
   data->mainListObjects[LT_QUICKVIEW] = quickviewList;
-
-  // make sure we generate the NList_Format of both objects now
-  for(i=LT_MAIN; i <= LT_QUICKVIEW; i++)
-  {
-    DoMethod(data->mainListObjects[i], MUIM_MainMailList_MakeFormat);
-    DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_SelectChange,TRUE,           MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeSelectedHook);
-    DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_Active,      MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_SetMessageInfoHook);
-    DoMethod(data->mainListObjects[i], MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj,                     2, MUIM_MainMailListGroup_DoubleClicked, MUIV_TriggerValue);
-  }
 
   return (IPTR)obj;
 }
@@ -531,6 +521,21 @@ DECLARE(IsMailList) // Object* list
 
   return (ULONG)(msg->list == data->mainListObjects[LT_MAIN] ||
                  msg->list == data->mainListObjects[LT_QUICKVIEW]);
+}
+
+///
+/// DECLARE(SetMailInfo)
+// update the mail list bubble help
+DECLARE(SetMailInfo)
+{
+  GETDATA;
+  int i;
+
+  // forward the method two the mail lists
+  for(i=LT_MAIN; i <= LT_QUICKVIEW; i++)
+    DoMethod(data->mainListObjects[i], MUIM_MainMailList_SetMailInfo);
+
+  return 0;
 }
 
 ///

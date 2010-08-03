@@ -48,6 +48,7 @@ struct Data
   Object *context_menu;
   Object *statusImage[si_Max];
   char context_menu_title[SIZE_DEFAULT];
+  char bubbleInfo[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
 };
 */
 
@@ -492,11 +493,16 @@ OVERLOAD(OM_NEW)
       DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
   }
 
+  DoMethod(obj, MUIM_MainMailList_MakeFormat);
+  DoMethod(obj, MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainMailList_SetMailInfo);
+  DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, MUIV_Notify_Self, 2, MUIM_MainMailListGroup_DoubleClicked, MUIV_TriggerValue);
+  DoMethod(obj, MUIM_Notify, MUIA_NList_SelectChange, TRUE,           MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeSelectedHook);
+
   // connect some notifies to the mainMailList group
-  DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,  MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_Both);
-  DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick2, MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_2);
-  DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark,  MUIV_TriggerValue);
-  DoMethod(obj, MUIM_Notify, MUIA_NList_SortType2,   MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark2, MUIV_TriggerValue);
+  DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,   MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_Both);
+  DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick2,  MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_2);
+  DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,     MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark,  MUIV_TriggerValue);
+  DoMethod(obj, MUIM_Notify, MUIA_NList_SortType2,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark2, MUIV_TriggerValue);
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
@@ -803,6 +809,46 @@ DECLARE(RemoveMail) // struct Mail* mail
 
   RETURN(result);
   return result;
+}
+
+///
+/// DECLARE(SetMailInfo)
+// update the mail list bubble help
+DECLARE(SetMailInfo)
+{
+  GETDATA;
+  struct Mail *mail;
+
+  ENTER();
+
+  if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
+  {
+    char datstr[64];
+    char sizestr[SIZE_DEFAULT];
+
+    // convert the datestamp of the mail to
+    // well defined string
+    DateStamp2String(datstr, sizeof(datstr), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+
+    // use FormatSize() to prettify the size display of the mail info
+    FormatSize(mail->Size, sizestr, sizeof(sizestr), SF_AUTO);
+
+    snprintf(data->bubbleInfo, sizeof(data->bubbleInfo), tr(MSG_MA_MESSAGEINFO), mail->From.RealName,
+                                                                                 mail->From.Address,
+                                                                                 mail->To.RealName,
+                                                                                 mail->To.Address,
+                                                                                 mail->Subject,
+                                                                                 datstr,
+                                                                                 mail->MailFile,
+                                                                                 sizestr);
+
+    set(obj, MUIA_ShortHelp, data->bubbleInfo);
+  }
+  else
+    set(obj, MUIA_ShortHelp, NULL);
+
+  LEAVE();
+  return 0;
 }
 
 ///
