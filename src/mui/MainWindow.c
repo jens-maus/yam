@@ -37,7 +37,7 @@
 /* CLASSDATA
 struct Data
 {
-  short dummy;
+  Object *aboutWindow;
 };
 */
 
@@ -120,7 +120,65 @@ DECLARE(DisposeSubWindow) // Object *win
   DoMethod(G->App, OM_REMMEMBER, msg->win);
   MUI_DisposeObject(msg->win);
 
-  RETURN(0);
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(ShowAbout)
+// show the about window
+DECLARE(ShowAbout)
+{
+  GETDATA;
+
+  ENTER();
+
+  // create the about window object and open it
+  if(data->aboutWindow == NULL)
+  {
+    data->aboutWindow = AboutwindowObject, End;
+
+    if(data->aboutWindow != NULL)
+      DoMethod(data->aboutWindow, MUIM_Notify, MUIA_Window_Open, FALSE, MUIV_Notify_Application, 4, MUIM_Application_PushMethod, G->App, 1, MUIM_MainWindow_CloseAbout);
+  }
+
+  SafeOpenWindow(data->aboutWindow);
+
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(CloseAbout)
+// close the about window
+DECLARE(CloseAbout)
+{
+  GETDATA;
+
+  ENTER();
+
+  // close the about window object
+  if(data->aboutWindow != NULL)
+  {
+    DoMethod(G->App, OM_REMMEMBER, data->aboutWindow);
+    MUI_DisposeObject(data->aboutWindow);
+    data->aboutWindow = NULL;
+  }
+
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(ShowErrors)
+// show the error window
+DECLARE(ShowErrors)
+{
+  ENTER();
+
+  ER_NewError(NULL);
+
+  LEAVE();
   return 0;
 }
 

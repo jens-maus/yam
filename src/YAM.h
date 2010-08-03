@@ -91,7 +91,6 @@ struct Global
   Object *                 WI_SEARCH;
   Object *                 NewMailSound_Obj;
   Object *                 SplashWinObject;
-  Object *                 AboutWinObject;
   Object *                 UpdateNotifyWinObject;
   Object *                 ReadToolbarCacheObject;
   Object *                 WriteToolbarCacheObject;

@@ -44,16 +44,6 @@ struct Data
 };
 */
 
-/* Hooks */
-/// OpenSupportPageHook
-//  User clicked homepage URL in About window
-HOOKPROTONHNONP(OpenSupportPageFunc, void)
-{
-  GotoURL("http://www.yam.ch/", FALSE);
-}
-MakeStaticHook(OpenSupportPageHook, OpenSupportPageFunc);
-///
-
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -279,9 +269,9 @@ OVERLOAD(OM_NEW)
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
-    DoMethod(obj,       MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-    DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-    DoMethod(bt_gopage, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_CallHook, &OpenSupportPageHook);
+    DoMethod(obj,       MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+    DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Self, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+    DoMethod(bt_gopage, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Self, 2, MUIM_Aboutwindow_GotoSupportPage);
 
     xset(obj, MUIA_Window_Activate,      TRUE,
               MUIA_Window_DefaultObject, bt_okay);
@@ -308,9 +298,19 @@ OVERLOAD(OM_DISPOSE)
   RETURN(result);
   return result;
 }
+
 ///
 
 /* Private Functions */
 
 /* Public Methods */
+/// DECLARE(GotoSupportPage)
+// open a browser and go to the YAM support page
+DECLARE(GotoSupportPage)
+{
+  GotoURL("http://www.yam.ch/", FALSE);
 
+  return 0;
+}
+
+///

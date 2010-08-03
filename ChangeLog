@@ -7,6 +7,8 @@ $URL$
 
 2010-08-03 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c, mui/MainWindow.c, mui/Aboutwindow.c: implemented some more hooks
+    as methods.
   * YAM_MA.c, YAM_UT.c, mui/MainMailList.c: moved the "set mail info" hook
     to a separate method of the list.
   * mui/ReadMailGroup.c, mui/WriteWindow.c: disabled the "default object on

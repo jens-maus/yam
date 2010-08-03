@@ -3337,59 +3337,6 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
 MakeHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
 
 ///
-/// MA_DisposeAboutWindowFunc
-//  Displays 'About' window
-HOOKPROTONHNONP(MA_DisposeAboutWindowFunc, void)
-{
-  ENTER();
-
-  // cleanup the about window object
-  if(G->AboutWinObject != NULL)
-  {
-    DoMethod(G->App, OM_REMMEMBER, G->AboutWinObject);
-    MUI_DisposeObject(G->AboutWinObject);
-    G->AboutWinObject = NULL;
-  }
-
-  LEAVE();
-}
-MakeStaticHook(MA_DisposeAboutWindowHook, MA_DisposeAboutWindowFunc);
-
-///
-/// MA_ShowAboutWindowFunc
-//  Displays 'About' window
-HOOKPROTONHNONP(MA_ShowAboutWindowFunc, void)
-{
-  ENTER();
-
-  // create the about window object and open it
-  if(G->AboutWinObject == NULL)
-  {
-    G->AboutWinObject = AboutwindowObject, End;
-
-    if(G->AboutWinObject != NULL)
-    {
-      DoMethod(G->AboutWinObject, MUIM_Notify, MUIA_Window_Open, FALSE, MUIV_Notify_Application, 5,
-                                  MUIM_Application_PushMethod, G->App, 2, MUIM_CallHook, &MA_DisposeAboutWindowHook);
-    }
-  }
-
-  SafeOpenWindow(G->AboutWinObject);
-
-  LEAVE();
-}
-MakeStaticHook(MA_ShowAboutWindowHook, MA_ShowAboutWindowFunc);
-
-///
-/// MA_ShowErrorsFunc
-//  Opens error message window
-HOOKPROTONHNONP(MA_ShowErrorsFunc, void)
-{
-   ER_NewError(NULL);
-}
-MakeStaticHook(MA_ShowErrorsHook, MA_ShowErrorsFunc);
-
-///
 /// MA_StartMacro
 //  Launches user-defined ARexx script or AmigaDOS command
 BOOL MA_StartMacro(enum Macro num, char *param)
@@ -4363,9 +4310,9 @@ struct MA_ClassData *MA_New(void)
       set(data->GUI.PG_MAILLIST, MUIA_NList_KeyLeftFocus, data->GUI.LV_FOLDERS);
       set(data->GUI.LV_FOLDERS, MUIA_NList_KeyRightFocus, data->GUI.PG_MAILLIST);
 
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUT,          MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ShowAboutWindowHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUT,          MUIV_Notify_Self,        1, MUIM_MainWindow_ShowAbout);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_VERSION,        MUIV_Notify_Application, 2, MUIM_YAM_UpdateCheck,      FALSE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ERRORS,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ShowErrorsHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ERRORS,         MUIV_Notify_Self,        1, MUIM_MainWindow_ShowErrors);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_LOGIN,          MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_RESTART);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HIDE,           MUIV_Notify_Application, 3, MUIM_Set,                  MUIA_Application_Iconified, TRUE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_QUIT,           MUIV_Notify_Application, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
