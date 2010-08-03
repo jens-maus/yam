@@ -495,7 +495,7 @@ OVERLOAD(OM_NEW)
 
   DoMethod(obj, MUIM_MainMailList_MakeFormat);
   DoMethod(obj, MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainMailList_SetMailInfo);
-  DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, MUIV_Notify_Self, 2, MUIM_MainMailListGroup_DoubleClicked, MUIV_TriggerValue);
+  DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, MUIV_Notify_Self, 2, MUIM_MainMailList_DoubleClicked, MUIV_TriggerValue);
   DoMethod(obj, MUIM_Notify, MUIA_NList_SelectChange, TRUE,           MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeSelectedHook);
 
   // connect some notifies to the mainMailList group
@@ -744,6 +744,40 @@ OVERLOAD(MUIM_ContextMenuChoice)
     }
   }
 
+  return 0;
+}
+
+///
+
+/* Private Methods */
+/// DECLARE(DoubleClicked)
+// if the user double-clicked in the mail list we either
+// have to open the message in a read window or if it is currently in
+// the outgoing folder we open it for editing.
+DECLARE(DoubleClicked) // LONG entryNum
+{
+  ENTER();
+
+  if(msg->entryNum >= 0)
+  {
+    struct Folder *folder = FO_GetCurrentFolder();
+
+    // A double click in the outgoing folder should popup a write
+    // window instead.
+    if(folder != NULL && isOutgoingFolder(folder))
+    {
+      // in case the folder is the "outgoing" folder
+      // we edit the mail instead.
+      DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_EDIT, 0);
+    }
+    else
+    {
+      // if not, then we open a read window instead
+      DoMethod(G->App, MUIM_CallHook, &MA_ReadMessageHook);
+    }
+  }
+
+  RETURN(0);
   return 0;
 }
 
