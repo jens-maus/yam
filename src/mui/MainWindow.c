@@ -31,6 +31,7 @@
 #include "MainWindow_cl.h"
 
 #include "MUIObjects.h"
+#include "YAM_error.h"
 
 #include "Debug.h"
 
