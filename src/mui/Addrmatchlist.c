@@ -158,7 +158,7 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        ATTR(String) : data->String = (Object *)tag->ti_Data ; break;
+        case ATTR(String) : data->String = (Object *)tag->ti_Data ; break;
       }
     }
 

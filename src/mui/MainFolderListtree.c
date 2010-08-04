@@ -315,7 +315,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(ImageArray): *store = (ULONG)data->folderImage; return TRUE;
+    case ATTR(ImageArray): *store = (ULONG)data->folderImage; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -332,7 +332,7 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(ReorderFolderList):
+      case ATTR(ReorderFolderList):
       {
         data->reorderFolderList = tag->ti_Data;
         // make the superMethod call ignore those tags

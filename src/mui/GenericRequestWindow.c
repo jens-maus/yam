@@ -65,14 +65,14 @@ OVERLOAD(OM_NEW)
       }
       break;
 
-      ATTR(Body):
+      case ATTR(Body):
       {
         bodyText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(Buttons):
+      case ATTR(Buttons):
       {
         buttons = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
@@ -245,7 +245,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(Result):
+    case ATTR(Result):
     {
       *store = data->result;
       return TRUE;

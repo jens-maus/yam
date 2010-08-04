@@ -252,14 +252,14 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(Body):
+      case ATTR(Body):
       {
         bodyText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(Alias):
+      case ATTR(Alias):
       {
         alias = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;

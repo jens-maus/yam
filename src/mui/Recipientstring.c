@@ -260,10 +260,10 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        ATTR(ResolveOnCR)        : data->ResolveOnCR = tag->ti_Data        ; break;
-        ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
-        ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
-        ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
+        case ATTR(ResolveOnCR)        : data->ResolveOnCR = tag->ti_Data        ; break;
+        case ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
+        case ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
+        case ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
 
         // we also catch foreign attributes
         case MUIA_String_AdvanceOnCR: data->AdvanceOnCR = tag->ti_Data     ; break;
@@ -314,7 +314,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(Popup) : *store = FALSE ; return TRUE;
+    case ATTR(Popup) : *store = FALSE ; return TRUE;
 
     // we also return foreign attributes
     case MUIA_String_AdvanceOnCR: *store = data->AdvanceOnCR; return TRUE;
@@ -333,7 +333,7 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(ResolveOnCR):
+      case ATTR(ResolveOnCR):
       {
         data->ResolveOnCR = tag->ti_Data;
 
@@ -342,7 +342,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(MultipleRecipients):
+      case ATTR(MultipleRecipients):
       {
         data->MultipleRecipients = tag->ti_Data;
 
@@ -351,7 +351,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(FromString):
+      case ATTR(FromString):
       {
         data->From = (Object *)tag->ti_Data;
 
@@ -360,7 +360,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(ReplyToString):
+      case ATTR(ReplyToString):
       {
         data->ReplyTo = (Object *)tag->ti_Data;
 

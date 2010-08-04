@@ -1019,8 +1019,8 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        ATTR(Mode): data->wmData->mode = (enum NewMailMode)tag->ti_Data; break;
-        ATTR(Quiet): data->wmData->quietMode = (BOOL)tag->ti_Data; break;
+        case ATTR(Mode): data->wmData->mode = (enum NewMailMode)tag->ti_Data; break;
+        case ATTR(Quiet): data->wmData->quietMode = (BOOL)tag->ti_Data; break;
       }
     }
 
@@ -1873,11 +1873,11 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(WriteMailData): *store = (ULONG)data->wmData; return TRUE;
-    ATTR(Num):           *store = data->windowNumber; return TRUE;
-    ATTR(To):            *store = xget(data->ST_TO, MUIA_String_Contents) ; return TRUE;
-    ATTR(Quiet):         *store = data->wmData->quietMode; return TRUE;
-    ATTR(NotifyPort):    *store = (ULONG)data->notifyPort; return TRUE;
+    case ATTR(WriteMailData): *store = (ULONG)data->wmData; return TRUE;
+    case ATTR(Num):           *store = data->windowNumber; return TRUE;
+    case ATTR(To):            *store = xget(data->ST_TO, MUIA_String_Contents) ; return TRUE;
+    case ATTR(Quiet):         *store = data->wmData->quietMode; return TRUE;
+    case ATTR(NotifyPort):    *store = (ULONG)data->notifyPort; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -1893,7 +1893,7 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(ActiveObject):
+      case ATTR(ActiveObject):
       {
         Object *actObj = NULL;
 
@@ -1917,7 +1917,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(To):
+      case ATTR(To):
       {
         setstring(data->ST_TO, tag->ti_Data);
 
@@ -1926,7 +1926,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(Cc):
+      case ATTR(Cc):
       {
         setstring(data->ST_CC, tag->ti_Data);
 
@@ -1935,7 +1935,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(BCC):
+      case ATTR(BCC):
       {
         setstring(data->ST_BCC, tag->ti_Data);
 
@@ -1944,7 +1944,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(ReplyTo):
+      case ATTR(ReplyTo):
       {
         setstring(data->ST_REPLYTO, tag->ti_Data);
 
@@ -1953,7 +1953,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(From):
+      case ATTR(From):
       {
         setstring(data->ST_FROM, tag->ti_Data);
 
@@ -1962,7 +1962,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(ExtHeaders):
+      case ATTR(ExtHeaders):
       {
         setstring(data->ST_EXTHEADER, tag->ti_Data);
 
@@ -1971,7 +1971,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(Subject):
+      case ATTR(Subject):
       {
         setstring(data->ST_SUBJECT, tag->ti_Data);
 
@@ -1980,7 +1980,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(AttachDescription):
+      case ATTR(AttachDescription):
       {
         setstring(data->ST_DESC, tag->ti_Data);
 
@@ -1989,7 +1989,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(AttachEncoding):
+      case ATTR(AttachEncoding):
       {
         setmutex(data->RA_ENCODING, tag->ti_Data);
 
@@ -1998,7 +1998,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(AttachContentType):
+      case ATTR(AttachContentType):
       {
         setstring(data->ST_CTYPE, tag->ti_Data);
 
@@ -2007,7 +2007,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(SendDisabled):
+      case ATTR(SendDisabled):
       {
         set(data->BT_SEND, MUIA_Disabled, tag->ti_Data);
 
@@ -2016,7 +2016,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(DelSend):
+      case ATTR(DelSend):
       {
         setcheckmark(data->CH_DELSEND, tag->ti_Data);
 
@@ -2025,7 +2025,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(MDN):
+      case ATTR(MDN):
       {
         setcheckmark(data->CH_MDN, tag->ti_Data);
 
@@ -2034,7 +2034,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(AddInfo):
+      case ATTR(AddInfo):
       {
         setcheckmark(data->CH_ADDINFO, tag->ti_Data);
 
@@ -2043,7 +2043,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(Importance):
+      case ATTR(Importance):
       {
         setcycle(data->CY_IMPORTANCE, tag->ti_Data);
 
@@ -2052,7 +2052,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(Signature):
+      case ATTR(Signature):
       {
         setmutex(data->RA_SIGNATURE, tag->ti_Data);
 
@@ -2061,7 +2061,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(Security):
+      case ATTR(Security):
       {
         setmutex(data->RA_SECURITY, tag->ti_Data);
 
@@ -2070,7 +2070,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(MailBody):
+      case ATTR(MailBody):
       {
         set(data->TE_EDIT, MUIA_TextEditor_Contents, tag->ti_Data);
 

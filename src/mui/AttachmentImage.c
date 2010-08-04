@@ -596,10 +596,10 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        ATTR(MailPart)  : data->mailPart = (struct Part *)tag->ti_Data; break;
-        ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
-        ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
-        ATTR(Group)     : data->attachmentGroup = (Object *)tag->ti_Data; break;
+        case ATTR(MailPart)  : data->mailPart = (struct Part *)tag->ti_Data; break;
+        case ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
+        case ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
+        case ATTR(Group)     : data->attachmentGroup = (Object *)tag->ti_Data; break;
       }
     }
 
@@ -647,10 +647,10 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(DoubleClick) : *store = 1; return TRUE;
-    ATTR(DropPath)    : *store = (ULONG)data->dropPath;   return TRUE;
-    ATTR(MailPart)    : *store = (ULONG)data->mailPart;   return TRUE;
-    ATTR(DiskObject)  : *store = (ULONG)data->diskObject; return TRUE;
+    case ATTR(DoubleClick) : *store = 1; return TRUE;
+    case ATTR(DropPath)    : *store = (ULONG)data->dropPath;   return TRUE;
+    case ATTR(MailPart)    : *store = (ULONG)data->mailPart;   return TRUE;
+    case ATTR(DiskObject)  : *store = (ULONG)data->diskObject; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -667,8 +667,8 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
-      ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
+      case ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
+      case ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
     }
   }
 

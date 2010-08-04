@@ -158,8 +158,8 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(RemoteFilterMode) : data->remoteFilterMode = tag->ti_Data; break;
-      ATTR(ShowCombineCycle) : data->showCombineCycle = tag->ti_Data; break;
+      case ATTR(RemoteFilterMode) : data->remoteFilterMode = tag->ti_Data; break;
+      case ATTR(ShowCombineCycle) : data->showCombineCycle = tag->ti_Data; break;
     }
   }
 
@@ -342,7 +342,7 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(RemoteFilterMode):
+      case ATTR(RemoteFilterMode):
       {
         // we check if we switch the FilterMode
         if(tag->ti_Data != (ULONG)data->remoteFilterMode)
@@ -412,8 +412,8 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(Modified):     *store = 1; return TRUE;
-    ATTR(ActiveObject): *store = (ULONG)data->activeObject; return TRUE;
+    case ATTR(Modified):     *store = 1; return TRUE;
+    case ATTR(ActiveObject): *store = (ULONG)data->activeObject; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);

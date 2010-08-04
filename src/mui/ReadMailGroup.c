@@ -465,8 +465,8 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(HGVertWeight): hgVertWeight = tag->ti_Data; break;
-      ATTR(TGVertWeight): tgVertWeight = tag->ti_Data; break;
+      case ATTR(HGVertWeight): hgVertWeight = tag->ti_Data; break;
+      case ATTR(TGVertWeight): tgVertWeight = tag->ti_Data; break;
     }
   }
 
@@ -672,11 +672,11 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(HGVertWeight) : *store = xget(data->headerGroup, MUIA_VertWeight); return TRUE;
-    ATTR(TGVertWeight) : *store = xget(data->mailBodyGroup, MUIA_VertWeight); return TRUE;
-    ATTR(ReadMailData) : *store = (ULONG)data->readMailData; return TRUE;
-    ATTR(DefaultObject): *store = (ULONG)data->mailTextObject; return TRUE;
-    ATTR(ActiveObject):
+    case ATTR(HGVertWeight) : *store = xget(data->headerGroup, MUIA_VertWeight); return TRUE;
+    case ATTR(TGVertWeight) : *store = xget(data->mailBodyGroup, MUIA_VertWeight); return TRUE;
+    case ATTR(ReadMailData) : *store = (ULONG)data->readMailData; return TRUE;
+    case ATTR(DefaultObject): *store = (ULONG)data->mailTextObject; return TRUE;
+    case ATTR(ActiveObject):
     {
       Object *actobj = (Object *)xget(_win(obj), MUIA_Window_ActiveObject);
 
@@ -702,7 +702,7 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(HGVertWeight):
+      case ATTR(HGVertWeight):
       {
         set(data->headerGroup, MUIA_VertWeight, tag->ti_Data);
 
@@ -711,7 +711,7 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      ATTR(TGVertWeight):
+      case ATTR(TGVertWeight):
       {
         set(data->mailBodyGroup, MUIA_VertWeight, tag->ti_Data);
 

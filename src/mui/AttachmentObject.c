@@ -92,8 +92,8 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(MailPart): mailPart = (struct Part *)tag->ti_Data; break;
-      ATTR(Group):    attGroupObject = (Object *)tag->ti_Data; break;
+      case ATTR(MailPart): mailPart = (struct Part *)tag->ti_Data; break;
+      case ATTR(Group):    attGroupObject = (Object *)tag->ti_Data; break;
     }
   }
 
@@ -154,8 +154,8 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(ImageObject) : *store = (ULONG)data->imageObject; return TRUE;
-    ATTR(MailPart)    : *store = (ULONG)data->mailPart;    return TRUE;
+    case ATTR(ImageObject) : *store = (ULONG)data->imageObject; return TRUE;
+    case ATTR(MailPart)    : *store = (ULONG)data->mailPart;    return TRUE;
     case MUIA_Selected: *store = xget(data->imageObject, MUIA_Selected); return TRUE;
   }
 

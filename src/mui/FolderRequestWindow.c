@@ -89,35 +89,35 @@ OVERLOAD(OM_NEW)
       }
       break;
 
-      ATTR(Body):
+      case ATTR(Body):
       {
         bodyText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(YesText):
+      case ATTR(YesText):
       {
         yesText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(NoText):
+      case ATTR(NoText):
       {
         noText = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(Exclude):
+      case ATTR(Exclude):
       {
         excludeFolder = (struct Folder *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(Folder):
+      case ATTR(Folder):
       {
         prevFolder = (struct Folder *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
@@ -210,13 +210,13 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(Result):
+    case ATTR(Result):
     {
       *store = data->result;
       return TRUE;
     }
 
-    ATTR(Folder):
+    case ATTR(Folder):
     {
       DoMethod(data->listObj, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, store);
       return TRUE;

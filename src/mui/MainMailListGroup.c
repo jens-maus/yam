@@ -108,11 +108,11 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(ActiveList):           *store = data->activeList; return TRUE;
-    ATTR(ActiveListviewObject): *store = (ULONG)data->mainListviewObjects[data->activeList]; return TRUE;
-    ATTR(ActiveListObject):     *store = (ULONG)data->mainListObjects[data->activeList]; return TRUE;
-    ATTR(MainList):             *store = (ULONG)data->mainListObjects[LT_MAIN]; return TRUE;
-    ATTR(LastActiveMail):       *store = (ULONG)data->lastActiveMail; return TRUE;
+    case ATTR(ActiveList):           *store = data->activeList; return TRUE;
+    case ATTR(ActiveListviewObject): *store = (ULONG)data->mainListviewObjects[data->activeList]; return TRUE;
+    case ATTR(ActiveListObject):     *store = (ULONG)data->mainListObjects[data->activeList]; return TRUE;
+    case ATTR(MainList):             *store = (ULONG)data->mainListObjects[LT_MAIN]; return TRUE;
+    case ATTR(LastActiveMail):       *store = (ULONG)data->lastActiveMail; return TRUE;
 
     // we also return foreign attributes
     case MUIA_NList_Active:

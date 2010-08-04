@@ -67,14 +67,14 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      ATTR(StringContents):
+      case ATTR(StringContents):
       {
         stringContents = (char *)tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
-      ATTR(MaxLength):
+      case ATTR(MaxLength):
       {
         maxLength = tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
@@ -147,9 +147,9 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(Result): *store = data->result; return TRUE;
-    ATTR(StringContents): GetMUIString((char *)store, data->stringObj, data->maxLength); return TRUE;
-    ATTR(RememberPhrase): *store = GetMUICheck(data->rememberObj); return TRUE;
+    case ATTR(Result): *store = data->result; return TRUE;
+    case ATTR(StringContents): GetMUIString((char *)store, data->stringObj, data->maxLength); return TRUE;
+    case ATTR(RememberPhrase): *store = GetMUICheck(data->rememberObj); return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);

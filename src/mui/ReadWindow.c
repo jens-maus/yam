@@ -495,8 +495,8 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(ReadMailData) : *store = (ULONG)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData); return TRUE;
-    ATTR(Num)          : *store = data->windowNumber; return TRUE;
+    case ATTR(ReadMailData) : *store = (ULONG)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData); return TRUE;
+    case ATTR(Num)          : *store = data->windowNumber; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);

@@ -502,7 +502,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(SearchStringIsActive):
+    case ATTR(SearchStringIsActive):
     {
       *store = (Object *)xget(_win(data->ST_SEARCHSTRING), MUIA_Window_ActiveObject) == data->ST_SEARCHSTRING;
       return TRUE;
