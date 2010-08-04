@@ -169,7 +169,7 @@ void list_sort( struct list *l, int (* compare)( const struct node *, const stru
   list_init(from);
   list_init(to);
 
-  while((ln = list_remtail(l)) != NULL)
+  while((ln = list_remhead(l)) != NULL)
   {
     list_addhead(from, ln);
   }
@@ -254,9 +254,9 @@ void list_sort( struct list *l, int (* compare)( const struct node *, const stru
   }
 
   list_init(l);
-  while((ln = list_remtail(to)) != NULL)
+  while((ln = list_remhead(to)) != NULL)
   {
-    list_addhead(l, ln);
+    list_addtail(l, ln);
   }
 }
 

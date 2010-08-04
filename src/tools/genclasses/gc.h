@@ -37,12 +37,13 @@
 #define HEADER_NAME  "Classes.h"
 #define SOURCE_NAME  "Classes.c"
 #define OBJECT_NAME  "Classes.o"
+#define CRC_NAME     "Classes.crc"
 
 #define KEYWD_SUPERCLASS  "Superclass:"
 #define KEYWD_DESC        "Description:"
-#define KEYWD_CLASSDATA    "CLASSDATA"
+#define KEYWD_CLASSDATA   "CLASSDATA"
 #define KEYWD_OVERLOAD    "OVERLOAD"
-#define KEYWD_DECLARE      "DECLARE"
+#define KEYWD_DECLARE     "DECLARE"
 #define KEYWD_ATTR        "ATTR"
 #define KEYWD_EXPORT      "EXPORT"
 
@@ -70,15 +71,17 @@ struct exportdef
 
 struct classdef
 {
-  char *name;               /* i.e. Searchwindow */
-  char *superclass;         /* i.e. MUIC_Window */
+  char *name;                 /* i.e. Searchwindow */
+  char *superclass;           /* i.e. MUIC_Window */
+  struct classdef *supernode; /* pointer to private superclass */
+  int index;                  /* index within the final list */
+  int finished;               /* finished marking during breadth search first */
   char *desc;
   char *classdata;
-  struct list overloadlist; /* list of extracted OVERLOAD() macros */
-  struct list declarelist;  /* list of extracted DECLARE() macros */
-  struct list attrlist;     /* list of extracted ATTR() macros */
-  struct list exportlist;   /* list of extracted EXPORT blocks */
-
+  struct list overloadlist;   /* list of extracted OVERLOAD() macros */
+  struct list declarelist;    /* list of extracted DECLARE() macros */
+  struct list attrlist;       /* list of extracted ATTR() macros */
+  struct list exportlist;     /* list of extracted EXPORT blocks */
 };
 
 #endif /* GC_H */

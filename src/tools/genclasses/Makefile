@@ -32,7 +32,7 @@ TARGET = GenClasses
 CC = gcc
 RM = rm -f
 
-OBJS = gc.o lists.o
+OBJS = gc.o lists.o crc32.o
 CFLAGS = -O3 -funroll-loops -fomit-frame-pointer -W -Wall -pedantic -Wno-strict-aliasing
 
 .PHONY: clean
@@ -50,5 +50,6 @@ clean:
 
 #
 
-gc.o : gc.c gc.h lists.h
+gc.o : gc.c gc.h lists.h crc32.h
 lists.o : lists.c lists.h
+crc32.o : crc32.c crc32.h

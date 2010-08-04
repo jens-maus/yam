@@ -4,6 +4,56 @@ GenClasses Tool - ChangeLog
 
 $Id$
 
+2010-08-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * CRC checksums are now used to check whether any class definition has
+    changed. Without any public change the sources will not be regenerated.
+
+2010-03-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * gc.c: even *VERY* dumb mistakes like a class being its own superclass are
+    now detected as dependency loops and will generate an "#error" statement.
+
+2010-03-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * gc.c: the ATTR() macro only creates the corresponding full attribute name
+    (i.e. MUIA_<class>_<attribute>) and no prepended "case" statement anymore.
+    This is much more intuitive if also foreign attributes are handled in an
+    OM_SET or OM_GET method. This also makes it possible to use ATTR() within
+    the class source instead of the full name whenever an attribute is being
+    used. Also added the METHOD() macro to enable the same convenience as with
+    attributes when invoking methods within the class source.
+
+2010-03-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * gc.c: classes without any instance data don't need to specify a Data
+    structure with an unused dummy variable anymore.
+
+2010-03-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * gc.c: the classes are now sorted alphabetically.
+
+2010-03-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * gc.c: renamed "SuperMCC" to "SuperMCCIndex" to make clear that the value in
+    fact is an index within the list structure. Also changed the layout of the
+    generated code a bit.
+
+2010-03-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * gc.c: reworked the source to add the usual ENTER() and RETURN() statements
+    to the generated class creation code. This makes it possible to output which
+    class exactly could not be created.
+  * gc.c: it is now possible to create private classes which are subclasses of
+    other private classes. Before only public classes could be used as super-
+    classes. The special order in which the classes must be created is properly
+    respected. Possible dependency loops will not be detected during the code
+    generation, but at runtime of the created code instead.
+  * gc.c: modified the code generation once more to detect possible class loops
+    and really make sure that all classes are created in the correct order (i.e.
+    superclasses before subclasses). In case of a loop the generated source will
+    contain an "#error" statement which contains the affected classes.
+
 2009-05-28  Jens Langner <Jens.Langner@light-speed.de>
 
     * gc.c: changed to use the new SDISPATCHER() macro which creates
