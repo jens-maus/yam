@@ -631,14 +631,15 @@ classinfo: $(MUIDIR)/Classes.h
 
 $(MUIDIR)/Classes.h: $(GENCLASSES)/GenClasses $(MUIDIR)/*.c Locale.h
 	@echo "  GN GenClasses"
-	@$(GENCLASSES)/GenClasses mui -bYAM -gpl -storm -iClassesExtra.h -q
+	@$(GENCLASSES)/GenClasses mui -bYAM -gpl -storm -iClassesExtra.h -qdl
 	@echo "  CC mui/Classes.c"
 	@$(CC) $(CFLAGS) -c $(MUIDIR)/Classes.c -o $(OBJDIR)/$(MUIDIR)/Classes.o
 
 $(MUIDIR)/Classes.c: $(MUIDIR)/ClassesExtra.h
 
 $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
-	$(GENCLASSES)/lists.c $(GENCLASSES)/lists.h
+	$(GENCLASSES)/lists.c $(GENCLASSES)/lists.h \
+	$(GENCLASSES)/crc32.c $(GENCLASSES)/crc32.h
 	@$(MAKE) -C$(GENCLASSES)
 
 ## CATALOG GENERATION #################
