@@ -64,6 +64,8 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  * History
  * -------
+ * 0.33 - the .crc file is now written on every run, even if the checksum did not
+ *        change. This solves some dependency issues in YAM's Makefile.
  * 0.32 - CRC checksums are now used to check whether any class definition has
  *        changed. Without any public change the sources will not be regenerated.
  * 0.31 - classes without any instance data don't need to pecify a Data structure
@@ -188,7 +190,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  */
 
-static const char * const verstr = "0.32";
+static const char * const verstr = "0.33";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -1677,12 +1679,12 @@ int main( int argc, char *argv[] )
       *mypathpart(arg_classdir) = 0;
 
       gen_classheaders(&classlist);
-
-      /* save the new CRC for the next run */
-      myaddpart(arg_classdir, CRC_NAME, 255);
-      write_crc(arg_classdir, new_crc);
-      *mypathpart(arg_classdir) = 0;
     }
+
+    /* save the new CRC for the next run */
+    myaddpart(arg_classdir, CRC_NAME, 255);
+    write_crc(arg_classdir, new_crc);
+    *mypathpart(arg_classdir) = 0;
 
     if(arg_mkfile_dest[0])
       gen_makefile(arg_mkfile_dest, &classlist);
