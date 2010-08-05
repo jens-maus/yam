@@ -627,15 +627,15 @@ depend: classinfo Locale.c ParseEmail.c HTML2Mail.c
 ## GENCLASSES TOOL ####################
 
 .PHONY: classinfo
-classinfo: $(MUIDIR)/Classes.h
+classinfo: $(MUIDIR)/Classes.crc
 
-$(MUIDIR)/Classes.h: $(GENCLASSES)/GenClasses $(MUIDIR)/*.c Locale.h
+$(MUIDIR)/Classes.crc: $(GENCLASSES)/GenClasses $(MUIDIR)/*.c Locale.h
 	@echo "  GN GenClasses"
 	@$(GENCLASSES)/GenClasses mui -bYAM -gpl -storm -iClassesExtra.h -qdl
 	@echo "  CC mui/Classes.c"
 	@$(CC) $(CFLAGS) -c $(MUIDIR)/Classes.c -o $(OBJDIR)/$(MUIDIR)/Classes.o
 
-$(MUIDIR)/Classes.c: $(MUIDIR)/ClassesExtra.h
+$(MUIDIR)/Classes.c: $(MUIDIR)/Classes.h $(MUIDIR)/ClassesExtra.h
 
 $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
 	$(GENCLASSES)/lists.c $(GENCLASSES)/lists.h \

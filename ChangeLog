@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Makefile: slightly modified the dependencies for the classes to avoid the
+    permanent GenClasses invokation even without any changes to the public stuff
+    of the classes (methods, attributes, etc).
+
 2010-08-05 Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.
