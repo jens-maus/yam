@@ -4,6 +4,11 @@ GenClasses Tool - ChangeLog
 
 $Id$
 
+2010-08-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * the .crc file is now written on every run, even if the checksum did not
+    change. This solves some dependency issues in YAM's Makefile.
+
 2010-08-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * CRC checksums are now used to check whether any class definition has
