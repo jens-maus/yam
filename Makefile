@@ -40,6 +40,10 @@ clean:
 cleanall:
 	@$(MAKE) -C src cleanall
 
+.PHONY: distclean
+distclean:
+	@$(MAKE) -C src distclean
+
 .PHONY: release
 release:
 	@$(MAKE) -C src release
