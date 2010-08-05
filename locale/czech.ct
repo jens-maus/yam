@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 7.2 (24.3.2010)
+## version $VER: YAM.catalog 7.3 (5.8.2010)
 ## language czech
 ## codeset 5
-## chunk AUTH Vit Sindlar
 ;
-; YAM.cd - YAM 2.6 catalog description file
+## chunk AUTH Vit Sindlar
+; YAM.cd - YAM 2.7 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -224,8 +224,8 @@ Datum sestavení:
 ; Compilation date:
 ;
 MSG_UserLogin
-Pøihla¹te se kliknutím na své jméno
-; Click your name to login
+Pøihla¹te se kliknutím na jméno:
+; Click your name to login:
 ;
 MSG_ErrorStartup
 Chyba pøi spou¹tìní
@@ -925,20 +925,20 @@ A nyní pro jistotu heslo zadejte znovu:
 ; Please re-type the password:
 ;
 MSG_CO_ConfirmDelete
-Pøijdete o v¹echny zprávy ve vybrané slo¾ce!\n\
+Pøijdete o v¹echny zprávy ve vybrané slo¾ce.\n\
 Opravdu ji chcete smazat?
-; All messages in this folder will be lost!\n\
+; All messages in this folder will be lost.\n\
 ; Do you really want to delete it?
 ;
 MSG_CO_InvalidConf
 Neplatná konfigurace (chybí adresa serveru SMTP,\n\
 POP3 nebo e-mail).\n\
 \n\
-Zadejte prosím v¹echny potøebné údaje!
+Zadejte prosím v¹echny potøebné údaje.
 ; Invalid configuration (missing SMTP/POP3\n\
 ; server name or e-mail address).\n\
 ; \n\
-; Please fill in these fields and try again!
+; Please fill in these fields and try again.
 ;
 MSG_CO_ImportMIMEReq
 Import definice MIME...
@@ -1832,11 +1832,11 @@ Na dotaz
 ; ask before
 ;
 MSG_CO_ATABinfoask
-Pokud jsou informace; dotázat se
+Pokud existuje; dotázat se
 ; if info available; ask
 ;
 MSG_CO_ATABinfo
-Pokud jsou informace
+Pokud existuje
 ; if info available
 ;
 MSG_CO_ATABalways
@@ -1981,7 +1981,7 @@ Po napsání zprávy
 ; After writing a message
 ;
 MSG_CO_ScriptClickURL
-Dvojím kliknutím na odkaz
+Dvojí kliknutí na odkaz
 ; When double-clicking an URL
 ;
 MSG_CO_Script
@@ -2807,22 +2807,13 @@ provedené zmìny.
 ;
 ; Module AB - Routines
 ;
-MSG_AB_BirthdayReq
-%s slaví právì dnes %ld. narozeniny!\n\
-\n\
-Chcete poslat blahopøání?
-; Today, %s reaches age %ld.\n\
-; \n\
-; Do you want to send a greetings card?
-; NAME, AGE
-;
 MSG_AB_BirthdayReminder
 Pøipomínka narozenin
 ; Birthday Reminder
 ;
 MSG_AB_HappyBirthday
 V¹echno nejlep¹í k narozeninám!
-; Happy birthday!
+; Happy birthday.
 ;
 MSG_AB_PersonAlias
 Alias (osoba)
@@ -2849,11 +2840,11 @@ Alias
 ; Alias
 ;
 MSG_AB_FoundEntry
-V seznamu byl nalezen odpovídající kontakt!\n\
+V seznamu byl nalezen odpovídající kontakt.\n\
 \n\
 Alias: \eb%s\en\n\
 Jméno: \eb%s\en
-; Found matching entry!\n\
+; Found matching entry.\n\
 ; \n\
 ; Alias: \eb%s\en\n\
 ; Name: \eb%s\en
@@ -2867,7 +2858,7 @@ MSG_AB_FindEntryReq
 Pomocí tohoto modulu program vyhledá zadaný text\n\
 v polích alias, jméno, adresa, popis, ulice, mìsto\n\
 nebo zemì. Zadejte prosím po¾adovanou masku (dle\n\
-systému AmigaOS):
+pravidel AmigaOS):
 ; This module finds a given text in the alias, name, address,\n\
 ; description, street, city or country fields. Please enter\n\
 ; the search pattern (AmigaDOS wildchars are supported):
@@ -2881,12 +2872,12 @@ _Dal¹í|Up_ravit|_Zru¹it
 ; _Next hit|_Edit hit|_Cancel
 ;
 MSG_AB_NoneFound
-V seznamu nebyl nalezena odpovídající kontakt!
-; No matching entries found!
+V seznamu nebyl nalezen odpovídající kontakt.
+; No matching entries found.
 ;
 MSG_AB_Modified
-Seznamu kontaktù byl zmìnìn! Chcete ho ulo¾it?
-; Address book has been modified!
+Seznamu kontaktù byl zmìnìn. Chcete ho ulo¾it?
+; Address book has been modified.
 ;
 MSG_AB_ModifiedGads
 *_Ulo¾it|_Pou¾ít|Neuklá_dat|_Zru¹it
@@ -3208,8 +3199,8 @@ Fotografie
 ; Portrait
 ;
 MSG_EA_SelectPhoto
-_Vybrat
-; Se_lect
+_Vybrat...
+; Se_lect...
 ;
 MSG_EA_ReturnAddress
 Zpáteèní a_dresa
@@ -3776,8 +3767,8 @@ zprávu.
 ; Module WR - Procedures
 ;
 MSG_WR_ErrorNoRcpt
-Zpráva není úplná: Zadejte adresu pøíjemce!
-; Mail is incomplete: no recipient!
+Zpráva není úplná: Zadejte adresu pøíjemce.
+; Mail is incomplete: no recipient.
 ;
 MSG_WR_NoRcptReqGad
 Pøid_at pozdìji|*_Zru¹it
@@ -4436,7 +4427,7 @@ MSG_TR_NewMailReq
 Poèet stáhnutých zpráv: %3ld\n\
 Na serveru ponecháno: %3ld\n\
 Duplicitních vynecháno: %3ld\n
-; \e8You have new mail!\e2\n\
+; \e8You have new mail.\e2\n\
 ; \n\
 ; %3ld messages downloaded,\n\
 ; %3ld left on server\n\
@@ -4600,12 +4591,12 @@ Pøesvìdète se, ¾e zaøízení není chránìno proti zápisu.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias
-Zadejte prosím polo¾ku 'alias'!
-; You must specify an alias to identify this entry!
+Zadejte prosím polo¾ku 'alias'.
+; You must specify an alias to identify this entry.
 ;
 MSG_ER_ErrorNoAddress
-Zadejte prosím polo¾ku 'adresa'!
-; You must specify an address for this entry!
+Zadejte prosím polo¾ku 'adresa'.
+; You must specify an address for this entry.
 ;
 MSG_ER_ErrorDateFormat
 Neplatný formát data a èasu.\n\
@@ -4714,12 +4705,12 @@ Soubor sice existuje, ale nelze ho pøeèíst.
 ; FILENAME
 ;
 MSG_ER_MissingDirectory
-Zadejte prosím adresáø pro nového u¾ivatele!
-; You must specify a directory for the new user!
+Zadejte prosím adresáø pro nového u¾ivatele.
+; You must specify a directory for the new user.
 ;
 MSG_ER_MissingName
-Zadejte prosím jméno nového u¾ivatele!
-; You must specify a name for the new user!
+Zadejte prosím jméno nového u¾ivatele.
+; You must specify a name for the new user.
 ;
 MSG_ER_NoPublicKeys
 Nebyly nalezeny ¾ádné veøejné klíèe PGP.\n\
@@ -5034,8 +5025,7 @@ Zapne rozli¹ování malých a VELKÝCH písmen.
 ; be case sensitive?
 ;
 MSG_HELP_FI_CH_SUBSTR
-Zapne hledání v rámci jednotlivých slov pomocí\n\
-masky AmigaOS, tj. ?, #?, (a|b) a [abc].
+Zapne hledání v rámci jednotlivých slov.
 ; Enable a partial\n\
 ; string search.
 ;
@@ -5070,11 +5060,11 @@ Pøihlá¹ení u¾ivatele...
 ;
 MSG_US_RemoveReq
 Tímto krokem pøijdete o v¹echny zprávy, slo¾ky\n\
-a konfiguraèní soubory patøící danému u¾ivateli!\n\
+a konfiguraèní soubory patøící danému u¾ivateli.\n\
 \n\
 Opravdu chcete vybraný profil smazat?
 ; All messages, folders and configuration\n\
-; files belonging to this user will be lost!\n\
+; files belonging to this user will be lost.\n\
 ; \n\
 ; Do you really want to remove the user?
 ;
@@ -5494,7 +5484,7 @@ Výchozí
 MSG_ER_PGPMultipart
 Chyba pøi vytváøení zabezpeèené zprávy. Text nelze pomocí PGP podepsat \
 ani za¹ifrovat.
-; Error creating multipart PGP message. Encrypting/signing disabled!
+; Error creating multipart PGP message. Encrypting/signing disabled.
 ;
 MSG_RE_FixedFont
 Fixní písmo?
@@ -5720,8 +5710,8 @@ Text '%s' nelze najít.
 ; '%s' not found.
 ;
 MSG_WR_ERRORNOSENDER
-Zpráva není úplná! Vyberte adresu odesílatele.
-; Mail is incomplete: no sender!
+Zpráva není úplná: Vyberte adresu odesílatele.
+; Mail is incomplete: no sender.
 ;
 MSG_WR_NOSENDERREQGAD
 _Pou¾ít výchozí|*_Zru¹it
@@ -5815,8 +5805,8 @@ o rozesílacím seznamu.
 ; first five e-mails in the folder.
 ;
 MSG_FO_NOTRECOGNIZED
-Nepodaøilo se zjistit potøebné informace!
-; Couldn't be recognized!
+Nepodaøilo se zjistit potøebné informace.
+; Couldn't be recognized.
 ;
 MSG_FO_MAXAGEFMT
 %ld dnù
@@ -7648,8 +7638,8 @@ Najít...
 ; Search...
 ;
 MSG_MA_MFILTER
-Filtrovat po¹tu
-; Filter
+Filtrovat...
+; Filter...
 ;
 MSG_MA_REMOVEDELETED
 Vyprázdnit ko¹
@@ -7708,8 +7698,8 @@ Zkopírovat do...
 ; Copy...
 ;
 MSG_MA_MPRINT
-Tisknout
-; Print
+Tisknout...
+; Print...
 ;
 MSG_MA_MSAVE
 Ulo¾it...
@@ -7720,8 +7710,8 @@ Ulo¾it...
 ; Save...
 ;
 MSG_MA_MNEW
-Nová
-; New
+Nová...
+; New...
 ;
 MSG_MA_MREPLY
 Odpovìdìt...
@@ -8072,7 +8062,7 @@ MSG_ER_USER_UNKNOWN_BUTTON
 ;
 MSG_ER_USER_UNKNOWN_ERROR
 Byl nalezen neznámý u¾ivatel '%s'.
-; Unknown user '%s'!
+; Unknown user '%s'.
 ;
 MSG_HELP_CO_CA_COLSIG
 Definuje barvu podpisu pøi zobrazování zpráv.
@@ -8094,8 +8084,8 @@ Nechcete tuto funkci prozatím vypnout?
 ; Do you want to disable this option again?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE
-Nelze vytvoøit semafor!
-; Can't create semaphore!
+Nelze vytvoøit semafor.
+; Can't create semaphore.
 ;
 MSG_MA_AUTOSAVEFOUND_BUTTONS
 *K _odeslání|_Upravit|_Smazat|_Ignorovat
@@ -9435,8 +9425,8 @@ Opravdu ho chcete pøepsat?
 ; FILENAME
 ;
 MSG_ER_USER_DIR_MISSING
-Nelze najít domovský adresáø '%s' u¾ivatele '%s'!
-; The home directory '%s' of user '%s' does not exist!
+Nelze najít domovský adresáø '%s' u¾ivatele '%s'.
+; The home directory '%s' of user '%s' does not exist.
 ; PATH, USERNAME
 ;
 MSG_CO_TEXTCOLORS_READ
@@ -9539,13 +9529,13 @@ Formát data narození je neplatný. Pou¾ijte tento: '%s'.\
 %%m - mìsíc\n\
 %%y - rok (2 èíslice)\n\
 %%Y - rok (4 èíslice)\n\
-Rok narození musí být vìt¹í nebo roven 1900!
+Rok narození musí být vìt¹í nebo roven 1900.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n\
 ; %%d - day\n\
 ; %%m - month\n\
 ; %%y - year (2 digits)\n\
 ; %%Y - year (4 digits)\n\
-; The year number must be greater or equal 1900!
+; The year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
 MSG_CO_PGPURL
@@ -9559,11 +9549,6 @@ bude vlo¾ena do hlavièky ka¾dé odesílané zprávy.
 ; PGP key can be downloaded from. This URL\n\
 ; will then placed into a separate header\n\
 ; entry in every mail.
-;
-MSG_TR_NEW_MAIL_NOTIFY
-Nová po¹ta! Poèet zpráv: %ld.
-; Received %ld new mails!
-; COUNT
 ;
 MSG_CO_NOTIOS41SYSTEM
 Zapnout upozornìní dle AmigaOS_4.1
@@ -9602,7 +9587,7 @@ MSG_OPEN_WRITEWINDOWS
 Nìkteré z rozepsaných zpráv nejsou ulo¾eny.\n\
 \n\
 Co si pøejete udìlat?
-; There are still some write windows open!\n\
+; There are still some write windows open.\n\
 ; \n\
 ; How do you want to proceed?
 ;
@@ -9621,4 +9606,79 @@ jako souèást nové zprávy
 MSG_CO_FWDMSG_ATTACH
 ve formì pøílohy
 ; as attachment
+;
+MSG_CO_ScriptPreFilterMail
+Pøed filtrováním po¹ty
+; Before filter mail
+;
+MSG_CO_ScriptPostFilterMail
+Po filtrování po¹ty
+; After filter mail
+;
+MSG_FI_DOS_PATTERN
+Pou¾ít masku dle AmigaOS
+; Use AmigaDOS patterns
+;
+MSG_HELP_FI_CH_DOS_PATTERN
+Umo¾ní hledání pomocí pravidel AmigaOS, tj. ?, #?,\n\
+(a|b) a [abc].
+; Enable AmigaDOS patterns\n\
+; in the string search.
+;
+MSG_CTapplicationpgpsig
+Podpis PGP
+; PGP signature
+;
+MSG_AB_BirthdayReqBody
+Dnes, tj. %s, %s slaví své %ld. narozeniny.\n\
+\n\
+Nechcete poslat blahopøání?
+; Today, on %s, %s reaches age %ld.\n\
+; \n\
+; Do you want to send a greetings card?
+; DATE, NAME, AGE
+;
+MSG_ER_AREXX_EXECUTION_ERROR
+Chyba pøi spu¹tìní skriptu '%s' (chyba è. %ld)\n\
+Zkontrolujte, zda uvedený soubor existuje a jde o platný arexxový skript.
+; Execution of the ARexx command '%s' failed (error code %ld).\n\
+; Please make sure that the file is accessible and is a valid ARexx script.
+; COMMANDNAME, ERRORCODE
+;
+MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
+Dnes ji¾ neupozoròovat
+; Do not show this requester today again.
+;
+MSG_TR_NEW_MAIL_NOTIFY_ONE
+Poèet nových zpráv: 1
+; Received 1 new mail.
+;
+MSG_TR_NEW_MAIL_NOTIFY_MANY
+Poèet nových zpráv: %ld
+; Received %ld new mails.
+; COUNT
+;
+MSG_RE_SAVE_FILE
+Ulo¾it soubor
+; Save file
+;
+MSG_UPD_NO_UPDATES_FOUND_TITLE
+Nezji¹tìna ¾ádná nová aktualizace
+; No software updates available
+;
+MSG_UPD_NO_UPDATES_FOUND
+Nezji¹tìna nová verze ¾ádné ze souèástí programu.\n\
+%s
+; There are no software updates available.\n\
+; %s
+; HINT
+MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
+Zapne automatické sledování aktualizací potøebného softwaru.
+; YAM will check for available updates automatically.
+;
+MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
+Zkuste pozdìji nebo si zapnìte automatické sledování\n\
+aktualizací potøebného softwaru.
+; Please try again later or activate the automatic\n\
+; software update check.
 ;
