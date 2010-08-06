@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-06 Jens Langner <Jens.Langner@light-speed.de>
+
+  * www/nightly.yam.ch: added yam-build.sh script to our repository. This one
+    creates the nightly builds and can now be tuned by everyone ;)
+
 2010-08-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * Makefile: slightly modified the dependencies for the classes to avoid the
