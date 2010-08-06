@@ -6,8 +6,8 @@
 #
 # Copyright (c) 2004-2010 Jens Langner <Jens.Langner@light-speed.de>
 #
-# $Id$
-# $URL$
+# $Id:$
+# $URL:$
 #
 
 # User definable variables
