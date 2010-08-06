@@ -5,7 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2010-08-06  Alexandre Balaban <abalaban@free.fr>
+2010-08-07 Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/french.ct: fixed some flexcat warnings regarding missmatched
+    parameters. Please check your catalogs with FlexCat 2.7+ in future before
+    submitting them.
+
+2010-08-06 Alexandre Balaban <abalaban@free.fr>
 
   * locale/french.ct: updated french translation according to latest changes.
 

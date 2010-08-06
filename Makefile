@@ -32,6 +32,10 @@ all: src
 src:
 	@$(MAKE) -C src
 
+.PHONY: catalogs
+catalogs:
+	@$(MAKE) -C src catalogs
+
 .PHONY: clean
 clean:
 	@$(MAKE) -C src clean
