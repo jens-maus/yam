@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-06  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/french.ct: updated french translation according to latest changes.
+
 2010-08-06 Jens Langner <Jens.Langner@light-speed.de>
 
   * www/nightly.yam.ch: added yam-build.sh script to our repository. This one

@@ -1,8 +1,9 @@
 ## version $VER: YAM.catalog 7.1 (21.02.2010)
 ## language français
 ## codeset 111
-## chunk AUTH Alexandre Balaban/ATO-fr
 ;
+## chunk AUTH Alexandre Balaban/ATO-fr
+; YAM.cd - YAM 2.7 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -16,6 +17,9 @@
 ; and increase the last listed identifier number by one for your
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
+;
+;#version 7
+;#language english
 ;
 ; General
 ;
@@ -221,7 +225,7 @@ Compilé le:
 ;
 MSG_UserLogin
 Sélectionnez un utilisateur
-; Click your name to login
+; Click your name to login:
 ;
 MSG_ErrorStartup
 Erreur au démarrage
@@ -921,9 +925,9 @@ Entrer de nouveau le mot de passe s.v.p :
 ; Please re-type the password:
 ;
 MSG_CO_ConfirmDelete
-Tous les messages de ce dossier seront perdus !\n\
+Tous les messages de ce dossier seront perdus.\n\
 Voulez-vous vraiment le supprimer ?
-; All messages in this folder will be lost!\n\
+; All messages in this folder will be lost.\n\
 ; Do you really want to delete it?
 ;
 MSG_CO_InvalidConf
@@ -934,7 +938,7 @@ Remplissez ces champs et essayez de nouveau.
 ; Invalid configuration (missing SMTP/POP3\n\
 ; server name or e-mail address).\n\
 ; \n\
-; Please fill in these fields and try again!
+; Please fill in these fields and try again.
 ;
 MSG_CO_ImportMIMEReq
 Importe les préférences de...
@@ -950,11 +954,11 @@ Salut,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-;
+; 
 ;
 MSG_CO_AltRepPatternDef
 
-;
+; 
 ;
 MSG_CO_ForwardIntroDef
 *** Message retransmis ***\\\\n\
@@ -984,15 +988,15 @@ Mes salutations
 ;
 MSG_CO_AltRepHelloDef
 Bonjour,\\n
-;
+; 
 ;
 MSG_CO_AltRepByeDef
 
-;
+; 
 ;
 MSG_CO_MLRepHelloDef
 
-;
+; 
 ;
 MSG_CO_MLRepIntroDef
 Le %c, %n a écrit :\\\\n
@@ -2859,22 +2863,13 @@ et utilise les anciennes propriétés
 ;
 ; Module AB - Routines
 ;
-MSG_AB_BirthdayReq
-Aujourd'hui, %s a %ld ans.\n\
-\n\
-Voulez-vous lui envoyer un message ?
-; Today, %s reaches age %ld.\n\
-; \n\
-; Do you want to send a greetings card?
-; NAME, AGE
-;
 MSG_AB_BirthdayReminder
 Pense-bête (anniversaire)
 ; Birthday Reminder
 ;
 MSG_AB_HappyBirthday
-Joyeux Anniversaire !
-; Happy birthday!
+Joyeux Anniversaire.
+; Happy birthday.
 ;
 MSG_AB_PersonAlias
 Alias (PERSONNE)
@@ -2904,7 +2899,7 @@ MSG_AB_FoundEntry
 J'ai trouvé cette personne :\n\n\
 Alias : \eb%s\en\n\
   Nom : \eb%s\en
-; Found matching entry!\n\
+; Found matching entry.\n\
 ; \n\
 ; Alias: \eb%s\en\n\
 ; Name: \eb%s\en
@@ -2931,12 +2926,12 @@ _Suivant|_Éditer|_Annuler
 ; _Next hit|_Edit hit|_Cancel
 ;
 MSG_AB_NoneFound
-Aucune correspondance trouvée !
-; No matching entries found!
+Aucune correspondance trouvée.
+; No matching entries found.
 ;
 MSG_AB_Modified
-Le carnet d'adresses a été modifié !
-; Address book has been modified!
+Le carnet d'adresses a été modifié.
+; Address book has been modified.
 ;
 MSG_AB_ModifiedGads
 *_Sauver|_Utiliser|_Perdre|_Annuler
@@ -3257,8 +3252,8 @@ Portrait
 ; Portrait
 ;
 MSG_EA_SelectPhoto
-_Sélectionner
-; Se_lect
+_Sélectionner...
+; Se_lect...
 ;
 MSG_EA_ReturnAddress
 Adresse de _retour
@@ -3833,8 +3828,8 @@ vers d'autres destinataires
 ; Module WR - Procedures
 ;
 MSG_WR_ErrorNoRcpt
-Courrier incomplet : pas de destinataire !
-; Mail is incomplete: no recipient!
+Courrier incomplet : pas de destinataire.
+; Mail is incomplete: no recipient.
 ;
 MSG_WR_NoRcptReqGad
 Ajouter _le(s) destinataire(s) plus tard|*_Annuler
@@ -4499,12 +4494,12 @@ Efface le message sur le serveur...
 ; Deleting mail on server...
 ;
 MSG_TR_NewMailReq
-\e8Vous avez reçu du courrier !\e2\n\
+\e8Vous avez reçu du courrier.\e2\n\
 \n\
 %3ld messages chargés,\n\
 %3ld restés sur le serveur,\n\
 %3ld doublons évités.\n
-; \e8You have new mail!\e2\n\
+; \e8You have new mail.\e2\n\
 ; \n\
 ; %3ld messages downloaded,\n\
 ; %3ld left on server\n\
@@ -4671,12 +4666,12 @@ Vérifiez que le support ne soit pas protégé en écriture.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias
-Vous devez spécifier un alias pour identifier la personne !
-; You must specify an alias to identify this entry!
+Vous devez spécifier un alias pour identifier la personne.
+; You must specify an alias to identify this entry.
 ;
 MSG_ER_ErrorNoAddress
-Vous devez spécifier une adresse dans cette zone !
-; You must specify an address for this entry!
+Vous devez spécifier une adresse dans cette zone.
+; You must specify an address for this entry.
 ;
 MSG_ER_ErrorDateFormat
 Format date/heure invalide.\n\
@@ -4787,12 +4782,12 @@ Le fichier existe, mais il y a eu une erreur durant la lecture.
 ; FILENAME
 ;
 MSG_ER_MissingDirectory
-Vous devez spécifier un répertoire pour ce nouvel utilisateur !
-; You must specify a directory for the new user!
+Vous devez spécifier un répertoire pour ce nouvel utilisateur.
+; You must specify a directory for the new user.
 ;
 MSG_ER_MissingName
-Vous devez spécifier un nom pour ce nouvel utilisateur !
-; You must specify a name for the new user!
+Vous devez spécifier un nom pour ce nouvel utilisateur.
+; You must specify a name for the new user.
 ;
 MSG_ER_NoPublicKeys
 La clé publique PGP n'a pas été trouvée.\n\
@@ -5153,7 +5148,7 @@ de configuration de cet utilisateur seront perdus.\n\
 \n\
 Voulez-vous vraiment retirer cet utilisateur ?
 ; All messages, folders and configuration\n\
-; files belonging to this user will be lost!\n\
+; files belonging to this user will be lost.\n\
 ; \n\
 ; Do you really want to remove the user?
 ;
@@ -5579,8 +5574,8 @@ Défaut
 ;
 MSG_ER_PGPMultipart
 Erreur durant la création d'un message PGP multi-partie. \
-Désactivation des fonctions de chiffrage et de signature !
-; Error creating multipart PGP message. Encrypting/signing disabled!
+Désactivation des fonctions de chiffrage et de signature.
+; Error creating multipart PGP message. Encrypting/signing disabled.
 ;
 MSG_RE_FixedFont
 Police à chasse fixe
@@ -5812,8 +5807,8 @@ MSG_SEARCHNOTFOUND_MSG
 ; '%s' not found.
 ;
 MSG_WR_ERRORNOSENDER
-Le message est incomplet : il n'y a pas d'expéditeur !
-; Mail is incomplete: no sender!
+Le message est incomplet : il n'y a pas d'expéditeur.
+; Mail is incomplete: no sender.
 ;
 MSG_WR_NOSENDERREQGAD
 _Utiliser l'expéditeur par défaut|*_Annuler
@@ -5909,8 +5904,8 @@ analysant les 5 premiers courriers du dossier.
 ; first five e-mails in the folder.
 ;
 MSG_FO_NOTRECOGNIZED
-non reconnu !
-; Couldn't be recognized!
+non reconnu.
+; Couldn't be recognized.
 ;
 MSG_FO_MAXAGEFMT
 %ld jours
@@ -7414,7 +7409,7 @@ MSG_CO_SCRIPTS_URL
 ; %p  Full URL path
 ;
 MSG_CO_MIMECMD_PARAMETER
-%s  Chemin complet du fichier
+%p  Chemin complet du fichier
 ; %s  Full path of file
 ;
 MSG_ER_CANTOPENASL
@@ -7765,8 +7760,8 @@ Chercher...
 ; Search...
 ;
 MSG_MA_MFILTER
-Filtrer
-; Filter
+Filtrer...
+; Filter...
 ;
 MSG_MA_REMOVEDELETED
 Vider la corbeille
@@ -7825,8 +7820,8 @@ Copier...
 ; Copy...
 ;
 MSG_MA_MPRINT
-Imprimer
-; Print
+Imprimer...
+; Print...
 ;
 MSG_MA_MSAVE
 Sauver...
@@ -7837,8 +7832,8 @@ Sauver...
 ; Save...
 ;
 MSG_MA_MNEW
-Nouveau
-; New
+Nouveau...
+; New...
 ;
 MSG_MA_MREPLY
 Répondre...
@@ -8205,8 +8200,8 @@ _Ok
 ; *_Ok
 ;
 MSG_ER_USER_UNKNOWN_ERROR
-L'utilisateur « %s » est inconnu !
-; Unknown user '%s'!
+L'utilisateur « %s » est inconnu.
+; Unknown user '%s'.
 ;
 MSG_HELP_CO_CA_COLSIG
 La couleur à utiliser pour\n\
@@ -8228,8 +8223,8 @@ Voulez-vous désactiver cette option à nouveau ?
 ; Do you want to disable this option again?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE
-Impossible de créer le sémaphore !
-; Can't create semaphore!
+Impossible de créer le sémaphore.
+; Can't create semaphore.
 ;
 MSG_MA_AUTOSAVEFOUND_BUTTONS
 *Déplacer vers « _En Attente »|_Editer|E_ffacer|_Ignorer
@@ -8433,10 +8428,6 @@ MSG_CO_FWDMSG
 Courr_iers retransmis
 ; _Forward messages
 ;
-MSG_CO_FWDMSG_ATTACH
-en pièces jointes
-; as attachments
-;
 MSG_CO_FWDMSG_INLINE
 insérés dans le corps
 ; inlined
@@ -8566,7 +8557,7 @@ MSG_WR_INVALIDSECURITY_GADS
 ;
 MSG_ER_FILEENCODE
 Une erreur inattendue est survenue lors de l'encodage du \
-fichier « %s ».\n\
+fichier « % ».\n\
 \n\
 Veuillez vous assurer que ce fichier existe et est lisible \
 puis essayez à nouveau de rédiger le message.
@@ -9000,7 +8991,7 @@ avec YAM.
 ; contains the correct default theme distributed with YAM.
 ;
 MSG_ER_THEME_FALLBACK
-Le thème « %s » actuellement activé n'est pas accessible \
+Le thème « % » actuellement activé n'est pas accessible \
 ou est corrompu et n'a pas pu être chargé. Le thème par \
 défaut de YAM a donc été activé en remplacement.\n\
 \n\
@@ -9409,7 +9400,7 @@ Veuillez désactivez l'option dans la configuration.
 ; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP
-Impossible de se connecter à l'hôte « %s ».\n\
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
 \n\
 Une connexion socket TCP/IP semble être déjà active. \
 Veuillez fermer tous les autres transferts en cours.
@@ -9420,7 +9411,7 @@ Veuillez fermer tous les autres transferts en cours.
 ; HOST
 ;
 MSG_ER_CONNECTERR_TIMEDOUT_SMTP
-Impossible de se connecter à l'hôte « %s ».\n\
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
 \n\
 Le serveur de courrier n'a pas répondu dans le délai imparti.
 ; Couldn't connect to host '%s'.\n\
@@ -9430,7 +9421,7 @@ Le serveur de courrier n'a pas répondu dans le délai imparti.
 ; HOST
 ;
 MSG_ER_CONNECTERR_NO_SOCKET_SMTP
-Impossible de se connecter à l'hôte « %s ».\n\
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
 \n\
 YAM n'a pas été en mesure d'établir une connexion socket \
 vers le serveur de courrier. Veuillez vous assurer que votre \
@@ -9443,7 +9434,7 @@ pile TCP/IP est bien démarrée et fonctionne correctement.
 ; HOST
 ;
 MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP
-Impossible de se connecter à l'hôte « %s ».\n\
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
 \n\
 YAM n'a pas été en mesure d'établir une connexion \
 avec accès non bloquant. Veuillez vous assurer que \
@@ -9469,7 +9460,7 @@ Veuillez désactiver cette option dans la configuration.
 ; HOST
 ;
 MSG_ER_BADRESPONSE_SMTP
-Mauvaise réponse du serveur de courrier « %s » \
+Mauvaise réponse du serveur de courrier « %s » du compte « %s » \
 à la commande « %s » :\n\
 %s\n\
 \n\
@@ -9484,7 +9475,7 @@ et a répondu par le message d'erreur ci-dessus.
 ; SERVER, COMMAND, TEXT
 ;
 MSG_ER_CANNOT_CONNECT_SMTP
-Impossible de se connecter à l'hôte « %s ».\n\
+Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
 \n\
 Le serveur de courrier est hors service, ou ne supporte pas le protocole SMTP.
 ; Couldn't connect to host '%s'.\n\
@@ -9618,8 +9609,8 @@ Voulez-vous l'écraser ?
 ; FILENAME
 ;
 MSG_ER_USER_DIR_MISSING
-Le répertoire personnel « %s » de l'utilisateur « %s » n'existe pas !
-; The home directory '%s' of user '%s' does not exist!
+Le répertoire personnel « %s » de l'utilisateur « %s » n'existe pas.
+; The home directory '%s' of user '%s' does not exist.
 ; PATH, USERNAME
 ;
 MSG_CO_TEXTCOLORS_READ
@@ -9722,13 +9713,13 @@ Le format correct est « %s ».\n\
 %%m - mois\n\
 %%y - année (deux chiffres)\n\
 %%Y - année (quatre chiffres)\n\
-L'année doit être supérieure ou égale à 1900 !
+L'année doit être supérieure ou égale à 1900.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n\
 ; %%d - day\n\
 ; %%m - month\n\
 ; %%y - year (2 digits)\n\
 ; %%Y - year (4 digits)\n\
-; The year number must be greater or equal 1900!
+; The year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
 MSG_CO_PGPURL
@@ -9744,12 +9735,10 @@ l'entête séparée dans chaque message.\n\
 ; PGP key can be downloaded from. This URL\n\
 ; will then placed into a separate header\n\
 ; entry in every mail.
-;
-MSG_TR_NEW_MAIL_NOTIFY
-%ld nouveaux courriers reçus !
-; Received %ld new mails!
-;
-; COUNT
+; You can specify an URL where your public\n\
+; PGP key can be downloaded from. This URL\n\
+; will then placed into a separate header\n\
+; entry in every mail.
 ;
 MSG_CO_NOTIOS41SYSTEM
 System de notification AmigaOS 4.1
@@ -9777,6 +9766,115 @@ et y saisir le lien suivant :\n\
 ; \n\
 ; Please launch your internet browser yourself and enter this link:\n\
 ; '%s'
-;
 ; URL
+;
+MSG_USERNAME_FALLBACK
+Monsieur X
+; John Doe
+;
+MSG_RE_DEFAULT_MIMEPART_NAME
+Partie %ld.%ld
+; Part %ld.%ld
+; PARENTNUMBER PARTNUMER
+;
+MSG_OPEN_WRITEWINDOWS
+Il existe encore des fenêtres de rédaction ouvertes.\n\
+\n\
+Que désirez-vous faire ?
+; There are still some write windows open.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_OPEN_WRITEWINDOWS_GAD
+*Enregi_strer maintenant|_Quitter sans enregistrer|_Annuler
+; *_Save now|_Quit without saving|_Cancel
+;
+MSG_MA_MFORWARD_ATTACH
+en tant que pièce jointe
+; as attachment
+;
+MSG_MA_MFORWARD_INLINE
+en tant que citation
+; inlined
+;
+MSG_CO_FWDMSG_ATTACH
+en tant que pièces jointes
+; as attachment
+;
+MSG_CO_ScriptPreFilterMail
+Avant le filtrage des messages
+; Before filter mail
+;
+MSG_CO_ScriptPostFilterMail
+Après le filtrage des messages
+; After filter mail
+;
+MSG_FI_DOS_PATTERN
+Utiliser les motifs AmigaDOS
+; Use AmigaDOS patterns
+;
+MSG_HELP_FI_CH_DOS_PATTERN
+Active les motifs AmigaDOS\n\
+dans la recherche de chaîne.
+; Enable AmigaDOS patterns\n\
+; in the string search.
+;
+MSG_CTapplicationpgpsig
+Signature PGP
+; PGP signature
+;
+MSG_AB_BirthdayReqBody
+Aujourd'hui, %s, %s a %ld ans.\n\
+\n\
+Voulez-vous lui envoyer un message ?
+; Today, on %s, %s reaches age %ld.\n\
+; \n\
+; Do you want to send a greetings card?
+; DATE, NAME, AGE
+;
+MSG_ER_AREXX_EXECUTION_ERROR
+L'exécution de la commande ARexx '%s' a échoué (code erreur %ld).\n\
+Veuillez vous assurer que le fichier est accessible et est un script ARexx valide.
+; Execution of the ARexx command '%s' failed (error code %ld).\n\
+; Please make sure that the file is accessible and is a valid ARexx script.
+; COMMANDNAME, ERRORCODE
+;
+MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
+Ne plus me redemander aujourd'hui.
+; Do not show this requester today again.
+;
+MSG_TR_NEW_MAIL_NOTIFY_ONE
+Un nouveau courrier.
+; Received 1 new mail.
+;
+MSG_TR_NEW_MAIL_NOTIFY_MANY
+%ld nouveaux courriers.
+; Received %ld new mails.
+;
+; COUNT
+;
+MSG_RE_SAVE_FILE
+Enregistrer fichier
+; Save file
+;
+MSG_UPD_NO_UPDATES_FOUND_TITLE
+Aucune mise à jour disponible
+; No software updates available
+;
+MSG_UPD_NO_UPDATES_FOUND
+Il n'y a aucune mise à jour disponible.\n\
+%s
+; There are no software updates available.\n\
+; %s
+;
+; HINT
+MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
+YAM vérifiera automatiquement l'existence de mises à jour.
+; YAM will check for available updates automatically.
+;
+MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
+Veuillez réessayer plus tard ou activer la recherche\n\
+automatique des mises à jour.
+; Please try again later or activate the automatic\n\
+; software update check.
 ;
