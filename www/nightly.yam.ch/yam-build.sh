@@ -151,6 +151,20 @@ compile_debug()
   echo "================================================================="
 }
 
+# to generate all catalogs
+create_catalogs()
+{
+  echo "Creating catalog files:"
+  echo "================================================================="
+  set -x
+  mkdir $DEVDIR/locale
+  cd $MODULEPATH/src
+  $MAKE catalogs
+  cp ../locale/*.catalog $DEVDIR/locale/
+  set +x
+  echo "================================================================="
+  echo "done."
+}
 
 ###################################################################
 #
@@ -239,10 +253,7 @@ cp -a $MODULEPATH/themes $DEVDIR/ >/dev/null 2>&1
 find $DEVDIR/themes/ -name ".svn" -exec rm -rf {} \; >/dev/null 2>&1
 
 # let us generate all catalogs first
-mkdir $DEVDIR/locale
-cd $MODULEPATH/src
-$MAKE catalogs >/dev/null 2>&1
-cp ../locale/*.catalog $DEVDIR/locale/
+create_catalogs
 
 # AmigaOS4 target compile
 compile_release AmigaOS4 os4
@@ -315,3 +326,6 @@ closeLogFile
 
 # move logfile to WEBDIR
 cp ${OUTPUT_LOG} $WEBDIR/`basename $DEVDIR`/
+
+# exit with no error
+exit 0
