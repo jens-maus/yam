@@ -26,9 +26,20 @@
 ***************************************************************************/
 
 This how-to assumes that you have enough experience to install and
-setup svn and using the Shell.
+setup svn and using the shell as well as dealing with catalog translation
+files (*.ct) and description files (*.cd).
 
-First, you need to get the subversion client "svn" from AmiNET for OS3/OS4:
+First, you will need to install "FlexCat" version 2.7 or later on your
+installation because that is the catalog compilation tool the YAM project
+is using (we are NOT using CatComp or any other tool). Simply go to the
+following URL and download the latest version of FlexCat:
+
+http://sourceforge.net/projects/flexcat/
+
+After download you should install FlexCat in a directory which is part of
+your standard command PATH (e.g. C:)
+
+Next, you need to get the subversion client "svn" from AmiNET for OS3/OS4:
 
 http://www.aminet.net/package.php?package=dev/misc/subversion-1.1.4.lha
 
@@ -45,12 +56,12 @@ language in there. (Don't change the directory layout and such!)
 However, you need to make sure you keep the following in mind:
 
  1. Always do a "svn update" in that "yam" directory right before your
- next change or checkin so that you make sure you get the very
- latest changes.
+    next change or checkin so that you make sure you get the very
+    latest changes.
  2. Always bump the revision and date of your *.ct file before you
- checkin your changes, back to the repository, that's very important!
+    checkin your changes, back to the repository, that's very important!
  3. Always adapt the "ChangeLog" yourself by adding an entry to it
- right before you checkin.
+    right before you checkin.
 
 After you have done your changes you might do a "svn status" in the
 "yam" directory and subversion should tell you which files you changed.
