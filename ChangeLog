@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-08 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed tons of erroneous shortcuts and removed all wrongly
+    ellipsis notifications that means no more compiling error with Flexcat 2.7!
+
 2010-08-07 Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/french.ct: fixed some flexcat warnings regarding missmatched
@@ -57,7 +62,7 @@ $URL$
 
 2010-07-30 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italiano.ct: fixed tons of warnings with FlexCat 2.7 caused by recent
+  * locale/italian.ct: fixed tons of warnings with FlexCat 2.7 caused by recent
     modifications, then updated to the latest changes.
   * Hey how about find a method for suppressing trailing ellipsis notifications!
 
@@ -156,7 +161,7 @@ $URL$
 
 2010-07-20 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italiano.ct: First compile with FlexCat 2.7 OS4 PPC!
+  * locale/italian.ct: First compile with FlexCat 2.7 OS4 PPC!
     Fixed some errors and update to the very latest YAM.cd
 
 2010-07-20 Jens Langner <Jens.Langner@light-speed.de>
@@ -186,7 +191,7 @@ $URL$
 
 2010-07-19 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italiano.ct: update italian translation.
+  * locale/italian.ct: update italian translation.
 
 2010-07-19 Thore Böckelmann <tboeckel@gmx.de>
 
@@ -262,7 +267,7 @@ $URL$
 
 2010-06-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italiano.ct: update italian translation.
+  * locale/italian.ct: update italian translation.
 
 2010-06-26 Frank Weber <opionline@yahoo.de>
 
@@ -318,7 +323,7 @@ $URL$
 
 2010-06-17 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italiano.ct: minor updates on translation.
+  * locale/italian.ct: minor updates on translation.
 
 2010-06-17 Thore Böckelmann <tboeckel@gmx.de>
 
@@ -929,7 +934,7 @@ $URL$
 
 2010-01-15 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italiano.ct: minor corrections on the italian translation.
+  * locale/italian.ct: minor corrections on the italian translation.
 
 2010-01-14  Vit Sindlar <sindlarv at centrum dot cz>
 
@@ -977,7 +982,7 @@ $URL$
 
 2010-01-08 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italiano.ct: other minor corrections on the italian translation.
+  * locale/italian.ct: other minor corrections on the italian translation.
 
 2010-01-08  Alexandre Balaban <abalaban@free.fr>
 
@@ -1067,7 +1072,7 @@ $URL$
 
 2009-12-27 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italiano.ct: minor correction in the italian translation.
+  * locale/italian.ct: minor correction in the italian translation.
 
 2009-12-27 Thore Böckelmann <tboeckel@gmx.de>
 
@@ -1120,7 +1125,7 @@ $URL$
 
 2009-12-09 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italiano.ct: Various changes on the italian translation.
+  * locale/italian.ct: Various changes on the italian translation.
 
 2009-12-09 Thore Böckelmann <tboeckel@gmx.de>
 
@@ -1230,11 +1235,11 @@ $URL$
 
 2009-10-25 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italiano.ct: Various minor changes on the italian translation.
+  * locale/italian.ct: Various minor changes on the italian translation.
 
 2009-10-21 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italiano.ct: Added missing string (MSG_CO_TEXTCOLORS_READ), this should
+  * locale/italian.ct: Added missing string (MSG_CO_TEXTCOLORS_READ), this should
     fix bugs #2874442 and #2874431
   * doc/Install-YAM: Added italian language as "Setting up" option, this need some
     more testing before 2.6 final release.
@@ -1288,7 +1293,7 @@ $URL$
 
 2009-10-10 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italiano.ct: Update italian catalog according to the latest changes
+  * locale/italian.ct: Update italian catalog according to the latest changes
   * doc/Install-YAM: fixed some inconsistencies regarding italian strings
 
 2009-10-08 Thore Böckelmann <tboeckel@gmx.de>
@@ -7648,7 +7653,7 @@ $URL$
 
 2006-12-09  Jens Langner <Jens.Langner@light-speed.de>
 
-  * locale/italiano.ct: updated italian catalog translation kindly provided
+  * locale/italian.ct: updated italian catalog translation kindly provided
     by Luca Longone.
   * YAM_folderconfig.h, misc: the "isSpamFolder()" macro now generally also
     checks the "C->SpamFilerEnabled" variable which seems to be more
@@ -9442,7 +9447,7 @@ $URL$
     body text, resulting in a malformed mail display. So using just an LF
     seems to be definitly more appropriate here and should fix the reported
     problems where mails from YAM show up malformed on Outlook&Co.
-  * locale/italiano.ct: update italian catalog translation kindly provided by
+  * locale/italian.ct: update italian catalog translation kindly provided by
     Luca Longone.
   * locale/francais.ct: updated french catalog translation kindly provided by
     Alexandre Balaban.
@@ -9558,7 +9563,7 @@ $URL$
 
 2006-03-05  Jens Langner <Jens.Langner@light-speed.de>
 
-  * locale/italiano.ct: updated italian catalog translation kindly
+  * locale/italian.ct: updated italian catalog translation kindly
     provided by Luca Longone.
   * YAM_UT.c: added #?.msg extension to the recognized extension
     for a mail import requester.
@@ -9724,7 +9729,7 @@ $URL$
 
 2006-01-20  Jens Langner <Jens.Langner@light-speed.de>
 
-  * locale/italiano.ct: updated italian catalog translation kindly provided
+  * locale/italian.ct: updated italian catalog translation kindly provided
     by Luca Longone.
   * YAM_RE.c: fixed a bug in the ConsumeRestOfPart() function where it couldn't
     deal with messages containing "\r\n" sequences instead of just plain

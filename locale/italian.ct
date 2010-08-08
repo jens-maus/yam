@@ -1,12 +1,13 @@
-## version $VER: YAM.catalog 7.1 (30.07.2010)
+## version $VER: YAM.catalog 7.2 (8.08.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
 ;
 ; italian.ct - YAM 2.7 catalog translation file
+; Compiled with FlexCat 2.7 PPC
 ; $Id$
 ;
-; based on YAM.cd 4817 2010-07-30
+; based on YAM.cd 4829 2010-07-30
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -717,7 +718,7 @@ In_oltra
 ; For_ward
 ;
 MSG_MA_TBGetMail
-_Preleva
+Pre_leva
 ; _Get
 ;
 MSG_MA_TBSendAll
@@ -725,7 +726,7 @@ _Invia
 ; _Send
 ;
 MSG_MA_TBFilter
-F_iltra
+_Filtra
 ; F_ilter
 ;
 MSG_MA_TBFind
@@ -1288,7 +1289,7 @@ A_ttiva connessione
 ; _Active
 ;
 MSG_CO_DeleteServerMail
-Cancella la p_osta sul server
+Cancella la p_osta dal server
 ; Delete mail _on server
 ;
 MSG_CO_UseAPOP
@@ -1452,7 +1453,7 @@ _Cancella
 ; Dele_te
 ;
 MSG_CO_ActionSkip
-Non scarica_re
+Non prele_vare/scaricare
 ; Don't do_wnload
 ;
 MSG_CO_HeadNone
@@ -1512,11 +1513,11 @@ Intesta_zione a capo
 ; _Wrap headers
 ;
 MSG_CO_OldQuotes
-_Citazione prec.
+Citazione prec.
 ; Old quotes
 ;
 MSG_CO_Header
-_Intestazione
+Intestazi_one
 ; _Headers
 ;
 MSG_CO_SenderInfo
@@ -1524,7 +1525,7 @@ Info _mittente
 ; Sender _info
 ;
 MSG_CO_SignatureSep
-Separatore _firma
+Se_paratore firma
 ; Si_g. separator
 ;
 MSG_CO_ColoredText
@@ -1532,11 +1533,11 @@ Testo colorato
 ; Colored text
 ;
 MSG_CO_MultiReadWin
-Fin_estre multiple
+Fine_stre multiple
 ; _Multiple windows
 ;
 MSG_CO_DisplayAll
-Most_ra tutti i testi
+Mostra tutte le parti del testo (e_-mail)
 ; Display _all texts
 ;
 MSG_CO_FixedFontEdit
@@ -1564,7 +1565,7 @@ Intestazione dei messaggi
 ; Message headers
 ;
 MSG_CO_ReplyTo
-_Rispondi a
+Rispon_di a
 ; _Reply to
 ;
 MSG_CO_Organization
@@ -1580,7 +1581,7 @@ Corpo del messaggio
 ; Message body
 ;
 MSG_CO_Welcome
-_Frase di benvenuto
+Frase di _benvenuto
 ; Welcome _phrase
 ;
 MSG_CO_Greetings
@@ -1592,7 +1593,7 @@ Editor
 ; Editor
 ;
 MSG_CO_WordWrap
-A _capo
+A ca_po
 ; _Word-wrap
 ;
 MSG_CO_EWOff
@@ -1608,7 +1609,7 @@ prima di spedire
 ; before sending
 ;
 MSG_CO_ExternalEditor
-_Editor esterno
+Editor este_rno
 ; _External editor
 ;
 MSG_CO_Launch
@@ -1636,7 +1637,7 @@ Frase di _apertura
 ; _Initial phrase
 ;
 MSG_CO_FwdFinish
-_Frase di chiusura
+Frase di chi_usura
 ; _Terminating phrase
 ;
 MSG_CO_Replying
@@ -1660,7 +1661,7 @@ Frase di risposta _Mailing list
 ; _Mailing list reply phrases
 ;
 MSG_CO_QuoteEmpty
-Citazione delle linee _vuote
+Citazione delle _linee vuote
 ; Quote _empty lines
 ;
 MSG_CO_VerifyAddress
@@ -1668,7 +1669,7 @@ _Verifica indirizzo mittente
 ; _Verify recipient address
 ;
 MSG_CO_StripSignature
-E_limina firma
+Elimina _firma
 ; Stri_p signature
 ;
 MSG_CO_DefSig
@@ -1812,7 +1813,7 @@ Cancella i vecchi messaggi
 ; Delete old mail
 ;
 MSG_CO_RemoveDel
-Rimuovi posta cancellata
+Rimuovi la posta cancellata
 ; Remove deleted mail
 ;
 MSG_CO_ATABnever
@@ -1872,7 +1873,7 @@ _Decodifica file in
 ; D_ecode files to
 ;
 MSG_CO_Attach
-Alle_ga file da
+A_llega file da
 ; _Attach files from
 ;
 MSG_CO_TempDir
@@ -1908,7 +1909,7 @@ _Rimuovi messaggi immediatamente
 ; _Remove messages immediately
 ;
 MSG_CO_SaveSent
-Sal_va messaggi inviati
+Salva _messaggi inviati
 ; Sa_ve sent messages
 ;
 MSG_CO_XPK
@@ -1916,15 +1917,15 @@ Impostazioni XPK/LhA
 ; XPK/LhA settings
 ;
 MSG_CO_XPKPack
-Co_mpattatore
+Compattatore
 ; Packer
 ;
 MSG_CO_XPKPackEnc
-Comprimi/prote_ggi
+Comprimi/proteggi
 ; Pack/Protect
 ;
 MSG_CO_Archiver
-Arc_hiviatore
+Archi_viatore
 ; Archi_ver
 ;
 MSG_CO_ScriptMenu
@@ -4971,7 +4972,7 @@ Ricerca sottostringa
 ; Module FI - Window
 ;
 MSG_FI_FindMessages
-Trova messaggi
+Ricerca messaggi
 ; Find messages
 ;
 MSG_FI_AllFolders
@@ -4979,7 +4980,7 @@ _Ovunque
 ; _everywhere
 ;
 MSG_FI_FindIn
-Trova in
+Cerca in
 ; Find in
 ;
 MSG_FI_FindWhat
@@ -5701,7 +5702,7 @@ MSG_CO_SENTMSGS
 ; %s  Sent messages
 ;
 MSG_FO_DSTATS
-Statistiche App_Icon
+_Statistiche AppIcon
 ; App_Icon stats
 ;
 MSG_HELP_FO_CH_STATS
@@ -6389,7 +6390,7 @@ direttamente nella finestra principale.
 ; directly in the main window.
 ;
 MSG_CO_SETSTATUSDELAYED1
-Ritarda mar_catura dei messaggi appena letti a
+_Ritarda marcatura dei messaggi appena letti a
 ; Delay mar_king of displayed mail as read for
 ;
 MSG_CO_SETSTATUSDELAYED2
@@ -6728,7 +6729,7 @@ Impostazioni di sistema
 ; System settings
 ;
 MSG_CO_DEFAULTCHARSET
-_Set di caratteri predefinito
+Set di caratteri predef_inito
 ; C_harset
 ;
 MSG_CO_CHARSETUNKNOWNWARN
@@ -7210,7 +7211,7 @@ Archivio BZIP2
 ; BZIP2 archive
 ;
 MSG_CO_DETECT_CYRILLIC
-Identifica automaticamente i set di caratteri c_irillici
+Identifica automaticamente i set di caratteri cirillici (C_yrillic)
 ; Auto-detect c_yrillic charsets
 ;
 MSG_HELP_CO_DETECT_CYRILLIC
@@ -7295,7 +7296,7 @@ Messaggio %%ld di %ld
 ; COUNT, COUNT
 ;
 MSG_CO_CONVERTHTML
-_Converti messaggi HTML in testo semplice
+Converti messaggi _HTML in testo semplice
 ; Con_vert HTML e-mails to plain text
 ;
 MSG_HELP_CO_CONVERTHTML
@@ -7477,7 +7478,7 @@ Caricamento dati per l'individuazione dello Spam...
 ; Loading spam training data...
 ;
 MSG_MA_TBSPAM
-_Spam
+S_pam
 ; Sp_am
 ;
 MSG_MA_TBNOTSPAM
@@ -7571,7 +7572,7 @@ Marca messaggi come Spam nel caso vengano _spostati nella cartella Spam
 ; Mark mails as spam when _moved to the Spam folder
 ;
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
-La _rubrica è una lista bianca
+La rubrica è una lista _bianca
 ; Address book is _white list
 ;
 MSG_CO_SPAM_RECOGNITION
@@ -7924,11 +7925,11 @@ Cerca...
 ; Search...
 ;
 MSG_RE_SEARCH_AGAIN
-Cerca ancora...
+Cerca ancora
 ; Search again
 ;
 MSG_WR_SEARCH_AGAIN
-Cerca ancora...
+Cerca ancora
 ; Search again
 ;
 MSG_WR_AUTOWRAP
@@ -8056,7 +8057,7 @@ _Non inviare la ricevuta di ritorno
 ; _Never send a return receipt
 ;
 MSG_CO_MDN_ENABLED
-Permetti la ricevuta di _ritorno per alcuni messaggi
+Permetti la ricevuta di ritorno per alc_uni messaggi
 ; Allow _return receipts for some messages
 ;
 MSG_CO_MDN_NORECIPIENT
@@ -8064,19 +8065,19 @@ Nel caso non si sia presenti né su _A: che su CC: del messaggio:
 ; If I'm not in the _To: or Cc: of the message:
 ;
 MSG_CO_MDN_NODOMAIN
-Nel caso il mittente sia _fuori dal proprio dominio:
+Nel caso il mittente sia fuori dal proprio _dominio:
 ; If the sender is _outside my domain:
 ;
 MSG_CO_MDN_DELETE
-Nel caso si desideri _eliminare il messaggio:
+Nel caso si desideri eliminare il messa_ggio:
 ; If I'm going to just _delete the message:
 ;
 MSG_CO_MDN_OTHER
-In tutti gli _altri casi:
+In tutti gli altri _casi:
 ; In all oth_er cases:
 ;
 MSG_CO_REQUESTMDN
-Chiedi sempre una ricevuta di r_itorno
+Chiedi sempre una ricevuta di ritor_no
 ; Always request a retur_n receipt
 ;
 MSG_HELP_CO_CH_REQUESTMDN
@@ -9732,7 +9733,7 @@ passaggi nei testi (ad esempio per le citazioni)
 ; text passages, (e.g. quotations, etc.)
 ;
 MSG_CO_TEXTSTYLES_READ
-Visualizza stili tes_to
+Visualizza stili t_esto
 ; Show te_xt styles
 ;
 MSG_HELP_CO_CH_TEXTSTYLES_READ
@@ -9752,7 +9753,7 @@ passaggi nei testi (ad esempio per le citazioni)
 ; text passages, (e.g. quotations, etc.)
 ;
 MSG_CO_TEXTSTYLES_WRITE
-Visualizza stili tes_to
+Visualizza stili t_esto
 ; Show te_xt styles
 ;
 MSG_HELP_CO_CH_TEXTSTYLES_WRITE
@@ -9949,7 +9950,7 @@ di un valido script ARexx.
 ; COMMANDNAME, ERRORCODE
 ;
 MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
-Per _oggi non visualizzare nuovamente questo messaggio.
+Per oggi non visualizzare nuovamente questo messaggio.
 ; Do not show this requester today again.
 ;
 MSG_TR_NEW_MAIL_NOTIFY_ONE
@@ -9966,7 +9967,7 @@ Salva file
 ; Save file
 ;
 MSG_UPD_NO_UPDATES_FOUND_TITLE
-Nessun aggiornamento software disponibile.
+Nessun aggiornamento disponibile
 ; No software updates available
 ;
 MSG_UPD_NO_UPDATES_FOUND
@@ -9977,12 +9978,13 @@ Non è stato trovato alcun nuovo aggiornamento.\n\
 ; HINT
 ;
 MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
-YAM verificherà periodicamente la presenza dei nuovi aggiornamenti.\n\
+YAM verificherà periodicamente la presenza dei\n\
+nuovi aggiornamenti.
 ; YAM will check for available updates automatically.
 ;
 MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
-Per favore riprova successivamente oppure dal menu a tendina attiva\n\
-l'opzione di verifica periodica degli aggiornamenti.
+Per favore riprova in un secondo tempo oppure attiva dal\n\
+menu l'opzione di verifica periodica degli aggiornamenti.
 ; Please try again later or activate the automatic\n\
 ; software update check.
 ;
