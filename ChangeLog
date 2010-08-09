@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/Aboutwindow.c: fixed wrong usage of MUIV_Notify_Self. This closes #176.
+
 2010-08-08 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed tons of erroneous shortcuts and removed all wrongly

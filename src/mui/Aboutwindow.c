@@ -48,7 +48,6 @@ struct Data
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct Data *data;
   char logopath[SIZE_PATHFILE];
   char *compileInfo;
   Object *bt_okay;
@@ -262,16 +261,15 @@ OVERLOAD(OM_NEW)
 
     TAG_MORE, (ULONG)inittags(msg))))
   {
-    if(!(data = (struct Data *)INST_DATA(cl,obj)))
-      return 0;
+    GETDATA;
 
     data->aboutText = aboutText;
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
     DoMethod(obj,       MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-    DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Self, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-    DoMethod(bt_gopage, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Self, 2, MUIM_Aboutwindow_GotoSupportPage);
+    DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+    DoMethod(bt_gopage, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_Aboutwindow_GotoSupportPage);
 
     xset(obj, MUIA_Window_Activate,      TRUE,
               MUIA_Window_DefaultObject, bt_okay);
@@ -308,8 +306,11 @@ OVERLOAD(OM_DISPOSE)
 // open a browser and go to the YAM support page
 DECLARE(GotoSupportPage)
 {
+  ENTER();
+
   GotoURL("http://www.yam.ch/", FALSE);
 
+  LEAVE();
   return 0;
 }
 
