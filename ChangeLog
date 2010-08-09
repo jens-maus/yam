@@ -7,6 +7,8 @@ $URL$
 
 2010-08-09 Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc/AllocSysObject.c: use a union of all supported object type to avoid
+    lots of type casts.
   * extrasrc.h: cleaned up the file. No longer defines lots of NEED_#? only just
     to define the corresponding HAVE_#? a few lines later. This and the last
     change very probably will break compatibility with non-GCC compilers.

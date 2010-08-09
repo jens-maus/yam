@@ -90,24 +90,36 @@ struct SysSignalSemaphore
 // needed or cannot be simulated
 APTR AllocSysObject(ULONG type, struct TagItem *tags)
 {
-  APTR object = NULL;
-  struct TagItem *tstate, *tag;
+  union {
+    APTR pointer;
+    struct IORequest *iorequest;
+    struct Hook *hook;
+    struct List *list;
+    struct Node *node;
+    struct MsgPort *port;
+    struct Message *message;
+    struct SignalSemaphore *semaphore;
+    struct TagItem *taglist;
+    APTR mempool;
+  } object;
+  struct TagItem *tstate = tags;
+  struct TagItem *tag;
   ULONG memFlags;
 
   ENTER();
 
   SHOWTAGS(tags);
 
-  memFlags = GetTagData(ASO_MemoryOvr, 0, tags);
+  object.pointer = NULL;
 
-  tstate  = tags;
+  memFlags = GetTagData(ASO_MemoryOvr, 0, tags);
 
   switch(type)
   {
     case ASOT_IOREQUEST:
     {
       ULONG size = sizeof(struct IORequest);
-      APTR port = NULL;
+      struct MsgPort *port = NULL;
       struct IORequest *duplicate = NULL;
 
       if(tags != NULL)
@@ -121,7 +133,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
             break;
 
             case ASOIOR_ReplyPort:
-              port = (APTR)tag->ti_Data;
+              port = (struct MsgPort *)tag->ti_Data;
             break;
 
             case ASOIOR_Duplicate:
@@ -134,12 +146,12 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       // if no reply port is given but an existing IO request is to be duplicated,
       // then we will use its reply port instead
       if(port == NULL && duplicate != NULL)
-        port = ((struct IORequest *)duplicate)->io_Message.mn_ReplyPort;
+        port = duplicate->io_Message.mn_ReplyPort;
 
       // just create the IO request the usual way
-      object = CreateIORequest(port, size);
-      if(object != NULL && duplicate != NULL)
-        CopyMem(duplicate, object, size);
+      object.iorequest = CreateIORequest(port, size);
+      if(object.iorequest != NULL && duplicate != NULL)
+        CopyMem(duplicate, object.iorequest, size);
     }
     break;
 
@@ -175,11 +187,11 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         }
       }
 
-      if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
+      if((object.hook = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
-        ((struct Hook *)object)->h_Entry = (HOOKFUNC)entry;
-        ((struct Hook *)object)->h_SubEntry = (HOOKFUNC)subentry;
-        ((struct Hook *)object)->h_Data = data;
+        object.hook->h_Entry = (HOOKFUNC)entry;
+        object.hook->h_SubEntry = (HOOKFUNC)subentry;
+        object.hook->h_Data = data;
       }
     }
     break;
@@ -194,12 +206,12 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       else
         size = GetTagData(ASOLIST_Size, sizeof(struct MinList), tags);
 
-      if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
+      if((object.list = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
-        NewList((struct List *)object);
+        NewList(object.list);
 
         if(min == FALSE)
-          ((struct List *)object)->lh_Type = GetTagData(ASOLIST_Type, NT_UNKNOWN, tags);
+          object.list->lh_Type = GetTagData(ASOLIST_Type, NT_UNKNOWN, tags);
       }
     }
     break;
@@ -214,13 +226,13 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       else
         size = GetTagData(ASONODE_Size, sizeof(struct MinNode), tags);
 
-      if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
+      if((object.node = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
         if(min == FALSE)
         {
-          ((struct Node *)object)->ln_Type = GetTagData(ASONODE_Type, NT_UNKNOWN, tags);
-          ((struct Node *)object)->ln_Pri = GetTagData(ASONODE_Pri, 0, tags);
-          ((struct Node *)object)->ln_Name = (STRPTR)GetTagData(ASONODE_Name, (IPTR)NULL, tags);
+          object.node->ln_Type = GetTagData(ASONODE_Type, NT_UNKNOWN, tags);
+          object.node->ln_Pri = GetTagData(ASONODE_Pri, 0, tags);
+          object.node->ln_Name = (STRPTR)GetTagData(ASONODE_Name, (IPTR)NULL, tags);
         }
       }
     }
@@ -286,9 +298,9 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       // add our own data size to the allocation
       size += sizeof(struct SysMsgPort) - sizeof(struct MsgPort);
 
-      if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
+      if((object.port = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
-        struct SysMsgPort *sobject = (struct SysMsgPort *)object;
+        struct SysMsgPort *sobject = (struct SysMsgPort *)object.port;
 
         sobject->name = NULL;
         sobject->signal = -1;
@@ -300,8 +312,8 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         {
           if((signum = AllocSignal(signum)) < 0)
           {
-            FreeVec(object);
-            object = NULL;
+            FreeVec(object.port);
+            object.port = NULL;
             goto done;
           }
 
@@ -327,7 +339,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         if(public != FALSE && name != NULL)
           AddPort(&sobject->port);
 
-        object = &sobject->port;
+        object.port = &sobject->port;
       }
     }
     break;
@@ -363,11 +375,11 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         }
       }
 
-      if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
+      if((object.message = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
-        ((struct Message *)object)->mn_Node.ln_Type = NT_MESSAGE;
-        ((struct Message *)object)->mn_ReplyPort = port;
-        ((struct Message *)object)->mn_Length = size;
+        object.message->mn_Node.ln_Type = NT_MESSAGE;
+        object.message->mn_ReplyPort = port;
+        object.message->mn_Length = size;
       }
     }
     break;
@@ -412,9 +424,9 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       // add our own data size to the allocation
       size += sizeof(struct SysSignalSemaphore) - sizeof(struct SignalSemaphore);
 
-      if((object = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
+      if((object.semaphore = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
-        struct SysSignalSemaphore *sobject = (struct SysSignalSemaphore *)object;
+        struct SysSignalSemaphore *sobject = (struct SysSignalSemaphore *)object.semaphore;
 
         sobject->name = NULL;
         sobject->public = public;
@@ -436,7 +448,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         if(public != FALSE && name != NULL)
           AddSemaphore(&sobject->semaphore);
 
-        object = &sobject->semaphore;
+        object.semaphore = &sobject->semaphore;
       }
     }
     break;
@@ -458,7 +470,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         }
       }
 
-      object = AllocVec(entries * sizeof(struct TagItem), memFlags|MEMF_CLEAR);
+      object.taglist = AllocVec(entries * sizeof(struct TagItem), memFlags|MEMF_CLEAR);
     }
     break;
 
@@ -494,15 +506,15 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           puddle = thresh;
       }
 
-      object = CreatePool(flags, puddle, thresh);
+      object.mempool = CreatePool(flags, puddle, thresh);
     }
     break;
   }
 
 done:
 
-  RETURN(object);
-  return object;
+  RETURN(object.pointer);
+  return object.pointer;
 }
 
 ///
