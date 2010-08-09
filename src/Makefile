@@ -310,11 +310,18 @@ ifeq ($(OS), aros-i386)
   LDLIBS += -lamiga -larossupport -larosc -lmui
 
   EXTRAOBJS = AllocSysObject.o \
+              DoSuperNew.o \
               ExamineDir.o \
+              NewMinList.o \
               NewReadArgs.o \
               SetProcWindow.o \
+              asprintf.o \
               getdelim.o \
-              memdup.o
+              memdup.o \
+              stcgfe.o \
+              strtok_r.o \
+              vasprintf.o \
+              vastubs.o
 
 else
 ifeq ($(OS), aros-ppc)
@@ -333,11 +340,18 @@ ifeq ($(OS), aros-ppc)
   LDLIBS += -lamiga -larossupport -larosc -lmui
 
   EXTRAOBJS = AllocSysObject.o \
+              DoSuperNew.o \
               ExamineDir.o \
+              NewMinList.o \
               NewReadArgs.o \
               SetProcWindow.o \
+              asprintf.o \
               getdelim.o \
-              memdup.o
+              memdup.o \
+              stcgfe.o \
+              strtok_r.o \
+              vasprintf.o \
+              vastubs.o
 
 else
 ifeq ($(OS), aros-x86_64)
@@ -356,11 +370,18 @@ ifeq ($(OS), aros-x86_64)
   LDLIBS += -lamiga -larossupport -larosc -lmui
 
   EXTRAOBJS = AllocSysObject.o \
+              DoSuperNew.o \
               ExamineDir.o \
+              NewMinList.o \
               NewReadArgs.o \
               SetProcWindow.o \
+              asprintf.o \
               getdelim.o \
-              memdup.o
+              memdup.o \
+              stcgfe.o \
+              strtok_r.o \
+              vasprintf.o \
+              vastubs.o
 
 endif
 endif

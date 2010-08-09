@@ -31,8 +31,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-char *
-strtok_r(char *str, const char *separator_set,char ** state_ptr)
+#include <string.h>
+
+char *strtok_r(char *str, const char *separator_set,char ** state_ptr)
 {
   char *result = NULL;
   char *last;
