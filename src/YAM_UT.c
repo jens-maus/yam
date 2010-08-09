@@ -5280,6 +5280,7 @@ BOOL GotoURL(const char *url, BOOL newWindow)
     char newurl[SIZE_LARGE];
 
     snprintf(newurl, sizeof(newurl), "\"%s\"", url);
+    D(DBF_UTIL, "trying script '%s' to open URL '%s'", C->RX[MACRO_URL].Script, url);
     wentToURL = MA_StartMacro(MACRO_URL, newurl);
   }
   else
@@ -5297,6 +5298,7 @@ BOOL GotoURL(const char *url, BOOL newWindow)
       // disable requesters
       oldWinPtr = SetProcWindow((APTR)-1);
 
+      D(DBF_UTIL, "trying URL: device to open URL '%s'", url);
       if((urlFH = Open(newurl, MODE_OLDFILE)) != (BPTR)NULL)
       {
         Close(urlFH);
@@ -5314,6 +5316,7 @@ BOOL GotoURL(const char *url, BOOL newWindow)
       // let the user decide himself if he wants to see
       // it popping up in a new window or not (via OpenURL
       // prefs)
+      D(DBF_UTIL, "trying openurl.library to open URL '%s'", url);
       wentToURL = URL_Open((STRPTR)url, URL_NewWindow, newWindow,
                                         TAG_DONE);
     }
