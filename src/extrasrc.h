@@ -44,114 +44,11 @@ struct IClass;
 struct MinList;
 
 /*
- * Differentations between runtime libs and operating system
- */
-#if (defined(__mc68000) && (defined(__ixemul) || defined(__libnix))) || defined(__SASC)
-
-#if !defined(HAVE_STRLCPY)
-#define NEED_STRLCPY
-#endif
-
-#if !defined(HAVE_STRLCAT)
-#define NEED_STRLCAT
-#endif
-
-#if !defined(HAVE_STRTOK_R)
-#define NEED_STRTOK_R
-#endif
-
-#if !defined(HAVE_VSNPRINTF)
-#define NEED_VSNPRINTF
-#endif
-
-#if !defined(HAVE_SNPRINTF)
-#define NEED_SNPRINTF
-#endif
-
-#endif /* (m68k && !clib2) || __SASC */
-
-#if defined(__libnix) || defined(__SASC) || defined(__AROS__)
-
-#if !defined(HAVE_VASPRINTF)
-#define NEED_VASPRINTF
-#endif
-
-#if !defined(HAVE_ASPRINTF)
-#define NEED_ASPRINTF
-#endif
-
-#endif /* libnix || __SASC || __AROS__ */
-
-#if !defined(__MORPHOS__) || !defined(__libnix)
-
-#if !defined(HAVE_STCGFE)
-#define NEED_STCGFE
-#endif
-
-#if !defined(HAVE_DOSUPERNEW)
-#define NEED_DOSUPERNEW
-#endif
-
-#endif /* !__MORPHOS__ || !__libnix */
-
-#if defined(__AROS__)
-
-#if !defined(HAVE_STRTOK_R)
-#define NEED_STRTOK_R
-#endif
-
-#endif /* __AROS__ */
-
-/*
- * Differentations between compilers
- */
-#if defined(__VBCC__)
-
-#if !defined(HAVE_STRDUP)
-#define NEED_STRDUP
-#endif
-
-#if !defined(HAVE_STRTOK_R)
-#define NEED_STRTOK_R
-#endif
-
-#endif /* __VBCC__ */
-
-#if !defined(__SASC)
-
-#if !defined(HAVE_VASTUBS)
-#define NEED_VASTUBS
-#endif
-
-#endif /* !__SASC */
-
-
-#if !defined(__GNUC__)
-
-#if !defined(HAVE_XGET)
-#define NEED_XGET
-#endif
-
-#if !defined(HAVE_XSET)
-#define NEED_XSET
-#endif
-
-#endif /* !__GNUC__ */
-
-/*
  * Stuff we always require on all systems
  */
-#if !defined(HAVE_NEWREADARGS)
-#define NEED_NEWREADARGS
-#endif
-
-#if !defined(HAVE_MEMDUP)
-#define NEED_MEMDUP
-#endif
-
-#if !defined(HAVE_GETDELIM)
-#define NEED_GETDELIM
-#endif
+#undef HAVE_NEWREADARGS
+#undef HAVE_MEMDUP
+#undef HAVE_GETDELIM
 
 /*
  * Stuff that exists in AmigaOS4
@@ -168,15 +65,21 @@ struct MinList;
 #define HAVE_NEWMINLIST
 #define HAVE_ALLOCVECPOOLED
 #define HAVE_FREEVECPOOLED
+#define HAVE_ASPRINTF
+#define HAVE_VASPRINTF
+#define HAVE_STRTOK_R
 #endif
 
 /*
  * Stuff that exists on MorphOS
  */
 #if defined(__MORPHOS__)
+#define HAVE_DOSUPERNEW
 #define HAVE_NEWMINLIST
 #define HAVE_ALLOCVECPOOLED
 #define HAVE_FREEVECPOOLED
+#define HAVE_STCGFE
+#define HAVE_STRTOK_R
 #endif
 
 /*
@@ -187,130 +90,85 @@ struct MinList;
 #define HAVE_GETPRED
 #define HAVE_GETSUCC
 #define HAVE_GETTAIL
+#define HAVE_NEWMINLIST
 #define HAVE_ALLOCVECPOOLED
 #define HAVE_FREEVECPOOLED
 #endif
 
 /*
- * Stuff that exists on AmigaOS3 (i.e. anything except AmigaOS4, MorphOS or AROS)
+ * Differentations between compilers
  */
-#if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__AROS__)
-#define HAVE_NEWMINLIST
-#endif
+#if defined(__GNUC__)
+#define HAVE_XGET
+#define HAVE_XSET
+#endif /* !__GNUC__ */
 
-
-/*
- * evaluate the HAVE_#? definitions to check which we NEED_#?
- */
-#if !defined(HAVE_SETPROCWINDOW)
-#define NEED_SETPROCWINDOW
-#endif
-
-#if !defined(HAVE_EXAMINEDIR)
-#define NEED_EXAMINEDIR
-#endif
-
-#if !defined(HAVE_ALLOCSYSOBJECT)
-#define NEED_ALLOCSYSOBJECT
-#endif
-
-#if !defined(HAVE_CHANGEFILEPOSITION)
-#define NEED_CHANGEFILEPOSITION
-#endif
-
-#if !defined(HAVE_GETHEAD)
-#define NEED_GETHEAD
-#endif
-
-#if !defined(HAVE_GETPRED)
-#define NEED_GETPRED
-#endif
-
-#if !defined(HAVE_GETSUCC)
-#define NEED_GETSUCC
-#endif
-
-#if !defined(HAVE_GETTAIL)
-#define NEED_GETTAIL
-#endif
-
-#if !defined(HAVE_NEWMINLIST)
-#define NEED_NEWMINLIST
-#endif
-
-#if !defined(HAVE_ALLOCVECPOOLED)
-#define NEED_ALLOCVECPOOLED
-#endif
-
-#if !defined(HAVE_FREEVECPOOLED)
-#define NEED_FREEVECPOOLED
-#endif
 
 /*
  * Function prototypes
  */
-#if defined(NEED_STRLCPY)
+#if !defined(HAVE_STRLCPY)
 size_t strlcpy(char *, const char *, size_t);
 #endif
 
-#if defined(NEED_STRLCAT)
+#if !defined(HAVE_STRLCAT)
 size_t strlcat(char *, const char *, size_t);
 #endif
 
-#if defined(NEED_STRTOK_R)
+#if !defined(HAVE_STRTOK_R)
 char *strtok_r(char *, const char *, char **);
 #endif
 
-#if defined(NEED_VSNPRINTF)
+#if !defined(HAVE_VSNPRINTF)
 int vsnprintf(char *buffer, size_t maxlen, const char *fmt, VA_LIST args);
 #endif
 
-#if defined(NEED_SNPRINTF)
+#if !defined(HAVE_SNPRINTF)
 int VARARGS68K snprintf(char *buffer, size_t maxlen, const char *fmt, ...);
 #endif
 
-#if defined(NEED_VASPRINTF)
+#if !defined(HAVE_VASPRINTF)
 int vasprintf(char **ptr, const char *format, VA_LIST ap);
 #endif
 
-#if defined(NEED_ASPRINTF)
+#if !defined(HAVE_ASPRINTF)
 int VARARGS68K asprintf(char **ptr, const char *format, ...);
 #endif
 
-#if defined(NEED_STCGFE)
+#if !defined(HAVE_STCGFE)
 int stcgfe(char *, const char *);
 #endif
 
-#if defined(NEED_STRDUP)
+#if !defined(HAVE_STRDUP)
 char *strdup(const char *);
 #endif
 
-#if defined(NEED_MEMDUP)
+#if !defined(HAVE_MEMDUP)
 void *memdup(const void *source, const size_t size);
 #endif
 
-#if defined(NEED_GETDELIM)
+#if !defined(HAVE_GETDELIM)
 #define getline(p, n, s) getdelim((p), (n), '\n', (s))
 ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream);
 #endif
 
-#if defined(NEED_XGET)
+#if !defined(HAVE_XGET)
 IPTR xget(Object *obj, const IPTR attr);
 #endif
 
-#if defined(NEED_XSET)
+#if !defined(HAVE_XSET)
 ULONG VARARGS68K xset(Object *obj, ...);
 #endif
 
-#if defined(NEED_DOSUPERNEW)
+#if !defined(HAVE_DOSUPERNEW)
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 #endif
 
-#if defined(NEED_SETPROCWINDOW)
+#if !defined(HAVE_SETPROCWINDOW)
 APTR SetProcWindow(const void *newWindowPtr);
 #endif
 
-#if defined(NEED_EXAMINEDIR)
+#if !defined(HAVE_EXAMINEDIR)
 APTR ObtainDirContext(struct TagItem *tags);
 #if defined(__PPC__)
 #define ObtainDirContextTags(...) ({ULONG _tags[] = { __VA_ARGS__ }; ObtainDirContext((struct TagItem *)_tags);})
@@ -322,7 +180,7 @@ struct ExamineData *ExamineDir(APTR context);
 #include "extrasrc/ExamineDir.h"
 #endif
 
-#if defined(NEED_ALLOCSYSOBJECT)
+#if !defined(HAVE_ALLOCSYSOBJECT)
 APTR AllocSysObject(ULONG type, struct TagItem *tags);
 #if defined(__PPC__)
 #define AllocSysObjectTags(type, ...) ({ULONG _tags[] = { __VA_ARGS__ }; AllocSysObject(type, (struct TagItem *)_tags);})
@@ -333,35 +191,39 @@ void FreeSysObject(ULONG type, APTR object);
 #include "extrasrc/AllocSysObject.h"
 #endif
 
-#if defined(NEED_GETHEAD)
+#if !defined(HAVE_GETHEAD)
 struct Node *GetHead(struct List *list);
 #endif
 
-#if defined(NEED_GETPRED)
+#if !defined(HAVE_GETPRED)
 struct Node *GetPred(struct Node *node);
 #endif
 
-#if defined(NEED_GETSUCC)
+#if !defined(HAVE_GETSUCC)
 struct Node *GetSucc(struct Node *node);
 #endif
 
-#if defined(NEED_GETTAIL)
+#if !defined(HAVE_GETTAIL)
 struct Node *GetTail(struct List *list);
 #endif
 
-#if defined(NEED_NEWMINLIST)
+#if !defined(HAVE_NEWMINLIST)
+// the NDK3.9 includes have this function declared already, but
+// we want to be able to run on pre-3.9 systems, thus we have to
+// use our own implementation
+#undef NewMinList
 void NewMinList(struct MinList *list);
 #endif
 
-#if defined(NEED_ALLOCVECPOOLED)
+#if !defined(HAVE_ALLOCVECPOOLED)
 APTR AllocVecPooled(APTR poolHeader, ULONG memSize);
 #endif
 
-#if defined(NEED_FREEVECPOOLED)
+#if !defined(HAVE_FREEVECPOOLED)
 void FreeVecPooled(APTR poolHeader, APTR memory);
 #endif
 
-#if defined(NEED_CHANGEFILEPOSITION)
+#if !defined(HAVE_CHANGEFILEPOSITION)
 #define ChangeFilePosition(fh, pos, mode)   Seek(fh, pos, mode)
 #endif
 

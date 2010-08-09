@@ -7,6 +7,9 @@ $URL$
 
 2010-08-09 Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc.h: cleaned up the file. No longer defines lots of NEED_#? only just
+    to define the corresponding HAVE_#? a few lines later. This and the last
+    change very probably will break compatibility with non-GCC compilers.
   * extrasrc: removed the combined extrasrc.c file and let the build process
     compile each imported module separately. This change has the big advantage
     that a modification to one of the modules does not require to "touch"
