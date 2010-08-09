@@ -2108,6 +2108,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   struct Folder *folder;
   struct MailNode *mnode;
   int i;
+  BOOL success;
 
   ENTER();
 
@@ -2131,6 +2132,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   LockMailListShared(folder->messages);
 
   i = 0;
+  success = TRUE;
   ForEachMailNode(folder->messages, mnode)
   {
     // skip the first mail as this has already been processed before
@@ -2147,11 +2149,10 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
         if(res != NULL)
           free(res);
 
-        res = strdup(result);
-        if(res == NULL)
+        if((res = strdup(result)) == NULL)
         {
-          LEAVE();
-          return;
+          success = FALSE;
+          break;
         }
 
         toPattern = res;
@@ -2173,56 +2174,60 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
 
   UnlockMailList(folder->messages);
 
-  // lets make a pattern out of the found SWS string
-  if(takePattern == TRUE)
+  if(success == TRUE)
   {
-    if(strlen(toPattern) >= 2 && !(toPattern[0] == '#' && toPattern[1] == '?'))
+    // lets make a pattern out of the found SWS string
+    if(takePattern == TRUE)
     {
-      if(res != NULL)
-        res = realloc(res, strlen(res)+3);
-      else if((res = malloc(strlen(toPattern)+3)) != NULL)
-        strlcpy(res, toPattern, strlen(toPattern));
-
-      if(res == NULL)
+      if(strlen(toPattern) >= 2 && !(toPattern[0] == '#' && toPattern[1] == '?'))
       {
-        LEAVE();
-        return;
+        if(res != NULL)
+          res = realloc(res, strlen(res)+3);
+        else if((res = malloc(strlen(toPattern)+3)) != NULL)
+          strlcpy(res, toPattern, strlen(toPattern));
+
+        if(res != NULL)
+        {
+          // move the actual string to the back and copy the wildcard in front of it.
+          memmove(&res[2], res, strlen(res)+1);
+          res[0] = '#';
+          res[1] = '?';
+
+          toPattern = res;
+        }
+        else
+          success = FALSE;
       }
 
-      // move the actual string to the back and copy the wildcard in front of it.
-      memmove(&res[2], res, strlen(res)+1);
-      res[0] = '#';
-      res[1] = '?';
+      if(success == TRUE && strlen(toPattern) >= 2 && !(toPattern[strlen(toPattern)-2] == '#' && toPattern[strlen(toPattern)-1] == '?'))
+      {
+        if(res != NULL)
+          res = realloc(res, strlen(res)+3);
+        else if((res = malloc(strlen(toPattern)+3)) != NULL)
+          strlcpy(res, toPattern, strlen(toPattern));
 
-      toPattern = res;
+        if(res != NULL)
+        {
+          // and now copy also the wildcard at the back of the string
+          strcat(res, "#?");
+
+          toPattern = res;
+        }
+        else
+          success = FALSE;
+      }
     }
 
-    if(strlen(toPattern) >= 2 && !(toPattern[strlen(toPattern)-2] == '#' && toPattern[strlen(toPattern)-1] == '?'))
+    if(success == TRUE)
     {
-      if(res != NULL)
-        res = realloc(res, strlen(res)+3);
-      else if((res = malloc(strlen(toPattern)+3)) != NULL)
-        strlcpy(res, toPattern, strlen(toPattern));
+      D(DBF_FOLDER, "ML-Pattern: [%s]", toPattern);
 
-      if(res == NULL)
-      {
-        LEAVE();
-        return;
-      }
-
-      // and now copy also the wildcard at the back of the string
-      strcat(res, "#?");
-
-      toPattern = res;
+      // Now we set the new pattern & address values to the string gadgets
+      notRecog = tr(MSG_FO_NOTRECOGNIZED);
+      setstring(G->FO->GUI.ST_MLPATTERN, takePattern && toPattern[0] ? toPattern : notRecog);
+      setstring(G->FO->GUI.ST_MLADDRESS, takeAddress ? toAddress : notRecog);
     }
   }
-
-  D(DBF_FOLDER, "ML-Pattern: [%s]", toPattern);
-
-  // Now we set the new pattern & address values to the string gadgets
-  notRecog = tr(MSG_FO_NOTRECOGNIZED);
-  setstring(G->FO->GUI.ST_MLPATTERN, takePattern && toPattern[0] ? toPattern : notRecog);
-  setstring(G->FO->GUI.ST_MLADDRESS, takeAddress ? toAddress : notRecog);
 
   // lets free all resources now
   if(res != NULL)
