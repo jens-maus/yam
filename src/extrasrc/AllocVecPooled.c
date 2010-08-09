@@ -28,6 +28,9 @@
 #include <exec/types.h>
 #include <proto/exec.h>
 
+#define DEBUG_USE_MALLOC_REDEFINE
+#include "Debug.h"
+
 /// AllocVecPooled
 // allocate a vector of <memSize> bytes from the pool specified by <poolHeader>
 APTR AllocVecPooled(APTR poolHeader, ULONG memSize)

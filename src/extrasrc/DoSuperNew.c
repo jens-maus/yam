@@ -25,12 +25,14 @@
 
 ***************************************************************************/
 
-#include "SDI_compiler.h"
-#include "SDI_stdarg.h"
+#include <proto/intuition.h>
 
 #if !defined(__amigaos4__)
 #include <clib/alib_protos.h>
 #endif
+
+#include "SDI_compiler.h"
+#include "SDI_stdarg.h"
 
 // DoSuperNew()
 // Calls parent NEW method within a subclass

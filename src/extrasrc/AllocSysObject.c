@@ -33,6 +33,9 @@
 
 ***************************************************************************/
 
+#include <stdlib.h>
+#include <string.h>
+
 #include <proto/exec.h>
 #include <proto/utility.h>
 
@@ -40,14 +43,12 @@
 
 #include "AllocSysObject.h"
 #include "SDI_compiler.h"
+#include "SDI_stdarg.h"
 
+#include "YAM_utilities.h"
+
+#define DEBUG_USE_MALLOC_REDEFINE
 #include "Debug.h"
-
-#if defined(DEBUG)
-#undef AllocSysObject
-#undef AllocSysObjectTags
-#undef FreeSysObject
-#endif
 
 #ifdef __GNUC__
    #ifdef __PPC__
@@ -198,7 +199,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         NewList((struct List *)object);
 
         if(min == FALSE)
-          ((struct List *)object)->lh_Type = GetTagData(ASOLIST_Size, NT_UNKNOWN, tags);
+          ((struct List *)object)->lh_Type = GetTagData(ASOLIST_Type, NT_UNKNOWN, tags);
       }
     }
     break;
@@ -603,5 +604,5 @@ void FreeSysObject(ULONG type, APTR object)
 
   LEAVE();
 }
-///
 
+///

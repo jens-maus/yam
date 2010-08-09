@@ -25,15 +25,19 @@
 
 ***************************************************************************/
 
-#include "SDI_compiler.h"
-#include "SDI_stdarg.h"
+#include <stdlib.h>
 
 #include <proto/dos.h>
 #include <proto/utility.h>
 
+#include "extrasrc/ExamineDir.h"
 #include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
 
+#include "SDI_compiler.h"
+#include "SDI_stdarg.h"
+
+#define DEBUG_USE_MALLOC_REDEFINE
 #include "Debug.h"
 
 struct DirContext
@@ -49,6 +53,8 @@ struct DirContext
   BOOL restoreOldCD;
   struct ExamineData exData;
 };
+
+void ReleaseDirContext(APTR context);
 
 /// ObtainDirContext
 // obtain a directory scanning context for a given directory, including pattern matching

@@ -25,8 +25,10 @@
 
 ***************************************************************************/
 
-#include <exec/types.h>
+#include <dos/dosextens.h>
 #include <proto/exec.h>
+
+#include "Debug.h"
 
 /// SetProcWindow
 // sets pr_WindowPtr of the current process to forbid (newWindowPtr==(APTR)-1) or

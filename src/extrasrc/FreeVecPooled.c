@@ -28,6 +28,9 @@
 #include <exec/types.h>
 #include <proto/exec.h>
 
+#define DEBUG_USE_MALLOC_REDEFINE
+#include "Debug.h"
+
 /// FreeVecPooled
 // return a vector to the pool
 void FreeVecPooled(APTR poolHeader, APTR memory)

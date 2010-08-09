@@ -30,6 +30,9 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+int vasprintf(char **ptr, const char * format, va_list ap);
 
 int VARARGS68K asprintf(char **ptr, const char * format, ...)
 {

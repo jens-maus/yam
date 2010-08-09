@@ -25,7 +25,7 @@
 
 ***************************************************************************/
 
-#include "SDI_compiler.h"
+#include <exec/lists.h>
 
 // GetTail()
 // get the tail element of a list

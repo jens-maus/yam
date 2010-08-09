@@ -52,6 +52,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "SDI_compiler.h"
+
 #include "Debug.h"
 
 #ifndef MEMF_SHARED

@@ -25,7 +25,7 @@
 
 ***************************************************************************/
 
-#include "SDI_compiler.h"
+#include <exec/lists.h>
 
 // GetPred()
 // get a node's predecessor

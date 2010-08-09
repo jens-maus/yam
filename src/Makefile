@@ -179,7 +179,7 @@ MUIDIR    = $(PREFIX)mui
 REXXDIR   = $(PREFIX)rexx
 MIMEDIR   = $(PREFIX)mime
 LOCALE    = $(PREFIX)$(CDUP)locale
-EXTRASRC  = $(PREFIX)extrasrc
+EXTRADIR  = $(PREFIX)extrasrc
 TOOLS     = $(PREFIX)tools
 LIB       = $(PREFIX)lib/$(OS)
 OBJDIR    = .obj_$(OS)
@@ -219,6 +219,12 @@ ifeq ($(OS), os4)
   CDUP     = ../
   CDTHIS   = ./
 
+  EXTRAOBJS = DoSuperNew.o \
+              NewReadArgs.o \
+              getdelim.o \
+              memdup.o \
+              stcgfe.o
+
 else
 ifeq ($(OS), os3)
 
@@ -237,6 +243,23 @@ ifeq ($(OS), os3)
   CFLAGS  += -I./include/netinclude -DNO_INLINE_STDARG
   LDFLAGS += -noixemul -mstackextend
   LDLIBS  += -ldebug -lmui
+
+  EXTRAOBJS = AllocSysObject.o \
+              AllocVecPooled.o \
+              DoSuperNew.o \
+              ExamineDir.o \
+              FreeVecPooled.o \
+              GetHead.o \
+              GetPred.o \
+              GetSucc.o \
+              GetTail.o \
+              NewMinList.o \
+              NewReadArgs.o \
+              SetProcWindow.o \
+              getdelim.o \
+              memdup.o \
+              stcgfe.o \
+              vastubs.o
 
 else
 ifeq ($(OS), mos)
@@ -257,6 +280,19 @@ ifeq ($(OS), mos)
   LDFLAGS += -noixemul
   LDLIBS  += -lxpk -lamissl -lcodesets -lopenurl
 
+  EXTRAOBJS = AllocSysObject.o \
+              ExamineDir.o \
+              GetHead.o \
+              GetPred.o \
+              GetSucc.o \
+              GetTail.o \
+              NewReadArgs.o \
+              SetProcWindow.o \
+              asprintf.o \
+              getdelim.o \
+              memdup.o \
+              vasprintf.o
+
 else
 ifeq ($(OS), aros-i386)
 
@@ -272,6 +308,13 @@ ifeq ($(OS), aros-i386)
   # Compiler/Linker flags
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
   LDLIBS += -lamiga -larossupport -larosc -lmui
+
+  EXTRAOBJS = AllocSysObject.o \
+              ExamineDir.o \
+              NewReadArgs.o \
+              SetProcWindow.o \
+              getdelim.o \
+              memdup.o
 
 else
 ifeq ($(OS), aros-ppc)
@@ -289,6 +332,13 @@ ifeq ($(OS), aros-ppc)
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
   LDLIBS += -lamiga -larossupport -larosc -lmui
 
+  EXTRAOBJS = AllocSysObject.o \
+              ExamineDir.o \
+              NewReadArgs.o \
+              SetProcWindow.o \
+              getdelim.o \
+              memdup.o
+
 else
 ifeq ($(OS), aros-x86_64)
 
@@ -304,6 +354,13 @@ ifeq ($(OS), aros-x86_64)
   # Compiler/Linker flags
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
   LDLIBS += -lamiga -larossupport -larosc -lmui
+
+  EXTRAOBJS = AllocSysObject.o \
+              ExamineDir.o \
+              NewReadArgs.o \
+              SetProcWindow.o \
+              getdelim.o \
+              memdup.o
 
 endif
 endif
@@ -492,7 +549,6 @@ YAMOBJS = \
 	Threads.o \
 	Timer.o \
 	UpdateCheck.o \
-	extrasrc.o \
 	Debug.o
 
 # and the other object files where
@@ -502,6 +558,7 @@ OBJS = \
 	$(addprefix $(MUIDIR)/,$(MUIOBJS)) \
 	$(addprefix $(REXXDIR)/,$(REXXOBJS)) \
 	$(addprefix $(MIMEDIR)/,$(MIMEOBJS)) \
+	$(addprefix $(EXTRADIR)/,$(EXTRAOBJS))
 
 # available catalog translations
 CATALOGS = \
@@ -529,7 +586,7 @@ CATALOGS = \
 
 # main target
 .PHONY: all
-all: $(OBJDIR) $(OBJDIR)/$(MUIDIR) $(OBJDIR)/$(REXXDIR) $(OBJDIR)/$(MIMEDIR) classinfo $(TARGET)
+all: $(OBJDIR) $(OBJDIR)/$(MUIDIR) $(OBJDIR)/$(REXXDIR) $(OBJDIR)/$(MIMEDIR) $(OBJDIR)/$(EXTRADIR) classinfo $(TARGET)
 
 # make the object directories
 $(OBJDIR):
@@ -544,6 +601,9 @@ $(OBJDIR)/$(REXXDIR): $(OBJDIR)
 
 $(OBJDIR)/$(MIMEDIR): $(OBJDIR)
 	@$(MKDIR) $(OBJDIR)/$(MIMEDIR)
+
+$(OBJDIR)/$(EXTRADIR): $(OBJDIR)
+	@$(MKDIR) $(OBJDIR)/$(EXTRADIR)
 
 # for compiling single .c files
 $(OBJDIR)/%.o: %.c
