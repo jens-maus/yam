@@ -179,6 +179,7 @@ BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail);
 BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2);
 void FilterMails(struct Folder *folder, struct MailList *mlist, int mode);
 BOOL FolderIsUsedByFilters(const char *folder);
-void ModifyFilters(const char *oldFolder, const char *newFolder);
+void RenameFolderInFilters(const char *oldFolder, const char *newFolder);
+void RemoveFolderFromFilters(const char *folder);
 
 #endif /* YAM_FIND_H */

@@ -2311,12 +2311,11 @@ BOOL FolderIsUsedByFilters(const char *folder)
 }
 
 ///
-/// ModifyFilters
+/// RenameFolderInFilters
 // modify the destination folder of all filters
-void ModifyFilters(const char *oldFolder, const char *newFolder)
+void RenameFolderInFilters(const char *oldFolder, const char *newFolder)
 {
   struct Node *fNode;
-  BOOL filterModified = FALSE;
 
   ENTER();
 
@@ -2329,14 +2328,41 @@ void ModifyFilters(const char *oldFolder, const char *newFolder)
     if(hasMoveAction(filter) == TRUE && stricmp(filter->moveTo, oldFolder) == 0)
     {
       D(DBF_FILTER, "changing MoveTo folder of filer '%s' to '%s'", filter->name, newFolder);
-      strlcpy(filter->name, newFolder, sizeof(filter->name));
-      filterModified = TRUE;
+      strlcpy(filter->moveTo, newFolder, sizeof(filter->moveTo));
+
+      // remember the modified configuration, but don't save it yet
+      C->ConfigIsSaved = FALSE;
     }
   }
 
-  // save the configuration in case we modified at least one filter
-  if(filterModified == TRUE)
-    CO_SaveConfig(C, G->CO_PrefsFile);
+  LEAVE();
+}
+
+///
+/// RemoveFolderFromFilters
+// remove a folder from a filter in case it is its "move to" folder
+void RemoveFolderFromFilters(const char *folder)
+{
+  struct Node *fNode;
+
+  ENTER();
+
+  // iterate over all filters and replace any occurence of
+  // the old folder name by the new one
+  IterateList(&C->filterList, fNode)
+  {
+    struct FilterNode *filter = (struct FilterNode *)fNode;
+
+    if(hasMoveAction(filter) == TRUE && stricmp(filter->moveTo, folder) == 0)
+    {
+      D(DBF_FILTER, "removing MoveTo folder '%s' of filer '%s'", folder, filter->name);
+      filter->moveTo[0] = '\0';
+      CLEAR_FLAG(filter->actions, FA_MOVE);
+
+      // remember the modified configuration, but don't save it yet
+      C->ConfigIsSaved = FALSE;
+    }
+  }
 
   LEAVE();
 }

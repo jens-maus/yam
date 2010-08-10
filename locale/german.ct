@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.7 (10.08.2010)
+## version $VER: YAM.catalog 7.8 (10.08.2010)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8593,12 +8593,6 @@ MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
 Bitte versuchen Sie es später noch einmal oder\n\
 aktivieren Sie die automatische Updateprüfung.
 ;
-MSG_FO_ASK_MODIFY_FILTERS
-Der Name des Postfachs wurde geändert.\n\
-Einige der Nachrichtenfilter werden nicht\n\
-mehr die konfigurierte Aktion ausführen.\n\
-\n\
-Wollen Sie diese Änderung auch auf die\n\
-Nachrichtenfilter anwenden?\n\
-(Dies wird Ihre Konfiguration ändern!)
+MSG_FO_APPLY_TO_FILTERS
+Die Änderung wird auf die Nachrichtenfilter angewandt.
 ;

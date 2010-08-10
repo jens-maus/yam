@@ -7,6 +7,11 @@ $URL$
 
 2010-08-10 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c, YAM_FI.c: reworked the automatic filter adaption. The user will
+    only be notified that the mail filters are modified, as it makes no sense
+    to keep a non-working filter. Additionally the filters will also be adapted
+    in case a folder is deleted. The modifications to the filters are not saved
+    immediately!
   * locale/YAM.cd: changed the requester's wording due to the last change.
   * YAM_FO.c, YAM_FI.c: the "do you want to modify the filters" question will
     pop up only in case the folder is used by any filter at all.

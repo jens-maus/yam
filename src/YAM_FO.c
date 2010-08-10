@@ -1625,6 +1625,13 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       {
         if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_ConfirmDelete)) != 0)
         {
+          if(FolderIsUsedByFilters(folder->Name) == TRUE)
+          {
+            // tell the user that the filters will be modified
+            MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_APPLY_TO_FILTERS));
+            RemoveFolderFromFilters(folder->Name);
+          }
+
           delete_folder = TRUE;
           DeleteMailDir(GetFolderDir(folder), FALSE);
           ClearMailList(folder, TRUE);
@@ -1769,8 +1776,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
     if(nameChanged == TRUE && FolderIsUsedByFilters(oldfolder->Name) == TRUE)
     {
-      if(MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_ASK_MODIFY_FILTERS)) != 0)
-        ModifyFilters(oldfolder->Name, folder.Name);
+      MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_APPLY_TO_FILTERS));
+      RenameFolderInFilters(oldfolder->Name, folder.Name);
     }
 
     strlcpy(oldfolder->Name, folder.Name, sizeof(oldfolder->Name));
