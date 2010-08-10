@@ -159,6 +159,7 @@ create_catalogs()
   set -x
   mkdir $DEVDIR/locale
   cd $MODULEPATH/src
+  rm ../locale/*.catalog
   $MAKE catalogs
   cp ../locale/*.catalog $DEVDIR/locale/
   set +x
@@ -201,24 +202,27 @@ if [ "$quiet" = "yes" ]; then
 fi
 
 # let us automatically delete all build directories which are older than 60 days
-find $WEBDIR/ -type d -daystart -mtime +60 -exec rm -rf {} \;
+echo "cleaning up nightly builds older than 60 days:"
+echo "============================================="
+find $WEBDIR/ -maxdepth 1 -type d -daystart -mtime +60 -print -exec rm -rf {} \;
+echo "============================================="
 
 # let us do a fresh SVN checkout and see if something
 # has been updated or not
-printf "checking out SVN repository:\n"
-printf "============================\n"
+echo "checking out SVN repository:"
+echo "============================"
 cd $CHECKOUTDIR
 output=`${SVN} co ${SVNROOT} ${MODULE}`
 ret=$?
 if [ $ret != 0 ]; then
-   printf "error during checkout! aborting.\n"
+   echo "error during checkout! aborting."
    echo $output
    exit 2
 fi
 echo "$output" | egrep "^[UPAG] .+\.[chl][d]*$" >/dev/null
 ret=$?
 echo "$output"
-printf "============================\n"
+echo "============================"
 if [ "$force" != "force" ]; then
    if [ $ret != 0 ]; then
       printf "no relevant changes found. checking last build date..."
@@ -233,7 +237,7 @@ if [ "$force" != "force" ]; then
       fi
    fi
 else
-   printf "forcing rebuild.\n"
+   echo "forcing rebuild."
 fi
 
 # create a new dev directory
