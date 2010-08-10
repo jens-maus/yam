@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-10 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FO.c, locale/YAM.cd: there is no need to annoy a user with a requester
+    that the folder constraint in a filter has been renamed or removed. The
+    user already acknoledged the change by his own operation and thus it is
+    clear that the operation is performed to all areas including the filters.
+
 2010-08-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c, YAM_FI.c: reworked the automatic filter adaption. The user will

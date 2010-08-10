@@ -1625,12 +1625,10 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       {
         if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_ConfirmDelete)) != 0)
         {
+          // check if the folder that is about to be deleted is part
+          // of an active filter and if so remove it from it
           if(FolderIsUsedByFilters(folder->Name) == TRUE)
-          {
-            // tell the user that the filters will be modified
-            MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_APPLY_TO_FILTERS));
             RemoveFolderFromFilters(folder->Name);
-          }
 
           delete_folder = TRUE;
           DeleteMailDir(GetFolderDir(folder), FALSE);
@@ -1774,12 +1772,13 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       return;
     }
 
+    // check if the filter name has changed and if it is part of
+    // an active filter and if so rename it in the filter definition
+    // as well.
     if(nameChanged == TRUE && FolderIsUsedByFilters(oldfolder->Name) == TRUE)
-    {
-      MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_APPLY_TO_FILTERS));
       RenameFolderInFilters(oldfolder->Name, folder.Name);
-    }
 
+    // copy the new Folder name
     strlcpy(oldfolder->Name, folder.Name, sizeof(oldfolder->Name));
 
     // if the folderpath string has changed

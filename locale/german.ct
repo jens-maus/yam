@@ -8593,6 +8593,3 @@ MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
 Bitte versuchen Sie es später noch einmal oder\n\
 aktivieren Sie die automatische Updateprüfung.
 ;
-MSG_FO_APPLY_TO_FILTERS
-Die Änderung wird auf die Nachrichtenfilter angewandt.
-;

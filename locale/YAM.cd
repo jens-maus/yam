@@ -6984,6 +6984,3 @@ MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK (2173//)
 Please try again later or activate the automatic\n\
 software update check.
 ;
-MSG_FO_APPLY_TO_FILTERS (2175//)
-The modification will be applied to the mail filters.
-;
