@@ -50,6 +50,7 @@
 #include "YAM_config.h"
 #include "YAM_configFile.h"
 #include "YAM_error.h"
+#include "YAM_find.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_main.h"
@@ -1735,10 +1736,12 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
   ENTER();
 
-  D(DBF_FOLDER, "oldfolder=%08lx '%s'", oldfolder, oldfolder ? oldfolder->Name: "<NULL>");
+  D(DBF_FOLDER, "oldfolder=%08lx '%s'", oldfolder, SafeStr(oldfolder->Name));
   // if this is a edit folder request we separate here.
   if(oldfolder != NULL)
   {
+    BOOL nameChanged;
+
     isNewFolder = FALSE;
     memcpy(&folder, oldfolder, sizeof(struct Folder));
     FO_PutFolder(&folder);
@@ -1752,14 +1755,22 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       return;
     }
 
+    nameChanged = (stricmp(oldfolder->Name, folder.Name) != 0);
+
     // lets first check for a valid folder name
     // if the foldername is empty or it was changed and the new name already exists it's invalid
-    if(folder.Name[0] == '\0' || (stricmp(oldfolder->Name, folder.Name) != 0 && FO_GetFolderByName(folder.Name, NULL) != NULL))
+    if(folder.Name[0] == '\0' || (nameChanged == TRUE && FO_GetFolderByName(folder.Name, NULL) != NULL))
     {
       MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
 
       LEAVE();
       return;
+    }
+
+    if(nameChanged == TRUE)
+    {
+      if(MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_ASK_MODIFY_FILTERS)) != 0)
+        ModifyFilters(oldfolder->Name, folder.Name);
     }
 
     strlcpy(oldfolder->Name, folder.Name, sizeof(oldfolder->Name));

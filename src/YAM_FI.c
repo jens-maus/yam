@@ -192,6 +192,7 @@ static BOOL FI_MatchListPattern(struct Search *search, char *string)
   RETURN(match);
   return match;
 }
+
 ///
 /// FI_MatchPerson
 //  Matches string against a person's name or address
@@ -209,6 +210,7 @@ static BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
   RETURN(match);
   return match;
 }
+
 ///
 /// FI_SearchPatternFast
 //  Searches string in standard header fields
@@ -1369,6 +1371,7 @@ BOOL FI_FilterSingleMail(struct Mail *mail, int *matches)
   RETURN(success);
   return success;
 }
+
 ///
 /// FreeSearchPatternList
 // Function to make the whole pattern list is correctly cleaned up
@@ -1968,6 +1971,7 @@ BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
   RETURN(success);
   return success;
 }
+
 ///
 /// CopySearchData
 // copy all data of a search structure (deep copy)
@@ -2280,6 +2284,35 @@ struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos)
 }
 
 ///
+/// ModifyFilters
+// modify the destination folder of all filters
+void ModifyFilters(const char *oldFolder, const char *newFolder)
+{
+  struct Node *fNode;
+  BOOL folderModified = FALSE;
+
+  ENTER();
+
+  // iterate over all filters and replace any occurence of
+  // the old folder name by the new one
+  IterateList(&C->filterList, fNode)
+  {
+    struct FilterNode *filter = (struct FilterNode *)fNode;
+
+    if(hasMoveAction(filter) == TRUE && stricmp(filter->moveTo, oldFolder) == 0)
+    {
+      D(DBF_FILTER, "changing MoveTo folder of filer '%s' to '%s'", filter->name, newFolder);
+      strlcpy(filter->name, newFolder, sizeof(filter->name));
+      folderModified = TRUE;
+    }
+  }
+
+  // save the configuration in case we modified at least one filter
+  if(folderModified == TRUE)
+    CO_SaveConfig(C, G->CO_PrefsFile);
+
+  LEAVE();
+}
 
 /*** GUI ***/
 /// InitFilterPopupList
@@ -2476,5 +2509,5 @@ static struct FI_ClassData *FI_New(void)
   RETURN(data);
   return data;
 }
-///
 
+///

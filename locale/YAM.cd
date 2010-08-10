@@ -6984,3 +6984,12 @@ MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK (2173//)
 Please try again later or activate the automatic\n\
 software update check.
 ;
+MSG_FO_ASK_MODIFY_FILTERS (2174//)
+The folder name has been modified.\n\
+Some of the mail filters might no longer\n\
+perform the configured action.\n\
+\n\
+Do you want to apply this change to the\n\
+mail filters aswell?\n\
+(This will modify your configuration!)
+;

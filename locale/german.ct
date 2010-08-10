@@ -8593,3 +8593,12 @@ MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
 Bitte versuchen Sie es später noch einmal oder\n\
 aktivieren Sie die automatische Updateprüfung.
 ;
+MSG_FO_ASK_MODIFY_FILTERS
+Der Name des Postfachs wurde geändert.\n\
+Einige der Nachrichtenfilter können eventuell nicht\n\
+mehr die konfigurierte Aktion ausführen.\n\
+\n\
+Wollen Sie diese Änderung auch auf die\n\
+Nachrichtenfilter anwenden?\n\
+(Dies wird Ihre Konfiguration ändern!)
+;

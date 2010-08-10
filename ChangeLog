@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c, YAM_FI.c: after changing a folder's name the user will now be
+    asked if the mail filters should be adapted accordingly in case they are
+    configured to move mails to this folder. This closes #116.
+
 2010-08-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/AllocSysObject.c: use a union of all supported object type to avoid

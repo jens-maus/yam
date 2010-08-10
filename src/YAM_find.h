@@ -178,5 +178,6 @@ struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos);
 BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail);
 BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2);
 void FilterMails(struct Folder *folder, struct MailList *mlist, int mode);
+void ModifyFilters(const char *oldFolder, const char *newFolder);
 
 #endif /* YAM_FIND_H */
