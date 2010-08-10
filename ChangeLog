@@ -7,6 +7,7 @@ $URL$
 
 2010-08-10 Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/YAM.cd: changed the requester's wording due to the last change.
   * YAM_FO.c, YAM_FI.c: the "do you want to modify the filters" question will
     pop up only in case the folder is used by any filter at all.
   * YAM_FO.c, YAM_FI.c: after changing a folder's name the user will now be

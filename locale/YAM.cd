@@ -6986,7 +6986,7 @@ software update check.
 ;
 MSG_FO_ASK_MODIFY_FILTERS (2174//)
 The folder name has been modified.\n\
-Some of the mail filters might no longer\n\
+Some of the mail filters will no longer\n\
 perform the configured action.\n\
 \n\
 Do you want to apply this change to the\n\

@@ -8595,7 +8595,7 @@ aktivieren Sie die automatische Updateprüfung.
 ;
 MSG_FO_ASK_MODIFY_FILTERS
 Der Name des Postfachs wurde geändert.\n\
-Einige der Nachrichtenfilter können eventuell nicht\n\
+Einige der Nachrichtenfilter werden nicht\n\
 mehr die konfigurierte Aktion ausführen.\n\
 \n\
 Wollen Sie diese Änderung auch auf die\n\
