@@ -1767,7 +1767,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       return;
     }
 
-    if(nameChanged == TRUE)
+    if(nameChanged == TRUE && FolderIsUsedByFilters(oldfolder->Name) == TRUE)
     {
       if(MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_ASK_MODIFY_FILTERS)) != 0)
         ModifyFilters(oldfolder->Name, folder.Name);

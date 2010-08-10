@@ -2284,12 +2284,39 @@ struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos)
 }
 
 ///
+/// FolderUsedByFilters
+// check if the folder is used by any filter as "move to" folder
+BOOL FolderIsUsedByFilters(const char *folder)
+{
+  struct Node *fNode;
+  BOOL folderIsUsed = FALSE;
+
+  ENTER();
+
+  // iterate over all filters and replace any occurence of
+  // the old folder name by the new one
+  IterateList(&C->filterList, fNode)
+  {
+    struct FilterNode *filter = (struct FilterNode *)fNode;
+
+    if(hasMoveAction(filter) == TRUE && stricmp(filter->moveTo, folder) == 0)
+    {
+      folderIsUsed = TRUE;
+      break;
+    }
+  }
+
+  RETURN(folderIsUsed);
+  return folderIsUsed;
+}
+
+///
 /// ModifyFilters
 // modify the destination folder of all filters
 void ModifyFilters(const char *oldFolder, const char *newFolder)
 {
   struct Node *fNode;
-  BOOL folderModified = FALSE;
+  BOOL filterModified = FALSE;
 
   ENTER();
 
@@ -2303,16 +2330,18 @@ void ModifyFilters(const char *oldFolder, const char *newFolder)
     {
       D(DBF_FILTER, "changing MoveTo folder of filer '%s' to '%s'", filter->name, newFolder);
       strlcpy(filter->name, newFolder, sizeof(filter->name));
-      folderModified = TRUE;
+      filterModified = TRUE;
     }
   }
 
   // save the configuration in case we modified at least one filter
-  if(folderModified == TRUE)
+  if(filterModified == TRUE)
     CO_SaveConfig(C, G->CO_PrefsFile);
 
   LEAVE();
 }
+
+///
 
 /*** GUI ***/
 /// InitFilterPopupList
