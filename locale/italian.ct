@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (8.08.2010)
+## version $VER: YAM.catalog 7.2 (10.08.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC
 ; $Id$
 ;
-; based on YAM.cd 4829 2010-07-30
+; based on YAM.cd 4871 2010-08-10
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9987,4 +9987,8 @@ Per favore riprova in un secondo tempo oppure attiva dal\n\
 menu l'opzione di verifica periodica degli aggiornamenti.
 ; Please try again later or activate the automatic\n\
 ; software update check.
+;
+MSG_FO_APPLY_TO_FILTERS
+Le modifiche verranno applicate nei filtri del messaggio.
+; The modification will be applied to the mail filters.
 ;

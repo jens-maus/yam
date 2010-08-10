@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-10 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: adapted to the latest catalog descriptor.
+
 2010-08-10 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_FO.c, locale/YAM.cd: there is no need to annoy a user with a requester
@@ -44,7 +48,7 @@ $URL$
 2010-08-08 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed tons of erroneous shortcuts and removed all wrongly
-    ellipsis notifications that means no more compiling error with Flexcat 2.7!
+    ellipsis notifications that means no more compiling error with FlexCat 2.7!
 
 2010-08-07 Jens Langner <Jens.Langner@light-speed.de>
 
