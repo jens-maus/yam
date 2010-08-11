@@ -58,7 +58,6 @@ struct Data
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct Data *data;
   Object *string;
   Object *case_sensitive;
   Object *search;
@@ -90,9 +89,10 @@ OVERLOAD(OM_NEW)
 
     End,
 
-    TAG_MORE, (ULONG)inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
-    data = (struct Data *)INST_DATA(cl,obj);
+    GETDATA;
+
     data->Searchstring = string;
 
     DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, MUIF_Searchwindow_FromTop);

@@ -30,8 +30,8 @@
 
 #include "MainWindow_cl.h"
 
-#include "MUIObjects.h"
 #include "YAM_error.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 
@@ -51,7 +51,7 @@ OVERLOAD(OM_SET)
 
   ENTER();
 
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {

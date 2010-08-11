@@ -37,7 +37,6 @@
 #include "AttachmentGroup_cl.h"
 
 #include "YAM_mainFolder.h"
-
 #include "MUIObjects.h"
 
 #include "Debug.h"
@@ -227,7 +226,7 @@ OVERLOAD(OM_SET)
 {
   struct TagItem *tags = inittags(msg), *tag;
 
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {

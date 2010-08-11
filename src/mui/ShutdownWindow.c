@@ -30,6 +30,8 @@
 
 #include "ShutdownWindow_cl.h"
 
+#include "MUIObjects.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -74,7 +76,7 @@ OVERLOAD(OM_NEW)
       End)),
     End,
 
-    TAG_MORE, (ULONG)inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
     // add the window to our application
     DoMethod(G->App, OM_ADDMEMBER, obj);

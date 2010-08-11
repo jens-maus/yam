@@ -55,45 +55,42 @@ enum MainListType { LT_MAIN=0, LT_QUICKVIEW };
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct Data *data;
   Object *mainListview;
   Object *mainList;
   Object *quickviewListview;
   Object *quickviewList;
 
-  if(!(obj = DoSuperNew(cl, obj,
+  if((obj = DoSuperNew(cl, obj,
 
     MUIA_Group_PageMode, TRUE,
 
     Child, mainListview = NListviewObject,
        MUIA_CycleChain, TRUE,
        MUIA_NListview_NList, mainList = MainMailListObject,
-          MUIA_ObjectID,                   MAKE_ID('N','L','0','2'),
-          MUIA_ContextMenu,                C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never,
-          MUIA_NList_DragType,             MUIV_NList_DragType_Default,
-          MUIA_NList_Exports,              MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
-          MUIA_NList_Imports,              MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
+          MUIA_ObjectID,       MAKE_ID('N','L','0','2'),
+          MUIA_ContextMenu,    C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never,
+          MUIA_NList_DragType, MUIV_NList_DragType_Default,
+          MUIA_NList_Exports,  MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
+          MUIA_NList_Imports,  MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
        End,
     End,
     Child, quickviewListview = NListviewObject,
        MUIA_CycleChain, TRUE,
        MUIA_NListview_NList, quickviewList = MainMailListObject,
-          MUIA_ContextMenu,                C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never,
-          MUIA_NList_DragType,             MUIV_NList_DragType_Default,
+          MUIA_ContextMenu,    C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never,
+          MUIA_NList_DragType, MUIV_NList_DragType_Default,
        End,
     End,
 
-    TAG_MORE, inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
-    return 0;
+    GETDATA;
+
+    data->mainListviewObjects[LT_MAIN] = mainListview;
+    data->mainListviewObjects[LT_QUICKVIEW] = quickviewListview;
+    data->mainListObjects[LT_MAIN] = mainList;
+    data->mainListObjects[LT_QUICKVIEW] = quickviewList;
   }
-
-  data = (struct Data *)INST_DATA(cl,obj);
-
-  data->mainListviewObjects[LT_MAIN] = mainListview;
-  data->mainListviewObjects[LT_QUICKVIEW] = quickviewListview;
-  data->mainListObjects[LT_MAIN] = mainList;
-  data->mainListObjects[LT_QUICKVIEW] = quickviewList;
 
   return (IPTR)obj;
 }
@@ -133,7 +130,7 @@ OVERLOAD(OM_SET)
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
 
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {

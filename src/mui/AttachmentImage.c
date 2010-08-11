@@ -586,13 +586,13 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
       MUIA_FillArea,    FALSE, // do not care about background filling
-    TAG_MORE, inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
     struct TagItem *tags = inittags(msg);
     struct TagItem *tag;
 
-    while((tag = NextTagItem((APTR)&tags)))
+    while((tag = NextTagItem((APTR)&tags)) != NULL)
     {
       switch(tag->ti_Tag)
       {

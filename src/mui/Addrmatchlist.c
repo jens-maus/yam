@@ -31,7 +31,6 @@
 #include "Addrmatchlist_cl.h"
 
 #include "YAM_addressbookEntry.h"
-
 #include "MUIObjects.h"
 
 #include "Debug.h"
@@ -149,12 +148,12 @@ OVERLOAD(OM_NEW)
         End,
       End,
     End,
-    TAG_MORE, inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
 
     struct TagItem *tags = inittags(msg), *tag;
-    while((tag = NextTagItem((APTR)&tags)))
+    while((tag = NextTagItem((APTR)&tags)) != NULL)
     {
       switch(tag->ti_Tag)
       {
@@ -220,7 +219,7 @@ OVERLOAD(OM_SET)
   ENTER();
 
   tags = inittags(msg);
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {

@@ -34,6 +34,7 @@
 #include "YAM_mainFolder.h"
 #include "YAM_transfer.h"
 #include "YAM_utilities.h"
+#include "MUIObjects.h"
 #include "Themes.h"
 
 #include "Debug.h"
@@ -138,7 +139,7 @@ OVERLOAD(OM_NEW)
 
     TAG_MORE, inittags(msg))) != NULL)
   {
-    struct Data *data = (struct Data *)INST_DATA(cl,obj);
+    GETDATA;
 
     // prepare the group image
     data->downloadImage = MakeImageObject("status_download", G->theme.statusImages[si_Download]);

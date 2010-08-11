@@ -31,6 +31,7 @@
 #include "ConfigPageList_cl.h"
 
 #include "YAM_config.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 
@@ -71,7 +72,7 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   if((obj = DoSuperNew(cl, obj,
-    TAG_MORE, inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
     enum ConfigPage i;

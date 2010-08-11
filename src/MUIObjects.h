@@ -108,6 +108,7 @@ IPTR xget(Object *obj, const IPTR attr);
   // the GetAttr() should catch the case when attr doesn't exist at all
   #define xget(OBJ, ATTR) ({IPTR b=0; GetAttr(ATTR, OBJ, &b); b;})
 #endif
+
 ///
 /// xset()
 //  Sets attributes for a MUI object
@@ -115,6 +116,7 @@ ULONG xset(Object *obj, ...);
 #if defined(__GNUC__) || defined(__VBCC__)
   #define xset(obj, ...)  SetAttrs((obj), __VA_ARGS__, TAG_DONE)
 #endif
+
 ///
 
 #endif /* MUIOBJECTS_H */

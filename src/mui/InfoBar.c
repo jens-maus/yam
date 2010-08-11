@@ -96,7 +96,6 @@ static void GetFolderInfo(struct Data *data, struct Folder *folder)
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct Data *data;
   Object *folderString;
   Object *folderInfoStr;
   Object *statusGroup;
@@ -168,9 +167,9 @@ OVERLOAD(OM_NEW)
       End,
     End,
 
-    TAG_MORE, inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
-    data = (struct Data *)INST_DATA(cl,obj);
+    GETDATA;
 
     // per default we set the stop button as hidden
     set(stopButton, MUIA_ShowMe, FALSE);

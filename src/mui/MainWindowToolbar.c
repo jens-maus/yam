@@ -33,6 +33,7 @@
 #include "YAM_addressbook.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 
@@ -165,15 +166,15 @@ OVERLOAD(OM_NEW)
 
   // instruct MUI to generate the object
   if((obj = DoSuperNew(cl, obj,
-                       MUIA_Group_Horiz,             TRUE,
-                       MUIA_TheBar_Buttons,          buttons,
-                       MUIA_TheBar_Pics,             G->theme.mainWindowToolbarImages[tbim_Normal],
-                       MUIA_TheBar_SelPics,          G->theme.mainWindowToolbarImages[tbim_Selected],
-                       MUIA_TheBar_DisPics,          G->theme.mainWindowToolbarImages[tbim_Ghosted],
-                       TAG_MORE, inittags(msg))))
+    MUIA_Group_Horiz,    TRUE,
+    MUIA_TheBar_Buttons, buttons,
+    MUIA_TheBar_Pics,    G->theme.mainWindowToolbarImages[tbim_Normal],
+    MUIA_TheBar_SelPics, G->theme.mainWindowToolbarImages[tbim_Selected],
+    MUIA_TheBar_DisPics, G->theme.mainWindowToolbarImages[tbim_Ghosted],
+    TAG_MORE, inittags(msg))) != NULL)
   {
     // update the SPAM control buttons only if the spam filter is not enabled
-    if(!C->SpamFilterEnabled)
+    if(C->SpamFilterEnabled == FALSE)
       DoMethod(obj, MUIM_MainWindowToolbar_UpdateSpamControls);
 
     // connect the buttons presses

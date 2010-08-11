@@ -48,22 +48,17 @@ struct Data
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct Data *data;
-
   ENTER();
 
-  if(!(obj = DoSuperNew(cl, obj,
-    TAG_MORE, inittags(msg))))
+  if((obj = DoSuperNew(cl, obj,
+    TAG_MORE, inittags(msg))) != NULL)
   {
-    RETURN(0);
-    return 0;
+    GETDATA;
+
+    // prepare the group image
+    data->listImage = MakeImageObject("status_group", G->theme.statusImages[si_Group]);
+    DoMethod(obj, MUIM_NList_UseImage, data->listImage, 0, MUIF_NONE);
   }
-
-  data = (struct Data *)INST_DATA(cl,obj);
-
-  // prepare the group image
-  data->listImage = MakeImageObject("status_group", G->theme.statusImages[si_Group]);
-  DoMethod(obj, MUIM_NList_UseImage, data->listImage, 0, MUIF_NONE);
 
   RETURN((IPTR)obj);
   return (IPTR)obj;

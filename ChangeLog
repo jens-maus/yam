@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * all classes: some general code cleanup in the subclasses.
+
 2010-08-10 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: adapted to the latest catalog descriptor.

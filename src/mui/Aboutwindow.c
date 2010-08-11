@@ -259,7 +259,7 @@ OVERLOAD(OM_NEW)
       End,
     End,
 
-    TAG_MORE, (ULONG)inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
 

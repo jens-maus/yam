@@ -111,7 +111,7 @@ OVERLOAD(OM_NEW)
        End,
     End,
 
-    TAG_MORE, (ULONG)inittags(msg))) != NULL)
+    TAG_MORE, inittags(msg))) != NULL)
   {
     // prepare the group for the change.
     if(buttons != NULL && DoMethod(buttonGroup, MUIM_Group_InitChange))

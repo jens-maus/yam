@@ -32,7 +32,6 @@
 
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-
 #include "MUIObjects.h"
 #include "Requesters.h"
 
@@ -61,7 +60,7 @@ OVERLOAD(OM_NEW)
     GETDATA;
     struct TagItem *tags = inittags(msg), *tag;
 
-    while((tag = NextTagItem((APTR)&tags)))
+    while((tag = NextTagItem((APTR)&tags)) != NULL)
     {
       switch(tag->ti_Tag)
       {

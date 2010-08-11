@@ -37,7 +37,6 @@
 #include <proto/asl.h>
 
 #include "YAM_find.h"
-
 #include "MUIObjects.h"
 
 #include "Debug.h"
@@ -154,7 +153,7 @@ OVERLOAD(OM_NEW)
     return 0;
 
   // get eventually set attributes first
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {
@@ -249,11 +248,11 @@ OVERLOAD(OM_NEW)
         End,
       End,
 
-    TAG_MORE, inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
     int i;
 
-    if(!(data = (struct Data *)INST_DATA(cl, obj)))
+    if((data = (struct Data *)INST_DATA(cl, obj)) == NULL)
       return 0;
 
     // copy back the data stored in our temporarly struct Data
@@ -338,7 +337,7 @@ OVERLOAD(OM_SET)
   GETDATA;
 
   struct TagItem *tags = inittags(msg), *tag;
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {

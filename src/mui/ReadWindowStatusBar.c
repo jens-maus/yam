@@ -34,7 +34,6 @@
 #include <proto/graphics.h>
 
 #include "YAM_mainFolder.h"
-
 #include "MUIObjects.h"
 #include "Themes.h"
 
@@ -224,19 +223,17 @@ OVERLOAD(OM_NEW)
     }
   }
 
-  obj = DoSuperNew(cl, obj,
-                    MUIA_ContextMenu,       FALSE,
-                    MUIA_Group_Horiz,       TRUE,
-                    MUIA_Group_Spacing,     0,
-                    MUIA_Group_LayoutHook,  &LayoutHook,
-                    Child, folderLabel = TextObject,
-                      MUIA_Font,          MUIV_Font_Tiny,
-                      MUIA_Frame,         MUIV_Frame_None,
-                      MUIA_Text_PreParse, "\033l",
-                    End,
-                  TAG_MORE, inittags(msg));
-
-  if(obj != NULL)
+  if((obj = DoSuperNew(cl, obj,
+    MUIA_ContextMenu,       FALSE,
+    MUIA_Group_Horiz,       TRUE,
+    MUIA_Group_Spacing,     0,
+    MUIA_Group_LayoutHook,  &LayoutHook,
+    Child, folderLabel = TextObject,
+      MUIA_Font,          MUIV_Font_Tiny,
+      MUIA_Frame,         MUIV_Frame_None,
+      MUIA_Text_PreParse, "\033l",
+    End,
+    TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
 

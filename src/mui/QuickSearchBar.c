@@ -34,7 +34,6 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
-
 #include "BoyerMooreSearch.h"
 #include "MailList.h"
 #include "MUIObjects.h"
@@ -338,7 +337,6 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct Data *data;
   Object *viewOptionCycle;
   Object *statusText;
   Object *searchOptionPopup;
@@ -367,7 +365,7 @@ OVERLOAD(OM_NEW)
   viewOptions[8] = tr(MSG_QUICKSEARCH_VO_MINSIZE);
   viewOptions[9] = NULL;
 
-  if(!(obj = DoSuperNew(cl, obj,
+  if((obj = DoSuperNew(cl, obj,
 
     MUIA_Group_Horiz,   TRUE,
     Child, HGroup,
@@ -430,36 +428,34 @@ OVERLOAD(OM_NEW)
       End,
     End,
 
-    TAG_MORE, inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
-    return 0;
+    GETDATA;
+
+    // per default we set the clear button as hidden
+    set(clearButton, MUIA_ShowMe, FALSE);
+
+    data->CY_VIEWOPTIONS = viewOptionCycle;
+    data->TX_STATUSTEXT = statusText;
+    data->BT_CLEARBUTTON = clearButton;
+    data->PO_SEARCHOPTIONPOPUP = searchOptionPopup;
+    data->NL_SEARCHOPTIONS = searchOptionsList;
+    data->ST_SEARCHSTRING = searchString;
+
+    data->searchInProgress = FALSE;
+
+    // set the help text for each GUI element
+    SetHelp(data->CY_VIEWOPTIONS,       MSG_HELP_QUICKSEARCH_VIEWOPTIONS);
+    SetHelp(data->ST_SEARCHSTRING,      MSG_HELP_QUICKSEARCH_SEARCHSTRING);
+    SetHelp(data->PO_SEARCHOPTIONPOPUP, MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP);
+
+    // set notifies
+    DoMethod(data->NL_SEARCHOPTIONS,MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_SearchOptionChanged, MUIV_TriggerValue);
+    DoMethod(data->CY_VIEWOPTIONS,  MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_ViewOptionChanged, MUIV_TriggerValue);
+    DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue, FALSE);
+    DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 3, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue, TRUE);
+    DoMethod(data->BT_CLEARBUTTON,  MUIM_Notify, MUIA_Pressed, FALSE, data->ST_SEARCHSTRING, 3, MUIM_Set, MUIA_String_Contents, "");
   }
-
-  data = (struct Data *)INST_DATA(cl,obj);
-
-  // per default we set the clear button as hidden
-  set(clearButton, MUIA_ShowMe, FALSE);
-
-  data->CY_VIEWOPTIONS = viewOptionCycle;
-  data->TX_STATUSTEXT = statusText;
-  data->BT_CLEARBUTTON = clearButton;
-  data->PO_SEARCHOPTIONPOPUP = searchOptionPopup;
-  data->NL_SEARCHOPTIONS = searchOptionsList;
-  data->ST_SEARCHSTRING = searchString;
-
-  data->searchInProgress = FALSE;
-
-  // set the help text for each GUI element
-  SetHelp(data->CY_VIEWOPTIONS,       MSG_HELP_QUICKSEARCH_VIEWOPTIONS);
-  SetHelp(data->ST_SEARCHSTRING,      MSG_HELP_QUICKSEARCH_SEARCHSTRING);
-  SetHelp(data->PO_SEARCHOPTIONPOPUP, MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP);
-
-  // set notifies
-  DoMethod(data->NL_SEARCHOPTIONS,MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_SearchOptionChanged, MUIV_TriggerValue);
-  DoMethod(data->CY_VIEWOPTIONS,  MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_ViewOptionChanged, MUIV_TriggerValue);
-  DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue, FALSE);
-  DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 3, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue, TRUE);
-  DoMethod(data->BT_CLEARBUTTON,  MUIM_Notify, MUIA_Pressed, FALSE, data->ST_SEARCHSTRING, 3, MUIM_Set, MUIA_String_Contents, "");
 
   return (IPTR)obj;
 }
@@ -470,7 +466,7 @@ OVERLOAD(OM_SET)
   GETDATA;
 
   struct TagItem *tags = inittags(msg), *tag;
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {

@@ -31,6 +31,7 @@
 #include "WriteWindowToolbar_cl.h"
 
 #include "ImageCache.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 

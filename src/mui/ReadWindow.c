@@ -33,7 +33,6 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
-
 #include "BayesFilter.h"
 #include "FolderList.h"
 #include "MailList.h"
@@ -366,7 +365,7 @@ OVERLOAD(OM_NEW)
         End,
       End,
 
-    TAG_MORE, (ULONG)inittags(msg))) != NULL)
+    TAG_MORE, inittags(msg))) != NULL)
   {
     struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 
@@ -508,7 +507,7 @@ OVERLOAD(OM_SET)
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
 
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {

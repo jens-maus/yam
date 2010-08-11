@@ -212,7 +212,7 @@ OVERLOAD(OM_NEW)
       End,
     End,
 
-    TAG_MORE, (ULONG)inittags(msg))) != NULL)
+    TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
     static struct Part spart[2];

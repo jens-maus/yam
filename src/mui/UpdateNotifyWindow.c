@@ -36,7 +36,6 @@
 #include <mui/NFloattext_mcc.h>
 
 #include "YAM_configFile.h"
-
 #include "FileInfo.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
@@ -209,9 +208,9 @@ OVERLOAD(OM_NEW)
 
     End,
 
-    TAG_MORE, (ULONG)inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
-    struct Data *data = (struct Data *)INST_DATA(cl,obj);
+    GETDATA;
 
     data->ComponentList = nl_componentlist;
     data->ComponentHistory = nf_componenthistory;
@@ -243,7 +242,7 @@ OVERLOAD(OM_SET)
   GETDATA;
 
   struct TagItem *tags = inittags(msg), *tag;
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {

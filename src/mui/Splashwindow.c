@@ -52,100 +52,97 @@ struct Data
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct Data *data;
-  char logopath[SIZE_PATHFILE];
-  char *compileInfo;
-  Object *windowGroup;
-  Object *imageGroup;
-  Object *textGroup;
-  Object *statusGauge;
-  Object *progressGroup;
   Object *progressGauge;
 
-  compileInfo = (char *)xget(G->App, MUIA_YAM_CompileInfo);
-
-  AddPath(logopath, G->ProgDir, "Themes/default/logo", sizeof(logopath));
-
-  if((obj = DoSuperNew(cl, obj,
-
-    MUIA_Window_DragBar,        FALSE,
-    MUIA_Window_CloseGadget,    FALSE,
-    MUIA_Window_DepthGadget,    FALSE,
-    MUIA_Window_SizeGadget,     FALSE,
-    MUIA_Window_LeftEdge,       MUIV_Window_LeftEdge_Centered,
-    MUIA_Window_TopEdge,        MUIV_Window_TopEdge_Centered,
-    MUIA_Window_ActiveObject,   NULL,
-    MUIA_Window_DefaultObject,  NULL,
-    WindowContents, windowGroup = VGroup,
-      MUIA_Background, MUII_GroupBack,
-      Child, imageGroup = HGroup,
-        MUIA_Group_Spacing, 0,
-        Child, HSpace(0),
-        Child, MakeImageObject("logo", logopath),
-        Child, HSpace(0),
-      End,
-      Child, textGroup = HCenter((VGroup,
-        Child, CLabel(tr(MSG_YAMINFO)),
-        Child, CLabel(yamfullcopyright),
-        Child, ColGroup(2),
-          Child, TextObject,
-            MUIA_Text_Contents, "\033c\033u\0335http://www.yam.ch/",
-          End,
-        End,
-        Child, RectangleObject,
-           MUIA_Rectangle_HBar, TRUE,
-           MUIA_FixHeight, 8,
-        End,
-        Child, ColGroup(2),
-           MUIA_Font, MUIV_Font_Tiny,
-           MUIA_Group_HorizSpacing, 8,
-           MUIA_Group_VertSpacing, 2,
-           Child, Label(tr(MSG_Version)),
-           Child, LLabel(yamversionver),
-           Child, Label(tr(MSG_CompilationDate)),
-           Child, LLabel(compileInfo),
-        End,
-      End)),
-      Child, statusGauge = GaugeObject,
-        GaugeFrame,
-        MUIA_Gauge_InfoText, " ",
-        MUIA_Gauge_Horiz,    TRUE,
-      End,
-      Child, progressGroup = PageGroup,
-        MUIA_Group_ActivePage, 0,
-        Child, HVSpace,
-      End,
-    End,
-
-    TAG_MORE, (ULONG)inittags(msg))) == NULL)
-  {
-    return 0;
-  }
-
-  // create the progressGauge now
-  progressGauge = GaugeObject,
+  // create the progressGauge first
+  if((progressGauge = GaugeObject,
     GaugeFrame,
     MUIA_Gauge_InfoText, " ",
     MUIA_Gauge_Horiz,     TRUE,
-  End;
-
-  if((data = (struct Data *)INST_DATA(cl,obj)) == NULL ||
-     progressGauge == NULL)
+  End) != NULL)
   {
-    return 0;
+    char logopath[SIZE_PATHFILE];
+    char *compileInfo;
+    Object *windowGroup;
+    Object *imageGroup;
+    Object *textGroup;
+    Object *statusGauge;
+    Object *progressGroup;
+
+    compileInfo = (char *)xget(G->App, MUIA_YAM_CompileInfo);
+
+    AddPath(logopath, G->ProgDir, "Themes/default/logo", sizeof(logopath));
+
+    if((obj = DoSuperNew(cl, obj,
+
+      MUIA_Window_DragBar,        FALSE,
+      MUIA_Window_CloseGadget,    FALSE,
+      MUIA_Window_DepthGadget,    FALSE,
+      MUIA_Window_SizeGadget,     FALSE,
+      MUIA_Window_LeftEdge,       MUIV_Window_LeftEdge_Centered,
+      MUIA_Window_TopEdge,        MUIV_Window_TopEdge_Centered,
+      MUIA_Window_ActiveObject,   NULL,
+      MUIA_Window_DefaultObject,  NULL,
+      WindowContents, windowGroup = VGroup,
+        MUIA_Background, MUII_GroupBack,
+        Child, imageGroup = HGroup,
+          MUIA_Group_Spacing, 0,
+          Child, HSpace(0),
+          Child, MakeImageObject("logo", logopath),
+          Child, HSpace(0),
+        End,
+        Child, textGroup = HCenter((VGroup,
+          Child, CLabel(tr(MSG_YAMINFO)),
+          Child, CLabel(yamfullcopyright),
+          Child, ColGroup(2),
+            Child, TextObject,
+              MUIA_Text_Contents, "\033c\033u\0335http://www.yam.ch/",
+            End,
+          End,
+          Child, RectangleObject,
+             MUIA_Rectangle_HBar, TRUE,
+             MUIA_FixHeight, 8,
+          End,
+          Child, ColGroup(2),
+             MUIA_Font, MUIV_Font_Tiny,
+             MUIA_Group_HorizSpacing, 8,
+             MUIA_Group_VertSpacing, 2,
+             Child, Label(tr(MSG_Version)),
+             Child, LLabel(yamversionver),
+             Child, Label(tr(MSG_CompilationDate)),
+             Child, LLabel(compileInfo),
+          End,
+        End)),
+        Child, statusGauge = GaugeObject,
+          GaugeFrame,
+          MUIA_Gauge_InfoText, " ",
+          MUIA_Gauge_Horiz,    TRUE,
+        End,
+        Child, progressGroup = PageGroup,
+          MUIA_Group_ActivePage, 0,
+          Child, HVSpace,
+        End,
+      End,
+
+      TAG_MORE, inittags(msg))) != NULL)
+    {
+      GETDATA;
+
+      data->windowGroup   = windowGroup;
+      data->imageGroup    = imageGroup;
+      data->textGroup     = textGroup;
+      data->statusGauge   = statusGauge;
+      data->progressGroup = progressGroup;
+      data->progressGauge = progressGauge;
+      data->progressGaugeActive = FALSE;
+
+      DoMethod(G->App, OM_ADDMEMBER, obj);
+
+      set(obj, MUIA_Window_Activate, TRUE);
+    }
+    else
+      MUI_DisposeObject(progressGauge);
   }
-
-  data->windowGroup   = windowGroup;
-  data->imageGroup    = imageGroup;
-  data->textGroup     = textGroup;
-  data->statusGauge   = statusGauge;
-  data->progressGroup = progressGroup;
-  data->progressGauge = progressGauge;
-  data->progressGaugeActive = FALSE;
-
-  DoMethod(G->App, OM_ADDMEMBER, obj);
-
-  set(obj, MUIA_Window_Activate, TRUE);
 
   return (IPTR)obj;
 }

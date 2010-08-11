@@ -30,6 +30,7 @@
 
 #include "ImageCache.h"
 #include "ImageArea_cl.h"
+#include "MUIObjects.h"
 
 #if defined(__amigaos4__)
 #include <graphics/blitattr.h>
@@ -401,7 +402,7 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   if((obj = DoSuperNew(cl, obj,
-    TAG_MORE, inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
     struct TagItem *tags = inittags(msg);

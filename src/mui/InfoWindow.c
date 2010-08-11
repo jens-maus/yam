@@ -96,7 +96,7 @@ OVERLOAD(OM_NEW)
       Child, HCenter(okButton = MakeButton(tr(MSG_Okay))),
     End,
 
-    TAG_MORE, (ULONG)inittags(msg))) != NULL)
+    TAG_MORE, inittags(msg))) != NULL)
   {
     DoMethod(G->App, OM_ADDMEMBER, obj);
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, parent, 2, MUIM_MainWindow_DisposeSubWindow, obj);

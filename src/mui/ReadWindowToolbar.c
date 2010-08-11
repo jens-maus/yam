@@ -31,8 +31,8 @@
 #include "ReadWindowToolbar_cl.h"
 
 #include "YAM_mainFolder.h"
-
 #include "ImageCache.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 

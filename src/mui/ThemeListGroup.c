@@ -31,8 +31,6 @@
 
 #include "ThemeListGroup_cl.h"
 
-#include "extrasrc.h"
-
 #include "MUIObjects.h"
 #include "Requesters.h"
 
@@ -133,7 +131,7 @@ OVERLOAD(OM_NEW)
 
   ENTER();
 
-  obj = DoSuperNew(cl, obj,
+  if((obj = DoSuperNew(cl, obj,
           MUIA_Group_Horiz,       TRUE,
           MUIA_ContextMenu,       FALSE,
 
@@ -218,9 +216,7 @@ OVERLOAD(OM_NEW)
             End,
           End,
 
-        TAG_MORE, inittags(msg));
-
-  if(obj != NULL)
+        TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
 

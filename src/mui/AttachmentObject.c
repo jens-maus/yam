@@ -40,7 +40,6 @@
 #include <proto/wb.h>
 
 #include "YAM_mainFolder.h"
-
 #include "MUIObjects.h"
 
 #include "Debug.h"
@@ -99,19 +98,19 @@ OVERLOAD(OM_NEW)
 
   // create the object
   if((obj = DoSuperNew(cl, obj,
-                         MUIA_ContextMenu,   TRUE,
-                         MUIA_Group_Horiz,   TRUE,
-                         MUIA_Group_Spacing, 0,
-                         Child, imageObject = AttachmentImageObject,
-                           MUIA_CycleChain,               TRUE,
-                           MUIA_AttachmentImage_MailPart, mailPart,
-                           MUIA_AttachmentImage_Group,    attGroupObject,
-                         End,
-                         Child, textObject = TextObject,
-                           MUIA_Text_SetMax, FALSE,
-                           MUIA_Font,        MUIV_Font_Tiny,
-                         End,
-                       TAG_MORE, inittags(msg))) != NULL)
+    MUIA_ContextMenu,   TRUE,
+    MUIA_Group_Horiz,   TRUE,
+    MUIA_Group_Spacing, 0,
+    Child, imageObject = AttachmentImageObject,
+      MUIA_CycleChain,               TRUE,
+      MUIA_AttachmentImage_MailPart, mailPart,
+      MUIA_AttachmentImage_Group,    attGroupObject,
+    End,
+    Child, textObject = TextObject,
+      MUIA_Text_SetMax, FALSE,
+      MUIA_Font,        MUIV_Font_Tiny,
+    End,
+    TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
 

@@ -44,7 +44,6 @@
 #include "YAM_error.h"
 #include "YAM_glossarydisplay.h"
 #include "YAM_mainFolder.h"
-
 #include "FileInfo.h"
 #include "MailList.h"
 #include "MUIObjects.h"
@@ -1058,7 +1057,7 @@ OVERLOAD(OM_NEW)
         End,
       End;
 
-      obj = DoSuperNew(cl, obj,
+      if((obj = DoSuperNew(cl, obj,
         MUIA_Window_Title, tr(MSG_WR_BounceWT),
         MUIA_HelpNode, "WR_W",
         MUIA_Window_ID, MAKE_ID('W','R','I','B'),
@@ -1076,9 +1075,7 @@ OVERLOAD(OM_NEW)
             Child, data->BT_CANCEL = MakeButton(tr(MSG_WR_CANCEL)),
           End,
         End,
-      TAG_MORE, (ULONG)inittags(msg));
-
-      if(obj != NULL)
+      TAG_MORE, inittags(msg))) != NULL)
       {
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,    obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_SEND);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,      obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
@@ -1447,7 +1444,7 @@ OVERLOAD(OM_NEW)
             End,
           End,
 
-        TAG_MORE, (ULONG)inittags(msg));
+        TAG_MORE, inittags(msg));
       }
     }
 
@@ -1889,7 +1886,7 @@ OVERLOAD(OM_SET)
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
 
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {

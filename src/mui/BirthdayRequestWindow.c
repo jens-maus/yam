@@ -319,7 +319,7 @@ OVERLOAD(OM_NEW)
           End,
         End,
 
-        TAG_MORE, (ULONG)inittags(msg))) != NULL)
+        TAG_MORE, inittags(msg))) != NULL)
       {
         DoMethod(G->App, OM_ADDMEMBER, obj);
 
@@ -329,9 +329,8 @@ OVERLOAD(OM_NEW)
         DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 4, MUIM_BirthdayRequestWindow_FinishInput, skipTodayCheckbox, alias, 1);
         DoMethod(noButton,  MUIM_Notify, MUIA_Pressed, FALSE, obj, 4, MUIM_BirthdayRequestWindow_FinishInput, skipTodayCheckbox, alias, 0);
 
-        xset(obj,
-             MUIA_Window_Activate, TRUE,
-             MUIA_Window_Open,     TRUE);
+        xset(obj, MUIA_Window_Activate, TRUE,
+                  MUIA_Window_Open,     TRUE);
 
         free(buf);
       }

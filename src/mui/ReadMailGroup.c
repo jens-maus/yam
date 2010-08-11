@@ -35,7 +35,6 @@
 #include "YAM_error.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
-
 #include "HTML2Mail.h"
 #include "FileInfo.h"
 #include "MimeTypes.h"
@@ -698,7 +697,7 @@ OVERLOAD(OM_SET)
   GETDATA;
 
   struct TagItem *tags = inittags(msg), *tag;
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {

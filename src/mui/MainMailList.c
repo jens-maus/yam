@@ -35,7 +35,6 @@
 #include "YAM_config.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
-
 #include "BayesFilter.h"
 #include "MUIObjects.h"
 #include "Themes.h"
@@ -438,12 +437,9 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct Data *data;
-  ULONG i;
-
   ENTER();
 
-  if(!(obj = DoSuperNew(cl, obj,
+  if((obj = DoSuperNew(cl, obj,
 
     MUIA_Font,                       C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
     MUIA_NList_MinColSortable,       0,
@@ -459,50 +455,48 @@ OVERLOAD(OM_NEW)
     MUIA_NList_DefaultObjectOnClick, FALSE,
     MUIA_NList_CenterOnJump,         TRUE,
 
-    TAG_MORE, inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
-    RETURN(0);
-    return 0;
+    GETDATA;
+    ULONG i;
+
+    // prepare the mail status images
+    data->statusImage[si_Attach]   = MakeImageObject("status_attach",   G->theme.statusImages[si_Attach]);
+    data->statusImage[si_Crypt]    = MakeImageObject("status_crypt",    G->theme.statusImages[si_Crypt]);
+    data->statusImage[si_Delete]   = MakeImageObject("status_delete",   G->theme.statusImages[si_Delete]);
+    data->statusImage[si_Download] = MakeImageObject("status_download", G->theme.statusImages[si_Download]);
+    data->statusImage[si_Error]    = MakeImageObject("status_error",    G->theme.statusImages[si_Error]);
+    data->statusImage[si_Forward]  = MakeImageObject("status_forward",  G->theme.statusImages[si_Forward]);
+    data->statusImage[si_Group]    = MakeImageObject("status_group",    G->theme.statusImages[si_Group]);
+    data->statusImage[si_Hold]     = MakeImageObject("status_hold",     G->theme.statusImages[si_Hold]);
+    data->statusImage[si_Mark]     = MakeImageObject("status_mark",     G->theme.statusImages[si_Mark]);
+    data->statusImage[si_New]      = MakeImageObject("status_new",      G->theme.statusImages[si_New]);
+    data->statusImage[si_Old]      = MakeImageObject("status_old",      G->theme.statusImages[si_Old]);
+    data->statusImage[si_Reply]    = MakeImageObject("status_reply",    G->theme.statusImages[si_Reply]);
+    data->statusImage[si_Report]   = MakeImageObject("status_report",   G->theme.statusImages[si_Report]);
+    data->statusImage[si_Sent]     = MakeImageObject("status_sent",     G->theme.statusImages[si_Sent]);
+    data->statusImage[si_Signed]   = MakeImageObject("status_signed",   G->theme.statusImages[si_Signed]);
+    data->statusImage[si_Spam]     = MakeImageObject("status_spam",     G->theme.statusImages[si_Spam]);
+    data->statusImage[si_Unread]   = MakeImageObject("status_unread",   G->theme.statusImages[si_Unread]);
+    data->statusImage[si_Urgent]   = MakeImageObject("status_urgent",   G->theme.statusImages[si_Urgent]);
+    data->statusImage[si_WaitSend] = MakeImageObject("status_waitsend", G->theme.statusImages[si_WaitSend]);
+    for(i = 0; i < si_Max; i++)
+    {
+      if(data->statusImage[i] != NULL)
+        DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
+    }
+
+    DoMethod(obj, MUIM_MainMailList_MakeFormat);
+    DoMethod(obj, MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainMailList_SetMailInfo);
+    DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, MUIV_Notify_Self, 2, MUIM_MainMailList_DoubleClicked, MUIV_TriggerValue);
+    DoMethod(obj, MUIM_Notify, MUIA_NList_SelectChange, TRUE,           MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeSelectedHook);
+
+    // connect some notifies to the mainMailList group
+    DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,   MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_Both);
+    DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick2,  MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_2);
+    DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,     MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark,  MUIV_TriggerValue);
+    DoMethod(obj, MUIM_Notify, MUIA_NList_SortType2,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark2, MUIV_TriggerValue);
   }
-
-  data = (struct Data *)INST_DATA(cl,obj);
-
-  // prepare the mail status images
-  data->statusImage[si_Attach]   = MakeImageObject("status_attach",   G->theme.statusImages[si_Attach]);
-  data->statusImage[si_Crypt]    = MakeImageObject("status_crypt",    G->theme.statusImages[si_Crypt]);
-  data->statusImage[si_Delete]   = MakeImageObject("status_delete",   G->theme.statusImages[si_Delete]);
-  data->statusImage[si_Download] = MakeImageObject("status_download", G->theme.statusImages[si_Download]);
-  data->statusImage[si_Error]    = MakeImageObject("status_error",    G->theme.statusImages[si_Error]);
-  data->statusImage[si_Forward]  = MakeImageObject("status_forward",  G->theme.statusImages[si_Forward]);
-  data->statusImage[si_Group]    = MakeImageObject("status_group",    G->theme.statusImages[si_Group]);
-  data->statusImage[si_Hold]     = MakeImageObject("status_hold",     G->theme.statusImages[si_Hold]);
-  data->statusImage[si_Mark]     = MakeImageObject("status_mark",     G->theme.statusImages[si_Mark]);
-  data->statusImage[si_New]      = MakeImageObject("status_new",      G->theme.statusImages[si_New]);
-  data->statusImage[si_Old]      = MakeImageObject("status_old",      G->theme.statusImages[si_Old]);
-  data->statusImage[si_Reply]    = MakeImageObject("status_reply",    G->theme.statusImages[si_Reply]);
-  data->statusImage[si_Report]   = MakeImageObject("status_report",   G->theme.statusImages[si_Report]);
-  data->statusImage[si_Sent]     = MakeImageObject("status_sent",     G->theme.statusImages[si_Sent]);
-  data->statusImage[si_Signed]   = MakeImageObject("status_signed",   G->theme.statusImages[si_Signed]);
-  data->statusImage[si_Spam]     = MakeImageObject("status_spam",     G->theme.statusImages[si_Spam]);
-  data->statusImage[si_Unread]   = MakeImageObject("status_unread",   G->theme.statusImages[si_Unread]);
-  data->statusImage[si_Urgent]   = MakeImageObject("status_urgent",   G->theme.statusImages[si_Urgent]);
-  data->statusImage[si_WaitSend] = MakeImageObject("status_waitsend", G->theme.statusImages[si_WaitSend]);
-  for(i = 0; i < si_Max; i++)
-  {
-    if(data->statusImage[i] != NULL)
-      DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
-  }
-
-  DoMethod(obj, MUIM_MainMailList_MakeFormat);
-  DoMethod(obj, MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainMailList_SetMailInfo);
-  DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, MUIV_Notify_Self, 2, MUIM_MainMailList_DoubleClicked, MUIV_TriggerValue);
-  DoMethod(obj, MUIM_Notify, MUIA_NList_SelectChange, TRUE,           MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeSelectedHook);
-
-  // connect some notifies to the mainMailList group
-  DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,   MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_Both);
-  DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick2,  MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_2);
-  DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,     MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark,  MUIV_TriggerValue);
-  DoMethod(obj, MUIM_Notify, MUIA_NList_SortType2,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark2, MUIV_TriggerValue);
 
   RETURN((IPTR)obj);
   return (IPTR)obj;

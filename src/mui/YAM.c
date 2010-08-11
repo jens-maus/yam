@@ -37,7 +37,7 @@
 
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-
+#include "MUIObjects.h"
 #include "UpdateCheck.h"
 
 #include "Debug.h"
@@ -584,7 +584,7 @@ OVERLOAD(OM_NEW)
     MUIA_Application_HelpFile,       "YAM.guide",
     MUIA_Application_DiskObject,     G->HideIcon,
 
-    TAG_MORE, inittags(msg))))
+    TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
     struct DateTime dt;
@@ -606,9 +606,9 @@ OVERLOAD(OM_NEW)
 
     // now we add the compiler information as YAM can be
     // compiled with different versions and types of compilers
-    strlcat(&data->compileInfo[strlen(data->compileInfo)], yamcompiler, sizeof(data->compileInfo)-strlen(data->compileInfo));
+    strlcat(data->compileInfo, yamcompiler, sizeof(data->compileInfo));
 
-    while((tag = NextTagItem((APTR)&tags)))
+    while((tag = NextTagItem((APTR)&tags)) != NULL)
     {
       switch(tag->ti_Tag)
       {
@@ -630,7 +630,7 @@ OVERLOAD(OM_DISPOSE)
   struct EMailCacheNode *node;
 
   // lets free the EMailCache List ourself in here, to make it a bit cleaner.
-  while((node = (struct EMailCacheNode *)RemHead(&data->EMailCache)))
+  while((node = (struct EMailCacheNode *)RemHead(&data->EMailCache)) != NULL)
   {
     free(node);
   }
@@ -661,7 +661,7 @@ OVERLOAD(OM_SET)
 {
   struct TagItem *tags = inittags(msg), *tag;
 
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {

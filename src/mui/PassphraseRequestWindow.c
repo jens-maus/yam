@@ -32,7 +32,6 @@
 
 #include "YAM_config.h"
 #include "YAM_stringsizes.h"
-
 #include "Locale.h"
 #include "MUIObjects.h"
 
@@ -115,7 +114,7 @@ OVERLOAD(OM_NEW)
       End,
     End,
 
-    TAG_MORE, (ULONG)inittags(msg))) != NULL)
+    TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
 

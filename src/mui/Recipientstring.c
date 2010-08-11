@@ -33,7 +33,6 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_mainFolder.h"
-
 #include "MUIObjects.h"
 
 #include "Debug.h"
@@ -246,17 +245,15 @@ OVERLOAD(OM_NEW)
 {
   ENTER();
 
-  obj = DoSuperNew(cl, obj,
-                    StringFrame,
-                    MUIA_BetterString_NoShortcuts, TRUE,
-                  TAG_MORE, inittags(msg));
-
-  if(obj != NULL)
+  if((obj = DoSuperNew(cl, obj,
+    StringFrame,
+    MUIA_BetterString_NoShortcuts, TRUE,
+    TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
     struct TagItem *tags = inittags(msg), *tag;
 
-    while((tag = NextTagItem((APTR)&tags)))
+    while((tag = NextTagItem((APTR)&tags)) != NULL)
     {
       switch(tag->ti_Tag)
       {
@@ -329,7 +326,7 @@ OVERLOAD(OM_SET)
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
 
-  while((tag = NextTagItem((APTR)&tags)))
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {
