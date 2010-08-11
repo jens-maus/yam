@@ -1211,7 +1211,7 @@ static void yam_exitfunc(void)
     CurrentDir(olddirlock);
   }
 
-  if(nrda.Template != NULL)
+  if(nrda.ExtHelp != NULL)
     NewFreeArgs(&nrda);
 
   // close some libraries now
@@ -2228,7 +2228,7 @@ static LONG ParseCommandArgs(void)
   ENTER();
 
   // clear the args structure
-  memset(&args, 0, sizeof(struct Args));
+  memset(&args, 0, sizeof(args));
 
   // set argument template
   nrda.Template = (STRPTR)"USER/K,"
