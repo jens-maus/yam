@@ -44,14 +44,19 @@ struct IClass;
 struct MinList;
 
 /*
- * Stuff we always require on all systems
+ * Stuff that exists on AmigaOS3
  */
-#undef HAVE_NEWREADARGS
-#undef HAVE_MEMDUP
-#undef HAVE_GETDELIM
+#if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__AROS__)
+#define HAVE_ASPRINTF
+#define HAVE_VASPRINTF
+#define HAVE_STRTOK_R
+#define HAVE_STRDUP
+#define HAVE_STRLCAT
+#define HAVE_STRLCPY
+#endif // !__amigaos4__ && !__MORPHOS__ && !__AROS__
 
 /*
- * Stuff that exists in AmigaOS4
+ * Stuff that exists on AmigaOS4
  */
 #if defined(__amigaos4__)
 #define HAVE_SETPROCWINDOW
@@ -68,7 +73,10 @@ struct MinList;
 #define HAVE_ASPRINTF
 #define HAVE_VASPRINTF
 #define HAVE_STRTOK_R
-#endif
+#define HAVE_STRDUP
+#define HAVE_STRLCAT
+#define HAVE_STRLCPY
+#endif // __amigaos4__
 
 /*
  * Stuff that exists on MorphOS
@@ -80,7 +88,7 @@ struct MinList;
 #define HAVE_FREEVECPOOLED
 #define HAVE_STCGFE
 #define HAVE_STRTOK_R
-#endif
+#endif // __MORPHOS__
 
 /*
  * Stuff that exists on AROS
@@ -93,7 +101,7 @@ struct MinList;
 #define HAVE_NEWMINLIST
 #define HAVE_ALLOCVECPOOLED
 #define HAVE_FREEVECPOOLED
-#endif
+#endif // __AROS__
 
 /*
  * Differentations between compilers
@@ -101,7 +109,14 @@ struct MinList;
 #if defined(__GNUC__)
 #define HAVE_XGET
 #define HAVE_XSET
-#endif /* !__GNUC__ */
+#endif // __GNUC__
+
+/*
+ * Stuff we always require on all systems
+ */
+#undef HAVE_NEWREADARGS
+#undef HAVE_MEMDUP
+#undef HAVE_GETDELIM
 
 
 /*
