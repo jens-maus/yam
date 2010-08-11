@@ -7,6 +7,8 @@ $URL$
 
 2010-08-11 Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc/vasprintf.c: make sure that our vasprintf() implementation returns
+    a NULL buffer in case of an error.
   * mui/AttachmentImage.c: use asprintf() instead of malloc() and snprintf().
   * YAM.c: use asprintf() instead of malloc() and snprintf() with a fixed buffer
     size for the extended help.
