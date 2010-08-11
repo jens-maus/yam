@@ -2247,7 +2247,6 @@ static LONG ParseCommandArgs(void)
                           "NOSPLASHWINDOW/S";
 
   // now we build an extended help page text
-  extHelp = NULL;
   if((asprintf(&extHelp, "%s (%s)\n%s\n\nUsage: YAM <options>\nOptions/Tooltypes:\n"
                          "  USER=<username>     : Selects the active YAM user and skips\n"
                          "                        the login process.\n"
