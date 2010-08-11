@@ -77,8 +77,8 @@
 #endif
 
 #include "extrasrc.h"
+#include "extrasrc/NewReadArgs.h"
 
-#include "NewReadArgs.h"
 #include "SDI_hook.h"
 
 #include "YAM.h"

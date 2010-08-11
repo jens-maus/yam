@@ -7,6 +7,10 @@ $URL$
 
 2010-08-11 Jens Langner <Jens.Langner@light-speed.de>
 
+  * extrasrc/NewReadArgs.h, include/NewReadArgs.h: moved the NewReadArgs
+    header file from our global "include" directory where third-party
+    headers are usually placed to our "extrasrc" directory path to make it
+    more clear that this function is part of our app.
   * YAM.c: fixed a potential memory leak where ExtHelp was checked but this
     structure element is set immediately to NULL when ParseCommandString() is
     finished with execution.

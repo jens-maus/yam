@@ -173,15 +173,14 @@ $(OBJDIR)/YAM.o: YAM.c include/libraries/amisslmaster.h \
  include/proto/expat.h include/libraries/expat.h \
  include/interfaces/expat.h include/inline4/expat.h extrasrc.h \
  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
- include/NewReadArgs.h include/amiga-align.h include/default-align.h \
- include/SDI_hook.h YAM.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
- YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Rexx.h \
- Themes.h Timer.h Threads.h YAM_addressbook.h include/mui/NListtree_mcc.h \
- YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
- YAM_configFile.h YAM_global.h YAM_mainFolder.h AppIcon.h DockyIcon.h \
- FileInfo.h MUIObjects.h FolderList.h ImageCache.h Locale.h MailList.h \
- Requesters.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
- BayesFilter.h Debug.h
+ extrasrc/NewReadArgs.h include/SDI_hook.h YAM.h YAM_stringsizes.h \
+ YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
+ BayesFilter.h HashTable.h Rexx.h Themes.h Timer.h Threads.h \
+ YAM_addressbook.h include/mui/NListtree_mcc.h YAM_config.h YAM_read.h \
+ YAM_write.h YAM_main.h UpdateCheck.h YAM_configFile.h YAM_global.h \
+ YAM_mainFolder.h AppIcon.h DockyIcon.h FileInfo.h MUIObjects.h \
+ FolderList.h ImageCache.h Locale.h MailList.h Requesters.h mui/Classes.h \
+ mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM_AB.o: YAM_AB.c include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
  include/libraries/mui.h include/mui/NListview_mcc.h \
  include/proto/muimaster.h include/interfaces/muimaster.h \

@@ -42,6 +42,8 @@
 struct TagItem;
 struct IClass;
 struct MinList;
+struct NewRDArgs;
+struct WBStartup;
 
 /*
  * Stuff that exists on AmigaOS3
@@ -245,6 +247,11 @@ void FreeVecPooled(APTR poolHeader, APTR memory);
 
 #if defined(NEED_CHANGEFILEPOSITION)
 #define ChangeFilePosition(fh, pos, mode)   Seek(fh, pos, mode)
+#endif
+
+#if defined(NEED_NEWREADARGS)
+LONG NewReadArgs(struct WBStartup *, struct NewRDArgs *);
+void NewFreeArgs(struct NewRDArgs *);
 #endif
 
 /*
