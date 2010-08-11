@@ -30,21 +30,14 @@
 ***************************************************************************/
 
 /*- INCLUDES & DEFINES -*/
-#if defined(__amigaos4__)
-  #define COMPILE_V52
-#else
-  #define COMPILE_V39
-#endif
-
 #include <dos/dos.h>
 #include <exec/memory.h>
-#if defined(COMPILE_V52)
+#if defined(__amigaos4__)
   #include <exec/exectags.h>
 #endif
 #include <workbench/startup.h>
 #include <workbench/workbench.h>
 #include <workbench/icon.h>
-#include <proto/intuition.h>
 #include <proto/icon.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -53,6 +46,8 @@
 #include <string.h>
 
 #include "SDI_compiler.h"
+
+#include "extrasrc.h"
 
 #include "Debug.h"
 
@@ -76,12 +71,11 @@ struct NewRDArgs
 // private data section
   struct RDArgs *RDArgs;    // RDArgs we give to ReadArgs()
   struct RDArgs *FreeArgs;  // RDArgs we get from ReadArgs()
+  STRPTR *Args;
+  ULONG MaxArgs;
+  STRPTR ToolWindow;
 
-  #if defined(COMPILE_V39) || defined(COMPILE_V52)
   APTR Pool;
-  #else
-  struct Remember *Remember;  // the memory we`ve allocated
-  #endif
 
   BPTR WinFH;     // i/o window stream
   BPTR OldInput;  // old i/o streams
@@ -111,6 +105,25 @@ void NewFreeArgs(struct NewRDArgs *rdargs)
     FreeDosObject(DOS_RDARGS, rdargs->RDArgs);
   }
 
+  if(rdargs->Args != NULL)
+  {
+    ULONG i;
+
+    for(i=0; i < rdargs->MaxArgs; i++)
+    {
+      if(rdargs->Args[i] != NULL)
+        FreeVecPooled(rdargs->Pool, rdargs->Args[i]);
+    }
+    FreeVecPooled(rdargs->Pool, rdargs->Args);
+    rdargs->Args = NULL;
+  }
+
+  if(rdargs->ToolWindow != NULL)
+  {
+    FreeVecPooled(rdargs->Pool, rdargs->ToolWindow);
+    rdargs->ToolWindow = NULL;
+  }
+
   if(rdargs->WinFH)
   {
     D(DBF_STARTUP, "SelectOutput( .. ) .. Close( ... )");
@@ -118,25 +131,15 @@ void NewFreeArgs(struct NewRDArgs *rdargs)
     Close(SelectInput(rdargs->OldInput));
   }
 
-  #if defined(COMPILE_V39)
   if(rdargs->Pool != NULL)
   {
-    DeletePool(rdargs->Pool);
-    rdargs->Pool = NULL;
-  }
-  #elif defined(COMPILE_V52)
-  if(rdargs->Pool != NULL)
-  {
+    #if defined(__amigaos4__)
     FreeSysObject(ASOT_MEMPOOL, rdargs->Pool);
+    #else
+    DeletePool(rdargs->Pool);
+    #endif
     rdargs->Pool = NULL;
   }
-  #else
-  if(rdargs->Remember != NULL)
-  {
-    FreeRemember(&rdargs->Remember, TRUE);
-    rdargs->Remember = NULL;
-  }
-  #endif
 
   D(DBF_STARTUP, "memory freed");
 
@@ -172,23 +175,18 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
   ENTER();
 
-  nrdargs->RDArgs   =
-  nrdargs->FreeArgs = NULL;
-  nrdargs->WinFH    = 0;
-  #if defined(COMPILE_V39) || defined(COMPILE_V52)
-  nrdargs->Pool   = NULL;
-  #else
-  nrdargs->Remember = NULL;
-  #endif
+  nrdargs->RDArgs     = NULL;
+  nrdargs->FreeArgs   = NULL;
+  nrdargs->Args       = NULL;
+  nrdargs->MaxArgs    = 0;
+  nrdargs->ToolWindow = NULL;
+  nrdargs->WinFH      = 0;
+  nrdargs->Pool       = NULL;
 
   if((nrdargs->RDArgs = (struct RDArgs *)AllocDosObject(DOS_RDARGS, NULL)))
   {
-    #if defined(COMPILE_V39) || defined(COMPILE_V52)
     APTR pool = NULL;
-    #else
-    struct Remember **remember = &nrdargs->Remember;
-    #endif
-    CONST_STRPTR ToolWindow = nrdargs->Window;
+    STRPTR ToolWindow = nrdargs->Window;
 
     if(WBStartup)
     {
@@ -227,27 +225,23 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       FileArgs = (FileArgs > num) ? num : ((FileArgs == -1) ? 0L : num);
       MaxArgs += FileArgs;
 
-      #if defined(COMPILE_V39)
-      pool = nrdargs->Pool = CreatePool(MEMF_CLEAR, 1024, 1024);
-      #elif defined(COMPILE_V52)
+      #if defined(__amigaos4__)
       pool = nrdargs->Pool = AllocSysObjectTags(ASOT_MEMPOOL, ASOPOOL_MFlags, MEMF_SHARED|MEMF_CLEAR,
                                                               ASOPOOL_Puddle, 1024,
                                                               ASOPOOL_Threshold, 1024,
                                                               ASOPOOL_Name, "YAM readargs pool",
                                                               TAG_DONE);
       #else
-      pool = NULL;
+      pool = nrdargs->Pool = CreatePool(MEMF_CLEAR, 1024, 1024);
       #endif
 
-      #if defined(COMPILE_V39) || defined(COMPILE_V52)
-      if(pool == NULL || (Args = AllocPooled(pool, MaxArgs*sizeof(STRPTR)*2)) == NULL)
-      #else
-      if((Args = AllocRemember(remember, MaxArgs*sizeof(STRPTR)*2, MEMF_CLEAR)) == NULL)
-      #endif
+      if(pool == NULL || (Args = nrdargs->Args = AllocVecPooled(pool, MaxArgs*sizeof(STRPTR)*2)) == NULL)
       {
         RETURN(ERROR_NO_FREE_STORE);
         return(ERROR_NO_FREE_STORE);
       }
+
+      nrdargs->MaxArgs = MaxArgs;
 
       // no need to clear the Args array here, because the pool is of type MEMF_CLEAR
 
@@ -274,11 +268,8 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
             {
               STRPTR dst;
               LONG len = strlen(buf) + 2L;
-              #if defined(COMPILE_V39) || defined(COMPILE_V52)
-              if((Args[FArgNum] = dst = AllocPooled(pool, len)))
-              #else
-              if((Args[FArgNum] = dst = AllocRemember(remember, len, MEMF_SHARED|MEMF_CLEAR)))
-              #endif
+
+              if((Args[FArgNum] = dst = AllocVecPooled(pool, len)))
               {
                 CopyMem(buf, (dst+1), len-2L);
                 *dst = dst[len-1] = '"';
@@ -339,11 +330,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
                   if( ArgLen[i] == 0L || (i-FileArgs) != MultiArg )
                   {
-                    #if defined(COMPILE_V39) || defined(COMPILE_V52)
-                    if((Args[i] = dst = AllocPooled(pool, (len = strlen(src))+2L)))
-                    #else
-                    if((Args[i] = dst = AllocRemember(remember, (len = strlen(src))+2L, MEMF_SHARED|MEMF_CLEAR)))
-                    #endif
+                    if((Args[i] = dst = AllocVecPooled(pool, (len = strlen(src))+2L)))
                     {
                       /*- copy arg -*/
                       while(*src)
@@ -368,11 +355,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                     while(*src && *src++ != '=' );
 
                     len = strlen( src ) + 1 + ArgLen[i];
-                    #if defined(COMPILE_V39) || defined(COMPILE_V52)
-                    if( (dst = AllocPooled(pool, len+2)) )
-                    #else
-                    if( (dst = AllocRemember(remember, len+2, MEMF_SHARED|MEMF_CLEAR)) )
-                    #endif
+                    if( (dst = AllocVecPooled(pool, len+2)) )
                     {
                       BOOL quotes = FALSE;
                       UBYTE c;
@@ -402,17 +385,13 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                 /*- arg not specified in template, check for WINDOW tooltype -*/
                 else if(!IsArg("WINDOW", src))
                 {
-                  if((i = strlen(src)-6L) > 1L)
+                  if((i = strlen(src)-7) > 0)
                   {
-                    #if defined(COMPILE_V39) || defined(COMPILE_V52)
-                    if((ToolWindow = AllocPooled(pool, i)))
-                    #else
-                    if((ToolWindow = AllocRemember(remember, i, MEMF_SHARED|MEMF_CLEAR)))
-                    #endif
-                      CopyMem((src+7L), (STRPTR)ToolWindow, i);
+                    if((ToolWindow = nrdargs->ToolWindow = AllocVecPooled(pool, i+1)))
+                      strlcpy(ToolWindow, &src[7], i+1);
                   }
                   else
-                    ToolWindow = "CON:";
+                    ToolWindow = (STRPTR)"CON:";
                 }
               }
 
@@ -507,25 +486,34 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       }
     }
 
-    #if defined(COMPILE_V39)
-    if(pool != NULL)
+    if(nrdargs->Args != NULL)
     {
-      DeletePool( pool );
+      ULONG i;
+
+      for(i=0; i < nrdargs->MaxArgs; i++)
+      {
+        if(nrdargs->Args[i] != NULL)
+          FreeVecPooled(nrdargs->Pool, nrdargs->Args[i]);
+      }
+      FreeVecPooled(nrdargs->Pool, nrdargs->Args);
+      nrdargs->Args = NULL;
+    }
+
+    if(nrdargs->ToolWindow != NULL)
+    {
+      FreeVecPooled(nrdargs->Pool, nrdargs->ToolWindow);
+      nrdargs->ToolWindow = NULL;
+    }
+
+    if(nrdargs->Pool != NULL)
+    {
+      #if defined(__amigaos4__)
+      FreeSysObject(ASOT_MEMPOOL, nrdargs->Pool);
+      #else
+      DeletePool(nrdargs->Pool);
+      #endif
       nrdargs->Pool = NULL;
     }
-    #elif defined(COMPILE_V52)
-    if(pool != NULL)
-    {
-      FreeSysObject(ASOT_MEMPOOL, pool);
-      nrdargs->Pool = NULL;
-    }
-    #else
-    if(*remember != NULL)
-    {
-      FreeRemember(remember, TRUE);
-      nrdargs->Remember = NULL;
-    }
-    #endif
   }
   else
   {

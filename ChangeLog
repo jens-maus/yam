@@ -7,6 +7,10 @@ $URL$
 
 2010-08-11 Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc/NewReadArgs.c: fixed a possible memtrack warning due to the use of
+    memory pools in the NewReadArgs() function. Also completely dropped the more
+    than ancient and unused "Remember" support. Finally fixed a buffer overrun
+    in case the WINDOW tooltype was used.
   * extrasrc.h: added missing HAVE_(V)SNPRINTF definitions. This fixes the OS4
     build.
   * extrasrc.h: added some HAVE_#? definitions for all systems.
