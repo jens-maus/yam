@@ -2230,58 +2230,55 @@ static LONG ParseCommandArgs(void)
   // clear the args structure
   memset(&args, 0, sizeof(struct Args));
 
-  // allocate some memory for the extended help
-  #define SIZE_EXTHELP  2048
-  if((extHelp = malloc(SIZE_EXTHELP)) != NULL)
+  // set argument template
+  nrda.Template = (STRPTR)"USER/K,"
+                          "PASSWORD/K,"
+                          "MAILDIR/K,"
+                          "PREFSFILE/K,"
+                          "NOCHECK/S,"
+                          "HIDE/S,"
+                          "DEBUG/S,"
+                          "MAILTO/K,"
+                          "SUBJECT/K,"
+                          "LETTER/K,"
+                          "ATTACH/M,"
+                          "NOIMGWARNING/S,"
+                          "NOCATALOG/S,"
+                          "NOSPLASHWINDOW/S";
+
+  // now we build an extended help page text
+  extHelp = NULL;
+  if((asprintf(&extHelp, "%s (%s)\n%s\n\nUsage: YAM <options>\nOptions/Tooltypes:\n"
+                         "  USER=<username>     : Selects the active YAM user and skips\n"
+                         "                        the login process.\n"
+                         "  PASSWORD=<password> : Password of selected user (if required).\n"
+                         "  MAILDIR=<path>      : Sets the home directory for the folders\n"
+                         "                        and configuration.\n"
+                         "  PREFSFILE=<filename>: Configuration file that should be used\n"
+                         "                        instead of the default.\n"
+                         "  NOCHECK             : Starts YAM without trying to receive/send\n"
+                         "                        any mail.\n"
+                         "  HIDE                : Starts YAM in iconify mode.\n"
+                         "  DEBUG               : Sends all conversations between YAM and a\n"
+                         "                        mail server to the console window.\n"
+                         "  MAILTO=<recipient>  : Creates a new mail for the specified\n"
+                         "                        recipients when YAM started.\n"
+                         "  SUBJECT=<subject>   : Sets the subject text for a new mail.\n"
+                         "  LETTER=<file>       : The text file containing the actual mail\n"
+                         "                        text of a new message.\n"
+                         "  ATTACH=<file>       : Attaches the specified file to the new\n"
+                         "                        mail created.\n"
+                         "  NOIMGWARNING        : Supresses all warnings regarding missing\n"
+                         "                        image files.\n"
+                         "  NOCATALOG           : Starts YAM without loading any catalog\n"
+                         "                        translation (english).\n"
+                         "  NOSPLASHWINDOW      : Starts YAM without opening the splash\n"
+                         "                        and shutdown windows.\n"
+                         "%s", yamversion,
+                               yamversiondate,
+                               yamcopyright,
+                               nrda.Template)) != -1)
   {
-    // set argument template
-    nrda.Template = (STRPTR)"USER/K,"
-                            "PASSWORD/K,"
-                            "MAILDIR/K,"
-                            "PREFSFILE/K,"
-                            "NOCHECK/S,"
-                            "HIDE/S,"
-                            "DEBUG/S,"
-                            "MAILTO/K,"
-                            "SUBJECT/K,"
-                            "LETTER/K,"
-                            "ATTACH/M,"
-                            "NOIMGWARNING/S,"
-                            "NOCATALOG/S,"
-                            "NOSPLASHWINDOW/S";
-
-    // now we build an extended help page text
-    snprintf(extHelp, SIZE_EXTHELP, "%s (%s)\n%s\n\nUsage: YAM <options>\nOptions/Tooltypes:\n"
-                                    "  USER=<username>     : Selects the active YAM user and skips\n"
-                                    "                        the login process.\n"
-                                    "  PASSWORD=<password> : Password of selected user (if required).\n"
-                                    "  MAILDIR=<path>      : Sets the home directory for the folders\n"
-                                    "                        and configuration.\n"
-                                    "  PREFSFILE=<filename>: Configuration file that should be used\n"
-                                    "                        instead of the default.\n"
-                                    "  NOCHECK             : Starts YAM without trying to receive/send\n"
-                                    "                        any mail.\n"
-                                    "  HIDE                : Starts YAM in iconify mode.\n"
-                                    "  DEBUG               : Sends all conversations between YAM and a\n"
-                                    "                        mail server to the console window.\n"
-                                    "  MAILTO=<recipient>  : Creates a new mail for the specified\n"
-                                    "                        recipients when YAM started.\n"
-                                    "  SUBJECT=<subject>   : Sets the subject text for a new mail.\n"
-                                    "  LETTER=<file>       : The text file containing the actual mail\n"
-                                    "                        text of a new message.\n"
-                                    "  ATTACH=<file>       : Attaches the specified file to the new\n"
-                                    "                        mail created.\n"
-                                    "  NOIMGWARNING        : Supresses all warnings regarding missing\n"
-                                    "                        image files.\n"
-                                    "  NOCATALOG           : Starts YAM without loading any catalog\n"
-                                    "                        translation (english).\n"
-                                    "  NOSPLASHWINDOW      : Starts YAM without opening the splash\n"
-                                    "                        and shutdown windows."
-                                    "\n%s: ", yamversion,
-                                              yamversiondate,
-                                              yamcopyright,
-                                              nrda.Template);
-
     // set the extHelp pointer
     nrda.ExtHelp = (STRPTR)extHelp;
 
