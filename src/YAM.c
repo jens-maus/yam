@@ -1211,7 +1211,8 @@ static void yam_exitfunc(void)
     CurrentDir(olddirlock);
   }
 
-  if(nrda.ExtHelp != NULL)
+  // Free the NewReadArgs structure/memory
+  if(nrda.Template != NULL)
     NewFreeArgs(&nrda);
 
   // close some libraries now
@@ -2229,6 +2230,7 @@ static LONG ParseCommandArgs(void)
 
   // clear the args structure
   memset(&args, 0, sizeof(args));
+  memset(&nrda, 0, sizeof(nrda));
 
   // set argument template
   nrda.Template = (STRPTR)"USER/K,"
@@ -2294,6 +2296,8 @@ static LONG ParseCommandArgs(void)
     free(extHelp);
     nrda.ExtHelp = NULL;
   }
+  else
+    E(DBF_STARTUP, "asprintf returned -1");
 
   RETURN(result);
   return result;
