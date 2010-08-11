@@ -28,8 +28,11 @@
 #include <dos/dosextens.h>
 #include <proto/exec.h>
 
+#include "extrasrc.h"
+
 #include "Debug.h"
 
+#if defined(NEED_SETPROCWINDOW)
 /// SetProcWindow
 // sets pr_WindowPtr of the current process to forbid (newWindowPtr==(APTR)-1) or
 // permit (newWindowPtr==NULL) error requesters from DOS
@@ -48,3 +51,6 @@ APTR SetProcWindow(const void *newWindowPtr)
   return oldWindowPtr;
 }
 ///
+#else
+  #warning "NEED_SETPROCWINDOW missing or compilation unnecessary"
+#endif

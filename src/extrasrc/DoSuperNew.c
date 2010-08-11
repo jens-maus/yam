@@ -34,9 +34,11 @@
 #include "SDI_compiler.h"
 #include "SDI_stdarg.h"
 
+#include "extrasrc.h"
+
+#if defined(NEED_DOSUPERNEW)
 // DoSuperNew()
 // Calls parent NEW method within a subclass
-
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
 {
   Object *rc;
@@ -48,3 +50,6 @@ Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
 
   return rc;
 }
+#else
+  #warning "NEED_DOSUPERNEW missing or compilation unnecessary"
+#endif

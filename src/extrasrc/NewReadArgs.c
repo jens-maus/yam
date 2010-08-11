@@ -51,6 +51,10 @@
 
 #include "Debug.h"
 
+#include "extrasrc.h"
+
+#if defined(NEED_NEWREADARGS)
+
 #ifndef MEMF_SHARED
 #define MEMF_SHARED MEMF_PUBLIC
 #endif
@@ -526,3 +530,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 }
 
 /****************************************************************************/
+
+#else
+  #warning "NEED_NEWREADARGS missing or compilation unnecessary"
+#endif

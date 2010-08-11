@@ -31,6 +31,9 @@
 #define DEBUG_USE_MALLOC_REDEFINE
 #include "Debug.h"
 
+#include "extrasrc.h"
+
+#if defined(NEED_ALLOCVECPOOLED)
 /// AllocVecPooled
 // allocate a vector of <memSize> bytes from the pool specified by <poolHeader>
 APTR AllocVecPooled(APTR poolHeader, ULONG memSize)
@@ -52,4 +55,7 @@ APTR AllocVecPooled(APTR poolHeader, ULONG memSize)
   RETURN(memory);
   return memory;
 }
+#else
+  #warning "NEED_ALLOCVECPOOLED missing or compilation unnecessary"
+#endif
 ///

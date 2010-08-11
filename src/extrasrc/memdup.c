@@ -28,6 +28,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_MEMDUP)
 /// memdup
 //  Duplicates a memory block of given size
 void *memdup(const void *source, const size_t size)
@@ -40,3 +43,6 @@ void *memdup(const void *source, const size_t size)
   return dest;
 }
 ///
+#else
+  #warning "NEED_MEMDUP missing or compilation unnecessary"
+#endif

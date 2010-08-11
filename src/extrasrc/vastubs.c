@@ -34,6 +34,10 @@
    requires a linear stack layout!
 */
 
+#include "extrasrc.h"
+
+#if defined(NEED_VASTUBS)
+
 #if !defined(__AROS__) && (defined(__VBCC__) || defined(NO_INLINE_STDARG))
 #if defined(_M68000) || defined(__M68000) || defined(__mc68000)
 
@@ -220,6 +224,8 @@ ULONG URL_Open(STRPTR url, Tag tag1, ...)
   AROS_SLOWSTACKTAGS_POST
 }
 
+#endif
 
-
+#else
+  #warning "NEED_VASTUBS missing or compilation unnecessary"
 #endif

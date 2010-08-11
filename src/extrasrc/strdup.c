@@ -28,6 +28,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_STRDUP)
 char *strdup(const char *str)
 {
   if(str)
@@ -43,3 +46,6 @@ char *strdup(const char *str)
 
   return NULL;
 }
+#else
+  #warning "NEED_STRDUP missing or compilation unnecessary"
+#endif

@@ -34,7 +34,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "extrasrc.h"
+
 #include "Debug.h"
+
+#if defined(NEED_GETDELIM)
 
 #ifndef SIZE_MAX
 #define SIZE_MAX ((size_t)-1)
@@ -118,3 +122,7 @@ out:
   RETURN(result);
   return result;
 }
+
+#else
+  #warning "NEED_GETDELIM missing or compilation unnecessary"
+#endif

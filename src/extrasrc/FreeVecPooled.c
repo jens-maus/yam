@@ -31,6 +31,9 @@
 #define DEBUG_USE_MALLOC_REDEFINE
 #include "Debug.h"
 
+#include "extrasrc.h"
+
+#if defined(NEED_FREEVECPOOLED)
 /// FreeVecPooled
 // return a vector to the pool
 void FreeVecPooled(APTR poolHeader, APTR memory)
@@ -48,4 +51,7 @@ void FreeVecPooled(APTR poolHeader, APTR memory)
 
   LEAVE();
 }
+#else
+  #warning "NEED_FREEVECPOOLED missing or compilation unnecessary"
+#endif
 ///

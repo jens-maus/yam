@@ -22,6 +22,10 @@ static char *rcsid = "$OpenBSD: strlcat.c,v 1.11 2003/06/17 21:56:24 millert Exp
 
 #include <string.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_STRLCAT)
+
 /*
  * Appends src to string dst of size siz (unlike strncat, siz is the
  * full size of dst, not space left).  At most siz-1 characters
@@ -57,3 +61,7 @@ strlcat(char *dst, const char *src, size_t siz)
 
   return(dlen + (s - src));  /* count does not include NUL */
 }
+
+#else
+  #warning "NEED_STRLCAT missing or compilation unnecessary"
+#endif

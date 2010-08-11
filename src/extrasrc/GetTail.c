@@ -27,6 +27,9 @@
 
 #include <exec/lists.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_GETTAIL)
 // GetTail()
 // get the tail element of a list
 struct Node *GetTail(struct List *list)
@@ -38,3 +41,6 @@ struct Node *GetTail(struct List *list)
 
   return result;
 }
+#else
+  #warning "NEED_GETTAIL missing or compilation unnecessary"
+#endif

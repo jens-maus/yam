@@ -27,6 +27,9 @@
 
 #include <exec/lists.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_NEWMINLIST)
 // NewMinList()
 // initialize a struct MinList
 void NewMinList(struct MinList *list)
@@ -35,3 +38,6 @@ void NewMinList(struct MinList *list)
   list->mlh_Tail = NULL;
   list->mlh_TailPred = (struct MinNode *)&list->mlh_Head;
 }
+#else
+  #warning "NEED_NEWMINLIST missing or compilation unnecessary"
+#endif

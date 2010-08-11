@@ -29,6 +29,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_VASPRINTF)
+
 #ifndef VA_COPY
 #if defined(__MORPHOS__)
 #define VA_COPY(dest, src) __va_copy(dest, src)
@@ -60,3 +64,7 @@ int vasprintf(char **ptr, const char * format, va_list ap)
 
   return ret;
 }
+
+#else
+  #warning "NEED_VASPRINTF missing or compilation unnecessary"
+#endif

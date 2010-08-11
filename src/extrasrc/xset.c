@@ -31,6 +31,10 @@
 #include <proto/intuition.h>
 #include <proto/utility.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_XSET)
+
 #warning possible incomplete tag list parsing!!
 
 ULONG VARARGS68K xset(Object *obj, ...)
@@ -69,3 +73,7 @@ ULONG VARARGS68K xset(Object *obj, ...)
 
   return SetAttrsA(obj, newTags);
 }
+
+#else
+  #warning "NEED_XSET missing or compilation unnecessary"
+#endif

@@ -27,6 +27,10 @@
 
 #include <string.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_STCGFE)
+
 #ifndef FESIZE
 #define FESIZE 32
 #endif
@@ -45,3 +49,7 @@ int stcgfe(char *ext, const char *name)
    *ext = '\0';
    return 0;
 }
+
+#else
+  #warning "NEED_STCGFE missing or compilation unnecessary"
+#endif

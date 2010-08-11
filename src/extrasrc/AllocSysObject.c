@@ -50,6 +50,10 @@
 #define DEBUG_USE_MALLOC_REDEFINE
 #include "Debug.h"
 
+#include "extrasrc.h"
+
+#if defined(NEED_ALLOCSYSOBJECT)
+
 #ifdef __GNUC__
    #ifdef __PPC__
     #pragma pack(2)
@@ -616,5 +620,9 @@ void FreeSysObject(ULONG type, APTR object)
 
   LEAVE();
 }
+
+#else
+  #warning "NEED_ALLOCSYSOBJECT missing or compilation unnecessary"
+#endif
 
 ///

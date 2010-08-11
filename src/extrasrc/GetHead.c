@@ -27,6 +27,9 @@
 
 #include <exec/lists.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_GETHEAD)
 // GetHead()
 // get the head element of a list
 struct Node *GetHead(struct List *list)
@@ -38,3 +41,6 @@ struct Node *GetHead(struct List *list)
 
   return result;
 }
+#else
+  #warning "NEED_GETHEAD missing or compilation unnecessary"
+#endif

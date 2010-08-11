@@ -31,6 +31,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_SNPRINTF)
 int VARARGS68K snprintf(char *s, size_t maxlen, const char *format, ...)
 {
   VA_LIST ap;
@@ -42,3 +45,6 @@ int VARARGS68K snprintf(char *s, size_t maxlen, const char *format, ...)
 
   return ret;
 }
+#else
+  #warning "NEED_SNPRINTF missing or compilation unnecessary"
+#endif

@@ -33,6 +33,9 @@
 
 #include <string.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_STRTOK_R)
 char *strtok_r(char *str, const char *separator_set,char ** state_ptr)
 {
   char *result = NULL;
@@ -87,3 +90,6 @@ out:
 
   return(result);
 }
+#else
+  #warning "NEED_STRTOK_R missing or compilation unnecessary"
+#endif

@@ -1,7 +1,9 @@
 #ifndef ALLOCSYSOBJECT_H
 #define ALLOCSYSOBJECT_H 1
-// do not redefine the tag items for OS4!
-#if !defined(__amigaos4__)
+
+#include "extrasrc.h" 
+
+#if defined(NEED_ALLOCSYSOBJECT)
 
 #include <utility/tagitem.h>
 
@@ -65,6 +67,7 @@
 #define ASOT_SEMAPHORE      8
 #define ASOT_TAGLIST        9
 #define ASOT_MEMPOOL        10
+
 #endif
 
 #endif /* ALLOCSYSOBJECT_H */

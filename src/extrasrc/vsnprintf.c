@@ -1,5 +1,8 @@
-#include "extrasrc.h"
 #include "SDI_compiler.h"
+
+#include "extrasrc.h"
+
+#if defined(NEED_VSNPRINTF)
 
 // ****************************************************************************
 // * vsnprintf()
@@ -1006,4 +1009,6 @@ int main (void)
 }
 #endif /* SNPRINTF_TEST */
 
-
+#else
+  #warning "NEED_VSNPRINTF missing or compilation unnecessary"
+#endif

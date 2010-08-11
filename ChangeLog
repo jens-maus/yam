@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-11 Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc.h, extrasrc: slightly reworked the whole "extrasrc" management
+    a bit and introduced NEED_XXXXX defines which define on which platform certain
+    functions are required. This is then in line with what is defined in the
+    individual Makefile part of that platform, thus should be easier to
+    understand. Furthermore, all sources in 'extrasrc' check now if the proper
+    NEED_XXXX define is set during compilation, which might point at some 
+    missing definition or unnecessary compilation of that file. All in all
+    this should now hopefully fix #177.
+
 2010-08-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/NewReadArgs.c: fixed a possible memtrack warning due to the use of

@@ -32,8 +32,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int vasprintf(char **ptr, const char * format, va_list ap);
+#include "extrasrc.h"
 
+#if defined(NEED_ASPRINTF)
 int VARARGS68K asprintf(char **ptr, const char * format, ...)
 {
   VA_LIST ap;
@@ -46,3 +47,6 @@ int VARARGS68K asprintf(char **ptr, const char * format, ...)
 
   return ret;
 }
+#else
+  #warning "NEED_ASPRINTF missing or compilation unnecessary"
+#endif

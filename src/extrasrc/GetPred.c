@@ -27,6 +27,9 @@
 
 #include <exec/lists.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_GETPRED)
 // GetPred()
 // get a node's predecessor
 struct Node *GetPred(struct Node *node)
@@ -38,3 +41,6 @@ struct Node *GetPred(struct Node *node)
 
   return result;
 }
+#else
+  #warning "NEED_GETPRED missing or compilation unnecessary"
+#endif

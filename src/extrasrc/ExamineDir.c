@@ -40,6 +40,10 @@
 #define DEBUG_USE_MALLOC_REDEFINE
 #include "Debug.h"
 
+#include "extrasrc.h"
+
+#if defined(NEED_EXAMINEDIR)
+
 struct DirContext
 {
   BPTR lock;
@@ -234,6 +238,10 @@ struct ExamineData *ExamineDir(APTR context)
   RETURN(ed);
   return ed;
 }
+
+#else
+  #warning "NEED_EXAMINEDIR missing or compilation unnecessary"
+#endif
 
 ///
 

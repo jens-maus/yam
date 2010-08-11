@@ -27,6 +27,9 @@
 
 #include <exec/lists.h>
 
+#include "extrasrc.h"
+
+#if defined(NEED_GETSUCC)
 // GetSucc()
 // get a node's sucessor
 struct Node *GetSucc(struct Node *node)
@@ -38,3 +41,6 @@ struct Node *GetSucc(struct Node *node)
 
   return result;
 }
+#else
+  #warning "NEED_GETSUCC missing or compilation unnecessary"
+#endif
