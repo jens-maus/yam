@@ -105,7 +105,7 @@ HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
   struct SelectionMsg *msg = (struct SelectionMsg *)hook->h_Data;
   struct Window *wnd = ism->ism_ParentWindow;
 
-  if(!wnd)
+  if(wnd == NULL)
     return ISMACTION_Stop;
 
   if(wnd->WLayer != msg->layer)
@@ -118,17 +118,13 @@ HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
   {
     if(ism->ism_Type == WBDRAWER)
     {
-      msg->destName = strdup(ism->ism_Name);
-      return ISMACTION_Select;
+      if((msg->destName = strdup(ism->ism_Name)) != NULL)
+        return ISMACTION_Select;
     }
     else if(ism->ism_Type == WBDISK)
     {
-      msg->destName = malloc(strlen(ism->ism_Name)+2);
-      if(msg->destName)
-      {
-        snprintf(msg->destName, strlen(ism->ism_Name)+2, "%s:", ism->ism_Name);
+      if(asprintf(&msg->destName, "%s:", ism->ism_Name) != -1)
         return ISMACTION_Select;
-      }
     }
 
     return ISMACTION_Stop;
