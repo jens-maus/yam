@@ -42,6 +42,8 @@
 struct TagItem;
 struct IClass;
 struct MinList;
+struct WBStartup;
+struct NewRDArgs;
 
 /*
  * Stuff that exists on AmigaOS3
@@ -49,6 +51,8 @@ struct MinList;
 #if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__AROS__)
 #define HAVE_ASPRINTF
 #define HAVE_VASPRINTF
+#define HAVE_SNPRINTF
+#define HAVE_VSNPRINTF
 #define HAVE_STRTOK_R
 #define HAVE_STRDUP
 #define HAVE_STRLCAT
@@ -72,6 +76,8 @@ struct MinList;
 #define HAVE_FREEVECPOOLED
 #define HAVE_ASPRINTF
 #define HAVE_VASPRINTF
+#define HAVE_SNPRINTF
+#define HAVE_VSNPRINTF
 #define HAVE_STRTOK_R
 #define HAVE_STRDUP
 #define HAVE_STRLCAT
@@ -86,6 +92,8 @@ struct MinList;
 #define HAVE_NEWMINLIST
 #define HAVE_ALLOCVECPOOLED
 #define HAVE_FREEVECPOOLED
+#define HAVE_SNPRINTF
+#define HAVE_VSNPRINTF
 #define HAVE_STCGFE
 #define HAVE_STRTOK_R
 #endif // __MORPHOS__
@@ -101,6 +109,8 @@ struct MinList;
 #define HAVE_NEWMINLIST
 #define HAVE_ALLOCVECPOOLED
 #define HAVE_FREEVECPOOLED
+#define HAVE_SNPRINTF
+#define HAVE_VSNPRINTF
 #endif // __AROS__
 
 /*

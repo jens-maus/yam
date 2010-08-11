@@ -7,6 +7,8 @@ $URL$
 
 2010-08-11 Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc.h: added missing HAVE_(V)SNPRINTF definitions. This fixes the OS4
+    build.
   * extrasrc.h: added some HAVE_#? definitions for all systems.
   * extrasrc/vasprintf.c: make sure that our vasprintf() implementation returns
     a NULL buffer in case of an error.
