@@ -19,7 +19,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NList_mcc.h 454 2010-07-30 07:00:26Z thboeckel $
+ $Id: NList_mcc.h 460 2010-08-11 21:15:27Z damato $
 
 ***************************************************************************/
 
@@ -181,8 +181,6 @@ extern "C" {
 #define MUIA_NList_KeyLeftFocus             0x9d5100C6UL /* GM  isg. Object *          */
 #define MUIA_NList_KeyRightFocus            0x9d5100C7UL /* GM  isg. Object *          */
 
-#define MUIA_NList_CenterOnJump             0x9d5100c8UL /* GM  isgn BOOL              */
-
 #define MUIA_NLIMG_EntryCurrent             MUIA_NList_First   /* LONG (special for nlist custom image object) */
 #define MUIA_NLIMG_EntryHeight              MUIA_NList_Visible /* LONG (special for nlist custom image object) */
 
@@ -281,6 +279,7 @@ extern "C" {
 #define MUIV_NList_Jump_Bottom           -2
 #define MUIV_NList_Jump_Down             -3
 #define MUIV_NList_Jump_Up               -4
+#define MUIV_NList_Jump_Active_Center    -5
 
 #define MUIV_NList_NextSelected_Start    -1
 #define MUIV_NList_NextSelected_End      -1
@@ -403,14 +402,14 @@ extern "C" {
 #define MUIV_NList_TitleMark2_Box         0x40000000
 #define MUIV_NList_TitleMark2_Circle      0xC0000000
 
-#define MUIV_NList_SetColumnCol_Default  -1
+#define MUIV_NList_SetColumnCol_Default   (-1)
 
-#define MUIV_NList_GetPos_Start          -1
-#define MUIV_NList_GetPos_End            -1
+#define MUIV_NList_GetPos_Start           (-1)
+#define MUIV_NList_GetPos_End             (-1)
 
-#define	MUIV_NList_SelectChange_Flag_Multi (1 << 0)
+#define MUIV_NList_SelectChange_Flag_Multi (1 << 0)
 
-#define MUIV_NList_UseImage_All         (-1)
+#define MUIV_NList_UseImage_All           (-1)
 
 /* Structs */
 

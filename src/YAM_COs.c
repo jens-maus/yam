@@ -2480,7 +2480,8 @@ void CO_SetConfig(void)
       DoMethod(gui->LV_MIME, MUIM_NList_Sort);
       set(gui->LV_MIME, MUIA_NList_Quiet, FALSE);
 
-      // make sure the first entry is selected per default
+      // make sure the first entry is selected per default and the listview
+      // is able to display it (jump to it)
       set(gui->LV_MIME, MUIA_NList_Active, MUIV_NList_Active_Top);
       DoMethod(gui->LV_MIME, MUIM_NList_Jump, MUIV_NList_Jump_Active);
 

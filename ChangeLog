@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-12 Jens Langner <Jens.Langner@light-speed.de>
+
+  * MainMailList.c, MainMailListGroup.c, rexx/setmail.c, rexx/setmailfile.c,
+    include/mui/NList_mcc.h: updated the public NList include header with the
+    latest one available and utilized the new MUIV_NList_Jump_Active_Center
+    value with the MUIM_NList_Jump method usage.
+
 2010-08-11 Jens Langner <Jens.Langner@light-speed.de>
 
   * extrasrc/NewReadArgs.h, include/NewReadArgs.h: moved the NewReadArgs

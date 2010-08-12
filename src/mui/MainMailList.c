@@ -453,7 +453,6 @@ OVERLOAD(OM_NEW)
     MUIA_NList_TitleSeparator,       TRUE,
     MUIA_NList_ActiveObjectOnClick,  TRUE,
     MUIA_NList_DefaultObjectOnClick, FALSE,
-    MUIA_NList_CenterOnJump,         TRUE,
 
     TAG_MORE, inittags(msg))) != NULL)
   {
@@ -585,11 +584,13 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         Object *afterThis;
 
         fo->LastActive = xget(obj, MUIA_NList_Active);
-        // Now we set this entry as active
+
+        // Now we set this entry as active and make it visible
+        // in the center of our listview
         if(fo->LastActive != res.entry)
         {
-          DoMethod(obj, MUIM_NList_Jump, res.entry);
           set(obj, MUIA_NList_Active, res.entry);
+          DoMethod(obj, MUIM_NList_Jump, MUIV_NList_Jump_Active_Center);
         }
 
         if(isMultiPartMail(mail))
