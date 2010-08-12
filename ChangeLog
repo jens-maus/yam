@@ -16,6 +16,11 @@ $URL$
 
 2010-08-12 Jens Langner <Jens.Langner@light-speed.de>
 
+  * Debug.c,h: slightly reworked all our main debug functions so that a
+    "module" name can be added in the form of a define statement. This should
+    bring our debug framework to somewhat more like the public librtdebug
+    library. This is not finished yet and things like a thread-aware output
+    as well as managing indent levels per thread need to be implemented.
   * YAM.c: moved the first MA_ChangeFolder() call in InitAfterLogin() after
     the final MUIA_Window_Open call to the main window. This should fix the
     problem that after the first start the listview is not centered on the

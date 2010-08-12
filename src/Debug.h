@@ -91,23 +91,31 @@
 #define DBF_THREAD   (1<<22)    // for the Thread management (Thread.c)
 #define DBF_ALL      0xffffffff
 
+// debug modules
+#define DBM_NONE      NULL
+#define DBM_ALL       "all"
+
+// set DEBUG_MODULE to DBM_NONE per default in case it was not set
+#if !defined(DEBUG_MODULE)
+#define DEBUG_MODULE DBM_NONE
+#endif
+
 void SetupDebug(void);
 void CleanupDebug(void);
 void DumpDbgMalloc(void);
 
-void _ENTER(unsigned long dclass, const char *file, unsigned long line, const char *function);
-void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const char *function);
-void _RETURN(unsigned long dclass, const char *file, unsigned long line, const char *function, unsigned long result);
-void _CHECKINDENT(long level, const char *file, unsigned long line);
-void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value, int size, const char *name, const char *file, unsigned long line);
-void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, const char *name, const char *file, unsigned long line);
-void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string, const char *name, const char *file, unsigned long line);
-void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const char *file, unsigned long line);
-void _SHOWTAGS(const char *file, unsigned long line, const struct TagItem *tags);
-void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, ...);
-void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, va_list args);
-void _STARTCLOCK(const char *file, unsigned long line);
-void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, unsigned long line);
+void _ENTER(const unsigned long c, const char *m, const char *file, const unsigned long line, const char *function);
+void _LEAVE(const unsigned long c, const char *m, const char *file, const unsigned long line, const char *function);
+void _RETURN(const unsigned long c, const char *m, const char *file, const unsigned long line, const char *function, unsigned long result);
+void _CHECKINDENT(const unsigned long c, const char *file, const unsigned long line, const long level);
+void _SHOWVALUE(const unsigned long c, const unsigned long f, const char *m, const char *file, const unsigned long line, const unsigned long value, const int size, const char *name);
+void _SHOWPOINTER(const unsigned long c, const unsigned long f, const char *m, const char *file, const unsigned long line, const void *p, const char *name);
+void _SHOWSTRING(const unsigned long c, const unsigned long f, const char *m, const char *file, const unsigned long line, const char *string, const char *name);
+void _SHOWMSG(const unsigned long c, const unsigned long f, const char *m, const char *file, const unsigned long line, const char *msg);
+void _SHOWTAGS(const unsigned long c, const unsigned long f, const char *m, const char *file, unsigned long line, const struct TagItem *tags);
+void _DPRINTF(const unsigned long c, const unsigned long f, const char *m, const char *file, unsigned long line, const char *format, ...);
+void _STARTCLOCK(const unsigned long c, const unsigned long f, const char *m, const char *file, unsigned long line);
+void _STOPCLOCK(const unsigned long c, const unsigned long f, const char *m, const char *file, unsigned long line, const char *message);
 void _MEMTRACK(const char *file, const int line, const char *func, void *ptr, size_t size);
 void _UNMEMTRACK(const char *file, const int line, const void *ptr);
 void _FLUSH(void);
@@ -118,36 +126,37 @@ void _FLUSH(void);
 #endif
 
 // Core class information class messages
-#define ENTER()               _ENTER(DBC_CTRACE, __FILE__, __LINE__, __FUNCTION__)
-#define LEAVE()               _LEAVE(DBC_CTRACE, __FILE__, __LINE__, __FUNCTION__)
-#define RETURN(r)             _RETURN(DBC_CTRACE, __FILE__, __LINE__, __FUNCTION__, (long)r)
-#define CHECKINDENT(l)        _CHECKINDENT(l, __FILE__, __LINE__)
-#define SHOWVALUE(f, v)       _SHOWVALUE(DBC_REPORT, f, (long)v, sizeof(v), #v, __FILE__, __LINE__)
-#define SHOWPOINTER(f, p)     _SHOWPOINTER(DBC_REPORT, f, p, #p, __FILE__, __LINE__)
-#define SHOWSTRING(f, s)      _SHOWSTRING(DBC_REPORT, f, s, #s, __FILE__, __LINE__)
-#define SHOWMSG(f, m)         _SHOWMSG(DBC_REPORT, f, m, __FILE__, __LINE__)
-#define SHOWTAGS(t)           _SHOWTAGS(__FILE__, __LINE__, t)
-#define STARTCLOCK()          _STARTCLOCK(__FILE__, __LINE__)
-#define STOPCLOCK(f, m)       _STOPCLOCK(f, m, __FILE__, __LINE__)
+#define ENTER()               _ENTER(DBC_CTRACE, DEBUG_MODULE, __FILE__, __LINE__, __FUNCTION__)
+#define LEAVE()               _LEAVE(DBC_CTRACE, DEBUG_MODULE, __FILE__, __LINE__, __FUNCTION__)
+#define RETURN(r)             _RETURN(DBC_CTRACE, DEBUG_MODULE, __FILE__, __LINE__, __FUNCTION__, (long)r)
+#define CHECKINDENT(l)        _CHECKINDENT(DBC_REPORT, __FILE__, __LINE__, l)
+#define SHOWVALUE(f, v)       _SHOWVALUE(DBC_REPORT, f, DEBUG_MODULE, __FILE__, __LINE__, (long)v, sizeof(v), #v)
+#define SHOWPOINTER(f, p)     _SHOWPOINTER(DBC_REPORT, f, DEBUG_MODULE, __FILE__, __LINE__, p, #p)
+#define SHOWSTRING(f, s)      _SHOWSTRING(DBC_REPORT, f, DEBUG_MODULE, __FILE__, __LINE__, s, #s)
+#define SHOWMSG(f, m)         _SHOWMSG(DBC_REPORT, f, DEBUG_MODULE, __FILE__, __LINE__, m)
+#define SHOWTAGS(f, t)        _SHOWTAGS(DBC_TAGS, f, DEBUG_MODULE, __FILE__, __LINE__, t)
+#define STARTCLOCK(f)         _STARTCLOCK(DBC_TIMEVAL, f, DEBUG_MODULE, __FILE__, __LINE__)
+#define STOPCLOCK(f, m)       _STOPCLOCK(DBC_TIMEVAL, f, DEBUG_MODULE __FILE__, __LINE__, m)
 #define MEMTRACK(f, p, s)     _MEMTRACK(__FILE__, __LINE__, f, p, s)
 #define UNMEMTRACK(p)         _UNMEMTRACK(__FILE__, __LINE__, p)
 #define FLUSH()               _FLUSH()
 
 #if defined(NO_VARARG_MARCOS)
-void D(unsigned long f, const char *format, ...);
-void E(unsigned long f, const char *format, ...);
-void W(unsigned long f, const char *format, ...);
+void D(const unsigned long f, const char *format, ...);
+void E(const unsigned long f, const char *format, ...);
+void W(const unsigned long f, const char *format, ...);
 #else
-#define D(f, ...)             _DPRINTF(DBC_DEBUG, f, __FILE__, __LINE__, __VA_ARGS__)
-#define E(f, ...)             _DPRINTF(DBC_ERROR, f, __FILE__, __LINE__, __VA_ARGS__)
-#define W(f, ...)             _DPRINTF(DBC_WARNING, f, __FILE__, __LINE__, __VA_ARGS__)
+#define D(f, ...)             _DPRINTF(DBC_DEBUG, f, DEBUG_MODULE, __FILE__, __LINE__, __VA_ARGS__)
+#define E(f, ...)             _DPRINTF(DBC_ERROR, f, DEBUG_MODULE, __FILE__, __LINE__, __VA_ARGS__)
+#define W(f, ...)             _DPRINTF(DBC_WARNING, f, DEBUG_MODULE, __FILE__, __LINE__, __VA_ARGS__)
 #endif
 #define ASSERT(expression)      \
   ((void)                       \
    ((expression) ? 0 :          \
-    (                            \
+    (                           \
      _DPRINTF(DBC_ASSERT,       \
               DBF_ALWAYS,       \
+              DEBUG_MODULE,     \
               __FILE__,         \
               __LINE__,         \
               "failed assertion '%s'", \
@@ -526,7 +535,7 @@ void W(unsigned long f, const char *format, ...);
 #define SHOWSTRING(f, s)      ((void)0)
 #define SHOWMSG(f, m)         ((void)0)
 #define SHOWTAGS(t)           ((void)0)
-#define STARTCLOCK()          ((void)0)
+#define STARTCLOCK(f)         ((void)0)
 #define STOPCLOCK(f, m)       ((void)0)
 #define MEMTRACK(f, p, s)     ((void)0)
 #define UNMEMTRACK(p)         ((void)0)

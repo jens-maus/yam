@@ -67,12 +67,48 @@ static int timer_level = -1;
 static struct TimeVal startTimes[8];
 static struct SignalSemaphore thread_lock;
 
+// static function prototypes
 static void SetupDbgMalloc(void);
 static void CleanupDbgMalloc(void);
 
 /****************************************************************************/
 
-void _DBPRINTF(const char *format, ...)
+// define variables for using ANSI colors in our debugging scheme
+#define ANSI_ESC_CLR        "\033[0m"
+#define ANSI_ESC_BOLD       "\033[1m"
+#define ANSI_ESC_UNDERLINE  "\033[4m"
+#define ANSI_ESC_BLINK      "\033[5m"
+#define ANSI_ESC_REVERSE    "\033[7m"
+#define ANSI_ESC_INVISIBLE  "\033[8m"
+#define ANSI_ESC_FG_BLACK   "\033[0;30m"
+#define ANSI_ESC_FG_RED     "\033[0;31m"
+#define ANSI_ESC_FG_GREEN   "\033[0;32m"
+#define ANSI_ESC_FG_BROWN   "\033[0;33m"
+#define ANSI_ESC_FG_BLUE    "\033[0;34m"
+#define ANSI_ESC_FG_PURPLE  "\033[0;35m"
+#define ANSI_ESC_FG_CYAN    "\033[0;36m"
+#define ANSI_ESC_FG_LGRAY   "\033[0;37m"
+#define ANSI_ESC_FG_DGRAY   "\033[1;30m"
+#define ANSI_ESC_FG_LRED    "\033[1;31m"
+#define ANSI_ESC_FG_LGREEN  "\033[1;32m"
+#define ANSI_ESC_FG_YELLOW  "\033[1;33m"
+#define ANSI_ESC_FG_LBLUE   "\033[1;34m"
+#define ANSI_ESC_FG_LPURPLE "\033[1;35m"
+#define ANSI_ESC_FG_LCYAN   "\033[1;36m"
+#define ANSI_ESC_FG_WHITE   "\033[1;37m"
+#define ANSI_ESC_BG         "\033[0;4"    // background esc-squ start with 4x
+#define ANSI_ESC_BG_BLACK   "\033[0;40m"
+#define ANSI_ESC_BG_RED     "\033[0;41m"
+#define ANSI_ESC_BG_GREEN   "\033[0;42m"
+#define ANSI_ESC_BG_BROWN   "\033[0;43m"
+#define ANSI_ESC_BG_BLUE    "\033[0;44m"
+#define ANSI_ESC_BG_PURPLE  "\033[0;45m"
+#define ANSI_ESC_BG_CYAN    "\033[0;46m"
+#define ANSI_ESC_BG_LGRAY   "\033[0;47m"
+
+/****************************************************************************/
+
+static void _DBPRINTF(const char *format, ...)
 {
   va_list args;
 
@@ -98,6 +134,63 @@ void _DBPRINTF(const char *format, ...)
   }
 
   va_end(args);
+}
+
+/****************************************************************************/
+
+INLINE void _INDENT(void)
+{
+  int i;
+  for(i=0; i < indent_level; i++)
+    _DBPRINTF(" ");
+}
+
+/****************************************************************************/
+
+INLINE BOOL matchDebugSpec(const unsigned long c, const unsigned f, 
+                           const char *m, const char *file)
+{
+  BOOL result = FALSE;
+
+  // first we check if we need to process this debug message or not,
+  // depending on the currently set debug class/flags
+  if(isFlagSet(debug_classes, c) && isFlagSet(debug_flags, f))
+    result = TRUE;
+
+  return result;
+}
+
+/****************************************************************************/
+
+INLINE void _VDPRINTF(const unsigned long c,
+                      const char *file, unsigned long line, 
+                      const char *format, va_list args)
+{
+  static char buf[1024];
+
+  _INDENT();
+
+  vsnprintf(buf, 1024, format, args);
+
+  if(ansi_output)
+  {
+    const char *highlight = ANSI_ESC_FG_GREEN;
+
+    switch(c)
+    {
+      case DBC_CTRACE:  highlight = ANSI_ESC_FG_BROWN; break;
+      case DBC_REPORT:  highlight = ANSI_ESC_FG_GREEN; break;
+      case DBC_ASSERT:  highlight = ANSI_ESC_FG_RED;   break;
+      case DBC_TIMEVAL: highlight = ANSI_ESC_FG_GREEN; break;
+      case DBC_DEBUG:   highlight = ANSI_ESC_FG_GREEN; break;
+      case DBC_ERROR:   highlight = ANSI_ESC_FG_RED;   break;
+      case DBC_WARNING: highlight = ANSI_ESC_FG_PURPLE;break;
+    }
+
+    _DBPRINTF("%s%s:%ld:%s%s\n", highlight, file, line, buf, ANSI_ESC_CLR);
+  }
+  else
+    _DBPRINTF("%s:%ld:%s\n", file, line, buf);
 }
 
 /****************************************************************************/
@@ -338,50 +431,6 @@ void CleanupDebug(void)
 
 /****************************************************************************/
 
-// define variables for using ANSI colors in our debugging scheme
-#define ANSI_ESC_CLR        "\033[0m"
-#define ANSI_ESC_BOLD       "\033[1m"
-#define ANSI_ESC_UNDERLINE  "\033[4m"
-#define ANSI_ESC_BLINK      "\033[5m"
-#define ANSI_ESC_REVERSE    "\033[7m"
-#define ANSI_ESC_INVISIBLE  "\033[8m"
-#define ANSI_ESC_FG_BLACK   "\033[0;30m"
-#define ANSI_ESC_FG_RED     "\033[0;31m"
-#define ANSI_ESC_FG_GREEN   "\033[0;32m"
-#define ANSI_ESC_FG_BROWN   "\033[0;33m"
-#define ANSI_ESC_FG_BLUE    "\033[0;34m"
-#define ANSI_ESC_FG_PURPLE  "\033[0;35m"
-#define ANSI_ESC_FG_CYAN    "\033[0;36m"
-#define ANSI_ESC_FG_LGRAY   "\033[0;37m"
-#define ANSI_ESC_FG_DGRAY   "\033[1;30m"
-#define ANSI_ESC_FG_LRED    "\033[1;31m"
-#define ANSI_ESC_FG_LGREEN  "\033[1;32m"
-#define ANSI_ESC_FG_YELLOW  "\033[1;33m"
-#define ANSI_ESC_FG_LBLUE   "\033[1;34m"
-#define ANSI_ESC_FG_LPURPLE "\033[1;35m"
-#define ANSI_ESC_FG_LCYAN   "\033[1;36m"
-#define ANSI_ESC_FG_WHITE   "\033[1;37m"
-#define ANSI_ESC_BG         "\033[0;4"    // background esc-squ start with 4x
-#define ANSI_ESC_BG_BLACK   "\033[0;40m"
-#define ANSI_ESC_BG_RED     "\033[0;41m"
-#define ANSI_ESC_BG_GREEN   "\033[0;42m"
-#define ANSI_ESC_BG_BROWN   "\033[0;43m"
-#define ANSI_ESC_BG_BLUE    "\033[0;44m"
-#define ANSI_ESC_BG_PURPLE  "\033[0;45m"
-#define ANSI_ESC_BG_CYAN    "\033[0;46m"
-#define ANSI_ESC_BG_LGRAY   "\033[0;47m"
-
-/****************************************************************************/
-
-INLINE void _INDENT(void)
-{
-  int i;
-  for(i=0; i < indent_level; i++)
-    _DBPRINTF(" ");
-}
-
-/****************************************************************************/
-
 #define checkIndentLevel(l) { \
   if(indent_level < l) \
   { \
@@ -394,11 +443,13 @@ INLINE void _INDENT(void)
 
 /****************************************************************************/
 
-void _ENTER(unsigned long dclass, const char *file, unsigned long line, const char *function)
+void _ENTER(const unsigned long c, const char *m, 
+            const char *file, const unsigned long line, 
+            const char *function)
 {
   ObtainSemaphore(&thread_lock);
 
-  if(isFlagSet(debug_classes, dclass))
+  if(matchDebugSpec(c, 0, m, file) == TRUE)
   {
     _INDENT();
     if(ansi_output)
@@ -407,21 +458,25 @@ void _ENTER(unsigned long dclass, const char *file, unsigned long line, const ch
       _DBPRINTF("%s:%ld:Entering %s\n", file, line, function);
 
     checkIndentLevel(0);
-  }
 
-  indent_level++;
+    indent_level++;
+  }
 
   ReleaseSemaphore(&thread_lock);
 }
 
-void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const char *function)
+/****************************************************************************/
+
+void _LEAVE(const unsigned long c, const char *m, 
+            const char *file, const unsigned long line, 
+            const char *function)
 {
   ObtainSemaphore(&thread_lock);
 
-  indent_level--;
-
-  if(isFlagSet(debug_classes, dclass))
+  if(matchDebugSpec(c, 0, m, file) == TRUE)
   {
+    indent_level--;
+
     _INDENT();
     if(ansi_output)
       _DBPRINTF("%s%s:%ld:Leaving %s%s\n", ANSI_ESC_FG_BROWN, file, line, function, ANSI_ESC_CLR);
@@ -434,14 +489,18 @@ void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const ch
   ReleaseSemaphore(&thread_lock);
 }
 
-void _RETURN(unsigned long dclass, const char *file, unsigned long line, const char *function, unsigned long result)
+/****************************************************************************/
+
+void _RETURN(const unsigned long c, const char *m, 
+             const char *file, const unsigned long line, 
+             const char *function, unsigned long result)
 {
   ObtainSemaphore(&thread_lock);
 
-  indent_level--;
-
-  if(isFlagSet(debug_classes, dclass))
+  if(matchDebugSpec(c, 0, m, file) == TRUE)
   {
+    indent_level--;
+
     _INDENT();
     if(ansi_output)
       _DBPRINTF("%s%s:%ld:Leaving %s (result 0x%08lx, %ld)%s\n", ANSI_ESC_FG_BROWN, file, line, function, result, result, ANSI_ESC_CLR);
@@ -456,19 +515,27 @@ void _RETURN(unsigned long dclass, const char *file, unsigned long line, const c
 
 /****************************************************************************/
 
-void _CHECKINDENT(long level, const char *file, unsigned long line)
+void _CHECKINDENT(const unsigned long c,
+                  const char *file, const unsigned long line,
+                  const long level)
 {
-  checkIndentLevel(level);
+  ObtainSemaphore(&thread_lock);
+
+  if(matchDebugSpec(c, 0, NULL, file) == TRUE)
+    checkIndentLevel(level);
+
+  ReleaseSemaphore(&thread_lock);
 }
 
 /****************************************************************************/
 
-void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value, int size, const char *name, const char *file, unsigned long line)
+void _SHOWVALUE(const unsigned long c, const unsigned long f, const char *m, 
+                const char *file, const unsigned long line,
+                const unsigned long value, const int size, const char *name)
 {
   ObtainSemaphore(&thread_lock);
 
-  if(isFlagSet(debug_classes, dclass) &&
-     isFlagSet(debug_flags, dflags))
+  if(matchDebugSpec(c, f, m, file) == TRUE)
   {
     const char *fmt;
 
@@ -513,12 +580,13 @@ void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value,
 
 /****************************************************************************/
 
-void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, const char *name, const char *file, unsigned long line)
+void _SHOWPOINTER(const unsigned long c, const unsigned long f, const char *m, 
+                  const char *file, const unsigned long line,
+                  const void *p, const char *name)
 {
   ObtainSemaphore(&thread_lock);
 
-  if(isFlagSet(debug_classes, dclass) &&
-     isFlagSet(debug_flags, dflags))
+  if(matchDebugSpec(c, f, m, file) == TRUE)
   {
     const char *fmt;
 
@@ -544,12 +612,13 @@ void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, con
 
 /****************************************************************************/
 
-void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string, const char *name, const char *file, unsigned long line)
+void _SHOWSTRING(const unsigned long c, const unsigned long f, const char *m,
+                 const char *file, const unsigned long line,
+                 const char *string, const char *name)
 {
   ObtainSemaphore(&thread_lock);
 
-  if(isFlagSet(debug_classes, dclass) &&
-     isFlagSet(debug_flags, dflags))
+  if(matchDebugSpec(c, f, m, file) == TRUE)
   {
     _INDENT();
 
@@ -564,12 +633,13 @@ void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string,
 
 /****************************************************************************/
 
-void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const char *file, unsigned long line)
+void _SHOWMSG(const unsigned long c, const unsigned long f, const char *m,
+              const char *file, const unsigned long line,
+              const char *msg)
 {
   ObtainSemaphore(&thread_lock);
 
-  if(isFlagSet(debug_classes, dclass) &&
-     isFlagSet(debug_flags, dflags))
+  if(matchDebugSpec(c, f, m, file) == TRUE)
   {
     _INDENT();
 
@@ -584,11 +654,13 @@ void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const
 
 /****************************************************************************/
 
-void _SHOWTAGS(const char *file, unsigned long line, const struct TagItem *tags)
+void _SHOWTAGS(const unsigned long c, const unsigned long f, const char *m,
+               const char *file, const unsigned long line, 
+               const struct TagItem *tags)
 {
   ObtainSemaphore(&thread_lock);
 
-  if(isFlagSet(debug_classes, DBC_TAGS))
+  if(matchDebugSpec(c, f, m, file) == TRUE)
   {
     int i;
     struct TagItem *tag;
@@ -624,53 +696,19 @@ void _SHOWTAGS(const char *file, unsigned long line, const struct TagItem *tags)
 
 /****************************************************************************/
 
-void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, ...)
+void _DPRINTF(const unsigned long c, const unsigned long f, const char *m, 
+              const char *file, unsigned long line, 
+              const char *format, ...)
 {
-  if((isFlagSet(debug_classes, dclass) && isFlagSet(debug_flags, dflags)) ||
-     (isFlagSet(dclass, DBC_ERROR) || isFlagSet(dclass, DBC_WARNING)))
+  ObtainSemaphore(&thread_lock);
+
+  if(matchDebugSpec(c, f, m, file) == TRUE)
   {
     va_list args;
 
     va_start(args, format);
-    _VDPRINTF(dclass, dflags, file, line, format, args);
+    _VDPRINTF(c, file, line, format, args);
     va_end(args);
-  }
-}
-
-/****************************************************************************/
-
-void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, va_list args)
-{
-  ObtainSemaphore(&thread_lock);
-
-  if((isFlagSet(debug_classes, dclass) && isFlagSet(debug_flags, dflags)) ||
-     (isFlagSet(dclass, DBC_ERROR) || isFlagSet(dclass, DBC_WARNING)))
-  {
-    static char buf[1024];
-
-    _INDENT();
-
-    vsnprintf(buf, 1024, format, args);
-
-    if(ansi_output)
-    {
-      const char *highlight = ANSI_ESC_FG_GREEN;
-
-      switch(dclass)
-      {
-        case DBC_CTRACE:  highlight = ANSI_ESC_FG_BROWN; break;
-        case DBC_REPORT:  highlight = ANSI_ESC_FG_GREEN; break;
-        case DBC_ASSERT:  highlight = ANSI_ESC_FG_RED;   break;
-        case DBC_TIMEVAL: highlight = ANSI_ESC_FG_GREEN; break;
-        case DBC_DEBUG:   highlight = ANSI_ESC_FG_GREEN; break;
-        case DBC_ERROR:   highlight = ANSI_ESC_FG_RED;   break;
-        case DBC_WARNING: highlight = ANSI_ESC_FG_PURPLE;break;
-      }
-
-      _DBPRINTF("%s%s:%ld:%s%s\n", highlight, file, line, buf, ANSI_ESC_CLR);
-    }
-    else
-      _DBPRINTF("%s:%ld:%s\n", file, line, buf);
   }
 
   ReleaseSemaphore(&thread_lock);
@@ -678,11 +716,12 @@ void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, uns
 
 /****************************************************************************/
 
-void _STARTCLOCK(const char *file, unsigned long line)
+void _STARTCLOCK(const unsigned long c, const unsigned long f, const char *m,
+                 const char *file, const unsigned long line)
 {
   ObtainSemaphore(&thread_lock);
 
-  if(isFlagSet(debug_classes, DBC_TIMEVAL))
+  if(matchDebugSpec(c, f, m, file) == TRUE)
   {
     if(timer_level + 1 < (int)ARRAY_SIZE(startTimes))
     {
@@ -690,7 +729,7 @@ void _STARTCLOCK(const char *file, unsigned long line)
       GetSysTime(TIMEVAL(&startTimes[timer_level]));
     }
     else
-      _DPRINTF(DBC_ERROR, DBF_ALWAYS, file, line, "already %ld clocks in use!", ARRAY_SIZE(startTimes));
+      _DPRINTF(DBC_ERROR, DBF_ALWAYS, m, file, line, "already %ld clocks in use!", ARRAY_SIZE(startTimes));
   }
 
   ReleaseSemaphore(&thread_lock);
@@ -698,11 +737,13 @@ void _STARTCLOCK(const char *file, unsigned long line)
 
 /****************************************************************************/
 
-void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, unsigned long line)
+void _STOPCLOCK(const unsigned long c, const unsigned long f, const char *m,
+                const char *file, const unsigned long line,
+                const char *message)
 {
   ObtainSemaphore(&thread_lock);
 
-  if(isFlagSet(debug_classes, DBC_TIMEVAL))
+  if(matchDebugSpec(c, f, m, file) == TRUE)
   {
     if(timer_level >= 0)
     {
@@ -710,11 +751,11 @@ void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, uns
 
       GetSysTime(TIMEVAL(&stopTime));
       SubTime(TIMEVAL(&stopTime), TIMEVAL(&startTimes[timer_level]));
-      _DPRINTF(DBC_TIMEVAL, dflags, file, line, "operation '%s' took %ld.%09ld seconds", message, stopTime.Seconds, stopTime.Microseconds);
+      _DPRINTF(DBC_TIMEVAL, f, m, file, line, "operation '%s' took %ld.%09ld seconds", message, stopTime.Seconds, stopTime.Microseconds);
       timer_level--;
     }
     else
-      _DPRINTF(DBC_ERROR, DBF_ALWAYS, file, line, "no clocks in use!");
+      _DPRINTF(DBC_ERROR, DBF_ALWAYS, m, file, line, "no clocks in use!");
   }
 
   ReleaseSemaphore(&thread_lock);
@@ -723,39 +764,60 @@ void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, uns
 /****************************************************************************/
 
 #if defined(NO_VARARG_MARCOS)
-void D(unsigned long f, const char *format, ...)
+void D(const unsigned long f, const char *format, ...)
 {
-  va_list args;
+  ObtainSemaphore(&thread_lock);
 
-  va_start(args, format);
-  _VDPRINTF(DBC_DEBUG, f, __FILE__, __LINE__, format, args);
-  va_end(args);
+  if(matchDebugSpec(DBC_DEBUG, f, NULL, NULL) == TRUE)
+  {
+    va_list args;
+
+    va_start(args, format);
+    _VDPRINTF(DBC_DEBUG, __FILE__, __LINE__, format, args);
+    va_end(args);
+  }
+
+  ReleaseSemaphore(&thread_lock);
 }
 #endif
 
 /****************************************************************************/
 
 #if defined(NO_VARARG_MARCOS)
-void E(unsigned long f, const char *format, ...)
+void E(const unsigned long f, const char *format, ...)
 {
-  va_list args;
+  ObtainSemaphore(&thread_lock);
 
-  va_start(args, format);
-  _VDPRINTF(DBC_ERROR, f, __FILE__, __LINE__, format, args);
-  va_end(args);
+  if(matchDebugSpec(DBC_ERROR, f, NULL, NULL) == TRUE)
+  {
+    va_list args;
+
+    va_start(args, format);
+    _VDPRINTF(DBC_ERROR, __FILE__, __LINE__, format, args);
+    va_end(args);
+  }
+
+  ReleaseSemaphore(&thread_lock);
 }
 #endif
 
 /****************************************************************************/
 
 #if defined(NO_VARARG_MARCOS)
-void W(unsigned long f, const char *format, ...)
+void W(const unsigned long f, const char *format, ...)
 {
-  va_list args;
+  ObtainSemaphore(&thread_lock);
 
-  va_start(args, format);
-  _VDPRINTF(DBC_WARNING, f, __FILE__, __LINE__, format, args);
-  va_end(args);
+  if(matchDebugSpec(DBC_WARNING, f, NULL, NULL) == TRUE)
+  {
+    va_list args;
+
+    va_start(args, format);
+    _VDPRINTF(DBC_WARNING, f, __FILE__, __LINE__, format, args);
+    va_end(args);
+  }
+
+  ReleaseSemaphore(&thread_lock);
 }
 #endif
 
@@ -830,7 +892,7 @@ void _MEMTRACK(const char *file, const int line, const char *func, void *ptr, si
       }
     }
     else
-      _DPRINTF(DBC_WARNING, DBF_ALWAYS, file, line, "potential invalid %s call with return (0x%08lx, 0x%08lx)", func, ptr, size);
+      _DPRINTF(DBC_WARNING, DBF_ALWAYS, NULL, file, line, "potential invalid %s call with return (0x%08lx, 0x%08lx)", func, ptr, size);
   }
 }
 
@@ -858,7 +920,7 @@ void _UNMEMTRACK(const char *file, const int line, const void *ptr)
     }
 
     if(success == FALSE)
-      _DPRINTF(DBC_WARNING, DBF_ALWAYS, file, line, "free of untracked memory area 0x%08lx attempted", ptr);
+      _DPRINTF(DBC_WARNING, DBF_ALWAYS, NULL, file, line, "free of untracked memory area 0x%08lx attempted", ptr);
 
     ReleaseSemaphore(&DbgMallocListSema);
   }
@@ -925,7 +987,7 @@ static void CleanupDbgMalloc(void)
 
         while((dmn = (struct DbgMallocNode *)RemHead((struct List *)&DbgMallocList[i])) != NULL)
         {
-          _DPRINTF(DBC_ERROR, DBF_ALWAYS, dmn->file, dmn->line, "unfreed memory tracking: 0x%08lx, size/type %ld, func (%s)", dmn->memory, dmn->size, dmn->func);
+          _DPRINTF(DBC_ERROR, DBF_ALWAYS, NULL, dmn->file, dmn->line, "unfreed memory tracking: 0x%08lx, size/type %ld, func (%s)", dmn->memory, dmn->size, dmn->func);
 
           // We only free the node structure here but not dmn->memory itself.
           // First of all, this is because the allocation could have been done
@@ -967,7 +1029,7 @@ void DumpDbgMalloc(void)
       {
         struct DbgMallocNode *dmn = (struct DbgMallocNode *)curNode;
 
-        _DPRINTF(DBC_MTRACK, DBF_ALWAYS, dmn->file, dmn->line, "memarea 0x%08lx, size/type %ld, func (%s)", dmn->memory, dmn->size, dmn->func);
+        _DPRINTF(DBC_MTRACK, DBF_ALWAYS, NULL, dmn->file, dmn->line, "memarea 0x%08lx, size/type %ld, func (%s)", dmn->memory, dmn->size, dmn->func);
       }
     }
 
