@@ -7,6 +7,8 @@ $URL$
 
 2010-08-12 Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc/AllocSysObject.c: fixed some inconsistencies with message objects.
+    ASOMSG_Length will only set the mn_Length variable.
   * Debug.c: added a signal semaphore to serialize debugging from different
     threads.
   * Threads.c: added missing sending of startup message to the new thread.

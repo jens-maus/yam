@@ -352,6 +352,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
     {
       STRPTR name = NULL;
       ULONG size = sizeof(struct Message);
+      ULONG length = 0;
       APTR port = NULL;
 
       if(tags != NULL)
@@ -369,7 +370,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
             break;
 
             case ASOMSG_Length:
-              size = MAX(size, tag->ti_Data);
+              length = MAX(length, tag->ti_Data);
             break;
 
             case ASOMSG_Name:
@@ -379,11 +380,15 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         }
       }
 
+      if(length == 0)
+        length = size;
+
       if((object.message = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
       {
+        object.message->mn_Node.ln_Name = name;
         object.message->mn_Node.ln_Type = NT_MESSAGE;
         object.message->mn_ReplyPort = port;
-        object.message->mn_Length = size;
+        object.message->mn_Length = length;
       }
     }
     break;
