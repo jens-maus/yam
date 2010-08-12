@@ -63,6 +63,8 @@ static BOOL stdout_output = FALSE;
 static FILE *file_output = NULL;
 static ULONG debug_flags = DBF_ALWAYS | DBF_STARTUP; // default debug flags
 static ULONG debug_classes = DBC_ERROR | DBC_DEBUG | DBC_WARNING | DBC_ASSERT | DBC_REPORT | DBC_MTRACK; // default debug classes
+static char debug_modules[256] = "";
+static char debug_files[256] = "";
 static int timer_level = -1;
 static struct TimeVal startTimes[8];
 static struct SignalSemaphore thread_lock;
@@ -105,6 +107,19 @@ static void CleanupDbgMalloc(void);
 #define ANSI_ESC_BG_PURPLE  "\033[0;45m"
 #define ANSI_ESC_BG_CYAN    "\033[0;46m"
 #define ANSI_ESC_BG_LGRAY   "\033[0;47m"
+
+// define the colors for each debug class
+#define DBC_CTRACE_COLOR    ANSI_ESC_FG_BROWN
+#define DBC_REPORT_COLOR    ANSI_ESC_FG_PURPLE
+#define DBC_ASSERT_COLOR    ANSI_ESC_FG_RED
+#define DBC_TIMEVAL_COLOR   ANSI_ESC_FG_BLUE
+#define DBC_DEBUG_COLOR     ANSI_ESC_FG_GREEN
+#define DBC_ERROR_COLOR     ANSI_ESC_FG_RED
+#define DBC_WARNING_COLOR   ANSI_ESC_FG_YELLOW
+
+// some general macros we use throughout our debug classes
+#define THREAD_LOCK         ObtainSemaphore(&thread_lock)
+#define THREAD_UNLOCK       ReleaseSemaphore(&thread_lock)
 
 /****************************************************************************/
 
@@ -155,6 +170,10 @@ INLINE BOOL matchDebugSpec(const unsigned long c, const unsigned f,
   // first we check if we need to process this debug message or not,
   // depending on the currently set debug class/flags
   if(isFlagSet(debug_classes, c) && isFlagSet(debug_flags, f))
+    result = TRUE;
+  else if(stristr(debug_modules, m) == 0)
+    result = TRUE;
+  else if(stristr(debug_files, file) == 0)
     result = TRUE;
 
   return result;
@@ -447,7 +466,7 @@ void _ENTER(const unsigned long c, const char *m,
             const char *file, const unsigned long line, 
             const char *function)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(c, 0, m, file) == TRUE)
   {
@@ -462,7 +481,7 @@ void _ENTER(const unsigned long c, const char *m,
     indent_level++;
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 
 /****************************************************************************/
@@ -471,7 +490,7 @@ void _LEAVE(const unsigned long c, const char *m,
             const char *file, const unsigned long line, 
             const char *function)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(c, 0, m, file) == TRUE)
   {
@@ -486,7 +505,7 @@ void _LEAVE(const unsigned long c, const char *m,
     checkIndentLevel(0);
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 
 /****************************************************************************/
@@ -495,7 +514,7 @@ void _RETURN(const unsigned long c, const char *m,
              const char *file, const unsigned long line, 
              const char *function, unsigned long result)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(c, 0, m, file) == TRUE)
   {
@@ -510,7 +529,7 @@ void _RETURN(const unsigned long c, const char *m,
     checkIndentLevel(0);
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 
 /****************************************************************************/
@@ -519,12 +538,12 @@ void _CHECKINDENT(const unsigned long c,
                   const char *file, const unsigned long line,
                   const long level)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(c, 0, NULL, file) == TRUE)
     checkIndentLevel(level);
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 
 /****************************************************************************/
@@ -533,7 +552,7 @@ void _SHOWVALUE(const unsigned long c, const unsigned long f, const char *m,
                 const char *file, const unsigned long line,
                 const unsigned long value, const int size, const char *name)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(c, f, m, file) == TRUE)
   {
@@ -575,7 +594,7 @@ void _SHOWVALUE(const unsigned long c, const unsigned long f, const char *m,
       _DBPRINTF("\n");
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 
 /****************************************************************************/
@@ -584,7 +603,7 @@ void _SHOWPOINTER(const unsigned long c, const unsigned long f, const char *m,
                   const char *file, const unsigned long line,
                   const void *p, const char *name)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(c, f, m, file) == TRUE)
   {
@@ -607,7 +626,7 @@ void _SHOWPOINTER(const unsigned long c, const unsigned long f, const char *m,
       _DBPRINTF(fmt, file, line, name, p);
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 
 /****************************************************************************/
@@ -616,7 +635,7 @@ void _SHOWSTRING(const unsigned long c, const unsigned long f, const char *m,
                  const char *file, const unsigned long line,
                  const char *string, const char *name)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(c, f, m, file) == TRUE)
   {
@@ -628,7 +647,7 @@ void _SHOWSTRING(const unsigned long c, const unsigned long f, const char *m,
       _DBPRINTF("%s:%ld:%s = 0x%08lx \"%s\"\n", file, line, name, (unsigned long)string, string);
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 
 /****************************************************************************/
@@ -637,7 +656,7 @@ void _SHOWMSG(const unsigned long c, const unsigned long f, const char *m,
               const char *file, const unsigned long line,
               const char *msg)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(c, f, m, file) == TRUE)
   {
@@ -649,7 +668,7 @@ void _SHOWMSG(const unsigned long c, const unsigned long f, const char *m,
       _DBPRINTF("%s:%ld:%s\n", file, line, msg);
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 
 /****************************************************************************/
@@ -658,7 +677,7 @@ void _SHOWTAGS(const unsigned long c, const unsigned long f, const char *m,
                const char *file, const unsigned long line, 
                const struct TagItem *tags)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(c, f, m, file) == TRUE)
   {
@@ -691,7 +710,7 @@ void _SHOWTAGS(const unsigned long c, const unsigned long f, const char *m,
     indent_level--;
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 
 /****************************************************************************/
@@ -700,7 +719,7 @@ void _DPRINTF(const unsigned long c, const unsigned long f, const char *m,
               const char *file, unsigned long line, 
               const char *format, ...)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(c, f, m, file) == TRUE)
   {
@@ -711,7 +730,7 @@ void _DPRINTF(const unsigned long c, const unsigned long f, const char *m,
     va_end(args);
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 
 /****************************************************************************/
@@ -719,7 +738,7 @@ void _DPRINTF(const unsigned long c, const unsigned long f, const char *m,
 void _STARTCLOCK(const unsigned long c, const unsigned long f, const char *m,
                  const char *file, const unsigned long line)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(c, f, m, file) == TRUE)
   {
@@ -732,7 +751,7 @@ void _STARTCLOCK(const unsigned long c, const unsigned long f, const char *m,
       _DPRINTF(DBC_ERROR, DBF_ALWAYS, m, file, line, "already %ld clocks in use!", ARRAY_SIZE(startTimes));
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 
 /****************************************************************************/
@@ -741,7 +760,7 @@ void _STOPCLOCK(const unsigned long c, const unsigned long f, const char *m,
                 const char *file, const unsigned long line,
                 const char *message)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(c, f, m, file) == TRUE)
   {
@@ -758,7 +777,7 @@ void _STOPCLOCK(const unsigned long c, const unsigned long f, const char *m,
       _DPRINTF(DBC_ERROR, DBF_ALWAYS, m, file, line, "no clocks in use!");
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 
 /****************************************************************************/
@@ -766,7 +785,7 @@ void _STOPCLOCK(const unsigned long c, const unsigned long f, const char *m,
 #if defined(NO_VARARG_MARCOS)
 void D(const unsigned long f, const char *format, ...)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(DBC_DEBUG, f, NULL, NULL) == TRUE)
   {
@@ -777,7 +796,7 @@ void D(const unsigned long f, const char *format, ...)
     va_end(args);
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 #endif
 
@@ -786,7 +805,7 @@ void D(const unsigned long f, const char *format, ...)
 #if defined(NO_VARARG_MARCOS)
 void E(const unsigned long f, const char *format, ...)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(DBC_ERROR, f, NULL, NULL) == TRUE)
   {
@@ -797,7 +816,7 @@ void E(const unsigned long f, const char *format, ...)
     va_end(args);
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 #endif
 
@@ -806,7 +825,7 @@ void E(const unsigned long f, const char *format, ...)
 #if defined(NO_VARARG_MARCOS)
 void W(const unsigned long f, const char *format, ...)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(matchDebugSpec(DBC_WARNING, f, NULL, NULL) == TRUE)
   {
@@ -817,7 +836,7 @@ void W(const unsigned long f, const char *format, ...)
     va_end(args);
   }
 
-  ReleaseSemaphore(&thread_lock);
+  THREAD_UNLOCK;
 }
 #endif
 
@@ -931,12 +950,14 @@ void _UNMEMTRACK(const char *file, const int line, const void *ptr)
 // Flush any pending stdout or file debug output
 void _FLUSH(void)
 {
-  ObtainSemaphore(&thread_lock);
+  THREAD_LOCK;
 
   if(stdout_output == TRUE)
     fflush(stdout);
   else if(file_output != NULL)
     fflush(file_output);
+
+  THREAD_UNLOCK;
 }
 
 ///
