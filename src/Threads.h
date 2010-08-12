@@ -62,6 +62,10 @@ BOOL InitThreads(void);
 void CleanupThreads(void);
 ULONG CurrentThreadMask(void);
 void HandleThreadEvent(ULONG mask);
+BOOL StartAsDefaultThread(int (*entry)(void *), void *eudata);
+BOOL ParentThreadCanContinue(void);
+
+#define THREAD_FUNCTION(x) ((int (*)(void*))x)
 
 #endif /* THREADS_H */
 
