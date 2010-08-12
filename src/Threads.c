@@ -107,7 +107,7 @@ void AbortThread(struct Thread *thread)
 
   Forbid();
 
-  D(DBF_THREAD, "Aborting thread at %08lx %08lx", thread, thread->process);
+  D(DBF_THREAD, "aborting thread at %08lx %08lx", thread, thread->process);
 
   // send a CTRL-C signal to signal an abort situation
   if(thread->process != NULL)
@@ -137,7 +137,7 @@ static void RemoveThread(struct ThreadMessage *tmsg)
       if(node->thread->isDefault == TRUE)
         default_thread = NULL;
 
-      D(DBF_THREAD, "Got startup message of 0x%08lx back", node->thread);
+      D(DBF_THREAD, "got startup message of 0x%08lx back", node->thread);
 
       Remove((struct Node *)node);
       FreeVecPooled(G->SharedMemPool, tmsg);
@@ -238,7 +238,7 @@ void HandleThreadEvent(ULONG mask)
 
     while((tmsg = (struct ThreadMessage *)GetMsg(thread->thread_port)) != NULL)
     {
-      D(DBF_THREAD, "Received Message: 0x%08lx", tmsg);
+      D(DBF_THREAD, "received Message: 0x%08lx", tmsg);
 
       // check if this is a startup message
       if(tmsg->startup == TRUE)
@@ -296,28 +296,29 @@ static SAVEDS void ThreadEntry(void)
 {
   struct Process *proc;
   struct ThreadMessage *msg;
-  int (*entry)(void *);
   struct Thread *thread;
-  BPTR dirlock;
 
   ENTER();
 
-  D(DBF_THREAD, "Waiting for startup message");
+  D(DBF_THREAD, "waiting for startup message");
 
   proc = (struct Process*)FindTask(NULL);
   WaitPort(&proc->pr_MsgPort);
   msg = (struct ThreadMessage *)GetMsg(&proc->pr_MsgPort);
 
-  // Set the task's UserData field to strore per thread data
+  // set the task's UserData field to store per thread data
   thread = msg->thread;
   if((thread->thread_port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
-    D(DBF_THREAD, "Subthreaded created port at 0x%08lx", thread->thread_port);
+    D(DBF_THREAD, "subthread created port at 0x%08lx", thread->thread_port);
 
     NewMinList(&thread->push_list);
 
     if(InitThreadTimer(thread) == TRUE)
     {
+      int (*entry)(void *);
+      BPTR dirlock;
+
       // Store the thread pointer as userdata
       proc->pr_Task.tc_UserData = thread;
 
@@ -343,7 +344,7 @@ static SAVEDS void ThreadEntry(void)
   }
 
   Forbid();
-  D(DBF_THREAD, "Replying startup message");
+  D(DBF_THREAD, "replying startup message");
   ReplyMsg((struct Message*)msg);
 
   LEAVE();
@@ -359,20 +360,18 @@ BOOL ParentThreadCanContinue(void)
 
   ENTER();
 
-  msg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage));
+  D(DBF_THREAD, "parent thread can continue");
 
-  D(DBF_THREAD, "Thread can continue");
-
-  if(msg != NULL)
+  if((msg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage))) != NULL)
   {
-    // No reply port needed as this message is async
+    // no reply port needed as this message is asynchronous
     msg->msg.mn_Length = sizeof(struct ThreadMessage);
     msg->async = 1;
     msg->parentCanContinue = TRUE;
 
     PutMsg(G->mainThread.thread_port, &msg->msg);
 
-    // Message is freed by parent task
+    // message is freed by parent task
     result = TRUE;
   }
 
@@ -429,10 +428,14 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
                                                 #endif
                                                 TAG_DONE,      0)) != NULL)
         {
+          D(DBF_THREAD, "thread started at 0x%08lx, sending message 0x%08lx", thread, msg);
+          PutMsg(&thread->process->pr_MsgPort, (struct Message *)msg);
+
           do
           {
             struct Node *node;
 
+            D(DBF_THREAD, "waiting for thread message");
             Wait(1UL << G->mainThread.thread_port->mp_SigBit);
 
             // Warning: We are accessing the message port directly and scan through all messages (without
@@ -441,7 +444,7 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
 
             IterateList(&G->mainThread.thread_port->mp_MsgList, node)
             {
-              struct ThreadMessage *tmsg = (struct ThreadMessage*)node;
+              struct ThreadMessage *tmsg = (struct ThreadMessage *)node;
 
               if(tmsg == msg)
               {
@@ -449,7 +452,7 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
                 Permit();
 
                 // This was the startup message, so something has failed
-                D(DBF_THREAD, "Got startup message back. Something went wrong");
+                D(DBF_THREAD, "got startup message back, something went wrong");
                 FreeVecPooled(G->SharedMemPool, tmsg);
                 FreeVecPooled(G->SharedMemPool, thread);
 
@@ -467,7 +470,7 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
 
                 // This was the "parent task can continue message", we don't reply it
                 // but we free it here (although it wasn't allocated by this task)
-                D(DBF_THREAD, "Got 'parent can continue' message");
+                D(DBF_THREAD, "got 'parent can continue' message");
                 FreeVecPooled(G->SharedMemPool, tmsg);
 
                 // Set the state of this message port to "hot" again
@@ -531,9 +534,9 @@ struct Thread *AddThread(const char *thread_name, int (*entry)(void *), void *eu
 /// StartAsDefaultThread()
 // Start a thread as a default sub thread. This function will be removed
 // in the future.
-int StartAsDefaultThread(int (*entry)(void *), void *eudata)
+BOOL StartAsDefaultThread(int (*entry)(void *), void *eudata)
 {
-  int result = 0;
+  BOOL result = FALSE;
 
   ENTER();
 
@@ -544,7 +547,7 @@ int StartAsDefaultThread(int (*entry)(void *), void *eudata)
     {
       default_thread->isDefault = TRUE;
 
-      result = 1;
+      result = TRUE;
     }
   }
 
@@ -619,7 +622,7 @@ static void HandleThreadMessage(struct ThreadMessage *tmsg)
 
     if(tmsg->async != 0)
     {
-      D(DBF_THREAD, "Freeing Message at 0x%08lx", tmsg);
+      D(DBF_THREAD, "freeing message at 0x%08lx", tmsg);
 
       if(tmsg->argcount >= 1 && tmsg->arg[0] != NULL && tmsg->async == 2)
         free(tmsg->arg[0]);
@@ -628,7 +631,7 @@ static void HandleThreadMessage(struct ThreadMessage *tmsg)
     }
     else
     {
-      D(DBF_THREAD, "Repling Message at 0x%08lx", tmsg);
+      D(DBF_THREAD, "repling message at 0x%08lx", tmsg);
       tmsg->called = TRUE;
       ReplyMsg(&tmsg->msg);
     }
@@ -913,7 +916,7 @@ BOOL IsThreadAborted(void)
   ENTER();
 
   aborted = !!CheckSignal(SIGBREAKF_CTRL_C);
-  D(DBF_THREAD, "Aborted=%ld", aborted);
+  D(DBF_THREAD, "aborted=%ld", aborted);
 
   RETURN(aborted);
   return aborted;
@@ -1030,7 +1033,7 @@ void CleanupThreads(void)
           {
             if(timer == timeout)
             {
-              W(DBF_THREAD, "Timeout occured before main thread replied, aborting thread again");
+              W(DBF_THREAD, "timeout occured before main thread replied, aborting thread again");
 
               // time out occured, abort the current task another time
               timeout = NULL;
@@ -1050,7 +1053,7 @@ void CleanupThreads(void)
             RemoveThread(tmsg);
           else
           {
-            D(DBF_THREAD, "Got non startup message (async=%ld)", tmsg->async);
+            D(DBF_THREAD, "got non startup message (async=%ld)", tmsg->async);
 
             // check if the thread was running synchronous or
             // asynchronous
