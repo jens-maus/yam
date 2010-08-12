@@ -1838,10 +1838,6 @@ static void InitAfterLogin(void)
     DoMethod(G->App, MUIM_Application_InputBuffered);
   }
 
-  // Now we have to make sure that the current folder is really in "active" state
-  // or we risk to get a unsynced message listview.
-  MA_ChangeFolder(NULL, TRUE);
-
   SplashProgress(tr(MSG_LoadingABook), 90);
   AB_LoadTree(G->AB_Filename, FALSE, FALSE);
   if((G->RexxHost = SetupARexxHost("YAM", NULL)) == NULL)
@@ -1858,7 +1854,6 @@ static void InitAfterLogin(void)
 
   // close the splash window right before we open our main YAM window
   // but ask it before closing if it was activated or not.
-
   splashWasActive = (args.noSplashWindow) ? TRUE : xget(G->SplashWinObject, MUIA_Window_Activate);
   set(G->SplashWinObject, MUIA_Window_Open, FALSE);
 
@@ -1872,6 +1867,12 @@ static void InitAfterLogin(void)
   xset(G->MA->GUI.WI,
        MUIA_Window_Activate, splashWasActive,
        MUIA_Window_Open,     TRUE);
+
+  // Now we have to make sure that the current folder is really in "active" state
+  // or we risk to get a unsynced message listview. We also have to do that AFTER
+  // the final MUIA_Window_Open call or e.g. a MUIM_NList_Jump call will not work
+  // correctly as NList doesn't know anything about its visible height yet.
+  MA_ChangeFolder(NULL, TRUE);
 
   // unlock the public screen again now that the main window is open
   UnlockPubScreen(pubScreenName, pubScreen);

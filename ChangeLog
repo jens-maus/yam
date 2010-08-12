@@ -16,6 +16,10 @@ $URL$
 
 2010-08-12 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: moved the first MA_ChangeFolder() call in InitAfterLogin() after
+    the final MUIA_Window_Open call to the main window. This should fix the
+    problem that after the first start the listview is not centered on the
+    active entry.
   * MainMailList.c, MainMailListGroup.c, rexx/setmail.c, rexx/setmailfile.c,
     include/mui/NList_mcc.h: updated the public NList include header with the
     latest one available and utilized the new MUIV_NList_Jump_Active_Center
