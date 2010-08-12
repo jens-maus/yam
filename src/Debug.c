@@ -65,6 +65,7 @@ static ULONG debug_flags = DBF_ALWAYS | DBF_STARTUP; // default debug flags
 static ULONG debug_classes = DBC_ERROR | DBC_DEBUG | DBC_WARNING | DBC_ASSERT | DBC_REPORT | DBC_MTRACK; // default debug classes
 static int timer_level = -1;
 static struct TimeVal startTimes[8];
+static struct SignalSemaphore thread_lock;
 
 static void SetupDbgMalloc(void);
 static void CleanupDbgMalloc(void);
@@ -104,6 +105,9 @@ void _DBPRINTF(const char *format, ...)
 void SetupDebug(void)
 {
   char var[256];
+
+  memset(&thread_lock, 0, sizeof(thread_lock));
+  InitSemaphore(&thread_lock);
 
   if(GetVar("yamdebug", var, sizeof(var), 0) > 0)
   {
@@ -392,6 +396,8 @@ INLINE void _INDENT(void)
 
 void _ENTER(unsigned long dclass, const char *file, unsigned long line, const char *function)
 {
+  ObtainSemaphore(&thread_lock);
+
   if(isFlagSet(debug_classes, dclass))
   {
     _INDENT();
@@ -404,10 +410,14 @@ void _ENTER(unsigned long dclass, const char *file, unsigned long line, const ch
   }
 
   indent_level++;
+
+  ReleaseSemaphore(&thread_lock);
 }
 
 void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const char *function)
 {
+  ObtainSemaphore(&thread_lock);
+
   indent_level--;
 
   if(isFlagSet(debug_classes, dclass))
@@ -420,10 +430,14 @@ void _LEAVE(unsigned long dclass, const char *file, unsigned long line, const ch
 
     checkIndentLevel(0);
   }
+
+  ReleaseSemaphore(&thread_lock);
 }
 
 void _RETURN(unsigned long dclass, const char *file, unsigned long line, const char *function, unsigned long result)
 {
+  ObtainSemaphore(&thread_lock);
+
   indent_level--;
 
   if(isFlagSet(debug_classes, dclass))
@@ -436,6 +450,8 @@ void _RETURN(unsigned long dclass, const char *file, unsigned long line, const c
 
     checkIndentLevel(0);
   }
+
+  ReleaseSemaphore(&thread_lock);
 }
 
 /****************************************************************************/
@@ -449,6 +465,8 @@ void _CHECKINDENT(long level, const char *file, unsigned long line)
 
 void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value, int size, const char *name, const char *file, unsigned long line)
 {
+  ObtainSemaphore(&thread_lock);
+
   if(isFlagSet(debug_classes, dclass) &&
      isFlagSet(debug_flags, dflags))
   {
@@ -489,12 +507,16 @@ void _SHOWVALUE(unsigned long dclass, unsigned long dflags, unsigned long value,
     else
       _DBPRINTF("\n");
   }
+
+  ReleaseSemaphore(&thread_lock);
 }
 
 /****************************************************************************/
 
 void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, const char *name, const char *file, unsigned long line)
 {
+  ObtainSemaphore(&thread_lock);
+
   if(isFlagSet(debug_classes, dclass) &&
      isFlagSet(debug_flags, dflags))
   {
@@ -516,12 +538,16 @@ void _SHOWPOINTER(unsigned long dclass, unsigned long dflags, const void *p, con
     else
       _DBPRINTF(fmt, file, line, name, p);
   }
+
+  ReleaseSemaphore(&thread_lock);
 }
 
 /****************************************************************************/
 
 void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string, const char *name, const char *file, unsigned long line)
 {
+  ObtainSemaphore(&thread_lock);
+
   if(isFlagSet(debug_classes, dclass) &&
      isFlagSet(debug_flags, dflags))
   {
@@ -532,12 +558,16 @@ void _SHOWSTRING(unsigned long dclass, unsigned long dflags, const char *string,
     else
       _DBPRINTF("%s:%ld:%s = 0x%08lx \"%s\"\n", file, line, name, (unsigned long)string, string);
   }
+
+  ReleaseSemaphore(&thread_lock);
 }
 
 /****************************************************************************/
 
 void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const char *file, unsigned long line)
 {
+  ObtainSemaphore(&thread_lock);
+
   if(isFlagSet(debug_classes, dclass) &&
      isFlagSet(debug_flags, dflags))
   {
@@ -548,12 +578,16 @@ void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const
     else
       _DBPRINTF("%s:%ld:%s\n", file, line, msg);
   }
+
+  ReleaseSemaphore(&thread_lock);
 }
 
 /****************************************************************************/
 
 void _SHOWTAGS(const char *file, unsigned long line, const struct TagItem *tags)
 {
+  ObtainSemaphore(&thread_lock);
+
   if(isFlagSet(debug_classes, DBC_TAGS))
   {
     int i;
@@ -584,6 +618,8 @@ void _SHOWTAGS(const char *file, unsigned long line, const struct TagItem *tags)
 
     indent_level--;
   }
+
+  ReleaseSemaphore(&thread_lock);
 }
 
 /****************************************************************************/
@@ -605,6 +641,8 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsi
 
 void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, unsigned long line, const char *format, va_list args)
 {
+  ObtainSemaphore(&thread_lock);
+
   if((isFlagSet(debug_classes, dclass) && isFlagSet(debug_flags, dflags)) ||
      (isFlagSet(dclass, DBC_ERROR) || isFlagSet(dclass, DBC_WARNING)))
   {
@@ -634,12 +672,16 @@ void _VDPRINTF(unsigned long dclass, unsigned long dflags, const char *file, uns
     else
       _DBPRINTF("%s:%ld:%s\n", file, line, buf);
   }
+
+  ReleaseSemaphore(&thread_lock);
 }
 
 /****************************************************************************/
 
 void _STARTCLOCK(const char *file, unsigned long line)
 {
+  ObtainSemaphore(&thread_lock);
+
   if(isFlagSet(debug_classes, DBC_TIMEVAL))
   {
     if(timer_level + 1 < (int)ARRAY_SIZE(startTimes))
@@ -650,12 +692,16 @@ void _STARTCLOCK(const char *file, unsigned long line)
     else
       _DPRINTF(DBC_ERROR, DBF_ALWAYS, file, line, "already %ld clocks in use!", ARRAY_SIZE(startTimes));
   }
+
+  ReleaseSemaphore(&thread_lock);
 }
 
 /****************************************************************************/
 
 void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, unsigned long line)
 {
+  ObtainSemaphore(&thread_lock);
+
   if(isFlagSet(debug_classes, DBC_TIMEVAL))
   {
     if(timer_level >= 0)
@@ -670,6 +716,8 @@ void _STOPCLOCK(unsigned long dflags, const char *message, const char *file, uns
     else
       _DPRINTF(DBC_ERROR, DBF_ALWAYS, file, line, "no clocks in use!");
   }
+
+  ReleaseSemaphore(&thread_lock);
 }
 
 /****************************************************************************/
@@ -821,6 +869,8 @@ void _UNMEMTRACK(const char *file, const int line, const void *ptr)
 // Flush any pending stdout or file debug output
 void _FLUSH(void)
 {
+  ObtainSemaphore(&thread_lock);
+
   if(stdout_output == TRUE)
     fflush(stdout);
   else if(file_output != NULL)

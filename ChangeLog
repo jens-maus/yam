@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Debug.c: added a signal semaphore to serialize debugging from different
+    threads.
+  * Threads.c: added missing sending of startup message to the new thread.
+
 2010-08-12 Jens Langner <Jens.Langner@light-speed.de>
 
   * MainMailList.c, MainMailListGroup.c, rexx/setmail.c, rexx/setmailfile.c,
@@ -26,7 +32,7 @@ $URL$
     functions are required. This is then in line with what is defined in the
     individual Makefile part of that platform, thus should be easier to
     understand. Furthermore, all sources in 'extrasrc' check now if the proper
-    NEED_XXXX define is set during compilation, which might point at some 
+    NEED_XXXX define is set during compilation, which might point at some
     missing definition or unnecessary compilation of that file. All in all
     this should now hopefully fix #177.
 
