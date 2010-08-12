@@ -140,7 +140,7 @@ static void RemoveThread(struct ThreadMessage *tmsg)
       D(DBF_THREAD, "got startup message of 0x%08lx back", node->thread);
 
       Remove((struct Node *)node);
-      FreeVecPooled(G->SharedMemPool, tmsg);
+      FreeSysObject(ASOT_MESSAGE, tmsg);
       FreeVecPooled(G->SharedMemPool, node);
 
       break;
@@ -200,9 +200,9 @@ static void CleanupThreadTimer(struct Thread *thread)
     WaitIO((struct IORequest*)&timer_msg->time_req);
 
     if(timer_msg->thread_msg != NULL)
-      FreeVecPooled(G->SharedMemPool, timer_msg->thread_msg);
+      FreeSysObject(ASOT_MESSAGE, timer_msg->thread_msg);
 
-    FreeVecPooled(G->SharedMemPool, timer_msg);
+    FreeSysObject(ASOT_MESSAGE, timer_msg);
   }
 
   CloseDevice((struct IORequest*)thread->timer_req);
@@ -278,11 +278,11 @@ void HandleThreadEvent(ULONG mask)
           }
         }
 
-        FreeVecPooled(G->SharedMemPool, tmsg);
+        FreeSysObject(ASOT_MESSAGE, tmsg);
       }
 
       Remove((struct Node *)&timer_msg->node);
-      FreeVecPooled(G->SharedMemPool, timer_msg);
+      FreeSysObject(ASOT_MESSAGE, timer_msg);
     }
   }
 
@@ -362,7 +362,8 @@ BOOL ParentThreadCanContinue(void)
 
   D(DBF_THREAD, "parent thread can continue");
 
-  if((msg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage))) != NULL)
+  if((msg = (struct ThreadMessage *)AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(struct ThreadMessage),
+                                                                     TAG_DONE)) != NULL)
   {
     // no reply port needed as this message is asynchronous
     msg->msg.mn_Length = sizeof(struct ThreadMessage);
@@ -392,14 +393,13 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
   {
     struct ThreadMessage *msg;
 
-    if((msg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(*msg))) != NULL)
+    if((msg = (struct ThreadMessage *)AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*msg),
+                                                                       ASOMSG_ReplyPort, G->mainThread.thread_port,
+                                                                       TAG_DONE)) != NULL)
     {
       BPTR in;
       BPTR out;
 
-      msg->msg.mn_Node.ln_Type = NT_MESSAGE;
-      msg->msg.mn_ReplyPort = G->mainThread.thread_port;
-      msg->msg.mn_Length = sizeof(*msg);
       msg->startup = TRUE;
       msg->thread = thread;
       msg->function = (int (*)(void))entry;
@@ -453,7 +453,7 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
 
                 // This was the startup message, so something has failed
                 D(DBF_THREAD, "got startup message back, something went wrong");
-                FreeVecPooled(G->SharedMemPool, tmsg);
+                FreeSysObject(ASOT_MESSAGE, tmsg);
                 FreeVecPooled(G->SharedMemPool, thread);
 
                 // Set the state of this message port to "hot" again
@@ -471,7 +471,7 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
                 // This was the "parent task can continue message", we don't reply it
                 // but we free it here (although it wasn't allocated by this task)
                 D(DBF_THREAD, "got 'parent can continue' message");
-                FreeVecPooled(G->SharedMemPool, tmsg);
+                FreeSysObject(ASOT_MESSAGE, tmsg);
 
                 // Set the state of this message port to "hot" again
                 SetSignal((1UL << G->mainThread.thread_port->mp_SigBit), (1UL << G->mainThread.thread_port->mp_SigBit));
@@ -491,7 +491,7 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
         Close(in);
       if(out != 0)
         Close(out);
-      FreeVecPooled(G->SharedMemPool, msg);
+      FreeSysObject(ASOT_MESSAGE, msg);
     }
   }
 
@@ -509,7 +509,9 @@ struct Thread *AddThread(const char *thread_name, int (*entry)(void *), void *eu
 
   ENTER();
 
-  if((thread_node = (struct ThreadNode*)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadNode))) != NULL)
+  if((thread_node = (struct ThreadNode*)AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(struct ThreadNode),
+                                                                      ASONODE_Min, TRUE,
+                                                                      TAG_DONE)) != NULL)
   {
     struct Thread *thread = StartNewThread(thread_name, entry, eudata);
 
@@ -523,7 +525,7 @@ struct Thread *AddThread(const char *thread_name, int (*entry)(void *), void *eu
       return thread;
     }
 
-    FreeVecPooled(G->SharedMemPool, thread_node);
+    FreeSysObject(ASOT_NODE, thread_node);
   }
 
   RETURN(NULL);
@@ -627,7 +629,7 @@ static void HandleThreadMessage(struct ThreadMessage *tmsg)
       if(tmsg->argcount >= 1 && tmsg->arg[0] != NULL && tmsg->async == 2)
         free(tmsg->arg[0]);
 
-      FreeVecPooled(G->SharedMemPool, tmsg);
+      FreeSysObject(ASOT_MESSAGE, tmsg);
     }
     else
     {
@@ -681,7 +683,7 @@ int CallParentThreadFunctionSync(BOOL *success, void *function, int argcount, ..
     if(success != NULL)
       *success = tmsg->called;
 
-    FreeVecPooled(G->SharedMemPool, tmsg);
+    FreeSysObject(ASOT_MESSAGE, tmsg);
   }
   else
   {
@@ -705,14 +707,14 @@ BOOL CallParentThreadFunctionAsync(void *function, int argcount, ...)
 
   ENTER();
 
-  if((tmsg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage))) != NULL)
+  if((tmsg = (struct ThreadMessage *)AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(struct ThreadMessage),
+                                                                      TAG_DONE)) != NULL)
   {
     va_list argptr;
 
     va_start(argptr, argcount);
 
     // Note that async messages are never replied, therefore no reply port is necessary
-    tmsg->msg.mn_Length = sizeof(struct ThreadMessage);
     tmsg->function = (int (*)(void))function;
     tmsg->argcount = argcount;
     tmsg->arg[0] = va_arg(argptr, void *); /*(*(&argcount + 1));*/
@@ -741,7 +743,8 @@ BOOL CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
   struct ThreadMessage *tmsg;
   BOOL result = FALSE;
 
-  if((tmsg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage))) != NULL)
+  if((tmsg = (struct ThreadMessage *)AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*tmsg),
+                                                                      TAG_DONE)) != NULL)
   {
     va_list argptr;
     BOOL sendMsg = FALSE;
@@ -749,7 +752,6 @@ BOOL CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
     va_start(argptr, argcount);
 
     // Note that async messages are never replied, therefore no reply port is necessary
-    tmsg->msg.mn_Length = sizeof(struct ThreadMessage);
     tmsg->function = (int (*)(void))function;
     tmsg->argcount = argcount;
     tmsg->arg[0] = va_arg(argptr, void *); /*(*(&argcount + 1));*/
@@ -821,7 +823,7 @@ int CallThreadFunctionSync(struct Thread *thread, void *function, int argcount, 
     }
 
     rc = tmsg->result;
-    FreeVecPooled(G->SharedMemPool, tmsg);
+    FreeSysObject(ASOT_MESSAGE, tmsg);
   }
 
   va_end(argptr);
@@ -874,9 +876,10 @@ BOOL PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
   if((tmsg = CreateThreadMessage(function, argcount, argptr)) != NULL)
   {
     struct Thread *thread = ((struct Thread *)(FindTask(NULL)->tc_UserData));
-    struct TimerMessage *timer_msg = AllocVecPooled(G->SharedMemPool, sizeof(struct TimerMessage));
+    struct TimerMessage *timer_msg;
 
-    if(timer_msg != NULL)
+    if((timer_msg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*timer_msg),
+                                                     TAG_DONE)) != NULL)
     {
       div_t milli;
 
@@ -897,7 +900,7 @@ BOOL PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
       success = TRUE;
     }
     else
-      FreeVecPooled(G->SharedMemPool, tmsg);
+      FreeSysObject(ASOT_MESSAGE, tmsg);
   }
 
   va_end(argptr);
@@ -1041,7 +1044,7 @@ void CleanupThreads(void)
             }
 
             Remove((struct Node *)&timer->node);
-            FreeVecPooled(G->SharedMemPool, timer);
+            FreeSysObject(ASOT_MESSAGE, timer);
           }
         }
 
@@ -1063,7 +1066,7 @@ void CleanupThreads(void)
               ReplyMsg(&tmsg->msg);
             }
             else
-              FreeVecPooled(G->SharedMemPool, tmsg);
+              FreeSysObject(ASOT_MESSAGE, tmsg);
           }
         }
       }
