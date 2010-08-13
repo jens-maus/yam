@@ -409,16 +409,20 @@ char *Trim(char *s)
 char *stristr(const char *a, const char *b)
 {
   char *s = NULL;
-  int l = strlen(b);
 
   ENTER();
 
-  for(; *a; a++)
+  if(a != NULL && b != NULL)
   {
-    if(strnicmp(a, b, l) == 0)
+    int l = strlen(b);
+
+    for(; *a; a++)
     {
-      s = (char *)a;
-      break;
+      if(strnicmp(a, b, l) == 0)
+      {
+        s = (char *)a;
+        break;
+      }
     }
   }
 

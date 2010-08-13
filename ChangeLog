@@ -7,6 +7,7 @@ $URL$
 
 2010-08-13 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: made stristr() NULL pointer safe.
   * Debug.h: fixed wrong SHOWTAGS() definition for the non-debug build.
   * extrasrc/AllocSysObject.c, extrasrc/ExamineDir.c: fixed SHOWTAGS() call.
 
