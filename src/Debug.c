@@ -57,7 +57,6 @@
 #endif
 
 // our static variables with default values
-static int indent_level = 0;
 static BOOL ansi_output = FALSE;
 static BOOL stdout_output = FALSE;
 static FILE *file_output = NULL;
@@ -67,7 +66,6 @@ static char debug_modules[256] = "";
 static char debug_files[256] = "";
 static int timer_level = -1;
 static struct TimeVal startTimes[8];
-static struct SignalSemaphore thread_lock;
 
 // static function prototypes
 static void SetupDbgMalloc(void);
@@ -116,12 +114,81 @@ static void CleanupDbgMalloc(void);
 #define DBC_DEBUG_COLOR     ANSI_ESC_FG_GREEN
 #define DBC_ERROR_COLOR     ANSI_ESC_FG_RED
 #define DBC_WARNING_COLOR   ANSI_ESC_FG_YELLOW
+#define DBC_CTRACE_BGCOLOR  ANSI_ESC_BG_BROWN
+#define DBC_REPORT_BGCOLOR  ANSI_ESC_BG_PURPLE
+#define DBC_ASSERT_BGCOLOR  ANSI_ESC_BG_RED
+#define DBC_TIMEVAL_BGCOLOR ANSI_ESC_BG_BLUE
+#define DBC_DEBUG_BGCOLOR   ANSI_ESC_BG_GREEN
+#define DBC_ERROR_BGCOLOR   ANSI_ESC_BG_RED
+#define DBC_WARNING_BGCOLOR ANSI_ESC_BG_CYAN
 
-// some general macros we use throughout our debug classes
+// define output string IDs for the varias debug classes
+#define DBC_CTRACE_STR      "C"
+#define DBC_REPORT_STR      "R"
+#define DBC_ASSERT_STR      "A"
+#define DBC_TIMEVAL_STR     "T"
+#define DBC_DEBUG_STR       "D"
+#define DBC_ERROR_STR       "E"
+#define DBC_WARNING_STR     "W"
+
+// the thread macros to use
+#if defined(NO_THREADS)
+
+#define THREAD_MAX          1
+#define THREAD_LOCK         (void(0))
+#define THREAD_UNLOCK       (void(0))
+#define THREAD_ID           0
+#define INDENT_LEVEL        indent_level[THREAD_ID]
+
+#else
+
+#define THREAD_MAX          256
 #define THREAD_LOCK         ObtainSemaphore(&thread_lock)
 #define THREAD_UNLOCK       ReleaseSemaphore(&thread_lock)
+#define THREAD_ID           _thread_id(FindTask(NULL))
+#define INDENT_LEVEL        indent_level[THREAD_ID]
+
+static struct SignalSemaphore thread_lock;
+static void *thread_id[THREAD_MAX];
+
+#endif
+
+#define INDENT_MAX          80
+static int indent_level[THREAD_MAX];
+static char indent_spaces[INDENT_MAX];
 
 /****************************************************************************/
+
+#if !defined(NO_THREADS)
+INLINE int _thread_id(const void *thread_ptr)
+{
+  int result=-1;
+  int i=0;
+
+  while(i < THREAD_MAX && thread_id[i] != NULL)
+  {
+    if(thread_id[i] == thread_ptr)
+    {
+      result = i;
+      break;
+    }
+    
+    i++;
+  }
+
+  if(result == -1)
+  {
+    if(i < THREAD_MAX)
+    {
+      thread_id[i] = (void *)thread_ptr;
+      result = i;
+    }
+  }
+
+  return result;
+}
+
+#endif
 
 static void _DBPRINTF(const char *format, ...)
 {
@@ -153,11 +220,17 @@ static void _DBPRINTF(const char *format, ...)
 
 /****************************************************************************/
 
-INLINE void _INDENT(void)
+INLINE char *_INDENT(void)
 {
+  int levels = INDENT_LEVEL;
   int i;
-  for(i=0; i < indent_level; i++)
-    _DBPRINTF(" ");
+
+  for(i=0; i < levels && i < INDENT_MAX; i++)
+    indent_spaces[i] = ' ';
+
+  indent_spaces[i] = '\0';
+
+  return indent_spaces;
 }
 
 /****************************************************************************/
@@ -186,30 +259,41 @@ INLINE void _VDPRINTF(const unsigned long c,
                       const char *format, va_list args)
 {
   static char buf[1024];
-
-  _INDENT();
+  const char *fg;
+  const char *bg;
+  const char *id;
+  const int threadID = THREAD_ID;
 
   vsnprintf(buf, 1024, format, args);
 
+  switch(c)
+  {
+    case DBC_CTRACE:  fg = DBC_CTRACE_COLOR;  bg = DBC_CTRACE_BGCOLOR;  id = DBC_CTRACE_STR;  break;
+    case DBC_REPORT:  fg = DBC_REPORT_COLOR;  bg = DBC_REPORT_BGCOLOR;  id = DBC_REPORT_STR;  break;
+    case DBC_ASSERT:  fg = DBC_ASSERT_COLOR;  bg = DBC_ASSERT_BGCOLOR;  id = DBC_ASSERT_STR;  break;
+    case DBC_TIMEVAL: fg = DBC_TIMEVAL_COLOR; bg = DBC_TIMEVAL_BGCOLOR; id = DBC_TIMEVAL_STR; break;
+    case DBC_DEBUG:   fg = DBC_DEBUG_COLOR;   bg = DBC_DEBUG_BGCOLOR;   id = DBC_DEBUG_STR;   break;
+    case DBC_ERROR:   fg = DBC_ERROR_COLOR;   bg = DBC_ERROR_BGCOLOR;   id = DBC_ERROR_STR;   break;
+    case DBC_WARNING: fg = DBC_WARNING_COLOR; bg = DBC_WARNING_BGCOLOR; id = DBC_WARNING_STR; break;
+    default:          fg = ANSI_ESC_FG_WHITE; bg = ANSI_ESC_FG_WHITE;   id = DBC_DEBUG_STR;   break;
+  }
+
   if(ansi_output)
   {
-    const char *highlight = ANSI_ESC_FG_GREEN;
-
-    switch(c)
-    {
-      case DBC_CTRACE:  highlight = ANSI_ESC_FG_BROWN; break;
-      case DBC_REPORT:  highlight = ANSI_ESC_FG_GREEN; break;
-      case DBC_ASSERT:  highlight = ANSI_ESC_FG_RED;   break;
-      case DBC_TIMEVAL: highlight = ANSI_ESC_FG_GREEN; break;
-      case DBC_DEBUG:   highlight = ANSI_ESC_FG_GREEN; break;
-      case DBC_ERROR:   highlight = ANSI_ESC_FG_RED;   break;
-      case DBC_WARNING: highlight = ANSI_ESC_FG_PURPLE;break;
-    }
-
-    _DBPRINTF("%s%s:%ld:%s%s\n", highlight, file, line, buf, ANSI_ESC_CLR);
+    _DBPRINTF("%s%dm%02d:%s%s%s%s%s:%s%s:%ld:%s%s\n", 
+                ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
+                bg, id, ANSI_ESC_CLR, fg, _INDENT(),
+                (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                line, buf, ANSI_ESC_CLR);
   }
   else
-    _DBPRINTF("%s:%ld:%s\n", file, line, buf);
+  {
+    _DBPRINTF("%02d:%s:%s%s:%ld:%s\n", 
+                threadID,
+                id, _INDENT(),
+                (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                line, buf);
+  }
 }
 
 /****************************************************************************/
@@ -218,8 +302,13 @@ void SetupDebug(void)
 {
   char var[256];
 
+  #if !defined(NO_THREADS)
   memset(&thread_lock, 0, sizeof(thread_lock));
+  memset(&thread_id, 0, sizeof(thread_id));
   InitSemaphore(&thread_lock);
+  #endif
+
+  memset(&indent_level, 0, sizeof(indent_level));
 
   if(GetVar("yamdebug", var, sizeof(var), 0) > 0)
   {
@@ -451,12 +540,12 @@ void CleanupDebug(void)
 /****************************************************************************/
 
 #define checkIndentLevel(l) { \
-  if(indent_level < l) \
+  if(INDENT_LEVEL < l) \
   { \
     if(ansi_output) \
-      _DBPRINTF("%s%s:%ld:indent level less than %ld (%ld)%s\n", ANSI_ESC_FG_PURPLE, file, line, l, indent_level, ANSI_ESC_CLR); \
+      _DBPRINTF("%s%s:%ld:indent level less than %ld (%ld)%s\n", ANSI_ESC_FG_PURPLE, file, line, l, INDENT_LEVEL, ANSI_ESC_CLR); \
     else \
-      _DBPRINTF("%s:%ld:indent level less than %ld (%ld)\n", file, line, l, indent_level); \
+      _DBPRINTF("%s:%ld:indent level less than %ld (%ld)\n", file, line, l, INDENT_LEVEL); \
   } \
 }
 
@@ -470,16 +559,31 @@ void _ENTER(const unsigned long c, const char *m,
 
   if(matchDebugSpec(c, 0, m, file) == TRUE)
   {
-    _INDENT();
+    const int threadID = THREAD_ID;
+
     if(ansi_output)
-      _DBPRINTF("%s%s:%ld:Entering %s%s\n", ANSI_ESC_FG_BROWN, file, line, function, ANSI_ESC_CLR);
+    {
+      _DBPRINTF("%s%dm%02d:%s%s:%s%s:%ld:Entering %s%s\n", 
+                  ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
+                  DBC_CTRACE_BGCOLOR DBC_CTRACE_STR ANSI_ESC_CLR DBC_CTRACE_COLOR, 
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, function, ANSI_ESC_CLR);
+    }
     else
-      _DBPRINTF("%s:%ld:Entering %s\n", file, line, function);
+    {
+      _DBPRINTF("%02d:%s:%s%s:%ld:Entering %s\n", 
+                  threadID,
+                  DBC_CTRACE_STR,
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, function);
+    }
 
     checkIndentLevel(0);
-
-    indent_level++;
   }
+
+  INDENT_LEVEL+=1;
 
   THREAD_UNLOCK;
 }
@@ -492,15 +596,30 @@ void _LEAVE(const unsigned long c, const char *m,
 {
   THREAD_LOCK;
 
+  INDENT_LEVEL-=1;
+
   if(matchDebugSpec(c, 0, m, file) == TRUE)
   {
-    indent_level--;
+    const int threadID = THREAD_ID;
 
-    _INDENT();
     if(ansi_output)
-      _DBPRINTF("%s%s:%ld:Leaving %s%s\n", ANSI_ESC_FG_BROWN, file, line, function, ANSI_ESC_CLR);
+    {
+      _DBPRINTF("%s%dm%02d:%s%s:%s%s:%ld:Leaving %s%s\n", 
+                  ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
+                  DBC_CTRACE_BGCOLOR DBC_CTRACE_STR ANSI_ESC_CLR DBC_CTRACE_COLOR, 
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, function, ANSI_ESC_CLR);
+    }
     else
-      _DBPRINTF("%s:%ld:Leaving %s\n", file, line, function);
+    {
+      _DBPRINTF("%02d:%s:%s%s:%ld:Leaving %s\n", 
+                  threadID,
+                  DBC_CTRACE_STR,
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, function);
+    }
 
     checkIndentLevel(0);
   }
@@ -516,15 +635,30 @@ void _RETURN(const unsigned long c, const char *m,
 {
   THREAD_LOCK;
 
+  INDENT_LEVEL-=1;
+
   if(matchDebugSpec(c, 0, m, file) == TRUE)
   {
-    indent_level--;
+    const int threadID = THREAD_ID;
 
-    _INDENT();
     if(ansi_output)
-      _DBPRINTF("%s%s:%ld:Leaving %s (result 0x%08lx, %ld)%s\n", ANSI_ESC_FG_BROWN, file, line, function, result, result, ANSI_ESC_CLR);
+    {
+      _DBPRINTF("%s%dm%02d:%s%s:%s%s:%ld:Leaving %s (result 0x%08lx, %ld)%s\n", 
+                  ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
+                  DBC_CTRACE_BGCOLOR DBC_CTRACE_STR ANSI_ESC_CLR DBC_CTRACE_COLOR, 
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, function, result, result, ANSI_ESC_CLR);
+    }
     else
-      _DBPRINTF("%s:%ld:Leaving %s (result 0x%08lx, %ld)\n", file, line, function, result, result);
+    {
+      _DBPRINTF("%02d:%s:%s%s:%ld:Leaving %s (result 0x%08lx, %ld)\n", 
+                  threadID,
+                  DBC_CTRACE_STR,
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, function, result, result);
+    }
 
     checkIndentLevel(0);
   }
@@ -556,29 +690,44 @@ void _SHOWVALUE(const unsigned long c, const unsigned long f, const char *m,
 
   if(matchDebugSpec(c, f, m, file) == TRUE)
   {
+    const int threadID = THREAD_ID;
     const char *fmt;
+
+    if(ansi_output)
+    {
+      _DBPRINTF("%s%dm%02d:%s%s:%s%s:%ld:%s = %ld, 0x", 
+                  ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
+                  DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR, 
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, name, value);
+    }
+    else
+    {
+      _DBPRINTF("%02d:%s:%s%s:%ld:%s = %ld, 0x", 
+                  threadID,
+                  DBC_CTRACE_STR,
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, name, value);
+    }
 
     switch(size)
     {
       case 1:
-        fmt = "%s:%ld:%s = %ld, 0x%02lx";
+        fmt = "%02lx";
       break;
 
       case 2:
-        fmt = "%s:%ld:%s = %ld, 0x%04lx";
+        fmt = "%04lx";
       break;
 
       default:
-        fmt = "%s:%ld:%s = %ld, 0x%08lx";
+        fmt = "%08lx";
       break;
     }
 
-    _INDENT();
-
-    if(ansi_output)
-      _DBPRINTF(ANSI_ESC_FG_GREEN);
-
-    _DBPRINTF(fmt, file, line, name, value, value);
+    _DBPRINTF(fmt, value);
 
     if(size == 1 && value < 256)
     {
@@ -607,23 +756,36 @@ void _SHOWPOINTER(const unsigned long c, const unsigned long f, const char *m,
 
   if(matchDebugSpec(c, f, m, file) == TRUE)
   {
-    const char *fmt;
-
-    _INDENT();
-
-    if(p != NULL)
-      fmt = "%s:%ld:%s = 0x%08lx\n";
-    else
-      fmt = "%s:%ld:%s = NULL\n";
+    const int threadID = THREAD_ID;
 
     if(ansi_output)
     {
-      _DBPRINTF(ANSI_ESC_FG_GREEN);
-      _DBPRINTF(fmt, file, line, name, p);
-      _DBPRINTF(ANSI_ESC_CLR);
+      _DBPRINTF("%s%dm%02d:%s%s:%s%s:%ld:%s = ", 
+                  ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
+                  DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR, 
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, name);
     }
     else
-      _DBPRINTF(fmt, file, line, name, p);
+    {
+      _DBPRINTF("%02d:%s:%s%s:%ld:%s = ", 
+                  threadID,
+                  DBC_CTRACE_STR,
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, name);
+    }
+
+    if(p != NULL)
+      _DBPRINTF("0x%08lx", p);
+    else
+      _DBPRINTF("NULL");
+
+    if(ansi_output)
+      _DBPRINTF("%s\n", ANSI_ESC_CLR);
+    else
+      _DBPRINTF("\n");
   }
 
   THREAD_UNLOCK;
@@ -639,12 +801,26 @@ void _SHOWSTRING(const unsigned long c, const unsigned long f, const char *m,
 
   if(matchDebugSpec(c, f, m, file) == TRUE)
   {
-    _INDENT();
+    const int threadID = THREAD_ID;
 
     if(ansi_output)
-      _DBPRINTF("%s%s:%ld:%s = 0x%08lx \"%s\"%s\n", ANSI_ESC_FG_GREEN, file, line, name, (unsigned long)string, string, ANSI_ESC_CLR);
+    {
+      _DBPRINTF("%s%dm%02d:%s%s:%s%s:%ld:%s = 0x%08lx \"%s\"%s\n", 
+                  ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
+                  DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR, 
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, name, (unsigned long)string, string, ANSI_ESC_CLR);
+    }
     else
-      _DBPRINTF("%s:%ld:%s = 0x%08lx \"%s\"\n", file, line, name, (unsigned long)string, string);
+    {
+      _DBPRINTF("%02d:%s:%s%s:%ld:%s = 0x%08lx \"%s\"\n", 
+                  threadID,
+                  DBC_REPORT_STR,
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, name, (unsigned long)string, string);
+    }
   }
 
   THREAD_UNLOCK;
@@ -660,12 +836,26 @@ void _SHOWMSG(const unsigned long c, const unsigned long f, const char *m,
 
   if(matchDebugSpec(c, f, m, file) == TRUE)
   {
-    _INDENT();
+    const int threadID = THREAD_ID;
 
     if(ansi_output)
-      _DBPRINTF("%s%s:%ld:%s%s\n", ANSI_ESC_FG_GREEN, file, line, msg, ANSI_ESC_CLR);
+    {
+      _DBPRINTF("%s%dm%02d:%s%s:%s%s:%ld:%s%s\n", 
+                  ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
+                  DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR, 
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, msg, ANSI_ESC_CLR);
+    }
     else
-      _DBPRINTF("%s:%ld:%s\n", file, line, msg);
+    {
+      _DBPRINTF("%02d:%s:%s%s:%ld:%s\n", 
+                  threadID,
+                  DBC_REPORT_STR,
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, msg);
+    }
   }
 
   THREAD_UNLOCK;
@@ -684,30 +874,41 @@ void _SHOWTAGS(const unsigned long c, const unsigned long f, const char *m,
     int i;
     struct TagItem *tag;
     struct TagItem *tstate = (struct TagItem *)tags;
-
-    _INDENT();
+    const int threadID = THREAD_ID;
 
     if(ansi_output)
-      _DBPRINTF("%s%s:%ld:tag list %08lx%s\n", ANSI_ESC_FG_GREEN, file, line, tags, ANSI_ESC_CLR);
+    {
+      _DBPRINTF("%s%dm%02d:%s%s:%s%s:%ld:tag list %08lx%s\n", 
+                  ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
+                  DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR, 
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, tags, ANSI_ESC_CLR);
+    }
     else
-      _DBPRINTF("%s:%ld:tag list %08lx\n", file, line, tags);
-
-    indent_level++;
+    {
+      _DBPRINTF("%02d:%s:%s%s:%ld:tag list %08lx\n", 
+                  threadID,
+                  DBC_REPORT_STR,
+                  _INDENT(),
+                  (strrchr(file, '/') ? strrchr(file, '/')+1 : file), 
+                  line, tags);
+    }
+ 
+    INDENT_LEVEL+=1;
 
     i = 0;
     while((tag = NextTagItem(&tstate)) != NULL)
     {
       i++;
 
-      _INDENT();
-
       if(ansi_output)
-        _DBPRINTF("%s%2ld: tag=%08lx data=%08lx%s\n", ANSI_ESC_FG_GREEN, i, tag->ti_Tag, tag->ti_Data, ANSI_ESC_CLR);
+        _DBPRINTF("%s%2ld: tag=%08lx data=%08lx%s\n", DBC_REPORT_COLOR, i, tag->ti_Tag, tag->ti_Data, ANSI_ESC_CLR);
       else
         _DBPRINTF("%2ld: tag=%08lx data=%08lx\n", i, tag->ti_Tag, tag->ti_Data);
     }
 
-    indent_level--;
+    INDENT_LEVEL-=1;
   }
 
   THREAD_UNLOCK;

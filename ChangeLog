@@ -7,6 +7,12 @@ $URL$
 
 2010-08-13 Jens Langner <Jens.Langner@light-speed.de>
 
+  * Debug.c: now that we have our thread framework finally running, the debug
+    framework required some changes to actually display/synchronize and manage
+    the debug output throughout multiple threads. Now a thread ID number will
+    be output together with an debug class identifier. This should make the
+    whole debug framework more thread-safe and actually usable to output
+    debug information from different threads in parallel.
   * YAM_UT.c, extrasrc/stristr.c: moved the stristr() function from YAM_UT.c
     to its own source file in the 'extrasrc' path as it better fits there.
 
