@@ -162,27 +162,27 @@ INLINE void _INDENT(void)
 
 /****************************************************************************/
 
-INLINE BOOL matchDebugSpec(const unsigned long c, const unsigned f, 
+INLINE BOOL matchDebugSpec(const unsigned long c, const unsigned f,
                            const char *m, const char *file)
 {
-  BOOL result = FALSE;
+  BOOL match = FALSE;
 
   // first we check if we need to process this debug message or not,
   // depending on the currently set debug class/flags
   if(isFlagSet(debug_classes, c) && isFlagSet(debug_flags, f))
-    result = TRUE;
-  else if(stristr(debug_modules, m) == 0)
-    result = TRUE;
-  else if(stristr(debug_files, file) == 0)
-    result = TRUE;
+    match = TRUE;
+  else if(stristr(debug_modules, m) != NULL)
+    match = TRUE;
+  else if(stristr(debug_files, file) != NULL)
+    match = TRUE;
 
-  return result;
+  return match;
 }
 
 /****************************************************************************/
 
 INLINE void _VDPRINTF(const unsigned long c,
-                      const char *file, unsigned long line, 
+                      const char *file, unsigned long line,
                       const char *format, va_list args)
 {
   static char buf[1024];
@@ -462,8 +462,8 @@ void CleanupDebug(void)
 
 /****************************************************************************/
 
-void _ENTER(const unsigned long c, const char *m, 
-            const char *file, const unsigned long line, 
+void _ENTER(const unsigned long c, const char *m,
+            const char *file, const unsigned long line,
             const char *function)
 {
   THREAD_LOCK;
@@ -486,8 +486,8 @@ void _ENTER(const unsigned long c, const char *m,
 
 /****************************************************************************/
 
-void _LEAVE(const unsigned long c, const char *m, 
-            const char *file, const unsigned long line, 
+void _LEAVE(const unsigned long c, const char *m,
+            const char *file, const unsigned long line,
             const char *function)
 {
   THREAD_LOCK;
@@ -510,8 +510,8 @@ void _LEAVE(const unsigned long c, const char *m,
 
 /****************************************************************************/
 
-void _RETURN(const unsigned long c, const char *m, 
-             const char *file, const unsigned long line, 
+void _RETURN(const unsigned long c, const char *m,
+             const char *file, const unsigned long line,
              const char *function, unsigned long result)
 {
   THREAD_LOCK;
@@ -548,7 +548,7 @@ void _CHECKINDENT(const unsigned long c,
 
 /****************************************************************************/
 
-void _SHOWVALUE(const unsigned long c, const unsigned long f, const char *m, 
+void _SHOWVALUE(const unsigned long c, const unsigned long f, const char *m,
                 const char *file, const unsigned long line,
                 const unsigned long value, const int size, const char *name)
 {
@@ -599,7 +599,7 @@ void _SHOWVALUE(const unsigned long c, const unsigned long f, const char *m,
 
 /****************************************************************************/
 
-void _SHOWPOINTER(const unsigned long c, const unsigned long f, const char *m, 
+void _SHOWPOINTER(const unsigned long c, const unsigned long f, const char *m,
                   const char *file, const unsigned long line,
                   const void *p, const char *name)
 {
@@ -674,7 +674,7 @@ void _SHOWMSG(const unsigned long c, const unsigned long f, const char *m,
 /****************************************************************************/
 
 void _SHOWTAGS(const unsigned long c, const unsigned long f, const char *m,
-               const char *file, const unsigned long line, 
+               const char *file, const unsigned long line,
                const struct TagItem *tags)
 {
   THREAD_LOCK;
@@ -715,8 +715,8 @@ void _SHOWTAGS(const unsigned long c, const unsigned long f, const char *m,
 
 /****************************************************************************/
 
-void _DPRINTF(const unsigned long c, const unsigned long f, const char *m, 
-              const char *file, unsigned long line, 
+void _DPRINTF(const unsigned long c, const unsigned long f, const char *m,
+              const char *file, unsigned long line,
               const char *format, ...)
 {
   THREAD_LOCK;

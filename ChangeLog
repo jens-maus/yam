@@ -7,6 +7,10 @@ $URL$
 
 2010-08-13 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: stristr() must *NOT* use the ENTER()/RETURN() macros, as this
+    function is already used when the debug environment is not yet completely
+    up and running. Calling ENTER() in that situation will cause infinite
+    recursions due to the module check of ENTER().
   * YAM_UT.c: made stristr() NULL pointer safe.
   * Debug.h: fixed wrong SHOWTAGS() definition for the non-debug build.
   * extrasrc/AllocSysObject.c, extrasrc/ExamineDir.c: fixed SHOWTAGS() call.

@@ -406,11 +406,13 @@ char *Trim(char *s)
 ///
 /// stristr
 //  Case insensitive version of strstr()
+//  NOTE: do *NOT* use the ENTER() and RETURN() macros, because this
+//        function is used during SetupDebug(). Calling ENTER() in
+//        that situation will cause infinite recursions due to the
+//        module check of ENTER().
 char *stristr(const char *a, const char *b)
 {
   char *s = NULL;
-
-  ENTER();
 
   if(a != NULL && b != NULL)
   {
@@ -426,7 +428,6 @@ char *stristr(const char *a, const char *b)
     }
   }
 
-  RETURN(s);
   return s;
 }
 
