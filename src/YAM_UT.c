@@ -1447,6 +1447,13 @@ BOOL DeleteZombieFiles(BOOL force)
       listCleared = FALSE;
 
       W(DBF_UTIL, "zombie file '%s' cannot be deleted, leaving in list", zombie->fileName);
+
+      // readd the zombie node or the next call to DeleteZombieFiles() will not
+      // bring up the same situation anymore.
+      AddHead((struct List *)&G->zombieFileList, (struct Node *)&zombie->node);
+
+      // break out because we couldn't close a file
+      break;
     }
     else
     {

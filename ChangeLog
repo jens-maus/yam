@@ -7,6 +7,9 @@ $URL$
 
 2010-08-13 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: fixed a bug in the DeleteZombiFiles() function where in case of
+    a undeletable file the zombie node has never been readded to the list and
+    thus a subsequent call to DeleteZombieFiles() always succeeded.
   * Threads.c, YAM.cd: changed the thread exit warning requester to use 
     localized strings and be a bit more verbose as well as more intuitive 
     button texts.
