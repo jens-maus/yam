@@ -12,6 +12,12 @@ $URL$
 
 2010-08-13 Thore Böckelmann <tboeckel@gmx.de>
 
+  * Threads.c: still running threads upon termination are no longer aborted,
+    as this causes crashes. The user has the choice to wait until the threads
+    have terminated or to blindly ignore the threads. However, ignoring still
+    running threads will definitely cause a crash as soon as the thread
+    terminates after YAM has exited, because that thread will access already
+    deallocated memory then.
   * misc: lots of changes to get the thread framework running. Clicking on an
     attachment now launches a new thread which then will run the associated
     command.

@@ -192,13 +192,13 @@ static BOOL InitThreadTimer(struct Thread *thread)
 // Cleanup the timer
 static void CleanupThreadTimer(struct Thread *thread)
 {
-  struct Node *node;
+  struct Node *tnode;
 
   ENTER();
 
-  while((node = RemTail((struct List *)&thread->timer_request_list)) != NULL)
+  while((tnode = RemTail((struct List *)&thread->timer_request_list)) != NULL)
   {
-    struct TimerMessage *timer_msg = (struct TimerMessage *)((IPTR)node - OFFSET_OF(struct TimerMessage, node));
+    struct TimerMessage *timer_msg = (struct TimerMessage *)((IPTR)tnode - OFFSET_OF(struct TimerMessage, node));
 
     AbortIO((struct IORequest *)&timer_msg->time_req);
     WaitIO((struct IORequest *)&timer_msg->time_req);
@@ -964,8 +964,6 @@ void CleanupThreads(void)
   // InitThreads() might not have been called yet.
   if(G->mainThread.thread_port != NULL)
   {
-    BOOL ignoreRunningThreads = FALSE;
-
     while(IsMinListEmpty(&G->subThreadList) == FALSE)
     {
       ULONG thread_m;
@@ -973,6 +971,8 @@ void CleanupThreads(void)
       struct TimerMessage *timeout = NULL;
       struct Node *curNode;
 
+/*
+// don't abort the threads for now, this causes crashes
       D(DBF_STARTUP, "aborting still running child threads");
       // signal all threads to abort
       IterateList(&G->subThreadList, curNode)
@@ -982,6 +982,7 @@ void CleanupThreads(void)
         // abort the thread
         AbortThread(node->thread);
       }
+*/
 
       // get the signalbit of the message ports of the thread
       // and its timer.
@@ -990,9 +991,16 @@ void CleanupThreads(void)
 
       // now iterate again through our subThreadList and
       // wait until the subthread have finished.
-      IterateList(&G->subThreadList, curNode)
+      // do not use IterateList(), because the embedded RemoveThread() call
+      // will do a Remove() while we are walking through the very same list
+      curNode = GetHead((struct List *)&G->subThreadList);
+      while(curNode != NULL)
       {
+        struct Node *nextNode = GetSucc(curNode);
+/*
+// don't abort the threads for now, this causes crashes
         struct ThreadNode *node = (struct ThreadNode *)curNode;
+*/
         struct ThreadMessage *tmsg;
         ULONG mask;
 
@@ -1033,7 +1041,10 @@ void CleanupThreads(void)
 
               // time out occured, abort the current task another time
               timeout = NULL;
+/*
+// don't abort the threads for now, this causes crashes
               AbortThread(node->thread);
+*/
             }
 
             Remove((struct Node *)&timer->node);
@@ -1061,12 +1072,14 @@ void CleanupThreads(void)
               FreeSysObject(ASOT_MESSAGE, tmsg);
           }
         }
+
+        curNode = nextNode;
       }
 
       if(IsMinListEmpty(&G->subThreadList) == FALSE)
       {
         if(MUI_Request(G->App, NULL, 0, "there are still threads running", tr(MSG_YesNoReq), "There are still threads running!\nIgnore and exit?") != 0)
-          ignoreRunningThreads = TRUE;
+          break;
       }
     }
 
