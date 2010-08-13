@@ -242,8 +242,11 @@ INLINE BOOL matchDebugSpec(const unsigned long c, const unsigned f,
 
   // first we check if we need to process this debug message or not,
   // depending on the currently set debug class/flags
-  if(isFlagSet(debug_classes, c) && isFlagSet(debug_flags, f))
+  if((isFlagSet(debug_classes, c) && isFlagSet(debug_flags, f)) ||
+     (isFlagSet(c, DBC_ERROR) || isFlagSet(c, DBC_WARNING)))
+  {
     match = TRUE;
+  }
   else if(stristr(debug_modules, m) != NULL)
     match = TRUE;
   else if(stristr(debug_files, file) != NULL)
