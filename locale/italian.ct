@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (10.08.2010)
+## version $VER: YAM.catalog 7.3 (13.08.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC
 ; $Id$
 ;
-; based on YAM.cd 4871 2010-08-10
+; based on YAM.cd 4909 2010-08-13
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9988,7 +9988,30 @@ menu l'opzione di verifica periodica degli aggiornamenti.
 ; Please try again later or activate the automatic\n\
 ; software update check.
 ;
-MSG_FO_APPLY_TO_FILTERS
-Le modifiche verranno applicate nei filtri del messaggio.
-; The modification will be applied to the mail filters.
+MSG_THREAD_EXIT_WARNING_TITLE
+Avviso YAM
+; YAM warning
+;
+MSG_THREAD_EXIT_WARNING
+Durante il tentativo di pulitura di YAM sono stati rilevati\n\
+alcuni sotto processi ancora attivi.\n\
+Per favore, prima di procedere assicurati che non vi sia\n\
+alcun sotto processo (sub threads) ancora attivo.\n\
+\n\
+Si desidera provare a chiudere YAM oppure si preferisce\n\
+ignorare i sotto processi già inizializzati ed attivi?\n\
+\n\
+Continuare con i processi ancora attivi potrebbe portare\n\
+ad instabilità di sistema.
+; While trying to cleanup YAM still running sub threads\n\
+; have been found. Please make sure to close all still\n\
+; existing sub threads (e.g. MIME viewers, etc.) you may\n\
+; have initiated from YAM.\n\
+; \n\
+; Do you want to retry to quit YAM or ignore the still\n\
+; running sub thread (which could end up in later crashes)?
+;
+MSG_THREAD_EXIT_WARNING_BT
+; _Riprova|_Ignora
+; _Retry|_Ignore
 ;

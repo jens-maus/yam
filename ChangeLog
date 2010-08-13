@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-13 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest development changes.
+
 2010-08-13 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: fixed a bug in the DeleteZombiFiles() function where in case of
