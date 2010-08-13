@@ -569,7 +569,7 @@ void FreeSysObject(ULONG type, APTR object)
     {
       case ASOT_PORT:
       {
-        struct SysMsgPort *sobject = (struct SysMsgPort *)((STRPTR)object - (sizeof(struct SysMsgPort) - sizeof(struct MsgPort)));
+        struct SysMsgPort *sobject = (struct SysMsgPort *)((IPTR)object - OFFSET_OF(struct SysMsgPort, port));
 
         // remove the port from the public list, if it was public
         if(sobject->public != FALSE)
@@ -605,7 +605,7 @@ void FreeSysObject(ULONG type, APTR object)
 
       case ASOT_SEMAPHORE:
       {
-        struct SysSignalSemaphore *sobject = (struct SysSignalSemaphore *)((STRPTR)object - (sizeof(struct SysSignalSemaphore) - sizeof(struct SignalSemaphore)));
+        struct SysSignalSemaphore *sobject = (struct SysSignalSemaphore *)((IPTR)object - OFFSET_OF(struct SysSignalSemaphore, semaphore));
 
         // remove the semaphore from the public list, if it was public
         if(sobject->public != FALSE)

@@ -12,6 +12,7 @@ $URL$
 
 2010-08-13 Thore Böckelmann <tboeckel@gmx.de>
 
+  * AllocSysObject.c: make use of the OFFSET_OF() macro.
   * Threads.c: still running threads upon termination are no longer aborted,
     as this causes crashes. The user has the choice to wait until the threads
     have terminated or to blindly ignore the threads. However, ignoring still

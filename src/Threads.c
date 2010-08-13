@@ -94,8 +94,6 @@ struct ThreadNode
   struct Thread *thread;
 };
 
-#define OFFSET_OF(s, o)					(IPTR)(&((s *)NULL)->o)
-
 // local prototypes
 static void HandleThreadMessage(struct ThreadMessage *tmsg);
 

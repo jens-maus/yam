@@ -178,6 +178,11 @@ struct TimeRequest
 #define ZERO (BPTR)NULL
 #endif
 
+// calculate the offset of an element within a structure
+#ifndef OFFSET_OF
+#define OFFSET_OF(s, o)					(IPTR)(&((s *)NULL)->o)
+#endif
+
 // Library open/close macros
 #if defined(__amigaos4__)
 #define INITLIB(lname, v, r, lbase, iname, iversion, ibase, req, url)  (InitLib((lname), (v), (r), (APTR)(lbase), (iname), (iversion), (APTR)(ibase), (req), (url)))
