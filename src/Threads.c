@@ -164,9 +164,9 @@ static BOOL InitThreadTimer(struct Thread *thread)
 
   if((thread->timer_port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
-    if((thread->timer_req =AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                              ASOIOR_ReplyPort, thread->timer_port,
-                                                              TAG_DONE)) != NULL)
+    if((thread->timer_req = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Size,      sizeof(struct TimeRequest),
+                                                               ASOIOR_ReplyPort, (IPTR)thread->timer_port,
+                                                               TAG_DONE)) != NULL)
     {
       if(OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)thread->timer_req, 0) == 0)
       {
@@ -396,7 +396,7 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
     struct ThreadMessage *msg;
 
     if((msg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*msg),
-                                               ASOMSG_ReplyPort, G->mainThread.thread_port,
+                                               ASOMSG_ReplyPort, (IPTR)G->mainThread.thread_port,
                                                TAG_DONE)) != NULL)
     {
       msg->startup = TRUE;
@@ -557,7 +557,7 @@ static struct ThreadMessage *CreateThreadMessage(void *function, int argcount, v
   ENTER();
 
   if((tmsg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*tmsg),
-                                              ASOMSG_ReplyPort, subthread_port,
+                                              ASOMSG_ReplyPort, (IPTR)subthread_port,
                                               TAG_DONE)) != NULL)
   {
 
@@ -866,7 +866,7 @@ BOOL PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
     struct Thread *thread = (struct Thread *)(FindTask(NULL)->tc_UserData);
     struct TimerMessage *timer_msg;
 
-    if((timer_msg = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Duplicate, thread->timer_req,
+    if((timer_msg = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Duplicate, (IPTR)thread->timer_req,
                                                        TAG_DONE)) != NULL)
     {
       div_t milli;
@@ -1005,7 +1005,7 @@ void CleanupThreads(void)
         // wait half a second to give our threads enough time
         // to terminate their jobs...
         if(timeout == NULL &&
-           (timeout = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Duplicate, G->mainThread.timer_req,
+           (timeout = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Duplicate, (IPTR)G->mainThread.timer_req,
                                                          TAG_DONE)) != NULL)
         {
           timeout->time_req.Request.io_Command = TR_ADDREQUEST;
