@@ -7,6 +7,7 @@ $URL$
 
 2010-08-13 Thore Böckelmann <tboeckel@gmx.de>
 
+  * Debug.h: fixed wrong SHOWTAGS() definition for the non-debug build.
   * extrasrc/AllocSysObject.c, extrasrc/ExamineDir.c: fixed SHOWTAGS() call.
 
 2010-08-12 Thore Böckelmann <tboeckel@gmx.de>

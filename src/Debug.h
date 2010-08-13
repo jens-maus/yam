@@ -534,7 +534,7 @@ void W(const unsigned long f, const char *format, ...);
 #define SHOWPOINTER(f, p)     ((void)0)
 #define SHOWSTRING(f, s)      ((void)0)
 #define SHOWMSG(f, m)         ((void)0)
-#define SHOWTAGS(t)           ((void)0)
+#define SHOWTAGS(f, t)        ((void)0)
 #define STARTCLOCK(f)         ((void)0)
 #define STOPCLOCK(f, m)       ((void)0)
 #define MEMTRACK(f, p, s)     ((void)0)
