@@ -66,6 +66,7 @@ struct WBStartup;
 #define NEED_STCGFE
 #define NEED_VASTUBS
 #define NEED_CHANGEFILEPOSITION
+#define NEED_STRISTR
 #endif // !__amigaos4__ && !__MORPHOS__ && !__AROS__
 
 /*
@@ -77,6 +78,7 @@ struct WBStartup;
 #define NEED_GETDELIM
 #define NEED_MEMDUP
 #define NEED_STCGFE
+#define NEED_STRISTR
 #endif // __amigaos4__
 
 /*
@@ -96,6 +98,7 @@ struct WBStartup;
 #define NEED_MEMDUP
 #define NEED_VASPRINTF
 #define NEED_CHANGEFILEPOSITION
+#define NEED_STRISTR
 #endif // __MORPHOS__
 
 /*
@@ -116,6 +119,7 @@ struct WBStartup;
 #define NEED_VASPRINTF
 #define NEED_VASTUBS
 #define NEED_CHANGEFILEPOSITION
+#define NEED_STRISTR
 #endif // __AROS__
 
 /*
@@ -252,6 +256,10 @@ void FreeVecPooled(APTR poolHeader, APTR memory);
 #if defined(NEED_NEWREADARGS)
 LONG NewReadArgs(struct WBStartup *, struct NewRDArgs *);
 void NewFreeArgs(struct NewRDArgs *);
+#endif
+
+#if defined(NEED_STRISTR)
+char *stristr(const char *a, const char *b);
 #endif
 
 /*

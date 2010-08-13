@@ -404,34 +404,6 @@ char *Trim(char *s)
 }
 
 ///
-/// stristr
-//  Case insensitive version of strstr()
-//  NOTE: do *NOT* use the ENTER() and RETURN() macros, because this
-//        function is used during SetupDebug(). Calling ENTER() in
-//        that situation will cause infinite recursions due to the
-//        module check of ENTER().
-char *stristr(const char *a, const char *b)
-{
-  char *s = NULL;
-
-  if(a != NULL && b != NULL)
-  {
-    int l = strlen(b);
-
-    for(; *a; a++)
-    {
-      if(strnicmp(a, b, l) == 0)
-      {
-        s = (char *)a;
-        break;
-      }
-    }
-  }
-
-  return s;
-}
-
-///
 /// MyStrChr
 //  Searches for a character in string, ignoring text in quotes
 char *MyStrChr(const char *s, const char c)

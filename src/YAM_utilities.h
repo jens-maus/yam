@@ -358,7 +358,6 @@ char *   StrBufCat(char *strbuf, const char *source);
 char *   StrBufCpy(char *strbuf, const char *source);
 char *   AppendToBuffer(char *buf, int *wptr, int *len, const char *add);
 char *   StripUnderscore(const char *label);
-char *   stristr(const char *a, const char *b);
 void     ReplaceInvalidChars(char *name);
 char *   SWSSearch(const char *str1, const char*str2);
 void     ToLowerCase(char *str);

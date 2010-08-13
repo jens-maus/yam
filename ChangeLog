@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-13 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, extrasrc/stristr.c: moved the stristr() function from YAM_UT.c
+    to its own source file in the 'extrasrc' path as it better fits there.
+
 2010-08-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: hitting the DEL key now takes both the mail list and and mail

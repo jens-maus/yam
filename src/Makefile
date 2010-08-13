@@ -223,7 +223,8 @@ ifeq ($(OS), os4)
               NewReadArgs.o \
               getdelim.o \
               memdup.o \
-              stcgfe.o
+              stcgfe.o \
+              stristr.o
 
 else
 ifeq ($(OS), os3)
@@ -259,6 +260,7 @@ ifeq ($(OS), os3)
               getdelim.o \
               memdup.o \
               stcgfe.o \
+              stristr.o \
               vastubs.o
 
 else
@@ -291,6 +293,7 @@ ifeq ($(OS), mos)
               asprintf.o \
               getdelim.o \
               memdup.o \
+              stristr.o \
               vasprintf.o
 
 else
@@ -319,6 +322,7 @@ ifeq ($(OS), aros-i386)
               getdelim.o \
               memdup.o \
               stcgfe.o \
+              stristr.o \
               strtok_r.o \
               vasprintf.o \
               vastubs.o
@@ -349,6 +353,7 @@ ifeq ($(OS), aros-ppc)
               getdelim.o \
               memdup.o \
               stcgfe.o \
+              stristr.o \
               strtok_r.o \
               vasprintf.o \
               vastubs.o
@@ -379,6 +384,7 @@ ifeq ($(OS), aros-x86_64)
               getdelim.o \
               memdup.o \
               stcgfe.o \
+              stristr.o \
               strtok_r.o \
               vasprintf.o \
               vastubs.o
