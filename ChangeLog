@@ -7,6 +7,9 @@ $URL$
 
 2010-08-13 Jens Langner <Jens.Langner@light-speed.de>
 
+  * Threads.c, YAM.cd: changed the thread exit warning requester to use 
+    localized strings and be a bit more verbose as well as more intuitive 
+    button texts.
   * Requesters.c: the '_' character will now be stripped from the gadget text
     in case a pure intuition requester will be shown with MUI_Request().
   * Debug.c: now that we have our thread framework finally running, the debug

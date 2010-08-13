@@ -1076,8 +1076,12 @@ void CleanupThreads(void)
 
       if(IsMinListEmpty(&G->subThreadList) == FALSE)
       {
-        if(MUI_Request(G->App, NULL, 0, "there are still threads running", tr(MSG_YesNoReq), "There are still threads running!\nIgnore and exit?") != 0)
+        if(MUI_Request(G->App, NULL, 0L, tr(MSG_THREAD_EXIT_WARNING_TITLE), 
+                                         tr(MSG_THREAD_EXIT_WARNING_BT), 
+                                         tr(MSG_THREAD_EXIT_WARNING)) == 0)
+        {
           break;
+        }
       }
     }
 

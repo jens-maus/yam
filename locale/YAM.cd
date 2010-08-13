@@ -6984,3 +6984,17 @@ MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK (2173//)
 Please try again later or activate the automatic\n\
 software update check.
 ;
+MSG_THREAD_EXIT_WARNING_TITLE (2174//)
+YAM warning
+;
+MSG_THREAD_EXIT_WARNING (2175//)
+While trying to cleanup YAM still running sub threads\n\
+have been found. Please make sure to close all still\n\
+existing sub threads (e.g. MIME viewers, etc.) you may\n\
+have initiated from YAM.\n\
+\n\
+Do you want to retry to quit YAM or ignore the still\n\
+running sub thread (which could end up in later crashes)?
+;
+MSG_THREAD_EXIT_WARNING_BT (2176//)
+_Retry|_Ignore
