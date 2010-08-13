@@ -91,14 +91,24 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
     if(IntuitionBase != NULL)
     {
       struct EasyStruct ErrReq;
+      char *stripped_gadgets;
+      char *p;
+
+      // we have to strip any special characters from the gadgets
+      // text (e.g. '_') so that intuition can open more nice looking requesters
+      stripped_gadgets = strdup(gadgets);
+      while((p = strchr(stripped_gadgets, '_')) != NULL)
+        memmove(p, p+1, strlen(p)+1);
 
       ErrReq.es_StructSize   = sizeof(struct EasyStruct);
       ErrReq.es_Flags        = 0;
       ErrReq.es_Title        = title;
       ErrReq.es_TextFormat   = reqtxt;
-      ErrReq.es_GadgetFormat = gadgets;
+      ErrReq.es_GadgetFormat = stripped_gadgets;
 
       result = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+
+      free(stripped_gadgets);
     }
   }
   else

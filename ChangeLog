@@ -7,6 +7,8 @@ $URL$
 
 2010-08-13 Jens Langner <Jens.Langner@light-speed.de>
 
+  * Requesters.c: the '_' character will now be stripped from the gadget text
+    in case a pure intuition requester will be shown with MUI_Request().
   * Debug.c: now that we have our thread framework finally running, the debug
     framework required some changes to actually display/synchronize and manage
     the debug output throughout multiple threads. Now a thread ID number will
