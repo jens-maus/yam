@@ -7,6 +7,9 @@ $URL$
 
 2010-08-13 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: hitting the DEL key now takes both the mail list and and mail
+    listview into account. This fixes the reported "unable to delete mail"
+    issue.
   * YAM_UT.c: stristr() must *NOT* use the ENTER()/RETURN() macros, as this
     function is already used when the debug environment is not yet completely
     up and running. Calling ENTER() in that situation will cause infinite

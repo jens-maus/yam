@@ -3630,6 +3630,7 @@ HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
   }
   else if(actobj == G->MA->GUI.PG_MAILLIST ||
           actobj == (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject) ||
+          actobj == (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListviewObject) ||
           (C->EmbeddedReadPane == TRUE && (Object *)xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_ActiveObject) != NULL))
   {
     MA_DeleteMessage(arg[0], FALSE);
