@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/AllocSysObject.c, extrasrc/ExamineDir.c: fixed SHOWTAGS() call.
+
 2010-08-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.c: switched all allocations to AllocSysObject().

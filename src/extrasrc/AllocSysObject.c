@@ -112,7 +112,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
   ENTER();
 
-  SHOWTAGS(tags);
+  SHOWTAGS(DBF_UTIL, tags);
 
   object.pointer = NULL;
 

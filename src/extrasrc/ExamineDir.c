@@ -69,7 +69,7 @@ APTR ObtainDirContext(struct TagItem *tags)
 
   ENTER();
 
-  SHOWTAGS(tags);
+  SHOWTAGS(DBF_UTIL, tags);
 
   if((ctx = (struct DirContext *)calloc(1, sizeof(*ctx))) != NULL)
   {
