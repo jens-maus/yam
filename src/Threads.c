@@ -52,6 +52,8 @@
 
 #include "extrasrc.h"
 
+#include "Locale.h"
+#include "Requesters.h"
 #include "Threads.h"
 
 #include "Debug.h"
@@ -91,6 +93,8 @@ struct ThreadNode
   struct MinNode node;
   struct Thread *thread;
 };
+
+#define OFFSET_OF(s, o)					(IPTR)(&((s *)NULL)->o)
 
 // local prototypes
 static void HandleThreadMessage(struct ThreadMessage *tmsg);
@@ -141,7 +145,8 @@ static void RemoveThread(struct ThreadMessage *tmsg)
 
       Remove((struct Node *)node);
       FreeSysObject(ASOT_MESSAGE, tmsg);
-      FreeVecPooled(G->SharedMemPool, node);
+      FreeSysObject(ASOT_NODE, node->thread);
+      FreeSysObject(ASOT_NODE, node);
 
       break;
     }
@@ -161,9 +166,9 @@ static BOOL InitThreadTimer(struct Thread *thread)
 
   if((thread->timer_port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
-    if((thread->timer_req = (struct TimeRequest *)AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                                                     ASOIOR_ReplyPort, (ULONG)thread->timer_port,
-                                                                                     TAG_DONE)) != NULL)
+    if((thread->timer_req =AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Size,      sizeof(struct TimeRequest),
+                                                              ASOIOR_ReplyPort, thread->timer_port,
+                                                              TAG_DONE)) != NULL)
     {
       if(OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)thread->timer_req, 0) == 0)
       {
@@ -187,27 +192,29 @@ static BOOL InitThreadTimer(struct Thread *thread)
 // Cleanup the timer
 static void CleanupThreadTimer(struct Thread *thread)
 {
-  struct MinNode *node;
+  struct Node *node;
 
   ENTER();
 
-  while((node = (struct MinNode*)RemTail((struct List *)&thread->timer_request_list)) != NULL)
+  while((node = RemTail((struct List *)&thread->timer_request_list)) != NULL)
   {
-    struct TimerMessage *dummy = NULL;
-    struct TimerMessage *timer_msg = (struct TimerMessage *)((UBYTE*)node - ((UBYTE*)&dummy->node - (UBYTE*)dummy));
+    struct TimerMessage *timer_msg = (struct TimerMessage *)((IPTR)node - OFFSET_OF(struct TimerMessage, node));
 
-    AbortIO((struct IORequest*)&timer_msg->time_req);
-    WaitIO((struct IORequest*)&timer_msg->time_req);
+    AbortIO((struct IORequest *)&timer_msg->time_req);
+    WaitIO((struct IORequest *)&timer_msg->time_req);
 
     if(timer_msg->thread_msg != NULL)
       FreeSysObject(ASOT_MESSAGE, timer_msg->thread_msg);
 
-    FreeSysObject(ASOT_MESSAGE, timer_msg);
+    FreeSysObject(ASOT_IOREQUEST, timer_msg);
   }
 
-  CloseDevice((struct IORequest*)thread->timer_req);
+  CloseDevice((struct IORequest *)thread->timer_req);
   FreeSysObject(ASOT_IOREQUEST, thread->timer_req);
+  thread->timer_req = NULL;
+
   FreeSysObject(ASOT_PORT, thread->timer_port);
+  thread->timer_port = NULL;
 
   LEAVE();
 }
@@ -230,6 +237,8 @@ void HandleThreadEvent(ULONG mask)
   ENTER();
 
   thread = (struct Thread *)(FindTask(NULL)->tc_UserData);
+  if(thread == NULL || thread != &G->mainThread)
+    E(DBF_THREAD, "unknown thread handle %08lx main=%08lx", thread, &G->mainThread);
 
   // check if the mask hits the signal bit of a thread
   if(mask & (1UL << thread->thread_port->mp_SigBit))
@@ -238,7 +247,7 @@ void HandleThreadEvent(ULONG mask)
 
     while((tmsg = (struct ThreadMessage *)GetMsg(thread->thread_port)) != NULL)
     {
-      D(DBF_THREAD, "received Message: 0x%08lx", tmsg);
+      D(DBF_THREAD, "received thread message: 0x%08lx", tmsg);
 
       // check if this is a startup message
       if(tmsg->startup == TRUE)
@@ -260,6 +269,8 @@ void HandleThreadEvent(ULONG mask)
     while((timer_msg = (struct TimerMessage *)GetMsg(thread->timer_port)) != NULL)
     {
       struct ThreadMessage *tmsg = timer_msg->thread_msg;
+
+      D(DBF_THREAD, "received timer message: 0x%08lx", timer_msg);
 
       if(tmsg != NULL)
       {
@@ -300,42 +311,34 @@ static SAVEDS void ThreadEntry(void)
 
   ENTER();
 
-  D(DBF_THREAD, "waiting for startup message");
+  D(DBF_THREAD, "child thread waiting for parent's startup message");
 
   proc = (struct Process*)FindTask(NULL);
   WaitPort(&proc->pr_MsgPort);
   msg = (struct ThreadMessage *)GetMsg(&proc->pr_MsgPort);
 
+  D(DBF_THREAD, "child thread got parent's startup message");
+
   // set the task's UserData field to store per thread data
   thread = msg->thread;
   if((thread->thread_port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
-    D(DBF_THREAD, "subthread created port at 0x%08lx", thread->thread_port);
+    D(DBF_THREAD, "child thread created port at 0x%08lx", thread->thread_port);
 
     NewMinList(&thread->push_list);
 
     if(InitThreadTimer(thread) == TRUE)
     {
       int (*entry)(void *);
-      BPTR dirlock;
 
       // Store the thread pointer as userdata
       proc->pr_Task.tc_UserData = thread;
 
       // get task's entry function
       entry = (int(*)(void *))msg->function;
+      entry(msg->arg[0]);
 
-      dirlock = DupLock(proc->pr_CurrentDir);
-      if(dirlock != 0)
-      {
-        BPTR odir = CurrentDir(dirlock);
-
-        entry(msg->arg[0]);
-        UnLock(CurrentDir(odir));
-
-        thread->process = NULL;
-      }
-
+      thread->process = NULL;
       CleanupThreadTimer(thread);
     }
 
@@ -343,9 +346,9 @@ static SAVEDS void ThreadEntry(void)
     thread->thread_port = NULL;
   }
 
+  D(DBF_THREAD, "child thread replying startup message to %08lx", msg->msg.mn_ReplyPort);
   Forbid();
-  D(DBF_THREAD, "replying startup message");
-  ReplyMsg((struct Message*)msg);
+  ReplyMsg((struct Message *)msg);
 
   LEAVE();
 }
@@ -360,17 +363,16 @@ BOOL ParentThreadCanContinue(void)
 
   ENTER();
 
-  D(DBF_THREAD, "parent thread can continue");
+  D(DBF_THREAD, "signaling parent thread to continue");
 
-  if((msg = (struct ThreadMessage *)AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(struct ThreadMessage),
-                                                                     TAG_DONE)) != NULL)
+  if((msg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*msg),
+                                             TAG_DONE)) != NULL)
   {
     // no reply port needed as this message is asynchronous
-    msg->msg.mn_Length = sizeof(struct ThreadMessage);
     msg->async = 1;
     msg->parentCanContinue = TRUE;
 
-    PutMsg(G->mainThread.thread_port, &msg->msg);
+    PutMsg(G->mainThread.thread_port, (struct Message *)msg);
 
     // message is freed by parent task
     result = TRUE;
@@ -389,108 +391,95 @@ static struct Thread *StartNewThread(const char *thread_name, int (*entry)(void 
 
   ENTER();
 
-  if((thread = (struct Thread *)AllocVecPooled(G->SharedMemPool, sizeof(*thread))) != NULL)
+  if((thread = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*thread),
+                                             ASONODE_Min, TRUE,
+                                             TAG_DONE)) != NULL)
   {
     struct ThreadMessage *msg;
 
-    if((msg = (struct ThreadMessage *)AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*msg),
-                                                                       ASOMSG_ReplyPort, G->mainThread.thread_port,
-                                                                       TAG_DONE)) != NULL)
+    if((msg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*msg),
+                                               ASOMSG_ReplyPort, G->mainThread.thread_port,
+                                               TAG_DONE)) != NULL)
     {
-      BPTR in;
-      BPTR out;
-
       msg->startup = TRUE;
       msg->thread = thread;
       msg->function = (int (*)(void))entry;
       msg->arg[0] = eudata;
 
-      in = Open("CONSOLE:", MODE_NEWFILE);
-      if(in == 0)
-        in = Open("NIL:", MODE_NEWFILE);
-
-      out = Open("CONSOLE:", MODE_NEWFILE);
-      if(out == 0)
-        out = Open("NIL:", MODE_NEWFILE);
-
-      if(in != 0 && out != 0)
+      if((thread->process = CreateNewProcTags(NP_Entry,       ThreadEntry, // entry function
+                                              NP_StackSize,   16384,       // stack size
+                                              NP_Name,        thread_name,
+                                              NP_Priority,    1,
+                                              #if defined(__amigaos4__)
+                                              NP_Child,       TRUE,
+                                              #elif defined(__MORPHOS__)
+                                              NP_CodeType,    MACHINE_PPC,
+                                              #endif
+                                              NP_Input,       ZERO,
+                                              NP_CloseInput,  FALSE,
+                                              NP_Output,      ZERO,
+                                              NP_CloseOutput, FALSE,
+                                              TAG_DONE)) != NULL)
       {
-        if((thread->process = CreateNewProcTags(NP_Entry,      ThreadEntry, // entry function
-                                                NP_StackSize,  16384,       // stack size
-                                                NP_Name,       thread_name,
-                                                NP_Priority,   -1,
-                                                NP_Input,      in,
-                                                NP_Output,     out,
-                                                #if defined(__amigaos4__)
-                                                NP_Child,      TRUE,
-                                                #elif defined(__MORPHOS__)
-                                                NP_CodeType,   MACHINE_PPC,
-                                                #endif
-                                                TAG_DONE,      0)) != NULL)
+        D(DBF_THREAD, "thread started at 0x%08lx, sending message 0x%08lx %08lx", thread, msg, msg->msg.mn_ReplyPort);
+        PutMsg(&thread->process->pr_MsgPort, (struct Message *)msg);
+
+        do
         {
-          D(DBF_THREAD, "thread started at 0x%08lx, sending message 0x%08lx", thread, msg);
-          PutMsg(&thread->process->pr_MsgPort, (struct Message *)msg);
+          struct Node *node;
 
-          do
+          D(DBF_THREAD, "parent thread waiting for child thread message");
+          Wait(1UL << G->mainThread.thread_port->mp_SigBit);
+          D(DBF_THREAD, "got thread signal");
+
+          // Warning: We are accessing the message port directly and scan through all messages (without
+          // removing them), this may not be merely ugly but also a hack
+          Forbid();
+
+          IterateList(&G->mainThread.thread_port->mp_MsgList, node)
           {
-            struct Node *node;
+            struct ThreadMessage *tmsg = (struct ThreadMessage *)node;
 
-            D(DBF_THREAD, "waiting for thread message");
-            Wait(1UL << G->mainThread.thread_port->mp_SigBit);
-
-            // Warning: We are accessing the message port directly and scan through all messages (without
-            // removing them), this may not be merely ugly but also a hack
-            Forbid();
-
-            IterateList(&G->mainThread.thread_port->mp_MsgList, node)
+            if(tmsg == msg)
             {
-              struct ThreadMessage *tmsg = (struct ThreadMessage *)node;
+              Remove(node);
+              Permit();
 
-              if(tmsg == msg)
-              {
-                Remove(node);
-                Permit();
+              // This was the startup message, so something has failed
+              D(DBF_THREAD, "got startup message back, something went wrong");
+              FreeSysObject(ASOT_MESSAGE, tmsg);
+              FreeSysObject(ASOT_NODE, thread);
 
-                // This was the startup message, so something has failed
-                D(DBF_THREAD, "got startup message back, something went wrong");
-                FreeSysObject(ASOT_MESSAGE, tmsg);
-                FreeVecPooled(G->SharedMemPool, thread);
+              // Set the state of this message port to "hot" again
+              SetSignal((1UL << G->mainThread.thread_port->mp_SigBit), (1UL << G->mainThread.thread_port->mp_SigBit));
 
-                // Set the state of this message port to "hot" again
-                SetSignal((1UL << G->mainThread.thread_port->mp_SigBit), (1UL << G->mainThread.thread_port->mp_SigBit));
-
-                RETURN(NULL);
-                return NULL;
-              }
-
-              if(tmsg->parentCanContinue == TRUE)
-              {
-                Remove(node);
-                Permit();
-
-                // This was the "parent task can continue message", we don't reply it
-                // but we free it here (although it wasn't allocated by this task)
-                D(DBF_THREAD, "got 'parent can continue' message");
-                FreeSysObject(ASOT_MESSAGE, tmsg);
-
-                // Set the state of this message port to "hot" again
-                SetSignal((1UL << G->mainThread.thread_port->mp_SigBit), (1UL << G->mainThread.thread_port->mp_SigBit));
-
-                RETURN(thread);
-                return thread;
-              }
+              RETURN(NULL);
+              return NULL;
             }
 
-            Permit();
+            if(tmsg->parentCanContinue == TRUE)
+            {
+              Remove(node);
+              Permit();
+
+              // This was the "parent task can continue" message, we don't reply it
+              // but we free it here (although it wasn't allocated by this task)
+              D(DBF_THREAD, "got 'parent can continue' message");
+              FreeSysObject(ASOT_MESSAGE, tmsg);
+
+              // Set the state of this message port to "hot" again
+              SetSignal((1UL << G->mainThread.thread_port->mp_SigBit), (1UL << G->mainThread.thread_port->mp_SigBit));
+
+              RETURN(thread);
+              return thread;
+            }
           }
-          while(TRUE);
+
+          Permit();
         }
+        while(TRUE);
       }
 
-      if(in != 0)
-        Close(in);
-      if(out != 0)
-        Close(out);
       FreeSysObject(ASOT_MESSAGE, msg);
     }
   }
@@ -509,9 +498,9 @@ struct Thread *AddThread(const char *thread_name, int (*entry)(void *), void *eu
 
   ENTER();
 
-  if((thread_node = (struct ThreadNode*)AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(struct ThreadNode),
-                                                                      ASONODE_Min, TRUE,
-                                                                      TAG_DONE)) != NULL)
+  if((thread_node = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*thread_node),
+                                                  ASONODE_Min, TRUE,
+                                                  TAG_DONE)) != NULL)
   {
     struct Thread *thread = StartNewThread(thread_name, entry, eudata);
 
@@ -519,6 +508,7 @@ struct Thread *AddThread(const char *thread_name, int (*entry)(void *), void *eu
     {
       thread_node->thread = thread;
 
+      D(DBF_THREAD, "adding thread to subthread list");
       AddTail((struct List *)&G->subThreadList, (struct Node *)thread_node);
 
       RETURN(thread);
@@ -564,15 +554,15 @@ BOOL StartAsDefaultThread(int (*entry)(void *), void *eudata)
 static struct ThreadMessage *CreateThreadMessage(void *function, int argcount, va_list argptr)
 {
   struct ThreadMessage *tmsg;
+  struct MsgPort *subthread_port = ((struct Thread *)(FindTask(NULL)->tc_UserData))->thread_port;
 
   ENTER();
 
-  if((tmsg = (struct ThreadMessage *)AllocVecPooled(G->SharedMemPool, sizeof(struct ThreadMessage))) != NULL)
+  if((tmsg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*tmsg),
+                                              ASOMSG_ReplyPort, subthread_port,
+                                              TAG_DONE)) != NULL)
   {
-    struct MsgPort *subthread_port = ((struct Thread *)(FindTask(NULL)->tc_UserData))->thread_port;
 
-    tmsg->msg.mn_ReplyPort = subthread_port;
-    tmsg->msg.mn_Length = sizeof(struct ThreadMessage);
     tmsg->function = (int (*)(void))function;
     tmsg->argcount = argcount;
 
@@ -633,7 +623,7 @@ static void HandleThreadMessage(struct ThreadMessage *tmsg)
     }
     else
     {
-      D(DBF_THREAD, "repling message at 0x%08lx", tmsg);
+      D(DBF_THREAD, "replying message at 0x%08lx", tmsg);
       tmsg->called = TRUE;
       ReplyMsg(&tmsg->msg);
     }
@@ -662,7 +652,7 @@ int CallParentThreadFunctionSync(BOOL *success, void *function, int argcount, ..
     struct MsgPort *subthread_port = tmsg->msg.mn_ReplyPort;
     BOOL ready = FALSE;
 
-    PutMsg(G->mainThread.thread_port, &tmsg->msg);
+    PutMsg(G->mainThread.thread_port, (struct Message *)&tmsg);
 
     while(ready == FALSE)
     {
@@ -707,8 +697,8 @@ BOOL CallParentThreadFunctionAsync(void *function, int argcount, ...)
 
   ENTER();
 
-  if((tmsg = (struct ThreadMessage *)AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(struct ThreadMessage),
-                                                                      TAG_DONE)) != NULL)
+  if((tmsg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*tmsg),
+                                              TAG_DONE)) != NULL)
   {
     va_list argptr;
 
@@ -725,7 +715,7 @@ BOOL CallParentThreadFunctionAsync(void *function, int argcount, ...)
 
     va_end(argptr);
 
-    PutMsg(G->mainThread.thread_port, &tmsg->msg);
+    PutMsg(G->mainThread.thread_port, (struct Message *)&tmsg);
 
     result = TRUE;
   }
@@ -743,8 +733,8 @@ BOOL CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
   struct ThreadMessage *tmsg;
   BOOL result = FALSE;
 
-  if((tmsg = (struct ThreadMessage *)AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*tmsg),
-                                                                      TAG_DONE)) != NULL)
+  if((tmsg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*tmsg),
+                                              TAG_DONE)) != NULL)
   {
     va_list argptr;
     BOOL sendMsg = FALSE;
@@ -778,7 +768,7 @@ BOOL CallParentThreadFunctionAsyncString(void *function, int argcount, ...)
 
     if(sendMsg == TRUE)
     {
-      PutMsg(G->mainThread.thread_port, &tmsg->msg);
+      PutMsg(G->mainThread.thread_port, (struct Message *)&tmsg);
       result = TRUE;
     }
   }
@@ -806,7 +796,7 @@ int CallThreadFunctionSync(struct Thread *thread, void *function, int argcount, 
     struct MsgPort *subthread_port = tmsg->msg.mn_ReplyPort;
     BOOL ready = FALSE;
 
-    PutMsg(thread->thread_port, &tmsg->msg);
+    PutMsg(thread->thread_port, (struct Message *)&tmsg);
 
     while(ready == FALSE)
     {
@@ -875,17 +865,16 @@ BOOL PushThreadFunctionDelayed(int millis, void *function, int argcount, ...)
 
   if((tmsg = CreateThreadMessage(function, argcount, argptr)) != NULL)
   {
-    struct Thread *thread = ((struct Thread *)(FindTask(NULL)->tc_UserData));
+    struct Thread *thread = (struct Thread *)(FindTask(NULL)->tc_UserData);
     struct TimerMessage *timer_msg;
 
-    if((timer_msg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*timer_msg),
-                                                     TAG_DONE)) != NULL)
+    if((timer_msg = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Duplicate, thread->timer_req,
+                                                       TAG_DONE)) != NULL)
     {
       div_t milli;
 
       milli = div(millis, 1000);
 
-      timer_msg->time_req = *thread->timer_req;
       timer_msg->time_req.Request.io_Command = TR_ADDREQUEST;
       timer_msg->time_req.Time.Seconds = milli.quot;
       timer_msg->time_req.Time.Microseconds = milli.rem * 1000;
@@ -975,15 +964,17 @@ void CleanupThreads(void)
   // InitThreads() might not have been called yet.
   if(G->mainThread.thread_port != NULL)
   {
-    if(IsMinListEmpty(&G->subThreadList) == FALSE)
+    BOOL ignoreRunningThreads = FALSE;
+
+    while(IsMinListEmpty(&G->subThreadList) == FALSE)
     {
       ULONG thread_m;
       ULONG timer_m;
       struct TimerMessage *timeout = NULL;
       struct Node *curNode;
 
-      // search through our subThreadList and signal all threads
-      // to abort
+      D(DBF_STARTUP, "aborting still running child threads");
+      // signal all threads to abort
       IterateList(&G->subThreadList, curNode)
       {
         struct ThreadNode *node = (struct ThreadNode *)curNode;
@@ -1006,15 +997,16 @@ void CleanupThreads(void)
         ULONG mask;
 
         // wait half a second to give our threads enough time
-        // to terminate its jobs...
+        // to terminate their jobs...
         if(timeout == NULL &&
-           (timeout = (struct TimerMessage *)AllocVecPooled(G->SharedMemPool, sizeof(*timeout))) != NULL)
+           (timeout = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Duplicate, G->mainThread.timer_req,
+                                                         TAG_DONE)) != NULL)
         {
-          timeout->time_req = *G->mainThread.timer_req;
           timeout->time_req.Request.io_Command = TR_ADDREQUEST;
           timeout->time_req.Time.Seconds = 0;
           timeout->time_req.Time.Microseconds = 500000;
 
+          D(DBF_STARTUP, "starting timeout thread");
           // first enqueue the timer_msg in our request list
           AddTail((struct List *)&G->mainThread.timer_request_list, (struct Node *)&timeout->node);
 
@@ -1022,6 +1014,7 @@ void CleanupThreads(void)
           SendIO(&timeout->time_req.Request);
         }
 
+        D(DBF_STARTUP, "waiting for child threads to terminate");
         // wait until the main thread or its timer
         // wakes us up.
         mask = Wait(thread_m|timer_m);
@@ -1044,7 +1037,7 @@ void CleanupThreads(void)
             }
 
             Remove((struct Node *)&timer->node);
-            FreeSysObject(ASOT_MESSAGE, timer);
+            FreeSysObject(ASOT_IOREQUEST, timer);
           }
         }
 
@@ -1056,10 +1049,9 @@ void CleanupThreads(void)
             RemoveThread(tmsg);
           else
           {
-            D(DBF_THREAD, "got non startup message (async=%ld)", tmsg->async);
+            D(DBF_STARTUP, "got non startup message (async=%ld)", tmsg->async);
 
-            // check if the thread was running synchronous or
-            // asynchronous
+            // check if the thread was running synchronous or asynchronous
             if(tmsg->async == 0)
             {
               tmsg->called = FALSE;
@@ -1070,9 +1062,15 @@ void CleanupThreads(void)
           }
         }
       }
+
+      if(IsMinListEmpty(&G->subThreadList) == FALSE)
+      {
+        if(MUI_Request(G->App, NULL, 0, "there are still threads running", tr(MSG_YesNoReq), "There are still threads running!\nIgnore and exit?") != 0)
+          ignoreRunningThreads = TRUE;
+      }
     }
 
-    D(DBF_THREAD, "zero subthreads left");
+    D(DBF_STARTUP, "zero subthreads left");
     CleanupThreadTimer(&G->mainThread);
 
     FreeSysObject(ASOT_PORT, G->mainThread.thread_port);
@@ -1110,7 +1108,7 @@ int thread_call_parent_function_sync_timer_callback(void (*timer_callback)(void 
       if(millis < 0) millis = 0;
 
       // now send the message
-      PutMsg(G->mainThread.thread_port, &tmsg->msg);
+      PutMsg(G->mainThread.thread_port, (struct Message *)&tmsg);
 
       // while the parent task should execute the message
       // we regualiy call the given callback function

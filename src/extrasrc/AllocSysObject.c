@@ -116,13 +116,15 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
   object.pointer = NULL;
 
-  memFlags = GetTagData(ASO_MemoryOvr, 0, tags);
+  memFlags = GetTagData(ASO_MemoryOvr, MEMF_ANY, tags);
+  // always clear the memory
+  SET_FLAG(memFlags, MEMF_CLEAR);
 
   switch(type)
   {
     case ASOT_IOREQUEST:
     {
-      ULONG size = sizeof(struct IORequest);
+      ULONG size = sizeof(*object.iorequest);
       struct MsgPort *port = NULL;
       struct IORequest *duplicate = NULL;
 
@@ -149,8 +151,13 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       // if no reply port is given but an existing IO request is to be duplicated,
       // then we will use its reply port instead
-      if(port == NULL && duplicate != NULL)
-        port = duplicate->io_Message.mn_ReplyPort;
+      if(duplicate != NULL)
+      {
+        if(size == sizeof(*object.iorequest))
+          size = duplicate->io_Message.mn_Length;
+        if(port == NULL)
+          port = duplicate->io_Message.mn_ReplyPort;
+      }
 
       // just create the IO request the usual way
       object.iorequest = CreateIORequest(port, size);
@@ -161,10 +168,10 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
     case ASOT_HOOK:
     {
-      APTR entry = NULL;
-      APTR subentry = NULL;
-      APTR data = NULL;
-      ULONG size = sizeof(struct Hook);
+      HOOKFUNC entry = NULL;
+      HOOKFUNC subentry = NULL;
+      HOOKFUNC data = NULL;
+      ULONG size = sizeof(*object.hook);
 
       if(tags != NULL)
       {
@@ -177,24 +184,24 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
             break;
 
             case ASOHOOK_Entry:
-              entry = (APTR)tag->ti_Data;
+              entry = (HOOKFUNC)tag->ti_Data;
             break;
 
             case ASOHOOK_Subentry:
-              subentry = (APTR)tag->ti_Data;
+              subentry = (HOOKFUNC)tag->ti_Data;
             break;
 
             case ASOHOOK_Data:
-              data = (APTR)tag->ti_Data;
+              data = (HOOKFUNC)tag->ti_Data;
             break;
           }
         }
       }
 
-      if((object.hook = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
+      if((object.hook = AllocVec(size, memFlags)) != NULL)
       {
-        object.hook->h_Entry = (HOOKFUNC)entry;
-        object.hook->h_SubEntry = (HOOKFUNC)subentry;
+        object.hook->h_Entry = entry;
+        object.hook->h_SubEntry = subentry;
         object.hook->h_Data = data;
       }
     }
@@ -210,7 +217,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       else
         size = GetTagData(ASOLIST_Size, sizeof(struct MinList), tags);
 
-      if((object.list = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
+      if((object.list = AllocVec(size, memFlags)) != NULL)
       {
         NewList(object.list);
 
@@ -230,8 +237,11 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       else
         size = GetTagData(ASONODE_Size, sizeof(struct MinNode), tags);
 
-      if((object.node = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
+      if((object.node = AllocVec(size, memFlags)) != NULL)
       {
+        object.node->ln_Succ = (struct Node *)0xffffffff;
+        object.node->ln_Pred = (struct Node *)0xffffffff;
+
         if(min == FALSE)
         {
           object.node->ln_Type = GetTagData(ASONODE_Type, NT_UNKNOWN, tags);
@@ -245,7 +255,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
     case ASOT_PORT:
     {
       STRPTR name = NULL;
-      ULONG size = sizeof(struct MsgPort);
+      ULONG size = sizeof(*object.port);
       ULONG action = 0;
       LONG pri = 0;
       LONG signum = -1;
@@ -302,7 +312,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       // add our own data size to the allocation
       size += sizeof(struct SysMsgPort) - sizeof(struct MsgPort);
 
-      if((object.port = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
+      if((object.port = AllocVec(size, memFlags)) != NULL)
       {
         struct SysMsgPort *sobject = (struct SysMsgPort *)object.port;
 
@@ -351,7 +361,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
     case ASOT_MESSAGE:
     {
       STRPTR name = NULL;
-      ULONG size = sizeof(struct Message);
+      ULONG size = sizeof(*object.message);
       ULONG length = 0;
       APTR port = NULL;
 
@@ -383,7 +393,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       if(length == 0)
         length = size;
 
-      if((object.message = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
+      if((object.message = AllocVec(size, memFlags)) != NULL)
       {
         object.message->mn_Node.ln_Name = name;
         object.message->mn_Node.ln_Type = NT_MESSAGE;
@@ -395,7 +405,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
     case ASOT_SEMAPHORE:
     {
-      ULONG size = sizeof(struct SignalSemaphore);
+      ULONG size = sizeof(*object.semaphore);
       LONG pri = 0;
       BOOL public = FALSE;
       BOOL copy = FALSE;
@@ -433,7 +443,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       // add our own data size to the allocation
       size += sizeof(struct SysSignalSemaphore) - sizeof(struct SignalSemaphore);
 
-      if((object.semaphore = AllocVec(size, memFlags|MEMF_CLEAR)) != NULL)
+      if((object.semaphore = AllocVec(size, memFlags)) != NULL)
       {
         struct SysSignalSemaphore *sobject = (struct SysSignalSemaphore *)object.semaphore;
 
@@ -479,7 +489,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         }
       }
 
-      object.taglist = AllocVec(entries * sizeof(struct TagItem), memFlags|MEMF_CLEAR);
+      object.taglist = AllocVec(entries * sizeof(struct TagItem), memFlags);
     }
     break;
 

@@ -1606,7 +1606,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
       char buf[SIZE_COMMAND + SIZE_PATHFILE];
 
       snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
-      ExecuteCommand(buf, FALSE, OUT_DOS);
+      LaunchCommand(buf, FALSE, OUT_STDOUT);
       G->RuleResults.Executed++;
     }
 

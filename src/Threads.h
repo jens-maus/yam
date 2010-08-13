@@ -36,6 +36,7 @@ struct TimeRequest;
 
 struct Thread
 {
+  struct MinNode node;
   struct Process *process;
   BOOL isMain;                          // is this the main thread
   BOOL isDefault;                       // is this the default thread
@@ -62,6 +63,7 @@ BOOL InitThreads(void);
 void CleanupThreads(void);
 ULONG CurrentThreadMask(void);
 void HandleThreadEvent(ULONG mask);
+struct Thread *AddThread(const char *thread_name, int (*entry)(void *), void *eudata);
 BOOL StartAsDefaultThread(int (*entry)(void *), void *eudata);
 BOOL ParentThreadCanContinue(void);
 

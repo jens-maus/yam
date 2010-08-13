@@ -3375,7 +3375,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
     {
       // now execute the command
       BusyText(tr(MSG_MA_EXECUTINGCMD), "");
-      ExecuteCommand(command, !C->RX[num].WaitTerm, C->RX[num].UseConsole ? OUT_DOS : OUT_NIL);
+      LaunchCommand(command, !C->RX[num].WaitTerm, C->RX[num].UseConsole ? OUT_STDOUT : OUT_NIL);
       BusyEnd();
 
       result = TRUE;
@@ -3391,7 +3391,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
         UnquoteString(command, FALSE);
 
       // make sure to open the output console handler
-      if((fh = Open(C->RX[num].UseConsole ? "CON:////YAM ARexx Window/AUTO" : "NIL:", MODE_NEWFILE)) != (BPTR)NULL)
+      if((fh = Open(C->RX[num].UseConsole ? "CON:////YAM ARexx Window/AUTO" : "NIL:", MODE_NEWFILE)) != ZERO)
       {
         struct RexxMsg *sentrm;
 

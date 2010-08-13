@@ -504,7 +504,7 @@ void RE_DisplayMIME(const char *fname, const char *ctype)
     BuildCommandString(command, sizeof(command), cmdPtr, GetRealPath(fname));
 
     // execute the command
-    ExecuteCommand(command, TRUE, OUT_NIL);
+    LaunchCommand(command, TRUE, OUT_NIL);
   }
 
   LEAVE();

@@ -1044,6 +1044,7 @@ static void Terminate(void)
                                               tr(MSG_ER_ZOMBIE_FILES_EXIST_BT),
                                               tr(MSG_ER_ZOMBIE_FILES_EXIST)) == 0)
       {
+        D(DBF_STARTUP, "ignoring further zombie files");
         ignore = TRUE;
       }
     }
@@ -1082,7 +1083,10 @@ static void Terminate(void)
 
   D(DBF_STARTUP, "freeing main application object...");
   if(G->App != NULL)
+  {
     MUI_DisposeObject(G->App);
+    G->App = NULL;
+  }
 
   D(DBF_STARTUP, "unloading/freeing theme images...");
   FreeTheme(&G->theme);
@@ -1134,16 +1138,22 @@ static void Terminate(void)
   D(DBF_STARTUP, "closing catalog...");
   CloseYAMCatalog();
   if(G->Locale != NULL)
+  {
     CloseLocale(G->Locale);
+    G->Locale = NULL;
+  }
 
   CLOSELIB(LocaleBase, ILocale);
 
   // make sure to free the shared memory pool before
   // freeing the rest
   if(G->SharedMemPool != NULL)
+  {
     FreeSysObject(ASOT_MEMPOOL, G->SharedMemPool);
+    G->SharedMemPool = NULL;
+  }
 
-  // last, but not clear free the global structure
+  // last, but not least, free the global structure
   free(G);
   G = NULL;
 
@@ -2506,7 +2516,7 @@ int main(int argc, char **argv)
   }
 
   // security only, can happen for residents only
-  if((progdir = GetProgramDir()) == (BPTR)0)
+  if((progdir = GetProgramDir()) == ZERO)
     exit(RETURN_ERROR);
 
   olddirlock = CurrentDir(progdir);
@@ -2695,7 +2705,7 @@ int main(int argc, char **argv)
     {
       if(signals != 0)
       {
-        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexxsig | appsig | applibsig | adstsig | writeWinNotifySig);
+        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexxsig | appsig | applibsig | adstsig | writeWinNotifySig | threadsig);
 
         if(isFlagSet(signals, SIGBREAKF_CTRL_C))
         {

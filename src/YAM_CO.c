@@ -2032,7 +2032,7 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
     if(CE->Editor[0] != '\0')
     {
       snprintf(buffer, sizeof(buffer), "%s \"%s\"", CE->Editor, GetRealPath(CreateFilename(SigNames[sig])));
-      ExecuteCommand(buffer, FALSE, OUT_NIL);
+      LaunchCommand(buffer, FALSE, OUT_NIL);
       refresh = TRUE;
     }
     else

@@ -95,8 +95,9 @@ enum ReqFileType
 
 enum OutputDefType
 {
-  OUT_DOS=0,
-  OUT_NIL
+  OUT_STDOUT=0,
+  OUT_NIL,
+  OUT_CONSOLE
 };
 
 enum SizeFormat
@@ -170,6 +171,11 @@ struct TimeRequest
 // define memory flags not existing on older platforms
 #ifndef MEMF_SHARED
 #define MEMF_SHARED MEMF_PUBLIC
+#endif
+
+// define an invalid BPTR value
+#ifndef ZERO
+#define ZERO (BPTR)NULL
 #endif
 
 // Library open/close macros
@@ -315,7 +321,7 @@ char *   Encrypt(const char *source);
 void     GetPubScreenName(const struct Screen *screen, char *pubName, ULONG pubNameSize);
 BOOL     TimeHasElapsed(struct TimeVal *last, ULONG micros);
 char *   GetRealPath(const char *path);
-BOOL     ExecuteCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef);
+BOOL     LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef);
 char *   BuildAddress(char *buffer, size_t buflen, const char *address, const char *name);
 void     ExtractAddress(const char *line, struct Person *pe);
 char *   FileToBuffer(const char *file);

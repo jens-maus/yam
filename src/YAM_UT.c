@@ -138,6 +138,12 @@ struct PathNode
 };
 #endif
 
+struct LaunchCommandData
+{
+  const char *cmd;
+  enum OutputDefType outdef;
+};
+
 /// FreePathList
 // free a previously copied list of PathNodes
 #if !defined(__amigaos4__)
@@ -216,7 +222,7 @@ static struct PathNode *CopyPathList(const struct PathNode *src)
 // search path) usable for NP_Path of SystemTagList().
 static BPTR ObtainSearchPath(void)
 {
-  BPTR path = 0;
+  BPTR path = ZERO;
 
   ENTER();
 
@@ -229,7 +235,7 @@ static BPTR ObtainSearchPath(void)
   // if we couldn't obtain a duplicate copy of the workbench search
   // path here it is very likely that we are running on a system with
   // workbench.library < 44 or on MorphOS with an old workbench.lib.
-  if(path == 0)
+  if(path == ZERO)
   {
     struct Task *me = FindTask(NULL);
 
@@ -255,18 +261,18 @@ static void ReleaseSearchPath(BPTR path)
 {
   ENTER();
 
-  if(path != 0)
+  if(path != ZERO)
   {
     #if !defined(__MORPHOS__)
     if(WorkbenchBase != NULL && LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
     {
       if(WorkbenchControl(NULL, WBCTRLA_FreeSearchPath, path, TAG_DONE))
-        path = 0;
+        path = ZERO;
     }
     #endif
 
     #if !defined(__amigaos4__)
-    if(path != 0)
+    if(path != ZERO)
       FreePathList(BADDR(path));
     #endif
   }
@@ -1398,7 +1404,9 @@ void AddZombieFile(const char *fileName)
 
   ENTER();
 
-  if((zombie = malloc(sizeof(*zombie))) != NULL)
+  if((zombie = (struct ZombieFile *)AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*zombie),
+                                                                  ASONODE_Min, TRUE,
+                                                                  TAG_DONE)) != NULL)
   {
     if((zombie->fileName = strdup(fileName)) != NULL)
     {
@@ -1445,7 +1453,7 @@ BOOL DeleteZombieFiles(BOOL force)
       // remove and free this node
       Remove((struct Node *)zombie);
       free(zombie->fileName);
-      free(zombie);
+      FreeSysObject(ASOT_NODE, zombie);
     }
   }
 
@@ -4364,11 +4372,11 @@ int PGPCommand(const char *progname, const char *options, int flags)
   strlcat(command, " >" PGPLOGFILE " ", sizeof(command));
   strlcat(command, options, sizeof(command));
 
-  if((fhi = Open("NIL:", MODE_OLDFILE)) != (BPTR)NULL)
+  if((fhi = Open("NIL:", MODE_OLDFILE)) != ZERO)
   {
     BPTR fho;
 
-    if((fho = Open("NIL:", MODE_NEWFILE)) != (BPTR)NULL)
+    if((fho = Open("NIL:", MODE_NEWFILE)) != ZERO)
     {
 
       BusyText(tr(MSG_BusyPGPrunning), "");
@@ -5113,16 +5121,16 @@ char *GetRealPath(const char *path)
 }
 
 ///
-/// ExecuteCommand
-//  Executes a DOS command
-BOOL ExecuteCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
+/// SyncLaunchCommand
+// synchronously launch a DOS command
+static BOOL SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
 {
   BOOL result = TRUE;
   BPTR path;
-  BPTR in = 0;
-  BPTR out = 0;
+  BPTR in = ZERO;
+  BPTR out = ZERO;
   #if defined(__amigaos4__)
-  BPTR err = 0;
+  BPTR err = ZERO;
   #endif
   LONG success;
 
@@ -5131,15 +5139,13 @@ BOOL ExecuteCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
 
   switch(outdef)
   {
-    case OUT_DOS:
+    case OUT_STDOUT:
     {
       in = Input();
       out = Output();
       #if defined(__amigaos4__)
       err = ErrorOutput();
       #endif
-
-      asynch = FALSE;
     }
     break;
 
@@ -5147,6 +5153,18 @@ BOOL ExecuteCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
     {
       in = Open("NIL:", MODE_OLDFILE);
       out = Open("NIL:", MODE_NEWFILE);
+    }
+    break;
+
+    case OUT_CONSOLE:
+    {
+      #if defined(__amigaos4__)
+      // use a window with scrollback buffer on AmigaOS4.1+
+      in = Open("CON:20/20/600/100/YAM thread/AUTO/CLOSE/WAIT/INACTIVE/HISTORY", MODE_NEWFILE);
+      #else
+      in = Open("CON:20/20/600/100/YAM thread/AUTO/CLOSE/WAIT/INACTIVE", MODE_NEWFILE);
+      #endif
+      out = ZERO;
     }
     break;
   }
@@ -5161,11 +5179,11 @@ BOOL ExecuteCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
                                 #if defined(__amigaos4__)
                                 SYS_Error,    err,
                                 #endif
+                                SYS_Asynch,   FALSE,
                                 NP_Name,      "YAM command process",
                                 NP_Path,      path,
                                 NP_StackSize, C->StackSize,
                                 NP_WindowPtr, -1,           // show no requesters at all
-                                SYS_Asynch,   asynch,
                                 TAG_DONE)) != 0)
   {
     // an error occurred as SystemTags should always
@@ -5176,21 +5194,83 @@ BOOL ExecuteCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
     // it itself, but only if the result is equal to -1. All other values
     // stem from the launched command itself and SystemTags() already freed
     // everything.
-    if(success == -1 && path != 0)
+    if(success == -1)
       ReleaseSearchPath(path);
 
     result = FALSE;
   }
 
-  if(asynch == FALSE && outdef != OUT_DOS)
-  {
+  if(out != ZERO)
     Close(out);
+  if(in != ZERO)
     Close(in);
-  }
+
+  D(DBF_UTIL, "execution of '%s' finished, IoErr()=%ld", cmd, IoErr());
 
   RETURN(result);
   return result;
 }
+
+///
+/// LaunchCommandThread
+// synchronously execute a command in a separate thread
+static int LaunchCommandThread(struct LaunchCommandData *data)
+{
+  char *cmd;
+  enum OutputDefType outdef;
+
+  ENTER();
+
+  outdef = data->outdef;
+
+  // copy all necessary data, we must not access the parent task's
+  // data after the "can continue" signal, as the parent task might
+  // have placed them on the stack which is then no longer valid.
+  if((cmd = AllocVec(strlen(data->cmd)+1, MEMF_SHARED)) != NULL)
+  {
+    strcpy(cmd, data->cmd);
+
+    // signal the parent task that we obtained all necessary data and
+    // that it may continue to run
+    if(ParentThreadCanContinue() == TRUE)
+    {
+      // now launch the command synchronously within this new thread
+      SyncLaunchCommand(cmd, outdef);
+    }
+
+    FreeVec(cmd);
+  }
+
+  LEAVE();
+  return 0;
+}
+
+///
+/// LaunchCommand
+//  Executes a DOS command in a separate thread
+BOOL LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
+{
+  BOOL result;
+
+  ENTER();
+
+  if(asynch == TRUE)
+  {
+    struct LaunchCommandData data;
+
+    data.cmd = cmd;
+    data.outdef = outdef;
+
+    // start the new thread
+    result = (AddThread("YAM thread", THREAD_FUNCTION(LaunchCommandThread), &data) != NULL);
+  }
+  else
+    result = SyncLaunchCommand(cmd, outdef);
+
+  RETURN(result);
+  return result;
+}
+
 ///
 /// GetSimpleID
 //  Returns a unique number
@@ -5200,6 +5280,7 @@ int GetSimpleID(void)
 
   return ++num;
 }
+
 ///
 /// GotoURLPossible
 //  Check whether there is some kind of openurl.library or OS4.1's URL: device available
@@ -5276,7 +5357,7 @@ BOOL GotoURL(const char *url, BOOL newWindow)
       oldWinPtr = SetProcWindow((APTR)-1);
 
       D(DBF_UTIL, "trying URL: device to open URL '%s'", url);
-      if((urlFH = Open(newurl, MODE_OLDFILE)) != (BPTR)NULL)
+      if((urlFH = Open(newurl, MODE_OLDFILE)) != ZERO)
       {
         Close(urlFH);
         wentToURL = TRUE;

@@ -3795,7 +3795,7 @@ static void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
       if(DoFilterSearch(filter, mtn->mail) == TRUE)
       {
         if(hasExecuteAction(filter) && *filter->executeCmd)
-           ExecuteCommand(filter->executeCmd, FALSE, OUT_DOS);
+           LaunchCommand(filter->executeCmd, FALSE, OUT_STDOUT);
 
         if(hasPlaySoundAction(filter) && *filter->playSound)
            PlaySound(filter->playSound);
@@ -7216,7 +7216,7 @@ static void TR_NewMailAlert(void)
     #endif // __amigaos4__
 
     if(hasCommandNotify(C->NotifyType))
-      ExecuteCommand(C->NotifyCommand, FALSE, OUT_DOS);
+      LaunchCommand(C->NotifyCommand, FALSE, OUT_STDOUT);
 
     if(hasSoundNotify(C->NotifyType))
       PlaySound(C->NotifySound);

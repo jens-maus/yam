@@ -221,10 +221,10 @@ void FreeRexxCommand(struct RexxMsg *rexxmessage)
   if(rexxmessage->rm_Result1 == 0 && rexxmessage->rm_Result2 != 0)
     DeleteArgstring((APTR)rexxmessage->rm_Result2);
 
-  if(rexxmessage->rm_Stdin != (BPTR)NULL && rexxmessage->rm_Stdin != Input())
+  if(rexxmessage->rm_Stdin != ZERO && rexxmessage->rm_Stdin != Input())
     Close(rexxmessage->rm_Stdin);
 
-  if(rexxmessage->rm_Stdout != (BPTR)NULL && rexxmessage->rm_Stdout != rexxmessage->rm_Stdin && rexxmessage->rm_Stdout != Output())
+  if(rexxmessage->rm_Stdout != ZERO && rexxmessage->rm_Stdout != rexxmessage->rm_Stdin && rexxmessage->rm_Stdout != Output())
     Close(rexxmessage->rm_Stdout);
 
   DeleteArgstring((APTR)ARG0(rexxmessage));

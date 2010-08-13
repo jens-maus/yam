@@ -2536,7 +2536,7 @@ DECLARE(AddArchive)
           BPTR olddir = CurrentDir(filedir);
 
           // now we do the archive generation right here.
-          result = ExecuteCommand(command, FALSE, OUT_NIL);
+          result = LaunchCommand(command, FALSE, OUT_NIL);
 
           // make the old directory the new current one again
           CurrentDir(olddir);
@@ -3422,7 +3422,7 @@ DECLARE(LaunchEditor)
     }
 
     snprintf(buffer, sizeof(buffer), "%s \"%s\"", C->Editor, GetRealPath(wmData->filename));
-    ExecuteCommand(buffer, TRUE, OUT_NIL);
+    LaunchCommand(buffer, TRUE, OUT_NIL);
 
     // (re)start the file notification on the temporary write window
     // content file
