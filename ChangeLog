@@ -12,6 +12,16 @@ $URL$
 
 2010-08-13 Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: lots of changes to get the thread framework running. Clicking on an
+    attachment now launches a new thread which then will run the associated
+    command.
+
+    WARNING: don't let commands launched by YAM in a separate thread run beyond
+    YAM's time of living!! Although you will be notified about still running
+    threads and have to choice to wait for the thread to terminate this is not
+    yet working as expected and will very probably crash your machine.
+    You have been warned!
+
   * YAM_MA.c: hitting the DEL key now takes both the mail list and and mail
     listview into account. This fixes the reported "unable to delete mail"
     issue.
