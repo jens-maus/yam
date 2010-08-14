@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: fixed a double removal of a node from a list (RemHead() first,
+    Remove() later) which might have caused a file to be closed twice.
+
 2010-08-14 Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: removed all unnecessary "if(X != NULL)" checks right before a free(X)

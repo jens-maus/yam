@@ -1426,14 +1426,15 @@ void AddZombieFile(const char *fileName)
 BOOL DeleteZombieFiles(BOOL force)
 {
   BOOL listCleared = TRUE;
-  struct Node *curNode;
+  struct Node *node;
 
   ENTER();
 
-  // save the pointer to the next zombie first, as we probably are going to Remove() this node later
-  while((curNode = RemHead((struct List *)&G->zombieFileList)) != NULL)
+  // always get the first node of the list, it will be Remove()'d later
+  // if the corresponding file could be closed.
+  while((node = GetHead((struct List *)&G->zombieFileList)) != NULL)
   {
-    struct ZombieFile *zombie = (struct ZombieFile *)curNode;
+    struct ZombieFile *zombie = (struct ZombieFile *)node;
 
     D(DBF_UTIL, "trying to delete zombie file '%s'", zombie->fileName);
 
@@ -1445,17 +1446,13 @@ BOOL DeleteZombieFiles(BOOL force)
 
       W(DBF_UTIL, "zombie file '%s' cannot be deleted, leaving in list", zombie->fileName);
 
-      // readd the zombie node or the next call to DeleteZombieFiles() will not
-      // bring up the same situation anymore.
-      AddHead((struct List *)&G->zombieFileList, (struct Node *)&zombie->node);
-
       // break out because we couldn't close a file
       break;
     }
     else
     {
       // remove and free this node
-      Remove((struct Node *)zombie);
+      Remove(node);
       free(zombie->fileName);
       FreeSysObject(ASOT_NODE, zombie);
     }
