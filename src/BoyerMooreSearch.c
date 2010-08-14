@@ -77,9 +77,7 @@ void BoyerMooreCleanup(struct BoyerMooreContext *bmc)
 
   if(bmc != NULL)
   {
-    if(bmc->pattern != NULL)
-      free(bmc->pattern);
-
+    free(bmc->pattern);
     free(bmc);
   }
 

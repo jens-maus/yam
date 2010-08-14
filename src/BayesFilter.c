@@ -474,11 +474,8 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
     }
   }
 
-  if(contentType != NULL)
-    free(contentType);
-
-  if(charSet != NULL)
-    free(charSet);
+  free(contentType);
+  free(charSet);
 
   LEAVE();
 }

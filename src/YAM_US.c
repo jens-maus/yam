@@ -215,8 +215,7 @@ static void US_LoadUsers(void)
 
     fclose(fh);
 
-    if(buffer != NULL)
-      free(buffer);
+    free(buffer);
 
     // if we found no user with manager privileges we give these privilege to the first user
     if(hasmanager == FALSE)

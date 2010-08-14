@@ -949,11 +949,8 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing %ld error messages...", G->ER_NumErr);
   for(i = 0; i < G->ER_NumErr; i++)
   {
-    if(G->ER_Message[i] != NULL)
-    {
-      free(G->ER_Message[i]);
-      G->ER_Message[i] = NULL;
-    }
+    free(G->ER_Message[i]);
+    G->ER_Message[i] = NULL;
   }
   G->ER_NumErr = 0;
 
@@ -998,13 +995,9 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing FileReqCache structures...");
   for(i = 0; i < ASL_MAX; i++)
   {
-    struct FileReqCache *frc;
-
-    if((frc = G->FileReqCache[i]) != NULL)
-    {
-      FreeFileReqCache(frc);
-      free(frc);
-    }
+    FreeFileReqCache(G->FileReqCache[i]);
+    free(G->FileReqCache[i]);
+    G->FileReqCache[i] = NULL;
   }
 
   FreeAppIcon();

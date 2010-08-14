@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-14 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: removed all unnecessary "if(X != NULL)" checks right before a free(X)
+    operation. free() is known to perform save even on NULL pointers. So the
+    additional check in our sources is really not required. In addition it
+    should be slightly faster and more readable under certain situations.
+
 2010-08-13 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest development changes.

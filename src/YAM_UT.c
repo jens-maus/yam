@@ -897,8 +897,7 @@ BOOL ConvertCRLF(char *in, char *out, BOOL to)
       success = TRUE;
       fclose(outfh);
 
-      if(buf != NULL)
-        free(buf);
+      free(buf);
     }
 
     fclose(infh);
@@ -1374,23 +1373,21 @@ void FreeFileReqCache(struct FileReqCache *frc)
 {
   ENTER();
 
-  if(frc->file != NULL)
+  if(frc != NULL)
+  {
     free(frc->file);
-
-  if(frc->drawer != NULL)
     free(frc->drawer);
-
-  if(frc->pattern != NULL)
     free(frc->pattern);
 
-  if(frc->numArgs > 0)
-  {
-    int j;
+    if(frc->numArgs > 0)
+    {
+      int j;
 
-    for(j=0; j < frc->numArgs; j++)
-      free(frc->argList[j]);
+      for(j=0; j < frc->numArgs; j++)
+        free(frc->argList[j]);
 
-    free(frc->argList);
+      free(frc->argList);
+    }
   }
 
   LEAVE();
@@ -5421,8 +5418,7 @@ char *SWSSearch(const char *str1, const char *str2)
   // to signal us to free the destination string
   if(str1 == NULL || str2 == NULL)
   {
-    if(Z != NULL)
-      free(Z);
+    free(Z);
     Z = NULL;
 
     RETURN(NULL);
@@ -5448,8 +5444,7 @@ char *SWSSearch(const char *str1, const char *str2)
   }
 
   // and allocate the result string separately
-  if(Z != NULL)
-    free(Z);
+  free(Z);
   if(!(Z = calloc(lz, sizeof(char)))) goto abort;
 
   // we copy str1&str2 into X and Y but have to copy a placeholder in front of them
@@ -5570,18 +5565,15 @@ char *SWSSearch(const char *str1, const char *str2)
 abort:
 
   // now we free our temporary buffers now
-  if(X != NULL)
-    free(X);
-  if(Y != NULL)
-    free(Y);
+  free(X);
+  free(Y);
 
   // lets free our help matrixes
   if(L != NULL)
   {
     for(i = 0; i < lx; i++)
     {
-      if(L[i] != NULL)
-        free(L[i]);
+      free(L[i]);
     }
     free(L);
   }
@@ -5589,8 +5581,7 @@ abort:
   {
     for(i = 0; i < lx; i++)
     {
-      if(Ind[i] != NULL)
-        free(Ind[i]);
+      free(Ind[i]);
     }
     free(Ind);
   }

@@ -137,8 +137,7 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
             memb = StrBufCat(memb, "\n");
           }
 
-          if(ab->Members != NULL)
-            free(ab->Members);
+          free(ab->Members);
           ab->Members = strdup(memb);
 
           FreeStrBuf(memb);

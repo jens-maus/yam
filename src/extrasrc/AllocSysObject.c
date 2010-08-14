@@ -576,7 +576,7 @@ void FreeSysObject(ULONG type, APTR object)
           RemPort(&sobject->port);
 
         // free the name memory, if it was duplicated
-        if(sobject->copy != FALSE && sobject->name != NULL)
+        if(sobject->copy != FALSE)
           free(sobject->name);
 
         // free the signal
@@ -612,7 +612,7 @@ void FreeSysObject(ULONG type, APTR object)
           RemSemaphore(&sobject->semaphore);
 
         // free the name memory, if it was duplicated
-        if(sobject->copy != FALSE && sobject->name != NULL)
+        if(sobject->copy != FALSE)
           free(sobject->name);
 
         FreeVec(sobject);

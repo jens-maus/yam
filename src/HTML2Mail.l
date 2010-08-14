@@ -294,9 +294,7 @@ char *html2mail(char *htmlTxt)
 
           case ht_HREF:
           {
-            if(lastHref != NULL)
-              free(lastHref);
-
+            free(lastHref);
             lastHref = strdup(yytext);
           }
           break;
@@ -475,8 +473,7 @@ char *html2mail(char *htmlTxt)
         }
       }
 
-      if(lastHref != NULL)
-        free(lastHref);
+      free(lastHref);
     }
 
     yy_delete_buffer(buffer);

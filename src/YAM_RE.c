@@ -631,8 +631,7 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
 
     fclose(fh);
 
-    if(buf != NULL)
-      free(buf);
+    free(buf);
 
     if(sigDone == TRUE || (decrFor != NULL && decrFail == FALSE))
       DeleteFile(PGPLOGFILE);
@@ -811,18 +810,14 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
   {
     case PT_CONTENTTYPE:
     {
-      if(rp->ContentType != NULL)
-        free(rp->ContentType);
-
+      free(rp->ContentType);
       rp->ContentType = s;
     }
     break;
 
     case PT_CONTENTDISPOSITION:
     {
-      if(rp->ContentDisposition != NULL)
-        free(rp->ContentDisposition);
-
+      free(rp->ContentDisposition);
       rp->ContentDisposition = s;
     }
     break;
@@ -894,26 +889,22 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
             }
             else if(strcmp(attribute, "boundary") == 0)
             {
-              if(rp->CParBndr != NULL)
-                free(rp->CParBndr);
+              free(rp->CParBndr);
               rp->CParBndr = value;
             }
             else if(strcmp(attribute, "protocol") == 0)
             {
-              if(rp->CParProt != NULL)
-                free(rp->CParProt);
+              free(rp->CParProt);
               rp->CParProt = value;
             }
             else if(strcmp(attribute, "report-type") == 0)
             {
-              if(rp->CParRType != NULL)
-                free(rp->CParRType);
+              free(rp->CParRType);
               rp->CParRType = value;
             }
             else if(strcmp(attribute, "charset") == 0)
             {
-              if(rp->CParCSet != NULL)
-                free(rp->CParCSet);
+              free(rp->CParCSet);
               rp->CParCSet = value;
             }
             else
@@ -956,11 +947,8 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
       {
         E(DBF_MIME, "couldn't extract a full parameter (%08lx/%08lx)", attribute, value);
 
-        if(attribute)
-          free(attribute);
-
-        if(value)
-          free(value);
+        free(attribute);
+        free(value);
       }
     }
   }
@@ -1276,8 +1264,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
     }
 
     // free the buffer allocated by getline()
-    if(buf != NULL)
-      free(buf);
+    free(buf);
   }
 
   RETURN(result);
@@ -1672,20 +1659,13 @@ static void RE_UndoPart(struct Part *rp)
   free(rp->ContentDisposition);
 
   // free all the CPar structue members
-  if(rp->CParName != NULL)
-    free(rp->CParName);
-  if(rp->CParFileName != NULL)
-    free(rp->CParFileName);
-  if(rp->CParBndr != NULL)
-    free(rp->CParBndr);
-  if(rp->CParProt != NULL)
-    free(rp->CParProt);
-  if(rp->CParDesc != NULL)
-    free(rp->CParDesc);
-  if(rp->CParRType != NULL)
-    free(rp->CParRType);
-  if(rp->CParCSet != NULL)
-    free(rp->CParCSet);
+  free(rp->CParName);
+  free(rp->CParFileName);
+  free(rp->CParBndr);
+  free(rp->CParProt);
+  free(rp->CParDesc);
+  free(rp->CParRType);
+  free(rp->CParCSet);
 
   // now we check whether the readMailData letterPartNum has to be decreased to
   // point to the correct letterPart number again
@@ -2095,8 +2075,7 @@ BOOL RE_DecodePart(struct Part *rp)
             break;
         }
 
-        if(buf != NULL)
-          free(buf);
+        free(buf);
 
         // we only go on if we are not in an ferror() condition
         // as we shouldn't have a EOF or real error here.
@@ -2409,8 +2388,7 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
             {
               setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
 
-              if(warnPart->ContentType)
-                free(warnPart->ContentType);
+              free(warnPart->ContentType);
 
               warnPart->ContentType = strdup("text/plain");
               SET_FLAG(warnPart->Flags, PFLAG_PRINTABLE);
@@ -2431,8 +2409,7 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
           // we have to put this error in place were the nonlocalized version is right now.
           if(CopyFile(warnPart->Filename, NULL, tf->Filename, NULL))
           {
-            if(warnPart->ContentType)
-              free(warnPart->ContentType);
+            free(warnPart->ContentType);
 
             warnPart->ContentType = strdup("text/plain");
             SET_FLAG(warnPart->Flags, PFLAG_PRINTABLE);
@@ -2578,8 +2555,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
       strlcpy(attachPart->Name, firstPart->Name, sizeof(attachPart->Name));
       strlcpy(attachPart->Description, firstPart->Description, sizeof(attachPart->Description));
 
-      if(attachPart->CParFileName)
-        free(attachPart->CParFileName);
+      free(attachPart->CParFileName);
 
       attachPart->CParFileName = firstPart->CParFileName ? strdup(firstPart->CParFileName) : NULL;
 
@@ -2679,8 +2655,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
         fclose(fh);
 
-        if(buf != NULL)
-          free(buf);
+        free(buf);
 
         cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
       }
@@ -2877,8 +2852,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   // prepare our part META data and fake the new part as being
                   // a application/octet-stream part as we don't know if it
                   // is some text or something else.
-                  if(uup->ContentType)
-                    free(uup->ContentType);
+                  free(uup->ContentType);
 
                   uup->ContentType = strdup("application/octet-stream");
                   strlcpy(uup->Description, tr(MSG_RE_UUencodedFile), sizeof(uup->Description));
@@ -3081,8 +3055,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                       cmsg = AppendToBuffer(cmsg, &wptr, &len, buf);
                     }
 
-                    if(buf != NULL)
-                      free(buf);
+                    free(buf);
                   }
 
                   CloseTempFile(tf);
@@ -3596,8 +3569,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
               fclose(fh);
 
-              if(buf != NULL)
-                free(buf);
+              free(buf);
             }
 
             FinishUnpack(fullfile);
@@ -4279,30 +4251,17 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
       FreeSysObject(ASOT_LIST, part->headerList);
     }
 
-    if(part->ContentType != NULL)
-      free(part->ContentType);
-
-    if(part->ContentDisposition != NULL)
-      free(part->ContentDisposition);
+    free(part->ContentType);
+    free(part->ContentDisposition);
 
     // free all the CPar structue members
-    if(part->CParName != NULL)
-      free(part->CParName);
-    if(part->CParFileName != NULL)
-      free(part->CParFileName);
-    if(part->CParBndr != NULL)
-      free(part->CParBndr);
-    if(part->CParProt != NULL)
-      free(part->CParProt);
-    if(part->CParDesc != NULL)
-      free(part->CParDesc);
-    if(part->CParRType != NULL)
-      free(part->CParRType);
-    if(part->CParCSet != NULL)
-      free(part->CParCSet);
-
-    // just a paranoia cleanup
-    memset(part, 0, sizeof(*part));
+    free(part->CParName);
+    free(part->CParFileName);
+    free(part->CParBndr);
+    free(part->CParProt);
+    free(part->CParDesc);
+    free(part->CParRType);
+    free(part->CParCSet);
 
     // finally free that part structure itself
     free(part);

@@ -625,11 +625,8 @@ OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
 
-  if(data->dropPath != NULL)
-  {
-    free(data->dropPath);
-    data->dropPath = NULL;
-  }
+  free(data->dropPath);
+  data->dropPath = NULL;
 
   return DoSuperMethodA(cl, obj, msg);
 }
@@ -997,11 +994,8 @@ OVERLOAD(MUIM_DeleteDragImage)
 
   ENTER();
 
-  if(data->dropPath != NULL)
-  {
-    free(data->dropPath);
-    data->dropPath = NULL;
-  }
+  free(data->dropPath);
+  data->dropPath = NULL;
 
   // The icon was not dropped on YAM's own write window, so now we check whether
   // YAM is running on the workbench screen or not, because otherwise we skip our
@@ -1109,8 +1103,7 @@ OVERLOAD(MUIM_DeleteDragImage)
                     }
                   }
 
-                  if(selMsg.drawer != NULL)
-                    free(selMsg.drawer);
+                  free(selMsg.drawer);
 
                   if(selMsg.finish == TRUE)
                     break;

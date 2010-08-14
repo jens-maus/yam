@@ -95,7 +95,7 @@ MakeStaticHook(DisplayHook, DisplayFunc);
 //  destructs the memory of the elements in a list
 HOOKPROTONHNO(DestructFunc, LONG, struct UpdateComponent *entry)
 {
-  if(entry)
+  if(entry != NULL)
   {
     if(entry->changeLogFile)
       CloseTempFile(entry->changeLogFile);
@@ -297,11 +297,8 @@ DECLARE(Clear)
   DoMethod(data->ComponentList, MUIM_NList_Clear);
   set(data->ComponentHistory, MUIA_NFloattext_Text, "");
 
-  if(data->ChangeLogText)
-  {
-    free(data->ChangeLogText);
-    data->ChangeLogText = NULL;
-  }
+  free(data->ChangeLogText);
+  data->ChangeLogText = NULL;
 
   RETURN(0);
   return 0;
@@ -330,8 +327,7 @@ DECLARE(Select) // ULONG num
     {
       if((comp->changeLogFile->FP = fopen(comp->changeLogFile->Filename, "r")) != NULL)
       {
-        if(data->ChangeLogText != NULL)
-          free(data->ChangeLogText);
+        free(data->ChangeLogText);
 
         if((data->ChangeLogText = malloc(size+1)) != NULL)
         {

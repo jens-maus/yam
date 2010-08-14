@@ -296,8 +296,8 @@ OVERLOAD(OM_DISPOSE)
     data->Matchwindow = NULL;
   }
 
-  if(data->CurrentRecipient != NULL)
-    free(data->CurrentRecipient);
+  free(data->CurrentRecipient);
+  data->CurrentRecipient = NULL;
 
   return DoSuperMethodA(cl, obj, msg);
 }
@@ -998,8 +998,10 @@ DECLARE(Resolve) // ULONG flags
 
       tmp = NULL;
     }
+
     free(contents);
-  } while(list_expansion == TRUE && max_list_nesting-- > 0);
+  } 
+  while(list_expansion == TRUE && max_list_nesting-- > 0);
 
   result = (res ? xget(obj, MUIA_String_Contents) : 0);
 
@@ -1078,11 +1080,8 @@ DECLARE(CurrentRecipient)
 
   ENTER();
 
-  if(data->CurrentRecipient != NULL)
-  {
-    free(data->CurrentRecipient);
-    data->CurrentRecipient = NULL;
-  }
+  free(data->CurrentRecipient);
+  data->CurrentRecipient = NULL;
 
   buf = (STRPTR)xget(obj, MUIA_String_Contents);
   pos = xget(obj, MUIA_String_BufferPos);

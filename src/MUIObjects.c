@@ -261,8 +261,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
 
     fclose(fp);
 
-    if(buf != NULL)
-      free(buf);
+    free(buf);
 
     if(DeleteFile(PGPLOGFILE) == 0)
       AddZombieFile(PGPLOGFILE);

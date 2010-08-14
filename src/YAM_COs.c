@@ -1482,8 +1482,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
     fclose(fh);
 
-    if(buf != NULL)
-      free(buf);
+    free(buf);
   }
 
   RETURN(success);

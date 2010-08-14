@@ -155,8 +155,7 @@ void ReleaseDirContext(APTR context)
     if(ctx->restoreOldCD == TRUE)
       CurrentDir(ctx->oldCD);
 
-    if(ctx->eaBuffer != NULL)
-      free(ctx->eaBuffer);
+    free(ctx->eaBuffer);
 
     if(ctx->eaControl != NULL)
       FreeDosObject(DOS_EXALLCONTROL, ctx->eaControl);

@@ -732,8 +732,8 @@ void CO_ClearConfig(struct Config *co)
   // free all config elements
   for(i = 0; i < MAXP3; i++)
   {
-    if(co->P3[i] != NULL)
-      free(co->P3[i]);
+    free(co->P3[i]);
+    co->P3[i] = NULL;
   }
 
   // we have to free the mimeTypeList
@@ -781,11 +781,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
     for(i = 0; i < MAXP3; i++)
     {
-      if(co->P3[i] != NULL)
-      {
-        free(co->P3[i]);
-        co->P3[i] = NULL;
-      }
+      free(co->P3[i]);
+      co->P3[i] = NULL;
     }
 
     co->SMTP_Server[0] = '\0';

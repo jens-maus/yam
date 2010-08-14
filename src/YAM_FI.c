@@ -537,8 +537,7 @@ static void FI_GenerateListPatterns(struct Search *search)
       }
     }
 
-    if(buf != NULL)
-      free(buf);
+    free(buf);
 
     fclose(fh);
   }

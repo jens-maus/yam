@@ -1430,8 +1430,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
                   // write out the boundary
                   fwrite(stopBoundary, stopBoundaryLen, 1, out);
 
-                  if(buf != NULL)
-                    free(buf);
+                  free(buf);
                 }
               }
               else
@@ -1506,8 +1505,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
                       fclose(in);
                       fprintf(out, "\n--%s", headerPart->CParBndr);
 
-                      if(buf != NULL)
-                        free(buf);
+                      free(buf);
                     }
                   }
 
@@ -3060,8 +3058,7 @@ BOOL MA_ImportMessages(const char *fname, BOOL quiet)
 
       fclose(fh);
 
-      if(buf != NULL)
-        free(buf);
+      free(buf);
     }
 
     SHOWVALUE(DBF_IMPORT, foundFormat);
@@ -3238,8 +3235,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
           fclose(oldfh);
           DeleteFile(oldfile);
 
-          if(buf != NULL)
-            free(buf);
+          free(buf);
         }
         fclose(newfh);
 

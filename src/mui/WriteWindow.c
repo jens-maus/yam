@@ -626,8 +626,7 @@ static BOOL CreateHashTable(char *source, char *hashfile, char *sep)
 
       fclose(out);
 
-      if(buf != NULL)
-        free(buf);
+      free(buf);
 
       result = TRUE;
     }
@@ -705,8 +704,7 @@ static void AddTagline(FILE *fh_mail)
               }
             }
 
-            if(buf != NULL)
-              free(buf);
+            free(buf);
           }
         }
 
@@ -826,8 +824,11 @@ HOOKPROTONHNO(DestructFunc, LONG, struct Attach *attach)
 {
   ENTER();
 
-  FinishUnpack(attach->FilePath);
-  free(attach);
+  if(attach != NULL)
+  {
+    FinishUnpack(attach->FilePath);
+    free(attach);
+  }
 
   RETURN(0);
   return 0;
@@ -2733,8 +2734,7 @@ DECLARE(ChangeSignature) // LONG signature
         tfout->FP = NULL;
 
         // free the buffer
-        if(buf != NULL)
-          free(buf);
+        free(buf);
 
         // put everything in the editor.
         FileToEditor(tfout->Filename, editor, xget(editor, MUIA_TextEditor_HasChanged),
@@ -3540,7 +3540,7 @@ DECLARE(EditorCmd) // enum TransformMode cmd
     break;
   }
 
-  if(text)
+  if(text != NULL)
   {
     if(msg->cmd == ED_OPEN)
       DoMethod(data->TE_EDIT, MUIM_TextEditor_ClearText);

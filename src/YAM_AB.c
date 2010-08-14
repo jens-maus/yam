@@ -844,6 +844,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
               members = StrBufCat(members, buffer);
               members = StrBufCat(members, "\n");
             }
+
             if((addr.Members = strdup(members)) != NULL)
             {
               FreeStrBuf(members);
@@ -917,8 +918,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
 
     fclose(fh);
 
-    if(buffer != NULL)
-      free(buffer);
+    free(buffer);
   }
   else
     ER_NewError(tr(MSG_ER_ADDRBOOKLOAD), fname);
@@ -1187,8 +1187,7 @@ static BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
 
     fclose(fh);
 
-    if(buffer != NULL)
-      free(buffer);
+    free(buffer);
   }
   else
      ER_NewError(tr(MSG_ER_ADDRBOOKIMPORT), fname);
@@ -1659,8 +1658,7 @@ static BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
         }
       }
 
-      if(buffer != NULL)
-        free(buffer);
+      free(buffer);
 
       // free the parser again
       XML_ParserFree(parser);
@@ -1969,8 +1967,7 @@ static BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, cha
 
     set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, FALSE);
 
-    if(buffer != NULL)
-      free(buffer);
+    free(buffer);
 
     fclose(fh);
   }
@@ -3009,8 +3006,7 @@ HOOKPROTONHNO(AB_LV_DesFunc, long, struct MUIP_NListtree_DestructMessage *msg)
 
     if(entry != NULL)
     {
-      if(entry->Members)
-        free(entry->Members);
+      free(entry->Members);
       free(entry);
     }
   }

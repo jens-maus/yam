@@ -176,8 +176,7 @@ static int DI_Load(void)
       set(G->DI->GUI.LV_ENTRIES, MUIA_List_Quiet, FALSE);
     }
 
-    if(buffer != NULL)
-      free(buffer);
+    free(buffer);
 
     fclose(fh);
     BusyEnd();
@@ -327,6 +326,9 @@ MakeStaticHook(DI_LV_DesFuncHook, DI_LV_DesFunc);
 static struct DI_ClassData *DI_New(void)
 {
    struct DI_ClassData *data = calloc(1, sizeof(struct DI_ClassData));
+
+   ENTER();
+
    if (data)
    {
       data->GUI.SL_EDIT = ScrollbarObject, End;
@@ -375,6 +377,7 @@ static struct DI_ClassData *DI_New(void)
             End,
          End,
       End;
+
       if (data->GUI.WI)
       {
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
@@ -395,11 +398,16 @@ static struct DI_ClassData *DI_New(void)
          DoMethod(data->GUI.LV_ENTRIES  ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook,&DI_PasteHook,0);
          DoMethod(data->GUI.LV_ENTRIES  ,MUIM_Notify,MUIA_List_Active         ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&DI_DisplayHook);
          DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook,&DI_CloseHook,0);
-         return data;
       }
-      free(data);
+      else
+      {
+        free(data);
+        data = NULL;
+      }
    }
-   return NULL;
+
+   RETURN(data);
+   return data;
 }
 ///
 

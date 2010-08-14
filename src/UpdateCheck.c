@@ -441,8 +441,7 @@ BOOL CheckForUpdates(const BOOL quiet)
               fclose(tf->FP);
               tf->FP = NULL;
 
-              if(buffer != NULL)
-                free(buffer);
+              free(buffer);
             }
             else
               ER_NewError(tr(MSG_ER_CantOpenTempfile), tf->Filename);
@@ -560,8 +559,7 @@ void LoadUpdateState(void)
 
     fclose(fh);
 
-    if(buf != NULL)
-      free(buf);
+    free(buf);
   }
 
   LEAVE();

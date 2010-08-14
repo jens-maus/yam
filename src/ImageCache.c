@@ -229,13 +229,11 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
           DisposeDTObject(node->dt_obj);
           node->dt_obj = NULL;
         }
-        if(node->filename != NULL)
-        {
-          free(node->filename);
-          node->filename = NULL;
-        }
-        // node->id will be freed by HashTableRawRemove()
 
+        free(node->filename);
+        node->filename = NULL;
+
+        // node->id will be freed by HashTableRawRemove()
         HashTableRawRemove(G->imageCacheHashTable, entry);
         node = NULL;
       }
@@ -276,11 +274,8 @@ static enum HashTableOperator DeleteImageCacheNode(UNUSED struct HashTable *tabl
 
   // node->id will be free()'ed by the hash table functions! We MUST NOT free it here,
   // because this item may be addressed further on while iterating through the list.
-  if(node->filename != NULL)
-  {
-    free(node->filename);
-    node->filename = NULL;
-  }
+  free(node->filename);
+  node->filename = NULL;
 
   if(node->pixelArray != NULL)
   {
@@ -544,11 +539,8 @@ void ReleaseImage(const char *id, BOOL dispose)
           node->dt_obj = NULL;
         }
 
-        if(node->filename != NULL)
-        {
-          free(node->filename);
-          node->filename = NULL;
-        }
+        free(node->filename);
+        node->filename = NULL;
 
         if(node->pixelArray != NULL)
         {

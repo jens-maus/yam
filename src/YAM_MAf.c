@@ -1310,8 +1310,7 @@ static BOOL MA_DetectUUE(FILE *fh)
     }
   }
 
-  if(buffer != NULL)
-    free(buffer);
+  free(buffer);
 
   RETURN(found);
   return found;
@@ -1747,8 +1746,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
       success = FALSE;
     }
 
-    if(buffer != NULL)
-      free(buffer);
+    free(buffer);
   }
 
   if(success == TRUE)

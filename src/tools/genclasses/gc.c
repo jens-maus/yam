@@ -402,33 +402,33 @@ static unsigned int gettagvalue(char *tag, int checkcol)
 void free_overload( struct overloaddef *od )
 {
   if (!od) return;
-  if (od->name) free(od->name);
+  free(od->name);
 }
 
 void free_declare( struct declaredef *dd )
 {
   if (!dd) return;
-  if (dd->name) free(dd->name);
-  if (dd->params) free(dd->params);
+  free(dd->name);
+  free(dd->params);
 }
 
 void free_exportblk( struct exportdef *ed )
 {
   if (!ed) return;
-  if (ed->exporttext) free(ed->exporttext);
+  free(ed->exporttext);
 }
 
 void free_attr( struct attrdef *ad )
 {
   if (!ad) return;
-  if (ad->name) free(ad->name);
+  free(ad->name);
 }
 
 void free_classdef( struct classdef *cd )
 {
   struct node *n;
   if (!cd) return;
-  if (cd->classdata) free(cd->classdata);
+  free(cd->classdata);
 
   while((n = list_remhead(&cd->overloadlist)))
   {

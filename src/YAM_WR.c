@@ -846,8 +846,7 @@ static BOOL WR_SaveDec(FILE *fh, const struct Compose *comp)
       fclose(oldfh);
       result = TRUE;
 
-      if(buf != NULL)
-        free(buf);
+      free(buf);
     }
 
     // if we temporary unpacked the file we delete it now

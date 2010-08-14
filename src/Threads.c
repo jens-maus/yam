@@ -614,7 +614,7 @@ static void HandleThreadMessage(struct ThreadMessage *tmsg)
     {
       D(DBF_THREAD, "freeing message at 0x%08lx", tmsg);
 
-      if(tmsg->argcount >= 1 && tmsg->arg[0] != NULL && tmsg->async == 2)
+      if(tmsg->argcount >= 1 && tmsg->async == 2)
         free(tmsg->arg[0]);
 
       FreeSysObject(ASOT_MESSAGE, tmsg);

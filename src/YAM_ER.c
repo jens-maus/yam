@@ -109,6 +109,7 @@ void ER_NewError(const char *error, ...)
       G->ER_NumErr = MAXERR;
 
       free(G->ER_Message[0]);
+      G->ER_Message[0] = NULL;
 
       for(i = 1; i < G->ER_NumErr; i++)
         G->ER_Message[i-1] = G->ER_Message[i];
@@ -177,11 +178,8 @@ HOOKPROTONHNO(ER_CloseFunc, void, int *arg)
 
     for(i = 0; i < G->ER_NumErr; i++)
     {
-      if(G->ER_Message[i] != NULL)
-      {
-        free(G->ER_Message[i]);
-        G->ER_Message[i] = NULL;
-      }
+      free(G->ER_Message[i]);
+      G->ER_Message[i] = NULL;
     }
     G->ER_NumErr = 0;
 

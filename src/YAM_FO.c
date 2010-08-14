@@ -468,8 +468,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
 
     fclose(fh);
 
-    if(buf != NULL)
-      free(buf);
+    free(buf);
   }
 
   RETURN(success);
@@ -999,8 +998,7 @@ BOOL FO_LoadTree(char *fname)
 
     fclose(fh);
 
-    if(buffer != NULL)
-      free(buffer);
+    free(buffer);
 
     success = TRUE;
   }
@@ -2163,8 +2161,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
       // Analyze the toAdress through the Smith&Waterman algorithm
       if(takePattern == TRUE && (result = SWSSearch(toPattern, mail->To.Address)) != NULL)
       {
-        if(res != NULL)
-          free(res);
+        free(res);
 
         if((res = strdup(result)) == NULL)
         {
@@ -2247,8 +2244,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   }
 
   // lets free all resources now
-  if(res != NULL)
-    free(res);
+  free(res);
 
   SWSSearch(NULL, NULL);
 

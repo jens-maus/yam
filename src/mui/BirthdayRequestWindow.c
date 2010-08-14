@@ -133,10 +133,10 @@ static BOOL CheckBirthdayCheckFile(const char *alias)
           }
         }
       }
+
       fclose(fh);
 
-      if(buf != NULL)
-        free(buf);
+      free(buf);
     }
   }
 
@@ -194,6 +194,7 @@ static void SaveBirthdayCheckFile(const char *alias)
           }
         }
       }
+
       free(buf);
     }
     else

@@ -538,12 +538,8 @@ static void FreeStemList(struct MinList *list)
 
   while((node = (struct StemNode *)RemHead((struct List *)list)) != NULL)
   {
-    if(node->name != NULL)
-      free(node->name);
-
-    if(node->value != NULL)
-      free(node->value);
-
+    free(node->name);
+    free(node->value);
     free(node);
   }
 

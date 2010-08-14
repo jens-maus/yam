@@ -122,8 +122,7 @@ void rx_requestfile(UNUSED struct RexxHost *host, struct RexxParams *params, enu
         FreeVecPooled(G->SharedMemPool, args);
       if(results != NULL)
       {
-        if(results->files != NULL)
-          free(results->files);
+        free(results->files);
         FreeVecPooled(G->SharedMemPool, results);
       }
     }

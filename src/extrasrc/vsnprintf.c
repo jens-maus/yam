@@ -120,7 +120,7 @@
 
 /* free memory if the pointer is valid and zero the pointer */
 #ifndef SAFE_FREE
-#define SAFE_FREE(x) do { if((x) != NULL) {free((x)); (x)=NULL;} } while(0)
+#define SAFE_FREE(x) do { free((x)); (x)=NULL; } while(0)
 #endif
 
 #ifndef VA_COPY

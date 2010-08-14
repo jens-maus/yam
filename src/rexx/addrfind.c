@@ -95,8 +95,7 @@ void rx_addrfind(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         FreeVecPooled(G->SharedMemPool, args);
       if(results != NULL)
       {
-        if(results->alias != NULL)
-          free(results->alias);
+        free(results->alias);
         FreeVecPooled(G->SharedMemPool, results);
       }
     }

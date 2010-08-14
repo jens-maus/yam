@@ -110,8 +110,7 @@ void rx_getselected(UNUSED struct RexxHost *host, struct RexxParams *params, enu
         FreeVecPooled(G->SharedMemPool, args);
       if(results != NULL)
       {
-        if(results->num)
-          free(results->num);
+        free(results->num);
         FreeVecPooled(G->SharedMemPool, results);
       }
     }

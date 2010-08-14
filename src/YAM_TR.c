@@ -556,7 +556,7 @@ static BOOL TR_StartTLS(void)
 
           D(DBF_NET, "issuer:  %s", x509buf);
 
-          if(x509buf)     free(x509buf);
+          free(x509buf);
           if(server_cert) X509_free(server_cert);
         }
         #endif
@@ -4813,12 +4813,10 @@ void TR_Cleanup(void)
     struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
     // free the mail pointer
-    if(mtn->mail != NULL)
-      free(mtn->mail);
+    free(mtn->mail);
 
     // free the UIDL
-    if(mtn->UIDL != NULL)
-      free(mtn->UIDL);
+    free(mtn->UIDL);
 
     // free the node itself
     free(mtn);
@@ -4916,8 +4914,7 @@ static BOOL InitUIDLhash(void)
 
       fclose(fh);
 
-      if(uidl != NULL)
-        free(uidl);
+      free(uidl);
 
       // start with a clean and and so far unmodified hash table
       G->TR->UIDLhashIsDirty = FALSE;
@@ -5423,8 +5420,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
             // close file pointer
             fclose(mfh);
 
-            if(buf != NULL)
-              free(buf);
+            free(buf);
 
             // put the transferStat to 100%
             TR_TransStat_Update(&ts, TS_SETMAX, tr(MSG_TR_Exporting));
@@ -5697,8 +5693,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
   else if(buf != NULL)
     ER_NewError(tr(MSG_ER_CantOpenFile), mf);
 
-  if(buf != NULL)
-    free(buf);
+  free(buf);
 
   RETURN(result);
   return result;
@@ -6602,8 +6597,7 @@ BOOL TR_GetMessageList_IMPORT(void)
 
           fclose(ifh);
 
-          if(buffer != NULL)
-            free(buffer);
+          free(buffer);
         }
         else
           E(DBF_IMPORT, "Error on trying to open file '%s'", G->TR->ImportFile);
@@ -6827,8 +6821,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               fclose(ofh);
               ofh = NULL;
 
-              if(buffer != NULL)
-                free(buffer);
+              free(buffer);
 
               // after writing out the mail to a
               // new mail file we go and add it to the folder

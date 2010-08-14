@@ -100,8 +100,7 @@ void NewFreeArgs(struct NewRDArgs *rdargs)
 
   if(rdargs->RDArgs)
   {
-    if(rdargs->RDArgs->RDA_Source.CS_Buffer != NULL)
-      free((void*)rdargs->RDArgs->RDA_Source.CS_Buffer);
+    free((void*)rdargs->RDArgs->RDA_Source.CS_Buffer);
 
     D(DBF_STARTUP, "FreeDosObject(DOS_RDARGS, rdargs->RDArgs)");
     FreeDosObject(DOS_RDARGS, rdargs->RDArgs);

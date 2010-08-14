@@ -102,14 +102,10 @@ void rx_readinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         FreeVecPooled(G->SharedMemPool, args);
       if(results != NULL)
       {
-        if(results->filename != NULL)
-          free(results->filename);
-        if(results->filetype != NULL)
-          free(results->filetype);
-        if(results->filesize != NULL)
-          free(results->filesize);
-        if(results->tempfile != NULL)
-          free(results->tempfile);
+        free(results->filename);
+        free(results->filetype);
+        free(results->filesize);
+        free(results->tempfile);
         FreeVecPooled(G->SharedMemPool, results);
       }
     }

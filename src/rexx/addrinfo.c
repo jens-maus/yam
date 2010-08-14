@@ -152,10 +152,8 @@ void rx_addrinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         FreeVecPooled(G->SharedMemPool, results);
       if(optional != NULL)
       {
-        if(optional->members != NULL)
-          free(optional->members);
-        if(optional->memberptr != NULL)
-          free(optional->memberptr);
+        free(optional->members);
+        free(optional->memberptr);
         FreeVecPooled(G->SharedMemPool, optional);
       }
     }

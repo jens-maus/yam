@@ -166,11 +166,8 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
     }
   }
 
-  if(title != NULL)
-    free(title);
-
-  if(gadgets != NULL)
-    free(gadgets);
+  free(title);
+  free(gadgets);
 
   RETURN(result);
   return result;

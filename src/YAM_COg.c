@@ -729,8 +729,7 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
 
         fclose(fh);
 
-        if(buf != NULL)
-          free(buf);
+        free(buf);
 
         set(lv, MUIA_NList_Quiet, FALSE);
         DoMethod(lv, MUIM_NList_Redraw, MUIV_NList_Redraw_All);

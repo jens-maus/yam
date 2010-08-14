@@ -448,17 +448,11 @@ OVERLOAD(OM_DISPOSE)
 
   ENTER();
 
-  if(data->id != NULL)
-    free(data->id);
-
-  if(data->filename != NULL)
-    free(data->filename);
-
-  if(data->label != NULL)
-    free(data->label);
+  free(data->id);
+  free(data->filename);
+  free(data->label);
 
   // everything else has been freed during MUIM_Cleanup already
-
   result = DoSuperMethodA(cl, obj, msg);
 
   RETURN(result);
@@ -599,11 +593,8 @@ OVERLOAD(OM_SET)
 
         Image_Unload(data);
 
-        if(data->filename != NULL)
-        {
-          free(data->filename);
-          data->filename = NULL;
-        }
+        free(data->filename);
+        data->filename = NULL;
 
         if(newFilename != NULL)
         {
