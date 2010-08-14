@@ -12,6 +12,8 @@ $URL$
 
 2010-08-14 Jens Langner <Jens.Langner@light-speed.de>
 
+  * extrasrc/NewReadArgs.c: replaced all oldstyle CopyMem() uses by proper
+    overflow safe uses of string functions.
   * extrasrc/NewReadArgs.c,h: unified the "public" and "private" NewRDArgs
     data structure as we are utilizing it anyway completely. In addition, the
     data alignment enforcement has been removed. All together this fixes #178

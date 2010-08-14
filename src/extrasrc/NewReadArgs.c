@@ -248,8 +248,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
               if((Args[FArgNum] = dst = AllocVecPooled(pool, len)))
               {
-                CopyMem(buf, (dst+1), len-2L);
-                *dst = dst[len-1] = '"';
+                snprintf(dst, len, "\"%s\"", buf);
 
                 ArgLen[FArgNum] = len;
               }
@@ -295,7 +294,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                 STRPTR src = *tarray;
                 LONG i;
 
-                D(DBF_STARTUP, "tt: %s", *tarray);
+                D(DBF_STARTUP, "tooltype: '%s'", *tarray);
 
                 /*- valid arg ? -*/
                 if((i = IsArg(ptr, src)) > -1)
@@ -329,7 +328,8 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                   }
                   else
                   {
-                    while(*src && *src++ != '=' );
+                    while(*src && *src++ != '=' )
+                      ;
 
                     len = strlen( src ) + 1 + ArgLen[i];
                     if( (dst = AllocVecPooled(pool, len+2)) )
@@ -337,7 +337,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                       BOOL quotes = FALSE;
                       UBYTE c;
 
-                      CopyMem( Args[i], dst, len );
+                      memcpy(dst, Args[i], len);
                       Args[i] = dst;
                       dst += ArgLen[i];
                       *dst++ = ' ';
@@ -386,21 +386,26 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       for(num = FileArgs = 0; FileArgs < MaxArgs; FileArgs++)
         num += ArgLen[FileArgs];
 
-      if(num)
+      if(num > 0)
       {
         nrdargs->RDArgs->RDA_Source.CS_Length = (num+=MaxArgs);
-        nrdargs->RDArgs->RDA_Source.CS_Buffer = malloc(num+1);
+        nrdargs->RDArgs->RDA_Source.CS_Buffer = calloc(1, num+1);
         ptr = (char *)nrdargs->RDArgs->RDA_Source.CS_Buffer;
 
-        if(ptr)
+        if(ptr != NULL)
         {
+          int args=0;
+
           for(FileArgs = 0; FileArgs < MaxArgs; FileArgs++)
           {
-            if((num = ArgLen[FileArgs]))
+            if(Args[FileArgs] != NULL && ArgLen[FileArgs] > 0)
             {
-              CopyMem(Args[FileArgs], ptr, num);
-              ptr += num;
-              *ptr++ = ' ';
+              if(args > 0)
+                strlcat(ptr, " ", num+1);
+
+              strlcat(ptr, Args[FileArgs], num+1);
+
+              args++;
             }
           }
         }
@@ -410,20 +415,17 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
           return(ERROR_NO_FREE_STORE);
         }
 
-        *(ptr-1) = '\n';
-        *ptr = '\0'; // not really needed
-
-        D(DBF_STARTUP, "CS_Buffer: %s", nrdargs->RDArgs->RDA_Source.CS_Buffer);
+        // make sure to terminal the string correctly
+        strlcat(ptr, "\n", num+1);
       }
       else
       {
         nrdargs->RDArgs->RDA_Source.CS_Length = 1;
-        nrdargs->RDArgs->RDA_Source.CS_Buffer = malloc(1);
-        ptr = (char *)nrdargs->RDArgs->RDA_Source.CS_Buffer;
-
-        if(ptr)
-          *ptr = '\n';
+        nrdargs->RDArgs->RDA_Source.CS_Buffer = malloc(2);
+        strlcpy((char *)nrdargs->RDArgs->RDA_Source.CS_Buffer, "\n", 2);
       }
+
+      D(DBF_STARTUP, "CS_Buffer[%d]: '%s'", num, nrdargs->RDArgs->RDA_Source.CS_Buffer);
     }
 
     /*- call ReadArgs() -*/
