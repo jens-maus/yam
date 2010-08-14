@@ -40,23 +40,29 @@
 #include <workbench/startup.h>
 #endif
 
-#include "amiga-align.h"
-
 struct NewRDArgs
 {
-	// you MUST initialize these fields 
-	// before calling NewReadArgs() !!!
-	STRPTR Template;        // ReadArgs-like template
-	STRPTR ExtHelp;         // ExtHelp string or NULL, shell ONLY
-	STRPTR Window;          // WB window descriptor, eg. "CON:////Test"
-	IPTR   *Parameters;	    // array to store parsed parameters
-	LONG   FileParameter;	  // -1 means none, 0 means all
-	LONG   PrgToolTypesOnly;
-
-	// private, keep off!
-	ULONG	reserved[6];
+  // you MUST initialize these fields 
+  // before calling NewReadArgs() !!!
+  STRPTR Template;        // ReadArgs-like template
+  STRPTR ExtHelp;         // ExtHelp string or NULL, shell ONLY
+  STRPTR Window;          // WB window descriptor, eg. "CON:////Test"
+  IPTR   *Parameters;     // array to store parsed parameters
+  LONG   FileParameter;   // -1 means none, 0 means all
+  LONG   PrgToolTypesOnly;
+  
+  // private data section
+  struct RDArgs *RDArgs;    // RDArgs we give to ReadArgs()
+  struct RDArgs *FreeArgs;  // RDArgs we get from ReadArgs()
+  STRPTR *Args;
+  ULONG MaxArgs;
+  STRPTR ToolWindow;
+  
+  APTR Pool;
+  
+  BPTR WinFH;     // i/o window stream
+  BPTR OldInput;  // old i/o streams
+  BPTR OldOutput;
 };
-
-#include "default-align.h"
 
 #endif /* NEWREADARGS_H */

@@ -12,6 +12,11 @@ $URL$
 
 2010-08-14 Jens Langner <Jens.Langner@light-speed.de>
 
+  * extrasrc/NewReadArgs.c,h: unified the "public" and "private" NewRDArgs
+    data structure as we are utilizing it anyway completely. In addition, the
+    data alignment enforcement has been removed. All together this fixes #178
+    where a Close() has been executed on an invalid file handle due to the
+    wrong structure alignment of NewRDArgs.
   * misc: removed all unnecessary "if(X != NULL)" checks right before a free(X)
     operation. free() is known to perform save even on NULL pointers. So the
     additional check in our sources is really not required. In addition it

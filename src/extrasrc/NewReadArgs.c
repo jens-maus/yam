@@ -48,6 +48,7 @@
 #include "SDI_compiler.h"
 
 #include "extrasrc.h"
+#include "extrasrc/NewReadArgs.h"
 
 #include "Debug.h"
 
@@ -56,33 +57,6 @@
 #ifndef MEMF_SHARED
 #define MEMF_SHARED MEMF_PUBLIC
 #endif
-
-/****************************************************************************/
-
-/*- NEWRDARGS STRUCTURE -*/
-struct NewRDArgs
-{
-  // initialize these fields before calling NewReadArgs() !!!
-  STRPTR Template;      // ReadArgs() template
-  STRPTR ExtHelp;       // ExtHelp string
-  STRPTR Window;        // workbench window -> eg. "CON:////Test"
-  IPTR *Parameters;     // where to store the data
-  LONG FileParameter;   // -1 = none, 0 = all
-  LONG PrgToolTypesOnly;
-
-// private data section
-  struct RDArgs *RDArgs;    // RDArgs we give to ReadArgs()
-  struct RDArgs *FreeArgs;  // RDArgs we get from ReadArgs()
-  STRPTR *Args;
-  ULONG MaxArgs;
-  STRPTR ToolWindow;
-
-  APTR Pool;
-
-  BPTR WinFH;     // i/o window stream
-  BPTR OldInput;  // old i/o streams
-  BPTR OldOutput;
-};
 
 /****************************************************************************/
 
@@ -98,9 +72,9 @@ void NewFreeArgs(struct NewRDArgs *rdargs)
   D(DBF_STARTUP, "FreeArgs(rdargs->FreeArgs)");
   FreeArgs(rdargs->FreeArgs);
 
-  if(rdargs->RDArgs)
+  if(rdargs->RDArgs != NULL)
   {
-    free((void*)rdargs->RDArgs->RDA_Source.CS_Buffer);
+    free((void *)rdargs->RDArgs->RDA_Source.CS_Buffer);
 
     D(DBF_STARTUP, "FreeDosObject(DOS_RDARGS, rdargs->RDArgs)");
     FreeDosObject(DOS_RDARGS, rdargs->RDArgs);
@@ -125,11 +99,13 @@ void NewFreeArgs(struct NewRDArgs *rdargs)
     rdargs->ToolWindow = NULL;
   }
 
-  if(rdargs->WinFH)
+  if(rdargs->WinFH != 0)
   {
     D(DBF_STARTUP, "SelectOutput( .. ) .. Close( ... )");
     SelectOutput(rdargs->OldOutput);
-    Close(SelectInput(rdargs->OldInput));
+    SelectInput(rdargs->OldInput);
+    Close(rdargs->WinFH);
+    rdargs->WinFH = 0;
   }
 
   if(rdargs->Pool != NULL)

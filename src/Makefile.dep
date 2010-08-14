@@ -101,7 +101,8 @@ $(OBJDIR)/Threads.o: Threads.c YAM.h include/xpk/xpk.h include/amiga-align.h \
  include/default-align.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
  YAM_utilities.h include/SDI_compiler.h YAM_folderconfig.h BayesFilter.h \
  HashTable.h Rexx.h Themes.h Timer.h Threads.h extrasrc.h \
- include/SDI_stdarg.h include/SDI_compiler.h Debug.h
+ include/SDI_stdarg.h include/SDI_compiler.h Locale.h Requesters.h \
+ Debug.h
 $(OBJDIR)/Timer.o: Timer.c include/mui/NList_mcc.h include/libraries/mui.h \
  include/mui/TextEditor_mcc.h YAM.h include/xpk/xpk.h \
  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -1678,7 +1679,8 @@ $(OBJDIR)/$(EXTRADIR)/GetTail.o: extrasrc/GetTail.c extrasrc.h include/SDI_compi
 $(OBJDIR)/$(EXTRADIR)/NewMinList.o: extrasrc/NewMinList.c extrasrc.h include/SDI_compiler.h \
  include/SDI_stdarg.h include/SDI_compiler.h
 $(OBJDIR)/$(EXTRADIR)/NewReadArgs.o: extrasrc/NewReadArgs.c include/SDI_compiler.h extrasrc.h \
- include/SDI_stdarg.h include/SDI_compiler.h Debug.h
+ include/SDI_stdarg.h include/SDI_compiler.h extrasrc/NewReadArgs.h \
+ Debug.h
 $(OBJDIR)/$(EXTRADIR)/SetProcWindow.o: extrasrc/SetProcWindow.c extrasrc.h \
  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
  Debug.h
@@ -1693,6 +1695,8 @@ $(OBJDIR)/$(EXTRADIR)/snprintf.o: extrasrc/snprintf.c include/SDI_compiler.h \
 $(OBJDIR)/$(EXTRADIR)/stcgfe.o: extrasrc/stcgfe.c extrasrc.h include/SDI_compiler.h \
  include/SDI_stdarg.h include/SDI_compiler.h
 $(OBJDIR)/$(EXTRADIR)/strdup.o: extrasrc/strdup.c extrasrc.h include/SDI_compiler.h \
+ include/SDI_stdarg.h include/SDI_compiler.h
+$(OBJDIR)/$(EXTRADIR)/stristr.o: extrasrc/stristr.c extrasrc.h include/SDI_compiler.h \
  include/SDI_stdarg.h include/SDI_compiler.h
 $(OBJDIR)/$(EXTRADIR)/strlcat.o: extrasrc/strlcat.c extrasrc.h include/SDI_compiler.h \
  include/SDI_stdarg.h include/SDI_compiler.h
