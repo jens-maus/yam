@@ -8610,6 +8610,6 @@ _Nochmals versuchen|_Ignorieren
 ;
 MSG_EXECUTE_COMMAND_FAILED
 Die Ausführung des Kommandos\n\
-'%s'
+'%s'\n\
 ist fehlgeschlagen. (Fehler %ld: %s)
 ;
