@@ -45,7 +45,6 @@
 #include "Rexx.h"            // struct RuleResult
 #include "Themes.h"          // struct Theme
 #include "Timer.h"           // struct Timers
-#include "Threads.h"         // struct Thread
 
 // forward declarations
 struct DiskObject;
@@ -70,6 +69,7 @@ struct codeset;
 struct codesetList;
 struct HashTable;
 struct NotifyRequest;
+struct Thread;
 
 /**************************************************************************/
 
@@ -171,7 +171,7 @@ struct Global
   struct Timers            timerData;
 
   // the data for our thread implementation
-  struct Thread            mainThread;     // the main thread
+  struct Thread          * mainThread;     // the main thread
   struct MinList           subThreadList;  // list of subthreads
 
   char                     ProgDir[SIZE_PATH];

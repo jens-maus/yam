@@ -25,7 +25,6 @@
 
 ***************************************************************************/
 
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -40,6 +39,7 @@
 #include "extrasrc.h"
 
 #include "SDI_hook.h"
+#include "SDI_stdarg.h"
 
 #include "YAM.h"
 #include "YAM_config.h"
@@ -49,6 +49,7 @@
 
 #include "Locale.h"
 #include "MUIObjects.h"
+#include "Threads.h"
 
 #include "Debug.h"
 
@@ -142,6 +143,28 @@ void ER_NewError(const char *error, ...)
 
   if(G->MA != NULL)
     set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
+
+  LEAVE();
+}
+
+///
+/// ER_NewErrorFromThread
+// Adds a new error message and displays it, to be called from subthreads
+void ER_NewErrorFromThread(const char *error, ...)
+{
+  VA_LIST args;
+  char buf[SIZE_LARGE];
+
+  ENTER();
+
+  // set up the error message ahead of calling ER_NewError(),
+  // as we only have a fixed number of arguments for the message
+  // the string will be freed by the thread framework
+  VA_START(args, error);
+  vsnprintf(buf, sizeof(buf), error, args);
+  VA_END(args);
+
+  CallParentThreadFunctionAsyncString(ER_NewError, 1, buf);
 
   LEAVE();
 }

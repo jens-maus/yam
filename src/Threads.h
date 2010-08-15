@@ -66,7 +66,11 @@ void HandleThreadEvent(ULONG mask);
 struct Thread *AddThread(const char *thread_name, int (*entry)(void *), void *eudata);
 BOOL StartAsDefaultThread(int (*entry)(void *), void *eudata);
 BOOL ParentThreadCanContinue(void);
+int VARARGS68K CallParentThreadFunctionSync(BOOL *success, void *function, int argcount, ...);
+BOOL VARARGS68K CallParentThreadFunctionAsync(void *function, int argcount, ...);
+BOOL VARARGS68K CallParentThreadFunctionAsyncString(void *function, int argcount, ...);
 
+#define MAIN_THREAD        G->mainThread
 #define THREAD_FUNCTION(x) ((int (*)(void*))x)
 
 #endif /* THREADS_H */

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: a failed command execution will now always be reported using the well
+    known error message window. This finally closes #11. The main thread is no
+    longer an embedded structure in the global data but allocated dynamically
+    like any other subthread. First, this is more consistent, and second, this
+    causes much less dependencies of the source code files.
+
 2010-08-15 Jens Langner <Jens.Langner@light-speed.de>
 
   * extrasrc/DoSuperNew.c, extrasrc.h: added an own AROS version of the

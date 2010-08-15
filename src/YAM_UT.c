@@ -104,6 +104,7 @@
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Requesters.h"
+#include "Threads.h"
 
 #include "Debug.h"
 
@@ -5124,7 +5125,7 @@ char *GetRealPath(const char *path)
 ///
 /// SyncLaunchCommand
 // synchronously launch a DOS command
-static BOOL SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
+static BOOL SyncLaunchCommand(const char *cmd, enum OutputDefType outdef, BOOL inThread)
 {
   BOOL result = TRUE;
   BPTR path;
@@ -5187,9 +5188,16 @@ static BOOL SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
                                 NP_WindowPtr, -1,           // show no requesters at all
                                 TAG_DONE)) != 0)
   {
+    LONG error = IoErr();
+    char fault[SIZE_LARGE];
+
     // an error occurred as SystemTags should always
     // return zero on success, no matter what.
-    E(DBF_UTIL, "execution of command '%s' failed, success=%ld, IoErr()=%ld", cmd, success, IoErr());
+    Fault(error, NULL, fault, sizeof(fault));
+    if(inThread == TRUE)
+      ER_NewErrorFromThread(tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, fault);
+    else
+      ER_NewError(tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, fault);
 
     // manually free our search path as SystemTags() shouldn't have freed
     // it itself, but only if the result is equal to -1. All other values
@@ -5206,7 +5214,7 @@ static BOOL SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
   if(in != ZERO)
     Close(in);
 
-  D(DBF_UTIL, "execution of '%s' finished, IoErr()=%ld", cmd, IoErr());
+  D(DBF_UTIL, "execution of '%s' finished", cmd);
 
   RETURN(result);
   return result;
@@ -5236,7 +5244,7 @@ static int LaunchCommandThread(struct LaunchCommandData *data)
     if(ParentThreadCanContinue() == TRUE)
     {
       // now launch the command synchronously within this new thread
-      SyncLaunchCommand(cmd, outdef);
+      SyncLaunchCommand(cmd, outdef, TRUE);
     }
 
     FreeVec(cmd);
@@ -5266,7 +5274,7 @@ BOOL LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
     result = (AddThread("YAM thread", THREAD_FUNCTION(LaunchCommandThread), &data) != NULL);
   }
   else
-    result = SyncLaunchCommand(cmd, outdef);
+    result = SyncLaunchCommand(cmd, outdef, FALSE);
 
   RETURN(result);
   return result;

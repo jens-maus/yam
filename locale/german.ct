@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.8 (10.08.2010)
+## version $VER: YAM.catalog 7.9 (15.08.2010)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8592,4 +8592,24 @@ YAM prüft automatisch auf verfügbare Updates.
 MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
 Bitte versuchen Sie es später noch einmal oder\n\
 aktivieren Sie die automatische Updateprüfung.
+;
+MSG_THREAD_EXIT_WARNING_TITLE
+YAM Warning
+;
+MSG_THREAD_EXIT_WARNING
+Beim Beenden von YAM wurden noch laufende Kindprozesse\n\
+gefunden. Bitte beenden Sie alle von YAM gestarteten und\n\
+noch laufenden Kindprozesse (z.B. MIME-Anzeiger, etc).
+\n\
+Wollen Sie nochmals versuchen YAM zu beenden oder wollen\n\
+Sie die noch laufenden Kindprozesse ignorieren (dies könnte\n\
+später zu einem Absturz führen)?
+;
+MSG_THREAD_EXIT_WARNING_BT
+_Nochmals versuchen|_Ignorieren
+;
+MSG_EXECUTE_COMMAND_FAILED
+Die Ausführung des Kommandos\n\
+'%s'
+ist fehlgeschlagen. (Fehler %ld: %s)
 ;
