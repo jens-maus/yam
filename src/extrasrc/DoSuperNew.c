@@ -37,8 +37,20 @@
 #include "extrasrc.h"
 
 #if defined(NEED_DOSUPERNEW)
+
 // DoSuperNew()
 // Calls parent NEW method within a subclass
+
+#if defined(__AROS__)
+Object *DoSuperNew(struct IClass *cl, Object *obj, Tag tag1, ...)
+{
+  AROS_SLOWSTACKTAGS_PRE(tag1);
+
+  retval = DoSuperNewTagList(cl, obj, NULL, AROS_SLOWSTACKTAGS_ARG(tag1));
+
+  AROS_SLOWSTACKTAGS_POST
+}
+#else
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
 {
   Object *rc;
@@ -50,6 +62,8 @@ Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
 
   return rc;
 }
+#endif
+
 #else
   #warning "NEED_DOSUPERNEW missing or compilation unnecessary"
 #endif

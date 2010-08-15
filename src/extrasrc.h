@@ -187,7 +187,11 @@ ULONG VARARGS68K xset(Object *obj, ...);
 #endif
 
 #if defined(NEED_DOSUPERNEW)
+#if defined(__AROS__)
+Object *DoSuperNew(struct IClass *cl, Object *obj, Tag tag1, ...) __stackparm;
+#else
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
+#endif
 #endif
 
 #if defined(NEED_SETPROCWINDOW)

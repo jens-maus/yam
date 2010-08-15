@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-15 Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc/DoSuperNew.c, extrasrc.h: added an own AROS version of the
+    DoSuperNew() function which itself uses the DoSuperNewTagList() function
+    to call the super-class OM_NEW method instead of using DoSuperMethod().
+
 2010-08-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: fixed a double removal of a node from a list (RemHead() first,
