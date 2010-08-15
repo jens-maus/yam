@@ -8599,7 +8599,7 @@ YAM Warning
 MSG_THREAD_EXIT_WARNING
 Beim Beenden von YAM wurden noch laufende Kindprozesse\n\
 gefunden. Bitte beenden Sie alle von YAM gestarteten und\n\
-noch laufenden Kindprozesse (z.B. MIME-Anzeiger, etc).
+noch laufenden Kindprozesse (z.B. MIME-Anzeiger, etc).\n\
 \n\
 Wollen Sie nochmals versuchen YAM zu beenden oder wollen\n\
 Sie die noch laufenden Kindprozesse ignorieren (dies könnte\n\
