@@ -11,6 +11,8 @@ $URL$
 
 2010-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/ReadMailGroup.c: the header list NList object and the surrounding
+    NListview object are treated as equal for the standard edit operations.
   * YAM_UT.c: the LaunchCommand() function now returns the return code of the
     launched command in the synchronous case and RETURN_OK/_FAIL for the asynch-
     ronous case to signal success/failure of the thread creation. This makes it

@@ -52,6 +52,7 @@ struct Data
   struct ReadMailData *readMailData;
 
   Object *headerGroup;
+  Object *headerListview;
   Object *headerList;
   Object *senderImageGroup;
   Object *senderImage;
@@ -473,6 +474,7 @@ OVERLOAD(OM_NEW)
   if((rmData = calloc(1, sizeof(struct ReadMailData))))
   {
     Object *headerGroup;
+    Object *headerListview;
     Object *headerList;
     Object *senderImageGroup;
     Object *senderImageSpace;
@@ -527,7 +529,7 @@ OVERLOAD(OM_NEW)
               GroupSpacing(0),
               MUIA_VertWeight, hgVertWeight,
               MUIA_ShowMe,     rmData->headerMode != HM_NOHEADER,
-              Child, NListviewObject,
+              Child, headerListview = NListviewObject,
                 MUIA_NListview_NList, headerList = NListObject,
                   InputListFrame,
                   MUIA_NList_DisplayHook,          &HeaderDisplayHook,
@@ -592,6 +594,7 @@ OVERLOAD(OM_NEW)
       data->scrolledAttachmentGroup = scrolledAttachmentGroup;
       data->attachmentGroup = attachmentGroup;
       data->headerGroup = headerGroup;
+      data->headerListview = headerListview;
       data->headerList = headerList;
       data->senderImageGroup = senderImageGroup;
       data->senderImageSpace = senderImageSpace;
@@ -679,7 +682,7 @@ OVERLOAD(OM_GET)
     {
       Object *actobj = (Object *)xget(_win(obj), MUIA_Window_ActiveObject);
 
-      if(actobj == data->headerList || actobj == data->mailTextObject)
+      if(actobj == data->headerListview || actobj == data->headerList || actobj == data->mailTextObject)
         *store = (ULONG)actobj;
       else
         *store = (ULONG)NULL;
@@ -1911,6 +1914,7 @@ DECLARE(DoEditAction) // enum EditAction editAction, ULONG flags
   // maintained objects or if the fallback option was
   // specified.
   if(curObj != data->mailTextObject &&
+     curObj != data->headerListview &&
      curObj != data->headerList &&
      hasEditActionFallbackFlag(msg->flags))
   {
@@ -1932,10 +1936,10 @@ DECLARE(DoEditAction) // enum EditAction editAction, ULONG flags
           DoMethod(curObj, MUIM_TextEditor_ARexxCmd, "COPY");
           result = TRUE;
         }
-        else if(curObj == data->headerList)
+        else if(curObj == data->headerListview || curObj == data->headerList)
         {
-          DoMethod(curObj, MUIM_NList_CopyToClip, MUIV_NList_CopyToClip_Selected, 0, NULL, NULL);
-          DoMethod(curObj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
+          DoMethod(data->headerList, MUIM_NList_CopyToClip, MUIV_NList_CopyToClip_Selected, 0, NULL, NULL);
+          DoMethod(data->headerList, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
           result = TRUE;
         }
       }
@@ -1948,9 +1952,9 @@ DECLARE(DoEditAction) // enum EditAction editAction, ULONG flags
           DoMethod(curObj, MUIM_TextEditor_ARexxCmd, "SELECTALL");
           result = TRUE;
         }
-        else if(curObj == data->headerList)
+        else if(curObj == data->headerListview || curObj == data->headerList)
         {
-          DoMethod(curObj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
+          DoMethod(data->headerList, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
           result = TRUE;
         }
       }
@@ -1963,9 +1967,9 @@ DECLARE(DoEditAction) // enum EditAction editAction, ULONG flags
           DoMethod(curObj, MUIM_TextEditor_ARexxCmd, "SELECTNONE");
           result = TRUE;
         }
-        else if(curObj == data->headerList)
+        else if(curObj == data->headerListview || curObj == data->headerList)
         {
-          DoMethod(curObj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
+          DoMethod(data->headerList, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
           result = TRUE;
         }
       }
