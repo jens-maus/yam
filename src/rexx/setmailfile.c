@@ -80,8 +80,7 @@ void rx_setmailfile(UNUSED struct RexxHost *host, struct RexxParams *params, enu
 
         if(stricmp(mail->MailFile, mfile) == 0)
         {
-          set(lv, MUIA_NList_Active, i);
-          DoMethod(lv, MUIM_NList_Jump, MUIV_NList_Jump_Active_Center);
+          DoMethod(lv, MUIM_NList_SetActive, i, MUIV_NList_SetActive_Jump_Center);
           break;
         }
       }

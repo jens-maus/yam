@@ -588,10 +588,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         // Now we set this entry as active and make it visible
         // in the center of our listview
         if(fo->LastActive != res.entry)
-        {
-          set(obj, MUIA_NList_Active, res.entry);
-          DoMethod(obj, MUIM_NList_Jump, MUIV_NList_Jump_Active_Center);
-        }
+          DoMethod(obj, MUIM_NList_SetActive, res.entry, MUIV_NList_SetActive_Jump_Center);
 
         if(isMultiPartMail(mail))
           hasattach = TRUE;

@@ -411,6 +411,9 @@ extern "C" {
 
 #define MUIV_NList_UseImage_All           (-1)
 
+#define MUIV_NList_SetActive_Entry         (1 << 0)
+#define MUIV_NList_SetActive_Jump_Center   (1 << 1)
+
 /* Structs */
 
 struct BitMapImage
@@ -533,6 +536,7 @@ struct MUI_NList_GetSelectInfo
 #define MUIM_NList_Display            0x9d5100A4UL /* GM */
 #define MUIM_NList_GoActive           0x9d5100A5UL /* GM */
 #define MUIM_NList_GoInactive         0x9d5100A6UL /* GM */
+#define MUIM_NList_SetActive          0x9d5100A7UL /* GM */
 
 /*
 for future extensions, skip 0x9d5100AF as method ID, this one is already used by NFloattext
@@ -583,6 +587,7 @@ struct MUIP_NList_Compare            { STACKED ULONG MethodID; STACKED APTR entr
 struct MUIP_NList_Display            { STACKED ULONG MethodID; STACKED APTR entry; STACKED LONG entry_pos; STACKED STRPTR *strings; STACKED STRPTR *preparses; };
 struct MUIP_NList_GoActive           { STACKED ULONG MethodID; };
 struct MUIP_NList_GoInactive         { STACKED ULONG MethodID; };
+struct MUIP_NList_SetActive          { STACKED ULONG MethodID; STACKED LONG pos; STACKED ULONG flags; };
 
 #define DISPLAY_ARRAY_MAX 64
 

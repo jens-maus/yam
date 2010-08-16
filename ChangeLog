@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-16 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: now that a new NList release is out we are finally using some new
+    features from it (MUIM_NList_SetActive). This of course required to 
+    increase the minimum required version of NList to 20.125.
+
 2010-08-16 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: make it more verbose and correct a few errors.
