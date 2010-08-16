@@ -928,38 +928,39 @@ BOOL IsThreadAborted(void)
 BOOL InitThreads(void)
 {
   BOOL result = FALSE;
+  struct Thread *thread;
 
   ENTER();
 
-  if((MAIN_THREAD = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*MAIN_THREAD),
-                                                  ASONODE_Min, TRUE,
-                                                  TAG_DONE)) != NULL)
+  if((thread = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*MAIN_THREAD),
+                                             ASONODE_Min, TRUE,
+                                             TAG_DONE)) != NULL)
   {
-    if((MAIN_THREAD->thread_port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+    if((thread->thread_port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
     {
-      MAIN_THREAD->process = (struct Process*)FindTask(NULL);
-      MAIN_THREAD->isMain = TRUE;
+      thread->process = (struct Process *)FindTask(NULL);
+      thread->isMain = TRUE;
 
       // init the thread own't timer stuff
-      InitThreadTimer(MAIN_THREAD);
+      InitThreadTimer(thread);
 
       // prepare the threads' function push list
-      NewMinList(&MAIN_THREAD->push_list);
+      NewMinList(&thread->push_list);
 
       // initialize the subThread list
       NewMinList(&G->subThreadList);
 
       // set the user data of the main thread
       Forbid();
-      CURRENT_THREAD = MAIN_THREAD;
+      thread->process->pr_Task.tc_UserData = thread;
       Permit();
 
+      MAIN_THREAD = thread;
       result = TRUE;
     }
     else
     {
-      FreeSysObject(ASOT_NODE, MAIN_THREAD);
-      MAIN_THREAD = NULL;
+      FreeSysObject(ASOT_NODE, thread);
     }
   }
 
