@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-16 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: make it more verbose and correct a few errors.
+
 2010-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT, YAM_ER.c: the error reporting code about a failed command execution

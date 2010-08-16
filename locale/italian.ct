@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.3 (13.08.2010)
+## version $VER: YAM.catalog 7.4 (16.08.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC
 ; $Id$
 ;
-; based on YAM.cd 4909 2010-08-13
+; based on YAM.cd 4924 2010-08-16
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1361,7 +1361,7 @@ Controlla la posta ogni
 ; Check for new mail every
 ;
 MSG_CO_Minutes
-minuti
+minuto(i)
 ; minutes
 ;
 MSG_CO_DownloadLarge
@@ -1801,7 +1801,7 @@ Preleva automaticamente la nuova posta in arrivo
 ; Download new mail
 ;
 MSG_CO_CheckDOB
-Verifica anniversari
+Verifica compleanni/anniversari
 ; Check birthdates
 ;
 MSG_CO_OnTermination
@@ -2089,8 +2089,8 @@ Lista degli account POP3
 ; accounts.
 ;
 MSG_HELP_CO_BT_PADD
-Aggiunge alla corrente lista un nuovo\n\
-account POP3.
+Aggiunge un nuovo account\n\
+POP3 nella corrente lista.
 ; Add a new POP3 account\n\
 ; to the list.
 ;
@@ -2120,7 +2120,7 @@ Connessione tramite autenticazione APOP.\n\
 Questa opzione consentirà di nascondere il\n\
 tuo nome utente e la tua password da occhi\n\
 indiscreti.\n\
-(Opzione non supportata da tutti i server POP3)
+(Non supportata da tutti i server POP3)
 ; Log in using APOP authentication\n\
 ; to keep your user name and password\n\
 ; away from prying eyes.\n\
@@ -2243,8 +2243,8 @@ ad un'altra persona.
 ; to another person.
 ;
 MSG_HELP_CO_ST_ABOUNCE
-Indirizzo(i) di posta della persona che\n\
-dovrebbe ottenere il messaggio respinto.
+Indirizzo(i) di posta della persona che dovrebbe\n\
+ottenere il messaggio respinto.
 ; E-mail address(es) that should\n\
 ; get the bounced messages.
 ;
@@ -2255,8 +2255,8 @@ ad un'altra persona.
 ; to another person.
 ;
 MSG_HELP_CO_ST_AFORWARD
-Indirizzo(i) di posta della persona che\n\
-dovrebbe ottenere il messaggio inoltrato.
+Indirizzo(i) di posta della persona che dovrebbe\n\
+ottenere il messaggio inoltrato.
 ; E-mail address(es) that should\n\
 ; get the forwarded messages.
 ;
@@ -5960,10 +5960,15 @@ possibile copiarlo per qualche altra ragione.
 ; MAILFILE, FOLDERNAME
 ;
 MSG_ER_ADDRBOOKLOAD
-Impossibile caricare la rubrica di YAM dal file '%s'.\n\
+Impossibile caricare la rubrica di YAM per il file:\n\
+'%s'.\n\
 \n\
 Il file potrebbe essere inesistente oppure non è\n\
-stato possibile aprirlo per qualche altra ragione.
+stato possibile aprirlo per qualche altra ragione.\n\
+\n\
+Assicurati di avere correttamente configurato le\n\
+impostazioni base per la creazione del file della\n\
+rubrica.
 ; Couldn't load address book from file '%s'.\n\
 ; \n\
 ; Either the file doesn't exist or it couldn't be opened for some
@@ -6375,7 +6380,7 @@ criptata.\n\
 Nel caso questi pulsanti risultino disabilitati ciò significa che il\n\
 supporto AmiSSL non è al momento disponibile.
 ; A TLSv1 or SSLv3 secure connection will be established between\n\
-; the SMTP server and YAM to send e-mail through an encrypted ; connection.\n\
+; the SMTP server and YAM to send e-mail through an encrypted connection.\n\
 ; If these radio buttons are ghosted, it means AmiSSL support is\n\
 ; currently not available.
 ;
@@ -6554,8 +6559,8 @@ Mostra _barra di ricerca nella finestra principale
 ;
 MSG_HELP_CO_CH_QUICKSEARCHBAR
 Attivando questa opzione sarà possibile aggiungere una barra\n\
-di ricerca rapida incorporata nella finestra principale in modo da\n\
-permettere una più veloce ricerca dei messaggi.
+di ricerca rapida incorporata nella finestra principale di YAM in\n\
+modo da permettere una più veloce ricerca dei messaggi.
 ; If checked, a search bar will appear\n\
 ; in the main window to let you find\n\
 ; certain e-mails more quickly.
@@ -7215,17 +7220,17 @@ Identifica automaticamente i set di caratteri cirillici (C_yrillic)
 ; Auto-detect c_yrillic charsets
 ;
 MSG_HELP_CO_DETECT_CYRILLIC
-Tentativo di utilizzo della funzione di auto-identificazione\n\
-della codesets.library atta ad identificare automaticamente\n\
-il set di caratteri cirillici corretto.\n\
-(Solo per utenti che usano il sistema cirillico)
+Prova ad utilizzare la funzione di auto-identificazione della\n\
+codesets.library atta ad identificare automaticamente il set\n\
+di caratteri cirillici corretto.\n\
+(Solo per gli utenti che usano il sistema cirillico)
 ; Try to use the auto-detect feature\n\
 ; of codesets.library to automatically\n\
 ; identify the correct cyrillic codeset\n\
 ; (only relevant for cyrillic users).
 ;
 MSG_WR_ErrorNotEnoughUndoMem
-Il testo cancellato era troppo largo per\n\
+Il testo cancellato era troppo largo per poter\n\
 essere inserito nel buffer di annullamento.\n\
 \n\
 Perciò il buffer di annullamento è andato\n\
@@ -7271,16 +7276,14 @@ Esegui un controllo sulla _rubrica nella lista messaggi
 ; _Address book lookup in message list
 ;
 MSG_HELP_CO_CH_ABOOKLOOKUP
-Esegue un controllo nella rubrica per ogni destinatario\n\
-principale del messaggio nella lista delle E-Mail e ne\n\
-mostra invece il vero nome dalla rubrica.\n\
+Esegue un controllo nella rubrica per ciascun mittente/destinatario\n\
+della lista dei messaggi di posta e ne mostra invece il vero nome\n\
+estrapolandolo dalla rubrica.\n\
 \n\
-ATTENZIONE: questa è un operazione piuttosto dispendiosa\n\
-che potrebbe influire sulle performance generali del\n\
-pannello messaggi\n\
-\n\
-(Specialmente in caso di configurazioni aventi rubriche\n\
-di una certa dimensione).
+ATTENZIONE: questa è un operazione piuttosto dispendiosa che\n\
+potrebbe influire notevolmente sulle prestazioni generali di YAM\n\
+specialmente in caso di configurazioni aventi rubriche di un certa\n\
+dimensione.
 ; Resolve sender/recipient addresses in the message\n\
 ; list by looking them up in the address book and show\n\
 ; the real name instead.\n\
@@ -7630,8 +7633,8 @@ configurato.\n\
 Il metodo 'Auto' ne seleziona uno automaticamente in\n\
 base alle capacità del server.\n\
 \n\
-Gli altri metodi invece lasciano all'utente la libertà\n\
-di selezionarne uno manualmente, generalmente il più\n\
+Gli altri metodi invece lasciano all'utente la libertà di\n\
+selezionarne uno manualmente, generalmente il più\n\
 sicuro viene visualizzato in cima.
 ; Select here the authentication method YAM should use.\n\
 ; 'Auto' lets YAM pick one automatically depending on\n\
@@ -7915,8 +7918,8 @@ Nome account
 ; Account name
 ;
 MSG_HELP_CO_ST_POPACCOUNT
-Il nome arbitrario per questo account che\n\
-dovrà essere usato al posto di utente@host.
+Il nome arbitrario di questo account che\n\
+sarà utilizzato al posto di utente@host.
 ; An arbitrary name for this account which\n\
 ; will be used instead of user@host.
 ;
@@ -8102,17 +8105,16 @@ in accordo con le impostazioni definite qui.
 ; according to the rules defined here.
 ;
 MSG_HELP_CO_CY_MDN_NORECIPIENT
-Cosa si desidera fare con la richiesta di\n\
-ricevuta di ritorno nell'eventualità che\n\
-nel proprio indirizzo E-Mail non compagliano\n\
-né l'intestazione A: né quella CC.
+Come comportarsi con la richiesta di ricevuta di ritorno\n\
+nell'eventualità che nel proprio indirizzo di posta non\n\
+compaiano né l'intestazione A: né quella CC.
 ; What to do with a return receipt request\n\
 ; when your e-mail address doesn't appear\n\
 ; neither in the To: or Cc: headers.
 ;
 MSG_HELP_CO_CY_MDN_NODOMAIN
 Cosa di desidera fare con la richiesta di\n\
-ricevuta di ritorno nell'eventulità che il\n\
+ricevuta di ritorno nell'eventualità che il\n\
 dominio del mittente non corrisponda al\n\
 proprio.
 ; What to do with a return receipt request\n\
@@ -8181,11 +8183,11 @@ Con SSLv3
 ; with SSLv3
 ;
 MSG_HELP_CO_RA_POP3SECURE
-Una connessione sicura TLSv1 o SSLv3 verrà stabilita tra il server\n\
-POP3 e YAM in modo da ricevere messaggi attraverso una connessione\n\
+Una connessione sicura TLSv1 o SSLv3 verrà stabilita tra il server POP3\n\
+e YAM in modo da poter ricevere messaggi attraverso una connessione\n\
 criptata.\n\
-Nel caso che AmiSSL non sia disponibile, questi pulsanti radio\n\
-appariranno come non selezionabili.
+Nel caso AmiSSL non sia presente nel sistema i radio pulsanti verranno\n\
+mostrati come non selezionabili.
 ; A TLSv1 or SSLv3 secure connection will be established between\n\
 ; the POP3 server and YAM to receive e-mail through an encrypted\n\
 ; connection. If these radio buttons are ghosted, it means AmiSSL\n\
@@ -8352,16 +8354,15 @@ Sposta messaggi 'Non Spam' nella cartella _In arrivo
 ; Move 'not spam' e-mails back to _Incoming folder
 ;
 MSG_HELP_CH_MOVE_HAM_TO_INCOMING
-Se attivato, ogni messaggio classificato incorrettamente\n\
-come 'Spam' e successivamente marcato come 'Non Spam'\n\
-verrà automaticamente spostato nella cartella dei messaggi\n\
-in arrivo.
+Se attivato, ogni messaggio incorrettamente classificato come\n\
+'Spam' (e successivamente marcato come 'Non Spam') verrà\n\
+automaticamente spostato nella cartella dei messaggi in arrivo.
 ; If enabled, any e-mail which was incorrectly classified\n\
 ; as 'spam' and later manually marked as 'not spam' will be\n\
 ; automatically moved back to the Incoming folder.
 ;
 MSG_CO_FILTER_HAM
-Applica _filtro
+Applica _filtri
 ; Apply _filters
 ;
 MSG_HELP_CH_FILTER_HAM
@@ -9109,12 +9110,12 @@ MSG_HELP_EA_BT_REMOVEPHOTO
 ;
 MSG_HELP_CO_TX_DEFAULTCHARSET
 Utilizza questo menu a comparsa in modo da selezionare il\n\
-set di caratteri che YAM dovrà utilizzare come modalità\n\
-predefinita.\n\
-Attenzione, questo set dovrà rispecchiare il set di\n\
-caratteri di sistema già esistente, altrimenti il\n\
-sistema stesso sarà costretto a richiedere nuovamente\n\
-il tipo di procedura da utilizzare.
+set di caratteri che YAM dovrà utilizzare in modo predefinito.\n\
+\n\
+Attenzione, la scelta dovrà rispecchiare le impostazioni dei\n\
+caratteri di sistema già esistenti altrimenti il sistema stesso\n\
+sarà costretto a richiedere nuovamente il tipo di procedura da\n\
+utilizzare.
 ; Use the popup button to select the character set\n\
 ; you would like YAM to use by default. This should\n\
 ; match the system's default charset, otherwise a\n\
@@ -9130,9 +9131,8 @@ un nuovo messaggio di posta.
 ; new mail.
 ;
 MSG_HELP_CO_CH_NOTICMD
-Esegue un comando al momento\n\
-della ricezione di un nuovo\n\
-messaggio di posta.
+Esegue un comando al momento della ricezione\n\
+di un nuovo messaggio di posta elettronica.
 ; Execute a command\n\
 ; when you received\n\
 ; new mail.
@@ -9676,8 +9676,8 @@ Mappa caratteri stranieri in formato ASCII
 ;
 MSG_HELP_CO_MAPFOREIGNCHARS
 Se selezionato, i caratteri non convertibili\n\
-in un formato leggibile verranno mappati in\n\
-una sequenza simile a quella ASCII.
+in un formato leggibile verranno mappati\n\
+in una sequenza simile a quella ASCII.
 ; If selected, characters that cannot\n\
 ; be converted to the read charset\n\
 ; will be mapped to looklike ASCII\n\
@@ -9848,7 +9848,7 @@ separata per ogni messaggio di posta.
 ; entry in every mail.
 ;
 MSG_CO_NOTIOS41SYSTEM
-Gestore notifiche di AmigaOS_4.1 - Ringhio
+Gestore notifiche di AmigaOS _4.1+ (Ringhio)
 ; AmigaOS_4.1 notification system
 ;
 MSG_HELP_CO_CH_NOTIOS41SYSTEM
@@ -10014,4 +10014,9 @@ ad instabilità di sistema.
 MSG_THREAD_EXIT_WARNING_BT
 ; _Riprova|_Ignora
 ; _Retry|_Ignore
+;
+MSG_EXECUTE_COMMAND_FAILED
+L'esecuzione del comando '%s' è fallita (codice di errore %ld: %s).
+; The execution of the command '%s' failed (error code %ld: %s).
+; COMMAND, ERRORCODE, ERRORSTRING
 ;
