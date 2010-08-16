@@ -45,6 +45,5 @@ struct ER_ClassData  /* error window */
 };
 
 void ER_NewError(const char *error, ...);
-void ER_NewErrorFromThread(const char *error, ...);
 
 #endif /* YAM_ERROR_H */

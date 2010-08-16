@@ -64,39 +64,30 @@ static struct ER_ClassData *ER_New(void);
 // Adds a new error message and displays it
 void ER_NewError(const char *error, ...)
 {
-  static char label[SIZE_SMALL];
-  int oldNumErr = G->ER_NumErr;
+  char buf[SIZE_LARGE];
 
   ENTER();
 
   // we only signal an error if we really have one,
-  // otherwise calling this function with error=NULL is just
-  // for showing the last errors,
+  // otherwise calling this function with error==NULL is just
+  // for showing the last errors
+
+  // setup the error message first
   if(error != NULL)
-    G->Error = TRUE;
-
-  if(G->ER == NULL)
   {
-    if((G->ER = ER_New()) == NULL)
-    {
-      LEAVE();
-      return;
-    }
+    va_list args;
 
-    if(SafeOpenWindow(G->ER->GUI.WI) == FALSE)
-    {
-      DisposeModule(&G->ER);
-
-      LEAVE();
-      return;
-    }
+    va_start(args, error);
+    vsnprintf(buf, sizeof(buf), error, args);
+    va_end(args);
   }
 
-  if(error != NULL)
+  if(CalledFromMainThread() == TRUE)
   {
-    char buf[SIZE_LARGE];
+    // only the main thread really does all the GUI stuff
     char datstr[64];
-    va_list args;
+    static char label[SIZE_SMALL];
+    int oldNumErr = G->ER_NumErr;
 
     // one more error message
     G->ER_NumErr++;
@@ -119,52 +110,50 @@ void ER_NewError(const char *error, ...)
     // get actual date as a string
     DateStamp2String(datstr, sizeof(datstr), NULL, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
 
-    va_start(args, error);
-    vsnprintf(buf, sizeof(buf), error, args);
-    va_end(args);
-
-    // append the datestring
-    snprintf(buf, sizeof(buf), "%s\n\n(%s)", buf, datstr);
+    // append the datestring, this must be done only once by the main thread
+    strlcat(buf, "\n\n", sizeof(buf));
+    strlcat(buf, datstr, sizeof(buf));
 
     // allocate an own buffer for our error string.
     G->ER_Message[G->ER_NumErr-1] = strdup(buf);
+    G->Error = TRUE;
+
+    if(G->ER == NULL)
+    {
+      if((G->ER = ER_New()) == NULL)
+      {
+        LEAVE();
+        return;
+      }
+
+      if(SafeOpenWindow(G->ER->GUI.WI) == FALSE)
+      {
+        DisposeModule(&G->ER);
+
+        LEAVE();
+        return;
+      }
+    }
+
+    snprintf(label, sizeof(label), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
+    xset(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
+                              MUIA_Numeric_Min,    1,
+                              MUIA_Numeric_Max,    G->ER_NumErr,
+                              MUIA_Numeric_Value,  G->ER_NumErr);
+
+    // The slider won't call the hook if the current number didn't change, but we need to
+    // to update the error display no matter what, so we have to do this update manually.
+    if(oldNumErr == G->ER_NumErr)
+      set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[G->ER_NumErr-1]);
+
+    if(G->MA != NULL)
+      set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
   }
-
-  snprintf(label, sizeof(label), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
-  xset(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
-                            MUIA_Numeric_Min,    1,
-                            MUIA_Numeric_Max,    G->ER_NumErr,
-                            MUIA_Numeric_Value,  G->ER_NumErr);
-
-  // The slider won't call the hook if the current number didn't change, but we need to
-  // to update the error display no matter what, so we have to do this update manually.
-  if(oldNumErr == G->ER_NumErr)
-    set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[G->ER_NumErr-1]);
-
-  if(G->MA != NULL)
-    set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
-
-  LEAVE();
-}
-
-///
-/// ER_NewErrorFromThread
-// Adds a new error message and displays it, to be called from subthreads
-void ER_NewErrorFromThread(const char *error, ...)
-{
-  VA_LIST args;
-  char buf[SIZE_LARGE];
-
-  ENTER();
-
-  // set up the error message ahead of calling ER_NewError(),
-  // as we only have a fixed number of arguments for the message
-  // the string will be freed by the thread framework
-  VA_START(args, error);
-  vsnprintf(buf, sizeof(buf), error, args);
-  VA_END(args);
-
-  CallParentThreadFunctionAsyncString(ER_NewError, 1, buf);
+  else
+  {
+    // subthreads pass the error message to the main thread
+    CallParentThreadFunctionAsyncString(ER_NewError, 1, buf);
+  }
 
   LEAVE();
 }

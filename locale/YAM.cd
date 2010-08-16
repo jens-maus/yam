@@ -7000,8 +7000,6 @@ MSG_THREAD_EXIT_WARNING_BT (2176//)
 _Retry|_Ignore
 ;
 MSG_EXECUTE_COMMAND_FAILED (2177//)
-The execution of the command\n\
-'%s'\n\
-failed. (Error %ld: %s)
-; COMMAND,ERRORCODE,ERRORSTRING
+The execution of the command '%s' failed (error code %ld: %s).
+; COMMAND, ERRORCODE, ERRORSTRING
 ;

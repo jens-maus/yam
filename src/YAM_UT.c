@@ -5125,7 +5125,7 @@ char *GetRealPath(const char *path)
 ///
 /// SyncLaunchCommand
 // synchronously launch a DOS command
-static BOOL SyncLaunchCommand(const char *cmd, enum OutputDefType outdef, BOOL inThread)
+static BOOL SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
 {
   BOOL result = TRUE;
   BPTR path;
@@ -5193,11 +5193,10 @@ static BOOL SyncLaunchCommand(const char *cmd, enum OutputDefType outdef, BOOL i
 
     // an error occurred as SystemTags should always
     // return zero on success, no matter what.
+    E(DBF_UTIL, "execution of '%s' failed, success=%ld", cmd, success);
+
     Fault(error, NULL, fault, sizeof(fault));
-    if(inThread == TRUE)
-      ER_NewErrorFromThread(tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, fault);
-    else
-      ER_NewError(tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, fault);
+    ER_NewError(tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, fault);
 
     // manually free our search path as SystemTags() shouldn't have freed
     // it itself, but only if the result is equal to -1. All other values
@@ -5213,8 +5212,6 @@ static BOOL SyncLaunchCommand(const char *cmd, enum OutputDefType outdef, BOOL i
     Close(out);
   if(in != ZERO)
     Close(in);
-
-  D(DBF_UTIL, "execution of '%s' finished", cmd);
 
   RETURN(result);
   return result;
@@ -5244,7 +5241,7 @@ static int LaunchCommandThread(struct LaunchCommandData *data)
     if(ParentThreadCanContinue() == TRUE)
     {
       // now launch the command synchronously within this new thread
-      SyncLaunchCommand(cmd, outdef, TRUE);
+      SyncLaunchCommand(cmd, outdef);
     }
 
     FreeVec(cmd);
@@ -5274,7 +5271,7 @@ BOOL LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
     result = (AddThread("YAM thread", THREAD_FUNCTION(LaunchCommandThread), &data) != NULL);
   }
   else
-    result = SyncLaunchCommand(cmd, outdef, FALSE);
+    result = SyncLaunchCommand(cmd, outdef);
 
   RETURN(result);
   return result;

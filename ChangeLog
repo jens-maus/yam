@@ -7,6 +7,9 @@ $URL$
 
 2010-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT, YAM_ER.c: the error reporting code about a failed command execution
+    no longer needs check which thread it is running in. This is done by the
+    error window now.
   * Threads.c: added a function to check wether the code is running in the main
     thread or in one of the subthreads.
 
