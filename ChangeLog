@@ -11,6 +11,11 @@ $URL$
 
 2010-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: the LaunchCommand() function now returns the return code of the
+    launched command in the synchronous case and RETURN_OK/_FAIL for the asynch-
+    ronous case to signal success/failure of the thread creation. This makes it
+    possible to use this function for all PGP calls instead of having to
+    implement the same stuff again there.
   * YAM_UT, YAM_ER.c: the error reporting code about a failed command execution
     no longer needs check which thread it is running in. This is done by the
     error window now.

@@ -4360,10 +4360,9 @@ void PGPClearPassPhrase(BOOL force)
 ///
 /// PGPCommand
 //  Launches a PGP command
-int PGPCommand(const char *progname, const char *options, int flags)
+LONG PGPCommand(const char *progname, const char *options, const int flags)
 {
-  BPTR fhi;
-  int error = -1;
+  LONG error;
   char command[SIZE_LARGE];
 
   ENTER();
@@ -4374,44 +4373,15 @@ int PGPCommand(const char *progname, const char *options, int flags)
   strlcat(command, " >" PGPLOGFILE " ", sizeof(command));
   strlcat(command, options, sizeof(command));
 
-  if((fhi = Open("NIL:", MODE_OLDFILE)) != ZERO)
-  {
-    BPTR fho;
-
-    if((fho = Open("NIL:", MODE_NEWFILE)) != ZERO)
-    {
-
-      BusyText(tr(MSG_BusyPGPrunning), "");
-
-      // use SystemTags() for executing PGP
-      error = SystemTags(command, SYS_Input,    fhi,
-                                  SYS_Output,   fho,
-                                  SYS_Asynch,   FALSE,
-                                  #if defined(__amigaos4__)
-                                  SYS_Error,    NULL,
-                                  NP_Child,     TRUE,
-                                  #endif
-                                  NP_Name,      "YAM PGP process",
-                                  NP_StackSize, C->StackSize,
-                                  NP_WindowPtr, -1, // no requester at all
-                                  TAG_DONE);
-      D(DBF_UTIL, "command '%s' returned with error code %ld", command, error);
-
-      BusyEnd();
-
-      Close(fho);
-    }
-
-    Close(fhi);
-  }
+  BusyText(tr(MSG_BusyPGPrunning), "");
+  error = LaunchCommand(command, FALSE, OUT_NIL);
+  BusyEnd();
 
   if(error > 0 && !hasNoErrorsFlag(flags))
     ER_NewError(tr(MSG_ER_PGPreturnsError), command, PGPLOGFILE);
-
-  if(error < 0)
+  else if(error < 0)
     ER_NewError(tr(MSG_ER_PGPnotfound), C->PGPCmdPath);
-
-  if(error == 0 && !hasKeepLogFlag(flags))
+  else if(error == 0 && !hasKeepLogFlag(flags))
   {
     if(DeleteFile(PGPLOGFILE) == 0)
       AddZombieFile(PGPLOGFILE);
@@ -5125,16 +5095,15 @@ char *GetRealPath(const char *path)
 ///
 /// SyncLaunchCommand
 // synchronously launch a DOS command
-static BOOL SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
+static LONG SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
 {
-  BOOL result = TRUE;
+  LONG result = RETURN_FAIL;
   BPTR path;
   BPTR in = ZERO;
   BPTR out = ZERO;
   #if defined(__amigaos4__)
   BPTR err = ZERO;
   #endif
-  LONG success;
 
   ENTER();
   SHOWSTRING(DBF_UTIL, cmd);
@@ -5176,24 +5145,25 @@ static BOOL SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
   // is done by SystemTags/CreateNewProc itself.
   path = ObtainSearchPath();
 
-  if((success = SystemTags(cmd, SYS_Input,    in,
-                                SYS_Output,   out,
-                                #if defined(__amigaos4__)
-                                SYS_Error,    err,
-                                #endif
-                                SYS_Asynch,   FALSE,
-                                NP_Name,      "YAM command process",
-                                NP_Path,      path,
-                                NP_StackSize, C->StackSize,
-                                NP_WindowPtr, -1,           // show no requesters at all
-                                TAG_DONE)) != 0)
+  if((result = SystemTags(cmd, SYS_Input,    in,
+                               SYS_Output,   out,
+                               #if defined(__amigaos4__)
+                               SYS_Error,    err,
+                               NP_Child,     TRUE,
+                               #endif
+                               SYS_Asynch,   FALSE,
+                               NP_Name,      "YAM command process",
+                               NP_Path,      path,
+                               NP_StackSize, C->StackSize,
+                               NP_WindowPtr, -1,           // show no requesters at all
+                               TAG_DONE)) != RETURN_OK)
   {
     LONG error = IoErr();
     char fault[SIZE_LARGE];
 
     // an error occurred as SystemTags should always
     // return zero on success, no matter what.
-    E(DBF_UTIL, "execution of '%s' failed, success=%ld", cmd, success);
+    E(DBF_UTIL, "execution of '%s' failed, rc=%ld", cmd, result);
 
     Fault(error, NULL, fault, sizeof(fault));
     ER_NewError(tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, fault);
@@ -5202,10 +5172,8 @@ static BOOL SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
     // it itself, but only if the result is equal to -1. All other values
     // stem from the launched command itself and SystemTags() already freed
     // everything.
-    if(success == -1)
+    if(result == -1)
       ReleaseSearchPath(path);
-
-    result = FALSE;
   }
 
   if(out != ZERO)
@@ -5254,9 +5222,9 @@ static int LaunchCommandThread(struct LaunchCommandData *data)
 ///
 /// LaunchCommand
 //  Executes a DOS command in a separate thread
-BOOL LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
+LONG LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
 {
-  BOOL result;
+  LONG result = RETURN_FAIL;
 
   ENTER();
 
@@ -5268,7 +5236,8 @@ BOOL LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
     data.outdef = outdef;
 
     // start the new thread
-    result = (AddThread("YAM thread", THREAD_FUNCTION(LaunchCommandThread), &data) != NULL);
+    if(AddThread("YAM thread", THREAD_FUNCTION(LaunchCommandThread), &data) != NULL)
+      result = RETURN_OK;
   }
   else
     result = SyncLaunchCommand(cmd, outdef);

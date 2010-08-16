@@ -2537,7 +2537,8 @@ DECLARE(AddArchive)
           BPTR olddir = CurrentDir(filedir);
 
           // now we do the archive generation right here.
-          result = LaunchCommand(command, FALSE, OUT_NIL);
+          if(LaunchCommand(command, FALSE, OUT_NIL) == RETURN_OK)
+            result = TRUE;
 
           // make the old directory the new current one again
           CurrentDir(olddir);
