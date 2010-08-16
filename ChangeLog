@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c: added a function to check wether the code is running in the main
+    thread or in one of the subthreads.
+
 2010-08-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: a failed command execution will now always be reported using the well
@@ -47,8 +52,8 @@ $URL$
   * YAM_UT.c: fixed a bug in the DeleteZombiFiles() function where in case of
     a undeletable file the zombie node has never been readded to the list and
     thus a subsequent call to DeleteZombieFiles() always succeeded.
-  * Threads.c, YAM.cd: changed the thread exit warning requester to use 
-    localized strings and be a bit more verbose as well as more intuitive 
+  * Threads.c, YAM.cd: changed the thread exit warning requester to use
+    localized strings and be a bit more verbose as well as more intuitive
     button texts.
   * Requesters.c: the '_' character will now be stripped from the gadget text
     in case a pure intuition requester will be shown with MUI_Request().

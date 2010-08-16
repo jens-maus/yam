@@ -95,6 +95,8 @@ struct ThreadNode
   struct Thread *thread;
 };
 
+#define CURRENT_THREAD   ((struct Thread *)(FindTask(NULL)->tc_UserData))
+
 // local prototypes
 static void HandleThreadMessage(struct ThreadMessage *tmsg);
 
@@ -222,7 +224,7 @@ static void CleanupThreadTimer(struct Thread *thread)
 // Returns the mask of the thread port of the current process
 ULONG CurrentThreadMask(void)
 {
-  struct Thread *thread = (struct Thread *)(FindTask(NULL)->tc_UserData);
+  struct Thread *thread = CURRENT_THREAD;
 
   return (1UL << thread->thread_port->mp_SigBit) | (1UL << thread->timer_port->mp_SigBit);
 }
@@ -231,11 +233,10 @@ ULONG CurrentThreadMask(void)
 // Handle a new message in the send to the current process
 void HandleThreadEvent(ULONG mask)
 {
-  struct Thread *thread;
+  struct Thread *thread = CURRENT_THREAD;
 
   ENTER();
 
-  thread = (struct Thread *)(FindTask(NULL)->tc_UserData);
   if(thread == NULL || thread != MAIN_THREAD)
     E(DBF_THREAD, "unknown thread handle %08lx main=%08lx", thread, MAIN_THREAD);
 
@@ -553,7 +554,7 @@ BOOL StartAsDefaultThread(int (*entry)(void *), void *eudata)
 static VARARGS68K struct ThreadMessage *CreateThreadMessage(void *function, int argcount, va_list argptr)
 {
   struct ThreadMessage *tmsg;
-  struct MsgPort *subthread_port = ((struct Thread *)(FindTask(NULL)->tc_UserData))->thread_port;
+  struct MsgPort *subthread_port = CURRENT_THREAD->thread_port;
 
   ENTER();
 
@@ -842,7 +843,7 @@ BOOL VARARGS68K PushThreadFunction(void *function, int argcount, ...)
 
   if((tmsg = CreateThreadMessage(function, argcount, argptr)) != NULL)
   {
-    struct Thread *this_thread = ((struct Thread *)(FindTask(NULL)->tc_UserData));
+    struct Thread *this_thread = CURRENT_THREAD;
 
     AddTail((struct List *)&this_thread->push_list, &tmsg->msg.mn_Node);
     success = TRUE;
@@ -870,7 +871,7 @@ BOOL VARARGS68K PushThreadFunctionDelayed(int millis, void *function, int argcou
 
   if((tmsg = CreateThreadMessage(function, argcount, argptr)) != NULL)
   {
-    struct Thread *thread = (struct Thread *)(FindTask(NULL)->tc_UserData);
+    struct Thread *thread = CURRENT_THREAD;
     struct TimerMessage *timer_msg;
 
     if((timer_msg = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Duplicate, (IPTR)thread->timer_req,
@@ -950,7 +951,7 @@ BOOL InitThreads(void)
 
       // set the user data of the main thread
       Forbid();
-      FindTask(NULL)->tc_UserData = MAIN_THREAD;
+      CURRENT_THREAD = MAIN_THREAD;
       Permit();
 
       result = TRUE;
@@ -1095,8 +1096,8 @@ void CleanupThreads(void)
 
         if(IsMinListEmpty(&G->subThreadList) == FALSE)
         {
-          if(MUI_Request(G->App, NULL, 0L, tr(MSG_THREAD_EXIT_WARNING_TITLE), 
-                                           tr(MSG_THREAD_EXIT_WARNING_BT), 
+          if(MUI_Request(G->App, NULL, 0L, tr(MSG_THREAD_EXIT_WARNING_TITLE),
+                                           tr(MSG_THREAD_EXIT_WARNING_BT),
                                            tr(MSG_THREAD_EXIT_WARNING)) == 0)
           {
             break;
@@ -1119,7 +1120,22 @@ void CleanupThreads(void)
 }
 
 ///
+/// CalledFromMainThread
+// check whether we are running in the main thread or
+// in one of the subthreads
+BOOL CalledFromMainThread(void)
+{
+  BOOL isMainThread;
 
+  ENTER();
+
+  isMainThread = (CURRENT_THREAD == MAIN_THREAD);
+
+  RETURN(isMainThread);
+  return isMainThread;
+}
+
+///
 /*
 // Call the function synchron, calls timer_callback on the calling process
 // context
@@ -1197,7 +1213,7 @@ void thread_wait(void (*timer_callback(void *)), void *timer_data, int millis)
   struct timer timer;
   if(timer_init(&timer))
   {
-    struct Thread *this_thread = ((struct Thread *)(FindTask(NULL)->tc_UserData));
+    struct Thread *this_thread = CURRENT_THREAD;
     struct MsgPort *this_thread_port = this_thread->thread_port;
     if(millis < 0) millis = 0;
 

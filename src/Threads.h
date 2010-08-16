@@ -65,6 +65,7 @@ ULONG CurrentThreadMask(void);
 void HandleThreadEvent(ULONG mask);
 struct Thread *AddThread(const char *thread_name, int (*entry)(void *), void *eudata);
 BOOL StartAsDefaultThread(int (*entry)(void *), void *eudata);
+BOOL CalledFromMainThread(void);
 BOOL ParentThreadCanContinue(void);
 int VARARGS68K CallParentThreadFunctionSync(BOOL *success, void *function, int argcount, ...);
 BOOL VARARGS68K CallParentThreadFunctionAsync(void *function, int argcount, ...);
