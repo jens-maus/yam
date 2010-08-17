@@ -56,8 +56,6 @@
  1.32  28.05.09 : added STACKED definition for non-AROS targets.
  1.33  03.06.10 : added missing SIPTR definition to make SDI_compiler.h more compatible
                   to AROS.
- 1.34  17.08.10 : added RODATA definition to force the m68k gcc to put constant strings
-                  into the .data section instead of the .text section.
 */
 
 /*
@@ -140,8 +138,6 @@
   #if defined(_M68000) || defined(__M68000) || defined(__mc68000)
     #define REG(reg,arg) arg __asm(#reg)
     #define LREG(reg,arg) register REG(reg,arg)
-    // the m68k gcc places "const char" variables in the .text section
-    #define RODATA __attribute__((section(".data")))
   #else
     #define REG(reg,arg) arg
     #define SAVEDS
