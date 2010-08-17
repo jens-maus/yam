@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-17 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Debug.h, include/netinclude: switched all inline files to use the correct
+    LPXXX() macros rather than defining the macros on our own. This should 
+    make our code compatible to gcc 3.4.x compiles for m68k-amigaos.
+
 2010-08-17 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest development changes.

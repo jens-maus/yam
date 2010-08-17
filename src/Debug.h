@@ -345,180 +345,98 @@ void W(const unsigned long f, const char *format, ...);
 
 #elif !defined(__AROS__) // AmigaOS 3
 
-#define AllocPooled(poolHeader, memSize) ({ \
-  APTR _AllocPooled_poolHeader = (poolHeader); \
-  ULONG _AllocPooled_memSize = (memSize); \
-  APTR _AllocPooled__re = \
-  ({ \
-  register struct ExecBase * const __AllocPooled__bn __asm("a6") = (struct ExecBase *) (EXEC_BASE_NAME);\
-  register APTR __AllocPooled__re __asm("d0"); \
-  register APTR __AllocPooled_poolHeader __asm("a0") = (_AllocPooled_poolHeader); \
-  register ULONG __AllocPooled_memSize __asm("d0") = (_AllocPooled_memSize); \
-  __asm volatile ("jsr a6@(-708:W)" \
-  : "=r"(__AllocPooled__re) \
-  : "r"(__AllocPooled__bn), "r"(__AllocPooled_poolHeader), "r"(__AllocPooled_memSize)  \
-  : "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
-  __AllocPooled__re; \
-  }); \
-  _MEMTRACK(__FILE__, __LINE__, "AllocPooled", _AllocPooled__re, memSize); \
-  _AllocPooled__re; \
+#define AllocPooled(__p0, __p1) ({ \
+  APTR P = LP2(0x2c4, APTR , AllocPooled, \
+    APTR , __p0, a0, \
+    ULONG , __p1, d0, \
+    , EXEC_BASE_NAME); \
+   _MEMTRACK(__FILE__, __LINE__, "AllocPooled", P, __p1); \
+   P; \
 })
 
-#define FreePooled(poolHeader, memory, memSize) ({ \
-  _UNMEMTRACK(__FILE__, __LINE__, memory); { \
-  APTR _FreePooled_poolHeader = (poolHeader); \
-  APTR _FreePooled_memory = (memory); \
-  ULONG _FreePooled_memSize = (memSize); \
-  { \
-  register struct ExecBase * const __FreePooled__bn __asm("a6") = (struct ExecBase *) (EXEC_BASE_NAME);\
-  register APTR __FreePooled_poolHeader __asm("a0") = (_FreePooled_poolHeader); \
-  register APTR __FreePooled_memory __asm("a1") = (_FreePooled_memory); \
-  register ULONG __FreePooled_memSize __asm("d0") = (_FreePooled_memSize); \
-  __asm volatile ("jsr a6@(-714:W)" \
-  : \
-  : "r"(__FreePooled__bn), "r"(__FreePooled_poolHeader), "r"(__FreePooled_memory), "r"(__FreePooled_memSize) \
-  : "d0", "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
-  } \
-}})
+#define FreePooled(__p0, __p1, __p2) ({ \
+   _UNMEMTRACK(__FILE__, __LINE__, __p1); \
+   LP3NR(0x2ca, FreePooled, \
+      APTR , __p0, a0, \
+      APTR , __p1, a1, \
+      ULONG , __p2, d0, \
+      , EXEC_BASE_NAME); \
+})
 
 #define AllocVecPooled(p, s) ({APTR P = AllocVecPooled(p, s); _MEMTRACK(__FILE__, __LINE__, "AllocVecPooled", P, s); P;})
 #define FreeVecPooled(p, m)  ({_UNMEMTRACK(__FILE__, __LINE__, m); FreeVecPooled(p, m);})
 
-#define AllocDosObject(type, tags) ({ \
-  ULONG _AllocDosObject_type = (type); \
-  const struct TagItem * _AllocDosObject_tags = (tags); \
-  APTR _AllocDosObject__re = \
-  ({ \
-  register struct DosLibrary * const __AllocDosObject__bn __asm("a6") = (struct DosLibrary *) (DOS_BASE_NAME);\
-  register APTR __AllocDosObject__re __asm("d0"); \
-  register ULONG __AllocDosObject_type __asm("d1") = (_AllocDosObject_type); \
-  register const struct TagItem * __AllocDosObject_tags __asm("d2") = (_AllocDosObject_tags); \
-  __asm volatile ("jsr a6@(-228:W)" \
-  : "=r"(__AllocDosObject__re) \
-  : "r"(__AllocDosObject__bn), "r"(__AllocDosObject_type), "r"(__AllocDosObject_tags)  \
-  : "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
-  __AllocDosObject__re; \
-  }); \
-  _MEMTRACK(__FILE__, __LINE__, "AllocDosObject", _AllocDosObject__re, type); \
-  _AllocDosObject__re; \
+#define AllocDosObject(__p0, __p1) ({ \
+  APTR P = LP2(0xe4, APTR , AllocDosObject, \
+    ULONG , __p0, d1, \
+    CONST struct TagItem *, __p1, d2, \
+    , DOS_BASE_NAME); \
+  _MEMTRACK(__FILE__, __LINE__, "AllocDosObject", P, __p0); \
+  P; \
 })
 
-#define FreeDosObject(type, ptr) ({ _UNMEMTRACK(__FILE__, __LINE__, ptr); { \
-  ULONG _FreeDosObject_type = (type); \
-  APTR _FreeDosObject_ptr = (ptr); \
-  { \
-  register struct DosLibrary * const __FreeDosObject__bn __asm("a6") = (struct DosLibrary *) (DOS_BASE_NAME);\
-  register ULONG __FreeDosObject_type __asm("d1") = (_FreeDosObject_type); \
-  register APTR __FreeDosObject_ptr __asm("d2") = (_FreeDosObject_ptr); \
-  __asm volatile ("jsr a6@(-234:W)" \
-  : \
-  : "r"(__FreeDosObject__bn), "r"(__FreeDosObject_type), "r"(__FreeDosObject_ptr)  \
-  : "d0", "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
-  } \
-}})
+#define FreeDosObject(__p0, __p1) ({ \
+  _UNMEMTRACK(__FILE__, __LINE__, __p1); \
+  LP2NR(0xea, FreeDosObject, \
+    ULONG , __p0, d1, \
+    APTR , __p1, d2, \
+    , DOS_BASE_NAME); \
+})
 
 #define AllocSysObject(t, p)       ({APTR P = AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
 #define AllocSysObjectTags(t, ...) ({APTR P = AllocSysObjectTags(t, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "AllocSysObjectTags", P, t+1); P;})
 #define FreeSysObject(t, p)        ({_UNMEMTRACK(__FILE__, __LINE__, p); FreeSysObject(t, p);})
 
-#define AllocBitMap(sizex, sizey, depth, flags, friend_bitmap) ({ \
-  ULONG _AllocBitMap_sizex = (sizex); \
-  ULONG _AllocBitMap_sizey = (sizey); \
-  ULONG _AllocBitMap_depth = (depth); \
-  ULONG _AllocBitMap_flags = (flags); \
-  CONST struct BitMap * _AllocBitMap_friend_bitmap = (friend_bitmap); \
-  struct BitMap * _AllocBitMap__re = \
-  ({ \
-  register struct GfxBase * const __AllocBitMap__bn __asm("a6") = (struct GfxBase *) (GRAPHICS_BASE_NAME);\
-  register struct BitMap * __AllocBitMap__re __asm("d0"); \
-  register ULONG __AllocBitMap_sizex __asm("d0") = (_AllocBitMap_sizex); \
-  register ULONG __AllocBitMap_sizey __asm("d1") = (_AllocBitMap_sizey); \
-  register ULONG __AllocBitMap_depth __asm("d2") = (_AllocBitMap_depth); \
-  register ULONG __AllocBitMap_flags __asm("d3") = (_AllocBitMap_flags); \
-  register CONST struct BitMap * __AllocBitMap_friend_bitmap __asm("a0") = (_AllocBitMap_friend_bitmap); \
-  __asm volatile ("jsr a6@(-918:W)" \
-  : "=r"(__AllocBitMap__re) \
-  : "r"(__AllocBitMap__bn), "r"(__AllocBitMap_sizex), "r"(__AllocBitMap_sizey), "r"(__AllocBitMap_depth), "r"(__AllocBitMap_flags), "r"(__AllocBitMap_friend_bitmap)  \
-  : "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
-  __AllocBitMap__re; \
-  }); \
-  _MEMTRACK(__FILE__, __LINE__, "AllocBitMap", _AllocBitMap__re, sizex); \
-  _AllocBitMap__re; \
+#define AllocBitMap(__p0, __p1, __p2, __p3, __p4) ({ \
+  APTR P = LP5(0x396, struct BitMap *, AllocBitMap, \
+    ULONG , __p0, d0, \
+    ULONG , __p1, d1, \
+    ULONG , __p2, d2, \
+    ULONG , __p3, d3, \
+    CONST struct BitMap *, __p4, a0, \
+    , GRAPHICS_BASE_NAME); \
+   _MEMTRACK(__FILE__, __LINE__, "AllocBitMap", P, __p0); \
+   P; \
 })
 
-#define FreeBitMap(bm) ({ _UNMEMTRACK(__FILE__, __LINE__, bm); { \
-  struct BitMap * _FreeBitMap_bm = (bm); \
-  { \
-  register struct GfxBase * const __FreeBitMap__bn __asm("a6") = (struct GfxBase *) (GRAPHICS_BASE_NAME);\
-  register struct BitMap * __FreeBitMap_bm __asm("a0") = (_FreeBitMap_bm); \
-  __asm volatile ("jsr a6@(-924:W)" \
-  : \
-  : "r"(__FreeBitMap__bn), "r"(__FreeBitMap_bm)  \
-  : "d0", "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
-  } \
-}})
+#define FreeBitMap(__p0) ({ \
+  _UNMEMTRACK(__FILE__, __LINE__, __p0); \
+  LP1NR(0x39c, FreeBitMap, \
+    struct BitMap *, __p0, a0, \
+    , GRAPHICS_BASE_NAME); \
+})
 
 #define ObtainDirContext(t)       ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContext", P, 1); P;})
 #define ObtainDirContextTags(...) ({APTR P = ObtainDirContextTags(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
 #define ReleaseDirContext(p)      ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
 
-#define AllocSignal(signalNum) ({ \
-  LONG _AllocSignal_signalNum = (signalNum); \
-  BYTE _AllocSignal__re = \
-  ({ \
-  register struct ExecBase * const __AllocSignal__bn __asm("a6") = (struct ExecBase *) (EXEC_BASE_NAME);\
-  register BYTE __AllocSignal__re __asm("d0"); \
-  register LONG __AllocSignal_signalNum __asm("d0") = (_AllocSignal_signalNum); \
-  __asm volatile ("jsr a6@(-330:W)" \
-  : "=r"(__AllocSignal__re) \
-  : "r"(__AllocSignal__bn), "r"(__AllocSignal_signalNum)  \
-  : "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
-  __AllocSignal__re; \
-  }); \
-  _MEMTRACK(__FILE__, __LINE__, "AllocSignal", (APTR)(LONG)_AllocSignal__re, (size_t)signalNum); \
-  _AllocSignal__re; \
+#define AllocSignal(__p0) ({ \
+  BYTE P = \
+  LP1(0x14a, BYTE , AllocSignal, LONG , __p0, d0, \
+  , EXEC_BASE_NAME); \
+  _MEMTRACK(__FILE__, __LINE__, "AllocSignal", (APTR)(LONG)P, (size_t)__p0); \
+  P; \
 })
 
-#define FreeSignal(signalNum) ({ _UNMEMTRACK(__FILE__, __LINE__, (APTR)signalNum); { \
-  LONG _FreeSignal_signalNum = (signalNum); \
-  { \
-  register struct ExecBase * const __FreeSignal__bn __asm("a6") = (struct ExecBase *) (EXEC_BASE_NAME);\
-  register LONG __FreeSignal_signalNum __asm("d0") = (_FreeSignal_signalNum); \
-  __asm volatile ("jsr a6@(-336:W)" \
-  : \
-  : "r"(__FreeSignal__bn), "r"(__FreeSignal_signalNum)  \
-  : "d0", "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
-  } \
-}})
-
-#define StartNotify(notify) ({ \
-  struct NotifyRequest * _StartNotify_notify = (notify); \
-  BOOL _StartNotify__re = \
-  ({ \
-  register struct DosLibrary * const __StartNotify__bn __asm("a6") = (struct DosLibrary *) (DOS_BASE_NAME);\
-  register BOOL __StartNotify__re __asm("d0"); \
-  register struct NotifyRequest * __StartNotify_notify __asm("d1") = (_StartNotify_notify); \
-  __asm volatile ("jsr a6@(-888:W)" \
-  : "=r"(__StartNotify__re) \
-  : "r"(__StartNotify__bn), "r"(__StartNotify_notify)  \
-  : "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
-  __StartNotify__re; \
-  }); \
-  _MEMTRACK(__FILE__, __LINE__, "StartNotify", _StartNotify_notify, (size_t)_StartNotify_notify); \
-  _StartNotify__re; \
+#define FreeSignal(__p0) ({ \
+  _UNMEMTRACK(__FILE__, __LINE__, (APTR)__p0); \
+  LP1NR(0x150, FreeSignal, LONG , __p0, d0, \
+  , EXEC_BASE_NAME); \
 })
 
-#define EndNotify(notify) ({ _UNMEMTRACK(__FILE__, __LINE__, notify); { \
-  struct NotifyRequest * _EndNotify_notify = (notify); \
-  { \
-  register struct DosLibrary * const __EndNotify__bn __asm("a6") = (struct DosLibrary *) (DOS_BASE_NAME);\
-  register struct NotifyRequest * __EndNotify_notify __asm("d1") = (_EndNotify_notify); \
-  __asm volatile ("jsr a6@(-894:W)" \
-  : \
-  : "r"(__EndNotify__bn), "r"(__EndNotify_notify)  \
-  : "d0", "d1", "a0", "a1", "fp0", "fp1", "cc", "memory"); \
-  } \
-}})
+#define StartNotify(__p0) ({ \
+  BOOL P = \
+  LP1(0x378, BOOL, StartNotify, struct NotifyRequest *, __p0, d1, \
+  , DOS_BASE_NAME); \
+  _MEMTRACK(__FILE__, __LINE__, "StartNotify", __p0, (size_t)__p0); \
+  P; \
+})
+
+#define EndNotify(__p0) ({ \
+  _UNMEMTRACK(__FILE__, __LINE__, __p0); \
+  LP1NR(0x37e, EndNotify, struct NotifyRequest *, __p0, d1, \
+  , DOS_BASE_NAME); \
+})
 
 #endif // amigaos4
 
