@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 7.7 (14.07.2010)
+## version $VER: YAM.catalog 7.8 (17.08.2010)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
-; YAM.ct - YAM 2.7 catalog translation file
+; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -224,8 +224,8 @@ Data kompilacji:
 ; Compilation date:
 ;
 MSG_UserLogin
-Wybierz u¿ytkownika do zalogowania
-; Click your name to login
+Wybierz u¿ytkownika do zalogowania:
+; Click your name to login:
 ;
 MSG_ErrorStartup
 B³±d przy starcie
@@ -924,19 +924,20 @@ Wpisz ponownie has³o:
 ; Please re-type the password:
 ;
 MSG_CO_ConfirmDelete
-Wszystkie wiadomo¶ci w tym folderze zostan± utracone!\nCzy na pewno chcesz go skasowaæ?
-; All messages in this folder will be lost!\n\
+Wszystkie wiadomo¶ci w tym folderze zostan± utracone.\n\
+Czy na pewno chcesz go skasowaæ?
+; All messages in this folder will be lost.\n\
 ; Do you really want to delete it?
 ;
 MSG_CO_InvalidConf
 Niew³a¶ciwa konfiguracja (brak nazwy\n\
 serwera SMTP/POP3 lub adresu e-mail).\n\
 \n\
-Proszê wype³niæ te pola i spróbowaæ ponownie!
+Proszê wype³niæ te pola i spróbowaæ ponownie.
 ; Invalid configuration (missing SMTP/POP3\n\
 ; server name or e-mail address).\n\
 ; \n\
-; Please fill in these fields and try again!
+; Please fill in these fields and try again.
 ;
 MSG_CO_ImportMIMEReq
 Importuj ustawienia z...
@@ -952,11 +953,11 @@ Cze¶æ,\\n
 ;
 MSG_CO_AltRepIntroDef
 
-;
+; 
 ;
 MSG_CO_AltRepPatternDef
 
-;
+; 
 ;
 MSG_CO_ForwardIntroDef
 *** Pocz±tek podsy³anej wiadomo¶ci ***\\n\
@@ -986,15 +987,15 @@ Pozdrawiam
 ;
 MSG_CO_AltRepHelloDef
 
-;
+; 
 ;
 MSG_CO_AltRepByeDef
 
-;
+; 
 ;
 MSG_CO_MLRepHelloDef
 
-;
+; 
 ;
 MSG_CO_MLRepIntroDef
 Dnia %c, %n napisa³(a):\\\\n
@@ -2857,8 +2858,8 @@ Urodziny
 ; Birthday Reminder
 ;
 MSG_AB_HappyBirthday
-Wszystkiego najlepszego!
-; Happy birthday!
+Wszystkiego najlepszego.
+; Happy birthday.
 ;
 MSG_AB_PersonAlias
 Synonim (OSOBA)
@@ -2885,11 +2886,11 @@ Synonim
 ; Alias
 ;
 MSG_AB_FoundEntry
-Znalaz³em pasuj±cy wpis!\n\
+Znalaz³em pasuj±cy wpis.\n\
 \n\
 Synonim: \eb%s\en\n\
 Imiê:    \eb%s\en
-; Found matching entry!\n\
+; Found matching entry.\n\
 ; \n\
 ; Alias: \eb%s\en\n\
 ; Name: \eb%s\en
@@ -2916,12 +2917,12 @@ _Nastêpne|_Edytuj|Ponie_chaj
 ; _Next hit|_Edit hit|_Cancel
 ;
 MSG_AB_NoneFound
-Brak pasuj±cych wpisów
-; No matching entries found!
+Brak pasuj±cych wpisów.
+; No matching entries found.
 ;
 MSG_AB_Modified
-Ksi±¿ka adresowa zosta³a zmodyfikowana!
-; Address book has been modified!
+Ksi±¿ka adresowa zosta³a zmodyfikowana.
+; Address book has been modified.
 ;
 MSG_AB_ModifiedGads
 *Zapi_sz|_U¿yj|_Anuluj zmiany|Ponie_chaj
@@ -3243,8 +3244,8 @@ Zdjêcie
 ; Portrait
 ;
 MSG_EA_SelectPhoto
-Wy_bierz
-; Se_lect
+Wy_bierz...
+; Se_lect...
 ;
 MSG_EA_ReturnAddress
 Ad_res zwrotny
@@ -3822,8 +3823,8 @@ tê wiadomo¶æ.
 ; Module WR - Procedures
 ;
 MSG_WR_ErrorNoRcpt
-Wiadomo¶æ niekompletna: brak odbiorcy!
-; Mail is incomplete: no recipient!
+Wiadomo¶æ niekompletna: brak odbiorcy.
+; Mail is incomplete: no recipient.
 ;
 MSG_WR_NoRcptReqGad
 Dod_aj odbiorcê pó¼niej|*Ponie_chaj
@@ -4487,12 +4488,12 @@ Usuwam pocztê z serwera...
 ; Deleting mail on server...
 ;
 MSG_TR_NewMailReq
-\e8Masz now± pocztê!\e2\n\
+\e8Masz now± pocztê.\e2\n\
 \n\
 Wiadomo¶ci odebranych: %3ld,\n\
 zosta³o na serwerze: %3ld,\n\
 pominiêtych duplikatów: %3ld.\n
-; \e8You have new mail!\e2\n\
+; \e8You have new mail.\e2\n\
 ; \n\
 ; %3ld messages downloaded,\n\
 ; %3ld left on server\n\
@@ -4661,12 +4662,12 @@ zabezpieczony przed zapisem.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias
-Musisz zdefiniowaæ synonim do identyfikacji tego wpisu!
-; You must specify an alias to identify this entry!
+Musisz zdefiniowaæ synonim do identyfikacji tego wpisu.
+; You must specify an alias to identify this entry.
 ;
 MSG_ER_ErrorNoAddress
-Musisz zdefiniowaæ adres dla tego wpisu!
-; You must specify an address for this entry!
+Musisz zdefiniowaæ adres dla tego wpisu.
+; You must specify an address for this entry.
 ;
 MSG_ER_ErrorDateFormat
 Niew³a¶ciwy format daty/godziny.\n\
@@ -4775,12 +4776,12 @@ Plik istnieje, ale wystêpuje b³±d przy jego odczycie.
 ; FILENAME
 ;
 MSG_ER_MissingDirectory
-Musisz zdefiniowaæ katalog dla nowego u¿ytkownika!
-; You must specify a directory for the new user!
+Musisz zdefiniowaæ katalog dla nowego u¿ytkownika.
+; You must specify a directory for the new user.
 ;
 MSG_ER_MissingName
-Musisz zdefiniowaæ imiê nowego u¿ytkownika!
-; You must specify a name for the new user!
+Musisz zdefiniowaæ imiê nowego u¿ytkownika.
+; You must specify a name for the new user.
 ;
 MSG_ER_NoPublicKeys
 Nie znaleziono klucza publicznego PGP.\n\
@@ -5140,11 +5141,11 @@ Czekam na zalogowanie u¿ytkownika...
 MSG_US_RemoveReq
 Wszystkie wiadomo¶ci, foldery i pliki\n\
 konfiguracyjne nale¿±ce do tego u¿ytkownika\n\
-zostan± utracone!\n\
+zostan± utracone.\n\
 \n\
 Czy na pewno chcesz usun±æ tego u¿ytkownika?
 ; All messages, folders and configuration\n\
-; files belonging to this user will be lost!\n\
+; files belonging to this user will be lost.\n\
 ; \n\
 ; Do you really want to remove the user?
 ;
@@ -5570,8 +5571,8 @@ Standardowe
 ;
 MSG_ER_PGPMultipart
 B³±d podczas tworzenia wieloczê¶cowej wiadomo¶ci PGP.\n\
-Kodowanie/podpisywanie wy³±czono!
-; Error creating multipart PGP message. Encrypting/signing disabled!
+Kodowanie/podpisywanie wy³±czono.
+; Error creating multipart PGP message. Encrypting/signing disabled.
 ;
 MSG_RE_FixedFont
 Czcionka o sta³ej szeroko¶ci
@@ -5802,8 +5803,8 @@ Ci±g \"%s\" nie zosta³ znaleziony
 ; '%s' not found.
 ;
 MSG_WR_ERRORNOSENDER
-E-mail jest niekompletny: brak nadawcy!
-; Mail is incomplete: no sender!
+E-mail jest niekompletny: brak nadawcy.
+; Mail is incomplete: no sender.
 ;
 MSG_WR_NOSENDERREQGAD
 _U¿yj domy¶lnego nadawcy|*Ponie_chaj
@@ -5898,8 +5899,8 @@ przeskanowanie pierwszych 5 wiadomo¶ci w folderze.
 ; first five e-mails in the folder.
 ;
 MSG_FO_NOTRECOGNIZED
-Nie mo¿na rozpoznaæ!
-; Couldn't be recognized!
+Nie mo¿na rozpoznaæ.
+; Couldn't be recognized.
 ;
 MSG_FO_MAXAGEFMT
 dni: %ld
@@ -7744,8 +7745,8 @@ Wyszukaj...
 ; Search...
 ;
 MSG_MA_MFILTER
-Filtr
-; Filter
+Filtr...
+; Filter...
 ;
 MSG_MA_REMOVEDELETED
 Opró¿nij ¶mietnik
@@ -7804,8 +7805,8 @@ Skopiuj...
 ; Copy...
 ;
 MSG_MA_MPRINT
-Wydrukuj
-; Print
+Wydrukuj...
+; Print...
 ;
 MSG_MA_MSAVE
 Zapisz...
@@ -7816,8 +7817,8 @@ Zapisz...
 ; Save...
 ;
 MSG_MA_MNEW
-Nowa
-; New
+Nowa...
+; New...
 ;
 MSG_MA_MREPLY
 Odpisz...
@@ -8180,8 +8181,8 @@ MSG_ER_USER_UNKNOWN_BUTTON
 ; *_Ok
 ;
 MSG_ER_USER_UNKNOWN_ERROR
-Nieznany u¿ytkownik \"%s\"!
-; Unknown user '%s'!
+Nieznany u¿ytkownik \"%s\".
+; Unknown user '%s'.
 ;
 MSG_HELP_CO_CA_COLSIG
 Kolor, który ma byæ u¿ywany do wy¶wietlania\n\
@@ -8203,8 +8204,8 @@ Czy chcesz ponownie wy³±czyæ tê opcjê?
 ; Do you want to disable this option again?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE
-Nie mo¿na utworzyæ semafora!
-; Can't create semaphore!
+Nie mo¿na utworzyæ semafora.
+; Can't create semaphore.
 ;
 MSG_MA_AUTOSAVEFOUND_BUTTONS
 *_Preznie¶ do \"wychodz±cych\"|_Edytuj|S_kasuj|_Ignoruj
@@ -9579,8 +9580,8 @@ Czy chcesz go nadpisaæ?
 ; FILENAME
 ;
 MSG_ER_USER_DIR_MISSING
-Katalog domowy \"%s\" u¿ytkownika \"%s\" nie istnieje!
-; The home directory '%s' of user '%s' does not exist!
+Katalog domowy \"%s\" u¿ytkownika \"%s\" nie istnieje.
+; The home directory '%s' of user '%s' does not exist.
 ; PATH, USERNAME
 ;
 MSG_CO_TEXTCOLORS_READ
@@ -9683,13 +9684,13 @@ Data urodzin u¿ywa niew³a¶ciwego formatu. Poprawnym formatem jest \"%s\".\n\
 %%m - miesi±c\n\
 %%y - rok (w postaci dwucyfrowej)\n\
 %%Y - rok (w postaci czterocyfrowej)\n\
-Rok musi byæ wiêkszy, b±d¼ równy 1900!
+Rok musi byæ wiêkszy, b±d¼ równy 1900.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n\
 ; %%d - day\n\
 ; %%m - month\n\
 ; %%y - year (2 digits)\n\
 ; %%Y - year (4 digits)\n\
-; The year number must be greater or equal 1900!
+; The year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
 MSG_CO_PGPURL
@@ -9705,11 +9706,6 @@ ka¿dej Twojej wiadomo¶ci.
 ; PGP key can be downloaded from. This URL\n\
 ; will then placed into a separate header\n\
 ; entry in every mail.
-;
-MSG_TR_NEW_MAIL_NOTIFY
-Odebrano %ld nowych wiadomo¶ci!
-; Received %ld new mails!
-; COUNT
 ;
 MSG_CO_NOTIOS41SYSTEM
 System notyfikacji AmigaOS_4.1
@@ -9748,10 +9744,10 @@ Czê¶æ %ld.%ld
 ; PARENTNUMBER PARTNUMER
 ;
 MSG_OPEN_WRITEWINDOWS
-Nadal s± otwarte okna pisania wiadomo¶ci!\n\
+Nadal s± otwarte okna pisania wiadomo¶ci.\n\
 \n\
 Co w tej sytuacji chcesz zrobiæ?
-; There are still some write windows open!\n\
+; There are still some write windows open.\n\
 ; \n\
 ; How do you want to proceed?
 ;
@@ -9813,4 +9809,67 @@ i jest prawid³owym skryptem ARexx'a.
 MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 Nie pokazuj dzisiaj tego komunikatu.
 ; Do not show this requester today again.
+;
+MSG_TR_NEW_MAIL_NOTIFY_ONE
+Odebrano 1 now± wiadomo¶æ.
+; Received 1 new mail.
+;
+MSG_TR_NEW_MAIL_NOTIFY_MANY
+Odebrano nowych wiadomo¶ci: %ld.
+; Received %ld new mails.
+; COUNT
+;
+MSG_RE_SAVE_FILE
+Zapisz plik
+; Save file
+;
+MSG_UPD_NO_UPDATES_FOUND_TITLE
+Nie ma dostêpnych ¿adnych uaktualnieñ
+; No software updates available
+;
+MSG_UPD_NO_UPDATES_FOUND
+Nie ma dostêpnych ¿adnych uaktualnieñ.\n\
+%s
+; There are no software updates available.\n\
+; %s
+; HINT
+MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
+YAM bêdzie automatycznie sprawdza³ dostêpno¶æ uaktualnieñ.
+; YAM will check for available updates automatically.
+;
+MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
+Proszê spróbowaæ innym razem lub w³±czyæ automatyczne\n\
+sprawdzanie uaktualnieñ.
+; Please try again later or activate the automatic\n\
+; software update check.
+;
+MSG_THREAD_EXIT_WARNING_TITLE
+YAM - ostrze¿enie
+; YAM warning
+;
+MSG_THREAD_EXIT_WARNING
+Podczas próby oczyszczenia pamiêci YAM wyszuka³ uruchomione\n\
+podprocesy. Proszê zamkn±æ wszystkie nadal otwarte podprocesy\n\
+(np. wy¶wietlarki MIME, itp.) które mog³e¶ zainicjowaæ\n\
+z poziomu programu pocztowego.\n\
+\n\
+Czy chcesz ponowiæ próbê zakoñczenia pracy, czy te¿ zignorowaæ\n\
+nadal uruchomione podprocesy (co mo¿e doprowadziæ do pó¿niejszych\n\
+zawieszeñ systemu).
+; While trying to cleanup YAM still running sub threads\n\
+; have been found. Please make sure to close all still\n\
+; existing sub threads (e.g. MIME viewers, etc.) you may\n\
+; have initiated from YAM.\n\
+; \n\
+; Do you want to retry to quit YAM or ignore the still\n\
+; running sub thread (which could end up in later crashes)?
+;
+MSG_THREAD_EXIT_WARNING_BT
+P_onów|_Ignoruj
+; _Retry|_Ignore
+;
+MSG_EXECUTE_COMMAND_FAILED
+Wykonanie polecenia \"%s\" zakoñczone niepowodzeniem (kod b³êdu %ld: %s).
+; The execution of the command '%s' failed (error code %ld: %s).
+; COMMAND, ERRORCODE, ERRORSTRING
 ;
