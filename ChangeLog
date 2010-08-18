@@ -7,6 +7,8 @@ $URL$
 
 2010-08-18 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: bumped the minimum required version of the NList classes to what
+    have been recently released as a new hotfix version 0.107 of NList.
   * Debug.h: added <inline/macros.h> include statement to get the debug sources
     compatible to the old gcc 2.95.x compile as gcc 3.4.0 doesn't seem to be
     that stable for m68k builds :(
