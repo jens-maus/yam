@@ -234,6 +234,8 @@ void W(const unsigned long f, const char *format, ...);
 
 #elif defined(__MORPHOS__)
 
+#include <inline/macros.h>
+
 #define AllocPooled(__p0, __p1) ({ \
   APTR P = LP2(708, APTR , AllocPooled, \
     APTR , __p0, a0, \
@@ -344,6 +346,8 @@ void W(const unsigned long f, const char *format, ...);
 })
 
 #elif !defined(__AROS__) // AmigaOS 3
+
+#include <inline/macros.h>
 
 #define AllocPooled(__p0, __p1) ({ \
   APTR P = LP2(0x2c4, APTR , AllocPooled, \

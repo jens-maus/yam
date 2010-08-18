@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-18 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Debug.h: added <inline/macros.h> include statement to get the debug sources
+    compatible to the old gcc 2.95.x compile as gcc 3.4.0 doesn't seem to be
+    that stable for m68k builds :(
+ 
 2010-08-17 Jens Langner <Jens.Langner@light-speed.de>
 
   * Debug.h, include/netinclude: switched all inline files to use the correct
