@@ -171,8 +171,14 @@ struct Global
   struct Timers            timerData;
 
   // the data for our thread implementation
-  struct Thread          * mainThread;     // the main thread
-  struct MinList           subThreadList;  // list of subthreads
+  struct MsgPort         * threadPort;
+  struct MinList           idleThreads;
+  struct MinList           workingThreads;
+  ULONG                    numThreads;
+
+  // the data for our methodstack implementation
+  struct MinList           methodStack;
+  struct SignalSemaphore   methodStackSema;
 
   char                     ProgDir[SIZE_PATH];
   char                     ProgName[SIZE_FILE];

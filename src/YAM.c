@@ -102,6 +102,7 @@
 #include "ImageCache.h"
 #include "Locale.h"
 #include "MailList.h"
+#include "MethodStack.h"
 #include "Requesters.h"
 #include "Rexx.h"
 #include "Threads.h"
@@ -1096,6 +1097,9 @@ static void Terminate(void)
   D(DBF_STARTUP, "cleaning up thread system...");
   CleanupThreads();
 
+  D(DBF_STARTUP, "cleaning up method stack...");
+  CleanupMethodStack();
+
   // cleaning up all AmiSSL stuff
   D(DBF_STARTUP, "cleaning up AmiSSL stuff...");
   if(AmiSSLBase != NULL)
@@ -1981,6 +1985,9 @@ static void InitBeforeLogin(BOOL hidden)
   // Lets check for the correct TextEditor.mcc version
   CheckMCC(MUIC_TextEditor, 15, 28, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
+  // initialize the method stack
+  InitMethodStack();
+
   // initialize the thread system of YAM
   if(InitThreads() == FALSE)
     Abort(tr(MSG_ERROR_THREADS));
@@ -2666,7 +2673,7 @@ int main(int argc, char **argv)
     appsig            = (1UL << G->AppPort->mp_SigBit);
     applibsig         = DockyIconSignal();
     writeWinNotifySig = (1UL << G->writeWinNotifyPort->mp_SigBit);
-    threadsig         = CurrentThreadMask();
+    threadsig         = (1UL << G->threadPort->mp_SigBit);
 
     D(DBF_STARTUP, "YAM allocated signals:");
     D(DBF_STARTUP, " adstsig           = %08lx", adstsig);
@@ -2715,6 +2722,9 @@ int main(int argc, char **argv)
         if(isFlagSet(signals, SIGBREAKF_CTRL_F))
           PopUp();
 
+        // handle pushed methods
+        CheckMethodStack();
+
         // check for a Timer event
         if(isFlagSet(signals, timsig))
         {
@@ -2749,7 +2759,8 @@ int main(int argc, char **argv)
         #endif // __amigaos4__
 
         // handle thread messages
-        HandleThreadEvent(signals);
+        if(isFlagSet(signals, threadsig))
+          HandleThreads();
 
         // check for a write window file notification signal
         if(isFlagSet(signals, writeWinNotifySig))

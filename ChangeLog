@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: completely rewrote the thread framework. Instead of launching a thread
+    whenever one is needed we now have a self-expanding pool of threads (4 by
+    default) which then get loaded with work. Currently only the asynchronous
+    lauching of external commands is implemented, but extended this is quite
+    straight forward and very easy. All in all this is much more intuitive and
+    less error prone than the previous approach. Additionally it doesn't need
+    lots of separate functions for different, but similar things.
+
 2010-08-18 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: bumped the minimum required version of the NList classes to what
@@ -12,11 +22,11 @@ $URL$
   * Debug.h: added <inline/macros.h> include statement to get the debug sources
     compatible to the old gcc 2.95.x compile as gcc 3.4.0 doesn't seem to be
     that stable for m68k builds :(
- 
+
 2010-08-17 Jens Langner <Jens.Langner@light-speed.de>
 
   * Debug.h, include/netinclude: switched all inline files to use the correct
-    LPXXX() macros rather than defining the macros on our own. This should 
+    LPXXX() macros rather than defining the macros on our own. This should
     make our code compatible to gcc 3.4.x compiles for m68k-amigaos.
 
 2010-08-17 Mariusz Danilewicz <mandi@interia.pl>
@@ -26,7 +36,7 @@ $URL$
 2010-08-16 Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: now that a new NList release is out we are finally using some new
-    features from it (MUIM_NList_SetActive). This of course required to 
+    features from it (MUIM_NList_SetActive). This of course required to
     increase the minimum required version of NList to 20.125.
 
 2010-08-16 Samir Hawamdeh <s.hawamdeh@tin.it>

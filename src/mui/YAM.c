@@ -37,6 +37,7 @@
 
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_error.h"
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
 
@@ -724,6 +725,18 @@ DECLARE(UpdateCheck) // ULONG quiet
   // perform the update check and update our open GUI
   // elements accordingly.
   CheckForUpdates(msg->quiet);
+
+  return 0;
+}
+
+///
+/// ShowError
+// show an error message and free() the pointer
+// NOTE: the error message must have been allocated by malloc() or similar!
+DECLARE(ShowError) // char *errorMsg
+{
+  ER_NewError(msg->errorMsg);
+  free(msg->errorMsg);
 
   return 0;
 }

@@ -100,6 +100,7 @@
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
+#include "MethodStack.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "ParseEmail.h"
@@ -5152,7 +5153,7 @@ static LONG SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
                                NP_Child,     TRUE,
                                #endif
                                SYS_Asynch,   FALSE,
-                               NP_Name,      "YAM command process",
+                               NP_Name,      "YAM launch command thread",
                                NP_Path,      path,
                                NP_StackSize, C->StackSize,
                                NP_WindowPtr, -1,           // show no requesters at all
@@ -5160,13 +5161,17 @@ static LONG SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
   {
     LONG error = IoErr();
     char fault[SIZE_LARGE];
+    char *failMessage;
 
     // an error occurred as SystemTags should always
     // return zero on success, no matter what.
     E(DBF_UTIL, "execution of '%s' failed, rc=%ld", cmd, result);
 
+    // setup the error message and put it on the application's method stack to
+    // let the main thread display it.
     Fault(error, NULL, fault, sizeof(fault));
-    ER_NewError(tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, fault);
+    if(asprintf(&failMessage, tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, fault) != -1)
+      PushMethodOnStack(G->App, 2, MUIM_YAM_ShowError, failMessage);
 
     // manually free our search path as SystemTags() shouldn't have freed
     // it itself, but only if the result is equal to -1. All other values
@@ -5186,40 +5191,6 @@ static LONG SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
 }
 
 ///
-/// LaunchCommandThread
-// synchronously execute a command in a separate thread
-static int LaunchCommandThread(struct LaunchCommandData *data)
-{
-  char *cmd;
-  enum OutputDefType outdef;
-
-  ENTER();
-
-  outdef = data->outdef;
-
-  // copy all necessary data, we must not access the parent task's
-  // data after the "can continue" signal, as the parent task might
-  // have placed them on the stack which is then no longer valid.
-  if((cmd = AllocVec(strlen(data->cmd)+1, MEMF_SHARED)) != NULL)
-  {
-    strcpy(cmd, data->cmd);
-
-    // signal the parent task that we obtained all necessary data and
-    // that it may continue to run
-    if(ParentThreadCanContinue() == TRUE)
-    {
-      // now launch the command synchronously within this new thread
-      SyncLaunchCommand(cmd, outdef);
-    }
-
-    FreeVec(cmd);
-  }
-
-  LEAVE();
-  return 0;
-}
-
-///
 /// LaunchCommand
 //  Executes a DOS command in a separate thread
 LONG LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
@@ -5230,14 +5201,10 @@ LONG LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
 
   if(asynch == TRUE)
   {
-    struct LaunchCommandData data;
-
-    data.cmd = cmd;
-    data.outdef = outdef;
-
-    // start the new thread
-    if(AddThread("YAM thread", THREAD_FUNCTION(LaunchCommandThread), &data) != NULL)
-      result = RETURN_OK;
+    // let the thread framework do the dirty work
+    result = DoAction(TA_LaunchCommand, TT_LaunchCommand_Command, cmd,
+                                        TT_LaunchCommand_Output, outdef,
+                                        TAG_DONE);
   }
   else
     result = SyncLaunchCommand(cmd, outdef);
