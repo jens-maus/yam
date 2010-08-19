@@ -103,7 +103,7 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
 
   ENTER();
 
-  if((pm = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*pm) + sizeof(pm->pm_args[0])*argCount,
+  if((pm = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*pm) + sizeof(pm->args[0])*argCount,
                                          ASONODE_Min, TRUE,
                                          TAG_DONE)) != NULL)
   {
