@@ -1,10 +1,10 @@
-## version $VER: YAM.catalog 7.4 (16.08.2010)
+## version $VER: YAM.catalog 7.5 (20.08.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
 ;
 ; italian.ct - YAM 2.7 catalog translation file
-; Compiled with FlexCat 2.7 PPC
+; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
 ; based on YAM.cd 4924 2010-08-16
@@ -96,7 +96,7 @@ MSG_YesNoReq
 ; *_Yes|_No
 ;
 MSG_ErrorReq
-Errore
+Errori
 ; Error
 ;
 MSG_NewEntry
@@ -308,7 +308,7 @@ Documento AmigaGuide
 ; AmigaGuide document
 ;
 MSG_CTapplicationoctetstream
-file binario
+File binario
 ; binary file
 ;
 MSG_CTapplicationpostscript
@@ -413,7 +413,7 @@ Cancellati(o) %ld messaggi(o) nella cartella '%s'
 ; COUNT, FOLDER
 ;
 MSG_LOG_DeletingVerbose
-Cancellato messaggio di '%s' su '%s' nella cartella '%s'
+Cancellato messaggio di '%s' relativo a '%s' nella cartella '%s'
 ; Deleted message from '%s' about '%s' in folder '%s'
 ; SENDER, SUBJECT, FOLDER
 ;
@@ -547,14 +547,14 @@ Carica
 ; Load
 ;
 MSG_UT_PGPPassReq
-Per favore, digita la tua password PGP:
+Per favore digita la tua password PGP:
 ; Please enter your PGP pass phrase:
 ;
 ; Module MA - Procedures
 ;
 MSG_MA_GetFolderPass
 La cartella '%s' è una cartella protetta.\n\
-Per favore, digita la password per sbloccarla:
+Per favore digita una password per sbloccarla:
 ; Folder '%s' is a protected folder.\n\
 ; Please enter the password to unlock it:
 ; FOLDER
@@ -623,7 +623,7 @@ Spostamento del/dei messaggio(i)
 ; Move message(s)
 ;
 MSG_MA_MoveMsgReq
-Per favore, seleziona una cartella di destinazione:
+Per favore seleziona una cartella di destinazione:
 ; Please select a destination folder:
 ;
 MSG_MA_MoveGad
@@ -916,7 +916,7 @@ per questa cartella:
 ; Enter a new password for this folder:
 ;
 MSG_CO_RetypePass
-Per favore, riscrivi la password:
+Per favore ridigita la password:
 ; Please re-type the password:
 ;
 MSG_CO_ConfirmDelete
@@ -926,10 +926,10 @@ Sei sicuro di volerli cancellare?
 ; Do you really want to delete it?
 ;
 MSG_CO_InvalidConf
-Configurazione errata!\n\
+La configurazione è errata!\n\
 (Nome host, Indirizzo E-Mail e/o password mancanti).\n\
 \n\
-Per favore, riempi questi campi e riprova.
+Per favore riempi questi campi e riprova nuovamente.
 ; Invalid configuration (missing SMTP/POP3\n\
 ; server name or e-mail address).\n\
 ; \n\
@@ -2168,7 +2168,7 @@ soglia verranno considerati come 'grandi'.
 ;
 MSG_HELP_CO_ST_INTERVAL
 Imposta un periodo di tempo durante il quale verificare la\n\
-presenza automatica di nuovi messaggi di posta.\n\
+presenza automatica dei nuovi messaggi di posta.\n\
 Digita '0' o lascia questo campo vuoto nel caso si desideri\n\
 desideri disattivare questa opzione.
 ; How often do you want YAM to automatically check for new mail?\n\
@@ -2205,7 +2205,7 @@ Lista dei filtri.
 ; List of filters.
 ;
 MSG_HELP_CO_ST_RNAME
-Nome filtro.
+Nome del filtro.
 ; Filter name.
 ;
 MSG_HELP_CO_CH_REMOTE
@@ -2353,8 +2353,7 @@ Il modello predefinito è (Da|A|Cc|BCC|Data|Oggetto).
 ;
 MSG_HELP_CO_CY_SENDERINFO
 Informazioni sul mittente da mostrare\n\
-nella finestra di lettura.\n\
-(Ove disponibili).
+nella finestra di lettura (se disponibile).
 ; Information about the sender to display\n\
 ; in the Read window (if available).
 ;
@@ -2650,7 +2649,8 @@ attraverso il servizio di Remailing.
 ; of all messages sent through the remailer.
 ;
 MSG_HELP_CO_ST_LOGFILE
-Percorso dove il file log verrà salvato.
+Percorso dove il file\n\
+log verrà salvato.
 ; Path where the log\n\
 ; files will be stored.
 ;
@@ -2714,7 +2714,8 @@ dei propri amici/corrispondenti.
 ; of your correspondents.
 ;
 MSG_HELP_CO_ST_PHOTOURL
-L'indirizzo WWW della propria immagine.
+L'indirizzo WWW della\n\
+propria immagine/foto.
 ; URL address of your\n\
 ; portrait image.
 ;
@@ -2727,14 +2728,14 @@ il mittente al momento della lettura del suo messaggio.
 MSG_HELP_CO_ST_PROXY
 Indirizzo e numero della porta del server proxy HTTP.\n\
 E' anche possibile lasciare vuoto questo campo.\n\
-(La porta predefinita è 80).
+(La porta predefinita è: 80).
 ; Address and optional port number of your\n\
 ; HTTP proxy server (default port is 80).\n\
 ; You may leave this field empty.
 ;
 MSG_HELP_CO_ST_NEWGROUP
-Aggiunge le nuove voci nella rubrica di questo gruppo\n\
-(ove non disponibile ne verrà creato uno)
+Aggiunge le nuove voci nella rubrica di questo gruppo.\n\
+(Ove non disponibile ne verrà creato uno).
 ; Add new address book entries to this group\n\
 ; (it will be created if it doesn't exist yet).
 ;
@@ -2764,10 +2765,10 @@ AppIcon di YAM.
 ;
 MSG_HELP_CO_CH_CLGADGET
 Seleziona questa opzione se si desidera\n\
-iconificare YAM cliccando sul gadget di\n\
-chiusura del programma.\n\
-Di norma questo gadget chiuderebbe\n\
-completamente il programma.
+iconificare YAM cliccando sul suo gadget\n\
+di chiusura.\n\
+Di norma il gadget di chiusura è utilizzato\n\
+per chiudere YAM definitivamente.
 ; Do you want YAM to iconify when\n\
 ; you hit the close gadget?
 ;
@@ -3080,7 +3081,7 @@ _Gruppo
 ; _Group
 ;
 MSG_AB_TBEdit
-_Modif.
+Mo_dif.
 ; _Edit
 ;
 MSG_AB_TBDelete
@@ -3208,7 +3209,7 @@ Indirizzo E-_Mail
 ; E-_mail address
 ;
 MSG_EA_PGPId
-C_hiave PGP ID
+Chia_ve PGP ID
 ; PGP _key ID
 ;
 MSG_EA_Homepage
@@ -3853,7 +3854,7 @@ Crea archivio
 ; Create archive
 ;
 MSG_WR_CreateArcReq
-Per favore, inserisci un nome per il nuovo archivio
+Per favore inserisci un nome per il nuovo archivio
 ; Please enter a filename for the new archive
 ;
 MSG_WR_InsertFile
@@ -4421,7 +4422,7 @@ Connesso, in attesa del messaggio di benvenuto...
 ; Connected, awaiting welcome message...
 ;
 MSG_TR_PopLoginReq
-Per favore, digita la password POP3 per l'account\n\
+Per favore digita la password POP3 per l'account\n\
 %s@%s
 ; Please enter POP3 password for account\n\
 ; %s@%s
@@ -4608,11 +4609,11 @@ Messaggio di errore
 ; Error messages
 ;
 MSG_ER_PrevError
-< Errore _precedente
+< _Precedente
 ; _Previous error
 ;
 MSG_ER_NextError
-Errore _successivo >
+_Successivo >
 ; _Next error
 ;
 MSG_ER_Clear
@@ -4813,9 +4814,9 @@ Verifica l'esistenza di %s.
 MSG_ER_AliasNotFound
 Pseudonimo o nome sconosciuto: %s.\n\
 \n\
-Impossibile trovare l'indirizzo E-Mail\n\
-di questo destinatario nella rubrica.\n\
-Per favore, effettua una verifica ortografica.
+Impossibile trovare l'indirizzo di posta di questo\n\
+destinatario all'interno della rubrica.\n\
+Per favore effettua una verifica ortografica.
 ; Unknown alias or name: %s.\n\
 ; \n\
 ; YAM couldn't find the e-mail address of this recipient \
@@ -5116,7 +5117,7 @@ usare un file coincidente o facente parte del pattern.
 ; Module US - Routines
 ;
 MSG_US_EnterPassword
-Per favore, digita la tua password
+Per favore digita la tua password
 ; Please enter your password
 ;
 MSG_US_TitleUserName
@@ -5624,8 +5625,9 @@ Dimensione formato
 ; Si_ze format
 ;
 MSG_HELP_CO_CY_SIZE
-Come si desidera che venga impostata la dimensione\n\
-di ogni singolo messaggio visualizzato?
+Come si desidera che venga impostata la\n\
+dimensione di ogni singolo messaggio di\n\
+posta visualizzato?
 ; How would you like the size of\n\
 ; each mail to be displayed?
 ;
@@ -5825,7 +5827,7 @@ MSG_ER_CANTMOVEMAIL
 Impossibile spostare il messaggio '%s' nella cartella '%s'.\n\
 \n\
 Non è stata trovata nessuna cartella con questo nome.\n\
-Per favore, verifica la tua configurazione Filtri.
+Per favore verifica le impostazioni dei tuoi Filtri.
 ; Couldn't move mail '%s' to folder '%s'.\n\
 ; \n\
 ; No folder with this name could be found. \
@@ -5911,14 +5913,14 @@ Seleziona 0 per disabilitare questa funzione.
 ; Select 0 to disable this feature.
 ;
 MSG_HELP_CO_ST_SMTPPORT
-Porta utilizzata dal server SMTP\n\
-(predefinita: 25)
+Porta utilizzata dal server SMTP.\n\
+(La porta predefinita è: 25)
 ; Port used by the SMTP server\n\
 ; (default: 25).
 ;
 MSG_HELP_CO_ST_POPPORT
-Porta utilizzata dal server POP3\n\
-(predefinita: 110)
+Porta utilizzata dal server POP3.\n\
+(La porta predefinita è: 110)
 ; Port used by the POP3 server\n\
 ; (default: 110).
 ;
@@ -7303,10 +7305,9 @@ Converti messaggi _HTML in testo semplice
 ; Con_vert HTML e-mails to plain text
 ;
 MSG_HELP_CO_CONVERTHTML
-Selezionando questa opzione sarà possibile\n\
-convertire i messaggi di posta aventi\n\
-consistenti parti in HTML in testo semplice\n\
-prima della loro visualizzazione finale.
+Selezionando questa opzione sarà possibile convertire\n\
+i messaggi di posta (aventi consistenti parti in HTML) in\n\
+testo semplice prima della loro visualizzazione finale.
 ; If the main part of an e-mail is HTML, YAM will\n\
 ; convert it to plain text before displaying it.
 ;
@@ -7966,7 +7967,7 @@ MSG_HELP_BT_SPAMRESETTRAININGDATA
 Permette di resettare manualmente l'intero\n\
 filtro AntiSpam.\n\
 Questa opzione potrebbe rendersi necessaria\n\
-solo in alcuni rari casi.
+solo in taluni e molto rari casi.
 ; Allows to manually reset the whole spam filter\n\
 ; training data. This should be necessary only\n\
 ; in very rare cases.
@@ -7979,9 +7980,9 @@ verrà prima analizzato dal filtro AntiSpam.
 ;
 MSG_HELP_CH_SPAMABOOKISWHITELIST
 Se selezionato, ogni messaggio provvisto di un mittente\n\
-già registrato nella rubrica personale verrà trattato\n\
-come messaggio sicuro e non verrà fatto passare per il\n\
-filtro AntiSpam.
+e già registrato nella rubrica indirizzi verrà trattato come\n\
+fosse un messaggio sicuro e non verrà fatto passare per\n\
+il filtro AntiSpam.
 ; If enabled, any e-mail with a From: address that\n\
 ; can be found in the address book will never\n\
 ; be considered as spam.
@@ -8003,7 +8004,7 @@ MSG_HELP_CH_UPDATECHECK
 Ogni quanto tempo si desidera che il programma\n\
 si connetta alla rete internet per cercare eventuali\n\
 nuovi aggiornamenti?\n\
-Imposta su disattivato per bloccare le notifiche\n\
+Impostala su 'Disattivata' per bloccare le notifiche\n\
 automatiche.
 ; How often do you want YAM to\n\
 ; automatically check for updates?\n\
@@ -9099,11 +9100,11 @@ Marca cartella già letta
 ; Mark folder read
 ;
 MSG_EA_REMOVEPHOTO
-Rimu_ovi
+_Rimuovi
 ; Remo_ve
 ;
 MSG_HELP_EA_BT_REMOVEPHOTO
-'Cancella' questa foto\n\
+'Dimentica' questa foto\n\
 (L'immagine rimarrà salvata su disco)
 ; 'Forget' this picture (the)\n\
 ; file on disk will remain).
@@ -9378,7 +9379,7 @@ MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Impossibile connettersi all'host '%s' dell'account '%s'.\n\
 \n\
 Una connessione TCP/IP sembra essere già attiva.\n\
-Per favore, chiudi tutte le applicazioni che stanno\n\
+Per favore chiudi tutte le applicazioni che stanno\n\
 eseguendo un trasferimento.
 ; Couldn't connect to host '%s' of account '%s'.\n\
 ; \n\
@@ -9494,8 +9495,8 @@ Impossibile connettersi all'host '%s'.\n\
 \n\
 Una connessione TCP/IP sembra essere già\n\
 attiva.\n\
-Per favore, chiudi tutte le applicazioni\n\
-che stanno eseguendo un trasferimento.
+Per favore chiudi tutte le applicazioni che\n\
+stanno eseguendo un trasferimento.
 ; Couldn't connect to host '%s'.\n\
 ; \n\
 ; A TCP/IP socket connection seems to be already active. \
@@ -9814,7 +9815,7 @@ una quantità inferiore di memoria.
 ; use less memory.
 ;
 MSG_CO_SPAM_STATISTICS
-%ld (%ld parole)
+%ld (%ld parole/a)
 ; %ld (%ld words)
 ;
 MSG_ER_WRONG_DOB_FORMAT
@@ -9852,7 +9853,7 @@ Gestore notifiche di AmigaOS _4.1+ (Ringhio)
 ; AmigaOS_4.1 notification system
 ;
 MSG_HELP_CO_CH_NOTIOS41SYSTEM
-Se selezionato YAM utilizzerà Ringhio, il gestore notifiche di AmigaOS 4.1 Update 1\n\
+Se selezionato YAM utilizzerà Ringhio, il gestore notifiche di AmigaOS 4.1 Update 1+\n\
 in modo da avvisare l'utente circa la presenza di nuovi aggiornamenti o messaggi di\n\
 posta elettronica.\n\
 Nota che questa funzionalità risulterà disabilitata qualora non sia presente la libreria\n\
@@ -9943,8 +9944,8 @@ Si desidera inviargli una cartolina di auguri?
 ;
 MSG_ER_AREXX_EXECUTION_ERROR
 Esecuzione del comando ARexx '%s' fallita (codice di errore %ld).\n\
-Per favore assicurati che il file sia accessibile e che si tratti\n\
-di un valido script ARexx.
+Per favore assicurati che il file sia accessibile e che si tratti di un\n\
+valido script ARexx.
 ; Execution of the ARexx command '%s' failed (error code %ld).\n\
 ; Please make sure that the file is accessible and is a valid ARexx script.
 ; COMMANDNAME, ERRORCODE

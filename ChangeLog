@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-19 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some more shortcuts and correct a few errors.
+
 2010-08-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: completely rewrote the thread framework. Instead of launching a thread
