@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include <exec/semaphores.h>
+
 #include "HashTable.h"
 
 // forward declarations
@@ -69,6 +71,7 @@ struct TokenAnalyzer
   ULONG goodCount;
   ULONG badCount;
   ULONG numDirtyingMessages;
+  struct SignalSemaphore lockSema;
 };
 
 /*** Public functions ***/

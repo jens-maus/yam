@@ -742,3 +742,21 @@ DECLARE(ShowError) // char *errorMsg
 }
 
 ///
+/// BusyText
+DECLARE(BusyText) // char *text, char *param
+{
+  BusyText(msg->text, msg->param);
+
+  return 0;
+}
+
+///
+/// BusyEnd
+DECLARE(BusyEnd)
+{
+  BusyEnd();
+
+  return 0;
+}
+
+///

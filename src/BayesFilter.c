@@ -41,10 +41,14 @@
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
 
+#include "mui/Classes.h"
+
 #include "extrasrc.h"
 
 #include "BayesFilter.h"
 #include "FileInfo.h"
+#include "Locale.h"
+#include "MethodStack.h"
 
 #include "Debug.h"
 
@@ -714,6 +718,9 @@ static BOOL tokenAnalyzerInit(void)
   G->spamFilter.badCount = 0;
   G->spamFilter.numDirtyingMessages = 0;
 
+  memset(&G->spamFilter.lockSema, 0, sizeof(G->spamFilter.lockSema));
+  InitSemaphore(&G->spamFilter.lockSema);
+
   if(tokenizerInit(&G->spamFilter.goodTokens) && tokenizerInit(&G->spamFilter.badTokens))
     result = TRUE;
 
@@ -728,8 +735,12 @@ static void tokenAnalyzerCleanup(void)
 {
   ENTER();
 
+  ObtainSemaphore(&G->spamFilter.lockSema);
+
   tokenizerCleanup(&G->spamFilter.goodTokens);
   tokenizerCleanup(&G->spamFilter.badTokens);
+
+  ReleaseSemaphore(&G->spamFilter.lockSema);
 
   LEAVE();
 }
@@ -872,6 +883,8 @@ static void tokenAnalyzerResetTrainingData(void)
 
   ENTER();
 
+  ObtainSemaphore(&G->spamFilter.lockSema);
+
   if(G->spamFilter.goodCount != 0 || G->spamFilter.goodTokens.tokenTable.entryCount != 0)
   {
     tokenizerClearTokens(&G->spamFilter.goodTokens);
@@ -890,6 +903,8 @@ static void tokenAnalyzerResetTrainingData(void)
   if(FileExists(fname))
     DeleteFile(fname);
 
+  ReleaseSemaphore(&G->spamFilter.lockSema);
+
   LEAVE();
 }
 
@@ -900,11 +915,15 @@ static void tokenAnalyzerOptimizeTrainingData(void)
 {
   ENTER();
 
+  ObtainSemaphore(&G->spamFilter.lockSema);
+
   if(G->spamFilter.goodTokens.tokenTable.entryCount != 0)
     G->spamFilter.numDirtyingMessages += tokenizerOptimizeTokens(&G->spamFilter.goodTokens, 1);
 
   if(G->spamFilter.badTokens.tokenTable.entryCount != 0)
     G->spamFilter.numDirtyingMessages += tokenizerOptimizeTokens(&G->spamFilter.badTokens, 1);
+
+  ReleaseSemaphore(&G->spamFilter.lockSema);
 
   LEAVE();
 }
@@ -1019,6 +1038,8 @@ static void tokenAnalyzerSetClassification(const struct Tokenizer *t,
 
   tokenEnumerationInit(&te, t);
 
+  ObtainSemaphore(&G->spamFilter.lockSema);
+
   if(oldClass != newClass)
   {
     switch(oldClass)
@@ -1077,6 +1098,8 @@ static void tokenAnalyzerSetClassification(const struct Tokenizer *t,
       break;
     }
   }
+
+  ReleaseSemaphore(&G->spamFilter.lockSema);
 
   LEAVE();
 }
@@ -1364,6 +1387,8 @@ static BOOL tokenAnalyzerClassifyMessage(const struct Tokenizer *t,
     // the mail's sender was not found in the address book, so let's analyze the mail contents
     struct Token *tokens = NULL;
 
+    ObtainSemaphoreShared(&G->spamFilter.lockSema);
+
     SHOWVALUE(DBF_SPAM, G->spamFilter.goodCount);
     SHOWVALUE(DBF_SPAM, G->spamFilter.badCount);
 
@@ -1521,6 +1546,9 @@ static BOOL tokenAnalyzerClassifyMessage(const struct Tokenizer *t,
       E(DBF_SPAM, "cannot copy tokens, assuming spam");
       isSpam = TRUE;
     }
+
+    ReleaseSemaphore(&G->spamFilter.lockSema);
+
   }
   else
   {
@@ -1560,6 +1588,8 @@ void BayesFilterCleanup(void)
 {
   ENTER();
 
+  ObtainSemaphore(&G->spamFilter.lockSema);
+
   // only write the spam training data to disk if there are any tokens and if something has changed since the last flush
   if(G->spamFilter.numDirtyingMessages > 0 && (G->spamFilter.goodCount > 0 || G->spamFilter.badCount > 0))
   {
@@ -1567,6 +1597,8 @@ void BayesFilterCleanup(void)
   }
 
   tokenAnalyzerCleanup();
+
+  ReleaseSemaphore(&G->spamFilter.lockSema);
 
   LEAVE();
 }
@@ -1678,7 +1710,9 @@ ULONG BayesFilterNumberOfSpamClassifiedMails(void)
 
   ENTER();
 
+  ObtainSemaphoreShared(&G->spamFilter.lockSema);
   num = G->spamFilter.badCount;
+  ReleaseSemaphore(&G->spamFilter.lockSema);
 
   RETURN(num);
   return num;
@@ -1693,7 +1727,9 @@ ULONG BayesFilterNumberOfSpamClassifiedWords(void)
 
   ENTER();
 
+  ObtainSemaphoreShared(&G->spamFilter.lockSema);
   num = G->spamFilter.badTokens.tokenTable.entryCount;
+  ReleaseSemaphore(&G->spamFilter.lockSema);
 
   RETURN(num);
   return num;
@@ -1708,7 +1744,9 @@ ULONG BayesFilterNumberOfHamClassifiedMails(void)
 
   ENTER();
 
+  ObtainSemaphoreShared(&G->spamFilter.lockSema);
   num = G->spamFilter.goodCount;
+  ReleaseSemaphore(&G->spamFilter.lockSema);
 
   RETURN(num);
   return num;
@@ -1723,7 +1761,9 @@ ULONG BayesFilterNumberOfHamClassifiedWords(void)
 
   ENTER();
 
+  ObtainSemaphoreShared(&G->spamFilter.lockSema);
   num = G->spamFilter.goodTokens.tokenTable.entryCount;
+  ReleaseSemaphore(&G->spamFilter.lockSema);
 
   RETURN(num);
   return num;
@@ -1736,11 +1776,17 @@ void BayesFilterFlushTrainingData(void)
 {
   ENTER();
 
-  if(C->SpamFlushTrainingDataThreshold > 0 && G->spamFilter.numDirtyingMessages > (ULONG)C->SpamFlushTrainingDataThreshold)
+  ObtainSemaphore(&G->spamFilter.lockSema);
+  PushMethodOnStack(G->App, 3, MUIM_YAM_BusyText, tr(MSG_BUSYFLUSHINGSPAMTRAININGDATA), "");
+
+  if(TRUE/*C->SpamFlushTrainingDataThreshold > 0 && G->spamFilter.numDirtyingMessages > (ULONG)C->SpamFlushTrainingDataThreshold*/)
   {
     tokenAnalyzerWriteTrainingData();
     G->spamFilter.numDirtyingMessages = 0;
   }
+
+  PushMethodOnStack(G->App, 1, MUIM_YAM_BusyEnd);
+  ReleaseSemaphore(&G->spamFilter.lockSema);
 
   LEAVE();
 }

@@ -45,6 +45,7 @@
 
 #include "Locale.h"
 #include "MUIObjects.h"
+#include "Threads.h"
 #include "Timer.h"
 
 #include "mui/Classes.h"
@@ -603,9 +604,7 @@ static void TimerDispatcher(const enum Timer tid)
     {
       D(DBF_TIMER, "timer[%ld]: TIMER_SPAMFLUSHTRAININGDATA fired @ %s", tid, dateString);
 
-      BusyText(tr(MSG_BUSYFLUSHINGSPAMTRAININGDATA), "");
-      BayesFilterFlushTrainingData();
-      BusyEnd();
+      DoAction(TA_FlushSpamTrainingData, TAG_DONE);
 
       PrepareTimer(tid, C->SpamFlushTrainingDataInterval, 0);
     }

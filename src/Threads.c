@@ -197,6 +197,13 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
                              GetTagData(TT_LaunchCommand_Output, OUT_NIL, msg->actionTags));
     }
     break;
+
+    case TA_FlushSpamTrainingData:
+    {
+      BayesFilterFlushTrainingData();
+      result = 0;
+    }
+    break;
   }
 
   D(DBF_THREAD, "thread '%s' finished action %ld, result %ld", msg->thread->name, msg->action, result);
