@@ -103,14 +103,14 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
 
   ENTER();
 
-  if((pm = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*pm),
+  if((pm = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*pm) + sizeof(pm->pm_args[0])*argCount,
                                          ASONODE_Min, TRUE,
                                          TAG_DONE)) != NULL)
   {
     va_list args;
     ULONG i;
 
-	va_start(args, argCount);
+    va_start(args, argCount);
 
     // fill in the data
     pm->obj = obj;
@@ -121,11 +121,11 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
     va_end(args);
 
     // push the method on the stack
-	ObtainSemaphore(&G->methodStackSema);
+    ObtainSemaphore(&G->methodStackSema);
     AddTail((struct List *)&G->methodStack, (struct Node *)pm);
-	ReleaseSemaphore(&G->methodStackSema);
+    ReleaseSemaphore(&G->methodStackSema);
 
-	success = TRUE;
+    success = TRUE;
   }
 
   RETURN(success);
@@ -165,3 +165,4 @@ void CheckMethodStack(void)
 }
 
 ///
+
