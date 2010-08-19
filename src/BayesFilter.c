@@ -1779,7 +1779,7 @@ void BayesFilterFlushTrainingData(void)
   ObtainSemaphore(&G->spamFilter.lockSema);
   PushMethodOnStack(G->App, 3, MUIM_YAM_BusyText, tr(MSG_BUSYFLUSHINGSPAMTRAININGDATA), "");
 
-  if(TRUE/*C->SpamFlushTrainingDataThreshold > 0 && G->spamFilter.numDirtyingMessages > (ULONG)C->SpamFlushTrainingDataThreshold*/)
+  if(C->SpamFlushTrainingDataThreshold > 0 && G->spamFilter.numDirtyingMessages > (ULONG)C->SpamFlushTrainingDataThreshold)
   {
     tokenAnalyzerWriteTrainingData();
     G->spamFilter.numDirtyingMessages = 0;
