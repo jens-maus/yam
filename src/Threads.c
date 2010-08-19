@@ -37,6 +37,7 @@
  *
  * Ambient's thread implementation can be found here:
  * http://morphosambient.cvs.sourceforge.net/viewvc/morphosambient/ambient/threads.c?view=log
+ *
  */
 
 #include <string.h>
@@ -86,10 +87,10 @@ struct ThreadNode
 
 struct ThreadMessage
 {
-  struct Message msg;     // to make ThreadMessage a full Exec message
-  ULONG action;
-  LONG result;
-  LONG priority;
+  struct Message msg;             // to make ThreadMessage a full Exec message
+  enum ThreadAction action;       // the action the thread should perform
+  LONG result;                    // when the thread is finished the result is stored here
+  LONG priority;                  // the task priority the thread should be set to
   struct TagItem *actionTags;
   struct ThreadNode *threadNode;
   struct Thread *thread;
@@ -196,6 +197,12 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
 
   switch(msg->action)
   {
+    // TA_Startup/TA_Shutdown is handled in ThreadEntry() already.
+    case TA_Startup:
+    case TA_Shutdown:
+      // nothing
+    break;
+
     case TA_LaunchCommand:
     {
       result = LaunchCommand((const char *)GetTagData(TT_LaunchCommand_Command, (IPTR)NULL, msg->actionTags),
@@ -294,7 +301,7 @@ static struct Thread *CreateThread(void)
     {
       threadNode->thread = thread;
 
-      snprintf(thread->name, sizeof(thread->name), "YAM thread %ld", G->numThreads+1);
+      snprintf(thread->name, sizeof(thread->name), "YAM thread [%d]", (int)G->numThreads+1);
 
       if((thread->process = CreateNewProcTags(NP_Entry,       ThreadEntry, // entry function
                                               NP_StackSize,   8192,        // stack size
@@ -526,7 +533,7 @@ BOOL VARARGS68K DoAction(const enum ThreadAction action, ...)
     D(DBF_THREAD, "found idle task '%s'", thread->name);
 
     if((msg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*msg),
-                                               ASOMSG_ReplyPort, G->threadPort,
+                                               ASOMSG_ReplyPort, (IPTR)G->threadPort,
                                                TAG_DONE)) != NULL)
     {
       VA_LIST args;

@@ -54,10 +54,10 @@
 
 struct PushedMethod
 {
-  struct MinNode node;
-  Object *obj;
-  ULONG argCount;
-  IPTR args[0];
+  struct MinNode node; // required to be put into an exec list
+  Object *obj;         // pointer to the object for receiving the method call
+  ULONG argCount;      // number of arguments to follow
+  IPTR *args;          // pointer to a memory area setup for holding the args
 };
 
 /// InitMethodStack
@@ -103,7 +103,7 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
 
   ENTER();
 
-  if((pm = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*pm) + sizeof(pm->args[0])*argCount,
+  if((pm = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*pm),
                                          ASONODE_Min, TRUE,
                                          TAG_DONE)) != NULL)
   {
@@ -115,8 +115,11 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
     // fill in the data
     pm->obj = obj;
     pm->argCount = argCount;
-    for(i = 0; i < argCount; i++)
-      pm->args[i] = va_arg(args, IPTR);
+    if((pm->args = calloc(1, argCount*sizeof(IPTR))))
+    {
+      for(i = 0; i < argCount; i++)
+        pm->args[i] = va_arg(args, IPTR);
+    }
 
     va_end(args);
 
@@ -156,6 +159,7 @@ void CheckMethodStack(void)
       DoMethodA(pm->obj, (Msg)&pm->args[0]);
 
       // finally free the handled method
+      free(pm->args);
       FreeSysObject(ASOT_NODE, pm);
     }
   }
