@@ -30,7 +30,13 @@
  * partly a modified version of the thread implementation in Ambient.
  * In fact it was highly inspired by the implementation of Ambient.
  *
- * Thanks to the authors of SimpleMail!
+ * Thanks to the authors of Ambient!
+ *
+ * Details about Ambient can be found here:
+ * http://sourceforge.net/projects/morphosambient/
+ *
+ * Ambient's thread implementation can be found here:
+ * http://morphosambient.cvs.sourceforge.net/viewvc/morphosambient/ambient/threads.c?view=log
  */
 
 #include <string.h>
