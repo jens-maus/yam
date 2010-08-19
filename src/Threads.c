@@ -294,7 +294,7 @@ static struct Thread *CreateThread(void)
     {
       threadNode->thread = thread;
 
-      snprintf(thread->name, sizeof(thread->name), "YAM thread %d", G->numThreads+1);
+      snprintf(thread->name, sizeof(thread->name), "YAM thread %ld", G->numThreads+1);
 
       if((thread->process = CreateNewProcTags(NP_Entry,       ThreadEntry, // entry function
                                               NP_StackSize,   8192,        // stack size
