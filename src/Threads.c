@@ -236,7 +236,7 @@ static SAVEDS void ThreadEntry(void)
   ENTER();
 
   proc = (struct Process*)FindTask(NULL);
-  D(DBF_THREAD, "thread 0x%08lx '%s' waiting for startup message", proc, proc->pr_Task.tr_Node.ln_Name);
+  D(DBF_THREAD, "thread 0x%08lx '%s' waiting for startup message", proc, SafeStr(proc->pr_Task.tc_Node.ln_Name));
 
   do
   {
