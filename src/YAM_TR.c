@@ -7134,12 +7134,12 @@ HOOKPROTONHNONP(TR_AbortGETFunc, void)
   // first set the Abort variable so that other can benefit from it
   G->TR->Abort = TRUE;
 
-  // we can easily abort the transfer by setting the POP_Nr to the
-  // highest value possible and issue a GetMailFromNextPOP command.
-  // with this solution YAM will also process the filters for mails that
-  // were already downloaded even if the user aborted the transfer somehow
-  G->TR->POP_Nr = MAXP3;
-  TR_GetMailFromNextPOP(FALSE, MAXP3, 0);
+  // we can easily abort the transfer by setting the POP_Nr to -1
+  // and issue a GetMailFromNextPOP command. With this solution YAM will
+  // also process the filters for mails that were already downloaded
+  // even if the user aborted the transfer somehow
+  G->TR->POP_Nr = -1;
+  TR_GetMailFromNextPOP(FALSE, -1, 0);
 
   LEAVE();
 }

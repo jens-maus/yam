@@ -7,6 +7,9 @@ $URL$
 
 2010-08-20 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_stringsizes.h: removed MAXP3 define as we have no limit on max. amount
+    of POP3 servers anymore. Only the number of entries in the main menu
+    will be limited with MAXP3_MENU.
   * MailServers.c,h, misc: partly merged the new mail server management
     functionality from our newtransfer branch back onto the trunk again.
     This include a changed mail server management to use exec lists which are

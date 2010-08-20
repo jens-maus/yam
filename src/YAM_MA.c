@@ -3741,13 +3741,13 @@ void MA_SetupDynamicMenus(void)
 
   if(G->MA->GUI.MN_REXX != NULL)
   {
-    static const char *const shortcuts[10] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
+    static const char *const shortcuts[MAXRX_MENU] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
     int i;
 
     // the first ten entries of our user definable
     // rexx script array is for defining rexx items
     // linked to the main menu.
-    for(i=0; i < 10; i++)
+    for(i=0; i < MAXRX_MENU; i++)
     {
       if(C->RX[i].Script[0] != '\0')
       {
@@ -4382,10 +4382,10 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_PREVTH,         MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, -1);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEXTTH,         MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, +1);
 
-      for(i=0; i < 10; i++)
+      for(i=0; i < MAXRX_MENU; i++)
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MACRO+i, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_CallRexxHook, i);
 
-      for(i=0; i < MAXP3; i++)
+      for(i=0; i < MAXP3_MENU; i++)
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, POP_USER, i, 0);
 
       DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_CloseRequest,  TRUE,                   MUIV_Notify_Application,  2, MUIM_Application_ReturnID, ID_CLOSEALL);

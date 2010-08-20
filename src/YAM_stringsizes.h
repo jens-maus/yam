@@ -53,8 +53,10 @@
 #define SIZE_EXALLBUF 32768
 #define SIZE_FILEBUF  65535 // the buffer size for our fopen() file buffers
 
-#define MAXP3           16
 #define MAXRX           23  // Number of script entries in the script list
+
+#define MAXP3_MENU      10  // the hardcoded max. for POP3 menu entries
+#define MAXRX_MENU      10  // the hardcoded max. for Rexx menu entries
 
 #define MAX_FOLDERIMG   11
 #define MAX_CFGIMG      36
