@@ -8,8 +8,8 @@ $URL$
 2010-08-20 Jens Langner <Jens.Langner@light-speed.de>
 
   * MailServers.c,h, misc: partly merged the new mail server management
-    functionality from our newtransfer branch onto the trunk again. This
-    include a changed mail server management to use exec lists which are
+    functionality from our newtransfer branch back onto the trunk again.
+    This include a changed mail server management to use exec lists which are
     structured via "MailServerNode" and put into a List in our main 
     configuration structure. This finally provides internal facilities to
     manage an unlimited amount of POP3 or SMTP servers. However, the
