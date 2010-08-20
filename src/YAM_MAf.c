@@ -575,9 +575,9 @@ void MA_ExpireIndex(struct Folder *folder)
 }
 
 ///
-/// MA_UpdateIndexes
-//  Updates indices of all folders
-void MA_UpdateIndexes(BOOL initial)
+/// MA_RebuildIndexes
+//  Rebuild indices of all folders
+void MA_RebuildIndexes(void)
 {
   ENTER();
 
@@ -593,92 +593,114 @@ void MA_UpdateIndexes(BOOL initial)
 
       if(folder != NULL && !isGroupFolder(folder))
       {
-        if(initial == TRUE)
+        const char *folderDir = GetFolderDir(folder);
+        char *indexFile = MA_IndexFileName(folder);
+        ULONG dirDate;
+        ULONG indexDate;
+
+        // get date of the folder directory and the .index file
+        // itself
+        if(ObtainFileInfo(folderDir, FI_TIME, &dirDate) == TRUE &&
+           ObtainFileInfo(indexFile, FI_TIME, &indexDate) == TRUE)
         {
-          const char *folderDir = GetFolderDir(folder);
-          char *indexFile = MA_IndexFileName(folder);
-          ULONG dirDate;
-          ULONG indexDate;
-
-          // get date of the folder directory and the .index file
-          // itself
-          if(ObtainFileInfo(folderDir, FI_TIME, &dirDate) == TRUE &&
-             ObtainFileInfo(indexFile, FI_TIME, &indexDate) == TRUE)
+          // only consider starting to rebuilding the .index if
+          // either the date of the directory is greater than the
+          // date of the .index file itself, or if there is no index
+          // file date at all (no file present)
+          if(dirDate > indexDate + 30)
           {
-            // only consider starting to rebuilding the .index if
-            // either the date of the directory is greater than the
-            // date of the .index file itself, or if there is no index
-            // file date at all (no file present)
-            if(dirDate > indexDate + 30)
+            ULONG dirProtection;
+            ULONG indexProtection;
+
+            // get the protection bits of the folder index file
+            // and the folder directory, and if both have the A
+            // bit set we skip the index rescanning process because
+            // the A bits might have been set by a backup program
+            if(ObtainFileInfo(folderDir, FI_PROTECTION, &dirProtection) == TRUE &&
+               ObtainFileInfo(indexFile, FI_PROTECTION, &indexProtection) == TRUE)
             {
-              ULONG dirProtection;
-              ULONG indexProtection;
-
-              // get the protection bits of the folder index file
-              // and the folder directory, and if both have the A
-              // bit set we skip the index rescanning process because
-              // the A bits might have been set by a backup program
-              if(ObtainFileInfo(folderDir, FI_PROTECTION, &dirProtection) == TRUE &&
-                 ObtainFileInfo(indexFile, FI_PROTECTION, &indexProtection) == TRUE)
+              if(isFlagClear(indexProtection, FIBF_ARCHIVE) ||
+                 isFlagClear(dirProtection, FIBF_ARCHIVE))
               {
-                if(isFlagClear(indexProtection, FIBF_ARCHIVE) ||
-                   isFlagClear(dirProtection, FIBF_ARCHIVE))
+                // lets first delete the .index file to
+                // make sure MA_GetIndex() is going to
+                // rebuild it.
+                if(indexDate > 0)
+                  DeleteFile(indexFile);
+
+                // then lets call GetIndex() to start rebuilding
+                // the .index - but only if this folder is one of the folders
+                // that should update it indexes during startup
+                if((isIncomingFolder(folder) || isOutgoingFolder(folder) ||
+                    isTrashFolder(folder) || C->LoadAllFolders) &&
+                   !isProtectedFolder(folder))
                 {
-                  // lets first delete the .index file to
-                  // make sure MA_GetIndex() is going to
-                  // rebuild it.
-                  if(indexDate > 0)
-                    DeleteFile(indexFile);
-
-                  // then lets call GetIndex() to start rebuilding
-                  // the .index - but only if this folder is one of the folders
-                  // that should update it indexes during startup
-                  if((isIncomingFolder(folder) || isOutgoingFolder(folder) ||
-                      isTrashFolder(folder) || C->LoadAllFolders) &&
-                     !isProtectedFolder(folder))
+                  if(MA_GetIndex(folder) == TRUE)
                   {
-                    if(MA_GetIndex(folder) == TRUE)
+                    // if we finally rebuilt the .index we
+                    // immediatly flush it here so that another
+                    // following index rebuild doesn't take
+                    // all remaining memory.
+                    if((isSentFolder(folder) || !isDefaultFolder(folder)) &&
+                        folder->LoadedMode == LM_VALID &&
+                        isFreeAccess(folder))
                     {
-                      // if we finally rebuilt the .index we
-                      // immediatly flush it here so that another
-                      // following index rebuild doesn't take
-                      // all remaining memory.
-                      if((isSentFolder(folder) || !isDefaultFolder(folder)) &&
-                          folder->LoadedMode == LM_VALID &&
-                          isFreeAccess(folder))
-                      {
-                        if(isModified(folder))
-                          MA_SaveIndex(folder);
+                      if(isModified(folder))
+                        MA_SaveIndex(folder);
 
-                        ClearMailList(folder, FALSE);
-                        folder->LoadedMode = LM_FLUSHED;
-                        CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
-                      }
+                      ClearMailList(folder, FALSE);
+                      folder->LoadedMode = LM_FLUSHED;
+                      CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
                     }
                   }
-                  else
-                  {
-                    // otherwise we make sure everything is cleared
-                    ClearMailList(folder, FALSE);
-                    folder->LoadedMode = LM_FLUSHED;
-                    CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
-                  }
+                }
+                else
+                {
+                  // otherwise we make sure everything is cleared
+                  ClearMailList(folder, FALSE);
+                  folder->LoadedMode = LM_FLUSHED;
+                  CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
                 }
               }
             }
           }
         }
+      }
+    }
+  }
+
+  UnlockFolderList(G->folders);
+
+  LEAVE();
+}
+
+///
+/// MA_UpdateIndexes
+//  Updates indices of all folders
+void MA_UpdateIndexes(void)
+{
+  ENTER();
+
+  LockFolderListShared(G->folders);
+
+  if(IsFolderListEmpty(G->folders) == FALSE)
+  {
+    struct FolderNode *fnode;
+
+    ForEachFolderNode(G->folders, fnode)
+    {
+      struct Folder *folder = fnode->folder;
+
+      if(folder != NULL && !isGroupFolder(folder))
+      {
+        // flush the index of the folder. This will save the index
+        // and here in case the last access time was > 300 seconds
+        // the index will also be expunged from memory in case this
+        // folder isn't a default, sent or the current folder.
+        if(C->ExpungeIndexes == 0)
+          MA_FlushIndex(folder, 1);
         else
-        {
-          // flush the index of the folder. This will save the index
-          // and here in case the last access time was > 300 seconds
-          // the index will also be expunged from memory in case this
-          // folder isn't a default, sent or the current folder.
-          if(C->ExpungeIndexes == 0)
-            MA_FlushIndex(folder, 1);
-          else
-            MA_FlushIndex(folder, GetDateStamp()-C->ExpungeIndexes);
-        }
+          MA_FlushIndex(folder, GetDateStamp()-C->ExpungeIndexes);
       }
     }
   }

@@ -5,12 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: split the old MA_UpdateIndexes() function into two separate
+    functions, since updating/flushing and rebuilding an index in fact don't
+    have anything in common.
+
 2010-08-19 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed some more shortcuts and correct a few errors.
 
 2010-08-19 Thore Böckelmann <tboeckel@gmx.de>
 
+  * Threads.c, Timer.c BayesFilter.c, mui/YAM.c: flushing the spam filters
+    training data is now done inside a thread.
   * misc: completely rewrote the thread framework. Instead of launching a thread
     whenever one is needed we now have a self-expanding pool of threads (4 by
     default) which then get loaded with work. Currently only the asynchronous
