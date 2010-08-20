@@ -435,7 +435,7 @@ static void TimerDispatcher(const enum Timer tid)
       }
 
       if(updateIndex == TRUE)
-        MA_UpdateIndexes(FALSE);
+        MA_UpdateIndexes();
       else
         D(DBF_TIMER, "Editor object of a write window is active, skipping update index operation");
 

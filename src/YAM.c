@@ -961,7 +961,7 @@ static void Terminate(void)
   D(DBF_STARTUP, "finalizing indexes and closing main window...");
   if(G->MA != NULL)
   {
-    MA_UpdateIndexes(FALSE);
+    MA_UpdateIndexes();
     // remember the current layout, but don't make that permanent yet
     SaveLayout(FALSE);
     set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
@@ -1517,7 +1517,7 @@ static int Root_GlobalDispatcher(ULONG app_input)
     // by a user or automatically)
     case ID_ICONIFY:
     {
-      MA_UpdateIndexes(FALSE);
+      MA_UpdateIndexes();
     }
     break;
   }
@@ -1760,7 +1760,7 @@ static void InitAfterLogin(void)
   MA_ChangeSelected(TRUE);
 
   SplashProgress(tr(MSG_RebuildIndices), 60);
-  MA_UpdateIndexes(TRUE);
+  MA_RebuildIndexes();
 
   SplashProgress(tr(MSG_LOADINGUPDATESTATE), 65);
   LoadUpdateState();
