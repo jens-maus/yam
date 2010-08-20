@@ -62,6 +62,7 @@
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
+#include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 
@@ -106,8 +107,12 @@ static char *NewMessageID(void)
   static char idbuf[SIZE_MSGID];
   unsigned int seconds;
   struct DateStamp ds;
+  struct MailServerNode *msn;
 
   ENTER();
+
+#warning FIXME: support for multiple SMTP servers missing
+  msn = GetMailServer(&C->mailServerList, MST_SMTP, 0);
 
   // lets calculate the seconds
   DateStamp(&ds);
@@ -116,7 +121,7 @@ static char *NewMessageID(void)
   // Here we try to generate a unique MessageID.
   // We try to be as much conform to the Recommandations for generating
   // unique Message IDs as we can: http://www.jwz.org/doc/mid.html
-  snprintf(idbuf, sizeof(idbuf), "<%x%x.%x@%s>", seconds, (unsigned int)ds.ds_Tick, (unsigned int)rand(), C->SMTP_Server);
+  snprintf(idbuf, sizeof(idbuf), "<%x%x.%x@%s>", seconds, (unsigned int)ds.ds_Tick, (unsigned int)rand(), msn->hostname);
 
   RETURN(idbuf);
   return idbuf;

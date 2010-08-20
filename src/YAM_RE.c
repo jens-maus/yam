@@ -72,6 +72,7 @@
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
+#include "MailServers.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "ParseEmail.h"
@@ -3512,11 +3513,19 @@ static void RE_SendMDN(const enum MDNMode mode,
       {
         struct WritePart *p3;
         struct TempFile *tf3;
+        struct MailServerNode *msn;
 
         p2->ContentType = "message/disposition-notification";
         p2->Filename = tf2->Filename;
-        snprintf(buf, sizeof(buf), "%s; %s", C->SMTP_Domain, yamversion);
-        EmitHeader(tf2->FP, "Reporting-UA", buf);
+
+        #warning "FIXME: fix for support of multiple SMTP servers missing"
+        if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) != NULL)
+        {
+          snprintf(buf, sizeof(buf), "%s; %s", msn->domain, yamversion);
+          //snprintf(buf, sizeof(buf), "%s; %s", C->SMTP_Domain, yamversion);
+          EmitHeader(tf2->FP, "Reporting-UA", buf);
+        }
+
         if(email->OriginalRcpt.Address[0] != '\0')
         {
           snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddress(address, sizeof(address), email->OriginalRcpt.Address, email->OriginalRcpt.RealName));

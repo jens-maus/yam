@@ -36,7 +36,6 @@
 #include "UpdateCheck.h"
 
 // forward declarations
-struct POP3;
 struct FilterNode;
 
 #define FOCOLNUM 5
@@ -339,24 +338,6 @@ struct CO_ClassData  /* configuration window */
   BOOL UpdateAll;
 };
 
-#define P3SSL_OFF 0
-#define P3SSL_SSL 1
-#define P3SSL_TLS 2
-
-struct POP3
-{
-  char Account[SIZE_USERID+SIZE_HOST];  // user definable account name
-  char Server[SIZE_HOST];               // servername/IP
-  int  Port;                            // the port
-  char User[SIZE_USERID];               // the account ID/name
-  char Password[SIZE_USERID];           // the password for this POP3 account
-  BOOL Enabled;                         // user enabled this POP3 config
-  int  SSLMode;                         // the user selected SSL mode
-  BOOL UseAPOP;                         // use APOP authentication
-  BOOL DeleteOnServer;                  // message are deleted after transfer
-  BOOL UIDLchecked;                     // TRUE if the UIDLs were checked during the last transfer
-};
-
 /*** RxHook structure ***/
 struct RxHook
 {
@@ -422,10 +403,9 @@ enum MailExchangeOrder
 /*** Configuration main structure ***/
 struct Config
 {
-  struct POP3 *P3[MAXP3];
-
-  struct MinList filterList;   // list of currently available filter node
-  struct MinList mimeTypeList; // list of user defined MIME types.
+  struct MinList mailServerList; // list of configured mail servers (SMTP/POP3/IMAP)
+  struct MinList filterList;     // list of currently available filter node
+  struct MinList mimeTypeList;   // list of user defined MIME types.
 
   int   TimeZone;
   int   WarnSize;
@@ -451,7 +431,6 @@ struct Config
   int   StackSize;
   int   SizeFormat;
   int   EmailCache;
-  int   SMTP_Port;
   int   TRBufferSize;
   int   EmbeddedMailDelay;
   int   StatusChangeDelay;
@@ -464,9 +443,7 @@ struct Config
   int   SocketTimeout;
 
   enum  PrintMethod        PrintMethod;
-  enum  SMTPSecMethod      SMTP_SecureMethod;
   enum  LFMode             LogfileMode;
-  enum  SMTPAuthMethod     SMTP_AUTH_Method;
   enum  MDNAction          MDN_NoRecipient;
   enum  MDNAction          MDN_NoDomain;
   enum  MDNAction          MDN_OnDelete;
@@ -482,8 +459,6 @@ struct Config
   enum  MailExchangeOrder  MailExchangeOrder;
 
   BOOL  DaylightSaving;
-  BOOL  Allow8bit;
-  BOOL  Use_SMTP_AUTH;
   BOOL  AvoidDuplicates;
   BOOL  UpdateStatus;
   BOOL  DownloadLarge;
@@ -574,10 +549,6 @@ struct Config
 
   char RealName[SIZE_REALNAME];
   char EmailAddress[SIZE_ADDRESS];
-  char SMTP_Server[SIZE_HOST];
-  char SMTP_Domain[SIZE_HOST];
-  char SMTP_AUTH_User[SIZE_USERID];
-  char SMTP_AUTH_Pass[SIZE_USERID];
   char NotifySound[SIZE_PATHFILE];
   char NotifyCommand[SIZE_COMMAND];
   char ShortHeaders[SIZE_PATTERN];
@@ -645,24 +616,21 @@ extern struct Hook CO_EditSignatHook;
 extern struct Hook CO_SwitchSignatHook;
 extern struct Hook CO_SwitchSpamFilterHook;
 extern struct Hook CO_GetDefaultPOPHook;
-extern struct Hook CO_GetP3EntryHook;
+extern struct Hook CO_GetPOP3EntryHook;
+extern struct Hook CO_PutPOP3EntryHook;
 extern struct Hook CO_OpenHook;
 extern struct Hook CO_PL_DspFuncHook;
-extern struct Hook CO_PutP3EntryHook;
 extern struct Hook CO_RemoteToggleHook;
 extern struct Hook SetActiveFilterDataHook;
 extern struct Hook GetActiveFilterDataHook;
 extern struct Hook AddNewRuleToListHook;
 extern struct Hook RemoveLastRuleHook;
 
-void          CO_ClearConfig(struct Config *co);
-BOOL          CO_IsValid(void);
-struct POP3 * CO_NewPOP3(struct Config *co, BOOL first);
-void          CO_SetDefaults(struct Config *co, enum ConfigPage page);
-void          CO_Validate(struct Config *co, BOOL update);
+void CO_ClearConfig(struct Config *co);
+BOOL CO_IsValid(void);
+void CO_SetDefaults(struct Config *co, enum ConfigPage page);
+void CO_Validate(struct Config *co, BOOL update);
 
-void          GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
+void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
 
 #endif /* YAM_CONFIG_H */
-
-

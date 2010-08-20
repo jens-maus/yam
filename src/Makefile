@@ -567,6 +567,7 @@ YAMOBJS = \
 	ImageCache.o \
 	Locale.o \
 	MailList.o \
+	MailServers.o \
 	MethodStack.o \
 	MimeTypes.o \
 	MUIObjects.o \

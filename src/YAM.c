@@ -2559,6 +2559,7 @@ int main(int argc, char **argv)
       break;
 
     // prepare the exec lists in G and C
+    NewList((struct List *)&(C->mailServerList));
     NewList((struct List *)&(C->mimeTypeList));
     NewList((struct List *)&(C->filterList));
     NewList((struct List *)&(G->readMailDataList));

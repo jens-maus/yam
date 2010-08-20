@@ -78,6 +78,7 @@
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
+#include "MailServers.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
@@ -3777,20 +3778,23 @@ void MA_SetupDynamicMenus(void)
   if(G->MA->GUI.MI_CSINGLE !=  NULL)
   {
     int i;
+    struct Node *curNode;
 
-    for(i=0; i < MAXP3; i++)
+    // we iterate through our mail server list and ouput the POP3 servers in it
+    i = 0;
+    IterateList(&C->mailServerList, curNode)
     {
-      struct POP3 *pop3 = C->P3[i];
+      struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-      if(pop3 != NULL)
+      if(msn->type == MST_POP3)
       {
         Object *newObj;
 
         // create a new default account name only if none is yet given
-        if(pop3->Account[0] == '\0')
-          snprintf(pop3->Account, sizeof(pop3->Account), "%s@%s", pop3->User, pop3->Server);
+        if(msn->account[0] == '\0')
+          snprintf(msn->account, sizeof(msn->account), "%s@%s", msn->username, msn->hostname);
 
-        newObj = Menuitem(pop3->Account, NULL, TRUE, FALSE, MMEN_POPHOST+i);
+        newObj = Menuitem(msn->account, NULL, TRUE, FALSE, MMEN_POPHOST+i);
         if(newObj != NULL)
           DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
       }

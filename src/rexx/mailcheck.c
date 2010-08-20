@@ -33,6 +33,7 @@
 #include "YAM_config.h"
 #include "YAM_main.h"
 
+#include "MailServers.h"
 #include "Rexx.h"
 
 #include "Debug.h"
@@ -70,12 +71,23 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
 
     case RXIF_ACTION:
     {
-      int pop;
       int popnr = -2;
 
       if(args->pop)
       {
-        if((pop = *args->pop) >= 0 && pop < MAXP3 && C->P3[pop])
+        int pop;
+        int maxpop=0;
+        struct Node *curNode;
+
+        IterateList(&C->mailServerList, curNode)
+        {
+          struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+          if(isPOP3Server(msn))
+            maxpop++;
+        }
+
+        if((pop = *args->pop) >= 0 && pop < maxpop)
           popnr = pop;
       }
       else

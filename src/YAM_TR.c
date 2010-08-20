@@ -94,6 +94,7 @@
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MailList.h"
+#include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 
@@ -583,11 +584,19 @@ static BOOL TR_StartTLS(void)
 static BOOL TR_InitSTARTTLS(void)
 {
   BOOL result = FALSE;
+  struct MailServerNode *msn;
 
   ENTER();
 
+#warning FIXME: replace GetMailServer() usage when struct Connection is there
+  if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) == NULL)
+  {
+    RETURN(FALSE);
+    return FALSE;
+  }
+
   // If this server doesn't support TLS at all we return with an error
-  if(hasSTARTTLS(G->TR_SMTPflags))
+  if(hasSTARTTLS(msn->smtpFlags))
   {
     // If we end up here the server supports STARTTLS and we can start
     // initializing the connection
@@ -603,11 +612,11 @@ static BOOL TR_InitSTARTTLS(void)
         result = TRUE;
       }
       else
-        ER_NewError(tr(MSG_ER_INITTLS_SMTP), C->SMTP_Server);
+        ER_NewError(tr(MSG_ER_INITTLS_SMTP), msn->hostname);
     }
   }
   else
-    ER_NewError(tr(MSG_ER_NOSTARTTLS_SMTP), C->SMTP_Server);
+    ER_NewError(tr(MSG_ER_NOSTARTTLS_SMTP), msn->hostname);
 
   RETURN(result);
   return result;
@@ -625,14 +634,22 @@ static BOOL TR_InitSMTPAUTH(void)
   char buffer[SIZE_LINE];
   char challenge[SIZE_LINE];
   enum SMTPAuthMethod selectedMethod = SMTPAUTH_AUTO;
+  struct MailServerNode *msn;
 
   ENTER();
 
   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SENDAUTH));
 
+#warning FIXME: replace GetMailServer() usage when struct Connection is there
+  if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) == NULL)
+  {
+    RETURN(FALSE);
+    return FALSE;
+  }
+
   // first we check if the user has supplied the User&Password
   // and if not we return with an error
-  if(C->SMTP_AUTH_User[0] == '\0' || C->SMTP_AUTH_Pass[0] == '\0')
+  if(msn->username[0] == '\0' || msn->password[0] == '\0')
   {
     ER_NewError(tr(MSG_ER_NOAUTHUSERPASS));
 
@@ -644,57 +661,45 @@ static BOOL TR_InitSMTPAUTH(void)
   // the user explicitly set an auth method. However, we have to
   // check wheter the SMTP server told us that it really
   // supports that method or not
-  switch(C->SMTP_AUTH_Method)
+  if(hasServerAuth_AUTO(msn))
   {
-    case SMTPAUTH_AUTO:
-    {
-      // we select the most secure one the server supports
-      if(hasDIGEST_MD5_Auth(G->TR_SMTPflags))
-        selectedMethod = SMTPAUTH_DIGEST;
-      else if(hasCRAM_MD5_Auth(G->TR_SMTPflags))
-        selectedMethod = SMTPAUTH_CRAM;
-      else if(hasLOGIN_Auth(G->TR_SMTPflags))
-        selectedMethod = SMTPAUTH_LOGIN;
-      else if(hasPLAIN_Auth(G->TR_SMTPflags))
-        selectedMethod = SMTPAUTH_PLAIN;
-    }
-    break;
-
-    case SMTPAUTH_DIGEST:
-    {
-      if(hasDIGEST_MD5_Auth(G->TR_SMTPflags))
-        selectedMethod = SMTPAUTH_DIGEST;
-      else
-        W(DBF_NET, "User selected SMTP-Auth 'DIGEST-MD5', but server doesn't support it!");
-    }
-    break;
-
-    case SMTPAUTH_CRAM:
-    {
-      if(hasCRAM_MD5_Auth(G->TR_SMTPflags))
-        selectedMethod = SMTPAUTH_CRAM;
-      else
-        W(DBF_NET, "User selected SMTP-Auth 'CRAM-MD5', but server doesn't support it!");
-    }
-    break;
-
-    case SMTPAUTH_LOGIN:
-    {
-      if(hasLOGIN_Auth(G->TR_SMTPflags))
-        selectedMethod = SMTPAUTH_LOGIN;
-      else
-        W(DBF_NET, "User selected SMTP-Auth 'LOGIN', but server doesn't support it!");
-    }
-    break;
-
-    case SMTPAUTH_PLAIN:
-    {
-      if(hasCRAM_MD5_Auth(G->TR_SMTPflags))
-        selectedMethod = SMTPAUTH_CRAM;
-      else
-        W(DBF_NET, "User selected SMTP-Auth 'DIGEST-MD5', but server doesn't support it!");
-    }
-    break;
+    // we select the most secure one the server supports
+    if(hasDIGEST_MD5_Auth(msn->smtpFlags))
+      selectedMethod = MSF_AUTH_DIGEST;
+    else if(hasCRAM_MD5_Auth(msn->smtpFlags))
+      selectedMethod = MSF_AUTH_CRAM;
+    else if(hasLOGIN_Auth(msn->smtpFlags))
+      selectedMethod = MSF_AUTH_LOGIN;
+    else if(hasPLAIN_Auth(msn->smtpFlags))
+      selectedMethod = MSF_AUTH_PLAIN;
+  }
+  else if(hasServerAuth_DIGEST(msn))
+  {
+    if(hasDIGEST_MD5_Auth(msn->smtpFlags))
+      selectedMethod = MSF_AUTH_DIGEST;
+    else
+      W(DBF_NET, "User selected SMTP-Auth 'DIGEST-MD5', but server doesn't support it!");
+  }
+  else if(hasServerAuth_CRAM(msn))
+  {
+    if(hasCRAM_MD5_Auth(msn->smtpFlags))
+      selectedMethod = MSF_AUTH_CRAM;
+    else
+      W(DBF_NET, "User selected SMTP-Auth 'CRAM-MD5', but server doesn't support it!");
+  }
+  else if(hasServerAuth_LOGIN(msn))
+  {
+    if(hasLOGIN_Auth(msn->smtpFlags))
+      selectedMethod = MSF_AUTH_LOGIN;
+    else
+      W(DBF_NET, "User selected SMTP-Auth 'LOGIN', but server doesn't support it!");
+  }
+  else if(hasServerAuth_PLAIN(msn))
+  {
+    if(hasPLAIN_Auth(msn->smtpFlags))
+      selectedMethod = MSF_AUTH_PLAIN;
+    else
+      W(DBF_NET, "User selected SMTP-Auth 'PLAIN', but server doesn't support it!");
   }
 
   // now we process the SMTP Authentication by choosing the method the user
@@ -770,11 +775,11 @@ static BOOL TR_InitSMTPAUTH(void)
           }
           else
           {
-            W(DBF_NET, "'realm' not found in challenge, using '%s' instead", C->SMTP_Domain);
+            W(DBF_NET, "'realm' not found in challenge, using '%s' instead", msn->domain);
 
             // if the challenge doesn't have a "realm" we assume our
             // choosen SMTP domain to be the realm
-            realm = strdup(C->SMTP_Domain);
+            realm = strdup(msn->domain);
           }
 
           D(DBF_NET, "realm: '%s'", realm);
@@ -899,7 +904,7 @@ static BOOL TR_InitSMTPAUTH(void)
           // lets first generate the A1 string
           // A1 = { H( { username-value, ":", realm-value, ":", passwd } ),
           //      ":", nonce-value, ":", cnonce-value }
-          snprintf(buf, sizeof(buf), "%s:%s:%s", C->SMTP_AUTH_User, realm, C->SMTP_AUTH_Pass);
+          snprintf(buf, sizeof(buf), "%s:%s:%s", msn->username, realm, msn->password);
           md5init(&context);
           md5update(&context, (unsigned char *)buf, strlen(buf));
           md5final(digest, &context);
@@ -960,7 +965,7 @@ static BOOL TR_InitSMTPAUTH(void)
                  "qop=\"auth\","           // we just use auth
                  "digest-uri=\"smtp/%s\"," // the digest-uri token
                  "response=\"%s\"",        // the response
-                 C->SMTP_AUTH_User,
+                 msn->username,
                  realm,
                  nonce,
                  cnonce,
@@ -977,7 +982,7 @@ static BOOL TR_InitSMTPAUTH(void)
         {
           // get the server response and see if it was valid
           if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 334)
-            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
           else
           {
             // now that we have received the 334 code we just send a plain line
@@ -985,7 +990,7 @@ static BOOL TR_InitSMTPAUTH(void)
             if(TR_WriteLine("\r\n") > 0)
             {
               if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-                ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+                ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
               else
                 rc = SMTP_ACTION_OK;
             }
@@ -1013,8 +1018,8 @@ static BOOL TR_InitSMTPAUTH(void)
       {
         ULONG digest[4]; // 16 chars
         char buf[512];
-        char *login = C->SMTP_AUTH_User;
-        char *password = C->SMTP_AUTH_Pass;
+        char *login = msn->username;
+        char *password = msn->password;
         char *chalRet;
 
         // get the challenge code from the response line of the
@@ -1054,7 +1059,7 @@ static BOOL TR_InitSMTPAUTH(void)
         {
           // get the server response and see if it was valid
           if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_CRAM_MD5], buffer);
+            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_CRAM_MD5], buffer);
           else
             rc = SMTP_ACTION_OK;
         }
@@ -1071,8 +1076,8 @@ static BOOL TR_InitSMTPAUTH(void)
       if((resp = TR_SendSMTPCmd(ESMTP_AUTH_LOGIN, NULL, tr(MSG_ER_BADRESPONSE_SMTP))) != NULL)
       {
         // prepare the username challenge
-        D(DBF_NET, "prepared AUTH LOGIN challenge: '%s'", C->SMTP_AUTH_User);
-        base64encode(buffer, (unsigned char *)C->SMTP_AUTH_User, strlen(C->SMTP_AUTH_User));
+        D(DBF_NET, "prepared AUTH LOGIN challenge: '%s'", msn->username);
+        base64encode(buffer, (unsigned char *)msn->username, strlen(msn->username));
         D(DBF_NET, "encoded  AUTH LOGIN challenge: '%s'", buffer);
         strlcat(buffer, "\r\n", sizeof(buffer));
 
@@ -1084,8 +1089,8 @@ static BOOL TR_InitSMTPAUTH(void)
              && (rc = getResponseCode(buffer)) == 334)
           {
             // prepare the password challenge
-            D(DBF_NET, "prepared AUTH LOGIN challenge: '%s'", C->SMTP_AUTH_Pass);
-            base64encode(buffer, (unsigned char *)C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass));
+            D(DBF_NET, "prepared AUTH LOGIN challenge: '%s'", msn->password);
+            base64encode(buffer, (unsigned char *)msn->password, strlen(msn->password));
             D(DBF_NET, "encoded  AUTH LOGIN challenge: '%s'", buffer);
             strlcat(buffer, "\r\n", sizeof(buffer));
 
@@ -1102,7 +1107,7 @@ static BOOL TR_InitSMTPAUTH(void)
           }
 
           if(rc != SMTP_ACTION_OK)
-            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_LOGIN], buffer);
+            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_LOGIN], buffer);
         }
       }
     }
@@ -1122,8 +1127,8 @@ static BOOL TR_InitSMTPAUTH(void)
 
       // we don't have a "authorize-id" so we set the first char to \0
       challenge[len++] = '\0';
-      len += snprintf(challenge+len, sizeof(challenge)-len, "%s", C->SMTP_AUTH_User)+1; // authenticate-id
-      len += snprintf(challenge+len, sizeof(challenge)-len, "%s", C->SMTP_AUTH_Pass);   // password
+      len += snprintf(challenge+len, sizeof(challenge)-len, "%s", msn->username)+1; // authenticate-id
+      len += snprintf(challenge+len, sizeof(challenge)-len, "%s", msn->password);   // password
 
       // now we base64 encode this string and send it to the server
       base64encode(buffer, (unsigned char *)challenge, len);
@@ -1137,7 +1142,7 @@ static BOOL TR_InitSMTPAUTH(void)
       {
         // get the server response and see if it was valid
         if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-          ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), C->SMTP_Server, (char *)SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
+          ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
         else
           rc = SMTP_ACTION_OK;
       }
@@ -1150,7 +1155,7 @@ static BOOL TR_InitSMTPAUTH(void)
 
       // if we don't have any of the Authentication Flags turned on we have to
       // exit with an error
-      ER_NewError(tr(MSG_CO_ER_SMTPAUTH), C->SMTP_Server);
+      ER_NewError(tr(MSG_CO_ER_SMTPAUTH), msn->hostname);
     }
     break;
   }
@@ -3369,6 +3374,8 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
         // only report an error if explicitly wanted
         if(errorMsg != NULL)
         {
+          struct MailServerNode *msn;
+
           // if we just issued a PASS command and that failed, then overwrite the visible
           // password with X chars now, so that nobody else can read your password
           if(command == POPCMD_PASS)
@@ -3385,7 +3392,9 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
             }
           }
 
-          ER_NewError(errorMsg, C->P3[G->TR->POP_Nr]->Server, C->P3[G->TR->POP_Nr]->Account, (char *)POPcmd[command], buf);
+          #warning FIXME: replace GetMailServer() usage when struct Connection is there
+          if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) != NULL)
+            ER_NewError(errorMsg, msn->hostname, msn->account, (char *)POPcmd[command], buf);
         }
       }
     }
@@ -3399,32 +3408,45 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
 //  Connects to a POP3 mail server
 static int TR_ConnectPOP(int guilevel)
 {
-  char passwd[SIZE_PASSWORD], host[SIZE_HOST], buf[SIZE_LINE], *p;
+  char passwd[SIZE_PASSWORD];
+  char host[SIZE_HOST];
+  char buf[SIZE_LINE];
+  char *p;
   char *welcomemsg = NULL;
-  int pop = G->TR->POP_Nr;
   int msgs = -1;
-  struct POP3 *pop3 = C->P3[pop];
-  int port = pop3->Port;
   char *resp;
   enum ConnectError err;
+  struct MailServerNode *msn;
+  int port;
 
   ENTER();
 
-  D(DBF_NET, "connect to POP3 server '%s'", pop3->Server);
+  #warning FIXME: replace GetMailServer() usage when struct Connection is there
+  if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
+  {
+    RETURN(-1);
+    return -1;
+  }
+ 
+  D(DBF_NET, "connect to POP3 server '%s'", msn->hostname);
 
-  strlcpy(passwd, pop3->Password, sizeof(passwd));
-  strlcpy(host, pop3->Server, sizeof(host));
+  strlcpy(passwd, msn->password, sizeof(passwd));
+  strlcpy(host, msn->hostname, sizeof(host));
+  port = msn->port;
 
   // now we have to check whether SSL/TLS is selected for that POP account,
   // but perhaps TLS is not working.
-  if(pop3->SSLMode != P3SSL_OFF && G->TR_UseableTLS == FALSE)
+  if((hasServerSSL(msn) || hasServerTLS(msn)) &&
+     G->TR_UseableTLS == FALSE)
   {
     ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
+
     RETURN(-1);
     return -1;
   }
 
-  if(C->TransferWindow == TWM_SHOW || (C->TransferWindow == TWM_AUTO && (guilevel == POP_START || guilevel == POP_USER)))
+  if(C->TransferWindow == TWM_SHOW || 
+     (C->TransferWindow == TWM_AUTO && (guilevel == POP_START || guilevel == POP_USER)))
   {
     // avoid MUIA_Window_Open's side effect of activating the window if it was already open
     if(xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
@@ -3445,10 +3467,10 @@ static int TR_ConnectPOP(int guilevel)
   // name of the POP3 server as there might be more than
   // one configured accounts for the very same host
   // and as such the hostname might just be not enough
-  if(pop3->Account[0] != '\0')
+  if(msn->account[0] != '\0')
   {
-    BusyText(tr(MSG_TR_MailTransferFrom), pop3->Account);
-    TR_SetWinTitle(TRUE, pop3->Account);
+    BusyText(tr(MSG_TR_MailTransferFrom), msn->account);
+    TR_SetWinTitle(TRUE, msn->account);
   }
   else
   {
@@ -3473,32 +3495,32 @@ static int TR_ConnectPOP(int guilevel)
 
         // socket is already in use
         case CONNECTERR_SOCKET_IN_USE:
-          ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3), host, pop3->Account);
+          ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3), host, msn->account);
         break;
 
         // socket() execution failed
         case CONNECTERR_NO_SOCKET:
-          ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_POP3), host, pop3->Account);
+          ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_POP3), host, msn->account);
         break;
 
         // couldn't establish non-blocking IO
         case CONNECTERR_NO_NONBLOCKIO:
-          ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3), host, pop3->Account);
+          ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3), host, msn->account);
         break;
 
         // connection request timed out
         case CONNECTERR_TIMEDOUT:
-          ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_POP3), host, pop3->Account);
+          ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_POP3), host, msn->account);
         break;
 
         // unknown host - gethostbyname() failed
         case CONNECTERR_UNKNOWN_HOST:
-          ER_NewError(tr(MSG_ER_UNKNOWN_HOST_POP3), host, pop3->Account);
+          ER_NewError(tr(MSG_ER_UNKNOWN_HOST_POP3), host, msn->account);
         break;
 
         // general connection error
         case CONNECTERR_UNKNOWN_ERROR:
-          ER_NewError(tr(MSG_ER_CANNOT_CONNECT_POP3), host, pop3->Account);
+          ER_NewError(tr(MSG_ER_CANNOT_CONNECT_POP3), host, msn->account);
         break;
 
         case CONNECTERR_SSLFAILED:
@@ -3513,7 +3535,7 @@ static int TR_ConnectPOP(int guilevel)
 
   // If this connection should be a STLS like connection we have to get the welcome
   // message now and then send the STLS command to start TLS negotiation
-  if(pop3->SSLMode == P3SSL_TLS)
+  if(hasServerTLS(msn))
   {
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
 
@@ -3530,25 +3552,23 @@ static int TR_ConnectPOP(int guilevel)
   }
 
   // Here start the TLS/SSL Connection stuff
-  if(pop3->SSLMode != P3SSL_OFF)
+  if(hasServerSSL(msn) || hasServerTLS(msn))
   {
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_INITTLS));
 
     // Now we have to Initialize and Start the TLS stuff if requested
     if(TR_InitTLS() == TRUE && TR_StartTLS() == TRUE)
-    {
       G->TR_UseTLS = TRUE;
-    }
     else
     {
-      ER_NewError(tr(MSG_ER_INITTLS_POP3), host, pop3->Account);
+      ER_NewError(tr(MSG_ER_INITTLS_POP3), host, msn->account);
       goto out;
     }
   }
 
   // If this was a connection on a stunnel on port 995 or a non-ssl connection
   // we have to get the welcome message now
-  if(pop3->SSLMode != P3SSL_TLS)
+  if(hasServerSSL(msn) == TRUE || hasServerTLS(msn) == FALSE)
   {
     // Initiate a connect and see if we succeed
     if((resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
@@ -3563,14 +3583,14 @@ static int TR_ConnectPOP(int guilevel)
     if(xget(G->App, MUIA_Application_Iconified) == TRUE)
       PopUp();
 
-    snprintf(buf, sizeof(buf), tr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
+    snprintf(buf, sizeof(buf), tr(MSG_TR_PopLoginReq), msn->username, host);
     if(StringRequest(passwd, SIZE_PASSWORD, tr(MSG_TR_PopLogin), buf, tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->TR->GUI.WI) == 0)
       goto out;
   }
 
   // if the user has selected APOP for that POP3 host
   // we have to process it now
-  if(pop3->UseAPOP == TRUE)
+  if(hasServerAPOP(msn))
   {
     // Now we get the APOP Identifier out of the welcome
     // message
@@ -3589,7 +3609,7 @@ static int TR_ConnectPOP(int guilevel)
       md5init(&context);
       md5update(&context, (unsigned char *)buf, strlen(buf));
       md5final(digest, &context);
-      snprintf(buf, sizeof(buf), "%s ", pop3->User);
+      snprintf(buf, sizeof(buf), "%s ", msn->username);
       for(j=strlen(buf), i=0; i<16; j+=2, i++)
         snprintf(&buf[j], sizeof(buf)-j, "%02x", digest[i]);
       buf[j] = '\0';
@@ -3599,14 +3619,14 @@ static int TR_ConnectPOP(int guilevel)
     }
     else
     {
-      ER_NewError(tr(MSG_ER_NO_APOP), host, pop3->Account);
+      ER_NewError(tr(MSG_ER_NO_APOP), host, msn->account);
       goto out;
     }
   }
   else
   {
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendUserID));
-    if(TR_SendPOP3Cmd(POPCMD_USER, pop3->User, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
+    if(TR_SendPOP3Cmd(POPCMD_USER, msn->username, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
       goto out;
 
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendPassword));
@@ -3620,7 +3640,7 @@ static int TR_ConnectPOP(int guilevel)
 
   sscanf(&resp[4], "%d", &msgs);
   if(msgs != 0)
-    AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_ConnectPOP), pop3->User, host, msgs);
+    AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_ConnectPOP), msn->username, host, msgs);
 
 out:
 
@@ -3732,14 +3752,23 @@ static BOOL TR_GetMessageList_GET(void)
             TRF_LOAD|TRF_DELETE|TRF_PRESELECT
           };
           int tflags;
+          struct MailServerNode *msn;
 
+          #warning FIXME: replace GetMailServer() usage when struct Connection is there
+          if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
+          {
+            RETURN(FALSE);
+            return FALSE;
+          }
+ 
           newMail->Size  = size;
 
           mode = (C->DownloadLarge == TRUE ? 1 : 0) +
-                 (C->P3[G->TR->POP_Nr]->DeleteOnServer == TRUE ? 2 : 0) +
+                 (hasServerPurge(msn) == TRUE ? 2 : 0) +
                  (G->TR->GUIlevel == POP_USER ? 4 : 0) +
                  ((C->WarnSize > 0 && newMail->Size >= (C->WarnSize*1024)) ? 8 : 0);
           tflags = mode2tflags[mode];
+
           // if preselection is configured then force displaying this mail in the list
           if(C->PreSelection >= PSM_ALWAYS)
             SET_FLAG(tflags, TRF_PRESELECT);
@@ -3876,8 +3905,16 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
           if(lline == -1)
           {
             char uidl[SIZE_DEFAULT+SIZE_HOST];
+            struct MailServerNode *msn;
 
-            snprintf(uidl, sizeof(uidl), "%s@%s", email->messageID, C->P3[G->TR->POP_Nr]->Server);
+            #warning FIXME: replace GetMailServer() usage when struct Connection is there
+            if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
+            {
+              LEAVE();
+              return;
+            }
+ 
+            snprintf(uidl, sizeof(uidl), "%s@%s", email->messageID, msn->hostname);
             mtn->UIDL = strdup(uidl);
           }
           else if(lline == -2)
@@ -3923,7 +3960,8 @@ static void TR_DisconnectPOP(void)
 void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
 {
   static int laststats;
-  int msgs, pop = singlepop;
+  int msgs;
+  int pop = singlepop;
 
   ENTER();
 
@@ -3946,6 +3984,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       LEAVE();
       return;
     }
+
     if((G->TR = TR_New(guilevel == POP_USER ? TR_GET_USER : TR_GET_AUTO)) == NULL)
     {
       TR_CloseTCPIP();
@@ -3953,6 +3992,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       LEAVE();
       return;
     }
+
     G->TR->Checking = TRUE;
     UpdateAppIcon();
     G->TR->GUIlevel = guilevel;
@@ -3971,61 +4011,91 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     {
       if(G->TR->SinglePOP == TRUE)
       {
-        if(C->P3[pop] != NULL)
+        if(GetMailServer(&C->mailServerList, MST_POP3, pop) != NULL)
           G->TR->DuplicatesChecking = TRUE;
       }
       else
       {
-        int i;
+        struct Node *curNode;
 
-        for(i=0; i < MAXP3; i++)
+        IterateList(&C->mailServerList, curNode)
         {
-          if(C->P3[i] != NULL && C->P3[i]->Enabled == TRUE)
+          struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+          if(msn->type == MST_POP3)
           {
-            G->TR->DuplicatesChecking = TRUE;
-            break;
+            if(isServerActive(msn))
+            {
+              G->TR->DuplicatesChecking = TRUE;
+              break;
+            }
           }
         }
       }
 
       if(G->TR->DuplicatesChecking == TRUE)
       {
-        int i;
+        struct Node *curNode;
 
-        InitUIDLhash();
-
-        for(i=0; i < MAXP3; i++)
+        if(InitUIDLhash() == TRUE)
         {
-          if(C->P3[i] != NULL)
-            C->P3[i]->UIDLchecked = FALSE;
+          IterateList(&C->mailServerList, curNode)
+          {
+            struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+            if(msn->type == MST_POP3)
+              CLEAR_FLAG(msn->flags, MSF_UIDLCHECKED);
+          }
         }
       }
     }
   }
   else /* Finish previous connection */
   {
-    struct POP3 *p = C->P3[G->TR->POP_Nr];
+    struct MailServerNode *msn;
 
-    D(DBF_NET, "downloaded %ld mails from server '%s'", G->TR->Stats.Downloaded, p->Server);
+    #warning FIXME: replace GetMailServer() usage when struct Connection is there
+    if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
+    {
+      LEAVE();
+      return;
+    }
+ 
+    D(DBF_NET, "downloaded %ld mails from server '%s'", G->TR->Stats.Downloaded, msn->hostname);
     TR_DisconnectPOP();
     TR_Cleanup();
-    AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_Retrieving), G->TR->Stats.Downloaded-laststats, p->User, p->Server);
+    AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_Retrieving), G->TR->Stats.Downloaded-laststats, msn->username, msn->hostname);
     if(G->TR->SinglePOP == TRUE)
-      pop = MAXP3;
+      pop = -1;
+
     laststats = G->TR->Stats.Downloaded;
   }
 
   // what is the next POP3 server we should check
   if(G->TR->SinglePOP == FALSE)
   {
-    for(pop = ++G->TR->POP_Nr; pop < MAXP3; pop++)
+    pop = -1;
+
+    while(++G->TR->POP_Nr >= 0)
     {
-      if(C->P3[pop] != NULL && C->P3[pop]->Enabled == TRUE)
+      struct MailServerNode *msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr);
+      if(msn != NULL)
+      {
+        if(isServerActive(msn))
+        {
+          pop = G->TR->POP_Nr;
+          break;
+        }
+      }
+      else
+      {
+        pop = -1;
         break;
+      }
     }
   }
 
-  if(pop >= MAXP3) /* Finish last connection */
+  if(pop == -1) /* Finish last connection */
   {
     // close the TCP/IP connection
     TR_CloseTCPIP();
@@ -4147,7 +4217,18 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
         if(G->TR->DuplicatesChecking == TRUE)
         {
           if(FilterDuplicates() == TRUE)
-            C->P3[G->TR->POP_Nr]->UIDLchecked = TRUE;
+          {
+            struct MailServerNode *msn;
+
+            #warning FIXME: replace GetMailServer() usage when struct Connection is there
+            if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
+            {
+              LEAVE();
+              return;
+            }
+ 
+            SET_FLAG(msn->flags, MSF_UIDLCHECKED);
+          }
         }
 
         // manually initiated transfer
@@ -4222,10 +4303,20 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     }
     else
     {
-      W(DBF_NET, "no messages found on server '%s'", C->P3[G->TR->POP_Nr]->Server);
+      struct MailServerNode *msn;
+
+      #warning FIXME: replace GetMailServer() usage when struct Connection is there
+      if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
+      {
+        LEAVE();
+        return;
+      }
+
+      W(DBF_NET, "no messages found on server '%s'", msn->hostname);
+
       // per default we flag that POP3 server as being UIDLchecked
       if(G->TR->DuplicatesChecking == TRUE)
-        C->P3[G->TR->POP_Nr]->UIDLchecked = TRUE;
+        SET_FLAG(msn->flags, MSF_UIDLCHECKED);
     }
   }
   else
@@ -4414,7 +4505,13 @@ static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext
   if(result == FALSE)
   {
     if(errorMsg != NULL)
-      ER_NewError(errorMsg, C->SMTP_Server, (char *)SMTPcmd[command], buf);
+    {
+      struct MailServerNode *msn;
+
+      #warning FIXME: replace GetMailServer() usage when struct Connection is there
+      if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) != NULL)
+        ER_NewError(errorMsg, msn->hostname, (char *)SMTPcmd[command], buf);
+    }
 
     RETURN(NULL);
     return NULL;
@@ -4432,13 +4529,21 @@ static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext
 static BOOL TR_ConnectSMTP(void)
 {
   BOOL result = FALSE;
+  struct MailServerNode *msn;
 
   ENTER();
-
+      
+  #warning FIXME: replace GetMailServer() usage when struct Connection is there
+  if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) == NULL)
+  {
+    RETURN(FALSE);
+    return FALSE;
+  }
+ 
   // If we did a TLS negotitaion previously we have to skip the
   // welcome message, but if it was another connection like a normal or a SSL
   // one we have wait for the welcome
-  if(G->TR_UseTLS == FALSE || C->SMTP_SecureMethod == SMTPSEC_SSL)
+  if(G->TR_UseTLS == FALSE || hasServerSSL(msn))
   {
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
 
@@ -4465,13 +4570,13 @@ static BOOL TR_ConnectSMTP(void)
 
     // in case we require SMTP-AUTH or a TLS secure connection we
     // have to force an ESMTP connection
-    if(C->Use_SMTP_AUTH || C->SMTP_SecureMethod == SMTPSEC_TLS)
-      resp = TR_SendSMTPCmd(ESMTP_EHLO, C->SMTP_Domain, tr(MSG_ER_BADRESPONSE_SMTP));
+    if(hasServerAuth(msn) || hasServerTLS(msn))
+      resp = TR_SendSMTPCmd(ESMTP_EHLO, msn->domain, tr(MSG_ER_BADRESPONSE_SMTP));
     else
     {
       // in all other cases, we first try to get an ESMTP connection
       // and if that doesn't work we go and do a normal SMTP connection
-      if((resp = TR_SendSMTPCmd(ESMTP_EHLO, C->SMTP_Domain, NULL)) == NULL)
+      if((resp = TR_SendSMTPCmd(ESMTP_EHLO, msn->domain, NULL)) == NULL)
       {
         D(DBF_NET, "ESMTP negotation failed, trying normal SMTP negotation");
 
@@ -4481,7 +4586,7 @@ static BOOL TR_ConnectSMTP(void)
 
         // now we send a HELO command which signals we are not
         // going to use any ESMTP stuff
-        resp = TR_SendSMTPCmd(SMTP_HELO, C->SMTP_Domain, tr(MSG_ER_BADRESPONSE_SMTP));
+        resp = TR_SendSMTPCmd(SMTP_HELO, msn->domain, tr(MSG_ER_BADRESPONSE_SMTP));
 
         // signal we are not into ESMTP stuff
         CLEAR_FLAG(flags, SMTP_FLG_ESMTP);
@@ -4543,7 +4648,7 @@ static BOOL TR_ConnectSMTP(void)
       }
 
       #ifdef DEBUG
-      D(DBF_NET, "SMTP Server '%s' serves:", C->SMTP_Server);
+      D(DBF_NET, "SMTP Server '%s' serves:", msn->hostname);
       D(DBF_NET, "  ESMTP..............: %ld", hasESMTP(flags));
       D(DBF_NET, "  AUTH CRAM-MD5......: %ld", hasCRAM_MD5_Auth(flags));
       D(DBF_NET, "  AUTH DIGEST-MD5....: %ld", hasDIGEST_MD5_Auth(flags));
@@ -4563,7 +4668,7 @@ static BOOL TR_ConnectSMTP(void)
       // now we check the 8BITMIME extension against
       // the user configured Allow8bit setting and if it collides
       // we raise a warning.
-      if(has8BITMIME(flags) == FALSE && C->Allow8bit == TRUE)
+      if(has8BITMIME(flags) == FALSE && hasServer8bit(msn) == TRUE)
         result = FALSE;
     }
     else
@@ -4573,7 +4678,7 @@ static BOOL TR_ConnectSMTP(void)
       W(DBF_NET, "error on SMTP server negotation");
     }
 
-    G->TR_SMTPflags = flags;
+    msn->smtpFlags = flags;
   }
   else
     W(DBF_NET, "SMTP connection failure!");
@@ -4957,25 +5062,26 @@ static enum HashTableOperator SaveUIDLtoken(UNUSED struct HashTable *table,
     // out as well. Otherwise we skip the write operation
     if((p = strrchr(token->uidl, '@')) != NULL && *(++p) != '\0')
     {
-      int i;
+      struct Node *curNode;
 
-      for(i=0; i < MAXP3; i++)
+      saveUIDL = TRUE;
+
+      IterateList(&C->mailServerList, curNode)
       {
-        if(C->P3[i] && C->P3[i]->UIDLchecked == FALSE &&
-           strcmp(p, C->P3[i]->Server) == 0)
+        struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+        if(msn->type == MST_POP3)
         {
-          // if we reach here than this uidl is part of
-          // a server we didn't check, so we can ignore it
-          break;
+          if(hasServerCheckedUIDL(msn) == FALSE &&
+             stricmp(p, msn->hostname) == 0)
+          {
+            // if we reach here than this uidl is part of
+            // a server we didn't check, so we can ignore it
+            saveUIDL = FALSE;
+            break;
+          }
         }
       }
-
-      // if we reached MAXP3 then
-      // we found an orphaned uidl which we can ignore
-      if(i < MAXP3)
-        saveUIDL = TRUE;
-      else
-        D(DBF_UIDL, "orphaned UIDL found and deleted '%s'", token->uidl);
     }
   }
   else
@@ -4986,6 +5092,8 @@ static enum HashTableOperator SaveUIDLtoken(UNUSED struct HashTable *table,
     fprintf(fh, "%s\n", token->uidl);
     D(DBF_UIDL, "saved UIDL '%s' to .uidl file", token->uidl);
   }
+  else
+    D(DBF_UIDL, "orphaned UIDL found and deleted '%s'", token->uidl);
 
   RETURN(htoNext);
   return htoNext;
@@ -5037,8 +5145,16 @@ static void CleanupUIDLhash(void)
 static BOOL FilterDuplicates(void)
 {
   BOOL result = FALSE;
+  struct MailServerNode *msn;
 
   ENTER();
+
+  #warning FIXME: replace GetMailServer() usage when struct Connection is there
+  if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
+  {
+    RETURN(FALSE);
+    return FALSE;
+  }
 
   // we first make sure the UIDL list is loaded from disk
   if(G->TR->UIDLhashTable != NULL)
@@ -5072,7 +5188,7 @@ static BOOL FilterDuplicates(void)
             // lets add our own ident to the uidl so that we can compare
             // it against our saved list
             strlcat(uidl, "@", sizeof(uidl));
-            strlcat(uidl, C->P3[G->TR->POP_Nr]->Server, sizeof(uidl));
+            strlcat(uidl, msn->hostname, sizeof(uidl));
 
             // search through our transferList
             IterateList(&G->TR->transferList, curNode)
@@ -5126,7 +5242,7 @@ static BOOL FilterDuplicates(void)
       {
         struct Node *curNode;
 
-        W(DBF_UIDL, "POP3 server '%s' doesn't support UIDL command!", C->P3[G->TR->POP_Nr]->Server);
+        W(DBF_UIDL, "POP3 server '%s' doesn't support UIDL command!", msn->hostname);
 
         // search through our transferList
         IterateList(&G->TR->transferList, curNode)
@@ -5467,10 +5583,18 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
   FILE *fh = NULL;
   char *buf = NULL;
   size_t buflen = SIZE_LINE;
+  struct MailServerNode *msn;
 
   ENTER();
 
-  D(DBF_NET, "about to send mail '%s' via SMTP", mf);
+#warning FIXME: replace GetMailServer() usage when struct Connection is there
+  if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) == NULL)
+  {
+    RETURN(-1);
+    return -1;
+  }
+
+  D(DBF_NET, "about to send mail '%s' via SMTP server '%s'", mf, msn->hostname);
 
   // open the mail file for reading
   if((buf = malloc(buflen)) != NULL &&
@@ -5485,13 +5609,13 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
     // in case the server supports the ESMTP SIZE extension lets add the
     // size
-    if(hasSIZE(G->TR_SMTPflags) && mail->Size > 0)
+    if(hasSIZE(msn->smtpFlags) && mail->Size > 0)
       snprintf(buf, buflen, "%s SIZE=%ld", buf, mail->Size);
 
     // in case the server supports the ESMTP 8BITMIME extension we can
     // add information about the encoding mode
-    if(has8BITMIME(G->TR_SMTPflags))
-      snprintf(buf, buflen, "%s BODY=%s", buf, C->Allow8bit ? "8BITMIME" : "7BIT");
+    if(has8BITMIME(msn->smtpFlags))
+      snprintf(buf, buflen, "%s BODY=%s", buf, hasServer8bit(msn) ? "8BITMIME" : "7BIT");
 
     // send the MAIL command with the FROM: message
     if(TR_SendSMTPCmd(SMTP_MAIL, buf, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)
@@ -5602,7 +5726,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                   {
                     E(DBF_NET, "couldn't send single '.' to SMTP server");
 
-                    ER_NewError(tr(MSG_ER_CONNECTIONBROKEN), C->SMTP_Server, (char *)SMTPcmd[SMTP_DATA]);
+                    ER_NewError(tr(MSG_ER_CONNECTIONBROKEN), msn->hostname, (char *)SMTPcmd[SMTP_DATA]);
                     break;
                   }
                   else
@@ -5620,7 +5744,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                 {
                   E(DBF_NET, "couldn't send buffer data to SMTP server (%ld)", curlen);
 
-                  ER_NewError(tr(MSG_ER_CONNECTIONBROKEN), C->SMTP_Server, (char *)SMTPcmd[SMTP_DATA]);
+                  ER_NewError(tr(MSG_ER_CONNECTIONBROKEN), msn->hostname, (char *)SMTPcmd[SMTP_DATA]);
                   break;
                 }
                 else
@@ -5631,7 +5755,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                 {
                   E(DBF_NET, "couldn't send CRLF to SMTP server");
 
-                  ER_NewError(tr(MSG_ER_CONNECTIONBROKEN), C->SMTP_Server, (char *)SMTPcmd[SMTP_DATA]);
+                  ER_NewError(tr(MSG_ER_CONNECTIONBROKEN), msn->hostname, (char *)SMTPcmd[SMTP_DATA]);
                   break;
                 }
                 else
@@ -5704,8 +5828,16 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
 {
   BOOL success = FALSE;
+  struct MailServerNode *msn;
 
   ENTER();
+
+#warning FIXME: replace GetMailServer() usage when struct Connection is there
+  if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) == NULL)
+  {
+    RETURN(FALSE);
+    return FALSE;
+  }
 
   // start the PRESEND macro first
   MA_StartMacro(MACRO_PRESEND, NULL);
@@ -5773,7 +5905,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
           // now we have to check whether SSL/TLS is selected for SMTP account,
           // and if it is usable. Or if no secure connection is requested
           // we can go on right away.
-          if(C->SMTP_SecureMethod == SMTPSEC_NONE ||
+          if((hasServerSSL(msn) == FALSE && hasServerTLS(msn) == FALSE) ||
              G->TR_UseableTLS == TRUE)
           {
             enum ConnectError err;
@@ -5785,7 +5917,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
             G->TR->SearchCount = AllocFilterSearch(APPLY_SENT);
             TR_TransStat_Init(&ts);
             TR_TransStat_Start(&ts);
-            strlcpy(host, C->SMTP_Server, sizeof(host));
+            strlcpy(host, msn->hostname, sizeof(host));
 
             // If the hostname has a explicit :xxxxx port statement at the end we
             // take this one, even if its not needed anymore.
@@ -5795,7 +5927,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
               port = atoi(++p);
             }
             else
-              port = C->SMTP_Port;
+              port = msn->port;
 
             set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Connecting));
 
@@ -5809,7 +5941,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
 
               // first we check whether the user wants to connect to a plain SSLv3 server
               // so that we initiate the SSL connection now
-              if(C->SMTP_SecureMethod == SMTPSEC_SSL)
+              if(hasServerSSL(msn) == TRUE)
               {
                 // lets try to establish the SSL connection via AmiSSL
                 if(TR_InitTLS() == TRUE && TR_StartTLS() == TRUE)
@@ -5829,7 +5961,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
 
                 // Now we have to check whether the user has selected SSL/TLS
                 // and then we have to initiate the STARTTLS command followed by the TLS negotiation
-                if(C->SMTP_SecureMethod == SMTPSEC_TLS && connected)
+                if(hasServerTLS(msn) == TRUE && connected == TRUE)
                 {
                   connected = TR_InitSTARTTLS();
 
@@ -5850,7 +5982,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
 
                 // If the user selected SMTP_AUTH we have to initiate
                 // a AUTH connection
-                if(C->Use_SMTP_AUTH == TRUE && connected == TRUE)
+                if(hasServerAuth(msn) == TRUE && connected == TRUE)
                   connected = TR_InitSMTPAUTH();
               }
 
@@ -5935,7 +6067,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
               else
               {
                 // check if we end up here cause of the 8BITMIME differences
-                if(has8BITMIME(G->TR_SMTPflags) == FALSE && C->Allow8bit == TRUE)
+                if(has8BITMIME(msn->smtpFlags) == FALSE && hasServer8bit(msn) == TRUE)
                 {
                   W(DBF_NET, "incorrect Allow8bit setting!");
                   err = CONNECTERR_INVALID8BIT;

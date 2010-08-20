@@ -232,8 +232,10 @@ static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
           // encoding or otherwise we have too long lines in our final mail
           encoding = ENC_QP;
         }
-        else if(binarychars == 0 && longlines == 0 && C->Allow8bit == TRUE)
+        else if(binarychars == 0 && longlines == 0/* && C->Allow8bit == TRUE */)
         {
+          #warning FIXME: Address Allow8bit case for multiple SMTP servers!
+
           // if there are no binary chars and no long lines in the file and if
           // our SMTP server support 8bit character we can go and encode it via 8bit
           encoding = ENC_8BIT;

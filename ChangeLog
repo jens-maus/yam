@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-20 Jens Langner <Jens.Langner@light-speed.de>
+
+  * MailServers.c,h, misc: partly merged the new mail server management
+    functionality from our newtransfer branch onto the trunk again. This
+    include a changed mail server management to use exec lists which are
+    structured via "MailServerNode" and put into a List in our main 
+    configuration structure. This finally provides internal facilities to
+    manage an unlimited amount of POP3 or SMTP servers. However, the
+    graphical configuration for the multiple SMTP server functionality is
+    still pending. Thus, this partly addresses #41.
+
 2010-08-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: split the old MA_UpdateIndexes() function into two separate

@@ -127,7 +127,6 @@ struct Global
 
   LONG                     Weights[12];
   LONG                     TR_Socket;
-  LONG                     TR_SMTPflags;
 
   int                      PGPVersion;
   int                      CO_DST;
