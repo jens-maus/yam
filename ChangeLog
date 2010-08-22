@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: initialize the debugging framework a bit earlier to be able to
+    correctly catch any ENTER()/RETURN() macros in called functions like
+    GotoURLPossible(). This might have caused #183.
+
 2010-08-20 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_stringsizes.h: removed MAXP3 define as we have no limit on max. amount
