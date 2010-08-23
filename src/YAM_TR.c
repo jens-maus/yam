@@ -1785,7 +1785,7 @@ static enum ConnectError TR_Connect(char *host, int port)
         // lets create a standard AF_INET socket now
         if((G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0)) != TCP_NO_SOCKET)
         {
-          char nonBlockingIO = 1;
+          long nonBlockingIO = 1;
 
           // now we set the socket for non-blocking I/O
           if(IoctlSocket(G->TR_Socket, FIONBIO, &nonBlockingIO) != -1)
@@ -3427,7 +3427,7 @@ static int TR_ConnectPOP(int guilevel)
     RETURN(-1);
     return -1;
   }
- 
+
   D(DBF_NET, "connect to POP3 server '%s'", msn->hostname);
 
   strlcpy(passwd, msn->password, sizeof(passwd));
@@ -3445,7 +3445,7 @@ static int TR_ConnectPOP(int guilevel)
     return -1;
   }
 
-  if(C->TransferWindow == TWM_SHOW || 
+  if(C->TransferWindow == TWM_SHOW ||
      (C->TransferWindow == TWM_AUTO && (guilevel == POP_START || guilevel == POP_USER)))
   {
     // avoid MUIA_Window_Open's side effect of activating the window if it was already open
@@ -3760,7 +3760,7 @@ static BOOL TR_GetMessageList_GET(void)
             RETURN(FALSE);
             return FALSE;
           }
- 
+
           newMail->Size  = size;
 
           mode = (C->DownloadLarge == TRUE ? 1 : 0) +
@@ -3913,7 +3913,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
               LEAVE();
               return;
             }
- 
+
             snprintf(uidl, sizeof(uidl), "%s@%s", email->messageID, msn->hostname);
             mtn->UIDL = strdup(uidl);
           }
@@ -4060,7 +4060,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       LEAVE();
       return;
     }
- 
+
     D(DBF_NET, "downloaded %ld mails from server '%s'", G->TR->Stats.Downloaded, msn->hostname);
     TR_DisconnectPOP();
     TR_Cleanup();
@@ -4226,7 +4226,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
               LEAVE();
               return;
             }
- 
+
             SET_FLAG(msn->flags, MSF_UIDLCHECKED);
           }
         }
@@ -4532,14 +4532,14 @@ static BOOL TR_ConnectSMTP(void)
   struct MailServerNode *msn;
 
   ENTER();
-      
+
   #warning FIXME: replace GetMailServer() usage when struct Connection is there
   if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) == NULL)
   {
     RETURN(FALSE);
     return FALSE;
   }
- 
+
   // If we did a TLS negotitaion previously we have to skip the
   // welcome message, but if it was another connection like a normal or a SSL
   // one we have wait for the welcome
