@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-24 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_TR.c, YAM_transfer.h: SMTP-AUTH support was broken due to incorrectly
+    used flag variables. Now the full functionality should be restored. This
+    fixes #185.
+
 2010-08-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c, TCP.c: added new TCP module to handle single connections. Setting

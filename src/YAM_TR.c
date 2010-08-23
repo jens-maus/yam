@@ -617,7 +617,7 @@ static BOOL TR_InitSMTPAUTH(void)
   char *resp;
   char buffer[SIZE_LINE];
   char challenge[SIZE_LINE];
-  enum SMTPAuthMethod selectedMethod = SMTPAUTH_AUTO;
+  int selectedMethod = MSF_AUTH_AUTO;
   struct MailServerNode *msn;
 
   ENTER();
@@ -647,6 +647,8 @@ static BOOL TR_InitSMTPAUTH(void)
   // supports that method or not
   if(hasServerAuth_AUTO(msn))
   {
+    D(DBF_NET, "about to automatically choose which SMTP-AUTH to prefer. smtpFlags=0x%08lx", msn->smtpFlags);
+
     // we select the most secure one the server supports
     if(hasDIGEST_MD5_Auth(msn->smtpFlags))
       selectedMethod = MSF_AUTH_DIGEST;
@@ -656,6 +658,8 @@ static BOOL TR_InitSMTPAUTH(void)
       selectedMethod = MSF_AUTH_LOGIN;
     else if(hasPLAIN_Auth(msn->smtpFlags))
       selectedMethod = MSF_AUTH_PLAIN;
+    else
+      W(DBF_NET, "Server doesn't seem to support any SMTP-AUTH method but InitSMTPAUTH function called?");
   }
   else if(hasServerAuth_DIGEST(msn))
   {
@@ -686,12 +690,14 @@ static BOOL TR_InitSMTPAUTH(void)
       W(DBF_NET, "User selected SMTP-Auth 'PLAIN', but server doesn't support it!");
   }
 
+  D(DBF_NET, "SMTP-AUTH method %d choosen due to server/user preference", selectedMethod);
+
   // now we process the SMTP Authentication by choosing the method the user
   // or the automatic did specify
   switch(selectedMethod)
   {
     // SMTP AUTH DIGEST-MD5 (RFC 2831)
-    case SMTPAUTH_DIGEST:
+    case MSF_AUTH_DIGEST:
     {
       D(DBF_NET, "processing AUTH DIGEST-MD5:");
 
@@ -993,7 +999,7 @@ static BOOL TR_InitSMTPAUTH(void)
     break;
 
     // SMTP AUTH CRAM-MD5 (RFC 2195)
-    case SMTPAUTH_CRAM:
+    case MSF_AUTH_CRAM:
     {
       D(DBF_NET, "processing AUTH CRAM-MD5:");
 
@@ -1052,7 +1058,7 @@ static BOOL TR_InitSMTPAUTH(void)
     break;
 
     // SMTP AUTH LOGIN
-    case SMTPAUTH_LOGIN:
+    case MSF_AUTH_LOGIN:
     {
       D(DBF_NET, "processing AUTH LOGIN:");
 
@@ -1098,7 +1104,7 @@ static BOOL TR_InitSMTPAUTH(void)
     break;
 
     // SMTP AUTH PLAIN (RFC 2595)
-    case SMTPAUTH_PLAIN:
+    case MSF_AUTH_PLAIN:
     {
       int len=0;
       D(DBF_NET, "processing AUTH PLAIN:");

@@ -67,7 +67,6 @@ struct MailTransferNode
 #define hasTR_PRESELECT(v)    (isFlagSet((v)->tflags, TRF_PRESELECT))
 
 enum SMTPSecMethod  { SMTPSEC_NONE=0, SMTPSEC_TLS, SMTPSEC_SSL };
-enum SMTPAuthMethod { SMTPAUTH_AUTO=0, SMTPAUTH_DIGEST, SMTPAUTH_CRAM, SMTPAUTH_LOGIN, SMTPAUTH_PLAIN };
 enum TransWinMode   { TWM_HIDE=0, TWM_AUTO, TWM_SHOW };
 enum PreSelMode     { PSM_NEVER=0, PSM_LARGE, PSM_ALWAYS, PSM_ALWAYSLARGE };
 
