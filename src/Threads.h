@@ -46,13 +46,13 @@ enum ThreadAction
 #define TT_LaunchCommand_Command     (TAG_STRING | (TAG_USER + 1))
 #define TT_LaunchCommand_Output                    (TAG_USER + 2)
 
-
 /*** Thread system init/cleanup functions ***/
 BOOL InitThreads(void);
 void CleanupThreads(void);
 void HandleThreads(void);
 void PurgeIdleThreads(void);
 BOOL VARARGS68K DoAction(const enum ThreadAction action, ...);
+BOOL IsMainThread(void);
 
 #endif /* THREADS_H */
 

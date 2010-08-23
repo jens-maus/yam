@@ -97,6 +97,7 @@
 #include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "TCP.h"
 
 #include "Debug.h"
 
@@ -223,23 +224,6 @@ static const char *const POPcmd[] =
 #define hasTCP_FLUSH(v)       (isFlagSet((v), TCPF_FLUSH))
 #define hasTCP_ONLYFLUSH(v)   (isFlagSet((v), TCPF_FLUSHONLY))
 #define hasTCP_FREEBUFFER(v)  (isFlagSet((v), TCPF_FREEBUFFER))
-
-/**************************************************************************/
-// general connection/transfer error enumation values
-enum ConnectError
-{
-  CONNECTERR_SUCCESS       = 0,
-  CONNECTERR_NO_ERROR      = -1,
-  CONNECTERR_UNKNOWN_ERROR = -2,
-  CONNECTERR_SOCKET_IN_USE = -3,
-  CONNECTERR_UNKNOWN_HOST  = -4,
-  CONNECTERR_NO_SOCKET     = -5,
-  CONNECTERR_NO_NONBLOCKIO = -6,
-  CONNECTERR_TIMEDOUT      = -7,
-  CONNECTERR_ABORTED       = -8,
-  CONNECTERR_SSLFAILED     = -9,
-  CONNECTERR_INVALID8BIT   = -10
-};
 
 /**************************************************************************/
 // static function prototypes
@@ -3163,11 +3147,9 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
   char host[SIZE_HOST];
   char *path;
   char *bufptr;
+  struct Connection *conn;
 
   ENTER();
-
-  // make sure the error state is cleared
-  G->Error = FALSE;
 
   // extract the server address and strip the http:// part
   // of the URI
@@ -3208,7 +3190,7 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
     hport = noproxy ? 80 : 8080;
 
   // open the TCP/IP connection to 'host' under the port 'hport'
-  if(TR_Connect(host, hport) == CONNECTERR_SUCCESS)
+  if((conn = ConnectToHost(host, hport)) != NULL && conn->error == CONNECTERR_SUCCESS)
   {
     char *serverHost;
     char serverPath[SIZE_LINE];
@@ -3249,7 +3231,7 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
     SHOWSTRING(DBF_NET, httpRequest);
 
     // send out the httpRequest
-    if(TR_WriteLine(httpRequest) > 0)
+    if(SendLineToHost(conn, httpRequest) > 0)
     {
       char *p;
       char serverResponse[SIZE_LINE];
@@ -3260,7 +3242,7 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
 
       // now we read out the very first line to see if the
       // response code matches and is fine
-      len = TR_ReadLine(G->TR_Socket, serverResponse, sizeof(serverResponse));
+      len = ReceiveLineFromHost(conn, serverResponse, sizeof(serverResponse));
 
       SHOWSTRING(DBF_NET, serverResponse);
 
@@ -3270,8 +3252,8 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
       {
         // we can request all further lines from our socket
         // until we reach the entity body
-        while(G->Error == FALSE &&
-              (len = TR_ReadLine(G->TR_Socket, serverResponse, sizeof(serverResponse))) > 0)
+        while(conn->error == CONNECTERR_NO_ERROR &&
+              (len = ReceiveLineFromHost(conn, serverResponse, sizeof(serverResponse))) > 0)
         {
           // we scan for the end of the
           // response header by searching for the first '\r\n'
@@ -3290,8 +3272,8 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
               // we seem to have reached the entity body, so
               // from here we retrieve everything we can get and
               // immediately write it out to a file. that's it :)
-              while(G->Error == FALSE &&
-                    (len = TR_Recv(serverResponse, sizeof(serverResponse))) > 0)
+              while(conn->error == CONNECTERR_NO_ERROR &&
+                    (len = ReceiveLineFromHost(conn, serverResponse, sizeof(serverResponse))) > 0)
               {
                 if(fwrite(serverResponse, len, 1, out) != 1)
                 {
@@ -3305,7 +3287,7 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
               D(DBF_NET, "received %ld bytes", retrieved);
 
               // check if we retrieved anything
-              if(G->Error == FALSE && retrieved >= 0)
+              if(conn->error == CONNECTERR_NO_ERROR && retrieved >= 0)
                 result = TRUE;
 
               fclose(out);
@@ -3322,15 +3304,19 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
     }
     else
       ER_NewError(tr(MSG_ER_SendHTTP));
-
-    TR_Disconnect();
   }
   else
     ER_NewError(tr(MSG_ER_ConnectHTTP), host);
 
-  RETURN((BOOL)(result == TRUE && G->Error == FALSE));
-  return (BOOL)(result == TRUE && G->Error == FALSE);
+  if(conn->error != CONNECTERR_NO_ERROR)
+    result = FALSE;
+
+  DisconnectFromHost(conn);
+
+  RETURN(result);
+  return result;
 }
+
 ///
 
 /*** POP3 routines ***/

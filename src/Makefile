@@ -574,6 +574,7 @@ YAMOBJS = \
 	ParseEmail.o \
 	Requesters.o \
 	Rexx.o \
+	TCP.o \
 	Themes.o \
 	Threads.o \
 	Timer.o \

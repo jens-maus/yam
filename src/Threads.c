@@ -251,6 +251,7 @@ static SAVEDS void ThreadEntry(void)
         case TA_Startup:
         {
           D(DBF_THREAD, "thread '%s' got startup message", msg->thread->name);
+          proc->pr_Task.tc_UserData = msg->thread;
           msg->result = TRUE;
         }
         break;
@@ -368,6 +369,7 @@ BOOL InitThreads(void)
   // initialize the thread lists
   NewMinList(&G->idleThreads);
   NewMinList(&G->workingThreads);
+  G->mainThread = (struct Process *)FindTask(NULL);
 
   if((G->threadPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
@@ -575,6 +577,22 @@ BOOL VARARGS68K DoAction(const enum ThreadAction action, ...)
 
   RETURN(success);
   return success;
+}
+
+///
+/// IsMainThread
+// check wether we are running in the context of the main thread
+BOOL IsMainThread(void)
+{
+  BOOL isMainThread = FALSE;
+
+  ENTER();
+
+  if((struct Process *)FindTask(NULL) == G->mainThread)
+    isMainThread = TRUE;
+
+  RETURN(isMainThread);
+  return isMainThread;
 }
 
 ///

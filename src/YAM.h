@@ -69,7 +69,7 @@ struct codeset;
 struct codesetList;
 struct HashTable;
 struct NotifyRequest;
-struct Thread;
+struct Process;
 
 /**************************************************************************/
 
@@ -173,6 +173,7 @@ struct Global
   struct MinList           idleThreads;
   struct MinList           workingThreads;
   ULONG                    numThreads;
+  struct Process         * mainThread;
 
   // the data for our methodstack implementation
   struct MinList           methodStack;

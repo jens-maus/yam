@@ -7,6 +7,13 @@ $URL$
 
 2010-08-23 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c, TCP.c: added new TCP module to handle single connections. Setting
+    up a connection just takes a host and a port. Further actions are then
+    sending and receiving data across this connection. After the setup the
+    connection can be made secure using AmiSSL. Each connection knows if and
+    when to get a private SocketBase and hence is safe to be used in a thread.
+    So far only TR_DownloadURL() uses a connection, but this will change in
+    the near future for POP3 and SMTP transfers as well.
   * YAM_TR.c: the argp parameter of IoctlSocket() must be a long. Using a char
     variable produced the desired result only by pure luck, but at least peeked
     around somewhere on the stack.
