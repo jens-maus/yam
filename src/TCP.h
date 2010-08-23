@@ -53,32 +53,34 @@ enum ConnectError
 
 struct Connection
 {
-  LONG socket;
-  struct sockaddr_in socketAddr;
-  SSL_CTX *sslCtx;
+  LONG socket;                   // the socket ID returned by socket()
+  struct sockaddr_in socketAddr; // the host this connection was established to
+
+  SSL_CTX *sslCtx;               // SSL context stuff
   SSL *ssl;
-  char *receiveBuffer;
-  char *receivePtr;
-  int receiveCount;
-  int receiveBufferSize;
 
-  char *sendBuffer;
-  char *sendPtr;
-  int sendCount;
-  int sendBufferSize;
+  char *receiveBuffer;           // receive buffer
+  char *receivePtr;              // current pointer into the receive buffer
+  int receiveCount;              // number of received bytes for buffered I/O
+  int receiveBufferSize;         // receive buffer size
 
-  struct fd_set fdset;
-  struct timeval timeout;
+  char *sendBuffer;              // send buffer
+  char *sendPtr;                 // current pointer into the send buffer
+  int sendCount;                 // numer of bytes to by sent for buffered I/O
+  int sendBufferSize;            // send buffer size
 
-  enum ConnectError error;
+  struct fd_set fdset;           // file descriptors for WaitSelect()
+  struct timeval timeout;        // timeout for WaitSelect()
 
-  struct Library *socketBase;
+  enum ConnectError error;       // error value of the last action
+
+  struct Library *socketBase;    // local instance of SocketBase
   #if defined(__amigaos4__)
   struct SocketIFace *socketIFace;
   #endif
 
-  BOOL closeSocketBase;
-  BOOL connectedFromMainThread;
+  BOOL closeSocketBase;          // do we have to close SocketBase ourself?
+  BOOL connectedFromMainThread;  // who created this connection?
 };
 
 struct Connection *ConnectToHost(const char *host, const int port);
