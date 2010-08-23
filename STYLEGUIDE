@@ -703,3 +703,34 @@ important, it keeps the dependency list (which is generated via 'make
 depend') clean and speed up compilation as well.
 
 ############################################################################
+
+24. Comment your structure elements
+-----------------------------------
+
+When implementing a new structure via "struct XXXX" it always helps if the
+individual structure elements are commented at the point where the structure
+will be defined. This should also be done if the element name itself might
+be self-explanatory. In practice, this means instead of doing something
+like:
+
+  struct Person
+  {
+    char firstname[10];
+    char lastname[10];
+    time_t birthday;
+  };
+
+you SHOULD do something like:
+
+  struct Person
+  {
+    char firstname[10];  // the first name of the person
+    char lastname[10];   // the last name (surname) of the person
+    time_t birthday;     // the birthday in days from 1.1.1970
+  };
+
+By adding line comments (//) to each structure element you help developers
+to understand what the individual elements stands for. In addition, you can
+give additional information about implications or warnings.
+
+############################################################################
