@@ -154,17 +154,8 @@ BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *ms
          strcmp(msn1->username, msn2->username) != 0 ||
          strcmp(msn1->password, msn2->password) != 0 ||
          msn1->port           != msn2->port ||
-         isServerActive(msn1) != isServerActive(msn2) ||
-         hasServerAPOP(msn1)  != hasServerAPOP(msn2)  ||
-         hasServerPurge(msn1) != hasServerPurge(msn2) ||
-         hasServerSSL(msn1)   != hasServerSSL(msn2)   ||
-         hasServerTLS(msn1)       != hasServerSSL(msn2)   ||
-         hasServerAuth_AUTO(msn1)   != hasServerAuth_AUTO(msn2)   ||
-         hasServerAuth_DIGEST(msn1) != hasServerAuth_DIGEST(msn2) ||
-         hasServerAuth_CRAM(msn1)   != hasServerAuth_CRAM(msn2)   ||
-         hasServerAuth_LOGIN(msn1)  != hasServerAuth_LOGIN(msn2)  ||
-         hasServerAuth_PLAIN(msn1)  != hasServerAuth_PLAIN(msn2)  ||
-         hasServer8bit(msn1)        != hasServer8bit(msn2))
+         msn1->flags          != msn2->flags ||
+         msn1->smtpFlags      != msn2->smtpFlags)
       {
         // something does not match
         equal = FALSE;
