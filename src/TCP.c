@@ -33,6 +33,10 @@
 #include <proto/bsdsocket.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
+#if !defined(__amigaos4__) && !defined(__AROS__)
+#include <proto/miami.h>
+#include <proto/genesis.h>
+#endif
 
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
@@ -47,6 +51,8 @@
 #else
 #include <sys/filio.h>
 #endif
+
+#include <libraries/genesis.h>
 
 #include "YAM.h"
 #include "YAM_config.h"
@@ -252,37 +258,9 @@ static void SetSocketOpts(struct Connection *conn)
 }
 
 ///
-/// DeleteConnection
-// delete a connection structure
-static void DeleteConnection(struct Connection *conn)
-{
-  ENTER();
-
-  if(conn != NULL)
-  {
-    if(conn->socketBase != NULL)
-    {
-      DROPINTERFACE(conn->socketIFace);
-      // subthreads must close their own SocketBase
-      if(conn->closeSocketBase == TRUE)
-      {
-        D(DBF_NET, "closing own SocketBase");
-        CloseLibrary(conn->socketBase);
-      }
-    }
-
-    free(conn->sendBuffer);
-    free(conn->receiveBuffer);
-    free(conn);
-  }
-
-  LEAVE();
-}
-
-///
 /// CreateConnection
 // create a connection structure
-static struct Connection *CreateConnection(void)
+struct Connection *CreateConnection(void)
 {
   struct Connection *result = NULL;
   struct Connection *conn;
@@ -348,15 +326,305 @@ static struct Connection *CreateConnection(void)
 }
 
 ///
-/// ConnectToHost
-//  Creates a new connection and tries to connect to a internet service
-struct Connection *ConnectToHost(const char *host, const int port)
+/// DeleteConnection
+// delete a connection structure
+void DeleteConnection(struct Connection *conn)
 {
-  struct Connection *conn;
+  ENTER();
+
+  if(conn != NULL)
+  {
+    DisconnectFromHost(conn);
+
+    if(conn->socketBase != NULL)
+    {
+      DROPINTERFACE(conn->socketIFace);
+
+      // subthreads must close their own SocketBase
+      if(conn->closeSocketBase == TRUE)
+      {
+        D(DBF_NET, "closing own SocketBase");
+        CloseLibrary(conn->socketBase);
+      }
+
+      conn->socketBase = NULL;
+    }
+
+    free(conn->sendBuffer);
+    free(conn->receiveBuffer);
+    free(conn);
+  }
+
+  LEAVE();
+}
+
+///
+/// CheckSingleInterface
+// checks a single interface to be online
+enum TCPIPStack
+{
+  TCPIP_Generic = 0,
+  TCPIP_RoadShow,
+  TCPIP_Miami,
+  TCPIP_Genesis
+};
+
+static BOOL CheckSingleInterface(struct Connection *conn, const char *iface, const enum TCPIPStack tcpipStack, const struct Library *stackBase)
+{
+  BOOL isOnline = FALSE;
 
   ENTER();
 
-  if((conn = CreateConnection()) != NULL)
+  switch(tcpipStack)
+  {
+    case TCPIP_Generic:
+    {
+      if(conn->socketBase != NULL)
+      {
+        D(DBF_NET, "assuming interface '%s' to be up", iface);
+        isOnline = TRUE;
+      }
+    }
+    break;
+
+    case TCPIP_RoadShow:
+    {
+      #if defined(__amigaos4__)
+      LONG onlineState = 0;
+      GET_SOCKETBASE;
+
+      if(QueryInterfaceTags((char *)iface, IFQ_State, &onlineState, TAG_END) == 0)
+      {
+        if(onlineState == SM_Up)
+        {
+          D(DBF_NET, "found RoadShow interface '%s' to be UP", iface);
+          isOnline = TRUE;
+        }
+        else
+          W(DBF_NET, "found RoadShow interface '%s' to be DOWN", iface);
+      }
+      else
+        E(DBF_NET, "couldn't query interface status. Unknown interface.");
+      #endif
+    }
+    break;
+
+    case TCPIP_Miami:
+    {
+      #if !defined(__amigaos4__) && !defined(__AROS__)
+      struct Library *MiamiBase = (struct Library *)stackBase;
+
+      if(MiamiIsOnline(iface[0] != '\0' ? (char *)iface : NULL))
+      {
+        D(DBF_NET, "found Miami interface '%s' to be UP", iface);
+        isOnline = TRUE;
+      }
+      else
+        W(DBF_NET, "found Miami interface '%s' to be DOWN", iface);
+      #endif
+    }
+    break;
+
+    case TCPIP_Genesis:
+    {
+      #if !defined(__amigaos4__) && !defined(__AROS__)
+      struct Library *GenesisBase = (struct Library *)stackBase;
+
+      if(IsOnline(iface[0] != '\0' ? (long)iface : 0))
+      {
+        D(DBF_NET, "found Genesis interface '%s' to be UP", iface);
+        isOnline = TRUE;
+      }
+      else
+        W(DBF_NET, "found Genesis interface '%s' to be DOWN", iface);
+      #endif
+    }
+    break;
+  }
+
+  RETURN(isOnline);
+  return isOnline;
+}
+
+///
+/// CheckAllInterfaces
+// check if any of the given interfaces is online
+static BOOL CheckAllInterfaces(struct Connection *conn, const enum TCPIPStack tcpipStack, const struct Library *stackBase)
+{
+  BOOL anyIsOnline = FALSE;
+
+  ENTER();
+
+  SHOWSTRING(DBF_NET, C->IOCInterfaces);
+  if(C->IOCInterfaces[0] != '\0')
+  {
+    char *ifaces;
+
+    // duplicate the interfaces setting and split it into its parts
+    if((ifaces = strdup(C->IOCInterfaces)) != NULL)
+    {
+      char *iface = ifaces;
+      char *next;
+
+      do
+      {
+        if((next = strpbrk(iface, ", ")) != NULL)
+          *next++ = '\0';
+
+        if(iface[0] != '\0')
+        {
+          // check every single interface to be online and
+          // bail out as soon as we found an active interface
+          D(DBF_NET, "checking interface '%s'", iface);
+          if(CheckSingleInterface(conn, iface, tcpipStack, stackBase) == TRUE)
+          {
+            anyIsOnline = TRUE;
+            break;
+          }
+        }
+
+        iface = next;
+      }
+      while(iface != NULL);
+
+      free(ifaces);
+    }
+  }
+  else
+  {
+    // check with no interface name
+    anyIsOnline = CheckSingleInterface(conn, "", tcpipStack, stackBase);
+  }
+
+  RETURN(anyIsOnline);
+  return anyIsOnline;
+}
+
+///
+/// ConnectionIsOnline
+// check whether the connection can be used to connect to a host
+BOOL ConnectionIsOnline(struct Connection *conn)
+{
+  BOOL isonline = FALSE;
+
+  ENTER();
+
+  if(conn != NULL)
+  {
+    // on AmigaOS4 we always do an online check via the v4 version
+    // of bsdsocket.library (RoadShow) as it should always be present
+    #if defined(__amigaos4__)
+    // if we find a bsdsocket.library < v4 on OS4
+    // we always assume it to be online
+    if(LIB_VERSION_IS_AT_LEAST(conn->SocketBase, 4, 0) == FALSE)
+    {
+      isonline = TRUE;
+    }
+    else
+    {
+      D(DBF_NET, "identified bsdsocket v4 TCP/IP stack (RoadShow)");
+
+      // in case the user hasn't specified a specific
+      // interface or set that the online check for a specific
+      // interface should be disabled we just do a general query
+      if(C->IsOnlineCheck == FALSE || C->IOCInterfaces[0] == '\0')
+      {
+        ULONG status = 0;
+        struct TagItem tags =
+        {
+          { SBTM_GETREF(SBTC_SYSTEM_STATUS), &status },
+          { TAG_END,                         0       }
+        };
+        GET_SOCKETBASE;
+
+        if(SocketBaseTagList(tags) == 0)
+        {
+          if(hasFlag(status, SBSYSSTAT_Interfaces))
+            isonline = TRUE;
+        }
+        else
+          E(DBF_NET, "couldn't query TCP/IP stack for its system status.");
+      }
+      else
+      {
+        ULONG hasInterfaceAPI = FALSE;
+        struct TagItem tags =
+        {
+          { SBTM_GETREF(SBTC_HAVE_INTERFACE_API), &hasInterfaceAPI },
+          { TAG_END,                              0                }
+        };
+        GET_SOCKETBASE;
+
+        if(SocketBaseTagList(tags) == 0 && hasInterfaceAPI == TRUE)
+        {
+          // now that we know that we have an interface API, we can
+          // go and query the interfaces if any of these is up&running
+          // correctly.
+          isonline = CheckAllInterfaces(conn, TCPIP_RoadShow, NULL);
+        }
+        else
+        {
+          E(DBF_NET, "couldn't query TCP/IP stack's interface API (%ld).", hasInterfaceAPI);
+        }
+      }
+    }
+    #else
+
+    #if !defined(__AROS__)
+    if(C->IsOnlineCheck == TRUE)
+    {
+      struct Library *MiamiBase;
+      struct Library *GenesisBase;
+
+      if((MiamiBase = OpenLibrary("miami.library", 10L)) != NULL)
+      {
+        D(DBF_NET, "identified Miami TCP/IP stack");
+
+        isonline = CheckAllInterfaces(conn, TCPIP_Miami, MiamiBase);
+
+        CloseLibrary(MiamiBase);
+        MiamiBase = NULL;
+      }
+      else if((GenesisBase = OpenLibrary("genesis.library", 1L)) != NULL)
+      {
+        D(DBF_NET, "identified Genesis TCP/IP stack");
+
+        isonline = CheckAllInterfaces(conn, TCPIP_Genesis, GenesisBase);
+
+        CloseLibrary(GenesisBase);
+        GenesisBase = NULL;
+      }
+      else if(LIB_VERSION_IS_AT_LEAST(SocketBase, 2, 0) == TRUE)
+      {
+        D(DBF_NET, "identified generic TCP/IP stack with bsdsocket.library v2+");
+
+        isonline = CheckAllInterfaces(conn, TCPIP_Generic, NULL);
+      }
+    }
+    else
+    #endif // !__AROS__
+    if(LIB_VERSION_IS_AT_LEAST(conn->socketBase, 2, 0) == TRUE)
+      isonline = CheckAllInterfaces(conn, TCPIP_Generic, NULL);
+
+    #endif // __amigaos4__
+  }
+
+  D(DBF_NET, "found the TCP/IP stack to be %s", isonline ? "ONLINE" : "OFFLINE");
+
+  RETURN(isonline);
+  return isonline;
+}
+
+///
+/// ConnectToHost
+//  Creates a new connection and tries to connect to a internet service
+enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const int port)
+{
+  enum ConnectError error = CONNECTERR_NO_CONNECTION;
+
+  ENTER();
+
+  if(conn != NULL)
   {
     struct hostent *hostaddr;
     GET_SOCKETBASE(conn);
@@ -563,6 +831,15 @@ struct Connection *ConnectToHost(const char *host, const int port)
             // we flag this connection as success
             if(conn->error == CONNECTERR_NO_ERROR)
               conn->error = CONNECTERR_SUCCESS;
+
+            // now we are properly connected
+            conn->isConnected = TRUE;
+
+            // reset the buffer pointers
+            conn->receiveCount = 0;
+            conn->receivePtr = conn->receiveBuffer;
+            conn->sendCount = 0;
+            conn->sendPtr = conn->sendBuffer;
           }
           else
           {
@@ -602,10 +879,12 @@ struct Connection *ConnectToHost(const char *host, const int port)
       E(DBF_NET, "ConnectToHost() connection error: %ld", conn->error);
     else
       D(DBF_NET, "connection to %s:%ld succedded", host, port);
+
+    error = conn->error;
   }
 
-  RETURN(conn);
-  return conn;
+  RETURN(error);
+  return error;
 }
 
 ///
@@ -619,7 +898,7 @@ void DisconnectFromHost(struct Connection *conn)
 
   if(conn != NULL)
   {
-    if(conn->socket != TCP_NO_SOCKET)
+    if(conn->isConnected == TRUE)
     {
       GET_SOCKETBASE(conn);
 
@@ -640,13 +919,15 @@ void DisconnectFromHost(struct Connection *conn)
       // close the connection
       shutdown(conn->socket, SHUT_RDWR);
       CloseSocket(conn->socket);
+      conn->socket = TCP_NO_SOCKET;
+
+      if(AmiSSLBase != NULL)
+        CleanupAmiSSLA(NULL);
+
+      // we are no longer connected
+      conn->isConnected = FALSE;
     }
-
-    if(AmiSSLBase != NULL)
-      CleanupAmiSSLA(NULL);
   }
-
-  DeleteConnection(conn);
 
   LEAVE();
 }
@@ -660,19 +941,20 @@ BOOL MakeSecureConnection(struct Connection *conn)
 
   ENTER();
 
-  if(conn != NULL)
+  if(conn != NULL && conn->isConnected == TRUE)
   {
     if(AmiSSLBase != NULL)
     {
-      GET_SOCKETBASE(conn);
+      long error;
 
       #if defined(__amigaos4__)
-      if(InitAmiSSL(AmiSSL_ISocket, ISocket,
-                    TAG_DONE) != 0)
+      error = InitAmiSSL(AmiSSL_ISocket, conn->socketIFace, TAG_DONE);
       #else
-      if(InitAmiSSL(AmiSSL_SocketBase, SocketBase,
-                    TAG_DONE) != 0)
+      error = InitAmiSSL(AmiSSL_SocketBase, conn->socketBase, TAG_DONE);
       #endif
+
+      SHOWVALUE(DBF_NET, error);
+      if(error == 0)
       {
         char tmp[24+1];
         SSL_METHOD *method = NULL;
@@ -749,6 +1031,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                           // is available and reissue the SSL_connect() command.
                           LONG retVal = -1;
                           int timeoutSum = 0;
+                          GET_SOCKETBASE(conn);
 
                           // now we iterate in a do/while loop and call WaitSelect()
                           // with a static timeout of 1s. We then continue to do so
@@ -1263,7 +1546,7 @@ int ReceiveLineFromHost(struct Connection *conn, char *vptr, const int maxlen)
   if(conn != NULL)
   {
     // make sure the socket is active.
-    if(conn->socket != TCP_NO_SOCKET)
+    if(conn->isConnected == TRUE)
     {
       int n;
       char *ptr = vptr;
@@ -1317,6 +1600,10 @@ int ReceiveLineFromHost(struct Connection *conn, char *vptr, const int maxlen)
       // return the number of chars we read
       result = n;
     }
+    else
+    {
+      conn->error = CONNECTERR_NOT_CONNECTED;
+    }
   }
 
   RETURN(result);
@@ -1337,7 +1624,7 @@ int ReceiveFromHost(struct Connection *conn, char *recvdata, const int maxlen)
   if(conn != NULL)
   {
     // make sure the socket is active.
-    if(conn->socket != TCP_NO_SOCKET)
+    if(conn->isConnected == TRUE)
     {
       conn->error = CONNECTERR_NO_ERROR;
 
@@ -1361,7 +1648,10 @@ int ReceiveFromHost(struct Connection *conn, char *recvdata, const int maxlen)
       D(DBF_NET, "TCP: received %ld of max %ld bytes", nread, maxlen);
     }
     else
-      W(DBF_NET, "socket == TCP_NO_SOCKET");
+    {
+      W(DBF_NET, "socket not connected");
+      conn->error = CONNECTERR_NOT_CONNECTED;
+    }
   }
 
   RETURN(nread);
@@ -1807,7 +2097,7 @@ int SendToHost(struct Connection *conn, const char *ptr, const int len, const in
   if(conn != NULL)
   {
     // make sure the socket is active.
-    if(conn->socket != TCP_NO_SOCKET)
+    if(conn->isConnected == TRUE)
     {
       conn->error = CONNECTERR_NO_ERROR;
 
@@ -1825,7 +2115,10 @@ int SendToHost(struct Connection *conn, const char *ptr, const int len, const in
       D(DBF_NET, "TCP: sent %ld of %ld bytes (%ld)", nwritten, len, flags);
     }
     else
-      W(DBF_NET, "socket == TCP_NO_SOCKET");
+    {
+      W(DBF_NET, "socket not connected");
+      conn->error = CONNECTERR_NOT_CONNECTED;
+    }
   }
 
   RETURN(nwritten);

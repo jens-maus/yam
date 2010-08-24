@@ -33,6 +33,7 @@
 
 #include "Locale.h"
 #include "Rexx.h"
+#include "TCP.h"
 
 #include "Debug.h"
 
@@ -58,15 +59,23 @@ void rx_geturl(UNUSED struct RexxHost *host, struct RexxParams *params, enum Rex
 
     case RXIF_ACTION:
     {
-      if(TR_OpenTCPIP())
+      struct Connection *conn;
+
+      if((conn = CreateConnection()) != NULL)
       {
-        BusyText(tr(MSG_TR_Downloading), "");
+        if(ConnectionIsOnline(conn) == TRUE)
+        {
+          BusyText(tr(MSG_TR_Downloading), "");
 
-        if(!TR_DownloadURL(args->url, NULL, args->filename))
-          params->rc = RETURN_ERROR;
+          if(TR_DownloadURL(conn, args->url, NULL, args->filename) == FALSE)
+            params->rc = RETURN_ERROR;
 
-        TR_CloseTCPIP();
-        BusyEnd();
+          BusyEnd();
+        }
+        else
+          params->rc = RETURN_WARN;
+
+        DeleteConnection(conn);
       }
       else
         params->rc = RETURN_WARN;

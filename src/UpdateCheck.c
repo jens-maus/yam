@@ -62,6 +62,7 @@
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "TCP.h"
 #include "UpdateCheck.h"
 
 #include "Debug.h"
@@ -132,6 +133,7 @@ void InitUpdateCheck(const BOOL initial)
 BOOL CheckForUpdates(const BOOL quiet)
 {
   BOOL result = FALSE;
+  struct Connection *conn;
 
   ENTER();
 
@@ -140,7 +142,7 @@ BOOL CheckForUpdates(const BOOL quiet)
 
   // first we check if we can start a connection or if the
   // tcp/ip stuff is busy right now so that we do not interrupt something
-  if(SocketBase == NULL || G->TR_Socket == TCP_NO_SOCKET)
+  if((conn = CreateConnection()) != NULL)
   {
     // disable the transfer buttons in the toolbar
     MA_ChangeTransfer(FALSE);
@@ -150,7 +152,7 @@ BOOL CheckForUpdates(const BOOL quiet)
     PauseTimer(TIMER_CHECKMAIL);
 
     // now we open a new TCP/IP connection socket
-    if(TR_OpenTCPIP() == TRUE)
+    if(ConnectionIsOnline(conn) == TRUE)
     {
       struct TempFile *tf;
 
@@ -290,7 +292,7 @@ BOOL CheckForUpdates(const BOOL quiet)
 
           // now we send a specific request via TR_DownloadURL() to
           // our update server
-          if(TR_DownloadURL(C->UpdateServer, request, tf->Filename) == TRUE)
+          if(TR_DownloadURL(conn, C->UpdateServer, request, tf->Filename) == TRUE)
           {
             // now we parse the result.
             if((tf->FP = fopen(tf->Filename, "r")) != NULL)
@@ -454,8 +456,6 @@ BOOL CheckForUpdates(const BOOL quiet)
 
         CloseTempFile(tf);
       }
-
-      TR_CloseTCPIP();
     }
     else
       ER_NewError(tr(MSG_ER_OPENTCPIP));
@@ -465,6 +465,8 @@ BOOL CheckForUpdates(const BOOL quiet)
 
     // resume the mail check timer
     ResumeTimer(TIMER_CHECKMAIL);
+
+    DeleteConnection(conn);
   }
 
   // as the last operation we get the current time as the

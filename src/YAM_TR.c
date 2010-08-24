@@ -1541,21 +1541,7 @@ static void TR_Disconnect(void)
 
   D(DBF_NET, "disconnecting TCP/IP session...");
 
-  if(G->TR_Socket != TCP_NO_SOCKET)
-  {
-    if(G->TR_UseTLS == TRUE)
-    {
-      TR_EndTLS();
-      G->TR_UseTLS = FALSE;
-    }
-
-    shutdown(G->TR_Socket, SHUT_RDWR);
-    CloseSocket(G->TR_Socket);
-    G->TR_Socket = TCP_NO_SOCKET;
-
-    // free the transfer buffers now
-    TR_FreeTransBuffers();
-  }
+  DisconnectFromHost(G->TR->connection);
 
   LEAVE();
 }
@@ -1999,50 +1985,6 @@ static enum ConnectError TR_Connect(char *host, int port)
   return result;
 }
 ///
-/// TR_Recv()
-// a own wrapper function for Recv()/SSL_read() that reads buffered somehow
-// it reads maxlen-1 data out of the buffer and stores it into recvdata with
-// a null terminated string
-static int TR_Recv(char *recvdata, int maxlen)
-{
-  int nread = -1;
-
-  ENTER();
-
-  // make sure the GUI can still update itself during this
-  // operation
-  DoMethod(G->App, MUIM_Application_InputBuffered);
-
-  // make sure the socket is active.
-  if(G->TR_Socket != TCP_NO_SOCKET)
-  {
-    // we call the ReadBuffered function so that
-    // we get out the data from our own buffer.
-    nread = TR_ReadBuffered(G->TR_Socket, recvdata, maxlen-1, TCPF_NONE);
-
-    if(nread <= 0)
-      recvdata[0] = '\0';
-    else
-      recvdata[nread] = '\0';
-
-    if(G->TR_Debug == TRUE)
-    {
-      printf("SERVER[%04d]: %s", nread, recvdata);
-      // add a linefeed in case of an error
-      if(nread <= 0 || strlen(recvdata) == 0)
-        printf("\n");
-    }
-
-    D(DBF_NET, "TCP: received %ld of max %ld bytes", nread, maxlen);
-  }
-  else
-    W(DBF_NET, "socket == TCP_NO_SOCKET");
-
-  RETURN(nread);
-  return nread;
-}
-
-///
 /// TR_RecvToFile()
 // function that receives data from a POP3 server until it receives a \r\n.\r\n termination
 // line. It automatically writes that data to the supplied filehandle and if present also
@@ -2058,10 +2000,11 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
   ENTER();
 
   // get the first data the pop server returns after the TOP command
-  if((read = count = TR_Recv(buf, sizeof(buf))) <= 0)
+  if((read = count = ReceiveFromHost(G->TR->connection, buf, sizeof(buf))) <= 0)
     G->Error = TRUE;
 
-  while(G->Error == FALSE && G->TR->Abort == FALSE)
+  D(DBF_NET, "got %ld, expected %ld", G->TR->connection->error, CONNECTERR_NO_ERROR);
+  while(G->TR->connection->error == CONNECTERR_NO_ERROR && G->TR->Abort == FALSE)
   {
     char *bufptr;
 
@@ -2215,7 +2158,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
       break;
 
     // if not, we get another bunch of data and start over again.
-    if((read = TR_Recv(buf, sizeof(buf))) <= 0)
+    if((read = ReceiveFromHost(G->TR->connection, buf, sizeof(buf))) <= 0)
       break;
 
     count += read;
@@ -3144,7 +3087,7 @@ static int TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags)
 /*** HTTP routines ***/
 /// TR_DownloadURL()
 //  Downloads a file from the web using HTTP/1.1 (RFC 2616)
-BOOL TR_DownloadURL(const char *server, const char *request, const char *filename)
+BOOL TR_DownloadURL(struct Connection *conn, const char *server, const char *request, const char *filename)
 {
   BOOL result = FALSE;
   BOOL noproxy = (C->ProxyServer[0] == '\0');
@@ -3153,7 +3096,6 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
   char host[SIZE_HOST];
   char *path;
   char *bufptr;
-  struct Connection *conn;
 
   ENTER();
 
@@ -3196,7 +3138,7 @@ BOOL TR_DownloadURL(const char *server, const char *request, const char *filenam
     hport = noproxy ? 80 : 8080;
 
   // open the TCP/IP connection to 'host' under the port 'hport'
-  if((conn = ConnectToHost(host, hport)) != NULL && conn->error == CONNECTERR_SUCCESS)
+  if((ConnectToHost(conn, host, hport)) == CONNECTERR_SUCCESS)
   {
     char *serverHost;
     char serverPath[SIZE_LINE];
@@ -3335,7 +3277,7 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
   ENTER();
 
   // first we check if the socket is in a valid state to proceed
-  if(G->TR_Socket != TCP_NO_SOCKET)
+  if(G->TR->connection != NULL)
   {
     static char buf[SIZE_LINE]; // SIZE_LINE should be enough for the command and reply
 
@@ -3350,11 +3292,11 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
     // send the pop command to the server and see if it was received somehow
     // and for a connect we don't send something or the server will get
     // confused.
-    if(command == POPCMD_CONNECT || TR_WriteLine(buf) > 0)
+    if(command == POPCMD_CONNECT || SendLineToHost(G->TR->connection, buf) > 0)
     {
       // let us read the next line from the server and check if
       // some status message can be retrieved.
-      if(TR_ReadLine(G->TR_Socket, buf, sizeof(buf)) > 0 &&
+      if(ReceiveLineFromHost(G->TR->connection, buf, sizeof(buf)) > 0 &&
         strncmp(buf, POP_RESP_OKAY, strlen(POP_RESP_OKAY)) == 0)
       {
         // everything worked out fine so lets set
@@ -3407,9 +3349,9 @@ static int TR_ConnectPOP(int guilevel)
   char *welcomemsg = NULL;
   int msgs = -1;
   char *resp;
-  enum ConnectError err;
   struct MailServerNode *msn;
   int port;
+  enum ConnectError err;
 
   ENTER();
 
@@ -3473,7 +3415,7 @@ static int TR_ConnectPOP(int guilevel)
   }
 
   // now we start our connection to the POP3 server
-  if((err = TR_Connect(host, port)) != CONNECTERR_SUCCESS)
+  if((err = ConnectToHost(G->TR->connection, host, port)) != CONNECTERR_SUCCESS)
   {
     if(guilevel == POP_USER)
     {
@@ -3517,6 +3459,8 @@ static int TR_ConnectPOP(int guilevel)
 
         case CONNECTERR_SSLFAILED:
         case CONNECTERR_INVALID8BIT:
+        case CONNECTERR_NO_CONNECTION:
+        case CONNECTERR_NOT_CONNECTED:
           // can't occur, do nothing
         break;
       }
@@ -3549,7 +3493,7 @@ static int TR_ConnectPOP(int guilevel)
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_INITTLS));
 
     // Now we have to Initialize and Start the TLS stuff if requested
-    if(TR_InitTLS() == TRUE && TR_StartTLS() == TRUE)
+    if(MakeSecureConnection(G->TR->connection) == TRUE)
       G->TR_UseTLS = TRUE;
     else
     {
@@ -3708,11 +3652,11 @@ static BOOL TR_GetMessageList_GET(void)
     NewList((struct List *)&G->TR->transferList);
 
     // get the first line the pop server returns after the LINE command
-    if(TR_ReadLine(G->TR_Socket, buf, sizeof(buf)) > 0)
+    if(ReceiveLineFromHost(G->TR->connection, buf, sizeof(buf)) > 0)
     {
       // we get the "scan listing" as long as we haven't received a a
       // finishing octet
-      while(G->Error == FALSE && strncmp(buf, ".\r\n", 3) != 0)
+      while(G->TR->connection->error == CONNECTERR_NO_ERROR && strncmp(buf, ".\r\n", 3) != 0)
       {
         int index, size;
         struct Mail *newMail;
@@ -3780,7 +3724,7 @@ static BOOL TR_GetMessageList_GET(void)
         }
 
         // now read the next Line
-        if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) <= 0)
+        if(ReceiveLineFromHost(G->TR->connection, buf, SIZE_LINE) <= 0)
         {
           success = FALSE;
           break;
@@ -3879,7 +3823,7 @@ static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 
         // If we end up here because of an error, abort or the upper loop wasn't finished
         // we exit immediatly with deleting the temp file also.
-        if(G->Error == TRUE || G->TR->Abort == TRUE || done == FALSE)
+        if(G->TR->connection->error != CONNECTERR_NO_ERROR || G->TR->Abort == TRUE || done == FALSE)
           lline = -1;
         else if((email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)) != NULL)
         {
@@ -3959,9 +3903,26 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
 
   if(isfirst == TRUE) /* Init first connection */
   {
+    struct Connection *conn;
+
     G->LastDL.Error = TRUE;
-    if(TR_OpenTCPIP() == FALSE)
+
+    if(CO_IsValid() == FALSE)
     {
+      LEAVE();
+      return;
+    }
+
+    if((conn = CreateConnection()) == NULL)
+    {
+      LEAVE();
+      return;
+    }
+
+    if(ConnectionIsOnline(conn) == FALSE)
+    {
+      DeleteConnection(conn);
+
       if(guilevel == POP_USER)
         ER_NewError(tr(MSG_ER_OPENTCPIP));
 
@@ -3969,22 +3930,15 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       return;
     }
 
-    if(CO_IsValid() == FALSE)
-    {
-      TR_CloseTCPIP();
-
-      LEAVE();
-      return;
-    }
-
     if((G->TR = TR_New(guilevel == POP_USER ? TR_GET_USER : TR_GET_AUTO)) == NULL)
     {
-      TR_CloseTCPIP();
+      DeleteConnection(conn);
 
       LEAVE();
       return;
     }
 
+    G->TR->connection = conn;
     G->TR->Checking = TRUE;
     UpdateAppIcon();
     G->TR->GUIlevel = guilevel;
@@ -4090,7 +4044,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
   if(pop == -1) /* Finish last connection */
   {
     // close the TCP/IP connection
-    TR_CloseTCPIP();
+    DeleteConnection(G->TR->connection);
+    G->TR->connection = NULL;
 
     // make sure the transfer window is closed
     set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
@@ -5164,11 +5119,11 @@ static BOOL FilterDuplicates(void)
         char buf[SIZE_LINE];
 
         // get the first line the pop server returns after the UIDL command
-        if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) > 0)
+        if(ReceiveLineFromHost(G->TR->connection, buf, sizeof(buf)) > 0)
         {
           // we get the "unique-id list" as long as we haven't received a
           // finishing octet
-          while(G->TR->Abort == FALSE && G->Error == FALSE && strncmp(buf, ".\r\n", 3) != 0)
+          while(G->TR->Abort == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR && strncmp(buf, ".\r\n", 3) != 0)
           {
             int num;
             char uidl[SIZE_DEFAULT+SIZE_HOST];
@@ -5215,12 +5170,12 @@ static BOOL FilterDuplicates(void)
                 break;
               }
 
-              if(G->TR->Abort == TRUE || G->Error == TRUE)
+              if(G->TR->Abort == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
                 break;
             }
 
             // now read the next Line
-            if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) <= 0)
+            if(ReceiveLineFromHost(G->TR->connection, buf, sizeof(buf)) <= 0)
             {
               E(DBF_UIDL, "unexpected end of data stream during UIDL.");
               break;
@@ -5265,12 +5220,12 @@ static BOOL FilterDuplicates(void)
             }
           }
 
-          if(G->TR->Abort == TRUE || G->Error == TRUE)
+          if(G->TR->Abort == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
             break;
         }
       }
 
-      result = (G->TR->Abort == FALSE && G->Error == FALSE);
+      result = (G->TR->Abort == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR);
     }
     else
       result = TRUE;
@@ -6127,6 +6082,11 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
               // a generic error message
               case CONNECTERR_UNKNOWN_ERROR:
                 ER_NewError(tr(MSG_ER_CANNOT_CONNECT_SMTP), host);
+              break;
+
+              case CONNECTERR_NO_CONNECTION:
+              case CONNECTERR_NOT_CONNECTED:
+                // cannot happen, do nothing
               break;
             }
 
@@ -7169,7 +7129,7 @@ static BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const 
     }
     fclose(fh);
 
-    if(G->TR->Abort == FALSE && G->Error == FALSE && done == TRUE)
+    if(G->TR->Abort == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR && done == TRUE)
     {
       struct ExtendedMail *mail;
 
@@ -7427,7 +7387,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       else
         D(DBF_NET, "leaving mail with subject '%s' and size %ld on server to be downloaded again", mail->Subject, mail->Size);
 
-      if(G->TR->Abort == TRUE || G->Error == TRUE)
+      if(G->TR->Abort == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
         break;
     }
 
@@ -7488,7 +7448,7 @@ static void TR_CompleteMsgList(void)
   {
     struct MinNode *curNode = tr->GMD_Mail;
 
-    for(; curNode->mln_Succ && tr->Abort == FALSE && G->Error == FALSE; curNode = curNode->mln_Succ)
+    for(; curNode->mln_Succ && tr->Abort == FALSE && tr->connection->error == CONNECTERR_NO_ERROR; curNode = curNode->mln_Succ)
     {
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 

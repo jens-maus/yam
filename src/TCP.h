@@ -48,7 +48,9 @@ enum ConnectError
   CONNECTERR_TIMEDOUT      = -7,
   CONNECTERR_ABORTED       = -8,
   CONNECTERR_SSLFAILED     = -9,
-  CONNECTERR_INVALID8BIT   = -10
+  CONNECTERR_INVALID8BIT   = -10,
+  CONNECTERR_NO_CONNECTION = -11,
+  CONNECTERR_NOT_CONNECTED = -12
 };
 
 struct Connection
@@ -81,9 +83,13 @@ struct Connection
 
   BOOL closeSocketBase;          // do we have to close SocketBase ourself?
   BOOL connectedFromMainThread;  // who created this connection?
+  BOOL isConnected;              // has ConnectToHost() been called before?
 };
 
-struct Connection *ConnectToHost(const char *host, const int port);
+struct Connection *CreateConnection(void);
+void DeleteConnection(struct Connection *conn);
+BOOL ConnectionIsOnline(struct Connection *conn);
+enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const int port);
 void DisconnectFromHost(struct Connection *conn);
 BOOL MakeSecureConnection(struct Connection *conn);
 int ReceiveLineFromHost(struct Connection *conn, char *vptr, const int maxlen);

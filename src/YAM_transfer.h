@@ -148,6 +148,7 @@ struct TR_ClassData
   struct Folder *       ImportFolder;
   struct HashTable *    UIDLhashTable; // for maintaining all UIDLs
   struct MailList *     downloadedMails;
+  struct Connection *   connection;
 
   long                  Abort;
   long                  Pause;
@@ -175,7 +176,7 @@ extern struct Hook TR_ProcessIMPORTHook;
 
 void  TR_Cleanup(void);
 void  TR_CloseTCPIP(void);
-BOOL  TR_DownloadURL(const char *server, const char *request, const char *filename);
+BOOL  TR_DownloadURL(struct Connection *conn, const char *server, const char *request, const char *filename);
 void  TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel);
 BOOL  TR_GetMessageList_IMPORT(void);
 BOOL  TR_IsOnline(void);

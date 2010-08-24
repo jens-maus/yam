@@ -7,6 +7,14 @@ $URL$
 
 2010-08-24 Thore Böckelmann <tboeckel@gmx.de>
 
+  * TCP.c, YAM_TR.c, UpdateCheck.c: refined the connections to make them
+    reusable if needed. First of all a connection must be created, then it can
+    be used to check the online state of the configured interfaces. Then a host
+    can be connected ahead of any data transfer. Finally the connection is
+    disconnected and if the connection will not be used anymore it must be
+    deleted again.
+    The POP3 functions now use a connection for all data transfers. This is far
+    from being thread safe yet, but we did a step more towards this goal.
   * TCP.c: in case MakeSecureConnection() fails for any reason the error value
     will always be set accordingly.
   * TCP.c: never use SocketBaseTags() but its non-vararg SocketBaseTagList()
