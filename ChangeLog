@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-24 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some shortcuts and correct a few errors.
+
 2010-08-24 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_TR.c, YAM_transfer.h: SMTP-AUTH support was broken due to incorrectly

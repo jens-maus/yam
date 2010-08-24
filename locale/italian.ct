@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (20.08.2010)
+## version $VER: YAM.catalog 7.5 (24.08.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -945,7 +945,7 @@ MSG_CO_ImportMIMEGads
 ;
 MSG_CO_NewIntroDef
 Salve,\\n
-; Hello,\\n
+; Hello,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 \0
@@ -2133,9 +2133,9 @@ di nuovi messaggi nel server di posta.
 ; checking for new mail.
 ;
 MSG_HELP_CO_CH_AVOIDDUP
-Se non si desidera cancellare la posta dal server\n\
-si consiglia di usare questa opzione per evitare\n\
-che si presentino inutili duplicati dei messaggi.
+Nel caso la posta non sia stata ancora cancellata dal\n\
+server si consiglia di attivare questa opzione in modo\n\
+da evitare che si presentino inutili duplicati delle mail.
 ; If you don't delete old mail\n\
 ; on the server, use this option\n\
 ; to avoid duplicate messages.
@@ -2161,7 +2161,7 @@ come 'non letti' prima di prelevare nuova posta.
 ; as 'unread' before downloading new mail.
 ;
 MSG_HELP_CO_ST_WARNSIZE
-I messaggi che dovessero superare questa\n\
+I messaggi in arrivo che dovessero superare questa\n\
 soglia verranno considerati come 'grandi'.
 ; Incoming messages bigger than this\n\
 ; will be considered as 'large'.
@@ -2170,7 +2170,7 @@ MSG_HELP_CO_ST_INTERVAL
 Imposta un periodo di tempo durante il quale verificare la\n\
 presenza automatica dei nuovi messaggi di posta.\n\
 Digita '0' o lascia questo campo vuoto nel caso si desideri\n\
-desideri disattivare questa opzione.
+disattivare questa opzione.
 ; How often do you want YAM to automatically check for new mail?\n\
 ; Use '0' if you don't want YAM to do this.
 ;
@@ -2231,7 +2231,7 @@ manuale della funzione 'Filtra'.
 ; the filter function manually.
 ;
 MSG_HELP_CO_CY_COMBINE
-Come combinare le due chiavi di\n\
+Come combinare le regole di\n\
 ricerca per questo filtro.
 ; How to combine the rules\n\
 ; for this filter.
@@ -2286,7 +2286,7 @@ fosse un argomento.
 ; message is passed as an argument.
 ;
 MSG_HELP_CO_CH_APLAY
-Esegue un suono per ogni\n\
+Esegue un suono per ogni corrispondente\n\
 messaggio filtrato.
 ; Play a sound file for\n\
 ; each matching message.
@@ -2472,7 +2472,7 @@ di un messaggio.
 ; typing your messages.
 ;
 MSG_HELP_CO_CH_LAUNCH
-Avvia un editor esterno durante la\n\
+Avvia un editor di testo esterno durante la\n\
 composizione di un nuovo messaggio.
 ; Automatically launch the external editor\n\
 ; when starting a new message.
@@ -2508,8 +2508,8 @@ visualizzare le variabili supportate.
 ; popup button at the right to see the supported variables.
 ;
 MSG_HELP_CO_ST_AREPLYTEXT
-Usa questi testi in risposta ai messaggi nel'eventualità\n\
-che il mittente rientri nel pattern specificato.
+Usa queste frasi di risposta ai messaggi nel caso\n\
+il mittente rientri nel pattern specificato.
 ; Use these phrases instead when then pattern\n\
 ; below matches the recipient's address.
 ;
@@ -2520,7 +2520,7 @@ intestazioni di risposta alternativa.
 ; the alternative reply phrases.
 ;
 MSG_HELP_CO_ST_MREPLYTEXT
-Usa questi testi in risposta ai\n\
+Usa queste frasi di risposta nei\n\
 messaggi di una Mailing list.
 ; Use these phrases in replies to\n\
 ; messages from a mailing list.
@@ -2577,7 +2577,7 @@ contenuta all'interno della variabile env.
 ;
 MSG_HELP_CO_ST_TAGFILE
 Specifica qui il database contenente i vari Tagline.\n\
-(Sono anche conoscosciuti con il nome di "cookie")
+(Sono conoscosciuti anche con il nome di "cookie")
 ; Specify here a database file containing\n\
 ; taglines (also known as 'cookies').
 ;
@@ -2845,8 +2845,8 @@ la gestione dei flussi di dati in ingresso e in uscita.
 ; and output from the script.
 ;
 MSG_HELP_CO_CH_WAITTERM
-Non avviare lo script in modo asincrono.\n\
-Attendi prima il completamento del processo.
+Non avviare lo script in modo asincrono ma attendi\n\
+prima il completamento del processo.
 ; Do not run the script\n\
 ; asynchronously but wait\n\
 ; for it to complete.
@@ -2869,7 +2869,7 @@ ed usa le precedenti impostazioni.
 ; Module AB - Routines
 ;
 MSG_AB_BirthdayReminder
-Memorandum per il compleanno
+Promemoria per il compleanno
 ; Birthday Reminder
 ;
 MSG_AB_HappyBirthday
@@ -3365,19 +3365,19 @@ di distribuzione.
 ;
 MSG_HELP_EA_ST_MEMBER
 Indirizzo (e nome) oppure\n\
-pseudonimo dei membri.
+pseudonimo del membro.
 ; Address (and name) or\n\
 ; alias of a member.
 ;
 MSG_HELP_EA_BT_ADD
-Aggiunge dei nuovi membri\n\
+Aggiunge un nuovo membro\n\
 alla lista di distribuzione.
 ; Add a new member\n\
 ; to the list.
 ;
 MSG_HELP_EA_BT_DEL
-Rimuove i membri selezionati\n\
-dalla lista.
+Rimuove dalla lista il\n\
+membro selezionato.
 ; Remove the selected\n\
 ; member from the list.
 ;
@@ -3560,9 +3560,9 @@ Il messaggio\n\
 MSG_RE_PGPNotAllowed
 >Errore da PGP<\n\
 \n\
-Impossibile visualizzare questo messaggio codificato da chiave PGP.\n\
-Il problema potrebbe essere dovuto ad un errore di configurazione di\n\
-PGP stesso, oppure il messaggio è stato codificato per qualcun altro.\n
+Impossibile visualizzare questo messaggio codificato con chiave PGP.\n\
+Il problema potrebbe essere dovuto ad un errore della configurazione\n\
+di PGP, oppure il messaggio è stato codificato per un altra persona.\n
 ; >PGP Error<\n\
 ; \n\
 ; You're not allowed to view this PGP encrypted message.\n\
@@ -3713,11 +3713,11 @@ _Succ.
 ; _Next
 ;
 MSG_RE_TBPrevTh
-Ogg._Pre
+Ogg.P_re
 ; Prev_Thr
 ;
 MSG_RE_TBNextTh
-Ogg._Suc
+Ogg.S_uc
 ; NextT_hr
 ;
 MSG_RE_TBDisplay
@@ -3725,7 +3725,7 @@ _Mostra
 ; _Display
 ;
 MSG_RE_TBSave
-_Salva
+Sal_va
 ; _Save
 ;
 MSG_RE_TBPrint
@@ -3733,15 +3733,15 @@ S_tampa
 ; Pr_int
 ;
 MSG_RE_TBDelete
-C_anc.
+Can_c.
 ; De_lete
 ;
 MSG_RE_TBMove
-S_posta
+Spost_a
 ; _Move
 ;
 MSG_RE_TBReply
-_Risp.
+R_isp.
 ; _Reply
 ;
 MSG_RE_TBForward
@@ -3779,8 +3779,8 @@ questo messaggio.\n\
 ; (follow thread).
 ;
 MSG_HELP_RE_BT_DISPLAY
-Usa un visualizzatore MIME configurato\n\
-in modo da mostrare una parte di questo\n\
+Usa un visualizzatore MIME configurato in\n\
+modo da mostrare una parte di questo\n\
 messaggio.
 ; Use the configured MIME\n\
 ; viewer to display a\n\
@@ -4006,7 +4006,7 @@ Aggiungi info _personali
 ; Add _personal info
 ;
 MSG_WR_Importance
-_Importanza
+Import_anza
 ; _Importance
 ;
 MSG_WR_Signature
@@ -4365,7 +4365,7 @@ dati personali inseriti nella rubrica.
 ; from your personal address book entry.
 ;
 MSG_HELP_WR_CY_IMPORTANCE
-Imposta la priorità di\n\
+Imposta una priorità per\n\
 questo messaggio.
 ; Set the priority\n\
 ; of this message.
@@ -4645,7 +4645,7 @@ Assicurati che il volume non sia protetto da scrittura.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias
-E' necessario specificare uno pseudonimo per l'identificazione di questa voce.
+E' necessario specificare uno pseudonimo/alias per l'identificazione di questa voce.
 ; You must specify an alias to identify this entry.
 ;
 MSG_ER_ErrorNoAddress
@@ -4653,11 +4653,11 @@ E' necessario specificare un indirizzo per questa voce.
 ; You must specify an address for this entry.
 ;
 MSG_ER_ErrorDateFormat
-Formato errato data/ora.\n\
+Formato errato della data/ora.\n\
 \n\
 La data dovrebbe essere scritta\n\
 in formato AmigaDOS.\n\
-Esempio: %s
+Ad esempio: %s
 ; Invalid date/time format.\n\
 ; \n\
 ; The date and time has to be specified in a compatible format.\n\
@@ -4668,7 +4668,7 @@ MSG_ER_CantOpenTempfile
 Impossibile aprire il file temporaneo '%s'.\n\
 \n\
 Controlla le impostazioni del percorso nella\n\
-configurazione
+configurazione.
 ; Couldn't open temporary file '%s'.\n\
 ; \n\
 ; Check the path settings in the configuration.
@@ -4832,8 +4832,8 @@ Tentativo con '%s'.
 MSG_ER_ErrorAppendKey
 Impossibile allegare la chiave pubblica %s.\n\
 \n\
-Si è verificato problema durante la sua estrazione\n\
-dal portachiavi di PGP.
+Si è verificato un problema durante l'estrazione\n\
+dal keyring di PGP.
 ; Couldn't append public PGP key %s.\n\
 ; \n\
 ; There was a problem extracting it from the PGP keyring.
@@ -5835,7 +5835,7 @@ Per favore verifica le impostazioni dei tuoi Filtri.
 ; MAILFILE, FOLDERNAME
 ;
 MSG_MA_EXECUTINGCMD
-Esecuzione comando...
+Esecuzione del comando...
 ; Executing command...
 ;
 MSG_APP_DESCRIPTION
@@ -6001,7 +6001,7 @@ Nome del gruppo cartelle:
 ; Name of folder group:
 ;
 MSG_ER_UNUSABLEAMISSL
-E' stato selezionato TLSv1/SSLv3 per questa connessione,\n\
+E' stato selezionato TLSv1/SSLv3 per questa connessione\n\
 ma si è riscontrato un problema durante l'inizializzazione\n\
 di AmiSSL.\n\
 Per favore verifica la tua installazione di AmiSSL oppure\n\
@@ -6200,12 +6200,12 @@ Frase di _chiusura
 ; C_losing phrase
 ;
 MSG_ER_SOCKETOPTION
-Attenzione: Si è rivelato impossibile impostare l'opzione socket\n\
-specificata '%s'.\n\
+Attenzione: Si è rivelato impossibile impostare l'opzione del socket\n\
+specificato '%s'.\n\
 \n\
-E' possibile che questa non sia correttamente supportata dallo\n\
-Stack TCP/IP utilizzato, oppure non è stata impostata\n\
-correttamente nella configurazione.
+E' possibile che questa opzione non sia correttamente supportata dallo\n\
+Stack TCP/IP in uso, oppure non è stata impostata correttamente nella\n\
+configurazione.
 ; Couldn't set socket option '%s'.\n\
 ; \n\
 ; Either this option is not supported by the TCP/IP stack your are
@@ -6290,8 +6290,8 @@ MSG_ER_UUDEC_CORRUPT
 Durante la codifica del file UU '%s', il programma ha rilevato che\n\
 alcune parti codificate con UU risultano danneggiate.\n\
 \n\
-Probabilmente è stato usato un codificatore UU difettoso oppure il\n\
-messaggio risulta troncato.
+Probabilmente è stato usato un codificatore UU difettoso oppure\n\
+il messaggio risulta troncato.
 ; During the UUcode decoding of file '%s' the encoded part was found be corrupt.\n\
 ; \n\
 ; Either the message is truncated or it was generated with a faulty Ucode encoder.
@@ -6340,8 +6340,8 @@ e che sia adeguatamente protetta dall'accesso in scrittura.
 ; FILENAME, FOLDER
 ;
 MSG_ER_XPKUSAGE
-Si è verificato un errore durante la decompressione/compressione del file '%s'\n\
-tramite XPK.\n\
+Si è verificato un errore durante la compressione/decompressione del file\n\
+'%s' tramite XPK.\n\
 \n\
 Per favore verifica la tua installazione di XPK nonchè le sue impostazioni di\n\
 compressione associate nella configurazione di YAM.
@@ -6379,8 +6379,8 @@ MSG_HELP_CO_RA_SMTPSECURE
 Una connessione sicura TLSv1 o SSLv3 verrà stabilita tra il server\n\
 SMTP e YAM per l'invio dei messaggi attraverso una connessione.\n\
 criptata.\n\
-Nel caso questi pulsanti risultino disabilitati ciò significa che il\n\
-supporto AmiSSL non è al momento disponibile.
+Nel caso questi pulsanti risultino disattivati significa che il supporto\n\
+AmiSSL non è al momento disponibile.
 ; A TLSv1 or SSLv3 secure connection will be established between\n\
 ; the SMTP server and YAM to send e-mail through an encrypted connection.\n\
 ; If these radio buttons are ghosted, it means AmiSSL support is\n\
@@ -6809,10 +6809,9 @@ Impossibile aprire la classe MUI custom '%s' v%lu.%lu.\n\
 %lu.%lu è correntemente in uso da un'altra applicazione.\n\
 \n\
 Vai all'indirizzo '%s'.\n\
-Una volta installata la versione richiesta, chiudi\n\
-tutti i programmi MUI ed assicurati che la vecchia\n\
-classe sia stata liberata dalla memoria, dopodichè\n\
-riprova ancora.
+Una volta installata la versione richiesta, chiudi tutti i programmi\n\
+MUI ed assicurati che la vecchia classe sia stata liberata dalla\n\
+memoria, dopodichè riprova nuovamente.
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
 ; \n\
 ; %lu.%lu is currently in use by other applications.\n\
@@ -7095,9 +7094,9 @@ Si è rilevato impossibile aprire l'interfaccia per la\n\
 bsdsocket.library, ciò è necessario per il corretto\n\
 funzionamento delle connessioni TCP/IP.\n\
 \n\
-Assicurati di aver installato uno stack TCP/IP compatibile\n\
-e che esso sia adeguatamente configurato, assicurati anche\n\
-che la tua connessione di rete sia attiva e funzionante.
+Assicurati di aver installato uno stack TCP/IP compatibile e\n\
+che esso sia adeguatamente configurato, assicurati anche\n\
+che la tua connessione di rete sia attiva e ben funzionante.
 ; Couldn't open bsdsocket.library interface required for \
 ; TCP/IP connections.\n\
 ; \n\
@@ -7130,7 +7129,7 @@ Non notificarmi altri aggiornamenti in futuro
 ; Do not notify me on updates in future
 ;
 MSG_UPD_NOTIFICATION_VISITURL
-Visita URL
+Scarica da URL
 ; Visit URL
 ;
 MSG_UPD_NOTIFICATION_CLOSE
@@ -7158,7 +7157,7 @@ _Descrizione
 ; D_escription
 ;
 MSG_CTapplicationgz
-Archivio zip GNU
+Archivio GNU zip
 ; GNU zip archive
 ;
 MSG_CTapplicationhqx
@@ -7182,7 +7181,7 @@ File XML
 ; XML file
 ;
 MSG_CTapplicationz
-File compresso zlib
+File zlib compresso
 ; zlib compressed file
 ;
 MSG_CTapplicationtar
@@ -7486,7 +7485,7 @@ S_pam
 ; Sp_am
 ;
 MSG_MA_TBNOTSPAM
-N.Sp_am
+_N.Spam
 ; N.Sp_am
 ;
 MSG_HELP_MA_BT_SPAM
@@ -7498,11 +7497,11 @@ Marca messaggio come non Spam
 ; Mark message as not spam
 ;
 MSG_RE_TBSPAM
-_Spam
+Spa_m
 ; Sp_am
 ;
 MSG_RE_TBNOTSPAM
-N.Sp_am
+_N.Spam
 ; N.Sp_am
 ;
 MSG_HELP_RE_BT_SPAM
@@ -8152,7 +8151,7 @@ Attiva D_aylight Saving Time (DST)
 ; D_aylight Saving Time (DST) is active
 ;
 MSG_HELP_CO_CH_DSTACTIVE
-Attiva questa opzione nell'eventulità che il DTS\n\
+Attiva questa opzione nel caso che il DTS\n\
 sia attualmente in vigore nella tua zona.\n\
 (Ad esempio nel periodo estivo)
 ; Enable this if daylight saving time is\n\
@@ -8421,7 +8420,7 @@ Invia _successivamente
 ; Send _later
 ;
 MSG_WR_HOLD
-In _sospeso
+In s_ospeso
 ; _Hold
 ;
 MSG_WR_CANCEL
@@ -9359,7 +9358,7 @@ oppure il datatype stesso non funziona correttamente.
 ; FILE
 ;
 MSG_WR_CHARSET
-_Set di caratteri
+Set di cara_tteri
 ; _Charset
 ;
 MSG_HELP_WR_PO_CHARSET
