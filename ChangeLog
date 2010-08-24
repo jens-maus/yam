@@ -35,6 +35,10 @@ $URL$
 
 2010-08-24 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_TR.c, TCP.c: added __NOLIBBASE__ and __NOGLOBALIFACE__ define right
+    before including <proto/bsdsocket.h>. This should assure that no global
+    socket base pointer is defined at all. One day this will help to keep
+    the tcp stuff threadsafe.
   * YAM_TR.c, YAM_transfer.h: SMTP-AUTH support was broken due to incorrectly
     used flag variables. Now the full functionality should be restored. This
     fixes #185.

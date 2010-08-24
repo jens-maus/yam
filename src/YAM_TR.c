@@ -38,18 +38,11 @@
 
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
-#include <sys/socket.h>
 
 #include <clib/alib_protos.h>
 #include <clib/macros.h>
 #include <libraries/iffparse.h>
 #include <libraries/genesis.h>
-#if defined(__AROS__)
-#define _SYS_MBUF_H_
-#include <libraries/bsdsocket.h>
-#include <netdb.h>
-#include <sys/ioctl.h>
-#endif
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/NListtree_mcc.h>
@@ -57,7 +50,6 @@
 #if defined(__amigaos4__)
 #include <proto/application.h>
 #endif
-#include <proto/bsdsocket.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>

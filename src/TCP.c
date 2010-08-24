@@ -30,7 +30,17 @@
 #include <clib/alib_protos.h>
 #include <proto/amissl.h>
 #include <proto/amisslmaster.h>
+
+// we include bsdsocket.h but make sure to not let
+// it define a global SocketBase or ISocket so that
+// our socket stuff is assured to not use a global socket
+// library base
+#define __NOLIBBASE__
+#define __NOGLOBALIFACE__
 #include <proto/bsdsocket.h>
+#undef __NOGLOBALIFACE__
+#undef __NOLIBBASE__
+
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #if !defined(__amigaos4__) && !defined(__AROS__)
