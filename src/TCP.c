@@ -267,32 +267,9 @@ struct Connection *CreateConnection(void)
     {
       if((conn->sendBuffer = malloc(C->TRBufferSize)) != NULL)
       {
-        // subthreads must get their own SocketBase
-        if(IsMainThread() == TRUE)
-        {
-          if(SocketBase == NULL)
-          {
-            D(DBF_NET, "called from main thread, getting new SocketBase");
-            conn->socketBase = OpenLibrary("bsdsocket.library", 2L);
-            conn->closeSocketBase = TRUE;
-          }
-          else
-          {
-            D(DBF_NET, "called from main thread, using global SocketBase");
-            conn->socketBase = SocketBase;
-            conn->closeSocketBase = FALSE;
-          }
-          conn->connectedFromMainThread = TRUE;
-        }
-        else
-        {
-          D(DBF_NET, "called from subthread, getting new SocketBase");
-          conn->socketBase = OpenLibrary("bsdsocket.library", 2L);
-          conn->closeSocketBase = TRUE;
-          conn->connectedFromMainThread = FALSE;
-        }
-
-        if(conn->socketBase != NULL && GETINTERFACE("main", 1, conn->socketIFace, conn->socketBase))
+        // each connection gets its own SocketBase, this is required for threads
+        if((conn->socketBase = OpenLibrary("bsdsocket.library", 2L)) != NULL &&
+           GETINTERFACE("main", 1, conn->socketIFace, conn->socketBase))
         {
           D(DBF_NET, "got socket interface");
           // set to no error per default
@@ -305,6 +282,8 @@ struct Connection *CreateConnection(void)
           // modified as long as this connection exists
           conn->receiveBufferSize = C->TRBufferSize;
           conn->sendBufferSize = C->TRBufferSize;
+
+          conn->connectedFromMainThread = IsMainThread();
 
           result = conn;
         }
@@ -333,14 +312,7 @@ void DeleteConnection(struct Connection *conn)
     if(conn->socketBase != NULL)
     {
       DROPINTERFACE(conn->socketIFace);
-
-      // subthreads must close their own SocketBase
-      if(conn->closeSocketBase == TRUE)
-      {
-        D(DBF_NET, "closing own SocketBase");
-        CloseLibrary(conn->socketBase);
-      }
-
+      CloseLibrary(conn->socketBase);
       conn->socketBase = NULL;
     }
 
@@ -500,8 +472,15 @@ static BOOL CheckAllInterfaces(struct Connection *conn, const enum TCPIPStack tc
 BOOL ConnectionIsOnline(struct Connection *conn)
 {
   BOOL isonline = FALSE;
+  BOOL deleteConnection = FALSE;
 
   ENTER();
+
+  if(conn == NULL)
+  {
+    conn = CreateConnection();
+    deleteConnection = TRUE;
+  }
 
   if(conn != NULL)
   {
@@ -588,7 +567,7 @@ BOOL ConnectionIsOnline(struct Connection *conn)
         CloseLibrary(GenesisBase);
         GenesisBase = NULL;
       }
-      else if(LIB_VERSION_IS_AT_LEAST(SocketBase, 2, 0) == TRUE)
+      else if(LIB_VERSION_IS_AT_LEAST(conn->socketBase, 2, 0) == TRUE)
       {
         D(DBF_NET, "identified generic TCP/IP stack with bsdsocket.library v2+");
 
@@ -602,6 +581,9 @@ BOOL ConnectionIsOnline(struct Connection *conn)
 
     #endif // __amigaos4__
   }
+
+  if(deleteConnection == TRUE)
+    DeleteConnection(conn);
 
   D(DBF_NET, "found the TCP/IP stack to be %s", isonline ? "ONLINE" : "OFFLINE");
 

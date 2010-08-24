@@ -32,6 +32,7 @@
 #include "YAM.h"
 
 #include "Rexx.h"
+#include "TCP.h"
 
 #include "Debug.h"
 
@@ -58,7 +59,7 @@ void rx_isonline(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
     case RXIF_ACTION:
     {
-      params->rc = SocketBase ? 1 : 0;
+      params->rc = ConnectionIsOnline(NULL) ? 1 : 0;
     }
     break;
 

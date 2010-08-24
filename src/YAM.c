@@ -105,6 +105,7 @@
 #include "MethodStack.h"
 #include "Requesters.h"
 #include "Rexx.h"
+#include "TCP.h"
 #include "Threads.h"
 #include "Timer.h"
 #include "UpdateCheck.h"
@@ -934,7 +935,6 @@ static void Terminate(void)
   if(G->TR != NULL)
   {
     TR_Cleanup();
-    TR_CloseTCPIP();
     DisposeModule(&G->TR);
   }
 
@@ -2157,7 +2157,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
 
       // the rest of the startup jobs require a running TCP/IP stack,
       // so check if it is properly running.
-      if(nocheck == FALSE && TR_IsOnline() == TRUE)
+      if(nocheck == FALSE && ConnectionIsOnline(NULL) == TRUE)
       {
         enum GUILevel mode;
 
@@ -2819,7 +2819,7 @@ int main(int argc, char **argv)
       }
     }
 
-    if(C->SendOnQuit == TRUE && args.nocheck == FALSE && TR_IsOnline() == TRUE)
+    if(C->SendOnQuit == TRUE && args.nocheck == FALSE && ConnectionIsOnline(NULL) == TRUE)
       SendWaitingMail(FALSE, FALSE);
 
     if(C->CleanupOnQuit == TRUE)

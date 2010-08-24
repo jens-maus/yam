@@ -88,7 +88,6 @@ struct Connection
   struct SocketIFace *socketIFace;
   #endif
 
-  BOOL closeSocketBase;          // do we have to close SocketBase ourself?
   BOOL connectedFromMainThread;  // who created this connection?
   BOOL isConnected;              // has ConnectToHost() been called before?
 };

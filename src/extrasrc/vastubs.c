@@ -106,10 +106,6 @@ STRPTR CodesetsUTF8ToStr(Tag tag1, ...)
 UTF8 *CodesetsUTF8Create(Tag tag1, ...)
 { return CodesetsUTF8CreateA((struct TagItem *)&tag1); }
 
-#include <proto/socket.h>
-LONG SocketBaseTags(Tag tag1, ...)
-{ return SocketBaseTagList((struct TagItem *)&tag1); }
-
 #include <proto/openurl.h>
 ULONG URL_Open(STRPTR url, Tag tag1, ...)
 { return URL_OpenA(url, (struct TagItem *)&tag1); }
@@ -205,14 +201,6 @@ UTF8 *CodesetsUTF8Create(Tag tag1, ...)
 {
   AROS_SLOWSTACKTAGS_PRE(tag1)
   retval = (IPTR)CodesetsUTF8CreateA((struct TagItem *)AROS_SLOWSTACKTAGS_ARG(tag1));
-  AROS_SLOWSTACKTAGS_POST
-}
-
-#include <proto/socket.h>
-LONG SocketBaseTags(Tag tag1, ...)
-{
-  AROS_SLOWSTACKTAGS_PRE(tag1)
-  retval = SocketBaseTagList((struct TagItem *)AROS_SLOWSTACKTAGS_ARG(tag1));
   AROS_SLOWSTACKTAGS_POST
 }
 

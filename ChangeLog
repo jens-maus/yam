@@ -7,6 +7,8 @@ $URL$
 
 2010-08-24 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_TR.c, YAM_RE.c, TCP.c: completely removed the need for a global
+    SocketBase. Each and everything is now handled by the connections.
   * YAM_TR.c: completely switched the SMTP transfer over to the new connection
     based data transfer.
   * mime/md5.c, YAM_TR.c: implemented a conversion of an MD5 digest into a

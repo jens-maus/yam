@@ -77,6 +77,7 @@
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Requesters.h"
+#include "TCP.h"
 
 #include "Debug.h"
 
@@ -3884,7 +3885,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
           break;
 
           case MDN_ACTION_SEND:
-            RE_SendMDN(mode, mail, &email->ReceiptTo, TR_IsOnline(), autoAction, TRUE);
+            RE_SendMDN(mode, mail, &email->ReceiptTo, ConnectionIsOnline(NULL), autoAction, TRUE);
           break;
 
           case MDN_ACTION_QUEUED:
@@ -3895,7 +3896,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
           {
             char buttons[SIZE_DEFAULT*2];
             int answer;
-            BOOL isonline = TR_IsOnline();
+            BOOL isonline = ConnectionIsOnline(NULL);
 
             D(DBF_MAIL, "asking user for MDN confirmation");
 
