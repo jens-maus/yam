@@ -345,7 +345,7 @@ static BOOL CheckSingleInterface(struct Connection *conn, const char *iface, con
   {
     case TCPIP_Generic:
     {
-      if(conn->socketBase != NULL)
+      if(stackBase == NULL && conn->socketBase != NULL)
       {
         D(DBF_NET, "assuming interface '%s' to be up", iface);
         isOnline = TRUE;
@@ -357,7 +357,7 @@ static BOOL CheckSingleInterface(struct Connection *conn, const char *iface, con
     {
       #if defined(__amigaos4__)
       LONG onlineState = 0;
-      GET_SOCKETBASE;
+      GET_SOCKETBASE(conn);
 
       if(QueryInterfaceTags((char *)iface, IFQ_State, &onlineState, TAG_END) == 0)
       {
@@ -489,7 +489,7 @@ BOOL ConnectionIsOnline(struct Connection *conn)
     #if defined(__amigaos4__)
     // if we find a bsdsocket.library < v4 on OS4
     // we always assume it to be online
-    if(LIB_VERSION_IS_AT_LEAST(conn->SocketBase, 4, 0) == FALSE)
+    if(LIB_VERSION_IS_AT_LEAST(conn->socketBase, 4, 0) == FALSE)
     {
       isonline = TRUE;
     }
@@ -503,12 +503,12 @@ BOOL ConnectionIsOnline(struct Connection *conn)
       if(C->IsOnlineCheck == FALSE || C->IOCInterfaces[0] == '\0')
       {
         ULONG status = 0;
-        struct TagItem tags =
+        struct TagItem tags[] =
         {
-          { SBTM_GETREF(SBTC_SYSTEM_STATUS), &status },
-          { TAG_END,                         0       }
+          { SBTM_GETREF(SBTC_SYSTEM_STATUS), (IPTR)&status },
+          { TAG_END,                         0             }
         };
-        GET_SOCKETBASE;
+        GET_SOCKETBASE(conn);
 
         if(SocketBaseTagList(tags) == 0)
         {
@@ -521,12 +521,12 @@ BOOL ConnectionIsOnline(struct Connection *conn)
       else
       {
         ULONG hasInterfaceAPI = FALSE;
-        struct TagItem tags =
+        struct TagItem tags[] =
         {
-          { SBTM_GETREF(SBTC_HAVE_INTERFACE_API), &hasInterfaceAPI },
-          { TAG_END,                              0                }
+          { SBTM_GETREF(SBTC_HAVE_INTERFACE_API), (IPTR)&hasInterfaceAPI },
+          { TAG_END,                              0                      }
         };
-        GET_SOCKETBASE;
+        GET_SOCKETBASE(conn);
 
         if(SocketBaseTagList(tags) == 0 && hasInterfaceAPI == TRUE)
         {
