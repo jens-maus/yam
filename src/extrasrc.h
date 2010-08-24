@@ -33,17 +33,25 @@
 #include <stddef.h>
 #include <stdio.h>
 
-#include <intuition/classusr.h> // Object
-
-#include "SDI_compiler.h"
-#include "SDI_stdarg.h"
+#ifndef EXEC_TYPES_H
+  #include <exec/types.h>         // ULONG
+#endif
+#ifndef SDI_COMPILER_H
+  #include "SDI_compiler.h"
+#endif
+#ifndef SDI_STDARG_H
+  #include "SDI_stdarg.h"
+#endif
 
 // forward declarations
 struct TagItem;
 struct IClass;
+struct Object;
 struct MinList;
 struct NewRDArgs;
 struct WBStartup;
+struct List;
+struct Node;
 
 /*
  * Stuff that exists on AmigaOS3
