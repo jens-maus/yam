@@ -283,6 +283,9 @@ struct Connection *CreateConnection(void)
            GETINTERFACE("main", 1, conn->socketIFace, conn->socketBase))
         {
           D(DBF_NET, "got socket interface");
+
+          conn->socket = TCP_NO_SOCKET;
+
           // set to no error per default
           conn->error = CONNECTERR_NO_ERROR;
 
@@ -2057,6 +2060,8 @@ static int WriteToHostBuffered(struct Connection *conn, const char *ptr, int max
   RETURN(result);
   return result;
 }
+
+///
 /// SendToHost()
 // a own wrapper function for send()/SSL_write() that writes buffered somehow
 // if called with flag != TCP_FLUSH - otherwise it will write and flush immediately
@@ -2128,3 +2133,4 @@ int FlushConnection(struct Connection *conn)
 }
 
 ///
+
