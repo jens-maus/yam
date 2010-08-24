@@ -25,6 +25,8 @@
 
 ***************************************************************************/
 
+#include <string.h>
+
 #include <clib/alib_protos.h>
 #include <proto/amissl.h>
 #include <proto/amisslmaster.h>
@@ -89,7 +91,7 @@ static void SetSocketOpts(struct Connection *conn)
   {
     struct TagItem tags[] = {
       { SBTM_SETVAL(SBTC_BREAKMASK), 0 },
-      { TAG_END,                     0 } ´
+      { TAG_END,                     0 }
     };
 
     SocketBaseTagList(tags);
@@ -390,7 +392,7 @@ struct Connection *ConnectToHost(const char *host, const int port)
           long nonBlockingIO = 1;
 
           // now we set the socket for non-blocking I/O
-          if(IoctlSocket(conn->socket, FIONBIO, &nonBlockingIO) != -1)
+          if(IoctlSocket(conn->socket, FIONBIO, (void *)&nonBlockingIO) != -1)
           {
             int connectIssued = 0;
 
