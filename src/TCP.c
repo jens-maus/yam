@@ -893,29 +893,25 @@ BOOL MakeSecureConnection(struct Connection *conn)
         }
         else
           E(DBF_NET, "SSLv23_client_method() error!");
-
-        // if we weren't ale to initialize the TLS/SSL stuff we have to clear it
-        // before leaving
-        if(secure == FALSE)
-        {
-          if(conn->sslCtx != NULL)
-          {
-            SSL_CTX_free(conn->sslCtx);
-            conn->sslCtx = NULL;
-          }
-
-          conn->ssl = NULL;
-          conn->error = CONNECTERR_SSLFAILED;
-        }
       }
       else
-      {
         E(DBF_NET, "InitAmiSSL() failed");
-      }
     }
     else
-    {
       W(DBF_NET, "AmiSSLBase == NULL");
+
+    // if we weren't ale to initialize the TLS/SSL stuff we have to clear it
+    // before leaving
+    if(secure == FALSE)
+    {
+      if(conn->sslCtx != NULL)
+      {
+        SSL_CTX_free(conn->sslCtx);
+        conn->sslCtx = NULL;
+      }
+
+      conn->ssl = NULL;
+      conn->error = CONNECTERR_SSLFAILED;
     }
   }
 
