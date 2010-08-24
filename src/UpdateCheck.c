@@ -62,15 +62,15 @@
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
-#include "TCP.h"
 #include "UpdateCheck.h"
+
+#include "tcp/Connection.h"
 
 #include "Debug.h"
 
 /*** Required library bases ***/
 extern struct Library *AmiSSLMasterBase;
 extern struct Library *CodesetsBase;
-extern struct Library *SocketBase;
 extern struct Library *XpkBase;
 
 /*** Static variables/functions ***/

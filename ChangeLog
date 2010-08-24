@@ -35,6 +35,9 @@ $URL$
 
 2010-08-24 Jens Langner <Jens.Langner@light-speed.de>
 
+  * TCP.c,h, tcp/Connection.c,h: renamed TCP.c,h to tcp/Connection.c,h. Now all tcp
+    network related stuff should be placed in the new subdirectory so make it
+    easier to identify the various source files which deal with network stuff.
   * YAM_TR.c, TCP.c: added __NOLIBBASE__ and __NOGLOBALIFACE__ define right
     before including <proto/bsdsocket.h>. This should assure that no global
     socket base pointer is defined at all. One day this will help to keep

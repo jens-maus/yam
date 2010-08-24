@@ -69,8 +69,9 @@
 #include "YAM_error.h"
 
 #include "Locale.h"
-#include "TCP.h"
 #include "Threads.h"
+
+#include "tcp/Connection.h"
 
 #include "Debug.h"
 

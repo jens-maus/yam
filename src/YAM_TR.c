@@ -89,7 +89,8 @@
 #include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
-#include "TCP.h"
+
+#include "tcp/Connection.h"
 
 #include "Debug.h"
 

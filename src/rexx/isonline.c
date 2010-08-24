@@ -32,7 +32,8 @@
 #include "YAM.h"
 
 #include "Rexx.h"
-#include "TCP.h"
+
+#include "tcp/Connection.h"
 
 #include "Debug.h"
 

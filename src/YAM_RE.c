@@ -77,7 +77,8 @@
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Requesters.h"
-#include "TCP.h"
+
+#include "tcp/Connection.h"
 
 #include "Debug.h"
 

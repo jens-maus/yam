@@ -105,11 +105,11 @@
 #include "MethodStack.h"
 #include "Requesters.h"
 #include "Rexx.h"
-#include "TCP.h"
 #include "Threads.h"
 #include "Timer.h"
 #include "UpdateCheck.h"
 
+#include "tcp/Connection.h"
 #include "mui/Classes.h"
 
 #include "Debug.h"
