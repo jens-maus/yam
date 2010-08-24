@@ -36,6 +36,9 @@
 #ifndef EXEC_TYPES_H
   #include <exec/types.h>         // ULONG
 #endif
+#ifndef INTUITION_CLASSUSR_H
+  #include <intuition/classusr.h> // Object
+#endif
 #ifndef SDI_COMPILER_H
   #include "SDI_compiler.h"
 #endif
@@ -46,7 +49,6 @@
 // forward declarations
 struct TagItem;
 struct IClass;
-struct Object;
 struct MinList;
 struct NewRDArgs;
 struct WBStartup;
