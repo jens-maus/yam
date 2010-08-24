@@ -80,24 +80,19 @@
 //  Sets the user specified options for the active socket
 static void SetSocketOpts(struct Connection *conn)
 {
+  struct TagItem tags[] =
+  {
+    { SBTM_SETVAL(SBTC_BREAKMASK), 0 },
+    { TAG_END,                     0 }
+  };
   GET_SOCKETBASE(conn);
 
   ENTER();
 
   // disable CTRL-C checking
-  #if !defined(__AROS__)
-  SocketBaseTags(SBTM_SETVAL(SBTC_BREAKMASK), 0, TAG_END);
-  #else
-  {
-    struct TagItem tags[] = {
-      { SBTM_SETVAL(SBTC_BREAKMASK), 0 },
-      { TAG_END,                     0 }
-    };
+  SocketBaseTagList(tags);
 
-    SocketBaseTagList(tags);
-  }
-  #endif
-
+  D(DBF_NET, "set options");
   if(C->SocketOptions.KeepAlive == TRUE)
   {
     int optval = C->SocketOptions.KeepAlive;
@@ -211,7 +206,7 @@ static void SetSocketOpts(struct Connection *conn)
     socklen_t optlen;
     socklen_t tvlen;
 
-    D(DBF_NET, "Opened socket: %08lx", conn->socket);
+    D(DBF_NET, "opened socket %08lx", conn->socket);
 
     // the value of the length pointer must be updated ahead of each call, because
     // getsockopt() might have modified it.
@@ -270,7 +265,10 @@ static void DeleteConnection(struct Connection *conn)
       DROPINTERFACE(conn->socketIFace);
       // subthreads must close their own SocketBase
       if(conn->closeSocketBase == TRUE)
+      {
+        D(DBF_NET, "closing own SocketBase");
         CloseLibrary(conn->socketBase);
+      }
     }
 
     free(conn->sendBuffer);
@@ -300,14 +298,15 @@ static struct Connection *CreateConnection(void)
         // subthreads must get their own SocketBase
         if(IsMainThread() == TRUE)
         {
-          D(DBF_NET, "called from main thread, using global SocketBase");
           if(SocketBase == NULL)
           {
+            D(DBF_NET, "called from main thread, getting new SocketBase");
             conn->socketBase = OpenLibrary("bsdsocket.library", 2L);
             conn->closeSocketBase = TRUE;
           }
           else
           {
+            D(DBF_NET, "called from main thread, using global SocketBase");
             conn->socketBase = SocketBase;
             conn->closeSocketBase = FALSE;
           }
@@ -422,12 +421,17 @@ struct Connection *ConnectToHost(const char *host, const int port)
                   connect(conn->socket, (struct sockaddr *)&conn->socketAddr, sizeof(conn->socketAddr)) == -1)
             {
               LONG connerr = -1;
+              struct TagItem tags[] =
+              {
+                { SBTM_GETREF(SBTC_ERRNO), (IPTR)&connerr },
+                { TAG_END,                 0              }
+              };
 
               // count the number of connect() processings
               connectIssued++;
 
               // get the error value which should normally be set by a connect()
-              SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), (ULONG)&connerr, TAG_END);
+              SocketBaseTagList(tags);
 
               // check the errno variable which connect() will set
               switch(connerr)
@@ -1076,9 +1080,14 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
       else // < 0 found, check error state
       {
         LONG err = -1;
+        struct TagItem tags[] =
+        {
+          { SBTM_GETREF(SBTC_ERRNO), (IPTR)&err },
+          { TAG_END,                 0          }
+        };
 
         // get the error value which should normally be set by a recv()
-        SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), (ULONG)&err, TAG_END);
+        SocketBaseTagList(tags);
 
         switch(err)
         {
@@ -1536,9 +1545,14 @@ static int WriteToHost(struct Connection *conn, const char *ptr, const int len)
       else // <= 0 if an error occurred we process it
       {
         LONG err = -1;
+        struct TagItem tags[] =
+        {
+          { SBTM_GETREF(SBTC_ERRNO), (IPTR)&err },
+          { TAG_END,                0          }
+        };
 
         // get the error value which should normally be set by a send()
-        SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), (ULONG)&err, TAG_END);
+        SocketBaseTagList(tags);
 
         switch(err)
         {

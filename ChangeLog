@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * TCP.c: never use SocketBaseTags() but its non-vararg SocketBaseTagList()
+    instead. We are dealing with a local SocketBase instead of a global one
+    and our varargs replacement does not/cannot obey this fact.
+
 2010-08-24 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed some shortcuts and correct a few errors.
