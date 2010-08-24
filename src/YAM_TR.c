@@ -216,30 +216,11 @@ static const char *const POPcmd[] =
 #define POP_RESP_OKAY     "+OK"
 
 /**************************************************************************/
-// some general flags for the Read(Recv)/Write(Send) TCP functions
-#define TCPF_NONE             (0)
-#define TCPF_FLUSH            (1<<0)
-#define TCPF_FLUSHONLY        (1<<1)
-#define TCPF_FREEBUFFER       (1<<2)
-#define hasTCP_FLUSH(v)       (isFlagSet((v), TCPF_FLUSH))
-#define hasTCP_ONLYFLUSH(v)   (isFlagSet((v), TCPF_FLUSHONLY))
-#define hasTCP_FREEBUFFER(v)  (isFlagSet((v), TCPF_FREEBUFFER))
-
-/**************************************************************************/
 // static function prototypes
 static void TR_NewMailAlert(void);
 static void TR_CompleteMsgList(void);
-static int TR_Send(const char *ptr, int len, int flags);
 static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext, const char *errorMsg);
-static int  TR_ReadLine(LONG socket, char *vptr, int maxlen);
-static int  TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags);
-static int  TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags);
 static void TR_TransStat_Update(struct TransStat *ts, int size_incr, const char *status);
-
-#define TR_WriteLine(buf)       (TR_Send((buf), strlen(buf), TCPF_FLUSH))
-#define TR_WriteFlush()         (TR_Send(NULL,  0, TCPF_FLUSHONLY))
-#define TR_FreeTransBuffers()   { TR_ReadBuffered(0, NULL, 0, TCPF_FREEBUFFER);  \
-                                  TR_WriteBuffered(0, NULL, 0, TCPF_FREEBUFFER); }
 
 // static UIDL function prototypes
 static BOOL InitUIDLhash(void);
@@ -255,314 +236,14 @@ struct UIDLtoken
 };
 
 /**************************************************************************/
-// TLS/SSL related variables
-
-static SSL_CTX *ctx = NULL;
-static SSL *ssl = NULL;
-
-/**************************************************************************/
 // local macros & defines
 #define GetLong(p,o)  ((((unsigned char*)(p))[o]) | (((unsigned char*)(p))[o+1]<<8) | (((unsigned char*)(p))[o+2]<<16) | (((unsigned char*)(p))[o+3]<<24))
-
-#ifndef SHUT_RDWR
-#define SHUT_RDWR 2
-#endif
 
 /***************************************************************************
  Module: Transfer
 ***************************************************************************/
 
 /*** TLS/SSL routines ***/
-/// TR_InitTLS()
-// Initialize the SSL/TLS session accordingly
-static BOOL TR_InitTLS(void)
-{
-  BOOL result = FALSE;
-  char tmp[24+1];
-  SSL_METHOD *method = NULL;
-
-  ENTER();
-
-  // lets initialize the library first and load the error strings
-  // these function don't return any serious error
-  SSL_library_init();
-  SSL_load_error_strings();
-
-  // We have to feed the random number generator first
-  D(DBF_NET, "Seeding random number generator...");
-  snprintf(tmp, sizeof(tmp), "%08lx%08lx%08lx", (unsigned long)time((time_t *)0), (unsigned long)FindTask(NULL), (unsigned long)rand());
-  RAND_seed(tmp, strlen(tmp));
-
-  // prepare the SSL client methods here
-  if((method = SSLv23_client_method()))
-  {
-    // get the SSL context
-    if((ctx = SSL_CTX_new(method)))
-    {
-      #if 0
-      char *CAfile = NULL;
-      char *CApath = NULL;
-
-      // In future we can give the user the ability to specify his own CA locations
-      // in the application instead of using the default ones.
-      if(CAfile || CApath)
-      {
-        D(DBF_NET, "CAfile = %s, CApath = %s", CAfile ? CAfile : "none", CApath ? CApath : "none");
-        if((!SSL_CTX_load_verify_locations(ctx, CAfile, CApath)))
-        {
-          E(DBF_NET, "Error setting default verify locations!");
-          return FALSE;
-        }
-      }
-      #endif
-
-      // set the default SSL context verify pathes
-      if(SSL_CTX_set_default_verify_paths(ctx))
-      {
-        // set the supported cipher list
-        if((SSL_CTX_set_cipher_list(ctx, "DEFAULT")))
-        {
-          // for now we set the SSL certificate to 'NONE' as
-          // YAM can currently not manage SSL server certificates itself
-          // and therefore must be set to not verify them... unsafe?
-          // well, I would call it "convienent" for the moment :)
-          SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, 0);
-
-          result = TRUE;
-        }
-        else
-          E(DBF_NET, "SSL_CTX_set_cipher_list() error!");
-      }
-      else
-        E(DBF_NET, "Error setting default verify locations!");
-    }
-    else
-      E(DBF_NET, "Can't create SSL_CTX object!");
-  }
-  else
-    E(DBF_NET, "SSLv23_client_method() error!");
-
-  // if we weren't ale to
-  // init the TLS/SSL stuff we have to clear it
-  // before leaving
-  if(result == FALSE)
-  {
-    if(ctx)
-    {
-      SSL_CTX_free(ctx);
-      ctx = NULL;
-    }
-
-    ssl = NULL;
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// TR_EndTLS()
-// function that stops all TLS context
-static void TR_EndTLS(void)
-{
-  ENTER();
-
-  if(ssl)
-  {
-    SSL_shutdown(ssl);
-    SSL_free(ssl);
-    ssl = NULL;
-  }
-
-  if(ctx)
-  {
-    SSL_CTX_free(ctx);
-    ctx = NULL;
-  }
-
-  LEAVE();
-}
-
-///
-/// TR_StartTLS()
-// function that starts & initializes the TLS/SSL session
-static BOOL TR_StartTLS(void)
-{
-  BOOL result = FALSE;
-
-  ENTER();
-
-  D(DBF_NET, "Initializing TLS/SSL session...");
-
-  // check if we are ready for creating the ssl connection
-  if(ctx != NULL && (ssl = SSL_new(ctx)))
-  {
-    // set the socket descriptor to the ssl context
-    if(G->TR_Socket != TCP_NO_SOCKET &&
-       SSL_set_fd(ssl, (int)G->TR_Socket))
-    {
-      BOOL errorState = FALSE;
-      int res;
-
-      // establish the ssl connection and take care of non-blocking IO
-      while(errorState == FALSE &&
-            (res = SSL_connect(ssl)) <= 0)
-      {
-        int err = SSL_get_error(ssl, res);
-
-        switch(err)
-        {
-          case SSL_ERROR_WANT_READ:
-          case SSL_ERROR_WANT_WRITE:
-          {
-            // we are using non-blocking socket IO so an SSL_ERROR_WANT_READ
-            // signals that the SSL socket wants us to wait until data
-            // is available and reissue the SSL_connect() command.
-            LONG retVal = -1;
-            fd_set fdset;
-            struct timeval timeout;
-            int timeoutSum = 0;
-
-            // now we iterate in a do/while loop and call WaitSelect()
-            // with a static timeout of 1s. We then continue todo so
-            // until we reach the predefined socket timeout
-            do
-            {
-              // check if we are here because of a second iteration
-              if(retVal == 0)
-              {
-                W(DBF_NET, "TR_StartTLS: recoverable WaitSelect() timeout: %ld", timeoutSum);
-
-                // give our GUI the chance to update
-                DoMethod(G->App, MUIM_Application_InputBuffered);
-
-                // if retVal is zero, then we are here in a
-                // consequtive iteration, so WaitSelect()
-                // seem to have timed out and we have to check
-                // whether we timed out too much already
-                timeoutSum += 1; // +1s
-
-                if(timeoutSum >= C->SocketTimeout ||
-                   (G->TR != NULL && G->TR->Abort == TRUE))
-                {
-                  break;
-                }
-              }
-
-              // we do a static timeout of 1s
-              timeout.tv_sec = 1;
-              timeout.tv_usec = 0;
-
-              // now we put our socket handle into a descriptor set
-              // we can pass on to WaitSelect()
-              FD_ZERO(&fdset);
-              FD_SET(G->TR_Socket, &fdset);
-
-              // depending on the SSL error (WANT_READ/WANT_WRITE)
-              // we either do a WaitSelect() on the read or write mode
-              // as with SSL both things can happen
-              // see http://www.openssl.org/docs/ssl/SSL_connect.html
-              if(err == SSL_ERROR_WANT_READ)
-                retVal = WaitSelect(G->TR_Socket+1, &fdset, NULL, NULL, (APTR)&timeout, NULL);
-              else
-                retVal = WaitSelect(G->TR_Socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL);
-            }
-            while(retVal == 0);
-
-            // if WaitSelect() returns 1 we successfully waited for
-            // being able to write to the socket. So we go and do another
-            // iteration in the while() loop as the next connect() call should
-            // return EISCONN if the connection really succeeded.
-            if(retVal >= 1 && FD_ISSET(G->TR_Socket, &fdset))
-            {
-              // everything fine
-              continue;
-            }
-            else if(retVal == 0)
-            {
-              W(DBF_NET, "WaitSelect() socket timeout reached");
-              errorState = TRUE;
-            }
-            else
-            {
-              // the rest should signal an error
-              E(DBF_NET, "WaitSelect() returned error %ld", err);
-              errorState = TRUE;
-            }
-          }
-          break;
-
-          default:
-          {
-            E(DBF_NET, "SSL_connect() returned error %ld", err);
-            errorState = TRUE;
-          }
-          break;
-        }
-      }
-
-      if(errorState == FALSE)
-      {
-        // everything was successfully so lets set the result
-        // value of that function to true
-        result = TRUE;
-
-        // Certificate info
-        // only for debug reasons
-        #ifdef DEBUG
-        {
-          char *x509buf;
-          SSL_CIPHER *cipher;
-          X509 *server_cert;
-          cipher = SSL_get_current_cipher(ssl);
-
-          if(cipher)
-            D(DBF_NET, "%s connection using %s", SSL_CIPHER_get_version(cipher), SSL_get_cipher(ssl));
-
-          if(!(server_cert = SSL_get_peer_certificate(ssl)))
-            E(DBF_NET, "SSL_get_peer_certificate() error!");
-
-          D(DBF_NET, "Server public key is %ld bits", EVP_PKEY_bits(X509_get_pubkey(server_cert)));
-
-          #define X509BUFSIZE 4096
-
-          x509buf = (char *)malloc(X509BUFSIZE);
-          memset(x509buf, 0, X509BUFSIZE);
-
-          D(DBF_NET, "Server certificate:");
-
-          if(!(X509_NAME_oneline(X509_get_subject_name(server_cert), x509buf, X509BUFSIZE)))
-            E(DBF_NET, "X509_NAME_oneline...[subject] error!");
-
-          D(DBF_NET, "subject: %s", x509buf);
-
-          if(!(X509_NAME_oneline(X509_get_issuer_name(server_cert), x509buf, X509BUFSIZE)))
-            E(DBF_NET, "X509_NAME_oneline...[issuer] error!");
-
-          D(DBF_NET, "issuer:  %s", x509buf);
-
-          free(x509buf);
-          if(server_cert) X509_free(server_cert);
-        }
-        #endif
-      }
-    }
-    else
-      E(DBF_NET, "SSL_set_fd() error. TR_Socket: %ld", G->TR_Socket);
-  }
-  else
-    E(DBF_NET, "Can't create a new SSL structure for a connection.");
-
-  // if we didn't succeed with our SSL
-  // startup we have to cleanup everything
-  if(result == FALSE)
-    TR_EndTLS();
-
-  RETURN(result);
-  return result;
-}
-
-///
 /// TR_InitSTARTTLS()
 // function to initiate a TLS connection to the ESMTP server via STARTTLS
 static BOOL TR_InitSTARTTLS(void)
@@ -590,7 +271,7 @@ static BOOL TR_InitSTARTTLS(void)
     if(TR_SendSMTPCmd(ESMTP_STARTTLS, NULL, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)
     {
       // setup the TLS/SSL session
-      if(TR_InitTLS() == TRUE && TR_StartTLS() == TRUE)
+      if(MakeSecureConnection(G->TR->connection) == TRUE)
       {
         G->TR_UseTLS = TRUE;
         result = TRUE;
@@ -964,18 +645,18 @@ static BOOL TR_InitSMTPAUTH(void)
         strlcat(buffer, "\r\n", sizeof(buffer));
 
         // now we send the SMTP AUTH response
-        if(TR_WriteLine(buffer) > 0)
+        if(SendLineToHost(G->TR->connection, buffer) > 0)
         {
           // get the server response and see if it was valid
-          if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 334)
+          if(ReceiveLineFromHost(G->TR->connection, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 334)
             ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
           else
           {
             // now that we have received the 334 code we just send a plain line
             // to signal that we don't need any option
-            if(TR_WriteLine("\r\n") > 0)
+            if(SendLineToHost(G->TR->connection, "\r\n") > 0)
             {
-              if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
+              if(ReceiveLineFromHost(G->TR->connection, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
                 ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
               else
                 rc = SMTP_ACTION_OK;
@@ -1041,10 +722,10 @@ static BOOL TR_InitSMTPAUTH(void)
         strlcat(buffer, "\r\n", sizeof(buffer));
 
         // now we send the SMTP AUTH response
-        if(TR_WriteLine(buffer) > 0)
+        if(SendLineToHost(G->TR->connection, buffer) > 0)
         {
           // get the server response and see if it was valid
-          if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
+          if(ReceiveLineFromHost(G->TR->connection, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
             ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_CRAM_MD5], buffer);
           else
             rc = SMTP_ACTION_OK;
@@ -1068,10 +749,10 @@ static BOOL TR_InitSMTPAUTH(void)
         strlcat(buffer, "\r\n", sizeof(buffer));
 
         // now we send the SMTP AUTH response (UserName)
-        if(TR_WriteLine(buffer) > 0)
+        if(SendLineToHost(G->TR->connection, buffer) > 0)
         {
           // get the server response and see if it was valid
-          if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0
+          if(ReceiveLineFromHost(G->TR->connection, buffer, SIZE_LINE) > 0
              && (rc = getResponseCode(buffer)) == 334)
           {
             // prepare the password challenge
@@ -1081,10 +762,10 @@ static BOOL TR_InitSMTPAUTH(void)
             strlcat(buffer, "\r\n", sizeof(buffer));
 
             // now lets send the Password
-            if(TR_WriteLine(buffer) > 0)
+            if(SendLineToHost(G->TR->connection, buffer) > 0)
             {
               // get the server response and see if it was valid
-              if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0
+              if(ReceiveLineFromHost(G->TR->connection, buffer, SIZE_LINE) > 0
                  && (rc = getResponseCode(buffer)) == 235)
               {
                 rc = SMTP_ACTION_OK;
@@ -1124,10 +805,10 @@ static BOOL TR_InitSMTPAUTH(void)
       snprintf(challenge, sizeof(challenge), "%s %s\r\n", SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
 
       // now we send the SMTP AUTH command (UserName+Password)
-      if(TR_WriteLine(challenge) > 0)
+      if(SendLineToHost(G->TR->connection, challenge) > 0)
       {
         // get the server response and see if it was valid
-        if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
+        if(ReceiveLineFromHost(G->TR->connection, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
           ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
         else
           rc = SMTP_ACTION_OK;
@@ -1542,445 +1223,6 @@ static void TR_Disconnect(void)
   LEAVE();
 }
 ///
-/// TR_SetSocketOpts
-//  Sets the user specified options for the active socket
-static void TR_SetSocketOpts(void)
-{
-  ENTER();
-
-  // disable CTRL-C checking
-  #if !defined(__AROS__)
-  SocketBaseTags(SBTM_SETVAL(SBTC_BREAKMASK), 0, TAG_END);
-  #else
-  {
-    struct TagItem tags[] = { { SBTM_SETVAL(SBTC_BREAKMASK), 0 },
-                          { TAG_END,                     0 } };
-
-    SocketBaseTagList(tags);
-  }
-  #endif
-
-  if(C->SocketOptions.KeepAlive)
-  {
-    int optval = C->SocketOptions.KeepAlive;
-
-    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval)) == -1)
-    {
-      E(DBF_NET, "setsockopt(SO_KEEPALIVE) error");
-      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_KEEPALIVE");
-    }
-  }
-
-  if(C->SocketOptions.NoDelay)
-  {
-    int optval = C->SocketOptions.NoDelay;
-
-    if(setsockopt(G->TR_Socket, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval)) == -1)
-    {
-      E(DBF_NET, "setsockopt(TCP_NODELAY) error");
-      ER_NewError(tr(MSG_ER_SOCKETOPTION), "TCP_NODELAY");
-    }
-  }
-
-  if(C->SocketOptions.LowDelay)
-  {
-    int optval = IPTOS_LOWDELAY;
-
-    if(setsockopt(G->TR_Socket, IPPROTO_IP, IP_TOS, &optval, sizeof(optval)) == -1)
-    {
-      E(DBF_NET, "setsockopt(IPTOS_LOWDELAY) error");
-      ER_NewError(tr(MSG_ER_SOCKETOPTION), "IPTOS_LOWDELAY");
-    }
-  }
-
-  if(C->SocketOptions.SendBuffer > -1)
-  {
-    int optval = C->SocketOptions.SendBuffer;
-
-    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDBUF, &optval, sizeof(optval)) == -1)
-    {
-      E(DBF_NET, "setsockopt(SO_SNDBUF) error");
-      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_SNDBUF");
-    }
-  }
-
-  if(C->SocketOptions.RecvBuffer > -1)
-  {
-    int optval = C->SocketOptions.RecvBuffer;
-
-    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVBUF, &optval, sizeof(optval)) == -1)
-    {
-      E(DBF_NET, "setsockopt(SO_RCVBUF) error");
-      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_RCVBUF");
-    }
-  }
-
-  if(C->SocketOptions.SendLowAt > -1)
-  {
-    int optval = C->SocketOptions.SendLowAt;
-
-    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDLOWAT, &optval, sizeof(optval)) == -1)
-    {
-      E(DBF_NET, "setsockopt(SO_SNDLOWAT) error");
-      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_SNDLOWAT");
-    }
-  }
-
-  if(C->SocketOptions.RecvLowAt > -1)
-  {
-    int optval = C->SocketOptions.RecvLowAt;
-
-    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVLOWAT, &optval, sizeof(optval)) == -1)
-    {
-      E(DBF_NET, "setsockopt(SO_RCVLOWAT) error");
-      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_RCVLOWAT");
-    }
-  }
-
-  if(C->SocketOptions.SendTimeOut > -1)
-  {
-    struct TimeVal tv;
-
-    tv.Seconds = C->SocketOptions.SendTimeOut;
-    tv.Microseconds = 0;
-
-    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(struct TimeVal)) == -1)
-    {
-      E(DBF_NET, "setsockopt(SO_SNDTIMEO) error");
-      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_SNDTIMEO");
-    }
-  }
-
-  if(C->SocketOptions.RecvTimeOut > -1)
-  {
-    struct TimeVal tv;
-
-    tv.Seconds = C->SocketOptions.RecvTimeOut;
-    tv.Microseconds = 0;
-
-    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct TimeVal)) == -1)
-    {
-      E(DBF_NET, "setsockopt(SO_RCVTIMEO) error");
-      ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_RCVTIMEO");
-    }
-  }
-
-  // lets print out the current socket options
-  #ifdef DEBUG
-  {
-    int optval;
-    struct TimeVal tv;
-    socklen_t optlen;
-    socklen_t tvlen;
-
-    D(DBF_NET, "Opened socket: %08lx", G->TR_Socket);
-
-    // the value of the length pointer must be updated ahead of each call, because
-    // getsockopt() might have modified it.
-    optlen = sizeof(optval);
-    getsockopt(G->TR_Socket, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen);
-    D(DBF_NET, "SO_KEEPALIVE..: %ld", optval);
-
-    optlen = sizeof(optval);
-    getsockopt(G->TR_Socket, IPPROTO_TCP, TCP_NODELAY, &optval, &optlen);
-    D(DBF_NET, "TCP_NODELAY...: %ld", optval);
-
-    optlen = sizeof(optval);
-    getsockopt(G->TR_Socket, IPPROTO_IP, IP_TOS, &optval, &optlen);
-    D(DBF_NET, "IPTOS_LOWDELAY: %ld", hasFlag(optval, IPTOS_LOWDELAY));
-
-    optlen = sizeof(optval);
-    getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDBUF, &optval, &optlen);
-    D(DBF_NET, "SO_SNDBUF.....: %ld bytes", optval);
-
-    optlen = sizeof(optval);
-    getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVBUF, &optval, &optlen);
-    D(DBF_NET, "SO_RCVBUF.....: %ld bytes", optval);
-
-    optlen = sizeof(optval);
-    getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDLOWAT, &optval, &optlen);
-    D(DBF_NET, "SO_SNDLOWAT...: %ld", optval);
-
-    optlen = sizeof(optval);
-    getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVLOWAT, &optval, &optlen);
-    D(DBF_NET, "SO_RCVLOWAT...: %ld", optval);
-
-    tvlen = sizeof(tv);
-    getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, &tvlen);
-    D(DBF_NET, "SO_SNDTIMEO...: %ld", tv.Seconds);
-
-    tvlen = sizeof(tv);
-    getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, &tvlen);
-    D(DBF_NET, "SO_RCVTIMEO...: %ld", tv.Seconds);
-  }
-  #endif
-
-  LEAVE();
-}
-///
-/// TR_Connect
-//  Connects to a internet service
-static enum ConnectError TR_Connect(char *host, int port)
-{
-  enum ConnectError result = CONNECTERR_UNKNOWN_ERROR;
-
-  ENTER();
-
-  if(G->TR_Socket == TCP_NO_SOCKET)
-  {
-    struct hostent *hostaddr;
-
-    // get the hostent out of the supplied hostname
-    if((hostaddr = gethostbyname((STRPTR)host)) != NULL)
-    {
-      int i;
-
-      #ifdef DEBUG
-      D(DBF_NET, "Host '%s':", host);
-      D(DBF_NET, "  Officially:\t%s", hostaddr->h_name);
-
-      for(i = 0; hostaddr->h_aliases[i]; ++i)
-        D(DBF_NET, "  Alias:\t%s", hostaddr->h_aliases[i]);
-
-      D(DBF_NET, "  Type:\t%s", hostaddr->h_addrtype == AF_INET ? "AF_INET" : "AF_INET6");
-      if(hostaddr->h_addrtype == AF_INET)
-      {
-        for(i = 0; hostaddr->h_addr_list[i]; ++i)
-          D(DBF_NET, "  Address:\t%s", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr));
-      }
-      #endif
-
-      // now we try a connection for every address we have for this host
-      // because a hostname can have more than one IP in h_addr_list[]
-      for(i = 0; hostaddr->h_addr_list[i]; i++)
-      {
-        // lets create a standard AF_INET socket now
-        if((G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0)) != TCP_NO_SOCKET)
-        {
-          long nonBlockingIO = 1;
-
-          // now we set the socket for non-blocking I/O
-          if(IoctlSocket(G->TR_Socket, FIONBIO, &nonBlockingIO) != -1)
-          {
-            int connectIssued = 0;
-            LONG err = CONNECTERR_NO_ERROR; // set to no error per default
-
-            D(DBF_NET, "successfully set socket to %sblocking I/O", nonBlockingIO == 1 ? "non-" : "");
-
-            // lets set the socket options the user has defined
-            // in the configuration
-            TR_SetSocketOpts();
-
-            // copy the hostaddr data in a local copy for further reference
-            memset(&G->TR_INetSocketAddr, 0, sizeof(G->TR_INetSocketAddr));
-            G->TR_INetSocketAddr.sin_len    = sizeof(G->TR_INetSocketAddr);
-            G->TR_INetSocketAddr.sin_family = AF_INET;
-            G->TR_INetSocketAddr.sin_port   = htons(port);
-
-            memcpy(&G->TR_INetSocketAddr.sin_addr, hostaddr->h_addr_list[i], (size_t)hostaddr->h_length);
-
-            D(DBF_NET, "trying TCP/IP connection to '%s' on port %ld", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr), port);
-
-            // we call connect() to establish the connection to the socket. In case of
-            // a non-blocking connection this call will return immediately with -1 and
-            // the errno value will be EINPROGRESS, EALREADY or EISCONN
-            while(err == CONNECTERR_NO_ERROR &&
-                  connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) == -1)
-            {
-              LONG connerr = -1;
-
-              // count the number of connect() processings
-              connectIssued++;
-
-              // get the error value which should normally be set by a connect()
-              SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), (ULONG)&connerr, TAG_END);
-
-              // check the errno variable which connect() will set
-              switch(connerr)
-              {
-                // as we are doing non-blocking socket I/O we check the error code
-                // and see if it is EINPROGRESS, the connection is currently in progress.
-                // so we go and call WaitSelect() to wait a specific amount of time until
-                // the connection succeeds.
-                case EINPROGRESS:
-                case EALREADY:
-                {
-                  LONG retVal = -1;
-                  fd_set fdset;
-                  struct timeval timeout;
-                  int timeoutSum = 0;
-
-                  // now we iterate in a do/while loop and call WaitSelect()
-                  // with a static timeout of 1s. We then continue todo so
-                  // until we reach the predefined socket timeout
-                  do
-                  {
-                    // check if we are here because of a second iteration
-                    if(retVal == 0)
-                    {
-                      W(DBF_NET, "TR_Connect: recoverable WaitSelect() timeout: %ld", timeoutSum);
-
-                      // give our GUI the chance to update
-                      DoMethod(G->App, MUIM_Application_InputBuffered);
-
-                      // if retVal is zero, then we are here in a
-                      // consequtive iteration, so WaitSelect()
-                      // seem to have timed out and we have to check
-                      // whether we timed out too much already
-                      timeoutSum += 1; // +1s
-
-                      if(timeoutSum >= C->SocketTimeout ||
-                         (G->TR != NULL && G->TR->Abort == TRUE))
-                      {
-                        break;
-                      }
-                    }
-
-                    // we do a static timeout of 1s
-                    timeout.tv_sec = 1;
-                    timeout.tv_usec = 0;
-
-                    // now we put our socket handle into a descriptor set
-                    // we can pass on to WaitSelect()
-                    FD_ZERO(&fdset);
-                    FD_SET(G->TR_Socket, &fdset);
-                  }
-                  while((retVal = WaitSelect(G->TR_Socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL)) == 0);
-
-                  // if WaitSelect() returns 1 we successfully waited for
-                  // being able to write to the socket. So we can break out of the
-                  // loop immediately and continue with our stuff.
-                  if(retVal >= 1 &&
-                     FD_ISSET(G->TR_Socket, &fdset))
-                  {
-                    int errval = -1;
-                    socklen_t errlen = sizeof(errval);
-
-                    D(DBF_NET, "WaitSelect() succeeded");
-
-                    // normally we should not set an error code here but
-                    // continue cleanly so that a second connect() will
-                    // return EISCONN. However, it seems there are some broken
-                    // TCP/IP implementations (e.g. bsdsocket of UAE) which
-                    // return an error for subsequent connect() calls instead.
-                    //
-                    // So what we do here to workaround the issue is, we
-                    // query the socket options and see if SO_ERROR is zero
-                    // (no error) which sould signal that the connection
-                    // worked out fine, else we return an unknown error.
-                    if(getsockopt(G->TR_Socket, SOL_SOCKET, SO_ERROR, &errval, &errlen) == 0 &&
-                       errval == 0)
-                    {
-                      err = CONNECTERR_SUCCESS;
-                    }
-                    else
-                    {
-                      E(DBF_NET, "SO_ERROR in socket options found! error value read: %ld", errval);
-                      err = CONNECTERR_UNKNOWN_ERROR;
-                    }
-                  }
-                  else if(retVal == 0)
-                  {
-                    // the WaitSelect() call timed out or it received a break
-                    // signal
-                    W(DBF_NET, "WaitSelect() socket timeout reached");
-                    err = CONNECTERR_TIMEDOUT;
-                  }
-                  else
-                  {
-                    // the rest should signal an error
-                    E(DBF_NET, "WaitSelect() returned an error: %ld", connerr);
-                    err = CONNECTERR_UNKNOWN_ERROR;
-                  }
-                }
-                break;
-
-                // check for EISCONN
-                case EISCONN:
-                {
-                  // EISCONN is only a valid reponse in case we have already issued
-                  // a connect() before
-                  if(connectIssued > 1)
-                  {
-                    D(DBF_NET, "connect() signaled an EISCONN success");
-                    err = CONNECTERR_SUCCESS;
-                  }
-                  else
-                  {
-                    E(DBF_NET, "connect() signaled an EISCONN failure");
-                    err = CONNECTERR_UNKNOWN_ERROR;
-                  }
-                }
-                break;
-
-                // all other errors are real errors
-                default:
-                {
-                  E(DBF_NET, "connect() returned with an unrecoverable error: %ld", connerr);
-                  err = CONNECTERR_UNKNOWN_ERROR;
-                }
-                break;
-              }
-            }
-
-            // in case the connection suceeded immediately (no entered the while)
-            // we flag this connection as success
-            if(err == CONNECTERR_NO_ERROR)
-              result = CONNECTERR_SUCCESS;
-            else
-              result = err;
-
-            // in case we didn't succeed we have to disconnect
-            if(result != CONNECTERR_SUCCESS)
-              TR_Disconnect();
-          }
-          else
-          {
-            E(DBF_NET, "couldn't establish non-blocking IO: %ld", Errno());
-            result = CONNECTERR_NO_NONBLOCKIO;
-            break;
-          }
-        }
-        else
-        {
-          E(DBF_NET, "socket() returned an error: %ld", Errno());
-          result = CONNECTERR_NO_SOCKET; // socket() failed
-          break;
-        }
-
-        // give the application the chance to refresh
-        DoMethod(G->App, MUIM_Application_InputBuffered);
-
-        // if the user pressed the abort button in the transfer
-        // window we have to exit the loop
-        if(G->TR != NULL && G->TR->Abort == TRUE)
-        {
-          result = CONNECTERR_ABORTED;
-          break;
-        }
-        else if(result == CONNECTERR_SUCCESS)
-          break;
-        else
-          E(DBF_NET, "connection result %ld. Trying next IP of host...", result);
-      }
-    }
-    else
-      result = CONNECTERR_UNKNOWN_HOST; // gethostbyname() failed
-  }
-  else
-    result = CONNECTERR_SOCKET_IN_USE; // socket is already in use
-
-  #if defined(DEBUG)
-  if(result != CONNECTERR_SUCCESS)
-    E(DBF_NET, "TR_Connect() connection error: %ld", result);
-  else
-    D(DBF_NET, "connection to %s:%ld succedded", host, port);
-  #endif
-
-  RETURN(result);
-  return result;
-}
-///
 /// TR_RecvToFile()
 // function that receives data from a POP3 server until it receives a \r\n.\r\n termination
 // line. It automatically writes that data to the supplied filehandle and if present also
@@ -2168,43 +1410,6 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
 }
 
 ///
-/// TR_Send()
-// a own wrapper function for Send()/SSL_write() that writes buffered somehow
-// if called with flag != TCP_FLUSH - otherwise it will write and flush immediatly
-static int TR_Send(const char *ptr, int len, int flags)
-{
-  int nwritten = -1;
-
-  ENTER();
-
-  // make sure the GUI can still update itself during this
-  // operation
-  DoMethod(G->App, MUIM_Application_InputBuffered);
-
-  // make sure the socket is active.
-  if(G->TR_Socket != TCP_NO_SOCKET)
-  {
-    // perform some debug output on the console if requested
-    // by the user
-    if(G->TR_Debug == TRUE && ptr != NULL)
-      printf("CLIENT[%04d]: %s", len, ptr);
-
-    // we call the WriteBuffered() function to write this characters
-    // out to the socket. the provided flag will define if it
-    // really will be buffered or if we write and flush the buffer
-    // immediatly
-    nwritten = TR_WriteBuffered(G->TR_Socket, ptr, len, flags);
-
-    D(DBF_NET, "TCP: sent %ld of %ld bytes (%ld)", nwritten, len, flags);
-  }
-  else
-    W(DBF_NET, "socket == TCP_NO_SOCKET");
-
-  RETURN(nwritten);
-  return nwritten;
-}
-
-///
 /// TR_SetWinTitle
 //  Sets the title of the transfer window
 void TR_SetWinTitle(BOOL from, const char *text)
@@ -2215,869 +1420,6 @@ void TR_SetWinTitle(BOOL from, const char *text)
   // set the window title
   set(G->TR->GUI.WI, MUIA_Window_Title, G->TR->WTitle);
 }
-///
-/// TR_ReadLine()
-// a buffered version of readline() that reads out charwise from the
-// socket via TR_ReadBuffered and returns the amount of chars copied
-// into the provided character array or -1 on error.
-//
-// This implementation is a slightly adapted version of readline()/my_read()
-// examples from (W.Richard Stevens - Unix Network Programming) - Page 80
-static int TR_ReadLine(LONG socket, char *vptr, int maxlen)
-{
-  int result = -1;
-
-  ENTER();
-
-  // make sure the GUI can still update itself during this
-  // operation
-  DoMethod(G->App, MUIM_Application_InputBuffered);
-
-  // make sure the socket is active.
-  if(G->TR_Socket != TCP_NO_SOCKET)
-  {
-    int n;
-    char *ptr;
-
-    ptr = vptr;
-
-    for(n = 1; n < maxlen; n++)
-    {
-      int rc;
-      char c;
-
-      // read out one buffered char only.
-      rc = TR_ReadBuffered(socket, &c, 1, TCPF_NONE);
-      if(rc == 1)
-      {
-        *ptr++ = c;
-        if(c == '\n')
-          break;  // newline is stored, like with getline()
-      }
-      else if(rc == 0)
-      {
-        // if n==1 then EOF, no data read
-        // otherwise    EOF, some data was read
-        if(n == 1)
-          n = 0;
-
-        break;
-      }
-      else
-      {
-        // error, errno set by readchar()
-        n = -1;
-        break;
-      }
-    }
-
-    *ptr = '\0'; // null terminate like getline()
-
-    // perform some debug output on the console if requested
-    // by the user
-    if(G->TR_Debug == TRUE)
-    {
-      printf("SERVER[%04d]: %s", n, vptr);
-      // add a linefeed in case of an error
-      if(n <= 0 || strlen(vptr) == 0)
-        printf("\n");
-    }
-
-    D(DBF_NET, "TCP: received %ld of max %ld bytes", n, maxlen);
-
-    // return the number of chars we read
-    result = n;
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// TR_Read()
-// an unbuffered implementation/wrapper for SSL_read/recv() where all available
-// data upto maxlen will be put into the memory at ptr while taking care of
-// non-blocking IO. Returns the number of bytes read or -1 on an error
-static int TR_Read(LONG socket, char *ptr, int maxlen)
-{
-  int result;
-  int nread = -1; // -1 is error
-  int status = 0; // < 0 error, 0 unknown, > 0 no error
-
-  ENTER();
-
-  if(G->TR_UseTLS)
-  {
-    // use SSL methods to get/process all data
-    do
-    {
-      // read out data and stop our loop in case there
-      // isn't anything to read anymore or we have filled
-      // maxlen data
-      nread = SSL_read(ssl, ptr, maxlen);
-
-      // if nread > 0 we read _some_ data and can
-      // break out
-      if(nread > 0)
-        break;
-      else // <= 0 found, check error state
-      {
-        int err = SSL_get_error(ssl, nread);
-
-        switch(err)
-        {
-          case SSL_ERROR_WANT_READ:
-          case SSL_ERROR_WANT_WRITE:
-          {
-            // we are using non-blocking socket IO so an SSL_ERROR_WANT_READ
-            // signals that the SSL socket wants us to wait until data
-            // is available and reissue the SSL_read() command.
-            LONG retVal = -1;
-            fd_set fdset;
-            struct timeval timeout;
-            int timeoutSum = 0;
-
-            // now we iterate in a do/while loop and call WaitSelect()
-            // with a static timeout of 1s. We then continue todo so
-            // until we reach the predefined socket timeout
-            do
-            {
-              // check if we are here because of a second iteration
-              if(retVal == 0)
-              {
-                W(DBF_NET, "TR_Read: recoverable WaitSelect() timeout: %ld", timeoutSum);
-
-                // give our GUI the chance to update
-                DoMethod(G->App, MUIM_Application_InputBuffered);
-
-                // if retVal is zero, then we are here in a
-                // consequtive iteration, so WaitSelect()
-                // seem to have timed out and we have to check
-                // whether we timed out too much already
-                timeoutSum += 1; // +1s
-
-                if(timeoutSum >= C->SocketTimeout ||
-                   (G->TR != NULL && G->TR->Abort == TRUE))
-                {
-                  break;
-                }
-              }
-
-              // we do a static timeout of 1s
-              timeout.tv_sec = 1;
-              timeout.tv_usec = 0;
-
-              // now we put our socket handle into a descriptor set
-              // we can pass on to WaitSelect()
-              FD_ZERO(&fdset);
-              FD_SET(socket, &fdset);
-
-              // depending on the SSL error (WANT_READ/WANT_WRITE)
-              // we either do a WaitSelect() on the read or write mode
-              // as with SSL both things can happen
-              // see http://www.openssl.org/docs/ssl/SSL_read.html
-              if(err == SSL_ERROR_WANT_READ)
-                retVal = WaitSelect(socket+1, &fdset, NULL, NULL, (APTR)&timeout, NULL);
-              else
-                retVal = WaitSelect(socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL);
-            }
-            while(retVal == 0);
-
-            // if WaitSelect() returns 1 we successfully waited for
-            // being able to read from the socket. So we go and do another
-            // iteration in the while() loop as the next connect() call should
-            // return EISCONN if the connection really succeeded.
-            if(retVal >= 1 && FD_ISSET(socket, &fdset))
-            {
-              // everything fine
-              continue;
-            }
-            else if(retVal == 0)
-            {
-              W(DBF_NET, "WaitSelect() socket timeout reached");
-              status = -1; // signal error
-            }
-            else
-            {
-              // the rest should signal an error
-              E(DBF_NET, "WaitSelect() returned an error: %ld", err);
-              status = -1; // signal error
-            }
-          }
-          break;
-
-          case SSL_ERROR_ZERO_RETURN:
-          {
-            // in case nread is zero the connection
-            // was shut down cleanly...
-            if(nread == 0)
-            {
-              // signal no error by +1
-              status = 1;
-            }
-            else
-            {
-              E(DBF_NET, "SSL_write() returned SSL_ERROR_ZERO_RETURN");
-              status = -1; // signal error
-            }
-          }
-          break;
-
-          default:
-          {
-            E(DBF_NET, "SSL_read() returned an error %ld", err);
-            status = -1; // signal error
-          }
-          break;
-        }
-      }
-    }
-    while(status == 0);
-  }
-  else
-  {
-    // use normal socket methods to query/process data
-    do
-    {
-      // read out data from our socket and return cleanly in
-      // case zero is returned (clean shutdown), otherwise
-      // read as much as possible
-      nread = recv(socket, ptr, maxlen, 0);
-
-      // if nread >= 0 we read _some_ data or reach the
-      // end of the socket and can break out
-      if(nread >= 0)
-        break;
-      else // < 0 found, check error state
-      {
-        LONG err = -1;
-
-        // get the error value which should normally be set by a recv()
-        SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), (ULONG)&err, TAG_END);
-
-        switch(err)
-        {
-          case EAGAIN:
-          {
-            // we are using non-blocking socket IO so an EAGAIN signals
-            // that we should wait for more data to arrive before we
-            // can issue a recv() again.
-            LONG retVal = -1;
-            fd_set fdset;
-            struct timeval timeout;
-            int timeoutSum = 0;
-
-            // now we iterate in a do/while loop and call WaitSelect()
-            // with a static timeout of 1s. We then continue todo so
-            // until we reach the predefined socket timeout
-            do
-            {
-              // check if we are here because of a second iteration
-              if(retVal == 0)
-              {
-                W(DBF_NET, "TR_Read: recoverable WaitSelect() timeout: %ld", timeoutSum);
-
-                // give our GUI the chance to update
-                DoMethod(G->App, MUIM_Application_InputBuffered);
-
-                // if retVal is zero, then we are here in a
-                // consequtive iteration, so WaitSelect()
-                // seem to have timed out and we have to check
-                // whether we timed out too much already
-                timeoutSum += 1; // +1s
-
-                if(timeoutSum >= C->SocketTimeout ||
-                   (G->TR != NULL && G->TR->Abort == TRUE))
-                {
-                  break;
-                }
-              }
-
-              // we do a static timeout of 1s
-              timeout.tv_sec = 1;
-              timeout.tv_usec = 0;
-
-              // now we put our socket handle into a descriptor set
-              // we can pass on to WaitSelect()
-              FD_ZERO(&fdset);
-              FD_SET(socket, &fdset);
-            }
-            while((retVal = WaitSelect(socket+1, &fdset, NULL, NULL, (APTR)&timeout, NULL)) == 0);
-
-            // if WaitSelect() returns 1 we successfully waited for
-            // being able to read from the socket. So we go and do another
-            // iteration in the while() loop as the next connect() call should
-            // return EISCONN if the connection really succeeded.
-            if(retVal >= 1 &&
-               FD_ISSET(socket, &fdset))
-            {
-              // everything fine
-              continue;
-            }
-            else if(retVal == 0)
-            {
-              W(DBF_NET, "WaitSelect() socket timeout reached");
-              status = -1; // signal error
-            }
-            else
-            {
-              // the rest should signal an error
-              E(DBF_NET, "WaitSelect() returned error: %ld", err);
-              status = -1; // signal error
-            }
-          }
-          break;
-
-          case EINTR:
-          {
-            // we received an interrupt signal so we issue the recv()
-            // command again.
-            continue;
-          }
-          break;
-
-          default:
-          {
-            E(DBF_NET, "recv() returned error %ld", err);
-            status = -1; // signal error
-          }
-          break;
-        }
-      }
-    }
-    while(status == 0);
-  }
-
-  // check the status for an error
-  if(status == -1)
-    result = -1;
-  else
-    result = nread;
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// TR_ReadBuffered()
-// a buffered implementation of read()/recv() which is somehow compatible
-// to the I/O fgets() function. It will read out data from the socket in
-// 4096 chunks and store them into a static buffer. This function SHOULD
-// only be called by TR_ReadLine() and TR_Recv().
-//
-// This implementation is a slightly adapted version of readline()/my_read()
-// examples from (W.Richard Stevens - Unix Network Programming) - Page 80
-// However, they were adapted to non-blocking IO whereever necessary
-static int TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags)
-{
-  int result = -1; // -1 = error
-  static int read_cnt = 0;
-  static char *read_buf = NULL;
-  static char *read_ptr = NULL;
-
-  ENTER();
-
-  // if we don't have a buffer yet, lets allocate one
-  if(read_buf != NULL || (read_buf = read_ptr = calloc(1, C->TRBufferSize*sizeof(char))) != NULL)
-  {
-    // if we called that function with the FREEBUFFER flag we free the buffer only
-    // and return with 0
-    if(hasTCP_FREEBUFFER(flags))
-    {
-      free(read_buf);
-      read_cnt = 0;
-      read_buf = NULL;
-      read_ptr = NULL;
-
-      result = 0;
-    }
-    else
-    {
-      BOOL errorState = FALSE;
-
-      // now comes the 'real' socket read stuff where
-      // we obtain as much data as possible up to the maxlen amount.
-
-      // if the buffer is empty we fill it again from
-      // data we request from the socket. Here we make sure we
-      // take care of non-blocking IO
-      if(read_cnt <= 0)
-      {
-        // read all data upto the maximum our buffer allows
-        if((read_cnt = TR_Read(socket, read_buf, C->TRBufferSize)) <= 0)
-          errorState = TRUE;
-
-        // reset the read_ptr
-        read_ptr = read_buf;
-      }
-
-      if(errorState == FALSE)
-      {
-        // we copy only the minmum of read_cnt and maxlen
-        int fill_cnt = MIN(read_cnt, maxlen);
-
-        // to speed up the ReadLine we only use memcpy()
-        // for requests > 1
-        if(fill_cnt > 1)
-        {
-          // now we copy a maximum of maxlen chars to
-          // the destination
-          memcpy(ptr, read_ptr, fill_cnt);
-          read_cnt -= fill_cnt;
-          read_ptr += fill_cnt;
-        }
-        else
-        {
-          read_cnt--;
-          *ptr = *read_ptr++;
-        }
-
-        result = fill_cnt;
-      }
-    }
-  }
-  else
-    E(DBF_NET, "couldn't allocate read buffer!");
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// TR_Write()
-// an unbuffered implementation/wrapper for SSL_write/send() where the supplied
-// data in ptr will be send out straight away while taking care of non-blocking IO.
-// returns the number of bytes written or -1 on an error
-static int TR_Write(LONG socket, const char *ptr, int len)
-{
-  int result;
-  int towrite = len;
-  int status = 0; // < 0 error, 0 unknown, > 0 no error
-
-  ENTER();
-
-  if(G->TR_UseTLS)
-  {
-    // use SSL methods to get/process all data
-    do
-    {
-      // write data to our socket and then check how much
-      // we have written and in case we weren't able to write
-      // all out, we retry it with smaller chunks.
-      int nwritten = SSL_write(ssl, ptr, towrite);
-
-      // if nwritten > 0 we transfered _some_ data
-      if(nwritten > 0)
-      {
-        towrite -= nwritten;
-        ptr += nwritten;
-
-        // check if we are finished with sending all data
-        // otherwise our next iteration wiill continue
-        // sending the rest.
-        if(towrite <= 0)
-          break;
-      }
-      else // if an error occurred we process it
-      {
-        int err = SSL_get_error(ssl, nwritten);
-
-        switch(err)
-        {
-          case SSL_ERROR_WANT_READ:
-          case SSL_ERROR_WANT_WRITE:
-          {
-            // we are using non-blocking socket IO so an SSL_ERROR_WANT_READ
-            // signals that the SSL socket wants us to wait until data
-            // is available and reissue the SSL_read() command.
-            LONG retVal = -1;
-            fd_set fdset;
-            struct timeval timeout;
-            int timeoutSum = 0;
-
-            // now we iterate in a do/while loop and call WaitSelect()
-            // with a static timeout of 1s. We then continue todo so
-            // until we reach the predefined socket timeout
-            do
-            {
-              // check if we are here because of a second iteration
-              if(retVal == 0)
-              {
-                W(DBF_NET, "TR_Write: recoverable WaitSelect() timeout: %ld", timeoutSum);
-
-                // give our GUI the chance to update
-                DoMethod(G->App, MUIM_Application_InputBuffered);
-
-                // if retVal is zero, then we are here in a
-                // consequtive iteration, so WaitSelect()
-                // seem to have timed out and we have to check
-                // whether we timed out too much already
-                timeoutSum += 1; // +1s
-
-                if(timeoutSum >= C->SocketTimeout ||
-                   (G->TR != NULL && G->TR->Abort == TRUE))
-                {
-                  break;
-                }
-              }
-
-              // we do a static timeout of 1s
-              timeout.tv_sec = 1;
-              timeout.tv_usec = 0;
-
-              // now we put our socket handle into a descriptor set
-              // we can pass on to WaitSelect()
-              FD_ZERO(&fdset);
-              FD_SET(socket, &fdset);
-
-              // depending on the SSL error (WANT_READ/WANT_WRITE)
-              // we either do a WaitSelect() on the read or write mode
-              // as with SSL both things can happen
-              // see http://www.openssl.org/docs/ssl/SSL_write.html
-              if(err == SSL_ERROR_WANT_READ)
-                retVal = WaitSelect(socket+1, &fdset, NULL, NULL, (APTR)&timeout, NULL);
-              else
-                retVal = WaitSelect(socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL);
-            }
-            while(retVal == 0);
-
-            // if WaitSelect() returns 1 we successfully waited for
-            // being able to write to the socket. So we go and do another
-            // iteration in the while() loop as the next connect() call should
-            // return EISCONN if the connection really succeeded.
-            if(retVal >= 1 && FD_ISSET(socket, &fdset))
-            {
-              // everything fine
-              continue;
-            }
-            else if(retVal == 0)
-            {
-              W(DBF_NET, "WaitSelect() socket timeout reached");
-              status = -1; // signal error
-            }
-            else
-            {
-              // the rest should signal an error
-              E(DBF_NET, "WaitSelect() returned error %ld", err);
-              status = -1; // signal error
-            }
-          }
-          break;
-
-          case SSL_ERROR_ZERO_RETURN:
-          {
-            // in case nwritten is zero the connection
-            // was shut down cleanly...
-            if(nwritten == 0)
-            {
-              // signal no error by +1
-              status = 1;
-            }
-            else
-            {
-              E(DBF_NET, "SSL_write() returned SSL_ERROR_ZERO_RETURN");
-              status = -1; // signal error
-            }
-          }
-          break;
-
-          default:
-          {
-            E(DBF_NET, "SSL_write() returned error %ld", err);
-            status = -1; // signal error
-          }
-          break;
-        }
-      }
-    }
-    while(status == 0);
-  }
-  else
-  {
-    // use normal socket methods to query/process data
-    do
-    {
-      // write data to our socket and then check how much
-      // we have written and in case we weren't able to write
-      // all out, we retry it with smaller chunks.
-      int nwritten = send(socket, (APTR)ptr, towrite, 0);
-
-      // if nwritten > 0 we transfered _some_ data
-      if(nwritten > 0)
-      {
-        towrite -= nwritten;
-        ptr += nwritten;
-
-        // check if we are finished with sending all data
-        // otherwise our next iteration wiill continue
-        // sending the rest.
-        if(towrite <= 0)
-          break;
-      }
-      else // <= 0 if an error occurred we process it
-      {
-        LONG err = -1;
-
-        // get the error value which should normally be set by a send()
-        SocketBaseTags(SBTM_GETREF(SBTC_ERRNO), (ULONG)&err, TAG_END);
-
-        switch(err)
-        {
-          case EAGAIN:
-          {
-            // we are using non-blocking socket IO so an EAGAIN signals
-            // that we should wait for more data to arrive before we
-            // can issue a recv() again.
-            LONG retVal = -1;
-            fd_set fdset;
-            struct timeval timeout;
-            int timeoutSum = 0;
-
-            // now we iterate in a do/while loop and call WaitSelect()
-            // with a static timeout of 1s. We then continue todo so
-            // until we reach the predefined socket timeout
-            do
-            {
-              // check if we are here because of a second iteration
-              if(retVal == 0)
-              {
-                W(DBF_NET, "TR_Write: recoverable WaitSelect() timeout: %ld", timeoutSum);
-
-                // give our GUI the chance to update
-                DoMethod(G->App, MUIM_Application_InputBuffered);
-
-                // if retVal is zero, then we are here in a
-                // consequtive iteration, so WaitSelect()
-                // seem to have timed out and we have to check
-                // whether we timed out too much already
-                timeoutSum += 1; // +1s
-
-                if(timeoutSum >= C->SocketTimeout ||
-                   (G->TR != NULL && G->TR->Abort == TRUE))
-                {
-                  break;
-                }
-              }
-
-              // we do a static timeout of 1s
-              timeout.tv_sec = 1;
-              timeout.tv_usec = 0;
-
-              // now we put our socket handle into a descriptor set
-              // we can pass on to WaitSelect()
-              FD_ZERO(&fdset);
-              FD_SET(socket, &fdset);
-            }
-            while((retVal = WaitSelect(socket+1, NULL, &fdset, NULL, (APTR)&timeout, NULL)) == 0);
-
-            // if WaitSelect() returns 1 we successfully waited for
-            // being able to write to the socket. So we go and do another
-            // iteration in the while() loop as the next connect() call should
-            // return EISCONN if the connection really succeeded.
-            if(retVal >= 1 &&
-               FD_ISSET(socket, &fdset))
-            {
-              // everything fine
-              continue;
-            }
-            else if(retVal == 0)
-            {
-              W(DBF_NET, "WaitSelect() socket timeout reached");
-              status = -1; // signal error
-            }
-            else
-            {
-              // the rest should signal an error
-              E(DBF_NET, "WaitSelect() returned error %ld", err);
-              status = -1; // signal error
-            }
-          }
-          break;
-
-          case EINTR:
-          {
-            // we received an interrupt signal so we issue the send()
-            // command again.
-            continue;
-          }
-          break;
-
-          default:
-          {
-            E(DBF_NET, "send() returned error %ld", err);
-            status = -1; // signal error
-          }
-          break;
-        }
-      }
-    }
-    while(status == 0);
-  }
-
-  #if defined(DEBUG)
-  if(towrite != 0)
-    E(DBF_NET, "TR_Write() short item count: %ld of %ld transfered!", len-towrite, len);
-  #endif
-
-  // check the status
-  if(status == -1)
-    result = -1;
-  else
-    result = len-towrite;
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// TR_WriteBuffered()
-// a buffered implementation of SSL_write()/send(). This function will buffer
-// all write operations in a temporary buffer and as soon as the buffer is
-// full or it will be explicitly flushed, it will write out the data to the
-// socket. This function SHOULD only be called by TR_Send() somehow.
-//
-// This function will also optimize the write operations by always making
-// sure that a full buffer will be written out to the socket. i.e. if the
-// buffer is filled up so that the next call would flush it, we copy as
-// many data to the buffer as possible and flush it immediatly.
-static int TR_WriteBuffered(LONG socket, const char *ptr, int maxlen, int flags)
-{
-  int result = -1; // -1 = error
-  static int write_cnt = 0;
-  static char *write_buf = NULL;
-  static char *write_ptr = NULL;
-
-  ENTER();
-
-  if(write_buf != NULL || (write_buf = write_ptr = calloc(1, C->TRBufferSize*sizeof(char))) != NULL)
-  {
-    // if we called that function with the FREEBUFFER flag we free the buffer only
-    // and return with 0
-    if(hasTCP_FREEBUFFER(flags))
-    {
-      free(write_buf);
-      write_cnt = 0;
-      write_buf = NULL;
-      write_ptr = NULL;
-
-      result = 0;
-    }
-    else
-    {
-      int fill_cnt = 0;
-      BOOL abortProc = FALSE;
-
-      // in case our write buffer is already filled up or
-      // the caller wants to just flush the buffer we immediately use
-      // the socket functions send/SSL_write() to transfer everything
-      // and therefore clear the buffer.
-      if(write_cnt >= C->TRBufferSize || hasTCP_ONLYFLUSH(flags))
-      {
-        // make sure we write out the data to the socket
-        if(TR_Write(socket, write_buf, write_cnt) != write_cnt)
-        {
-          // abort and signal an error
-          abortProc = TRUE;
-        }
-        else
-        {
-          // set the ptr to the start of the buffer
-          write_ptr = write_buf;
-          write_cnt = 0;
-
-          // if this write operation was just because of a ONLYFLUSH
-          // flag we can abort immediately, but make sure we don't
-          // return an error but a count of zero
-          if(hasTCP_ONLYFLUSH(flags))
-          {
-            abortProc = TRUE;
-            result = 0;
-          }
-        }
-      }
-
-      // check if we should continue
-      if(abortProc == FALSE)
-      {
-        // if the string we want to copy into the buffer
-        // wouldn't fit, we copy as much as we can, clear the buffer
-        // and continue until there is enough space left
-        while(write_cnt+maxlen > C->TRBufferSize)
-        {
-          int fillable = C->TRBufferSize-write_cnt;
-
-          // after the copy we have to increase the pointer of the
-          // array we want to copy, because in the next cycle we have to
-          // copy the rest out of it.
-          memcpy(write_ptr, ptr, fillable);
-          ptr += fillable;
-          write_cnt += fillable;
-          fill_cnt += fillable;
-
-          // decrease maxlen now by the amount of bytes we have written
-          // to the buffer
-          maxlen -= fillable;
-
-          // now we write out the data
-          if(TR_Write(socket, write_buf, write_cnt) != write_cnt)
-          {
-            // abort and signal an error
-            abortProc = TRUE;
-            break;
-          }
-          else
-          {
-            // set the ptr to the start of the buffer
-            // as we flushed everything
-            write_ptr = write_buf;
-            write_cnt = 0;
-          }
-        }
-
-        // check if we should abort
-        if(abortProc == FALSE)
-        {
-          // if we end up here we have enough space for our
-          // string in the buffer, so lets copy it in
-          memcpy(write_ptr, ptr, maxlen);
-          write_ptr += maxlen;
-          write_cnt += maxlen;
-          fill_cnt += maxlen;
-
-          // if the user has supplied the FLUSH flag we have to clear/flush
-          // the buffer immediately after having copied everything
-          if(hasTCP_FLUSH(flags))
-          {
-            // write our whole buffer out to the socket
-            if(TR_Write(socket, write_buf, write_cnt) != write_cnt)
-            {
-              // abort and signal an error
-              abortProc = TRUE;
-            }
-            else
-            {
-              // set the ptr to the start of the buffer
-              // as we flushed everything
-              write_ptr = write_buf;
-              write_cnt = 0;
-            }
-          }
-
-          // if we still haven't received an abort signal
-          // we can finally set the result to fill_cnt
-          if(abortProc == FALSE)
-            result = fill_cnt;
-        }
-      }
-    }
-  }
-  else
-    E(DBF_NET, "couldn't allocate write buffer!");
-
-  RETURN(result);
-  return result;
-}
-
 ///
 
 /*** HTTP routines ***/
@@ -4302,7 +2644,7 @@ static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext
   ENTER();
 
   // first we check if the socket is ready
-  if(G->TR_Socket != TCP_NO_SOCKET)
+  if(G->TR->connection != NULL)
   {
     // now we prepare the SMTP command
     if(parmtext == NULL || parmtext[0] == '\0')
@@ -4314,13 +2656,13 @@ static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext
 
     // lets send the command via TR_WriteLine, but not if we are in connection
     // state
-    if(command == SMTP_CONNECT || TR_WriteLine(buf) > 0)
+    if(command == SMTP_CONNECT || SendLineToHost(G->TR->connection, buf) > 0)
     {
       int len = 0;
 
       // after issuing the SMTP command we read out the server response to it
       // but only if this wasn't the SMTP_QUIT command.
-      if((len = TR_ReadLine(G->TR_Socket, buf, sizeof(buf))) > 0)
+      if((len = ReceiveLineFromHost(G->TR->connection, buf, sizeof(buf))) > 0)
       {
         // get the response code
         int rc = strtol(buf, NULL, 10);
@@ -4336,7 +2678,7 @@ static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext
           do
           {
             // lets get out the next line from the socket
-            if((len = TR_ReadLine(G->TR_Socket, tbuf, sizeof(tbuf))) > 0)
+            if((len = ReceiveLineFromHost(G->TR->connection, tbuf, sizeof(tbuf))) > 0)
             {
               // get the response code
               int rc2 = strtol(buf, NULL, 10);
@@ -4495,7 +2837,7 @@ static BOOL TR_ConnectSMTP(void)
 
   // now we either send a HELO (non-ESMTP) or EHLO (ESMTP) command to
   // signal we wanting to start a session accordingly (RFC 1869 - section 4)
-  if(result && G->TR_Socket != TCP_NO_SOCKET)
+  if(result == TRUE && G->TR->connection != NULL)
   {
     ULONG flags = 0;
     char *resp = NULL;
@@ -5627,7 +3969,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
             // as long there is no abort situation we go on reading out
             // from the stream and sending it to our SMTP server
-            while(G->TR->Abort == FALSE && G->Error == FALSE &&
+            while(G->TR->Abort == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR &&
                   (curlen = getline(&buf, &buflen, fh)) > 0)
             {
               #if defined(DEBUG)
@@ -5663,7 +4005,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                 // so we send out a period in advance
                 if(buf[0] == '.')
                 {
-                  if(TR_Send(".", 1, TCPF_NONE) <= 0)
+                  if(SendToHost(G->TR->connection, ".", 1, TCPF_NONE) <= 0)
                   {
                     E(DBF_NET, "couldn't send single '.' to SMTP server");
 
@@ -5681,7 +4023,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
                 // now lets send the data buffered to the socket.
                 // we will flush it later then.
-                if(curlen > 0 && TR_Send(buf, curlen, TCPF_NONE) <= 0)
+                if(curlen > 0 && SendToHost(G->TR->connection, buf, curlen, TCPF_NONE) <= 0)
                 {
                   E(DBF_NET, "couldn't send buffer data to SMTP server (%ld)", curlen);
 
@@ -5692,7 +4034,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                   sentbytes += curlen;
 
                 // now we send the final CRLF (RFC 2822)
-                if(TR_Send("\r\n", 2, TCPF_NONE) <= 0)
+                if(SendToHost(G->TR->connection, "\r\n", 2, TCPF_NONE) <= 0)
                 {
                   E(DBF_NET, "couldn't send CRLF to SMTP server");
 
@@ -5708,7 +4050,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
             D(DBF_NET, "transfered %ld bytes (raw: %ld bytes) error: %ld/%ld", sentbytes, mail->Size, G->TR->Abort, G->Error);
 
-            if(G->TR->Abort == FALSE && G->Error == FALSE)
+            if(G->TR->Abort == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR)
             {
               // check if any of the above getline() operations caused a ferror or
               // if we didn't walk until the end of the mail file
@@ -5723,7 +4065,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
               {
                 // we have to flush the write buffer if this wasn't a error or
                 // abort situation
-                TR_WriteFlush();
+                SendToHost(G->TR->connection, NULL, 0, TCPF_FLUSHONLY);
 
                 // send a CRLF+octet "\r\n." to signal that the data is finished.
                 // we do it here because if there was an error and we send it, the message
@@ -5770,6 +4112,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
 {
   BOOL success = FALSE;
   struct MailServerNode *msn;
+  struct Connection *conn;
 
   ENTER();
 
@@ -5784,11 +4127,13 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
   MA_StartMacro(MACRO_PRESEND, NULL);
 
   // try to open the TCP/IP stack
-  if(TR_OpenTCPIP() == TRUE)
+  if((conn = CreateConnection()) != NULL && ConnectionIsOnline(conn) == TRUE)
   {
     // verify that the configuration is ready for sending mail
     if(CO_IsValid() == TRUE && (G->TR = TR_New((mode == SEND_ALL_AUTO || mode == SEND_ACTIVE_AUTO) ? TR_SEND_AUTO : TR_SEND_USER)) != NULL)
     {
+      G->TR->connection = conn;
+
       // open the transfer window
       if(SafeOpenWindow(G->TR->GUI.WI) == TRUE)
       {
@@ -5876,7 +4221,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
 
             TR_SetWinTitle(FALSE, host);
 
-            if((err = TR_Connect(host, port)) == CONNECTERR_SUCCESS)
+            if((err = ConnectToHost(G->TR->connection, host, port)) == CONNECTERR_SUCCESS)
             {
               BOOL connected = FALSE;
 
@@ -5885,7 +4230,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
               if(hasServerSSL(msn) == TRUE)
               {
                 // lets try to establish the SSL connection via AmiSSL
-                if(TR_InitTLS() == TRUE && TR_StartTLS() == TRUE)
+                if(MakeSecureConnection(G->TR->connection) == TRUE)
                   G->TR_UseTLS = TRUE;
                 else
                   err = CONNECTERR_SSLFAILED; // special SSL connection error
@@ -6099,13 +4444,13 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
       // and everything disposed
       TR_AbortnClose();
     }
-
-    // make sure to close the TCP/IP
-    // connection completly
-    TR_CloseTCPIP();
   }
   else
     ER_NewError(tr(MSG_ER_OPENTCPIP));
+
+  // make sure to close the TCP/IP
+  // connection completly
+  DeleteConnection(conn);
 
   // start the POSTSEND macro so that others
   // notice that the send process finished.

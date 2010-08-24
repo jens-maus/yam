@@ -53,6 +53,13 @@ enum ConnectError
   CONNECTERR_NOT_CONNECTED = -12
 };
 
+// flags for SendToHost()
+#define TCPF_NONE             (0)
+#define TCPF_FLUSH            (1<<0)
+#define TCPF_FLUSHONLY        (1<<1)
+#define hasTCP_FLUSH(v)       (isFlagSet((v), TCPF_FLUSH))
+#define hasTCP_ONLYFLUSH(v)   (isFlagSet((v), TCPF_FLUSHONLY))
+
 struct Connection
 {
   LONG socket;                   // the socket ID returned by socket()
@@ -92,9 +99,10 @@ BOOL ConnectionIsOnline(struct Connection *conn);
 enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const int port);
 void DisconnectFromHost(struct Connection *conn);
 BOOL MakeSecureConnection(struct Connection *conn);
+int ReceiveFromHost(struct Connection *conn, char *vptr, const int maxlen);
 int ReceiveLineFromHost(struct Connection *conn, char *vptr, const int maxlen);
-int ReceiveFromHost(struct Connection *conn, char *recvdata, const int maxlen);
-int SendLineToHost(struct Connection *conn, const char *vptr);
 int SendToHost(struct Connection *conn, const char *ptr, const int len, const int flags);
+int SendLineToHost(struct Connection *conn, const char *vptr);
+int FlushConnection(struct Connection *conn);
 
 #endif /* TCP_H */

@@ -126,7 +126,6 @@ struct Global
   #endif
 
   LONG                     Weights[12];
-  LONG                     TR_Socket;
 
   int                      PGPVersion;
   int                      CO_DST;

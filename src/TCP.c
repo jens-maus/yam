@@ -64,12 +64,6 @@
 
 #include "Debug.h"
 
-#define TCPF_NONE             (0)
-#define TCPF_FLUSH            (1<<0)
-#define TCPF_FLUSHONLY        (1<<1)
-#define hasTCP_FLUSH(v)       (isFlagSet((v), TCPF_FLUSH))
-#define hasTCP_ONLYFLUSH(v)   (isFlagSet((v), TCPF_FLUSHONLY))
-
 #ifndef SHUT_RDWR
 #define SHUT_RDWR 2
 #endif
@@ -1946,21 +1940,6 @@ static int WriteToHost(struct Connection *conn, const char *ptr, const int len)
 }
 
 ///
-/// SendLineToHost
-// send out a line of text
-int SendLineToHost(struct Connection *conn, const char *vptr)
-{
-  int result;
-
-  ENTER();
-
-  result = SendToHost(conn, vptr, strlen(vptr), TCPF_FLUSH);
-
-  RETURN(result);
-  return result;
-}
-
-///
 /// WriteToHostBuffered
 // a buffered implementation of SSL_write()/send(). This function will buffer
 // all write operations in a temporary buffer and as soon as the buffer is
@@ -2123,6 +2102,36 @@ int SendToHost(struct Connection *conn, const char *ptr, const int len, const in
 
   RETURN(nwritten);
   return nwritten;
+}
+
+///
+/// SendLineToHost
+// send out a line of text
+int SendLineToHost(struct Connection *conn, const char *vptr)
+{
+  int result;
+
+  ENTER();
+
+  result = SendToHost(conn, vptr, strlen(vptr), TCPF_FLUSH);
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// FlushConnection
+// send out any still pending data
+int FlushConnection(struct Connection *conn)
+{
+  int result;
+
+  ENTER();
+
+  result = SendToHost(conn, NULL, 0, TCPF_FLUSHONLY);
+
+  RETURN(result);
+  return result;
 }
 
 ///
