@@ -884,7 +884,6 @@ static BOOL TR_InitSMTPAUTH(void)
         // and A2 as MD5 encoded strings
         {
           unsigned char digest[16]; // 16 octets
-          ULONG digest_hex[4];      // 16 octets
           struct MD5Context context;
           char buf[SIZE_LARGE];
           char A1[32+1];
@@ -906,9 +905,8 @@ static BOOL TR_InitSMTPAUTH(void)
           // HEX(H(A1))
           md5init(&context);
           md5update(&context, (unsigned char *)buf, A1_len);
-          md5final((UBYTE *)digest_hex, &context);
-          snprintf(A1, sizeof(A1), "%08x%08x%08x%08x", (unsigned int)digest_hex[0], (unsigned int)digest_hex[1],
-                                                       (unsigned int)digest_hex[2], (unsigned int)digest_hex[3]);
+          md5final(digest, &context);
+          md5digestToHex(digest, A1);
           D(DBF_NET, "encoded   A1: '%s'", A1);
 
 
@@ -921,9 +919,8 @@ static BOOL TR_InitSMTPAUTH(void)
           // HEX(H(A2))
           md5init(&context);
           md5update(&context, (unsigned char *)buf, strlen(buf));
-          md5final((UBYTE *)digest_hex, &context);
-          snprintf(A2, sizeof(A2), "%08x%08x%08x%08x", (unsigned int)digest_hex[0], (unsigned int)digest_hex[1],
-                                                       (unsigned int)digest_hex[2], (unsigned int)digest_hex[3]);
+          md5final(digest, &context);
+          md5digestToHex(digest, A2);
           D(DBF_NET, "encoded   A2: '%s'", A2);
 
           // now we build the string from which we also build the MD5
@@ -939,9 +936,8 @@ static BOOL TR_InitSMTPAUTH(void)
           //          cnonce-value, ":", qop-value, ":", HEX(H(A2)) }))
           md5init(&context);
           md5update(&context, (unsigned char *)buf, strlen(buf));
-          md5final((UBYTE *)digest_hex, &context);
-          snprintf(response, sizeof(response), "%08x%08x%08x%08x", (unsigned int)digest_hex[0], (unsigned int)digest_hex[1],
-                                                                   (unsigned int)digest_hex[2], (unsigned int)digest_hex[3]);
+          md5final(digest, &context);
+          md5digestToHex(digest, response);
           D(DBF_NET, "encoded   resp: '%s'", response);
         }
 
@@ -3534,7 +3530,7 @@ static int TR_ConnectPOP(int guilevel)
     {
       struct MD5Context context;
       unsigned char digest[16];
-      int i, j;
+      char digestHex[33];
 
       strlcpy(buf, p, sizeof(buf));
       if((p = strchr(buf, '>')) != NULL)
@@ -3545,10 +3541,8 @@ static int TR_ConnectPOP(int guilevel)
       md5init(&context);
       md5update(&context, (unsigned char *)buf, strlen(buf));
       md5final(digest, &context);
-      snprintf(buf, sizeof(buf), "%s ", msn->username);
-      for(j=strlen(buf), i=0; i<16; j+=2, i++)
-        snprintf(&buf[j], sizeof(buf)-j, "%02x", digest[i]);
-      buf[j] = '\0';
+      md5digestToHex(digest, digestHex);
+      snprintf(buf, sizeof(buf), "%s %s", msn->username, digestHex);
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendAPOPLogin));
       if(TR_SendPOP3Cmd(POPCMD_APOP, buf, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
         goto out;

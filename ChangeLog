@@ -7,6 +7,9 @@ $URL$
 
 2010-08-24 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mime/md5.c, YAM_TR.c: implemented a conversion of an MD5 digest into a
+    hexdump. In contrast to the former conversion this happens in an endianess
+    aware way.
   * TCP.c, YAM_TR.c, UpdateCheck.c: refined the connections to make them
     reusable if needed. First of all a connection must be created, then it can
     be used to check the online state of the configured interfaces. Then a host

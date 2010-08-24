@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include <string.h>
+#include <stdio.h>
 
 #include "mime/md5.h"
 
@@ -346,4 +347,15 @@ void md5hmac(unsigned char * text, int text_len, unsigned char *key, int key_len
   md5final(digest, &context);          /* finish up 2nd pass */
 }
 ///
+/// md5digestToHex
+// convert an MD5 digest into a NUL-terminated hexdump for transmission
+// NOTE: the hex buffer must have a size of at least 33 bytes!
+void md5digestToHex(unsigned char digest[16], char *hex)
+{
+  int i;
 
+  for(i=0; i<16; i++)
+    snprintf(&hex[i*2], 3, "%02x", digest[i]);
+}
+
+///
