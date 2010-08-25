@@ -66,12 +66,13 @@ struct Tokenizer
 
 struct TokenAnalyzer
 {
-  struct Tokenizer goodTokens;
-  struct Tokenizer badTokens;
-  ULONG goodCount;
-  ULONG badCount;
-  ULONG numDirtyingMessages;
-  struct SignalSemaphore lockSema;
+  struct Tokenizer goodTokens;     // non-spam words
+  struct Tokenizer badTokens;      // spam words
+  ULONG goodCount;                 // number of non-spam words
+  ULONG badCount;                  // number of spam words
+  ULONG numDirtyingMessages;       // number of modifications since last save operation
+  struct SignalSemaphore lockSema; // semaphore for multi-threading
+  BOOL initialized;                // has this structure been initialized?
 };
 
 /*** Public functions ***/

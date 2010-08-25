@@ -30,7 +30,9 @@
 
 #include "SDI_compiler.h"
 
-struct Object;
+#ifndef INTUITION_CLASSUSR_H
+  #include <intuition/classusr.h> // Object
+#endif
 
 BOOL InitMethodStack(void);
 void CleanupMethodStack(void);

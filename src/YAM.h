@@ -177,6 +177,7 @@ struct Global
   // the data for our methodstack implementation
   struct MinList           methodStack;
   struct SignalSemaphore   methodStackSema;
+  BOOL                     methodStackInitialized;
 
   char                     ProgDir[SIZE_PATH];
   char                     ProgName[SIZE_FILE];

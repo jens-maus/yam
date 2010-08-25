@@ -71,6 +71,8 @@ void InitMethodStack(void)
   memset(&G->methodStackSema, 0, sizeof(G->methodStackSema));
   InitSemaphore(&G->methodStackSema);
 
+  G->methodStackInitialized = TRUE;
+
   LEAVE();
 }
 
@@ -79,16 +81,26 @@ void InitMethodStack(void)
 // clean up the global method stack
 void CleanupMethodStack(void)
 {
-  struct Node *node;
-
   ENTER();
 
-  // pop all methods from the stack without handling them
-  ObtainSemaphore(&G->methodStackSema);
-  while((node = RemHead((struct List *)&G->methodStack)) != NULL)
-    FreeSysObject(ASOT_NODE, node);
+  if(G->methodStackInitialized == TRUE)
+  {
+    struct Node *node;
 
-  // no need to release the semaphore, we a going down anyway soo
+    // pop all methods from the stack without handling them
+    ObtainSemaphore(&G->methodStackSema);
+    while((node = RemHead((struct List *)&G->methodStack)) != NULL)
+    {
+      struct PushedMethod *pm = (struct PushedMethod *)node;
+
+      free(pm->args);
+      FreeSysObject(ASOT_NODE, pm);
+    }
+    ReleaseSemaphore(&G->methodStackSema);
+
+    // we are no longer initialized
+    G->methodStackInitialized = FALSE;
+  }
 
   LEAVE();
 }

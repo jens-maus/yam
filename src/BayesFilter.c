@@ -714,6 +714,7 @@ static BOOL tokenAnalyzerInit(void)
 
   ENTER();
 
+  // initialize the counters
   G->spamFilter.goodCount = 0;
   G->spamFilter.badCount = 0;
   G->spamFilter.numDirtyingMessages = 0;
@@ -1570,12 +1571,15 @@ BOOL BayesFilterInit(void)
 
   ENTER();
 
-  if(tokenAnalyzerInit())
+  if(tokenAnalyzerInit() == TRUE)
   {
     tokenAnalyzerReadTrainingData();
 
     result = TRUE;
   }
+
+  // no matter if the initialization succeeded or not we treat ourself as initialized
+  G->spamFilter.initialized = TRUE;
 
   RETURN(result);
   return result;
@@ -1588,17 +1592,24 @@ void BayesFilterCleanup(void)
 {
   ENTER();
 
-  ObtainSemaphore(&G->spamFilter.lockSema);
-
-  // only write the spam training data to disk if there are any tokens and if something has changed since the last flush
-  if(G->spamFilter.numDirtyingMessages > 0 && (G->spamFilter.goodCount > 0 || G->spamFilter.badCount > 0))
+  // check whether BayesFilterInit() has been called before, otherwise we must not access the semaphore
+  if(G->spamFilter.initialized == TRUE)
   {
-    tokenAnalyzerWriteTrainingData();
+    ObtainSemaphore(&G->spamFilter.lockSema);
+
+    // only write the spam training data to disk if there are any tokens and if something has changed since the last flush
+    if(G->spamFilter.numDirtyingMessages > 0 && (G->spamFilter.goodCount > 0 || G->spamFilter.badCount > 0))
+    {
+      tokenAnalyzerWriteTrainingData();
+    }
+
+    tokenAnalyzerCleanup();
+
+    ReleaseSemaphore(&G->spamFilter.lockSema);
+
+    // we are no longer initialized
+    G->spamFilter.initialized = FALSE;
   }
-
-  tokenAnalyzerCleanup();
-
-  ReleaseSemaphore(&G->spamFilter.lockSema);
 
   LEAVE();
 }
