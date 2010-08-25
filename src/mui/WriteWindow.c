@@ -44,12 +44,14 @@
 #include "YAM_error.h"
 #include "YAM_glossarydisplay.h"
 #include "YAM_mainFolder.h"
+
 #include "FileInfo.h"
 #include "MailList.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 
 #include "mime/uucode.h"
+#include "tcp/smtp.h"
 
 #include "Debug.h"
 

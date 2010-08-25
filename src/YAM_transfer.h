@@ -30,7 +30,10 @@
 
 #include <stdio.h>
 
+#include <devices/timer.h> // struct TimeVal
 #include <intuition/classusr.h> // Object
+
+#include "HashTable.h" // struct HashEntryHeader
 
 // forward declarations
 struct Folder;
@@ -72,6 +75,29 @@ enum PreSelMode     { PSM_NEVER=0, PSM_LARGE, PSM_ALWAYS, PSM_ALWAYSLARGE };
 
 #define TCP_NO_SOCKET -1
 
+// structure for calculation and management
+// of the transfer statistics
+struct TransStat
+{
+  int Msgs_Tot;
+  int Msgs_Done;
+  int Msgs_Curr;
+  int Msgs_ListPos;
+  ULONG Size_Tot;
+  ULONG Size_Done;
+  ULONG Size_Curr;
+  ULONG Size_Curr_Max;
+  ULONG Clock_Start;
+  struct TimeVal Clock_Last;
+  char str_size_tot[SIZE_SMALL];
+  char str_size_done[SIZE_SMALL];
+  char str_size_curr[SIZE_SMALL];
+  char str_size_curr_max[SIZE_SMALL];
+  char str_speed[SIZE_SMALL];
+};
+
+#define TS_SETMAX   (-1)
+
 // Socket Options a user can set in .config
 // if a value was not specified by the user it is either -1 or
 // FALSE for a boolean.
@@ -95,6 +121,13 @@ struct DownloadResult
   long DupSkipped;
   long Deleted;
   BOOL Error;
+};
+
+struct UIDLtoken
+{
+  struct HashEntryHeader hash;
+  const char *uidl;
+  BOOL checked;
 };
 
 struct TR_GUIData
@@ -174,17 +207,29 @@ struct TR_ClassData
 extern struct Hook TR_ProcessGETHook;
 extern struct Hook TR_ProcessIMPORTHook;
 
-void  TR_Cleanup(void);
-void  TR_CloseTCPIP(void);
-BOOL  TR_DownloadURL(struct Connection *conn, const char *server, const char *request, const char *filename);
-void  TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel);
-BOOL  TR_GetMessageList_IMPORT(void);
-BOOL  TR_IsOnline(void);
+void TR_Cleanup(void);
+void TR_CloseTCPIP(void);
+BOOL TR_GetMessageList_IMPORT(void);
+BOOL TR_IsOnline(void);
 struct TR_ClassData *TR_New(enum TransferType TRmode);
-BOOL  TR_OpenTCPIP(void);
-BOOL  TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append);
-BOOL  TR_ProcessSEND(struct MailList *mlist, enum SendMode mode);
-void  TR_SetWinTitle(BOOL from, const char *text);
-BOOL  TR_SendPOP3KeepAlive(void);
+BOOL TR_OpenTCPIP(void);
+BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append);
+void TR_SetWinTitle(BOOL from, const char *text);
+
+void TR_Disconnect(void);
+void TR_ApplyRemoteFilters(struct MailTransferNode *mtn);
+BOOL TR_ApplySentFilters(struct Mail *mail);
+void TR_NewMailAlert(void);
+void TR_CompleteMsgList(void);
+void TR_AbortnClose(void);
+
+void TR_TransStat_Init(struct TransStat *ts);
+void TR_TransStat_Start(struct TransStat *ts);
+void TR_TransStat_Update(struct TransStat *ts, int size_incr, const char *status);
+void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size, const char *status);
+void TR_TransStat_Finish(struct TransStat *ts);
+
+BOOL InitUIDLhash(void);
+void CleanupUIDLhash(void);
 
 #endif /* YAM_TRANSFER_H */

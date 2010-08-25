@@ -49,6 +49,7 @@
 #include "Timer.h"
 
 #include "mui/Classes.h"
+#include "tcp/pop3.h"
 
 #include "Debug.h"
 

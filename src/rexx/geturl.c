@@ -35,6 +35,7 @@
 #include "Rexx.h"
 
 #include "tcp/Connection.h"
+#include "tcp/http.h"
 
 #include "Debug.h"
 

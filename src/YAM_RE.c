@@ -66,6 +66,7 @@
 #include "mime/base64.h"
 #include "mime/qprintable.h"
 #include "mime/uucode.h"
+#include "tcp/smtp.h"
 
 #include "HTML2Mail.h"
 #include "FileInfo.h"

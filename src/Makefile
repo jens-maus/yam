@@ -539,7 +539,10 @@ MIMEOBJS = \
 	md5.o
 
 TCPOBJS = \
-	Connection.o
+	Connection.o \
+	pop3.o \
+	smtp.o \
+	http.o
 
 YAMOBJS = \
 	YAM_global.o \

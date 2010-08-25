@@ -53,11 +53,11 @@
 #include "YAM_configFile.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
-#include "YAM_transfer.h"
 #include "YAM_utilities.h"
 
 #include "mui/Classes.h"
 #include "mime/rfc1738.h"
+#include "tcp/http.h"
 
 #include "Locale.h"
 #include "MUIObjects.h"

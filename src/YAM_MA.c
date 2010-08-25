@@ -71,6 +71,8 @@
 
 #include "mui/Classes.h"
 #include "mime/base64.h"
+#include "tcp/pop3.h"
+#include "tcp/smtp.h"
 
 #include "HTML2Mail.h"
 #include "BayesFilter.h"
