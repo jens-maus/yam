@@ -25,8 +25,11 @@
 
 ***************************************************************************/
 
+#include <string.h>
+
 #include <mui/NList_mcc.h>
 
+#include <clib/alib_protos.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/utility.h>
@@ -50,6 +53,7 @@
 #include "mime/md5.h"
 #include "tcp/Connection.h"
 
+#include "extrasrc.h"
 #include "Debug.h"
 
 /**************************************************************************/

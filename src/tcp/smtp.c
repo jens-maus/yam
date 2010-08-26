@@ -26,7 +26,9 @@
 ***************************************************************************/
 
 #include <ctype.h>
+#include <string.h>
 
+#include <clib/alib_protos.h>
 #include <proto/exec.h>
 
 #include "YAM.h"

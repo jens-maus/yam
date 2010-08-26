@@ -30,8 +30,9 @@
 
 #include <stdio.h>
 
-#include <devices/timer.h> // struct TimeVal
 #include <intuition/classusr.h> // Object
+
+#include "YAM_utilities.h" // struct TimeVal
 
 #include "HashTable.h" // struct HashEntryHeader
 

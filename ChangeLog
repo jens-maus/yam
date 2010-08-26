@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-25 Jens Langner <Jens.Langner@light-speed.de>
+
+  * tcp/pop3.c, tcp/smtp.c, tcp/html.c, YAM_TR.c, misc: splitted YAM_TR.c into
+    several files under the tcp sub directory. Now all protocol related functions
+    are stored in the respective sources files. This should make everything a bit
+    more clear and easier to identify where the corresponding functions are.
+
 2010-08-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * BayesFilter.c, MethodStack.c: the spam filter's and the method stack's
