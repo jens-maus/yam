@@ -118,6 +118,6 @@ make OS=$1 DEVFLAGS= all
 cp ../doc/README.debug "release/"
 cp YAM.$1.debug "release/YAM.debug"
 cp YAM.$1.map "release/YAM.debug.map"
-echo "  MK YAM26-$yamsys-debug.lha"
+echo "  MK YAM26p1-$yamsys-debug.lha"
 cd release
-lha -aq YAM26-$yamsys-debug.lha README.debug YAM.debug YAM.debug.map
+lha -aq YAM26p1-$yamsys-debug.lha README.debug YAM.debug YAM.debug.map
