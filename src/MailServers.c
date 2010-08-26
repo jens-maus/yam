@@ -60,7 +60,7 @@ struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Conf
                                           TAG_DONE)) != NULL)
   {
     msn->type = type;
-    SET_FLAG(msn->flags, MSF_ACTIVE);
+    msn->flags = MSF_ACTIVE;
 
     switch(msn->type)
     {
@@ -95,6 +95,7 @@ struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Conf
     }
   }
 
+  D(DBF_ALWAYS, "msn %08lx flags %08lx", msn, msn->flags);
   RETURN(msn);
   return msn;
 }
