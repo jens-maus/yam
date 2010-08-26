@@ -455,6 +455,7 @@ OVERLOAD(OM_NEW)
     MUIA_NList_Title,                TRUE,
     MUIA_NList_TitleSeparator,       TRUE,
     MUIA_NList_ActiveObjectOnClick,  TRUE,
+    MUIA_NList_DefaultObjectOnClick, FALSE,
 
     TAG_MORE, inittags(msg))))
   {

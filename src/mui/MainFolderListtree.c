@@ -240,6 +240,7 @@ OVERLOAD(OM_NEW)
     MUIA_NList_DragType,              MUIV_NList_DragType_Immediate,
     MUIA_NList_DragSortable,          TRUE,
     MUIA_NList_ActiveObjectOnClick,   TRUE,
+    MUIA_NList_DefaultObjectOnClick,  FALSE,
     MUIA_NList_Exports,               MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
     MUIA_NList_Imports,               MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
     MUIA_NListtree_DisplayHook,       &DisplayHook,

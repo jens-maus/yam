@@ -538,6 +538,7 @@ OVERLOAD(OM_NEW)
                   MUIA_NList_AutoCopyToClip,       FALSE,
                   MUIA_NList_TypeSelect,           MUIV_NList_TypeSelect_Char,
                   MUIA_NList_ActiveObjectOnClick,  TRUE,
+                  MUIA_NList_DefaultObjectOnClick, FALSE,
                   MUIA_ContextMenu,                FALSE,
                   MUIA_CycleChain,                 TRUE,
                 End,

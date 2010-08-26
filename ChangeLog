@@ -37,6 +37,10 @@ $URL$
     closes #14.
   * YAM_TR.c: the "avoid duplicates" option cleared too many flags which caused
     mails not to be displayed in the preselection list. This closes #1.
+  * misc: disabled the "default object on click" feature for several NList
+    objects. This finally fixes the keyboard navigation issues. These issues
+    were bugs of YAM but only really occured with the latest NList 0.107
+    release.
 
 #### YAM 2.6 RELEASE ####################################################
 
