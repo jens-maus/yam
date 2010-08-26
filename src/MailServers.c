@@ -55,7 +55,9 @@ struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Conf
 
   ENTER();
 
-  if((msn = (struct MailServerNode *)calloc(1, sizeof(*msn))) != NULL)
+  if((msn = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*msn),
+                                          ASONIDE_Min, TRUE,
+                                          TAG_DONE)) != NULL)
   {
     msn->type = type;
     SET_FLAG(msn->flags, MSF_ACTIVE);
@@ -101,22 +103,20 @@ struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Conf
 /// FreeMailServerList
 void FreeMailServerList(struct MinList *mailServerList)
 {
+  struct Node *curNode;
+
   ENTER();
 
-  if(IsMinListEmpty(mailServerList) == FALSE)
+
+  // we have to free the mailServerList
+  while((curNode = RemHead((struct List *)mailServerList)) != NULL)
   {
-    struct Node *curNode;
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-    // we have to free the mailServerList
-    while((curNode = RemHead((struct List *)mailServerList)) != NULL)
-    {
-      struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
-      free(msn);
-    }
-
-    NewMinList(mailServerList);
+    FreeSysObject(ASOT_NODE, msn);
   }
+
+  NewMinList(mailServerList);
 
   LEAVE();
 }
