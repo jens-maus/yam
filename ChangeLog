@@ -34,6 +34,8 @@ $URL$
     AllocSysObject().
   * YAM_CO.c, YAM_COg.c: fixed MailServerNode handling due to allocation using
     AllocSysObject().
+  * YAM_COg.c: newly added POP3 server nodes must be added to the list of
+    servers.
 
 2010-08-25 Jens Langner <Jens.Langner@light-speed.de>
 

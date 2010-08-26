@@ -1353,6 +1353,9 @@ HOOKPROTONHNONP(CO_AddPOP3, void)
 
     DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
 
+    // add the server to the list
+    AddTail((struct List *)&CE->mailServerList, (struct Node *)msn);
+
     // set the new entry active and make sure that the host gadget will be
     // set as the new active object of the window as that gadget will be used
     // to automatically set the account name.
