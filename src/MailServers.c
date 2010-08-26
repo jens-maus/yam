@@ -56,7 +56,7 @@ struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Conf
   ENTER();
 
   if((msn = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*msn),
-                                          ASONIDE_Min, TRUE,
+                                          ASONODE_Min, TRUE,
                                           TAG_DONE)) != NULL)
   {
     msn->type = type;
