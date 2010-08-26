@@ -27,6 +27,8 @@ $URL$
     This closes #187.
   * Threads.c, YAM.c, YAM_UT.c: playback of sound samples is now done inside a
     thread. This makes it possible to play more than one sample at a time.
+  * YAM.c, YAM_COg.c: turned the embedded XPK packet list into a dynamically
+    allocated list.
 
 2010-08-25 Jens Langner <Jens.Langner@light-speed.de>
 

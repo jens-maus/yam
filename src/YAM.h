@@ -119,6 +119,7 @@ struct Global
   struct codesetList *     codesetsList;
   struct HashTable *       imageCacheHashTable;
   struct FolderList *      folders;
+  struct MinList         * xpkPackerList;
 
   #if defined(__amigaos4__)
   struct MsgPort *         AppLibPort;
@@ -160,7 +161,6 @@ struct Global
   struct sockaddr_in       TR_INetSocketAddr;
   struct MinList           readMailDataList;
   struct MinList           writeMailDataList;
-  struct MinList           xpkPackerList;
   struct MinList           zombieFileList;
   struct Theme             theme;
   struct TokenAnalyzer     spamFilter;

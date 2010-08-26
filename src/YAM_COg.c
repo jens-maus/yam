@@ -1522,7 +1522,7 @@ static Object *MakeXPKPop(Object **text, BOOL encrypt)
     {
       struct Node *curNode;
 
-      IterateList(&G->xpkPackerList, curNode)
+      IterateList(G->xpkPackerList, curNode)
       {
         struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
         BOOL suits = TRUE;
