@@ -30,6 +30,8 @@ $URL$
   * YAM.c, YAM_COg.c: turned the embedded XPK packet list into a dynamically
     allocated list.
   * MailServers.c: the server nodes are now allocated using AllocSysObject().
+  * YAM_MAf.c, YAM_RE.c: the header nodes are now allocated using
+    AllocSysObject().
 
 2010-08-25 Jens Langner <Jens.Langner@light-speed.de>
 

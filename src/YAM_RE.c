@@ -4368,7 +4368,7 @@ void FreeHeaderNode(struct HeaderNode *hdrNode)
   FreeStrBuf(hdrNode->name);
   FreeStrBuf(hdrNode->content);
 
-  free(hdrNode);
+  FreeSysObject(ASOT_NODE, hdrNode);
 
   LEAVE();
 }
