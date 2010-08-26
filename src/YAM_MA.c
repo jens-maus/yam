@@ -2898,7 +2898,13 @@ BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
 
         if((frc = ReqFile(ASL_EXPORT, G->MA->GUI.WI, tr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, "")) != NULL)
         {
-          filename = AddPath(outname, frc->drawer, frc->file, sizeof(outname));
+          // avoid empty file names
+          if(frc->file == NULL || frc->file[0] == '\0')
+            filename = NULL;
+          else
+            filename = AddPath(outname, frc->drawer, frc->file, sizeof(outname));
+
+          // now check whether the file exists and ask if it should be overwritten
           if(FileExists(filename) == TRUE)
           {
             switch(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_MESSAGEEXPORT), tr(MSG_MA_ExportAppendOpts), tr(MSG_MA_ExportAppendReq)))

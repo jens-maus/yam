@@ -23,6 +23,9 @@ $URL$
     displayed lists in the configuration window showed the wrong packers. For
     example the IDEA packer was no longer recognized as being able to encrypt.
     This closes #152.
+  * YAM_MA.c: when exporting mails the file name returned by the file requester
+    is now checked to be non-empty. Although I could not reproduce ticket #154
+    this should fix it and thus closes #154.
 
 #### YAM 2.6 RELEASE ####################################################
 
