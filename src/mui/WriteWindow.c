@@ -922,8 +922,6 @@ OVERLOAD(OM_NEW)
   ULONG i=0;
   struct Data *data;
   struct Data *tmpData;
-
-  // the static arrays
   static const char *rtitles[4] = { NULL, NULL, NULL, NULL };
   static const char *encoding[3];
   static const char *security[SEC_MAXDUMMY+1];
@@ -940,37 +938,33 @@ OVERLOAD(OM_NEW)
     return 0;
   }
 
-  // initialize static data on first call only
-  if(rtitles[0] == '\0')
-  {
-    rtitles[0] = tr(MSG_Message);
-    rtitles[1] = tr(MSG_Attachments);
-    rtitles[2] = tr(MSG_Options);
-    rtitles[3] = NULL;
+  rtitles[0] = tr(MSG_Message);
+  rtitles[1] = tr(MSG_Attachments);
+  rtitles[2] = tr(MSG_Options);
+  rtitles[3] = NULL;
 
-    encoding[0] = "Base64/QP";
-    encoding[1] = "UUencode";
-    encoding[2] = NULL;
+  encoding[0] = "Base64/QP";
+  encoding[1] = "UUencode";
+  encoding[2] = NULL;
 
-    security[SEC_NONE]    = tr(MSG_WR_SecNone);
-    security[SEC_SIGN]    = tr(MSG_WR_SecSign);
-    security[SEC_ENCRYPT] = tr(MSG_WR_SecEncrypt);
-    security[SEC_BOTH]    = tr(MSG_WR_SecBoth);
-    security[SEC_SENDANON]= tr(MSG_WR_SecAnon);
-    security[SEC_DEFAULTS]= tr(MSG_WR_SecDefaults);
-    security[SEC_MAXDUMMY]= NULL;
+  security[SEC_NONE]    = tr(MSG_WR_SecNone);
+  security[SEC_SIGN]    = tr(MSG_WR_SecSign);
+  security[SEC_ENCRYPT] = tr(MSG_WR_SecEncrypt);
+  security[SEC_BOTH]    = tr(MSG_WR_SecBoth);
+  security[SEC_SENDANON]= tr(MSG_WR_SecAnon);
+  security[SEC_DEFAULTS]= tr(MSG_WR_SecDefaults);
+  security[SEC_MAXDUMMY]= NULL;
 
-    priority[0] = tr(MSG_WR_ImpHigh);
-    priority[1] = tr(MSG_WR_ImpNormal);
-    priority[2] = tr(MSG_WR_ImpLow);
-    priority[3] = NULL;
+  priority[0] = tr(MSG_WR_ImpHigh);
+  priority[1] = tr(MSG_WR_ImpNormal);
+  priority[2] = tr(MSG_WR_ImpLow);
+  priority[3] = NULL;
 
-    signat[0] = tr(MSG_WR_NoSig);
-    signat[1] = tr(MSG_WR_DefSig);
-    signat[2] = tr(MSG_WR_AltSig1);
-    signat[3] = tr(MSG_WR_AltSig2);
-    signat[4] = NULL;
-  }
+  signat[0] = tr(MSG_WR_NoSig);
+  signat[1] = tr(MSG_WR_DefSig);
+  signat[2] = tr(MSG_WR_AltSig1);
+  signat[3] = tr(MSG_WR_AltSig2);
+  signat[4] = NULL;
 
   // set some default values
   data->useFixedFont = C->UseFixedFontWrite;

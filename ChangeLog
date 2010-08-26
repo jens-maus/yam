@@ -12,6 +12,12 @@ $URL$
   * Rexx.c, rexx/help.c: added terminating dummy entry to avoid a crash in the
     ARexx HELP implementation. This closes #159.
   * locale/german.ct: fixed a typo. This really fixes #140.
+  * mui/WriteWindow.c: the tabs' title texts and several other static texts were
+    initialized on the very first use only. Restarting YAM by choosing "Restart"
+    from the project menu closed YAM's catalog and reopened it later. This could
+    result in invalid pointers the next time the write window was opened again.
+    Now the pointers are initialized every time. We really must get rid of these
+    static variables!! This closes #167.
 
 #### YAM 2.6 RELEASE ####################################################
 
