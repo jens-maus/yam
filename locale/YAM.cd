@@ -6574,7 +6574,7 @@ Date of birth in locale format\n\
 (e.g. 19.06.1974 or 19/06/1974).
 ;
 MSG_ERROR_THREADS (2082//)
-Can't initialize thread system
+Cannot initialize thread system.
 ;
 MSG_ERROR_PLAYSOUND (2083//)
 An error occurred while trying to play\n\
@@ -7002,4 +7002,7 @@ _Retry|_Ignore
 MSG_EXECUTE_COMMAND_FAILED (2177//)
 The execution of the command '%s' failed (error code %ld: %s).
 ; COMMAND, ERRORCODE, ERRORSTRING
+;
+MSG_ERROR_METHODSTACK (2178//)
+Cannot initialize method stack.
 ;

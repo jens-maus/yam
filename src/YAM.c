@@ -1986,7 +1986,8 @@ static void InitBeforeLogin(BOOL hidden)
   CheckMCC(MUIC_TextEditor, 15, 28, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
   // initialize the method stack
-  InitMethodStack();
+  if(InitMethodStack() == FALSE)
+    Abort(tr(MSG_ERROR_METHODSTACK));
 
   // initialize the thread system of YAM
   if(InitThreads() == FALSE)
@@ -2530,6 +2531,7 @@ int main(int argc, char **argv)
     ULONG applibsig;
     ULONG threadsig;
     ULONG writeWinNotifySig;
+    ULONG methodStackSig;
     struct User *user;
     int ret;
 
@@ -2673,6 +2675,7 @@ int main(int argc, char **argv)
     applibsig         = DockyIconSignal();
     writeWinNotifySig = (1UL << G->writeWinNotifyPort->mp_SigBit);
     threadsig         = (1UL << G->threadPort->mp_SigBit);
+    methodStackSig    = (1UL << G->methodStack->mp_SigBit);
 
     D(DBF_STARTUP, "YAM allocated signals:");
     D(DBF_STARTUP, " adstsig           = %08lx", adstsig);
@@ -2682,6 +2685,7 @@ int main(int argc, char **argv)
     D(DBF_STARTUP, " applibsig         = %08lx", applibsig);
     D(DBF_STARTUP, " writeWinNotifySig = %08lx", writeWinNotifySig);
     D(DBF_STARTUP, " threadsig         = %08lx", threadsig);
+    D(DBF_STARTUP, " methodStackSig    = %08lx", methodStackSig);
 
     // start our maintanance Timer requests for
     // different purposes (writeindexes/mailcheck/autosave)
@@ -2704,7 +2708,7 @@ int main(int argc, char **argv)
     {
       if(signals != 0)
       {
-        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexxsig | appsig | applibsig | adstsig | writeWinNotifySig | threadsig);
+        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexxsig | appsig | applibsig | adstsig | writeWinNotifySig | threadsig | methodStackSig);
 
         if(isFlagSet(signals, SIGBREAKF_CTRL_C))
         {
@@ -2722,7 +2726,8 @@ int main(int argc, char **argv)
           PopUp();
 
         // handle pushed methods
-        CheckMethodStack();
+        if(isFlagSet(signals, methodStackSig))
+          CheckMethodStack();
 
         // check for a Timer event
         if(isFlagSet(signals, timsig))

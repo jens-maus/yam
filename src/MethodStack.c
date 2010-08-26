@@ -33,7 +33,6 @@
 #include <dos/dostags.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
-#include <proto/utility.h>
 
 #if defined(__amigaos4__)
 #include <exec/exectags.h>
@@ -54,7 +53,7 @@
 
 struct PushedMethod
 {
-  struct MinNode node; // required to be put into an exec list
+  struct Message msg;  // make this a real Exec message
   Object *obj;         // pointer to the object for receiving the method call
   ULONG argCount;      // number of arguments to follow
   IPTR *args;          // pointer to a memory area setup for holding the args
@@ -62,18 +61,19 @@ struct PushedMethod
 
 /// InitMethodStack
 // initialize the global method stack
-void InitMethodStack(void)
+BOOL InitMethodStack(void)
 {
+  BOOL success = FALSE;
+
   ENTER();
 
-  NewMinList(&G->methodStack);
+  if((G->methodStack = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+  {
+    success = TRUE;
+  }
 
-  memset(&G->methodStackSema, 0, sizeof(G->methodStackSema));
-  InitSemaphore(&G->methodStackSema);
-
-  G->methodStackInitialized = TRUE;
-
-  LEAVE();
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -83,23 +83,22 @@ void CleanupMethodStack(void)
 {
   ENTER();
 
-  if(G->methodStackInitialized == TRUE)
+  if(G->methodStack != NULL)
   {
-    struct Node *node;
+    struct Message *msg;
 
     // pop all methods from the stack without handling them
-    ObtainSemaphore(&G->methodStackSema);
-    while((node = RemHead((struct List *)&G->methodStack)) != NULL)
+    while((msg = GetMsg(G->methodStack)) != NULL)
     {
-      struct PushedMethod *pm = (struct PushedMethod *)node;
+      struct PushedMethod *pm = (struct PushedMethod *)msg;
 
       free(pm->args);
-      FreeSysObject(ASOT_NODE, pm);
+      FreeSysObject(ASOT_MESSAGE, pm);
     }
-    ReleaseSemaphore(&G->methodStackSema);
 
-    // we are no longer initialized
-    G->methodStackInitialized = FALSE;
+    // free the stack
+    FreeSysObject(ASOT_PORT, G->methodStack);
+    G->methodStack = NULL;
   }
 
   LEAVE();
@@ -115,9 +114,8 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
 
   ENTER();
 
-  if((pm = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*pm),
-                                         ASONODE_Min, TRUE,
-                                         TAG_DONE)) != NULL)
+  if((pm = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*pm),
+                                            TAG_DONE)) != NULL)
   {
     va_list args;
     ULONG i;
@@ -136,9 +134,7 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
     va_end(args);
 
     // push the method on the stack
-    ObtainSemaphore(&G->methodStackSema);
-    AddTail((struct List *)&G->methodStack, (struct Node *)pm);
-    ReleaseSemaphore(&G->methodStackSema);
+    PutMsg(G->methodStack, (struct Message *)pm);
 
     success = TRUE;
   }
@@ -152,33 +148,24 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
 // handle pending pushed methods on the stack
 void CheckMethodStack(void)
 {
-  struct Node *node;
+  struct Message *msg;
 
   ENTER();
 
-  do
+  // try to pop a method from the stack
+  while((msg = GetMsg(G->methodStack)) != NULL)
   {
-    // try to pop a method from the stack
-    ObtainSemaphore(&G->methodStackSema);
-    node = RemHead((struct List *)&G->methodStack);
-    ReleaseSemaphore(&G->methodStackSema);
+    struct PushedMethod *pm = (struct PushedMethod *)msg;
 
-    if(node != NULL)
-    {
-      struct PushedMethod *pm = (struct PushedMethod *)node;
+    // perform the desired action
+    DoMethodA(pm->obj, (Msg)&pm->args[0]);
 
-      // perform the desired action
-      DoMethodA(pm->obj, (Msg)&pm->args[0]);
-
-      // finally free the handled method
-      free(pm->args);
-      FreeSysObject(ASOT_NODE, pm);
-    }
+    // finally free the handled method
+    free(pm->args);
+    FreeSysObject(ASOT_MESSAGE, pm);
   }
-  while(node != NULL);
 
   LEAVE();
 }
 
 ///
-

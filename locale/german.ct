@@ -8218,7 +8218,7 @@ Benutzen Sie das landestypische Format,\n\
 z.B. 19.06.1974.
 ;
 MSG_ERROR_THREADS
-Kann das Thread-System nicht initialisieren
+Kann das Thread-System nicht initialisieren.
 ;
 MSG_ERROR_PLAYSOUND
 Beim Abspielen der Tondatei '%s'\n\
@@ -8610,4 +8610,7 @@ _Nochmals versuchen|_Ignorieren
 ;
 MSG_EXECUTE_COMMAND_FAILED
 Die Ausführung des Kommandos '%s' ist fehlgeschlagen (Fehler %ld: %s).
+;
+MSG_ERROR_METHODSTACK
+Kann den Methodstack nicht initialisieren.
 ;

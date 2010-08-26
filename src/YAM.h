@@ -175,9 +175,7 @@ struct Global
   struct Process         * mainThread;
 
   // the data for our methodstack implementation
-  struct MinList           methodStack;
-  struct SignalSemaphore   methodStackSema;
-  BOOL                     methodStackInitialized;
+  struct MsgPort         * methodStack;
 
   char                     ProgDir[SIZE_PATH];
   char                     ProgName[SIZE_FILE];

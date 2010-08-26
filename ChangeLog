@@ -7,6 +7,9 @@ $URL$
 
 2010-08-26 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, MethodStack.c: changed the method stack from a plain list to a
+    standard Exec message port. This makes it possible to Wait() for stacked
+    method instead of having to poll for them.
   * ImageCache.c: warnings about missing image files will only be issued in case
     neither the NOIMAGEWARNING ToolType nor the theme's NoImageWarning option
     are active. This avoids lots of useless warnings for the "empty" theme.
