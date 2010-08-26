@@ -1110,7 +1110,11 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
       struct MailServerNode *srcNode = (struct MailServerNode *)curNode;
       struct MailServerNode *dstNode;
 
-      if((dstNode = memdup(srcNode, sizeof(struct MailServerNode))) != NULL)
+      if((dstNode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*dstNode),
+                                                  ASONODE_Min, TRUE,
+                                                  TAG_DONE)) != NULL)
+      {
+        memcpy(dstNode, srcNode, sizeof(*dstNode));
         AddTail((struct List *)&dco->mailServerList, (struct Node *)dstNode);
       else
       {

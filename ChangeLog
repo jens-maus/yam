@@ -32,6 +32,8 @@ $URL$
   * MailServers.c: the server nodes are now allocated using AllocSysObject().
   * YAM_MAf.c, YAM_RE.c: the header nodes are now allocated using
     AllocSysObject().
+  * YAM_CO.c, YAM_COg.c: fixed MailServerNode handling due to allocation using
+    AllocSysObject().
 
 2010-08-25 Jens Langner <Jens.Langner@light-speed.de>
 

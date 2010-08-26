@@ -1383,7 +1383,7 @@ HOOKPROTONHNONP(CO_DelPOP3, void)
 
     // remove it from the internal mail server list as well.
     Remove((struct Node *)msn);
-    free(msn);
+    FreeSysObject(ASOT_NODE, msn);
   }
 
   LEAVE();
