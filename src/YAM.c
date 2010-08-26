@@ -692,24 +692,27 @@ static BOOL InitXPKPackerList(void)
 
     if((error = XpkQueryTags(XPK_PackersQuery, &xpl, TAG_DONE)) == 0)
     {
-      struct XpkPackerInfo xpi;
       unsigned int i;
 
       D(DBF_XPK, "Loaded XPK Packerlist: %ld packers found", xpl.xpl_NumPackers);
 
       for(i=0; i < xpl.xpl_NumPackers; i++)
       {
+        struct XpkPackerInfo xpi;
+
         if((error = XpkQueryTags(XPK_PackMethod, xpl.xpl_Packer[i], XPK_PackerQuery, &xpi, TAG_DONE)) == 0)
         {
           struct xpkPackerNode *newPacker;
 
-          if((newPacker = memdup(&xpi, sizeof(struct xpkPackerNode))) != NULL)
+          if((newPacker = malloc(sizeof(*newPacker))) != NULL)
           {
+            memcpy(&newPacker->info, &xpi, sizeof(newPacker->info));
+
             // because the short name isn't always equal to the packer short name
             // we work around that problem and make sure they are equal.
             strlcpy((char *)newPacker->info.xpi_Name, (char *)xpl.xpl_Packer[i], sizeof(newPacker->info.xpi_Name));
 
-            D(DBF_XPK, "Found XPKPacker: %ld: [%s] = '%s' flags = %08lx", i, xpl.xpl_Packer[i], newPacker->info.xpi_Name, newPacker->info.xpi_Flags);
+            //D(DBF_XPK, "Found XPKPacker: %ld: [%s] = '%s' flags = %08lx", i, xpl.xpl_Packer[i], newPacker->info.xpi_Name, newPacker->info.xpi_Flags);
 
             // add the new packer to our internal list.
             AddTail((struct List *)&G->xpkPackerList, (struct Node *)newPacker);
