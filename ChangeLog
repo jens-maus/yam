@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-26 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest release.
+
 2010-08-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * tools/mkrelease.sh: the dutch translation was accidentally copied as polish

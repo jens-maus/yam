@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (24.08.2010)
+## version $VER: YAM.catalog 7.5 (26.08.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 4924 2010-08-16
+; based on YAM.cd 5006 2010-08-16
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9342,6 +9342,10 @@ Data di nascita in formato locale\n\
 ; Date of birth in locale format\n\
 ; (e.g. 19.06.1974 or 19/06/1974).
 ;
+MSG_ERROR_THREADS
+Impossibile inizializzare il thread di sistema.
+; Cannot initialize thread system.
+;
 MSG_ERROR_PLAYSOUND
 Si è verificato un errore durante l'esecuzione del file\n\
 audio '%s'.\n\
@@ -9349,12 +9353,9 @@ audio '%s'.\n\
 Nota: Il problema potrebbe essere stato generato da\n\
 un datatype specifico non compatibile o danneggiato\n\
 oppure il datatype stesso non funziona correttamente.
-; An error occurred while trying to play\n\
-; the sound file '%s'.\n\
+; An error occurred while trying to play the sound file '%s'.\n\
 ; \n\
-; This could be either due to a broken or\n\
-; unsupported sound file or because your\n\
-; sound datatype is not properly working.
+; This could be either due to a broken or unsupported sound file or because your sound datatype is not properly working.
 ; FILE
 ;
 MSG_WR_CHARSET
@@ -9989,7 +9990,7 @@ menu l'opzione di verifica periodica degli aggiornamenti.
 ; software update check.
 ;
 MSG_THREAD_EXIT_WARNING_TITLE
-Avviso YAM
+Avviso di YAM
 ; YAM warning
 ;
 MSG_THREAD_EXIT_WARNING
@@ -10019,4 +10020,8 @@ MSG_EXECUTE_COMMAND_FAILED
 L'esecuzione del comando '%s' è fallita (codice di errore %ld: %s).
 ; The execution of the command '%s' failed (error code %ld: %s).
 ; COMMAND, ERRORCODE, ERRORSTRING
+;
+MSG_ERROR_METHODSTACK
+Impossibile inizializzare il metodo dello stack.
+; Cannot initialize method stack.
 ;
