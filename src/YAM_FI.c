@@ -1203,6 +1203,8 @@ HOOKPROTONHNONP(FI_SwitchFunc, void)
 {
   struct Mail *foundmail;
 
+  ENTER();
+
   // get the mail from the find list
   DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &foundmail);
 
@@ -1230,6 +1232,8 @@ HOOKPROTONHNONP(FI_SwitchFunc, void)
       set(G->FI->GUI.LV_MAILS, MUIA_NList_DisplayRecall, TRUE);
     }
   }
+
+  LEAVE();
 }
 MakeStaticHook(FI_SwitchHook, FI_SwitchFunc);
 
@@ -1239,6 +1243,8 @@ MakeStaticHook(FI_SwitchHook, FI_SwitchFunc);
 HOOKPROTONHNONP(FI_ReadFunc, void)
 {
   struct Mail *mail;
+
+  ENTER();
 
   DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
 
@@ -1258,6 +1264,8 @@ HOOKPROTONHNONP(FI_ReadFunc, void)
       }
     }
   }
+
+  LEAVE();
 }
 MakeStaticHook(FI_ReadHook, FI_ReadFunc);
 
@@ -2494,6 +2502,7 @@ static struct FI_ClassData *FI_New(void)
                    //MUIA_NList_Format,   "COL=8 W=-1 BAR, COL=1 W=-1 BAR, COL=3 W=-1 BAR, COL=4 W=-1 BAR, COL=7 W=-1 BAR, COL=5 W=-1 P=\33r BAR",
                    //MUIA_NList_Exports,  MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
                    //MUIA_NList_Imports,  MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
+                   MUIA_MainMailList_HandleDoubleClick, FALSE,
                 End,
              End,
           End,

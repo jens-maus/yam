@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainMailList.c, YAM_FI.c: the main mail list object can now be told not
+    to handle double clicks itself but to let the surrounding stuff handle this
+    case. For the mail search window this caused multiple read windows to be
+    opened, because the double click in the result list caused the click to be
+    handled twice, but the class itself and once again by the search window.
+    This closes #187.
+
 2010-08-25 Jens Langner <Jens.Langner@light-speed.de>
 
   * tcp/pop3.c, tcp/smtp.c, tcp/html.c, YAM_TR.c, misc: splitted YAM_TR.c into

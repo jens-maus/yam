@@ -457,7 +457,11 @@ OVERLOAD(OM_NEW)
     TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
+    BOOL handleDoubleClick;
     ULONG i;
+
+    // determine whether double clicks are handled by ourself or by some external stuff
+    handleDoubleClick = GetTagData(ATTR(HandleDoubleClick), TRUE, inittags(msg));
 
     // prepare the mail status images
     data->statusImage[si_Attach]   = MakeImageObject("status_attach",   G->theme.statusImages[si_Attach]);
@@ -487,7 +491,8 @@ OVERLOAD(OM_NEW)
 
     DoMethod(obj, MUIM_MainMailList_MakeFormat);
     DoMethod(obj, MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainMailList_SetMailInfo);
-    DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, MUIV_Notify_Self, 2, MUIM_MainMailList_DoubleClicked, MUIV_TriggerValue);
+    if(handleDoubleClick == TRUE)
+      DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, MUIV_Notify_Self, 2, MUIM_MainMailList_DoubleClicked, MUIV_TriggerValue);
     DoMethod(obj, MUIM_Notify, MUIA_NList_SelectChange, TRUE,           MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeSelectedHook);
 
     // connect some notifies to the mainMailList group
