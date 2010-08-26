@@ -4808,8 +4808,11 @@ BOOL PlaySound(const char *filename)
                                                       SDTA_Cycles,    1,
                                                       SDTA_SignalTask, FindTask(NULL),
                                                       #if defined(__amigaos4__)
+                                                      // SDTA_SignalBit is deprecated on AmigaOS4
+                                                      // use SDTA_SignalBitMask instead, which correctly takes a signal mask
                                                       SDTA_SignalBitMask, 1UL << signal,
                                                       #else
+                                                      // SDTA_SignalBit takes a mask instead of a bit number!!
                                                       SDTA_SignalBit, 1UL << signal,
                                                       #endif
                                                       TAG_DONE)) != NULL)
