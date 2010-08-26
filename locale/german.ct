@@ -8221,13 +8221,9 @@ MSG_ERROR_THREADS
 Kann das Thread-System nicht initialisieren.
 ;
 MSG_ERROR_PLAYSOUND
-Beim Abspielen der Tondatei '%s'\n\
-ist ein Fehler aufgetreten.\n\
+Beim Abspielen der Tondatei '%s' ist ein Fehler aufgetreten.\n\
 \n\
-Der Grund dafür könnte entweder eine beschädigte\n\
-bzw- nicht unterstützte Tondatei sein, oder Ihr\n\
-Datatype für Tondateien funktioniert nicht ordnungs-\n\
-gemäß.
+Der Grund dafür könnte entweder eine beschädigte bzw- nicht unterstützte Tondatei sein, oder Ihr Datatype für Tondateien funktioniert nicht ordnungsgemäß.
 ;
 MSG_WR_CHARSET
 Zeichenko_dierung

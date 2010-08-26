@@ -74,6 +74,7 @@
 #include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "Threads.h"
 
 #include "Debug.h"
 
@@ -754,9 +755,7 @@ HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
   ENTER();
 
   soundFile = (char *)xget((Object *)arg[0], MUIA_String_Contents);
-
-  if(PlaySound(soundFile) == FALSE)
-    MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_Okay), tr(MSG_ERROR_PLAYSOUND), soundFile);
+  DoAction(TA_PlaySound, TT_PlaySound_Filename, soundFile, TAG_DONE);
 
   LEAVE();
 }

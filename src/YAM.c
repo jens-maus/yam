@@ -1018,11 +1018,6 @@ static void Terminate(void)
   D(DBF_STARTUP, "stoping ADSTnotify...");
   ADSTnotify_stop();
 
-  // check if we have an allocated NewMailSound_Obj and dispose it.
-  D(DBF_STARTUP, "freeing newmailsound object...");
-  if(G->NewMailSound_Obj != NULL)
-    DisposeDTObject(G->NewMailSound_Obj);
-
   D(DBF_STARTUP, "freeing hideIcon...");
   if(G->HideIcon != NULL)
     FreeDiskObject(G->HideIcon);

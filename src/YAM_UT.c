@@ -4795,38 +4795,59 @@ BOOL PlaySound(const char *filename)
 
   if(DataTypesBase != NULL)
   {
-    // if we previously created a sound object
-    // lets dispose it first.
-    if(G->NewMailSound_Obj != NULL)
-      DisposeDTObject(G->NewMailSound_Obj);
+    LONG signal;
 
-    // create the new datatype object
-    if((G->NewMailSound_Obj = NewDTObject((char *)filename, DTA_SourceType, DTST_FILE,
-                                                            DTA_GroupID,    GID_SOUND,
-                                                            SDTA_Cycles,    1,
-                                                            TAG_DONE)) != NULL)
+    // allocate a signal to Wait() for the completition of the playback
+    if((signal = AllocSignal(-1)) != -1)
     {
-      // create a datatype trigger
-      struct dtTrigger dtt;
-      ULONG error;
+      Object *soundObject;
 
-      // Fill the trigger
-      dtt.MethodID     = DTM_TRIGGER;
-      dtt.dtt_GInfo    = NULL;
-      dtt.dtt_Function = STM_PLAY;
-      dtt.dtt_Data     = NULL;
+      // create the new datatype object
+      if((soundObject = NewDTObject((char *)filename, DTA_SourceType, DTST_FILE,
+                                                      DTA_GroupID,    GID_SOUND,
+                                                      SDTA_Cycles,    1,
+                                                      SDTA_SignalTask, FindTask(NULL),
+                                                      #if defined(__amigaos4__)
+                                                      SDTA_SignalBitMask, 1UL << signal,
+                                                      #else
+                                                      SDTA_SignalBit, 1UL << signal,
+                                                      #endif
+                                                      TAG_DONE)) != NULL)
+      {
+        ULONG error;
 
-      // Play the sound by calling DoMethodA()
-      if((error = DoMethodA(G->NewMailSound_Obj, (APTR)&dtt)) == 1)
-        result = TRUE;
+        // Play the sound by calling DoMethod()
+        if((error = DoMethod(soundObject, DTM_TRIGGER, NULL, STM_PLAY, NULL)) == 1)
+        {
+          D(DBF_UTIL, "started playback of '%s'", filename);
+          // wait for the playback to finish
+          Wait(SIGBREAKF_CTRL_C | 1UL << signal);
+          result = TRUE;
+        }
+        D(DBF_UTIL, "playback of '%s' returned %ld/%ld", filename, error, result);
 
-      D(DBF_UTIL, "started playback of '%s' returned %ld/%ld", filename, error, result);
+        DisposeDTObject(soundObject);
+      }
+      else
+        W(DBF_UTIL, "failed to create sound DT object from '%s'", filename);
+
+      FreeSignal(signal);
     }
     else
-      W(DBF_UTIL, "failed to create sound DT object from '%s'", filename);
+      W(DBF_UTIL, "failed to allocate signal for sound DT object '%s'", filename);
   }
   else
     W(DBF_UTIL, "datatypes.library missing, no sound playback!");
+
+  // let the application show an error in case anything went wrong
+  if(result == FALSE)
+  {
+    char *failMessage;
+
+    if(asprintf(&failMessage, tr(MSG_ERROR_PLAYSOUND), filename) != -1)
+      PushMethodOnStack(G->App, 2, MUIM_YAM_ShowError, failMessage);
+  }
+
 
   RETURN(result);
   return result;

@@ -89,6 +89,7 @@
 #include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "Threads.h"
 
 #include "tcp/Connection.h"
 #include "tcp/pop3.h"
@@ -201,7 +202,7 @@ void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
            LaunchCommand(filter->executeCmd, FALSE, OUT_STDOUT);
 
         if(hasPlaySoundAction(filter) && *filter->playSound)
-           PlaySound(filter->playSound);
+           DoAction(TA_PlaySound, TT_PlaySound_Filename, filter->playSound, TAG_DONE);
 
         if(hasDeleteAction(filter))
            SET_FLAG(mtn->tflags, TRF_DELETE);
@@ -2024,7 +2025,7 @@ void TR_NewMailAlert(void)
       LaunchCommand(C->NotifyCommand, FALSE, OUT_STDOUT);
 
     if(hasSoundNotify(C->NotifyType))
-      PlaySound(C->NotifySound);
+      DoAction(TA_PlaySound, TT_PlaySound_Filename, C->NotifySound, TAG_DONE);
   }
 
   LEAVE();

@@ -91,9 +91,9 @@ struct ThreadMessage
   enum ThreadAction action;       // the action the thread should perform
   LONG result;                    // when the thread is finished the result is stored here
   LONG priority;                  // the task priority the thread should be set to
-  struct TagItem *actionTags;
-  struct ThreadNode *threadNode;
-  struct Thread *thread;
+  struct TagItem *actionTags;     // the parameters for the action
+  struct ThreadNode *threadNode;  // link to the thread's node
+  struct Thread *thread;          // link to the thread itself
 };
 
 // we use a global message for startup/shutdown, because
@@ -215,6 +215,12 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
     {
       BayesFilterFlushTrainingData();
       result = 0;
+    }
+    break;
+
+    case TA_PlaySound:
+    {
+      result = PlaySound((const char *)GetTagData(TT_PlaySound_Filename, (IPTR)NULL, msg->actionTags));
     }
     break;
   }

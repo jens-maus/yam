@@ -65,6 +65,7 @@
 #include "FolderList.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "Threads.h"
 
 #include "Debug.h"
 
@@ -1619,9 +1620,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
 
     // PlaySound Action
     if(hasPlaySoundAction(filter) && *filter->playSound)
-    {
-      PlaySound(filter->playSound);
-    }
+      DoAction(TA_PlaySound, TT_PlaySound_Filename, filter->playSound, TAG_DONE);
 
     // Move Action
     if(hasMoveAction(filter) && !filter->remote)

@@ -21,6 +21,8 @@ $URL$
     opened, because the double click in the result list caused the click to be
     handled twice, but the class itself and once again by the search window.
     This closes #187.
+  * Threads.c, YAM.c, YAM_UT.c: playback of sound samples is now done inside a
+    thread. This makes it possible to play more than one sample at a time.
 
 2010-08-25 Jens Langner <Jens.Langner@light-speed.de>
 

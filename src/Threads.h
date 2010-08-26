@@ -39,12 +39,15 @@ enum ThreadAction
   TA_Shutdown,
   TA_LaunchCommand,
   TA_FlushSpamTrainingData,
+  TA_PlaySound,
 };
 
 #define TT_Priority                                 0xf001 // priority of the thread
 
 #define TT_LaunchCommand_Command     (TAG_STRING | (TAG_USER + 1))
 #define TT_LaunchCommand_Output                    (TAG_USER + 2)
+
+#define TT_PlaySound_Filename        (TAG_STRING | (TAG_USER + 1))
 
 /*** Thread system init/cleanup functions ***/
 BOOL InitThreads(void);
