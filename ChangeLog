@@ -11,6 +11,7 @@ $URL$
     This fixes #147.
   * Rexx.c, rexx/help.c: added terminating dummy entry to avoid a crash in the
     ARexx HELP implementation. This closes #159.
+  * locale/german.ct: fixed a typo. This really fixes #140.
 
 #### YAM 2.6 RELEASE ####################################################
 
