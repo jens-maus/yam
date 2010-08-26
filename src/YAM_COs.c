@@ -1835,10 +1835,10 @@ void CO_GetConfig(BOOL saveConfig)
 
       case cp_Read:
       {
-        CE->ShowHeader        = GetMUICycle  (gui->CY_HEADER);
+        CE->ShowHeader        = GetMUICycle(gui->CY_HEADER);
         GetMUIString(CE->ShortHeaders, gui->ST_HEADERS, sizeof(CE->ShortHeaders));
-        CE->ShowSenderInfo    = GetMUICycle  (gui->CY_SENDERINFO);
-        CE->SigSepLine        = GetMUICycle  (gui->CY_SIGSEPLINE);
+        CE->ShowSenderInfo    = GetMUICycle(gui->CY_SENDERINFO);
+        CE->SigSepLine        = GetMUICycle(gui->CY_SIGSEPLINE);
         memcpy(&CE->ColorSignature, (struct MUI_PenSpec*)xget(gui->CA_COLSIG,   MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
         memcpy(&CE->ColoredText,    (struct MUI_PenSpec*)xget(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
         memcpy(&CE->Color1stLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
@@ -1846,9 +1846,9 @@ void CO_GetConfig(BOOL saveConfig)
         memcpy(&CE->Color3rdLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
         memcpy(&CE->Color4thLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
         memcpy(&CE->ColorURL,       (struct MUI_PenSpec*)xget(gui->CA_COLURL,   MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-        CE->DisplayAllTexts   = GetMUICheck  (gui->CH_ALLTEXTS);
-        CE->FixedFontEdit     = GetMUICheck  (gui->CH_FIXFEDIT);
-        CE->WrapHeader        = GetMUICheck  (gui->CH_WRAPHEAD);
+        CE->DisplayAllTexts   = GetMUICheck(gui->CH_ALLTEXTS);
+        CE->FixedFontEdit     = GetMUICheck(gui->CH_FIXFEDIT);
+        CE->WrapHeader        = GetMUICheck(gui->CH_WRAPHEAD);
         CE->UseTextStylesRead = GetMUICheck(gui->CH_TEXTSTYLES_READ);
         CE->UseTextColorsRead = GetMUICheck(gui->CH_TEXTCOLORS_READ);
         CE->DisplayAllAltPart = GetMUICheck(gui->CH_SHOWALTPARTS);
@@ -1860,14 +1860,14 @@ void CO_GetConfig(BOOL saveConfig)
         CE->MDN_OnDelete    = GetMUICycle(gui->CY_MDN_DELETE);
         CE->MDN_Other       = GetMUICycle(gui->CY_MDN_OTHER);
 
-        CE->MultipleReadWindows = GetMUICheck  (gui->CH_MULTIWIN);
-        CE->StatusChangeDelayOn  = GetMUICheck  (gui->CH_DELAYEDSTATUS);
-        CE->StatusChangeDelay    = GetMUINumer  (gui->NB_DELAYEDSTATUS)*1000;
-        CE->ConvertHTML       = GetMUICheck(gui->CH_CONVERTHTML);
+        CE->MultipleReadWindows = GetMUICheck(gui->CH_MULTIWIN);
+        CE->StatusChangeDelayOn = GetMUICheck(gui->CH_DELAYEDSTATUS);
+        CE->StatusChangeDelay   = GetMUINumer(gui->NB_DELAYEDSTATUS)*1000;
+        CE->ConvertHTML         = GetMUICheck(gui->CH_CONVERTHTML);
 
         GetMUIText(CE->DefaultReadCharset, gui->TX_DEFCHARSET_READ, sizeof(CE->DefaultReadCharset));
-        CE->DetectCyrillic = GetMUICheck(gui->CH_DETECTCYRILLIC);
-        CE->MapForeignChars = GetMUICheck(gui->CH_MAPFOREIGNCHARS);
+        CE->DetectCyrillic    = GetMUICheck(gui->CH_DETECTCYRILLIC);
+        CE->MapForeignChars   = GetMUICheck(gui->CH_MAPFOREIGNCHARS);
         CE->GlobalMailThreads = GetMUICheck(gui->CH_GLOBALMAILTHREADS);
       }
       break;
@@ -2277,6 +2277,17 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_WRAPHEAD, CE->WrapHeader);
       setcheckmark(gui->CH_TEXTSTYLES_READ, CE->UseTextStylesRead);
       setcheckmark(gui->CH_TEXTCOLORS_READ, CE->UseTextColorsRead);
+
+      // disable all poppen objects according to the UseTextColorsRead setting
+      DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, CE->UseTextColorsRead == FALSE, gui->CA_COLSIG,
+                                                                                     gui->CA_COLTEXT,
+                                                                                     gui->CA_COL1QUOT,
+                                                                                     gui->CA_COL2QUOT,
+                                                                                     gui->CA_COL3QUOT,
+                                                                                     gui->CA_COL4QUOT,
+                                                                                     gui->CA_COLURL,
+                                                                                     NULL);
+
       setcheckmark(gui->CH_SHOWALTPARTS, CE->DisplayAllAltPart);
 
       // set the MDN stuff according to other config
