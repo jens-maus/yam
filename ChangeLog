@@ -41,6 +41,7 @@ $URL$
     objects. This finally fixes the keyboard navigation issues. These issues
     were bugs of YAM but only really occured with the latest NList 0.107
     release.
+  * tickets #1 and #14 plus some additional fixes finally close #188.
 
 #### YAM 2.6 RELEASE ####################################################
 
