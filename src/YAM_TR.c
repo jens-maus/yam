@@ -133,7 +133,6 @@ void TR_SetWinTitle(BOOL from, const char *text)
   set(G->TR->GUI.WI, MUIA_Window_Title, G->TR->WTitle);
 }
 ///
-///
 /// TR_DisplayMailList
 //  Displays a list of messages ready for download
 static void TR_DisplayMailList(BOOL largeonly)
