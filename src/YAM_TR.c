@@ -3529,6 +3529,7 @@ static void TR_DisplayMailList(BOOL largeonly)
     struct Mail *mail = mtn->mail;
     #endif
 
+    D(DBF_GUI, "checking mail with flags %08lx and subject '%s'", mtn->tflags, mail->Subject);
     // only display mails to be downloaded
     if(hasTR_LOAD(mtn) || hasTR_PRESELECT(mtn))
     {
@@ -3609,6 +3610,7 @@ static BOOL TR_GetMessageList_GET(void)
             TRF_PRESELECT,
             TRF_LOAD|TRF_DELETE|TRF_PRESELECT
           };
+          int tflags;
 
           newMail->Size  = size;
 
@@ -3616,14 +3618,19 @@ static BOOL TR_GetMessageList_GET(void)
                  (C->P3[G->TR->POP_Nr]->DeleteOnServer == TRUE ? 2 : 0) +
                  (G->TR->GUIlevel == POP_USER ? 4 : 0) +
                  ((C->WarnSize > 0 && newMail->Size >= (C->WarnSize*1024)) ? 8 : 0);
-          D(DBF_GUI, "mail transfer flags %08lx", mode);
+          tflags = mode2tflags[mode];
+          // if preselection is configured then force displaying this mail in the list
+          if(C->PreSelection >= PSM_ALWAYS)
+            SET_FLAG(tflags, TRF_PRESELECT);
+
+          D(DBF_GUI, "mail transfer mode %ld, tflags %08lx", mode, tflags);
 
           // allocate a new MailTransferNode and add it to our
           // new transferlist
           if((mtn = calloc(1, sizeof(struct MailTransferNode))) != NULL)
           {
             mtn->mail = newMail;
-            mtn->tflags = mode2tflags[mode];
+            mtn->tflags = tflags;
             mtn->index = index;
 
             AddTail((struct List *)&G->TR->transferList, (struct Node *)mtn);
@@ -4970,7 +4977,7 @@ static BOOL FilterDuplicates(void)
                     // make sure the mail is flagged as being ignoreable
                     G->TR->Stats.DupSkipped++;
                     // don't download this mail, because it has been downloaded before
-                    MASK_FLAG(mtn->tflags, TRF_DELETE);
+                    CLEAR_FLAG(mtn->tflags, TRF_LOAD);
 
                     // mark the UIDLtoken as being checked
                     token->checked = TRUE;
@@ -5026,7 +5033,7 @@ static BOOL FilterDuplicates(void)
             {
               G->TR->Stats.DupSkipped++;
               // don't download this mail, because it has been downloaded before
-              MASK_FLAG(mtn->tflags, TRF_DELETE);
+              CLEAR_FLAG(mtn->tflags, TRF_LOAD);
 
               D(DBF_UIDL, "mail %ld: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
             }

@@ -35,6 +35,8 @@ $URL$
     bedded list objects. Thus we have to distinguish between these two in lots
     of places. Together with the latest modificiations to NList itself this
     closes #14.
+  * YAM_TR.c: the "avoid duplicates" option cleared too many flags which caused
+    mails not to be displayed in the preselection list. This closes #1.
 
 #### YAM 2.6 RELEASE ####################################################
 
