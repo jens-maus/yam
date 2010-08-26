@@ -26,6 +26,10 @@ $URL$
   * YAM_MA.c: when exporting mails the file name returned by the file requester
     is now checked to be non-empty. Although I could not reproduce ticket #154
     this should fix it and thus closes #154.
+  * YAM_TR.c: in case an imported mail contains both the Status and the X-Status
+    header lines the "new" state of the mail is derived from the Status header
+    line only, because the X-Status header line does not contain any explicit
+    information about the "new" state. This closes #118.
 
 #### YAM 2.6 RELEASE ####################################################
 
