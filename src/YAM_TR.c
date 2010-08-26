@@ -6623,7 +6623,8 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               char *buffer = NULL;
               size_t size = 0;
               BOOL foundBody = FALSE;
-              unsigned int stat = SFLAG_NONE;
+              unsigned int status = SFLAG_NONE;
+              unsigned int xstatus = SFLAG_NONE;
               BOOL ownStatusFound = FALSE;
 
               // if the mail is not flagged as 'loading' we can continue with the next
@@ -6656,20 +6657,12 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                     // we search for some interesting header lines (i.e. X-Status: etc.)
                     if(strnicmp(buffer, "X-Status: ", 10) == 0)
                     {
-                      if(ownStatusFound == TRUE)
-                        stat |= MA_FromXStatusHeader(&buffer[10]);
-                      else
-                        stat = MA_FromXStatusHeader(&buffer[10]);
-
+                      xstatus = MA_FromXStatusHeader(&buffer[10]);
                       ownStatusFound = TRUE;
                     }
                     else if(strnicmp(buffer, "Status: ", 8) == 0)
                     {
-                      if(ownStatusFound == TRUE)
-                        stat |= MA_FromStatusHeader(&buffer[8]);
-                      else
-                        stat = MA_FromStatusHeader(&buffer[8]);
-
+                      status = MA_FromStatusHeader(&buffer[8]);
                       ownStatusFound = TRUE;
                     }
                   }
@@ -6716,15 +6709,24 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                 // define the default status flags depending on the
                 // folder
                 if(ftype == FT_OUTGOING)
-                  stat = SFLAG_QUEUED | SFLAG_READ;
+                  status = SFLAG_QUEUED | SFLAG_READ;
                 else if(ftype == FT_SENT || ftype == FT_CUSTOMSENT)
-                  stat = SFLAG_SENT | SFLAG_READ;
+                  status = SFLAG_SENT | SFLAG_READ;
                 else
-                  stat = SFLAG_NEW;
+                  status = SFLAG_NEW;
+              }
+              else
+              {
+                // Check whether Status and X-Status contained some contradicting flags.
+                // The X-Status header line contains no explicit information about the "new"
+                // state of a mail, but the Status header line does. Hence we derive this
+                // flag from the Status header line only.
+                if(isFlagClear(status, SFLAG_NEW) && isFlagSet(xstatus, SFLAG_NEW))
+                  CLEAR_FLAG(xstatus, SFLAG_NEW);
               }
 
               // set the status flags now
-              SET_FLAG(mail->sflags, stat);
+              SET_FLAG(mail->sflags, status | xstatus);
 
               // depending on the Status we have to set the transDate or not
               if(!hasStatusQueued(mail) && !hasStatusHold(mail))

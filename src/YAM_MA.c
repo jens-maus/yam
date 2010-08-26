@@ -1127,12 +1127,14 @@ char *MA_ToXStatusHeader(struct Mail *mail)
 unsigned int MA_FromStatusHeader(char *statusflags)
 {
   unsigned int sflags = SFLAG_NEW;
+  char c;
 
   ENTER();
 
-  while(*statusflags != '\0')
+  D(DBF_MAIL, "getting flags from status '%s'", statusflags);
+  while((c = *statusflags++) != '\0')
   {
-    switch(*statusflags)
+    switch(c)
     {
       case 'R':
         SET_FLAG(sflags, SFLAG_READ);
@@ -1142,9 +1144,8 @@ unsigned int MA_FromStatusHeader(char *statusflags)
         CLEAR_FLAG(sflags, SFLAG_NEW);
       break;
     }
-
-    statusflags++;
   }
+  D(DBF_MAIL, "status flags %08lx", sflags);
 
   RETURN(sflags);
   return sflags;
@@ -1156,12 +1157,14 @@ unsigned int MA_FromStatusHeader(char *statusflags)
 unsigned int MA_FromXStatusHeader(char *xstatusflags)
 {
   unsigned int sflags = SFLAG_NEW;
+  char c;
 
   ENTER();
 
-  while(*xstatusflags != '\0')
+  D(DBF_MAIL, "getting flags from xstatus '%s'", xstatusflags);
+  while((c = *xstatusflags++) != '\0')
   {
-    switch(*xstatusflags)
+    switch(c)
     {
       case 'R':
         SET_FLAG(sflags, SFLAG_READ);
@@ -1202,9 +1205,8 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags)
         CLEAR_FLAG(sflags, SFLAG_AUTOSPAM);
       break;
     }
-
-    xstatusflags++;
   }
+  D(DBF_MAIL, "xstatus flags %08lx", sflags);
 
   RETURN(sflags);
   return sflags;
