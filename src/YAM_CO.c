@@ -1116,6 +1116,7 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
       {
         memcpy(dstNode, srcNode, sizeof(*dstNode));
         AddTail((struct List *)&dco->mailServerList, (struct Node *)dstNode);
+      }
       else
       {
         success = FALSE;
