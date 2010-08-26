@@ -30,6 +30,11 @@ $URL$
     header lines the "new" state of the mail is derived from the Status header
     line only, because the X-Status header line does not contain any explicit
     information about the "new" state. This closes #118.
+  * YAM_MA.c, mui/MainWindow.c, mui/MainMailListGroup.c: the "active object on
+    click" feature of NList must operate on listview objects instead of the em-
+    bedded list objects. Thus we have to distinguish between these two in lots
+    of places. Together with the latest modificiations to NList itself this
+    closes #14.
 
 #### YAM 2.6 RELEASE ####################################################
 

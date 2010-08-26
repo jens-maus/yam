@@ -37,6 +37,7 @@
 /* CLASSDATA
 struct Data
 {
+  Object *mainListviewObjects[2];
   Object *mainListObjects[2];
   struct Folder *lastActiveFolder;
   struct Mail *lastActiveMail;
@@ -55,7 +56,9 @@ enum MainListType { LT_MAIN=0, LT_QUICKVIEW };
 OVERLOAD(OM_NEW)
 {
   struct Data *data;
+  Object *mainListview;
   Object *mainList;
+  Object *quickviewListview;
   Object *quickviewList;
   int i;
 
@@ -63,7 +66,7 @@ OVERLOAD(OM_NEW)
 
     MUIA_Group_PageMode, TRUE,
 
-    Child, NListviewObject,
+    Child, mainListview = NListviewObject,
        MUIA_CycleChain, TRUE,
        MUIA_NListview_NList, mainList = MainMailListObject,
           MUIA_ObjectID,                   MAKE_ID('N','L','0','2'),
@@ -73,7 +76,7 @@ OVERLOAD(OM_NEW)
           MUIA_NList_Imports,              MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
        End,
     End,
-    Child, NListviewObject,
+    Child, quickviewListview = NListviewObject,
        MUIA_CycleChain, TRUE,
        MUIA_NListview_NList, quickviewList = MainMailListObject,
           MUIA_ContextMenu,                C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never,
@@ -88,6 +91,8 @@ OVERLOAD(OM_NEW)
 
   data = (struct Data *)INST_DATA(cl,obj);
 
+  data->mainListviewObjects[LT_MAIN] = mainListview;
+  data->mainListviewObjects[LT_QUICKVIEW] = quickviewListview;
   data->mainListObjects[LT_MAIN] = mainList;
   data->mainListObjects[LT_QUICKVIEW] = quickviewList;
 
@@ -113,10 +118,11 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    ATTR(ActiveList):       *store = data->activeList; return TRUE;
-    ATTR(ActiveListObject): *store = (ULONG)data->mainListObjects[data->activeList]; return TRUE;
-    ATTR(MainList):         *store = (ULONG)data->mainListObjects[LT_MAIN]; return TRUE;
-    ATTR(LastActiveMail):   *store = (ULONG)data->lastActiveMail; return TRUE;
+    ATTR(ActiveList):           *store = data->activeList; return TRUE;
+    ATTR(ActiveListviewObject): *store = (ULONG)data->mainListviewObjects[data->activeList]; return TRUE;
+    ATTR(ActiveListObject):     *store = (ULONG)data->mainListObjects[data->activeList]; return TRUE;
+    ATTR(MainList):             *store = (ULONG)data->mainListObjects[LT_MAIN]; return TRUE;
+    ATTR(LastActiveMail):       *store = (ULONG)data->lastActiveMail; return TRUE;
 
     // we also return foreign attributes
     case MUIA_NList_Active:
@@ -147,8 +153,8 @@ OVERLOAD(OM_SET)
         {
           // set the new mainlist as the default object of the window it belongs to
           // but only if not another one is yet active
-          if((Object*)xget(_win(obj), MUIA_Window_DefaultObject) == data->mainListObjects[data->activeList])
-            set(_win(obj), MUIA_Window_DefaultObject, data->mainListObjects[tag->ti_Data]);
+          if((Object*)xget(_win(obj), MUIA_Window_DefaultObject) == data->mainListviewObjects[data->activeList])
+            set(_win(obj), MUIA_Window_DefaultObject, data->mainListviewObjects[tag->ti_Data]);
 
           data->activeList = tag->ti_Data;
         }
@@ -172,8 +178,8 @@ OVERLOAD(OM_SET)
       case MUIA_NList_SortType2:
       case MUIA_NList_KeyLeftFocus:
       {
-        set(data->mainListObjects[LT_MAIN], tag->ti_Tag, tag->ti_Data);
-        set(data->mainListObjects[LT_QUICKVIEW], tag->ti_Tag, tag->ti_Data);
+        set(data->mainListviewObjects[LT_MAIN], tag->ti_Tag, tag->ti_Data);
+        set(data->mainListviewObjects[LT_QUICKVIEW], tag->ti_Tag, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -193,7 +199,7 @@ OVERLOAD(MUIM_GoActive)
 
   // we don't forward the GoActive() call to our own
   // superclass but forward it to the activeList object itself
-  set(_win(obj), MUIA_Window_ActiveObject, data->mainListObjects[data->activeList]);
+  set(_win(obj), MUIA_Window_ActiveObject, data->mainListviewObjects[data->activeList]);
 
   RETURN(0);
   return 0;
@@ -411,7 +417,7 @@ DECLARE(SwitchToList) // enum MainListType type
     }
 
     // see if we have to make the switched object as the new active one
-    if(((Object *)xget(_win(data->mainListObjects[data->activeList]), MUIA_Window_ActiveObject)) == data->mainListObjects[data->activeList])
+    if(((Object *)xget(_win(data->mainListviewObjects[data->activeList]), MUIA_Window_ActiveObject)) == data->mainListviewObjects[data->activeList])
       listWasActive = TRUE;
 
     // switch the page of the group now
@@ -435,7 +441,7 @@ DECLARE(SwitchToList) // enum MainListType type
     }
 
     if(listWasActive == TRUE)
-      xset(_win(data->mainListObjects[data->activeList]), MUIA_Window_ActiveObject, data->mainListObjects[data->activeList]);
+      xset(_win(data->mainListviewObjects[data->activeList]), MUIA_Window_ActiveObject, data->mainListviewObjects[data->activeList]);
   }
 
   DoMethod(data->mainListObjects[LT_QUICKVIEW], MUIM_NList_Clear);

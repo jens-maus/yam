@@ -4366,12 +4366,12 @@ struct MA_ClassData *MA_New(void)
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
       // set the maillist group as the active object of that window
-      set(data->GUI.WI, MUIA_Window_ActiveObject, xget(data->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject));
+      set(data->GUI.WI, MUIA_Window_ActiveObject, xget(data->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListviewObject));
 
       // make sure to set the KeyLeft/Right Focus for the mainmaillist and
       // folder listtree objects
-      set(data->GUI.PG_MAILLIST, MUIA_NList_KeyLeftFocus, data->GUI.NL_FOLDERS);
-      set(data->GUI.NL_FOLDERS, MUIA_NList_KeyRightFocus, data->GUI.PG_MAILLIST);
+      set(data->GUI.PG_MAILLIST, MUIA_NList_KeyLeftFocus, data->GUI.LV_FOLDERS);
+      set(data->GUI.LV_FOLDERS, MUIA_NList_KeyRightFocus, data->GUI.PG_MAILLIST);
 
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUT,     MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ShowAboutWindowHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_VERSION,   MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_CheckVersionHook);
