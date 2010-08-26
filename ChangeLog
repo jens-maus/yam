@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tools/mkrelease.sh: copied over the mkrelease.sh script from the 2.7 branch.
+    This fixes #14.
+
 #### YAM 2.6 RELEASE ####################################################
 
 2010-02-21 Jens Langner <Jens.Langner@light-speed.de>
