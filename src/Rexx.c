@@ -161,6 +161,7 @@ struct rxs_command rxs_commandlist[] =
   { "WRITESEND", NULL, NULL, rx_writesend },
   { "WRITESUBJECT", "SUBJECT/A", NULL, rx_writesubject },
   { "WRITETO", "ADDRESS/A/M,ADD/S", NULL, rx_writeto },
+  { NULL, NULL, NULL, NULL }
 };
 
 ///
@@ -466,7 +467,7 @@ static struct rxs_command *ParseRXCommand(char **arg)
   SHOWSTRING(DBF_REXX, *arg);
 
   key.command = com;
-  cmd = (struct rxs_command *)bsearch(&key, rxs_commandlist, ARRAY_SIZE(rxs_commandlist), sizeof(struct rxs_command), compare_rxs_commands);
+  cmd = (struct rxs_command *)bsearch(&key, rxs_commandlist, ARRAY_SIZE(rxs_commandlist)-1, sizeof(struct rxs_command), compare_rxs_commands);
 
   SHOWVALUE(DBF_REXX, cmd);
 

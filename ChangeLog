@@ -9,6 +9,8 @@ $URL$
 
   * tools/mkrelease.sh: copied over the mkrelease.sh script from the 2.7 branch.
     This fixes #147.
+  * Rexx.c, rexx/help.c: added terminating dummy entry to avoid a crash in the
+    ARexx HELP implementation. This closes #159.
 
 #### YAM 2.6 RELEASE ####################################################
 
