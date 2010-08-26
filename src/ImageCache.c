@@ -130,7 +130,7 @@ static BOOL LoadImage(struct ImageCacheNode *node)
     else
       E(DBF_IMAGE, "wasn't able to load specified image '%s'. error: %ld", node->filename, IoErr());
   }
-  else
+  else if(G->NoImageWarning == FALSE)
     W(DBF_IMAGE, "specified image '%s' doesn't exist.", node->filename);
 
   RETURN(result);

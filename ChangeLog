@@ -7,6 +7,9 @@ $URL$
 
 2010-08-26 Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: warnings about missing image files will only be issued in case
+    neither the NOIMAGEWARNING ToolType nor the theme's NoImageWarning option
+    are active. This avoids lots of useless warnings for the "empty" theme.
   * mui/MainMailList.c, YAM_FI.c: the main mail list object can now be told not
     to handle double clicks itself but to let the surrounding stuff handle this
     case. For the mail search window this caused multiple read windows to be
