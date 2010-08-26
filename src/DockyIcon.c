@@ -56,6 +56,26 @@ void InitDockyIcon(void)
   if(ApplicationBase != NULL)
   {
     struct ApplicationIconInfo aii;
+    char filename[SIZE_PATHFILE];
+    struct TagItem registerTags[] =
+    {
+      { REGAPP_FileName,          (uint32)filename },
+      { REGAPP_UniqueApplication, TRUE },
+      { REGAPP_URLIdentifier,     (uint32)"yam.ch" },
+      { REGAPP_AppIconInfo,       (uint32)&aii },
+      { REGAPP_Hidden,            xget(G->App, MUIA_Application_Iconified) },
+      { REGAPP_Description,       (uint32)tr(MSG_APP_DESCRIPTION) },
+      { TAG_DONE,                 0 }
+    };
+    struct TagItem portTags[] =
+    {
+      { APPATTR_Port, (uint32)&G->AppLibPort },
+      { TAG_DONE, 0 }
+    };
+
+    // combine the full application path
+    strlcpy(filename, G->ProgDir, sizeof(filename));
+    AddPart(filename, G->ProgName, sizeof(filename));
 
     if(C->DockyIcon == TRUE)
     {
@@ -70,18 +90,57 @@ void InitDockyIcon(void)
     }
 
     // register YAM to application.library
-    // application.lib V52.1 crashes if it sees REGAPP_Description and V53.2
-    // misinterprets german umlauts, hence we require at least V53.3 for the
-    // description string.
-    if((G->applicationID = RegisterApplication("YAM", REGAPP_UniqueApplication, TRUE,
-                                                      REGAPP_URLIdentifier,     "yam.ch",
-                                                      REGAPP_AppIconInfo,       (uint32)&aii,
-                                                      REGAPP_Hidden,            xget(G->App, MUIA_Application_Iconified),
-                                                      LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 3) ? REGAPP_Description : TAG_IGNORE, tr(MSG_APP_DESCRIPTION),
-                                                      TAG_DONE)) != 0)
+    if(IApplication->Data.Version >= 2)
     {
-      GetApplicationAttrs(G->applicationID, APPATTR_Port, (uint32)&G->AppLibPort,
-                                            TAG_DONE);
+      // the V2 interface uses regular tags
+      // check whether we compile with the old V1 tag definitions, while already having
+      // a new V2 interface. If yes, then we must adapt the tag values by simply
+      // adding TAG_USER to the old definition.
+      if(REGAPP_UniqueApplication < TAG_USER)
+      {
+        registerTags[0].ti_Tag += TAG_USER;
+        registerTags[1].ti_Tag += TAG_USER;
+        registerTags[2].ti_Tag += TAG_USER;
+        registerTags[3].ti_Tag += TAG_USER;
+        registerTags[4].ti_Tag += TAG_USER;
+        registerTags[5].ti_Tag += TAG_USER;
+
+        portTags[0].ti_Tag += TAG_USER;
+      }
+    }
+    else
+    {
+      // we have the old V1 interface
+      // the V1 interface uses non-standard tags which collide with standard
+      // tags like TAG_IGNORE and TAG_MORE, thus we have to take additional
+      // care here.
+      // check whether we compile with the new V2 tag definitions, but still got
+      // an old V1 interface. If yes, then we must adapt the tag values by simply
+      // substracting TAG_USER from the new definition.
+      if(REGAPP_UniqueApplication >= TAG_USER)
+      {
+        registerTags[0].ti_Tag -= TAG_USER;
+        registerTags[1].ti_Tag -= TAG_USER;
+        registerTags[2].ti_Tag -= TAG_USER;
+        registerTags[3].ti_Tag -= TAG_USER;
+        registerTags[4].ti_Tag -= TAG_USER;
+        registerTags[5].ti_Tag -= TAG_USER;
+
+        portTags[0].ti_Tag -= TAG_USER;
+      }
+
+      // application.lib V52.1 crashes if it sees REGAPP_Description and V53.2
+      // misinterprets german umlauts, hence we require at least V53.3 for the
+      // description string.
+      if(LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 3) == FALSE)
+        registerTags[5].ti_Tag = TAG_DONE;
+
+    }
+
+    // the dirty work is done, let's register us
+    if((G->applicationID = RegisterApplicationA("YAM", registerTags)) != 0)
+    {
+      GetApplicationAttrsA(G->applicationID, portTags);
       if(G->AppLibPort == NULL)
         E(DBF_STARTUP, "error on trying to retrieve application libraries MsgPort for YAM.");
     }
@@ -131,6 +190,11 @@ void UpdateDockyIcon(void)
   if(G->applicationID > 0 && G->LastIconID != G->currentAppIcon)
   {
     struct ApplicationIconInfo aii;
+    struct TagItem iconTags[] =
+    {
+      { APPATTR_IconType, (uint32)&aii },
+      { TAG_DONE, 0 }
+    };
 
     if(C->DockyIcon == FALSE)
     {
@@ -144,12 +208,24 @@ void UpdateDockyIcon(void)
     }
     else
     {
-      D(DBF_GUI, "set custom Docky icon %ld %p", G->currentAppIcon, G->theme.icons[G->currentAppIcon]);
+      D(DBF_GUI, "set custom Docky icon %ld %08lx", G->currentAppIcon, G->theme.icons[G->currentAppIcon]);
       aii.iconType = APPICONT_CustomIcon;
       aii.info.customIcon = G->theme.icons[G->currentAppIcon];
     }
 
-    if(SetApplicationAttrs(G->applicationID, APPATTR_IconType, (uint32)&aii, TAG_DONE))
+    // adapt the tag values for the different interface versions
+    if(IApplication->Data.Version >= 2)
+    {
+      if(APPATTR_IconType < TAG_USER)
+        iconTags[0].ti_Tag += TAG_USER;
+    }
+    else
+    {
+      if(APPATTR_IconType >= TAG_USER)
+        iconTags[0].ti_Tag -= TAG_USER;
+    }
+
+    if(SetApplicationAttrsA(G->applicationID, iconTags))
     {
       D(DBF_GUI, "Docky icon changed");
       if(C->DockyIcon == TRUE)

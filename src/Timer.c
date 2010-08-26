@@ -308,7 +308,7 @@ BOOL InitTimers(void)
       {
         // needed to get GetSysTime() working
         if((TimerBase = (APTR)G->timerData.timer[0].tr->Request.io_Device) &&
-           GETINTERFACE("main", ITimer, TimerBase))
+           GETINTERFACE("main", 1, ITimer, TimerBase))
         {
           enum Timer tid;
 

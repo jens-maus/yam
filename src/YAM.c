@@ -173,6 +173,7 @@ static BOOL InitLib(const char *libname,
                     ULONG revision,
                     struct Library **libbase,
                     const char *iname,
+                    ULONG iversion,
                     struct Interface **iface,
                     BOOL required,
                     const char *homepage)
@@ -214,16 +215,16 @@ static BOOL InitLib(const char *libname,
       struct Interface *i;
 
       // if we weren't able to obtain the interface, lets close the library also
-      if(GETINTERFACE(iname, i, base) == NULL)
+      if(GETINTERFACE(iname, iversion, i, base) == NULL)
       {
-        D(DBF_STARTUP, "InitLib: can't get '%s' interface of library %s", iname, libname);
+        D(DBF_STARTUP, "InitLib: can't get v%ld '%s' interface of library %s", iversion, iname, libname);
 
         CloseLibrary(base);
         *libbase = NULL;
         base = NULL;
       }
       else
-        D(DBF_STARTUP, "InitLib: library %s v%ld.%ld with iface '%s' successfully opened.", libname, base->lib_Version, base->lib_Revision, iname);
+        D(DBF_STARTUP, "InitLib: library %s v%ld.%ld with iface '%s' v%ld successfully opened.", libname, base->lib_Version, base->lib_Revision, iname, iversion);
 
       // store interface pointer
       *iface = i;
@@ -568,7 +569,7 @@ static int GetDST(BOOL update)
   // check via timezone.library in case we are compiled for AmigaOS4
   if((update == FALSE || ADSTdata.method == ADST_TZLIB))
   {
-    if(INITLIB("timezone.library", 52, 1, &TimezoneBase, "main", &ITimezone, TRUE, NULL))
+    if(INITLIB("timezone.library", 52, 1, &TimezoneBase, "main", 1, &ITimezone, TRUE, NULL))
     {
       BYTE dstSetting = TFLG_UNKNOWN;
 
@@ -1819,7 +1820,7 @@ static void InitBeforeLogin(BOOL hidden)
 
   // First open locale.library, so we can display a translated error requester
   // in case some of the other libraries can't be opened.
-  if(INITLIB("locale.library", 38, 0, &LocaleBase, "main", &ILocale, TRUE, NULL))
+  if(INITLIB("locale.library", 38, 0, &LocaleBase, "main", 1, &ILocale, TRUE, NULL))
     G->Locale = OpenLocale(NULL);
 
   // Now load the catalog of YAM
@@ -1828,42 +1829,42 @@ static void InitBeforeLogin(BOOL hidden)
 
   // load&initialize all required libraries
   // first all system relevant libraries
-  INITLIB("graphics.library",      36, 0, &GfxBase,       "main", &IGraphics,  TRUE,  NULL);
-  INITLIB("layers.library",        39, 0, &LayersBase,    "main", &ILayers,    TRUE,  NULL);
-  INITLIB("workbench.library",     36, 0, &WorkbenchBase, "main", &IWorkbench, TRUE,  NULL);
-  INITLIB("keymap.library",        36, 0, &KeymapBase,    "main", &IKeymap,    TRUE,  NULL);
-  INITLIB("iffparse.library",      36, 0, &IFFParseBase,  "main", &IIFFParse,  TRUE,  NULL);
-  INITLIB("rexxsyslib.library",    36, 0, &RexxSysBase,   "main", &IRexxSys,   TRUE,  NULL);
-  INITLIB("datatypes.library",     39, 0, &DataTypesBase, "main", &IDataTypes, TRUE,  NULL);
+  INITLIB("graphics.library",      36, 0, &GfxBase,       "main", 1, &IGraphics,  TRUE,  NULL);
+  INITLIB("layers.library",        39, 0, &LayersBase,    "main", 1, &ILayers,    TRUE,  NULL);
+  INITLIB("workbench.library",     36, 0, &WorkbenchBase, "main", 1, &IWorkbench, TRUE,  NULL);
+  INITLIB("keymap.library",        36, 0, &KeymapBase,    "main", 1, &IKeymap,    TRUE,  NULL);
+  INITLIB("iffparse.library",      36, 0, &IFFParseBase,  "main", 1, &IIFFParse,  TRUE,  NULL);
+  INITLIB("rexxsyslib.library",    36, 0, &RexxSysBase,   "main", 1, &IRexxSys,   TRUE,  NULL);
+  INITLIB("datatypes.library",     39, 0, &DataTypesBase, "main", 1, &IDataTypes, TRUE,  NULL);
 
   // try to open the cybergraphics.library on non-OS4 systems as on OS4 we use the
   // new graphics.library functions instead.
   #if !defined(__amigaos4__)
-  INITLIB("cybergraphics.library", 40, 0, &CyberGfxBase,  "main", &ICyberGfx,  FALSE, NULL);
+  INITLIB("cybergraphics.library", 40, 0, &CyberGfxBase,  "main", 1, &ICyberGfx,  FALSE, NULL);
   #endif
 
   // try to open MUI 3.8+
-  INITLIB("muimaster.library",     19, 0, &MUIMasterBase, "main", &IMUIMaster, TRUE, "http://www.sasg.com/");
+  INITLIB("muimaster.library",     19, 0, &MUIMasterBase, "main", 1, &IMUIMaster, TRUE, "http://www.sasg.com/");
 
   // openurl.library has a homepage, but providing that homepage without having OpenURL
   // installed would result in a paradoxon, because InitLib() would provide a button
   // to visit the URL which in turn requires OpenURL to be installed...
   // Hence we try to open openurl.library without
-  INITLIB("openurl.library",        1, 0, &OpenURLBase,   "main", &IOpenURL,   FALSE, NULL);
+  INITLIB("openurl.library",        1, 0, &OpenURLBase,   "main", 1, &IOpenURL,   FALSE, NULL);
 
   // try to open the mandatory codesets.library
-  INITLIB("codesets.library",       6, 8, &CodesetsBase,  "main", &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
+  INITLIB("codesets.library",       6, 8, &CodesetsBase,  "main", 1, &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
 
   // try to open expat.library for our XML import stuff
-  INITLIB("expat.library", XML_MAJOR_VERSION, 0, &ExpatBase, "main", &IExpat, FALSE, NULL);
+  INITLIB("expat.library", XML_MAJOR_VERSION, 0, &ExpatBase, "main", 1, &IExpat, FALSE, NULL);
 
   // we check for the amisslmaster.library v3 accordingly
-  if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))
+  if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", 1, &IAmiSSLMaster, FALSE, NULL))
   {
     if(InitAmiSSLMaster(AMISSL_CURRENT_VERSION, TRUE))
     {
       if((AmiSSLBase = OpenAmiSSL()) != NULL &&
-         GETINTERFACE("main", IAmiSSL, AmiSSLBase))
+         GETINTERFACE("main", 1, IAmiSSL, AmiSSLBase))
       {
         G->TR_UseableTLS = TRUE;
 
@@ -1876,7 +1877,9 @@ static void InitBeforeLogin(BOOL hidden)
   // and will be used to notify YAM of certain events and also manage
   // the docky icon accordingly.
   #if defined(__amigaos4__)
-  INITLIB("application.library", 50, 0, &ApplicationBase, "application", &IApplication, FALSE, NULL);
+  // try version 2 first, if that is not available try version 1
+  if(INITLIB("application.library", 50, 0, &ApplicationBase, "application", 2, &IApplication, FALSE, NULL) == FALSE)
+    INITLIB("application.library", 50, 0, &ApplicationBase, "application", 1, &IApplication, FALSE, NULL);
   #endif
 
   // Lets check for the correct TheBar.mcc version
@@ -1941,12 +1944,12 @@ static void InitBeforeLogin(BOOL hidden)
 
   // try to open the xadmaster.library v12.1+ as this is the somewhat
   // most recent version publically available
-  INITLIB(XADNAME, 12, 1, &xadMasterBase, "main", &IxadMaster, FALSE, NULL);
+  INITLIB(XADNAME, 12, 1, &xadMasterBase, "main", 1, &IxadMaster, FALSE, NULL);
 
   // try to open xpkmaster.library v5.0+ as this is somewhat the most
   // stable version available. Previous version might have some issues
   // as documented in our FAQ.
-  INITLIB(XPKNAME, 5, 0, &XpkBase, "main", &IXpk, FALSE, NULL);
+  INITLIB(XPKNAME, 5, 0, &XpkBase, "main", 1, &IXpk, FALSE, NULL);
   InitXPKPackerList();
 
   // initialize our timers
@@ -2233,7 +2236,7 @@ int main(int argc, char **argv)
   if(LIB_VERSION_IS_AT_LEAST(SysBase, 52, 2) == FALSE)
   {
     if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) != NULL &&
-       GETINTERFACE("main", IIntuition, IntuitionBase))
+       GETINTERFACE("main", 1, IIntuition, IntuitionBase))
     {
       struct EasyStruct ErrReq;
 
@@ -2284,10 +2287,10 @@ int main(int argc, char **argv)
     BOOL goon = TRUE;
 
     if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) != NULL &&
-       GETINTERFACE("main", IIntuition, IntuitionBase))
+       GETINTERFACE("main", 1, IIntuition, IntuitionBase))
     {
       if((UtilityBase = (APTR)OpenLibrary("utility.library", 36)) != NULL &&
-         GETINTERFACE("main", IUtility, UtilityBase))
+         GETINTERFACE("main", 1, IUtility, UtilityBase))
       {
         char var;
         struct EasyStruct ErrReq;
@@ -2297,7 +2300,7 @@ int main(int argc, char **argv)
         if((OpenURLBase = (APTR)OpenLibrary("openurl.library", 1)) != NULL)
         {
           #if defined(__amigaos4__)
-          GETINTERFACE("main", IOpenURL, OpenURLBase);
+          GETINTERFACE("main", 1, IOpenURL, OpenURLBase);
           #endif
         }
 
@@ -2399,10 +2402,10 @@ int main(int argc, char **argv)
 
   WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
 
-  INITLIB("intuition.library", 36, 0, &IntuitionBase, "main", &IIntuition, TRUE, NULL);
-  INITLIB("icon.library",      36, 0, &IconBase,      "main", &IIcon,      TRUE, NULL);
-  INITLIB("utility.library",   36, 0, &UtilityBase,   "main", &IUtility,   TRUE, NULL);
-  INITLIB("diskfont.library",  37, 0, &DiskfontBase,  "main", &IDiskfont,  TRUE, NULL);
+  INITLIB("intuition.library", 36, 0, &IntuitionBase, "main", 1, &IIntuition, TRUE, NULL);
+  INITLIB("icon.library",      36, 0, &IconBase,      "main", 1, &IIcon,      TRUE, NULL);
+  INITLIB("utility.library",   36, 0, &UtilityBase,   "main", 1, &IUtility,   TRUE, NULL);
+  INITLIB("diskfont.library",  37, 0, &DiskfontBase,  "main", 1, &IDiskfont,  TRUE, NULL);
 
   // now we parse the command-line arguments
   if((err = ParseCommandArgs()) != 0)

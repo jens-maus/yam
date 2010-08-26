@@ -173,15 +173,15 @@ struct TimeRequest
 
 // Library open/close macros
 #if defined(__amigaos4__)
-#define INITLIB(lname, v, r, lbase, iname, ibase, req, url)  (InitLib((lname), (v), (r), (APTR)(lbase), (iname), (APTR)(ibase), (req), (url)))
-#define CLOSELIB(lib, iface)              { if((iface) && (lib)) { DropInterface((APTR)(iface)); iface = NULL; CloseLibrary((struct Library *)lib); lib = NULL; } }
-#define GETINTERFACE(iname, iface, base)  ((iface) = (APTR)GetInterface((struct Library *)(base), (iname), 1L, NULL))
-#define DROPINTERFACE(iface)              { DropInterface((APTR)(iface)); iface = NULL; }
+#define INITLIB(lname, v, r, lbase, iname, iversion, ibase, req, url)  (InitLib((lname), (v), (r), (APTR)(lbase), (iname), (iversion), (APTR)(ibase), (req), (url)))
+#define CLOSELIB(lib, iface)                                           { if((iface) && (lib)) { DropInterface((APTR)(iface)); iface = NULL; CloseLibrary((struct Library *)lib); lib = NULL; } }
+#define GETINTERFACE(iname, iversion, iface, base)                     ((iface) = (APTR)GetInterface((struct Library *)(base), (iname), (iversion), NULL))
+#define DROPINTERFACE(iface)                                           { DropInterface((APTR)(iface)); iface = NULL; }
 #else
-#define INITLIB(lname, v, r, lbase, iname, ibase, req, url)  (InitLib((lname), (v), (r), (APTR)(lbase), (req), (url)))
-#define CLOSELIB(lib, iface)              { if((lib)) { CloseLibrary((struct Library *)lib); lib = NULL; } }
-#define GETINTERFACE(iname, iface, base)  TRUE
-#define DROPINTERFACE(iface)              ((void)0)
+#define INITLIB(lname, v, r, lbase, iname, iversion, ibase, req, url)  (InitLib((lname), (v), (r), (APTR)(lbase), (req), (url)))
+#define CLOSELIB(lib, iface)                                           { if((lib)) { CloseLibrary((struct Library *)lib); lib = NULL; } }
+#define GETINTERFACE(iname, iversion, iface, base)                     TRUE
+#define DROPINTERFACE(iface)                                           ((void)0)
 #endif
 
 // misc defines
