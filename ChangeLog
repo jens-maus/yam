@@ -32,10 +32,6 @@ $URL$
   * YAM_MA.c: when exporting mails the file name returned by the file requester
     is now checked to be non-empty. Although I could not reproduce ticket #154
     this should fix it and thus closes #154.
-  * YAM_TR.c: in case an imported mail contains both the Status and the X-Status
-    header lines the "new" state of the mail is derived from the Status header
-    line only, because the X-Status header line does not contain any explicit
-    information about the "new" state. This closes #118.
   * YAM_MA.c, mui/MainWindow.c, mui/MainMailListGroup.c: the "active object on
     click" feature of NList must operate on listview objects instead of the em-
     bedded list objects. Thus we have to distinguish between these two in lots
@@ -60,6 +56,13 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-03-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: in case an imported mail contains both the Status and the X-Status
+    header lines the "new" state of the mail is derived from the Status header
+    line only, because the X-Status header line does not contain any explicit
+    information about the "new" state. This closes #118.
+ 
 2010-03-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: the "avoid duplicates" option cleared too many flags which caused
