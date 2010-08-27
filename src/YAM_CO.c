@@ -1110,11 +1110,8 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
       struct MailServerNode *srcNode = (struct MailServerNode *)curNode;
       struct MailServerNode *dstNode;
 
-      if((dstNode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*dstNode),
-                                                  ASONODE_Min, TRUE,
-                                                  TAG_DONE)) != NULL)
+      if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode)) != NULL)
       {
-        memcpy(dstNode, srcNode, sizeof(*dstNode));
         AddTail((struct List *)&dco->mailServerList, (struct Node *)dstNode);
       }
       else
@@ -1460,7 +1457,7 @@ void CO_Validate(struct Config *co, BOOL update)
   BOOL updateMenuShortcuts = FALSE;
   struct MailServerNode *firstPOP3;
   struct MailServerNode *firstSMTP;
- 
+
   ENTER();
 
   // retrieve the first SMTP and POP3 server so that
