@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-27 Frank Weber <opionline@yahoo.de>
+
+  * Debug.c: changed all '%d' to '%ld' because KPutFmt() crash on AOS3.
+
 2010-08-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest release.
