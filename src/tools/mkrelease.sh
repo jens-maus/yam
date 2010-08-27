@@ -53,7 +53,7 @@ echo "  MK $yamsys/Catalogs"
 mkdir -p "release/$yamsys/YAM $yamver/Catalogs"
 cp ../icons/$1/Catalogs_directory.info "release/$yamsys/YAM $yamver/Catalogs.info"
 cp ../locale/YAM.cd "release/$yamsys/YAM $yamver/Catalogs/YAM.cd"
-for language in czech dutch english-british french german greek italian swedish; do
+for language in czech english-british french german greek italian swedish; do
 	mkdir -p "release/$yamsys/YAM $yamver/Catalogs/$language"
 	cp ../locale/$language.catalog "release/$yamsys/YAM $yamver/Catalogs/$language/YAM.catalog"
 done
@@ -77,7 +77,7 @@ cp ../doc/ReadMe_gallery "release/$yamsys/YAM $yamver/Gallery/ReadMe"
 cp ../icons/$1/ReadMe.info "release/$yamsys/YAM $yamver/Gallery/ReadMe.info"
 echo "  MK $yamsys/Install"
 mkdir -p "release/$yamsys/YAM $yamver/Install"
-cp -r "../../distribution/$yamsys/YAM $yamver/Install/" "release/$yamsys/YAM $yamver/Install/"
+cp -r "../../../distribution/$yamsys/YAM $yamver/Install/" "release/$yamsys/YAM $yamver/Install/"
 cp ../icons/$1/Install_directory.info "release/$yamsys/YAM $yamver/Install.info"
 cp ../doc/Install-YAM "release/$yamsys/YAM $yamver/Install/Install-YAM"
 cp ../icons/$1/Install-YAM.info "release/$yamsys/YAM $yamver/Install/Install-YAM.info"
