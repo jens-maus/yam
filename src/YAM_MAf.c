@@ -1709,9 +1709,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
         // we can finally start processing a new one.
         // Which means we allocate a new HeaderNode and try to get out the header
         // name
-        if((hdrNode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*hdrNode),
-                                                    ASONODE_Min, TRUE,
-                                                    TAG_DONE)) != NULL)
+        if((hdrNode = AllocHeaderNode()) != NULL)
         {
           char *ptr;
 

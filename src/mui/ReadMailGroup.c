@@ -1209,7 +1209,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
         // make sure we cleaned up the senderInfoHeader List beforehand
         ClearHeaderList(&data->senderInfoHeaders);
 
-        if(*ab->RealName != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->RealName != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_RealName)));
@@ -1218,7 +1218,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Street != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->Street != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Street)));
@@ -1227,7 +1227,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->City != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->City != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_City)));
@@ -1236,7 +1236,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Country != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->Country != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Country)));
@@ -1245,7 +1245,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Phone != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->Phone != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Phone)));
@@ -1254,7 +1254,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*AB_ExpandBD(ab->BirthDay) && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*AB_ExpandBD(ab->BirthDay) && (newNode = AllocHeaderNode()) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_DOB)));
@@ -1263,7 +1263,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Comment != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->Comment != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Description)));
@@ -1272,7 +1272,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*ab->Homepage != '\0' && (newNode = malloc(sizeof(struct HeaderNode))) != NULL)
+        if(*ab->Homepage != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Homepage)));

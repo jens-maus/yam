@@ -7,6 +7,8 @@ $URL$
 
 2010-08-27 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c, ReadMailGroup.c: the header nodes are now allocated using
+    AllocSysObject(). Also fixed a inconsistent usage of malloc() and ASO().
   * YAM_RE.c, YAM_WR.c: the ReadMailData and WriteMailData nodes are now
     allocated using AllocSysObject().
   * MimeTypes.c: the MIME type nodes are now allocated using AllocSysObject().

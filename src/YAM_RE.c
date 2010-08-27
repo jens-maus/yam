@@ -4383,6 +4383,27 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 }
 
 ///
+/// AllocHeaderNode
+// allocate a header node
+struct HeaderNode *AllocHeaderNode(void)
+{
+  struct HeaderNode *hdrNode;
+
+  ENTER();
+
+  if((hdrNode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*hdrNode),
+                                              ASONODE_Min, TRUE,
+                                              TAG_DONE)) != NULL)
+  {
+    hdrNode->name = NULL;
+    hdrNode->content = NULL;
+  }
+
+  RETURN(hdrNode);
+  return hdrNode;
+}
+
+///
 /// FreeHeaderNode()
 // free a single header node
 void FreeHeaderNode(struct HeaderNode *hdrNode)
