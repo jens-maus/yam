@@ -189,7 +189,7 @@ HOOKPROTONHNONP(RemoveLastRule, void)
       // now we do free our search structure if it exists
       FreeRuleSearchData(rule);
 
-      free(rule);
+      FreeSysObject(ASOT_NODE, rule);
 
       // Remove the GUI elements as well
       if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
@@ -1159,7 +1159,9 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
       struct FilterNode *srcFilter = (struct FilterNode *)curNode;
       struct FilterNode *dstFilter;
 
-      if((dstFilter = malloc(sizeof(struct FilterNode))) != NULL)
+      if((dstFilter = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*dstFilter),
+                                                    ASONODE_Min, TRUE,
+                                                    TAG_DONE)) != NULL)
       {
         if(CopyFilterData(dstFilter, srcFilter) == FALSE)
         {

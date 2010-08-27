@@ -119,7 +119,7 @@ struct SearchPatternNode
 struct RuleNode
 {
   struct MinNode      node;                       // required for placing it into struct FilterNode;
-  struct Search*      search;                     // ptr to our search structure or NULL if not ready yet
+  struct Search     * search;                     // ptr to our search structure or NULL if not ready yet
   enum CombineMode    combine;                    // combine value defining which combine operation is used (i.e. AND/OR/XOR)
   enum SearchMode     searchMode;                 // the destination of the search (i.e. FROM/TO/CC/REPLYTO etc..)
   enum SubSearchMode  subSearchMode;              // the sub mode for the search (i.e. Adress/Name for email adresses etc.)
@@ -129,7 +129,6 @@ struct RuleNode
   BOOL                dosPattern;                 // apply DOS patterns or not.
   char                matchPattern[SIZE_PATTERN]; // user defined pattern for search/filter
   char                customField[SIZE_DEFAULT];  // user definable string to query some more information
-
 };
 
 // A filter is represented as a single filter node

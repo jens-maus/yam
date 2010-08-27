@@ -1937,7 +1937,7 @@ BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
     struct RuleNode *newRule;
 
     // do a raw copy of the rule contents first
-    if((newRule = memdup(rule, sizeof(struct RuleNode))) != NULL)
+    if((newRule = DuplicateNode(rule, sizeof(*rule))) != NULL)
     {
       // check if the search structure exists and if so
       // so start another deep copy
@@ -2037,7 +2037,7 @@ void FreeFilterRuleList(struct FilterNode *filter)
     // now we do free our search structure if it exists
     FreeRuleSearchData(rule);
 
-    free(rule);
+    FreeSysObject(ASOT_NODE, rule);
   }
 
   // initialize the ruleList as well
@@ -2174,11 +2174,22 @@ struct FilterNode *CreateNewFilter(void)
 
   ENTER();
 
-  if((filter = calloc(1, sizeof(struct FilterNode))) != NULL)
+  if((filter = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*filter),
+                                             ASONODE_Min, TRUE,
+                                             TAG_DONE)) != NULL)
   {
-    strlcpy(filter->name, tr(MSG_NewEntry), sizeof(filter->name));
+    filter->actions = 0;
+    filter->remote = FALSE;
     filter->applyToNew = TRUE;
     filter->applyOnReq = TRUE;
+    filter->applyToSent = FALSE;
+    strlcpy(filter->name, tr(MSG_NewEntry), sizeof(filter->name));
+    filter->bounceTo[0] = '\0';
+    filter->forwardTo[0] = '\0';
+    filter->replyFile[0] = '\0';
+    filter->executeCmd[0] = '\0';
+    filter->playSound[0] = '\0';
+    filter->moveTo[0] = '\0';
 
     // initialize the rule list
     NewMinList(&filter->ruleList);
@@ -2188,7 +2199,7 @@ struct FilterNode *CreateNewFilter(void)
     if(CreateNewRule(filter, FALSE) == NULL)
     {
       // creating the default rule failed, so we let this operation fail, too
-      free(filter);
+      FreeSysObject(ASOT_NODE, filter);
       filter = NULL;
     }
   }
@@ -2208,7 +2219,7 @@ void FreeFilterNode(struct FilterNode *filter)
   FreeFilterRuleList(filter);
 
   // and finally free the filter itself
-  free(filter);
+  FreeSysObject(ASOT_NODE, filter);
 
   LEAVE();
 }
@@ -2244,10 +2255,21 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern)
 
   ENTER();
 
-  if((rule = calloc(1, sizeof(struct RuleNode))) != NULL)
+  if((rule = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*rule),
+  	                                       ASONODE_Min, TRUE,
+  	                                       TAG_DONE)) != NULL)
   {
     // set the default search mode (plain string search or DOS patterns)
+    rule->search = NULL;
+    rule->combine = CB_NONE;
+    rule->searchMode = SM_FROM;
+    rule->subSearchMode = SSM_ADDRESS;
+    rule->comparison = CP_EQUAL;
+    rule->caseSensitive = FALSE;
+    rule->subString = FALSE;
     rule->dosPattern = dosPattern;
+    rule->matchPattern[0] = '\0';
+    rule->customField[0] = '\0';
 
     // if a filter was specified we immediatley add this new rule to it
     if(filter != NULL)

@@ -1299,7 +1299,7 @@ HOOKPROTONHNONP(AddNewFilterToList, void)
 {
   struct FilterNode *filterNode;
 
-  if((filterNode = CreateNewFilter()))
+  if((filterNode = CreateNewFilter()) != NULL)
   {
     DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filterNode, MUIV_NList_Insert_Bottom);
     set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
