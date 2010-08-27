@@ -143,38 +143,48 @@ void FreeMimeTypeList(struct MinList *mimeTypeList)
 BOOL CompareMimeTypeLists(const struct MinList *mtl1, const struct MinList *mtl2)
 {
   BOOL equal = TRUE;
-  struct Node *mln1;
-  struct Node *mln2;
+  BOOL empty1;
+  BOOL empty2;
 
   ENTER();
 
-  mln1 = GetHead((struct List *)mtl1);
-  mln2 = GetHead((struct List *)mtl2);
-
-  // walk through both lists in parallel and compare the single nodes
-  while(mln1 != NULL && mln2 != NULL)
+  empty1 = IsMinListEmpty(mtl1);
+  empty2 = IsMinListEmpty(mtl2);
+  if(empty1 == FALSE && empty2 == FALSE)
   {
-    struct MimeTypeNode *mtn1 = (struct MimeTypeNode *)mln1;
-    struct MimeTypeNode *mtn2 = (struct MimeTypeNode *)mln2;
+    struct Node *mln1 = GetHead((struct List *)mtl1);
+    struct Node *mln2 = GetHead((struct List *)mtl2);
 
-    // compare every single member of the structure
-    if(strcmp(mtn1->ContentType, mtn2->ContentType) != 0 ||
-       strcmp(mtn1->Extension,   mtn2->Extension) != 0 ||
-       strcmp(mtn1->Description, mtn2->Description) != 0 ||
-       strcmp(mtn1->Command,     mtn2->Command) != 0)
+    // walk through both lists in parallel and compare the single nodes
+    while(mln1 != NULL && mln2 != NULL)
     {
-      // something does not match
-      equal = FALSE;
-      break;
+      struct MimeTypeNode *mtn1 = (struct MimeTypeNode *)mln1;
+      struct MimeTypeNode *mtn2 = (struct MimeTypeNode *)mln2;
+
+      // compare every single member of the structure
+      if(strcmp(mtn1->ContentType, mtn2->ContentType) != 0 ||
+         strcmp(mtn1->Extension,   mtn2->Extension) != 0 ||
+         strcmp(mtn1->Description, mtn2->Description) != 0 ||
+         strcmp(mtn1->Command,     mtn2->Command) != 0)
+      {
+        // something does not match
+        equal = FALSE;
+        break;
+      }
+
+      mln1 = GetSucc(mln1);
+      mln2 = GetSucc(mln2);
     }
 
-    mln1 = GetSucc(mln1);
-    mln2 = GetSucc(mln2);
+    // if there are any nodes left then the two lists cannot be equal
+    if((mln1 != NULL && GetSucc(mln1) != NULL) || (mln2 != NULL && GetSucc(mln2) != NULL))
+    {
+      equal = FALSE;
+    }
   }
-
-  // if there are any nodes left then the two lists cannot be equal
-  if((mln1 != NULL && GetSucc(mln1) != NULL) || (mln2 != NULL && GetSucc(mln2) != NULL))
+  else if((empty1 == TRUE && empty2 == FALSE) || (empty1 == FALSE && empty2 == TRUE))
   {
+    // if one list is empty while the other is not the two lists cannot be equal
     equal = FALSE;
   }
 
