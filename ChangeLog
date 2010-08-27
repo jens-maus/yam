@@ -60,6 +60,10 @@ $URL$
 
   * doc/.addressbook, doc/.taglines, Makefile: added default address book and
     taglines files and added them to the release target.
+  * YAM_US.c: in case the first of YAM's users has no real name YAM will now
+    at first try to use the real name from the configuration. If there was no
+    name entered in the configuration then "John Doe" will be used as a simple
+    fallback.
 
 #### YAM 2.6 RELEASE ####################################################
 
