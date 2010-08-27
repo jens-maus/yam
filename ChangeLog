@@ -62,6 +62,11 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-03-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: possible quotes around a part's encoding name are now stripped.
+    This fixes bug #2957412.
+
 2010-03-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/Install-YAM: added AROS system detection.
