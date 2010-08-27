@@ -7,6 +7,7 @@ $URL$
 
 2010-08-27 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tools/mkrelease.sh: fixed some path issues.
   * YAM_FI.c: the filter and rule list nodes are now allocated using
     AllocSysObject().
   * YAM_FI.c: the search list nodes are now allocated using AllocSysObject().
