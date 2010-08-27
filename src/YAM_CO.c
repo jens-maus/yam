@@ -1110,7 +1110,7 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
       struct MailServerNode *srcNode = (struct MailServerNode *)curNode;
       struct MailServerNode *dstNode;
 
-      if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode)) != NULL)
+      if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
       {
         AddTail((struct List *)&dco->mailServerList, (struct Node *)dstNode);
       }

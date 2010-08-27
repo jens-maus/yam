@@ -320,7 +320,7 @@ void     DisplayMailList(struct Folder *fo, Object *lv);
 void     DisplayStatistics(struct Folder *fo, BOOL updateAppIcon);
 void     DisposeModule(void *modptr);
 BOOL     DoPack(const char *file, const char *newfile, const struct Folder *folder);
-struct MinNode *DuplicateNode(const struct MinNode *node, size_t size);
+void *   DuplicateNode(const void *node, size_t size);
 BOOL     DumpClipboard(FILE *out);
 BOOL     EditorToFile(Object *editor, const char *file);
 char *   Encrypt(const char *source);
