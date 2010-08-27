@@ -109,6 +109,6 @@ cp ../doc/README.debug "release/"
 cp YAM.$1.debug "release/YAM.debug"
 cp YAM.$1.map "release/YAM.debug.map"
 echo "  MK YAM26-$yamsys-debug.lha"
-cd release/$yamsys/
+cd release
 lha -aq YAM26-$yamsys-debug.lha README.debug YAM.debug YAM.debug.map
-cd ../../
+cd ../
