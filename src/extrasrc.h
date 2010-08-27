@@ -273,7 +273,7 @@ ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream);
 #endif
 
 #if defined(NEED_XGET)
-ULONG xget(Object *obj, const IPTR attr);
+IPTR xget(Object *obj, const IPTR attr);
 #endif
 
 #if defined(NEED_XSET)

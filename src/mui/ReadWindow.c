@@ -459,6 +459,8 @@ OVERLOAD(OM_NEW)
                   MUIV_Notify_Application, 6,
                     MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
   }
+  else
+    obj = NULL;
 
   // free the temporary mem we allocated before
   free(tmpData);

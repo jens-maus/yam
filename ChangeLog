@@ -56,6 +56,10 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-03-15 Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc.h: fixed xget() prototype for AROS compile.
+
 2010-03-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: reading a message part will now correctly add the LF character
