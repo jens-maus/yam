@@ -1582,10 +1582,12 @@ Locale.o: Locale.c YAM.h include/xpk/xpk.h include/amiga-align.h \
   YAM_utilities.h include/SDI_compiler.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Rexx.h Themes.h Timer.h Threads.h Debug.h
 MailList.o: MailList.c extrasrc.h include/SDI_compiler.h \
-  include/SDI_stdarg.h include/SDI_compiler.h MailList.h Debug.h
-MimeTypes.o: MimeTypes.c YAM_stringsizes.h extrasrc.h \
-  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
-  Locale.h MimeTypes.h Debug.h
+  include/SDI_stdarg.h include/SDI_compiler.h MailList.h YAM_utilities.h \
+  YAM_stringsizes.h YAM_folderconfig.h Debug.h
+MimeTypes.o: MimeTypes.c YAM_stringsizes.h YAM_utilities.h \
+  include/SDI_compiler.h YAM_folderconfig.h extrasrc.h \
+  include/SDI_stdarg.h include/SDI_compiler.h Locale.h MimeTypes.h \
+  Debug.h
 MUIObjects.o: MUIObjects.c include/mui/BetterString_mcc.h \
   include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListtree_mcc.h include/mui/NListview_mcc.h \
