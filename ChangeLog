@@ -56,6 +56,11 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-03-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * AttachmentRequestWindow.c: added an additional column to display a mail
+    part's description. This fixes #119.
+
 2010-03-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: in case an imported mail contains both the Status and the X-Status

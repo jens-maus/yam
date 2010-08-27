@@ -57,7 +57,7 @@ HOOKPROTONHNO(AttachDspFunc, LONG, struct NList_DisplayMessage *msg)
   {
     // now we set our local variables to the DisplayMessage structure ones
     struct Part *entry = (struct Part *)msg->entry;
-    char **array = msg->strings;
+    STRPTR *array = msg->strings;
 
     if(entry != NULL)
     {
@@ -65,14 +65,18 @@ HOOKPROTONHNO(AttachDspFunc, LONG, struct NList_DisplayMessage *msg)
       static char dispsz[SIZE_SMALL];
 
       if(entry->Nr > PART_RAW)
-        snprintf(array[0] = dispnu, sizeof(dispnu), "%d%s", entry->Nr, (entry->rmData && entry->Nr == entry->rmData->letterPartNum) ? "*" : "");
+        snprintf(array[0] = dispnu, sizeof(dispnu), "%d%s", entry->Nr, (entry->rmData != NULL && entry->Nr == entry->rmData->letterPartNum) ? "*" : "");
       else
-        array[0] = (char *)"";
+        array[0] = (STRPTR)"";
 
-      if(entry->Name[0] != '\0')
-        array[1] = entry->Name;
+      array[1] = entry->Name;
+
+      if(entry->Nr <= PART_RAW)
+        array[2] = (STRPTR)tr(MSG_CTtextplain);
+      else if(entry->Description[0] != '\0')
+        array[2] = entry->Description;
       else
-        array[1] = (STRPTR)DescribeCT(entry->ContentType);
+        array[2] = (STRPTR)DescribeCT(entry->ContentType);
 
       // check the alternative status
       if(isAlternativePart(entry) == TRUE && entry->Parent != NULL && entry->Parent->MainAltPart != entry)
@@ -80,8 +84,6 @@ HOOKPROTONHNO(AttachDspFunc, LONG, struct NList_DisplayMessage *msg)
 
       if(entry->Size > 0)
       {
-        array[2] = dispsz;
-
         if(isDecoded(entry))
           FormatSize(entry->Size, dispsz, sizeof(dispsz), SF_AUTO);
         else
@@ -89,15 +91,18 @@ HOOKPROTONHNO(AttachDspFunc, LONG, struct NList_DisplayMessage *msg)
           dispsz[0] = '~';
           FormatSize(entry->Size, &dispsz[1], sizeof(dispsz)-1, SF_AUTO);
         }
+
+        array[3] = dispsz;
       }
       else
-        array[2] = (char *)"";
+        array[3] = (STRPTR)"";
     }
     else
     {
       array[0] = (STRPTR)tr(MSG_ATTACH_NO);
       array[1] = (STRPTR)tr(MSG_ATTACH_PART);
-      array[2] = (STRPTR)tr(MSG_Size);
+      array[2] = (STRPTR)tr(MSG_RE_Description);
+      array[3] = (STRPTR)tr(MSG_Size);
     }
   }
 
@@ -110,6 +115,7 @@ MakeStaticHook(AttachDspHook, AttachDspFunc);
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
+//
 OVERLOAD(OM_NEW)
 {
   struct TagItem *tags = inittags(msg), *tag;
@@ -190,7 +196,7 @@ OVERLOAD(OM_NEW)
           MUIA_CycleChain, TRUE,
           MUIA_NListview_NList, listObj = NListObject,
             InputListFrame,
-            MUIA_NList_Format,               "BAR,BAR,",
+            MUIA_NList_Format,               "BAR,BAR,BAR,",
             MUIA_NList_Title,                TRUE,
             MUIA_NList_DoubleClick,          TRUE,
             MUIA_NList_MultiSelect,          isMultiReq(mode) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
@@ -254,8 +260,8 @@ OVERLOAD(OM_NEW)
 }
 
 ///
-///
 /// OVERLOAD(OM_GET)
+//
 OVERLOAD(OM_GET)
 {
   GETDATA;
@@ -325,3 +331,4 @@ DECLARE(FinishInput) // ULONG result
 }
 
 ///
+
