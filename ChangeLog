@@ -77,6 +77,12 @@ $URL$
 
 2010-02-24 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_WR.c: changed the mail composition to use the original file's name in
+    the Content-Disposition header instead of the current file name. This fixes
+    the problem, that attachments are shown with wrong name on other systems if
+    one attaches a file to mail, puts the mail on hold, edits it later and
+    finally sends it off. In this case YAM changed the original file name to the
+    one used internally by YAM (YAMm00000123.txt for example).
   * doc/Install-YAM: fixed typo which might lead to a wrong system detection.
 
 2010-02-23 Samir Hawamdeh <s.hawamdeh@tin.it>
