@@ -56,6 +56,11 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-02-23 Thore Böckelmann <tboeckel@gmx.de> 
+
+  * doc/.addressbook, doc/.taglines, Makefile: added default address book and
+    taglines files and added them to the release target.
+
 #### YAM 2.6 RELEASE ####################################################
 
 2010-02-21 Jens Langner <Jens.Langner@light-speed.de>
