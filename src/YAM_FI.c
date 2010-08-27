@@ -519,18 +519,17 @@ static void FI_GenerateListPatterns(struct Search *search)
     {
       if(buf[0] != '\0')
       {
-        char pattern[SIZE_PATTERN*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
         struct SearchPatternNode *newNode;
 
-        if(search->CaseSens)
-          ParsePattern(buf, pattern, sizeof(pattern));
-        else
-          ParsePatternNoCase(buf, pattern, sizeof(pattern));
-
         // put the pattern in our search pattern list
-        if((newNode = malloc(sizeof(struct SearchPatternNode))) != NULL)
+        if((newNode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*newNode),
+                                                    ASONODE_Min, TRUE,
+                                                    TAG_DONE)) != NULL)
         {
-          strlcpy(newNode->pattern, pattern, sizeof(newNode->pattern));
+          if(search->CaseSens == TRUE)
+            ParsePattern(buf, newNode->pattern, sizeof(newNode->pattern));
+          else
+            ParsePatternNoCase(buf, newNode->pattern, sizeof(newNode->pattern));
 
           // add the pattern to our list
           AddTail((struct List *)&search->patternList, (struct Node *)newNode);
@@ -1394,7 +1393,7 @@ static void FreeSearchPatternList(struct Search *search)
   {
     struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
 
-    free(patternNode);
+    FreeSysObject(ASOT_NODE, patternNode);
   }
 
   LEAVE();
@@ -2004,7 +2003,7 @@ static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
     struct SearchPatternNode *srcNode = (struct SearchPatternNode *)curNode;
     struct SearchPatternNode *dstNode;
 
-    if((dstNode = memdup(srcNode, sizeof(*srcNode))) != NULL)
+    if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
       AddTail((struct List *)&dstSearch->patternList, (struct Node *)dstNode);
     else
     {
