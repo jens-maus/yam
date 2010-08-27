@@ -58,6 +58,8 @@ $URL$
 
 2010-03-09 Thore Böckelmann <tboeckel@gmx.de>
 
+  * AttachmentImage.c: a double click on an already selected attachment icon
+    will now correctly invoke the associated command. This fixes #141.
   * YAM_WR.c: fixed a memory leak.
 
 2010-03-06 Thore Böckelmann <tboeckel@gmx.de>
