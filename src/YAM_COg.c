@@ -827,7 +827,7 @@ HOOKPROTONHNONP(AddMimeTypeFunc, void)
 
   ENTER();
 
-  if((mt = CreateNewMimeType()))
+  if((mt = CreateNewMimeType()) != NULL)
   {
     // add the new mime type to our internal list of
     // user definable MIME types.
@@ -870,7 +870,7 @@ HOOKPROTONHNONP(DelMimeTypeFunc, void)
       Remove((struct Node *)mt);
 
       // free memory.
-      free(mt);
+      FreeSysObject(ASOT_NODE, mt);
     }
   }
 

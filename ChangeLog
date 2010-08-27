@@ -7,6 +7,7 @@ $URL$
 
 2010-08-27 Thore Böckelmann <tboeckel@gmx.de>
 
+  * MimeTypes.c: the MIME type nodes are now allocated using AllocSysObject().
   * tools/mkrelease.sh: fixed some path issues.
   * YAM_FI.c: the filter and rule list nodes are now allocated using
     AllocSysObject().

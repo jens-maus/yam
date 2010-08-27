@@ -107,8 +107,15 @@ struct MimeTypeNode *CreateNewMimeType(void)
 
   ENTER();
 
-  if((mt = calloc(1, sizeof(*mt))) != NULL)
+  if((mt = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*mt),
+                                         ASONODE_Min, TRUE,
+                                         TAG_DONE)) != NULL)
+  {
     strlcpy(mt->ContentType, "?/?", sizeof(mt->ContentType));
+    mt->Extension[0] = '\0';
+    mt->Description[0] = '\0';
+    mt->Command[0] = '\0';
+  }
 
   RETURN(mt);
   return mt;
@@ -118,22 +125,19 @@ struct MimeTypeNode *CreateNewMimeType(void)
 /// FreeMimeTypeList
 void FreeMimeTypeList(struct MinList *mimeTypeList)
 {
+  struct Node *curNode;
+
   ENTER();
 
-  if(IsMinListEmpty(mimeTypeList) == FALSE)
+  // we have to free the mimeTypeList
+  while((curNode = RemHead((struct List *)mimeTypeList)) != NULL)
   {
-    struct Node *curNode;
+    struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
 
-    // we have to free the mimeTypeList
-    while((curNode = RemHead((struct List *)mimeTypeList)) != NULL)
-    {
-      struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
-
-      free(mt);
-    }
-
-    NewMinList(mimeTypeList);
+    FreeSysObject(ASOT_NODE, mt);
   }
+
+  NewMinList(mimeTypeList);
 
   LEAVE();
 }

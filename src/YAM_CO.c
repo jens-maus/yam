@@ -1136,7 +1136,7 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
       struct MimeTypeNode *srcNode = (struct MimeTypeNode *)curNode;
       struct MimeTypeNode *dstNode;
 
-      if((dstNode = memdup(srcNode, sizeof(struct MimeTypeNode))) != NULL)
+      if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
         AddTail((struct List *)&dco->mimeTypeList, (struct Node *)dstNode);
       else
       {
