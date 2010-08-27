@@ -188,6 +188,8 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags);
 struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int flags);
 struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags, const char *replytxt);
 BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRef);
+struct WriteMailData *AllocWriteMailData(void);
+void FreeWriteMailData(struct WriteMailData *wmData);
 BOOL CleanupWriteMailData(struct WriteMailData *wmData);
 struct WritePart *NewMIMEpart(struct WriteMailData *wmData);
 void CheckForAutoSaveFiles(void);

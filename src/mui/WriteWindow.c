@@ -1010,7 +1010,7 @@ OVERLOAD(OM_NEW)
   while(TRUE);
 
   // allocate the new writeMailData structure
-  if((data->wmData = calloc(1, sizeof(struct WriteMailData))) != NULL)
+  if((data->wmData = AllocWriteMailData()) != NULL)
   {
     Object *menuStripObject = NULL;
     Object *charsetPopButton;
@@ -1461,6 +1461,8 @@ OVERLOAD(OM_NEW)
 
       if((data = (struct Data *)INST_DATA(cl,obj)) == NULL)
       {
+        FreeWriteMailData(tmpData->wmData);
+        free(tmpData);
         RETURN(0);
         return 0;
       }

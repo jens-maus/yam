@@ -4181,15 +4181,39 @@ struct ReadMailData *AllocPrivateRMData(const struct Mail *mail, short parseFlag
 
   ENTER();
 
-  if((rmData = calloc(1, sizeof(struct ReadMailData))) != NULL)
+  if((rmData = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*rmData),
+                                             ASONODE_Min, TRUE,
+                                             TAG_DONE)) != NULL)
   {
+    rmData->readWindow = NULL;
+    rmData->readMailGroup = NULL;
     rmData->mail = (struct Mail *)mail;
+    rmData->firstPart = NULL;
+    rmData->tempFile = NULL;
+    rmData->uniqueID = 0;
+    rmData->headerMode = HM_NOHEADER;
+    rmData->senderInfoMode = SIM_OFF;
     rmData->parseFlags = parseFlags;
+    rmData->signedFlags = 0;
+    rmData->encryptionFlags = 0;
+    rmData->letterPartNum = 0;
+    rmData->hasPGPKey = FALSE;
+    rmData->useTextcolors = FALSE;
+    rmData->useTextstyles = FALSE;
+    rmData->wrapHeaders = FALSE;
+    rmData->useFixedFont = FALSE;
 
-    if(RE_LoadMessage(rmData) == FALSE)
+    rmData->readFile[0] = '\0';
+    rmData->sigAuthor[0] = '\0';
+
+    // try load a message only if there is one to load
+    if(mail != NULL)
     {
-      free(rmData);
-      rmData = NULL;
+      if(RE_LoadMessage(rmData) == FALSE)
+      {
+        FreeSysObject(ASOT_NODE, rmData);
+        rmData = NULL;
+      }
     }
   }
 
@@ -4203,8 +4227,8 @@ void FreePrivateRMData(struct ReadMailData *rmData)
 {
   ENTER();
 
-  if(CleanupReadMailData(rmData, FALSE))
-    free(rmData);
+  if(CleanupReadMailData(rmData, FALSE) == TRUE)
+    FreeSysObject(ASOT_NODE, rmData);
 
   LEAVE();
 }

@@ -471,7 +471,7 @@ OVERLOAD(OM_NEW)
   }
 
   // allocate the readMailData structure
-  if((rmData = calloc(1, sizeof(struct ReadMailData))))
+  if((rmData = AllocPrivateRMData(NULL, 0)) != NULL)
   {
     Object *headerGroup;
     Object *headerListview;
@@ -621,7 +621,7 @@ OVERLOAD(OM_NEW)
       result = obj;
     }
     else
-      free(rmData);
+      FreeSysObject(ASOT_NODE, rmData);
   }
 
   RETURN((IPTR)result);
@@ -643,7 +643,8 @@ OVERLOAD(OM_DISPOSE)
   {
     // Remove our readWindowNode and free it afterwards
     Remove((struct Node *)data->readMailData);
-    free(data->readMailData);
+    // don't use FreePrivateRMData()!
+    FreeSysObject(ASOT_NODE, data->readMailData);
     data->readMailData = NULL;
   }
 

@@ -2971,6 +2971,52 @@ struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags)
 ///
 
 /*** WriteMailData ***/
+/// AllocWriteMailData
+// creates a WriteMailData structure
+struct WriteMailData *AllocWriteMailData(void)
+{
+  struct WriteMailData *wmData;
+
+  ENTER();
+
+  if((wmData = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*wmData),
+                                             ASONODE_Min, TRUE,
+                                             TAG_DONE)) != NULL)
+  {
+    wmData->window = NULL;
+    wmData->refMail = NULL;
+    wmData->refMailList = NULL;
+    wmData->mode = NMM_NEW;
+    wmData->inReplyToMsgID = NULL;
+    wmData->references = NULL;
+    wmData->charset = NULL;
+
+    wmData->filename[0] = '\0';
+    DateStamp(&wmData->lastFileChangeTime);
+    wmData->notifyRequest = NULL;
+    wmData->fileNotifyActive = FALSE;
+
+    wmData->quietMode = FALSE;
+    wmData->oldSecurity = SEC_NONE;
+  }
+
+  RETURN(wmData);
+  return wmData;
+}
+
+///
+/// FreeWriteMailData
+// free a WriteMailData structure
+void FreeWriteMailData(struct WriteMailData *wmData)
+{
+  ENTER();
+
+  FreeSysObject(ASOT_NODE, wmData);
+
+  LEAVE();
+}
+
+///
 /// CleanupWriteMailData()
 // cleans/deletes all data of a WriteMailData structure
 BOOL CleanupWriteMailData(struct WriteMailData *wmData)
@@ -3048,7 +3094,7 @@ BOOL CleanupWriteMailData(struct WriteMailData *wmData)
 
   // Remove the writeWindowNode and free it afterwards
   Remove((struct Node *)wmData);
-  free(wmData);
+  FreeWriteMailData(wmData);
 
   RETURN(TRUE);
   return TRUE;
