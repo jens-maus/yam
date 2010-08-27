@@ -7,6 +7,8 @@ $URL$
 
 2010-08-27 Thore Böckelmann <tboeckel@gmx.de>
 
+  * MailServer.c: initialize all variables since AllocSysObject() does not clear
+    the allocated memory.
   * YAM_UT.c, YAM_CO.c: added DuplicateNode() function to easily create a copy
     of a node using AllocSysObject().
 

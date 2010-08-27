@@ -59,8 +59,16 @@ struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Conf
                                           ASONODE_Min, TRUE,
                                           TAG_DONE)) != NULL)
   {
+    // initialize all variables as AllocSysObject() does not clear the memory
     msn->type = type;
+    msn->account[0] = '\0';
+    msn->hostname[0] = '\0';
+    msn->domain[0] = '\0';
+    msn->port = 0;
+    msn->username[0] = '\0';
+    msn->password[0] = '\0';
     msn->flags = MSF_ACTIVE;
+    msn->smtpFlags = 0;
 
     switch(msn->type)
     {
@@ -95,7 +103,6 @@ struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Conf
     }
   }
 
-  D(DBF_ALWAYS, "msn %08lx flags %08lx", msn, msn->flags);
   RETURN(msn);
   return msn;
 }
