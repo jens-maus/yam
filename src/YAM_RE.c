@@ -1877,6 +1877,8 @@ static void RE_SetPartInfo(struct Part *rp)
 
   // give the part a name if it has none yet
   if(rp->Name[0] == '\0')
+    strlcpy(rp->Name, rp->Description, sizeof(rp->Name));
+  if(rp->Name[0] == '\0')
     snprintf(rp->Name, sizeof(rp->Name), tr(MSG_RE_DEFAULT_MIMEPART_NAME), (rp->Parent != NULL) ? rp->Parent->Nr+1 : 1, rp->Nr);
 
   // Now that we have defined that this part is printable we have
