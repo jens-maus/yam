@@ -64,6 +64,9 @@ $URL$
 
 2010-03-02 Thore Böckelmann <tboeckel@gmx.de>
 
+  * themes/AISS: the AISS theme now requires at least AISS 4.8 to be installed.
+    This makes it possible to remove the last custom toolbar images. The config
+    images have been copied over from the default theme.
   * YAM_RE.c: possible quotes around a part's encoding name are now stripped.
     This fixes bug #2957412.
 
