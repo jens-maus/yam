@@ -1212,7 +1212,7 @@ BOOL TR_IsOnline(void)
     else
     {
       // check if we have to get the interface or not.
-      if(ISocket != NULL || GETINTERFACE("main", ISocket, SocketBase))
+      if(ISocket != NULL || GETINTERFACE("main", 1, ISocket, SocketBase))
       {
         BOOL hasInterfaceAPI = FALSE;
 
@@ -1368,7 +1368,7 @@ BOOL TR_OpenTCPIP(void)
   {
     if((SocketBase = OpenLibrary("bsdsocket.library", 2L)))
     {
-      if(GETINTERFACE("main", ISocket, SocketBase))
+      if(GETINTERFACE("main", 1, ISocket, SocketBase))
         result = TRUE;
       else
       {
