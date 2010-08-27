@@ -58,6 +58,8 @@ $URL$
 
 2010-03-09 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c: reading a message part will now correctly add the LF character
+    which was stripped by the GetLine() function. This fixes #2.
   * AttachmentImage.c: a double click on an already selected attachment icon
     will now correctly invoke the associated command. This fixes #141.
   * YAM_WR.c: fixed a memory leak.

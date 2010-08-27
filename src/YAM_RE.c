@@ -1291,10 +1291,13 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
 
     // if we end up here because of a EOF we have to check
     // if there is still something in c and then write it into the out fh.
-    if(result == FALSE &&
-       curlen == -1 && feof(in) != 0)
+    if(result == FALSE && curlen == -1 && feof(in) != 0)
     {
-      result = TRUE;
+      // if we read at least one line we must add a line feed, because GetLine() strips these
+      if(numLines > 1 && fputc('\n', out) == EOF)
+        E(DBF_MAIL, "error during '\n' write operation!");
+      else
+        result = TRUE;
     }
 
     // free the buffer allocated by getline()
