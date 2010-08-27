@@ -62,6 +62,23 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-03-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install-YAM: added AROS system detection.
+
+2010-02-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install-YAM: rewrote the operation system detection. Now MorphOS 1.x
+    will correctly be detected (exec.library V50+ instead of V51+). Additionally
+    the user will be asked to acknowledge the automatic detection in case our
+    assumptions were wrong. Also removed the checks for a 68020 CPU, MUI 3.8
+    and AmigaOS 3.0 as minimum system requirements. YAM's own checks are far
+    better than these rough and outdated estimations.
+
+2010-02-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install-YAM: fixed typo which might lead to a wrong system detection.
+
 2010-02-23 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update italian catalog according to latest 2.6 changes.
