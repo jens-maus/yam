@@ -88,6 +88,52 @@ struct SysSignalSemaphore
    #pragma default-align
 #endif
 
+/// MungeMemory
+// fill a memory block with "random" garbage
+#if defined(DEBUG)
+static void MungeMemory(const void *ptr, size_t size)
+{
+  union
+  {
+    void *vptr;
+    ULONG *u32ptr;
+    char *u8ptr;
+  } _ptr;
+
+  ENTER();
+
+  _ptr.vptr = (void *)ptr;
+
+  // first do 32bit fills
+  while(size >= sizeof(_ptr.u32ptr))
+  {
+    *_ptr.u32ptr++ = 0xabadcafe;
+    size -= sizeof(_ptr.u32ptr);
+  }
+  // fill the remaining single bytes
+  if(size > 0)
+  {
+    *_ptr.u8ptr++ = 0xab;
+    size -= sizeof(_ptr.u8ptr);
+    if(size > 0)
+    {
+      *_ptr.u8ptr++ = 0xad;
+      size -= sizeof(_ptr.u8ptr);
+      if(size > 0)
+      {
+        *_ptr.u8ptr++ = 0xca;
+      }
+    }
+  }
+
+  LEAVE();
+}
+#else
+// do nothing in the non-debug build
+#define MungeMemory(ptr, size) ((void)0)
+#endif
+
+///
 /// AllocSysObject
 // allocate a system object just like OS4 does
 // this function does not cover all the types of OS4, because some are simply not
@@ -117,8 +163,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
   object.pointer = NULL;
 
   memFlags = GetTagData(ASO_MemoryOvr, MEMF_ANY, tags);
-  // always clear the memory
-  SET_FLAG(memFlags, MEMF_CLEAR);
 
   switch(type)
   {
@@ -200,6 +244,8 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object.hook = AllocVec(size, memFlags)) != NULL)
       {
+        MungeMemory(object.hook, size);
+
         object.hook->h_Entry = entry;
         object.hook->h_SubEntry = subentry;
         object.hook->h_Data = data;
@@ -219,6 +265,8 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object.list = AllocVec(size, memFlags)) != NULL)
       {
+        MungeMemory(object.list, size);
+
         NewList(object.list);
 
         if(min == FALSE)
@@ -239,6 +287,8 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object.node = AllocVec(size, memFlags)) != NULL)
       {
+        MungeMemory(object.node, size);
+
         object.node->ln_Succ = (struct Node *)0xffffffff;
         object.node->ln_Pred = (struct Node *)0xffffffff;
 
@@ -315,6 +365,8 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       if((object.port = AllocVec(size, memFlags)) != NULL)
       {
         struct SysMsgPort *sobject = (struct SysMsgPort *)object.port;
+
+        MungeMemory(object.port, size);
 
         sobject->name = NULL;
         sobject->signal = -1;
@@ -395,6 +447,8 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object.message = AllocVec(size, memFlags)) != NULL)
       {
+        MungeMemory(object.message, size);
+
         object.message->mn_Node.ln_Name = name;
         object.message->mn_Node.ln_Type = NT_MESSAGE;
         object.message->mn_ReplyPort = port;
@@ -446,6 +500,8 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       if((object.semaphore = AllocVec(size, memFlags)) != NULL)
       {
         struct SysSignalSemaphore *sobject = (struct SysSignalSemaphore *)object.semaphore;
+
+        MungeMemory(object.semaphore, size);
 
         sobject->name = NULL;
         sobject->public = public;

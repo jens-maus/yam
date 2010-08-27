@@ -7,6 +7,11 @@ $URL$
 
 2010-08-27 Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc/AllocSysObject.c: the allocated memory will no longer be cleared,
+    as OS4's function does not do this as well. This may sound bad, but it
+    requires us to properly initialize the variables before they are used.
+    Additionally the debug build will munge the allocated memory and fill it
+    with 0xabadcafe.
   * MailServer.c: initialize all variables since AllocSysObject() does not clear
     the allocated memory.
   * YAM_UT.c, YAM_CO.c: added DuplicateNode() function to easily create a copy
