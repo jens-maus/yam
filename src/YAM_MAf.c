@@ -1828,7 +1828,7 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
 //  Extracts recipients from a header field
 static int MA_GetRecipients(char *h, struct Person **per)
 {
-  int cnt=0;
+  int cnt = 0;
   char *p = h;
 
   ENTER();
@@ -1844,25 +1844,26 @@ static int MA_GetRecipients(char *h, struct Person **per)
 
   if(cnt > 0)
   {
-    struct Person *cur;
-
     // allocate enough memory to carry all
     // found recipients in an array of struct Person
     // structures.
-    if((*per = cur = calloc(cnt, sizeof(struct Person))))
+    if((*per = calloc(cnt, sizeof(struct Person))) != NULL)
     {
+      struct Person *cur = *per;
+
       for(p=h; *p; cur++)
       {
         char *next;
 
-        if((next = MyStrChr(p, ',')))
+        if((next = MyStrChr(p, ',')) != NULL)
           *next++ = '\0';
 
         ExtractAddress(p, cur);
 
         D(DBF_MIME, "extracted rcpt: '%s' '%s'", cur->RealName, cur->Address);
 
-        if(!(p = next))
+        p = next;
+        if(p == NULL)
           break;
       }
     }

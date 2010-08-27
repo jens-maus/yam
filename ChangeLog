@@ -56,6 +56,10 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-03-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: fixed a memory leak.
+
 2010-03-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * AttachmentRequestWindow.c: added an additional column to display a mail

@@ -1715,7 +1715,6 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
       if(wmData->refMail != NULL)
       {
         char address[SIZE_LARGE];
-        struct ExtendedMail *email;
 
         // check whether the old mail contains a ReplyTo: address
         // or not. And if so we prefer that one instead of using the
@@ -1726,6 +1725,8 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
 
           if(addr != NULL)
           {
+            struct ExtendedMail *email;
+
             if(isMultiReplyToMail(mail) &&
                (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
             {
@@ -1740,6 +1741,7 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
               set(wmData->window, MUIA_WriteWindow_To, sbuf);
 
               FreeStrBuf(sbuf);
+              MA_FreeEMailStruct(email);
             }
             else
               set(wmData->window, MUIA_WriteWindow_To, addr);
@@ -1751,6 +1753,8 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
 
           if(addr != NULL)
           {
+            struct ExtendedMail *email;
+
             if(isMultiSenderMail(mail) &&
               (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
             {
@@ -1765,6 +1769,7 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
               set(wmData->window, MUIA_WriteWindow_To, sbuf);
 
               FreeStrBuf(sbuf);
+              MA_FreeEMailStruct(email);
             }
             else
               set(wmData->window, MUIA_WriteWindow_To, addr);

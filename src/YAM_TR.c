@@ -5932,7 +5932,7 @@ static struct MailTransferNode *TR_AddMessageHeader(int *count, int size, long a
 
   ENTER();
 
-  if((email = MA_ExamineMail(NULL, tfname, FALSE)))
+  if((email = MA_ExamineMail(NULL, tfname, FALSE)) != NULL)
   {
     struct MailTransferNode *mtn;
 
