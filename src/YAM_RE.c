@@ -447,6 +447,7 @@ void RE_DisplayMIME(char *fname, const char *ctype)
         if((mail = calloc(1, sizeof(struct Mail))) == NULL)
         {
           CloseTempFile(tf);
+          MA_FreeEMailStruct(email);
           LEAVE();
           return;
         }
@@ -3673,6 +3674,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
                   AddNewMailNode(mlist, mail);
                 }
+
                 MA_FreeEMailStruct(email);
               }
 
