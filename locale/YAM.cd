@@ -6940,3 +6940,6 @@ Please launch your internet browser yourself and enter this link:\n\
 MSG_USERNAME_FALLBACK (2152//)
 John Doe
 ;
+MSG_RE_DEFAULT_MIMEPART_NAME (2153//)
+Part %ld.%ld
+; PARENTNUMBER PARTNUMER

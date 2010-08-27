@@ -1811,6 +1811,7 @@ static BOOL RE_SaveThisPart(struct Part *rp)
 static void RE_SetPartInfo(struct Part *rp)
 {
   LONG size;
+  const char *comment;
 
   ENTER();
 
@@ -1874,6 +1875,10 @@ static void RE_SetPartInfo(struct Part *rp)
   else
     CLEAR_FLAG(rp->Flags, PFLAG_PRINTABLE);
 
+  // give the part a name if it has none yet
+  if(rp->Name[0] == '\0')
+    snprintf(rp->Name, sizeof(rp->Name), tr(MSG_RE_DEFAULT_MIMEPART_NAME), (rp->Parent != NULL) ? rp->Parent->Nr+1 : 1, rp->Nr);
+
   // Now that we have defined that this part is printable we have
   // to check whether our readMailData structure already contains a reference
   // to the actual readable letterPart or not and if not we do make this
@@ -1887,16 +1892,25 @@ static void RE_SetPartInfo(struct Part *rp)
 
     rp->rmData->letterPartNum = rp->Nr;
 
-    SetComment(rp->Filename, tr(MSG_RE_Letter));
+    comment = tr(MSG_RE_Letter);
   }
   else if(rp->Nr == PART_RAW)
-    SetComment(rp->Filename, tr(MSG_RE_Header));
+  {
+    comment = tr(MSG_RE_Header);
+  }
   else
   {
     // if this is not a printable LETTER part or a RAW part we
     // write another comment
-    SetComment(rp->Filename, *rp->Description ? rp->Description : (*rp->Name ? rp->Name : rp->ContentType));
+    if(rp->Description[0] != '\0')
+      comment = rp->Description;
+    else if(rp->Name[0] != '\0')
+      comment = rp->Name;
+    else
+      comment = rp->ContentType;
   }
+
+  SetComment(rp->Filename, comment);
 
   LEAVE();
 }

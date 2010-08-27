@@ -62,6 +62,12 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-03-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: in case a MIME part has no name an aritifical name will now be
+    generated from the part's index number. This avoids usage of YAM's temporary
+    names When saving such parts to a file.
+
 2010-03-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * themes/AISS: the AISS theme now requires at least AISS 4.8 to be installed.
