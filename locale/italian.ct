@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (21.02.2010)
+## version $VER: YAM.catalog 7.1 (24.02.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6,7 +6,7 @@
 ; italian.ct - YAM 2.6 catalog translation file
 ; $Id$
 ;
-; based on YAM.cd 4501 2010-01-26
+; based on YAM.cd 4546 2010-02-23
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9381,11 +9381,11 @@ Data di nascita in formato locale\n\
 ; (e.g. 19.06.1974 or 19/06/1974).
 ;
 MSG_ERROR_PLAYSOUND
-Si è verificato un errore durante l'esecuzione\n\
-del file audio '%s'.\n\
+Si è verificato un errore durante l'esecuzione del file\n\
+audio '%s'.\n\
 \n\
-Il problema potrebbe essere stato generato da un\n\
-datatype specifico non compatibile o danneggiato\n\
+Nota: Il problema potrebbe essere stato generato da\n\
+un datatype specifico non compatibile o danneggiato\n\
 oppure il datatype stesso non funziona correttamente.
 ; An error occurred while trying to play\n\
 ; the sound file '%s'.\n\
@@ -9910,4 +9910,8 @@ Per favore scaricala manualmente da questo indirizzo:\n\
 ; Please launch your internet browser yourself and enter this link:\n\
 ; '%s'
 ; URL
+;
+MSG_USERNAME_FALLBACK
+John Doe
+; John Doe
 ;
