@@ -10,6 +10,9 @@ $URL$
   * tools/mkrelease.sh: fixed a few path related issues and removed the dutch
     catalog.
   * Makefile: adapted to use the mkrelease.sh script.
+  * Debug.c: clear the semaphore structure before calling InitSemaphore(). The
+    "CxBroker" hit is harmless as commodities.library will truncate too long
+    strings automatically. This closes #171.
 
 2010-08-26 Thore Böckelmann <tboeckel@gmx.de>
 
