@@ -25,6 +25,12 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-08-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mime/md5.c, YAM_TR.c: implemented a conversion of an MD5 digest into a
+    hexdump. In contrast to the former conversion this happens in an endianess
+    aware way.
+
 2010-08-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: the argp parameter of IoctlSocket() must be a long. Using a char
