@@ -531,18 +531,20 @@ DECLARE(AddToEmailCache) // struct Person *person
 OVERLOAD(OM_NEW)
 {
   char filebuf[SIZE_PATHFILE];
+  char verbuf[CBD_TITLELEN];
   BOOL singleTaskOnly = TRUE;
   char var;
 
   // prepare a string pointer array with all the
   // names of the used classes within. This array is only usefull if MUI v20
   // is used and the user wants to alter the MUI settings of the application
-  static const char *const Classes[] = { "TextEditor.mcc",
-                                         "TheBar.mcc",
-                                         "BetterString.mcc",
-                                         "NListtree.mcc",
+  static const char *const Classes[] = { "BetterString.mcc",
+                                         "NBalance.mcc",
                                          "NList.mcc",
+                                         "NListtree.mcc",
                                          "NListviews.mcc",
+                                         "TextEditor.mcc",
+                                         "TheBar.mcc",
                                          NULL
                                        };
 
@@ -560,12 +562,18 @@ OVERLOAD(OM_NEW)
   else
    G->HideIcon = GetDiskObject(filebuf);
 
+  // set up the version string for the Commodity title
+  // the string MUST include the "$VER:" cookie, because this one will be stripped
+  // by MUI. However, to avoid any problems with two version cookies in the final
+  // executable we set up this one here in a bit more obfuscated fashion.
+  snprintf(verbuf, sizeof(verbuf), "%lcVER: YAM %s (%s)", '$', yamver, yamversiondate);
+
   if((obj = (Object *)DoSuperNew(cl, obj,
 
     MUIA_Application_Author,         "YAM Open Source Team",
     MUIA_Application_Base,           "YAM",
     MUIA_Application_Title,          "YAM",
-    MUIA_Application_Version,        yamversionstring,
+    MUIA_Application_Version,        verbuf,
     MUIA_Application_Copyright,      yamcopyright,
     MUIA_Application_Description,    tr(MSG_APP_DESCRIPTION),
     MUIA_Application_UseRexx,        FALSE,

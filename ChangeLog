@@ -30,6 +30,11 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-06-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/YAM.c: set up a correct and not too long Commodity title string. This
+    finally fixes the last PatchWork hit of #170.
+
 2010-06-26 Jens Langner <Jens.Langner@light-speed.de>
 
   * SDI_hook.h: updated to the very latest version of the hook macros to
