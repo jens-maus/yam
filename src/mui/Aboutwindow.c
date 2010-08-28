@@ -269,7 +269,7 @@ OVERLOAD(OM_NEW)
 
     DoMethod(obj,       MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_Set, MUIA_Window_Open, FALSE);
     DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-    DoMethod(bt_gopage, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_Aboutwindow_GotoSupportPage);
+    DoMethod(bt_gopage, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_Aboutwindow_GotoSupportPage);
 
     xset(obj, MUIA_Window_Activate,      TRUE,
               MUIA_Window_DefaultObject, bt_okay);
