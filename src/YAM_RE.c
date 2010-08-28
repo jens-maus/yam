@@ -4410,10 +4410,13 @@ void FreeHeaderNode(struct HeaderNode *hdrNode)
 {
   ENTER();
 
-  FreeStrBuf(hdrNode->name);
-  FreeStrBuf(hdrNode->content);
+  if(hdrNode != NULL)
+  {
+    FreeStrBuf(hdrNode->name);
+    FreeStrBuf(hdrNode->content);
 
-  FreeSysObject(ASOT_NODE, hdrNode);
+    FreeSysObject(ASOT_NODE, hdrNode);
+  }
 
   LEAVE();
 }

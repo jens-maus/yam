@@ -7,6 +7,8 @@ $URL$
 
 2010-08-28 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_RE.c: added a NULL check when freeing header nodes. This should close
+    #193. Please reopen the ticket if that is not the case.
   * YAM_MA.c: setting up the POP3 menu items must increase the index. This
     fixes #190.
 
