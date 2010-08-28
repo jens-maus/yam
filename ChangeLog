@@ -25,6 +25,12 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-08-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: hitting the DEL key now takes both the mail list and and mail
+    listview into account. This fixes the reported "unable to delete mail"
+    issue.
+ 
 2010-08-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: fixed some possible memory leaks and locked mail lists in case
