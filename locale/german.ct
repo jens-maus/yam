@@ -5710,7 +5710,8 @@ MSG_WR_TBSearch
 Suchen
 ;
 MSG_HELP_WR_BT_SEARCH
-Sucht den Text für eine gegebene Zeichenkette.
+Durchsucht den Text nach\n\
+einer Zeichenkette.
 ; Search the text\n\
 ; for a given string
 ;

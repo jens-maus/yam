@@ -43,6 +43,7 @@ $URL$
     any further notifications when modifying the buttons' states. All in all
     this fixes bug #3002917. Modifying the style using the menus always worked
     as expected. Just the buttons were not showing the correct state.
+  * locale/germant.ct: fixed a very strange translation.
 
 2010-04-25 Thore Böckelmann <tboeckel@gmx.de>
 
