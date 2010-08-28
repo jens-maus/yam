@@ -103,6 +103,7 @@ void InitDockyIcon(void)
         registerTags[2].ti_Tag += TAG_USER;
         registerTags[3].ti_Tag += TAG_USER;
         registerTags[4].ti_Tag += TAG_USER;
+        registerTags[5].ti_Tag += TAG_USER;
 
         portTags[0].ti_Tag += TAG_USER;
       }
@@ -123,6 +124,7 @@ void InitDockyIcon(void)
         registerTags[2].ti_Tag -= TAG_USER;
         registerTags[3].ti_Tag -= TAG_USER;
         registerTags[4].ti_Tag -= TAG_USER;
+        registerTags[5].ti_Tag -= TAG_USER;
 
         portTags[0].ti_Tag -= TAG_USER;
       }
@@ -131,7 +133,7 @@ void InitDockyIcon(void)
       // misinterprets german umlauts, hence we require at least V53.3 for the
       // description string.
       if(LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 3) == FALSE)
-        registerTags[4].ti_Tag = TAG_DONE;
+        registerTags[5].ti_Tag = TAG_DONE;
 
     }
 
