@@ -13,6 +13,9 @@ $URL$
 
 2010-08-26 Thore Böckelmann <tboeckel@gmx.de>
 
+  * ImageCache.c: warnings about missing image files will only be issued in case
+    neither the NOIMAGEWARNING ToolType nor the theme's NoImageWarning option
+    are active. This avoids lots of useless warnings for the "empty" theme.
   * tools/mkrelease.sh: copied over the mkrelease.sh script from the 2.7 branch.
     This fixes #147.
   * locale/german.ct: fixed a typo. This really fixes #140.
