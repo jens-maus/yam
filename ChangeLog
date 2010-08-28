@@ -25,6 +25,11 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-08-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ReadMailGroup.c: the header list NList object and the surrounding
+    NListview object are treated as equal for the standard edit operations.
+
 2010-08-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: fixed a double removal of a node from a list (RemHead() first,
