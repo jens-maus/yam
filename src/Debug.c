@@ -36,6 +36,7 @@
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/timer.h>
+#include <proto/utility.h>
 #include <clib/alib_protos.h>
 
 #include "YAM_global.h"
@@ -121,6 +122,7 @@ void SetupDebug(void)
       { "error",   DBC_ERROR    },
       { "warning", DBC_WARNING  },
       { "mtrack",  DBC_MTRACK   },
+      { "tags",    DBC_TAGS     },
       { "all",     DBC_ALL      },
       { NULL,      0            }
     };
@@ -520,6 +522,42 @@ void _SHOWMSG(unsigned long dclass, unsigned long dflags, const char *msg, const
       _DBPRINTF("%s%s:%ld:%s%s\n", ANSI_ESC_FG_GREEN, file, line, msg, ANSI_ESC_CLR);
     else
       _DBPRINTF("%s:%ld:%s\n", file, line, msg);
+  }
+}
+
+/****************************************************************************/
+
+void _SHOWTAGS(const char *file, unsigned long line, const struct TagItem *tags)
+{
+  if(isFlagSet(debug_classes, DBC_TAGS))
+  {
+    int i;
+    struct TagItem *tag;
+    struct TagItem *tstate = (struct TagItem *)tags;
+
+    _INDENT();
+
+    if(ansi_output)
+      _DBPRINTF("%s%s:%ld:tag list %08lx%s\n", ANSI_ESC_FG_GREEN, file, line, tags, ANSI_ESC_CLR);
+    else
+      _DBPRINTF("%s:%ld:tag list %08lx\n", file, line, tags);
+
+    indent_level++;
+
+    i = 0;
+    while((tag = NextTagItem(&tstate)) != NULL)
+    {
+      i++;
+
+      _INDENT();
+
+      if(ansi_output)
+        _DBPRINTF("%s%2ld: tag=%08lx data=%08lx%s\n", ANSI_ESC_FG_GREEN, i, tag->ti_Tag, tag->ti_Data, ANSI_ESC_CLR);
+      else
+        _DBPRINTF("%2ld: tag=%08lx data=%08lx\n", i, tag->ti_Tag, tag->ti_Data);
+    }
+
+    indent_level--;
   }
 }
 
