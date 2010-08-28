@@ -36,6 +36,10 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-06-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * include/SDI_compiler.h: updated to latest version.
+
 2010-05-21 Jens Langner <Jens.Langner@light-speed.de>
 
   * include/mui: updated the mui includes to match the latest released
