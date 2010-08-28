@@ -789,6 +789,8 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
       }
       else if(FO_GetCurrentFolder() == folder) // check again for the current folder
       {
+        BOOL jumped;
+
         // set the SortFlag in the NList accordingly
         MA_SetSortFlag();
 
@@ -815,12 +817,18 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         set(gui->PG_MAILLIST, MUIA_Disabled, FALSE);
 
         // Now we jump to messages that are NEW
-        if(C->JumpToNewMsg == TRUE && (folder->New != 0 || folder->Unread != 0))
-          MA_JumpToNewMsg();
-        else if(C->JumpToRecentMsg == TRUE)
-          MA_JumpToRecentMsg();
-        else if(folder->LastActive >= 0)
+        jumped = FALSE;
+        if(jumped == FALSE && C->JumpToNewMsg == TRUE && (folder->New != 0 || folder->Unread != 0))
+          jumped = MA_JumpToNewMsg();
+
+        if(jumped == FALSE && folder->LastActive >= 0)
+        {
           set(gui->PG_MAILLIST, MUIA_NList_Active, folder->LastActive);
+          jumped = TRUE;
+        }
+
+        if(jumped == FALSE && C->JumpToRecentMsg == TRUE)
+          jumped = MA_JumpToRecentMsg();
 
         // if there is still no entry active in the NList we make the first one active
         if(xget(gui->PG_MAILLIST, MUIA_NList_Active) == (ULONG)MUIV_NList_Active_Off)
@@ -849,11 +857,12 @@ MakeHook(MA_ChangeFolderHook, MA_ChangeFolderFunc);
 /// MA_JumpToNewMsg
 // Function that jumps to the first or last unread mail in a folder,
 // depending on sort order of the folder
-void MA_JumpToNewMsg(void)
+BOOL MA_JumpToNewMsg(void)
 {
   struct Folder *folder;
   Object *lv;
-  int i, incr, pos = -1;
+  int i, incr, newIdx = -1;
+  BOOL jumped = FALSE;
 
   ENTER();
 
@@ -881,26 +890,32 @@ void MA_JumpToNewMsg(void)
 
     if(hasStatusNew(mail) || !hasStatusRead(mail))
     {
-      pos = i;
+      newIdx = i;
       break;
     }
 
     i += incr;
   }
 
-  set(lv, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
+  if(newIdx >= 0 && newIdx != folder->LastActive)
+  {
+    set(lv, MUIA_NList_Active, newIdx);
+    jumped = TRUE;
+  }
 
-  LEAVE();
+  RETURN(jumped);
+  return jumped;
 }
 ///
 /// MA_JumpToRecentMsg
 // Function that jumps to the most recent mail in a folder
-void MA_JumpToRecentMsg(void)
+BOOL MA_JumpToRecentMsg(void)
 {
   struct Folder *folder;
   Object *lv;
   struct Mail *recent = NULL;
   int recentIdx = -1, i;
+  BOOL jumped = FALSE;
 
   ENTER();
 
@@ -926,9 +941,14 @@ void MA_JumpToRecentMsg(void)
     i++;
   }
 
-  set(lv, MUIA_NList_Active, recentIdx >= 0 ? recentIdx : folder->LastActive);
+  if(recentIdx >= 0 && recentIdx != folder->LastActive)
+  {
+    set(lv, MUIA_NList_Active, recentIdx);
+    jumped = TRUE;
+  }
 
-  LEAVE();
+  RETURN(jumped);
+  return jumped;
 }
 ///
 /// MA_ConvertOldMailFile
