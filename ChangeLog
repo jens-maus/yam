@@ -30,6 +30,12 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-06-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * src/YAM_FI.c: clicking on "Select matched" in the search window will now
+    correctly refresh the main window's toolbar and menu items to reflect the
+    selection.
+
 2010-06-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: the tabs' title texts and several other static texts were
