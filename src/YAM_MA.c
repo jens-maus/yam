@@ -3799,6 +3799,8 @@ void MA_SetupDynamicMenus(void)
         newObj = Menuitem(msn->account, NULL, TRUE, FALSE, MMEN_POPHOST+i);
         if(newObj != NULL)
           DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
+
+        i++;
       }
     }
 

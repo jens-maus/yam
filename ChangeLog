@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: setting up the POP3 menu items must increase the index. This
+    fixes #190.
+
 2010-08-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c, ReadMailGroup.c: the header nodes are now allocated using
