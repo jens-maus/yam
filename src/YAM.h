@@ -87,7 +87,6 @@ struct Global
   // pointers first
   APTR                     SharedMemPool; // MEMF_SHARED memory pool
   Object *                 App;
-  Object *                 WI_SEARCH;
   Object *                 NewMailSound_Obj;
   Object *                 SplashWinObject;
   Object *                 AboutWinObject;

@@ -2289,6 +2289,10 @@ int main(int argc, char **argv)
   }
   #endif // _M680x0
 
+  // initialize our debugging system.
+  #if defined(DEBUG)
+  SetupDebug();
+  #endif // DEBUG
 
   #if defined(DEVWARNING)
   {
@@ -2398,11 +2402,6 @@ int main(int argc, char **argv)
       exit(RETURN_WARN);
   }
   #endif // DEVWARNING
-
-  // initialize our debugging system.
-  #if defined(DEBUG)
-  SetupDebug();
-  #endif // DEBUG
 
   // signal that on a exit() the 'yam_exitfunc' function
   // should be called.

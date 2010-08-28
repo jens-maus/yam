@@ -25,6 +25,12 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-08-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: initialize the debugging framework a bit earlier to be able to
+    correctly catch any ENTER()/RETURN() macros in called functions like
+    GotoURLPossible(). This might have caused #183.
+
 2010-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ReadMailGroup.c: the header list NList object and the surrounding
