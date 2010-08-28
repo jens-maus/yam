@@ -25,6 +25,11 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-08-13 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Requesters.c: the '_' character will now be stripped from the gadget text
+    in case a pure intuition requester will be shown with MUI_Request().
+
 2010-08-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: hitting the DEL key now takes both the mail list and and mail
