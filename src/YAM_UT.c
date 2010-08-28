@@ -1678,6 +1678,15 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
       }
     }
 
+    // check for an error by ExamineDir() only if nothing else failed
+    if(result == TRUE)
+    {
+      LONG error;
+
+      if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
+        E(DBF_FOLDER, "ExamineDir() failed, error %ld", error);
+    }
+
     ReleaseDirContext(context);
 
     if(result == TRUE && DeleteFile(dir) == 0)
