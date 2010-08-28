@@ -16,12 +16,6 @@ $URL$
   * tools/mkrelease.sh: copied over the mkrelease.sh script from the 2.7 branch.
     This fixes #147.
   * locale/german.ct: fixed a typo. This really fixes #140.
-  * mui/WriteWindow.c: the tabs' title texts and several other static texts were
-    initialized on the very first use only. Restarting YAM by choosing "Restart"
-    from the project menu closed YAM's catalog and reopened it later. This could
-    result in invalid pointers the next time the write window was opened again.
-    Now the pointers are initialized every time. We really must get rid of these
-    static variables!! This closes #167.
   * YAM_MA.c, mui/MainWindow.c, mui/MainMailListGroup.c: the "active object on
     click" feature of NList must operate on listview objects instead of the em-
     bedded list objects. Thus we have to distinguish between these two in lots
@@ -35,6 +29,15 @@ $URL$
   * misc: added interface version parameter to the INITLIB() and GETINTERFACE()
     macros to be able to obtain other interface versions than just the fixed
     version 1.
+
+2010-06-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: the tabs' title texts and several other static texts were
+    initialized on the very first use only. Restarting YAM by choosing "Restart"
+    from the project menu closed YAM's catalog and reopened it later. This could
+    result in invalid pointers the next time the write window was opened again.
+    Now the pointers are initialized every time. We really must get rid of these
+    static variables!! This closes #167.
 
 2010-06-06 Thore Böckelmann <tboeckel@gmx.de>
 
