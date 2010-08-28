@@ -59,6 +59,8 @@ APTR ObtainDirContext(struct TagItem *tags)
 
   ENTER();
 
+  SHOWTAGS(tags);
+
   if((ctx = (struct DirContext *)calloc(1, sizeof(*ctx))) != NULL)
   {
     char *dir;
@@ -177,13 +179,14 @@ struct ExamineData *ExamineDir(APTR context)
     else
     {
       // then do another ExAll() call to get more data
-      ctx->more = ExAll(ctx->lock, ctx->eaBuffer, SIZE_EXALLBUF, ED_SIZE, ctx->eaControl);
-      SHOWVALUE(DBF_FOLDER, ctx->more);
+      ctx->more = ExAll(ctx->lock, ctx->eaBuffer, SIZE_EXALLBUF, ED_COMMENT, ctx->eaControl);
 
       if(ctx->more == 0)
       {
         // preserve the error number of this last call, this will be restored later
-        ctx->exAllError = IoErr();
+        // make sure to return "no more entries" in case the filesystem reported no error
+        if((ctx->exAllError = IoErr()) == 0)
+          ctx->exAllError = ERROR_NO_MORE_ENTRIES;
       }
       if(ctx->more != 0 || ctx->eaControl->eac_Entries > 0)
       {
@@ -191,6 +194,10 @@ struct ExamineData *ExamineDir(APTR context)
         // or we got at least one entry to handle
         ctx->eaData = ctx->eaBuffer;
       }
+
+      SHOWVALUE(DBF_FOLDER, ctx->more);
+      SHOWVALUE(DBF_FOLDER, ctx->exAllError);
+      SHOWVALUE(DBF_FOLDER, ctx->eaControl->eac_Entries);
     }
   }
 
