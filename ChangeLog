@@ -24,11 +24,6 @@ $URL$
     result in invalid pointers the next time the write window was opened again.
     Now the pointers are initialized every time. We really must get rid of these
     static variables!! This closes #167.
-  * YAM.c: the XPK scanning duplicated the found packers in a wrong way so
-    that the resulting capability flags were completely screwed up and the
-    displayed lists in the configuration window showed the wrong packers. For
-    example the IDEA packer was no longer recognized as being able to encrypt.
-    This closes #152.
   * YAM_MA.c: when exporting mails the file name returned by the file requester
     is now checked to be non-empty. Although I could not reproduce ticket #154
     this should fix it and thus closes #154.
@@ -37,7 +32,7 @@ $URL$
     bedded list objects. Thus we have to distinguish between these two in lots
     of places. Together with the latest modificiations to NList itself this
     closes #14.
- * misc: disabled the "default object on click" feature for several NList
+  * misc: disabled the "default object on click" feature for several NList
     objects. This finally fixes the keyboard navigation issues. These issues
     were bugs of YAM but only really occured with the latest NList 0.107
     release.
@@ -55,6 +50,18 @@ $URL$
   * misc: added interface version parameter to the INITLIB() and GETINTERFACE()
     macros to be able to obtain other interface versions than just the fixed
     version 1.
+
+2010-04-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: the XPK scanning duplicated the found packers in a wrong way so
+    that the resulting capability flags were completely screwed up and the
+    displayed lists in the configuration window showed the wrong packers. For
+    example the IDEA packer was no longer recognized as being able to encrypt.
+    This closes #152.
+  * YAM.c: scanning the XPK compressors could result in a wrong final result if
+    querying the info of one compressor failed but the next one succeeded.
+    Additionally the query structure is now allocated dynamically instead of
+    placing it on the stack.
 
 2010-03-31 Frank Weber <opionline@yahoo.de>
 

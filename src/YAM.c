@@ -689,63 +689,71 @@ static BOOL InitXPKPackerList(void)
 
   if(XpkBase != NULL)
   {
-    struct XpkPackerList xpl;
+    struct XpkPackerList *xpl;
 
-    if((error = XpkQueryTags(XPK_PackersQuery, &xpl, TAG_DONE)) == 0)
+    if((xpl = malloc(sizeof(*xpl))) != NULL)
     {
-      unsigned int i;
-
-      D(DBF_XPK, "Loaded XPK Packerlist: %ld packers found", xpl.xpl_NumPackers);
-
-      for(i=0; i < xpl.xpl_NumPackers; i++)
+      // obtain the list of all available packers
+      if((error = XpkQueryTags(XPK_PackersQuery, xpl, TAG_DONE)) == 0)
       {
-        struct XpkPackerInfo xpi;
+        unsigned int i;
 
-        if((error = XpkQueryTags(XPK_PackMethod, xpl.xpl_Packer[i], XPK_PackerQuery, &xpi, TAG_DONE)) == 0)
+        D(DBF_XPK, "loaded XPK packer list, %ld packers found", xpl->xpl_NumPackers);
+
+        // assume success for now
+        result = TRUE;
+
+        for(i=0; i < xpl->xpl_NumPackers; i++)
         {
-          struct xpkPackerNode *newPacker;
+          struct XpkPackerInfo xpi;
 
-          if((newPacker = malloc(sizeof(*newPacker))) != NULL)
+          // obtain the basic information about the individual packers
+          if((error = XpkQueryTags(XPK_PackMethod, xpl->xpl_Packer[i], XPK_PackerQuery, &xpi, TAG_DONE)) == 0)
           {
-            memcpy(&newPacker->info, &xpi, sizeof(newPacker->info));
+            struct xpkPackerNode *newPacker;
 
-            // because the short name isn't always equal to the packer short name
-            // we work around that problem and make sure they are equal.
-            strlcpy((char *)newPacker->info.xpi_Name, (char *)xpl.xpl_Packer[i], sizeof(newPacker->info.xpi_Name));
+            if((newPacker = malloc(sizeof(*newPacker))) != NULL)
+            {
+              memcpy(&newPacker->info, &xpi, sizeof(newPacker->info));
 
-            //D(DBF_XPK, "Found XPKPacker: %ld: [%s] = '%s' flags = %08lx", i, xpl.xpl_Packer[i], newPacker->info.xpi_Name, newPacker->info.xpi_Flags);
+              // because the short name isn't always equal to the packer short name
+              // we work around that problem and make sure they are equal.
+              strlcpy((char *)newPacker->info.xpi_Name, (char *)xpl->xpl_Packer[i], sizeof(newPacker->info.xpi_Name));
 
-            // add the new packer to our internal list.
-            AddTail((struct List *)&G->xpkPackerList, (struct Node *)newPacker);
+              D(DBF_XPK, "found XPK packer #%ld: '%s' flags = %08lx", i, newPacker->info.xpi_Name, newPacker->info.xpi_Flags);
 
-            result = TRUE;
+              // add the new packer to our internal list.
+              AddTail((struct List *)&G->xpkPackerList, (struct Node *)newPacker);
+            }
+          }
+          else
+          {
+            // something failed, so lets query the error!
+            #if defined(DEBUG)
+            char buf[1024];
+
+            XpkFault(error, NULL, buf, sizeof(buf));
+
+            E(DBF_XPK, "error on XpkQuery() of packer '%s': '%s'", xpl->xpl_Packer[i], buf);
+            #endif
+
+            result = FALSE;
           }
         }
-        else
-        {
-          // something failed, so lets query the error!
-          #if defined(DEBUG)
-          char buf[1024];
-
-          XpkFault(error, NULL, buf, sizeof(buf));
-
-          E(DBF_XPK, "Error on XpkQuery() of packer '%s': '%s'", xpl.xpl_Packer[i], buf);
-          #endif
-
-          result = FALSE;
-        }
       }
-    }
-    else
-    {
-      // something failed, so lets query the error!
-      #if defined(DEBUG)
-      char buf[1024];
+      else
+      {
+        // something failed, so lets query the error!
+        #if defined(DEBUG)
+        char buf[1024];
 
-      XpkFault(error, NULL, buf, sizeof(buf));
+        XpkFault(error, NULL, buf, sizeof(buf));
 
-      E(DBF_XPK, "Error on general XpkQuery(): '%s'", buf);
-      #endif
+        E(DBF_XPK, "error on general XpkQuery(): '%s'", buf);
+        #endif
+      }
+
+      free(xpl);
     }
   }
 
@@ -762,10 +770,10 @@ static void FreeXPKPackerList(void)
 
   if(IsMinListEmpty(&G->xpkPackerList) == FALSE)
   {
-    struct MinNode *curNode;
+    struct Node *curNode;
 
-    // Now we process the read header to set all flags accordingly
-    while((curNode = (struct MinNode *)RemHead((struct List *)&G->xpkPackerList)) != NULL)
+    // subsequently remove all nodes from the list and free them
+    while((curNode = RemHead((struct List *)&G->xpkPackerList)) != NULL)
     {
       // free everything of the node
       free(curNode);
