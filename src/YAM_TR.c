@@ -7068,51 +7068,22 @@ static void TR_NewMailAlert(void)
     if(hasOS41SystemNotify(C->NotifyType))
     {
       D(DBF_GUI, "appID is %ld, application.lib is V%ld.%ld (needed V%ld.%ld)", G->applicationID, ApplicationBase->lib_Version, ApplicationBase->lib_Revision, 53, 7);
-      // Notify() is V53.2+, 53.7 fixes some serious issues
+      // Notify() is V53.2+, but 53.7 fixes some serious issues
       if(G->applicationID > 0 && LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 7) == TRUE)
       {
         // 128 chars is the current maximum :(
         char message[128];
-        struct TagItem notifyTags[] =
-        {
-          { APPNOTIFY_Title, (uint32)"YAM" },
-          { APPNOTIFY_PubScreenName, (uint32)"FRONT" },
-          { APPNOTIFY_Text, (uint32)message },
-          { APPNOTIFY_CloseOnDC, TRUE },
-          { APPNOTIFY_BackMsg, (uint32)"POPUP" },
-          { TAG_DONE, 0 }
-        };
-
-        // adapt the tag values for the different interface versions
-        if(IApplication->Data.Version >= 2)
-        {
-          D(DBF_GUI, "using application.library v2 interface tags");
-          if(APPNOTIFY_Title < TAG_USER)
-          {
-            D(DBF_GUI, "adapting v1 tags for v2 interface");
-            notifyTags[0].ti_Tag += TAG_USER;
-            notifyTags[1].ti_Tag += TAG_USER;
-            notifyTags[2].ti_Tag += TAG_USER;
-            notifyTags[3].ti_Tag += TAG_USER;
-            notifyTags[4].ti_Tag += TAG_USER;
-          }
-        }
-        else
-        {
-          D(DBF_GUI, "using application.library v1 interface tags");
-          if(APPNOTIFY_Title >= TAG_USER)
-          {
-            D(DBF_GUI, "adapting v2 tags for v1 interface");
-            notifyTags[0].ti_Tag -= TAG_USER;
-            notifyTags[1].ti_Tag -= TAG_USER;
-            notifyTags[2].ti_Tag -= TAG_USER;
-            notifyTags[3].ti_Tag -= TAG_USER;
-            notifyTags[4].ti_Tag -= TAG_USER;
-          }
-        }
 
         snprintf(message, sizeof(message), tr(MSG_TR_NEW_MAIL_NOTIFY), stats->Downloaded - rr->Spam);
-        NotifyA(G->applicationID, notifyTags);
+        // We require 53.7+. From this version on proper tag values are used, hence there
+        // is no need to distinguish between v1 and v2 interfaces here as we have to do for
+        // other application.lib functions.
+        Notify(G->applicationID, APPNOTIFY_Title, (uint32)"YAM",
+                                 APPNOTIFY_PubScreenName, (uint32)"FRONT",
+                                 APPNOTIFY_Text, (uint32)message,
+                                 APPNOTIFY_CloseOnDC, TRUE,
+                                 APPNOTIFY_BackMsg, (uint32)"POPUP",
+                                 TAG_DONE);
       }
     }
     #endif // __amigaos4__
