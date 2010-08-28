@@ -10,9 +10,6 @@
 #ifndef UTILITY_TAGITEM_H
 #include <utility/tagitem.h>
 #endif
-#ifndef LIBRARIES_MUI_H
-#include <libraries/mui.h>
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,8 +24,8 @@ Object *MUI_NewObject          (CONST_STRPTR classname,Tag tag1,...);
 Object *MUI_MakeObjectA        (LONG type,ULONG *params);
 Object *MUI_MakeObject         (LONG type,...);
 VOID    MUI_DisposeObject      (Object *obj);
-LONG    MUI_RequestA           (APTR app,APTR win,LONGBITS flags,CONST_STRPTR title,CONST_STRPTR gadgets,CONST_STRPTR format,APTR params);
-LONG    MUI_Request            (APTR app,APTR win,LONGBITS flags,CONST_STRPTR title,CONST_STRPTR gadgets,CONST_STRPTR format,...);
+LONG    MUI_RequestA           (APTR app,APTR win,ULONG flags,CONST_STRPTR title,CONST_STRPTR gadgets,CONST_STRPTR format,APTR params);
+LONG    MUI_Request            (APTR app,APTR win,ULONG flags,CONST_STRPTR title,CONST_STRPTR gadgets,CONST_STRPTR format,...);
 LONG    MUI_Error              (VOID);
 APTR    MUI_AllocAslRequest    (unsigned long reqType, struct TagItem *tagList);
 APTR    MUI_AllocAslRequestTags(unsigned long reqType, Tag Tag1, ...);
@@ -62,9 +59,13 @@ VOID                    MUI_ReleasePen       (struct MUI_RenderInfo *mri,LONG pe
 /*************************************************************/
 
 BOOL MUI_Layout(Object *obj,LONG left,LONG top,LONG width,LONG height,ULONG flags);
+BOOL MUI_LayoutObj(Object *obj,LONG left,LONG top,LONG width,LONG height,ULONG flags);
+
+ULONG MUI_Show(Object *obj);
+ULONG MUI_Hide(Object *obj);
+VOID MUI_Offset(Object *obj,LONG addx,LONG addy);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* CLIB_MUIMASTER_PROTOS_H */
