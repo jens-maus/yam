@@ -36,6 +36,13 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-04-24 Frank Weber <opionline@yahoo.de>
+
+  * YAM_CO.c: Add a workaround for a MUI 3.8 bug to show the colors for the
+    Poppen objects on OS3.x.
+  * YAM_COs.c: Disable all Poppen objects according to the UseTextColorsRead
+    setting and do some cosmetic changes. This closes #162.
+
 2010-04-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: added missing NULL pointer check for output file. Having no output
@@ -179,10 +186,6 @@ $URL$
   * locale: bumped the version of our catalog to version 7 and updated the
     currently uptodate catalog translations to match that version. Also fixed
     the cleanup script and cleaned up all catalog translations accordingly.
-  * YAM_CO.c: Add a workaround for a MUI 3.8 bug to show the colors for the
-    Poppen objects on OS3.x.
-  * YAM_COs.c: Disable all Poppen objects according to the UseTextColorsRead
-    setting and do some cosmetic changes. This closes #162.
 
 2010-02-20 Matthias Rustler <mrustler@gmx.de>
 
