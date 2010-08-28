@@ -25,6 +25,11 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-08-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ReadMailGroup.c, mui/WriteWindow.c: disabled the "default object on
+    click" for the last to instances.
+
 2010-08-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: changed a warning to a normal debug message to reduce the
