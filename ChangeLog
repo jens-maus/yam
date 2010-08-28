@@ -30,6 +30,11 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-07-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/request windows: make sure that every requester window gets a window
+    title at all if none given. "YAM" will be used as default.
+
 2010-07-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/ExamineDir.c: the ExamineDir() reimplementation directly returned
