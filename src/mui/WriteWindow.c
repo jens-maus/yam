@@ -1584,8 +1584,14 @@ OVERLOAD(OM_NEW)
           DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_BOLD,      MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
           DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_ITALIC,    MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
           DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_UNDERLINE, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            7,              data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, TRUE);
           DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            0,              data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, FALSE);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            6,              data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, FALSE);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            7,              data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, TRUE);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            8,              data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, FALSE);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            9,              data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, FALSE);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           10,              data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, FALSE);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           11,              data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, FALSE);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           12,              data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, FALSE);
 
           DoMethod(data->MI_BOLD,      MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_BOLD,      MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
           DoMethod(data->MI_ITALIC,    MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_ITALIC,    MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
@@ -1602,8 +1608,14 @@ OVERLOAD(OM_NEW)
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->MI_BOLD,      3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->MI_ITALIC,    3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, data->MI_UNDERLINE, 3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
-        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            7,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, TRUE);
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            0,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            6,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            7,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, TRUE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            8,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            9,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           10,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           11,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           12,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
 
         DoMethod(data->MI_BOLD,      MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_BOLD, ORIGIN_MENU);
         DoMethod(data->MI_ITALIC,    MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_ITALIC, ORIGIN_MENU);

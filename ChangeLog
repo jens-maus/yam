@@ -30,6 +30,12 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-07-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: the notifications for colored text did only take changes
+    between pens 0 and 7 into account, but neglected other colored text, i.e.
+    because of being quoted.
+
 2010-06-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/YAM.c: set up a correct and not too long Commodity title string. This
