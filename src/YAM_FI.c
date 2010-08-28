@@ -1996,10 +1996,8 @@ static BOOL CompareRuleLists(const struct MinList *rl1, const struct MinList *rl
     }
 
     // if there are any nodes left then the two lists cannot be equal
-    if((mln1 != NULL && GetSucc(mln1) != NULL) || (mln2 != NULL && GetSucc(mln2) != NULL))
-    {
+    if(mln1 != NULL || mln2 != NULL)
       equal = FALSE;
-    }
   }
   else if((empty1 == TRUE && empty2 == FALSE) || (empty1 == FALSE && empty2 == TRUE))
   {
@@ -2061,10 +2059,8 @@ BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2)
     }
 
     // if there are any nodes left then the two lists cannot be equal
-    if((mln1 != NULL && GetSucc(mln1) != NULL) || (mln2 != NULL && GetSucc(mln2) != NULL))
-    {
+    if(mln1 != NULL || mln2 != NULL)
       equal = FALSE;
-    }
   }
   else if((empty1 == TRUE && empty2 == FALSE) || (empty1 == FALSE && empty2 == TRUE))
   {

@@ -50,7 +50,8 @@ $URL$
     back to the V1 interface upon failure. The function calls then must be
     adapted to use the correct tag definitions for the two possible interface
     versions.
- 
+  * YAM_FI.c, MimeTypes.c: fixed the still wrong list comparison.
+
 2010-04-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: when exporting mails the file name returned by the file requester
