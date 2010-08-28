@@ -36,6 +36,14 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-05-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c, mui/WriteWindowToolbar.c: correctly declared the style
+    buttons as toggle buttons and modified some notifications to not trigger
+    any further notifications when modifying the buttons' states. All in all
+    this fixes bug #3002917. Modifying the style using the menus always worked
+    as expected. Just the buttons were not showing the correct state.
+
 2010-04-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * DockyIcon.c: the full application path is now specified when registering

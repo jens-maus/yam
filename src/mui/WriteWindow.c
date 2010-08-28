@@ -1568,10 +1568,10 @@ OVERLOAD(OM_NEW)
           DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_COPY,      MUIA_Pressed, FALSE, data->TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "COPY");
           DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_PASTE,     MUIA_Pressed, FALSE, data->TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "PASTE");
           DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_UNDO,      MUIA_Pressed, FALSE, data->TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "UNDO");
-          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_BOLD,      MUIA_Pressed, FALSE, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_BOLD, ORIGIN_TOOLBAR);
-          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_ITALIC,    MUIA_Pressed, FALSE, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_ITALIC, ORIGIN_TOOLBAR);
-          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_UNDERLINE, MUIA_Pressed, FALSE, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_UNDERLINE, ORIGIN_TOOLBAR);
-          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_COLORED,   MUIA_Pressed, FALSE, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_COLOR, ORIGIN_TOOLBAR);
+          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_BOLD,      MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_BOLD, ORIGIN_TOOLBAR);
+          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_ITALIC,    MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_ITALIC, ORIGIN_TOOLBAR);
+          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_UNDERLINE, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_UNDERLINE, ORIGIN_TOOLBAR);
+          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_COLORED,   MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_COLOR, ORIGIN_TOOLBAR);
           DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_SEARCH,    MUIA_Pressed, FALSE, obj, 3, MUIM_WriteWindow_Search, MUIF_NONE);
 
           // connect attributes to button disables
@@ -1580,16 +1580,17 @@ OVERLOAD(OM_NEW)
           DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_UndoAvailable, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDO, MUIA_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
 
           // connect attributes to button selections
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_BOLD,      MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_ITALIC,    MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDERLINE, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            7,              data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, TRUE);
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            0,              data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, FALSE);
+          // modifying the buttons' states must not cause any notifications!
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_BOLD,      MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_ITALIC,    MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_UNDERLINE, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            7,              data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, TRUE);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            0,              data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, FALSE);
 
-          DoMethod(data->MI_BOLD,      MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_BOLD,      MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->MI_ITALIC,    MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_ITALIC,    MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_UNDERLINE, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
-          DoMethod(data->MI_COLORED,   MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->MI_BOLD,      MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_BOLD,      MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->MI_ITALIC,    MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_ITALIC,    MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_UNDERLINE, MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
+          DoMethod(data->MI_COLORED,   MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_NoNotifySetAttr, TB_WRITE_COLORED,   MUIA_TheBar_Attr_Selected, MUIV_TriggerValue);
         }
 
         if(data->TX_POSI != NULL)
@@ -2756,16 +2757,15 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm, ULONG origin
       ULONG ny1;
       char marker[2] = " ";
       BOOL enableStyle = FALSE;
-      ULONG toolbarStore;
+      ULONG toolbarStore = 0;
       LONG addedChars = 0;
       LONG lastAddedChars = 0;
 
-      //D(DBF_STARTUP, "txt: '%s'", txt);
+      D(DBF_GUI, "txt '%s', origin %ld", txt, msg->origin);
 
       // define the marker for the
       // selected soft-style and check if
       // we should enable or disable the style
-      D(DBF_ALWAYS, "origin=%ld",msg->origin);
       switch(msg->ssm)
       {
         case SSM_NORMAL:
@@ -2779,9 +2779,8 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm, ULONG origin
             enableStyle = (xget(data->MI_BOLD, MUIA_Menuitem_Checked) == TRUE);
           else if(msg->origin == ORIGIN_TOOLBAR)
           {
-            toolbarStore = 0;
             DoMethod(data->TO_TOOLBAR, MUIM_TheBar_GetAttr, TB_WRITE_BOLD, MUIA_TheBar_Attr_Selected, &toolbarStore);
-            enableStyle = (toolbarStore == 0);
+            enableStyle = (toolbarStore != 0);
           }
         }
         break;
@@ -2793,9 +2792,8 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm, ULONG origin
             enableStyle = (xget(data->MI_ITALIC, MUIA_Menuitem_Checked) == TRUE);
           else if(msg->origin == ORIGIN_TOOLBAR)
           {
-            toolbarStore = 0;
             DoMethod(data->TO_TOOLBAR, MUIM_TheBar_GetAttr, TB_WRITE_ITALIC, MUIA_TheBar_Attr_Selected, &toolbarStore);
-            enableStyle = (toolbarStore == 0);
+            enableStyle = (toolbarStore != 0);
           }
         }
         break;
@@ -2807,9 +2805,8 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm, ULONG origin
             enableStyle = (xget(data->MI_UNDERLINE, MUIA_Menuitem_Checked) == TRUE);
           else if(msg->origin == ORIGIN_TOOLBAR)
           {
-            toolbarStore = 0;
             DoMethod(data->TO_TOOLBAR, MUIM_TheBar_GetAttr, TB_WRITE_UNDERLINE, MUIA_TheBar_Attr_Selected, &toolbarStore);
-            enableStyle = (toolbarStore == 0);
+            enableStyle = (toolbarStore != 0);
           }
         }
         break;
@@ -2821,15 +2818,14 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm, ULONG origin
             enableStyle = (xget(data->MI_COLORED, MUIA_Menuitem_Checked) == TRUE);
           else if(msg->origin == ORIGIN_TOOLBAR)
           {
-            toolbarStore = 0;
             DoMethod(data->TO_TOOLBAR, MUIM_TheBar_GetAttr, TB_WRITE_COLORED, MUIA_TheBar_Attr_Selected, &toolbarStore);
-            enableStyle = (toolbarStore == 0);
+            enableStyle = (toolbarStore != 0);
           }
         }
         break;
       }
 
-      D(DBF_ALWAYS, "marker '%s', enable %ld", marker, enableStyle);
+      D(DBF_GUI, "marker '%s', enable %ld, toolbarStore %ld", marker, enableStyle, toolbarStore);
 
       // check/get the status of the marked area
       if(DoMethod(data->TE_EDIT, MUIM_TextEditor_BlockInfo, &x1, &y1, &x2, &y2) == FALSE)
@@ -2921,7 +2917,7 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm, ULONG origin
 
           if(ntxt)
           {
-            //D(DBF_STARTUP, "ntxt: '%s' : %ld %ld", ntxt, enableStyle, addedChars);
+            D(DBF_GUI, "ntxt: '%s' : %ld %ld", ntxt, enableStyle, addedChars);
 
             // now we mark the area we found to be the one we want to
             // set bold/italic whatever
