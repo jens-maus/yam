@@ -29,6 +29,11 @@ $URL$
   * misc: added interface version parameter to the INITLIB() and GETINTERFACE()
     macros to be able to obtain other interface versions than just the fixed
     version 1.
+    
+2010-07-20 Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc/ExamineDir.c,h: fixed compilation by adding the missing EAD
+    defines and corrected its usage accordingly.
 
 2010-07-20 Thore Böckelmann <tboeckel@gmx.de>
 
