@@ -162,7 +162,6 @@ OVERLOAD(OM_SET)
       break;
 
       case MUIA_NList_Active:
-      case MUIA_NList_SelectChange:
       {
         set(data->mainListObjects[data->activeList], tag->ti_Tag, tag->ti_Data);
 

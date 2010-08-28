@@ -25,6 +25,19 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-07-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainMailListGroup.c: removed the catch of the MUIA_NList_SelectChange
+    attribute. The former redirection of setting the active liste entry was
+    complete nonsense, as the attribute is a boolean one. Interpretin such a
+    value as a position which would have caused the wrong reaction. Even the
+    attempt to avoid passing this attribute the group parent is not necessary
+    as group object would ignore the unknown attribute anyway.
+  * YAM_MA.c, mui/MainMailListGroup.c: use the NListview objects to set up the
+    left/right key focus feature instead of the NList objects for consistency
+    reasons. In any case the NListview object must become the active object
+    instead of the embedded NList object.
+
 2010-07-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, mui/MainWindow.c, mui/MainMailListGroup.c: the "active object on
