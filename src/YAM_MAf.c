@@ -2115,418 +2115,465 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
   // header lines
   if(fh != NULL && MA_ReadHeader(fullfile, fh, &headerList, RHM_MAINHEADER) == TRUE)
   {
-     BOOL foundTo = FALSE;
-     BOOL foundReplyTo = FALSE;
-     char *ptr;
-     char dateFilePart[12+1];
-     char timebuf[sizeof(struct TimeVal)+1]; // +1 because the b64decode does set a NUL byte
-     struct Node *curNode;
-     LONG size;
+    BOOL foundFrom = FALSE;
+    BOOL foundTo = FALSE;
+    BOOL foundReplyTo = FALSE;
+    char *ptr;
+    char dateFilePart[12+1];
+    char timebuf[sizeof(struct TimeVal)+1]; // +1 because the b64decode does set a NUL byte
+    struct Node *curNode;
+    LONG size;
 
-     // Now we process the read header to set all flags accordingly
-     IterateList(&headerList, curNode)
-     {
-       struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
-       char *field = hdrNode->name;
-       char *value = hdrNode->content;
+    // Now we process the read header to set all flags accordingly
+    IterateList(&headerList, curNode)
+    {
+      struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
+      char *field = hdrNode->name;
+      char *value = hdrNode->content;
 
-       if(stricmp(field, "from") == 0)
-       {
-         // find out if there are more than one From: address
-         if((p = MyStrChr(value, ',')) != NULL)
-          *p++ = '\0';
+      if(stricmp(field, "from") == 0)
+      {
+        foundFrom = TRUE;
 
-         // extract the main mail address
-         ExtractAddress(value, &pe);
-         mail->From = pe;
+        // find out if there are more than one From: address
+        if((p = MyStrChr(value, ',')) != NULL)
+         *p++ = '\0';
 
-         // if we have more addresses waiting we
-         // go and process them yet
-         if(p != NULL)
-         {
-           if(deep == TRUE)
-           {
-             if(email->NoSFrom == 0)
-               email->NoSFrom = MA_GetRecipients(p, &(email->SFrom));
+        // extract the main mail address
+        ExtractAddress(value, &pe);
+        mail->From = pe;
 
-             if(email->NoSFrom > 0)
-               SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
-           }
-           else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
-             SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
-         }
+        // if we have more addresses waiting we
+        // go and process them yet
+        if(p != NULL)
+        {
+          if(deep == TRUE)
+          {
+            if(email->NoSFrom == 0)
+              email->NoSFrom = MA_GetRecipients(p, &(email->SFrom));
 
-         D(DBF_MIME, "'From' senders: %ld", email->NoSFrom+1);
-       }
-       else if(stricmp(field, "reply-to") == 0)
-       {
-         foundReplyTo = TRUE;
+            if(email->NoSFrom > 0)
+              SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
+          }
+          else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
+            SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
+        }
 
-         // find out if there are more than one ReplyTo: address
-         if((p = MyStrChr(value, ',')) != NULL)
-          *p++ = '\0';
+        D(DBF_MIME, "'From' senders: %ld", email->NoSFrom+1);
+      }
+      else if(stricmp(field, "reply-to") == 0)
+      {
+        foundReplyTo = TRUE;
 
-         ExtractAddress(value, &pe);
-         mail->ReplyTo = pe;
+        // find out if there are more than one ReplyTo: address
+        if((p = MyStrChr(value, ',')) != NULL)
+         *p++ = '\0';
 
-         // if we have more addresses waiting we
-         // go and process them yet
-         if(p != NULL)
-         {
-           if(deep == TRUE)
-           {
-             if(email->NoSReplyTo == 0)
-               email->NoSReplyTo = MA_GetRecipients(p, &(email->SReplyTo));
+        ExtractAddress(value, &pe);
+        mail->ReplyTo = pe;
 
-             if(email->NoSReplyTo > 0)
-               SET_FLAG(mail->mflags, MFLAG_MULTIREPLYTO);
-           }
-           else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
-             SET_FLAG(mail->mflags, MFLAG_MULTIREPLYTO);
-         }
+        // if we have more addresses waiting we
+        // go and process them yet
+        if(p != NULL)
+        {
+          if(deep == TRUE)
+          {
+            if(email->NoSReplyTo == 0)
+              email->NoSReplyTo = MA_GetRecipients(p, &(email->SReplyTo));
 
-         D(DBF_MIME, "'ReplyTo' recipients: %ld", email->NoSReplyTo+1);
-       }
-       else if(stricmp(field, "original-recipient") == 0)
-       {
-         ExtractAddress(value, &pe);
-         email->OriginalRcpt = pe;
-       }
-       else if(stricmp(field, "return-path") == 0)
-       {
-         ExtractAddress(value, &pe);
-         email->ReturnPath = pe;
-       }
-       else if(stricmp(field, "disposition-notification-to") == 0 ||
-               stricmp(field, "return-receipt-to") == 0)
-       {
-         ExtractAddress(value, &pe);
-         email->ReceiptTo = pe;
-         SET_FLAG(mail->mflags, MFLAG_SENDMDN);
-       }
-       else if(stricmp(field, "to") == 0)
-       {
-         if(foundTo == FALSE)
-         {
-           foundTo = TRUE;
+            if(email->NoSReplyTo > 0)
+              SET_FLAG(mail->mflags, MFLAG_MULTIREPLYTO);
+          }
+          else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
+            SET_FLAG(mail->mflags, MFLAG_MULTIREPLYTO);
+        }
 
-           if((p = MyStrChr(value, ',')) != NULL)
-             *p++ = '\0';
+        D(DBF_MIME, "'ReplyTo' recipients: %ld", email->NoSReplyTo+1);
+      }
+      else if(stricmp(field, "original-recipient") == 0)
+      {
+        ExtractAddress(value, &pe);
+        email->OriginalRcpt = pe;
+      }
+      else if(stricmp(field, "return-path") == 0)
+      {
+        ExtractAddress(value, &pe);
+        email->ReturnPath = pe;
+      }
+      else if(stricmp(field, "disposition-notification-to") == 0 ||
+              stricmp(field, "return-receipt-to") == 0)
+      {
+        ExtractAddress(value, &pe);
+        email->ReceiptTo = pe;
+        SET_FLAG(mail->mflags, MFLAG_SENDMDN);
+      }
+      else if(stricmp(field, "to") == 0)
+      {
+        if(foundTo == FALSE)
+        {
+          foundTo = TRUE;
 
-           ExtractAddress(value, &pe);
-           mail->To = pe;
-           if(p != NULL)
-           {
-             if(deep == TRUE)
-             {
-               if(email->NoSTo == 0)
-                 email->NoSTo = MA_GetRecipients(p, &(email->STo));
+          if((p = MyStrChr(value, ',')) != NULL)
+            *p++ = '\0';
 
-               if(email->NoSTo > 0)
-                 SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-             }
-             else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
-               SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-           }
+          ExtractAddress(value, &pe);
+          mail->To = pe;
+          if(p != NULL)
+          {
+            if(deep == TRUE)
+            {
+              if(email->NoSTo == 0)
+                email->NoSTo = MA_GetRecipients(p, &(email->STo));
 
-           D(DBF_MIME, "'To:' recipients: %ld", email->NoSTo+1);
-         }
-       }
-       else if(stricmp(field, "cc") == 0)
-       {
-         if(deep == TRUE)
-         {
-           if(email->NoCC == 0)
-             email->NoCC = MA_GetRecipients(value, &(email->CC));
+              if(email->NoSTo > 0)
+                SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+            }
+            else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
+              SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+          }
 
-           D(DBF_MIME, "'Cc:' recipients: %ld", email->NoCC);
+          D(DBF_MIME, "'To:' recipients: %ld", email->NoSTo+1);
+        }
+      }
+      else if(stricmp(field, "cc") == 0)
+      {
+        if(deep == TRUE)
+        {
+          if(email->NoCC == 0)
+            email->NoCC = MA_GetRecipients(value, &(email->CC));
 
-           if(email->NoCC > 0)
-             SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-         }
-         else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
-           SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-       }
-       else if(stricmp(field, "bcc") == 0)
-       {
-         if(deep == TRUE)
-         {
-           if(email->NoBCC == 0)
-             email->NoBCC = MA_GetRecipients(value, &(email->BCC));
+          D(DBF_MIME, "'Cc:' recipients: %ld", email->NoCC);
 
-           D(DBF_MIME, "'BCC:' recipients: %ld", email->NoBCC);
+          if(email->NoCC > 0)
+            SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+        }
+        else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
+          SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+      }
+      else if(stricmp(field, "bcc") == 0)
+      {
+        if(deep == TRUE)
+        {
+          if(email->NoBCC == 0)
+            email->NoBCC = MA_GetRecipients(value, &(email->BCC));
 
-           if(email->NoBCC > 0)
-             SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-         }
-         else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
-           SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-       }
-       else if(stricmp(field, "resent-to") == 0)
-       {
-         if(email->NoResentTo == 0)
-           email->NoResentTo = MA_GetRecipients(value, &(email->ResentTo));
+          D(DBF_MIME, "'BCC:' recipients: %ld", email->NoBCC);
 
-         D(DBF_MIME, "'Resent-To:' recipients: %ld", email->NoResentTo);
-       }
-       else if(stricmp(field, "subject") == 0)
-       {
-         strlcpy(mail->Subject, Trim(value), sizeof(mail->Subject));
-       }
-       else if(stricmp(field, "message-id") == 0)
-       {
-         email->messageID = StrBufCpy(email->messageID, Trim(value));
-         mail->cMsgID = CompressMsgID(email->messageID);
-       }
-       else if(stricmp(field, "in-reply-to") == 0)
-       {
-         email->inReplyToMsgID = StrBufCpy(email->inReplyToMsgID, Trim(value));
-         mail->cIRTMsgID = CompressMsgID(email->inReplyToMsgID);
-       }
-       else if(stricmp(field, "references") == 0)
-       {
-         email->references = StrBufCpy(email->references, Trim(value));
-       }
-       else if(stricmp(field, "date") == 0)
-       {
-         dateFound = MA_ScanDate(mail, value);
-       }
-       else if(stricmp(field, "importance") == 0)
-       {
-         if(getImportanceLevel(mail) == IMP_NORMAL)
-         {
-           p = Trim(value);
-           if(stricmp(p, "high") == 0)
-             setImportanceLevel(mail, IMP_HIGH);
-           else if(stricmp(p, "low") == 0)
-             setImportanceLevel(mail, IMP_LOW);
-         }
-       }
-       else if(stricmp(field, "priority") == 0)
-       {
-         if(getImportanceLevel(mail) == IMP_NORMAL)
-         {
-           p = Trim(value);
-           if(stricmp(p, "urgent") == 0)
-             setImportanceLevel(mail, IMP_HIGH);
-           else if(stricmp(p, "non-urgent") == 0)
-             setImportanceLevel(mail, IMP_HIGH);
-         }
-       }
-       else if(stricmp(field, "content-type") == 0)
-       {
-         p = Trim(value);
-         if(strnicmp(p, "multipart", 9) == 0)
-         {
-           p += 10;
+          if(email->NoBCC > 0)
+            SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+        }
+        else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
+          SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+      }
+      else if(stricmp(field, "resent-to") == 0)
+      {
+        if(email->NoResentTo == 0)
+          email->NoResentTo = MA_GetRecipients(value, &(email->ResentTo));
 
-           // we do specify the multipart content-type in
-           // accordance to RFC 2046/RFC2387
-           if(strnicmp(p, "mixed", 5) == 0)             // RFC 2046 (5.1.3)
-             SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
-           else if(strnicmp(p, "alternative", 11) == 0) // RFC 2046 (5.1.4)
-             SET_FLAG(mail->mflags, MFLAG_MP_ALTERN);
-           else if(strnicmp(p, "report", 6) == 0)       // RFC 3462
-             SET_FLAG(mail->mflags, MFLAG_MP_REPORT);
-           else if(strnicmp(p, "encrypted", 9) == 0)    // RFC 1847 (2.2)
-             SET_FLAG(mail->mflags, MFLAG_MP_CRYPT);
-           else if(strnicmp(p, "signed", 6) == 0)       // RFC 1847 (2.1)
-             SET_FLAG(mail->mflags, MFLAG_MP_SIGNED);
-           else
-           {
-             // "mixed" is the primary subtype and in fact RFC 2046 (5.1.7)
-             // suggests to fall back to mixed if a MIME subtype is unknown
-             // to a MIME parser, which we do here now.
-             SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
-           }
-         }
-         else if(strnicmp(p, "message/partial", 15) == 0) // RFC 2046 (5.2.2)
-         {
-           SET_FLAG(mail->mflags, MFLAG_PARTIAL);
-         }
-       }
-       else if(stricmp(field, "x-senderinfo") == 0)
-       {
-         SET_FLAG(mail->mflags, MFLAG_SENDERINFO);
-         if(deep == TRUE)
-           email->SenderInfo = StrBufCpy(email->SenderInfo, value);
-       }
-       else if(deep == TRUE) // and if we end up here we check if we really have to go further
-       {
-         if(stricmp(field, "x-yam-options") == 0)
-         {
-           enum Security sec;
+        D(DBF_MIME, "'Resent-To:' recipients: %ld", email->NoResentTo);
+      }
+      else if(stricmp(field, "subject") == 0)
+      {
+        strlcpy(mail->Subject, Trim(value), sizeof(mail->Subject));
+      }
+      else if(stricmp(field, "message-id") == 0)
+      {
+        email->messageID = StrBufCpy(email->messageID, Trim(value));
+        mail->cMsgID = CompressMsgID(email->messageID);
+      }
+      else if(stricmp(field, "in-reply-to") == 0)
+      {
+        email->inReplyToMsgID = StrBufCpy(email->inReplyToMsgID, Trim(value));
+        mail->cIRTMsgID = CompressMsgID(email->inReplyToMsgID);
+      }
+      else if(stricmp(field, "references") == 0)
+      {
+        email->references = StrBufCpy(email->references, Trim(value));
+      }
+      else if(stricmp(field, "date") == 0)
+      {
+        dateFound = MA_ScanDate(mail, value);
+      }
+      else if(stricmp(field, "importance") == 0)
+      {
+        if(getImportanceLevel(mail) == IMP_NORMAL)
+        {
+          p = Trim(value);
+          if(stricmp(p, "high") == 0)
+            setImportanceLevel(mail, IMP_HIGH);
+          else if(stricmp(p, "low") == 0)
+            setImportanceLevel(mail, IMP_LOW);
+        }
+      }
+      else if(stricmp(field, "priority") == 0)
+      {
+        if(getImportanceLevel(mail) == IMP_NORMAL)
+        {
+          p = Trim(value);
+          if(stricmp(p, "urgent") == 0)
+            setImportanceLevel(mail, IMP_HIGH);
+          else if(stricmp(p, "non-urgent") == 0)
+            setImportanceLevel(mail, IMP_HIGH);
+        }
+      }
+      else if(stricmp(field, "content-type") == 0)
+      {
+        p = Trim(value);
+        if(strnicmp(p, "multipart", 9) == 0)
+        {
+          p += 10;
 
-           if(strstr(value, "delsent") != NULL)
-             email->DelSend = TRUE;
+          // we do specify the multipart content-type in
+          // accordance to RFC 2046/RFC2387
+          if(strnicmp(p, "mixed", 5) == 0)             // RFC 2046 (5.1.3)
+            SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
+          else if(strnicmp(p, "alternative", 11) == 0) // RFC 2046 (5.1.4)
+            SET_FLAG(mail->mflags, MFLAG_MP_ALTERN);
+          else if(strnicmp(p, "report", 6) == 0)       // RFC 3462
+            SET_FLAG(mail->mflags, MFLAG_MP_REPORT);
+          else if(strnicmp(p, "encrypted", 9) == 0)    // RFC 1847 (2.2)
+            SET_FLAG(mail->mflags, MFLAG_MP_CRYPT);
+          else if(strnicmp(p, "signed", 6) == 0)       // RFC 1847 (2.1)
+            SET_FLAG(mail->mflags, MFLAG_MP_SIGNED);
+          else
+          {
+            // "mixed" is the primary subtype and in fact RFC 2046 (5.1.7)
+            // suggests to fall back to mixed if a MIME subtype is unknown
+            // to a MIME parser, which we do here now.
+            SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
+          }
+        }
+        else if(strnicmp(p, "message/partial", 15) == 0) // RFC 2046 (5.2.2)
+        {
+          SET_FLAG(mail->mflags, MFLAG_PARTIAL);
+        }
+      }
+      else if(stricmp(field, "x-senderinfo") == 0)
+      {
+        SET_FLAG(mail->mflags, MFLAG_SENDERINFO);
+        if(deep == TRUE)
+          email->SenderInfo = StrBufCpy(email->SenderInfo, value);
+      }
+      else if(deep == TRUE) // and if we end up here we check if we really have to go further
+      {
+        if(stricmp(field, "x-yam-options") == 0)
+        {
+          enum Security sec;
 
-           if((p = strstr(value, "sigfile")) != NULL)
-             email->Signature = p[7]-'0'+1;
+          if(strstr(value, "delsent") != NULL)
+            email->DelSend = TRUE;
 
-           for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
-           {
-             if(strstr(value, SecCodes[sec]) != NULL)
-               email->Security = sec;
-           }
-         }
-         else if(strnicmp(field, "x-yam-header-", 13) == 0)
-         {
-           email->extraHeaders = StrBufCat(StrBufCat(email->extraHeaders, &field[13]), ":");
-           email->extraHeaders = StrBufCat(StrBufCat(email->extraHeaders, value), "\\n");
-         }
-       }
-     }
+          if((p = strstr(value, "sigfile")) != NULL)
+            email->Signature = p[7]-'0'+1;
 
-     // if now the mail is still not MULTIPART we have to check for uuencoded attachments
-     if(!isMP_MixedMail(mail) && MA_DetectUUE(fh) == TRUE)
-       SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
+          for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
+          {
+            if(strstr(value, SecCodes[sec]) != NULL)
+              email->Security = sec;
+          }
+        }
+        else if(strnicmp(field, "x-yam-header-", 13) == 0)
+        {
+          email->extraHeaders = StrBufCat(StrBufCat(email->extraHeaders, &field[13]), ":");
+          email->extraHeaders = StrBufCat(StrBufCat(email->extraHeaders, value), "\\n");
+        }
+      }
+    }
 
-     // And now we close the Mailfile and clear the temporary headerList again
-     fclose(fh);
-     FreeHeaderList(&headerList);
+    // if now the mail is still not MULTIPART we have to check for uuencoded attachments
+    if(!isMP_MixedMail(mail) && MA_DetectUUE(fh) == TRUE)
+      SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
 
-     // in case the replyTo recipient doesn't have a realname yet and it is
-     // completly the same like the from address we go and copy the realname as both
-     // are the same.
-     if(foundReplyTo == TRUE && mail->ReplyTo.RealName[0] != '\0' && stricmp(mail->ReplyTo.Address, mail->From.Address) == 0)
-       strlcpy(mail->ReplyTo.RealName, mail->From.RealName, sizeof(mail->ReplyTo.RealName));
+    // in case we found no From: head line we try to construct a name
+    // from a possible Sender: line
+    if(foundFrom == FALSE)
+    {
+      struct HeaderNode *hdrNode;
+      D(DBF_MIME, "no From: header");
 
-     // if this function call has a folder of NULL then we are examining a virtual mail
-     // which means this mail doesn't have any folder and also no filename that may contain
-     // any usable date or stuff
-     if(folder != NULL)
-     {
-       // now we take the filename of our mailfile into account to check for
-       // the transfer date at the start of the name and for the set status
-       // flags at the end of it.
-       strlcpy(dateFilePart, mail->MailFile, sizeof(dateFilePart));
+      if((hdrNode = FindHeader(&headerList, "sender")) != NULL)
+      {
+        char *value = hdrNode->content;
+        char *p;
 
-       // make sure there is no "-" in the base64 encoded part as we just mapped
-       // the not allowed "/" to "-" to make it possible to use base64 for
-       // the timeval encoding
-       ptr = dateFilePart;
-       while((ptr = strchr(ptr, '-')) != NULL)
-         *ptr = '/';
+        // find out if there are more than one From: address
+        if((p = MyStrChr(value, ',')) != NULL)
+         *p++ = '\0';
 
-       // lets decode the base64 encoded timestring in a temporary buffer
-       if(base64decode(timebuf, (unsigned char *)dateFilePart, 12) <= 0)
-       {
-         W(DBF_FOLDER, "WARNING: failure in decoding the encoded date from mailfile: '%s'", mail->MailFile);
+        // extract the main mail address
+        ExtractAddress(value, &pe);
+        mail->From = pe;
 
-         // if we weren't able to decode the base64 encoded string
-         // we have to validate the transDate so that the calling function
-         // recognizes to rewrite the comment with a valid string.
-         mail->transDate.Seconds      = 0;
-         mail->transDate.Microseconds = 0;
-       }
-       else
-       {
-         // everything seems to have worked so lets copy the binary data in our
-         // transDate structure
-         memcpy(&mail->transDate, timebuf, sizeof(struct TimeVal));
-       }
+        D(DBF_MIME, "From: address obtained from Sender: header");
 
-       // now grab the status out of the end of the mailfilename
-       ptr = &mail->MailFile[17];
-       while(*ptr != '\0')
-       {
-         if(*ptr >= '1' && *ptr <= '7')
-         {
-           setPERValue(mail, *ptr-'1'+1);
-         }
-         else
-         {
-           switch(*ptr)
-           {
-             case SCHAR_READ:
-               SET_FLAG(mail->sflags, SFLAG_READ);
-             break;
+        // if we have more addresses waiting we
+        // go and process them yet
+        if(p != NULL)
+        {
+          if(deep == TRUE)
+          {
+            if(email->NoSFrom == 0)
+              email->NoSFrom = MA_GetRecipients(p, &(email->SFrom));
 
-             case SCHAR_REPLIED:
-               SET_FLAG(mail->sflags, SFLAG_REPLIED);
-             break;
+            if(email->NoSFrom > 0)
+              SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
+          }
+          else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
+            SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
+        }
 
-             case SCHAR_FORWARDED:
-               SET_FLAG(mail->sflags, SFLAG_FORWARDED);
-             break;
+        D(DBF_MIME, "'Sender' senders: %ld", email->NoSFrom+1);
 
-             case SCHAR_NEW:
-               SET_FLAG(mail->sflags, SFLAG_NEW);
-             break;
+        foundFrom = TRUE;
+      }
+    }
 
-             case SCHAR_QUEUED:
-               SET_FLAG(mail->sflags, SFLAG_QUEUED);
-             break;
+    // And now we close the Mailfile and clear the temporary headerList again
+    fclose(fh);
+    FreeHeaderList(&headerList);
 
-             case SCHAR_HOLD:
-               SET_FLAG(mail->sflags, SFLAG_HOLD);
-             break;
+    // in case the replyTo recipient doesn't have a realname yet and it is
+    // completly the same like the from address we go and copy the realname as both
+    // are the same.
+    if(foundReplyTo == TRUE && mail->ReplyTo.RealName[0] != '\0' && stricmp(mail->ReplyTo.Address, mail->From.Address) == 0)
+      strlcpy(mail->ReplyTo.RealName, mail->From.RealName, sizeof(mail->ReplyTo.RealName));
 
-             case SCHAR_SENT:
-               SET_FLAG(mail->sflags, SFLAG_SENT);
-             break;
+    // if this function call has a folder of NULL then we are examining a virtual mail
+    // which means this mail doesn't have any folder and also no filename that may contain
+    // any usable date or stuff
+    if(folder != NULL)
+    {
+      // now we take the filename of our mailfile into account to check for
+      // the transfer date at the start of the name and for the set status
+      // flags at the end of it.
+      strlcpy(dateFilePart, mail->MailFile, sizeof(dateFilePart));
 
-             case SCHAR_DELETED:
-               SET_FLAG(mail->sflags, SFLAG_DELETED);
-             break;
+      // make sure there is no "-" in the base64 encoded part as we just mapped
+      // the not allowed "/" to "-" to make it possible to use base64 for
+      // the timeval encoding
+      ptr = dateFilePart;
+      while((ptr = strchr(ptr, '-')) != NULL)
+        *ptr = '/';
 
-             case SCHAR_MARKED:
-               SET_FLAG(mail->sflags, SFLAG_MARKED);
-             break;
+      // lets decode the base64 encoded timestring in a temporary buffer
+      if(base64decode(timebuf, (unsigned char *)dateFilePart, 12) <= 0)
+      {
+        W(DBF_FOLDER, "WARNING: failure in decoding the encoded date from mailfile: '%s'", mail->MailFile);
 
-             case SCHAR_ERROR:
-               SET_FLAG(mail->sflags, SFLAG_ERROR);
-             break;
+        // if we weren't able to decode the base64 encoded string
+        // we have to validate the transDate so that the calling function
+        // recognizes to rewrite the comment with a valid string.
+        mail->transDate.Seconds      = 0;
+        mail->transDate.Microseconds = 0;
+      }
+      else
+      {
+        // everything seems to have worked so lets copy the binary data in our
+        // transDate structure
+        memcpy(&mail->transDate, timebuf, sizeof(struct TimeVal));
+      }
 
-             case SCHAR_USERSPAM:
-               SET_FLAG(mail->sflags, SFLAG_USERSPAM);
-             break;
+      // now grab the status out of the end of the mailfilename
+      ptr = &mail->MailFile[17];
+      while(*ptr != '\0')
+      {
+        if(*ptr >= '1' && *ptr <= '7')
+        {
+          setPERValue(mail, *ptr-'1'+1);
+        }
+        else
+        {
+          switch(*ptr)
+          {
+            case SCHAR_READ:
+              SET_FLAG(mail->sflags, SFLAG_READ);
+            break;
 
-             case SCHAR_AUTOSPAM:
-               SET_FLAG(mail->sflags, SFLAG_AUTOSPAM);
-             break;
+            case SCHAR_REPLIED:
+              SET_FLAG(mail->sflags, SFLAG_REPLIED);
+            break;
 
-             case SCHAR_HAM:
-               SET_FLAG(mail->sflags, SFLAG_HAM);
-             break;
-           }
-         }
+            case SCHAR_FORWARDED:
+              SET_FLAG(mail->sflags, SFLAG_FORWARDED);
+            break;
 
-         ptr++;
-       }
-     }
+            case SCHAR_NEW:
+              SET_FLAG(mail->sflags, SFLAG_NEW);
+            break;
 
-     // if we didn't find a Date: header we take the transfered date (if found)
-     if(dateFound == FALSE)
-     {
-       if(mail->transDate.Seconds > 0)
-       {
-         // convert the UTC transDate to a UTC mail Date
-         TimeVal2DateStamp(&mail->transDate, &mail->Date, TZC_NONE);
-       }
-       else
-       {
-         // and as a fallback we take the date of the mail file
-         if(ObtainFileInfo(mail->MailFile, FI_DATE, &mail->Date) == TRUE)
-         {
-           DateStampTZConvert(&mail->Date, TZC_UTC);
-         }
-       }
+            case SCHAR_QUEUED:
+              SET_FLAG(mail->sflags, SFLAG_QUEUED);
+            break;
 
-       // set the timeZone to our local one
-       mail->tzone = C->TimeZone;
-     }
+            case SCHAR_HOLD:
+              SET_FLAG(mail->sflags, SFLAG_HOLD);
+            break;
 
-     // lets calculate the mailSize out of the FileSize() function
-     if(ObtainFileInfo(fullfile, FI_SIZE, &size) == TRUE)
-       mail->Size = size;
-     else
-       mail->Size = -1;
+            case SCHAR_SENT:
+              SET_FLAG(mail->sflags, SFLAG_SENT);
+            break;
 
-     FinishUnpack(fullfile);
+            case SCHAR_DELETED:
+              SET_FLAG(mail->sflags, SFLAG_DELETED);
+            break;
 
-     RETURN(email);
-     return email;
+            case SCHAR_MARKED:
+              SET_FLAG(mail->sflags, SFLAG_MARKED);
+            break;
+
+            case SCHAR_ERROR:
+              SET_FLAG(mail->sflags, SFLAG_ERROR);
+            break;
+
+            case SCHAR_USERSPAM:
+              SET_FLAG(mail->sflags, SFLAG_USERSPAM);
+            break;
+
+            case SCHAR_AUTOSPAM:
+              SET_FLAG(mail->sflags, SFLAG_AUTOSPAM);
+            break;
+
+            case SCHAR_HAM:
+              SET_FLAG(mail->sflags, SFLAG_HAM);
+            break;
+          }
+        }
+
+        ptr++;
+      }
+    }
+
+    // if we didn't find a Date: header we take the transfered date (if found)
+    if(dateFound == FALSE)
+    {
+      if(mail->transDate.Seconds > 0)
+      {
+        // convert the UTC transDate to a UTC mail Date
+        TimeVal2DateStamp(&mail->transDate, &mail->Date, TZC_NONE);
+      }
+      else
+      {
+        // and as a fallback we take the date of the mail file
+        if(ObtainFileInfo(mail->MailFile, FI_DATE, &mail->Date) == TRUE)
+        {
+          DateStampTZConvert(&mail->Date, TZC_UTC);
+        }
+      }
+
+      // set the timeZone to our local one
+      mail->tzone = C->TimeZone;
+    }
+
+    // lets calculate the mailSize out of the FileSize() function
+    if(ObtainFileInfo(fullfile, FI_SIZE, &size) == TRUE)
+      mail->Size = size;
+    else
+      mail->Size = -1;
+
+    FinishUnpack(fullfile);
+
+    RETURN(email);
+    return email;
   }
   else
     E(DBF_MAIL, "couldn't read/parse mail header of mail file '%s'", fullfile);
