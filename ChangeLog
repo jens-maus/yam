@@ -25,6 +25,11 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-08-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c: changed a warning to a normal debug message to reduce the
+    massive amount of messages during the startup phase.
+
 2010-07-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: several active "jump on xxx" config settings will now do what
