@@ -69,7 +69,7 @@ APTR ObtainDirContext(struct TagItem *tags)
     {
       SHOWSTRING(DBF_FOLDER, dir);
 
-      if((ctx->lock = Lock(dir, SHARED_LOCK)))
+      if((ctx->lock = Lock(dir, SHARED_LOCK)) != (BPTR)NULL)
       {
         if((ctx->eaControl = AllocDosObject(DOS_EXALLCONTROL, NULL)) != NULL)
         {
@@ -139,6 +139,9 @@ void ReleaseDirContext(APTR context)
   {
     struct DirContext *ctx = (struct DirContext *)context;
 
+    if(ctx->more != 0 && ctx->lock != (BPTR)NULL && ctx->eaBuffer != NULL && ctx->eaControl != NULL)
+      ExAllEnd(ctx->lock, ctx->eaBuffer, SIZE_EXALLBUF, ED_COMMENT, ctx->eaControl);
+
     if(ctx->restoreOldCD == TRUE)
       CurrentDir(ctx->oldCD);
 
@@ -148,7 +151,7 @@ void ReleaseDirContext(APTR context)
     if(ctx->eaControl != NULL)
       FreeDosObject(DOS_EXALLCONTROL, ctx->eaControl);
 
-    if(ctx->lock)
+    if(ctx->lock != (BPTR)NULL)
       UnLock(ctx->lock);
 
     free(context);

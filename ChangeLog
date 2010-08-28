@@ -35,6 +35,8 @@ $URL$
   * Debug.c: added "tags" debug class to display complete tag lists.
   * extrasrc/ExamineDir.c: make sure to set DOS' IoErr to ERROR_NO_MORE_ENTRIES
     if that error code was not already returned by the ExAll() call.
+  * extrasrc/ExamineDir.c: added a proper ExAllEnd() call in case the looped
+    ExamineDir() call was aborted prematurely before.
 
 2010-07-20 Jens Langner <Jens.Langner@light-speed.de>
 
