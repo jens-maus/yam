@@ -56,6 +56,13 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-03-31 Frank Weber <opionline@yahoo.de>
+
+  * YAM_UT.c: Initialize the DateStamp->ds_Days in the functions
+    String2DateStamp() and DateStamp2String() if DSS_TIME is used.
+    This closes #145.
+  * YAM_AB.c: Do the birthday compare only if here is really anthing to compare.
+ 
 2010-03-15 Jens Langner <Jens.Langner@light-speed.de>
 
   * extrasrc.h: fixed xget() prototype for AROS compile.
