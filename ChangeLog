@@ -25,8 +25,16 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-08-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: fixed a double removal of a node from a list (RemHead() first,
+    Remove() later) which might have caused a file to be closed twice.
+
 2010-08-13 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: fixed a bug in the DeleteZombiFiles() function where in case of
+    a undeletable file the zombie node has never been readded to the list and
+    thus a subsequent call to DeleteZombieFiles() always succeeded.
   * Requesters.c: the '_' character will now be stripped from the gadget text
     in case a pure intuition requester will be shown with MUI_Request().
 
