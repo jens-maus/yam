@@ -1214,7 +1214,7 @@ BOOL TR_IsOnline(void)
       // check if we have to get the interface or not.
       if(ISocket != NULL || GETINTERFACE("main", 1, ISocket, SocketBase))
       {
-        BOOL hasInterfaceAPI = FALSE;
+        ULONG hasInterfaceAPI = FALSE;
 
         D(DBF_NET, "identified bsdsocket v4 TCP/IP stack (RoadShow)");
 
@@ -1253,7 +1253,7 @@ BOOL TR_IsOnline(void)
             E(DBF_NET, "couldn't query interface status. Unknown interface.");
         }
         else
-          E(DBF_NET, "couldn't query TCP/IP stack's interface API.");
+          E(DBF_NET, "couldn't query TCP/IP stack's interface API (%ld).", hasInterfaceAPI);
 
         // drop the interface if required
         if(closeSocket)

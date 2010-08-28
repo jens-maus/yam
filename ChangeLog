@@ -29,6 +29,11 @@ $URL$
   * misc: added interface version parameter to the INITLIB() and GETINTERFACE()
     macros to be able to obtain other interface versions than just the fixed
     version 1.
+ 
+2010-07-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: variables passed to SocketBaseTags() must be full 32bit wide,
+    otherwise some information might get lost.
 
 2010-07-27 Jens Langner <Jens.Langner@light-speed.de>
 
