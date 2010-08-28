@@ -27,6 +27,9 @@ $URL$
 
 2010-08-22 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: the argp parameter of IoctlSocket() must be a long. Using a char
+    variable produced the desired result only by pure luck, but at least peeked
+    around somewhere on the stack.
   * YAM.c: initialize the debugging framework a bit earlier to be able to
     correctly catch any ENTER()/RETURN() macros in called functions like
     GotoURLPossible(). This might have caused #183.

@@ -1659,7 +1659,7 @@ static enum ConnectError TR_Connect(char *host, int port)
         // lets create a standard AF_INET socket now
         if((G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0)) != TCP_NO_SOCKET)
         {
-          char nonBlockingIO = 1;
+          long nonBlockingIO = 1;
 
           // now we set the socket for non-blocking I/O
           if(IoctlSocket(G->TR_Socket, FIONBIO, &nonBlockingIO) != -1)
