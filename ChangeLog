@@ -30,6 +30,16 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-07-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/ExamineDir.c: added some debug output to the ExamineDir()
+    reimplementation.
+
+2010-07-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: added some more debug output to the mail folder scanning to
+    catch a possible problem on certain MorphOS systems.
+
 2010-07-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: the notifications for colored text did only take changes

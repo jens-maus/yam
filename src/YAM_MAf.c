@@ -2656,7 +2656,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
         }
       }
 
-      BusyGaugeInt(tr(MSG_BusyScanning), folder->Name, filecount-1);
+      BusyGaugeInt(tr(MSG_BusyScanning), folder->Name, filecount);
       ClearMailList(folder, TRUE);
 
       D(DBF_FOLDER, "Scanning folder: '%s' (path '%s', %ld files)...", folder->Name, GetFolderDir(folder), filecount);
@@ -2681,7 +2681,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
         while((ed = ExamineDir(context)) != NULL)
         {
           // set the gauge and check the stopButton status as well.
-          if(BusySet(processedFiles++) == FALSE)
+          if(BusySet(++processedFiles) == FALSE)
           {
             D(DBF_FOLDER, "scan process aborted by user");
             result = FALSE;
@@ -2701,8 +2701,8 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
             if(validMailFile == FALSE)
             {
-              // ok, the file doesn't seem to have to be a valid mailfilename, so
-              // lets see if it is an "old" file (<= YAM2.4) or just trash
+              // ok, the file doesn't seem to have to be a valid mail filename, so
+              // let's see if it is an "old" file (<= YAM2.4) or just trash
               int i = 0;
               BOOL oldFound = TRUE;
 
@@ -2732,11 +2732,11 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                 int res;
                 BOOL convertOnce = FALSE;
 
-                // ok we seem to have found an old-fashioned mailfile, so lets
+                // ok we seem to have found an old-fashioned mailfile, so let's
                 // convert it to the newstyle
-                W(DBF_FOLDER, "found < v2.5 style mailfile: '%s'", fname);
+                W(DBF_FOLDER, "found < v2.5 style mailfile '%s'", fname);
 
-                // lets ask if the user wants to convert the file or not
+                // let's ask if the user wants to convert the file or not
                 if(convertAllOld == FALSE && skipAllOld == FALSE)
                 {
                   res = MUI_Request(G->App, NULL, 0,
@@ -2783,7 +2783,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                 int res;
                 BOOL convertOnce = FALSE;
 
-                W(DBF_FOLDER, "found unknown file: '%s'", fname);
+                W(DBF_FOLDER, "found unknown file '%s'", fname);
 
                 // lets ask if the user wants to convert the file or not
                 if(convertAllUnknown == FALSE && skipAllUnknown == FALSE)
@@ -2835,7 +2835,10 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                   continue;
               }
               else
+              {
+                D(DBF_FOLDER, "skipping file '%s'", fname);
                 continue;
+              }
             }
 
             // check the filesize of the mail file
@@ -2843,7 +2846,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
             {
               struct ExtendedMail *email;
 
-              D(DBF_FOLDER, "examining MailFile: %s", fname);
+              D(DBF_FOLDER, "examining mail file '%s'", fname);
 
               while((email = MA_ExamineMail(folder, fname, FALSE)) == NULL &&
                     ignoreInvalids == FALSE)
@@ -2899,7 +2902,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                     {
                       struct DateStamp ds;
 
-                      W(DBF_FOLDER, "no transfer Date information found in mail file, taking fileDate...");
+                      W(DBF_FOLDER, "no transfer date information found in mail file, using file date...");
 
                       // obtain the datestamp information from  and as a fallback we take the date of the mail file
                       if(ObtainFileInfo(GetMailFile(NULL, folder, newMail), FI_DATE, &ds) == TRUE)
@@ -2937,7 +2940,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
         result = FALSE;
       }
 
-      D(DBF_FOLDER, "Scanning finished %s", result ? "successfully" : "unsuccessfully");
+      D(DBF_FOLDER, "scanning finished %s", result ? "successfully" : "unsuccessfully");
 
       BusyEnd();
 

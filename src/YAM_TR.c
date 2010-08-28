@@ -7067,6 +7067,7 @@ static void TR_NewMailAlert(void)
     #if defined(__amigaos4__)
     if(hasOS41SystemNotify(C->NotifyType))
     {
+      D(DBF_GUI, "appID is %ld, application.lib is V%ld.%ld (needed V%ld.%ld)", G->applicationID, ApplicationBase->lib_Version, ApplicationBase->lib_Revision, 53, 7);
       // Notify() is V53.2+, 53.7 fixes some serious issues
       if(G->applicationID > 0 && LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 7) == TRUE)
       {
@@ -7085,8 +7086,10 @@ static void TR_NewMailAlert(void)
         // adapt the tag values for the different interface versions
         if(IApplication->Data.Version >= 2)
         {
+          D(DBF_GUI, "using application.library v2 interface tags");
           if(APPNOTIFY_Title < TAG_USER)
           {
+            D(DBF_GUI, "adapting v1 tags for v2 interface");
             notifyTags[0].ti_Tag += TAG_USER;
             notifyTags[1].ti_Tag += TAG_USER;
             notifyTags[2].ti_Tag += TAG_USER;
@@ -7096,8 +7099,10 @@ static void TR_NewMailAlert(void)
         }
         else
         {
+          D(DBF_GUI, "using application.library v1 interface tags");
           if(APPNOTIFY_Title >= TAG_USER)
           {
+            D(DBF_GUI, "adapting v2 tags for v1 interface");
             notifyTags[0].ti_Tag -= TAG_USER;
             notifyTags[1].ti_Tag -= TAG_USER;
             notifyTags[2].ti_Tag -= TAG_USER;

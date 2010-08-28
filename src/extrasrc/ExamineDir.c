@@ -65,6 +65,8 @@ APTR ObtainDirContext(struct TagItem *tags)
 
     if((dir = (char *)GetTagData(EX_StringName, (ULONG)NULL, tags)) != NULL)
     {
+      SHOWSTRING(DBF_FOLDER, dir);
+
       if((ctx->lock = Lock(dir, SHARED_LOCK)))
       {
         if((ctx->eaControl = AllocDosObject(DOS_EXALLCONTROL, NULL)) != NULL)
@@ -72,6 +74,8 @@ APTR ObtainDirContext(struct TagItem *tags)
           ctx->eaControl->eac_LastKey = 0;
           ctx->eaControl->eac_MatchString = (STRPTR)GetTagData(EX_MatchString, (ULONG)NULL, tags);
           ctx->eaControl->eac_MatchFunc = NULL;
+
+          SHOWSTRING(DBF_FOLDER, ctx->eaControl->eac_MatchString);
 
           if((ctx->eaBuffer = malloc(SIZE_EXALLBUF)) != NULL)
           {
@@ -85,6 +89,7 @@ APTR ObtainDirContext(struct TagItem *tags)
               ctx->restoreOldCD = FALSE;
 
             ctx->dataFields = GetTagData(EX_DataFields, 0xffffffff, tags);
+            SHOWVALUE(DBF_FOLDER, ctx->dataFields);
 
             // we have no information obtained yet
             ctx->eaData = NULL;
@@ -172,6 +177,8 @@ struct ExamineData *ExamineDir(APTR context)
     {
       // then do another ExAll() call to get more data
       ctx->more = ExAll(ctx->lock, ctx->eaBuffer, SIZE_EXALLBUF, ED_SIZE, ctx->eaControl);
+      SHOWVALUE(DBF_FOLDER, ctx->more);
+
       if(ctx->more == 0)
       {
         // preserve the error number of this last call, this will be restored later
@@ -188,13 +195,16 @@ struct ExamineData *ExamineDir(APTR context)
 
   if(ctx->eaData != NULL && ctx->eaControl->eac_Entries > 0)
   {
-    // copy over the data we might be interested in
-    ctx->exData.Type = ctx->eaData->ed_Type;
-    ctx->exData.FileSize = ctx->eaData->ed_Size;
-    ctx->exData.Name = isFlagSet(ctx->dataFields, EXF_NAME) ? ctx->eaData->ed_Name : NULL;
-
     // return the prepared data structure
     ed = &ctx->exData;
+
+    // copy over the data we might be interested in
+    ed->Type = ctx->eaData->ed_Type;
+    ed->FileSize = ctx->eaData->ed_Size;
+    ed->Name = isFlagSet(ctx->dataFields, EXF_NAME) ? ctx->eaData->ed_Name : NULL;
+    SHOWVALUE(DBF_FOLDER, ed->Type);
+    SHOWVALUE(DBF_FOLDER, ed->FileSize);
+    SHOWVALUE(DBF_FOLDER, ed->Name);
 
     // and advance to the next item for the next call
     ctx->eaData = ctx->eaData->ed_Next;
