@@ -24,9 +24,6 @@ $URL$
     result in invalid pointers the next time the write window was opened again.
     Now the pointers are initialized every time. We really must get rid of these
     static variables!! This closes #167.
-  * YAM_MA.c: when exporting mails the file name returned by the file requester
-    is now checked to be non-empty. Although I could not reproduce ticket #154
-    this should fix it and thus closes #154.
   * YAM_MA.c, mui/MainWindow.c, mui/MainMailListGroup.c: the "active object on
     click" feature of NList must operate on listview objects instead of the em-
     bedded list objects. Thus we have to distinguish between these two in lots
@@ -51,6 +48,12 @@ $URL$
     macros to be able to obtain other interface versions than just the fixed
     version 1.
 
+2010-04-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: when exporting mails the file name returned by the file requester
+    is now checked to be non-empty. Although I could not reproduce ticket #154
+    this should fix it and thus closes #154.
+ 
 2010-04-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: the XPK scanning duplicated the found packers in a wrong way so
