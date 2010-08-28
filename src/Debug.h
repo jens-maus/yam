@@ -49,6 +49,7 @@
 #if defined(DEBUG)
 
 #include <stdarg.h>
+#include <exec/types.h>
 #include <utility/tagitem.h>
 
 // debug classes
@@ -60,7 +61,7 @@
 #define DBC_ERROR    (1<<5) // error output     E()
 #define DBC_WARNING  (1<<6) // warning output   W()
 #define DBC_MTRACK   (1<<7) // memory tracking MEMTRACK/UNMEMTRACK()
-#define DBC_TAGS     (1<<8) // tag lists
+#define DBC_TAGS     (1<<8) // tag lists (SHOWTAGS)
 #define DBC_ALL      0xffffffff
 
 // debug flags
@@ -207,7 +208,7 @@ void W(unsigned long f, const char *format, ...);
 #define FreeSysObject(t, p)           ({_UNMEMTRACK(__FILE__, __LINE__, p); IExec->FreeSysObject(t, p);})
 #define AllocBitMap(sx, sy, d, f, bm) ({APTR P = IGraphics->AllocBitMap(sx, sy, d, f, bm); _MEMTRACK(__FILE__, __LINE__, "AllocBitMap", P, sx); P;})
 #define FreeBitMap(p)                 ({_UNMEMTRACK(__FILE__, __LINE__, p); IGraphics->FreeBitMap(p);})
-#define ObtainDirContext(t)           ({APTR P = IDOS->ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
+#define ObtainDirContext(t)           ({APTR P = IDOS->ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContext", P, 1); P;})
 #define ObtainDirContextTags(...)     ({APTR P = IDOS->ObtainDirContextTags(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
 #define ReleaseDirContext(p)          ({_UNMEMTRACK(__FILE__, __LINE__, p); IDOS->ReleaseDirContext(p);})
 #define AllocSignal(s)                ({BYTE P = IExec->AllocSignal(s); _MEMTRACK(__FILE__, __LINE__, "AllocSignal", (APTR)(LONG)P, (size_t)s); P;})
@@ -269,16 +270,9 @@ void W(unsigned long f, const char *format, ...);
     , DOS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
 })
 
-#define AllocSysObject(t, p) ({APTR P = AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
-
-#define AllocSysObjectTags(t, ...) ({ \
-   ULONG _tags[] = { __VA_ARGS__ }; \
-   APTR P = AllocSysObject(t, (struct TagItem *)_tags); \
-   _MEMTRACK(__FILE__, __LINE__, "AllocSysObjectTags", P, t+1); \
-   P; \
-})
-
-#define FreeSysObject(t, p) ({_UNMEMTRACK(__FILE__, __LINE__, p); FreeSysObject(t, p);})
+#define AllocSysObject(t, p)       ({APTR P = AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
+#define AllocSysObjectTags(t, ...) ({ULONG _tags[] = { __VA_ARGS__ }; AllocSysObject(t, (struct TagItem *)_tags);})
+#define FreeSysObject(t, p)        ({_UNMEMTRACK(__FILE__, __LINE__, p); FreeSysObject(t, p);})
 
 #define AllocBitMap(__p0, __p1, __p2, __p3, __p4) ({ \
   APTR P = LP5(918, struct BitMap *, AllocBitMap, \
@@ -299,16 +293,9 @@ void W(unsigned long f, const char *format, ...);
     , GRAPHICS_BASE_NAME, 0, 0, 0, 0, 0, 0); \
 })
 
-#define ObtainDirContext(t) ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
-
-#define ObtainDirContextTags(...) ({ \
-   ULONG _tags[] = { __VA_ARGS__ }; \
-   APTR P = ObtainDirContext((struct TagItem *)_tags); \
-   _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); \
-   P; \
-})
-
-#define ReleaseDirContext(p) ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
+#define ObtainDirContext(t)       ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContext", P, 1); P;})
+#define ObtainDirContextTags(...) ({ULONG _tags[] = { __VA_ARGS__ }; ObtainDirContext((struct TagItem *)_tags);})
+#define ReleaseDirContext(p)      ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
 
 #define AllocSignal(__p0) ({ \
    BYTE P = LP1(330, BYTE , AllocSignal, \
@@ -414,11 +401,9 @@ void W(unsigned long f, const char *format, ...);
   } \
 }})
 
-#define AllocSysObject(t, p) ({APTR P = AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
-
+#define AllocSysObject(t, p)       ({APTR P = AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
 #define AllocSysObjectTags(t, ...) ({APTR P = AllocSysObjectTags(t, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "AllocSysObjectTags", P, t+1); P;})
-
-#define FreeSysObject(t, p) ({_UNMEMTRACK(__FILE__, __LINE__, p); FreeSysObject(t, p);})
+#define FreeSysObject(t, p)        ({_UNMEMTRACK(__FILE__, __LINE__, p); FreeSysObject(t, p);})
 
 #define AllocBitMap(sizex, sizey, depth, flags, friend_bitmap) ({ \
   ULONG _AllocBitMap_sizex = (sizex); \
@@ -457,7 +442,7 @@ void W(unsigned long f, const char *format, ...);
   } \
 }})
 
-#define ObtainDirContext(t)       ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
+#define ObtainDirContext(t)       ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContext", P, 1); P;})
 #define ObtainDirContextTags(...) ({APTR P = ObtainDirContextTags(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
 #define ReleaseDirContext(p)      ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
 
