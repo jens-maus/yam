@@ -5205,10 +5205,13 @@ static LONG SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
       ReleaseSearchPath(path);
   }
 
-  if(out != ZERO)
-    Close(out);
-  if(in != ZERO)
-    Close(in);
+  if(outdef != OUT_STDOUT)
+  {
+    if(out != ZERO)
+      Close(out);
+    if(in != ZERO)
+      Close(in);
+  }
 
   RETURN(result);
   return result;
