@@ -5228,6 +5228,11 @@ LONG LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
 
   if(asynch == TRUE)
   {
+    // the sub thread's standard I/O channel are different from the main
+    // thread's, so we let the subthread open a new console window instead.
+    if(outdef == OUT_STDOUT)
+      outdef = OUT_CONSOLE;
+
     // let the thread framework do the dirty work
     result = DoAction(TA_LaunchCommand, TT_LaunchCommand_Command, cmd,
                                         TT_LaunchCommand_Output, outdef,

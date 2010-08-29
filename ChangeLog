@@ -7,6 +7,9 @@ $URL$
 
 2010-08-29 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: the output channel for asynchronously launched commands will be
+    automatically changed to a new console window in case output to the standard
+    channels is requested.
   * YAM_UT.c: launching a command synchronously with output redirected to the
     current standard input/output channels would crash sooner or later, because
     YAM closed exactly these channels. Now the channels are closed only if YAM
