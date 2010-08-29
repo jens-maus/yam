@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-30 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile: changed AROS build to use -O2 as the default optimization level as
+    -O3 seems to cause some troubles with AROS compiles.
+
 2010-08-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: the output channel for asynchronously launched commands will be
