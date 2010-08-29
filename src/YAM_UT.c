@@ -5205,6 +5205,8 @@ static LONG SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
       ReleaseSearchPath(path);
   }
 
+  // close the channels only if we did open them before
+  // we must *NEVER* close the Input()/Output() channels.
   if(outdef != OUT_STDOUT)
   {
     if(out != ZERO)
