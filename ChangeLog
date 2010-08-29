@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-30 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile: changed AROS build to use -O2 as the default optimization level as
+    -O3 seems to cause some troubles with AROS compiles.
+
 2010-08-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * tools/mkrelease.sh: fixed a few path related issues and removed the dutch
