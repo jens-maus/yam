@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: removed the ENTER()/RETURN() calls from the root dispatcher, as this
+    clutters a @all log too much without giving any useful additional trace
+    information.
+
 2010-08-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: added a NULL check when freeing header nodes. This should close
