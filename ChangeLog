@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-30 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed remaining shortcuts thanks to users feedback.
+
 2010-08-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: the current mail server node is now remembered during a POP3

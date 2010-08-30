@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (26.08.2010)
+## version $VER: YAM.catalog 7.5 (30.08.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -993,7 +993,7 @@ MSG_CO_MLRepHelloDef
 ; \0
 ;
 MSG_CO_MLRepIntroDef
-Il %c, %n scrisse:\\\\n
+Il %c, %n ha scritto:\n
 ; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
@@ -1269,7 +1269,7 @@ Invio posta (SMTP)
 ; Send mail (SMTP)
 ;
 MSG_CO_Domain
-Do_minio
+Domin_io
 ; Do_main
 ;
 MSG_CO_Allow8bit
@@ -1445,7 +1445,7 @@ Su_ona
 ; _Play sound
 ;
 MSG_CO_ActionMove
-_Sposta
+Spos_ta
 ; _Move
 ;
 MSG_CO_ActionDelete
@@ -1533,7 +1533,7 @@ Testo colorato
 ; Colored text
 ;
 MSG_CO_MultiReadWin
-Fine_stre multiple
+Finestre multiple (_windows)
 ; _Multiple windows
 ;
 MSG_CO_DisplayAll
@@ -1633,7 +1633,7 @@ Inoltro
 ; Forwarding
 ;
 MSG_CO_FwdInit
-Frase di _apertura
+Frase di aper_tura
 ; _Initial phrase
 ;
 MSG_CO_FwdFinish
@@ -1809,7 +1809,7 @@ Alla chiusura del programma
 ; On program termination
 ;
 MSG_CO_DeleteOld
-Cancella i vecchi messaggi
+Cancella i vecchi messaggi di posta
 ; Delete old mail
 ;
 MSG_CO_RemoveDel
@@ -3007,7 +3007,7 @@ Nuovo gruppo
 ; New group
 ;
 MSG_AB_AddList
-Nuova lista distribuzione
+Nuova lista di distribuzione
 ; New distribution list
 ;
 MSG_AB_Duplicate
@@ -5773,7 +5773,7 @@ Cerca
 ; Search
 ;
 MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE
-Ma_iusc./Min.
+Ma_iuscole/Minuscole
 ; C_ase sensitive
 ;
 MSG_SEARCHWINDOW_BT_SEARCH
@@ -7305,7 +7305,7 @@ Converti messaggi _HTML in testo semplice
 ;
 MSG_HELP_CO_CONVERTHTML
 Selezionando questa opzione sarà possibile convertire\n\
-i messaggi di posta (aventi consistenti parti in HTML) in\n\
+i messaggi di posta (aventi consistenti parti HTML) in\n\
 testo semplice prima della loro visualizzazione finale.
 ; If the main part of an e-mail is HTML, YAM will\n\
 ; convert it to plain text before displaying it.
@@ -7571,7 +7571,7 @@ Svuotamento dei dati di riconoscimento dello Spam...
 ; Flushing spam training data...
 ;
 MSG_CO_SPAM_MARKONMOVE
-Marca messaggi come Spam nel caso vengano _spostati nella cartella Spam
+Marca messaggi come Spam nel caso vengano spostati nella _cartella Spam
 ; Mark mails as spam when _moved to the Spam folder
 ;
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
@@ -7583,12 +7583,12 @@ Riconoscimento Spam
 ; Spam recognition
 ;
 MSG_CO_SPAM_FILTERENABLED
-Attiva filtro _AntiSpam
+Attiva filtro AntiS_pam
 ; S_pam filter enabled
 ;
 MSG_CO_SPAM_RESETTRAININGDATAASK
-Sei sicuro di voler resettare i dati di riconoscimento\n\
-per il filtro AntiSpam?\n\
+Sei sicuro di voler resettare i dati di riconoscimento per\n\
+il filtro AntiSpam?\n\
 \n\
 Il filtro AntiSpam dovrà essere configurato nuovamente!
 ; Do you really want to reset the spam filter's\n\
@@ -8060,11 +8060,11 @@ _Non inviare la ricevuta di ritorno
 ; _Never send a return receipt
 ;
 MSG_CO_MDN_ENABLED
-Permetti la ricevuta di ritorno per alc_uni messaggi
+Permetti la rice_vuta di ritorno per alcuni messaggi
 ; Allow _return receipts for some messages
 ;
 MSG_CO_MDN_NORECIPIENT
-Nel caso non si sia presenti né su _A: che su CC: del messaggio:
+Nel caso non si sia presenti né su A: che su _CC: del messaggio:
 ; If I'm not in the _To: or Cc: of the message:
 ;
 MSG_CO_MDN_NODOMAIN
@@ -8076,7 +8076,7 @@ Nel caso si desideri eliminare il messa_ggio:
 ; If I'm going to just _delete the message:
 ;
 MSG_CO_MDN_OTHER
-In tutti gli altri _casi:
+In _qualsiasi altro caso:
 ; In all oth_er cases:
 ;
 MSG_CO_REQUESTMDN
@@ -8122,8 +8122,8 @@ proprio.
 ;
 MSG_HELP_CO_CY_MDN_DELETE
 Cosa si desidera fare con la richiesta di\n\
-ricevuta di ritorno nel caso sia stato\n\
-cancellato il messaggio originale.
+ricevuta di ritorno nel caso il messaggio\n\
+originale sia stato cancellato.
 ; What to do with a return receipt request\n\
 ; when you just delete the original message.
 ;
@@ -8147,7 +8147,7 @@ Aspetto
 ; Look & Feel
 ;
 MSG_CO_DSTACTIVE
-Attiva D_aylight Saving Time (DST)
+Attiva Daylight Saving _Time (DST)
 ; D_aylight Saving Time (DST) is active
 ;
 MSG_HELP_CO_CH_DSTACTIVE
@@ -8254,9 +8254,9 @@ firma di un messaggio.
 ;
 MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS
 Attenzione, non è raccomandabile utilizzare questa\n\
-opzione con un numero di %ld messaggi classificati\n\
+opzione con un numero di %ld messaggi/o classificati\n\
 come Spam, poichè questo potrebbe influire sulle\n\
-performance del filtro AntiSpam.\n\
+performance generali del filtro AntiSpam.\n\
 \n\
 Si desidera disattivare nuovamente questa opzione?
 ; It is not recommended to enable this feature with as\n\
@@ -8325,8 +8325,8 @@ Mostra le parti a_lternative
 ; Show a_lternative parts
 ;
 MSG_HELP_CO_CH_SHOWALTPARTS
-Se attivato, le parti MIME alternative\n\
-di un messaggio 'multipart/alternativo'\n\
+Se attivato, le parti MIME alternative di\n\
+un messaggio 'multipart/alternativo'\n\
 che potrebbero altrimenti rimanere\n\
 nascoste, verranno invece visualizzate\n\
 come degli allegati.
@@ -8350,7 +8350,7 @@ posizione dell'AppIcon.
 ; position of the AppIcon.
 ;
 MSG_CO_MOVE_HAM_TO_INCOMING
-Sposta messaggi 'Non Spam' nella cartella _In arrivo
+Sposta messaggi 'Non Spam' nella cartella _in arrivo
 ; Move 'not spam' e-mails back to _Incoming folder
 ;
 MSG_HELP_CH_MOVE_HAM_TO_INCOMING
@@ -9697,7 +9697,7 @@ Messaggio precedente
 ; Previous message in thread
 ;
 MSG_CO_GLOBALMAILTHREADS
-Ricerca messaggi relativi all'argomento in tutte le cartelle
+Ricerca in tutte le cartelle dei messaggi relativi all'argomento
 ; Search for mails of same thread in all folders
 ;
 MSG_HELP_CO_CH_GLOBALMAILTHREADS
