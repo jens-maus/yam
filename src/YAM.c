@@ -1406,7 +1406,9 @@ static int Root_GlobalDispatcher(ULONG app_input)
 {
   int ret = 0;
 
-  ENTER();
+  // no ENTER() call here, because this function will be called *very*
+  // often and a @all or @ctrace log will be swamped with too much
+  // useless trace informations.
 
   switch(app_input)
   {
@@ -1447,7 +1449,6 @@ static int Root_GlobalDispatcher(ULONG app_input)
     break;
   }
 
-  RETURN(ret);
   return ret;
 }
 

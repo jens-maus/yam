@@ -10,6 +10,12 @@ $URL$
   * Makefile: changed AROS build to use -O2 as the default optimization level as
     -O3 seems to cause some troubles with AROS compiles.
 
+2010-08-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: removed the ENTER()/RETURN() calls from the root dispatcher, as this
+    clutters a @all log too much without giving any useful additional trace
+    information.
+
 2010-08-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * tools/mkrelease.sh: fixed a few path related issues and removed the dutch
