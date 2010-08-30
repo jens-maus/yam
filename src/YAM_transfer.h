@@ -176,33 +176,34 @@ enum SendMode
 // transfer window class data
 struct TR_ClassData
 {
-  struct TR_GUIData     GUI;          // the actual GUI relevant data
-  struct MinList        transferList; // list for managing the downloads
-  struct MinNode       *GMD_Mail;
-  struct Folder *       ImportFolder;
-  struct HashTable *    UIDLhashTable; // for maintaining all UIDLs
-  struct MailList *     downloadedMails;
-  struct Connection *   connection;
+  struct TR_GUIData       GUI;             // the actual GUI relevant data
+  struct MinList          transferList;    // list for managing the downloads
+  struct MinNode        * GMD_Mail;
+  struct Folder         * ImportFolder;
+  struct HashTable      * UIDLhashTable;   // for maintaining all UIDLs
+  struct MailList       * downloadedMails; // a list of downloaded mails to be filtered later
+  struct Connection     * connection;      // the connection to be used during the session
+  struct MailServerNode * mailServer;      // the current mail server
 
-  long                  Abort;
-  long                  Pause;
-  long                  Start;
-  int                   SearchCount;
-  int                   GMD_Line;
-  enum GUILevel         GUIlevel;
-  enum ImportFormat     ImportFormat;
-  int                   POP_Nr;
-  BOOL                  SinglePOP;
-  BOOL                  Checking;
-  BOOL                  DuplicatesChecking;
-  BOOL                  UIDLhashIsDirty;
-  struct DownloadResult Stats;
+  long                    Abort;
+  long                    Pause;
+  long                    Start;
+  int                     SearchCount;
+  int                     GMD_Line;
+  enum GUILevel           GUIlevel;
+  enum ImportFormat       ImportFormat;
+  int                     POP_Nr;
+  BOOL                    SinglePOP;
+  BOOL                    Checking;
+  BOOL                    DuplicatesChecking;
+  BOOL                    UIDLhashIsDirty;
+  struct DownloadResult   Stats;
 
-  char                  WTitle[SIZE_DEFAULT];
-  char                  ImportFile[SIZE_PATHFILE];
-  char                  CountLabel[SIZE_DEFAULT];
-  char                  BytesLabel[SIZE_DEFAULT];
-  char                  StatsLabel[SIZE_DEFAULT];
+  char                    WTitle[SIZE_DEFAULT];
+  char                    ImportFile[SIZE_PATHFILE];
+  char                    CountLabel[SIZE_DEFAULT];
+  char                    BytesLabel[SIZE_DEFAULT];
+  char                    StatsLabel[SIZE_DEFAULT];
 };
 
 extern struct Hook TR_ProcessGETHook;

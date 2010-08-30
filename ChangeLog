@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-08-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c: the current mail server node is now remembered during a POP3
+    session. This saves some GetMailServer() calls and also makes it possible
+    to abort the session with an opened and already finished preselection list.
+    Furthermore allowed the application to perform its event handling while the
+    preselection list is filled with data. This closes #195.
+
 2010-08-30 Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile: changed AROS build to use -O2 as the default optimization level as

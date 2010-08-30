@@ -325,8 +325,6 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
         // only report an error if explicitly wanted
         if(errorMsg != NULL)
         {
-          struct MailServerNode *msn;
-
           // if we just issued a PASS command and that failed, then overwrite the visible
           // password with X chars now, so that nobody else can read your password
           if(command == POPCMD_PASS)
@@ -343,9 +341,8 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
             }
           }
 
-          #warning FIXME: replace GetMailServer() usage when struct Connection is there
-          if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) != NULL)
-            ER_NewError(errorMsg, msn->hostname, msn->account, (char *)POPcmd[command], buf);
+          if(G->TR->mailServer != NULL)
+            ER_NewError(errorMsg, G->TR->mailServer->hostname, G->TR->mailServer->account, (char *)POPcmd[command], buf);
         }
       }
     }
@@ -593,6 +590,9 @@ static int TR_ConnectPOP(int guilevel)
   if(msgs != 0)
     AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_ConnectPOP), msn->username, host, msgs);
 
+  // remember the current mail server
+  G->TR->mailServer = msn;
+
 out:
 
   FreeStrBuf(welcomemsg);
@@ -703,19 +703,11 @@ static BOOL TR_GetMessageList_GET(void)
             TRF_LOAD|TRF_DELETE|TRF_PRESELECT
           };
           int tflags;
-          struct MailServerNode *msn;
-
-          #warning FIXME: replace GetMailServer() usage when struct Connection is there
-          if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
-          {
-            RETURN(FALSE);
-            return FALSE;
-          }
 
           newMail->Size  = size;
 
           mode = (C->DownloadLarge == TRUE ? 1 : 0) +
-                 (hasServerPurge(msn) == TRUE ? 2 : 0) +
+                 (hasServerPurge(G->TR->mailServer) == TRUE ? 2 : 0) +
                  (G->TR->GUIlevel == POP_USER ? 4 : 0) +
                  ((C->WarnSize > 0 && newMail->Size >= (C->WarnSize*1024)) ? 8 : 0);
           tflags = mode2tflags[mode];
@@ -814,16 +806,8 @@ void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
           if(lline == -1)
           {
             char uidl[SIZE_DEFAULT+SIZE_HOST];
-            struct MailServerNode *msn;
 
-            #warning FIXME: replace GetMailServer() usage when struct Connection is there
-            if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
-            {
-              LEAVE();
-              return;
-            }
-
-            snprintf(uidl, sizeof(uidl), "%s@%s", email->messageID, msn->hostname);
+            snprintf(uidl, sizeof(uidl), "%s@%s", email->messageID, G->TR->mailServer->hostname);
             mtn->UIDL = strdup(uidl);
           }
           else if(lline == -2)
@@ -843,6 +827,9 @@ void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 
   if(lline >= 0)
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Redraw, lline);
+
+  // signal the application to update now
+  DoMethod(G->App, MUIM_Application_InputBuffered);
 
   LEAVE();
 }
@@ -971,23 +958,18 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
   }
   else /* Finish previous connection */
   {
-    struct MailServerNode *msn;
+    D(DBF_NET, "downloaded %ld mails from server '%s'", G->TR->Stats.Downloaded, G->TR->mailServer->hostname);
 
-    #warning FIXME: replace GetMailServer() usage when struct Connection is there
-    if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
-    {
-      LEAVE();
-      return;
-    }
-
-    D(DBF_NET, "downloaded %ld mails from server '%s'", G->TR->Stats.Downloaded, msn->hostname);
     TR_DisconnectPOP();
     TR_Cleanup();
-    AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_Retrieving), G->TR->Stats.Downloaded-laststats, msn->username, msn->hostname);
+    AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_Retrieving), G->TR->Stats.Downloaded-laststats, G->TR->mailServer->username, G->TR->mailServer->hostname);
     if(G->TR->SinglePOP == TRUE)
       pop = -1;
 
     laststats = G->TR->Stats.Downloaded;
+
+    // forget the current mail server again
+    G->TR->mailServer = NULL;
   }
 
   // what is the next POP3 server we should check
@@ -998,6 +980,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     while(++G->TR->POP_Nr >= 0)
     {
       struct MailServerNode *msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr);
+
       if(msn != NULL)
       {
         if(isServerActive(msn))
@@ -1019,6 +1002,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     // close the TCP/IP connection
     DeleteConnection(G->TR->connection);
     G->TR->connection = NULL;
+    G->TR->mailServer = NULL;
 
     // make sure the transfer window is closed
     set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
@@ -1138,16 +1122,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
         {
           if(FilterDuplicates() == TRUE)
           {
-            struct MailServerNode *msn;
-
-            #warning FIXME: replace GetMailServer() usage when struct Connection is there
-            if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
-            {
-              LEAVE();
-              return;
-            }
-
-            SET_FLAG(msn->flags, MSF_UIDLCHECKED);
+            SET_FLAG(G->TR->mailServer->flags, MSF_UIDLCHECKED);
           }
         }
 
@@ -1223,20 +1198,17 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     }
     else
     {
-      struct MailServerNode *msn;
-
-      #warning FIXME: replace GetMailServer() usage when struct Connection is there
-      if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
+      if(G->TR->mailServer == NULL)
       {
         LEAVE();
         return;
       }
 
-      W(DBF_NET, "no messages found on server '%s'", msn->hostname);
+      W(DBF_NET, "no messages found on server '%s'", G->TR->mailServer->hostname);
 
       // per default we flag that POP3 server as being UIDLchecked
       if(G->TR->DuplicatesChecking == TRUE)
-        SET_FLAG(msn->flags, MSF_UIDLCHECKED);
+        SET_FLAG(G->TR->mailServer->flags, MSF_UIDLCHECKED);
     }
   }
   else
@@ -1379,12 +1351,10 @@ BOOL TR_DeleteMessage(struct TransStat *ts, int number)
 static BOOL FilterDuplicates(void)
 {
   BOOL result = FALSE;
-  struct MailServerNode *msn;
 
   ENTER();
 
-  #warning FIXME: replace GetMailServer() usage when struct Connection is there
-  if((msn = GetMailServer(&C->mailServerList, MST_POP3, G->TR->POP_Nr)) == NULL)
+  if(G->TR->mailServer == NULL)
   {
     RETURN(FALSE);
     return FALSE;
@@ -1422,7 +1392,7 @@ static BOOL FilterDuplicates(void)
             // lets add our own ident to the uidl so that we can compare
             // it against our saved list
             strlcat(uidl, "@", sizeof(uidl));
-            strlcat(uidl, msn->hostname, sizeof(uidl));
+            strlcat(uidl, G->TR->mailServer->hostname, sizeof(uidl));
 
             // search through our transferList
             IterateList(&G->TR->transferList, curNode)
@@ -1476,7 +1446,7 @@ static BOOL FilterDuplicates(void)
       {
         struct Node *curNode;
 
-        W(DBF_UIDL, "POP3 server '%s' doesn't support UIDL command!", msn->hostname);
+        W(DBF_UIDL, "POP3 server '%s' doesn't support UIDL command!", G->TR->mailServer->hostname);
 
         // search through our transferList
         IterateList(&G->TR->transferList, curNode)
