@@ -375,6 +375,8 @@ $URL$
     one attaches a file to mail, puts the mail on hold, edits it later and
     finally sends it off. In this case YAM changed the original file name to the
     one used internally by YAM (YAMm00000123.txt for example).
+  * Debug.c: renamed the "con" debug flag to "stdout" because it conflicted with
+    "config" and made listening to config debug messages only impossible.
   * YAM_CO.c, YAM_FI.c: comparing an empty list against a non-empty list falsely
     signaled both lists to be equal. This effectively prevented saving the
     conifiguration when i.e. starting with an empty MIME type list and adding
