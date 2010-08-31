@@ -3798,10 +3798,15 @@ void MA_SetupDynamicMenus(void)
 
         newObj = Menuitem(msn->account, NULL, TRUE, FALSE, MMEN_POPHOST+i);
         if(newObj != NULL)
+        {
           DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
-
-        i++;
+          i++;
+        }
       }
+
+      // we add the first 10 POP3 servers at most
+      if(i == MAXP3_MENU)
+        break;
     }
 
     // add the new dynamic menu to our

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+<<<<<<< .mine
+2010-08-31 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: adding the POP3 servers to the menu will bail out now after the
+    maximum number of ten (10) entries. This closes #190 again.
+
 2010-08-30 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed remaining shortcuts thanks to users feedback.
