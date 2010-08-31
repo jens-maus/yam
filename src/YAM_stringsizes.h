@@ -55,7 +55,7 @@
 
 #define MAXRX           23  // Number of script entries in the script list
 
-#define MAXP3_MENU      10  // the hardcoded max. for POP3 menu entries
+#define MAXP3_MENU      30  // the hardcoded max. for POP3 menu entries
 #define MAXRX_MENU      10  // the hardcoded max. for Rexx menu entries
 
 #define MAX_FOLDERIMG   11

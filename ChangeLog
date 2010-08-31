@@ -5,7 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-<<<<<<< .mine
+2010-08-31 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: moved the Notify creation out of the MA_New() function into
+    the CreateDynamicMenus() function and enabled it to dynamically create
+    and kill notifies. In addition, the limit for POP3 menus has been raised
+    to 30. This should really be enough for people as not all POP3 accounts
+    are really required to be a menuitem and users can freely move POP3
+    accounts around to get the first 30 items displayed accordingly. This
+    refs #190.
+
 2010-08-31 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: adding the POP3 servers to the menu will bail out now after the

@@ -3769,15 +3769,22 @@ void MA_SetupDynamicMenus(void)
   // dynamic Folder/Check menu items
   if(G->MA->GUI.MI_CSINGLE != NULL)
   {
+    int i=0;
+
     DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_CSINGLE);
     MUI_DisposeObject(G->MA->GUI.MI_CSINGLE);
+    G->MA->GUI.MI_CSINGLE = NULL;
+    
+    // now we clear all notifies
+    for(i=0; i < MAXP3_MENU; i++)
+      DoMethod(G->MA->GUI.WI, MUIM_KillNotify, MMEN_POPHOST+i);
   }
 
   G->MA->GUI.MI_CSINGLE = MenuitemObject,
     MUIA_Menuitem_Title, tr(MSG_MA_CheckSingle),
   End;
 
-  if(G->MA->GUI.MI_CSINGLE !=  NULL)
+  if(G->MA->GUI.MI_CSINGLE != NULL)
   {
     int i;
     struct Node *curNode;
@@ -3799,12 +3806,17 @@ void MA_SetupDynamicMenus(void)
         newObj = Menuitem(msn->account, NULL, TRUE, FALSE, MMEN_POPHOST+i);
         if(newObj != NULL)
         {
+          // add the new menu item to the sublist
           DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
+          
+          // add a notify for this item as well.
+          DoMethod(G->MA->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, POP_USER, i, 0L);
+
           i++;
         }
       }
 
-      // we add the first 10 POP3 servers at most
+      // we add the first MAXP3_MENU POP3 servers at most
       if(i == MAXP3_MENU)
         break;
     }
@@ -4393,9 +4405,6 @@ struct MA_ClassData *MA_New(void)
 
       for(i=0; i < MAXRX_MENU; i++)
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MACRO+i, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_CallRexxHook, i);
-
-      for(i=0; i < MAXP3_MENU; i++)
-        DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, POP_USER, i, 0);
 
       DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_CloseRequest,  TRUE,                   MUIV_Notify_Application,  2, MUIM_Application_ReturnID, ID_CLOSEALL);
 
