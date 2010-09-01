@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.8 (17.08.2010)
+## version $VER: YAM.catalog 7.9 (01.09.2010)
 ## language polski
 ## codeset 5
 ;
@@ -9231,23 +9231,16 @@ Data urodzin w formacie systemowym\n\
 ; (e.g. 19.06.1974 or 19/06/1974).
 ;
 MSG_ERROR_THREADS
-Nie mo¿na zainicjalizowaæ systemu w±tków
-; Can't initialize thread system
+Nie mo¿na zainicjalizowaæ systemu w±tków.
+; Cannot initialize thread system.
 ;
 MSG_ERROR_PLAYSOUND
-Wyst±pi³ b³±d podczas próby odtworzenia\n\
-pliku d¼wiêkowego \"%s\".\n\
+Wyst±pi³ b³±d podczas próby odtworzenia pliku d¼wiêkowego \"%s\".\n\
 \n\
-Mo¿e to byæ spowodowane uszkodzonym lub\n\
-nieobs³ugiwanym plikiem d¼wiêkowym, albo\n\
-Twoje datatype'y d¼wiêkowe nie dzia³aj±\n\
-poprawnie.
-; An error occurred while trying to play\n\
-; the sound file '%s'.\n\
+Mo¿e to byæ spowodowane uszkodzonym lub nieobs³ugiwanym plikiem d¼wiêkowym, albo Twoje datatype'y d¼wiêkowe nie dzia³aj± poprawnie.
+; An error occurred while trying to play the sound file '%s'.\n\
 ; \n\
-; This could be either due to a broken or\n\
-; unsupported sound file or because your\n\
-; sound datatype is not properly working.
+; This could be either due to a broken or unsupported sound file or because your sound datatype is not properly working.
 ; FILE
 ;
 MSG_WR_CHARSET
@@ -9872,4 +9865,8 @@ MSG_EXECUTE_COMMAND_FAILED
 Wykonanie polecenia \"%s\" zakoñczone niepowodzeniem (kod b³êdu %ld: %s).
 ; The execution of the command '%s' failed (error code %ld: %s).
 ; COMMAND, ERRORCODE, ERRORSTRING
+;
+MSG_ERROR_METHODSTACK
+Nie mo¿na zainicjalizowaæ stosu metod.
+; Cannot initialize method stack.
 ;
