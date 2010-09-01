@@ -169,6 +169,7 @@ void AddFolderNode(struct FolderList *flist, struct FolderNode *fnode)
 
 ///
 /// RemoveFolderNode
+// remove a folder node from the list
 void RemoveFolderNode(struct FolderList *flist, struct FolderNode *fnode)
 {
   ENTER();
@@ -178,6 +179,29 @@ void RemoveFolderNode(struct FolderList *flist, struct FolderNode *fnode)
 
   // and decrease the counter
   flist->count--;
+
+  LEAVE();
+}
+
+///
+/// RemoveFolder
+// find a folder in the list and remove and delete the node
+void RemoveFolder(struct FolderList *flist, struct Folder *folder)
+{
+  struct FolderNode *fnode;
+
+  ENTER();
+
+  ForEachFolderNode(flist, fnode)
+  {
+    if(fnode->folder == folder)
+    {
+      // we found the folder, remove and delete the node
+      RemoveFolderNode(flist, fnode);
+      DeleteFolderNode(fnode);
+      break;
+    }
+  }
 
   LEAVE();
 }

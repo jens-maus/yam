@@ -11,6 +11,13 @@ $URL$
 
 2010-09-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COs.c, YAM_FO.c, FolderList.c: en/disabling the spam filter several
+    times without restarting YAM eventually resulted in multiple folders named
+    "Spam", because the folder's node was only removed from the listtree, but
+    never from the folder list. When trying to remove the folder a second time
+    YAM would work with the previous node pointer and hence was not able to find
+    this node in the listtree and in turn did not remove the tree node. Now the
+    folder is correctly removed from the folder list. This closes #198.
   * YAM.c, YAM_COs.c, YAM_FO.c: fixed some wrong constants when removing a node
     from the folder listtree. The old constants didn't cause any harm, because
     they have the same value.

@@ -56,6 +56,7 @@ void DeleteFolderList(struct FolderList *flist);
 struct FolderNode *AddNewFolderNode(struct FolderList *flist, const struct Folder *folder);
 void AddFolderNode(struct FolderList *flist, struct FolderNode *fnode);
 void RemoveFolderNode(struct FolderList *flist, struct FolderNode *fnode);
+void RemoveFolder(struct FolderList *flist, struct Folder *folder);
 void DeleteFolderNode(struct FolderNode *fnode);
 void MoveFolderNode(struct FolderList *flist, struct FolderNode *fnode, struct FolderNode *afterThis);
 struct FolderNode *TakeFolderNode(struct FolderList *flist);
