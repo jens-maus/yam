@@ -1876,8 +1876,6 @@ void CO_GetConfig(BOOL saveConfig)
                 // now we need the corresponding treenode to remove it from the list of folders
                 if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
                 {
-                  char foldersPath[SIZE_PATHFILE];
-
                   // delete the folder on disk
                   DeleteMailDir(GetFolderDir(spamFolder), FALSE);
 
@@ -1898,7 +1896,7 @@ void CO_GetConfig(BOOL saveConfig)
                   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
 
                   // and finally save the modified tree to the folder config now
-                  FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
+                  FO_SaveTree();
 
                   // update the statistics in case the spam folder contained new or unread mails
                   DisplayStatistics(NULL, TRUE);
@@ -2002,7 +2000,6 @@ void CO_GetConfig(BOOL saveConfig)
           if(createSpamFolder == TRUE)
           {
             struct Folder *spamFolder;
-            char foldersPath[SIZE_PATHFILE];
 
             // if a folder named "spam" already exists, but a new spam folder should be
             // created, we need to remove the old folder from the tree view first
@@ -2026,7 +2023,7 @@ void CO_GetConfig(BOOL saveConfig)
             }
 
             // try to create the folder and save the new folder tree
-            if(FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) == FALSE || FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath))) == FALSE)
+            if(FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) == FALSE || FO_SaveTree() == FALSE)
             {
               // something failed, so we disable the spam filter again
               ER_NewError(tr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));

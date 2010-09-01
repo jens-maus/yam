@@ -737,15 +737,19 @@ static BOOL FO_LoadFolderImage(struct Folder *folder)
 ///
 /// FO_LoadTree
 //  Loads folder list from a file
-BOOL FO_LoadTree(char *fname)
+BOOL FO_LoadTree(void)
 {
+  char foldersPath[SIZE_PATHFILE];
   BOOL success = FALSE;
+  char *fname;
   int nested = 0, i = 0, j = MAX_FOLDERIMG+1;
   FILE *fh;
   APTR lv = G->MA->GUI.NL_FOLDERS;
   struct MUI_NListtree_TreeNode *tn_root = MUIV_NListtree_Insert_ListNode_Root;
 
   ENTER();
+
+  fname = CreateFilename(".folders", foldersPath, sizeof(foldersPath));
 
   if((fh = fopen(fname, "r")) != NULL)
   {
@@ -1087,12 +1091,16 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
 ///
 /// FO_SaveTree
 //  Saves folder list to a file
-BOOL FO_SaveTree(char *fname)
+BOOL FO_SaveTree(void)
 {
+  char foldersPath[SIZE_PATHFILE];
+  char *fname;
   BOOL success = FALSE;
   FILE *fh;
 
   ENTER();
+
+  fname = CreateFilename(".folders", foldersPath, sizeof(foldersPath));
 
   if((fh = fopen(fname, "w")) != NULL)
   {
@@ -1441,11 +1449,9 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
 
     if(fnode != NULL)
     {
-      char foldersPath[SIZE_PATHFILE];
-
       DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
 
-      FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
+      FO_SaveTree();
     }
   }
 
@@ -1695,15 +1701,13 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 
     if(delete_folder == TRUE)
     {
-      char foldersPath[SIZE_PATHFILE];
-
       D(DBF_FOLDER, "deleting folder \"%s\"", folder->Name);
 
       // remove the entry from the listtree now
       DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, MUIF_NONE);
 
       // Save the Tree to the folder config now
-      FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
+      FO_SaveTree();
 
       // update the statistics in case the just deleted folder contained new or unread mail
       DisplayStatistics(NULL, TRUE);
@@ -2037,11 +2041,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     // a temporarily modified open/close state of folder groups will be saved
     // as well, even if the user didn't want this.
     if(isNewFolder == TRUE)
-    {
-      char foldersPath[SIZE_PATHFILE];
-
-      FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
-    }
+      FO_SaveTree();
 
     DisplayStatistics(oldfolder, TRUE);
   }
@@ -2063,16 +2063,13 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
   {
     case SO_SAVE:
     {
-      char foldersPath[SIZE_PATHFILE];
-
-      FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
+      FO_SaveTree();
     }
     break;
 
     case SO_RESET:
     {
       struct FolderNode *fnode;
-      char foldersPath[SIZE_PATHFILE];
 
       // before we reset/reload the foldertree we have to
       // make sure everything is freed correctly.
@@ -2110,7 +2107,7 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
 
       UnlockFolderList(G->folders);
 
-      FO_LoadTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
+      FO_LoadTree();
     }
     break;
   }

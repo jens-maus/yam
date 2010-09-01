@@ -1580,7 +1580,6 @@ static BOOL Root_New(BOOL hidden)
 //  Phase 2 of program initialization (after user logs in)
 static void InitAfterLogin(void)
 {
-  char foldersPath[SIZE_PATHFILE];
   struct FolderList *oldfolders = NULL;
   BOOL newfolders;
   BOOL splashWasActive;
@@ -1639,7 +1638,7 @@ static void InitAfterLogin(void)
   SplashProgress(tr(MSG_LoadingFolders), 50);
 
   newfolders = FALSE;
-  if(FO_LoadTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath))) == FALSE && oldfolders != NULL && IsFolderListEmpty(oldfolders) == FALSE)
+  if(FO_LoadTree() == FALSE && oldfolders != NULL && IsFolderListEmpty(oldfolders) == FALSE)
   {
     struct FolderNode *fnode;
 
@@ -1762,10 +1761,8 @@ static void InitAfterLogin(void)
 
   if(newfolders == TRUE)
   {
-  	char foldersPath[SIZE_PATHFILE];
-
     set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
-    FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
+    FO_SaveTree();
   }
 
   // setup some dynamic (changing) menus

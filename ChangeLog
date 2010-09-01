@@ -7,6 +7,8 @@ $URL$
 
 2010-09-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: removed the path argument from the FO_Load/SaveTree functions
+    as we are using a static file name anyway.
   * YAM_UT.c, misc: the CreateFilename() now requires a destination buffer to
     be filled with the full path. This makes this function usable from several
     places and threads at the same time.
