@@ -5,6 +5,24 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c, tcp/pop3.c: reworked the UIDL management. First of all YAM will
+    use separate files for each account to avoid any mix up of (in)active and/or
+    (un)checked accounts. The filename will be built as ".uidl_<user>_<host>"
+    to be unique even for multiple accounts with the same host. The old .uidl
+    file will be kept as a fallback, because it may contain UIDLs of multiple
+    accounts. The new .uidl_* file will be written only if new entries added
+    added to the database. This also means that old and outdated entries will
+    vanish only if there are new mails to be remembered. Mails will be rem-
+    embered as soon as they were downloaded or just deleted. This respects the
+    fact that certain providers don't delete mails immediately but only after a
+    proper QUIT command. The result of an aborted download was that already
+    deleted mails were downloaded again, even if YAM was configured to avoid
+    duplicate mails. All this closes #191. The old style .uidl must deleted
+    manually if the user is sure that all contained UIDLs really don't longer
+    reside on the server.
+
 2010-08-31 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c: moved the Notify creation out of the MA_New() function into

@@ -376,6 +376,9 @@ static int TR_ConnectPOP(int guilevel)
     return -1;
   }
 
+  // remember the current mail server
+  G->TR->mailServer = msn;
+
   D(DBF_NET, "connect to POP3 server '%s'", msn->hostname);
 
   strlcpy(passwd, msn->password, sizeof(passwd));
@@ -388,6 +391,14 @@ static int TR_ConnectPOP(int guilevel)
      G->TR_UseableTLS == FALSE)
   {
     ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
+
+    RETURN(-1);
+    return -1;
+  }
+
+  if(C->AvoidDuplicates == TRUE && InitUIDLhash() == FALSE)
+  {
+    ER_NewError("Failed to init UIDL hash");
 
     RETURN(-1);
     return -1;
@@ -589,9 +600,6 @@ static int TR_ConnectPOP(int guilevel)
   sscanf(&resp[4], "%d", &msgs);
   if(msgs != 0)
     AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_ConnectPOP), msn->username, host, msgs);
-
-  // remember the current mail server
-  G->TR->mailServer = msn;
 
 out:
 
@@ -908,53 +916,6 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     else
       G->TR->POP_Nr = -1;
     laststats = 0;
-
-    // now we find out if we need to check for duplicates
-    // during POP3 processing or if we can skip that.
-    G->TR->DuplicatesChecking = FALSE;
-
-    if(C->AvoidDuplicates == TRUE)
-    {
-      if(G->TR->SinglePOP == TRUE)
-      {
-        if(GetMailServer(&C->mailServerList, MST_POP3, pop) != NULL)
-          G->TR->DuplicatesChecking = TRUE;
-      }
-      else
-      {
-        struct Node *curNode;
-
-        IterateList(&C->mailServerList, curNode)
-        {
-          struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
-          if(msn->type == MST_POP3)
-          {
-            if(isServerActive(msn))
-            {
-              G->TR->DuplicatesChecking = TRUE;
-              break;
-            }
-          }
-        }
-      }
-
-      if(G->TR->DuplicatesChecking == TRUE)
-      {
-        struct Node *curNode;
-
-        if(InitUIDLhash() == TRUE)
-        {
-          IterateList(&C->mailServerList, curNode)
-          {
-            struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
-            if(msn->type == MST_POP3)
-              CLEAR_FLAG(msn->flags, MSF_UIDLCHECKED);
-          }
-        }
-      }
-    }
   }
   else /* Finish previous connection */
   {
@@ -967,6 +928,10 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       pop = -1;
 
     laststats = G->TR->Stats.Downloaded;
+
+    // free/cleanup the UIDL hash tables
+    if(C->AvoidDuplicates == TRUE)
+      CleanupUIDLhash();
 
     // forget the current mail server again
     G->TR->mailServer = NULL;
@@ -1006,10 +971,6 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
 
     // make sure the transfer window is closed
     set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
-
-    // free/cleanup the UIDL hash tables
-    if(G->TR->DuplicatesChecking == TRUE)
-      CleanupUIDLhash();
 
     FreeFilterSearch();
     G->TR->SearchCount = 0;
@@ -1118,7 +1079,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
         // if the user wants to avoid to receive the
         // same message from the POP3 server again
         // we have to analyze the UIDL of it
-        if(G->TR->DuplicatesChecking == TRUE)
+        if(C->AvoidDuplicates == TRUE)
         {
           if(FilterDuplicates() == TRUE)
           {
@@ -1207,7 +1168,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       W(DBF_NET, "no messages found on server '%s'", G->TR->mailServer->hostname);
 
       // per default we flag that POP3 server as being UIDLchecked
-      if(G->TR->DuplicatesChecking == TRUE)
+      if(C->AvoidDuplicates == TRUE)
         SET_FLAG(G->TR->mailServer->flags, MSF_UIDLCHECKED);
     }
   }
@@ -1410,15 +1371,10 @@ static BOOL FilterDuplicates(void)
                   // see if that hash lookup worked out fine or not.
                   if(HASH_ENTRY_IS_LIVE(entry))
                   {
-                    struct UIDLtoken *token = (struct UIDLtoken *)entry;
-
                     // make sure the mail is flagged as being ignoreable
                     G->TR->Stats.DupSkipped++;
                     // don't download this mail, because it has been downloaded before
                     CLEAR_FLAG(mtn->tflags, TRF_LOAD);
-
-                    // mark the UIDLtoken as being checked
-                    token->checked = TRUE;
 
                     D(DBF_UIDL, "mail %ld: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
                   }

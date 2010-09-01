@@ -124,13 +124,6 @@ struct DownloadResult
   BOOL Error;
 };
 
-struct UIDLtoken
-{
-  struct HashEntryHeader hash;
-  const char *uidl;
-  BOOL checked;
-};
-
 struct TR_GUIData
 {
   Object *WI;
