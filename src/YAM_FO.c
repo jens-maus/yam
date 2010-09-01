@@ -352,6 +352,7 @@ struct MUI_NListtree_TreeNode *FO_GetFolderTreeNode(struct Folder *findfo)
 
   ENTER();
 
+  D(DBF_ALWAYS, "find folder %08lx '%s'",findfo,findfo->Name);
   for(i=0;;i++)
   {
     tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
@@ -363,12 +364,14 @@ struct MUI_NListtree_TreeNode *FO_GetFolderTreeNode(struct Folder *findfo)
     }
 
     fo = ((struct FolderNode *)tn->tn_User)->folder;
+  D(DBF_ALWAYS, "checking folder %08lx %08lx '%s'",tn->tn_User,fo,fo->Name);
     if(fo == findfo)
     {
       // we just found the desired folder, so break out of the loop and return the treenode
       break;
     }
   }
+  D(DBF_ALWAYS, "found folder %08lx %08lx '%s'",tn,tn!=NULL ? ((struct FolderNode *)tn->tn_User)->folder:NULL,((struct FolderNode *)tn->tn_User)->folder?((struct FolderNode *)tn->tn_User)->folder->Name:"NULL");
 
   RETURN(tn);
   return tn;
@@ -536,7 +539,7 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
 
   ENTER();
 
-  if((folder = calloc(1, sizeof(struct Folder))) != NULL)
+  if((folder = calloc(1, sizeof(*folder))) != NULL)
   {
     if((folder->messages = CreateMailList()) != NULL)
     {
@@ -664,6 +667,7 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
 
       if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) != NULL)
       {
+      	D(DBF_ALWAYS,"create new folder %08lx %08lx '%s'",tn,folder, folder->Name);
         if(FO_SaveConfig(folder) == TRUE)
         {
           // only if we reach here everything was fine and we can return TRUE

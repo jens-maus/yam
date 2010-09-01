@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COs.c, YAM_FO.c, FolderList.c: en/disabling the spam filter several
+    times without restarting YAM eventually resulted in multiple folders named
+    "Spam", because the folder's node was only removed from the listtree, but
+    never from the folder list. When trying to remove the folder a second time
+    YAM would work with the previous node pointer and hence was not able to find
+    this node in the listtree and in turn did not remove the tree node. Now the
+    folder is correctly removed from the folder list. This closes #198.
+
 2010-08-30 Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile: changed AROS build to use -O2 as the default optimization level as

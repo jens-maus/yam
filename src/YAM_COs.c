@@ -1663,16 +1663,6 @@ void CO_GetConfig(BOOL saveConfig)
                   // remove all mails from our internal list
                   ClearMailList(spamFolder, TRUE);
 
-                  if(spamFolder->imageObject != NULL)
-                  {
-                    // we make sure that the NList also doesn't use the image in future anymore
-                    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
-                    spamFolder->imageObject = NULL;
-
-                    // we don't need to dispose the image, because it is one of the standard images and not
-                    // a custom image of the user.
-                  }
-
                   // remove the folder from the folder list
                   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
 
@@ -1681,6 +1671,13 @@ void CO_GetConfig(BOOL saveConfig)
 
                   // update the statistics in case the spam folder contained new or unread mails
                   DisplayStatistics(NULL, TRUE);
+
+                  // remove and delete the folder from our list
+                  LockFolderList(G->folders);
+                  RemoveFolder(G->folders, spamFolder);
+                  UnlockFolderList(G->folders);
+
+                  FO_FreeFolder(spamFolder);
                 }
               }
             }
