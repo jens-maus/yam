@@ -11,6 +11,9 @@ $URL$
 
 2010-09-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_COs.c, YAM_FO.c: fixed some wrong constants when removing a node
+    from the folder listtree. The old constants didn't cause any harm, because
+    they have the same value.
   * YAM_AB.c, YAM_US.c: for new users get an empty address book file will now
     be created in case the global address book is not to be copied. This avoids
     an error message about a missing/invalid address book as soon as that new

@@ -674,7 +674,7 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
           // If we reach here the SaveConfig() returned FALSE and we need to remove the folder again
           // from the listtree. But we MUST pass the treenode and NOT the folder, because the folder
           // pointer is no valid treenode but just the user data!!
-          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, tn, MUIF_NONE);
         }
       }
     }

@@ -1750,7 +1750,7 @@ static void InitAfterLogin(void)
           if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
           {
             // remove the folder from the folder list
-            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, tn, MUIF_NONE);
           }
         }
         // finally, create the spam folder

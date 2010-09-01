@@ -1591,774 +1591,781 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 //  Fills form data of current section with data from configuration structure
 void CO_GetConfig(BOOL saveConfig)
 {
-   int i;
-   struct CO_GUIData *gui = &G->CO->GUI;
+  int i;
+  struct CO_GUIData *gui = &G->CO->GUI;
 
-   ENTER();
+  ENTER();
 
-   switch (G->CO->VisiblePage)
-   {
-      case cp_AllPages:
+  switch (G->CO->VisiblePage)
+  {
+    case cp_AllPages:
+    {
+      // nothing
+    }
+    break;
+
+    case cp_FirstSteps:
+    {
+      GetMUIString(CE->RealName, gui->ST_REALNAME, sizeof(CE->RealName));
+      GetMUIString(CE->EmailAddress, gui->ST_EMAIL, sizeof(CE->EmailAddress));
+      CE->TimeZone = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
+      CE->DaylightSaving = GetMUICheck(gui->CH_DSTACTIVE);
+    }
+    break;
+
+    case cp_TCPIP:
+    {
+      int i;
+      struct MailServerNode *msn;
+
+      // try to get the SMTP server structure of the first SMTP server
+      if((msn = GetMailServer(&CE->mailServerList, MST_SMTP, 0)) != NULL)
       {
-        // nothing
-      }
-      break;
+        GetMUIString(msn->hostname, gui->ST_SMTPHOST, sizeof(msn->hostname));
+        msn->port = GetMUIInteger(gui->ST_SMTPPORT);
+        GetMUIString(msn->domain, gui->ST_DOMAIN, sizeof(msn->domain));
 
-      case cp_FirstSteps:
-      {
-        GetMUIString(CE->RealName, gui->ST_REALNAME, sizeof(CE->RealName));
-        GetMUIString(CE->EmailAddress, gui->ST_EMAIL, sizeof(CE->EmailAddress));
-        CE->TimeZone = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
-        CE->DaylightSaving = GetMUICheck(gui->CH_DSTACTIVE);
-      }
-      break;
-
-      case cp_TCPIP:
-      {
-        int i;
-        struct MailServerNode *msn;
-
-        // try to get the SMTP server structure of the first SMTP server
-        if((msn = GetMailServer(&CE->mailServerList, MST_SMTP, 0)) != NULL)
+        switch(GetMUIRadio(gui->RA_SMTPSECURE))
         {
-          GetMUIString(msn->hostname, gui->ST_SMTPHOST, sizeof(msn->hostname));
-          msn->port = GetMUIInteger(gui->ST_SMTPPORT);
-          GetMUIString(msn->domain, gui->ST_DOMAIN, sizeof(msn->domain));
-
-          switch(GetMUIRadio(gui->RA_SMTPSECURE))
+          case 0:
           {
-            case 0:
-            {
-              CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
-              CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
-            }
-            break;
-
-            case 1:
-            {
-              SET_FLAG(msn->flags, MSF_SEC_TLS);
-              CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
-            }
-            break;
-
-            case 2:
-            {
-              CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
-              SET_FLAG(msn->flags, MSF_SEC_SSL);
-            }
-            break;
+            CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
+            CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
           }
+          break;
 
-          if(GetMUICheck(gui->CH_SMTP8BIT) == TRUE)
-            SET_FLAG(msn->flags, MSF_ALLOW_8BIT);
-          else
-            CLEAR_FLAG(msn->flags, MSF_ALLOW_8BIT);
-
-          if(GetMUICheck(gui->CH_USESMTPAUTH) == TRUE)
-            SET_FLAG(msn->flags, MSF_AUTH);
-          else
-            CLEAR_FLAG(msn->flags, MSF_AUTH);
-
-          GetMUIString(msn->username, gui->ST_SMTPAUTHUSER, sizeof(msn->username));
-          GetMUIString(msn->password, gui->ST_SMTPAUTHPASS, sizeof(msn->password));
-
-          switch(GetMUICycle(gui->CY_SMTPAUTHMETHOD))
+          case 1:
           {
-            case 0:
-            {
-              SET_FLAG(msn->flags, MSF_AUTH_AUTO);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
-            }
-            break;
-
-            case 1:
-            {
-              CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-              SET_FLAG(msn->flags, MSF_AUTH_DIGEST);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
-            }
-            break;
-
-            case 2:
-            {
-              CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-              SET_FLAG(msn->flags, MSF_AUTH_CRAM);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
-            }
-            break;
-
-            case 3:
-            {
-              CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-              SET_FLAG(msn->flags, MSF_AUTH_LOGIN);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
-            }
-            break;
-
-            case 4:
-            {
-              CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-              CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-              SET_FLAG(msn->flags, MSF_AUTH_PLAIN);
-            }
-            break;
+            SET_FLAG(msn->flags, MSF_SEC_TLS);
+            CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
           }
+          break;
+
+          case 2:
+          {
+            CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
+            SET_FLAG(msn->flags, MSF_SEC_SSL);
+          }
+          break;
         }
 
-        CE->MailExchangeOrder = GetMUICycle(gui->CY_EXCHANGEORDER);
+        if(GetMUICheck(gui->CH_SMTP8BIT) == TRUE)
+          SET_FLAG(msn->flags, MSF_ALLOW_8BIT);
+        else
+          CLEAR_FLAG(msn->flags, MSF_ALLOW_8BIT);
 
-        // as the user may have changed the order of the POP3 servers
-        // we have to make sure the order in the NList fits to the
-        // exec list order of our POP3 server list
-        i = 0;
-        do
+        if(GetMUICheck(gui->CH_USESMTPAUTH) == TRUE)
+          SET_FLAG(msn->flags, MSF_AUTH);
+        else
+          CLEAR_FLAG(msn->flags, MSF_AUTH);
+
+        GetMUIString(msn->username, gui->ST_SMTPAUTHUSER, sizeof(msn->username));
+        GetMUIString(msn->password, gui->ST_SMTPAUTHPASS, sizeof(msn->password));
+
+        switch(GetMUICycle(gui->CY_SMTPAUTHMETHOD))
         {
-          struct MailServerNode *msn = NULL;
+          case 0:
+          {
+            SET_FLAG(msn->flags, MSF_AUTH_AUTO);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+          }
+          break;
 
-          DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, i, &msn);
-          if(msn == NULL || msn->type != MST_POP3)
-            break;
+          case 1:
+          {
+            CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
+            SET_FLAG(msn->flags, MSF_AUTH_DIGEST);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+          }
+          break;
 
-          // for resorting the POP3 list we just have to remove that particular server
+          case 2:
+          {
+            CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
+            SET_FLAG(msn->flags, MSF_AUTH_CRAM);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+          }
+          break;
+
+          case 3:
+          {
+            CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
+            SET_FLAG(msn->flags, MSF_AUTH_LOGIN);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+          }
+          break;
+
+          case 4:
+          {
+            CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
+            CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
+            SET_FLAG(msn->flags, MSF_AUTH_PLAIN);
+          }
+          break;
+        }
+      }
+
+      CE->MailExchangeOrder = GetMUICycle(gui->CY_EXCHANGEORDER);
+
+      // as the user may have changed the order of the POP3 servers
+      // we have to make sure the order in the NList fits to the
+      // exec list order of our POP3 server list
+      i = 0;
+      do
+      {
+        struct MailServerNode *msn = NULL;
+
+        DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, i, &msn);
+        if(msn == NULL || msn->type != MST_POP3)
+          break;
+
+        // for resorting the POP3 list we just have to remove that particular server
+        // and add it to the tail - all other operations like adding/removing should
+        // have been done by others already - so this is just resorting
+        Remove((struct Node *)msn);
+        AddTail((struct List *)&CE->mailServerList, (struct Node *)msn);
+
+        i++;
+      }
+      while(TRUE);
+    }
+    break;
+
+    case cp_NewMail:
+    {
+      CE->PreSelection      = GetMUICycle  (gui->CY_MSGSELECT);
+      CE->TransferWindow    = GetMUICycle  (gui->CY_TRANSWIN);
+      CE->AvoidDuplicates   = GetMUICheck  (gui->CH_AVOIDDUP);
+      CE->UpdateStatus      = GetMUICheck  (gui->CH_UPDSTAT);
+      CE->WarnSize          = GetMUIInteger(gui->ST_WARNSIZE);
+      CE->CheckMailDelay    = GetMUINumer  (gui->NM_INTERVAL);
+      CE->DownloadLarge     = GetMUICheck  (gui->CH_DLLARGE);
+      CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ)        ? NOTIFY_REQ        : 0)
+                            + (GetMUICheck(gui->CH_NOTIOS41SYSTEM) ? NOTIFY_OS41SYSTEM : 0)
+                            + (GetMUICheck(gui->CH_NOTISOUND)      ? NOTIFY_SOUND      : 0)
+                            + (GetMUICheck(gui->CH_NOTICMD)        ? NOTIFY_CMD        : 0);
+      GetMUIString(CE->NotifySound, gui->ST_NOTISOUND, sizeof(CE->NotifySound));
+      GetMUIString(CE->NotifyCommand, gui->ST_NOTICMD, sizeof(CE->NotifyCommand));
+    }
+    break;
+
+    case cp_Filters:
+    {
+      int i=0;
+
+      // as the user may have changed the order of the filters
+      // we have to make sure the order in the NList fits to the
+      // exec list order of our filter list
+      do
+      {
+        struct FilterNode *filter = NULL;
+
+        DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, i, &filter);
+        if(filter)
+        {
+          // for resorting the filterlist we just have to remove that particular filter
           // and add it to the tail - all other operations like adding/removing should
           // have been done by others already - so this is just resorting
-          Remove((struct Node *)msn);
-          AddTail((struct List *)&CE->mailServerList, (struct Node *)msn);
-
-          i++;
+          Remove((struct Node *)filter);
+          AddTail((struct List *)&CE->filterList, (struct Node *)filter);
         }
-        while(TRUE);
+        else
+          break;
       }
-      break;
+      while(++i);
+    }
+    break;
 
-      case cp_NewMail:
+    case cp_Spam:
+    {
+      CE->SpamFilterEnabled = GetMUICheck(gui->CH_SPAMFILTERENABLED);
+      CE->SpamFilterForNewMail = GetMUICheck(gui->CH_SPAMFILTERFORNEWMAIL);
+      CE->SpamMarkOnMove = GetMUICheck(gui->CH_SPAMMARKONMOVE);
+      CE->SpamMarkAsRead = GetMUICheck(gui->CH_SPAMMARKASREAD);
+      CE->SpamAddressBookIsWhiteList = GetMUICheck(gui->CH_SPAMABOOKISWHITELIST);
+      CE->MoveHamToIncoming = GetMUICheck(gui->CH_MOVEHAMTOINCOMING);
+      CE->FilterHam = GetMUICheck(gui->CH_FILTERHAM);
+
+D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnabled);
+      if(C->SpamFilterEnabled == TRUE && CE->SpamFilterEnabled == FALSE)
       {
-        CE->PreSelection      = GetMUICycle  (gui->CY_MSGSELECT);
-        CE->TransferWindow    = GetMUICycle  (gui->CY_TRANSWIN);
-        CE->AvoidDuplicates   = GetMUICheck  (gui->CH_AVOIDDUP);
-        CE->UpdateStatus      = GetMUICheck  (gui->CH_UPDSTAT);
-        CE->WarnSize          = GetMUIInteger(gui->ST_WARNSIZE);
-        CE->CheckMailDelay    = GetMUINumer  (gui->NM_INTERVAL);
-        CE->DownloadLarge     = GetMUICheck  (gui->CH_DLLARGE);
-        CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ)        ? NOTIFY_REQ        : 0)
-                              + (GetMUICheck(gui->CH_NOTIOS41SYSTEM) ? NOTIFY_OS41SYSTEM : 0)
-                              + (GetMUICheck(gui->CH_NOTISOUND)      ? NOTIFY_SOUND      : 0)
-                              + (GetMUICheck(gui->CH_NOTICMD)        ? NOTIFY_CMD        : 0);
-        GetMUIString(CE->NotifySound, gui->ST_NOTISOUND, sizeof(CE->NotifySound));
-        GetMUIString(CE->NotifyCommand, gui->ST_NOTICMD, sizeof(CE->NotifyCommand));
-      }
-      break;
+        LONG mask;
 
-      case cp_Filters:
-      {
-        int i=0;
+        // raise a CheckboxRequest and ask the user which
+        // operations he want to performed while disabling the
+        // SPAM filter.
+        mask = CheckboxRequest(G->CO->GUI.WI, NULL, 3, tr(MSG_CO_SPAM_DISABLEFILTERASK),
+                                                       tr(MSG_CO_SPAM_RESETTDATA),
+                                                       tr(MSG_CO_SPAM_RESETMAILFLAGS),
+                                                       tr(MSG_CO_SPAM_DELETESPAMFOLDER));
 
-        // as the user may have changed the order of the filters
-        // we have to make sure the order in the NList fits to the
-        // exec list order of our filter list
-        do
+        SHOWVALUE(DBF_CONFIG, mask);
+        SHOWVALUE(DBF_ALWAYS, mask);
+        // check if the user canceled the requester
+        if(mask >= 0)
         {
-          struct FilterNode *filter = NULL;
-
-          DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, i, &filter);
-          if(filter)
+          // reset training data
+          if(mask & (1 << 0))
           {
-            // for resorting the filterlist we just have to remove that particular filter
-            // and add it to the tail - all other operations like adding/removing should
-            // have been done by others already - so this is just resorting
-            Remove((struct Node *)filter);
-            AddTail((struct List *)&CE->filterList, (struct Node *)filter);
+            D(DBF_CONFIG, "resetting spam training data");
+            BayesFilterResetTrainingData();
           }
-          else
-            break;
-        }
-        while(++i);
-      }
-      break;
 
-      case cp_Spam:
-      {
-        CE->SpamFilterEnabled = GetMUICheck(gui->CH_SPAMFILTERENABLED);
-        CE->SpamFilterForNewMail = GetMUICheck(gui->CH_SPAMFILTERFORNEWMAIL);
-        CE->SpamMarkOnMove = GetMUICheck(gui->CH_SPAMMARKONMOVE);
-        CE->SpamMarkAsRead = GetMUICheck(gui->CH_SPAMMARKASREAD);
-        CE->SpamAddressBookIsWhiteList = GetMUICheck(gui->CH_SPAMABOOKISWHITELIST);
-        CE->MoveHamToIncoming = GetMUICheck(gui->CH_MOVEHAMTOINCOMING);
-        CE->FilterHam = GetMUICheck(gui->CH_FILTERHAM);
-
-        if(C->SpamFilterEnabled == TRUE && CE->SpamFilterEnabled == FALSE)
-        {
-          LONG mask;
-
-          // raise a CheckboxRequest and ask the user which
-          // operations he want to performed while disabling the
-          // SPAM filter.
-          mask = CheckboxRequest(G->CO->GUI.WI, NULL, 3, tr(MSG_CO_SPAM_DISABLEFILTERASK),
-                                                         tr(MSG_CO_SPAM_RESETTDATA),
-                                                         tr(MSG_CO_SPAM_RESETMAILFLAGS),
-                                                         tr(MSG_CO_SPAM_DELETESPAMFOLDER));
-
-          SHOWVALUE(DBF_CONFIG, mask);
-          // check if the user canceled the requester
-          if(mask >= 0)
+          // reset spam state of all mails
+          if(mask & (1 << 1))
           {
-            // reset training data
-            if(mask & (1 << 0))
+            D(DBF_CONFIG, "resetting spam state of all mails");
+
+            LockFolderListShared(G->folders);
+
+            if(IsFolderListEmpty(G->folders) == FALSE)
             {
-              D(DBF_CONFIG, "resetting spam training data");
-              BayesFilterResetTrainingData();
-            }
+              struct FolderNode *fnode;
 
-            // reset spam state of all mails
-            if(mask & (1 << 1))
-            {
-              D(DBF_CONFIG, "resetting spam state of all mails");
-
-              LockFolderListShared(G->folders);
-
-              if(IsFolderListEmpty(G->folders) == FALSE)
+              ForEachFolderNode(G->folders, fnode)
               {
-                struct FolderNode *fnode;
+                struct Folder *folder = fnode->folder;
 
-                ForEachFolderNode(G->folders, fnode)
+                if(!isGroupFolder(folder))
                 {
-                  struct Folder *folder = fnode->folder;
+                  struct MailList *mlist;
 
-                  if(!isGroupFolder(folder))
+                  if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
                   {
-                    struct MailList *mlist;
+                    struct MailNode *mnode;
 
-                    if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
+                    // clear all possible spam/ham flags from each mail
+                    ForEachMailNode(mlist, mnode)
                     {
-                      struct MailNode *mnode;
+                      struct Mail *mail = mnode->mail;
 
-                      // clear all possible spam/ham flags from each mail
-                      ForEachMailNode(mlist, mnode)
-                      {
-                        struct Mail *mail = mnode->mail;
-
-                        if(mail != NULL)
-                          MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_USERSPAM|SFLAG_AUTOSPAM|SFLAG_HAM);
-                      }
-
-                      DeleteMailList(mlist);
+                      if(mail != NULL)
+                        MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_USERSPAM|SFLAG_AUTOSPAM|SFLAG_HAM);
                     }
+
+                    DeleteMailList(mlist);
                   }
                 }
-
-                UnlockFolderList(G->folders);
               }
-            }
 
-            // delete spam folder
-            if(mask & (1 << 2))
-            {
-              struct Folder *spamFolder;
-
-              D(DBF_CONFIG, "deleting spam folder");
-
-              // first locate the spam folder
-              if((spamFolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
-              {
-                struct MUI_NListtree_TreeNode *tn;
-
-                // now we need the corresponding treenode to remove it from the list of folders
-                if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
-                {
-                  // delete the folder on disk
-                  DeleteMailDir(GetFolderDir(spamFolder), FALSE);
-
-                  // remove all mails from our internal list
-                  ClearMailList(spamFolder, TRUE);
-
-                  if(spamFolder->imageObject != NULL)
-                  {
-                    // we make sure that the NList also doesn't use the image in future anymore
-                    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
-                    spamFolder->imageObject = NULL;
-
-                    // we don't need to dispose the image, because it is one of the standard images and not
-                    // a custom image of the user.
-                  }
-
-                  // remove the folder from the folder list
-                  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
-
-                  // and finally save the modified tree to the folder config now
-                  FO_SaveTree();
-
-                  // update the statistics in case the spam folder contained new or unread mails
-                  DisplayStatistics(NULL, TRUE);
-                }
-              }
-            }
-            else
-            {
-              // the spam folder should be kept, but it must be "degraded" to a normal folder
-              // to make it deleteable later
-              struct Folder *spamFolder;
-
-              // first locate the spam folder
-              if((spamFolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
-              {
-                if(spamFolder->imageObject != NULL)
-                {
-                  // we make sure that the NList also doesn't use the image in future anymore
-                  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
-                  spamFolder->imageObject = NULL;
-                  // we don't need to dispose the image, because it is one of the standard images and not
-                  // a custom image of the user.
-                }
-
-                // degrade it to a custom folder without folder image
-                spamFolder->Type = FT_CUSTOM;
-                spamFolder->ImageIndex = -1;
-
-                // finally save the modified configuration
-                FO_SaveConfig(spamFolder);
-
-                // update the statistics in case the spam folder contained new or unread mails
-                DisplayStatistics(spamFolder, TRUE);
-              }
-            }
-
-            // update the toolbar to the new settings
-            if(G->MA->GUI.TO_TOOLBAR != NULL)
-              DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
-          }
-          else
-          {
-            // the user canceled the requester so lets set the Spam filter
-            // back online
-            CE->SpamFilterEnabled = TRUE;
-          }
-
-        }
-        else if(C->SpamFilterEnabled == FALSE && CE->SpamFilterEnabled == TRUE)
-        {
-          // the spam filter has been enabled, now try to create the mandatory spam folder
-          char spamPath[SIZE_PATHFILE];
-          BOOL createSpamFolder;
-          enum FType type;
-
-          if(ObtainFileInfo(CreateFilename(FolderName[FT_SPAM], spamPath, sizeof(spamPath)), FI_TYPE, &type) == TRUE && type == FIT_NONEXIST)
-          {
-            // no directory named "spam" exists, so let's create it
-            createSpamFolder = TRUE;
-          }
-          else
-          {
-            ULONG result;
-
-            // the directory "spam" already exists, but it is not the standard spam folder
-            // let the user decide what to do
-            result = MUI_Request(G->App, NULL, 0, NULL,
-                                                  tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
-                                                  tr(MSG_ER_SPAMDIR_EXISTS));
-            switch(result)
-            {
-              default:
-              case 0:
-              {
-                // the user has chosen to disable the spam filter, so we do it
-                // or the requester was cancelled
-                CE->SpamFilterEnabled = FALSE;
-                createSpamFolder = FALSE;
-              }
-              break;
-
-              case 1:
-              {
-                char spamPath[SIZE_PATHFILE];
-
-                // delete everything in the folder, the directory itself can be kept
-                DeleteMailDir(CreateFilename(FolderName[FT_SPAM], spamPath, sizeof(spamPath)), FALSE);
-                createSpamFolder = TRUE;
-              }
-              break;
-
-              case 2:
-              {
-                // keep the folder contents
-                createSpamFolder = TRUE;
-              }
-              break;
+              UnlockFolderList(G->folders);
             }
           }
 
-          if(createSpamFolder == TRUE)
+          // delete spam folder
+          if(mask & (1 << 2))
           {
             struct Folder *spamFolder;
 
-            // if a folder named "spam" already exists, but a new spam folder should be
-            // created, we need to remove the old folder from the tree view first
-            if((spamFolder = FO_GetFolderByPath((STRPTR)FolderName[FT_SPAM], NULL)) != NULL)
+            D(DBF_CONFIG, "deleting spam folder");
+            D(DBF_ALWAYS, "deleting spam folder");
+
+            // first locate the spam folder
+            if((spamFolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
             {
               struct MUI_NListtree_TreeNode *tn;
 
               // now we need the corresponding treenode to remove it from the list of folders
               if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
               {
+                // delete the folder on disk
+                DeleteMailDir(GetFolderDir(spamFolder), FALSE);
+
+                // remove all mails from our internal list
+                ClearMailList(spamFolder, TRUE);
+
                 if(spamFolder->imageObject != NULL)
                 {
                   // we make sure that the NList also doesn't use the image in future anymore
                   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
                   spamFolder->imageObject = NULL;
+
+                  // we don't need to dispose the image, because it is one of the standard images and not
+                  // a custom image of the user.
                 }
 
                 // remove the folder from the folder list
-                DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
-              }
-            }
+                DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, tn, MUIF_NONE);
 
-            // try to create the folder and save the new folder tree
-            if(FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) == FALSE || FO_SaveTree() == FALSE)
-            {
-              // something failed, so we disable the spam filter again
-              ER_NewError(tr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));
-              CE->SpamFilterEnabled = FALSE;
+                // and finally save the modified tree to the folder config now
+                FO_SaveTree();
+
+                // update the statistics in case the spam folder contained new or unread mails
+                DisplayStatistics(NULL, TRUE);
+              }
+              else
+              	W(DBF_ALWAYS, "cant find spam treenode");
             }
             else
-            {
-              // update the toolbar to the new settings
-              if(G->MA->GUI.TO_TOOLBAR != NULL)
-                DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
-            }
+            	W(DBF_ALWAYS, "cant find spam folder");
           }
-        }
-
-        if(CE->SpamFilterEnabled == TRUE && CE->SpamMarkAsRead == TRUE)
-        {
-          ULONG numberClassified = BayesFilterNumberOfHamClassifiedMails() + BayesFilterNumberOfSpamClassifiedMails();
-
-          if(numberClassified < 100)
-          {
-            // Less than 100 mails have been classified so far.
-            // Better ask the user if new spam mails really should be mark as "read", because
-            // the filter is most probably not trained well enough an non-spam mails may be
-            // marked as spam and read unnoticed.
-            if(MUI_Request(G->App, NULL, 0, NULL,
-                                            tr(MSG_YesNoReq),
-                                            tr(MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS), numberClassified))
-            {
-              CE->SpamMarkAsRead = FALSE;
-            }
-          }
-        }
-      }
-      break;
-
-      case cp_Read:
-      {
-        CE->ShowHeader        = GetMUICycle(gui->CY_HEADER);
-        GetMUIString(CE->ShortHeaders, gui->ST_HEADERS, sizeof(CE->ShortHeaders));
-        CE->ShowSenderInfo    = GetMUICycle(gui->CY_SENDERINFO);
-        CE->SigSepLine        = GetMUICycle(gui->CY_SIGSEPLINE);
-        memcpy(&CE->ColorSignature, (struct MUI_PenSpec*)xget(gui->CA_COLSIG,   MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-        memcpy(&CE->ColoredText,    (struct MUI_PenSpec*)xget(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-        memcpy(&CE->Color1stLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-        memcpy(&CE->Color2ndLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-        memcpy(&CE->Color3rdLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-        memcpy(&CE->Color4thLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-        memcpy(&CE->ColorURL,       (struct MUI_PenSpec*)xget(gui->CA_COLURL,   MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-        CE->DisplayAllTexts   = GetMUICheck(gui->CH_ALLTEXTS);
-        CE->FixedFontEdit     = GetMUICheck(gui->CH_FIXFEDIT);
-        CE->WrapHeader        = GetMUICheck(gui->CH_WRAPHEAD);
-        CE->UseTextStylesRead = GetMUICheck(gui->CH_TEXTSTYLES_READ);
-        CE->UseTextColorsRead = GetMUICheck(gui->CH_TEXTCOLORS_READ);
-        CE->DisplayAllAltPart = GetMUICheck(gui->CH_SHOWALTPARTS);
-
-        // get MDN options from GUI
-        CE->MDNEnabled      = GetMUICheck(gui->CH_MDN_ALLOW) && !GetMUICheck(gui->CH_MDN_NEVER);
-        CE->MDN_NoRecipient = GetMUICycle(gui->CY_MDN_NORECIPIENT);
-        CE->MDN_NoDomain    = GetMUICycle(gui->CY_MDN_NODOMAIN);
-        CE->MDN_OnDelete    = GetMUICycle(gui->CY_MDN_DELETE);
-        CE->MDN_Other       = GetMUICycle(gui->CY_MDN_OTHER);
-
-        CE->MultipleReadWindows = GetMUICheck(gui->CH_MULTIWIN);
-        CE->StatusChangeDelayOn = GetMUICheck(gui->CH_DELAYEDSTATUS);
-        CE->StatusChangeDelay   = GetMUINumer(gui->NB_DELAYEDSTATUS)*1000;
-        CE->ConvertHTML         = GetMUICheck(gui->CH_CONVERTHTML);
-
-        GetMUIText(CE->DefaultReadCharset, gui->TX_DEFCHARSET_READ, sizeof(CE->DefaultReadCharset));
-        CE->DetectCyrillic    = GetMUICheck(gui->CH_DETECTCYRILLIC);
-        CE->MapForeignChars   = GetMUICheck(gui->CH_MAPFOREIGNCHARS);
-        CE->GlobalMailThreads = GetMUICheck(gui->CH_GLOBALMAILTHREADS);
-      }
-      break;
-
-      case cp_Write:
-      {
-        GetMUIString(CE->ReplyTo, gui->ST_REPLYTO, sizeof(CE->ReplyTo));
-        GetMUIString(CE->Organization, gui->ST_ORGAN, sizeof(CE->Organization));
-        GetMUIString(CE->ExtraHeaders, gui->ST_EXTHEADER, sizeof(CE->ExtraHeaders));
-        GetMUIString(CE->NewIntro, gui->ST_HELLOTEXT, sizeof(CE->NewIntro));
-        GetMUIString(CE->Greetings, gui->ST_BYETEXT, sizeof(CE->Greetings));
-        CE->WarnSubject       = GetMUICheck  (gui->CH_WARNSUBJECT);
-        CE->EdWrapCol         = GetMUIInteger(gui->ST_EDWRAP);
-        CE->EdWrapMode        = GetMUICycle  (gui->CY_EDWRAP);
-        GetMUIString(CE->Editor, gui->ST_EDITOR, sizeof(CE->Editor));
-        CE->LaunchAlways      = GetMUICheck  (gui->CH_LAUNCH);
-        CE->EmailCache        = GetMUINumer  (gui->NB_EMAILCACHE);
-        CE->AutoSave          = GetMUINumer  (gui->NB_AUTOSAVE)*60; // in seconds
-        CE->RequestMDN = GetMUICheck(gui->CH_REQUESTMDN);
-        CE->SaveSent = GetMUICheck(gui->CH_SAVESENT);
-        GetMUIText(CE->DefaultWriteCharset, gui->TX_DEFCHARSET_WRITE, sizeof(CE->DefaultWriteCharset));
-        CE->UseFixedFontWrite = GetMUICheck(gui->CH_FIXEDFONT_WRITE);
-        CE->UseTextStylesWrite = GetMUICheck(gui->CH_TEXTSTYLES_WRITE);
-        CE->UseTextColorsWrite = GetMUICheck(gui->CH_TEXTCOLORS_WRITE);
-      }
-      break;
-
-      case cp_ReplyForward:
-      {
-        GetMUIString(CE->ReplyHello, gui->ST_REPLYHI, sizeof(CE->ReplyHello));
-        GetMUIString(CE->ReplyIntro, gui->ST_REPLYTEXT, sizeof(CE->ReplyIntro));
-        GetMUIString(CE->ReplyBye, gui->ST_REPLYBYE, sizeof(CE->ReplyBye));
-        GetMUIString(CE->AltReplyHello, gui->ST_AREPLYHI, sizeof(CE->AltReplyHello));
-        GetMUIString(CE->AltReplyIntro, gui->ST_AREPLYTEXT, sizeof(CE->AltReplyIntro));
-        GetMUIString(CE->AltReplyBye, gui->ST_AREPLYBYE, sizeof(CE->AltReplyBye));
-        GetMUIString(CE->AltReplyPattern, gui->ST_AREPLYPAT, sizeof(CE->AltReplyPattern));
-        GetMUIString(CE->MLReplyHello, gui->ST_MREPLYHI, sizeof(CE->MLReplyHello));
-        GetMUIString(CE->MLReplyIntro, gui->ST_MREPLYTEXT, sizeof(CE->MLReplyIntro));
-        GetMUIString(CE->MLReplyBye, gui->ST_MREPLYBYE, sizeof(CE->MLReplyBye));
-        GetMUIString(CE->ForwardIntro, gui->ST_FWDSTART, sizeof(CE->ForwardIntro));
-        GetMUIString(CE->ForwardFinish, gui->ST_FWDEND, sizeof(CE->ForwardFinish));
-        CE->QuoteMessage      = GetMUICheck  (gui->CH_QUOTE);
-        CE->QuoteEmptyLines   = GetMUICheck  (gui->CH_QUOTEEMPTY);
-        CE->CompareAddress    = GetMUICheck  (gui->CH_COMPADDR);
-        CE->StripSignature    = GetMUICheck  (gui->CH_STRIPSIG);
-        CE->ForwardMode = GetMUICycle(gui->CY_FORWARDMODE);
-      }
-      break;
-
-      case cp_Signature:
-      {
-        CE->UseSignature = GetMUICheck(gui->CH_USESIG);
-        GetMUIString(CE->TagsFile, gui->ST_TAGFILE, sizeof(CE->TagsFile));
-        GetMUIString(CE->TagsSeparator, gui->ST_TAGSEP, sizeof(CE->TagsSeparator));
-
-        if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE && saveConfig == FALSE)
-        {
-          // if the signature was modified but the config should not be saved but just be "used"
-          // then ask the user if the changes to the signature should be made permanent
-          if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
-          {
-            char sigPath[SIZE_PATHFILE];
-
-            // save the modified signature only if the user told us to do so
-            EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
-          }
-        }
-      }
-      break;
-
-      case cp_Lists:
-      {
-        CE->FolderCols = 1;
-        for(i=1; i < FOCOLNUM; i++)
-        {
-          if(GetMUICheck(gui->CH_FCOLS[i]))
-            SET_FLAG(CE->FolderCols, (1<<i));
-        }
-
-        CE->MessageCols = 1;
-        for(i=1; i < MACOLNUM; i++)
-        {
-          if(GetMUICheck(gui->CH_MCOLS[i]))
-            SET_FLAG(CE->MessageCols, (1<<i));
-        }
-
-        CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
-        CE->ABookLookup = GetMUICheck(gui->CH_ABOOKLOOKUP);
-        CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
-        CE->MessageCntMenu = GetMUICheck(gui->CH_MCNTMENU);
-        CE->FolderDoubleClick = GetMUICheck(gui->CH_FOLDERDBLCLICK);
-
-        if(GetMUICheck(gui->CH_BEAT) == TRUE)
-        {
-          if(GetMUICheck(gui->CH_RELDATETIME) == TRUE)
-            CE->DSListFormat = DSS_RELDATEBEAT;
           else
-            CE->DSListFormat = DSS_DATEBEAT;
+          {
+            // the spam folder should be kept, but it must be "degraded" to a normal folder
+            // to make it deleteable later
+            struct Folder *spamFolder;
+
+            // first locate the spam folder
+            if((spamFolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
+            {
+              if(spamFolder->imageObject != NULL)
+              {
+                // we make sure that the NList also doesn't use the image in future anymore
+                DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
+                spamFolder->imageObject = NULL;
+                // we don't need to dispose the image, because it is one of the standard images and not
+                // a custom image of the user.
+              }
+
+              // degrade it to a custom folder without folder image
+              spamFolder->Type = FT_CUSTOM;
+              spamFolder->ImageIndex = -1;
+
+              // finally save the modified configuration
+              FO_SaveConfig(spamFolder);
+
+              // update the statistics in case the spam folder contained new or unread mails
+              DisplayStatistics(spamFolder, TRUE);
+            }
+          }
+
+          // update the toolbar to the new settings
+          if(G->MA->GUI.TO_TOOLBAR != NULL)
+            DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
         }
         else
         {
-          if(GetMUICheck(gui->CH_RELDATETIME) == TRUE)
-            CE->DSListFormat = DSS_RELDATETIME;
-          else
-            CE->DSListFormat = DSS_DATETIME;
+          // the user canceled the requester so lets set the Spam filter
+          // back online
+          CE->SpamFilterEnabled = TRUE;
         }
 
-        CE->FolderInfoMode = GetMUICycle(gui->CY_FOLDERINFO);
       }
-      break;
-
-      case cp_Security:
+      else if(C->SpamFilterEnabled == FALSE && CE->SpamFilterEnabled == TRUE)
       {
-        GetMUIString(CE->PGPCmdPath, gui->ST_PGPCMD, sizeof(CE->PGPCmdPath));
-        GetMUIString(CE->MyPGPID, gui->ST_MYPGPID, sizeof(CE->MyPGPID));
-        GetMUIString(CE->PGPURL, gui->ST_PGPURL, sizeof(CE->PGPURL));
-        CE->EncryptToSelf = GetMUICheck(gui->CH_ENCSELF);
-        GetMUIString(CE->ReMailer, gui->ST_REMAILER, sizeof(CE->ReMailer));
-        GetMUIString(CE->RMCommands, gui->ST_FIRSTLINE, sizeof(CE->RMCommands));
-        GetMUIString(CE->LogfilePath, gui->ST_LOGFILE, sizeof(CE->LogfilePath));
-        CE->LogfileMode = GetMUICycle(gui->CY_LOGMODE);
-        CE->SplitLogfile = GetMUICheck(gui->CH_SPLITLOG);
-        CE->LogAllEvents = GetMUICheck(gui->CH_LOGALL);
+        // the spam filter has been enabled, now try to create the mandatory spam folder
+        char spamPath[SIZE_PATHFILE];
+        BOOL createSpamFolder;
+        enum FType type;
 
-        if(GetMUICheck(gui->CH_PGPPASSINTERVAL) == TRUE)
-          CE->PGPPassInterval = GetMUINumer(gui->NB_PGPPASSINTERVAL);
-        else
-          CE->PGPPassInterval = -GetMUINumer(gui->NB_PGPPASSINTERVAL);
-      }
-      break;
-
-      case cp_StartupQuit:
-      {
-        CE->GetOnStartup      = GetMUICheck(gui->CH_POPSTART);
-        CE->SendOnStartup     = GetMUICheck(gui->CH_SENDSTART);
-        CE->CleanupOnStartup  = GetMUICheck(gui->CH_DELETESTART);
-        CE->RemoveOnStartup   = GetMUICheck(gui->CH_REMOVESTART);
-        CE->LoadAllFolders    = GetMUICheck(gui->CH_LOADALL);
-        CE->UpdateNewMail     = GetMUICheck(gui->CH_MARKNEW);
-        CE->CheckBirthdates   = GetMUICheck(gui->CH_CHECKBD);
-        CE->SendOnQuit        = GetMUICheck(gui->CH_SENDQUIT);
-        CE->CleanupOnQuit     = GetMUICheck(gui->CH_DELETEQUIT);
-        CE->RemoveOnQuit      = GetMUICheck(gui->CH_REMOVEQUIT);
-      }
-      break;
-
-      case cp_MIME:
-      {
-        int i=0;
-
-        // as the user may have changed the order of the list of MIME types
-        // we have to make sure the order in the NList fits to the
-        // exec list order of our MIME type list
-        do
+        if(ObtainFileInfo(CreateFilename(FolderName[FT_SPAM], spamPath, sizeof(spamPath)), FI_TYPE, &type) == TRUE && type == FIT_NONEXIST)
         {
-          struct MimeTypeNode *mt = NULL;
+          // no directory named "spam" exists, so let's create it
+          createSpamFolder = TRUE;
+        }
+        else
+        {
+          ULONG result;
 
-          DoMethod(gui->LV_MIME, MUIM_NList_GetEntry, i, &mt);
-          if(mt != NULL)
+          // the directory "spam" already exists, but it is not the standard spam folder
+          // let the user decide what to do
+          result = MUI_Request(G->App, NULL, 0, NULL,
+                                                tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
+                                                tr(MSG_ER_SPAMDIR_EXISTS));
+          switch(result)
           {
-            // for resorting the MIME type list we just have to remove that particular type
-            // and add it to the tail - all other operations like adding/removing should
-            // have been done by others already - so this is just resorting
-            Remove((struct Node *)mt);
-            AddTail((struct List *)&CE->mimeTypeList, (struct Node *)mt);
-          }
-          else
+            default:
+            case 0:
+            {
+              // the user has chosen to disable the spam filter, so we do it
+              // or the requester was cancelled
+              CE->SpamFilterEnabled = FALSE;
+              createSpamFolder = FALSE;
+            }
             break;
+
+            case 1:
+            {
+              char spamPath[SIZE_PATHFILE];
+
+              // delete everything in the folder, the directory itself can be kept
+              DeleteMailDir(CreateFilename(FolderName[FT_SPAM], spamPath, sizeof(spamPath)), FALSE);
+              createSpamFolder = TRUE;
+            }
+            break;
+
+            case 2:
+            {
+              // keep the folder contents
+              createSpamFolder = TRUE;
+            }
+            break;
+          }
         }
-        while(++i);
-        GetMUIString(CE->DefaultMimeViewer, gui->ST_DEFVIEWER, sizeof(CE->DefaultMimeViewer));
-      }
-      break;
 
-      case cp_AddressBook:
-      {
-        GetMUIString(CE->GalleryDir, gui->ST_GALLDIR, sizeof(CE->GalleryDir));
-        GetMUIString(CE->MyPictureURL, gui->ST_PHOTOURL, sizeof(CE->MyPictureURL));
-        GetMUIString(CE->NewAddrGroup, gui->ST_NEWGROUP, sizeof(CE->NewAddrGroup));
-        GetMUIString(CE->ProxyServer, gui->ST_PROXY, sizeof(CE->ProxyServer));
-        CE->AddToAddrbook     = GetMUICycle  (gui->CY_ATAB);
-        CE->AddMyInfo         = GetMUICheck  (gui->CH_ADDINFO);
-        CE->AddrbookCols = 1; for (i = 1; i < ABCOLNUM; i++) if (GetMUICheck(gui->CH_ACOLS[i])) CE->AddrbookCols += (1<<i);
-      }
-      break;
-
-      case cp_Scripts:
-      {
-        // nothing
-      }
-      break;
-
-      case cp_Mixed:
-      {
-        GetMUIString(CE->TempDir, gui->ST_TEMPDIR, sizeof(CE->TempDir));
-        GetMUIString(CE->DetachDir, gui->ST_DETACHDIR, sizeof(CE->DetachDir));
-        GetMUIString(CE->AttachDir, gui->ST_ATTACHDIR, sizeof(CE->AttachDir));
-        CE->WBAppIcon         = GetMUICheck  (gui->CH_WBAPPICON);
-        CE->IconPositionX     = GetMUIInteger(gui->ST_APPX);
-        CE->IconPositionY     = GetMUIInteger(gui->ST_APPY);
-
-        if(GetMUICheck(gui->CH_APPICONPOS) == FALSE)
+        if(createSpamFolder == TRUE)
         {
-          CE->IconPositionX = -CE->IconPositionX;
-          CE->IconPositionY = -CE->IconPositionY;
+          struct Folder *spamFolder;
+
+          // if a folder named "spam" already exists, but a new spam folder should be
+          // created, we need to remove the old folder from the tree view first
+          if((spamFolder = FO_GetFolderByPath((STRPTR)FolderName[FT_SPAM], NULL)) != NULL)
+          {
+            struct MUI_NListtree_TreeNode *tn;
+
+            // now we need the corresponding treenode to remove it from the list of folders
+            if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
+            {
+              if(spamFolder->imageObject != NULL)
+              {
+                // we make sure that the NList also doesn't use the image in future anymore
+                DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
+                spamFolder->imageObject = NULL;
+              }
+
+              // remove the folder from the folder list
+              DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, tn, MUIF_NONE);
+            }
+          }
+
+          // try to create the folder and save the new folder tree
+          if(FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) == FALSE || FO_SaveTree() == FALSE)
+          {
+            // something failed, so we disable the spam filter again
+            ER_NewError(tr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));
+            CE->SpamFilterEnabled = FALSE;
+          }
+          else
+          {
+            // update the toolbar to the new settings
+            if(G->MA->GUI.TO_TOOLBAR != NULL)
+              DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
+          }
         }
-
-        GetMUIString(CE->AppIconText, gui->ST_APPICON, sizeof(CE->AppIconText));
-        CE->DockyIcon         = GetMUICheck  (gui->CH_DOCKYICON);
-        CE->IconifyOnQuit     = GetMUICheck  (gui->CH_CLGADGET);
-        CE->Confirm           = GetMUICheck  (gui->CH_CONFIRM);
-        CE->ConfirmDelete     = GetMUINumer  (gui->NB_CONFIRMDEL);
-        CE->RemoveAtOnce      = GetMUICheck  (gui->CH_REMOVE);
-        GetMUIText(CE->XPKPack, gui->TX_PACKER, sizeof(CE->XPKPack));
-        GetMUIText(CE->XPKPackEncrypt, gui->TX_ENCPACK, sizeof(CE->XPKPackEncrypt));
-        CE->XPKPackEff        = GetMUINumer  (gui->NB_PACKER);
-        CE->XPKPackEncryptEff = GetMUINumer  (gui->NB_ENCPACK);
-        GetMUIString(CE->PackerCommand, gui->ST_ARCHIVER, sizeof(CE->PackerCommand));
       }
-      break;
 
-      case cp_LookFeel:
+      if(CE->SpamFilterEnabled == TRUE && CE->SpamMarkAsRead == TRUE)
       {
-        CE->InfoBar = GetMUICycle(gui->CY_INFOBAR);
-        GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT, sizeof(CE->InfoBarText));
-        CE->QuickSearchBar = GetMUICheck(gui->CH_QUICKSEARCHBAR);
-        CE->EmbeddedReadPane = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
-        CE->SizeFormat = GetMUICycle(gui->CY_SIZE);
-      }
-      break;
+        ULONG numberClassified = BayesFilterNumberOfHamClassifiedMails() + BayesFilterNumberOfSpamClassifiedMails();
 
-      case cp_Update:
-      {
-        int interval = GetMUICycle(gui->CY_UPDATEINTERVAL);
-
-        switch(interval)
+        if(numberClassified < 100)
         {
-          default:
-          case 0:
-            CE->UpdateInterval = 0; // never
-          break;
-
-          case 1:
-            CE->UpdateInterval = 86400; // 1 day
-          break;
-
-          case 2:
-            CE->UpdateInterval = 604800; // 1 week
-          break;
-
-          case 3:
-            CE->UpdateInterval = 2419200; // 1 month
-          break;
+          // Less than 100 mails have been classified so far.
+          // Better ask the user if new spam mails really should be mark as "read", because
+          // the filter is most probably not trained well enough an non-spam mails may be
+          // marked as spam and read unnoticed.
+          if(MUI_Request(G->App, NULL, 0, NULL,
+                                          tr(MSG_YesNoReq),
+                                          tr(MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS), numberClassified))
+          {
+            CE->SpamMarkAsRead = FALSE;
+          }
         }
       }
-      break;
+    }
+    break;
 
-      case cp_Max:
+    case cp_Read:
+    {
+      CE->ShowHeader        = GetMUICycle(gui->CY_HEADER);
+      GetMUIString(CE->ShortHeaders, gui->ST_HEADERS, sizeof(CE->ShortHeaders));
+      CE->ShowSenderInfo    = GetMUICycle(gui->CY_SENDERINFO);
+      CE->SigSepLine        = GetMUICycle(gui->CY_SIGSEPLINE);
+      memcpy(&CE->ColorSignature, (struct MUI_PenSpec*)xget(gui->CA_COLSIG,   MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+      memcpy(&CE->ColoredText,    (struct MUI_PenSpec*)xget(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+      memcpy(&CE->Color1stLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+      memcpy(&CE->Color2ndLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+      memcpy(&CE->Color3rdLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+      memcpy(&CE->Color4thLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+      memcpy(&CE->ColorURL,       (struct MUI_PenSpec*)xget(gui->CA_COLURL,   MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
+      CE->DisplayAllTexts   = GetMUICheck(gui->CH_ALLTEXTS);
+      CE->FixedFontEdit     = GetMUICheck(gui->CH_FIXFEDIT);
+      CE->WrapHeader        = GetMUICheck(gui->CH_WRAPHEAD);
+      CE->UseTextStylesRead = GetMUICheck(gui->CH_TEXTSTYLES_READ);
+      CE->UseTextColorsRead = GetMUICheck(gui->CH_TEXTCOLORS_READ);
+      CE->DisplayAllAltPart = GetMUICheck(gui->CH_SHOWALTPARTS);
+
+      // get MDN options from GUI
+      CE->MDNEnabled      = GetMUICheck(gui->CH_MDN_ALLOW) && !GetMUICheck(gui->CH_MDN_NEVER);
+      CE->MDN_NoRecipient = GetMUICycle(gui->CY_MDN_NORECIPIENT);
+      CE->MDN_NoDomain    = GetMUICycle(gui->CY_MDN_NODOMAIN);
+      CE->MDN_OnDelete    = GetMUICycle(gui->CY_MDN_DELETE);
+      CE->MDN_Other       = GetMUICycle(gui->CY_MDN_OTHER);
+
+      CE->MultipleReadWindows = GetMUICheck(gui->CH_MULTIWIN);
+      CE->StatusChangeDelayOn = GetMUICheck(gui->CH_DELAYEDSTATUS);
+      CE->StatusChangeDelay   = GetMUINumer(gui->NB_DELAYEDSTATUS)*1000;
+      CE->ConvertHTML         = GetMUICheck(gui->CH_CONVERTHTML);
+
+      GetMUIText(CE->DefaultReadCharset, gui->TX_DEFCHARSET_READ, sizeof(CE->DefaultReadCharset));
+      CE->DetectCyrillic    = GetMUICheck(gui->CH_DETECTCYRILLIC);
+      CE->MapForeignChars   = GetMUICheck(gui->CH_MAPFOREIGNCHARS);
+      CE->GlobalMailThreads = GetMUICheck(gui->CH_GLOBALMAILTHREADS);
+    }
+    break;
+
+    case cp_Write:
+    {
+      GetMUIString(CE->ReplyTo, gui->ST_REPLYTO, sizeof(CE->ReplyTo));
+      GetMUIString(CE->Organization, gui->ST_ORGAN, sizeof(CE->Organization));
+      GetMUIString(CE->ExtraHeaders, gui->ST_EXTHEADER, sizeof(CE->ExtraHeaders));
+      GetMUIString(CE->NewIntro, gui->ST_HELLOTEXT, sizeof(CE->NewIntro));
+      GetMUIString(CE->Greetings, gui->ST_BYETEXT, sizeof(CE->Greetings));
+      CE->WarnSubject       = GetMUICheck  (gui->CH_WARNSUBJECT);
+      CE->EdWrapCol         = GetMUIInteger(gui->ST_EDWRAP);
+      CE->EdWrapMode        = GetMUICycle  (gui->CY_EDWRAP);
+      GetMUIString(CE->Editor, gui->ST_EDITOR, sizeof(CE->Editor));
+      CE->LaunchAlways      = GetMUICheck  (gui->CH_LAUNCH);
+      CE->EmailCache        = GetMUINumer  (gui->NB_EMAILCACHE);
+      CE->AutoSave          = GetMUINumer  (gui->NB_AUTOSAVE)*60; // in seconds
+      CE->RequestMDN = GetMUICheck(gui->CH_REQUESTMDN);
+      CE->SaveSent = GetMUICheck(gui->CH_SAVESENT);
+      GetMUIText(CE->DefaultWriteCharset, gui->TX_DEFCHARSET_WRITE, sizeof(CE->DefaultWriteCharset));
+      CE->UseFixedFontWrite = GetMUICheck(gui->CH_FIXEDFONT_WRITE);
+      CE->UseTextStylesWrite = GetMUICheck(gui->CH_TEXTSTYLES_WRITE);
+      CE->UseTextColorsWrite = GetMUICheck(gui->CH_TEXTCOLORS_WRITE);
+    }
+    break;
+
+    case cp_ReplyForward:
+    {
+      GetMUIString(CE->ReplyHello, gui->ST_REPLYHI, sizeof(CE->ReplyHello));
+      GetMUIString(CE->ReplyIntro, gui->ST_REPLYTEXT, sizeof(CE->ReplyIntro));
+      GetMUIString(CE->ReplyBye, gui->ST_REPLYBYE, sizeof(CE->ReplyBye));
+      GetMUIString(CE->AltReplyHello, gui->ST_AREPLYHI, sizeof(CE->AltReplyHello));
+      GetMUIString(CE->AltReplyIntro, gui->ST_AREPLYTEXT, sizeof(CE->AltReplyIntro));
+      GetMUIString(CE->AltReplyBye, gui->ST_AREPLYBYE, sizeof(CE->AltReplyBye));
+      GetMUIString(CE->AltReplyPattern, gui->ST_AREPLYPAT, sizeof(CE->AltReplyPattern));
+      GetMUIString(CE->MLReplyHello, gui->ST_MREPLYHI, sizeof(CE->MLReplyHello));
+      GetMUIString(CE->MLReplyIntro, gui->ST_MREPLYTEXT, sizeof(CE->MLReplyIntro));
+      GetMUIString(CE->MLReplyBye, gui->ST_MREPLYBYE, sizeof(CE->MLReplyBye));
+      GetMUIString(CE->ForwardIntro, gui->ST_FWDSTART, sizeof(CE->ForwardIntro));
+      GetMUIString(CE->ForwardFinish, gui->ST_FWDEND, sizeof(CE->ForwardFinish));
+      CE->QuoteMessage      = GetMUICheck  (gui->CH_QUOTE);
+      CE->QuoteEmptyLines   = GetMUICheck  (gui->CH_QUOTEEMPTY);
+      CE->CompareAddress    = GetMUICheck  (gui->CH_COMPADDR);
+      CE->StripSignature    = GetMUICheck  (gui->CH_STRIPSIG);
+      CE->ForwardMode = GetMUICycle(gui->CY_FORWARDMODE);
+    }
+    break;
+
+    case cp_Signature:
+    {
+      CE->UseSignature = GetMUICheck(gui->CH_USESIG);
+      GetMUIString(CE->TagsFile, gui->ST_TAGFILE, sizeof(CE->TagsFile));
+      GetMUIString(CE->TagsSeparator, gui->ST_TAGSEP, sizeof(CE->TagsSeparator));
+
+      if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE && saveConfig == FALSE)
       {
-        // nothing
-      }
-      break;
-   }
+        // if the signature was modified but the config should not be saved but just be "used"
+        // then ask the user if the changes to the signature should be made permanent
+        if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+        {
+          char sigPath[SIZE_PATHFILE];
 
-   LEAVE();
+          // save the modified signature only if the user told us to do so
+          EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
+        }
+      }
+    }
+    break;
+
+    case cp_Lists:
+    {
+      CE->FolderCols = 1;
+      for(i=1; i < FOCOLNUM; i++)
+      {
+        if(GetMUICheck(gui->CH_FCOLS[i]))
+          SET_FLAG(CE->FolderCols, (1<<i));
+      }
+
+      CE->MessageCols = 1;
+      for(i=1; i < MACOLNUM; i++)
+      {
+        if(GetMUICheck(gui->CH_MCOLS[i]))
+          SET_FLAG(CE->MessageCols, (1<<i));
+      }
+
+      CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
+      CE->ABookLookup = GetMUICheck(gui->CH_ABOOKLOOKUP);
+      CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
+      CE->MessageCntMenu = GetMUICheck(gui->CH_MCNTMENU);
+      CE->FolderDoubleClick = GetMUICheck(gui->CH_FOLDERDBLCLICK);
+
+      if(GetMUICheck(gui->CH_BEAT) == TRUE)
+      {
+        if(GetMUICheck(gui->CH_RELDATETIME) == TRUE)
+          CE->DSListFormat = DSS_RELDATEBEAT;
+        else
+          CE->DSListFormat = DSS_DATEBEAT;
+      }
+      else
+      {
+        if(GetMUICheck(gui->CH_RELDATETIME) == TRUE)
+          CE->DSListFormat = DSS_RELDATETIME;
+        else
+          CE->DSListFormat = DSS_DATETIME;
+      }
+
+      CE->FolderInfoMode = GetMUICycle(gui->CY_FOLDERINFO);
+    }
+    break;
+
+    case cp_Security:
+    {
+      GetMUIString(CE->PGPCmdPath, gui->ST_PGPCMD, sizeof(CE->PGPCmdPath));
+      GetMUIString(CE->MyPGPID, gui->ST_MYPGPID, sizeof(CE->MyPGPID));
+      GetMUIString(CE->PGPURL, gui->ST_PGPURL, sizeof(CE->PGPURL));
+      CE->EncryptToSelf = GetMUICheck(gui->CH_ENCSELF);
+      GetMUIString(CE->ReMailer, gui->ST_REMAILER, sizeof(CE->ReMailer));
+      GetMUIString(CE->RMCommands, gui->ST_FIRSTLINE, sizeof(CE->RMCommands));
+      GetMUIString(CE->LogfilePath, gui->ST_LOGFILE, sizeof(CE->LogfilePath));
+      CE->LogfileMode = GetMUICycle(gui->CY_LOGMODE);
+      CE->SplitLogfile = GetMUICheck(gui->CH_SPLITLOG);
+      CE->LogAllEvents = GetMUICheck(gui->CH_LOGALL);
+
+      if(GetMUICheck(gui->CH_PGPPASSINTERVAL) == TRUE)
+        CE->PGPPassInterval = GetMUINumer(gui->NB_PGPPASSINTERVAL);
+      else
+        CE->PGPPassInterval = -GetMUINumer(gui->NB_PGPPASSINTERVAL);
+    }
+    break;
+
+    case cp_StartupQuit:
+    {
+      CE->GetOnStartup      = GetMUICheck(gui->CH_POPSTART);
+      CE->SendOnStartup     = GetMUICheck(gui->CH_SENDSTART);
+      CE->CleanupOnStartup  = GetMUICheck(gui->CH_DELETESTART);
+      CE->RemoveOnStartup   = GetMUICheck(gui->CH_REMOVESTART);
+      CE->LoadAllFolders    = GetMUICheck(gui->CH_LOADALL);
+      CE->UpdateNewMail     = GetMUICheck(gui->CH_MARKNEW);
+      CE->CheckBirthdates   = GetMUICheck(gui->CH_CHECKBD);
+      CE->SendOnQuit        = GetMUICheck(gui->CH_SENDQUIT);
+      CE->CleanupOnQuit     = GetMUICheck(gui->CH_DELETEQUIT);
+      CE->RemoveOnQuit      = GetMUICheck(gui->CH_REMOVEQUIT);
+    }
+    break;
+
+    case cp_MIME:
+    {
+      int i=0;
+
+      // as the user may have changed the order of the list of MIME types
+      // we have to make sure the order in the NList fits to the
+      // exec list order of our MIME type list
+      do
+      {
+        struct MimeTypeNode *mt = NULL;
+
+        DoMethod(gui->LV_MIME, MUIM_NList_GetEntry, i, &mt);
+        if(mt != NULL)
+        {
+          // for resorting the MIME type list we just have to remove that particular type
+          // and add it to the tail - all other operations like adding/removing should
+          // have been done by others already - so this is just resorting
+          Remove((struct Node *)mt);
+          AddTail((struct List *)&CE->mimeTypeList, (struct Node *)mt);
+        }
+        else
+          break;
+      }
+      while(++i);
+      GetMUIString(CE->DefaultMimeViewer, gui->ST_DEFVIEWER, sizeof(CE->DefaultMimeViewer));
+    }
+    break;
+
+    case cp_AddressBook:
+    {
+      GetMUIString(CE->GalleryDir, gui->ST_GALLDIR, sizeof(CE->GalleryDir));
+      GetMUIString(CE->MyPictureURL, gui->ST_PHOTOURL, sizeof(CE->MyPictureURL));
+      GetMUIString(CE->NewAddrGroup, gui->ST_NEWGROUP, sizeof(CE->NewAddrGroup));
+      GetMUIString(CE->ProxyServer, gui->ST_PROXY, sizeof(CE->ProxyServer));
+      CE->AddToAddrbook     = GetMUICycle  (gui->CY_ATAB);
+      CE->AddMyInfo         = GetMUICheck  (gui->CH_ADDINFO);
+      CE->AddrbookCols = 1; for (i = 1; i < ABCOLNUM; i++) if (GetMUICheck(gui->CH_ACOLS[i])) CE->AddrbookCols += (1<<i);
+    }
+    break;
+
+    case cp_Scripts:
+    {
+      // nothing
+    }
+    break;
+
+    case cp_Mixed:
+    {
+      GetMUIString(CE->TempDir, gui->ST_TEMPDIR, sizeof(CE->TempDir));
+      GetMUIString(CE->DetachDir, gui->ST_DETACHDIR, sizeof(CE->DetachDir));
+      GetMUIString(CE->AttachDir, gui->ST_ATTACHDIR, sizeof(CE->AttachDir));
+      CE->WBAppIcon         = GetMUICheck  (gui->CH_WBAPPICON);
+      CE->IconPositionX     = GetMUIInteger(gui->ST_APPX);
+      CE->IconPositionY     = GetMUIInteger(gui->ST_APPY);
+
+      if(GetMUICheck(gui->CH_APPICONPOS) == FALSE)
+      {
+        CE->IconPositionX = -CE->IconPositionX;
+        CE->IconPositionY = -CE->IconPositionY;
+      }
+
+      GetMUIString(CE->AppIconText, gui->ST_APPICON, sizeof(CE->AppIconText));
+      CE->DockyIcon         = GetMUICheck  (gui->CH_DOCKYICON);
+      CE->IconifyOnQuit     = GetMUICheck  (gui->CH_CLGADGET);
+      CE->Confirm           = GetMUICheck  (gui->CH_CONFIRM);
+      CE->ConfirmDelete     = GetMUINumer  (gui->NB_CONFIRMDEL);
+      CE->RemoveAtOnce      = GetMUICheck  (gui->CH_REMOVE);
+      GetMUIText(CE->XPKPack, gui->TX_PACKER, sizeof(CE->XPKPack));
+      GetMUIText(CE->XPKPackEncrypt, gui->TX_ENCPACK, sizeof(CE->XPKPackEncrypt));
+      CE->XPKPackEff        = GetMUINumer  (gui->NB_PACKER);
+      CE->XPKPackEncryptEff = GetMUINumer  (gui->NB_ENCPACK);
+      GetMUIString(CE->PackerCommand, gui->ST_ARCHIVER, sizeof(CE->PackerCommand));
+    }
+    break;
+
+    case cp_LookFeel:
+    {
+      CE->InfoBar = GetMUICycle(gui->CY_INFOBAR);
+      GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT, sizeof(CE->InfoBarText));
+      CE->QuickSearchBar = GetMUICheck(gui->CH_QUICKSEARCHBAR);
+      CE->EmbeddedReadPane = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
+      CE->SizeFormat = GetMUICycle(gui->CY_SIZE);
+    }
+    break;
+
+    case cp_Update:
+    {
+      int interval = GetMUICycle(gui->CY_UPDATEINTERVAL);
+
+      switch(interval)
+      {
+        default:
+        case 0:
+          CE->UpdateInterval = 0; // never
+        break;
+
+        case 1:
+          CE->UpdateInterval = 86400; // 1 day
+        break;
+
+        case 2:
+          CE->UpdateInterval = 604800; // 1 week
+        break;
+
+        case 3:
+          CE->UpdateInterval = 2419200; // 1 month
+        break;
+      }
+    }
+    break;
+
+    case cp_Max:
+    {
+      // nothing
+    }
+    break;
+  }
+
+  LEAVE();
 }
 
 ///
