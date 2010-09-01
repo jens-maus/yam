@@ -1869,7 +1869,6 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
             struct Folder *spamFolder;
 
             D(DBF_CONFIG, "deleting spam folder");
-            D(DBF_ALWAYS, "deleting spam folder");
 
             // first locate the spam folder
             if((spamFolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
@@ -1904,11 +1903,7 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
                 // update the statistics in case the spam folder contained new or unread mails
                 DisplayStatistics(NULL, TRUE);
               }
-              else
-              	W(DBF_ALWAYS, "cant find spam treenode");
             }
-            else
-            	W(DBF_ALWAYS, "cant find spam folder");
           }
           else
           {
