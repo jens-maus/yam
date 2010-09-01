@@ -995,6 +995,29 @@ BOOL AB_SaveTree(const char *fname)
 }
 
 ///
+/// AB_CreateEmptyABook
+// create an empty address book
+BOOL AB_CreateEmptyABook(const char *fname)
+{
+  FILE *fh;
+  BOOL result = FALSE;
+
+  ENTER();
+
+  if((fh = fopen(fname, "w")) != NULL)
+  {
+    // write at least the header, this is required for a valid .addressbook file
+    fputs("YAB4 - YAM Addressbook\n", fh);
+    fclose(fh);
+  }
+  else
+    ER_NewError(tr(MSG_ER_CantCreateFile), fname);
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// AB_ImportTreeLDIF
 //  Imports an address book in LDIF format
 static BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)

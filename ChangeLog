@@ -7,6 +7,10 @@ $URL$
 
 2010-09-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_AB.c, YAM_US.c: for new users get an empty address book file will now
+    be created in case the global address book is not to be copied. This avoids
+    an error message about a missing/invalid address book as soon as that new
+    user logs in for the first time.
   * YAM_TR.c: the generated .uidl#? filenames for are now stripped of invalid
     characters for AmigaDOS but which might occur in user and host names.
   * YAM_FO.c: removed the path argument from the FO_Load/SaveTree functions

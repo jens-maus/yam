@@ -43,6 +43,7 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
+#include "YAM_addressbook.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_userlist.h"
@@ -459,10 +460,10 @@ static BOOL US_SaveUserList(void)
           {
             if(MUI_Request(G->App, G->US->GUI.WI, 0, tr(MSG_MA_MUsers), tr(MSG_YesNoReq), tr(MSG_US_DIRECTORY_DOESNT_EXIST), user->MailDir, user->Name))
             {
-               if(CreateDirectory(user->MailDir) == TRUE)
-                 validUser = TRUE;
-               else
-                 ER_NewError(tr(MSG_ER_CantCreateDir), user->MailDir);
+              if(CreateDirectory(user->MailDir) == TRUE)
+                validUser = TRUE;
+              else
+                ER_NewError(tr(MSG_ER_CantCreateDir), user->MailDir);
             }
           }
           else
@@ -479,19 +480,30 @@ static BOOL US_SaveUserList(void)
 
     if(validUser == TRUE)
     {
-      if(user->Clone == TRUE && user->IsNew == TRUE)
+      if(user->IsNew == TRUE)
       {
-         char dest[SIZE_PATHFILE];
+        if(user->Clone == TRUE)
+        {
+          char dest[SIZE_PATHFILE];
 
-         // clone the
-         AddPath(dest, user->MailDir, ".addressbook", sizeof(dest));
-         CopyFile(dest, NULL, G->AB_Filename, NULL);
+          // clone some files for the new user
+          AddPath(dest, user->MailDir, ".addressbook", sizeof(dest));
+          CopyFile(dest, NULL, G->AB_Filename, NULL);
 
-         AddPath(dest, user->MailDir, ".glossary", sizeof(dest));
-         CopyFile(dest, NULL, G->DI_Filename, NULL);
+          AddPath(dest, user->MailDir, ".glossary", sizeof(dest));
+          CopyFile(dest, NULL, G->DI_Filename, NULL);
 
-         AddPath(dest, user->MailDir, ".config", sizeof(dest));
-         CopyFile(dest, NULL, G->CO_PrefsFile, NULL);
+          AddPath(dest, user->MailDir, ".config", sizeof(dest));
+          CopyFile(dest, NULL, G->CO_PrefsFile, NULL);
+        }
+        else
+        {
+          char dest[SIZE_PATHFILE];
+
+          // create an empty .addressbook file
+          AddPath(dest, user->MailDir, ".addressbook", sizeof(dest));
+          AB_CreateEmptyABook(dest);
+        }
       }
     }
     else
