@@ -921,7 +921,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       G->TR->POP_Nr = -1;
     laststats = 0;
   }
-  else /* Finish previous connection */
+  else if(G->TR->mailServer != NULL) /* Finish previous connection */
   {
     D(DBF_NET, "downloaded %ld mails from server '%s'", G->TR->Stats.Downloaded, G->TR->mailServer->hostname);
 

@@ -11,6 +11,8 @@ $URL$
 
 2010-09-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tcp/pop3.c: added a NULL pointer check to catch the situation that a failed
+    connection is attempted to be shut down. This closes #201.
   * YAM_TR.c, UIDL.c, tcp/pop3.c: separated the UIDL management functions into
     a separate module. Furthermore fixed some issues in the changed management
     which could still result in certain mails to be downloaded twice.
