@@ -587,6 +587,7 @@ YAMOBJS = \
 	Themes.o \
 	Threads.o \
 	Timer.o \
+	UIDL.o \
 	UpdateCheck.o \
 	Debug.o
 

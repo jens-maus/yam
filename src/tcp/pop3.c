@@ -49,6 +49,7 @@
 #include "MUIObjects.h"
 #include "Locale.h"
 #include "Requesters.h"
+#include "UIDL.h"
 
 #include "mime/md5.h"
 #include "tcp/Connection.h"
@@ -396,12 +397,15 @@ static int TR_ConnectPOP(int guilevel)
     return -1;
   }
 
-  if(C->AvoidDuplicates == TRUE && InitUIDLhash() == FALSE)
+  if(C->AvoidDuplicates == TRUE)
   {
-    ER_NewError("Failed to init UIDL hash");
+    if((G->TR->UIDLhashTable = InitUIDLhash(msn)) == NULL)
+    {
+      ER_NewError("Failed to init UIDL hash");
 
-    RETURN(-1);
-    return -1;
+      RETURN(-1);
+      return -1;
+    }
   }
 
   if(C->TransferWindow == TWM_SHOW ||
@@ -931,7 +935,10 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
 
     // free/cleanup the UIDL hash tables
     if(C->AvoidDuplicates == TRUE)
-      CleanupUIDLhash();
+    {
+      CleanupUIDLhash(G->TR->UIDLhashTable);
+      G->TR->UIDLhashTable = NULL;
+    }
 
     // forget the current mail server again
     G->TR->mailServer = NULL;
@@ -1362,21 +1369,25 @@ static BOOL FilterDuplicates(void)
 
               if(mtn->index == num)
               {
-                mtn->UIDL = strdup(uidl);
-
-                if(G->TR->UIDLhashTable->entryCount > 0 && mtn->UIDL != NULL)
+                if((mtn->UIDL = strdup(uidl)) != NULL)
                 {
-                  struct HashEntryHeader *entry = HashTableOperate(G->TR->UIDLhashTable, mtn->UIDL, htoLookup);
+                  struct UIDLtoken *token;
 
-                  // see if that hash lookup worked out fine or not.
-                  if(HASH_ENTRY_IS_LIVE(entry))
+                  // try to add the UIDL to our table, a return value
+                  // of FALSE signals that the entry did exist before
+                  // and just the flags have been updated
+                  if((token = AddUIDLtoHash(G->TR->UIDLhashTable, mtn->UIDL, UIDLF_NEW)) != NULL)
                   {
-                    // make sure the mail is flagged as being ignoreable
-                    G->TR->Stats.DupSkipped++;
-                    // don't download this mail, because it has been downloaded before
-                    CLEAR_FLAG(mtn->tflags, TRF_LOAD);
+                    D(DBF_UIDL, "mail %ld: found UIDL '%s', flags=%08lx", mtn->index, mtn->UIDL, token->flags);
 
-                    D(DBF_UIDL, "mail %ld: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
+                    // check if we knew this UIDL before
+                    if(isFlagSet(token->flags, UIDLF_OLD))
+                    {
+                      // make sure the mail is flagged as being ignoreable
+                      G->TR->Stats.DupSkipped++;
+                      // don't download this mail, because it has been downloaded before
+                      CLEAR_FLAG(mtn->tflags, TRF_LOAD);
+                    }
                   }
                 }
 
@@ -1418,18 +1429,21 @@ static BOOL FilterDuplicates(void)
           // mailtransfernode we go and check if that UIDL is already in our UIDLhash
           // and if so we go and flag the mail as a mail that should not be downloaded
           // automatically
-          if(G->TR->UIDLhashTable->entryCount > 0 && mtn->UIDL != NULL)
+          if(mtn->UIDL != NULL)
           {
-            struct HashEntryHeader *entry = HashTableOperate(G->TR->UIDLhashTable, mtn->UIDL, htoLookup);
+            struct UIDLtoken *token;
 
-            // see if that hash lookup worked out fine or not.
-            if(HASH_ENTRY_IS_LIVE(entry))
+            if((token = AddUIDLtoHash(G->TR->UIDLhashTable, mtn->UIDL, UIDLF_NEW)) != NULL)
             {
-              G->TR->Stats.DupSkipped++;
-              // don't download this mail, because it has been downloaded before
-              CLEAR_FLAG(mtn->tflags, TRF_LOAD);
+              D(DBF_UIDL, "mail %ld: found UIDL '%s', flags=%08lx", mtn->index, mtn->UIDL, token->flags);
 
-              D(DBF_UIDL, "mail %ld: UIDL '%s' was FOUND!", mtn->index, mtn->UIDL);
+              // check if we knew this UIDL before
+              if(isFlagSet(token->flags, UIDLF_OLD))
+              {
+                G->TR->Stats.DupSkipped++;
+                // don't download this mail, because it has been downloaded before
+                CLEAR_FLAG(mtn->tflags, TRF_LOAD);
+              }
             }
           }
 

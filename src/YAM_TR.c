@@ -90,6 +90,7 @@
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Threads.h"
+#include "UIDL.h"
 
 #include "tcp/Connection.h"
 #include "tcp/pop3.h"
@@ -97,22 +98,8 @@
 #include "Debug.h"
 
 /**************************************************************************/
-// static function prototypes
-static void AddUIDLtoHash(const char *uidl, const ULONG flags);
-
-/**************************************************************************/
 // local macros & defines
 #define GetLong(p,o)  ((((unsigned char*)(p))[o]) | (((unsigned char*)(p))[o+1]<<8) | (((unsigned char*)(p))[o+2]<<16) | (((unsigned char*)(p))[o+3]<<24))
-
-struct UIDLtoken
-{
-  struct HashEntryHeader hash;
-  const char *uidl;
-  ULONG flags;
-};
-
-#define UIDLF_OLD     (1<<0) // we knew this UIDL before
-#define UIDLF_NEW     (1<<1) // this is a new UIDL
 
 /***************************************************************************
  Module: Transfer
@@ -527,236 +514,6 @@ BOOL TR_ApplySentFilters(struct Mail *mail)
 
   RETURN(result);
   return result;
-}
-///
-
-/*** UIDL (Avoid duplicates) management ***/
-/// BuildUIDLFilename
-// set up a name for a UIDL file to be accessed
-static char *BuildUIDLFilename(const struct MailServerNode *msn)
-{
-  char *filename;
-
-  ENTER();
-
-  if(msn != NULL)
-  {
-    char uidlName[SIZE_FILE];
-    char uidlPath[SIZE_PATHFILE];
-    char *p;
-
-    // create a file name consisting of the user and host name of the given server entry
-    snprintf(uidlName, sizeof(uidlName), ".uidl_%s_%s", msn->username, msn->hostname);
-
-    // filter out possible invalid characters for filenames
-    p = uidlName;
-    while(*p != '\0')
-    {
-      switch(*p)
-      {
-        case ':':
-        case '/':
-        case '<':
-        case '>':
-        case '[':
-        case ']':
-        {
-          *p = '_';
-        }
-        break;
-      }
-
-      p++;
-    }
-    filename = CreateFilename(uidlName, uidlPath, sizeof(uidlPath));
-  }
-  else
-  {
-    char uidlPath[SIZE_PATHFILE];
-
-    // use the old style .uidl name
-    filename = CreateFilename(".uidl", uidlPath, sizeof(uidlPath));
-  }
-
-  RETURN(filename);
-  return filename;
-}
-
-///
-/// InitUIDLhash
-// Initialize the UIDL list and load it from the .uidl file
-BOOL InitUIDLhash(void)
-{
-  BOOL result = FALSE;
-
-  ENTER();
-
-  // make sure no other UIDLhashTable is active
-  if(G->TR->UIDLhashTable != NULL)
-    CleanupUIDLhash();
-
-  // allocate a new hashtable for managing the UIDL data
-  if((G->TR->UIDLhashTable = HashTableNew(HashTableGetDefaultStringOps(), NULL, sizeof(struct UIDLtoken), 512)) != NULL)
-  {
-    char *filename;
-    LONG size;
-    FILE *fh = NULL;
-
-    // try to access the account specific .uidl file first
-    filename = BuildUIDLFilename(G->TR->mailServer);
-    if(ObtainFileInfo(filename, FI_SIZE, &size) == TRUE && size > 0)
-    {
-      fh = fopen(filename, "r");
-    }
-
-    if(fh == NULL)
-    {
-      // an account specific UIDL does not seem to exist, try the old .uidl file instead
-      filename = BuildUIDLFilename(NULL);
-      if(ObtainFileInfo(filename, FI_SIZE, &size) == TRUE && size > 0)
-      {
-        fh = fopen(filename, "r");
-      }
-    }
-
-    if(fh != NULL)
-    {
-      // now read in the UIDL/MsgIDs line-by-line
-      char *uidl = NULL;
-      size_t size = 0;
-
-      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-      // add all read UIDL to the hash marking them as OLD
-      while(GetLine(&uidl, &size, fh) >= 0)
-        AddUIDLtoHash(uidl, UIDLF_OLD);
-
-      fclose(fh);
-
-      free(uidl);
-
-      // start with a clean and and so far unmodified hash table
-      G->TR->UIDLhashIsDirty = FALSE;
-    }
-    else
-      W(DBF_UIDL, "no or empty .uidl file found");
-
-    SHOWVALUE(DBF_UIDL, G->TR->UIDLhashTable->entryCount);
-
-    result = TRUE;
-  }
-  else
-    E(DBF_UIDL, "couldn't create new Hashtable for UIDL management");
-
-  RETURN(result);
-  return result;
-}
-///
-/// SaveUIDLtoken
-// HashTable callback function to save an UIDLtoken
-static enum HashTableOperator SaveUIDLtoken(UNUSED struct HashTable *table,
-                                            struct HashEntryHeader *entry,
-                                            UNUSED ULONG number,
-                                            void *arg)
-{
-  struct UIDLtoken *token = (struct UIDLtoken *)entry;
-
-  ENTER();
-
-  // Check whether the UIDL is a new one (received from the server), then we keep it.
-  // Otherwise (OLD set, but not NEW) we skip it, because the mail belonging to this
-  // UIDL does no longer exist on the server and we can forget about it.
-  if(isFlagSet(token->flags, UIDLF_NEW))
-  {
-    FILE *fh = (FILE *)arg;
-
-    fprintf(fh, "%s\n", token->uidl);
-    D(DBF_UIDL, "saved UIDL '%s' to .uidl file", token->uidl);
-  }
-  else
-    D(DBF_UIDL, "outdated UIDL '%s' found and deleted", token->uidl);
-
-  RETURN(htoNext);
-  return htoNext;
-}
-///
-/// CleanupUIDLhash
-// Cleanup the whole UIDL hash
-void CleanupUIDLhash(void)
-{
-  ENTER();
-
-  if(G->TR->UIDLhashTable != NULL)
-  {
-    // save the UIDLs only if something has been changed
-    if(G->TR->UIDLhashIsDirty == TRUE)
-    {
-      char *filename;
-      FILE *fh;
-
-      // we are saving account specific .uidl files only, the old one will be kept
-      // in case it still contains UIDLs of multiple accounts
-      filename = BuildUIDLFilename(G->TR->mailServer);
-
-      // before we go and destroy the UIDL hash we have to
-      // write it to the .uidl file back again.
-      if((fh = fopen(filename, "w")) != NULL)
-      {
-        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-        // call HashTableEnumerate with the SaveUIDLtoken callback function
-        HashTableEnumerate(G->TR->UIDLhashTable, SaveUIDLtoken, fh);
-
-        fclose(fh);
-      }
-      else
-        E(DBF_UIDL, "couldn't open .uidl file for writing");
-    }
-
-    // now we can destroy the uidl hash
-    HashTableDestroy(G->TR->UIDLhashTable);
-    G->TR->UIDLhashTable = NULL;
-
-    D(DBF_UIDL, "successfully cleaned up UIDLhash");
-  }
-
-  // forget any modification to the hash table
-  G->TR->UIDLhashIsDirty = FALSE;
-
-  LEAVE();
-}
-///
-/// AddUIDLtoHash
-// adds the UIDL of a mail transfer node to the hash
-static void AddUIDLtoHash(const char *uidl, const ULONG flags)
-{
-  struct HashEntryHeader *entry;
-
-  ENTER();
-
-  if((entry = HashTableOperate(G->TR->UIDLhashTable, uidl, htoLookup)) != NULL && HASH_ENTRY_IS_LIVE(entry))
-  {
-    struct UIDLtoken *token = (struct UIDLtoken *)entry;
-
-    token->flags |= flags;
-
-    D(DBF_UIDL, "updated flags for UIDL '%s' (%08lx)", uidl, token);
-    G->TR->UIDLhashIsDirty = TRUE;
-  }
-  else if((entry = HashTableOperate(G->TR->UIDLhashTable, uidl, htoAdd)) != NULL)
-  {
-    struct UIDLtoken *token = (struct UIDLtoken *)entry;
-
-    token->uidl = strdup(uidl);
-    token->flags = flags;
-
-    D(DBF_UIDL, "added UIDL '%s' (%08lx) to hash", uidl, token);
-    G->TR->UIDLhashIsDirty = TRUE;
-  }
-  else
-    E(DBF_UIDL, "couldn't add UIDL '%s' to hash", uidl);
-
-  LEAVE();
 }
 ///
 
@@ -2131,7 +1888,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
           {
             D(DBF_NET, "adding mail with subject '%s' to UIDL hash", mail->Subject);
             // add the UIDL to the hash table or update an existing entry
-            AddUIDLtoHash(mtn->UIDL, UIDLF_NEW);
+            AddUIDLtoHash(G->TR->UIDLhashTable, mtn->UIDL, UIDLF_NEW);
           }
 
           if(hasTR_DELETE(mtn))
@@ -2154,7 +1911,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
         {
           D(DBF_NET, "adding mail with subject '%s' to UIDL hash", mail->Subject);
           // add the UIDL to the hash table or update an existing entry
-          AddUIDLtoHash(mtn->UIDL, UIDLF_NEW);
+          AddUIDLtoHash(G->TR->UIDLhashTable, mtn->UIDL, UIDLF_NEW);
         }
 
         TR_DeleteMessage(&ts, mtn->index);

@@ -11,6 +11,9 @@ $URL$
 
 2010-09-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c, UIDL.c, tcp/pop3.c: separated the UIDL management functions into
+    a separate module. Furthermore fixed some issues in the changed management
+    which could still result in certain mails to be downloaded twice.
   * Rexx.c: in case YAM receives an asynchronous reply to a former
     SendRexxCommand() call an error message will only be displayed if the
     result is not equal to zero. This is now the same reaction as for a

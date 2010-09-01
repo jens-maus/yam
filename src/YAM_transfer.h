@@ -39,6 +39,7 @@
 // forward declarations
 struct Folder;
 struct MailList;
+struct UIDLhash;
 
 enum TransferType
 {
@@ -173,7 +174,7 @@ struct TR_ClassData
   struct MinList          transferList;    // list for managing the downloads
   struct MinNode        * GMD_Mail;
   struct Folder         * ImportFolder;
-  struct HashTable      * UIDLhashTable;   // for maintaining all UIDLs
+  struct UIDLhash       * UIDLhashTable;   // for maintaining all UIDLs
   struct MailList       * downloadedMails; // a list of downloaded mails to be filtered later
   struct Connection     * connection;      // the connection to be used during the session
   struct MailServerNode * mailServer;      // the current mail server
@@ -223,8 +224,5 @@ void TR_TransStat_Start(struct TransStat *ts);
 void TR_TransStat_Update(struct TransStat *ts, int size_incr, const char *status);
 void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size, const char *status);
 void TR_TransStat_Finish(struct TransStat *ts);
-
-BOOL InitUIDLhash(void);
-void CleanupUIDLhash(void);
 
 #endif /* YAM_TRANSFER_H */
