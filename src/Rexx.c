@@ -924,6 +924,7 @@ void ARexxDispatch(struct RexxHost *host)
 
       if((org = (struct RexxMsg *)rexxmsg->rm_Args[15]) != NULL)
       {
+        D(DBF_REXX, "received reply of a forwarded ARexx message");
         // Reply to a forwarded Msg
         if(rexxmsg->rm_Result1 != 0)
         {
@@ -938,9 +939,12 @@ void ARexxDispatch(struct RexxHost *host)
       else
       {
         // reply to a SendRexxCommand()-Call
+        D(DBF_REXX, "received reply of a SendRexxCommand() call");
+        SHOWVALUE(DBF_REXX, ARexxResultHook);
+
         if(ARexxResultHook != NULL)
           ARexxResultHook(host, rexxmsg);
-        else
+        else if(rexxmsg->rm_Result1 != 0)
           ER_NewError(tr(MSG_ER_AREXX_EXECUTION_ERROR), rexxmsg->rm_Args[0], rexxmsg->rm_Result1);
       }
 

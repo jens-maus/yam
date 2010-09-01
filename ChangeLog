@@ -11,6 +11,10 @@ $URL$
 
 2010-09-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * Rexx.c: in case YAM receives an asynchronous reply to a former
+    SendRexxCommand() call an error message will only be displayed if the
+    result is not equal to zero. This is now the same reaction as for a
+    synchronous ARexx script. This closes #199.
   * YAM_COs.c, YAM_FO.c, FolderList.c: en/disabling the spam filter several
     times without restarting YAM eventually resulted in multiple folders named
     "Spam", because the folder's node was only removed from the listtree, but
