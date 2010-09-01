@@ -97,7 +97,7 @@ static BOOL FilterDuplicates(void);
 /***************************************************************************
  Module: POP3 mail transfer
 ***************************************************************************/
-/// TR_RecvToFile()
+/// TR_RecvToFile
 // function that receives data from a POP3 server until it receives a \r\n.\r\n termination
 // line. It automatically writes that data to the supplied filehandle and if present also
 // updates the Transfer status
@@ -857,6 +857,9 @@ static void TR_DisconnectPOP(void)
   if(G->Error == FALSE)
     TR_SendPOP3Cmd(POPCMD_QUIT, NULL, tr(MSG_ER_BADRESPONSE_POP3));
 
+  // make sure we don't send a "keep alive" signal anymore
+  StopTimer(TIMER_POP3_KEEPALIVE);
+
   TR_Disconnect();
 
   LEAVE();
@@ -1189,7 +1192,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
   LEAVE();
 }
 ///
-/// TR_SendPOP3KeepAlive()
+/// TR_SendPOP3KeepAlive
 // Function that sends a STAT command regularly to a POP3 to
 // prevent it from dropping the connection.
 BOOL TR_SendPOP3KeepAlive(void)
@@ -1314,7 +1317,7 @@ BOOL TR_DeleteMessage(struct TransStat *ts, int number)
   return result;
 }
 ///
-/// FilterDuplicates()
+/// FilterDuplicates
 //
 static BOOL FilterDuplicates(void)
 {
