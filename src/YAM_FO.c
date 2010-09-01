@@ -1441,9 +1441,11 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
 
     if(fnode != NULL)
     {
+      char foldersPath[SIZE_PATHFILE];
+
       DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
 
-      FO_SaveTree(CreateFilename(".folders"));
+      FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
     }
   }
 
@@ -1693,13 +1695,15 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 
     if(delete_folder == TRUE)
     {
+      char foldersPath[SIZE_PATHFILE];
+
       D(DBF_FOLDER, "deleting folder \"%s\"", folder->Name);
 
       // remove the entry from the listtree now
       DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, MUIF_NONE);
 
       // Save the Tree to the folder config now
-      FO_SaveTree(CreateFilename(".folders"));
+      FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
 
       // update the statistics in case the just deleted folder contained new or unread mail
       DisplayStatistics(NULL, TRUE);
@@ -2033,7 +2037,11 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     // a temporarily modified open/close state of folder groups will be saved
     // as well, even if the user didn't want this.
     if(isNewFolder == TRUE)
-      FO_SaveTree(CreateFilename(".folders"));
+    {
+      char foldersPath[SIZE_PATHFILE];
+
+      FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
+    }
 
     DisplayStatistics(oldfolder, TRUE);
   }
@@ -2055,13 +2063,16 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
   {
     case SO_SAVE:
     {
-      FO_SaveTree(CreateFilename(".folders"));
+      char foldersPath[SIZE_PATHFILE];
+
+      FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
     }
     break;
 
     case SO_RESET:
     {
       struct FolderNode *fnode;
+      char foldersPath[SIZE_PATHFILE];
 
       // before we reset/reload the foldertree we have to
       // make sure everything is freed correctly.
@@ -2099,7 +2110,7 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
 
       UnlockFolderList(G->folders);
 
-      FO_LoadTree(CreateFilename(".folders"));
+      FO_LoadTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
     }
     break;
   }

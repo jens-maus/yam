@@ -541,16 +541,19 @@ static char *BuildUIDLFilename(const struct MailServerNode *msn)
 
   if(msn != NULL)
   {
-    char uidlname[SIZE_FILE];
+    char uidlName[SIZE_FILE];
+    char uidlPath[SIZE_PATHFILE];
 
     // create a file name consisting of the user and host name of the given server entry
-    snprintf(uidlname, sizeof(uidlname), ".uidl_%s_%s", msn->username, msn->hostname);
-    filename = CreateFilename(uidlname);
+    snprintf(uidlName, sizeof(uidlName), ".uidl_%s_%s", msn->username, msn->hostname);
+    filename = CreateFilename(uidlName, uidlPath, sizeof(uidlPath));
   }
   else
   {
+    char uidlPath[SIZE_PATHFILE];
+
     // use the old style .uidl name
-    filename = CreateFilename(".uidl");
+    filename = CreateFilename(".uidl", uidlPath, sizeof(uidlPath));
   }
 
   RETURN(filename);

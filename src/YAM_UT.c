@@ -1847,16 +1847,14 @@ char *AddPath(char *dst, const char *src, const char *add, size_t size)
 /*** Mail related ***/
 /// CreateFilename
 //  Prepends mail directory to a file name
-char *CreateFilename(const char * const file)
+char *CreateFilename(const char * const file, char *fullPath, const size_t fullPathSize)
 {
-  static char buffer[SIZE_PATHFILE];
-
   ENTER();
 
-  AddPath(buffer, G->MA_MailDir, file, sizeof(buffer));
+  AddPath(fullPath, G->MA_MailDir, file, fullPathSize);
 
-  RETURN(buffer);
-  return buffer;
+  RETURN(fullPath);
+  return fullPath;
 }
 ///
 /// CreateDirectory

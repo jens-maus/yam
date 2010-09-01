@@ -7,6 +7,9 @@ $URL$
 
 2010-09-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c, misc: the CreateFilename() now requires a destination buffer to
+    be filled with the full path. This makes this function usable from several
+    places and threads at the same time.
   * YAM_TR.c, tcp/pop3.c: reworked the UIDL management. First of all YAM will
     use separate files for each account to avoid any mix up of (in)active and/or
     (un)checked accounts. The filename will be built as ".uidl_<user>_<host>"

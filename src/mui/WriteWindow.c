@@ -731,12 +731,13 @@ static void AddTagline(FILE *fh_mail)
 //  Writes signature to the message file
 static void WriteSignature(FILE *out, int signat)
 {
+  char sigPath[SIZE_PATHFILE];
   char *sigFile;
   LONG sigSize;
 
   ENTER();
 
-  sigFile = CreateFilename(SigNames[signat]);
+  sigFile = CreateFilename(SigNames[signat], sigPath, sizeof(sigPath));
 
   // check whether the signature file exists and contains at least one character
   if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE && sigSize > 0)

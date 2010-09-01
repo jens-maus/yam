@@ -1580,6 +1580,7 @@ static BOOL Root_New(BOOL hidden)
 //  Phase 2 of program initialization (after user logs in)
 static void InitAfterLogin(void)
 {
+  char foldersPath[SIZE_PATHFILE];
   struct FolderList *oldfolders = NULL;
   BOOL newfolders;
   BOOL splashWasActive;
@@ -1638,7 +1639,7 @@ static void InitAfterLogin(void)
   SplashProgress(tr(MSG_LoadingFolders), 50);
 
   newfolders = FALSE;
-  if(FO_LoadTree(CreateFilename(".folders")) == FALSE && oldfolders != NULL && IsFolderListEmpty(oldfolders) == FALSE)
+  if(FO_LoadTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath))) == FALSE && oldfolders != NULL && IsFolderListEmpty(oldfolders) == FALSE)
   {
     struct FolderNode *fnode;
 
@@ -1683,10 +1684,11 @@ static void InitAfterLogin(void)
     // check if the spam folder has to be created
     if(FO_GetFolderByType(FT_SPAM, NULL) == NULL)
     {
+      char spamPath[SIZE_PATHFILE];
       BOOL createSpamFolder;
       enum FType type;
 
-      if(ObtainFileInfo(CreateFilename(FolderName[FT_SPAM]), FI_TYPE, &type) == TRUE && type == FIT_NONEXIST)
+      if(ObtainFileInfo(CreateFilename(FolderName[FT_SPAM], spamPath, sizeof(spamPath)), FI_TYPE, &type) == TRUE && type == FIT_NONEXIST)
       {
         // no directory named "spam" exists, so let's create it
         createSpamFolder = TRUE;
@@ -1704,22 +1706,30 @@ static void InitAfterLogin(void)
         {
           default:
           case 0:
+          {
             // the user has chosen to disable the spam filter, so we do it
             // or the requester was cancelled
             C->SpamFilterEnabled = FALSE;
             createSpamFolder = FALSE;
-            break;
+          }
+          break;
 
           case 1:
+          {
+            char spamPath[SIZE_PATHFILE];
+
             // delete everything in the folder, the directory itself can be kept
-            DeleteMailDir(CreateFilename(FolderName[FT_SPAM]), FALSE);
+            DeleteMailDir(CreateFilename(FolderName[FT_SPAM], spamPath, sizeof(spamPath)), FALSE);
             createSpamFolder = TRUE;
-            break;
+          }
+          break;
 
           case 2:
+          {
             // keep the folder contents
             createSpamFolder = TRUE;
-            break;
+          }
+          break;
         }
       }
 
@@ -1752,8 +1762,10 @@ static void InitAfterLogin(void)
 
   if(newfolders == TRUE)
   {
+  	char foldersPath[SIZE_PATHFILE];
+
     set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
-    FO_SaveTree(CreateFilename(".folders"));
+    FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
   }
 
   // setup some dynamic (changing) menus

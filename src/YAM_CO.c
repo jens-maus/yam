@@ -2000,8 +2000,12 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
   if(xget(ed, MUIA_TextEditor_HasChanged) == TRUE)
   {
     if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+    {
+      char sigPath[SIZE_PATHFILE];
+
       // save the modified signature only if the user told us to do so
-      EditorToFile(ed, CreateFilename(SigNames[G->CO->LastSig]));
+      EditorToFile(ed, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
+    }
   }
 
   if(editSig == TRUE)
@@ -2010,7 +2014,9 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
     // we need to check if there is an editor defined
     if(CE->Editor[0] != '\0')
     {
-      snprintf(buffer, sizeof(buffer), "%s \"%s\"", CE->Editor, GetRealPath(CreateFilename(SigNames[sig])));
+      char sigPath[SIZE_PATHFILE];
+
+      snprintf(buffer, sizeof(buffer), "%s \"%s\"", CE->Editor, GetRealPath(CreateFilename(SigNames[sig], sigPath, sizeof(sigPath))));
       LaunchCommand(buffer, FALSE, OUT_NIL);
       refresh = TRUE;
     }
@@ -2025,8 +2031,10 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
 
   if(refresh == TRUE)
   {
+    char sigPath[SIZE_PATHFILE];
+
     // refresh the signature in the internal editor
-    if(FileToEditor(CreateFilename(SigNames[sig]), ed, FALSE, TRUE, TRUE) == FALSE)
+    if(FileToEditor(CreateFilename(SigNames[sig], sigPath, sizeof(sigPath)), ed, FALSE, TRUE, TRUE) == FALSE)
       DoMethod(ed, MUIM_TextEditor_ClearText);
 
     G->CO->LastSig = sig;
@@ -2234,7 +2242,11 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
     {
       // save the signature if it has been modified
       if(xget(G->CO->GUI.TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE)
-        EditorToFile(G->CO->GUI.TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]));
+      {
+        char sigPath[SIZE_PATHFILE];
+
+        EditorToFile(G->CO->GUI.TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
+      }
 
       CO_SaveConfig(C, G->CO_PrefsFile);
     }

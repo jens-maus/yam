@@ -1876,6 +1876,8 @@ void CO_GetConfig(BOOL saveConfig)
                 // now we need the corresponding treenode to remove it from the list of folders
                 if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
                 {
+                  char foldersPath[SIZE_PATHFILE];
+
                   // delete the folder on disk
                   DeleteMailDir(GetFolderDir(spamFolder), FALSE);
 
@@ -1896,7 +1898,7 @@ void CO_GetConfig(BOOL saveConfig)
                   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, tn, MUIF_NONE);
 
                   // and finally save the modified tree to the folder config now
-                  FO_SaveTree(CreateFilename(".folders"));
+                  FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath)));
 
                   // update the statistics in case the spam folder contained new or unread mails
                   DisplayStatistics(NULL, TRUE);
@@ -1948,10 +1950,11 @@ void CO_GetConfig(BOOL saveConfig)
         else if(C->SpamFilterEnabled == FALSE && CE->SpamFilterEnabled == TRUE)
         {
           // the spam filter has been enabled, now try to create the mandatory spam folder
+          char spamPath[SIZE_PATHFILE];
           BOOL createSpamFolder;
           enum FType type;
 
-          if(ObtainFileInfo(CreateFilename(FolderName[FT_SPAM]), FI_TYPE, &type) == TRUE && type == FIT_NONEXIST)
+          if(ObtainFileInfo(CreateFilename(FolderName[FT_SPAM], spamPath, sizeof(spamPath)), FI_TYPE, &type) == TRUE && type == FIT_NONEXIST)
           {
             // no directory named "spam" exists, so let's create it
             createSpamFolder = TRUE;
@@ -1979,8 +1982,10 @@ void CO_GetConfig(BOOL saveConfig)
 
               case 1:
               {
+                char spamPath[SIZE_PATHFILE];
+
                 // delete everything in the folder, the directory itself can be kept
-                DeleteMailDir(CreateFilename(FolderName[FT_SPAM]), FALSE);
+                DeleteMailDir(CreateFilename(FolderName[FT_SPAM], spamPath, sizeof(spamPath)), FALSE);
                 createSpamFolder = TRUE;
               }
               break;
@@ -1997,6 +2002,7 @@ void CO_GetConfig(BOOL saveConfig)
           if(createSpamFolder == TRUE)
           {
             struct Folder *spamFolder;
+            char foldersPath[SIZE_PATHFILE];
 
             // if a folder named "spam" already exists, but a new spam folder should be
             // created, we need to remove the old folder from the tree view first
@@ -2020,7 +2026,7 @@ void CO_GetConfig(BOOL saveConfig)
             }
 
             // try to create the folder and save the new folder tree
-            if(FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) == FALSE || FO_SaveTree(CreateFilename(".folders")) == FALSE)
+            if(FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) == FALSE || FO_SaveTree(CreateFilename(".folders", foldersPath, sizeof(foldersPath))) == FALSE)
             {
               // something failed, so we disable the spam filter again
               ER_NewError(tr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));
@@ -2152,8 +2158,10 @@ void CO_GetConfig(BOOL saveConfig)
           // then ask the user if the changes to the signature should be made permanent
           if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
           {
+            char sigPath[SIZE_PATHFILE];
+
             // save the modified signature only if the user told us to do so
-            EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]));
+            EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
           }
         }
       }
@@ -2607,11 +2615,13 @@ void CO_SetConfig(void)
 
     case cp_Signature:
     {
+      char sigPath[SIZE_PATHFILE];
+
       setcheckmark(gui->CH_USESIG, CE->UseSignature);
       setstring(gui->ST_TAGFILE, CE->TagsFile);
       setstring(gui->ST_TAGSEP, CE->TagsSeparator);
       setcycle(gui->CY_SIGNAT, G->CO->LastSig);
-      FileToEditor(CreateFilename(SigNames[G->CO->LastSig]), gui->TE_SIGEDIT, FALSE, TRUE, TRUE);
+      FileToEditor(CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)), gui->TE_SIGEDIT, FALSE, TRUE, TRUE);
       DoMethod(G->App, MUIM_CallHook, &CO_SwitchSignatHook, !CE->UseSignature);
     }
     break;
