@@ -49,7 +49,7 @@
 
 /// CreateNewMailServer
 //  Initializes a new POP3/SMTP account
-struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Config *co, BOOL first)
+struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const struct Config *co, const BOOL first)
 {
   struct MailServerNode *msn;
 
@@ -61,6 +61,7 @@ struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Conf
   {
     // initialize all variables as AllocSysObject() does not clear the memory
     msn->type = type;
+    msn->id = 0;
     msn->account[0] = '\0';
     msn->hostname[0] = '\0';
     msn->domain[0] = '\0';
@@ -193,7 +194,7 @@ BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *ms
 ///
 /// GetMailServer
 // function to extract the structure of a POP3 server from our mailserver list
-struct MailServerNode *GetMailServer(struct MinList *mailServerList, enum MailServerType type, unsigned int num)
+struct MailServerNode *GetMailServer(const struct MinList *mailServerList, const enum MailServerType type, const unsigned int num)
 {
   struct MailServerNode *result = NULL;
 
@@ -223,6 +224,33 @@ struct MailServerNode *GetMailServer(struct MinList *mailServerList, enum MailSe
 
   RETURN(result);
   return result;
+}
+
+///
+/// IsUniqueMailServerID
+// check if the ID is unique within the list of servers
+BOOL IsUniqueMailServerID(const struct MinList *mailServerList, const int id)
+{
+  BOOL isUnique = TRUE;
+  struct Node *curNode;
+
+  ENTER();
+
+
+  IterateList(mailServerList, curNode)
+  {
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+    if(msn->id == id)
+    {
+      // we found exactly this ID, this is bad
+      isUnique = FALSE;
+      break;
+    }
+  }
+
+  RETURN(isUnique);
+  return isUnique;
 }
 
 ///

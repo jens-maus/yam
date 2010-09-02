@@ -1459,6 +1459,7 @@ void CO_Validate(struct Config *co, BOOL update)
   BOOL updateMenuShortcuts = FALSE;
   struct MailServerNode *firstPOP3;
   struct MailServerNode *firstSMTP;
+  struct Node *curNode;
 
   ENTER();
 
@@ -1470,7 +1471,6 @@ void CO_Validate(struct Config *co, BOOL update)
   if(firstPOP3 != NULL && firstSMTP != NULL)
   {
     char *p = strchr(co->EmailAddress, '@');
-    struct Node *curNode;
 
     // now we walk through our mailserver list and check and fix certains
     // things in it
@@ -1513,6 +1513,30 @@ void CO_Validate(struct Config *co, BOOL update)
           // nothing to do
         break;
       }
+    }
+  }
+
+  // check all servers for valid and unique IDs
+  IterateList(&co->mailServerList, curNode)
+  {
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+    // check for a valid and unique ID, this is independend of the server type
+    if(msn->id == 0)
+    {
+      int id;
+
+      // loop until we generated a unique ID
+      // usually this will happen with just one iteration
+      do
+      {
+        id = rand();
+      }
+      while(IsUniqueMailServerID(&co->mailServerList, id) == FALSE);
+
+      msn->id = id;
+
+      saveAtEnd = TRUE;
     }
   }
 

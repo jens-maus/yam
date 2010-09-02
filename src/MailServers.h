@@ -91,6 +91,7 @@ struct MailServerNode
   struct MinNode node;                   // required for placing it into struct Config
 
   enum MailServerType type;              // which type is this server? POP3 or SMTP?
+  int id;                                // a unique ID for this server
 
   char account[SIZE_USERID+SIZE_HOST+1]; // user definable account name
   char hostname[SIZE_HOST];              // servername/IP
@@ -106,9 +107,10 @@ struct MailServerNode
 };
 
 // public functions
-struct MailServerNode *CreateNewMailServer(enum MailServerType type, struct Config *co, BOOL first);
+struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const struct Config *co, const BOOL first);
 void FreeMailServerList(struct MinList *mailServerList);
 BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *msl2);
-struct MailServerNode *GetMailServer(struct MinList *mailServerList, enum MailServerType type, unsigned int num);
+struct MailServerNode *GetMailServer(const struct MinList *mailServerList, const enum MailServerType type, const unsigned int num);
+BOOL IsUniqueMailServerID(const struct MinList *mailServerList, const int id);
 
 #endif // MAILSERVERS_H

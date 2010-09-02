@@ -50,30 +50,9 @@ static void BuildUIDLFilename(const struct MailServerNode *msn, char *uidlPath, 
   {
     char *uidlName;
 
-    // create a file name consisting of the user and host name of the given server entry
-    if(asprintf(&uidlName, ".uidl_%s_%s", msn->username, msn->hostname) != -1)
+    // create a file name using the mail server's unique ID
+    if(asprintf(&uidlName, ".uidl_%08lx", msn->id) != -1)
     {
-      char *p = uidlName;
-
-      // filter out possible invalid characters for filenames
-      while(*p != '\0')
-      {
-        switch(*p)
-        {
-          case ':':
-          case '/':
-          case '<':
-          case '>':
-          case '[':
-          case ']':
-          {
-            *p = '_';
-          }
-          break;
-        }
-
-        p++;
-      }
       CreateFilename(uidlName, uidlPath, uidlPathSize);
 
       free(uidlName);
@@ -105,6 +84,7 @@ struct UIDLhash *InitUIDLhash(const struct MailServerNode *msn)
       char uidlPath[SIZE_PATHFILE];
       LONG size;
       FILE *fh = NULL;
+      BOOL oldUIDLFile = FALSE;
 
       // try to access the account specific .uidl file first
       BuildUIDLFilename(msn, uidlPath, sizeof(uidlPath));
@@ -120,6 +100,8 @@ struct UIDLhash *InitUIDLhash(const struct MailServerNode *msn)
         if(ObtainFileInfo(uidlPath, FI_SIZE, &size) == TRUE && size > 0)
         {
           fh = fopen(uidlPath, "r");
+          // this file is definitely an old style UIDL file without header
+          oldUIDLFile = TRUE;
         }
       }
 
@@ -128,21 +110,39 @@ struct UIDLhash *InitUIDLhash(const struct MailServerNode *msn)
         // now read in the UIDL/MsgIDs line-by-line
         char *uidl = NULL;
         size_t size = 0;
+        BOOL validFile = FALSE;
 
         D(DBF_UIDL, "opened UIDL database file '%s'", uidlPath);
 
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-        // add all read UIDL to the hash marking them as OLD
-        while(GetLine(&uidl, &size, fh) >= 0)
-          AddUIDLtoHash(uidlHash, uidl, UIDLF_OLD);
+        if(oldUIDLFile == TRUE)
+        {
+          // old UIDL files are considered to be always valid
+          validFile = TRUE;
+        }
+        else
+        {
+          // new UIDL files must contain the usual header
+          if(GetLine(&uidl, &size, fh) >= 0 && strncmp(uidl, "UIDL", 4) == 0)
+            validFile = TRUE;
+        }
+
+        if(validFile == TRUE)
+        {
+          // add all read UIDLs to the hash marking them as OLD
+          while(GetLine(&uidl, &size, fh) >= 0)
+            AddUIDLtoHash(uidlHash, uidl, UIDLF_OLD);
+        }
+        else
+          W(DBF_UIDL, "file '%s' is no valid UIDL database file", uidlPath);
 
         fclose(fh);
 
         free(uidl);
       }
       else
-        W(DBF_UIDL, "no or empty .uidl file found");
+        W(DBF_UIDL, "no UIDL database file found");
 
       // remember the mail server to be able to regenerate the file name upon cleanup
       uidlHash->mailServer = (struct MailServerNode *)msn;
@@ -218,6 +218,8 @@ void CleanupUIDLhash(struct UIDLhash *uidlHash)
         if((fh = fopen(uidlPath, "w")) != NULL)
         {
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+          fprintf(fh, "UIDL - YAM UIDL database for %s@%s\n", uidlHash->mailServer->username, uidlHash->mailServer->hostname);
 
           // call HashTableEnumerate with the SaveUIDLtoken callback function
           HashTableEnumerate(uidlHash->hash, SaveUIDLtoken, fh);

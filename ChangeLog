@@ -7,6 +7,13 @@ $URL$
 
 2010-09-02 Thore Böckelmann <tboeckel@gmx.de>
 
+  * UIDL.c, MailServers.c: changed the UIDL database naming. Each mail server
+    now gets a unique account ID which is idependend of the accoutn data. The
+    user and host name will now be written to a header line inside the file
+    instead of the file name. This has the advantage that changing the account
+    data will not result in a different UIDL database file to be used further
+    on. Second the generated file name has a fixed length which can be handled
+    by all standard AmigaOS filesystems.
   * UIDL.c: the generated UIDL file name is no longer placed on the stack as a
     local variable inside the generating function. This closes #202.
 

@@ -274,6 +274,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
         // for the first SMTP server we output in the old format
         if(i == 0)
         {
+          fprintf(fh, "SMTP-ID          = %08lx\n", msn->id);
           fprintf(fh, "SMTP-Server      = %s\n", msn->hostname);
           fprintf(fh, "SMTP-Port        = %d\n", msn->port);
           fprintf(fh, "SMTP-Domain      = %s\n", msn->domain);
@@ -286,6 +287,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
         }
         else
         {
+          fprintf(fh, "SMTP%02d.ID        = %08lx\n", i, msn->id);
           fprintf(fh, "SMTP%02d.Account   = %s\n", i, msn->account);
           fprintf(fh, "SMTP%02d.Server    = %s\n", i, msn->hostname);
           fprintf(fh, "SMTP%02d.Port      = %d\n", i, msn->port);
@@ -311,6 +313,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
       if(msn->type == MST_POP3)
       {
+        fprintf(fh, "POP%02d.ID         = %08lx\n", i, msn->id);
         fprintf(fh, "POP%02d.Account    = %s\n", i, msn->account);
         fprintf(fh, "POP%02d.Server     = %s\n", i, msn->hostname);
         fprintf(fh, "POP%02d.Port       = %d\n", i, msn->port);
@@ -916,6 +919,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
 /* TCP/IP */
           else if(stricmp(buf, "MailExchangeOrder") == 0) co->MailExchangeOrder = atoi(value);
+          else if(stricmp(buf, "SMTP-ID") == 0)           fSMTP->id = strtol(value, NULL, 16);
           else if(stricmp(buf, "SMTP-Server") == 0)       strlcpy(fSMTP->hostname, value, sizeof(fSMTP->hostname));
           else if(stricmp(buf, "SMTP-Port") == 0)         fSMTP->port = atoi(value);
           else if(stricmp(buf, "SMTP-Domain") == 0)       strlcpy(fSMTP->domain, value, sizeof(fSMTP->domain));
@@ -949,7 +953,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 char *p = strchr(buf, '.')+1;
 
                 // now find out which subtype this smtp configuration is
-                if(stricmp(p, "Account") == 0)          strlcpy(msn->account, value, sizeof(msn->account));
+                if(stricmp(buf, "ID") == 0)             msn->id = strtol(value, NULL, 16);
+                else if(stricmp(p, "Account") == 0)     strlcpy(msn->account, value, sizeof(msn->account));
                 else if(stricmp(p, "Server") == 0)      strlcpy(msn->hostname, value, sizeof(msn->hostname));
                 else if(stricmp(p, "Port") == 0)        msn->port = atoi(value);
                 else if(stricmp(p, "Domain") == 0)      strlcpy(msn->domain, value, sizeof(msn->domain));
@@ -989,7 +994,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
               {
                 char *p = strchr(buf, '.')+1;
 
-                if(stricmp(p, "Account") == 0)        strlcpy(msn->account, value, sizeof(msn->account));
+                if(stricmp(p, "ID") == 0)             msn->id = strtol(value, NULL, 16);
+                else if(stricmp(p, "Account") == 0)   strlcpy(msn->account, value, sizeof(msn->account));
                 else if(stricmp(p, "Server") == 0)    strlcpy(msn->hostname, value, sizeof(msn->hostname));
                 else if(stricmp(p, "Port") == 0)      msn->port = atoi(value);
                 else if(stricmp(p, "Password") == 0)  strlcpy(msn->password, Decrypt(value), sizeof(msn->password));
