@@ -128,6 +128,9 @@ $(OBJDIR)/Timer.o: Timer.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_mainFolder.h extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h \
   Locale.h MUIObjects.h Threads.h mui/Classes.h mui/ClassesExtra.h \
   YAM_main.h YAM_read.h BayesFilter.h tcp/pop3.h Debug.h
+$(OBJDIR)/UIDL.o: UIDL.c extrasrc.h include/SDI_compiler.h include/SDI_stdarg.h \
+  include/SDI_compiler.h YAM_stringsizes.h YAM_utilities.h \
+  YAM_folderconfig.h FileInfo.h MailServers.h UIDL.h HashTable.h Debug.h
 $(OBJDIR)/UpdateCheck.o: UpdateCheck.c include/mui/BetterString_mcc.h \
   include/mui/NFloattext_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/mui/NList_mcc.h \
@@ -464,8 +467,8 @@ $(OBJDIR)/YAM_TR.o: YAM_TR.c include/libraries/genesis.h include/amiga-align.h \
   UpdateCheck.h YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h \
   mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
   mime/base64.h mime/md5.h AppIcon.h FileInfo.h Locale.h MailList.h \
-  MailServers.h MUIObjects.h Requesters.h Threads.h tcp/Connection.h \
-  tcp/pop3.h Debug.h
+  MailServers.h MUIObjects.h Requesters.h Threads.h UIDL.h \
+  tcp/Connection.h tcp/pop3.h Debug.h
 $(OBJDIR)/YAM_US.o: YAM_US.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/proto/muimaster.h \
   include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
@@ -473,10 +476,11 @@ $(OBJDIR)/YAM_US.o: YAM_US.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/SDI_hook.h YAM.h include/xpk/xpk.h include/amiga-align.h \
   include/default-align.h YAM_stringsizes.h YAM_transfer.h \
   YAM_utilities.h YAM_folderconfig.h HashTable.h YAM_userlist.h \
-  BayesFilter.h Rexx.h Themes.h Timer.h YAM_config.h YAM_read.h \
-  YAM_write.h YAM_main.h UpdateCheck.h YAM_error.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h FileInfo.h \
-  Locale.h MUIObjects.h Requesters.h Debug.h
+  BayesFilter.h Rexx.h Themes.h Timer.h YAM_addressbook.h \
+  include/mui/NListtree_mcc.h YAM_config.h YAM_read.h YAM_write.h \
+  YAM_main.h UpdateCheck.h YAM_error.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h FileInfo.h Locale.h MUIObjects.h \
+  Requesters.h Debug.h
 $(OBJDIR)/YAM_UT.o: YAM_UT.c include/libraries/openurl.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/mui/NListtree_mcc.h \
@@ -1874,7 +1878,7 @@ $(OBJDIR)/$(TCPDIR)/pop3.o: tcp/pop3.c include/mui/NList_mcc.h include/libraries
   Themes.h Timer.h YAM_addressbookEntry.h YAM_write.h YAM_main.h \
   YAM_config.h YAM_read.h UpdateCheck.h YAM_error.h YAM_find.h \
   YAM_mainFolder.h YAM_stringsizes.h YAM_transfer.h AppIcon.h MailList.h \
-  MailServers.h MUIObjects.h Locale.h Requesters.h mime/md5.h \
+  MailServers.h MUIObjects.h Locale.h Requesters.h UIDL.h mime/md5.h \
   tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
   include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
