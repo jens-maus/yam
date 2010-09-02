@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * UIDL.c: the generated UIDL file name is no longer placed on the stack as a
+    local variable inside the generating function. This closes #202.
+
 2010-09-01 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest development changes.

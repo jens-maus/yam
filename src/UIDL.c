@@ -42,53 +42,50 @@
 
 /// BuildUIDLFilename
 // set up a name for a UIDL file to be accessed
-static char *BuildUIDLFilename(const struct MailServerNode *msn)
+static void BuildUIDLFilename(const struct MailServerNode *msn, char *uidlPath, const size_t uidlPathSize)
 {
-  char *filename;
-
   ENTER();
 
   if(msn != NULL)
   {
-    char uidlName[SIZE_FILE];
-    char uidlPath[SIZE_PATHFILE];
-    char *p;
+    char *uidlName;
 
     // create a file name consisting of the user and host name of the given server entry
-    snprintf(uidlName, sizeof(uidlName), ".uidl_%s_%s", msn->username, msn->hostname);
-
-    // filter out possible invalid characters for filenames
-    p = uidlName;
-    while(*p != '\0')
+    if(asprintf(&uidlName, ".uidl_%s_%s", msn->username, msn->hostname) != -1)
     {
-      switch(*p)
-      {
-        case ':':
-        case '/':
-        case '<':
-        case '>':
-        case '[':
-        case ']':
-        {
-          *p = '_';
-        }
-        break;
-      }
+      char *p = uidlName;
 
-      p++;
+      // filter out possible invalid characters for filenames
+      while(*p != '\0')
+      {
+        switch(*p)
+        {
+          case ':':
+          case '/':
+          case '<':
+          case '>':
+          case '[':
+          case ']':
+          {
+            *p = '_';
+          }
+          break;
+        }
+
+        p++;
+      }
+      CreateFilename(uidlName, uidlPath, uidlPathSize);
+
+      free(uidlName);
     }
-    filename = CreateFilename(uidlName, uidlPath, sizeof(uidlPath));
   }
   else
   {
-    char uidlPath[SIZE_PATHFILE];
-
     // use the old style .uidl name
-    filename = CreateFilename(".uidl", uidlPath, sizeof(uidlPath));
+    CreateFilename(".uidl", uidlPath, uidlPathSize);
   }
 
-  RETURN(filename);
-  return filename;
+  LEAVE();
 }
 
 ///
@@ -105,24 +102,24 @@ struct UIDLhash *InitUIDLhash(const struct MailServerNode *msn)
     // allocate a new hashtable for managing the UIDL data
     if((uidlHash->hash = HashTableNew(HashTableGetDefaultStringOps(), NULL, sizeof(struct UIDLtoken), 512)) != NULL)
     {
-      char *filename;
+      char uidlPath[SIZE_PATHFILE];
       LONG size;
       FILE *fh = NULL;
 
       // try to access the account specific .uidl file first
-      filename = BuildUIDLFilename(msn);
-      if(ObtainFileInfo(filename, FI_SIZE, &size) == TRUE && size > 0)
+      BuildUIDLFilename(msn, uidlPath, sizeof(uidlPath));
+      if(ObtainFileInfo(uidlPath, FI_SIZE, &size) == TRUE && size > 0)
       {
-        fh = fopen(filename, "r");
+        fh = fopen(uidlPath, "r");
       }
 
       if(fh == NULL)
       {
         // an account specific UIDL does not seem to exist, try the old .uidl file instead
-        filename = BuildUIDLFilename(NULL);
-        if(ObtainFileInfo(filename, FI_SIZE, &size) == TRUE && size > 0)
+        BuildUIDLFilename(NULL, uidlPath, sizeof(uidlPath));
+        if(ObtainFileInfo(uidlPath, FI_SIZE, &size) == TRUE && size > 0)
         {
-          fh = fopen(filename, "r");
+          fh = fopen(uidlPath, "r");
         }
       }
 
@@ -132,7 +129,7 @@ struct UIDLhash *InitUIDLhash(const struct MailServerNode *msn)
         char *uidl = NULL;
         size_t size = 0;
 
-        D(DBF_UIDL, "opened UIDL database file '%s'", filename);
+        D(DBF_UIDL, "opened UIDL database file '%s'", uidlPath);
 
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -209,16 +206,16 @@ void CleanupUIDLhash(struct UIDLhash *uidlHash)
       // save the UIDLs only if something has been changed
       if(uidlHash->isDirty == TRUE)
       {
-        char *filename;
+        char uidlPath[SIZE_PATHFILE];
         FILE *fh;
 
         // we are saving account specific .uidl files only, the old one will be kept
         // in case it still contains UIDLs of multiple accounts
-        filename = BuildUIDLFilename(uidlHash->mailServer);
+        BuildUIDLFilename(uidlHash->mailServer, uidlPath, sizeof(uidlPath));
 
         // before we go and destroy the UIDL hash we have to
         // write it to the .uidl file back again.
-        if((fh = fopen(filename, "w")) != NULL)
+        if((fh = fopen(uidlPath, "w")) != NULL)
         {
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -228,17 +225,18 @@ void CleanupUIDLhash(struct UIDLhash *uidlHash)
           fclose(fh);
         }
         else
-          E(DBF_UIDL, "couldn't open .uidl file for writing");
+          E(DBF_UIDL, "couldn't open '%s' for writing", uidlPath);
       }
 
       // now we can destroy the uidl hash
       HashTableDestroy(uidlHash->hash);
       uidlHash->hash = NULL;
+      D(DBF_UIDL, "destroyed UIDL hash table");
     }
 
     free(uidlHash);
 
-    D(DBF_UIDL, "successfully cleaned up UIDLhash");
+    D(DBF_UIDL, "cleaned up UIDLhash");
   }
 
   LEAVE();
