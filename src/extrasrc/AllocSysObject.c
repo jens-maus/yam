@@ -515,6 +515,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         }
 
         // initialize the semaphore
+        memset(&sobject->semaphore, 0, sizeof(sobject->semaphore));
         InitSemaphore(&sobject->semaphore);
         sobject->semaphore.ss_Link.ln_Pri = pri;
         sobject->semaphore.ss_Link.ln_Name = name;
