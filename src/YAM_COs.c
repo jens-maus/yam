@@ -274,7 +274,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
         // for the first SMTP server we output in the old format
         if(i == 0)
         {
-          fprintf(fh, "SMTP-ID          = %08lx\n", msn->id);
+          fprintf(fh, "SMTP-ID          = %08x\n", msn->id);
           fprintf(fh, "SMTP-Server      = %s\n", msn->hostname);
           fprintf(fh, "SMTP-Port        = %d\n", msn->port);
           fprintf(fh, "SMTP-Domain      = %s\n", msn->domain);
@@ -287,7 +287,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
         }
         else
         {
-          fprintf(fh, "SMTP%02d.ID        = %08lx\n", i, msn->id);
+          fprintf(fh, "SMTP%02d.ID        = %08x\n", i, msn->id);
           fprintf(fh, "SMTP%02d.Account   = %s\n", i, msn->account);
           fprintf(fh, "SMTP%02d.Server    = %s\n", i, msn->hostname);
           fprintf(fh, "SMTP%02d.Port      = %d\n", i, msn->port);
@@ -313,7 +313,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
       if(msn->type == MST_POP3)
       {
-        fprintf(fh, "POP%02d.ID         = %08lx\n", i, msn->id);
+        fprintf(fh, "POP%02d.ID         = %08x\n", i, msn->id);
         fprintf(fh, "POP%02d.Account    = %s\n", i, msn->account);
         fprintf(fh, "POP%02d.Server     = %s\n", i, msn->hostname);
         fprintf(fh, "POP%02d.Port       = %d\n", i, msn->port);
