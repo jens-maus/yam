@@ -1376,10 +1376,8 @@ static BOOL FilterDuplicates(void)
                 {
                   struct UIDLtoken *token;
 
-                  // try to add the UIDL to our table, a return value
-                  // of FALSE signals that the entry did exist before
-                  // and just the flags have been updated
-                  if((token = AddUIDLtoHash(G->TR->UIDLhashTable, mtn->UIDL, UIDLF_NEW)) != NULL)
+                  // check if this UIDL is known already
+                  if((token = FindUIDL(G->TR->UIDLhashTable, mtn->UIDL)) != NULL)
                   {
                     D(DBF_UIDL, "mail %ld: found UIDL '%s', flags=%08lx", mtn->index, mtn->UIDL, token->flags);
 
@@ -1390,6 +1388,8 @@ static BOOL FilterDuplicates(void)
                       G->TR->Stats.DupSkipped++;
                       // don't download this mail, because it has been downloaded before
                       CLEAR_FLAG(mtn->tflags, TRF_LOAD);
+                      // mark this UIDL as old+new, thus it will be saved upon cleanup
+                      SET_FLAG(token->flags, UIDLF_NEW);
                     }
                   }
                 }

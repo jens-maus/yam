@@ -164,6 +164,7 @@ struct UIDLhash *InitUIDLhash(const struct MailServerNode *msn)
   RETURN(uidlHash);
   return uidlHash;
 }
+
 ///
 /// SaveUIDLtoken
 // HashTable callback function to save an UIDLtoken
@@ -192,6 +193,7 @@ static enum HashTableOperator SaveUIDLtoken(UNUSED struct HashTable *table,
   RETURN(htoNext);
   return htoNext;
 }
+
 ///
 /// CleanupUIDLhash
 // Cleanup the whole UIDL hash
@@ -243,6 +245,7 @@ void CleanupUIDLhash(struct UIDLhash *uidlHash)
 
   LEAVE();
 }
+
 ///
 /// AddUIDLtoHash
 // adds the UIDL of a mail transfer node to the hash
@@ -274,6 +277,25 @@ struct UIDLtoken *AddUIDLtoHash(struct UIDLhash *uidlHash, const char *uidl, con
   }
   else
     E(DBF_UIDL, "couldn't add UIDL '%s' to hash", uidl);
+
+  RETURN(token);
+  return token;
+}
+
+///
+/// FindUIDL
+// try to find a UIDL in the hash
+struct UIDLtoken *FindUIDL(const struct UIDLhash *uidlHash, const char *uidl)
+{
+  struct UIDLtoken *token = NULL;
+  struct HashEntryHeader *entry;
+
+  ENTER();
+
+  if((entry = HashTableOperate(uidlHash->hash, uidl, htoLookup)) != NULL && HASH_ENTRY_IS_LIVE(entry))
+  {
+    token = (struct UIDLtoken *)entry;
+  }
 
   RETURN(token);
   return token;

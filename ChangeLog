@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * UIDL.c, tcp/pop3.c: the duplicate mail filtering process no longer adds the
+    received UIDLs from the server to the hash table, but just marks already
+    known entries as "new", because only "new" entries will be saved in the UIDL
+    database files. The UIDLs will be added only after the corresponding mails
+    have been downloaded successfully or been deleted.
+
 2010-09-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * UIDL.c, MailServers.c: changed the UIDL database naming. Each mail server

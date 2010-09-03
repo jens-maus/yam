@@ -1917,7 +1917,12 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
         TR_DeleteMessage(&ts, mtn->index);
       }
       else
+      {
         D(DBF_NET, "leaving mail with subject '%s' and size %ld on server to be downloaded again", mail->Subject, mail->Size);
+        // Do not modify the UIDL hash here!
+        // The mail was marked as "don't download", but here we don't know if that
+        // is due to the duplicates checking or if the user did that himself.
+      }
 
       if(G->TR->Abort == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
         break;

@@ -51,6 +51,7 @@ struct UIDLtoken
 
 struct UIDLhash *InitUIDLhash(const struct MailServerNode *msn);
 struct UIDLtoken *AddUIDLtoHash(struct UIDLhash *uidlHash, const char *uidl, const ULONG flags);
+struct UIDLtoken *FindUIDL(const struct UIDLhash *uidlHash, const char *uidl);
 void CleanupUIDLhash(struct UIDLhash *uidlHash);
 
 #endif /* UIDL_H */
