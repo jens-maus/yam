@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-06 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fix another shortcut in addressbook, this solve #204.
+
 2010-09-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MailFolderListtree.c: folder groups will now show the number of new and

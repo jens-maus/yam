@@ -1,13 +1,13 @@
-## version $VER: YAM.catalog 7.5 (30.08.2010)
+## version $VER: YAM.catalog 7.5 (06.09.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
 ;
-; italian.ct - YAM 2.7 catalog translation file
+; italian.ct - YAM 2.6p1/2.7 catalog translation file
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5006 2010-08-16
+; based on YAM.cd 5006 2010-08-26
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -3085,7 +3085,7 @@ Mo_dif.
 ; _Edit
 ;
 MSG_AB_TBDelete
-_Canc.
+Ca_nc.
 ; _Delete
 ;
 MSG_AB_TBPrint
@@ -9123,9 +9123,9 @@ utilizzare.
 ; proceed.
 ;
 MSG_HELP_CO_CH_NOTISOUND
-Suona un campione audio al\n\
-momento della ricezione di\n\
-un nuovo messaggio di posta.
+Suona un campione audio al momento\n\
+della ricezione di un nuovo messaggio\n\
+di posta.
 ; Play a sound file\n\
 ; when you receive\n\
 ; new mail.
@@ -9155,18 +9155,18 @@ alto sulla lista.
 ;
 MSG_HELP_CO_BT_FILTERDOWN
 Sposta questo filtro in\n\
-basso sulla lista
+basso nella  lista
 ; Move this filter\n\
 ; down in the list.
 ;
 MSG_HELP_CO_PO_APLAY
 Apri una finestra di dialogo in modo da\n\
-selezionare un file audio da aprire.
+selezionare un file audio da suonare.
 ; Open a file requester to\n\
 ; select the file to play.
 ;
 MSG_HELP_CO_BT_APLAY
-Prova il campione audio
+Prova il campione audio.
 ; Test the sound.
 ;
 MSG_HELP_CO_CH_USESIG
@@ -9337,7 +9337,7 @@ Invio %ld messaggio(i) tramite server SMTP '%s' fallito
 ; COUNT, HOST
 ;
 MSG_HELP_EA_ST_BIRTHDAY
-Data di nascita in formato locale\n\
+Data di nascita nel formato locale\n\
 (Esempio 19.06.1974 o 19/06/1974).
 ; Date of birth in locale format\n\
 ; (e.g. 19.06.1974 or 19/06/1974).
