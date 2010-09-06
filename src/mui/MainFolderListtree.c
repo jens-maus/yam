@@ -66,13 +66,20 @@ enum
 /* Private Functions */
 /// FormatFolderInfo
 // puts all user defined folder information into a string
-static void FormatFolderInfo(char *folderStr, const size_t maxLen, const struct Folder *folder)
+static void FormatFolderInfo(char *folderStr, const size_t maxLen, const struct Folder *folder, const ULONG flags)
 {
+  int imageIndex = -1;
+
   ENTER();
 
   // add the folder image first, if it exists
-  if(folder->ImageIndex >= 0)
-    snprintf(folderStr, maxLen, "\033o[%d] ", folder->ImageIndex);
+  if(folder->Type == FT_GROUP)
+    imageIndex = isFlagSet(flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD;
+  else
+    imageIndex = folder->ImageIndex;
+
+  if(imageIndex >= 0)
+    snprintf(folderStr, maxLen, "\033o[%d] ", imageIndex);
   else
     strlcpy(folderStr, " ", maxLen);
 
@@ -82,7 +89,8 @@ static void FormatFolderInfo(char *folderStr, const size_t maxLen, const struct 
   else
     snprintf(folderStr, maxLen, "%s[%s]", folderStr, FilePart(folder->Path));
 
-  if(folder->LoadedMode != LM_UNLOAD && folder->LoadedMode != LM_REBUILD)
+  // append the numbers if this is a folder group or a folder with a valid index
+  if(folder->Type == FT_GROUP || (folder->LoadedMode != LM_UNLOAD && folder->LoadedMode != LM_REBUILD))
   {
     char dst[SIZE_SMALL];
 
@@ -168,14 +176,15 @@ HOOKPROTONHNO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
       {
         case FT_GROUP:
         {
-          snprintf(folderStr, sizeof(folderStr), "\033o[%d] %s", (isFlagSet(msg->TreeNode->tn_Flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD), entry->Name);
+          FormatFolderInfo(folderStr, sizeof(folderStr), entry, msg->TreeNode->tn_Flags);
+
           msg->Preparse[0] = (entry->New != 0 || entry->Unread != 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
         }
         break;
 
         default:
         {
-          FormatFolderInfo(folderStr, sizeof(folderStr), entry);
+          FormatFolderInfo(folderStr, sizeof(folderStr), entry, 0);
 
           if(entry->LoadedMode != LM_UNLOAD && entry->LoadedMode != LM_REBUILD)
           {

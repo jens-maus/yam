@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MailFolderListtree.c: folder groups will now show the number of new and
+    unread mails after their name, just like it is done for normal folders. This
+    closes #68.
+
 2010-09-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * UIDL.c, tcp/pop3.c: the duplicate mail filtering process no longer adds the
