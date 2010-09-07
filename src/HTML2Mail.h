@@ -43,6 +43,7 @@ enum htmlTagType
   ht_HREF_END,
   ht_DD,
   ht_DL,
+  ht_DT,
   ht_UL,
   ht_LI,
   ht_PRE,

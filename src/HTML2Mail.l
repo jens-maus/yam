@@ -105,6 +105,7 @@ UNKNOWN_CHAR  "&""#"?[[:alnum:]]+";"
 <tag_s>"/a>"                { BEGIN(INITIAL); return ht_HREF_END;   }
 <tag_s>"/dd>"               { BEGIN(INITIAL); return ht_DD;         }
 <tag_s>"/dl>"               { BEGIN(INITIAL); return ht_DL;         }
+<tag_s>"/dt>"               { BEGIN(INITIAL); return ht_DT;         }
 <tag_s>"/ul>"               { BEGIN(INITIAL); return ht_UL;         }
 <tag_s>"/li>"               { BEGIN(INITIAL); return ht_LI;         }
 <tag_s>"/pre>"              { BEGIN(INITIAL); return ht_PRE;        }
@@ -285,6 +286,10 @@ char *html2mail(char *htmlTxt)
           case ht_LI:
           case ht_HEAD:
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+          break;
+
+          case ht_DT:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n  ");
           break;
 
           case ht_PRE:
