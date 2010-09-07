@@ -74,10 +74,11 @@
 #include "tcp/pop3.h"
 #include "tcp/smtp.h"
 
-#include "HTML2Mail.h"
+#include "AppIcon.h"
 #include "BayesFilter.h"
 #include "FileInfo.h"
 #include "FolderList.h"
+#include "HTML2Mail.h"
 #include "Locale.h"
 #include "MailList.h"
 #include "MailServers.h"
@@ -936,7 +937,8 @@ static void MA_UpdateStatus(void)
     {
       struct Folder *folder = fnode->folder;
 
-      if(isSentMailFolder(folder) == FALSE && folder->LoadedMode == LM_VALID)
+      // handle all folders with a valid index, except the sent folder and folder groups
+      if(isGroupFolder(folder) == FALSE && isSentMailFolder(folder) == FALSE && folder->LoadedMode == LM_VALID)
       {
         BOOL updated = FALSE;
 
@@ -952,19 +954,25 @@ static void MA_UpdateStatus(void)
 
             if(hasStatusNew(mail))
             {
-              updated = TRUE;
               setStatusToUnread(mail);
+              updated = TRUE;
             }
           }
         }
 
         UnlockMailList(folder->messages);
 
+        // show the modified stats if we updated anything,
+        // but don't update the AppIcon yet
         if(updated == TRUE)
-          DisplayStatistics(folder, TRUE);
+          DisplayStatistics(folder, FALSE);
       }
     }
   }
+
+  // finally update the AppIcon as well
+  if(G->AppIconQuiet == FALSE)
+    UpdateAppIcon();
 
   UnlockFolderList(G->folders);
 
@@ -3774,7 +3782,7 @@ void MA_SetupDynamicMenus(void)
     DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_CSINGLE);
     MUI_DisposeObject(G->MA->GUI.MI_CSINGLE);
     G->MA->GUI.MI_CSINGLE = NULL;
-    
+
     // now we clear all notifies
     for(i=0; i < MAXP3_MENU; i++)
       DoMethod(G->MA->GUI.WI, MUIM_KillNotify, MMEN_POPHOST+i);
@@ -3808,7 +3816,7 @@ void MA_SetupDynamicMenus(void)
         {
           // add the new menu item to the sublist
           DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
-          
+
           // add a notify for this item as well.
           DoMethod(G->MA->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, POP_USER, i, 0L);
 

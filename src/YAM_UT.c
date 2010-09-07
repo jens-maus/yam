@@ -4550,7 +4550,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
   else if(fo == (struct Folder *)-1)
     fo = FO_GetFolderByType(FT_INCOMING, NULL);
 
-  // get the folder's position with in the tree
+  // get the folder's position within the tree
   if(fo != NULL && (pos = FO_GetFolderPosition(fo, TRUE)) >= 0)
   {
     D(DBF_GUI, "updating statistics for folder '%s', appicon %ld", fo->Name, updateAppIcon);

@@ -7,6 +7,8 @@ $URL$
 
 2010-09-07 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: slightly optimized the "update status" process by not updating the
+    AppIcon after each processed folder.
   * HTML2Mail.l: added some new HTML tags to allow better parsing of SVN commit
     mails.
 
