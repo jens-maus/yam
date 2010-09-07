@@ -244,14 +244,13 @@ MakeStaticHook(TR_ChangeTransFlagsHook, TR_ChangeTransFlagsFunc);
 ///
 /// TR_TransStat_Init
 //  Initializes transfer statistics
-void TR_TransStat_Init(struct TransStat *ts)
+void TR_TransStat_Init(void)
 {
   struct Node *curNode;
+  int numberOfMails = 0;
+  ULONG totalSize = 0;
 
   ENTER();
-
-  ts->Msgs_Tot = 0;
-  ts->Size_Tot = 0;
 
   if(G->TR->GUI.GR_LIST != NULL)
   {
@@ -264,172 +263,14 @@ void TR_TransStat_Init(struct TransStat *ts)
   {
     struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
-    ts->Msgs_Tot++;
+    numberOfMails++;
 
     if(hasTR_LOAD(mtn))
-      ts->Size_Tot += mtn->mail->Size;
+      totalSize += mtn->mail->Size;
   }
 
-  LEAVE();
-}
-///
-/// TR_TransStat_Start
-//  Resets statistics display
-void TR_TransStat_Start(struct TransStat *ts)
-{
-  ENTER();
-
-  ts->Msgs_Done = 0;
-  ts->Size_Done = 0;
-
-  // get the actual time we started the TransferStatus
-  GetSysTime(TIMEVAL(&ts->Clock_Last));
-  ts->Clock_Start = ts->Clock_Last.Seconds;
-
-  memset(&ts->Clock_Last, 0, sizeof(ts->Clock_Last));
-
-  snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
-  xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
-                            MUIA_Gauge_Max,      ts->Msgs_Tot,
-                            MUIA_Gauge_Current,  0);
-
-  LEAVE();
-}
-///
-/// TR_TransStat_Finish
-//  updates statistics display to represent the final state
-void TR_TransStat_Finish(struct TransStat *ts)
-{
-  ENTER();
-
-  // make sure we have valid strings to display
-  FormatSize(ts->Size_Curr_Max, ts->str_size_curr_max, sizeof(ts->str_size_curr_max), SF_AUTO);
-
-  // show the final statistics
-  snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), ts->Msgs_Tot);
-  xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
-                            MUIA_Gauge_Max,      ts->Msgs_Tot,
-                            MUIA_Gauge_Current,  ts->Msgs_Tot);
-
-  snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
-                                                         ts->str_size_curr_max, ts->str_size_curr_max);
-  xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                            MUIA_Gauge_Max,      100,
-                            MUIA_Gauge_Current,  100);
-  LEAVE();
-}
-///
-/// TR_TransStat_NextMsg
-//  Updates statistics display for next message
-void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size, const char *status)
-{
-  ENTER();
-
-  ts->Msgs_Curr = index;
-  ts->Msgs_ListPos = listpos;
-  ts->Msgs_Done++;
-  ts->Size_Curr = 0;
-  ts->Size_Curr_Max = size;
-
-  // format the current mail's size ahead of any refresh
-  FormatSize(size, ts->str_size_curr_max, sizeof(ts->str_size_curr_max), SF_AUTO);
-
-  TR_TransStat_Update(ts, 0, status);
-
-  LEAVE();
-}
-///
-/// TR_TransStat_Update
-//  Updates statistics display for next block of data
-void TR_TransStat_Update(struct TransStat *ts, int size_incr, const char *status)
-{
-  ENTER();
-
-  if(size_incr > 0)
-  {
-    ts->Size_Done += size_incr;
-    ts->Size_Curr += size_incr;
-  }
-  else if(size_incr == TS_SETMAX)
-  {
-    // first update the total transferred size
-    ts->Size_Done += ts->Size_Curr_Max - ts->Size_Curr;
-    // we are done with this mail, so make sure the current size equals the final size
-    ts->Size_Curr = ts->Size_Curr_Max;
-  }
-
-  // if the window isn't open we don't need to update it, do we?
-  if(xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
-  {
-    // update the stats at most 4 times per second
-    if(TimeHasElapsed(&ts->Clock_Last, 250000) == TRUE)
-    {
-      ULONG deltatime = ts->Clock_Last.Seconds - ts->Clock_Start;
-      ULONG speed = 0;
-      LONG remclock = 0;
-      ULONG max;
-      ULONG current;
-
-      // if we have a preselection window, update it.
-      if(G->TR->GUI.GR_LIST != NULL && ts->Msgs_ListPos >= 0)
-        set(G->TR->GUI.LV_MAILS, MUIA_NList_Active, ts->Msgs_ListPos);
-
-      // first we calculate the speed in bytes/sec
-      // to display to the user
-      if(deltatime != 0)
-        speed = ts->Size_Done / deltatime;
-
-      // calculate the estimated remaining time
-      if(speed != 0 && ((remclock = (ts->Size_Tot / speed) - deltatime) < 0))
-        remclock = 0;
-
-      // show the current status
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, status);
-
-      // show the current message index
-      set(G->TR->GUI.GA_COUNT, MUIA_Gauge_Current, ts->Msgs_Curr);
-
-      // format the size done and size total strings
-      FormatSize(ts->Size_Done, ts->str_size_done, sizeof(ts->str_size_done), SF_MIXED);
-      FormatSize(ts->Size_Tot, ts->str_size_tot, sizeof(ts->str_size_tot), SF_MIXED);
-      FormatSize(ts->Size_Curr, ts->str_size_curr, sizeof(ts->str_size_curr), SF_AUTO);
-
-      FormatSize(speed, ts->str_speed, sizeof(ts->str_speed), SF_MIXED);
-
-      // now format the StatsLabel and update it
-      snprintf(G->TR->StatsLabel, sizeof(G->TR->StatsLabel), tr(MSG_TR_TRANSFERSTATUS),
-                                  ts->str_size_done, ts->str_size_tot, ts->str_speed,
-                                  deltatime / 60, deltatime % 60,
-                                  remclock / 60, remclock % 60);
-
-      set(G->TR->GUI.TX_STATS, MUIA_Text_Contents, G->TR->StatsLabel);
-
-      // update the gauge
-      snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
-                                                             ts->str_size_curr, ts->str_size_curr_max);
-      if(size_incr == TS_SETMAX)
-      {
-        max = 100;
-        current = 100;
-      }
-      else if(ts->Size_Curr_Max <= 65536)
-      {
-        max = ts->Size_Curr_Max;
-        current = ts->Size_Curr;
-      }
-      else
-      {
-        max = ts->Size_Curr_Max / 1024;
-        current = ts->Size_Curr / 1024;
-      }
-      xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                                MUIA_Gauge_Max,      max,
-                                MUIA_Gauge_Current,  current);
-
-      // signal the application to update now
-      DoMethod(G->App, MUIM_Application_InputBuffered);
-    }
-  }
+  xset(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_NumberOfMails, numberOfMails,
+                            MUIA_TransferControlGroup_TotalSize, totalSize);
 
   LEAVE();
 }
@@ -585,11 +426,10 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
      IsMinListEmpty(&G->TR->transferList) == FALSE)
   {
     FILE *fh;
-    struct TransStat ts;
 
     TR_SetWinTitle(FALSE, (char *)FilePart(fname));
-    TR_TransStat_Init(&ts);
-    TR_TransStat_Start(&ts);
+    TR_TransStat_Init();
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start);
 
     // open our final destination file either in append or in a fresh
     // write mode.
@@ -608,7 +448,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
         char fullfile[SIZE_PATHFILE];
 
         // update the transfer status
-        TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, tr(MSG_TR_Exporting));
+        DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Next, mtn->index, -1, mail->Size, tr(MSG_TR_Exporting));
 
         if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder) != NULL)
         {
@@ -635,7 +475,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
 
             // now we iterate through every line of our mail and try to substitute
             // found "From " line with quoted ones
-            while(G->TR->Abort == FALSE &&
+            while(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE &&
                   (curlen = getline(&buf, &buflen, mfh)) > 0)
             {
               char *tmp = buf;
@@ -699,7 +539,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
               }
 
               // update the transfer status
-              TR_TransStat_Update(&ts, curlen, tr(MSG_TR_Exporting));
+              DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, curlen, tr(MSG_TR_Exporting));
             }
 
             // check why we exited the while() loop and if everything is fine
@@ -724,7 +564,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
             free(buf);
 
             // put the transferStat to 100%
-            TR_TransStat_Update(&ts, TS_SETMAX, tr(MSG_TR_Exporting));
+            DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Exporting));
           }
           else
            success = FALSE;
@@ -734,7 +574,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
         else
           success = FALSE;
 
-        if(G->TR->Abort == TRUE || success == FALSE)
+        if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE || success == FALSE)
           break;
       }
 
@@ -743,10 +583,10 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
 
       // write the status to our logfile
       mnode = FirstMailNode(mlist);
-      AppendToLogfile(LF_ALL, 51, tr(MSG_LOG_Exporting), ts.Msgs_Done, mnode->mail->Folder->Name, fname);
+      AppendToLogfile(LF_ALL, 51, tr(MSG_LOG_Exporting), xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_NumberOfProcessedMails), mnode->mail->Folder->Name, fname);
     }
 
-    TR_TransStat_Finish(&ts);
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Finish);
   }
 
   TR_AbortnClose();
@@ -1424,15 +1264,13 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
   // immediately.
   if(IsMinListEmpty(&G->TR->transferList) == FALSE)
   {
-    struct TransStat ts;
-
-    TR_TransStat_Init(&ts);
-    if(ts.Msgs_Tot > 0)
+    TR_TransStat_Init();
+    if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_NumberOfMails) > 0)
     {
       struct Folder *folder = G->TR->ImportFolder;
       enum FolderType ftype = folder->Type;
 
-      TR_TransStat_Start(&ts);
+      DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start);
 
       // now we distinguish between the different import format
       // and import the mails out of it
@@ -1467,6 +1305,9 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               unsigned int xstatus = SFLAG_NONE;
               BOOL ownStatusFound = FALSE;
 
+              if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE)
+                break;
+
               // if the mail is not flagged as 'loading' we can continue with the next
               // node
               if(hasTR_LOAD(mtn) == FALSE)
@@ -1476,7 +1317,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
                 break;
 
-              TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
+              DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Next, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
 
               if((ofh = fopen(MA_NewMailFile(folder, mfile), "w")) == NULL)
                 break;
@@ -1485,7 +1326,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
               // now that we seeked to the mail address we go
               // and read in line by line
-              while(GetLine(&buffer, &size, ifh) >= 0 && G->TR->Abort == FALSE)
+              while(GetLine(&buffer, &size, ifh) >= 0 && xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE)
               {
                 // if we did not find the message body yet
                 if(foundBody == FALSE)
@@ -1533,7 +1374,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                 }
 
                 // update the transfer statistics
-                TR_TransStat_Update(&ts, strlen(buffer)+1, tr(MSG_TR_Importing));
+                DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, strlen(buffer)+1, tr(MSG_TR_Importing));
               }
 
               fclose(ofh);
@@ -1585,11 +1426,8 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                 MA_UpdateMailFile(mail);
 
                 // put the transferStat to 100%
-                TR_TransStat_Update(&ts, TS_SETMAX, tr(MSG_TR_Importing));
+                DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Importing));
               }
-
-              if(G->TR->Abort == TRUE)
-                break;
             }
 
             fclose(ifh);
@@ -1618,6 +1456,9 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               FILE *ofh = NULL;
               char mfile[SIZE_MFILE];
 
+              if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE)
+                break;
+
               // if the mail is not flagged as 'loading' we can continue with the next
               // node
               if(hasTR_LOAD(mtn) == FALSE)
@@ -1627,7 +1468,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
               if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
                 break;
 
-              TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
+              DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Next, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
 
               if((ofh = fopen(MA_NewMailFile(folder, mfile), "wb")) == NULL)
                 break;
@@ -1675,11 +1516,8 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                 MA_UpdateMailFile(mail);
 
                 // put the transferStat to 100%
-                TR_TransStat_Update(&ts, TS_SETMAX, tr(MSG_TR_Importing));
+                DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Importing));
               }
-
-              if(G->TR->Abort == TRUE)
-                break;
             }
 
             fclose(ifh);
@@ -1692,9 +1530,9 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
         break;
       }
 
-      TR_TransStat_Finish(&ts);
+      DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start);
 
-      AppendToLogfile(LF_ALL, 50, tr(MSG_LOG_Importing), ts.Msgs_Done, G->TR->ImportFile, folder->Name);
+      AppendToLogfile(LF_ALL, 50, tr(MSG_LOG_Importing), xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_NumberOfProcessedMails), G->TR->ImportFile, folder->Name);
       DisplayStatistics(folder, TRUE);
       MA_ChangeFolder(NULL, FALSE);
     }
@@ -1718,7 +1556,7 @@ HOOKPROTONHNONP(TR_AbortGETFunc, void)
   StopTimer(TIMER_POP3_KEEPALIVE);
 
   // first set the Abort variable so that other can benefit from it
-  G->TR->Abort = TRUE;
+  set(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted, TRUE);
 
   // we can easily abort the transfer by setting the POP_Nr to -1
   // and issue a GetMailFromNextPOP command. With this solution YAM will
@@ -1835,17 +1673,15 @@ void TR_NewMailAlert(void)
 /*** TR_ProcessGETFunc - Downloads messages from a POP3 server ***/
 HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 {
-  struct TransStat ts;
-
   ENTER();
 
   // initialize the transfer statistics
-  TR_TransStat_Init(&ts);
+  TR_TransStat_Init();
 
   // make sure the NOOP timer is definitly stopped
   StopTimer(TIMER_POP3_KEEPALIVE);
 
-  if(ts.Msgs_Tot > 0)
+  if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_NumberOfMails) > 0)
   {
     struct Folder *infolder = FO_GetFolderByType(FT_INCOMING, NULL);
     struct Node *curNode;
@@ -1854,7 +1690,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
     if(C->TransferWindow == TWM_SHOW && xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
       set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
 
-    TR_TransStat_Start(&ts);
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start);
 
     IterateList(&G->TR->transferList, curNode)
     {
@@ -1867,15 +1703,15 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
         D(DBF_NET, "downloading mail with subject '%s' and size %ld", mail->Subject, mail->Size);
 
         // update the transfer status
-        TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
+        DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Next, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
 
-        if(TR_LoadMessage(infolder, &ts, mtn->index) == TRUE)
+        if(TR_LoadMessage(infolder, mtn->index) == TRUE)
         {
           // redraw the folderentry in the listtree
           DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, incomingTreeNode, MUIF_NONE);
 
           // put the transferStat for this mail to 100%
-          TR_TransStat_Update(&ts, TS_SETMAX, tr(MSG_TR_Downloading));
+          DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Downloading));
 
           G->TR->Stats.Downloaded++;
 
@@ -1895,7 +1731,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
           {
             D(DBF_NET, "deleting mail with subject '%s' on server", mail->Subject);
 
-            TR_DeleteMessage(&ts, mtn->index);
+            TR_DeleteMessage(mtn->index);
           }
           else
             D(DBF_NET, "leaving mail with subject '%s' and size %ld on server to be downloaded again", mail->Subject, mail->Size);
@@ -1914,7 +1750,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
           AddUIDLtoHash(G->TR->UIDLhashTable, mtn->UIDL, UIDLF_NEW);
         }
 
-        TR_DeleteMessage(&ts, mtn->index);
+        TR_DeleteMessage(mtn->index);
       }
       else
       {
@@ -1924,11 +1760,11 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
         // is due to the duplicates checking or if the user did that himself.
       }
 
-      if(G->TR->Abort == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
+      if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
         break;
     }
 
-    TR_TransStat_Finish(&ts);
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start);
 
     DisplayStatistics(infolder, TRUE);
 
@@ -1974,18 +1810,19 @@ void TR_CompleteMsgList(void)
   // first we have to set the notifies to the default values.
   // this is needed so that if we get mail from more than one POP3 at a line this
   // abort stuff works out
-  set(G->TR->GUI.BT_PAUSE, MUIA_Disabled, FALSE);
-  set(G->TR->GUI.BT_RESUME, MUIA_Disabled, TRUE);
+  set(tr->GUI.BT_PAUSE, MUIA_Disabled, FALSE);
+  set(tr->GUI.BT_RESUME, MUIA_Disabled, TRUE);
   DoMethod(tr->GUI.BT_START, MUIM_KillNotify, MUIA_Pressed);
   DoMethod(tr->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(tr->Start));
   DoMethod(tr->GUI.BT_QUIT , MUIM_KillNotify, MUIA_Pressed);
-  DoMethod(tr->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(tr->Abort));
+  DoMethod(tr->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, tr->GUI.GR_STATS, 3, MUIM_Set, MUIA_TransferControlGroup_Aborted, TRUE);
 
   if(C->PreSelection < PSM_ALWAYSLARGE)
   {
-    struct MinNode *curNode = tr->GMD_Mail;
+    struct Node *curNode = (struct Node *)tr->GMD_Mail;
+    struct Node *nextNode;
 
-    for(; curNode->mln_Succ && tr->Abort == FALSE && tr->connection->error == CONNECTERR_NO_ERROR; curNode = curNode->mln_Succ)
+    for(; (nextNode = GetSucc(curNode)) != NULL && xget(tr->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && tr->connection->error == CONNECTERR_NO_ERROR; curNode = nextNode)
     {
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
@@ -2004,18 +1841,18 @@ void TR_CompleteMsgList(void)
 
         // set the next mail as the active one for the display,
         // so that if the user pauses we can go on here
-        tr->GMD_Mail = curNode->mln_Succ;
+        tr->GMD_Mail = (struct MinNode *)nextNode;
       }
     }
   }
 
-  set(G->TR->GUI.BT_PAUSE, MUIA_Disabled, TRUE);
+  set(tr->GUI.BT_PAUSE, MUIA_Disabled, TRUE);
   DoMethod(tr->GUI.BT_START, MUIM_KillNotify, MUIA_Pressed);
   DoMethod(tr->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_ProcessGETHook);
   DoMethod(tr->GUI.BT_QUIT , MUIM_KillNotify, MUIA_Pressed);
   DoMethod(tr->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_AbortGETHook);
 
-  if(tr->Abort == TRUE)
+  if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE)
     TR_AbortGETFunc();
   else
   {
@@ -2073,56 +1910,10 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
       Object *bt_all = NULL, *bt_none = NULL, *bt_loadonly = NULL, *bt_loaddel = NULL, *bt_delonly = NULL, *bt_leave = NULL;
       Object *gr_sel, *gr_proc, *gr_win;
       BOOL fullwin = (TRmode == TR_GET_USER || TRmode == TR_GET_AUTO || TRmode == TR_IMPORT);
-      static char status_label[SIZE_DEFAULT];
-      static char size_gauge_label[SIZE_DEFAULT];
-      static char msg_gauge_label[SIZE_DEFAULT];
-      static char str_size_done[SIZE_SMALL];
-      static char str_size_tot[SIZE_SMALL];
-      static char str_speed[SIZE_SMALL];
-      static char str_size_curr[SIZE_SMALL];
-      static char str_size_curr_max[SIZE_SMALL];
 
       NewList((struct List *)&data->transferList);
 
-      // prepare the initial text object content
-      FormatSize(0, str_size_done, sizeof(str_size_done), SF_MIXED);
-      FormatSize(0, str_size_tot, sizeof(str_size_tot), SF_MIXED);
-      FormatSize(0, str_speed, sizeof(str_speed), SF_MIXED);
-      snprintf(status_label, sizeof(status_label), tr(MSG_TR_TRANSFERSTATUS),
-                                      str_size_done, str_size_tot, str_speed, 0, 0, 0, 0);
-
-      snprintf(msg_gauge_label, sizeof(msg_gauge_label), tr(MSG_TR_MESSAGEGAUGE), 0);
-
-      FormatSize(0, str_size_curr, sizeof(str_size_curr), SF_AUTO);
-      FormatSize(0, str_size_curr_max, sizeof(str_size_curr_max), SF_AUTO);
-      snprintf(size_gauge_label, sizeof(size_gauge_label), tr(MSG_TR_TRANSFERSIZE),
-                                                           str_size_curr, str_size_curr_max);
-
-      gr_proc = ColGroup(2), GroupFrameT(tr(MSG_TR_Status)),
-         Child, data->GUI.TX_STATS = TextObject,
-            MUIA_Text_Contents, status_label,
-            MUIA_Background,    MUII_TextBack,
-            MUIA_Frame,         MUIV_Frame_Text,
-            MUIA_Text_PreParse, MUIX_C,
-         End,
-         Child, VGroup,
-            Child, data->GUI.GA_COUNT = GaugeObject,
-               GaugeFrame,
-               MUIA_Gauge_Horiz,    TRUE,
-               MUIA_Gauge_InfoText, msg_gauge_label,
-            End,
-            Child, data->GUI.GA_BYTES = GaugeObject,
-               GaugeFrame,
-               MUIA_Gauge_Horiz,    TRUE,
-               MUIA_Gauge_InfoText, size_gauge_label,
-            End,
-         End,
-         Child, data->GUI.TX_STATUS = TextObject,
-            MUIA_Background,MUII_TextBack,
-            MUIA_Frame     ,MUIV_Frame_Text,
-         End,
-         Child, data->GUI.BT_ABORT = MakeButton(tr(MSG_TR_Abort)),
-      End;
+      gr_proc = TransferControlGroupObject, End;
 
       if(fullwin == TRUE)
       {
@@ -2177,9 +1968,10 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
 
       if(data->GUI.WI != NULL)
       {
+        data->GUI.GR_STATS = gr_proc;
+
         DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-        SetHelp(data->GUI.TX_STATUS,MSG_HELP_TR_TX_STATUS);
-        SetHelp(data->GUI.BT_ABORT ,MSG_HELP_TR_BT_ABORT);
+        set(gr_proc, MUIA_TransferControlGroup_PreselectionList, data->GUI.GR_LIST);
 
         if(fullwin == TRUE)
         {
@@ -2211,7 +2003,6 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
           DoMethod(bt_all,             MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
           DoMethod(bt_none,            MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
         }
-        DoMethod(data->GUI.BT_ABORT, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
         MA_ChangeTransfer(FALSE);
       }
       else

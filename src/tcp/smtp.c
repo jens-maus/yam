@@ -42,9 +42,11 @@
 #include "Locale.h"
 #include "MailList.h"
 #include "MailServers.h"
+#include "MUIObjects.h"
 
 #include "mime/base64.h"
 #include "mime/md5.h"
+#include "mui/Classes.h"
 #include "tcp/Connection.h"
 
 #include "extrasrc.h"
@@ -146,7 +148,7 @@ static BOOL TR_InitSTARTTLS(void)
   {
     // If we end up here the server supports STARTTLS and we can start
     // initializing the connection
-    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_INITTLS));
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_INITTLS));
 
     // Now we initiate the STARTTLS command (RFC 2487)
     if(TR_SendSMTPCmd(ESMTP_STARTTLS, NULL, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)
@@ -184,7 +186,7 @@ static BOOL TR_InitSMTPAUTH(void)
 
   ENTER();
 
-  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SENDAUTH));
+  DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_SENDAUTH));
 
 #warning FIXME: replace GetMailServer() usage when struct Connection is there
   if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) == NULL)
@@ -911,7 +913,7 @@ static BOOL TR_ConnectSMTP(void)
   // one we have wait for the welcome
   if(G->TR_UseTLS == FALSE || hasServerSSL(msn))
   {
-    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_WaitWelcome));
 
     result = (TR_SendSMTPCmd(SMTP_CONNECT, NULL, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL);
   }
@@ -930,7 +932,7 @@ static BOOL TR_ConnectSMTP(void)
     SET_FLAG(flags, SMTP_FLG_ESMTP);
 
     // set the connection status
-    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendHello));
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_SendHello));
 
     D(DBF_NET, "trying ESMTP negotation");
 
@@ -1058,7 +1060,7 @@ static BOOL TR_ConnectSMTP(void)
 /// TR_SendMessage
 // Sends a single message (-1 signals an error in DATA phase, 0 signals
 // error in start phase, 1 and 2 signals success)
-static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
+static int TR_SendMessage(struct Mail *mail)
 {
   int result = 0;
   struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
@@ -1169,7 +1171,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
             // as long there is no abort situation we go on reading out
             // from the stream and sending it to our SMTP server
-            while(G->TR->Abort == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR &&
+            while(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR &&
                   (curlen = getline(&buf, &buflen, fh)) > 0)
             {
               #if defined(DEBUG)
@@ -1245,12 +1247,12 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                   sentbytes += 2;
               }
 
-              TR_TransStat_Update(ts, proclen, tr(MSG_TR_Sending));
+              DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, proclen, tr(MSG_TR_Sending));
             }
 
-            D(DBF_NET, "transfered %ld bytes (raw: %ld bytes) error: %ld/%ld", sentbytes, mail->Size, G->TR->Abort, G->Error);
+            D(DBF_NET, "transfered %ld bytes (raw: %ld bytes) error: %ld/%ld", sentbytes, mail->Size, xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted), G->TR->connection->error);
 
-            if(G->TR->Abort == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR)
+            if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR)
             {
               // check if any of the above getline() operations caused a ferror or
               // if we didn't walk until the end of the mail file
@@ -1273,7 +1275,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                 if(TR_SendSMTPCmd(SMTP_FINISH, NULL, tr(MSG_ER_BADRESPONSE_SMTP)) != NULL)
                 {
                   // put the transferStat to 100%
-                  TR_TransStat_Update(ts, TS_SETMAX, tr(MSG_TR_Sending));
+                  DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Sending));
 
                   // now that we are at 100% we have to set the transfer Date of the message
                   GetSysTimeUTC(&mail->Reference->transDate);
@@ -1284,7 +1286,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
               }
             }
 
-            if(G->TR->Abort == TRUE || G->Error == TRUE)
+            if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
               result = -1; // signal the caller that we aborted within the DATA part
           }
         }
@@ -1342,8 +1344,6 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
 
         NewList((struct List *)&G->TR->transferList);
         G->TR_Allow = FALSE;
-        G->TR->Abort = FALSE;
-        G->Error = FALSE;
 
         // now we build the list of mails which should
         // be transfered.
@@ -1398,11 +1398,10 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
             int port;
             char *p;
             char host[SIZE_HOST];
-            struct TransStat ts;
 
             G->TR->SearchCount = AllocFilterSearch(APPLY_SENT);
-            TR_TransStat_Init(&ts);
-            TR_TransStat_Start(&ts);
+            TR_TransStat_Init();
+            DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start);
             strlcpy(host, msn->hostname, sizeof(host));
 
             // If the hostname has a explicit :xxxxx port statement at the end we
@@ -1415,7 +1414,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
             else
               port = msn->port;
 
-            set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Connecting));
+            DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
 
             BusyText(tr(MSG_TR_MailTransferTo), host);
 
@@ -1489,12 +1488,12 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
                   struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
                   struct Mail *mail = mtn->mail;
 
-                  if(G->TR->Abort == TRUE || G->Error == TRUE)
+                  if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
                     break;
 
-                  TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, tr(MSG_TR_Sending));
+                  DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Next, mtn->index, -1, mail->Size, tr(MSG_TR_Sending));
 
-                  switch(TR_SendMessage(&ts, mail))
+                  switch(TR_SendMessage(mail))
                   {
                     // -1 means that SendMessage was aborted within the
                     // DATA part and so we cannot issue a RSET command and have to abort
@@ -1502,7 +1501,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
                     case -1:
                     {
                       setStatusToError(mail->Reference);
-                      G->Error = TRUE;
+                      G->TR->connection->error = CONNECTERR_UNKNOWN_ERROR;
                     }
                     break;
 
@@ -1512,7 +1511,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
                     {
                       setStatusToError(mail->Reference);
                       TR_SendSMTPCmd(SMTP_RSET, NULL, NULL); // no error check
-                      G->Error = FALSE;
+                      G->TR->connection->error = CONNECTERR_NO_ERROR;
                     }
                     break;
 
@@ -1536,18 +1535,18 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
                   }
                 }
 
-                if(G->Error == FALSE)
+                if(G->TR->connection->error == CONNECTERR_NO_ERROR)
                   AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_Sending), c, host);
                 else
                   AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_SENDING_FAILED), c, host);
 
                 // now we can disconnect from the SMTP
                 // server again
-                set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
+                DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Disconnecting));
 
                 // send a 'QUIT' command, but only if
                 // we didn't receive any error during the transfer
-                if(G->Error == FALSE)
+                if(G->TR->connection->error == CONNECTERR_NO_ERROR)
                   TR_SendSMTPCmd(SMTP_QUIT, NULL, tr(MSG_ER_BADRESPONSE_SMTP));
               }
               else
@@ -1567,7 +1566,7 @@ BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode)
               TR_Disconnect();
             }
 
-            TR_TransStat_Finish(&ts);
+            DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Finish);
 
             // if we got an error here, let's throw it
             switch(err)

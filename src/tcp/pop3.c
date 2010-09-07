@@ -52,6 +52,7 @@
 #include "UIDL.h"
 
 #include "mime/md5.h"
+#include "mui/Classes.h"
 #include "tcp/Connection.h"
 
 #include "extrasrc.h"
@@ -101,7 +102,7 @@ static BOOL FilterDuplicates(void);
 // function that receives data from a POP3 server until it receives a \r\n.\r\n termination
 // line. It automatically writes that data to the supplied filehandle and if present also
 // updates the Transfer status
-static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
+static int TR_RecvToFile(FILE *fh, const char *filename)
 {
   int l=0, read, state=0, count;
   char buf[SIZE_LINE];
@@ -113,10 +114,9 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
 
   // get the first data the pop server returns after the TOP command
   if((read = count = ReceiveFromHost(G->TR->connection, buf, sizeof(buf))) <= 0)
-    G->Error = TRUE;
+    G->TR->connection->error = CONNECTERR_UNKNOWN_ERROR;
 
-  D(DBF_NET, "got %ld, expected %ld", G->TR->connection->error, CONNECTERR_NO_ERROR);
-  while(G->TR->connection->error == CONNECTERR_NO_ERROR && G->TR->Abort == FALSE)
+  while(G->TR->connection->error == CONNECTERR_NO_ERROR && xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE)
   {
     char *bufptr;
 
@@ -131,8 +131,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
       if(l == sizeof(line) || done == TRUE)
       {
         // update the transfer status
-        if(ts != NULL)
-          TR_TransStat_Update(ts, l, tr(MSG_TR_Downloading));
+        DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, l, tr(MSG_TR_Downloading));
 
         // write the line to the file now
         if(fwrite(line, 1, l, fh) != (size_t)l)
@@ -266,7 +265,7 @@ static int TR_RecvToFile(FILE *fh, const char *filename, struct TransStat *ts)
     }
 
     // if we received the term octet we can exit the while loop now
-    if(done == TRUE || G->Error == TRUE || G->TR->Abort == TRUE)
+    if(done == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR || xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE)
       break;
 
     // if not, we get another bunch of data and start over again.
@@ -415,7 +414,7 @@ static int TR_ConnectPOP(int guilevel)
     if(xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
       set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
   }
-  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Connecting));
+  DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
 
   // If the hostname has a explicit :xxxxx port statement at the end we
   // take this one, even if its not needed anymore.
@@ -502,7 +501,7 @@ static int TR_ConnectPOP(int guilevel)
   // message now and then send the STLS command to start TLS negotiation
   if(hasServerTLS(msn))
   {
-    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_WaitWelcome));
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_WaitWelcome));
 
     // Initiate a connect and see if we succeed
     if((resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
@@ -519,7 +518,7 @@ static int TR_ConnectPOP(int guilevel)
   // Here start the TLS/SSL Connection stuff
   if(hasServerSSL(msn) || hasServerTLS(msn))
   {
-    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_INITTLS));
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_INITTLS));
 
     // Now we have to Initialize and Start the TLS stuff if requested
     if(MakeSecureConnection(G->TR->connection) == TRUE)
@@ -576,7 +575,7 @@ static int TR_ConnectPOP(int guilevel)
       md5final(digest, &context);
       md5digestToHex(digest, digestHex);
       snprintf(buf, sizeof(buf), "%s %s", msn->username, digestHex);
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendAPOPLogin));
+      DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_SendAPOPLogin));
       if(TR_SendPOP3Cmd(POPCMD_APOP, buf, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
         goto out;
     }
@@ -588,16 +587,16 @@ static int TR_ConnectPOP(int guilevel)
   }
   else
   {
-    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendUserID));
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_SendUserID));
     if(TR_SendPOP3Cmd(POPCMD_USER, msn->username, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
       goto out;
 
-    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_SendPassword));
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_SendPassword));
     if(TR_SendPOP3Cmd(POPCMD_PASS, passwd, tr(MSG_ER_BADRESPONSE_POP3)) == NULL)
       goto out;
   }
 
-  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_GetStats));
+  DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_GetStats));
   if((resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, tr(MSG_ER_BADRESPONSE_POP3))) == NULL)
     goto out;
 
@@ -769,7 +768,7 @@ void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 
   ENTER();
 
-  if(mail->From.Address[0] == '\0' && G->TR->Abort == FALSE && G->Error == FALSE)
+  if(mail->From.Address[0] == '\0' && xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR)
   {
     char cmdbuf[SIZE_SMALL];
 
@@ -791,7 +790,7 @@ void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 
         // now we call a subfunction to receive data from the POP3 server
         // and write it in the filehandle as long as there is no termination \r\n.\r\n
-        if(TR_RecvToFile(tf->FP, tf->Filename, NULL) > 0)
+        if(TR_RecvToFile(tf->FP, tf->Filename) > 0)
           done = TRUE;
 
         // close the filehandle now.
@@ -800,7 +799,7 @@ void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 
         // If we end up here because of an error, abort or the upper loop wasn't finished
         // we exit immediatly with deleting the temp file also.
-        if(G->TR->connection->error != CONNECTERR_NO_ERROR || G->TR->Abort == TRUE || done == FALSE)
+        if(G->TR->connection->error != CONNECTERR_NO_ERROR || xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE || done == FALSE)
           lline = -1;
         else if((email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)) != NULL)
         {
@@ -852,9 +851,9 @@ static void TR_DisconnectPOP(void)
 {
   ENTER();
 
-  set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_Disconnecting));
+  DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Disconnecting));
 
-  if(G->Error == FALSE)
+  if(G->TR->connection->error == CONNECTERR_NO_ERROR)
     TR_SendPOP3Cmd(POPCMD_QUIT, NULL, tr(MSG_ER_BADRESPONSE_POP3));
 
   // make sure we don't send a "keep alive" signal anymore
@@ -923,6 +922,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     else
       G->TR->POP_Nr = -1;
     laststats = 0;
+
+    set(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Connection, G->TR->connection);
   }
   else if(G->TR->mailServer != NULL) /* Finish previous connection */
   {
@@ -1035,32 +1036,13 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
   // begin
   G->TR->POP_Nr = pop;
   G->TR_Allow = FALSE;
-  G->TR->Abort = FALSE;
   G->TR->Pause = FALSE;
   G->TR->Start = FALSE;
-  G->Error = FALSE;
 
   // if the window isn't open we don't need to update it, do we?
   if(isfirst == FALSE && xget(G->TR->GUI.WI, MUIA_Window_Open) == TRUE)
   {
-    char str_size_curr[SIZE_SMALL];
-    char str_size_curr_max[SIZE_SMALL];
-
-    // reset the statistics display
-    snprintf(G->TR->CountLabel, sizeof(G->TR->CountLabel), tr(MSG_TR_MESSAGEGAUGE), 0);
-    xset(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
-                              MUIA_Gauge_Max,      0,
-                              MUIA_Gauge_Current,  0);
-
-    // and last, but not least update the gauge.
-    FormatSize(0, str_size_curr, sizeof(str_size_curr), SF_AUTO);
-    FormatSize(0, str_size_curr_max, sizeof(str_size_curr_max), SF_AUTO);
-    snprintf(G->TR->BytesLabel, sizeof(G->TR->BytesLabel), tr(MSG_TR_TRANSFERSIZE),
-                                                           str_size_curr, str_size_curr_max);
-
-    xset(G->TR->GUI.GA_BYTES, MUIA_Gauge_InfoText, G->TR->BytesLabel,
-                              MUIA_Gauge_Max,      0,
-                              MUIA_Gauge_Current,  0);
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Reset);
   }
 
   if((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)
@@ -1081,7 +1063,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
         {
           struct Node *curNode;
 
-          set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_ApplyFilters));
+          DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_ApplyFilters));
           IterateList(&G->TR->transferList, curNode)
             TR_GetMessageDetails((struct MailTransferNode *)curNode, -2);
         }
@@ -1213,7 +1195,7 @@ BOOL TR_SendPOP3KeepAlive(void)
 ///
 /// TR_LoadMessage
 //  Retrieves a message from the POP3 server
-BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const int number)
+BOOL TR_LoadMessage(struct Folder *infolder, const int number)
 {
   static char mfile[SIZE_MFILE];
   char msgnum[SIZE_SMALL];
@@ -1238,12 +1220,12 @@ BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const int num
     {
       // now we call a subfunction to receive data from the POP3 server
       // and write it in the filehandle as long as there is no termination \r\n.\r\n
-      if(TR_RecvToFile(fh, msgfile, ts) > 0)
+      if(TR_RecvToFile(fh, msgfile) > 0)
         done = TRUE;
     }
     fclose(fh);
 
-    if(G->TR->Abort == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR && done == TRUE)
+    if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR && done == TRUE)
     {
       struct ExtendedMail *mail;
 
@@ -1296,7 +1278,7 @@ BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const int num
 ///
 /// TR_DeleteMessage
 //  Deletes a message on the POP3 server
-BOOL TR_DeleteMessage(struct TransStat *ts, int number)
+BOOL TR_DeleteMessage(int number)
 {
   BOOL result = FALSE;
   char msgnum[SIZE_SMALL];
@@ -1305,7 +1287,8 @@ BOOL TR_DeleteMessage(struct TransStat *ts, int number)
 
   snprintf(msgnum, sizeof(msgnum), "%d", number);
 
-  TR_TransStat_Update(ts, TS_SETMAX, tr(MSG_TR_DeletingServerMail));
+  // update the transfer status
+  DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_DeletingServerMail));
 
   if(TR_SendPOP3Cmd(POPCMD_DELE, msgnum, tr(MSG_ER_BADRESPONSE_POP3)) != NULL)
   {
@@ -1338,7 +1321,7 @@ static BOOL FilterDuplicates(void)
     if(IsMinListEmpty(&G->TR->transferList) == FALSE)
     {
       // inform the user of the operation
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, tr(MSG_TR_CHECKUIDL));
+      DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_CHECKUIDL));
 
       // before we go and request each UIDL of a message we check wheter the server
       // supports the UIDL command at all
@@ -1351,7 +1334,7 @@ static BOOL FilterDuplicates(void)
         {
           // we get the "unique-id list" as long as we haven't received a
           // finishing octet
-          while(G->TR->Abort == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR && strncmp(buf, ".\r\n", 3) != 0)
+          while(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR && strncmp(buf, ".\r\n", 3) != 0)
           {
             int num;
             char uidl[SIZE_DEFAULT+SIZE_HOST];
@@ -1397,7 +1380,7 @@ static BOOL FilterDuplicates(void)
                 break;
               }
 
-              if(G->TR->Abort == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
+              if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
                 break;
             }
 
@@ -1450,12 +1433,12 @@ static BOOL FilterDuplicates(void)
             }
           }
 
-          if(G->TR->Abort == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
+          if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
             break;
         }
       }
 
-      result = (G->TR->Abort == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR);
+      result = (xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR);
     }
     else
       result = TRUE;

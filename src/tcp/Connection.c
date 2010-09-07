@@ -725,9 +725,15 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
                       timeoutSum += 1; // +1s
 
                       if(timeoutSum >= C->SocketTimeout)
+                      {
+                        conn->error = CONNECTERR_TIMEDOUT;
                         break;
-                      if(conn->connectedFromMainThread == TRUE && G->TR != NULL && G->TR->Abort == TRUE)
+                      }
+                      else if(conn->abort == TRUE)
+                      {
+                        conn->error = CONNECTERR_ABORTED;
                         break;
+                      }
                     }
 
                     // we do a static timeout of 1s
@@ -848,7 +854,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
 
         // if the user pressed the abort button in the transfer
         // window we have to exit the loop
-        if(IsMainThread() == TRUE && G->TR != NULL && G->TR->Abort == TRUE)
+        if(conn->abort == TRUE)
         {
           conn->error = CONNECTERR_ABORTED;
           break;
@@ -1046,9 +1052,15 @@ BOOL MakeSecureConnection(struct Connection *conn)
                               timeoutSum += 1; // +1s
 
                               if(timeoutSum >= C->SocketTimeout)
+                              {
+                                conn->error = CONNECTERR_TIMEDOUT;
                                 break;
-                              if(conn->connectedFromMainThread == TRUE && G->TR != NULL && G->TR->Abort == TRUE)
+                              }
+                              else if(conn->abort == TRUE)
+                              {
+                                conn->error = CONNECTERR_ABORTED;
                                 break;
+                              }
                             }
 
                             // we do a static timeout of 1s
@@ -1269,9 +1281,15 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
                 timeoutSum += 1; // +1s
 
                 if(timeoutSum >= C->SocketTimeout)
+                {
+                  conn->error = CONNECTERR_TIMEDOUT;
                   break;
-                if(conn->connectedFromMainThread == TRUE && G->TR != NULL && G->TR->Abort == TRUE)
+                }
+                else if(conn->abort == TRUE)
+                {
+                  conn->error = CONNECTERR_ABORTED;
                   break;
+                }
               }
 
               // we do a static timeout of 1s
@@ -1402,9 +1420,15 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
                 timeoutSum += 1; // +1s
 
                 if(timeoutSum >= C->SocketTimeout)
+                {
+                  conn->error = CONNECTERR_TIMEDOUT;
                   break;
-                if(conn->connectedFromMainThread == TRUE && G->TR != NULL && G->TR->Abort == TRUE)
+                }
+                else if(conn->abort == TRUE)
+                {
+                  conn->error = CONNECTERR_ABORTED;
                   break;
+                }
               }
 
               // we do a static timeout of 1s
@@ -1527,6 +1551,8 @@ static int ReadFromHostBuffered(struct Connection *conn, char *ptr, const int ma
 
     result = fillCount;
   }
+  else
+    conn->error = CONNECTERR_UNKNOWN_ERROR;
 
   RETURN(result);
   return result;
@@ -1733,9 +1759,15 @@ static int WriteToHost(struct Connection *conn, const char *ptr, const int len)
                 timeoutSum += 1; // +1s
 
                 if(timeoutSum >= C->SocketTimeout)
+                {
+                  conn->error = CONNECTERR_TIMEDOUT;
                   break;
-                if(conn->connectedFromMainThread == TRUE && G->TR != NULL && G->TR->Abort == TRUE)
+                }
+                else if(conn->abort == TRUE)
+                {
+                  conn->error = CONNECTERR_ABORTED;
                   break;
+                }
               }
 
               // we do a static timeout of 1s
@@ -1874,9 +1906,15 @@ static int WriteToHost(struct Connection *conn, const char *ptr, const int len)
                 timeoutSum += 1; // +1s
 
                 if(timeoutSum >= C->SocketTimeout)
+                {
+                  conn->error = CONNECTERR_TIMEDOUT;
                   break;
-                if(conn->connectedFromMainThread == TRUE && G->TR != NULL && G->TR->Abort == TRUE)
+                }
+                else if(conn->abort == TRUE)
+                {
+                  conn->error = CONNECTERR_ABORTED;
                   break;
+                }
               }
 
               // we do a static timeout of 1s

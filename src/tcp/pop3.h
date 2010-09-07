@@ -30,13 +30,12 @@
 
 // forward declarations
 struct MailTransferNode;
-struct TransStat;
 struct Folder;
 
 // prototypes
 void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline);
-BOOL TR_DeleteMessage(struct TransStat *ts, int number);
-BOOL TR_LoadMessage(struct Folder *infolder, struct TransStat *ts, const int number);
+BOOL TR_DeleteMessage(int number);
+BOOL TR_LoadMessage(struct Folder *infolder, const int number);
 void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel);
 BOOL TR_SendPOP3KeepAlive(void);
 

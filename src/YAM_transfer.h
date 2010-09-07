@@ -77,29 +77,6 @@ enum PreSelMode     { PSM_NEVER=0, PSM_LARGE, PSM_ALWAYS, PSM_ALWAYSLARGE };
 
 #define TCP_NO_SOCKET -1
 
-// structure for calculation and management
-// of the transfer statistics
-struct TransStat
-{
-  int Msgs_Tot;
-  int Msgs_Done;
-  int Msgs_Curr;
-  int Msgs_ListPos;
-  ULONG Size_Tot;
-  ULONG Size_Done;
-  ULONG Size_Curr;
-  ULONG Size_Curr_Max;
-  ULONG Clock_Start;
-  struct TimeVal Clock_Last;
-  char str_size_tot[SIZE_SMALL];
-  char str_size_done[SIZE_SMALL];
-  char str_size_curr[SIZE_SMALL];
-  char str_size_curr_max[SIZE_SMALL];
-  char str_speed[SIZE_SMALL];
-};
-
-#define TS_SETMAX   (-1)
-
 // Socket Options a user can set in .config
 // if a value was not specified by the user it is either -1 or
 // FALSE for a boolean.
@@ -135,12 +112,7 @@ struct TR_GUIData
   Object *BT_RESUME;
   Object *BT_QUIT;
   Object *BT_START;
-  Object *TX_STATS;
-  Object *TX_STATUS;
-  Object *GA_COUNT;
-  Object *GA_BYTES;
-  Object *BT_ABORT;
-  char *ST_STATUS;
+  Object *GR_STATS;
 };
 
 enum GUILevel
@@ -193,9 +165,6 @@ struct TR_ClassData
 
   char                    WTitle[SIZE_DEFAULT];
   char                    ImportFile[SIZE_PATHFILE];
-  char                    CountLabel[SIZE_DEFAULT];
-  char                    BytesLabel[SIZE_DEFAULT];
-  char                    StatsLabel[SIZE_DEFAULT];
 };
 
 extern struct Hook TR_ProcessGETHook;
@@ -217,10 +186,6 @@ void TR_NewMailAlert(void);
 void TR_CompleteMsgList(void);
 void TR_AbortnClose(void);
 
-void TR_TransStat_Init(struct TransStat *ts);
-void TR_TransStat_Start(struct TransStat *ts);
-void TR_TransStat_Update(struct TransStat *ts, int size_incr, const char *status);
-void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size, const char *status);
-void TR_TransStat_Finish(struct TransStat *ts);
+void TR_TransStat_Init(void);
 
 #endif /* YAM_TRANSFER_H */

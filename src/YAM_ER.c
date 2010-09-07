@@ -68,12 +68,6 @@ void ER_NewError(const char *error, ...)
 
   ENTER();
 
-  // we only signal an error if we really have one,
-  // otherwise calling this function with error=NULL is just
-  // for showing the last errors,
-  if(error != NULL)
-    G->Error = TRUE;
-
   if(G->ER == NULL)
   {
     if((G->ER = ER_New()) == NULL)
@@ -254,5 +248,5 @@ static struct ER_ClassData *ER_New(void)
   RETURN(data);
   return data;
 }
-///
 
+///

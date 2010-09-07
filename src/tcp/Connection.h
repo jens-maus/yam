@@ -90,6 +90,7 @@ struct Connection
 
   BOOL connectedFromMainThread;  // who created this connection?
   BOOL isConnected;              // has ConnectToHost() been called before?
+  BOOL abort;                    // should the connection be aborted?
 };
 
 struct Connection *CreateConnection(void);

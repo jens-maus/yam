@@ -140,7 +140,6 @@ struct Global
   uint32                   applicationID;
   #endif
 
-  BOOL                     Error;
   BOOL                     PGP5;
   BOOL                     AppIconQuiet;
   BOOL                     PGPPassVolatile;

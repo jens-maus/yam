@@ -7,6 +7,10 @@ $URL$
 
 2010-09-07 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c, mui/TransferControlGroup.c: split off the transfer statistics into
+    a separate subclass of Group.mui. This new group handles everything which
+    was done by the TR_TransStat_#? functions before. This makes it possible to
+    get rid of some more global variables.
   * YAM_MA.c: slightly optimized the "update status" process by not updating the
     AppIcon after each processed folder.
   * HTML2Mail.l: added some new HTML tags to allow better parsing of SVN commit

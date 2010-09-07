@@ -446,6 +446,7 @@ MUIOBJS = \
 	Splashwindow.o \
 	StringRequestWindow.o \
 	ThemeListGroup.o \
+	TransferControlGroup.o \
 	TransferMailList.o \
 	UpdateNotifyWindow.o \
 	WriteAttachmentList.o \
