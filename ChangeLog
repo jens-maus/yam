@@ -7,6 +7,7 @@ $URL$
 
 2010-09-07 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tools/mkrelease.sh: fixed archive generation.
   * doc/Install-YAM: bumped to "2.6p1".
 
 2010-09-01 Thore Böckelmann <tboeckel@gmx.de>
