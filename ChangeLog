@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * HTML2Mail.l: added some new HTML tags to allow better parsing of SVN commit
+    mails.
+
 2010-09-06 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fix another shortcut in addressbook, this solve #204.

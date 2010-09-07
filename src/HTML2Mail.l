@@ -100,8 +100,14 @@ UNKNOWN_CHAR  "&""#"?[[:alnum:]]+";"
 <tag_s>"div"{TAGEND}        { BEGIN(INITIAL); return ht_DIV;        }
 <tag_s>"hr"{TAGEND}         { BEGIN(INITIAL); return ht_HR;         }
 <tag_s>"/"?"p"{TAGEND}      { BEGIN(INITIAL); return ht_PARAGRAPH;  }
+<tag_s>"/h"[[:digit:]]">"   { BEGIN(INITIAL); return ht_HEAD;       }
 <tag_s>"a "{NOT_GT}"href="  { BEGIN(href);    D(DBF_HTML, "<a href=: '%s'", yytext); }
 <tag_s>"/a>"                { BEGIN(INITIAL); return ht_HREF_END;   }
+<tag_s>"/dd>"               { BEGIN(INITIAL); return ht_DD;         }
+<tag_s>"/dl>"               { BEGIN(INITIAL); return ht_DL;         }
+<tag_s>"/ul>"               { BEGIN(INITIAL); return ht_UL;         }
+<tag_s>"/li>"               { BEGIN(INITIAL); return ht_LI;         }
+<tag_s>"/pre>"              { BEGIN(INITIAL); return ht_PRE;        }
 <tag_s>">"                  BEGIN(INITIAL);
 <tag_s,tag_e>">"            BEGIN(INITIAL);
 <tag_s>.|\n                 BEGIN(tag_e);
@@ -273,7 +279,16 @@ char *html2mail(char *htmlTxt)
           case ht_PARAGRAPH:
           case ht_BR:
           case ht_DIV:
+          case ht_DD:
+          case ht_DL:
+          case ht_UL:
+          case ht_LI:
+          case ht_HEAD:
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+          break;
+
+          case ht_PRE:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n\n");
           break;
 
           case ht_HR:

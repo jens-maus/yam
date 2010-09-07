@@ -41,6 +41,12 @@ enum htmlTagType
   ht_COMMENT,
   ht_HREF,
   ht_HREF_END,
+  ht_DD,
+  ht_DL,
+  ht_UL,
+  ht_LI,
+  ht_PRE,
+  ht_HEAD,
   ht_UNKNOWN,
 
   ht_SP = 32,
