@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.13 (01.03.2010) (c) 2000-2010 by YAM Open Source Team
+; $VER: Install-YAM 1.14 (07.09.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sφnke Tesch/ATO
 ;
 ; $Id$
@@ -44,15 +44,15 @@
                                "YAM 2.4 installation)\n"
                                "\n"
                                "The mail naming scheme has been changed completely.\n"
-                               "When you run YAM 2.6 for the first time all your\n"
+                               "When you run YAM 2.6p1 for the first time all your\n"
                                "existing mails will be converted automatically to\n"
                                "the new scheme. After that YAM 2.4 will not be able\n"
                                "to handle them anymore\n"
                                "So better backup ALL your mails BEFORE running\n"
-                               "YAM 2.6.\n"
+                               "YAM 2.6p1.\n"
                                "\n"
                                "However, it is absolutely NO problem to install"
-                               "YAM 2.4 and YAM 2.6 in separate directories."))
+                               "YAM 2.4 and YAM 2.6p1 in separate directories."))
 (set #faq_and_bugtracker (cat "\n"
                               "If you have any questions concerning YAM\n"
                               "you can ask these in the YAM forum:\n"
@@ -103,12 +103,12 @@
                                        "YAM 2.4 updaten wollen)\n"
                                        "\n"
                                        "Das Namensformat der EMail-Dateien wurde grundlegend geδndert.\n"
-                                       "Wenn Sie YAM 2.6 zum ersten Mal starten werden alle Ihre EMails\n"
+                                       "Wenn Sie YAM 2.6p1 zum ersten Mal starten werden alle Ihre EMails\n"
                                        "automatisch auf das neue Namensformat konvertiert. Danach\n"
                                        "kφnnen sie NICHT mehr von YAM 2.4 verarbeitet werden.\n"
-                                       "Machen Sie also besser ein Backup BEVOR Sie YAM 2.6 starten.\n"
+                                       "Machen Sie also besser ein Backup BEVOR Sie YAM 2.6p1 starten.\n"
                                        "\n"
-                                       "Es ist absolut KEIN Problem YAM 2.4 und YAM 2.6 in unter-\n"
+                                       "Es ist absolut KEIN Problem YAM 2.4 und YAM 2.6p1 in unter-\n"
                                        "schiedlichen Verzeichnissen zu installieren."))
         (set #done_1   (cat "\n"
                             "YAM wurde erfolgreich installiert.\n"
@@ -135,14 +135,14 @@
                                        "YAM 2.4 installation)\n"
                                        "\n"
                                        "Namn schemat fφr mailfilerna har δndrats totalt.\n"
-                                       "Nδr du kφr YAM 2.6 fφr fφrsta gεngen, kommer alla\n"
+                                       "Nδr du kφr YAM 2.6p1 fφr fφrsta gεngen, kommer alla\n"
                                        "dina nuvarande mailfiler att konverteras automatiskt till\n"
                                        "det nya schemat. Efter det kommer inte YAM 2.4 att kunna\n"
                                        "hantera dem lδngre.\n"
-                                       "Sε, backa upp ALLA dina mailfiler FΦRE du kφr YAM 2.6.\n"
+                                       "Sε, backa upp ALLA dina mailfiler FΦRE du kφr YAM 2.6p1.\n"
                                        "\n"
                                        "Men, det δr absolut INGA problem att installera\n"
-                                       "YAM 2.4 och YAM 2.6 i separata kataloger."))
+                                       "YAM 2.4 och YAM 2.6p1 i separata kataloger."))
         (set #faq_and_bugtracker (cat "\n"
                                       "Om du har nεgra frεgor rφrande YAM\n"
                                       "kan du frεga dessa i YAM's forum:\n"
@@ -181,14 +181,14 @@
                                        "existante de YAM 2.4)\n"
                                        "\n"
                                        "Le schιma de nommage des messages a complθtement changι.\n"
-                                       "Lorsque vous lancez YAM 2.6 pour la premiθre fois, tous vos\n"
+                                       "Lorsque vous lancez YAM 2.6p1 pour la premiθre fois, tous vos\n"
                                        "messages existants seront automatiquement convertis. Aprθs\n"
                                        "cela YAM 2.4 ne pourra plus les gιrer.\n"
                                        "Vous devriez donc faire une sauvegarde de TOUS vos messages\n"
-                                       "AVANT de lancer YAM 2.6.\n"
+                                       "AVANT de lancer YAM 2.6p1.\n"
                                        "\n"
                                        "Cependant, il n'y a absolument AUCUN problθme ΰ installer\n"
-                                       "YAM 2.4 et 2.6 dans des rιpertoires diffιrents."))
+                                       "YAM 2.4 et 2.6p1 dans des rιpertoires diffιrents."))
         (set #faq_and_bugtracker (cat "\n"
                                       "Si vous avez des questions concernant YAM\n"
                                       "vous pouvez les poser sur le forum :\n"
@@ -313,15 +313,15 @@
                                        "εγκατάσταση του YAM 2.4)\n"
                                        "\n"
                                        "Η μορφή ονομάτων αλληλογραφίας έχει αλλάξει εντελώς.\n"
-                                       "Όταν τρέξετε το YAM 2.6 για πρώτη φορά όλες οι\n"
+                                       "Όταν τρέξετε το YAM 2.6p1 για πρώτη φορά όλες οι\n"
                                        "υπάρχουσες αλληλογραφίες θα μετατραπούν αυτόματα στη\n"
                                        "νέα μορφή. Μετά από αυτό, το YAM 2.4 δε θα μπορεί να\n"
                                        "τις χειριστεί πλέον.\n"
                                        "Έτσι είναι καλύτερα να κάνετε αντίγραφο ασφαλείας σε\n"
-                                       "ΌΛΕΣ τις αλληλογραφίες σας ΠΡΙΝ τρέξετε το YAM 2.6.\n"
+                                       "ΌΛΕΣ τις αλληλογραφίες σας ΠΡΙΝ τρέξετε το YAM 2.6p1.\n"
                                        "\n"
                                        "Όμως, δεν υπάρχει ΚΑΝΕΝΑ πρόβλημα να εγκαταστήσετε"
-                                       " το YAM 2.4 και ΥAM 2.6 σε διαφορετικούς καταλόγους."))
+                                       " το YAM 2.4 και ΥAM 2.6p1 σε διαφορετικούς καταλόγους."))
         (set #faq_and_bugtracker (cat "\n"
                                       "Εάν έχετε οποιαδήποτε απορία σχετικά με το YAM\n"
                                       "μπορείτε να την αναφέρετε στα forum του YAM:\n"
@@ -488,7 +488,7 @@
         (makedir YAM_dir)
         ; copy the directory icon
         (copyfiles
-            (source "//YAM 2.6.info")
+            (source "//YAM 2.6p1.info")
             (dest (tackon YAM_dir "/"))
             (newname "YAM.info")
             (infos)

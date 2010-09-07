@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install-YAM: bumped to "2.6p1".
+
 2010-09-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs.c, YAM_FO.c, FolderList.c: en/disabling the spam filter several
@@ -76,12 +80,12 @@ $URL$
   * YAM_MA.c: hitting the DEL key now takes both the mail list and and mail
     listview into account. This fixes the reported "unable to delete mail"
     issue.
- 
+
 2010-08-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: fixed some possible memory leaks and locked mail lists in case
     something went wrong during the mailing list pattern search.
- 
+
 2010-08-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ReadMailGroup.c, mui/WriteWindow.c: disabled the "default object on
@@ -297,7 +301,7 @@ $URL$
   * YAM_MA.c: when exporting mails the file name returned by the file requester
     is now checked to be non-empty. Although I could not reproduce ticket #154
     this should fix it and thus closes #154.
- 
+
 2010-04-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: the XPK scanning duplicated the found packers in a wrong way so
@@ -347,7 +351,7 @@ $URL$
     header lines the "new" state of the mail is derived from the Status header
     line only, because the X-Status header line does not contain any explicit
     information about the "new" state. This closes #118.
- 
+
 2010-03-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_TR.c: the "avoid duplicates" option cleared too many flags which caused
