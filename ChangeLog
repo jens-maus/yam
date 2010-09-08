@@ -7,6 +7,8 @@ $URL$
 
 2010-09-08 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tcp/Connection.c: a connection's error code is now correctly set after each
+    receive operation. This closes #206.
   * misc: implemented feature request #61. The confirmation requester can now be
     disabled globally by setting the ConfirmRemoveAttachments option in the
     hidden section of the configuration to "Y" or "1". YAM will then *never* ask

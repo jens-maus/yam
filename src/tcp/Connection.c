@@ -1325,12 +1325,14 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
             {
               W(DBF_NET, "WaitSelect() socket timeout reached");
               status = -1; // signal error
+              conn->error = CONNECTERR_TIMEDOUT;
             }
             else
             {
               // the rest should signal an error
               E(DBF_NET, "WaitSelect() returned an error: %ld", err);
               status = -1; // signal error
+              conn->error = CONNECTERR_UNKNOWN_ERROR;
             }
           }
           break;
@@ -1348,6 +1350,7 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
             {
               E(DBF_NET, "SSL_write() returned SSL_ERROR_ZERO_RETURN");
               status = -1; // signal error
+              conn->error = CONNECTERR_UNKNOWN_ERROR;
             }
           }
           break;
@@ -1356,6 +1359,7 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
           {
             E(DBF_NET, "SSL_read() returned an error %ld", err);
             status = -1; // signal error
+            conn->error = CONNECTERR_UNKNOWN_ERROR;
           }
           break;
         }
@@ -1455,12 +1459,14 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
             {
               W(DBF_NET, "WaitSelect() socket timeout reached");
               status = -1; // signal error
+              conn->error = CONNECTERR_TIMEDOUT;
             }
             else
             {
               // the rest should signal an error
               E(DBF_NET, "WaitSelect() returned error: %ld", err);
               status = -1; // signal error
+              conn->error = CONNECTERR_UNKNOWN_ERROR;
             }
           }
           break;
@@ -1477,6 +1483,7 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
           {
             E(DBF_NET, "recv() returned error %ld", err);
             status = -1; // signal error
+            conn->error = CONNECTERR_UNKNOWN_ERROR;
           }
           break;
         }
@@ -1508,7 +1515,6 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
 static int ReadFromHostBuffered(struct Connection *conn, char *ptr, const int maxlen)
 {
   int result = -1; // -1 = error
-  BOOL errorState = FALSE;
 
   ENTER();
 
@@ -1521,14 +1527,13 @@ static int ReadFromHostBuffered(struct Connection *conn, char *ptr, const int ma
   if(conn->receiveCount <= 0)
   {
     // read all data upto the maximum our buffer allows
-    if((conn->receiveCount = ReadFromHost(conn, conn->receiveBuffer, conn->receiveBufferSize)) <= 0)
-      errorState = TRUE;
+    conn->receiveCount = ReadFromHost(conn, conn->receiveBuffer, conn->receiveBufferSize);
 
     // reset the read_ptr
     conn->receivePtr = conn->receiveBuffer;
   }
 
-  if(errorState == FALSE)
+  if(conn->receiveCount > 0)
   {
     // we copy only the minmum of read_cnt and maxlen
     int fillCount = MIN(conn->receiveCount, maxlen);
@@ -1551,8 +1556,6 @@ static int ReadFromHostBuffered(struct Connection *conn, char *ptr, const int ma
 
     result = fillCount;
   }
-  else
-    conn->error = CONNECTERR_UNKNOWN_ERROR;
 
   RETURN(result);
   return result;
