@@ -1614,11 +1614,18 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
 //  Removes attachments from selected messages
 HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
 {
+  BOOL goOn;
+
   ENTER();
 
   // we need to warn the user of this operation we put up a requester
   // before we go on
-  if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETEATTREQUEST)) > 0)
+  if(C->ConfirmRemoveAttachments == TRUE)
+    goOn = (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETEATTREQUEST)) > 0);
+  else
+    goOn = TRUE;
+
+  if(goOn == TRUE)
   {
     struct MailList *mlist;
 
@@ -1633,6 +1640,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
       i = 0;
       ForEachMailNode(mlist, mnode)
       {
+        // delete the attachments without further confirmation
         MA_RemoveAttach(mnode->mail, NULL, FALSE);
 
         // if BusySet() returns FALSE, then the user aborted

@@ -404,7 +404,7 @@ DECLARE(Delete)
     parts[0] = data->mailPart;
     parts[1] = NULL;
 
-    MA_RemoveAttach(data->mailPart->rmData->mail, parts, TRUE);
+    MA_RemoveAttach(data->mailPart->rmData->mail, parts, C->ConfirmRemoveAttachments);
   }
 
   RETURN(0);

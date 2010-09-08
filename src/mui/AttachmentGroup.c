@@ -536,7 +536,7 @@ DECLARE(DeleteAll)
   if(data->firstPart != NULL)
   {
     // remove all attachments now
-    MA_RemoveAttach(data->firstPart->rmData->mail, NULL, TRUE);
+    MA_RemoveAttach(data->firstPart->rmData->mail, NULL, C->ConfirmRemoveAttachments);
   }
 
   RETURN(0);
@@ -580,7 +580,7 @@ DECLARE(DeleteSelected)
       }
 
       // and finally remove the attachments
-      MA_RemoveAttach(data->firstPart->rmData->mail, parts, TRUE);
+      MA_RemoveAttach(data->firstPart->rmData->mail, parts, C->ConfirmRemoveAttachments);
 
       free(parts);
     }

@@ -1065,6 +1065,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->KeepAliveInterval = 30;  // 30s interval per default
     co->AutoClip = FALSE;
     co->ShowFilterStats = TRUE;
+    co->ConfirmRemoveAttachments = TRUE;
 
     // set the default styles of the folder listtree and
     // mail list items.
@@ -1340,8 +1341,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->TimeZoneCheck                   == c2->TimeZoneCheck &&
      c1->AutoDSTCheck                    == c2->AutoDSTCheck &&
      c1->DetectCyrillic                  == c2->DetectCyrillic &&
-     c1->MapForeignChars                 == c2->MapForeignChars &&
-     c1->GlobalMailThreads               == c2->GlobalMailThreads &&
      c1->ABookLookup                     == c2->ABookLookup &&
      c1->ConvertHTML                     == c2->ConvertHTML &&
      c1->SpamFilterEnabled               == c2->SpamFilterEnabled &&
@@ -1355,8 +1354,11 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->MDNEnabled                      == c2->MDNEnabled &&
      c1->RequestMDN                      == c2->RequestMDN &&
      c1->AutoClip                        == c2->AutoClip &&
-     c1->ShowFilterStats                 == c2->ShowFilterStats &&
      c1->FolderDoubleClick               == c2->FolderDoubleClick &&
+     c1->MapForeignChars                 == c2->MapForeignChars &&
+     c1->GlobalMailThreads               == c2->GlobalMailThreads &&
+     c1->ShowFilterStats                 == c2->ShowFilterStats &&
+     c1->ConfirmRemoveAttachments        == c2->ConfirmRemoveAttachments &&
 
      c1->SocketOptions.SendBuffer        == c2->SocketOptions.SendBuffer &&
      c1->SocketOptions.RecvBuffer        == c2->SocketOptions.RecvBuffer &&

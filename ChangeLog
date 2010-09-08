@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: implemented feature request #61. The confirmation requester can now be
+    disabled globally by setting the ConfirmRemoveAttachments option in the
+    hidden section of the configuration to "Y" or "1". YAM will then *never* ask
+    for confirmation before removing any attachment. You have been warned! This
+    closes #61.
+
 2010-09-08 Mariusz Danilewicz <mandi@interia.pl>
 
   * AUTHORS: added translators section (please check and update missing persons).

@@ -535,6 +535,7 @@ struct Config
   BOOL  MapForeignChars;
   BOOL  GlobalMailThreads;
   BOOL  ShowFilterStats;
+  BOOL  ConfirmRemoveAttachments;
 
   struct MUI_PenSpec ColoredText;
   struct MUI_PenSpec Color1stLevel;

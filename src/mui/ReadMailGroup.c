@@ -1801,7 +1801,7 @@ DECLARE(DeleteAttachmentsRequest)
   ENTER();
 
   // remove the attchments now
-  MA_RemoveAttach(mail, NULL, TRUE);
+  MA_RemoveAttach(mail, NULL, C->ConfirmRemoveAttachments);
 
   RETURN(0);
   return 0;
