@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-08 Mariusz Danilewicz <mandi@interia.pl>
+
+  * AUTHORS: added translators section (please check and update missing persons).
+
 2010-09-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * tools/mkrelease.sh: fixed archive generation.
