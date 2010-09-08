@@ -388,7 +388,7 @@ DECLARE(Update) // int size_incr, const char *status
 
       // update the gauge
       snprintf(data->size_gauge_label, sizeof(data->size_gauge_label), tr(MSG_TR_TRANSFERSIZE),
-                                                             data->str_size_curr_max, data->str_size_curr_max);
+                                                             data->str_size_curr, data->str_size_curr_max);
 
       if(msg->size_incr == TCG_SETMAX)
       {
