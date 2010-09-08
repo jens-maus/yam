@@ -7,6 +7,8 @@ $URL$
 
 2010-09-08 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/TransferControlGroup.c: fixed a NULL pointer access in case the transfer
+    happens while the transfer window is not visible.
   * mui/TransferControlGroup.c: fixed wrong display of mail size during the
     transfer.
   * tcp/Connection.c: a connection's error code is now correctly set after each
