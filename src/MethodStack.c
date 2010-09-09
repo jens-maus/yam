@@ -46,6 +46,7 @@
 #include "extrasrc.h"
 
 #include "Locale.h"
+#include "MethodStack.h"
 #include "Requesters.h"
 #include "Threads.h"
 
@@ -54,10 +55,14 @@
 struct PushedMethod
 {
   struct Message msg;  // make this a real Exec message
-  Object *obj;         // pointer to the object for receiving the method call
+  Object *object;      // pointer to the object for receiving the method call
+  ULONG flags;         // various flags, i.e. synchronous exection
   ULONG argCount;      // number of arguments to follow
   IPTR *args;          // pointer to a memory area setup for holding the args
+  IPTR result;         // return value of a synchronous call
 };
+
+#define PMF_SYNC       (1<<0)
 
 /// InitMethodStack
 // initialize the global method stack
@@ -123,7 +128,9 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
     va_start(args, argCount);
 
     // fill in the data
-    pm->obj = obj;
+    pm->object = obj;
+    // execute this one asynchronous
+    pm->flags = 0;
     pm->argCount = argCount;
     if((pm->args = calloc(1, argCount*sizeof(IPTR))))
     {
@@ -144,6 +151,75 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
 }
 
 ///
+/// PushMethodOnStackWait
+// push a method with all given parameters on the method stack and wait
+// for the application to handle it
+IPTR VARARGS68K PushMethodOnStackWait(Object *obj, ULONG argCount, ...)
+{
+  struct PushedMethod *pm;
+  IPTR result = (IPTR)-1;
+
+  ENTER();
+
+  if((pm = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*pm),
+                                            TAG_DONE)) != NULL)
+  {
+    va_list args;
+    ULONG i;
+
+    va_start(args, argCount);
+
+    // fill in the data
+    pm->object = obj;
+    // execute this one synchronous
+    pm->flags = PMF_SYNC;
+    pm->argCount = argCount;
+    if((pm->args = calloc(1, argCount*sizeof(IPTR))))
+    {
+      for(i = 0; i < argCount; i++)
+        pm->args[i] = va_arg(args, IPTR);
+    }
+
+    va_end(args);
+
+    if(IsMainThread() == TRUE)
+    {
+      // we have been called from within the main thread, so let's handle this
+      // method immediately. But first we handle any already waiting method on
+      // the stack.
+      CheckMethodStack();
+
+      // perform the desired action and get the return value
+      result = DoMethodA(pm->object, (Msg)&pm->args[0]);
+    }
+    else
+    {
+      struct Process *me = (struct Process *)FindTask(NULL);
+      struct MsgPort *replyPort = &me->pr_MsgPort;
+
+      // set the process port as replyport
+      pm->msg.mn_ReplyPort = replyPort;
+      pm->result = (IPTR)-1;
+
+      // push the method on the stack
+      PutMsg(G->methodStack, (struct Message *)pm);
+
+      // wait for the method to be handled
+      WaitPort(replyPort);
+
+      result = pm->result;
+    }
+
+    // finally free the handled method
+    free(pm->args);
+    FreeSysObject(ASOT_MESSAGE, pm);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// CheckMethodStack
 // handle pending pushed methods on the stack
 void CheckMethodStack(void)
@@ -157,12 +233,27 @@ void CheckMethodStack(void)
   {
     struct PushedMethod *pm = (struct PushedMethod *)msg;
 
-    // perform the desired action
-    DoMethodA(pm->obj, (Msg)&pm->args[0]);
+    // check for synchronous or asynchronous execution
+    if(isFlagSet(pm->flags, PMF_SYNC))
+    {
+      // perform the desired action and get the return value
+      if(pm->object != NULL)
+        pm->result = DoMethodA(pm->object, (Msg)&pm->args[0]);
+      else
+        pm->result = (IPTR)-1;
 
-    // finally free the handled method
-    free(pm->args);
-    FreeSysObject(ASOT_MESSAGE, pm);
+      // return to sender
+      ReplyMsg((struct Message *)pm);
+    }
+    else
+    {
+      // perform the desired action
+      DoMethodA(pm->object, (Msg)&pm->args[0]);
+
+      // free the handled method
+      free(pm->args);
+      FreeSysObject(ASOT_MESSAGE, pm);
+    }
   }
 
   LEAVE();

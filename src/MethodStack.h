@@ -37,6 +37,7 @@
 BOOL InitMethodStack(void);
 void CleanupMethodStack(void);
 BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...);
+IPTR VARARGS68K PushMethodOnStackWait(Object *obj, ULONG argCount, ...);
 void CheckMethodStack(void);
 
 #endif /* METHODSTACK_H */
