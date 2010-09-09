@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.6 (14.05.2010)
+## version $VER: YAM.catalog 7.7 (09.09.2010)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
@@ -1025,11 +1025,11 @@ Filtros
 ; Filters
 ;
 MSG_CO_CrdRead
-Leer
+Lectura
 ; Read
 ;
 MSG_CO_CrdWrite
-Escribir
+Escritura
 ; Write
 ;
 MSG_CO_CrdSignature
@@ -1177,7 +1177,7 @@ _Nombre Completo
 ; _Real name
 ;
 MSG_CO_EmailAddress
-Correo _electrónico
+Correo elec_trónico
 ; _E-mail address
 ;
 MSG_CO_POPServer
@@ -1209,7 +1209,7 @@ Recibir correo (POP3)
 ; Receive mail (POP3)
 ;
 MSG_CO_POPUserID
-Nombre Usuario
+_Nombre Usuario
 ; User name
 ;
 MSG_CO_POPActive
@@ -1217,11 +1217,11 @@ _Activar
 ; _Active
 ;
 MSG_CO_DeleteServerMail
-B_orrar correo en servidor
+_Borrar correo en servidor
 ; Delete mail _on server
 ;
 MSG_CO_UseAPOP
-_Registro de uso APOP
+_Registro utilizando APOP
 ; _Log in using APOP
 ;
 MSG_CO_PSNever
@@ -1237,7 +1237,7 @@ siempre
 ; always
 ;
 MSG_CO_PSAlwaysFast
-siempre, sólo grandes
+siempre, sólo tamaño
 ; always, only sizes
 ;
 MSG_CO_TWNever
@@ -1441,7 +1441,7 @@ Justificar C_abeceras
 ; _Wrap headers
 ;
 MSG_CO_OldQuotes
-Comillas antiguas
+Citas anteriores
 ; Old quotes
 ;
 MSG_CO_Header
@@ -1597,7 +1597,7 @@ _Verificar dirección de destinatario
 ; _Verify recipient address
 ;
 MSG_CO_StripSignature
-Evi_tar en firma
+Evi_tar firma
 ; Stri_p signature
 ;
 MSG_CO_DefSig
@@ -1653,7 +1653,7 @@ Mostrar hora en Pasos Swatch
 ; Show time in Swatch _Beats
 ;
 MSG_CO_LogNone
-nada
+ninguno
 ; none
 ;
 MSG_CO_LogNormal
@@ -1669,7 +1669,7 @@ Directorio P_GP's
 ; P_GP's directory
 ;
 MSG_CO_PGPKey
-Tu clave PGP _ID
+Su clave PGP _ID
 ; Your PGP key _ID
 ;
 MSG_CO_EncryptToSelf
@@ -1769,11 +1769,11 @@ Intercambio de Datos Personales
 ; Personal data exchange
 ;
 MSG_CO_Gallery
-Salvar _fotos en
+Salvar _fotografías en
 ; Save _photos in
 ;
 MSG_CO_MyURL
-UR_L de tu imagen
+UR_L de su imagen
 ; UR_L of your picture
 ;
 MSG_CO_AddToAddrbook
@@ -2149,7 +2149,7 @@ Borrar el filtro seleccionado\nde la lista.
 ; Remove the selected filter\nfrom the list.
 ;
 MSG_HELP_CO_CA_COL2QUOT
-Color utilizado para mostrar\n2° nivel de comillas.
+Color utilizado para mostrar\n2° nivel de citados.
 ; Color used to display\n2nd level quotes.
 ;
 MSG_HELP_CO_CH_WRAPHEAD
@@ -2273,11 +2273,11 @@ Usa estas frases en respuestas a\nmensajes desde la lista de correo.
 ; Use these phrases in replies to\nmessages from a mailing list.
 ;
 MSG_HELP_CO_CH_QUOTE
-Entrecomillar el mensaje\noriginal en tu respuesta?
+Citar el mensaje\noriginal en tu respuesta?
 ; Quote the original\nmessage in your reply?
 ;
 MSG_HELP_CO_CH_QUOTEEMPTY
-Insertar carácter de comillas\npara líneas vacías?
+Insertar carácter de cita\npara líneas vacías?
 ; Insert quote character\nfor empty lines?
 ;
 MSG_HELP_CO_CH_COMPADDR
@@ -2285,7 +2285,7 @@ Si está activado, se te preguntará donde quieres enviar tu\nrespuesta cuando las
 ; If checked, you will be asked where to send your\nreply when the 'From:' and 'Reply-To:' addresses\nof the original message differ.
 ;
 MSG_HELP_CO_CH_STRIPSIG
-Evita el entrecomillado de la firma\ndel mensaje original.
+Evita el citar la firma\ndel mensaje original.
 ; Avoids quoting the signature\nof the original message.
 ;
 MSG_HELP_CO_CY_SIGNAT
@@ -2401,7 +2401,7 @@ Directorio donde salvar las imágenes\nde tus contactos.
 ; Directory to save the pictures\nof your correspondents.
 ;
 MSG_HELP_CO_ST_PHOTOURL
-Dirección URL de tu\nfotografía.
+Dirección URL de su\nfotografía.
 ; URL address of your\nportrait image.
 ;
 MSG_HELP_CO_CY_ATAB
@@ -4802,7 +4802,7 @@ Fuente fija?
 ; Fixed font?
 ;
 MSG_CO_UseSMTPAUTH
-Utilizar Au_tenticación SMTP
+Utilizar Au_tentificación SMTP
 ; Use SMTP AU_TH
 ;
 MSG_CO_SMTPUser
@@ -4818,7 +4818,7 @@ Entrecomillado Alternativo
 ; Alternative quoted
 ;
 MSG_CO_DoQuote
-Entrec_omillar mensaje
+Citar _mensaje
 ; Qu_ote message
 ;
 MSG_EA_SelectPhoto_Title
@@ -6123,7 +6123,7 @@ Ocurrió un error mientras intentaba crear un paquete de archivos con los archivo
 ; An error occurred while trying to create an archive out of the selected files.\n\nPlease make sure that all files are accessible and not read protected.
 ;
 MSG_CO_ABOOKLOOKUP
-Localiza Contactos en la lista de mensajes
+Localizar Contactos en la lista de mensajes
 ; _Address book lookup in message list
 ;
 MSG_HELP_CO_CH_ABOOKLOOKUP
@@ -6632,7 +6632,7 @@ Editar como nuevo...
 ; Edit as new...
 ;
 MSG_CO_POPACCOUNT
-_Cuenta de Correo
+Cuenta de C_orreo
 ; Account name
 ;
 MSG_HELP_CO_ST_POPACCOUNT
@@ -6764,7 +6764,7 @@ En el resto de casos:
 ; In all oth_er cases:
 ;
 MSG_CO_REQUESTMDN
-Siem_pre solicita una confirmación de recepción
+Siem_pre solicitar una confirmación de recepción
 ; Always request a retur_n receipt
 ;
 MSG_HELP_CO_CH_REQUESTMDN
@@ -6808,7 +6808,7 @@ Apariencia
 ; Look & Feel
 ;
 MSG_CO_DSTACTIVE
-_Activar Cambio Horario de Verano (DST)
+Activar Cambio _Horario de Verano (DST)
 ; D_aylight Saving Time (DST) is active
 ;
 MSG_HELP_CO_CH_DSTACTIVE
@@ -7026,7 +7026,7 @@ _Guardar
 ; _Hold
 ;
 MSG_WR_CANCEL
-Cancelar
+_Cancelar
 ; Cancel
 ;
 MSG_WR_MSENDNOW
@@ -7065,6 +7065,10 @@ Opciones
 MSG_CO_FWDMSG
 R_eenviar mensajes
 ; _Forward messages
+;
+MSG_CO_FWDMSG_ATTACHMENTS
+como anexo
+; as attachments
 ;
 MSG_CO_FWDMSG_INLINE
 Continuado
@@ -7524,7 +7528,7 @@ Intercambio de correo
 ; Exchange mail
 ;
 MSG_CO_EXCHANGE_ORDER
-Orden de Intercambio
+Orden de _Intercambio
 ; Exchange order
 ;
 MSG_CO_EXCHANGE_ORDER_GET_FIRST
