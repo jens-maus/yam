@@ -206,6 +206,7 @@ IPTR VARARGS68K PushMethodOnStackWait(Object *obj, ULONG argCount, ...)
 
       // wait for the method to be handled
       WaitPort(replyPort);
+      GetMsg(replyPort);
 
       result = pm->result;
     }
