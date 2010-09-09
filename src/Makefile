@@ -772,11 +772,7 @@ Locale.c: ../locale/YAM.cd Locale_h.sd Locale_c.sd
 
 .PHONY: release
 release:
-	@$(RMDIR) $@
-## Create catalogs first ##############
-	@echo "  MK catalogs"
 	@$(RM) $(CATALOGS)
-	@$(MAKE) catalogs
 ## Create distributions for all systems
 	@sh $(TOOLS)/mkrelease.sh os3
 	@sh $(TOOLS)/mkrelease.sh os4

@@ -41,11 +41,16 @@ esac
 echo "  MK $yamsys release"
 
 yamver="2.6"
+yamarcver="26"
 
 mkdir -p release
 
+echo "  MK catalogs"
+make catalogs
+
 make OS=$1 DEBUG= DEVFLAGS= clean
 make OS=$1 DEBUG= DEVFLAGS= all
+rm -rf "release/$yamsys"
 mkdir -p "release/$yamsys"
 mkdir -p "release/$yamsys/YAM $yamver"
 cp ../icons/$1/YAM_directory.info "release/$yamsys/YAM $yamver.info"
@@ -96,10 +101,10 @@ cp ../doc/ReadMe "release/$yamsys/YAM $yamver/ReadMe"
 cp ../icons/$1/ReadMe.info "release/$yamsys/YAM $yamver/ReadMe.info"
 cp ../doc/.addressbook "release/$yamsys/YAM $yamver/.addressbook"
 cp ../doc/.taglines "release/$yamsys/YAM $yamver/.taglines"
-echo "  MK YAM26-$yamsys.lha"
+echo "  MK YAM$yamarcver-$yamsys.lha"
 find release/$yamsys -nowarn -name ".svn" -exec rm -rf {} \; 2>/dev/null
 cd release/$yamsys/
-lha -aq ../YAM26-$yamsys.lha *
+lha -aq ../YAM$yamarcver-$yamsys.lha *
 cd ../../
 
 echo "  MK $yamsys-debug"
@@ -108,7 +113,7 @@ make OS=$1 DEVFLAGS= all
 cp ../doc/README.debug "release/"
 cp YAM.$1.debug "release/YAM.debug"
 cp YAM.$1.map "release/YAM.debug.map"
-echo "  MK YAM26-$yamsys-debug.lha"
+echo "  MK YAM$yamarcver-$yamsys-debug.lha"
 cd release
-lha -aq YAM26-$yamsys-debug.lha README.debug YAM.debug YAM.debug.map
+lha -aq YAM$yamarcver-$yamsys-debug.lha README.debug YAM.debug YAM.debug.map
 cd ../
