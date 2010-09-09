@@ -101,9 +101,9 @@ static void DoUpdateStats(struct Data *data, const int size_incr, const char *st
   // update the stats 4 times per second at most
   if(TimeHasElapsed(&data->Clock_Last, 250000) == TRUE)
   {
-    ULONG deltatime = data->Clock_Last.Seconds - data->Clock_Start;
+    ULONG deltatime;
     ULONG speed = 0;
-    LONG remclock = 0;
+    LONG remtime;
     ULONG max;
     ULONG current;
 
@@ -113,12 +113,20 @@ static void DoUpdateStats(struct Data *data, const int size_incr, const char *st
 
     // first we calculate the speed in bytes/sec
     // to display to the user
+    deltatime = data->Clock_Last.Seconds - data->Clock_Start;
     if(deltatime != 0)
       speed = data->Size_Done / deltatime;
+    else
+      speed = 0;
 
     // calculate the estimated remaining time
-    if(speed != 0 && ((remclock = (data->Size_Tot / speed) - deltatime) < 0))
-      remclock = 0;
+    remtime = 0;
+    if(speed != 0)
+    {
+      remtime = (LONG)((data->Size_Tot / speed) - deltatime);
+      if(remtime < 0)
+        remtime = 0;
+    }
 
     // show the current status
     set(data->TX_STATUS, MUIA_Text_Contents, status);
@@ -137,7 +145,7 @@ static void DoUpdateStats(struct Data *data, const int size_incr, const char *st
     snprintf(data->stats_label, sizeof(data->stats_label), tr(MSG_TR_TRANSFERSTATUS),
                                 data->str_size_done, data->str_size_tot, data->str_speed,
                                 deltatime / 60, deltatime % 60,
-                                remclock / 60, remclock % 60);
+                                remtime / 60, remtime % 60);
 
     set(data->TX_STATS, MUIA_Text_Contents, data->stats_label);
 
@@ -147,16 +155,19 @@ static void DoUpdateStats(struct Data *data, const int size_incr, const char *st
 
     if(size_incr == TCG_SETMAX)
     {
+      // simply display 100%
       max = 100;
       current = 100;
     }
     else if(data->Size_Curr_Max <= 65536)
     {
+      // everything below 64K will be display non-scaled
       max = data->Size_Curr_Max;
       current = data->Size_Curr;
     }
     else
     {
+      // everything else is scaled down by 10 bits to avoid integer overflows in MUI3.8
       max = data->Size_Curr_Max / 1024;
       current = data->Size_Curr / 1024;
     }
@@ -258,7 +269,6 @@ OVERLOAD(OM_SET)
       break;
 
       case ATTR(Aborted):
-        D(DBF_ALWAYS, "set aborted=%ld",tag->ti_Data);
         data->aborted = (BOOL)tag->ti_Data;
         if(data->conn != NULL)
           data->conn->abort = (BOOL)tag->ti_Data;
@@ -285,6 +295,7 @@ OVERLOAD(OM_GET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
 ///
 
 /* Public Methods */
@@ -310,8 +321,12 @@ DECLARE(Reset)
                                                        data->str_size_curr, data->str_size_curr_max);
 
   set(data->TX_STATS, MUIA_Text_Contents, data->stats_label);
-  set(data->GA_COUNT, MUIA_Gauge_InfoText, data->msg_gauge_label);
-  set(data->GA_BYTES, MUIA_Gauge_InfoText, data->size_gauge_label);
+  xset(data->GA_COUNT, MUIA_Gauge_InfoText, data->msg_gauge_label,
+                       MUIA_Gauge_Max,      data->Msgs_Tot,
+                       MUIA_Gauge_Current,  0);
+  xset(data->GA_BYTES, MUIA_Gauge_InfoText, data->size_gauge_label,
+                       MUIA_Gauge_Max,      100,
+                       MUIA_Gauge_Current,  0);
 
   LEAVE();
   return 0;
