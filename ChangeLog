@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_TR.c: fixed missing display of final transfer statistics.
+
 2010-09-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/TransferControlGroup.c: fixed a NULL pointer access in case the transfer

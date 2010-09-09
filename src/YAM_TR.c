@@ -1764,7 +1764,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
         break;
     }
 
-    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start);
+    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Finish);
 
     DisplayStatistics(infolder, TRUE);
 
