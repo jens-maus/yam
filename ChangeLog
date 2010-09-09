@@ -7,6 +7,10 @@ $URL$
 
 2010-09-09 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: for all systems except AmigaOS4 the sound playback no longer
+    checks the return value of the STM_PLAY trigger. For AmigaOS3 the return
+    value very much depends on the used sound.dt. For AROS it is always 0 and
+    does in no way reflect success or failure.
   * YAM_TR.c: fixed missing display of final transfer statistics.
 
 2010-09-08 Thore Böckelmann <tboeckel@gmx.de>

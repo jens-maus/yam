@@ -4819,14 +4819,27 @@ BOOL PlaySound(const char *filename)
       {
         ULONG error;
 
-        // Play the sound by calling DoMethod()
-        if((error = DoMethod(soundObject, DTM_TRIGGER, NULL, STM_PLAY, NULL)) == 1)
+        // play the sound
+        #if defined(__amigaos4__) || defined(__MORPHOS__)
+        // AmigaOS4's sound.dt returns 1 in case everything was ok, 0 otherwise
+        error = DoMethod(soundObject, DTM_TRIGGER, NULL, STM_PLAY, NULL);
+        #else
+        // AmigaOS3's return value differs between different versions of sound.dt
+        // Some always return 0, some return a value from the subclass.
+        // AROS' sound.dt definitely always returns 0. I assume the same for MorphOS.
+        // Thus we always signal success here in case creating the object succeeded.
+        DoMethod(soundObject, DTM_TRIGGER, NULL, STM_PLAY, NULL);
+        error = 1;
+        #endif
+
+        if(error == 1)
         {
           D(DBF_UTIL, "started playback of '%s'", filename);
           // wait for the playback to finish
           Wait(SIGBREAKF_CTRL_C | 1UL << signal);
           result = TRUE;
         }
+
         D(DBF_UTIL, "playback of '%s' returned %ld/%ld", filename, error, result);
 
         DisposeDTObject(soundObject);
