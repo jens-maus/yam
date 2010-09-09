@@ -1530,7 +1530,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
         break;
       }
 
-      DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start);
+      DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Finish);
 
       AppendToLogfile(LF_ALL, 50, tr(MSG_LOG_Importing), xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_NumberOfProcessedMails), G->TR->ImportFile, folder->Name);
       DisplayStatistics(folder, TRUE);
