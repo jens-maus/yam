@@ -75,8 +75,8 @@
 static int rfc2047_decode_int(const char *text,
                               int (*func)(const char *, unsigned int, const char *, const char *, void *),
                               void *arg);
-static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *chset,
-                                const char *lang, void *arg);
+static int rfc2047_decode_callback(const char *txt, unsigned int len, const char *chset,
+                                   const char *lang, void *arg);
 INLINE char *rfc2047_search_quote(const char **ptr);
 
 /*** RFC 2047 MIME encoding/decoding routines ***/
@@ -546,7 +546,7 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen)
 
   // call the decode_int function to start decoding our
   // data.
-  result = rfc2047_decode_int(src, &rfc2047_dec_callback, &info);
+  result = rfc2047_decode_int(src, &rfc2047_decode_callback, &info);
   info.dst[0] = '\0'; // make sure this string is null-terminated
 
   // on success return the decoded string len.
@@ -555,11 +555,11 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen)
 }
 
 ///
-/// rfc2047_dec_callback()
+/// rfc2047_decode_callback()
 // the callback function that is called by the decode_int() function each
 // time a string was successfully decoded so that it can be converted.
-static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *chset,
-                                UNUSED const char *lang, void *arg)
+static int rfc2047_decode_callback(const char *txt, unsigned int len, const char *chset,
+                                   UNUSED const char *lang, void *arg)
 {
   struct rfc2047_decode_info *info = (struct rfc2047_decode_info *)arg;
 
