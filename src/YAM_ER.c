@@ -48,7 +48,11 @@
 #include "YAM_utilities.h"
 
 #include "Locale.h"
+#include "MethodStack.h"
 #include "MUIObjects.h"
+#include "Threads.h"
+
+#include "mui/Classes.h"
 
 #include "Debug.h"
 
@@ -63,12 +67,11 @@ static struct ER_ClassData *ER_New(void);
 // Adds a new error message and displays it
 void ER_NewError(const char *error, ...)
 {
-  static char label[SIZE_SMALL];
   int oldNumErr = G->ER_NumErr;
 
   ENTER();
 
-  if(G->ER == NULL)
+  if(IsMainThread() == TRUE && G->ER == NULL)
   {
     if((G->ER = ER_New()) == NULL)
     {
@@ -87,54 +90,72 @@ void ER_NewError(const char *error, ...)
 
   if(error != NULL)
   {
-    char buf[SIZE_LARGE];
-    char datstr[64];
-    va_list args;
-
-    // one more error message
-    G->ER_NumErr++;
-
-    // if the number of error messages exceeds the maximum number then delete
-    // the oldest one and shift the remaining errors down by one
-    if(G->ER_NumErr > MAXERR)
+    if(IsMainThread() == TRUE)
     {
-      int i;
+      va_list args;
+      char buf[SIZE_LARGE];
+      char datstr[64];
 
-      G->ER_NumErr = MAXERR;
+      // one more error message
+      G->ER_NumErr++;
 
-      free(G->ER_Message[0]);
+      // if the number of error messages exceeds the maximum number then delete
+      // the oldest one and shift the remaining errors down by one
+      if(G->ER_NumErr > MAXERR)
+      {
+        int i;
 
-      for(i = 1; i < G->ER_NumErr; i++)
-        G->ER_Message[i-1] = G->ER_Message[i];
+        G->ER_NumErr = MAXERR;
+
+        free(G->ER_Message[0]);
+
+        for(i = 1; i < G->ER_NumErr; i++)
+          G->ER_Message[i-1] = G->ER_Message[i];
+      }
+
+      // get actual date as a string
+      DateStamp2String(datstr, sizeof(datstr), NULL, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
+
+      va_start(args, error);
+      vsnprintf(buf, sizeof(buf), error, args);
+      va_end(args);
+
+      // append the datestring
+      snprintf(buf, sizeof(buf), "%s\n\n(%s)", buf, datstr);
+
+      // allocate an own buffer for our error string.
+      G->ER_Message[G->ER_NumErr-1] = strdup(buf);
     }
+    else
+    {
+      va_list args;
+      char *msg;
 
-    // get actual date as a string
-    DateStamp2String(datstr, sizeof(datstr), NULL, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
-
-    va_start(args, error);
-    vsnprintf(buf, sizeof(buf), error, args);
-    va_end(args);
-
-    // append the datestring
-    snprintf(buf, sizeof(buf), "%s\n\n(%s)", buf, datstr);
-
-    // allocate an own buffer for our error string.
-    G->ER_Message[G->ER_NumErr-1] = strdup(buf);
+      va_start(args, error);
+      if(vasprintf(&msg, error, args) != -1)
+        PushMethodOnStack(G->App, 2, MUIM_YAM_ShowError, msg);
+      va_end(args);
+    }
   }
 
-  snprintf(label, sizeof(label), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
-  xset(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
-                            MUIA_Numeric_Min,    1,
-                            MUIA_Numeric_Max,    G->ER_NumErr,
-                            MUIA_Numeric_Value,  G->ER_NumErr);
+  if(IsMainThread() == TRUE)
+  {
+    static char label[SIZE_SMALL];
 
-  // The slider won't call the hook if the current number didn't change, but we need to
-  // to update the error display no matter what, so we have to do this update manually.
-  if(oldNumErr == G->ER_NumErr)
-    set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[G->ER_NumErr-1]);
+    snprintf(label, sizeof(label), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
+    xset(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
+                              MUIA_Numeric_Min,    1,
+                              MUIA_Numeric_Max,    G->ER_NumErr,
+                              MUIA_Numeric_Value,  G->ER_NumErr);
 
-  if(G->MA != NULL)
-    set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
+    // The slider won't call the hook if the current number didn't change, but we need to
+    // to update the error display no matter what, so we have to do this update manually.
+    if(oldNumErr == G->ER_NumErr)
+      set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[G->ER_NumErr-1]);
+
+    if(G->MA != NULL)
+      set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
+  }
 
   LEAVE();
 }
