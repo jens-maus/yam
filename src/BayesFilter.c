@@ -1788,7 +1788,7 @@ void BayesFilterFlushTrainingData(void)
   ENTER();
 
   ObtainSemaphore(&G->spamFilter.lockSema);
-  PushMethodOnStack(G->App, 3, MUIM_YAM_BusyText, tr(MSG_BUSYFLUSHINGSPAMTRAININGDATA), "");
+  BusyText(tr(MSG_BUSYFLUSHINGSPAMTRAININGDATA), "");
 
   if(C->SpamFlushTrainingDataThreshold > 0 && G->spamFilter.numDirtyingMessages > (ULONG)C->SpamFlushTrainingDataThreshold)
   {
@@ -1796,7 +1796,7 @@ void BayesFilterFlushTrainingData(void)
     G->spamFilter.numDirtyingMessages = 0;
   }
 
-  PushMethodOnStack(G->App, 1, MUIM_YAM_BusyEnd);
+  BusyEnd();
   ReleaseSemaphore(&G->spamFilter.lockSema);
 
   LEAVE();

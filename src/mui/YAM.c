@@ -38,6 +38,7 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
+#include "YAM_transfer.h"
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
 
@@ -715,7 +716,7 @@ OVERLOAD(OM_SET)
 }
 
 ///
-/// UpdateCheck
+/// DECLARE(UpdateCheck)
 DECLARE(UpdateCheck) // ULONG quiet
 {
   // stop a possibly running timer
@@ -730,7 +731,7 @@ DECLARE(UpdateCheck) // ULONG quiet
 }
 
 ///
-/// ShowError
+/// DECLARE(ShowError)
 // show an error message and free() the pointer
 // NOTE: the error message must have been allocated by malloc() or similar!
 DECLARE(ShowError) // char *errorMsg
@@ -742,19 +743,10 @@ DECLARE(ShowError) // char *errorMsg
 }
 
 ///
-/// BusyText
-DECLARE(BusyText) // char *text, char *param
+/// DECLARE(Busy)
+DECLARE(Busy) // const char *text, const char *parameter, int cur, int max
 {
-  BusyText(msg->text, msg->param);
-
-  return 0;
-}
-
-///
-/// BusyEnd
-DECLARE(BusyEnd)
-{
-  BusyEnd();
+  Busy(msg->text, msg->parameter, msg->cur, msg->max);
 
   return 0;
 }

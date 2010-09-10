@@ -4458,75 +4458,84 @@ void AppendToLogfile(enum LFMode mode, int id, const char *text, ...)
 //  stop its processing.
 BOOL Busy(const char *text, const char *parameter, int cur, int max)
 {
-  // we can have different busy levels (defined BUSYLEVEL)
-  static char infotext[BUSYLEVEL][SIZE_DEFAULT];
   BOOL result = TRUE;
 
   ENTER();
 
-  if(text != NULL)
+  if(IsMainThread() == TRUE)
   {
-    if(text[0] != '\0')
+    // we can have different busy levels (defined BUSYLEVEL)
+    static char infotext[BUSYLEVEL][SIZE_DEFAULT];
+
+    if(text != NULL)
     {
-      snprintf(infotext[BusyLevel], sizeof(infotext[BusyLevel]), text, parameter);
-
-      if(max > 0)
+      if(text[0] != '\0')
       {
-        // initialize the InfoBar gauge and also make sure it
-        // shows a stop gadget in case cur < 0
-        if(G->MA != NULL)
-          DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, infotext[BusyLevel], cur, max);
+        snprintf(infotext[BusyLevel], sizeof(infotext[BusyLevel]), text, parameter);
 
-        // check if we are in startup phase so that we also
-        // update the gauge elements of the About window
-        if(G->InStartupPhase == TRUE)
+        if(max > 0)
         {
-          static char progressText[SIZE_DEFAULT];
+          // initialize the InfoBar gauge and also make sure it
+          // shows a stop gadget in case cur < 0
+          if(G->MA != NULL)
+            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, infotext[BusyLevel], cur, max);
 
-          snprintf(progressText, sizeof(progressText), "%%ld/%d", max);
+          // check if we are in startup phase so that we also
+          // update the gauge elements of the About window
+          if(G->InStartupPhase == TRUE)
+          {
+            static char progressText[SIZE_DEFAULT];
 
-          DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, infotext[BusyLevel], -1);
-          DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, progressText, cur, max);
+            snprintf(progressText, sizeof(progressText), "%%ld/%d", max);
+
+            DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, infotext[BusyLevel], -1);
+            DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, progressText, cur, max);
+          }
+        }
+        else
+        {
+          // initialize the InfoBar infotext
+          if(G->MA != NULL)
+            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel]);
+        }
+
+        if(BusyLevel < BUSYLEVEL-1)
+          BusyLevel++;
+        else
+          E(DBF_UTIL, "Error: reached highest BusyLevel!!!");
+      }
+      else
+      {
+        if(BusyLevel != 0)
+          BusyLevel--;
+
+        if(G->MA != NULL)
+        {
+          if(BusyLevel <= 0)
+            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_HideBars);
+          else
+            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel-1]);
         }
       }
-      else
-      {
-        // initialize the InfoBar infotext
-        if(G->MA != NULL)
-          DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel]);
-      }
-
-      if(BusyLevel < BUSYLEVEL-1)
-        BusyLevel++;
-      else
-        E(DBF_UTIL, "Error: reached highest BusyLevel!!!");
     }
     else
     {
-      if(BusyLevel != 0)
-        BusyLevel--;
-
-      if(G->MA != NULL)
+      // If the text is NULL we just have to set the Gauge of the infoBar to the current
+      // level
+      if(BusyLevel > 0)
       {
-        if(BusyLevel <= 0)
-          DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_HideBars);
-        else
-          DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel-1]);
+        if(G->MA != NULL)
+          result = DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, NULL, cur, max);
+
+        if(G->InStartupPhase == TRUE)
+          DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, NULL, cur, -1);
       }
     }
   }
   else
   {
-    // If the text is NULL we just have to set the Gauge of the infoBar to the current
-    // level
-    if(BusyLevel > 0)
-    {
-      if(G->MA != NULL)
-        result = DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, NULL, cur, max);
-
-      if(G->InStartupPhase == TRUE)
-        DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, NULL, cur, -1);
-    }
+    // called from a thread, push a method on the stack
+    PushMethodOnStack(G->App, 5, MUIM_YAM_Busy, text, parameter, cur, max);
   }
 
   RETURN(result);
@@ -4857,12 +4866,7 @@ BOOL PlaySound(const char *filename)
 
   // let the application show an error in case anything went wrong
   if(result == FALSE)
-  {
-    char *failMessage;
-
-    if(asprintf(&failMessage, tr(MSG_ERROR_PLAYSOUND), filename) != -1)
-      PushMethodOnStack(G->App, 2, MUIM_YAM_ShowError, failMessage);
-  }
+    ER_NewError(tr(MSG_ERROR_PLAYSOUND), filename);
 
 
   RETURN(result);
@@ -5198,7 +5202,6 @@ static LONG SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
   {
     LONG error = IoErr();
     char fault[SIZE_LARGE];
-    char *failMessage;
 
     // an error occurred as SystemTags should always
     // return zero on success, no matter what.
@@ -5207,8 +5210,7 @@ static LONG SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
     // setup the error message and put it on the application's method stack to
     // let the main thread display it.
     Fault(error, NULL, fault, sizeof(fault));
-    if(asprintf(&failMessage, tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, fault) != -1)
-      PushMethodOnStack(G->App, 2, MUIM_YAM_ShowError, failMessage);
+    ER_NewError(tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, fault);
 
     // manually free our search path as SystemTags() shouldn't have freed
     // it itself, but only if the result is equal to -1. All other values
