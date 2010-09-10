@@ -754,7 +754,7 @@ DECLARE(Busy) // const char *text, const char *parameter, int cur, int max
 ///
 /// DECLARE(AppendToLogfile)
 // NOTE: the log message must have been allocated by malloc() or similar!
-DECLARE(AppendToLogfile) // enum LFMode mode, int id, const char *logMessage
+DECLARE(AppendToLogfile) // enum LFMode mode, int id, char *logMessage
 {
   AppendToLogfile(msg->mode, msg->id, msg->logMessage);
   free(msg->logMessage);
