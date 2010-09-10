@@ -7,6 +7,8 @@ $URL$
 
 2010-09-10 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tcp/smtp.c: multiline replies from an SMTP server were always treated as
+    matching due to a wrong comparison.
   * YAM_UT.c: made Busy#?() safe to be called from threads.
   * YAM_ER.c: made ER_NewError() safe to be called from threads.
 

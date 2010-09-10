@@ -766,7 +766,7 @@ static char *TR_SendSMTPCmd(const enum SMTPCommand command, const char *parmtext
             if((len = ReceiveLineFromHost(G->TR->connection, tbuf, sizeof(tbuf))) > 0)
             {
               // get the response code
-              int rc2 = strtol(buf, NULL, 10);
+              int rc2 = strtol(tbuf, NULL, 10);
 
               // check if the response code matches the one
               // of the first line
