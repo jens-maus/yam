@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-11 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: updated spanish catalog translation.
+
 2010-09-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: made AppendToLogfile() safe to be called from threads.

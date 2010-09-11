@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.7 (09.09.2010)
+## version $VER: YAM.catalog 7.8 (11.09.2010)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
@@ -674,7 +674,7 @@ _Borrar
 ; De_lete
 ;
 MSG_MA_TBGetAddr
-Añadir Con_tacto
+Contacto
 ; Ge_tAdd
 ;
 MSG_MA_TBWrite
@@ -682,11 +682,11 @@ _Nuevo
 ; _New
 ;
 MSG_MA_TBReply
-_Responder
+Responde
 ; _Reply
 ;
 MSG_MA_TBForward
-Reen_viar
+Reenviar
 ; For_ward
 ;
 MSG_MA_TBGetMail
@@ -710,7 +710,7 @@ A_genda
 ; A_book
 ;
 MSG_MA_TBConfig
-C_onfiguración
+_Config
 ; _Config
 ;
 ;
@@ -2503,9 +2503,6 @@ Cierra la ventana\nde configuración y utiliza\nlas preferencias antiguas.
 ;
 ; Module AB - Routines
 ;
-MSG_AB_BirthdayReq
-Hoy, %s cumple %ld años.\n\nQuieres enviarle una tarjeta de felicitación?
-; Today, %s reaches age %ld.\n\nDo you want to send a greetings card?
 ; NAME, AGE
 ;
 MSG_AB_BirthdayReminder
@@ -2704,7 +2701,7 @@ B_uscar
 ; _Find
 ;
 MSG_AB_TBNewUser
-Co_ntacto
+Contacto
 ; _Person
 ;
 MSG_AB_TBNewList
@@ -2724,11 +2721,11 @@ _Borrar
 ; _Delete
 ;
 MSG_AB_TBPrint
-Imp_rimir
+Imprimir
 ; P_rint
 ;
 MSG_AB_TBOpenTree
-_Desplega
+Desplega
 ; _Unfold
 ;
 MSG_AB_TBCloseTree
@@ -3235,19 +3232,19 @@ Estílos de Texto?
 ; Module RE - Toolbar
 ;
 MSG_RE_TBPrev
-_Anterior
+Anterior
 ; _Prev
 ;
 MSG_RE_TBNext
-_Siguient
+Siguient
 ; _Next
 ;
 MSG_RE_TBPrevTh
-_Tema Ant
+Tema Ant
 ; Prev_Thr
 ;
 MSG_RE_TBNextTh
-Si_g Tema
+Sig Tema
 ; NextT_hr
 ;
 MSG_RE_TBDisplay
@@ -3259,7 +3256,7 @@ _Salvar
 ; _Save
 ;
 MSG_RE_TBPrint
-_Imprimir
+Imprimir
 ; Pr_int
 ;
 MSG_RE_TBDelete
@@ -3271,7 +3268,7 @@ _Mover
 ; _Move
 ;
 MSG_RE_TBReply
-_Responde
+Responde
 ; _Reply
 ;
 MSG_RE_TBForward
@@ -3589,7 +3586,7 @@ Plano
 ; Plain
 ;
 MSG_WR_Quoted
-Entrecomillado
+Cita
 ; Quoted
 ;
 MSG_WR_ROT13
@@ -4560,7 +4557,7 @@ Propiedades
 ; Properties
 ;
 MSG_FO_MaxAge
-_Antiguedad Máx.
+Antiguedad máx
 ; Max. age
 ;
 MSG_FO_FolderType
@@ -4814,7 +4811,7 @@ C_lave
 ; Pass_word
 ;
 MSG_WR_AltQuoted
-Entrecomillado Alternativo
+Cita Alternativa
 ; Alternative quoted
 ;
 MSG_CO_DoQuote
@@ -5187,15 +5184,15 @@ De/Para
 ; From/To
 ;
 MSG_HELP_CO_CA_COL1QUOT
-Color utilizado para\nmostrar entrecomillado.
+Color utilizado para\nmostrar cita.
 ; Color used to\ndisplay quotes.
 ;
 MSG_HELP_CO_CA_COL3QUOT
-Color utilizado para mostrar\n3° nivel de entrecomillado.
+Color utilizado para mostrar\n3° nivel de cita.
 ; Color used to display\n3rd level quotes.
 ;
 MSG_HELP_CO_CA_COL4QUOT
-Color utilizado para mostrar\n4° nivel de entrecomillado.
+Color utilizado para mostrar\n4° nivel de cita.
 ; Color used to display\n4th level quotes.
 ;
 MSG_CO_URLCOLOR
@@ -6548,11 +6545,11 @@ No leído
 ; Unread
 ;
 MSG_MA_TOREAD
-Leer
+Leído
 ; Read
 ;
 MSG_MA_TOHOLD
-Guardar
+Retenido
 ; Hold
 ;
 MSG_MA_TOQUEUED
@@ -7022,7 +7019,7 @@ Enviar más _tarde
 ; Send _later
 ;
 MSG_WR_HOLD
-_Guardar
+_Retener
 ; _Hold
 ;
 MSG_WR_CANCEL
@@ -7038,7 +7035,7 @@ Enviar más tarde
 ; Send later
 ;
 MSG_WR_MHOLD
-Guardar
+Retener
 ; Hold
 ;
 MSG_WR_MCANCEL
@@ -7066,9 +7063,6 @@ MSG_CO_FWDMSG
 R_eenviar mensajes
 ; _Forward messages
 ;
-MSG_CO_FWDMSG_ATTACHMENTS
-como anexo
-; as attachments
 ;
 MSG_CO_FWDMSG_INLINE
 Continuado
@@ -7846,9 +7840,6 @@ MSG_HELP_CO_ST_PGPURL
 Puedes especificar una URL desde donde se puede\ndescargar tu clave pública PGP. Esta URL\nserá ubicada en una cabecera aparte\ndentro de cada mensaje.
 ; You can specify an URL where your public\nPGP key can be downloaded from. This URL\nwill then placed into a separate header\nentry in every mail.
 ;
-MSG_TR_NEW_MAIL_NOTIFY
-Recibido %ld nuevo(s) mensaje(s)!
-; Received %ld new mails!
 ; COUNT
 ;
 MSG_CO_NOTIOS41SYSTEM
@@ -7908,4 +7899,53 @@ Usar patrón AmigaDOS
 MSG_HELP_FI_CH_DOS_PATTERN
 Activa patrones de AmigaDOS\nen la búsqueda de cadena de texto.
 ; Enable AmigaDOS patterns\nin the string search.
+MSG_ERROR_METHODSTACK
+No se puede iniciar método de pila.
+; Cannot initialize method stack.
+MSG_EXECUTE_COMMAND_FAILED
+La ejecución del comando '%s' ha fallado (código de error %ld: %s).
+; The execution of the command '%s' failed (error code %ld: %s).
+MSG_THREAD_EXIT_WARNING_BT
+_Reintentar|_Ignorar
+; _Retry|_Ignore
+MSG_THREAD_EXIT_WARNING
+Mientras trataba de limpiar YAM se han encontrado temas aún en ejecución\n. Por favor asegúrese de cerrar todos los temas\nexistentes (p.ej. visores MIME, etc.) iniciados\ndesde YAM.\n\nQuiere volver \
+a intentarlo para quitar YAM o ignorar los temas\nen ejecución (podrían acabar en posteriores fallos del sistema)?
+; While trying to cleanup YAM still running sub threads\nhave been found. Please make sure to close all still\nexisting sub threads (e.g. MIME viewers, etc.) you may\nhave initiated from YAM.\n\nDo you want to retry to quit YAM or ignore the still\nrunning sub thread (which could end up in later crashes)?
+MSG_THREAD_EXIT_WARNING_TITLE
+Aviso YAM
+; YAM warning
+MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
+Por favor, inténtelo de nuevo más tarde o active el\nsoftware automático de verificación de actualizaciones.
+; Please try again later or activate the automatic\nsoftware update check.
+MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
+YAM comprobará automáticamente actualizaciones disponibles.
+; YAM will check for available updates automatically.
+MSG_UPD_NO_UPDATES_FOUND
+No hay actualizaciones de software.\n%s
+; There are no software updates available.\n%s
+MSG_UPD_NO_UPDATES_FOUND_TITLE
+No hay actualizaciones disponibles
+; No software updates available
+MSG_RE_SAVE_FILE
+Salvar archivo
+; Save file
+MSG_TR_NEW_MAIL_NOTIFY_MANY
+Recibidos %ld nuevos mensajes.
+; Received %ld new mails.
+MSG_TR_NEW_MAIL_NOTIFY_ONE
+Recibido 1 nuevo mensaje.
+; Received 1 new mail.
+MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
+No mostrar esta solicitud hoy de nuevo.
+; Do not show this requester today again.
+MSG_ER_AREXX_EXECUTION_ERROR
+La ejecución del comando ARexx '%s' ha fallado (código de error %ld).\nPor favor, asegúrese de que el archivo es accesible y es un script válido de comandos ARexx.
+; Execution of the ARexx command '%s' failed (error code %ld).\nPlease make sure that the file is accessible and is a valid ARexx script.
+MSG_AB_BirthdayReqBody
+Hoy, el %s, %s cumple %ld años. ¿Desea enviarle una tarjeta de felicitación?
+; Today, on %s, %s reaches age %ld.\n\nDo you want to send a greetings card?
+MSG_CTapplicationpgpsig
+Firma PGP
+; PGP signature
 ;
