@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-11 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some typos.
+
 2010-09-11 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: updated spanish catalog translation.
@@ -747,7 +751,7 @@ $URL$
 
 2010-07-20 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italian.ct: First compile with FlexCat 2.7 OS4 PPC!
+  * locale/italian.ct: first compile with FlexCat 2.7 OS4 PPC!
     Fixed some errors and update to the very latest YAM.cd
 
 2010-07-20 Jens Langner <Jens.Langner@light-speed.de>
@@ -1711,7 +1715,7 @@ $URL$
 
 2009-12-09 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italian.ct: Various changes on the italian translation.
+  * locale/italian.ct: various changes on the italian translation.
 
 2009-12-09 Thore Böckelmann <tboeckel@gmx.de>
 

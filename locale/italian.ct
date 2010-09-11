@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (06.09.2010)
+## version $VER: YAM.catalog 7.5 (11.09.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -2390,7 +2390,7 @@ font ad ampiezza fissa.
 MSG_HELP_CO_ST_CTYPE
 Inserisci un nuovo tipo di MIME o selezionane\n\
 un altro usando il menu a comparsa attivabile\n\
-tramite il pulsante destro del mouse.
+sulla destra.
 ; Enter a new MIME type or select one\n\
 ; using the popup button at the right.
 ;
@@ -5724,7 +5724,7 @@ Menu contestuale
 ; Context menu
 ;
 MSG_HELP_CO_CONTEXTMENU
-Visualizza un menu a comparsa cliccando\n\
+Mostra un menu a comparsa cliccando\n\
 con il tasto destro del mouse su una di\n\
 queste voci nella lista?
 ; Show a popup menu when clicking\n\
@@ -6407,8 +6407,8 @@ secondo(i)
 MSG_HELP_CO_SETSTATUSDELAYED
 Dopo aver aperto un messaggio o visualizzando un\n\
 messaggio nel riquadro anteprima, YAM ritarderà la\n\
-marcatura dei messaggi appena letti per il numero di\n\
-secondi specificato.
+marcatura dei messaggi appena letti per il numero\n\
+di secondi specificato.
 ; After opening an e-mail, YAM will\n\
 ; wait this amount of time before\n\
 ; marking the e-mail as 'read'.
@@ -7221,7 +7221,7 @@ Identifica automaticamente i set di caratteri cirillici (C_yrillic)
 ; Auto-detect c_yrillic charsets
 ;
 MSG_HELP_CO_DETECT_CYRILLIC
-Prova ad utilizzare la funzione di auto-identificazione della\n\
+Prova ad utilizzare la funzione di 'auto-identificazione' della\n\
 codesets.library atta ad identificare automaticamente il set\n\
 di caratteri cirillici corretto.\n\
 (Solo per gli utenti che usano il sistema cirillico)
@@ -8325,11 +8325,10 @@ Mostra le parti a_lternative
 ; Show a_lternative parts
 ;
 MSG_HELP_CO_CH_SHOWALTPARTS
-Se attivato, le parti MIME alternative di\n\
-un messaggio 'multipart/alternativo'\n\
-che potrebbero altrimenti rimanere\n\
-nascoste, verranno invece visualizzate\n\
-come degli allegati.
+Se attivato, le parti MIME alternative di un messaggio di\n\
+posta 'multipart/alternativo' che potrebbero altrimenti\n\
+rimanere nascoste, verranno invece visualizzate come\n\
+fossero degli allegati.
 ; If enabled, alternative MIME parts of a\n\
 ; 'multipart/alternative' e-mail that\n\
 ; would otherwise remain hidden will be\n\
