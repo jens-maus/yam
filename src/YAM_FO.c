@@ -353,7 +353,6 @@ struct MUI_NListtree_TreeNode *FO_GetFolderTreeNode(struct Folder *findfo)
 
   ENTER();
 
-  D(DBF_ALWAYS, "find folder %08lx '%s'",findfo,findfo->Name);
   for(i=0;;i++)
   {
     tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
@@ -365,14 +364,12 @@ struct MUI_NListtree_TreeNode *FO_GetFolderTreeNode(struct Folder *findfo)
     }
 
     fo = ((struct FolderNode *)tn->tn_User)->folder;
-  D(DBF_ALWAYS, "checking folder %08lx %08lx '%s'",tn->tn_User,fo,fo->Name);
     if(fo == findfo)
     {
       // we just found the desired folder, so break out of the loop and return the treenode
       break;
     }
   }
-  D(DBF_ALWAYS, "found folder %08lx %08lx '%s'",tn,tn!=NULL ? ((struct FolderNode *)tn->tn_User)->folder:NULL,((struct FolderNode *)tn->tn_User)->folder?((struct FolderNode *)tn->tn_User)->folder->Name:"NULL");
 
   RETURN(tn);
   return tn;
@@ -388,7 +385,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
 
   ENTER();
 
-  AddPath(fname, GetFolderDir(fo), ".fconfig", sizeof(fname));
+  AddPath(fname, fo->Fullpath, ".fconfig", sizeof(fname));
   if((fh = fopen(fname, "r")) != NULL)
   {
     char *buf = NULL;
@@ -489,7 +486,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
 
   ENTER();
 
-  AddPath(fname, GetFolderDir(fo), ".fconfig", sizeof(fname));
+  AddPath(fname, fo->Fullpath, ".fconfig", sizeof(fname));
   if((fh = fopen(fname, "w")) != NULL)
   {
     struct DateStamp ds;
@@ -516,7 +513,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
     fprintf(fh, "WriteGreetings = %s\n", fo->WriteGreetings);
     fclose(fh);
 
-    AddPath(fname, GetFolderDir(fo), ".index", sizeof(fname));
+    AddPath(fname, fo->Fullpath, ".index", sizeof(fname));
 
     if(!isModified(fo))
       SetFileDate(fname, DateStamp(&ds));
@@ -562,7 +559,12 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
       strlcpy(folder->Path, path, sizeof(folder->Path));
       strlcpy(folder->Name, name, sizeof(folder->Name));
 
-      if(CreateDirectory(GetFolderDir(folder)) == FALSE)
+      if(strchr(path, ':') != NULL)
+        strlcpy(folder->Fullpath, path, sizeof(folder->Fullpath));
+      else
+        AddPath(folder->Fullpath, G->MA_MailDir, path, sizeof(folder->Fullpath));
+
+      if(CreateDirectory(folder->Fullpath) == FALSE)
       {
         DeleteMailList(folder->messages);
         free(folder);
@@ -705,7 +707,7 @@ static BOOL FO_LoadFolderImage(struct Folder *folder)
       char fname[SIZE_PATHFILE];
       Object *lv = G->MA->GUI.NL_FOLDERS;
 
-      AddPath(fname, GetFolderDir(folder), ".fimage", sizeof(fname));
+      AddPath(fname, folder->Fullpath, ".fimage", sizeof(fname));
       if(FileExists(fname) == TRUE)
       {
         // Now we say that this image could be used by this Listtree
@@ -781,9 +783,23 @@ BOOL FO_LoadTree(void)
             strlcpy(fo->Name, Trim(&buffer[8]), sizeof(fo->Name));
             GetLine(&buffer, &size, fh);
             strlcpy(fo->Path, Trim(buffer), sizeof(fo->Path));
+
+            // set up the full path to the folder
+            if(strchr(fo->Path, ':') != NULL)
+            {
+              // the path is an absolute path already
+              strlcpy(fo->Fullpath, fo->Path, sizeof(fo->Fullpath));
+            }
+            else
+            {
+              // concatenate the default mail dir and the folder's relative path to an absolute path
+              strlcpy(fo->Fullpath, G->MA_MailDir, sizeof(fo->Fullpath));
+              AddPart(fo->Fullpath, fo->Path, sizeof(fo->Fullpath));
+            }
+
             if((fo->messages = CreateMailList()) != NULL)
             {
-              if(CreateDirectory(GetFolderDir(fo)) == TRUE)
+              if(CreateDirectory(fo->Fullpath) == TRUE)
               {
                 struct FolderNode *fnode;
 
@@ -1185,8 +1201,6 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
   ENTER();
 
   BusyGauge(tr(MSG_BusyMoving), itoa(fo->Total), fo->Total);
-  strlcpy(srcbuf, GetFolderDir(oldfo), sizeof(srcbuf));
-  strlcpy(dstbuf, GetFolderDir(fo), sizeof(dstbuf));
 
   LockMailListShared(fo->messages);
 
@@ -1220,17 +1234,17 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
   if(success == TRUE)
   {
     // now we try to move an existing .index file
-    AddPath(srcbuf, GetFolderDir(oldfo), ".index", sizeof(srcbuf));
-    AddPath(dstbuf, GetFolderDir(fo), ".index", sizeof(dstbuf));
+    AddPath(srcbuf, oldfo->Fullpath, ".index", sizeof(srcbuf));
+    AddPath(dstbuf, fo->Fullpath, ".index", sizeof(dstbuf));
     if(FileExists(srcbuf) == TRUE && MoveFile(srcbuf, dstbuf) == FALSE)
     {
       success = FALSE;
     }
     else
     {
-      // now we try to mvoe the .fimage file aswell
-      AddPath(srcbuf, GetFolderDir(oldfo), ".fimage", sizeof(srcbuf));
-      AddPath(dstbuf, GetFolderDir(fo), ".fimage", sizeof(dstbuf));
+      // now we try to move the .fimage file aswell
+      AddPath(srcbuf, oldfo->Fullpath, ".fimage", sizeof(srcbuf));
+      AddPath(dstbuf, fo->Fullpath, ".fimage", sizeof(dstbuf));
       if(FileExists(srcbuf) == TRUE && MoveFile(srcbuf, dstbuf) == FALSE)
       {
         success = FALSE;
@@ -1241,7 +1255,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
         // we can also delete the source directory. However,
         // we are NOT doing any error checking here as the
         // source may be a VOLUME and as such not deleteable
-        DeleteMailDir(GetFolderDir(oldfo), FALSE);
+        DeleteMailDir(oldfo->Fullpath, FALSE);
       }
     }
   }
@@ -1641,7 +1655,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
             RemoveFolderFromFilters(folder->Name);
 
           delete_folder = TRUE;
-          DeleteMailDir(GetFolderDir(folder), FALSE);
+          DeleteMailDir(folder->Fullpath, FALSE);
           ClearMailList(folder, TRUE);
 
           // Here we dispose the folderimage Object because the destructor
@@ -1758,10 +1772,10 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     BOOL nameChanged;
 
     isNewFolder = FALSE;
-    memcpy(&folder, oldfolder, sizeof(struct Folder));
+    memcpy(&folder, oldfolder, sizeof(folder));
     FO_PutFolder(&folder);
 
-    // check if something has changed and if not we immediatly exit here
+    // check if something has changed and if not we exit here immediately
     if(memcmp(&folder, oldfolder, sizeof(struct Folder)) == 0)
     {
       DisposeModulePush(&G->FO);
@@ -1794,20 +1808,13 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     // if the folderpath string has changed
     if(stricmp(oldfolder->Path, folder.Path) != 0)
     {
-      char realpath_old[SIZE_PATH];
-      char realpath_new[SIZE_PATH];
-
-      // lets get the real pathes so that we can compare them later on
-      strlcpy(realpath_old, GetRealPath(oldfolder->Path), sizeof(realpath_old));
-      strlcpy(realpath_new, GetRealPath(folder.Path), sizeof(realpath_new));
-
-      // then let's check if the realPathes (after lock/unlock) is also different
-      if(stricmp(realpath_old, realpath_new) != 0)
+      // check if the full pathes are different
+      if(stricmp(oldfolder->Fullpath, folder.Fullpath) != 0)
       {
         int result;
 
         // check if the new folder already exists or not.
-        if(FileExists(folder.Path) == FALSE)
+        if(FileExists(folder.Fullpath) == FALSE)
         {
           result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDEREXISTS));
         }
@@ -1819,11 +1826,11 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         // If the user really wants to proceed
         if(result == 1)
         {
-          if(Rename(oldfolder->Path, folder.Path) == FALSE)
+          if(Rename(oldfolder->Fullpath, folder.Fullpath) == FALSE)
           {
-            if(!(CreateDirectory(GetFolderDir(&folder)) && FO_MoveFolderDir(&folder, oldfolder)))
+            if(!(CreateDirectory(folder.Fullpath) && FO_MoveFolderDir(&folder, oldfolder)))
             {
-              ER_NewError(tr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Path);
+              ER_NewError(tr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Fullpath);
 
               LEAVE();
               return;
@@ -1838,6 +1845,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       }
 
       strlcpy(oldfolder->Path, folder.Path, sizeof(oldfolder->Path));
+      strlcpy(oldfolder->Fullpath, folder.Fullpath, sizeof(oldfolder->Path));
     }
 
     strlcpy(oldfolder->WriteIntro,       folder.WriteIntro, sizeof(oldfolder->WriteIntro));
@@ -1971,7 +1979,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
           return;
         }
 
-        if(CreateDirectory(GetFolderDir(&folder)) == TRUE)
+        if(CreateDirectory(folder.Fullpath) == TRUE)
         {
           if(FO_SaveConfig(&folder) == TRUE)
           {

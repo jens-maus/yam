@@ -1887,7 +1887,7 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
               if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
               {
                 // delete the folder on disk
-                DeleteMailDir(GetFolderDir(spamFolder), FALSE);
+                DeleteMailDir(spamFolder->Fullpath, FALSE);
 
                 // remove all mails from our internal list
                 ClearMailList(spamFolder, TRUE);

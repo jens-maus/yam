@@ -1913,27 +1913,6 @@ BOOL CreateDirectory(const char *dir)
   return success;
 }
 ///
-/// GetFolderDir
-//  Returns path of a folder directory
-const char *GetFolderDir(const struct Folder *fo)
-{
-  static char buffer[SIZE_PATH];
-  const char *dir;
-
-  ENTER();
-
-  if(strchr(fo->Path, ':') != NULL)
-    dir = fo->Path;
-  else
-  {
-    AddPath(buffer, G->MA_MailDir, fo->Path, sizeof(buffer));
-    dir = buffer;
-  }
-
-  RETURN(dir);
-  return dir;
-}
-///
 /// GetMailFile
 //  Returns path of a message file
 char *GetMailFile(char *string, const struct Folder *folder, const struct Mail *mail)
@@ -1949,7 +1928,10 @@ char *GetMailFile(char *string, const struct Folder *folder, const struct Mail *
   if(string == NULL)
     string = buffer;
 
-  AddPath(string, (folder == NULL || folder == (struct Folder *)-1) ? C->TempDir : GetFolderDir(folder), mail->MailFile, SIZE_PATHFILE);
+  if(folder == NULL || folder == (struct Folder *)-1)
+    AddPath(string, C->TempDir, mail->MailFile, SIZE_PATHFILE);
+  else
+    AddPath(string, folder->Fullpath, mail->MailFile, SIZE_PATHFILE);
 
   result = GetRealPath(string);
 
@@ -3528,7 +3510,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
     // unique
     strlcpy(dstFileName, mail->MailFile, sizeof(dstFileName));
 
-    AddPath(dstbuf, GetFolderDir(dstfolder), dstFileName, sizeof(dstbuf));
+    AddPath(dstbuf, dstfolder->Fullpath, dstFileName, sizeof(dstbuf));
     if(FileExists(dstbuf) == TRUE)
     {
       int mCounter = atoi(&dstFileName[13]);
@@ -3546,7 +3528,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
           snprintf(&dstFileName[13], sizeof(dstFileName)-13, "%03d", mCounter);
           dstFileName[16] = ','; // restore it
 
-          AddPath(dstbuf, GetFolderDir(dstfolder), dstFileName, sizeof(dstbuf));
+          AddPath(dstbuf, dstfolder->Fullpath, dstFileName, sizeof(dstbuf));
         }
       }
       while(counterExceeded == FALSE && FileExists(dstbuf) == TRUE);

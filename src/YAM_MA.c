@@ -82,10 +82,12 @@
 #include "Locale.h"
 #include "MailList.h"
 #include "MailServers.h"
+#include "MethodStack.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Rexx.h"
+#include "Threads.h"
 
 #include "Debug.h"
 
@@ -466,14 +468,11 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   char dateFilePart[12 + 1];
   char statusFilePart[14 + 1];
   char oldFilePath[SIZE_PATHFILE];
-  const char *folderDir;
   char *ptr;
   BOOL success = FALSE;
   int mcounter;
 
   ENTER();
-
-  folderDir = GetFolderDir(mail->Folder);
 
   // modify the transferDate part
   base64encode(dateFilePart, (unsigned char *)&mail->transDate, sizeof(struct timeval));
@@ -509,7 +508,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   *ptr = '\0'; // NUL terminate it
 
   // construct the full old file path
-  AddPath(oldFilePath, folderDir, mail->MailFile, sizeof(oldFilePath));
+  AddPath(oldFilePath, mail->Folder->Fullpath, mail->MailFile, sizeof(oldFilePath));
 
   while(success == FALSE)
   {
@@ -527,7 +526,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
     }
 
     // construct new full file path
-    AddPath(newFilePath, folderDir, newFileName, sizeof(newFilePath));
+    AddPath(newFilePath, mail->Folder->Fullpath, newFileName, sizeof(newFilePath));
 
     // then rename it
     if(Rename(oldFilePath, newFilePath) != 0)
@@ -3209,7 +3208,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
       FILE *newfh;
 
       snprintf(tfname, sizeof(tfname), "YAMt%08x.tmp", (unsigned int)GetUniqueID());
-      AddPath(newfile, GetFolderDir(fo), tfname, sizeof(newfile));
+      AddPath(newfile, fo->Fullpath, tfname, sizeof(newfile));
 
       if((newfh = fopen(newfile, "w")) != NULL)
       {

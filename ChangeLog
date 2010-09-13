@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c: the folder structure now carries the absolute path to the folder's
+    directory around. This solves the possible race conditions that would occur
+    with the former GetFolderDir() function due to the static path buffer.
+
 2010-09-11 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed some typos.

@@ -238,7 +238,7 @@ static char *MA_IndexFileName(struct Folder *folder)
 
   ENTER();
 
-  AddPath(buffer, GetFolderDir(folder), ".index", sizeof(buffer));
+  AddPath(buffer, folder->Fullpath, ".index", sizeof(buffer));
 
   RETURN(buffer);
   return buffer;
@@ -593,14 +593,13 @@ void MA_RebuildIndexes(void)
 
       if(folder != NULL && !isGroupFolder(folder))
       {
-        const char *folderDir = GetFolderDir(folder);
         char *indexFile = MA_IndexFileName(folder);
         ULONG dirDate;
         ULONG indexDate;
 
         // get date of the folder directory and the .index file
         // itself
-        if(ObtainFileInfo(folderDir, FI_TIME, &dirDate) == TRUE &&
+        if(ObtainFileInfo(folder->Fullpath, FI_TIME, &dirDate) == TRUE &&
            ObtainFileInfo(indexFile, FI_TIME, &indexDate) == TRUE)
         {
           // only consider starting to rebuilding the .index if
@@ -616,7 +615,7 @@ void MA_RebuildIndexes(void)
             // and the folder directory, and if both have the A
             // bit set we skip the index rescanning process because
             // the A bits might have been set by a backup program
-            if(ObtainFileInfo(folderDir, FI_PROTECTION, &dirProtection) == TRUE &&
+            if(ObtainFileInfo(folder->Fullpath, FI_PROTECTION, &dirProtection) == TRUE &&
                ObtainFileInfo(indexFile, FI_PROTECTION, &indexProtection) == TRUE)
             {
               if(isFlagClear(indexProtection, FIBF_ARCHIVE) ||
@@ -1025,9 +1024,8 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 
   // construct the full path of the old filename
   // and get the file comment
-  if(AddPath(oldFilePath, GetFolderDir(folder), filename, sizeof(oldFilePath)) == NULL ||
-     ObtainFileInfo(oldFilePath, FI_COMMENT, &comment) == FALSE ||
-     comment == NULL)
+  AddPath(oldFilePath, folder->Fullpath, filename, sizeof(oldFilePath));
+  if(ObtainFileInfo(oldFilePath, FI_COMMENT, &comment) == FALSE || comment == NULL)
   {
     RETURN(NULL);
     return NULL;
@@ -1155,7 +1153,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 
     // so, now we should be finished with finding the new filename of the mail file.
     // lets try to rename it with the dos.library's Rename() function
-    if(AddPath(newFilePath, GetFolderDir(folder), newFileName, sizeof(newFilePath)) == NULL)
+    if(AddPath(newFilePath, folder->Fullpath, newFileName, sizeof(newFilePath)) == NULL)
     {
       result = NULL;
       break;
@@ -1170,7 +1168,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 
       // search for files matching the dateFilePart
       snprintf(pattern, sizeof(pattern), "%s.#?", dateFilePart);
-      mailCounter = FileCount(GetFolderDir(folder), pattern);
+      mailCounter = FileCount(folder->Fullpath, pattern);
 
       // if we didn't find any matching file then this signals
       // another error than an already existing file!
@@ -1183,8 +1181,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 
       // let us now try it again to rename the file
       snprintf(newFileName, sizeof(newFileName), "%s.%03d,%s", dateFilePart, (unsigned int)(++mailCounter), statusFilePart);
-
-      if(AddPath(newFilePath, GetFolderDir(folder), newFileName, sizeof(newFilePath)) == NULL)
+      if(AddPath(newFilePath, folder->Fullpath, newFileName, sizeof(newFilePath)) == NULL)
       {
         result = NULL;
         break;
@@ -1262,15 +1259,12 @@ char *MA_NewMailFile(const struct Folder *folder, char *mailfile)
   static char fullpath[SIZE_PATHFILE+1];
   char dateFilePart[12+1];
   char newFileName[SIZE_MFILE];
-  const char *folderDir;
   char *ptr;
   struct TimeVal curDate;
   int mCounter = 0;
   char *result = NULL;
 
   ENTER();
-
-  folderDir = GetFolderDir(folder);
 
   // take the current time and use it as the datePart of the
   // new mailfile name
@@ -1289,7 +1283,7 @@ char *MA_NewMailFile(const struct Folder *folder, char *mailfile)
   {
     snprintf(newFileName, sizeof(newFileName), "%s.%03d,N", dateFilePart, ++mCounter);
 
-    AddPath(fullpath, folderDir, newFileName, sizeof(fullpath));
+    AddPath(fullpath, folder->Fullpath, newFileName, sizeof(fullpath));
   }
   while(mCounter < 999 && FileExists(fullpath));
 
@@ -2671,7 +2665,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
   ENTER();
 
-  filecount = FileCount(GetFolderDir(folder), NULL);
+  filecount = FileCount(folder->Fullpath, NULL);
 
   // check if there are files in this mailbox or not.
   if(filecount < 0)
@@ -2729,9 +2723,9 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
       BusyGaugeInt(tr(MSG_BusyScanning), folder->Name, filecount);
       ClearMailList(folder, TRUE);
 
-      D(DBF_FOLDER, "Scanning folder: '%s' (path '%s', %ld files)...", folder->Name, GetFolderDir(folder), filecount);
+      D(DBF_FOLDER, "Scanning folder: '%s' (path '%s', %ld files)...", folder->Name, folder->Fullpath, filecount);
 
-      if((context = ObtainDirContextTags(EX_StringName, (ULONG)GetFolderDir(folder), TAG_DONE)) != NULL)
+      if((context = ObtainDirContextTags(EX_StringName, (IPTR)folder->Fullpath, TAG_DONE)) != NULL)
       {
         struct ExamineData *ed;
         LONG error;
@@ -2881,7 +2875,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                   char oldfile[SIZE_PATHFILE+1];
                   char *newfile;
 
-                  AddPath(oldfile, GetFolderDir(folder), fname, sizeof(oldfile));
+                  AddPath(oldfile, folder->Fullpath, fname, sizeof(oldfile));
                   if((newfile = MA_NewMailFile(folder, fbuf)) != NULL)
                   {
                     if(Rename(oldfile, newfile))
@@ -2950,7 +2944,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                 {
                   char path[SIZE_PATHFILE+1];
 
-                  AddPath(path, GetFolderDir(folder), fname, sizeof(path));
+                  AddPath(path, folder->Fullpath, fname, sizeof(path));
                   DeleteFile(path);
 
                   break;
@@ -2995,7 +2989,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
             {
               char path[SIZE_PATHFILE+1];
 
-              AddPath(path, GetFolderDir(folder), fname, sizeof(path));
+              AddPath(path, folder->Fullpath, fname, sizeof(path));
               DeleteFile(path);
 
               W(DBF_FOLDER, "found empty file '%s' in mail folder and deleted it", path);
@@ -3010,7 +3004,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
       }
       else
       {
-        W(DBF_FOLDER, "couldn't allocate DirContext structure for directory '%s', IoErr()=%ld", GetFolderDir(folder), IoErr());
+        W(DBF_FOLDER, "couldn't allocate DirContext structure for directory '%s', IoErr()=%ld", path, IoErr());
         result = FALSE;
       }
 
