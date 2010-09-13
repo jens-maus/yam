@@ -2277,27 +2277,24 @@ MakeStaticHook(FO_MLAutoDetectHook, FO_MLAutoDetectFunc);
 // set the user's mail directory path as default path instead of YAM's directory
 HOOKPROTONHNO(FolderPathFunc, LONG, struct TagItem *tags)
 {
-  BOOL drawerTagFound = FALSE;
+  struct TagItem *tag;
 
   ENTER();
 
-  // search for the end of the tag list or an already existing drawer tag item
-  while(tags->ti_Tag != TAG_DONE && tags->ti_Tag != ASLFR_InitialDrawer)
-    tags++;
-
-  // remember if we found ASLFR_InitialDrawer
-  if(tags->ti_Tag == ASLFR_InitialDrawer)
-    drawerTagFound = TRUE;
-  else
-    tags->ti_Tag = ASLFR_InitialDrawer;
-
-  // set the initial drawer to the user's mail directory
-  tags->ti_Data = (ULONG)G->MA_MailDir;
-
-  // add a terminating TAG_DONE if necessary
-  if(drawerTagFound == FALSE)
+  // search for an already existing drawer tag item
+  if((tag = FindTagItem(ASLFR_InitialDrawer, tags)) != NULL)
   {
+    // set the initial drawer to the user's mail directory
+    tag->ti_Data = (ULONG)G->MA_MailDir;
+  }
+  else
+  {
+    // MUI allows us to add up to 15 own tags
+    // add the tag for the initial drawer
+    tags->ti_Tag = ASLFR_InitialDrawer;
+    tags->ti_Data = (ULONG)G->MA_MailDir;
     tags++;
+    // terminate the list
     tags->ti_Tag = TAG_DONE;
   }
 
@@ -2305,6 +2302,7 @@ HOOKPROTONHNO(FolderPathFunc, LONG, struct TagItem *tags)
   return TRUE;
 }
 MakeStaticHook(FolderPathHook, FolderPathFunc);
+
 ///
 
 /// FO_New
