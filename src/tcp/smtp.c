@@ -1081,7 +1081,7 @@ static int TR_SendMessage(struct Mail *mail)
 
   GetMailFile(mailfile, sizeof(mailfile), outfolder, mail);
 
-  D(DBF_NET, "about to send mail '%s' via SMTP server '%s'", mf, msn->hostname);
+  D(DBF_NET, "about to send mail '%s' via SMTP server '%s'", mailfile, msn->hostname);
 
   // open the mail file for reading
   if((buf = malloc(buflen)) != NULL &&
