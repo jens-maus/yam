@@ -3488,7 +3488,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 
   ENTER();
 
-  D(DBF_UTIL, "TransferMailFile: %s '%s' to '%s' %ld->%ld", copyit ? "copy" : "move", mail->MailFile, GetFolderDir(dstfolder), srcMode, dstMode);
+  D(DBF_UTIL, "TransferMailFile: %s '%s' to '%s' %ld->%ld", copyit ? "copy" : "move", mail->MailFile, dstfolder->Fullpath, srcMode, dstMode);
 
   if(MA_GetIndex(srcfolder) == TRUE && MA_GetIndex(dstfolder) == TRUE)
   {
