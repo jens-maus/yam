@@ -3004,7 +3004,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
       }
       else
       {
-        W(DBF_FOLDER, "couldn't allocate DirContext structure for directory '%s', IoErr()=%ld", path, IoErr());
+        W(DBF_FOLDER, "couldn't allocate DirContext structure for directory '%s', IoErr()=%ld", folder->Fullpath, IoErr());
         result = FALSE;
       }
 
