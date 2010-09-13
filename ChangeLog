@@ -7,6 +7,9 @@ $URL$
 
 2010-09-13 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: the folder structure now carries a pointer to the corresponding
+    treenode. This avoids a lot of double iterating through the folder tree
+    every time YAM has to access the treenode.
   * YAM_FO.c: slightly rewrote the ASL start hook.
   * YAM_FO.c: the folder structure now carries the absolute path to the folder's
     directory around. This solves the possible race conditions that would occur

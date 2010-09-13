@@ -1881,33 +1881,27 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
             // first locate the spam folder
             if((spamFolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
             {
-              struct MUI_NListtree_TreeNode *tn;
+              // delete the folder on disk
+              DeleteMailDir(spamFolder->Fullpath, FALSE);
 
-              // now we need the corresponding treenode to remove it from the list of folders
-              if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
-              {
-                // delete the folder on disk
-                DeleteMailDir(spamFolder->Fullpath, FALSE);
+              // remove all mails from our internal list
+              ClearMailList(spamFolder, TRUE);
 
-                // remove all mails from our internal list
-                ClearMailList(spamFolder, TRUE);
+              // remove the folder from the folder list
+              DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, spamFolder->Treenode, MUIF_NONE);
 
-                // remove the folder from the folder list
-                DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, tn, MUIF_NONE);
+              // and finally save the modified tree to the folder config now
+              FO_SaveTree();
 
-                // and finally save the modified tree to the folder config now
-                FO_SaveTree();
+              // update the statistics in case the spam folder contained new or unread mails
+              DisplayStatistics(NULL, TRUE);
 
-                // update the statistics in case the spam folder contained new or unread mails
-                DisplayStatistics(NULL, TRUE);
+              // remove and delete the folder from our list
+              LockFolderList(G->folders);
+              RemoveFolder(G->folders, spamFolder);
+              UnlockFolderList(G->folders);
 
-                // remove and delete the folder from our list
-                LockFolderList(G->folders);
-                RemoveFolder(G->folders, spamFolder);
-                UnlockFolderList(G->folders);
-
-                FO_FreeFolder(spamFolder);
-              }
+              FO_FreeFolder(spamFolder);
             }
           }
           else
@@ -2012,20 +2006,15 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
           // created, we need to remove the old folder from the tree view first
           if((spamFolder = FO_GetFolderByPath((STRPTR)FolderName[FT_SPAM], NULL)) != NULL)
           {
-            struct MUI_NListtree_TreeNode *tn;
+            // remove the folder from the folder list
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, spamFolder->Treenode, MUIF_NONE);
+            spamFolder->Treenode = NULL;
 
-            // now we need the corresponding treenode to remove it from the list of folders
-            if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
+            if(spamFolder->imageObject != NULL)
             {
-              if(spamFolder->imageObject != NULL)
-              {
-                // we make sure that the NList also doesn't use the image in future anymore
-                DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
-                spamFolder->imageObject = NULL;
-              }
-
-              // remove the folder from the folder list
-              DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, tn, MUIF_NONE);
+              // we make sure that the NList also doesn't use the image in future anymore
+              DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
+              spamFolder->imageObject = NULL;
             }
           }
 

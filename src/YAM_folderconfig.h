@@ -171,6 +171,7 @@ struct Folder
 {
   Object *          imageObject;
   struct MailList * messages;
+  struct MUI_NListtree_TreeNode *Treenode;
   ULONG             Flags;
   LONG              Size;
   int               MLSignature;
@@ -222,7 +223,6 @@ struct Folder * FO_GetFolderByPath(const char *path, int *pos);
 struct Folder * FO_GetFolderByType(const enum FolderType type, int *pos);
 struct Folder * FO_GetFolderRexx(const char *arg, int *pos);
 int             FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups);
-struct MUI_NListtree_TreeNode *FO_GetFolderTreeNode(struct Folder *findfo);
 BOOL            FO_LoadConfig(struct Folder *fo);
 BOOL            FO_LoadTree(void);
 struct Folder * FO_NewFolder(enum FolderType type, const char *path, const char *name);

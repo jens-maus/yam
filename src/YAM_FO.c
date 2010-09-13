@@ -669,9 +669,10 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
 
       if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) != NULL)
       {
-      	D(DBF_ALWAYS,"create new folder %08lx %08lx '%s'",tn,folder, folder->Name);
         if(FO_SaveConfig(folder) == TRUE)
         {
+          folder->Treenode = tn;
+
           // only if we reach here everything was fine and we can return TRUE
           result = TRUE;
         }
@@ -802,6 +803,7 @@ BOOL FO_LoadTree(void)
               if(CreateDirectory(fo->Fullpath) == TRUE)
               {
                 struct FolderNode *fnode;
+                struct MUI_NListtree_TreeNode *tn;
 
                 // if there doesn't exist any .fconfig configuration in the folder
                 // we do have to generate it and we do that by analyzing its name,
@@ -867,7 +869,7 @@ BOOL FO_LoadTree(void)
                 }
 
                 // Now we add this folder to the folder listtree
-                if(!(DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
+                if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) == NULL)
                 {
                   fclose(fh);
                   free(buffer);
@@ -876,6 +878,9 @@ BOOL FO_LoadTree(void)
                   RETURN(FALSE);
                   return FALSE;
                 }
+
+                // remember the treenode
+                fo->Treenode = tn;
               }
             }
             else
@@ -903,6 +908,7 @@ BOOL FO_LoadTree(void)
           {
             long tnflags = TNF_LIST;
             struct FolderNode *fnode;
+            struct MUI_NListtree_TreeNode *tn;
 
             // SEPARATOR support is obsolete since the folder hierachical order
             // that's why we handle SEPARATORs as GROUPs now for backward compatibility
@@ -937,7 +943,7 @@ BOOL FO_LoadTree(void)
               return FALSE;
             }
 
-            if((Object *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags) == NULL)
+            if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)) == NULL)
             {
               fclose(fh);
               free(buffer);
@@ -946,6 +952,9 @@ BOOL FO_LoadTree(void)
               RETURN(FALSE);
               return FALSE;
             }
+
+            // remember the treenode
+            fo->Treenode = tn;
           }
         }
         else if(strncmp(buffer, "@GROUP", 6) == 0)
@@ -990,7 +999,7 @@ BOOL FO_LoadTree(void)
             }
 
             // now we are going to add this treenode to the list
-            if(!(tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
+            if((tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)) == NULL)
             {
               fclose(fh);
               free(buffer);
@@ -999,6 +1008,9 @@ BOOL FO_LoadTree(void)
               RETURN(FALSE);
               return FALSE;
             }
+
+            // remember the treenode
+            fo->Treenode = tn_root;
 
             nested++;
           }
@@ -2004,7 +2016,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
                 if(prevFolder != NULL && isGroupFolder(prevFolder))
                 {
                   // add the folder to the end of the current folder group
-                  DoMethod(lv, MUIM_NListtree_Insert, oldfolder->Name, fnode, FO_GetFolderTreeNode(prevFolder), MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
+                  DoMethod(lv, MUIM_NListtree_Insert, oldfolder->Name, fnode, prevFolder->Treenode, MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
                 }
                 else
                 {

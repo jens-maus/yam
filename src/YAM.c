@@ -1739,18 +1739,16 @@ static void InitAfterLogin(void)
         // try to remove the existing folder named "spam"
         if((spamFolder = FO_GetFolderByPath(FolderName[FT_SPAM], NULL)) != NULL)
         {
-          struct MUI_NListtree_TreeNode *tn;
-
+          if(spamFolder->Treenode != NULL)
+          {
+            // remove the folder from the folder list
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, spamFolder->Treenode, MUIF_NONE);
+          }
           if(spamFolder->imageObject != NULL)
           {
             // we make sure that the NList also doesn't use the image in future anymore
             DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
             spamFolder->imageObject = NULL;
-          }
-          if((tn = FO_GetFolderTreeNode(spamFolder)) != NULL)
-          {
-            // remove the folder from the folder list
-            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, tn, MUIF_NONE);
           }
         }
         // finally, create the spam folder

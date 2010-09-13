@@ -1685,7 +1685,6 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
   {
     struct Folder *infolder = FO_GetFolderByType(FT_INCOMING, NULL);
     struct Node *curNode;
-    struct MUI_NListtree_TreeNode *incomingTreeNode = FO_GetFolderTreeNode(infolder);
 
     if(C->TransferWindow == TWM_SHOW && xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
       set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
@@ -1708,7 +1707,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
         if(TR_LoadMessage(infolder, mtn->index) == TRUE)
         {
           // redraw the folderentry in the listtree
-          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, incomingTreeNode, MUIF_NONE);
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, infolder->Treenode, MUIF_NONE);
 
           // put the transferStat for this mail to 100%
           DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Downloading));
