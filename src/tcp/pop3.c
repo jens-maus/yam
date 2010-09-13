@@ -1235,6 +1235,8 @@ BOOL TR_LoadMessage(struct Folder *infolder, const int number)
 
         if((newMail = AddMailToList(&mail->Mail, infolder)) != NULL)
         {
+          char mailfile[SIZE_PATHFILE];
+
           // we have to get the actual Time and place it in the transDate, so that we know at
           // which time this mail arrived
           GetSysTimeUTC(&newMail->transDate);
@@ -1253,7 +1255,9 @@ BOOL TR_LoadMessage(struct Folder *infolder, const int number)
 
           AppendToLogfile(LF_VERBOSE, 32, tr(MSG_LOG_RetrievingVerbose), AddrName(newMail->From), newMail->Subject, newMail->Size);
 
-          MA_StartMacro(MACRO_NEWMSG, GetRealPath(GetMailFile(NULL, infolder, newMail)));
+          GetMailFile(mailfile, sizeof(mailfile), NULL, newMail);
+
+          MA_StartMacro(MACRO_NEWMSG, mailfile);
           MA_FreeEMailStruct(mail);
 
           result = TRUE;

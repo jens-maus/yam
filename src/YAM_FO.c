@@ -1207,7 +1207,6 @@ void FO_UpdateStatistics(struct Folder *folder)
 //  Moves a folder to a new directory
 static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 {
-  char srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
   BOOL success = TRUE;
 
   ENTER();
@@ -1224,6 +1223,8 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
     ForEachMailNode(fo->messages, mnode)
     {
       struct Mail *mail = mnode->mail;
+      char srcbuf[SIZE_PATHFILE];
+      char dstbuf[SIZE_PATHFILE];
 
       if(BusySet(++i) == FALSE)
       {
@@ -1231,8 +1232,8 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
         break;
       }
 
-      GetMailFile(dstbuf, fo, mail);
-      GetMailFile(srcbuf, oldfo, mail);
+      GetMailFile(dstbuf, sizeof(dstbuf), fo, mail);
+      GetMailFile(srcbuf, sizeof(srcbuf), oldfo, mail);
 
       if(MoveFile(srcbuf, dstbuf) == TRUE)
         RepackMailFile(mail, fo->Mode, fo->Password);
@@ -1245,6 +1246,9 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 
   if(success == TRUE)
   {
+    char srcbuf[SIZE_PATHFILE];
+    char dstbuf[SIZE_PATHFILE];
+
     // now we try to move an existing .index file
     AddPath(srcbuf, oldfo->Fullpath, ".index", sizeof(srcbuf));
     AddPath(dstbuf, fo->Fullpath, ".index", sizeof(dstbuf));

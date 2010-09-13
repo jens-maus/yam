@@ -2496,7 +2496,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
   rmData->uniqueID = GetUniqueID();
 
   // here we read in the mail in our read mail group
-  GetMailFile(rmData->readFile, folder, mail);
+  GetMailFile(rmData->readFile, sizeof(rmData->readFile), NULL, mail);
 
   // check whether the folder of the mail is using XPK and if so we
   // unpack it to a temporarly file
@@ -3550,6 +3550,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
         if(p3 && (tf3 = OpenTempFile("w")) != NULL)
         {
+          char mailfile[SIZE_PATHFILE];
           char fullfile[SIZE_PATHFILE];
           char mfile[SIZE_MFILE];
           struct Compose comp;
@@ -3557,7 +3558,9 @@ static void RE_SendMDN(const enum MDNMode mode,
 
           p3->ContentType = "text/rfc822-headers";
           p3->Filename = tf3->Filename;
-          if(StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder) != NULL)
+
+          GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+          if(StartUnpack(mailfile, fullfile, mail->Folder) != NULL)
           {
             FILE *fh;
 

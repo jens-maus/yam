@@ -718,6 +718,8 @@ void MA_DeleteSingle(struct Mail *mail, ULONG delFlags)
        (isSpamFolder(mailFolder) && hasStatusSpam(mail)) ||
        isFlagSet(delFlags, DELF_AT_ONCE))
     {
+      char mailfile[SIZE_PATHFILE];
+
       D(DBF_MAIL, "deleting mail with subject '%s' from folder '%s'", mail->Subject, mailFolder->Name);
 
       // before we go and delete/free the mail we have to check
@@ -727,7 +729,8 @@ void MA_DeleteSingle(struct Mail *mail, ULONG delFlags)
       AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
 
       // make sure we delete the mailfile
-      DeleteFile(GetMailFile(NULL, mailFolder, mail));
+      GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+      DeleteFile(mailfile);
 
       // now remove the mail from its folder/mail list
       RemoveMailFromList(mail, isFlagSet(delFlags, DELF_CLOSE_WINDOWS));
@@ -1385,7 +1388,8 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
       char fname[SIZE_PATHFILE];
       char tfname[SIZE_PATHFILE];
 
-      snprintf(tfname, sizeof(tfname), "%s.tmp", GetMailFile(fname, NULL, mail));
+      GetMailFile(fname, sizeof(fname), NULL, mail);
+      snprintf(tfname, sizeof(tfname), "%s.tmp", fname);
 
       if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)) != NULL)
       {
@@ -2735,10 +2739,12 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
       ForEachMailNode(folder->messages, mnode)
       {
         struct Mail *mail = mnode->mail;
+        char mailfile[SIZE_PATHFILE];
 
         BusySet(++i);
         AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
-        DeleteFile(GetMailFile(NULL, NULL, mail));
+        GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+        DeleteFile(mailfile);
       }
 
       // We only clear the folder if it wasn't empty anyway..
@@ -3198,9 +3204,10 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
   if(strcmp(subj, mail->Subject) != 0)
   {
     struct Folder *fo = mail->Folder;
-    char *oldfile = GetMailFile(NULL, NULL, mail);
+    char oldfile[SIZE_PATHFILE];
     char fullfile[SIZE_PATHFILE];
 
+    GetMailFile(oldfile, sizeof(oldfile), NULL, mail);
     if(StartUnpack(oldfile, fullfile, fo) != NULL)
     {
       char tfname[SIZE_MFILE];

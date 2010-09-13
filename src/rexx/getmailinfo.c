@@ -124,7 +124,7 @@ void rx_getmailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enu
           results->value = mail->Subject;
         else if(!strnicmp(key, "FIL", 3))
         {
-          GetMailFile(optional->result, mail->Folder, mail);
+          GetMailFile(optional->result, sizeof(optional->result), NULL, mail);
           results->value = optional->result;
         }
         else

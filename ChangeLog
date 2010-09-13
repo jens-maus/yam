@@ -7,6 +7,8 @@ $URL$
 
 2010-09-13 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: changed the GetMailFile() function to not use a static temporary
+    buffer anymore.
   * YAM_FO.c: the folder structure now carries a pointer to the corresponding
     treenode. This avoids a lot of double iterating through the folder tree
     every time YAM has to access the treenode.

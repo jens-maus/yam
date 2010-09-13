@@ -1915,28 +1915,19 @@ BOOL CreateDirectory(const char *dir)
 ///
 /// GetMailFile
 //  Returns path of a message file
-char *GetMailFile(char *string, const struct Folder *folder, const struct Mail *mail)
+void GetMailFile(char *string, const size_t stringSize, const struct Folder *folder, const struct Mail *mail)
 {
-  static char buffer[SIZE_PATHFILE];
-  char *result;
-
   ENTER();
 
   if(folder == NULL && mail != NULL)
     folder = mail->Folder;
 
-  if(string == NULL)
-    string = buffer;
-
   if(folder == NULL || folder == (struct Folder *)-1)
-    AddPath(string, C->TempDir, mail->MailFile, SIZE_PATHFILE);
+    AddPath(string, C->TempDir, mail->MailFile, stringSize);
   else
-    AddPath(string, folder->Fullpath, mail->MailFile, SIZE_PATHFILE);
+    AddPath(string, folder->Fullpath, mail->MailFile, stringSize);
 
-  result = GetRealPath(string);
-
-  RETURN(result);
-  return result;
+  LEAVE();
 }
 ///
 /// BuildAddress
@@ -3503,7 +3494,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 
     // get some information we require
     GetPackMethod(dstMode, &pmeth, &peff);
-    GetMailFile(srcbuf, srcfolder, mail);
+    GetMailFile(srcbuf, sizeof(srcbuf), NULL, mail);
 
     // check if we can just take the exactly same filename in the destination
     // folder or if we require to increase the mailfile counter to make it
@@ -3639,7 +3630,7 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, const char *pass
   }
 
   MA_GetIndex(folder);
-  GetMailFile(srcbuf, folder, mail);
+  GetMailFile(srcbuf, sizeof(srcbuf), NULL, mail);
   GetPackMethod(dstMode, &pmeth, &peff);
   snprintf(dstbuf, sizeof(dstbuf), "%s.tmp", srcbuf);
 

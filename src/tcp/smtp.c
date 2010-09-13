@@ -1064,7 +1064,7 @@ static int TR_SendMessage(struct Mail *mail)
 {
   int result = 0;
   struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-  char *mf = GetMailFile(NULL, outfolder, mail);
+  char mailfile[SIZE_PATHFILE];
   FILE *fh = NULL;
   char *buf = NULL;
   size_t buflen = SIZE_LINE;
@@ -1079,11 +1079,13 @@ static int TR_SendMessage(struct Mail *mail)
     return -1;
   }
 
+  GetMailFile(mailfile, sizeof(mailfile), outfolder, mail);
+
   D(DBF_NET, "about to send mail '%s' via SMTP server '%s'", mf, msn->hostname);
 
   // open the mail file for reading
   if((buf = malloc(buflen)) != NULL &&
-     mf != NULL && (fh = fopen(mf, "r")) != NULL)
+     (fh = fopen(mailfile, "r")) != NULL)
   {
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -1260,7 +1262,7 @@ static int TR_SendMessage(struct Mail *mail)
               {
                 E(DBF_NET, "input mail file returned error state: ferror(fh)=%ld feof(fh)=%ld", ferror(fh), feof(fh));
 
-                ER_NewError(tr(MSG_ER_ErrorReadMailfile), mf);
+                ER_NewError(tr(MSG_ER_ErrorReadMailfile), mailfile);
                 result = -1; // signal error
               }
               else
@@ -1294,13 +1296,13 @@ static int TR_SendMessage(struct Mail *mail)
         MA_FreeEMailStruct(email);
       }
       else
-        ER_NewError(tr(MSG_ER_CantOpenFile), mf);
+        ER_NewError(tr(MSG_ER_CantOpenFile), mailfile);
     }
 
     fclose(fh);
   }
   else if(buf != NULL)
-    ER_NewError(tr(MSG_ER_CantOpenFile), mf);
+    ER_NewError(tr(MSG_ER_CantOpenFile), mailfile);
 
   free(buf);
 

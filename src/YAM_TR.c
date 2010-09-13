@@ -445,12 +445,14 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
       {
         struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
         struct Mail *mail = mtn->mail;
+        char mailfile[SIZE_PATHFILE];
         char fullfile[SIZE_PATHFILE];
 
         // update the transfer status
         DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Next, mtn->index, -1, mail->Size, tr(MSG_TR_Exporting));
 
-        if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder) != NULL)
+        GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+        if(StartUnpack(mailfile, fullfile, mail->Folder) != NULL)
         {
           FILE *mfh;
 

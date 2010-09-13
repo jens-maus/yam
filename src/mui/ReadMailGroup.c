@@ -1086,7 +1086,12 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       result = TRUE;
     }
     else
-      ER_NewError(tr(MSG_ER_ErrorReadMailfile), GetMailFile(NULL, folder, mail));
+    {
+      char mailfile[SIZE_PATHFILE];
+
+      GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+      ER_NewError(tr(MSG_ER_ErrorReadMailfile), mailfile);
+    }
 
     BusyEnd();
   }
@@ -1094,7 +1099,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   {
     // check first if the mail file exists and if not we have to exit with an error
     if(FileExists(mail->MailFile) == FALSE)
-      ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
+      ER_NewError(tr(MSG_ER_CantOpenFile), mail->MailFile);
   }
 
   // make sure we know that there is some content
@@ -1349,9 +1354,11 @@ DECLARE(CheckPGPSignature) // ULONG forceRequester
   {
     if(hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData))
     {
+      char mailfile[SIZE_PATHFILE];
       char fullfile[SIZE_PATHFILE];
 
-      if(StartUnpack(GetMailFile(NULL, NULL, rmData->mail), fullfile, rmData->mail->Folder) != NULL)
+      GetMailFile(mailfile, sizeof(mailfile), NULL, rmData->mail);
+      if(StartUnpack(mailfile, fullfile, rmData->mail->Folder) != NULL)
       {
         char options[SIZE_LARGE];
         int error;
@@ -1399,10 +1406,12 @@ DECLARE(ExtractPGPKey)
   GETDATA;
   struct ReadMailData *rmData = data->readMailData;
   struct Mail *mail = rmData->mail;
+  char mailfile[SIZE_PATHFILE];
   char fullfile[SIZE_PATHFILE];
   char options[SIZE_PATHFILE];
 
-  if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder) != NULL)
+  GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+  if(StartUnpack(mailfile, fullfile, mail->Folder) != NULL)
   {
     snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s +batchmode=1 +force" : "-ka %s +bat +f", fullfile);
     PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0);

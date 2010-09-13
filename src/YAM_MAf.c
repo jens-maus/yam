@@ -2143,7 +2143,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
   mail = &email->Mail;
   strlcpy(mail->MailFile, file, sizeof(mail->MailFile));
   email->DelSend = !C->SaveSent;
-  if((fh = fopen(GetMailFile(fullfile, folder, mail), "r")) != NULL)
+  GetMailFile(fullfile, sizeof(fullfile), folder, mail);
+  if((fh = fopen(fullfile, "r")) != NULL)
   {
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -2151,11 +2152,14 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
     // file and we have to unpack it first.
     if(fgetc(fh) == 'X' && fgetc(fh) == 'P' && fgetc(fh) == 'K')
     {
+      char mailfile[SIZE_PATHFILE];
+
       // temporary close the file
       fclose(fh);
 
+      GetMailFile(mailfile, sizeof(mailfile), folder, mail);
       // then unpack the file with XPK routines.
-      if(StartUnpack(GetMailFile(NULL, folder, mail), fullfile, folder) == NULL)
+      if(StartUnpack(mailfile, fullfile, folder) == NULL)
       {
         MA_FreeEMailStruct(email);
 
@@ -2965,12 +2969,14 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                     // as the fallback
                     if(!hasStatusQueued(newMail) && !hasStatusHold(newMail))
                     {
+                      char mailfile[SIZE_PATHFILE];
                       struct DateStamp ds;
 
                       W(DBF_FOLDER, "no transfer date information found in mail file, using file date...");
 
+                      GetMailFile(mailfile, sizeof(mailfile), NULL, newMail);
                       // obtain the datestamp information from  and as a fallback we take the date of the mail file
-                      if(ObtainFileInfo(GetMailFile(NULL, folder, newMail), FI_DATE, &ds) == TRUE)
+                      if(ObtainFileInfo(mailfile, FI_DATE, &ds) == TRUE)
                       {
                         // now convert the local TZ fib_Date to a UTC transDate
                         DateStamp2TimeVal(&ds, &newMail->transDate, TZC_UTC);

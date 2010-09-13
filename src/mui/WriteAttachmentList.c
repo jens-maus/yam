@@ -127,7 +127,8 @@ OVERLOAD(MUIM_DragDrop)
 
         memset(&attach, 0, sizeof(struct Attach));
 
-        if(StartUnpack(GetMailFile(filename, NULL, mail), attach.FilePath, mail->Folder) != NULL)
+        GetMailFile(filename, sizeof(filename), NULL, mail);
+        if(StartUnpack(filename, attach.FilePath, mail->Folder) != NULL)
         {
           strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
           strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));

@@ -128,7 +128,8 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           int vf = getVOLValue(mail);
           int i;
 
-          GetMailFile(results->filename = optional->filename, folder, mail);
+          GetMailFile(optional->filename, sizeof(optional->filename), NULL, mail);
+          results->filename = optional->filename;
           results->index = &optional->active;
 
           if(hasStatusError(mail))

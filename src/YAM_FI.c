@@ -415,10 +415,12 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
 static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 {
   char fullfile[SIZE_PATHFILE];
-  char *mailfile = GetMailFile(NULL, mail->Folder, mail);
+  char mailfile[SIZE_PATHFILE];
   BOOL found = FALSE;
 
   ENTER();
+
+  GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
 
   if(StartUnpack(mailfile, fullfile, mail->Folder) != NULL)
   {
@@ -1610,9 +1612,11 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
     // Execute Action
     if(hasExecuteAction(filter) && *filter->executeCmd)
     {
+      char mailfile[SIZE_PATHFILE];
       char buf[SIZE_COMMAND + SIZE_PATHFILE];
 
-      snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
+      GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+      snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, mailfile);
       LaunchCommand(buf, FALSE, OUT_STDOUT);
       G->RuleResults.Executed++;
     }

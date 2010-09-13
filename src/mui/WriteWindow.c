@@ -3971,7 +3971,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     {
       if(wmData->refMail != NULL && MailExists(wmData->refMail, NULL) == TRUE)
       {
-        GetMailFile(newMailFile, outfolder, wmData->refMail);
+        GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->refMail);
         break;
       }
     }

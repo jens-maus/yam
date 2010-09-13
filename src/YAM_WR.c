@@ -758,30 +758,36 @@ static char *WR_GetPGPIds(const char *source, char *ids)
 static BOOL WR_Bounce(FILE *fh, const struct Compose *comp)
 {
   BOOL result = FALSE;
-  FILE *oldfh;
 
   ENTER();
 
-  if(comp->refMail != NULL && (oldfh = fopen(GetMailFile(NULL, NULL, comp->refMail), "r")) != NULL)
+  if(comp->refMail != NULL)
   {
-    char address[SIZE_LARGE];
+    char mailfile[SIZE_PATHFILE];
+    FILE *oldfh;
 
-    setvbuf(oldfh, NULL, _IOFBF, SIZE_FILEBUF);
+    GetMailFile(mailfile, sizeof(mailfile), NULL, comp->refMail);
+    if((oldfh = fopen(mailfile, "r")) != NULL)
+    {
+      char address[SIZE_LARGE];
 
-    // now we add the "Resent-#?" type headers which are defined
-    // by RFC2822 section 3.6.6. The RFC defined that these headers
-    // should be added to the top of a message
-    EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
-    EmitHeader(fh, "Resent-Date", GetDateTime());
-    if(comp->MailTo != NULL)
-      EmitRcptHeader(fh, "Resent-To", comp->MailTo);
-    EmitHeader(fh, "Resent-Message-ID", NewMessageID());
+      setvbuf(oldfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    // now we copy the rest of the message
-    // directly from the file handlers
-    result = CopyFile(NULL, fh, NULL, oldfh);
+      // now we add the "Resent-#?" type headers which are defined
+      // by RFC2822 section 3.6.6. The RFC defined that these headers
+      // should be added to the top of a message
+      EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
+      EmitHeader(fh, "Resent-Date", GetDateTime());
+      if(comp->MailTo != NULL)
+        EmitRcptHeader(fh, "Resent-To", comp->MailTo);
+      EmitHeader(fh, "Resent-Message-ID", NewMessageID());
 
-    fclose(oldfh);
+      // now we copy the rest of the message
+      // directly from the file handlers
+      result = CopyFile(NULL, fh, NULL, oldfh);
+
+      fclose(oldfh);
+    }
   }
 
   RETURN(result);
@@ -793,16 +799,18 @@ static BOOL WR_Bounce(FILE *fh, const struct Compose *comp)
 //  Creates decrypted copy of a PGP encrypted message
 static BOOL WR_SaveDec(FILE *fh, const struct Compose *comp)
 {
-  char *mailfile;
   BOOL result = FALSE;
 
   ENTER();
 
-  if(comp->refMail != NULL && (mailfile = GetMailFile(NULL, NULL, comp->refMail)) != NULL)
+  if(comp->refMail != NULL)
   {
+    char mailfile[SIZE_PATHFILE];
     char unpFile[SIZE_PATHFILE];
     BOOL xpkPacked = FALSE;
     FILE *oldfh;
+
+    GetMailFile(mailfile, sizeof(mailfile), NULL, comp->refMail);
 
     // we need to analyze if the folder we are reading this mail from
     // is encrypted or compressed and then first unpacking it to a temporary file
@@ -1994,7 +2002,10 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
       if((email = MA_ExamineMail(folder, mail->MailFile, TRUE)) == NULL)
       {
-        ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
+        char mailfile[SIZE_PATHFILE];
+
+        GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+        ER_NewError(tr(MSG_ER_CantOpenFile), mailfile);
         fclose(out);
         CleanupWriteMailData(wmData);
 
@@ -2230,7 +2241,10 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
 
         if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) == NULL)
         {
-          ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, mail->Folder, mail));
+          char mailfile[SIZE_PATHFILE];
+
+          GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+          ER_NewError(tr(MSG_ER_CantOpenFile), mailfile);
           fclose(out);
           FreeStrBuf(rsub);
 
@@ -2275,7 +2289,8 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
 
             memset(&attach, 0, sizeof(struct Attach));
 
-            if(StartUnpack(GetMailFile(filename, NULL, mail), attach.FilePath, mail->Folder) != NULL)
+            GetMailFile(filename, sizeof(filename), NULL, mail);
+            if(StartUnpack(filename, attach.FilePath, mail->Folder) != NULL)
             {
               strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
               strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
@@ -2425,7 +2440,10 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
         if((email = MA_ExamineMail(folder, mail->MailFile, TRUE)) == NULL)
         {
-          ER_NewError(tr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
+          char mailfile[SIZE_PATHFILE];
+
+          GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+          ER_NewError(tr(MSG_ER_CantOpenFile), mailfile);
           fclose(out);
           CleanupWriteMailData(wmData);
           FreeStrBuf(rto);
