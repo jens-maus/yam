@@ -26,7 +26,8 @@
 ; (set #def_lang_<language name>     bitmask)
 
 (set #def_doc_english              $00)
-(set #def_doc_french               $01)
+(set #def_doc_german               $01)
+(set #def_doc_french               $02)
 ; add more languages here
 ; (set #def_doc_<language name>       bitmask)
 ; ///
@@ -71,6 +72,7 @@
 (if (= @language "deutsch")
     (
         (set #def_cat_lang #def_lang_german)
+        (set #def_doc_lang #def_doc_german)
         (set #acknowledgeOS (cat "Bitte bestätigen Sie die automatische\n"
                                  "Ermittlung Ihres Betriebssystems:"))
         (set #YAM_dir  (cat "Wählen Sie ein Verzeichnis für YAM\n"
@@ -415,6 +417,7 @@
         (prompt #lang_manual)
         (help @askchoice-help)
         (choices "English"
+                 "Deutsch (von YAM 2.4)"
                  "Français"
         )
         (default #def_doc_lang)
@@ -691,6 +694,18 @@
     (
         (copyfiles
             (source "/Docs/YAM_english.guide")
+            (dest YAM_dir)
+            (newname "YAM.guide")
+            (infos)
+            (noposition)
+        )
+    )
+)
+
+(if (= doc_lang #def_doc_german)
+    (
+        (copyfiles
+            (source "/Docs/YAM_german.guide")
             (dest YAM_dir)
             (newname "YAM.guide")
             (infos)

@@ -65,10 +65,10 @@ done
 echo "  MK $yamsys/Docs"
 mkdir -p "release/$yamsys/YAM $yamver/Docs"
 cp ../icons/$1/Docs_directory.info "release/$yamsys/YAM $yamver/Docs.info"
-cp ../doc/YAM_english.guide "release/$yamsys/YAM $yamver/Docs/YAM_english.guide"
-cp ../icons/$1/guide.info "release/$yamsys/YAM $yamver/Docs/YAM_english.guide.info"
-cp ../doc/YAM_french.guide "release/$yamsys/YAM $yamver/Docs/YAM_french.guide"
-cp ../icons/$1/guide.info "release/$yamsys/YAM $yamver/Docs/YAM_french.guide.info"
+for language in english french german; do
+  cp ../doc/YAM_$language.guide "release/$yamsys/YAM $yamver/Docs/YAM_$language.guide"
+  cp ../icons/$1/guide.info "release/$yamsys/YAM $yamver/Docs/YAM_$language.guide.info"
+done
 cp ../AUTHORS "release/$yamsys/YAM $yamver/Docs/AUTHORS"
 cp ../icons/$1/Docs_AUTHORS.info "release/$yamsys/YAM $yamver/Docs/AUTHORS.info"
 cp ../ChangeLog "release/$yamsys/YAM $yamver/Docs/ChangeLog"
