@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install-YAM: let the Installer application do the word wrapping instead
+    of doing this ourself. This works around the ugly fact, that Installer opens
+    a fixed sized window depending on the font being used which is not able to
+    display all texts in full length with certain fonts.
+
 2010-09-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * tools/mkrelease.sh: fixed archive generation.
