@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.16 (14.09.2010) (c) 2000-2010 by YAM Open Source Team
+; $VER: Install-YAM 1.17 (14.09.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -51,7 +51,7 @@
                                "\n"
                                "However, it is absolutely NO problem to install YAM 2.4 and YAM 2.6 in separate directories."))
 (set #faq_and_bugtracker (cat "\n"
-                              "If you have any questions concerning YAM\ you can ask these in the YAM forum:\n"
+                              "If you have any questions concerning YAM you can ask these in the YAM forum:\n"
                               "http://forum.yam.ch/\n"
                               "\n"
                               "Frequently asked questions are already answered in the YAM FAQ:\n"
@@ -118,7 +118,7 @@
                                 "(Engelska är inbyggt)"))
         (set #lang_manual "Välj språk för den AmigaGuide-baserade hjälpen")
         (set #no_way_back_warning (cat  "VARNING!!\n"
-                                       "(om du vill uppdatera en existerande\ YAM 2.4 installation)\n"
+                                       "(om du vill uppdatera en existerande YAM 2.4 installation)\n"
                                        "\n"
                                        "Namn schemat för mailfilerna har ändrats totalt. När du kör YAM 2.6 för första gången, kommer alla dina nuvarande mailfiler att konverteras automatiskt till det nya schemat. Efter det kommer inte YAM 2.4 att kunna hantera dem längre. Så, backa upp ALLA dina mailfiler FÖRE du kör YAM 2.6.\n"
                                        "\n"
@@ -218,17 +218,19 @@
 (if (= @language "italiano")
     (
         (set #def_cat_lang #def_lang_italian)
+        (set #acknowledgeOS (cat "Per favore istruisci il sistema ad\n"
+                         "auto-rilevare il sistema operativo in uso:"))
         (set #YAM_dir  (cat "Per favore seleziona una directory per YAM\n"
                             "(Non verrà creata nessuna cartella extra!)"))
         (set #lang_catalog (cat "Quale catalogo di lingua si desidera installare?\n"
                                 "(La lingua inglese è quella predefinita)"))
-        (set #lang_manual "Seleziona la lingua da installare per la guida in linea AmigaGuide")
+        (set #lang_manual "Seleziona la lingua da installare per la guida in linea (file AmigaGuide)")
         (set #no_way_back_warning (cat "ATTENZIONE!!\n"
-                                       "(Nel caso si desideri aggiornare il programma da una precedente installazione di YAM)\n"
+                                       "(Nel caso si desideri aggiornare il programma da una precedente installazione di YAM.)\n"
                                        "\n"
-                                       "Lo schema dei nomi dei messaggi è stato modificato, perciò quando verrà lanciata questa nuova versione per la prima volta tutti i precedenti messaggi verranno automaticamente convertiti al nuovo schema. Si consiglia di effettuare un backup di TUTTI i messaggi PRIMA di procedere.\n"
+                                       "Lo schema dei nomi relativo ai messaggi di posta è stato modificato, perciò al primo avvio della nuova versione tutti i precedenti messaggi verranno automaticamente convertiti al nuovo schema. Si consiglia di effettuare un backup di TUTTI i messaggi prima di procedere con questa operazione.\n"
                                        "\n"
-                                       "Ricorda che è sempre possibile installare due differenti versioni di YAM in directory separate."))
+                                       "Ricorda che seppur in directory separate, sarà sempre possibile installare due differenti versioni di YAM."))
         (set #faq_and_bugtracker (cat "\n"
                                       "Nel caso si abbiano delle domande concernenti YAM ed il suo sviluppo potete contattarci attraverso il nostro forum all'indirizzo internet:\n"
                                       "http://forum.yam.ch/\n"
@@ -236,7 +238,7 @@
                                       "Nota che le domande più frequentemente risposte sono disponibili nelle FAQ del sito di YAM all'indirizzo:\n"
                                       "http://faq.yam.ch/\n"
                                       "\n"
-                                      "Nel caso venga riscontrato qualche bug o problema su YAM, potete segnalarcelo attraverso il nostro bugtracker all'indirizzo:\n"
+                                      "Nel caso si riscontri qualche bug o qualsiasi altro problema su YAM, potete segnalarcelo attraverso il nostro bugtracker all'indirizzo:\n"
                                       "http://bugs.yam.ch/"))
         (set #done_1   (cat "\n"
                             "YAM è stato installato con successo!\n"
