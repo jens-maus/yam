@@ -7,6 +7,7 @@ $URL$
 
 2010-09-14 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tools/mkrelease.sh: fixed archive generation.
   * extrasrc/AllocSysObject.c: fixed the memory munging for the debug build to
     correctly decrement the counter and avoid writing one byte too much and
     hence causing MungWall hits. This closes #208.
