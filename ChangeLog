@@ -7,6 +7,9 @@ $URL$
 
 2010-09-14 Thore Böckelmann <tboeckel@gmx.de>
 
+  * extrasrc/AllocSysObject.c: fixed the memory munging for the debug build to
+    correctly decrement the counter and avoid writing one byte too much and
+    hence causing MungWall hits. This closes #208.
   * YAM_CO.c: removed redundant NewMinList() calls.
   * doc/Install-YAM: let the Installer application do the word wrapping instead
     of doing this ourself. This works around the ugly fact, that Installer opens

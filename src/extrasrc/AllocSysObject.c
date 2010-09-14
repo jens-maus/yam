@@ -108,17 +108,17 @@ static void MungeMemory(const void *ptr, size_t size)
   while(size >= sizeof(_ptr.u32ptr))
   {
     *_ptr.u32ptr++ = 0xabadcafe;
-    size -= sizeof(_ptr.u32ptr);
+    size -= sizeof(*_ptr.u32ptr);
   }
   // fill the remaining single bytes
   if(size > 0)
   {
     *_ptr.u8ptr++ = 0xab;
-    size -= sizeof(_ptr.u8ptr);
+    size -= sizeof(*_ptr.u8ptr);
     if(size > 0)
     {
       *_ptr.u8ptr++ = 0xad;
-      size -= sizeof(_ptr.u8ptr);
+      size -= sizeof(*_ptr.u8ptr);
       if(size > 0)
       {
         *_ptr.u8ptr++ = 0xca;
