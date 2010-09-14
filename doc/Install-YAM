@@ -188,6 +188,7 @@
         (set #lang_catalog (cat "Které z pøekladù chcete nainstalovat?\n"
                                 "(Angliètinu pou¾ívá program internì.)"))
         (set #lang_manual "Vyberte pøeklad nápovìdy k programu")
+        (set #ask_charsets "Chcete nainstalovat dodateèná kódování pro knihovnu codesets.library?")
         (set #no_way_back_warning (cat "UPOZORNÌNÍ!\n"
                                        "(Platí pro pøípad, ¾e chcete pøejít z verze 2.4.)\n"
                                        "\n"

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.3 (5.8.2010)
+## version $VER: YAM.catalog 7.4 (14.9.2010)
 ## language czech
 ## codeset 5
 ;
@@ -9081,22 +9081,16 @@ takto: 28.10.1918.
 ;
 MSG_ERROR_THREADS
 Nelze inicializovat systém správy vláken programu.
-; Can't initialize thread system
+; Cannot initialize thread system.
 ;
 MSG_ERROR_PLAYSOUND
 Chyba pøi pokusu o pøehrání zvukového souboru\n\
 '%s'.\n\
 \n\
-Zkontrolujte prosím, zda uvedený soubor existuje\n\
-a jestli systém podporuje tento formát zvuku. Dále\n\
-také provìøte, jestli máte nainstalovány v¹echny\n\
-aktualizace urèené pro Vá¹ operaèní systém.
-; An error occurred while trying to play\n\
-; the sound file '%s'.\n\
+Zkontrolujte prosím, zda uvedený soubor existuje a také jestli systém podporuje tento formát zvuku.
+; An error occurred while trying to play the sound file '%s'.\n\
 ; \n\
-; This could be either due to a broken or\n\
-; unsupported sound file or because your\n\
-; sound datatype is not properly working.
+; This could be either due to a broken or unsupported sound file or because your sound datatype is not properly working.
 ; FILE
 ;
 MSG_WR_CHARSET
@@ -9681,4 +9675,35 @@ Zkuste pozdìji nebo si zapnìte automatické sledování\n\
 aktualizací potøebného softwaru.
 ; Please try again later or activate the automatic\n\
 ; software update check.
+;
+MSG_THREAD_EXIT_WARNING_TITLE
+YAM :: Upozornìní
+; YAM warning
+;
+MSG_THREAD_EXIT_WARNING
+Stále jsou otevøená okna nebo programy spu¹tìné z programu\n\
+YAM (napø. prohlí¾eè pøíloh zpráv).\n\
+\n\
+Opravdu chcete YAM ukonèit a riskovat tak pozdìj¹í problémy,\n\
+pøíp. i zatuhnutí systému?
+; While trying to cleanup YAM still running sub threads\n\
+; have been found. Please make sure to close all still\n\
+; existing sub threads (e.g. MIME viewers, etc.) you may\n\
+; have initiated from YAM.\n\
+; \n\
+; Do you want to retry to quit YAM or ignore the still\n\
+; running sub thread (which could end up in later crashes)?
+;
+MSG_THREAD_EXIT_WARNING_BT
+_Opakovat|_Ignorovat
+; _Retry|_Ignore
+;
+MSG_EXECUTE_COMMAND_FAILED
+Chyba pøi spu¹tìní pøíkazu '%s' (chyba è. %ld: %s).
+; The execution of the command '%s' failed (error code %ld: %s).
+; COMMAND, ERRORCODE, ERRORSTRING
+;
+MSG_ERROR_METHODSTACK
+Nelze inicializovat potøebný zásobník.
+; Cannot initialize method stack.
 ;

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-14 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+  * doc/Install-YAM: translated newly added sentence (#ask_charsets)
+
 2010-09-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/Install-YAM: the script will nor ask for confirmation before copying the
