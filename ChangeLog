@@ -7,6 +7,9 @@ $URL$
 
 2010-09-14 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tools/mkrelease.sh, doc/Install-YAM: added the german guide to the release
+    archives, even if this one is still based on YAM 2.4 and therefore is quite
+    outdated.
   * tools/mkrelease.sh: fixed archive generation.
   * doc/Install-YAM: let the Installer application do the word wrapping instead
     of doing this ourself. This works around the ugly fact, that Installer opens
