@@ -743,11 +743,6 @@ void CO_ClearConfig(struct Config *co)
   // clear the config
   memset(co, 0, sizeof(struct Config));
 
-  // init the filterList & stuff
-  NewList((struct List *)&co->mailServerList);
-  NewList((struct List *)&co->mimeTypeList);
-  NewList((struct List *)&co->filterList);
-
   LEAVE();
 }
 
