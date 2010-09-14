@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (11.09.2010)
+## version $VER: YAM.catalog 7.5 (14.09.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6797,7 +6797,7 @@ MSG_ER_MCC_OLD
 Impossibile aprire la classe MUI custom '%s' v%lu.%lu.\n\
 \n\
 La versione attualmente in uso è la v%lu.%lu.\n\
-Si consiglia di scaricare l'ultima versione da '%s'.
+Si consiglia di scaricare l'ultima versione da\n\'%s'.
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
 ; \n\
 ; Currently installed is v%lu.%lu. Please upgrade by downloading\n\
@@ -8976,14 +8976,13 @@ Percorso
 ; Path
 ;
 MSG_ER_ICONOBJECT_WARNING
-Si è verificato un errore durante il tentativo di\n\
-caricamento dell'icona '%s.info' dal Tema '%s'.\n\
+Attenzione, si è verificato un errore durante il tentativo\n\
+di caricamento dell'icona '%s.info' dal Tema '%s'.\n\
 L'icona non apparirà in questa sessione.\n\
 \n\
-Per favore assicurati che la directory del Tema\n\
-contenga tutte le icone necessarie, oppure\n\
-disattiva questo Tema per evitare ulteriori\n\
-avvisi.
+Per favore assicurati che la directory del Tema contenga\n\
+tutte le icone necessarie, oppure disattiva questo Tema\n\
+in modo da evitare ulteriori avvisi.
 ; An error occurred while trying to load icon \
 ; '%s.info' from theme '%s'. The icon will not be displayed \
 ; during this session.\n\
@@ -8993,13 +8992,13 @@ avvisi.
 ; further warnings.
 ;
 MSG_ER_THEMEVER_FALLBACK
-L'attuale Tema '%s' attivato si è rivelato incompatibile\n\
-con YAM perciò non è stato possibile caricarlo.\n\
+Attenzione, l'attuale Tema '%s' attivato si è rivelato\n\
+incompatibile con questa versione di YAM perciò non è\n\
+stato possibile caricarlo.\n\
 Verrà automaticamente attivato il Tema predefinito.\n\
 \n\
 Per favore assicurati di aver installato l'ultima versione\n\
-disponibile del Tema oppure disattivalo dalle impostazioni\n\
-generali.
+disponibile oppure disattivalo dalle impostazioni di YAM.
 ; The currently activated theme '%s' was found to be \
 ; of an incompatible version and wasn't loaded. The \
 ; default theme was therefore activated as a \
@@ -9009,15 +9008,14 @@ generali.
 ; version or disable it in the configuration.
 ;
 MSG_ER_THEMEVER_IGNORE
-Si è verificato un errore durante il tentativo di\n\
-caricamento del Tema predefinito di YAM.\n\
-Il Tema selezionato non sembra essere quello\n\
-corretto oppure potrebbe trattarsi di una vecchia\n\
-versione.\n\
+Attenzione, si è verificato un errore durante il tentativo\n\
+di caricamento del Tema predefinito di YAM.\n\
+Il Tema selezionato non sembra essere quello corretto\n\
+oppure potrebbe trattarsi di una vecchia versione.\n\
 \n\
-Il processo di caricamento del Tema è stato\n\
-annullato, si consiglia di aggiornare il\n\
-proprio Tema all'ultima versione disponibile.
+Il processo di caricamento del Tema è stato annullato.\n\
+Si consiglia di aggiornare il Tema all'ultima versione\n\
+disponibile.
 ; While trying to load the default theme of YAM, it \
 ; was found to be of an incorrect version.\n\
 ; \n\
@@ -9026,13 +9024,14 @@ proprio Tema all'ultima versione disponibile.
 ; version.
 ;
 MSG_ER_DATATYPE_ERROR
-Si è verificato un errore durante il tentativo di caricamento\n\
-del file immagine '%s' attraverso l'uso del datatype.\n\
+Attenzione, si è verificato un errore durante il tentativo\n\
+di caricamento del file immagine '%s'\n\
+attraverso l'uso dei datatype.\n\
 \n\
-Per favore assicurati che il file esista e di avere installato\n\
-correttamente nel sistema il datatype necessario.\n\
-(Si consiglia di provare ad aprire il file con MultiView\n\
-in modo da essere sicuri che esso funzioni correttamente).
+Per favore assicurati che il file esista e di aver installato\n\
+correttamente il datatype necessario.\n\
+(Si consiglia di provare ad aprire il file con MultiView in\n\
+modo da essere certi che esso funzioni correttamente).
 ; An error occurred while trying to load the image file \
 ; '%s' via datatypes.\n\
 ; \n\
@@ -9041,13 +9040,13 @@ in modo da essere sicuri che esso funzioni correttamente).
 ; image displays properly with MultiView).
 ;
 MSG_ER_IMAGEOBJECT_WARNING
-Attenzione, si è verificato un errore durante il\n\
-tentativo di caricamento del file immagine '%s'\n\
+Attenzione, si è verificato un errore durante il tentativo\n\
+di caricamento del file immagine: '%s'\n\
 dalla directory '%s'.\n\
 \n\
-Per favore assicurati che il Tema contenga tutte\n\
-le immagini necessarie come definito dalle\n\
-impostazioni dell'ultima versione del Tema.
+Per favore assicurati che il tuo Tema contenga tutte le\n\
+immagini necessarie come definito dalle impostazioni\n\
+dell'ultima versione del Tema di YAM.
 ; An error occurred while trying to load the image file \
 ; '%s' from directory '%s'.\n\
 ; \n\
@@ -9056,8 +9055,9 @@ impostazioni dell'ultima versione del Tema.
 ; layout.
 ;
 MSG_ER_THEME_FATAL
-YAM non è stato in grado di caricare il Tema predefinito\n\
-perciò il caricamento è stato annullato automaticamente.\n\
+Attenzione, YAM non è stato in grado di caricare il Tema\n\
+predefinito.\n\
+Il caricamento è stato annullato automaticamente!\n\
 \n\
 Per favore assicurati che la directory dove sono residenti\n\
 i Temi risulti leggibile e che contenga il Tema predefinito\n\
@@ -9069,12 +9069,12 @@ distribuito con l'archivio finale di YAM.
 ; contains the correct default theme distributed with YAM.
 ;
 MSG_ER_THEME_FALLBACK
-Attenzione, il nuovo Tema selezionato chiamato '%s'\n\
-potrebbe essere inaccessibile o danneggiato.\n\
+Attenzione, il nuovo Tema selezionato denominato\n\
+'%s' potrebbe essere inaccessibile o danneggiato.\n\
 Verrà automaticamente attivato il Tema predefinito.\n\
 \n\
 Per favore assicurati che il Tema selezionato sia\n\
-leggibile e che risulti essere un valido Tema per YAM.
+leggibile e che risulti essere un valido Tema di YAM.
 ; The currently activated theme '%s' is either \
 ; inaccesible or it is corrupt. The default theme \
 ; was therefore activated as a fallback.\n\
@@ -9087,9 +9087,9 @@ YAM richiede di essere riavviato
 ; YAM restart required
 ;
 MSG_ER_THEME_ACTIVATED
-Prima che il Tema selezionato venga applicato è\n\
-necessario salvare la propria configurazione e\n\
-riavviare il programma.
+Attenzione, prima che il Tema selezionato venga applicato\n\
+è necessario salvare la propria configurazione e riavviare il\n\
+programma.
 ; Before the selected theme can be applied, you have\n\
 ; to save the configuration and restart YAM.
 ;
@@ -9803,9 +9803,9 @@ MSG_CO_SPAM_OPTIMIZE_TRAININGDATA_ASK
 Si desidera veramente ottimizzare i dati di riconoscimento\n\
 del filtro Antispam?\n\
 \n\
-L'efficienza del filtro potrebbe risultare compromessa\n\
-ma il processo del filtro verrà velocizzato e utilizzerà\n\
-una quantità inferiore di memoria.
+L'efficienza del filtro potrebbe risultare compromessa ma il\n\
+processo del filtro potrà essere velocizzato utilizzando una\n\
+quantità inferiore di memoria.
 ; Do you really want to optimize the spam filter's\n\
 ; training data?\n\
 ; \n\
@@ -9875,7 +9875,7 @@ Per favore scaricala manualmente da questo indirizzo:\n\
 ; '%s'
 ; URL
 ;
-; *** Added for YAM 2.7 ********************************************************
+; *** Added for YAM 2.6p1/2.7 ********************************************************
 ;
 MSG_USERNAME_FALLBACK
 Mario Rossi

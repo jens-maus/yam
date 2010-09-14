@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-14 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: rewritten some error messages.
+  * doc/Install-YAM: complete the italian part of the installer.
+
 2010-09-14 Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.

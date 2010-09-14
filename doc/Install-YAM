@@ -219,17 +219,18 @@
 (if (= @language "italiano")
     (
         (set #def_cat_lang #def_lang_italian)
-        (set #acknowledgeOS (cat "Per favore istruisci il sistema ad\n"
-                         "auto-rilevare il sistema operativo in uso:"))
+        (set #acknowledgeOS (cat "Per favore istruisci il sistema ad auto-rilevare\n"
+                         "i file necessari per il sistema operativo in uso:"))
         (set #YAM_dir  (cat "Per favore seleziona una directory per YAM\n"
                             "(Non verrà creata nessuna cartella extra!)"))
         (set #lang_catalog (cat "Quale catalogo di lingua si desidera installare?\n"
                                 "(La lingua inglese è quella predefinita)"))
         (set #lang_manual "Seleziona la lingua da installare per la guida in linea (file AmigaGuide)")
+        (set #ask_charsets "Si desidera installare i file del set di caratteri richiesti dalla codesets.library?")
         (set #no_way_back_warning (cat "ATTENZIONE!!\n"
-                                       "(Nel caso si desideri aggiornare il programma da una precedente installazione di YAM.)\n"
+                                       "(Nel caso si desideri aggiornare il programma da una precedente installazione di YAM 2.4.)\n"
                                        "\n"
-                                       "Lo schema dei nomi relativo ai messaggi di posta è stato modificato, perciò al primo avvio della nuova versione tutti i precedenti messaggi verranno automaticamente convertiti al nuovo schema. Si consiglia di effettuare un backup di TUTTI i messaggi prima di procedere con questa operazione.\n"
+                                       "Lo schema dei nomi relativo ai messaggi di posta è stato completamente modificato, alla prima esecuzione di YAM 2.6p1 tutti i precedenti messaggi verranno automaticamente convertiti al nuovo schema. Nota che YAM 2.4 non sarà più in grado di accedere a questi messaggi perciò è consigliabile effettuare un backup di TUTTI i vecchi messaggi di posta prima di procedere con questa operazione.\n"
                                        "\n"
                                        "Ricorda che seppur in directory separate, sarà sempre possibile installare due differenti versioni di YAM."))
         (set #faq_and_bugtracker (cat "\n"
@@ -242,7 +243,7 @@
                                       "Nel caso si riscontri qualche bug o qualsiasi altro problema su YAM, potete segnalarcelo attraverso il nostro bugtracker all'indirizzo:\n"
                                       "http://bugs.yam.ch/"))
         (set #done_1   (cat "\n"
-                            "YAM è stato installato con successo!\n"
+                            "Congratulazioni, YAM è stato installato con successo!\n"
                             "\n"
                             "Doppio click sull'icona di \"YAM\" nella directory\n"))
         (set #done_2   (cat "\n"
