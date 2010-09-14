@@ -7,6 +7,9 @@ $URL$
 
 2010-09-14 Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/Install-YAM: the script will nor ask for confirmation before copying the
+    charset files. This makes sense in case the user skipped the installation of
+    codesets.library before.
   * tools/mkrelease.sh, doc/Install-YAM: added the german guide to the release
     archives, even if this one is still based on YAM 2.4 and therefore is
     quite outdated.

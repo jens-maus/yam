@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.15 (14.09.2010) (c) 2000-2010 by YAM Open Source Team
+; $VER: Install-YAM 1.16 (14.09.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -43,6 +43,7 @@
 (set #lang_catalog (cat "Which catalog file do you want to install?\n"
                         "(English language is built-in)"))
 (set #lang_manual "Select language for online AmigaGuide help")
+(set #ask_charsets "Do you want to install the character set files required by codesets.library?")
 (set #no_way_back_warning (cat "WARNING!!\n"
                                "(if you want to update an existing YAM 2.4 installation)\n"
                                "\n"
@@ -80,6 +81,7 @@
         (set #lang_catalog (cat "Welche catalog-Datei wollen Sie installieren?\n"
                                 "(Englisch ist eingebaut)"))
         (set #lang_manual "Wählen Sie eine Sprache für die Online-AmigaGuide-Hilfe")
+        (set #ask_charsets "Wollen Sie die von der codesets.library benötigten Zeichensatzdateien installieren?")
         (set #no_way_back_warning (cat "WARNUNG!!\n"
                                        "(falls Sie eine bestehende Installation von YAM 2.4 updaten wollen)\n"
                                        "\n"
@@ -816,9 +818,12 @@
 
 (if (or (= detectedSystem "os3") (= detectedSystem "mos") (= detectedSystem "aros"))
     (copyfiles
+        (prompt #ask_charsets)
         (source "Libs/Charsets/")
         (dest "LIBS:Charsets")
         (all)
+        (confirm)
+        (help @copyfiles-help)
     )
 )
 
