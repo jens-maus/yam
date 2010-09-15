@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-15  Alexandre Balaban <abalaban@free.fr>
+
+  * doc/Install-YAM: updated according to latest changes.
+  * locale/french.ct: updated according to latest changes.
+
 2010-09-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/Install-YAM: added the default help text to all copyfiles commands.

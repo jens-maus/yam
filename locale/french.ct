@@ -1,8 +1,9 @@
-## version $VER: YAM.catalog 7.1 (21.02.2010)
+## version $VER: YAM.catalog 7.1 (19.09.2010)
 ## language français
 ## codeset 111
-## chunk AUTH Alexandre Balaban/ATO-fr
 ;
+## chunk AUTH Alexandre Balaban/ATO-fr
+; YAM.cd - YAM 2.6 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -16,6 +17,9 @@
 ; and increase the last listed identifier number by one for your
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
+;
+;#version 7
+;#language english
 ;
 ; General
 ;
@@ -221,7 +225,7 @@ Compilé le:
 ;
 MSG_UserLogin
 Sélectionnez un utilisateur
-; Click your name to login
+; Click your name to login:
 ;
 MSG_ErrorStartup
 Erreur au démarrage
@@ -974,11 +978,11 @@ Salut,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-;
+; 
 ;
 MSG_CO_AltRepPatternDef
 
-;
+; 
 ;
 MSG_CO_ForwardIntroDef
 *** Message retransmis ***\\\\n\
@@ -1008,15 +1012,15 @@ Mes salutations
 ;
 MSG_CO_AltRepHelloDef
 Bonjour,\\n
-;
+; 
 ;
 MSG_CO_AltRepByeDef
 
-;
+; 
 ;
 MSG_CO_MLRepHelloDef
 
-;
+; 
 ;
 MSG_CO_MLRepIntroDef
 Le %c, %n a écrit :\\\\n
@@ -9768,11 +9772,14 @@ l'entête séparée dans chaque message.\n\
 ; PGP key can be downloaded from. This URL\n\
 ; will then placed into a separate header\n\
 ; entry in every mail.
+; You can specify an URL where your public\n\
+; PGP key can be downloaded from. This URL\n\
+; will then placed into a separate header\n\
+; entry in every mail.
 ;
 MSG_TR_NEW_MAIL_NOTIFY
 %ld nouveaux courriers reçus !
 ; Received %ld new mails!
-;
 ; COUNT
 ;
 MSG_CO_NOTIOS41SYSTEM
@@ -9801,6 +9808,15 @@ et y saisir le lien suivant :\n\
 ; \n\
 ; Please launch your internet browser yourself and enter this link:\n\
 ; '%s'
-;
 ; URL
 ;
+MSG_USERNAME_FALLBACK
+Monsieur X
+; John Doe
+;
+MSG_RE_DEFAULT_MIMEPART_NAME
+Partie %ld.%ld
+; Part %ld.%ld
+; PARENTNUMBER PARTNUMER
+;
+
