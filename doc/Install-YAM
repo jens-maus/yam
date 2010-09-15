@@ -394,6 +394,8 @@
                      "Français"
                      "ÅëëçíéêÜ"
                      "Nederlands"
+                     "Polski"
+                     "Español"
                      "English (british)"
             )
             (default #def_cat_lang)
@@ -409,8 +411,10 @@
                      "Czech"
                      "Italiano"
                      "Français"
-                     "Nederlands"
                      "ÅëëçíéêÜ"
+                     "Nederlands"
+                     "Polski"
+                     "Español"
             )
             (default #def_cat_lang)
         )

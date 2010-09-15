@@ -7,6 +7,8 @@ $URL$
 
 2010-09-15 Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/Install-YAM: added polish and spanish to the list of supported languages
+    and corrected the order when not being installed on AmigaOS4.
   * YAM_FI.c: a search in the mail headers now bails out as soon as a matching
     string has been found instead of continuing the search which will forget
     about the found string. This closes #211.
