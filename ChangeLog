@@ -7,6 +7,11 @@ $URL$
 
 2010-09-15 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: playing a sound for testing purposes will happen synchronously
+    again to avoid multiple playback. The application will be put to sleep while
+    the playback is in progress. However, sound playback triggered by a filter
+    will be done asynchronously, because playing a notification sound should not
+    halt other actions.
   * doc/Install-YAM: added the default help text to all copyfiles commands.
   * Threads.c, YAM_UT.c: each thread now allocates a signal which can be used
     by the main thread to abort the thread's current action. This closes #212.
