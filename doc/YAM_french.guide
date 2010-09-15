@@ -1,5 +1,5 @@
 @database YAM.guide
-@$VER: YAM.guide 2.6 (13.09.2009)
+@$VER: YAM.guide 2.6 (15.09.2010)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -33,8 +33,8 @@
 @REMARK  - Hervé Dupont <herve.dpt@free.fr>
 @REMARK  - Jean-Marc Mossu <jeanmarc.mossu@free.fr>
 @REMARK  - Pascal Rullier <rullier@bugss.org>
-@REMARK  Mise à jour v2.5 et suivante Alexandre Balaban <alexandre@balaban.fr>
-@REMARK  Basée sur YAM_english v4469
+@REMARK  Mise à jour v2.5 et suivantes Alexandre Balaban <alexandre@balaban.fr>
+@REMARK  Basée sur YAM_english v4600
 
 @NODE "Main" "YAM - Documentation en Français (ATO-Fr)"
 
@@ -5854,6 +5854,7 @@ Liste des commandes ARexx par ordre alphabétique
  @{" REQUESTFILE       " link "RX_REQUESTFILE"}  - Demande à l'utilisateur de sélectionner un fichier.
  @{" REQUESTFOLDER     " link "RX_REQUESTFOLDER"}  - Demande à l'utilisateur de choisir un dossier.
  @{" REQUESTSTRING     " link "RX_REQUESTSTRING"}  - Demande à l'utilisateur une chaîne de caractères.
+ @{" RESTART           " link "RX_RESTART"}  - Redémarre YAM 
  @{" SCREENTOBACK      " link "RX_SCREENTOBACK"}  - Place l'écran de YAM en arrière plan.
  @{" SCREENTOFRONT     " link "RX_SCREENTOFRONT"}  - Place l'écran de YAM au premier plan.
  @{" SETFLAG           " link "RX_SETFLAG"}  - Active l'état PERmanent ou VOLatile d'un message.
@@ -5932,6 +5933,7 @@ Gestion de l'interface
  @{" LISTFREEZE        " link "RX_LISTFREEZE"}  - Désactive les mises à jour graphique d'une liste.
  @{" LISTUNFREEZE      " link "RX_LISTUNFREEZE"}  - Réactive les mises à jour graphique d'une liste.
  @{" READCLOSE         " link "RX_READCLOSE"}  - Ferme la fenêtre de lecture active.
+ @{" RESTART           " link "RX_RESTART"}  - Redémarre YAM 
 
 
 Sélection des messages et dossiers
@@ -6654,7 +6656,7 @@ FLUSHINDEXES
 
 @node "RX_FOLDERINFO" "ARexx command: FOLDERINFO"
 @next "RX_GETCONFIGINFO"
-@prev "RX_APPNOBUSY"
+@prev "RX_FLUSHINDEXES"
 @toc "REXX"
 
 FOLDERINFO
@@ -8530,6 +8532,7 @@ QUIT
 @{b}BUGS@{ub}
 
 @{b}VOIR AUSSI@{ub}
+     @{" RESTART " link "RX_RESTART"}
 
 @endnode
 
@@ -8939,7 +8942,7 @@ REQUESTFOLDER
 @endnode
 
 @node "RX_REQUESTSTRING" "ARexx command: REQUESTSTRING"
-@next "RX_SCREENTOBACK"
+@next "RX_RESTART"
 @prev "RX_REQUESTFOLDER"
 @toc "REXX"
 
@@ -8991,9 +8994,44 @@ REQUESTSTRING
 
 @endnode
 
+@node "RX_RESTART" "ARexx command: RESTART"
+@next "RX_SCREENTOBACK"
+@prev "RX_REQUESTSTRING"
+@toc "REXX"
+
+RESTART
+-------------
+
+@{b}NAME@{ub}
+     Restart -- Restart YAM (V2.7)
+
+@{b}TEMPLATE@{ub}
+     FORCE/S
+
+@{b}FUNCTION@{ub}
+     Restarts YAM, just as if the user had chosen "Restart" from the
+     "Project" menu.
+
+@{b}INPUTS@{ub}
+     FORCE/S   - skip any safety requester, except for changes in the
+                 address book done using the GUI
+
+@{b}RETURNS@{ub}
+
+@{b}NOTES@{ub}
+
+@{b}EXAMPLE@{ub}
+
+@{b}BUGS@{ub}
+
+@{b}SEE ALSO@{ub}
+     @{" QUIT " link "RX_QUIT"}
+
+@endnode
+
 @node "RX_SCREENTOBACK" "ARexx command: SCREENTOBACK"
 @next "RX_SCREENTOFRONT"
-@prev "RX_REQUESTSTRING"
+@prev "RX_RESTART"
 @toc "REXX"
 
 SCREENTOBACK
@@ -10830,7 +10868,7 @@ de lecture.
 
 YAM met des crochets lorsque l'on clique sur un lien comme celui-ci :
 ---------------------------------------------------------------------
-« [http://www.example.com] ».
+« [http://www.exemple.com] ».
 -----------------------------
 
    Malgré les recommandations dans RFC #1738 pour encoder certains
@@ -11703,6 +11741,7 @@ elles ont une apparence très professionnelle maintenant.
    @{" REQUESTFILE, commande ARexx " link "RX_REQUESTFILE"}
    @{" REQUESTFOLDER, commande ARexx " link "RX_REQUESTFOLDER"}
    @{" REQUESTSTRING, commande ARexx " link "RX_REQUESTSTRING"}
+   @{" RESTART, commande ARexx " link "RX_RESTART"} 
    @{" Référence " link "RF_W"}
    @{" Réglages de retransmission " link "CO06"}
    @{" Réglages des dossiers " link "FO_W"}

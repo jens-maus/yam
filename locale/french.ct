@@ -1,8 +1,8 @@
-## version $VER: YAM.catalog 7.2 (07.08.2010)
+## version $VER: YAM.catalog 7.2 (15.09.2010)
 ## language français
 ## codeset 111
-## chunk AUTH Alexandre Balaban/ATO-fr
 ;
+## chunk AUTH Alexandre Balaban/ATO-fr
 ; YAM.cd - YAM 2.7 catalog description file
 ; $Id$
 ;
@@ -9258,22 +9258,16 @@ Date de naissance au format local.\n\
 ; (e.g. 19.06.1974 or 19/06/1974).
 ;
 MSG_ERROR_THREADS
-Impossible d'initialiser le système de thread
-; Can't initialize thread system
+Impossible d'initialiser le système de thread.
+; Cannot initialize thread system.
 ;
 MSG_ERROR_PLAYSOUND
-Une erreur est survenue lors de la tentative\n\
-de lecture du fichier son '%s'.\n\
+Une erreur est survenue lors de la tentative de lecture du fichier son « %s ».\n\
 \n\
-Cela peut soit être dû à un fichier son corrompu\n\
-ou non supporté ou à une datatype sonore qui ne\n\
-fonctionne pas correctement.
-; An error occurred while trying to play\n\
-; the sound file '%s'.\n\
+Cela peut soit être dû à un fichier son corrompu ou non supporté ou à un datatype sonore qui ne fonctionne pas correctement.
+; An error occurred while trying to play the sound file '%s'.\n\
 ; \n\
-; This could be either due to a broken or\n\
-; unsupported sound file or because your\n\
-; sound datatype is not properly working.
+; This could be either due to a broken or unsupported sound file or because your sound datatype is not properly working.
 ; FILE
 ;
 MSG_WR_CHARSET
@@ -9850,7 +9844,6 @@ Un nouveau courrier.
 MSG_TR_NEW_MAIL_NOTIFY_MANY
 %ld nouveaux courriers.
 ; Received %ld new mails.
-;
 ; COUNT
 ;
 MSG_RE_SAVE_FILE
@@ -9866,7 +9859,6 @@ Il n'y a aucune mise à jour disponible.\n\
 %s
 ; There are no software updates available.\n\
 ; %s
-;
 ; HINT
 MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
 YAM vérifiera automatiquement l'existence de mises à jour.
@@ -9877,4 +9869,39 @@ Veuillez réessayer plus tard ou activer la recherche\n\
 automatique des mises à jour.
 ; Please try again later or activate the automatic\n\
 ; software update check.
+;
+MSG_THREAD_EXIT_WARNING_TITLE
+Avertissement de YAM
+; YAM warning
+;
+MSG_THREAD_EXIT_WARNING
+Lors de la tentative de nettoyage de YAM, des sous processus\n\
+en cours d'exécution ont été trouvés. Veuillez vous assurer\n\
+de fermer tous les sous processus (p. ex. visionneuse MIME,\n\
+etc.) que vous pourriez avoir initiés depuis YAM.\n\
+\n\
+Voulez-vous réessayer de quitter YAM ou ignorer les sous\n\
+processus en cours (ce qui peut amener par la suite à des\n\
+plantages) ?
+; While trying to cleanup YAM still running sub threads\n\
+; have been found. Please make sure to close all still\n\
+; existing sub threads (e.g. MIME viewers, etc.) you may\n\
+; have initiated from YAM.\n\
+; \n\
+; Do you want to retry to quit YAM or ignore the still\n\
+; running sub thread (which could end up in later crashes)?
+;
+MSG_THREAD_EXIT_WARNING_BT
+_Réessayer|_Ignorer
+; _Retry|_Ignore
+;
+MSG_EXECUTE_COMMAND_FAILED
+L'exécution de la commande « %s » a échoué (code d'erreur %ld : %s).
+; The execution of the command '%s' failed (error code %ld: %s).
+;
+; COMMAND, ERRORCODE, ERRORSTRING
+;
+MSG_ERROR_METHODSTACK
+Impossible d'initialiser la pile pour la méthode.
+; Cannot initialize method stack.
 ;

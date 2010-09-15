@@ -148,11 +148,14 @@
     (
         (set #def_cat_lang #def_lang_french)
         (set #def_doc_lang #def_doc_french)
+        (set #acknowledgeOS (cat "Veuillez confirmer la détection\n"
+                                 "automatique de votre système d'exploitation :"))
         (set #YAM_dir  (cat "Veuillez sélectionner un répertoire pour YAM\n"
                             "(AUCUN nouveau tiroir ne sera créé !)"))
         (set #lang_catalog (cat "Quel catalogue voulez-vous installer ?\n"
                                 "(L'anglais est déjà incorporé)"))
         (set #lang_manual "Sélectionnez la langue de l'aide en ligne AmigaGuide")
+        (set #ask_charsets "Voulez-vous installer les fichiers de jeux de caractères requis par codesets.library ?")
         (set #no_way_back_warning (cat "ATTENTION !!\n"
                                        "(si vous voulez mettre à jour une installation existante de YAM 2.4)\n"
                                        "\n"
