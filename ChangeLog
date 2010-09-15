@@ -7,6 +7,8 @@ $URL$
 
 2010-09-15 Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/Install-YAM: the charset files for codesets.library will now be
+    installed only if codesets.library is currently installed.
   * doc/Install-YAM: updated greek translation.
 
 2010-09-14 Samir Hawamdeh <s.hawamdeh@tin.it>

@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.17 (14.09.2010) (c) 2000-2010 by YAM Open Source Team
+; $VER: Install-YAM 1.18 (15.09.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -821,14 +821,18 @@
     )
 )
 
-(if (or (= detectedSystem "os3") (= detectedSystem "mos") (= detectedSystem "aros"))
-    (copyfiles
-        (prompt #ask_charsets)
-        (source "Libs/Charsets/")
-        (dest "LIBS:Charsets")
-        (all)
-        (confirm)
-        (help @copyfiles-help)
+; copy the charset files for AmigaOS3, MorphOS and AROS only,
+; and only if codesets.library is installed already
+(if (or (or (= detectedSystem "os3") (= detectedSystem "mos")) (= detectedSystem "aros"))
+    (if (exists "LIBS:codesets.library" (noreq))
+        (copyfiles
+            (prompt #ask_charsets)
+            (source "Libs/Charsets/")
+            (dest "LIBS:Charsets")
+            (all)
+            (confirm)
+            (help @copyfiles-help)
+        )
     )
 )
 
