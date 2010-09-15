@@ -7,6 +7,8 @@ $URL$
 
 2010-09-15 Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/czech.ct, locale/greek.ct, doc/Install-YAM: updated czech and greek
+    translations.
   * doc/Install-YAM: updated greek translation.
 
 2010-09-14 Thore Böckelmann <tboeckel@gmx.de>

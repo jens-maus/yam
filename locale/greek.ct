@@ -1,8 +1,8 @@
-## version $VER: YAM.catalog 7.1 (21.02.2010)
-## language greek
+## version $VER: yam.catalog 6.00 (09.10.2009)
 ## codeset 10
+## language greek
 ## chunk AUTH Antonis Iliakis
-;
+; YAM.cd - YAM 2.5 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -16,6 +16,7 @@
 ; and increase the last listed identifier number by one for your
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
+;
 ;
 ; General
 ;
@@ -5749,8 +5750,8 @@ MSG_ER_NO_MCC
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_OLD
-Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΗ τρέχουσα εγκατεστημένη είναι η v%lu.%lu. Κάντε αναβάθμιση κάνοντας\nλήψη της τελευταίας έκδοσης από 's%'.
-; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\nCurrently installed is v%lu.%lu. Please upgrade by downloading\nthe latest version from 's%'.
+Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΗ τρέχουσα εγκατεστημένη είναι η v%lu.%lu. Κάντε αναβάθμιση κάνοντας\nλήψη της τελευταίας έκδοσης από '%s'.
+; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\nCurrently installed is v%lu.%lu. Please upgrade by downloading\nthe latest version from '%s'.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_IN_USE
@@ -7847,3 +7848,20 @@ MSG_HELP_CO_CH_NOTIOS41SYSTEM
 Εάν επιλεχτεί, το YAM θα χρησιμοποιήσει το σύστημα\nπροειδοποίησης του AmigaOS4.1 για την ειδοποίηση του\nχρήστη σχετικά με νέα ληφθέντα μηνύματα.\nΑυτό απαιτεί τουλάχιστον την application.library V53.2.
 ; If checked, YAM will use AmigaOS4.1's notification\nsystem to notify the user about new received mails.\nThis requires at least application.library V53.2.
 ;
+MSG_NO_OPENURL_LIB
+Η openurl.library δεν είναι εγκατεστημένη στο σύστημά σας.\n\Συνεπώς το YAM δε μπορεί να ανοίξει την ζητούμενη τοποθεσία.\n\Παρακαλώ τρέξτε τον περιηγητή σας και εισάγετε την παρακάτω διεύθυνση:\n\'%s'
+;openurl.library not installed on your system.\n\
+;Thus YAM is not able to open the requested link itself.\n\
+;\n\
+;Please launch your internet browser yourself and enter this link:\n\
+;'%s'
+; URL
+;
+MSG_USERNAME_FALLBACK
+Δρακουμέλ
+;John Doe
+;
+MSG_RE_DEFAULT_MIMEPART_NAME
+Τμήμα %ld.%ld
+;Part %ld.%ld
+; PARENTNUMBER PARTNUMER

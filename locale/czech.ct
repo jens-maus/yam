@@ -9613,3 +9613,12 @@ Spus»te prohlí¾eè ruènì a zadejte do nìj tuto adresu:\n\
 ; '%s'
 ; URL
 ;
+MSG_USERNAME_FALLBACK
+Jan Novák
+; John Doe
+;
+MSG_RE_DEFAULT_MIMEPART_NAME
+pøíloha, èást %ld.%ld
+; Part %ld.%ld
+; PARENTNUMBER PARTNUMER
+;

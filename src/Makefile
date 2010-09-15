@@ -507,7 +507,7 @@ CATALOGS = \
 	$(LOCALE)/german.catalog \
 	$(LOCALE)/greek.catalog \
 	$(LOCALE)/italian.catalog \
-	$(LOCALE)/swedish.catalog \
+	$(LOCALE)/swedish.catalog
 	# $(LOCALE)/bosnian.catalog \
 	# $(LOCALE)/danish.catalog \
 	# $(LOCALE)/finnish.catalog \
