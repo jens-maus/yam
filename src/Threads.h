@@ -56,6 +56,7 @@ void HandleThreads(void);
 void PurgeIdleThreads(void);
 BOOL VARARGS68K DoAction(const enum ThreadAction action, ...);
 BOOL IsMainThread(void);
+LONG ThreadAbortSignal(void);
 
 #endif /* THREADS_H */
 

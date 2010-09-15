@@ -71,10 +71,11 @@
 
 struct Thread
 {
-  struct MinNode node;
-  struct Process *process;
-  LONG priority;
-  char name[SIZE_LARGE];
+  struct MinNode node;     // to make this a full Exec node
+  struct Process *process; // the process pointer as returned by CreateNewProc()
+  LONG priority;           // the thread's priority
+  LONG abortSignal;        // an allocated signal to abort the thread
+  char name[SIZE_LARGE];   // the thread's name
 };
 
 // a thread node which will be inserted to our
@@ -238,6 +239,7 @@ static SAVEDS void ThreadEntry(void)
 {
   struct Process *proc;
   BOOL done = FALSE;
+  struct Thread *thread = NULL;
 
   ENTER();
 
@@ -257,14 +259,25 @@ static SAVEDS void ThreadEntry(void)
         case TA_Startup:
         {
           D(DBF_THREAD, "thread '%s' got startup message", msg->thread->name);
-          proc->pr_Task.tc_UserData = msg->thread;
-          msg->result = TRUE;
+          if((msg->thread->abortSignal = AllocSignal(-1)) != -1)
+          {
+            proc->pr_Task.tc_UserData = msg->thread;
+            msg->result = TRUE;
+            thread = msg->thread;
+          }
+          else
+          {
+            E(DBF_THREAD, "thread '%s' failed to allocate abort signal", msg->thread->name);
+            msg->result = FALSE;
+          }
         }
         break;
 
         case TA_Shutdown:
         {
           D(DBF_THREAD, "thread '%s' got shutdown message", msg->thread->name);
+          if(msg->thread->abortSignal != -1)
+            FreeSignal(msg->thread->abortSignal);
           msg->result = TRUE;
           done = TRUE;
         }
@@ -272,6 +285,8 @@ static SAVEDS void ThreadEntry(void)
 
         default:
         {
+          // clear the abort signal before executing the desired action
+          SetSignal(0UL, 1UL << thread->abortSignal);
           msg->result = DoThreadMessage(msg);
         }
         break;
@@ -281,6 +296,63 @@ static SAVEDS void ThreadEntry(void)
     }
   }
   while(done == FALSE);
+
+  LEAVE();
+}
+
+///
+/// AbortThread
+// signal a thread to abort the current action
+static void AbortThread(struct Thread *thread)
+{
+  ENTER();
+
+  if(thread->abortSignal != -1)
+    Signal((struct Task *)thread->process, 1UL << thread->abortSignal);
+
+  LEAVE();
+}
+
+///
+/// AbortRunningThreads
+// signal all still running threads to abort the current action
+static void AbortRunningThreads(void)
+{
+  struct Node *node;
+
+  ENTER();
+
+  IterateList(&G->workingThreads, node)
+  {
+    struct ThreadNode *threadNode = (struct ThreadNode *)node;
+
+    AbortThread(threadNode->thread);
+  }
+
+  LEAVE();
+}
+
+///
+/// ShutdownThread
+// terminate a single thread
+static void ShutdownThread(struct ThreadNode *threadNode)
+{
+  struct Thread *thread = threadNode->thread;
+
+  ENTER();
+
+  // prepare the shutdown message
+  memset(&startupMessage, 0, sizeof(startupMessage));
+  startupMessage.msg.mn_ReplyPort = G->threadPort;
+  startupMessage.msg.mn_Length = sizeof(startupMessage);
+  startupMessage.action = TA_Shutdown;
+  startupMessage.threadNode = threadNode;
+  startupMessage.thread = thread;
+
+  // send out the startup message and wait for a reply
+  D(DBF_THREAD, "sending shutdown message to thread '%s'", thread->name);
+  PutMsg(&thread->process->pr_MsgPort, (struct Message *)&startupMessage);
+  Remove((struct Node *)WaitPort(G->threadPort));
 
   LEAVE();
 }
@@ -325,6 +397,8 @@ static struct Thread *CreateThread(void)
                                               NP_CloseOutput, FALSE,
                                               TAG_DONE)) != NULL)
       {
+        thread->abortSignal = -1;
+
         // prepare the startup message
         memset(&startupMessage, 0, sizeof(startupMessage));
         startupMessage.msg.mn_ReplyPort = G->threadPort;
@@ -347,6 +421,11 @@ static struct Thread *CreateThread(void)
           AddTail((struct List *)&G->idleThreads, (struct Node *)threadNode);
 
           result = thread;
+        }
+        else
+        {
+          E(DBF_THREAD, "thread 0x%08lx '%s' failed to initialize", thread, thread->name);
+          ShutdownThread(threadNode);
         }
       }
 
@@ -409,6 +488,12 @@ void CleanupThreads(void)
   if(G->threadPort != NULL)
   {
     BOOL tryAgain = TRUE;
+
+    // send an abort signal and a shutdown message to each still existing idle thread
+    AbortRunningThreads();
+
+    // send a shutdown message to each still existing idle thread
+    PurgeIdleThreads();
 
     // handle possible working->idle transitions of threads in case
     // a thread was closed during the shutdown. This might happen if
@@ -492,22 +577,9 @@ void PurgeIdleThreads(void)
   while((node = RemHead((struct List *)&G->idleThreads)) != NULL)
   {
     struct ThreadNode *threadNode = (struct ThreadNode *)node;
-    struct Thread *thread = threadNode->thread;
 
-    // prepare the shutdown message
-    memset(&startupMessage, 0, sizeof(startupMessage));
-    startupMessage.msg.mn_ReplyPort = G->threadPort;
-    startupMessage.msg.mn_Length = sizeof(startupMessage);
-    startupMessage.action = TA_Shutdown;
-    startupMessage.threadNode = threadNode;
-    startupMessage.thread = thread;
-
-    // send out the startup message and wait for a reply
-    D(DBF_THREAD, "sending shutdown message to thread '%s'", thread->name);
-    PutMsg(&thread->process->pr_MsgPort, (struct Message *)&startupMessage);
-    Remove((struct Node *)WaitPort(G->threadPort));
-
-    FreeSysObject(ASOT_NODE, thread);
+    ShutdownThread(threadNode);
+    FreeSysObject(ASOT_NODE, threadNode->thread);
     FreeSysObject(ASOT_NODE, threadNode);
   }
 
@@ -599,6 +671,33 @@ BOOL IsMainThread(void)
 
   RETURN(isMainThread);
   return isMainThread;
+}
+
+///
+/// ThreadAbortSignal
+// get the abort signal of the current thread, this is CTRL-C for the main thread
+LONG ThreadAbortSignal(void)
+{
+  ULONG signal;
+  struct Process *me;
+
+  ENTER();
+
+  me = (struct Process *)FindTask(NULL);
+
+  if(me == G->mainThread)
+  {
+    signal = SIGBREAKB_CTRL_C;
+  }
+  else
+  {
+    struct Thread *thread = (struct Thread *)me->pr_Task.tc_UserData;
+
+    signal = thread->abortSignal;
+  }
+
+  RETURN(signal);
+  return signal;
 }
 
 ///

@@ -4793,10 +4793,10 @@ BOOL PlaySound(const char *filename)
 
   if(DataTypesBase != NULL)
   {
-    LONG signal;
+    LONG finishSignal;
 
     // allocate a signal to Wait() for the completition of the playback
-    if((signal = AllocSignal(-1)) != -1)
+    if((finishSignal = AllocSignal(-1)) != -1)
     {
       Object *soundObject;
 
@@ -4808,10 +4808,10 @@ BOOL PlaySound(const char *filename)
                                                       #if defined(__amigaos4__)
                                                       // SDTA_SignalBit is deprecated on AmigaOS4
                                                       // use SDTA_SignalBitMask instead, which correctly takes a signal mask
-                                                      SDTA_SignalBitMask, 1UL << signal,
+                                                      SDTA_SignalBitMask, 1UL << finishSignal,
                                                       #else
                                                       // SDTA_SignalBit takes a mask instead of a bit number!!
-                                                      SDTA_SignalBit, 1UL << signal,
+                                                      SDTA_SignalBit, 1UL << finishSignal,
                                                       #endif
                                                       TAG_DONE)) != NULL)
       {
@@ -4832,9 +4832,18 @@ BOOL PlaySound(const char *filename)
 
         if(error == 1)
         {
+          ULONG abortSig = ThreadAbortSignal();
+          ULONG sigs;
+
           D(DBF_UTIL, "started playback of '%s'", filename);
-          // wait for the playback to finish
-          Wait(SIGBREAKF_CTRL_C | 1UL << signal);
+          // wait for the playback to finish or an extern abortion
+          sigs = Wait(1UL << finishSignal | 1UL << abortSig);
+          if(isFlagSet(sigs, 1UL << abortSig))
+          {
+            // we were told to abort, stop playback
+            DoMethod(soundObject, DTM_TRIGGER, NULL, STM_STOP, NULL);
+          }
+
           result = TRUE;
         }
 
@@ -4845,7 +4854,7 @@ BOOL PlaySound(const char *filename)
       else
         W(DBF_UTIL, "failed to create sound DT object from '%s'", filename);
 
-      FreeSignal(signal);
+      FreeSignal(finishSignal);
     }
     else
       W(DBF_UTIL, "failed to allocate signal for sound DT object '%s'", filename);

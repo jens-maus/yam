@@ -7,6 +7,8 @@ $URL$
 
 2010-09-15 Thore Böckelmann <tboeckel@gmx.de>
 
+  * Threads.c, YAM_UT.c: each thread now allocates a signal which can be used
+    by the main thread to abort the thread's current action. This closes #212.
   * doc/Install-YAM: added polish and spanish to the list of supported languages
     and corrected the order when not being installed on AmigaOS4.
   * YAM_FI.c: a search in the mail headers now bails out as soon as a matching
