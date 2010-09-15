@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.18 (15.09.2010) (c) 2000-2010 by YAM Open Source Team
+; $VER: Install-YAM 1.19 (15.09.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -515,6 +515,7 @@
                      (source "/Catalogs/german")
                      (choices "YAM.catalog")
                      (dest (tackon Cat_dir #cat_name_german))
+                     (help @copyfiles-help)
                 )
             )
         )
@@ -528,6 +529,7 @@
                     (source "/Catalogs/swedish")
                     (choices "YAM.catalog")
                     (dest (tackon Cat_dir #cat_name_swedish))
+                    (help @copyfiles-help)
                 )
             )
         )
@@ -541,6 +543,7 @@
                     (source "/Catalogs/czech")
                     (choices "YAM.catalog")
                     (dest (tackon Cat_dir #cat_name_czech))
+                    (help @copyfiles-help)
                 )
             )
         )
@@ -554,6 +557,7 @@
                     (source "/Catalogs/italian")
                     (choices "YAM.catalog")
                     (dest (tackon Cat_dir #cat_name_italian))
+                    (help @copyfiles-help)
                 )
             )
         )
@@ -567,6 +571,7 @@
                     (source "/Catalogs/french")
                     (choices "YAM.catalog")
                     (dest (tackon Cat_dir #cat_name_french))
+                    (help @copyfiles-help)
                 )
             )
         )
@@ -580,6 +585,7 @@
                     (source "/Catalogs/greek")
                     (choices "YAM.catalog")
                     (dest (tackon Cat_dir #cat_name_greek))
+                    (help @copyfiles-help)
                 )
             )
         )
@@ -596,6 +602,7 @@
                         (source "/Catalogs/english-british")
                         (choices "YAM.catalog")
                         (dest (tackon Cat_dir #cat_name_english_british))
+                        (help @copyfiles-help)
                     )
                 )
             )
@@ -613,6 +620,7 @@
     (source "/Gallery/")
     (dest Gallery_dir)
     (all)
+    (help @copyfiles-help)
 )
 
 (if (not (exists (tackon YAM_dir "Gallery.info")))
@@ -654,6 +662,7 @@
             (newname "YAM.guide")
             (infos)
             (noposition)
+            (help @copyfiles-help)
         )
     )
 )
@@ -666,6 +675,7 @@
             (newname "YAM.guide")
             (infos)
             (noposition)
+            (help @copyfiles-help)
         )
     )
 )
@@ -678,6 +688,7 @@
             (newname "YAM.guide")
             (infos)
             (noposition)
+            (help @copyfiles-help)
         )
     )
 )
@@ -687,6 +698,7 @@
     (source "/ReadMe")
     (dest YAM_dir)
     (infos)
+    (help @copyfiles-help)
 )
 
 (complete 60)
@@ -699,6 +711,7 @@
     (source "/Themes/")
     (dest Themes_dir)
     (all)
+    (help @copyfiles-help)
 )
 
 (if (not (exists (tackon YAM_dir "Themes.info")))
@@ -721,6 +734,7 @@
     (source "/Rexx/")
     (dest ARexx_dir)
     (all)
+    (help @copyfiles-help)
 )
 
 (if (not (exists (tackon YAM_dir "Rexx.info")))
