@@ -106,6 +106,7 @@ static BOOL FI_MatchString(struct Search *search, char *string)
   switch(search->Compare)
   {
     case 0:
+    case 1:
     {
       if(search->DOSPattern == TRUE)
       {
@@ -118,40 +119,24 @@ static BOOL FI_MatchString(struct Search *search, char *string)
       {
         match = (BOOL)(BoyerMooreSearch(search->bmContext, string) != NULL);
       }
-    }
-    break;
 
-    case 1:
-    {
-      if(search->DOSPattern == TRUE)
-      {
-        if(search->CaseSens == TRUE)
-           match = (BOOL)!MatchPattern(search->Pattern, string);
-         else
-           match = (BOOL)!MatchPatternNoCase(search->Pattern, string);
-      }
-      else
-      {
-        match = (BOOL)(BoyerMooreSearch(search->bmContext, string) == NULL);
-      }
+      // check for non-matching search
+      if(search->Compare == 1)
+        match = !match;
     }
     break;
 
     case 2:
+    case 3:
     {
       if(search->CaseSens == TRUE)
         match = (BOOL)(strcmp(string, search->Match) < 0);
       else
         match = (BOOL)(Stricmp(string, search->Match) < 0);
-    }
-    break;
 
-    case 3:
-    {
-      if(search->CaseSens == TRUE)
-        match = (BOOL)(strcmp(string, search->Match) > 0);
-      else
-        match = (BOOL)(Stricmp(string, search->Match) > 0);
+      // check for non-matching search
+      if(search->Compare == 3)
+        match = !match;
     }
     break;
 
@@ -465,6 +450,10 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
               found = FI_MatchListPattern(search, hdrNode->content);
             else
               found = FI_MatchString(search, hdrNode->content);
+
+            // bail out as soon as we found a matching string
+            if(found == TRUE)
+              break;
           }
         }
 
@@ -640,7 +629,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
     break;
   }
 
-  if(success)
+  if(success == TRUE)
   {
     if(compar == 4)
       FI_GenerateListPatterns(search);
@@ -700,9 +689,12 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
     case SM_SIZE:
     {
       // check whether this is a fast search or not.
-      found = (search->Fast == FS_NONE) ? FI_SearchPatternInHeader(search, mail) : FI_SearchPatternFast(search, mail);
+      if(search->Fast == FS_NONE)
+        found = FI_SearchPatternInHeader(search, mail);
+      else
+        found = FI_SearchPatternFast(search, mail);
 
-      if(found)
+      if(found == TRUE)
         D(DBF_FILTER, "  search mode %ld matched", search->Mode);
       else
         D(DBF_FILTER, "  search mode %ld NOT matched", search->Mode);
@@ -711,117 +703,117 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 
     case SM_HEADER:
     {
-      BOOL found0;
-      int comp_bak = search->Compare;
+      int oldCompare = search->Compare;
 
+      // always perform a matching search
       search->Compare = 0;
-      found0 = FI_SearchPatternInHeader(search, mail);
-      search->Compare = comp_bak;
+      found = FI_SearchPatternInHeader(search, mail);
+      search->Compare = oldCompare;
 
-      if(found0 == (search->Compare == 0))
-      {
-        D(DBF_FILTER, "  HEADER: search for '%s' matched", search->Pattern);
-        found = TRUE;
-      }
+      // invert the result in case a non-matching search was requested
+      if(oldCompare == 1)
+        found = !found;
+
+      if(found == TRUE)
+        D(DBF_FILTER, "  HEADER: search for '%s' matched", (search->DOSPattern == TRUE) ? search->Pattern : search->bmContext->pattern);
       else
-        D(DBF_FILTER, "  HEADER: search for '%s' NOT matched", search->Pattern);
+        D(DBF_FILTER, "  HEADER: search for '%s' NOT matched", (search->DOSPattern == TRUE) ? search->Pattern : search->bmContext->pattern);
     }
     break;
 
     case SM_BODY:
     {
-      BOOL found0;
-      int comp_bak = search->Compare;
+      int oldCompare = search->Compare;
 
+      // always perform a matching search
       search->Compare = 0;
-      found0 = FI_SearchPatternInBody(search, mail);
-      search->Compare = comp_bak;
+      found = FI_SearchPatternInBody(search, mail);
+      search->Compare = oldCompare;
 
-      if(found0 == (search->Compare == 0))
-      {
-        D(DBF_FILTER, "  BODY: search for '%s' matched", search->Pattern);
-        found = TRUE;
-      }
+      // invert the result in case a non-matching search was requested
+      if(oldCompare == 1)
+        found = !found;
+
+      if(found == TRUE)
+        D(DBF_FILTER, "  BODY: search for '%s' matched", (search->DOSPattern == TRUE) ? search->Pattern : search->bmContext->pattern);
       else
-        D(DBF_FILTER, "  BODY: search for '%s' NOT matched", search->Pattern);
+        D(DBF_FILTER, "  BODY: search for '%s' NOT matched", (search->DOSPattern == TRUE) ? search->Pattern : search->bmContext->pattern);
     }
     break;
 
     case SM_WHOLE:
     {
-      BOOL found0;
-      int comp_bak = search->Compare;
+      int oldCompare = search->Compare;
 
+      // always perform a matching search
       search->Compare = 0;
+      found = FI_SearchPatternInHeader(search, mail);
+      if(found == FALSE)
+        found = FI_SearchPatternInBody(search, mail);
+      search->Compare = oldCompare;
 
-      if(!(found0 = FI_SearchPatternInHeader(search, mail)))
-        found0 = FI_SearchPatternInBody(search, mail);
+      // invert the result in case a non-matching search was requested
+      if(oldCompare == 1)
+        found = !found;
 
-      search->Compare = comp_bak;
-
-      if(found0 == (search->Compare == 0))
-      {
-        D(DBF_FILTER, "  WHOLE: search for '%s' matched", search->Pattern);
-        found = TRUE;
-      }
+      if(found == TRUE)
+        D(DBF_FILTER, "  WHOLE: search for '%s' matched", (search->DOSPattern == TRUE) ? search->Pattern : search->bmContext->pattern);
       else
-        D(DBF_FILTER, "  WHOLE: search for '%s' NOT matched", search->Pattern);
+        D(DBF_FILTER, "  WHOLE: search for '%s' NOT matched", (search->DOSPattern == TRUE) ? search->Pattern : search->bmContext->pattern);
     }
     break;
 
     case SM_STATUS:
     {
-      BOOL statusFound = FALSE;
-
       switch(search->Status)
       {
         case 'U':
-          statusFound = (hasStatusNew(mail) || !hasStatusRead(mail));
+          found = (hasStatusNew(mail) || !hasStatusRead(mail));
         break;
 
         case 'O':
-          statusFound = (!hasStatusNew(mail) && hasStatusRead(mail));
+          found = (!hasStatusNew(mail) && hasStatusRead(mail));
         break;
 
         case 'F':
-          statusFound = hasStatusForwarded(mail);
+          found = hasStatusForwarded(mail);
         break;
 
         case 'R':
-          statusFound = hasStatusReplied(mail);
+          found = hasStatusReplied(mail);
         break;
 
         case 'W':
-          statusFound = hasStatusQueued(mail);
+          found = hasStatusQueued(mail);
         break;
 
         case 'E':
-          statusFound = hasStatusError(mail);
+          found = hasStatusError(mail);
         break;
 
         case 'H':
-          statusFound = hasStatusHold(mail);
+          found = hasStatusHold(mail);
         break;
 
         case 'S':
-          statusFound = hasStatusSent(mail);
+          found = hasStatusSent(mail);
         break;
 
         case 'M':
-          statusFound = hasStatusMarked(mail);
+          found = hasStatusMarked(mail);
         break;
 
         case 'X':
-          statusFound = hasStatusSpam(mail);
+          found = hasStatusSpam(mail);
         break;
       }
 
-      if((search->Compare == 0 && statusFound == TRUE) ||
-         (search->Compare == 1 && statusFound == FALSE))
-      {
+      // invert the result in case a non-matching search was requested
+      if(search->Compare == 1)
+        found = !found;
+
+      if(found == TRUE)
         D(DBF_FILTER, "  status search %ld matched", search->Status);
-        found = TRUE;
-      }
       else
         D(DBF_FILTER, "  status search %ld NOT matched", search->Status);
     }
@@ -829,7 +821,7 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 
     case SM_SPAM:
     {
-      if(C->SpamFilterEnabled && BayesFilterClassifyMessage(mail))
+      if(C->SpamFilterEnabled == TRUE && BayesFilterClassifyMessage(mail) == TRUE)
       {
         D(DBF_FILTER, "  identified as SPAM");
         found = TRUE;

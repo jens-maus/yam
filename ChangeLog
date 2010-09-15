@@ -7,6 +7,9 @@ $URL$
 
 2010-09-15 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: a search in the mail headers now bails out as soon as a matching
+    string has been found instead of continuing the search which will forget
+    about the found string. This closes #211.
   * doc/Install-YAM: the charset files for codesets.library will now be
     installed only if codesets.library is currently installed.
   * doc/Install-YAM: updated greek translation.
