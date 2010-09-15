@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install-YAM: updated greek translation.
+
 2010-09-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/Install-YAM: the script will nor ask for confirmation before copying the
