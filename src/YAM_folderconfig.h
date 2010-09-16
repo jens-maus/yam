@@ -228,6 +228,8 @@ BOOL            FO_LoadTree(void);
 struct Folder * FO_NewFolder(enum FolderType type, const char *path, const char *name);
 BOOL            FO_SaveConfig(struct Folder *fo);
 BOOL            FO_SaveTree(void);
+void            FO_SetFolderImage(struct Folder *folder);
 void            FO_UpdateStatistics(struct Folder *folder);
+void            FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw);
 
 #endif /* YAM_FOLDERCONFIG_H */

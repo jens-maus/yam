@@ -1104,18 +1104,45 @@ BOOL FO_SaveTree(void)
 }
 
 ///
+/// FO_SetFolderImage
+// set a folder's image depending on its type and the number of new/unread mails
+void FO_SetFolderImage(struct Folder *folder)
+{
+  ENTER();
+
+  // if this folder hasn't got any own folder image in the folder
+  // directory and it is one of our standard folders we have to check which image we put in front of it
+  if(folder->imageObject == NULL)
+  {
+    if(isIncomingFolder(folder))
+      folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
+    else if(isOutgoingFolder(folder))
+      folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
+    else if(isTrashFolder(folder))
+      folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
+    else if(isSentFolder(folder))
+      folder->ImageIndex = FICON_ID_SENT;
+    else if(isSpamFolder(folder))
+      folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
+    else
+      folder->ImageIndex = -1;
+  }
+
+  LEAVE();
+}
+
+///
 /// FO_UpdateStatistics
 // recalculate the number of new/unread/etc mails in a folder
 void FO_UpdateStatistics(struct Folder *folder)
 {
   ENTER();
 
-  if(folder == (struct Folder *)-1)
-    folder = FO_GetFolderByType(FT_INCOMING, NULL);
-
   if(isGroupFolder(folder) == FALSE)
   {
-    D(DBF_FOLDER, "updating folder '%s'", folder->Name);
+    struct MailNode *mnode;
+
+    D(DBF_FOLDER, "updating stats of folder '%s'", folder->Name);
 
     folder->Unread = 0;
     folder->New = 0;
@@ -1125,35 +1152,102 @@ void FO_UpdateStatistics(struct Folder *folder)
 
     LockMailListShared(folder->messages);
 
-    if(IsMailListEmpty(folder->messages) == FALSE)
+    // now we recount the amount of messages of this folder
+    ForEachMailNode(folder->messages, mnode)
     {
-      struct MailNode *mnode;
-      // now we recount the amount of messages of this folder
-      ForEachMailNode(folder->messages, mnode)
-      {
-        struct Mail *mail = mnode->mail;
+      struct Mail *mail = mnode->mail;
 
-        folder->Total++;
+      folder->Total++;
 
-        if(hasStatusNew(mail))
-          folder->New++;
+      if(hasStatusNew(mail))
+        folder->New++;
 
-        if(!hasStatusRead(mail))
-          folder->Unread++;
+      if(!hasStatusRead(mail))
+        folder->Unread++;
 
-        if(hasStatusSent(mail))
-          folder->Sent++;
+      if(hasStatusSent(mail))
+        folder->Sent++;
 
-        if(hasStatusDeleted(mail))
-          folder->Deleted++;
-      }
+      if(hasStatusDeleted(mail))
+        folder->Deleted++;
     }
 
     UnlockMailList(folder->messages);
+
+    // finally update the image based on the new numbers
+    FO_SetFolderImage(folder);
   }
 
   LEAVE();
 }
+
+///
+/// FO_UpdateTreeStatistics
+// recalculate the number of new/unread/etc mails in a folder and update the parent treenodes
+void FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw)
+{
+  struct MUI_NListtree_TreeNode *tn;
+  struct MUI_NListtree_TreeNode *tn_parent;
+
+  ENTER();
+
+  tn = folder->Treenode;
+
+  if(redraw == TRUE)
+  {
+    // let's redraw the folderentry in the listtree
+    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn, MUIF_NONE);
+  }
+
+  // Now we have to recalculate all parent and grandparents treenodes to
+  // set their status accordingly.
+  while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
+  {
+    if(tn_parent->tn_User != NULL)
+    {
+      struct Folder *fo_parent = ((struct FolderNode *)tn_parent->tn_User)->folder;
+      int i;
+
+      // clear the parent mailvariables first
+      fo_parent->Unread = 0;
+      fo_parent->New = 0;
+      fo_parent->Total = 0;
+      fo_parent->Sent = 0;
+      fo_parent->Deleted = 0;
+
+      // Now we scan every child of the parent and count the mails
+      for(i=0;;i++)
+      {
+        struct MUI_NListtree_TreeNode *tn_child;
+        struct Folder *fo_child;
+
+        tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, MUIV_NListtree_GetEntry_Flag_SameLevel);
+        if(tn_child == NULL)
+          break;
+
+        fo_child = ((struct FolderNode *)tn_child->tn_User)->folder;
+
+        fo_parent->Unread    += fo_child->Unread;
+        fo_parent->New       += fo_child->New;
+        fo_parent->Total     += fo_child->Total;
+        fo_parent->Sent      += fo_child->Sent;
+        fo_parent->Deleted   += fo_child->Deleted;
+      }
+
+      if(redraw == TRUE)
+        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn_parent, MUIF_NONE);
+
+      // for the next step we set tn to the current parent so that we get the
+      // grandparents ;)
+      tn = tn_parent;
+    }
+    else
+      break;
+  }
+
+  LEAVE();
+}
+
 ///
 /// FO_MoveFolderDir
 //  Moves a folder to a new directory

@@ -1779,8 +1779,6 @@ static void InitAfterLogin(void)
   ForEachFolderNode(G->folders, fnode)
   {
     struct Folder *folder = fnode->folder;
-    struct MUI_NListtree_TreeNode *tn = folder->Treenode;
-    struct MUI_NListtree_TreeNode *tn_parent;
 
     // if this entry is a group lets skip here immediatly
     if(isGroupFolder(folder))
@@ -1807,41 +1805,12 @@ static void InitAfterLogin(void)
         folder->New = 0;
     }
 
-    // if this folder hasn't got any own folder image in the folder
-    // directory and it is one of our standard folders we have to check which image we put in front of it
-    if(folder->imageObject == NULL)
-    {
-      if(isIncomingFolder(folder))      folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
-      else if(isOutgoingFolder(folder)) folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
-      else if(isTrashFolder(folder))    folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
-      else if(isSentFolder(folder))     folder->ImageIndex = FICON_ID_SENT;
-      else if(isSpamFolder(folder))     folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
-      else folder->ImageIndex = -1;
-    }
+    // update the folder's image
+    FO_SetFolderImage(folder);
 
     // now we have to add the amount of mails of this folder to the foldergroup
     // aswell and also the grandparents.
-    while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)) != NULL)
-    {
-      // tn_parent->tn_User is NULL then it's ROOT and we have to skip here
-      // because we cannot have a status of the ROOT tree.
-      if(tn_parent->tn_User != NULL)
-      {
-        struct Folder *fo_parent = ((struct FolderNode *)tn_parent->tn_User)->folder;
-
-        fo_parent->Unread    += folder->Unread;
-        fo_parent->New       += folder->New;
-        fo_parent->Total     += folder->Total;
-        fo_parent->Sent      += folder->Sent;
-        fo_parent->Deleted   += folder->Deleted;
-
-        // for the next step we set tn to the current parent so that we get the
-        // grandparents ;)
-        tn = tn_parent;
-      }
-      else
-        break;
-    }
+    FO_UpdateTreeStatistics(folder, FALSE);
 
     DoMethod(G->App, MUIM_Application_InputBuffered);
   }

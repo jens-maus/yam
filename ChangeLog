@@ -7,6 +7,8 @@ $URL$
 
 2010-09-16 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, YAM_FO.c, YAM_UT.c: simplified and centralized the folder statistics
+    update process.
   * YAM.c: don't use the folder treeview to traverse through all folders but the
     folder list only.
   * YAM_FO.c: simplified the FO_SetCurrentFolder() function since the folder

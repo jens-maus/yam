@@ -4536,8 +4536,6 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
 //  Calculates folder statistics and update mailbox status icon
 void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 {
-  int pos;
-  struct MUI_NListtree_TreeNode *tn;
   struct Folder *actfo = FO_GetCurrentFolder();
 
   ENTER();
@@ -4548,85 +4546,20 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
   else if(fo == (struct Folder *)-1)
     fo = FO_GetFolderByType(FT_INCOMING, NULL);
 
-  // get the folder's position within the tree
-  if(fo != NULL && (pos = FO_GetFolderPosition(fo, TRUE)) >= 0)
+  if(fo != NULL)
   {
     D(DBF_GUI, "updating statistics for folder '%s', appicon %ld", fo->Name, updateAppIcon);
 
     // update the stats for this folder
     FO_UpdateStatistics(fo);
-
-    // if this folder hasn't got any own folder image in the folder
-    // directory and it is one of our standard folders we have to check which image we put in front of it
-    if(fo->imageObject == NULL)
-    {
-      if(isIncomingFolder(fo))      fo->ImageIndex = (fo->Unread != 0) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
-      else if(isOutgoingFolder(fo)) fo->ImageIndex = (fo->Unread != 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
-      else if(isTrashFolder(fo))    fo->ImageIndex = (fo->Unread != 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
-      else if(isSentFolder(fo))     fo->ImageIndex = FICON_ID_SENT;
-      else if(isSpamFolder(fo))     fo->ImageIndex = (fo->Unread != 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
-      else fo->ImageIndex = -1;
-    }
+    // Recalc the number of messages of the folder group
+    FO_UpdateTreeStatistics(fo, TRUE);
 
     if(fo == actfo)
     {
       DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_SetMailInfo);
       DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_SetFolderInfo);
       DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, fo);
-    }
-
-    // Recalc the number of messages of the folder group
-    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, MUIF_NONE)))
-    {
-      struct MUI_NListtree_TreeNode *tn_parent;
-
-      // Now lets redraw the folderentry in the listtree
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn, MUIF_NONE);
-
-      // Now we have to recalculate all parent and grandparents treenodes to
-      // set their status accordingly.
-      while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
-      {
-        if(tn_parent->tn_User != NULL)
-        {
-          struct Folder *fo_parent = ((struct FolderNode *)tn_parent->tn_User)->folder;
-          int i;
-
-          // clear the parent mailvariables first
-          fo_parent->Unread = 0;
-          fo_parent->New = 0;
-          fo_parent->Total = 0;
-          fo_parent->Sent = 0;
-          fo_parent->Deleted = 0;
-
-          // Now we scan every child of the parent and count the mails
-          for(i=0;;i++)
-          {
-            struct MUI_NListtree_TreeNode *tn_child;
-            struct Folder *fo_child;
-
-            tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, MUIV_NListtree_GetEntry_Flag_SameLevel);
-            if(tn_child == NULL)
-              break;
-
-            fo_child = ((struct FolderNode *)tn_child->tn_User)->folder;
-
-            fo_parent->Unread    += fo_child->Unread;
-            fo_parent->New       += fo_child->New;
-            fo_parent->Total     += fo_child->Total;
-            fo_parent->Sent      += fo_child->Sent;
-            fo_parent->Deleted   += fo_child->Deleted;
-          }
-
-          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn_parent, MUIF_NONE);
-
-          // for the next step we set tn to the current parent so that we get the
-          // grandparents ;)
-          tn = tn_parent;
-        }
-        else
-          break;
-      }
     }
 
     if(G->AppIconQuiet == FALSE && updateAppIcon == TRUE)
