@@ -36,6 +36,7 @@
 #include "YAM_config.h"
 #include "mui/Classes.h"
 
+#include "FolderList.h"
 #include "Rexx.h"
 
 #include "Debug.h"
@@ -81,8 +82,8 @@ void rx_userinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     case RXIF_ACTION:
     {
       struct User *u = US_GetCurrentUser();
-      int i = 0, numfolders = 0;
-      struct MUI_NListtree_TreeNode *tn;
+      int numfolders;
+      struct FolderNode *fnode;
 
       results->username = u->Name;
       results->email = C->EmailAddress;
@@ -91,13 +92,16 @@ void rx_userinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
       results->maildir = G->MA_MailDir;
 
       // count the real folders now
-      while((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)))
+      numfolders = 0;
+      LockFolderListShared(G->folders);
+      ForEachFolderNode(G->folders, fnode)
       {
-        if(!isFlagSet(tn->tn_Flags, TNF_LIST))
-          numfolders++;
+        struct Folder *folder = fnode->folder;
 
-        i++;
+        if(!isGroupFolder(folder))
+          numfolders++;
       }
+      UnlockFolderList(G->folders);
 
       optional->folders = numfolders;
       results->folders = &optional->folders;
