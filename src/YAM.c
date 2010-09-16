@@ -1581,9 +1581,9 @@ static BOOL Root_New(BOOL hidden)
 static void InitAfterLogin(void)
 {
   struct FolderList *oldfolders = NULL;
+  struct FolderNode *fnode;
   BOOL newfolders;
   BOOL splashWasActive;
-  int i;
   char pubScreenName[MAXPUBSCREENNAME + 1];
   struct Screen *pubScreen;
 
@@ -1640,8 +1640,6 @@ static void InitAfterLogin(void)
   newfolders = FALSE;
   if(FO_LoadTree() == FALSE && oldfolders != NULL && IsFolderListEmpty(oldfolders) == FALSE)
   {
-    struct FolderNode *fnode;
-
     // add all YAM 1.x style folders
     ForEachFolderNode(oldfolders, fnode)
     {
@@ -1656,8 +1654,6 @@ static void InitAfterLogin(void)
   // free any YAM 1.x style folder
   if(oldfolders != NULL && IsFolderListEmpty(oldfolders) == FALSE)
   {
-    struct FolderNode *fnode;
-
     ForEachFolderNode(oldfolders, fnode)
     {
       free(fnode->folder);
@@ -1780,17 +1776,11 @@ static void InitAfterLogin(void)
   BayesFilterInit();
 
   SplashProgress(tr(MSG_LoadingFolders), 75);
-  for(i = 0; ;i++)
+  ForEachFolderNode(G->folders, fnode)
   {
-    struct MUI_NListtree_TreeNode *tn;
+    struct Folder *folder = fnode->folder;
+    struct MUI_NListtree_TreeNode *tn = folder->Treenode;
     struct MUI_NListtree_TreeNode *tn_parent;
-    struct Folder *folder;
-
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-    if(tn == NULL || tn->tn_User == NULL)
-      break;
-
-    folder = ((struct FolderNode *)tn->tn_User)->folder;
 
     // if this entry is a group lets skip here immediatly
     if(isGroupFolder(folder))
@@ -1882,9 +1872,8 @@ static void InitAfterLogin(void)
 
   // Only activate the main window if the about window is active and open it immediatly.
   // We always start YAM with Window_Open=TRUE or else the hide functionality does not work as expected.
-  xset(G->MA->GUI.WI,
-       MUIA_Window_Activate, splashWasActive,
-       MUIA_Window_Open,     TRUE);
+  xset(G->MA->GUI.WI, MUIA_Window_Activate, splashWasActive,
+                      MUIA_Window_Open,     TRUE);
 
   // Now we have to make sure that the current folder is really in "active" state
   // or we risk to get a unsynced message listview. We also have to do that AFTER
