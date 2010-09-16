@@ -978,11 +978,11 @@ Salut,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-; 
+;
 ;
 MSG_CO_AltRepPatternDef
 
-; 
+;
 ;
 MSG_CO_ForwardIntroDef
 *** Message retransmis ***\\\\n\
@@ -1012,15 +1012,15 @@ Mes salutations
 ;
 MSG_CO_AltRepHelloDef
 Bonjour,\\n
-; 
+;
 ;
 MSG_CO_AltRepByeDef
 
-; 
+;
 ;
 MSG_CO_MLRepHelloDef
 
-; 
+;
 ;
 MSG_CO_MLRepIntroDef
 Le %c, %n a écrit :\\\\n
@@ -9819,4 +9819,3 @@ Partie %ld.%ld
 ; Part %ld.%ld
 ; PARENTNUMBER PARTNUMER
 ;
-
