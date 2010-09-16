@@ -108,35 +108,19 @@ struct Folder *FO_GetCurrentFolder(void)
 ///
 /// FO_SetCurrentFolder
 //  Set the passed folder as the active one
-BOOL FO_SetCurrentFolder(struct Folder *fo)
+void FO_SetCurrentFolder(const struct Folder *fo)
 {
-  BOOL result = FALSE;
-
   ENTER();
 
   if(fo != NULL)
   {
-    int i;
+    // make sure the tree is opened to display it
+    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, fo->Treenode, MUIF_NONE);
 
-    for(i = 0;; i++)
-    {
-      struct MUI_NListtree_TreeNode *tn;
-
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-      if(tn != NULL && ((struct FolderNode *)tn->tn_User)->folder == fo)
-      {
-        // make sure the tree is opened to display it
-        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
-
-        nnset(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, tn);
-        result = TRUE;
-        break;
-      }
-    }
+    nnset(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, fo->Treenode);
   }
 
-  RETURN(result);
-  return result;
+  LEAVE();
 }
 ///
 /// FO_GetFolderRexx
