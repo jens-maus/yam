@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (21.02.2010)
+## version $VER: YAM.catalog 7.2 (16.9.2010)
 ## language svenska
 ## codeset 0
 ## chunk AUTH Pär Boberg
@@ -2434,10 +2434,6 @@ Använd nuvarande inställningar.
 MSG_HELP_CO_BT_CANCEL
 Stäng konfigurationsfönstret och\nanvänd de gamla inställningarna.
 ;#DEF Close configuration\nwindow and use the old\nsettings.
-;#SET (701//)
-MSG_AB_BirthdayReq
-Idag fyller %s %ld år!\n\nVill du skicka ett gratulationskort?
-;#DEF Today, %s reaches age %ld.\n\nDo you want to send a greetings card?
 ;#SET (702//)
 MSG_AB_BirthdayReminder
 Födelsedagspåminnelse
@@ -2780,7 +2776,7 @@ Bild
 ;#DEF Portrait
 ;#SET (793//)
 MSG_EA_SelectPhoto
-Väl_j
+Väl_j...
 ;#DEF Se_lect
 ;#SET (794//)
 MSG_EA_ReturnAddress
@@ -6244,7 +6240,7 @@ Sök...
 ;#DEF Search...
 ;#SET (1814//)
 MSG_MA_MFILTER
-Filtrera
+Filtrera...
 ;#DEF Filter
 ;#SET (1815//)
 MSG_MA_REMOVEDELETED
@@ -6304,7 +6300,7 @@ Kopiera...
 ;#DEF Copy...
 ;#SET (1829//)
 MSG_MA_MPRINT
-Skriv ut
+Skriv ut...
 ;#DEF Print
 ;#SET (1830//)
 MSG_MA_MSAVE
@@ -6316,7 +6312,7 @@ Spara...
 ;#DEF Save...
 ;#SET (1832//)
 MSG_MA_MNEW
-Nytt
+Nytt...
 ;#DEF New
 ;#SET (1834//)
 MSG_MA_MREPLY
@@ -7502,10 +7498,6 @@ URL till pubilk PGP-nyckel
 MSG_HELP_CO_ST_PGPURL
 Du kan specifiera en URL där din publika\nPGP-nyckel kan laddas ned från. Denna URL\nkommer sedan att placeras i en separat\nhuvudpost i varje brev.
 ;#DEF You can specify an URL where your public\nPGP key can be downloaded from. This URL\nwill then placed into a separate header\nentry in every mail.
-;#SET (2145//)
-MSG_TR_NEW_MAIL_NOTIFY
-Tog emot %ld nya brev!
-;#DEF Received %ld new mails!
 ;#SET (2148//)
 MSG_CO_NOTIOS41SYSTEM
 AmigaOS_4.1 notifieringssystem

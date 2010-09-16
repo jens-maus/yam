@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.8 (11.09.2010)
+## version $VER: YAM.catalog 7.9 (16.9.2010)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
@@ -891,11 +891,11 @@ Hola,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-; 
+;
 ;
 MSG_CO_AltRepPatternDef
 
-; 
+;
 ;
 MSG_CO_ForwardIntroDef
 *** Inicio de mensaje respuesta ***\\\\n\\\\nFecha: %c\\\\nDe: %n <%e>\\\\nAsunto: %s\\\\n\\\\n--- Seguimiento del mensaje reenviado ---\\\\n\\\\n
@@ -911,15 +911,15 @@ Saludos Cordiales
 ;
 MSG_CO_AltRepHelloDef
 
-; 
+;
 ;
 MSG_CO_AltRepByeDef
 
-; 
+;
 ;
 MSG_CO_MLRepHelloDef
 
-; 
+;
 ;
 MSG_CO_MLRepIntroDef
 El %c, %n escribió:\\\\n
@@ -2866,7 +2866,7 @@ Fotografía
 ; Portrait
 ;
 MSG_EA_SelectPhoto
-Selecci_onar
+Selecci_onar...
 ; Se_lect
 ;
 MSG_EA_ReturnAddress
@@ -6513,7 +6513,7 @@ Buscar...
 ; Search...
 ;
 MSG_MA_MFILTER
-Filtrar
+Filtrar...
 ; Filter
 ;
 MSG_MA_REMOVEDELETED
@@ -6573,7 +6573,7 @@ Copiar...
 ; Copy...
 ;
 MSG_MA_MPRINT
-Imprimir
+Imprimir...
 ; Print
 ;
 MSG_MA_MSAVE
@@ -6585,7 +6585,7 @@ Salvar...
 ; Save...
 ;
 MSG_MA_MNEW
-Nuevo
+Nuevo...
 ; New
 ;
 MSG_MA_MREPLY

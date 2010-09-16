@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/greek.ct, locale/spanish.ct, locale/swedish.ct: removed some unused
+    strings and added missing trailing ellipsises.
+
 2010-09-15  Alexandre Balaban <abalaban@free.fr>
 
   * doc/Install-YAM: updated according to latest changes.

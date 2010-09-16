@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.1 (21.02.2010)
+## version $VER: YAM.catalog 7.2 (16.9.2010)
 ## language greek
 ## codeset 10
 ## chunk AUTH Antonis Iliakis
@@ -2502,11 +2502,6 @@ MSG_HELP_CO_BT_CANCEL
 ;
 ; Module AB - Routines
 ;
-MSG_AB_BirthdayReq
-Σήμερα, ο/η %s γίνεται %ld χρονών.\n\nΘέλετε να στείλετε μια ευχετήρια κάρτα;
-; Today, %s reaches age %ld.\n\nDo you want to send a greetings card?
-; NAME, AGE
-;
 MSG_AB_BirthdayReminder
 Υπενθύμιση Γενεθλίων
 ; Birthday Reminder
@@ -2867,7 +2862,7 @@ MSG_EA_Portrait
 ; Portrait
 ;
 MSG_EA_SelectPhoto
-_Επιλογή
+_Επιλογή...
 ; Se_lect
 ;
 MSG_EA_ReturnAddress
@@ -6502,7 +6497,7 @@ MSG_MA_MSEARCH
 ; Search...
 ;
 MSG_MA_MFILTER
-Φίλτρο
+Φίλτρο...
 ; Filter
 ;
 MSG_MA_REMOVEDELETED
@@ -6562,7 +6557,7 @@ MSG_MA_MCOPY
 ; Copy...
 ;
 MSG_MA_MPRINT
-Εκτύπωση
+Εκτύπωση...
 ; Print
 ;
 MSG_MA_MSAVE
@@ -6574,7 +6569,7 @@ MSG_MA_MSAVEATT
 ; Save...
 ;
 MSG_MA_MNEW
-Νέο
+Νέο...
 ; New
 ;
 MSG_MA_MREPLY
@@ -7810,11 +7805,6 @@ MSG_HELP_CO_ST_PGPURL
 Μπορείτε να προσδιορίσετε ένα URL όπου μπορεί να γίνει\nλήψη του κοινού κλειδιού PGP. Αυτό το URL\nθα τοποθετηθεί σε μια ξεχωριστή κεφαλίδα\nσε κάθε μήνυμα.
 ; You can specify an URL where your public\nPGP key can be downloaded from. This URL\nwill then placed into a separate header\nentry in every mail.
 ;
-MSG_TR_NEW_MAIL_NOTIFY
-Λήφθηκαν %ld νέα μηνύματα!
-; Received %ld new mails!
-; COUNT
-;
 MSG_CO_NOTIOS41SYSTEM
 Σύστημα προειδοποίησης AmigaOS 4.1
 ; AmigaOS_4.1 notification system
@@ -7823,3 +7813,20 @@ MSG_HELP_CO_CH_NOTIOS41SYSTEM
 Εάν επιλεχτεί, το YAM θα χρησιμοποιήσει το σύστημα\nπροειδοποίησης του AmigaOS4.1 για την ειδοποίηση του\nχρήστη σχετικά με νέα ληφθέντα μηνύματα.\nΑυτό απαιτεί τουλάχιστον την application.library V53.2.
 ; If checked, YAM will use AmigaOS4.1's notification\nsystem to notify the user about new received mails.\nThis requires at least application.library V53.2.
 ;
+MSG_NO_OPENURL_LIB
+Η openurl.library δεν είναι εγκατεστημένη στο σύστημά σας.\n\Συνεπώς το YAM δε μπορεί να ανοίξει την ζητούμενη τοποθεσία.\n\Παρακαλώ τρέξτε τον περιηγητή σας και εισάγετε την παρακάτω διεύθυνση:\n\'%s'
+;openurl.library not installed on your system.\n\
+;Thus YAM is not able to open the requested link itself.\n\
+;\n\
+;Please launch your internet browser yourself and enter this link:\n\
+;'%s'
+; URL
+;
+MSG_USERNAME_FALLBACK
+Δρακουμέλ
+;John Doe
+;
+MSG_RE_DEFAULT_MIMEPART_NAME
+Τμήμα %ld.%ld
+;Part %ld.%ld
+; PARENTNUMBER PARTNUMER
