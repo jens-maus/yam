@@ -7,6 +7,7 @@ $URL$
 
 2010-09-16 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: removed the now unused FO_GetFolderTreenode() function.
   * locale/greek.ct, locale/spanish.ct, locale/swedish.ct: removed some unused
     strings and added missing trailing ellipsises.
 

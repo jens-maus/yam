@@ -343,38 +343,6 @@ int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
   return pos;
 }
 ///
-/// FO_GetFolderTreeNode
-//  Gets the tree node of a folder
-struct MUI_NListtree_TreeNode *FO_GetFolderTreeNode(struct Folder *findfo)
-{
-  int i;
-  struct Folder *fo;
-  struct MUI_NListtree_TreeNode *tn;
-
-  ENTER();
-
-  for(i=0;;i++)
-  {
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-    if(tn == NULL || tn->tn_User == NULL)
-    {
-      // no more treenodes or invalid user data, bail out
-      tn = NULL;
-      break;
-    }
-
-    fo = ((struct FolderNode *)tn->tn_User)->folder;
-    if(fo == findfo)
-    {
-      // we just found the desired folder, so break out of the loop and return the treenode
-      break;
-    }
-  }
-
-  RETURN(tn);
-  return tn;
-}
-///
 /// FO_LoadConfig
 //  Loads folder configuration from .fconfig file
 BOOL FO_LoadConfig(struct Folder *fo)
