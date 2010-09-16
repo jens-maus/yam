@@ -5,7 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2010-09-15  Alexandre Balaban <abalaban@free.fr>
+2010-09-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/french.ct: fixed some serious issues in the french translation, like
+    missing placeholders ('%' instead of '%s') or exceeding placeholders.
+    Translators, please don't create your translations by simple copy'n'paste
+    operations.
+
+2010-09-15 Alexandre Balaban <abalaban@free.fr>
 
   * doc/Install-YAM: updated according to latest changes.
   * locale/french.ct: updated according to latest changes.

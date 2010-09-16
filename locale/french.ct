@@ -7442,7 +7442,7 @@ MSG_CO_SCRIPTS_URL
 ; %p  Full URL path
 ;
 MSG_CO_MIMECMD_PARAMETER
-%p  Chemin complet du fichier
+%s  Chemin complet du fichier
 ; %s  Full path of file
 ;
 MSG_ER_CANTOPENASL
@@ -8594,7 +8594,7 @@ MSG_WR_INVALIDSECURITY_GADS
 ;
 MSG_ER_FILEENCODE
 Une erreur inattendue est survenue lors de l'encodage du \
-fichier « % ».\n\
+fichier « %s ».\n\
 \n\
 Veuillez vous assurer que ce fichier existe et est lisible \
 puis essayez à nouveau de rédiger le message.
@@ -9028,7 +9028,7 @@ avec YAM.
 ; contains the correct default theme distributed with YAM.
 ;
 MSG_ER_THEME_FALLBACK
-Le thème « % » actuellement activé n'est pas accessible \
+Le thème « %s » actuellement activé n'est pas accessible \
 ou est corrompu et n'a pas pu être chargé. Le thème par \
 défaut de YAM a donc été activé en remplacement.\n\
 \n\
@@ -9437,7 +9437,7 @@ Veuillez désactivez l'option dans la configuration.
 ; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP
-Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+Impossible de se connecter à l'hôte « %s ».\n\
 \n\
 Une connexion socket TCP/IP semble être déjà active. \
 Veuillez fermer tous les autres transferts en cours.
@@ -9448,7 +9448,7 @@ Veuillez fermer tous les autres transferts en cours.
 ; HOST
 ;
 MSG_ER_CONNECTERR_TIMEDOUT_SMTP
-Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+Impossible de se connecter à l'hôte « %s ».\n\
 \n\
 Le serveur de courrier n'a pas répondu dans le délai imparti.
 ; Couldn't connect to host '%s'.\n\
@@ -9458,7 +9458,7 @@ Le serveur de courrier n'a pas répondu dans le délai imparti.
 ; HOST
 ;
 MSG_ER_CONNECTERR_NO_SOCKET_SMTP
-Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+Impossible de se connecter à l'hôte « %s ».\n\
 \n\
 YAM n'a pas été en mesure d'établir une connexion socket \
 vers le serveur de courrier. Veuillez vous assurer que votre \
@@ -9471,7 +9471,7 @@ pile TCP/IP est bien démarrée et fonctionne correctement.
 ; HOST
 ;
 MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP
-Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+Impossible de se connecter à l'hôte « %s ».\n\
 \n\
 YAM n'a pas été en mesure d'établir une connexion \
 avec accès non bloquant. Veuillez vous assurer que \
@@ -9497,8 +9497,7 @@ Veuillez désactiver cette option dans la configuration.
 ; HOST
 ;
 MSG_ER_BADRESPONSE_SMTP
-Mauvaise réponse du serveur de courrier « %s » du compte « %s » \
-à la commande « %s » :\n\
+Mauvaise réponse du serveur de courrier « %s » à la commande « %s » :\n\
 %s\n\
 \n\
 Le serveur de mail n'a pas pu exécuter la commande \
@@ -9512,13 +9511,13 @@ et a répondu par le message d'erreur ci-dessus.
 ; SERVER, COMMAND, TEXT
 ;
 MSG_ER_CANNOT_CONNECT_SMTP
-Impossible de se connecter à l'hôte « %s » du compte « %s ».\n\
+Impossible de se connecter à l'hôte « %s ».\n\
 \n\
 Le serveur de courrier est hors service, ou ne supporte pas le protocole SMTP.
 ; Couldn't connect to host '%s'.\n\
 ; \n\
 ; The mail server is currently down or doesn't support the SMTP protocols.
-; HOS
+; HOST
 ;
 MSG_ER_UNKNOWN_HOST_SMTP
 Serveur SMTP « %s » inconnu.\n\
