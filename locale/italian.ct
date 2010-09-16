@@ -1016,7 +1016,7 @@ MSG_CO_MLRepHelloDef
 ; \0
 ;
 MSG_CO_MLRepIntroDef
-Il %c, %n scrisse:\\\\n\
+Il %c, %n scrisse:\\\\n
 ; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
@@ -3561,7 +3561,7 @@ MSG_RE_MDNdisplay
 Il messaggio\n\
 %s\n\
 è stato visualizzato.\n\
-Ciò non garantisce che il contenuto sia stato letto o compreso.\n\
+Ciò non garantisce che il contenuto sia stato letto o compreso.\n
 ; The message\n\
 ; %s\n\
 ; has been displayed.\n\
@@ -3572,7 +3572,7 @@ Il messaggio\n\
 %s\n\
 è stato cancellato %s.\n\
 Il destinatario potrebbe aver visto o meno il messaggio.\n\
-Il destinatario potrebbe "recuperare" il messaggio più tardi e leggerlo.\n\
+Il destinatario potrebbe "recuperare" il messaggio più tardi e leggerlo.\n
 ; The message\n\
 ; %s\n\
 ; has been deleted %s.\n\
@@ -3582,7 +3582,7 @@ Il destinatario potrebbe "recuperare" il messaggio più tardi e leggerlo.\n\
 MSG_RE_MDNunknown
 Il messaggio\n\
 %s\n\
-è stato %s%s.\n\
+è stato %s%s.\n
 ; The message\n\
 ; %s\n\
 ; has been %s%s.\n
@@ -3600,7 +3600,7 @@ PGP stesso, oppure il messaggio è stato codificato per qualcun altro.\n\
 ; the message was encrypted for someone else.\n
 ;
 MSG_RE_MsgReadOnly
-Il messaggio può esser letto solo da %s\n\
+Il messaggio può esser letto solo da %s\n
 ; The message can only be read by %s\n
 ; RECIPIENT
 ;
@@ -8855,7 +8855,7 @@ MSG_ER_MIME_ERROR
 Impossibile estrarre il messaggio MIME dal file '%s'.\n\
 \n\
 Il messaggio potrebbe contenere delle parti MIME non\n\
-conformi, oppure il MIME stesso risulta vuoto o troncato.\n\
+conformi, oppure il MIME stesso risulta vuoto o troncato.\n
 ; Couldn't extract MIME message from file '%s'.\n\
 ; \n\
 ; The message contains malformed MIME parts, or it is empty or truncated.
@@ -9914,4 +9914,13 @@ Per favore scaricala manualmente da questo indirizzo:\n\
 MSG_USERNAME_FALLBACK
 John Doe
 ; John Doe
+;
+MSG_ERROR_THREADS
+Impossibile inizializzare il thread di sistema.
+; Cannot initialize thread system.
+;
+MSG_RE_DEFAULT_MIMEPART_NAME
+Parte %ld.%ld
+; Part %ld.%ld
+; PARENTNUMBER PARTNUMER
 ;

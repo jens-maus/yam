@@ -7,6 +7,8 @@ $URL$
 
 2010-09-16 Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/italian.ct, locale/swedish.ct: fixed some serious issues in the
+    italian and swedish translation.
   * locale/french.ct: fixed some serious issues in the french translation, like
     missing placeholders ('%' instead of '%s') or exceeding placeholders.
     Translators, please don't create your translations by simple copy'n'paste

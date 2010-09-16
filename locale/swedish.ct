@@ -7440,7 +7440,7 @@ Filen '%s' existerar redan.\n\nVill du skriva över den?
 ;#DEF File '%s' already exists.\n\nDo you want to overwrite it?
 ;#SET (2123//)
 MSG_ER_USER_DIR_MISSING
-Hemmamappen '%'s för användare '%s' existerar inte!
+Hemmamappen '%s' för användare '%s' existerar inte!
 ;#DEF The home directory '%s' of user '%s' does not exist!
 ;#SET (2124//)
 MSG_CO_TEXTCOLORS_READ
