@@ -7,6 +7,7 @@ $URL$
 
 2010-09-16 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: applied the necessary change to close #211 in the bugfix branch.
   * locale/italian.ct, locale/swedish.ct: fixed some serious issues in the
     italian and swedish translation.
   * locale/french.ct: fixed some serious issues in the french translation, like

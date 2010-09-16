@@ -421,6 +421,10 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
               found = FI_MatchListPattern(search, hdrNode->content);
             else
               found = FI_MatchString(search, hdrNode->content);
+
+            // bail out as soon as we found a matching string
+            if(found == TRUE)
+              break;
           }
 
           // free our temporary header list
