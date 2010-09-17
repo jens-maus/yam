@@ -2043,54 +2043,73 @@ void FreeFilterRuleList(struct FilterNode *filter)
 }
 
 ///
+/// CompareRuleNodes
+static BOOL CompareRuleNodes(const struct Node *n1, const struct Node *n2)
+{
+  BOOL equal = TRUE;
+  const struct RuleNode *rn1 = (const struct RuleNode *)n1;
+  const struct RuleNode *rn2 = (const struct RuleNode *)n2;
+
+  ENTER();
+
+  // compare every single member of the structure
+  if(rn1->combine           != rn2->combine ||
+     rn1->searchMode        != rn2->searchMode ||
+     rn1->subSearchMode     != rn2->subSearchMode ||
+     rn1->comparison        != rn2->comparison ||
+     rn1->caseSensitive     != rn2->caseSensitive ||
+     rn1->subString         != rn2->subString ||
+     rn1->dosPattern        != rn2->dosPattern ||
+     strcmp(rn1->matchPattern, rn2->matchPattern) != 0 ||
+     strcmp(rn1->customField,  rn2->customField) != 0)
+  {
+    equal = FALSE;
+  }
+
+  RETURN(equal);
+  return equal;
+}
+
+///
 /// CompareRuleLists
 // compare two rule lists to be equal
 static BOOL CompareRuleLists(const struct MinList *rl1, const struct MinList *rl2)
 {
-  BOOL equal = TRUE;
-  BOOL empty1;
-  BOOL empty2;
+  BOOL equal;
 
   ENTER();
 
-  empty1 = IsMinListEmpty(rl1);
-  empty2 = IsMinListEmpty(rl2);
-  if(empty1 == FALSE && empty2 == FALSE)
+  equal = CompareLists((const struct List *)rl1, (const struct List *)rl2, CompareRuleNodes);
+
+  RETURN(equal);
+  return equal;
+}
+
+///
+/// CompareFilterNodes
+static BOOL CompareFilterNodes(const struct Node *n1, const struct Node *n2)
+{
+  BOOL equal = TRUE;
+  const struct FilterNode *fn1 = (const struct FilterNode *)n1;
+  const struct FilterNode *fn2 = (const struct FilterNode *)n2;
+
+  ENTER();
+
+  // compare every single member of the structure
+  if(fn1->actions         != fn2->actions ||
+     fn1->remote          != fn2->remote ||
+     fn1->applyToNew      != fn2->applyToNew ||
+     fn1->applyOnReq      != fn2->applyOnReq ||
+     fn1->applyToSent     != fn2->applyToSent ||
+     strcmp(fn1->name,       fn2->name) != 0 ||
+     strcmp(fn1->bounceTo,   fn2->bounceTo) != 0 ||
+     strcmp(fn1->forwardTo,  fn2->forwardTo) != 0 ||
+     strcmp(fn1->replyFile,  fn2->replyFile) != 0 ||
+     strcmp(fn1->executeCmd, fn2->executeCmd) != 0 ||
+     strcmp(fn1->playSound,  fn2->playSound) != 0 ||
+     strcmp(fn1->moveTo,     fn2->moveTo) != 0 ||
+     CompareRuleLists(&fn1->ruleList, &fn2->ruleList) == FALSE)
   {
-    struct Node *mln1 = GetHead((struct List *)rl1);
-    struct Node *mln2 = GetHead((struct List *)rl2);
-
-    while(mln1 != NULL && mln2 != NULL)
-    {
-      struct RuleNode *rn1 = (struct RuleNode *)mln1;
-      struct RuleNode *rn2 = (struct RuleNode *)mln2;
-
-      if(rn1->combine           != rn2->combine ||
-         rn1->searchMode        != rn2->searchMode ||
-         rn1->subSearchMode     != rn2->subSearchMode ||
-         rn1->comparison        != rn2->comparison ||
-         rn1->caseSensitive     != rn2->caseSensitive ||
-         rn1->subString         != rn2->subString ||
-         rn1->dosPattern        != rn2->dosPattern ||
-         strcmp(rn1->matchPattern, rn2->matchPattern) != 0 ||
-         strcmp(rn1->customField,  rn2->customField) != 0)
-      {
-        // something of this rule does not match
-        equal = FALSE;
-        break;
-      }
-
-      mln1 = GetSucc(mln1);
-      mln2 = GetSucc(mln2);
-    }
-
-    // if there are any nodes left then the two lists cannot be equal
-    if(mln1 != NULL || mln2 != NULL)
-      equal = FALSE;
-  }
-  else if((empty1 == TRUE && empty2 == FALSE) || (empty1 == FALSE && empty2 == TRUE))
-  {
-    // if one list is empty while the other is not the two lists cannot be equal
     equal = FALSE;
   }
 
@@ -2100,62 +2119,14 @@ static BOOL CompareRuleLists(const struct MinList *rl1, const struct MinList *rl
 
 ///
 /// CompareFilterLists
-// performs a deep compare of two filter lists and returns TRUE if they are
-// equal
+// performs a deep compare of two filter lists and returns TRUE if they are equal
 BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2)
 {
-  BOOL equal = TRUE;
-  BOOL empty1;
-  BOOL empty2;
+  BOOL equal;
 
   ENTER();
 
-  empty1 = IsMinListEmpty(fl1);
-  empty2 = IsMinListEmpty(fl2);
-  if(empty1 == FALSE && empty2 == FALSE)
-  {
-    struct Node *mln1 = GetHead((struct List *)fl1);
-    struct Node *mln2 = GetHead((struct List *)fl2);
-
-    // walk through both lists in parallel and compare the single nodes
-    while(mln1 != NULL && mln2 != NULL)
-    {
-      struct FilterNode *fn1 = (struct FilterNode *)mln1;
-      struct FilterNode *fn2 = (struct FilterNode *)mln2;
-
-      // compare every single member of the structure
-      if(fn1->actions         != fn2->actions ||
-         fn1->remote          != fn2->remote ||
-         fn1->applyToNew      != fn2->applyToNew ||
-         fn1->applyOnReq      != fn2->applyOnReq ||
-         fn1->applyToSent     != fn2->applyToSent ||
-         strcmp(fn1->name,       fn2->name) != 0 ||
-         strcmp(fn1->bounceTo,   fn2->bounceTo) != 0 ||
-         strcmp(fn1->forwardTo,  fn2->forwardTo) != 0 ||
-         strcmp(fn1->replyFile,  fn2->replyFile) != 0 ||
-         strcmp(fn1->executeCmd, fn2->executeCmd) != 0 ||
-         strcmp(fn1->playSound,  fn2->playSound) != 0 ||
-         strcmp(fn1->moveTo,     fn2->moveTo) != 0 ||
-         CompareRuleLists(&fn1->ruleList, &fn2->ruleList) == FALSE)
-      {
-        // something does not match
-        equal = FALSE;
-        break;
-      }
-
-      mln1 = GetSucc(mln1);
-      mln2 = GetSucc(mln2);
-    }
-
-    // if there are any nodes left then the two lists cannot be equal
-    if(mln1 != NULL || mln2 != NULL)
-      equal = FALSE;
-  }
-  else if((empty1 == TRUE && empty2 == FALSE) || (empty1 == FALSE && empty2 == TRUE))
-  {
-    // if one list is empty while the other is not the two lists cannot be equal
-    equal = FALSE;
-  }
+  equal = CompareLists((const struct List *)fl1, (const struct List *)fl2, CompareFilterNodes);
 
   RETURN(equal);
   return equal;

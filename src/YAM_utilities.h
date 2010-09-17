@@ -294,6 +294,7 @@ BOOL     DeleteZombieFiles(BOOL force);
 void     CloseTempFile(struct TempFile *tf);
 ULONG    CRC32(const void *buffer, unsigned int count, ULONG crc);
 char *   strippedCharsetName(const struct codeset* codeset);
+BOOL CompareLists(const struct List *lh1, const struct List *lh2, BOOL (* compare)(const struct Node *, const struct Node *));
 BOOL     ConvertCRLF(char *in, char *out, BOOL to);
 unsigned char ConvertKey(const struct IntuiMessage *imsg);
 BOOL     CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh);

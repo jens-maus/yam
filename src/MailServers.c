@@ -131,61 +131,46 @@ void FreeMailServerList(struct MinList *mailServerList)
 }
 
 ///
+/// CompareMailServerNodes
+static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
+{
+  BOOL equal = TRUE;
+  const struct MailServerNode *msn1 = (const struct MailServerNode *)n1;
+  const struct MailServerNode *msn2 = (const struct MailServerNode *)n2;
+
+  ENTER();
+
+  // compare every single member of the structure
+  // "UIDLchecked" must not be checked, because that is not saved but
+  // modified while YAM is looking for new mails.
+  if(msn1->type != msn2->type ||
+     strcmp(msn1->account,  msn2->account) != 0 ||
+     strcmp(msn1->hostname, msn2->hostname) != 0 ||
+     strcmp(msn1->username, msn2->username) != 0 ||
+     strcmp(msn1->password, msn2->password) != 0 ||
+     msn1->port           != msn2->port ||
+     msn1->flags          != msn2->flags ||
+     msn1->smtpFlags      != msn2->smtpFlags)
+  {
+    // something does not match
+    equal = FALSE;
+  }
+
+  RETURN(equal);
+  return equal;
+}
+
+///
+
 /// CompareMailServerLists
 // compare two MailServer lists
 BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *msl2)
 {
-  BOOL equal = TRUE;
-  BOOL empty1;
-  BOOL empty2;
+  BOOL equal;
 
   ENTER();
 
-  empty1 = IsMinListEmpty(msl1);
-  empty2 = IsMinListEmpty(msl2);
-  if(empty1 == FALSE && empty2 == FALSE)
-  {
-    struct Node *node1 = GetHead((struct List *)msl1);
-    struct Node *node2 = GetHead((struct List *)msl2);
-
-    // walk through both lists in parallel and compare the single nodes
-    while(node1 != NULL && node2 != NULL)
-    {
-      struct MailServerNode *msn1 = (struct MailServerNode *)node1;
-      struct MailServerNode *msn2 = (struct MailServerNode *)node2;
-
-      // compare every single member of the structure
-      // "UIDLchecked" must not be checked, because that is not saved but
-      // modified while YAM is looking for new mails.
-      if(msn1->type != msn2->type ||
-         strcmp(msn1->account,  msn2->account) != 0 ||
-         strcmp(msn1->hostname, msn2->hostname) != 0 ||
-         strcmp(msn1->username, msn2->username) != 0 ||
-         strcmp(msn1->password, msn2->password) != 0 ||
-         msn1->port           != msn2->port ||
-         msn1->flags          != msn2->flags ||
-         msn1->smtpFlags      != msn2->smtpFlags)
-      {
-        // something does not match
-        equal = FALSE;
-        break;
-      }
-
-      node1 = GetSucc(node1);
-      node2 = GetSucc(node2);
-    }
-
-    // if there are any nodes left then the two lists cannot be equal
-    if((node1 != NULL && GetSucc(node1) != NULL) || (node2 != NULL && GetSucc(node2) != NULL))
-    {
-      equal = FALSE;
-    }
-  }
-  else if((empty1 == TRUE && empty2 == FALSE) || (empty1 == FALSE && empty2 == TRUE))
-  {
-    // if one list is empty while the other is not the two lists cannot be equal
-    equal = FALSE;
-  }
+  equal = CompareLists((const struct List *)msl1, (const struct List *)msl2, CompareMailServerNodes);
 
   RETURN(equal);
   return equal;

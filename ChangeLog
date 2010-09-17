@@ -7,6 +7,9 @@ $URL$
 
 2010-09-17 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c, YAM_FI.c, MailServers.c, MimeTypes.c: implemented a generic list
+    comparison function to avoid having to implement the same stuff over and
+    over again.
   * YAM_FO.c: the default folder images are now set using FO_SetFolderImage().
 
 2010-09-16 Thore Böckelmann <tboeckel@gmx.de>

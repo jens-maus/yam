@@ -143,53 +143,39 @@ void FreeMimeTypeList(struct MinList *mimeTypeList)
 }
 
 ///
+/// CompareMimeTypeNodes
+static BOOL CompareMimeTypeNodes(const struct Node *n1, const struct Node *n2)
+{
+  BOOL equal = TRUE;
+  const struct MimeTypeNode *mtn1 = (const struct MimeTypeNode *)n1;
+  const struct MimeTypeNode *mtn2 = (const struct MimeTypeNode *)n2;
+
+  ENTER();
+
+  // compare every single member of the structure
+  if(strcmp(mtn1->ContentType, mtn2->ContentType) != 0 ||
+     strcmp(mtn1->Extension,   mtn2->Extension) != 0 ||
+     strcmp(mtn1->Description, mtn2->Description) != 0 ||
+     strcmp(mtn1->Command,     mtn2->Command) != 0)
+  {
+    // something does not match
+    equal = FALSE;
+  }
+
+  RETURN(equal);
+  return equal;
+}
+
+///
 /// CompareMimeTypeLists
 // compare two MIME type lists
 BOOL CompareMimeTypeLists(const struct MinList *mtl1, const struct MinList *mtl2)
 {
-  BOOL equal = TRUE;
-  BOOL empty1;
-  BOOL empty2;
+  BOOL equal;
 
   ENTER();
 
-  empty1 = IsMinListEmpty(mtl1);
-  empty2 = IsMinListEmpty(mtl2);
-  if(empty1 == FALSE && empty2 == FALSE)
-  {
-    struct Node *mln1 = GetHead((struct List *)mtl1);
-    struct Node *mln2 = GetHead((struct List *)mtl2);
-
-    // walk through both lists in parallel and compare the single nodes
-    while(mln1 != NULL && mln2 != NULL)
-    {
-      struct MimeTypeNode *mtn1 = (struct MimeTypeNode *)mln1;
-      struct MimeTypeNode *mtn2 = (struct MimeTypeNode *)mln2;
-
-      // compare every single member of the structure
-      if(strcmp(mtn1->ContentType, mtn2->ContentType) != 0 ||
-         strcmp(mtn1->Extension,   mtn2->Extension) != 0 ||
-         strcmp(mtn1->Description, mtn2->Description) != 0 ||
-         strcmp(mtn1->Command,     mtn2->Command) != 0)
-      {
-        // something does not match
-        equal = FALSE;
-        break;
-      }
-
-      mln1 = GetSucc(mln1);
-      mln2 = GetSucc(mln2);
-    }
-
-    // if there are any nodes left then the two lists cannot be equal
-    if(mln1 != NULL || mln2 != NULL)
-      equal = FALSE;
-  }
-  else if((empty1 == TRUE && empty2 == FALSE) || (empty1 == FALSE && empty2 == TRUE))
-  {
-    // if one list is empty while the other is not the two lists cannot be equal
-    equal = FALSE;
-  }
+  equal = CompareLists((const struct List *)mtl1, (const struct List *)mtl2, CompareMimeTypeNodes);
 
   RETURN(equal);
   return equal;

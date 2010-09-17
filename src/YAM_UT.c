@@ -5799,3 +5799,45 @@ void *DuplicateNode(const void *node, size_t size)
 }
 
 ///
+/// CompareLists
+// compare two lists using a comparison function
+BOOL CompareLists(const struct List *lh1, const struct List *lh2, BOOL (* compare)(const struct Node *, const struct Node *))
+{
+  BOOL equal = TRUE;
+  struct Node *ln1;
+  struct Node *ln2;
+
+  ENTER();
+
+  ln1 = GetHead((struct List *)lh1);
+  ln2 = GetHead((struct List *)lh2);
+
+  // walk through both lists in parallel and compare the single nodes
+  while(ln1 != NULL && ln2 != NULL)
+  {
+    // compare the two nodes
+    if(compare(ln1, ln2) == FALSE)
+    {
+      // something does not match
+      equal = FALSE;
+      break;
+    }
+
+    // advance to the next nodes in each list
+    ln1 = GetSucc(ln1);
+    ln2 = GetSucc(ln2);
+  }
+
+  if(equal == TRUE)
+  {
+    // if both lists are equal so far, but there are any nodes left in either list
+    // then the two lists cannot be equal
+    if(ln1 != NULL || ln2 != NULL)
+      equal = FALSE;
+  }
+
+  RETURN(equal);
+  return equal;
+}
+
+///
