@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c: the default folder images are now set using FO_SetFolderImage().
+
 2010-09-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * rexx/userinfo.c: use the folder list instead of graphical representation to

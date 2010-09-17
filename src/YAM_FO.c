@@ -791,19 +791,16 @@ BOOL FO_LoadTree(void)
                 fo->SortIndex = i++;
                 fo->ImageIndex = j;
 
-                // Now we load the FolderImages if they exists
+                // Now we load the folder images if they exists
                 if(FO_LoadFolderImage(fo) == TRUE)
+                {
                   j++;
+                }
                 else
                 {
-                  // we cannot find out if there is new/unread mail in the folder,
-                  // so we initialize the folder with the std ImageIndex.
-                  if(isIncomingFolder(fo))      fo->ImageIndex = FICON_ID_INCOMING;
-                  else if(isOutgoingFolder(fo)) fo->ImageIndex = FICON_ID_OUTGOING;
-                  else if(isTrashFolder(fo))    fo->ImageIndex = FICON_ID_TRASH;
-                  else if(isSentFolder(fo))     fo->ImageIndex = FICON_ID_SENT;
-                  else if(isSpamFolder(fo))     fo->ImageIndex = FICON_ID_SPAM;
-                  else fo->ImageIndex = -1; // or with -1 for a non std folder.
+                  // the new/unread statistics are still at zero, so this will result
+                  // in the "no new mails" images
+                  FO_SetFolderImage(fo);
                 }
 
                 LockFolderList(G->folders);
