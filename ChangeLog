@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-17 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated according to changes and fixed warnings
+    from FlexCat 2.7.
+
 2010-09-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c, YAM_FI.c, MailServers.c, MimeTypes.c: implemented a generic list
