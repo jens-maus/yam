@@ -2004,6 +2004,19 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       FO_PutFolder(&folder);
       D(DBF_FOLDER, "new folder '%s'", folder.Name);
 
+      // set up the full path to the folder
+      if(strchr(folder.Path, ':') != NULL)
+      {
+        // the path is an absolute path already
+        strlcpy(folder.Fullpath, folder.Path, sizeof(folder.Fullpath));
+      }
+      else
+      {
+        // concatenate the default mail dir and the folder's relative path to an absolute path
+        strlcpy(folder.Fullpath, G->MA_MailDir, sizeof(folder.Fullpath));
+        AddPart(folder.Fullpath, folder.Path, sizeof(folder.Fullpath));
+      }
+
       // lets first check for a valid folder name
       // if the foldername is empty or the new name already exists it's invalid
       if(folder.Name[0] == '\0' || FO_GetFolderByName(folder.Name, NULL) != NULL)
@@ -2015,14 +2028,14 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       }
 
       // lets check if entered folder path is valid or not
-      if(folder.Path[0] == '\0')
+      if(folder.Fullpath[0] == '\0')
       {
         MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERPATHINVALID));
 
         LEAVE();
         return;
       }
-      else if(FileExists(folder.Path) == TRUE) // check if something with folder.Path already exists
+      else if(FileExists(folder.Fullpath) == TRUE) // check if something with folder.Path already exists
       {
         result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDEREXISTS));
       }

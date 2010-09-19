@@ -7,6 +7,8 @@ $URL$
 
 2010-09-19 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: creating a new folder now correctly sets up the full path to the
+    folder's directory. This closes #215.
   * YAM_FO.c: fixed a possible NULL pointer access in the debug build.
 
 2010-09-17 Pär Boberg <pbobbenb@spray.se>
