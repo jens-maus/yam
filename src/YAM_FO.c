@@ -1824,7 +1824,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
   ENTER();
 
-  D(DBF_FOLDER, "oldfolder=%08lx '%s'", oldfolder, SafeStr(oldfolder->Name));
+  D(DBF_FOLDER, "oldfolder=%08lx '%s'", oldfolder, oldfolder != NULL ? SafeStr(oldfolder->Name) : SafeStr(NULL));
   // if this is a edit folder request we separate here.
   if(oldfolder != NULL)
   {
