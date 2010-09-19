@@ -1637,6 +1637,7 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
   // there is no "old" folder which could be edited, just the new one
   G->FO->EditFolder = NULL;
   FO_GetFolder(&folder);
+  set(G->FO->GUI.WI, MUIA_Window_ActiveObject, G->FO->GUI.ST_FNAME);
 
   LEAVE();
 }

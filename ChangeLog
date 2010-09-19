@@ -7,6 +7,7 @@ $URL$
 
 2010-09-19 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FO.c: upon creating a new folder the name gadget will be activated.
   * YAM_FO.c: creating a new folder now correctly sets up the full path to the
     folder's directory. This closes #215.
   * YAM_FO.c: fixed a possible NULL pointer access in the debug build.
