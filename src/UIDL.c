@@ -29,6 +29,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <proto/dos.h>
+
 #include "extrasrc.h"
 
 #include "YAM_stringsizes.h"
@@ -299,6 +301,26 @@ struct UIDLtoken *FindUIDL(const struct UIDLhash *uidlHash, const char *uidl)
 
   RETURN(token);
   return token;
+}
+
+///
+/// DeleteUIDLfile
+// delete a UIDL file in case it it no longer needed, i.e. the account is deleted
+void DeleteUIDLfile(const struct MailServerNode *msn)
+{
+  char uidlPath[SIZE_PATHFILE];
+
+  ENTER();
+
+  BuildUIDLFilename(msn, uidlPath, sizeof(uidlPath));
+
+  if(FileExists(uidlPath) == TRUE)
+  {
+    if(DeleteFile(uidlPath) == 0)
+      AddZombieFile(uidlPath);
+  }
+
+  LEAVE();
 }
 
 ///

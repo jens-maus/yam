@@ -75,6 +75,7 @@
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Threads.h"
+#include "UIDL.h"
 
 #include "Debug.h"
 
@@ -1388,6 +1389,10 @@ HOOKPROTONHNONP(CO_DelPOP3, void)
 
     // remove it from the internal mail server list as well.
     Remove((struct Node *)msn);
+
+    // delete a possibly existing UIDL database file
+    DeleteUIDLfile(msn);
+
     FreeSysObject(ASOT_NODE, msn);
   }
 

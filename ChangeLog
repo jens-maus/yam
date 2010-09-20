@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * UIDL.c, YAM_COg.c: an existing UIDL database file will now be deleted if
+    the corresponding POP3 account is deleted.
+
 2010-09-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: upon creating a new folder the name gadget will be activated.

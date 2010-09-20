@@ -65,7 +65,7 @@ $(OBJDIR)/MethodStack.o: MethodStack.c YAM.h include/xpk/xpk.h \
   YAM_transfer.h YAM_utilities.h include/SDI_compiler.h \
   YAM_folderconfig.h HashTable.h YAM_userlist.h BayesFilter.h Rexx.h \
   Themes.h Timer.h include/SDI_stdarg.h include/SDI_compiler.h extrasrc.h \
-  Locale.h Requesters.h Threads.h Debug.h
+  Locale.h MethodStack.h Requesters.h Threads.h Debug.h
 $(OBJDIR)/MimeTypes.o: MimeTypes.c YAM_stringsizes.h YAM_utilities.h \
   include/SDI_compiler.h YAM_folderconfig.h extrasrc.h \
   include/SDI_stdarg.h include/SDI_compiler.h Locale.h MimeTypes.h \
@@ -280,7 +280,7 @@ $(OBJDIR)/YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
   YAM_find.h YAM_global.h YAM_mainFolder.h mui/Classes.h \
   mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h FolderList.h \
   ImageCache.h include/mui/TheBar_mcc.h Locale.h MimeTypes.h \
-  MailServers.h MUIObjects.h Requesters.h Threads.h Debug.h
+  MailServers.h MUIObjects.h Requesters.h Threads.h UIDL.h Debug.h
 $(OBJDIR)/YAM_COs.o: YAM_COs.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
@@ -323,7 +323,8 @@ $(OBJDIR)/YAM_ER.o: YAM_ER.c include/mui/NListview_mcc.h include/libraries/mui.h
   YAM_stringsizes.h YAM_transfer.h YAM_utilities.h YAM_folderconfig.h \
   HashTable.h YAM_userlist.h BayesFilter.h Rexx.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_error.h Locale.h MUIObjects.h Debug.h
+  YAM_error.h Locale.h MethodStack.h MUIObjects.h Threads.h mui/Classes.h \
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h Debug.h
 $(OBJDIR)/YAM_FI.o: YAM_FI.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/mui/NListview_mcc.h \
   include/proto/muimaster.h include/interfaces/muimaster.h \
@@ -367,8 +368,8 @@ $(OBJDIR)/YAM_MA.o: YAM_MA.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h 
   YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h mui/Classes.h \
   mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h mime/base64.h \
   tcp/pop3.h tcp/smtp.h AppIcon.h FileInfo.h FolderList.h HTML2Mail.h \
-  Locale.h MailList.h MailServers.h MimeTypes.h MUIObjects.h Requesters.h \
-  Debug.h
+  Locale.h MailList.h MailServers.h MethodStack.h MimeTypes.h \
+  MUIObjects.h Requesters.h Threads.h Debug.h
 $(OBJDIR)/YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListtree_mcc.h include/proto/muimaster.h \
   include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
@@ -1221,7 +1222,7 @@ $(OBJDIR)/$(MUIDIR)/YAM.o: mui/YAM.c mui/YAM_cl.h mui/Classes.h mui/ClassesExtra
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h \
-  YAM_error.h MUIObjects.h UpdateCheck.h Debug.h
+  YAM_error.h YAM_transfer.h MUIObjects.h UpdateCheck.h Debug.h
 $(OBJDIR)/$(REXXDIR)/addrdelete.o: rexx/addrdelete.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -1709,7 +1710,8 @@ $(OBJDIR)/$(REXXDIR)/userinfo.o: rexx/userinfo.c include/libraries/mui.h \
   YAM_transfer.h YAM_utilities.h YAM_folderconfig.h HashTable.h \
   YAM_userlist.h BayesFilter.h Rexx.h Themes.h Timer.h YAM_config.h \
   YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h Rexx.h Debug.h
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h FolderList.h \
+  Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writeattach.o: rexx/writeattach.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
