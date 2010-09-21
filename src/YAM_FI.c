@@ -1638,7 +1638,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
             accessFreed = TRUE;
           }
 
-          MA_MoveCopy(mail, mail->Folder, fo, FALSE, TRUE);
+          MA_MoveCopy(mail, mail->Folder, fo, MVCPF_CLOSE_WINDOWS);
 
           // restore the old access mode if it was changed before
           if(accessFreed)
@@ -1758,7 +1758,7 @@ void FilterMails(struct Folder *folder, struct MailList *mlist, int mode)
               setStatusToAutoSpam(mail);
 
             // move newly recognized spam to the spam folder
-            MA_MoveCopy(mail, folder, spamfolder, FALSE, FALSE);
+            MA_MoveCopy(mail, folder, spamfolder, 0);
             wasSpam = TRUE;
 
             // update the stats
@@ -2238,7 +2238,7 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern)
     rule->matchPattern[0] = '\0';
     rule->customField[0] = '\0';
 
-    // if a filter was specified we immediatley add this new rule to it
+    // if a filter was specified we immediately add this new rule to it
     if(filter != NULL)
     {
       SHOWSTRING(DBF_FILTER, filter->name);

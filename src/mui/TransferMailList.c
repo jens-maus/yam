@@ -69,7 +69,7 @@ HOOKPROTONHNO(DisplayFunc, LONG, struct NList_DisplayMessage *msg)
     array[0] = dispsta;
     // status icon display
     snprintf(dispsta, sizeof(dispsta), "%3d ", entry->index);
-    if(hasTR_LOAD(entry))
+    if(hasTR_TRANSFER(entry))
       strlcat(dispsta, SI_STR(si_Download), sizeof(dispsta));
     if(hasTR_DELETE(entry))
       strlcat(dispsta, SI_STR(si_Delete), sizeof(dispsta));

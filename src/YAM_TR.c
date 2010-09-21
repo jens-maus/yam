@@ -152,7 +152,7 @@ static void TR_DisplayMailList(BOOL largeonly)
 
     D(DBF_GUI, "checking mail with flags %08lx and subject '%s'", mtn->tflags, mail->Subject);
     // only display mails to be downloaded
-    if(hasTR_LOAD(mtn) || hasTR_PRESELECT(mtn))
+    if(hasTR_TRANSFER(mtn) || hasTR_PRESELECT(mtn))
     {
       // add this mail to the transfer list in case we either
       // should show ALL mails or the mail size is >= the warning size
@@ -206,9 +206,9 @@ void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
            CLEAR_FLAG(mtn->tflags, TRF_DELETE);
 
         if(hasSkipMsgAction(filter))
-           CLEAR_FLAG(mtn->tflags, TRF_LOAD);
+           CLEAR_FLAG(mtn->tflags, TRF_TRANSFER);
         else
-           SET_FLAG(mtn->tflags, TRF_LOAD);
+           SET_FLAG(mtn->tflags, TRF_TRANSFER);
 
         // get out of this loop after a successful search
         break;
@@ -265,12 +265,11 @@ void TR_TransStat_Init(void)
 
     numberOfMails++;
 
-    if(hasTR_LOAD(mtn))
+    if(hasTR_TRANSFER(mtn))
       totalSize += mtn->mail->Size;
   }
 
-  xset(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_NumberOfMails, numberOfMails,
-                            MUIA_TransferControlGroup_TotalSize, totalSize);
+  DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start, numberOfMails, totalSize);
 
   LEAVE();
 }
@@ -394,7 +393,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
           mtn->index = i + 1;
 
           // set to LOAD
-          mtn->tflags = TRF_LOAD;
+          mtn->tflags = TRF_TRANSFER;
 
           AddTail((struct List *)&(G->TR->transferList), (struct Node *)mtn);
         }
@@ -429,7 +428,6 @@ BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append)
 
     TR_SetWinTitle(FALSE, (char *)FilePart(fname));
     TR_TransStat_Init();
-    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start);
 
     // open our final destination file either in append or in a fresh
     // write mode.
@@ -623,7 +621,7 @@ static struct MailTransferNode *TR_AddMessageHeader(int *count, int size, long a
 
         // flag the mail as being transfered
         mtn->index      = ++(*count);
-        mtn->tflags     = TRF_LOAD;
+        mtn->tflags     = TRF_TRANSFER;
         mtn->mail       = mail;
         mtn->importAddr = addr;
 
@@ -1272,8 +1270,6 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
       struct Folder *folder = G->TR->ImportFolder;
       enum FolderType ftype = folder->Type;
 
-      DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start);
-
       // now we distinguish between the different import format
       // and import the mails out of it
       switch(G->TR->ImportFormat)
@@ -1312,7 +1308,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
               // if the mail is not flagged as 'loading' we can continue with the next
               // node
-              if(hasTR_LOAD(mtn) == FALSE)
+              if(hasTR_TRANSFER(mtn) == FALSE)
                 continue;
 
               // seek to the file position where the mail resist
@@ -1463,7 +1459,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 
               // if the mail is not flagged as 'loading' we can continue with the next
               // node
-              if(hasTR_LOAD(mtn) == FALSE)
+              if(hasTR_TRANSFER(mtn) == FALSE)
                 continue;
 
               // seek to the file position where the mail resist
@@ -1691,15 +1687,13 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
     if(C->TransferWindow == TWM_SHOW && xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
       set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
 
-    DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start);
-
     IterateList(&G->TR->transferList, curNode)
     {
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
       struct Mail *mail = mtn->mail;
 
-      D(DBF_NET, "download flags %08lx=%s%s%s for mail with subject '%s' and size %ld",mtn->tflags, hasTR_LOAD(mtn) ? "TR_LOAD " : "" , hasTR_DELETE(mtn) ? "TR_DELETE " : "", hasTR_PRESELECT(mtn) ? "TR_PRESELECT " : "", mail->Subject, mail->Size);
-      if(hasTR_LOAD(mtn))
+      D(DBF_NET, "download flags %08lx=%s%s%s for mail with subject '%s' and size %ld",mtn->tflags, hasTR_TRANSFER(mtn) ? "TR_TRANSFER " : "" , hasTR_DELETE(mtn) ? "TR_DELETE " : "", hasTR_PRESELECT(mtn) ? "TR_PRESELECT " : "", mail->Subject, mail->Size);
+      if(hasTR_TRANSFER(mtn))
       {
         D(DBF_NET, "downloading mail with subject '%s' and size %ld", mail->Subject, mail->Size);
 
@@ -1995,11 +1989,11 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
             DoMethod(data->GUI.BT_PAUSE, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Pause));
             DoMethod(data->GUI.LV_MAILS ,MUIM_Notify, MUIA_NList_DoubleClick,TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_GetMessageInfoHook);
             DoMethod(bt_delonly,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_DELETE);
-            DoMethod(bt_loaddel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, (TRF_LOAD|TRF_DELETE));
+            DoMethod(bt_loaddel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, (TRF_TRANSFER|TRF_DELETE));
             DoMethod(data->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Start));
             DoMethod(data->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
           }
-          DoMethod(bt_loadonly,        MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_LOAD);
+          DoMethod(bt_loadonly,        MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_TRANSFER);
           DoMethod(bt_leave,           MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_NONE);
           DoMethod(bt_all,             MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
           DoMethod(bt_none,            MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
@@ -2023,4 +2017,5 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
   RETURN(data);
   return data;
 }
+
 ///

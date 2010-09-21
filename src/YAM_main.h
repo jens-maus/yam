@@ -187,6 +187,10 @@ enum ForwardMode
   FWM_INLINE    // forward mail inlined
 };
 
+// flags for MA_MoveCopy and MA_MoveCopySingle
+#define MVCPF_COPY          (1<<0)
+#define MVCPF_CLOSE_WINDOWS (1<<1)
+
 // flags for MA_DeleteSingle()
 #define DELF_AT_ONCE           (1<<0)
 #define DELF_QUIET             (1<<1)
@@ -356,14 +360,14 @@ int   MA_CompareByDate(const struct Mail *m1, const struct Mail *m2);
 struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew);
 struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew);
 void  MA_DeleteMessage(BOOL delatonce, BOOL force);
-void  MA_DeleteSingle(struct Mail *mail, ULONG delFlags);
+void  MA_DeleteSingle(struct Mail *mail, const ULONG delFlags);
 BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet);
 struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, LONG *activep);
 void  MA_GetAddress(struct MailList *mlist);
 BOOL MA_ImportMessages(const char *fname, BOOL quiet);
 struct MA_ClassData *MA_New(void);
 void  MA_SortWindow(void);
-void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit, BOOL closeWindows);
+void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, const ULONG flags);
 void  MA_ExchangeMail(enum GUILevel mode);
 void  MA_PopNow(enum GUILevel mode, int pop);
 void  MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning);
@@ -373,7 +377,7 @@ BOOL  MA_UpdateMailFile(struct Mail *mail);
 void  MA_SetSortFlag(void);
 void  MA_SetStatusTo(int addflags, int clearflags, BOOL all);
 void  MA_SetupDynamicMenus(void);
-BOOL  MA_StartMacro(enum Macro num, char *param);
+BOOL  MA_StartMacro(const enum Macro num, const char *param);
 char *MA_ToStatusHeader(struct Mail *mail);
 char *MA_ToXStatusHeader(struct Mail *mail);
 unsigned int MA_FromStatusHeader(char *statusflags);

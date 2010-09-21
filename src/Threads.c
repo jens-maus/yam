@@ -65,6 +65,9 @@
 #include "Requesters.h"
 #include "Threads.h"
 
+#include "mui/Classes.h"
+#include "tcp/smtp.h"
+
 #include "Debug.h"
 
 #define MIN_THREADS       4
@@ -222,6 +225,14 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
     case TA_PlaySound:
     {
       result = PlaySound((const char *)GetTagData(TT_PlaySound_Filename, (IPTR)NULL, msg->actionTags));
+    }
+    break;
+
+    case TA_SendMails:
+    {
+      result = SendMails((struct MailServerNode *)GetTagData(TT_SendMails_MailServer, (IPTR)NULL, msg->actionTags),
+                         (struct MailList *)GetTagData(TT_SendMails_Mails, (IPTR)NULL, msg->actionTags),
+                         GetTagData(TT_SendMails_Mode, (IPTR)0, msg->actionTags));
     }
     break;
   }

@@ -23,7 +23,7 @@
 
  $Id$
 
- Superclass:  MUIC_Group
+ Superclass:  MUIC_ObjectListitem
  Description: Displays statistics about a transfer in progress
 
 ***************************************************************************/
@@ -193,11 +193,16 @@ OVERLOAD(OM_NEW)
   Object *GA_COUNT;
   Object *GA_BYTES;
   Object *BT_ABORT;
+  const char *title;
+
+  ENTER();
+
+  title = (const char *)GetTagData(ATTR(Title), (IPTR)tr(MSG_TR_Status), inittags(msg));
 
   if((obj = DoSuperNew(cl, obj,
 
+    GroupFrameT(title),
     MUIA_Group_Columns, 2,
-    GroupFrameT(tr(MSG_TR_Status)),
     Child, TX_STATS = TextObject,
       MUIA_Background,    MUII_TextBack,
       MUIA_Frame,         MUIV_Frame_Text,
@@ -238,6 +243,7 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, METHOD(Reset));
   }
 
+  RETURN((IPTR)obj);
   return (IPTR)obj;
 }
 
@@ -252,26 +258,30 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
+      case ATTR(Title):
+      {
+        set(obj, MUIA_FrameTitle, (char *)tag->ti_Data);
+      }
+      break;
+
       case ATTR(PreselectionList):
+      {
         data->preselectionList = (Object *)tag->ti_Data;
+      }
       break;
 
       case ATTR(Connection):
+      {
         data->conn = (struct Connection *)tag->ti_Data;
-      break;
-
-      case ATTR(NumberOfMails):
-        data->Msgs_Tot = tag->ti_Data;
-      break;
-
-      case ATTR(TotalSize):
-        data->Size_Tot = tag->ti_Data;
+      }
       break;
 
       case ATTR(Aborted):
+      {
         data->aborted = (BOOL)tag->ti_Data;
         if(data->conn != NULL)
           data->conn->abort = (BOOL)tag->ti_Data;
+      }
       break;
     }
   }
@@ -288,9 +298,23 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(NumberOfMails): *store = data->Msgs_Tot; return TRUE;
-    case ATTR(NumberOfProcessedMails): *store = data->Msgs_Done; return TRUE;
-    case ATTR(Aborted): *store = (data->aborted == TRUE || (data->conn != NULL && data->conn->abort == TRUE)); return TRUE;
+    case ATTR(NumberOfMails):
+    {
+      *store = data->Msgs_Tot;
+      return TRUE;
+    }
+
+    case ATTR(NumberOfProcessedMails):
+    {
+      *store = data->Msgs_Done;
+      return TRUE;
+    }
+
+    case ATTR(Aborted):
+    {
+      *store = (data->aborted == TRUE || (data->conn != NULL && data->conn->abort == TRUE));
+      return TRUE;
+    }
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -350,14 +374,18 @@ DECLARE(ShowStatus) // const char *status
 ///
 /// DECLARE(Start)
 // start the clock for a new transfer
-DECLARE(Start)
+DECLARE(Start) // int numberOfMails, ULONG totalSize
 {
   GETDATA;
 
   ENTER();
 
+  data->Msgs_Tot = msg->numberOfMails;
   data->Msgs_Done = 0;
+  data->Msgs_Curr = 0;
+  data->Size_Tot = msg->totalSize;
   data->Size_Done = 0;
+  data->Size_Curr = 0;
 
   // get the actual time we started the transfer
   GetSysTime(TIMEVAL(&data->Clock_Last));

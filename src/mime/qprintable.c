@@ -521,4 +521,3 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 }
 
 ///
-

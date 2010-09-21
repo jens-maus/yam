@@ -741,7 +741,7 @@ void CO_ClearConfig(struct Config *co)
   FreeFilterList(&co->filterList);
 
   // clear the config
-  memset(co, 0, sizeof(struct Config));
+  memset(co, 0, sizeof(*co));
 
   LEAVE();
 }

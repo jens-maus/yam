@@ -64,10 +64,10 @@ struct MailTransferNode
 
 // flags for the transfer preselection stuff
 #define TRF_NONE              (0)
-#define TRF_LOAD              (1<<0)
+#define TRF_TRANSFER          (1<<0)
 #define TRF_DELETE            (1<<1)
 #define TRF_PRESELECT         (1<<2)
-#define hasTR_LOAD(v)         (isFlagSet((v)->tflags, TRF_LOAD))
+#define hasTR_TRANSFER(v)     (isFlagSet((v)->tflags, TRF_TRANSFER))
 #define hasTR_DELETE(v)       (isFlagSet((v)->tflags, TRF_DELETE))
 #define hasTR_PRESELECT(v)    (isFlagSet((v)->tflags, TRF_PRESELECT))
 

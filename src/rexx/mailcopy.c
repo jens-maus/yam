@@ -60,7 +60,7 @@ void rx_mailcopy(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
       struct Folder *folder;
 
       if((folder = FO_GetFolderRexx(args->folder, NULL)))
-        MA_MoveCopy(NULL, FO_GetCurrentFolder(), folder, TRUE, FALSE);
+        MA_MoveCopy(NULL, FO_GetCurrentFolder(), folder, MVCPF_COPY);
       else
         params->rc = RETURN_ERROR;
     }

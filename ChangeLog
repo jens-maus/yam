@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: first version of sending mails via SMTP in a subthread. The transfer
+    progress will be shown as usual, but for the future each transfer will have
+    its own separate graphical display. The window will be closed as soon as the
+    last transfer has finished.
+
 2010-09-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * UIDL.c, YAM_COg.c: an existing UIDL database file will now be deleted if

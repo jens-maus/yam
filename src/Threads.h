@@ -40,6 +40,7 @@ enum ThreadAction
   TA_LaunchCommand,
   TA_FlushSpamTrainingData,
   TA_PlaySound,
+  TA_SendMails,
 };
 
 #define TT_Priority                                 0xf001 // priority of the thread
@@ -48,6 +49,10 @@ enum ThreadAction
 #define TT_LaunchCommand_Output                    (TAG_USER + 2)
 
 #define TT_PlaySound_Filename        (TAG_STRING | (TAG_USER + 1))
+
+#define TT_SendMails_MailServer                    (TAG_USER + 1)
+#define TT_SendMails_Mails                         (TAG_USER + 2)
+#define TT_SendMails_Mode                          (TAG_USER + 3)
 
 /*** Thread system init/cleanup functions ***/
 BOOL InitThreads(void);

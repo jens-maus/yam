@@ -94,7 +94,7 @@
 extern struct Library *RexxSysBase;
 
 /* local protos */
-static struct Mail *MA_MoveCopySingle(struct Mail*, struct Folder*, struct Folder*, BOOL, BOOL);
+static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, struct Folder *to, const ULONG flags);
 
 /***************************************************************************
  Module: Main
@@ -705,7 +705,7 @@ struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 ///
 /// MA_DeleteSingle
 //  Deletes a single message
-void MA_DeleteSingle(struct Mail *mail, ULONG delFlags)
+void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
 {
   ENTER();
 
@@ -746,7 +746,7 @@ void MA_DeleteSingle(struct Mail *mail, ULONG delFlags)
 
       D(DBF_MAIL, "moving mail with subject '%s' from folder '%s' to folder 'trash'", mail->Subject, mailFolder->Name);
 
-      MA_MoveCopySingle(mail, mailFolder, delfolder, FALSE, isFlagSet(delFlags, DELF_CLOSE_WINDOWS));
+      MA_MoveCopySingle(mail, mailFolder, delfolder, isFlagSet(delFlags, DELF_CLOSE_WINDOWS) ? MVCPF_CLOSE_WINDOWS : 0);
 
       // if we are allowed to make some noise we
       // update our statistics
@@ -769,7 +769,7 @@ void MA_DeleteSingle(struct Mail *mail, ULONG delFlags)
 ///
 /// MA_MoveCopySingle
 //  Moves or copies a single message from one folder to another
-static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, struct Folder *to, BOOL copyit, BOOL closeWindows)
+static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, struct Folder *to, const ULONG flags)
 {
   struct Mail *newMail = NULL;
   char mfile[SIZE_MFILE];
@@ -779,9 +779,9 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 
   strlcpy(mfile, mail->MailFile, sizeof(mfile));
 
-  if((result = TransferMailFile(copyit, mail, to)) >= 0)
+  if((result = TransferMailFile(isFlagSet(flags, MVCPF_COPY), mail, to)) >= 0)
   {
-    if(copyit == TRUE)
+    if(isFlagSet(flags, MVCPF_COPY))
     {
       AppendToLogfile(LF_VERBOSE, 25, tr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
@@ -804,7 +804,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
       SetWriteMailDataMailRef(mail, newMail);
 
       // now remove the mail from its folder/mail list
-      RemoveMailFromList(mail, closeWindows);
+      RemoveMailFromList(mail, isFlagSet(flags, MVCPF_CLOSE_WINDOWS));
     }
 
     if(newMail != NULL)
@@ -851,14 +851,14 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 ///
 /// MA_MoveCopy
 //  Moves or copies messages from one folder to another
-void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit, BOOL closeWindows)
+void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, const ULONG flags)
 {
   struct MailList *mlist;
   ULONG selected = 0;
 
   ENTER();
 
-  if(frombox == tobox && copyit == FALSE)
+  if(frombox == tobox && isFlagClear(flags, MVCPF_COPY))
   {
     LEAVE();
     return;
@@ -874,7 +874,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
   if(mail != NULL)
   {
     selected = 1;
-    MA_MoveCopySingle(mail, frombox, tobox, copyit, closeWindows);
+    MA_MoveCopySingle(mail, frombox, tobox, flags);
   }
   else if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
@@ -890,7 +890,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
     ForEachMailNode(mlist, mnode)
     {
       if(mnode->mail != NULL)
-        MA_MoveCopySingle(mnode->mail, frombox, tobox, copyit, closeWindows);
+        MA_MoveCopySingle(mnode->mail, frombox, tobox, flags);
 
       // if BusySet() returns FALSE, then the user aborted
       if(BusySet(++i) == FALSE)
@@ -906,13 +906,13 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
   }
 
   // write some log out
-  if(copyit == TRUE)
+  if(isFlagSet(flags, MVCPF_COPY))
     AppendToLogfile(LF_NORMAL, 24, tr(MSG_LOG_Copying), selected, FolderName(frombox), FolderName(tobox));
   else
     AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, FolderName(frombox), FolderName(tobox));
 
   // refresh the folder statistics if necessary
-  if(copyit == FALSE)
+  if(isFlagClear(flags, MVCPF_COPY))
     DisplayStatistics(frombox, FALSE);
 
   DisplayStatistics(tobox, TRUE);
@@ -2144,7 +2144,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
 
             // move the mail
             if(folder != spamFolder)
-              MA_MoveCopySingle(mail, folder, spamFolder, FALSE, TRUE);
+              MA_MoveCopySingle(mail, folder, spamFolder, MVCPF_CLOSE_WINDOWS);
           }
           else if(hasStatusHam(mail) == FALSE && bclass == BC_HAM)
           {
@@ -2173,7 +2173,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
 
               // if the mail has not been moved to another folder before we move it to the incoming folder now.
               if(moveToIncoming == TRUE && folder != incomingFolder)
-                MA_MoveCopySingle(mail, folder, incomingFolder, FALSE, TRUE);
+                MA_MoveCopySingle(mail, folder, incomingFolder, MVCPF_CLOSE_WINDOWS);
             }
           }
         }
@@ -2495,8 +2495,10 @@ BOOL MA_Send(enum SendMode mode)
 
     if(mlist != NULL)
     {
-      success = TR_ProcessSEND(mlist, mode);
-      DeleteMailList(mlist);
+      DoAction(TA_SendMails, TT_SendMails_MailServer, GetMailServer(&C->mailServerList, MST_SMTP, 0),
+                             TT_SendMails_Mails, mlist,
+                             TT_SendMails_Mode, mode,
+                             TAG_DONE);
     }
   }
 
@@ -3166,7 +3168,7 @@ HOOKPROTONHNONP(MA_MoveMessageFunc, void)
     struct Folder *dst;
 
     if((dst = FolderRequest(tr(MSG_MA_MoveMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_MoveGad), tr(MSG_Cancel), src, G->MA->GUI.WI)) != NULL)
-      MA_MoveCopy(NULL, src, dst, FALSE, TRUE);
+      MA_MoveCopy(NULL, src, dst, MVCPF_CLOSE_WINDOWS);
   }
 
   LEAVE();
@@ -3187,7 +3189,7 @@ HOOKPROTONHNONP(MA_CopyMessageFunc, void)
     struct Folder *dst;
 
     if((dst = FolderRequest(tr(MSG_MA_CopyMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_CopyGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)) != NULL)
-      MA_MoveCopy(NULL, src, dst, TRUE, FALSE);
+      MA_MoveCopy(NULL, src, dst, MVCPF_COPY);
   }
 
   LEAVE();
@@ -3360,7 +3362,7 @@ MakeHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
 ///
 /// MA_StartMacro
 //  Launches user-defined ARexx script or AmigaDOS command
-BOOL MA_StartMacro(enum Macro num, char *param)
+BOOL MA_StartMacro(const enum Macro num, const char *param)
 {
   BOOL result = FALSE;
 

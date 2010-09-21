@@ -47,8 +47,10 @@
 
 #include "FileInfo.h"
 #include "MailList.h"
+#include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "Threads.h"
 
 #include "mime/uucode.h"
 #include "tcp/smtp.h"
@@ -4232,10 +4234,11 @@ DECLARE(ComposeMail) // enum WriteMode mode
       if(AddNewMailNode(mlist, newMail) != NULL)
       {
         set(obj, MUIA_Window_Open, FALSE);
-        TR_ProcessSEND(mlist, SEND_ACTIVE_USER);
+        DoAction(TA_SendMails, TT_SendMails_MailServer, GetMailServer(&C->mailServerList, MST_SMTP, 0),
+                               TT_SendMails_Mails, mlist,
+                               TT_SendMails_Mode, SEND_ACTIVE_USER,
+                               TAG_DONE);
       }
-
-      DeleteMailList(mlist);
     }
   }
 

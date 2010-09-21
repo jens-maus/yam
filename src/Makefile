@@ -433,6 +433,8 @@ MUIOBJS = \
 	MainMailListGroup.o \
 	MainWindow.o \
 	MainWindowToolbar.o \
+	ObjectList.o \
+	ObjectListitem.o \
 	PassphraseRequestWindow.o \
 	QuickSearchBar.o \
 	ReadMailGroup.o \
@@ -447,7 +449,9 @@ MUIOBJS = \
 	StringRequestWindow.o \
 	ThemeListGroup.o \
 	TransferControlGroup.o \
+	TransferControlList.o \
 	TransferMailList.o \
+	TransferWindow.o \
 	UpdateNotifyWindow.o \
 	WriteAttachmentList.o \
 	WriteWindow.o \

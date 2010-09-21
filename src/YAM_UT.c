@@ -5781,7 +5781,7 @@ int ReadUInt32(FILE *stream, ULONG *value)
 ///
 /// DuplicateNode
 // create a copy of an existing node using AllocSysObject()
-void *DuplicateNode(const void *node, size_t size)
+void *DuplicateNode(const void *node, const size_t size)
 {
   void *dup;
 

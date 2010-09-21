@@ -634,7 +634,7 @@ static void TR_DisplayMailList(BOOL largeonly)
 
     D(DBF_GUI, "checking mail with flags %08lx and subject '%s'", mtn->tflags, mail->Subject);
     // only display mails to be downloaded
-    if(hasTR_LOAD(mtn) || hasTR_PRESELECT(mtn))
+    if(hasTR_TRANSFER(mtn) || hasTR_PRESELECT(mtn))
     {
       // add this mail to the transfer list in case we either
       // should show ALL mails or the mail size is >= the warning size
@@ -696,22 +696,22 @@ static BOOL TR_GetMessageList_GET(void)
           struct MailTransferNode *mtn;
           static const int mode2tflags[16] =
           {
-            TRF_LOAD,
-            TRF_LOAD,
-            TRF_LOAD|TRF_DELETE,
-            TRF_LOAD|TRF_DELETE,
-            TRF_LOAD,
-            TRF_LOAD,
-            TRF_LOAD|TRF_DELETE,
-            TRF_LOAD|TRF_DELETE,
+            TRF_TRANSFER,
+            TRF_TRANSFER,
+            TRF_TRANSFER|TRF_DELETE,
+            TRF_TRANSFER|TRF_DELETE,
+            TRF_TRANSFER,
+            TRF_TRANSFER,
+            TRF_TRANSFER|TRF_DELETE,
+            TRF_TRANSFER|TRF_DELETE,
             TRF_NONE,
-            TRF_LOAD|TRF_PRESELECT,
+            TRF_TRANSFER|TRF_PRESELECT,
             TRF_NONE,
-            TRF_LOAD|TRF_DELETE|TRF_PRESELECT,
+            TRF_TRANSFER|TRF_DELETE|TRF_PRESELECT,
             TRF_PRESELECT,
-            TRF_LOAD|TRF_PRESELECT,
+            TRF_TRANSFER|TRF_PRESELECT,
             TRF_PRESELECT,
-            TRF_LOAD|TRF_DELETE|TRF_PRESELECT
+            TRF_TRANSFER|TRF_DELETE|TRF_PRESELECT
           };
           int tflags;
 
@@ -1374,7 +1374,7 @@ static BOOL FilterDuplicates(void)
                       // make sure the mail is flagged as being ignoreable
                       G->TR->Stats.DupSkipped++;
                       // don't download this mail, because it has been downloaded before
-                      CLEAR_FLAG(mtn->tflags, TRF_LOAD);
+                      CLEAR_FLAG(mtn->tflags, TRF_TRANSFER);
                       // mark this UIDL as old+new, thus it will be saved upon cleanup
                       SET_FLAG(token->flags, UIDLF_NEW);
                     }
@@ -1432,7 +1432,7 @@ static BOOL FilterDuplicates(void)
               {
                 G->TR->Stats.DupSkipped++;
                 // don't download this mail, because it has been downloaded before
-                CLEAR_FLAG(mtn->tflags, TRF_LOAD);
+                CLEAR_FLAG(mtn->tflags, TRF_TRANSFER);
               }
             }
           }

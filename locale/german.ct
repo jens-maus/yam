@@ -8610,3 +8610,6 @@ Die Ausführung des Kommandos '%s' ist fehlgeschlagen (Fehler %ld: %s).
 MSG_ERROR_METHODSTACK
 Kann den Methodstack nicht initialisieren.
 ;
+MSG_TRANSFERS_IN_PROGRESS
+Laufende Übertragungen
+;

@@ -7003,3 +7003,6 @@ The execution of the command '%s' failed (error code %ld: %s).
 MSG_ERROR_METHODSTACK (2178//)
 Cannot initialize method stack.
 ;
+MSG_TRANSFERS_IN_PROGRESS (2179//)
+Transfers in progress
+;

@@ -1,6 +1,3 @@
-#ifndef SMTP_H
-#define SMTP_H
-
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -14,28 +11,50 @@
 
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.   See the
  GNU General Public License for more details.
 
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
- YAM Official Support Site :  http://www.yam.ch
- YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+ YAM Official Support Site : http://www.yam.ch
+ YAM OpenSource project     : http://sourceforge.net/projects/yamos/
 
  $Id$
 
+ Superclass:  MUIC_ObjectList
+ Description: Displays statistics about all transfers in progress
+
 ***************************************************************************/
 
-#include "YAM_transfer.h"
+#include "TransferControlList_cl.h"
 
-// forward declarations
-struct MailList;
-struct MailServerNode;
+#include "MUIObjects.h"
 
-// prototypes
-BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode);
-BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode mode);
+#include "mui/Classes.h"
+#include "tcp/Connection.h"
 
-#endif /* SMTP_H */
+#include "Debug.h"
+
+/* Hooks */
+
+/* Private Functions */
+
+/* Overloaded Methods */
+/// OVERLOAD(MUIM_ObjectList_CreateItem)
+OVERLOAD(MUIM_ObjectList_CreateItem)
+{
+  Object *item;
+
+  ENTER();
+
+  item = TransferControlGroupObject,
+    MUIA_ObjectList_DisposeRemovedItems, TRUE,
+  End;
+
+  RETURN((IPTR)item);
+  return (IPTR)item;
+}
+
+///

@@ -49,6 +49,7 @@
 /* CLASSDATA
 struct Data
 {
+  Object *transferWindow;
   struct List EMailCache;
   STRPTR EMailCacheName;
   char compileInfo[SIZE_DEFAULT];
@@ -758,6 +759,97 @@ DECLARE(AppendToLogfile) // enum LFMode mode, int id, char *logMessage
 {
   AppendToLogfile(msg->mode, msg->id, msg->logMessage);
   free(msg->logMessage);
+
+  return 0;
+}
+
+///
+/// DECLARE(CreateTransferGroup)
+DECLARE(CreateTransferGroup) // enum TransferType TRmode, const char *title, ULONG openWindow
+{
+  GETDATA;
+  Object *group = NULL;
+
+  ENTER();
+
+  // create a new transfer window if we don't have one yet
+  if(data->transferWindow == NULL)
+  {
+    if((data->transferWindow = TransferWindowObject,
+        MUIA_TransferWindow_Mode, msg->TRmode,
+      End) != NULL)
+    {
+      DoMethod(G->App, OM_ADDMEMBER, data->transferWindow);
+    }
+  }
+
+  if(data->transferWindow != NULL)
+  {
+    if((group = (Object *)DoMethod(data->transferWindow, MUIM_TransferWindow_CreateTransferControlGroup, msg->title)) != NULL)
+    {
+      if(msg->openWindow == TRUE)
+        SafeOpenWindow(data->transferWindow);
+    }
+  }
+
+  RETURN(group);
+  return (IPTR)group;
+}
+
+///
+/// DECLARE(DeleteTransferGroup)
+DECLARE(DeleteTransferGroup) // Object *transferGroup
+{
+  GETDATA;
+
+  ENTER();
+
+  if(msg->transferGroup != NULL)
+  {
+    if((BOOL)DoMethod(data->transferWindow, MUIM_TransferWindow_DeleteTransferControlGroup, msg->transferGroup) == TRUE)
+    {
+      // we just removed the last item, now close the window
+      set(data->transferWindow, MUIA_Window_Open, FALSE);
+      DoMethod(G->App, OM_REMMEMBER, data->transferWindow);
+      MUI_DisposeObject(data->transferWindow);
+      data->transferWindow = NULL;
+    }
+  }
+
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(SetStatusTo)
+DECLARE(SetStatusTo) // struct Mail *mail, int addflags, int clearflags
+{
+  MA_ChangeMailStatus(msg->mail, msg->addflags, msg->clearflags);
+
+  return 0;
+}
+
+///
+/// DECLARE(StartMacro)
+DECLARE(StartMacro) // enum Macro num, const char *param
+{
+  return MA_StartMacro(msg->num, msg->param);
+}
+
+///
+/// DECLARE(MoveCopyMail)
+DECLARE(MoveCopyMail) // struct Mail *mail, struct Folder *frombox, struct Folder *tobox, ULONG flags
+{
+  MA_MoveCopy(msg->mail, msg->frombox, msg->tobox, msg->flags);
+
+  return 0;
+}
+
+///
+/// DECLARE(DeleteMail)
+DECLARE(DeleteMail) // struct Mail *mail, ULONG flags
+{
+  MA_DeleteSingle(msg->mail, msg->flags);
 
   return 0;
 }

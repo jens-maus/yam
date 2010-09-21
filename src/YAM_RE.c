@@ -66,6 +66,7 @@
 #include "mime/base64.h"
 #include "mime/qprintable.h"
 #include "mime/uucode.h"
+#include "tcp/Connection.h"
 #include "tcp/smtp.h"
 
 #include "HTML2Mail.h"
@@ -78,8 +79,7 @@
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Requesters.h"
-
-#include "tcp/Connection.h"
+#include "Threads.h"
 
 #include "Debug.h"
 
@@ -3645,12 +3645,19 @@ static void RE_SendMDN(const enum MDNMode mode,
               // in case the user wants to send the message
               // immediately we go and send it out
               if(sendnow == TRUE && mlist->count != 0 && G->TR == NULL)
-                TR_ProcessSEND(mlist, autoSend ? SEND_ACTIVE_AUTO : SEND_ACTIVE_USER);
+              {
+                DoAction(TA_SendMails, TT_SendMails_MailServer, GetMailServer(&C->mailServerList, MST_SMTP, 0),
+                                       TT_SendMails_Mails, mlist,
+                                       TT_SendMails_Mode, autoSend ? SEND_ACTIVE_AUTO : SEND_ACTIVE_USER,
+                                       TAG_DONE);
+              }
+              else
+              {
+                DeleteMailList(mlist);
+              }
 
               // refresh the folder statistics after the transfer
               DisplayStatistics(outfolder, TRUE);
-
-              DeleteMailList(mlist);
             }
           }
           else
