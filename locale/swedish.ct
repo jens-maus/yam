@@ -1,9 +1,8 @@
-## version $VER: YAM.catalog 7.2 (16.09.2010)
+## version $VER: YAM.catalog 7.3 (21.09.2010)
 ## language svenska
 ## codeset 0
-;
 ## chunk AUTH Pär Boberg
-; YAM.cd - YAM 2.7 catalog description file
+;
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -8784,13 +8783,9 @@ MSG_USERNAME_FALLBACK
 John Doe
 ; John Doe
 ;
-; ***NEW***
-;
 MSG_RE_DEFAULT_MIMEPART_NAME
 Del %ld.%ld
 ; Part %ld.%ld
-;
-; ***NEW***
 ; PARENTNUMBER PARTNUMER
 ;
 MSG_OPEN_WRITEWINDOWS
@@ -8799,25 +8794,17 @@ Det finns fortfarande skrivfönster öppna.\n\nHur vill du fortsätta?
 ; \n\
 ; How do you want to proceed?
 ;
-; ***NEW***
-;
 MSG_OPEN_WRITEWINDOWS_GAD
 *_Spara nu|_Avsluta utan att spara|A_vbryt
 ; *_Save now|_Quit without saving|_Cancel
-;
-; ***NEW***
 ;
 MSG_MA_MFORWARD_ATTACH
 som bilaga
 ; as attachment
 ;
-; ***NEW***
-;
 MSG_MA_MFORWARD_INLINE
 infogad
 ; inlined
-;
-; ***NEW***
 ;
 MSG_CO_FWDMSG_ATTACH
 som bilagor
@@ -8827,106 +8814,74 @@ MSG_CO_ScriptPreFilterMail
 Före brevfiltrering
 ; Before filter mail
 ;
-; ***NEW***
-;
 MSG_CO_ScriptPostFilterMail
 Efter brevfiltrering
 ; After filter mail
 ;
-; ***NEW***
-;
 MSG_FI_DOS_PATTERN
 Använd AmigaDOS mönster
 ; Use AmigaDOS patterns
-;
-; ***NEW***
 ;
 MSG_HELP_FI_CH_DOS_PATTERN
 Tillåt AmigaDOS mönster\ni strängsökningen.
 ; Enable AmigaDOS patterns\n\
 ; in the string search.
 ;
-; ***NEW***
-;
 MSG_CTapplicationpgpsig
 PGP signatur
 ; PGP signature
-;
-; ***NEW***
 ;
 MSG_AB_BirthdayReqBody
 Idag, den %s, så blir %s %ld år.\n\nVill du skicka ett gratulationskort?
 ; Today, on %s, %s reaches age %ld.\n\
 ; \n\
 ; Do you want to send a greetings card?
-;
-; ***NEW***
 ; DATE, NAME, AGE
 ;
 MSG_ER_AREXX_EXECUTION_ERROR
 Exekvering av ARexx kommandot '%s' misslyckades (felkod %ld).\nVar god kontrollera att filen finns och att den är ett giltigt ARexx skript.
 ; Execution of the ARexx command '%s' failed (error code %ld).\n\
 ; Please make sure that the file is accessible and is a valid ARexx script.
-;
-; ***NEW***
 ; COMMANDNAME, ERRORCODE
 ;
 MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 Visa inte detta dialogfönster något mer idag.
 ; Do not show this requester today again.
 ;
-; ***NEW***
-;
 MSG_TR_NEW_MAIL_NOTIFY_ONE
 Mottog 1 nytt brev.
 ; Received 1 new mail.
 ;
-; ***NEW***
-;
 MSG_TR_NEW_MAIL_NOTIFY_MANY
 Mottog %ld nya brev.
 ; Received %ld new mails.
-;
-; ***NEW***
 ; COUNT
 ;
 MSG_RE_SAVE_FILE
 Spara fil
 ; Save file
 ;
-; ***NEW***
-;
 MSG_UPD_NO_UPDATES_FOUND_TITLE
 Inga programuppdateringar tillgängliga
 ; No software updates available
-;
-; ***NEW***
 ;
 MSG_UPD_NO_UPDATES_FOUND
 Det finns inga programuppdateringar tillgängliga.\n%s
 ; There are no software updates available.\n\
 ; %s
-;
-; ***NEW***
 ; HINT
 MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
 YAM kollar efter uppdateringar automatiskt.
 ; YAM will check for available updates automatically.
-;
-; ***NEW***
 ;
 MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
 Var god försök igen eller aktivera den automatiska\nprogramuppdateringskontrollen.
 ; Please try again later or activate the automatic\n\
 ; software update check.
 ;
-; ***NEW***
-;
 MSG_THREAD_EXIT_WARNING_TITLE
 YAM varning
 ; YAM warning
-;
-; ***NEW***
 ;
 MSG_THREAD_EXIT_WARNING
 Vid försök att rensa YAM så har undertrådar som fortfarande\nkörs hittats. Var god stäng alla existerande under-\ntrådar (t.ex. MIME visare etc.) som du kan ha startat från YAM.\n\nVill du försöka att avsluta YAM igen eller ignorera\nde undertrådar som fortfarande körs (som kan leda till\nkrasher senare)?
@@ -8938,24 +8893,22 @@ Vid försök att rensa YAM så har undertrådar som fortfarande\nkörs hittats. Var g
 ; Do you want to retry to quit YAM or ignore the still\n\
 ; running sub thread (which could end up in later crashes)?
 ;
-; ***NEW***
-;
 MSG_THREAD_EXIT_WARNING_BT
 _Försök igen|_Ignorera
 ; _Retry|_Ignore
 ;
-; ***NEW***
-;
 MSG_EXECUTE_COMMAND_FAILED
 Exekveringen av kommandot '%s' misslyckades (felkod %ld: %s).
 ; The execution of the command '%s' failed (error code %ld: %s).
-;
-; ***NEW***
 ; COMMAND, ERRORCODE, ERRORSTRING
 ;
 MSG_ERROR_METHODSTACK
 Kan inte initiera method stack.
 ; Cannot initialize method stack.
+;
+MSG_TRANSFERS_IN_PROGRESS
+Pågående överföringar
+; Transfers in progress
 ;
 ; ***NEW***
 ;
