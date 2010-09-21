@@ -7,6 +7,8 @@ $URL$
 
 2010-09-21 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tcp/pop3.c: don't show an error message in case the QUIT command failed
+    without receiving any answer from the server.
   * misc: first version of sending mails via SMTP in a subthread. The transfer
     progress will be shown as usual, but for the future each transfer will have
     its own separate graphical display. The window will be closed as soon as the

@@ -311,9 +311,11 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
     // confused.
     if(command == POPCMD_CONNECT || SendLineToHost(G->TR->connection, buf) > 0)
     {
+      int received;
+
       // let us read the next line from the server and check if
       // some status message can be retrieved.
-      if(ReceiveLineFromHost(G->TR->connection, buf, sizeof(buf)) > 0 &&
+      if((received = ReceiveLineFromHost(G->TR->connection, buf, sizeof(buf))) > 0 &&
         strncmp(buf, POP_RESP_OKAY, strlen(POP_RESP_OKAY)) == 0)
       {
         // everything worked out fine so lets set
@@ -322,8 +324,16 @@ static char *TR_SendPOP3Cmd(const enum POPCommand command, const char *parmtext,
       }
       else
       {
+        BOOL showError;
+
+        // don't show an error message for a failed QUIT command with no answer at all
+        if(command == POPCMD_QUIT && received == -1)
+          showError = FALSE;
+        else
+          showError = TRUE;
+
         // only report an error if explicitly wanted
-        if(errorMsg != NULL)
+        if(showError == TRUE && errorMsg != NULL)
         {
           // if we just issued a PASS command and that failed, then overwrite the visible
           // password with X chars now, so that nobody else can read your password
