@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-21 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update italian catalog.
+  * doc/YAM_english.guide: complete the contributors list (translators).
+  * doc/YAM_french.guide: complete the contributors list (translators).
+
 2010-09-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: don't show an error message in case the QUIT command failed
