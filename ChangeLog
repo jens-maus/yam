@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c: combined the search cleanup process into one function.
+
 2010-09-21 Pär Boberg <pbobbenb@spray.se>
 
   * doc/Install-YAM: updated the swedish section of the script.

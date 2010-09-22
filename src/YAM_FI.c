@@ -72,7 +72,6 @@
 /* local protos */
 static struct FI_ClassData *FI_New(void);
 static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch);
-static void FreeSearchPatternList(struct Search *search);
 
 /***************************************************************************
  Module: Find & Filters
@@ -502,9 +501,6 @@ static void FI_GenerateListPatterns(struct Search *search)
     size_t size = 0;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-    // make sure the pattern list is successfully freed
-    FreeSearchPatternList(search);
 
     while(GetLine(&buf, &size, fh) >= 0)
     {
@@ -1035,7 +1031,6 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
 
       // free the temporary memory we allocated due to our
       // search operation
-      FreeSearchPatternList(&search);
       FreeSearchData(&search);
     }
 
@@ -1374,9 +1369,9 @@ BOOL FI_FilterSingleMail(struct Mail *mail, int *matches)
 }
 
 ///
-/// FreeSearchPatternList
-// Function to make the whole pattern list is correctly cleaned up
-static void FreeSearchPatternList(struct Search *search)
+/// FreeSearchData
+// Function to free the search data
+void FreeSearchData(struct Search *search)
 {
   struct Node *curNode;
 
@@ -1389,16 +1384,6 @@ static void FreeSearchPatternList(struct Search *search)
 
     FreeSysObject(ASOT_NODE, patternNode);
   }
-
-  LEAVE();
-}
-
-///
-/// FreeSearchData
-// Function to free the search data
-void FreeSearchData(struct Search *search)
-{
-  ENTER();
 
   // free a possibly initalized Boyer-Moore search context
   if(search->bmContext != NULL)
@@ -1419,7 +1404,6 @@ void FreeRuleSearchData(struct RuleNode *rule)
 
   if(rule->search != NULL)
   {
-    FreeSearchPatternList(rule->search);
     FreeSearchData(rule->search);
     free(rule->search);
     rule->search = NULL;
