@@ -1265,6 +1265,7 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
   return result;
 }
 
+///
 /// ApplySentFilters
 // apply the filters to the sent mail
 static BOOL ApplySentFilters(const struct MinList *filterList, struct Mail *mail)
