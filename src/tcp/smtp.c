@@ -1401,6 +1401,8 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
           {
             enum ConnectError err;
 
+            tc.searchCount = AllocFilterSearch(APPLY_SENT);
+
             PushMethodOnStack(tc.transferGroup, 3, MUIM_TransferControlGroup_Start, numberOfMails, totalSize);
 
             PushMethodOnStack(tc.transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
@@ -1615,6 +1617,8 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
             }
 
             BusyEnd();
+
+            FreeFilterSearch();
           }
           else
           {

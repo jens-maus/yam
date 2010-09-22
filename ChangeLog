@@ -7,6 +7,7 @@ $URL$
 
 2010-09-22 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tcp/smtp.c: added the omitted appliance of filters for sent mails.
   * YAM_FI.c: there is no more difference between a single search pattern and
     multiple patterns read from a pattern file. This makes the pattern handling
     a lot easier. Also combined the boolean variables into one single flag
