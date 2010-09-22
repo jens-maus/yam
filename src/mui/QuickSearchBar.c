@@ -309,14 +309,12 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
         // we use our global find function for searching in the entire message
         // (including the headers)
         if(FI_PrepareSearch(&search, SM_WHOLE,
-                                     FALSE,
                                      0,
                                      CP_EQUAL,
                                      0,
-                                     TRUE,
-                                     FALSE,
                                      bmContext->pattern,
-                                     ""))
+                                     "",
+                                     SEARCHF_SUBSTRING))
         {
           foundMatch = FI_DoSearch(&search, mail);
         }

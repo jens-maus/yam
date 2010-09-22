@@ -7,6 +7,13 @@ $URL$
 
 2010-09-22 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: there is no more difference between a single search pattern and
+    multiple patterns read from a pattern file. This makes the pattern handling
+    a lot easier. Also combined the boolean variables into one single flag
+    variable.
+  * YAM_FI.c: added some safety checks when reading a pattern file. Each parse
+    operation must be successful and there must be at least one valid pattern in
+    the file for final success.
   * YAM_FI.c: combined the search cleanup process into one function.
 
 2010-09-21 Pär Boberg <pbobbenb@spray.se>

@@ -372,9 +372,9 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
           fprintf(fh, "FI%02d.CustomField = %s\n", i, rule->customField);
           fprintf(fh, "FI%02d.Comparison  = %d\n", i, rule->comparison);
           fprintf(fh, "FI%02d.Match       = %s\n", i, rule->matchPattern);
-          fprintf(fh, "FI%02d.CaseSens    = %s\n", i, Bool2Txt(rule->caseSensitive));
-          fprintf(fh, "FI%02d.Substring   = %s\n", i, Bool2Txt(rule->subString));
-          fprintf(fh, "FI%02d.DOSPattern  = %s\n", i, Bool2Txt(rule->dosPattern));
+          fprintf(fh, "FI%02d.CaseSens    = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_CASE_SENSITIVE)));
+          fprintf(fh, "FI%02d.Substring   = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SUBSTRING)));
+          fprintf(fh, "FI%02d.DOSPattern  = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_DOS_PATTERN)));
         }
         else
         {
@@ -390,9 +390,9 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
           fprintf(fh, "FI%02d.CustomField%d= %s\n", i, j+1, rule->customField);
           fprintf(fh, "FI%02d.Comparison%d = %d\n", i, j+1, rule->comparison);
           fprintf(fh, "FI%02d.Match%d      = %s\n", i, j+1, rule->matchPattern);
-          fprintf(fh, "FI%02d.CaseSens%d   = %s\n", i, j+1, Bool2Txt(rule->caseSensitive));
-          fprintf(fh, "FI%02d.Substring%d  = %s\n", i, j+1, Bool2Txt(rule->subString));
-          fprintf(fh, "FI%02d.DOSPattern%d = %s\n", i, j+1, Bool2Txt(rule->dosPattern));
+          fprintf(fh, "FI%02d.CaseSens%d   = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_CASE_SENSITIVE)));
+          fprintf(fh, "FI%02d.Substring%d  = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SUBSTRING)));
+          fprintf(fh, "FI%02d.DOSPattern%d = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_DOS_PATTERN)));
         }
 
         j++;
@@ -842,7 +842,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 if((rule->searchMode = atoi(p)) == 2)
                   rule->searchMode = SM_SUBJECT;
 
-                rule->caseSensitive = Txt2Bool(&p[2]);
+                if(Txt2Bool(&p[2]) == TRUE)
+                  SET_FLAG(rule->flags, SEARCHF_CASE_SENSITIVE);
                 rule->comparison = Txt2Bool(&p[4]) ? CP_NOTEQUAL : CP_EQUAL;
                 p = strchr(p2 = &p[6], ';');
                 *p++ = '\0';
@@ -1070,18 +1071,18 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
               }
 
               // now find out which subtype this filter has
-              if(!stricmp(p, "Name"))                            strlcpy(lastFilter->name, value, sizeof(lastFilter->name));
-              else if(!stricmp(p, "Remote"))                     lastFilter->remote = Txt2Bool(value);
-              else if(!stricmp(p, "ApplyToNew"))                 lastFilter->applyToNew = Txt2Bool(value);
-              else if(!stricmp(p, "ApplyToSent"))                lastFilter->applyToSent = Txt2Bool(value);
-              else if(!stricmp(p, "ApplyOnReq"))                 lastFilter->applyOnReq = Txt2Bool(value);
-              else if(!stricmp(p, "Actions"))                    lastFilter->actions = atoi(value);
-              else if(!stricmp(p, "BounceTo"))                   strlcpy(lastFilter->bounceTo, value, sizeof(lastFilter->bounceTo));
-              else if(!stricmp(p, "ForwardTo"))                  strlcpy(lastFilter->forwardTo, value, sizeof(lastFilter->forwardTo));
-              else if(!stricmp(p, "ReplyFile"))                  strlcpy(lastFilter->replyFile, value, sizeof(lastFilter->replyFile));
-              else if(!stricmp(p, "ExecuteCmd"))                 strlcpy(lastFilter->executeCmd, value, sizeof(lastFilter->executeCmd));
-              else if(!stricmp(p, "PlaySound"))                  strlcpy(lastFilter->playSound, value, sizeof(lastFilter->playSound));
-              else if(!stricmp(p, "MoveTo"))                     strlcpy(lastFilter->moveTo, value, sizeof(lastFilter->moveTo));
+              if(stricmp(p, "Name") == 0)                        strlcpy(lastFilter->name, value, sizeof(lastFilter->name));
+              else if(stricmp(p, "Remote") == 0)                 lastFilter->remote = Txt2Bool(value);
+              else if(stricmp(p, "ApplyToNew") == 0)             lastFilter->applyToNew = Txt2Bool(value);
+              else if(stricmp(p, "ApplyToSent") == 0)            lastFilter->applyToSent = Txt2Bool(value);
+              else if(stricmp(p, "ApplyOnReq") == 0)             lastFilter->applyOnReq = Txt2Bool(value);
+              else if(stricmp(p, "Actions") == 0)                lastFilter->actions = atoi(value);
+              else if(stricmp(p, "BounceTo") == 0)               strlcpy(lastFilter->bounceTo, value, sizeof(lastFilter->bounceTo));
+              else if(stricmp(p, "ForwardTo") == 0)              strlcpy(lastFilter->forwardTo, value, sizeof(lastFilter->forwardTo));
+              else if(stricmp(p, "ReplyFile") == 0)              strlcpy(lastFilter->replyFile, value, sizeof(lastFilter->replyFile));
+              else if(stricmp(p, "ExecuteCmd") == 0)             strlcpy(lastFilter->executeCmd, value, sizeof(lastFilter->executeCmd));
+              else if(stricmp(p, "PlaySound") == 0)              strlcpy(lastFilter->playSound, value, sizeof(lastFilter->playSound));
+              else if(stricmp(p, "MoveTo") == 0)                 strlcpy(lastFilter->moveTo, value, sizeof(lastFilter->moveTo));
               else
               {
                 struct RuleNode *rule;
@@ -1089,7 +1090,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 // if nothing of the above string matched than the FI string
                 // is probably a rule definition so we check it here
 
-                if(!strnicmp(p, "Field", 5))
+                if(strnicmp(p, "Field", 5) == 0)
                 {
                   int n = atoi(p+5);
 
@@ -1098,7 +1099,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
                   rule->searchMode = atoi(value);
                 }
-                else if(!strnicmp(p, "SubField", 8))
+                else if(strnicmp(p, "SubField", 8) == 0)
                 {
                   int n = atoi(p+8);
 
@@ -1107,7 +1108,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
                   rule->subSearchMode = atoi(value);
                 }
-                else if(!strnicmp(p, "CustomField", 11))
+                else if(strnicmp(p, "CustomField", 11) == 0)
                 {
                   int n = atoi(p+11);
 
@@ -1116,7 +1117,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
                   strlcpy(rule->customField, value, sizeof(rule->customField));
                 }
-                else if(!strnicmp(p, "Comparison", 10))
+                else if(strnicmp(p, "Comparison", 10) == 0)
                 {
                   int n = atoi(p+10);
 
@@ -1125,7 +1126,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
                   rule->comparison = atoi(value);
                 }
-                else if(!strnicmp(p, "Match", 5))
+                else if(strnicmp(p, "Match", 5) == 0)
                 {
                   int n = atoi(p+5);
 
@@ -1134,34 +1135,43 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
                   strlcpy(rule->matchPattern, value2, sizeof(rule->matchPattern));
                 }
-                else if(!strnicmp(p, "CaseSens", 8))
+                else if(strnicmp(p, "CaseSens", 8) == 0)
                 {
                   int n = atoi(p+8);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                     CreateNewRule(lastFilter, TRUE);
 
-                  rule->caseSensitive = Txt2Bool(value);
+                  if(Txt2Bool(value) == TRUE)
+                    SET_FLAG(rule->flags, SEARCHF_CASE_SENSITIVE);
+                  else
+                    CLEAR_FLAG(rule->flags, SEARCHF_CASE_SENSITIVE);
                 }
-                else if(!strnicmp(p, "Substring", 9))
+                else if(strnicmp(p, "Substring", 9) == 0)
                 {
                   int n = atoi(p+9);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                     CreateNewRule(lastFilter, TRUE);
 
-                  rule->subString = Txt2Bool(value);
+                  if(Txt2Bool(value) == TRUE)
+                    SET_FLAG(rule->flags, SEARCHF_SUBSTRING);
+                  else
+                    CLEAR_FLAG(rule->flags, SEARCHF_SUBSTRING);
                 }
-                else if(!strnicmp(p, "DOSPattern", 10))
+                else if(strnicmp(p, "DOSPattern", 10) == 0)
                 {
                   int n = atoi(p+10);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                     CreateNewRule(lastFilter, TRUE);
 
-                  rule->dosPattern = Txt2Bool(value);
+                  if(Txt2Bool(value) == TRUE)
+                    SET_FLAG(rule->flags, SEARCHF_DOS_PATTERN);
+                  else
+                    CLEAR_FLAG(rule->flags, SEARCHF_DOS_PATTERN);
                 }
-                else if(!strnicmp(p, "Combine", 7) && atoi(value) > CB_NONE)
+                else if(strnicmp(p, "Combine", 7) == 0 && atoi(value) > CB_NONE)
                 {
                   int n = atoi(p+7);
 

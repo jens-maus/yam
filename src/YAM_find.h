@@ -87,31 +87,32 @@ enum Comparison       { CP_EQUAL=0, CP_NOTEQUAL, CP_LOWER, CP_GREATER, CP_INPUT 
 #define hasDeleteAction(filter)     (isFlagSet((filter)->actions, FA_DELETE))
 #define hasSkipMsgAction(filter)    (isFlagSet((filter)->actions, FA_SKIPMSG))
 
+struct SearchPatternNode
+{
+  struct MinNode node;                // for storing it into the patternList
+  char pattern[(SIZE_PATTERN+4)*2+2]; // for storing the parsed pattern, plus 4 for possible "#?str#?" expansions
+};
+
+// flags for a search
+#define SEARCHF_CASE_SENSITIVE      (1<<0) // perform a case sensitive seatch
+#define SEARCHF_SUBSTRING           (1<<1) // search for a substring instead of a complete string
+#define SEARCHF_DOS_PATTERN         (1<<2) // use AmigaDOS pattern matching
+
 struct Search
 {
-  char *               Pattern;
-  struct FilterNode *  filter;
+  struct FilterNode  * filter;
   long                 Size;
   enum SearchMode      Mode;
   int                  PersMode;
   int                  Compare;
   char                 Status;  // mail status flags
   enum FastSearch      Fast;
-  BOOL                 CaseSens;
-  BOOL                 SubString;
-  BOOL                 DOSPattern;
-  char                 Match[SIZE_PATTERN+4];
-  char                 PatBuf[(SIZE_PATTERN+4)*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
+  int                  flags;   // search flags, see above
+  char                 Match[SIZE_PATTERN+4];     // the string to search, plus 4 for possible "#?str#?" expansions
   char                 Field[SIZE_DEFAULT];
-  struct DateTime      DT;
-  struct MinList       patternList;                  // for storing search patterns
+  struct DateTime      dateTime;
+  struct MinList       patternList;               // for storing search patterns, including the embedded singlePattern
   struct BoyerMooreContext *bmContext;
-};
-
-struct SearchPatternNode
-{
-  struct MinNode node;            // for storing it into the patternList
-  char pattern[SIZE_PATTERN*2+2]; // for storing the already parsed pattern
 };
 
 // A rule structure which is used to be placed
@@ -124,9 +125,7 @@ struct RuleNode
   enum SearchMode     searchMode;                 // the destination of the search (i.e. FROM/TO/CC/REPLYTO etc..)
   enum SubSearchMode  subSearchMode;              // the sub mode for the search (i.e. Adress/Name for email adresses etc.)
   enum Comparison     comparison;                 // comparison mode to use for our query (i.e. >, <, <>, IN)
-  BOOL                caseSensitive;              // case sensitive search/filtering or not.
-  BOOL                subString;                  // sub string search/filtering or not.
-  BOOL                dosPattern;                 // apply DOS patterns or not.
+  int                 flags;                      // search flags, see above
   char                matchPattern[SIZE_PATTERN]; // user defined pattern for search/filter
   char                customField[SIZE_DEFAULT];  // user definable string to query some more information
 };
@@ -157,8 +156,8 @@ extern struct Hook ApplyFiltersHook;
 
 extern const char mailStatusCycleMap[11];
 
-BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode,
-                      int compar, char stat, BOOL substr, BOOL dosPattern, const char *match, const char *field);
+BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, int persmode,
+                      int compar, char stat, const char *match, const char *field, const int flags);
 BOOL FI_DoSearch(struct Search *search, struct Mail *mail);
 BOOL FI_FilterSingleMail(struct Mail *mail, int *matches);
 

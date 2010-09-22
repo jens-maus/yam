@@ -456,25 +456,32 @@ DECLARE(PrepareSearch) // struct Search *search
   GETDATA;
   int pg = xget(data->PG_SRCHOPT, MUIA_Group_ActivePage);
   const char *match;
-  char *field;
+  const char *field;
+  int flags;
 
   if(pg != 3) // Page 3 (Status) has no ST_MATCH
     match = (const char *)xget(data->ST_MATCH[pg], MUIA_String_Contents);
   else
     match = "";
 
-  field = (char *)xget(data->ST_FIELD, MUIA_String_Contents);
+  field = (const char *)xget(data->ST_FIELD, MUIA_String_Contents);
+
+  flags = 0;
+  if(GetMUICheck(data->CH_CASESENS[pg]) == TRUE)
+    SET_FLAG(flags, SEARCHF_CASE_SENSITIVE);
+  if((pg < 2 && GetMUICheck(data->CH_SUBSTR[pg]) == TRUE) || pg == 4)
+    SET_FLAG(flags, SEARCHF_SUBSTRING);
+  if(GetMUICheck(data->CH_DOSPATTERN[pg]) == TRUE)
+    SET_FLAG(flags, SEARCHF_DOS_PATTERN);
 
   FI_PrepareSearch(msg->search,
                    GetMUICycle(data->CY_MODE[data->remoteFilterMode]),
-                   GetMUICheck(data->CH_CASESENS[pg]),
                    GetMUIRadio(data->RA_ADRMODE),
                    GetMUICycle(data->CY_COMP[pg]),
                    mailStatusCycleMap[GetMUICycle(data->CY_STATUS)],
-                   pg < 2 ? GetMUICheck(data->CH_SUBSTR[pg]) : (pg == 4 ? TRUE : FALSE),
-                   GetMUICheck(data->CH_DOSPATTERN[pg]),
                    match,
-                   field);
+                   field,
+                   flags);
 
   return 0;
 }
@@ -502,14 +509,15 @@ DECLARE(SetToRule) // struct RuleNode *rule
     rule->matchPattern[1] = '\0';
   }
 
-  if(data->CH_CASESENS[g] != NULL)
-    rule->caseSensitive = GetMUICheck(data->CH_CASESENS[g]);
+  rule->flags = 0;
+  if(data->CH_CASESENS[g] != NULL && GetMUICheck(data->CH_CASESENS[g]) == TRUE)
+    SET_FLAG(rule->flags, SEARCHF_CASE_SENSITIVE);
 
-  if(data->CH_SUBSTR[g] != NULL)
-    rule->subString = GetMUICheck(data->CH_SUBSTR[g]);
+  if(data->CH_SUBSTR[g] != NULL && GetMUICheck(data->CH_SUBSTR[g]) == TRUE)
+    SET_FLAG(rule->flags, SEARCHF_SUBSTRING);
 
-  if(data->CH_DOSPATTERN[g] != NULL)
-    rule->dosPattern = GetMUICheck(data->CH_DOSPATTERN[g]);
+  if(data->CH_DOSPATTERN[g] != NULL && GetMUICheck(data->CH_DOSPATTERN[g]) == TRUE)
+    SET_FLAG(rule->flags, SEARCHF_DOS_PATTERN);
 
   return 0;
 }
@@ -547,13 +555,13 @@ DECLARE(GetFromRule) // struct RuleNode *rule
   }
 
   if(data->CH_CASESENS[g] != NULL)
-    nnset(data->CH_CASESENS[g], MUIA_Selected, rule->caseSensitive);
+    nnset(data->CH_CASESENS[g], MUIA_Selected, isFlagSet(rule->flags, SEARCHF_CASE_SENSITIVE));
 
   if(data->CH_SUBSTR[g] != NULL)
-    nnset(data->CH_SUBSTR[g], MUIA_Selected, rule->subString);
+    nnset(data->CH_SUBSTR[g], MUIA_Selected, isFlagSet(rule->flags, SEARCHF_SUBSTRING));
 
   if(data->CH_DOSPATTERN[g] != NULL)
-    nnset(data->CH_DOSPATTERN[g], MUIA_Selected, rule->dosPattern);
+    nnset(data->CH_DOSPATTERN[g], MUIA_Selected, isFlagSet(rule->flags, SEARCHF_DOS_PATTERN));
 
   return 0;
 }

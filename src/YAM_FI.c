@@ -98,7 +98,7 @@ const char mailStatusCycleMap[11] = { 'U', 'O', 'F', 'R', 'W', 'E', 'H', 'S', 'M
 //  Matches string against pattern
 static BOOL FI_MatchString(struct Search *search, char *string)
 {
-  BOOL match;
+  BOOL match = FALSE;
 
   ENTER();
 
@@ -107,12 +107,23 @@ static BOOL FI_MatchString(struct Search *search, char *string)
     case 0:
     case 1:
     {
-      if(search->DOSPattern == TRUE)
+      if(isFlagSet(search->flags, SEARCHF_DOS_PATTERN))
       {
-        if(search->CaseSens == TRUE)
-           match = (BOOL)MatchPattern(search->Pattern, string);
-         else
-           match = (BOOL)MatchPatternNoCase(search->Pattern, string);
+        struct Node *curNode;
+
+        // match the string against all patterns in the list
+        IterateList(&search->patternList, curNode)
+        {
+          struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
+
+          if(isFlagSet(search->flags, SEARCHF_CASE_SENSITIVE))
+            match = (BOOL)MatchPattern(patternNode->pattern, string);
+          else
+            match = (BOOL)MatchPatternNoCase(patternNode->pattern, string);
+
+          if(match == TRUE)
+            break;
+        }
       }
       else
       {
@@ -128,7 +139,7 @@ static BOOL FI_MatchString(struct Search *search, char *string)
     case 2:
     case 3:
     {
-      if(search->CaseSens == TRUE)
+      if(isFlagSet(search->flags, SEARCHF_CASE_SENSITIVE))
         match = (BOOL)(strcmp(string, search->Match) < 0);
       else
         match = (BOOL)(Stricmp(string, search->Match) < 0);
@@ -152,33 +163,6 @@ static BOOL FI_MatchString(struct Search *search, char *string)
 }
 
 ///
-/// FI_MatchListPattern
-//  Matches string against a list of patterns
-static BOOL FI_MatchListPattern(struct Search *search, char *string)
-{
-  BOOL match = FALSE;
-  struct Node *curNode;
-
-  ENTER();
-
-  IterateList(&search->patternList, curNode)
-  {
-    struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
-
-    if(search->CaseSens == TRUE)
-      match = (BOOL)MatchPattern(patternNode->pattern, string);
-    else
-      match = (BOOL)MatchPatternNoCase(patternNode->pattern, string);
-
-    if(match == TRUE)
-      break;
-  }
-
-  RETURN(match);
-  return match;
-}
-
-///
 /// FI_MatchPerson
 //  Matches string against a person's name or address
 static BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
@@ -187,10 +171,7 @@ static BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
 
   ENTER();
 
-  if(search->Compare == 4)
-    match = FI_MatchListPattern(search, search->PersMode ? pe->RealName : pe->Address);
-  else
-    match = FI_MatchString(search, search->PersMode ? pe->RealName : pe->Address);
+  match = FI_MatchString(search, search->PersMode ? pe->RealName : pe->Address);
 
   RETURN(match);
   return match;
@@ -212,8 +193,10 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
     {
       struct ExtendedMail *email;
 
-      if(FI_MatchPerson(search, &mail->From))
+      if(FI_MatchPerson(search, &mail->From) == TRUE)
+      {
         found = TRUE;
+      }
       else if(isMultiSenderMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
       {
         int i;
@@ -237,8 +220,10 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
     {
       struct ExtendedMail *email;
 
-      if(FI_MatchPerson(search, &mail->To))
+      if(FI_MatchPerson(search, &mail->To) == TRUE)
+      {
         found = TRUE;
+      }
       else if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
       {
         int i;
@@ -285,8 +270,10 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
     {
       struct ExtendedMail *email;
 
-      if(FI_MatchPerson(search, &mail->ReplyTo))
+      if(FI_MatchPerson(search, &mail->ReplyTo) == TRUE)
+      {
         found = TRUE;
+      }
       else if(isMultiReplyToMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
       {
         int i;
@@ -308,25 +295,41 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
     // search the "Subject:" line
     case FS_SUBJECT:
     {
-      if(search->Compare == 4)
-        found = FI_MatchListPattern(search, mail->Subject);
-      else
-        found = FI_MatchString(search, mail->Subject);
+      found = FI_MatchString(search, mail->Subject);
     }
     break;
 
     // search the "Date:" line
     case FS_DATE:
     {
-      struct DateStamp *pdat = (struct DateStamp *)search->Pattern;
+      long cmp;
 
-      int cmp = (pdat->ds_Minute) ? CompareDates(&(mail->Date), pdat) : pdat->ds_Days-mail->Date.ds_Days;
-      if((search->Compare == 0 && cmp == 0) ||
-         (search->Compare == 1 && cmp != 0) ||
-         (search->Compare == 2 && cmp > 0) ||
-         (search->Compare == 3 && cmp < 0))
+      if(search->dateTime.dat_Stamp.ds_Minute != 0)
+        cmp = CompareDates(&mail->Date, &search->dateTime.dat_Stamp);
+      else
+        cmp = search->dateTime.dat_Stamp.ds_Days - mail->Date.ds_Days;
+
+      switch(search->Compare)
       {
-        found = TRUE;
+        case 0:
+          if(cmp == 0)
+            found = TRUE;
+        break;
+
+        case 1:
+          if(cmp != 0)
+            found = TRUE;
+        break;
+
+        case 2:
+          if(cmp > 0)
+            found = TRUE;
+        break;
+
+        case 3:
+          if(cmp < 0)
+            found = TRUE;
+        break;
       }
     }
     break;
@@ -336,12 +339,27 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
     {
       long cmp = search->Size - mail->Size;
 
-      if((search->Compare == 0 && cmp == 0) ||
-         (search->Compare == 1 && cmp != 0) ||
-         (search->Compare == 2 && cmp > 0) ||
-         (search->Compare == 3 && cmp < 0))
+      switch(search->Compare)
       {
-        found = TRUE;
+        case 0:
+          if(cmp == 0)
+            found = TRUE;
+        break;
+
+        case 1:
+          if(cmp != 0)
+            found = TRUE;
+        break;
+
+        case 2:
+          if(cmp > 0)
+            found = TRUE;
+        break;
+
+        case 3:
+          if(cmp < 0)
+            found = TRUE;
+        break;
       }
     }
     break;
@@ -376,7 +394,7 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
       for(ptr = rptr; *ptr && *ptr != '\n'; ptr++);
 
       *ptr = 0;
-      if(FI_MatchString(search, rptr))
+      if(FI_MatchString(search, rptr) == TRUE)
         found = TRUE;
 
       rptr = ++ptr;
@@ -445,10 +463,7 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
                 continue;
             }
 
-            if(search->Compare == 4)
-              found = FI_MatchListPattern(search, hdrNode->content);
-            else
-              found = FI_MatchString(search, hdrNode->content);
+            found = FI_MatchString(search, hdrNode->content);
 
             // bail out as soon as we found a matching string
             if(found == TRUE)
@@ -477,20 +492,65 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 //  Checks if quick search is available for selected header field
 static enum FastSearch FI_IsFastSearch(const char *field)
 {
-  if (!stricmp(field, "from"))     return FS_FROM;
-  if (!stricmp(field, "to"))       return FS_TO;
-  if (!stricmp(field, "cc"))       return FS_CC;
-  if (!stricmp(field, "reply-to")) return FS_REPLYTO;
-  if (!stricmp(field, "subject"))  return FS_SUBJECT;
-  if (!stricmp(field, "date"))     return FS_DATE;
-  return FS_NONE;
+  if(stricmp(field, "from") == 0)
+    return FS_FROM;
+  else if(stricmp(field, "to") == 0)
+    return FS_TO;
+  else if(stricmp(field, "cc") == 0)
+    return FS_CC;
+  else if(stricmp(field, "reply-to") == 0)
+    return FS_REPLYTO;
+  else if(stricmp(field, "subject") == 0)
+    return FS_SUBJECT;
+  else if(stricmp(field, "date") == 0)
+    return FS_DATE;
+  else
+    return FS_NONE;
+}
+
+///
+// AllocSearchPatternNode
+static struct SearchPatternNode *AllocSearchPatternNode(const char *pattern, const int flags)
+{
+  struct SearchPatternNode *spn;
+
+  ENTER();
+
+  if((spn = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*spn),
+                                          ASONODE_Min, TRUE,
+                                          TAG_DONE)) != NULL)
+  {
+    BOOL parseOk = FALSE;
+
+    if(isFlagSet(flags, SEARCHF_CASE_SENSITIVE))
+    {
+      if(ParsePattern(pattern, spn->pattern, sizeof(spn->pattern)) != -1)
+        parseOk = TRUE;
+    }
+    else
+    {
+      if(ParsePatternNoCase(pattern, spn->pattern, sizeof(spn->pattern)) != -1)
+        parseOk = TRUE;
+    }
+
+    if(parseOk == FALSE)
+    {
+      // parsing the pattern failed
+      FreeSysObject(ASOT_NODE, spn);
+      spn = NULL;
+    }
+  }
+
+  RETURN(spn);
+  return spn;
 }
 
 ///
 /// FI_GenerateListPatterns
 //  Reads list of patterns from a file
-static void FI_GenerateListPatterns(struct Search *search)
+static BOOL FI_GenerateListPatterns(struct Search *search)
 {
+  BOOL success = FALSE;
   FILE *fh;
 
   ENTER();
@@ -499,45 +559,49 @@ static void FI_GenerateListPatterns(struct Search *search)
   {
     char *buf = NULL;
     size_t size = 0;
+    int numPatterns = 0;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    // we succeed only if we were able to open the pattern file at least
+    success = TRUE;
 
     while(GetLine(&buf, &size, fh) >= 0)
     {
       if(buf[0] != '\0')
       {
-        struct SearchPatternNode *newNode;
+        struct SearchPatternNode *spn;
 
-        // put the pattern in our search pattern list
-        if((newNode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*newNode),
-                                                    ASONODE_Min, TRUE,
-                                                    TAG_DONE)) != NULL)
+        if((spn = AllocSearchPatternNode(buf, search->flags)) != NULL)
         {
-          if(search->CaseSens == TRUE)
-            ParsePattern(buf, newNode->pattern, sizeof(newNode->pattern));
-          else
-            ParsePatternNoCase(buf, newNode->pattern, sizeof(newNode->pattern));
-
-          // add the pattern to our list
-          AddTail((struct List *)&search->patternList, (struct Node *)newNode);
+          // add the pattern node to the list if parsing the pattern was successful
+          AddTail((struct List *)&search->patternList, (struct Node *)spn);
+          numPatterns++;
         }
+        else
+          break;
       }
     }
 
     free(buf);
 
     fclose(fh);
+
+    // signal failure if we did not read a single pattern
+    if(numPatterns == 0)
+      success = FALSE;
   }
 
-  LEAVE();
+  RETURN(success);
+  return success;
 }
 
 ///
 /// FI_PrepareSearch
 //  Initializes Search structure
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
-                      BOOL casesens, int persmode, int compar,
-                      char stat, BOOL substr, BOOL dosPattern, const char *match, const char *field)
+                      int persmode, int compar,
+                      char stat, const char *match, const char *field, const int flags)
 {
   BOOL success = TRUE;
 
@@ -545,15 +609,12 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
 
   memset(search, 0, sizeof(struct Search));
   search->Mode       = mode;
-  search->CaseSens   = casesens;
+  search->flags      = flags;
   search->PersMode   = persmode;
   search->Compare    = compar;
   search->Status     = stat;
-  search->SubString  = substr;
-  search->DOSPattern = dosPattern;
   strlcpy(search->Match, match, sizeof(search->Match));
   strlcpy(search->Field, field, sizeof(search->Field));
-  search->Pattern = search->PatBuf;
   search->Fast = FS_NONE;
   NewMinList(&search->patternList);
 
@@ -584,15 +645,11 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
       char *time;
 
       search->Fast = FS_DATE;
-      search->DT.dat_Format = FORMAT_DEF;
-      search->DT.dat_StrDate = (STRPTR)match;
-      search->DT.dat_StrTime = (STRPTR)((time = strchr(match,' ')) ? time+1 : "00:00:00");
+      search->dateTime.dat_Format = FORMAT_DEF;
+      search->dateTime.dat_StrDate = (STRPTR)match;
+      search->dateTime.dat_StrTime = (STRPTR)((time = strchr(match, ' ')) ? time+1 : "00:00:00");
 
-      if(StrToDate(&(search->DT)))
-      {
-        search->Pattern = (char *)&(search->DT.dat_Stamp);
-      }
-      else
+      if(StrToDate(&search->dateTime) == FALSE)
       {
         char datstr[64];
 
@@ -628,31 +685,40 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
   if(success == TRUE)
   {
     if(compar == 4)
-      FI_GenerateListPatterns(search);
-    else if (search->Fast != FS_DATE && search->Fast != FS_SIZE && mode != SM_SIZE)
     {
-      if(dosPattern == TRUE)
+      success = FI_GenerateListPatterns(search);
+    }
+    else if(search->Fast != FS_DATE && search->Fast != FS_SIZE && mode != SM_SIZE)
+    {
+      if(isFlagSet(flags, SEARCHF_DOS_PATTERN))
       {
+        struct SearchPatternNode *spn;
+
         // we are told to perform AmigaDOS pattern matching
-        if(substr == TRUE || mode == SM_HEADER || mode == SM_BODY || mode == SM_WHOLE || mode == SM_STATUS)
+        if(isFlagSet(flags, SEARCHF_SUBSTRING) || mode == SM_HEADER || mode == SM_BODY || mode == SM_WHOLE || mode == SM_STATUS)
         {
           char buffer[SIZE_PATTERN+1];
 
-          // if substring is selected lets generate a substring out
-          // of the current match string, but keep the string borders in mind.
+          // if substring is selected lets generate a substring from
+          // the current match string, but keep the string borders in mind.
           strlcpy(buffer, search->Match, sizeof(buffer));
           snprintf(search->Match, sizeof(search->Match), "#?%s#?", buffer);
         }
 
-        if(casesens == TRUE)
-          ParsePattern(search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
+        if((spn = AllocSearchPatternNode(search->Match, flags)) != NULL)
+        {
+          // add the pattern node to the list if parsing the pattern was successful
+          AddTail((struct List *)&search->patternList, (struct Node *)spn);
+        }
         else
-          ParsePatternNoCase(search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
+        {
+          success = FALSE;
+        }
       }
       else
       {
         // a simple substring search using the Boyer/Moore algorithm
-        if((search->bmContext = BoyerMooreInit(search->Match, casesens)) == NULL)
+        if((search->bmContext = BoyerMooreInit(search->Match, isFlagSet(flags, SEARCHF_CASE_SENSITIVE))) == NULL)
           success = FALSE;
       }
     }
@@ -668,10 +734,33 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
 BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 {
   BOOL found = FALSE;
+  #if defined(DEBUG)
+  const char *searchString;
+  #endif // DEBUG
 
   ENTER();
 
   D(DBF_FILTER, "doing filter search in message '%s'...", mail->Subject);
+
+  #if defined(DEBUG)
+  if(isFlagSet(search->flags, SEARCHF_DOS_PATTERN))
+  {
+    struct Node *node;
+
+    if((node = GetHead((struct List *)&search->patternList)) != NULL)
+    {
+      struct SearchPatternNode *spn = (struct SearchPatternNode *)node;
+
+      searchString = spn->pattern;
+    }
+    else
+      searchString = SafeStr(NULL);
+  }
+  else
+  {
+    searchString = search->bmContext->pattern;
+  }
+  #endif // DEBUG
 
   switch(search->Mode)
   {
@@ -711,9 +800,9 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
         found = !found;
 
       if(found == TRUE)
-        D(DBF_FILTER, "  HEADER: search for '%s' matched", (search->DOSPattern == TRUE) ? search->Pattern : search->bmContext->pattern);
+        D(DBF_FILTER, "  HEADER: search for '%s' matched", searchString);
       else
-        D(DBF_FILTER, "  HEADER: search for '%s' NOT matched", (search->DOSPattern == TRUE) ? search->Pattern : search->bmContext->pattern);
+        D(DBF_FILTER, "  HEADER: search for '%s' NOT matched", searchString);
     }
     break;
 
@@ -731,9 +820,9 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
         found = !found;
 
       if(found == TRUE)
-        D(DBF_FILTER, "  BODY: search for '%s' matched", (search->DOSPattern == TRUE) ? search->Pattern : search->bmContext->pattern);
+        D(DBF_FILTER, "  BODY: search for '%s' matched", searchString);
       else
-        D(DBF_FILTER, "  BODY: search for '%s' NOT matched", (search->DOSPattern == TRUE) ? search->Pattern : search->bmContext->pattern);
+        D(DBF_FILTER, "  BODY: search for '%s' NOT matched", searchString);
     }
     break;
 
@@ -753,9 +842,9 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
         found = !found;
 
       if(found == TRUE)
-        D(DBF_FILTER, "  WHOLE: search for '%s' matched", (search->DOSPattern == TRUE) ? search->Pattern : search->bmContext->pattern);
+        D(DBF_FILTER, "  WHOLE: search for '%s' matched", searchString);
       else
-        D(DBF_FILTER, "  WHOLE: search for '%s' NOT matched", (search->DOSPattern == TRUE) ? search->Pattern : search->bmContext->pattern);
+        D(DBF_FILTER, "  WHOLE: search for '%s' NOT matched", searchString);
     }
     break;
 
@@ -1478,14 +1567,12 @@ int AllocFilterSearch(enum ApplyFilterMode mode)
 
           FI_PrepareSearch(rule->search,
                            rule->searchMode,
-                           rule->caseSensitive,
                            rule->subSearchMode,
                            rule->comparison,
                            mailStatusCycleMap[stat],
-                           rule->subString,
-                           rule->dosPattern,
                            rule->matchPattern,
-                           rule->customField);
+                           rule->customField,
+                           rule->flags);
 
           // save a pointer to the filter in the search structure as well.
           rule->search->filter = filter;
@@ -1968,23 +2055,20 @@ static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
   ENTER();
 
   // raw copy all global stuff first
-  memcpy(dstSearch, srcSearch, sizeof(struct Search));
-
-  // then we check whether we have to copy another bunch of sub data or not
-  if(srcSearch->Pattern == srcSearch->PatBuf)
-    dstSearch->Pattern = dstSearch->PatBuf;
-  else if(srcSearch->Pattern == (char *)&(srcSearch->DT.dat_Stamp))
-    dstSearch->Pattern = (char *)&(dstSearch->DT.dat_Stamp);
+  memcpy(dstSearch, srcSearch, sizeof(*dstSearch));
 
   // now we have to copy the patternList as well
   NewMinList(&dstSearch->patternList);
+
   IterateList(&srcSearch->patternList, curNode)
   {
     struct SearchPatternNode *srcNode = (struct SearchPatternNode *)curNode;
     struct SearchPatternNode *dstNode;
 
     if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
+    {
       AddTail((struct List *)&dstSearch->patternList, (struct Node *)dstNode);
+    }
     else
     {
       success = FALSE;
@@ -2041,9 +2125,7 @@ static BOOL CompareRuleNodes(const struct Node *n1, const struct Node *n2)
      rn1->searchMode        != rn2->searchMode ||
      rn1->subSearchMode     != rn2->subSearchMode ||
      rn1->comparison        != rn2->comparison ||
-     rn1->caseSensitive     != rn2->caseSensitive ||
-     rn1->subString         != rn2->subString ||
-     rn1->dosPattern        != rn2->dosPattern ||
+     rn1->flags             != rn2->flags ||
      strcmp(rn1->matchPattern, rn2->matchPattern) != 0 ||
      strcmp(rn1->customField,  rn2->customField) != 0)
   {
@@ -2216,9 +2298,9 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern)
     rule->searchMode = SM_FROM;
     rule->subSearchMode = SSM_ADDRESS;
     rule->comparison = CP_EQUAL;
-    rule->caseSensitive = FALSE;
-    rule->subString = FALSE;
-    rule->dosPattern = dosPattern;
+    rule->flags = 0;
+    if(dosPattern == TRUE)
+      SET_FLAG(rule->flags, SEARCHF_DOS_PATTERN);
     rule->matchPattern[0] = '\0';
     rule->customField[0] = '\0';
 
