@@ -581,6 +581,7 @@ YAMOBJS = \
 	HTML2Mail.o \
 	ImageCache.o \
 	Locale.o \
+	MailExport.o \
 	MailList.o \
 	MailServers.o \
 	MethodStack.o \

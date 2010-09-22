@@ -176,7 +176,6 @@ BOOL TR_GetMessageList_IMPORT(void);
 BOOL TR_IsOnline(void);
 struct TR_ClassData *TR_New(enum TransferType TRmode);
 BOOL TR_OpenTCPIP(void);
-BOOL TR_ProcessEXPORT(char *fname, struct MailList *mlist, BOOL append);
 void TR_SetWinTitle(BOOL from, const char *text);
 
 void TR_Disconnect(void);

@@ -80,6 +80,7 @@
 #include "FolderList.h"
 #include "HTML2Mail.h"
 #include "Locale.h"
+#include "MailExport.h"
 #include "MailList.h"
 #include "MailServers.h"
 #include "MethodStack.h"
@@ -2936,19 +2937,7 @@ BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
       }
 
       if(filename != NULL)
-      {
-        if((G->TR = TR_New(TR_EXPORT)) != NULL)
-        {
-          if(quiet == TRUE || SafeOpenWindow(G->TR->GUI.WI) == TRUE)
-            success = TR_ProcessEXPORT(filename, mlist, append);
-
-          if(success == FALSE)
-          {
-            MA_ChangeTransfer(TRUE);
-            DisposeModulePush(&G->TR);
-          }
-        }
-      }
+        success = ExportMails(filename, mlist, quiet, append);
 
       DeleteMailList(mlist);
     }
