@@ -7,6 +7,11 @@ $URL$
 
 2010-09-22 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c, misc: all filters will now be cloned before they are used to
+    filter mails. This finally makes it possible to use filter from within
+    threads, because the actual filtering process modifies the filter nodes and
+    that would have clashed as soon as two threads try to use the filters at the
+    same time.
   * tcp/smtp.c: added the omitted appliance of filters for sent mails.
   * YAM_FI.c: there is no more difference between a single search pattern and
     multiple patterns read from a pattern file. This makes the pattern handling

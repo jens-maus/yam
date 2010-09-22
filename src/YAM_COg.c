@@ -1335,7 +1335,7 @@ HOOKPROTONHNONP(RemoveActiveFilter, void)
     DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_Remove, MUIV_NList_Remove_Active);
 
     Remove((struct Node *)filterNode);
-    FreeFilterNode(filterNode);
+    DeleteFilterNode(filterNode);
   }
 }
 MakeStaticHook(RemoveActiveFilterHook, RemoveActiveFilter);

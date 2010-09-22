@@ -180,39 +180,34 @@ static void TR_DisplayMailList(BOOL largeonly)
 //  Applies remote filters to a message
 void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
 {
+  struct Node *curNode;
+
   ENTER();
 
-  // if there is no search count we can break out immediatly
-  if(G->TR->SearchCount > 0)
+  IterateList(G->TR->remoteFilters, curNode)
   {
-    struct Node *curNode;
+    struct FilterNode *filter = (struct FilterNode *)curNode;
 
-    // Now we process the read header to set all flags accordingly
-    IterateList(&C->filterList, curNode)
+    if(DoFilterSearch(filter, mtn->mail) == TRUE)
     {
-      struct FilterNode *filter = (struct FilterNode *)curNode;
+      if(hasExecuteAction(filter) && *filter->executeCmd)
+         LaunchCommand(filter->executeCmd, FALSE, OUT_STDOUT);
 
-      if(DoFilterSearch(filter, mtn->mail) == TRUE)
-      {
-        if(hasExecuteAction(filter) && *filter->executeCmd)
-           LaunchCommand(filter->executeCmd, FALSE, OUT_STDOUT);
+      if(hasPlaySoundAction(filter) && *filter->playSound)
+         DoAction(TA_PlaySound, TT_PlaySound_Filename, filter->playSound, TAG_DONE);
 
-        if(hasPlaySoundAction(filter) && *filter->playSound)
-           DoAction(TA_PlaySound, TT_PlaySound_Filename, filter->playSound, TAG_DONE);
+      if(hasDeleteAction(filter))
+         SET_FLAG(mtn->tflags, TRF_DELETE);
+      else
+         CLEAR_FLAG(mtn->tflags, TRF_DELETE);
 
-        if(hasDeleteAction(filter))
-           SET_FLAG(mtn->tflags, TRF_DELETE);
-        else
-           CLEAR_FLAG(mtn->tflags, TRF_DELETE);
+      if(hasSkipMsgAction(filter))
+         CLEAR_FLAG(mtn->tflags, TRF_TRANSFER);
+      else
+         SET_FLAG(mtn->tflags, TRF_TRANSFER);
 
-        if(hasSkipMsgAction(filter))
-           CLEAR_FLAG(mtn->tflags, TRF_TRANSFER);
-        else
-           SET_FLAG(mtn->tflags, TRF_TRANSFER);
-
-        // get out of this loop after a successful search
-        break;
-      }
+      // get out of this loop after a successful search
+      break;
     }
   }
 
@@ -320,40 +315,6 @@ void TR_AbortnClose(void)
   DisposeModulePush(&G->TR);
 
   LEAVE();
-}
-///
-/// TR_ApplySentFilters
-//  Applies filters to a sent message
-BOOL TR_ApplySentFilters(struct Mail *mail)
-{
-  BOOL result = TRUE;
-
-  ENTER();
-
-  // only if we have a positiv search count we start
-  // our filtering at all, otherwise we return immediatly
-  if(G->TR->SearchCount > 0)
-  {
-    struct Node *curNode;
-
-    // Now we process the read header to set all flags accordingly
-    IterateList(&C->filterList, curNode)
-    {
-      struct FilterNode *filter = (struct FilterNode *)curNode;
-
-      if(DoFilterSearch(filter, mail) == TRUE)
-      {
-        if(ExecuteFilterAction(filter, mail) == FALSE)
-        {
-          result = FALSE;
-          break;
-        }
-      }
-    }
-  }
-
-  RETURN(result);
-  return result;
 }
 ///
 

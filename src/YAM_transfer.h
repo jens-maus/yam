@@ -150,11 +150,11 @@ struct TR_ClassData
   struct MailList       * downloadedMails; // a list of downloaded mails to be filtered later
   struct Connection     * connection;      // the connection to be used during the session
   struct MailServerNode * mailServer;      // the current mail server
+  struct MinList        * remoteFilters;   // cloned list of remote filters to be applied
 
   long                    Abort;
   long                    Pause;
   long                    Start;
-  int                     SearchCount;
   int                     GMD_Line;
   enum GUILevel           GUIlevel;
   enum ImportFormat       ImportFormat;
@@ -181,7 +181,6 @@ void TR_SetWinTitle(BOOL from, const char *text);
 
 void TR_Disconnect(void);
 void TR_ApplyRemoteFilters(struct MailTransferNode *mtn);
-BOOL TR_ApplySentFilters(struct Mail *mail);
 void TR_NewMailAlert(void);
 void TR_CompleteMsgList(void);
 void TR_AbortnClose(void);

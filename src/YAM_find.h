@@ -100,7 +100,7 @@ struct SearchPatternNode
 
 struct Search
 {
-  struct FilterNode  * filter;
+  struct FilterNode  * filter;  // backchain pointer to the filter which this search belongs to
   long                 Size;
   enum SearchMode      Mode;
   int                  PersMode;
@@ -158,22 +158,23 @@ extern const char mailStatusCycleMap[11];
 
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, int persmode,
                       int compar, char stat, const char *match, const char *field, const int flags);
-BOOL FI_DoSearch(struct Search *search, struct Mail *mail);
-BOOL FI_FilterSingleMail(struct Mail *mail, int *matches);
+BOOL FI_DoSearch(struct Search *search, const struct Mail *mail);
+BOOL FI_FilterSingleMail(const struct MinList *filterList, struct Mail *mail, int *matches);
 
 void FreeSearchData(struct Search *search);
-void FreeRuleSearchData(struct RuleNode *rule);
-int AllocFilterSearch(enum ApplyFilterMode mode);
-void FreeFilterSearch(void);
-BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail);
+void DeleteRuleNode(struct RuleNode *rule);
+void DeleteFilterNode(struct FilterNode *filter);
+void DeleteFilterList(struct MinList *filterList);
+struct MinList *CloneFilterList(enum ApplyFilterMode mode);
+void FreeFilterList(struct MinList *filterList);
+BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail);
 BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter);
 void FreeFilterRuleList(struct FilterNode *filter);
 struct FilterNode *CreateNewFilter(void);
-void FreeFilterNode(struct FilterNode *filter);
 void FreeFilterList(struct MinList *filterList);
 struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern);
 struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos);
-BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail);
+BOOL DoFilterSearch(const struct FilterNode *filter, const struct Mail *mail);
 BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2);
 void FilterMails(struct Folder *folder, struct MailList *mlist, int mode);
 BOOL FolderIsUsedByFilters(const char *folder);

@@ -186,10 +186,7 @@ HOOKPROTONHNONP(RemoveLastRule, void)
     {
       struct List *childList;
 
-      // now we do free our search structure if it exists
-      FreeRuleSearchData(rule);
-
-      FreeSysObject(ASOT_NODE, rule);
+      DeleteRuleNode(rule);
 
       // Remove the GUI elements as well
       if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))

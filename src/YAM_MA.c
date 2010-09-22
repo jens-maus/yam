@@ -2161,13 +2161,15 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
               // first try to apply the filters to this mail, if requested
               if(C->FilterHam == TRUE)
               {
-                if(AllocFilterSearch(APPLY_USER) > 0)
+                struct MinList *filterList;
+
+                if((filterList = CloneFilterList(APPLY_USER)) != NULL)
                 {
                   // FI_FilterSingleMail() returns TRUE if the filters didn't move or delete the mail.
                   // If the mail is still in place after filtering we will move it back to the incoming
                   // folder later.
-                  moveToIncoming = FI_FilterSingleMail(mail, NULL);
-                  FreeFilterSearch();
+                  moveToIncoming = FI_FilterSingleMail(filterList, mail, NULL);
+                  DeleteFilterList(filterList);
                 }
               }
 

@@ -96,7 +96,7 @@ const char mailStatusCycleMap[11] = { 'U', 'O', 'F', 'R', 'W', 'E', 'H', 'S', 'M
 ///
 /// FI_MatchString
 //  Matches string against pattern
-static BOOL FI_MatchString(struct Search *search, char *string)
+static BOOL FI_MatchString(const struct Search *search, const char *string)
 {
   BOOL match = FALSE;
 
@@ -117,9 +117,9 @@ static BOOL FI_MatchString(struct Search *search, char *string)
           struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
 
           if(isFlagSet(search->flags, SEARCHF_CASE_SENSITIVE))
-            match = (BOOL)MatchPattern(patternNode->pattern, string);
+            match = (BOOL)MatchPattern(patternNode->pattern, (STRPTR)string);
           else
-            match = (BOOL)MatchPatternNoCase(patternNode->pattern, string);
+            match = (BOOL)MatchPatternNoCase(patternNode->pattern, (STRPTR)string);
 
           if(match == TRUE)
             break;
@@ -165,7 +165,7 @@ static BOOL FI_MatchString(struct Search *search, char *string)
 ///
 /// FI_MatchPerson
 //  Matches string against a person's name or address
-static BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
+static BOOL FI_MatchPerson(const struct Search *search, const struct Person *pe)
 {
   BOOL match;
 
@@ -180,7 +180,7 @@ static BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
 ///
 /// FI_SearchPatternFast
 //  Searches string in standard header fields
-static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
+static BOOL FI_SearchPatternFast(const struct Search *search, const struct Mail *mail)
 {
   BOOL found = FALSE;
 
@@ -376,7 +376,7 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
 ///
 /// FI_SearchPatternInBody
 //  Searches string in message body
-static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
+static BOOL FI_SearchPatternInBody(const struct Search *search, const struct Mail *mail)
 {
   BOOL found = FALSE;
   struct ReadMailData *rmData;
@@ -414,7 +414,7 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
 ///
 /// FI_SearchPatternInHeader
 //  Searches string in header field(s)
-static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
+static BOOL FI_SearchPatternInHeader(const struct Search *search, const struct Mail *mail)
 {
   char fullfile[SIZE_PATHFILE];
   char mailfile[SIZE_PATHFILE];
@@ -607,7 +607,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
 
   ENTER();
 
-  memset(search, 0, sizeof(struct Search));
+  memset(search, 0, sizeof(*search));
   search->Mode       = mode;
   search->flags      = flags;
   search->PersMode   = persmode;
@@ -731,7 +731,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
 ///
 /// FI_DoSearch
 //  Checks if a message fulfills the search criteria
-BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
+BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
 {
   BOOL found = FALSE;
   #if defined(DEBUG)
@@ -924,10 +924,10 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 ///
 /// DoFilterSearch()
 //  Does a complex search with combined criterias based on the rules of a filter
-BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail)
+BOOL DoFilterSearch(const struct FilterNode *filter, const struct Mail *mail)
 {
   BOOL lastCond = FALSE;
-  int i = 0;
+  int ruleIndex = 0;
   struct Node *curNode;
 
   ENTER();
@@ -944,39 +944,44 @@ BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail)
     {
       BOOL actCond = FI_DoSearch(rule->search, mail);
 
-      if(i == 0)
-        rule->combine = CB_NONE;
-
-      // if this isn't the first rule we do a compare
-      switch(rule->combine)
+      if(ruleIndex == 0)
       {
-        case CB_OR:
+        // there is nothing to combine for the first rule of a filter
+        lastCond = actCond;
+      }
+      else
+      {
+        // if this isn't the first rule we do a compare
+        switch(rule->combine)
         {
-          lastCond = (actCond || lastCond);
-        }
-        break;
+          case CB_OR:
+          {
+            lastCond = (actCond || lastCond);
+          }
+          break;
 
-        case CB_AND:
-        {
-          lastCond = (actCond && lastCond);
-        }
-        break;
+          case CB_AND:
+          {
+            lastCond = (actCond && lastCond);
+          }
+          break;
 
-        case CB_XOR:
-        {
-          lastCond = (actCond+lastCond) % 2;
-        }
-        break;
+          case CB_XOR:
+          {
+            lastCond = (actCond+lastCond) % 2;
+          }
+          break;
 
-        case CB_NONE:
-        {
-          lastCond = actCond;
+          case CB_NONE:
+          {
+            lastCond = actCond;
+          }
+          break;
         }
-        break;
       }
     }
 
-    i++;
+    ruleIndex++;
   }
 
   RETURN(lastCond);
@@ -1424,7 +1429,7 @@ MakeStaticHook(FI_CloseHook, FI_Close);
 ///
 /// FI_FilterSingleMail
 //  applies the configured filters on a single mail
-BOOL FI_FilterSingleMail(struct Mail *mail, int *matches)
+BOOL FI_FilterSingleMail(const struct MinList *filterList, struct Mail *mail, int *matches)
 {
   BOOL success = TRUE;
   struct Node *curNode;
@@ -1432,7 +1437,7 @@ BOOL FI_FilterSingleMail(struct Mail *mail, int *matches)
 
   ENTER();
 
-  IterateList(&C->filterList, curNode)
+  IterateList(filterList, curNode)
   {
     struct FilterNode *filter = (struct FilterNode *)curNode;
 
@@ -1485,12 +1490,51 @@ void FreeSearchData(struct Search *search)
 }
 
 ///
-/// FreeRuleSearchData
-// Function to free the search data of a rule
-void FreeRuleSearchData(struct RuleNode *rule)
+/// CloneFilterNode
+// clone a filter including all its rules
+struct FilterNode *CloneFilterNode(struct FilterNode *filter)
+{
+  struct FilterNode *clonedFilter;
+
+  ENTER();
+
+  if((clonedFilter = DuplicateNode(filter, sizeof(*filter))) != NULL)
+  {
+    struct Node *node;
+
+    // clone the filter's rules
+    NewMinList(&clonedFilter->ruleList);
+    IterateList(&filter->ruleList, node)
+    {
+      struct RuleNode *rule = (struct RuleNode *)node;
+      struct RuleNode *clonedRule;
+
+      if((clonedRule = DuplicateNode(rule, sizeof(*rule))) != NULL)
+      {
+        AddTail((struct List *)&clonedFilter->ruleList, (struct Node *)clonedRule);
+      }
+      else
+      {
+        // delete the cloned filter again if anything fails
+        DeleteFilterNode(clonedFilter);
+        clonedFilter = NULL;
+        break;
+      }
+    }
+  }
+
+  RETURN(clonedFilter);
+  return clonedFilter;
+}
+
+///
+/// DeleteRuleNode
+// delete a rule node
+void DeleteRuleNode(struct RuleNode *rule)
 {
   ENTER();
 
+  // free possible search data
   if(rule->search != NULL)
   {
     FreeSearchData(rule->search);
@@ -1498,127 +1542,168 @@ void FreeRuleSearchData(struct RuleNode *rule)
     rule->search = NULL;
   }
 
+  // and finally free the rule itself
+  FreeSysObject(ASOT_NODE, rule);
+
   LEAVE();
 }
 
 ///
-/// AllocFilterSearch
-//  Allocates and initializes search structures for filters and returns
-//  the number of active filters/search structures allocated.
-int AllocFilterSearch(enum ApplyFilterMode mode)
+/// DeleteFilterNode
+// delete a filter node
+void DeleteFilterNode(struct FilterNode *filter)
 {
-  int active = 0;
-  struct Node *curNode;
+  ENTER();
+
+  // free this filter's rules
+  FreeFilterRuleList(filter);
+
+  // and finally free the filter itself
+  FreeSysObject(ASOT_NODE, filter);
+
+  LEAVE();
+}
+
+///
+/// DeleteFilterList
+// delete a cloned filter list
+void DeleteFilterList(struct MinList *filterList)
+{
+  ENTER();
+
+  FreeFilterList(filterList);
+  FreeSysObject(ASOT_LIST, filterList);
+
+  LEAVE();
+}
+
+///
+/// CloneFilterList
+// clone the configured filter list including on those filters which apply for a certain mode only
+struct MinList *CloneFilterList(enum ApplyFilterMode mode)
+{
+  struct MinList *clonedList;
 
   ENTER();
 
-  // iterate through our filter List
-  IterateList(&C->filterList, curNode)
+  if((clonedList = AllocSysObjectTags(ASOT_LIST, ASOLIST_Min, TRUE,
+                                                 TAG_DONE)) != NULL)
   {
-    struct FilterNode *filter = (struct FilterNode *)curNode;
+    struct Node *node;
 
-    // let's check if we can skip some filters because of the ApplyMode
-    // and filter relation.
-    // For spam recognition we just clear all filters and don't allocate
-    // anything.
-    if((mode == APPLY_AUTO && (!filter->applyToNew || filter->remote)) ||
-       (mode == APPLY_USER && (!filter->applyOnReq || filter->remote)) ||
-       (mode == APPLY_SENT && (!filter->applyToSent || filter->remote)) ||
-       (mode == APPLY_REMOTE && !filter->remote) ||
-       (mode == APPLY_SPAM))
+    IterateList(&C->filterList, node)
     {
-      struct Node *curRuleNode;
+      struct FilterNode *filter = (struct FilterNode *)node;
+      BOOL include;
 
-      IterateList(&filter->ruleList, curRuleNode)
+      // check if the filter needs to be included in the cloned list
+      switch(mode)
       {
-        // make sure the current search structures of the rules of the filter
-        // are freed
-        struct RuleNode *rule = (struct RuleNode *)curRuleNode;
+        case APPLY_AUTO:
+          include = (filter->applyToNew == TRUE && filter->remote == FALSE);
+        break;
 
-        // now we do free our search structure if it exists
-        FreeRuleSearchData(rule);
+        case APPLY_USER:
+          include = (filter->applyOnReq == TRUE && filter->remote == FALSE);
+        break;
+
+        case APPLY_SENT:
+          include = (filter->applyToSent == TRUE && filter->remote == FALSE);
+        break;
+
+        case APPLY_REMOTE:
+          include = (filter->remote == TRUE);
+        break;
+
+        case APPLY_SPAM:
+          include = FALSE;
+        break;
+
+        default:
+          include = TRUE;
+        break;
       }
-    }
-    else
-    {
-      struct Node *curRuleNode;
 
-      IterateList(&filter->ruleList, curRuleNode)
+      if(include == TRUE)
       {
-        // check if the search structures are already allocated or not
-        struct RuleNode *rule = (struct RuleNode *)curRuleNode;
+        struct FilterNode *clonedFilter;
 
-        // check if that search structure already exists or not
-        if(rule->search == NULL &&
-           (rule->search = calloc(1, sizeof(struct Search))))
+        // now clone the filter including its rules
+        if((clonedFilter = CloneFilterNode(filter)) != NULL)
         {
-          int stat = sizeof(mailStatusCycleMap);
-
-          // we check the status field first and if we find a match
-          // we can immediatly break up here because we don't need to prepare the search
-          if(rule->searchMode == SM_STATUS)
-          {
-            for(stat=0; stat <= (int)sizeof(mailStatusCycleMap) - 1; stat++)
-            {
-              if(*rule->matchPattern == mailStatusCycleMap[stat])
-                break;
-            }
-          }
-
-          FI_PrepareSearch(rule->search,
-                           rule->searchMode,
-                           rule->subSearchMode,
-                           rule->comparison,
-                           mailStatusCycleMap[stat],
-                           rule->matchPattern,
-                           rule->customField,
-                           rule->flags);
-
-          // save a pointer to the filter in the search structure as well.
-          rule->search->filter = filter;
+          D(DBF_FILTER, "cloned filter '%s'", clonedFilter->name);
+          AddTail((struct List *)clonedList, (struct Node *)clonedFilter);
         }
+        else
+        {
+          // delete the list again if anything fails
+          DeleteFilterList(clonedList);
+          clonedList = NULL;
+        }
+      }
+    }
 
-        active++;
+    if(clonedList != NULL)
+    {
+      // now that we have cloned the filter list we go ahead and prepare the
+      // search data for each rule
+      struct Node *filterNode;
+
+      IterateList(clonedList, filterNode)
+      {
+        struct FilterNode *filter = (struct FilterNode *)filterNode;
+        struct Node *ruleNode;
+
+        IterateList(&filter->ruleList, ruleNode)
+        {
+          struct RuleNode *rule = (struct RuleNode *)ruleNode;
+
+          if((rule->search = calloc(1, sizeof(*rule->search))) != NULL)
+          {
+            int stat;
+
+            // we check the status field first and if we find a match
+            // we can immediatly break up here because we don't need to prepare the search
+            if(rule->searchMode == SM_STATUS)
+            {
+              for(stat=0; stat <= (int)sizeof(mailStatusCycleMap) - 1; stat++)
+              {
+                if(rule->matchPattern[0] == mailStatusCycleMap[stat])
+                  break;
+              }
+            }
+            else
+            {
+              stat = sizeof(mailStatusCycleMap);
+            }
+
+            FI_PrepareSearch(rule->search,
+                             rule->searchMode,
+                             rule->subSearchMode,
+                             rule->comparison,
+                             mailStatusCycleMap[stat],
+                             rule->matchPattern,
+                             rule->customField,
+                             rule->flags);
+
+            // save a pointer to the filter in the search structure as well.
+            rule->search->filter = filter;
+          }
+        }
       }
     }
   }
 
-  RETURN(active);
-  return active;
-}
 
-///
-/// FreeFilterSearch
-//  Frees filter search structures
-void FreeFilterSearch(void)
-{
-  struct Node *curNode;
-
-  ENTER();
-
-  // Now we process the read header to set all flags accordingly
-  IterateList(&C->filterList, curNode)
-  {
-    struct FilterNode *filter = (struct FilterNode *)curNode;
-    struct Node *curRuleNode;
-
-    IterateList(&filter->ruleList, curRuleNode)
-    {
-      struct RuleNode *rule = (struct RuleNode *)curRuleNode;
-
-      // now we do free our search structure if it exists
-      FreeRuleSearchData(rule);
-    }
-  }
-
-  LEAVE();
+  RETURN(clonedList);
+  return clonedList;
 }
 
 ///
 /// ExecuteFilterAction
 //  Applies filter action to a message and return TRUE if the filter search
 //  should continue or FALSE if it should stop afterwards
-BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
+BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail)
 {
   BOOL success = TRUE;
   struct MailList *mlist;
@@ -1631,7 +1716,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
     AddNewMailNode(mlist, mail);
 
     // Bounce Action
-    if(hasBounceAction(filter) && !filter->remote && *filter->bounceTo)
+    if(hasBounceAction(filter) && filter->remote == FALSE && *filter->bounceTo)
     {
       struct WriteMailData *wmData;
 
@@ -1645,7 +1730,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
     }
 
     // Forward Action
-    if(hasForwardAction(filter) && !filter->remote && *filter->forwardTo)
+    if(hasForwardAction(filter) && filter->remote == FALSE && *filter->forwardTo)
     {
       struct WriteMailData *wmData;
 
@@ -1659,7 +1744,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
     }
 
     // Reply Action
-    if(hasReplyAction(filter) && !filter->remote && *filter->replyFile)
+    if(hasReplyAction(filter) && filter->remote == FALSE && *filter->replyFile)
     {
       struct WriteMailData *wmData;
 
@@ -1689,7 +1774,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
       DoAction(TA_PlaySound, TT_PlaySound_Filename, filter->playSound, TAG_DONE);
 
     // Move Action
-    if(hasMoveAction(filter) && !filter->remote)
+    if(hasMoveAction(filter) && filter->remote == FALSE)
     {
       struct Folder* fo;
 
@@ -1759,118 +1844,119 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
 // Apply filters
 void FilterMails(struct Folder *folder, struct MailList *mlist, int mode)
 {
-  struct Folder *spamfolder = FO_GetFolderByType(FT_SPAM, NULL);
-  struct MailNode *mnode;
-  ULONG m;
-  int scnt;
-  int matches = 0;
+  struct MinList *filterList;
 
   ENTER();
 
-  memset(&G->RuleResults, 0, sizeof(G->RuleResults));
-  set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
-  G->AppIconQuiet = TRUE;
-
-  // for simple spam classification this will result in zero
-  scnt = AllocFilterSearch(mode);
-
-  // we use another Busy Gauge information if this is
-  // a spam classification session. And we build an interruptable
-  // Gauge which will report back if the user pressed the stop button
-  if(mode != APPLY_SPAM)
-    BusyGaugeInt(tr(MSG_BusyFiltering), "", mlist->count);
-  else
-    BusyGaugeInt(tr(MSG_FI_BUSYCHECKSPAM), "", mlist->count);
-
-    MA_StartMacro(MACRO_PREFILTER, NULL);
-
-  m = 0;
-  ForEachMailNode(mlist, mnode)
+  if((filterList = CloneFilterList(mode)) != NULL)
   {
-    struct Mail *mail = mnode->mail;
-    BOOL wasSpam = FALSE;
+    struct Folder *spamfolder = FO_GetFolderByType(FT_SPAM, NULL);
+    struct MailNode *mnode;
+    ULONG m;
+    int matches = 0;
 
-    if(mail != NULL)
+    memset(&G->RuleResults, 0, sizeof(G->RuleResults));
+    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
+    G->AppIconQuiet = TRUE;
+
+    // we use another Busy Gauge information if this is
+    // a spam classification session. And we build an interruptable
+    // Gauge which will report back if the user pressed the stop button
+    if(mode != APPLY_SPAM)
+      BusyGaugeInt(tr(MSG_BusyFiltering), "", mlist->count);
+    else
+      BusyGaugeInt(tr(MSG_FI_BUSYCHECKSPAM), "", mlist->count);
+
+      MA_StartMacro(MACRO_PREFILTER, NULL);
+
+    m = 0;
+    ForEachMailNode(mlist, mnode)
     {
-      if(C->SpamFilterEnabled == TRUE && (mode == APPLY_AUTO || mode == APPLY_SPAM))
+      struct Mail *mail = mnode->mail;
+      BOOL wasSpam = FALSE;
+
+      if(mail != NULL)
       {
-        BOOL doClassification;
-
-        D(DBF_FILTER, "About to apply SPAM filter to message with subject \"%s\"", mail->Subject);
-
-        if(mode == APPLY_AUTO && C->SpamFilterForNewMail == TRUE)
+        if(C->SpamFilterEnabled == TRUE && (mode == APPLY_AUTO || mode == APPLY_SPAM))
         {
-          // classify this mail if we are allowed to check new mails automatically
-          doClassification = TRUE;
-        }
-        else if(mode == APPLY_SPAM && hasStatusSpam(mail) == FALSE && hasStatusHam(mail) == FALSE)
-        {
-          // classify mails if the user triggered this and the mail is not yet classified
-          doClassification = TRUE;
-        }
-        else
-        {
-          // don't try to classify this mail
-          doClassification = FALSE;
-        }
+          BOOL doClassification;
 
-        if(doClassification == TRUE)
-        {
-          D(DBF_FILTER, "Classifying message with subject \"%s\"", mail->Subject);
+          D(DBF_FILTER, "About to apply SPAM filter to message with subject \"%s\"", mail->Subject);
 
-          if(BayesFilterClassifyMessage(mail) == TRUE)
+          if(mode == APPLY_AUTO && C->SpamFilterForNewMail == TRUE)
           {
-            D(DBF_FILTER, "Message was classified as spam");
+            // classify this mail if we are allowed to check new mails automatically
+            doClassification = TRUE;
+          }
+          else if(mode == APPLY_SPAM && hasStatusSpam(mail) == FALSE && hasStatusHam(mail) == FALSE)
+          {
+            // classify mails if the user triggered this and the mail is not yet classified
+            doClassification = TRUE;
+          }
+          else
+          {
+            // don't try to classify this mail
+            doClassification = FALSE;
+          }
 
-            // set the SPAM flags, but clear the NEW and READ flags only if desired
-            if(C->SpamMarkAsRead == TRUE)
-              setStatusToReadAutoSpam(mail);
-            else
-              setStatusToAutoSpam(mail);
+          if(doClassification == TRUE)
+          {
+            D(DBF_FILTER, "Classifying message with subject \"%s\"", mail->Subject);
 
-            // move newly recognized spam to the spam folder
-            MA_MoveCopy(mail, folder, spamfolder, 0);
-            wasSpam = TRUE;
+            if(BayesFilterClassifyMessage(mail) == TRUE)
+            {
+              D(DBF_FILTER, "Message was classified as spam");
 
-            // update the stats
-            G->RuleResults.Spam++;
-            // we just checked the mail
-            G->RuleResults.Checked++;
+              // set the SPAM flags, but clear the NEW and READ flags only if desired
+              if(C->SpamMarkAsRead == TRUE)
+                setStatusToReadAutoSpam(mail);
+              else
+                setStatusToAutoSpam(mail);
+
+              // move newly recognized spam to the spam folder
+              MA_MoveCopy(mail, folder, spamfolder, 0);
+              wasSpam = TRUE;
+
+              // update the stats
+              G->RuleResults.Spam++;
+              // we just checked the mail
+              G->RuleResults.Checked++;
+            }
           }
         }
+
+        if(IsMinListEmpty(filterList) == FALSE && wasSpam == FALSE)
+        {
+          // apply all other user defined filters (if they exist) for non-spam mails
+          // or if the spam filter is disabled
+          G->RuleResults.Checked++;
+
+          // now we process the search
+          FI_FilterSingleMail(filterList, mail, &matches);
+        }
+
+        // we update the busy gauge and
+        // see if we have to exit/abort in case it returns FALSE
+        if(BusySet(++m) == FALSE)
+          break;
       }
-
-      if(scnt > 0 && wasSpam == FALSE)
-      {
-        // apply all other user defined filters (if they exist) for non-spam mails
-        // or if the spam filter is disabled
-        G->RuleResults.Checked++;
-
-        // now we process the search
-        FI_FilterSingleMail(mail, &matches);
-      }
-
-      // we update the busy gauge and
-      // see if we have to exit/abort in case it returns FALSE
-      if(BusySet(++m) == FALSE)
-        break;
     }
+
+    DeleteFilterList(filterList);
+
+    if(G->RuleResults.Checked != 0)
+      AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_Filtering), G->RuleResults.Checked, folder->Name, matches);
+
+      MA_StartMacro(MACRO_POSTFILTER, NULL);
+
+    BusyEnd();
+
+    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
+    G->AppIconQuiet = FALSE;
+
+    if(mode != APPLY_AUTO)
+      DisplayStatistics(NULL, TRUE);
   }
-
-  FreeFilterSearch();
-
-  if(G->RuleResults.Checked != 0)
-    AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_Filtering), G->RuleResults.Checked, folder->Name, matches);
-
-    MA_StartMacro(MACRO_POSTFILTER, NULL);
-
-  BusyEnd();
-
-  set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
-  G->AppIconQuiet = FALSE;
-
-  if(mode != APPLY_AUTO)
-    DisplayStatistics(NULL, TRUE);
 
   LEAVE();
 }
@@ -2095,14 +2181,7 @@ void FreeFilterRuleList(struct FilterNode *filter)
   // we do have to iterate through our ruleList and
   // free them as well
   while((curNode = RemHead((struct List *)&filter->ruleList)) != NULL)
-  {
-    struct RuleNode *rule = (struct RuleNode *)curNode;
-
-    // now we do free our search structure if it exists
-    FreeRuleSearchData(rule);
-
-    FreeSysObject(ASOT_NODE, rule);
-  }
+    DeleteRuleNode((struct RuleNode *)curNode);
 
   // initialize the ruleList as well
   NewMinList(&filter->ruleList);
@@ -2242,22 +2321,6 @@ struct FilterNode *CreateNewFilter(void)
 }
 
 ///
-/// FreeFilterNode
-// frees a complete filter with all embedded rules
-void FreeFilterNode(struct FilterNode *filter)
-{
-  ENTER();
-
-  // free this filter's rules
-  FreeFilterRuleList(filter);
-
-  // and finally free the filter itself
-  FreeSysObject(ASOT_NODE, filter);
-
-  LEAVE();
-}
-
-///
 /// FreeFilterList
 // frees a complete filter list with all embedded filters
 void FreeFilterList(struct MinList *filterList)
@@ -2271,7 +2334,7 @@ void FreeFilterList(struct MinList *filterList)
   {
     struct FilterNode *filter = (struct FilterNode *)curNode;
 
-    FreeFilterNode(filter);
+    DeleteFilterNode(filter);
   }
 
   NewMinList(filterList);

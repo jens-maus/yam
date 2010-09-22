@@ -922,11 +922,18 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       return;
     }
 
+    if((G->TR->remoteFilters = CloneFilterList(APPLY_REMOTE)) == NULL)
+    {
+      DeleteConnection(conn);
+
+      LEAVE();
+      return;
+    }
+
     G->TR->connection = conn;
     G->TR->Checking = TRUE;
     UpdateAppIcon();
     G->TR->GUIlevel = guilevel;
-    G->TR->SearchCount = AllocFilterSearch(APPLY_REMOTE);
     if(singlepop >= 0)
       G->TR->SinglePOP = TRUE;
     else
@@ -993,8 +1000,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     // make sure the transfer window is closed
     set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
 
-    FreeFilterSearch();
-    G->TR->SearchCount = 0;
+    DeleteFilterList(G->TR->remoteFilters);
+    G->TR->remoteFilters = NULL;
 
     MA_StartMacro(MACRO_POSTGET, itoa((int)G->TR->Stats.Downloaded));
 
@@ -1068,8 +1075,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
 
         G->TR->Stats.OnServer += msgs;
 
-        // do we have to do some remote filter actions?
-        if(G->TR->SearchCount > 0)
+        // apply possible remote filters
+        if(IsMinListEmpty(G->TR->remoteFilters) == FALSE)
         {
           struct Node *curNode;
 
