@@ -1643,7 +1643,7 @@ int ReceiveLineFromHost(struct Connection *conn, char *vptr, const int maxlen)
 }
 
 ///
-/// ReceiveFromHost()
+/// ReceiveFromHost
 // a own wrapper function for recv()/SSL_read() that reads buffered somehow
 // it reads maxlen-1 data out of the buffer and stores it into recvdata with
 // a null terminated string
@@ -2116,7 +2116,7 @@ static int WriteToHostBuffered(struct Connection *conn, const char *ptr, int max
 }
 
 ///
-/// SendToHost()
+/// SendToHost
 // a own wrapper function for send()/SSL_write() that writes buffered somehow
 // if called with flag != TCP_FLUSH - otherwise it will write and flush immediately
 int SendToHost(struct Connection *conn, const char *ptr, const int len, const int flags)
