@@ -7,6 +7,7 @@ $URL$
 
 2010-09-22 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tcp/smtp.c: added some debug output.
   * MailExport.c, YAM_TR.c: moved the mail box export to a separate module which
     uses the new style transfer window.
   * tcp/pop3.c: replaced the UIDL parsing by a length limiting function, to

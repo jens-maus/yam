@@ -309,7 +309,7 @@ static BOOL ConnectToSMTP(struct TransferContext *tc)
 
   // now we either send a HELO (non-ESMTP) or EHLO (ESMTP) command to
   // signal we wanting to start a session accordingly (RFC 1869 - section 4)
-  if(result == TRUE && tc->conn != NULL)
+  if(result == TRUE)
   {
     ULONG flags = 0;
     char *resp = NULL;
@@ -443,7 +443,7 @@ static BOOL ConnectToSMTP(struct TransferContext *tc)
 }
 
 ///
-/// InitSTARTTLS()
+/// InitSTARTTLS
 // function to initiate a TLS connection to the ESMTP server via STARTTLS
 static BOOL InitSTARTTLS(struct TransferContext *tc)
 {
@@ -483,7 +483,7 @@ static BOOL InitSTARTTLS(struct TransferContext *tc)
 }
 
 ///
-/// InitSMTPAUTH()
+/// InitSMTPAUTH
 // function to authenticate to a ESMTP Server
 static BOOL InitSMTPAUTH(struct TransferContext *tc)
 {
@@ -1364,6 +1364,8 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
 
       UnlockMailList(mlist);
 
+      D(DBF_NET, "prepared %ld mails for sending, %ld bytes", numberOfMails, totalSize);
+
       // just go on if we really have something
       if(numberOfMails > 0)
       {
@@ -1430,7 +1432,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
 
                   // Now we have to check whether the user has selected SSL/TLS
                   // and then we have to initiate the STARTTLS command followed by the TLS negotiation
-                  if(hasServerTLS(msn) == TRUE && connected == TRUE)
+                  if(connected == TRUE && hasServerTLS(msn) == TRUE)
                   {
                     connected = InitSTARTTLS(&tc);
 
@@ -1451,7 +1453,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
 
                   // If the user selected SMTP_AUTH we have to initiate
                   // a AUTH connection
-                  if(hasServerAuth(msn) == TRUE && connected == TRUE)
+                  if(connected == TRUE && hasServerAuth(msn) == TRUE)
                     connected = InitSMTPAUTH(&tc);
                 }
 
@@ -1461,6 +1463,8 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
                   struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
                   struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
                   struct Node *curNode;
+
+                  D(DBF_NET,
 
                   // set the success to TRUE as everything worked out fine
                   // until here.
