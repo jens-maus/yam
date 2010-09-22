@@ -1464,8 +1464,6 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
                   struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
                   struct Node *curNode;
 
-                  D(DBF_NET,
-
                   // set the success to TRUE as everything worked out fine
                   // until here.
                   success = TRUE;
