@@ -1450,6 +1450,8 @@ static BOOL FilterDuplicates(void)
                 G->TR->Stats.DupSkipped++;
                 // don't download this mail, because it has been downloaded before
                 CLEAR_FLAG(mtn->tflags, TRF_TRANSFER);
+                // mark this UIDL as old+new, thus it will be saved upon cleanup
+                SET_FLAG(token->flags, UIDLF_NEW);
               }
             }
           }
@@ -1470,4 +1472,5 @@ static BOOL FilterDuplicates(void)
   RETURN(result);
   return result;
 }
+
 ///
