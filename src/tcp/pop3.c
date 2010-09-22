@@ -822,15 +822,9 @@ void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 
           // if this function was called with -1, then the POP3 server
           // doesn't have the UIDL command and we have to generate our
-          // own one by using the MsgID and the Serverstring for the POP3
-          // server.
+          // own one by using the MsgID.
           if(lline == -1)
-          {
-            char uidl[SIZE_DEFAULT+SIZE_HOST];
-
-            snprintf(uidl, sizeof(uidl), "%s@%s", email->messageID, G->TR->mailServer->hostname);
-            mtn->UIDL = strdup(uidl);
-          }
+            mtn->UIDL = strdup(email->messageID);
           else if(lline == -2)
             TR_ApplyRemoteFilters(mtn);
 
@@ -1364,11 +1358,6 @@ static BOOL FilterDuplicates(void)
             // now parse the line and get the message number and UIDL
             sscanf(buf, "%d %s", &num, uidl);
 
-            // lets add our own ident to the uidl so that we can compare
-            // it against our saved list
-            strlcat(uidl, "@", sizeof(uidl));
-            strlcat(uidl, G->TR->mailServer->hostname, sizeof(uidl));
-
             // search through our transferList
             IterateList(&G->TR->transferList, curNode)
             {
@@ -1388,7 +1377,7 @@ static BOOL FilterDuplicates(void)
                     // check if we knew this UIDL before
                     if(isFlagSet(token->flags, UIDLF_OLD))
                     {
-                      // make sure the mail is flagged as being ignoreable
+                    // make sure the mail is flagged as being ignoreable
                       G->TR->Stats.DupSkipped++;
                       // don't download this mail, because it has been downloaded before
                       CLEAR_FLAG(mtn->tflags, TRF_TRANSFER);
@@ -1400,10 +1389,10 @@ static BOOL FilterDuplicates(void)
 
                 break;
               }
-
-              if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
-                break;
             }
+
+            if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == TRUE || G->TR->connection->error != CONNECTERR_NO_ERROR)
+              break;
 
             // now read the next Line
             if(ReceiveLineFromHost(G->TR->connection, buf, sizeof(buf)) <= 0)
