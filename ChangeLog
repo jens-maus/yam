@@ -7,6 +7,8 @@ $URL$
 
 2010-09-22 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tcp/pop3.c: replaced the UIDL parsing by a length limiting function, to
+    avoid the non-length aware sscanf() function.
   * tcp/pop3.c: now that we don't have a common .uidl database file for all
     accounts anymore we can drop the "@hostname" appendix for each entry.
   * tcp/pop3.c: for servers which don't support the UIDL command already known

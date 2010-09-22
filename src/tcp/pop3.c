@@ -1351,43 +1351,55 @@ static BOOL FilterDuplicates(void)
           // finishing octet
           while(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && G->TR->connection->error == CONNECTERR_NO_ERROR && strncmp(buf, ".\r\n", 3) != 0)
           {
-            int num;
-            char uidl[SIZE_DEFAULT+SIZE_HOST];
-            struct Node *curNode;
+            char *p;
 
             // now parse the line and get the message number and UIDL
-            sscanf(buf, "%d %s", &num, uidl);
-
-            // search through our transferList
-            IterateList(&G->TR->transferList, curNode)
+            // each UIDL entry is transmitted as "number uidl"
+            if((p = strchr(buf, ' ')) != NULL)
             {
-              struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+              int num;
+              char *uidl;
+              struct Node *curNode;
 
-              if(mtn->index == num)
+              // replace the space by a NUL byte and convert the first part to an integer
+              *p++ = '\0';
+              num = atoi(buf);
+              // strip the trailing CR+LF
+              uidl = p;
+              if((p = strchr(uidl, '\r')) != NULL)
+                *p = '\0';
+
+              // search through our transferList
+              IterateList(&G->TR->transferList, curNode)
               {
-                if((mtn->UIDL = strdup(uidl)) != NULL)
+                struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+
+                if(mtn->index == num)
                 {
-                  struct UIDLtoken *token;
-
-                  // check if this UIDL is known already
-                  if((token = FindUIDL(G->TR->UIDLhashTable, mtn->UIDL)) != NULL)
+                  if((mtn->UIDL = strdup(uidl)) != NULL)
                   {
-                    D(DBF_UIDL, "mail %ld: found UIDL '%s', flags=%08lx", mtn->index, mtn->UIDL, token->flags);
+                    struct UIDLtoken *token;
 
-                    // check if we knew this UIDL before
-                    if(isFlagSet(token->flags, UIDLF_OLD))
+                    // check if this UIDL is known already
+                    if((token = FindUIDL(G->TR->UIDLhashTable, mtn->UIDL)) != NULL)
                     {
-                    // make sure the mail is flagged as being ignoreable
-                      G->TR->Stats.DupSkipped++;
-                      // don't download this mail, because it has been downloaded before
-                      CLEAR_FLAG(mtn->tflags, TRF_TRANSFER);
-                      // mark this UIDL as old+new, thus it will be saved upon cleanup
-                      SET_FLAG(token->flags, UIDLF_NEW);
+                      D(DBF_UIDL, "mail %ld: found UIDL '%s', flags=%08lx", mtn->index, mtn->UIDL, token->flags);
+
+                      // check if we knew this UIDL before
+                      if(isFlagSet(token->flags, UIDLF_OLD))
+                      {
+                      // make sure the mail is flagged as being ignoreable
+                        G->TR->Stats.DupSkipped++;
+                        // don't download this mail, because it has been downloaded before
+                        CLEAR_FLAG(mtn->tflags, TRF_TRANSFER);
+                        // mark this UIDL as old+new, thus it will be saved upon cleanup
+                        SET_FLAG(token->flags, UIDLF_NEW);
+                      }
                     }
                   }
-                }
 
-                break;
+                  break;
+                }
               }
             }
 
