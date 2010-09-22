@@ -79,7 +79,7 @@ struct Data
 /* Hooks */
 
 /* Private Functions */
-/// DoUpdateState
+/// DoUpdateStats
 // update the statistics
 static void DoUpdateStats(struct Data *data, const int size_incr, const char *status)
 {
