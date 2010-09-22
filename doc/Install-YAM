@@ -112,15 +112,18 @@
 (if (= @language "svenska")
     (
         (set #def_cat_lang #def_lang_swedish)
+        (set #acknowledgeOS (cat "Var god bekräfta den automatiska\n"
+                                 "detekteringen av ditt operativsystem:"))
         (set #YAM_dir  (cat "Välj katalog att installera YAM i\n"
                             "(någon underkatalog kommer INTE att skapas!)"))
         (set #lang_catalog (cat "Vilka språkkataloger vill du installera?\n"
                                 "(Engelska är inbyggt)"))
+        (set #ask_charsets "Vill du installera de teckenset som krävs av codesets.library?")
         (set #lang_manual "Välj språk för den AmigaGuide-baserade hjälpen")
         (set #no_way_back_warning (cat  "VARNING!!\n"
                                        "(om du vill uppdatera en existerande YAM 2.4 installation)\n"
                                        "\n"
-                                       "Namn schemat för mailfilerna har ändrats totalt. När du kör YAM 2.6 för första gången, kommer alla dina nuvarande mailfiler att konverteras automatiskt till det nya schemat. Efter det kommer inte YAM 2.4 att kunna hantera dem längre. Så, backa upp ALLA dina mailfiler FÖRE du kör YAM 2.6.\n"
+                                       "Namnschemat för mailfilerna har ändrats totalt. När du kör YAM 2.6 för första gången, kommer alla dina nuvarande mailfiler att konverteras automatiskt till det nya schemat. Efter det kommer inte YAM 2.4 att kunna hantera dem längre. Så, backa upp ALLA dina mailfiler FÖRE du kör YAM 2.6.\n"
                                        "\n"
                                        "Men, det är absolut INGA problem att installera YAM 2.4 och YAM 2.6 i separata kataloger."))
         (set #faq_and_bugtracker (cat "\n"
@@ -139,7 +142,7 @@
         (set #done_2   (cat "\n"
                             "för att pröva det.\n"
                             "\n"
-                            "Ha det så bra!"))
+                            "Ha det så kul..."))
     )
 )
 ; ///
