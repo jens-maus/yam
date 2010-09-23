@@ -39,7 +39,6 @@ enum ThreadAction
   TA_Shutdown,
   TA_LaunchCommand,
   TA_FlushSpamTrainingData,
-  TA_PlaySound,
   TA_SendMails,
 };
 
@@ -47,8 +46,6 @@ enum ThreadAction
 
 #define TT_LaunchCommand_Command     (TAG_STRING | (TAG_USER + 1))
 #define TT_LaunchCommand_Output                    (TAG_USER + 2)
-
-#define TT_PlaySound_Filename        (TAG_STRING | (TAG_USER + 1))
 
 #define TT_SendMails_MailServer                    (TAG_USER + 1)
 #define TT_SendMails_Mails                         (TAG_USER + 2)

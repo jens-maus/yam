@@ -756,9 +756,7 @@ HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
   ENTER();
 
   soundFile = (char *)xget((Object *)arg[0], MUIA_String_Contents);
-  set(G->App, MUIA_Application_Sleep, TRUE);
   PlaySound(soundFile);
-  set(G->App, MUIA_Application_Sleep, FALSE);
 
   LEAVE();
 }

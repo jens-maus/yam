@@ -4726,71 +4726,42 @@ BOOL PlaySound(const char *filename)
 
   if(DataTypesBase != NULL)
   {
-    LONG finishSignal;
-
-    // allocate a signal to Wait() for the completition of the playback
-    if((finishSignal = AllocSignal(-1)) != -1)
+    // if we previously created a sound object
+    // lets dispose it first.
+    if(G->SoundDTObj != NULL)
     {
-      Object *soundObject;
+      DoMethod(G->SoundDTObj, DTM_TRIGGER, NULL, STM_STOP, NULL);
+      DisposeDTObject(G->SoundDTObj);
+    }
 
-      // create the new datatype object
-      if((soundObject = NewDTObject((char *)filename, DTA_SourceType, DTST_FILE,
+    // create the new datatype object
+    if((G->SoundDTObj = NewDTObject((char *)filename, DTA_SourceType, DTST_FILE,
                                                       DTA_GroupID,    GID_SOUND,
                                                       SDTA_Cycles,    1,
-                                                      SDTA_SignalTask, FindTask(NULL),
-                                                      #if defined(__amigaos4__)
-                                                      // SDTA_SignalBit is deprecated on AmigaOS4
-                                                      // use SDTA_SignalBitMask instead, which correctly takes a signal mask
-                                                      SDTA_SignalBitMask, 1UL << finishSignal,
-                                                      #else
-                                                      // SDTA_SignalBit takes a mask instead of a bit number!!
-                                                      SDTA_SignalBit, 1UL << finishSignal,
-                                                      #endif
                                                       TAG_DONE)) != NULL)
-      {
-        ULONG error;
+    {
+      ULONG error;
 
-        // play the sound
-        #if defined(__amigaos4__) || defined(__MORPHOS__)
-        // AmigaOS4's sound.dt returns 1 in case everything was ok, 0 otherwise
-        error = DoMethod(soundObject, DTM_TRIGGER, NULL, STM_PLAY, NULL);
-        #else
-        // AmigaOS3's return value differs between different versions of sound.dt
-        // Some always return 0, some return a value from the subclass.
-        // AROS' sound.dt definitely always returns 0. I assume the same for MorphOS.
-        // Thus we always signal success here in case creating the object succeeded.
-        DoMethod(soundObject, DTM_TRIGGER, NULL, STM_PLAY, NULL);
-        error = 1;
-        #endif
+      // play the sound
+      #if defined(__amigaos4__) || defined(__MORPHOS__)
+      // AmigaOS4's sound.dt returns 1 in case everything was ok, 0 otherwise
+      error = DoMethod(G->SoundDTObj, DTM_TRIGGER, NULL, STM_PLAY, NULL);
+      #else
+      // AmigaOS3's return value differs between different versions of sound.dt
+      // Some always return 0, some return a value from the subclass.
+      // AROS' sound.dt definitely always returns 0. I assume the same for MorphOS.
+      // Thus we always signal success here in case creating the object succeeded.
+      DoMethod(G->SoundDTObj, DTM_TRIGGER, NULL, STM_PLAY, NULL);
+      error = 1;
+      #endif
 
-        if(error == 1)
-        {
-          ULONG abortSig = ThreadAbortSignal();
-          ULONG sigs;
+      if(error == 1)
+        result = TRUE;
 
-          D(DBF_UTIL, "started playback of '%s'", filename);
-          // wait for the playback to finish or an extern abortion
-          sigs = Wait(1UL << finishSignal | 1UL << abortSig);
-          if(isFlagSet(sigs, 1UL << abortSig))
-          {
-            // we were told to abort, stop playback
-            DoMethod(soundObject, DTM_TRIGGER, NULL, STM_STOP, NULL);
-          }
-
-          result = TRUE;
-        }
-
-        D(DBF_UTIL, "playback of '%s' returned %ld/%ld", filename, error, result);
-
-        DisposeDTObject(soundObject);
-      }
-      else
-        W(DBF_UTIL, "failed to create sound DT object from '%s'", filename);
-
-      FreeSignal(finishSignal);
+      D(DBF_UTIL, "started playback of '%s' returned %ld/%ld", filename, error, result);
     }
     else
-      W(DBF_UTIL, "failed to allocate signal for sound DT object '%s'", filename);
+      W(DBF_UTIL, "failed to create sound DT object from '%s'", filename);
   }
   else
     W(DBF_UTIL, "datatypes.library missing, no sound playback!");
@@ -4799,10 +4770,10 @@ BOOL PlaySound(const char *filename)
   if(result == FALSE)
     ER_NewError(tr(MSG_ERROR_PLAYSOUND), filename);
 
-
   RETURN(result);
   return result;
 }
+
 ///
 /// MatchExtension
 //  Matches a file extension against a list of extension

@@ -7,6 +7,10 @@ $URL$
 
 2010-09-23 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c, Threads.c: removed the sound playback in a separate thread again
+    and reverted to the old approach. AmigaOS3's sound.datatype is simply too
+    buggy to be able to play more than 4 samples in different threads without
+    causing major problems. This closes #214.
   * MailExport.c: the export process now uses a connection without connecting to
     to any host. This makes it possible to use the connection's abort checking.
     Additionally aborting the export process will now correctly signal failure.

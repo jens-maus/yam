@@ -1771,7 +1771,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail)
 
     // PlaySound Action
     if(hasPlaySoundAction(filter) && *filter->playSound)
-      DoAction(TA_PlaySound, TT_PlaySound_Filename, filter->playSound, TAG_DONE);
+      PlaySound(filter->playSound);
 
     // Move Action
     if(hasMoveAction(filter) && filter->remote == FALSE)

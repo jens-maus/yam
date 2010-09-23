@@ -222,12 +222,6 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
     }
     break;
 
-    case TA_PlaySound:
-    {
-      result = PlaySound((const char *)GetTagData(TT_PlaySound_Filename, (IPTR)NULL, msg->actionTags));
-    }
-    break;
-
     case TA_SendMails:
     {
       result = SendMails((struct MailServerNode *)GetTagData(TT_SendMails_MailServer, (IPTR)NULL, msg->actionTags),
