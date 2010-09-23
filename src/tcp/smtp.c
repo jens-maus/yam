@@ -1387,7 +1387,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
 
         snprintf(tc.transferGroupTitle, sizeof(tc.transferGroupTitle), tr(MSG_TR_MailTransferTo), host);
 
-        if((tc.transferGroup = (Object *)PushMethodOnStackWait(G->App, 4, MUIM_YAM_CreateTransferGroup, mode, tc.transferGroupTitle, TRUE)) != NULL)
+        if((tc.transferGroup = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAM_CreateTransferGroup, mode, tc.transferGroupTitle, tc.conn, TRUE)) != NULL)
         {
           // now we have to check whether SSL/TLS is selected for SMTP account,
           // and if it is usable. Or if no secure connection is requested

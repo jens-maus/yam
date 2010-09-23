@@ -765,7 +765,7 @@ DECLARE(AppendToLogfile) // enum LFMode mode, int id, char *logMessage
 
 ///
 /// DECLARE(CreateTransferGroup)
-DECLARE(CreateTransferGroup) // enum TransferType TRmode, const char *title, ULONG openWindow
+DECLARE(CreateTransferGroup) // enum TransferType TRmode, const char *title, struct Connection *connection, ULONG openWindow
 {
   GETDATA;
   Object *group = NULL;
@@ -787,6 +787,9 @@ DECLARE(CreateTransferGroup) // enum TransferType TRmode, const char *title, ULO
   {
     if((group = (Object *)DoMethod(data->transferWindow, MUIM_TransferWindow_CreateTransferControlGroup, msg->title)) != NULL)
     {
+      // tell the control group about the connection being used
+      set(group, MUIA_TransferControlGroup_Connection, msg->connection);
+
       if(msg->openWindow == TRUE)
         SafeOpenWindow(data->transferWindow);
     }

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailExport.c: the export process now uses a connection without connecting to
+    to any host. This makes it possible to use the connection's abort checking.
+    Additionally aborting the export process will now correctly signal failure.
+
 2010-09-23 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * AUTHORS: add Luca Longone as italian contributor, thanks mate!
