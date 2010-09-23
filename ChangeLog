@@ -7,6 +7,8 @@ $URL$
 
 2010-09-23 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_FI.c: fixed a NULL pointer access in the debug build during the filter
+    process.
   * YAM_UT.c, Threads.c: removed the sound playback in a separate thread again
     and reverted to the old approach. AmigaOS3's sound.datatype is simply too
     buggy to be able to play more than 4 samples in different threads without

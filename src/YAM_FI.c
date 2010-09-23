@@ -756,9 +756,13 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
     else
       searchString = SafeStr(NULL);
   }
-  else
+  else if(search->bmContext != NULL)
   {
     searchString = search->bmContext->pattern;
+  }
+  else
+  {
+    searchString = SafeStr(NULL);
   }
   #endif // DEBUG
 
