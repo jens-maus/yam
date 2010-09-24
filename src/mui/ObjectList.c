@@ -56,6 +56,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
     MUIA_Scrollgroup_FreeHoriz, FALSE,
+    MUIA_Scrollgroup_AutoBars, TRUE,
 
     MUIA_Scrollgroup_Contents, virtgroup = VirtgroupObject,
       MUIA_Group_Horiz, FALSE,

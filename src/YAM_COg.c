@@ -1809,6 +1809,7 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, ColGroup(2), GroupFrameT(tr(MSG_CO_MinConfig)),
@@ -1897,6 +1898,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_SendMail)),
@@ -2162,6 +2164,7 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, HGroup, GroupFrameT(tr(MSG_CO_Download)),
@@ -2299,6 +2302,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, HGroup,
@@ -2353,6 +2357,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                             MUIA_Weight, 100,
                             MUIA_Scrollgroup_FreeHoriz, FALSE,
                             MUIA_Scrollgroup_FreeVert,  TRUE,
+                            MUIA_Scrollgroup_AutoBars,  TRUE,
                             MUIA_Scrollgroup_Contents,  data->GUI.GR_SGROUP = VirtgroupObject,
                               Child, SearchControlGroupObject, // we need a minimum of one dummy control group
                               End,
@@ -2523,6 +2528,7 @@ Object *CO_PageSpam(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_SPAMFILTER)),
@@ -2658,6 +2664,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
             Child, ColGroup(3), GroupFrameT(tr(MSG_CO_HeaderLayout)),
@@ -2885,6 +2892,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, ColGroup(2), GroupFrameT(tr(MSG_CO_MessageHeader)),
@@ -3023,6 +3031,7 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_Replying)),
@@ -3116,6 +3125,7 @@ Object *CO_PageSignature(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
              Child, VGroup, GroupFrameT(tr(MSG_CO_Signature)),
@@ -3203,6 +3213,7 @@ Object *CO_PageLists(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
             Child, HGroup, GroupFrameT(tr(MSG_CO_FIELDLISTCFG)),
@@ -3328,6 +3339,7 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, VGroup, GroupFrameT("PGP (Pretty Good Privacy)"),
@@ -3436,6 +3448,7 @@ Object *CO_PageStartupQuit(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
              Child, VGroup, GroupFrameT(tr(MSG_CO_OnStartup)),
@@ -3488,6 +3501,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, VGroup,
@@ -3614,6 +3628,7 @@ Object *CO_PageAddressBook(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
              Child, HGroup, GroupFrameT(tr(MSG_Columns)),
@@ -3696,6 +3711,7 @@ Object *CO_PageScripts(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
              Child, VGroup,
@@ -3785,6 +3801,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Paths)),
@@ -3972,6 +3989,7 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, data->GUI.GR_THEMES = ThemeListGroupObject,
@@ -4039,6 +4057,7 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_SOFTWAREUPDATE)),
