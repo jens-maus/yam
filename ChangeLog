@@ -7,6 +7,9 @@ $URL$
 
 2010-09-24 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tcp/smtp.c, mui/YAM,c: filtering the sent mails will now be done by the main
+    process, as the filter process might involve lots of actions which must not
+    be done from within a thread directly, i.e. GUI actions.
   * tcp/smtp.c, mui/YAM.c: added some more debug output to track down #218. Also
     made sure that the transfer list is correctly cleaned up to avoid memory
     leaks.

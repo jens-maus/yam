@@ -38,6 +38,7 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
+#include "YAM_find.h"
 #include "YAM_transfer.h"
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
@@ -864,6 +865,13 @@ DECLARE(DeleteMail) // struct Mail *mail, ULONG flags
   MA_DeleteSingle(msg->mail, msg->flags);
 
   return 0;
+}
+
+///
+/// DECLARE(FilterMail)
+DECLARE(FilterMail) // const struct MinList *filterList, struct Mail *mail
+{
+  return FI_FilterSingleMail(msg->filterList, msg->mail, NULL);
 }
 
 ///

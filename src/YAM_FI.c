@@ -1871,7 +1871,7 @@ void FilterMails(struct Folder *folder, struct MailList *mlist, int mode)
     else
       BusyGaugeInt(tr(MSG_FI_BUSYCHECKSPAM), "", mlist->count);
 
-      MA_StartMacro(MACRO_PREFILTER, NULL);
+    MA_StartMacro(MACRO_PREFILTER, NULL);
 
     m = 0;
     ForEachMailNode(mlist, mnode)
@@ -1951,7 +1951,7 @@ void FilterMails(struct Folder *folder, struct MailList *mlist, int mode)
     if(G->RuleResults.Checked != 0)
       AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_Filtering), G->RuleResults.Checked, folder->Name, matches);
 
-      MA_StartMacro(MACRO_POSTFILTER, NULL);
+    MA_StartMacro(MACRO_POSTFILTER, NULL);
 
     BusyEnd();
 

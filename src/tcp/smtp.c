@@ -1266,36 +1266,6 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
 }
 
 ///
-/// ApplySentFilters
-// apply the filters to the sent mail
-static BOOL ApplySentFilters(const struct MinList *filterList, struct Mail *mail)
-{
-  BOOL result = TRUE;
-  struct Node *curNode;
-
-  ENTER();
-
-  // apply all filters to the given mail
-  IterateList(filterList, curNode)
-  {
-    struct FilterNode *filter = (struct FilterNode *)curNode;
-
-    if(DoFilterSearch(filter, mail) == TRUE)
-    {
-      // for sent mails only the "execute" action will be performed
-      if(ExecuteFilterAction(filter, mail) == FALSE)
-      {
-        result = FALSE;
-        break;
-      }
-    }
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///
 /// SendMails
 BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode mode)
 {
@@ -1494,7 +1464,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
                       }
                       break;
 
-                      // 0 means that a error occured before the DATA part and
+                      // 0 means that an error occured before the DATA part and
                       // so we can abort the transaction cleanly by a RSET and QUIT
                       case 0:
                       {
@@ -1508,8 +1478,11 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
                       case 1:
                       {
                         setStatusToSent(mail->Reference);
-                        if(ApplySentFilters(sentMailFilters, mail->Reference) == TRUE)
+                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
+                        {
+                          // the filter process did not move the mail, hence we do it now
                           PushMethodOnStack(G->App, 6, MUIM_YAM_MoveCopyMail, mail->Reference, outfolder, sentfolder, FALSE, TRUE);
+                        }
                       }
                       break;
 
@@ -1517,8 +1490,11 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
                       case 2:
                       {
                         setStatusToSent(mail->Reference);
-                        if(ApplySentFilters(sentMailFilters, mail->Reference) == TRUE)
+                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
+                        {
+                          // the filter process did not delete the mail, hence we do it now
                           PushMethodOnStack(G->App, 3, MUIM_YAM_DeleteMail, mail->Reference, DELF_UPDATE_APPICON);
+                        }
                       }
                       break;
                     }
