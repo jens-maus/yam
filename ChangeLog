@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/smtp.c, mui/YAM.c: added some more debug output to track down #218. Also
+    made sure that the transfer list is correctly cleaned up to avoid memory
+    leaks.
+
 2010-09-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: fixed a NULL pointer access in the debug build during the filter

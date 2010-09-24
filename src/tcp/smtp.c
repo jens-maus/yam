@@ -1320,7 +1320,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
       struct MailNode *mnode;
       struct Node *curNode;
 
-      // start the PRESEND macro first
+      // start the PRESEND macro first and wait for it to terminate
       PushMethodOnStackWait(G->App, 3, MUIM_YAM_StartMacro, MACRO_PRESEND, NULL);
 
       // now we build the list of mails to be transfered.
@@ -1387,6 +1387,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
 
         snprintf(tc.transferGroupTitle, sizeof(tc.transferGroupTitle), tr(MSG_TR_MailTransferTo), host);
 
+        D(DBF_GUI, "create transfer control group");
         if((tc.transferGroup = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAM_CreateTransferGroup, mode, tc.transferGroupTitle, tc.conn, TRUE)) != NULL)
         {
           // now we have to check whether SSL/TLS is selected for SMTP account,
@@ -1397,6 +1398,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
           {
             struct MinList *sentMailFilters;
 
+            D(DBF_NET, "clone sent mail filters");
             if((sentMailFilters = CloneFilterList(APPLY_SENT)) != NULL)
             {
               enum ConnectError err;
@@ -1406,6 +1408,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
               PushMethodOnStack(tc.transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
               BusyText(tr(MSG_TR_MailTransferTo), host);
 
+              D(DBF_NET, "connecting to host '%s' port %ld", host, port);
               if((err = ConnectToHost(tc.conn, host, port)) == CONNECTERR_SUCCESS)
               {
                 BOOL connected = FALSE;
@@ -1625,22 +1628,23 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
           }
         }
 
-        while((curNode = RemHead((struct List *)transferList)) != NULL)
-        {
-          struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-
-          free(mtn->mail);
-          FreeSysObject(ASOT_NODE, curNode);
-        }
-
         PushMethodOnStack(G->App, 2, MUIM_YAM_DeleteTransferGroup, tc.transferGroup);
+      }
+
+      // remove any mail transfer nodes from the list and delete the list
+      while((curNode = RemHead((struct List *)transferList)) != NULL)
+      {
+        struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+
+        free(mtn->mail);
+        FreeSysObject(ASOT_NODE, curNode);
       }
 
       FreeSysObject(ASOT_LIST, transferList);
 
-      // start the POSTSEND macro so that others
-      // notice that the send process has finished.
-      PushMethodOnStackWait(G->App, 3, MUIM_YAM_StartMacro, MACRO_POSTSEND, NULL);
+      // start the POSTSEND macro so that others notice that the
+      // send process has finished. No need to wait for termination.
+      PushMethodOnStack(G->App, 3, MUIM_YAM_StartMacro, MACRO_POSTSEND, NULL);
     }
   }
 

@@ -775,6 +775,8 @@ DECLARE(CreateTransferGroup) // enum TransferType TRmode, const char *title, str
   // create a new transfer window if we don't have one yet
   if(data->transferWindow == NULL)
   {
+    D(DBF_GUI, "creating new transfer window, mode %ld", msg->TRmode);
+
     if((data->transferWindow = TransferWindowObject,
         MUIA_TransferWindow_Mode, msg->TRmode,
       End) != NULL)
@@ -785,17 +787,22 @@ DECLARE(CreateTransferGroup) // enum TransferType TRmode, const char *title, str
 
   if(data->transferWindow != NULL)
   {
+    D(DBF_GUI, "creating new transfer control group, title '%s'", msg->title);
+
     if((group = (Object *)DoMethod(data->transferWindow, MUIM_TransferWindow_CreateTransferControlGroup, msg->title)) != NULL)
     {
       // tell the control group about the connection being used
       set(group, MUIA_TransferControlGroup_Connection, msg->connection);
 
       if(msg->openWindow == TRUE)
+      {
+        D(DBF_GUI, "visible transfer window is requested");
         SafeOpenWindow(data->transferWindow);
+      }
     }
   }
 
-  RETURN(group);
+  RETURN((IPTR)group);
   return (IPTR)group;
 }
 
@@ -809,9 +816,11 @@ DECLARE(DeleteTransferGroup) // Object *transferGroup
 
   if(msg->transferGroup != NULL)
   {
+    D(DBF_GUI, "removing transfer control group %08lx", msg->transferGroup);
     if((BOOL)DoMethod(data->transferWindow, MUIM_TransferWindow_DeleteTransferControlGroup, msg->transferGroup) == TRUE)
     {
       // we just removed the last item, now close the window
+      D(DBF_GUI, "closing transfer window", msg->transferGroup);
       set(data->transferWindow, MUIA_Window_Open, FALSE);
       DoMethod(G->App, OM_REMMEMBER, data->transferWindow);
       MUI_DisposeObject(data->transferWindow);
