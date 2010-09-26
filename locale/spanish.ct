@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.9 (16.9.2010)
+## version $VER: YAM.catalog 7.10 (26.09.2010)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
@@ -891,11 +891,11 @@ Hola,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-;
+; 
 ;
 MSG_CO_AltRepPatternDef
 
-;
+; 
 ;
 MSG_CO_ForwardIntroDef
 *** Inicio de mensaje respuesta ***\\\\n\\\\nFecha: %c\\\\nDe: %n <%e>\\\\nAsunto: %s\\\\n\\\\n--- Seguimiento del mensaje reenviado ---\\\\n\\\\n
@@ -911,15 +911,15 @@ Saludos Cordiales
 ;
 MSG_CO_AltRepHelloDef
 
-;
+; 
 ;
 MSG_CO_AltRepByeDef
 
-;
+; 
 ;
 MSG_CO_MLRepHelloDef
 
-;
+; 
 ;
 MSG_CO_MLRepIntroDef
 El %c, %n escribió:\\\\n
@@ -7899,53 +7899,69 @@ Usar patrón AmigaDOS
 MSG_HELP_FI_CH_DOS_PATTERN
 Activa patrones de AmigaDOS\nen la búsqueda de cadena de texto.
 ; Enable AmigaDOS patterns\nin the string search.
-MSG_ERROR_METHODSTACK
-No se puede iniciar método de pila.
-; Cannot initialize method stack.
-MSG_EXECUTE_COMMAND_FAILED
-La ejecución del comando '%s' ha fallado (código de error %ld: %s).
-; The execution of the command '%s' failed (error code %ld: %s).
-MSG_THREAD_EXIT_WARNING_BT
-_Reintentar|_Ignorar
-; _Retry|_Ignore
+;
+MSG_CTapplicationpgpsig
+Firma PGP
+; PGP signature
+;
+MSG_AB_BirthdayReqBody
+Hoy, el %s, %s cumple %ld años. ¿Desea enviarle una tarjeta de felicitación?
+; Today, on %s, %s reaches age %ld.\n\nDo you want to send a greetings card?
+;
+MSG_ER_AREXX_EXECUTION_ERROR
+La ejecución del comando ARexx '%s' ha fallado (código de error %ld).\nPor favor, asegúrese de que el archivo es accesible y es un script válido de comandos ARexx.
+; Execution of the ARexx command '%s' failed (error code %ld).\nPlease make sure that the file is accessible and is a valid ARexx script.
+;
+MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
+No mostrar esta solicitud hoy de nuevo.
+; Do not show this requester today again.
+;
+MSG_TR_NEW_MAIL_NOTIFY_ONE
+Recibido 1 nuevo mensaje.
+; Received 1 new mail.
+;
+MSG_TR_NEW_MAIL_NOTIFY_MANY
+Recibidos %ld nuevos mensajes.
+; Received %ld new mails.
+;
+MSG_RE_SAVE_FILE
+Salvar archivo
+; Save file
+;
+MSG_UPD_NO_UPDATES_FOUND_TITLE
+No hay actualizaciones disponibles
+; No software updates available
+;
+MSG_UPD_NO_UPDATES_FOUND
+No hay actualizaciones de software.\n%s
+; There are no software updates available.\n%s
+;
+MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
+YAM comprobará automáticamente actualizaciones disponibles.
+; YAM will check for available updates automatically.
+;
+MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
+Por favor, inténtelo de nuevo más tarde o active el\nsoftware automático de verificación de actualizaciones.
+; Please try again later or activate the automatic\nsoftware update check.
+;
+MSG_THREAD_EXIT_WARNING_TITLE
+Aviso YAM
+; YAM warning
+;
 MSG_THREAD_EXIT_WARNING
 Mientras trataba de limpiar YAM se han encontrado temas aún en ejecución\n. Por favor asegúrese de cerrar todos los temas\nexistentes (p.ej. visores MIME, etc.) iniciados\ndesde YAM.\n\nQuiere volver \
 a intentarlo para quitar YAM o ignorar los temas\nen ejecución (podrían acabar en posteriores fallos del sistema)?
 ; While trying to cleanup YAM still running sub threads\nhave been found. Please make sure to close all still\nexisting sub threads (e.g. MIME viewers, etc.) you may\nhave initiated from YAM.\n\nDo you want to retry to quit YAM or ignore the still\nrunning sub thread (which could end up in later crashes)?
-MSG_THREAD_EXIT_WARNING_TITLE
-Aviso YAM
-; YAM warning
-MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
-Por favor, inténtelo de nuevo más tarde o active el\nsoftware automático de verificación de actualizaciones.
-; Please try again later or activate the automatic\nsoftware update check.
-MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
-YAM comprobará automáticamente actualizaciones disponibles.
-; YAM will check for available updates automatically.
-MSG_UPD_NO_UPDATES_FOUND
-No hay actualizaciones de software.\n%s
-; There are no software updates available.\n%s
-MSG_UPD_NO_UPDATES_FOUND_TITLE
-No hay actualizaciones disponibles
-; No software updates available
-MSG_RE_SAVE_FILE
-Salvar archivo
-; Save file
-MSG_TR_NEW_MAIL_NOTIFY_MANY
-Recibidos %ld nuevos mensajes.
-; Received %ld new mails.
-MSG_TR_NEW_MAIL_NOTIFY_ONE
-Recibido 1 nuevo mensaje.
-; Received 1 new mail.
-MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
-No mostrar esta solicitud hoy de nuevo.
-; Do not show this requester today again.
-MSG_ER_AREXX_EXECUTION_ERROR
-La ejecución del comando ARexx '%s' ha fallado (código de error %ld).\nPor favor, asegúrese de que el archivo es accesible y es un script válido de comandos ARexx.
-; Execution of the ARexx command '%s' failed (error code %ld).\nPlease make sure that the file is accessible and is a valid ARexx script.
-MSG_AB_BirthdayReqBody
-Hoy, el %s, %s cumple %ld años. ¿Desea enviarle una tarjeta de felicitación?
-; Today, on %s, %s reaches age %ld.\n\nDo you want to send a greetings card?
-MSG_CTapplicationpgpsig
-Firma PGP
-; PGP signature
+;
+MSG_THREAD_EXIT_WARNING_BT
+_Reintentar|_Ignorar
+; _Retry|_Ignore
+;
+MSG_EXECUTE_COMMAND_FAILED
+La ejecución del comando '%s' ha fallado (código de error %ld: %s).
+; The execution of the command '%s' failed (error code %ld: %s).
+;
+MSG_ERROR_METHODSTACK
+No se puede iniciar método de pila.
+; Cannot initialize method stack.
 ;
