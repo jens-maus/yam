@@ -1,14 +1,14 @@
-Short:        YAM 2.6 - MUI-based E-mail client
+Short:        YAM 2.6p1 - MUI-based E-mail client
 Author:       YAM Open Source Team (http://www.yam.ch/)
 Uploader:     Jens Langner <Jens.Langner@light-speed.de>
 Type:         comm/yam
-Version:      2.6
-Replaces:     comm/yam/YAM25*
+Version:      2.6p1
+Replaces:     comm/yam/YAM26*
 Requires:     AmigaOS 3.0+, MorphOS or AROS, MUI 3.8+, 68020+/PPC604e+
 Architecture: ppc-amigaos >= 4.0.5; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2; i386-aros; ppc-aros; x86_64-aros
 
 ---------------------------------------------------------------------------
-                           YAM - Version 2.6
+                          YAM - Version 2.6p1
 ---------------------------------------------------------------------------
 
 About YAM
@@ -28,7 +28,7 @@ year 2000 a group of mixed developers maintain YAM and release new versions
 from time  to time.  While these  versions are all  targeted for  the Amiga
 platform,  versions of  different AmigaOS  incarnations are  supplied. This
 includes native  PowerPC ports to  modern Amiga platforms like  AmigaOS4 or
-MorphOS.
+MorphOS. But also releases for the AmigaOS reimplementation project AROS.
 
 
 Before you start the installation
@@ -55,11 +55,12 @@ Afterwards you  may manually import  the mails from your  old installation.
 What's new
 ----------
 Here's a  list (in  alphabetical order)  of the  brave developers  who have
-contributed   to    this   release    since   the   last    official   one:
+contributed  to the 2.6 release line up to now:
 
               Alexey Ivanov
               David Rey
               Guenther Nikl
+              Frank Weber
               Jens Langner
               Joerg Strohmayer
               Matthias Rustler
@@ -67,7 +68,38 @@ contributed   to    this   release    since   the   last    official   one:
               Thore Boeckelmann
 
 And here's a  PARTIAL list of the  changes in this version  with respect to
-the previous official update:
+the previous official update (2.5):
+
+YAM 2.6p1 (bugfix release):
+
+- improved general stability by having fixed several memory leaks, important
+  bugs and situations where YAM crashed under certain circumstances.
+- fixed the tons of "empty" themes warnings in case NOIMAGEWARNING tooltype
+  or a themes "NoImageWarning" option is set.
+- fixed the "Jump on XXX" config settings to better interact with each other.
+- fixed keyboard usage (cursor left/right) to switch between the folder and
+  mail list.
+- fixed some endianess cases so that the AROS build for i386 works more
+  smoothly.
+- fixed the spam filter to handle its 'inactive' state better and not reset
+  all values anymore on that occassion. Now it is possibile to turn off
+  the SPAM filter all together.
+- fixed display of the poppen objects for MUI 3.8 installations.
+- the attachment show window will now display the mail part description
+  in a separate column.
+- fixed problems with important mails containing X-Status: and Status:
+  as local headers.
+- fixed bug in the "avoid duplicates" functionality which caused that
+  not all mails have been shown in a preselection window.
+- updated the included AISS based theme to require at least AISS 4.8
+- fixed the mail attachment management to not use internal file names
+  for the "Content-Disposition" header of attachments.
+- fixed mail search functionality to correctly handle mail header searches.
+- fixed XPK packer scanning to show all installed packers correctly.
+- fixed the startup to handle multi user installation more smoothly.
+- fixed the installation script to get the installation going again.
+
+YAM 2.6:
 
 - updated translations for czech, french, german, greek, italian and swedish
   language.

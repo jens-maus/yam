@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+#### YAM 2.6p1 RELEASE ##################################################
+
+2010-09-26 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: final YAM 2.6p1 release preparations.
+  * YAM.c: bumped all minimum required versions of all required mcc classes
+    and libraries to the latest versions.
+
 2010-09-21 Pär Boberg <pbobbenb@spray.se>
 
   * doc/Install-YAM: updated the swedish section of the script.

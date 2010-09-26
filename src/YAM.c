@@ -1862,7 +1862,7 @@ static void InitBeforeLogin(BOOL hidden)
   INITLIB("openurl.library",        1, 0, &OpenURLBase,   "main", 1, &IOpenURL,   FALSE, NULL);
 
   // try to open the mandatory codesets.library
-  INITLIB("codesets.library",       6, 8, &CodesetsBase,  "main", 1, &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
+  INITLIB("codesets.library",       6, 12, &CodesetsBase,  "main", 1, &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
 
   // try to open expat.library for our XML import stuff
   INITLIB("expat.library", XML_MAJOR_VERSION, 0, &ExpatBase, "main", 1, &IExpat, FALSE, NULL);
@@ -1892,23 +1892,23 @@ static void InitBeforeLogin(BOOL hidden)
   #endif
 
   // Lets check for the correct TheBar.mcc version
-  CheckMCC(MUIC_TheBar,     26, 2, TRUE, "http://www.sf.net/projects/thebar/");
-  CheckMCC(MUIC_TheBarVirt, 26, 2, TRUE, "http://www.sf.net/projects/thebar/");
-  CheckMCC(MUIC_TheButton,  26, 2, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheBar,     26, 7, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheBarVirt, 26, 7, TRUE, "http://www.sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheButton,  26, 7, TRUE, "http://www.sf.net/projects/thebar/");
 
   // Lets check for the correct BetterString.mcc version
-  CheckMCC(MUIC_BetterString, 11, 16, TRUE, "http://www.sf.net/projects/bstring-mcc/");
+  CheckMCC(MUIC_BetterString, 11, 20, TRUE, "http://www.sf.net/projects/bstring-mcc/");
 
   // we also make sure the user uses the latest brand of all other NList classes, such as
   // NListview, NFloattext etc.
-  CheckMCC(MUIC_NList,      20, 121, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NListview,  19,  76, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NFloattext, 19,  57, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NListtree,  18,  28, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NBalance,   15,   2, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NList,      20, 127, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NListview,  19,  82, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NFloattext, 19,  63, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NListtree,  18,  34, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NBalance,   15,   8, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
   // Lets check for the correct TextEditor.mcc version
-  CheckMCC(MUIC_TextEditor, 15, 28, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+  CheckMCC(MUIC_TextEditor, 15, 36, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
   // initialize the thread system of YAM
   if(InitThreads() == FALSE)
