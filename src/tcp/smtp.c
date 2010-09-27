@@ -1481,7 +1481,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
                         if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
                         {
                           // the filter process did not move the mail, hence we do it now
-                          PushMethodOnStack(G->App, 6, MUIM_YAM_MoveCopyMail, mail->Reference, outfolder, sentfolder, FALSE, TRUE);
+                          PushMethodOnStackWait(G->App, 6, MUIM_YAM_MoveCopyMail, mail->Reference, outfolder, sentfolder, FALSE, TRUE);
                         }
                       }
                       break;
@@ -1493,12 +1493,14 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
                         if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
                         {
                           // the filter process did not delete the mail, hence we do it now
-                          PushMethodOnStack(G->App, 3, MUIM_YAM_DeleteMail, mail->Reference, DELF_UPDATE_APPICON);
+                          PushMethodOnStackWait(G->App, 3, MUIM_YAM_DeleteMail, mail->Reference, DELF_UPDATE_APPICON);
                         }
                       }
                       break;
                     }
                   }
+
+                  PushMethodOnStack(tc.transferGroup, 1, MUIM_TransferControlGroup_Finish);
 
                   if(tc.conn->error == CONNECTERR_NO_ERROR)
                     AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_Sending), numberOfMails, host);
@@ -1530,8 +1532,6 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
                 // and all possible SSL connection stuff
                 DisconnectFromHost(tc.conn);
               }
-
-              PushMethodOnStack(tc.transferGroup, 1, MUIM_TransferControlGroup_Finish);
 
               // if we got an error here, let's throw it
               switch(err)
