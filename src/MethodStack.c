@@ -122,23 +122,18 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
   if((pm = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*pm),
                                             TAG_DONE)) != NULL)
   {
-    va_list args;
-    ULONG i;
+    VA_LIST args;
 
-    va_start(args, argCount);
+    VA_START(args, argCount);
 
     // fill in the data
     pm->object = obj;
     // execute this one asynchronous
     pm->flags = 0;
     pm->argCount = argCount;
-    if((pm->args = calloc(1, argCount*sizeof(IPTR))))
-    {
-      for(i = 0; i < argCount; i++)
-        pm->args[i] = va_arg(args, IPTR);
-    }
+    pm->args = memdup(VA_ARG(args, IPTR), argCount*sizeof(IPTR));
 
-    va_end(args);
+    VA_END(args);
 
     // push the method on the stack
     PutMsg(G->methodStack, (struct Message *)pm);
@@ -164,23 +159,18 @@ IPTR VARARGS68K PushMethodOnStackWait(Object *obj, ULONG argCount, ...)
   if((pm = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*pm),
                                             TAG_DONE)) != NULL)
   {
-    va_list args;
-    ULONG i;
+    VA_LIST args;
 
-    va_start(args, argCount);
+    VA_START(args, argCount);
 
     // fill in the data
     pm->object = obj;
     // execute this one synchronous
     pm->flags = PMF_SYNC;
     pm->argCount = argCount;
-    if((pm->args = calloc(1, argCount*sizeof(IPTR))))
-    {
-      for(i = 0; i < argCount; i++)
-        pm->args[i] = va_arg(args, IPTR);
-    }
+    pm->args = memdup(VA_ARG(args, IPTR), argCount*sizeof(IPTR));
 
-    va_end(args);
+    VA_END(args);
 
     if(IsMainThread() == TRUE)
     {

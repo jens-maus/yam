@@ -5,11 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MethodStack.c: the arguments are no longer copied one by one, but using a
+    single memcpy() call.
+
 2010-09-26 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: updated spanish catalog translation - bug fixed.
   * help guide in spanish language adapted from v2.4 to v2.7; updated with
-     last new features of the program.
+    last new features of the program.
 
 2010-09-24 Thore Böckelmann <tboeckel@gmx.de>
 
