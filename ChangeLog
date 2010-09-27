@@ -7,6 +7,8 @@ $URL$
 
 2010-09-27 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/TransferWindow.c: removing the last control group will now dispose the
+    window object immediately instead of disposing the group first.
   * tcp/smtp.c: make sure that the final stats are displayed before the transfer
     window is closed and that the filters are applied synchronously.
   * MethodStack.c: the arguments are no longer copied one by one, but using a

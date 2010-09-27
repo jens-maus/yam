@@ -818,14 +818,19 @@ DECLARE(DeleteTransferGroup) // Object *transferGroup
   if(msg->transferGroup != NULL)
   {
     D(DBF_GUI, "removing transfer control group %08lx", msg->transferGroup);
-    if((BOOL)DoMethod(data->transferWindow, MUIM_TransferWindow_DeleteTransferControlGroup, msg->transferGroup) == TRUE)
+    if(xget(data->transferWindow, MUIA_TransferWindow_NumberOfControlGroups) == 1)
     {
-      // we just removed the last item, now close the window
+      // we are about to remove the last group, just dispose the window instead
       D(DBF_GUI, "closing transfer window", msg->transferGroup);
       set(data->transferWindow, MUIA_Window_Open, FALSE);
       DoMethod(G->App, OM_REMMEMBER, data->transferWindow);
       MUI_DisposeObject(data->transferWindow);
       data->transferWindow = NULL;
+    }
+    else
+    {
+      // remove the group and keep the others
+      DoMethod(data->transferWindow, MUIM_TransferWindow_DeleteTransferControlGroup, msg->transferGroup);
     }
   }
 

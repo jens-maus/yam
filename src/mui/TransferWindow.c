@@ -80,6 +80,25 @@ OVERLOAD(OM_NEW)
 }
 
 ///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  GETDATA;
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(NumberOfControlGroups):
+    {
+      *store = xget(data->transferList, MUIA_ObjectList_ItemCount);
+      return TRUE;
+    }
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
 
 /* Private Functions */
 
@@ -112,10 +131,15 @@ DECLARE(DeleteTransferControlGroup) // Object *group
 
   ENTER();
 
-  DoMethod(data->transferList, MUIM_ObjectList_RemoveItem, msg->group);
+  // check if we are about to remove the last item in the list
+  if(xget(data->transferList, MUIA_ObjectList_ItemCount) == 1)
+  {
+    lastItem = TRUE;
+    // close the window before the item is removed
+    set(obj, MUIA_Window_Open, FALSE);
+  }
 
-  // check if this was the last item in the list
-  lastItem = (xget(data->transferList, MUIA_ObjectList_ItemCount) == 0);
+  DoMethod(data->transferList, MUIM_ObjectList_RemoveItem, msg->group);
 
   RETURN(lastItem);
   return lastItem;

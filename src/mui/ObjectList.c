@@ -247,7 +247,9 @@ DECLARE(AddItem) // Object *item
 
   if(msg->item != NULL && DoMethod(data->virtgroup, MUIM_Group_InitChange))
   {
+    // remove the spacer item first, we want this as the last one
     DoMethod(data->virtgroup, OM_REMMEMBER, data->spacer);
+    // now add the new item and the spacer item after that one
     DoMethod(data->virtgroup, OM_ADDMEMBER, msg->item);
     DoMethod(data->virtgroup, OM_ADDMEMBER, data->spacer);
     DoMethod(data->virtgroup, MUIM_Group_ExitChange);
