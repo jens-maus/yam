@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.19 (15.09.2010) (c) 2000-2010 by YAM Open Source Team
+; $VER: Install-YAM 1.20 (28.09.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -28,6 +28,7 @@
 (set #def_doc_english              $00)
 (set #def_doc_german               $01)
 (set #def_doc_french               $02)
+(set #def_doc_spanish              $04)
 ; add more languages here
 ; (set #def_doc_<language name>       bitmask)
 ; ///
@@ -436,6 +437,7 @@
         (choices "English"
                  "Deutsch (von YAM 2.4)"
                  "Français"
+                 "Español"
         )
         (default #def_doc_lang)
     )
@@ -748,6 +750,19 @@
     (
         (copyfiles
             (source "/Docs/YAM_french.guide")
+            (dest YAM_dir)
+            (newname "YAM.guide")
+            (infos)
+            (noposition)
+            (help @copyfiles-help)
+        )
+    )
+)
+
+(if (= doc_lang #def_doc_spanish)
+    (
+        (copyfiles
+            (source "/Docs/YAM_spanish.guide")
             (dest YAM_dir)
             (newname "YAM.guide")
             (infos)
