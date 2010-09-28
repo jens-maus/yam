@@ -65,7 +65,7 @@ done
 echo "  MK $yamsys/Docs"
 mkdir -p "release/$yamsys/YAM $yamver/Docs"
 cp ../icons/$1/Docs_directory.info "release/$yamsys/YAM $yamver/Docs.info"
-for language in english french german; do
+for language in english french german spanish; do
   cp ../doc/YAM_$language.guide "release/$yamsys/YAM $yamver/Docs/YAM_$language.guide"
   cp ../icons/$1/guide.info "release/$yamsys/YAM $yamver/Docs/YAM_$language.guide.info"
 done
