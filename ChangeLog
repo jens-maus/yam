@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: opening the address book window again will now correctly activate
+    the To/CC/BCC buttons depending on whether there is an active entry or not.
+
 2010-09-01 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest development changes.

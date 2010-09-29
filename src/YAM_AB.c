@@ -2921,6 +2921,7 @@ HOOKPROTONHNO(AB_OpenFunc, void, LONG *arg)
 {
   struct AB_ClassData *ab = G->AB;
   const char *md = "";
+  BOOL nodeActive;
 
   ENTER();
 
@@ -2940,12 +2941,12 @@ HOOKPROTONHNO(AB_OpenFunc, void, LONG *arg)
   ab->winNumber = (*md != '\0' ? arg[1] : -1);
   ab->Modified = FALSE;
 
-  // disable the To/CC/BCC buttons regardless of the config mode, because we start
-  // with no active tree entry
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, ab->GUI.BT_TO,
-                                                       ab->GUI.BT_CC,
-                                                       ab->GUI.BT_BCC,
-                                                       NULL);
+  // enable/disable the To/CC/BCC buttons depending on whether there is an active entry or not
+  nodeActive = ((struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active) != NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, nodeActive == FALSE, ab->GUI.BT_TO,
+                                                                      ab->GUI.BT_CC,
+                                                                      ab->GUI.BT_BCC,
+                                                                      NULL);
   DoMethod(ab->GUI.TB_TOOLBAR, MUIM_AddrBookToolbar_UpdateControls);
 
 
@@ -2978,7 +2979,7 @@ HOOKPROTONHNONP(AB_Close, void)
     }
   }
 
-  if(closeWin)
+  if(closeWin == TRUE)
     set(G->AB->GUI.WI, MUIA_Window_Open, FALSE);
 
   LEAVE();
