@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.9 (01.09.2010)
+## version $VER: YAM.catalog 7.10 (29.09.2010)
 ## language polski
 ## codeset 5
 ;
@@ -9869,4 +9869,8 @@ Wykonanie polecenia \"%s\" zakoñczone niepowodzeniem (kod b³êdu %ld: %s).
 MSG_ERROR_METHODSTACK
 Nie mo¿na zainicjalizowaæ stosu metod.
 ; Cannot initialize method stack.
+;
+MSG_TRANSFERS_IN_PROGRESS
+Trwa przesy³anie danych
+; Transfers in progress
 ;

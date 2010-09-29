@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-01 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest development changes.
+
 2010-09-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/TransferWindow.c: removing the last control group will now dispose the
