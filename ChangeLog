@@ -8,6 +8,7 @@ $URL$
 2010-09-01 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest development changes.
+  * doc/YAM-install: added polish translation (only ASCII due to differences between AmigaPL and ISO-8859-2)
 
 2010-09-27 Thore Böckelmann <tboeckel@gmx.de>
 
