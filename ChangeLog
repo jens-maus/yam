@@ -7,6 +7,7 @@ $URL$
 
 2010-09-29 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/YAM.c: fall back to a default icon in case there is no application icon.
   * YAM_TR.c: the POP3 detail download stopped one mail too early and left the
     last line in the preselection window empty. Now YAM correctly advances until
     the last mail. This closes #223.

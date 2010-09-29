@@ -34,6 +34,7 @@
 #if defined(__amigaos4__)
 #include <proto/application.h>
 #endif
+#include <workbench/icon.h>
 
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
@@ -564,9 +565,14 @@ OVERLOAD(OM_NEW)
   AddPath(filebuf, G->ProgDir, G->ProgName, sizeof(filebuf));
 
   if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
-   G->HideIcon = (struct DiskObject *)GetIconTags(filebuf, TAG_DONE);
+  {
+    G->HideIcon = (struct DiskObject *)GetIconTags(filebuf, ICONGETA_FailIfUnavailable, FALSE,
+                                                            TAG_DONE);
+  }
   else
-   G->HideIcon = GetDiskObject(filebuf);
+  {
+    G->HideIcon = GetDiskObjectNew(filebuf);
+  }
 
   // set up the version string for the Commodity title
   // the string MUST include the "$VER:" cookie, because this one will be stripped
