@@ -184,14 +184,13 @@ OVERLOAD(OM_NEW)
       data->EventHandlerAdded = TRUE;
 
       // set the doubleclick notify to signal the string to resolve a entry
-      DoMethod(listview, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, data->String, 2, MUIM_Recipientstring_Resolve, MUIF_NONE);
-      DoMethod(listview, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-      DoMethod(list, MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, MUIM_Addrmatchlist_ActiveChange, MUIV_TriggerValue);
+      DoMethod(listview, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, obj, 1, METHOD(AddRecipient));
+      DoMethod(list, MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, METHOD(ActiveChange), MUIV_TriggerValue);
     }
   }
 
-  RETURN(obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///
@@ -278,7 +277,7 @@ DECLARE(ChangeWindow)
               MUIA_Window_Width,      _width(data->String));
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -331,6 +330,7 @@ DECLARE(Event) // struct IntuiMessage *imsg
   RETURN(result);
   return result;
 }
+
 ///
 /// DECLARE(Open)
 DECLARE(Open) // char *str
@@ -377,6 +377,7 @@ DECLARE(Open) // char *str
   RETURN(result);
   return (IPTR)result;
 }
+
 ///
 /// DECLARE(ActiveChange)
 DECLARE(ActiveChange) // LONG active
@@ -433,8 +434,29 @@ DECLARE(ActiveChange) // LONG active
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
-///
 
+///
+/// DECLARE(AddRecipient)
+DECLARE(AddRecipient)
+{
+  GETDATA;
+
+  ENTER();
+
+  // adding the recipient is done by simply resolving the address, as the
+  // recipient itself has been added already by selecting one entry from
+  // our list
+  DoMethod(data->String, MUIM_Recipientstring_Resolve, MUIF_NONE);
+  // append a comma and a space to allow easy further input
+  DoMethod(data->String, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
+  // close the window
+  set(obj, MUIA_Window_Open, FALSE);
+
+  LEAVE();
+  return 0;
+}
+
+///
