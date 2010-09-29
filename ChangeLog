@@ -10,7 +10,7 @@ $URL$
   * YAM_AB.c: opening the address book window again will now correctly activate
     the To/CC/BCC buttons depending on whether there is an active entry or not.
 
-2010-09-01 Mariusz Danilewicz <mandi@interia.pl>
+2010-09-29 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest development changes.
   * doc/YAM-install: added polish translation (only ASCII due to differences between AmigaPL and ISO-8859-2)
