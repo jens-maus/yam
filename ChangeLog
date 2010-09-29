@@ -7,6 +7,9 @@ $URL$
 
 2010-09-29 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_TR.c: the POP3 detail download stopped one mail too early and left the
+    last line in the preselection window empty. Now YAM correctly advances until
+    the last mail. This closes #223.
   * doc/Install-YAM: fixed indentation and corrected language name for polish
     translation. Also set english guide to be the default for all languages with
     no native guide.

@@ -1537,9 +1537,8 @@ void TR_CompleteMsgList(void)
   if(C->PreSelection < PSM_ALWAYSLARGE)
   {
     struct Node *curNode = (struct Node *)tr->GMD_Mail;
-    struct Node *nextNode;
 
-    for(; (nextNode = GetSucc(curNode)) != NULL && xget(tr->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && tr->connection->error == CONNECTERR_NO_ERROR; curNode = nextNode)
+    while(curNode != NULL && xget(tr->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && tr->connection->error == CONNECTERR_NO_ERROR)
     {
       struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
@@ -1558,8 +1557,10 @@ void TR_CompleteMsgList(void)
 
         // set the next mail as the active one for the display,
         // so that if the user pauses we can go on here
-        tr->GMD_Mail = (struct MinNode *)nextNode;
+        tr->GMD_Mail = (struct MinNode *)curNode;
       }
+
+      curNode = GetSucc(curNode);
     }
   }
 
