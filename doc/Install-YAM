@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.20 (28.09.2010) (c) 2000-2010 by YAM Open Source Team
+; $VER: Install-YAM 1.21 (29.09.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sφnke Tesch/ATO
 ;
 ; $Id$
@@ -110,41 +110,41 @@
 )
 ; ///
 ; /// ***** Polish
-(if (= @language "polish")
+(if (= @language "polski")
     (
         (set #def_cat_lang #def_lang_polish)
         (set #def_doc_lang #def_doc_english)
-	(set #acknowledgeOS (cat "Prosze potwierdzic automatycznie\n"
-	                         "wykryty system operacyjny:"))
-	(set #YAM_dir  (cat "Prosze wybrac katalog dla programu YAM\n"
-	                    "(NIE zostanie utworzony dodatkowy podkatalog!)"))
-	(set #lang_catalog (cat "Ktore pliki lokalizacyjne chcesz zainstalowac?\n"
-	                        "(jezyk angielski jest wbudowany)"))
-	(set #lang_manual "Wybierz jezyk pliku pomocy AmigaGuide")
-	(set #ask_charsets "Czy chcesz zainstalowac wymagane przez codesets.library pliki zestawow znakow?")
-	(set #no_way_back_warning (cat "OSTRZEZENIE!!\n"
-	                               "(jesli chcesz uaktualnic istniejaca instalacje programu YAM 2.4)\n"
-	                               "\n"
-	                               "Zostal calkowicie zmieniony system nazywania plikow wiadomosci. Przy pierwszym uruchomieniu programu YAM 2.6, wszystkie istniejace wiadomosci zostana automatycznie przekonwertowane na nowy format. Po tej czynnosci YAM 2.4 nie bedzie potrafil juz ich obsluzyc. Lepiej wykonaj kopie bezpieczenstwa WSZYSTKICH swoich wiadomosci PRZED uruchomieniem programu YAM 2.6.\n"
-	                               "\n"
-	                               "Jednakze nie stanowi zadnego problemu zainstalowanie programow YAM 2.4 i 2.6 w osobnych katalogach."))
-	(set #faq_and_bugtracker (cat "\n"
-	                              "Jesli masz jakies pytania dotyczace programu, mozesz je zadac na forum:\n"
-	                              "http://forum.yam.ch/\n"
-	                              "\n"
-	                              "Najczesciej zadawane pytania sa juz zebrane w FAQ:\n"
-	                              "http://faq.yam.ch/\n"
-	                              "\n"
-	                              "W przypadku znalezienia bledu w programie, prosze dokonac zgloszenia na:\n"
-	                              "http://bugs.yam.ch/"))
-	(set #done_1   (cat "\n"
-	                    "Program YAM zostal zainstalowany pomyslnie.\n"
-	                    "\n"
-	                    "Dwukliknij na ikonce \"YAM\" w katalogu\n"))
-	(set #done_2   (cat "\n"
-	                    "by go wyprobowac.\n"
-	                    "\n"
-	                    "Milej zabawy..."))
+        (set #acknowledgeOS (cat "Prosze potwierdzic automatycznie\n"
+                                 "wykryty system operacyjny:"))
+        (set #YAM_dir  (cat "Prosze wybrac katalog dla programu YAM\n"
+                            "(NIE zostanie utworzony dodatkowy podkatalog!)"))
+        (set #lang_catalog (cat "Ktore pliki lokalizacyjne chcesz zainstalowac?\n"
+                                "(jezyk angielski jest wbudowany)"))
+        (set #lang_manual "Wybierz jezyk pliku pomocy AmigaGuide")
+        (set #ask_charsets "Czy chcesz zainstalowac wymagane przez codesets.library pliki zestawow znakow?")
+        (set #no_way_back_warning (cat "OSTRZEZENIE!!\n"
+                                       "(jesli chcesz uaktualnic istniejaca instalacje programu YAM 2.4)\n"
+                                       "\n"
+                                       "Zostal calkowicie zmieniony system nazywania plikow wiadomosci. Przy pierwszym uruchomieniu programu YAM 2.6, wszystkie istniejace wiadomosci zostana automatycznie przekonwertowane na nowy format. Po tej czynnosci YAM 2.4 nie bedzie potrafil juz ich obsluzyc. Lepiej wykonaj kopie bezpieczenstwa WSZYSTKICH swoich wiadomosci PRZED uruchomieniem programu YAM 2.6.\n"
+                                       "\n"
+                                       "Jednakze nie stanowi zadnego problemu zainstalowanie programow YAM 2.4 i 2.6 w osobnych katalogach."))
+        (set #faq_and_bugtracker (cat "\n"
+                                      "Jesli masz jakies pytania dotyczace programu, mozesz je zadac na forum:\n"
+                                      "http://forum.yam.ch/\n"
+                                      "\n"
+                                      "Najczesciej zadawane pytania sa juz zebrane w FAQ:\n"
+                                      "http://faq.yam.ch/\n"
+                                      "\n"
+                                      "W przypadku znalezienia bledu w programie, prosze dokonac zgloszenia na:\n"
+                                      "http://bugs.yam.ch/"))
+        (set #done_1   (cat "\n"
+                            "Program YAM zostal zainstalowany pomyslnie.\n"
+                            "\n"
+                            "Dwukliknij na ikonce \"YAM\" w katalogu\n"))
+        (set #done_2   (cat "\n"
+                            "by go wyprobowac.\n"
+                            "\n"
+                            "Milej zabawy..."))
     )
 )
 ; ///
@@ -152,6 +152,7 @@
 (if (= @language "svenska")
     (
         (set #def_cat_lang #def_lang_swedish)
+        (set #def_doc_lang #def_doc_english)
         (set #acknowledgeOS (cat "Var god bekrδfta den automatiska\n"
                                  "detekteringen av ditt operativsystem:"))
         (set #YAM_dir  (cat "Vδlj katalog att installera YAM i\n"
@@ -229,6 +230,7 @@
 (if (= @language "czech")
     (
         (set #def_cat_lang #def_lang_czech)
+        (set #def_doc_lang #def_doc_english)
         (set #YAM_dir  (cat "Vyberte prosνm cνlovύ adresαψ pro YAM\n"
                             "(Instalαtor Ύαdnύ adresαψ nevytvoψν!)"))
         (set #lang_catalog (cat "Kterι z pψekladω chcete nainstalovat?\n"
@@ -265,6 +267,7 @@
 (if (= @language "italiano")
     (
         (set #def_cat_lang #def_lang_italian)
+        (set #def_doc_lang #def_doc_english)
         (set #acknowledgeOS (cat "Per favore istruisci il sistema ad auto-rilevare\n"
                          "i file necessari per il sistema operativo in uso:"))
         (set #YAM_dir  (cat "Per favore seleziona una directory per YAM\n"
@@ -303,6 +306,7 @@
 (if (= @language "greek")
     (
         (set #def_cat_lang #def_lang_greek)
+        (set #def_doc_lang #def_doc_english)
         (set #YAM_dir  (cat "Παρακαλώ επιλέξτε ένα κατάλογο για το YAM.\n"
                             "(ΔΕΝ θα δημιουργηθεί επιπλέον φάκελος)"))
         (set #lang_catalog (cat "Ποιό αρχείο καταλόγου θέλετε να εγκαταστήσετε;\n"

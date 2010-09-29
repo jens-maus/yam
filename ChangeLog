@@ -7,6 +7,9 @@ $URL$
 
 2010-09-29 Thore Böckelmann <tboeckel@gmx.de>
 
+  * doc/Install-YAM: fixed indentation and corrected language name for polish
+    translation. Also set english guide to be the default for all languages with
+    no native guide.
   * mui/Addrmatchlist.c: double clicking an entry in the match list will now
     append a comma and a space just like pressing Return does. This closes #203.
   * YAM_AB.c: opening the address book window again will now correctly activate
