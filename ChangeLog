@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-30 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: update to the latest changes.
+  * doc/Install-YAM: added spanish translation.
+
 2010-09-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * AppIcon.c, DockyIcon.c: slightly reworked the Docky icon logic to always

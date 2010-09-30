@@ -1,8 +1,8 @@
-## version $VER: YAM.catalog 7.10 (26.09.2010)
+## version $VER: YAM.catalog 7.11 (30.09.2010)
 ## codeset 0
 ## language español
-## chunk AUTH Emilio Jimenez
-; YAM.cd - YAM 2.6 catalog description file
+## chunk AUTH Emilio Jimenez <ejim@ono.com>
+; YAM.cd - YAM 2.7 catalog description file
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -221,7 +221,7 @@ Fecha Compilación:
 ;
 MSG_UserLogin
 Pulsa tu nombre para identificarte
-; Click your name to login
+; Click your name to login:
 ;
 MSG_ErrorStartup
 Error durante el inicio
@@ -871,11 +871,11 @@ Por favor repite la clave:
 ;
 MSG_CO_ConfirmDelete
 Todos los mensajes de esta carpeta se perderán!\nRealmente quieres borrar?
-; All messages in this folder will be lost!\nDo you really want to delete it?
+; All messages in this folder will be lost.\nDo you really want to delete it?
 ;
 MSG_CO_InvalidConf
 Configuración no válida (sin nombre del servidor SMTP/POP3\no dirección de correo).\n\nPor favor rellena estos campos e inténtalo otra vez!
-; Invalid configuration (missing SMTP/POP3\nserver name or e-mail address).\n\nPlease fill in these fields and try again!
+; Invalid configuration (missing SMTP/POP3\nserver name or e-mail address).\n\nPlease fill in these fields and try again.
 ;
 MSG_CO_ImportMIMEReq
 Importar preferencias desde...
@@ -2503,15 +2503,13 @@ Cierra la ventana\nde configuración y utiliza\nlas preferencias antiguas.
 ;
 ; Module AB - Routines
 ;
-; NAME, AGE
-;
 MSG_AB_BirthdayReminder
 Recordatorio de Cumpleaños
 ; Birthday Reminder
 ;
 MSG_AB_HappyBirthday
 Feliz Cumpleaños!
-; Happy birthday!
+; Happy birthday.
 ;
 MSG_AB_PersonAlias
 Alias (PERSONA)
@@ -2539,7 +2537,7 @@ Alias
 ;
 MSG_AB_FoundEntry
 Encontrado entrada coincidente!\n\nAlias: \eb%s\en\nNombre: \eb%s\en
-; Found matching entry!\n\nAlias: \eb%s\en\nName: \eb%s\en
+; Found matching entry.\n\nAlias: \eb%s\en\nName: \eb%s\en
 ; ALIAS, NAME
 ;
 MSG_AB_FindEntry
@@ -2561,11 +2559,11 @@ _Próximo|_Editar|_Cancelar
 ;
 MSG_AB_NoneFound
 No se ha encontrado ninguna coincidencia!
-; No matching entries found!
+; No matching entries found.
 ;
 MSG_AB_Modified
 La Agenda de Contactos ha sido modificada!
-; Address book has been modified!
+; Address book has been modified.
 ;
 MSG_AB_ModifiedGads
 *_Salvar|_Usar|_Deshacer cambios|_Cancelar
@@ -2867,7 +2865,7 @@ Fotografía
 ;
 MSG_EA_SelectPhoto
 Selecci_onar...
-; Se_lect
+; Se_lect...
 ;
 MSG_EA_ReturnAddress
 Dirección de _retorno
@@ -3327,7 +3325,7 @@ Reenviar este\nmensaje.
 ;
 MSG_WR_ErrorNoRcpt
 Correo incompleto: sin destinatario!
-; Mail is incomplete: no recipient!
+; Mail is incomplete: no recipient.
 ;
 MSG_WR_NoRcptReqGad
 _Añadir destinatario más tarde|*_Cancelar
@@ -3911,7 +3909,7 @@ Borrando correo del servidor...
 ;
 MSG_TR_NewMailReq
 \e8Tienes nuevo correo!\e2\n\n%3ld mensajes descargados,\n%3ld quedan en el servidor\n%3ld duplicados evitados\n
-; \e8You have new mail!\e2\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n
+; \e8You have new mail.\e2\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n
 ; COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FilterStats
@@ -4044,11 +4042,11 @@ No puedo crear el directorio '%s'.\n\nAsegúrate de que el volúmen no está proteg
 ;
 MSG_ER_ErrorNoAlias
 Debes especificar un alias para identificar la entrada!
-; You must specify an alias to identify this entry!
+; You must specify an alias to identify this entry.
 ;
 MSG_ER_ErrorNoAddress
 Debes especificar una dirección para esta entrada!
-; You must specify an address for this entry!
+; You must specify an address for this entry.
 ;
 MSG_ER_ErrorDateFormat
 Formato de fecha/hora no válido.\n\nLa fecha y la hora tienen que ser especificados en un formato compatible.\nEjemplo: %s
@@ -4113,11 +4111,11 @@ Error de lectura en el archivo de correo: %s.\n\nEl archivo existe, pero hubo un
 ;
 MSG_ER_MissingDirectory
 Debes especificar un directorio para el nuevo usuario!
-; You must specify a directory for the new user!
+; You must specify a directory for the new user.
 ;
 MSG_ER_MissingName
 Debes especificar un nombre para el nuevo usuario!
-; You must specify a name for the new user!
+; You must specify a name for the new user.
 ;
 MSG_ER_NoPublicKeys
 No se encontraron claves públicas PGP.\n\nAsegúrate que PGP está instalado y que las preferencias requeridas están definidas en la configuración de YAM.
@@ -4411,7 +4409,7 @@ Esperando identificación de usuario...
 ;
 MSG_US_RemoveReq
 Todos los mensajes, carpetas y archivos de configuración\nde este usuario se perderán!\n\nQuieres realmente borrar el usuario?
-; All messages, folders and configuration\nfiles belonging to this user will be lost!\n\nDo you really want to remove the user?
+; All messages, folders and configuration\nfiles belonging to this user will be lost.\n\nDo you really want to remove the user?
 ;
 MSG_US_RemoveReqGads
 *_Sí|_Mantener archivos|_Cancelar
@@ -4792,7 +4790,7 @@ Por defecto
 ;
 MSG_ER_PGPMultipart
 Error creando un mensaje PGP multiparte. Encriptado/signing no activo!
-; Error creating multipart PGP message. Encrypting/signing disabled!
+; Error creating multipart PGP message. Encrypting/signing disabled.
 ;
 MSG_RE_FixedFont
 Fuente fija?
@@ -4996,7 +4994,7 @@ MSG_SEARCHNOTFOUND_MSG
 ;
 MSG_WR_ERRORNOSENDER
 Mensaje incompleto: sin destinatario!
-; Mail is incomplete: no sender!
+; Mail is incomplete: no sender.
 ;
 MSG_WR_NOSENDERREQGAD
 _Usar destinatario por defecto|*_Cancelar
@@ -5074,7 +5072,7 @@ Intenta reunir automáticamente las preferencias de soporte\nútiles ML escaneando
 ;
 MSG_FO_NOTRECOGNIZED
 No puede ser reconocido!
-; Couldn't be recognized!
+; Couldn't be recognized.
 ;
 MSG_FO_MAXAGEFMT
 %ld días
@@ -6514,7 +6512,7 @@ Buscar...
 ;
 MSG_MA_MFILTER
 Filtrar...
-; Filter
+; Filter...
 ;
 MSG_MA_REMOVEDELETED
 Vaciar Papelera
@@ -6574,7 +6572,7 @@ Copiar...
 ;
 MSG_MA_MPRINT
 Imprimir...
-; Print
+; Print...
 ;
 MSG_MA_MSAVE
 Salvar...
@@ -6586,7 +6584,7 @@ Salvar...
 ;
 MSG_MA_MNEW
 Nuevo...
-; New
+; New...
 ;
 MSG_MA_MREPLY
 Responder...
@@ -6887,7 +6885,7 @@ MSG_ER_USER_UNKNOWN_BUTTON
 ;
 MSG_ER_USER_UNKNOWN_ERROR
 Usuario desconocido '%s'!
-; Unknown user '%s'!
+; Unknown user '%s'.
 ;
 MSG_HELP_CO_CA_COLSIG
 El color que debe utilizarse\nal imprimir la firma de un mensaje.
@@ -6899,7 +6897,7 @@ No es recomendable activar esta opción con tan\npocos como %ld correos clasifica
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE
 No puedo crear semáforo!
-; Can't create semaphore!
+; Can't create semaphore.
 ;
 MSG_MA_AUTOSAVEFOUND_BUTTONS
 *Mover a bandeja de _salida|_Editar|_Borrar|_Ignorar
@@ -7062,7 +7060,6 @@ Opciones
 MSG_CO_FWDMSG
 R_eenviar mensajes
 ; _Forward messages
-;
 ;
 MSG_CO_FWDMSG_INLINE
 Continuado
@@ -7558,12 +7555,12 @@ Fecha de cumpleaños en formato local\n(ej. 19.06.1974 o 19/06/1974).
 ;
 MSG_ERROR_THREADS
 No puedo inicializar el sistema de temas
-; Can't initialize thread system
+; Cannot initialize thread system.
 ;
 MSG_ERROR_PLAYSOUND
 Ocurrió un error mientras intentaba reproducir\nel archivo de sonido '%s'.\n\nEsto puede ser debido a un archivo de sonido dañado\no no soportado o porque tu datatype de\nsonido no está funcionando \
 correctamente.
-; An error occurred while trying to play\nthe sound file '%s'.\n\nThis could be either due to a broken or\nunsupported sound file or because your\nsound datatype is not properly working.
+; An error occurred while trying to play the sound file '%s'.\n\nThis could be either due to a broken or unsupported sound file or because your sound datatype is not properly working.
 ; FILE
 ;
 MSG_WR_CHARSET
@@ -7752,7 +7749,7 @@ Archivo '%s' ya existe.\n\nQuieres sobreescribirlo?
 ;
 MSG_ER_USER_DIR_MISSING
 El directorio base '%s' del usuario '%s' no existe!
-; The home directory '%s' of user '%s' does not exist!
+; The home directory '%s' of user '%s' does not exist.
 ; PATH, USERNAME
 ;
 MSG_CO_TEXTCOLORS_READ
@@ -7829,7 +7826,7 @@ MSG_CO_SPAM_STATISTICS
 ;
 MSG_ER_WRONG_DOB_FORMAT
 Utilizas un formato erróneo para la fecha de nacimiento. El formato correcto es '%s'.\n%%d - día\n%%m - mes\n%%y - año (2 dígitos)\n%%Y - año (4 dígitos)\nEl año debe ser mayor o igual a 1900!
-; Date of birth uses a wrong format. The correct format is '%s'.\n%%d - day\n%%m - month\n%%y - year (2 digits)\n%%Y - year (4 digits)\nThe year number must be greater or equal 1900!
+; Date of birth uses a wrong format. The correct format is '%s'.\n%%d - day\n%%m - month\n%%y - year (2 digits)\n%%Y - year (4 digits)\nThe year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
 MSG_CO_PGPURL
@@ -7839,8 +7836,6 @@ C_lave pública PGP en URL
 MSG_HELP_CO_ST_PGPURL
 Puedes especificar una URL desde donde se puede\ndescargar tu clave pública PGP. Esta URL\nserá ubicada en una cabecera aparte\ndentro de cada mensaje.
 ; You can specify an URL where your public\nPGP key can be downloaded from. This URL\nwill then placed into a separate header\nentry in every mail.
-;
-; COUNT
 ;
 MSG_CO_NOTIOS41SYSTEM
 Notificación del sistema AmigaOS_4.1
@@ -7866,7 +7861,7 @@ Parte %ld.%ld
 ;
 MSG_OPEN_WRITEWINDOWS
 Existen todavía algunas ventanas de escritura abiertas!\n\nCómo quieres proceder?
-; There are still some write windows open!\n\nHow do you want to proceed?
+; There are still some write windows open.\n\nHow do you want to proceed?
 ;
 MSG_OPEN_WRITEWINDOWS_GAD
 *_Salvar ahora|_Salir sin salvar|_Cancelar
@@ -7907,10 +7902,12 @@ Firma PGP
 MSG_AB_BirthdayReqBody
 Hoy, el %s, %s cumple %ld años. ¿Desea enviarle una tarjeta de felicitación?
 ; Today, on %s, %s reaches age %ld.\n\nDo you want to send a greetings card?
+; DATE, NAME, AGE
 ;
 MSG_ER_AREXX_EXECUTION_ERROR
 La ejecución del comando ARexx '%s' ha fallado (código de error %ld).\nPor favor, asegúrese de que el archivo es accesible y es un script válido de comandos ARexx.
 ; Execution of the ARexx command '%s' failed (error code %ld).\nPlease make sure that the file is accessible and is a valid ARexx script.
+; COMMANDNAME, ERRORCODE
 ;
 MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 No mostrar esta solicitud hoy de nuevo.
@@ -7923,6 +7920,7 @@ Recibido 1 nuevo mensaje.
 MSG_TR_NEW_MAIL_NOTIFY_MANY
 Recibidos %ld nuevos mensajes.
 ; Received %ld new mails.
+; COUNT
 ;
 MSG_RE_SAVE_FILE
 Salvar archivo
@@ -7935,7 +7933,7 @@ No hay actualizaciones disponibles
 MSG_UPD_NO_UPDATES_FOUND
 No hay actualizaciones de software.\n%s
 ; There are no software updates available.\n%s
-;
+; HINT
 MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
 YAM comprobará automáticamente actualizaciones disponibles.
 ; YAM will check for available updates automatically.
@@ -7960,8 +7958,13 @@ _Reintentar|_Ignorar
 MSG_EXECUTE_COMMAND_FAILED
 La ejecución del comando '%s' ha fallado (código de error %ld: %s).
 ; The execution of the command '%s' failed (error code %ld: %s).
+; COMMAND, ERRORCODE, ERRORSTRING
 ;
 MSG_ERROR_METHODSTACK
 No se puede iniciar método de pila.
 ; Cannot initialize method stack.
+;
+MSG_TRANSFERS_IN_PROGRESS
+Transferencia en progreso
+; Transfers in progress
 ;
