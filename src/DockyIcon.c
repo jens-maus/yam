@@ -80,8 +80,15 @@ void InitDockyIcon(void)
     if(C->DockyIcon == TRUE)
     {
       D(DBF_STARTUP, "registering with custom Docky icon");
-      aii.iconType = APPICONT_CustomIcon;
-      aii.info.customIcon = G->HideIcon;
+      if(G->HideIcon != NULL)
+      {
+        aii.iconType = APPICONT_CustomIcon;
+        aii.info.customIcon = G->HideIcon;
+      }
+      else
+      {
+        aii.iconType = APPICONT_ProgramIcon;
+      }
     }
     else
     {
@@ -133,8 +140,7 @@ void InitDockyIcon(void)
       // misinterprets german umlauts, hence we require at least V53.3 for the
       // description string.
       if(LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 3) == FALSE)
-        registerTags[5].ti_Tag = TAG_DONE;
-
+        registerTags[5].ti_Tag = TAG_IGNORE;
     }
 
     // the dirty work is done, let's register us

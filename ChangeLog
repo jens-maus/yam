@@ -7,6 +7,8 @@ $URL$
 
 2010-09-30 Thore Böckelmann <tboeckel@gmx.de>
 
+  * DockyIcon.c: let application.lib fall back to the application's icon in case
+    no hide icon could be obtained.
   * YAM.c, mui/misc: bumped the required minimum version of NList.mcc to the one
     of the most recent 0.108 release as this fixes the method based display.
     This makes it possible to replace lots of display hooks by proper methods.
