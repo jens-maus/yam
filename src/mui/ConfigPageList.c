@@ -39,7 +39,8 @@
 struct Data
 {
   struct Hook displayHook;
-  Object       *configIcon[cp_Max];
+  Object *configIcon[cp_Max];
+  char pageName[SIZE_DEFAULT];
 };
 */
 
@@ -50,20 +51,6 @@ struct PageList
   const void *PageLabel;
 };
 */
-
-/* Hooks */
-/// DisplayHook
-//  Section listview displayhook
-HOOKPROTONH(DisplayFunc, long, char **array, struct PageList *entry)
-{
-  static char page[SIZE_DEFAULT];
-  snprintf(array[0] = page, sizeof(page), "\033o[%d] %s", entry->Offset, tr(entry->PageLabel));
-  return 0;
-}
-MakeStaticHook(DisplayHook, DisplayFunc);
-///
-
-/* Private Functions */
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -76,9 +63,6 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
     enum ConfigPage i;
-
-    InitHook(&data->displayHook, DisplayHook, data);
-    set(obj, MUIA_NList_DisplayHook, &data->displayHook);
 
     // create/load all bodychunkimages of our config icons
     data->configIcon[cp_FirstSteps  ] = MakeImageObject("config_firststep", G->theme.configImages[ci_FirstStep]);
@@ -135,6 +119,19 @@ OVERLOAD(OM_DISPOSE)
 }
 
 ///
+/// OVERLOAD(MUIM_NList_Display)
+OVERLOAD(MUIM_NList_Display)
+{
+  struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
+  struct PageList *entry = ndm->entry;
+  GETDATA;
+
+  ndm->strings[0] = data->pageName;
+  snprintf(data->pageName, sizeof(data->pageName), "\033o[%d] %s", entry->Offset, tr(entry->PageLabel));
+
+  return 0;
+}
+
+///
 
 /* Public Methods */
-

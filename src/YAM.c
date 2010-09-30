@@ -1953,14 +1953,14 @@ static void InitBeforeLogin(BOOL hidden)
 
   // we also make sure the user uses the latest brand of all other NList classes, such as
   // NListview, NFloattext etc.
-  CheckMCC(MUIC_NList,      20, 126, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NListview,  19,  81, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NFloattext, 19,  62, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NListtree,  18,  33, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NBalance,   15,   7, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NList,      20, 127, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NListview,  19,  82, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NFloattext, 19,  63, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NListtree,  18,  34, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NBalance,   15,   8, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
   // Lets check for the correct TextEditor.mcc version
-  CheckMCC(MUIC_TextEditor, 15, 28, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+  CheckMCC(MUIC_TextEditor, 15, 36, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
   // initialize the method stack
   if(InitMethodStack() == FALSE)

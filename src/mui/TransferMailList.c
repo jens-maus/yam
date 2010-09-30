@@ -44,75 +44,12 @@ struct Data
 {
   Object *downloadImage;
   Object *deleteImage;
+  char fromBuffer[SIZE_DEFAULT];
+  char statusBuffer[SIZE_DEFAULT];
+  char sizeBuffer[SIZE_SMALL];
+  char dateBuffer[64];
 };
 */
-
-/* Hooks */
-/// DisplayHook
-//  Message listview display hook
-HOOKPROTONHNO(DisplayFunc, LONG, struct NList_DisplayMessage *msg)
-{
-  struct MailTransferNode *entry;
-  char **array = msg->strings;
-
-  ENTER();
-
-  if((entry = (struct MailTransferNode *)msg->entry) != NULL)
-  {
-    static char dispfro[SIZE_DEFAULT];
-    static char dispsta[SIZE_DEFAULT];
-    static char dispsiz[SIZE_SMALL];
-    static char dispdate[64];
-    struct Mail *mail = entry->mail;
-    struct Person *pe = &mail->From;
-
-    array[0] = dispsta;
-    // status icon display
-    snprintf(dispsta, sizeof(dispsta), "%3d ", entry->index);
-    if(hasTR_TRANSFER(entry))
-      strlcat(dispsta, SI_STR(si_Download), sizeof(dispsta));
-    if(hasTR_DELETE(entry))
-      strlcat(dispsta, SI_STR(si_Delete), sizeof(dispsta));
-
-    // size display
-    array[1] = dispsiz;
-    if(C->WarnSize > 0 && mail->Size >= (C->WarnSize*1024))
-    {
-      strlcpy(dispsiz, MUIX_PH, sizeof(dispsiz));
-      FormatSize(mail->Size, dispsiz+strlen(dispsiz), sizeof(dispsiz)-strlen(dispsiz), SF_AUTO);
-    }
-    else
-      FormatSize(mail->Size, dispsiz, sizeof(dispsiz), SF_AUTO);
-
-    // from address display
-    array[2] = dispfro;
-    strlcpy(dispfro, AddrName(*pe), sizeof(dispfro));
-
-    // mail subject display
-    array[3] = mail->Subject;
-
-    // display date
-    array[4] = dispdate;
-    *dispdate = '\0';
-
-    if(mail->Date.ds_Days != 0)
-      DateStamp2String(dispdate, sizeof(dispdate), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
-  }
-  else
-  {
-    array[0] = (STRPTR)tr(MSG_MA_TitleStatus);
-    array[1] = (STRPTR)tr(MSG_Size);
-    array[2] = (STRPTR)tr(MSG_From);
-    array[3] = (STRPTR)tr(MSG_Subject);
-    array[4] = (STRPTR)tr(MSG_Date);
-  }
-
-  LEAVE();
-  return 0;
-}
-MakeStaticHook(DisplayHook, DisplayFunc);
-
-///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -128,7 +65,6 @@ OVERLOAD(OM_NEW)
     MUIA_ContextMenu,          NULL,
     MUIA_NList_MultiSelect,    MUIV_NList_MultiSelect_Default,
     MUIA_NList_Format,         "W=-1 BAR,W=-1 MACW=9 P=\033r BAR,MICW=10 MACW=30 BAR,BAR,MICW=16 MACW=30 BAR,MICW=9 MACW=15 BAR",
-    MUIA_NList_DisplayHook2,   &DisplayHook,
     MUIA_NList_AutoVisible,    TRUE,
     MUIA_NList_Title,          TRUE,
     MUIA_NList_TitleSeparator, TRUE,
@@ -177,8 +113,66 @@ OVERLOAD(OM_DISPOSE)
 }
 
 ///
+/// OVERLOAD(MUIM_NList_Display)
+OVERLOAD(MUIM_NList_Display)
+{
+  struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
+  struct MailTransferNode *entry = (struct MailTransferNode *)ndm->entry;
+
+  ENTER();
+
+  if(entry != NULL)
+  {
+    struct Mail *mail = entry->mail;
+    struct Person *pe = &mail->From;
+    GETDATA;
+
+    // status icon display
+    snprintf(data->statusBuffer, sizeof(data->statusBuffer), "%3d ", entry->index);
+    if(hasTR_TRANSFER(entry))
+      strlcat(data->statusBuffer, SI_STR(si_Download), sizeof(data->statusBuffer));
+    if(hasTR_DELETE(entry))
+      strlcat(data->statusBuffer, SI_STR(si_Delete), sizeof(data->statusBuffer));
+    ndm->strings[0] = data->statusBuffer;
+
+    // size display
+    if(C->WarnSize > 0 && mail->Size >= (C->WarnSize*1024))
+    {
+      strlcpy(data->sizeBuffer, MUIX_PH, sizeof(data->sizeBuffer));
+      FormatSize(mail->Size, &data->sizeBuffer[strlen(data->sizeBuffer)], sizeof(data->sizeBuffer)-strlen(data->sizeBuffer), SF_AUTO);
+    }
+    else
+      FormatSize(mail->Size, data->sizeBuffer, sizeof(data->sizeBuffer), SF_AUTO);
+    ndm->strings[1] = data->sizeBuffer;
+
+    // from address display
+    strlcpy(data->fromBuffer, AddrName(*pe), sizeof(data->fromBuffer));
+    ndm->strings[2] = data->fromBuffer;
+
+    // mail subject display
+    ndm->strings[3] = mail->Subject;
+
+    // display date
+    data->dateBuffer[0] = '\0';
+    if(mail->Date.ds_Days != 0)
+      DateStamp2String(data->dateBuffer, sizeof(data->dateBuffer), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+    ndm->strings[4] = data->dateBuffer;
+  }
+  else
+  {
+    ndm->strings[0] = (STRPTR)tr(MSG_MA_TitleStatus);
+    ndm->strings[1] = (STRPTR)tr(MSG_Size);
+    ndm->strings[2] = (STRPTR)tr(MSG_From);
+    ndm->strings[3] = (STRPTR)tr(MSG_Subject);
+    ndm->strings[4] = (STRPTR)tr(MSG_Date);
+  }
+
+  LEAVE();
+  return 0;
+}
+
+///
 
 /* Private Functions */
 
 /* Public Methods */
-

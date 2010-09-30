@@ -54,60 +54,6 @@ struct Data
 };
 */
 
-/* Private Functions */
-
-/* Hooks */
-/// DisplayHook
-HOOKPROTONHNO(DisplayFunc, LONG, struct NList_DisplayMessage *msg)
-{
-  struct UpdateComponent *entry;
-  char **array;
-
-  if(!msg)
-    return 0;
-
-  // now we set our local variables to the DisplayMessage structure ones
-  entry = (struct UpdateComponent *)msg->entry;
-  array = msg->strings;
-
-  if(entry)
-  {
-    array[0] = entry->name;
-    array[1] = entry->recent;
-    array[2] = entry->installed;
-    array[3] = entry->url;
-  }
-  else
-  {
-    // setup the listview titles
-    array[0] = (STRPTR)tr(MSG_UPD_NOTIFICATION_COMP);
-    array[1] = (STRPTR)tr(MSG_UPD_NOTIFICATION_RECENT);
-    array[2] = (STRPTR)tr(MSG_UPD_NOTIFICATION_INSTALLED);
-    array[3] = (STRPTR)tr(MSG_UPD_NOTIFICATION_URL);
-  }
-
-  return 0;
-}
-MakeStaticHook(DisplayHook, DisplayFunc);
-
-///
-/// DestructHook
-//  destructs the memory of the elements in a list
-HOOKPROTONHNO(DestructFunc, LONG, struct UpdateComponent *entry)
-{
-  if(entry != NULL)
-  {
-    if(entry->changeLogFile)
-      CloseTempFile(entry->changeLogFile);
-
-    free(entry);
-  }
-
-  return 0;
-}
-MakeStaticHook(DestructHook, DestructFunc);
-///
-
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -161,8 +107,6 @@ OVERLOAD(OM_NEW)
            MUIA_NList_TitleClick,           FALSE,
            MUIA_NList_TitleClick2,          FALSE,
            MUIA_NList_MultiSelect,          MUIV_NList_MultiSelect_None,
-           MUIA_NList_DisplayHook2,         &DisplayHook,
-           MUIA_NList_DestructHook,         &DestructHook,
            MUIA_NList_Title,                TRUE,
            MUIA_NList_TitleSeparator,       TRUE,
            MUIA_NList_DragType,             MUIV_NList_DragType_None,
@@ -220,11 +164,11 @@ OVERLOAD(OM_NEW)
     // start with a disabled "Visit URL" button
     set(bt_visit, MUIA_Disabled, TRUE);
 
-    DoMethod(obj,               MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_UpdateNotifyWindow_Close);
-    DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, MUIM_UpdateNotifyWindow_Select, MUIV_TriggerValue);
-    DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, MUIM_UpdateNotifyWindow_VisitURL);
-    DoMethod(bt_visit,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_UpdateNotifyWindow_VisitURL);
-    DoMethod(bt_close,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_UpdateNotifyWindow_Close);
+    DoMethod(obj,               MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, METHOD(Close));
+    DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, METHOD(Select), MUIV_TriggerValue);
+    DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, METHOD(VisitURL));
+    DoMethod(bt_visit,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(VisitURL));
+    DoMethod(bt_close,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(Close));
 
     set(obj, MUIA_Window_Activate, TRUE);
   }
@@ -234,8 +178,6 @@ OVERLOAD(OM_NEW)
 }
 
 ///
-
-/* Overloaded Methods */
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
 {
@@ -256,7 +198,7 @@ OVERLOAD(OM_SET)
           // close request wasn't issue due to an application iconification
           // request
           if(xget(G->App, MUIA_Application_Iconified) == FALSE)
-            DoMethod(obj, MUIM_UpdateNotifyWindow_Clear);
+            DoMethod(obj, METHOD(Clear));
         }
         else
         {
@@ -284,6 +226,52 @@ OVERLOAD(OM_SET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
+///
+/// OVERLOAD(MUIM_NList_Destruct)
+//  destructs the memory of the elements in a list
+OVERLOAD(MUIM_NList_Destruct)
+{
+  struct MUIP_NList_Destruct *ndm = (struct MUIP_NList_Destruct *)msg;
+  struct UpdateComponent *entry = (struct UpdateComponent *)ndm->entry;
+
+  if(entry != NULL)
+  {
+    if(entry->changeLogFile != NULL)
+      CloseTempFile(entry->changeLogFile);
+
+    free(entry);
+  }
+
+  return 0;
+}
+
+///
+/// OVERLOAD(MUIM_NList_Display)
+OVERLOAD(MUIM_NList_Display)
+{
+  struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
+  struct UpdateComponent *entry = (struct UpdateComponent *)ndm->entry;
+
+  if(entry != NULL)
+  {
+    ndm->strings[0] = entry->name;
+    ndm->strings[1] = entry->recent;
+    ndm->strings[2] = entry->installed;
+    ndm->strings[3] = entry->url;
+  }
+  else
+  {
+    // setup the listview titles
+    ndm->strings[0] = (STRPTR)tr(MSG_UPD_NOTIFICATION_COMP);
+    ndm->strings[1] = (STRPTR)tr(MSG_UPD_NOTIFICATION_RECENT);
+    ndm->strings[2] = (STRPTR)tr(MSG_UPD_NOTIFICATION_INSTALLED);
+    ndm->strings[3] = (STRPTR)tr(MSG_UPD_NOTIFICATION_URL);
+  }
+
+  return 0;
+}
+
 ///
 
 /* Public Methods */
@@ -435,4 +423,3 @@ DECLARE(Close)
 }
 
 ///
-

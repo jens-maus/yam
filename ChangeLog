@@ -7,6 +7,11 @@ $URL$
 
 2010-09-30 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, mui/misc: bumped the required minimum version of NList.mcc to the one
+    of the most recent 0.108 release as this fixes the method based display.
+    This makes it possible to replace lots of display hooks by proper methods.
+    Also bumped the required version of TextEditor.mcc to the latest 15.36
+    release.
   * misc: SMTP mail servers are now marked as being "in use" as soon as a mail
     transfer is initiated for them.
 
