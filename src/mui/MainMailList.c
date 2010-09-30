@@ -330,7 +330,7 @@ OVERLOAD(MUIM_NList_Compare)
   if(ncm->sort_type1 & MUIV_NList_TitleMark_TypeMask) cmp = MailCompare(entry2, entry1, col1);
   else                                                cmp = MailCompare(entry1, entry2, col1);
 
-  if(cmp == 0 || col1 == col2)
+  if(cmp != 0 || col1 == col2)
   {
     RETURN(cmp);
     return cmp;
