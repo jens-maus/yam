@@ -96,8 +96,12 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
         {
           struct MailTransferNode *mtn;
 
-          if((mtn = calloc(1, sizeof(*mtn))) != NULL)
+          if((mtn = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*mtn),
+                                                  ASONODE_Min, TRUE,
+                                                  TAG_DONE)) != NULL)
           {
+            memset(mtn, 0, sizeof(*mtn));
+
             if((mtn->mail = memdup(mail, sizeof(*mail))) != NULL)
             {
               mtn->index = i + 1;
@@ -114,7 +118,7 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
             {
               // we end up in a low memory condition, lets exit
               // after having freed everything
-              free(mtn);
+              FreeSysObject(ASOT_NODE, mtn);
               abort = TRUE;
               break;
             }
@@ -311,11 +315,8 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
         // free the mail pointer
         free(mtn->mail);
 
-        // free the UIDL
-        free(mtn->UIDL);
-
         // free the node itself
-        free(mtn);
+        FreeSysObject(ASOT_NODE, mtn);
       }
 
       DoMethod(G->App, MUIM_YAM_DeleteTransferGroup, tc.transferGroup);

@@ -7,6 +7,7 @@ $URL$
 
 2010-09-30 Thore Böckelmann <tboeckel@gmx.de>
 
+  * MailExport.c: use AllocSysObject() to allocate the transfer nodes.
   * DockyIcon.c: let application.lib fall back to the application's icon in case
     no hide icon could be obtained.
   * YAM.c, mui/misc: bumped the required minimum version of NList.mcc to the one
