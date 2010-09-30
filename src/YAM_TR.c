@@ -1356,6 +1356,7 @@ void TR_NewMailAlert(void)
       if(G->applicationID > 0 && LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 7) == TRUE)
       {
         // 128 chars is the current maximum :(
+        char imagePath[SIZE_PATHFILE];
         char message[128];
         int count = stats->Downloaded - rr->Spam;
 
@@ -1365,6 +1366,8 @@ void TR_NewMailAlert(void)
         else
           strlcpy(message, tr(MSG_TR_NEW_MAIL_NOTIFY_ONE), sizeof(message));
 
+        AddPath(imagePath, G->ProgDir, "Themes/default/notify", sizeof(imagePath));
+
         // We require 53.7+. From this version on proper tag values are used, hence there
         // is no need to distinguish between v1 and v2 interfaces here as we have to do for
         // other application.lib functions.
@@ -1373,6 +1376,7 @@ void TR_NewMailAlert(void)
                                  APPNOTIFY_Text, (uint32)message,
                                  APPNOTIFY_CloseOnDC, TRUE,
                                  APPNOTIFY_BackMsg, (uint32)"POPUP",
+                                 APPNOTIFY_ImageFile, (uint32)imagePath,
                                  TAG_DONE);
       }
     }
