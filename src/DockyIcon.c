@@ -52,6 +52,9 @@ void InitDockyIcon(void)
   #if defined(__amigaos4__)
   G->AppLibPort = NULL;
   G->applicationID = 0;
+  // reset the docky icon id to some sensible default
+  // upon restart this makes sure that the docky icon is set to the correct state
+  G->LastIconID = ii_Max;
 
   if(ApplicationBase != NULL)
   {
@@ -77,23 +80,28 @@ void InitDockyIcon(void)
     strlcpy(filename, G->ProgDir, sizeof(filename));
     AddPart(filename, G->ProgName, sizeof(filename));
 
-    if(C->DockyIcon == TRUE)
-    {
-      D(DBF_STARTUP, "registering with custom Docky icon");
-      if(G->HideIcon != NULL)
-      {
-        aii.iconType = APPICONT_CustomIcon;
-        aii.info.customIcon = G->HideIcon;
-      }
-      else
-      {
-        aii.iconType = APPICONT_ProgramIcon;
-      }
-    }
-    else
+    if(C->DockyIcon == FALSE)
     {
       D(DBF_STARTUP, "registering without Docky icon");
       aii.iconType = APPICONT_None;
+    }
+    else if(G->HideIcon == NULL)
+    {
+      D(DBF_STARTUP, "registering with program Docky icon");
+      aii.iconType = APPICONT_ProgramIcon;
+    }
+    else if(G->currentAppIcon != ii_Max && G->theme.icons[G->currentAppIcon] != NULL)
+    {
+      D(DBF_STARTUP, "registering with custom Docky icon %ld %08lx", G->currentAppIcon, G->theme.icons[G->currentAppIcon]);
+      aii.iconType = APPICONT_CustomIcon;
+      aii.info.customIcon = G->theme.icons[G->currentAppIcon];
+      G->LastIconID = G->currentAppIcon;
+    }
+    else
+    {
+      D(DBF_STARTUP, "registering with custom Docky icon %08lx", G->HideIcon);
+      aii.iconType = APPICONT_CustomIcon;
+      aii.info.customIcon = G->HideIcon;
     }
 
     // register YAM to application.library
@@ -153,10 +161,6 @@ void InitDockyIcon(void)
 
     D(DBF_STARTUP, "registered YAM to application.library with appID: %ld", G->applicationID);
   }
-
-  // reset the docky icon id to some sensible default
-  // upon restart this makes sure that the docky icon is set to the correct state
-  G->LastIconID = ii_Max;
   #endif
 
   LEAVE();
@@ -204,17 +208,17 @@ void UpdateDockyIcon(void)
 
     if(C->DockyIcon == FALSE)
     {
-      D(DBF_GUI, "remove Docky icon");
+      D(DBF_STARTUP, "remove Docky icon");
       aii.iconType = APPICONT_None;
     }
     else if(G->currentAppIcon == ii_Max)
     {
-      D(DBF_GUI, "set default Docky icon");
+      D(DBF_STARTUP, "set program Docky icon");
       aii.iconType = APPICONT_ProgramIcon;
     }
     else
     {
-      D(DBF_GUI, "set custom Docky icon %ld %08lx", G->currentAppIcon, G->theme.icons[G->currentAppIcon]);
+      D(DBF_STARTUP, "set custom Docky icon %ld %08lx", G->currentAppIcon, G->theme.icons[G->currentAppIcon]);
       aii.iconType = APPICONT_CustomIcon;
       aii.info.customIcon = G->theme.icons[G->currentAppIcon];
     }
@@ -233,7 +237,7 @@ void UpdateDockyIcon(void)
 
     if(SetApplicationAttrsA(G->applicationID, iconTags))
     {
-      D(DBF_GUI, "Docky icon changed");
+      D(DBF_STARTUP, "Docky icon changed");
       if(C->DockyIcon == TRUE)
       {
         // remember the new docky icon state

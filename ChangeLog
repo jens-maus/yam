@@ -7,6 +7,8 @@ $URL$
 
 2010-09-30 Thore Böckelmann <tboeckel@gmx.de>
 
+  * AppIcon.c, DockyIcon.c: slightly reworked the Docky icon logic to always
+    display the correct Docky icon. This closes #197.
   * themes/default: added image for AmigaOS4 new mail notifications.
   * YAM_TR.c: if the file "Themes/default/notify" exists it will be displayed in
     YAM's AmigaOS4 new mail notification. This closes #151.

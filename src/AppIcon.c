@@ -61,6 +61,7 @@ BOOL InitAppIcon(void)
 
   ENTER();
 
+  G->currentAppIcon = ii_Max;
   if((G->AppPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
     success = TRUE;
 
