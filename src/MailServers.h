@@ -55,6 +55,7 @@ enum MailServerType { MST_UNKNOWN=0, MST_SMTP, MST_POP3, MST_IMAP };
 #define MSF_AUTH_LOGIN          (1<<10) // [SMTP]      : SMTP AUTH method = LOGIN
 #define MSF_AUTH_PLAIN          (1<<11) // [SMTP]      : SMTP AUTH method = PLAIN
 #define MSF_ALLOW_8BIT          (1<<12) // [SMTP]      : Server allows 8bit characters
+#define MSF_IN_USE              (1<<13) // [POP3/SMTP] : server is currently up/downloading mails
 
 #define isServerActive(v)       (isFlagSet((v)->flags, MSF_ACTIVE))
 #define hasServerAPOP(v)        (isFlagSet((v)->flags, MSF_APOP))
@@ -69,6 +70,7 @@ enum MailServerType { MST_UNKNOWN=0, MST_SMTP, MST_POP3, MST_IMAP };
 #define hasServerAuth_LOGIN(v)  (isFlagSet((v)->flags, MSF_AUTH_LOGIN))
 #define hasServerAuth_PLAIN(v)  (isFlagSet((v)->flags, MSF_AUTH_PLAIN))
 #define hasServer8bit(v)        (isFlagSet((v)->flags, MSF_ALLOW_8BIT))
+#define hasServerInUse(v)       (isFlagSet((v)->flags, MSF_IN_USE))
 
 #define MSF2SMTPSecMethod(v)    (hasServerTLS(v) ? 1 : (hasServerSSL(v) ? 2 : 0))
 #define MSF2POP3SecMethod(v)    (hasServerSSL(v) ? 1 : (hasServerTLS(v) ? 2 : 0))

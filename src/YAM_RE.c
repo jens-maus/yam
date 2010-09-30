@@ -3620,6 +3620,8 @@ static void RE_SendMDN(const enum MDNMode mode,
 
             if((mlist = CreateMailList()) != NULL)
             {
+              BOOL mdnSent = FALSE;
+
               setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
 
               WriteOutMessage(&comp);
@@ -3644,17 +3646,30 @@ static void RE_SendMDN(const enum MDNMode mode,
 
               // in case the user wants to send the message
               // immediately we go and send it out
-              if(sendnow == TRUE && mlist->count != 0 && G->TR == NULL)
+              if(sendnow == TRUE && mlist->count != 0)
               {
-                DoAction(TA_SendMails, TT_SendMails_MailServer, GetMailServer(&C->mailServerList, MST_SMTP, 0),
-                                       TT_SendMails_Mails, mlist,
-                                       TT_SendMails_Mode, autoSend ? SEND_ACTIVE_AUTO : SEND_ACTIVE_USER,
-                                       TAG_DONE);
+                struct MailServerNode *msn;
+
+                if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) != NULL)
+                {
+                  if(hasServerInUse(msn) == FALSE)
+                  {
+                    // mark the server as "in use"
+                    SET_FLAG(msn->flags, MSF_IN_USE);
+
+                    mdnSent = DoAction(TA_SendMails, TT_SendMails_MailServer, msn,
+                                                     TT_SendMails_Mails, mlist,
+                                                     TT_SendMails_Mode, autoSend ? SEND_ACTIVE_AUTO : SEND_ACTIVE_USER,
+                                                     TAG_DONE);
+                    if(mdnSent == FALSE)
+                      CLEAR_FLAG(msn->flags, MSF_IN_USE);
+                  }
+                }
               }
-              else
-              {
+
+              // delete the mail list again if the MDN was not sent
+              if(mdnSent == FALSE)
                 DeleteMailList(mlist);
-              }
 
               // refresh the folder statistics after the transfer
               DisplayStatistics(outfolder, TRUE);

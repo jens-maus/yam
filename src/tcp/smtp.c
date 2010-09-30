@@ -1274,6 +1274,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
 
   ENTER();
 
+  memset(&tc, 0, sizeof(tc));
   tc.msn = msn;
   tc.useTLS = FALSE;
 
@@ -1627,6 +1628,9 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
   DeleteConnection(tc.conn);
 
   DeleteMailList(mlist);
+
+  // mark the server as being "not in use"
+  CLEAR_FLAG(msn->flags, MSF_IN_USE);
 
   RETURN(success);
   return success;

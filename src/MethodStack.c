@@ -180,7 +180,7 @@ IPTR VARARGS68K PushMethodOnStackWait(Object *obj, ULONG argCount, ...)
       CheckMethodStack();
 
       // perform the desired action and get the return value
-      result = DoMethodA(pm->object, (Msg)&pm->args[0]);
+      result = DoMethodA(pm->object, (Msg)pm->args);
     }
     else
     {
@@ -229,7 +229,7 @@ void CheckMethodStack(void)
     {
       // perform the desired action and get the return value
       if(pm->object != NULL)
-        pm->result = DoMethodA(pm->object, (Msg)&pm->args[0]);
+        pm->result = DoMethodA(pm->object, (Msg)pm->args);
       else
         pm->result = (IPTR)-1;
 
@@ -239,7 +239,7 @@ void CheckMethodStack(void)
     else
     {
       // perform the desired action
-      DoMethodA(pm->object, (Msg)&pm->args[0]);
+      DoMethodA(pm->object, (Msg)pm->args);
 
       // free the handled method
       free(pm->args);

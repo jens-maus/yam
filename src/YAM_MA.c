@@ -2470,38 +2470,53 @@ MakeHook(MA_PopNowHook, MA_PopNowFunc);
 BOOL MA_Send(enum SendMode mode)
 {
   BOOL success = FALSE;
+  struct MailServerNode *msn;
 
   ENTER();
 
-  // we only proceed if there isn't already a transfer
-  // window/process in action
-  if(G->TR == NULL)
+  // get the SMTP server first
+  if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) != NULL)
   {
-    struct MailList *mlist = NULL;
-    struct Folder *fo = FO_GetFolderByType(FT_OUTGOING, NULL);
-
-    switch(mode)
+    // we only proceed if there isn't already a transfer
+    // process in action for this server
+    if(hasServerInUse(msn) == FALSE)
     {
-      case SEND_ALL_USER:
-      case SEND_ALL_AUTO:
-        mlist = MA_CreateFullList(fo, FALSE);
-      break;
+      struct MailList *mlist = NULL;
+      struct Folder *fo = FO_GetFolderByType(FT_OUTGOING, NULL);
 
-      case SEND_ACTIVE_USER:
-      case SEND_ACTIVE_AUTO:
+      // mark the server as "in use"
+      SET_FLAG(msn->flags, MSF_IN_USE);
+
+      switch(mode)
       {
-        if(fo == FO_GetCurrentFolder())
-          mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
-      }
-      break;
-    }
+        case SEND_ALL_USER:
+        case SEND_ALL_AUTO:
+          mlist = MA_CreateFullList(fo, FALSE);
+        break;
 
-    if(mlist != NULL)
-    {
-      DoAction(TA_SendMails, TT_SendMails_MailServer, GetMailServer(&C->mailServerList, MST_SMTP, 0),
-                             TT_SendMails_Mails, mlist,
-                             TT_SendMails_Mode, mode,
-                             TAG_DONE);
+        case SEND_ACTIVE_USER:
+        case SEND_ACTIVE_AUTO:
+        {
+          if(fo == FO_GetCurrentFolder())
+            mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
+        }
+        break;
+      }
+
+      if(mlist != NULL)
+      {
+        success = DoAction(TA_SendMails, TT_SendMails_MailServer, msn,
+                                         TT_SendMails_Mails, mlist,
+                                         TT_SendMails_Mode, mode,
+                                         TAG_DONE);
+
+        // reset everything in case of failure
+        if(success == FALSE)
+        {
+          DeleteMailList(mlist);
+          CLEAR_FLAG(msn->flags, MSF_IN_USE);
+        }
+      }
     }
   }
 

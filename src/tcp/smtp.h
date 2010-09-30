@@ -35,7 +35,6 @@ struct MailList;
 struct MailServerNode;
 
 // prototypes
-BOOL TR_ProcessSEND(struct MailList *mlist, enum SendMode mode);
 BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode mode);
 
 #endif /* SMTP_H */

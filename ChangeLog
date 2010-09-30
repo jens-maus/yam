@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-09-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: SMTP mail servers are now marked as being "in use" as soon as a mail
+    transfer is initiated for them.
+
 2010-09-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/YAM.c: fall back to a default icon in case there is no application icon.
