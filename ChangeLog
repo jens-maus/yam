@@ -7,6 +7,7 @@ $URL$
 
 2010-09-30 Thore Böckelmann <tboeckel@gmx.de>
 
+  * themes/default: added image for AmigaOS4 new mail notifications.
   * YAM_TR.c: if the file "Themes/default/notify" exists it will be displayed in
     YAM's AmigaOS4 new mail notification. This closes #151.
   * MailExport.c: use AllocSysObject() to allocate the transfer nodes.
