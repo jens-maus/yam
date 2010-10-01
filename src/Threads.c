@@ -249,7 +249,7 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
 }
 
 ///
-/// ThreadEntry()
+/// ThreadEntry
 // Entrypoint for a new thread
 static SAVEDS void ThreadEntry(void)
 {
@@ -431,7 +431,7 @@ static void ShutdownThread(struct ThreadNode *threadNode)
 }
 
 ///
-/// CreateThread()
+/// CreateThread
 // Runs a given function in a newly created thread under the given name which
 // in linked into a internal list.
 static struct Thread *CreateThread(void)
@@ -458,7 +458,7 @@ static struct Thread *CreateThread(void)
       if((thread->process = CreateNewProcTags(NP_Entry,       ThreadEntry, // entry function
                                               NP_StackSize,   8192,        // stack size
                                               NP_Name,        thread->name,
-                                              NP_Priority,    1,
+                                              NP_Priority,    0,
                                               #if defined(__amigaos4__)
                                               NP_Child,       TRUE,
                                               #elif defined(__MORPHOS__)
@@ -515,8 +515,7 @@ static struct Thread *CreateThread(void)
 }
 
 ///
-/*** Thread system init/cleanup functions ***/
-/// InitThreads()
+/// InitThreads
 // initializes the thread system
 BOOL InitThreads(void)
 {
@@ -551,7 +550,7 @@ BOOL InitThreads(void)
 }
 
 ///
-/// CleanupThreads()
+/// CleanupThreads
 // cleanup the whole thread system - abort eventually active threads and
 // wait for them to finish properly.
 void CleanupThreads(void)
