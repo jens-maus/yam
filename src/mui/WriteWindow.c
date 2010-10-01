@@ -4158,11 +4158,29 @@ DECLARE(ComposeMail) // enum WriteMode mode
     {
       if(AddNewMailNode(mlist, newMail) != NULL)
       {
+        struct MailServerNode *msn;
+        BOOL mailSent = FALSE;
+
         set(obj, MUIA_Window_Open, FALSE);
-        DoAction(TA_SendMails, TT_SendMails_MailServer, GetMailServer(&C->mailServerList, MST_SMTP, 0),
-                               TT_SendMails_Mails, mlist,
-                               TT_SendMails_Mode, SEND_ACTIVE_USER,
-                               TAG_DONE);
+
+        if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) != NULL)
+        {
+          if(hasServerInUse(msn) == FALSE)
+          {
+            // mark the server as "in use"
+            SET_FLAG(msn->flags, MSF_IN_USE);
+
+            mailSent = DoAction(TA_SendMails, TT_SendMails_MailServer, msn,
+                                              TT_SendMails_Mails, mlist,
+                                              TT_SendMails_Mode, SEND_ACTIVE_USER,
+                                              TAG_DONE);
+            if(mailSent == FALSE)
+              CLEAR_FLAG(msn->flags, MSF_IN_USE);
+          }
+        }
+
+        if(mailSent == FALSE)
+          DeleteMailList(mlist);
       }
     }
   }
