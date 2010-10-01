@@ -49,74 +49,6 @@ struct Data
 };
 */
 
-/* Hooks */
-/// ConstructHook
-HOOKPROTONHNO(ConstructFunc, struct Theme *, struct Theme *e)
-{
-  struct Theme *entry;
-
-  ENTER();
-
-  entry = memdup(e, sizeof(*e));
-
-  RETURN(entry);
-  return entry;
-}
-MakeStaticHook(ConstructHook, ConstructFunc);
-
-///
-/// DestructHook
-//  destruction hook
-HOOKPROTONHNO(DestructFunc, LONG, struct Theme *entry)
-{
-  FreeTheme(entry);
-  free(entry);
-
-  return 0;
-}
-MakeStaticHook(DestructHook, DestructFunc);
-
-///
-/// DisplayHook
-HOOKPROTONHNO(DisplayFunc, LONG, struct NList_DisplayMessage *msg)
-{
-  struct Theme *entry;
-  char **array;
-
-  if(!msg)
-    return 0;
-
-  // now we set our local variables to the DisplayMessage structure ones
-  entry = (struct Theme *)msg->entry;
-  array = msg->strings;
-
-  if(entry)
-  {
-    array[0] = FilePart(entry->directory);
-
-    if(stricmp(array[0], CE->ThemeName) == 0)
-      msg->preparses[0] = (char *)"\033b";
-  }
-
-  return 0;
-}
-MakeStaticHook(DisplayHook, DisplayFunc);
-
-///
-/// CompareHook
-HOOKPROTONHNO(CompareFunc, LONG, struct NList_CompareMessage *msg)
-{
-  struct Theme *theme1 = (struct Theme *)msg->entry1;
-  struct Theme *theme2 = (struct Theme *)msg->entry2;
-
-  return stricmp(FilePart(theme1->directory), FilePart(theme2->directory));
-}
-MakeStaticHook(CompareHook, CompareFunc);
-
-///
-
-/* Private Functions */
-
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -140,15 +72,7 @@ OVERLOAD(OM_NEW)
 
             Child, NListviewObject,
               MUIA_CycleChain, TRUE,
-              MUIA_NListview_NList, themeListObject = NListObject,
-                InputListFrame,
-                MUIA_NList_Format,        "",
-                MUIA_NList_Title,         FALSE,
-                MUIA_NList_DragType,      MUIV_NList_DragType_None,
-                MUIA_NList_ConstructHook, &ConstructHook,
-                MUIA_NList_DestructHook,  &DestructHook,
-                MUIA_NList_DisplayHook2,  &DisplayHook,
-                MUIA_NList_CompareHook2,  &CompareHook,
+              MUIA_NListview_NList, themeListObject = ThemeListObject,
               End,
             End,
 
@@ -229,14 +153,15 @@ OVERLOAD(OM_NEW)
     data->TX_URL = urlTextObject;
 
     // set notifies
-    DoMethod(themeListObject,      MUIM_Notify, MUIA_NList_SelectChange, TRUE, obj, 1, MUIM_ThemeListGroup_SelectionChanged);
-    DoMethod(themeListObject,      MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, MUIM_ThemeListGroup_ActivateTheme);
-    DoMethod(activateButtonObject, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_ThemeListGroup_ActivateTheme);
+    DoMethod(themeListObject,      MUIM_Notify, MUIA_NList_SelectChange, TRUE, obj, 1, METHOD(SelectionChanged));
+    DoMethod(themeListObject,      MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, METHOD(ActivateTheme));
+    DoMethod(activateButtonObject, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(ActivateTheme));
   }
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
 }
+
 ///
 
 /* Public Methods */
@@ -344,6 +269,7 @@ DECLARE(Update)
   RETURN(result);
   return result;
 }
+
 ///
 /// DECLARE(SelectionChanged)
 DECLARE(SelectionChanged)
@@ -385,6 +311,7 @@ DECLARE(SelectionChanged)
   RETURN(0);
   return 0;
 }
+
 ///
 /// DECLARE(ActivateTheme)
 DECLARE(ActivateTheme)
@@ -425,4 +352,5 @@ DECLARE(ActivateTheme)
   RETURN(0);
   return 0;
 }
+
 ///

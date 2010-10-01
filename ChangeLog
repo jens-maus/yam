@@ -7,6 +7,8 @@ $URL$
 
 2010-10-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/ThemeListGroup.c, mui/ThemeList.c: split off the theme list to a
+    separate module to be able to replace the hooks by proper methods.
   * MailImport.c, YAM_TR.c: splitt off the mail import to a separate module.
     The mail import will now happen inside a thread and uses the just added
     preselection window class to let the user the mails to be imported.

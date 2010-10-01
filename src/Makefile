@@ -448,6 +448,7 @@ MUIOBJS = \
 	ShutdownWindow.o \
 	Splashwindow.o \
 	StringRequestWindow.o \
+	ThemeList.o \
 	ThemeListGroup.o \
 	TransferControlGroup.o \
 	TransferControlList.o \
