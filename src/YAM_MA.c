@@ -2986,7 +2986,8 @@ BOOL MA_ImportMessages(const char *fname, const BOOL quiet, const BOOL wait)
     result = DoAction(TA_ImportMails, TT_ImportMails_File, fname,
                                       TT_ImportMails_Folder, actfo,
                                       TT_ImportMails_Quiet, quiet,
-                                      TT_ImportMails_Wait, wait);
+                                      TT_ImportMails_Wait, wait,
+                                      TAG_DONE);
   }
 
   RETURN(result);
