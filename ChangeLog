@@ -7,6 +7,8 @@ $URL$
 
 2010-10-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/ObjectList.c: no idea why, but the object list needs an invisible dummy
+    object to be resizeable.
   * mui/ReadMailGroup.c, mui/HeaderList.c: split off the read mail group's
     header list to a separate module to be able to implement the hooks as proper
     methods.

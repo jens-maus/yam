@@ -40,6 +40,7 @@ struct Data
 {
   Object *virtgroup;
   Object *spacer;
+  Object *dummy;
   ULONG itemCount;
   BOOL disposeRemovedItems;
 };
@@ -51,6 +52,7 @@ OVERLOAD(OM_NEW)
 {
   Object *virtgroup = NULL;
   Object *spacer = NULL;
+  Object *dummy = NULL;
 
   ENTER();
 
@@ -60,6 +62,9 @@ OVERLOAD(OM_NEW)
 
     MUIA_Scrollgroup_Contents, virtgroup = VirtgroupObject,
       MUIA_Group_Horiz, FALSE,
+      Child, dummy = TextObject,
+        MUIA_ShowMe, FALSE,
+      End,
       Child, spacer = VSpace(0),
     End,
 
@@ -69,6 +74,7 @@ OVERLOAD(OM_NEW)
 
     data->virtgroup = virtgroup;
     data->spacer = spacer;
+    data->dummy = dummy;
     data->itemCount = 0;
     data->disposeRemovedItems = GetTagData(ATTR(DisposeRemovedItems), FALSE, inittags(msg)) ? TRUE : FALSE;
   }
@@ -151,9 +157,11 @@ OVERLOAD(OM_GET)
         Object *last = NULL;
 
         // Unfortunately we cannot iterate backwards through the list,
-        // thus we have to take to longer way forward...
+        // thus we have to take the longer way forward...
         while((current = NextObject(&cstate)) != NULL)
         {
+          if(current == data->dummy)
+            continue;
           if(current == data->spacer)
             break;
 
@@ -247,11 +255,9 @@ DECLARE(AddItem) // Object *item
 
   if(msg->item != NULL && DoMethod(data->virtgroup, MUIM_Group_InitChange))
   {
-    // remove the spacer item first, we want this as the last one
-    DoMethod(data->virtgroup, OM_REMMEMBER, data->spacer);
-    // now add the new item and the spacer item after that one
+    // now add the new item and move the spacer item behind to the last position
     DoMethod(data->virtgroup, OM_ADDMEMBER, msg->item);
-    DoMethod(data->virtgroup, OM_ADDMEMBER, data->spacer);
+    DoMethod(data->virtgroup, MUIM_Group_MoveMember, data->spacer, -1);
     DoMethod(data->virtgroup, MUIM_Group_ExitChange);
 
     // tell the item to which list it belongs
@@ -298,8 +304,8 @@ DECLARE(RemoveItem) // Object *item
 
     if(data->disposeRemovedItems == TRUE)
     {
-      // dispose this object
-      MUI_DisposeObject(msg->item);
+      // dispose this object, but don't do it right now
+      DoMethod(G->App, MUIM_Application_PushMethod, 2, msg->item, OM_DISPOSE);
     }
 
     result = TRUE;
@@ -327,7 +333,12 @@ DECLARE(IterateItems) // void **state
       *msg->state = (Object *)GetHead(childList);
     }
 
-    item = NextObject((Object **)msg->state);
+    // iterate over the items, but skip the dummy object
+    do
+    {
+      item = NextObject((Object **)msg->state);
+    }
+    while(item == data->dummy);
 
     if(item == data->spacer)
       item = NULL;
