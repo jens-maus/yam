@@ -62,6 +62,7 @@
 #include "extrasrc.h"
 
 #include "Locale.h"
+#include "MailImport.h"
 #include "Requesters.h"
 #include "Threads.h"
 
@@ -78,6 +79,7 @@ struct Thread
   struct Process *process; // the process pointer as returned by CreateNewProc()
   LONG priority;           // the thread's priority
   LONG abortSignal;        // an allocated signal to abort the thread
+  LONG wakeupSignal;       // an allocated signal to wakeup a sleeping thread
   char name[SIZE_LARGE];   // the thread's name
 };
 
@@ -229,6 +231,14 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
                          GetTagData(TT_SendMails_Mode, (IPTR)0, msg->actionTags));
     }
     break;
+
+    case TA_ImportMails:
+    {
+      result = ImportMails((const char *)GetTagData(TT_ImportMails_File, (IPTR)NULL, msg->actionTags),
+                           (struct Folder *)GetTagData(TT_ImportMails_Folder, (IPTR)NULL, msg->actionTags),
+                           GetTagData(TT_ImportMails_Quiet, FALSE, msg->actionTags));
+    }
+    break;
   }
 
   D(DBF_THREAD, "thread '%s' finished action %ld, result %ld", msg->thread->name, msg->action, result);
@@ -266,9 +276,18 @@ static SAVEDS void ThreadEntry(void)
           D(DBF_THREAD, "thread '%s' got startup message", msg->thread->name);
           if((msg->thread->abortSignal = AllocSignal(-1)) != -1)
           {
-            proc->pr_Task.tc_UserData = msg->thread;
-            msg->result = TRUE;
-            thread = msg->thread;
+            if((msg->thread->wakeupSignal = AllocSignal(-1)) != -1)
+            {
+              proc->pr_Task.tc_UserData = msg->thread;
+              msg->result = TRUE;
+              thread = msg->thread;
+            }
+            else
+            {
+              E(DBF_THREAD, "thread '%s' failed to allocate wakeup signal", msg->thread->name);
+              FreeSignal(msg->thread->abortSignal);
+              msg->result = FALSE;
+            }
           }
           else
           {
@@ -283,6 +302,8 @@ static SAVEDS void ThreadEntry(void)
           D(DBF_THREAD, "thread '%s' got shutdown message", msg->thread->name);
           if(msg->thread->abortSignal != -1)
             FreeSignal(msg->thread->abortSignal);
+          if(msg->thread->wakeupSignal != -1)
+            FreeSignal(msg->thread->wakeupSignal);
           msg->result = TRUE;
           done = TRUE;
         }
@@ -291,7 +312,7 @@ static SAVEDS void ThreadEntry(void)
         default:
         {
           // clear the abort signal before executing the desired action
-          SetSignal(0UL, 1UL << thread->abortSignal);
+          SetSignal(0UL, (1UL << thread->abortSignal) | (1UL << thread->wakeupSignal));
           msg->result = DoThreadMessage(msg);
         }
         break;
@@ -314,6 +335,52 @@ static void AbortThread(struct Thread *thread)
 
   if(thread->abortSignal != -1)
     Signal((struct Task *)thread->process, 1UL << thread->abortSignal);
+
+  LEAVE();
+}
+
+///
+/// SleepThread
+// put the current thread to sleep
+BOOL SleepThread(void)
+{
+  struct Thread *thread = CurrentThread();
+  ULONG abortMask;
+  ULONG wakeupMask;
+  ULONG sigs;
+  BOOL notAborted;
+
+  ENTER();
+
+  if(IsMainThread() == TRUE)
+  {
+    abortMask = SIGBREAKF_CTRL_C;
+    wakeupMask = SIGBREAKF_CTRL_E;
+  }
+  else
+  {
+    abortMask = 1UL << thread->abortSignal;
+    wakeupMask = 1UL << thread->wakeupSignal;
+  }
+
+  sigs = Wait(abortMask | wakeupMask);
+  notAborted = isFlagClear(sigs, abortMask);
+
+  RETURN(notAborted);
+  return notAborted;
+}
+
+///
+/// WakeupThread
+// signal a thread to continue its work
+void WakeupThread(APTR thread)
+{
+  struct Thread *_thread = thread;
+
+  ENTER();
+
+  if(_thread != NULL && _thread->wakeupSignal != -1)
+    Signal((struct Task *)_thread->process, 1UL << _thread->wakeupSignal);
 
   LEAVE();
 }
@@ -676,6 +743,24 @@ BOOL IsMainThread(void)
 
   RETURN(isMainThread);
   return isMainThread;
+}
+
+///
+/// CurrentThread
+// get the current thread
+APTR CurrentThread(void)
+{
+  APTR thread;
+
+  ENTER();
+
+  if(IsMainThread() == TRUE)
+    thread = G->mainThread;
+  else
+    thread = ((struct Process *)FindTask(NULL))->pr_Task.tc_UserData;
+
+  RETURN(thread);
+  return thread;
 }
 
 ///

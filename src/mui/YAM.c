@@ -40,9 +40,12 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
+#include "YAM_mainFolder.h"
 #include "YAM_transfer.h"
+
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
+#include "Threads.h"
 
 #include "Debug.h"
 
@@ -771,6 +774,24 @@ DECLARE(AppendToLogfile) // enum LFMode mode, int id, char *logMessage
 }
 
 ///
+/// DECLARE(ChangeFolder)
+DECLARE(ChangeFolder) // struct Folder *folder, ULONG setActive
+{
+  MA_ChangeFolder(msg->folder, msg->setActive);
+
+  return 0;
+}
+
+///
+/// DECLARE(DisplayStatistics)
+DECLARE(DisplayStatistics) // struct Folder *folder, ULONG updateAppIcon
+{
+  DisplayStatistics(msg->folder, msg->updateAppIcon);
+
+  return 0;
+}
+
+///
 /// DECLARE(CreateTransferGroup)
 DECLARE(CreateTransferGroup) // enum TransferType TRmode, const char *title, struct Connection *connection, ULONG openWindow
 {
@@ -883,6 +904,37 @@ DECLARE(DeleteMail) // struct Mail *mail, ULONG flags
 DECLARE(FilterMail) // const struct MinList *filterList, struct Mail *mail
 {
   return FI_FilterSingleMail(msg->filterList, msg->mail, NULL);
+}
+
+///
+/// DECLARE(CreatePreselectionWindow)
+DECLARE(CreatePreselectionWindow) // struct Thread *thread, const char *title, struct MinList *mailList
+{
+  Object *window;
+
+  if((window = PreselectionWindowObject,
+    MUIA_Window_Title, msg->title,
+    MUIA_PreselectionWindow_Thread, msg->thread,
+    MUIA_PreselectionWindow_Mails, msg->mailList,
+  End) != NULL)
+  {
+    SafeOpenWindow(window);
+  }
+
+  return (IPTR)window;
+}
+
+///
+/// DECLARE(DisposeWindow)
+DECLARE(DisposeWindow) // Object *window
+{
+  if(msg->window != NULL)
+  {
+    DoMethod(G->App, OM_REMMEMBER, msg->window);
+    MUI_DisposeObject(msg->window);
+  }
+
+  return 0;
 }
 
 ///

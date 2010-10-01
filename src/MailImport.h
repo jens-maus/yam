@@ -1,3 +1,6 @@
+#ifndef MAILIMPORT_H
+#define MAILIMPORT_H
+
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -25,54 +28,8 @@
 
 ***************************************************************************/
 
-#include <proto/exec.h>
-#include <proto/utility.h>
+struct Folder;
 
-#include "extrasrc.h"
+BOOL ImportMails(const char *importFile, struct Folder *folder, const BOOL quiet);
 
-#include "YAM.h"
-#include "YAM_main.h"
-
-#include "Rexx.h"
-#include "Threads.h"
-
-#include "Debug.h"
-
-struct args
-{
-  char *filename;
-  long quiet;
-  long wait;
-};
-
-void rx_mailimport(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
-{
-  struct args *args = params->args;
-
-  ENTER();
-
-  switch(action)
-  {
-    case RXIF_INIT:
-    {
-      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
-    }
-    break;
-
-    case RXIF_ACTION:
-    {
-      if(MA_ImportMessages(args->filename, args->quiet != 0, args->wait != 0) == FALSE)
-        params->rc = RETURN_ERROR;
-    }
-    break;
-
-    case RXIF_FREE:
-    {
-      if(args != NULL)
-        FreeVecPooled(G->SharedMemPool, args);
-    }
-    break;
-  }
-
-  LEAVE();
-}
+#endif /* MAILIMPORT_H */

@@ -1274,9 +1274,9 @@ char *MA_NewMailFile(const struct Folder *folder, char *mailfile)
   base64encode(dateFilePart, (unsigned char *)&curDate, sizeof(struct TimeVal));
 
   // as the dateFilePart may contain slashes "/" we have to replace them
-  // with "-" chars to don't drive the filesystem crazy :)
+  // with "-" chars to not drive the filesystem crazy :)
   ptr = dateFilePart;
-  while((ptr = strchr(ptr, '/')))
+  while((ptr = strchr(ptr, '/')) != NULL)
     *ptr = '-';
 
   do
@@ -1290,10 +1290,10 @@ char *MA_NewMailFile(const struct Folder *folder, char *mailfile)
   if(mCounter < 999)
   {
     // copy the newFileName to our mailfile buffer
-    if(mailfile)
+    if(mailfile != NULL)
       strcpy(mailfile, newFileName);
     // get the real path to the file
-    result = GetRealPath(fullpath);
+    result = fullpath;
   }
   else
     // we ran out of free numbers

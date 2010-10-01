@@ -7,6 +7,9 @@ $URL$
 
 2010-10-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * MailImport.c, YAM_TR.c: splitt off the mail import to a separate module.
+    The mail import will now happen inside a thread and uses the just added
+    preselection window class to let the user the mails to be imported.
   * mui/PreselectionWindow.c: split off the preselection window to a separate
     class. Not all known functions are working yet, but this class will not be
     used for POP3 downloads yet as well.

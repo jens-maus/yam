@@ -81,6 +81,7 @@
 #include "HTML2Mail.h"
 #include "Locale.h"
 #include "MailExport.h"
+#include "MailImport.h"
 #include "MailList.h"
 #include "MailServers.h"
 #include "MethodStack.h"
@@ -2973,7 +2974,7 @@ MakeHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 ///
 /// MA_ImportMessages
 //  Imports messages from a MBOX mailbox file
-BOOL MA_ImportMessages(const char *fname, BOOL quiet)
+BOOL MA_ImportMessages(const char *fname, const BOOL quiet, const BOOL wait)
 {
   BOOL result = FALSE;
   struct Folder *actfo = FO_GetCurrentFolder();
@@ -2983,148 +2984,10 @@ BOOL MA_ImportMessages(const char *fname, BOOL quiet)
   // check that a real folder is active
   if(actfo != NULL && isGroupFolder(actfo) == FALSE)
   {
-    enum ImportFormat foundFormat = IMF_UNKNOWN;
-    FILE *fh;
-
-    // check if the file exists or not and if so, open
-    // it immediately.
-    if((fh = fopen(fname, "r")) != NULL)
-    {
-      int i=0;
-      char *buf = NULL;
-      size_t buflen = 0;
-
-      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-      // what we do first is to try to find out which
-      // file the user tries to import and if it is a valid
-      // and supported one.
-
-      // try to identify the file as an MBOX file by trying
-      // to find a line starting with "From " in the first 10
-      // successive lines.
-      D(DBF_IMPORT, "processing MBOX file identification");
-      while(i < 10 && getline(&buf, &buflen, fh) > 0)
-      {
-        if(strncmp(buf, "From ", 5) == 0)
-        {
-          foundFormat = IMF_MBOX;
-          break;
-        }
-
-        i++;
-      }
-
-      // if we still couldn't identify the file
-      // we go and try to identify it as a dbx (Outlook Express)
-      // message file
-      // Please check http://oedbx.aroh.de/ for a recent description
-      // of the format!
-      if(foundFormat == IMF_UNKNOWN)
-      {
-        unsigned char *file_header;
-
-        D(DBF_IMPORT, "processing DBX file identification");
-
-        // seek the file pointer back
-        fseek(fh, 0, SEEK_SET);
-
-        // read the 9404 bytes long file header for properly identifying
-        // an Outlook Express database file.
-        if((file_header = (unsigned char *)malloc(0x24bc)) !=  NULL)
-        {
-          if(fread(file_header, 1, 0x24bc, fh) == 0x24bc)
-          {
-            // try to identify the file as a CLSID_MessageDatabase file
-            if((file_header[0] == 0xcf && file_header[1] == 0xad &&
-                file_header[2] == 0x12 && file_header[3] == 0xfe) &&
-               (file_header[4] == 0xc5 && file_header[5] == 0xfd &&
-                file_header[6] == 0x74 && file_header[7] == 0x6f))
-            {
-              // the file seems to be indeed an Outlook Express
-              // message database file (.dbx)
-              foundFormat = IMF_DBX;
-            }
-          }
-
-          free(file_header);
-        }
-      }
-
-      // if we still haven't identified the file we try to find out
-      // if it might be just a RAW mail file without a common "From "
-      // phrase a MBOX compliant mail file normally contains.
-      if(foundFormat == IMF_UNKNOWN || foundFormat == IMF_MBOX)
-      {
-        int foundTokens = 0;
-
-        D(DBF_IMPORT, "processing PLAIN mail file identification");
-
-        // seek the file pointer back
-        fseek(fh, 0, SEEK_SET);
-
-        // Let's try to find up to 4 known header lines within the first
-        // 100 lines which might indicate a valid .mbox file. If we find at
-        // least 2 of these this will satisfy us.
-        i = 0;
-        while(i < 100 && foundTokens < 2 && getline(&buf, &buflen, fh) > 0)
-        {
-          if(strnicmp(buf, "From:", 5) == 0)
-            foundTokens++;
-          else if(strnicmp(buf, "To:", 3) == 0)
-            foundTokens++;
-          else if(strnicmp(buf, "Date:", 5) == 0)
-            foundTokens++;
-          else if(strnicmp(buf, "Subject:", 8) == 0)
-            foundTokens++;
-
-          i++;
-        }
-
-        // if we found enough tokens we can set the ImportFormat accordingly.
-        if(foundTokens >= 2)
-          foundFormat = (foundFormat == IMF_UNKNOWN ? IMF_PLAIN : IMF_MBOX);
-        else
-          foundFormat = IMF_UNKNOWN;
-      }
-
-      fclose(fh);
-
-      free(buf);
-    }
-
-    SHOWVALUE(DBF_IMPORT, foundFormat);
-
-    // if we found that the file contains a valid import format
-    // we go and create a transfer window object and let the user
-    // choose which mail he wants to actually import.
-    if(foundFormat != IMF_UNKNOWN)
-    {
-      if((G->TR = TR_New(TR_IMPORT)) != NULL)
-      {
-        TR_SetWinTitle(TRUE, (char *)FilePart(fname));
-
-        // put some import relevant data into variables of our
-        // transfer window object
-        strlcpy(G->TR->ImportFile, fname, sizeof(G->TR->ImportFile));
-        G->TR->ImportFolder = actfo;
-        G->TR->ImportFormat = foundFormat;
-
-        // call TR_GetMessageList_IMPORT() to parse the file once again
-        // and present the user with a selectable list of mails the file
-        // contains.
-        if(TR_GetMessageList_IMPORT() == TRUE)
-        {
-          if(quiet == TRUE || SafeOpenWindow(G->TR->GUI.WI) == TRUE)
-            result = TRUE;
-        }
-        else
-        {
-          MA_ChangeTransfer(TRUE);
-          DisposeModulePush(&G->TR);
-        }
-      }
-    }
+    result = DoAction(TA_ImportMails, TT_ImportMails_File, fname,
+                                      TT_ImportMails_Folder, actfo,
+                                      TT_ImportMails_Quiet, quiet,
+                                      TT_ImportMails_Wait, wait);
   }
 
   RETURN(result);
@@ -3143,7 +3006,7 @@ HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
   {
     struct FileReqCache *frc;
 
-    // put up an Requester to query the user for the input file.
+    // pop up a requester to query the user for the input file.
     if((frc = ReqFile(ASL_IMPORT, G->MA->GUI.WI, tr(MSG_MA_MessageImport), REQF_NONE, C->DetachDir, "")))
     {
       char inname[SIZE_PATHFILE];
@@ -3151,7 +3014,7 @@ HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
       AddPath(inname, frc->drawer, frc->file, sizeof(inname));
 
       // now start the actual importing of the messages
-      if(MA_ImportMessages(inname, FALSE) == FALSE)
+      if(MA_ImportMessages(inname, FALSE, FALSE) == FALSE)
         ER_NewError(tr(MSG_ER_MESSAGEIMPORT), inname);
     }
   }

@@ -583,6 +583,7 @@ YAMOBJS = \
 	ImageCache.o \
 	Locale.o \
 	MailExport.o \
+	MailImport.o \
 	MailList.o \
 	MailServers.o \
 	MethodStack.o \
