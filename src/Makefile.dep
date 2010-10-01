@@ -834,6 +834,21 @@ $(OBJDIR)/$(MUIDIR)/GenericRequestWindow.o: mui/GenericRequestWindow.c \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
   YAM_global.h YAM_utilities.h Locale.h ParseEmail.h YAM_main.h \
   YAM_read.h BayesFilter.h MUIObjects.h Debug.h
+$(OBJDIR)/$(MUIDIR)/HeaderList.o: mui/HeaderList.c mui/HeaderList_cl.h mui/Classes.h \
+  mui/ClassesExtra.h include/libraries/mui.h \
+  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
+  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
+  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
+  include/proto/muimaster.h include/interfaces/muimaster.h \
+  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
+  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_transfer.h YAM_utilities.h YAM_folderconfig.h HashTable.h \
+  YAM_userlist.h BayesFilter.h Rexx.h Themes.h Timer.h YAM_config.h \
+  YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h YAM_global.h \
+  YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
+  BayesFilter.h YAM_mainFolder.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ImageArea.o: mui/ImageArea.c ImageCache.h include/mui/TheBar_mcc.h \
   include/libraries/mui.h HashTable.h include/SDI_compiler.h \
   mui/ImageArea_cl.h mui/Classes.h mui/ClassesExtra.h \

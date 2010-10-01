@@ -70,7 +70,6 @@ struct Data
   char menuTitle[SIZE_DEFAULT];
 
   struct MinList senderInfoHeaders;
-  struct Hook headerCompareHook;
 
   BOOL hasContent;
   BOOL activeAttachmentGroup;
@@ -106,65 +105,6 @@ enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIM
 ///
 
 /* Hooks */
-/// HeaderDisplayHook
-//  Header listview display hook
-HOOKPROTONH(HeaderDisplayFunc, LONG, char **array, struct HeaderNode *hdrNode)
-{
-  // we translate some common header names into the local
-  // language
-  if(stricmp("From", hdrNode->name) == 0)
-    array[0] = (STRPTR)tr(MSG_RE_HDR_FROM);
-  else if(stricmp("To", hdrNode->name) == 0)
-    array[0] = (STRPTR)tr(MSG_RE_HDR_TO);
-  else if(stricmp("Reply-To", hdrNode->name) == 0)
-    array[0] = (STRPTR)tr(MSG_RE_HDR_REPLYTO);
-  else if(stricmp("Date", hdrNode->name) == 0)
-    array[0] = (STRPTR)tr(MSG_RE_HDR_DATE);
-  else if(stricmp("Subject", hdrNode->name) == 0)
-    array[0] = (STRPTR)tr(MSG_RE_HDR_SUBJECT);
-  else
-    array[0] = hdrNode->name;
-
-  // set the content of the header line
-  array[1] = hdrNode->content;
-
-  return 0;
-}
-MakeStaticHook(HeaderDisplayHook, HeaderDisplayFunc);
-///
-/// HeaderCompareHook
-//  Header listview compare hook
-HOOKPROTO(HeaderCompareFunc, LONG, struct HeaderNode *hdrNode1, struct HeaderNode *hdrNode2)
-{
-  LONG diff = 0;
-  struct ReadMailData *rmData = (struct ReadMailData *)hook->h_Data;
-
-  ENTER();
-
-  // we sort the headerdisplay  not only by checking which
-  // header should be displayed, but also by checking in
-  // which order they should be displayed regarding the
-  // specification in the short headers string object.
-  if(rmData->headerMode == HM_SHORTHEADER && C->ShortHeaders[0] != '\0')
-  {
-    char *e1 = stristr(C->ShortHeaders, hdrNode1->name);
-    char *e2 = stristr(C->ShortHeaders, hdrNode2->name);
-
-    // now we compare the position of the found pointers
-    // so that a lower pointer get higher priorities
-    if(e1 && e2)
-      diff = (LONG)(e2-e1);
-    else if(e1)
-      diff = +1;
-    else if(e2)
-      diff = -1;
-  }
-
-  RETURN(diff);
-  return diff;
-}
-MakeStaticHook(HeaderCompareHook, HeaderCompareFunc);
-///
 /// TextEditDoubleClickHook
 //  Handles double-clicks on an URL
 HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *clickmsg)
@@ -259,6 +199,7 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
   return result;
 }
 MakeStaticHook(TextEditDoubleClickHook, TextEditDoubleClickFunc);
+
 ///
 
 /* Private Functions */
@@ -530,18 +471,8 @@ OVERLOAD(OM_NEW)
               MUIA_VertWeight, hgVertWeight,
               MUIA_ShowMe,     rmData->headerMode != HM_NOHEADER,
               Child, headerListview = NListviewObject,
-                MUIA_NListview_NList, headerList = NListObject,
-                  InputListFrame,
-                  MUIA_NList_DisplayHook,          &HeaderDisplayHook,
-                  MUIA_NList_Format,               "P=\033r\0338 W=-1 MIW=-1,",
-                  MUIA_NList_Input,                FALSE,
-                  MUIA_NList_AutoClip,             C->AutoClip,
-                  MUIA_NList_AutoCopyToClip,       FALSE,
-                  MUIA_NList_TypeSelect,           MUIV_NList_TypeSelect_Char,
-                  MUIA_NList_ActiveObjectOnClick,  TRUE,
-                  MUIA_NList_DefaultObjectOnClick, FALSE,
-                  MUIA_ContextMenu,                FALSE,
-                  MUIA_CycleChain,                 TRUE,
+                MUIA_NListview_NList, headerList = HeaderListObject,
+                  MUIA_HeaderList_ReadMailData, rmData,
                 End,
               End,
               Child, senderImageGroup = VGroup,
@@ -602,10 +533,6 @@ OVERLOAD(OM_NEW)
       data->balanceObjectBottom = balanceObjectBottom;
       data->mailBodyGroup = mailBodyGroup;
       data->mailTextObject = mailTextObject;
-
-      // prepare the headerCompareHook to carry a reference to the readMailData
-      InitHook(&data->headerCompareHook, HeaderCompareHook, rmData);
-      set(data->headerList, MUIA_NList_CompareHook, &data->headerCompareHook);
 
       // prepare the senderInfoHeader list
       NewMinList(&data->senderInfoHeaders);

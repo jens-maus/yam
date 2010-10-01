@@ -425,6 +425,7 @@ MUIOBJS = \
 	ConfigPageList.o \
 	FolderRequestWindow.o \
 	GenericRequestWindow.o \
+	HeaderList.o \
 	ImageArea.o \
 	InfoBar.o \
 	InfoWindow.o \
