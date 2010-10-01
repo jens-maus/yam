@@ -66,18 +66,18 @@ OVERLOAD(MUIM_NList_Display)
   if(entry != NULL)
   {
     ndm->strings[0] = entry->name;
-    ndm->strings[1] = entry->remote ? "x" : " ";
-    ndm->strings[2] = entry->applyToNew && !entry->remote ?  "x" : " ";
-    ndm->strings[3] = entry->applyToSent && !entry->remote ? "x" : " ";
-    ndm->strings[4] = entry->applyOnReq && !entry->remote ?  "x" : " ";
+    ndm->strings[1] = (entry->remote == TRUE) ? (char *)"x" : (char *)" ";
+    ndm->strings[2] = (entry->applyToNew == TRUE && entry->remote == FALSE) ?  (char *)"x" : (char *)" ";
+    ndm->strings[3] = (entry->applyToSent == TRUE && entry->remote == FALSE) ? (char *)"x" : (char *)" ";
+    ndm->strings[4] = (entry->applyOnReq == TRUE && entry->remote == FALSE) ?  (char *)"x" : (char *)" ";
   }
   else
   {
-    ndm->strings[0] = tr(MSG_CO_Filter_Name);
-    ndm->strings[1] = tr(MSG_CO_Filter_RType);
-    ndm->strings[2] = tr(MSG_CO_Filter_NType);
-    ndm->strings[3] = tr(MSG_CO_Filter_SType);
-    ndm->strings[4] = tr(MSG_CO_Filter_UType);
+    ndm->strings[0] = (char *)tr(MSG_CO_Filter_Name);
+    ndm->strings[1] = (char *)tr(MSG_CO_Filter_RType);
+    ndm->strings[2] = (char *)tr(MSG_CO_Filter_NType);
+    ndm->strings[3] = (char *)tr(MSG_CO_Filter_SType);
+    ndm->strings[4] = (char *)tr(MSG_CO_Filter_UType);
   }
 
   LEAVE();
