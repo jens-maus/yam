@@ -131,7 +131,7 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
     // execute this one asynchronous
     pm->flags = 0;
     pm->argCount = argCount;
-    pm->args = memdup(VA_ARG(args, IPTR), argCount*sizeof(IPTR));
+    pm->args = memdup((void *)VA_ARG(args, IPTR), argCount*sizeof(IPTR));
 
     VA_END(args);
 
@@ -168,7 +168,7 @@ IPTR VARARGS68K PushMethodOnStackWait(Object *obj, ULONG argCount, ...)
     // execute this one synchronous
     pm->flags = PMF_SYNC;
     pm->argCount = argCount;
-    pm->args = memdup(VA_ARG(args, IPTR), argCount*sizeof(IPTR));
+    pm->args = memdup((void *)VA_ARG(args, IPTR), argCount*sizeof(IPTR));
 
     VA_END(args);
 
