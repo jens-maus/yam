@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.21 (29.09.2010) (c) 2000-2010 by YAM Open Source Team
+; $VER: Install-YAM 1.22 (1.10.2010) (c) 2000-2010 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -337,50 +337,44 @@
     )
 )
 ; ///
-;----------------------------------------------------------------------------
 ;/// ***** Español
-(set #def_cat_lang #def_lang_spanish)
-(set #def_doc_lang #def_doc_spanish)
-(set #acknowledgeOS (cat "Por favor confirme la detección\n"
-                         "automática de su sistema operativo:"))
-(set #YAM_dir  (cat "Por favor seleccione un directorio para YAM\n"
-                    "(NO se creará un cajón extra!)"))
-(set #lang_catalog (cat "Qué catálogo desea instalar?\n"
-                        "(Inglés está por defecto)"))
-(set #lang_manual "Seleccione lengua para la ayuda en línea AmigaGuide")
-(set #no_way_back_warning (cat "ATENCION!!\n"
-                               "(si quiere actualizar la versión existente\n"
-                               "de YAM 2.4)\n"
-                               "\n"
-                               "El esquema de denominación de correo ha cambiado completamente.\n"
-                               "Cuando ejecute YAM 2.6 por primera vez todos sus correos\n"
-                               "existentes serán convertidos automáticamente al nuevo esquema.\n"
-                               "Después de esto YAM 2.4 no se podrá utilizar más.\n"
-                               "Así que mejor guarde TODOS sus correos ANTES de ejecutar\n"
-                               "YAM 2.6.\n"
-                               "\n"
-                               "Aunque, NO hay problema en absoluto el instalar "
-                               "YAM 2.4 y YAM 2.6 en directorios separados."))
-(set #faq_and_bugtracker (cat "\n"
-                              "Si tiene alguna consulta concerniente a YAM\n"
-                              "puede realizarla en el forum de YAM:\n"
-                              "http://forum.yam.ch/\n"
-                              "\n"
-                              "Las preguntas más frecuentes son a su vez\n"
-                              "contestadas en el FAQ de YAM:\n"
-                              "http://faq.yam.ch/\n"
-                              "\n"
-                              "En caso de que encuentre algún fallo en YAM, por favor,\n"
-                              "hágalo saber en el registro de fallos de YAM:\n"
-                              "http://bugs.yam.ch/"))
-(set #done_1   (cat "\n"
-                    "YAM ha sido instalado satisfactoriamente.\n"
-                    "\n"
-                    "Haga doble click en el icono de \"YAM\" en el \n"))
-(set #done_2   (cat "\n"
-                    "directorio seleccionado.\n"
-                    "\n"
-                    "Que lo disfrute..."))
+(if (= @language "español")
+    (
+        (set #def_cat_lang #def_lang_spanish)
+        (set #def_doc_lang #def_doc_spanish)
+        (set #acknowledgeOS (cat "Por favor confirme la detección\n"
+                                 "automática de su sistema operativo:"))
+        (set #YAM_dir  (cat "Por favor seleccione un directorio para YAM\n"
+                            "(NO se creará un cajón extra!)"))
+        (set #lang_catalog (cat "Qué catálogo desea instalar?\n"
+                                "(Inglés está por defecto)"))
+        (set #lang_manual "Seleccione lengua para la ayuda en línea AmigaGuide")
+        (set #no_way_back_warning (cat "ATENCION!!\n"
+                                       "(si quiere actualizar la versión existente\n"
+                                       "de YAM 2.4)\n"
+                                       "\n"
+                                       "El esquema de denominación de correo ha cambiado completamente. Cuando ejecute YAM 2.6 por primera vez todos sus correos existentes serán convertidos automáticamente al nuevo esquema. Después de esto YAM 2.4 no se podrá utilizar más. Así que mejor guarde TODOS sus correos ANTES de ejecutar YAM 2.6.\n"
+                                       "\n"
+                                       "Aunque, NO hay problema en absoluto el instalar YAM 2.4 y YAM 2.6 en directorios separados."))
+        (set #faq_and_bugtracker (cat "\n"
+                                      "Si tiene alguna consulta concerniente a YAM puede realizarla en el forum de YAM:\n"
+                                      "http://forum.yam.ch/\n"
+                                      "\n"
+                                      "Las preguntas más frecuentes son a su vez\ contestadas en el FAQ de YAM:\n"
+                                      "http://faq.yam.ch/\n"
+                                      "\n"
+                                      "En caso de que encuentre algún fallo en YAM, por favor, hágalo saber en el registro de fallos de YAM:\n"
+                                      "http://bugs.yam.ch/"))
+        (set #done_1   (cat "\n"
+                            "YAM ha sido instalado satisfactoriamente.\n"
+                            "\n"
+                            "Haga doble click en el icono de \"YAM\" en el \n"))
+        (set #done_2   (cat "\n"
+                            "directorio seleccionado.\n"
+                            "\n"
+                            "Que lo disfrute..."))
+    )
+)
 ; ///
 ;----------------------------------------------------------------------------
 ; /// Checking environment
