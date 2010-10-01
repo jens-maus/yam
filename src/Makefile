@@ -436,6 +436,7 @@ MUIOBJS = \
 	ObjectList.o \
 	ObjectListitem.o \
 	PassphraseRequestWindow.o \
+	PreselectionWindow.o \
 	QuickSearchBar.o \
 	ReadMailGroup.o \
 	ReadWindow.o \

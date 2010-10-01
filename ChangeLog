@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/PreselectionWindow.c: split off the preselection window to a separate
+    class. Not all known functions are working yet, but this class will not be
+    used for POP3 downloads yet as well.
+
 2010-09-30 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: update to the latest changes.
