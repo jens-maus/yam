@@ -417,6 +417,7 @@ MUIOBJS = \
 	Addrmatchlist.o \
 	AttachmentGroup.o \
 	AttachmentImage.o \
+	AttachmentList.o \
 	AttachmentObject.o \
 	AttachmentRequestWindow.o \
 	BirthdayRequestWindow.o \

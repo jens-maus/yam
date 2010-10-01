@@ -7,6 +7,9 @@ $URL$
 
 2010-10-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/AttachmentRequestWindow.c, mui/AttachmentList.c: split off the list of
+    attachments to a separate module to be able to implement the display hook
+    as method.
   * mui/WriteWindow.c, mui/WriteAttachmentList.c: implemented the window's list
     hooks as proper methods of the list itself.
   * mui/ThemeListGroup.c, mui/ThemeList.c: split off the theme list to a

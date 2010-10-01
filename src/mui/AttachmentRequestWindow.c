@@ -44,74 +44,9 @@ struct Data
 {
   LONG result;
   Object *listObj;
+  struct Part spart[2];
 };
 */
-
-/// AttachDspFunc
-//  Attachment listview display hook
-HOOKPROTONHNO(AttachDspFunc, LONG, struct NList_DisplayMessage *msg)
-{
-  ENTER();
-
-  if(msg != NULL)
-  {
-    // now we set our local variables to the DisplayMessage structure ones
-    struct Part *entry = (struct Part *)msg->entry;
-    char **array = msg->strings;
-
-    if(entry != NULL)
-    {
-      static char dispnu[SIZE_SMALL];
-      static char dispsz[SIZE_SMALL];
-
-      if(entry->Nr > PART_RAW)
-        snprintf(array[0] = dispnu, sizeof(dispnu), "%d%s", entry->Nr, (entry->rmData != NULL && entry->Nr == entry->rmData->letterPartNum) ? "*" : "");
-      else
-        array[0] = (STRPTR)"";
-
-      array[1] = entry->Name;
-
-      if(entry->Nr <= PART_RAW)
-        array[2] = (STRPTR)tr(MSG_CTtextplain);
-      else if(entry->Description[0] != '\0')
-        array[2] = entry->Description;
-      else
-        array[2] = (STRPTR)DescribeCT(entry->ContentType);
-
-      // check the alternative status
-      if(isAlternativePart(entry) == TRUE && entry->Parent != NULL && entry->Parent->MainAltPart != entry)
-        msg->preparses[1] = (char *)MUIX_I;
-
-      if(entry->Size > 0)
-      {
-        if(isDecoded(entry))
-          FormatSize(entry->Size, dispsz, sizeof(dispsz), SF_AUTO);
-        else
-        {
-          dispsz[0] = '~';
-          FormatSize(entry->Size, &dispsz[1], sizeof(dispsz)-1, SF_AUTO);
-        }
-
-        array[3] = dispsz;
-      }
-      else
-        array[3] = (STRPTR)"";
-    }
-    else
-    {
-      array[0] = (STRPTR)tr(MSG_ATTACH_NO);
-      array[1] = (STRPTR)tr(MSG_ATTACH_PART);
-      array[2] = (STRPTR)tr(MSG_RE_Description);
-      array[3] = (STRPTR)tr(MSG_Size);
-    }
-  }
-
-  RETURN(0);
-  return 0;
-}
-MakeStaticHook(AttachDspHook, AttachDspFunc);
-
-///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -194,14 +129,8 @@ OVERLOAD(OM_NEW)
         Child, LLabel(bodyText),
         Child, NListviewObject,
           MUIA_CycleChain, TRUE,
-          MUIA_NListview_NList, listObj = NListObject,
-            InputListFrame,
-            MUIA_NList_Format,               "BAR,BAR,BAR,",
-            MUIA_NList_Title,                TRUE,
-            MUIA_NList_DoubleClick,          TRUE,
-            MUIA_NList_MultiSelect,          isMultiReq(mode) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
-            MUIA_NList_DisplayHook2,         &AttachDspHook,
-            MUIA_NList_DefaultObjectOnClick, FALSE,
+          MUIA_NListview_NList, listObj = AttachmentListObject,
+            MUIA_NList_MultiSelect, isMultiReq(mode) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
           End,
         End,
       End,
@@ -215,27 +144,26 @@ OVERLOAD(OM_NEW)
     TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
-    static struct Part spart[2];
     struct Part *part;
 
     data->listObj = listObj;
 
     // lets create the static parts of the Attachrequest entries in the NList
-    spart[0].Nr = PART_ORIGINAL;
-    strlcpy(spart[0].Name, tr(MSG_RE_Original), sizeof(spart[0].Name));
-    spart[0].Size = rmData->mail->Size;
-    SET_FLAG(spart[0].Flags, PFLAG_DECODED);
-    DoMethod(listObj, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Top);
+    data->spart[0].Nr = PART_ORIGINAL;
+    strlcpy(data->spart[0].Name, tr(MSG_RE_Original), sizeof(data->spart[0].Name));
+    data->spart[0].Size = rmData->mail->Size;
+    SET_FLAG(data->spart[0].Flags, PFLAG_DECODED);
+    DoMethod(listObj, MUIM_NList_InsertSingle, &data->spart[0], MUIV_NList_Insert_Top);
     set(listObj, MUIA_NList_Active, MUIV_NList_Active_Top);
 
     // if this AttachRequest isn't a DISPLAY request we show all the option to select the text we actually see
     if(!isDisplayReq(mode))
     {
-      spart[1].Nr = PART_ALLTEXT;
-      strlcpy(spart[1].Name, tr(MSG_RE_AllTexts), sizeof(spart[1].Name));
-      spart[1].Size = 0;
+      data->spart[1].Nr = PART_ALLTEXT;
+      strlcpy(data->spart[1].Name, tr(MSG_RE_AllTexts), sizeof(data->spart[1].Name));
+      data->spart[1].Size = 0;
 
-      DoMethod(listObj, MUIM_NList_InsertSingle, &spart[1], MUIV_NList_Insert_Bottom);
+      DoMethod(listObj, MUIM_NList_InsertSingle, &data->spart[1], MUIV_NList_Insert_Bottom);
     }
 
     // now we process the mail and pick every part out to the NListview
