@@ -24,7 +24,7 @@
  $Id$
 
  Superclass:  MUIC_NList
- Description: NList class of the write window's attachment list
+ Description: NList class of the attachment requester's list
 
 ***************************************************************************/
 
