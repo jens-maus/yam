@@ -762,42 +762,6 @@ HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
 }
 MakeStaticHook(CO_PlaySoundHook,CO_PlaySoundFunc);
 ///
-/// FilterDisplayFunc
-// Filter list display hook
-HOOKPROTONHNO(FilterDisplayFunc, LONG, struct NList_DisplayMessage *msg)
-{
-  struct FilterNode *entry;
-  const char **array;
-
-  if(!msg)
-    return 0;
-
-  // now we set our local variables to the DisplayMessage structure ones
-  entry = (struct FilterNode *)msg->entry;
-  array = (const char **)msg->strings;
-
-  if(entry)
-  {
-    array[0] = entry->name;
-    array[1] = entry->remote ? "x" : " ";
-    array[2] = entry->applyToNew && !entry->remote ?  "x" : " ";
-    array[3] = entry->applyToSent && !entry->remote ? "x" : " ";
-    array[4] = entry->applyOnReq && !entry->remote ?  "x" : " ";
-  }
-  else
-  {
-    array[0] = tr(MSG_CO_Filter_Name);
-    array[1] = tr(MSG_CO_Filter_RType);
-    array[2] = tr(MSG_CO_Filter_NType);
-    array[3] = tr(MSG_CO_Filter_SType);
-    array[4] = tr(MSG_CO_Filter_UType);
-  }
-
-  return 0;
-}
-MakeStaticHook(FilterDisplayHook, FilterDisplayFunc);
-
-///
 /// UpdateCheckHook
 // initiates an interactive update check
 HOOKPROTONHNONP(UpdateCheckFunc, void)
@@ -929,70 +893,6 @@ HOOKPROTONHNONP(PutMimeTypeEntryFunc, void)
   LEAVE();
 }
 MakeStaticHook(PutMimeTypeEntryHook, PutMimeTypeEntryFunc);
-///
-/// MimeTypeDisplayHook
-// display hook for the mime type list
-HOOKPROTONH(MimeTypeDisplayFunc, LONG, char **array, struct MimeTypeNode *mt)
-{
-  ENTER();
-
-  array[0] = mt->ContentType;
-
-  RETURN(0);
-  return 0;
-}
-MakeStaticHook(MimeTypeDisplayHook, MimeTypeDisplayFunc);
-
-///
-/// MimeTypeCompareHook
-// compare hook for the mime type list
-HOOKPROTONHNO(MimeTypeCompareFunc, LONG, struct NList_CompareMessage *msg)
-{
-  LONG result;
-  struct MimeTypeNode *mt1 = (struct MimeTypeNode *)msg->entry1;
-  struct MimeTypeNode *mt2 = (struct MimeTypeNode *)msg->entry2;
-  char class1[SIZE_CTYPE];
-  char class2[SIZE_CTYPE];
-  char *type1;
-  char *type2;
-
-  ENTER();
-
-  strlcpy(class1, mt1->ContentType, sizeof(class1));
-  strlcpy(class2, mt2->ContentType, sizeof(class2));
-
-  // split the content-type in its two parts
-  if((type1 = strchr(class1, '/')) != NULL)
-    *type1++ = '\0';
-  else
-    type1 = (char *)"";
-  if((type2 = strchr(class2, '/')) != NULL)
-    *type2++ = '\0';
-  else
-    type2 = (char *)"";
-
-  // first check if any is a catch all
-  // these are put to the end of each class
-  result = stricmp(class1, class2);
-  if(result == 0)
-  {
-    // the class is the same, now take a look at the type
-    // the catch-all is sorted in front of all the others
-    // as '*' and '?' are forbidden for MIME types it is enough to check just for these
-    // two chars.
-    if(type1[0] == '*' || type1[0] == '#' || type1[0] == '?')
-      result = +1;
-    else if(type2[0] == '*' || type2[0] == '#' || type2[0] == '?')
-      result = -1;
-    else
-      result = stricmp(type1, type2);
-  }
-
-  RETURN(result);
-  return result;
-}
-MakeStaticHook(MimeTypeCompareHook, MimeTypeCompareFunc);
-
 ///
 /// CO_GetRXEntryHook
 //  Fills form with data from selected list entry
@@ -2310,13 +2210,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                       MUIA_Weight, 70,
                       Child, NListviewObject,
                          MUIA_CycleChain, TRUE,
-                         MUIA_NListview_NList, data->GUI.LV_RULES = NListObject,
-                            InputListFrame,
-                            MUIA_NList_Format,       "BAR, P=\033c NB CW=1 MICW=1 MACW=1, P=\033c NB CW=1 MICW=1 MACW=1, P=\033c NB CW=1 MICW=1 MACW=1, P=\033c NB CW=1 MICW=1 MACW=1",
-                            MUIA_NList_Title,        TRUE,
-                            MUIA_NList_DragType,     MUIV_NList_DragType_Immediate,
-                            MUIA_NList_DragSortable, TRUE,
-                            MUIA_NList_DisplayHook2, &FilterDisplayHook,
+                         MUIA_NListview_NList, data->GUI.LV_RULES = FilterListObject,
                          End,
                       End,
                       Child, ColGroup(3),
@@ -3510,10 +3404,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
                     MUIA_Weight, 30,
                     Child, NListviewObject,
                        MUIA_CycleChain, TRUE,
-                       MUIA_NListview_NList, data->GUI.LV_MIME = NListObject,
-                         InputListFrame,
-                         MUIA_NList_DisplayHook, &MimeTypeDisplayHook,
-                         MUIA_NList_CompareHook2, &MimeTypeCompareHook,
+                       MUIA_NListview_NList, data->GUI.LV_MIME = MimeTypeListObject,
                        End,
                     End,
 

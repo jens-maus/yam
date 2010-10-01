@@ -423,6 +423,7 @@ MUIOBJS = \
 	BirthdayRequestWindow.o \
 	CheckboxRequestWindow.o \
 	ConfigPageList.o \
+  FilterList.o \
 	FolderRequestWindow.o \
 	GenericRequestWindow.o \
 	HeaderList.o \
@@ -435,6 +436,7 @@ MUIOBJS = \
 	MainMailListGroup.o \
 	MainWindow.o \
 	MainWindowToolbar.o \
+  MimeTypeList.o \
 	ObjectList.o \
 	ObjectListitem.o \
 	PassphraseRequestWindow.o \
