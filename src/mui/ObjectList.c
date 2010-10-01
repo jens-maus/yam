@@ -57,15 +57,12 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   if((obj = DoSuperNew(cl, obj,
+
     MUIA_Scrollgroup_FreeHoriz, FALSE,
     MUIA_Scrollgroup_AutoBars, TRUE,
-
-    MUIA_Scrollgroup_Contents, virtgroup = VirtgroupObject,
-      MUIA_Group_Horiz, FALSE,
-      Child, dummy = TextObject,
-        MUIA_ShowMe, FALSE,
-      End,
-      Child, spacer = VSpace(0),
+    MUIA_Scrollgroup_Contents, virtgroup = VGroupV,
+      Child, dummy = VSpace(1),
+      Child, spacer = HVSpace,
     End,
 
     TAG_MORE, inittags(msg))) != NULL)
