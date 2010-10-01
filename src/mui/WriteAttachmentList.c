@@ -39,11 +39,33 @@
 /* CLASSDATA
 struct Data
 {
-  short dummy;
+  char sizeBuffer[SIZE_SMALL];
 };
 */
 
 /* Overloaded Methods */
+/// OVERLOAD(OM_NEW)
+OVERLOAD(OM_NEW)
+{
+  ENTER();
+
+  obj = DoSuperNew(cl, obj,
+
+    InputListFrame,
+    MUIA_NList_ActiveObjectOnClick,  TRUE,
+    MUIA_NList_DefaultObjectOnClick, FALSE,
+    MUIA_NList_DragType,             MUIV_NList_DragType_Immediate,
+    MUIA_NList_DragSortable,         TRUE,
+    MUIA_NList_Format,               "D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
+    MUIA_NList_Title,                TRUE,
+
+    TAG_MORE, inittags(msg));
+
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
+}
+
+///
 /// OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Setup)
 {
@@ -196,6 +218,71 @@ OVERLOAD(MUIM_DragDrop)
 
   RETURN(result);
   return result;
+}
+
+///
+/// OVERLOAD(MUIM_NList_Construct)
+OVERLOAD(MUIM_NList_Construct)
+{
+  struct MUIP_NList_Construct *ncm = (struct MUIP_NList_Construct *)msg;
+  struct Attach *attach = ncm->entry;
+  struct Attach *entry;
+
+  ENTER();
+
+  entry = memdup(attach, sizeof(*attach));
+
+  RETURN((IPTR)entry);
+  return (IPTR)entry;
+}
+
+///
+/// OVERLOAD(MUIM_NList_Destruct)
+OVERLOAD(MUIM_NList_Destruct)
+{
+  struct MUIP_NList_Destruct *ncm = (struct MUIP_NList_Destruct *)msg;
+  struct Attach *attach = ncm->entry;
+
+  ENTER();
+
+  FinishUnpack(attach->FilePath);
+  free(attach);
+
+  LEAVE();
+  return 0;
+}
+
+///
+/// OVERLOAD(MUIM_NList_Display)
+OVERLOAD(MUIM_NList_Display)
+{
+  struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
+  struct Attach *entry = (struct Attach *)ndm->entry;
+
+  ENTER();
+
+  if(entry != NULL)
+  {
+    GETDATA;
+
+    FormatSize(entry->Size, data->sizeBuffer, sizeof(data->sizeBuffer), SF_AUTO);
+    ndm->strings[0] = entry->Name;
+    ndm->strings[1] = data->sizeBuffer;
+    ndm->strings[2] = (STRPTR)DescribeCT(entry->ContentType);
+    ndm->strings[3] = (STRPTR)(entry->IsMIME ? "MIME" : "UU");
+    ndm->strings[4] = entry->Description;
+  }
+  else
+  {
+    ndm->strings[0] = (STRPTR)tr(MSG_WR_TitleFile);
+    ndm->strings[1] = (STRPTR)tr(MSG_WR_TitleSize);
+    ndm->strings[2] = (STRPTR)tr(MSG_WR_TitleContents);
+    ndm->strings[3] = (STRPTR)tr(MSG_WR_TitleEncoding);
+    ndm->strings[4] = (STRPTR)tr(MSG_WR_TitleDescription);
+  }
+
+  LEAVE();
+  return 0;
 }
 
 ///

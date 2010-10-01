@@ -808,71 +808,6 @@ HOOKPROTONHNO(CloseWriteWindowFunc, void, struct WriteMailData **arg)
   LEAVE();
 }
 MakeStaticHook(CloseWriteWindowHook, CloseWriteWindowFunc);
-///
-/// ConstructHook()
-// ConstructHook for the AttachmentList
-HOOKPROTONHNO(ConstructFunc, struct Attach *, struct Attach *attach)
-{
-  struct Attach *entry;
-
-  ENTER();
-
-  entry = memdup(attach, sizeof(*attach));
-
-  RETURN(entry);
-  return entry;
-}
-MakeStaticHook(ConstructHook, ConstructFunc);
-
-///
-/// DestructHook()
-// DestructHook for the AttachmentList
-HOOKPROTONHNO(DestructFunc, LONG, struct Attach *attach)
-{
-  ENTER();
-
-  if(attach != NULL)
-  {
-    FinishUnpack(attach->FilePath);
-    free(attach);
-  }
-
-  RETURN(0);
-  return 0;
-}
-MakeStaticHook(DestructHook, DestructFunc);
-
-///
-/// DisplayHook()
-// DisplayHook for the AttachmentList
-HOOKPROTONH(DisplayFunc, LONG, char **array, struct Attach *entry)
-{
-  ENTER();
-
-  if(entry != NULL)
-  {
-    static char dispsz[SIZE_SMALL];
-
-    FormatSize(entry->Size, dispsz, sizeof(dispsz), SF_AUTO);
-    array[0] = entry->Name;
-    array[1] = dispsz;
-    array[2] = (STRPTR)DescribeCT(entry->ContentType);
-    array[3] = (STRPTR)(entry->IsMIME ? "MIME" : "UU");
-    array[4] = entry->Description;
-  }
-  else
-  {
-    array[0] = (STRPTR)tr(MSG_WR_TitleFile);
-    array[1] = (STRPTR)tr(MSG_WR_TitleSize);
-    array[2] = (STRPTR)tr(MSG_WR_TitleContents);
-    array[3] = (STRPTR)tr(MSG_WR_TitleEncoding);
-    array[4] = (STRPTR)tr(MSG_WR_TitleDescription);
-  }
-
-  RETURN(0);
-  return 0;
-}
-MakeStaticHook(DisplayHook, DisplayFunc);
 
 ///
 /// AppMessageHook()
@@ -1339,16 +1274,6 @@ OVERLOAD(OM_NEW)
                 Child, NListviewObject,
                   MUIA_CycleChain, TRUE,
                   MUIA_NListview_NList, data->LV_ATTACH = WriteAttachmentListObject,
-                    InputListFrame,
-                    MUIA_NList_ActiveObjectOnClick,   TRUE,
-                    MUIA_NList_DefaultObjectOnClick,  FALSE,
-                    MUIA_NList_DragType,              MUIV_NList_DragType_Immediate,
-                    MUIA_NList_DragSortable,          TRUE,
-                    MUIA_NList_Format,                "D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
-                    MUIA_NList_Title,                 TRUE,
-                    MUIA_NList_ConstructHook,         &ConstructHook,
-                    MUIA_NList_DestructHook,          &DestructHook,
-                    MUIA_NList_DisplayHook,           &DisplayHook,
                   End,
                 End,
 
