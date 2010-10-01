@@ -187,78 +187,6 @@ HOOKPROTONH(PO_List2TextFunc, void, Object *list, Object *text)
 MakeStaticHook(PO_List2TextHook, PO_List2TextFunc);
 
 ///
-/// ScriptListDisplayHook
-//  ARexx listview display hook
-HOOKPROTONHNO(ScriptListDisplayFunc, LONG, struct NList_DisplayMessage *msg)
-{
-  ENTER();
-
-  if(msg != NULL)
-  {
-    const char **array = (const char **)msg->strings;
-
-    if(CE != NULL)
-    {
-      if(msg->entry != NULL)
-      {
-        static char title[SIZE_DEFAULT];
-        enum Macro type = (enum Macro)(msg->entry)-1;
-
-        title[0] = '\0';
-
-        switch(type)
-        {
-          case MACRO_STARTUP:   strlcpy(title, tr(MSG_CO_ScriptStartup), sizeof(title)); break;
-          case MACRO_QUIT:      strlcpy(title, tr(MSG_CO_ScriptTerminate), sizeof(title)); break;
-          case MACRO_PREGET:    strlcpy(title, tr(MSG_CO_ScriptPreGetMail), sizeof(title)); break;
-          case MACRO_POSTGET:   strlcpy(title, tr(MSG_CO_ScriptPostGetMail), sizeof(title)); break;
-          case MACRO_NEWMSG:    strlcpy(title, tr(MSG_CO_ScriptNewMsg), sizeof(title)); break;
-          case MACRO_PRESEND:   strlcpy(title, tr(MSG_CO_ScriptPreSendMail), sizeof(title)); break;
-          case MACRO_POSTSEND:  strlcpy(title, tr(MSG_CO_ScriptPostSendMail), sizeof(title)); break;
-          case MACRO_READ:      strlcpy(title, tr(MSG_CO_ScriptReadMsg), sizeof(title)); break;
-          case MACRO_PREWRITE:  strlcpy(title, tr(MSG_CO_ScriptPreWriteMsg), sizeof(title)); break;
-          case MACRO_POSTWRITE: strlcpy(title, tr(MSG_CO_ScriptPostWriteMsg), sizeof(title)); break;
-          case MACRO_URL:       strlcpy(title, tr(MSG_CO_ScriptClickURL), sizeof(title)); break;
-          case MACRO_PREFILTER: strlcpy(title, tr(MSG_CO_ScriptPreFilterMail), sizeof(title)); break;
-          case MACRO_POSTFILTER:strlcpy(title, tr(MSG_CO_ScriptPostFilterMail), sizeof(title)); break;
-
-          // the user definable macros
-          default:
-          {
-            snprintf(title, sizeof(title), tr(MSG_CO_ScriptMenu), type+1);
-
-            if(CE->RX[type].Name[0] != '\0')
-              snprintf(title, sizeof(title), "%s (%s)", title, CE->RX[type].Name);
-          }
-        }
-
-        array[0] = title;
-
-        if(CE->RX[type].Script[0] != '\0')
-        {
-          array[1] = CE->RX[type].Script;
-          msg->preparses[0] = (char *)MUIX_B;
-        }
-      }
-      else
-      {
-        array[0] = tr(MSG_CO_SCRIPTACTION);
-        array[1] = tr(MSG_CO_SCRIPTPATH);
-      }
-    }
-    else
-    {
-      array[0] = NULL;
-      array[1] = NULL;
-    }
-  }
-
-  RETURN(0);
-  return 0;
-}
-MakeStaticHook(ScriptListDisplayHook, ScriptListDisplayFunc);
-
-///
 /// PO_XPKOpenHook
 //  Sets a popup listview accordingly to its string gadget
 HOOKPROTONH(PO_XPKOpenFunc, BOOL, Object *list, Object *str)
@@ -3608,11 +3536,7 @@ Object *CO_PageScripts(struct CO_ClassData *data)
              Child, VGroup,
                 Child, NListviewObject,
                    MUIA_CycleChain, TRUE,
-                   MUIA_NListview_NList, data->GUI.LV_REXX = NListObject,
-                      InputListFrame,
-                      MUIA_NList_Title,        TRUE,
-                      MUIA_NList_Format,       "BAR,",
-                      MUIA_NList_DisplayHook2, &ScriptListDisplayHook,
+                   MUIA_NListview_NList, data->GUI.LV_REXX = ScriptListObject,
                    End,
                 End,
                 Child, ColGroup(2),

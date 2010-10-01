@@ -447,6 +447,7 @@ MUIOBJS = \
 	ReadWindowToolbar.o \
 	ReadWindowStatusBar.o \
 	Recipientstring.o \
+  ScriptList.o \
 	Searchwindow.o \
 	SearchControlGroup.o \
 	ShutdownWindow.o \

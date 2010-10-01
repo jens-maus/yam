@@ -7,8 +7,10 @@ $URL$
 
 2010-10-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c, mui/ScriptList.c: split off some more list classes as separate
+    modules to be able to implement the hooks as proper methods.
   * YAM_COg.c, mui/FilterList.c, mui/MimeTypeList.c: split off some more list
-    classes a separate modules to be able to implement the hooks as proper
+    classes as separate modules to be able to implement the hooks as proper
     methods.
   * mui/ObjectList.c: no idea why, but the object list needs an invisible dummy
     object to be resizeable.
