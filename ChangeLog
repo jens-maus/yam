@@ -7,6 +7,7 @@ $URL$
 
 2010-10-01 Thore Böckelmann <tboeckel@gmx.de>
 
+  * Thread.c: execute the subthreads with priority 0 instead of +1.
   * doc/Install-YAM: fixed spanish part of Installer script.
   * YAM_COg.c, mui/ScriptList.c: split off some more list classes as separate
     modules to be able to implement the hooks as proper methods.
