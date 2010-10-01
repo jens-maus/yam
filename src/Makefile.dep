@@ -94,27 +94,28 @@ $(OBJDIR)/MailImport.o: MailImport.c include/libraries/mui.h extrasrc.h \
   YAM_stringsizes.h YAM_transfer.h YAM_utilities.h YAM_folderconfig.h \
   HashTable.h YAM_userlist.h BayesFilter.h Rexx.h Themes.h Timer.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h UpdateCheck.h \
-  YAM_mainFolder.h FileInfo.h Locale.h MailList.h MethodStack.h \
-  MUIObjects.h Threads.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_read.h BayesFilter.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  YAM_mainFolder.h FileInfo.h Locale.h MailImport.h MailList.h \
+  MethodStack.h MUIObjects.h Threads.h mui/Classes.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -442,7 +443,7 @@ $(OBJDIR)/YAM_MA.o: YAM_MA.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h 
   YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h mui/Classes.h \
   mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h mime/base64.h \
   tcp/pop3.h tcp/smtp.h YAM_transfer.h AppIcon.h FileInfo.h FolderList.h \
-  HTML2Mail.h Locale.h MailExport.h MailImport.h MailList.h MailServers.h \
+  HTML2Mail.h Locale.h MailExport.h MailList.h MailServers.h \
   MethodStack.h MimeTypes.h MUIObjects.h Requesters.h Threads.h Debug.h
 $(OBJDIR)/YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListtree_mcc.h include/proto/muimaster.h \

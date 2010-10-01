@@ -81,7 +81,6 @@
 #include "HTML2Mail.h"
 #include "Locale.h"
 #include "MailExport.h"
-#include "MailImport.h"
 #include "MailList.h"
 #include "MailServers.h"
 #include "MethodStack.h"

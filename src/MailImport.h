@@ -30,6 +30,6 @@
 
 struct Folder;
 
-BOOL ImportMails(const char *importFile, struct Folder *folder, const BOOL quiet);
+BOOL ImportMails(const char *importFile, struct Folder *folder, const BOOL quiet, const BOOL wait);
 
 #endif /* MAILIMPORT_H */

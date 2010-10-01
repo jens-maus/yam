@@ -236,7 +236,8 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
     {
       result = ImportMails((const char *)GetTagData(TT_ImportMails_File, (IPTR)NULL, msg->actionTags),
                            (struct Folder *)GetTagData(TT_ImportMails_Folder, (IPTR)NULL, msg->actionTags),
-                           GetTagData(TT_ImportMails_Quiet, FALSE, msg->actionTags));
+                           GetTagData(TT_ImportMails_Quiet, FALSE, msg->actionTags),
+                           GetTagData(TT_ImportMails_Wait, FALSE, msg->actionTags));
     }
     break;
   }
