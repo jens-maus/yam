@@ -362,7 +362,7 @@ BOOL CheckForUpdates(const BOOL quiet)
 
                   // create a new UpdateComponent structure which we
                   // are going to fill step by step
-                  if((comp = calloc(sizeof(struct UpdateComponent), 1)) == NULL)
+                  if((comp = calloc(sizeof(*comp), 1)) == NULL)
                   {
                     updatesAvailable = FALSE;
                     break;

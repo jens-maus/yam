@@ -459,6 +459,7 @@ MUIOBJS = \
 	TransferControlList.o \
 	TransferMailList.o \
 	TransferWindow.o \
+  UpdateComponentList.o \
 	UpdateNotifyWindow.o \
 	WriteAttachmentList.o \
 	WriteWindow.o \

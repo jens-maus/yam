@@ -100,19 +100,7 @@ OVERLOAD(OM_NEW)
         MUIA_CycleChain, TRUE,
         MUIA_VertWeight, 20,
         MUIA_Listview_DragType,  MUIV_Listview_DragType_None,
-        MUIA_NListview_NList, nl_componentlist = NListObject,
-           InputListFrame,
-           MUIA_NList_Format,               "BAR,BAR,BAR,",
-           MUIA_NList_MinColSortable,       0,
-           MUIA_NList_TitleClick,           FALSE,
-           MUIA_NList_TitleClick2,          FALSE,
-           MUIA_NList_MultiSelect,          MUIV_NList_MultiSelect_None,
-           MUIA_NList_Title,                TRUE,
-           MUIA_NList_TitleSeparator,       TRUE,
-           MUIA_NList_DragType,             MUIV_NList_DragType_None,
-           MUIA_NList_DefaultObjectOnClick, TRUE,
-           MUIA_ContextMenu,                0,
-           MUIA_Dropable,                   FALSE,
+        MUIA_NListview_NList, nl_componentlist = UpdateComponentListObject,
         End,
       End,
 
@@ -225,51 +213,6 @@ OVERLOAD(OM_SET)
   }
 
   return DoSuperMethodA(cl, obj, msg);
-}
-
-///
-/// OVERLOAD(MUIM_NList_Destruct)
-//  destructs the memory of the elements in a list
-OVERLOAD(MUIM_NList_Destruct)
-{
-  struct MUIP_NList_Destruct *ndm = (struct MUIP_NList_Destruct *)msg;
-  struct UpdateComponent *entry = (struct UpdateComponent *)ndm->entry;
-
-  if(entry != NULL)
-  {
-    if(entry->changeLogFile != NULL)
-      CloseTempFile(entry->changeLogFile);
-
-    free(entry);
-  }
-
-  return 0;
-}
-
-///
-/// OVERLOAD(MUIM_NList_Display)
-OVERLOAD(MUIM_NList_Display)
-{
-  struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
-  struct UpdateComponent *entry = (struct UpdateComponent *)ndm->entry;
-
-  if(entry != NULL)
-  {
-    ndm->strings[0] = entry->name;
-    ndm->strings[1] = entry->recent;
-    ndm->strings[2] = entry->installed;
-    ndm->strings[3] = entry->url;
-  }
-  else
-  {
-    // setup the listview titles
-    ndm->strings[0] = (STRPTR)tr(MSG_UPD_NOTIFICATION_COMP);
-    ndm->strings[1] = (STRPTR)tr(MSG_UPD_NOTIFICATION_RECENT);
-    ndm->strings[2] = (STRPTR)tr(MSG_UPD_NOTIFICATION_INSTALLED);
-    ndm->strings[3] = (STRPTR)tr(MSG_UPD_NOTIFICATION_URL);
-  }
-
-  return 0;
 }
 
 ///

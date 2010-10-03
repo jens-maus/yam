@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/UpdateNotifyWindow.c, mui/UpdateComponentList.c: correctly implemented
+    the component list class. This closes #224.
+
 2010-10-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow: mark the SMTP mail servers as being "in use" in case the
