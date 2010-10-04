@@ -30,9 +30,9 @@
 
 struct Folder;
 
-#define IMPORTF_QUIET  (1<<0)
-#define IMPORTF_WAIT   (1<<1)
-#define IMPORTF_SIGNAL (1<<2)
+#define IMPORTF_QUIET  (1<<0) // import the mails quietly
+#define IMPORTF_WAIT   (1<<1) // prompt the user for selection ahead of the import
+#define IMPORTF_SIGNAL (1<<2) // wakeup the calling thread after the import
 
 BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flags);
 
