@@ -7,6 +7,8 @@ $URL$
 
 2010-10-04 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_UT.c: removed the generic NList destruct hook, as it is not used
+    anymore.
   * YAM_US.c, mui/UserList.c:s plit off the user list to a separate module to
     be able to implement the hooks as proper methods.
   * YAM.c, Threads.c, rexx/mailimport.c: importing mails via ARexx will now

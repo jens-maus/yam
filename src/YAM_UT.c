@@ -3861,17 +3861,6 @@ BOOL FileToEditor(const char *file, Object *editor,
 ///
 
 /*** Hooks ***/
-/// GeneralDesFunc
-//  General purpose destruction hook
-HOOKPROTONHNO(GeneralDesFunc, long, void *entry)
-{
-  free(entry);
-
-  return 0;
-}
-MakeHook(GeneralDesHook, GeneralDesFunc);
-
-///
 /// ExamineDirMatchHook
 // dos.library 52.12 from the July update doesn't use the supplied match string
 // correctly and simply returns all directory entries instead of just the matching

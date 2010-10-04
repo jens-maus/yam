@@ -72,6 +72,16 @@ HOOKPROTONHNO(ConstructFunc, struct CustomABEntry *, struct CustomABEntry *e)
 MakeStaticHook(ConstructHook, ConstructFunc);
 
 ///
+/// DestructHook
+HOOKPROTONHNO(DestructFunc, long, void *entry)
+{
+  free(entry);
+
+  return 0;
+}
+MakeStaticHook(DestructHook, DestructFunc);
+
+///
 /// DisplayHook
 HOOKPROTONH(DisplayFunc, LONG, CONST_STRPTR *array, struct CustomABEntry *e)
 {
@@ -142,7 +152,7 @@ OVERLOAD(OM_NEW)
           InputListFrame,
           MUIA_NList_CompareHook,     &CompareHook,
           MUIA_NList_ConstructHook,   &ConstructHook,
-          MUIA_NList_DestructHook,    &GeneralDesHook,
+          MUIA_NList_DestructHook,    &DestructHook,
           MUIA_NList_DisplayHook,     &DisplayHook,
           MUIA_NList_Format,          ",,",
         End,

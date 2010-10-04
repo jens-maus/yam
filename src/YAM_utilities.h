@@ -275,7 +275,6 @@ enum LFMode
 
 // external variables
 extern int            BusyLevel;
-extern struct Hook    GeneralDesHook;
 extern struct Hook    DisposeModuleHook;
 #if defined(__amigaos4__)
 extern struct Hook    ExamineDirMatchHook;
