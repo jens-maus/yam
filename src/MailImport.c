@@ -846,7 +846,7 @@ enum ImportFormat DetectMBoxFormat(const char *importFile)
 
 ///
 /// ProcessImport
-static void ProcessImport(struct TransferContext *tc, const char *importFile, struct Folder *folder, const BOOL quiet)
+static void ProcessImport(struct TransferContext *tc, const char *importFile, struct Folder *folder, const ULONG flags)
 {
   struct Node *node;
   int numberOfMails = 0;
@@ -871,7 +871,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
   {
     snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MsgInFile), importFile);
 
-    if((tc->transferGroup = (Object *)DoMethod(G->App, MUIM_YAM_CreateTransferGroup, TR_IMPORT, tc->transferGroupTitle, conn, quiet == FALSE)) != NULL)
+    if((tc->transferGroup = (Object *)DoMethod(G->App, MUIM_YAM_CreateTransferGroup, TR_IMPORT, tc->transferGroupTitle, conn, isFlagClear(flags, IMPORTF_QUIET))) != NULL)
     {
       enum FolderType ftype = folder->Type;
 
@@ -1153,7 +1153,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
 ///
 /// ImportMails
 //  Import mails from a file
-BOOL ImportMails(const char *importFile, struct Folder *folder, const BOOL quiet, const BOOL wait)
+BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flags)
 {
   BOOL success = FALSE;
   struct TransferContext tc;
@@ -1174,7 +1174,7 @@ BOOL ImportMails(const char *importFile, struct Folder *folder, const BOOL quiet
     {
       BOOL doImport = FALSE;
 
-      if(quiet == FALSE || wait == TRUE)
+      if(isFlagClear(flags, IMPORTF_QUIET) || isFlagSet(flags, IMPORTF_WAIT))
       {
         // show the preselection window in case user interaction is requested
         Object *preselectWin;
@@ -1204,11 +1204,15 @@ BOOL ImportMails(const char *importFile, struct Folder *folder, const BOOL quiet
       }
 
       if(doImport == TRUE)
-        ProcessImport(&tc, importFile, folder, quiet);
+        ProcessImport(&tc, importFile, folder, flags);
     }
 
     FreeImportList(&tc);
   }
+
+  // wake up the calling thread if this is requested
+  if(isFlagSet(flags, IMPORTF_SIGNAL))
+    WakeupThread(NULL);
 
   RETURN(success);
   return success;

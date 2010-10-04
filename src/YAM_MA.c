@@ -2973,7 +2973,7 @@ MakeHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 ///
 /// MA_ImportMessages
 //  Imports messages from a MBOX mailbox file
-BOOL MA_ImportMessages(const char *fname, const BOOL quiet, const BOOL wait)
+BOOL MA_ImportMessages(const char *fname, const ULONG flags)
 {
   BOOL result = FALSE;
   struct Folder *actfo = FO_GetCurrentFolder();
@@ -2985,8 +2985,7 @@ BOOL MA_ImportMessages(const char *fname, const BOOL quiet, const BOOL wait)
   {
     result = DoAction(TA_ImportMails, TT_ImportMails_File, fname,
                                       TT_ImportMails_Folder, actfo,
-                                      TT_ImportMails_Quiet, quiet,
-                                      TT_ImportMails_Wait, wait,
+                                      TT_ImportMails_Flags, flags,
                                       TAG_DONE);
   }
 
@@ -3014,7 +3013,7 @@ HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
       AddPath(inname, frc->drawer, frc->file, sizeof(inname));
 
       // now start the actual importing of the messages
-      if(MA_ImportMessages(inname, FALSE, FALSE) == FALSE)
+      if(MA_ImportMessages(inname, 0) == FALSE)
         ER_NewError(tr(MSG_ER_MESSAGEIMPORT), inname);
     }
   }

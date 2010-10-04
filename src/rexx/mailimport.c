@@ -33,6 +33,7 @@
 #include "YAM.h"
 #include "YAM_main.h"
 
+#include "MailImport.h"
 #include "Rexx.h"
 #include "Threads.h"
 
@@ -61,7 +62,18 @@ void rx_mailimport(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
     case RXIF_ACTION:
     {
-      if(MA_ImportMessages(args->filename, args->quiet != 0, args->wait != 0) == FALSE)
+      ULONG flags;
+
+      // we want to be woken up
+      flags = IMPORTF_SIGNAL;
+      if(args->quiet != 0)
+        SET_FLAG(flags, IMPORTF_QUIET);
+      if(args->wait != 0)
+        SET_FLAG(flags, IMPORTF_WAIT);
+
+      if(MA_ImportMessages(args->filename, flags) == TRUE)
+        MiniMainLoop();
+      else
         params->rc = RETURN_ERROR;
     }
     break;

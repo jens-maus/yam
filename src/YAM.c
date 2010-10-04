@@ -2837,4 +2837,60 @@ int main(int argc, char **argv)
 }
 
 ///
+/// MiniMainLoop
+// a "stripped down to the bare minimum" version of the mainloop
+// to be used in situations where we have to wait for specific events
+void MiniMainLoop(void)
+{
+  ULONG signals;
+  ULONG threadSig;
+  ULONG methodStackSig;
+  ULONG wakeupSig;
 
+  // prepare all signal bits
+  threadSig      = (1UL << G->threadPort->mp_SigBit);
+  methodStackSig = (1UL << G->methodStack->mp_SigBit);
+  wakeupSig      = (1UL << ThreadWakeupSignal());
+
+  D(DBF_STARTUP, "YAM allocated signals:");
+  D(DBF_STARTUP, " threadSig         = %08lx", threadSig);
+  D(DBF_STARTUP, " methodStackSig    = %08lx", methodStackSig);
+  D(DBF_STARTUP, " wakeupSig         = %08lx", wakeupSig);
+
+  SetSignal(0UL, wakeupSig);
+
+  // start the event loop
+  signals = 0;
+  while(DoMethod(G->App, MUIM_Application_NewInput, &signals) == 0)
+  {
+    if(signals != 0)
+    {
+      signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | threadSig | methodStackSig | wakeupSig);
+
+      if(isFlagSet(signals, SIGBREAKF_CTRL_C))
+        break;
+
+      // show ourselves if we receive a CTRL-F
+      if(isFlagSet(signals, SIGBREAKF_CTRL_F))
+        PopUp();
+
+      // handle pushed methods
+      if(isFlagSet(signals, methodStackSig))
+        CheckMethodStack();
+
+      // handle thread messages
+      if(isFlagSet(signals, threadSig))
+        HandleThreads();
+
+      if(isFlagSet(signals, wakeupSig))
+      {
+        D(DBF_STARTUP, "got wakeup signal");
+        // clear the wakeup signal and bail out
+        SetSignal(0UL, wakeupSig);
+        break;
+      }
+    }
+  }
+}
+
+///

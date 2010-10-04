@@ -236,8 +236,7 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
     {
       result = ImportMails((const char *)GetTagData(TT_ImportMails_File, (IPTR)NULL, msg->actionTags),
                            (struct Folder *)GetTagData(TT_ImportMails_Folder, (IPTR)NULL, msg->actionTags),
-                           GetTagData(TT_ImportMails_Quiet, FALSE, msg->actionTags),
-                           GetTagData(TT_ImportMails_Wait, FALSE, msg->actionTags));
+                           GetTagData(TT_ImportMails_Flags, 0, msg->actionTags));
     }
     break;
   }
@@ -282,6 +281,8 @@ static SAVEDS void ThreadEntry(void)
               proc->pr_Task.tc_UserData = msg->thread;
               msg->result = TRUE;
               thread = msg->thread;
+
+              SetTaskPri((struct Task *)proc, 0);
             }
             else
             {
@@ -345,27 +346,21 @@ static void AbortThread(struct Thread *thread)
 // put the current thread to sleep
 BOOL SleepThread(void)
 {
-  struct Thread *thread = CurrentThread();
-  ULONG abortMask;
-  ULONG wakeupMask;
+  ULONG abortSig;
+  ULONG wakeupSig;
   ULONG sigs;
   BOOL notAborted;
 
   ENTER();
 
-  if(IsMainThread() == TRUE)
-  {
-    abortMask = SIGBREAKF_CTRL_C;
-    wakeupMask = SIGBREAKF_CTRL_E;
-  }
-  else
-  {
-    abortMask = 1UL << thread->abortSignal;
-    wakeupMask = 1UL << thread->wakeupSignal;
-  }
+  abortSig = ThreadAbortSignal();
+  wakeupSig = ThreadWakeupSignal();
 
-  sigs = Wait(abortMask | wakeupMask);
-  notAborted = isFlagClear(sigs, abortMask);
+  D(DBF_THREAD, "thread '%s' waiting for signals %08lx", ThreadName(), 1UL << abortSig | 1UL << wakeupSig);
+  sigs = Wait(1UL << abortSig | 1UL << wakeupSig);
+  D(DBF_THREAD, "thread '%s' got signals %08lx", ThreadName(), sigs);
+
+  notAborted = isFlagClear(sigs, 1UL << abortSig);
 
   RETURN(notAborted);
   return notAborted;
@@ -376,12 +371,27 @@ BOOL SleepThread(void)
 // signal a thread to continue its work
 void WakeupThread(APTR thread)
 {
-  struct Thread *_thread = thread;
+  struct Process *proc;
+  ULONG sig;
 
   ENTER();
 
-  if(_thread != NULL && _thread->wakeupSignal != -1)
-    Signal((struct Task *)_thread->process, 1UL << _thread->wakeupSignal);
+  if(thread == NULL || thread == G->mainThread)
+  {
+    D(DBF_THREAD, "waking up main thread");
+    proc = G->mainThread;
+    sig = SIGBREAKB_CTRL_E;
+  }
+  else
+  {
+    struct Thread *_thread = thread;
+
+    D(DBF_THREAD, "waking up subthread '%s'", _thread->name);
+    proc = _thread->process;
+    sig = _thread->wakeupSignal;
+  }
+
+  Signal((struct Task *)proc, 1UL << sig);
 
   LEAVE();
 }
@@ -458,7 +468,7 @@ static struct Thread *CreateThread(void)
       if((thread->process = CreateNewProcTags(NP_Entry,       ThreadEntry, // entry function
                                               NP_StackSize,   8192,        // stack size
                                               NP_Name,        thread->name,
-                                              NP_Priority,    0,
+                                              NP_Priority,    1,
                                               #if defined(__amigaos4__)
                                               NP_Child,       TRUE,
                                               #elif defined(__MORPHOS__)
@@ -788,6 +798,55 @@ LONG ThreadAbortSignal(void)
 
   RETURN(signal);
   return signal;
+}
+
+///
+/// ThreadWakeupSignal
+// get the wakeup signal of the current thread, this is CTRL-E for the main thread
+LONG ThreadWakeupSignal(void)
+{
+  ULONG signal;
+  struct Process *me;
+
+  ENTER();
+
+  me = (struct Process *)FindTask(NULL);
+
+  if(me == G->mainThread)
+  {
+    signal = SIGBREAKB_CTRL_E;
+  }
+  else
+  {
+    struct Thread *thread = (struct Thread *)me->pr_Task.tc_UserData;
+
+    signal = thread->wakeupSignal;
+  }
+
+  RETURN(signal);
+  return signal;
+}
+
+///
+/// ThreadName
+// return the current thread's name
+const char *ThreadName(void)
+{
+  const char *name;
+
+  ENTER();
+
+  if(IsMainThread() == TRUE)
+    name = "main";
+  else
+  {
+    struct Thread *thread = CurrentThread();
+
+    name = thread->name;
+  }
+
+  RETURN(name);
+  return name;
 }
 
 ///

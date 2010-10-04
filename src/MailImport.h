@@ -30,6 +30,10 @@
 
 struct Folder;
 
-BOOL ImportMails(const char *importFile, struct Folder *folder, const BOOL quiet, const BOOL wait);
+#define IMPORTF_QUIET  (1<<0)
+#define IMPORTF_WAIT   (1<<1)
+#define IMPORTF_SIGNAL (1<<2)
+
+BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flags);
 
 #endif /* MAILIMPORT_H */

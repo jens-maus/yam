@@ -54,8 +54,7 @@ enum ThreadAction
 
 #define TT_ImportMails_File          (TAG_STRING | (TAG_USER + 1))
 #define TT_ImportMails_Folder                      (TAG_USER + 2)
-#define TT_ImportMails_Quiet                       (TAG_USER + 3)
-#define TT_ImportMails_Wait                        (TAG_USER + 4)
+#define TT_ImportMails_Flags                       (TAG_USER + 3)
 
 /*** Thread system init/cleanup functions ***/
 BOOL InitThreads(void);
@@ -68,6 +67,8 @@ APTR CurrentThread(void);
 BOOL SleepThread(void);
 void WakeupThread(APTR thread);
 LONG ThreadAbortSignal(void);
+LONG ThreadWakeupSignal(void);
+const char *ThreadName(void);
 
 #endif /* THREADS_H */
 

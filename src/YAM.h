@@ -195,6 +195,7 @@ struct xpkPackerNode
 
 void PopUp(void);
 BOOL StayInProg(void);
+void MiniMainLoop(void);
 
 #endif /* MAIN_YAM_H */
 

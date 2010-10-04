@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, Threads.c, rexx/mailimport.c: importing mails via ARexx will now
+    return control to ARexx only after the import has finished completely.
+
 2010-10-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/UpdateNotifyWindow.c, mui/UpdateComponentList.c: correctly implemented
