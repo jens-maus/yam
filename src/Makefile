@@ -461,6 +461,7 @@ MUIOBJS = \
 	TransferWindow.o \
 	UpdateComponentList.o \
 	UpdateNotifyWindow.o \
+	UserList.o \
 	WriteAttachmentList.o \
 	WriteWindow.o \
 	WriteWindowToolbar.o \

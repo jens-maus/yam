@@ -662,47 +662,6 @@ MakeStaticHook(US_PutUSEntryHook,US_PutUSEntryFunc);
 ///
 
 /*** GUI ***/
-/// US_LV_ConFunc
-//  User listview construction hook
-HOOKPROTONHNO(US_LV_ConFunc, struct User *, struct User *user)
-{
-  struct User *entry;
-
-  ENTER();
-
-  entry = memdup(user, sizeof(*user));
-
-  RETURN(entry);
-  return entry;
-}
-MakeStaticHook(US_LV_ConHook, US_LV_ConFunc);
-
-///
-/// US_LV_DspFunc
-//  User listview display hook
-HOOKPROTONH(US_LV_DspFunc, long, char **array, struct User *entry)
-{
-  ENTER();
-
-  if(entry != NULL)
-  {
-    array[0] = entry->Name;
-    array[1] = entry->MailDir;
-    if(entry->ID == G->Users.CurrentID)
-      array[DISPLAY_ARRAY_MAX] = (char *)"\0338";
-  }
-  else
-  {
-    array[0] = (STRPTR)tr(MSG_US_TitleUserName);
-    array[1] = (STRPTR)tr(MSG_US_TitleMailDir);
-  }
-
-  RETURN(0);
-  return 0;
-}
-MakeStaticHook(US_LV_DspHook,US_LV_DspFunc);
-
-///
 /// US_New
 //  Creates user list window
 static struct US_ClassData *US_New(BOOL supervisor)
@@ -721,15 +680,7 @@ static struct US_ClassData *US_New(BOOL supervisor)
        WindowContents, VGroup,
           Child, NListviewObject,
              MUIA_CycleChain, TRUE,
-             MUIA_NListview_NList, data->GUI.LV_USERS = NListObject,
-                InputListFrame,
-                MUIA_NList_ConstructHook, &US_LV_ConHook,
-                MUIA_NList_DestructHook, &GeneralDesHook,
-                MUIA_NList_DisplayHook, &US_LV_DspHook,
-            //  MUIA_NList_DisplayHook, &MA_LV_FDspFuncHook,
-                MUIA_NList_TitleSeparator, TRUE,
-                MUIA_NList_Title, TRUE,
-                MUIA_NList_Format, "BAR,",
+             MUIA_NListview_NList, data->GUI.LV_USERS = UserListObject,
              End,
           End,
           Child, VGroup, GroupFrameT(tr(MSG_MA_Settings)),
