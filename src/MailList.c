@@ -249,20 +249,20 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
   {
     // we use standard lists and node instead of MinLists and MinNodes to avoid too
     // much type casting, which in fact only pleases the compiler
-    struct List list[2];
-    struct List *from;
-    struct List *to;
+    struct MinList list[2];
+    struct MinList *from;
+    struct MinList *to;
     struct Node *node;
     LONG insize;
 
     from = &list[0];
     to = &list[1];
 
-    NewList(from);
+    NewMinList(from);
     // move all nodes to the source list
     while((node = RemHead((struct List *)&mlist->list)) != NULL)
     {
-      AddTail(from, node);
+      AddTail((struct List *)from, node);
     }
 
     // we start sorting with lists of one node max
@@ -273,17 +273,17 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
       LONG nmerges;
       LONG psize;
       LONG qsize;
-      struct Node *p;
-      struct Node *q;
-      struct Node *e;
+      struct MinNode *p;
+      struct MinNode *q;
+      struct MinNode *e;
 
       // initialize the destination list
-      NewList(to);
-      p = from->lh_Head;
+      NewMinList(to);
+      p = from->mlh_Head;
       // count number of merges we do in this pass
       nmerges = 0;
 
-      while(p->ln_Succ != NULL)
+      while(p->mln_Succ != NULL)
       {
         LONG i;
 
@@ -294,10 +294,10 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
         psize = 0;
         for(i = 0; i < insize; i++)
         {
-          if(q->ln_Succ != NULL && q->ln_Succ->ln_Succ == NULL)
+          if(q->mln_Succ != NULL && q->mln_Succ->mln_Succ == NULL)
             break;
 
-          q = q->ln_Succ;
+          q = q->mln_Succ;
           psize++;
         }
 
@@ -305,41 +305,41 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
         qsize = insize;
 
         // now we have two lists; merge them
-        while(psize > 0 || (qsize > 0 && q->ln_Succ != NULL))
+        while(psize > 0 || (qsize > 0 && q->mln_Succ != NULL))
         {
           // decide whether next element of merge comes from p or q
           if(psize == 0)
           {
             // p is empty; e must come from q
             e = q;
-            q = q->ln_Succ;
+            q = q->mln_Succ;
             qsize--;
           }
-          else if(qsize == 0 || q->ln_Succ == NULL)
+          else if(qsize == 0 || q->mln_Succ == NULL)
           {
             // q is empty; e must come from p
             e = p;
-            p = p->ln_Succ;
+            p = p->mln_Succ;
             psize--;
           }
           else if(compare(((struct MailNode *)p)->mail, ((struct MailNode *)q)->mail) <= 0)
           {
             // first element of p is lower (or same); e must come from p
             e = p;
-            p = p->ln_Succ;
+            p = p->mln_Succ;
             psize--;
           }
           else
           {
             // first element of q is lower; e must come from q
             e = q;
-            q = q->ln_Succ;
+            q = q->mln_Succ;
             qsize--;
           }
 
           // add the next element to the merged list
-          Remove(e);
-          AddTail(to, e);
+          Remove((struct Node *)e);
+          AddTail((struct List *)to, (struct Node *)e);
         }
 
         // now p has stepped insize places along, and q has too
@@ -351,21 +351,21 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
         break;
       else
       {
-        struct List *tmp;
+        struct MinList *tmp;
 
         // otherwise repeat, merging lists twice the size
         tmp = from;
         from = to;
         to = tmp;
 
-        NewList(to);
+        NewMinList(to);
         insize *= 2;
       }
     }
 
     // put all the sorted nodes back into the original list
     NewMinList(&mlist->list);
-    while((node = RemHead(to)) != NULL)
+    while((node = RemHead((struct List *)to)) != NULL)
       AddTail((struct List *)&mlist->list, node);
   }
 
