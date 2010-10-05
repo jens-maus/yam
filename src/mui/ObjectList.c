@@ -97,15 +97,6 @@ OVERLOAD(OM_SET)
         data->disposeRemovedItems = (tag->ti_Data) ? TRUE : FALSE;
       }
       break;
-
-      case ATTR(ItemAdded):
-      case ATTR(ItemRemoved):
-      case ATTR(ItemsChanged):
-      {
-        // nothing to do, these are just here to enable the
-        // notifications for these attributes
-      }
-      break;
     }
   }
 
@@ -138,8 +129,9 @@ OVERLOAD(OM_GET)
         *store = (IPTR)NextObject(&cstate);
       }
       else
+      {
         *store = (IPTR)NULL;
-
+      }
       return TRUE;
     }
     break;
@@ -168,8 +160,9 @@ OVERLOAD(OM_GET)
         *store = (IPTR)last;
       }
       else
+      {
         *store = (IPTR)NULL;
-
+      }
       return TRUE;
     }
     break;
@@ -287,11 +280,11 @@ DECLARE(RemoveItem) // Object *item
 
   if(msg->item != NULL && DoMethod(data->virtgroup, MUIM_Group_InitChange))
   {
-    DoMethod(data->virtgroup, OM_REMMEMBER, msg->item);
-    DoMethod(data->virtgroup, MUIM_Group_ExitChange);
-
     // tell the item that it belongs to no list anymore
     set(msg->item, MUIA_ObjectListitem_ObjectList, NULL);
+
+    DoMethod(data->virtgroup, OM_REMMEMBER, msg->item);
+    DoMethod(data->virtgroup, MUIM_Group_ExitChange);
 
     data->itemCount--;
     // trigger possible notifications
