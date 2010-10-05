@@ -32,14 +32,14 @@
 #include "extrasrc.h"
 
 #include "YAM_mainFolder.h"
-#include "TransferList.h"
+#include "MailTransferList.h"
 
 #include "Debug.h"
 
-/// InitTransferList
+/// InitMailTransferList
 // initialize a transfer list
 // NOTE: the embedded semaphore must NOT be used for such a list
-void InitTransferList(struct TransferList *tlist)
+void InitMailTransferList(struct MailTransferList *tlist)
 {
   ENTER();
 
@@ -50,9 +50,9 @@ void InitTransferList(struct TransferList *tlist)
 }
 
 ///
-/// ClearTransferList
+/// ClearMailTransferList
 // removed all nodes from a transfer list
-void ClearTransferList(struct TransferList *tlist)
+void ClearMailTransferList(struct MailTransferList *tlist)
 {
   struct Node *node;
 
@@ -60,9 +60,9 @@ void ClearTransferList(struct TransferList *tlist)
 
   while((node = RemHead((struct List *)&tlist->list)) != NULL)
   {
-    struct TransferNode *tnode = (struct TransferNode *)node;
+    struct MailTransferNode *tnode = (struct MailTransferNode *)node;
 
-    DeleteTransferNode(tnode);
+    DeleteMailTransferNode(tnode);
   }
   tlist->count = 0;
 
@@ -70,11 +70,11 @@ void ClearTransferList(struct TransferList *tlist)
 }
 
 ///
-/// CreateTransferList
+/// CreateMailTransferList
 // create a new list for transfers
-struct TransferList *CreateTransferList(void)
+struct MailTransferList *CreateMailTransferList(void)
 {
-  struct TransferList *tlist;
+  struct MailTransferList *tlist;
 
   ENTER();
 
@@ -102,25 +102,25 @@ struct TransferList *CreateTransferList(void)
 }
 
 ///
-/// DeleteTransferList
+/// DeleteMailTransferList
 // remove all nodes from a list and free it completely
-void DeleteTransferList(struct TransferList *tlist)
+void DeleteMailTransferList(struct MailTransferList *tlist)
 {
   ENTER();
 
   if(tlist != NULL)
   {
-    struct TransferNode *tnode;
+    struct MailTransferNode *tnode;
 
     // lock the list just, just for safety reasons
-    LockTransferList(tlist);
+    LockMailTransferList(tlist);
 
     // remove and free all remaining nodes in the list
-    while((tnode = (struct TransferNode *)RemHead((struct List *)&tlist->list)) != NULL)
-      DeleteTransferNode(tnode);
+    while((tnode = (struct MailTransferNode *)RemHead((struct List *)&tlist->list)) != NULL)
+      DeleteMailTransferNode(tnode);
 
     // unlock the list again
-    UnlockTransferList(tlist);
+    UnlockMailTransferList(tlist);
 
     // free the semaphore
     FreeSysObject(ASOT_SEMAPHORE, tlist->lockSemaphore);
@@ -134,17 +134,17 @@ void DeleteTransferList(struct TransferList *tlist)
 }
 
 ///
-/// ScanTransferList
+/// ScanMailTransferList
 // iterate over a transfer list and return TRUE if at least one node
 // has the given flags set
-BOOL ScanTransferList(const struct TransferList *tlist, const ULONG flags)
+BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flags)
 {
   BOOL found = FALSE;
-  struct TransferNode *tnode;
+  struct MailTransferNode *tnode;
 
   ENTER();
 
-  ForEachTransferNode(tlist, tnode)
+  ForEachMailTransferNode(tlist, tnode)
   {
     if(isFlagSet(tnode->tflags, flags))
     {
@@ -158,11 +158,11 @@ BOOL ScanTransferList(const struct TransferList *tlist, const ULONG flags)
 }
 
 ///
-/// CreateTransferNode
+/// CreateMailTransferNode
 // create a new transfer node, a given mail pointer will be memdup()'ed
-struct TransferNode *CreateTransferNode(const struct Mail *mail, const ULONG flags)
+struct MailTransferNode *CreateMailTransferNode(const struct Mail *mail, const ULONG flags)
 {
-  struct TransferNode *tnode;
+  struct MailTransferNode *tnode;
 
   ENTER();
 
@@ -190,10 +190,10 @@ struct TransferNode *CreateTransferNode(const struct Mail *mail, const ULONG fla
 }
 
 ///
-/// AddTransferNode
+/// AddMailTransferNode
 // add a transfer node to an existing list
 // if locking of the list is needed this must be done by the calling function
-void AddTransferNode(struct TransferList *tlist, struct TransferNode *tnode)
+void AddMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode *tnode)
 {
   ENTER();
 
@@ -211,10 +211,10 @@ void AddTransferNode(struct TransferList *tlist, struct TransferNode *tnode)
 }
 
 ///
-/// RemoveTransferNode
+/// RemoveMailTransferNode
 // remove a transfer node from the list, the node is NOT freed
 // if locking of the list is needed this must be done by the calling function
-void RemoveTransferNode(struct TransferList *tlist, struct TransferNode *tnode)
+void RemoveMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode *tnode)
 {
   ENTER();
 
@@ -231,9 +231,9 @@ void RemoveTransferNode(struct TransferList *tlist, struct TransferNode *tnode)
 }
 
 ///
-/// DeleteTransferNode
+/// DeleteMailTransferNode
 // free a transfer node that does not belong to a list
-void DeleteTransferNode(struct TransferNode *tnode)
+void DeleteMailTransferNode(struct MailTransferNode *tnode)
 {
   ENTER();
 
@@ -249,15 +249,15 @@ void DeleteTransferNode(struct TransferNode *tnode)
 #if defined(DEBUG)
 static LONG transferLocks = 0;
 
-/// LockTransferList()
-void LockTransferList(const struct TransferList *tlist)
+/// LockMailTransferList()
+void LockMailTransferList(const struct MailTransferList *tlist)
 {
   ENTER();
 
   if(AttemptSemaphore(tlist->lockSemaphore) == FALSE)
   {
     if(transferLocks > 0)
-      E(DBF_ALWAYS, "nested (%ld) exclusive lock of TransferList %08lx", transferLocks + 1, tlist);
+      E(DBF_ALWAYS, "nested (%ld) exclusive lock of MailTransferList %08lx", transferLocks + 1, tlist);
     ObtainSemaphore(tlist->lockSemaphore);
   }
 
@@ -267,15 +267,15 @@ void LockTransferList(const struct TransferList *tlist)
 }
 
 ///
-/// LockTransferListShared()
-void LockTransferListShared(const struct TransferList *tlist)
+/// LockMailTransferListShared()
+void LockMailTransferListShared(const struct MailTransferList *tlist)
 {
   ENTER();
 
   if(AttemptSemaphoreShared(tlist->lockSemaphore) == FALSE)
   {
     if(transferLocks > 0)
-      E(DBF_ALWAYS, "nested (%ld) shared lock of TransferList %08lx", transferLocks + 1, tlist);
+      E(DBF_ALWAYS, "nested (%ld) shared lock of MailTransferList %08lx", transferLocks + 1, tlist);
     ObtainSemaphoreShared(tlist->lockSemaphore);
   }
 
@@ -285,14 +285,14 @@ void LockTransferListShared(const struct TransferList *tlist)
 }
 
 ///
-/// UnlockTransferList()
-void UnlockTransferList(const struct TransferList *tlist)
+/// UnlockMailTransferList()
+void UnlockMailTransferList(const struct MailTransferList *tlist)
 {
   ENTER();
 
   transferLocks--;
   if(transferLocks < 0)
-    E(DBF_ALWAYS, "too many unlocks (%ld) of TransferList %08lx", transferLocks, tlist);
+    E(DBF_ALWAYS, "too many unlocks (%ld) of MailTransferList %08lx", transferLocks, tlist);
 
   ReleaseSemaphore(tlist->lockSemaphore);
 

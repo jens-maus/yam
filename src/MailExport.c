@@ -43,8 +43,8 @@
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MailList.h"
+#include "MailTransferList.h"
 #include "MUIObjects.h"
-#include "TransferList.h"
 
 #include "mui/Classes.h"
 #include "tcp/Connection.h"
@@ -56,7 +56,7 @@ struct TransferContext
   struct Connection *conn;
   Object *transferGroup;
   char transferGroupTitle[SIZE_DEFAULT]; // the TransferControlGroup's title
-  struct TransferList transferList;
+  struct MailTransferList transferList;
 };
 
 /// ExportMails
@@ -80,7 +80,7 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
       int i;
 
       // reset our processing list
-      InitTransferList(&tc.transferList);
+      InitMailTransferList(&tc.transferList);
 
       // temporarly copy all data out of our mlist to the
       // processing list and mark all mails as "to be transferred"
@@ -93,15 +93,15 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
 
         if(mail != NULL)
         {
-          struct TransferNode *tnode;
+          struct MailTransferNode *tnode;
 
-          if((tnode = CreateTransferNode(mail, TRF_TRANSFER)) != NULL)
+          if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
           {
             tnode->index = i + 1;
 
             totalSize += mail->Size;
 
-            AddTransferNode(&tc.transferList, tnode);
+            AddMailTransferNode(&tc.transferList, tnode);
           }
           else
           {
@@ -118,7 +118,7 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
 
       // if we have now something in our processing list,
       // lets go on
-      if(abort == FALSE && IsTransferListEmpty(&tc.transferList) == FALSE)
+      if(abort == FALSE && IsMailTransferListEmpty(&tc.transferList) == FALSE)
       {
         FILE *fh;
 
@@ -128,13 +128,13 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
         // write mode.
         if((fh = fopen(fname, append ? "a" : "w")) != NULL)
         {
-          struct TransferNode *tnode;
+          struct MailTransferNode *tnode;
 
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
           success = TRUE;
 
-          ForEachTransferNode(&tc.transferList, tnode)
+          ForEachMailTransferNode(&tc.transferList, tnode)
           {
             struct Mail *mail = tnode->mail;
             char mailfile[SIZE_PATHFILE];
@@ -291,7 +291,7 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
       }
 
       // delete all nodes in our temporary list
-      ClearTransferList(&tc.transferList);
+      ClearMailTransferList(&tc.transferList);
 
       DoMethod(G->App, MUIM_YAM_DeleteTransferGroup, tc.transferGroup);
     }

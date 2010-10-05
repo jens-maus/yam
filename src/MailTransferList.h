@@ -1,5 +1,5 @@
-#ifndef TransferList_H
-#define TransferList_H 1
+#ifndef MAILTRANSFERLIST_H
+#define MAILTRANSFERLIST_H 1
 
 /***************************************************************************
 
@@ -39,14 +39,14 @@
 struct SignalSemaphore;
 struct Mail;
 
-struct TransferList
+struct MailTransferList
 {
   struct MinList list;
   struct SignalSemaphore *lockSemaphore;
   ULONG count;
 };
 
-struct TransferNode
+struct MailTransferNode
 {
   struct MinNode node;      // required for placing it into "struct TR_ClassData"
   struct Mail *mail;        // pointer to the corresponding mail
@@ -63,38 +63,38 @@ struct TransferNode
 #define TRF_DELETE            (1<<1) // delete this node
 #define TRF_PRESELECT         (1<<2) // include this node in a preselection
 
-void InitTransferList(struct TransferList *tlist);
-void ClearTransferList(struct TransferList *tlist);
-struct TransferList *CreateTransferList(void);
-void DeleteTransferList(struct TransferList *tlist);
-BOOL ScanTransferList(const struct TransferList *tlist, const ULONG flags);
-struct TransferNode *CreateTransferNode(const struct Mail *mail, const ULONG flags);
-void AddTransferNode(struct TransferList *tlist, struct TransferNode *tnode);
-void RemoveTransferNode(struct TransferList *tlist, struct TransferNode *tnode);
-void DeleteTransferNode(struct TransferNode *tnode);
+void InitMailTransferList(struct MailTransferList *tlist);
+void ClearMailTransferList(struct MailTransferList *tlist);
+struct MailTransferList *CreateMailTransferList(void);
+void DeleteMailTransferList(struct MailTransferList *tlist);
+BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flags);
+struct MailTransferNode *CreateMailTransferNode(const struct Mail *mail, const ULONG flags);
+void AddMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode *tnode);
+void RemoveMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode *tnode);
+void DeleteMailTransferNode(struct MailTransferNode *tnode);
 
 
 // check if a mail list is empty
-#define IsTransferListEmpty(tlist)                    IsMinListEmpty(&(tlist)->list)
+#define IsMailTransferListEmpty(tlist)                    IsMinListEmpty(&(tlist)->list)
 
 // iterate through the list, the list must *NOT* be modified!
-#define ForEachTransferNode(tlist, tnode)             for(tnode = FirstTransferNode(tlist); tnode != NULL; tnode = NextTransferNode(tnode))
+#define ForEachMailTransferNode(tlist, tnode)             for(tnode = FirstMailTransferNode(tlist); tnode != NULL; tnode = NextMailTransferNode(tnode))
 
 // navigate in the list
-#define FirstTransferNode(tlist)                      (struct TransferNode *)GetHead((struct List *)&((tlist)->list))
-#define LastTransferNode(tlist)                       (struct TransferNode *)GetTail((struct List *)&((tlist)->list))
-#define NextTransferNode(tnode)                       (struct TransferNode *)GetSucc((struct Node *)tnode)
-#define PreviousTransferNode(tnode)                   (struct TransferNode *)GetPred((struct Node *)tnode)
+#define FirstMailTransferNode(tlist)                      (struct MailTransferNode *)GetHead((struct List *)&((tlist)->list))
+#define LastMailTransferNode(tlist)                       (struct MailTransferNode *)GetTail((struct List *)&((tlist)->list))
+#define NextMailTransferNode(tnode)                       (struct MailTransferNode *)GetSucc((struct Node *)tnode)
+#define PreviousMailTransferNode(tnode)                   (struct MailTransferNode *)GetPred((struct Node *)tnode)
 
 // lock and unlock a Transfer list via its semaphore
 #if defined(DEBUG)
-void LockTransferList(const struct TransferList *tlist);
-void LockTransferListShared(const struct TransferList *tlist);
-void UnlockTransferList(const struct TransferList *tlist);
+void LockMailTransferList(const struct MailTransferList *tlist);
+void LockMailTransferListShared(const struct MailTransferList *tlist);
+void UnlockMailTransferList(const struct MailTransferList *tlist);
 #else
-#define LockTransferList(tlist)                       ObtainSemaphore((tlist)->lockSemaphore)
-#define LockTransferListShared(tlist)                 ObtainSemaphoreShared((tlist)->lockSemaphore)
-#define UnlockTransferList(tlist)                     ReleaseSemaphore((tlist)->lockSemaphore)
+#define LockMailTransferList(tlist)                       ObtainSemaphore((tlist)->lockSemaphore)
+#define LockMailTransferListShared(tlist)                 ObtainSemaphoreShared((tlist)->lockSemaphore)
+#define UnlockMailTransferList(tlist)                     ReleaseSemaphore((tlist)->lockSemaphore)
 #endif
 
-#endif /* TransferList_H */
+#endif /* MAILTRANSFERLIST */

@@ -32,9 +32,9 @@
 
 #include "Locale.h"
 #include "MailImport.h"
+#include "MailTransferList.h"
 #include "MUIObjects.h"
 #include "Threads.h"
-#include "TransferList.h"
 
 #include "YAM_mainFolder.h"
 #include "YAM_transfer.h"
@@ -61,7 +61,7 @@ struct Data
   ULONG mailCount;
 
   APTR thread;
-  struct TransferList *preselectList;
+  struct MailTransferList *preselectList;
 
   ULONG accept;
 };
@@ -144,25 +144,25 @@ OVERLOAD(OM_NEW)
     data->quitButton = quitButton;
 
     data->thread = (struct Thread *)GetTagData(ATTR(Thread), (IPTR)NULL, inittags(msg));
-    data->preselectList = (struct TransferList *)GetTagData(ATTR(Mails), (IPTR)NULL, inittags(msg));
+    data->preselectList = (struct MailTransferList *)GetTagData(ATTR(Mails), (IPTR)NULL, inittags(msg));
 
     if(data->preselectList != NULL)
     {
-      struct TransferNode *tnode;
+      struct MailTransferNode *tnode;
       ULONG position = 0;
 
       set(data->transferMailList, MUIA_NList_Quiet, TRUE);
 
-      LockTransferList(data->preselectList);
+      LockMailTransferList(data->preselectList);
 
-      ForEachTransferNode(data->preselectList, tnode)
+      ForEachMailTransferNode(data->preselectList, tnode)
       {
         tnode->position = position++;
 
         DoMethod(data->transferMailList, MUIM_NList_InsertSingle, tnode, MUIV_NList_Insert_Bottom);
       }
 
-      UnlockTransferList(data->preselectList);
+      UnlockMailTransferList(data->preselectList);
 
       xset(data->transferMailList, MUIA_NList_Active, MUIV_NList_Active_Top,
                                    MUIA_NList_Quiet, FALSE);
@@ -250,11 +250,11 @@ DECLARE(ChangeFlags) // ULONG flags
   GETDATA;
   LONG id = MUIV_NList_NextSelected_Start;
 
-  LockTransferList(data->preselectList);
+  LockMailTransferList(data->preselectList);
 
   do
   {
-    struct TransferNode *tnode;
+    struct MailTransferNode *tnode;
 
     DoMethod(data->transferMailList, MUIM_NList_NextSelected, &id);
     if(id == MUIV_NList_NextSelected_End)
@@ -268,7 +268,7 @@ DECLARE(ChangeFlags) // ULONG flags
   }
   while(TRUE);
 
-  UnlockTransferList(data->preselectList);
+  UnlockMailTransferList(data->preselectList);
 
   return 0;
 }

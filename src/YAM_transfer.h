@@ -35,7 +35,7 @@
 #include "YAM_utilities.h" // struct TimeVal
 
 #include "HashTable.h" // struct HashEntryHeader
-#include "TransferList.h"
+#include "MailTransferList.h"
 
 // forward declarations
 struct Folder;
@@ -124,8 +124,8 @@ enum SendMode
 struct TR_ClassData
 {
   struct TR_GUIData       GUI;             // the actual GUI relevant data
-  struct TransferList     transferList;    // list for managing the downloads
-  struct TransferNode   * GMD_Mail;
+  struct MailTransferList transferList;    // list for managing the downloads
+  struct MailTransferNode * GMD_Mail;
   struct Folder         * ImportFolder;
   struct UIDLhash       * UIDLhashTable;   // for maintaining all UIDLs
   struct MailList       * downloadedMails; // a list of downloaded mails to be filtered later
@@ -160,7 +160,7 @@ BOOL TR_OpenTCPIP(void);
 void TR_SetWinTitle(BOOL from, const char *text);
 
 void TR_Disconnect(void);
-void TR_ApplyRemoteFilters(struct TransferNode *tnode);
+void TR_ApplyRemoteFilters(struct MailTransferNode *tnode);
 void TR_NewMailAlert(void);
 void TR_CompleteMsgList(void);
 void TR_AbortnClose(void);

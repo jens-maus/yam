@@ -87,10 +87,10 @@
 #include "Locale.h"
 #include "MailList.h"
 #include "MailServers.h"
+#include "MailTransferList.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Threads.h"
-#include "TransferList.h"
 #include "UIDL.h"
 
 #include "tcp/Connection.h"
@@ -129,7 +129,7 @@ void TR_SetWinTitle(BOOL from, const char *text)
 ///
 /// TR_ApplyRemoteFilters
 //  Applies remote filters to a message
-void TR_ApplyRemoteFilters(struct TransferNode *tnode)
+void TR_ApplyRemoteFilters(struct MailTransferNode *tnode)
 {
   struct Node *curNode;
 
@@ -173,7 +173,7 @@ HOOKPROTONHNO(TR_ChangeTransFlagsFunc, void, int *arg)
 
   do
   {
-    struct TransferNode *tnode;
+    struct MailTransferNode *tnode;
 
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_NextSelected, &id);
     if(id == MUIV_NList_NextSelected_End)
@@ -192,7 +192,7 @@ MakeStaticHook(TR_ChangeTransFlagsHook, TR_ChangeTransFlagsFunc);
 //  Initializes transfer statistics
 void TR_TransStat_Init(void)
 {
-  struct TransferNode *tnode;
+  struct MailTransferNode *tnode;
   int numberOfMails = 0;
   ULONG totalSize = 0;
 
@@ -205,7 +205,7 @@ void TR_TransStat_Init(void)
   }
 
   // search through our transferList
-  ForEachTransferNode(&G->TR->transferList, tnode)
+  ForEachMailTransferNode(&G->TR->transferList, tnode)
   {
     numberOfMails++;
 
@@ -227,7 +227,7 @@ void TR_Cleanup(void)
   if(G->TR->GUI.LV_MAILS != NULL)
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Clear);
 
-  ClearTransferList(&G->TR->transferList);
+  ClearMailTransferList(&G->TR->transferList);
 
   LEAVE();
 }
@@ -394,12 +394,12 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
   if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_NumberOfMails) > 0)
   {
     struct Folder *infolder = FO_GetFolderByType(FT_INCOMING, NULL);
-    struct TransferNode *tnode;
+    struct MailTransferNode *tnode;
 
     if(C->TransferWindow == TWM_SHOW && xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
       set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
 
-    ForEachTransferNode(&G->TR->transferList, tnode)
+    ForEachMailTransferNode(&G->TR->transferList, tnode)
     {
       struct Mail *mail = tnode->mail;
 
@@ -493,7 +493,7 @@ MakeHook(TR_ProcessGETHook, TR_ProcessGETFunc);
 HOOKPROTONHNONP(TR_GetMessageInfoFunc, void)
 {
   int line;
-  struct TransferNode *tnode;
+  struct MailTransferNode *tnode;
 
   ENTER();
 
@@ -525,7 +525,7 @@ void TR_CompleteMsgList(void)
 
   if(C->PreSelection < PSM_ALWAYSLARGE)
   {
-    struct TransferNode *tnode = tr->GMD_Mail;
+    struct MailTransferNode *tnode = tr->GMD_Mail;
 
     while(tnode != NULL && xget(tr->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && tr->connection->error == CONNECTERR_NO_ERROR)
     {
@@ -547,7 +547,7 @@ void TR_CompleteMsgList(void)
         tr->GMD_Mail = tnode;
       }
 
-      tnode = NextTransferNode(tnode);
+      tnode = NextMailTransferNode(tnode);
     }
   }
 
@@ -616,7 +616,7 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
       Object *gr_sel, *gr_proc, *gr_win;
       BOOL fullwin = (TRmode == TR_GET_USER || TRmode == TR_GET_AUTO || TRmode == TR_IMPORT);
 
-      InitTransferList(&data->transferList);
+      InitMailTransferList(&data->transferList);
 
       gr_proc = TransferControlGroupObject, End;
 

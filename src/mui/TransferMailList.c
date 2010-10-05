@@ -35,9 +35,9 @@
 #include "YAM_transfer.h"
 #include "YAM_utilities.h"
 
+#include "MailTransferList.h"
 #include "MUIObjects.h"
 #include "Themes.h"
-#include "TransferList.h"
 
 #include "Debug.h"
 
@@ -119,7 +119,7 @@ OVERLOAD(OM_DISPOSE)
 OVERLOAD(MUIM_NList_Display)
 {
   struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
-  struct TransferNode *entry = (struct TransferNode *)ndm->entry;
+  struct MailTransferNode *entry = (struct MailTransferNode *)ndm->entry;
 
   ENTER();
 

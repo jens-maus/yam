@@ -594,6 +594,7 @@ YAMOBJS = \
 	MailImport.o \
 	MailList.o \
 	MailServers.o \
+	MailTransferList.o \
 	MethodStack.o \
 	MimeTypes.o \
 	MUIObjects.o \
@@ -603,7 +604,6 @@ YAMOBJS = \
 	Themes.o \
 	Threads.o \
 	Timer.o \
-	TransferList.o \
 	UIDL.o \
 	UpdateCheck.o \
 	Debug.o

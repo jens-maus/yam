@@ -47,10 +47,10 @@
 #include "Locale.h"
 #include "MailImport.h"
 #include "MailList.h"
+#include "MailTransferList.h"
 #include "MethodStack.h"
 #include "MUIObjects.h"
 #include "Threads.h"
-#include "TransferList.h"
 
 #include "mui/Classes.h"
 #include "tcp/Connection.h"
@@ -63,7 +63,7 @@ struct TransferContext
   char windowTitle[SIZE_DEFAULT];        // the preselection window's title
   char transferGroupTitle[SIZE_DEFAULT]; // the TransferControlGroup's title
   Object *transferGroup;
-  struct TransferList *importList;
+  struct MailTransferList *importList;
   enum ImportFormat format;
 };
 
@@ -73,18 +73,18 @@ struct TransferContext
 
 /// AddMessageHeader
 //  Parses downloaded message header
-static struct TransferNode *AddMessageHeader(struct TransferContext *tc, int *count, const int size, const long addr, const char *tfname)
+static struct MailTransferNode *AddMessageHeader(struct TransferContext *tc, int *count, const int size, const long addr, const char *tfname)
 {
-  struct TransferNode *ret = NULL;
+  struct MailTransferNode *ret = NULL;
   struct ExtendedMail *email;
 
   ENTER();
 
   if((email = MA_ExamineMail(NULL, tfname, FALSE)) != NULL)
   {
-    struct TransferNode *tnode;
+    struct MailTransferNode *tnode;
 
-    if((tnode = CreateTransferNode(&email->Mail, TRF_TRANSFER)) != NULL)
+    if((tnode = CreateMailTransferNode(&email->Mail, TRF_TRANSFER)) != NULL)
     {
       struct Mail *mail = tnode->mail;
 
@@ -94,13 +94,13 @@ static struct TransferNode *AddMessageHeader(struct TransferContext *tc, int *co
       tnode->index      = ++(*count);
       tnode->importAddr = addr;
 
-      AddTransferNode(tc->importList, tnode);
+      AddMailTransferNode(tc->importList, tnode);
       D(DBF_IMPORT, "added mail '%s' (%ld bytes) to import list.", mail->Subject, size);
 
       ret = tnode;
     }
     else
-      E(DBF_IMPORT, "Couldn't allocate enough memory for struct TransferNode");
+      E(DBF_IMPORT, "Couldn't allocate enough memory for struct MailTransferNode");
 
     MA_FreeEMailStruct(email);
   }
@@ -371,7 +371,7 @@ out:
     if(preview == TRUE)
     {
       LONG size;
-      struct TransferNode *tnode;
+      struct MailTransferNode *tnode;
 
       ObtainFileInfo(outFileName, FI_SIZE, &size);
 
@@ -814,7 +814,7 @@ enum ImportFormat DetectMBoxFormat(const char *importFile)
 /// ProcessImport
 static void ProcessImport(struct TransferContext *tc, const char *importFile, struct Folder *folder, const ULONG flags)
 {
-  struct TransferNode *tnode;
+  struct MailTransferNode *tnode;
   int numberOfMails = 0;
   ULONG totalSize = 0;
   struct Connection *conn;
@@ -822,7 +822,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
   ENTER();
 
   // sum up the mails to be imported and their sizes
-  ForEachTransferNode(tc->importList, tnode)
+  ForEachMailTransferNode(tc->importList, tnode)
   {
     if(isFlagSet(tnode->tflags, TRF_TRANSFER))
     {
@@ -859,7 +859,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
 
             // iterate through our importList and seek to
             // each position/address of a mail
-            ForEachTransferNode(tc->importList, tnode)
+            ForEachMailTransferNode(tc->importList, tnode)
             {
               struct Mail *mail = tnode->mail;
               FILE *ofh = NULL;
@@ -1013,7 +1013,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
 
             // iterate through our importList and seek to
             // each position/address of a mail
-            ForEachTransferNode(tc->importList, tnode)
+            ForEachMailTransferNode(tc->importList, tnode)
             {
               struct Mail *mail = tnode->mail;
               FILE *ofh = NULL;
@@ -1122,14 +1122,14 @@ BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flag
 
   if((tc.format = DetectMBoxFormat(importFile)) != IMF_UNKNOWN)
   {
-    if((tc.importList = CreateTransferList()) != NULL)
+    if((tc.importList = CreateMailTransferList()) != NULL)
     {
       // being able to open the file is enough to signal success
       success = TRUE;
 
       BuildImportList(&tc, importFile);
 
-      if(IsTransferListEmpty(tc.importList) == FALSE)
+      if(IsMailTransferListEmpty(tc.importList) == FALSE)
       {
         BOOL doImport = FALSE;
 
@@ -1166,7 +1166,7 @@ BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flag
           ProcessImport(&tc, importFile, folder, flags);
       }
 
-      DeleteTransferList(tc.importList);
+      DeleteMailTransferList(tc.importList);
     }
   }
 

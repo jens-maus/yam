@@ -42,9 +42,9 @@
 #include "Locale.h"
 #include "MailList.h"
 #include "MailServers.h"
+#include "MailTransferList.h"
 #include "MethodStack.h"
 #include "MUIObjects.h"
-#include "TransferList.h"
 
 #include "mime/base64.h"
 #include "mime/md5.h"
@@ -1282,9 +1282,9 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
   // try to open the TCP/IP stack
   if((tc.conn = CreateConnection()) != NULL && ConnectionIsOnline(tc.conn) == TRUE)
   {
-    struct TransferList *transferList;
+    struct MailTransferList *transferList;
 
-    if((transferList = CreateTransferList()) != NULL)
+    if((transferList = CreateMailTransferList()) != NULL)
     {
       ULONG totalSize = 0;
       struct MailNode *mnode;
@@ -1303,13 +1303,13 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
         {
           if(hasStatusQueued(mail) || hasStatusError(mail))
           {
-            struct TransferNode *tn;
+            struct MailTransferNode *tnode;
 
-            if((tn = CreateTransferNode(mail, TRF_TRANSFER)) != NULL)
+            if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
             {
-              AddTransferNode(transferList, tn);
+              AddMailTransferNode(transferList, tnode);
 
-              tn->index = transferList->count;
+              tnode->index = transferList->count;
               totalSize += mail->Size;
             }
           }
@@ -1419,14 +1419,14 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
                 {
                   struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
                   struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
-                  struct TransferNode *tn;
+                  struct MailTransferNode *tn;
 
                   // set the success to TRUE as everything worked out fine
                   // until here.
                   success = TRUE;
                   AppendToLogfile(LF_VERBOSE, 41, tr(MSG_LOG_ConnectSMTP), host);
 
-                  ForEachTransferNode(transferList, tn)
+                  ForEachMailTransferNode(transferList, tn)
                   {
                     struct Mail *mail = tn->mail;
 
@@ -1591,7 +1591,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
       }
 
       // remove any mail transfer nodes from the list and delete the list
-      DeleteTransferList(transferList);
+      DeleteMailTransferList(transferList);
 
       // start the POSTSEND macro so that others notice that the
       // send process has finished. No need to wait for termination.

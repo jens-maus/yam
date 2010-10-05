@@ -46,10 +46,10 @@
 #include "AppIcon.h"
 #include "MailList.h"
 #include "MailServers.h"
+#include "MailTransferList.h"
 #include "MUIObjects.h"
 #include "Locale.h"
 #include "Requesters.h"
-#include "TransferList.h"
 #include "UIDL.h"
 
 #include "mime/md5.h"
@@ -628,7 +628,7 @@ out:
 static void TR_DisplayMailList(BOOL largeonly)
 {
   Object *lv = G->TR->GUI.LV_MAILS;
-  struct TransferNode *tnode;
+  struct MailTransferNode *tnode;
   int pos=0;
 
   ENTER();
@@ -636,7 +636,7 @@ static void TR_DisplayMailList(BOOL largeonly)
   set(lv, MUIA_NList_Quiet, TRUE);
 
   // search through our transferList
-  ForEachTransferNode(&G->TR->transferList, tnode)
+  ForEachMailTransferNode(&G->TR->transferList, tnode)
   {
     #if defined(DEBUG)
     struct Mail *mail = tnode->mail;
@@ -685,7 +685,7 @@ static BOOL TR_GetMessageList_GET(void)
 
     success = TRUE;
 
-    ClearTransferList(&G->TR->transferList);
+    ClearMailTransferList(&G->TR->transferList);
 
     // get the first line the pop server returns after the LINE command
     if(ReceiveLineFromHost(G->TR->connection, buf, sizeof(buf)) > 0)
@@ -703,7 +703,7 @@ static BOOL TR_GetMessageList_GET(void)
         if(index > 0 && (newMail = calloc(1, sizeof(struct Mail))) != NULL)
         {
           int mode;
-          struct TransferNode *tnode;
+          struct MailTransferNode *tnode;
           static const int mode2tflags[16] =
           {
             TRF_TRANSFER,
@@ -739,14 +739,14 @@ static BOOL TR_GetMessageList_GET(void)
 
           D(DBF_GUI, "mail transfer mode %ld, tflags %08lx", mode, tflags);
 
-          // allocate a new MailTransferNode and add it to our
+          // allocate a new MailMailTransferNode and add it to our
           // new transferlist
-          if((tnode = CreateTransferNode(NULL, tflags)) != NULL)
+          if((tnode = CreateMailTransferNode(NULL, tflags)) != NULL)
           {
             tnode->mail = newMail;
             tnode->index = index;
 
-            AddTransferNode(&G->TR->transferList, tnode);
+            AddMailTransferNode(&G->TR->transferList, tnode);
           }
         }
 
@@ -771,7 +771,7 @@ static BOOL TR_GetMessageList_GET(void)
 ///
 /// TR_GetMessageDetails
 //  Gets header from a message stored on the POP3 server
-void TR_GetMessageDetails(struct TransferNode *tnode, int lline)
+void TR_GetMessageDetails(struct MailTransferNode *tnode, int lline)
 {
   struct Mail *mail = tnode->mail;
 
@@ -1071,10 +1071,10 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
         // apply possible remote filters
         if(IsMinListEmpty(G->TR->remoteFilters) == FALSE)
         {
-          struct TransferNode *tnode;
+          struct MailTransferNode *tnode;
 
           DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_ApplyFilters));
-          ForEachTransferNode(&G->TR->transferList, tnode)
+          ForEachMailTransferNode(&G->TR->transferList, tnode)
             TR_GetMessageDetails(tnode, -2);
         }
 
@@ -1099,9 +1099,9 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
           {
             // ...or any sort of preselection and there is a maximum size
 
-            struct TransferNode *tnode;
+            struct MailTransferNode *tnode;
 
-            ForEachTransferNode(&G->TR->transferList, tnode)
+            ForEachMailTransferNode(&G->TR->transferList, tnode)
             {
               #if defined(DEBUG)
               struct Mail *mail = tnode->mail;
@@ -1142,7 +1142,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
           set(G->TR->GUI.WI, MUIA_Window_Activate, xget(G->MA->GUI.WI, MUIA_Window_Activate));
 
           set(G->TR->GUI.GR_PAGE, MUIA_Group_ActivePage, 0);
-          G->TR->GMD_Mail = FirstTransferNode(&G->TR->transferList);
+          G->TR->GMD_Mail = FirstMailTransferNode(&G->TR->transferList);
           G->TR->GMD_Line = 0;
           TR_CompleteMsgList();
         }
@@ -1332,7 +1332,7 @@ static BOOL FilterDuplicates(void)
   if(G->TR->UIDLhashTable != NULL)
   {
     // check if there is anything to transfer at all
-    if(IsTransferListEmpty(&G->TR->transferList) == FALSE)
+    if(IsMailTransferListEmpty(&G->TR->transferList) == FALSE)
     {
       // inform the user of the operation
       DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_CHECKUIDL));
@@ -1358,7 +1358,7 @@ static BOOL FilterDuplicates(void)
             {
               int num;
               char *uidl;
-              struct TransferNode *tnode;
+              struct MailTransferNode *tnode;
 
               // replace the space by a NUL byte and convert the first part to an integer
               *p++ = '\0';
@@ -1369,7 +1369,7 @@ static BOOL FilterDuplicates(void)
                 *p = '\0';
 
               // search through our transferList
-              ForEachTransferNode(&G->TR->transferList, tnode)
+              ForEachMailTransferNode(&G->TR->transferList, tnode)
               {
                 if(tnode->index == num)
                 {
@@ -1416,12 +1416,12 @@ static BOOL FilterDuplicates(void)
       }
       else
       {
-        struct TransferNode *tnode;
+        struct MailTransferNode *tnode;
 
         W(DBF_UIDL, "POP3 server '%s' doesn't support UIDL command!", G->TR->mailServer->hostname);
 
         // search through our transferList
-        ForEachTransferNode(&G->TR->transferList, tnode)
+        ForEachMailTransferNode(&G->TR->transferList, tnode)
         {
           // if the server doesn't support the UIDL command we
           // use the TOP command and generate our own UIDL within
