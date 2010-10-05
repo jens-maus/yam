@@ -62,7 +62,7 @@ void MoveFolderNode(struct FolderList *flist, struct FolderNode *fnode, struct F
 struct FolderNode *TakeFolderNode(struct FolderList *flist);
 
 // check if a folder list is empty
-#define IsFolderListEmpty(flist)                  IsMinListEmpty((struct MinList *)(flist))
+#define IsFolderListEmpty(flist)                  IsMinListEmpty(flist)
 
 // navigate in the list
 #define FirstFolderNode(flist)                    (struct FolderNode *)GetHead((struct List *)flist)

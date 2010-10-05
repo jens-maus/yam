@@ -66,7 +66,7 @@ struct MailNode *FindMailInList(const struct MailList *mlist, const struct Mail 
 struct MailNode *TakeMailNode(struct MailList *mlist);
 
 // check if a mail list is empty
-#define IsMailListEmpty(mlist)                    IsMinListEmpty((struct MinList *)(mlist))
+#define IsMailListEmpty(mlist)                    IsMinListEmpty(mlist)
 
 // navigate in the list
 #define FirstMailNode(mlist)                      (struct MailNode *)GetHead((struct List *)mlist)
