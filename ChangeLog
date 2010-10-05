@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-05 Jens Langner <Jens.Langner@light-speed.de>
+
+  * tools/mkrelease.sh: adapted release script to use "svn export" rather
+    than copying the distribution files from a local checked out directory.
+ 
 2010-10-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c, mui/MailTextEdit.c: converted the two functions EditorToFile and
