@@ -310,7 +310,7 @@ void TR_NewMailAlert(void)
   {
     if(hasRequesterNotify(C->NotifyType) && G->TR->GUIlevel != POP_REXX)
     {
-      static char buffer[SIZE_LARGE];
+      char buffer[SIZE_LARGE];
 
       // make sure the application isn't iconified
       if(xget(G->App, MUIA_Application_Iconified) == TRUE)

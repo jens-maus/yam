@@ -464,7 +464,7 @@ void RE_DisplayMIME(const char *fname, const char *ctype)
   }
   else
   {
-    static char command[SIZE_COMMAND+SIZE_PATHFILE];
+    char command[SIZE_COMMAND+SIZE_PATHFILE];
     char *cmdPtr;
 
     // if we still didn't found the correct mime type or the command line of the
