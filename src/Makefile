@@ -603,6 +603,7 @@ YAMOBJS = \
 	Themes.o \
 	Threads.o \
 	Timer.o \
+	TransferList.o \
 	UIDL.o \
 	UpdateCheck.o \
 	Debug.o

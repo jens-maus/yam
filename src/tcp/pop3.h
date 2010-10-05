@@ -29,11 +29,11 @@
 ***************************************************************************/
 
 // forward declarations
-struct MailTransferNode;
+struct TransferNode;
 struct Folder;
 
 // prototypes
-void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline);
+void TR_GetMessageDetails(struct TransferNode *tnode, int lline);
 BOOL TR_DeleteMessage(int number);
 BOOL TR_LoadMessage(struct Folder *infolder, const int number);
 void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel);

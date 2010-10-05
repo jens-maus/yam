@@ -90,6 +90,7 @@
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Threads.h"
+#include "TransferList.h"
 #include "UIDL.h"
 
 #include "tcp/Connection.h"
@@ -128,7 +129,7 @@ void TR_SetWinTitle(BOOL from, const char *text)
 ///
 /// TR_ApplyRemoteFilters
 //  Applies remote filters to a message
-void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
+void TR_ApplyRemoteFilters(struct TransferNode *tnode)
 {
   struct Node *curNode;
 
@@ -138,7 +139,7 @@ void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
   {
     struct FilterNode *filter = (struct FilterNode *)curNode;
 
-    if(DoFilterSearch(filter, mtn->mail) == TRUE)
+    if(DoFilterSearch(filter, tnode->mail) == TRUE)
     {
       if(hasExecuteAction(filter) && *filter->executeCmd)
          LaunchCommand(filter->executeCmd, FALSE, OUT_STDOUT);
@@ -147,14 +148,14 @@ void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
          PlaySound(filter->playSound);
 
       if(hasDeleteAction(filter))
-         SET_FLAG(mtn->tflags, TRF_DELETE);
+         SET_FLAG(tnode->tflags, TRF_DELETE);
       else
-         CLEAR_FLAG(mtn->tflags, TRF_DELETE);
+         CLEAR_FLAG(tnode->tflags, TRF_DELETE);
 
       if(hasSkipMsgAction(filter))
-         CLEAR_FLAG(mtn->tflags, TRF_TRANSFER);
+         CLEAR_FLAG(tnode->tflags, TRF_TRANSFER);
       else
-         SET_FLAG(mtn->tflags, TRF_TRANSFER);
+         SET_FLAG(tnode->tflags, TRF_TRANSFER);
 
       // get out of this loop after a successful search
       break;
@@ -172,14 +173,14 @@ HOOKPROTONHNO(TR_ChangeTransFlagsFunc, void, int *arg)
 
   do
   {
-    struct MailTransferNode *mtn;
+    struct TransferNode *tnode;
 
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_NextSelected, &id);
     if(id == MUIV_NList_NextSelected_End)
       break;
 
-    DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, id, &mtn);
-    mtn->tflags = *arg;
+    DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, id, &tnode);
+    tnode->tflags = *arg;
 
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Redraw, id);
   }
@@ -191,7 +192,7 @@ MakeStaticHook(TR_ChangeTransFlagsHook, TR_ChangeTransFlagsFunc);
 //  Initializes transfer statistics
 void TR_TransStat_Init(void)
 {
-  struct Node *curNode;
+  struct TransferNode *tnode;
   int numberOfMails = 0;
   ULONG totalSize = 0;
 
@@ -204,14 +205,12 @@ void TR_TransStat_Init(void)
   }
 
   // search through our transferList
-  IterateList(&G->TR->transferList, curNode)
+  ForEachTransferNode(&G->TR->transferList, tnode)
   {
-    struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-
     numberOfMails++;
 
-    if(hasTR_TRANSFER(mtn))
-      totalSize += mtn->mail->Size;
+    if(isFlagSet(tnode->tflags, TRF_TRANSFER))
+      totalSize += tnode->mail->Size;
   }
 
   DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Start, numberOfMails, totalSize);
@@ -223,28 +222,12 @@ void TR_TransStat_Init(void)
 //  Free temporary message and UIDL lists
 void TR_Cleanup(void)
 {
-  struct Node *curNode;
-
   ENTER();
 
   if(G->TR->GUI.LV_MAILS != NULL)
     DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Clear);
 
-  while((curNode = RemHead((struct List *)&G->TR->transferList)) != NULL)
-  {
-    struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-
-    // free the mail pointer
-    free(mtn->mail);
-
-    // free the UIDL
-    free(mtn->UIDL);
-
-    // free the node itself
-    free(mtn);
-  }
-
-  NewList((struct List *)&G->TR->transferList);
+  ClearTransferList(&G->TR->transferList);
 
   LEAVE();
 }
@@ -411,25 +394,24 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
   if(xget(G->TR->GUI.GR_STATS, MUIA_TransferControlGroup_NumberOfMails) > 0)
   {
     struct Folder *infolder = FO_GetFolderByType(FT_INCOMING, NULL);
-    struct Node *curNode;
+    struct TransferNode *tnode;
 
     if(C->TransferWindow == TWM_SHOW && xget(G->TR->GUI.WI, MUIA_Window_Open) == FALSE)
       set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
 
-    IterateList(&G->TR->transferList, curNode)
+    ForEachTransferNode(&G->TR->transferList, tnode)
     {
-      struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-      struct Mail *mail = mtn->mail;
+      struct Mail *mail = tnode->mail;
 
-      D(DBF_NET, "download flags %08lx=%s%s%s for mail with subject '%s' and size %ld",mtn->tflags, hasTR_TRANSFER(mtn) ? "TR_TRANSFER " : "" , hasTR_DELETE(mtn) ? "TR_DELETE " : "", hasTR_PRESELECT(mtn) ? "TR_PRESELECT " : "", mail->Subject, mail->Size);
-      if(hasTR_TRANSFER(mtn))
+      D(DBF_NET, "download flags %08lx=%s%s%s for mail with subject '%s' and size %ld", tnode->tflags, isFlagSet(tnode->tflags, TRF_TRANSFER) ? "TR_TRANSFER " : "" , isFlagSet(tnode->tflags, TRF_DELETE) ? "TR_DELETE " : "", isFlagSet(tnode->tflags, TRF_PRESELECT) ? "TR_PRESELECT " : "", mail->Subject, mail->Size);
+      if(isFlagSet(tnode->tflags, TRF_TRANSFER))
       {
         D(DBF_NET, "downloading mail with subject '%s' and size %ld", mail->Subject, mail->Size);
 
         // update the transfer status
-        DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Next, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Downloading));
+        DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Next, tnode->index, tnode->position, mail->Size, tr(MSG_TR_Downloading));
 
-        if(TR_LoadMessage(infolder, mtn->index) == TRUE)
+        if(TR_LoadMessage(infolder, tnode->index) == TRUE)
         {
           // redraw the folderentry in the listtree
           DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, infolder->Treenode, MUIF_NONE);
@@ -448,20 +430,20 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
           {
             D(DBF_NET, "adding mail with subject '%s' to UIDL hash", mail->Subject);
             // add the UIDL to the hash table or update an existing entry
-            AddUIDLtoHash(G->TR->UIDLhashTable, mtn->UIDL, UIDLF_NEW);
+            AddUIDLtoHash(G->TR->UIDLhashTable, tnode->uidl, UIDLF_NEW);
           }
 
-          if(hasTR_DELETE(mtn))
+          if(isFlagSet(tnode->tflags, TRF_DELETE))
           {
             D(DBF_NET, "deleting mail with subject '%s' on server", mail->Subject);
 
-            TR_DeleteMessage(mtn->index);
+            TR_DeleteMessage(tnode->index);
           }
           else
             D(DBF_NET, "leaving mail with subject '%s' and size %ld on server to be downloaded again", mail->Subject, mail->Size);
         }
       }
-      else if(hasTR_DELETE(mtn))
+      else if(isFlagSet(tnode->tflags, TRF_DELETE))
       {
         D(DBF_NET, "deleting mail with subject '%s' on server", mail->Subject);
 
@@ -471,10 +453,10 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
         {
           D(DBF_NET, "adding mail with subject '%s' to UIDL hash", mail->Subject);
           // add the UIDL to the hash table or update an existing entry
-          AddUIDLtoHash(G->TR->UIDLhashTable, mtn->UIDL, UIDLF_NEW);
+          AddUIDLtoHash(G->TR->UIDLhashTable, tnode->uidl, UIDLF_NEW);
         }
 
-        TR_DeleteMessage(mtn->index);
+        TR_DeleteMessage(tnode->index);
       }
       else
       {
@@ -511,13 +493,13 @@ MakeHook(TR_ProcessGETHook, TR_ProcessGETFunc);
 HOOKPROTONHNONP(TR_GetMessageInfoFunc, void)
 {
   int line;
-  struct MailTransferNode *mtn;
+  struct TransferNode *tnode;
 
   ENTER();
 
   line = xget(G->TR->GUI.LV_MAILS, MUIA_NList_Active);
-  DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, line, &mtn);
-  TR_GetMessageDetails(mtn, line);
+  DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, line, &tnode);
+  TR_GetMessageDetails(tnode, line);
 
   LEAVE();
 }
@@ -543,12 +525,10 @@ void TR_CompleteMsgList(void)
 
   if(C->PreSelection < PSM_ALWAYSLARGE)
   {
-    struct Node *curNode = (struct Node *)tr->GMD_Mail;
+    struct TransferNode *tnode = tr->GMD_Mail;
 
-    while(curNode != NULL && xget(tr->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && tr->connection->error == CONNECTERR_NO_ERROR)
+    while(tnode != NULL && xget(tr->GUI.GR_STATS, MUIA_TransferControlGroup_Aborted) == FALSE && tr->connection->error == CONNECTERR_NO_ERROR)
     {
-      struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-
       if(tr->Pause == TRUE)
         break;
 
@@ -558,16 +538,16 @@ void TR_CompleteMsgList(void)
         break;
       }
 
-      if(C->PreSelection != PSM_LARGE || mtn->mail->Size >= C->WarnSize*1024)
+      if(C->PreSelection != PSM_LARGE || tnode->mail->Size >= C->WarnSize*1024)
       {
-        TR_GetMessageDetails(mtn, tr->GMD_Line++);
+        TR_GetMessageDetails(tnode, tr->GMD_Line++);
 
         // set the next mail as the active one for the display,
         // so that if the user pauses we can go on here
-        tr->GMD_Mail = (struct MinNode *)curNode;
+        tr->GMD_Mail = tnode;
       }
 
-      curNode = GetSucc(curNode);
+      tnode = NextTransferNode(tnode);
     }
   }
 
@@ -636,7 +616,7 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
       Object *gr_sel, *gr_proc, *gr_win;
       BOOL fullwin = (TRmode == TR_GET_USER || TRmode == TR_GET_AUTO || TRmode == TR_IMPORT);
 
-      NewList((struct List *)&data->transferList);
+      InitTransferList(&data->transferList);
 
       gr_proc = TransferControlGroupObject, End;
 

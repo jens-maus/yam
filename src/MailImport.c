@@ -50,6 +50,7 @@
 #include "MethodStack.h"
 #include "MUIObjects.h"
 #include "Threads.h"
+#include "TransferList.h"
 
 #include "mui/Classes.h"
 #include "tcp/Connection.h"
@@ -62,7 +63,7 @@ struct TransferContext
   char windowTitle[SIZE_DEFAULT];        // the preselection window's title
   char transferGroupTitle[SIZE_DEFAULT]; // the TransferControlGroup's title
   Object *transferGroup;
-  struct MinList importList;
+  struct TransferList *importList;
   enum ImportFormat format;
 };
 
@@ -72,49 +73,34 @@ struct TransferContext
 
 /// AddMessageHeader
 //  Parses downloaded message header
-static struct MailTransferNode *AddMessageHeader(struct TransferContext *tc, int *count, const int size, const long addr, const char *tfname)
+static struct TransferNode *AddMessageHeader(struct TransferContext *tc, int *count, const int size, const long addr, const char *tfname)
 {
-  struct MailTransferNode *ret = NULL;
+  struct TransferNode *ret = NULL;
   struct ExtendedMail *email;
 
   ENTER();
 
   if((email = MA_ExamineMail(NULL, tfname, FALSE)) != NULL)
   {
-    struct MailTransferNode *mtn;
+    struct TransferNode *tnode;
 
-    if((mtn = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*mtn),
-                                            ASONODE_Min, TRUE,
-                                            TAG_DONE)) != NULL)
+    if((tnode = CreateTransferNode(&email->Mail, TRF_TRANSFER)) != NULL)
     {
-      struct Mail *mail;
+      struct Mail *mail = tnode->mail;
 
-      memset(mtn, 0, sizeof(*mtn));
+      mail->Folder  = NULL;
+      mail->Size    = size;
 
-      if((mail = memdup(&email->Mail, sizeof(email->Mail))) != NULL)
-      {
-        mail->Folder  = NULL;
-        mail->Size    = size;
+      tnode->index      = ++(*count);
+      tnode->importAddr = addr;
 
-        // flag the mail as to be transfered
-        mtn->index      = ++(*count);
-        mtn->tflags     = TRF_TRANSFER;
-        mtn->mail       = mail;
-        mtn->importAddr = addr;
+      AddTransferNode(tc->importList, tnode);
+      D(DBF_IMPORT, "added mail '%s' (%ld bytes) to import list.", mail->Subject, size);
 
-        AddTail((struct List *)&tc->importList, (struct Node *)mtn);
-        D(DBF_IMPORT, "added mail '%s' (%ld bytes) to import list.", mail->Subject, size);
-
-        ret = mtn;
-      }
-      else
-      {
-        FreeSysObject(ASOT_NODE, mtn);
-        E(DBF_IMPORT, "Couldn't allocate enough memory for struct Mail");
-      }
+      ret = tnode;
     }
     else
-      E(DBF_IMPORT, "Couldn't allocate enough memory for struct MailTransferNode");
+      E(DBF_IMPORT, "Couldn't allocate enough memory for struct TransferNode");
 
     MA_FreeEMailStruct(email);
   }
@@ -385,16 +371,16 @@ out:
     if(preview == TRUE)
     {
       LONG size;
-      struct MailTransferNode *mtn;
+      struct TransferNode *tnode;
 
       ObtainFileInfo(outFileName, FI_SIZE, &size);
 
       // if this is the preview run we go and
       // use the TR_AddMessageHeader method to
       // add the found mail to our mail list
-      if((mtn = AddMessageHeader(tc, mail_accu, size, msg_addr, FilePart(outFileName))))
+      if((tnode = AddMessageHeader(tc, mail_accu, size, msg_addr, FilePart(outFileName))) != NULL)
       {
-        SET_FLAG(mtn->mail->sflags, mailStatusFlags);
+        SET_FLAG(tnode->mail->sflags, mailStatusFlags);
       }
 
       DeleteFile(outFileName);
@@ -704,26 +690,6 @@ static void BuildImportList(struct TransferContext *tc, const char *importFile)
 }
 
 ///
-/// FreeImportList
-// free the list of mails to be imported
-static void FreeImportList(struct TransferContext *tc)
-{
-  struct Node *node;
-
-  ENTER();
-
-  while((node = RemHead((struct List *)&tc->importList)) != NULL)
-  {
-    struct MailTransferNode *mtn = (struct MailTransferNode *)node;
-
-    free(mtn->mail);
-    FreeSysObject(ASOT_NODE, mtn);
-  }
-
-  LEAVE();
-}
-
-///
 /// DetectMBoxFormat
 // detect the format of a selected file to be imported
 enum ImportFormat DetectMBoxFormat(const char *importFile)
@@ -848,7 +814,7 @@ enum ImportFormat DetectMBoxFormat(const char *importFile)
 /// ProcessImport
 static void ProcessImport(struct TransferContext *tc, const char *importFile, struct Folder *folder, const ULONG flags)
 {
-  struct Node *node;
+  struct TransferNode *tnode;
   int numberOfMails = 0;
   ULONG totalSize = 0;
   struct Connection *conn;
@@ -856,14 +822,12 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
   ENTER();
 
   // sum up the mails to be imported and their sizes
-  IterateList(&tc->importList, node)
+  ForEachTransferNode(tc->importList, tnode)
   {
-    struct MailTransferNode *mtn = (struct MailTransferNode *)node;
-
-    if(hasTR_TRANSFER(mtn) == TRUE)
+    if(isFlagSet(tnode->tflags, TRF_TRANSFER))
     {
       numberOfMails++;
-      totalSize += mtn->mail->Size;
+      totalSize += tnode->mail->Size;
     }
   }
 
@@ -891,16 +855,13 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
 
           if((ifh = fopen(importFile, "r")) != NULL)
           {
-            struct Node *curNode;
-
             setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
             // iterate through our importList and seek to
             // each position/address of a mail
-            IterateList(&tc->importList, curNode)
+            ForEachTransferNode(tc->importList, tnode)
             {
-              struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-              struct Mail *mail = mtn->mail;
+              struct Mail *mail = tnode->mail;
               FILE *ofh = NULL;
               char mfile[SIZE_MFILE];
               char *buffer = NULL;
@@ -915,14 +876,14 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
 
               // if the mail is not flagged as 'loading' we can continue with the next
               // node
-              if(hasTR_TRANSFER(mtn) == FALSE)
+              if(isFlagClear(tnode->tflags, TRF_TRANSFER))
                 continue;
 
               // seek to the file position where the mail resist
-              if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
+              if(fseek(ifh, tnode->importAddr, SEEK_SET) != 0)
                 break;
 
-              PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
+              PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index, tnode->position, mail->Size, tr(MSG_TR_Importing));
 
               if((ofh = fopen(MA_NewMailFile(folder, mfile), "w")) == NULL)
                 break;
@@ -1048,16 +1009,13 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
 
           if((ifh = fopen(importFile, "rb")) != NULL)
           {
-            struct Node *curNode;
-
             setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
             // iterate through our importList and seek to
             // each position/address of a mail
-            IterateList(&tc->importList, curNode)
+            ForEachTransferNode(tc->importList, tnode)
             {
-              struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-              struct Mail *mail = mtn->mail;
+              struct Mail *mail = tnode->mail;
               FILE *ofh = NULL;
               char mfile[SIZE_MFILE];
 
@@ -1066,22 +1024,22 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
 
               // if the mail is not flagged as 'loading' we can continue with the next
               // node
-              if(hasTR_TRANSFER(mtn) == FALSE)
+              if(isFlagClear(tnode->tflags, TRF_TRANSFER))
                 continue;
 
               // seek to the file position where the mail resist
-              if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
+              if(fseek(ifh, tnode->importAddr, SEEK_SET) != 0)
                 break;
 
-              PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, mtn->index, mtn->position, mail->Size, tr(MSG_TR_Importing));
+              PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index, tnode->position, mail->Size, tr(MSG_TR_Importing));
 
               if((ofh = fopen(MA_NewMailFile(folder, mfile), "wb")) == NULL)
                 break;
 
               setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
 
-              if(ReadDBXMessage(ifh, ofh, mtn->importAddr) == FALSE)
-                E(DBF_IMPORT, "Couldn't import dbx message from addr %08lx", mtn->importAddr);
+              if(ReadDBXMessage(ifh, ofh, tnode->importAddr) == FALSE)
+                E(DBF_IMPORT, "Couldn't import dbx message from addr %08lx", tnode->importAddr);
 
               fclose(ofh);
 
@@ -1161,53 +1119,55 @@ BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flag
   ENTER();
 
   memset(&tc, 0, sizeof(tc));
-  NewMinList(&tc.importList);
 
   if((tc.format = DetectMBoxFormat(importFile)) != IMF_UNKNOWN)
   {
-    // being able to open the file is enough to signal success
-    success = TRUE;
-
-    BuildImportList(&tc, importFile);
-
-    if(IsMinListEmpty(&tc.importList) == FALSE)
+    if((tc.importList = CreateTransferList()) != NULL)
     {
-      BOOL doImport = FALSE;
+      // being able to open the file is enough to signal success
+      success = TRUE;
 
-      if(isFlagClear(flags, IMPORTF_QUIET) || isFlagSet(flags, IMPORTF_WAIT))
+      BuildImportList(&tc, importFile);
+
+      if(IsTransferListEmpty(tc.importList) == FALSE)
       {
-        // show the preselection window in case user interaction is requested
-        Object *preselectWin;
+        BOOL doImport = FALSE;
 
-        snprintf(tc.windowTitle, sizeof(tc.windowTitle), tr(MSG_TR_MsgInFile), importFile);
-
-        if((preselectWin = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAM_CreatePreselectionWindow, CurrentThread(), tc.windowTitle, &tc.importList)) != NULL)
+        if(isFlagClear(flags, IMPORTF_QUIET) || isFlagSet(flags, IMPORTF_WAIT))
         {
-          if(SleepThread() == TRUE)
+          // show the preselection window in case user interaction is requested
+          Object *preselectWin;
+
+          snprintf(tc.windowTitle, sizeof(tc.windowTitle), tr(MSG_TR_MsgInFile), importFile);
+
+          if((preselectWin = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAM_CreatePreselectionWindow, CurrentThread(), tc.windowTitle, tc.importList)) != NULL)
           {
-            ULONG result = FALSE;
-
-            PushMethodOnStackWait(preselectWin, 3, OM_GET, MUIA_PreselectionWindow_Result, &result);
-            if(result == TRUE)
+            if(SleepThread() == TRUE)
             {
-              doImport = TRUE;
+              ULONG result = FALSE;
+
+              PushMethodOnStackWait(preselectWin, 3, OM_GET, MUIA_PreselectionWindow_Result, &result);
+              if(result == TRUE)
+              {
+                doImport = TRUE;
+              }
             }
+
+            PushMethodOnStack(G->App, 2, MUIM_YAM_DisposeWindow, preselectWin);
           }
-
-          PushMethodOnStack(G->App, 2, MUIM_YAM_DisposeWindow, preselectWin);
         }
-      }
-      else
-      {
-        // otherwise we perform the import no matter what
-        doImport = TRUE;
+        else
+        {
+          // otherwise we perform the import no matter what
+          doImport = TRUE;
+        }
+
+        if(doImport == TRUE)
+          ProcessImport(&tc, importFile, folder, flags);
       }
 
-      if(doImport == TRUE)
-        ProcessImport(&tc, importFile, folder, flags);
+      DeleteTransferList(tc.importList);
     }
-
-    FreeImportList(&tc);
   }
 
   // wake up the calling thread if this is requested

@@ -49,6 +49,7 @@
 #include "MUIObjects.h"
 #include "Locale.h"
 #include "Requesters.h"
+#include "TransferList.h"
 #include "UIDL.h"
 
 #include "mime/md5.h"
@@ -627,7 +628,7 @@ out:
 static void TR_DisplayMailList(BOOL largeonly)
 {
   Object *lv = G->TR->GUI.LV_MAILS;
-  struct Node *curNode;
+  struct TransferNode *tnode;
   int pos=0;
 
   ENTER();
@@ -635,24 +636,23 @@ static void TR_DisplayMailList(BOOL largeonly)
   set(lv, MUIA_NList_Quiet, TRUE);
 
   // search through our transferList
-  IterateList(&G->TR->transferList, curNode)
+  ForEachTransferNode(&G->TR->transferList, tnode)
   {
-    struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
     #if defined(DEBUG)
-    struct Mail *mail = mtn->mail;
+    struct Mail *mail = tnode->mail;
     #endif
 
-    D(DBF_GUI, "checking mail with flags %08lx and subject '%s'", mtn->tflags, mail->Subject);
+    D(DBF_GUI, "checking mail with flags %08lx and subject '%s'", tnode->tflags, mail->Subject);
     // only display mails to be downloaded
-    if(hasTR_TRANSFER(mtn) || hasTR_PRESELECT(mtn))
+    if(isFlagSet(tnode->tflags, TRF_TRANSFER) || isFlagSet(tnode->tflags, TRF_PRESELECT))
     {
       // add this mail to the transfer list in case we either
       // should show ALL mails or the mail size is >= the warning size
-      if(largeonly == FALSE || hasTR_PRESELECT(mtn))
+      if(largeonly == FALSE || isFlagSet(tnode->tflags, TRF_PRESELECT))
       {
-        mtn->position = pos++;
+        tnode->position = pos++;
 
-        DoMethod(lv, MUIM_NList_InsertSingle, mtn, MUIV_NList_Insert_Bottom);
+        DoMethod(lv, MUIM_NList_InsertSingle, tnode, MUIV_NList_Insert_Bottom);
         D(DBF_GUI, "added mail with subject '%s' and size %ld to preselection list", mail->Subject, mail->Size);
       }
       else
@@ -685,7 +685,7 @@ static BOOL TR_GetMessageList_GET(void)
 
     success = TRUE;
 
-    NewList((struct List *)&G->TR->transferList);
+    ClearTransferList(&G->TR->transferList);
 
     // get the first line the pop server returns after the LINE command
     if(ReceiveLineFromHost(G->TR->connection, buf, sizeof(buf)) > 0)
@@ -703,7 +703,7 @@ static BOOL TR_GetMessageList_GET(void)
         if(index > 0 && (newMail = calloc(1, sizeof(struct Mail))) != NULL)
         {
           int mode;
-          struct MailTransferNode *mtn;
+          struct TransferNode *tnode;
           static const int mode2tflags[16] =
           {
             TRF_TRANSFER,
@@ -741,13 +741,12 @@ static BOOL TR_GetMessageList_GET(void)
 
           // allocate a new MailTransferNode and add it to our
           // new transferlist
-          if((mtn = calloc(1, sizeof(struct MailTransferNode))) != NULL)
+          if((tnode = CreateTransferNode(NULL, tflags)) != NULL)
           {
-            mtn->mail = newMail;
-            mtn->tflags = tflags;
-            mtn->index = index;
+            tnode->mail = newMail;
+            tnode->index = index;
 
-            AddTail((struct List *)&G->TR->transferList, (struct Node *)mtn);
+            AddTransferNode(&G->TR->transferList, tnode);
           }
         }
 
@@ -772,9 +771,9 @@ static BOOL TR_GetMessageList_GET(void)
 ///
 /// TR_GetMessageDetails
 //  Gets header from a message stored on the POP3 server
-void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
+void TR_GetMessageDetails(struct TransferNode *tnode, int lline)
 {
-  struct Mail *mail = mtn->mail;
+  struct Mail *mail = tnode->mail;
 
   ENTER();
 
@@ -786,7 +785,7 @@ void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
     //
     // This command is optional within the RFC 1939 specification
     // and therefore we don't throw any error
-    snprintf(cmdbuf, sizeof(cmdbuf), "%d 1", mtn->index);
+    snprintf(cmdbuf, sizeof(cmdbuf), "%d 1", tnode->index);
     if(TR_SendPOP3Cmd(POPCMD_TOP, cmdbuf, NULL) != NULL)
     {
       struct TempFile *tf;
@@ -824,9 +823,9 @@ void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
           // doesn't have the UIDL command and we have to generate our
           // own one by using the MsgID.
           if(lline == -1)
-            mtn->UIDL = strdup(email->messageID);
+            tnode->uidl = strdup(email->messageID);
           else if(lline == -2)
-            TR_ApplyRemoteFilters(mtn);
+            TR_ApplyRemoteFilters(tnode);
 
           MA_FreeEMailStruct(email);
         }
@@ -1072,11 +1071,11 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
         // apply possible remote filters
         if(IsMinListEmpty(G->TR->remoteFilters) == FALSE)
         {
-          struct Node *curNode;
+          struct TransferNode *tnode;
 
           DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_ApplyFilters));
-          IterateList(&G->TR->transferList, curNode)
-            TR_GetMessageDetails((struct MailTransferNode *)curNode, -2);
+          ForEachTransferNode(&G->TR->transferList, tnode)
+            TR_GetMessageDetails(tnode, -2);
         }
 
         // if the user wants to avoid to receive the
@@ -1100,17 +1099,17 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
           {
             // ...or any sort of preselection and there is a maximum size
 
-            struct Node *curNode;
+            struct TransferNode *tnode;
 
-            IterateList(&G->TR->transferList, curNode)
+            ForEachTransferNode(&G->TR->transferList, tnode)
             {
-              struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
               #if defined(DEBUG)
-              struct Mail *mail = mtn->mail;
+              struct Mail *mail = tnode->mail;
               #endif
 
-              D(DBF_GUI, "checking mail with subject '%s' and size %ld for preselection", mail->Subject, mail->Size);              // check the size of those mails only, which are left for download
-              if(hasTR_PRESELECT(mtn))
+              D(DBF_GUI, "checking mail with subject '%s' and size %ld for preselection", mail->Subject, mail->Size);
+              // check the size of those mails only, which are left for download
+              if(isFlagSet(tnode->tflags, TRF_PRESELECT))
               {
                 D(DBF_GUI, "mail with subject '%s' and size %ld exceeds size limit", mail->Subject, mail->Size);
                 preselect = TRUE;
@@ -1143,7 +1142,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
           set(G->TR->GUI.WI, MUIA_Window_Activate, xget(G->MA->GUI.WI, MUIA_Window_Activate));
 
           set(G->TR->GUI.GR_PAGE, MUIA_Group_ActivePage, 0);
-          G->TR->GMD_Mail = (struct MinNode *)GetHead((struct List *)&G->TR->transferList);
+          G->TR->GMD_Mail = FirstTransferNode(&G->TR->transferList);
           G->TR->GMD_Line = 0;
           TR_CompleteMsgList();
         }
@@ -1333,7 +1332,7 @@ static BOOL FilterDuplicates(void)
   if(G->TR->UIDLhashTable != NULL)
   {
     // check if there is anything to transfer at all
-    if(IsMinListEmpty(&G->TR->transferList) == FALSE)
+    if(IsTransferListEmpty(&G->TR->transferList) == FALSE)
     {
       // inform the user of the operation
       DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_CHECKUIDL));
@@ -1359,7 +1358,7 @@ static BOOL FilterDuplicates(void)
             {
               int num;
               char *uidl;
-              struct Node *curNode;
+              struct TransferNode *tnode;
 
               // replace the space by a NUL byte and convert the first part to an integer
               *p++ = '\0';
@@ -1370,20 +1369,18 @@ static BOOL FilterDuplicates(void)
                 *p = '\0';
 
               // search through our transferList
-              IterateList(&G->TR->transferList, curNode)
+              ForEachTransferNode(&G->TR->transferList, tnode)
               {
-                struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-
-                if(mtn->index == num)
+                if(tnode->index == num)
                 {
-                  if((mtn->UIDL = strdup(uidl)) != NULL)
+                  if((tnode->uidl = strdup(uidl)) != NULL)
                   {
                     struct UIDLtoken *token;
 
                     // check if this UIDL is known already
-                    if((token = FindUIDL(G->TR->UIDLhashTable, mtn->UIDL)) != NULL)
+                    if((token = FindUIDL(G->TR->UIDLhashTable, tnode->uidl)) != NULL)
                     {
-                      D(DBF_UIDL, "mail %ld: found UIDL '%s', flags=%08lx", mtn->index, mtn->UIDL, token->flags);
+                      D(DBF_UIDL, "mail %ld: found UIDL '%s', flags=%08lx", tnode->index, tnode->uidl, token->flags);
 
                       // check if we knew this UIDL before
                       if(isFlagSet(token->flags, UIDLF_OLD))
@@ -1391,7 +1388,7 @@ static BOOL FilterDuplicates(void)
                       // make sure the mail is flagged as being ignoreable
                         G->TR->Stats.DupSkipped++;
                         // don't download this mail, because it has been downloaded before
-                        CLEAR_FLAG(mtn->tflags, TRF_TRANSFER);
+                        CLEAR_FLAG(tnode->tflags, TRF_TRANSFER);
                         // mark this UIDL as old+new, thus it will be saved upon cleanup
                         SET_FLAG(token->flags, UIDLF_NEW);
                       }
@@ -1419,38 +1416,36 @@ static BOOL FilterDuplicates(void)
       }
       else
       {
-        struct Node *curNode;
+        struct TransferNode *tnode;
 
         W(DBF_UIDL, "POP3 server '%s' doesn't support UIDL command!", G->TR->mailServer->hostname);
 
         // search through our transferList
-        IterateList(&G->TR->transferList, curNode)
+        ForEachTransferNode(&G->TR->transferList, tnode)
         {
-          struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-
           // if the server doesn't support the UIDL command we
           // use the TOP command and generate our own UIDL within
           // the GetMessageDetails function
-          TR_GetMessageDetails(mtn, -1);
+          TR_GetMessageDetails(tnode, -1);
 
           // now that we should successfully obtained the UIDL of the
           // mailtransfernode we go and check if that UIDL is already in our UIDLhash
           // and if so we go and flag the mail as a mail that should not be downloaded
           // automatically
-          if(mtn->UIDL != NULL)
+          if(tnode->uidl != NULL)
           {
             struct UIDLtoken *token;
 
-            if((token = AddUIDLtoHash(G->TR->UIDLhashTable, mtn->UIDL, UIDLF_NEW)) != NULL)
+            if((token = AddUIDLtoHash(G->TR->UIDLhashTable, tnode->uidl, UIDLF_NEW)) != NULL)
             {
-              D(DBF_UIDL, "mail %ld: found UIDL '%s', flags=%08lx", mtn->index, mtn->UIDL, token->flags);
+              D(DBF_UIDL, "mail %ld: found UIDL '%s', flags=%08lx", tnode->index, tnode->uidl, token->flags);
 
               // check if we knew this UIDL before
               if(isFlagSet(token->flags, UIDLF_OLD))
               {
                 G->TR->Stats.DupSkipped++;
                 // don't download this mail, because it has been downloaded before
-                CLEAR_FLAG(mtn->tflags, TRF_TRANSFER);
+                CLEAR_FLAG(tnode->tflags, TRF_TRANSFER);
                 // mark this UIDL as old+new, thus it will be saved upon cleanup
                 SET_FLAG(token->flags, UIDLF_NEW);
               }

@@ -44,6 +44,7 @@
 #include "Locale.h"
 #include "MailList.h"
 #include "MUIObjects.h"
+#include "TransferList.h"
 
 #include "mui/Classes.h"
 #include "tcp/Connection.h"
@@ -55,7 +56,7 @@ struct TransferContext
   struct Connection *conn;
   Object *transferGroup;
   char transferGroupTitle[SIZE_DEFAULT]; // the TransferControlGroup's title
-  struct MinList transferList;
+  struct TransferList transferList;
 };
 
 /// ExportMails
@@ -75,13 +76,11 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
     {
       BOOL abort = FALSE;
       struct MailNode *mnode;
-      int numberOfMails = 0;
       ULONG totalSize = 0;
       int i;
-      struct Node *curNode;
 
       // reset our processing list
-      NewMinList(&tc.transferList);
+      InitTransferList(&tc.transferList);
 
       // temporarly copy all data out of our mlist to the
       // processing list and mark all mails as "to be transferred"
@@ -94,38 +93,19 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
 
         if(mail != NULL)
         {
-          struct MailTransferNode *mtn;
+          struct TransferNode *tnode;
 
-          if((mtn = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*mtn),
-                                                  ASONODE_Min, TRUE,
-                                                  TAG_DONE)) != NULL)
+          if((tnode = CreateTransferNode(mail, TRF_TRANSFER)) != NULL)
           {
-            memset(mtn, 0, sizeof(*mtn));
+            tnode->index = i + 1;
 
-            if((mtn->mail = memdup(mail, sizeof(*mail))) != NULL)
-            {
-              mtn->index = i + 1;
+            totalSize += mail->Size;
 
-              // set to TRANSFER
-              mtn->tflags = TRF_TRANSFER;
-
-              numberOfMails++;
-              totalSize += mail->Size;
-
-              AddTail((struct List *)&tc.transferList, (struct Node *)mtn);
-            }
-            else
-            {
-              // we end up in a low memory condition, lets exit
-              // after having freed everything
-              FreeSysObject(ASOT_NODE, mtn);
-              abort = TRUE;
-              break;
-            }
+            AddTransferNode(&tc.transferList, tnode);
           }
           else
           {
-            // we end up in a low memory condition, lets exit
+            // we end up in a low memory condition, let's exit
             abort = TRUE;
             break;
           }
@@ -138,29 +118,30 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
 
       // if we have now something in our processing list,
       // lets go on
-      if(abort == FALSE && IsMinListEmpty(&tc.transferList) == FALSE)
+      if(abort == FALSE && IsTransferListEmpty(&tc.transferList) == FALSE)
       {
         FILE *fh;
 
-        DoMethod(tc.transferGroup, MUIM_TransferControlGroup_Start, numberOfMails, totalSize);
+        DoMethod(tc.transferGroup, MUIM_TransferControlGroup_Start, tc.transferList.count, totalSize);
 
         // open our final destination file either in append or in a fresh
         // write mode.
         if((fh = fopen(fname, append ? "a" : "w")) != NULL)
         {
+          struct TransferNode *tnode;
+
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
           success = TRUE;
 
-          IterateList(&tc.transferList, curNode)
+          ForEachTransferNode(&tc.transferList, tnode)
           {
-            struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-            struct Mail *mail = mtn->mail;
+            struct Mail *mail = tnode->mail;
             char mailfile[SIZE_PATHFILE];
             char fullfile[SIZE_PATHFILE];
 
             // update the transfer status
-            DoMethod(tc.transferGroup, MUIM_TransferControlGroup_Next, mtn->index, -1, mail->Size, tr(MSG_TR_Exporting));
+            DoMethod(tc.transferGroup, MUIM_TransferControlGroup_Next, tnode->index, -1, mail->Size, tr(MSG_TR_Exporting));
 
             GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
             if(StartUnpack(mailfile, fullfile, mail->Folder) != NULL)
@@ -300,24 +281,17 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
           fclose(fh);
 
           // write the status to our logfile
+          LockMailListShared(mlist);
           mnode = FirstMailNode(mlist);
-          AppendToLogfile(LF_ALL, 51, tr(MSG_LOG_Exporting), numberOfMails, mnode->mail->Folder->Name, fname);
+          AppendToLogfile(LF_ALL, 51, tr(MSG_LOG_Exporting), tc.transferList.count, mnode->mail->Folder->Name, fname);
+          UnlockMailList(mlist);
         }
 
         DoMethod(tc.transferGroup, MUIM_TransferControlGroup_Finish);
       }
 
       // delete all nodes in our temporary list
-      while((curNode = RemHead((struct List *)&tc.transferList)) != NULL)
-      {
-        struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-
-        // free the mail pointer
-        free(mtn->mail);
-
-        // free the node itself
-        FreeSysObject(ASOT_NODE, mtn);
-      }
+      ClearTransferList(&tc.transferList);
 
       DoMethod(G->App, MUIM_YAM_DeleteTransferGroup, tc.transferGroup);
     }

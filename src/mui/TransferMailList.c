@@ -34,8 +34,10 @@
 #include "YAM_mainFolder.h"
 #include "YAM_transfer.h"
 #include "YAM_utilities.h"
+
 #include "MUIObjects.h"
 #include "Themes.h"
+#include "TransferList.h"
 
 #include "Debug.h"
 
@@ -117,7 +119,7 @@ OVERLOAD(OM_DISPOSE)
 OVERLOAD(MUIM_NList_Display)
 {
   struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
-  struct MailTransferNode *entry = (struct MailTransferNode *)ndm->entry;
+  struct TransferNode *entry = (struct TransferNode *)ndm->entry;
 
   ENTER();
 
@@ -129,9 +131,9 @@ OVERLOAD(MUIM_NList_Display)
 
     // status icon display
     snprintf(data->statusBuffer, sizeof(data->statusBuffer), "%3d ", entry->index);
-    if(hasTR_TRANSFER(entry))
+    if(isFlagSet(entry->tflags, TRF_TRANSFER))
       strlcat(data->statusBuffer, SI_STR(si_Download), sizeof(data->statusBuffer));
-    if(hasTR_DELETE(entry))
+    if(isFlagSet(entry->tflags, TRF_DELETE))
       strlcat(data->statusBuffer, SI_STR(si_Delete), sizeof(data->statusBuffer));
     ndm->strings[0] = data->statusBuffer;
 

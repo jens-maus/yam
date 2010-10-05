@@ -44,6 +44,7 @@
 #include "MailServers.h"
 #include "MethodStack.h"
 #include "MUIObjects.h"
+#include "TransferList.h"
 
 #include "mime/base64.h"
 #include "mime/md5.h"
@@ -1281,15 +1282,12 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
   // try to open the TCP/IP stack
   if((tc.conn = CreateConnection()) != NULL && ConnectionIsOnline(tc.conn) == TRUE)
   {
-    struct MinList *transferList;
+    struct TransferList *transferList;
 
-    if((transferList = AllocSysObjectTags(ASOT_LIST, ASOLIST_Min, TRUE,
-                                                     TAG_DONE)) != NULL)
+    if((transferList = CreateTransferList()) != NULL)
     {
-      int numberOfMails = 0;
       ULONG totalSize = 0;
       struct MailNode *mnode;
-      struct Node *curNode;
 
       // start the PRESEND macro first and wait for it to terminate
       PushMethodOnStackWait(G->App, 3, MUIM_YAM_StartMacro, MACRO_PRESEND, NULL);
@@ -1305,29 +1303,14 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
         {
           if(hasStatusQueued(mail) || hasStatusError(mail))
           {
-            struct MailTransferNode *mtn;
+            struct TransferNode *tn;
 
-            if((mtn = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*mtn),
-                                                    ASONODE_Min, TRUE,
-                                                    TAG_DONE)) != NULL)
+            if((tn = CreateTransferNode(mail, TRF_TRANSFER)) != NULL)
             {
-              struct Mail *newMail;
+              AddTransferNode(transferList, tn);
 
-              if((newMail = memdup(mail, sizeof(*mail))) != NULL)
-              {
-                newMail->Reference = mail;
-
-                // set index and transfer flags
-                mtn->index = ++numberOfMails;
-                mtn->tflags = TRF_TRANSFER;
-                mtn->mail = newMail;
-
-                totalSize += newMail->Size;
-
-                AddTail((struct List *)transferList, (struct Node *)mtn);
-              }
-              else
-                FreeSysObject(ASOT_NODE, mtn);
+              tn->index = transferList->count;
+              totalSize += mail->Size;
             }
           }
         }
@@ -1335,10 +1318,10 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
 
       UnlockMailList(mlist);
 
-      D(DBF_NET, "prepared %ld mails for sending, %ld bytes", numberOfMails, totalSize);
+      D(DBF_NET, "prepared %ld mails for sending, %ld bytes", transferList->count, totalSize);
 
       // just go on if we really have something
-      if(numberOfMails > 0)
+      if(transferList->count > 0)
       {
         int port;
         char *p;
@@ -1374,7 +1357,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
             {
               enum ConnectError err;
 
-              PushMethodOnStack(tc.transferGroup, 3, MUIM_TransferControlGroup_Start, numberOfMails, totalSize);
+              PushMethodOnStack(tc.transferGroup, 3, MUIM_TransferControlGroup_Start, transferList->count, totalSize);
 
               PushMethodOnStack(tc.transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
               BusyText(tr(MSG_TR_MailTransferTo), host);
@@ -1436,22 +1419,21 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
                 {
                   struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
                   struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
-                  struct Node *curNode;
+                  struct TransferNode *tn;
 
                   // set the success to TRUE as everything worked out fine
                   // until here.
                   success = TRUE;
                   AppendToLogfile(LF_VERBOSE, 41, tr(MSG_LOG_ConnectSMTP), host);
 
-                  IterateList(transferList, curNode)
+                  ForEachTransferNode(transferList, tn)
                   {
-                    struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-                    struct Mail *mail = mtn->mail;
+                    struct Mail *mail = tn->mail;
 
                     if(tc.conn->abort == TRUE || tc.conn->error != CONNECTERR_NO_ERROR)
                       break;
 
-                    PushMethodOnStack(tc.transferGroup, 5, MUIM_TransferControlGroup_Next, mtn->index, -1, mail->Size, tr(MSG_TR_Sending));
+                    PushMethodOnStack(tc.transferGroup, 5, MUIM_TransferControlGroup_Next, tn->index, -1, mail->Size, tr(MSG_TR_Sending));
 
                     switch(SendMessage(&tc, mail))
                     {
@@ -1504,9 +1486,9 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
                   PushMethodOnStack(tc.transferGroup, 1, MUIM_TransferControlGroup_Finish);
 
                   if(tc.conn->error == CONNECTERR_NO_ERROR)
-                    AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_Sending), numberOfMails, host);
+                    AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_Sending), transferList->count, host);
                   else
-                    AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_SENDING_FAILED), numberOfMails, host);
+                    AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_SENDING_FAILED), transferList->count, host);
 
                   // now we can disconnect from the SMTP
                   // server again
@@ -1609,15 +1591,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
       }
 
       // remove any mail transfer nodes from the list and delete the list
-      while((curNode = RemHead((struct List *)transferList)) != NULL)
-      {
-        struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
-
-        free(mtn->mail);
-        FreeSysObject(ASOT_NODE, curNode);
-      }
-
-      FreeSysObject(ASOT_LIST, transferList);
+      DeleteTransferList(transferList);
 
       // start the POSTSEND macro so that others notice that the
       // send process has finished. No need to wait for termination.

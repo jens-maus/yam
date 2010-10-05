@@ -35,6 +35,7 @@
 #include "YAM_utilities.h" // struct TimeVal
 
 #include "HashTable.h" // struct HashEntryHeader
+#include "TransferList.h"
 
 // forward declarations
 struct Folder;
@@ -50,26 +51,6 @@ enum TransferType
   TR_SEND_USER,    // send mails, user triggered
   TR_SEND_AUTO     // send mails, timer/ARexx triggered
 };
-
-struct MailTransferNode
-{
-  struct MinNode node;      // required for placing it into "struct TR_ClassData"
-  struct Mail   *mail;      // pointer to the corresponding mail
-  char          *UIDL;      // an unique identifier (UIDL) in case AvoidDuplicates is used
-  unsigned char tflags;     // transfer flags
-  int           position;   // current position of the mail in the GUI NList
-  int           index;      // the index value of the mail as told by a POP3 server
-  long          importAddr; // the position (addr) within an export file to find the mail
-};
-
-// flags for the transfer preselection stuff
-#define TRF_NONE              (0)
-#define TRF_TRANSFER          (1<<0)
-#define TRF_DELETE            (1<<1)
-#define TRF_PRESELECT         (1<<2)
-#define hasTR_TRANSFER(v)     (isFlagSet((v)->tflags, TRF_TRANSFER))
-#define hasTR_DELETE(v)       (isFlagSet((v)->tflags, TRF_DELETE))
-#define hasTR_PRESELECT(v)    (isFlagSet((v)->tflags, TRF_PRESELECT))
 
 enum SMTPSecMethod  { SMTPSEC_NONE=0, SMTPSEC_TLS, SMTPSEC_SSL };
 enum TransWinMode   { TWM_HIDE=0, TWM_AUTO, TWM_SHOW };
@@ -143,8 +124,8 @@ enum SendMode
 struct TR_ClassData
 {
   struct TR_GUIData       GUI;             // the actual GUI relevant data
-  struct MinList          transferList;    // list for managing the downloads
-  struct MinNode        * GMD_Mail;
+  struct TransferList     transferList;    // list for managing the downloads
+  struct TransferNode   * GMD_Mail;
   struct Folder         * ImportFolder;
   struct UIDLhash       * UIDLhashTable;   // for maintaining all UIDLs
   struct MailList       * downloadedMails; // a list of downloaded mails to be filtered later
@@ -179,7 +160,7 @@ BOOL TR_OpenTCPIP(void);
 void TR_SetWinTitle(BOOL from, const char *text);
 
 void TR_Disconnect(void);
-void TR_ApplyRemoteFilters(struct MailTransferNode *mtn);
+void TR_ApplyRemoteFilters(struct TransferNode *tnode);
 void TR_NewMailAlert(void);
 void TR_CompleteMsgList(void);
 void TR_AbortnClose(void);

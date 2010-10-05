@@ -34,6 +34,7 @@
 #include "MailImport.h"
 #include "MUIObjects.h"
 #include "Threads.h"
+#include "TransferList.h"
 
 #include "YAM_mainFolder.h"
 #include "YAM_transfer.h"
@@ -60,7 +61,7 @@ struct Data
   ULONG mailCount;
 
   APTR thread;
-  struct MinList *preselectList;
+  struct TransferList *preselectList;
 
   ULONG accept;
 };
@@ -143,23 +144,25 @@ OVERLOAD(OM_NEW)
     data->quitButton = quitButton;
 
     data->thread = (struct Thread *)GetTagData(ATTR(Thread), (IPTR)NULL, inittags(msg));
-    data->preselectList = (struct MinList *)GetTagData(ATTR(Mails), (IPTR)NULL, inittags(msg));
+    data->preselectList = (struct TransferList *)GetTagData(ATTR(Mails), (IPTR)NULL, inittags(msg));
 
     if(data->preselectList != NULL)
     {
-      struct Node *node;
+      struct TransferNode *tnode;
       ULONG position = 0;
 
       set(data->transferMailList, MUIA_NList_Quiet, TRUE);
 
-      IterateList(data->preselectList, node)
+      LockTransferList(data->preselectList);
+
+      ForEachTransferNode(data->preselectList, tnode)
       {
-        struct MailTransferNode *mtn = (struct MailTransferNode *)node;
+        tnode->position = position++;
 
-        mtn->position = position++;
-
-        DoMethod(data->transferMailList, MUIM_NList_InsertSingle, mtn, MUIV_NList_Insert_Bottom);
+        DoMethod(data->transferMailList, MUIM_NList_InsertSingle, tnode, MUIV_NList_Insert_Bottom);
       }
+
+      UnlockTransferList(data->preselectList);
 
       xset(data->transferMailList, MUIA_NList_Active, MUIV_NList_Active_Top,
                                    MUIA_NList_Quiet, FALSE);
@@ -247,21 +250,25 @@ DECLARE(ChangeFlags) // ULONG flags
   GETDATA;
   LONG id = MUIV_NList_NextSelected_Start;
 
+  LockTransferList(data->preselectList);
+
   do
   {
-    struct MailTransferNode *mtn;
+    struct TransferNode *tnode;
 
     DoMethod(data->transferMailList, MUIM_NList_NextSelected, &id);
     if(id == MUIV_NList_NextSelected_End)
       break;
 
-    DoMethod(data->transferMailList, MUIM_NList_GetEntry, id, &mtn);
+    DoMethod(data->transferMailList, MUIM_NList_GetEntry, id, &tnode);
 
-    mtn->tflags = msg->flags;
+    tnode->tflags = msg->flags;
 
     DoMethod(data->transferMailList, MUIM_NList_Redraw, id);
   }
   while(TRUE);
+
+  UnlockTransferList(data->preselectList);
 
   return 0;
 }

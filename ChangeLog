@@ -9,9 +9,12 @@ $URL$
 
   * tools/mkrelease.sh: adapted release script to use "svn export" rather
     than copying the distribution files from a local checked out directory.
- 
+
 2010-10-05 Thore Böckelmann <tboeckel@gmx.de>
 
+  * TransferList.c, YAM_TR.c: split off the complete transfer list handling to
+    a separate module. This makes it much easier to handle lists of mails to be
+    transferred in any way and avoids much code duplication.
   * YAM_UT.c, mui/MailTextEdit.c: converted the two functions EditorToFile and
     FileToEditor to methods of the mail text editor class.
 
