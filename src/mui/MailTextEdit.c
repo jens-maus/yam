@@ -49,6 +49,12 @@ struct Data
 };
 */
 
+/* EXPORT
+#define MUIF_MailTextEdit_LoadFromFile_SetChanged (1<<0)
+#define MUIF_MailTextEdit_LoadFromFile_UseStyles  (1<<1)
+#define MUIF_MailTextEdit_LoadFromFile_UseColors  (1<<2)
+*/
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -266,3 +272,63 @@ OVERLOAD(MUIM_TextEditor_HandleError)
 /* Private Functions */
 
 /* Public Methods */
+/// DECLARE(LoadFromFile)
+//  Loads a text from a file
+DECLARE(LoadFromFile) // const char *file, ULONG flags
+{
+  BOOL result = FALSE;
+  char *text;
+
+  ENTER();
+
+  if((text = FileToBuffer(msg->file)) != NULL)
+  {
+    char *parsedText;
+
+    // parse the text and do some highlighting and stuff
+    if((parsedText = ParseEmailText(text, FALSE, isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_UseStyles), isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_UseColors))) != NULL)
+    {
+      // set the new text and tell the editor that its content has changed
+      xset(obj, MUIA_TextEditor_Contents,   parsedText,
+                MUIA_TextEditor_HasChanged, isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_SetChanged));
+
+      free(parsedText);
+
+      result = TRUE;
+    }
+
+    free(text);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// DECLARE(SaveToFile)
+//  Saves the contents to a file
+DECLARE(SaveToFile) // const char *file
+{
+  BOOL result = FALSE;
+  FILE *fh;
+
+  ENTER();
+
+  if((fh = fopen(msg->file, "w")) != NULL)
+  {
+    char *text = (char *)DoMethod(obj, MUIM_TextEditor_ExportText);
+
+    // write out the whole text to the file
+    if(fwrite(text, strlen(text), 1, fh) == 1)
+      result = TRUE;
+
+    // the exported text must be freed using FreeVec()
+    FreeVec(text);
+    fclose(fh);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///

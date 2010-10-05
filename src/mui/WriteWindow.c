@@ -2638,7 +2638,7 @@ DECLARE(ChangeSignature) // LONG signature
     FILE *in;
     Object *editor = data->TE_EDIT;
 
-    EditorToFile(editor, tfin->Filename);
+    DoMethod(editor, MUIM_MailTextEdit_SaveToFile, tfin->Filename);
     if((in = fopen(tfin->Filename, "r")) != NULL)
     {
       struct TempFile *tfout;
@@ -2651,6 +2651,7 @@ DECLARE(ChangeSignature) // LONG signature
         char *buf = NULL;
         size_t buflen = 0;
         ssize_t curlen;
+        ULONG flags;
 
         while((curlen = getline(&buf, &buflen, in)) > 0)
         {
@@ -2671,9 +2672,13 @@ DECLARE(ChangeSignature) // LONG signature
         // free the buffer
         free(buf);
 
-        // put everything in the editor.
-        FileToEditor(tfout->Filename, editor, xget(editor, MUIA_TextEditor_HasChanged),
-                     data->useTextStyles, data->useTextColors);
+        // put everything in the editor
+        flags = MUIF_NONE;
+        if(data->useTextStyles == TRUE)
+          SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
+        if(data->useTextColors == TRUE)
+         SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
+        DoMethod(editor, MUIM_MailTextEdit_LoadFromFile, tfout->Filename, xget(editor, MUIA_TextEditor_HasChanged), flags);
 
         // make sure the temp file is deleted
         CloseTempFile(tfout);
@@ -3071,7 +3076,7 @@ DECLARE(SaveTextAs)
     if(FileExists(filename) == FALSE ||
        MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
-      EditorToFile(data->TE_EDIT, data->wmData->filename);
+      DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename);
 
       if(CopyFile(filename, NULL, data->wmData->filename, NULL) == FALSE)
         ER_NewError(tr(MSG_ER_CantCreateFile), filename);
@@ -3348,7 +3353,7 @@ DECLARE(LaunchEditor)
     if(xget(obj, MUIA_Window_Open) == TRUE)
       set(data->RG_PAGE, MUIA_Group_ActivePage, 0);
 
-    EditorToFile(data->TE_EDIT, wmData->filename);
+    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename);
     // remember the modification date of the file
     if(ObtainFileInfo(data->wmData->filename, FI_DATE, &data->wmData->lastFileChangeTime) == FALSE)
     {
@@ -3556,10 +3561,18 @@ DECLARE(ReloadText) // ULONG changed
 {
   GETDATA;
   BOOL result;
+  ULONG flags;
+
   ENTER();
 
-  result = FileToEditor(data->wmData->filename, data->TE_EDIT,
-                        msg->changed, data->useTextStyles, data->useTextColors);
+  flags = MUIF_NONE;
+  if(msg->changed != FALSE)
+    SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_SetChanged);
+  if(data->useTextStyles == TRUE)
+    SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
+  if(data->useTextColors == TRUE)
+    SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
+  result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, data->wmData->filename, flags);
 
   RETURN(result);
   return (ULONG)result;
@@ -3572,10 +3585,18 @@ DECLARE(LoadText) // char *filename, ULONG changed
 {
   GETDATA;
   BOOL result;
+  ULONG flags;
+
   ENTER();
 
-  result = FileToEditor(msg->filename, data->TE_EDIT,
-                        msg->changed, data->useTextStyles, data->useTextColors);
+  flags = MUIF_NONE;
+  if(msg->changed != FALSE)
+    SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_SetChanged);
+  if(data->useTextStyles == TRUE)
+    SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
+  if(data->useTextColors == TRUE)
+    SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
+  result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, msg->filename, flags);
 
   RETURN(result);
   return (ULONG)result;
@@ -3877,7 +3898,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     MA_StartMacro(MACRO_POSTWRITE, itoa(data->windowNumber));
 
     // export the text of our texteditor to a file
-    EditorToFile(data->TE_EDIT, wmData->filename);
+    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename);
 
     // build the whole mail part list including
     // the attachments
@@ -4273,7 +4294,7 @@ DECLARE(DoAutoSave)
     // do the autosave only if something was modified
     if(xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
     {
-      if(EditorToFile(data->TE_EDIT, WR_AutoSaveFile(data->windowNumber, fileName, sizeof(fileName))) == TRUE)
+      if(DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, WR_AutoSaveFile(data->windowNumber, fileName, sizeof(fileName))) == TRUE)
       {
         // we just saved the mail text, so it is no longer modified
         set(data->TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);

@@ -2022,7 +2022,7 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
       char sigPath[SIZE_PATHFILE];
 
       // save the modified signature only if the user told us to do so
-      EditorToFile(ed, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
+      DoMethod(ed, MUIM_MailTextEdit_SaveToFile, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
     }
   }
 
@@ -2052,7 +2052,7 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
     char sigPath[SIZE_PATHFILE];
 
     // refresh the signature in the internal editor
-    if(FileToEditor(CreateFilename(SigNames[sig], sigPath, sizeof(sigPath)), ed, FALSE, TRUE, TRUE) == FALSE)
+    if(DoMethod(ed, MUIM_MailTextEdit_LoadFromFile, CreateFilename(SigNames[sig], sigPath, sizeof(sigPath)), MUIF_MailTextEdit_LoadFromFile_UseStyles|MUIF_MailTextEdit_LoadFromFile_UseColors) == FALSE)
       DoMethod(ed, MUIM_TextEditor_ClearText);
 
     G->CO->LastSig = sig;
@@ -2263,7 +2263,7 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
       {
         char sigPath[SIZE_PATHFILE];
 
-        EditorToFile(G->CO->GUI.TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
+        DoMethod(G->CO->GUI.TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
       }
 
       CO_SaveConfig(C, G->CO_PrefsFile);

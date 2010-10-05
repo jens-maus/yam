@@ -3800,66 +3800,6 @@ void FinishUnpack(const char *file)
 }
 ///
 
-/*** Editor related ***/
-/// EditorToFile
-//  Saves contents of a texteditor object to a file
-BOOL EditorToFile(Object *editor, const char *file)
-{
-  FILE *fh;
-  BOOL result = FALSE;
-
-  ENTER();
-
-  if((fh = fopen(file, "w")) != NULL)
-  {
-    char *text = (char *)DoMethod(editor, MUIM_TextEditor_ExportText);
-
-    // write out the whole text to the file
-    if(fwrite(text, strlen(text), 1, fh) == 1)
-      result = TRUE;
-
-    FreeVec(text); // use FreeVec() because TextEditor.mcc uses AllocVec()
-    fclose(fh);
-  }
-
-  RETURN(result);
-  return result;
-}
-///
-/// FileToEditor
-//  Loads a file into a texteditor object
-BOOL FileToEditor(const char *file, Object *editor,
-                  const BOOL changed, const BOOL useStyles, const BOOL useColors)
-{
-  char *text;
-  BOOL res = FALSE;
-
-  ENTER();
-
-  if((text = FileToBuffer(file)) != NULL)
-  {
-    char *parsedText;
-
-    // parse the text and do some highlighting and stuff
-    if((parsedText = ParseEmailText(text, FALSE, useStyles, useColors)) != NULL)
-    {
-      // set the new text and tell the editor that its content has changed
-      xset(editor, MUIA_TextEditor_Contents,   parsedText,
-                   MUIA_TextEditor_HasChanged, changed);
-
-      free(parsedText);
-
-      res = TRUE;
-    }
-
-    free(text);
-  }
-
-  RETURN(res);
-  return res;
-}
-///
-
 /*** Hooks ***/
 /// ExamineDirMatchHook
 // dos.library 52.12 from the July update doesn't use the supplied match string

@@ -2164,7 +2164,7 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
           char sigPath[SIZE_PATHFILE];
 
           // save the modified signature only if the user told us to do so
-          EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
+          DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
         }
       }
     }
@@ -2624,7 +2624,7 @@ void CO_SetConfig(void)
       setstring(gui->ST_TAGFILE, CE->TagsFile);
       setstring(gui->ST_TAGSEP, CE->TagsSeparator);
       setcycle(gui->CY_SIGNAT, G->CO->LastSig);
-      FileToEditor(CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)), gui->TE_SIGEDIT, FALSE, TRUE, TRUE);
+      DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_LoadFromFile, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)), MUIF_MailTextEdit_LoadFromFile_UseStyles|MUIF_MailTextEdit_LoadFromFile_UseColors);
       DoMethod(G->App, MUIM_CallHook, &CO_SwitchSignatHook, !CE->UseSignature);
     }
     break;

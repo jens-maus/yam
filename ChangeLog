@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c, mui/MailTextEdit.c: converted the two functions EditorToFile and
+    FileToEditor to methods of the mail text editor class.
+
 2010-10-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: removed the generic NList destruct hook, as it is not used
