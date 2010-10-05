@@ -43,6 +43,23 @@ struct Data
 */
 
 /* Overloaded Methods */
+/// OVERLOAD(OM_NEW)
+OVERLOAD(OM_NEW)
+{
+  ENTER();
+
+  if((obj = DoSuperNew(cl, obj,
+    MUIA_Group_Horiz, FALSE,
+
+    TAG_MORE, inittags(msg))) != NULL)
+  {
+  }
+
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
+}
+
+///
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
 {
