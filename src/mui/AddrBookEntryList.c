@@ -37,13 +37,6 @@
 
 #include "Debug.h"
 
-/* CLASSDATA
-struct Data
-{
-  short dummy;
-};
-*/
-
 /* Overloaded Methods */
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)

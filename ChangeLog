@@ -12,6 +12,7 @@ $URL$
 
 2010-10-05 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/misc: removed dummy instance data for all classes which don't need it.
   * TransferList.c, YAM_TR.c: split off the complete transfer list handling to
     a separate module. This makes it much easier to handle lists of mails to be
     transferred in any way and avoids much code duplication.

@@ -37,13 +37,6 @@
 
 #include "Debug.h"
 
-/* CLASSDATA
-struct Data
-{
-  ULONG dummy;
-};
-*/
-
 /* EXPORT
 enum { TB_ABOOK_SAVE=0,
        TB_ABOOK_FIND,

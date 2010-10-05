@@ -35,13 +35,6 @@
 #include "FileInfo.h"
 #include "Debug.h"
 
-/* CLASSDATA
-struct Data
-{
-  short dummy;
-};
-*/
-
 #define BIRTHDAYCHECKFILE "PROGDIR:.birthdaycheck"
 
 /* Private Functions */

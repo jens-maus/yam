@@ -36,13 +36,6 @@
 
 #include "Debug.h"
 
-/* CLASSDATA
-struct Data
-{
-  ULONG dummy;
-};
-*/
-
 /* EXPORT
 enum { TB_READ_PREV=0,
        TB_READ_NEXT,
