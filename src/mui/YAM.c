@@ -903,7 +903,7 @@ DECLARE(DeleteMail) // struct Mail *mail, ULONG flags
 /// DECLARE(FilterMail)
 DECLARE(FilterMail) // const struct MinList *filterList, struct Mail *mail
 {
-  return FI_FilterSingleMail(msg->filterList, msg->mail, NULL);
+  return FI_FilterSingleMail(msg->filterList, msg->mail, NULL, NULL);
 }
 
 ///

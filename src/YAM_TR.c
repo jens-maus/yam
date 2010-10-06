@@ -277,19 +277,18 @@ MakeStaticHook(TR_AbortGETHook, TR_AbortGETFunc);
 ///
 /// TR_NewMailAlert
 //  Notifies user when new mail is available
-void TR_NewMailAlert(void)
+void TR_NewMailAlert(struct FilterResult *filterResult)
 {
   struct DownloadResult *stats = &G->TR->Stats;
-  struct RuleResult *rr = &G->RuleResults;
 
   ENTER();
 
   SHOWVALUE(DBF_NET, stats->Downloaded);
-  SHOWVALUE(DBF_NET, rr->Spam);
+  SHOWVALUE(DBF_NET, filterResult->Spam);
 
   // show the statistics only if we downloaded some mails at all,
   // and not all of them were spam mails
-  if(stats->Downloaded > 0 && stats->Downloaded > rr->Spam)
+  if(stats->Downloaded > 0 && stats->Downloaded > filterResult->Spam)
   {
     if(hasRequesterNotify(C->NotifyType) && G->TR->GUIlevel != POP_REXX)
     {
@@ -304,25 +303,25 @@ void TR_NewMailAlert(void)
       {
         // include the number of spam classified mails
         snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FILTER_STATS_SPAM),
-                                                                         rr->Checked,
-                                                                         rr->Bounced,
-                                                                         rr->Forwarded,
-                                                                         rr->Replied,
-                                                                         rr->Executed,
-                                                                         rr->Moved,
-                                                                         rr->Deleted,
-                                                                         rr->Spam);
+                                                                         filterResult->Checked,
+                                                                         filterResult->Bounced,
+                                                                         filterResult->Forwarded,
+                                                                         filterResult->Replied,
+                                                                         filterResult->Executed,
+                                                                         filterResult->Moved,
+                                                                         filterResult->Deleted,
+                                                                         filterResult->Spam);
       }
       else
       {
         snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FilterStats),
-                                                                         rr->Checked,
-                                                                         rr->Bounced,
-                                                                         rr->Forwarded,
-                                                                         rr->Replied,
-                                                                         rr->Executed,
-                                                                         rr->Moved,
-                                                                         rr->Deleted);
+                                                                         filterResult->Checked,
+                                                                         filterResult->Bounced,
+                                                                         filterResult->Forwarded,
+                                                                         filterResult->Replied,
+                                                                         filterResult->Executed,
+                                                                         filterResult->Moved,
+                                                                         filterResult->Deleted);
       }
 
       // show the info window.
@@ -344,7 +343,7 @@ void TR_NewMailAlert(void)
         // 128 chars is the current maximum :(
         char imagePath[SIZE_PATHFILE];
         char message[128];
-        int count = stats->Downloaded - rr->Spam;
+        int count = stats->Downloaded - filterResult->Spam;
 
         // distinguish between single and multiple mails
         if(count >= 2)

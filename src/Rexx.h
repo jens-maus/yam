@@ -44,18 +44,6 @@ struct RexxHost
   APTR userdata;
 };
 
-struct RuleResult
-{
-  long Checked;
-  long Bounced;
-  long Forwarded;
-  long Replied;
-  long Executed;
-  long Moved;
-  long Deleted;
-  long Spam;
-};
-
 void ARexxDispatch(struct RexxHost *host);
 void CloseDownARexxHost(struct RexxHost *host);
 void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg);

@@ -1083,7 +1083,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
             // FI_FilterSingleMail() returns TRUE if the filters didn't move or delete the mail.
             // If the mail is still in place after filtering we will move it back to the incoming
             // folder later.
-            moveToIncoming = FI_FilterSingleMail(filterList, mail, NULL);
+            moveToIncoming = FI_FilterSingleMail(filterList, mail, NULL, NULL);
             DeleteFilterList(filterList);
           }
         }

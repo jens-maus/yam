@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c: the filter functions don't use a global structure to place the
+    results into anymore. This makes it possible to invoke the filter functions
+    multiple times without loosing old results.
+
 2010-10-05 Jens Langner <Jens.Langner@light-speed.de>
 
   * tools/mkrelease.sh: adapted release script to use "svn export" rather

@@ -56,10 +56,16 @@ struct results
   long *spam;
 };
 
+struct optional
+{
+  struct FilterResult filterResult;
+};
+
 void rx_mailfilter(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct args *args = params->args;
   struct results *results = params->results;
+  struct optional *optional = params->optional;
 
   ENTER();
 
@@ -69,23 +75,22 @@ void rx_mailfilter(UNUSED struct RexxHost *host, struct RexxParams *params, enum
     {
       params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
       params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
     }
     break;
 
     case RXIF_ACTION:
     {
-      struct RuleResult *rr = &G->RuleResults;
+      DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, args->all ? APPLY_RX_ALL : APPLY_RX, 0, &optional->filterResult);
 
-      DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, args->all ? APPLY_RX_ALL : APPLY_RX, 0);
-
-      results->checked = &rr->Checked;
-      results->bounced = &rr->Bounced;
-      results->forwarded = &rr->Forwarded;
-      results->replied = &rr->Replied;
-      results->executed = &rr->Executed;
-      results->moved = &rr->Moved;
-      results->deleted = &rr->Deleted;
-      results->spam = &rr->Spam;
+      results->checked = &optional->filterResult.Checked;
+      results->bounced = &optional->filterResult.Bounced;
+      results->forwarded = &optional->filterResult.Forwarded;
+      results->replied = &optional->filterResult.Replied;
+      results->executed = &optional->filterResult.Executed;
+      results->moved = &optional->filterResult.Moved;
+      results->deleted = &optional->filterResult.Deleted;
+      results->spam = &optional->filterResult.Spam;
     }
     break;
 
@@ -95,6 +100,8 @@ void rx_mailfilter(UNUSED struct RexxHost *host, struct RexxParams *params, enum
         FreeVecPooled(G->SharedMemPool, args);
       if(results != NULL)
         FreeVecPooled(G->SharedMemPool, results);
+      if(optional != NULL)
+        FreeVecPooled(G->SharedMemPool, optional);
     }
     break;
   }

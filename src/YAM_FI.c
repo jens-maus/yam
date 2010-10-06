@@ -1433,7 +1433,7 @@ MakeStaticHook(FI_CloseHook, FI_Close);
 ///
 /// FI_FilterSingleMail
 //  applies the configured filters on a single mail
-BOOL FI_FilterSingleMail(const struct MinList *filterList, struct Mail *mail, int *matches)
+BOOL FI_FilterSingleMail(const struct MinList *filterList, struct Mail *mail, int *matches, struct FilterResult *result)
 {
   BOOL success = TRUE;
   struct Node *curNode;
@@ -1451,7 +1451,7 @@ BOOL FI_FilterSingleMail(const struct MinList *filterList, struct Mail *mail, in
 
       // if ExecuteFilterAction returns FALSE then the filter search should be aborted
       // completley
-      if(ExecuteFilterAction(filter, mail) == FALSE)
+      if(ExecuteFilterAction(filter, mail, result) == FALSE)
       {
         success = FALSE;
         break;
@@ -1707,7 +1707,7 @@ struct MinList *CloneFilterList(enum ApplyFilterMode mode)
 /// ExecuteFilterAction
 //  Applies filter action to a message and return TRUE if the filter search
 //  should continue or FALSE if it should stop afterwards
-BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail)
+BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, struct FilterResult *result)
 {
   BOOL success = TRUE;
   struct MailList *mlist;
@@ -1729,7 +1729,8 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail)
         set(wmData->window, MUIA_WriteWindow_To, filter->bounceTo);
         DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
 
-        G->RuleResults.Bounced++;
+        if(result != NULL)
+          result->Bounced++;
       }
     }
 
@@ -1743,7 +1744,8 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail)
         set(wmData->window, MUIA_WriteWindow_To, filter->forwardTo);
         DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
 
-        G->RuleResults.Forwarded++;
+        if(result != NULL)
+          result->Forwarded++;
       }
     }
 
@@ -1757,7 +1759,8 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail)
         DoMethod(wmData->window, MUIM_WriteWindow_LoadText, filter->replyFile, TRUE);
         DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
 
-        G->RuleResults.Replied++;
+        if(result != NULL)
+          result->Replied++;
       }
     }
 
@@ -1770,7 +1773,8 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail)
       GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
       snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, mailfile);
       LaunchCommand(buf, FALSE, OUT_STDOUT);
-      G->RuleResults.Executed++;
+      if(result != NULL)
+          result->Executed++;
     }
 
     // PlaySound Action
@@ -1789,7 +1793,8 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail)
           BOOL accessFreed = FALSE;
           enum LoadedMode oldLoadedMode = fo->LoadedMode;
 
-          G->RuleResults.Moved++;
+          if(result != NULL)
+          result->Moved++;
 
           // temporarily grant free access to the folder, but only if it has no free access yet
           if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo) && isFreeAccess(fo) == FALSE)
@@ -1821,7 +1826,8 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail)
     // Delete Action
     if(hasDeleteAction(filter) && success == TRUE)
     {
-      G->RuleResults.Deleted++;
+      if(result != NULL)
+          result->Deleted++;
 
       if(isSendMDNMail(mail) &&
          (hasStatusNew(mail) || !hasStatusRead(mail)))
@@ -1846,11 +1852,14 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail)
 ///
 /// FilterMails
 // Apply filters
-void FilterMails(struct Folder *folder, struct MailList *mlist, int mode)
+void FilterMails(struct Folder *folder, const struct MailList *mlist, const int mode, struct FilterResult *result)
 {
   struct MinList *filterList;
 
   ENTER();
+
+  // clear the result statistics first
+  memset(result, 0, sizeof(*result));
 
   if((filterList = CloneFilterList(mode)) != NULL)
   {
@@ -1859,7 +1868,6 @@ void FilterMails(struct Folder *folder, struct MailList *mlist, int mode)
     ULONG m;
     int matches = 0;
 
-    memset(&G->RuleResults, 0, sizeof(G->RuleResults));
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
     G->AppIconQuiet = TRUE;
 
@@ -1922,9 +1930,9 @@ void FilterMails(struct Folder *folder, struct MailList *mlist, int mode)
               wasSpam = TRUE;
 
               // update the stats
-              G->RuleResults.Spam++;
+              result->Spam++;
               // we just checked the mail
-              G->RuleResults.Checked++;
+              result->Checked++;
             }
           }
         }
@@ -1933,10 +1941,10 @@ void FilterMails(struct Folder *folder, struct MailList *mlist, int mode)
         {
           // apply all other user defined filters (if they exist) for non-spam mails
           // or if the spam filter is disabled
-          G->RuleResults.Checked++;
+          result->Checked++;
 
           // now we process the search
-          FI_FilterSingleMail(filterList, mail, &matches);
+          FI_FilterSingleMail(filterList, mail, &matches, result);
         }
 
         // we update the busy gauge and
@@ -1948,8 +1956,8 @@ void FilterMails(struct Folder *folder, struct MailList *mlist, int mode)
 
     DeleteFilterList(filterList);
 
-    if(G->RuleResults.Checked != 0)
-      AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_Filtering), G->RuleResults.Checked, folder->Name, matches);
+    if(result->Checked != 0)
+      AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_Filtering), result->Checked, folder->Name, matches);
 
     MA_StartMacro(MACRO_POSTFILTER, NULL);
 
@@ -1972,10 +1980,13 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 {
   struct Folder *folder;
   enum ApplyFilterMode mode = arg[0];
+  struct FilterResult filterResult;
 
   ENTER();
 
   D(DBF_FILTER, "About to apply SPAM and user defined filters in mode %ld...", mode);
+
+  memset(&filterResult, 0, sizeof(filterResult));
 
   if((folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder()) != NULL &&
      (C->SpamFilterEnabled == FALSE || FO_GetFolderByType(FT_SPAM, NULL) != NULL))
@@ -2030,9 +2041,9 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
       // the user has not cancelled the filter process
       if(applyFilters == TRUE)
       {
-        FilterMails(folder, mlist, mode);
+        FilterMails(folder, mlist, mode, &filterResult);
 
-        if(G->RuleResults.Checked != 0 && mode == APPLY_USER)
+        if(filterResult.Checked != 0 && mode == APPLY_USER)
         {
           if(C->ShowFilterStats == TRUE)
           {
@@ -2041,18 +2052,18 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
             if(C->SpamFilterEnabled == TRUE)
             {
               // include the number of spam classified mails
-              snprintf(buf, sizeof(buf), tr(MSG_MA_FILTER_STATS_SPAM), G->RuleResults.Checked,
-                                                                       G->RuleResults.Forwarded,
-                                                                       G->RuleResults.Moved,
-                                                                       G->RuleResults.Deleted,
-                                                                       G->RuleResults.Spam);
+              snprintf(buf, sizeof(buf), tr(MSG_MA_FILTER_STATS_SPAM), filterResult.Checked,
+                                                                       filterResult.Forwarded,
+                                                                       filterResult.Moved,
+                                                                       filterResult.Deleted,
+                                                                       filterResult.Spam);
             }
             else
             {
-              snprintf(buf, sizeof(buf), tr(MSG_MA_FilterStats), G->RuleResults.Checked,
-                                                                 G->RuleResults.Forwarded,
-                                                                 G->RuleResults.Moved,
-                                                                 G->RuleResults.Deleted);
+              snprintf(buf, sizeof(buf), tr(MSG_MA_FilterStats), filterResult.Checked,
+                                                                 filterResult.Forwarded,
+                                                                 filterResult.Moved,
+                                                                 filterResult.Deleted);
             }
             MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), buf);
           }
@@ -2065,6 +2076,12 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
     }
     else
       W(DBF_FILTER, "folder empty or error on creating list of mails.");
+  }
+
+  // copy the results if anybody is interested in them
+  if(arg[2] != 0)
+  {
+    memcpy((struct FilterResult *)arg[2], &filterResult, sizeof(filterResult));
   }
 
   LEAVE();

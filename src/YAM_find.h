@@ -150,6 +150,18 @@ struct FilterNode
   struct MinList  ruleList;                 // list of all rules that filter evaluates.
 };
 
+struct FilterResult
+{
+  long Checked;
+  long Bounced;
+  long Forwarded;
+  long Replied;
+  long Executed;
+  long Moved;
+  long Deleted;
+  long Spam;
+};
+
 // external hooks
 extern struct Hook FI_OpenHook;
 extern struct Hook ApplyFiltersHook;
@@ -159,7 +171,7 @@ extern const char mailStatusCycleMap[11];
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, int persmode,
                       int compar, char stat, const char *match, const char *field, const int flags);
 BOOL FI_DoSearch(struct Search *search, const struct Mail *mail);
-BOOL FI_FilterSingleMail(const struct MinList *filterList, struct Mail *mail, int *matches);
+BOOL FI_FilterSingleMail(const struct MinList *filterList, struct Mail *mail, int *matches, struct FilterResult *result);
 
 void FreeSearchData(struct Search *search);
 void DeleteRuleNode(struct RuleNode *rule);
@@ -167,7 +179,7 @@ void DeleteFilterNode(struct FilterNode *filter);
 void DeleteFilterList(struct MinList *filterList);
 struct MinList *CloneFilterList(enum ApplyFilterMode mode);
 void FreeFilterList(struct MinList *filterList);
-BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail);
+BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, struct FilterResult *result);
 BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter);
 void FreeFilterRuleList(struct FilterNode *filter);
 struct FilterNode *CreateNewFilter(void);
@@ -176,7 +188,7 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern)
 struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos);
 BOOL DoFilterSearch(const struct FilterNode *filter, const struct Mail *mail);
 BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2);
-void FilterMails(struct Folder *folder, struct MailList *mlist, int mode);
+void FilterMails(struct Folder *folder, const struct MailList *mlist, const int mode, struct FilterResult *result);
 BOOL FolderIsUsedByFilters(const char *folder);
 void RenameFolderInFilters(const char *oldFolder, const char *newFolder);
 void RemoveFolderFromFilters(const char *folder);

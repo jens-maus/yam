@@ -38,6 +38,7 @@
 #include "MailTransferList.h"
 
 // forward declarations
+struct FilterResult;
 struct Folder;
 struct MailList;
 struct UIDLhash;
@@ -161,7 +162,7 @@ void TR_SetWinTitle(BOOL from, const char *text);
 
 void TR_Disconnect(void);
 void TR_ApplyRemoteFilters(struct MailTransferNode *tnode);
-void TR_NewMailAlert(void);
+void TR_NewMailAlert(struct FilterResult *filterResult);
 void TR_CompleteMsgList(void);
 void TR_AbortnClose(void);
 

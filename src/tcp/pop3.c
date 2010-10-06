@@ -1006,9 +1006,10 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
     if(G->TR->Stats.Downloaded > 0)
     {
       struct Folder *folder;
+      struct FilterResult filterResult;
 
       D(DBF_UTIL, "filter %ld/%ld downloaded mails", G->TR->downloadedMails->count, G->TR->Stats.Downloaded);
-      FilterMails(FO_GetFolderByType(FT_INCOMING, NULL), G->TR->downloadedMails, APPLY_AUTO);
+      FilterMails(FO_GetFolderByType(FT_INCOMING, NULL), G->TR->downloadedMails, APPLY_AUTO, &filterResult);
 
       // Now we jump to the first new mail we received if the number of messages has changed
       // after the mail transfer
@@ -1022,7 +1023,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
       else
         UpdateAppIcon();
 
-      TR_NewMailAlert();
+      TR_NewMailAlert(&filterResult);
     }
     else
       UpdateAppIcon();

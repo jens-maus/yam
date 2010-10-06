@@ -42,7 +42,6 @@
 #include "YAM_utilities.h"   // ASL_MAX
 
 #include "BayesFilter.h"     // struct TokenAnalyzer
-#include "Rexx.h"            // struct RuleResult
 #include "Themes.h"          // struct Theme
 #include "Timer.h"           // struct Timers
 
@@ -156,7 +155,6 @@ struct Global
 
   struct DateStamp         StartDate;
   struct Users             Users;
-  struct RuleResult        RuleResults;
   struct DownloadResult    LastDL;
   struct sockaddr_in       TR_INetSocketAddr;
   struct MinList           readMailDataList;

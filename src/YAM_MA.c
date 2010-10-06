@@ -2169,7 +2169,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
                   // FI_FilterSingleMail() returns TRUE if the filters didn't move or delete the mail.
                   // If the mail is still in place after filtering we will move it back to the incoming
                   // folder later.
-                  moveToIncoming = FI_FilterSingleMail(filterList, mail, NULL);
+                  moveToIncoming = FI_FilterSingleMail(filterList, mail, NULL, NULL);
                   DeleteFilterList(filterList);
                 }
               }
@@ -4248,8 +4248,8 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELNONE,        data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELTOGG,        data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SEARCH,         MUIV_Notify_Application, 2, MUIM_CallHook,             &FI_OpenHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FILTER,         MUIV_Notify_Application, 4, MUIM_CallHook,             &ApplyFiltersHook, APPLY_USER, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CLASSIFY,       MUIV_Notify_Application, 4, MUIM_CallHook,             &ApplyFiltersHook, APPLY_SPAM, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FILTER,         MUIV_Notify_Application, 5, MUIM_CallHook,             &ApplyFiltersHook, APPLY_USER, 0, NULL);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CLASSIFY,       MUIV_Notify_Application, 5, MUIM_CallHook,             &ApplyFiltersHook, APPLY_SPAM, 0, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELDEL,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_DeleteDeletedHook, FALSE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELSPAM,        MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_DeleteSpamHook, FALSE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_INDEX,          MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_RescanIndexHook);
