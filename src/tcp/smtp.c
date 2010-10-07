@@ -1299,19 +1299,18 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
       {
         struct Mail *mail = mnode->mail;
 
-        if(mail != NULL)
+        if(hasStatusQueued(mail) || hasStatusError(mail))
         {
-          if(hasStatusQueued(mail) || hasStatusError(mail))
+          struct MailTransferNode *tnode;
+
+          if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
           {
-            struct MailTransferNode *tnode;
+            AddMailTransferNode(transferList, tnode);
 
-            if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
-            {
-              AddMailTransferNode(transferList, tnode);
-
-              tnode->index = transferList->count;
-              totalSize += mail->Size;
-            }
+            // let the duplicated mail reference to its origin
+            tnode->mail->Reference = mail;
+            tnode->index = transferList->count;
+            totalSize += mail->Size;
           }
         }
       }

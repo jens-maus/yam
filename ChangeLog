@@ -7,6 +7,9 @@ $URL$
 
 2010-10-07 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tcp/smtp.c: due to the recently introduced mail transfer lists a main being
+    sent no longer carried a reference to itself and hence setting the mail's
+    status after it was sent no longer worked correctly.
   * YAM_MA.c: made MA_SetStatusTo() callable from threads.
   * mui/WriteWindow.c: removed the dependency from the old transfer structure
     since sending mails is now happening in a thread.
