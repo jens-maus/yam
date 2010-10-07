@@ -7,6 +7,8 @@ $URL$
 
 2010-10-07 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/WriteWindow.c: removed the dependency from the old transfer structure
+    since sending mails is now happening in a thread.
   * tcp/smtp.c: moving sent mails from the outgoing folder to the sent folder
     did not happen due to wrong parameters being used.
 

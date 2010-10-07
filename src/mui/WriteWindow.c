@@ -4171,7 +4171,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   }
 
   // now we make sure we immediately send out the mail.
-  if(mode == WRITE_SEND && newMail != NULL && G->TR == NULL)
+  if(mode == WRITE_SEND && newMail != NULL)
   {
     struct MailList *mlist;
 
