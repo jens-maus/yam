@@ -3968,7 +3968,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     {
       email->Mail.sflags = stat;
 
-      if((newMail = AddMailToList((struct Mail *)email, outfolder)) != NULL)
+      if((newMail = AddMailToList(&email->Mail, outfolder)) != NULL)
       {
         // Now we have to check whether we have to add the To & CC addresses
         // to the emailCache
