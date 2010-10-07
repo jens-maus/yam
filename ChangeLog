@@ -7,6 +7,7 @@ $URL$
 
 2010-10-07 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: made MA_SetStatusTo() callable from threads.
   * mui/WriteWindow.c: removed the dependency from the old transfer structure
     since sending mails is now happening in a thread.
   * tcp/smtp.c: moving sent mails from the outgoing folder to the sent folder

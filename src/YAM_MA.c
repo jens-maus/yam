@@ -432,29 +432,36 @@ void MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags)
 {
   unsigned int newstatus = (mail->sflags | addflags) & ~(clearflags);
 
+  D(DBF_MAIL, "ChangeMailStatus %08lx +%08lx -%08lx = %08lx", mail->sflags, addflags, clearflags, newstatus);
+
   ENTER();
 
   // check if the status is already set or not
   if(newstatus != mail->sflags)
   {
-    D(DBF_MAIL, "ChangeMailStatus: +%08lx -%08lx", addflags, clearflags);
+    if(IsMainThread() == TRUE)
+    {
+      // set the new status
+      mail->sflags = newstatus;
 
-    // set the new status
-    mail->sflags = newstatus;
+      // set the comment to the Mailfile
+      MA_UpdateMailFile(mail);
 
-    // set the comment to the Mailfile
-    MA_UpdateMailFile(mail);
+      // flag the index as expired
+      MA_ExpireIndex(mail->Folder);
 
-    // flag the index as expired
-    MA_ExpireIndex(mail->Folder);
+      // update the status of the readmaildata (window)
+      // of the mail here
+      UpdateReadMailDataStatus(mail);
 
-    // update the status of the readmaildata (window)
-    // of the mail here
-    UpdateReadMailDataStatus(mail);
-
-    // lets redraw the entry if it is actually displayed, so that
-    // the status icon gets updated.
-    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
+      // lets redraw the entry if it is actually displayed, so that
+      // the status icon gets updated.
+      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
+    }
+    else
+    {
+      PushMethodOnStack(G->App, 4, MUIM_YAM_SetStatusTo, mail, addflags, clearflags);
+    }
   }
 
   LEAVE();
