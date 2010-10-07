@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/smtp.c: moving sent mails from the outgoing folder to the sent folder
+    did not happen due to wrong parameters being used.
+
 2010-10-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: the filter functions don't use a global structure to place the

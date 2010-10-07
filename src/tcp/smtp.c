@@ -1464,7 +1464,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode
                         if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
                         {
                           // the filter process did not move the mail, hence we do it now
-                          PushMethodOnStackWait(G->App, 6, MUIM_YAM_MoveCopyMail, mail->Reference, outfolder, sentfolder, FALSE, TRUE);
+                          PushMethodOnStackWait(G->App, 5, MUIM_YAM_MoveCopyMail, mail->Reference, outfolder, sentfolder, MVCPF_CLOSE_WINDOWS);
                         }
                       }
                       break;
