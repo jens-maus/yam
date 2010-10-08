@@ -912,8 +912,6 @@ void DisconnectFromHost(struct Connection *conn)
         conn->sslCtx = NULL;
       }
 
-      G->TR_UseTLS = FALSE;
-
       // close the connection
       shutdown(conn->socket, SHUT_RDWR);
       CloseSocket(conn->socket);
@@ -1188,15 +1186,10 @@ BOOL MakeSecureConnection(struct Connection *conn)
         ER_NewError(tr(MSG_ER_INITAMISSL));
 
         G->TR_UseableTLS = FALSE;
-        G->TR_UseTLS = FALSE;
       }
     }
     else
-    {
       W(DBF_NET, "AmiSSLBase == NULL");
-
-      G->TR_UseTLS = FALSE;
-    }
 
     // if we weren't ale to initialize the TLS/SSL stuff we have to clear it
     // before leaving

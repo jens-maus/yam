@@ -57,6 +57,14 @@
 
 #include "Debug.h"
 
+enum ImportFormat
+{
+  IMF_UNKNOWN = 0,
+  IMF_MBOX,
+  IMF_DBX,
+  IMF_PLAIN
+};
+
 struct TransferContext
 {
   struct Connection *conn;

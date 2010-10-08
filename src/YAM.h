@@ -145,9 +145,7 @@ struct Global
   BOOL                     PGPPassVolatile;
   BOOL                     CO_Valid;
   BOOL                     TR_Debug;
-  BOOL                     TR_Allow;
   BOOL                     TR_UseableTLS;
-  BOOL                     TR_UseTLS;
   BOOL                     InStartupPhase;
   BOOL                     NoImageWarning;
   BOOL                     NoCatalogTranslation;
@@ -156,7 +154,6 @@ struct Global
   struct DateStamp         StartDate;
   struct Users             Users;
   struct DownloadResult    LastDL;
-  struct sockaddr_in       TR_INetSocketAddr;
   struct MinList           readMailDataList;
   struct MinList           writeMailDataList;
   struct MinList           zombieFileList;

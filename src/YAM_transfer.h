@@ -105,14 +105,6 @@ enum GUILevel
   POP_REXX
 };
 
-enum ImportFormat
-{
-  IMF_UNKNOWN = 0,
-  IMF_MBOX,
-  IMF_DBX,
-  IMF_PLAIN
-};
-
 enum SendMode
 {
   SEND_ALL_USER = 0,
@@ -127,7 +119,6 @@ struct TR_ClassData
   struct TR_GUIData       GUI;             // the actual GUI relevant data
   struct MailTransferList transferList;    // list for managing the downloads
   struct MailTransferNode * GMD_Mail;
-  struct Folder         * ImportFolder;
   struct UIDLhash       * UIDLhashTable;   // for maintaining all UIDLs
   struct MailList       * downloadedMails; // a list of downloaded mails to be filtered later
   struct Connection     * connection;      // the connection to be used during the session
@@ -139,14 +130,12 @@ struct TR_ClassData
   long                    Start;
   int                     GMD_Line;
   enum GUILevel           GUIlevel;
-  enum ImportFormat       ImportFormat;
   int                     POP_Nr;
   BOOL                    SinglePOP;
   BOOL                    Checking;
   struct DownloadResult   Stats;
 
   char                    WTitle[SIZE_DEFAULT];
-  char                    ImportFile[SIZE_PATHFILE];
 };
 
 extern struct Hook TR_ProcessGETHook;

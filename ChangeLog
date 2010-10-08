@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.h, YAM_transfer.h: removed some no longer used global variables.
+
 2010-10-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/smtp.c: due to the recently introduced mail transfer lists a main being

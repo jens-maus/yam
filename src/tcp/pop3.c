@@ -532,9 +532,7 @@ static int TR_ConnectPOP(int guilevel)
     DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_INITTLS));
 
     // Now we have to Initialize and Start the TLS stuff if requested
-    if(MakeSecureConnection(G->TR->connection) == TRUE)
-      G->TR_UseTLS = TRUE;
-    else
+    if(MakeSecureConnection(G->TR->connection) == FALSE)
     {
       ER_NewError(tr(MSG_ER_INITTLS_POP3), host, msn->account);
       goto out;
@@ -1046,7 +1044,6 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
   // lets initialize some important data first so that the transfer can
   // begin
   G->TR->POP_Nr = pop;
-  G->TR_Allow = FALSE;
   G->TR->Pause = FALSE;
   G->TR->Start = FALSE;
 
