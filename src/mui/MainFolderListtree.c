@@ -89,8 +89,9 @@ static void FormatFolderInfo(char *folderStr, const size_t maxLen, const struct 
   else
     snprintf(folderStr, maxLen, "%s[%s]", folderStr, FilePart(folder->Path));
 
-  // append the numbers if this is a folder group or a folder with a valid index
-  if(folder->Type == FT_GROUP || (folder->LoadedMode != LM_UNLOAD && folder->LoadedMode != LM_REBUILD))
+  // append the numbers if this is an close folder group or a folder with a valid index
+  if((folder->Type == FT_GROUP && isFlagClear(flags, TNF_OPEN)) ||
+     (folder->LoadedMode != LM_UNLOAD && folder->LoadedMode != LM_REBUILD))
   {
     char dst[SIZE_SMALL];
 
@@ -180,18 +181,22 @@ HOOKPROTONHNO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
 
           msg->Preparse[0] = (entry->New != 0 || entry->Unread != 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
 
-          // if other folder columns are enabled lets fill the values in
-          if(hasFColTotal(C->FolderCols))
-            snprintf(totalStr, sizeof(totalStr), "%d", entry->Total);
+          // show group stats for closed nodes only
+          if(isFlagClear(msg->TreeNode->tn_Flags, TNF_OPEN))
+          {
+            // if other folder columns are enabled lets fill the values in
+            if(hasFColTotal(C->FolderCols))
+              snprintf(totalStr, sizeof(totalStr), "%d", entry->Total);
 
-          if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
-            snprintf(unreadStr, sizeof(unreadStr), "%d", entry->Unread);
+            if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
+              snprintf(unreadStr, sizeof(unreadStr), "%d", entry->Unread);
 
-          if(hasFColNew(C->FolderCols) && entry->New != 0)
-            snprintf(newStr, sizeof(newStr), "%d", entry->New);
+            if(hasFColNew(C->FolderCols) && entry->New != 0)
+              snprintf(newStr, sizeof(newStr), "%d", entry->New);
 
-          if(hasFColSize(C->FolderCols) && entry->Size > 0)
-            FormatSize(entry->Size, sizeStr, sizeof(sizeStr), SF_AUTO);
+            if(hasFColSize(C->FolderCols) && entry->Size > 0)
+              FormatSize(entry->Size, sizeStr, sizeof(sizeStr), SF_AUTO);
+          }
         }
         break;
 

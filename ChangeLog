@@ -13,6 +13,8 @@ $URL$
 
 2010-10-08 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/MainFolderListtree.c: the group statistics will now be shown for closed
+    group nodes only.
   * YAM.h, YAM_transfer.h: removed some no longer used global variables.
 
 2010-10-07 Thore Böckelmann <tboeckel@gmx.de>
