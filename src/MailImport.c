@@ -620,7 +620,7 @@ static void BuildImportList(struct TransferContext *tc, const char *importFile)
         free(buffer);
       }
       else
-        E(DBF_IMPORT, "Error on trying to open file '%s'", G->TR->ImportFile);
+        E(DBF_IMPORT, "Error on trying to open file '%s'", importFile);
     }
     break;
 
