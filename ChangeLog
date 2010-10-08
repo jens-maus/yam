@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-08 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FO.c, YAM_UT.c, mui/MainFolderListtree.c: now that we show also the
+    statistics of folder groups we needed to show statistics also in each
+    separate column of the folder listtree.
+
 2010-10-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.h, YAM_transfer.h: removed some no longer used global variables.

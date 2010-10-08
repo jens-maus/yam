@@ -179,6 +179,19 @@ HOOKPROTONHNO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
           FormatFolderInfo(folderStr, sizeof(folderStr), entry, msg->TreeNode->tn_Flags);
 
           msg->Preparse[0] = (entry->New != 0 || entry->Unread != 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
+
+          // if other folder columns are enabled lets fill the values in
+          if(hasFColTotal(C->FolderCols))
+            snprintf(totalStr, sizeof(totalStr), "%d", entry->Total);
+
+          if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
+            snprintf(unreadStr, sizeof(unreadStr), "%d", entry->Unread);
+
+          if(hasFColNew(C->FolderCols) && entry->New != 0)
+            snprintf(newStr, sizeof(newStr), "%d", entry->New);
+
+          if(hasFColSize(C->FolderCols) && entry->Size > 0)
+            FormatSize(entry->Size, sizeStr, sizeof(sizeStr), SF_AUTO);
         }
         break;
 

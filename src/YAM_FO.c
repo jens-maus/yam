@@ -1211,6 +1211,7 @@ void FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw)
       fo_parent->Total = 0;
       fo_parent->Sent = 0;
       fo_parent->Deleted = 0;
+      fo_parent->Size = 0;
 
       // Now we scan every child of the parent and count the mails
       for(i=0;;i++)
@@ -1229,6 +1230,7 @@ void FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw)
         fo_parent->Total     += fo_child->Total;
         fo_parent->Sent      += fo_child->Sent;
         fo_parent->Deleted   += fo_child->Deleted;
+        fo_parent->Size      += fo_child->Size;
       }
 
       if(redraw == TRUE)

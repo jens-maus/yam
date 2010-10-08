@@ -3181,7 +3181,7 @@ struct Mail *AddMailToList(const struct Mail *mail, struct Folder *folder)
 
     // lets summarize the stats
     folder->Total++;
-    folder->Size+= mail->Size;
+    folder->Size += mail->Size;
 
     if(hasStatusNew(mail))
       folder->New++;
