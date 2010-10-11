@@ -73,6 +73,7 @@
 
 #include "tcp/Connection.h"
 
+#include "extrasrc.h"
 #include "Debug.h"
 
 #ifndef SHUT_RDWR
