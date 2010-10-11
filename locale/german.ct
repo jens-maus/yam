@@ -8613,3 +8613,6 @@ Kann den Methodstack nicht initialisieren.
 MSG_TRANSFERS_IN_PROGRESS
 Laufende Übertragungen
 ;
+MSG_ERROR_CONNECTIONS
+Kann Verbindungen nicht initialisieren.
+;

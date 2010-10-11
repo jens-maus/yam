@@ -93,6 +93,8 @@ struct Connection
   BOOL abort;                    // should the connection be aborted?
 };
 
+BOOL InitConnections(void);
+void CleanupConnections(void);
 struct Connection *CreateConnection(void);
 void DeleteConnection(struct Connection *conn);
 BOOL ConnectionIsOnline(struct Connection *conn);

@@ -120,6 +120,7 @@ struct Global
   struct HashTable *       imageCacheHashTable;
   struct FolderList *      folders;
   struct MinList         * xpkPackerList;
+  struct SignalSemaphore * connectionSemaphore;
 
   #if defined(__amigaos4__)
   struct MsgPort *         AppLibPort;

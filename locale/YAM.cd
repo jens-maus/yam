@@ -7006,3 +7006,6 @@ Cannot initialize method stack.
 MSG_TRANSFERS_IN_PROGRESS (2179//)
 Transfers in progress
 ;
+MSG_ERROR_CONNECTIONS (2180//)
+Cannot initialize connections.
+;

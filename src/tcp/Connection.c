@@ -87,6 +87,38 @@
 #define GET_SOCKETBASE(conn)  struct Library *SocketBase = (conn)->socketBase
 #endif
 
+/// InitConnections
+// initalize a shared semaphore for all connections
+BOOL InitConnections(void)
+{
+  BOOL success = FALSE;
+
+  ENTER();
+
+  if((G->connectionSemaphore = AllocSysObjectTags(ASOT_SEMAPHORE, TAG_DONE)) != NULL)
+    success = TRUE;
+
+  RETURN(success);
+  return(success);
+}
+
+///
+/// CleanupConnections
+// delete the shared connection semaphore
+void CleanupConnections(void)
+{
+  ENTER();
+
+  if(G->connectionSemaphore != NULL)
+  {
+    FreeSysObject(ASOT_SEMAPHORE, G->connectionSemaphore);
+    G->connectionSemaphore = NULL;
+  }
+
+  LEAVE();
+}
+
+///
 /// SetSocketOpts
 //  Sets the user specified options for the active socket
 static void SetSocketOpts(struct Connection *conn)
@@ -619,8 +651,14 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
     struct hostent *hostaddr;
     GET_SOCKETBASE(conn);
 
-    // get the hostent out of the supplied hostname
-    if((hostaddr = gethostbyname((char *)host)) != NULL)
+    // obtain the hostent from the supplied host name
+    // we call gethostbyname() with a locked semaphore, because calling this
+    // function heavily from several threads seems to lock up on WinUAE.
+    ObtainSemaphore(G->connectionSemaphore);
+    hostaddr = gethostbyname((char *)host);
+    ReleaseSemaphore(G->connectionSemaphore);
+
+    if(hostaddr != NULL)
     {
       int i;
 

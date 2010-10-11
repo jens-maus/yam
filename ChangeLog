@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, tcp/Connection.c: added a global semaphore to avoid deadlocks when
+    calling gethostfromname() from several threads at the same time. At least
+    WinUAE suffers from this kind of deadlock.
+
 2010-10-08 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_FO.c, YAM_UT.c, mui/MainFolderListtree.c: now that we show also the

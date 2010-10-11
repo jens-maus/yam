@@ -1111,6 +1111,9 @@ static void Terminate(void)
   D(DBF_STARTUP, "cleaning up method stack...");
   CleanupMethodStack();
 
+  D(DBF_STARTUP, "cleaning up connection stuff...");
+  CleanupConnections();
+
   // cleaning up all AmiSSL stuff
   D(DBF_STARTUP, "cleaning up AmiSSL stuff...");
   if(AmiSSLBase != NULL)
@@ -1961,6 +1964,10 @@ static void InitBeforeLogin(BOOL hidden)
 
   // Lets check for the correct TextEditor.mcc version
   CheckMCC(MUIC_TextEditor, 15, 36, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+
+  // initialize the shared connection semaphore
+  if(InitConnections() == FALSE)
+    Abort(tr(MSG_ERROR_CONNECTIONS));
 
   // initialize the method stack
   if(InitMethodStack() == FALSE)
