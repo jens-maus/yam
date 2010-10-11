@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (21.09.2010)
+## version $VER: YAM.catalog 7.5 (11.10.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5241 2010-09-21
+; based on YAM.cd 5347 2010-10-11
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -10010,7 +10010,7 @@ ad instabilità di sistema.
 ; running sub thread (which could end up in later crashes)?
 ;
 MSG_THREAD_EXIT_WARNING_BT
-; _Riprova|_Ignora
+_Riprova|_Ignora
 ; _Retry|_Ignore
 ;
 MSG_EXECUTE_COMMAND_FAILED
@@ -10025,4 +10025,8 @@ Impossibile inizializzare il metodo dello stack.
 MSG_TRANSFERS_IN_PROGRESS
 Trasferimenti in corso
 ; Transfers in progress
+;
+MSG_ERROR_CONNECTIONS
+Impossibile inizializzare le connessioni.
+; Cannot initialize connections.
 ;
