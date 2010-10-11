@@ -2179,7 +2179,6 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                             MUIA_Weight, 100,
                             MUIA_Scrollgroup_FreeHoriz, FALSE,
                             MUIA_Scrollgroup_FreeVert,  TRUE,
-                            MUIA_Scrollgroup_AutoBars,  TRUE,
                             MUIA_Scrollgroup_Contents,  data->GUI.GR_SGROUP = VirtgroupObject,
                               Child, SearchControlGroupObject, // we need a minimum of one dummy control group
                               End,
