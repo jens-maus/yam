@@ -140,8 +140,6 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
-    DoMethod(G->App, OM_ADDMEMBER, obj);
-
     // prepare the group for the change.
     if(entries != NULL && DoMethod(checkboxGroup, MUIM_Group_InitChange))
     {
@@ -176,6 +174,8 @@ OVERLOAD(OM_NEW)
 
       DoMethod(checkboxGroup, MUIM_Group_ExitChange);
     }
+
+    DoMethod(G->App, OM_ADDMEMBER, obj);
 
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_CheckboxRequestWindow_FinishInput, 0);
     DoMethod(useButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_CheckboxRequestWindow_FinishInput, 1);

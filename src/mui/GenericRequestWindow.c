@@ -113,8 +113,6 @@ OVERLOAD(OM_NEW)
 
     TAG_MORE, inittags(msg))) != NULL)
   {
-    DoMethod(G->App, OM_ADDMEMBER, obj);
-
     // prepare the group for the change.
     if(buttons != NULL && DoMethod(buttonGroup, MUIM_Group_InitChange))
     {
@@ -230,6 +228,8 @@ OVERLOAD(OM_NEW)
 
       DoMethod(buttonGroup, MUIM_Group_ExitChange);
     }
+
+    DoMethod(G->App, OM_ADDMEMBER, obj);
 
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_GenericRequestWindow_FinishInput, 0);
   }
