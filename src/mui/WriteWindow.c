@@ -3522,8 +3522,6 @@ DECLARE(Search) // ULONG flags
   {
     if((data->WI_SEARCH = SearchwindowObject, End))
     {
-      DoMethod(G->App, OM_ADDMEMBER, data->WI_SEARCH);
-
       // perform the search operation
       DoMethod(data->WI_SEARCH, MUIM_Searchwindow_Open, data->TE_EDIT);
     }

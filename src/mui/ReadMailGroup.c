@@ -1776,8 +1776,6 @@ DECLARE(Search) // int flags
   {
     if((data->searchWindow = SearchwindowObject, End) != NULL)
     {
-      DoMethod(G->App, OM_ADDMEMBER, data->searchWindow);
-
       // perform the search operation
       DoMethod(data->searchWindow, MUIM_Searchwindow_Open, data->mailTextObject);
     }
