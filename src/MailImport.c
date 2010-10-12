@@ -843,7 +843,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
   {
     snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MsgInFile), importFile);
 
-    if((tc->transferGroup = (Object *)DoMethod(G->App, MUIM_YAM_CreateTransferGroup, TR_IMPORT, tc->transferGroupTitle, conn, isFlagClear(flags, IMPORTF_QUIET))) != NULL)
+    if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAM_CreateTransferGroup, TR_IMPORT, tc->transferGroupTitle, conn, isFlagClear(flags, IMPORTF_QUIET))) != NULL)
     {
       enum FolderType ftype = folder->Type;
 

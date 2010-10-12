@@ -7,6 +7,8 @@ $URL$
 
 2010-10-12 Thore Böckelmann <tboeckel@gmx.de>
 
+  * MailImport.c: the transfer control group must not be created from within the
+    subthread.
   * mui/misc: all subclassed windows now add themselves to the application
     automatically instead of leaving this task to the creating instance.
   * tcp/pop3.c, locale/YAM.cd: changed some strings in the POP3 transfer to
