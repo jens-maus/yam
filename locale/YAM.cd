@@ -6998,7 +6998,7 @@ Cannot initialize connections.
 ;
 MSG_LOG_CONNECT_POP3 (2181//)
 Logged in on POP3 account '%s': %ld messages waiting
-; USER_ID, HOST, COUNT
+; ACCOUNT, COUNT
 ;
 MSG_LOG_RETRIEVED_POP3 (2182//)
 Retrieved %ld message(s) from POP3 account '%s'
