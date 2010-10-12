@@ -128,6 +128,8 @@ OVERLOAD(OM_NEW)
     {
       GETDATA;
 
+      DoMethod(G->App, OM_ADDMEMBER, obj);
+
       data->windowGroup   = windowGroup;
       data->imageGroup    = imageGroup;
       data->textGroup     = textGroup;
@@ -135,8 +137,6 @@ OVERLOAD(OM_NEW)
       data->progressGroup = progressGroup;
       data->progressGauge = progressGauge;
       data->progressGaugeActive = FALSE;
-
-      DoMethod(G->App, OM_ADDMEMBER, obj);
 
       set(obj, MUIA_Window_Activate, TRUE);
     }

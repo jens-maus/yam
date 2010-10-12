@@ -93,6 +93,8 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
+    DoMethod(G->App, OM_ADDMEMBER, obj);
+
     data->Searchstring = string;
 
     DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, MUIF_Searchwindow_FromTop);

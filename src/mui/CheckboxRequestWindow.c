@@ -140,6 +140,8 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
+    DoMethod(G->App, OM_ADDMEMBER, obj);
+
     // prepare the group for the change.
     if(entries != NULL && DoMethod(checkboxGroup, MUIM_Group_InitChange))
     {

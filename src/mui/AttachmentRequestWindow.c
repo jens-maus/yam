@@ -146,6 +146,8 @@ OVERLOAD(OM_NEW)
     GETDATA;
     struct Part *part;
 
+    DoMethod(G->App, OM_ADDMEMBER, obj);
+
     data->listObj = listObj;
 
     // lets create the static parts of the Attachrequest entries in the NList

@@ -160,6 +160,8 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
+    DoMethod(G->App, OM_ADDMEMBER, obj);
+
     data->listObj = listObj;
     data->result = 0;
 

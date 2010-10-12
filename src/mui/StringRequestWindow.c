@@ -154,6 +154,8 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
+    DoMethod(G->App, OM_ADDMEMBER, obj);
+
     data->stringObj = stringObj;
     data->maxLength = maxLength;
     data->result = 0;

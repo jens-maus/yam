@@ -263,9 +263,9 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
-    data->aboutText = aboutText;
-
     DoMethod(G->App, OM_ADDMEMBER, obj);
+
+    data->aboutText = aboutText;
 
     DoMethod(obj,       MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_Set, MUIA_Window_Open, FALSE);
     DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);

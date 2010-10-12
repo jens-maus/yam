@@ -389,11 +389,10 @@ OVERLOAD(MUIM_Setup)
   // create the address match list object, if it does not exist yet
   if(data->Matchwindow == NULL)
   {
-    if((data->Matchwindow = AddrmatchlistObject, MUIA_Addrmatchlist_String, obj, End) != NULL)
-    {
-      D(DBF_GUI, "Create addrlistpopup: %08lx", data->Matchwindow);
-      DoMethod(_app(obj), OM_ADDMEMBER, data->Matchwindow);
-    }
+    data->Matchwindow = AddrmatchlistObject,
+      MUIA_Addrmatchlist_String, obj,
+    End;
+    D(DBF_GUI, "Create addrlistpopup: %08lx", data->Matchwindow);
   }
 
   if(data->Matchwindow != NULL)
@@ -1000,7 +999,7 @@ DECLARE(Resolve) // ULONG flags
     }
 
     free(contents);
-  } 
+  }
   while(list_expansion == TRUE && max_list_nesting-- > 0);
 
   result = (res ? xget(obj, MUIA_String_Contents) : 0);

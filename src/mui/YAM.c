@@ -805,12 +805,9 @@ DECLARE(CreateTransferGroup) // enum TransferType TRmode, const char *title, str
   {
     D(DBF_GUI, "creating new transfer window, mode %ld", msg->TRmode);
 
-    if((data->transferWindow = TransferWindowObject,
-        MUIA_TransferWindow_Mode, msg->TRmode,
-      End) != NULL)
-    {
-      DoMethod(G->App, OM_ADDMEMBER, data->transferWindow);
-    }
+    data->transferWindow = TransferWindowObject,
+      MUIA_TransferWindow_Mode, msg->TRmode,
+    End;
   }
 
   if(data->transferWindow != NULL)

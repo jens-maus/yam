@@ -113,6 +113,8 @@ OVERLOAD(OM_NEW)
 
     TAG_MORE, inittags(msg))) != NULL)
   {
+    DoMethod(G->App, OM_ADDMEMBER, obj);
+
     // prepare the group for the change.
     if(buttons != NULL && DoMethod(buttonGroup, MUIM_Group_InitChange))
     {

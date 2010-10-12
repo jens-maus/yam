@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/misc: all subclassed windows now add themselves to the application
+    automatically instead of leaving this task to the creating instance.
+
 2010-10-11 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update italian catalog.

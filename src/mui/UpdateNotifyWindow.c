@@ -144,6 +144,8 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
+    DoMethod(G->App, OM_ADDMEMBER, obj);
+
     data->ComponentList = nl_componentlist;
     data->ComponentHistory = nf_componenthistory;
     data->SkipInFutureCheckBox = ch_skipinfuture;

@@ -129,8 +129,6 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
 
       set(G->App, MUIA_Application_Sleep, TRUE);
 
-      DoMethod(G->App, OM_ADDMEMBER, win);
-
       if(SafeOpenWindow(win) == TRUE)
       {
         ULONG signals = 0;
@@ -201,8 +199,6 @@ int StringRequest(char *string, int size, const char *title, const char *body,
 
     set(G->App, MUIA_Application_Sleep, TRUE);
 
-    DoMethod(G->App, OM_ADDMEMBER, win);
-
     if(SafeOpenWindow(win) == TRUE)
     {
       ULONG signals = 0;
@@ -264,8 +260,6 @@ int PassphraseRequest(char *string, int size, Object *parent)
     DoMethod(win, MUIM_Notify, MUIA_PassphraseRequestWindow_Result, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, REQUESTER_RETURNID);
 
     set(G->App, MUIA_Application_Sleep, TRUE);
-
-    DoMethod(G->App, OM_ADDMEMBER, win);
 
     if(SafeOpenWindow(win) == TRUE)
     {
@@ -339,8 +333,6 @@ struct Folder *FolderRequest(const char *title, const char *body, const char *ye
 
     set(G->App, MUIA_Application_Sleep, TRUE);
 
-    DoMethod(G->App, OM_ADDMEMBER, win);
-
     if(SafeOpenWindow(win) == TRUE)
     {
       ULONG signals = 0;
@@ -408,8 +400,6 @@ struct Part *AttachRequest(const char *title, const char *body, const char *yest
     DoMethod(win, MUIM_Notify, MUIA_AttachmentRequestWindow_Result, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, REQUESTER_RETURNID);
 
     set(G->App, MUIA_Application_Sleep, TRUE);
-
-    DoMethod(G->App, OM_ADDMEMBER, win);
 
     if(SafeOpenWindow(win) == TRUE)
     {
@@ -493,8 +483,6 @@ LONG CheckboxRequest(Object *parent, const char *tit, ULONG numBoxes, const char
       DoMethod(win, MUIM_Notify, MUIA_CheckboxRequestWindow_Result, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, REQUESTER_RETURNID);
 
       set(G->App, MUIA_Application_Sleep, TRUE);
-
-      DoMethod(G->App, OM_ADDMEMBER, win);
 
       if(SafeOpenWindow(win) == TRUE)
       {

@@ -182,6 +182,8 @@ OVERLOAD(OM_NEW)
     }
     else
     {
+      DoMethod(G->App, OM_ADDMEMBER, obj);
+
       // we need to catch the RAWKEY events and forward them directly
       // to our string object
       data->ehnode.ehn_Priority = 1;

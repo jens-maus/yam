@@ -341,9 +341,7 @@ BOOL CheckForUpdates(const BOOL quiet)
                   // window in advance.
                   if(G->UpdateNotifyWinObject == NULL)
                   {
-                    if((G->UpdateNotifyWinObject = UpdateNotifyWindowObject, End) != NULL)
-                      DoMethod(G->App, OM_ADDMEMBER, G->UpdateNotifyWinObject);
-                    else
+                    if((G->UpdateNotifyWinObject = UpdateNotifyWindowObject, End) == NULL)
                       break;
                   }
 
