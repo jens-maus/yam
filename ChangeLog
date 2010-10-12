@@ -9,6 +9,8 @@ $URL$
 
   * mui/misc: all subclassed windows now add themselves to the application
     automatically instead of leaving this task to the creating instance.
+  * tcp/pop3.c, locale/YAM.cd: changed some strings in the POP3 transfer to
+    use the account's name instead of combining user name + host.
 
 2010-10-11 Samir Hawamdeh <s.hawamdeh@tin.it>
 

@@ -556,7 +556,7 @@ static int TR_ConnectPOP(int guilevel)
     if(xget(G->App, MUIA_Application_Iconified) == TRUE)
       PopUp();
 
-    snprintf(buf, sizeof(buf), tr(MSG_TR_PopLoginReq), msn->username, host);
+    snprintf(buf, sizeof(buf), tr(MSG_LOG_CONNECT_POP3), msn->account);
     if(StringRequest(passwd, SIZE_PASSWORD, tr(MSG_TR_PopLogin), buf, tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->TR->GUI.WI) == 0)
       goto out;
   }
@@ -611,7 +611,7 @@ static int TR_ConnectPOP(int guilevel)
 
   sscanf(&resp[4], "%d", &msgs);
   if(msgs != 0)
-    AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_ConnectPOP), msn->username, host, msgs);
+    AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_CONNECT_POP3), msn->account, msgs);
 
 out:
 
@@ -939,7 +939,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel)
 
     TR_DisconnectPOP();
     TR_Cleanup();
-    AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_Retrieving), G->TR->Stats.Downloaded-laststats, G->TR->mailServer->username, G->TR->mailServer->hostname);
+    AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_RETRIEVED_POP3), G->TR->Stats.Downloaded-laststats, G->TR->mailServer->account);
     if(G->TR->SinglePOP == TRUE)
       pop = -1;
 

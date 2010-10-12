@@ -434,20 +434,10 @@ Nachricht von '%s' über '%s' aus dem Postfach '%s' nach '%s' kopiert
 ; Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
-MSG_LOG_ConnectPOP
-Verbunden mit POP3-Zugang '%s@%s': %ld Nachrichten vorhanden
-; Logged in on POP3 account '%s@%s': %ld messages waiting
-; USER_ID, HOST, COUNT
-;
 MSG_LOG_RetrievingVerbose
 Nachricht von '%s' über '%s' geladen (%ld Bytes)
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
-;
-MSG_LOG_Retrieving
-%ld Nachricht(en) von POP3-Zugang '%s@%s' geladen
-; Retrieved %ld message(s) from POP3 account '%s@%s'
-; COUNT, USER_ID, HOST
 ;
 MSG_LOG_ConnectSMTP
 Verbunden mit SMTP-Server '%s'
@@ -4368,13 +4358,6 @@ Verbinde mit Postserver...
 MSG_TR_WaitWelcome
 Verbunden, warte auf Begrüßung...
 ; Connected, awaiting welcome message...
-;
-MSG_TR_PopLoginReq
-Bitte geben Sie Ihr POP3-Passwort für\n\
-das Konto %s@%s ein
-; Please enter POP3 password for account\n\
-; %s@%s
-; USER_ID, HOST
 ;
 MSG_TR_PopLogin
 POP3 Anmeldung
@@ -8615,4 +8598,14 @@ Laufende Übertragungen
 ;
 MSG_ERROR_CONNECTIONS
 Kann Verbindungen nicht initialisieren.
+;
+MSG_LOG_CONNECT_POP3
+Verbunden mit POP3-Konto '%s': %ld Nachrichten vorhanden
+;
+MSG_LOG_RETRIEVED
+%ld Nachricht(en) von POP3-Konto '%s' geladen
+;
+MSG_TR_ENTER_POP3_PASSWORD
+Bitte geben Sie das Passwort für\n\
+das POP3-Konto '%s' ein:
 ;

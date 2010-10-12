@@ -329,17 +329,9 @@ MSG_LOG_CopyingVerbose (116//)
 Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
-MSG_LOG_ConnectPOP (117//)
-Logged in on POP3 account '%s@%s': %ld messages waiting
-; USER_ID, HOST, COUNT
-;
 MSG_LOG_RetrievingVerbose (118//)
 Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
-;
-MSG_LOG_Retrieving (119//)
-Retrieved %ld message(s) from POP3 account '%s@%s'
-; COUNT, USER_ID, HOST
 ;
 MSG_LOG_ConnectSMTP (120//)
 Connected to SMTP server '%s'
@@ -3217,11 +3209,6 @@ Connecting to mail server...
 ;
 MSG_TR_WaitWelcome (1052//)
 Connected, awaiting welcome message...
-;
-MSG_TR_PopLoginReq (1053//)
-Please enter POP3 password for account\n\
-%s@%s
-; USER_ID, HOST
 ;
 MSG_TR_PopLogin (1054//)
 POP3 login
@@ -7008,4 +6995,17 @@ Transfers in progress
 ;
 MSG_ERROR_CONNECTIONS (2180//)
 Cannot initialize connections.
+;
+MSG_LOG_CONNECT_POP3 (2181//)
+Logged in on POP3 account '%s': %ld messages waiting
+; USER_ID, HOST, COUNT
+;
+MSG_LOG_RETRIEVED_POP3 (2182//)
+Retrieved %ld message(s) from POP3 account '%s'
+; COUNT, ACCOUNT
+;
+MSG_TR_ENTER_POP3_PASSWORD (2183//)
+Please enter the password for\n\
+POP3 account '%s':
+; ACCOUNT
 ;
