@@ -103,7 +103,7 @@ static BOOL FilterDuplicates(void);
 // function that receives data from a POP3 server until it receives a \r\n.\r\n termination
 // line. It automatically writes that data to the supplied filehandle and if present also
 // updates the Transfer status
-static int TR_RecvToFile(FILE *fh, const char *filename)
+static int TR_RecvToFile(FILE *fh, const char *filename, const BOOL isTemp)
 {
   int l=0, read, state=0, count;
   char buf[SIZE_LINE];
@@ -131,8 +131,9 @@ static int TR_RecvToFile(FILE *fh, const char *filename)
       // write it to the file.
       if(l == sizeof(line) || done == TRUE)
       {
-        // update the transfer status
-        DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, l, tr(MSG_TR_Downloading));
+        // update the transfer status during the final download
+        if(isTemp == FALSE)
+          DoMethod(G->TR->GUI.GR_STATS, MUIM_TransferControlGroup_Update, l, tr(MSG_TR_Downloading));
 
         // write the line to the file now
         if(fwrite(line, 1, l, fh) != (size_t)l)
@@ -797,7 +798,7 @@ void TR_GetMessageDetails(struct MailTransferNode *tnode, int lline)
 
         // now we call a subfunction to receive data from the POP3 server
         // and write it in the filehandle as long as there is no termination \r\n.\r\n
-        if(TR_RecvToFile(tf->FP, tf->Filename) > 0)
+        if(TR_RecvToFile(tf->FP, tf->Filename, TRUE) > 0)
           done = TRUE;
 
         // close the filehandle now.
@@ -1228,7 +1229,7 @@ BOOL TR_LoadMessage(struct Folder *infolder, const int number)
     {
       // now we call a subfunction to receive data from the POP3 server
       // and write it in the filehandle as long as there is no termination \r\n.\r\n
-      if(TR_RecvToFile(fh, msgfile) > 0)
+      if(TR_RecvToFile(fh, msgfile, FALSE) > 0)
         done = TRUE;
     }
     fclose(fh);

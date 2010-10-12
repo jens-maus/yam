@@ -7,6 +7,9 @@ $URL$
 
 2010-10-12 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tcp/pop3.c: don't update the transfer control group while loading the mail
+    details for the preselection list. This will output a malformed time since
+    the transfer has not been started yet. This closes #163.
   * MailImport.c: the transfer control group must not be created from within the
     subthread.
   * mui/misc: all subclassed windows now add themselves to the application
