@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ImageArea.c, mui/TransferMailList.c: implemented optional alternative
+    texts for images. These will be used in case an image could not be loaded.
+    This comes in quite handy for i.e. the "empty" theme. Instead of images the
+    mail preselection window will now display some chars to indicate the state
+    of the mails.
+
 2010-10-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: don't update the transfer control group while loading the mail

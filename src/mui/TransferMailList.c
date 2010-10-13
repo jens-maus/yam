@@ -80,8 +80,8 @@ OVERLOAD(OM_NEW)
     GETDATA;
 
     // prepare the group image
-    data->downloadImage = MakeImageObject("status_download", G->theme.statusImages[si_Download]);
-    data->deleteImage   = MakeImageObject("status_delete", G->theme.statusImages[si_Delete]);
+    data->downloadImage = MakeImageAltObject("status_download", G->theme.statusImages[si_Download], tr(MSG_ALTIMAGE_STATUS_DOWNLOAD));
+    data->deleteImage   = MakeImageAltObject("status_delete", G->theme.statusImages[si_Delete], tr(MSG_ALTIMAGE_STATUS_DELETE));
 
     DoMethod(obj, MUIM_NList_UseImage, data->downloadImage, si_Download, MUIF_NONE);
     DoMethod(obj, MUIM_NList_UseImage, data->deleteImage, si_Delete, MUIF_NONE);

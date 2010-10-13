@@ -7009,3 +7009,9 @@ Please enter the password for\n\
 POP3 account '%s':
 ; ACCOUNT
 ;
+MSG_ALTIMAGE_STATUS_DOWNLOAD (2184//3)
+D
+;
+MSG_ALTIMAGE_STATUS_DELETE (2185//3)
+X
+;

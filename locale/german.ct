@@ -8609,3 +8609,9 @@ MSG_TR_ENTER_POP3_PASSWORD
 Bitte geben Sie das Passwort für\n\
 das POP3-Konto '%s' ein:
 ;
+MSG_ALTIMAGE_STATUS_DOWNLOAD
+L
+;
+MSG_ALTIMAGE_STATUS_DELETE
+X
+;

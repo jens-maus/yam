@@ -50,6 +50,7 @@ struct Data
 {
   char *id;
   char *filename;
+  char *altText;
   char *label;
 
   struct ImageCacheNode imageNode;
@@ -81,6 +82,11 @@ struct Data
                                     MUIA_ImageArea_ID, (id),\
                                     MUIA_ImageArea_Filename, (file),\
                                   End
+#define MakeImageAltObject(id, file, alt) ImageAreaObject,\
+                                            MUIA_ImageArea_ID, (id),\
+                                            MUIA_ImageArea_Filename, (file),\
+                                            MUIA_ImageArea_AltText, (alt),\
+                                          End
 */
 
 /* Defines */
@@ -411,6 +417,7 @@ OVERLOAD(OM_NEW)
     // set default values
     data->id = NULL;
     data->filename = NULL;
+    data->altText = NULL;
     data->label = NULL;
     data->free_vert = FALSE;
     data->free_horiz = FALSE;
@@ -425,6 +432,7 @@ OVERLOAD(OM_NEW)
       {
         case ATTR(ID):          if((char *)tag->ti_Data != NULL) data->id = strdup((char *)tag->ti_Data); break;
         case ATTR(Filename):    if((char *)tag->ti_Data != NULL) data->filename = strdup((char *)tag->ti_Data); break;
+        case ATTR(AltText):     if((char *)tag->ti_Data != NULL) data->altText = strdup((char *)tag->ti_Data); break;
         case ATTR(Label):       if((char *)tag->ti_Data != NULL) data->label = strdup((char *)tag->ti_Data); break;
         case ATTR(FreeVert):    data->free_vert   = (BOOL)tag->ti_Data; break;
         case ATTR(FreeHoriz):   data->free_horiz  = (BOOL)tag->ti_Data; break;
@@ -450,6 +458,7 @@ OVERLOAD(OM_DISPOSE)
 
   free(data->id);
   free(data->filename);
+  free(data->altText);
   free(data->label);
 
   // everything else has been freed during MUIM_Cleanup already
@@ -714,6 +723,15 @@ OVERLOAD(MUIM_AskMinMax)
       minwidth  = data->imageNode.width;
       minheight = data->imageNode.height;
     }
+  }
+  else if(data->altText != NULL && data->altText[0] != '\0')
+  {
+    struct RastPort rp;
+
+    InitRastPort(&rp);
+    SetFont(&rp, _font(obj));
+    minwidth = TextLength(&rp, data->altText, strlen(data->altText));
+    minheight = _font(obj)->tf_YSize;
   }
   else
   {
@@ -1025,6 +1043,19 @@ OVERLOAD(MUIM_Draw)
       }
 
       rel_y += data->imageNode.height;
+    }
+  }
+  else if(data->altText != NULL && data->altText[0] != '\0')
+  {
+    LONG len;
+    struct TextExtent te;
+
+    if((len = TextFit(rp, data->altText, strlen(data->altText), &te, NULL, 1, _mwidth(obj), _mheight(obj))) > 0)
+    {
+      Move(rp, _mleft(obj) + (_mwidth(obj) - te.te_Width)/2, _mtop(obj) + (_mheight(obj) - te.te_Height)/2 + _font(obj)->tf_Baseline);
+      SetAPen(rp, _dri(obj)->dri_Pens[TEXTPEN]);
+      SetDrMd(rp, JAM1);
+      Text(rp, data->altText, len);
     }
   }
 
