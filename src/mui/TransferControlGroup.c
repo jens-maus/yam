@@ -60,6 +60,7 @@ struct Data
   struct TimeVal Clock_Last;
 
   BOOL aborted;
+  BOOL started;
 
   char stats_label[SIZE_DEFAULT];
   char size_gauge_label[SIZE_DEFAULT];
@@ -386,6 +387,7 @@ DECLARE(Start) // int numberOfMails, ULONG totalSize
   data->Size_Tot = msg->totalSize;
   data->Size_Done = 0;
   data->Size_Curr = 0;
+  data->started = TRUE;
 
   // get the actual time we started the transfer
   GetSysTime(TIMEVAL(&data->Clock_Last));
@@ -425,6 +427,9 @@ DECLARE(Finish)
   xset(data->GA_BYTES, MUIA_Gauge_InfoText, data->size_gauge_label,
                        MUIA_Gauge_Max,      100,
                        MUIA_Gauge_Current,  100);
+
+  data->started = FALSE;
+
   LEAVE();
   return 0;
 }
@@ -438,16 +443,20 @@ DECLARE(Next) // int index, int listpos, ULONG size, const char *status
 
   ENTER();
 
-  data->Msgs_Curr = msg->index;
-  data->Msgs_ListPos = msg->listpos;
-  data->Msgs_Done++;
-  data->Size_Curr = 0;
-  data->Size_Curr_Max = msg->size;
+  // update the stats only if the transfer has been started already
+  if(data->started == TRUE)
+  {
+    data->Msgs_Curr = msg->index;
+    data->Msgs_ListPos = msg->listpos;
+    data->Msgs_Done++;
+    data->Size_Curr = 0;
+    data->Size_Curr_Max = msg->size;
 
-  // format the current mail's size ahead of any refresh
-  FormatSize(msg->size, data->str_size_curr_max, sizeof(data->str_size_curr_max), SF_AUTO);
+    // format the current mail's size ahead of any refresh
+    FormatSize(msg->size, data->str_size_curr_max, sizeof(data->str_size_curr_max), SF_AUTO);
 
-  DoUpdateStats(data, 0, msg->status);
+    DoUpdateStats(data, 0, msg->status);
+  }
 
   LEAVE();
   return 0;
@@ -463,7 +472,9 @@ DECLARE(Update) // int size_incr, const char *status
 
   ENTER();
 
-  DoUpdateStats(data, msg->size_incr, msg->status);
+  // update the stats only if the transfer has been started already
+  if(data->started == TRUE)
+    DoUpdateStats(data, msg->size_incr, msg->status);
 
   LEAVE();
   return 0;
