@@ -1254,15 +1254,14 @@ static ULONG CompressMsgID(const char *msgid)
 //  Function that creates a new plain mail filename or by taking provided
 //  data into account. It returns the full path to the new mail file in the
 //  folder and also writes it into the mailfile parameter
-char *MA_NewMailFile(const struct Folder *folder, char *mailfile)
+BOOL MA_NewMailFile(const struct Folder *folder, char *fullPath, const size_t fullPathSize)
 {
-  static char fullpath[SIZE_PATHFILE+1];
   char dateFilePart[12+1];
   char newFileName[SIZE_MFILE];
   char *ptr;
   struct TimeVal curDate;
   int mCounter = 0;
-  char *result = NULL;
+  BOOL result;
 
   ENTER();
 
@@ -1283,21 +1282,11 @@ char *MA_NewMailFile(const struct Folder *folder, char *mailfile)
   {
     snprintf(newFileName, sizeof(newFileName), "%s.%03d,N", dateFilePart, ++mCounter);
 
-    AddPath(fullpath, folder->Fullpath, newFileName, sizeof(fullpath));
+    AddPath(fullPath, folder->Fullpath, newFileName, fullPathSize);
   }
-  while(mCounter < 999 && FileExists(fullpath));
+  while(mCounter < 999 && FileExists(fullPath) == TRUE);
 
-  if(mCounter < 999)
-  {
-    // copy the newFileName to our mailfile buffer
-    if(mailfile != NULL)
-      strcpy(mailfile, newFileName);
-    // get the real path to the file
-    result = fullpath;
-  }
-  else
-    // we ran out of free numbers
-    result = NULL;
+  result = (mCounter < 999);
 
   RETURN(result);
   return result;
@@ -2876,14 +2865,15 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                 if(convertAllUnknown == TRUE || convertOnce == TRUE)
                 {
                   // now it is our job to get a new mailfile name and replace the old one
-                  char oldfile[SIZE_PATHFILE+1];
-                  char *newfile;
+                  char oldfilePath[SIZE_PATHFILE];
+                  char newfilePath[SIZE_PATHFILE];
 
-                  AddPath(oldfile, folder->Fullpath, fname, sizeof(oldfile));
-                  if((newfile = MA_NewMailFile(folder, fbuf)) != NULL)
+                  AddPath(oldfilePath, folder->Fullpath, fname, sizeof(oldfilePath));
+                  if(MA_NewMailFile(folder, newfilePath, sizeof(newfilePath)) == TRUE)
                   {
-                    if(Rename(oldfile, newfile))
+                    if(Rename(oldfilePath, newfilePath))
                     {
+                      strlcpy(fbuf, FilePart(newfilePath), sizeof(fbuf));
                       fname = fbuf;
                     }
                     else

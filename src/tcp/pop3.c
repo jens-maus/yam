@@ -1206,7 +1206,6 @@ BOOL TR_SendPOP3KeepAlive(void)
 //  Retrieves a message from the POP3 server
 BOOL TR_LoadMessage(struct Folder *infolder, const int number)
 {
-  static char mfile[SIZE_MFILE];
   char msgnum[SIZE_SMALL];
   char msgfile[SIZE_PATHFILE];
   BOOL result = FALSE;
@@ -1214,7 +1213,7 @@ BOOL TR_LoadMessage(struct Folder *infolder, const int number)
 
   ENTER();
 
-  strlcpy(msgfile, MA_NewMailFile(infolder, mfile), sizeof(msgfile));
+  MA_NewMailFile(infolder, msgfile, sizeof(msgfile));
 
   // open the new mailfile for writing out the retrieved
   // data
@@ -1238,7 +1237,7 @@ BOOL TR_LoadMessage(struct Folder *infolder, const int number)
     {
       struct ExtendedMail *mail;
 
-      if((mail = MA_ExamineMail(infolder, mfile, FALSE)) != NULL)
+      if((mail = MA_ExamineMail(infolder, FilePart(msgfile), FALSE)) != NULL)
       {
         struct Mail *newMail;
 
@@ -1283,7 +1282,7 @@ BOOL TR_LoadMessage(struct Folder *infolder, const int number)
     }
   }
   else
-    ER_NewError(tr(MSG_ER_ErrorWriteMailfile), mfile);
+    ER_NewError(tr(MSG_ER_ErrorWriteMailfile), msgfile);
 
   RETURN(result);
   return result;

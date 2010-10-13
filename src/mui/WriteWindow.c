@@ -3928,7 +3928,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // continue
 
     default:
-      strlcpy(newMailFile, MA_NewMailFile(outfolder, NULL), sizeof(newMailFile));
+      MA_NewMailFile(outfolder, newMailFile, sizeof(newMailFile));
+    break;
   }
 
   // now open the new mail file for write operations

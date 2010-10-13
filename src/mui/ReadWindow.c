@@ -880,33 +880,41 @@ DECLARE(CopyMailRequest)
   struct Mail *mail = rmData->mail;
   struct Folder *srcfolder = mail->Folder;
 
-  if(MailExists(mail, srcfolder))
+  if(MailExists(mail, srcfolder) == TRUE)
   {
     struct Folder *dstfolder = FolderRequest(tr(MSG_MA_CopyMsg),
                                              tr(MSG_MA_MoveMsgReq),
                                              tr(MSG_MA_CopyGad),
                                              tr(MSG_Cancel), NULL, obj);
-    if(dstfolder)
+    if(dstfolder != NULL)
     {
       // if there is no source folder this is a virtual mail that we
       // export to the destination folder
-      if(srcfolder)
+      if(srcfolder != NULL)
       {
         MA_MoveCopy(mail, srcfolder, dstfolder, MVCPF_COPY);
 
         AppendToLogfile(LF_NORMAL, 24, tr(MSG_LOG_Copying), 1, srcfolder->Name, dstfolder->Name);
       }
-      else if(RE_Export(rmData, rmData->readFile,
-                MA_NewMailFile(dstfolder, mail->MailFile), "", 0, FALSE, FALSE, IntMimeTypeArray[MT_ME_EMAIL].ContentType))
+      else
       {
-        struct Mail *newmail;
+        char mfilePath[SIZE_PATHFILE];
 
-        if((newmail = AddMailToList(mail, dstfolder)) != NULL)
+        if(MA_NewMailFile(dstfolder, mfilePath, sizeof(mfilePath)) == TRUE)
         {
-          if(dstfolder == FO_GetCurrentFolder())
-            DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
+          strlcpy(mail->MailFile, FilePart(mfilePath), sizeof(mail->MailFile));
+          if(RE_Export(rmData, rmData->readFile, mfilePath, "", 0, FALSE, FALSE, IntMimeTypeArray[MT_ME_EMAIL].ContentType) == TRUE)
+          {
+            struct Mail *newmail;
 
-          setStatusToRead(newmail); // OLD status
+            if((newmail = AddMailToList(mail, dstfolder)) != NULL)
+            {
+              if(FO_GetCurrentFolder() == dstfolder)
+                DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
+
+              setStatusToRead(newmail); // OLD status
+            }
+          }
         }
       }
     }

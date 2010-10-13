@@ -82,11 +82,12 @@ void rx_newmailfile(UNUSED struct RexxHost *host, struct RexxParams *params, enu
       else
         folder = FO_GetCurrentFolder();
 
-      if(folder && !isGroupFolder(folder))
+      if(folder != NULL && !isGroupFolder(folder))
       {
-        char mfile[SIZE_MFILE];
-
-        strlcpy(results->filename = optional->result, MA_NewMailFile(folder, mfile), sizeof(optional->result));
+        if(MA_NewMailFile(folder, optional->result, sizeof(optional->result)) == TRUE)
+          results->filename = optional->result;
+        else
+          params->rc = RETURN_ERROR;
       }
       else
         params->rc = RETURN_ERROR;

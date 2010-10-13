@@ -871,7 +871,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
             {
               struct Mail *mail = tnode->mail;
               FILE *ofh = NULL;
-              char mfile[SIZE_MFILE];
+              char mfilePath[SIZE_PATHFILE];
               char *buffer = NULL;
               size_t size = 0;
               BOOL foundBody = FALSE;
@@ -893,7 +893,9 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
 
               PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index, tnode->position, mail->Size, tr(MSG_TR_Importing));
 
-              if((ofh = fopen(MA_NewMailFile(folder, mfile), "w")) == NULL)
+              if(MA_NewMailFile(folder, mfilePath, sizeof(mfilePath)) == FALSE)
+                break;
+              if((ofh = fopen(mfilePath, "w")) == NULL)
                 break;
 
               setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
@@ -990,7 +992,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
               if((mail = AddMailToList(mail, folder)) != NULL)
               {
                 // update the mailFile Path
-                strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
+                strlcpy(mail->MailFile, FilePart(mfilePath), sizeof(mail->MailFile));
 
                 // if this was a compressed/encrypted folder we need to pack the mail now
                 if(folder->Mode > FM_SIMPLE)
@@ -1025,7 +1027,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
             {
               struct Mail *mail = tnode->mail;
               FILE *ofh = NULL;
-              char mfile[SIZE_MFILE];
+              char mfilePath[SIZE_PATHFILE];
 
               if(conn->abort == TRUE)
                 break;
@@ -1041,7 +1043,10 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
 
               PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index, tnode->position, mail->Size, tr(MSG_TR_Importing));
 
-              if((ofh = fopen(MA_NewMailFile(folder, mfile), "wb")) == NULL)
+
+              if(MA_NewMailFile(folder, mfilePath, sizeof(mfilePath)) == FALSE)
+                break;
+              if((ofh = fopen(mfilePath, "wb")) == NULL)
                 break;
 
               setvbuf(ofh, NULL, _IOFBF, SIZE_FILEBUF);
@@ -1077,7 +1082,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
               if((mail = AddMailToList(mail, folder)) != NULL)
               {
                 // update the mailFile Path
-                strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
+                strlcpy(mail->MailFile, FilePart(mfilePath), sizeof(mail->MailFile));
 
                 // if this was a compressed/encrypted folder we need to pack the mail now
                 if(folder->Mode > FM_SIMPLE)

@@ -1454,7 +1454,6 @@ DECLARE(SaveDecryptedMail)
   struct Folder *folder = mail->Folder;
   struct WritePart *p1;
   int choice;
-  char mfile[SIZE_MFILE];
 
   if(!folder)
     return 0;
@@ -1464,9 +1463,12 @@ DECLARE(SaveDecryptedMail)
                                                           tr(MSG_RE_SaveDecReq))) != 0)
   {
     struct Compose comp;
+    char mfilePath[SIZE_PATHFILE];
+
     memset(&comp, 0, sizeof(struct Compose));
 
-    if((comp.FH = fopen(MA_NewMailFile(folder, mfile), "w")) != NULL)
+    if(MA_NewMailFile(folder, mfilePath, sizeof(mfilePath)) == TRUE &&
+       (comp.FH = fopen(mfilePath, "w")) != NULL)
     {
       struct ExtendedMail *email;
 
@@ -1483,7 +1485,7 @@ DECLARE(SaveDecryptedMail)
       }
       fclose(comp.FH);
 
-      if((email = MA_ExamineMail(folder, mfile, TRUE)) != NULL)
+      if((email = MA_ExamineMail(folder, FilePart(mfilePath), TRUE)) != NULL)
       {
         struct Mail *newmail;
 
