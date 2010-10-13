@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-13 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update again to the latest changes.
+
 2010-10-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ImageArea.c, mui/TransferMailList.c: implemented optional alternative
