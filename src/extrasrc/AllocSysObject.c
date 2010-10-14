@@ -246,8 +246,16 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       {
         MungeMemory(object.hook, size);
 
+        #if defined(__MORPHOS__) || defined(__AROS__)
+        // MorphOS and AROS need to go through the standard HookEntry function
+        // to pass the parameters in the correct registers. The normal entry
+        // becomes the subentry in this case
+        object.hook->h_Entry = (HOOKFUNC)HookEntry;
+        object.hook->h_SubEntry = (entry != NULL) ? entry : subentry;
+        #else
         object.hook->h_Entry = entry;
         object.hook->h_SubEntry = subentry;
+        #endif
         object.hook->h_Data = data;
       }
     }

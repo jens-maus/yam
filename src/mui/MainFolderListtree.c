@@ -42,6 +42,12 @@ struct Data
 {
   Object *context_menu;
   Object *folderImage[MAX_FOLDERIMG+1];
+  struct Hook *displayHook;
+  char folderStr[SIZE_DEFAULT];
+  char totalStr[SIZE_SMALL];
+  char unreadStr[SIZE_SMALL];
+  char newStr[SIZE_SMALL];
+  char sizeStr[SIZE_SMALL];
   char bubbleInfo[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
   BOOL draggingMails;
   BOOL reorderFolderList;
@@ -145,7 +151,7 @@ static void FormatFolderInfo(char *folderStr, const size_t maxLen, const struct 
 /* Hooks */
 /// DisplayHook
 // Folder listview display hook
-HOOKPROTONHNO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
+HOOKPROTONO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
 {
   ENTER();
 
@@ -153,31 +159,27 @@ HOOKPROTONHNO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
   {
     if(msg->TreeNode != NULL)
     {
-      static char folderStr[SIZE_DEFAULT];
-      static char totalStr[SIZE_SMALL];
-      static char unreadStr[SIZE_SMALL];
-      static char newStr[SIZE_SMALL];
-      static char sizeStr[SIZE_SMALL];
+      struct Data *data = (struct Data *)hook->h_Data;
       struct FolderNode *fnode = (struct FolderNode *)msg->TreeNode->tn_User;
       struct Folder *entry = fnode->folder;
 
-      folderStr[0] = '\0';
-      totalStr[0] = '\0';
-      unreadStr[0] = '\0';
-      newStr[0] = '\0';
-      sizeStr[0] = '\0';
+      data->folderStr[0] = '\0';
+      data->totalStr[0] = '\0';
+      data->unreadStr[0] = '\0';
+      data->newStr[0] = '\0';
+      data->sizeStr[0] = '\0';
 
-      msg->Array[0] = folderStr;
-      msg->Array[1] = totalStr;
-      msg->Array[2] = unreadStr;
-      msg->Array[3] = newStr;
-      msg->Array[4] = sizeStr;
+      msg->Array[0] = data->folderStr;
+      msg->Array[1] = data->totalStr;
+      msg->Array[2] = data->unreadStr;
+      msg->Array[3] = data->newStr;
+      msg->Array[4] = data->sizeStr;
 
       switch(entry->Type)
       {
         case FT_GROUP:
         {
-          FormatFolderInfo(folderStr, sizeof(folderStr), entry, msg->TreeNode->tn_Flags);
+          FormatFolderInfo(data->folderStr, sizeof(data->folderStr), entry, msg->TreeNode->tn_Flags);
 
           msg->Preparse[0] = (entry->New != 0 || entry->Unread != 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
 
@@ -186,23 +188,23 @@ HOOKPROTONHNO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
           {
             // if other folder columns are enabled lets fill the values in
             if(hasFColTotal(C->FolderCols))
-              snprintf(totalStr, sizeof(totalStr), "%d", entry->Total);
+              snprintf(data->totalStr, sizeof(data->totalStr), "%d", entry->Total);
 
             if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
-              snprintf(unreadStr, sizeof(unreadStr), "%d", entry->Unread);
+              snprintf(data->unreadStr, sizeof(data->unreadStr), "%d", entry->Unread);
 
             if(hasFColNew(C->FolderCols) && entry->New != 0)
-              snprintf(newStr, sizeof(newStr), "%d", entry->New);
+              snprintf(data->newStr, sizeof(data->newStr), "%d", entry->New);
 
             if(hasFColSize(C->FolderCols) && entry->Size > 0)
-              FormatSize(entry->Size, sizeStr, sizeof(sizeStr), SF_AUTO);
+              FormatSize(entry->Size, data->sizeStr, sizeof(data->sizeStr), SF_AUTO);
           }
         }
         break;
 
         default:
         {
-          FormatFolderInfo(folderStr, sizeof(folderStr), entry, 0);
+          FormatFolderInfo(data->folderStr, sizeof(data->folderStr), entry, 0);
 
           if(entry->LoadedMode != LM_UNLOAD && entry->LoadedMode != LM_REBUILD)
           {
@@ -215,22 +217,22 @@ HOOKPROTONHNO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
 
             // if other folder columns are enabled lets fill the values in
             if(hasFColTotal(C->FolderCols))
-              snprintf(totalStr, sizeof(totalStr), "%d", entry->Total);
+              snprintf(data->totalStr, sizeof(data->totalStr), "%d", entry->Total);
 
             if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
-              snprintf(unreadStr, sizeof(unreadStr), "%d", entry->Unread);
+              snprintf(data->unreadStr, sizeof(data->unreadStr), "%d", entry->Unread);
 
             if(hasFColNew(C->FolderCols) && entry->New != 0)
-              snprintf(newStr, sizeof(newStr), "%d", entry->New);
+              snprintf(data->newStr, sizeof(data->newStr), "%d", entry->New);
 
             if(hasFColSize(C->FolderCols) && entry->Size > 0)
-              FormatSize(entry->Size, sizeStr, sizeof(sizeStr), SF_AUTO);
+              FormatSize(entry->Size, data->sizeStr, sizeof(data->sizeStr), SF_AUTO);
           }
           else
             msg->Preparse[0] = (char *)MUIX_I;
 
           if(isProtectedFolder(entry))
-            snprintf(folderStr, sizeof(folderStr), "%s \033o[%d]", folderStr, FICON_ID_PROTECTED);
+            snprintf(data->folderStr, sizeof(data->folderStr), "%s \033o[%d]", data->folderStr, FICON_ID_PROTECTED);
         }
       }
     }
@@ -255,56 +257,70 @@ MakeStaticHook(DisplayHook, DisplayFunc);
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
+  struct Hook *displayHook;
+
   ENTER();
 
-  if((obj = DoSuperNew(cl, obj,
-
-    InputListFrame,
-    MUIA_ObjectID,                    MAKE_ID('N','L','0','1'),
-    MUIA_ContextMenu,                 C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : 0,
-    MUIA_Font,                        C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
-    MUIA_Dropable,                    TRUE,
-    MUIA_NList_DragType,              MUIV_NList_DragType_Immediate,
-    MUIA_NList_DragSortable,          TRUE,
-    MUIA_NList_ActiveObjectOnClick,   TRUE,
-    MUIA_NList_DefaultObjectOnClick,  FALSE,
-    MUIA_NList_Exports,               MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
-    MUIA_NList_Imports,               MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
-    MUIA_NListtree_DisplayHook,       &DisplayHook,
-    MUIA_NListtree_DragDropSort,      TRUE,
-    MUIA_NListtree_Title,             TRUE,
-    MUIA_NListtree_DoubleClick,       MUIV_NListtree_DoubleClick_All,
-
-    TAG_MORE, inittags(msg))) != NULL)
+  if((displayHook = AllocSysObjectTags(ASOT_HOOK, ASOHOOK_Entry, (HOOKFUNC)DisplayFunc,
+                                                  TAG_DONE)) != NULL)
   {
-    GETDATA;
-    ULONG i;
+    if((obj = DoSuperNew(cl, obj,
 
-    DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,   MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainFolderListtree_EditFolder);
-    //DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_NList_Sort2,          MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
-    //DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,      MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,                  MUIA_NList_TitleMark,MUIV_TriggerValue);
-    DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active,    MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeFolderHook);
-    DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active,    MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainFolderListtree_SetFolderInfo);
+      InputListFrame,
+      MUIA_ObjectID,                    MAKE_ID('N','L','0','1'),
+      MUIA_ContextMenu,                 C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : 0,
+      MUIA_Font,                        C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
+      MUIA_Dropable,                    TRUE,
+      MUIA_NList_DragType,              MUIV_NList_DragType_Immediate,
+      MUIA_NList_DragSortable,          TRUE,
+      MUIA_NList_ActiveObjectOnClick,   TRUE,
+      MUIA_NList_DefaultObjectOnClick,  FALSE,
+      MUIA_NList_Exports,               MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
+      MUIA_NList_Imports,               MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
+      MUIA_NListtree_DisplayHook,       displayHook,
+      MUIA_NListtree_DragDropSort,      TRUE,
+      MUIA_NListtree_Title,             TRUE,
+      MUIA_NListtree_DoubleClick,       MUIV_NListtree_DoubleClick_All,
 
-    // prepare the folder images
-    data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[fi_Fold]);
-    data->folderImage[FICON_ID_UNFOLD]      = MakeImageObject("folder_unfold",       G->theme.folderImages[fi_Unfold]);
-    data->folderImage[FICON_ID_INCOMING]    = MakeImageObject("folder_incoming",     G->theme.folderImages[fi_Incoming]);
-    data->folderImage[FICON_ID_INCOMING_NEW]= MakeImageObject("folder_incoming_new", G->theme.folderImages[fi_IncomingNew]);
-    data->folderImage[FICON_ID_OUTGOING]    = MakeImageObject("folder_outgoing",     G->theme.folderImages[fi_Outgoing]);
-    data->folderImage[FICON_ID_OUTGOING_NEW]= MakeImageObject("folder_outgoing_new", G->theme.folderImages[fi_OutgoingNew]);
-    data->folderImage[FICON_ID_TRASH]       = MakeImageObject("folder_trash",        G->theme.folderImages[fi_Trash]);
-    data->folderImage[FICON_ID_TRASH_NEW]   = MakeImageObject("folder_trash_new",    G->theme.folderImages[fi_TrashNew]);
-    data->folderImage[FICON_ID_SENT]        = MakeImageObject("folder_sent",         G->theme.folderImages[fi_Sent]);
-    data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt",        G->theme.statusImages[si_Crypt]);
-    data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam",         G->theme.folderImages[fi_Spam]);
-    data->folderImage[FICON_ID_SPAM_NEW]    = MakeImageObject("folder_spam_new",     G->theme.folderImages[fi_SpamNew]);
-    for(i = 0; i < ARRAY_SIZE(data->folderImage); i++)
-      DoMethod(obj, MUIM_NList_UseImage, data->folderImage[i], i, MUIF_NONE);
+      TAG_MORE, inittags(msg))) != NULL)
+    {
+      GETDATA;
+      ULONG i;
+
+      // tell the hook about the instance data
+      displayHook->h_Data = data;
+      data->displayHook = displayHook;
+
+      DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,   MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainFolderListtree_EditFolder);
+      //DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_NList_Sort2,          MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
+      //DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,      MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,                  MUIA_NList_TitleMark,MUIV_TriggerValue);
+      DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active,    MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeFolderHook);
+      DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active,    MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainFolderListtree_SetFolderInfo);
+
+      // prepare the folder images
+      data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[fi_Fold]);
+      data->folderImage[FICON_ID_UNFOLD]      = MakeImageObject("folder_unfold",       G->theme.folderImages[fi_Unfold]);
+      data->folderImage[FICON_ID_INCOMING]    = MakeImageObject("folder_incoming",     G->theme.folderImages[fi_Incoming]);
+      data->folderImage[FICON_ID_INCOMING_NEW]= MakeImageObject("folder_incoming_new", G->theme.folderImages[fi_IncomingNew]);
+      data->folderImage[FICON_ID_OUTGOING]    = MakeImageObject("folder_outgoing",     G->theme.folderImages[fi_Outgoing]);
+      data->folderImage[FICON_ID_OUTGOING_NEW]= MakeImageObject("folder_outgoing_new", G->theme.folderImages[fi_OutgoingNew]);
+      data->folderImage[FICON_ID_TRASH]       = MakeImageObject("folder_trash",        G->theme.folderImages[fi_Trash]);
+      data->folderImage[FICON_ID_TRASH_NEW]   = MakeImageObject("folder_trash_new",    G->theme.folderImages[fi_TrashNew]);
+      data->folderImage[FICON_ID_SENT]        = MakeImageObject("folder_sent",         G->theme.folderImages[fi_Sent]);
+      data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt",        G->theme.statusImages[si_Crypt]);
+      data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam",         G->theme.folderImages[fi_Spam]);
+      data->folderImage[FICON_ID_SPAM_NEW]    = MakeImageObject("folder_spam_new",     G->theme.folderImages[fi_SpamNew]);
+      for(i = 0; i < ARRAY_SIZE(data->folderImage); i++)
+        DoMethod(obj, MUIM_NList_UseImage, data->folderImage[i], i, MUIF_NONE);
+    }
+    else
+      FreeSysObject(ASOT_HOOK, displayHook);
   }
+  else
+    obj = NULL;
 
-  RETURN((ULONG)obj);
-  return (ULONG)obj;
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
 }
 
 ///
@@ -327,6 +343,9 @@ OVERLOAD(OM_DISPOSE)
       data->folderImage[i] = NULL;
     }
   }
+
+  if(data->displayHook != NULL)
+    FreeSysObject(ASOT_HOOK, data->displayHook);
 
   return DoSuperMethodA(cl,obj,msg);
 }
