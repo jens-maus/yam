@@ -146,6 +146,7 @@ static void FormatFolderInfo(char *folderStr, const size_t maxLen, const struct 
 
   LEAVE();
 }
+
 ///
 
 /* Hooks */
@@ -249,7 +250,6 @@ HOOKPROTONO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
   LEAVE();
   return 0;
 }
-MakeStaticHook(DisplayHook, DisplayFunc);
 
 ///
 
