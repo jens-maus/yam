@@ -102,9 +102,8 @@ static char *GetDateTime(void)
 ///
 /// NewMessageID
 //  Creates a unique id, used for Message-ID header field
-static char *NewMessageID(void)
+static void NewMessageID(char *idbuf, const size_t idbufSize)
 {
-  static char idbuf[SIZE_MSGID];
   unsigned int seconds;
   struct DateStamp ds;
   struct MailServerNode *msn;
@@ -121,28 +120,23 @@ static char *NewMessageID(void)
   // Here we try to generate a unique MessageID.
   // We try to be as much conform to the Recommandations for generating
   // unique Message IDs as we can: http://www.jwz.org/doc/mid.html
-  snprintf(idbuf, sizeof(idbuf), "<%x%x.%x@%s>", seconds, (unsigned int)ds.ds_Tick, (unsigned int)rand(), msn->hostname);
+  snprintf(idbuf, idbufSize, "<%x%x.%x@%s>", seconds, (unsigned int)ds.ds_Tick, (unsigned int)rand(), msn->hostname);
 
-  RETURN(idbuf);
-  return idbuf;
+  LEAVE();
 }
 
 ///
 /// NewBoundaryID
 //  Creates a unique id, used for the MIME boundaries
-static char *NewBoundaryID(void)
+static void NewBoundaryID(char *idbuf, const size_t idbufSize)
 {
-  static char idbuf[SIZE_MSGID];
-  static int ctr = 0;
-
   ENTER();
 
   // Generate a unique Boundary ID which conforms to RFC 2045 and includes
   // a "=_" sequence to make it safe for quoted printable encoded parts
-  snprintf(idbuf, sizeof(idbuf), "--=_BOUNDARY.%lx%x.%02x", (IPTR)FindTask(NULL), (unsigned int)rand(), ++ctr);
+  snprintf(idbuf, idbufSize, "--=_BOUNDARY.%lx%x.%02x", (IPTR)FindTask(NULL), (unsigned int)rand(), GetSimpleID() & 0xff);
 
-  RETURN(idbuf);
-  return idbuf;
+  LEAVE();
 }
 
 ///
@@ -770,6 +764,7 @@ static BOOL WR_Bounce(FILE *fh, const struct Compose *comp)
     if((oldfh = fopen(mailfile, "r")) != NULL)
     {
       char address[SIZE_LARGE];
+      char msgID[SIZE_MSGID];
 
       setvbuf(oldfh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -780,7 +775,8 @@ static BOOL WR_Bounce(FILE *fh, const struct Compose *comp)
       EmitHeader(fh, "Resent-Date", GetDateTime());
       if(comp->MailTo != NULL)
         EmitRcptHeader(fh, "Resent-To", comp->MailTo);
-      EmitHeader(fh, "Resent-Message-ID", NewMessageID());
+      NewMessageID(msgID, sizeof(msgID));
+      EmitHeader(fh, "Resent-Message-ID", msgID);
 
       // now we copy the rest of the message
       // directly from the file handlers
@@ -1206,6 +1202,7 @@ BOOL WriteOutMessage(struct Compose *comp)
   FILE *fh = comp->FH;
   struct WritePart *firstpart = comp->FirstPart;
   char buf[SIZE_DEFAULT];
+  char msgID[SIZE_MSGID];
 
   ENTER();
 
@@ -1333,7 +1330,8 @@ BOOL WriteOutMessage(struct Compose *comp)
   EmitHeader(fh, "Date", GetDateTime());
 
   // output the Message-ID, In-Reply-To and References message headers
-  EmitHeader(fh, "Message-ID", NewMessageID());
+  NewMessageID(msgID, sizeof(msgID));
+  EmitHeader(fh, "Message-ID", msgID);
   if(comp->inReplyToMsgID != NULL)
     EmitHeader(fh, "In-Reply-To", comp->inReplyToMsgID);
   if(comp->references != NULL)
@@ -1390,7 +1388,7 @@ mimebody:
   // RFC 2049 requires this
   fputs("MIME-Version: 1.0\n", fh);
 
-  strlcpy(buf, NewBoundaryID(), sizeof(buf));
+  NewBoundaryID(buf, sizeof(buf));
 
   if(comp->GenerateMDN == TRUE)
   {

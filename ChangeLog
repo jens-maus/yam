@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: removed some static string buffers.
+
 2010-10-13 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update again to the latest changes.
