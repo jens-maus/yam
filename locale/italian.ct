@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (13.10.2010)
+## version $VER: YAM.catalog 7.5 (14.10.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -437,20 +437,10 @@ Copiato messaggio di '%s' relativo a '%s' dalla cartella '%s' alla cartella '%s'
 ; Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
-MSG_LOG_ConnectPOP
-Connesso all'account POP3 '%s@%s': %ld messaggi in attesa
-; Logged in on POP3 account '%s@%s': %ld messages waiting
-; USER_ID, HOST, COUNT
-;
 MSG_LOG_RetrievingVerbose
 Recuperato messaggio di '%s' relativo a '%s' (%ld byte)
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
-;
-MSG_LOG_Retrieving
-Recuperati(o) %ld messaggi(o) dall'account POP3 '%s@%s'
-; Retrieved %ld message(s) from POP3 account '%s@%s'
-; COUNT, USER_ID, HOST
 ;
 MSG_LOG_ConnectSMTP
 Connesso al server SMTP '%s'
@@ -4420,13 +4410,6 @@ Connessione al server di posta...
 MSG_TR_WaitWelcome
 Connesso, in attesa del messaggio di benvenuto...
 ; Connected, awaiting welcome message...
-;
-MSG_TR_PopLoginReq
-Per favore digita la password POP3 per l'account\n\
-%s@%s
-; Please enter POP3 password for account\n\
-; %s@%s
-; USER_ID, HOST
 ;
 MSG_TR_PopLogin
 Login POP3
@@ -10048,7 +10031,7 @@ l'account POP3 '%s':
 ; ACCOUNT
 ;
 MSG_ALTIMAGE_STATUS_DOWNLOAD
-D
+S
 ; D
 ;
 MSG_ALTIMAGE_STATUS_DELETE
