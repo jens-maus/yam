@@ -3091,7 +3091,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
       char newfile[SIZE_PATHFILE];
       FILE *newfh;
 
-      snprintf(tfname, sizeof(tfname), "YAMt%08x.tmp", (unsigned int)GetUniqueID());
+      snprintf(tfname, sizeof(tfname), "YAMt%08x.tmp", GetSimpleID());
       AddPath(newfile, fo->Fullpath, tfname, sizeof(newfile));
 
       if((newfh = fopen(newfile, "w")) != NULL)

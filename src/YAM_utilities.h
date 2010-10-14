@@ -338,7 +338,7 @@ time_t   GetDateStamp(void);
 ssize_t  GetLine(char **buffer, size_t *size, FILE *fh);
 void     GetMailFile(char *string, const size_t stringSize, const struct Folder *folder, const struct Mail *mail);
 char *   GetNextLine(char *p1);
-int      GetSimpleID(void);
+ULONG    GetSimpleID(void);
 BOOL     GotoURLPossible(void);
 BOOL     GotoURL(const char *url, BOOL newWindow);
 const char *IdentifyFile(const char *fname);

@@ -2493,7 +2493,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
   // with each new LoadMessage() we set a new uniqueID
   // to our ReadMailData structure (this is required for
   // the tempfilename generation)
-  rmData->uniqueID = GetUniqueID();
+  rmData->uniqueID = GetSimpleID();
 
   // here we read in the mail in our read mail group
   GetMailFile(rmData->readFile, sizeof(rmData->readFile), NULL, mail);

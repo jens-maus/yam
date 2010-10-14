@@ -10,6 +10,8 @@ $URL$
   * YAM_WR.c: removed some static string buffers.
   * mui/MainFolderListtree.c, extrasrc/AllocSysObject.c: moved the static hook
     strings into the class' instance data.
+  * YAM_UT.c, YAM.c: implemented a semaphore protected unique ID generation
+    system.
 
 2010-10-13 Samir Hawamdeh <s.hawamdeh@tin.it>
 
