@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c, YAM_EA.c, Makefile: completely disabled any automatic stack
+    extension facility since this is not available for all platforms.
+
 2010-10-14 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: oops ! forget to cleanup old strings.

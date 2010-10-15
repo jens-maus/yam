@@ -25,6 +25,11 @@
 
 ***************************************************************************/
 
+// define the STACKEXT symbol here to *disable* any stack checking
+// which might possibly be initiated by the SDI headers. The m68k
+// gcc2 seems to enforce this as soon as it discovers a recursion.
+#define STACKEXT
+
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
@@ -200,7 +205,7 @@ void EA_AddSingleMember(Object *obj, struct MUI_NListtree_TreeNode *tn)
 ///
 /// EA_AddMembers (rec)
 //  Adds an entire group to the member list by Drag&Drop
-void STACKEXT EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
+void EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
 {
   struct MUI_NListtree_TreeNode *tn;
   int i;

@@ -25,6 +25,11 @@
 
 ***************************************************************************/
 
+// define the STACKEXT symbol here to *disable* any stack checking
+// which might possibly be initiated by the SDI headers. The m68k
+// gcc2 seems to enforce this as soon as it discovers a recursion.
+#define STACKEXT
+
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -930,7 +935,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
 ///
 /// AB_SaveTreeNode (rec)
 //  Recursively saves an address book node
-static STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *list)
+static void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *list)
 {
   struct MUI_NListtree_TreeNode *tn;
   int i;
@@ -1701,7 +1706,7 @@ static BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
 ///
 /// AB_ExportTreeNodeLDIF
 //  Exports an address book as LDIF file
-static STACKEXT void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNode *list)
+static void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNode *list)
 {
   int i;
 
@@ -2042,7 +2047,7 @@ static void WriteTabCSVItem(FILE *fh, const char *value, const char delim)
 ///
 /// AB_ExportTreeNodeTabCSV
 //  Exports an address book with comma or tab separated entries
-static STACKEXT void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_TreeNode *list, const char delim)
+static void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_TreeNode *list, const char delim)
 {
   int i;
 
@@ -2577,7 +2582,7 @@ static void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
 ///
 /// AB_PrintLevel (rec)
 //  Recursively prints an address book node
-static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *prt, int mode)
+static void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *prt, int mode)
 {
   struct MUI_NListtree_TreeNode *tn;
   int i;

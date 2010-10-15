@@ -243,7 +243,7 @@ ifeq ($(OS), os3)
   # Compiler/Linker flags
   CPU	    = -m68020-60 -msoft-float
   CFLAGS  += -I./include/netinclude -DNO_INLINE_STDARG
-  LDFLAGS += -noixemul -mstackextend
+  LDFLAGS += -noixemul
   LDLIBS  += -ldebug -lmui
 
   EXTRAOBJS = AllocSysObject.o \
