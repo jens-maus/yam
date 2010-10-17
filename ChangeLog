@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainFolderListtree.c: the dynamically allocated display hook must be
+    freed after the object itself has been disposed. It seems NListtree.mcc is
+    using the hook while being disposed. This closes #226.
+
 2010-10-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c, YAM_EA.c, Makefile: completely disabled any automatic stack
