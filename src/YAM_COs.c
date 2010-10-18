@@ -1895,7 +1895,7 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
               DeleteMailDir(spamFolder->Fullpath, FALSE);
 
               // remove all mails from our internal list
-              ClearMailList(spamFolder, TRUE);
+              ClearFolderMails(spamFolder, TRUE);
 
               // remove the folder from the folder list
               DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, spamFolder->Treenode, MUIF_NONE);

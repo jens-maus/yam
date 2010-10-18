@@ -2777,7 +2777,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
       // We only clear the folder if it wasn't empty anyway..
       if(i > 0)
       {
-        ClearMailList(folder, TRUE);
+        ClearFolderMails(folder, TRUE);
 
         MA_ExpireIndex(folder);
 

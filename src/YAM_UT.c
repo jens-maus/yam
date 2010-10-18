@@ -3303,9 +3303,9 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 }
 
 ///
-/// ClearMailList
+/// ClearFolderMails
 //  Removes all messages from a folder
-void ClearMailList(struct Folder *folder, BOOL resetstats)
+void ClearFolderMails(struct Folder *folder, BOOL resetstats)
 {
   ENTER();
 

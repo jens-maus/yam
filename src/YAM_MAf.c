@@ -289,7 +289,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 
         if(full == TRUE)
         {
-          ClearMailList(folder, TRUE);
+          ClearFolderMails(folder, TRUE);
           for(;;)
           {
             struct Mail mail;
@@ -381,7 +381,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
   if(error == TRUE)
   {
     E(DBF_FOLDER, "error %ld occurred while trying to load the index file '%s'", errno, indexFileName);
-    ClearMailList(folder, TRUE);
+    ClearFolderMails(folder, TRUE);
     indexloaded = LM_UNLOAD;
 
     // report failure
@@ -394,7 +394,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                                                       full ? "rebuilding..." : "skipping...");
 
     // clear the mail list of the folder
-    ClearMailList(folder, TRUE);
+    ClearFolderMails(folder, TRUE);
 
     // if the "full" mode was requested we make sure we
     // rescan the index accordingly
@@ -647,7 +647,7 @@ void MA_RebuildIndexes(void)
                       if(isModified(folder))
                         MA_SaveIndex(folder);
 
-                      ClearMailList(folder, FALSE);
+                      ClearFolderMails(folder, FALSE);
                       folder->LoadedMode = LM_FLUSHED;
                       CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
                     }
@@ -656,7 +656,7 @@ void MA_RebuildIndexes(void)
                 else
                 {
                   // otherwise we make sure everything is cleared
-                  ClearMailList(folder, FALSE);
+                  ClearFolderMails(folder, FALSE);
                   folder->LoadedMode = LM_FLUSHED;
                   CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
                 }
@@ -739,7 +739,7 @@ static void MA_FlushIndex(struct Folder *folder, time_t minAccessTime)
     else
       D(DBF_FOLDER, "Flush index of folder '%s'", folder->Name);
 
-    ClearMailList(folder, FALSE);
+    ClearFolderMails(folder, FALSE);
     folder->LoadedMode = LM_FLUSHED;
     CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
   }
@@ -2714,7 +2714,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
       }
 
       BusyGaugeInt(tr(MSG_BusyScanning), folder->Name, filecount);
-      ClearMailList(folder, TRUE);
+      ClearFolderMails(folder, TRUE);
 
       D(DBF_FOLDER, "Scanning folder: '%s' (path '%s', %ld files)...", folder->Name, folder->Fullpath, filecount);
 

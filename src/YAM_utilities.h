@@ -288,7 +288,7 @@ char *   AllocStrBuf(size_t initlen);
 void     AppendToLogfile(enum LFMode, int id, const char *text, ...);
 BOOL     Busy(const char *text, const char *parameter, int cur, int max);
 BOOL     CheckPrinter(void);
-void     ClearMailList(struct Folder *folder, BOOL resetstats);
+void     ClearFolderMails(struct Folder *folder, BOOL resetstats);
 BOOL     DeleteZombieFiles(BOOL force);
 void     CloseTempFile(struct TempFile *tf);
 ULONG    CRC32(const void *buffer, unsigned int count, ULONG crc);

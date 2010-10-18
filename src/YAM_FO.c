@@ -1718,7 +1718,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 
           delete_folder = TRUE;
           DeleteMailDir(folder->Fullpath, FALSE);
-          ClearMailList(folder, TRUE);
+          ClearFolderMails(folder, TRUE);
 
           // Here we dispose the folderimage Object because the destructor
           // of the Folder Listtree can't do this without throwing enforcer hits
