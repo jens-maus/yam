@@ -166,7 +166,8 @@ struct Global
   struct MsgPort         * threadPort;
   struct MinList           idleThreads;
   struct MinList           workingThreads;
-  ULONG                    numThreads;
+  ULONG                    numberOfThreads;
+  ULONG                    threadCounter;
   struct Process         * mainThread;
 
   // the data for our methodstack implementation

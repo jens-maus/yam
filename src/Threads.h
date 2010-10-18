@@ -60,7 +60,7 @@ enum ThreadAction
 BOOL InitThreads(void);
 void CleanupThreads(void);
 void HandleThreads(void);
-void PurgeIdleThreads(void);
+void PurgeIdleThreads(const BOOL purgeAll);
 BOOL VARARGS68K DoAction(const enum ThreadAction action, ...);
 BOOL IsMainThread(void);
 APTR CurrentThread(void);
@@ -68,7 +68,12 @@ BOOL SleepThread(void);
 void WakeupThread(APTR thread);
 LONG ThreadAbortSignal(void);
 LONG ThreadWakeupSignal(void);
+LONG ThreadTimerSignal(void);
 const char *ThreadName(void);
+BOOL InitThreadTimer(void);
+void CleanupThreadTimer(void);
+void StartThreadTimer(ULONG seconds, ULONG micros);
+void StopThreadTimer(void);
 
 #endif /* THREADS_H */
 

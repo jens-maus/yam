@@ -67,6 +67,7 @@
 #include "Threads.h"
 
 #include "mui/Classes.h"
+#include "tcp/pop3.h"
 #include "tcp/smtp.h"
 
 #include "Debug.h"
@@ -77,10 +78,13 @@ struct Thread
 {
   struct MinNode node;     // to make this a full Exec node
   struct Process *process; // the process pointer as returned by CreateNewProc()
+  struct MsgPort *timerPort;
+  struct TimeRequest *timerRequest;
   LONG priority;           // the thread's priority
   LONG abortSignal;        // an allocated signal to abort the thread
   LONG wakeupSignal;       // an allocated signal to wakeup a sleeping thread
   char name[SIZE_LARGE];   // the thread's name
+  BOOL timerRunning;       // is the timer running?
 };
 
 // a thread node which will be inserted to our
@@ -346,21 +350,21 @@ static void AbortThread(struct Thread *thread)
 // put the current thread to sleep
 BOOL SleepThread(void)
 {
-  ULONG abortSig;
-  ULONG wakeupSig;
-  ULONG sigs;
+  ULONG abortMask;
+  ULONG wakeupMask;
+  ULONG signals;
   BOOL notAborted;
 
   ENTER();
 
-  abortSig = ThreadAbortSignal();
-  wakeupSig = ThreadWakeupSignal();
+  abortMask = (1UL << ThreadAbortSignal());
+  wakeupMask = (1UL << ThreadWakeupSignal());
 
-  D(DBF_THREAD, "thread '%s' waiting for signals %08lx", ThreadName(), 1UL << abortSig | 1UL << wakeupSig);
-  sigs = Wait(1UL << abortSig | 1UL << wakeupSig);
-  D(DBF_THREAD, "thread '%s' got signals %08lx", ThreadName(), sigs);
+  D(DBF_THREAD, "thread '%s' is waiting for signals %08lx", ThreadName(), abortMask|wakeupMask);
+  signals = Wait(abortMask|wakeupMask);
+  D(DBF_THREAD, "thread '%s' got signals %08lx", ThreadName(), signals);
 
-  notAborted = isFlagClear(sigs, 1UL << abortSig);
+  notAborted = isFlagClear(signals, abortMask);
 
   RETURN(notAborted);
   return notAborted;
@@ -437,6 +441,8 @@ static void ShutdownThread(struct ThreadNode *threadNode)
   PutMsg(&thread->process->pr_MsgPort, (struct Message *)&startupMessage);
   Remove((struct Node *)WaitPort(G->threadPort));
 
+  G->numberOfThreads--;
+
   LEAVE();
 }
 
@@ -463,7 +469,10 @@ static struct Thread *CreateThread(void)
     {
       threadNode->thread = thread;
 
-      snprintf(thread->name, sizeof(thread->name), "YAM thread [%d]", (int)G->numThreads+1);
+      memset(thread, 0, sizeof(*thread));
+      thread->abortSignal = -1;
+      thread->wakeupSignal = -1;
+      snprintf(thread->name, sizeof(thread->name), "YAM thread [%d]", (int)G->threadCounter+1);
 
       if((thread->process = CreateNewProcTags(NP_Entry,       ThreadEntry, // entry function
                                               NP_StackSize,   8192,        // stack size
@@ -480,8 +489,6 @@ static struct Thread *CreateThread(void)
                                               NP_CloseOutput, FALSE,
                                               TAG_DONE)) != NULL)
       {
-        thread->abortSignal = -1;
-
         // prepare the startup message
         memset(&startupMessage, 0, sizeof(startupMessage));
         startupMessage.msg.mn_ReplyPort = G->threadPort;
@@ -499,7 +506,8 @@ static struct Thread *CreateThread(void)
         if(startupMessage.result != 0)
         {
           // increase the thread counter
-          G->numThreads++;
+          G->numberOfThreads++;
+          G->threadCounter++;
 
           AddTail((struct List *)&G->idleThreads, (struct Node *)threadNode);
 
@@ -575,7 +583,7 @@ void CleanupThreads(void)
     AbortRunningThreads();
 
     // send a shutdown message to each still existing idle thread
-    PurgeIdleThreads();
+    PurgeIdleThreads(TRUE);
 
     // handle possible working->idle transitions of threads in case
     // a thread was closed during the shutdown. This might happen if
@@ -605,7 +613,7 @@ void CleanupThreads(void)
       }
 
       // now send a shutdown message to each still existing idle thread
-      PurgeIdleThreads();
+      PurgeIdleThreads(TRUE);
     }
     while(tryAgain == TRUE && IsMinListEmpty(&G->workingThreads) == FALSE);
 
@@ -650,13 +658,20 @@ void HandleThreads(void)
 ///
 /// PurgeIdleThreads
 // terminate all idle threads to save memory
-void PurgeIdleThreads(void)
+void PurgeIdleThreads(const BOOL purgeAll)
 {
   struct Node *node;
+  ULONG limit;
 
   ENTER();
 
-  while((node = RemHead((struct List *)&G->idleThreads)) != NULL)
+  // purge either all idle threads or leave at least the minimum number of threads alive
+  if(purgeAll == TRUE)
+    limit = 0;
+  else
+    limit = MIN_THREADS;
+
+  while(G->numberOfThreads > limit && (node = RemHead((struct List *)&G->idleThreads)) != NULL)
   {
     struct ThreadNode *threadNode = (struct ThreadNode *)node;
 
@@ -828,6 +843,36 @@ LONG ThreadWakeupSignal(void)
 }
 
 ///
+/// ThreadTimerSignal
+// get the timer signal of the current thread
+LONG ThreadTimerSignal(void)
+{
+  ULONG signal;
+  struct Process *me;
+
+  ENTER();
+
+  me = (struct Process *)FindTask(NULL);
+
+  if(me == G->mainThread)
+  {
+    signal = G->timerData.port->mp_SigBit;
+  }
+  else
+  {
+    struct Thread *thread = (struct Thread *)me->pr_Task.tc_UserData;
+
+    if(thread->timerRequest != NULL)
+      signal = thread->timerPort->mp_SigBit;
+    else
+      signal = -1;
+  }
+
+  RETURN(signal);
+  return signal;
+}
+
+///
 /// ThreadName
 // return the current thread's name
 const char *ThreadName(void)
@@ -847,6 +892,126 @@ const char *ThreadName(void)
 
   RETURN(name);
   return name;
+}
+
+///
+/// InitThreadTimer
+// initalize a timer for the calling thread
+BOOL InitThreadTimer(void)
+{
+  BOOL success = FALSE;
+  struct Thread *thread = CurrentThread();
+
+  ENTER();
+
+  if(thread->timerRequest == NULL)
+  {
+    if((thread->timerPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+    {
+      if((thread->timerRequest = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Size, sizeof(*thread->timerRequest),
+                                                                    ASOIOR_ReplyPort, (IPTR)thread->timerPort,
+                                                                    TAG_DONE)) != NULL)
+      {
+        if(OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)thread->timerRequest, 0L) == 0)
+        {
+          thread->timerRunning = FALSE;
+          success = TRUE;
+        }
+      }
+    }
+  }
+
+  if(success == FALSE)
+  {
+    if(thread->timerRequest != NULL)
+    {
+      FreeSysObject(ASOT_IOREQUEST, thread->timerRequest);
+      thread->timerRequest = NULL;
+    }
+    if(thread->timerPort != NULL)
+    {
+      FreeSysObject(ASOT_PORT, thread->timerPort);
+      thread->timerPort = NULL;
+    }
+  }
+
+  RETURN(success);
+  return success;
+}
+
+///
+/// CleanupThreadTimer
+// delete a previously initialized thread timer
+void CleanupThreadTimer(void)
+{
+  struct Thread *thread = CurrentThread();
+
+  ENTER();
+
+  if(thread->timerRequest != NULL)
+  {
+    StopThreadTimer();
+
+    if(thread->timerRequest != NULL)
+    {
+      CloseDevice((struct IORequest *)thread->timerRequest);
+      FreeSysObject(ASOT_IOREQUEST, thread->timerRequest);
+      thread->timerRequest = NULL;
+    }
+    if(thread->timerPort != NULL)
+    {
+      FreeSysObject(ASOT_PORT, thread->timerPort);
+      thread->timerPort = NULL;
+    }
+  }
+
+  LEAVE();
+}
+
+///
+/// StartThreadTimer
+void StartThreadTimer(ULONG seconds, ULONG micros)
+{
+  struct Thread *thread = CurrentThread();
+
+  ENTER();
+
+  if(thread->timerRequest != NULL && thread->timerRunning == FALSE)
+  {
+    if(seconds > 0 || micros > 0)
+    {
+      // issue a new timerequest
+      thread->timerRequest->Request.io_Command = TR_ADDREQUEST;
+      thread->timerRequest->Time.Seconds       = seconds;
+      thread->timerRequest->Time.Microseconds  = micros;
+      SendIO((struct IORequest *)thread->timerRequest);
+
+      thread->timerRunning = TRUE;
+    }
+  }
+
+  LEAVE();
+}
+
+///
+/// StopThreadTimer
+void StopThreadTimer(void)
+{
+  struct Thread *thread = CurrentThread();
+
+  ENTER();
+
+  if(thread->timerRequest != NULL && thread->timerRunning == TRUE)
+  {
+    if(CheckIO((struct IORequest *)thread->timerRequest) == NULL)
+      AbortIO((struct IORequest *)thread->timerRequest);
+
+    WaitIO((struct IORequest *)thread->timerRequest);
+
+    thread->timerRunning = FALSE;
+  }
+
+  LEAVE();
 }
 
 ///
