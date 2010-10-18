@@ -1,10 +1,11 @@
-## version $VER: YAM.catalog 7.10 (29.09.2010)
+## version $VER: YAM.catalog 7.11 (18.10.2010)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
+; in sync with .cd in revision 5357
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -435,20 +436,10 @@ Skopiowano wiadomo¶æ od \"%s\" o \"%s\" z foldera \"%s\" do \"%s\"
 ; Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
-MSG_LOG_ConnectPOP
-Zalogowano siê na konto POP3 \"%s@%s\": %ld wiadomo¶ci na koncie
-; Logged in on POP3 account '%s@%s': %ld messages waiting
-; USER_ID, HOST, COUNT
-;
 MSG_LOG_RetrievingVerbose
 Odebrano wiadomo¶æ od \"%s\" o \"%s\" (%ld bajtów)
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
-;
-MSG_LOG_Retrieving
-Odebrano %ld wiadomo¶ci z konta POP3 \"%s@%s\"
-; Retrieved %ld message(s) from POP3 account '%s@%s'
-; COUNT, USER_ID, HOST
 ;
 MSG_LOG_ConnectSMTP
 Po³±czono siê z serwerem SMTP \"%s\"
@@ -4431,13 +4422,6 @@ MSG_TR_Connecting
 MSG_TR_WaitWelcome
 Po³±czy³em, czekam na powitanie...
 ; Connected, awaiting welcome message...
-;
-MSG_TR_PopLoginReq
-Podaj swoje has³o POP3 dla konta\n\
-%s@%s
-; Please enter POP3 password for account\n\
-; %s@%s
-; USER_ID, HOST
 ;
 MSG_TR_PopLogin
 Logowanie POP3
@@ -9873,4 +9857,33 @@ Nie mo¿na zainicjalizowaæ stosu metod.
 MSG_TRANSFERS_IN_PROGRESS
 Trwa przesy³anie danych
 ; Transfers in progress
+;
+MSG_ERROR_CONNECTIONS
+Nie mo¿na zainicjalizowaæ po³±czeñ.
+; Cannot initialize connections.
+;
+MSG_LOG_CONNECT_POP3
+Zalogowano siê na konto POP3 \"%s\": %ld oczekuj±cych wiadomo¶ci
+; Logged in on POP3 account '%s': %ld messages waiting
+; ACCOUNT, COUNT
+;
+MSG_LOG_RETRIEVED_POP3
+Odebrano %ld wiadomo¶ci z konta POP3 \"%s\"
+; Retrieved %ld message(s) from POP3 account '%s'
+; COUNT, ACCOUNT
+;
+MSG_TR_ENTER_POP3_PASSWORD
+Podaj swoje has³o POP3\n\
+dla konta \"%s\":
+; Please enter the password for\n\
+; POP3 account '%s':
+; ACCOUNT
+;
+MSG_ALTIMAGE_STATUS_DOWNLOAD
+D
+; D
+;
+MSG_ALTIMAGE_STATUS_DELETE
+X
+; X
 ;
