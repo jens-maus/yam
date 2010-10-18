@@ -37,6 +37,7 @@
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
+#include <proto/utility.h>
 
 #include "extrasrc.h"
 
@@ -197,7 +198,7 @@ static void US_LoadUsers(void)
             strlcpy(user->Password, Decrypt(buffer), sizeof(user->Password));
           }
 
-          user->ID = GetSimpleID();
+          user->ID = GetUniqueID();
           G->Users.Num++;
 
           // check if the user's home directory exists
@@ -236,7 +237,7 @@ static void US_LoadUsers(void)
     user->Limited = FALSE;
     user->UseAddr = TRUE;
     user->UseDict = TRUE;
-    user->ID = GetSimpleID();
+    user->ID = GetUniqueID();
 
     // there can only be one :)
     G->Users.Num = 1;

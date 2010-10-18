@@ -32,6 +32,7 @@
 #include <clib/alib_protos.h>
 #include <proto/dos.h>
 #include <proto/intuition.h>
+#include <proto/utility.h>
 #include <libraries/mui.h>
 
 #include "extrasrc.h"
@@ -506,7 +507,7 @@ static void BuildImportList(struct TransferContext *tc, const char *importFile)
   set(G->App, MUIA_Application_Sleep, TRUE);
 
   // prepare the temporary filename buffers
-  snprintf(tfname, sizeof(tfname), "YAMi%08x.tmp", GetSimpleID());
+  snprintf(tfname, sizeof(tfname), "YAMi%08x.tmp", (unsigned int)GetUniqueID());
   AddPath(fname, C->TempDir, tfname, sizeof(fname));
 
   // before this function is called the MA_ImportMessages() function

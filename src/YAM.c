@@ -1156,12 +1156,6 @@ static void Terminate(void)
 
   CLOSELIB(LocaleBase, ILocale);
 
-  if(G->simpleIDSemaphore != NULL)
-  {
-    FreeSysObject(ASOT_SEMAPHORE, G->simpleIDSemaphore);
-    G->simpleIDSemaphore = NULL;
-  }
-
   // make sure to free the shared memory pool before
   // freeing the rest
   if(G->SharedMemPool != NULL)
@@ -2544,10 +2538,6 @@ int main(int argc, char **argv)
       // break out immediately to signal an error!
       break;
     }
-
-    // setup the semaphore for our unique ID generation
-    if((G->simpleIDSemaphore = AllocSysObjectTags(ASOT_SEMAPHORE, TAG_DONE)) == NULL)
-      break;
 
     // create a list for all the folders
     if((G->folders = CreateFolderList()) == NULL)

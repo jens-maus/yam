@@ -1481,7 +1481,7 @@ struct TempFile *OpenTempFile(const char *mode)
 
     // now format our temporary filename according to our Application data
     // this format tries to make the temporary filename kinda unique.
-    snprintf(buf, sizeof(buf), "YAMt%08x.tmp", GetSimpleID());
+    snprintf(buf, sizeof(buf), "YAMt%08x.tmp", (unsigned int)GetUniqueID());
 
     // now add the temporary path to the filename
     AddPath(tf->Filename, C->TempDir, buf, sizeof(tf->Filename));
@@ -3746,7 +3746,7 @@ char *StartUnpack(const char *file, char *newfile, const struct Folder *folder)
     {
       char nfile[SIZE_FILE];
 
-      snprintf(nfile, sizeof(nfile), "YAMu%08x.unp", GetSimpleID());
+      snprintf(nfile, sizeof(nfile), "YAMu%08x.unp", (unsigned int)GetUniqueID());
       AddPath(newfile, C->TempDir, nfile, SIZE_PATHFILE);
 
       // check that the destination filename
@@ -5091,21 +5091,6 @@ LONG LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
 
   RETURN(result);
   return result;
-}
-
-///
-/// GetSimpleID
-//  Returns a unique number
-ULONG GetSimpleID(void)
-{
-  ULONG id;
-
-  ObtainSemaphore(G->simpleIDSemaphore);
-  G->simpleID++;
-  id = G->simpleID;
-  ReleaseSemaphore(G->simpleIDSemaphore);
-
-  return id;
 }
 
 ///

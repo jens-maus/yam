@@ -37,6 +37,7 @@
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/muimaster.h>
+#include <proto/utility.h>
 
 #include "extrasrc.h"
 
@@ -134,7 +135,7 @@ static void NewBoundaryID(char *idbuf, const size_t idbufSize)
 
   // Generate a unique Boundary ID which conforms to RFC 2045 and includes
   // a "=_" sequence to make it safe for quoted printable encoded parts
-  snprintf(idbuf, idbufSize, "--=_BOUNDARY.%lx%x.%02x", (IPTR)FindTask(NULL), (unsigned int)rand(), GetSimpleID() & 0xff);
+  snprintf(idbuf, idbufSize, "--=_BOUNDARY.%lx%x.%02x", (IPTR)FindTask(NULL), (unsigned int)rand(), (unsigned int)GetUniqueID() & 0xff);
 
   LEAVE();
 }

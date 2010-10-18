@@ -173,10 +173,6 @@ struct Global
   // the data for our methodstack implementation
   struct MsgPort         * methodStack;
 
-  // the data for our own unique ID generation
-  struct SignalSemaphore * simpleIDSemaphore;
-  ULONG                    simpleID;
-
   char                     ProgDir[SIZE_PATH];
   char                     ProgName[SIZE_FILE];
   char                     PGPPassPhrase[SIZE_DEFAULT];
