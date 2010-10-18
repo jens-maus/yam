@@ -2675,10 +2675,12 @@ int main(int argc, char **argv)
     PrepareTimer(TIMER_CHECKMAIL, C->CheckMailDelay*60, 0);
     PrepareTimer(TIMER_AUTOSAVE,  C->AutoSave, 0);
     PrepareTimer(TIMER_SPAMFLUSHTRAININGDATA, C->SpamFlushTrainingDataInterval, 0);
+    PrepareTimer(TIMER_PURGEIDLETHREADS, 60, 0);
     StartTimer(TIMER_WRINDEX);
     StartTimer(TIMER_CHECKMAIL);
     StartTimer(TIMER_AUTOSAVE);
     StartTimer(TIMER_SPAMFLUSHTRAININGDATA);
+    StartTimer(TIMER_PURGEIDLETHREADS);
 
     // initialize the automatic UpdateCheck facility and schedule an
     // automatic update check during startup if necessary

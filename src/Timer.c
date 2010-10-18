@@ -635,6 +635,18 @@ static void TimerDispatcher(const enum Timer tid)
     }
     break;
 
+    // check for superflous threads being idle
+    case TIMER_PURGEIDLETHREADS:
+    {
+      D(DBF_TIMER, "timer[%ld]: TIMER_PURGEIDLETHREADS fired @ %s", tid, dateString);
+
+      PurgeIdleThreads(FALSE);
+
+      // restart the timer
+      PrepareTimer(TIMER_PURGEIDLETHREADS, 60, 0);
+    }
+    break;
+
     // dummy to please GCC
     case TIMER_NUM:
       // nothing
@@ -712,6 +724,9 @@ BOOL ProcessTimerEvent(void)
 
     if(G->timerData.timer[TIMER_DELETEZOMBIEFILES].isPrepared == TRUE)
       StartTimer(TIMER_DELETEZOMBIEFILES);
+
+    if(G->timerData.timer[TIMER_PURGEIDLETHREADS].isPrepared == TRUE)
+      StartTimer(TIMER_PURGEIDLETHREADS);
   }
   else
     W(DBF_TIMER, "timer event received but no timer was processed!!!");

@@ -7,6 +7,7 @@ $URL$
 
 2010-10-18 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, Timer.c: superflous idle threads will now be purged once per minute.
   * Threads.c: extended the thread framework for future usage.
 
 2010-10-17 Thore Böckelmann <tboeckel@gmx.de>
