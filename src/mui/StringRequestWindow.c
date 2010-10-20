@@ -31,8 +31,10 @@
 #include "StringRequestWindow_cl.h"
 
 #include "YAM_stringsizes.h"
+
 #include "Locale.h"
 #include "MUIObjects.h"
+#include "Threads.h"
 
 #include "Debug.h"
 
@@ -42,6 +44,7 @@ struct Data
   Object *stringObj;
   ULONG maxLength;
   ULONG result;
+  APTR thread;
 };
 */
 
@@ -62,6 +65,7 @@ OVERLOAD(OM_NEW)
   Object *noButton = NULL;
   Object *altButton = NULL;
   ULONG maxLength = SIZE_DEFAULT;
+  APTR thread = NULL;
 
   ENTER();
 
@@ -124,6 +128,13 @@ OVERLOAD(OM_NEW)
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
+
+      case ATTR(Thread):
+      {
+        thread = (APTR)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
     }
   }
 
@@ -158,21 +169,22 @@ OVERLOAD(OM_NEW)
 
     data->stringObj = stringObj;
     data->maxLength = maxLength;
+    data->thread = thread;
     data->result = 0;
 
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_StringRequestWindow_FinishInput, 0);
-    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_StringRequestWindow_FinishInput, 1);
-    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_StringRequestWindow_FinishInput, 0);
-    DoMethod(stringObj, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, MUIM_StringRequestWindow_FinishInput, 1);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, METHOD(FinishInput), 0);
+    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 1);
+    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 0);
+    DoMethod(stringObj, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, METHOD(FinishInput), 1);
 
     if(altText != NULL)
-      DoMethod(altButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_StringRequestWindow_FinishInput, 2);
+      DoMethod(altButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 2);
 
     set(stringObj, MUIA_String_Contents, stringContents);
     set(obj, MUIA_Window_ActiveObject, stringObj);
   }
 
-  RETURN(obj);
+  RETURN((IPTR)obj);
   return (IPTR)obj;
 }
 
@@ -210,9 +222,12 @@ DECLARE(FinishInput) // ULONG result
   // trigger possible notifications
   set(obj, MUIA_StringRequestWindow_Result, msg->result);
 
+  // wake up a possibly sleeping thread
+  if(data->thread != NULL)
+    WakeupThread(data->thread);
+
   RETURN(0);
   return 0;
 }
 
 ///
-

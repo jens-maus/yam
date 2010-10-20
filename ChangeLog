@@ -5,7 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2010-10-13 Mariusz Danilewicz <mandi@interia.pl>
+2010-10-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/StringRequestWindow.c: some changes to allow waking up a waiting thread.
+
+2010-10-18 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest changes.
 
