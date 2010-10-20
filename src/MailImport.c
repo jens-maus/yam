@@ -843,7 +843,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
   {
     snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MsgInFile), importFile);
 
-    if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAM_CreateTransferGroup, TR_IMPORT, tc->transferGroupTitle, conn, isFlagClear(flags, IMPORTF_QUIET))) != NULL)
+    if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAM_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, conn, TRUE, isFlagClear(flags, IMPORTF_QUIET))) != NULL)
     {
       enum FolderType ftype = folder->Type;
 
@@ -1127,60 +1127,63 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
 BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flags)
 {
   BOOL success = FALSE;
-  struct TransferContext tc;
+  struct TransferContext *tc;
 
   ENTER();
 
-  memset(&tc, 0, sizeof(tc));
-
-  if((tc.format = DetectMBoxFormat(importFile)) != IMF_UNKNOWN)
+  if((tc = calloc(1, sizeof(*tc))) != NULL)
   {
-    if((tc.importList = CreateMailTransferList()) != NULL)
+    if((tc->format = DetectMBoxFormat(importFile)) != IMF_UNKNOWN)
     {
-      // being able to open the file is enough to signal success
-      success = TRUE;
-
-      BuildImportList(&tc, importFile);
-
-      if(IsMailTransferListEmpty(tc.importList) == FALSE)
+      if((tc->importList = CreateMailTransferList()) != NULL)
       {
-        BOOL doImport = FALSE;
+        // being able to open the file is enough to signal success
+        success = TRUE;
 
-        if(isFlagClear(flags, IMPORTF_QUIET) || isFlagSet(flags, IMPORTF_WAIT))
+        BuildImportList(tc, importFile);
+
+        if(IsMailTransferListEmpty(tc->importList) == FALSE)
         {
-          // show the preselection window in case user interaction is requested
-          Object *preselectWin;
+          BOOL doImport = FALSE;
 
-          snprintf(tc.windowTitle, sizeof(tc.windowTitle), tr(MSG_TR_MsgInFile), importFile);
-
-          if((preselectWin = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAM_CreatePreselectionWindow, CurrentThread(), tc.windowTitle, tc.importList)) != NULL)
+          if(isFlagClear(flags, IMPORTF_QUIET) || isFlagSet(flags, IMPORTF_WAIT))
           {
-            if(SleepThread() == TRUE)
+            // show the preselection window in case user interaction is requested
+            Object *preselectWin;
+
+            snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MsgInFile), importFile);
+
+            if((preselectWin = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAM_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, PRESELMODE_IMPORT, tc->importList)) != NULL)
             {
-              ULONG result = FALSE;
-
-              PushMethodOnStackWait(preselectWin, 3, OM_GET, MUIA_PreselectionWindow_Result, &result);
-              if(result == TRUE)
+              if(SleepThread() == TRUE)
               {
-                doImport = TRUE;
+                ULONG result = FALSE;
+
+                PushMethodOnStackWait(preselectWin, 3, OM_GET, MUIA_PreselectionWindow_Result, &result);
+                if(result == TRUE)
+                {
+                  doImport = TRUE;
+                }
               }
+
+              PushMethodOnStack(G->App, 2, MUIM_YAM_DisposeWindow, preselectWin);
             }
-
-            PushMethodOnStack(G->App, 2, MUIM_YAM_DisposeWindow, preselectWin);
           }
-        }
-        else
-        {
-          // otherwise we perform the import no matter what
-          doImport = TRUE;
+          else
+          {
+            // otherwise we perform the import no matter what
+            doImport = TRUE;
+          }
+
+          if(doImport == TRUE)
+            ProcessImport(tc, importFile, folder, flags);
         }
 
-        if(doImport == TRUE)
-          ProcessImport(&tc, importFile, folder, flags);
+        DeleteMailTransferList(tc->importList);
       }
-
-      DeleteMailTransferList(tc.importList);
     }
+
+    free(tc);
   }
 
   // wake up the calling thread if this is requested

@@ -7,6 +7,9 @@ $URL$
 
 2010-10-20 Thore Böckelmann <tboeckel@gmx.de>
 
+  * MailImport.c: the transfer context is now dynamically allocated instead of
+    being placed on the stack. Also changed the creation of the preselection
+    window accoring to the latest changes to that class.
   * mui/PreselectionWindow.c: the preselection window now features a mode of
     working (import, mail download, etc). The "Resume" and "Pause" buttons are
     no longer needed. So far this only affects the mail import from a file.
