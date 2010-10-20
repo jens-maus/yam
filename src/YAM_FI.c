@@ -1871,6 +1871,8 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
     G->AppIconQuiet = TRUE;
 
+    LockMailList(mlist);
+
     // we use another Busy Gauge information if this is
     // a spam classification session. And we build an interruptable
     // Gauge which will report back if the user pressed the stop button
@@ -1953,6 +1955,8 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
           break;
       }
     }
+
+    UnlockMailList(mlist);
 
     DeleteFilterList(filterList);
 
