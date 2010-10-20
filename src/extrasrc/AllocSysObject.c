@@ -168,7 +168,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
   {
     case ASOT_IOREQUEST:
     {
-      ULONG size = sizeof(*object.iorequest);
+      ULONG size = sizeof(struct IORequest);
       struct MsgPort *port = NULL;
       struct IORequest *duplicate = NULL;
 
@@ -197,7 +197,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       // then we will use its reply port instead
       if(duplicate != NULL)
       {
-        if(size == sizeof(*object.iorequest))
+        if(size == sizeof(struct IORequest))
           size = duplicate->io_Message.mn_Length;
         if(port == NULL)
           port = duplicate->io_Message.mn_ReplyPort;
@@ -215,7 +215,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       HOOKFUNC entry = NULL;
       HOOKFUNC subentry = NULL;
       HOOKFUNC data = NULL;
-      ULONG size = sizeof(*object.hook);
+      ULONG size = sizeof(struct Hook);
 
       if(tags != NULL)
       {
@@ -313,7 +313,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
     case ASOT_PORT:
     {
       STRPTR name = NULL;
-      ULONG size = sizeof(*object.port);
+      ULONG size = sizeof(struct MsgPort);
       ULONG action = 0;
       LONG pri = 0;
       LONG signum = -1;
@@ -421,7 +421,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
     case ASOT_MESSAGE:
     {
       STRPTR name = NULL;
-      ULONG size = sizeof(*object.message);
+      ULONG size = sizeof(struct Message);
       ULONG length = 0;
       APTR port = NULL;
 
@@ -467,7 +467,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
     case ASOT_SEMAPHORE:
     {
-      ULONG size = sizeof(*object.semaphore);
+      ULONG size = sizeof(struct SignalSemaphore);
       LONG pri = 0;
       BOOL public = FALSE;
       BOOL copy = FALSE;
