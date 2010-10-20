@@ -483,9 +483,9 @@ static struct Thread *CreateThread(void)
                                               #elif defined(__MORPHOS__)
                                               NP_CodeType,    MACHINE_PPC,
                                               #endif
-                                              NP_Input,       ZERO,
+                                              NP_Input,       Input(),
                                               NP_CloseInput,  FALSE,
-                                              NP_Output,      ZERO,
+                                              NP_Output,      Output(),
                                               NP_CloseOutput, FALSE,
                                               TAG_DONE)) != NULL)
       {

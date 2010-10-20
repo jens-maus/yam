@@ -7,6 +7,8 @@ $URL$
 
 2010-10-20 Thore Böckelmann <tboeckel@gmx.de>
 
+  * Threads.c: the subthreads will now use the same default input/output streams
+    as the main task.
   * tools/mkrelease.sh, doc/Install-YAM: added turkish catalog.
   * locale/turkish.ct: added/updated turkish translation kindly provided by
     Alper Sönmez.
