@@ -666,7 +666,7 @@ YAM %s - Kullanýcý: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix
-
+\ebKime: \en
 ; \ebTo: \en
 ;
 ;
@@ -1904,6 +1904,7 @@ MSG_CO_SaveDelete
 MSG_CO_ConfirmDelPart1
 
 ; Confirm _deletion of
+; NOTE: this string must be left empty to match the turkish grammar!
 ;
 MSG_CO_ConfirmDelPart2
 veya daha fazla mesaj silineceðinde onay penceresi göster
@@ -2904,7 +2905,9 @@ Bul
 ; Find Entry
 ;
 MSG_AB_FindEntryReq
-
+Bu modül, verilen bir metni takma ad, ad, adres, açýklama,\n\
+sokak, þehir veya ülke alanlarýnda arar. Lütfen bir arama\n\
+þablonu giriniz (AmigaDOS jokerleri desteklenmektedir):
 ; This module finds a given text in the alias, name, address,\n\
 ; description, street, city or country fields. Please enter\n\
 ; the search pattern (AmigaDOS wildchars are supported):
@@ -5558,7 +5561,8 @@ Gü_venlik
 ; Sec_urity
 ;
 MSG_HELP_MA_CY_DEFSECURITY
-
+Bu kiþiye ileti gönderilirken kullanýlacak\n\
+varsayýlan güvenlik seviyesi.
 ; Default security for sending\n\
 ; mail to this person.
 ;
@@ -7215,7 +7219,11 @@ okuma korumalý olmadýðýndan emin olun.
 ; and that is not read protected.
 ;
 MSG_ER_PACKERROR
-
+Seçilen dosyalardan bir arþiv oluþturmaya \
+çalýþýlýrken bir hata oluþtu.\n\
+\n\
+Lütfen tüm dosyalarýn eriþilebilirliðinden ve \
+okuma korumalý olmadýðýndan emin olunuz.
 ; An error occurred while trying to create \
 ; an archive out of the selected files.\n\
 ; \n\
