@@ -905,17 +905,22 @@ DECLARE(FilterMail) // const struct MinList *filterList, struct Mail *mail
 
 ///
 /// DECLARE(CreatePreselectionWindow)
-DECLARE(CreatePreselectionWindow) // struct Thread *thread, const char *title, struct MinList *mailList
+DECLARE(CreatePreselectionWindow) // APTR thread, const char *title, const enum PreselectionMode mode, struct MinList *mailList
 {
   Object *window;
 
   if((window = PreselectionWindowObject,
     MUIA_Window_Title, msg->title,
     MUIA_PreselectionWindow_Thread, msg->thread,
+    MUIA_PreselectionWindow_Mode, msg->mode,
     MUIA_PreselectionWindow_Mails, msg->mailList,
   End) != NULL)
   {
-    SafeOpenWindow(window);
+    // make sure the application isn't iconified
+    if(xget(obj, MUIA_Application_Iconified) == TRUE)
+      PopUp();
+
+    set(window, MUIA_Window_Open, TRUE);
   }
 
   return (IPTR)window;

@@ -37,7 +37,6 @@
 #include "Threads.h"
 
 #include "YAM_mainFolder.h"
-#include "YAM_transfer.h"
 
 #include "tcp/Connection.h"
 
@@ -53,17 +52,23 @@ struct Data
   Object *downloadDeleteButton;
   Object *downloadOnlyButton;
   Object *deleteOnlyButton;
-  Object *pauseButton;
-  Object *resumeButton;
   Object *startButton;
   Object *quitButton;
 
   ULONG mailCount;
 
   APTR thread;
-  struct MailTransferList *preselectList;
+  struct MailTransferList *mailList;
 
   ULONG accept;
+};
+*/
+
+/* EXPORT
+enum PreselectionMode
+{
+  PRESELMODE_IMPORT=0,
+  PRESELMODE_DOWNLOAD,
 };
 */
 
@@ -80,8 +85,6 @@ OVERLOAD(OM_NEW)
   Object *downloadDeleteButton;
   Object *downloadOnlyButton;
   Object *deleteOnlyButton;
-  Object *pauseButton;
-  Object *resumeButton;
   Object *startButton;
   Object *quitButton;
 
@@ -108,17 +111,14 @@ OVERLOAD(OM_NEW)
         End,
       End,
       Child, VGroup, GroupFrameT(tr(MSG_TR_Control)),
-        Child, ColGroup(5),
+        Child, ColGroup(3),
           Child, allButton = MakeButton(tr(MSG_TR_All)),
           Child, downloadDeleteButton = MakeButton(tr(MSG_TR_DownloadDelete)),
           Child, leaveButton = MakeButton(tr(MSG_TR_Leave)),
-          Child, HSpace(0),
-          Child, pauseButton = MakeButton(tr(MSG_TR_Pause)),
+
           Child, noneButton= MakeButton(tr(MSG_TR_Clear)),
           Child, downloadOnlyButton = MakeButton(tr(MSG_TR_DownloadOnly)),
           Child, deleteOnlyButton = MakeButton(tr(MSG_TR_DeleteOnly)),
-          Child, HSpace(0),
-          Child, resumeButton = MakeButton(tr(MSG_TR_Resume)),
         End,
         Child, ColGroup(2),
           Child, startButton = MakeButton(tr(MSG_TR_Start)),
@@ -130,6 +130,9 @@ OVERLOAD(OM_NEW)
     TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
+    enum PreselectionMode mode;
+
+    DoMethod(G->App, OM_ADDMEMBER, obj);
 
     data->transferMailList = transferMailList;
     data->allButton = allButton;
@@ -138,54 +141,46 @@ OVERLOAD(OM_NEW)
     data->downloadDeleteButton = downloadDeleteButton;
     data->downloadOnlyButton = downloadOnlyButton;
     data->deleteOnlyButton = deleteOnlyButton;
-    data->pauseButton = pauseButton;
-    data->resumeButton = resumeButton;
     data->startButton = startButton;
     data->quitButton = quitButton;
 
-    data->thread = (struct Thread *)GetTagData(ATTR(Thread), (IPTR)NULL, inittags(msg));
-    data->preselectList = (struct MailTransferList *)GetTagData(ATTR(Mails), (IPTR)NULL, inittags(msg));
+    data->thread = (APTR)GetTagData(ATTR(Thread), (IPTR)NULL, inittags(msg));
+    data->mailList = (struct MailTransferList *)GetTagData(ATTR(Mails), (IPTR)NULL, inittags(msg));
 
-    if(data->preselectList != NULL)
+    if(data->mailList != NULL)
     {
       struct MailTransferNode *tnode;
       ULONG position = 0;
 
       set(data->transferMailList, MUIA_NList_Quiet, TRUE);
 
-      LockMailTransferList(data->preselectList);
+      LockMailTransferList(data->mailList);
 
-      ForEachMailTransferNode(data->preselectList, tnode)
+      ForEachMailTransferNode(data->mailList, tnode)
       {
         tnode->position = position++;
 
         DoMethod(data->transferMailList, MUIM_NList_InsertSingle, tnode, MUIV_NList_Insert_Bottom);
       }
 
-      UnlockMailTransferList(data->preselectList);
+      UnlockMailTransferList(data->mailList);
 
       xset(data->transferMailList, MUIA_NList_Active, MUIV_NList_Active_Top,
                                    MUIA_NList_Quiet, FALSE);
     }
 
-    set(data->pauseButton, MUIA_Disabled, TRUE);
-    set(data->resumeButton, MUIA_Disabled, TRUE);
-    set(data->deleteOnlyButton, MUIA_Disabled, TRUE);
-    set(data->downloadDeleteButton, MUIA_Disabled, TRUE);
+    mode = GetTagData(ATTR(Mode), PRESELMODE_IMPORT, inittags(msg));
+    set(data->deleteOnlyButton, MUIA_Disabled, mode == PRESELMODE_IMPORT);
+    set(data->downloadDeleteButton, MUIA_Disabled, mode == PRESELMODE_IMPORT);
 
     DoMethod(data->startButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(Accept), TRUE);
     DoMethod(data->quitButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(Accept), FALSE);
-    DoMethod(data->resumeButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(Resume));
-    DoMethod(data->pauseButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(Pause));
-    DoMethod(data->transferMailList, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, obj, 1, METHOD(GetMessageDetails));
     DoMethod(data->deleteOnlyButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ChangeFlags), TRF_DELETE);
     DoMethod(data->downloadDeleteButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ChangeFlags), TRF_TRANSFER|TRF_DELETE);
     DoMethod(data->downloadOnlyButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ChangeFlags), TRF_TRANSFER);
     DoMethod(data->leaveButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ChangeFlags), TRF_NONE);
     DoMethod(data->allButton, MUIM_Notify, MUIA_Pressed, FALSE, data->transferMailList, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
     DoMethod(data->noneButton, MUIM_Notify, MUIA_Pressed, FALSE, data->transferMailList, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
-
-    DoMethod(G->App, OM_ADDMEMBER, obj);
   }
 
   RETURN((IPTR)obj);
@@ -224,22 +219,11 @@ DECLARE(Accept) // ULONG accept
   GETDATA;
 
   data->accept = msg->accept;
-  WakeupThread(data->thread);
 
-  return 0;
-}
+  // wake up a possibly sleeping thread
+  if(data->thread != NULL)
+    WakeupThread(data->thread);
 
-///
-/// DECLARE(Resume)
-DECLARE(Resume)
-{
-  return 0;
-}
-
-///
-/// DECLARE(Pause)
-DECLARE(Pause)
-{
   return 0;
 }
 
@@ -250,7 +234,7 @@ DECLARE(ChangeFlags) // ULONG flags
   GETDATA;
   LONG id = MUIV_NList_NextSelected_Start;
 
-  LockMailTransferList(data->preselectList);
+  LockMailTransferList(data->mailList);
 
   do
   {
@@ -268,15 +252,19 @@ DECLARE(ChangeFlags) // ULONG flags
   }
   while(TRUE);
 
-  UnlockMailTransferList(data->preselectList);
+  UnlockMailTransferList(data->mailList);
 
   return 0;
 }
 
 ///
-/// DECLARE(GetMessageDetails)
-DECLARE(GetMessageDetails)
+/// DECLARE(RefreshMail)
+DECLARE(RefreshMail) // const LONG line
 {
+  GETDATA;
+
+  DoMethod(data->transferMailList, MUIM_NList_Redraw, msg->line);
+
   return 0;
 }
 

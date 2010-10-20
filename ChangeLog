@@ -7,6 +7,9 @@ $URL$
 
 2010-10-20 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/PreselectionWindow.c: the preselection window now features a mode of
+    working (import, mail download, etc). The "Resume" and "Pause" buttons are
+    no longer needed. So far this only affects the mail import from a file.
   * YAM_FI.c: lock the mail list while filtering the mails.
   * mui/ObjectList.c: correctly set the top position of a new item.
   * mui/StringRequestWindow.c: some changes to allow waking up a waiting thread.
