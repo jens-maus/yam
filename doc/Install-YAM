@@ -16,6 +16,7 @@
 (set #def_lang_dutch               $040)
 (set #def_lang_polish              $080)
 (set #def_lang_spanish             $100)
+(set #def_lang_turkish             $200)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
@@ -430,6 +431,7 @@
         (set #cat_name_dutch                 "dutch")
         (set #cat_name_polish                "polish")
         (set #cat_name_spanish               "spanish")
+        (set #cat_name_turkish               "turkish")
         (set #cat_name_english_british       "english-british")
     )
     ; AmigaOS 3.x and MorphOS use localized locale names
@@ -443,6 +445,7 @@
         (set #cat_name_dutch                 "nederlands")
         (set #cat_name_polish                "polski")
         (set #cat_name_spanish               "español")
+        (set #cat_name_turkish               "türkçe")
     )
 )
 
