@@ -254,7 +254,7 @@ DECLARE(AddItem) // Object *item
     set(msg->item, MUIA_ObjectListitem_ObjectList, obj);
 
     // make sure the new item is visible
-    set(data->virtgroup, MUIA_Virtgroup_Top, _top(msg->item));
+    set(data->virtgroup, MUIA_Virtgroup_Top, _mtop(msg->item));
 
     data->itemCount++;
     // trigger possible notifications

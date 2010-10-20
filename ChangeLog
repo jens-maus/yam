@@ -7,6 +7,7 @@ $URL$
 
 2010-10-20 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/ObjectList.c: correctly set the top position of a new item.
   * mui/StringRequestWindow.c: some changes to allow waking up a waiting thread.
 
 2010-10-18 Mariusz Danilewicz <mandi@interia.pl>
