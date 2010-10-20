@@ -7,6 +7,8 @@ $URL$
 
 2010-10-20 Thore Böckelmann <tboeckel@gmx.de>
 
+  * locale/turkish.ct: added/updated turkish translation kindly provided by
+    Alper Sönmez.
   * MailImport.c: the transfer context is now dynamically allocated instead of
     being placed on the stack. Also changed the creation of the preselection
     window accoring to the latest changes to that class.

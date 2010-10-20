@@ -630,17 +630,17 @@ CATALOGS = \
 	$(LOCALE)/polish.catalog \
 	$(LOCALE)/spanish.catalog \
 	$(LOCALE)/swedish.catalog \
-	# $(LOCALE)/bosnian.catalog \
-	# $(LOCALE)/danish.catalog \
-	# $(LOCALE)/finnish.catalog \
-	# $(LOCALE)/hungarian.catalog \
-	# $(LOCALE)/norwegian.catalog \
-	# $(LOCALE)/portuguese-brazil.catalog \
-	# $(LOCALE)/portuguese.catalog \
-	# $(LOCALE)/russian.catalog \
-	# $(LOCALE)/serbian.catalog \
-	# $(LOCALE)/slovenian.catalog \
-	# $(LOCALE)/turkish.catalog
+	$(LOCALE)/turkish.catalog
+	# $(LOCALE)/bosnian.catalog
+	# $(LOCALE)/danish.catalog
+	# $(LOCALE)/finnish.catalog
+	# $(LOCALE)/hungarian.catalog
+	# $(LOCALE)/norwegian.catalog
+	# $(LOCALE)/portuguese-brazil.catalog
+	# $(LOCALE)/portuguese.catalog
+	# $(LOCALE)/russian.catalog
+	# $(LOCALE)/serbian.catalog
+	# $(LOCALE)/slovenian.catalog
 
 # main target
 .PHONY: all
