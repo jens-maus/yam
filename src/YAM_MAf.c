@@ -1260,7 +1260,7 @@ BOOL MA_NewMailFile(const struct Folder *folder, char *fullPath, const size_t fu
   char newFileName[SIZE_MFILE];
   char *ptr;
   struct TimeVal curDate;
-  int mCounter = 0;
+  int mCounter;
   BOOL result;
 
   ENTER();
@@ -1270,7 +1270,7 @@ BOOL MA_NewMailFile(const struct Folder *folder, char *fullPath, const size_t fu
   GetSysTimeUTC(&curDate);
 
   // encode this date as a base64 encoded string
-  base64encode(dateFilePart, (unsigned char *)&curDate, sizeof(struct TimeVal));
+  base64encode(dateFilePart, (unsigned char *)&curDate, sizeof(curDate));
 
   // as the dateFilePart may contain slashes "/" we have to replace them
   // with "-" chars to not drive the filesystem crazy :)
@@ -1278,6 +1278,7 @@ BOOL MA_NewMailFile(const struct Folder *folder, char *fullPath, const size_t fu
   while((ptr = strchr(ptr, '/')) != NULL)
     *ptr = '-';
 
+  mCounter = 0;
   do
   {
     snprintf(newFileName, sizeof(newFileName), "%s.%03d,N", dateFilePart, ++mCounter);
@@ -1747,7 +1748,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
     else if(IsMinListEmpty(headerList) == TRUE &&
             (mode == RHM_MAINHEADER || (buffer != NULL && buffer[0] != '\0') || linesread != 1))
     {
-      W(DBF_MAIL, "no required header data found while having scanned '%s'.", mailFile);
+      W(DBF_MAIL, "no required header data found while scanning '%s'", mailFile);
       success = FALSE;
     }
 
