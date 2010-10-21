@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-21 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2010-10-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c, misc: I finally managed to put the complete POP3 stuff into a

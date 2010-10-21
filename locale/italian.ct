@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (14.10.2010)
+## version $VER: YAM.catalog 7.5 (21.10.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5357 2010-10-13
+; based on YAM.cd 5387 2010-10-21
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -6764,7 +6764,7 @@ di averla correttamente installata nel percorso delle librerie.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
 ;
 MSG_ER_NO_MCC
-Impossibile aprire la classe MUI custom '%s' v%lu.%lu.\n\
+Impossibile aprire la classe MUI '%s' v%lu.%lu.\n\
 \n\
 Vai all'indirizzo '%s'\n\
 Scarica l'ultima versione disponibile, dopodichè assicurati\n\
@@ -6777,7 +6777,7 @@ di averla correttamente installata nel tuo sistema.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_OLD
-Impossibile aprire la classe MUI custom '%s' v%lu.%lu.\n\
+Impossibile aprire la classe MUI '%s' v%lu.%lu.\n\
 \n\
 La versione attualmente in uso è la v%lu.%lu.\n\
 Si consiglia di scaricare l'ultima versione da\n\'%s'.
@@ -6788,7 +6788,7 @@ Si consiglia di scaricare l'ultima versione da\n\'%s'.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_IN_USE
-Impossibile aprire la classe MUI custom '%s' v%lu.%lu.\n\
+Impossibile aprire la classe MUI '%s' v%lu.%lu.\n\
 %lu.%lu è correntemente in uso da un'altra applicazione.\n\
 \n\
 Vai all'indirizzo '%s'.\n\
@@ -9856,7 +9856,7 @@ Per favore scaricala manualmente da questo indirizzo:\n\
 ; '%s'
 ; URL
 ;
-; *** Added for YAM 2.6p1 ********************************************************
+; *** Added for YAM 2.6p1/2.7 ********************************************************
 ;
 MSG_USERNAME_FALLBACK
 Mario Rossi
@@ -10037,4 +10037,16 @@ S
 MSG_ALTIMAGE_STATUS_DELETE
 X
 ; X
+;
+MSG_PRESELECT_INDEX
+Indice
+; Index
+;
+MSG_TR_WAIT_FOR_PASSWORD
+In attesa della password utente...
+; Waiting for user's password input...
+;
+MSG_TR_WAIT_FOR_PRESELECTION
+In attesa della preselezione utente...
+; Waiting for user's preselection...
 ;
