@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * lib/os3: added thread safe build of clib2 to be linked against for the OS3
+    build. This is absolutely necessary to guarantee thread safety when using
+    i.e. fopen() from several threads simultaneously. Additionally this makes it
+    possible to leave the compiler's default C runtime library untouched.
+
 2010-10-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.c: the subthreads will now use the same default input/output streams
