@@ -64,6 +64,9 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  * History
  * -------
+ * 0.34 - multiple dependencies from a private class were not handled correctly
+ *        and rejected as a dependency loop. Additionally the parent's class name
+ *        will now be included in the error message.
  * 0.33 - the .crc file is now written on every run, even if the checksum did not
  *        change. This solves some dependency issues in YAM's Makefile.
  * 0.32 - CRC checksums are now used to check whether any class definition has
@@ -190,7 +193,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  */
 
-static const char * const verstr = "0.33";
+static const char * const verstr = "0.34";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -1173,7 +1176,6 @@ int gen_source( char *destfile, struct list *classlist )
 
         if(nextcd->supernode != NULL)
         {
-          nextcd->supernode->index = -1;
           goOn = 1;
         }
 
@@ -1194,7 +1196,7 @@ int gen_source( char *destfile, struct list *classlist )
     {
       /* handle all still unfinished class nodes with private superclasses */
       if(nextcd->finished == 0 && nextcd->supernode != NULL)
-        fprintf(fp, " %s", nextcd->name);
+        fprintf(fp, " %s (subclass of %s)", nextcd->name, nextcd->supernode->name);
     }
     fprintf(fp, "\n");
   }

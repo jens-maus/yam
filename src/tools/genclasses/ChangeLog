@@ -4,6 +4,12 @@ GenClasses Tool - ChangeLog
 
 $Id$
 
+2010-10-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * gc.c: multiple dependencies from a private class were not handled correctly
+    and rejected as a dependency loop. Additionally the parent's class name will
+    now be included in the error message.
+
 2010-08-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * the .crc file is now written on every run, even if the checksum did not
