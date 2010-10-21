@@ -29,7 +29,8 @@
 ***************************************************************************/
 
 #include "YAM_stringsizes.h"
-#include "YAM_transfer.h"
+#include "tcp/pop3.h"
+#include "tcp/smtp.h"
 
 // forward declarations
 struct Mail;
@@ -188,14 +189,16 @@ enum ForwardMode
 };
 
 // flags for MA_MoveCopy and MA_MoveCopySingle
-#define MVCPF_COPY          (1<<0)
-#define MVCPF_CLOSE_WINDOWS (1<<1)
+#define MVCPF_COPY              (1<<0)
+#define MVCPF_CLOSE_WINDOWS     (1<<1)
+#define MVCPF_CHECK_CONNECTIONS (1<<2)
 
-// flags for MA_DeleteSingle()
-#define DELF_AT_ONCE           (1<<0)
-#define DELF_QUIET             (1<<1)
-#define DELF_CLOSE_WINDOWS     (1<<2)
-#define DELF_UPDATE_APPICON    (1<<3)
+// flags for MA_DeleteSingle
+#define DELF_AT_ONCE            (1<<0)
+#define DELF_QUIET              (1<<1)
+#define DELF_CLOSE_WINDOWS      (1<<2)
+#define DELF_UPDATE_APPICON     (1<<3)
+#define DELF_CHECK_CONNECTIONS  (1<<4)
 
 // flags and macros for creating new mails
 #define NEWF_QUIET               (1<<0)
@@ -368,10 +371,10 @@ BOOL MA_ImportMessages(const char *fname, const ULONG flags);
 struct MA_ClassData *MA_New(void);
 void  MA_SortWindow(void);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, const ULONG flags);
-void  MA_ExchangeMail(enum GUILevel mode);
-void  MA_PopNow(enum GUILevel mode, int pop);
+void  MA_ExchangeMail(const ULONG receiveFlags);
+BOOL  MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult);
 void  MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning);
-BOOL  MA_Send(enum SendMode sendpos);
+BOOL  MA_Send(enum SendMailMode sendpos);
 void  MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags);
 BOOL  MA_UpdateMailFile(struct Mail *mail);
 void  MA_SetSortFlag(void);
@@ -391,5 +394,7 @@ enum NewMailMode CheckNewMailQualifier(const enum NewMailMode mode, const ULONG 
 struct WriteMailData *NewMessage(enum NewMailMode mode, const int flags);
 struct Mail *FindThreadInFolder(struct Mail *srcMail, struct Folder *folder, BOOL nextThread);
 struct Mail *FindThread(struct Mail *srcMail, BOOL nextThread, Object *window);
+
+BOOL ReceiveMailsFromPOP(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult);
 
 #endif /* YAM_MAIN_H */

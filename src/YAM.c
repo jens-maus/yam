@@ -904,6 +904,12 @@ static void Terminate(void)
 
   ENTER();
 
+  D(DBF_STARTUP, "aborting all working threads...");
+  AbortWorkingThreads();
+
+  D(DBF_STARTUP, "cleaning up thread system...");
+  CleanupThreads();
+
   D(DBF_STARTUP, "freeing spam filter module...");
   BayesFilterCleanup();
 
@@ -937,13 +943,6 @@ static void Terminate(void)
     struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
     CleanupWriteMailData(wmData);
-  }
-
-  D(DBF_STARTUP, "freeing tcp/ip stuff...");
-  if(G->TR != NULL)
-  {
-    TR_Cleanup();
-    DisposeModule(&G->TR);
   }
 
   if(G->FO != NULL)
@@ -1104,9 +1103,6 @@ static void Terminate(void)
 
   D(DBF_STARTUP, "deleting semaphore...");
   DeleteStartupSemaphore();
-
-  D(DBF_STARTUP, "cleaning up thread system...");
-  CleanupThreads();
 
   D(DBF_STARTUP, "cleaning up method stack...");
   CleanupMethodStack();
@@ -2092,7 +2088,7 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
   }
 
   if(skipSend == FALSE && sendableMail == TRUE)
-    MA_Send(SEND_ALL_USER);
+    MA_Send(SENDMAIL_ALL_USER);
 
   RETURN(sendableMail);
   return(sendableMail);
@@ -2144,9 +2140,9 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       // so check if it is properly running.
       if(nocheck == FALSE && ConnectionIsOnline(NULL) == TRUE)
       {
-        enum GUILevel mode;
+        ULONG receiveFlags;
 
-        mode = (C->PreSelection == PSM_NEVER || hide == TRUE) ? POP_START : POP_USER;
+        receiveFlags = (C->PreSelection == PSM_NEVER || hide == TRUE) ? RECEIVEF_STARTUP : RECEIVEF_USER;
 
         if(C->GetOnStartup == TRUE && C->SendOnStartup == TRUE)
         {
@@ -2154,28 +2150,22 @@ static void DoStartup(BOOL nocheck, BOOL hide)
           if(SendWaitingMail(hide, TRUE) == TRUE)
           {
             // do a complete mail exchange, the order depends on the user settings
-            MA_ExchangeMail(mode);
+            MA_ExchangeMail(receiveFlags);
             // the delayed closure of any transfer window is already handled in MA_ExchangeMail()
           }
           else
           {
             // just get new mail
-            MA_PopNow(mode, -1);
-            // let MUI execute the delayed disposure of the POP3 transfer window
-            DoMethod(G->App, MUIM_Application_InputBuffered);
+            MA_PopNow(-1, receiveFlags, NULL);
           }
         }
         else if(C->GetOnStartup == TRUE)
         {
-          MA_PopNow(mode, -1);
-          // let MUI execute the delayed disposure of the POP3 transfer window
-          DoMethod(G->App, MUIM_Application_InputBuffered);
+          MA_PopNow(-1, receiveFlags, NULL);
         }
         else if(C->SendOnStartup == TRUE)
         {
           SendWaitingMail(hide, FALSE);
-          // let MUI execute the delayed disposure of the SMTP transfer window
-          DoMethod(G->App, MUIM_Application_InputBuffered);
         }
       }
     }
@@ -2855,6 +2845,8 @@ void MiniMainLoop(void)
   ULONG methodStackSig;
   ULONG wakeupSig;
 
+  ENTER();
+
   // prepare all signal bits
   threadSig      = (1UL << G->threadPort->mp_SigBit);
   methodStackSig = (1UL << G->methodStack->mp_SigBit);
@@ -2899,6 +2891,41 @@ void MiniMainLoop(void)
       }
     }
   }
+
+  LEAVE();
+}
+
+///
+/// MicroMainLoop
+// an even more "stripped down to the bare minimum" version of the mainloop
+// to be used in situations where we have to poll for specific basic events
+void MicroMainLoop(void)
+{
+  ULONG signals;
+  ULONG threadSig;
+  ULONG methodStackSig;
+
+  ENTER();
+
+  // prepare all signal bits
+  threadSig      = (1UL << G->threadPort->mp_SigBit);
+  methodStackSig = (1UL << G->methodStack->mp_SigBit);
+
+  D(DBF_STARTUP, "YAM allocated signals:");
+  D(DBF_STARTUP, " threadSig         = %08lx", threadSig);
+  D(DBF_STARTUP, " methodStackSig    = %08lx", methodStackSig);
+
+  // instead of Wait()ing for some signals we just poll for them
+  SetSignal(0UL, threadSig|methodStackSig);
+
+  // handle the possibly received signals
+  CheckMethodStack();
+  HandleThreads();
+
+  // let the application handle some stuff
+  DoMethod(G->App, MUIM_Application_NewInput, &signals);
+
+  LEAVE();
 }
 
 ///

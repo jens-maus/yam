@@ -31,12 +31,32 @@
 // forward declarations
 struct Folder;
 struct MailTransferNode;
+struct MailServerNode;
+
+struct DownloadResult
+{
+  long downloaded;
+  long onServer;
+  long dupeSkipped;
+  long deleted;
+  BOOL error;
+};
+
+#define RECEIVEF_USER    (1<<0) // transfer initiated by user
+#define RECEIVEF_STARTUP (1<<1) // transfer initiated by startup
+#define RECEIVEF_TIMER   (1<<2) // transfer initiated by timer
+#define RECEIVEF_AREXX   (1<<3) // transfer initiated by ARexx
+#define RECEIVEF_SIGNAL  (1<<4) // wakeup a waiting thread after the transfer
+
+enum PreSelMode
+{
+  PSM_NEVER=0,
+  PSM_LARGE,
+  PSM_ALWAYS,
+  PSM_ALWAYSLARGE
+};
 
 // prototypes
-void TR_GetMessageDetails(struct MailTransferNode *tnode, int lline);
-BOOL TR_DeleteMessage(int number);
-BOOL TR_LoadMessage(struct Folder *infolder, const int number);
-void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, enum GUILevel guilevel);
-BOOL TR_SendPOP3KeepAlive(void);
+BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult);
 
 #endif /* POP3_H */

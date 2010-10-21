@@ -1103,7 +1103,8 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
       struct MailServerNode *srcNode = (struct MailServerNode *)curNode;
       struct MailServerNode *dstNode;
 
-      if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
+      // clone the server but give the clone its own private data
+      if((dstNode = CloneMailServer(srcNode)) != NULL)
       {
         AddTail((struct List *)&dco->mailServerList, (struct Node *)dstNode);
       }

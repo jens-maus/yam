@@ -80,6 +80,7 @@ struct Connection
 
   struct fd_set fdset;           // file descriptors for WaitSelect()
   struct timeval timeout;        // timeout for WaitSelect()
+  ULONG breakSignals;            // break signals for WaitSelect()
 
   enum ConnectError error;       // error value of the last action
 
@@ -91,6 +92,22 @@ struct Connection
   BOOL connectedFromMainThread;  // who created this connection?
   BOOL isConnected;              // has ConnectToHost() been called before?
   BOOL abort;                    // should the connection be aborted?
+};
+
+// Socket Options a user can set in .config
+// if a value was not specified by the user it is either -1 or
+// FALSE for a boolean.
+struct SocketOptions
+{
+  LONG SendBuffer;   // SO_SNDBUF
+  LONG RecvBuffer;   // SO_RCVBUF
+  LONG SendLowAt;    // SO_SNDLOWAT
+  LONG RecvLowAt;    // SO_RCVLOWAT
+  LONG SendTimeOut;  // SO_SNDTIMEO
+  LONG RecvTimeOut;  // SO_RCVTIMEO
+  BOOL KeepAlive;    // SO_KEEPALIVE
+  BOOL NoDelay;      // TCP_NODELAY
+  BOOL LowDelay;     // IPTOS_LOWDELAY
 };
 
 BOOL InitConnections(void);

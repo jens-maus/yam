@@ -4019,7 +4019,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
             }
           }
 
-          RemoveMailFromList(wmData->refMail, TRUE);
+          RemoveMailFromList(wmData->refMail, TRUE, TRUE);
           wmData->refMail = newMail;
         }
       }
@@ -4192,7 +4192,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
             mailSent = DoAction(TA_SendMails, TT_SendMails_MailServer, msn,
                                               TT_SendMails_Mails, mlist,
-                                              TT_SendMails_Mode, SEND_ACTIVE_USER,
+                                              TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
                                               TAG_DONE);
             if(mailSent == FALSE)
               CLEAR_FLAG(msn->flags, MSF_IN_USE);

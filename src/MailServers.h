@@ -32,6 +32,7 @@
 
 // forward declarations
 struct Config;
+struct MailList;
 
 // an enumeration type to flag a mail server
 // structure to a specific type
@@ -106,10 +107,13 @@ struct MailServerNode
 
   // mail server type specific flags
   unsigned int smtpFlags;                // [MST_SMTP]: runtime SMTP flags found during connection
+
+  struct MailList *downloadedMails;      // [MST_POP3]: list of downloaded mails
 };
 
 // public functions
 struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const struct Config *co, const BOOL first);
+struct MailServerNode *CloneMailServer(const struct MailServerNode *msn);
 void FreeMailServerList(struct MinList *mailServerList);
 BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *msl2);
 struct MailServerNode *GetMailServer(const struct MinList *mailServerList, const enum MailServerType type, const unsigned int num);

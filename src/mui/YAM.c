@@ -41,8 +41,8 @@
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
-#include "YAM_transfer.h"
 
+#include "AppIcon.h"
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
 #include "Threads.h"
@@ -793,7 +793,7 @@ DECLARE(DisplayStatistics) // struct Folder *folder, ULONG updateAppIcon
 
 ///
 /// DECLARE(CreateTransferGroup)
-DECLARE(CreateTransferGroup) // enum TransferType TRmode, const char *title, struct Connection *connection, ULONG openWindow
+DECLARE(CreateTransferGroup) // APTR thread, const char *title, struct Connection *connection, ULONG activate, ULONG openWindow
 {
   GETDATA;
   Object *group = NULL;
@@ -803,10 +803,10 @@ DECLARE(CreateTransferGroup) // enum TransferType TRmode, const char *title, str
   // create a new transfer window if we don't have one yet
   if(data->transferWindow == NULL)
   {
-    D(DBF_GUI, "creating new transfer window, mode %ld", msg->TRmode);
+    D(DBF_GUI, "creating new transfer window");
 
     data->transferWindow = TransferWindowObject,
-      MUIA_TransferWindow_Mode, msg->TRmode,
+      MUIA_Window_Activate, msg->openWindow && msg->activate,
     End;
   }
 
@@ -816,8 +816,9 @@ DECLARE(CreateTransferGroup) // enum TransferType TRmode, const char *title, str
 
     if((group = (Object *)DoMethod(data->transferWindow, MUIM_TransferWindow_CreateTransferControlGroup, msg->title)) != NULL)
     {
-      // tell the control group about the connection being used
-      set(group, MUIA_TransferControlGroup_Connection, msg->connection);
+      // tell the control group about the thread and the connection being used
+      xset(group, MUIA_TransferControlGroup_Thread, msg->thread,
+                  MUIA_TransferControlGroup_Connection, msg->connection);
 
       if(msg->openWindow == TRUE)
       {
@@ -845,7 +846,7 @@ DECLARE(DeleteTransferGroup) // Object *transferGroup
     if(xget(data->transferWindow, MUIA_TransferWindow_NumberOfControlGroups) == 1)
     {
       // we are about to remove the last group, just dispose the window instead
-      D(DBF_GUI, "closing transfer window", msg->transferGroup);
+      D(DBF_GUI, "closing transfer window");
       set(data->transferWindow, MUIA_Window_Open, FALSE);
       DoMethod(G->App, OM_REMMEMBER, data->transferWindow);
       MUI_DisposeObject(data->transferWindow);
@@ -901,6 +902,177 @@ DECLARE(DeleteMail) // struct Mail *mail, ULONG flags
 DECLARE(FilterMail) // const struct MinList *filterList, struct Mail *mail
 {
   return FI_FilterSingleMail(msg->filterList, msg->mail, NULL, NULL);
+}
+
+///
+/// DECLARE(FilterNewMails)
+DECLARE(FilterNewMails) // const struct MailList *mailList, struct FilterResult *filterResult
+{
+  struct Folder *folder;
+
+  FilterMails(FO_GetFolderByType(FT_INCOMING, NULL), msg->mailList, APPLY_AUTO, msg->filterResult);
+
+/*
+  // Now we jump to the first new mail we received if the number of messages has changed
+  // after the mail transfer
+  if(C->JumpToIncoming == TRUE)
+    MA_JumpToNewMsg();
+*/
+
+  // only call the DisplayStatistics() function if the actual folder wasn't already the INCOMING
+  // one or we would have refreshed it twice
+  if((folder = FO_GetCurrentFolder()) != NULL && !isIncomingFolder(folder))
+    DisplayStatistics((struct Folder *)-1, TRUE);
+  else
+    UpdateAppIcon();
+
+  return 0;
+}
+
+///
+/// DECLARE(UpdateAppIcon)
+DECLARE(UpdateAppIcon)
+{
+  UpdateAppIcon();
+
+  return 0;
+}
+
+///
+/// DECLARE(NewMailAlert)
+//  Notifies user when new mail is available
+DECLARE(NewMailAlert) // struct DownloadResult *downloadResult, struct FilterResult *filterResult, const ULONG flags
+{
+  ENTER();
+
+  SHOWVALUE(DBF_NET, msg->downloadResult->downloaded);
+  SHOWVALUE(DBF_NET, msg->filterResult->Spam);
+
+  // show the statistics only if we downloaded some mails at all,
+  // and not all of them were spam mails
+  if(msg->downloadResult->downloaded > 0 && msg->downloadResult->downloaded > msg->filterResult->Spam)
+  {
+    if(hasRequesterNotify(C->NotifyType) && isFlagClear(msg->flags, RECEIVEF_AREXX))
+    {
+      char buffer[SIZE_LARGE];
+
+      // make sure the application isn't iconified
+      if(xget(G->App, MUIA_Application_Iconified) == TRUE)
+        PopUp();
+
+      snprintf(buffer, sizeof(buffer), tr(MSG_TR_NewMailReq), msg->downloadResult->downloaded, msg->downloadResult->onServer-msg->downloadResult->deleted, msg->downloadResult->dupeSkipped);
+      if(C->SpamFilterEnabled == TRUE)
+      {
+        // include the number of spam classified mails
+        snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FILTER_STATS_SPAM),
+                                                                         msg->filterResult->Checked,
+                                                                         msg->filterResult->Bounced,
+                                                                         msg->filterResult->Forwarded,
+                                                                         msg->filterResult->Replied,
+                                                                         msg->filterResult->Executed,
+                                                                         msg->filterResult->Moved,
+                                                                         msg->filterResult->Deleted,
+                                                                         msg->filterResult->Spam);
+      }
+      else
+      {
+        snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FilterStats),
+                                                                         msg->filterResult->Checked,
+                                                                         msg->filterResult->Bounced,
+                                                                         msg->filterResult->Forwarded,
+                                                                         msg->filterResult->Replied,
+                                                                         msg->filterResult->Executed,
+                                                                         msg->filterResult->Moved,
+                                                                         msg->filterResult->Deleted);
+      }
+
+      // show the info window.
+      InfoWindowObject,
+        MUIA_Window_Title, tr(MSG_TR_NewMail),
+        MUIA_Window_RefWindow, G->MA->GUI.WI,
+        MUIA_Window_Activate, isFlagSet(msg->flags, RECEIVEF_USER),
+        MUIA_InfoWindow_Body, buffer,
+      End;
+    }
+
+    #if defined(__amigaos4__)
+    if(hasOS41SystemNotify(C->NotifyType))
+    {
+      D(DBF_GUI, "appID is %ld, application.lib is V%ld.%ld (needed V%ld.%ld)", G->applicationID, ApplicationBase->lib_Version, ApplicationBase->lib_Revision, 53, 7);
+      // Notify() is V53.2+, but 53.7 fixes some serious issues
+      if(G->applicationID > 0 && LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 7) == TRUE)
+      {
+        // 128 chars is the current maximum :(
+        char message[128];
+        int count = msg->downloadResult->downloaded - msg->filterResult->Spam;
+
+        // distinguish between single and multiple mails
+        if(count >= 2)
+          snprintf(message, sizeof(message), tr(MSG_TR_NEW_MAIL_NOTIFY_MANY), count);
+        else
+          strlcpy(message, tr(MSG_TR_NEW_MAIL_NOTIFY_ONE), sizeof(message));
+
+        // We require 53.7+. From this version on proper tag values are used, hence there
+        // is no need to distinguish between v1 and v2 interfaces here as we have to do for
+        // other application.lib functions.
+        Notify(G->applicationID, APPNOTIFY_Title, (uint32)"YAM",
+                                 APPNOTIFY_PubScreenName, (uint32)"FRONT",
+                                 APPNOTIFY_Text, (uint32)message,
+                                 APPNOTIFY_CloseOnDC, TRUE,
+                                 APPNOTIFY_BackMsg, (uint32)"POPUP",
+                                 TAG_DONE);
+      }
+    }
+    #endif // __amigaos4__
+
+    if(hasCommandNotify(C->NotifyType))
+      LaunchCommand(C->NotifyCommand, FALSE, OUT_STDOUT);
+
+    if(hasSoundNotify(C->NotifyType))
+      PlaySound(C->NotifySound);
+  }
+
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(ChangeSelected)
+DECLARE(ChangeSelected) // const struct Folder *folder, const ULONG forceUpdate
+{
+  if(FO_GetCurrentFolder() == msg->folder)
+    MA_ChangeSelected(msg->forceUpdate);
+
+  return 0;
+}
+
+///
+/// DECLARE(CreatePasswordWindow)
+DECLARE(CreatePasswordWindow) // APTR thread, const char *title, const char *body, ULONG maxLength
+{
+  Object *window;
+
+  ENTER();
+
+  if((window = StringRequestWindowObject,
+    MUIA_Window_Title, msg->title,
+    MUIA_Window_RefWindow, G->MA->GUI.WI,
+    MUIA_StringRequestWindow_Body, msg->body,
+    MUIA_StringRequestWindow_YesText, tr(MSG_Okay),
+    MUIA_StringRequestWindow_NoText, tr(MSG_Cancel),
+    MUIA_StringRequestWindow_MaxLength, msg->maxLength,
+    MUIA_StringRequestWindow_Secret, TRUE,
+    MUIA_StringRequestWindow_Thread, msg->thread,
+  End) != NULL)
+  {
+    // make sure the application isn't iconified
+    if(xget(obj, MUIA_Application_Iconified) == TRUE)
+      PopUp();
+
+    set(window, MUIA_Window_Open, TRUE);
+  }
+
+  return (IPTR)window;
 }
 
 ///

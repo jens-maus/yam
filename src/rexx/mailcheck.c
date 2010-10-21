@@ -53,10 +53,17 @@ struct results
   long *deleted;
 };
 
+struct optional
+{
+  struct DownloadResult dlResult;
+  long remaining;
+};
+
 void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct args *args = params->args;
   struct results *results = params->results;
+  struct optional *optional = params->optional;
 
   ENTER();
 
@@ -66,48 +73,83 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
     {
       params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
       params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
     }
     break;
 
     case RXIF_ACTION:
     {
-      int popnr = -2;
+      int pop;
 
-      if(args->pop)
-      {
-        int pop;
-        int maxpop=0;
-        struct Node *curNode;
-
-        IterateList(&C->mailServerList, curNode)
-        {
-          struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
-          if(isPOP3Server(msn))
-            maxpop++;
-        }
-
-        if((pop = *args->pop) >= 0 && pop < maxpop)
-          popnr = pop;
-      }
+      if(args->pop == NULL)
+        pop = -1;
       else
-        popnr = -1;
+        pop = args->pop[0];
 
-      if(popnr > -2)
+      if(pop >= -1)
       {
-        static long remaining;
+        MA_StartMacro(MACRO_PREGET, "3");
 
-        MA_PopNow(args->manual ? POP_USER : POP_REXX, popnr);
+        if(pop == -1)
+        {
+          struct MailServerNode *msn;
+          struct DownloadResult dlResult;
+          int pop;
 
-        remaining = G->LastDL.OnServer - G->LastDL.Deleted;
+          optional->dlResult.downloaded = 0;
+          optional->dlResult.onServer = 0;
+          optional->dlResult.dupeSkipped = 0;
+          optional->dlResult.deleted = 0;
+          optional->dlResult.error = FALSE;
+          optional->remaining = 0;
 
-        results->downloaded = &G->LastDL.Downloaded;
-        results->onserver = &remaining;
-        results->dupskipped = &G->LastDL.DupSkipped;
-        results->deleted = &G->LastDL.Deleted;
+          pop = 0;
+          while((msn = GetMailServer(&C->mailServerList, MST_POP3, pop)) != NULL)
+          {
+            // fetch mails from active servers only
+            if(isServerActive(msn) == TRUE)
+            {
+              if(ReceiveMailsFromPOP(msn, args->manual ? RECEIVEF_USER|RECEIVEF_SIGNAL : RECEIVEF_AREXX|RECEIVEF_SIGNAL, &dlResult) == TRUE)
+              {
+                MiniMainLoop();
 
-        if(G->LastDL.Error)
-          params->rc = RETURN_WARN;
+                optional->dlResult.downloaded += dlResult.downloaded;
+                optional->dlResult.onServer += dlResult.onServer;
+                optional->dlResult.dupeSkipped += dlResult.dupeSkipped;
+                optional->dlResult.deleted += dlResult.deleted;
+                optional->dlResult.error |= dlResult.error;
+                optional->remaining += dlResult.onServer - dlResult.deleted;
+
+                if(dlResult.error == TRUE)
+                  params->rc = RETURN_WARN;
+              }
+              else
+              {
+                params->rc = RETURN_ERROR;
+                break;
+              }
+            }
+
+            pop++;
+          }
+        }
+        else if(pop > 0)
+        {
+          struct MailServerNode *msn;
+
+          if((msn = GetMailServer(&C->mailServerList, MST_POP3, *args->pop)) != NULL)
+          {
+            if(ReceiveMailsFromPOP(msn, args->manual ? RECEIVEF_USER|RECEIVEF_SIGNAL : RECEIVEF_AREXX|RECEIVEF_SIGNAL, &optional->dlResult) == TRUE)
+            {
+              MiniMainLoop();
+
+              if(optional->dlResult.error == TRUE)
+                params->rc = RETURN_WARN;
+            }
+            else
+              params->rc = RETURN_ERROR;
+          }
+        }
       }
       else
         params->rc = RETURN_ERROR;
@@ -120,6 +162,8 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
         FreeVecPooled(G->SharedMemPool, args);
       if(results != NULL)
         FreeVecPooled(G->SharedMemPool, results);
+      if(optional != NULL)
+        FreeVecPooled(G->SharedMemPool, optional);
     }
     break;
   }

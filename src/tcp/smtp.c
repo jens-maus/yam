@@ -37,7 +37,6 @@
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
-#include "YAM_transfer.h"
 
 #include "Locale.h"
 #include "MailList.h"
@@ -45,6 +44,7 @@
 #include "MailTransferList.h"
 #include "MethodStack.h"
 #include "MUIObjects.h"
+#include "Threads.h"
 
 #include "mime/base64.h"
 #include "mime/md5.h"
@@ -123,6 +123,8 @@ struct TransferContext
   struct MailServerNode *msn;
   Object *transferGroup;
   char smtpBuffer[SIZE_LINE];            // RFC 2821 says 1000 should be enough
+  char challenge[SIZE_LINE];
+  char tempBuffer[SIZE_LINE];
   char transferGroupTitle[SIZE_DEFAULT]; // the TransferControlGroup's title
   BOOL useTLS;
 };
@@ -490,8 +492,6 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
 {
   int rc = SMTP_SERVICE_NOT_AVAILABLE;
   char *resp;
-  char buffer[SIZE_LINE];
-  char challenge[SIZE_LINE];
   int selectedMethod = MSF_AUTH_AUTO;
 
   ENTER();
@@ -579,24 +579,24 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
 
         // get the challenge code from the response line of the
         // AUTH command.
-        strlcpy(challenge, &resp[4], sizeof(challenge));
+        strlcpy(tc->challenge, &resp[4], sizeof(tc->challenge));
 
         // now that we have the challenge phrase we need to base64decode
         // it, but have to take care to remove the ending "\r\n" cookie.
-        chalRet = strpbrk(challenge, "\r\n"); // find the first CR or LF
-        if(chalRet)
+        chalRet = strpbrk(tc->challenge, "\r\n"); // find the first CR or LF
+        if(chalRet != NULL)
           *chalRet = '\0'; // strip it
 
-        D(DBF_NET, "received DIGEST-MD5 challenge: '%s'", challenge);
+        D(DBF_NET, "received DIGEST-MD5 challenge: '%s'", tc->challenge);
 
         // lets base64 decode it
-        if(base64decode(challenge, (unsigned char *)challenge, strlen(challenge)) <= 0)
+        if(base64decode(tc->challenge, (unsigned char *)tc->challenge, strlen(tc->challenge)) <= 0)
         {
           RETURN(FALSE);
           return FALSE;
         }
 
-        D(DBF_NET, "decoded  DIGEST-MD5 challenge: '%s'", challenge);
+        D(DBF_NET, "decoded  DIGEST-MD5 challenge: '%s'", tc->challenge);
 
         // we now analyze the received challenge identifier and pick out
         // the value which we are going to need for our challenge response.
@@ -606,7 +606,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
           char *pend;
 
           // first we try to find out the "realm" of the challenge
-          if((pstart = strstr(challenge, "realm=")))
+          if((pstart = strstr(tc->challenge, "realm=")) != NULL)
           {
             // iterate to the beginning of the realm
             pstart += 6;
@@ -642,7 +642,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
           D(DBF_NET, "realm: '%s'", realm);
 
           // grab the "nonce" token for later reference
-          if((pstart = strstr(challenge, "nonce=")))
+          if((pstart = strstr(tc->challenge, "nonce=")) != NULL)
           {
             // iterate to the beginning of the nonce
             pstart += 6;
@@ -684,7 +684,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
           // sure that this server really wants an authentification from us
           // RFC 2831 says that it is OK if no qop is present, because this
           // assumes the server to support at least "auth"
-          if((pstart = strstr(challenge, "qop=")))
+          if((pstart = strstr(tc->challenge, "qop=")) != NULL)
           {
             char *qop;
 
@@ -809,7 +809,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
         }
 
         // form up the challenge to authenticate according to RFC 2831
-        snprintf(challenge, sizeof(challenge),
+        snprintf(tc->challenge, sizeof(tc->challenge),
                  "username=\"%s\","        // the username token
                  "realm=\"%s\","           // the realm token
                  "nonce=\"%s\","           // the nonce token
@@ -825,25 +825,25 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
                  realm,
                  response);
 
-        D(DBF_NET, "prepared challenge answer....: '%s'", challenge);
-        base64encode(buffer, (unsigned char *)challenge, strlen(challenge));
-        D(DBF_NET, "encoded  challenge answer....: '%s'", buffer);
-        strlcat(buffer, "\r\n", sizeof(buffer));
+        D(DBF_NET, "prepared challenge answer....: '%s'", tc->challenge);
+        base64encode(tc->tempBuffer, (unsigned char *)tc->challenge, strlen(tc->challenge));
+        D(DBF_NET, "encoded  challenge answer....: '%s'", tc->tempBuffer);
+        strlcat(tc->tempBuffer, "\r\n", sizeof(tc->tempBuffer));
 
         // now we send the SMTP AUTH response
-        if(SendLineToHost(tc->conn, buffer) > 0)
+        if(SendLineToHost(tc->conn, tc->tempBuffer) > 0)
         {
           // get the server response and see if it was valid
-          if(ReceiveLineFromHost(tc->conn, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 334)
-            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), tc->msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+          if(ReceiveLineFromHost(tc->conn, tc->tempBuffer, sizeof(tc->tempBuffer)) <= 0 || (rc = getResponseCode(tc->tempBuffer)) != 334)
+            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), tc->msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], tc->tempBuffer);
           else
           {
             // now that we have received the 334 code we just send a plain line
             // to signal that we don't need any option
             if(SendLineToHost(tc->conn, "\r\n") > 0)
             {
-              if(ReceiveLineFromHost(tc->conn, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-                ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), tc->msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+              if(ReceiveLineFromHost(tc->conn, tc->tempBuffer, sizeof(tc->tempBuffer)) <= 0 || (rc = getResponseCode(tc->tempBuffer)) != 235)
+                ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), tc->msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], tc->tempBuffer);
               else
                 rc = SMTP_ACTION_OK;
             }
@@ -877,42 +877,42 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
 
         // get the challenge code from the response line of the
         // AUTH command.
-        strlcpy(challenge, &resp[4], sizeof(challenge));
+        strlcpy(tc->challenge, &resp[4], sizeof(tc->challenge));
 
         // now that we have the challenge phrase we need to base64decode
         // it, but have to take care to remove the ending "\r\n" cookie.
-        chalRet = strpbrk(challenge, "\r\n"); // find the first CR or LF
+        chalRet = strpbrk(tc->challenge, "\r\n"); // find the first CR or LF
         if(chalRet)
           *chalRet = '\0'; // strip it
 
-        D(DBF_NET, "received CRAM-MD5 challenge: '%s'", challenge);
+        D(DBF_NET, "received CRAM-MD5 challenge: '%s'", tc->challenge);
 
         // lets base64 decode it
-        if(base64decode(challenge, (unsigned char *)challenge, strlen(challenge)) <= 0)
+        if(base64decode(tc->challenge, (unsigned char *)tc->challenge, strlen(tc->challenge)) <= 0)
         {
           RETURN(FALSE);
           return FALSE;
         }
 
-        D(DBF_NET, "decoded  CRAM-MD5 challenge: '%s'", challenge);
+        D(DBF_NET, "decoded  CRAM-MD5 challenge: '%s'", tc->challenge);
 
         // compose the md5 challenge
-        md5hmac((unsigned char *)challenge, strlen(challenge), (unsigned char *)password, strlen(password), (unsigned char *)digest);
+        md5hmac((unsigned char *)tc->challenge, strlen(tc->challenge), (unsigned char *)password, strlen(password), (unsigned char *)digest);
         snprintf(buf, sizeof(buf), "%s %08x%08x%08x%08x", login, (unsigned int)digest[0], (unsigned int)digest[1],
                                                                  (unsigned int)digest[2], (unsigned int)digest[3]);
 
         D(DBF_NET, "prepared CRAM-MD5 reponse..: '%s'", buf);
         // lets base64 encode the md5 challenge for the answer
-        base64encode(buffer, (unsigned char *)buf, strlen(buf));
-        D(DBF_NET, "encoded  CRAM-MD5 reponse..: '%s'", buffer);
-        strlcat(buffer, "\r\n", sizeof(buffer));
+        base64encode(tc->tempBuffer, (unsigned char *)buf, strlen(buf));
+        D(DBF_NET, "encoded  CRAM-MD5 reponse..: '%s'", tc->tempBuffer);
+        strlcat(tc->tempBuffer, "\r\n", sizeof(tc->tempBuffer));
 
         // now we send the SMTP AUTH response
-        if(SendLineToHost(tc->conn, buffer) > 0)
+        if(SendLineToHost(tc->conn, tc->tempBuffer) > 0)
         {
           // get the server response and see if it was valid
-          if(ReceiveLineFromHost(tc->conn, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), tc->msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_CRAM_MD5], buffer);
+          if(ReceiveLineFromHost(tc->conn, tc->tempBuffer, sizeof(tc->tempBuffer)) <= 0 || (rc = getResponseCode(tc->tempBuffer)) != 235)
+            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), tc->msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_CRAM_MD5], tc->tempBuffer);
           else
             rc = SMTP_ACTION_OK;
         }
@@ -930,29 +930,29 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
       {
         // prepare the username challenge
         D(DBF_NET, "prepared AUTH LOGIN challenge: '%s'", tc->msn->username);
-        base64encode(buffer, (unsigned char *)tc->msn->username, strlen(tc->msn->username));
-        D(DBF_NET, "encoded  AUTH LOGIN challenge: '%s'", buffer);
-        strlcat(buffer, "\r\n", sizeof(buffer));
+        base64encode(tc->tempBuffer, (unsigned char *)tc->msn->username, strlen(tc->msn->username));
+        D(DBF_NET, "encoded  AUTH LOGIN challenge: '%s'", tc->tempBuffer);
+        strlcat(tc->tempBuffer, "\r\n", sizeof(tc->tempBuffer));
 
         // now we send the SMTP AUTH response (UserName)
-        if(SendLineToHost(tc->conn, buffer) > 0)
+        if(SendLineToHost(tc->conn, tc->tempBuffer) > 0)
         {
           // get the server response and see if it was valid
-          if(ReceiveLineFromHost(tc->conn, buffer, SIZE_LINE) > 0
-             && (rc = getResponseCode(buffer)) == 334)
+          if(ReceiveLineFromHost(tc->conn, tc->tempBuffer, sizeof(tc->tempBuffer)) > 0
+             && (rc = getResponseCode(tc->tempBuffer)) == 334)
           {
             // prepare the password challenge
             D(DBF_NET, "prepared AUTH LOGIN challenge: '%s'", tc->msn->password);
-            base64encode(buffer, (unsigned char *)tc->msn->password, strlen(tc->msn->password));
-            D(DBF_NET, "encoded  AUTH LOGIN challenge: '%s'", buffer);
-            strlcat(buffer, "\r\n", sizeof(buffer));
+            base64encode(tc->tempBuffer, (unsigned char *)tc->msn->password, strlen(tc->msn->password));
+            D(DBF_NET, "encoded  AUTH LOGIN challenge: '%s'", tc->tempBuffer);
+            strlcat(tc->tempBuffer, "\r\n", sizeof(tc->tempBuffer));
 
             // now lets send the Password
-            if(SendLineToHost(tc->conn, buffer) > 0)
+            if(SendLineToHost(tc->conn, tc->tempBuffer) > 0)
             {
               // get the server response and see if it was valid
-              if(ReceiveLineFromHost(tc->conn, buffer, SIZE_LINE) > 0
-                 && (rc = getResponseCode(buffer)) == 235)
+              if(ReceiveLineFromHost(tc->conn, tc->tempBuffer, SIZE_LINE) > 0
+                 && (rc = getResponseCode(tc->tempBuffer)) == 235)
               {
                 rc = SMTP_ACTION_OK;
               }
@@ -960,7 +960,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
           }
 
           if(rc != SMTP_ACTION_OK)
-            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), tc->msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_LOGIN], buffer);
+            ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), tc->msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_LOGIN], tc->tempBuffer);
         }
       }
     }
@@ -979,23 +979,23 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
       // where we can left out the first one
 
       // we don't have a "authorize-id" so we set the first char to \0
-      challenge[len++] = '\0';
-      len += snprintf(challenge+len, sizeof(challenge)-len, "%s", tc->msn->username)+1; // authenticate-id
-      len += snprintf(challenge+len, sizeof(challenge)-len, "%s", tc->msn->password);   // password
+      tc->challenge[len++] = '\0';
+      len += snprintf(tc->challenge+len, sizeof(tc->challenge)-len, "%s", tc->msn->username)+1; // authenticate-id
+      len += snprintf(tc->challenge+len, sizeof(tc->challenge)-len, "%s", tc->msn->password);   // password
 
       // now we base64 encode this string and send it to the server
-      base64encode(buffer, (unsigned char *)challenge, len);
+      base64encode(tc->tempBuffer, (unsigned char *)tc->challenge, len);
 
       // lets now form up the AUTH PLAIN command we are going to send
       // to the SMTP server for authorization purposes:
-      snprintf(challenge, sizeof(challenge), "%s %s\r\n", SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
+      snprintf(tc->challenge, sizeof(tc->challenge), "%s %s\r\n", SMTPcmd[ESMTP_AUTH_PLAIN], tc->tempBuffer);
 
       // now we send the SMTP AUTH command (UserName+Password)
-      if(SendLineToHost(tc->conn, challenge) > 0)
+      if(SendLineToHost(tc->conn, tc->challenge) > 0)
       {
         // get the server response and see if it was valid
-        if(ReceiveLineFromHost(tc->conn, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-          ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), tc->msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
+        if(ReceiveLineFromHost(tc->conn, tc->tempBuffer, sizeof(tc->tempBuffer)) <= 0 || (rc = getResponseCode(tc->tempBuffer)) != 235)
+          ER_NewError(tr(MSG_ER_BADRESPONSE_SMTP), tc->msn->hostname, (char *)SMTPcmd[ESMTP_AUTH_PLAIN], tc->tempBuffer);
         else
           rc = SMTP_ACTION_OK;
       }
@@ -1268,341 +1268,347 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
 
 ///
 /// SendMails
-BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode mode)
+BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMailMode mode)
 {
   BOOL success = FALSE;
-  struct TransferContext tc;
+  struct TransferContext *tc;
 
   ENTER();
 
-  memset(&tc, 0, sizeof(tc));
-  tc.msn = msn;
-  tc.useTLS = FALSE;
-
-  // try to open the TCP/IP stack
-  if((tc.conn = CreateConnection()) != NULL && ConnectionIsOnline(tc.conn) == TRUE)
+  if((tc = calloc(1, sizeof(*tc))) != NULL)
   {
-    struct MailTransferList *transferList;
+    tc->msn = msn;
 
-    if((transferList = CreateMailTransferList()) != NULL)
+    // try to open the TCP/IP stack
+    if((tc->conn = CreateConnection()) != NULL && ConnectionIsOnline(tc->conn) == TRUE)
     {
-      ULONG totalSize = 0;
-      struct MailNode *mnode;
+      struct MailTransferList *transferList;
 
-      // start the PRESEND macro first and wait for it to terminate
-      PushMethodOnStackWait(G->App, 3, MUIM_YAM_StartMacro, MACRO_PRESEND, NULL);
-
-      // now we build the list of mails to be transfered.
-      LockMailListShared(mlist);
-
-      ForEachMailNode(mlist, mnode)
+      if((transferList = CreateMailTransferList()) != NULL)
       {
-        struct Mail *mail = mnode->mail;
+        ULONG totalSize = 0;
+        struct MailNode *mnode;
 
-        if(hasStatusQueued(mail) || hasStatusError(mail))
+        // start the PRESEND macro first and wait for it to terminate
+        PushMethodOnStackWait(G->App, 3, MUIM_YAM_StartMacro, MACRO_PRESEND, NULL);
+
+        // now we build the list of mails to be transfered.
+        LockMailListShared(mlist);
+
+        ForEachMailNode(mlist, mnode)
         {
-          struct MailTransferNode *tnode;
+          struct Mail *mail = mnode->mail;
 
-          if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
+          if(hasStatusQueued(mail) || hasStatusError(mail))
           {
-            AddMailTransferNode(transferList, tnode);
+            struct MailTransferNode *tnode;
 
-            // let the duplicated mail reference to its origin
-            tnode->mail->Reference = mail;
-            tnode->index = transferList->count;
-            totalSize += mail->Size;
-          }
-        }
-      }
-
-      UnlockMailList(mlist);
-
-      D(DBF_NET, "prepared %ld mails for sending, %ld bytes", transferList->count, totalSize);
-
-      // just go on if we really have something
-      if(transferList->count > 0)
-      {
-        int port;
-        char *p;
-        char host[SIZE_HOST];
-
-        strlcpy(host, msn->hostname, sizeof(host));
-
-        // If the hostname has a explicit :xxxxx port statement at the end we
-        // take this one, even if its not needed anymore.
-        if((p = strchr(host, ':')) != NULL)
-        {
-          *p = '\0';
-          port = atoi(++p);
-        }
-        else
-          port = msn->port;
-
-        snprintf(tc.transferGroupTitle, sizeof(tc.transferGroupTitle), tr(MSG_TR_MailTransferTo), host);
-
-        D(DBF_GUI, "create transfer control group");
-        if((tc.transferGroup = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAM_CreateTransferGroup, mode, tc.transferGroupTitle, tc.conn, TRUE)) != NULL)
-        {
-          // now we have to check whether SSL/TLS is selected for SMTP account,
-          // and if it is usable. Or if no secure connection is requested
-          // we can go on right away.
-          if((hasServerSSL(msn) == FALSE && hasServerTLS(msn) == FALSE) ||
-             G->TR_UseableTLS == TRUE)
-          {
-            struct MinList *sentMailFilters;
-
-            D(DBF_NET, "clone sent mail filters");
-            if((sentMailFilters = CloneFilterList(APPLY_SENT)) != NULL)
+            if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
             {
-              enum ConnectError err;
+              AddMailTransferNode(transferList, tnode);
 
-              PushMethodOnStack(tc.transferGroup, 3, MUIM_TransferControlGroup_Start, transferList->count, totalSize);
-
-              PushMethodOnStack(tc.transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
-              BusyText(tr(MSG_TR_MailTransferTo), host);
-
-              D(DBF_NET, "connecting to host '%s' port %ld", host, port);
-              if((err = ConnectToHost(tc.conn, host, port)) == CONNECTERR_SUCCESS)
-              {
-                BOOL connected = FALSE;
-
-                // first we check whether the user wants to connect to a plain SSLv3 server
-                // so that we initiate the SSL connection now
-                if(hasServerSSL(msn) == TRUE)
-                {
-                  // lets try to establish the SSL connection via AmiSSL
-                  if(MakeSecureConnection(tc.conn) == TRUE)
-                    tc.useTLS = TRUE;
-                  else
-                    err = CONNECTERR_SSLFAILED; // special SSL connection error
-                }
-
-                // first we have to check whether the TCP/IP connection could
-                // be successfully opened so that we can init the SMTP connection
-                // and query the SMTP server for its capabilities now.
-                if(err == CONNECTERR_SUCCESS)
-                {
-                  // initialize the SMTP connection which will also
-                  // query the SMTP server for its capabilities
-                  connected = ConnectToSMTP(&tc);
-
-                  // Now we have to check whether the user has selected SSL/TLS
-                  // and then we have to initiate the STARTTLS command followed by the TLS negotiation
-                  if(connected == TRUE && hasServerTLS(msn) == TRUE)
-                  {
-                    connected = InitSTARTTLS(&tc);
-
-                    // then we have to refresh the SMTPflags and check
-                    // again what features we have after the STARTTLS
-                    if(connected == TRUE)
-                    {
-                      // first we flag this connection as a sucessfull
-                      // TLS session
-                      tc.useTLS = TRUE;
-
-                      // now run the connect SMTP function again
-                      // so that the SMTP server flags will be refreshed
-                      // accordingly.
-                      connected = ConnectToSMTP(&tc);
-                    }
-                  }
-
-                  // If the user selected SMTP_AUTH we have to initiate
-                  // a AUTH connection
-                  if(connected == TRUE && hasServerAuth(msn) == TRUE)
-                    connected = InitSMTPAUTH(&tc);
-                }
-
-                // If we are still "connected" we can proceed with transfering the data
-                if(connected == TRUE)
-                {
-                  struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-                  struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
-                  struct MailTransferNode *tn;
-
-                  // set the success to TRUE as everything worked out fine
-                  // until here.
-                  success = TRUE;
-                  AppendToLogfile(LF_VERBOSE, 41, tr(MSG_LOG_ConnectSMTP), host);
-
-                  ForEachMailTransferNode(transferList, tn)
-                  {
-                    struct Mail *mail = tn->mail;
-
-                    if(tc.conn->abort == TRUE || tc.conn->error != CONNECTERR_NO_ERROR)
-                      break;
-
-                    PushMethodOnStack(tc.transferGroup, 5, MUIM_TransferControlGroup_Next, tn->index, -1, mail->Size, tr(MSG_TR_Sending));
-
-                    switch(SendMessage(&tc, mail))
-                    {
-                      // -1 means that SendMessage was aborted within the
-                      // DATA part and so we cannot issue a RSET command and have to abort
-                      // immediatly by leaving the mailserver alone.
-                      case -1:
-                      {
-                        setStatusToError(mail->Reference);
-                        tc.conn->error = CONNECTERR_UNKNOWN_ERROR;
-                      }
-                      break;
-
-                      // 0 means that an error occured before the DATA part and
-                      // so we can abort the transaction cleanly by a RSET and QUIT
-                      case 0:
-                      {
-                        setStatusToError(mail->Reference);
-                        SendSMTPCommand(&tc, SMTP_RSET, NULL, NULL); // no error check
-                        tc.conn->error = CONNECTERR_NO_ERROR;
-                      }
-                      break;
-
-                      // 1 means we filter the mails and then copy/move the mail to the send folder
-                      case 1:
-                      {
-                        setStatusToSent(mail->Reference);
-                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
-                        {
-                          // the filter process did not move the mail, hence we do it now
-                          PushMethodOnStackWait(G->App, 5, MUIM_YAM_MoveCopyMail, mail->Reference, outfolder, sentfolder, MVCPF_CLOSE_WINDOWS);
-                        }
-                      }
-                      break;
-
-                      // 2 means we filter and delete afterwards
-                      case 2:
-                      {
-                        setStatusToSent(mail->Reference);
-                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
-                        {
-                          // the filter process did not delete the mail, hence we do it now
-                          PushMethodOnStackWait(G->App, 3, MUIM_YAM_DeleteMail, mail->Reference, DELF_UPDATE_APPICON);
-                        }
-                      }
-                      break;
-                    }
-                  }
-
-                  PushMethodOnStack(tc.transferGroup, 1, MUIM_TransferControlGroup_Finish);
-
-                  if(tc.conn->error == CONNECTERR_NO_ERROR)
-                    AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_Sending), transferList->count, host);
-                  else
-                    AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_SENDING_FAILED), transferList->count, host);
-
-                  // now we can disconnect from the SMTP
-                  // server again
-                  PushMethodOnStack(tc.transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Disconnecting));
-
-                  // send a 'QUIT' command, but only if
-                  // we didn't receive any error during the transfer
-                  if(tc.conn->error == CONNECTERR_NO_ERROR)
-                    SendSMTPCommand(&tc, SMTP_QUIT, NULL, tr(MSG_ER_BADRESPONSE_SMTP));
-                }
-                else
-                {
-                  // check if we end up here cause of the 8BITMIME differences
-                  if(has8BITMIME(msn->smtpFlags) == FALSE && hasServer8bit(msn) == TRUE)
-                  {
-                    W(DBF_NET, "incorrect Allow8bit setting!");
-                    err = CONNECTERR_INVALID8BIT;
-                  }
-                  else if(err != CONNECTERR_SSLFAILED)
-                    err = CONNECTERR_UNKNOWN_ERROR;
-                }
-
-                // make sure to shutdown the socket
-                // and all possible SSL connection stuff
-                DisconnectFromHost(tc.conn);
-              }
-
-              // if we got an error here, let's throw it
-              switch(err)
-              {
-                case CONNECTERR_SUCCESS:
-                case CONNECTERR_ABORTED:
-                case CONNECTERR_NO_ERROR:
-                  // do nothing
-                break;
-
-                // a socket is already in use so we return
-                // a specific error to the user
-                case CONNECTERR_SOCKET_IN_USE:
-                  ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP), host);
-                break;
-
-                // socket() execution failed
-                case CONNECTERR_NO_SOCKET:
-                  ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_SMTP), host);
-                break;
-
-                // couldn't establish non-blocking IO
-                case CONNECTERR_NO_NONBLOCKIO:
-                  ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP), host);
-                break;
-
-                // the specified hostname isn't valid, so
-                // lets tell the user
-                case CONNECTERR_UNKNOWN_HOST:
-                  ER_NewError(tr(MSG_ER_UNKNOWN_HOST_SMTP), host);
-                break;
-
-                // the connection request timed out, so tell
-                // the user
-                case CONNECTERR_TIMEDOUT:
-                  ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_SMTP), host);
-                break;
-
-                // an error occurred while checking for 8bit MIME
-                // compatibility
-                case CONNECTERR_INVALID8BIT:
-                  ER_NewError(tr(MSG_ER_NO8BITMIME_SMTP), host);
-                break;
-
-                // error during initialization of an SSL connection
-                case CONNECTERR_SSLFAILED:
-                  ER_NewError(tr(MSG_ER_INITTLS_SMTP), host);
-                break;
-
-                // an unknown error occurred so lets show
-                // a generic error message
-                case CONNECTERR_UNKNOWN_ERROR:
-                  ER_NewError(tr(MSG_ER_CANNOT_CONNECT_SMTP), host);
-                break;
-
-                case CONNECTERR_NO_CONNECTION:
-                case CONNECTERR_NOT_CONNECTED:
-                  // cannot happen, do nothing
-                break;
-              }
-
-              BusyEnd();
-
-              DeleteFilterList(sentMailFilters);
+              // let the duplicated mail reference to its origin
+              tnode->mail->Reference = mail;
+              tnode->index = transferList->count;
+              totalSize += mail->Size;
             }
           }
-          else
-          {
-            ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
-          }
         }
 
-        PushMethodOnStack(G->App, 2, MUIM_YAM_DeleteTransferGroup, tc.transferGroup);
+        UnlockMailList(mlist);
+
+        D(DBF_NET, "prepared %ld mails for sending, %ld bytes", transferList->count, totalSize);
+
+        // just go on if we really have something
+        if(transferList->count > 0)
+        {
+          int port;
+          char *p;
+          char host[SIZE_HOST];
+
+          strlcpy(host, msn->hostname, sizeof(host));
+
+          // If the hostname has a explicit :xxxxx port statement at the end we
+          // take this one, even if its not needed anymore.
+          if((p = strchr(host, ':')) != NULL)
+          {
+            *p = '\0';
+            port = atoi(++p);
+          }
+          else
+            port = msn->port;
+
+          snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferTo), host);
+
+          D(DBF_GUI, "create transfer control group");
+          if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAM_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->conn, mode == SENDMAIL_ALL_USER || mode == SENDMAIL_ACTIVE_USER, TRUE)) != NULL)
+          {
+            // now we have to check whether SSL/TLS is selected for SMTP account,
+            // and if it is usable. Or if no secure connection is requested
+            // we can go on right away.
+            if((hasServerSSL(msn) == FALSE && hasServerTLS(msn) == FALSE) ||
+               G->TR_UseableTLS == TRUE)
+            {
+              struct MinList *sentMailFilters;
+
+              D(DBF_NET, "clone sent mail filters");
+              if((sentMailFilters = CloneFilterList(APPLY_SENT)) != NULL)
+              {
+                enum ConnectError err;
+
+                PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, transferList->count, totalSize);
+
+                PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
+                BusyText(tr(MSG_TR_MailTransferTo), host);
+
+                D(DBF_NET, "connecting to host '%s' port %ld", host, port);
+                if((err = ConnectToHost(tc->conn, host, port)) == CONNECTERR_SUCCESS)
+                {
+                  BOOL connected = FALSE;
+
+                  // first we check whether the user wants to connect to a plain SSLv3 server
+                  // so that we initiate the SSL connection now
+                  if(hasServerSSL(msn) == TRUE)
+                  {
+                    // lets try to establish the SSL connection via AmiSSL
+                    if(MakeSecureConnection(tc->conn) == TRUE)
+                      tc->useTLS = TRUE;
+                    else
+                      err = CONNECTERR_SSLFAILED; // special SSL connection error
+                  }
+
+                  // first we have to check whether the TCP/IP connection could
+                  // be successfully opened so that we can init the SMTP connection
+                  // and query the SMTP server for its capabilities now.
+                  if(err == CONNECTERR_SUCCESS)
+                  {
+                    // initialize the SMTP connection which will also
+                    // query the SMTP server for its capabilities
+                    connected = ConnectToSMTP(tc);
+
+                    // Now we have to check whether the user has selected SSL/TLS
+                    // and then we have to initiate the STARTTLS command followed by the TLS negotiation
+                    if(connected == TRUE && hasServerTLS(msn) == TRUE)
+                    {
+                      connected = InitSTARTTLS(tc);
+
+                      // then we have to refresh the SMTPflags and check
+                      // again what features we have after the STARTTLS
+                      if(connected == TRUE)
+                      {
+                        // first we flag this connection as a sucessfull
+                        // TLS session
+                        tc->useTLS = TRUE;
+
+                        // now run the connect SMTP function again
+                        // so that the SMTP server flags will be refreshed
+                        // accordingly.
+                        connected = ConnectToSMTP(tc);
+                      }
+                    }
+
+                    // If the user selected SMTP_AUTH we have to initiate
+                    // a AUTH connection
+                    if(connected == TRUE && hasServerAuth(msn) == TRUE)
+                      connected = InitSMTPAUTH(tc);
+                  }
+
+                  // If we are still "connected" we can proceed with transfering the data
+                  if(connected == TRUE)
+                  {
+                    struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
+                    struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
+                    struct MailTransferNode *tn;
+
+                    // set the success to TRUE as everything worked out fine
+                    // until here.
+                    success = TRUE;
+                    AppendToLogfile(LF_VERBOSE, 41, tr(MSG_LOG_ConnectSMTP), host);
+
+                    ForEachMailTransferNode(transferList, tn)
+                    {
+                      struct Mail *mail = tn->mail;
+
+                      if(tc->conn->abort == TRUE || tc->conn->error != CONNECTERR_NO_ERROR)
+                        break;
+
+                      PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tn->index, -1, mail->Size, tr(MSG_TR_Sending));
+
+                      switch(SendMessage(tc, mail))
+                      {
+                        // -1 means that SendMessage was aborted within the
+                        // DATA part and so we cannot issue a RSET command and have to abort
+                        // immediatly by leaving the mailserver alone.
+                        case -1:
+                        {
+                          setStatusToError(mail->Reference);
+                          tc->conn->error = CONNECTERR_UNKNOWN_ERROR;
+                        }
+                        break;
+
+                        // 0 means that an error occured before the DATA part and
+                        // so we can abort the transaction cleanly by a RSET and QUIT
+                        case 0:
+                        {
+                          setStatusToError(mail->Reference);
+                          SendSMTPCommand(tc, SMTP_RSET, NULL, NULL); // no error check
+                          tc->conn->error = CONNECTERR_NO_ERROR;
+                        }
+                        break;
+
+                        // 1 means we filter the mails and then copy/move the mail to the send folder
+                        case 1:
+                        {
+                          setStatusToSent(mail->Reference);
+                          if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
+                          {
+                            // the filter process did not move the mail, hence we do it now
+                            PushMethodOnStackWait(G->App, 5, MUIM_YAM_MoveCopyMail, mail->Reference, outfolder, sentfolder, MVCPF_CLOSE_WINDOWS);
+                          }
+                        }
+                        break;
+
+                        // 2 means we filter and delete afterwards
+                        case 2:
+                        {
+                          setStatusToSent(mail->Reference);
+                          if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
+                          {
+                            // the filter process did not delete the mail, hence we do it now
+                            PushMethodOnStackWait(G->App, 3, MUIM_YAM_DeleteMail, mail->Reference, DELF_UPDATE_APPICON);
+                          }
+                        }
+                        break;
+                      }
+                    }
+
+                    PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
+
+                    if(tc->conn->error == CONNECTERR_NO_ERROR)
+                      AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_Sending), transferList->count, host);
+                    else
+                      AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_SENDING_FAILED), transferList->count, host);
+
+                    // now we can disconnect from the SMTP
+                    // server again
+                    PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Disconnecting));
+
+                    // send a 'QUIT' command, but only if
+                    // we didn't receive any error during the transfer
+                    if(tc->conn->error == CONNECTERR_NO_ERROR)
+                      SendSMTPCommand(tc, SMTP_QUIT, NULL, tr(MSG_ER_BADRESPONSE_SMTP));
+                  }
+                  else
+                  {
+                    // check if we end up here cause of the 8BITMIME differences
+                    if(has8BITMIME(msn->smtpFlags) == FALSE && hasServer8bit(msn) == TRUE)
+                    {
+                      W(DBF_NET, "incorrect Allow8bit setting!");
+                      err = CONNECTERR_INVALID8BIT;
+                    }
+                    else if(err != CONNECTERR_SSLFAILED)
+                      err = CONNECTERR_UNKNOWN_ERROR;
+                  }
+
+                  // make sure to shutdown the socket and all possible SSL connection stuff
+                  DisconnectFromHost(tc->conn);
+
+                  // update the AppIcon after closing down the connection
+                  PushMethodOnStack(G->App, 1, MUIM_YAM_UpdateAppIcon);
+                }
+
+                // if we got an error here, let's throw it
+                switch(err)
+                {
+                  case CONNECTERR_SUCCESS:
+                  case CONNECTERR_ABORTED:
+                  case CONNECTERR_NO_ERROR:
+                    // do nothing
+                  break;
+
+                  // a socket is already in use so we return
+                  // a specific error to the user
+                  case CONNECTERR_SOCKET_IN_USE:
+                    ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP), host);
+                  break;
+
+                  // socket() execution failed
+                  case CONNECTERR_NO_SOCKET:
+                    ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_SMTP), host);
+                  break;
+
+                  // couldn't establish non-blocking IO
+                  case CONNECTERR_NO_NONBLOCKIO:
+                    ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP), host);
+                  break;
+
+                  // the specified hostname isn't valid, so
+                  // lets tell the user
+                  case CONNECTERR_UNKNOWN_HOST:
+                    ER_NewError(tr(MSG_ER_UNKNOWN_HOST_SMTP), host);
+                  break;
+
+                  // the connection request timed out, so tell
+                  // the user
+                  case CONNECTERR_TIMEDOUT:
+                    ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_SMTP), host);
+                  break;
+
+                  // an error occurred while checking for 8bit MIME
+                  // compatibility
+                  case CONNECTERR_INVALID8BIT:
+                    ER_NewError(tr(MSG_ER_NO8BITMIME_SMTP), host);
+                  break;
+
+                  // error during initialization of an SSL connection
+                  case CONNECTERR_SSLFAILED:
+                    ER_NewError(tr(MSG_ER_INITTLS_SMTP), host);
+                  break;
+
+                  // an unknown error occurred so lets show
+                  // a generic error message
+                  case CONNECTERR_UNKNOWN_ERROR:
+                    ER_NewError(tr(MSG_ER_CANNOT_CONNECT_SMTP), host);
+                  break;
+
+                  case CONNECTERR_NO_CONNECTION:
+                  case CONNECTERR_NOT_CONNECTED:
+                    // cannot happen, do nothing
+                  break;
+                }
+
+                BusyEnd();
+
+                DeleteFilterList(sentMailFilters);
+              }
+            }
+            else
+            {
+              ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
+            }
+          }
+
+          PushMethodOnStack(G->App, 2, MUIM_YAM_DeleteTransferGroup, tc->transferGroup);
+        }
+
+        // remove any mail transfer nodes from the list and delete the list
+        DeleteMailTransferList(transferList);
+
+        // start the POSTSEND macro so that others notice that the
+        // send process has finished. No need to wait for termination.
+        PushMethodOnStack(G->App, 3, MUIM_YAM_StartMacro, MACRO_POSTSEND, NULL);
       }
-
-      // remove any mail transfer nodes from the list and delete the list
-      DeleteMailTransferList(transferList);
-
-      // start the POSTSEND macro so that others notice that the
-      // send process has finished. No need to wait for termination.
-      PushMethodOnStack(G->App, 3, MUIM_YAM_StartMacro, MACRO_POSTSEND, NULL);
     }
+
+    DeleteConnection(tc->conn);
+
+    free(tc);
   }
 
-  DeleteConnection(tc.conn);
-
+  // delete the list of mails
   DeleteMailList(mlist);
 
-  // mark the server as being "not in use"
+  // mark the server as being no longer "in use"
   CLEAR_FLAG(msn->flags, MSF_IN_USE);
 
   RETURN(success);

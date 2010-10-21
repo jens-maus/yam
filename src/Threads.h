@@ -41,6 +41,7 @@ enum ThreadAction
   TA_FlushSpamTrainingData,
   TA_SendMails,
   TA_ImportMails,
+  TA_ReceiveMails,
 };
 
 #define TT_Priority                                 0xf001 // priority of the thread
@@ -56,10 +57,15 @@ enum ThreadAction
 #define TT_ImportMails_Folder                      (TAG_USER + 2)
 #define TT_ImportMails_Flags                       (TAG_USER + 3)
 
+#define TT_ReceiveMails_MailServer                 (TAG_USER + 1)
+#define TT_ReceiveMails_Flags                      (TAG_USER + 2)
+#define TT_ReceiveMails_Result                     (TAG_USER + 3)
+
 /*** Thread system init/cleanup functions ***/
 BOOL InitThreads(void);
 void CleanupThreads(void);
 void HandleThreads(void);
+void AbortWorkingThreads(void);
 void PurgeIdleThreads(const BOOL purgeAll);
 BOOL VARARGS68K DoAction(const enum ThreadAction action, ...);
 BOOL IsMainThread(void);
@@ -69,6 +75,7 @@ void WakeupThread(APTR thread);
 LONG ThreadAbortSignal(void);
 LONG ThreadWakeupSignal(void);
 LONG ThreadTimerSignal(void);
+BOOL ThreadWasAborted(void);
 const char *ThreadName(void);
 BOOL InitThreadTimer(void);
 void CleanupThreadTimer(void);

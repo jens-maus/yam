@@ -33,7 +33,6 @@
 #include <proto/timer.h>
 
 #include <mui/NList_mcc.h>
-#include <mui/TextEditor_mcc.h>
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
@@ -49,7 +48,6 @@
 #include "Timer.h"
 
 #include "mui/Classes.h"
-#include "tcp/pop3.h"
 
 #include "Debug.h"
 
@@ -303,7 +301,7 @@ BOOL InitTimers(void)
     // free the data in case YAM crashes (only available on OS4)
     if((G->timerData.timer[0].tr = AllocSysObjectTags(ASOT_IOREQUEST,
                                                 ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                ASOIOR_ReplyPort, (ULONG)G->timerData.port,
+                                                ASOIOR_ReplyPort, (IPTR)G->timerData.port,
                                                 TAG_DONE)) != NULL)
     {
       // then open the device
@@ -322,7 +320,7 @@ BOOL InitTimers(void)
             // free the data in case YAM crashes (only available on OS4)
             if((G->timerData.timer[tid].tr = AllocSysObjectTags(ASOT_IOREQUEST,
                                                           ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                          ASOIOR_Duplicate, (ULONG)G->timerData.timer[0].tr,
+                                                          ASOIOR_Duplicate, (IPTR)G->timerData.timer[0].tr,
                                                           TAG_DONE)) == NULL)
             {
               break;
@@ -445,36 +443,11 @@ static void TimerDispatcher(const enum Timer tid)
     }
     break;
 
-    // in case the checkMail timerIO request was triggered we
-    // need to check if no writewindow is currently in use and
-    // then check for new mail.
     case TIMER_CHECKMAIL:
     {
-      BOOL writeWindowActive = FALSE;
-      struct Node *curNode;
-
       D(DBF_TIMER, "timer[%ld]: TIMER_CHECKMAIL fired @ %s", tid, dateString);
 
-      // only if there is currently no write window open we
-      // check for new mail.
-      IterateList(&G->writeMailDataList, curNode)
-      {
-        struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-        if(wmData->window != NULL && xget(wmData->window, MUIA_Window_Open) == TRUE)
-        {
-          writeWindowActive = TRUE;
-          break;
-        }
-      }
-
-      // also the configuration window needs to be closed
-      // or we skip the pop operation
-      if(writeWindowActive == FALSE &&
-         G->CO == NULL)
-      {
-        MA_PopNow(POP_TIMED, -1);
-      }
+      MA_PopNow(-1, RECEIVEF_TIMER, NULL);
 
       // prepare the timer to get fired again
       PrepareTimer(tid, C->CheckMailDelay*60, 0);
@@ -568,22 +541,6 @@ static void TimerDispatcher(const enum Timer tid)
 
       // signal the QuickSearchBar to search now
       DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_ProcessSearch);
-    }
-    break;
-
-    // on a POP3_KEEPALIVE we make sure that a currently active, but waiting
-    // POP3 connection (preselection) doesn't die by sending NOOP commands regularly
-    // to the currently connected POP3 server.
-    case TIMER_POP3_KEEPALIVE:
-    {
-      D(DBF_TIMER, "timer[%ld]: TIMER_POP3_KEEPALIVE fired @ %s", tid, dateString);
-
-      // send the POP3 server a 'NOOP'
-      if(TR_SendPOP3KeepAlive() == TRUE)
-      {
-        // prepare the timer to get fired again
-        PrepareTimer(tid, C->KeepAliveInterval, 0);
-      }
     }
     break;
 
@@ -712,9 +669,6 @@ BOOL ProcessTimerEvent(void)
 
     if(G->timerData.timer[TIMER_AUTOSAVE].isPrepared == TRUE)
       StartTimer(TIMER_AUTOSAVE);
-
-    if(G->timerData.timer[TIMER_POP3_KEEPALIVE].isPrepared == TRUE)
-      StartTimer(TIMER_POP3_KEEPALIVE);
 
     if(G->timerData.timer[TIMER_UPDATECHECK].isPrepared == TRUE)
       StartTimer(TIMER_UPDATECHECK);

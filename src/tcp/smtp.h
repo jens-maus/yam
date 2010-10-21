@@ -28,13 +28,26 @@
 
 ***************************************************************************/
 
-#include "YAM_transfer.h"
-
 // forward declarations
 struct MailList;
 struct MailServerNode;
 
+enum SendMailMode
+{
+  SENDMAIL_ALL_USER = 0,
+  SENDMAIL_ALL_AUTO,
+  SENDMAIL_ACTIVE_USER,
+  SENDMAIL_ACTIVE_AUTO
+};
+
+enum TransWinMode
+{
+  TWM_HIDE=0,
+  TWM_AUTO,
+  TWM_SHOW
+};
+
 // prototypes
-BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMode mode);
+BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMailMode mode);
 
 #endif /* SMTP_H */

@@ -1505,7 +1505,7 @@ DECLARE(SaveDecryptedMail)
 
           if(choice == 2)
           {
-            MA_DeleteSingle(mail, DELF_UPDATE_APPICON);
+            MA_DeleteSingle(mail, DELF_UPDATE_APPICON|DELF_CHECK_CONNECTIONS);
 
             // erase the old pointer as this has been free()ed by MA_DeleteSingle()
             rmData->mail = NULL;
@@ -1716,7 +1716,7 @@ DECLARE(DeleteMail)
     struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
 
     // delete the mail
-    MA_DeleteSingle(mail, DELF_UPDATE_APPICON);
+    MA_DeleteSingle(mail, DELF_UPDATE_APPICON|DELF_CHECK_CONNECTIONS);
     AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
 
     // erase the old pointer as this has been free()ed by MA_MoveCopy()

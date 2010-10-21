@@ -8564,7 +8564,7 @@ Keine Updates verfügbar
 MSG_UPD_NO_UPDATES_FOUND
 Es sind keine Softwareupdates verfügbar.\n\
 %s
-; HINT
+;
 MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
 YAM prüft automatisch auf verfügbare Updates.
 ;
@@ -8614,4 +8614,13 @@ L
 ;
 MSG_ALTIMAGE_STATUS_DELETE
 X
+;
+MSG_PRESELECT_INDEX
+Index
+;
+MSG_TR_WAIT_FOR_PASSWORD
+Warte auf Passworteingabe des Benutzers...
+;
+MSG_TR_WAIT_FOR_PRESELECTION
+Warte auf Vorauswahl des Benutzers...
 ;

@@ -30,7 +30,6 @@
 
 #include "TransferWindow_cl.h"
 
-#include "YAM_transfer.h"
 #include "MUIObjects.h"
 
 #include "mui/Classes.h"
@@ -48,22 +47,18 @@ struct Data
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  enum TransferType TRmode;
   Object *transferList;
-
-  TRmode = GetTagData(ATTR(Mode), TR_IMPORT, inittags(msg));
 
   ENTER();
 
   if((obj = DoSuperNew(cl, obj,
 
     MUIA_Window_Title, tr(MSG_TRANSFERS_IN_PROGRESS),
-    MUIA_Window_ID, MAKE_ID('T','R','A','0'+TRmode),
+    MUIA_Window_ID, MAKE_ID('T','R','A','N'),
     MUIA_Window_CloseGadget, FALSE,
-    MUIA_Window_Activate, (TRmode == TR_IMPORT || TRmode == TR_EXPORT || TRmode == TR_GET_USER || TRmode == TR_SEND_USER),
     MUIA_HelpNode, "TR_W",
     WindowContents, VGroup,
-      MUIA_Frame, MUIV_Frame_None,
+      MUIA_Background, MUII_GroupBack,
       Child, transferList = TransferControlListObject,
       End,
     End,

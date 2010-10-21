@@ -31,6 +31,7 @@
 #include "TransferControlGroup_cl.h"
 
 #include "MUIObjects.h"
+#include "Threads.h"
 
 #include "tcp/Connection.h"
 
@@ -44,9 +45,9 @@ struct Data
   Object *GA_COUNT;
   Object *GA_BYTES;
   Object *BT_ABORT;
-  Object *preselectionList;
 
   struct Connection *conn;
+  APTR thread;
 
   int Msgs_Tot;
   int Msgs_Done;
@@ -59,9 +60,6 @@ struct Data
   ULONG Clock_Start;
   struct TimeVal Clock_Last;
 
-  BOOL aborted;
-  BOOL started;
-
   char stats_label[SIZE_DEFAULT];
   char size_gauge_label[SIZE_DEFAULT];
   char msg_gauge_label[SIZE_DEFAULT];
@@ -70,14 +68,14 @@ struct Data
   char str_speed[SIZE_SMALL];
   char str_size_curr[SIZE_SMALL];
   char str_size_curr_max[SIZE_SMALL];
+
+  BOOL started;
 };
 */
 
 /* EXPORT
 #define TCG_SETMAX   (-1)
 */
-
-/* Hooks */
 
 /* Private Functions */
 /// DoUpdateStats
@@ -107,10 +105,6 @@ static void DoUpdateStats(struct Data *data, const int size_incr, const char *st
     LONG remtime;
     ULONG max;
     ULONG current;
-
-    // if we have a preselection list then update this as well
-    if(data->preselectionList != NULL && data->Msgs_ListPos >= 0)
-      set(data->preselectionList, MUIA_NList_Active, data->Msgs_ListPos);
 
     // first we calculate the speed in bytes/sec
     // to display to the user
@@ -175,9 +169,6 @@ static void DoUpdateStats(struct Data *data, const int size_incr, const char *st
     xset(data->GA_BYTES, MUIA_Gauge_InfoText, data->size_gauge_label,
                          MUIA_Gauge_Max,      max,
                          MUIA_Gauge_Current,  current);
-
-    // signal the application to update now
-    DoMethod(G->App, MUIM_Application_InputBuffered);
   }
 
   LEAVE();
@@ -235,10 +226,12 @@ OVERLOAD(OM_NEW)
     data->GA_BYTES = GA_BYTES;
     data->BT_ABORT = BT_ABORT;
 
+    data->thread = (APTR)GetTagData(ATTR(Thread), (IPTR)NULL, inittags(msg));
+
     SetHelp(data->TX_STATUS, MSG_HELP_TR_TX_STATUS);
     SetHelp(data->BT_ABORT, MSG_HELP_TR_BT_ABORT);
 
-    DoMethod(data->BT_ABORT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, ATTR(Aborted), TRUE);
+    DoMethod(data->BT_ABORT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(Abort));
 
     // prepare the initial text object content
     DoMethod(obj, METHOD(Reset));
@@ -265,56 +258,17 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      case ATTR(PreselectionList):
-      {
-        data->preselectionList = (Object *)tag->ti_Data;
-      }
-      break;
-
       case ATTR(Connection):
       {
         data->conn = (struct Connection *)tag->ti_Data;
       }
       break;
 
-      case ATTR(Aborted):
+      case ATTR(Thread):
       {
-        data->aborted = (BOOL)tag->ti_Data;
-        if(data->conn != NULL)
-          data->conn->abort = (BOOL)tag->ti_Data;
+        data->thread = (APTR)tag->ti_Data;
       }
       break;
-    }
-  }
-
-  return DoSuperMethodA(cl, obj, msg);
-}
-
-///
-/// OVERLOAD(OM_GET)
-OVERLOAD(OM_GET)
-{
-  GETDATA;
-  IPTR *store = ((struct opGet *)msg)->opg_Storage;
-
-  switch(((struct opGet *)msg)->opg_AttrID)
-  {
-    case ATTR(NumberOfMails):
-    {
-      *store = data->Msgs_Tot;
-      return TRUE;
-    }
-
-    case ATTR(NumberOfProcessedMails):
-    {
-      *store = data->Msgs_Done;
-      return TRUE;
-    }
-
-    case ATTR(Aborted):
-    {
-      *store = (data->aborted == TRUE || (data->conn != NULL && data->conn->abort == TRUE));
-      return TRUE;
     }
   }
 
@@ -352,6 +306,23 @@ DECLARE(Reset)
   xset(data->GA_BYTES, MUIA_Gauge_InfoText, data->size_gauge_label,
                        MUIA_Gauge_Max,      100,
                        MUIA_Gauge_Current,  0);
+
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(Abort)
+DECLARE(Abort)
+{
+  GETDATA;
+
+  ENTER();
+
+  if(data->conn != NULL)
+    data->conn->abort = TRUE;
+  if(data->thread != NULL)
+    WakeupThread(data->thread);
 
   LEAVE();
   return 0;

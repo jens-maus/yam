@@ -726,7 +726,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case MMEN_FORWARD_ATTACH: DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_ATTACH, 0); break;
     case MMEN_FORWARD_INLINE: DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_INLINE, 0); break;
     case MMEN_BOUNCE:         DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_BOUNCE,         0); break;
-    case MMEN_SEND:           DoMethod(G->App, MUIM_CallHook, &MA_SendHook, SEND_ACTIVE_USER); break;
+    case MMEN_SEND:           DoMethod(G->App, MUIM_CallHook, &MA_SendHook, SENDMAIL_ACTIVE_USER); break;
     case MMEN_CHSUBJ:         DoMethod(G->App, MUIM_CallHook, &MA_ChangeSubjectHook); break;
     case MMEN_TOUNREAD:       DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_NEW|SFLAG_READ);              break;
     case MMEN_TOREAD:         DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_READ,              SFLAG_NEW);                         break;

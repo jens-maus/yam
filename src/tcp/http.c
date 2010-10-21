@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include <string.h>
+#include <stdio.h>
 
 #include "YAM_config.h"
 #include "YAM_error.h"

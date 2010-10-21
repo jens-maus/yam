@@ -35,6 +35,8 @@
 
 #include "UpdateCheck.h"
 
+#include "tcp/Connection.h"
+
 // forward declarations
 struct FilterNode;
 
@@ -537,16 +539,16 @@ struct Config
   BOOL  ShowFilterStats;
   BOOL  ConfirmRemoveAttachments;
 
-  struct MUI_PenSpec ColoredText;
-  struct MUI_PenSpec Color1stLevel;
-  struct MUI_PenSpec Color2ndLevel;
-  struct MUI_PenSpec Color3rdLevel;
-  struct MUI_PenSpec Color4thLevel;
-  struct MUI_PenSpec ColorURL;
-  struct MUI_PenSpec ColorSignature;
-  struct RxHook      RX[MAXRX];
-  struct TRSocketOpt SocketOptions;
-  struct DateStamp   BirthdayCheckTime;
+  struct MUI_PenSpec   ColoredText;
+  struct MUI_PenSpec   Color1stLevel;
+  struct MUI_PenSpec   Color2ndLevel;
+  struct MUI_PenSpec   Color3rdLevel;
+  struct MUI_PenSpec   Color4thLevel;
+  struct MUI_PenSpec   ColorURL;
+  struct MUI_PenSpec   ColorSignature;
+  struct RxHook        RX[MAXRX];
+  struct SocketOptions SocketOptions;
+  struct DateStamp     BirthdayCheckTime;
 
   char RealName[SIZE_REALNAME];
   char EmailAddress[SIZE_ADDRESS];

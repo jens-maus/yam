@@ -88,6 +88,8 @@
 #define GET_SOCKETBASE(conn)  struct Library *SocketBase = (conn)->socketBase
 #endif
 
+#define INVALID_SOCKET        -1
+
 /// InitConnections
 // initalize a shared semaphore for all connections
 BOOL InitConnections(void)
@@ -317,7 +319,7 @@ struct Connection *CreateConnection(void)
         {
           D(DBF_NET, "got socket interface");
 
-          conn->socket = TCP_NO_SOCKET;
+          conn->socket = INVALID_SOCKET;
 
           // set to no error per default
           conn->error = CONNECTERR_NO_ERROR;
@@ -329,6 +331,9 @@ struct Connection *CreateConnection(void)
           // modified as long as this connection exists
           conn->receiveBufferSize = C->TRBufferSize;
           conn->sendBufferSize = C->TRBufferSize;
+
+          // by default we can be aborted by the standard break signal
+          conn->breakSignals = (1UL << ThreadAbortSignal());
 
           conn->connectedFromMainThread = IsMainThread();
 
@@ -680,10 +685,10 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
 
       // now we try a connection for every address we have for this host
       // because a hostname can have more than one IP in h_addr_list[]
-      for(i = 0; hostaddr->h_addr_list[i]; i++)
+      for(i = 0; hostaddr->h_addr_list[i]; ++i)
       {
         // lets create a standard AF_INET socket now
-        if((conn->socket = socket(AF_INET, SOCK_STREAM, 0)) != TCP_NO_SOCKET)
+        if((conn->socket = socket(AF_INET, SOCK_STREAM, 0)) != INVALID_SOCKET)
         {
           long nonBlockingIO = 1;
 
@@ -692,7 +697,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
           {
             int connectIssued = 0;
 
-            D(DBF_NET, "successfully set socket to non-blocking I/O");
+            D(DBF_NET, "host '%s', successfully set socket to non-blocking I/O", host);
 
             // set the socket options the user has defined
             // in the configuration
@@ -706,7 +711,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
 
             memcpy(&conn->socketAddr.sin_addr, hostaddr->h_addr_list[i], (size_t)hostaddr->h_length);
 
-            D(DBF_NET, "trying TCP/IP connection to '%s' on port %ld", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr), port);
+            D(DBF_NET, "trying TCP/IP connection to host '%s' with IP %s on port %ld", host, Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr), port);
 
             // set to no error per default
             conn->error = CONNECTERR_NO_ERROR;
@@ -751,7 +756,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
                     // check if we are here because of a second iteration
                     if(retVal == 0)
                     {
-                      W(DBF_NET, "TR_Connect: recoverable WaitSelect() timeout: %ld", timeoutSum);
+                      W(DBF_NET, "host '%s', recoverable WaitSelect() timeout: %ld", host, timeoutSum);
 
                       // give our GUI the chance to update
                       if(conn->connectedFromMainThread == TRUE)
@@ -784,7 +789,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
                     FD_ZERO(&conn->fdset);
                     FD_SET(conn->socket, &conn->fdset);
                   }
-                  while((retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL)) == 0);
+                  while((retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, &conn->breakSignals)) == 0);
 
                   // if WaitSelect() returns 1 we successfully waited for
                   // being able to write to the socket. So we can break out of the
@@ -795,7 +800,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
                     int errval = -1;
                     socklen_t errlen = sizeof(errval);
 
-                    D(DBF_NET, "WaitSelect() succeeded");
+                    D(DBF_NET, "host '%s', WaitSelect() succeeded", host);
 
                     // normally we should not set an error code here but
                     // continue cleanly so that a second connect() will
@@ -822,13 +827,13 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
                   {
                     // the WaitSelect() call timed out or it received a break
                     // signal
-                    W(DBF_NET, "WaitSelect() socket timeout reached");
+                    W(DBF_NET, "host '%s', WaitSelect() socket timeout reached", host);
                     conn->error = CONNECTERR_TIMEDOUT;
                   }
                   else
                   {
                     // the rest should signal an error
-                    E(DBF_NET, "WaitSelect() returned an error: %ld", connerr);
+                    E(DBF_NET, "host '%s', WaitSelect() returned an error: %ld", host, connerr);
                     conn->error = CONNECTERR_UNKNOWN_ERROR;
                   }
                 }
@@ -870,6 +875,10 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
             // now we are properly connected
             conn->isConnected = TRUE;
 
+            ObtainSemaphore(G->connectionSemaphore);
+            G->activeConnections++;
+            ReleaseSemaphore(G->connectionSemaphore);
+
             // reset the buffer pointers
             conn->receiveCount = 0;
             conn->receivePtr = conn->receiveBuffer;
@@ -901,7 +910,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
         else if(conn->error == CONNECTERR_SUCCESS)
           break;
         else
-          E(DBF_NET, "connection result %ld, trying next IP of host...", conn->error);
+          E(DBF_NET, "connection result %ld, trying next IP of host '%s'", conn->error, host);
       }
     }
     else
@@ -929,13 +938,13 @@ void DisconnectFromHost(struct Connection *conn)
 {
   ENTER();
 
-  D(DBF_NET, "disconnecting TCP/IP session %08lx", conn);
-
   if(conn != NULL)
   {
     if(conn->isConnected == TRUE)
     {
       GET_SOCKETBASE(conn);
+
+      D(DBF_NET, "disconnecting TCP/IP session %08lx", conn);
 
       // shut down the SSL stuff
       if(conn->ssl != NULL)
@@ -954,13 +963,17 @@ void DisconnectFromHost(struct Connection *conn)
       // close the connection
       shutdown(conn->socket, SHUT_RDWR);
       CloseSocket(conn->socket);
-      conn->socket = TCP_NO_SOCKET;
+      conn->socket = INVALID_SOCKET;
 
       if(AmiSSLBase != NULL)
         CleanupAmiSSLA(NULL);
 
       // we are no longer connected
       conn->isConnected = FALSE;
+
+      ObtainSemaphore(G->connectionSemaphore);
+      G->activeConnections--;
+      ReleaseSemaphore(G->connectionSemaphore);
     }
   }
 
@@ -1114,9 +1127,9 @@ BOOL MakeSecureConnection(struct Connection *conn)
                             // as with SSL both things can happen
                             // see http://www.openssl.org/docs/ssl/SSL_connect.html
                             if(err == SSL_ERROR_WANT_READ)
-                              retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
+                              retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, &conn->breakSignals);
                             else
-                              retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
+                              retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, &conn->breakSignals);
                           }
                           while(retVal == 0);
 
@@ -1338,9 +1351,9 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
               // as with SSL both things can happen
               // see http://www.openssl.org/docs/ssl/SSL_read.html
               if(err == SSL_ERROR_WANT_READ)
-                retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
+                retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, &conn->breakSignals);
               else
-                retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
+                retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, &conn->breakSignals);
             }
             while(retVal == 0);
 
@@ -1476,7 +1489,7 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
               FD_ZERO(&conn->fdset);
               FD_SET(conn->socket, &conn->fdset);
             }
-            while((retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL)) == 0);
+            while((retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, &conn->breakSignals)) == 0);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to read from the socket. So we go and do another
@@ -1659,7 +1672,7 @@ int ReceiveLineFromHost(struct Connection *conn, char *vptr, const int maxlen)
           printf("\n");
       }
 
-      D(DBF_NET, "TCP: received %ld of max %ld bytes", n, maxlen);
+      //D(DBF_NET, "TCP: received %ld of max %ld bytes", n, maxlen);
 
       // return the number of chars we read
       result = n;
@@ -1709,7 +1722,7 @@ int ReceiveFromHost(struct Connection *conn, char *recvdata, const int maxlen)
           printf("\n");
       }
 
-      D(DBF_NET, "TCP: received %ld of max %ld bytes", nread, maxlen);
+      //D(DBF_NET, "TCP: received %ld of max %ld bytes", nread, maxlen);
     }
     else
     {
@@ -1819,9 +1832,9 @@ static int WriteToHost(struct Connection *conn, const char *ptr, const int len)
               // as with SSL both things can happen
               // see http://www.openssl.org/docs/ssl/SSL_write.html
               if(err == SSL_ERROR_WANT_READ)
-                retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
+                retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, &conn->breakSignals);
               else
-                retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
+                retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, &conn->breakSignals);
             }
             while(retVal == 0);
 
@@ -1961,7 +1974,7 @@ static int WriteToHost(struct Connection *conn, const char *ptr, const int len)
               FD_ZERO(&conn->fdset);
               FD_SET(conn->socket, &conn->fdset);
             }
-            while((retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL)) == 0);
+            while((retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, &conn->breakSignals)) == 0);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to write to the socket. So we go and do another

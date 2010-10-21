@@ -741,7 +741,7 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
       DeleteFile(mailfile);
 
       // now remove the mail from its folder/mail list
-      RemoveMailFromList(mail, isFlagSet(delFlags, DELF_CLOSE_WINDOWS));
+      RemoveMailFromList(mail, isFlagSet(delFlags, DELF_CLOSE_WINDOWS), isFlagSet(delFlags, DELF_CHECK_CONNECTIONS));
 
       // if we are allowed to make some noise we
       // update our Statistics
@@ -812,7 +812,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
       SetWriteMailDataMailRef(mail, newMail);
 
       // now remove the mail from its folder/mail list
-      RemoveMailFromList(mail, isFlagSet(flags, MVCPF_CLOSE_WINDOWS));
+      RemoveMailFromList(mail, isFlagSet(flags, MVCPF_CLOSE_WINDOWS), isFlagSet(flags, MVCPF_CHECK_CONNECTIONS));
     }
 
     if(newMail != NULL)
@@ -2027,7 +2027,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         struct MailNode *mnode;
         ULONG deleted;
         BOOL ignoreall = FALSE;
-        ULONG delFlags = (delatonce == TRUE) ? DELF_AT_ONCE|DELF_QUIET|DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON : DELF_QUIET|DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON;
+        ULONG delFlags = (delatonce == TRUE) ? DELF_AT_ONCE|DELF_QUIET|DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON|DELF_CHECK_CONNECTIONS : DELF_QUIET|DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON|DELF_CHECK_CONNECTIONS;
 
         D(DBF_MAIL, "going to delete %ld mails from folder '%s'", selected, folder->Name);
 
@@ -2395,7 +2395,7 @@ MakeHook(MA_GetAddressHook, MA_GetAddressFunc);
 ///
 /// MA_ExchangeMail
 //  send and get mails
-void MA_ExchangeMail(enum GUILevel mode)
+void MA_ExchangeMail(const ULONG receiveFlags)
 {
   ENTER();
 
@@ -2403,50 +2403,101 @@ void MA_ExchangeMail(enum GUILevel mode)
   {
     case MEO_GET_FIRST:
     {
-      MA_PopNow(mode, -1);
-      // the POP transfer window is not yet disposed
-      // we need to process that disposure first before we can send any outstanding mail
-      DoMethod(G->App, MUIM_Application_InputBuffered);
-      MA_Send(mode == POP_USER ? SEND_ALL_USER : SEND_ALL_AUTO);
+      MA_PopNow(-1, receiveFlags, NULL);
+      MA_Send(isFlagSet(receiveFlags, RECEIVEF_USER) ? SENDMAIL_ALL_USER : SENDMAIL_ALL_AUTO);
     }
     break;
 
     case MEO_SEND_FIRST:
     {
-      MA_Send(mode == POP_USER ? SEND_ALL_USER : SEND_ALL_AUTO);
-      // the SMTP transfer window is not yet disposed
-      // we need to process that disposure first before we can fetch any new mail
-      DoMethod(G->App, MUIM_Application_InputBuffered);
-      MA_PopNow(mode, -1);
+      MA_Send(isFlagSet(receiveFlags, RECEIVEF_USER) ? SENDMAIL_ALL_USER : SENDMAIL_ALL_AUTO);
+      MA_PopNow(-1, receiveFlags, NULL);
     }
     break;
   }
-
-  // close the last window
-  DoMethod(G->App, MUIM_Application_InputBuffered);
 
   LEAVE();
 }
 
 ///
-/// MA_PopNow
-//  Fetches new mail from POP3 account(s)
-void MA_PopNow(enum GUILevel mode, int pop)
+/// ReceiveMailsFromPOP
+BOOL ReceiveMailsFromPOP(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult)
 {
+  BOOL success = FALSE;
+
   ENTER();
 
-  // Don't proceed if another transfer is in progress
-  if(G->TR == NULL)
+  if(hasServerInUse(msn) == FALSE)
   {
-    if(C->UpdateStatus == TRUE)
-      MA_UpdateStatus();
+    // mark the server as being "in use"
+    SET_FLAG(msn->flags, MSF_IN_USE);
 
-    MA_StartMacro(MACRO_PREGET, itoa(mode));
+    success = DoAction(TA_ReceiveMails, TT_ReceiveMails_MailServer, msn,
+                                        TT_ReceiveMails_Flags, flags,
+                                        TT_ReceiveMails_Result, dlResult,
+                                        TAG_DONE);
+    if(success == FALSE)
+    {
+      // clear the "in use" flag again in case of an error
+      CLEAR_FLAG(msn->flags, MSF_IN_USE);
+    }
+  }
+  else
+    W(DBF_NET, "server '%s' is already in use", msn->account);
 
-    TR_GetMailFromNextPOP(TRUE, pop, mode);
+  RETURN(success);
+  return success;
+}
+
+///
+/// MA_PopNow
+//  Fetches new mail from POP3 account(s)
+BOOL MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult)
+{
+  BOOL success = FALSE;
+
+  ENTER();
+
+  if(C->UpdateStatus == TRUE)
+    MA_UpdateStatus();
+
+  if(isFlagSet(flags, RECEIVEF_USER))
+    MA_StartMacro(MACRO_PREGET, "0");
+  else if(isFlagSet(flags, RECEIVEF_STARTUP))
+    MA_StartMacro(MACRO_PREGET, "1");
+  else if(isFlagSet(flags, RECEIVEF_TIMER))
+    MA_StartMacro(MACRO_PREGET, "2");
+  else if(isFlagSet(flags, RECEIVEF_AREXX))
+    MA_StartMacro(MACRO_PREGET, "3");
+
+  if(pop == -1)
+  {
+    struct MailServerNode *msn;
+
+    success = TRUE;
+    pop = 0;
+    while((msn = GetMailServer(&C->mailServerList, MST_POP3, pop)) != NULL)
+    {
+      // fetch mails from active servers only
+      if(isServerActive(msn) == TRUE)
+        success &= ReceiveMailsFromPOP(msn, flags, dlResult);
+
+      pop++;
+    }
+  }
+  else
+  {
+    struct MailServerNode *msn;
+
+    if((msn = GetMailServer(&C->mailServerList, MST_POP3, pop)) != NULL)
+    {
+      // we ignore the active state for single servers
+      success = ReceiveMailsFromPOP(msn, flags, dlResult);
+    }
   }
 
-  LEAVE();
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -2461,9 +2512,9 @@ HOOKPROTONHNO(MA_PopNowFunc, void, int *arg)
   // pressed then a mail exchange is done rather than a simple
   // download of mails
   if(hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
-    MA_ExchangeMail(arg[0]);
+    MA_ExchangeMail(arg[1]);
   else
-    MA_PopNow(arg[0], arg[1]);
+    MA_PopNow(arg[0], arg[1], NULL);
 
   LEAVE();
 }
@@ -2474,7 +2525,7 @@ MakeHook(MA_PopNowHook, MA_PopNowFunc);
 /*** Sub-button functions ***/
 /// MA_Send
 //  Sends selected or all messages
-BOOL MA_Send(enum SendMode mode)
+BOOL MA_Send(enum SendMailMode mode)
 {
   BOOL success = FALSE;
   struct MailServerNode *msn;
@@ -2496,13 +2547,13 @@ BOOL MA_Send(enum SendMode mode)
 
       switch(mode)
       {
-        case SEND_ALL_USER:
-        case SEND_ALL_AUTO:
+        case SENDMAIL_ALL_USER:
+        case SENDMAIL_ALL_AUTO:
           mlist = MA_CreateFullList(fo, FALSE);
         break;
 
-        case SEND_ACTIVE_USER:
-        case SEND_ACTIVE_AUTO:
+        case SENDMAIL_ACTIVE_USER:
+        case SENDMAIL_ACTIVE_AUTO:
         {
           if(fo == FO_GetCurrentFolder())
             mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
@@ -3273,7 +3324,7 @@ BOOL MA_StartMacro(const enum Macro num, const char *param)
     {
       // now execute the command
       BusyText(tr(MSG_MA_EXECUTINGCMD), "");
-      LaunchCommand(command, !C->RX[num].WaitTerm, C->RX[num].UseConsole ? OUT_STDOUT : OUT_NIL);
+      LaunchCommand(command, C->RX[num].WaitTerm == FALSE, C->RX[num].UseConsole ? OUT_STDOUT : OUT_NIL);
       BusyEnd();
 
       result = TRUE;
@@ -3709,7 +3760,7 @@ void MA_SetupDynamicMenus(void)
           DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
 
           // add a notify for this item as well.
-          DoMethod(G->MA->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, POP_USER, i, 0L);
+          DoMethod(G->MA->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, i, RECEIVEF_USER, 0L);
 
           i++;
         }
@@ -4264,9 +4315,9 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOOK,          MUIV_Notify_Application, 3, MUIM_CallHook,             &AB_OpenHook, ABM_EDIT);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXPORT,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ExportMessagesHook, TRUE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_IMPORT,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ImportMessagesHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_GETMAIL,        MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, POP_USER, -1, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SENDMAIL,       MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ALL_USER);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXMAIL,         MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, POP_USER, -1, IEQUALIFIER_LSHIFT);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_GETMAIL,        MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, -1, RECEIVEF_USER, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SENDMAIL,       MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SENDMAIL_ALL_USER);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXMAIL,         MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, -1, RECEIVEF_USER, IEQUALIFIER_LSHIFT);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_READ,           MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ReadMessageHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT,           MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_EDIT, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MOVE,           MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_MoveMessageHook);
@@ -4284,7 +4335,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_BOUNCE,         MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_BOUNCE, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SAVEADDR,       MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_GetAddressHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CHSUBJ,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ChangeSubjectHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SEND,           MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SEND_ACTIVE_USER);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SEND,           MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SENDMAIL_ACTIVE_USER);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOUNREAD,       MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_NEW|SFLAG_READ);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOREAD,         MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_READ,              SFLAG_NEW);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOHOLD,         MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_HOLD|SFLAG_READ,   SFLAG_QUEUED|SFLAG_ERROR);

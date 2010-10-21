@@ -37,7 +37,6 @@
 #include <netinet/in.h>
 
 #include "YAM_stringsizes.h"
-#include "YAM_transfer.h"    // struct DownloadResult
 #include "YAM_userlist.h"    // struct Users
 #include "YAM_utilities.h"   // ASL_MAX
 
@@ -106,7 +105,6 @@ struct Global
   struct CO_ClassData *    CO;
   struct AB_ClassData *    AB;
   struct EA_ClassData *    EA[MAXEA];
-  struct TR_ClassData *    TR;
   struct ER_ClassData *    ER;
   struct FI_ClassData *    FI;
   struct FO_ClassData *    FO;
@@ -132,6 +130,7 @@ struct Global
   int                      CO_DST;
   int                      ER_NumErr;
   enum IconImages          currentAppIcon;
+  int                      activeConnections;
   #if defined(__amigaos4__)
   enum IconImages          LastIconID;
   #endif
@@ -154,7 +153,6 @@ struct Global
 
   struct DateStamp         StartDate;
   struct Users             Users;
-  struct DownloadResult    LastDL;
   struct MinList           readMailDataList;
   struct MinList           writeMailDataList;
   struct MinList           zombieFileList;
@@ -193,6 +191,7 @@ struct xpkPackerNode
 void PopUp(void);
 BOOL StayInProg(void);
 void MiniMainLoop(void);
+void MicroMainLoop(void);
 
 #endif /* MAIN_YAM_H */
 

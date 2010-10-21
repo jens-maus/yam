@@ -3662,8 +3662,10 @@ static void RE_SendMDN(const enum MDNMode mode,
 
                       mdnSent = DoAction(TA_SendMails, TT_SendMails_MailServer, msn,
                                                        TT_SendMails_Mails, mlist,
-                                                       TT_SendMails_Mode, autoSend ? SEND_ACTIVE_AUTO : SEND_ACTIVE_USER,
+                                                       TT_SendMails_Mode, autoSend ? SENDMAIL_ACTIVE_AUTO : SENDMAIL_ACTIVE_USER,
                                                        TAG_DONE);
+
+                      // clear the "in use" flag if the send process failed
                       if(mdnSent == FALSE)
                         CLEAR_FLAG(msn->flags, MSF_IN_USE);
                     }

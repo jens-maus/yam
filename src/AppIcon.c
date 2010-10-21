@@ -94,6 +94,7 @@ void FreeAppIcon(void)
 //  Calculates AppIconStatistic and update the AppIcon
 void UpdateAppIcon(void)
 {
+  int activeConnections;
   static char apptit[SIZE_DEFAULT/2];
   enum IconImages mode;
   int new_msg = 0;
@@ -162,8 +163,12 @@ void UpdateAppIcon(void)
     }
   }
 
+  ObtainSemaphore(G->connectionSemaphore);
+  activeConnections = G->activeConnections;
+  ReleaseSemaphore(G->connectionSemaphore);
+
   // we set the mode accordingly to the status of the folder (new/check/old)
-  if(G->TR != NULL && G->TR->Checking == TRUE)
+  if(activeConnections != 0)
     mode = ii_Check;
   else if(tot_msg == 0)
     mode = ii_Empty;
@@ -361,4 +366,3 @@ void HandleAppIcon(void)
 }
 
 ///
-

@@ -100,6 +100,7 @@
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailList.h"
+#include "MailServers.h"
 #include "MethodStack.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
@@ -1472,7 +1473,7 @@ struct TempFile *OpenTempFile(const char *mode)
 
   ENTER();
 
-  if((tf = calloc(1, sizeof(struct TempFile))) != NULL)
+  if((tf = calloc(1, sizeof(*tf))) != NULL)
   {
     // the tempfile MUST be SIZE_MFILE long because we
     // also use this tempfile routine for showing temporary mails which
@@ -1828,7 +1829,7 @@ LONG FileCount(const char *directory, const char *pattern)
 // Function that is a wrapper to AddPart so that we can add the
 // specified path 'add' to an existing/non-existant 'src' which
 // is then stored in dst of max size 'size'.
-char *AddPath(char *dst, const char *src, const char *add, size_t size)
+char *AddPath(char *dst, const char *src, const char *add, const size_t size)
 {
   ENTER();
 
@@ -3199,7 +3200,7 @@ struct Mail *AddMailToList(const struct Mail *mail, struct Folder *folder)
 ///
 /// RemoveMailFromList
 //  Removes a message from a folder
-void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
+void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL checkConnections)
 {
   struct Folder *folder = mail->Folder;
   struct MailNode *mnode;
@@ -3240,22 +3241,48 @@ void RemoveMailFromList(struct Mail *mail, BOOL closeWindows)
 
   UnlockMailList(folder->messages);
 
-  // now check if the mail to be removed has just been downloaded, but not yet filtered
-  if(G->TR != NULL && G->TR->downloadedMails != NULL && G->TR->Checking == TRUE && folder == FO_GetFolderByType(FT_INCOMING, NULL))
+  if(checkConnections == TRUE)
   {
-    LockMailList(G->TR->downloadedMails);
+    int activeConnections;
 
-    if((mnode = FindMailInList(G->TR->downloadedMails, mail)) != NULL)
+    // now check if the mail to be removed has just been downloaded, but not yet filtered
+    ObtainSemaphore(G->connectionSemaphore);
+    activeConnections = G->activeConnections;
+    ReleaseSemaphore(G->connectionSemaphore);
+
+    // we need to check only if there are any active connections
+    if(activeConnections != 0)
     {
-      // remove the mail from the list of just downloaded mails,
-      // so it will not be filtered anymore when the download
-      // process finishes
-      D(DBF_UTIL, "removing mail with subject '%s' from download list", mail->Subject);
-      RemoveMailNode(G->TR->downloadedMails, mnode);
-      DeleteMailNode(mnode);
-    }
+      struct MailServerNode *msn;
+      int i = 0;
+      BOOL mailFound = FALSE;
 
-    UnlockMailList(G->TR->downloadedMails);
+      while(mailFound == FALSE && (msn = GetMailServer(&C->mailServerList, MST_POP3, i)) != NULL)
+      {
+        if(hasServerInUse(msn) == TRUE)
+        {
+          LockMailList(msn->downloadedMails);
+
+          if((mnode = FindMailInList(msn->downloadedMails, mail)) != NULL)
+          {
+            // remove the mail from the list of just downloaded mails,
+            // so it will not be filtered anymore when the download
+            // process finishes
+            D(DBF_UTIL, "removing mail with subject '%s' from download list", mail->Subject);
+            RemoveMailNode(msn->downloadedMails, mnode);
+            DeleteMailNode(mnode);
+
+            // we found the mail, but it cannot be part of more than one list thus we
+            // can exit this loop
+            mailFound = TRUE;
+          }
+
+          UnlockMailList(msn->downloadedMails);
+        }
+
+        i++;
+      }
+    }
   }
 
   // then we have to mark the folder index as expired so

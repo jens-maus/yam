@@ -576,7 +576,6 @@ YAMOBJS = \
 	YAM_MA.o \
 	YAM_MAf.o \
 	YAM_RE.o \
-	YAM_TR.o \
 	YAM_US.o \
 	YAM_UT.o \
 	YAM_WR.o \

@@ -331,7 +331,7 @@ char *   BuildAddress(char *buffer, size_t buflen, const char *address, const ch
 void     ExtractAddress(const char *line, struct Person *pe);
 char *   FileToBuffer(const char *file);
 LONG     FileCount(const char *directory, const char *pattern);
-char *   AddPath(char *dst, const char *src, const char *add, size_t size);
+char *   AddPath(char *dst, const char *src, const char *add, const size_t size);
 void     FinishUnpack(const char *file);
 void     FormatSize(LONG size, char *buffer, int buflen, enum SizeFormat forcedPrecision);
 time_t   GetDateStamp(void);
@@ -354,7 +354,7 @@ LONG     PGPCommand(const char *progname, const char *options, const int flags);
 void     PGPGetPassPhrase(void);
 BOOL     PlaySound(const char *filename);
 void     QuoteText(FILE *out, const char *src, const int len, const int line_max);
-void     RemoveMailFromList(struct Mail *mail, BOOL closeWindows);
+void     RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL checkConnections);
 BOOL     RenameFile(const char *oldname, const char *newname);
 BOOL     RepackMailFile(struct Mail *mail, enum FolderMode dstMode, const char *passwd);
 struct FileReqCache *ReqFile(enum ReqFileType num, Object *win, const char *title, int mode, const char *drawer, const char *file);

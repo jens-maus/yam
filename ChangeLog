@@ -7,6 +7,23 @@ $URL$
 
 2010-10-21 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tcp/pop3.c, misc: I finally managed to put the complete POP3 stuff into a
+    separate thread. In contrast to the known behaviour the individual accounts
+    will no longer be handled one after each other but in parallel. Running the
+    POP3 download in a thread means YAM will be 100% responsive to user input
+    while the download is in progress. Each account will have its own control
+    group in the transfer window and in case preselection is required YAM will
+    open separate preselection windows for each account.
+
+    I really hope I didn't introduce too many new bugs and/or possible deadlocks
+    due to the now massively used threading. My personal tests didn't reveal any
+    deadlocks anymore, but my setup is definitely different from that of other
+    users and might not expose every possible pit fall.
+
+    A warning for AROS users: AROS's current arosc.library is definitely *NOT*
+    thread safe and YAM will very probably misbehave as soon as two or more
+    transfers are running in parallel. It is up to the AROS development team
+    to make its default C runtime library thread safe.
   * lib/os3: added thread safe build of clib2 to be linked against for the OS3
     build. This is absolutely necessary to guarantee thread safety when using
     i.e. fopen() from several threads simultaneously. Additionally this makes it

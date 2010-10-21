@@ -7015,3 +7015,12 @@ D
 MSG_ALTIMAGE_STATUS_DELETE (2185//3)
 X
 ;
+MSG_PRESELECT_INDEX (2186//)
+Index
+;
+MSG_TR_WAIT_FOR_PASSWORD (2187//)
+Waiting for user's password input...
+;
+MSG_TR_WAIT_FOR_PRESELECTION (2188//)
+Waiting for user's preselection...
+;

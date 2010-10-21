@@ -72,7 +72,7 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
   {
     snprintf(tc.transferGroupTitle, sizeof(tc.transferGroupTitle), tr(MSG_TR_MailTransferTo), fname);
 
-    if((tc.transferGroup = (Object *)DoMethod(G->App, MUIM_YAM_CreateTransferGroup, TR_EXPORT, tc.transferGroupTitle, tc.conn, quiet == FALSE)) != NULL)
+    if((tc.transferGroup = (Object *)DoMethod(G->App, MUIM_YAM_CreateTransferGroup, NULL, tc.transferGroupTitle, tc.conn, TRUE, quiet == FALSE)) != NULL)
     {
       BOOL abort = FALSE;
       struct MailNode *mnode;

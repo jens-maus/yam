@@ -27,6 +27,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #if !defined(__amigaos4__)
 #include <clib/alib_protos.h>
@@ -39,6 +40,7 @@
 
 #include "extrasrc.h"
 
+#include "MailList.h"
 #include "MailServers.h"
 
 #include "Debug.h"
@@ -60,35 +62,37 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
                                           TAG_DONE)) != NULL)
   {
     // initialize all variables as AllocSysObject() does not clear the memory
+    memset(msn, 0, sizeof(*msn));
     msn->type = type;
-    msn->id = 0;
-    msn->account[0] = '\0';
-    msn->hostname[0] = '\0';
-    msn->domain[0] = '\0';
-    msn->port = 0;
-    msn->username[0] = '\0';
-    msn->password[0] = '\0';
     msn->flags = MSF_ACTIVE;
-    msn->smtpFlags = 0;
 
     switch(msn->type)
     {
       case MST_POP3:
       {
-        if(first == TRUE)
+        // POP3 servers keep a list of downloaded mails
+        if((msn->downloadedMails = CreateMailList()) != NULL)
         {
-          char *p = strchr(co->EmailAddress, '@');
+          if(first == TRUE)
+          {
+            char *p = strchr(co->EmailAddress, '@');
 
-          strlcpy(msn->username, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(msn->username));
+            strlcpy(msn->username, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(msn->username));
 
-          // now we get the first SMTP server in our list and reuse
-          // the hostname of it for the new POP3 server
-          #warning "FIXME: use first SMTP server from list"
-          //strlcpy(msn->hostname, co->SMTP_Server, sizeof(msn->hostname));
+            // now we get the first SMTP server in our list and reuse
+            // the hostname of it for the new POP3 server
+            #warning "FIXME: use first SMTP server from list"
+            //strlcpy(msn->hostname, co->SMTP_Server, sizeof(msn->hostname));
+          }
+
+          msn->port = 110;
+          SET_FLAG(msn->flags, MSF_PURGEMESSGAES);
         }
-
-        msn->port = 110;
-        SET_FLAG(msn->flags, MSF_PURGEMESSGAES);
+        else
+        {
+          FreeSysObject(ASOT_NODE, msn);
+          msn = NULL;
+        }
       }
       break;
 
@@ -109,6 +113,33 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
 }
 
 ///
+/// CloneMailServer
+struct MailServerNode *CloneMailServer(const struct MailServerNode *msn)
+{
+  struct MailServerNode *clone;
+
+  ENTER();
+
+  if((clone = DuplicateNode(msn, sizeof(*msn))) != NULL)
+  {
+    if(clone->type == MST_POP3)
+    {
+      // POP3 servers keep a list of downloaded mails
+      if((clone->downloadedMails = CreateMailList()) == NULL)
+      {
+        FreeSysObject(ASOT_NODE, clone);
+        clone = NULL;
+      }
+    }
+    else
+      clone->downloadedMails = NULL;
+  }
+
+  RETURN(clone);
+  return clone;
+}
+
+///
 /// FreeMailServerList
 void FreeMailServerList(struct MinList *mailServerList)
 {
@@ -121,6 +152,9 @@ void FreeMailServerList(struct MinList *mailServerList)
   while((curNode = RemHead((struct List *)mailServerList)) != NULL)
   {
     struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+    if(msn->downloadedMails != NULL)
+      DeleteMailList(msn->downloadedMails);
 
     FreeSysObject(ASOT_NODE, msn);
   }

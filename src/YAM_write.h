@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include <dos/dos.h>
+
 #include "YAM_main.h"
 #include "YAM_stringsizes.h"
 

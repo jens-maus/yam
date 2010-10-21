@@ -63,6 +63,7 @@
 
 #include "Locale.h"
 #include "MailImport.h"
+#include "MethodStack.h"
 #include "Requesters.h"
 #include "Threads.h"
 
@@ -84,6 +85,8 @@ struct Thread
   LONG abortSignal;        // an allocated signal to abort the thread
   LONG wakeupSignal;       // an allocated signal to wakeup a sleeping thread
   char name[SIZE_LARGE];   // the thread's name
+  BOOL working;            // are we currently working?
+  BOOL aborted;            // have we been aborted?
   BOOL timerRunning;       // is the timer running?
 };
 
@@ -243,6 +246,14 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
                            GetTagData(TT_ImportMails_Flags, 0, msg->actionTags));
     }
     break;
+
+    case TA_ReceiveMails:
+    {
+      result = ReceiveMails((struct MailServerNode *)GetTagData(TT_ReceiveMails_MailServer, (IPTR)NULL, msg->actionTags),
+                            GetTagData(TT_ReceiveMails_Flags, 0, msg->actionTags),
+                            (struct DownloadResult *)GetTagData(TT_ReceiveMails_Result, (IPTR)NULL, msg->actionTags));
+    }
+    break;
   }
 
   D(DBF_THREAD, "thread '%s' finished action %ld, result %ld", msg->thread->name, msg->action, result);
@@ -318,6 +329,7 @@ static SAVEDS void ThreadEntry(void)
         default:
         {
           // clear the abort signal before executing the desired action
+          thread->aborted = FALSE;
           SetSignal(0UL, (1UL << thread->abortSignal) | (1UL << thread->wakeupSignal));
           msg->result = DoThreadMessage(msg);
         }
@@ -340,7 +352,13 @@ static void AbortThread(struct Thread *thread)
   ENTER();
 
   if(thread->abortSignal != -1)
+  {
+    D(DBF_THREAD, "aborting thread '%s'", thread->name);
+    thread->aborted = TRUE;
     Signal((struct Task *)thread->process, 1UL << thread->abortSignal);
+  }
+  else
+    E(DBF_THREAD, "thread '%s' has no abort signal", thread->name);
 
   LEAVE();
 }
@@ -401,19 +419,34 @@ void WakeupThread(APTR thread)
 }
 
 ///
-/// AbortRunningThreads
+/// AbortWorkingThreads
 // signal all still running threads to abort the current action
-static void AbortRunningThreads(void)
+void AbortWorkingThreads(void)
 {
   struct Node *node;
 
   ENTER();
 
-  IterateList(&G->workingThreads, node)
+  // always get the first node in the list, because later calls to HandleThreads()
+  // will modify the list, thus iterating through the will not give the desired result
+  while((node = GetHead((struct List *)&G->workingThreads)) != NULL)
   {
     struct ThreadNode *threadNode = (struct ThreadNode *)node;
+    struct Thread *thread = threadNode->thread;
 
-    AbortThread(threadNode->thread);
+    // abort the working thread
+    AbortThread(thread);
+
+    // and wait until it finished its work
+    do
+    {
+      MicroMainLoop();
+      Delay(10);
+    }
+    while(thread->working == TRUE);
+
+    // perform thread clean up stuff
+    HandleThreads();
   }
 
   LEAVE();
@@ -440,6 +473,7 @@ static void ShutdownThread(struct ThreadNode *threadNode)
   D(DBF_THREAD, "sending shutdown message to thread '%s'", thread->name);
   PutMsg(&thread->process->pr_MsgPort, (struct Message *)&startupMessage);
   Remove((struct Node *)WaitPort(G->threadPort));
+  D(DBF_THREAD, "thread '%s' is dead now", thread->name);
 
   G->numberOfThreads--;
 
@@ -580,7 +614,7 @@ void CleanupThreads(void)
     BOOL tryAgain = TRUE;
 
     // send an abort signal and a shutdown message to each still existing idle thread
-    AbortRunningThreads();
+    AbortWorkingThreads();
 
     // send a shutdown message to each still existing idle thread
     PurgeIdleThreads(TRUE);
@@ -589,7 +623,7 @@ void CleanupThreads(void)
     // a thread was closed during the shutdown. This might happen if
     // there were zombie files which got closed by shutting down a
     // MIME viewer for example.
-    HandleThreads();
+    MicroMainLoop();
 
     do
     {
@@ -603,7 +637,7 @@ void CleanupThreads(void)
         {
           // the user wanted to try again, so let's handle possible
           // working->idle transitions
-          HandleThreads();
+          MicroMainLoop();
         }
         else
         {
@@ -637,8 +671,11 @@ void HandleThreads(void)
   {
     struct ThreadMessage *tmsg = (struct ThreadMessage *)msg;
 
+    D(DBF_THREAD, "thread '%s' finished action %ld", tmsg->thread->name, tmsg->action);
+
     // remove the thread from the working list and put it back into the idle list
     Remove((struct Node *)tmsg->threadNode);
+    tmsg->threadNode->thread->working = FALSE;
     AddTail((struct List *)&G->idleThreads, (struct Node *)tmsg->threadNode);
 
     // change the thread's priority back to zero
@@ -741,6 +778,7 @@ BOOL VARARGS68K DoAction(const enum ThreadAction action, ...)
 
         // remove the thread from the idle list and put it into the working list
         Remove((struct Node *)threadNode);
+        threadNode->thread->working = TRUE;
         AddTail((struct List *)&G->workingThreads, (struct Node *)threadNode);
 
         success = TRUE;
@@ -870,6 +908,34 @@ LONG ThreadTimerSignal(void)
 
   RETURN(signal);
   return signal;
+}
+
+///
+/// ThreadWasAborted
+// return the current thread's abort state
+BOOL ThreadWasAborted(void)
+{
+  BOOL aborted;
+  struct Process *me;
+
+  ENTER();
+
+  me = (struct Process *)FindTask(NULL);
+
+  if(me == G->mainThread)
+  {
+    // the main thread can never be aborted
+    aborted = FALSE;
+  }
+  else
+  {
+    struct Thread *thread = (struct Thread *)me->pr_Task.tc_UserData;
+
+    aborted = thread->aborted;
+  }
+
+  RETURN(aborted);
+  return aborted;
 }
 
 ///
