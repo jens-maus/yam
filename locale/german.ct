@@ -8602,7 +8602,7 @@ Kann Verbindungen nicht initialisieren.
 MSG_LOG_CONNECT_POP3
 Verbunden mit POP3-Konto '%s': %ld Nachrichten vorhanden
 ;
-MSG_LOG_RETRIEVED
+MSG_LOG_RETRIEVED_POP3
 %ld Nachricht(en) von POP3-Konto '%s' geladen
 ;
 MSG_TR_ENTER_POP3_PASSWORD
