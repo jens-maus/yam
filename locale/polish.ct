@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.11 (18.10.2010)
+## version $VER: YAM.catalog 7.12 (22.10.2010)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5357
+; in sync with .cd in revision 5387
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9886,4 +9886,16 @@ D
 MSG_ALTIMAGE_STATUS_DELETE
 X
 ; X
+;
+MSG_PRESELECT_INDEX
+Indeks
+; Index
+;
+MSG_TR_WAIT_FOR_PASSWORD
+Oczekiwanie na wprowadzenie has³a przez u¿ytkownika...
+; Waiting for user's password input...
+;
+MSG_TR_WAIT_FOR_PRESELECTION
+Oczekiwanie na preselekcjê u¿ytkownika...
+; Waiting for user's preselection...
 ;

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-22 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
 2010-10-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/Connection.c, tcp/pop3.c, tcp/smtp.c: slightly reworked the availibility
