@@ -185,12 +185,13 @@ OVERLOAD(OM_NEW)
 
     // on a button press on the stop button, lets set the
     // correct variable to TRUE as well.
-    DoMethod(data->BT_STOP, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_WriteLong, MUIV_NotTriggerValue, &(data->stopButtonPressed));
+    DoMethod(data->BT_STOP, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(StopProcess));
   }
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
 }
+
 ///
 
 /* Public Methods */
@@ -273,6 +274,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
   RETURN(result);
   return result;
 }
+
 ///
 /// DECLARE(ShowGauge)
 // activates the gauge in the InfoBar with the passed text and percentage
@@ -321,6 +323,7 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
   RETURN(result);
   return result;
 }
+
 ///
 /// DECLARE(ShowInfoText)
 // activates the gauge in the InfoBar with the passed text and percentage
@@ -348,6 +351,7 @@ DECLARE(ShowInfoText) // STRPTR infoText
   RETURN(TRUE);
   return TRUE;
 }
+
 ///
 /// DECLARE(HideBars)
 // activates the gauge in the InfoBar with the passed text and percentage
@@ -363,5 +367,19 @@ DECLARE(HideBars)
   RETURN(TRUE);
   return TRUE;
 }
-///
 
+///
+/// DECLARE(StopProcess)
+DECLARE(StopProcess)
+{
+  GETDATA;
+
+  ENTER();
+
+  data->stopButtonPressed = TRUE;
+
+  LEAVE();
+  return 0;
+}
+
+///

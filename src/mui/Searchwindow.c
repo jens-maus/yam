@@ -41,7 +41,7 @@ struct Data
   Object *Searchstring;
   Object *Texteditor;
   Object *ParentWindow;
-  ULONG CaseSensitive;
+  BOOL CaseSensitive;
   BOOL CloseNotifyAdded;
 };
 */
@@ -97,11 +97,11 @@ OVERLOAD(OM_NEW)
 
     data->Searchstring = string;
 
-    DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, MUIF_Searchwindow_FromTop);
-    DoMethod(case_sensitive, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_WriteLong, MUIV_TriggerValue, &data->CaseSensitive);
-    DoMethod(search,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, MUIF_Searchwindow_FromTop);
-    DoMethod(cancel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 1, MUIM_Searchwindow_Close);
-    DoMethod(obj,            MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 1, MUIM_Searchwindow_Close);
+    DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, METHOD(Search), MUIF_Searchwindow_FromTop);
+    DoMethod(case_sensitive, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 1, METHOD(ToggleCaseSensitivity));
+    DoMethod(search,         MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(Search), MUIF_Searchwindow_FromTop);
+    DoMethod(cancel,         MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(Close));
+    DoMethod(obj,            MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 1, METHOD(Close));
   }
 
   RETURN((IPTR)obj);
@@ -140,7 +140,7 @@ DECLARE(Open) // Object *texteditor
             MUIA_Window_RefWindow,    data->ParentWindow,
             MUIA_Window_Open,         TRUE);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -160,7 +160,7 @@ DECLARE(Close)
     data->CloseNotifyAdded = FALSE;
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -205,7 +205,7 @@ DECLARE(Search) // ULONG flags
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -217,4 +217,17 @@ DECLARE(Next)
 }
 
 ///
+/// DECLARE(ToggleCaseSensitivity)
+DECLARE(ToggleCaseSensitivity)
+{
+  GETDATA;
 
+  ENTER();
+
+  data->CaseSensitive = !data->CaseSensitive;
+
+  LEAVE();
+  return 0;
+}
+
+///

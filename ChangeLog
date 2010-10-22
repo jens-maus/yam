@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/InfoBar.c, mui/Searchwindow.c: replaced two MUIM_WriteLong occurences by
+    proper methods. This gives a much more safe implementation, because in one
+    case MUI was instructed to write a 4 byte LONG value to a 1 byte BOOL
+    variable and thus trashed memory.
+
 2010-10-21 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.
