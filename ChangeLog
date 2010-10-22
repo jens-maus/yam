@@ -7,6 +7,8 @@ $URL$
 
 2010-10-22 Thore Böckelmann <tboeckel@gmx.de>
 
+  * tcp/Connection.c, tcp/pop3.c, tcp/smtp.c: slightly reworked the availibility
+    check of secure connections.
   * mui/InfoBar.c, mui/Searchwindow.c: replaced two MUIM_WriteLong occurences by
     proper methods. This gives a much more safe implementation, because in one
     case MUI was instructed to write a 4 byte LONG value to a 1 byte BOOL

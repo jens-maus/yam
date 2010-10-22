@@ -1234,10 +1234,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
       else
       {
         E(DBF_NET, "InitAmiSSL() failed");
-
         ER_NewError(tr(MSG_ER_INITAMISSL));
-
-        G->TR_UseableTLS = FALSE;
       }
     }
     else
@@ -1255,6 +1252,10 @@ BOOL MakeSecureConnection(struct Connection *conn)
 
       conn->ssl = NULL;
       conn->error = CONNECTERR_SSLFAILED;
+
+      // tell the user if secure connection are impossible due to AmiSSL being unavailable
+      if(AmiSSLBase == NULL)
+        ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
     }
   }
 

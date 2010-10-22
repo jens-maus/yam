@@ -1343,248 +1343,237 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
           D(DBF_GUI, "create transfer control group");
           if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAM_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->conn, mode == SENDMAIL_ALL_USER || mode == SENDMAIL_ACTIVE_USER, TRUE)) != NULL)
           {
-            // now we have to check whether SSL/TLS is selected for SMTP account,
-            // and if it is usable. Or if no secure connection is requested
-            // we can go on right away.
-            if((hasServerSSL(msn) == FALSE && hasServerTLS(msn) == FALSE) ||
-               G->TR_UseableTLS == TRUE)
-            {
-              struct MinList *sentMailFilters;
+            struct MinList *sentMailFilters;
 
-              D(DBF_NET, "clone sent mail filters");
-              if((sentMailFilters = CloneFilterList(APPLY_SENT)) != NULL)
+            D(DBF_NET, "clone sent mail filters");
+            if((sentMailFilters = CloneFilterList(APPLY_SENT)) != NULL)
+            {
+              enum ConnectError err;
+
+              PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, transferList->count, totalSize);
+
+              PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
+              BusyText(tr(MSG_TR_MailTransferTo), host);
+
+              D(DBF_NET, "connecting to host '%s' port %ld", host, port);
+              if((err = ConnectToHost(tc->conn, host, port)) == CONNECTERR_SUCCESS)
               {
-                enum ConnectError err;
+                BOOL connected = FALSE;
 
-                PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, transferList->count, totalSize);
-
-                PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
-                BusyText(tr(MSG_TR_MailTransferTo), host);
-
-                D(DBF_NET, "connecting to host '%s' port %ld", host, port);
-                if((err = ConnectToHost(tc->conn, host, port)) == CONNECTERR_SUCCESS)
+                // first we check whether the user wants to connect to a plain SSLv3 server
+                // so that we initiate the SSL connection now
+                if(hasServerSSL(msn) == TRUE)
                 {
-                  BOOL connected = FALSE;
-
-                  // first we check whether the user wants to connect to a plain SSLv3 server
-                  // so that we initiate the SSL connection now
-                  if(hasServerSSL(msn) == TRUE)
-                  {
-                    // lets try to establish the SSL connection via AmiSSL
-                    if(MakeSecureConnection(tc->conn) == TRUE)
-                      tc->useTLS = TRUE;
-                    else
-                      err = CONNECTERR_SSLFAILED; // special SSL connection error
-                  }
-
-                  // first we have to check whether the TCP/IP connection could
-                  // be successfully opened so that we can init the SMTP connection
-                  // and query the SMTP server for its capabilities now.
-                  if(err == CONNECTERR_SUCCESS)
-                  {
-                    // initialize the SMTP connection which will also
-                    // query the SMTP server for its capabilities
-                    connected = ConnectToSMTP(tc);
-
-                    // Now we have to check whether the user has selected SSL/TLS
-                    // and then we have to initiate the STARTTLS command followed by the TLS negotiation
-                    if(connected == TRUE && hasServerTLS(msn) == TRUE)
-                    {
-                      connected = InitSTARTTLS(tc);
-
-                      // then we have to refresh the SMTPflags and check
-                      // again what features we have after the STARTTLS
-                      if(connected == TRUE)
-                      {
-                        // first we flag this connection as a sucessfull
-                        // TLS session
-                        tc->useTLS = TRUE;
-
-                        // now run the connect SMTP function again
-                        // so that the SMTP server flags will be refreshed
-                        // accordingly.
-                        connected = ConnectToSMTP(tc);
-                      }
-                    }
-
-                    // If the user selected SMTP_AUTH we have to initiate
-                    // a AUTH connection
-                    if(connected == TRUE && hasServerAuth(msn) == TRUE)
-                      connected = InitSMTPAUTH(tc);
-                  }
-
-                  // If we are still "connected" we can proceed with transfering the data
-                  if(connected == TRUE)
-                  {
-                    struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-                    struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
-                    struct MailTransferNode *tn;
-
-                    // set the success to TRUE as everything worked out fine
-                    // until here.
-                    success = TRUE;
-                    AppendToLogfile(LF_VERBOSE, 41, tr(MSG_LOG_ConnectSMTP), host);
-
-                    ForEachMailTransferNode(transferList, tn)
-                    {
-                      struct Mail *mail = tn->mail;
-
-                      if(tc->conn->abort == TRUE || tc->conn->error != CONNECTERR_NO_ERROR)
-                        break;
-
-                      PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tn->index, -1, mail->Size, tr(MSG_TR_Sending));
-
-                      switch(SendMessage(tc, mail))
-                      {
-                        // -1 means that SendMessage was aborted within the
-                        // DATA part and so we cannot issue a RSET command and have to abort
-                        // immediatly by leaving the mailserver alone.
-                        case -1:
-                        {
-                          setStatusToError(mail->Reference);
-                          tc->conn->error = CONNECTERR_UNKNOWN_ERROR;
-                        }
-                        break;
-
-                        // 0 means that an error occured before the DATA part and
-                        // so we can abort the transaction cleanly by a RSET and QUIT
-                        case 0:
-                        {
-                          setStatusToError(mail->Reference);
-                          SendSMTPCommand(tc, SMTP_RSET, NULL, NULL); // no error check
-                          tc->conn->error = CONNECTERR_NO_ERROR;
-                        }
-                        break;
-
-                        // 1 means we filter the mails and then copy/move the mail to the send folder
-                        case 1:
-                        {
-                          setStatusToSent(mail->Reference);
-                          if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
-                          {
-                            // the filter process did not move the mail, hence we do it now
-                            PushMethodOnStackWait(G->App, 5, MUIM_YAM_MoveCopyMail, mail->Reference, outfolder, sentfolder, MVCPF_CLOSE_WINDOWS);
-                          }
-                        }
-                        break;
-
-                        // 2 means we filter and delete afterwards
-                        case 2:
-                        {
-                          setStatusToSent(mail->Reference);
-                          if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
-                          {
-                            // the filter process did not delete the mail, hence we do it now
-                            PushMethodOnStackWait(G->App, 3, MUIM_YAM_DeleteMail, mail->Reference, DELF_UPDATE_APPICON);
-                          }
-                        }
-                        break;
-                      }
-                    }
-
-                    PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
-
-                    if(tc->conn->error == CONNECTERR_NO_ERROR)
-                      AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_Sending), transferList->count, host);
-                    else
-                      AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_SENDING_FAILED), transferList->count, host);
-
-                    // now we can disconnect from the SMTP
-                    // server again
-                    PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Disconnecting));
-
-                    // send a 'QUIT' command, but only if
-                    // we didn't receive any error during the transfer
-                    if(tc->conn->error == CONNECTERR_NO_ERROR)
-                      SendSMTPCommand(tc, SMTP_QUIT, NULL, tr(MSG_ER_BADRESPONSE_SMTP));
-                  }
+                  // lets try to establish the SSL connection via AmiSSL
+                  if(MakeSecureConnection(tc->conn) == TRUE)
+                    tc->useTLS = TRUE;
                   else
+                    err = CONNECTERR_SSLFAILED; // special SSL connection error
+                }
+
+                // first we have to check whether the TCP/IP connection could
+                // be successfully opened so that we can init the SMTP connection
+                // and query the SMTP server for its capabilities now.
+                if(err == CONNECTERR_SUCCESS)
+                {
+                  // initialize the SMTP connection which will also
+                  // query the SMTP server for its capabilities
+                  connected = ConnectToSMTP(tc);
+
+                  // Now we have to check whether the user has selected SSL/TLS
+                  // and then we have to initiate the STARTTLS command followed by the TLS negotiation
+                  if(connected == TRUE && hasServerTLS(msn) == TRUE)
                   {
-                    // check if we end up here cause of the 8BITMIME differences
-                    if(has8BITMIME(msn->smtpFlags) == FALSE && hasServer8bit(msn) == TRUE)
+                    connected = InitSTARTTLS(tc);
+
+                    // then we have to refresh the SMTPflags and check
+                    // again what features we have after the STARTTLS
+                    if(connected == TRUE)
                     {
-                      W(DBF_NET, "incorrect Allow8bit setting!");
-                      err = CONNECTERR_INVALID8BIT;
+                      // first we flag this connection as a sucessfull
+                      // TLS session
+                      tc->useTLS = TRUE;
+
+                      // now run the connect SMTP function again
+                      // so that the SMTP server flags will be refreshed
+                      // accordingly.
+                      connected = ConnectToSMTP(tc);
                     }
-                    else if(err != CONNECTERR_SSLFAILED)
-                      err = CONNECTERR_UNKNOWN_ERROR;
                   }
 
-                  // make sure to shutdown the socket and all possible SSL connection stuff
-                  DisconnectFromHost(tc->conn);
-
-                  // update the AppIcon after closing down the connection
-                  PushMethodOnStack(G->App, 1, MUIM_YAM_UpdateAppIcon);
+                  // If the user selected SMTP_AUTH we have to initiate
+                  // a AUTH connection
+                  if(connected == TRUE && hasServerAuth(msn) == TRUE)
+                    connected = InitSMTPAUTH(tc);
                 }
 
-                // if we got an error here, let's throw it
-                switch(err)
+                // If we are still "connected" we can proceed with transfering the data
+                if(connected == TRUE)
                 {
-                  case CONNECTERR_SUCCESS:
-                  case CONNECTERR_ABORTED:
-                  case CONNECTERR_NO_ERROR:
-                    // do nothing
-                  break;
+                  struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
+                  struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
+                  struct MailTransferNode *tn;
 
-                  // a socket is already in use so we return
-                  // a specific error to the user
-                  case CONNECTERR_SOCKET_IN_USE:
-                    ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP), host);
-                  break;
+                  // set the success to TRUE as everything worked out fine
+                  // until here.
+                  success = TRUE;
+                  AppendToLogfile(LF_VERBOSE, 41, tr(MSG_LOG_ConnectSMTP), host);
 
-                  // socket() execution failed
-                  case CONNECTERR_NO_SOCKET:
-                    ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_SMTP), host);
-                  break;
+                  ForEachMailTransferNode(transferList, tn)
+                  {
+                    struct Mail *mail = tn->mail;
 
-                  // couldn't establish non-blocking IO
-                  case CONNECTERR_NO_NONBLOCKIO:
-                    ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP), host);
-                  break;
+                    if(tc->conn->abort == TRUE || tc->conn->error != CONNECTERR_NO_ERROR)
+                      break;
 
-                  // the specified hostname isn't valid, so
-                  // lets tell the user
-                  case CONNECTERR_UNKNOWN_HOST:
-                    ER_NewError(tr(MSG_ER_UNKNOWN_HOST_SMTP), host);
-                  break;
+                    PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tn->index, -1, mail->Size, tr(MSG_TR_Sending));
 
-                  // the connection request timed out, so tell
-                  // the user
-                  case CONNECTERR_TIMEDOUT:
-                    ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_SMTP), host);
-                  break;
+                    switch(SendMessage(tc, mail))
+                    {
+                      // -1 means that SendMessage was aborted within the
+                      // DATA part and so we cannot issue a RSET command and have to abort
+                      // immediatly by leaving the mailserver alone.
+                      case -1:
+                      {
+                        setStatusToError(mail->Reference);
+                        tc->conn->error = CONNECTERR_UNKNOWN_ERROR;
+                      }
+                      break;
 
-                  // an error occurred while checking for 8bit MIME
-                  // compatibility
-                  case CONNECTERR_INVALID8BIT:
-                    ER_NewError(tr(MSG_ER_NO8BITMIME_SMTP), host);
-                  break;
+                      // 0 means that an error occured before the DATA part and
+                      // so we can abort the transaction cleanly by a RSET and QUIT
+                      case 0:
+                      {
+                        setStatusToError(mail->Reference);
+                        SendSMTPCommand(tc, SMTP_RSET, NULL, NULL); // no error check
+                        tc->conn->error = CONNECTERR_NO_ERROR;
+                      }
+                      break;
 
-                  // error during initialization of an SSL connection
-                  case CONNECTERR_SSLFAILED:
-                    ER_NewError(tr(MSG_ER_INITTLS_SMTP), host);
-                  break;
+                      // 1 means we filter the mails and then copy/move the mail to the send folder
+                      case 1:
+                      {
+                        setStatusToSent(mail->Reference);
+                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
+                        {
+                          // the filter process did not move the mail, hence we do it now
+                          PushMethodOnStackWait(G->App, 5, MUIM_YAM_MoveCopyMail, mail->Reference, outfolder, sentfolder, MVCPF_CLOSE_WINDOWS);
+                        }
+                      }
+                      break;
 
-                  // an unknown error occurred so lets show
-                  // a generic error message
-                  case CONNECTERR_UNKNOWN_ERROR:
-                    ER_NewError(tr(MSG_ER_CANNOT_CONNECT_SMTP), host);
-                  break;
+                      // 2 means we filter and delete afterwards
+                      case 2:
+                      {
+                        setStatusToSent(mail->Reference);
+                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
+                        {
+                          // the filter process did not delete the mail, hence we do it now
+                          PushMethodOnStackWait(G->App, 3, MUIM_YAM_DeleteMail, mail->Reference, DELF_UPDATE_APPICON);
+                        }
+                      }
+                      break;
+                    }
+                  }
 
-                  case CONNECTERR_NO_CONNECTION:
-                  case CONNECTERR_NOT_CONNECTED:
-                    // cannot happen, do nothing
-                  break;
+                  PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
+
+                  if(tc->conn->error == CONNECTERR_NO_ERROR)
+                    AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_Sending), transferList->count, host);
+                  else
+                    AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_SENDING_FAILED), transferList->count, host);
+
+                  // now we can disconnect from the SMTP
+                  // server again
+                  PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Disconnecting));
+
+                  // send a 'QUIT' command, but only if
+                  // we didn't receive any error during the transfer
+                  if(tc->conn->error == CONNECTERR_NO_ERROR)
+                    SendSMTPCommand(tc, SMTP_QUIT, NULL, tr(MSG_ER_BADRESPONSE_SMTP));
+                }
+                else
+                {
+                  // check if we end up here cause of the 8BITMIME differences
+                  if(has8BITMIME(msn->smtpFlags) == FALSE && hasServer8bit(msn) == TRUE)
+                  {
+                    W(DBF_NET, "incorrect Allow8bit setting!");
+                    err = CONNECTERR_INVALID8BIT;
+                  }
+                  else if(err != CONNECTERR_SSLFAILED)
+                    err = CONNECTERR_UNKNOWN_ERROR;
                 }
 
-                BusyEnd();
+                // make sure to shutdown the socket and all possible SSL connection stuff
+                DisconnectFromHost(tc->conn);
 
-                DeleteFilterList(sentMailFilters);
+                // update the AppIcon after closing down the connection
+                PushMethodOnStack(G->App, 1, MUIM_YAM_UpdateAppIcon);
               }
-            }
-            else
-            {
-              ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
+
+              // if we got an error here, let's throw it
+              switch(err)
+              {
+                case CONNECTERR_SUCCESS:
+                case CONNECTERR_ABORTED:
+                case CONNECTERR_NO_ERROR:
+                  // do nothing
+                break;
+
+                // a socket is already in use so we return
+                // a specific error to the user
+                case CONNECTERR_SOCKET_IN_USE:
+                  ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP), host);
+                break;
+
+                // socket() execution failed
+                case CONNECTERR_NO_SOCKET:
+                  ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_SMTP), host);
+                break;
+
+                // couldn't establish non-blocking IO
+                case CONNECTERR_NO_NONBLOCKIO:
+                  ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP), host);
+                break;
+
+                // the specified hostname isn't valid, so
+                // lets tell the user
+                case CONNECTERR_UNKNOWN_HOST:
+                  ER_NewError(tr(MSG_ER_UNKNOWN_HOST_SMTP), host);
+                break;
+
+                // the connection request timed out, so tell
+                // the user
+                case CONNECTERR_TIMEDOUT:
+                  ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_SMTP), host);
+                break;
+
+                // an error occurred while checking for 8bit MIME
+                // compatibility
+                case CONNECTERR_INVALID8BIT:
+                  ER_NewError(tr(MSG_ER_NO8BITMIME_SMTP), host);
+                break;
+
+                // error during initialization of an SSL connection
+                case CONNECTERR_SSLFAILED:
+                  ER_NewError(tr(MSG_ER_INITTLS_SMTP), host);
+                break;
+
+                // an unknown error occurred so lets show
+                // a generic error message
+                case CONNECTERR_UNKNOWN_ERROR:
+                  ER_NewError(tr(MSG_ER_CANNOT_CONNECT_SMTP), host);
+                break;
+
+                case CONNECTERR_NO_CONNECTION:
+                case CONNECTERR_NOT_CONNECTED:
+                  // cannot happen, do nothing
+                break;
+              }
+
+              BusyEnd();
+
+              DeleteFilterList(sentMailFilters);
             }
           }
 

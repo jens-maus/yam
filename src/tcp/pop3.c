@@ -816,15 +816,6 @@ static int ConnectToPOP3(struct TransferContext *tc)
 
   D(DBF_NET, "connect to POP3 server '%s'", tc->msn->hostname);
 
-  // now we have to check whether SSL/TLS is selected for that POP account,
-  // but perhaps TLS is not working.
-  if((hasServerSSL(tc->msn) || hasServerTLS(tc->msn)) &&
-     G->TR_UseableTLS == FALSE)
-  {
-    ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
-    goto out;
-  }
-
   PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
 
   BusyText(tr(MSG_TR_MailTransferFrom), tc->msn->account);
