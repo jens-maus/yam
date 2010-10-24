@@ -1,8 +1,9 @@
-## version $VER: YAM.catalog 7.11 (30.09.2010)
+## version $VER: YAM.catalog 7.12 (24.10.2010)
 ## codeset 0
 ## language español
-## chunk AUTH Emilio Jimenez <ejim@ono.com>
+## chunk AUTH Emilio Jimenez
 ; YAM.cd - YAM 2.7 catalog description file
+;basado en YAM.cd 2010-10-12
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -429,9 +430,6 @@ Copiado mensaje desde '%s' sobre '%s' desde la carpeta '%s' a '%s'
 ; Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
-MSG_LOG_ConnectPOP
-Identificado en cuenta POP3 '%s@%s': %ld esperando mensajes
-; Logged in on POP3 account '%s@%s': %ld messages waiting
 ; USER_ID, HOST, COUNT
 ;
 MSG_LOG_RetrievingVerbose
@@ -439,9 +437,6 @@ Mensaje obtenido de '%s' sobre '%s' (%ld bytes)
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
 ;
-MSG_LOG_Retrieving
-%ld mensaje(s) obtenido(s) desde la cuenta POP3 '%s@%s'
-; Retrieved %ld message(s) from POP3 account '%s@%s'
 ; COUNT, USER_ID, HOST
 ;
 MSG_LOG_ConnectSMTP
@@ -3854,9 +3849,6 @@ MSG_TR_WaitWelcome
 Conectado, esperando llegada de mensajes...
 ; Connected, awaiting welcome message...
 ;
-MSG_TR_PopLoginReq
-Por favor introduce una clave para la cuenta POP3\n%s@%s
-; Please enter POP3 password for account\n%s@%s
 ; USER_ID, HOST
 ;
 MSG_TR_PopLogin
@@ -7967,4 +7959,31 @@ No se puede iniciar método de pila.
 MSG_TRANSFERS_IN_PROGRESS
 Transferencia en progreso
 ; Transfers in progress
+MSG_TR_WAIT_FOR_PRESELECTION
+Esperando preselección del usuario...
+; Waiting for user's preselection...
+MSG_TR_WAIT_FOR_PASSWORD
+Esperando clave del usuario...
+; Waiting for user's password input...
+MSG_PRESELECT_INDEX
+Indice
+; Index
+MSG_ALTIMAGE_STATUS_DELETE
+X
+; X
+MSG_ALTIMAGE_STATUS_DOWNLOAD
+D
+; D
+MSG_TR_ENTER_POP3_PASSWORD
+Por favor introduzca la clave para\nla cuenta POP3 '%s':
+; Please enter the password for\nPOP3 account '%s':
+MSG_LOG_RETRIEVED_POP3
+Recogido %ld mensaje(s) de la cuenta POP3 '%s'
+; Retrieved %ld message(s) from POP3 account '%s'
+MSG_LOG_CONNECT_POP3
+Identificado en la cuenta POP3 '%s': esperando %ld mensajes
+; Logged in on POP3 account '%s': %ld messages waiting
+MSG_ERROR_CONNECTIONS
+No puedo iniciar conexiones.
+; Cannot initialize connections.
 ;

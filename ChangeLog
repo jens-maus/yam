@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-24 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: update to the latest changes.
+
 2010-10-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: deriving the transfer flags from mail's attributes now correctly
