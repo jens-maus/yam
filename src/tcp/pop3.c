@@ -471,14 +471,14 @@ static BOOL GetMessageList(struct TransferContext *tc)
           mode = (C->DownloadLarge == TRUE ? 1 : 0) +
                  (hasServerPurge(tc->msn) == TRUE ? 2 : 0) +
                  (isFlagSet(tc->flags, RECEIVEF_USER) ? 4 : 0) +
-                 ((C->WarnSize > 0 && newMail->Size >= (C->WarnSize*1024)) ? 8 : 0);
+                 ((C->PreSelection >= PSM_LARGE && C->WarnSize > 0 && newMail->Size >= (C->WarnSize*1024)) ? 8 : 0);
           tflags = mode2tflags[mode];
 
           // if preselection is configured then force displaying this mail in the list
           if(C->PreSelection >= PSM_ALWAYS)
             SET_FLAG(tflags, TRF_PRESELECT);
 
-          D(DBF_NET, "mail transfer mode %ld, tflags %08lx (dl large %ld, purge %ld, user %ld, warnsize %ld, size %ld, presel %ld)", mode, tflags, C->DownloadLarg, hasServerPurge(tc->msn), isFlagSet(tc->flags, RECEIVEF_USER), C->WarnSize*1024, newMail->Size, C->PreSelection);
+          D(DBF_NET, "mail transfer mode %ld, tflags %08lx (dl large %ld, purge %ld, user %ld, warnsize %ld, size %ld, presel %ld)", mode, tflags, C->DownloadLarge, hasServerPurge(tc->msn), isFlagSet(tc->flags, RECEIVEF_USER), C->WarnSize*1024, newMail->Size, C->PreSelection);
 
           // allocate a new MailTransferNode and add it to our
           // new transferlist
