@@ -11,6 +11,8 @@ $URL$
 
 2010-10-24 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, misc: removed all "mail exchange order" related stuff, since this in
+    no longer required due to the recently added POP3 and SMTP thread stuff.
   * tcp/pop3.c: deriving the transfer flags from mail's attributes now correctly
     respects the mail's size and the configured preselection mode. This closes
     #228.

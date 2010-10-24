@@ -8164,21 +8164,6 @@ Filtervorgang abgeschlossen:\n\
 %3ld gelöscht,\n\
 %3ld als Spam klassifiziert
 ;
-MSG_CO_EXCHANGE_MAIL
-Post austauschen
-;
-MSG_CO_EXCHANGE_ORDER
-Austauschreihenfolge
-;
-MSG_CO_EXCHANGE_ORDER_GET_FIRST
-erst Post holen, dann senden
-;
-MSG_CO_EXCHANGE_ORDER_SEND_FIRST
-erst Post senden, dann holen
-;
-MSG_HELP_CO_CY_EXCHANGE_ORDER
-Die Reihenfolge beim Postaustausch.
-;
 MSG_FCHANGE_WARN_TITLE
 Warnung wegen Dateiänderung
 ;

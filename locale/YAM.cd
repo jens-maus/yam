@@ -6523,21 +6523,6 @@ Filtering done:\n\
 %3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
-MSG_CO_EXCHANGE_MAIL (2073//)
-Exchange mail
-;
-MSG_CO_EXCHANGE_ORDER (2074//)
-Exchange order
-;
-MSG_CO_EXCHANGE_ORDER_GET_FIRST (2075//)
-get mail first, then send mail
-;
-MSG_CO_EXCHANGE_ORDER_SEND_FIRST (2076//)
-send mail first, then get mail
-;
-MSG_HELP_CO_CY_EXCHANGE_ORDER (2077//)
-The order of the mail exchange.
-;
 MSG_FCHANGE_WARN_TITLE (2078//)
 Filechange warning
 ;

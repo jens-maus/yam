@@ -771,8 +771,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     // we have to free the mailServerList
     FreeMailServerList(&co->mailServerList);
 
-    co->MailExchangeOrder = MEO_GET_FIRST;
-
     // fill the mailserver list with an empty POP3 and SMTP Server
     AddTail((struct List *)&co->mailServerList, (struct Node *)CreateNewMailServer(MST_SMTP, co, TRUE));
     AddTail((struct List *)&co->mailServerList, (struct Node *)CreateNewMailServer(MST_POP3, co, TRUE));
@@ -1263,7 +1261,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->SocketTimeout                   == c2->SocketTimeout &&
      c1->PrintMethod                     == c2->PrintMethod &&
      c1->LogfileMode                     == c2->LogfileMode &&
-     c1->MailExchangeOrder               == c2->MailExchangeOrder &&
      c1->MDN_NoRecipient                 == c2->MDN_NoRecipient &&
      c1->MDN_NoDomain                    == c2->MDN_NoDomain &&
      c1->MDN_OnDelete                    == c2->MDN_OnDelete &&

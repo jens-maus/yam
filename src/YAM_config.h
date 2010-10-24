@@ -81,7 +81,6 @@ struct CO_GUIData
   Object *CH_USEAPOP;
   Object *RA_POP3SECURE;
   Object *CH_POPENABLED;
-  Object *CY_EXCHANGEORDER;
   Object *CH_AVOIDDUP;
   Object *CY_MSGSELECT;
   Object *CY_TRANSWIN;
@@ -396,12 +395,6 @@ enum WrapMode
   EWM_ONSENT   // word wrapping before sent
 };
 
-enum MailExchangeOrder
-{
-  MEO_GET_FIRST = 0,
-  MEO_SEND_FIRST,
-};
-
 /*** Configuration main structure ***/
 struct Config
 {
@@ -458,7 +451,6 @@ struct Config
   enum  ForwardMode        ForwardMode;
   enum  InfoBarPos         InfoBar;
   enum  WrapMode           EdWrapMode;
-  enum  MailExchangeOrder  MailExchangeOrder;
 
   BOOL  DaylightSaving;
   BOOL  AvoidDuplicates;

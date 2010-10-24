@@ -2140,33 +2140,12 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       // so check if it is properly running.
       if(nocheck == FALSE && ConnectionIsOnline(NULL) == TRUE)
       {
-        ULONG receiveFlags;
+        // perform the configured startup actions for receiving and sending mails
+        if(C->GetOnStartup == TRUE)
+          MA_PopNow(-1, (C->PreSelection == PSM_NEVER || hide == TRUE) ? RECEIVEF_STARTUP : RECEIVEF_USER, NULL);
 
-        receiveFlags = (C->PreSelection == PSM_NEVER || hide == TRUE) ? RECEIVEF_STARTUP : RECEIVEF_USER;
-
-        if(C->GetOnStartup == TRUE && C->SendOnStartup == TRUE)
-        {
-          // check whether there is mail to be sent and the user allows us to send it
-          if(SendWaitingMail(hide, TRUE) == TRUE)
-          {
-            // do a complete mail exchange, the order depends on the user settings
-            MA_ExchangeMail(receiveFlags);
-            // the delayed closure of any transfer window is already handled in MA_ExchangeMail()
-          }
-          else
-          {
-            // just get new mail
-            MA_PopNow(-1, receiveFlags, NULL);
-          }
-        }
-        else if(C->GetOnStartup == TRUE)
-        {
-          MA_PopNow(-1, receiveFlags, NULL);
-        }
-        else if(C->SendOnStartup == TRUE)
-        {
+        if(C->SendOnStartup == TRUE)
           SendWaitingMail(hide, FALSE);
-        }
       }
     }
     else

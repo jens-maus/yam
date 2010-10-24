@@ -2399,22 +2399,8 @@ void MA_ExchangeMail(const ULONG receiveFlags)
 {
   ENTER();
 
-  switch(C->MailExchangeOrder)
-  {
-    case MEO_GET_FIRST:
-    {
-      MA_PopNow(-1, receiveFlags, NULL);
-      MA_Send(isFlagSet(receiveFlags, RECEIVEF_USER) ? SENDMAIL_ALL_USER : SENDMAIL_ALL_AUTO);
-    }
-    break;
-
-    case MEO_SEND_FIRST:
-    {
-      MA_Send(isFlagSet(receiveFlags, RECEIVEF_USER) ? SENDMAIL_ALL_USER : SENDMAIL_ALL_AUTO);
-      MA_PopNow(-1, receiveFlags, NULL);
-    }
-    break;
-  }
+  MA_PopNow(-1, receiveFlags, NULL);
+  MA_Send(isFlagSet(receiveFlags, RECEIVEF_USER) ? SENDMAIL_ALL_USER : SENDMAIL_ALL_AUTO);
 
   LEAVE();
 }

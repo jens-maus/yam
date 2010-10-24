@@ -261,7 +261,6 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "DaylightSaving   = %s\n", Bool2Txt(co->DaylightSaving));
 
     fprintf(fh, "\n[TCP/IP]\n");
-    fprintf(fh, "MailExchangeOrder= %d\n", co->MailExchangeOrder);
 
     // we iterate through our mail server list and ouput the SMTP servers in it
     i = 0;
@@ -920,7 +919,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(stricmp(buf, "DaylightSaving") == 0)           co->DaylightSaving = Txt2Bool(value);
 
 /* TCP/IP */
-          else if(stricmp(buf, "MailExchangeOrder") == 0)        co->MailExchangeOrder = atoi(value);
           else if(stricmp(buf, "SMTP-ID") == 0)                  fSMTP->id = strtol(value, NULL, 16);
           else if(stricmp(buf, "SMTP-Server") == 0)              strlcpy(fSMTP->hostname, value, sizeof(fSMTP->hostname));
           else if(stricmp(buf, "SMTP-Port") == 0)                fSMTP->port = atoi(value);
@@ -1734,8 +1732,6 @@ void CO_GetConfig(BOOL saveConfig)
         }
       }
 
-      CE->MailExchangeOrder = GetMUICycle(gui->CY_EXCHANGEORDER);
-
       // as the user may have changed the order of the POP3 servers
       // we have to make sure the order in the NList fits to the
       // exec list order of our POP3 server list
@@ -2424,8 +2420,6 @@ void CO_SetConfig(void)
         setstring(gui->ST_SMTPAUTHPASS, msn->password);
         setcycle(gui->CY_SMTPAUTHMETHOD, MSF2SMTPAuthMethod(msn));
       }
-
-      setcycle(gui->CY_EXCHANGEORDER, CE->MailExchangeOrder);
 
       // clear the list first
       set(gui->LV_POP3, MUIA_NList_Quiet, TRUE);
