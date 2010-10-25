@@ -689,11 +689,9 @@ void ReplaceInvalidChars(char *name)
 
   while((c = *ptr) != '\0')
   {
-    static const char invalidChars[] = ":/#?*()[]|%'\"";
-
     // see if we have to replace certain unallowed characters
     // by a '_'
-    if((c <= 0x20) || (c > 0x80 && c < 0xa0) || strchr(invalidChars, c) != NULL)
+    if((c <= 0x20) || (c > 0x80 && c < 0xa0) || strchr(":/#?*()[]|%'\"", c) != NULL)
       *ptr = '_';
 
     ptr++;
