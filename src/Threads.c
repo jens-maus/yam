@@ -297,6 +297,7 @@ static SAVEDS void ThreadEntry(void)
               msg->result = TRUE;
               thread = msg->thread;
 
+              // change our initial priority of 1 back to 0
               SetTaskPri((struct Task *)proc, 0);
             }
             else
@@ -512,15 +513,17 @@ static struct Thread *CreateThread(void)
                                               NP_StackSize,   8192,        // stack size
                                               NP_Name,        thread->name,
                                               NP_Priority,    1,
-                                              #if defined(__amigaos4__)
-                                              NP_Child,       TRUE,
-                                              #elif defined(__MORPHOS__)
-                                              NP_CodeType,    MACHINE_PPC,
-                                              #endif
                                               NP_Input,       Input(),
                                               NP_CloseInput,  FALSE,
                                               NP_Output,      Output(),
                                               NP_CloseOutput, FALSE,
+                                              #if defined(__amigaos4__)
+                                              NP_Error,       ErrorOutput(),
+                                              NP_CloseError,  FALSE,
+                                              NP_Child,       TRUE,
+                                              #elif defined(__MORPHOS__)
+                                              NP_CodeType,    MACHINE_PPC,
+                                              #endif
                                               TAG_DONE)) != NULL)
       {
         // prepare the startup message

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c: set the default error output stream as well for the new threads
+    in the OS4 build.
+
 2010-10-24 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: update to the latest changes.
