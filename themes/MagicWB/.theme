@@ -1,0 +1,8 @@
+YTH1 - YAM Theme
+Name                = MagicWB theme
+Author              = Images by Pavel Narozny - Recompiled by Alper Sönmez
+URL                 = http://www.yam.ch/
+Version             = 1.0 (13.07.2010)
+IgnoreMissingImages = Y
+; Image file substitutions
+; <image id> = <file path>

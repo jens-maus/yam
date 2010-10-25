@@ -15,6 +15,7 @@ $URL$
 
 2010-10-25 Thore Böckelmann <tboeckel@gmx.de>
 
+  * themes: added four themes done by Alper Sönmez.
   * mui/YAM.c: enabled the "jump to new mail" feature again.
   * ParseEmail.l, mui/YAM.c, mui/ReadMailGroup.c: the GotoURL() function is no
     longer called in TextEditor.mcc's double click hook directly. This should
