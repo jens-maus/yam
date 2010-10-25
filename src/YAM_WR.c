@@ -3000,20 +3000,9 @@ struct WriteMailData *AllocWriteMailData(void)
                                              ASONODE_Min, TRUE,
                                              TAG_DONE)) != NULL)
   {
-    wmData->window = NULL;
-    wmData->refMail = NULL;
-    wmData->refMailList = NULL;
+    memset(wmData, 0, sizeof(*wmData));
     wmData->mode = NMM_NEW;
-    wmData->inReplyToMsgID = NULL;
-    wmData->references = NULL;
-    wmData->charset = NULL;
-
-    wmData->filename[0] = '\0';
     DateStamp(&wmData->lastFileChangeTime);
-    wmData->notifyRequest = NULL;
-    wmData->fileNotifyActive = FALSE;
-
-    wmData->quietMode = FALSE;
     wmData->oldSecurity = SEC_NONE;
   }
 

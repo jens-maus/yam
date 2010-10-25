@@ -4216,26 +4216,11 @@ struct ReadMailData *AllocPrivateRMData(const struct Mail *mail, short parseFlag
                                              ASONODE_Min, TRUE,
                                              TAG_DONE)) != NULL)
   {
-    rmData->readWindow = NULL;
-    rmData->readMailGroup = NULL;
+    memset(rmData, 0, sizeof(*rmData));
     rmData->mail = (struct Mail *)mail;
-    rmData->firstPart = NULL;
-    rmData->tempFile = NULL;
-    rmData->uniqueID = 0;
     rmData->headerMode = HM_NOHEADER;
     rmData->senderInfoMode = SIM_OFF;
     rmData->parseFlags = parseFlags;
-    rmData->signedFlags = 0;
-    rmData->encryptionFlags = 0;
-    rmData->letterPartNum = 0;
-    rmData->hasPGPKey = FALSE;
-    rmData->useTextcolors = FALSE;
-    rmData->useTextstyles = FALSE;
-    rmData->wrapHeaders = FALSE;
-    rmData->useFixedFont = FALSE;
-
-    rmData->readFile[0] = '\0';
-    rmData->sigAuthor[0] = '\0';
 
     // try load a message only if there is one to load
     if(mail != NULL)
