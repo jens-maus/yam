@@ -1112,3 +1112,15 @@ DECLARE(DisposeWindow) // Object *window
 }
 
 ///
+/// DECLARE(GotoURL)
+// invoke the GotoURL() function with the given parameters
+// NOTE: the error message must have been allocated by malloc() or similar!
+DECLARE(GotoURL) // char *url, ULONG newWindow
+{
+  GotoURL(msg->url, (BOOL)msg->newWindow);
+  free(msg->url);
+
+  return 0;
+}
+
+///

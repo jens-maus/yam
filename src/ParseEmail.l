@@ -573,7 +573,7 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
 
 ///
 /// ExtractURL()
-enum tokenType ExtractURL(const char *text, char *resultBuffer)
+enum tokenType ExtractURL(const char *text, char **resultBuffer)
 {
   YY_BUFFER_STATE buffer;
   enum tokenType type;
@@ -581,10 +581,10 @@ enum tokenType ExtractURL(const char *text, char *resultBuffer)
 
   ENTER();
 
-  if(text && resultBuffer)
+  if(text != NULL && resultBuffer != NULL)
   {
     // clear the resultBuffer
-    resultBuffer[0] = '\0';
+    *resultBuffer = NULL;
 
     // lets prepare the text for the lexer
     if((buffer = yy_scan_string(text)))
@@ -606,7 +606,7 @@ enum tokenType ExtractURL(const char *text, char *resultBuffer)
           case tURL:
           {
             // copy yytext to the resultBuffer
-            strcpy(resultBuffer, yytext);
+            *resultBuffer = strdup(yytext);
             result = type;
           }
           break;

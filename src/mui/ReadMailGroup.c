@@ -35,8 +35,10 @@
 #include "YAM_error.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
+
 #include "HTML2Mail.h"
 #include "FileInfo.h"
+#include "MethodStack.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
@@ -124,8 +126,9 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
   if(!isspace(clickmsg->LineContents[clickmsg->ClickPosition]))
   {
     int pos = clickmsg->ClickPosition;
-    char *line, *surl;
-    static char url[SIZE_URL];
+    char *line;
+    char *surl;
+    char *url = NULL;
     char *p;
     enum tokenType type;
 
@@ -147,7 +150,7 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
 
     // now we start our quick lexical analysis to find a clickable element within
     // the doubleclick area
-    if((type = ExtractURL(surl, url)) != 0)
+    if((type = ExtractURL(surl, &url)) != 0)
     {
       switch(type)
       {
@@ -181,7 +184,12 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
           if(xget(editor, MUIA_Revision) >= 26)
             newWindow = hasFlag(clickmsg->Qualifier, IEQUALIFIER_CONTROL);
 
-          GotoURL(url, newWindow);
+          // don't invoke the GotoURL command right here in there hook, as the
+          // execution may take lots of time
+          PushMethodOnStack(G->App, 3, MUIM_YAM_GotoURL, url, newWindow);
+
+          // don't free the URL string in this context
+          url = NULL;
         }
         break;
 
@@ -192,6 +200,8 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
 
       result = TRUE;
     }
+
+    free(url);
 
     FreeStrBuf(line);
   }

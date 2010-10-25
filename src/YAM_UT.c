@@ -5164,7 +5164,7 @@ BOOL GotoURLPossible(void)
 ///
 /// GotoURL
 //  Loads an URL using an ARexx script or openurl.library
-BOOL GotoURL(const char *url, BOOL newWindow)
+BOOL GotoURL(const char *url, const BOOL newWindow)
 {
   BOOL wentToURL = FALSE;
 

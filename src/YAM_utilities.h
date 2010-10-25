@@ -340,7 +340,7 @@ void     GetMailFile(char *string, const size_t stringSize, const struct Folder 
 char *   GetNextLine(char *p1);
 ULONG    GetSimpleID(void);
 BOOL     GotoURLPossible(void);
-BOOL     GotoURL(const char *url, BOOL newWindow);
+BOOL     GotoURL(const char *url, const BOOL newWindow);
 const char *IdentifyFile(const char *fname);
 char *   itoa(int val);
 void     LoadLayout(void);

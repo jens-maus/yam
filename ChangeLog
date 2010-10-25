@@ -15,6 +15,10 @@ $URL$
 
 2010-10-25 Thore Böckelmann <tboeckel@gmx.de>
 
+  * ParseEmail.l, mui/YAM.c, mui/ReadMailGroup.c: the GotoURL() function is no
+    longer called in TextEditor.mcc's double click hook directly. This should
+    cure the unwanted "text marked on double click" issues on AmigaOS4. Opening
+    a URL using the URL: device seems to take a bit too much time.
   * Threads.c: set the default error output stream as well for the new threads
     in the OS4 build.
 
