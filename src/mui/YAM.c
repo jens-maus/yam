@@ -912,12 +912,10 @@ DECLARE(FilterNewMails) // const struct MailList *mailList, struct FilterResult 
 
   FilterMails(FO_GetFolderByType(FT_INCOMING, NULL), msg->mailList, APPLY_AUTO, msg->filterResult);
 
-/*
   // Now we jump to the first new mail we received if the number of messages has changed
   // after the mail transfer
   if(C->JumpToIncoming == TRUE)
     MA_JumpToNewMsg();
-*/
 
   // only call the DisplayStatistics() function if the actual folder wasn't already the INCOMING
   // one or we would have refreshed it twice
