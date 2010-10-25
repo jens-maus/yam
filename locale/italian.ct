@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (21.10.2010)
+## version $VER: YAM.catalog 7.5 (26.10.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5387 2010-10-21
+; based on YAM.cd 5405 2010-10-25
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9269,26 +9269,6 @@ Filtraggio eseguito:\n\
 ; %3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
-MSG_CO_EXCHANGE_MAIL
-Scambio messaggi
-; Exchange mail
-;
-MSG_CO_EXCHANGE_ORDER
-Scambia ordine
-; Exchange order
-;
-MSG_CO_EXCHANGE_ORDER_GET_FIRST
-Scarica messaggio, dopodichè invia messaggi
-; get mail first, then send mail
-;
-MSG_CO_EXCHANGE_ORDER_SEND_FIRST
-Invia messaggio, dopodichè scarica messaggi
-; send mail first, then get mail
-;
-MSG_HELP_CO_CY_EXCHANGE_ORDER
-L'ordine dello scambio messaggi.
-; The order of the mail exchange.
-;
 MSG_FCHANGE_WARN_TITLE
 Avviso di modifica del file
 ; Filechange warning
@@ -9447,8 +9427,8 @@ La connessione è stata terminata:\n\
 ;
 MSG_ER_BADRESPONSE_POP3
 Errato responso da parte del server di posta '%s' per l'account '%s' al comando '%s':\n\
-\n\
 %s\n\
+\n\
 Il server di posta non ha potuto eseguire il\n\
 comando ed ha risposto con il messaggio\n\
 di errore sopra riportato.
