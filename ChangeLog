@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-25 Alper Sönmez <amithlondestek@gmail.com>
+
+  * locale/turkish.ct: update to the latest changes.
+
 2010-10-25 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest changes.

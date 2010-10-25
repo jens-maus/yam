@@ -773,7 +773,7 @@ Kaydet
 ; Save
 ;
 MSG_MA_Reset
-Resetle
+Sýfýrla
 ; Reset
 ;
 MSG_MA_Select
@@ -781,7 +781,7 @@ Seç
 ; Select
 ;
 MSG_MA_FlushIndices
-Ýndeksleri boþalt
+Ýndisleri boþalt
 ; Flush indices
 ;
 MSG_MA_MDelete
@@ -1904,7 +1904,6 @@ MSG_CO_SaveDelete
 MSG_CO_ConfirmDelPart1
 
 ; Confirm _deletion of
-; NOTE: this string must be left empty to match the turkish grammar!
 ;
 MSG_CO_ConfirmDelPart2
 veya daha fazla mesaj silineceðinde onay penceresi göster
@@ -2015,7 +2014,7 @@ Varsayýlana dönder
 ; Reset to defaults
 ;
 MSG_CO_ResetAll
-Tüm ayarlarý resetle
+Tüm ayarlarý sýfýrla
 ; Reset all settings
 ;
 MSG_CO_LastSaved
@@ -4127,7 +4126,7 @@ Geri al
 ; Undo
 ;
 MSG_WR_Redo
-Tekrar yap
+Yeniden yap
 ; Redo
 ;
 MSG_WR_Dictionary
@@ -4453,7 +4452,7 @@ APOP giriþ bilgisi gönderiliyor...
 ; Sending APOP login information...
 ;
 MSG_TR_SendUserID
-Kullanýcý ID'si gönderiliyo...
+Kullanýcý ID'si gönderiliyor...
 ; Sending user ID...
 ;
 MSG_TR_SendPassword
@@ -6664,7 +6663,7 @@ Docky _simgesini etkinleþtir
 ;
 MSG_HELP_CO_CH_DOCKYICON
 Eðer seçilirse, YAM AmiDock'a bir simge\n\
-ekleyecektir. Bu AmigaOS4.x gerektir.
+ekleyecektir. Bu AmigaOS4.x gerektirir.
 ; If checked, YAM will add a 'docky' to\n\
 ; AmiDock. This requires AmigaOS 4.x.
 ;
@@ -6792,7 +6791,7 @@ MSG_CO_FIRSTSTEPS_TITLE
 ; First Steps Settings
 ;
 MSG_CO_FIRSTSTEPS_SUMMARY
-E-posta gönderip/almayý saðlayacak minimum parametreler...
+E-posta gönderip/almayý saðlayacak asgari ayarlamalar...
 ; The minimum parameters to be able to send/receive e-mail...
 ;
 MSG_CO_TCPIP_TITLE
@@ -8413,7 +8412,7 @@ MSG_HELP_CO_CY_FORWARDMODE
 Postalarýn varsayýlan olarak nasýl\n\
 iletileceðini seçiniz. Ýletiler yeni\n\
 postaya bir ek olarak veya\n\
-satýriçi olarak eklenebilir.\n\
+satýriçi olarak eklenebilir.
 ; Select here the way messages should be\n\
 ; forwarded by default. Either a message\n\
 ; can be forwarded as an attachment or the\n\
@@ -8613,7 +8612,7 @@ GeriAl
 ; Undo
 ;
 MSG_MA_EDIT_REDO
-TekrarYap
+YenidenYap
 ; Redo
 ;
 MSG_MA_EDIT_CUT
@@ -9543,7 +9542,7 @@ kodlanacaktýr.
 ; sequences.
 ;
 MSG_MA_NAVIGATION
-Yöngüdüm
+Hareket
 ; Navigation
 ;
 MSG_MA_MNEXTTH
