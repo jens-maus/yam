@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-25 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
 2010-10-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.c: set the default error output stream as well for the new threads
