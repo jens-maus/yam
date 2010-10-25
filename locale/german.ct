@@ -8249,7 +8249,7 @@ MSG_ER_BADRESPONSE_POP3
 Der Postserver '%s' von Konto '%s' hat auf den Befehl '%s' falsch geantwortet:\n\
 %s\n\
 \n\
-Der Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
+Der Postserver konnte den Befehl nicht ausführen und antwortete mit obiger Fehlermeldung.
 ;
 MSG_ER_INITTLS_POP3
 Fehler beim Initialisieren der TLSv1/SSLv3 Session mit Server '%s' von Konto '%s'.

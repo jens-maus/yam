@@ -6618,7 +6618,6 @@ procedure and the connection was terminated:\n\
 ;
 MSG_ER_BADRESPONSE_POP3 (2094//)
 Bad response from mail server '%s' of account '%s' to command '%s':\n\
-\n\
 %s\n\
 \n\
 The mail server couldn't execute the command \
