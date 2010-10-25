@@ -118,6 +118,7 @@ struct Global
   struct FolderList *      folders;
   struct MinList         * xpkPackerList;
   struct SignalSemaphore * connectionSemaphore;
+  struct Part            * virtualMailpart[2]; // two virtual mail parts for the attachment requester window
 
   #if defined(__amigaos4__)
   struct MsgPort *         AppLibPort;

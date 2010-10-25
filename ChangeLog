@@ -15,6 +15,11 @@ $URL$
 
 2010-10-25 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM.c, mui/AttachmentRequestWindow.c: the two virtual mail parts used for
+    selecting the raw mail part must not be part of the requester's instance
+    data, as these vanish as soon as the requester is closed and hence must not
+    be accessed afterwards. Instead we use two globally accessible mail parts
+    to circumvent this issue.
   * themes: added four themes done by Alper Sönmez.
   * mui/YAM.c: enabled the "jump to new mail" feature again.
   * ParseEmail.l, mui/YAM.c, mui/ReadMailGroup.c: the GotoURL() function is no

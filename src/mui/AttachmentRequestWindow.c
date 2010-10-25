@@ -44,7 +44,6 @@ struct Data
 {
   LONG result;
   Object *listObj;
-  struct Part spart[2];
 };
 */
 
@@ -151,21 +150,21 @@ OVERLOAD(OM_NEW)
     data->listObj = listObj;
 
     // lets create the static parts of the Attachrequest entries in the NList
-    data->spart[0].Nr = PART_ORIGINAL;
-    strlcpy(data->spart[0].Name, tr(MSG_RE_Original), sizeof(data->spart[0].Name));
-    data->spart[0].Size = rmData->mail->Size;
-    SET_FLAG(data->spart[0].Flags, PFLAG_DECODED);
-    DoMethod(listObj, MUIM_NList_InsertSingle, &data->spart[0], MUIV_NList_Insert_Top);
+    G->virtualMailpart[0]->Nr = PART_ORIGINAL;
+    strlcpy(G->virtualMailpart[0]->Name, tr(MSG_RE_Original), sizeof(G->virtualMailpart[0]->Name));
+    G->virtualMailpart[0]->Size = rmData->mail->Size;
+    SET_FLAG(G->virtualMailpart[0]->Flags, PFLAG_DECODED);
+    DoMethod(listObj, MUIM_NList_InsertSingle, G->virtualMailpart[0], MUIV_NList_Insert_Top);
     set(listObj, MUIA_NList_Active, MUIV_NList_Active_Top);
 
     // if this AttachRequest isn't a DISPLAY request we show all the option to select the text we actually see
     if(!isDisplayReq(mode))
     {
-      data->spart[1].Nr = PART_ALLTEXT;
-      strlcpy(data->spart[1].Name, tr(MSG_RE_AllTexts), sizeof(data->spart[1].Name));
-      data->spart[1].Size = 0;
+      G->virtualMailpart[1]->Nr = PART_ALLTEXT;
+      strlcpy(G->virtualMailpart[1]->Name, tr(MSG_RE_AllTexts), sizeof(G->virtualMailpart[1]->Name));
+      G->virtualMailpart[1]->Size = 0;
 
-      DoMethod(listObj, MUIM_NList_InsertSingle, &data->spart[1], MUIV_NList_Insert_Bottom);
+      DoMethod(listObj, MUIM_NList_InsertSingle, G->virtualMailpart[1], MUIV_NList_Insert_Bottom);
     }
 
     // now we process the mail and pick every part out to the NListview

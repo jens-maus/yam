@@ -1152,6 +1152,10 @@ static void Terminate(void)
 
   CLOSELIB(LocaleBase, ILocale);
 
+  // free the two virtual mail parts
+  free(G->virtualMailpart[0]);
+  free(G->virtualMailpart[1]);
+
   // make sure to free the shared memory pool before
   // freeing the rest
   if(G->SharedMemPool != NULL)
@@ -2510,6 +2514,13 @@ int main(int argc, char **argv)
 
     // create a list for all the folders
     if((G->folders = CreateFolderList()) == NULL)
+      break;
+
+    // allocate two virtual mail parts for the attachment requester
+    // these two must be accessible all the time
+    if((G->virtualMailpart[0] = calloc(1, sizeof(*G->virtualMailpart[0]))) == NULL)
+      break;
+    if((G->virtualMailpart[1] = calloc(1, sizeof(*G->virtualMailpart[1]))) == NULL)
       break;
 
     // prepare the exec lists in G and C
