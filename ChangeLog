@@ -7,8 +7,9 @@ $URL$
 
 2010-10-26 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/Aboutwindow.c: added Alper Sönmez to the list of translators.
   * mui/AttachmentObject.c: some more error checkings upon exporting an
-    attachment
+    attachment.
   * YAM_RE.c: exporting an attachment will now replace possibly invalid
     characters in every case. Furthermore mail attachments will now get the
     extension ".eml" by default.
