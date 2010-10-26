@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (26.10.2010)
+## version $VER: YAM.catalog 7.5 (27.10.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -8455,7 +8455,7 @@ _Inoltra messaggi
 ; _Forward messages
 ;
 MSG_CO_FWDMSG_INLINE
-in coda
+In coda
 ; inlined
 ;
 MSG_HELP_CO_CY_FORWARDMODE

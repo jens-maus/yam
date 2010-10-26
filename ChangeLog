@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-26 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed a little typo.
+
 2010-10-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ImageArea.c: handle possible duplicate attributes during OM_NEW.
