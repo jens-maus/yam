@@ -53,6 +53,7 @@ struct Data
   Object *attGroupObject;
   struct Part *mailPart;
   char menuTitle[SIZE_DEFAULT];
+  char descriptionBuffer[SIZE_PATH + SIZE_DEFAULT * 2];
 };
 */
 
@@ -120,10 +121,8 @@ OVERLOAD(OM_NEW)
     data->attGroupObject = attGroupObject;
 
     // connect some notifies which we might be interested in
-    DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DoubleClick, TRUE,
-             obj, 1, MUIM_AttachmentObject_Display);
-    DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DropPath, MUIV_EveryTime,
-             obj, 2, MUIM_AttachmentObject_ImageDropped, MUIV_TriggerValue);
+    DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DoubleClick, TRUE, obj, 1, METHOD(Display));
+    DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DropPath, MUIV_EveryTime, obj, 2, METHOD(ImageDropped), MUIV_TriggerValue);
 
   }
 
@@ -196,7 +195,7 @@ OVERLOAD(MUIM_Setup)
 
   if(data->mailPart != NULL && (result = DoSuperMethodA(cl, obj, msg)) != 0)
   {
-    DoMethod(obj, MUIM_AttachmentObject_UpdateDescription);
+    DoMethod(obj, METHOD(UpdateDescription));
     xset(data->imageObject, MUIA_AttachmentImage_MaxHeight, _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0,
                             MUIA_AttachmentImage_MaxWidth,  _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0);
   }
@@ -253,19 +252,19 @@ OVERLOAD(MUIM_ContextMenuChoice)
   switch(xget(m->item, MUIA_UserData))
   {
     case AMEN_DISPLAY:
-      DoMethod(obj, MUIM_AttachmentObject_Display);
+      DoMethod(obj, METHOD(Display));
     break;
 
     case AMEN_SAVEAS:
-      DoMethod(obj, MUIM_AttachmentObject_Save);
+      DoMethod(obj, METHOD(Save));
     break;
 
     case AMEN_DELETE:
-      DoMethod(obj, MUIM_AttachmentObject_Delete);
+      DoMethod(obj, METHOD(Delete));
     break;
 
     case AMEN_PRINT:
-      DoMethod(obj, MUIM_AttachmentObject_Print);
+      DoMethod(obj, METHOD(Print));
     break;
 
     case AMEN_SAVEALL:
@@ -324,7 +323,7 @@ DECLARE(Display)
         // will issue a refresh of all images as well in
         // case they have changed.
         MUI_Redraw(data->imageObject, MADF_DRAWOBJECT);
-        DoMethod(obj, MUIM_AttachmentObject_UpdateDescription);
+        DoMethod(obj, METHOD(UpdateDescription));
       }
     }
 
@@ -340,44 +339,47 @@ DECLARE(Display)
 DECLARE(Save)
 {
   GETDATA;
+  struct Part *rp = data->mailPart;
 
   ENTER();
 
-  if(data->mailPart != NULL)
+  if(rp != NULL)
   {
-    BOOL oldDecoded = isDecoded(data->mailPart);
+    BOOL oldDecoded = isDecoded(rp);
 
     BusyText(tr(MSG_BusyDecSaving), "");
 
-    if(RE_DecodePart(data->mailPart) == TRUE)
+    // export the mail part only if the decoding succeeded
+    if(RE_DecodePart(rp) == TRUE)
     {
       char *fileName;
 
-      // export the mail part only if the decoding succeeded
-      fileName = data->mailPart->CParFileName;
+      fileName = rp->CParFileName;
       if(fileName == NULL || strlen(fileName) == 0)
       {
-        fileName = data->mailPart->Name;
+        fileName = rp->Name;
         if(fileName == NULL || strlen(fileName) == 0)
-          fileName = data->mailPart->Filename;
+          fileName = rp->Filename;
       }
-      // finally strip any path from the file name
-      fileName = FilePart(fileName);
+      // finally strip any path from the file name if it is no mail attachment
+      // for mail attachments we want to keep possible "Re:" parts of the subject
+      if(rp->ContentType == NULL || stricmp(rp->ContentType, "message/rfc822") != 0)
+        fileName = FilePart(fileName);
 
-      RE_Export(data->mailPart->rmData,
-                data->mailPart->Filename,
+      RE_Export(rp->rmData,
+                rp->Filename,
                 "",
                 fileName,
                 data->mailPart->Nr,
                 FALSE,
                 FALSE,
-                data->mailPart->ContentType);
+                rp->ContentType);
 
       if(oldDecoded == FALSE)
       {
         // now we know the exact size of the file and can redraw ourself
         MUI_Redraw(data->imageObject, MADF_DRAWOBJECT);
-        DoMethod(obj, MUIM_AttachmentObject_UpdateDescription);
+        DoMethod(obj, METHOD(UpdateDescription));
       }
     }
 
@@ -438,39 +440,54 @@ DECLARE(ImageDropped) // char *dropPath
   BOOL result;
   char *fileName;
   char filePathBuf[SIZE_PATHFILE];
+  BOOL oldDecoded;
 
   ENTER();
 
   D(DBF_GUI, "image of Part %ld was dropped at [%s]", data->mailPart->Nr, msg->dropPath);
 
+  oldDecoded = isDecoded(data->mailPart);
+
   BusyText(tr(MSG_BusyDecSaving), "");
 
-  // make sure the drawer is opened upon the drag operation
-  if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
-    OpenWorkbenchObjectA(msg->dropPath, NULL);
-
-  // prepare the final path
-  fileName = data->mailPart->CParFileName;
-  if(fileName == NULL || strlen(fileName) == 0)
+  // export the mail part only if the decoding succeeded
+  if(RE_DecodePart(data->mailPart) == TRUE)
   {
-    fileName = data->mailPart->Name;
-    if(fileName == NULL || strlen(fileName) == 0)
-      fileName = data->mailPart->Filename;
-  }
-  // first strip any path from the file name
-  fileName = FilePart(fileName);
-  // then add the file name to the drop path
-  AddPath(filePathBuf, msg->dropPath, fileName, sizeof(filePathBuf));
+    // make sure the drawer is opened upon the drag operation
+    if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
+      OpenWorkbenchObjectA(msg->dropPath, NULL);
 
-  RE_DecodePart(data->mailPart);
-  result = RE_Export(data->mailPart->rmData,
-                     data->mailPart->Filename,
-                     filePathBuf,
-                     "",
-                     data->mailPart->Nr,
-                     FALSE,
-                     FALSE,
-                     data->mailPart->ContentType);
+    // prepare the final path
+    fileName = data->mailPart->CParFileName;
+    if(fileName == NULL || strlen(fileName) == 0)
+    {
+      fileName = data->mailPart->Name;
+      if(fileName == NULL || strlen(fileName) == 0)
+        fileName = data->mailPart->Filename;
+    }
+    // finally strip any path from the file name if it is no mail attachment
+    // for mail attachments we want to keep possible "Re:" parts of the subject
+    if(data->mailPart->ContentType == NULL || stricmp(data->mailPart->ContentType, "message/rfc822") != 0)
+      fileName = FilePart(fileName);
+    // then add the file name to the drop path
+    AddPath(filePathBuf, msg->dropPath, fileName, sizeof(filePathBuf));
+
+    result = RE_Export(data->mailPart->rmData,
+                       data->mailPart->Filename,
+                       filePathBuf,
+                       "",
+                       data->mailPart->Nr,
+                       FALSE,
+                       FALSE,
+                       data->mailPart->ContentType);
+
+    if(oldDecoded == FALSE)
+    {
+      // now we know the exact size of the file and can redraw ourself
+      MUI_Redraw(data->imageObject, MADF_DRAWOBJECT);
+      DoMethod(obj, METHOD(UpdateDescription));
+    }
+  }
 
   // let the workbench know about the change
   if(result == TRUE)
@@ -533,7 +550,6 @@ DECLARE(ImageDropped) // char *dropPath
 DECLARE(UpdateDescription)
 {
   GETDATA;
-  char buffer[SIZE_PATH + SIZE_DEFAULT * 2];
   char sizeBuffer[SIZE_DEFAULT];
 
   ENTER();
@@ -541,16 +557,16 @@ DECLARE(UpdateDescription)
   // first line: the attachment name
   if(isAlternativePart(data->mailPart))
   {
-    strlcpy(buffer, MUIX_I "multipart/alternative" MUIX_N, sizeof(buffer));
+    strlcpy(data->descriptionBuffer, MUIX_I "multipart/alternative" MUIX_N, sizeof(data->descriptionBuffer));
   }
   else
   {
     if(data->mailPart->Name[0] != '\0')
-      strlcpy(buffer, data->mailPart->Name, sizeof(buffer));
+      strlcpy(data->descriptionBuffer, data->mailPart->Name, sizeof(data->descriptionBuffer));
     else
-      strlcpy(buffer, data->mailPart->Description, sizeof(buffer));
+      strlcpy(data->descriptionBuffer, data->mailPart->Description, sizeof(data->descriptionBuffer));
   }
-  strlcat(buffer, "\n", sizeof(buffer));
+  strlcat(data->descriptionBuffer, "\n", sizeof(data->descriptionBuffer));
 
   // second line: the attachment size
   if(isDecoded(data->mailPart))
@@ -562,13 +578,13 @@ DECLARE(UpdateDescription)
     sizeBuffer[0] = '~';
     FormatSize(data->mailPart->Size, &sizeBuffer[1], sizeof(sizeBuffer)-1, SF_AUTO);
   }
-  strlcat(buffer, sizeBuffer, sizeof(buffer));
-  strlcat(buffer, "\n", sizeof(buffer));
+  strlcat(data->descriptionBuffer, sizeBuffer, sizeof(data->descriptionBuffer));
+  strlcat(data->descriptionBuffer, "\n", sizeof(data->descriptionBuffer));
 
   // third line: the attachment description
-  strlcat(buffer, DescribeCT(data->mailPart->ContentType), sizeof(buffer));
+  strlcat(data->descriptionBuffer, DescribeCT(data->mailPart->ContentType), sizeof(data->descriptionBuffer));
 
-  set(data->textObject, MUIA_Text_Contents, buffer);
+  set(data->textObject, MUIA_Text_Contents, data->descriptionBuffer);
 
   RETURN(0);
   return 0;
