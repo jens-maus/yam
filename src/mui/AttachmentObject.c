@@ -437,8 +437,8 @@ DECLARE(Print)
 DECLARE(ImageDropped) // char *dropPath
 {
   GETDATA;
-  BOOL result;
-  char *fileName;
+  BOOL result = FALSE;
+  char *fileName = NULL;
   char filePathBuf[SIZE_PATHFILE];
   BOOL oldDecoded;
 
