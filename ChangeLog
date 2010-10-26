@@ -7,6 +7,7 @@ $URL$
 
 2010-10-26 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/ImageArea.c: handle possible duplicate attributes during OM_NEW.
   * mui/Aboutwindow.c: added the language name to the translators' names.
   * mui/Aboutwindow.c: added Alper Sönmez to the list of translators.
   * mui/AttachmentObject.c: some more error checkings upon exporting an

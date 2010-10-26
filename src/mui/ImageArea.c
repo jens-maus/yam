@@ -430,10 +430,10 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        case ATTR(ID):          if((char *)tag->ti_Data != NULL) data->id = strdup((char *)tag->ti_Data); break;
-        case ATTR(Filename):    if((char *)tag->ti_Data != NULL) data->filename = strdup((char *)tag->ti_Data); break;
-        case ATTR(AltText):     if((char *)tag->ti_Data != NULL) data->altText = strdup((char *)tag->ti_Data); break;
-        case ATTR(Label):       if((char *)tag->ti_Data != NULL) data->label = strdup((char *)tag->ti_Data); break;
+        case ATTR(ID):          if((char *)tag->ti_Data != NULL) { free(data->id); data->id = strdup((char *)tag->ti_Data); } break;
+        case ATTR(Filename):    if((char *)tag->ti_Data != NULL) { free(data->filename); data->filename = strdup((char *)tag->ti_Data); } break;
+        case ATTR(AltText):     if((char *)tag->ti_Data != NULL) { free(data->altText); data->altText = strdup((char *)tag->ti_Data); } break;
+        case ATTR(Label):       if((char *)tag->ti_Data != NULL) { free(data->label); data->label = strdup((char *)tag->ti_Data); } break;
         case ATTR(FreeVert):    data->free_vert   = (BOOL)tag->ti_Data; break;
         case ATTR(FreeHoriz):   data->free_horiz  = (BOOL)tag->ti_Data; break;
         case ATTR(ShowLabel):   data->show_label  = (BOOL)tag->ti_Data; break;
@@ -447,6 +447,7 @@ OVERLOAD(OM_NEW)
   RETURN((IPTR)obj);
   return (IPTR)obj;
 }
+
 ///
 /// OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_DISPOSE)
@@ -467,6 +468,7 @@ OVERLOAD(OM_DISPOSE)
   RETURN(result);
   return result;
 }
+
 ///
 /// OVERLOAD(OM_GET)
 // get info about the instance data
@@ -539,6 +541,7 @@ OVERLOAD(OM_GET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
 ///
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
@@ -657,6 +660,7 @@ OVERLOAD(MUIM_Setup)
   RETURN(result);
   return result;
 }
+
 ///
 /// OVERLOAD(MUIM_Cleanup)
 OVERLOAD(MUIM_Cleanup)
