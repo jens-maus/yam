@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (27.10.2010)
+## version $VER: YAM.catalog 7.5 (26.10.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -96,7 +96,7 @@ MSG_YesNoReq
 ; *_Yes|_No
 ;
 MSG_ErrorReq
-Errori
+Errore
 ; Error
 ;
 MSG_NewEntry
