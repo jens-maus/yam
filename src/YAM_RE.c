@@ -103,6 +103,7 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
   BOOL success = FALSE;
   Object *win;
   struct Mail *mail;
+  char filename[SIZE_FILE];
   char path[SIZE_PATHFILE];
 
   ENTER();
@@ -114,12 +115,15 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
 
   if(dest[0] == '\0')
   {
-    char filename[SIZE_FILE];
     struct FileReqCache *frc;
 
     if(name[0] != '\0')
     {
-      strlcpy(filename, name, sizeof(filename));
+      char suggestedName[SIZE_FILE];
+
+      strlcpy(suggestedName, name, sizeof(suggestedName));
+      ReplaceInvalidChars(suggestedName);
+      strlcpy(filename, suggestedName, sizeof(filename));
     }
     else if(nr != 0)
     {
@@ -152,7 +156,9 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
     }
 
     if(force == TRUE)
+    {
       dest = AddPath(path, C->DetachDir, filename, sizeof(path));
+    }
     else
     {
       const char *title;
@@ -293,10 +299,10 @@ static void BuildCommandString(char *command, const size_t commandLen, const cha
                 GetPubScreenName((struct Screen *)xget(G->MA->GUI.WI, MUIA_Window_Screen), pubScreenName, sizeof(pubScreenName));
 
                 // insert the public screen name
-                if(!hasQuotes)
+                if(hasQuotes == FALSE)
                   strlcat(command, "\"", commandLen);
                 strlcat(command, pubScreenName, commandLen);
-                if(!hasQuotes)
+                if(hasQuotes == FALSE)
                   strlcat(command, "\"", commandLen);
               }
               break;
@@ -304,10 +310,10 @@ static void BuildCommandString(char *command, const size_t commandLen, const cha
               case 's':
               {
                 // insert the filename
-                if(!hasQuotes)
+                if(hasQuotes == FALSE)
                   strlcat(command, "\"", commandLen);
                 strlcat(command, file, commandLen);
-                if(!hasQuotes)
+                if(hasQuotes == FALSE)
                   strlcat(command, "\"", commandLen);
               }
               break;
@@ -523,7 +529,7 @@ void RE_SaveAll(struct ReadMailData *rmData, const char *path)
 
   ENTER();
 
-  if((dest = calloc(1, size)))
+  if((dest = malloc(size)) != NULL)
   {
     struct Part *part;
     char fname[SIZE_DEFAULT];
@@ -533,15 +539,21 @@ void RE_SaveAll(struct ReadMailData *rmData, const char *path)
       // we skip the part which is considered the letterPart
       if(part->Nr != rmData->letterPartNum)
       {
-        if(*part->Name)
-          strlcpy(fname, part->Name, sizeof(fname));
-        else
-          snprintf(fname, sizeof(fname), "%s-%d", rmData->mail->MailFile, part->Nr);
+        // export the mail part only if the decoding succeeded
+        if(RE_DecodePart(part) == TRUE)
+        {
+          if(part->Name[0] != '\0')
+            strlcpy(fname, part->Name, sizeof(fname));
+          else
+            snprintf(fname, sizeof(fname), "%s-%d", rmData->mail->MailFile, part->Nr);
 
-        AddPath(dest, path, fname, size);
+          // replace possibly invalid characters
+          ReplaceInvalidChars(fname);
 
-        RE_DecodePart(part);
-        RE_Export(rmData, part->Filename, dest, part->Name, part->Nr, FALSE, FALSE, part->ContentType);
+          AddPath(dest, path, fname, size);
+
+          RE_Export(rmData, part->Filename, dest, part->Name, part->Nr, FALSE, FALSE, part->ContentType);
+        }
       }
     }
 
@@ -1089,6 +1101,13 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
       // to the MIME standards.
       SET_FLAG(rp->Flags, PFLAG_MIME);
     }
+  }
+
+  // add the ".eml" extensions for mail attachments if it doesn't exist already
+  if(rp->ContentType != NULL && stricmp(rp->ContentType, "message/rfc822") == 0)
+  {
+    if(rp->Description != NULL && stricmp(&rp->Description[strlen(rp->Description)-4], ".eml") != 0)
+      strlcat(rp->Description, ".eml", sizeof(rp->Description));
   }
 
   // if this is a main header scan and if this main part

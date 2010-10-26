@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: exporting an attachment will now replace possibly invalid
+    characters in every case. Furthermore mail attachments will now get the
+    extension ".eml" by default.
+
 2010-10-25 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.
