@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/Base64Dataspace.c: added a subclass of Dataspace.mui to im/export data
+    from/to a base64 encoded ASCII string.
+
 2010-10-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed a little typo.

@@ -420,6 +420,7 @@ MUIOBJS = \
 	AttachmentList.o \
 	AttachmentObject.o \
 	AttachmentRequestWindow.o \
+	Base64Dataspace.o \
 	BirthdayRequestWindow.o \
 	CheckboxRequestWindow.o \
 	ConfigPageList.o \
