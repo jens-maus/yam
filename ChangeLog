@@ -7,6 +7,12 @@ $URL$
 
 2010-10-27 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/PreselectionWindow.c, YAM_UT.c: the column layout of the preselection
+    window can be saved permanently. This is accomplished by using the new
+    Base64Dataspace class to store the layout of the dynamically added NList
+    object. MUI itself will save the window's dimensions, but I cannot save
+    further exported data by MUIM_Export of already dead objects. This is why
+    we have to take this detour. This finally closes #60.
   * mui/Base64Dataspace.c: added a subclass of Dataspace.mui to im/export data
     from/to a base64 encoded ASCII string.
 

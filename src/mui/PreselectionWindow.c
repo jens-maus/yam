@@ -130,6 +130,7 @@ OVERLOAD(OM_NEW)
     TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
+    Object *ds;
     enum PreselectionMode mode;
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
@@ -146,6 +147,15 @@ OVERLOAD(OM_NEW)
 
     data->thread = (APTR)GetTagData(ATTR(Thread), (IPTR)NULL, inittags(msg));
     data->mailList = (struct MailTransferList *)GetTagData(ATTR(Mails), (IPTR)NULL, inittags(msg));
+
+    // try to restore any previously remembered NList layout
+    if((ds = Base64DataspaceObject,
+      MUIA_Base64Dataspace_Base64String, G->preselectionWindowLayout,
+    End) != NULL)
+    {
+      DoMethod(data->transferMailList, MUIM_Import, ds);
+      MUI_DisposeObject(ds);
+    }
 
     if(data->mailList != NULL)
     {
@@ -185,6 +195,45 @@ OVERLOAD(OM_NEW)
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
+}
+
+///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags = inittags(msg), *tag;
+
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      case MUIA_Window_Open:
+      {
+        if(tag->ti_Data == FALSE)
+        {
+          Object *ds;
+
+          // remember the current NList layout whenever the window is closed
+          if((ds = Base64DataspaceObject, End) != NULL)
+          {
+            char *b64;
+
+            // let NList export its stuff to our subclassed Dataspace.mui object
+            DoMethod(data->transferMailList, MUIM_Export, ds);
+            // then get the base64 encoded string and remember it
+            if((b64 = (char *)xget(ds, MUIA_Base64Dataspace_Base64String)) != NULL)
+              strlcpy(G->preselectionWindowLayout, b64, sizeof(G->preselectionWindowLayout));
+
+            MUI_DisposeObject(ds);
+          }
+        }
+      }
+      break;
+    }
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///

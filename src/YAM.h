@@ -178,6 +178,7 @@ struct Global
   char                     AB_Filename[SIZE_PATHFILE];
   char                     CO_PrefsFile[SIZE_PATHFILE];
   char                     DI_Filename[SIZE_PATHFILE];
+  char                     preselectionWindowLayout[SIZE_LARGE];
 };
 
 extern struct Global *G;

@@ -4219,7 +4219,7 @@ struct MA_ClassData *MA_New(void)
           MUIA_ShowMe, FALSE,
           Child, data->GUI.ST_LAYOUT = StringObject,
             MUIA_ObjectID, MAKE_ID('S','T','L','A'),
-            MUIA_String_MaxLen, SIZE_DEFAULT,
+            MUIA_String_MaxLen, SIZE_LARGE,
           End,
         End,
         Child, data->GUI.IB_INFOBAR = InfoBarObject,

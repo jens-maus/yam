@@ -4016,6 +4016,11 @@ void LoadLayout(void)
   if(endptr == NULL || endptr == ls)
     G->Weights[11] = 100;
 
+  if(endptr != NULL)
+    strlcpy(G->preselectionWindowLayout, Trim(endptr), sizeof(G->preselectionWindowLayout));
+  else
+    G->preselectionWindowLayout[0] = '\0';
+
   // lets set the weight factors to the corresponding GUI elements now
   // if they exist
   set(G->MA->GUI.LV_FOLDERS,  MUIA_HorizWeight, G->Weights[0]);
@@ -4023,7 +4028,7 @@ void LoadLayout(void)
   set(G->MA->GUI.PG_MAILLIST, MUIA_VertWeight,  G->Weights[6]);
 
   // if the embedded read pane is active we set its weight values
-  if(C->EmbeddedReadPane)
+  if(C->EmbeddedReadPane == TRUE)
   {
     xset(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight,                 G->Weights[7],
                                          MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
@@ -4037,11 +4042,11 @@ void LoadLayout(void)
 //  Saves column widths to ENV(ARC):MUI/YAM.cfg
 void SaveLayout(BOOL permanent)
 {
-  char buf[SIZE_DEFAULT+1];
+  char *buf;
 
   ENTER();
 
-  // we encode the different weight factors which are embeeded in a dummy string
+  // we encode the different weight factors which are embedded in a dummy string
   // gadgets:
   //
   // 0:  Horizontal weight of left foldertree in main window.
@@ -4056,21 +4061,28 @@ void SaveLayout(BOOL permanent)
   // 9:  Vertical weight of bottom object (texteditor) of the embedded read pane
   // 10: Vertical weight of top object (headerlist) in a read window
   // 11: Vertical weight of bottom object (texteditor) in a read window
+  //
+  // the last item will be the column layout of the preselection window
 
-  snprintf(buf, sizeof(buf), "%d %d %d %d %d %d %d %d %d %d %d %d", (int)G->Weights[0],
-                                                                    (int)G->Weights[1],
-                                                                    (int)G->Weights[2],
-                                                                    (int)G->Weights[3],
-                                                                    (int)G->Weights[4],
-                                                                    (int)G->Weights[5],
-                                                                    (int)G->Weights[6],
-                                                                    (int)G->Weights[7],
-                                                                    (int)G->Weights[8],
-                                                                    (int)G->Weights[9],
-                                                                    (int)G->Weights[10],
-                                                                    (int)G->Weights[11]);
+  if(asprintf(&buf, "%d %d %d %d %d %d %d %d %d %d %d %d %s",
+    (int)G->Weights[0],
+    (int)G->Weights[1],
+    (int)G->Weights[2],
+    (int)G->Weights[3],
+    (int)G->Weights[4],
+    (int)G->Weights[5],
+    (int)G->Weights[6],
+    (int)G->Weights[7],
+    (int)G->Weights[8],
+    (int)G->Weights[9],
+    (int)G->Weights[10],
+    (int)G->Weights[11],
+    G->preselectionWindowLayout) != -1)
+  {
+    setstring(G->MA->GUI.ST_LAYOUT, buf);
+    free(buf);
+  }
 
-  setstring(G->MA->GUI.ST_LAYOUT, buf);
   DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
 
   // if we want to save to ENVARC:
