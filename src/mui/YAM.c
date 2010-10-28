@@ -939,10 +939,11 @@ DECLARE(UpdateAppIcon)
 ///
 /// DECLARE(NewMailAlert)
 //  Notifies user when new mail is available
-DECLARE(NewMailAlert) // struct DownloadResult *downloadResult, struct FilterResult *filterResult, const ULONG flags
+DECLARE(NewMailAlert) // const char *account, struct DownloadResult *downloadResult, struct FilterResult *filterResult, const ULONG flags
 {
   ENTER();
 
+  SHOWSTRING(DBF_NET, msg->account);
   SHOWVALUE(DBF_NET, msg->downloadResult->downloaded);
   SHOWVALUE(DBF_NET, msg->filterResult->Spam);
 
@@ -958,7 +959,7 @@ DECLARE(NewMailAlert) // struct DownloadResult *downloadResult, struct FilterRes
       if(xget(G->App, MUIA_Application_Iconified) == TRUE)
         PopUp();
 
-      snprintf(buffer, sizeof(buffer), tr(MSG_TR_NewMailReq), msg->downloadResult->downloaded, msg->downloadResult->onServer-msg->downloadResult->deleted, msg->downloadResult->dupeSkipped);
+      snprintf(buffer, sizeof(buffer), tr(MSG_POP3_NEW_MAIL_NOTIFY_REQ), msg->account, msg->downloadResult->downloaded, msg->downloadResult->onServer-msg->downloadResult->deleted, msg->downloadResult->dupeSkipped);
       if(C->SpamFilterEnabled == TRUE)
       {
         // include the number of spam classified mails
@@ -1006,9 +1007,9 @@ DECLARE(NewMailAlert) // struct DownloadResult *downloadResult, struct FilterRes
 
         // distinguish between single and multiple mails
         if(count >= 2)
-          snprintf(message, sizeof(message), tr(MSG_TR_NEW_MAIL_NOTIFY_MANY), count);
+          snprintf(message, sizeof(message), tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY), msg->account, count);
         else
-          strlcpy(message, tr(MSG_TR_NEW_MAIL_NOTIFY_ONE), sizeof(message));
+          strlcpy(message, tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE), msg->account, sizeof(message));
 
         // We require 53.7+. From this version on proper tag values are used, hence there
         // is no need to distinguish between v1 and v2 interfaces here as we have to do for

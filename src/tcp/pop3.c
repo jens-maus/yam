@@ -1510,7 +1510,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
           if(tc->downloadResult.downloaded > 0)
           {
             PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterNewMails, tc->msn->downloadedMails, &tc->filterResult);
-            PushMethodOnStackWait(G->App, 4, MUIM_YAM_NewMailAlert, &tc->downloadResult, &tc->filterResult, tc->flags);
+            PushMethodOnStackWait(G->App, 4, MUIM_YAM_NewMailAlert, tc->msn->account, &tc->downloadResult, &tc->filterResult, tc->flags);
           }
           else
           {

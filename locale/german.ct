@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.11 (26.08.2010)
+## version $VER: YAM.catalog 7.12 (28.10.2010)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -4407,19 +4407,6 @@ MSG_TR_DeletingServerMail
 Lösche Nachricht auf Server...
 ; Deleting mail on server...
 ;
-MSG_TR_NewMailReq
-\e8Sie haben neue Post.\e2\n\
-\n\
-%3ld Nachrichten geladen,\n\
-%3ld verbleiben auf Server,\n\
-%3ld Duplikate ignoriert\n
-; \e8You have new mail.\e2\n\
-; \n\
-; %3ld messages downloaded,\n\
-; %3ld left on server\n\
-; %3ld duplicates skipped\n
-; COUNT, COUNT, COUNT, COUNT
-;
 MSG_TR_FilterStats
 \n\
 Filtervorgang abgeschlossen:\n\
@@ -8534,12 +8521,6 @@ Bitte stellen Sie sicher, dass die Datei existiert und ein korrektes ARexx-Skrip
 MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 _Dieses Fenster heute nicht nochmal anzeigen.
 ;
-MSG_TR_NEW_MAIL_NOTIFY_ONE
-1 neue Nachricht empfangen.
-;
-MSG_TR_NEW_MAIL_NOTIFY_MANY
-%ld neue Nachrichten empfangen.
-;
 MSG_RE_SAVE_FILE
 Datei speichern
 ;
@@ -8608,4 +8589,19 @@ Warte auf Passworteingabe des Benutzers...
 ;
 MSG_TR_WAIT_FOR_PRESELECTION
 Warte auf Vorauswahl des Benutzers...
+;
+MSG_POP3_NEW_MAIL_NOTIFY_REQ
+\e8Sie haben neue Post vom Konto '%s'.\e2\n\
+\n\
+%3ld Nachrichten geladen,\n\
+%3ld verbleiben auf Server,\n\
+%3ld Duplikate ignoriert\n
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
+%s\n\
+1 neue Nachricht empfangen.
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
+%s\n\
+%ld neue Nachrichten empfangen.
 ;

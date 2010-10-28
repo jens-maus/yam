@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c, mui/YAM.c, locale/YAM.cd: the new mail notification now includes
+    the account name.
+
 2010-10-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/PreselectionWindow.c, YAM_UT.c: the column layout of the preselection
