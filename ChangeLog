@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/#?Window.c: only snapshotting a window will remember the current weight
+    values and NList column sizes. For the preselection window unsnapshotting
+    the window will reset the column sizes to their defaults.
+
 2010-10-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c, mui/YAM.c, locale/YAM.cd: the new mail notification now includes

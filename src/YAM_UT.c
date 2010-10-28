@@ -3948,7 +3948,7 @@ void LoadLayout(void)
       ls[0] == '\0')
   {
     //    0  1   2  3   4  5   6  7   8 9   10 11
-    ls = "30 100 25 100 30 100 25 100 5 100 5 100";
+    ls = "30 100 25 100 30 100 25 100 5 100 5 100 0&0&";
 
     D(DBF_UTIL, "using default layout weight factors: '%s'", ls);
   }
@@ -4019,7 +4019,7 @@ void LoadLayout(void)
   if(endptr != NULL)
     strlcpy(G->preselectionWindowLayout, Trim(endptr), sizeof(G->preselectionWindowLayout));
   else
-    G->preselectionWindowLayout[0] = '\0';
+    strlcpy(G->preselectionWindowLayout, "0&0&", sizeof(G->preselectionWindowLayout));
 
   // lets set the weight factors to the corresponding GUI elements now
   // if they exist

@@ -544,14 +544,19 @@ OVERLOAD(OM_SET)
 /// OVERLOAD(MUIM_Window_Snapshot)
 OVERLOAD(MUIM_Window_Snapshot)
 {
+  struct MUIP_Window_Snapshot *snap = (struct MUIP_Window_Snapshot *)msg;
   GETDATA;
 
-  // on a snapshot request we save the weights of all our objects here.
-  G->Weights[10] = xget(data->readMailGroup, MUIA_ReadMailGroup_HGVertWeight);
-  G->Weights[11] = xget(data->readMailGroup, MUIA_ReadMailGroup_TGVertWeight);
+  // remember the weights for snapshot operations, but not for unsnapshot operations
+  if(snap->flags != 0)
+  {
+    // on a snapshot request we save the weights of all our objects here.
+    G->Weights[10] = xget(data->readMailGroup, MUIA_ReadMailGroup_HGVertWeight);
+    G->Weights[11] = xget(data->readMailGroup, MUIA_ReadMailGroup_TGVertWeight);
 
-  // make sure the layout is saved
-  SaveLayout(TRUE);
+    // make sure the layout is saved
+    SaveLayout(TRUE);
+  }
 
   return DoSuperMethodA(cl, obj, msg);
 }

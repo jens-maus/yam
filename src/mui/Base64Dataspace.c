@@ -220,7 +220,16 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(Base64String): *store = (IPTR)data->base64String; return TRUE;
+    case ATTR(Base64String):
+    {
+      // we always return a valid string
+      if(data->base64String != NULL)
+        *store = (IPTR)data->base64String;
+      else
+        *store = (IPTR)"0&0&";
+
+      return TRUE;
+    }
   }
 
   return DoSuperMethodA(cl, obj, msg);

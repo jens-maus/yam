@@ -198,45 +198,6 @@ OVERLOAD(OM_NEW)
 }
 
 ///
-/// OVERLOAD(OM_SET)
-OVERLOAD(OM_SET)
-{
-  GETDATA;
-  struct TagItem *tags = inittags(msg), *tag;
-
-  while((tag = NextTagItem((APTR)&tags)) != NULL)
-  {
-    switch(tag->ti_Tag)
-    {
-      case MUIA_Window_Open:
-      {
-        if(tag->ti_Data == FALSE)
-        {
-          Object *ds;
-
-          // remember the current NList layout whenever the window is closed
-          if((ds = Base64DataspaceObject, End) != NULL)
-          {
-            char *b64;
-
-            // let NList export its stuff to our subclassed Dataspace.mui object
-            DoMethod(data->transferMailList, MUIM_Export, ds);
-            // then get the base64 encoded string and remember it
-            if((b64 = (char *)xget(ds, MUIA_Base64Dataspace_Base64String)) != NULL)
-              strlcpy(G->preselectionWindowLayout, b64, sizeof(G->preselectionWindowLayout));
-
-            MUI_DisposeObject(ds);
-          }
-        }
-      }
-      break;
-    }
-  }
-
-  return DoSuperMethodA(cl, obj, msg);
-}
-
-///
 /// OVERLOAD(OM_GET)
 OVERLOAD(OM_GET)
 {
@@ -253,6 +214,53 @@ OVERLOAD(OM_GET)
     }
     break;
   }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(MUIM_Window_Snapshot)
+OVERLOAD(MUIM_Window_Snapshot)
+{
+  GETDATA;
+  struct MUIP_Window_Snapshot *snap = (struct MUIP_Window_Snapshot *)msg;
+  BOOL setDefault = TRUE;
+
+  // remember the columns for snapshot operations, but not for unsnapshot operations
+  if(snap->flags != 0)
+  {
+    Object *ds;
+
+    // remember the current NList layout whenever the window is closed
+    if((ds = Base64DataspaceObject, End) != NULL)
+    {
+      char *b64;
+
+      // let NList export its stuff to our subclassed Dataspace.mui object
+      DoMethod(data->transferMailList, MUIM_Export, ds);
+      // then get the base64 encoded string and remember it
+      if((b64 = (char *)xget(ds, MUIA_Base64Dataspace_Base64String)) != NULL)
+      {
+        strlcpy(G->preselectionWindowLayout, b64, sizeof(G->preselectionWindowLayout));
+        setDefault = FALSE;
+      }
+
+      MUI_DisposeObject(ds);
+    }
+  }
+  else
+  {
+    // unsnapshot, set the defaults
+  }
+
+  if(setDefault == TRUE)
+  {
+    // set the default layout, which means that NList will calculate the column sizes automatically
+    strlcpy(G->preselectionWindowLayout, "0&0&", sizeof(G->preselectionWindowLayout));
+  }
+
+  // make sure the layout is saved
+  SaveLayout(TRUE);
 
   return DoSuperMethodA(cl, obj, msg);
 }

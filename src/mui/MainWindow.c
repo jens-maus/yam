@@ -77,25 +77,30 @@ OVERLOAD(OM_SET)
 /// OVERLOAD(MUIM_Window_Snapshot)
 OVERLOAD(MUIM_Window_Snapshot)
 {
+  struct MUIP_Window_Snapshot *snap = (struct MUIP_Window_Snapshot *)msg;
   IPTR result;
 
   ENTER();
 
-  // get the weights according to their GUI elements
-  G->Weights[0] = xget(G->MA->GUI.LV_FOLDERS,  MUIA_HorizWeight);
-  G->Weights[1] = xget(G->MA->GUI.GR_MAILVIEW, MUIA_HorizWeight);
-  G->Weights[6] = xget(G->MA->GUI.PG_MAILLIST, MUIA_VertWeight);
-
-  // if the embedded read pane objects are currently active we save their weight values
-  if(C->EmbeddedReadPane == TRUE)
+  // remember the weights for snapshot operations, but not for unsnapshot operations
+  if(snap->flags != 0)
   {
-    G->Weights[7] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight);
-    G->Weights[8] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_HGVertWeight);
-    G->Weights[9] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_TGVertWeight);
-  }
+    // get the weights according to their GUI elements
+    G->Weights[0] = xget(G->MA->GUI.LV_FOLDERS,  MUIA_HorizWeight);
+    G->Weights[1] = xget(G->MA->GUI.GR_MAILVIEW, MUIA_HorizWeight);
+    G->Weights[6] = xget(G->MA->GUI.PG_MAILLIST, MUIA_VertWeight);
 
-  // make sure the layout is saved
-  SaveLayout(TRUE);
+    // if the embedded read pane objects are currently active we save their weight values
+    if(C->EmbeddedReadPane == TRUE)
+    {
+      G->Weights[7] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight);
+      G->Weights[8] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_HGVertWeight);
+      G->Weights[9] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_TGVertWeight);
+    }
+
+    // make sure the layout is saved
+    SaveLayout(TRUE);
+  }
 
   result = DoSuperMethodA(cl, obj, msg);
 
