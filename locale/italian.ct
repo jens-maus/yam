@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (26.10.2010)
+## version $VER: YAM.catalog 7.6 (29.10.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5405 2010-10-25
+; based on YAM.cd 5420 2010-10-28
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -4076,7 +4076,7 @@ Citazione
 ; Quoted
 ;
 MSG_WR_ROT13
-Codificato con ROT13
+Codifica con ROT13
 ; ROT13 encoded
 ;
 MSG_WR_LaunchEd
@@ -4458,19 +4458,6 @@ Importazione del messagio...
 MSG_TR_DeletingServerMail
 Cancellazione della posta sul server...
 ; Deleting mail on server...
-;
-MSG_TR_NewMailReq
-\e8C'è nuova posta.\e2\n\
-\n\
-%3ld messaggio(i) prelevato(i)\n\
-%3ld messaggio(i) lasciato(i) nel server\n\
-%3ld messaggio(i) duplicato(i) saltato(i)\n
-; \e8You have new mail.\e2\n\
-; \n\
-; %3ld messages downloaded,\n\
-; %3ld left on server\n\
-; %3ld duplicates skipped\n
-; COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FilterStats
 \n\
@@ -9914,15 +9901,6 @@ MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 Per oggi non visualizzare nuovamente questo messaggio.
 ; Do not show this requester today again.
 ;
-MSG_TR_NEW_MAIL_NOTIFY_ONE
-Ricevuto un nuovo messaggio.
-; Received 1 new mail.
-;
-MSG_TR_NEW_MAIL_NOTIFY_MANY
-Ricevuti %ld nuovi messaggi.
-; Received %ld new mails.
-; COUNT
-;
 MSG_RE_SAVE_FILE
 Salva file
 ; Save file
@@ -10029,4 +10007,31 @@ In attesa della password utente...
 MSG_TR_WAIT_FOR_PRESELECTION
 In attesa della preselezione utente...
 ; Waiting for user's preselection...
+;
+MSG_POP3_NEW_MAIL_NOTIFY_REQ
+\e8Nuova posta in arrivo dall'account '%s'.\e2\n\
+\n\
+%3ld messaggio(i) prelevato(i)\n\
+%3ld messaggio(i) lasciato(i) nel server\n\
+%3ld messaggio(i) duplicato(i) saltato(i)\n
+; \e8You have new mail from account '%s'.\e2\n\
+; \n\
+; %3ld messages downloaded,\n\
+; %3ld left on server\n\
+; %3ld duplicates skipped\n
+; ACCOUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
+%s\n\
+Ricevuto un nuovo messaggio.
+; %s\n\
+; Received 1 new mail.
+; ACCOUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
+%s\n\
+Ricevuti %ld nuovi messaggi.
+; %s\n\
+; Received %ld new mails.
+; ACCOUNT, COUNT
 ;
