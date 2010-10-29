@@ -1006,10 +1006,10 @@ DECLARE(NewMailAlert) // const char *account, struct DownloadResult *downloadRes
         int count = msg->downloadResult->downloaded - msg->filterResult->Spam;
 
         // distinguish between single and multiple mails
-        if(count >= 2)
-          snprintf(message, sizeof(message), tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY), msg->account, count);
+        if(count == 1)
+          snprintf(message, sizeof(message), tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE), msg->account);
         else
-          strlcpy(message, tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE), msg->account, sizeof(message));
+          snprintf(message, sizeof(message), tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY), msg->account, count);
 
         // We require 53.7+. From this version on proper tag values are used, hence there
         // is no need to distinguish between v1 and v2 interfaces here as we have to do for
