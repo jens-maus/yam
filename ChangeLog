@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-30 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: update to the latest changes.
+
 2010-10-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/YAM.c: fixed wrong usage of strlcpy().

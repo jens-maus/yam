@@ -1,9 +1,8 @@
-## version $VER: YAM.catalog 7.12 (24.10.2010)
+## version $VER: YAM.catalog 7.13 (30.10.2010)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
 ; YAM.cd - YAM 2.7 catalog description file
-;basado en YAM.cd 2010-10-12
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -430,14 +429,10 @@ Copiado mensaje desde '%s' sobre '%s' desde la carpeta '%s' a '%s'
 ; Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
-; USER_ID, HOST, COUNT
-;
 MSG_LOG_RetrievingVerbose
 Mensaje obtenido de '%s' sobre '%s' (%ld bytes)
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
-;
-; COUNT, USER_ID, HOST
 ;
 MSG_LOG_ConnectSMTP
 Conectado al servidor SMTP '%s'
@@ -3849,8 +3844,6 @@ MSG_TR_WaitWelcome
 Conectado, esperando llegada de mensajes...
 ; Connected, awaiting welcome message...
 ;
-; USER_ID, HOST
-;
 MSG_TR_PopLogin
 Identificación POP3
 ; POP3 login
@@ -3898,11 +3891,6 @@ Importando mensaje...
 MSG_TR_DeletingServerMail
 Borrando correo del servidor...
 ; Deleting mail on server...
-;
-MSG_TR_NewMailReq
-\e8Tienes nuevo correo!\e2\n\n%3ld mensajes descargados,\n%3ld quedan en el servidor\n%3ld duplicados evitados\n
-; \e8You have new mail.\e2\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n
-; COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FilterStats
 \nFiltrado realizado:\n\n%3ld mensaje(s) comprobado(s),\n%3ld remitido(s),\n%3ld reenviado(s),\n%3ld auto-contestado(s),\n%3ld comando(s) activado(s),\n%3ld movido(s),\n%3ld borrado(s)
@@ -7506,26 +7494,6 @@ MSG_TR_FILTER_STATS_SPAM
 ; \nFiltering done:\n\n%3ld messages checked,\n%3ld bounced,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted,\n%3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
-MSG_CO_EXCHANGE_MAIL
-Intercambio de correo
-; Exchange mail
-;
-MSG_CO_EXCHANGE_ORDER
-Orden de _Intercambio
-; Exchange order
-;
-MSG_CO_EXCHANGE_ORDER_GET_FIRST
-recibir correo primero y enviar correo después
-; get mail first, then send mail
-;
-MSG_CO_EXCHANGE_ORDER_SEND_FIRST
-enviar correo primero y recibir correo después
-; send mail first, then get mail
-;
-MSG_HELP_CO_CY_EXCHANGE_ORDER
-El orden de intercambio de correo.
-; The order of the mail exchange.
-;
 MSG_FCHANGE_WARN_TITLE
 Advertencia cambio de archivo
 ; Filechange warning
@@ -7606,7 +7574,7 @@ Servidor POP3 '%s' de la cuenta '%s' respondde con un mensaje de error durante e
 ;
 MSG_ER_BADRESPONSE_POP3
 Respuesta errónea del servidor de correo '%s' de la cuenta '%s' al comando '%s':\n\n%s\n\nEl servidor de correo no puede ejecutar el comando y responde con el mensaje de error de arriba.
-; Bad response from mail server '%s' of account '%s' to command '%s':\n\n%s\n\nThe mail server couldn't execute the command and replied with the above error message.
+; Bad response from mail server '%s' of account '%s' to command '%s':\n%s\n\nThe mail server couldn't execute the command and replied with the above error message.
 ; SERVER, ACCOUNT, COMMAND, TEXT
 ;
 MSG_ER_INITTLS_POP3
@@ -7905,15 +7873,6 @@ MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 No mostrar esta solicitud hoy de nuevo.
 ; Do not show this requester today again.
 ;
-MSG_TR_NEW_MAIL_NOTIFY_ONE
-Recibido 1 nuevo mensaje.
-; Received 1 new mail.
-;
-MSG_TR_NEW_MAIL_NOTIFY_MANY
-Recibidos %ld nuevos mensajes.
-; Received %ld new mails.
-; COUNT
-;
 MSG_RE_SAVE_FILE
 Salvar archivo
 ; Save file
@@ -7959,31 +7918,58 @@ No se puede iniciar método de pila.
 MSG_TRANSFERS_IN_PROGRESS
 Transferencia en progreso
 ; Transfers in progress
-MSG_TR_WAIT_FOR_PRESELECTION
-Esperando preselección del usuario...
-; Waiting for user's preselection...
-MSG_TR_WAIT_FOR_PASSWORD
-Esperando clave del usuario...
-; Waiting for user's password input...
-MSG_PRESELECT_INDEX
-Indice
-; Index
-MSG_ALTIMAGE_STATUS_DELETE
-X
-; X
-MSG_ALTIMAGE_STATUS_DOWNLOAD
-D
-; D
-MSG_TR_ENTER_POP3_PASSWORD
-Por favor introduzca la clave para\nla cuenta POP3 '%s':
-; Please enter the password for\nPOP3 account '%s':
-MSG_LOG_RETRIEVED_POP3
-Recogido %ld mensaje(s) de la cuenta POP3 '%s'
-; Retrieved %ld message(s) from POP3 account '%s'
-MSG_LOG_CONNECT_POP3
-Identificado en la cuenta POP3 '%s': esperando %ld mensajes
-; Logged in on POP3 account '%s': %ld messages waiting
+;
 MSG_ERROR_CONNECTIONS
 No puedo iniciar conexiones.
 ; Cannot initialize connections.
+;
+MSG_LOG_CONNECT_POP3
+Identificado en la cuenta POP3 '%s': esperando %ld mensajes
+; Logged in on POP3 account '%s': %ld messages waiting
+; ACCOUNT, COUNT
+;
+MSG_LOG_RETRIEVED_POP3
+Recogido %ld mensaje(s) de la cuenta POP3 '%s'
+; Retrieved %ld message(s) from POP3 account '%s'
+; COUNT, ACCOUNT
+;
+MSG_TR_ENTER_POP3_PASSWORD
+Por favor introduzca la clave para\nla cuenta POP3 '%s':
+; Please enter the password for\nPOP3 account '%s':
+; ACCOUNT
+;
+MSG_ALTIMAGE_STATUS_DOWNLOAD
+D
+; D
+;
+MSG_ALTIMAGE_STATUS_DELETE
+X
+; X
+;
+MSG_PRESELECT_INDEX
+Indice
+; Index
+;
+MSG_TR_WAIT_FOR_PASSWORD
+Esperando clave del usuario...
+; Waiting for user's password input...
+;
+MSG_TR_WAIT_FOR_PRESELECTION
+Esperando preselección del usuario...
+; Waiting for user's preselection...
+;
+MSG_POP3_NEW_MAIL_NOTIFY_REQ
+\e8Tiene nuevo correo de la cuenta '%s'.\e2\n\n%3ld mensajes descargados,\n%3ld en el servidor\n%3ld duplicados evitados\n
+; \e8You have new mail from account '%s'.\e2\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n
+; ACCOUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
+%s\nRecibido 1 nuevo mensaje.
+; %s\nReceived 1 new mail.
+; ACCOUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
+%s\nRecibidos %ld nuevos mensajes.
+; %s\nReceived %ld new mails.
+; ACCOUNT, COUNT
 ;
