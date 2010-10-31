@@ -59,7 +59,7 @@ static char *EncodeData(APTR data, LONG len, ULONG id)
   // plus one byte for the trailing NUL
   if((base64String = malloc(18 + (len*4)/3+3 + 1)) != NULL)
   {
-    snprintf(base64String, 18+1, "%08d;%08x;", len, id);
+    snprintf(base64String, 18+1, "%08d;%08x;", (int)len, (int)id);
     base64encode(&base64String[18], data, len);
   }
 
@@ -82,7 +82,7 @@ static BOOL DecodeData(const char *base64String, APTR *pdata, LONG *plen, ULONG 
     // we are going to modify the string so we must operated on a copy
     if((dupe = strdup(base64String)) != NULL)
     {
-      char *data = NULL;
+      unsigned char *data = NULL;
       LONG len = 0;
       ULONG id = 0;
       char *word = dupe;
@@ -107,7 +107,7 @@ static BOOL DecodeData(const char *base64String, APTR *pdata, LONG *plen, ULONG 
           break;
 
           case 2:
-            data = word;
+            data = (unsigned char *)word;
           break;
         }
 
