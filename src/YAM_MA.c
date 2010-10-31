@@ -4142,7 +4142,7 @@ struct MA_ClassData *MA_New(void)
         MenuChild, data->GUI.MI_EXPORT = Menuitem(tr(MSG_FOLDER_EXPORT), NULL, TRUE, FALSE, MMEN_EXPORT),
         MenuChild, MenuBarLabel,
         MenuChild, data->GUI.MI_SENDALL = Menuitem(tr(MSG_MA_MSENDALL), "S", TRUE, FALSE, MMEN_SENDMAIL),
-        MenuChild, data->GUI.MI_EXCHANGE = Menuitem(tr(MSG_MA_MEXCHANGE), "L", TRUE, FALSE, MMEN_EXMAIL),
+        MenuChild, data->GUI.MI_EXCHANGE = Menuitem(tr(MSG_MA_SEND_AND_GET_MAIL), "L", TRUE, FALSE, MMEN_EXMAIL),
         MenuChild, data->GUI.MI_GETMAIL = Menuitem(tr(MSG_MA_MGETMAIL), "G", TRUE, FALSE, MMEN_GETMAIL),
       End,
       MenuChild, MenuObject,

@@ -5558,9 +5558,6 @@ Update index
 MSG_MA_MSENDALL (1818//)
 Send queued mail
 ;
-MSG_MA_MEXCHANGE (1819//)
-Exchange mail
-;
 MSG_MA_MGETMAIL (1820//)
 Get new mail
 ;
@@ -7010,4 +7007,7 @@ MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY (2191//)
 %s\n\
 Received %ld new mails.
 ; ACCOUNT, COUNT
+;
+MSG_MA_SEND_AND_GET_MAIL (2192//)
+Send queued and get new mails
 ;

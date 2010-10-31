@@ -7175,9 +7175,6 @@ Index erneuern
 MSG_MA_MSENDALL
 Wartende Post senden
 ;
-MSG_MA_MEXCHANGE
-Post austauschen
-;
 MSG_MA_MGETMAIL
 Neue Post holen
 ;
@@ -8604,4 +8601,7 @@ MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
 MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
 %s\n\
 %ld neue Nachrichten empfangen.
+;
+MSG_MA_SEND_AND_GET_MAIL
+Sende wartende und hole neue Post
 ;
