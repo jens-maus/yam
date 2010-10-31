@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-10-30 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update again to the latest changes.
+
 2010-10-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, locale/YAM.cd: shortened some more menu item texts.

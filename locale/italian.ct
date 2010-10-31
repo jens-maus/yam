@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.6 (29.10.2010)
+## version $VER: YAM.catalog 7.6 (31.10.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5420 2010-10-28
+; based on YAM.cd 5427 2010-10-31
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -7779,18 +7779,6 @@ MSG_MA_UPDATEINDEX
 Aggiorna indice
 ; Update index
 ;
-MSG_MA_MSENDALL
-Invia messaggi in attesa
-; Send queued mail
-;
-MSG_MA_MEXCHANGE
-Scambia messaggi
-; Exchange mail
-;
-MSG_MA_MGETMAIL
-Scarica la nuova posta
-; Get new mail
-;
 MSG_MA_MREAD
 Leggi
 ; Read
@@ -9058,8 +9046,8 @@ YAM richiede di essere riavviato
 ;
 MSG_ER_THEME_ACTIVATED
 Attenzione, prima che il Tema selezionato venga applicato\n\
-è necessario salvare la propria configurazione e riavviare il\n\
-programma.
+è necessario salvare la propria configurazione e riavviare\n\
+il programma.
 ; Before the selected theme can be applied, you have\n\
 ; to save the configuration and restart YAM.
 ;
@@ -10034,4 +10022,16 @@ Ricevuti %ld nuovi messaggi.
 ; %s\n\
 ; Received %ld new mails.
 ; ACCOUNT, COUNT
+;
+MSG_MA_SEND_AND_GET_MAIL
+Invia e ricevi la posta
+; Send and get mail
+;
+MSG_MA_SEND_MAIL
+Invia la posta
+; Send mail
+;
+MSG_MA_GET_MAIL
+Ricevi la posta
+; Get mail
 ;
