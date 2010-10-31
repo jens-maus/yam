@@ -5555,12 +5555,6 @@ Empty trash
 MSG_MA_UPDATEINDEX (1817//)
 Update index
 ;
-MSG_MA_MSENDALL (1818//)
-Send queued mail
-;
-MSG_MA_MGETMAIL (1820//)
-Get new mail
-;
 MSG_MA_MREAD (1821//)
 Read
 ;
@@ -7009,5 +7003,11 @@ Received %ld new mails.
 ; ACCOUNT, COUNT
 ;
 MSG_MA_SEND_AND_GET_MAIL (2192//)
-Send queued and get new mails
+Send and get mail
+;
+MSG_MA_SEND_MAIL (2193//)
+Send mail
+;
+MSG_MA_GET_MAIL (2194//)
+Get mail
 ;

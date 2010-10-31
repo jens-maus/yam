@@ -7,6 +7,7 @@ $URL$
 
 2010-10-30 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c, locale/YAM.cd: shortened some more menu item texts.
   * mui/Base64Dataspace.c: fixed two warnings.
   * YAM_MA.c, locale/YAM.cd: renamed the "exchange mail" menu item to "send
     queued and get new mail". This closes #23.

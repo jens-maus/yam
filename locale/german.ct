@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.12 (28.10.2010)
+## version $VER: YAM.catalog 7.13 (31.10.2010)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -7172,12 +7172,6 @@ Papierkorb leeren
 MSG_MA_UPDATEINDEX
 Index erneuern
 ;
-MSG_MA_MSENDALL
-Wartende Post senden
-;
-MSG_MA_MGETMAIL
-Neue Post holen
-;
 MSG_MA_MREAD
 Lesen
 ;
@@ -8603,5 +8597,11 @@ MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
 %ld neue Nachrichten empfangen.
 ;
 MSG_MA_SEND_AND_GET_MAIL
-Sende wartende und hole neue Post
+Post senden und holen
+;
+MSG_MA_SEND_MAIL
+Post senden
+;
+MSG_MA_GET_MAIL
+Post holen
 ;
