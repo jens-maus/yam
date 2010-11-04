@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.13 (25.10.2010)
+## version $VER: YAM.catalog 7.14 (04.11.2010)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5398;
+; in sync with .cd in revision 5427;
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -4471,19 +4471,6 @@ MSG_TR_DeletingServerMail
 Usuwam pocztê z serwera...
 ; Deleting mail on server...
 ;
-MSG_TR_NewMailReq
-\e8Masz now± pocztê.\e2\n\
-\n\
-Wiadomo¶ci odebranych: %3ld,\n\
-zosta³o na serwerze: %3ld,\n\
-pominiêtych duplikatów: %3ld.\n
-; \e8You have new mail.\e2\n\
-; \n\
-; %3ld messages downloaded,\n\
-; %3ld left on server\n\
-; %3ld duplicates skipped\n
-; COUNT, COUNT, COUNT, COUNT
-;
 MSG_TR_FilterStats
 \n\
 Filtrowanie zakoñczone:\n\
@@ -7740,18 +7727,6 @@ MSG_MA_UPDATEINDEX
 Aktualizuj indeksy
 ; Update index
 ;
-MSG_MA_MSENDALL
-Wy¶lij pocztê oczekuj±c±
-; Send queued mail
-;
-MSG_MA_MEXCHANGE
-Wymieñ pocztê
-; Exchange mail
-;
-MSG_MA_MGETMAIL
-Pobierz nowe wiadomo¶ci
-; Get new mail
-;
 MSG_MA_MREAD
 Odczytaj
 ; Read
@@ -9309,7 +9284,6 @@ Z³a odpowied¿ od serwera pocztowego \"%s\" dla konta \"%s\" na polecenie \"%s\":
 \n\
 Serwer pocztowy nie mo¿e wykonaæ polecenia i odpowiedzia³ powy¿szym komunikatem b³êdu.
 ; Bad response from mail server '%s' of account '%s' to command '%s':\n\
-; \n\
 ; %s\n\
 ; \n\
 ; The mail server couldn't execute the command \
@@ -9767,15 +9741,6 @@ MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 Nie pokazuj dzisiaj tego komunikatu.
 ; Do not show this requester today again.
 ;
-MSG_TR_NEW_MAIL_NOTIFY_ONE
-Odebrano 1 now± wiadomo¶æ.
-; Received 1 new mail.
-;
-MSG_TR_NEW_MAIL_NOTIFY_MANY
-Odebrano nowych wiadomo¶ci: %ld.
-; Received %ld new mails.
-; COUNT
-;
 MSG_RE_SAVE_FILE
 Zapisz plik
 ; Save file
@@ -9878,4 +9843,43 @@ Oczekiwanie na wprowadzenie has³a przez u¿ytkownika...
 MSG_TR_WAIT_FOR_PRESELECTION
 Oczekiwanie na preselekcjê u¿ytkownika...
 ; Waiting for user's preselection...
+;
+MSG_POP3_NEW_MAIL_NOTIFY_REQ
+\e8Masz now± wiadomo¶æ z konta \"%s\".\e2\n\
+\n\
+Wiadomo¶ci odebranych: %3ld,\n\
+zosta³o na serwerze: %3ld,\n\
+pominiêtych duplikatów: %3ld.\n
+; \e8You have new mail from account '%s'.\e2\n\
+; \n\
+; %3ld messages downloaded,\n\
+; %3ld left on server\n\
+; %3ld duplicates skipped\n
+; ACCOUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
+%s\n\
+Odebrano 1 now± wiadomo¶æ.
+; %s\n\
+; Received 1 new mail.
+; ACCOUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
+%s\n\
+Odebrano nowych wiadomo¶ci: %ld.
+; %s\n\
+; Received %ld new mails.
+; ACCOUNT, COUNT
+;
+MSG_MA_SEND_AND_GET_MAIL
+Wy¶lij i pobierz wiadomo¶ci
+; Send and get mail
+;
+MSG_MA_SEND_MAIL
+Wy¶lij wiadomo¶ci
+; Send mail
+;
+MSG_MA_GET_MAIL
+Pobierz wiadomo¶ci
+; Get mail
 ;
