@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-11-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/YAM.c: somehow the image in the OS4 notification got lost. Now it is
+    back again.
+
 2010-11-04 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest changes.

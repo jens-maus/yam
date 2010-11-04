@@ -1003,6 +1003,7 @@ DECLARE(NewMailAlert) // const char *account, struct DownloadResult *downloadRes
       {
         // 128 chars is the current maximum :(
         char message[128];
+        char imagePath[SIZE_PATHFILE];
         int count = msg->downloadResult->downloaded - msg->filterResult->Spam;
 
         // distinguish between single and multiple mails
@@ -1010,6 +1011,8 @@ DECLARE(NewMailAlert) // const char *account, struct DownloadResult *downloadRes
           snprintf(message, sizeof(message), tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE), msg->account);
         else
           snprintf(message, sizeof(message), tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY), msg->account, count);
+
+        AddPath(imagePath, G->ProgDir, "Themes/default/notify", sizeof(imagePath));
 
         // We require 53.7+. From this version on proper tag values are used, hence there
         // is no need to distinguish between v1 and v2 interfaces here as we have to do for
@@ -1019,6 +1022,7 @@ DECLARE(NewMailAlert) // const char *account, struct DownloadResult *downloadRes
                                  APPNOTIFY_Text, (uint32)message,
                                  APPNOTIFY_CloseOnDC, TRUE,
                                  APPNOTIFY_BackMsg, (uint32)"POPUP",
+                                 APPNOTIFY_ImageFile, (uint32)imagePath,
                                  TAG_DONE);
       }
     }
