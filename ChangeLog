@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-11-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * all: lots of minor changes due to the latest changes in the GenClasses tool.
+    It is now necessary to include the header of each used class separately
+    instead of the former "mui/classes.h" header. On the other hand this
+    minimizes the number of dependencies a lot as the sources now depend on the
+    classes they acually use only and no longer on all available classes.
+
 2010-11-05 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: update again to the latest changes.

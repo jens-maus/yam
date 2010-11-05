@@ -186,7 +186,7 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
 
           // don't invoke the GotoURL command right here in there hook, as the
           // execution may take lots of time
-          PushMethodOnStack(G->App, 3, MUIM_YAM_GotoURL, url, newWindow);
+          PushMethodOnStack(G->App, 3, MUIM_YAMApplication_GotoURL, url, newWindow);
 
           // don't free the URL string in this context
           url = NULL;

@@ -47,7 +47,11 @@
 #include "Threads.h"
 #include "Timer.h"
 
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/QuickSearchBar.h"
+#include "mui/ReadMailGroup.h"
+#include "mui/WriteWindow.h"
+#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 
@@ -550,7 +554,7 @@ static void TimerDispatcher(const enum Timer tid)
     {
       D(DBF_TIMER, "timer[%ld]: TIMER_UPDATECHECK fired @ %s", tid, dateString);
 
-      DoMethod(G->App, MUIM_YAM_UpdateCheck, TRUE);
+      DoMethod(G->App, MUIM_YAMApplication_UpdateCheck, TRUE);
 
       // prepare the timer to get fired again
       PrepareTimer(tid, C->UpdateInterval, 0);

@@ -34,7 +34,6 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "mui/Classes.h"
 
 #include "Locale.h"
 #include "Rexx.h"

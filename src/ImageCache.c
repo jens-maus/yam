@@ -48,7 +48,11 @@
 #include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
 #include "YAM_error.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/AddrBookToolbar.h"
+#include "mui/ReadWindowToolbar.h"
+#include "mui/WriteWindowToolbar.h"
 
 #include "ImageCache.h"
 #include "Locale.h"

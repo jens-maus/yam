@@ -33,8 +33,8 @@ $(OBJDIR)/AppIcon.o: AppIcon.c extrasrc.h include/SDI_compiler.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_configFile.h \
-  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
-  AppIcon.h DockyIcon.h FolderList.h Debug.h
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/WriteWindow.h AppIcon.h DockyIcon.h FolderList.h Debug.h
 $(OBJDIR)/BayesFilter.o: BayesFilter.c YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h include/SDI_compiler.h \
@@ -69,8 +69,7 @@ $(OBJDIR)/BayesFilter.o: BayesFilter.c YAM.h include/xpk/xpk.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_addressbook.h \
-  include/mui/NListtree_mcc.h YAM_mainFolder.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h extrasrc.h \
+  include/mui/NListtree_mcc.h YAM_mainFolder.h extrasrc.h \
   include/SDI_stdarg.h include/SDI_compiler.h FileInfo.h Locale.h \
   MethodStack.h Debug.h
 $(OBJDIR)/BoyerMooreSearch.o: BoyerMooreSearch.c BoyerMooreSearch.h YAM_utilities.h \
@@ -110,8 +109,7 @@ $(OBJDIR)/DockyIcon.o: DockyIcon.c YAM.h include/xpk/xpk.h include/amiga-align.h
   include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
-  include/interfaces/amissl.h include/inline4/amissl.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h DockyIcon.h \
+  include/interfaces/amissl.h include/inline4/amissl.h DockyIcon.h \
   Locale.h MUIObjects.h Debug.h
 $(OBJDIR)/FileInfo.o: FileInfo.c FileInfo.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h Debug.h
@@ -127,9 +125,10 @@ $(OBJDIR)/ImageCache.o: ImageCache.c include/proto/muimaster.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h include/SDI_compiler.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
-  YAM_global.h YAM_error.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
+  YAM_global.h YAM_error.h mui/ClassesExtra.h YAM_main.h \
   YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h \
-  YAM_main.h BayesFilter.h ImageCache.h include/mui/TheBar_mcc.h Locale.h \
+  YAM_main.h BayesFilter.h mui/AddrBookToolbar.h mui/ReadWindowToolbar.h \
+  mui/WriteWindowToolbar.h ImageCache.h include/mui/TheBar_mcc.h Locale.h \
   FileInfo.h MUIObjects.h extrasrc.h include/SDI_stdarg.h \
   include/SDI_compiler.h Debug.h
 $(OBJDIR)/Locale.o: Locale.c YAM.h include/xpk/xpk.h include/amiga-align.h \
@@ -141,28 +140,29 @@ $(OBJDIR)/MailExport.o: MailExport.c extrasrc.h include/SDI_compiler.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_mainFolder.h FileInfo.h Locale.h \
-  MailList.h MailTransferList.h MUIObjects.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h \
-  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  MailList.h MailTransferList.h MUIObjects.h mui/ClassesExtra.h \
+  YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \
+  YAM_write.h YAM_main.h BayesFilter.h mui/TransferControlGroup.h \
+  mui/YAMApplication.h YAM_utilities.h mui/PreselectionWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -207,8 +207,10 @@ $(OBJDIR)/MailImport.o: MailImport.c include/libraries/mui.h extrasrc.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_mainFolder.h \
   FileInfo.h Locale.h MailImport.h MailList.h MailTransferList.h \
-  MethodStack.h MUIObjects.h Threads.h mui/Classes.h mui/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h Debug.h
+  MethodStack.h MUIObjects.h Threads.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h BayesFilter.h mui/PreselectionWindow.h \
+  mui/TransferControlGroup.h mui/YAMApplication.h YAM_utilities.h \
+  mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/MailList.o: MailList.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h MailList.h YAM_utilities.h \
   YAM_stringsizes.h YAM_folderconfig.h Debug.h
@@ -271,8 +273,8 @@ $(OBJDIR)/MUIObjects.o: MUIObjects.c include/mui/BetterString_mcc.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_addressbook.h \
   YAM_error.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
-  Locale.h MUIObjects.h Debug.h
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/Recipientstring.h Locale.h MUIObjects.h Debug.h
 $(OBJDIR)/ParseEmail.o: ParseEmail.c YAM_utilities.h include/SDI_compiler.h \
   YAM_stringsizes.h YAM_folderconfig.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
@@ -342,8 +344,11 @@ $(OBJDIR)/Requesters.o: Requesters.c include/mui/NList_mcc.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_mainFolder.h \
-  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
-  FolderList.h Locale.h MUIObjects.h Requesters.h Debug.h
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/AttachmentRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/FolderRequestWindow.h mui/GenericRequestWindow.h \
+  mui/PassphraseRequestWindow.h mui/StringRequestWindow.h FolderList.h \
+  Locale.h MUIObjects.h Requesters.h Debug.h
 $(OBJDIR)/Rexx.o: Rexx.c extrasrc.h include/SDI_compiler.h include/SDI_stdarg.h \
   include/SDI_compiler.h YAM.h include/xpk/xpk.h include/amiga-align.h \
   include/default-align.h YAM_stringsizes.h YAM_userlist.h \
@@ -389,9 +394,7 @@ $(OBJDIR)/Threads.o: Threads.c YAM.h include/xpk/xpk.h include/amiga-align.h \
   YAM_utilities.h include/SDI_compiler.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h include/SDI_stdarg.h \
   include/SDI_compiler.h extrasrc.h Locale.h MailImport.h MethodStack.h \
-  Requesters.h Threads.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h \
-  YAM_main.h BayesFilter.h tcp/pop3.h tcp/smtp.h Debug.h
+  Requesters.h Threads.h tcp/pop3.h tcp/smtp.h Debug.h
 $(OBJDIR)/Timer.o: Timer.c include/mui/NList_mcc.h include/libraries/mui.h YAM.h \
   include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h include/SDI_compiler.h \
@@ -427,8 +430,10 @@ $(OBJDIR)/Timer.o: Timer.c include/mui/NList_mcc.h include/libraries/mui.h YAM.h
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_mainFolder.h \
   extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h Locale.h \
-  MUIObjects.h Threads.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_read.h BayesFilter.h Debug.h
+  MUIObjects.h Threads.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/WriteWindow.h mui/YAMApplication.h YAM_utilities.h \
+  mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/UIDL.o: UIDL.c extrasrc.h include/SDI_compiler.h include/SDI_stdarg.h \
   include/SDI_compiler.h YAM_stringsizes.h YAM_utilities.h \
   YAM_folderconfig.h FileInfo.h MailServers.h UIDL.h HashTable.h Debug.h
@@ -472,9 +477,9 @@ $(OBJDIR)/UpdateCheck.o: UpdateCheck.c include/mui/BetterString_mcc.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_configFile.h \
-  YAM_error.h YAM_global.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_read.h BayesFilter.h mime/rfc1738.h tcp/http.h Locale.h \
-  MUIObjects.h Requesters.h Debug.h
+  YAM_error.h YAM_global.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h mui/UpdateNotifyWindow.h mime/rfc1738.h tcp/http.h \
+  Locale.h MUIObjects.h Requesters.h Debug.h
 $(OBJDIR)/YAM_AB.o: YAM_AB.c include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/mui/NListview_mcc.h \
   include/proto/muimaster.h include/interfaces/muimaster.h \
@@ -517,9 +522,10 @@ $(OBJDIR)/YAM_AB.o: YAM_AB.c include/mui/BetterString_mcc.h include/mui/NList_mc
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  YAM_global.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h mime/base64.h Locale.h MUIObjects.h Requesters.h \
-  FileInfo.h Debug.h
+  YAM_global.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/BirthdayRequestWindow.h mui/Recipientstring.h mui/WriteWindow.h \
+  mime/base64.h Locale.h MUIObjects.h Requesters.h FileInfo.h Debug.h
 $(OBJDIR)/YAM.o: YAM.c include/libraries/amisslmaster.h \
   include/mui/BetterString_mcc.h include/mui/NListview_mcc.h \
   include/libraries/mui.h include/mui/NList_mcc.h \
@@ -574,8 +580,10 @@ $(OBJDIR)/YAM.o: YAM.c include/libraries/amisslmaster.h \
   YAM_main.h tcp/pop3.h tcp/smtp.h UpdateCheck.h tcp/Connection.h \
   YAM_configFile.h YAM_global.h YAM_mainFolder.h AppIcon.h DockyIcon.h \
   FileInfo.h MUIObjects.h FolderList.h ImageCache.h Locale.h MailList.h \
-  MethodStack.h Requesters.h Rexx.h Threads.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h Debug.h
+  MethodStack.h Requesters.h Rexx.h Threads.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h mui/ClassesSetup.h \
+  mui/Splashwindow.h mui/ShutdownWindow.h mui/WriteWindow.h \
+  mui/YAMApplication.h YAM_utilities.h mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/YAM_CO.o: YAM_CO.c include/libraries/amisslmaster.h \
   include/mui/BetterString_mcc.h include/mui/NListview_mcc.h \
   include/libraries/mui.h include/mui/NList_mcc.h \
@@ -618,7 +626,10 @@ $(OBJDIR)/YAM_CO.o: YAM_CO.c include/libraries/amisslmaster.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_configFile.h \
   YAM_configGUI.h YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h \
-  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/ConfigPageList.h mui/InfoBar.h mui/MainFolderListtree.h \
+  mui/MainMailListGroup.h mui/MainWindowToolbar.h mui/MailTextEdit.h \
+  mui/ReadMailGroup.h mui/ReadWindow.h mui/SearchControlGroup.h \
   DockyIcon.h FileInfo.h Locale.h MimeTypes.h MailServers.h MUIObjects.h \
   Requesters.h Debug.h
 $(OBJDIR)/YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
@@ -662,10 +673,13 @@ $(OBJDIR)/YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_configFile.h \
-  YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h FolderList.h \
-  ImageCache.h include/mui/TheBar_mcc.h Locale.h MimeTypes.h \
-  MailServers.h MUIObjects.h Requesters.h Threads.h UIDL.h Debug.h
+  YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h mui/FilterList.h mui/ImageArea.h \
+  mui/MailTextEdit.h mui/MimeTypeList.h mui/ScriptList.h \
+  mui/SearchControlGroup.h mui/ThemeListGroup.h mui/YAMApplication.h \
+  YAM_utilities.h mui/PreselectionWindow.h FolderList.h ImageCache.h \
+  include/mui/TheBar_mcc.h Locale.h MimeTypes.h MailServers.h \
+  MUIObjects.h Requesters.h Threads.h UIDL.h Debug.h
 $(OBJDIR)/YAM_COs.o: YAM_COs.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
@@ -701,8 +715,9 @@ $(OBJDIR)/YAM_COs.o: YAM_COs.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  YAM_find.h YAM_global.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_read.h BayesFilter.h FileInfo.h FolderList.h Locale.h MailList.h \
+  YAM_find.h YAM_global.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h mui/MailTextEdit.h mui/MainWindowToolbar.h \
+  mui/ThemeListGroup.h FileInfo.h FolderList.h Locale.h MailList.h \
   MailServers.h MimeTypes.h MUIObjects.h Requesters.h Debug.h
 $(OBJDIR)/YAM_DI.o: YAM_DI.c include/mui/NBalance_mcc.h \
   include/mui/TextEditor_mcc.h include/proto/muimaster.h \
@@ -713,8 +728,8 @@ $(OBJDIR)/YAM_DI.o: YAM_DI.c include/mui/NBalance_mcc.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_error.h \
   YAM_glossarydisplay.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  Locale.h MUIObjects.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h Debug.h
+  Locale.h MUIObjects.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h mui/MailTextEdit.h mui/WriteWindow.h Debug.h
 $(OBJDIR)/YAM_EA.o: YAM_EA.c include/mui/NListview_mcc.h include/libraries/mui.h \
   include/mui/NList_mcc.h include/mui/BetterString_mcc.h \
   include/proto/muimaster.h include/interfaces/muimaster.h \
@@ -753,7 +768,8 @@ $(OBJDIR)/YAM_EA.o: YAM_EA.c include/mui/NListview_mcc.h include/libraries/mui.h
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/AddrBookEntryList.h mui/ImageArea.h mui/Recipientstring.h \
   FileInfo.h Locale.h MUIObjects.h Requesters.h Debug.h
 $(OBJDIR)/YAM_ER.o: YAM_ER.c include/mui/NListview_mcc.h include/libraries/mui.h \
   include/mui/NList_mcc.h include/mui/NFloattext_mcc.h \
@@ -792,8 +808,9 @@ $(OBJDIR)/YAM_ER.o: YAM_ER.c include/mui/NListview_mcc.h include/libraries/mui.h
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  Locale.h MethodStack.h MUIObjects.h Threads.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h Debug.h
+  Locale.h MethodStack.h MUIObjects.h Threads.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h mui/YAMApplication.h \
+  YAM_utilities.h mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/YAM_FI.o: YAM_FI.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/mui/NListview_mcc.h \
   include/proto/muimaster.h include/interfaces/muimaster.h \
@@ -831,10 +848,10 @@ $(OBJDIR)/YAM_FI.o: YAM_FI.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h 
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_configFile.h \
-  YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
-  BoyerMooreSearch.h Locale.h MailList.h FolderList.h MUIObjects.h \
-  Requesters.h Threads.h Debug.h
+  YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h mui/MainMailList.h mui/ReadWindow.h \
+  mui/SearchControlGroup.h mui/WriteWindow.h BoyerMooreSearch.h Locale.h \
+  MailList.h FolderList.h MUIObjects.h Requesters.h Threads.h Debug.h
 $(OBJDIR)/YAM_FO.o: YAM_FO.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListtree_mcc.h include/proto/muimaster.h \
   include/interfaces/muimaster.h include/inline4/muimaster.h \
@@ -873,10 +890,11 @@ $(OBJDIR)/YAM_FO.o: YAM_FO.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_configFile.h \
-  YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h FileInfo.h \
-  FolderList.h ImageCache.h include/mui/TheBar_mcc.h Locale.h MailList.h \
-  MUIObjects.h Requesters.h Debug.h
+  YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h mui/ImageArea.h \
+  mui/MainFolderListtree.h mui/Recipientstring.h FileInfo.h FolderList.h \
+  ImageCache.h include/mui/TheBar_mcc.h Locale.h MailList.h MUIObjects.h \
+  Requesters.h Debug.h
 $(OBJDIR)/YAM_global.o: YAM_global.c include/SDI_compiler.h YAM_global.h
 $(OBJDIR)/YAM_MA.o: YAM_MA.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/mui/NListview_mcc.h \
@@ -917,11 +935,15 @@ $(OBJDIR)/YAM_MA.o: YAM_MA.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h 
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  YAM_find.h YAM_global.h YAM_mainFolder.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h mime/base64.h \
-  AppIcon.h FileInfo.h FolderList.h HTML2Mail.h Locale.h MailExport.h \
-  MailList.h MailServers.h MethodStack.h MimeTypes.h MUIObjects.h \
-  Requesters.h Rexx.h Threads.h Debug.h
+  YAM_find.h YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h BayesFilter.h mui/InfoBar.h mui/MainFolderListtree.h \
+  mui/MainMailListGroup.h mui/MainWindow.h mui/MainWindowToolbar.h \
+  mui/QuickSearchBar.h mui/ReadMailGroup.h mui/ReadWindow.h \
+  mui/WriteWindow.h mui/YAMApplication.h YAM_utilities.h \
+  mui/PreselectionWindow.h mime/base64.h AppIcon.h FileInfo.h \
+  FolderList.h HTML2Mail.h Locale.h MailExport.h MailList.h MailServers.h \
+  MethodStack.h MimeTypes.h MUIObjects.h Requesters.h Rexx.h Threads.h \
+  Debug.h
 $(OBJDIR)/YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListtree_mcc.h include/proto/muimaster.h \
   include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
@@ -958,10 +980,11 @@ $(OBJDIR)/YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  YAM_global.h YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h mime/base64.h mime/rfc2047.h \
-  FileInfo.h FolderList.h Locale.h MailList.h MUIObjects.h Requesters.h \
-  Rexx.h Debug.h include/amiga-align.h include/default-align.h
+  YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h mui/InfoBar.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mime/base64.h mime/rfc2047.h FileInfo.h FolderList.h Locale.h \
+  MailList.h MUIObjects.h Requesters.h Rexx.h Debug.h \
+  include/amiga-align.h include/default-align.h
 $(OBJDIR)/YAM_RE.o: YAM_RE.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/mui/TextEditor_mcc.h \
   include/proto/codesets.h include/libraries/codesets.h \
@@ -1002,8 +1025,9 @@ $(OBJDIR)/YAM_RE.o: YAM_RE.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  YAM_global.h YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h mime/rfc2231.h mime/base64.h \
+  YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h mui/MainMailListGroup.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/WriteWindow.h mime/rfc2231.h mime/base64.h \
   mime/qprintable.h mime/uucode.h HTML2Mail.h FileInfo.h FolderList.h \
   Locale.h MailList.h MailServers.h MimeTypes.h MUIObjects.h ParseEmail.h \
   Requesters.h Threads.h Debug.h
@@ -1044,8 +1068,9 @@ $(OBJDIR)/YAM_US.o: YAM_US.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
-  FileInfo.h Locale.h MUIObjects.h Requesters.h Debug.h
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/Splashwindow.h mui/UserList.h FileInfo.h Locale.h MUIObjects.h \
+  Requesters.h Debug.h
 $(OBJDIR)/YAM_UT.o: YAM_UT.c include/libraries/openurl.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/mui/NListtree_mcc.h \
@@ -1090,10 +1115,13 @@ $(OBJDIR)/YAM_UT.o: YAM_UT.c include/libraries/openurl.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  YAM_find.h YAM_global.h YAM_mainFolder.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h AppIcon.h \
-  FileInfo.h FolderList.h Locale.h MailList.h MailServers.h MethodStack.h \
-  MimeTypes.h MUIObjects.h ParseEmail.h Requesters.h Threads.h Debug.h
+  YAM_find.h YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h BayesFilter.h mui/InfoBar.h mui/MainFolderListtree.h \
+  mui/MainMailList.h mui/MainMailListGroup.h mui/ReadMailGroup.h \
+  mui/Splashwindow.h mui/YAMApplication.h YAM_utilities.h \
+  mui/PreselectionWindow.h AppIcon.h FileInfo.h FolderList.h Locale.h \
+  MailList.h MailServers.h MethodStack.h MimeTypes.h MUIObjects.h \
+  ParseEmail.h Requesters.h Threads.h Debug.h
 $(OBJDIR)/YAM_WR.o: YAM_WR.c include/proto/muimaster.h include/libraries/mui.h \
   include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
@@ -1130,8 +1158,8 @@ $(OBJDIR)/YAM_WR.o: YAM_WR.c include/proto/muimaster.h include/libraries/mui.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  YAM_mainFolder.h YAM_global.h mui/Classes.h mui/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h mime/rfc2231.h mime/rfc2047.h \
+  YAM_mainFolder.h YAM_global.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h mui/WriteWindow.h mime/rfc2231.h mime/rfc2047.h \
   mime/base64.h mime/qprintable.h mime/uucode.h FileInfo.h FolderList.h \
   Locale.h MailList.h MailServers.h MUIObjects.h Requesters.h Debug.h
 $(OBJDIR)/$(MUIDIR)/Aboutwindow.o: mui/Aboutwindow.c mui/Aboutwindow_cl.h mui/Classes.h \
@@ -1176,7 +1204,29 @@ $(OBJDIR)/$(MUIDIR)/Aboutwindow.o: mui/Aboutwindow.c mui/Aboutwindow_cl.h mui/Cl
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h include/mui/NFloattext_mcc.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h include/mui/NFloattext_mcc.h MUIObjects.h \
+  Debug.h
 $(OBJDIR)/$(MUIDIR)/AddrBookEntryList.o: mui/AddrBookEntryList.c mui/AddrBookEntryList_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -1219,8 +1269,29 @@ $(OBJDIR)/$(MUIDIR)/AddrBookEntryList.o: mui/AddrBookEntryList.c mui/AddrBookEnt
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h MUIObjects.h \
-  Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbook.h YAM_addressbookEntry.h \
+  MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/AddrBookListtree.o: mui/AddrBookListtree.c mui/AddrBookListtree_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -1263,7 +1334,29 @@ $(OBJDIR)/$(MUIDIR)/AddrBookListtree.o: mui/AddrBookListtree.c mui/AddrBookListt
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbookEntry.h MailList.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbookEntry.h MailList.h MUIObjects.h \
+  Debug.h
 $(OBJDIR)/$(MUIDIR)/AddrBookToolbar.o: mui/AddrBookToolbar.c mui/AddrBookToolbar_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -1306,8 +1399,29 @@ $(OBJDIR)/$(MUIDIR)/AddrBookToolbar.o: mui/AddrBookToolbar.c mui/AddrBookToolbar
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h ImageCache.h \
-  MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbook.h YAM_addressbookEntry.h \
+  ImageCache.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/Addrmatchlist.o: mui/Addrmatchlist.c mui/Addrmatchlist_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -1350,7 +1464,28 @@ $(OBJDIR)/$(MUIDIR)/Addrmatchlist.o: mui/Addrmatchlist.c mui/Addrmatchlist_cl.h 
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbookEntry.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbookEntry.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/AttachmentGroup.o: mui/AttachmentGroup.c mui/AttachmentGroup_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -1393,7 +1528,28 @@ $(OBJDIR)/$(MUIDIR)/AttachmentGroup.o: mui/AttachmentGroup.c mui/AttachmentGroup
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_mainFolder.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_mainFolder.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/AttachmentImage.o: mui/AttachmentImage.c mui/AttachmentImage_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -1436,7 +1592,28 @@ $(OBJDIR)/$(MUIDIR)/AttachmentImage.o: mui/AttachmentImage.c mui/AttachmentImage
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/AttachmentList.o: mui/AttachmentList.c mui/AttachmentList_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -1479,7 +1656,28 @@ $(OBJDIR)/$(MUIDIR)/AttachmentList.o: mui/AttachmentList.c mui/AttachmentList_cl
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_mainFolder.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_mainFolder.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/AttachmentObject.o: mui/AttachmentObject.c mui/AttachmentObject_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -1522,7 +1720,28 @@ $(OBJDIR)/$(MUIDIR)/AttachmentObject.o: mui/AttachmentObject.c mui/AttachmentObj
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_mainFolder.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_mainFolder.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/AttachmentRequestWindow.o: mui/AttachmentRequestWindow.c \
   mui/AttachmentRequestWindow_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -1565,7 +1784,29 @@ $(OBJDIR)/$(MUIDIR)/AttachmentRequestWindow.o: mui/AttachmentRequestWindow.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_mainFolder.h MUIObjects.h Requesters.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_mainFolder.h MUIObjects.h Requesters.h \
+  Debug.h
 $(OBJDIR)/$(MUIDIR)/Base64Dataspace.o: mui/Base64Dataspace.c mui/Base64Dataspace_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -1608,7 +1849,28 @@ $(OBJDIR)/$(MUIDIR)/Base64Dataspace.o: mui/Base64Dataspace.c mui/Base64Dataspace
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h mime/base64.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h mime/base64.h Debug.h
 $(OBJDIR)/$(MUIDIR)/BirthdayRequestWindow.o: mui/BirthdayRequestWindow.c \
   mui/BirthdayRequestWindow_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -1651,7 +1913,28 @@ $(OBJDIR)/$(MUIDIR)/BirthdayRequestWindow.o: mui/BirthdayRequestWindow.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h FileInfo.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h FileInfo.h Debug.h
 $(OBJDIR)/$(MUIDIR)/CheckboxRequestWindow.o: mui/CheckboxRequestWindow.c \
   mui/CheckboxRequestWindow_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -1694,7 +1977,28 @@ $(OBJDIR)/$(MUIDIR)/CheckboxRequestWindow.o: mui/CheckboxRequestWindow.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/Classes.o: mui/Classes.c mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
   include/mui/NList_mcc.h include/mui/NListview_mcc.h \
@@ -1736,7 +2040,28 @@ $(OBJDIR)/$(MUIDIR)/Classes.o: mui/Classes.c mui/Classes.h mui/ClassesExtra.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ConfigPageList.o: mui/ConfigPageList.c mui/ConfigPageList_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -1779,7 +2104,28 @@ $(OBJDIR)/$(MUIDIR)/ConfigPageList.o: mui/ConfigPageList.c mui/ConfigPageList_cl
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/FilterList.o: mui/FilterList.c mui/FilterList_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -1822,7 +2168,28 @@ $(OBJDIR)/$(MUIDIR)/FilterList.o: mui/FilterList.c mui/FilterList_cl.h mui/Class
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_find.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_find.h Debug.h
 $(OBJDIR)/$(MUIDIR)/FolderRequestWindow.o: mui/FolderRequestWindow.c \
   mui/FolderRequestWindow_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -1865,7 +2232,28 @@ $(OBJDIR)/$(MUIDIR)/FolderRequestWindow.o: mui/FolderRequestWindow.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h FolderList.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h FolderList.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/GenericRequestWindow.o: mui/GenericRequestWindow.c \
   mui/GenericRequestWindow_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -1908,7 +2296,28 @@ $(OBJDIR)/$(MUIDIR)/GenericRequestWindow.o: mui/GenericRequestWindow.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/HeaderList.o: mui/HeaderList.c mui/HeaderList_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -1951,7 +2360,28 @@ $(OBJDIR)/$(MUIDIR)/HeaderList.o: mui/HeaderList.c mui/HeaderList_cl.h mui/Class
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_mainFolder.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_mainFolder.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ImageArea.o: mui/ImageArea.c ImageCache.h include/mui/TheBar_mcc.h \
   include/libraries/mui.h HashTable.h include/SDI_compiler.h \
   mui/ImageArea_cl.h mui/Classes.h mui/ClassesExtra.h \
@@ -1994,7 +2424,28 @@ $(OBJDIR)/$(MUIDIR)/ImageArea.o: mui/ImageArea.c ImageCache.h include/mui/TheBar
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/InfoBar.o: mui/InfoBar.c mui/InfoBar_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2037,7 +2488,28 @@ $(OBJDIR)/$(MUIDIR)/InfoBar.o: mui/InfoBar.c mui/InfoBar_cl.h mui/Classes.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/InfoWindow.o: mui/InfoWindow.c mui/InfoWindow_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2080,7 +2552,28 @@ $(OBJDIR)/$(MUIDIR)/InfoWindow.o: mui/InfoWindow.c mui/InfoWindow_cl.h mui/Class
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/MailTextEdit.o: mui/MailTextEdit.c mui/MailTextEdit_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2123,8 +2616,29 @@ $(OBJDIR)/$(MUIDIR)/MailTextEdit.o: mui/MailTextEdit.c mui/MailTextEdit_cl.h mui
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h MUIObjects.h \
-  Requesters.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbook.h YAM_addressbookEntry.h \
+  MUIObjects.h Requesters.h Debug.h
 $(OBJDIR)/$(MUIDIR)/MainFolderListtree.o: mui/MainFolderListtree.c \
   mui/MainFolderListtree_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -2167,8 +2681,29 @@ $(OBJDIR)/$(MUIDIR)/MainFolderListtree.o: mui/MainFolderListtree.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_find.h YAM_mainFolder.h FolderList.h MUIObjects.h \
-  Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_find.h YAM_mainFolder.h FolderList.h \
+  MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/MainMailList.o: mui/MainMailList.c mui/MainMailList_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2211,8 +2746,29 @@ $(OBJDIR)/$(MUIDIR)/MainMailList.o: mui/MainMailList.c mui/MainMailList_cl.h mui
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h YAM_find.h \
-  YAM_mainFolder.h MUIObjects.h Themes.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbook.h YAM_addressbookEntry.h \
+  YAM_find.h YAM_mainFolder.h MUIObjects.h Themes.h Debug.h
 $(OBJDIR)/$(MUIDIR)/MainMailListGroup.o: mui/MainMailListGroup.c mui/MainMailListGroup_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2255,7 +2811,28 @@ $(OBJDIR)/$(MUIDIR)/MainMailListGroup.o: mui/MainMailListGroup.c mui/MainMailLis
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/MainWindow.o: mui/MainWindow.c mui/MainWindow_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2298,7 +2875,28 @@ $(OBJDIR)/$(MUIDIR)/MainWindow.o: mui/MainWindow.c mui/MainWindow_cl.h mui/Class
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_error.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_error.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/MainWindowToolbar.o: mui/MainWindowToolbar.c mui/MainWindowToolbar_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2341,7 +2939,28 @@ $(OBJDIR)/$(MUIDIR)/MainWindowToolbar.o: mui/MainWindowToolbar.c mui/MainWindowT
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbook.h YAM_find.h YAM_mainFolder.h \
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbook.h YAM_find.h YAM_mainFolder.h \
   MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/MimeTypeList.o: mui/MimeTypeList.c mui/MimeTypeList_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
@@ -2385,7 +3004,28 @@ $(OBJDIR)/$(MUIDIR)/MimeTypeList.o: mui/MimeTypeList.c mui/MimeTypeList_cl.h mui
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MimeTypes.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MimeTypes.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ObjectList.o: mui/ObjectList.c mui/ObjectList_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2428,7 +3068,28 @@ $(OBJDIR)/$(MUIDIR)/ObjectList.o: mui/ObjectList.c mui/ObjectList_cl.h mui/Class
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ObjectListitem.o: mui/ObjectListitem.c mui/ObjectListitem_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2471,7 +3132,28 @@ $(OBJDIR)/$(MUIDIR)/ObjectListitem.o: mui/ObjectListitem.c mui/ObjectListitem_cl
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/PassphraseRequestWindow.o: mui/PassphraseRequestWindow.c \
   mui/PassphraseRequestWindow_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -2514,7 +3196,28 @@ $(OBJDIR)/$(MUIDIR)/PassphraseRequestWindow.o: mui/PassphraseRequestWindow.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_stringsizes.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_stringsizes.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/PreselectionWindow.o: mui/PreselectionWindow.c \
   mui/PreselectionWindow_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -2557,8 +3260,29 @@ $(OBJDIR)/$(MUIDIR)/PreselectionWindow.o: mui/PreselectionWindow.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MailImport.h MailTransferList.h MUIObjects.h Threads.h \
-  YAM_mainFolder.h tcp/Connection.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MailImport.h MailTransferList.h MUIObjects.h \
+  Threads.h YAM_mainFolder.h tcp/Connection.h Debug.h
 $(OBJDIR)/$(MUIDIR)/QuickSearchBar.o: mui/QuickSearchBar.c mui/QuickSearchBar_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2601,8 +3325,30 @@ $(OBJDIR)/$(MUIDIR)/QuickSearchBar.o: mui/QuickSearchBar.c mui/QuickSearchBar_cl
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h YAM_find.h \
-  YAM_mainFolder.h BoyerMooreSearch.h MailList.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbook.h YAM_addressbookEntry.h \
+  YAM_find.h YAM_mainFolder.h BoyerMooreSearch.h MailList.h MUIObjects.h \
+  Debug.h
 $(OBJDIR)/$(MUIDIR)/ReadMailGroup.o: mui/ReadMailGroup.c mui/ReadMailGroup_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2645,9 +3391,31 @@ $(OBJDIR)/$(MUIDIR)/ReadMailGroup.o: mui/ReadMailGroup.c mui/ReadMailGroup_cl.h 
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h YAM_error.h \
-  YAM_mainFolder.h HTML2Mail.h FileInfo.h MethodStack.h MimeTypes.h \
-  MUIObjects.h Requesters.h Timer.h include/mui/NBalance_mcc.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbook.h YAM_addressbookEntry.h \
+  YAM_error.h YAM_mainFolder.h HTML2Mail.h FileInfo.h MethodStack.h \
+  MimeTypes.h MUIObjects.h Requesters.h Timer.h \
+  include/mui/NBalance_mcc.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ReadWindow.o: mui/ReadWindow.c mui/ReadWindow_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2690,8 +3458,30 @@ $(OBJDIR)/$(MUIDIR)/ReadWindow.o: mui/ReadWindow.c mui/ReadWindow_cl.h mui/Class
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbookEntry.h YAM_find.h YAM_mainFolder.h \
-  FolderList.h MailList.h MimeTypes.h MUIObjects.h Requesters.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbookEntry.h YAM_find.h \
+  YAM_mainFolder.h FolderList.h MailList.h MimeTypes.h MUIObjects.h \
+  Requesters.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ReadWindowStatusBar.o: mui/ReadWindowStatusBar.c \
   mui/ReadWindowStatusBar_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -2734,7 +3524,28 @@ $(OBJDIR)/$(MUIDIR)/ReadWindowStatusBar.o: mui/ReadWindowStatusBar.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_mainFolder.h MUIObjects.h Themes.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_mainFolder.h MUIObjects.h Themes.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ReadWindowToolbar.o: mui/ReadWindowToolbar.c mui/ReadWindowToolbar_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2777,7 +3588,29 @@ $(OBJDIR)/$(MUIDIR)/ReadWindowToolbar.o: mui/ReadWindowToolbar.c mui/ReadWindowT
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_mainFolder.h ImageCache.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_mainFolder.h ImageCache.h MUIObjects.h \
+  Debug.h
 $(OBJDIR)/$(MUIDIR)/Recipientstring.o: mui/Recipientstring.c mui/Recipientstring_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2820,8 +3653,29 @@ $(OBJDIR)/$(MUIDIR)/Recipientstring.o: mui/Recipientstring.c mui/Recipientstring
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h YAM_mainFolder.h \
-  MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbook.h YAM_addressbookEntry.h \
+  YAM_mainFolder.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ScriptList.o: mui/ScriptList.c mui/ScriptList_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2864,7 +3718,28 @@ $(OBJDIR)/$(MUIDIR)/ScriptList.o: mui/ScriptList.c mui/ScriptList_cl.h mui/Class
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/$(MUIDIR)/SearchControlGroup.o: mui/SearchControlGroup.c \
   mui/SearchControlGroup_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -2907,7 +3782,28 @@ $(OBJDIR)/$(MUIDIR)/SearchControlGroup.o: mui/SearchControlGroup.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_find.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_find.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/Searchwindow.o: mui/Searchwindow.c mui/Searchwindow_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2950,7 +3846,28 @@ $(OBJDIR)/$(MUIDIR)/Searchwindow.o: mui/Searchwindow.c mui/Searchwindow_cl.h mui
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Requesters.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Requesters.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ShutdownWindow.o: mui/ShutdownWindow.c mui/ShutdownWindow_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -2993,7 +3910,28 @@ $(OBJDIR)/$(MUIDIR)/ShutdownWindow.o: mui/ShutdownWindow.c mui/ShutdownWindow_cl
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/Splashwindow.o: mui/Splashwindow.c mui/Splashwindow_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -3036,7 +3974,28 @@ $(OBJDIR)/$(MUIDIR)/Splashwindow.o: mui/Splashwindow.c mui/Splashwindow_cl.h mui
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/StringRequestWindow.o: mui/StringRequestWindow.c \
   mui/StringRequestWindow_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -3079,7 +4038,29 @@ $(OBJDIR)/$(MUIDIR)/StringRequestWindow.o: mui/StringRequestWindow.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_stringsizes.h MUIObjects.h Threads.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_stringsizes.h MUIObjects.h Threads.h \
+  Debug.h
 $(OBJDIR)/$(MUIDIR)/ThemeList.o: mui/ThemeList.c mui/ThemeList_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -3122,7 +4103,28 @@ $(OBJDIR)/$(MUIDIR)/ThemeList.o: mui/ThemeList.c mui/ThemeList_cl.h mui/Classes.
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ThemeListGroup.o: mui/ThemeListGroup.c mui/ThemeListGroup_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -3165,7 +4167,28 @@ $(OBJDIR)/$(MUIDIR)/ThemeListGroup.o: mui/ThemeListGroup.c mui/ThemeListGroup_cl
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Requesters.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Requesters.h Debug.h
 $(OBJDIR)/$(MUIDIR)/TransferControlGroup.o: mui/TransferControlGroup.c \
   mui/TransferControlGroup_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -3208,7 +4231,29 @@ $(OBJDIR)/$(MUIDIR)/TransferControlGroup.o: mui/TransferControlGroup.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h Threads.h tcp/Connection.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h Threads.h tcp/Connection.h \
+  Debug.h
 $(OBJDIR)/$(MUIDIR)/TransferControlList.o: mui/TransferControlList.c \
   mui/TransferControlList_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -3251,7 +4296,28 @@ $(OBJDIR)/$(MUIDIR)/TransferControlList.o: mui/TransferControlList.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h mui/Classes.h tcp/Connection.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h MUIObjects.h tcp/Connection.h Debug.h
 $(OBJDIR)/$(MUIDIR)/TransferMailList.o: mui/TransferMailList.c mui/TransferMailList_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -3294,7 +4360,28 @@ $(OBJDIR)/$(MUIDIR)/TransferMailList.o: mui/TransferMailList.c mui/TransferMailL
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbookEntry.h YAM_mainFolder.h \
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbookEntry.h YAM_mainFolder.h \
   MailTransferList.h MUIObjects.h Themes.h Debug.h
 $(OBJDIR)/$(MUIDIR)/TransferWindow.o: mui/TransferWindow.c mui/TransferWindow_cl.h \
   mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
@@ -3338,7 +4425,28 @@ $(OBJDIR)/$(MUIDIR)/TransferWindow.o: mui/TransferWindow.c mui/TransferWindow_cl
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h MUIObjects.h mui/Classes.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h mui/TransferControlList.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/UpdateComponentList.o: mui/UpdateComponentList.c \
   mui/UpdateComponentList_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -3381,7 +4489,28 @@ $(OBJDIR)/$(MUIDIR)/UpdateComponentList.o: mui/UpdateComponentList.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/$(MUIDIR)/UpdateNotifyWindow.o: mui/UpdateNotifyWindow.c \
   mui/UpdateNotifyWindow_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -3424,10 +4553,31 @@ $(OBJDIR)/$(MUIDIR)/UpdateNotifyWindow.o: mui/UpdateNotifyWindow.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h include/proto/openurl.h include/interfaces/openurl.h \
-  include/inline4/openurl.h include/mui/NBalance_mcc.h \
-  include/mui/NFloattext_mcc.h YAM_configFile.h FileInfo.h MUIObjects.h \
-  Requesters.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h include/proto/openurl.h \
+  include/interfaces/openurl.h include/inline4/openurl.h \
+  include/mui/NBalance_mcc.h include/mui/NFloattext_mcc.h \
+  YAM_configFile.h FileInfo.h MUIObjects.h Requesters.h Debug.h
 $(OBJDIR)/$(MUIDIR)/UserList.o: mui/UserList.c mui/UserList_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -3470,7 +4620,28 @@ $(OBJDIR)/$(MUIDIR)/UserList.o: mui/UserList.c mui/UserList_cl.h mui/Classes.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/$(MUIDIR)/WriteAttachmentList.o: mui/WriteAttachmentList.c \
   mui/WriteAttachmentList_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -3513,7 +4684,28 @@ $(OBJDIR)/$(MUIDIR)/WriteAttachmentList.o: mui/WriteAttachmentList.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_mainFolder.h MUIObjects.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_mainFolder.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/WriteWindow.o: mui/WriteWindow.c mui/WriteWindow_cl.h mui/Classes.h \
   mui/ClassesExtra.h include/libraries/mui.h \
   include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
@@ -3556,12 +4748,33 @@ $(OBJDIR)/$(MUIDIR)/WriteWindow.o: mui/WriteWindow.c mui/WriteWindow_cl.h mui/Cl
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h include/proto/codesets.h include/libraries/codesets.h \
-  include/interfaces/codesets.h include/inline4/codesets.h \
-  YAM_addressbook.h YAM_addressbookEntry.h YAM_configGUI.h YAM_error.h \
-  YAM_glossarydisplay.h YAM_mainFolder.h FileInfo.h MailList.h \
-  MailServers.h MUIObjects.h Requesters.h Threads.h mime/uucode.h \
-  tcp/smtp.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h include/proto/codesets.h \
+  include/libraries/codesets.h include/interfaces/codesets.h \
+  include/inline4/codesets.h YAM_addressbook.h YAM_addressbookEntry.h \
+  YAM_configGUI.h YAM_error.h YAM_glossarydisplay.h YAM_mainFolder.h \
+  FileInfo.h MailList.h MailServers.h MUIObjects.h Requesters.h Threads.h \
+  mime/uucode.h tcp/smtp.h Debug.h
 $(OBJDIR)/$(MUIDIR)/WriteWindowToolbar.o: mui/WriteWindowToolbar.c \
   mui/WriteWindowToolbar_cl.h mui/Classes.h mui/ClassesExtra.h \
   include/libraries/mui.h include/mui/BetterString_mcc.h \
@@ -3604,38 +4817,60 @@ $(OBJDIR)/$(MUIDIR)/WriteWindowToolbar.o: mui/WriteWindowToolbar.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h ImageCache.h MUIObjects.h Debug.h
-$(OBJDIR)/$(MUIDIR)/YAM.o: mui/YAM.c mui/YAM_cl.h mui/Classes.h mui/ClassesExtra.h \
-  include/libraries/mui.h include/mui/BetterString_mcc.h \
-  include/mui/NList_mcc.h include/mui/NListview_mcc.h \
-  include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h \
-  include/mui/TheBar_mcc.h include/proto/muimaster.h \
-  include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
-  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
-  include/newmouse.h include/SDI_hook.h include/SDI_stdarg.h YAM.h \
-  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
-  YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
-  BayesFilter.h HashTable.h Themes.h Timer.h YAM_config.h YAM_read.h \
-  YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h UpdateCheck.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h ImageCache.h MUIObjects.h Debug.h
+$(OBJDIR)/$(MUIDIR)/YAMApplication.o: mui/YAMApplication.c mui/YAMApplication_cl.h \
+  mui/Classes.h mui/ClassesExtra.h include/libraries/mui.h \
+  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
+  include/mui/NListview_mcc.h include/mui/NListtree_mcc.h \
+  include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
+  include/proto/muimaster.h include/interfaces/muimaster.h \
+  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h include/newmouse.h \
+  include/SDI_hook.h include/SDI_stdarg.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
+  HashTable.h Themes.h Timer.h YAM_config.h YAM_read.h YAM_write.h \
+  YAM_main.h tcp/pop3.h tcp/smtp.h UpdateCheck.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -3646,9 +4881,30 @@ $(OBJDIR)/$(MUIDIR)/YAM.o: mui/YAM.c mui/YAM_cl.h mui/Classes.h mui/ClassesExtra
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_global.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
-  BayesFilter.h YAM_addressbook.h YAM_addressbookEntry.h YAM_error.h \
-  YAM_find.h YAM_mainFolder.h AppIcon.h MUIObjects.h UpdateCheck.h \
-  Threads.h Debug.h
+  BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
+  mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
+  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
+  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
+  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
+  mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  mui/InfoBar.h mui/InfoWindow.h mui/MailTextEdit.h \
+  mui/MainFolderListtree.h mui/MainMailList.h mui/MainMailListGroup.h \
+  mui/MainWindow.h mui/MainWindowToolbar.h mui/MimeTypeList.h \
+  mui/ObjectList.h mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h YAM_addressbook.h YAM_addressbookEntry.h \
+  YAM_error.h YAM_find.h YAM_mainFolder.h AppIcon.h MUIObjects.h \
+  UpdateCheck.h Threads.h Debug.h
 $(OBJDIR)/$(REXXDIR)/addrdelete.o: rexx/addrdelete.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -3663,9 +4919,8 @@ $(OBJDIR)/$(REXXDIR)/addredit.o: rexx/addredit.c include/mui/NListtree_mcc.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_addressbook.h YAM_addressbookEntry.h \
-  YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h MUIObjects.h \
-  Rexx.h Debug.h
+  YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h MUIObjects.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/addrfind.o: rexx/addrfind.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -3714,8 +4969,8 @@ $(OBJDIR)/$(REXXDIR)/addrresolve.o: rexx/addrresolve.c include/proto/muimaster.h
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_addressbook.h \
   include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_write.h \
-  YAM_main.h tcp/pop3.h tcp/smtp.h mui/Classes.h mui/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h Rexx.h Debug.h
+  YAM_main.h tcp/pop3.h tcp/smtp.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h BayesFilter.h mui/Recipientstring.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/addrsave.o: rexx/addrsave.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -3799,9 +5054,9 @@ $(OBJDIR)/$(REXXDIR)/getselected.o: rexx/getselected.c extrasrc.h include/SDI_co
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h MailList.h MUIObjects.h Rexx.h \
-  Debug.h
+  YAM_mainFolder.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h mui/MainMailListGroup.h MailList.h \
+  MUIObjects.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/geturl.o: rexx/geturl.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -3889,17 +5144,17 @@ $(OBJDIR)/$(REXXDIR)/listfreeze.o: rexx/listfreeze.c include/mui/NList_mcc.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
-  HashTable.h Themes.h Timer.h mui/Classes.h mui/ClassesExtra.h \
-  YAM_main.h tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h \
-  BayesFilter.h Rexx.h Debug.h
+  HashTable.h Themes.h Timer.h mui/ClassesExtra.h YAM_main.h tcp/pop3.h \
+  tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  mui/MainMailListGroup.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/listselect.o: rexx/listselect.c include/mui/NList_mcc.h \
   include/libraries/mui.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
-  HashTable.h Themes.h Timer.h mui/Classes.h mui/ClassesExtra.h \
-  YAM_main.h tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h \
-  BayesFilter.h MUIObjects.h Rexx.h Debug.h
+  HashTable.h Themes.h Timer.h mui/ClassesExtra.h YAM_main.h tcp/pop3.h \
+  tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  mui/MainMailListGroup.h MUIObjects.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/listunfreeze.o: rexx/listunfreeze.c include/mui/NList_mcc.h \
   include/libraries/mui.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
@@ -3934,8 +5189,9 @@ $(OBJDIR)/$(REXXDIR)/listunfreeze.o: rexx/listunfreeze.c include/mui/NList_mcc.h
   include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
-  include/interfaces/amissl.h include/inline4/amissl.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h Rexx.h Debug.h
+  include/interfaces/amissl.h include/inline4/amissl.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h mui/MainMailListGroup.h Rexx.h \
+  Debug.h
 $(OBJDIR)/$(REXXDIR)/mailarchive.o: rexx/mailarchive.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -3946,16 +5202,16 @@ $(OBJDIR)/$(REXXDIR)/mailbounce.o: rexx/mailbounce.c include/libraries/mui.h ext
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_main.h tcp/pop3.h \
-  tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h Rexx.h MUIObjects.h Debug.h
+  tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h mui/WriteWindow.h Rexx.h MUIObjects.h Debug.h
 $(OBJDIR)/$(REXXDIR)/mailchangesubject.o: rexx/mailchangesubject.c include/mui/NList_mcc.h \
   include/libraries/mui.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
-  HashTable.h Themes.h Timer.h mui/Classes.h mui/ClassesExtra.h \
-  YAM_main.h tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h \
-  BayesFilter.h MailList.h MUIObjects.h Rexx.h Debug.h
+  HashTable.h Themes.h Timer.h mui/ClassesExtra.h YAM_main.h tcp/pop3.h \
+  tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  mui/MainMailListGroup.h MailList.h MUIObjects.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/mailcheck.o: rexx/mailcheck.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -4008,8 +5264,8 @@ $(OBJDIR)/$(REXXDIR)/mailedit.o: rexx/mailedit.c include/libraries/mui.h extrasr
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_main.h tcp/pop3.h \
-  tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h Rexx.h MUIObjects.h Debug.h
+  tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h mui/WriteWindow.h Rexx.h MUIObjects.h Debug.h
 $(OBJDIR)/$(REXXDIR)/mailexport.o: rexx/mailexport.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -4026,8 +5282,8 @@ $(OBJDIR)/$(REXXDIR)/mailforward.o: rexx/mailforward.c include/libraries/mui.h e
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_main.h tcp/pop3.h \
-  tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h Rexx.h MUIObjects.h Debug.h
+  tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h mui/WriteWindow.h Rexx.h MUIObjects.h Debug.h
 $(OBJDIR)/$(REXXDIR)/mailimport.o: rexx/mailimport.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -4040,8 +5296,9 @@ $(OBJDIR)/$(REXXDIR)/mailinfo.o: rexx/mailinfo.c include/mui/NList_mcc.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h MUIObjects.h Rexx.h Debug.h
+  YAM_mainFolder.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h mui/MainMailListGroup.h MUIObjects.h Rexx.h \
+  Debug.h
 $(OBJDIR)/$(REXXDIR)/mailmove.o: rexx/mailmove.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -4053,16 +5310,16 @@ $(OBJDIR)/$(REXXDIR)/mailread.o: rexx/mailread.c include/libraries/mui.h extrasr
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_main.h tcp/pop3.h \
-  tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h MUIObjects.h \
+  tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h mui/ReadWindow.h MUIObjects.h \
   Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/mailreply.o: rexx/mailreply.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_main.h tcp/pop3.h \
-  tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h Rexx.h MUIObjects.h Debug.h
+  tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h mui/WriteWindow.h Rexx.h MUIObjects.h Debug.h
 $(OBJDIR)/$(REXXDIR)/mailsendall.o: rexx/mailsendall.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -4092,8 +5349,8 @@ $(OBJDIR)/$(REXXDIR)/mailwrite.o: rexx/mailwrite.c include/libraries/mui.h extra
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_main.h tcp/pop3.h \
-  tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h Rexx.h MUIObjects.h Debug.h
+  tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h mui/WriteWindow.h Rexx.h MUIObjects.h Debug.h
 $(OBJDIR)/$(REXXDIR)/newmailfile.o: rexx/newmailfile.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -4122,8 +5379,8 @@ $(OBJDIR)/$(REXXDIR)/readprint.o: rexx/readprint.c extrasrc.h include/SDI_compil
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_read.h YAM_write.h YAM_main.h \
-  tcp/pop3.h tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_read.h BayesFilter.h Rexx.h Debug.h
+  tcp/pop3.h tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h mui/ReadMailGroup.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/readsave.o: rexx/readsave.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -4158,8 +5415,8 @@ $(OBJDIR)/$(REXXDIR)/readsave.o: rexx/readsave.c extrasrc.h include/SDI_compiler
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_read.h \
-  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
-  MimeTypes.h Rexx.h Debug.h
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/ReadMailGroup.h MimeTypes.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/request.o: rexx/request.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -4169,23 +5426,21 @@ $(OBJDIR)/$(REXXDIR)/requestfile.o: rexx/requestfile.c extrasrc.h include/SDI_co
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
-  HashTable.h Themes.h Timer.h mui/Classes.h mui/ClassesExtra.h \
-  YAM_main.h tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h \
-  BayesFilter.h Locale.h Rexx.h Debug.h
+  HashTable.h Themes.h Timer.h Locale.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/requestfolder.o: rexx/requestfolder.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
-  HashTable.h Themes.h Timer.h mui/Classes.h mui/ClassesExtra.h \
-  YAM_main.h tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h \
-  BayesFilter.h Locale.h Requesters.h Rexx.h Debug.h
+  HashTable.h Themes.h Timer.h mui/ClassesExtra.h YAM_main.h tcp/pop3.h \
+  tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  mui/MainWindow.h Locale.h Requesters.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/requeststring.o: rexx/requeststring.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
-  HashTable.h Themes.h Timer.h mui/Classes.h mui/ClassesExtra.h \
-  YAM_main.h tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h \
-  BayesFilter.h Locale.h Requesters.h Rexx.h Debug.h
+  HashTable.h Themes.h Timer.h mui/ClassesExtra.h YAM_main.h tcp/pop3.h \
+  tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  mui/StringRequestWindow.h Locale.h Requesters.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/restart.o: rexx/restart.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
@@ -4195,16 +5450,16 @@ $(OBJDIR)/$(REXXDIR)/screentoback.o: rexx/screentoback.c include/libraries/mui.h
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
-  BayesFilter.h HashTable.h Themes.h Timer.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h tcp/pop3.h tcp/smtp.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h Rexx.h Debug.h
+  BayesFilter.h HashTable.h Themes.h Timer.h mui/ClassesExtra.h \
+  YAM_main.h tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h \
+  BayesFilter.h mui/MainWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/screentofront.o: rexx/screentofront.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
-  BayesFilter.h HashTable.h Themes.h Timer.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h tcp/pop3.h tcp/smtp.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h Rexx.h Debug.h
+  BayesFilter.h HashTable.h Themes.h Timer.h mui/ClassesExtra.h \
+  YAM_main.h tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h \
+  BayesFilter.h mui/MainWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/setflag.o: rexx/setflag.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -4222,17 +5477,18 @@ $(OBJDIR)/$(REXXDIR)/setmail.o: rexx/setmail.c include/mui/NList_mcc.h include/l
   include/SDI_compiler.h YAM.h include/xpk/xpk.h include/amiga-align.h \
   include/default-align.h YAM_stringsizes.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
-  Timer.h YAM_main.h tcp/pop3.h tcp/smtp.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h YAM_main.h \
-  BayesFilter.h MUIObjects.h Rexx.h Debug.h
+  Timer.h YAM_main.h tcp/pop3.h tcp/smtp.h mui/ClassesExtra.h YAM_main.h \
+  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h mui/MainMailListGroup.h \
+  MUIObjects.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/setmailfile.o: rexx/setmailfile.c include/mui/NList_mcc.h \
   include/libraries/mui.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  YAM_mainFolder.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h MUIObjects.h Rexx.h Debug.h
+  YAM_mainFolder.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h mui/MainMailListGroup.h MUIObjects.h Rexx.h \
+  Debug.h
 $(OBJDIR)/$(REXXDIR)/show.o: rexx/show.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
@@ -4272,44 +5528,43 @@ $(OBJDIR)/$(REXXDIR)/userinfo.o: rexx/userinfo.c include/libraries/mui.h \
   include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
-  include/interfaces/amissl.h include/inline4/amissl.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h FolderList.h \
+  include/interfaces/amissl.h include/inline4/amissl.h FolderList.h \
   Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writeattach.o: rexx/writeattach.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_write.h YAM_main.h \
-  tcp/pop3.h tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h FileInfo.h Rexx.h Debug.h
+  tcp/pop3.h tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h mui/WriteWindow.h FileInfo.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writebcc.o: rexx/writebcc.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_write.h YAM_main.h tcp/pop3.h \
-  tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h BayesFilter.h Rexx.h Debug.h
+  tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  BayesFilter.h mui/WriteWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writecc.o: rexx/writecc.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_write.h YAM_main.h tcp/pop3.h \
-  tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h BayesFilter.h Rexx.h Debug.h
+  tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  BayesFilter.h mui/WriteWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writeeditor.o: rexx/writeeditor.c include/mui/TextEditor_mcc.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_write.h YAM_main.h \
-  tcp/pop3.h tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
+  tcp/pop3.h tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h mui/WriteWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writefrom.o: rexx/writefrom.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_write.h YAM_main.h \
-  tcp/pop3.h tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
+  tcp/pop3.h tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h mui/WriteWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writeletter.o: rexx/writeletter.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -4344,57 +5599,57 @@ $(OBJDIR)/$(REXXDIR)/writeletter.o: rexx/writeletter.c extrasrc.h include/SDI_co
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_write.h \
-  mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
-  Rexx.h Debug.h
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/WriteWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writemailto.o: rexx/writemailto.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_write.h YAM_main.h tcp/pop3.h \
-  tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h BayesFilter.h Rexx.h Debug.h
+  tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  BayesFilter.h mui/WriteWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writeoptions.o: rexx/writeoptions.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_write.h YAM_main.h \
-  tcp/pop3.h tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h Rexx.h MUIObjects.h Debug.h
+  tcp/pop3.h tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h mui/WriteWindow.h Rexx.h MUIObjects.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writequeue.o: rexx/writequeue.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_write.h YAM_main.h tcp/pop3.h \
-  tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h BayesFilter.h Rexx.h Debug.h
+  tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  BayesFilter.h mui/WriteWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writereplyto.o: rexx/writereplyto.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_write.h YAM_main.h \
-  tcp/pop3.h tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
+  tcp/pop3.h tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h mui/WriteWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writesend.o: rexx/writesend.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_write.h YAM_main.h tcp/pop3.h \
-  tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h BayesFilter.h Rexx.h Debug.h
+  tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  BayesFilter.h mui/WriteWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writesubject.o: rexx/writesubject.c include/libraries/mui.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_write.h YAM_main.h \
-  tcp/pop3.h tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h \
-  YAM_read.h YAM_write.h BayesFilter.h Rexx.h Debug.h
+  tcp/pop3.h tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  YAM_write.h BayesFilter.h mui/WriteWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/writeto.o: rexx/writeto.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_write.h YAM_main.h tcp/pop3.h \
-  tcp/smtp.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  YAM_write.h BayesFilter.h Rexx.h Debug.h
+  tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  BayesFilter.h mui/WriteWindow.h Rexx.h Debug.h
 $(OBJDIR)/$(MIMEDIR)/base64.o: mime/base64.c include/proto/codesets.h \
   include/libraries/codesets.h include/interfaces/codesets.h \
   include/inline4/codesets.h YAM.h include/xpk/xpk.h \
@@ -4690,9 +5945,12 @@ $(OBJDIR)/$(TCPDIR)/pop3.o: tcp/pop3.c include/mui/NList_mcc.h include/libraries
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
   YAM_find.h YAM_mainFolder.h YAM_stringsizes.h AppIcon.h FolderList.h \
   MailList.h MailServers.h MethodStack.h MailTransferList.h MUIObjects.h \
-  Locale.h Requesters.h Threads.h UIDL.h mime/md5.h mui/Classes.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h tcp/Connection.h \
-  extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h Debug.h
+  Locale.h Requesters.h Threads.h UIDL.h mime/md5.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h mui/PreselectionWindow.h \
+  mui/StringRequestWindow.h mui/TransferControlGroup.h \
+  mui/YAMApplication.h YAM_utilities.h mui/PreselectionWindow.h \
+  tcp/Connection.h extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h \
+  Debug.h
 $(OBJDIR)/$(TCPDIR)/smtp.o: tcp/smtp.c YAM.h include/xpk/xpk.h include/amiga-align.h \
   include/default-align.h YAM_stringsizes.h YAM_userlist.h \
   YAM_utilities.h include/SDI_compiler.h YAM_folderconfig.h BayesFilter.h \
@@ -4728,9 +5986,10 @@ $(OBJDIR)/$(TCPDIR)/smtp.o: tcp/smtp.c YAM.h include/xpk/xpk.h include/amiga-ali
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
   YAM_find.h YAM_mainFolder.h Locale.h MailList.h MailServers.h \
   MailTransferList.h MethodStack.h MUIObjects.h Threads.h mime/base64.h \
-  mime/md5.h mui/Classes.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h tcp/Connection.h extrasrc.h include/SDI_stdarg.h \
-  include/SDI_compiler.h Debug.h
+  mime/md5.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/TransferControlGroup.h mui/YAMApplication.h YAM_utilities.h \
+  mui/PreselectionWindow.h tcp/Connection.h extrasrc.h \
+  include/SDI_stdarg.h include/SDI_compiler.h Debug.h
 $(OBJDIR)/$(EXTRADIR)/AllocSysObject.o: extrasrc/AllocSysObject.c extrasrc/AllocSysObject.h \
   extrasrc.h include/SDI_compiler.h include/SDI_stdarg.h \
   include/SDI_compiler.h include/SDI_compiler.h include/SDI_stdarg.h \

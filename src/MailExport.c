@@ -46,7 +46,9 @@
 #include "MailTransferList.h"
 #include "MUIObjects.h"
 
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/TransferControlGroup.h"
+#include "mui/YAMApplication.h"
 #include "tcp/Connection.h"
 
 #include "Debug.h"
@@ -72,7 +74,7 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
   {
     snprintf(tc.transferGroupTitle, sizeof(tc.transferGroupTitle), tr(MSG_TR_MailTransferTo), fname);
 
-    if((tc.transferGroup = (Object *)DoMethod(G->App, MUIM_YAM_CreateTransferGroup, NULL, tc.transferGroupTitle, tc.conn, TRUE, quiet == FALSE)) != NULL)
+    if((tc.transferGroup = (Object *)DoMethod(G->App, MUIM_YAMApplication_CreateTransferGroup, NULL, tc.transferGroupTitle, tc.conn, TRUE, quiet == FALSE)) != NULL)
     {
       BOOL abort = FALSE;
       struct MailNode *mnode;
@@ -293,7 +295,7 @@ BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL qui
       // delete all nodes in our temporary list
       ClearMailTransferList(&tc.transferList);
 
-      DoMethod(G->App, MUIM_YAM_DeleteTransferGroup, tc.transferGroup);
+      DoMethod(G->App, MUIM_YAMApplication_DeleteTransferGroup, tc.transferGroup);
     }
   }
 

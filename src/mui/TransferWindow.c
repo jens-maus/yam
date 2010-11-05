@@ -30,9 +30,9 @@
 
 #include "TransferWindow_cl.h"
 
-#include "MUIObjects.h"
+#include "mui/TransferControlList.h"
 
-#include "mui/Classes.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 

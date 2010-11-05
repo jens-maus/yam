@@ -52,7 +52,8 @@
 #include "MUIObjects.h"
 #include "Threads.h"
 
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 
@@ -133,7 +134,7 @@ void ER_NewError(const char *error, ...)
 
       va_start(args, error);
       if(vasprintf(&msg, error, args) != -1)
-        PushMethodOnStack(G->App, 2, MUIM_YAM_ShowError, msg);
+        PushMethodOnStack(G->App, 2, MUIM_YAMApplication_ShowError, msg);
       va_end(args);
     }
   }

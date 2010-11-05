@@ -44,6 +44,10 @@ struct Data
 };
 */
 
+/* INCLUDE
+#include "YAM.h"
+*/
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -144,7 +148,7 @@ OVERLOAD(OM_NEW)
 
   ENTER();
 
-  compileInfo = (char *)xget(G->App, MUIA_YAM_CompileInfo);
+  compileInfo = (char *)xget(G->App, MUIA_YAMApplication_CompileInfo);
 
   AddPath(logopath, G->ProgDir, "Themes/default/logo", sizeof(logopath));
 

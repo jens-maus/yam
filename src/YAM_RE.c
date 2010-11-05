@@ -61,7 +61,11 @@
 #include "YAM_write.h"
 #include "YAM_utilities.h"
 
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/MainMailListGroup.h"
+#include "mui/ReadMailGroup.h"
+#include "mui/ReadWindow.h"
+#include "mui/WriteWindow.h"
 #include "mime/rfc2231.h"
 #include "mime/base64.h"
 #include "mime/qprintable.h"

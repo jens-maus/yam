@@ -110,7 +110,12 @@
 #include "UpdateCheck.h"
 
 #include "tcp/Connection.h"
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/ClassesSetup.h"
+#include "mui/Splashwindow.h"
+#include "mui/ShutdownWindow.h"
+#include "mui/WriteWindow.h"
+#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 
@@ -1554,7 +1559,7 @@ static BOOL Root_New(BOOL hidden)
   // MUI chokes if a single task application is created a second time while the first instance is not yet fully created
   ObtainSemaphore(&startupSemaphore->semaphore);
 
-  if((G->App = YAMObject, End) != NULL)
+  if((G->App = YAMApplicationObject, End) != NULL)
   {
     if(hidden == TRUE)
       set(G->App, MUIA_Application_Iconified, TRUE);

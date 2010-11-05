@@ -56,7 +56,11 @@
 #include "UIDL.h"
 
 #include "mime/md5.h"
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/PreselectionWindow.h"
+#include "mui/StringRequestWindow.h"
+#include "mui/TransferControlGroup.h"
+#include "mui/YAMApplication.h"
 #include "tcp/Connection.h"
 
 #include "extrasrc.h"
@@ -925,7 +929,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
 
     snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_ENTER_POP3_PASSWORD), tc->msn->account);
 
-    if((passwordWin = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAM_CreatePasswordWindow, CurrentThread(), tr(MSG_TR_PopLogin), tc->windowTitle, sizeof(tc->password))) != NULL)
+    if((passwordWin = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreatePasswordWindow, CurrentThread(), tr(MSG_TR_PopLogin), tc->windowTitle, sizeof(tc->password))) != NULL)
     {
       PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_WAIT_FOR_PASSWORD));
 
@@ -943,7 +947,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
         tc->password[0] = '\0';
       }
 
-      PushMethodOnStack(G->App, 2, MUIM_YAM_DisposeWindow, passwordWin);
+      PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DisposeWindow, passwordWin);
     }
 
     // bail out if we still got no password
@@ -1097,7 +1101,7 @@ static BOOL LoadMessage(struct TransferContext *tc, struct Folder *inFolder, con
 
           AppendToLogfile(LF_VERBOSE, 32, tr(MSG_LOG_RetrievingVerbose), AddrName(mail->From), mail->Subject, mail->Size);
 
-          PushMethodOnStackWait(G->App, 3, MUIM_YAM_StartMacro, MACRO_NEWMSG, msgfile);
+          PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_NEWMSG, msgfile);
 
           MA_FreeEMailStruct(email);
 
@@ -1228,10 +1232,10 @@ static void DownloadMails(struct TransferContext *tc)
   PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
 
   // update the stats
-  PushMethodOnStack(G->App, 3, MUIM_YAM_DisplayStatistics, inFolder, TRUE);
+  PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, inFolder, TRUE);
 
   // update the menu items and toolbars
-  PushMethodOnStack(G->App, 2, MUIM_YAM_ChangeSelected, inFolder, TRUE);
+  PushMethodOnStack(G->App, 2, MUIM_YAMApplication_ChangeSelected, inFolder, TRUE);
 
   LEAVE();
 }
@@ -1385,7 +1389,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
               snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferFrom), msn->account);
 
-              if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAM_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagSet(tc->flags, RECEIVEF_USER))) != NULL)
+              if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagSet(tc->flags, RECEIVEF_USER))) != NULL)
               {
                 int msgs;
 
@@ -1394,7 +1398,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                   // connection succeeded
                   success = TRUE;
 
-                  PushMethodOnStack(G->App, 1, MUIM_YAM_UpdateAppIcon);
+                  PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
 
                   // but we continue only if there is something to download
                   if(msgs > 0)
@@ -1429,7 +1433,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
                         snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MailTransferFrom), tc->msn->account);
 
-                        if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAM_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, PRESELMODE_DOWNLOAD, tc->transferList)) != NULL)
+                        if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, PRESELMODE_DOWNLOAD, tc->transferList)) != NULL)
                         {
                           int mustWait;
 
@@ -1449,7 +1453,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                             }
                           }
 
-                          PushMethodOnStack(G->App, 2, MUIM_YAM_DisposeWindow, tc->preselectWindow);
+                          PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DisposeWindow, tc->preselectWindow);
                         }
                       }
                       else
@@ -1484,7 +1488,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                 // disconnect no matter if the connect operation succeeded or not
                 DisconnectFromPOP3(tc);
 
-                PushMethodOnStack(G->App, 2, MUIM_YAM_DeleteTransferGroup, tc->transferGroup);
+                PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DeleteTransferGroup, tc->transferGroup);
               }
 
               CleanupUIDLhash(tc->UIDLhashTable);
@@ -1501,7 +1505,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
         // perform the finalizing actions only if we haven't been aborted externally
         if(ThreadWasAborted() == FALSE)
         {
-          PushMethodOnStackWait(G->App, 3, MUIM_YAM_StartMacro, MACRO_POSTGET, itoa((int)tc->downloadResult.downloaded));
+          PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_POSTGET, itoa((int)tc->downloadResult.downloaded));
 
           AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_RETRIEVED_POP3), tc->downloadResult.downloaded, msn->account);
 
@@ -1509,12 +1513,12 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
           D(DBF_THREAD, "filter %ld downloaded mails", tc->downloadResult.downloaded);
           if(tc->downloadResult.downloaded > 0)
           {
-            PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterNewMails, tc->msn->downloadedMails, &tc->filterResult);
-            PushMethodOnStackWait(G->App, 4, MUIM_YAM_NewMailAlert, tc->msn->account, &tc->downloadResult, &tc->filterResult, tc->flags);
+            PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterNewMails, tc->msn->downloadedMails, &tc->filterResult);
+            PushMethodOnStackWait(G->App, 4, MUIM_YAMApplication_NewMailAlert, tc->msn->account, &tc->downloadResult, &tc->filterResult, tc->flags);
           }
           else
           {
-            PushMethodOnStack(G->App, 1, MUIM_YAM_UpdateAppIcon);
+            PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
           }
 
           // forget about the downloaded mails again

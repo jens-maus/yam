@@ -45,7 +45,14 @@
 #include "YAM_config.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/AttachmentRequestWindow.h"
+#include "mui/CheckboxRequestWindow.h"
+#include "mui/FolderRequestWindow.h"
+#include "mui/GenericRequestWindow.h"
+#include "mui/PassphraseRequestWindow.h"
+#include "mui/StringRequestWindow.h"
 
 #include "FolderList.h"
 #include "Locale.h"

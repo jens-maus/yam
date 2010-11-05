@@ -41,8 +41,6 @@
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
 
-#include "mui/Classes.h"
-
 #include "extrasrc.h"
 
 #include "BayesFilter.h"

@@ -69,7 +69,17 @@
 #include "YAM_utilities.h"
 #include "YAM_write.h"
 
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/InfoBar.h"
+#include "mui/MainFolderListtree.h"
+#include "mui/MainMailListGroup.h"
+#include "mui/MainWindow.h"
+#include "mui/MainWindowToolbar.h"
+#include "mui/QuickSearchBar.h"
+#include "mui/ReadMailGroup.h"
+#include "mui/ReadWindow.h"
+#include "mui/WriteWindow.h"
+#include "mui/YAMApplication.h"
 #include "mime/base64.h"
 #include "tcp/pop3.h"
 #include "tcp/smtp.h"
@@ -460,7 +470,7 @@ void MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags)
     }
     else
     {
-      PushMethodOnStack(G->App, 4, MUIM_YAM_SetStatusTo, mail, addflags, clearflags);
+      PushMethodOnStack(G->App, 4, MUIM_YAMApplication_SetStatusTo, mail, addflags, clearflags);
     }
   }
 
@@ -4269,7 +4279,7 @@ struct MA_ClassData *MA_New(void)
       set(data->GUI.LV_FOLDERS, MUIA_NList_KeyRightFocus, data->GUI.PG_MAILLIST);
 
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUT,          MUIV_Notify_Self,        1, MUIM_MainWindow_ShowAbout);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_VERSION,        MUIV_Notify_Application, 2, MUIM_YAM_UpdateCheck,      FALSE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_VERSION,        MUIV_Notify_Application, 2, MUIM_YAMApplication_UpdateCheck,      FALSE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ERRORS,         MUIV_Notify_Self,        1, MUIM_MainWindow_ShowErrors);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_LOGIN,          MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_RESTART);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HIDE,           MUIV_Notify_Application, 3, MUIM_Set,                  MUIA_Application_Iconified, TRUE);

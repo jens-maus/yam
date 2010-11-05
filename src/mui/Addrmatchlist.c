@@ -360,7 +360,7 @@ DECLARE(Open) // char *str
 
   DoMethod(data->Matchlist, MUIM_NList_Clear);
 
-  DoMethod(_app(obj), MUIM_YAM_FindEmailMatches, msg->str, data->Matchlist);
+  DoMethod(_app(obj), MUIM_YAMApplication_FindEmailMatches, msg->str, data->Matchlist);
 
   /* is there more entries in the list and if only one, is it longer than what the user already typed... */
   entries = xget(data->Matchlist, MUIA_NList_Entries);

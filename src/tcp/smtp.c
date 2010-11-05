@@ -48,7 +48,9 @@
 
 #include "mime/base64.h"
 #include "mime/md5.h"
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/TransferControlGroup.h"
+#include "mui/YAMApplication.h"
 #include "tcp/Connection.h"
 
 #include "extrasrc.h"
@@ -1290,7 +1292,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
         struct MailNode *mnode;
 
         // start the PRESEND macro first and wait for it to terminate
-        PushMethodOnStackWait(G->App, 3, MUIM_YAM_StartMacro, MACRO_PRESEND, NULL);
+        PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_PRESEND, NULL);
 
         // now we build the list of mails to be transfered.
         LockMailListShared(mlist);
@@ -1341,7 +1343,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
           snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferTo), host);
 
           D(DBF_GUI, "create transfer control group");
-          if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAM_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->conn, mode == SENDMAIL_ALL_USER || mode == SENDMAIL_ACTIVE_USER, TRUE)) != NULL)
+          if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->conn, mode == SENDMAIL_ALL_USER || mode == SENDMAIL_ACTIVE_USER, TRUE)) != NULL)
           {
             struct MinList *sentMailFilters;
 
@@ -1454,10 +1456,10 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
                       case 1:
                       {
                         setStatusToSent(mail->Reference);
-                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
+                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail->Reference) == TRUE)
                         {
                           // the filter process did not move the mail, hence we do it now
-                          PushMethodOnStackWait(G->App, 5, MUIM_YAM_MoveCopyMail, mail->Reference, outfolder, sentfolder, MVCPF_CLOSE_WINDOWS);
+                          PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_MoveCopyMail, mail->Reference, outfolder, sentfolder, MVCPF_CLOSE_WINDOWS);
                         }
                       }
                       break;
@@ -1466,10 +1468,10 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
                       case 2:
                       {
                         setStatusToSent(mail->Reference);
-                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAM_FilterMail, sentMailFilters, mail->Reference) == TRUE)
+                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail->Reference) == TRUE)
                         {
                           // the filter process did not delete the mail, hence we do it now
-                          PushMethodOnStackWait(G->App, 3, MUIM_YAM_DeleteMail, mail->Reference, DELF_UPDATE_APPICON);
+                          PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_DeleteMail, mail->Reference, DELF_UPDATE_APPICON);
                         }
                       }
                       break;
@@ -1508,7 +1510,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
                 DisconnectFromHost(tc->conn);
 
                 // update the AppIcon after closing down the connection
-                PushMethodOnStack(G->App, 1, MUIM_YAM_UpdateAppIcon);
+                PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
               }
 
               // if we got an error here, let's throw it
@@ -1577,7 +1579,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
             }
           }
 
-          PushMethodOnStack(G->App, 2, MUIM_YAM_DeleteTransferGroup, tc->transferGroup);
+          PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DeleteTransferGroup, tc->transferGroup);
         }
 
         // remove any mail transfer nodes from the list and delete the list
@@ -1585,7 +1587,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
 
         // start the POSTSEND macro so that others notice that the
         // send process has finished. No need to wait for termination.
-        PushMethodOnStack(G->App, 3, MUIM_YAM_StartMacro, MACRO_POSTSEND, NULL);
+        PushMethodOnStack(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_POSTSEND, NULL);
       }
     }
 

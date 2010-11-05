@@ -55,7 +55,8 @@
 #include "YAM_global.h"
 #include "YAM_utilities.h"
 
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/UpdateNotifyWindow.h"
 #include "mime/rfc1738.h"
 #include "tcp/http.h"
 

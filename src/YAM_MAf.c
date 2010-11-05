@@ -57,7 +57,10 @@
 #include "YAM_userlist.h"
 #include "YAM_utilities.h"
 
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/InfoBar.h"
+#include "mui/QuickSearchBar.h"
+#include "mui/ReadMailGroup.h"
 #include "mime/base64.h"
 #include "mime/rfc2047.h"
 

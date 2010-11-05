@@ -18,65 +18,17 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
- YAM Official Support Site :  http://www.yam.ch
+ YAM Official Support Site :  http://www.yam.ch/
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
  $Id$
 
 ***************************************************************************/
 
-#include <clib/alib_protos.h>
-#include <proto/exec.h>
+#ifndef CLASSES_CLASSES_SETUP_H
+#define CLASSES_CLASSES_SETUP_H
 
-#include "extrasrc.h"
+BOOL YAM_SetupClasses(void);
+void YAM_CleanupClasses(void);
 
-#include "YAM.h"
-#include "YAM_write.h"
-
-#include "mui/ClassesExtra.h"
-#include "mui/WriteWindow.h"
-
-#include "Rexx.h"
-
-#include "Debug.h"
-
-struct args
-{
-  long dummy;
-};
-
-void rx_writesend(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
-{
-  struct args *args = params->args;
-
-  ENTER();
-
-  switch(action)
-  {
-    case RXIF_INIT:
-    {
-      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
-    }
-    break;
-
-    case RXIF_ACTION:
-    {
-      struct WriteMailData *wmData = G->ActiveRexxWMData;
-
-      if(wmData != NULL && wmData->window != NULL)
-        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_SEND);
-      else
-        params->rc = RETURN_ERROR;
-    }
-    break;
-
-    case RXIF_FREE:
-    {
-      if(args != NULL)
-        FreeVecPooled(G->SharedMemPool, args);
-    }
-    break;
-  }
-
-  LEAVE();
-}
+#endif /* CLASSES_CLASSES_SETUP_H */

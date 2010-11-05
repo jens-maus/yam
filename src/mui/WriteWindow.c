@@ -3973,7 +3973,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
         // to the emailCache
         if(C->EmailCache > 0)
         {
-          DoMethod(_app(obj), MUIM_YAM_AddToEmailCache, &newMail->To);
+          DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &newMail->To);
 
           // if this mail has more than one recipient we have to add the others too
           if(isMultiRCPTMail(newMail))
@@ -3981,13 +3981,13 @@ DECLARE(ComposeMail) // enum WriteMode mode
             int j;
 
             for(j = 0; j < email->NoSTo; j++)
-              DoMethod(_app(obj), MUIM_YAM_AddToEmailCache, &email->STo[j]);
+              DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->STo[j]);
 
             for(j = 0; j < email->NoCC; j++)
-              DoMethod(_app(obj), MUIM_YAM_AddToEmailCache, &email->CC[j]);
+              DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->CC[j]);
 
             for(j = 0; j < email->NoBCC; j++)
-              DoMethod(_app(obj), MUIM_YAM_AddToEmailCache, &email->BCC[j]);
+              DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->BCC[j]);
           }
         }
 

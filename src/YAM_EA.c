@@ -54,7 +54,11 @@
 #include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_utilities.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/AddrBookEntryList.h"
+#include "mui/ImageArea.h"
+#include "mui/Recipientstring.h"
 
 #include "FileInfo.h"
 #include "Locale.h"

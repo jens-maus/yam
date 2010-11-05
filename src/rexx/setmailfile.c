@@ -37,7 +37,9 @@
 #include "YAM.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/MainMailListGroup.h"
 
 #include "MUIObjects.h"
 #include "Rexx.h"

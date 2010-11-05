@@ -67,7 +67,6 @@
 #include "Requesters.h"
 #include "Threads.h"
 
-#include "mui/Classes.h"
 #include "tcp/pop3.h"
 #include "tcp/smtp.h"
 

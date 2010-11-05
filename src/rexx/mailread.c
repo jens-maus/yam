@@ -34,7 +34,9 @@
 #include "YAM.h"
 #include "YAM_main.h"
 #include "YAM_read.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/ReadWindow.h"
 
 #include "MUIObjects.h"
 #include "Rexx.h"

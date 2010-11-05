@@ -45,7 +45,8 @@
 #include "YAM_config.h"
 #include "YAM_configFile.h"
 
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/WriteWindow.h"
 
 #include "AppIcon.h"
 #include "DockyIcon.h"

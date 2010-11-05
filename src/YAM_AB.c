@@ -68,7 +68,12 @@
 #include "YAM_utilities.h"
 #include "YAM_write.h"
 
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/AddrBookListtree.h"
+#include "mui/AddrBookToolbar.h"
+#include "mui/BirthdayRequestWindow.h"
+#include "mui/Recipientstring.h"
+#include "mui/WriteWindow.h"
 #include "mime/base64.h"
 
 #include "Locale.h"

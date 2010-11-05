@@ -34,7 +34,6 @@
 
 #include "YAM.h"
 #include "YAM_config.h"
-#include "mui/Classes.h"
 
 #include "FolderList.h"
 #include "Rexx.h"

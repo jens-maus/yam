@@ -466,7 +466,7 @@ MUIOBJS = \
 	WriteAttachmentList.o \
 	WriteWindow.o \
 	WriteWindowToolbar.o \
-	YAM.o
+	YAMApplication.o
 
 REXXOBJS = \
 	addrdelete.o \
@@ -756,7 +756,7 @@ classinfo: $(MUIDIR)/Classes.crc
 
 $(MUIDIR)/Classes.crc: $(GENCLASSES)/GenClasses $(MUIDIR)/*.c Locale.h
 	@echo "  GN GenClasses"
-	@$(GENCLASSES)/GenClasses mui -bYAM -gpl -storm -iClassesExtra.h -qdl
+	@$(GENCLASSES)/GenClasses mui -bYAM -gpl -storm -iClassesExtra.h,ClassesSetup.h -qdl
 	@echo "  CC mui/Classes.c"
 	@$(CC) $(CFLAGS) -c $(MUIDIR)/Classes.c -o $(OBJDIR)/$(MUIDIR)/Classes.o
 

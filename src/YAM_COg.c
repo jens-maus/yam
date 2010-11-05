@@ -64,7 +64,16 @@
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/FilterList.h"
+#include "mui/ImageArea.h"
+#include "mui/MailTextEdit.h"
+#include "mui/MimeTypeList.h"
+#include "mui/ScriptList.h"
+#include "mui/SearchControlGroup.h"
+#include "mui/ThemeListGroup.h"
+#include "mui/YAMApplication.h"
 
 #include "BayesFilter.h"
 #include "FolderList.h"
@@ -704,7 +713,7 @@ HOOKPROTONHNONP(UpdateCheckFunc, void)
   C->UpdateInterval = CE->UpdateInterval;
 
   // let the application check for updates
-  DoMethod(G->App, MUIM_YAM_UpdateCheck, FALSE);
+  DoMethod(G->App, MUIM_YAMApplication_UpdateCheck, FALSE);
 
   LEAVE();
 }

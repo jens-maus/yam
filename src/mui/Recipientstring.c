@@ -959,7 +959,7 @@ DECLARE(Resolve) // ULONG flags
           res = FALSE;
         }
       }
-      else if(withcache == TRUE && (entry = (struct ABEntry *)DoMethod(G->App, MUIM_YAM_FindEmailCacheMatch, s)) != NULL)
+      else if(withcache == TRUE && (entry = (struct ABEntry *)DoMethod(G->App, MUIM_YAMApplication_FindEmailCacheMatch, s)) != NULL)
       {
         D(DBF_GUI, "\tEmailCache Hit: '%s' <%s>", entry->RealName, entry->Address);
         if(withrealname == TRUE && entry->RealName[0] != '\0')

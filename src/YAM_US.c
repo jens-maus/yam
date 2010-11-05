@@ -49,7 +49,10 @@
 #include "YAM_error.h"
 #include "YAM_userlist.h"
 #include "YAM_utilities.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/Splashwindow.h"
+#include "mui/UserList.h"
 
 #include "FileInfo.h"
 #include "Locale.h"

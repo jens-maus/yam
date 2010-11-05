@@ -69,7 +69,7 @@ OVERLOAD(OM_NEW)
     Object *statusGauge;
     Object *progressGroup;
 
-    compileInfo = (char *)xget(G->App, MUIA_YAM_CompileInfo);
+    compileInfo = (char *)xget(G->App, MUIA_YAMApplication_CompileInfo);
 
     AddPath(logopath, G->ProgDir, "Themes/default/logo", sizeof(logopath));
 

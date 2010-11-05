@@ -34,7 +34,9 @@
 
 #include "YAM.h"
 #include "YAM_config.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/MainMailListGroup.h"
 
 #include "Rexx.h"
 

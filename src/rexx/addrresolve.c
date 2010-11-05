@@ -37,7 +37,9 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/Recipientstring.h"
 
 #include "Rexx.h"
 

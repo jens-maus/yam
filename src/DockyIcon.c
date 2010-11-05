@@ -35,8 +35,6 @@
 #include "YAM.h"
 #include "YAM_config.h"
 
-#include "mui/Classes.h"
-
 #include "DockyIcon.h"
 #include "Locale.h"
 #include "MUIObjects.h"

@@ -52,7 +52,10 @@
 #include "MUIObjects.h"
 #include "Threads.h"
 
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/PreselectionWindow.h"
+#include "mui/TransferControlGroup.h"
+#include "mui/YAMApplication.h"
 #include "tcp/Connection.h"
 
 #include "Debug.h"
@@ -843,7 +846,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
   {
     snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MsgInFile), importFile);
 
-    if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAM_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, conn, TRUE, isFlagClear(flags, IMPORTF_QUIET))) != NULL)
+    if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, conn, TRUE, isFlagClear(flags, IMPORTF_QUIET))) != NULL)
     {
       enum FolderType ftype = folder->Type;
 
@@ -1109,11 +1112,11 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
       PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
     }
 
-    PushMethodOnStack(G->App, 2, MUIM_YAM_DeleteTransferGroup, tc->transferGroup);
+    PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DeleteTransferGroup, tc->transferGroup);
 
     AppendToLogfile(LF_ALL, 50, tr(MSG_LOG_Importing), numberOfMails, importFile, folder->Name);
-    PushMethodOnStack(G->App, 3, MUIM_YAM_DisplayStatistics, folder, TRUE);
-    PushMethodOnStack(G->App, 3, MUIM_YAM_ChangeFolder, NULL, FALSE);
+    PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, folder, TRUE);
+    PushMethodOnStack(G->App, 3, MUIM_YAMApplication_ChangeFolder, NULL, FALSE);
   }
 
   DeleteConnection(conn);
@@ -1153,7 +1156,7 @@ BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flag
 
             snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MsgInFile), importFile);
 
-            if((preselectWin = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAM_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, PRESELMODE_IMPORT, tc->importList)) != NULL)
+            if((preselectWin = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, PRESELMODE_IMPORT, tc->importList)) != NULL)
             {
               if(SleepThread() == TRUE)
               {
@@ -1166,7 +1169,7 @@ BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flag
                 }
               }
 
-              PushMethodOnStack(G->App, 2, MUIM_YAM_DisposeWindow, preselectWin);
+              PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DisposeWindow, preselectWin);
             }
           }
           else

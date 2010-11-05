@@ -52,7 +52,8 @@
 #include "YAM_global.h"
 #include "YAM_utilities.h"
 
-#include "mui/Classes.h"
+#include "mui/ClassesExtra.h"
+#include "mui/WriteWindow.h"
 #include "mime/rfc2231.h"
 #include "mime/rfc2047.h"
 #include "mime/base64.h"

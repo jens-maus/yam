@@ -66,7 +66,17 @@
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/ConfigPageList.h"
+#include "mui/InfoBar.h"
+#include "mui/MainFolderListtree.h"
+#include "mui/MainMailListGroup.h"
+#include "mui/MainWindowToolbar.h"
+#include "mui/MailTextEdit.h"
+#include "mui/ReadMailGroup.h"
+#include "mui/ReadWindow.h"
+#include "mui/SearchControlGroup.h"
 
 #include "DockyIcon.h"
 #include "FileInfo.h"

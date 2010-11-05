@@ -93,7 +93,15 @@
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 #include "YAM_utilities.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/InfoBar.h"
+#include "mui/MainFolderListtree.h"
+#include "mui/MainMailList.h"
+#include "mui/MainMailListGroup.h"
+#include "mui/ReadMailGroup.h"
+#include "mui/Splashwindow.h"
+#include "mui/YAMApplication.h"
 
 #include "AppIcon.h"
 #include "FileInfo.h"
@@ -4397,7 +4405,7 @@ void AppendToLogfile(enum LFMode mode, int id, const char *text, ...)
         // compose the varags values
         va_start(args, text);
         if(vasprintf(&logMessage, text, args) != -1)
-          PushMethodOnStack(G->App, 4, MUIM_YAM_AppendToLogfile, mode, id, logMessage);
+          PushMethodOnStack(G->App, 4, MUIM_YAMApplication_AppendToLogfile, mode, id, logMessage);
         va_end(args);
       }
     }
@@ -4490,7 +4498,7 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
   else
   {
     // called from a thread, push a method on the stack
-    PushMethodOnStack(G->App, 5, MUIM_YAM_Busy, text, parameter, cur, max);
+    PushMethodOnStack(G->App, 5, MUIM_YAMApplication_Busy, text, parameter, cur, max);
   }
 
   RETURN(result);

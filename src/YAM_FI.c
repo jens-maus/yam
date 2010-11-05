@@ -56,7 +56,12 @@
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 #include "YAM_utilities.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/MainMailList.h"
+#include "mui/ReadWindow.h"
+#include "mui/SearchControlGroup.h"
+#include "mui/WriteWindow.h"
 
 #include "BayesFilter.h"
 #include "BoyerMooreSearch.h"

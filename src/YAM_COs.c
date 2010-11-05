@@ -50,7 +50,11 @@
 #include "YAM_global.h"
 #include "YAM_main.h"
 #include "YAM_utilities.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/MailTextEdit.h"
+#include "mui/MainWindowToolbar.h"
+#include "mui/ThemeListGroup.h"
 
 #include "BayesFilter.h"
 #include "FileInfo.h"

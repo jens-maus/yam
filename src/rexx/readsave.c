@@ -33,7 +33,9 @@
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_read.h"
-#include "mui/Classes.h"
+
+#include "mui/ClassesExtra.h"
+#include "mui/ReadMailGroup.h"
 
 #include "MimeTypes.h"
 #include "Rexx.h"

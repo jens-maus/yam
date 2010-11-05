@@ -32,7 +32,6 @@
 
 #include "MUIObjects.h"
 
-#include "mui/Classes.h"
 #include "tcp/Connection.h"
 
 #include "Debug.h"

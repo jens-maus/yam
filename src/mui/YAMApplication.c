@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "YAM_cl.h"
+#include "YAMApplication_cl.h"
 
 #include <proto/icon.h>
 #if defined(__amigaos4__)
@@ -59,6 +59,12 @@ struct Data
   STRPTR EMailCacheName;
   char compileInfo[SIZE_DEFAULT];
 };
+*/
+
+/* INCLUDE
+#include "YAM_main.h"
+#include "YAM_utilities.h"
+#include "mui/PreselectionWindow.h"
 */
 
 struct EMailCacheNode
