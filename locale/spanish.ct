@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.13 (30.10.2010)
+## version $VER: YAM.catalog 7.14 (05.11.2010)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
@@ -6502,18 +6502,6 @@ MSG_MA_UPDATEINDEX
 Actualizar índice
 ; Update index
 ;
-MSG_MA_MSENDALL
-Enviar correo pendiente
-; Send queued mail
-;
-MSG_MA_MEXCHANGE
-Intercambio de correo
-; Exchange mail
-;
-MSG_MA_MGETMAIL
-Obtener correo nuevo
-; Get new mail
-;
 MSG_MA_MREAD
 Leer
 ; Read
@@ -7972,4 +7960,16 @@ MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
 %s\nRecibidos %ld nuevos mensajes.
 ; %s\nReceived %ld new mails.
 ; ACCOUNT, COUNT
+;
+MSG_MA_SEND_AND_GET_MAIL
+Enviar y recibir correo
+; Send and get mail
+;
+MSG_MA_SEND_MAIL
+Enviar correo
+; Send mail
+;
+MSG_MA_GET_MAIL
+Recibir correo
+; Get mail
 ;
