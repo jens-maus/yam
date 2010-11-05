@@ -656,16 +656,30 @@ static void AddTagline(FILE *fh_mail)
     char hashfile[SIZE_PATHFILE];
     LONG tagsTime;
     LONG hashTime;
+    BOOL createHashFile;
     FILE *fh_tag;
 
     snprintf(hashfile, sizeof(hashfile), "%s.hsh", C->TagsFile);
 
-    if(ObtainFileInfo(C->TagsFile, FI_TIME, &tagsTime) == TRUE &&
-       ObtainFileInfo(hashfile, FI_TIME, &hashTime) == TRUE &&
-       tagsTime > hashTime)
+    if(FileExists(hashfile) == FALSE)
     {
-      CreateHashTable(C->TagsFile, hashfile, C->TagsSeparator);
+      // create the .hsh file if it doesn't exist
+      createHashFile = TRUE;
     }
+    else if(ObtainFileInfo(C->TagsFile, FI_TIME, &tagsTime) == TRUE &&
+            ObtainFileInfo(hashfile, FI_TIME, &hashTime) == TRUE &&
+            tagsTime > hashTime)
+    {
+      // recreate the .hsh file if it is outdated
+      createHashFile = TRUE;
+    }
+    else
+    {
+      createHashFile = FALSE;
+    }
+
+    if(createHashFile == TRUE)
+      CreateHashTable(C->TagsFile, hashfile, C->TagsSeparator);
 
     if((fh_tag = fopen(C->TagsFile, "r")) != NULL)
     {

@@ -7,6 +7,8 @@ $URL$
 
 2010-11-05 Thore Böckelmann <tboeckel@gmx.de>
 
+  * mui/WriteWindow.c: make sure the .taglines.hsh file is created in case it
+    doesn't yet exist.
   * all: lots of minor changes due to the latest changes in the GenClasses tool.
     It is now necessary to include the header of each used class separately
     instead of the former "mui/classes.h" header. On the other hand this
