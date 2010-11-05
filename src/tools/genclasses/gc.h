@@ -46,7 +46,7 @@
 #define KEYWD_DECLARE     "DECLARE"
 #define KEYWD_ATTR        "ATTR"
 #define KEYWD_EXPORT      "EXPORT"
-
+#define KEYWD_INCLUDE     "INCLUDE"
 
 struct overloaddef
 {
@@ -69,6 +69,11 @@ struct exportdef
   char *exporttext;
 };
 
+struct includedef
+{
+  char *includetext;
+};
+
 struct classdef
 {
   char *name;                 /* i.e. Searchwindow */
@@ -82,6 +87,7 @@ struct classdef
   struct list declarelist;    /* list of extracted DECLARE() macros */
   struct list attrlist;       /* list of extracted ATTR() macros */
   struct list exportlist;     /* list of extracted EXPORT blocks */
+  struct list includelist;    /* list of extracted INCLUDE blocks */
 };
 
 #endif /* GC_H */

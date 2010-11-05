@@ -64,6 +64,12 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  * History
  * -------
+ * 0.35 - each class now gets its own public header file to avoid depency of lots
+ *        of source file on one single generated classes.h file. The classes.h
+ *        file now contains the function prototypes used in classes.c only.
+ *        Furthermore added the new keyword INCLUDE to let classes specify
+ *        additional #include statements in case their method need definitions
+ *        from other headers.
  * 0.34 - multiple dependencies from a private class were not handled correctly
  *        and rejected as a dependency loop. Additionally the parent's class name
  *        will now be included in the error message.
@@ -193,7 +199,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  */
 
-static const char * const verstr = "0.34";
+static const char * const verstr = "0.35";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -378,7 +384,7 @@ static unsigned int gettagvalue(char *tag, int checkcol)
   unsigned int hash = gethash(tag);
   unsigned int val = TAG_USER + (hash << 8) + collision_cnts[hash];
 
-  /* now we check that val is definitly between TAG_USER and the MUI tag base
+  /* now we check that val is definitely between TAG_USER and the MUI tag base
      because anything above/below that might cause problems. */
   if(val < TAG_USER || val >= 0x80010000)
     fprintf(stderr, "WARNING: generate tag value '%x' of class '%s' collides with BOOPSI/MUI tag values!\n", val, tag);
@@ -421,6 +427,12 @@ void free_exportblk( struct exportdef *ed )
   free(ed->exporttext);
 }
 
+void free_includeblk( struct includedef *id )
+{
+  if (!id) return;
+  free(id->includetext);
+}
+
 void free_attr( struct attrdef *ad )
 {
   if (!ad) return;
@@ -457,6 +469,12 @@ void free_classdef( struct classdef *cd )
     free(n);
   }
 
+  while((n = list_remhead(&cd->includelist)))
+  {
+    free_includeblk(n->data);
+    free(n);
+  }
+
   free(cd);
 }
 
@@ -488,6 +506,14 @@ void add_exportblk( struct classdef *cd, char *textblk )
   if (!(ed = (struct exportdef *) calloc(1, sizeof(struct exportdef)))) return;
   if (!(ed->exporttext = stralloc(textblk))) return;
   list_saveitem(&cd->exportlist, ed->exporttext, ed);
+}
+
+void add_includeblk( struct classdef *cd, char *textblk )
+{
+  struct includedef *id;
+  if (!(id = (struct includedef *) calloc(1, sizeof(struct includedef)))) return;
+  if (!(id->includetext = stralloc(textblk))) return;
+  list_saveitem(&cd->includelist, id->includetext, id);
 }
 
 void add_attr( struct classdef *cd, char *name )
@@ -527,6 +553,7 @@ struct classdef *processclasssrc( char *path )
   list_init(&cd->declarelist);
   list_init(&cd->attrlist);
   list_init(&cd->exportlist);
+  list_init(&cd->includelist);
 
   if ((cd->name = stralloc(myfilepart(path))))
   {
@@ -661,6 +688,35 @@ struct classdef *processclasssrc( char *path )
 
         if(epos == 0)
           fprintf(stderr, "WARNING: Unterminated EXPORT block at line %d\n", lineno);
+      }
+      else if (strncmp(KEYWD_INCLUDE, p, sizeof(KEYWD_INCLUDE) - 1) == 0)
+      {
+        if(arg_v)
+          fprintf(stdout, KEYWD_INCLUDE " keyword found at line %d in file %s\n", lineno, path);
+
+        p += sizeof(KEYWD_INCLUDE) - 1;
+        spos = ftell(fp);
+        while(fgets(p = line, 255, fp))
+        {
+          lineno++; epos = ftell(fp);
+          if (!(p = strstr(line, "*/"))) continue;
+          epos += (p - line) - 3; /* + offset into line... */
+          fseek(fp, spos, SEEK_SET);
+          if (!(blk = calloc(1, (size_t)(epos - spos + 1))))
+          {
+            fprintf(stderr, "WARNING: Cannot read " KEYWD_INCLUDE " block at line %d, out of memory!\n", exlineno); break;
+          }
+          if (fread(blk, (size_t)(epos - spos), 1, fp) != 1)
+          {
+            fprintf(stderr, "WARNING: Cannot read " KEYWD_INCLUDE " block at line %d, fread fails!\n", exlineno); break;
+          }
+          add_includeblk(cd, blk);
+          free(blk);
+          break;
+        }
+
+        if(epos == 0)
+          fprintf(stderr, "WARNING: Unterminated INCLUDE block at line %d\n", lineno);
       }
     }
   }  /* while() */
@@ -857,6 +913,7 @@ unsigned long gen_crc( struct list *classlist )
   struct exportdef *nexted;
   struct attrdef *nextad;
   struct overloaddef *nextod;
+  struct includedef *nextid;
   struct node *n, *nn;
 
   crc = 0;
@@ -880,6 +937,7 @@ unsigned long gen_crc( struct list *classlist )
     {
       crc = crc32(nextod->name, strlen(nextod->name), crc);
     }
+
     for(n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **)&nextdd));)
     {
       crc = crc32(nextdd->name, strlen(nextdd->name), crc);
@@ -894,6 +952,11 @@ unsigned long gen_crc( struct list *classlist )
     for(n = NULL; (n = list_getnext(&nextcd->exportlist, n, (void **)&nexted));)
     {
       crc = crc32(nexted->exporttext, strlen(nexted->exporttext), crc);
+    }
+
+    for(n = NULL; (n = list_getnext(&nextcd->includelist, n, (void **)&nextid));)
+    {
+      crc = crc32(nextid->includetext, strlen(nextid->includetext), crc);
     }
   }
 
@@ -940,8 +1003,6 @@ void gen_gpl( FILE *fp )
   "\n"
   " YAM Official Support Site :  http://www.yam.ch/\n"
   " YAM OpenSource project    :  http://sourceforge.net/projects/yamos/\n"
-  "\n"
-  " $Id$\n"
   "\n"
   "***************************************************************************/\n");
 }
@@ -1219,11 +1280,9 @@ int gen_source( char *destfile, struct list *classlist )
 int gen_header( char *destfile, struct list *classlist )
 {
   FILE *fp;
-  char *bn = arg_basename, *cn, *p;
+  char *bn = arg_basename, *cn;
   struct classdef *nextcd;
   struct declaredef *nextdd;
-  struct exportdef *nexted;
-  struct attrdef *nextad;
   struct overloaddef *nextod;
   struct node *n, *nn;
 
@@ -1285,9 +1344,6 @@ int gen_header( char *destfile, struct list *classlist )
   fprintf(fp, "#define NUMBEROFCLASSES %ld\n", classlist->cnt);
   fprintf(fp, "\n");
   fprintf(fp, "extern struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n", bn);
-  fprintf(fp, "Object * VARARGS68K %s_NewObject(CONST_STRPTR className, ...);\n", bn);
-  fprintf(fp, "BOOL %s_SetupClasses(void);\n", bn);
-  fprintf(fp, "void %s_CleanupClasses(void);\n", bn);
   fprintf(fp, "\n");
 
   /***************************************/
@@ -1298,85 +1354,7 @@ int gen_header( char *destfile, struct list *classlist )
   {
     cn = nextcd->name;
 
-    /***********************************************/
-    /* Write MUIC_, xxxObject, etc. for this class */
-    /***********************************************/
-
-    fprintf(fp, "/******** Class: %s (0x%08x) ********/\n", cn, gettagvalue(cn, 0));
-    fprintf(fp, "\n");
-    fprintf(fp, "#define MUIC_%s \"%s_%s\"\n", cn, bn, cn);
-    fprintf(fp, "#define %sObject %s_NewObject(MUIC_%s\n", cn, bn, cn);
-
-    for(n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd));)
-    {
-      char name[128];
-
-      snprintf(name, sizeof(name), "MUIM_%s_%s", cn, nextdd->name);
-      fprintf(fp, "#define %-45s 0x%08x\n", name, gettagvalue(cn, 1));
-    }
-
-    /***************************************/
-    /* Write attributes for this class     */
-    /***************************************/
-
-    for(n = NULL; (n = list_getnext(&nextcd->attrlist, n, (void **) &nextad));)
-    {
-      char name[128];
-
-      snprintf(name, sizeof(name), "MUIA_%s_%s", cn, nextad->name);
-      fprintf(fp, "#define %-45s 0x%08x\n", name, gettagvalue(cn, 1));
-    }
-    fprintf(fp, "\n");
-
-    /***************************************/
-    /* Write exported text for this class  */
-    /***************************************/
-
-    if(nextcd->exportlist.cnt)
-    {
-      fprintf(fp, "/* Exported text */\n\n");
-      for (n = NULL; (n = list_getnext(&nextcd->exportlist, n, (void **) &nexted));)
-        fprintf(fp, "%s\n\n", nexted->exporttext);
-
-    }
-
-    /*****************************************/
-    /* Write MUIP_ structures for this class */
-    /*****************************************/
-
-    for(n = NULL; (n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd));)
-    {
-      fprintf(fp, "struct MUIP_%s_%s\n", cn, nextdd->name);
-      fprintf(fp, "{\n");
-      fprintf(fp, "  ULONG methodID;\n");
-
-      if(strlen(nextdd->params) > 0)
-      {
-        char *lp;
-
-        for(p = lp = nextdd->params;;)
-        {
-          if((p = strpbrk(lp, ",;")) != NULL)
-          {
-            *p++ = '\0';
-
-            fprintf(fp, "  %s;\n", lp);
-
-            lp = p;
-          }
-          else
-          {
-            if(strlen(lp) > 0)
-              fprintf(fp, "  %s;\n", lp);
-
-            break;
-          }
-        }
-      }
-      fprintf(fp, "};\n");
-      fprintf(fp, "\n");
-    }
-    fprintf(fp, "\n");
+    fprintf(fp, "#include \"%s.h\"\n", cn);
 
     /***************************************/
     /* Write protos for this class         */
@@ -1406,19 +1384,25 @@ int gen_header( char *destfile, struct list *classlist )
 int gen_classheaders( struct list *classlist )
 {
   struct node *n;
+  struct node *nn;
   struct classdef *nextcd;
+  struct declaredef *nextdd;
+  struct exportdef *nexted;
+  struct attrdef *nextad;
+  struct includedef *nextid;
   FILE *fp;
 
   for(n = NULL; (n = list_getnext(classlist, n, (void **)&nextcd));)
   {
     char name[128], buf[128], *p;
     char *cn = nextcd->name;
+    char *bn = arg_basename;
 
     snprintf(name, sizeof(name), "%s_cl.h", cn);
     myaddpart(arg_classdir, name, 255);
 
     if(arg_v)
-      fprintf(stdout, "Creating class header: %s\n", arg_classdir);
+      fprintf(stdout, "Creating private class header: %s\n", arg_classdir);
 
     if((fp = fopen(arg_classdir, "w")) == NULL)
     {
@@ -1467,8 +1451,129 @@ int gen_classheaders( struct list *classlist )
     fprintf(fp, "\n");
     fprintf(fp, "#endif /* %s_H */\n", buf);
 
-    *mypathpart(arg_classdir) = 0;
     fclose(fp);
+    *mypathpart(arg_classdir) = 0;
+
+    snprintf(name, sizeof(name), "%s.h", cn);
+    myaddpart(arg_classdir, name, 255);
+
+    if(arg_v)
+      fprintf(stdout, "Creating public class header: %s\n", arg_classdir);
+
+    if((fp = fopen(arg_classdir, "w")) == NULL)
+    {
+      fprintf(stderr, "WARNING: Unable to write %s\n", name);
+      *mypathpart(arg_classdir) = 0;
+
+      continue;
+    }
+    strncpy(buf, cn, 127);
+    for (p = buf; *p; p++)
+      *p = toupper(*p);
+
+    /* write the gpl to this class header also */
+    gen_gpl(fp);
+    fprintf(fp, "\n");
+    fprintf(fp, "/* " EDIT_WARNING " */\n");
+    fprintf(fp, "\n");
+
+    fprintf(fp, "#ifndef MUI_%s_H\n", buf);
+    fprintf(fp, "#define MUI_%s_H 1\n", buf);
+    fprintf(fp, "\n");
+
+    /*************************************************/
+    /* Write include statements text for this class  */
+    /*************************************************/
+
+    if(nextcd->includelist.cnt)
+    {
+      fprintf(fp, "/* Exported includes */\n\n");
+      for (nn = NULL; (nn = list_getnext(&nextcd->includelist, nn, (void **) &nextid));)
+        fprintf(fp, "%s\n\n", nextid->includetext);
+
+    }
+
+    fprintf(fp, "Object * VARARGS68K %s_NewObject(CONST_STRPTR className, ...);\n", bn);
+    fprintf(fp, "\n");
+    fprintf(fp, "#define MUIC_%s \"%s_%s\"\n", cn, bn, cn);
+    fprintf(fp, "\n");
+    fprintf(fp, "#define %sObject %s_NewObject(MUIC_%s\n", cn, bn, cn);
+    fprintf(fp, "\n");
+
+    for(nn = NULL; (nn = list_getnext(&nextcd->declarelist, nn, (void **) &nextdd));)
+    {
+      char name[128];
+
+      snprintf(name, sizeof(name), "MUIM_%s_%s", cn, nextdd->name);
+      fprintf(fp, "#define %-45s 0x%08x\n", name, gettagvalue(cn, 1));
+    }
+
+    /***************************************/
+    /* Write attributes for this class     */
+    /***************************************/
+
+    for(nn = NULL; (nn = list_getnext(&nextcd->attrlist, nn, (void **) &nextad));)
+    {
+      char name[128];
+
+      snprintf(name, sizeof(name), "MUIA_%s_%s", cn, nextad->name);
+      fprintf(fp, "#define %-45s 0x%08x\n", name, gettagvalue(cn, 1));
+    }
+    fprintf(fp, "\n");
+
+    /***************************************/
+    /* Write exported text for this class  */
+    /***************************************/
+
+    if(nextcd->exportlist.cnt)
+    {
+      fprintf(fp, "/* Exported text */\n\n");
+      for (nn = NULL; (nn = list_getnext(&nextcd->exportlist, nn, (void **) &nexted));)
+        fprintf(fp, "%s\n\n", nexted->exporttext);
+
+    }
+
+    /*****************************************/
+    /* Write MUIP_ structures for this class */
+    /*****************************************/
+
+    for(nn = NULL; (nn = list_getnext(&nextcd->declarelist, nn, (void **) &nextdd));)
+    {
+      fprintf(fp, "struct MUIP_%s_%s\n", cn, nextdd->name);
+      fprintf(fp, "{\n");
+      fprintf(fp, "  ULONG methodID;\n");
+
+      if(strlen(nextdd->params) > 0)
+      {
+        char *lp;
+
+        for(p = lp = nextdd->params;;)
+        {
+          if((p = strpbrk(lp, ",;")) != NULL)
+          {
+            *p++ = '\0';
+
+            fprintf(fp, "  %s;\n", lp);
+
+            lp = p;
+          }
+          else
+          {
+            if(strlen(lp) > 0)
+              fprintf(fp, "  %s;\n", lp);
+
+            break;
+          }
+        }
+      }
+      fprintf(fp, "};\n");
+      fprintf(fp, "\n");
+    }
+
+    fprintf(fp, "#endif /* MUI_%s_H */\n", buf);
+
+    fclose(fp);
+    *mypathpart(arg_classdir) = 0;
   }
   return 1;
 }

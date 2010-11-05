@@ -4,6 +4,15 @@ GenClasses Tool - ChangeLog
 
 $Id$
 
+2010-11-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * gc.c: each class now gets its own public header file to avoid depency of
+    lots of source file on one single generated classes.h file. The classes.h
+    file now contains the function prototypes used in classes.c only.
+    Furthermore added the new keyword INCLUDE to let classes specify additional
+    #include statements in case their method need definitions from other
+    headers.
+
 2010-10-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * gc.c: multiple dependencies from a private class were not handled correctly
