@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-11-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c, misc: made the birthday to string conversion thread safe. I hope
+    this also closes #227, altough I was not able to reproduce this issue.
+
 2010-11-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: make sure the .taglines.hsh file is created in case it

@@ -1147,6 +1147,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
       if(hits == 1 || ab->Type == AET_LIST)
       {
         struct HeaderNode *newNode;
+        char dateStr[SIZE_SMALL];
 
         // make sure we cleaned up the senderInfoHeader List beforehand
         ClearHeaderList(&data->senderInfoHeaders);
@@ -1196,11 +1197,11 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(*AB_ExpandBD(ab->BirthDay) && (newNode = AllocHeaderNode()) != NULL)
+        if(AB_ExpandBD(ab->BirthDay, dateStr, sizeof(dateStr)) == TRUE && (newNode = AllocHeaderNode()) != NULL)
         {
           newNode->name = StrBufCpy(NULL, MUIX_I);
           newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_DOB)));
-          newNode->content = StrBufCpy(NULL, AB_ExpandBD(ab->BirthDay));
+          newNode->content = StrBufCpy(NULL, dateStr);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }

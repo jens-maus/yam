@@ -137,6 +137,10 @@ void EA_Setup(int winnum, struct ABEntry *ab)
   {
     case AET_USER:
     {
+      char dateStr[SIZE_SMALL];
+
+      AB_ExpandBD(ab->BirthDay, dateStr, sizeof(dateStr));
+
       setstring(gui->ST_ALIAS, ab->Alias);
       setstring(gui->ST_REALNAME, ab->RealName);
       setstring(gui->ST_ADDRESS, ab->Address);
@@ -149,7 +153,7 @@ void EA_Setup(int winnum, struct ABEntry *ab)
       setcycle(gui->CY_DEFSECURITY,ab->DefSecurity);
       setstring(gui->ST_HOMEPAGE, ab->Homepage);
       setstring(gui->ST_COMMENT, ab->Comment);
-      setstring(gui->ST_BIRTHDAY, AB_ExpandBD(ab->BirthDay));
+      setstring(gui->ST_BIRTHDAY, dateStr);
       EA_SetPhoto(winnum, ab->Photo);
     }
     break;

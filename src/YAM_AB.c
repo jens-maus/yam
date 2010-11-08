@@ -443,9 +443,9 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
 ///
 /// AB_ExpandBD
 //  Converts date from numeric into textual format
-char *AB_ExpandBD(long date)
+BOOL AB_ExpandBD(const long date, char *dateStr, const size_t dateStrSize)
 {
-  static char datestr[SIZE_SMALL];
+  BOOL success = FALSE;
   ldiv_t d;
   LONG day;
   LONG month;
@@ -462,7 +462,10 @@ char *AB_ExpandBD(long date)
   // check first if it could be a valid date!
   // I think we can assume that nobody used EMail before WW1 :)
   if(date == 0 || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900)
-    datestr[0] = '\0';
+  {
+    dateStr[0] = '\0';
+    success = FALSE;
+  }
   else
   {
     struct tm tm;
@@ -474,12 +477,16 @@ char *AB_ExpandBD(long date)
 
     dateFormat = G->Locale != NULL ? G->Locale->loc_ShortDateFormat : (STRPTR)"%d.%m.%Y";
     D(DBF_UTIL, "formatting date %ld as %ld/%ld/%ld -> '%s'", date, day, month, year, dateFormat);
-    strftime(datestr, sizeof(datestr), dateFormat, &tm);
-    D(DBF_UTIL, "formatted date string is '%s'", datestr);
+    // strftime() returns the number of characters including the trailing NUL byte,
+    // so we check for at least one non-NUL character
+    if(strftime(dateStr, dateStrSize, dateFormat, &tm) >= 2)
+      success = TRUE;
+
+    D(DBF_UTIL, "formatted date string is '%s'", dateStr);
   }
 
-  RETURN(datestr);
-  return datestr;
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -2536,6 +2543,11 @@ static void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
   switch(ab->Type)
   {
     case AET_USER:
+    {
+      char dateStr[SIZE_SMALL];
+
+      AB_ExpandBD(ab->BirthDay, dateStr, sizeof(dateStr));
+
       AB_PrintField(prt, tr(MSG_AB_PersonAlias), ab->Alias);
       AB_PrintField(prt, tr(MSG_EA_RealName), ab->RealName);
       AB_PrintField(prt, tr(MSG_EA_EmailAddress), ab->Address);
@@ -2545,9 +2557,12 @@ static void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
       AB_PrintField(prt, tr(MSG_EA_City), ab->City);
       AB_PrintField(prt, tr(MSG_EA_Country), ab->Country);
       AB_PrintField(prt, tr(MSG_EA_Phone), ab->Phone);
-      AB_PrintField(prt, tr(MSG_EA_DOB), AB_ExpandBD(ab->BirthDay));
-      break;
+      AB_PrintField(prt, tr(MSG_EA_DOB), dateStr);
+    }
+    break;
+
     case AET_LIST:
+    {
       AB_PrintField(prt, tr(MSG_AB_ListAlias), ab->Alias);
       AB_PrintField(prt, tr(MSG_EA_MLName), ab->RealName);
       AB_PrintField(prt, tr(MSG_EA_ReturnAddress), ab->Address);
@@ -2575,9 +2590,14 @@ static void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
           ptr = nptr;
         }
       }
-      break;
+    }
+    break;
+
     case AET_GROUP:
+    {
       AB_PrintField(prt, tr(MSG_AB_GroupAlias), ab->Alias);
+    }
+    break;
   }
   AB_PrintField(prt, tr(MSG_EA_Description), ab->Comment);
 
@@ -3065,23 +3085,28 @@ HOOKPROTONHNO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 
       if(entry != NULL)
       {
-        msg->Array[0] = entry->Alias;
-        msg->Array[1] = entry->RealName;
-        msg->Array[2] = entry->Comment;
-        msg->Array[3] = entry->Address;
-        msg->Array[4] = entry->Street;
-        msg->Array[5] = entry->City;
-        msg->Array[6] = entry->Country;
-        msg->Array[7] = entry->Phone;
-        msg->Array[8] = AB_ExpandBD(entry->BirthDay);
-        msg->Array[9] = entry->PGPId;
-        msg->Array[10]= entry->Homepage;
+        static char dateStr[SIZE_SMALL];
+
+        AB_ExpandBD(entry->BirthDay, dateStr, sizeof(dateStr));
+
+        msg->Array[0]  = entry->Alias;
+        msg->Array[1]  = entry->RealName;
+        msg->Array[2]  = entry->Comment;
+        msg->Array[3]  = entry->Address;
+        msg->Array[4]  = entry->Street;
+        msg->Array[5]  = entry->City;
+        msg->Array[6]  = entry->Country;
+        msg->Array[7]  = entry->Phone;
+        msg->Array[8]  = dateStr;
+        msg->Array[9]  = entry->PGPId;
+        msg->Array[10] = entry->Homepage;
 
         switch(entry->Type)
         {
            case AET_LIST:
            {
              static char dispal[SIZE_DEFAULT];
+
              snprintf(msg->Array[0] = dispal, sizeof(dispal), "\033o[0]%s", entry->Alias);
            }
            break;
@@ -3101,17 +3126,17 @@ HOOKPROTONHNO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
     }
     else
     {
-      msg->Array[0] = (STRPTR)tr(MSG_AB_TitleAlias);
-      msg->Array[1] = (STRPTR)tr(MSG_AB_TitleName);
-      msg->Array[2] = (STRPTR)tr(MSG_AB_TitleDescription);
-      msg->Array[3] = (STRPTR)tr(MSG_AB_TitleAddress);
-      msg->Array[4] = (STRPTR)tr(MSG_AB_TitleStreet);
-      msg->Array[5] = (STRPTR)tr(MSG_AB_TitleCity);
-      msg->Array[6] = (STRPTR)tr(MSG_AB_TitleCountry);
-      msg->Array[7] = (STRPTR)tr(MSG_AB_TitlePhone);
-      msg->Array[8] = (STRPTR)tr(MSG_AB_TitleBirthDate);
-      msg->Array[9] = (STRPTR)tr(MSG_AB_TitlePGPId);
-      msg->Array[10]= (STRPTR)tr(MSG_AB_TitleHomepage);
+      msg->Array[0]  = (STRPTR)tr(MSG_AB_TitleAlias);
+      msg->Array[1]  = (STRPTR)tr(MSG_AB_TitleName);
+      msg->Array[2]  = (STRPTR)tr(MSG_AB_TitleDescription);
+      msg->Array[3]  = (STRPTR)tr(MSG_AB_TitleAddress);
+      msg->Array[4]  = (STRPTR)tr(MSG_AB_TitleStreet);
+      msg->Array[5]  = (STRPTR)tr(MSG_AB_TitleCity);
+      msg->Array[6]  = (STRPTR)tr(MSG_AB_TitleCountry);
+      msg->Array[7]  = (STRPTR)tr(MSG_AB_TitlePhone);
+      msg->Array[8]  = (STRPTR)tr(MSG_AB_TitleBirthDate);
+      msg->Array[9]  = (STRPTR)tr(MSG_AB_TitlePGPId);
+      msg->Array[10] = (STRPTR)tr(MSG_AB_TitleHomepage);
     }
   }
 

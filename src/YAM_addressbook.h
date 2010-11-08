@@ -95,7 +95,7 @@ void   AB_CheckBirthdates(BOOL check);
 char * AB_CompleteAlias(const char *text);
 long   AB_CompressBD(const char *datestr);
 BOOL   AB_CreateEmptyABook(const char *fname);
-char * AB_ExpandBD(long date);
+BOOL   AB_ExpandBD(const long date, char *dateStr, const size_t dateStrSize);
 int    AB_FindEntry(const char *pattern, enum AddressbookFind mode, char **result);
 APTR   AB_GotoEntry(const char *alias);
 BOOL   AB_LoadTree(const char *fname, BOOL append, BOOL sorted);

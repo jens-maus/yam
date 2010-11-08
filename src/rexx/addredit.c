@@ -108,11 +108,13 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
         if(args->birthdate != NULL)
         {
+          char dateStr[SIZE_SMALL];
+
           // if the user supplied 0 as the birthdate, he wants to "delete" the current
           // birthdate
           if(*args->birthdate == 0)
             ab->BirthDay = 0;
-          else if(AB_ExpandBD(*args->birthdate)[0])
+          else if(AB_ExpandBD(*args->birthdate, dateStr, sizeof(dateStr)) == TRUE)
             ab->BirthDay = *args->birthdate;
           else
           {
