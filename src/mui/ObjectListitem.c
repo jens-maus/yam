@@ -33,6 +33,8 @@
 
 #include "MUIObjects.h"
 
+#include "mui/ObjectList.h"
+
 #include "Debug.h"
 
 /* CLASSDATA

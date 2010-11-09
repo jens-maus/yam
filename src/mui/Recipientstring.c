@@ -30,10 +30,25 @@
 
 #include "Recipientstring_cl.h"
 
+#include <ctype.h>
+#include <string.h>
+#include <proto/muimaster.h>
+#include <mui/BetterString_mcc.h>
+#include <mui/NList_mcc.h>
+
+#include "SDI_hook.h"
+#include "newmouse.h"
+
+#include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_config.h"
 #include "YAM_mainFolder.h"
 #include "MUIObjects.h"
+
+#include "mui/Addrmatchlist.h"
+#include "mui/MainMailListGroup.h"
+#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 

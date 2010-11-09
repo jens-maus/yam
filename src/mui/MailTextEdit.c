@@ -30,9 +30,17 @@
 
 #include "MailTextEdit_cl.h"
 
+#include <proto/muimaster.h>
+#include <mui/TextEditor_mcc.h>
+
+#include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_config.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
+#include "ParseEmail.h"
 #include "Requesters.h"
 
 #include "Debug.h"

@@ -30,15 +30,27 @@
 
 #include "UpdateNotifyWindow_cl.h"
 
+#include <stdlib.h>
+#include <proto/muimaster.h>
 #include <proto/openurl.h>
+#include <libraries/iffparse.h>
 #include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NFloattext_mcc.h>
 
+#include "YAM.h"
+#include "YAM_config.h"
 #include "YAM_configFile.h"
+#include "YAM_utilities.h"
+
 #include "FileInfo.h"
+#include "Locale.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "Themes.h"
+
+#include "mui/ImageArea.h"
+#include "mui/UpdateComponentList.h"
 
 #include "Debug.h"
 

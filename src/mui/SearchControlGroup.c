@@ -35,9 +35,18 @@
 #include "SearchControlGroup_cl.h"
 
 #include <proto/asl.h>
+#include <proto/muimaster.h>
+#include <mui/BetterString_mcc.h>
 
+#include "YAM.h"
+#include "YAM_config.h"
 #include "YAM_find.h"
+#include "YAM_utilities.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
+
+#include "mui/ImageArea.h"
 
 #include "Debug.h"
 

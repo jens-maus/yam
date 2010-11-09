@@ -30,29 +30,53 @@
 
 #include "WriteWindow_cl.h"
 
+#include <ctype.h>
 #include <string.h>
-
 #include <proto/codesets.h>
 #include <proto/dos.h>
+#include <proto/muimaster.h>
 #include <proto/wb.h>
 #include <dos/notify.h>
+#include <libraries/gadtools.h>
+#include <libraries/iffparse.h>
+#include <mui/BetterString_mcc.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+#include <mui/TextEditor_mcc.h>
+#include <mui/TheBar_mcc.h>
 #include <workbench/startup.h>
 
+#include "SDI_hook.h"
+
+#include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_config.h"
 #include "YAM_configGUI.h"
 #include "YAM_error.h"
+#include "YAM_global.h"
 #include "YAM_glossarydisplay.h"
 #include "YAM_mainFolder.h"
 
 #include "FileInfo.h"
+#include "Locale.h"
+#include "Logfile.h"
 #include "MailList.h"
 #include "MailServers.h"
 #include "MUIObjects.h"
+#include "ParseEmail.h"
 #include "Requesters.h"
 #include "Threads.h"
 
 #include "mime/uucode.h"
+#include "mui/MailTextEdit.h"
+#include "mui/ReadMailGroup.h"
+#include "mui/ReadWindow.h"
+#include "mui/Recipientstring.h"
+#include "mui/Searchwindow.h"
+#include "mui/WriteAttachmentList.h"
+#include "mui/WriteWindowToolbar.h"
+#include "mui/YAMApplication.h"
 #include "tcp/smtp.h"
 
 #include "Debug.h"

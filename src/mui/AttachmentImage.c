@@ -36,20 +36,26 @@
 
 #include "AttachmentImage_cl.h"
 
+#include "SDI_hook.h"
+
 #include <workbench/icon.h>
 
 #if defined(__amigaos4__)
 #include <graphics/blitattr.h>
 #endif
 
+#include <proto/dos.h>
 #include <proto/graphics.h>
 #include <proto/layers.h>
 #include <proto/icon.h>
 #include <proto/wb.h>
 
-#include <proto/intuition.h>
+#include "YAM.h"
 
+#include "Locale.h"
 #include "MUIObjects.h"
+
+#include "mui/AttachmentGroup.h"
 
 #include "Debug.h"
 

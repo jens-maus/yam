@@ -30,8 +30,23 @@
 
 #include "Addrmatchlist_cl.h"
 
+#include <stdlib.h>
+#include <proto/muimaster.h>
+#include <mui/BetterString_mcc.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+
+#include "newmouse.h"
+#include "SDI_hook.h"
+
+#include "YAM.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_global.h"
+
 #include "MUIObjects.h"
+
+#include "mui/Recipientstring.h"
+#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 

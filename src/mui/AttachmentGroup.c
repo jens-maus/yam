@@ -36,8 +36,17 @@
 
 #include "AttachmentGroup_cl.h"
 
+#include <proto/muimaster.h>
+
+#include "SDI_hook.h"
+
+#include "YAM_config.h"
 #include "YAM_mainFolder.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
+
+#include "mui/AttachmentObject.h"
 
 #include "Debug.h"
 

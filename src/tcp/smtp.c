@@ -39,6 +39,7 @@
 #include "YAM_mainFolder.h"
 
 #include "Locale.h"
+#include "Logfile.h"
 #include "MailList.h"
 #include "MailServers.h"
 #include "MailTransferList.h"

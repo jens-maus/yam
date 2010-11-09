@@ -45,6 +45,7 @@
 #include "extrasrc.h"
 
 #include "SDI_hook.h"
+#include "timeval.h"
 
 #include "YAM.h"
 #include "YAM_config.h"
@@ -2531,7 +2532,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       {
         // everything seems to have worked so lets copy the binary data in our
         // transDate structure
-        memcpy(&mail->transDate, timebuf, sizeof(struct TimeVal));
+        memcpy(&mail->transDate, timebuf, sizeof(mail->transDate));
       }
 
       // now grab the status out of the end of the mailfilename

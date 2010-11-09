@@ -42,6 +42,7 @@
 
 #include "FileInfo.h"
 #include "Locale.h"
+#include "Logfile.h"
 #include "MailExport.h"
 #include "MailList.h"
 #include "MailTransferList.h"

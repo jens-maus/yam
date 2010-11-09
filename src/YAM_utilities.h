@@ -47,6 +47,7 @@
 struct ReadMailData;
 struct Mail;
 struct codeset;
+struct TimeVal;
 
 // Types of string outputs the DateStamp2String()
 // function can handle. Please note that in case the
@@ -141,32 +142,6 @@ struct FileReqCache
   long height;    // last height of requester
   BOOL used;      // cache is in use
 };
-
-// since the Amiga's timeval structure was renamed to
-// "struct TimeVal" in OS4 (to prevent clashes with the POSIX one)
-// we require to define that slightly compatible structure on our
-// own in case we compile YAM for something else than OS4 or in case
-// an older SDK is used.
-#if !defined(__amigaos4__) || !defined(__NEW_TIMEVAL_DEFINITION_USED__)
-struct TimeVal
-{
-  ULONG Seconds;
-  ULONG Microseconds;
-};
-
-struct TimeRequest
-{
-  struct IORequest Request;
-  struct TimeVal   Time;
-};
-
-#define TIMEVAL(x)  (APTR)(x)
-
-#else
-
-#define TIMEVAL(x)  (x)
-
-#endif
 
 // define memory flags not existing on older platforms
 #ifndef MEMF_SHARED
@@ -264,15 +239,6 @@ struct TimeRequest
     ( (struct MinList *)((x)->mlh_TailPred) == (struct MinList *)(x) )
 #endif
 
-// LogFile enums and macros
-enum LFMode
-{
-  LF_NONE=0,
-  LF_NORMAL,
-  LF_VERBOSE,
-  LF_ALL
-};
-
 // external variables
 extern int            BusyLevel;
 extern struct Hook    DisposeModuleHook;
@@ -285,7 +251,6 @@ struct Mail *AddMailToList(const struct Mail *mail, struct Folder *folder);
 void     AddZombieFile(const char *fileName);
 char *   AllocReqText(const char *s);
 char *   AllocStrBuf(size_t initlen);
-void     AppendToLogfile(enum LFMode, int id, const char *text, ...);
 BOOL     Busy(const char *text, const char *parameter, int cur, int max);
 BOOL     CheckPrinter(void);
 void     ClearFolderMails(struct Folder *folder, BOOL resetstats);

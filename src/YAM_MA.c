@@ -90,6 +90,7 @@
 #include "FolderList.h"
 #include "HTML2Mail.h"
 #include "Locale.h"
+#include "Logfile.h"
 #include "MailExport.h"
 #include "MailList.h"
 #include "MailServers.h"
@@ -493,7 +494,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   ENTER();
 
   // modify the transferDate part
-  base64encode(dateFilePart, (unsigned char *)&mail->transDate, sizeof(struct timeval));
+  base64encode(dateFilePart, (unsigned char *)&mail->transDate, sizeof(mail->transDate));
 
   // for proper handling we have to remove an eventually existing "/" which
   // could be part of a base64 encoding

@@ -31,9 +31,18 @@
 
 #include "Aboutwindow_cl.h"
 
+#include <proto/muimaster.h>
 #include <mui/NFloattext_mcc.h>
 
+#include "YAM.h"
+#include "YAM_global.h"
+#include "YAM_stringsizes.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
+
+#include "mui/ImageArea.h"
+#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 
@@ -42,10 +51,6 @@ struct Data
 {
   char *aboutText;
 };
-*/
-
-/* INCLUDE
-#include "YAM.h"
 */
 
 /* Overloaded Methods */

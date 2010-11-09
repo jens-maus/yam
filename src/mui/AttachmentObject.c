@@ -36,11 +36,20 @@
 
 #include "AttachmentObject_cl.h"
 
+#include <proto/dos.h>
 #include <proto/icon.h>
+#include <proto/muimaster.h>
 #include <proto/wb.h>
+#include <libraries/gadtools.h>
 
+#include "YAM_config.h"
 #include "YAM_mainFolder.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
+
+#include "mui/AttachmentGroup.h"
+#include "mui/AttachmentImage.h"
 
 #include "Debug.h"
 

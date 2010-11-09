@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include "timeval.h"
+
 // all the different timers YAM is using
 enum Timer
 {

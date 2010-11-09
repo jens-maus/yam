@@ -30,10 +30,13 @@
 
 #include "HeaderList_cl.h"
 
+#include <mui/NList_mcc.h>
+
 #include "YAM_config.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 
+#include "Locale.h"
 #include "MUIObjects.h"
 
 #include "Debug.h"

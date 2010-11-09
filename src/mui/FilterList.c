@@ -30,7 +30,11 @@
 
 #include "FilterList_cl.h"
 
+#include <mui/NList_mcc.h>
+
 #include "YAM_find.h"
+
+#include "Locale.h"
 
 #include "Debug.h"
 

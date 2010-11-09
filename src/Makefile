@@ -445,12 +445,12 @@ MUIOBJS = \
 	QuickSearchBar.o \
 	ReadMailGroup.o \
 	ReadWindow.o \
-	ReadWindowToolbar.o \
 	ReadWindowStatusBar.o \
+	ReadWindowToolbar.o \
 	Recipientstring.o \
 	ScriptList.o \
-	Searchwindow.o \
 	SearchControlGroup.o \
+	Searchwindow.o \
 	ShutdownWindow.o \
 	Splashwindow.o \
 	StringRequestWindow.o \
@@ -590,6 +590,7 @@ YAMOBJS = \
 	HTML2Mail.o \
 	ImageCache.o \
 	Locale.o \
+	Logfile.o \
 	MailExport.o \
 	MailImport.o \
 	MailList.o \
@@ -697,7 +698,7 @@ clean:
 # clean all including .obj directory
 .PHONY: cleanall
 cleanall: clean
-	-$(RM) Locale.? ParseEmail.c HTML2Mail.c $(MUIDIR)/Classes.* $(MUIDIR)/*_cl.h
+	-$(RM) Locale.? ParseEmail.c HTML2Mail.c $(MUIDIR)/Classes.* $(MUIDIR)/*_cl.h $(MUIDIR)/*.crc
 	-$(RM) $(LOCALE)/*.catalog
 	-$(RMDIR) $(OBJDIR)
 

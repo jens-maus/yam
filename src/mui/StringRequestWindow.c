@@ -30,6 +30,11 @@
 
 #include "StringRequestWindow_cl.h"
 
+#include <string.h>
+#include <proto/muimaster.h>
+#include <libraries/iffparse.h>
+
+#include "YAM.h"
 #include "YAM_stringsizes.h"
 
 #include "Locale.h"

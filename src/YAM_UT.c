@@ -81,6 +81,7 @@
 
 #include "SDI_hook.h"
 #include "SDI_stdarg.h"
+#include "timeval.h"
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
@@ -4337,81 +4338,6 @@ LONG PGPCommand(const char *progname, const char *options, const int flags)
 
   RETURN(error);
   return error;
-}
-///
-/// AppendToLogfile
-//  Appends a line to the logfile
-void AppendToLogfile(enum LFMode mode, int id, const char *text, ...)
-{
-  ENTER();
-
-  // check the Logfile mode
-  if(C->LogfileMode != LF_NONE &&
-     (mode == LF_ALL || C->LogfileMode == mode))
-  {
-    // check if the event in question should really be logged or
-    // not.
-    if(C->LogAllEvents == TRUE || (id >= 30 && id <= 49))
-    {
-      if(IsMainThread() == TRUE)
-      {
-        FILE *fh;
-        char logfile[SIZE_PATHFILE];
-        char filename[SIZE_FILE];
-
-        // if the user wants to split the logfile by date
-        // we go and generate the filename now.
-        if(C->SplitLogfile == TRUE)
-        {
-          struct ClockData cd;
-
-          Amiga2Date(GetDateStamp(), &cd);
-          snprintf(filename, sizeof(filename), "YAM-%s%d.log", months[cd.month-1], cd.year);
-        }
-        else
-          strlcpy(filename, "YAM.log", sizeof(filename));
-
-        // add the logfile path to the filename.
-        AddPath(logfile, C->LogfilePath[0] != '\0' ? C->LogfilePath : G->ProgDir, filename, sizeof(logfile));
-
-        // open the file handle in 'append' mode and output the
-        // text accordingly.
-        if((fh = fopen(logfile, "a")) != NULL)
-        {
-          char datstr[64];
-          va_list args;
-
-          DateStamp2String(datstr, sizeof(datstr), NULL, DSS_DATETIME, TZC_NONE);
-
-          // output the header
-          fprintf(fh, "%s [%02d] ", datstr, id);
-
-          // compose the varags values
-          va_start(args, text);
-          vfprintf(fh, text, args);
-          va_end(args);
-
-          fprintf(fh, "\n");
-          fclose(fh);
-        }
-      }
-      else
-      {
-        // subthreads just build the message string and
-        // let the application do the dirty work
-        va_list args;
-        char *logMessage;
-
-        // compose the varags values
-        va_start(args, text);
-        if(vasprintf(&logMessage, text, args) != -1)
-          PushMethodOnStack(G->App, 4, MUIM_YAMApplication_AppendToLogfile, mode, id, logMessage);
-        va_end(args);
-      }
-    }
-  }
-
-  LEAVE();
 }
 ///
 /// Busy

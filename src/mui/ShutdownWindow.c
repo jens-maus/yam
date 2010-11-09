@@ -30,7 +30,15 @@
 
 #include "ShutdownWindow_cl.h"
 
+#include <proto/dos.h>
+#include <proto/muimaster.h>
+
+#include "YAM.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
+
+#include "mui/ImageArea.h"
 
 #include "Debug.h"
 

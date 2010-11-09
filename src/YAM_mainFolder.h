@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include "timeval.h"
+
 #include "YAM_utilities.h"
 
 // forward declarations

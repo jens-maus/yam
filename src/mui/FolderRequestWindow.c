@@ -30,6 +30,11 @@
 
 #include "FolderRequestWindow_cl.h"
 
+#include <proto/muimaster.h>
+#include <libraries/iffparse.h>
+
+#include "SDI_hook.h"
+
 #include "YAM.h"
 
 #include "FolderList.h"

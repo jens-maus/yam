@@ -1,3 +1,6 @@
+#ifndef TIMEVAL_H
+#define TIMEVAL_H 1
+
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -23,39 +26,38 @@
 
  $Id$
 
- Superclass:  MUIC_ObjectList
- Description: Displays statistics about all transfers in progress
+ Superclass:  MUIC_ObjectListitem
+ Description: Displays statistics about a transfer in progress
 
 ***************************************************************************/
 
-#include "TransferControlList_cl.h"
+// since the Amiga's timeval structure was renamed to
+// "struct TimeVal" in OS4 (to prevent clashes with the POSIX one)
+// we require to define that slightly compatible structure on our
+// own in case we compile YAM for something else than OS4 or in case
+// an older SDK is used.
+#if !defined(__amigaos4__) || !defined(__NEW_TIMEVAL_DEFINITION_USED__)
+#include <exec/io.h>
 
-#include "MUIObjects.h"
 
-#include "mui/ObjectList.h"
-#include "mui/TransferControlGroup.h"
-#include "tcp/Connection.h"
-
-#include "Debug.h"
-
-/* Hooks */
-
-/* Private Functions */
-
-/* Overloaded Methods */
-/// OVERLOAD(MUIM_ObjectList_CreateItem)
-OVERLOAD(MUIM_ObjectList_CreateItem)
+struct TimeVal
 {
-  Object *item;
+  ULONG Seconds;
+  ULONG Microseconds;
+};
 
-  ENTER();
+struct TimeRequest
+{
+  struct IORequest Request;
+  struct TimeVal   Time;
+};
 
-  item = TransferControlGroupObject,
-    MUIA_ObjectList_DisposeRemovedItems, TRUE,
-  End;
+#define TIMEVAL(x)  (APTR)(x)
 
-  RETURN((IPTR)item);
-  return (IPTR)item;
-}
+#else
 
-///
+#define TIMEVAL(x)  (x)
+
+#endif
+
+#endif /* TIMEVAL_H */

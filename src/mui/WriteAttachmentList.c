@@ -30,9 +30,18 @@
 
 #include "WriteAttachmentList_cl.h"
 
+#include <proto/muimaster.h>
+#include <mui/NList_mcc.h>
+
+#include "YAM.h"
+#include "YAM_config.h"
 #include "YAM_mainFolder.h"
 
+#include "Locale.h"
 #include "MUIObjects.h"
+
+#include "mui/AttachmentImage.h"
+#include "mui/MainMailListGroup.h"
 
 #include "Debug.h"
 

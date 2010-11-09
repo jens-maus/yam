@@ -30,15 +30,35 @@
 
 #include "ReadWindow_cl.h"
 
+#include <proto/dos.h>
+#include <proto/muimaster.h>
+#include <libraries/gadtools.h>
+#include <libraries/iffparse.h>
+#include <mui/NList_mcc.h>
+#include <mui/TextEditor_mcc.h>
+#include <mui/TheBar_mcc.h>
+
+#include "SDI_hook.h"
+
+#include "YAM.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_config.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
+
 #include "BayesFilter.h"
 #include "FolderList.h"
+#include "Locale.h"
+#include "Logfile.h"
 #include "MailList.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+
+#include "mui/MainMailListGroup.h"
+#include "mui/ReadMailGroup.h"
+#include "mui/ReadWindowStatusBar.h"
+#include "mui/ReadWindowToolbar.h"
 
 #include "Debug.h"
 

@@ -28,9 +28,10 @@
 
 ***************************************************************************/
 
-#include "ImageCache.h"
 #include "ImageArea_cl.h"
-#include "MUIObjects.h"
+
+#include <stdlib.h>
+#include <string.h>
 
 #if defined(__amigaos4__)
 #include <graphics/blitattr.h>
@@ -42,6 +43,11 @@
 #include <proto/datatypes.h>
 #include <proto/icon.h>
 #include <proto/graphics.h>
+
+#include "YAM.h"
+
+#include "ImageCache.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 
@@ -87,6 +93,10 @@ struct Data
                                             MUIA_ImageArea_Filename, (file),\
                                             MUIA_ImageArea_AltText, (alt),\
                                           End
+*/
+
+/* INCLUDE
+#include "ImageCache.h"
 */
 
 /* Defines */

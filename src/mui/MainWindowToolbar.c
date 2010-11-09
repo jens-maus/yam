@@ -30,10 +30,20 @@
 
 #include "MainWindowToolbar_cl.h"
 
+#include <mui/NList_mcc.h>
+#include <mui/TheBar_mcc.h>
+
+#include "YAM.h"
 #include "YAM_addressbook.h"
+#include "YAM_config.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
+#include "Themes.h"
+
+#include "mui/MainWindowToolbar.h"
 
 #include "Debug.h"
 

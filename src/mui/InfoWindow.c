@@ -30,17 +30,16 @@
 
 #include "InfoWindow_cl.h"
 
+#include <proto/muimaster.h>
+
+#include "YAM.h"
+
 #include "Locale.h"
 #include "MUIObjects.h"
 
-#include "Debug.h"
+#include "mui/MainWindow.h"
 
-/* CLASSDATA
-struct Data
-{
-  ULONG dummy;
-};
-*/
+#include "Debug.h"
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)

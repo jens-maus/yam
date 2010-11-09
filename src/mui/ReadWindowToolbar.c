@@ -30,9 +30,19 @@
 
 #include "ReadWindowToolbar_cl.h"
 
+#include <mui/TheBar_mcc.h>
+
+#include "YAM.h"
+#include "YAM_config.h"
 #include "YAM_mainFolder.h"
+
 #include "ImageCache.h"
+#include "Locale.h"
 #include "MUIObjects.h"
+#include "Themes.h"
+
+#include "mui/ReadMailGroup.h"
+#include "mui/ReadWindow.h"
 
 #include "Debug.h"
 

@@ -30,6 +30,13 @@
 
 #include "Searchwindow_cl.h"
 
+#include <proto/muimaster.h>
+#include <mui/BetterString_mcc.h>
+#include <mui/TextEditor_mcc.h>
+
+#include "YAM.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 

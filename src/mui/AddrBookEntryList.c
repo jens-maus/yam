@@ -30,6 +30,7 @@
 
 #include "AddrBookEntryList_cl.h"
 
+#include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 

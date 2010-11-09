@@ -30,13 +30,27 @@
 
 #include "QuickSearchBar_cl.h"
 
+#include <proto/muimaster.h>
+#include <proto/timer.h>
+#include <mui/BetterString_mcc.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+
+#include "SDI_hook.h"
+
+#include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
+#include "YAM_utilities.h"
+
 #include "BoyerMooreSearch.h"
+#include "Locale.h"
 #include "MailList.h"
 #include "MUIObjects.h"
+
+#include "mui/MainMailListGroup.h"
 
 #include "Debug.h"
 
@@ -53,6 +67,10 @@ struct Data
   BOOL abortSearch;
   BOOL searchInProgress;
 };
+*/
+
+/* INCLUDE
+#include "timeval.h"
 */
 
 /* Hooks */

@@ -30,9 +30,17 @@
 
 #include "TransferControlGroup_cl.h"
 
+#include <proto/muimaster.h>
+#include <proto/timer.h>
+
+#include "YAM_utilities.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
 #include "Threads.h"
 
+#include "mui/ObjectList.h"
+#include "mui/TransferControlList.h"
 #include "tcp/Connection.h"
 
 #include "Debug.h"
@@ -75,6 +83,10 @@ struct Data
 
 /* EXPORT
 #define TCG_SETMAX   (-1)
+*/
+
+/* INCLUDE
+#include "timeval.h"
 */
 
 /* Private Functions */

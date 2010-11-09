@@ -31,8 +31,20 @@
 
 #include "BirthdayRequestWindow_cl.h"
 
-#include "MUIObjects.h"
+#include <ctype.h>
+#include <proto/muimaster.h>
+#include <libraries/iffparse.h>
+
+#include "YAM.h"
+#include "YAM_userlist.h"
+#include "YAM_utilities.h"
+
 #include "FileInfo.h"
+#include "Locale.h"
+#include "MUIObjects.h"
+
+#include "mui/WriteWindow.h"
+
 #include "Debug.h"
 
 #define BIRTHDAYCHECKFILE "PROGDIR:.birthdaycheck"

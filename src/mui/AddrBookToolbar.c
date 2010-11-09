@@ -30,9 +30,12 @@
 
 #include "AddrBookToolbar_cl.h"
 
+#include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+
 #include "ImageCache.h"
+#include "Locale.h"
 #include "MUIObjects.h"
 
 #include "Debug.h"

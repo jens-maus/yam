@@ -44,6 +44,7 @@
 #include "extrasrc.h"
 
 #include "SDI_hook.h"
+#include "timeval.h"
 
 #include "YAM.h"
 #include "YAM_config.h"
@@ -66,6 +67,7 @@
 #include "BayesFilter.h"
 #include "BoyerMooreSearch.h"
 #include "Locale.h"
+#include "Logfile.h"
 #include "MailList.h"
 #include "FolderList.h"
 #include "MUIObjects.h"

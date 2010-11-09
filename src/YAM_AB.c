@@ -57,6 +57,7 @@
 #include "extrasrc.h"
 
 #include "SDI_hook.h"
+#include "timeval.h"
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
@@ -77,6 +78,7 @@
 #include "mime/base64.h"
 
 #include "Locale.h"
+#include "Logfile.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "FileInfo.h"

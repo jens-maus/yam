@@ -30,10 +30,28 @@
 
 #include "MainFolderListtree_cl.h"
 
+#include <proto/dos.h>
+#include <proto/muimaster.h>
+#include <libraries/gadtools.h>
+#include <libraries/iffparse.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
+
+#include "SDI_hook.h"
+
+#include "YAM.h"
+#include "YAM_config.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
+
 #include "FolderList.h"
+#include "Locale.h"
 #include "MUIObjects.h"
+#include "Themes.h"
+
+#include "mui/ImageArea.h"
+#include "mui/MainFolderListtree.h"
+#include "mui/MainMailListGroup.h"
 
 #include "Debug.h"
 

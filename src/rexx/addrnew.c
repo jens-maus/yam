@@ -37,6 +37,7 @@
 #include "YAM_addressbookEntry.h"
 
 #include "Locale.h"
+#include "Logfile.h"
 #include "Rexx.h"
 
 #include "Debug.h"

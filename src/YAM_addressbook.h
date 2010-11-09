@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include <stdlib.h>
+
 #include <mui/NListtree_mcc.h>
 
 #include "SDI_compiler.h"

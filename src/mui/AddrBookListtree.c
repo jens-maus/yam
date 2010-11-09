@@ -30,10 +30,18 @@
 
 #include "AddrBookListtree_cl.h"
 
-#include "YAM_addressbookEntry.h"
-#include "MailList.h"
+#include <proto/muimaster.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
 
+#include "YAM.h"
+#include "YAM_addressbookEntry.h"
+
+#include "MailList.h"
 #include "MUIObjects.h"
+
+#include "mui/ImageArea.h"
+#include "mui/MainMailListGroup.h"
 
 #include "Debug.h"
 

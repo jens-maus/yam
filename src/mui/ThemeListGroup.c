@@ -31,8 +31,20 @@
 
 #include "ThemeListGroup_cl.h"
 
+#include <proto/dos.h>
+#include <proto/muimaster.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+
+#include "YAM.h"
+#include "YAM_config.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+
+#include "mui/ImageArea.h"
+#include "mui/ThemeList.h"
 
 #include "Debug.h"
 

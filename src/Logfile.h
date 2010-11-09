@@ -1,3 +1,6 @@
+#ifndef LOGFILE_H
+#define LOGFILE_H 1
+
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -11,51 +14,29 @@
 
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.   See the
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
 
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
- YAM Official Support Site : http://www.yam.ch
- YAM OpenSource project     : http://sourceforge.net/projects/yamos/
+ YAM Official Support Site :  http://www.yam.ch
+ YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
  $Id$
 
- Superclass:  MUIC_ObjectList
- Description: Displays statistics about all transfers in progress
-
 ***************************************************************************/
 
-#include "TransferControlList_cl.h"
-
-#include "MUIObjects.h"
-
-#include "mui/ObjectList.h"
-#include "mui/TransferControlGroup.h"
-#include "tcp/Connection.h"
-
-#include "Debug.h"
-
-/* Hooks */
-
-/* Private Functions */
-
-/* Overloaded Methods */
-/// OVERLOAD(MUIM_ObjectList_CreateItem)
-OVERLOAD(MUIM_ObjectList_CreateItem)
+// LogFile enums and macros
+enum LFMode
 {
-  Object *item;
+  LF_NONE=0,
+  LF_NORMAL,
+  LF_VERBOSE,
+  LF_ALL
+};
 
-  ENTER();
+void AppendToLogfile(const enum LFMode, const int id, const char *text, ...);
 
-  item = TransferControlGroupObject,
-    MUIA_ObjectList_DisposeRemovedItems, TRUE,
-  End;
-
-  RETURN((IPTR)item);
-  return (IPTR)item;
-}
-
-///
+#endif /* LOGFILE_H */

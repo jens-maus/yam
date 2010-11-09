@@ -101,6 +101,7 @@
 #include "FolderList.h"
 #include "ImageCache.h"
 #include "Locale.h"
+#include "Logfile.h"
 #include "MailList.h"
 #include "MethodStack.h"
 #include "Requesters.h"

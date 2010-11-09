@@ -30,6 +30,11 @@
 
 #include "GenericRequestWindow_cl.h"
 
+#include <ctype.h>
+#include <proto/muimaster.h>
+
+#include "YAM.h"
+
 #include "Locale.h"
 #include "MUIObjects.h"
 

@@ -30,8 +30,13 @@
 
 #include "WriteWindowToolbar_cl.h"
 
+#include "YAM.h"
+#include "YAM_config.h"
+
 #include "ImageCache.h"
+#include "Locale.h"
 #include "MUIObjects.h"
+#include "Themes.h"
 
 #include "Debug.h"
 

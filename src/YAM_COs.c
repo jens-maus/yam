@@ -42,6 +42,8 @@
 
 #include "extrasrc.h"
 
+#include "timeval.h"
+
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
@@ -60,6 +62,7 @@
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"
+#include "Logfile.h"
 #include "MailList.h"
 #include "MailServers.h"
 #include "MimeTypes.h"

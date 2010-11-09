@@ -30,14 +30,28 @@
 
 #include "MainMailList_cl.h"
 
+#include <proto/dos.h>
+#include <proto/muimaster.h>
+#include <proto/timer.h>
+#include <libraries/gadtools.h>
+#include <mui/NList_mcc.h>
+
+#include "SDI_hook.h"
+#include "timeval.h"
+
+#include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
+
 #include "BayesFilter.h"
+#include "Locale.h"
 #include "MUIObjects.h"
 #include "Themes.h"
+
+#include "mui/ImageArea.h"
 
 #include "Debug.h"
 
@@ -55,6 +69,10 @@ struct Data
   char context_menu_title[SIZE_DEFAULT];
   char bubbleInfo[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
 };
+*/
+
+/* INCLUDE
+#include "Themes.h"
 */
 
 /* Hooks */

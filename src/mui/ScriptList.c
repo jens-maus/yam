@@ -30,6 +30,12 @@
 
 #include "ScriptList_cl.h"
 
+#include <mui/NList_mcc.h>
+
+#include "YAM_config.h"
+
+#include "Locale.h"
+
 #include "Debug.h"
 
 /* CLASSDATA

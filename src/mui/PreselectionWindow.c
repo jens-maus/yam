@@ -30,14 +30,22 @@
 
 #include "PreselectionWindow_cl.h"
 
+#include <proto/muimaster.h>
+#include <libraries/iffparse.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+
+#include "YAM.h"
+#include "YAM_mainFolder.h"
+
 #include "Locale.h"
 #include "MailImport.h"
 #include "MailTransferList.h"
 #include "MUIObjects.h"
 #include "Threads.h"
 
-#include "YAM_mainFolder.h"
-
+#include "mui/Base64Dataspace.h"
+#include "mui/TransferMailList.h"
 #include "tcp/Connection.h"
 
 #include "Debug.h"

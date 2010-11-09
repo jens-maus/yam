@@ -30,8 +30,17 @@
 
 #include "MainWindow_cl.h"
 
+#include <proto/muimaster.h>
+
+#include "YAM.h"
+#include "YAM_config.h"
 #include "YAM_error.h"
+
 #include "MUIObjects.h"
+
+#include "mui/Aboutwindow.h"
+#include "mui/MainMailListGroup.h"
+#include "mui/ReadMailGroup.h"
 
 #include "Debug.h"
 

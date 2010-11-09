@@ -44,6 +44,7 @@
 #include "extrasrc.h"
 
 #include "SDI_compiler.h"
+#include "timeval.h"
 
 #define DEBUG_USE_MALLOC_REDEFINE 1
 #include "Debug.h"

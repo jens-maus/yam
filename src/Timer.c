@@ -42,6 +42,8 @@
 
 #include "extrasrc.h"
 
+#include "timeval.h"
+
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "Threads.h"

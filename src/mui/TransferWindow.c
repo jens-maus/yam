@@ -30,9 +30,17 @@
 
 #include "TransferWindow_cl.h"
 
-#include "mui/TransferControlList.h"
+#include <proto/muimaster.h>
+#include <libraries/iffparse.h>
 
+#include "YAM.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
+
+#include "mui/ObjectList.h"
+#include "mui/TransferControlGroup.h"
+#include "mui/TransferControlList.h"
 
 #include "Debug.h"
 

@@ -31,7 +31,13 @@
 
 #include "ObjectList_cl.h"
 
+#include <proto/muimaster.h>
+
+#include "YAM.h"
+
 #include "MUIObjects.h"
+
+#include "mui/ObjectListitem.h"
 
 #include "Debug.h"
 

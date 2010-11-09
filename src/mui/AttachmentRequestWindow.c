@@ -30,12 +30,20 @@
 
 #include "AttachmentRequestWindow_cl.h"
 
+#include <proto/muimaster.h>
+#include <libraries/iffparse.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+
+#include "YAM.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+
+#include "mui/AttachmentList.h"
 
 #include "Debug.h"
 

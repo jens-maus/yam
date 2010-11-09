@@ -8,6 +8,9 @@ $URL$
 2010-11-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * MailExport.c, misc: The mail export will now happens inside a thread.
+  * all: restructured all classes to avoid lots of dependencies. Now it is
+    possible add/modify class methods and definitions and only the sources
+    depending on the modified classes will be recompiled.
 
 2010-11-08 Thore Böckelmann <tboeckel@gmx.de>
 

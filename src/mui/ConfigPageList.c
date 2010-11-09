@@ -30,8 +30,17 @@
 
 #include "ConfigPageList_cl.h"
 
+#include <proto/muimaster.h>
+#include <mui/NList_mcc.h>
+
+#include "YAM.h"
 #include "YAM_config.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
+#include "Themes.h"
+
+#include "mui/ImageArea.h"
 
 #include "Debug.h"
 
@@ -49,6 +58,30 @@ struct PageList
 {
   int  Offset;
   const void *PageLabel;
+};
+
+enum ConfigPage
+{
+  cp_AllPages = -1,
+  cp_FirstSteps = 0,
+  cp_TCPIP,
+  cp_NewMail,
+  cp_Filters,
+  cp_Spam,
+  cp_Read,
+  cp_Write,
+  cp_ReplyForward,
+  cp_Signature,
+  cp_Lists,
+  cp_Security,
+  cp_StartupQuit,
+  cp_MIME,
+  cp_AddressBook,
+  cp_Scripts,
+  cp_Mixed,
+  cp_LookFeel,
+  cp_Update,
+  cp_Max,
 };
 */
 

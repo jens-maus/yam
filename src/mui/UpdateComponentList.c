@@ -30,6 +30,14 @@
 
 #include "UpdateComponentList_cl.h"
 
+#include <stdlib.h>
+#include <mui/NList_mcc.h>
+
+#include "YAM_utilities.h"
+
+#include "Locale.h"
+#include "UpdateCheck.h"
+
 #include "Debug.h"
 
 /* Overloaded Methods */

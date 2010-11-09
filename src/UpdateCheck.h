@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include "timeval.h"
+
 // forward declarations
 struct TempFile;
 

@@ -30,6 +30,12 @@
 
 #include "CheckboxRequestWindow_cl.h"
 
+#include <proto/muimaster.h>
+
+#include "SDI_hook.h"
+
+#include "YAM.h"
+
 #include "Locale.h"
 #include "MUIObjects.h"
 

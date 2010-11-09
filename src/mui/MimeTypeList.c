@@ -30,6 +30,9 @@
 
 #include "MimeTypeList_cl.h"
 
+#include <string.h>
+#include <mui/NList_mcc.h>
+
 #include "MimeTypes.h"
 
 #include "Debug.h"

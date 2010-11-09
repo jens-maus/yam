@@ -30,7 +30,16 @@
 
 #include "InfoBar_cl.h"
 
+#include <proto/muimaster.h>
+
+#include "YAM.h"
+#include "YAM_config.h"
+#include "YAM_utilities.h"
+
 #include "MUIObjects.h"
+
+#include "mui/ImageArea.h"
+#include "mui/MainFolderListtree.h"
 
 #include "Debug.h"
 
@@ -50,6 +59,10 @@ struct Data
   char infoText[SIZE_SMALL];
   char folderInfo[SIZE_DEFAULT / 2];
 };
+*/
+
+/* INCLUDE
+#include "timeval.h"
 */
 
 /* Private Functions */

@@ -30,6 +30,13 @@
 
 #include "UserList_cl.h"
 
+#include <stdlib.h>
+#include <mui/NList_mcc.h>
+
+#include "YAM.h"
+
+#include "Locale.h"
+
 #include "Debug.h"
 
 /* Overloaded Methods */

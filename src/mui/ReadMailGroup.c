@@ -30,21 +30,45 @@
 
 #include "ReadMailGroup_cl.h"
 
+#include <ctype.h>
+#include <proto/dos.h>
+#include <proto/muimaster.h>
+#include <libraries/gadtools.h>
+#include <mui/NBalance_mcc.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+#include <mui/TextEditor_mcc.h>
+
+#include "SDI_hook.h"
+
+#include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 
 #include "HTML2Mail.h"
 #include "FileInfo.h"
+#include "Locale.h"
+#include "Logfile.h"
 #include "MethodStack.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
+#include "ParseEmail.h"
 #include "Requesters.h"
 #include "Timer.h"
 
-#include <mui/NBalance_mcc.h>
+#include "mui/AttachmentGroup.h"
+#include "mui/HeaderList.h"
+#include "mui/ImageArea.h"
+#include "mui/MainMailListGroup.h"
+#include "mui/MailTextEdit.h"
+#include "mui/Searchwindow.h"
+#include "mui/ReadMailGroup.h"
+#include "mui/ReadWindow.h"
+#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 
@@ -1502,7 +1526,7 @@ DECLARE(SaveDecryptedMail)
 
         // lets set some values depending on the original message
         email->Mail.sflags = mail->sflags;
-        memcpy(&email->Mail.transDate, &mail->transDate, sizeof(struct timeval));
+        memcpy(&email->Mail.transDate, &mail->transDate, sizeof(email->Mail.transDate));
 
         // add the mail to the folder now
         if((newmail = AddMailToList(&email->Mail, folder)) != NULL)

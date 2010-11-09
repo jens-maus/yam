@@ -30,7 +30,19 @@
 
 #include "Splashwindow_cl.h"
 
+#include <proto/dos.h>
+#include <proto/muimaster.h>
+#include <mui/BetterString_mcc.h>
+
+#include "YAM.h"
+#include "YAM_global.h"
+#include "YAM_utilities.h"
+
+#include "Locale.h"
 #include "MUIObjects.h"
+
+#include "mui/ImageArea.h"
+#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 
@@ -46,6 +58,10 @@ struct Data
   BOOL progressGaugeActive;
   struct TimeVal last_gaugemove;
 };
+*/
+
+/* INCLUDE
+#include "timeval.h"
 */
 
 /* Overloaded Methods */

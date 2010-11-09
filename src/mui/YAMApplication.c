@@ -30,22 +30,37 @@
 
 #include "YAMApplication_cl.h"
 
+#include <string.h>
+#include <proto/dos.h>
 #include <proto/icon.h>
+#include <proto/muimaster.h>
 #if defined(__amigaos4__)
 #include <proto/application.h>
 #endif
+#include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <workbench/icon.h>
 
+#include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
+#include "YAM_global.h"
 #include "YAM_mainFolder.h"
 
 #include "AppIcon.h"
+#include "Locale.h"
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
 #include "Threads.h"
+
+#include "mui/Addrmatchlist.h"
+#include "mui/InfoWindow.h"
+#include "mui/StringRequestWindow.h"
+#include "mui/TransferControlGroup.h"
+#include "mui/TransferWindow.h"
 
 #include "Debug.h"
 
@@ -63,7 +78,6 @@ struct Data
 
 /* INCLUDE
 #include "YAM_main.h"
-#include "YAM_utilities.h"
 #include "mui/PreselectionWindow.h"
 */
 
@@ -761,7 +775,7 @@ DECLARE(ShowError) // char *errorMsg
 
 ///
 /// DECLARE(Busy)
-DECLARE(Busy) // const char *text, const char *parameter, int cur, int max
+DECLARE(Busy) // const char *text, const char *parameter, const int cur, const int max
 {
   Busy(msg->text, msg->parameter, msg->cur, msg->max);
 
@@ -771,9 +785,9 @@ DECLARE(Busy) // const char *text, const char *parameter, int cur, int max
 ///
 /// DECLARE(AppendToLogfile)
 // NOTE: the log message must have been allocated by malloc() or similar!
-DECLARE(AppendToLogfile) // enum LFMode mode, int id, char *logMessage
+DECLARE(AppendToLogfile) // const int mode, const int id, char *logMessage
 {
-  AppendToLogfile(msg->mode, msg->id, msg->logMessage);
+  AppendToLogfile((enum LFMode)msg->mode, msg->id, msg->logMessage);
   free(msg->logMessage);
 
   return 0;

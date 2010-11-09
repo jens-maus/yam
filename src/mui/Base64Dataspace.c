@@ -30,6 +30,9 @@
 
 #include "Base64Dataspace_cl.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "mime/base64.h"
 
 #include "Debug.h"

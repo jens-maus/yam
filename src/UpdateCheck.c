@@ -48,6 +48,8 @@
 
 #include "extrasrc.h"
 
+#include "timeval.h"
+
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"

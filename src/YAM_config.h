@@ -33,8 +33,10 @@
 #include "YAM_read.h"
 #include "YAM_utilities.h"
 
+#include "Logfile.h"
 #include "UpdateCheck.h"
 
+#include "mui/ConfigPageList.h"
 #include "tcp/Connection.h"
 
 // forward declarations
@@ -304,30 +306,6 @@ struct CO_GUIData
   Object *CH_TEXTSTYLES_WRITE;
   Object *CH_TEXTCOLORS_WRITE;
   Object *CH_NOTIOS41SYSTEM;
-};
-
-enum ConfigPage
-{
-  cp_AllPages = -1,
-  cp_FirstSteps = 0,
-  cp_TCPIP,
-  cp_NewMail,
-  cp_Filters,
-  cp_Spam,
-  cp_Read,
-  cp_Write,
-  cp_ReplyForward,
-  cp_Signature,
-  cp_Lists,
-  cp_Security,
-  cp_StartupQuit,
-  cp_MIME,
-  cp_AddressBook,
-  cp_Scripts,
-  cp_Mixed,
-  cp_LookFeel,
-  cp_Update,
-  cp_Max,
 };
 
 struct CO_ClassData  /* configuration window */

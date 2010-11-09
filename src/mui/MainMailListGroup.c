@@ -30,7 +30,18 @@
 
 #include "MainMailListGroup_cl.h"
 
+#include <proto/muimaster.h>
+#include <libraries/iffparse.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+
+#include "YAM.h"
+#include "YAM_config.h"
+
 #include "MUIObjects.h"
+
+#include "mui/MainMailList.h"
+#include "mui/QuickSearchBar.h"
 
 #include "Debug.h"
 
