@@ -4,6 +4,11 @@ GenClasses Tool - ChangeLog
 
 $Id$
 
+2010-11-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * gc.c: a .crc file will be created for each class. This makes it possible to
+    regenerate only those classes which really have been modified.
+
 2010-11-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * gc.c: each class now gets its own public header file to avoid depency of
