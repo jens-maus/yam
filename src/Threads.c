@@ -62,6 +62,7 @@
 #include "extrasrc.h"
 
 #include "Locale.h"
+#include "MailExport.h"
 #include "MailImport.h"
 #include "MethodStack.h"
 #include "Requesters.h"
@@ -238,6 +239,14 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
     }
     break;
 
+    case TA_ReceiveMails:
+    {
+      result = ReceiveMails((struct MailServerNode *)GetTagData(TT_ReceiveMails_MailServer, (IPTR)NULL, msg->actionTags),
+                            GetTagData(TT_ReceiveMails_Flags, 0, msg->actionTags),
+                            (struct DownloadResult *)GetTagData(TT_ReceiveMails_Result, (IPTR)NULL, msg->actionTags));
+    }
+    break;
+
     case TA_ImportMails:
     {
       result = ImportMails((const char *)GetTagData(TT_ImportMails_File, (IPTR)NULL, msg->actionTags),
@@ -246,11 +255,11 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
     }
     break;
 
-    case TA_ReceiveMails:
+    case TA_ExportMails:
     {
-      result = ReceiveMails((struct MailServerNode *)GetTagData(TT_ReceiveMails_MailServer, (IPTR)NULL, msg->actionTags),
-                            GetTagData(TT_ReceiveMails_Flags, 0, msg->actionTags),
-                            (struct DownloadResult *)GetTagData(TT_ReceiveMails_Result, (IPTR)NULL, msg->actionTags));
+      result = ExportMails((const char *)GetTagData(TT_ExportMails_File, (IPTR)NULL, msg->actionTags),
+                           (struct MailList *)GetTagData(TT_ExportMails_Mails, (IPTR)NULL, msg->actionTags),
+                           GetTagData(TT_ExportMails_Flags, 0, msg->actionTags));
     }
     break;
   }
@@ -673,7 +682,7 @@ void HandleThreads(void)
   {
     struct ThreadMessage *tmsg = (struct ThreadMessage *)msg;
 
-    D(DBF_THREAD, "thread '%s' finished action %ld", tmsg->thread->name, tmsg->action);
+    D(DBF_THREAD, "thread '%s' finished action %ld with result %ld", tmsg->thread->name, tmsg->action, tmsg->result);
 
     // remove the thread from the working list and put it back into the idle list
     Remove((struct Node *)tmsg->threadNode);

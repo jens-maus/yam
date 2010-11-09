@@ -2943,7 +2943,7 @@ MakeHook(MA_RescanIndexHook, MA_RescanIndexFunc);
 ///
 /// MA_ExportMessages
 //  Saves messages to a MBOX mailbox file
-BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
+BOOL MA_ExportMessages(char *filename, const BOOL all, ULONG flags)
 {
   BOOL success = FALSE;
   char outname[SIZE_PATHFILE];
@@ -2997,8 +2997,8 @@ BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
           {
             switch(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_MESSAGEEXPORT), tr(MSG_MA_ExportAppendOpts), tr(MSG_MA_ExportAppendReq)))
             {
-              case 1: append = FALSE; break;
-              case 2: append = TRUE; break;
+              case 1: CLEAR_FLAG(flags, EXPORTF_APPEND); break;
+              case 2: SET_FLAG(flags, EXPORTF_APPEND); break;
               case 0: filename = NULL;
             }
           }
@@ -3006,9 +3006,12 @@ BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
       }
 
       if(filename != NULL)
-        success = ExportMails(filename, mlist, quiet, append);
-
-      DeleteMailList(mlist);
+      {
+        success = DoAction(TA_ExportMails, TT_ExportMails_File, filename,
+                                           TT_ExportMails_Mails, mlist,
+                                           TT_ExportMails_Flags, flags,
+                                           TAG_DONE);
+      }
     }
   }
 
@@ -3020,7 +3023,7 @@ BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet)
 /// MA_ExportMessagesFunc
 HOOKPROTONHNO(MA_ExportMessagesFunc, void, int *arg)
 {
-   MA_ExportMessages(NULL, arg[0] != 0, FALSE, FALSE);
+   MA_ExportMessages(NULL, arg[0] != 0, 0);
 }
 MakeHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 

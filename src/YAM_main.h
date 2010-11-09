@@ -364,7 +364,7 @@ struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew);
 struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew);
 void  MA_DeleteMessage(BOOL delatonce, BOOL force);
 void  MA_DeleteSingle(struct Mail *mail, const ULONG delFlags);
-BOOL MA_ExportMessages(char *filename, BOOL all, BOOL append, BOOL quiet);
+BOOL MA_ExportMessages(char *filename, const BOOL all, ULONG flags);
 struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, LONG *activep);
 void  MA_GetAddress(struct MailList *mlist);
 BOOL MA_ImportMessages(const char *fname, const ULONG flags);

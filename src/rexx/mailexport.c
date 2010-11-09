@@ -32,7 +32,9 @@
 #include "YAM.h"
 #include "YAM_main.h"
 
+#include "MailExport.h"
 #include "Rexx.h"
+#include "Threads.h"
 
 #include "Debug.h"
 
@@ -60,7 +62,18 @@ void rx_mailexport(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
     case RXIF_ACTION:
     {
-      if(MA_ExportMessages(args->filename, args->all != 0, args->append != 0, args->quiet != 0) == FALSE)
+      ULONG flags;
+
+      // we want to be woken up
+      flags = EXPORTF_SIGNAL;
+      if(args->quiet != 0)
+        SET_FLAG(flags, EXPORTF_QUIET);
+      if(args->append != 0)
+        SET_FLAG(flags, EXPORTF_APPEND);
+
+      if(MA_ExportMessages(args->filename, args->all != 0, flags) == TRUE)
+        MiniMainLoop();
+      else
         params->rc = RETURN_ERROR;
     }
     break;

@@ -42,9 +42,12 @@
 
 #include "FileInfo.h"
 #include "Locale.h"
+#include "MailExport.h"
 #include "MailList.h"
 #include "MailTransferList.h"
+#include "MethodStack.h"
 #include "MUIObjects.h"
+#include "Threads.h"
 
 #include "mui/ClassesExtra.h"
 #include "mui/TransferControlGroup.h"
@@ -55,7 +58,7 @@
 
 struct TransferContext
 {
-  struct Connection *conn;
+  struct Connection *connection;
   Object *transferGroup;
   char transferGroupTitle[SIZE_DEFAULT]; // the TransferControlGroup's title
   struct MailTransferList transferList;
@@ -63,243 +66,256 @@ struct TransferContext
 
 /// ExportMails
 //  Saves a list of messages to a MBOX mailbox file
-BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL quiet, const BOOL append)
+BOOL ExportMails(const char *fname, struct MailList *mlist, const ULONG flags)
 {
   BOOL success = FALSE;
-  struct TransferContext tc;
+  struct TransferContext *tc;
 
   ENTER();
 
-  if((tc.conn = CreateConnection()) != NULL)
+  if((tc = calloc(1, sizeof(*tc))) != NULL)
   {
-    snprintf(tc.transferGroupTitle, sizeof(tc.transferGroupTitle), tr(MSG_TR_MailTransferTo), fname);
-
-    if((tc.transferGroup = (Object *)DoMethod(G->App, MUIM_YAMApplication_CreateTransferGroup, NULL, tc.transferGroupTitle, tc.conn, TRUE, quiet == FALSE)) != NULL)
+    if((tc->connection = CreateConnection()) != NULL)
     {
-      BOOL abort = FALSE;
-      struct MailNode *mnode;
-      ULONG totalSize = 0;
-      int i;
+      snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferTo), fname);
 
-      // reset our processing list
-      InitMailTransferList(&tc.transferList);
-
-      // temporarly copy all data out of our mlist to the
-      // processing list and mark all mails as "to be transferred"
-      LockMailListShared(mlist);
-
-      i = 0;
-      ForEachMailNode(mlist, mnode)
+      if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagClear(flags, EXPORTF_QUIET))) != NULL)
       {
-        struct Mail *mail = mnode->mail;
+        BOOL abort = FALSE;
+        struct MailNode *mnode;
+        ULONG totalSize = 0;
+        int i;
 
-        if(mail != NULL)
+        // reset our processing list
+        InitMailTransferList(&tc->transferList);
+
+        // temporarly copy all data out of our mlist to the
+        // processing list and mark all mails as "to be transferred"
+        LockMailListShared(mlist);
+
+        i = 0;
+        ForEachMailNode(mlist, mnode)
         {
-          struct MailTransferNode *tnode;
+          struct Mail *mail = mnode->mail;
 
-          if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
+          if(mail != NULL)
           {
-            tnode->index = i + 1;
+            struct MailTransferNode *tnode;
 
-            totalSize += mail->Size;
+            if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
+            {
+              tnode->index = i + 1;
 
-            AddMailTransferNode(&tc.transferList, tnode);
+              totalSize += mail->Size;
+
+              AddMailTransferNode(&tc->transferList, tnode);
+            }
+            else
+            {
+              // we end up in a low memory condition, let's exit
+              abort = TRUE;
+              break;
+            }
           }
-          else
-          {
-            // we end up in a low memory condition, let's exit
-            abort = TRUE;
-            break;
-          }
+
+          i++;
         }
 
-        i++;
-      }
+        UnlockMailList(mlist);
 
-      UnlockMailList(mlist);
-
-      // if we have now something in our processing list,
-      // lets go on
-      if(abort == FALSE && IsMailTransferListEmpty(&tc.transferList) == FALSE)
-      {
-        FILE *fh;
-
-        DoMethod(tc.transferGroup, MUIM_TransferControlGroup_Start, tc.transferList.count, totalSize);
-
-        // open our final destination file either in append or in a fresh
-        // write mode.
-        if((fh = fopen(fname, append ? "a" : "w")) != NULL)
+        // if we have now something in our processing list,
+        // lets go on
+        if(abort == FALSE && IsMailTransferListEmpty(&tc->transferList) == FALSE)
         {
-          struct MailTransferNode *tnode;
+          FILE *fh;
 
-          setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+          PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, tc->transferList.count, totalSize);
 
-          success = TRUE;
-
-          ForEachMailTransferNode(&tc.transferList, tnode)
+          // open our final destination file either in append or in a fresh
+          // write mode.
+          if((fh = fopen(fname, isFlagSet(flags, EXPORTF_APPEND) ? "a" : "w")) != NULL)
           {
-            struct Mail *mail = tnode->mail;
-            char mailfile[SIZE_PATHFILE];
-            char fullfile[SIZE_PATHFILE];
+            struct MailTransferNode *tnode;
 
-            // update the transfer status
-            DoMethod(tc.transferGroup, MUIM_TransferControlGroup_Next, tnode->index, -1, mail->Size, tr(MSG_TR_Exporting));
+            setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-            GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
-            if(StartUnpack(mailfile, fullfile, mail->Folder) != NULL)
+            // assume success for the beginning
+            success = TRUE;
+
+            ForEachMailTransferNode(&tc->transferList, tnode)
             {
-              FILE *mfh;
+              struct Mail *mail = tnode->mail;
+              char mailfile[SIZE_PATHFILE];
+              char fullfile[SIZE_PATHFILE];
 
-              // open the message file to start exporting it
-              if((mfh = fopen(fullfile, "r")) != NULL)
+              // update the transfer status
+              PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index, -1, mail->Size, tr(MSG_TR_Exporting));
+
+              GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+              if(StartUnpack(mailfile, fullfile, mail->Folder) != NULL)
               {
-                char datstr[64];
-                char *buf = NULL;
-                size_t buflen = 0;
-                ssize_t curlen;
-                BOOL inHeader = TRUE;
+                FILE *mfh;
 
-                // printf out our leading "From " MBOX format line first
-                DateStamp2String(datstr, sizeof(datstr), &mail->Date, DSS_UNIXDATE, TZC_NONE);
-                fprintf(fh, "From %s %s", mail->From.Address, datstr);
-
-                // let us put out the Status: header field
-                fprintf(fh, "Status: %s\n", MA_ToStatusHeader(mail));
-
-                // let us put out the X-Status: header field
-                fprintf(fh, "X-Status: %s\n", MA_ToXStatusHeader(mail));
-
-                // now we iterate through every line of our mail and try to substitute
-                // found "From " line with quoted ones
-                while(tc.conn->abort == FALSE &&
-                      (curlen = getline(&buf, &buflen, mfh)) > 0)
+                // open the message file to start exporting it
+                if((mfh = fopen(fullfile, "r")) != NULL)
                 {
-                  char *tmp = buf;
+                  char datstr[64];
+                  char *buf = NULL;
+                  size_t buflen = 0;
+                  ssize_t curlen;
+                  BOOL inHeader = TRUE;
 
-                  // check if this is a single \n so that it
-                  // signals the end if a line
-                  if(buf[0] == '\n' || (buf[0] == '\r' && buf[1] == '\n'))
+                  // printf out our leading "From " MBOX format line first
+                  DateStamp2String(datstr, sizeof(datstr), &mail->Date, DSS_UNIXDATE, TZC_NONE);
+                  fprintf(fh, "From %s %s", mail->From.Address, datstr);
+
+                  // let us put out the Status: header field
+                  fprintf(fh, "Status: %s\n", MA_ToStatusHeader(mail));
+
+                  // let us put out the X-Status: header field
+                  fprintf(fh, "X-Status: %s\n", MA_ToXStatusHeader(mail));
+
+                  // now we iterate through every line of our mail and try to substitute
+                  // found "From " line with quoted ones
+                  while(tc->connection->abort == FALSE &&
+                        (curlen = getline(&buf, &buflen, mfh)) > 0)
                   {
-                    inHeader = FALSE;
+                    char *tmp = buf;
 
+                    // check if this is a single \n so that it
+                    // signals the end if a line
+                    if(buf[0] == '\n' || (buf[0] == '\r' && buf[1] == '\n'))
+                    {
+                      inHeader = FALSE;
+
+                      if(fwrite(buf, curlen, 1, fh) != 1)
+                      {
+                        // write error, bail out
+                        break;
+                      }
+
+                      continue;
+                    }
+
+                    // the mboxrd format specifies that we need to quote any
+                    // From, >From, >>From etc-> occurance.
+                    // http://www.qmail.org/man/man5/mbox.html
+                    while(*tmp == '>')
+                      tmp++;
+
+                    if(strncmp(tmp, "From ", 5) == 0)
+                    {
+                      if(fputc('>', fh) == EOF)
+                      {
+                        // write error, bail out
+                        break;
+                      }
+                    }
+                    else if(inHeader == TRUE)
+                    {
+                      // let us skip some specific headerlines
+                      // because we placed our own here
+                      if(strncmp(buf, "Status: ", 8) == 0 ||
+                         strncmp(buf, "X-Status: ", 10) == 0)
+                      {
+                        // skip line
+                        continue;
+                      }
+                    }
+
+                    // write the line to our destination file
                     if(fwrite(buf, curlen, 1, fh) != 1)
                     {
                       // write error, bail out
                       break;
                     }
 
-                    continue;
-                  }
-
-                  // the mboxrd format specifies that we need to quote any
-                  // From, >From, >>From etc. occurance.
-                  // http://www.qmail.org/man/man5/mbox.html
-                  while(*tmp == '>')
-                    tmp++;
-
-                  if(strncmp(tmp, "From ", 5) == 0)
-                  {
-                    if(fputc('>', fh) == EOF)
+                    // make sure we have a newline at the end of the line
+                    if(buf[curlen-1] != '\n')
                     {
-                      // write error, bail out
-                      break;
+                      if(fputc('\n', fh) == EOF)
+                      {
+                        // write error, bail out
+                        break;
+                      }
                     }
+
+                    // update the transfer status
+                    PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, curlen, tr(MSG_TR_Exporting));
                   }
-                  else if(inHeader == TRUE)
+
+                  // check why we exited the while() loop and if everything is fine
+                  if(tc->connection->abort == TRUE)
                   {
-                    // let us skip some specific headerlines
-                    // because we placed our own here
-                    if(strncmp(buf, "Status: ", 8) == 0 ||
-                       strncmp(buf, "X-Status: ", 10) == 0)
-                    {
-                      // skip line
-                      continue;
-                    }
+                    D(DBF_NET, "export was aborted by the user");
+                    success = FALSE;
                   }
-
-                  // write the line to our destination file
-                  if(fwrite(buf, curlen, 1, fh) != 1)
+                  else if(ferror(fh) != 0)
                   {
-                    // write error, bail out
-                    break;
-                  }
+                    E(DBF_NET, "error on writing data! ferror(fh)=%ld", ferror(fh));
 
-                  // make sure we have a newline at the end of the line
-                  if(buf[curlen-1] != '\n')
+                    // an error occurred, lets return failure
+                    success = FALSE;
+                  }
+                  else if(ferror(mfh) != 0 || feof(mfh) == 0)
                   {
-                    if(fputc('\n', fh) == EOF)
-                    {
-                      // write error, bail out
-                      break;
-                    }
+                    E(DBF_NET, "error on reading data! ferror(mfh)=%ld feof(mfh)=%ld", ferror(mfh), feof(mfh));
+
+                    // an error occurred, lets return failure
+                    success = FALSE;
                   }
 
-                  // update the transfer status
-                  DoMethod(tc.transferGroup, MUIM_TransferControlGroup_Update, curlen, tr(MSG_TR_Exporting));
-                }
+                  // close file pointer
+                  fclose(mfh);
 
-                // check why we exited the while() loop and if everything is fine
-                if(tc.conn->abort == TRUE)
-                {
-                  D(DBF_NET, "export was aborted by the user");
+                  free(buf);
+
+                  // put the transferStat to 100%
+                  PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Exporting));
+                }
+                else
                   success = FALSE;
-                }
-                else if(ferror(fh) != 0)
-                {
-                  E(DBF_NET, "error on writing data! ferror(fh)=%ld", ferror(fh));
 
-                  // an error occurred, lets return failure
-                  success = FALSE;
-                }
-                else if(ferror(mfh) != 0 || feof(mfh) == 0)
-                {
-                  E(DBF_NET, "error on reading data! ferror(mfh)=%ld feof(mfh)=%ld", ferror(mfh), feof(mfh));
-
-                  // an error occurred, lets return failure
-                  success = FALSE;
-                }
-
-                // close file pointer
-                fclose(mfh);
-
-                free(buf);
-
-                // put the transferStat to 100%
-                DoMethod(tc.transferGroup, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Exporting));
+                FinishUnpack(fullfile);
               }
               else
-               success = FALSE;
+                success = FALSE;
 
-              FinishUnpack(fullfile);
+              if(tc->connection->abort == TRUE || success == FALSE)
+                break;
             }
-            else
-              success = FALSE;
 
-            if(tc.conn->abort == TRUE || success == FALSE)
-              break;
+            // close file pointer
+            fclose(fh);
+
+            // write the status to our logfile
+            LockMailListShared(mlist);
+            mnode = FirstMailNode(mlist);
+            AppendToLogfile(LF_ALL, 51, tr(MSG_LOG_Exporting), tc->transferList.count, mnode->mail->Folder->Name, fname);
+            UnlockMailList(mlist);
           }
 
-          // close file pointer
-          fclose(fh);
-
-          // write the status to our logfile
-          LockMailListShared(mlist);
-          mnode = FirstMailNode(mlist);
-          AppendToLogfile(LF_ALL, 51, tr(MSG_LOG_Exporting), tc.transferList.count, mnode->mail->Folder->Name, fname);
-          UnlockMailList(mlist);
+          PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
         }
 
-        DoMethod(tc.transferGroup, MUIM_TransferControlGroup_Finish);
+        // delete all nodes in our temporary list
+        ClearMailTransferList(&tc->transferList);
+
+        PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DeleteTransferGroup, tc->transferGroup);
       }
-
-      // delete all nodes in our temporary list
-      ClearMailTransferList(&tc.transferList);
-
-      DoMethod(G->App, MUIM_YAMApplication_DeleteTransferGroup, tc.transferGroup);
     }
+
+    DeleteConnection(tc->connection);
+
+    free(tc);
   }
 
-  DeleteConnection(tc.conn);
+  // delete the list of mails no matter if the export succeeded or not
+  DeleteMailList(mlist);
+
+  // wake up the calling thread if this is requested
+  if(isFlagSet(flags, EXPORTF_SIGNAL))
+    WakeupThread(NULL);
 
   RETURN(success);
   return success;

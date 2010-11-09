@@ -30,6 +30,10 @@
 
 struct MailList;
 
-BOOL ExportMails(const char *fname, const struct MailList *mlist, const BOOL quiet, const BOOL append);
+#define EXPORTF_QUIET  (1<<0) // export the mails quietly
+#define EXPORTF_APPEND (1<<1) // append to an existing file instead of overwriting it
+#define EXPORTF_SIGNAL (1<<2) // wakeup the calling thread after the export
+
+BOOL ExportMails(const char *fname, struct MailList *mlist, const ULONG flags);
 
 #endif /* MAILEXPORT_H */

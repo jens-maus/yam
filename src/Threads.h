@@ -40,8 +40,9 @@ enum ThreadAction
   TA_LaunchCommand,
   TA_FlushSpamTrainingData,
   TA_SendMails,
-  TA_ImportMails,
   TA_ReceiveMails,
+  TA_ImportMails,
+  TA_ExportMails,
 };
 
 #define TT_Priority                                 0xf001 // priority of the thread
@@ -53,13 +54,17 @@ enum ThreadAction
 #define TT_SendMails_Mails                         (TAG_USER + 2)
 #define TT_SendMails_Mode                          (TAG_USER + 3)
 
+#define TT_ReceiveMails_MailServer                 (TAG_USER + 1)
+#define TT_ReceiveMails_Flags                      (TAG_USER + 2)
+#define TT_ReceiveMails_Result                     (TAG_USER + 3)
+
 #define TT_ImportMails_File          (TAG_STRING | (TAG_USER + 1))
 #define TT_ImportMails_Folder                      (TAG_USER + 2)
 #define TT_ImportMails_Flags                       (TAG_USER + 3)
 
-#define TT_ReceiveMails_MailServer                 (TAG_USER + 1)
-#define TT_ReceiveMails_Flags                      (TAG_USER + 2)
-#define TT_ReceiveMails_Result                     (TAG_USER + 3)
+#define TT_ExportMails_File          (TAG_STRING | (TAG_USER + 1))
+#define TT_ExportMails_Mails                       (TAG_USER + 2)
+#define TT_ExportMails_Flags                       (TAG_USER + 3)
 
 /*** Thread system init/cleanup functions ***/
 BOOL InitThreads(void);
