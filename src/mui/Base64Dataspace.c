@@ -123,7 +123,7 @@ static BOOL DecodeData(const char *base64String, APTR *pdata, LONG *plen, ULONG 
       {
         char *raw;
 
-        if((raw = malloc((len*3)/4)) != NULL)
+        if((raw = malloc(len)) != NULL)
         {
           // now convert the base64 string back to raw data
           // everything is ok if the decoded amount of data matches the predicted size
