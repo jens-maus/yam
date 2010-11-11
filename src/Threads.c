@@ -68,6 +68,8 @@
 #include "Requesters.h"
 #include "Threads.h"
 
+#include "mui/ClassesExtra.h"
+#include "tcp/http.h"
 #include "tcp/pop3.h"
 #include "tcp/smtp.h"
 
@@ -107,6 +109,7 @@ struct ThreadMessage
   struct TagItem *actionTags;     // the parameters for the action
   struct ThreadNode *threadNode;  // link to the thread's node
   struct Thread *thread;          // link to the thread itself
+  Object *object;                 // an object for which MUIM_ThreadFinished will be called
 };
 
 // we use a global message for startup/shutdown, because
@@ -260,6 +263,15 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
       result = ExportMails((const char *)GetTagData(TT_ExportMails_File, (IPTR)NULL, msg->actionTags),
                            (struct MailList *)GetTagData(TT_ExportMails_Mails, (IPTR)NULL, msg->actionTags),
                            GetTagData(TT_ExportMails_Flags, 0, msg->actionTags));
+    }
+    break;
+
+    case TA_DownloadURL:
+    {
+      result = DownloadURL((const char *)GetTagData(TT_DownloadURL_Server, (IPTR)NULL, msg->actionTags),
+                           (const char *)GetTagData(TT_DownloadURL_Request, (IPTR)NULL, msg->actionTags),
+                           (const char *)GetTagData(TT_DownloadURL_Filename, (IPTR)NULL, msg->actionTags),
+                           GetTagData(TT_DownloadURL_Flags, 0, msg->actionTags));
     }
     break;
   }
@@ -682,7 +694,13 @@ void HandleThreads(void)
   {
     struct ThreadMessage *tmsg = (struct ThreadMessage *)msg;
 
-    D(DBF_THREAD, "thread '%s' finished action %ld with result %ld", tmsg->thread->name, tmsg->action, tmsg->result);
+    D(DBF_THREAD, "thread '%s' finished action %ld, result %ld", tmsg->thread->name, tmsg->action, tmsg->result);
+
+    if(tmsg->object != NULL)
+    {
+      D(DBF_THREAD, "sending MUIM_ThreadFinished to object %08lx", tmsg->object);
+      PushMethodOnStackWait(tmsg->object, 4, MUIM_ThreadFinished, tmsg->action, tmsg->result, tmsg->actionTags);
+    }
 
     // remove the thread from the working list and put it back into the idle list
     Remove((struct Node *)tmsg->threadNode);
@@ -734,7 +752,7 @@ void PurgeIdleThreads(const BOOL purgeAll)
 ///
 /// DoAction
 //
-BOOL VARARGS68K DoAction(const enum ThreadAction action, ...)
+BOOL VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...)
 {
   BOOL success = FALSE;
   struct Node *node;
@@ -776,6 +794,7 @@ BOOL VARARGS68K DoAction(const enum ThreadAction action, ...)
         msg->action = action;
         msg->threadNode = threadNode;
         msg->thread = thread;
+        msg->object = obj;
 
         // raise the thread's priority if this is requested
         if((pri = GetTagData(TT_Priority, 0, msg->actionTags)) != 0)

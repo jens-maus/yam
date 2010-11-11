@@ -43,9 +43,10 @@ enum ThreadAction
   TA_ReceiveMails,
   TA_ImportMails,
   TA_ExportMails,
+  TA_DownloadURL,
 };
 
-#define TT_Priority                                 0xf001 // priority of the thread
+#define TT_Priority                                0xf001 // priority of the thread
 
 #define TT_LaunchCommand_Command     (TAG_STRING | (TAG_USER + 1))
 #define TT_LaunchCommand_Output                    (TAG_USER + 2)
@@ -66,13 +67,18 @@ enum ThreadAction
 #define TT_ExportMails_Mails                       (TAG_USER + 2)
 #define TT_ExportMails_Flags                       (TAG_USER + 3)
 
+#define TT_DownloadURL_Server        (TAG_STRING | (TAG_USER + 1))
+#define TT_DownloadURL_Request       (TAG_STRING | (TAG_USER + 2))
+#define TT_DownloadURL_Filename      (TAG_STRING | (TAG_USER + 3))
+#define TT_DownloadURL_Flags                       (TAG_USER + 4)
+
 /*** Thread system init/cleanup functions ***/
 BOOL InitThreads(void);
 void CleanupThreads(void);
 void HandleThreads(void);
 void AbortWorkingThreads(void);
 void PurgeIdleThreads(const BOOL purgeAll);
-BOOL VARARGS68K DoAction(const enum ThreadAction action, ...);
+BOOL VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...);
 BOOL IsMainThread(void);
 APTR CurrentThread(void);
 BOOL SleepThread(void);

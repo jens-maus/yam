@@ -568,7 +568,7 @@ static void TimerDispatcher(const enum Timer tid)
     {
       D(DBF_TIMER, "timer[%ld]: TIMER_SPAMFLUSHTRAININGDATA fired @ %s", tid, dateString);
 
-      DoAction(TA_FlushSpamTrainingData, TAG_DONE);
+      DoAction(NULL, TA_FlushSpamTrainingData, TAG_DONE);
 
       PrepareTimer(tid, C->SpamFlushTrainingDataInterval, 0);
     }

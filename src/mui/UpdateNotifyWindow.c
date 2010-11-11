@@ -48,6 +48,7 @@
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Themes.h"
+#include "Threads.h"
 
 #include "mui/ImageArea.h"
 #include "mui/UpdateComponentList.h"
@@ -63,6 +64,8 @@ struct Data
   Object *VisitURLButton;
   char *ChangeLogText;
   char WindowTitle[SIZE_DEFAULT];
+  struct TempFile *tempFile;
+  BOOL quiet;
 };
 */
 
@@ -70,113 +73,134 @@ struct Data
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  Object *bt_visit;
-  Object *bt_close;
-  Object *nl_componentlist;
-  Object *nf_componenthistory;
-  Object *ch_skipinfuture;
+  struct TempFile *tempFile;
 
   ENTER();
 
-  if((obj = DoSuperNew(cl, obj,
-
-    MUIA_Window_ID,         MAKE_ID('U','P','D','1'),
-    MUIA_Window_Title,      tr(MSG_UPD_NOTIFICATION_WTITLE),
-    MUIA_Window_Height,     MUIV_Window_Height_MinMax(30),
-    MUIA_Window_Width,      MUIV_Window_Width_MinMax(30),
-    MUIA_Window_RefWindow,  G->MA->GUI.WI,
-    WindowContents, VGroup,
-
-      Child, HGroup,
-        Child, MakeImageObject("config_update_big", G->theme.configImages[ci_UpdateBig]),
-        Child, VGroup,
-          Child, TextObject,
-            MUIA_Text_PreParse, "\033b",
-            MUIA_Text_Contents, tr(MSG_UPD_NOTIFICATION_TITLE),
-            MUIA_Weight,        100,
-          End,
-          Child, TextObject,
-            MUIA_Text_Contents, tr(MSG_UPD_NOTIFICATION_SUMMARY),
-            MUIA_Font,          MUIV_Font_Tiny,
-            MUIA_Weight,        100,
-          End,
-        End,
-      End,
-
-      Child, RectangleObject,
-        MUIA_Rectangle_HBar, TRUE,
-        MUIA_FixHeight,      4,
-      End,
-
-      Child, NListviewObject,
-        MUIA_CycleChain, TRUE,
-        MUIA_VertWeight, 20,
-        MUIA_Listview_DragType,  MUIV_Listview_DragType_None,
-        MUIA_NListview_NList, nl_componentlist = UpdateComponentListObject,
-        End,
-      End,
-
-      Child, NBalanceObject, End,
-
-      Child, TextObject,
-        MUIA_Text_Contents, tr(MSG_UPD_NOTIFICATION_CHANGES),
-        MUIA_Font,          MUIV_Font_Tiny,
-      End,
-      Child, NListviewObject,
-        MUIA_CycleChain, TRUE,
-        MUIA_NListview_NList, nf_componenthistory = NFloattextObject,
-          MUIA_Font,             MUIV_Font_Fixed,
-          MUIA_NList_Format,     "P=\33l",
-          MUIA_NList_Input,      FALSE,
-          MUIA_NFloattext_Text,  "",
-        End,
-      End,
-
-      Child, HGroup,
-        Child, ch_skipinfuture = MakeCheck(tr(MSG_UPD_NOTIFICATION_NOUPDATE)),
-        Child, LLabel1(tr(MSG_UPD_NOTIFICATION_NOUPDATE)),
-        Child, HVSpace,
-      End,
-
-      Child, RectangleObject,
-        MUIA_Rectangle_HBar, TRUE,
-        MUIA_FixHeight,      4,
-      End,
-
-      Child, HGroup,
-        Child, HVSpace,
-        Child, HVSpace,
-        Child, bt_close = MakeButton(tr(MSG_UPD_NOTIFICATION_CLOSE)),
-        Child, bt_visit = MakeButton(tr(MSG_UPD_NOTIFICATION_VISITURL)),
-      End,
-
-    End,
-
-    TAG_MORE, inittags(msg))) != NULL)
+  if((tempFile = OpenTempFile(NULL)) != NULL)
   {
-    GETDATA;
+    Object *bt_visit;
+    Object *bt_close;
+    Object *nl_componentlist;
+    Object *nf_componenthistory;
+    Object *ch_skipinfuture;
 
-    DoMethod(G->App, OM_ADDMEMBER, obj);
+    if((obj = DoSuperNew(cl, obj,
 
-    data->ComponentList = nl_componentlist;
-    data->ComponentHistory = nf_componenthistory;
-    data->SkipInFutureCheckBox = ch_skipinfuture;
-    data->VisitURLButton = bt_visit;
+      MUIA_Window_ID,         MAKE_ID('U','P','D','1'),
+      MUIA_Window_Title,      tr(MSG_UPD_NOTIFICATION_WTITLE),
+      MUIA_Window_Height,     MUIV_Window_Height_MinMax(30),
+      MUIA_Window_Width,      MUIV_Window_Width_MinMax(30),
+      MUIA_Window_RefWindow,  G->MA->GUI.WI,
+      WindowContents, VGroup,
 
-    // start with a disabled "Visit URL" button
-    set(bt_visit, MUIA_Disabled, TRUE);
+        Child, HGroup,
+          Child, MakeImageObject("config_update_big", G->theme.configImages[ci_UpdateBig]),
+          Child, VGroup,
+            Child, TextObject,
+              MUIA_Text_PreParse, "\033b",
+              MUIA_Text_Contents, tr(MSG_UPD_NOTIFICATION_TITLE),
+              MUIA_Weight,        100,
+            End,
+            Child, TextObject,
+              MUIA_Text_Contents, tr(MSG_UPD_NOTIFICATION_SUMMARY),
+              MUIA_Font,          MUIV_Font_Tiny,
+              MUIA_Weight,        100,
+            End,
+          End,
+        End,
 
-    DoMethod(obj,               MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, METHOD(Close));
-    DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, METHOD(Select), MUIV_TriggerValue);
-    DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, METHOD(VisitURL));
-    DoMethod(bt_visit,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(VisitURL));
-    DoMethod(bt_close,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(Close));
+        Child, RectangleObject,
+          MUIA_Rectangle_HBar, TRUE,
+          MUIA_FixHeight,      4,
+        End,
 
-    set(obj, MUIA_Window_Activate, TRUE);
+        Child, NListviewObject,
+          MUIA_CycleChain, TRUE,
+          MUIA_VertWeight, 20,
+          MUIA_Listview_DragType,  MUIV_Listview_DragType_None,
+          MUIA_NListview_NList, nl_componentlist = UpdateComponentListObject,
+          End,
+        End,
+
+        Child, NBalanceObject, End,
+
+        Child, TextObject,
+          MUIA_Text_Contents, tr(MSG_UPD_NOTIFICATION_CHANGES),
+          MUIA_Font,          MUIV_Font_Tiny,
+        End,
+        Child, NListviewObject,
+          MUIA_CycleChain, TRUE,
+          MUIA_NListview_NList, nf_componenthistory = NFloattextObject,
+            MUIA_Font,             MUIV_Font_Fixed,
+            MUIA_NList_Format,     "P=\33l",
+            MUIA_NList_Input,      FALSE,
+            MUIA_NFloattext_Text,  "",
+          End,
+        End,
+
+        Child, HGroup,
+          Child, ch_skipinfuture = MakeCheck(tr(MSG_UPD_NOTIFICATION_NOUPDATE)),
+          Child, LLabel1(tr(MSG_UPD_NOTIFICATION_NOUPDATE)),
+          Child, HVSpace,
+        End,
+
+        Child, RectangleObject,
+          MUIA_Rectangle_HBar, TRUE,
+          MUIA_FixHeight,      4,
+        End,
+
+        Child, HGroup,
+          Child, HVSpace,
+          Child, HVSpace,
+          Child, bt_close = MakeButton(tr(MSG_UPD_NOTIFICATION_CLOSE)),
+          Child, bt_visit = MakeButton(tr(MSG_UPD_NOTIFICATION_VISITURL)),
+        End,
+
+      End,
+
+      TAG_MORE, inittags(msg))) != NULL)
+    {
+      GETDATA;
+
+      DoMethod(G->App, OM_ADDMEMBER, obj);
+
+      data->ComponentList = nl_componentlist;
+      data->ComponentHistory = nf_componenthistory;
+      data->SkipInFutureCheckBox = ch_skipinfuture;
+      data->VisitURLButton = bt_visit;
+      data->tempFile = tempFile;
+
+      // start with a disabled "Visit URL" button
+      set(bt_visit, MUIA_Disabled, TRUE);
+
+      DoMethod(obj,               MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, METHOD(Close));
+      DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, METHOD(Select), MUIV_TriggerValue);
+      DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, METHOD(VisitURL));
+      DoMethod(bt_visit,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(VisitURL));
+      DoMethod(bt_close,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(Close));
+
+      set(obj, MUIA_Window_Activate, TRUE);
+    }
+    else
+      CloseTempFile(tempFile);
   }
+  else
+    obj = NULL;
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
+}
+
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+
+  CloseTempFile(data->tempFile);
+
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -184,8 +208,8 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_SET)
 {
   GETDATA;
-
   struct TagItem *tags = inittags(msg), *tag;
+
   while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
@@ -230,8 +254,59 @@ OVERLOAD(OM_SET)
 }
 
 ///
+/// OVERLOAD(MUIM_ThreadFinished)
+OVERLOAD(MUIM_ThreadFinished)
+{
+  GETDATA;
+  struct MUIP_ThreadFinished *tf = (struct MUIP_ThreadFinished *)msg;
+
+  ENTER();
+
+  // the thread which did the download has finished
+  // now parse the update file if the download was successful
+  if(tf->result == TRUE)
+    ParseUpdateFile(data->tempFile->Filename, data->quiet);
+
+  BusyEnd();
+
+  LEAVE();
+  return 0;
+}
+
+///
 
 /* Public Methods */
+/// DECLARE(CheckForUpdates)
+// set up and send an update request
+DECLARE(CheckForUpdates) // ULONG quiet
+{
+  GETDATA;
+  char *request;
+
+  ENTER();
+
+  if((request = BuildUpdateRequest()) != NULL)
+  {
+    D(DBF_UPDATE, "send update request '%s' (%ld)", request, strlen(request));
+
+    BusyText(tr(MSG_BusyGettingVerInfo), "");
+
+    // now we send a specific request via DownloadURL() to our update server
+    DoAction(obj, TA_DownloadURL, TT_DownloadURL_Server, C->UpdateServer,
+                                  TT_DownloadURL_Request, request,
+                                  TT_DownloadURL_Filename, data->tempFile->Filename,
+                                  TAG_DONE);
+    free(request);
+
+    // remember the "quiet" state of this check
+    data->quiet = msg->quiet;
+  }
+
+  LEAVE();
+  return 0;
+}
+
+///
 /// DECLARE(Clear)
 DECLARE(Clear)
 {
@@ -245,7 +320,7 @@ DECLARE(Clear)
   free(data->ChangeLogText);
   data->ChangeLogText = NULL;
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -290,7 +365,7 @@ DECLARE(Select) // ULONG num
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -305,7 +380,7 @@ DECLARE(AddComponent) // struct UpdateComponent *comp
   D(DBF_UPDATE, "added '%s' as a new updateable component", msg->comp->name);
   DoMethod(data->ComponentList, MUIM_NList_InsertSingle, msg->comp, MUIV_NList_Insert_Bottom);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -333,7 +408,7 @@ DECLARE(VisitURL)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -361,7 +436,7 @@ DECLARE(Close)
     InitUpdateCheck(FALSE);
   }
 
-  if(CE)
+  if(CE != NULL)
   {
     // now we make sure the C and CE config structure is in sync again
     CE->UpdateInterval = C->UpdateInterval;
@@ -375,7 +450,7 @@ DECLARE(Close)
   // now close the window for real.
   set(obj, MUIA_Window_Open, FALSE);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

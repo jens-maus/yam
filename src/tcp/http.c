@@ -33,199 +33,204 @@
 #include "YAM_global.h"
 
 #include "Locale.h"
+#include "Threads.h"
 
 #include "tcp/Connection.h"
+#include "tcp/http.h"
 
 #include "Debug.h"
 
-/**************************************************************************/
-// static function prototypes
-
-/**************************************************************************/
-// local macros & defines
-
-/***************************************************************************
- Module: HTTP protocol
-***************************************************************************/
-
-/// TR_DownloadURL()
-//  Downloads a file from the web using HTTP/1.1 (RFC 2616)
-BOOL TR_DownloadURL(struct Connection *conn, const char *server, const char *request, const char *filename)
+struct TransferContext
 {
-  BOOL result = FALSE;
-  BOOL noproxy = (C->ProxyServer[0] == '\0');
+  struct Connection *connection;
   int hport;
   char url[SIZE_URL];
   char host[SIZE_HOST];
-  char *path;
-  char *bufptr;
+  char serverPath[SIZE_LINE];
+  char requestResponse[SIZE_LINE];
+};
+
+/// DownloadURL()
+//  Downloads a file from the web using HTTP/1.1 (RFC 2616)
+BOOL DownloadURL(const char *server, const char *request, const char *filename, const ULONG flags)
+{
+  BOOL success = FALSE;
+  struct TransferContext *tc;
 
   ENTER();
 
-  // extract the server address and strip the http:// part
-  // of the URI
-  if(strnicmp(server, "http://", 7) == 0)
-    strlcpy(url, &server[7], sizeof(url));
-  else
-    strlcpy(url, server, sizeof(url));
-
-  // in case an explicit request was given we
-  // add it here
-  if(request != NULL)
+  if((tc = calloc(1, sizeof(*tc))) != NULL)
   {
-    if(url[strlen(url)-1] != '/')
-      strlcat(url, "/", sizeof(url));
-
-    strlcat(url, request, sizeof(url));
-  }
-
-  // find the first occurance of the '/' separator in out
-  // url and insert a terminating NUL character
-  if((path = strchr(url, '/')) != NULL)
-    *path++ = '\0';
-  else
-    path = (char *)"";
-
-  // extract the hostname from the URL or use the proxy server
-  // address if specified.
-  strlcpy(host, noproxy ? url : C->ProxyServer, sizeof(host));
-
-  // extract the port on which we connect if the
-  // hostname contain an ':' separator
-  if((bufptr = strchr(host, ':')) != NULL)
-  {
-    *bufptr++ = '\0';
-    hport = atoi(bufptr);
-  }
-  else
-    hport = noproxy ? 80 : 8080;
-
-  // open the TCP/IP connection to 'host' under the port 'hport'
-  if((ConnectToHost(conn, host, hport)) == CONNECTERR_SUCCESS)
-  {
-    char *serverHost;
-    char serverPath[SIZE_LINE];
-    char httpRequest[SIZE_LINE];
-    char *port;
-
-    // now we build the HTTP request we send out to the HTTP
-    // server
-    if(noproxy)
+    if((tc->connection = CreateConnection()) != NULL && ConnectionIsOnline(tc->connection) == TRUE)
     {
-      snprintf(serverPath, sizeof(serverPath), "/%s", path);
-      serverHost = host;
-    }
-    else if((port = strchr(url, ':')) != NULL)
-    {
-      *port++ = '\0';
+      BOOL noproxy = (C->ProxyServer[0] == '\0');
+      char *path;
+      char *bufptr;
 
-      snprintf(serverPath, sizeof(serverPath), "http://%s:%s/%s", url, port, path);
-      serverHost = url;
-    }
-    else
-    {
-      snprintf(serverPath, sizeof(serverPath), "http://%s/%s", url, path);
-      serverHost = url;
-    }
+      // extract the server address and strip the http:// part
+      // of the URI
+      if(strnicmp(server, "http://", 7) == 0)
+        strlcpy(tc->url, &server[7], sizeof(tc->url));
+      else
+        strlcpy(tc->url, server, sizeof(tc->url));
 
-    // construct the HTTP request
-    // we send a HTTP/1.0 request because 1.1 implies that we have to be able
-    // to deal with e.g. "Transfer-Encoding: chunked" responses which we can't handle
-    // right now.
-    snprintf(httpRequest, sizeof(httpRequest), "GET %s HTTP/1.0\r\n"
-                                               "Host: %s\r\n"
-                                               "User-Agent: %s\r\n"
-                                               "Connection: close\r\n"
-                                               "Accept: */*\r\n"
-                                               "\r\n", serverPath, serverHost, yamuseragent);
-
-    SHOWSTRING(DBF_NET, httpRequest);
-
-    // send out the httpRequest
-    if(SendLineToHost(conn, httpRequest) > 0)
-    {
-      char *p;
-      char serverResponse[SIZE_LINE];
-      int len;
-
-      // clear the serverResponse string
-      serverResponse[0] = '\0';
-
-      // now we read out the very first line to see if the
-      // response code matches and is fine
-      len = ReceiveLineFromHost(conn, serverResponse, sizeof(serverResponse));
-
-      SHOWSTRING(DBF_NET, serverResponse);
-
-      // check the server response
-      if(len > 0 && strnicmp(serverResponse, "HTTP/", 5) == 0 &&
-         (p = strchr(serverResponse, ' ')) != NULL && atoi(TrimStart(p)) == 200)
+      // in case an explicit request was given we
+      // add it here
+      if(request != NULL)
       {
-        // we can request all further lines from our socket
-        // until we reach the entity body
-        while(conn->error == CONNECTERR_NO_ERROR &&
-              (len = ReceiveLineFromHost(conn, serverResponse, sizeof(serverResponse))) > 0)
-        {
-          // we scan for the end of the
-          // response header by searching for the first '\r\n'
-          // line
-          if(strcmp(serverResponse, "\r\n") == 0)
-          {
-            FILE *out;
+        if(tc->url[strlen(tc->url)-1] != '/')
+          strlcat(tc->url, "/", sizeof(tc->url));
 
-            // prepare the output file.
-            if((out = fopen(filename, "w")) != NULL)
-            {
-              LONG retrieved = -1;
+        strlcat(tc->url, request, sizeof(tc->url));
+      }
 
-              setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+      // find the first occurance of the '/' separator in out
+      // url and insert a terminating NUL character
+      if((path = strchr(tc->url, '/')) != NULL)
+        *path++ = '\0';
+      else
+        path = (char *)"";
 
-              // we seem to have reached the entity body, so
-              // from here we retrieve everything we can get and
-              // immediately write it out to a file. that's it :)
-              while(conn->error == CONNECTERR_NO_ERROR &&
-                    (len = ReceiveLineFromHost(conn, serverResponse, sizeof(serverResponse))) > 0)
-              {
-                if(fwrite(serverResponse, len, 1, out) != 1)
-                {
-                  retrieved = -1; // signal an error!
-                  break;
-                }
+      // extract the hostname from the URL or use the proxy server
+      // address if specified.
+      strlcpy(tc->host, noproxy ? tc->url : C->ProxyServer, sizeof(tc->host));
 
-                retrieved += len;
-              }
-
-              D(DBF_NET, "received %ld bytes", retrieved);
-
-              // check if we retrieved anything
-              if(conn->error == CONNECTERR_NO_ERROR && retrieved >= 0)
-                result = TRUE;
-
-              fclose(out);
-            }
-            else
-              ER_NewError(tr(MSG_ER_CantCreateFile), filename);
-
-            break;
-          }
-        }
+      // extract the port on which we connect if the
+      // hostname contain an ':' separator
+      if((bufptr = strchr(tc->host, ':')) != NULL)
+      {
+        *bufptr++ = '\0';
+        tc->hport = atoi(bufptr);
       }
       else
-        ER_NewError(tr(MSG_ER_DocNotFound), path);
+        tc->hport = noproxy ? 80 : 8080;
+
+      // open the TCP/IP connection to 'host' under the port 'hport'
+      if((ConnectToHost(tc->connection, tc->host, tc->hport)) == CONNECTERR_SUCCESS)
+      {
+        char *serverHost;
+        char *port;
+
+        // now we build the HTTP request we send out to the HTTP
+        // server
+        if(noproxy == TRUE)
+        {
+          snprintf(tc->serverPath, sizeof(tc->serverPath), "/%s", path);
+          serverHost = tc->host;
+        }
+        else if((port = strchr(tc->url, ':')) != NULL)
+        {
+          *port++ = '\0';
+
+          snprintf(tc->serverPath, sizeof(tc->serverPath), "http://%s:%s/%s", tc->url, port, path);
+          serverHost = tc->url;
+        }
+        else
+        {
+          snprintf(tc->serverPath, sizeof(tc->serverPath), "http://%s/%s", tc->url, path);
+          serverHost = tc->url;
+        }
+
+        // construct the HTTP request
+        // we send a HTTP/1.0 request because 1.1 implies that we have to be able
+        // to deal with e.g. "Transfer-Encoding: chunked" responses which we can't handle
+        // right now.
+        snprintf(tc->requestResponse, sizeof(tc->requestResponse), "GET %s HTTP/1.0\r\n"
+                                                                   "Host: %s\r\n"
+                                                                   "User-Agent: %s\r\n"
+                                                                   "Connection: close\r\n"
+                                                                   "Accept: */*\r\n"
+                                                                   "\r\n", tc->serverPath, serverHost, yamuseragent);
+
+        SHOWSTRING(DBF_NET, tc->requestResponse);
+
+        // send out the httpRequest
+        if(SendLineToHost(tc->connection, tc->requestResponse) > 0)
+        {
+          char *p;
+          int len;
+
+          // now we read out the very first line to see if the
+          // response code matches and is fine
+          len = ReceiveLineFromHost(tc->connection, tc->requestResponse, sizeof(tc->requestResponse));
+
+          SHOWSTRING(DBF_NET, tc->requestResponse);
+
+          // check the server response
+          if(len > 0 && strnicmp(tc->requestResponse, "HTTP/", 5) == 0 &&
+             (p = strchr(tc->requestResponse, ' ')) != NULL && atoi(TrimStart(p)) == 200)
+          {
+            // we can request all further lines from our socket
+            // until we reach the entity body
+            while(tc->connection->error == CONNECTERR_NO_ERROR &&
+                  (len = ReceiveLineFromHost(tc->connection, tc->requestResponse, sizeof(tc->requestResponse))) > 0)
+            {
+              // we scan for the end of the
+              // response header by searching for the first '\r\n'
+              // line
+              if(strcmp(tc->requestResponse, "\r\n") == 0)
+              {
+                FILE *out;
+
+                // prepare the output file.
+                if((out = fopen(filename, "w")) != NULL)
+                {
+                  LONG retrieved = -1;
+
+                  setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+
+                  // we seem to have reached the entity body, so
+                  // from here we retrieve everything we can get and
+                  // immediately write it out to a file. that's it :)
+                  while(tc->connection->error == CONNECTERR_NO_ERROR &&
+                        (len = ReceiveLineFromHost(tc->connection, tc->requestResponse, sizeof(tc->requestResponse))) > 0)
+                  {
+                    if(fwrite(tc->requestResponse, len, 1, out) != 1)
+                    {
+                      retrieved = -1; // signal an error!
+                      break;
+                    }
+
+                    retrieved += len;
+                  }
+
+                  D(DBF_NET, "received %ld bytes", retrieved);
+
+                  // check if we retrieved anything
+                  if(tc->connection->error == CONNECTERR_NO_ERROR && retrieved >= 0)
+                    success = TRUE;
+
+                  fclose(out);
+                }
+                else
+                  ER_NewError(tr(MSG_ER_CantCreateFile), filename);
+
+                break;
+              }
+            }
+          }
+          else
+            ER_NewError(tr(MSG_ER_DocNotFound), path);
+        }
+        else
+          ER_NewError(tr(MSG_ER_SendHTTP));
+      }
+      else
+        ER_NewError(tr(MSG_ER_ConnectHTTP), tc->host);
+
+      DisconnectFromHost(tc->connection);
     }
-    else
-      ER_NewError(tr(MSG_ER_SendHTTP));
+
+    DeleteConnection(tc->connection);
+    free(tc);
   }
-  else
-    ER_NewError(tr(MSG_ER_ConnectHTTP), host);
 
-  if(conn->error != CONNECTERR_NO_ERROR)
-    result = FALSE;
+  // wake up the calling thread if this is requested
+  if(isFlagSet(flags, DLURLF_SIGNAL))
+    WakeupThread(NULL);
 
-  DisconnectFromHost(conn);
-
-  RETURN(result);
-  return result;
+  RETURN(success);
+  return success;
 }
 
 ///

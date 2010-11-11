@@ -62,7 +62,9 @@ struct UpdateState
 
 // externally accessible functions
 void InitUpdateCheck(const BOOL initial);
-BOOL CheckForUpdates(const BOOL quiet);
+void CheckForUpdates(const BOOL quiet);
+char *BuildUpdateRequest(void);
+BOOL ParseUpdateFile(const char *filename, const BOOL quiet);
 void LoadUpdateState(void);
 void SaveUpdateState(void);
 void GetLastUpdateState(struct UpdateState *state);

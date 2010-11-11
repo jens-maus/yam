@@ -5053,9 +5053,9 @@ LONG LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
       outdef = OUT_CONSOLE;
 
     // let the thread framework do the dirty work
-    result = DoAction(TA_LaunchCommand, TT_LaunchCommand_Command, cmd,
-                                        TT_LaunchCommand_Output, outdef,
-                                        TAG_DONE);
+    result = DoAction(NULL, TA_LaunchCommand, TT_LaunchCommand_Command, cmd,
+                                              TT_LaunchCommand_Output, outdef,
+                                              TAG_DONE);
   }
   else
     result = SyncLaunchCommand(cmd, outdef);

@@ -163,4 +163,9 @@ enum { IECODE_SPACE = 64,
 #define _isinobject(o,x,y) 				(_between(_mleft(o),(x),_mright (o)) && _between(_mtop(o) ,(y),_mbottom(o)))
 #define _isinwholeobject(o,x,y) 	(_between(_left(o),(x),_right (o)) && _between(_top(o) ,(y),_bottom(o)))
 
+
+#define MUIM_ThreadFinished                        (TAG_USER | (0x2677 << 16))
+
+struct MUIP_ThreadFinished { ULONG MethodID; ULONG action; LONG result; APTR actionTags; };
+
 #endif

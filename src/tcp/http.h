@@ -28,10 +28,8 @@
 
 ***************************************************************************/
 
-// forward declarations
-struct Connection;
+#define DLURLF_SIGNAL (1<<0)
 
-// prototypes
-BOOL TR_DownloadURL(struct Connection *conn, const char *server, const char *request, const char *filename);
+BOOL DownloadURL(const char *server, const char *request, const char *filename, const ULONG flags);
 
 #endif /* HTTP_H */

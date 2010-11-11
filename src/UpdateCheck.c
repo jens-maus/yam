@@ -57,17 +57,13 @@
 #include "YAM_global.h"
 #include "YAM_utilities.h"
 
-#include "mui/ClassesExtra.h"
-#include "mui/UpdateNotifyWindow.h"
-#include "mime/rfc1738.h"
-#include "tcp/http.h"
-
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "UpdateCheck.h"
 
-#include "tcp/Connection.h"
+#include "mui/UpdateNotifyWindow.h"
+#include "mime/rfc1738.h"
 
 #include "Debug.h"
 
@@ -133,342 +129,317 @@ void InitUpdateCheck(const BOOL initial)
 /// CheckForUpdates
 // contacts the 'update.yam.ch' HTTP server and asks for
 // specific updates.
-BOOL CheckForUpdates(const BOOL quiet)
+void CheckForUpdates(const BOOL quiet)
 {
-  BOOL result = FALSE;
-  struct Connection *conn;
-
   ENTER();
 
   // flag the last update to be failed per default first
   LastUpdateState.LastUpdateStatus = UST_NOQUERY;
 
-  // first we check if we can start a connection or if the
-  // tcp/ip stuff is busy right now so that we do not interrupt something
-  if((conn = CreateConnection()) != NULL)
+  // make sure that we have created the update notification
+  // window in advance. If one already exists we don't create a second one
+  if(G->UpdateNotifyWinObject == NULL)
   {
-    // disable the transfer buttons in the toolbar
-    MA_ChangeTransfer(FALSE);
+    G->UpdateNotifyWinObject = UpdateNotifyWindowObject, End;
+  }
 
-    // pause the mail check timer so that we are not
-    // interfering with an automatic mail check action
-    PauseTimer(TIMER_CHECKMAIL);
+  if(G->UpdateNotifyWinObject != NULL)
+  {
+    DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_CheckForUpdates, quiet);
+  }
 
-    // now we open a new TCP/IP connection socket
-    if(ConnectionIsOnline(conn) == TRUE)
+  LEAVE();
+}
+
+///
+/// BuildUpdateRequest
+// build a request string to be sent to the update server
+char *BuildUpdateRequest(void)
+{
+  char *request;
+
+  // now we prepare our request string which we send to our update server
+  // and will inform it about our configuration/YAM version and so on.
+  // use a max. request buffer of 1K.
+  #define REQUEST_SIZE 1024
+  if((request = malloc(REQUEST_SIZE)) != NULL) // don't use stack for the request
+  {
+    char buf[SIZE_LINE];
+    Object *mccObj;
+    struct Library *base;
+    unsigned short cnt = 0;
+
+    // encode the yam version
+    if(urlencode(buf, yamversion, sizeof(buf)) > 0)
+      snprintf(request, REQUEST_SIZE, "?ver=%s", buf);
+
+    // encode the yam buildid if present
+    if(urlencode(buf, yambuildid, sizeof(buf)) > 0)
+      snprintf(request, REQUEST_SIZE, "%s&buildid=%s", request, buf);
+
+    // encode the yam builddate if present
+    if(urlencode(buf, yamversiondate, sizeof(buf)) > 0)
+      snprintf(request, REQUEST_SIZE, "%s&builddate=%s", request, buf);
+
+    // encode the language in which YAM is running
+    if(G->Catalog != NULL && urlencode(buf, G->Catalog->cat_Language, sizeof(buf)) > 0)
+      snprintf(request, REQUEST_SIZE, "%s&lang=%s%%20%d%%2E%d", request, buf, G->Catalog->cat_Version,
+                                                                              G->Catalog->cat_Revision);
+
+    // Now we add some third party components
+    // information for our update server as well.
+
+    // encode the exec version
+    snprintf(request, REQUEST_SIZE, "%s&exec=%d%%2E%d", request, ((struct Library *)SysBase)->lib_Version,
+                                                                 ((struct Library *)SysBase)->lib_Revision);
+
+    // add codesets.library information
+    snprintf(request, REQUEST_SIZE, "%s&lib%d=codesets-%d%%2E%d", request, cnt++, CodesetsBase->lib_Version,
+                                                                                  CodesetsBase->lib_Revision);
+
+    // add AmiSSL library information
+    if(AmiSSLMasterBase != NULL)
+      snprintf(request, REQUEST_SIZE, "%s&lib%d=amissl-%d%%2E%d", request, cnt++, AmiSSLMasterBase->lib_Version,
+                                                                                  AmiSSLMasterBase->lib_Revision);
+
+    // add XPK library information
+    if(XpkBase != NULL)
+      snprintf(request, REQUEST_SIZE, "%s&lib%d=xpk-%d%%2E%d", request, cnt++, XpkBase->lib_Version,
+                                                                               XpkBase->lib_Revision);
+
+    // add openurl.library information
+    if((base = OpenLibrary("openurl.library", 0)) != NULL)
     {
-      struct TempFile *tf;
+      snprintf(request, REQUEST_SIZE, "%s&lib%d=openurl-%d%%2E%d", request, cnt++, base->lib_Version,
+                                                                                   base->lib_Revision);
+      CloseLibrary(base);
+    }
 
-      if((tf = OpenTempFile(NULL)) != NULL)
-      {
-        char *request;
+    // encode the MUI version
+    cnt = 0;
+    snprintf(request, REQUEST_SIZE, "%s&mui=%d%%2E%d", request, MUIMasterBase->lib_Version,
+                                                                MUIMasterBase->lib_Revision);
 
-        BusyText(tr(MSG_BusyGettingVerInfo), "");
+    // add TheBar.mcc version information
+    if((mccObj = MUI_NewObject(MUIC_TheBar, TAG_DONE)) != NULL)
+    {
+      snprintf(request, REQUEST_SIZE, "%s&mcc%d=thebar-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
+                                                                                    xget(mccObj, MUIA_Revision));
+      MUI_DisposeObject(mccObj);
+    }
 
-        // now we prepare our request string which we send to our update server
-        // and will inform it about our configuration/YAM version and so on.
-        // use a max. request buffer of 1K.
-        #define REQUEST_SIZE 1024
-        if((request = malloc(REQUEST_SIZE)) != NULL) // don't use stack for the request
-        {
-          char buf[SIZE_LINE];
-          Object *mccObj;
-          struct Library *base;
-          unsigned short cnt = 0;
+    // add TextEditor.mcc version information
+    if((mccObj = MUI_NewObject(MUIC_TextEditor, TAG_DONE)) != NULL)
+    {
+      snprintf(request, REQUEST_SIZE, "%s&mcc%d=texteditor-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
+                                                                                        xget(mccObj, MUIA_Revision));
+      MUI_DisposeObject(mccObj);
+    }
 
-          // encode the yam version
-          if(urlencode(buf, yamversion, sizeof(buf)) > 0)
-            snprintf(request, REQUEST_SIZE, "?ver=%s", buf);
-
-          // encode the yam buildid if present
-          if(urlencode(buf, yambuildid, sizeof(buf)) > 0)
-            snprintf(request, REQUEST_SIZE, "%s&buildid=%s", request, buf);
-
-          // encode the yam builddate if present
-          if(urlencode(buf, yamversiondate, sizeof(buf)) > 0)
-            snprintf(request, REQUEST_SIZE, "%s&builddate=%s", request, buf);
-
-          // encode the language in which YAM is running
-          if(G->Catalog != NULL && urlencode(buf, G->Catalog->cat_Language, sizeof(buf)) > 0)
-            snprintf(request, REQUEST_SIZE, "%s&lang=%s%%20%d%%2E%d", request, buf, G->Catalog->cat_Version,
-                                                                                    G->Catalog->cat_Revision);
-
-          // Now we add some third party components
-          // information for our update server as well.
-
-          // encode the exec version
-          snprintf(request, REQUEST_SIZE, "%s&exec=%d%%2E%d", request, ((struct Library *)SysBase)->lib_Version,
-                                                                       ((struct Library *)SysBase)->lib_Revision);
-
-          // add codesets.library information
-          snprintf(request, REQUEST_SIZE, "%s&lib%d=codesets-%d%%2E%d", request, cnt++, CodesetsBase->lib_Version,
-                                                                                        CodesetsBase->lib_Revision);
-
-          // add AmiSSL library information
-          if(AmiSSLMasterBase != NULL)
-            snprintf(request, REQUEST_SIZE, "%s&lib%d=amissl-%d%%2E%d", request, cnt++, AmiSSLMasterBase->lib_Version,
-                                                                                        AmiSSLMasterBase->lib_Revision);
-
-          // add XPK library information
-          if(XpkBase != NULL)
-            snprintf(request, REQUEST_SIZE, "%s&lib%d=xpk-%d%%2E%d", request, cnt++, XpkBase->lib_Version,
-                                                                                     XpkBase->lib_Revision);
-
-          // add openurl.library information
-          if((base = OpenLibrary("openurl.library", 0)) != NULL)
-          {
-            snprintf(request, REQUEST_SIZE, "%s&lib%d=openurl-%d%%2E%d", request, cnt++, base->lib_Version,
-                                                                                         base->lib_Revision);
-            CloseLibrary(base);
-          }
-
-          // encode the MUI version
-          cnt = 0;
-          snprintf(request, REQUEST_SIZE, "%s&mui=%d%%2E%d", request, MUIMasterBase->lib_Version,
-                                                                      MUIMasterBase->lib_Revision);
-
-          // add TheBar.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_TheBar, TAG_DONE)) != NULL)
-          {
-            snprintf(request, REQUEST_SIZE, "%s&mcc%d=thebar-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
+    // add BetterString.mcc version information
+    if((mccObj = MUI_NewObject(MUIC_BetterString, TAG_DONE)) != NULL)
+    {
+      snprintf(request, REQUEST_SIZE, "%s&mcc%d=betterstring-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
                                                                                           xget(mccObj, MUIA_Revision));
-            MUI_DisposeObject(mccObj);
-          }
+      MUI_DisposeObject(mccObj);
+    }
 
-          // add TextEditor.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_TextEditor, TAG_DONE)) != NULL)
-          {
-            snprintf(request, REQUEST_SIZE, "%s&mcc%d=texteditor-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                              xget(mccObj, MUIA_Revision));
-            MUI_DisposeObject(mccObj);
-          }
+    // add NList.mcc version information
+    if((mccObj = MUI_NewObject(MUIC_NList, TAG_DONE)) != NULL)
+    {
+      snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlist-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
+                                                                                   xget(mccObj, MUIA_Revision));
+      MUI_DisposeObject(mccObj);
+    }
 
-          // add BetterString.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_BetterString, TAG_DONE)) != NULL)
-          {
-            snprintf(request, REQUEST_SIZE, "%s&mcc%d=betterstring-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                                xget(mccObj, MUIA_Revision));
-            MUI_DisposeObject(mccObj);
-          }
+    // add NListview.mcc version information
+    if((mccObj = MUI_NewObject(MUIC_NListview, TAG_DONE)) != NULL)
+    {
+      snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlistview-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
+                                                                                       xget(mccObj, MUIA_Revision));
+      MUI_DisposeObject(mccObj);
+    }
 
-          // add NList.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_NList, TAG_DONE)) != NULL)
-          {
-            snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlist-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                         xget(mccObj, MUIA_Revision));
-            MUI_DisposeObject(mccObj);
-          }
+    // add NFloattext.mcc version information
+    if((mccObj = MUI_NewObject(MUIC_NFloattext, TAG_DONE)) != NULL)
+    {
+      snprintf(request, REQUEST_SIZE, "%s&mcc%d=nfloattext-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
+                                                                                        xget(mccObj, MUIA_Revision));
+      MUI_DisposeObject(mccObj);
+    }
 
-          // add NListview.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_NListview, TAG_DONE)) != NULL)
-          {
-            snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlistview-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                             xget(mccObj, MUIA_Revision));
-            MUI_DisposeObject(mccObj);
-          }
+    // add NListtree.mcc version information
+    if((mccObj = MUI_NewObject(MUIC_NListtree, TAG_DONE)) != NULL)
+    {
+      snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlisttree-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
+                                                                                       xget(mccObj, MUIA_Revision));
+      MUI_DisposeObject(mccObj);
+    }
 
-          // add NFloattext.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_NFloattext, TAG_DONE)) != NULL)
-          {
-            snprintf(request, REQUEST_SIZE, "%s&mcc%d=nfloattext-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                              xget(mccObj, MUIA_Revision));
-            MUI_DisposeObject(mccObj);
-          }
+    // add NBalance.mcc version information
+    if((mccObj = MUI_NewObject(MUIC_NBalance, TAG_DONE)) != NULL)
+    {
+      snprintf(request, REQUEST_SIZE, "%s&mcc%d=nbalance-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
+                                                                                      xget(mccObj, MUIA_Revision));
+      MUI_DisposeObject(mccObj);
+    }
+  }
 
-          // add NListtree.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_NListtree, TAG_DONE)) != NULL)
-          {
-            snprintf(request, REQUEST_SIZE, "%s&mcc%d=nlisttree-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                             xget(mccObj, MUIA_Revision));
-            MUI_DisposeObject(mccObj);
-          }
+  RETURN(request);
+  return request;
+}
 
-          // add NBalance.mcc version information
-          if((mccObj = MUI_NewObject(MUIC_NBalance, TAG_DONE)) != NULL)
-          {
-            snprintf(request, REQUEST_SIZE, "%s&mcc%d=nbalance-%ld%%2E%ld", request, cnt++, xget(mccObj, MUIA_Version),
-                                                                                            xget(mccObj, MUIA_Revision));
-            MUI_DisposeObject(mccObj);
-          }
+///
+/// ParseUpdateFile
+// parse the downloaded update file and add the found components to the update
+// notify window
+BOOL ParseUpdateFile(const char *filename, const BOOL quiet)
+{
+  BOOL result = FALSE;
+  FILE *fp;
 
-          D(DBF_UPDATE, "send update request: '%s' (%ld)", request, strlen(request));
+  ENTER();
 
-          // now we send a specific request via TR_DownloadURL() to
-          // our update server
-          if(TR_DownloadURL(conn, C->UpdateServer, request, tf->Filename) == TRUE)
-          {
-            // now we parse the result.
-            if((tf->FP = fopen(tf->Filename, "r")) != NULL)
-            {
-              BOOL validUpdateCheck = FALSE;
-              BOOL updatesAvailable = FALSE;
-              struct UpdateComponent *comp = NULL;
-              char *buffer = NULL;
-              size_t size = 0;
+  if((fp = fopen(filename, "r")) != NULL)
+  {
+    BOOL validUpdateCheck = FALSE;
+    BOOL updatesAvailable = FALSE;
+    struct UpdateComponent *comp = NULL;
+    char *buffer = NULL;
+    size_t size = 0;
 
-              setvbuf(tf->FP, NULL, _IOFBF, SIZE_FILEBUF);
+    setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
 
-              // make sure we clear an eventually existing update window
-              if(G->UpdateNotifyWinObject != NULL)
-                DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_Clear);
+    // make sure we clear the update window
+    DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_Clear);
 
-              while(GetLine(&buffer, &size, tf->FP) >= 0)
-              {
-                // make sure we trim the line by stripping leading
-                // and trailing spaces.
-                char *p = Trim(buffer);
+    while(GetLine(&buffer, &size, fp) >= 0)
+    {
+      // make sure we trim the line by stripping leading
+      // and trailing spaces.
+      char *p = Trim(buffer);
 
-                D(DBF_UPDATE, "'%s'", p);
+      D(DBF_UPDATE, "'%s'", p);
 
-                if(stricmp(p, "<updatecheck>") == 0)
-                {
-                  validUpdateCheck = TRUE;
-                }
-                else if(stricmp(p, "</updatecheck>") == 0)
-                {
-                  // break out as the update check signals to exit
-                  break;
-                }
-                else if(validUpdateCheck == FALSE)
-                {
-                  // we skip all lines until we found the <updatecheck> tag
-                  continue;
-                }
-                else if(stricmp(p, "<component>") == 0)
-                {
-                  // if we find an '<component>' tag, we can go and create an
-                  // update notify window in advance and fill it according to the
-                  // followed information
+      if(stricmp(p, "<updatecheck>") == 0)
+      {
+        validUpdateCheck = TRUE;
+      }
+      else if(stricmp(p, "</updatecheck>") == 0)
+      {
+        // break out as the update check signals to exit
+        break;
+      }
+      else if(validUpdateCheck == FALSE)
+      {
+        // we skip all lines until we found the <updatecheck> tag
+        continue;
+      }
+      else if(stricmp(p, "<component>") == 0)
+      {
+        // if we find an '<component>' tag, we can go and create an
+        // update notify window in advance and fill it according to the
+        // followed information
 
-                  // make sure that we have created the update notification
-                  // window in advance.
-                  if(G->UpdateNotifyWinObject == NULL)
-                  {
-                    if((G->UpdateNotifyWinObject = UpdateNotifyWindowObject, End) == NULL)
-                      break;
-                  }
-
-                  // if we still have an update component structure
-                  // waiting to be submitted to our window we do it right
-                  // away.
-                  if(comp != NULL)
-                  {
-                    DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_AddComponent, comp);
-                    comp = NULL;
-                  }
-
-                  // make sure that we know that we have updates available also
-                  // later on.
-                  updatesAvailable = TRUE;
-
-                  // create a new UpdateComponent structure which we
-                  // are going to fill step by step
-                  if((comp = calloc(sizeof(*comp), 1)) == NULL)
-                  {
-                    updatesAvailable = FALSE;
-                    break;
-                  }
-                }
-                else if(stricmp(p, "</component>") == 0)
-                {
-                  if(comp != NULL)
-                  {
-                    DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_AddComponent, comp);
-                    comp = NULL;
-                  }
-                }
-                else if(comp != NULL)
-                {
-                  if(strnicmp(p, "NAME: ", 6) == 0)
-                    strlcpy(comp->name, p+6, sizeof(comp->name));
-                  else if(strnicmp(p, "RECENT: ", 7) == 0)
-                    strlcpy(comp->recent, p+7, sizeof(comp->recent));
-                  else if(strnicmp(p, "INSTALLED: ", 11) == 0)
-                    strlcpy(comp->installed, p+11, sizeof(comp->installed));
-                  else if(strnicmp(p, "URL: ", 5) == 0)
-                    strlcpy(comp->url, p+5, sizeof(comp->url));
-                  else if(stricmp(p, "<changelog>") == 0)
-                  {
-                    // we put the changelog text into a temporary file
-                    if((comp->changeLogFile = OpenTempFile("w")) != NULL)
-                    {
-                      FILE *out = comp->changeLogFile->FP;
-
-                      while(GetLine(&buffer, &size, tf->FP) >= 0L)
-                      {
-                        D(DBF_UPDATE, "%s", buffer);
-
-                        if(stricmp(buffer, "</changelog>") == 0)
-                        {
-                          // break out
-                          break;
-                        }
-                        else
-                          fprintf(out, "%s\n", buffer);
-                      }
-
-                      fclose(out);
-                      comp->changeLogFile->FP = NULL;
-                    }
-                  }
-                }
-              }
-
-              // make sure we submitted all update components to our
-              // notify window.
-              if(comp != NULL)
-              {
-                DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_AddComponent, comp);
-                comp = NULL;
-              }
-
-              // make sure we show the update notify window.
-              if(updatesAvailable == TRUE)
-              {
-                set(G->UpdateNotifyWinObject, MUIA_Window_Open, TRUE);
-                LastUpdateState.LastUpdateStatus = UST_UPDATESUCCESS;
-              }
-              else
-              {
-                // we didn't find any new updates
-                LastUpdateState.LastUpdateStatus = UST_NOUPDATE;
-
-                // show a requester if the check was triggered by the user
-                if(quiet == FALSE)
-                  MUI_Request(G->App, NULL, 0, tr(MSG_UPD_NO_UPDATES_FOUND_TITLE), tr(MSG_Okay), tr(MSG_UPD_NO_UPDATES_FOUND), (C->UpdateInterval > 0) ? tr(MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK) : tr(MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK));
-              }
-
-              // the updatecheck was successfull
-              result = TRUE;
-
-              fclose(tf->FP);
-              tf->FP = NULL;
-
-              free(buffer);
-            }
-            else
-              ER_NewError(tr(MSG_ER_CantOpenTempfile), tf->Filename);
-          }
-
-          free(request);
+        // if we still have an update component structure
+        // waiting to be submitted to our window we do it right
+        // away.
+        if(comp != NULL)
+        {
+          DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_AddComponent, comp);
+          comp = NULL;
         }
 
-        BusyEnd();
+        // make sure that we know that we have updates available also
+        // later on.
+        updatesAvailable = TRUE;
 
-        CloseTempFile(tf);
+        // create a new UpdateComponent structure which we
+        // are going to fill step by step
+        if((comp = calloc(sizeof(*comp), 1)) == NULL)
+        {
+          updatesAvailable = FALSE;
+          break;
+        }
+      }
+      else if(stricmp(p, "</component>") == 0)
+      {
+        if(comp != NULL)
+        {
+          DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_AddComponent, comp);
+          comp = NULL;
+        }
+      }
+      else if(comp != NULL)
+      {
+        if(strnicmp(p, "NAME: ", 6) == 0)
+          strlcpy(comp->name, p+6, sizeof(comp->name));
+        else if(strnicmp(p, "RECENT: ", 7) == 0)
+          strlcpy(comp->recent, p+7, sizeof(comp->recent));
+        else if(strnicmp(p, "INSTALLED: ", 11) == 0)
+          strlcpy(comp->installed, p+11, sizeof(comp->installed));
+        else if(strnicmp(p, "URL: ", 5) == 0)
+          strlcpy(comp->url, p+5, sizeof(comp->url));
+        else if(stricmp(p, "<changelog>") == 0)
+        {
+          // we put the changelog text into a temporary file
+          if((comp->changeLogFile = OpenTempFile("w")) != NULL)
+          {
+            FILE *out = comp->changeLogFile->FP;
+
+            while(GetLine(&buffer, &size, fp) >= 0L)
+            {
+              D(DBF_UPDATE, "%s", buffer);
+
+              if(stricmp(buffer, "</changelog>") == 0)
+              {
+                // break out
+                break;
+              }
+              else
+                fprintf(out, "%s\n", buffer);
+            }
+
+            fclose(out);
+            comp->changeLogFile->FP = NULL;
+          }
+        }
       }
     }
+
+    // make sure we submitted all update components to our
+    // notify window.
+    if(comp != NULL)
+    {
+      DoMethod(G->UpdateNotifyWinObject, MUIM_UpdateNotifyWindow_AddComponent, comp);
+      comp = NULL;
+    }
+
+    // make sure we show the update notify window.
+    if(updatesAvailable == TRUE)
+    {
+      set(G->UpdateNotifyWinObject, MUIA_Window_Open, TRUE);
+      LastUpdateState.LastUpdateStatus = UST_UPDATESUCCESS;
+    }
     else
-      ER_NewError(tr(MSG_ER_OPENTCPIP));
+    {
+      // we didn't find any new updates
+      LastUpdateState.LastUpdateStatus = UST_NOUPDATE;
 
-    // enable the transfer buttons in the toolbar again
-    MA_ChangeTransfer(TRUE);
+      // show a requester if the check was triggered by the user
+      if(quiet == FALSE)
+        MUI_Request(G->App, NULL, 0, tr(MSG_UPD_NO_UPDATES_FOUND_TITLE), tr(MSG_Okay), tr(MSG_UPD_NO_UPDATES_FOUND), (C->UpdateInterval > 0) ? tr(MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK) : tr(MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK));
+    }
 
-    // resume the mail check timer
-    ResumeTimer(TIMER_CHECKMAIL);
+    // the updatecheck was successfull
+    result = TRUE;
 
-    DeleteConnection(conn);
+    fclose(fp);
+
+    free(buffer);
   }
+  else
+    ER_NewError(tr(MSG_ER_CantOpenTempfile), filename);
 
   // as the last operation we get the current time as the
   // last checked time for the update check and save our
@@ -496,7 +467,8 @@ BOOL CheckForUpdates(const BOOL quiet)
   RETURN(result);
   return result;
 }
-///
+
+//
 /// LoadUpdateState
 // Load update state file from disk
 void LoadUpdateState(void)
@@ -567,6 +539,7 @@ void LoadUpdateState(void)
 
   LEAVE();
 }
+
 ///
 /// SaveUpdateState
 // Save update state file to disk
@@ -593,6 +566,7 @@ void SaveUpdateState(void)
 
   LEAVE();
 }
+
 ///
 /// GetLastUpdateState
 // Get a copy of the last update state
@@ -608,6 +582,7 @@ void GetLastUpdateState(struct UpdateState *state)
 
   LEAVE();
 }
+
 ///
 /// SetDefaultUpdateState
 // Set a default update state
@@ -620,5 +595,5 @@ void SetDefaultUpdateState(void)
 
   LEAVE();
 }
-///
 
+///

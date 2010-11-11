@@ -4228,10 +4228,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
             // mark the server as "in use"
             SET_FLAG(msn->flags, MSF_IN_USE);
 
-            mailSent = DoAction(TA_SendMails, TT_SendMails_MailServer, msn,
-                                              TT_SendMails_Mails, mlist,
-                                              TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
-                                              TAG_DONE);
+            mailSent = DoAction(NULL, TA_SendMails, TT_SendMails_MailServer, msn,
+                                                    TT_SendMails_Mails, mlist,
+                                                    TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
+                                                    TAG_DONE);
             if(mailSent == FALSE)
               CLEAR_FLAG(msn->flags, MSF_IN_USE);
           }

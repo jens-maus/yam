@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-11-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * UpdateCheck.c, Threads.c, tcp/http.c: put the HTTP URL download into a
+    thread. Thus the update check can now be done asynchronously as well. All
+    in all this makes stuff like automatic and asynchronous user image download
+    from service providers like www.gravatar.com possible.
+
 2010-11-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * MailExport.c, misc: The mail export will now happens inside a thread.
