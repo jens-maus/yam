@@ -164,8 +164,12 @@ enum { IECODE_SPACE = 64,
 #define _isinwholeobject(o,x,y) 	(_between(_left(o),(x),_right (o)) && _between(_top(o) ,(y),_bottom(o)))
 
 
+// this method is invoked for an object as soon
+// as a thread has finished its task
 #define MUIM_ThreadFinished                        (TAG_USER | (0x2677 << 16))
 
+// the method gets the performed action with all
+// parameters and the final result value
 struct MUIP_ThreadFinished { ULONG MethodID; ULONG action; LONG result; APTR actionTags; };
 
 #endif
