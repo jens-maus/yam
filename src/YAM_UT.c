@@ -4089,7 +4089,6 @@ void SaveLayout(BOOL permanent)
     G->preselectionWindowLayout) != -1)
   {
     setstring(G->MA->GUI.ST_LAYOUT, buf);
-    free(buf);
   }
 
   DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
@@ -4114,8 +4113,11 @@ void SaveLayout(BOOL permanent)
   else
     D(DBF_UTIL, "saved layout weight factors: '%s'", buf);
 
+  free(buf);
+
   LEAVE();
 }
+
 ///
 /// ConvertKey
 //  Converts input event to key code
