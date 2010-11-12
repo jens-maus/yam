@@ -4089,31 +4089,31 @@ void SaveLayout(BOOL permanent)
     G->preselectionWindowLayout) != -1)
   {
     setstring(G->MA->GUI.ST_LAYOUT, buf);
+
+    DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
+
+    // if we want to save to ENVARC:
+    if(permanent == TRUE)
+    {
+      APTR oldWindowPtr;
+
+      // this is for the people out there having their SYS: partition locked and whining about
+      // YAM popping up a error requester upon the exit - so it's their fault now if
+      // the MUI objects aren't saved correctly.
+      oldWindowPtr = SetProcWindow((APTR)-1);
+
+      DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
+
+      D(DBF_UTIL, "permanently saved layout weight factors: '%s'", SafeStr(buf));
+
+      // restore the old windowPtr
+      SetProcWindow(oldWindowPtr);
+    }
+    else
+      D(DBF_UTIL, "saved layout weight factors: '%s'", SafeStr(buf));
+
+    free(buf);
   }
-
-  DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
-
-  // if we want to save to ENVARC:
-  if(permanent == TRUE)
-  {
-    APTR oldWindowPtr;
-
-    // this is for the people out there having their SYS: partition locked and whining about
-    // YAM popping up a error requester upon the exit - so it's their fault now if
-    // the MUI objects aren't saved correctly.
-    oldWindowPtr = SetProcWindow((APTR)-1);
-
-    DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
-
-    D(DBF_UTIL, "permanently saved layout weight factors: '%s'", buf);
-
-    // restore the old windowPtr
-    SetProcWindow(oldWindowPtr);
-  }
-  else
-    D(DBF_UTIL, "saved layout weight factors: '%s'", buf);
-
-  free(buf);
 
   LEAVE();
 }
