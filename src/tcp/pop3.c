@@ -1322,9 +1322,9 @@ static void SumUpMails(struct TransferContext *tc)
   // search through our transferList
   ForEachMailTransferNode(tc->transferList, tnode)
   {
+    tc->numberOfMails++;
     if(isFlagSet(tnode->tflags, TRF_TRANSFER))
     {
-      tc->numberOfMails++;
       tc->totalSize += tnode->mail->Size;
     }
   }
