@@ -139,95 +139,89 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
 
   D(DBF_GUI, "DoubleClick: %ld - [%s]", clickmsg->ClickPosition, clickmsg->LineContents);
 
-  DoMethod(G->App, MUIM_Application_InputBuffered);
-
-  // for safety reasons
-  if(clickmsg->LineContents == NULL)
-    return FALSE;
-
   // if the user clicked on space we skip the following
   // analysis of a URL and just check if it was an attachment the user clicked at
   if(!isspace(clickmsg->LineContents[clickmsg->ClickPosition]))
   {
-    int pos = clickmsg->ClickPosition;
     char *line;
-    char *surl;
-    char *url = NULL;
-    char *p;
-    enum tokenType type;
 
     // then we make a copy of the LineContents
-    if((line = StrBufCpy(NULL, clickmsg->LineContents)) == NULL)
-      return FALSE;
-
-    // find the beginning of the word we clicked at
-    surl = &line[pos];
-    while(surl != &line[0] && !isspace(*(surl-1)))
-      surl--;
-
-    // now find the end of the word the user clicked at
-    p = &line[pos];
-    while(p+1 != &line[strlen(line)] && !isspace(*(p+1)))
-      p++;
-
-    *(++p) = '\0';
-
-    // now we start our quick lexical analysis to find a clickable element within
-    // the doubleclick area
-    if((type = ExtractURL(surl, &url)) != 0)
+    if((line = strdup(clickmsg->LineContents)) != NULL)
     {
-      switch(type)
+      int pos = clickmsg->ClickPosition;
+      char *surl;
+      char *url = NULL;
+      char *p;
+      enum tokenType type;
+
+      // find the beginning of the word we clicked at
+      surl = &line[pos];
+      while(surl != &line[0] && !isspace(*(surl-1)))
+        surl--;
+
+      // now find the end of the word the user clicked at
+      p = &line[pos];
+      while(p+1 != &line[strlen(line)] && !isspace(*(p+1)))
+        p++;
+
+      *(++p) = '\0';
+
+      // now we start our quick lexical analysis to find a clickable element within
+      // the doubleclick area
+      if((type = ExtractURL(surl, &url)) != 0)
       {
-        case tEMAIL:
+        switch(type)
         {
-          RE_ClickedOnMessage(url);
+          case tEMAIL:
+          {
+            RE_ClickedOnMessage(url);
+          }
+          break;
+
+          case tMAILTO:
+          {
+            RE_ClickedOnMessage(&url[7]);
+          }
+          break;
+
+          case tHTTP:
+          case tHTTPS:
+          case tFTP:
+          case tFILE:
+          case tGOPHER:
+          case tTELNET:
+          case tNEWS:
+          case tURL:
+          {
+            BOOL newWindow = FALSE;
+
+            // TextEditor.mcc V15.26+ tells us the pressed qualifier
+            // if the CTRL key is pressed we try to open a new window
+            // as soon as TE.mcc 15.26 has gone public and is mandatory this
+            // revision check can be removed again.
+            if(xget(editor, MUIA_Revision) >= 26)
+              newWindow = hasFlag(clickmsg->Qualifier, IEQUALIFIER_CONTROL);
+
+            // don't invoke the GotoURL command right here in there hook, as the
+            // execution may take lots of time
+            PushMethodOnStack(G->App, 3, MUIM_YAMApplication_GotoURL, url, newWindow);
+
+            // don't free the URL string in this context
+            url = NULL;
+          }
+          break;
+
+          default:
+            // nothing
+          break;
         }
-        break;
 
-        case tMAILTO:
-        {
-          RE_ClickedOnMessage(&url[7]);
-        }
-        break;
-
-        case tHTTP:
-        case tHTTPS:
-        case tFTP:
-        case tFILE:
-        case tGOPHER:
-        case tTELNET:
-        case tNEWS:
-        case tURL:
-        {
-          BOOL newWindow = FALSE;
-
-          // TextEditor.mcc V15.26+ tells us the pressed qualifier
-          // if the CTRL key is pressed we try to open a new window
-          // as soon as TE.mcc 15.26 has gone public and is mandatory this
-          // revision check can be removed again.
-          if(xget(editor, MUIA_Revision) >= 26)
-            newWindow = hasFlag(clickmsg->Qualifier, IEQUALIFIER_CONTROL);
-
-          // don't invoke the GotoURL command right here in there hook, as the
-          // execution may take lots of time
-          PushMethodOnStack(G->App, 3, MUIM_YAMApplication_GotoURL, url, newWindow);
-
-          // don't free the URL string in this context
-          url = NULL;
-        }
-        break;
-
-        default:
-          // nothing
-        break;
+        result = TRUE;
       }
 
-      result = TRUE;
+      free(url);
+      free(line);
     }
-
-    free(url);
-
-    FreeStrBuf(line);
   }
 
   return result;

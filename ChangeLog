@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-11-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ReadMailGroup.c: streamlined the double click hook a bit.
+
 2010-11-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: fixed the slightly wrong number of total mails in case there
