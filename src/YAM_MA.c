@@ -991,11 +991,11 @@ static void MA_UpdateStatus(void)
     }
   }
 
+  UnlockFolderList(G->folders);
+
   // finally update the AppIcon as well
   if(G->AppIconQuiet == FALSE)
     UpdateAppIcon();
-
-  UnlockFolderList(G->folders);
 
   LEAVE();
 }
