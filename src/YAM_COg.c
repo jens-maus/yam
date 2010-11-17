@@ -3190,14 +3190,6 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
                 End,
               End,
 
-              Child, ColGroup(2), GroupFrameT(tr(MSG_CO_AnonMail)),
-                Child, Label2(tr(MSG_CO_ReMailer)),
-                Child, data->GUI.ST_REMAILER = MakeString(SIZE_ADDRESS,tr(MSG_CO_ReMailer)),
-
-                Child, Label2(tr(MSG_CO_ReMailerLine)),
-                Child, data->GUI.ST_FIRSTLINE = MakeString(SIZE_INTRO,tr(MSG_CO_ReMailerLine)),
-              End,
-
               Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Logfiles)),
                 Child, Label1(tr(MSG_CO_LogMode)),
                 Child, data->GUI.CY_LOGMODE = MakeCycle(logfmode, tr(MSG_CO_LogMode)),
@@ -3234,8 +3226,6 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
     SetHelp(data->GUI.NB_PGPPASSINTERVAL, MSG_HELP_CO_PGPPASSINTERVAL);
     SetHelp(data->GUI.CH_ENCSELF   ,MSG_HELP_CO_CH_ENCSELF  );
-    SetHelp(data->GUI.ST_REMAILER  ,MSG_HELP_CO_ST_REMAILER );
-    SetHelp(data->GUI.ST_FIRSTLINE ,MSG_HELP_CO_ST_FIRSTLINE);
     SetHelp(data->GUI.ST_LOGFILE   ,MSG_HELP_CO_ST_LOGFILE  );
     SetHelp(data->GUI.CH_SPLITLOG  ,MSG_HELP_CO_CH_SPLITLOG );
     SetHelp(data->GUI.CY_LOGMODE   ,MSG_HELP_CO_CY_LOGMODE  );

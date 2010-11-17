@@ -521,8 +521,6 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "PGPURL           = %s\n", co->PGPURL);
     fprintf(fh, "EncryptToSelf    = %s\n", Bool2Txt(co->EncryptToSelf));
     fprintf(fh, "PGPPassInterval  = %d\n", co->PGPPassInterval);
-    fprintf(fh, "ReMailer         = %s\n", co->ReMailer);
-    fprintf(fh, "RMCommands       = %s\n", co->RMCommands);
     fprintf(fh, "LogfilePath      = %s\n", co->LogfilePath);
     fprintf(fh, "LogfileMode      = %d\n", co->LogfileMode);
     fprintf(fh, "SplitLogfile     = %s\n", Bool2Txt(co->SplitLogfile));
@@ -1311,8 +1309,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(stricmp(buf, "PGPURL") == 0)                   strlcpy(co->PGPURL, value, sizeof(co->PGPURL));
           else if(stricmp(buf, "EncryptToSelf") == 0)            co->EncryptToSelf = Txt2Bool(value);
           else if(stricmp(buf, "PGPPassInterval") == 0)          co->PGPPassInterval = atoi(value);
-          else if(stricmp(buf, "ReMailer") == 0)                 strlcpy(co->ReMailer, value, sizeof(co->ReMailer));
-          else if(stricmp(buf, "RMCommands") == 0)               strlcpy(co->RMCommands, value2, sizeof(co->RMCommands));
           else if(stricmp(buf, "LogfilePath") == 0)              strlcpy(co->LogfilePath, value, sizeof(co->LogfilePath));
           else if(stricmp(buf, "LogfileMode") == 0)              co->LogfileMode = atoi(value);
           else if(stricmp(buf, "SplitLogfile") == 0)             co->SplitLogfile = Txt2Bool(value);
@@ -2220,8 +2216,6 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
       GetMUIString(CE->MyPGPID, gui->ST_MYPGPID, sizeof(CE->MyPGPID));
       GetMUIString(CE->PGPURL, gui->ST_PGPURL, sizeof(CE->PGPURL));
       CE->EncryptToSelf = GetMUICheck(gui->CH_ENCSELF);
-      GetMUIString(CE->ReMailer, gui->ST_REMAILER, sizeof(CE->ReMailer));
-      GetMUIString(CE->RMCommands, gui->ST_FIRSTLINE, sizeof(CE->RMCommands));
       GetMUIString(CE->LogfilePath, gui->ST_LOGFILE, sizeof(CE->LogfilePath));
       CE->LogfileMode = GetMUICycle(gui->CY_LOGMODE);
       CE->SplitLogfile = GetMUICheck(gui->CH_SPLITLOG);
@@ -2659,8 +2653,6 @@ void CO_SetConfig(void)
       setstring(gui->ST_MYPGPID, CE->MyPGPID);
       setstring(gui->ST_PGPURL, CE->PGPURL);
       setcheckmark(gui->CH_ENCSELF, CE->EncryptToSelf);
-      setstring(gui->ST_REMAILER, CE->ReMailer);
-      setstring(gui->ST_FIRSTLINE, CE->RMCommands);
       setstring(gui->ST_LOGFILE, CE->LogfilePath);
       setcycle(gui->CY_LOGMODE, CE->LogfileMode);
       setcheckmark(gui->CH_SPLITLOG, CE->SplitLogfile);

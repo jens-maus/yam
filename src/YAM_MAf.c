@@ -2428,7 +2428,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           if((p = strstr(value, "sigfile")) != NULL)
             email->Signature = p[7]-'0'+1;
 
-          for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
+          for(sec = SEC_SIGN; sec <= SEC_BOTH; sec++)
           {
             if(strstr(value, SecCodes[sec]) != NULL)
               email->Security = sec;

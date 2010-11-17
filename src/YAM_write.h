@@ -50,7 +50,6 @@ enum Security
   SEC_SIGN,        // PGP sign the message
   SEC_ENCRYPT,     // PGP encrypt the message
   SEC_BOTH,        // PGP sign&encrypt the message
-  SEC_SENDANON,    // send the message anonymously
   SEC_DEFAULTS,    // use the preconfigured defaults
   SEC_MAXDUMMY
 };

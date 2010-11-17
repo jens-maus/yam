@@ -660,35 +660,6 @@ BOOL EncodePart(FILE *ofh, const struct WritePart *part)
 }
 
 ///
-/// WR_Anonymize
-//  Inserts recipient header field for remailer service
-static void WR_Anonymize(FILE *fh, const char *body)
-{
-  char *ptr;
-
-  ENTER();
-
-  for(ptr = C->RMCommands; *ptr; ptr++)
-  {
-    if(ptr[0] == '\\' && ptr[1] == 'n')
-    {
-      ptr++;
-      fputs("\n", fh);
-    }
-    else if(ptr[0] == '%' && ptr[1] == 's')
-    {
-      ptr++;
-      EmitRcptField(fh, body);
-    }
-    else
-      fputc(*ptr, fh);
-  }
-  fputs("\n", fh);
-
-  LEAVE();
-}
-
-///
 /// WR_GetPGPId
 //  Gets PGP key id for a person
 static char *WR_GetPGPId(const struct Person *pe)
@@ -1173,9 +1144,6 @@ static BOOL WR_ComposeMulti(FILE *fh, const struct Compose *comp, const char *bo
 
     WriteContentTypeAndEncoding(fh, p);
 
-    if(comp->Security == SEC_SENDANON)
-      WR_Anonymize(fh, comp->MailTo);
-
     fputs("\n", fh);
 
     if(EncodePart(fh, p) == FALSE)
@@ -1324,7 +1292,7 @@ BOOL WriteOutMessage(struct Compose *comp)
   if(comp->ReplyTo != NULL)
     EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
   if(comp->MailTo != NULL)
-    EmitRcptHeader(fh, "To", comp->Security == 4 ? C->ReMailer : comp->MailTo);
+    EmitRcptHeader(fh, "To", comp->MailTo);
   if(comp->MailCC != NULL)
     EmitRcptHeader(fh, "CC", comp->MailCC);
   if(comp->MailBCC != NULL)
@@ -1407,11 +1375,7 @@ mimebody:
   else
   {
     WriteContentTypeAndEncoding(fh, firstpart);
-    if(comp->Security == SEC_SENDANON && comp->OldSecurity != SEC_SENDANON)
-      WR_Anonymize(fh, comp->MailTo);
-
     fputs("\n", fh);
-
     success = EncodePart(fh, firstpart);
   }
 

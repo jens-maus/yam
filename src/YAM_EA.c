@@ -771,14 +771,13 @@ static struct EA_ClassData *EA_New(int winnum, int type)
     {
       case AET_USER:
       {
-        static const char *SecurityCycleEntries[6];
+        static const char *SecurityCycleEntries[4];
 
         SecurityCycleEntries[0] = tr(MSG_WR_SecNone);
         SecurityCycleEntries[1] = tr(MSG_WR_SecSign);
         SecurityCycleEntries[2] = tr(MSG_WR_SecEncrypt);
         SecurityCycleEntries[3] = tr(MSG_WR_SecBoth);
-        SecurityCycleEntries[4] = tr(MSG_WR_SecAnon);
-        SecurityCycleEntries[5] = NULL;
+        SecurityCycleEntries[4] = NULL;
 
         /* build MUI object tree */
         group = HGroup,

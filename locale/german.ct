@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.13 (31.10.2010)
+## version $VER: YAM.catalog 7.14 (17.11.2010)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -1730,18 +1730,6 @@ MSG_CO_EncryptToSelf
 _Mit eigenem Schlüssel
 ; _Encrypt to self
 ;
-MSG_CO_AnonMail
-Anonyme Post
-; Anonymous mail
-;
-MSG_CO_ReMailer
-Anonymisier_dienst
-; _Re-Mailer
-;
-MSG_CO_ReMailerLine
-_Kopfzeile
-; _Header field
-;
 MSG_CO_Logfiles
 Protokoll
 ; Log files
@@ -2590,19 +2578,6 @@ Schlüssel verschlüsseln, damit versandte Nachrichten\n\
 immer noch gelesen oder geändert werden können.
 ; Encrypt new messages with your public key,\n\
 ; so you can still read or edit sent messages
-;
-MSG_HELP_CO_ST_REMAILER
-E-Mail-Adresse des Remailer-Dienstes,\n\
-welcher Ihre Post anonymisiert.
-; Email address of the remailer service\n\
-; used to send anonymous mail
-;
-MSG_HELP_CO_ST_FIRSTLINE
-Diese Zeile wird am Anfang Ihrer\n\
-Nachricht eingefügt, falls sie via\n\
-Anonymisierdienst versandt wird.
-; Insert this line at the top of your\n\
-; message if it is sent via remailer
 ;
 MSG_HELP_CO_ST_LOGFILE
 Pfad für die Protokolldateien.
@@ -3834,10 +3809,6 @@ MSG_WR_SecBoth
 Signieren und verschlüsseln
 ; Sign and encrypt
 ;
-MSG_WR_SecAnon
-Anonym senden
-; Send anonymously
-;
 MSG_WR_ImpHigh
 Hoch
 ; High
@@ -4314,12 +4285,9 @@ in dieser Nachricht verwenden?
 ; to append to this letter?
 ;
 MSG_HELP_WR_RA_SECURITY
-Wählen Sie eine dieser Sicherheitsoptionen,\n\
-um Ihre Nachricht PGP signiert, verschlüsselt\n\
-oder anonym zu versenden.
-; Select one of these security options to send\n\
-; your message PGP signed, encrypted\n\
-; or anonymously
+Wählen Sie eine dieser Sicherheitsoptionen, um\n\
+Ihre Nachricht PGP signiert oder verschlüsselt\n\
+zu versenden.
 ;
 MSG_HELP_WR_BT_HOLD
 Kopiert die erstellte Nachricht\n\
@@ -6672,9 +6640,6 @@ Sicherheitseinstellungen.\n\
 \n\
 Wie möchten Sie die Nachricht verfassen?
 ;
-MSG_WR_SECURITYREQ_GADS
-*_Unbehandelt|_Signiert|_Verschlüsselt|S_igniert&Verschl.|_Anonym|_Abbrechen
-;
 MSG_ER_OPENTCPIP
 YAM konnte die notwendige bsdsocket.library Schnittstelle \
 für TCP/IP-Verbindungen nicht öffnen.\n\
@@ -8604,4 +8569,7 @@ Post senden
 ;
 MSG_MA_GET_MAIL
 Post holen
+;
+MSG_WR_SECURITYREQ_GADS
+*_Unbehandelt|_Signiert|_Verschlüsselt|S_igniert&Verschl._Abbrechen
 ;

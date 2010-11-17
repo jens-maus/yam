@@ -930,8 +930,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->EncryptToSelf = TRUE;
     co->LogAllEvents = TRUE;
     co->PGPPassInterval = 10; // 10 min per default
-    strlcpy(co->ReMailer, "Remailer <remailer@remailer.xganon.com>", sizeof(co->ReMailer));
-    strlcpy(co->RMCommands, "Anon-To: %s", sizeof(co->RMCommands));
     strlcpy(co->LogfilePath, G->ProgDir, sizeof(co->LogfilePath));
     co->LogfileMode = LF_NORMAL;
     co->SplitLogfile = FALSE;
@@ -1410,8 +1408,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      strcmp(c1->PGPCmdPath,          c2->PGPCmdPath) == 0 &&
      strcmp(c1->MyPGPID,             c2->MyPGPID) == 0 &&
      strcmp(c1->PGPURL,              c2->PGPURL) == 0 &&
-     strcmp(c1->ReMailer,            c2->ReMailer) == 0 &&
-     strcmp(c1->RMCommands,          c2->RMCommands) == 0 &&
      strcmp(c1->LogfilePath,         c2->LogfilePath) == 0 &&
      strcmp(c1->DetachDir,           c2->DetachDir) == 0 &&
      strcmp(c1->AttachDir,           c2->AttachDir) == 0 &&

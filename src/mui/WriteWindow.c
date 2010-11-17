@@ -175,7 +175,7 @@ enum
   WMEN_AUTOSP,WMEN_AUTOWRAP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
   WMEN_DELSEND,WMEN_MDN,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
   WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
-  WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5, WMEN_INSUUCODE,
+  WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4,WMEN_INSUUCODE,
   WMEN_SENDNOW,WMEN_QUEUE,WMEN_HOLD,WMEN_CANCEL,WMEN_SWITCH1,WMEN_SWITCH2,WMEN_SWITCH3,
   WMEN_FFONT,WMEN_TSTYLE,WMEN_TCOLOR
 };
@@ -416,10 +416,6 @@ static BOOL SetDefaultSecurity(struct Compose *comp)
 
               case 4:
                 security = SEC_BOTH;
-              break;
-
-              case 5:
-                security = SEC_SENDANON;
               break;
             }
 
@@ -931,7 +927,6 @@ OVERLOAD(OM_NEW)
   security[SEC_SIGN]    = tr(MSG_WR_SecSign);
   security[SEC_ENCRYPT] = tr(MSG_WR_SecEncrypt);
   security[SEC_BOTH]    = tr(MSG_WR_SecBoth);
-  security[SEC_SENDANON]= tr(MSG_WR_SecAnon);
   security[SEC_DEFAULTS]= tr(MSG_WR_SecDefaults);
   security[SEC_MAXDUMMY]= NULL;
 
@@ -1212,8 +1207,7 @@ OVERLOAD(OM_NEW)
             MenuChild, MenuitemCheck(security[SEC_SIGN], NULL, G->PGPVersion != 0, FALSE, TRUE, 0x3D, WMEN_SECUR1),
             MenuChild, MenuitemCheck(security[SEC_ENCRYPT], NULL, G->PGPVersion != 0, FALSE, TRUE, 0x3B, WMEN_SECUR2),
             MenuChild, MenuitemCheck(security[SEC_BOTH], NULL, G->PGPVersion != 0, FALSE, TRUE, 0x37, WMEN_SECUR3),
-            MenuChild, MenuitemCheck(security[SEC_SENDANON], NULL, TRUE, FALSE, TRUE, 0x2F, WMEN_SECUR4),
-            MenuChild, MenuitemCheck(security[SEC_DEFAULTS], NULL, TRUE, TRUE, TRUE, 0x1F, WMEN_SECUR5),
+            MenuChild, MenuitemCheck(security[SEC_DEFAULTS], NULL, TRUE, TRUE, TRUE, 0x2F, WMEN_SECUR4),
           End,
           MenuChild, MenuBarLabel,
           MenuChild, data->MI_FFONT  = MenuitemCheck(tr(MSG_WR_FIXEDFONT),  NULL, TRUE, data->useFixedFont,  TRUE, 0, WMEN_FFONT),
@@ -1665,8 +1659,6 @@ OVERLOAD(OM_NEW)
         DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR3,    data->RA_SECURITY,       3, MUIM_Set,      MUIA_Radio_Active, 3);
         DoMethod(data->RA_SECURITY,   MUIM_Notify, MUIA_Radio_Active,      4,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR4, MUIA_Menuitem_Checked, TRUE);
         DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR4,    data->RA_SECURITY,       3, MUIM_Set,      MUIA_Radio_Active, 4);
-        DoMethod(data->RA_SECURITY,   MUIM_Notify, MUIA_Radio_Active,      5,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR5, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR5,    data->RA_SECURITY,       3, MUIM_Set,      MUIA_Radio_Active, 5);
 
         // set some default values for this newly created
         // write window

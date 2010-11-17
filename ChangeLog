@@ -8,6 +8,9 @@ $URL$
 2010-11-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ReadMailGroup.c: streamlined the double click hook a bit.
+  * misc: completely removed the support for anonymous remailers as suggested
+    in ticket #25. YAM should not be used to produce even more junk mails.
+    This closes #25.
 
 2010-11-16 Thore Böckelmann <tboeckel@gmx.de>
 
