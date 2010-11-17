@@ -957,17 +957,6 @@ static void Terminate(void)
   if(G->FI != NULL)
     DisposeModule(&G->FI);
 
-  if(G->ER != NULL)
-    DisposeModule(&G->ER);
-
-  D(DBF_STARTUP, "freeing %ld error messages...", G->ER_NumErr);
-  for(i = 0; i < G->ER_NumErr; i++)
-  {
-    free(G->ER_Message[i]);
-    G->ER_Message[i] = NULL;
-  }
-  G->ER_NumErr = 0;
-
   if(G->US != NULL)
     DisposeModule(&G->US);
 
@@ -1066,6 +1055,17 @@ static void Terminate(void)
 
   D(DBF_STARTUP, "freeing toolbar cache...");
   ToolbarCacheCleanup();
+
+  if(G->ER != NULL)
+    DisposeModule(&G->ER);
+
+  D(DBF_STARTUP, "freeing %ld error messages...", G->ER_NumErr);
+  for(i = 0; i < G->ER_NumErr; i++)
+  {
+    free(G->ER_Message[i]);
+    G->ER_Message[i] = NULL;
+  }
+  G->ER_NumErr = 0;
 
   D(DBF_STARTUP, "freeing config...");
   CO_ClearConfig(C);

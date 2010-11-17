@@ -11,6 +11,9 @@ $URL$
   * misc: completely removed the support for anonymous remailers as suggested
     in ticket #25. YAM should not be used to produce even more junk mails.
     This closes #25.
+  * YAM.c: postponed freeing of pending error messages a bit, since the shutdown
+    process might throw some more error messages which then would not be freed
+    correctly anymore.
 
 2010-11-16 Thore Böckelmann <tboeckel@gmx.de>
 
