@@ -122,6 +122,9 @@ struct MailServerNode *CloneMailServer(const struct MailServerNode *msn)
 
   if((clone = DuplicateNode(msn, sizeof(*msn))) != NULL)
   {
+    // the clone is not in use
+    CLEAR_FLAG(clone->flags, MSF_IN_USE);
+
     if(clone->type == MST_POP3)
     {
       // POP3 servers keep a list of downloaded mails
