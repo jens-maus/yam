@@ -193,6 +193,7 @@ void EA_Setup(int winnum, struct ABEntry *ab)
 
   LEAVE();
 }
+
 ///
 
 /*** Private functions (member list) ***/
@@ -407,6 +408,7 @@ void EA_SetDefaultAlias(struct ABEntry *ab)
 
   LEAVE();
 }
+
 ///
 
 /*** Buttons ***/
@@ -749,6 +751,7 @@ HOOKPROTONHNO(EA_CloseFunc, void, int *arg)
   LEAVE();
 }
 MakeStaticHook(EA_CloseHook, EA_CloseFunc);
+
 ///
 
 /*** GUI ***/
@@ -771,7 +774,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
     {
       case AET_USER:
       {
-        static const char *SecurityCycleEntries[4];
+        static const char *SecurityCycleEntries[5];
 
         SecurityCycleEntries[0] = tr(MSG_WR_SecNone);
         SecurityCycleEntries[1] = tr(MSG_WR_SecSign);
@@ -988,4 +991,5 @@ static struct EA_ClassData *EA_New(int winnum, int type)
   RETURN(data);
   return data;
 }
+
 ///
