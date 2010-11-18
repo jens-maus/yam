@@ -1258,7 +1258,7 @@ static double Pseries (double a, double x, int *error)
 //
 static double Qcontfrac (double a, double x, int *error)
 {
-  double result, D, C, e, f, term;
+  double result, DD, CC, e, f, term;
   const double eps = 2.0 * DBL_EPSILON;
   const double small = DBL_EPSILON * DBL_EPSILON * DBL_EPSILON * DBL_EPSILON;
   const int imax = 5000;
@@ -1268,21 +1268,21 @@ static double Qcontfrac (double a, double x, int *error)
   f = x - a + 1.0;
   if(fabs (f) < small)
     f = small;
-  C = f + 1.0 / small;
-  D = 1.0 / f;
-  result = D;
+  CC = f + 1.0 / small;
+  DD = 1.0 / f;
+  result = DD;
   for(i = 1; i < imax; ++i)
   {
     e = i * (a - i);
     f += 2.0;
-    D = f + e * D;
-    if(fabs (D) < small)
-      D = small;
-    D = 1.0 / D;
-    C = f + e / C;
-    if(fabs (C) < small)
-      C = small;
-    term = C * D;
+    DD = f + e * DD;
+    if(fabs (DD) < small)
+      DD = small;
+    DD = 1.0 / DD;
+    CC = f + e / CC;
+    if(fabs (CC) < small)
+      CC = small;
+    term = CC * DD;
     result *= term;
     if(fabs (term - 1.0) < eps)
       break;
