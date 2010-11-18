@@ -1102,7 +1102,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
       struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
 
       // now we use MatchNoCase() to find out if we should include that headerNode
-      // in out headerList or not
+      // in our headerList or not
       if(rmData->headerMode == HM_SHORTHEADER)
         dispheader = MatchNoCase(hdrNode->name, C->ShortHeaders);
       else
