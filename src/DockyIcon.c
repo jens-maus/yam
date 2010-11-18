@@ -260,17 +260,17 @@ void UpdateDockyIcon(void)
 // return the signal of the docky icon port
 ULONG DockyIconSignal(void)
 {
-  ULONG signal = 0;
+  ULONG sigMask = 0;
 
   ENTER();
 
   #if defined(__amigaos4__)
   if(G->AppLibPort != NULL)
-    signal = (1UL << G->AppLibPort->mp_SigBit);
+    sigMask = (1UL << G->AppLibPort->mp_SigBit);
   #endif
 
-  RETURN(signal);
-  return signal;
+  RETURN(sigMask);
+  return sigMask;
 }
 
 ///

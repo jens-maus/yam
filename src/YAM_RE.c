@@ -3591,23 +3591,23 @@ static void RE_SendMDN(const enum MDNMode mode,
             // our third MIME part
             if((fh = fopen(fullfile, "r")) != NULL)
             {
-              char *buf = NULL;
-              size_t buflen = 0;
+              char *line = NULL;
+              size_t linelen = 0;
               ssize_t curlen = 0;
 
               setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-              while((curlen = getline(&buf, &buflen, fh)) > 0)
+              while((curlen = getline(&line, &linelen, fh)) > 0)
               {
-                if(*buf == '\n' || *buf == '\r')
+                if(*line == '\n' || *line == '\r')
                   break;
                 else
-                  fwrite(buf, curlen, 1, tf3->FP);
+                  fwrite(line, curlen, 1, tf3->FP);
               }
 
               fclose(fh);
 
-              free(buf);
+              free(line);
             }
 
             FinishUnpack(fullfile);
@@ -3656,16 +3656,16 @@ static void RE_SendMDN(const enum MDNMode mode,
 
                 if((email = MA_ExamineMail(outfolder, FilePart(mfilePath), TRUE)) != NULL)
                 {
-                  struct Mail *mail;
+                  struct Mail *mdnMail;
 
-                  if((mail = AddMailToList(&email->Mail, outfolder)) != NULL)
+                  if((mdnMail = AddMailToList(&email->Mail, outfolder)) != NULL)
                   {
-                    setStatusToQueued(mail);
+                    setStatusToQueued(mdnMail);
 
                     // refresh the folder statistics before the transfer
                     DisplayStatistics(outfolder, TRUE);
 
-                    AddNewMailNode(mlist, mail);
+                    AddNewMailNode(mlist, mdnMail);
                   }
 
                   MA_FreeEMailStruct(email);
@@ -3675,8 +3675,6 @@ static void RE_SendMDN(const enum MDNMode mode,
                 // immediately we go and send it out
                 if(sendnow == TRUE && mlist->count != 0)
                 {
-                  struct MailServerNode *msn;
-
                   if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) != NULL)
                   {
                     if(hasServerInUse(msn) == FALSE)
@@ -3851,7 +3849,8 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
               for(i=0; i < email->NoSFrom; i++)
               {
                 struct Person *pe = &email->SFrom[i];
-                int peLen = strlen(pe->Address);
+
+                peLen = strlen(pe->Address);
 
                 if(domainLen > peLen ||
                    stricmp(&pe->Address[peLen-domainLen], p) != 0)
@@ -4074,7 +4073,6 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
 
           IterateList(headerList, curNode)
           {
-            char buf[SIZE_LINE];
             struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
             char *field = hdrNode->name;
             char *value = hdrNode->content;
@@ -4099,8 +4097,10 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
 
             if(msg != NULL)
             {
-              snprintf(buf, sizeof(buf), "%s %s", msg, value);
-              msgdesc = StrBufCat(msgdesc, buf);
+              char desc[SIZE_LINE];
+
+              snprintf(desc, sizeof(desc), "%s %s", msg, value);
+              msgdesc = StrBufCat(msgdesc, desc);
             }
           }
 

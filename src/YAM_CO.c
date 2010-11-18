@@ -1972,8 +1972,6 @@ void CO_Validate(struct Config *co, BOOL update)
   // finally update possibly open read windows
   if(updateReadWindows == TRUE || updateHeaderMode == TRUE || updateSenderInfo == TRUE || updateMenuShortcuts == TRUE)
   {
-    struct Node *curNode;
-
     IterateList(&G->readMailDataList, curNode)
     {
       struct ReadMailData *rmData = (struct ReadMailData *)curNode;

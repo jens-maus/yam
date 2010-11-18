@@ -3094,12 +3094,12 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
       const char *gs = G->Locale ? (const char *)G->Locale->loc_GroupSeparator : ",";
 
       // as we just split the size to another value, we redefine the KB/MB/GB values to base 10 variables
-      enum { KB = 1000, MB = 1000 * 1000, GB = 1000 * 1000 * 1000 };
+      enum { KiB = 1000, MiB = 1000 * 1000, GiB = 1000 * 1000 * 1000 };
 
-      if(size < KB)      snprintf(buf, buflen, "%d", (unsigned int)size);
-      else if(size < MB) snprintf(buf, buflen, "%d%s%03d", (unsigned int)size/KB, gs, (unsigned int)size%KB);
-      else if(size < GB) snprintf(buf, buflen, "%d%s%03d%s%03d", (unsigned int)size/MB, gs, (unsigned int)(size%MB)/KB, gs, (unsigned int)size%KB);
-      else               snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d", (unsigned int)size/GB, gs, (unsigned int)(size%GB)/MB, gs, (unsigned int)(size%MB)/KB, gs, (unsigned int)size%KB);
+      if(size < KiB)      snprintf(buf, buflen, "%d", (unsigned int)size);
+      else if(size < MiB) snprintf(buf, buflen, "%d%s%03d", (unsigned int)size/KB, gs, (unsigned int)size%KB);
+      else if(size < GiB) snprintf(buf, buflen, "%d%s%03d%s%03d", (unsigned int)size/MB, gs, (unsigned int)(size%MB)/KB, gs, (unsigned int)size%KB);
+      else                snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d", (unsigned int)size/GB, gs, (unsigned int)(size%GB)/MB, gs, (unsigned int)(size%MB)/KB, gs, (unsigned int)size%KB);
     }
     break;
   }
@@ -3843,15 +3843,15 @@ void FinishUnpack(const char *file)
 #if defined(__amigaos4__)
 HOOKPROTONH(ExamineDirMatchFunc, LONG, CONST_STRPTR matchString, const struct ExamineData *ed)
 {
-  LONG accept = TRUE;
+  LONG matches = TRUE;
 
   ENTER();
 
   if(matchString != NULL)
-    accept = MatchPatternNoCase(matchString, ed->Name);
+    matches = MatchPatternNoCase(matchString, ed->Name);
 
-  RETURN(accept);
-  return accept;
+  RETURN(matches);
+  return matches;
 }
 MakeHook(ExamineDirMatchHook, ExamineDirMatchFunc);
 #endif

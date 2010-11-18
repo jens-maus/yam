@@ -364,15 +364,15 @@ BOOL US_Login(const char *username, const char *password, const char *maildir, c
 HOOKPROTONHNONP(US_DelFunc, void)
 {
   Object *lv;
-  int index;
+  int userIndex;
   int m;
   struct User *user;
 
   ENTER();
 
   lv = G->US->GUI.LV_USERS;
-  index = xget(lv, MUIA_NList_Active);
-  DoMethod(lv, MUIM_NList_GetEntry, index, &user);
+  userIndex = xget(lv, MUIA_NList_Active);
+  DoMethod(lv, MUIM_NList_GetEntry, userIndex, &user);
 
   if(user->MailDir[0] != '\0')
   {
@@ -389,7 +389,7 @@ HOOKPROTONHNONP(US_DelFunc, void)
 
   if(m != 0)
   {
-    DoMethod(lv, MUIM_NList_Remove, index);
+    DoMethod(lv, MUIM_NList_Remove, userIndex);
     // reactivate the Add/Del buttons
     set(G->US->GUI.BT_ADD, MUIA_Disabled, FALSE);
     set(G->US->GUI.BT_DEL, MUIA_Disabled, xget(lv, MUIA_NList_Entries) == 0);

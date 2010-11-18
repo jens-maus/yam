@@ -897,9 +897,10 @@ DECLARE(Resolve) // ULONG flags
       else if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, MUIF_NONE))) /* entry found in address book */
       {
         struct MUI_NListtree_TreeNode *nexttn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
-        struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
 
         D(DBF_GUI, "Found match: %s", s);
+
+        entry = (struct ABEntry *)tn->tn_User;
 
         // Now we have to check if there exists another entry in the AB with this string
         if(nexttn == NULL || DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, nexttn, s, MUIV_NListtree_FindUserData_Flag_StartNode) == (ULONG)NULL)

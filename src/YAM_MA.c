@@ -1753,7 +1753,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
     if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
     {
       struct MailNode *mnode;
-      BOOL abort = FALSE;
+      BOOL abortPrint = FALSE;
 
       ForEachMailNode(mlist, mnode)
       {
@@ -1777,7 +1777,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
                 if(CopyFile("PRT:", 0, tf->Filename, 0) == FALSE)
                 {
                   MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
-                  abort = TRUE;
+                  abortPrint = TRUE;
                 }
               }
               else
@@ -1785,7 +1785,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
                 // export the mail but abort our iteration in
                 // case the user pressed 'Cancel' or the export failed
                 if(RE_Export(rmData, tf->Filename, "", "", 0, FALSE, FALSE, IntMimeTypeArray[MT_TX_PLAIN].ContentType) == FALSE)
-                  abort = TRUE;
+                  abortPrint = TRUE;
               }
 
               CloseTempFile(tf);
@@ -1797,7 +1797,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
           FreePrivateRMData(rmData);
         }
 
-        if(abort == TRUE)
+        if(abortPrint == TRUE)
           break;
       }
 
@@ -2242,7 +2242,7 @@ void MA_GetAddress(struct MailList *mlist)
   struct MailNode *mnode = FirstMailNode(mlist);
   struct Mail *mail = mnode->mail;
   struct Folder *folder = mail->Folder;
-  BOOL isSentMail = (folder != NULL) ? isSentMailFolder(folder) : FALSE;
+  BOOL isSentFolder = (folder != NULL) ? isSentMailFolder(folder) : FALSE;
   BOOL isMLFolder = (folder != NULL) ? folder->MLSupport : FALSE;
   struct ExtendedMail *email;
   struct Person *pe = NULL;
@@ -2251,9 +2251,9 @@ void MA_GetAddress(struct MailList *mlist)
 
   // check whether we want to create a single addressbook
   // entry or a list of addresses
-  if(mlist->count == 1 && !(isSentMail == TRUE && isMultiRCPTMail(mail)))
+  if(mlist->count == 1 && !(isSentFolder == TRUE && isMultiRCPTMail(mail)))
   {
-    if(isSentMail == TRUE)
+    if(isSentFolder == TRUE)
       pe = &mail->To;
     else
     {
@@ -2318,9 +2318,10 @@ void MA_GetAddress(struct MailList *mlist)
       ForEachMailNode(mlist, mnode)
       {
         char address[SIZE_LARGE];
-        struct Mail *mail = mnode->mail;
 
-        if(isSentMail == TRUE)
+        mail = mnode->mail;
+
+        if(isSentFolder == TRUE)
         {
           DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName), MUIV_List_Insert_Bottom);
 

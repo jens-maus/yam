@@ -507,8 +507,6 @@ static char *CreateVAR(struct MinList *stemList)
 
     if((var = AllocVecPooled(G->SharedMemPool, size)) != NULL)
     {
-      struct Node *curNode;
-
       var[0] = '\0';
 
       IterateList(stemList, curNode)
@@ -618,7 +616,7 @@ static BOOL CreateSTEM(struct MinList *stemList, struct rxs_command *rxc, LONG *
       if((countNode = malloc(sizeof(*countNode))) != NULL)
       {
         long *r;
-        long index = 0;
+        long stemIndex = 0;
         LONG **subarray = (LONG **)*resarray++;
 
         AddTail((struct List *)stemList, (struct Node *)countNode);
@@ -630,7 +628,7 @@ static BOOL CreateSTEM(struct MinList *stemList, struct rxs_command *rxc, LONG *
 
           if((stemNode = malloc(sizeof(*stemNode))) != NULL)
           {
-            snprintf(t, sizeof(resb)-(t-resb), ".%ld", index++);
+            snprintf(t, sizeof(resb)-(t-resb), ".%ld", stemIndex++);
             stemNode->name = strdup(resb);
 
             if(isNumber == TRUE)
@@ -653,7 +651,7 @@ static BOOL CreateSTEM(struct MinList *stemList, struct rxs_command *rxc, LONG *
         strlcpy(t, ".COUNT", sizeof(resb)-(t-resb));
         countNode->name = strdup(resb);
 
-        snprintf(longbuff, sizeof(longbuff), "%ld", index);
+        snprintf(longbuff, sizeof(longbuff), "%ld", stemIndex);
         countNode->value = strdup(longbuff);
       }
     }

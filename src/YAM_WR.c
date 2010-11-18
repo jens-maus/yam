@@ -277,7 +277,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
   {
     size_t len = strlen(s);
 
-    // there seems to be non "violating" characters in the string and
+    // there seem to be no "violating" characters in the string and
     // the resulting string will also be not > 78 chars in case we
     // have to encode a MIME parameter, so we go and output the source
     // string immediately
@@ -290,7 +290,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
       char *p = (char *)s;
       char *e = (char *)s;
       char *last_space = NULL;
-      size_t c = offset;
+      size_t l = offset;
 
       // start our search
       while(len > 0)
@@ -301,7 +301,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
         // check if we need a newline and
         // if so we go and write out the last
         // stuff including a newline.
-        if(c >= 75 && last_space != NULL)
+        if(l >= 75 && last_space != NULL)
         {
           fwrite(p, last_space-p, 1, fh);
 
@@ -309,16 +309,16 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
             fwrite("\n ", 2, 1, fh);
 
           p = last_space+1;
-          c = e-p;
+          l = e-p;
           last_space = NULL;
         }
 
-        c++;
+        l++;
         e++;
         len--;
       }
 
-      if(c > 0)
+      if(l > 0)
         fwrite(p, e-p, 1, fh);
     }
     else
@@ -1936,14 +1936,14 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
     IterateList(&G->writeMailDataList, curNode)
     {
-      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+      struct WriteMailData *lwmData = (struct WriteMailData *)curNode;
 
-      if(wmData->window != NULL && wmData->refMail == mail)
+      if(lwmData->window != NULL && lwmData->refMail == mail)
       {
-        DoMethod(wmData->window, MUIM_Window_ToFront);
+        DoMethod(lwmData->window, MUIM_Window_ToFront);
 
-        RETURN(wmData);
-        return wmData;
+        RETURN(lwmData);
+        return lwmData;
       }
     }
   }
@@ -2636,7 +2636,6 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               // reply to, so we go and add the 'mlistad' to our To: addresses
               while(ptr != NULL && *ptr != '\0')
               {
-                struct Person pe;
                 char *next;
 
                 if((next = MyStrChr(ptr, ',')) != NULL)

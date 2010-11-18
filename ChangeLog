@@ -8,6 +8,9 @@ $URL$
 2010-11-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_EA.c: fixed a "one too small" array size.
+  * misc: fixed lots of shadowing variable declarations. Unfortunately the
+    -Wshadow compiler option cannot be set for all target systems, because
+    the system includes already produce lots of warnings (at least for OS3).
 
 2010-11-17 Thore Böckelmann <tboeckel@gmx.de>
 

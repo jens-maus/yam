@@ -211,7 +211,7 @@ ifeq ($(OS), os4)
   # Compiler/Linker flags
   CRT      = newlib
   CPU      = -mcpu=powerpc -mstrict-align
-  WARN     += -Wdeclaration-after-statement -Wdisabled-optimization
+  WARN     += -Wdeclaration-after-statement -Wdisabled-optimization -Wshadow
   REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod \
              -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
   CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \

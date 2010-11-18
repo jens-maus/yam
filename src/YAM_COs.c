@@ -785,10 +785,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
             else if(stricmp(buf, "DeleteOnExit") == 0)           co->RemoveAtOnce = !(co->RemoveOnQuit = Txt2Bool(value));
             else if(strnicmp(buf, "Folder", 6) == 0 && oldfolders != NULL)
             {
-              static const int sortconv[4] = { -1, 1, 3, 5 };
-              int index = atoi(&buf[6]);
-              int type;
-
               if(ofo == NULL)
               {
                 ofo = CreateFolderList();
@@ -796,9 +792,10 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
               }
               if(ofo != NULL)
               {
+                int type;
                 struct Folder *folder;
 
-                switch(index)
+                switch(atoi(&buf[6]))
                 {
                   case 0:
                     type = FT_INCOMING;
@@ -822,6 +819,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
                 if((folder = FO_NewFolder(type, &value[4], p)) != NULL)
                 {
+                  static const int sortconv[4] = { -1, 1, 3, 5 };
+
                   folder->Sort[0] = sortconv[atoi(&value[2])];
                   AddNewFolderNode(ofo, folder);
                 }
@@ -955,21 +954,21 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
               if(msn != NULL)
               {
-                char *p = strchr(buf, '.')+1;
+                char *q = strchr(buf, '.')+1;
 
                 // now find out which subtype this smtp configuration is
-                if(stricmp(buf, "ID") == 0)                      msn->id = strtol(value, NULL, 16);
-                else if(stricmp(p, "Account") == 0)              strlcpy(msn->account, value, sizeof(msn->account));
-                else if(stricmp(p, "Server") == 0)               strlcpy(msn->hostname, value, sizeof(msn->hostname));
-                else if(stricmp(p, "Port") == 0)                 msn->port = atoi(value);
-                else if(stricmp(p, "Domain") == 0)               strlcpy(msn->domain, value, sizeof(msn->domain));
-                else if(stricmp(p, "Enabled") == 0)              Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_ACTIVE) : CLEAR_FLAG(msn->flags, MSF_ACTIVE);
-                else if(stricmp(p, "SecMethod") == 0)            SET_FLAG(msn->flags, SMTPSecMethod2MSF(atoi(value)));
-                else if(stricmp(p, "Allow8bit") == 0)            Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_ALLOW_8BIT) : CLEAR_FLAG(msn->flags, MSF_ALLOW_8BIT);
-                else if(stricmp(p, "SMTP-AUTH") == 0)            Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_AUTH) : CLEAR_FLAG(msn->flags, MSF_AUTH);
-                else if(stricmp(p, "AUTH-User") == 0)            strlcpy(msn->username, value, sizeof(msn->username));
-                else if(stricmp(p, "AUTH-Pass") == 0)            strlcpy(msn->password, Decrypt(value), sizeof(msn->password));
-                else if(stricmp(p, "AUTH-Method") == 0)          SET_FLAG(msn->flags, SMTPAuthMethod2MSF(atoi(value)));
+                if(stricmp(q, "ID") == 0)                        msn->id = strtol(value, NULL, 16);
+                else if(stricmp(q, "Account") == 0)              strlcpy(msn->account, value, sizeof(msn->account));
+                else if(stricmp(q, "Server") == 0)               strlcpy(msn->hostname, value, sizeof(msn->hostname));
+                else if(stricmp(q, "Port") == 0)                 msn->port = atoi(value);
+                else if(stricmp(q, "Domain") == 0)               strlcpy(msn->domain, value, sizeof(msn->domain));
+                else if(stricmp(q, "Enabled") == 0)              Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_ACTIVE) : CLEAR_FLAG(msn->flags, MSF_ACTIVE);
+                else if(stricmp(q, "SecMethod") == 0)            SET_FLAG(msn->flags, SMTPSecMethod2MSF(atoi(value)));
+                else if(stricmp(q, "Allow8bit") == 0)            Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_ALLOW_8BIT) : CLEAR_FLAG(msn->flags, MSF_ALLOW_8BIT);
+                else if(stricmp(q, "SMTP-AUTH") == 0)            Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_AUTH) : CLEAR_FLAG(msn->flags, MSF_AUTH);
+                else if(stricmp(q, "AUTH-User") == 0)            strlcpy(msn->username, value, sizeof(msn->username));
+                else if(stricmp(q, "AUTH-Pass") == 0)            strlcpy(msn->password, Decrypt(value), sizeof(msn->password));
+                else if(stricmp(q, "AUTH-Method") == 0)          SET_FLAG(msn->flags, SMTPAuthMethod2MSF(atoi(value)));
               }
               else
                 break;
@@ -997,18 +996,18 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
               if(msn != NULL)
               {
-                char *p = strchr(buf, '.')+1;
+                char *q = strchr(buf, '.')+1;
 
-                if(stricmp(p, "ID") == 0)                        msn->id = strtol(value, NULL, 16);
-                else if(stricmp(p, "Account") == 0)              strlcpy(msn->account, value, sizeof(msn->account));
-                else if(stricmp(p, "Server") == 0)               strlcpy(msn->hostname, value, sizeof(msn->hostname));
-                else if(stricmp(p, "Port") == 0)                 msn->port = atoi(value);
-                else if(stricmp(p, "Password") == 0)             strlcpy(msn->password, Decrypt(value), sizeof(msn->password));
-                else if(stricmp(p, "User") == 0)                 strlcpy(msn->username, value, sizeof(msn->username));
-                else if(stricmp(p, "Enabled") == 0)              Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_ACTIVE) : CLEAR_FLAG(msn->flags, MSF_ACTIVE);
-                else if(stricmp(p, "SSLMode") == 0)              SET_FLAG(msn->flags, POP3SecMethod2MSF(atoi(value)));
-                else if(stricmp(p, "UseAPOP") == 0)              Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_APOP) : CLEAR_FLAG(msn->flags, MSF_APOP);
-                else if(stricmp(p, "Delete") == 0)               Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_PURGEMESSGAES) : CLEAR_FLAG(msn->flags, MSF_PURGEMESSGAES);
+                if(stricmp(q, "ID") == 0)                        msn->id = strtol(value, NULL, 16);
+                else if(stricmp(q, "Account") == 0)              strlcpy(msn->account, value, sizeof(msn->account));
+                else if(stricmp(q, "Server") == 0)               strlcpy(msn->hostname, value, sizeof(msn->hostname));
+                else if(stricmp(q, "Port") == 0)                 msn->port = atoi(value);
+                else if(stricmp(q, "Password") == 0)             strlcpy(msn->password, Decrypt(value), sizeof(msn->password));
+                else if(stricmp(q, "User") == 0)                 strlcpy(msn->username, value, sizeof(msn->username));
+                else if(stricmp(q, "Enabled") == 0)              Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_ACTIVE) : CLEAR_FLAG(msn->flags, MSF_ACTIVE);
+                else if(stricmp(q, "SSLMode") == 0)              SET_FLAG(msn->flags, POP3SecMethod2MSF(atoi(value)));
+                else if(stricmp(q, "UseAPOP") == 0)              Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_APOP) : CLEAR_FLAG(msn->flags, MSF_APOP);
+                else if(stricmp(q, "Delete") == 0)               Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_PURGEMESSGAES) : CLEAR_FLAG(msn->flags, MSF_PURGEMESSGAES);
               }
               else
                 break;
@@ -1033,7 +1032,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(strnicmp(buf, "FI", 2) == 0 && isdigit(buf[2]) && isdigit(buf[3]) && strchr(buf, '.'))
           {
             int curFilterID = atoi(&buf[2]);
-            char *p = strchr(buf, '.')+1;
+            char *q = strchr(buf, '.')+1;
 
             if(curFilterID >= 0)
             {
@@ -1074,18 +1073,18 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
               }
 
               // now find out which subtype this filter has
-              if(stricmp(p, "Name") == 0)                        strlcpy(lastFilter->name, value, sizeof(lastFilter->name));
-              else if(stricmp(p, "Remote") == 0)                 lastFilter->remote = Txt2Bool(value);
-              else if(stricmp(p, "ApplyToNew") == 0)             lastFilter->applyToNew = Txt2Bool(value);
-              else if(stricmp(p, "ApplyToSent") == 0)            lastFilter->applyToSent = Txt2Bool(value);
-              else if(stricmp(p, "ApplyOnReq") == 0)             lastFilter->applyOnReq = Txt2Bool(value);
-              else if(stricmp(p, "Actions") == 0)                lastFilter->actions = atoi(value);
-              else if(stricmp(p, "BounceTo") == 0)               strlcpy(lastFilter->bounceTo, value, sizeof(lastFilter->bounceTo));
-              else if(stricmp(p, "ForwardTo") == 0)              strlcpy(lastFilter->forwardTo, value, sizeof(lastFilter->forwardTo));
-              else if(stricmp(p, "ReplyFile") == 0)              strlcpy(lastFilter->replyFile, value, sizeof(lastFilter->replyFile));
-              else if(stricmp(p, "ExecuteCmd") == 0)             strlcpy(lastFilter->executeCmd, value, sizeof(lastFilter->executeCmd));
-              else if(stricmp(p, "PlaySound") == 0)              strlcpy(lastFilter->playSound, value, sizeof(lastFilter->playSound));
-              else if(stricmp(p, "MoveTo") == 0)                 strlcpy(lastFilter->moveTo, value, sizeof(lastFilter->moveTo));
+              if(stricmp(q, "Name") == 0)                        strlcpy(lastFilter->name, value, sizeof(lastFilter->name));
+              else if(stricmp(q, "Remote") == 0)                 lastFilter->remote = Txt2Bool(value);
+              else if(stricmp(q, "ApplyToNew") == 0)             lastFilter->applyToNew = Txt2Bool(value);
+              else if(stricmp(q, "ApplyToSent") == 0)            lastFilter->applyToSent = Txt2Bool(value);
+              else if(stricmp(q, "ApplyOnReq") == 0)             lastFilter->applyOnReq = Txt2Bool(value);
+              else if(stricmp(q, "Actions") == 0)                lastFilter->actions = atoi(value);
+              else if(stricmp(q, "BounceTo") == 0)               strlcpy(lastFilter->bounceTo, value, sizeof(lastFilter->bounceTo));
+              else if(stricmp(q, "ForwardTo") == 0)              strlcpy(lastFilter->forwardTo, value, sizeof(lastFilter->forwardTo));
+              else if(stricmp(q, "ReplyFile") == 0)              strlcpy(lastFilter->replyFile, value, sizeof(lastFilter->replyFile));
+              else if(stricmp(q, "ExecuteCmd") == 0)             strlcpy(lastFilter->executeCmd, value, sizeof(lastFilter->executeCmd));
+              else if(stricmp(q, "PlaySound") == 0)              strlcpy(lastFilter->playSound, value, sizeof(lastFilter->playSound));
+              else if(stricmp(q, "MoveTo") == 0)                 strlcpy(lastFilter->moveTo, value, sizeof(lastFilter->moveTo));
               else
               {
                 struct RuleNode *rule;
@@ -1093,54 +1092,54 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 // if nothing of the above string matched than the FI string
                 // is probably a rule definition so we check it here
 
-                if(strnicmp(p, "Field", 5) == 0)
+                if(strnicmp(q, "Field", 5) == 0)
                 {
-                  int n = atoi(p+5);
+                  int n = atoi(q+5);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                     CreateNewRule(lastFilter, TRUE);
 
                   rule->searchMode = atoi(value);
                 }
-                else if(strnicmp(p, "SubField", 8) == 0)
+                else if(strnicmp(q, "SubField", 8) == 0)
                 {
-                  int n = atoi(p+8);
+                  int n = atoi(q+8);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                     CreateNewRule(lastFilter, TRUE);
 
                   rule->subSearchMode = atoi(value);
                 }
-                else if(strnicmp(p, "CustomField", 11) == 0)
+                else if(strnicmp(q, "CustomField", 11) == 0)
                 {
-                  int n = atoi(p+11);
+                  int n = atoi(q+11);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                     CreateNewRule(lastFilter, TRUE);
 
                   strlcpy(rule->customField, value, sizeof(rule->customField));
                 }
-                else if(strnicmp(p, "Comparison", 10) == 0)
+                else if(strnicmp(q, "Comparison", 10) == 0)
                 {
-                  int n = atoi(p+10);
+                  int n = atoi(q+10);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                     CreateNewRule(lastFilter, TRUE);
 
                   rule->comparison = atoi(value);
                 }
-                else if(strnicmp(p, "Match", 5) == 0)
+                else if(strnicmp(q, "Match", 5) == 0)
                 {
-                  int n = atoi(p+5);
+                  int n = atoi(q+5);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                     CreateNewRule(lastFilter, TRUE);
 
                   strlcpy(rule->matchPattern, value2, sizeof(rule->matchPattern));
                 }
-                else if(strnicmp(p, "CaseSens", 8) == 0)
+                else if(strnicmp(q, "CaseSens", 8) == 0)
                 {
-                  int n = atoi(p+8);
+                  int n = atoi(q+8);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                     CreateNewRule(lastFilter, TRUE);
@@ -1150,9 +1149,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                   else
                     CLEAR_FLAG(rule->flags, SEARCHF_CASE_SENSITIVE);
                 }
-                else if(strnicmp(p, "Substring", 9) == 0)
+                else if(strnicmp(q, "Substring", 9) == 0)
                 {
-                  int n = atoi(p+9);
+                  int n = atoi(q+9);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                     CreateNewRule(lastFilter, TRUE);
@@ -1162,9 +1161,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                   else
                     CLEAR_FLAG(rule->flags, SEARCHF_SUBSTRING);
                 }
-                else if(strnicmp(p, "DOSPattern", 10) == 0)
+                else if(strnicmp(q, "DOSPattern", 10) == 0)
                 {
-                  int n = atoi(p+10);
+                  int n = atoi(q+10);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
                     CreateNewRule(lastFilter, TRUE);
@@ -1174,9 +1173,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                   else
                     CLEAR_FLAG(rule->flags, SEARCHF_DOS_PATTERN);
                 }
-                else if(strnicmp(p, "Combine", 7) == 0 && atoi(value) > CB_NONE)
+                else if(strnicmp(q, "Combine", 7) == 0 && atoi(value) > CB_NONE)
                 {
-                  int n = atoi(p+7);
+                  int n = atoi(q+7);
 
                   // here we use n and not n-1 on purpose because the combine line
                   // refers always to the next one.
@@ -1330,7 +1329,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(strnicmp(buf, "MV", 2) == 0 && isdigit(buf[2]) && isdigit(buf[3]) && strchr(buf, '.'))
           {
             int curTypeID = atoi(&buf[2]);
-            char *p = strchr(buf, '.')+1;
+            char *q = strchr(buf, '.')+1;
 
             // we only get the correct mimetype node if the ID
             // is greater than zero, because zero is reserved for the default
@@ -1377,18 +1376,18 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
             // now we can fill the mimeType with data
             if(curTypeID > 0)
             {
-              if(!stricmp(p, "ContentType"))
+              if(!stricmp(q, "ContentType"))
                 strlcpy(lastType->ContentType, value, sizeof(lastType->ContentType));
-              else if(!stricmp(p, "Extension"))
+              else if(!stricmp(q, "Extension"))
                 strlcpy(lastType->Extension, value, sizeof(lastType->Extension));
-              else if(!stricmp(p, "Command"))
+              else if(!stricmp(q, "Command"))
                 strlcpy(lastType->Command, value, sizeof(lastType->Command));
-              else if(!stricmp(p, "Description"))
+              else if(!stricmp(q, "Description"))
                 strlcpy(lastType->Description, value, sizeof(lastType->Description));
             }
             else
             {
-              if(!stricmp(p, "Command"))
+              if(!stricmp(q, "Command"))
                 strlcpy(C->DefaultMimeViewer, value, sizeof(C->DefaultMimeViewer));
             }
           }
@@ -1507,45 +1506,45 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
               }
               else if(strnicmp(s, "SO_SNDBUF", 9) == 0)
               {
-                char *p = strchr(s, '=');
+                char *q = strchr(s, '=');
 
-                if(p != NULL)
-                  co->SocketOptions.SendBuffer = atoi(p+1);
+                if(q != NULL)
+                  co->SocketOptions.SendBuffer = atoi(q+1);
               }
               else if(strnicmp(s, "SO_RCVBUF", 9) == 0)
               {
-                char *p = strchr(s, '=');
+                char *q = strchr(s, '=');
 
-                if(p != NULL)
-                  co->SocketOptions.RecvBuffer = atoi(p+1);
+                if(q != NULL)
+                  co->SocketOptions.RecvBuffer = atoi(q+1);
               }
               else if(strnicmp(s, "SO_SNDLOWAT", 11) == 0)
               {
-                char *p = strchr(s, '=');
+                char *q = strchr(s, '=');
 
-                if(p != NULL)
-                  co->SocketOptions.SendLowAt = atoi(p+1);
+                if(q != NULL)
+                  co->SocketOptions.SendLowAt = atoi(q+1);
               }
               else if(strnicmp(s, "SO_RCVLOWAT", 11) == 0)
               {
-                char *p = strchr(s, '=');
+                char *q = strchr(s, '=');
 
-                if(p != NULL)
-                  co->SocketOptions.RecvLowAt = atoi(p+1);
+                if(q != NULL)
+                  co->SocketOptions.RecvLowAt = atoi(q+1);
               }
               else if(strnicmp(s, "SO_SNDTIMEO", 11) == 0)
               {
-                char *p = strchr(s, '=');
+                char *q = strchr(s, '=');
 
-                if(p != NULL)
-                  co->SocketOptions.SendTimeOut = atoi(p+1);
+                if(q != NULL)
+                  co->SocketOptions.SendTimeOut = atoi(q+1);
               }
               else if(strnicmp(s, "SO_RCVTIMEO", 11) == 0)
               {
-                char *p = strchr(s, '=');
+                char *q = strchr(s, '=');
 
-                if(p != NULL)
-                  co->SocketOptions.RecvTimeOut = atoi(p+1);
+                if(q != NULL)
+                  co->SocketOptions.RecvTimeOut = atoi(q+1);
               }
 
               // set the next start to our last search
@@ -1610,7 +1609,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 //  Fills form data of current section with data from configuration structure
 void CO_GetConfig(BOOL saveConfig)
 {
-  int i;
   struct CO_GUIData *gui = &G->CO->GUI;
 
   ENTER();
@@ -1741,8 +1739,7 @@ void CO_GetConfig(BOOL saveConfig)
       i = 0;
       do
       {
-        struct MailServerNode *msn = NULL;
-
+        msn = NULL;
         DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, i, &msn);
         if(msn == NULL || msn->type != MST_POP3)
           break;
@@ -1990,8 +1987,6 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
 
             case 1:
             {
-              char spamPath[SIZE_PATHFILE];
-
               // delete everything in the folder, the directory itself can be kept
               DeleteMailDir(CreateFilename(FolderName[FT_SPAM], spamPath, sizeof(spamPath)), FALSE);
               createSpamFolder = TRUE;
@@ -2171,6 +2166,8 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
 
     case cp_Lists:
     {
+      int i;
+
       CE->FolderCols = 1;
       for(i=1; i < FOCOLNUM; i++)
       {
@@ -2273,13 +2270,20 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
 
     case cp_AddressBook:
     {
+      int i;
+
       GetMUIString(CE->GalleryDir, gui->ST_GALLDIR, sizeof(CE->GalleryDir));
       GetMUIString(CE->MyPictureURL, gui->ST_PHOTOURL, sizeof(CE->MyPictureURL));
       GetMUIString(CE->NewAddrGroup, gui->ST_NEWGROUP, sizeof(CE->NewAddrGroup));
       GetMUIString(CE->ProxyServer, gui->ST_PROXY, sizeof(CE->ProxyServer));
       CE->AddToAddrbook     = GetMUICycle  (gui->CY_ATAB);
       CE->AddMyInfo         = GetMUICheck  (gui->CH_ADDINFO);
-      CE->AddrbookCols = 1; for (i = 1; i < ABCOLNUM; i++) if (GetMUICheck(gui->CH_ACOLS[i])) CE->AddrbookCols += (1<<i);
+      CE->AddrbookCols = 1;
+      for(i = 1; i < ABCOLNUM; i++)
+      {
+        if(GetMUICheck(gui->CH_ACOLS[i]))
+          CE->AddrbookCols += (1<<i);
+      }
     }
     break;
 
@@ -2431,7 +2435,7 @@ void CO_SetConfig(void)
       numPops = 0;
       IterateList(&CE->mailServerList, curNode)
       {
-        struct MailServerNode *msn = (struct MailServerNode *)curNode;
+        msn = (struct MailServerNode *)curNode;
 
         if(msn->type == MST_POP3)
         {

@@ -298,7 +298,7 @@ static BOOL ReadDBXMessageInfo(struct TransferContext *tc, FILE *fh, char *outFi
   for(i=0; i<num_of_idxs; i++)
   {
     unsigned int idx = body[0];
-    unsigned int addr = body[1] | (body[2] << 8) | (body[3] << 16);
+    unsigned int offset = body[1] | (body[2] << 8) | (body[3] << 16);
 
     // check the index value
     if((idx & 0x7f) > sizeof(entries)/sizeof(entries[0]))
@@ -310,9 +310,9 @@ static BOOL ReadDBXMessageInfo(struct TransferContext *tc, FILE *fh, char *outFi
     if(idx & 0x80)
     {
       // overwrite the body (and enforce little endian)
-      body[0] = addr & 0xff;
-      body[1] = (addr & 0xff00) >> 8;
-      body[2] = (addr & 0xff0000) >> 16;
+      body[0] = offset & 0xff;
+      body[1] = (offset & 0xff00) >> 8;
+      body[2] = (offset & 0xff0000) >> 16;
       body[3] = 0;
 
       // is direct value
@@ -320,7 +320,7 @@ static BOOL ReadDBXMessageInfo(struct TransferContext *tc, FILE *fh, char *outFi
     }
     else
     {
-      entries[idx] = data + addr;
+      entries[idx] = data + offset;
     }
 
     body += 4;
@@ -382,15 +382,15 @@ out:
   {
     if(preview == TRUE)
     {
-      LONG size;
+      LONG fsize;
       struct MailTransferNode *tnode;
 
-      ObtainFileInfo(outFileName, FI_SIZE, &size);
+      ObtainFileInfo(outFileName, FI_SIZE, &fsize);
 
       // if this is the preview run we go and
       // use the TR_AddMessageHeader method to
       // add the found mail to our mail list
-      if((tnode = AddMessageHeader(tc, mail_accu, size, msg_addr, FilePart(outFileName))) != NULL)
+      if((tnode = AddMessageHeader(tc, mail_accu, fsize, msg_addr, FilePart(outFileName))) != NULL)
       {
         SET_FLAG(tnode->mail->sflags, mailStatusFlags);
       }

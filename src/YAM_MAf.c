@@ -2120,7 +2120,6 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
   static struct Person pe;
   struct MinList headerList;
   struct Mail *mail;
-  char *p;
   char fullfile[SIZE_PATHFILE];
   BOOL dateFound = FALSE;
   FILE *fh;
@@ -2195,6 +2194,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
       if(stricmp(field, "from") == 0)
       {
+        char *p;
         foundFrom = TRUE;
 
         // find out if there are more than one From: address
@@ -2225,6 +2225,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       }
       else if(stricmp(field, "reply-to") == 0)
       {
+        char *p;
+
         foundReplyTo = TRUE;
 
         // find out if there are more than one ReplyTo: address
@@ -2273,6 +2275,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       {
         if(foundTo == FALSE)
         {
+          char *p;
+
           foundTo = TRUE;
 
           if((p = MyStrChr(value, ',')) != NULL)
@@ -2360,7 +2364,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       {
         if(getImportanceLevel(mail) == IMP_NORMAL)
         {
-          p = Trim(value);
+          char *p = Trim(value);
+
           if(stricmp(p, "high") == 0)
             setImportanceLevel(mail, IMP_HIGH);
           else if(stricmp(p, "low") == 0)
@@ -2371,7 +2376,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       {
         if(getImportanceLevel(mail) == IMP_NORMAL)
         {
-          p = Trim(value);
+          char *p = Trim(value);
+
           if(stricmp(p, "urgent") == 0)
             setImportanceLevel(mail, IMP_HIGH);
           else if(stricmp(p, "non-urgent") == 0)
@@ -2380,7 +2386,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       }
       else if(stricmp(field, "content-type") == 0)
       {
-        p = Trim(value);
+        char *p = Trim(value);
+
         if(strnicmp(p, "multipart", 9) == 0)
         {
           p += 10;
@@ -2420,6 +2427,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       {
         if(stricmp(field, "x-yam-options") == 0)
         {
+          char *p;
           enum Security sec;
 
           if(strstr(value, "delsent") != NULL)

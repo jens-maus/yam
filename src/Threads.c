@@ -861,7 +861,7 @@ APTR CurrentThread(void)
 // get the abort signal of the current thread, this is CTRL-C for the main thread
 LONG ThreadAbortSignal(void)
 {
-  ULONG signal;
+  ULONG sigBit;
   struct Process *me;
 
   ENTER();
@@ -870,17 +870,17 @@ LONG ThreadAbortSignal(void)
 
   if(me == G->mainThread)
   {
-    signal = SIGBREAKB_CTRL_C;
+    sigBit = SIGBREAKB_CTRL_C;
   }
   else
   {
     struct Thread *thread = (struct Thread *)me->pr_Task.tc_UserData;
 
-    signal = thread->abortSignal;
+    sigBit = thread->abortSignal;
   }
 
-  RETURN(signal);
-  return signal;
+  RETURN(sigBit);
+  return sigBit;
 }
 
 ///
@@ -888,7 +888,7 @@ LONG ThreadAbortSignal(void)
 // get the wakeup signal of the current thread, this is CTRL-E for the main thread
 LONG ThreadWakeupSignal(void)
 {
-  ULONG signal;
+  ULONG sigBit;
   struct Process *me;
 
   ENTER();
@@ -897,17 +897,17 @@ LONG ThreadWakeupSignal(void)
 
   if(me == G->mainThread)
   {
-    signal = SIGBREAKB_CTRL_E;
+    sigBit = SIGBREAKB_CTRL_E;
   }
   else
   {
     struct Thread *thread = (struct Thread *)me->pr_Task.tc_UserData;
 
-    signal = thread->wakeupSignal;
+    sigBit = thread->wakeupSignal;
   }
 
-  RETURN(signal);
-  return signal;
+  RETURN(sigBit);
+  return sigBit;
 }
 
 ///
@@ -915,7 +915,7 @@ LONG ThreadWakeupSignal(void)
 // get the timer signal of the current thread
 LONG ThreadTimerSignal(void)
 {
-  ULONG signal;
+  ULONG sigBit;
   struct Process *me;
 
   ENTER();
@@ -924,20 +924,20 @@ LONG ThreadTimerSignal(void)
 
   if(me == G->mainThread)
   {
-    signal = G->timerData.port->mp_SigBit;
+    sigBit = G->timerData.port->mp_SigBit;
   }
   else
   {
     struct Thread *thread = (struct Thread *)me->pr_Task.tc_UserData;
 
     if(thread->timerRequest != NULL)
-      signal = thread->timerPort->mp_SigBit;
+      sigBit = thread->timerPort->mp_SigBit;
     else
-      signal = -1;
+      sigBit = -1;
   }
 
-  RETURN(signal);
-  return signal;
+  RETURN(sigBit);
+  return sigBit;
 }
 
 ///

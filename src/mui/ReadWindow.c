@@ -1318,7 +1318,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
       if(IsFolderListEmpty(G->folders) == FALSE)
       {
         struct FolderNode *fnode;
-        BOOL abort;
+        BOOL abortJump;
         BOOL turnOver;
 
         // look for the current folder in the array
@@ -1328,9 +1328,9 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
             break;
         }
 
-        abort = FALSE;
+        abortJump = FALSE;
         turnOver = FALSE;
-        while(found == FALSE && abort == FALSE)
+        while(found == FALSE && abortJump == FALSE)
         {
           struct FolderNode *fnode2;
 
@@ -1361,7 +1361,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
                                                  tr(MSG_YesNoReq),
                                                  tr(MSG_RE_MoveNextFolderReq), fo->Name) == 0)
                   {
-                    abort = TRUE;
+                    abortJump = TRUE;
                     break;
                   }
 

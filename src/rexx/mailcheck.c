@@ -94,7 +94,6 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
         {
           struct MailServerNode *msn;
           struct DownloadResult dlResult;
-          int pop;
 
           optional->dlResult.downloaded = 0;
           optional->dlResult.onServer = 0;

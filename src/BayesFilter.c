@@ -1416,35 +1416,35 @@ static BOOL tokenAnalyzerClassifyMessage(const struct Tokenizer *t,
           {
             struct Token *token = &tokens[i];
             CONST_STRPTR word = (CONST_STRPTR)token->word;
-            struct Token *t;
+            struct Token *_t;
             double hamCount;
             double spamCount;
             double denom;
-            double prob;
+            double tokenProb;
             double n;
             double distance;
 
-            t = tokenizerGet(&G->spamFilter.goodTokens, word);
-            hamCount = (t != NULL) ? t->count : 0;
-            t = tokenizerGet(&G->spamFilter.badTokens, word);
-            spamCount = (t != NULL) ? t->count : 0;
+            _t = tokenizerGet(&G->spamFilter.goodTokens, word);
+            hamCount = (_t != NULL) ? _t->count : 0;
+            _t = tokenizerGet(&G->spamFilter.badTokens, word);
+            spamCount = (_t != NULL) ? _t->count : 0;
 
             denom = hamCount * nBad + spamCount * nGood;
             // avoid division by zero error
             if(denom == 0.0)
               denom = nBad + nGood;
 
-            prob = (spamCount * nGood) / denom;
+            tokenProb = (spamCount * nGood) / denom;
             n = hamCount + spamCount;
-            prob = (0.225 + n * prob) / (0.45 + n);
-            distance = fabs(prob - 0.5);
+            tokenProb = (0.225 + n * tokenProb) / (0.45 + n);
+            distance = fabs(tokenProb - 0.5);
 
             if(distance >= 0.1)
             {
-              D(DBF_SPAM, "probability for token '%s' is %.2f", word, prob);
+              D(DBF_SPAM, "probability for token '%s' is %.2f", word, tokenProb);
               goodClues++;
               token->distance = distance;
-              token->probability = prob;
+              token->probability = tokenProb;
             }
             else
             {

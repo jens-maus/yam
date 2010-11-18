@@ -111,7 +111,7 @@ struct UIDLhash *InitUIDLhash(const struct MailServerNode *msn)
       {
         // now read in the UIDL/MsgIDs line-by-line
         char *uidl = NULL;
-        size_t size = 0;
+        size_t uidlLen = 0;
         BOOL validFile = FALSE;
 
         D(DBF_UIDL, "opened UIDL database file '%s'", uidlPath);
@@ -126,14 +126,14 @@ struct UIDLhash *InitUIDLhash(const struct MailServerNode *msn)
         else
         {
           // new UIDL files must contain the usual header
-          if(GetLine(&uidl, &size, fh) >= 0 && strncmp(uidl, "UIDL", 4) == 0)
+          if(GetLine(&uidl, &uidlLen, fh) >= 0 && strncmp(uidl, "UIDL", 4) == 0)
             validFile = TRUE;
         }
 
         if(validFile == TRUE)
         {
           // add all read UIDLs to the hash marking them as OLD
-          while(GetLine(&uidl, &size, fh) >= 0)
+          while(GetLine(&uidl, &uidlLen, fh) >= 0)
             AddUIDLtoHash(uidlHash, uidl, UIDLF_OLD);
         }
         else

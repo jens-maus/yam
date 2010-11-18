@@ -1450,7 +1450,6 @@ BOOL StayInProg(void)
 
     if(saveMails == TRUE)
     {
-      struct Node *curNode;
       struct Node *nextNode;
 
       // put the mails of all still opened write windows on hold
@@ -1728,8 +1727,6 @@ static void InitAfterLogin(void)
 
           case 1:
           {
-            char spamPath[SIZE_PATHFILE];
-
             // delete everything in the folder, the directory itself can be kept
             DeleteMailDir(CreateFilename(FolderName[FT_SPAM], spamPath, sizeof(spamPath)), FALSE);
             createSpamFolder = TRUE;

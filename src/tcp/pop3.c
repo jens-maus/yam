@@ -440,13 +440,14 @@ static BOOL GetMessageList(struct TransferContext *tc)
       // finishing octet
       while(tc->connection->error == CONNECTERR_NO_ERROR && strncmp(tc->pop3Buffer, ".\r\n", 3) != 0)
       {
-        int index, size;
+        int serverIndex;
+        int size;
         struct Mail *newMail;
 
         // read the index and size of the first message
-        sscanf(tc->pop3Buffer, "%d %d", &index, &size);
+        sscanf(tc->pop3Buffer, "%d %d", &serverIndex, &size);
 
-        if(index > 0 && (newMail = calloc(1, sizeof(*newMail))) != NULL)
+        if(serverIndex > 0 && (newMail = calloc(1, sizeof(*newMail))) != NULL)
         {
           int mode;
           struct MailTransferNode *tnode;
@@ -490,7 +491,7 @@ static BOOL GetMessageList(struct TransferContext *tc)
           if((tnode = CreateMailTransferNode(NULL, tflags)) != NULL)
           {
             tnode->mail = newMail;
-            tnode->index = index;
+            tnode->index = serverIndex;
 
             AddMailTransferNode(tc->transferList, tnode);
           }

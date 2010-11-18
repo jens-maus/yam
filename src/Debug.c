@@ -477,16 +477,16 @@ void SetupDebug(void)
           }
           else if(strnicmp(s, "file:", 5) == 0)
           {
-            char *e;
-            char *t = s+5;
+            char *_e;
+            char *_t = s+5;
             char filename[256];
 
             // the user wants to output the debugging information
             // to a file instead
-            if((e = strpbrk(t, " ,;")) == NULL)
-              strlcpy(filename, t, sizeof(filename));
+            if((_e = strpbrk(_t, " ,;")) == NULL)
+              strlcpy(filename, _t, sizeof(filename));
             else
-              strlcpy(filename, t, e-t+1);
+              strlcpy(filename, _t, _e-_t+1);
 
             _DBPRINTF("FILE output enabled to: '%s'\n", filename);
           }

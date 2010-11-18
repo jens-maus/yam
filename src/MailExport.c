@@ -82,7 +82,7 @@ BOOL ExportMails(const char *fname, struct MailList *mlist, const ULONG flags)
 
       if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagClear(flags, EXPORTF_QUIET))) != NULL)
       {
-        BOOL abort = FALSE;
+        BOOL abortExport = FALSE;
         struct MailNode *mnode;
         ULONG totalSize = 0;
         int i;
@@ -114,7 +114,7 @@ BOOL ExportMails(const char *fname, struct MailList *mlist, const ULONG flags)
             else
             {
               // we end up in a low memory condition, let's exit
-              abort = TRUE;
+              abortExport = TRUE;
               break;
             }
           }
@@ -126,7 +126,7 @@ BOOL ExportMails(const char *fname, struct MailList *mlist, const ULONG flags)
 
         // if we have now something in our processing list,
         // lets go on
-        if(abort == FALSE && IsMailTransferListEmpty(&tc->transferList) == FALSE)
+        if(abortExport == FALSE && IsMailTransferListEmpty(&tc->transferList) == FALSE)
         {
           FILE *fh;
 

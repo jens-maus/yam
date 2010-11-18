@@ -70,12 +70,12 @@ void PrepareTimer(const enum Timer tid, const int seconds, const int micros)
 
     if(timer->isRunning == FALSE && timer->isPrepared == FALSE)
     {
-      struct TimeRequest *tr = timer->tr;
+      struct TimeRequest *timeReq = timer->tr;
 
       // issue a new timerequest
-      tr->Request.io_Command  = TR_ADDREQUEST;
-      tr->Time.Seconds        = seconds;
-      tr->Time.Microseconds   = micros;
+      timeReq->Request.io_Command  = TR_ADDREQUEST;
+      timeReq->Time.Seconds        = seconds;
+      timeReq->Time.Microseconds   = micros;
 
       // remember the remaining time
       timer->remainingTime.Seconds = seconds;
@@ -236,12 +236,12 @@ void ResumeTimer(const enum Timer tid)
 
   if(timer->isRunning == FALSE && timer->isPaused == TRUE)
   {
-    struct TimeRequest *tr = timer->tr;
+    struct TimeRequest *timeReq = timer->tr;
 
     // issue a new timerequest with the previously calculated remaining time
-    tr->Request.io_Command  = TR_ADDREQUEST;
-    tr->Time.Seconds = timer->remainingTime.Seconds;
-    tr->Time.Microseconds = timer->remainingTime.Microseconds;
+    timeReq->Request.io_Command  = TR_ADDREQUEST;
+    timeReq->Time.Seconds = timer->remainingTime.Seconds;
+    timeReq->Time.Microseconds = timer->remainingTime.Microseconds;
 
     #if defined(DEBUG)
     {
@@ -250,13 +250,13 @@ void ResumeTimer(const enum Timer tid)
 
       D(DBF_TIMER, "timer[%ld]: resumed @ %s to finish in %ld'%ld secs", tid,
                                                                            dateString,
-                                                                           tr->Time.Seconds,
-                                                                           tr->Time.Microseconds);
+                                                                           timeReq->Time.Seconds,
+                                                                           timeReq->Time.Microseconds);
     }
     #endif
 
     // fire the timer by doing a SendIO()
-    SendIO((struct IORequest *)tr);
+    SendIO((struct IORequest *)timeReq);
 
     // remember the new start time
     GetSysTime(TIMEVAL(&timer->startTime));
