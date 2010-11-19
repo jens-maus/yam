@@ -946,48 +946,41 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 //  Changes status of all new messages to unread
 static void MA_UpdateStatus(void)
 {
+  struct FolderNode *fnode;
+
   ENTER();
 
   LockFolderListShared(G->folders);
 
-  if(IsFolderListEmpty(G->folders) == FALSE)
+  ForEachFolderNode(G->folders, fnode)
   {
-    struct FolderNode *fnode;
+    struct Folder *folder = fnode->folder;
 
-    ForEachFolderNode(G->folders, fnode)
+    // handle all folders with a valid index, except the sent folder and folder groups
+    if(isGroupFolder(folder) == FALSE && isSentMailFolder(folder) == FALSE && folder->LoadedMode == LM_VALID)
     {
-      struct Folder *folder = fnode->folder;
+      BOOL updated = FALSE;
+      struct MailNode *mnode;
 
-      // handle all folders with a valid index, except the sent folder and folder groups
-      if(isGroupFolder(folder) == FALSE && isSentMailFolder(folder) == FALSE && folder->LoadedMode == LM_VALID)
+      LockMailListShared(folder->messages);
+
+      ForEachMailNode(folder->messages, mnode)
       {
-        BOOL updated = FALSE;
+        struct Mail *mail = mnode->mail;
 
-        LockMailListShared(folder->messages);
-
-        if(IsMailListEmpty(folder->messages) == FALSE)
+        if(hasStatusNew(mail))
         {
-          struct MailNode *mnode;
-
-          ForEachMailNode(folder->messages, mnode)
-          {
-            struct Mail *mail = mnode->mail;
-
-            if(hasStatusNew(mail))
-            {
-              setStatusToUnread(mail);
-              updated = TRUE;
-            }
-          }
+          setStatusToUnread(mail);
+          updated = TRUE;
         }
-
-        UnlockMailList(folder->messages);
-
-        // show the modified stats if we updated anything,
-        // but don't update the AppIcon yet
-        if(updated == TRUE)
-          DisplayStatistics(folder, FALSE);
       }
+
+      UnlockMailList(folder->messages);
+
+      // show the modified stats if we updated anything,
+      // but don't update the AppIcon yet
+      if(updated == TRUE)
+        DisplayStatistics(folder, FALSE);
     }
   }
 
@@ -1247,49 +1240,46 @@ struct Mail *FindThread(struct Mail *srcMail, BOOL nextThread, Object *window)
         // the other folders and search for further mails of the same threads.
         if(C->GlobalMailThreads == TRUE)
         {
+          int autoloadindex = -1;
+          struct FolderNode *fnode;
+
           // if we still haven't found the mail we have to scan the other folders aswell
           LockFolderListShared(G->folders);
 
-          if(IsFolderListEmpty(G->folders) == FALSE)
+          ForEachFolderNode(G->folders, fnode)
           {
-            int autoloadindex = -1;
-            struct FolderNode *fnode;
+            struct Folder *fo = fnode->folder;
 
-            ForEachFolderNode(G->folders, fnode)
+            // check if this folder isn't a group and that we haven't scanned
+            // it already.
+            if(isGroupFolder(fo) == FALSE && fo != srcMail->Folder)
             {
-              struct Folder *fo = fnode->folder;
-
-              // check if this folder isn't a group and that we haven't scanned
-              // it already.
-              if(isGroupFolder(fo) == FALSE && fo != srcMail->Folder)
+              if(fo->LoadedMode != LM_VALID)
               {
-                if(fo->LoadedMode != LM_VALID)
+                if(autoloadindex == -1)
                 {
-                  if(autoloadindex == -1)
-                  {
-                    // if we are going to ask for loading all folders we do it now
-                    if(MUI_Request(G->App, window, 0,
-                                   tr(MSG_MA_ConfirmReq),
-                                   tr(MSG_YesNoReq),
-                                   tr(MSG_RE_FOLLOWTHREAD)) != 0)
-                      autoloadindex = 1;
-                    else
-                      autoloadindex = 0;
-                  }
-
-                  // load the folder's index, if we are allowed to do that
-                  if(autoloadindex == 1)
-                    MA_GetIndex(fo);
+                  // if we are going to ask for loading all folders we do it now
+                  if(MUI_Request(G->App, window, 0,
+                                 tr(MSG_MA_ConfirmReq),
+                                 tr(MSG_YesNoReq),
+                                 tr(MSG_RE_FOLLOWTHREAD)) != 0)
+                    autoloadindex = 1;
+                  else
+                    autoloadindex = 0;
                 }
 
-                // check again for a valid index
-                if(fo->LoadedMode == LM_VALID)
-                  mail = FindThreadInFolder(srcMail, fo, nextThread);
+                // load the folder's index, if we are allowed to do that
+                if(autoloadindex == 1)
+                  MA_GetIndex(fo);
               }
 
-              if(mail != NULL)
-                break;
+              // check again for a valid index
+              if(fo->LoadedMode == LM_VALID)
+                mail = FindThreadInFolder(srcMail, fo, nextThread);
             }
+
+            if(mail != NULL)
+              break;
           }
 
           UnlockFolderList(G->folders);
@@ -2655,120 +2645,116 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
   struct DateStamp today;
   ULONG today_days;
   BOOL mailsDeleted = FALSE;
+  struct MailList *toBeDeletedList;
+  ULONG delFlags = (C->RemoveOnQuit == TRUE) ? DELF_AT_ONCE|DELF_QUIET : DELF_QUIET;
 
   ENTER();
 
   DateStampUTC(&today);
   today_days = today.ds_Days;
 
-  LockFolderListShared(G->folders);
-
-  if(IsFolderListEmpty(G->folders) == FALSE)
+  // we need a temporary "to be deleted" list of mails to avoid doubly locking a folder's mail list
+  if((toBeDeletedList = CreateMailList()) != NULL)
   {
-    struct MailList *toBeDeletedList;
-    ULONG delFlags = (C->RemoveOnQuit == TRUE) ? DELF_AT_ONCE|DELF_QUIET : DELF_QUIET;
+    ULONG f;
+    struct FolderNode *fnode;
 
-    // we need a temporary "to be deleted" list of mails to avoid doubly locking a folder's mail list
-    if((toBeDeletedList = CreateMailList()) != NULL)
+    BusyGaugeInt(tr(MSG_BusyDeletingOld), "", G->folders->count);
+
+    LockFolderListShared(G->folders);
+
+    f = 0;
+    ForEachFolderNode(G->folders, fnode)
     {
-      ULONG f;
-      struct FolderNode *fnode;
+      struct Folder *folder = fnode->folder;
 
-      BusyGaugeInt(tr(MSG_BusyDeletingOld), "", G->folders->count);
-
-      f = 0;
-      ForEachFolderNode(G->folders, fnode)
+      if(isGroupFolder(folder) == FALSE && folder->MaxAge > 0 && MA_GetIndex(folder) == TRUE)
       {
-        struct Folder *folder = fnode->folder;
+        struct MailNode *mnode;
 
-        if(isGroupFolder(folder) == FALSE && folder->MaxAge > 0 && MA_GetIndex(folder) == TRUE)
+        // calculate the maximum age for this folder
+        today.ds_Days = today_days - folder->MaxAge;
+
+        LockMailList(folder->messages);
+
+        // initialize the list of mails to be deleted
+        InitMailList(toBeDeletedList);
+
+        ForEachMailNode(folder->messages, mnode)
         {
-          struct MailNode *mnode;
+          struct Mail *mail = mnode->mail;
 
-          // calculate the maximum age for this folder
-          today.ds_Days = today_days - folder->MaxAge;
-
-          LockMailList(folder->messages);
-
-          // initialize the list of mails to be deleted
-          InitMailList(toBeDeletedList);
-
-          ForEachMailNode(folder->messages, mnode)
+          if(CompareDates(&today, &mail->Date) < 0)
           {
-            struct Mail *mail = mnode->mail;
+            BOOL deleteMail;
 
-            if(CompareDates(&today, &mail->Date) < 0)
+            // Delete any message from trash and spam folder automatically
+            // or if the message is read already (keep unread messages).
+            // "Marked" messages will never be deleted automatically.
+            if(isTrashFolder(folder) || isSpamFolder(folder))
             {
-              BOOL deleteMail;
-
-              // Delete any message from trash and spam folder automatically
-              // or if the message is read already (keep unread messages).
-              // "Marked" messages will never be deleted automatically.
-              if(isTrashFolder(folder) || isSpamFolder(folder))
-              {
-                // old mails in the trash and spam folders are deleted in any case
-                deleteMail = TRUE;
-              }
-              else if(!hasStatusNew(mail) && !hasStatusMarked(mail) && hasStatusRead(mail))
-              {
-                // delete old mails if they are read already, but respect marked mails
-                deleteMail = TRUE;
-              }
-              else if(folder->ExpireUnread == TRUE && !hasStatusMarked(mail))
-              {
-                // delete old mails if the folder's configuration allows us to do that, but
-                // respect marked mails
-                deleteMail = TRUE;
-              }
-              else
-              {
-                // keep the mail if it is either unread, marked or not yet old enough
-                deleteMail = FALSE;
-              }
-
-              // put the mail in the "to be deleted" list if it may be deleted
-              if(deleteMail == TRUE)
-                AddNewMailNode(toBeDeletedList, mail);
+              // old mails in the trash and spam folders are deleted in any case
+              deleteMail = TRUE;
             }
+            else if(!hasStatusNew(mail) && !hasStatusMarked(mail) && hasStatusRead(mail))
+            {
+              // delete old mails if they are read already, but respect marked mails
+              deleteMail = TRUE;
+            }
+            else if(folder->ExpireUnread == TRUE && !hasStatusMarked(mail))
+            {
+              // delete old mails if the folder's configuration allows us to do that, but
+              // respect marked mails
+              deleteMail = TRUE;
+            }
+            else
+            {
+              // keep the mail if it is either unread, marked or not yet old enough
+              deleteMail = FALSE;
+            }
+
+            // put the mail in the "to be deleted" list if it may be deleted
+            if(deleteMail == TRUE)
+              AddNewMailNode(toBeDeletedList, mail);
           }
-
-          UnlockMailList(folder->messages);
-
-          // no need to lock the "to be deleted" list as this is known in this function only
-          // iterate through the list "by foot" as we remove the nodes, ForEachMailNode() is
-          // not safe to call here!
-          while((mnode = TakeMailNode(toBeDeletedList)) != NULL)
-          {
-            // Finally delete the mail. Removing/freeing the mail from the folder's list of mails
-            // is in fact done by the MA_DeleteSingle() function itself.
-            MA_DeleteSingle(mnode->mail, delFlags);
-
-            // remember that we deleted at least one mail
-            mailsDeleted = TRUE;
-
-            // delete the mail node itself
-            DeleteMailNode(mnode);
-          }
-
-          DisplayStatistics(folder, FALSE);
         }
 
-        // if BusySet() returns FALSE, then the user aborted
-        if(BusySet(++f) == FALSE)
+        UnlockMailList(folder->messages);
+
+        // no need to lock the "to be deleted" list as this is known in this function only
+        // iterate through the list "by foot" as we remove the nodes, ForEachMailNode() is
+        // not safe to call here!
+        while((mnode = TakeMailNode(toBeDeletedList)) != NULL)
         {
-          // abort the loop
-          break;
+          // Finally delete the mail. Removing/freeing the mail from the folder's list of mails
+          // is in fact done by the MA_DeleteSingle() function itself.
+          MA_DeleteSingle(mnode->mail, delFlags);
+
+          // remember that we deleted at least one mail
+          mailsDeleted = TRUE;
+
+          // delete the mail node itself
+          DeleteMailNode(mnode);
         }
+
+        DisplayStatistics(folder, FALSE);
       }
 
-      // delete the "to be deleted" list
-      DeleteMailList(toBeDeletedList);
+      // if BusySet() returns FALSE, then the user aborted
+      if(BusySet(++f) == FALSE)
+      {
+        // abort the loop
+        break;
+      }
     }
 
-    BusyEnd();
+    UnlockFolderList(G->folders);
+
+    // delete the "to be deleted" list
+    DeleteMailList(toBeDeletedList);
   }
 
-  UnlockFolderList(G->folders);
+  BusyEnd();
 
   // MA_DeleteSingle() does not update the trash folder treeitem if something was deleted from
   // another folder, because it was advised to be quiet. So we must refresh the trash folder

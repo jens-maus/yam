@@ -239,7 +239,7 @@ void MoveFolderNode(struct FolderList *flist, struct FolderNode *fnode, struct F
 }
 
 ///
-/// TakeFolderNode()
+/// TakeFolderNode
 struct FolderNode *TakeFolderNode(struct FolderList *flist)
 {
   struct FolderNode *fnode = NULL;
@@ -265,7 +265,7 @@ struct FolderNode *TakeFolderNode(struct FolderList *flist)
 #if defined(DEBUG)
 static LONG folderLocks = 0;
 
-/// LockFolderList()
+/// LockFolderList
 void LockFolderList(const struct FolderList *flist)
 {
   ENTER();
@@ -283,7 +283,7 @@ void LockFolderList(const struct FolderList *flist)
 }
 
 ///
-/// LockFolderListShared()
+/// LockFolderListShared
 void LockFolderListShared(const struct FolderList *flist)
 {
   ENTER();
@@ -301,7 +301,7 @@ void LockFolderListShared(const struct FolderList *flist)
 }
 
 ///
-/// UnlockFolderList()
+/// UnlockFolderList
 void UnlockFolderList(const struct FolderList *flist)
 {
   ENTER();

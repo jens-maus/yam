@@ -972,17 +972,16 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing folders...");
   if(G->folders != NULL)
   {
-    LockFolderList(G->folders);
-    if(IsFolderListEmpty(G->folders) == FALSE)
-    {
-      struct FolderNode *fnode;
+    struct FolderNode *fnode;
 
-      ForEachFolderNode(G->folders, fnode)
-      {
-        FO_FreeFolder(fnode->folder);
-        fnode->folder = NULL;
-      }
+    LockFolderList(G->folders);
+
+    ForEachFolderNode(G->folders, fnode)
+    {
+      FO_FreeFolder(fnode->folder);
+      fnode->folder = NULL;
     }
+
     UnlockFolderList(G->folders);
     DeleteFolderList(G->folders);
   }
@@ -1654,7 +1653,7 @@ static void InitAfterLogin(void)
   SplashProgress(tr(MSG_LoadingFolders), 50);
 
   newfolders = FALSE;
-  if(FO_LoadTree() == FALSE && oldfolders != NULL && IsFolderListEmpty(oldfolders) == FALSE)
+  if(FO_LoadTree() == FALSE && oldfolders != NULL)
   {
     // add all YAM 1.x style folders
     ForEachFolderNode(oldfolders, fnode)
@@ -1668,7 +1667,7 @@ static void InitAfterLogin(void)
   }
 
   // free any YAM 1.x style folder
-  if(oldfolders != NULL && IsFolderListEmpty(oldfolders) == FALSE)
+  if(oldfolders != NULL)
   {
     ForEachFolderNode(oldfolders, fnode)
     {
@@ -2061,19 +2060,16 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
 
   if((fo = FO_GetFolderByType(FT_OUTGOING, NULL)) != NULL)
   {
+    struct MailNode *mnode;
+
     LockMailListShared(fo->messages);
 
-    if(IsMailListEmpty(fo->messages) == FALSE)
+    ForEachMailNode(fo->messages, mnode)
     {
-      struct MailNode *mnode;
-
-      ForEachMailNode(fo->messages, mnode)
+      if(!hasStatusHold(mnode->mail) && !hasStatusError(mnode->mail))
       {
-        if(!hasStatusHold(mnode->mail) && !hasStatusError(mnode->mail))
-        {
-          sendableMail = TRUE;
-          break;
-        }
+        sendableMail = TRUE;
+        break;
       }
     }
 

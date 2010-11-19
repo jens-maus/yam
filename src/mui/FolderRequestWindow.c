@@ -164,6 +164,8 @@ OVERLOAD(OM_NEW)
     TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
+    struct FolderNode *fnode;
+    ULONG pos;
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
@@ -172,26 +174,21 @@ OVERLOAD(OM_NEW)
 
     LockFolderListShared(G->folders);
 
-    if(IsFolderListEmpty(G->folders) == FALSE)
+    pos = 0;
+    ForEachFolderNode(G->folders, fnode)
     {
-      struct FolderNode *fnode;
-      ULONG pos = 0;
-
-      ForEachFolderNode(G->folders, fnode)
+      if(!isGroupFolder(fnode->folder))
       {
-        if(!isGroupFolder(fnode->folder))
+        // check if the folder is to be excluded
+        if(fnode->folder != excludeFolder)
         {
-          // check if the folder is to be excluded
-          if(fnode->folder != excludeFolder)
-          {
-            DoMethod(listObj, MUIM_List_InsertSingle, fnode->folder, MUIV_List_Insert_Bottom);
-            // mark the previously selected folder
-            if(fnode->folder == prevFolder)
-              set(listObj, MUIA_List_Active, pos);
-          }
+          DoMethod(listObj, MUIM_List_InsertSingle, fnode->folder, MUIV_List_Insert_Bottom);
+          // mark the previously selected folder
+          if(fnode->folder == prevFolder)
+            set(listObj, MUIA_List_Active, pos);
         }
-        pos++;
       }
+      pos++;
     }
 
     UnlockFolderList(G->folders);

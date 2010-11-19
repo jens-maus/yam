@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-11-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: eliminated lots of empty folder list checks. This is done implicitly
+    by the ForEachFolderNode() macro.
+
 2010-11-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_EA.c: fixed a "one too small" array size.

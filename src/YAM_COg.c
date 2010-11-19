@@ -135,6 +135,8 @@ enum VarPopMode
 HOOKPROTONH(PO_InitFolderList, BOOL, Object *pop, Object *str)
 {
   char *s;
+  struct FolderNode *fnode;
+  ULONG i;
 
   ENTER();
 
@@ -145,29 +147,24 @@ HOOKPROTONH(PO_InitFolderList, BOOL, Object *pop, Object *str)
 
   LockFolderListShared(G->folders);
 
-  if(IsFolderListEmpty(G->folders) == FALSE)
+  i = 0;
+  ForEachFolderNode(G->folders, fnode)
   {
-    struct FolderNode *fnode;
-    ULONG i = 0;
+    struct Folder *folder = fnode->folder;
 
-    ForEachFolderNode(G->folders, fnode)
+    if(isGroupFolder(folder) == FALSE)
     {
-      struct Folder *folder = fnode->folder;
+      DoMethod(pop, MUIM_List_InsertSingle, folder->Name, MUIV_List_Insert_Bottom);
 
-      if(isGroupFolder(folder) == FALSE)
+      // now we check whether we make that item active or not.
+      if(s != NULL && stricmp(folder->Name, s) == 0)
       {
-        DoMethod(pop, MUIM_List_InsertSingle, folder->Name, MUIV_List_Insert_Bottom);
-
-        // now we check whether we make that item active or not.
-        if(s != NULL && stricmp(folder->Name, s) == 0)
-        {
-          set(pop, MUIA_List_Active, i);
-          s = NULL;
-        }
+        set(pop, MUIA_List_Active, i);
+        s = NULL;
       }
-
-      i++;
     }
+
+    i++;
   }
 
   UnlockFolderList(G->folders);

@@ -516,7 +516,7 @@ static enum FastSearch FI_IsFastSearch(const char *field)
 }
 
 ///
-// AllocSearchPatternNode
+/// AllocSearchPatternNode
 static struct SearchPatternNode *AllocSearchPatternNode(const char *pattern, const int flags)
 {
   struct SearchPatternNode *spn;
@@ -1240,25 +1240,21 @@ HOOKPROTONHNONP(FI_Open, void)
     if((folder = FO_GetCurrentFolder()) != NULL)
     {
       int apos = 0;
+      struct FolderNode *fnode;
+      int j = 0;
 
       LockFolderListShared(G->folders);
 
-      if(IsFolderListEmpty(G->folders) == FALSE)
+      ForEachFolderNode(G->folders, fnode)
       {
-        struct FolderNode *fnode;
-        int j = 0;
-
-        ForEachFolderNode(G->folders, fnode)
+        if(isGroupFolder(fnode->folder) == FALSE)
         {
-          if(isGroupFolder(fnode->folder) == FALSE)
-          {
-            DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, fnode->folder->Name, MUIV_List_Insert_Bottom);
+          DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, fnode->folder->Name, MUIV_List_Insert_Bottom);
 
-            if(fnode->folder == folder)
-              apos = j;
+          if(fnode->folder == folder)
+            apos = j;
 
-            j++;
-          }
+          j++;
         }
       }
 

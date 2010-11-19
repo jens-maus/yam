@@ -231,24 +231,20 @@ static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(const struct Folder*,
 {
   int i = 0;
   struct Folder *folder = NULL;
+  struct FolderNode *fnode;
 
   ENTER();
 
   LockFolderListShared(G->folders);
 
-  if(IsFolderListEmpty(G->folders) == FALSE)
+  ForEachFolderNode(G->folders, fnode)
   {
-    struct FolderNode *fnode;
-
-    ForEachFolderNode(G->folders, fnode)
+    if(cmpf(fnode->folder, attr) == TRUE)
     {
-      if(cmpf(fnode->folder, attr) == TRUE)
-      {
-        folder = fnode->folder;
-        break;
-      }
-      i++;
+      folder = fnode->folder;
+      break;
     }
+    i++;
   }
 
   UnlockFolderList(G->folders);
@@ -302,28 +298,24 @@ struct Folder *FO_GetFolderByPath(const char *path, int *pos)
 int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
 {
   int pos = -1;
+  struct FolderNode *fnode;
+  int p = 0;
 
   ENTER();
 
-  if(IsFolderListEmpty(G->folders) == FALSE)
+  ForEachFolderNode(G->folders, fnode)
   {
-    struct FolderNode *fnode;
-    int p = 0;
-
-    ForEachFolderNode(G->folders, fnode)
+    if(fnode->folder == findfo)
     {
-      if(fnode->folder == findfo)
-      {
-        // success
-        pos = p;
-        break;
-      }
+      // success
+      pos = p;
+      break;
+    }
 
-      if(withGroups == TRUE || isGroupFolder(fnode->folder) == FALSE)
-      {
-        // count all folders, or even groups if allowed
-        p++;
-      }
+    if(withGroups == TRUE || isGroupFolder(fnode->folder) == FALSE)
+    {
+      // count all folders, or even groups if allowed
+      p++;
     }
   }
 
@@ -570,18 +562,15 @@ BOOL FO_FreeFolder(struct Folder *folder)
 
     if(!isGroupFolder(folder))
     {
+      struct MailNode *mnode;
+
       // free all the mail pointers in the list
       LockMailListShared(folder->messages);
 
-      if(IsMailListEmpty(folder->messages) == FALSE)
+      ForEachMailNode(folder->messages, mnode)
       {
-        struct MailNode *mnode;
-
-        ForEachMailNode(folder->messages, mnode)
-        {
-          free(mnode->mail);
-          mnode->mail = NULL;
-        }
+        free(mnode->mail);
+        mnode->mail = NULL;
       }
 
       UnlockMailList(folder->messages);
@@ -1257,6 +1246,8 @@ void FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw)
 static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 {
   BOOL success = TRUE;
+  struct MailNode *mnode;
+  ULONG i;
 
   ENTER();
 
@@ -1264,31 +1255,26 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 
   LockMailListShared(fo->messages);
 
-  if(IsMailListEmpty(fo->messages) == FALSE)
+  i = 0;
+  ForEachMailNode(fo->messages, mnode)
   {
-    struct MailNode *mnode;
-    ULONG i = 0;
+    struct Mail *mail = mnode->mail;
+    char srcbuf[SIZE_PATHFILE];
+    char dstbuf[SIZE_PATHFILE];
 
-    ForEachMailNode(fo->messages, mnode)
+    if(BusySet(++i) == FALSE)
     {
-      struct Mail *mail = mnode->mail;
-      char srcbuf[SIZE_PATHFILE];
-      char dstbuf[SIZE_PATHFILE];
-
-      if(BusySet(++i) == FALSE)
-      {
-        success = FALSE;
-        break;
-      }
-
-      GetMailFile(dstbuf, sizeof(dstbuf), fo, mail);
-      GetMailFile(srcbuf, sizeof(srcbuf), oldfo, mail);
-
-      if(MoveFile(srcbuf, dstbuf) == TRUE)
-        RepackMailFile(mail, fo->Mode, fo->Password);
-      else
-        success = FALSE;
+      success = FALSE;
+      break;
     }
+
+    GetMailFile(dstbuf, sizeof(dstbuf), fo, mail);
+    GetMailFile(srcbuf, sizeof(srcbuf), oldfo, mail);
+
+    if(MoveFile(srcbuf, dstbuf) == TRUE)
+      RepackMailFile(mail, fo->Mode, fo->Password);
+    else
+      success = FALSE;
   }
 
   UnlockMailList(fo->messages);
@@ -1966,20 +1952,18 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
         if(folder.Mode != oldmode)
         {
+          struct MailNode *mnode;
+          ULONG i;
+
           BusyGauge(tr(MSG_BusyUncompressingFO), "", folder.Total);
 
           LockMailListShared(folder.messages);
 
-          if(IsMailListEmpty(folder.messages) == FALSE)
+          i = 0;
+          ForEachMailNode(folder.messages, mnode)
           {
-            struct MailNode *mnode;
-            ULONG i = 0;
-
-            ForEachMailNode(folder.messages, mnode)
-            {
-              BusySet(++i);
-              RepackMailFile(mnode->mail, folder.Mode, folder.Password);
-            }
+            BusySet(++i);
+            RepackMailFile(mnode->mail, folder.Mode, folder.Password);
           }
 
           UnlockMailList(folder.messages);
@@ -2239,11 +2223,11 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
     return;
   }
 
+  LockMailListShared(folder->messages);
+
   mnode = FirstMailNode(folder->messages);
   toPattern = mnode->mail->To.Address;
   toAddress = mnode->mail->To.Address;
-
-  LockMailListShared(folder->messages);
 
   i = 0;
   success = TRUE;

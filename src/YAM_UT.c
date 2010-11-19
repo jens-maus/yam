@@ -3341,6 +3341,8 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
 //  Removes all messages from a folder
 void ClearFolderMails(struct Folder *folder, BOOL resetstats)
 {
+  struct MailNode *mnode;
+
   ENTER();
 
   ASSERT(folder != NULL);
@@ -3350,36 +3352,31 @@ void ClearFolderMails(struct Folder *folder, BOOL resetstats)
 
   LockMailList(folder->messages);
 
-  if(IsMailListEmpty(folder->messages) == FALSE)
+  while((mnode = TakeMailNode(folder->messages)) != NULL)
   {
-    struct MailNode *mnode;
+    struct Mail *mail = mnode->mail;
+    struct Node *curNode;
 
-    while((mnode = (struct MailNode *)RemHead((struct List *)&folder->messages->list)) != NULL)
+    // Now we check if there is any read window with that very same
+    // mail currently open and if so we have to clean it.
+    curNode = GetHead((struct List *)&G->readMailDataList);
+    while(curNode != NULL)
     {
-      struct Mail *mail = mnode->mail;
-      struct Node *curNode;
+      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+      struct Node *nextNode = GetSucc(curNode);
 
-      // Now we check if there is any read window with that very same
-      // mail currently open and if so we have to clean it.
-      curNode = GetHead((struct List *)&G->readMailDataList);
-      while(curNode != NULL)
-      {
-        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-        struct Node *nextNode = GetSucc(curNode);
+      if(rmData->mail == mail)
+        CleanupReadMailData(rmData, TRUE);
 
-        if(rmData->mail == mail)
-          CleanupReadMailData(rmData, TRUE);
-
-        curNode = nextNode;
-      }
-
-      DeleteMailNode(mnode);
-      // free the mail pointer
-      free(mail);
+      curNode = nextNode;
     }
 
-    D(DBF_FOLDER, "cleared mail list of folder '%s'", folder->Name);
+    DeleteMailNode(mnode);
+    // free the mail pointer
+    free(mail);
   }
+
+  D(DBF_FOLDER, "cleared mail list of folder '%s'", folder->Name);
 
   // reset the list of mails
   InitMailList(folder->messages);

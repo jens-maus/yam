@@ -445,7 +445,7 @@ struct MailNode *FindMailInList(const struct MailList *mlist, const struct Mail 
 }
 
 ///
-/// TakeMailNode()
+/// TakeMailNode
 struct MailNode *TakeMailNode(struct MailList *mlist)
 {
   struct MailNode *mnode = NULL;
@@ -471,7 +471,7 @@ struct MailNode *TakeMailNode(struct MailList *mlist)
 #if defined(DEBUG)
 static LONG mailLocks = 0;
 
-/// LockMailList()
+/// LockMailList
 void LockMailList(const struct MailList *mlist)
 {
   ENTER();
@@ -489,7 +489,7 @@ void LockMailList(const struct MailList *mlist)
 }
 
 ///
-/// LockMailListShared()
+/// LockMailListShared
 void LockMailListShared(const struct MailList *mlist)
 {
   ENTER();
@@ -507,7 +507,7 @@ void LockMailListShared(const struct MailList *mlist)
 }
 
 ///
-/// UnlockMailList()
+/// UnlockMailList
 void UnlockMailList(const struct MailList *mlist)
 {
   ENTER();

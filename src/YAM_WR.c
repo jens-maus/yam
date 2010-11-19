@@ -2488,49 +2488,46 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           // we have to check all other folders first.
           if(isIncomingFolder(folder))
           {
+            struct FolderNode *fnode;
+
             LockFolderListShared(G->folders);
 
             // walk through all our folders
             // and check if it matches a pattern
-            if(IsFolderListEmpty(G->folders) == FALSE)
+            ForEachFolderNode(G->folders, fnode)
             {
-              struct FolderNode *fnode;
-
-              ForEachFolderNode(G->folders, fnode)
+              if(fnode->folder != NULL && fnode->folder->MLSupport == TRUE && fnode->folder->MLPattern[0] != '\0')
               {
-                if(fnode->folder != NULL && fnode->folder->MLSupport == TRUE && fnode->folder->MLPattern[0] != '\0')
-                {
-                  char *pattern = fnode->folder->MLPattern;
+                char *pattern = fnode->folder->MLPattern;
 
-                  if(MatchNoCase(mail->To.Address, pattern) == FALSE &&
-                     MatchNoCase(mail->To.RealName, pattern) == FALSE)
+                if(MatchNoCase(mail->To.Address, pattern) == FALSE &&
+                   MatchNoCase(mail->To.RealName, pattern) == FALSE)
+                {
+                  for(k=0; k < email->NoSTo; k++)
                   {
-                    for(k=0; k < email->NoSTo; k++)
+                    if(MatchNoCase(email->STo[k].Address, pattern) ||
+                       MatchNoCase(email->STo[k].RealName, pattern))
                     {
-                      if(MatchNoCase(email->STo[k].Address, pattern) ||
-                         MatchNoCase(email->STo[k].RealName, pattern))
-                      {
-                        foundMLFolder = TRUE;
-                        break;
-                      }
+                      foundMLFolder = TRUE;
+                      break;
                     }
                   }
-                  else
-                    foundMLFolder = TRUE;
+                }
+                else
+                  foundMLFolder = TRUE;
 
-                  if(foundMLFolder == TRUE)
-                  {
-                    mlistad = fnode->folder->MLAddress[0] != '\0' ? fnode->folder->MLAddress : NULL;
-                    folder = fnode->folder;
+                if(foundMLFolder == TRUE)
+                {
+                  mlistad = fnode->folder->MLAddress[0] != '\0' ? fnode->folder->MLAddress : NULL;
+                  folder = fnode->folder;
 
-                    if(folder->MLFromAddress[0] != '\0')
-                      rfrom  = folder->MLFromAddress;
+                  if(folder->MLFromAddress[0] != '\0')
+                    rfrom  = folder->MLFromAddress;
 
-                    if(folder->MLReplyToAddress[0] != '\0')
-                      rrepto = folder->MLReplyToAddress;
+                  if(folder->MLReplyToAddress[0] != '\0')
+                    rrepto = folder->MLReplyToAddress;
 
-                    break;
-                  }
+                  break;
                 }
               }
             }

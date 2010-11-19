@@ -1839,42 +1839,39 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
           // reset spam state of all mails
           if(mask & (1 << 1))
           {
+            struct FolderNode *fnode;
+
             D(DBF_CONFIG, "resetting spam state of all mails");
 
             LockFolderListShared(G->folders);
 
-            if(IsFolderListEmpty(G->folders) == FALSE)
+            ForEachFolderNode(G->folders, fnode)
             {
-              struct FolderNode *fnode;
+              struct Folder *folder = fnode->folder;
 
-              ForEachFolderNode(G->folders, fnode)
+              if(!isGroupFolder(folder))
               {
-                struct Folder *folder = fnode->folder;
+                struct MailList *mlist;
 
-                if(!isGroupFolder(folder))
+                if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
                 {
-                  struct MailList *mlist;
+                  struct MailNode *mnode;
 
-                  if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
+                  // clear all possible spam/ham flags from each mail
+                  ForEachMailNode(mlist, mnode)
                   {
-                    struct MailNode *mnode;
+                    struct Mail *mail = mnode->mail;
 
-                    // clear all possible spam/ham flags from each mail
-                    ForEachMailNode(mlist, mnode)
-                    {
-                      struct Mail *mail = mnode->mail;
-
-                      if(mail != NULL)
-                        MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_USERSPAM|SFLAG_AUTOSPAM|SFLAG_HAM);
-                    }
-
-                    DeleteMailList(mlist);
+                    if(mail != NULL)
+                      MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_USERSPAM|SFLAG_AUTOSPAM|SFLAG_HAM);
                   }
+
+                  DeleteMailList(mlist);
                 }
               }
-
-              UnlockFolderList(G->folders);
             }
+
+            UnlockFolderList(G->folders);
           }
 
           // delete spam folder
