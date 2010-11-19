@@ -398,15 +398,12 @@ struct Mail **MailListToMailArray(const struct MailList *mlist)
     // we allocate at least the terminating NULL entry
     if((marray = (struct Mail **)calloc(mlist->count + 1, sizeof(struct Mail *))) != NULL)
     {
-      if(IsMailListEmpty(mlist) == FALSE)
-      {
-        struct Mail **mptr = marray;
-        struct MailNode *mnode;
+      struct Mail **mptr = marray;
+      struct MailNode *mnode;
 
-        ForEachMailNode(mlist, mnode)
-        {
-          *mptr++ = mnode->mail;
-        }
+      ForEachMailNode(mlist, mnode)
+      {
+        *mptr++ = mnode->mail;
       }
     }
 
@@ -423,20 +420,16 @@ struct Mail **MailListToMailArray(const struct MailList *mlist)
 struct MailNode *FindMailInList(const struct MailList *mlist, const struct Mail *mail)
 {
   struct MailNode *foundNode = NULL;
+  struct MailNode *mnode;
 
   ENTER();
 
-  if(IsMailListEmpty(mlist) == FALSE)
+  ForEachMailNode(mlist, mnode)
   {
-    struct MailNode *mnode;
-
-    ForEachMailNode(mlist, mnode)
+    if(mnode->mail == mail)
     {
-      if(mnode->mail == mail)
-      {
-        foundNode = mnode;
-        break;
-      }
+      foundNode = mnode;
+      break;
     }
   }
 

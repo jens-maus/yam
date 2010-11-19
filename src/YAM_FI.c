@@ -1084,45 +1084,41 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
       ForEachFolderNode(flist, fnode)
       {
         struct Folder *folder = fnode->folder;
+        struct MailNode *mnode;
 
         LockMailListShared(folder->messages);
 
-        if(IsMailListEmpty(folder->messages) == FALSE)
+        ForEachMailNode(folder->messages, mnode)
         {
-          struct MailNode *mnode;
+          struct Mail *mail = mnode->mail;
 
-          ForEachMailNode(folder->messages, mnode)
+          if(FI_DoSearch(&search, mail) == TRUE)
           {
-            struct Mail *mail = mnode->mail;
+            DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
+            fndmsg++;
+          }
 
-            if(FI_DoSearch(&search, mail) == TRUE)
-            {
-              DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
-              fndmsg++;
-            }
+          // bail out if the search was aborted
+          if(G->FI->Abort != FALSE)
+            break;
 
-            // bail out if the search was aborted
-            if(G->FI->Abort != FALSE)
-              break;
+          // increase the progress counter
+          progress++;
 
-            // increase the progress counter
-            progress++;
+          // then we update the gauge, but we take also care of not refreshing
+          // it too often or otherwise it slows down the whole search process.
+          if(TimeHasElapsed(&last, 250000) == TRUE)
+          {
+            // update the gauge
+            set(ga, MUIA_Gauge_Current, progress);
+            // let the list show the found mails so far
+            set(lv, MUIA_NList_Quiet, FALSE);
 
-            // then we update the gauge, but we take also care of not refreshing
-            // it too often or otherwise it slows down the whole search process.
-            if(TimeHasElapsed(&last, 250000) == TRUE)
-            {
-              // update the gauge
-              set(ga, MUIA_Gauge_Current, progress);
-              // let the list show the found mails so far
-              set(lv, MUIA_NList_Quiet, FALSE);
+            // signal the application to update now
+            DoMethod(G->App, MUIM_Application_InputBuffered);
 
-              // signal the application to update now
-              DoMethod(G->App, MUIM_Application_InputBuffered);
-
-              // forbid immediate display again
-              set(lv, MUIA_NList_Quiet, TRUE);
-            }
+            // forbid immediate display again
+            set(lv, MUIA_NList_Quiet, TRUE);
           }
         }
 

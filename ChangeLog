@@ -9,6 +9,8 @@ $URL$
 
   * misc: eliminated lots of empty folder list checks. This is done implicitly
     by the ForEachFolderNode() macro.
+  * misc: eliminated lots of empty mail list checks. This is done implicitly by
+    the ForEachMailNode() macro.
 
 2010-11-18 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -2195,141 +2195,134 @@ MakeHook(FO_SetOrderHook, FO_SetOrderFunc);
 //  Tries to autodetect the Mailinglist support parameters
 HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
 {
-  #define SCANMSGS  5
-
-  char *toPattern;
-  char *toAddress;
-  char *res=NULL;
-  const char *notRecog;
-  BOOL takePattern = TRUE;
-  BOOL takeAddress = TRUE;
   struct Folder *folder;
-  struct MailNode *mnode;
-  int i;
-  BOOL success;
 
   ENTER();
 
-  folder = G->FO->EditFolder;
-  if(folder == NULL)
+  if((folder = G->FO->EditFolder) != NULL)
   {
-    LEAVE();
-    return;
-  }
+    LockMailListShared(folder->messages);
 
-  if(IsMailListEmpty(folder->messages) == TRUE)
-  {
-    LEAVE();
-    return;
-  }
-
-  LockMailListShared(folder->messages);
-
-  mnode = FirstMailNode(folder->messages);
-  toPattern = mnode->mail->To.Address;
-  toAddress = mnode->mail->To.Address;
-
-  i = 0;
-  success = TRUE;
-  ForEachMailNode(folder->messages, mnode)
-  {
-    // skip the first mail as this has already been processed before
-    if(i > 0)
+    if(IsMailListEmpty(folder->messages) == FALSE)
     {
-      struct Mail *mail = mnode->mail;
-      char *result;
+      #define SCANMSGS  5
+      struct MailNode *mnode;
+      char *toPattern;
+      char *toAddress;
+      char *res=NULL;
+      const char *notRecog;
+      BOOL takePattern = TRUE;
+      BOOL takeAddress = TRUE;
+      int i;
+      BOOL success;
 
-      D(DBF_FOLDER, "SWS: [%s] [%s]", toPattern, mail->To.Address);
+      mnode = FirstMailNode(folder->messages);
+      toPattern = mnode->mail->To.Address;
+      toAddress = mnode->mail->To.Address;
 
-      // Analyze the toAdress through the Smith&Waterman algorithm
-      if(takePattern == TRUE && (result = SWSSearch(toPattern, mail->To.Address)) != NULL)
+      i = 0;
+      success = TRUE;
+      ForEachMailNode(folder->messages, mnode)
       {
-        free(res);
-
-        if((res = strdup(result)) == NULL)
+        // skip the first mail as this has already been processed before
+        if(i > 0)
         {
-          success = FALSE;
+          struct Mail *mail = mnode->mail;
+          char *result;
+
+          D(DBF_FOLDER, "SWS: [%s] [%s]", toPattern, mail->To.Address);
+
+          // Analyze the toAdress through the Smith&Waterman algorithm
+          if(takePattern == TRUE && (result = SWSSearch(toPattern, mail->To.Address)) != NULL)
+          {
+            free(res);
+
+            if((res = strdup(result)) == NULL)
+            {
+              success = FALSE;
+              break;
+            }
+
+            toPattern = res;
+
+            // If we reached a #? pattern then we break here
+            if(strcmp(toPattern, "#?") == 0)
+              takePattern = FALSE;
+          }
+
+          // Lets check if the toAddress kept the same and then we can use
+          // it for the TOADDRESS string gadget
+          if(takeAddress == TRUE && stricmp(toAddress, mail->To.Address) != 0)
+            takeAddress = FALSE;
+        }
+
+        if(++i > SCANMSGS)
           break;
-        }
-
-        toPattern = res;
-
-        // If we reached a #? pattern then we break here
-        if(strcmp(toPattern, "#?") == 0)
-          takePattern = FALSE;
       }
 
-      // Lets check if the toAddress kept the same and then we can use
-      // it for the TOADDRESS string gadget
-      if(takeAddress == TRUE && stricmp(toAddress, mail->To.Address) != 0)
-        takeAddress = FALSE;
-    }
+      UnlockMailList(folder->messages);
 
-    if(++i > SCANMSGS)
-      break;
-  }
-
-  UnlockMailList(folder->messages);
-
-  if(success == TRUE)
-  {
-    // lets make a pattern out of the found SWS string
-    if(takePattern == TRUE)
-    {
-      if(strlen(toPattern) >= 2 && !(toPattern[0] == '#' && toPattern[1] == '?'))
+      if(success == TRUE)
       {
-        if(res != NULL)
-          res = realloc(res, strlen(res)+3);
-        else if((res = malloc(strlen(toPattern)+3)) != NULL)
-          strlcpy(res, toPattern, strlen(toPattern));
-
-        if(res != NULL)
+        // lets make a pattern out of the found SWS string
+        if(takePattern == TRUE)
         {
-          // move the actual string to the back and copy the wildcard in front of it.
-          memmove(&res[2], res, strlen(res)+1);
-          res[0] = '#';
-          res[1] = '?';
+          if(strlen(toPattern) >= 2 && !(toPattern[0] == '#' && toPattern[1] == '?'))
+          {
+            if(res != NULL)
+              res = realloc(res, strlen(res)+3);
+            else if((res = malloc(strlen(toPattern)+3)) != NULL)
+              strlcpy(res, toPattern, strlen(toPattern));
 
-          toPattern = res;
+            if(res != NULL)
+            {
+              // move the actual string to the back and copy the wildcard in front of it.
+              memmove(&res[2], res, strlen(res)+1);
+              res[0] = '#';
+              res[1] = '?';
+
+              toPattern = res;
+            }
+            else
+              success = FALSE;
+          }
+
+          if(success == TRUE && strlen(toPattern) >= 2 && !(toPattern[strlen(toPattern)-2] == '#' && toPattern[strlen(toPattern)-1] == '?'))
+          {
+            if(res != NULL)
+              res = realloc(res, strlen(res)+3);
+            else if((res = malloc(strlen(toPattern)+3)) != NULL)
+              strlcpy(res, toPattern, strlen(toPattern));
+
+            if(res != NULL)
+            {
+              // and now copy also the wildcard at the back of the string
+              strcat(res, "#?");
+
+              toPattern = res;
+            }
+            else
+              success = FALSE;
+          }
         }
-        else
-          success = FALSE;
+
+        if(success == TRUE)
+        {
+          D(DBF_FOLDER, "ML-Pattern: [%s]", toPattern);
+
+          // Now we set the new pattern & address values to the string gadgets
+          notRecog = tr(MSG_FO_NOTRECOGNIZED);
+          setstring(G->FO->GUI.ST_MLPATTERN, takePattern && toPattern[0] ? toPattern : notRecog);
+          setstring(G->FO->GUI.ST_MLADDRESS, takeAddress ? toAddress : notRecog);
+        }
       }
 
-      if(success == TRUE && strlen(toPattern) >= 2 && !(toPattern[strlen(toPattern)-2] == '#' && toPattern[strlen(toPattern)-1] == '?'))
-      {
-        if(res != NULL)
-          res = realloc(res, strlen(res)+3);
-        else if((res = malloc(strlen(toPattern)+3)) != NULL)
-          strlcpy(res, toPattern, strlen(toPattern));
+      // lets free all resources now
+      free(res);
 
-        if(res != NULL)
-        {
-          // and now copy also the wildcard at the back of the string
-          strcat(res, "#?");
-
-          toPattern = res;
-        }
-        else
-          success = FALSE;
-      }
-    }
-
-    if(success == TRUE)
-    {
-      D(DBF_FOLDER, "ML-Pattern: [%s]", toPattern);
-
-      // Now we set the new pattern & address values to the string gadgets
-      notRecog = tr(MSG_FO_NOTRECOGNIZED);
-      setstring(G->FO->GUI.ST_MLPATTERN, takePattern && toPattern[0] ? toPattern : notRecog);
-      setstring(G->FO->GUI.ST_MLADDRESS, takeAddress ? toAddress : notRecog);
+      SWSSearch(NULL, NULL);
     }
   }
-
-  // lets free all resources now
-  free(res);
-
-  SWSSearch(NULL, NULL);
 
   LEAVE();
 }

@@ -3088,7 +3088,7 @@ BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRe
       result = TRUE;
     }
 
-    if(wmData->refMailList != NULL && IsMailListEmpty(wmData->refMailList) == FALSE)
+    if(wmData->refMailList != NULL)
     {
       struct MailNode *mnode;
 

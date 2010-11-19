@@ -1177,36 +1177,32 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags)
 struct Mail *FindThreadInFolder(struct Mail *srcMail, struct Folder *folder, BOOL nextThread)
 {
   struct Mail *result = NULL;
+  struct MailNode *mnode;
 
   ENTER();
 
   LockMailListShared(folder->messages);
 
-  if(IsMailListEmpty(folder->messages) == FALSE)
+  ForEachMailNode(folder->messages, mnode)
   {
-    struct MailNode *mnode;
+    struct Mail *mail = mnode->mail;
 
-    ForEachMailNode(folder->messages, mnode)
+    if(nextThread == TRUE)
     {
-      struct Mail *mail = mnode->mail;
-
-      if(nextThread == TRUE)
+      // find the answer to the srcMail
+      if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
       {
-        // find the answer to the srcMail
-        if(mail->cIRTMsgID != 0 && mail->cIRTMsgID == srcMail->cMsgID)
-        {
-          result = mail;
-          break;
-        }
+        result = mail;
+        break;
       }
-      else
+    }
+    else
+    {
+      // else we have to find the question to the srcMail
+      if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
       {
-        // else we have to find the question to the srcMail
-        if(mail->cMsgID != 0 && mail->cMsgID == srcMail->cIRTMsgID)
-        {
-          result = mail;
-          break;
-        }
+        result = mail;
+        break;
       }
     }
   }
@@ -2789,41 +2785,39 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
 
   if(folder != NULL)
   {
+    struct MailNode *mnode;
+    int i;
+
     BusyGaugeInt(tr(MSG_BusyEmptyingTrash), "", folder->Total);
 
     LockMailList(folder->messages);
 
-    if(IsMailListEmpty(folder->messages) == FALSE)
+    i = 0;
+    ForEachMailNode(folder->messages, mnode)
     {
-      struct MailNode *mnode;
-      int i = 0;
+      struct Mail *mail = mnode->mail;
+      char mailfile[SIZE_PATHFILE];
 
-      ForEachMailNode(folder->messages, mnode)
-      {
-        struct Mail *mail = mnode->mail;
-        char mailfile[SIZE_PATHFILE];
+      BusySet(++i);
+      AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
+      GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+      DeleteFile(mailfile);
+    }
 
-        BusySet(++i);
-        AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
-        GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
-        DeleteFile(mailfile);
-      }
+    // We only clear the folder if it wasn't empty anyway..
+    if(i > 0)
+    {
+      ClearFolderMails(folder, TRUE);
 
-      // We only clear the folder if it wasn't empty anyway..
-      if(i > 0)
-      {
-        ClearFolderMails(folder, TRUE);
+      MA_ExpireIndex(folder);
 
-        MA_ExpireIndex(folder);
+      if(FO_GetCurrentFolder() == folder)
+        DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
 
-        if(FO_GetCurrentFolder() == folder)
-          DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
+      AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), i, folder->Name);
 
-        AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), i, folder->Name);
-
-        if(quiet == FALSE)
-          DisplayStatistics(folder, TRUE);
-      }
+      if(quiet == FALSE)
+        DisplayStatistics(folder, TRUE);
     }
 
     UnlockMailList(folder->messages);
