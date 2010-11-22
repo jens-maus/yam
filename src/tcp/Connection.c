@@ -319,27 +319,38 @@ struct Connection *CreateConnection(void)
         if((conn->socketBase = OpenLibrary("bsdsocket.library", 2L)) != NULL &&
            GETINTERFACE("main", 1, conn->socketIFace, conn->socketBase))
         {
+          struct TagItem tags[] =
+          {
+            { SBTM_SETVAL(SBTC_BREAKMASK), (1UL << ThreadAbortSignal()) },
+            { TAG_END,                     0                            }
+          };
+          GET_SOCKETBASE(conn);
+
           D(DBF_NET, "got socket interface");
 
-          conn->socket = INVALID_SOCKET;
-
-          // set to no error per default
-          conn->error = CONNECTERR_NO_ERROR;
-
-          conn->receivePtr = conn->receiveBuffer;
-          conn->sendPtr = conn->sendBuffer;
-
-          // remember the buffer sizes in case this is
-          // modified as long as this connection exists
-          conn->receiveBufferSize = C->TRBufferSize;
-          conn->sendBufferSize = C->TRBufferSize;
-
+          // tell the stack to react on which break signals
           // by default we can be aborted by the standard break signal
-          conn->breakSignals = (1UL << ThreadAbortSignal());
+          if(SocketBaseTagList(tags) == 0)
+          {
+            D(DBF_NET, "set break mask");
 
-          conn->connectedFromMainThread = IsMainThread();
+            conn->socket = INVALID_SOCKET;
 
-          result = conn;
+            // set to no error per default
+            conn->error = CONNECTERR_NO_ERROR;
+
+            conn->receivePtr = conn->receiveBuffer;
+            conn->sendPtr = conn->sendBuffer;
+
+            // remember the buffer sizes in case this is
+            // modified as long as this connection exists
+            conn->receiveBufferSize = C->TRBufferSize;
+            conn->sendBufferSize = C->TRBufferSize;
+
+            conn->connectedFromMainThread = IsMainThread();
+
+            result = conn;
+          }
         }
       }
     }
@@ -791,7 +802,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
                     FD_ZERO(&conn->fdset);
                     FD_SET(conn->socket, &conn->fdset);
                   }
-                  while((retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, &conn->breakSignals)) == 0);
+                  while((retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL)) == 0);
 
                   // if WaitSelect() returns 1 we successfully waited for
                   // being able to write to the socket. So we can break out of the
@@ -1129,9 +1140,9 @@ BOOL MakeSecureConnection(struct Connection *conn)
                             // as with SSL both things can happen
                             // see http://www.openssl.org/docs/ssl/SSL_connect.html
                             if(err == SSL_ERROR_WANT_READ)
-                              retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, &conn->breakSignals);
+                              retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
                             else
-                              retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, &conn->breakSignals);
+                              retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
                           }
                           while(retVal == 0);
 
@@ -1354,9 +1365,9 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
               // as with SSL both things can happen
               // see http://www.openssl.org/docs/ssl/SSL_read.html
               if(err == SSL_ERROR_WANT_READ)
-                retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, &conn->breakSignals);
+                retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
               else
-                retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, &conn->breakSignals);
+                retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
             }
             while(retVal == 0);
 
@@ -1492,7 +1503,7 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
               FD_ZERO(&conn->fdset);
               FD_SET(conn->socket, &conn->fdset);
             }
-            while((retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, &conn->breakSignals)) == 0);
+            while((retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL)) == 0);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to read from the socket. So we go and do another
@@ -1835,9 +1846,9 @@ static int WriteToHost(struct Connection *conn, const char *ptr, const int len)
               // as with SSL both things can happen
               // see http://www.openssl.org/docs/ssl/SSL_write.html
               if(err == SSL_ERROR_WANT_READ)
-                retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, &conn->breakSignals);
+                retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
               else
-                retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, &conn->breakSignals);
+                retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
             }
             while(retVal == 0);
 
@@ -1920,7 +1931,7 @@ static int WriteToHost(struct Connection *conn, const char *ptr, const int len)
         struct TagItem tags[] =
         {
           { SBTM_GETREF(SBTC_ERRNO), (IPTR)&err },
-          { TAG_END,                0          }
+          { TAG_END,                 0          }
         };
 
         // get the error value which should normally be set by a send()
@@ -1977,7 +1988,7 @@ static int WriteToHost(struct Connection *conn, const char *ptr, const int len)
               FD_ZERO(&conn->fdset);
               FD_SET(conn->socket, &conn->fdset);
             }
-            while((retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, &conn->breakSignals)) == 0);
+            while((retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL)) == 0);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to write to the socket. So we go and do another

@@ -80,7 +80,6 @@ struct Connection
 
   struct fd_set fdset;           // file descriptors for WaitSelect()
   struct timeval timeout;        // timeout for WaitSelect()
-  ULONG breakSignals;            // break signals for WaitSelect()
 
   enum ConnectError error;       // error value of the last action
 

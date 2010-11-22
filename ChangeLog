@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-11-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/Connection.c: the break signal mask is now set globally instead for the
+    WaitSelect() call only. This should make it possible to abort even calls
+    like gethostbyname() which cannot be called in an asynchronous manner.
+
 2010-11-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: eliminated lots of empty folder list checks. This is done implicitly
