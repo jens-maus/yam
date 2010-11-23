@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.14 (04.11.2010)
+## version $VER: YAM.catalog 7.15 (23.11.2010)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5427;
+; in sync with .cd in revision 5450;
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1745,18 +1745,6 @@ MSG_CO_EncryptToSelf
 Koduj dla si_ebie
 ; _Encrypt to self
 ;
-MSG_CO_AnonMail
-Anonimowa poczta
-; Anonymous mail
-;
-MSG_CO_ReMailer
-_Dostawca
-; _Re-Mailer
-;
-MSG_CO_ReMailerLine
-_Pole nag³ówka
-; _Header field
-;
 MSG_CO_Logfiles
 Pliki raportów
 ; Log files
@@ -2617,18 +2605,6 @@ publicznym, wiêc nadal mo¿esz czytaæ\n\
 lub edytowaæ wychodz±ce wiadomo¶ci.
 ; Encrypt new messages with your public key,\n\
 ; so you can still read or edit outgoing messages.
-;
-MSG_HELP_CO_ST_REMAILER
-Adres e-mail serwera do wysy³ania\n\
-poczty anonimowej.
-; E-mail address of the remailer service\n\
-; used to send anonymous mail.
-;
-MSG_HELP_CO_ST_FIRSTLINE
-Automatycznie wstawia tê liniê na pocz±tku\n\
-wszystkich wiadomo¶ci wysy³anych anonimowo.
-; Automatically insert this line at the top\n\
-; of all messages sent through the remailer.
 ;
 MSG_HELP_CO_ST_LOGFILE
 ¦cie¿ka przechowywania\n\
@@ -3893,10 +3869,6 @@ MSG_WR_SecBoth
 Podpisana i kodowana
 ; Sign and encrypt
 ;
-MSG_WR_SecAnon
-Wy¶lij anonimowo
-; Send anonymously
-;
 MSG_WR_ImpHigh
 Du¿a
 ; High
@@ -4373,16 +4345,15 @@ do wiadomo¶ci?
 ;
 MSG_HELP_WR_RA_SECURITY
 Wybierz jedn± z tych opcji, aby wys³aæ\n\
-wiadomo¶æ podpisan± przez PGP, wiadomo¶æ\n\
-zakodowan± lub wys³aæ anonimowo.\n\
-\"Domy¶lnie\" próbuje wyszukaæ\n\
+wiadomo¶æ podpisan± przez PGP lub wiadomo¶æ\n\
+zakodowan±. \"Domy¶lnie\" próbuje wyszukaæ\n\
 odbiorcê w Twojej ksi±¿ce adresowej i u¿yæ\n\
 opcji zabezpieczeñ tam okre¶lonych.
 ; Select one of these security options to send\n\
-; your message PGP signed, encrypted\n\
-; or anonymously. "Default" tries to find\n\
-; the recipient in your address book and use\n\
-; the security settings specified there.
+; your message PGP signed or encrypted.\n\
+; "Default" tries to find the recipient\n\
+; in your address book and use the security\n\
+; settings specified there.
 ;
 MSG_HELP_WR_BT_HOLD
 Kopiuje utworzon± wiadomo¶æ\n\
@@ -7021,10 +6992,6 @@ Których zabezpieczeñ chcesz u¿yæ?
 ; default mail security settings.\n\
 ; \n\
 ; What type of security do you want to use?
-;
-MSG_WR_SECURITYREQ_GADS
-*_Proste|Podpi_sane|Zakodowan_e|Podp_isane i zakodowane|_Anonimowe|Ponie_chaj
-; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Anonymous|_Cancel
 ;
 MSG_ER_OPENTCPIP
 Nie mo¿na otworzyæ interfejsu biblioteki bsdsocket.library \
@@ -9882,4 +9849,8 @@ Wy¶lij wiadomo¶ci
 MSG_MA_GET_MAIL
 Pobierz wiadomo¶ci
 ; Get mail
+;
+MSG_WR_SECURITYREQ_GADS
+*_Proste|Podpi_sane|Zakodowan_e|Podp_isane i zakodowane|Ponie_chaj
+; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Cancel
 ;

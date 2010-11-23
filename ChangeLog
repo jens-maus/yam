@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-11-23 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
 2010-11-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.c, mui/TransferControlGroup.c: aborting a transfer will now also
