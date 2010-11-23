@@ -31,6 +31,7 @@
 #include "ThemeList_cl.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include <proto/dos.h>
 #include <mui/NList_mcc.h>
 

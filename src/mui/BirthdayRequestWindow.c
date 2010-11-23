@@ -32,6 +32,7 @@
 #include "BirthdayRequestWindow_cl.h"
 
 #include <ctype.h>
+#include <string.h>
 #include <proto/muimaster.h>
 #include <libraries/iffparse.h>
 

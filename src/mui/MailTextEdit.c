@@ -30,6 +30,7 @@
 
 #include "MailTextEdit_cl.h"
 
+#include <string.h>
 #include <proto/muimaster.h>
 #include <mui/TextEditor_mcc.h>
 

@@ -30,6 +30,7 @@
 
 #include "TransferControlGroup_cl.h"
 
+#include <string.h>
 #include <proto/muimaster.h>
 #include <proto/timer.h>
 

@@ -30,6 +30,7 @@
 
 #include "WriteAttachmentList_cl.h"
 
+#include <string.h>
 #include <proto/muimaster.h>
 #include <mui/NList_mcc.h>
 

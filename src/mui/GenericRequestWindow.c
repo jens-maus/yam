@@ -31,6 +31,7 @@
 #include "GenericRequestWindow_cl.h"
 
 #include <ctype.h>
+#include <string.h>
 #include <proto/muimaster.h>
 
 #include "YAM.h"

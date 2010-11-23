@@ -30,6 +30,7 @@
 
 #include "Searchwindow_cl.h"
 
+#include <string.h>
 #include <proto/muimaster.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/TextEditor_mcc.h>

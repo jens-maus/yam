@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include <stdlib.h>
+#include <string.h>
 #include <proto/utility.h>
 #include <utility/date.h>
 

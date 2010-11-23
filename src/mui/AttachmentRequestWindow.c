@@ -30,6 +30,7 @@
 
 #include "AttachmentRequestWindow_cl.h"
 
+#include <string.h>
 #include <proto/muimaster.h>
 #include <libraries/iffparse.h>
 #include <mui/NList_mcc.h>

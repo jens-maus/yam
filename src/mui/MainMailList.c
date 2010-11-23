@@ -30,6 +30,7 @@
 
 #include "MainMailList_cl.h"
 
+#include <string.h>
 #include <proto/dos.h>
 #include <proto/muimaster.h>
 #include <proto/timer.h>

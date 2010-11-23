@@ -30,6 +30,7 @@
 
 #include "QuickSearchBar_cl.h"
 
+#include <string.h>
 #include <proto/muimaster.h>
 #include <proto/timer.h>
 #include <mui/BetterString_mcc.h>

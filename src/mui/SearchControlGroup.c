@@ -34,6 +34,7 @@
 
 #include "SearchControlGroup_cl.h"
 
+#include <string.h>
 #include <proto/asl.h>
 #include <proto/muimaster.h>
 #include <mui/BetterString_mcc.h>

@@ -30,6 +30,7 @@
 
 #include "Splashwindow_cl.h"
 
+#include <string.h>
 #include <proto/dos.h>
 #include <proto/muimaster.h>
 #include <mui/BetterString_mcc.h>

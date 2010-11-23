@@ -31,6 +31,7 @@
 
 #include "Aboutwindow_cl.h"
 
+#include <stdlib.h>
 #include <proto/muimaster.h>
 #include <mui/NFloattext_mcc.h>
 

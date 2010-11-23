@@ -31,6 +31,7 @@
 
 #include "ReadWindowStatusBar_cl.h"
 
+#include <string.h>
 #include <proto/graphics.h>
 #include <proto/muimaster.h>
 

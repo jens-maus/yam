@@ -30,6 +30,7 @@
 
 #include "MainFolderListtree_cl.h"
 
+#include <string.h>
 #include <proto/dos.h>
 #include <proto/muimaster.h>
 #include <libraries/gadtools.h>
