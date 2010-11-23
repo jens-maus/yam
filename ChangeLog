@@ -20,6 +20,8 @@ $URL$
   * MailServers.c, YAM_CO.c: removed some more unnecessary empty list checks.
   * mui/AttachmentObject.c, mui/AttachmentImage.c: added a missing include to
     fix the AROS build.
+  * mui/FolderRequestWindow.c: make the listview object instead of the embedded
+    list object the window's default object. This closes #235.
 
 2010-11-22 Thore Böckelmann <tboeckel@gmx.de>
 
