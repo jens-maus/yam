@@ -219,28 +219,24 @@ BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *ms
 struct MailServerNode *GetMailServer(const struct MinList *mailServerList, const enum MailServerType type, const unsigned int num)
 {
   struct MailServerNode *result = NULL;
+  unsigned int count = 0;
+  struct Node *curNode;
 
   ENTER();
 
-  if(IsMinListEmpty(mailServerList) == FALSE)
+  IterateList(mailServerList, curNode)
   {
-    unsigned int count = 0;
-    struct Node *curNode;
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-    IterateList(mailServerList, curNode)
+    if(msn->type == type)
     {
-      struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
-      if(msn->type == type)
+      if(count == num)
       {
-        if(count == num)
-        {
-          result = msn;
-          break;
-        }
-
-        count++;
+        result = msn;
+        break;
       }
+
+      count++;
     }
   }
 

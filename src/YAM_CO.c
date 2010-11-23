@@ -1090,6 +1090,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 {
   BOOL success = TRUE;
+  struct Node *curNode;
 
   ENTER();
   SHOWVALUE(DBF_CONFIG, sco);
@@ -1100,27 +1101,23 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 
   // then we have to do a deep copy and allocate separate memory for our copy
   NewMinList(&dco->mailServerList);
-  if(IsMinListEmpty(&sco->mailServerList) == FALSE)
+
+  IterateList(&sco->mailServerList, curNode)
   {
-    struct Node *curNode;
+    struct MailServerNode *srcNode = (struct MailServerNode *)curNode;
+    struct MailServerNode *dstNode;
 
-    IterateList(&sco->mailServerList, curNode)
+    // clone the server but give the clone its own private data
+    if((dstNode = CloneMailServer(srcNode)) != NULL)
     {
-      struct MailServerNode *srcNode = (struct MailServerNode *)curNode;
-      struct MailServerNode *dstNode;
+      AddTail((struct List *)&dco->mailServerList, (struct Node *)dstNode);
+    }
+    else
+    {
+      success = FALSE;
 
-      // clone the server but give the clone its own private data
-      if((dstNode = CloneMailServer(srcNode)) != NULL)
-      {
-        AddTail((struct List *)&dco->mailServerList, (struct Node *)dstNode);
-      }
-      else
-      {
-        success = FALSE;
-
-        // bail out, no need to copy further data
-        break;
-      }
+      // bail out, no need to copy further data
+      break;
     }
   }
 

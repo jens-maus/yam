@@ -9,6 +9,7 @@ $URL$
 
   * Threads.c, mui/TransferControlGroup.c: aborting a transfer will now also
     abort the corresponding thread.
+  * MailServers.c, YAM_CO.c: removed some more unnecessary empty list checks.
 
 2010-11-22 Thore Böckelmann <tboeckel@gmx.de>
 
