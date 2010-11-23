@@ -1126,8 +1126,6 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 
   if(success == TRUE)
   {
-    struct Node *curNode;
-
     IterateList(&sco->mimeTypeList, curNode)
     {
       struct MimeTypeNode *srcNode = (struct MimeTypeNode *)curNode;
@@ -1149,8 +1147,6 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 
   if(success == TRUE)
   {
-    struct Node *curNode;
-
     IterateList(&sco->filterList, curNode)
     {
       struct FilterNode *srcFilter = (struct FilterNode *)curNode;
