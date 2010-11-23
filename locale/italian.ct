@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.6 (31.10.2010)
+## version $VER: YAM.catalog 7.6 (23.11.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5427 2010-10-31
+; based on YAM.cd 5450 2010-11-17
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1738,18 +1738,6 @@ MSG_CO_EncryptToSelf
 Autod_ecodifica
 ; _Encrypt to self
 ;
-MSG_CO_AnonMail
-Posta anonima
-; Anonymous mail
-;
-MSG_CO_ReMailer
-_Re-Mailer
-; _Re-Mailer
-;
-MSG_CO_ReMailerLine
-Campo intesta_zione
-; _Header field
-;
 MSG_CO_Logfiles
 Log dei File
 ; Log files
@@ -2624,19 +2612,6 @@ pubblica sarà ancora possibile leggere o modificare i messaggi\n\
 'In uscita'.
 ; Encrypt new messages with your public key,\n\
 ; so you can still read or edit outgoing messages.
-;
-MSG_HELP_CO_ST_REMAILER
-Indirizzo E-Mail del servizio di 'Remailing'\n\
-utilizzato per inviare messaggi anonimi.
-; E-mail address of the remailer service\n\
-; used to send anonymous mail.
-;
-MSG_HELP_CO_ST_FIRSTLINE
-Inserisce automaticamente questa linea all'inizio di ogni\n\
-nuovo messaggio, questo nel caso esso sia stato inviato\n\
-attraverso il servizio di Remailing.
-; Automatically insert this line at the top\n\
-; of all messages sent through the remailer.
 ;
 MSG_HELP_CO_ST_LOGFILE
 Percorso dove il file\n\
@@ -3891,10 +3866,6 @@ MSG_WR_SecBoth
 Firma e codifica
 ; Sign and encrypt
 ;
-MSG_WR_SecAnon
-Invio anonimo
-; Send anonymously
-;
 MSG_WR_ImpHigh
 Alta
 ; High
@@ -4367,14 +4338,15 @@ a questo messaggio?
 ; to append to this message?
 ;
 MSG_HELP_WR_RA_SECURITY
-Seleziona una di queste opzioni di sicurezza in modo\n\
-da inviare il messaggio come firmato PGP, codificato\n\
-oppure in forma anonima.
+Seleziona una di queste opzioni di sicurezza in modo da inviare il\n\
+messaggio come firma PGP oppure codificato.\n\
+Se impostato su "Predefinito" si cercherà di trovare il destinatario\n\
+all'interno della rubrica usando le impostazioni di sicurezza specificate.
 ; Select one of these security options to send\n\
-; your message PGP signed, encrypted\n\
-; or anonymously. "Default" tries to find\n\
-; the recipient in your address book and use\n\
-; the security settings specified there.
+; your message PGP signed or encrypted.\n\
+; "Default" tries to find the recipient\n\
+; in your address book and use the security\n\
+; settings specified there.
 ;
 MSG_HELP_WR_BT_HOLD
 Copia il messaggio creato nella cartella In uscita\n\
@@ -7054,10 +7026,6 @@ Quale tipo di sicurezza si desidera usare ?
 ; default mail security settings.\n\
 ; \n\
 ; What type of security do you want to use?
-;
-MSG_WR_SECURITYREQ_GADS
-*Se_mplice|_Firmata|_Criptata|Firmata _e criptata|An_onima|_Annulla
-; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Anonymous|_Cancel
 ;
 MSG_ER_OPENTCPIP
 Si è rilevato impossibile aprire l'interfaccia per la\n\
@@ -10034,4 +10002,8 @@ Invia la posta
 MSG_MA_GET_MAIL
 Ricevi la posta
 ; Get mail
+;
+MSG_WR_SECURITYREQ_GADS
+*Se_mplice|_Firmata|_Criptata|Firmata _e criptata|An_onima|_Annulla
+; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Anonymous|_Cancel
 ;
