@@ -334,7 +334,11 @@ DECLARE(Abort)
   if(data->conn != NULL)
     data->conn->abort = TRUE;
   if(data->thread != NULL)
+  {
+    // tell the thread to abort and wake up, what ever it is Wait()ing for
+    AbortThread(data->thread);
     WakeupThread(data->thread);
+  }
 
   LEAVE();
   return 0;

@@ -366,25 +366,6 @@ static SAVEDS void ThreadEntry(void)
 }
 
 ///
-/// AbortThread
-// signal a thread to abort the current action
-static void AbortThread(struct Thread *thread)
-{
-  ENTER();
-
-  if(thread->abortSignal != -1)
-  {
-    D(DBF_THREAD, "aborting thread '%s'", thread->name);
-    thread->aborted = TRUE;
-    Signal((struct Task *)thread->process, 1UL << thread->abortSignal);
-  }
-  else
-    E(DBF_THREAD, "thread '%s' has no abort signal", thread->name);
-
-  LEAVE();
-}
-
-///
 /// SleepThread
 // put the current thread to sleep
 BOOL SleepThread(void)
@@ -410,6 +391,37 @@ BOOL SleepThread(void)
 }
 
 ///
+/// AbortThread
+// signal a thread to abort the current action
+void AbortThread(APTR thread)
+{
+  struct Process *proc;
+  ULONG sig;
+
+  ENTER();
+
+  if(thread == NULL || thread == G->mainThread)
+  {
+    D(DBF_THREAD, "aborting main thread");
+    proc = G->mainThread;
+    sig = SIGBREAKB_CTRL_C;
+  }
+  else
+  {
+    struct Thread *_thread = thread;
+
+    D(DBF_THREAD, "aborting thread '%s'", _thread->name);
+    _thread->aborted = TRUE;
+    proc = _thread->process;
+    sig = _thread->abortSignal;
+  }
+
+  Signal((struct Task *)proc, sig);
+
+  LEAVE();
+}
+
+///
 /// WakeupThread
 // signal a thread to continue its work
 void WakeupThread(APTR thread)
@@ -429,7 +441,7 @@ void WakeupThread(APTR thread)
   {
     struct Thread *_thread = thread;
 
-    D(DBF_THREAD, "waking up subthread '%s'", _thread->name);
+    D(DBF_THREAD, "waking up thread '%s'", _thread->name);
     proc = _thread->process;
     sig = _thread->wakeupSignal;
   }

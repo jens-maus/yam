@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-11-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c, mui/TransferControlGroup.c: aborting a transfer will now also
+    abort the corresponding thread.
+
 2010-11-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/Connection.c: the break signal mask is now set globally instead for the

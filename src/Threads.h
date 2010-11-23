@@ -82,6 +82,7 @@ BOOL VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...);
 BOOL IsMainThread(void);
 APTR CurrentThread(void);
 BOOL SleepThread(void);
+void AbortThread(APTR thread);
 void WakeupThread(APTR thread);
 LONG ThreadAbortSignal(void);
 LONG ThreadWakeupSignal(void);
