@@ -38,6 +38,7 @@
 
 #include "SDI_hook.h"
 
+#include <string.h>
 #include <workbench/icon.h>
 
 #if defined(__amigaos4__)

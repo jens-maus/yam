@@ -36,6 +36,7 @@
 
 #include "AttachmentObject_cl.h"
 
+#include <string.h>
 #include <proto/dos.h>
 #include <proto/icon.h>
 #include <proto/muimaster.h>
