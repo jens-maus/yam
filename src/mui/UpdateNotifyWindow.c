@@ -31,6 +31,7 @@
 #include "UpdateNotifyWindow_cl.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include <proto/muimaster.h>
 #include <proto/openurl.h>
 #include <libraries/iffparse.h>
