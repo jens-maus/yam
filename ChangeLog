@@ -14,6 +14,8 @@ $URL$
     gethostbyname() call. A suitable error code will be returned in this case.
   * mui/TransferControlGroup.c: aborting a transfer will abort the corresponding
     thread only instead of waking it up in a regular fashion.
+  * Threads.c: aborting a thread incorrectly used the signal bit instead of a
+    mask with that bit set.
 
 2010-11-23 Samir Hawamdeh <s.hawamdeh@tin.it>
 

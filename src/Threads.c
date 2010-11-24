@@ -416,7 +416,7 @@ void AbortThread(APTR thread)
     sig = _thread->abortSignal;
   }
 
-  Signal((struct Task *)proc, sig);
+  Signal((struct Task *)proc, 1UL << sig);
 
   LEAVE();
 }
