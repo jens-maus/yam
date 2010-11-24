@@ -12,6 +12,8 @@ $URL$
     is put back to "normal" state.
   * tcp/Connection.c: added a check for a possible abortion during the
     gethostbyname() call. A suitable error code will be returned in this case.
+  * mui/TransferControlGroup.c: aborting a transfer will abort the corresponding
+    thread only instead of waking it up in a regular fashion.
 
 2010-11-23 Samir Hawamdeh <s.hawamdeh@tin.it>
 

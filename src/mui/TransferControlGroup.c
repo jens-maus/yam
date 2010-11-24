@@ -55,7 +55,7 @@ struct Data
   Object *GA_BYTES;
   Object *BT_ABORT;
 
-  struct Connection *conn;
+  struct Connection *connection;
   APTR thread;
 
   int Msgs_Tot;
@@ -273,7 +273,7 @@ OVERLOAD(OM_SET)
 
       case ATTR(Connection):
       {
-        data->conn = (struct Connection *)tag->ti_Data;
+        data->connection = (struct Connection *)tag->ti_Data;
       }
       break;
 
@@ -332,13 +332,16 @@ DECLARE(Abort)
 
   ENTER();
 
-  if(data->conn != NULL)
-    data->conn->abort = TRUE;
+  if(data->connection != NULL)
+  {
+    // set the connection state to aborted
+    data->connection->abort = TRUE;
+  }
+
   if(data->thread != NULL)
   {
-    // tell the thread to abort and wake up, what ever it is Wait()ing for
+    // tell the thread to abort
     AbortThread(data->thread);
-    WakeupThread(data->thread);
   }
 
   LEAVE();
