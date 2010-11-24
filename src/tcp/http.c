@@ -28,13 +28,16 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
 
 #include "Locale.h"
+#include "MethodStack.h"
 #include "Threads.h"
 
+#include "mui/YAMApplication.h"
 #include "tcp/Connection.h"
 #include "tcp/http.h"
 
@@ -110,6 +113,9 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
       {
         char *serverHost;
         char *port;
+
+        // update the AppIcon now that the connection was established
+        PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
 
         // now we build the HTTP request we send out to the HTTP
         // server
@@ -219,6 +225,9 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
         ER_NewError(tr(MSG_ER_ConnectHTTP), tc->host);
 
       DisconnectFromHost(tc->connection);
+
+      // update the AppIcon after closing down the connection
+      PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
     }
 
     DeleteConnection(tc->connection);
