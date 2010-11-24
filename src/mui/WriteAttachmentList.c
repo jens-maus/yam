@@ -76,39 +76,6 @@ OVERLOAD(OM_NEW)
 }
 
 ///
-/// OVERLOAD(MUIM_Setup)
-OVERLOAD(MUIM_Setup)
-{
-  IPTR result;
-
-  ENTER();
-
-  if((result = DoSuperMethodA(cl, obj, msg)))
-  {
-    MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// OVERLOAD(MUIM_Cleanup)
-OVERLOAD(MUIM_Cleanup)
-{
-  IPTR result;
-
-  ENTER();
-
-  MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
-
-  result = DoSuperMethodA(cl, obj, msg);
-
-  RETURN(result);
-  return result;
-}
-
-///
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {

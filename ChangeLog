@@ -16,6 +16,9 @@ $URL$
     thread only instead of waking it up in a regular fashion.
   * Threads.c: aborting a thread incorrectly used the signal bit instead of a
     mask with that bit set.
+  * mui/WriteAttachmentList.c: removed the unneeded setup and cleanup methods.
+    There is no need to request additional IDCMP messages when no custom input
+    handling is done.
 
 2010-11-23 Samir Hawamdeh <s.hawamdeh@tin.it>
 
