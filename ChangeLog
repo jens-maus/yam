@@ -10,6 +10,8 @@ $URL$
   * tcp/pop3.c, tcp/smtp.c, tcp/http.c: in case a transfer was aborted the
     AppIcon could be left in the "transferring" state. Now we make sure that it
     is put back to "normal" state.
+  * tcp/Connection.c: added a check for a possible abortion during the
+    gethostbyname() call. A suitable error code will be returned in this case.
 
 2010-11-23 Samir Hawamdeh <s.hawamdeh@tin.it>
 

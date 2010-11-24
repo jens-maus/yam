@@ -670,6 +670,8 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
     struct hostent *hostaddr;
     GET_SOCKETBASE(conn);
 
+    D(DBF_NET, "connecting to host '%s' port %ld", host, port);
+
     // obtain the hostent from the supplied host name
     // we call gethostbyname() with a locked semaphore, because calling this
     // function heavily from several threads seems to lock up on WinUAE.
@@ -677,7 +679,8 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
     hostaddr = gethostbyname((char *)host);
     ReleaseSemaphore(G->connectionSemaphore);
 
-    if(hostaddr != NULL)
+    // check for a possible abortion and a successful obtainment of the hostent
+    if(conn->abort == FALSE && hostaddr != NULL)
     {
       int i;
 
@@ -928,8 +931,8 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
     }
     else
     {
-      // gethostbyname() failed
-      conn->error = CONNECTERR_UNKNOWN_HOST;
+      // gethostbyname() either failed or was aborted
+      conn->error = (conn->abort == TRUE) ? CONNECTERR_ABORTED : CONNECTERR_UNKNOWN_HOST;
     }
 
     if(conn->error != CONNECTERR_SUCCESS)
