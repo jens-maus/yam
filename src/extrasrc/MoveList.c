@@ -1,0 +1,54 @@
+/***************************************************************************
+
+ YAM - Yet Another Mailer
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2010 by YAM Open Source Team
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+ YAM Official Support Site :  http://www.yam.ch
+ YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+
+ $Id$
+
+***************************************************************************/
+
+#include <clib/alib_protos.h>
+#include <exec/lists.h>
+
+#include "extrasrc.h"
+
+#if defined(NEED_MOVELIST)
+// MoveList()
+// move all nodes from one list to another one
+void MoveList(struct List *destList, struct List *sourceList)
+{
+  if(IsListEmpty(sourceList) == FALSE)
+  {
+    // connect tail node of destList to the head node of sourceList
+    destList->lh_TailPred->ln_Succ = sourceList->lh_Head;
+    destList->lh_TailPred->ln_Succ->ln_Pred = destList->lh_TailPred;
+
+    // connect tail node of sourceList to destList as new tail
+    destList->lh_TailPred = sourceList->lh_TailPred;
+    destList->lh_TailPred->ln_Succ = (struct Node *)&destList->lh_Tail;
+
+    // now empty the source list, we move all nodes
+    NewList(sourceList);
+  }
+}
+#else
+  #warning "NEED_MOVELIST missing or compilation unnecessary"
+#endif

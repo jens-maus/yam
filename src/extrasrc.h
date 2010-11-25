@@ -68,6 +68,7 @@ struct Node;
 #define NEED_GETPRED
 #define NEED_GETSUCC
 #define NEED_GETTAIL
+#define NEED_MOVELIST
 #define NEED_NEWMINLIST
 #define NEED_NEWREADARGS
 #define NEED_SETPROCWINDOW
@@ -101,6 +102,7 @@ struct Node;
 #define NEED_GETPRED
 #define NEED_GETSUCC
 #define NEED_GETTAIL
+#define NEED_MOVELIST
 #define NEED_NEWREADARGS
 #define NEED_SETPROCWINDOW
 #define NEED_ASPRINTF
@@ -118,6 +120,7 @@ struct Node;
 #define NEED_ALLOCSYSOBJECT
 #define NEED_DOSUPERNEW
 #define NEED_EXAMINEDIR
+#define NEED_MOVELIST
 #define NEED_NEWMINLIST
 #define NEED_NEWREADARGS
 #define NEED_SETPROCWINDOW
@@ -225,6 +228,10 @@ APTR VARARGS68K AllocSysObjectTags(ULONG type, ...);
 #endif
 void FreeSysObject(ULONG type, APTR object);
 #include "extrasrc/AllocSysObject.h"
+#endif
+
+#if defined(NEED_MOVELIST)
+void MoveList(struct List *destList, struct List *sourceList);
 #endif
 
 #if defined(NEED_GETHEAD)

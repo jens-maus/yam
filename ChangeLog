@@ -9,6 +9,8 @@ $URL$
 
   * extrasrc/AllocSysObject.c: added support for ASOT_INTERRUPT. This might come
     handy sooner or later.
+  * extrasrc/MoveList.c: added a reimplementation of AmigaOS4's MoveList()
+    function.
 
 2010-11-24 Thore Böckelmann <tboeckel@gmx.de>
 
