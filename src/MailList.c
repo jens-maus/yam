@@ -262,7 +262,6 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
     struct MinList list[2];
     struct MinList *from;
     struct MinList *to;
-    struct Node *node;
     LONG insize;
 
     from = &list[0];
@@ -270,10 +269,7 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
 
     NewMinList(from);
     // move all nodes to the source list
-    while((node = RemHead((struct List *)&mlist->list)) != NULL)
-    {
-      AddTail((struct List *)from, node);
-    }
+    MoveList((struct List *)from, (struct List *)&mlist->list);
 
     // we start sorting with lists of one node max
     insize = 1;
@@ -374,9 +370,8 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
     }
 
     // put all the sorted nodes back into the original list
-    NewMinList(&mlist->list);
-    while((node = RemHead((struct List *)to)) != NULL)
-      AddTail((struct List *)&mlist->list, node);
+    // no need to NewMinList() the list before as this is guaranteed to be empty
+    MoveList((struct List *)&mlist->list, (struct List *)to);
   }
 
   LEAVE();
