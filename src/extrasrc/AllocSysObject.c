@@ -151,6 +151,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
     struct SignalSemaphore *semaphore;
     struct TagItem *taglist;
     APTR mempool;
+    struct Interrupt *interrupt;
   } object;
   struct TagItem *tstate = tags;
   struct TagItem *tag;
@@ -593,6 +594,44 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       object.mempool = CreatePool(flags, puddle, thresh);
     }
     break;
+
+    case ASOT_INTERRUPT:
+    {
+      ULONG size = sizeof(struct Interrupt);
+      void (*code)() = NULL;
+      void (*data)() = NULL;
+
+      if(tags != NULL)
+      {
+        while((tag = NextTagItem((APTR)&tstate)) != NULL)
+        {
+          switch(tag->ti_Tag)
+          {
+            case ASOINTR_Size:
+              size = tag->ti_Data;
+            break;
+
+            case ASOINTR_Code:
+              code = (void (*)())tag->ti_Data;
+            break;
+
+            case ASOINTR_Data:
+              data = (void (*)())tag->ti_Data;
+            break;
+          }
+        }
+      }
+
+      if((object.interrupt = AllocVec(size, memFlags)) != NULL)
+      {
+        MungeMemory(object.interrupt, size);
+
+        object.interrupt->is_Code = code;
+        object.interrupt->is_Data = data;
+        object.interrupt->is_Node.ln_Type = NT_INTERRUPT;
+      }
+    }
+    break;
   }
 
 done:
@@ -663,6 +702,7 @@ void FreeSysObject(ULONG type, APTR object)
       case ASOT_NODE:
       case ASOT_MESSAGE:
       case ASOT_TAGLIST:
+      case ASOT_INTERRUPT:
       {
         FreeVec(object);
       }

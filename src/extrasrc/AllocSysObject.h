@@ -1,7 +1,7 @@
 #ifndef ALLOCSYSOBJECT_H
 #define ALLOCSYSOBJECT_H 1
 
-#include "extrasrc.h" 
+#include "extrasrc.h"
 
 #if defined(NEED_ALLOCSYSOBJECT)
 
@@ -58,6 +58,10 @@
 #define ASOPOOL_Threshold   (TAG_USER + 12)
 #define ASOPOOL_Name        (TAG_USER + 13)
 
+#define ASOINTR_Size        (TAG_USER + 10)
+#define ASOINTR_Code        (TAG_USER + 11)
+#define ASOINTR_Data        (TAG_USER + 12)
+
 #define ASOT_IOREQUEST      0
 #define ASOT_HOOK           1
 #define ASOT_LIST           3
@@ -67,6 +71,7 @@
 #define ASOT_SEMAPHORE      8
 #define ASOT_TAGLIST        9
 #define ASOT_MEMPOOL        10
+#define ASOT_INTERRUPT      11
 
 #endif
 

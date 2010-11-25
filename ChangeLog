@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-11-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/AllocSysObject.c: added support for ASOT_INTERRUPT. This might come
+    handy sooner or later.
+
 2010-11-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c, tcp/smtp.c, tcp/http.c: in case a transfer was aborted the
