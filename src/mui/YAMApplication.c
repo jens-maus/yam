@@ -70,7 +70,7 @@
 struct Data
 {
   Object *transferWindow;
-  struct List EMailCache;
+  struct MinList EMailCache;
   STRPTR EMailCacheName;
   char compileInfo[SIZE_DEFAULT];
 };
@@ -83,19 +83,19 @@ struct Data
 
 struct EMailCacheNode
 {
-  struct Node ecn_Node;
+  struct MinNode ecn_Node;
   struct ABEntry ecn_Person;
 };
 
 /* Private functions */
 /// LoadEMailCache()
-VOID LoadEMailCache(STRPTR name, struct List *list)
+VOID LoadEMailCache(STRPTR name, struct MinList *list)
 {
   BPTR fh;
 
   ENTER();
 
-  NewList(list);
+  NewMinList(list);
 
   if((fh = Open(name, MODE_OLDFILE)))
   {
@@ -106,29 +106,35 @@ VOID LoadEMailCache(STRPTR name, struct List *list)
     {
       char *addr;
       char *end;
-      struct EMailCacheNode *node;
 
-      if((addr = strchr(line, '<')) && (end = strchr(addr, '>')) && (node = calloc(1, sizeof(struct EMailCacheNode))))
+      if((addr = strchr(line, '<')) != NULL && (end = strchr(addr, '>')) != NULL)
       {
-        if(addr != line)
-        {
-          addr[-1] = '\0';
-          // now check if the cached entry contains a comma in the real name and does not start with a quote
-          if(strchr(line, ',') != NULL && line[0] != '"')
-          {
-            // add the quotes around the name
-            snprintf(node->ecn_Person.RealName, sizeof(node->ecn_Person.RealName), "\"%s\"", line);
-          }
-          else
-          {
-            // just copy the real name
-            strlcpy(node->ecn_Person.RealName, line, sizeof(node->ecn_Person.RealName));
-          }
-        }
-        end[0] = '\0';
-        strlcpy(node->ecn_Person.Address, addr+1, sizeof(node->ecn_Person.Address));
+        struct EMailCacheNode *node;
 
-        AddTail(list, &node->ecn_Node);
+     	if((node = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*node),
+     	                                         ASONODE_Min, TRUE,
+     	                                         TAG_DONE)) != NULL)
+        {
+          if(addr != line)
+          {
+            addr[-1] = '\0';
+            // now check if the cached entry contains a comma in the real name and does not start with a quote
+            if(strchr(line, ',') != NULL && line[0] != '"')
+            {
+              // add the quotes around the name
+              snprintf(node->ecn_Person.RealName, sizeof(node->ecn_Person.RealName), "\"%s\"", line);
+            }
+            else
+            {
+              // just copy the real name
+              strlcpy(node->ecn_Person.RealName, line, sizeof(node->ecn_Person.RealName));
+            }
+          }
+          end[0] = '\0';
+          strlcpy(node->ecn_Person.Address, addr+1, sizeof(node->ecn_Person.Address));
+
+          AddTail((struct List *)list, (struct Node *)node);
+        }
       }
       else
       {
@@ -147,7 +153,7 @@ VOID LoadEMailCache(STRPTR name, struct List *list)
 
 ///
 /// SaveEMailCache()
-VOID SaveEMailCache(STRPTR name, struct List *list)
+VOID SaveEMailCache(STRPTR name, struct MinList *list)
 {
   BPTR fh;
 
@@ -508,7 +514,7 @@ DECLARE(AddToEmailCache) // struct Person *person
          !Stricmp(entry->Address, msg->person->Address))
       {
         Remove((struct Node *)node);
-        AddHead(&data->EMailCache, (struct Node *)node);
+        AddHead((struct List *)&data->EMailCache, (struct Node *)node);
         found = TRUE;
         break;
       }
@@ -523,7 +529,9 @@ DECLARE(AddToEmailCache) // struct Person *person
       struct EMailCacheNode *newnode;
 
       // we alloc mem for this new node and add it behind the last node
-      if((newnode = calloc(1, sizeof(struct EMailCacheNode))))
+      if((newnode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(newnode),
+                                                  ASONODE_Min, TRUE,
+                                                  TAG_DONE)) != NULL)
       {
         struct ABEntry *entry = &newnode->ecn_Person;
 
@@ -542,7 +550,7 @@ DECLARE(AddToEmailCache) // struct Person *person
         strlcpy(entry->Address, msg->person->Address, sizeof(entry->Address));
 
         // we always add new items to the top because this is a FILO
-        AddHead(&data->EMailCache, (struct Node *)newnode);
+        AddHead((struct List *)&data->EMailCache, (struct Node *)newnode);
       }
     }
 
@@ -663,9 +671,9 @@ OVERLOAD(OM_DISPOSE)
   struct EMailCacheNode *node;
 
   // lets free the EMailCache List ourself in here, to make it a bit cleaner.
-  while((node = (struct EMailCacheNode *)RemHead(&data->EMailCache)) != NULL)
+  while((node = (struct EMailCacheNode *)RemHead((struct List *)&data->EMailCache)) != NULL)
   {
-    free(node);
+    FreeSysObject(ASOT_NODE, node);
   }
 
   // then we call the supermethod to let

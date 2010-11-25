@@ -12,6 +12,8 @@ $URL$
   * extrasrc/MoveList.c: added a reimplementation of AmigaOS4's MoveList()
     function.
   * MailList.c: make use of the new MoveList() function.
+  * mui/YAMApplication.c: changed the mail cache entries to be MinNodes instead
+    of nodes and allocate them using AllocSysObject().
 
 2010-11-24 Thore Böckelmann <tboeckel@gmx.de>
 
