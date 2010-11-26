@@ -67,7 +67,7 @@ void InitMailTransferList(struct MailTransferList *tlist);
 void ClearMailTransferList(struct MailTransferList *tlist);
 struct MailTransferList *CreateMailTransferList(void);
 void DeleteMailTransferList(struct MailTransferList *tlist);
-BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flags);
+BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flags, LONG *index);
 struct MailTransferNode *CreateMailTransferNode(const struct Mail *mail, const ULONG flags);
 void AddMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode *tnode);
 void RemoveMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode *tnode);

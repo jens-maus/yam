@@ -207,6 +207,29 @@ OVERLOAD(OM_NEW)
 }
 
 ///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags = inittags(msg);
+  struct TagItem *tag;
+
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      case ATTR(ActiveMail):
+      {
+        DoMethod(data->transferMailList, MUIM_NList_SetActive, tag->ti_Data, MUIV_NList_SetActive_Jump_Center);
+      }
+      break;
+    }
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
 /// OVERLOAD(OM_GET)
 OVERLOAD(OM_GET)
 {

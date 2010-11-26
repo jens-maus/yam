@@ -104,6 +104,9 @@ struct TransferContext
 {
   struct Connection *connection;
   struct MailServerNode *msn;
+  ULONG abortMask;
+  ULONG wakeupMask;
+  ULONG timerMask;
   Object *transferGroup;
   Object *preselectWindow;
   char pop3Buffer[SIZE_LINE];            // RFC 2821 says 1000 should be enough
@@ -122,6 +125,7 @@ struct TransferContext
   struct FilterResult filterResult;
   int numberOfMails;
   long totalSize;
+  LONG firstToPreselect;
 };
 
 /// ApplyRemoteFilters
@@ -600,6 +604,52 @@ static void GetSingleMessageDetails(struct TransferContext *tc, struct MailTrans
 }
 
 ///
+/// CheckAbort
+// check for an abortion while obtaining the message details
+static int CheckAbort(struct TransferContext *tc)
+{
+  int success = 1;
+
+  ENTER();
+
+  // check for transmission errors
+  if(tc->connection->abort == TRUE || tc->connection->error != CONNECTERR_NO_ERROR)
+  {
+    success = 0;
+  }
+  else
+  {
+    ULONG signals;
+
+    // check for pending signals and clear them
+    signals = SetSignal(0UL, tc->abortMask|tc->wakeupMask);
+
+    // check for abortion
+    if(success == 1 && isFlagSet(signals, tc->abortMask))
+    {
+      D(DBF_THREAD, "get message details aborted");
+      tc->connection->abort = TRUE;
+      success = 0;
+    }
+
+    // check for an early reaction from the user in the preselection window
+    if(success == 1 && isFlagSet(signals, tc->wakeupMask))
+    {
+      ULONG result = FALSE;
+
+      PushMethodOnStackWait(tc->preselectWindow, 3, OM_GET, MUIA_PreselectionWindow_Result, &result);
+      if(result == TRUE)
+        success = 2;
+      else
+        success = 0;
+    }
+  }
+
+  RETURN(success);
+  return success;
+}
+
+///
 /// GetAllMessageDetails
 // get the details of all mails
 // success will be:
@@ -609,55 +659,61 @@ static void GetSingleMessageDetails(struct TransferContext *tc, struct MailTrans
 static int GetAllMessageDetails(struct TransferContext *tc)
 {
   int success = 1;
-  ULONG abortMask;
-  ULONG wakeupMask;
-  LONG line;
   struct MailTransferNode *tnode;
+  LONG line;
 
   ENTER();
 
-  abortMask = (1UL << ThreadAbortSignal());
-  wakeupMask = (1UL << ThreadWakeupSignal());
-
+  // start with the first node in the list
+  tnode = FirstMailTransferNode(tc->transferList);
   line = 0;
-  ForEachMailTransferNode(tc->transferList, tnode)
-  {
-    ULONG signals;
 
+  if(tc->firstToPreselect > 0)
+  {
+    // the first mail to be transferred is not the first in the list,
+    // skip until that index
+    do
+    {
+      tnode = NextMailTransferNode(tnode);
+      line++;
+      if(line == tc->firstToPreselect)
+        break;
+    }
+    while(tnode != NULL);
+  }
+
+  // tell the preselection window to highlight the first mail to be transferred
+  PushMethodOnStackWait(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tc->firstToPreselect);
+
+  // get all message details until the end of the list
+  while(tnode != NULL)
+  {
     GetSingleMessageDetails(tc, tnode, line);
+
+    tnode = NextMailTransferNode(tnode);
     line++;
 
-    // check for transmission errors
-    if(tc->connection->abort == TRUE || tc->connection->error != CONNECTERR_NO_ERROR)
-    {
-      success = 0;
+    if((success = CheckAbort(tc)) != 1)
       break;
-    }
+  }
 
-    signals = SetSignal(0UL, abortMask|wakeupMask);
+  // get any remaining message details from the beginning of the list
+  if(tc->firstToPreselect > 0)
+  {
+    tnode = FirstMailTransferNode(tc->transferList);
+    line = 0;
 
-    // check for abortion
-    if(isFlagSet(signals, abortMask))
+    while(tnode != NULL)
     {
-      D(DBF_THREAD, "get message details aborted");
-      tc->connection->abort = TRUE;
-      success = 0;
-      break;
-    }
+      GetSingleMessageDetails(tc, tnode, line);
 
-    // check for an early reaction from the user in the preselection window
-    if(isFlagSet(signals, wakeupMask))
-    {
-      ULONG result = FALSE;
+      tnode = NextMailTransferNode(tnode);
+      line++;
+      if(line == tc->firstToPreselect)
+        break;
 
-      PushMethodOnStackWait(tc->preselectWindow, 3, OM_GET, MUIA_PreselectionWindow_Result, &result);
-      if(result == TRUE)
-        success = 2;
-      else
-        success = 0;
-
-      // get out here in any case
-      break;
+      if((success = CheckAbort(tc)) != 1)
+        break;
     }
   }
 
@@ -1250,16 +1306,9 @@ static void DownloadMails(struct TransferContext *tc)
 // wait for the user to finish the preselection
 static BOOL WaitForPreselection(struct TransferContext *tc)
 {
-  ULONG abortMask;
-  ULONG wakeupMask;
-  ULONG timerMask;
   BOOL success = FALSE;
 
   ENTER();
-
-  abortMask = (1UL << ThreadAbortSignal());
-  wakeupMask = (1UL << ThreadWakeupSignal());
-  timerMask = (1UL << ThreadTimerSignal());
 
   // start the "keep alive" timer
   StartThreadTimer(C->KeepAliveInterval, 0);
@@ -1268,15 +1317,15 @@ static BOOL WaitForPreselection(struct TransferContext *tc)
   {
     ULONG signals;
 
-    signals = Wait(abortMask|wakeupMask|timerMask);
-    if(isFlagSet(signals, abortMask))
+    signals = Wait(tc->abortMask|tc->wakeupMask|tc->timerMask);
+    if(isFlagSet(signals, tc->abortMask))
     {
       // we were aborted
       D(DBF_THREAD, "preselection aborted");
       tc->connection->abort = TRUE;
       break;
     }
-    if(isFlagSet(signals, wakeupMask))
+    if(isFlagSet(signals, tc->wakeupMask))
     {
       // the user finished the preselection
       ULONG result = FALSE;
@@ -1287,7 +1336,7 @@ static BOOL WaitForPreselection(struct TransferContext *tc)
 
       break;
     }
-    if(isFlagSet(signals, timerMask))
+    if(isFlagSet(signals, tc->timerMask))
     {
       // here we send a STAT command instead of a NOOP which normally
       // should do the job as well. But there are several known POP3
@@ -1352,6 +1401,8 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
     tc->flags = flags;
     // assume an error at first
     tc->downloadResult.error = TRUE;
+    tc->abortMask = (1UL << ThreadAbortSignal());
+    tc->wakeupMask = (1UL << ThreadWakeupSignal());
 
     // try to open the TCP/IP stack
     if((tc->connection = CreateConnection()) != NULL && ConnectionIsOnline(tc->connection) == TRUE)
@@ -1363,6 +1414,8 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
           if(InitThreadTimer() == TRUE)
           {
             BOOL uidlOk = FALSE;
+
+            tc->timerMask = (1UL << ThreadTimerSignal());
 
             if(C->AvoidDuplicates == TRUE)
             {
@@ -1428,7 +1481,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                         FilterDuplicates(tc);
 
                       // check the list of mails if some kind of preselection is required
-                      if(isFlagSet(tc->flags, RECEIVEF_USER) && ScanMailTransferList(tc->transferList, TRF_PRESELECT) == TRUE)
+                      if(isFlagSet(tc->flags, RECEIVEF_USER) && ScanMailTransferList(tc->transferList, TRF_PRESELECT, NULL) == TRUE)
                       {
                         // show the preselection window in case user interaction is requested
                         D(DBF_NET, "preselection is required");
@@ -1442,21 +1495,27 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
                           PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_WAIT_FOR_PRESELECTION));
 
-                          if(ThreadWasAborted() == FALSE && (mustWait = GetAllMessageDetails(tc)) != 0)
+                          if(ThreadWasAborted() == FALSE)
                           {
-                            if(mustWait == 1)
-                            {
-                              // we got all details, now wait for the user to finish the preselection
-                              doDownload = WaitForPreselection(tc);
-                            }
-                            else
-                            {
-                              // getting the details has been aborted early by pressing the "Start" button
-                              doDownload = TRUE;
-                            }
-                          }
+                            // scan the list for the first mail to be transferred
+                            ScanMailTransferList(tc->transferList, TRF_TRANSFER, &tc->firstToPreselect);
 
-                          PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DisposeWindow, tc->preselectWindow);
+                            if((mustWait = GetAllMessageDetails(tc)) != 0)
+                            {
+                              if(mustWait == 1)
+                              {
+                                // we got all details, now wait for the user to finish the preselection
+                                doDownload = WaitForPreselection(tc);
+                              }
+                              else
+                              {
+                                // getting the details has been aborted early by pressing the "Start" button
+                                doDownload = TRUE;
+                              }
+                            }
+
+                            PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DisposeWindow, tc->preselectWindow);
+                          }
                         }
                       }
                       else
@@ -1466,7 +1525,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                       }
 
                       // is there anything left to transfer?
-                      if(ThreadWasAborted() == FALSE && doDownload == TRUE && ScanMailTransferList(tc->transferList, TRF_TRANSFER) == TRUE)
+                      if(ThreadWasAborted() == FALSE && doDownload == TRUE && ScanMailTransferList(tc->transferList, TRF_TRANSFER, NULL) == TRUE)
                       {
                         SumUpMails(tc);
                         PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, tc->numberOfMails, tc->totalSize);
