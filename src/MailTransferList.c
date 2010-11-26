@@ -138,7 +138,7 @@ void DeleteMailTransferList(struct MailTransferList *tlist)
 /// ScanMailTransferList
 // iterate over a transfer list and return TRUE if at least one node
 // has the given flags set, optionally the node's index can be returned
-BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flags, LONG *index)
+BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flags, LONG *indexPtr)
 {
   BOOL found = FALSE;
   struct MailTransferNode *tnode;
@@ -146,8 +146,8 @@ BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flag
 
   ENTER();
 
-  if(index != NULL)
-    *index = -1;
+  if(indexPtr != NULL)
+    *indexPtr = -1;
 
   i = 0;
   ForEachMailTransferNode(tlist, tnode)
@@ -156,8 +156,8 @@ BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flag
     {
       found = TRUE;
 
-      if(index != NULL)
-        *index = i;
+      if(indexPtr != NULL)
+        *indexPtr = i;
 
       break;
     }
