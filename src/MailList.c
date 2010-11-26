@@ -83,14 +83,23 @@ struct MailList *CreateMailList(void)
 /// ClearMailList
 // remove all mails from a list
 // if locking of the list is needed this must be done by the calling function
-void ClearMailList(struct MailList *mlist)
+void ClearMailList(struct MailList *mlist, const BOOL freeMails)
 {
   struct Node *node;
 
   ENTER();
 
   while((node = RemHead((struct List *)&mlist->list)) != NULL)
+  {
+    if(freeMails == TRUE)
+    {
+      struct MailNode *mnode = (struct MailNode *)node;
+
+      free(mnode->mail);
+    }
+
     FreeSysObject(ASOT_NODE, node);
+  }
   InitMailList(mlist);
 
   LEAVE();
@@ -107,7 +116,7 @@ void DeleteMailList(struct MailList *mlist)
   {
     // remove and free all remaining nodes in the list
     LockMailList(mlist);
-    ClearMailList(mlist);
+    ClearMailList(mlist, FALSE);
     UnlockMailList(mlist);
 
     // free the semaphore

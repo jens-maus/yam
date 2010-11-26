@@ -561,20 +561,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
     }
 
     if(!isGroupFolder(folder))
-    {
-      struct MailNode *mnode;
-
-      // free all the mail pointers in the list
-      LockMailListShared(folder->messages);
-
-      ForEachMailNode(folder->messages, mnode)
-      {
-        free(mnode->mail);
-        mnode->mail = NULL;
-      }
-
-      UnlockMailList(folder->messages);
-    }
+      ClearMailList(folder->messages, TRUE);
 
     // free the mail list itself
     DeleteMailList(folder->messages);

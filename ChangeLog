@@ -14,6 +14,11 @@ $URL$
     start with this mail. This comes in very handy if there are more mails on
     the server than are actually to be downloaded (i.e. because of filtering and
     duplicates checking).
+  * MailList.c, YAM_FO.c, YAM_UT.c: clearing a folder's mail list should be much
+    faster for large folders now. This is archived by checking possibly opened
+    read windows to be closed ahead of clearing the list. Before the opened read
+    windows were checked against every single mail which made YAM crawl when
+    folders with some ten thousand mails had to be cleared.
 
 2010-11-25 Thore Böckelmann <tboeckel@gmx.de>
 

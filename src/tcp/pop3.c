@@ -1583,9 +1583,9 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
             PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
           }
 
-          // forget about the downloaded mails again
+          // forget about the downloaded mails again, but don't free the mails
           LockMailList(tc->msn->downloadedMails);
-          ClearMailList(tc->msn->downloadedMails);
+          ClearMailList(tc->msn->downloadedMails, FALSE);
           UnlockMailList(tc->msn->downloadedMails);
         }
         else

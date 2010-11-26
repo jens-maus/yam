@@ -3341,7 +3341,7 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
 //  Removes all messages from a folder
 void ClearFolderMails(struct Folder *folder, BOOL resetstats)
 {
-  struct MailNode *mnode;
+  struct Node *node;
 
   ENTER();
 
@@ -3350,38 +3350,30 @@ void ClearFolderMails(struct Folder *folder, BOOL resetstats)
   ASSERT(folder->messages->lockSemaphore != NULL);
   D(DBF_FOLDER, "clearing mail list of folder '%s'", folder->Name);
 
-  LockMailList(folder->messages);
-
-  while((mnode = TakeMailNode(folder->messages)) != NULL)
+  // First we check if there is any read window open with a mail
+  // belonging to the folder we are about to clear.
+  // Instead of checking each of the folder's mail to be contained
+  // in thelist of active readMailData we just check if one the
+  // active readMailData is pointing back to the folder. This is
+  // much more efficient as one has usually only very few read
+  // windows opened in parallel.
+  node = GetHead((struct List *)&G->readMailDataList);
+  while(node != NULL)
   {
-    struct Mail *mail = mnode->mail;
-    struct Node *curNode;
+    struct ReadMailData *rmData = (struct ReadMailData *)node;
+    struct Node *nextNode = GetSucc(node);
 
-    // Now we check if there is any read window with that very same
-    // mail currently open and if so we have to clean it.
-    curNode = GetHead((struct List *)&G->readMailDataList);
-    while(curNode != NULL)
-    {
-      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-      struct Node *nextNode = GetSucc(curNode);
+    if(rmData->mail != NULL && rmData->mail->Folder == folder)
+      CleanupReadMailData(rmData, TRUE);
 
-      if(rmData->mail == mail)
-        CleanupReadMailData(rmData, TRUE);
-
-      curNode = nextNode;
-    }
-
-    DeleteMailNode(mnode);
-    // free the mail pointer
-    free(mail);
+    node = nextNode;
   }
 
-  D(DBF_FOLDER, "cleared mail list of folder '%s'", folder->Name);
-
-  // reset the list of mails
-  InitMailList(folder->messages);
-
+  LockMailList(folder->messages);
+  ClearMailList(folder->messages, TRUE);
   UnlockMailList(folder->messages);
+
+  D(DBF_FOLDER, "cleared mail list of folder '%s'", folder->Name);
 
   if(resetstats == TRUE)
   {
