@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-11-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/AllocSysObject.c: added the missing includes to fix the broken
+    MorphOS and AROS builds.
+
 2010-11-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/AllocSysObject.c: added support for ASOT_INTERRUPT. This might come

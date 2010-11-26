@@ -38,8 +38,13 @@
 
 #include <proto/exec.h>
 #include <proto/utility.h>
-
 #include <clib/alib_protos.h>
+#include <exec/interrupts.h>
+#include <exec/io.h>
+#include <exec/memory.h>
+#include <exec/nodes.h>
+#include <exec/ports.h>
+#include <exec/semaphores.h>
 
 #include "AllocSysObject.h"
 #include "SDI_compiler.h"
