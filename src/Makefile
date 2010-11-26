@@ -352,6 +352,7 @@ ifeq ($(OS), aros-ppc)
   EXTRAOBJS = AllocSysObject.o \
               DoSuperNew.o \
               ExamineDir.o \
+              MoveList.o \
               NewMinList.o \
               NewReadArgs.o \
               SetProcWindow.o \
@@ -384,6 +385,7 @@ ifeq ($(OS), aros-x86_64)
   EXTRAOBJS = AllocSysObject.o \
               DoSuperNew.o \
               ExamineDir.o \
+              MoveList.o \
               NewMinList.o \
               NewReadArgs.o \
               SetProcWindow.o \
