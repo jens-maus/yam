@@ -468,7 +468,7 @@ BOOL ParseUpdateFile(const char *filename, const BOOL quiet)
   return result;
 }
 
-//
+///
 /// LoadUpdateState
 // Load update state file from disk
 void LoadUpdateState(void)
