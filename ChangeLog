@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-11-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/TransferWindow.c, mui/YAMApplication.c: the user's transfer window
+    setting is now respected correctly again. Setting this to "never" or
+    "always" will show the transfer window never or always respectively while
+    the automatic setting will leave it to the application whether the window
+    should be visible or not.
+
 2010-11-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/AllocSysObject.c: added the missing includes to fix the broken

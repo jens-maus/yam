@@ -51,6 +51,15 @@ struct Data
 };
 */
 
+/* EXPORT
+enum TransferWindowMode
+{
+  TWM_HIDE=0,
+  TWM_AUTO,
+  TWM_SHOW
+};
+*/
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)

@@ -37,6 +37,7 @@
 #include "UpdateCheck.h"
 
 #include "mui/ConfigPageList.h"
+#include "mui/TransferWindow.h"
 #include "tcp/Connection.h"
 
 // forward declarations
@@ -421,7 +422,7 @@ struct Config
   enum  MDNAction          MDN_Other;
   enum  DateStampType      DSListFormat;
   enum  SigSepType         SigSepLine;
-  enum  TransWinMode       TransferWindow;
+  enum  TransferWindowMode TransferWindow;
   enum  PreSelMode         PreSelection;
   enum  FolderInfoMode     FolderInfoMode;
   enum  ForwardMode        ForwardMode;

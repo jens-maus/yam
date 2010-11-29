@@ -40,13 +40,6 @@ enum SendMailMode
   SENDMAIL_ACTIVE_AUTO
 };
 
-enum TransWinMode
-{
-  TWM_HIDE=0,
-  TWM_AUTO,
-  TWM_SHOW
-};
-
 // prototypes
 BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMailMode mode);
 

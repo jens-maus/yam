@@ -848,10 +848,14 @@ DECLARE(CreateTransferGroup) // APTR thread, const char *title, struct Connectio
       xset(group, MUIA_TransferControlGroup_Thread, msg->thread,
                   MUIA_TransferControlGroup_Connection, msg->connection);
 
-      if(msg->openWindow == TRUE)
+      // respect the user's settings for the transfer window
+      if(C->TransferWindow != TWM_HIDE)
       {
-        D(DBF_GUI, "visible transfer window is requested");
-        SafeOpenWindow(data->transferWindow);
+        if(msg->openWindow == TRUE || C->TransferWindow == TWM_SHOW)
+        {
+          D(DBF_GUI, "visible transfer window is requested");
+          SafeOpenWindow(data->transferWindow);
+        }
       }
     }
   }
