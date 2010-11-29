@@ -12,6 +12,9 @@ $URL$
     "always" will show the transfer window never or always respectively while
     the automatic setting will leave it to the application whether the window
     should be visible or not.
+  * YAM_MA.c: deleting old mails will now use 00:00 as base time instead of the
+    current time to compare a mail's date against the folder's maximum age.
+    Effectively this results in deleting old mails once per day only.
 
 2010-11-26 Thore Böckelmann <tboeckel@gmx.de>
 

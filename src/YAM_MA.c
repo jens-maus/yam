@@ -2647,6 +2647,8 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
   ENTER();
 
   DateStampUTC(&today);
+  today.ds_Minute = 0;
+  today.ds_Tick = 0;
   today_days = today.ds_Days;
 
   // we need a temporary "to be deleted" list of mails to avoid doubly locking a folder's mail list
