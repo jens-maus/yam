@@ -1871,6 +1871,7 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
     struct MailNode *mnode;
     ULONG m;
     int matches = 0;
+    BOOL noFilters = IsMinListEmpty(filterList);
 
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
     G->AppIconQuiet = TRUE;
@@ -1943,7 +1944,7 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
           }
         }
 
-        if(IsMinListEmpty(filterList) == FALSE && wasSpam == FALSE)
+        if(noFilters == FALSE && wasSpam == FALSE)
         {
           // apply all other user defined filters (if they exist) for non-spam mails
           // or if the spam filter is disabled
