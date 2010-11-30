@@ -358,7 +358,6 @@ extern struct Hook MA_FolderKeyHook;
 extern struct Hook MA_PopNowHook;
 
 void  MA_ChangeSubject(struct Mail *mail, char *subj);
-void  MA_ChangeTransfer(BOOL on);
 int   MA_CompareByDate(const struct Mail *m1, const struct Mail *m2);
 struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew);
 struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew);

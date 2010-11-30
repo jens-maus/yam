@@ -144,45 +144,6 @@ void MA_SetSortFlag(void)
 }
 
 ///
-/// MA_ChangeTransfer
-//  Disables menus and toolbar buttons during transfer operations
-void MA_ChangeTransfer(BOOL on)
-{
-  struct MA_GUIData *gui = &G->MA->GUI;
-  struct Node *curNode;
-
-  ENTER();
-
-  // modify the toolbar buttons, if the toolbar is visible
-  if(gui->TO_TOOLBAR != NULL)
-  {
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETMAIL, MUIA_TheBar_Attr_Disabled, on == FALSE);
-    DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SENDALL, MUIA_TheBar_Attr_Disabled, on == FALSE);
-  }
-
-  // modify the menu items
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, on == TRUE, gui->MI_UPDATECHECK,
-                                                                     gui->MI_IMPORT,
-                                                                     gui->MI_EXPORT,
-                                                                     gui->MI_SENDALL,
-                                                                     gui->MI_EXCHANGE,
-                                                                     gui->MI_GETMAIL,
-                                                                     gui->MI_CSINGLE,
-                                                                     NULL);
-
-  // modify the write window's "Send now" buttons
-  IterateList(&G->writeMailDataList, curNode)
-  {
-    struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-    if(wmData->window != NULL)
-      set(wmData->window, MUIA_WriteWindow_SendDisabled, on == FALSE);
-  }
-
-  LEAVE();
-}
-
-///
 /// MA_ChangeSelected
 // function which updates some mail information on the main
 // window and triggers an update of the embedded read pane if required.
@@ -1336,7 +1297,7 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
 MakeHook(MA_ReadMessageHook, MA_ReadMessage);
 
 ///
-/// MA_CmpDate
+/// MA_CompareByDate
 //  Compares two messages by date
 int MA_CompareByDate(const struct Mail *m1, const struct Mail *m2)
 {
@@ -1907,7 +1868,7 @@ HOOKPROTONHNO(MA_NewMessageFunc, void, int *arg)
 MakeHook(MA_NewMessageHook, MA_NewMessageFunc);
 
 ///
-/// CheckNewMailQualifier()
+/// CheckNewMailQualifier
 enum NewMailMode CheckNewMailQualifier(const enum NewMailMode mode, const ULONG qualifier, int *flags)
 {
   enum NewMailMode newMode = mode;
@@ -2719,8 +2680,8 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
 
         UnlockMailList(folder->messages);
 
-        // no need to lock the "to be deleted" list as this is known in this function only
-        // iterate through the list "by foot" as we remove the nodes, ForEachMailNode() is
+        // No need to lock the "to be deleted" list as this is known in this function only.
+        // Iterate through the list "by foot" as we remove the nodes, ForEachMailNode() is
         // not safe to call here!
         while((mnode = TakeMailNode(toBeDeletedList)) != NULL)
         {
