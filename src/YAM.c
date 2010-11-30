@@ -2051,7 +2051,7 @@ static void InitBeforeLogin(BOOL hidden)
 ///
 /// SendWaitingMail
 //  Sends pending mail on startup
-static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
+static BOOL SendWaitingMail(const BOOL hideDisplay)
 {
   struct Folder *fo;
   BOOL sendableMail = FALSE;
@@ -2078,8 +2078,7 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
     // in case the folder contains
     // mail which could be sent, we ask the
     // user what to do with it
-    if(sendableMail == TRUE &&
-       (hideDisplay == FALSE && xget(G->App, MUIA_Application_Iconified) == FALSE))
+    if(sendableMail == TRUE && hideDisplay == FALSE && xget(G->App, MUIA_Application_Iconified) == FALSE)
     {
       // change the folder first so that the user
       // might have a look at the mails
@@ -2090,7 +2089,7 @@ static BOOL SendWaitingMail(BOOL hideDisplay, BOOL skipSend)
     }
   }
 
-  if(skipSend == FALSE && sendableMail == TRUE)
+  if(sendableMail == TRUE)
     MA_Send(SENDMAIL_ALL_USER);
 
   RETURN(sendableMail);
@@ -2148,7 +2147,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
           MA_PopNow(-1, (C->PreSelection == PSM_NEVER || hide == TRUE) ? RECEIVEF_STARTUP : RECEIVEF_USER, NULL);
 
         if(C->SendOnStartup == TRUE)
-          SendWaitingMail(hide, FALSE);
+          SendWaitingMail(hide);
       }
     }
     else
@@ -2788,7 +2787,7 @@ int main(int argc, char **argv)
     }
 
     if(C->SendOnQuit == TRUE && args.nocheck == FALSE && ConnectionIsOnline(NULL) == TRUE)
-      SendWaitingMail(FALSE, FALSE);
+      SendWaitingMail(FALSE);
 
     if(C->CleanupOnQuit == TRUE)
       DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
