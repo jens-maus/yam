@@ -453,23 +453,22 @@ BOOL MA_SaveIndex(struct Folder *folder)
       struct ComprMail cmail;
       char buf[SIZE_LARGE];
 
-      memset(&cmail, 0, sizeof(struct ComprMail));
-      snprintf(buf, sizeof(buf), "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
-         mail->Subject,
-         mail->From.Address, mail->From.RealName,
-         mail->To.Address, mail->To.RealName,
-         mail->ReplyTo.Address, mail->ReplyTo.RealName);
-
       strlcpy(cmail.mailFile, mail->MailFile, sizeof(cmail.mailFile));
       cmail.date = mail->Date;
       cmail.transDate = mail->transDate;
       cmail.sflags = mail->sflags;
       cmail.mflags = mail->mflags;
-      setVOLValue(&cmail, 0);  // we have to make sure that the volatile flag field isn't saved
+      // we have to make sure that the volatile flag field isn't saved
+      setVOLValue(&cmail, 0);  
       cmail.cMsgID = mail->cMsgID;
       cmail.cIRTMsgID = mail->cIRTMsgID;
       cmail.size = mail->Size;
-      cmail.moreBytes = strlen(buf);
+      // snprintf() returns the number of bytes used, this saves an additional strlen() call
+      cmail.moreBytes = snprintf(buf, sizeof(buf), "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+                                                   mail->Subject,
+                                                   mail->From.Address, mail->From.RealName,
+                                                   mail->To.Address, mail->To.RealName,
+                                                   mail->ReplyTo.Address, mail->ReplyTo.RealName);
 
       fwrite(&cmail, sizeof(struct ComprMail), 1, fh);
       fwrite(buf, 1, cmail.moreBytes, fh);

@@ -9,6 +9,9 @@ $URL$
 
   * YAM_MA.c: removed the now unused MA_ChangeTransfer() function.
   * YAM_FI.c: moved an IsMinListEmpty() call outside a loop.
+  * YAM_MAf.c: slightly optimized the folder index saving by exploiting the
+    fact that snprintf() already returns the number of characters. This saves
+    the additional strlen() call.
 
 2010-11-27 Thore Böckelmann <tboeckel@gmx.de>
 
