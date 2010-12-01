@@ -53,7 +53,7 @@ struct TransferContext
   char requestResponse[SIZE_LINE];
 };
 
-/// DownloadURL()
+/// DownloadURL
 //  Downloads a file from the web using HTTP/1.1 (RFC 2616)
 BOOL DownloadURL(const char *server, const char *request, const char *filename, const ULONG flags)
 {
@@ -171,6 +171,8 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
             while(tc->connection->error == CONNECTERR_NO_ERROR &&
                   (len = ReceiveLineFromHost(tc->connection, tc->requestResponse, sizeof(tc->requestResponse))) > 0)
             {
+              SHOWSTRING(DBF_NET, tc->requestResponse);
+
               // we scan for the end of the
               // response header by searching for the first '\r\n'
               // line
@@ -181,7 +183,7 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
                 // prepare the output file.
                 if((out = fopen(filename, "w")) != NULL)
                 {
-                  LONG retrieved = -1;
+                  LONG received = -1;
 
                   setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -193,17 +195,21 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
                   {
                     if(fwrite(tc->requestResponse, len, 1, out) != 1)
                     {
-                      retrieved = -1; // signal an error!
+                      received = -1; // signal an error!
                       break;
                     }
 
-                    retrieved += len;
+                    // forget the initial value and sum up all further sizes
+                    if(received == -1)
+                      received = len;
+                    else
+                      received += len;
                   }
 
-                  D(DBF_NET, "received %ld bytes", retrieved);
+                  D(DBF_NET, "received %ld bytes", received);
 
                   // check if we retrieved anything
-                  if(tc->connection->error == CONNECTERR_NO_ERROR && retrieved >= 0)
+                  if(tc->connection->error == CONNECTERR_NO_ERROR && received >= 0)
                     success = TRUE;
 
                   fclose(out);
