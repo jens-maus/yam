@@ -938,7 +938,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
     if(conn->error != CONNECTERR_SUCCESS)
       E(DBF_NET, "ConnectToHost() connection error: %ld", conn->error);
     else
-      D(DBF_NET, "connection to %s:%ld succedded", host, port);
+      D(DBF_NET, "connection to '%s:%ld' succeeded", host, port);
 
     error = conn->error;
   }
