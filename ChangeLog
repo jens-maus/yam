@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Timer.c: added a safety check to avoid restarting an already cleaned up
+    timer during the termination process.
+
 2010-11-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: removed the now unused MA_ChangeTransfer() function.

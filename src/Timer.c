@@ -102,31 +102,36 @@ void StartTimer(const enum Timer tid)
 
   ENTER();
 
-  if(timer->isRunning == FALSE && timer->isPrepared == TRUE)
+  if(timer->tr != NULL)
   {
-    #if defined(DEBUG)
-    char dateString[64];
+    if(timer->isRunning == FALSE && timer->isPrepared == TRUE)
+    {
+      #if defined(DEBUG)
+      char dateString[64];
 
-    DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
+      DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
 
-    D(DBF_TIMER, "timer[%ld]: started @ %s to finish in %ld'%ld secs", tid,
-                                                                         dateString,
-                                                                         timer->tr->Time.Seconds,
-                                                                         timer->tr->Time.Microseconds);
-    #endif
+      D(DBF_TIMER, "timer[%ld]: started @ %s to finish in %ld'%ld secs", tid,
+                                                                           dateString,
+                                                                           timer->tr->Time.Seconds,
+                                                                           timer->tr->Time.Microseconds);
+      #endif
 
-    // fire the timer by doing a SendIO()
-    SendIO(&timer->tr->Request);
+      // fire the timer by doing a SendIO()
+      SendIO(&timer->tr->Request);
 
-    // remember the start time
-    GetSysTime(TIMEVAL(&timer->startTime));
+      // remember the start time
+      GetSysTime(TIMEVAL(&timer->startTime));
 
-    // signal that our timer is running
-    timer->isRunning = TRUE;
-    timer->isPrepared = FALSE;
+      // signal that our timer is running
+      timer->isRunning = TRUE;
+      timer->isPrepared = FALSE;
+    }
+    else
+      W(DBF_TIMER, "timer[%ld]: either already running or not prepared to get fired", tid);
   }
   else
-    W(DBF_TIMER, "timer[%ld]: either already running or not prepared to get fired", tid);
+    W(DBF_TIMER, "timer[%ld]: timer is already cleaned up", tid);
 
   LEAVE();
 }
