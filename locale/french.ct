@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (15.09.2010)
+## version $VER: YAM.catalog 7.2 (02.12.2010)
 ## language français
 ## codeset 111
 ;
@@ -60,11 +60,11 @@ Ajouter...
 ; Append...
 ;
 MSG_Save
-Sauver
+Enregistrer
 ; Save
 ;
 MSG_SaveAs
-Sauver sous...
+Enregistrer sous...
 ; Save as...
 ;
 MSG_Print
@@ -435,20 +435,10 @@ Message de « %s » sur « %s » du dossier « %s » copié vers « %s »
 ; Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
-MSG_LOG_ConnectPOP
-Connecté avec POP3 « %s@%s » : %ld messages en attente
-; Logged in on POP3 account '%s@%s': %ld messages waiting
-; USER_ID, HOST, COUNT
-;
 MSG_LOG_RetrievingVerbose
 Message de « %s », sujet « %s » chargé (%ld octets)
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
-;
-MSG_LOG_Retrieving
-%ld message(s) chargé(s) depuis POP3 « %s@%s »
-; Retrieved %ld message(s) from POP3 account '%s@%s'
-; COUNT, USER_ID, HOST
 ;
 MSG_LOG_ConnectSMTP
 Connecté au serveur SMTP « %s »
@@ -538,7 +528,7 @@ Change le sujet « %s » du message « %s » dans le dossier « %s » en « %s »
 ; Module UT - Procedures
 ;
 MSG_UT_Save
-Sauver
+Enregistrer
 ; Save
 ;
 MSG_UT_Load
@@ -774,7 +764,7 @@ Ordre
 ; Order
 ;
 MSG_MA_OSave
-Sauver
+Enregistrer
 ; Save
 ;
 MSG_MA_Reset
@@ -794,11 +784,11 @@ Effacer
 ; Delete
 ;
 MSG_MA_Save
-Sauver...
+Enregistrer...
 ; Save...
 ;
 MSG_MA_MGetAddress
-Sauver l'adresse...
+Enregistrer l'adresse...
 ; Save address...
 ;
 MSG_MA_SetStatus
@@ -1136,7 +1126,7 @@ Carnet d'adresses
 ; Address book
 ;
 MSG_CO_Save
-_Sauver
+Enregi_strer
 ; _Save
 ;
 MSG_CO_Use
@@ -1755,18 +1745,6 @@ MSG_CO_EncryptToSelf
 avec _clé personnelle
 ; _Encrypt to self
 ;
-MSG_CO_AnonMail
-Courrier anonyme
-; Anonymous mail
-;
-MSG_CO_ReMailer
-_Re-Mailer
-; _Re-Mailer
-;
-MSG_CO_ReMailerLine
-Champ d'en_-tête
-; _Header field
-;
 MSG_CO_Logfiles
 Fichier des évènements
 ; Log files
@@ -1900,7 +1878,7 @@ _Gadget de fermeture pour icônifier le programme
 ; Close _gadget iconifies program
 ;
 MSG_CO_SaveDelete
-Sauver/effacer les messages
+Enregistrement/Suppression des messages
 ; Save/delete messages
 ;
 MSG_CO_ConfirmDelPart1
@@ -2004,7 +1982,7 @@ Ouvrir...
 ; Open...
 ;
 MSG_CO_SaveAs
-Sauver sous...
+Enregistrer sous...
 ; Save as...
 ;
 MSG_CO_Edit
@@ -2631,18 +2609,6 @@ toujours lire ou éditer les messages sortants.
 ; Encrypt new messages with your public key,\n\
 ; so you can still read or edit outgoing messages.
 ;
-MSG_HELP_CO_ST_REMAILER
-Adresse électronique du Remailer à utiliser\n\
-pour envoyer des messages anonymes.
-; E-mail address of the remailer service\n\
-; used to send anonymous mail.
-;
-MSG_HELP_CO_ST_FIRSTLINE
-Ligne insérée automatiquement au début\n\
-de tous messages expédié via le Remailer.
-; Automatically insert this line at the top\n\
-; of all messages sent through the remailer.
-;
 MSG_HELP_CO_ST_LOGFILE
 Chemin où sont stockés\n\
 les fichiers d'évènements
@@ -2934,7 +2900,7 @@ Le carnet d'adresses a été modifié.
 ; Address book has been modified.
 ;
 MSG_AB_ModifiedGads
-*_Sauver|_Utiliser|_Perdre|_Annuler
+*Enregi_strer|_Utiliser|_Perdre|_Annuler
 ; *_Save|_Use|_Discard changes|_Cancel
 ;
 ;
@@ -3059,7 +3025,7 @@ Tout déplier
 ; Module AB - Toolbar
 ;
 MSG_AB_TBSave
-_Sauver
+Enregi_strer
 ; _Save
 ;
 MSG_AB_TBFind
@@ -3407,7 +3373,7 @@ Que voulez-vous faire ?
 ; What do you want to do?
 ;
 MSG_RE_SaveMessage
-Sauver un message
+Enregistrer un message
 ; Save message
 ;
 MSG_RE_PrintMsg
@@ -3423,11 +3389,11 @@ _Imprimer
 ; _Print
 ;
 MSG_RE_SelectSavePart
-Choisir la partie à sauver :
+Choisir la partie à enregistrer :
 ; Select part to save:
 ;
 MSG_RE_SaveGad
-_Sauver
+Enregi_strer
 ; _Save
 ;
 MSG_RE_DisplayMsg
@@ -3632,7 +3598,7 @@ Afficher...
 ; Display...
 ;
 MSG_RE_SaveAll
-Tout sauver...
+Enregistrer tout...
 ; Save all...
 ;
 MSG_RE_Navigation
@@ -3668,7 +3634,7 @@ Extrait la/les clé(s)
 ; Extract public key(s)
 ;
 MSG_RE_SaveDecrypted
-Sauver message décrypté
+Enregistrer message décrypté
 ; Save decrypted message
 ;
 MSG_RE_NoHeaders
@@ -3727,7 +3693,7 @@ _Montrer
 ; _Display
 ;
 MSG_RE_TBSave
-_Sauver
+Enregi_strer
 ; _Save
 ;
 MSG_RE_TBPrint
@@ -3846,7 +3812,7 @@ MSG_WR_DiscardChangesGad
 ; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
-Sauver texte sous
+Enregistrer texte sous
 ; Save text as
 ;
 MSG_WR_AddFile
@@ -3906,10 +3872,6 @@ Crypter
 MSG_WR_SecBoth
 Signer et crypter
 ; Sign and encrypt
-;
-MSG_WR_SecAnon
-Envoi anonyme
-; Send anonymously
 ;
 MSG_WR_ImpHigh
 Haute
@@ -4357,7 +4319,7 @@ pour ce message
 ; for this message.
 ;
 MSG_HELP_WR_CH_DELSEND
-Ne pas sauver le message\n\
+Ne pas enregistrer le message\n\
 dans le dossier « Envoyés »
 ; Do not store this message\n\
 ; in the Sent folder.
@@ -4388,16 +4350,15 @@ ajouter à ce message ?
 ;
 MSG_HELP_WR_RA_SECURITY
 Choisissez une de ces options de sécurité\n\
-pour envoyer votre courrier : signé (PGP),\n\
-soit crypté ou anonyme. « défaut » tente\n\
-de trouver le destinataire dans votre carnet\n\
-d'adresses et utilise les réglages de sécurité\n\
-mentionnés à cet endroit.
+pour envoyer votre courrier : signé (PGP)\n\
+ou crypté. « Défaut » tente de trouver le\n\
+destinataire dans votre carnet d'adresses et\n\
+utilise les réglages de sécurité associés.
 ; Select one of these security options to send\n\
-; your message PGP signed, encrypted\n\
-; or anonymously. "Default" tries to find\n\
-; the recipient in your address book and use\n\
-; the security settings specified there.
+; your message PGP signed or encrypted.\n\
+; "Default" tries to find the recipient\n\
+; in your address book and use the security\n\
+; settings specified there.
 ;
 MSG_HELP_WR_BT_HOLD
 Place le message créé dans\n\
@@ -4437,13 +4398,6 @@ Connexion au serveur de courrier...
 MSG_TR_WaitWelcome
 Connecté, attente du message d'accueil...
 ; Connected, awaiting welcome message...
-;
-MSG_TR_PopLoginReq
-Entrez votre code d'accès POP3\n\
-pour la boîte aux lettres %s@%s
-; Please enter POP3 password for account\n\
-; %s@%s
-; USER_ID, HOST
 ;
 MSG_TR_PopLogin
 Identifiant POP3
@@ -4493,19 +4447,6 @@ MSG_TR_DeletingServerMail
 Efface le message sur le serveur...
 ; Deleting mail on server...
 ;
-MSG_TR_NewMailReq
-\e8Vous avez reçu du courrier.\e2\n\
-\n\
-%3ld messages chargés,\n\
-%3ld restés sur le serveur,\n\
-%3ld doublons évités.\n
-; \e8You have new mail.\e2\n\
-; \n\
-; %3ld messages downloaded,\n\
-; %3ld left on server\n\
-; %3ld duplicates skipped\n
-; COUNT, COUNT, COUNT, COUNT
-;
 MSG_TR_FilterStats
 \n\
 Filtrage terminé :\n\
@@ -4541,12 +4482,12 @@ Télécharge le courrier...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-Reçoit le courrier sur « %s »
+Réception du courrier depuis « %s »
 ; Mail transfer from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-Transfère le courrier vers « %s »
+Envoi du courrier vers « %s »
 ; Mail transfer to '%s'
 ; HOST
 ;
@@ -4766,7 +4707,7 @@ ou ne supporte pas les requêtes HTTP.
 MSG_ER_ErrorWriteMailfile
 Erreur d'écriture pour : %s.\n\
 \n\
-YAM ne peut pas sauver le message sur disque. L'espace disque doit être insuffisant.
+YAM ne peut pas enregistrer le message sur disque. L'espace disque doit être insuffisant.
 ; Write error on mail file: %s.\n\
 ; \n\
 ; YAM can't save the message to disk, maybe you're out of disk space.
@@ -6404,7 +6345,7 @@ Montrer
 ; Display
 ;
 MSG_MA_ATTACHMENT_SAVEAS
-Sauver sous...
+Enregistrer sous...
 ; Save as...
 ;
 MSG_MA_ATTACHMENT_PRINT
@@ -6412,11 +6353,11 @@ Imprimer
 ; Print
 ;
 MSG_MA_ATTACHMENT_SAVEALL
-Sauver tous...
+Enregistrer tout...
 ; Save all...
 ;
 MSG_MA_ATTACHMENT_SAVESEL
-Sauver sélection...
+Enregistrer sélection...
 ; Save selected...
 ;
 MSG_CO_SImageOnly
@@ -7052,10 +6993,6 @@ Quel type de sécurité désirez-vous utiliser ?
 ; \n\
 ; What type of security do you want to use?
 ;
-MSG_WR_SECURITYREQ_GADS
-*A_ucune|_Signé|_Crypté|S_igné & crypté|Envoi A_nonyme|_Annuler
-; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Anonymous|_Cancel
-;
 MSG_ER_OPENTCPIP
 Impossible d'ouvrir l'interface bsdsocket.library requise \
 pour les connexions TCP/IP.\n\
@@ -7502,7 +7439,7 @@ Courrier indésirable
 ; Spam
 ;
 MSG_CO_SPAMFILTER
-Filtre des courriers indésirables
+Filtrage des courriers indésirables
 ; Spam filter
 ;
 MSG_CO_SPAMFILTER_TITLE
@@ -7771,18 +7708,6 @@ MSG_MA_UPDATEINDEX
 Réindexer
 ; Update index
 ;
-MSG_MA_MSENDALL
-Envoyer les courriers en attente
-; Send queued mail
-;
-MSG_MA_MEXCHANGE
-Envoyer et recevoir les courriers
-; Exchange mail
-;
-MSG_MA_MGETMAIL
-Recevoir les nouveaux messages
-; Get new mail
-;
 MSG_MA_MREAD
 Lire
 ; Read
@@ -7824,11 +7749,11 @@ Imprimer...
 ; Print...
 ;
 MSG_MA_MSAVE
-Sauver...
+Enregistrer...
 ; Save...
 ;
 MSG_MA_MSAVEATT
-Sauver...
+Enregistrer...
 ; Save...
 ;
 MSG_MA_MNEW
@@ -7848,7 +7773,7 @@ Détourner...
 ; Bounce...
 ;
 MSG_MA_MSAVEADDRESS
-Sauver l'adresse...
+Enregistrer l'adresse...
 ; Save address...
 ;
 MSG_MA_MADDRESSBOOK
@@ -8492,11 +8417,11 @@ Comment voulez-vous procéder ?
 ; How do you want to proceed?
 ;
 MSG_CONFIG_MODIFIED_GAD
-*_Sauver maintenant|_Quitter sans sauver|_Annuler
+*Enregi_strer maintenant|_Quitter sans enregistrer|_Annuler
 ; *_Save now|_Quit without saving|_Cancel
 ;
 MSG_ABOOK_MODIFIED_GAD
-*_Sauver maintenant|_Quitter sans sauver|_Annuler
+*Enregi_strer maintenant|_Quitter sans enregistrer|_Annuler
 ; *_Save now|_Quit without saving|_Cancel
 ;
 MSG_HELP_CO_BT_MIMEIMPORT
@@ -9201,26 +9126,6 @@ Filtrage terminé :\n\
 ; %3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
-MSG_CO_EXCHANGE_MAIL
-Échange de courrier
-; Exchange mail
-;
-MSG_CO_EXCHANGE_ORDER
-Ordre d'échange
-; Exchange order
-;
-MSG_CO_EXCHANGE_ORDER_GET_FIRST
-réception puis émission du courrier
-; get mail first, then send mail
-;
-MSG_CO_EXCHANGE_ORDER_SEND_FIRST
-émission puis réception du courrier
-; send mail first, then get mail
-;
-MSG_HELP_CO_CY_EXCHANGE_ORDER
-L'ordre d'échange du courrier
-; The order of the mail exchange.
-;
 MSG_FCHANGE_WARN_TITLE
 Avertissement de fichier modifié
 ; Filechange warning
@@ -9374,7 +9279,6 @@ Mauvaise réponse du serveur de courrier « %s » du compte « %s » \
 Le serveur de mail n'a pas pu exécuter la commande \
 et a répondu par le message d'erreur ci-dessus.
 ; Bad response from mail server '%s' of account '%s' to command '%s':\n\
-; \n\
 ; %s\n\
 ; \n\
 ; The mail server couldn't execute the command \
@@ -9735,7 +9639,7 @@ l'entête séparée dans chaque message.\n\
 ; entry in every mail.
 ;
 MSG_CO_NOTIOS41SYSTEM
-System de notification AmigaOS 4.1
+Système de notification AmigaOS 4.1
 ; AmigaOS_4.1 notification system
 ;
 MSG_HELP_CO_CH_NOTIOS41SYSTEM
@@ -9837,15 +9741,6 @@ MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 Ne plus me redemander aujourd'hui.
 ; Do not show this requester today again.
 ;
-MSG_TR_NEW_MAIL_NOTIFY_ONE
-Un nouveau courrier.
-; Received 1 new mail.
-;
-MSG_TR_NEW_MAIL_NOTIFY_MANY
-%ld nouveaux courriers.
-; Received %ld new mails.
-; COUNT
-;
 MSG_RE_SAVE_FILE
 Enregistrer fichier
 ; Save file
@@ -9898,10 +9793,97 @@ _Réessayer|_Ignorer
 MSG_EXECUTE_COMMAND_FAILED
 L'exécution de la commande « %s » a échoué (code d'erreur %ld : %s).
 ; The execution of the command '%s' failed (error code %ld: %s).
-;
 ; COMMAND, ERRORCODE, ERRORSTRING
 ;
 MSG_ERROR_METHODSTACK
 Impossible d'initialiser la pile pour la méthode.
 ; Cannot initialize method stack.
+;
+MSG_TRANSFERS_IN_PROGRESS
+Transferts en cours...
+; Transfers in progress
+;
+MSG_ERROR_CONNECTIONS
+Impossible d'initialiser les connexions.
+; Cannot initialize connections.
+;
+MSG_LOG_CONNECT_POP3
+Connecté sur le compte « %s » : %ld messages en attente
+; Logged in on POP3 account '%s': %ld messages waiting
+; ACCOUNT, COUNT
+;
+MSG_LOG_RETRIEVED_POP3
+%ld message(s) reçu(s) du compte POP3 « %s »
+; Retrieved %ld message(s) from POP3 account '%s'
+; COUNT, ACCOUNT
+;
+MSG_TR_ENTER_POP3_PASSWORD
+Veillez saisir votre mot de passe\n\
+pour le compte POP3 « %s » :
+; Please enter the password for\n\
+; POP3 account '%s':
+; ACCOUNT
+;
+MSG_ALTIMAGE_STATUS_DOWNLOAD
+T
+; D
+;
+MSG_ALTIMAGE_STATUS_DELETE
+X
+; X
+;
+MSG_PRESELECT_INDEX
+Index
+; Index
+;
+MSG_TR_WAIT_FOR_PASSWORD
+En attente de la saisie du mot de passe...
+; Waiting for user's password input...
+;
+MSG_TR_WAIT_FOR_PRESELECTION
+En attente de la sélection utilisateur...
+; Waiting for user's preselection...
+;
+MSG_POP3_NEW_MAIL_NOTIFY_REQ
+\e8Vous avez reçu du courrier du compte « %s ».\e2\n\
+\n\
+%3ld messages chargés,\n\
+%3ld restés sur le serveur,\n\
+%3ld doublons évités.\n
+; \e8You have new mail from account '%s'.\e2\n\
+; \n\
+; %3ld messages downloaded,\n\
+; %3ld left on server\n\
+; %3ld duplicates skipped\n
+; ACCOUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
+%s\n\
+Un nouveau message reçu.
+; %s\n\
+; Received 1 new mail.
+; ACCOUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
+%s\n\
+%ld nouveaux messages reçus.
+; %s\n\
+; Received %ld new mails.
+; ACCOUNT, COUNT
+;
+MSG_MA_SEND_AND_GET_MAIL
+Envoyer/Recevoir le courrier
+; Send and get mail
+;
+MSG_MA_SEND_MAIL
+Envoyer le courrier
+; Send mail
+;
+MSG_MA_GET_MAIL
+Recevoir le courrier
+; Get mail
+;
+MSG_WR_SECURITYREQ_GADS
+*A_ucune|_Signé|_Crypté|S_igné & crypté|Envoi A_nonyme|_Annuler
+; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Cancel
 ;
