@@ -9,6 +9,9 @@ $URL$
 
   * Timer.c: added a safety check to avoid restarting an already cleaned up
     timer during the termination process.
+  * mui/YAMApplication.c: fixed a wrong sizeof() statement when adding a new
+    entry to the EMail cache. This closes #237. At least I hope. Please reopen
+    the ticket if the bug is still present.
 
 2010-11-30 Thore Böckelmann <tboeckel@gmx.de>
 

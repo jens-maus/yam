@@ -529,7 +529,7 @@ DECLARE(AddToEmailCache) // struct Person *person
       struct EMailCacheNode *newnode;
 
       // we alloc mem for this new node and add it behind the last node
-      if((newnode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(newnode),
+      if((newnode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*newnode),
                                                   ASONODE_Min, TRUE,
                                                   TAG_DONE)) != NULL)
       {
