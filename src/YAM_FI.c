@@ -446,7 +446,21 @@ static BOOL FI_SearchPatternInHeader(const struct Search *search, const struct M
 
         if(MA_ReadHeader(mailfile, fh, headerList, RHM_MAINHEADER) == TRUE)
         {
+          int searchLen = 0;
           struct Node *curNode;
+
+          // prepare the search length ahead of the iteration
+          if(search->Field[0] != '\0')
+          {
+            char *ptr;
+
+            // if the field is specified we search if it was specified with a ':'
+            // at the end
+            if((ptr = strchr(search->Field, ':')) != NULL)
+              searchLen = ptr-(search->Field);
+            else
+              searchLen = strlen(search->Field);
+          }
 
           IterateList(headerList, curNode)
           {
@@ -456,16 +470,7 @@ static BOOL FI_SearchPatternInHeader(const struct Search *search, const struct M
             // otherwise skip our search
             if(search->Field[0] != '\0')
             {
-              int searchLen;
-              char *ptr;
-
-              // if the field is specified we search if it was specified with a ':'
-              // at the end
-              if((ptr = strchr(search->Field, ':')) != NULL)
-                searchLen = ptr-(search->Field);
-              else
-                searchLen = strlen(search->Field);
-
+              // the search length has been calculated before
               if(strnicmp(hdrNode->name, search->Field, searchLen) != 0)
                 continue;
             }

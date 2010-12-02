@@ -13,6 +13,8 @@ $URL$
     entry to the EMail cache. This closes #237. At least I hope. Please reopen
     the ticket if the bug is still present.
   * MailImport.c: save one strlen() call.
+  * YAM_FI.c: calculate some stuff outside the header search loop once instead
+    of in each iteration.
 
 2010-11-30 Thore Böckelmann <tboeckel@gmx.de>
 
