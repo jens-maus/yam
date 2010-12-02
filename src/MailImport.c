@@ -124,7 +124,7 @@ static struct MailTransferNode *AddMessageHeader(struct TransferContext *tc, int
 }
 
 ///
-/// ReadDBXMessage()
+/// ReadDBXMessage
 // Extract a certain message from a dbx (Outlook Express) file into
 // a separate output file.
 static BOOL ReadDBXMessage(FILE *fh, FILE *out, unsigned int addr)
@@ -202,7 +202,7 @@ static BOOL ReadDBXMessage(FILE *fh, FILE *out, unsigned int addr)
 }
 
 ///
-/// ReadDBXMessageInfo()
+/// ReadDBXMessageInfo
 // reads out the message info of a dbx (Outlook Express) Mail Archive file
 static BOOL ReadDBXMessageInfo(struct TransferContext *tc, FILE *fh, char *outFileName, unsigned int addr, unsigned int size, int *mail_accu, BOOL preview)
 {
@@ -406,7 +406,7 @@ out:
 }
 
 ///
-/// ReadDBXNode()
+/// ReadDBXNode
 // Function that reads in a node within the tree of a DBX Mail archive
 // file from Outlook Express.
 static BOOL ReadDBXNode(struct TransferContext *tc, FILE *fh, char *outFileName, unsigned int addr, int *mail_accu, BOOL preview)
@@ -882,6 +882,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
               unsigned int status = SFLAG_NONE;
               unsigned int xstatus = SFLAG_NONE;
               BOOL ownStatusFound = FALSE;
+              ssize_t lineLength;
 
               if(conn->abort == TRUE)
                 break;
@@ -906,7 +907,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
 
               // now that we seeked to the mail address we go
               // and read in line by line
-              while(GetLine(&buffer, &size, ifh) >= 0 && conn->abort == FALSE)
+              while((lineLength = GetLine(&buffer, &size, ifh)) >= 0 && conn->abort == FALSE)
               {
                 // if we did not find the message body yet
                 if(foundBody == FALSE)
@@ -954,7 +955,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
                 }
 
                 // update the transfer statistics
-                PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, strlen(buffer)+1, tr(MSG_TR_Importing));
+                PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, lineLength+1, tr(MSG_TR_Importing));
               }
 
               fclose(ofh);

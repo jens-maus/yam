@@ -12,6 +12,7 @@ $URL$
   * mui/YAMApplication.c: fixed a wrong sizeof() statement when adding a new
     entry to the EMail cache. This closes #237. At least I hope. Please reopen
     the ticket if the bug is still present.
+  * MailImport.c: save one strlen() call.
 
 2010-11-30 Thore Böckelmann <tboeckel@gmx.de>
 
