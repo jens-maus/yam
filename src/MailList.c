@@ -379,7 +379,7 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
     }
 
     // put all the sorted nodes back into the original list
-    // no need to NewMinList() the list before as this is guaranteed to be empty
+    NewMinList(&mlist->list);
     MoveList((struct List *)&mlist->list, (struct List *)to);
   }
 
