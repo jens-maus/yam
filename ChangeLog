@@ -9,6 +9,7 @@ $URL$
 
   * YAM_MAf.c: reverted the index save optimization as snprintf() might return
     larger numbers than the amount of character actually used.
+  * Debug.h: fixed a typo in the STOPCLOCK() macro which made it unusable.
 
 2010-12-02  Alexandre Balaban <abalaban@free.fr>
 

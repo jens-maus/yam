@@ -115,7 +115,7 @@ void _SHOWMSG(const unsigned long c, const unsigned long f, const char *m, const
 void _SHOWTAGS(const unsigned long c, const unsigned long f, const char *m, const char *file, unsigned long line, const struct TagItem *tags);
 void _DPRINTF(const unsigned long c, const unsigned long f, const char *m, const char *file, unsigned long line, const char *format, ...);
 void _STARTCLOCK(const unsigned long c, const unsigned long f, const char *m, const char *file, unsigned long line);
-void _STOPCLOCK(const unsigned long c, const unsigned long f, const char *m, const char *file, unsigned long line, const char *message);
+void _STOPCLOCK(const unsigned long c, const unsigned long f, const char *m, const char *file, unsigned long line, const char *msg);
 void _MEMTRACK(const char *file, const int line, const char *func, void *ptr, size_t size);
 void _UNMEMTRACK(const char *file, const int line, const void *ptr);
 void _FLUSH(void);
@@ -133,10 +133,10 @@ void _FLUSH(void);
 #define SHOWVALUE(f, v)       _SHOWVALUE(DBC_REPORT, f, DEBUG_MODULE, __FILE__, __LINE__, (long)v, sizeof(v), #v)
 #define SHOWPOINTER(f, p)     _SHOWPOINTER(DBC_REPORT, f, DEBUG_MODULE, __FILE__, __LINE__, p, #p)
 #define SHOWSTRING(f, s)      _SHOWSTRING(DBC_REPORT, f, DEBUG_MODULE, __FILE__, __LINE__, s, #s)
-#define SHOWMSG(f, m)         _SHOWMSG(DBC_REPORT, f, DEBUG_MODULE, __FILE__, __LINE__, m)
+#define SHOWMSG(f, msg)       _SHOWMSG(DBC_REPORT, f, DEBUG_MODULE, __FILE__, __LINE__, msg)
 #define SHOWTAGS(f, t)        _SHOWTAGS(DBC_TAGS, f, DEBUG_MODULE, __FILE__, __LINE__, t)
 #define STARTCLOCK(f)         _STARTCLOCK(DBC_TIMEVAL, f, DEBUG_MODULE, __FILE__, __LINE__)
-#define STOPCLOCK(f, m)       _STOPCLOCK(DBC_TIMEVAL, f, DEBUG_MODULE __FILE__, __LINE__, m)
+#define STOPCLOCK(f, msg)     _STOPCLOCK(DBC_TIMEVAL, f, DEBUG_MODULE, __FILE__, __LINE__, msg)
 #define MEMTRACK(f, p, s)     _MEMTRACK(__FILE__, __LINE__, f, p, s)
 #define UNMEMTRACK(p)         _UNMEMTRACK(__FILE__, __LINE__, p)
 #define FLUSH()               _FLUSH()
