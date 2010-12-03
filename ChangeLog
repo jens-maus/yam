@@ -5,7 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: reverted the index save optimization as snprintf() might return
+    larger numbers than the amount of character actually used.
+
 2010-12-02  Alexandre Balaban <abalaban@free.fr>
+
   * locale/french.ct: updated according to latest changes.
 
 2010-12-02 Thore Böckelmann <tboeckel@gmx.de>

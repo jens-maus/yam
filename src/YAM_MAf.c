@@ -453,6 +453,12 @@ BOOL MA_SaveIndex(struct Folder *folder)
       struct ComprMail cmail;
       char buf[SIZE_LARGE];
 
+      snprintf(buf, sizeof(buf), "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+                                 mail->Subject,
+                                 mail->From.Address, mail->From.RealName,
+                                 mail->To.Address, mail->To.RealName,
+                                 mail->ReplyTo.Address, mail->ReplyTo.RealName);
+
       strlcpy(cmail.mailFile, mail->MailFile, sizeof(cmail.mailFile));
       cmail.date = mail->Date;
       cmail.transDate = mail->transDate;
@@ -463,12 +469,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
       cmail.cMsgID = mail->cMsgID;
       cmail.cIRTMsgID = mail->cIRTMsgID;
       cmail.size = mail->Size;
-      // snprintf() returns the number of bytes used, this saves an additional strlen() call
-      cmail.moreBytes = snprintf(buf, sizeof(buf), "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
-                                                   mail->Subject,
-                                                   mail->From.Address, mail->From.RealName,
-                                                   mail->To.Address, mail->To.RealName,
-                                                   mail->ReplyTo.Address, mail->ReplyTo.RealName);
+      cmail.moreBytes = strlen(buf);
 
       fwrite(&cmail, sizeof(struct ComprMail), 1, fh);
       fwrite(buf, 1, cmail.moreBytes, fh);
