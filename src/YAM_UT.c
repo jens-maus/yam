@@ -3026,12 +3026,19 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     */
     case SF_1PREC:
     {
-      if(size < KB)       snprintf(buf, buflen, "%d B", (unsigned int)size);
-      else if(size < MB)  snprintf(buf, buflen, "%.1f KB", dsize/KB);
-      else if(size < GB)  snprintf(buf, buflen, "%.1f MB", dsize/MB);
-      else                snprintf(buf, buflen, "%.1f GB", dsize/GB);
+      char *p;
 
-      if((buf = strchr(buf, '.'))) *buf = *dp;
+      if(size < KB)
+        snprintf(buf, buflen, "%d B", (unsigned int)size);
+      else if(size < MB)
+        snprintf(buf, buflen, "%.1f KB", dsize/KB);
+      else if(size < GB)
+        snprintf(buf, buflen, "%.1f MB", dsize/MB);
+      else
+        snprintf(buf, buflen, "%.1f GB", dsize/GB);
+
+      if((p = strchr(buf, '.')) != NULL)
+        *p = *dp;
     }
     break;
 
@@ -3042,12 +3049,19 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     */
     case SF_2PREC:
     {
-      if(size < KB)       snprintf(buf, buflen, "%d B", (unsigned int)size);
-      else if(size < MB)  snprintf(buf, buflen, "%.2f KB", dsize/KB);
-      else if(size < GB)  snprintf(buf, buflen, "%.2f MB", dsize/MB);
-      else                snprintf(buf, buflen, "%.2f GB", dsize/GB);
+      char *p;
 
-      if((buf = strchr(buf, '.'))) *buf = *dp;
+      if(size < KB)
+        snprintf(buf, buflen, "%d B", (unsigned int)size);
+      else if(size < MB)
+        snprintf(buf, buflen, "%.2f KB", dsize/KB);
+      else if(size < GB)
+        snprintf(buf, buflen, "%.2f MB", dsize/MB);
+      else
+        snprintf(buf, buflen, "%.2f GB", dsize/GB);
+
+      if((p = strchr(buf, '.')) != NULL)
+        *p = *dp;
     }
     break;
 
@@ -3058,12 +3072,19 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     */
     case SF_3PREC:
     {
-      if(size < KB)       snprintf(buf, buflen, "%d B", (unsigned int)size);
-      else if(size < MB)  snprintf(buf, buflen, "%.3f KB", dsize/KB);
-      else if(size < GB)  snprintf(buf, buflen, "%.3f MB", dsize/MB);
-      else                snprintf(buf, buflen, "%.3f GB", dsize/GB);
+      char *p;
 
-      if((buf = strchr(buf, '.'))) *buf = *dp;
+      if(size < KB)
+        snprintf(buf, buflen, "%d B", (unsigned int)size);
+      else if(size < MB)
+        snprintf(buf, buflen, "%.3f KB", dsize/KB);
+      else if(size < GB)
+        snprintf(buf, buflen, "%.3f MB", dsize/MB);
+      else
+        snprintf(buf, buflen, "%.3f GB", dsize/GB);
+
+      if((p = strchr(buf, '.')) != NULL)
+        *p = *dp;
     }
     break;
 
@@ -3074,12 +3095,19 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
     */
     case SF_MIXED:
     {
-      if(size < KB)       snprintf(buf, buflen, "%d B", (unsigned int)size);
-      else if(size < MB)  snprintf(buf, buflen, "%.1f KB", dsize/KB);
-      else if(size < GB)  snprintf(buf, buflen, "%.2f MB", dsize/MB);
-      else                snprintf(buf, buflen, "%.3f GB", dsize/GB);
+      char *p;
 
-      if((buf = strchr(buf, '.'))) *buf = *dp;
+      if(size < KB)
+        snprintf(buf, buflen, "%d B", (unsigned int)size);
+      else if(size < MB)
+        snprintf(buf, buflen, "%.1f KB", dsize/KB);
+      else if(size < GB)
+        snprintf(buf, buflen, "%.2f MB", dsize/MB);
+      else
+        snprintf(buf, buflen, "%.3f GB", dsize/GB);
+
+      if((p = strchr(buf, '.')) != NULL)
+        *p = *dp;
     }
     break;
 
@@ -3096,10 +3124,34 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
       // as we just split the size to another value, we redefine the KB/MB/GB values to base 10 variables
       enum { KiB = 1000, MiB = 1000 * 1000, GiB = 1000 * 1000 * 1000 };
 
-      if(size < KiB)      snprintf(buf, buflen, "%d", (unsigned int)size);
-      else if(size < MiB) snprintf(buf, buflen, "%d%s%03d", (unsigned int)size/KB, gs, (unsigned int)size%KB);
-      else if(size < GiB) snprintf(buf, buflen, "%d%s%03d%s%03d", (unsigned int)size/MB, gs, (unsigned int)(size%MB)/KB, gs, (unsigned int)size%KB);
-      else                snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d", (unsigned int)size/GB, gs, (unsigned int)(size%GB)/MB, gs, (unsigned int)(size%MB)/KB, gs, (unsigned int)size%KB);
+      if(size < KiB)
+      {
+        snprintf(buf, buflen, "%d", (unsigned int)size);
+      }
+      else if(size < MiB)
+      {
+        ldiv_t k;
+
+        k = ldiv(size, KiB);
+        snprintf(buf, buflen, "%d%s%03d", (unsigned int)k.quot, gs, (unsigned int)k.rem);
+      }
+      else if(size < GiB)
+      {
+        ldiv_t m, k;
+
+        m = ldiv(size, MiB);
+        k = ldiv(m.rem, KiB);
+        snprintf(buf, buflen, "%d%s%03d%s%03d", (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem);
+      }
+      else
+      {
+        ldiv_t g, m, k;
+
+        g = ldiv(size, GiB);
+        m = ldiv(g.rem, MiB);
+        k = ldiv(m.rem, KiB);
+        snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d", (unsigned int)g.quot, gs, (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem);
+      }
     }
     break;
   }
