@@ -15,6 +15,8 @@ $URL$
 
   * YAM_UT.c: converting a mail size to a string now uses the correct power of
     10 for the conversion. This closes #238.
+  * mui/YAMApplication.c: clear the contents of newly allocated entries for the
+    address match list to avoid display of corrupted strings.
 
 2010-12-03 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -102,7 +102,7 @@ VOID LoadEMailCache(STRPTR name, struct MinList *list)
     int i = 0;
     char line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
 
-    while(FGets(fh, line, sizeof(line)) && i++ < 100) // we limit the reading to a maximum of 100 so that this code can`t read endlessly
+    while(FGets(fh, line, sizeof(line)) && i++ < 100) // we limit the reading to a maximum of 100 so that this code can't read endlessly
     {
       char *addr;
       char *end;
@@ -111,10 +111,13 @@ VOID LoadEMailCache(STRPTR name, struct MinList *list)
       {
         struct EMailCacheNode *node;
 
-     	if((node = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*node),
-     	                                         ASONODE_Min, TRUE,
-     	                                         TAG_DONE)) != NULL)
+       	if((node = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*node),
+       	                                         ASONODE_Min, TRUE,
+       	                                         TAG_DONE)) != NULL)
         {
+          // clear the node structure
+          memset(node, 0, sizeof(*node));
+
           if(addr != line)
           {
             addr[-1] = '\0';
@@ -482,7 +485,7 @@ DECLARE(AddToEmailCache) // struct Person *person
   ENTER();
 
   // if the emailcache feature is turned off or
-  // the supplied person doesn`t have a address, lets exit immediatly
+  // the supplied person doesn't have a address, lets exit immediatly
   if(C->EmailCache == 0 || !msg->person->Address[0])
   {
     RETURN(-1);
@@ -497,7 +500,7 @@ DECLARE(AddToEmailCache) // struct Person *person
     BOOL found = FALSE;
     struct Node *curNode;
 
-    // Ok, it doesn`t exists in the AB, now lets check the cache list
+    // Ok, it doesn't exists in the AB, now lets check the cache list
     // itself
     i = 0;
     IterateList(&data->EMailCache, curNode)
@@ -522,7 +525,7 @@ DECLARE(AddToEmailCache) // struct Person *person
       i++;
     }
 
-    // if we didn`t find the person already in the list
+    // if we didn't find the person already in the list
     // we have to add it after the last node
     if(found == FALSE)
     {
@@ -534,6 +537,9 @@ DECLARE(AddToEmailCache) // struct Person *person
                                                   TAG_DONE)) != NULL)
       {
         struct ABEntry *entry = &newnode->ecn_Person;
+
+        // clear the node structure
+        memset(newnode, 0, sizeof(*newnode));
 
         // Lets copy the data in the new Person struct
         // for the real name we have to check for possible commas without quotes yet
