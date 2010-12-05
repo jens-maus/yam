@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-05 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c: we will now always show the unit with all kind of size display
+    settings rather then omitting 'B' if only bytes are shown. This should make
+    the display more consistent.
+
 2010-12-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: converting a mail size to a string now uses the correct power of

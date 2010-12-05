@@ -3126,14 +3126,14 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
 
       if(size < KiB)
       {
-        snprintf(buf, buflen, "%d", (unsigned int)size);
+        snprintf(buf, buflen, "%d B", (unsigned int)size);
       }
       else if(size < MiB)
       {
         ldiv_t k;
 
         k = ldiv(size, KiB);
-        snprintf(buf, buflen, "%d%s%03d", (unsigned int)k.quot, gs, (unsigned int)k.rem);
+        snprintf(buf, buflen, "%d%s%03d B", (unsigned int)k.quot, gs, (unsigned int)k.rem);
       }
       else if(size < GiB)
       {
@@ -3141,7 +3141,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
 
         m = ldiv(size, MiB);
         k = ldiv(m.rem, KiB);
-        snprintf(buf, buflen, "%d%s%03d%s%03d", (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem);
+        snprintf(buf, buflen, "%d%s%03d%s%03d B", (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem);
       }
       else
       {
@@ -3150,7 +3150,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
         g = ldiv(size, GiB);
         m = ldiv(g.rem, MiB);
         k = ldiv(m.rem, KiB);
-        snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d", (unsigned int)g.quot, gs, (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem);
+        snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d B", (unsigned int)g.quot, gs, (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem);
       }
     }
     break;
