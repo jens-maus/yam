@@ -71,7 +71,7 @@
 #include "mui/ImageArea.h"
 #include "mui/MailTextEdit.h"
 #include "mui/MimeTypeList.h"
-#include "mui/PlaceholderList.h"
+#include "mui/PlaceholderPopupList.h"
 #include "mui/ScriptList.h"
 #include "mui/SearchControlGroup.h"
 #include "mui/ThemeListGroup.h"
@@ -415,7 +415,7 @@ HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *list)
 {
   ENTER();
 
-  DoMethod(list, MUIM_PlaceholderList_SetScriptEntry, xget(G->CO->GUI.LV_REXX, MUIA_NList_Active));
+  DoMethod(list, MUIM_PlaceholderPopupList_SetScriptEntry, xget(G->CO->GUI.LV_REXX, MUIA_NList_Active));
 
   RETURN(TRUE);
   return TRUE;
@@ -814,17 +814,17 @@ HOOKPROTONO(FileRequestStartFunc, BOOL, struct TagItem *tags)
 
   ENTER();
 
-  switch((enum VariablePopMode)hook->h_Data)
+  switch((enum PlaceholderMode)hook->h_Data)
   {
-    case VPM_SCRIPTS:
+    case PHM_SCRIPTS:
       strObj = G->CO->GUI.ST_SCRIPT;
     break;
 
-    case VPM_MIME_DEFVIEWER:
+    case PHM_MIME_DEFVIEWER:
       strObj = G->CO->GUI.ST_DEFVIEWER;
     break;
 
-    case VPM_MIME_COMMAND:
+    case PHM_MIME_COMMAND:
       strObj = G->CO->GUI.ST_COMMAND;
     break;
 
@@ -865,9 +865,9 @@ HOOKPROTONO(FileRequestStartFunc, BOOL, struct TagItem *tags)
   RETURN(TRUE);
   return TRUE;
 }
-MakeHookWithData(ScriptsReqStartHook,       FileRequestStartFunc, VPM_SCRIPTS);
-MakeHookWithData(MimeDefViewerReqStartHook, FileRequestStartFunc, VPM_MIME_DEFVIEWER);
-MakeHookWithData(MimeCommandReqStartHook,   FileRequestStartFunc, VPM_MIME_COMMAND);
+MakeHookWithData(ScriptsReqStartHook,       FileRequestStartFunc, PHM_SCRIPTS);
+MakeHookWithData(MimeDefViewerReqStartHook, FileRequestStartFunc, PHM_MIME_DEFVIEWER);
+MakeHookWithData(MimeCommandReqStartHook,   FileRequestStartFunc, PHM_MIME_COMMAND);
 
 ///
 /// FileRequestStopFunc
@@ -878,17 +878,17 @@ HOOKPROTONO(FileRequestStopFunc, void, struct FileRequester *fileReq)
 
   ENTER();
 
-  switch((enum VariablePopMode)hook->h_Data)
+  switch((enum PlaceholderMode)hook->h_Data)
   {
-    case VPM_SCRIPTS:
+    case PHM_SCRIPTS:
       strObj = G->CO->GUI.ST_SCRIPT;
     break;
 
-    case VPM_MIME_DEFVIEWER:
+    case PHM_MIME_DEFVIEWER:
       strObj = G->CO->GUI.ST_DEFVIEWER;
     break;
 
-    case VPM_MIME_COMMAND:
+    case PHM_MIME_COMMAND:
       strObj = G->CO->GUI.ST_COMMAND;
     break;
 
@@ -921,9 +921,9 @@ HOOKPROTONO(FileRequestStopFunc, void, struct FileRequester *fileReq)
 
   LEAVE();
 }
-MakeHookWithData(ScriptsReqStopHook,       FileRequestStopFunc, VPM_SCRIPTS);
-MakeHookWithData(MimeDefViewerReqStopHook, FileRequestStopFunc, VPM_MIME_DEFVIEWER);
-MakeHookWithData(MimeCommandReqStopHook,   FileRequestStopFunc, VPM_MIME_COMMAND);
+MakeHookWithData(ScriptsReqStopHook,       FileRequestStopFunc, PHM_SCRIPTS);
+MakeHookWithData(MimeDefViewerReqStopHook, FileRequestStopFunc, PHM_MIME_DEFVIEWER);
+MakeHookWithData(MimeCommandReqStopHook,   FileRequestStopFunc, PHM_MIME_COMMAND);
 
 ///
 /// ToggleSpamFilter
@@ -1303,7 +1303,7 @@ Object *MakeMimeTypePop(Object **string, const char *desc)
 ///
 /// MakeVarPop
 //  Creates a popup list containing variables and descriptions for phrases etc.
-static Object *MakeVarPop(Object **string, Object **popButton, const enum VariablePopMode mode, const int size, const char *shortcut)
+static Object *MakeVarPop(Object **string, Object **popButton, const enum PlaceholderMode mode, const int size, const char *shortcut)
 {
   Object *lv;
   Object *po;
@@ -1316,13 +1316,13 @@ static Object *MakeVarPop(Object **string, Object **popButton, const enum Variab
     MUIA_Popstring_Button, *popButton = PopButton(MUII_PopUp),
     MUIA_Popobject_ObjStrHook, &PO_HandleVarHook,
     MUIA_Popobject_WindowHook, &PO_WindowHook,
-    MUIA_Popobject_StrObjHook, (mode == VPM_SCRIPTS) ? &PO_HandleScriptsOpenHook : NULL,
+    MUIA_Popobject_StrObjHook, (mode == PHM_SCRIPTS) ? &PO_HandleScriptsOpenHook : NULL,
     MUIA_Popobject_Object, NListviewObject,
       MUIA_FixHeightTxt, "\n\n\n\n\n\n\n\n",
       MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
       MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_FullAuto,
-      MUIA_NListview_NList, lv = PlaceholderListObject,
-        MUIA_PlaceholderList_Mode, mode,
+      MUIA_NListview_NList, lv = PlaceholderPopupListObject,
+        MUIA_PlaceholderPopupList_Mode, mode,
       End,
     End,
 
@@ -1361,9 +1361,9 @@ static Object *MakePhraseGroup(Object **hello, Object **intro, Object **bye,
             MUIA_Weight, 0,
          End,
          Child, pgrp = PageGroup,
-            Child, MakeVarPop(hello, &popButton, VPM_REPLYHELLO, SIZE_INTRO, ""),
-            Child, MakeVarPop(intro, &popButton, VPM_REPLYINTRO, SIZE_INTRO, ""),
-            Child, MakeVarPop(bye,   &popButton, VPM_REPLYBYE,   SIZE_INTRO, ""),
+            Child, MakeVarPop(hello, &popButton, PHM_REPLYHELLO, SIZE_INTRO, ""),
+            Child, MakeVarPop(intro, &popButton, PHM_REPLYINTRO, SIZE_INTRO, ""),
+            Child, MakeVarPop(bye,   &popButton, PHM_REPLYBYE,   SIZE_INTRO, ""),
          End,
          MUIA_ShortHelp, help,
       End))
@@ -2680,10 +2680,10 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
                 Child, data->GUI.CY_FORWARDMODE = MakeCycle(fwdmode, tr(MSG_CO_FWDMSG)),
 
                 Child, Label2(tr(MSG_CO_FwdInit)),
-                Child, MakeVarPop(&data->GUI.ST_FWDSTART, &popButton, VPM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdInit)),
+                Child, MakeVarPop(&data->GUI.ST_FWDSTART, &popButton, PHM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdInit)),
 
                 Child, Label2(tr(MSG_CO_FwdFinish)),
-                Child, MakeVarPop(&data->GUI.ST_FWDEND, &popButton, VPM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdFinish)),
+                Child, MakeVarPop(&data->GUI.ST_FWDEND, &popButton, PHM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdFinish)),
 
               End,
 
@@ -3143,7 +3143,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
                       Child, Label2(tr(MSG_CO_MimeCmd)),
                       Child, HGroup,
                         MUIA_Group_HorizSpacing, 0,
-                        Child, MakeVarPop(&data->GUI.ST_COMMAND, &popButton, VPM_MIME_COMMAND, SIZE_COMMAND, tr(MSG_CO_MimeCmd)),
+                        Child, MakeVarPop(&data->GUI.ST_COMMAND, &popButton, PHM_MIME_COMMAND, SIZE_COMMAND, tr(MSG_CO_MimeCmd)),
                         Child, PopaslObject,
                           MUIA_Popasl_StartHook, &MimeCommandReqStartHook,
                           MUIA_Popasl_StopHook,  &MimeCommandReqStopHook,
@@ -3160,7 +3160,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
                   Child, Label2(tr(MSG_CO_DefaultViewer)),
                   Child, HGroup,
                     MUIA_Group_HorizSpacing, 0,
-                    Child, MakeVarPop(&data->GUI.ST_DEFVIEWER, &popButton, VPM_MIME_DEFVIEWER, SIZE_COMMAND, tr(MSG_CO_DefaultViewer)),
+                    Child, MakeVarPop(&data->GUI.ST_DEFVIEWER, &popButton, PHM_MIME_DEFVIEWER, SIZE_COMMAND, tr(MSG_CO_DefaultViewer)),
                     Child, PopaslObject,
                       MUIA_Popasl_StartHook, &MimeDefViewerReqStartHook,
                       MUIA_Popasl_StopHook,  &MimeDefViewerReqStopHook,
@@ -3331,7 +3331,7 @@ Object *CO_PageScripts(struct CO_ClassData *data)
                    Child, Label2(tr(MSG_CO_Script)),
                    Child, HGroup,
                      MUIA_Group_HorizSpacing, 0,
-                     Child, MakeVarPop(&data->GUI.ST_SCRIPT, &data->GUI.PO_SCRIPT, VPM_SCRIPTS, SIZE_PATHFILE, tr(MSG_CO_Script)),
+                     Child, MakeVarPop(&data->GUI.ST_SCRIPT, &data->GUI.PO_SCRIPT, PHM_SCRIPTS, SIZE_PATHFILE, tr(MSG_CO_Script)),
                      Child, PopaslObject,
                         MUIA_Popasl_Type,       ASL_FileRequest,
                         MUIA_Popasl_StartHook,  &ScriptsReqStartHook,
@@ -3430,7 +3430,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
                   Child, ColGroup(2),
 
                     Child, Label2(tr(MSG_CO_APPICONTEXT)),
-                    Child, MakeVarPop(&data->GUI.ST_APPICON, &popButton, VPM_MAILSTATS, SIZE_DEFAULT/2, tr(MSG_CO_APPICONTEXT)),
+                    Child, MakeVarPop(&data->GUI.ST_APPICON, &popButton, PHM_MAILSTATS, SIZE_DEFAULT/2, tr(MSG_CO_APPICONTEXT)),
 
                     Child, HGroup,
                       Child, data->GUI.CH_APPICONPOS = MakeCheck(tr(MSG_CO_PositionX)),
@@ -3496,7 +3496,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
                   Child, MakeXPKPop(&data->GUI.TX_ENCPACK, TRUE),
                   Child, data->GUI.NB_ENCPACK = MakeNumeric(0,100,TRUE),
                   Child, HSpace(8),
-                  Child, MakeVarPop(&data->GUI.ST_ARCHIVER, &popButton, VPM_ARCHIVE, SIZE_COMMAND, tr(MSG_CO_Archiver)),
+                  Child, MakeVarPop(&data->GUI.ST_ARCHIVER, &popButton, PHM_ARCHIVE, SIZE_COMMAND, tr(MSG_CO_Archiver)),
                 End,
               End,
 
@@ -3593,7 +3593,7 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
                 Child, data->GUI.CY_INFOBAR = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
 
                 Child, Label2(tr(MSG_CO_FOLDERLABEL)),
-                Child, data->GUI.PO_INFOBARTXT = MakeVarPop(&data->GUI.ST_INFOBARTXT, &popButton, VPM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
+                Child, data->GUI.PO_INFOBARTXT = MakeVarPop(&data->GUI.ST_INFOBARTXT, &popButton, PHM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
               End,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_GENLISTCFG)),

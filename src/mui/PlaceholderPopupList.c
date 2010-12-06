@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "PlaceholderList_cl.h"
+#include "PlaceholderPopupList_cl.h"
 
 #include <string.h>
 #include <mui/NList_mcc.h>
@@ -50,17 +50,17 @@ struct Data
 */
 
 /* EXPORT
-enum VariablePopMode
+enum PlaceholderMode
 {
-  VPM_FORWARD=0,
-  VPM_REPLYHELLO,
-  VPM_REPLYINTRO,
-  VPM_REPLYBYE,
-  VPM_ARCHIVE,
-  VPM_MAILSTATS,
-  VPM_SCRIPTS,
-  VPM_MIME_DEFVIEWER,
-  VPM_MIME_COMMAND,
+  PHM_FORWARD=0,
+  PHM_REPLYHELLO,
+  PHM_REPLYINTRO,
+  PHM_REPLYBYE,
+  PHM_ARCHIVE,
+  PHM_MAILSTATS,
+  PHM_SCRIPTS,
+  PHM_MIME_DEFVIEWER,
+  PHM_MIME_COMMAND,
 };
 */
 
@@ -68,11 +68,11 @@ enum VariablePopMode
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  enum VariablePopMode mode;
+  enum PlaceholderMode mode;
 
   ENTER();
 
-  mode = (enum VariablePopMode)GetTagData(ATTR(Mode), VPM_FORWARD, inittags(msg));
+  mode = (enum PlaceholderMode)GetTagData(ATTR(Mode), PHM_FORWARD, inittags(msg));
 
   if((obj = DoSuperNew(cl, obj,
 
@@ -86,15 +86,15 @@ OVERLOAD(OM_NEW)
 
     switch(mode)
     {
-      case VPM_FORWARD:
-      case VPM_REPLYHELLO:
-      case VPM_REPLYINTRO:
-      case VPM_REPLYBYE:
+      case PHM_FORWARD:
+      case PHM_REPLYHELLO:
+      case PHM_REPLYINTRO:
+      case PHM_REPLYBYE:
       {
         data->entries[ 0] = tr(MSG_CO_LineBreak);
-        data->entries[ 1] = (mode == VPM_FORWARD) ? tr(MSG_CO_ORecptName) : tr(MSG_CO_RecptName);
-        data->entries[ 2] = (mode == VPM_FORWARD) ? tr(MSG_CO_ORecptFirstname) : tr(MSG_CO_RecptFirstname);
-        data->entries[ 3] = (mode == VPM_FORWARD) ? tr(MSG_CO_ORecptAddress) : tr(MSG_CO_RecptAddress);
+        data->entries[ 1] = (mode == PHM_FORWARD) ? tr(MSG_CO_ORecptName) : tr(MSG_CO_RecptName);
+        data->entries[ 2] = (mode == PHM_FORWARD) ? tr(MSG_CO_ORecptFirstname) : tr(MSG_CO_RecptFirstname);
+        data->entries[ 3] = (mode == PHM_FORWARD) ? tr(MSG_CO_ORecptAddress) : tr(MSG_CO_RecptAddress);
         data->entries[ 4] = tr(MSG_CO_SenderName);
         data->entries[ 5] = tr(MSG_CO_SenderFirstname);
         data->entries[ 6] = tr(MSG_CO_SenderAddress);
@@ -106,12 +106,12 @@ OVERLOAD(OM_NEW)
         data->entries[12] = tr(MSG_CO_SenderDOW);
         data->entries[13] = tr(MSG_CO_SenderMsgID);
         // depending on the mode we have the "CompleteHeader" feature or not
-        data->entries[14] = (mode == VPM_FORWARD || mode == VPM_REPLYINTRO) ? tr(MSG_CO_CompleteHeader) : NULL;
+        data->entries[14] = (mode == PHM_FORWARD || mode == PHM_REPLYINTRO) ? tr(MSG_CO_CompleteHeader) : NULL;
         data->entries[15] = NULL;
       }
       break;
 
-      case VPM_ARCHIVE:
+      case PHM_ARCHIVE:
       {
         data->entries[0] = tr(MSG_CO_ArchiveName);
         data->entries[1] = tr(MSG_CO_ArchiveFiles);
@@ -120,7 +120,7 @@ OVERLOAD(OM_NEW)
       }
       break;
 
-      case VPM_MAILSTATS:
+      case PHM_MAILSTATS:
       {
         data->entries[0] = tr(MSG_CO_NEWMSGS);
         data->entries[1] = tr(MSG_CO_UNREADMSGS);
@@ -131,15 +131,15 @@ OVERLOAD(OM_NEW)
       }
       break;
 
-      case VPM_SCRIPTS:
+      case PHM_SCRIPTS:
       {
         // nothing to insert here, this is done externally depending on the type of the script
         data->entries[0] = NULL;
       }
       break;
 
-      case VPM_MIME_DEFVIEWER:
-      case VPM_MIME_COMMAND:
+      case PHM_MIME_DEFVIEWER:
+      case PHM_MIME_COMMAND:
       {
         data->entries[0] = tr(MSG_CO_MIMECMD_PARAMETER);
         data->entries[1] = tr(MSG_CO_MIMECMD_PUBSCREEN);
