@@ -9,6 +9,8 @@ $URL$
 
   * mui/AddressmatchList.c, AddressmatchPopup.c: separated the old class into
     two classes to be able to implement the old hooks as proper methods.
+  * YAM_RE.c: do not access the struct ReadMailData after disposing the
+    ReadWindow object as this will read just free()'d memory. This closes #234.
 
 2010-12-05 Jens Langner <Jens.Langner@light-speed.de>
 

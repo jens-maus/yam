@@ -4376,6 +4376,12 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     }
   }
 
+  // check if this rmData is the current active Rexx background
+  // processing one and if so set the ptr to NULL to signal the rexx
+  // commands that their active window was closed/disposed
+  if(rmData == G->ActiveRexxRMData)
+    G->ActiveRexxRMData = NULL;
+
   // if the caller wants to cleanup everything tidy we do it here or exit immediatly
   if(fullCleanup == TRUE)
   {
@@ -4403,20 +4409,17 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     // clean up the read window now
     if(rmData->readWindow != NULL)
     {
+      Object *readWindow = rmData->readWindow;
+
       D(DBF_GUI, "cleaning up readwindow");
-      DoMethod(G->App, OM_REMMEMBER, rmData->readWindow);
-      MUI_DisposeObject(rmData->readWindow);
-      rmData->readWindow = NULL;
+      DoMethod(G->App, OM_REMMEMBER, readWindow);
+      MUI_DisposeObject(readWindow);
+      // do not access rmData beyond this point as the pointer is free()'d in
+      // the ReadWindow's OM_DISPOSE method
     }
   }
   else
     rmData->mail = NULL;
-
-  // check if this rmData is the current active Rexx background
-  // processing one and if so set the ptr to NULL to signal the rexx
-  // commands that their active window was closed/disposed
-  if(rmData == G->ActiveRexxRMData)
-    G->ActiveRexxRMData = NULL;
 
   RETURN(TRUE);
   return TRUE;
