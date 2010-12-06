@@ -36,6 +36,7 @@
 
 #include "AttachmentGroup_cl.h"
 
+#include <string.h>
 #include <proto/muimaster.h>
 
 #include "SDI_hook.h"
