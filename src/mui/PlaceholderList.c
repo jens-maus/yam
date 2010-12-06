@@ -43,6 +43,7 @@
 /* CLASSDATA
 struct Data
 {
+  const char *entries[16];
   char placeholder[8];
   char description[SIZE_LARGE];
 };
@@ -81,6 +82,8 @@ OVERLOAD(OM_NEW)
 
     TAG_MORE, inittags(msg))) != NULL)
   {
+    GETDATA;
+
     switch(mode)
     {
       case VPM_FORWARD:
@@ -88,59 +91,65 @@ OVERLOAD(OM_NEW)
       case VPM_REPLYINTRO:
       case VPM_REPLYBYE:
       {
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_LineBreak), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, mode != VPM_FORWARD ? tr(MSG_CO_RecptName) : tr(MSG_CO_ORecptName), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, mode != VPM_FORWARD ? tr(MSG_CO_RecptFirstname) : tr(MSG_CO_ORecptFirstname), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, mode != VPM_FORWARD ? tr(MSG_CO_RecptAddress) : tr(MSG_CO_ORecptAddress), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SenderName), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SenderFirstname), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SenderAddress), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SenderSubject), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SenderRFCDateTime), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SenderDate), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SenderTime), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SenderTimeZone), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SenderDOW), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SenderMsgID), MUIV_NList_Insert_Bottom);
-
-        // depending on the mode we have the "CompleteHeader" feature or not.
-        if(mode == VPM_FORWARD || mode == VPM_REPLYINTRO)
-          DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_CompleteHeader), MUIV_NList_Insert_Bottom);
+        data->entries[ 0] = tr(MSG_CO_LineBreak);
+        data->entries[ 1] = (mode == VPM_FORWARD) ? tr(MSG_CO_ORecptName) : tr(MSG_CO_RecptName);
+        data->entries[ 2] = (mode == VPM_FORWARD) ? tr(MSG_CO_ORecptFirstname) : tr(MSG_CO_RecptFirstname);
+        data->entries[ 3] = (mode == VPM_FORWARD) ? tr(MSG_CO_ORecptAddress) : tr(MSG_CO_RecptAddress);
+        data->entries[ 4] = tr(MSG_CO_SenderName);
+        data->entries[ 5] = tr(MSG_CO_SenderFirstname);
+        data->entries[ 6] = tr(MSG_CO_SenderAddress);
+        data->entries[ 7] = tr(MSG_CO_SenderSubject);
+        data->entries[ 8] = tr(MSG_CO_SenderRFCDateTime);
+        data->entries[ 9] = tr(MSG_CO_SenderDate);
+        data->entries[10] = tr(MSG_CO_SenderTime);
+        data->entries[11] = tr(MSG_CO_SenderTimeZone);
+        data->entries[12] = tr(MSG_CO_SenderDOW);
+        data->entries[13] = tr(MSG_CO_SenderMsgID);
+        // depending on the mode we have the "CompleteHeader" feature or not
+        data->entries[14] = (mode == VPM_FORWARD || mode == VPM_REPLYINTRO) ? tr(MSG_CO_CompleteHeader) : NULL;
+        data->entries[15] = NULL;
       }
       break;
 
       case VPM_ARCHIVE:
       {
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveName), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveFiles), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveFilelist), MUIV_NList_Insert_Bottom);
+        data->entries[0] = tr(MSG_CO_ArchiveName);
+        data->entries[1] = tr(MSG_CO_ArchiveFiles);
+        data->entries[2] = tr(MSG_CO_ArchiveFilelist);
+        data->entries[3] = NULL;
       }
       break;
 
       case VPM_MAILSTATS:
       {
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_NEWMSGS), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_UNREADMSGS), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_TOTALMSGS), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_DELMSGS), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SENTMSGS), MUIV_NList_Insert_Bottom);
+        data->entries[0] = tr(MSG_CO_NEWMSGS);
+        data->entries[1] = tr(MSG_CO_UNREADMSGS);
+        data->entries[2] = tr(MSG_CO_TOTALMSGS);
+        data->entries[3] = tr(MSG_CO_DELMSGS);
+        data->entries[4] = tr(MSG_CO_SENTMSGS);
+        data->entries[5] = NULL;
       }
       break;
 
       case VPM_SCRIPTS:
       {
         // nothing to insert here, this is done externally depending on the type of the script
+        data->entries[0] = NULL;
       }
       break;
 
       case VPM_MIME_DEFVIEWER:
       case VPM_MIME_COMMAND:
       {
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_MIMECMD_PARAMETER), MUIV_NList_Insert_Bottom);
-        DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_MIMECMD_PUBSCREEN), MUIV_NList_Insert_Bottom);
+        data->entries[0] = tr(MSG_CO_MIMECMD_PARAMETER);
+        data->entries[1] = tr(MSG_CO_MIMECMD_PUBSCREEN);
+        data->entries[2] = NULL;
       }
       break;
     }
+
+    if(data->entries[0] != NULL)
+      DoMethod(obj, MUIM_NList_Insert, data->entries, -1, MUIV_NList_Insert_Bottom, MUIF_NONE);
   }
 
   RETURN((IPTR)obj);
@@ -197,6 +206,8 @@ OVERLOAD(MUIM_NList_Display)
 // set the placeholder entries for a script
 DECLARE(SetScriptEntry) // enum Macro macro
 {
+  GETDATA;
+
   ENTER();
 
   // clear the list first
@@ -222,33 +233,39 @@ DECLARE(SetScriptEntry) // enum Macro macro
     case MACRO_POSTFILTER:
     default:
       // nothing
+      data->entries[0] = NULL;
     break;
 
     case MACRO_PREGET:
-      DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SCRIPTS_PREGET), MUIV_NList_Insert_Bottom);
+      data->entries[0] = tr(MSG_CO_SCRIPTS_PREGET);
     break;
 
     case MACRO_POSTGET:
-      DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SCRIPTS_POSTGET), MUIV_NList_Insert_Bottom);
+      data->entries[0] = tr(MSG_CO_SCRIPTS_POSTGET);
     break;
 
     case MACRO_NEWMSG:
-      DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SCRIPTS_NEWMSG), MUIV_NList_Insert_Bottom);
+      data->entries[0] = tr(MSG_CO_SCRIPTS_NEWMSG);
     break;
 
     case MACRO_READ:
-      DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SCRIPTS_READ), MUIV_NList_Insert_Bottom);
+      data->entries[0] = tr(MSG_CO_SCRIPTS_READ);
     break;
 
     case MACRO_PREWRITE:
     case MACRO_POSTWRITE:
-      DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SCRIPTS_WRITE), MUIV_NList_Insert_Bottom);
+      data->entries[0] = tr(MSG_CO_SCRIPTS_WRITE);
     break;
 
     case MACRO_URL:
-      DoMethod(obj, MUIM_NList_InsertSingle, tr(MSG_CO_SCRIPTS_URL), MUIV_NList_Insert_Bottom);
+      data->entries[0] = tr(MSG_CO_SCRIPTS_URL);
     break;
   }
+
+  data->entries[1] = NULL;
+
+  if(data->entries[0] != NULL)
+    DoMethod(obj, MUIM_NList_Insert, data->entries, 1, MUIV_NList_Insert_Bottom, MUIF_NONE);
 
   LEAVE();
   return 0;
