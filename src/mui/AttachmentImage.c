@@ -38,6 +38,7 @@
 
 #include "SDI_hook.h"
 
+#include <stdlib.h>
 #include <string.h>
 #include <workbench/icon.h>
 
