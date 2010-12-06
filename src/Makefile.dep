@@ -730,10 +730,11 @@ $(OBJDIR)/YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
   YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h mui/AccountList.h \
   mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h mui/FilterList.h \
   mui/ImageArea.h ImageCache.h include/mui/TheBar_mcc.h HashTable.h \
-  mui/MailTextEdit.h mui/MimeTypeList.h mui/ScriptList.h \
-  mui/SearchControlGroup.h mui/ThemeListGroup.h mui/YAMApplication.h \
-  mui/PreselectionWindow.h FolderList.h ImageCache.h Locale.h MimeTypes.h \
-  MailServers.h MUIObjects.h Requesters.h Threads.h UIDL.h Debug.h
+  mui/MailTextEdit.h mui/MimeTypeList.h mui/PlaceholderList.h \
+  mui/ScriptList.h mui/SearchControlGroup.h mui/ThemeListGroup.h \
+  mui/YAMApplication.h mui/PreselectionWindow.h FolderList.h ImageCache.h \
+  Locale.h MimeTypes.h MailServers.h MUIObjects.h Requesters.h Threads.h \
+  UIDL.h Debug.h
 $(OBJDIR)/YAM_COs.o: YAM_COs.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListtree_mcc.h include/mui/TextEditor_mcc.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
@@ -1488,16 +1489,17 @@ $(OBJDIR)/$(MUIDIR)/Classes.o: mui/Classes.c mui/Classes.h mui/ClassesExtra.h \
   mui/MailTextEdit.h mui/MainFolderListtree.h mui/MainMailList.h Themes.h \
   mui/MainMailListGroup.h mui/MainWindow.h mui/MainWindowToolbar.h \
   mui/MimeTypeList.h mui/ObjectList.h mui/ObjectListitem.h \
-  mui/PassphraseRequestWindow.h mui/PreselectionWindow.h \
-  mui/QuickSearchBar.h mui/ReadMailGroup.h mui/ReadWindow.h \
-  mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h mui/Recipientstring.h \
-  mui/ScriptList.h mui/SearchControlGroup.h mui/Searchwindow.h \
-  mui/ShutdownWindow.h mui/Splashwindow.h mui/StringRequestWindow.h \
-  mui/ThemeList.h mui/ThemeListGroup.h mui/TransferControlGroup.h \
-  mui/TransferControlList.h mui/TransferMailList.h mui/TransferWindow.h \
-  mui/UpdateComponentList.h mui/UpdateNotifyWindow.h mui/UserList.h \
-  mui/WriteAttachmentList.h mui/WriteWindow.h mui/WriteWindowToolbar.h \
-  mui/YAMApplication.h mui/PreselectionWindow.h Debug.h
+  mui/PassphraseRequestWindow.h mui/PlaceholderList.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ConfigPageList.o: mui/ConfigPageList.c mui/ConfigPageList_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -1972,6 +1974,12 @@ $(OBJDIR)/$(MUIDIR)/PassphraseRequestWindow.o: mui/PassphraseRequestWindow.c \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_stringsizes.h \
   Locale.h MUIObjects.h Debug.h
+$(OBJDIR)/$(MUIDIR)/PlaceholderList.o: mui/PlaceholderList.c mui/PlaceholderList_cl.h \
+  include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
+  tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h mui/PlaceholderList.h include/mui/NList_mcc.h \
+  YAM_utilities.h YAM_folderconfig.h Locale.h Debug.h
 $(OBJDIR)/$(MUIDIR)/PreselectionWindow.o: mui/PreselectionWindow.c \
   mui/PreselectionWindow_cl.h include/libraries/mui.h mui/ClassesExtra.h \
   YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \

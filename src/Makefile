@@ -448,6 +448,7 @@ MUIOBJS = \
 	ObjectList.o \
 	ObjectListitem.o \
 	PassphraseRequestWindow.o \
+	PlaceholderList.o \
 	PreselectionWindow.o \
 	QuickSearchBar.o \
 	ReadMailGroup.o \

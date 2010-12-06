@@ -17,6 +17,8 @@ $URL$
     far as this is possible to catch possible "access after free" type of bugs.
   * mui/AccountList.c, YAM_COg.c: split off the POP3 account list to a separate
     class to be able to implement the hooks as proper methods.
+  * mui/PlaceholderList.c, YAM_COg.c: split off the variable placeholder list to
+    a separate class to be able to implement the hooks as proper methods.
 
 2010-12-05 Jens Langner <Jens.Langner@light-speed.de>
 

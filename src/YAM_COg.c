@@ -71,6 +71,7 @@
 #include "mui/ImageArea.h"
 #include "mui/MailTextEdit.h"
 #include "mui/MimeTypeList.h"
+#include "mui/PlaceholderList.h"
 #include "mui/ScriptList.h"
 #include "mui/SearchControlGroup.h"
 #include "mui/ThemeListGroup.h"
@@ -88,19 +89,6 @@
 #include "UIDL.h"
 
 #include "Debug.h"
-
-enum VarPopMode
-{
-  VPM_FORWARD=0,
-  VPM_REPLYHELLO,
-  VPM_REPLYINTRO,
-  VPM_REPLYBYE,
-  VPM_ARCHIVE,
-  VPM_MAILSTATS,
-  VPM_SCRIPTS,
-  VPM_MIME_DEFVIEWER,
-  VPM_MIME_COMMAND,
-};
 
 /* local defines */
 /// ConfigPageHeaderObject()
@@ -381,7 +369,7 @@ HOOKPROTONH(PO_HandleVarFunc, void, Object *pop, Object *string)
   ENTER();
 
   DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
-  if(var)
+  if(var != NULL)
   {
     char addstr[3];
     char *str = (char *)xget(string, MUIA_String_Contents);
@@ -389,30 +377,27 @@ HOOKPROTONH(PO_HandleVarFunc, void, Object *pop, Object *string)
 
     strlcpy(addstr, var, sizeof(addstr));
 
-    if(str && str[0] != '\0')
+    if(str != NULL && str[0] != '\0')
     {
       int len = strlen(str)+sizeof(addstr);
-      char *buf = calloc(len, 1);
+      char *buf;
 
-      if(buf == NULL)
+      if((buf = calloc(1, len)) != NULL)
       {
-        LEAVE();
-        return;
+        // append the addstr to the right position
+
+        if(pos > 0)
+          strlcpy(buf, str, MIN(len, pos + 1));
+
+        strlcat(buf, addstr, len);
+
+        if(pos >= 0)
+          strlcat(buf, str + pos, len);
+
+        set(string, MUIA_String_Contents, buf);
+
+        free(buf);
       }
-
-      // append the addstr to the right position
-
-      if(pos > 0)
-        strlcpy(buf, str, MIN(len, pos + 1));
-
-      strlcat(buf, addstr, len);
-
-      if(pos >= 0)
-        strlcat(buf, str + pos, len);
-
-      set(string, MUIA_String_Contents, buf);
-
-      free(buf);
     }
     else
       set(string, MUIA_String_Contents, addstr);
@@ -423,111 +408,14 @@ HOOKPROTONH(PO_HandleVarFunc, void, Object *pop, Object *string)
 MakeStaticHook(PO_HandleVarHook, PO_HandleVarFunc);
 
 ///
-/// VarPopDisplayFunc
-// Variable popup list display hook
-HOOKPROTONHNO(VarPopDisplayFunc, LONG, struct NList_DisplayMessage *msg)
-{
-  if(msg != NULL && msg->entry != NULL)
-  {
-    const char **array = (const char **)msg->strings;
-    static char placeholder[8];
-    static char description[SIZE_LARGE];
-    char *src;
-    char *dst;
-    size_t i;
-
-    src = msg->entry;
-    dst = placeholder;
-    i = 0;
-    // copy the string until the first space character occurs
-    while(*src != '\0' && *src != ' ' && i < sizeof(placeholder) - 1)
-    {
-      *dst++ = *src++;
-      i++;
-    }
-    // NUL terminate the string
-    *dst = '\0';
-
-    // skip the spaces
-    while(*src != '\0' && *src == ' ')
-      src++;
-
-    // finally copy the rest of the string to the description text
-    strlcpy(description, src, sizeof(description));
-
-    array[0] = placeholder;
-    array[1] = description;
-  }
-
-  return 0;
-}
-MakeStaticHook(VarPopDisplayHook, VarPopDisplayFunc);
-
-///
 /// PO_HandleScriptsOpenHook
 // Hook which is used when the arexx/dos scripts popup window will
 // be opened and populate the listview.
 HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *list)
 {
-  LONG active;
-
   ENTER();
 
-  // clear the list first
-  DoMethod(list, MUIM_NList_Clear);
-
-  if((active = xget(G->CO->GUI.LV_REXX, MUIA_NList_Active)) >= 0)
-  {
-    enum Macro macro = (enum Macro)active;
-
-    switch(macro)
-    {
-      case MACRO_MEN0:
-      case MACRO_MEN1:
-      case MACRO_MEN2:
-      case MACRO_MEN3:
-      case MACRO_MEN4:
-      case MACRO_MEN5:
-      case MACRO_MEN6:
-      case MACRO_MEN7:
-      case MACRO_MEN8:
-      case MACRO_MEN9:
-      case MACRO_STARTUP:
-      case MACRO_QUIT:
-      case MACRO_PRESEND:
-      case MACRO_POSTSEND:
-      case MACRO_PREFILTER:
-      case MACRO_POSTFILTER:
-      default:
-        // nothing
-      break;
-
-      case MACRO_PREGET:
-        DoMethod(list, MUIM_NList_InsertSingle, tr(MSG_CO_SCRIPTS_PREGET), MUIV_NList_Insert_Bottom);
-      break;
-
-      case MACRO_POSTGET:
-        DoMethod(list, MUIM_NList_InsertSingle, tr(MSG_CO_SCRIPTS_POSTGET), MUIV_NList_Insert_Bottom);
-      break;
-
-      case MACRO_NEWMSG:
-        DoMethod(list, MUIM_NList_InsertSingle, tr(MSG_CO_SCRIPTS_NEWMSG), MUIV_NList_Insert_Bottom);
-      break;
-
-      case MACRO_READ:
-        DoMethod(list, MUIM_NList_InsertSingle, tr(MSG_CO_SCRIPTS_READ), MUIV_NList_Insert_Bottom);
-      break;
-
-      case MACRO_PREWRITE:
-      case MACRO_POSTWRITE:
-        DoMethod(list, MUIM_NList_InsertSingle, tr(MSG_CO_SCRIPTS_WRITE), MUIV_NList_Insert_Bottom);
-      break;
-
-      case MACRO_URL:
-        DoMethod(list, MUIM_NList_InsertSingle, tr(MSG_CO_SCRIPTS_URL), MUIV_NList_Insert_Bottom);
-      break;
-    }
-  }
+  DoMethod(list, MUIM_PlaceholderList_SetScriptEntry, xget(G->CO->GUI.LV_REXX, MUIA_NList_Active));
 
   RETURN(TRUE);
   return TRUE;
@@ -926,7 +814,7 @@ HOOKPROTONO(FileRequestStartFunc, BOOL, struct TagItem *tags)
 
   ENTER();
 
-  switch((enum VarPopMode)hook->h_Data)
+  switch((enum VariablePopMode)hook->h_Data)
   {
     case VPM_SCRIPTS:
       strObj = G->CO->GUI.ST_SCRIPT;
@@ -990,7 +878,7 @@ HOOKPROTONO(FileRequestStopFunc, void, struct FileRequester *fileReq)
 
   ENTER();
 
-  switch((enum VarPopMode)hook->h_Data)
+  switch((enum VariablePopMode)hook->h_Data)
   {
     case VPM_SCRIPTS:
       strObj = G->CO->GUI.ST_SCRIPT;
@@ -1415,7 +1303,7 @@ Object *MakeMimeTypePop(Object **string, const char *desc)
 ///
 /// MakeVarPop
 //  Creates a popup list containing variables and descriptions for phrases etc.
-static Object *MakeVarPop(Object **string, Object **popButton, enum VarPopMode mode, int size, const char *shortcut)
+static Object *MakeVarPop(Object **string, Object **popButton, const enum VariablePopMode mode, const int size, const char *shortcut)
 {
   Object *lv;
   Object *po;
@@ -1428,82 +1316,18 @@ static Object *MakeVarPop(Object **string, Object **popButton, enum VarPopMode m
     MUIA_Popstring_Button, *popButton = PopButton(MUII_PopUp),
     MUIA_Popobject_ObjStrHook, &PO_HandleVarHook,
     MUIA_Popobject_WindowHook, &PO_WindowHook,
+    MUIA_Popobject_StrObjHook, (mode == VPM_SCRIPTS) ? &PO_HandleScriptsOpenHook : NULL,
     MUIA_Popobject_Object, NListviewObject,
       MUIA_FixHeightTxt, "\n\n\n\n\n\n\n\n",
       MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
       MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_FullAuto,
-      MUIA_NListview_NList, lv = NListObject,
-        InputListFrame,
-        MUIA_NList_AdjustHeight, TRUE,
-        (mode == VPM_SCRIPTS) ? TAG_IGNORE : MUIA_NList_Format, ",",
-        (mode == VPM_SCRIPTS) ? TAG_IGNORE : MUIA_NList_DisplayHook2, &VarPopDisplayHook,
+      MUIA_NListview_NList, lv = PlaceholderListObject,
+        MUIA_PlaceholderList_Mode, mode,
       End,
     End,
 
   End))
   {
-    switch (mode)
-    {
-      case VPM_FORWARD:
-      case VPM_REPLYHELLO:
-      case VPM_REPLYINTRO:
-      case VPM_REPLYBYE:
-      {
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_LineBreak), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(mode?MSG_CO_RecptName:MSG_CO_ORecptName), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(mode?MSG_CO_RecptFirstname:MSG_CO_ORecptFirstname), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(mode?MSG_CO_RecptAddress:MSG_CO_ORecptAddress), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderName), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderFirstname), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderAddress), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderSubject), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderRFCDateTime), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderDate), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderTime), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderTimeZone), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderDOW), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SenderMsgID), MUIV_NList_Insert_Bottom);
-
-        // depending on the mode we have the "CompleteHeader" feature or not.
-        if(mode == VPM_FORWARD || mode == VPM_REPLYINTRO)
-          DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_CompleteHeader), MUIV_NList_Insert_Bottom);
-      }
-      break;
-
-      case VPM_ARCHIVE:
-      {
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveName), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveFiles), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_ArchiveFilelist), MUIV_NList_Insert_Bottom);
-      }
-      break;
-
-      case VPM_MAILSTATS:
-      {
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_NEWMSGS), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_UNREADMSGS), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_TOTALMSGS), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_DELMSGS), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_SENTMSGS), MUIV_NList_Insert_Bottom);
-      }
-      break;
-
-      case VPM_SCRIPTS:
-      {
-        // we let the openhook handle the list management
-        set(po, MUIA_Popobject_StrObjHook, &PO_HandleScriptsOpenHook);
-      }
-      break;
-
-      case VPM_MIME_DEFVIEWER:
-      case VPM_MIME_COMMAND:
-      {
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_MIMECMD_PARAMETER), MUIV_NList_Insert_Bottom);
-        DoMethod(lv, MUIM_NList_InsertSingle, tr(MSG_CO_MIMECMD_PUBSCREEN), MUIV_NList_Insert_Bottom);
-      }
-      break;
-    }
-
     DoMethod(lv, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
     DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
   }
