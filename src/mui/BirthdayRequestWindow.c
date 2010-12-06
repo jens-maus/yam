@@ -32,6 +32,7 @@
 #include "BirthdayRequestWindow_cl.h"
 
 #include <ctype.h>
+#include <stdlib.h>
 #include <string.h>
 #include <proto/muimaster.h>
 #include <libraries/iffparse.h>
@@ -159,33 +160,34 @@ static BOOL CheckBirthdayCheckFile(const char *alias)
 static void SaveBirthdayCheckFile(const char *alias)
 {
   struct User *user;
-  char *userName = NULL;
-  char *buf;
-  char *ptr;
-  FILE *fh = NULL;
-  char dateString[64];
-  BOOL writeNewFile = FALSE;
 
   ENTER();
 
-  // get the current date
-  DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATE, TZC_NONE);
-
   // without a user and user name it makes no sense to search for the user
-  if((user = US_GetCurrentUser()) != NULL && (userName = user->Name) != NULL)
+  if((user = US_GetCurrentUser()) != NULL && user->Name != NULL)
   {
-    if((buf = FileToBuffer(BIRTHDAYCHECKFILE)))
+    char *buf;
+    FILE *fh = NULL;
+    char dateString[64];
+    BOOL writeNewFile = FALSE;
+
+    // get the current date
+    DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATE, TZC_NONE);
+
+    if((buf = FileToBuffer(BIRTHDAYCHECKFILE)) != NULL)
     {
       // check if we really work on a YAM BirthdayCheck file
       if(strnicmp(buf, "YBC", 3) == 0)
       {
+        char *ptr;
+
         if((ptr = strchr(buf, '\n')) != NULL)
         {
           // skip to the first digit
           while(*++ptr != '\0' && !isdigit(*ptr));
 
-          // now we compare the Date
-          if(strncmp(ptr, dateString, strlen(dateString)) == 0)
+          // now we compare the date
+          if(stricmp(ptr, dateString) == 0)
           {
             // if the date is equal then we open the file in append mode
             if((fh = fopen(BIRTHDAYCHECKFILE, "a")) != NULL)
@@ -212,9 +214,10 @@ static void SaveBirthdayCheckFile(const char *alias)
       }
       else
       {
-        E(DBF_ALWAYS, "File %s exists but could not read in the buffer!", BIRTHDAYCHECKFILE);
+        E(DBF_ALWAYS, "File '%s' exists but could not read in the buffer!", BIRTHDAYCHECKFILE);
       }
     }
+
     if(writeNewFile == TRUE)
     {
       if((fh = fopen(BIRTHDAYCHECKFILE, "w")) != NULL)
@@ -224,11 +227,12 @@ static void SaveBirthdayCheckFile(const char *alias)
         fprintf(fh, "DATE = %s\n", dateString);
       }
     }
+
     // if the file is openend succesfully in the appropriate
     // mode we write the user and alias to the file
     if(fh != NULL)
     {
-      fprintf(fh, "USER = %s\n", userName);
+      fprintf(fh, "USER = %s\n", user->Name);
       fprintf(fh, "ALIAS= %s\n", alias);
       fclose(fh);
     }
