@@ -65,6 +65,7 @@
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
 
+#include "mui/AccountList.h"
 #include "mui/ClassesExtra.h"
 #include "mui/FilterList.h"
 #include "mui/ImageArea.h"
@@ -1233,32 +1234,6 @@ HOOKPROTONHNONP(CO_DelPOP3, void)
 MakeStaticHook(CO_DelPOP3Hook,CO_DelPOP3);
 
 ///
-/// POP3DisplayHook
-// display hook for the POP3 account list
-HOOKPROTONHNO(POP3DisplayFunc, LONG, struct NList_DisplayMessage *msg)
-{
-  ENTER();
-
-  if(msg != NULL)
-  {
-    struct MailServerNode *msn = (struct MailServerNode *)msg->entry;
-
-    if(msn != NULL)
-    {
-      msg->strings[0] = msn->account;
-
-      // inactive accounts are shown in italics
-      if(isServerActive(msn) == FALSE)
-        msg->preparses[0] = (char *)MUIX_I;
-    }
-  }
-
-  RETURN(0);
-  return 0;
-}
-MakeStaticHook(POP3DisplayHook, POP3DisplayFunc);
-
-///
 /// GetAppIconPos
 // Retrieves the position x/y of the AppIcon and
 // sets the position label accordingly
@@ -1806,12 +1781,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                   Child, NListviewObject,
                     MUIA_CycleChain, TRUE,
                     MUIA_Weight,     60,
-                    MUIA_NListview_NList, data->GUI.LV_POP3 = NListObject,
-                      InputListFrame,
-                      MUIA_NList_Title,        FALSE,
-                      MUIA_NList_DisplayHook2, &POP3DisplayHook,
-                      MUIA_NList_DragType,     MUIV_NList_DragType_Immediate,
-                      MUIA_NList_DragSortable, TRUE,
+                    MUIA_NListview_NList, data->GUI.LV_POP3 = AccountListObject,
                     End,
                   End,
 

@@ -416,6 +416,7 @@ GENCLASSES= $(TOOLS)/genclasses
 MUIOBJS = \
 	Classes.o \
 	Aboutwindow.o \
+	AccountList.o \
 	AddrBookEntryList.o \
 	AddrBookListtree.o \
 	AddrBookToolbar.o \
