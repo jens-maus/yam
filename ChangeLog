@@ -13,6 +13,8 @@ $URL$
     ReadWindow object as this will read just free()'d memory. This closes #234.
   * mui/YAMApplication.c: make sure YAM doesn't steal the focus in case a
     visible but inactive transfer window is requested.
+  * extrasrc/AllocSysObject.c: the debug build now munges the freed memory as
+    far as this is possible to catch possible "access after free" type of bugs.
 
 2010-12-05 Jens Langner <Jens.Langner@light-speed.de>
 

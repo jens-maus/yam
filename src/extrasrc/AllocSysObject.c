@@ -692,6 +692,7 @@ void FreeSysObject(ULONG type, APTR object)
         if(sobject->signal != -1)
           FreeSignal(sobject->signal);
 
+        MungeMemory(sobject, sizeof(struct SysMsgPort));
         FreeVec(sobject);
       }
       break;
@@ -703,12 +704,44 @@ void FreeSysObject(ULONG type, APTR object)
       break;
 
       case ASOT_HOOK:
+      {
+        MungeMemory(object, sizeof(struct Hook));
+        FreeVec(object);
+      }
+      break;
+
       case ASOT_LIST:
+      {
+        // munge a MinList only
+        MungeMemory(object, sizeof(struct MinList));
+        FreeVec(object);
+      }
+      break;
+
       case ASOT_NODE:
+      {
+        // munge a MinNode only
+        MungeMemory(object, sizeof(struct MinNode));
+        FreeVec(object);
+      }
+      break;
+
       case ASOT_MESSAGE:
+      {
+        MungeMemory(object, sizeof(struct Message));
+        FreeVec(object);
+      }
+      break;
+
       case ASOT_TAGLIST:
+      {
+        FreeVec(object);
+      }
+      break;
+
       case ASOT_INTERRUPT:
       {
+        MungeMemory(object, sizeof(struct Interrupt));
         FreeVec(object);
       }
       break;
@@ -725,6 +758,7 @@ void FreeSysObject(ULONG type, APTR object)
         if(sobject->copy != FALSE)
           free(sobject->name);
 
+        MungeMemory(sobject, sizeof(struct SysSignalSemaphore));
         FreeVec(sobject);
       }
       break;
