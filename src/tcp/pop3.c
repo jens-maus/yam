@@ -786,6 +786,8 @@ static BOOL FilterDuplicates(struct TransferContext *tc)
                       tc->downloadResult.dupeSkipped++;
                       // don't download this mail, because it has been downloaded before
                       CLEAR_FLAG(tnode->tflags, TRF_TRANSFER);
+                      // exclude this mail from preselection for the same reason
+                      CLEAR_FLAG(tnode->tflags, TRF_PRESELECT);
                       // mark this UIDL as old+new, thus it will be saved upon cleanup
                       SET_FLAG(token->flags, UIDLF_NEW);
                     }
