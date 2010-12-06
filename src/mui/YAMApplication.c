@@ -840,7 +840,7 @@ DECLARE(CreateTransferGroup) // APTR thread, const char *title, struct Connectio
     D(DBF_GUI, "creating new transfer window");
 
     data->transferWindow = TransferWindowObject,
-      MUIA_Window_Activate, msg->openWindow && msg->activate,
+      MUIA_Window_Activate, C->TransferWindow != TWM_HIDE && msg->openWindow == TRUE && msg->activate == TRUE,
     End;
   }
 
@@ -860,7 +860,10 @@ DECLARE(CreateTransferGroup) // APTR thread, const char *title, struct Connectio
         if(msg->openWindow == TRUE || C->TransferWindow == TWM_SHOW)
         {
           D(DBF_GUI, "visible transfer window is requested");
-          SafeOpenWindow(data->transferWindow);
+
+          // open the window only once
+          if(xget(data->transferWindow, MUIA_Window_Open) == FALSE)
+            SafeOpenWindow(data->transferWindow);
         }
       }
     }
