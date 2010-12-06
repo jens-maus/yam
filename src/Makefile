@@ -432,6 +432,7 @@ MUIOBJS = \
 	CheckboxRequestWindow.o \
 	ConfigPageList.o \
 	FilterList.o \
+	FilterPopupList.o \
 	FolderRequestWindow.o \
 	GenericRequestWindow.o \
 	HeaderList.o \

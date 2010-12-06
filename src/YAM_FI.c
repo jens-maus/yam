@@ -59,6 +59,7 @@
 #include "YAM_utilities.h"
 
 #include "mui/ClassesExtra.h"
+#include "mui/FilterPopupList.h"
 #include "mui/MainMailList.h"
 #include "mui/ReadWindow.h"
 #include "mui/SearchControlGroup.h"
@@ -2532,29 +2533,11 @@ void RemoveFolderFromFilters(const char *folder)
 //  Creates a popup list of configured filters
 HOOKPROTONHNP(InitFilterPopupList, ULONG, Object *pop)
 {
-  struct Node *curNode;
-
-  // clear the popup list first
-  DoMethod(pop, MUIM_List_Clear);
-
-  // Now we process the read header to set all flags accordingly
-  IterateList(&C->filterList, curNode)
-  {
-    DoMethod(pop, MUIM_List_InsertSingle, curNode, MUIV_List_Insert_Bottom);
-  }
+  DoMethod(pop, MUIM_FilterPopupList_Popup);
 
   return TRUE;
 }
 MakeStaticHook(InitFilterPopupListHook, InitFilterPopupList);
-
-///
-/// FilterPopupDisplayHook
-HOOKPROTONH(FilterPopupDisplayFunc, ULONG, char **array, struct FilterNode *filter)
-{
-  array[0] = filter->name;
-  return 0;
-}
-MakeStaticHook(FilterPopupDisplayHook, FilterPopupDisplayFunc);
 
 ///
 /// SearchOptFromFilterPopup
@@ -2628,10 +2611,8 @@ static struct FI_ClassData *FI_New(void)
                       MUIA_Popobject_ObjStrHook, &SearchOptFromFilterPopupHook,
                       MUIA_Popobject_StrObjHook, &InitFilterPopupListHook,
                       MUIA_Popobject_WindowHook, &PO_WindowHook,
-                      MUIA_Popobject_Object, lv_fromrule = ListviewObject,
-                         MUIA_Listview_List, ListObject,
-                           InputListFrame,
-                           MUIA_List_DisplayHook, &FilterPopupDisplayHook,
+                      MUIA_Popobject_Object, lv_fromrule = NListviewObject,
+                         MUIA_NListview_NList, FilterPopupListObject,
                          End,
                       End,
                    End,
