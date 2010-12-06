@@ -419,7 +419,8 @@ MUIOBJS = \
 	AddrBookEntryList.o \
 	AddrBookListtree.o \
 	AddrBookToolbar.o \
-	Addrmatchlist.o \
+	AddressmatchList.o \
+	AddressmatchPopup.o \
 	AttachmentGroup.o \
 	AttachmentImage.o \
 	AttachmentList.o \

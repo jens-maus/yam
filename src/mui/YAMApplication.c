@@ -56,7 +56,7 @@
 #include "UpdateCheck.h"
 #include "Threads.h"
 
-#include "mui/Addrmatchlist.h"
+#include "mui/AddressmatchPopup.h"
 #include "mui/InfoWindow.h"
 #include "mui/StringRequestWindow.h"
 #include "mui/TransferControlGroup.h"

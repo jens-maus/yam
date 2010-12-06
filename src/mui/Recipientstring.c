@@ -46,7 +46,7 @@
 #include "YAM_mainFolder.h"
 #include "MUIObjects.h"
 
-#include "mui/Addrmatchlist.h"
+#include "mui/AddressmatchPopup.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/YAMApplication.h"
 
@@ -404,8 +404,8 @@ OVERLOAD(MUIM_Setup)
   // create the address match list object, if it does not exist yet
   if(data->Matchwindow == NULL)
   {
-    data->Matchwindow = AddrmatchlistObject,
-      MUIA_Addrmatchlist_String, obj,
+    data->Matchwindow = AddressmatchPopupObject,
+      MUIA_AddressmatchPopup_String, obj,
     End;
     D(DBF_GUI, "Create addrlistpopup: %08lx", data->Matchwindow);
   }
@@ -441,7 +441,7 @@ OVERLOAD(MUIM_Show)
 
   ENTER();
 
-  DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
+  DoMethod(data->Matchwindow, MUIM_AddressmatchPopup_ChangeWindow);
   result = DoSuperMethodA(cl, obj, msg);
 
   RETURN(result);
@@ -636,7 +636,7 @@ OVERLOAD(MUIM_HandleEvent)
         case NM_WHEEL_RIGHT:
         {
           // forward this event to the addrmatchlist
-          if(DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg))
+          if(DoMethod(data->Matchwindow, MUIM_AddressmatchPopup_Event, imsg))
             result = MUI_EventHandlerRC_Eat;
         }
         break;
@@ -744,7 +744,7 @@ OVERLOAD(MUIM_HandleEvent)
             struct CustomABEntry *abentry;
 
             if(cur_rcpt != NULL &&
-               (abentry = (struct CustomABEntry *)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Open, cur_rcpt)) != NULL)
+               (abentry = (struct CustomABEntry *)DoMethod(data->Matchwindow, MUIM_AddressmatchPopup_Open, cur_rcpt)) != NULL)
             {
               ULONG pos = xget(obj, MUIA_String_BufferPos);
 
@@ -795,13 +795,13 @@ OVERLOAD(MUIM_HandleEvent)
     {
       // only if the matchwindow is open we advice the matchwindow to refresh it`s position.
       if(xget(data->Matchwindow, MUIA_Window_Open))
-        DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
+        DoMethod(data->Matchwindow, MUIM_AddressmatchPopup_ChangeWindow);
     }
     #if defined(__amigaos4__)
     else if(imsg->Class == IDCMP_EXTENDEDMOUSE && (imsg->Code & IMSGCODE_INTUIWHEELDATA))
     {
       // we forward OS4 mousewheel events to the addrmatchlist directly
-      if(DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg))
+      if(DoMethod(data->Matchwindow, MUIM_AddressmatchPopup_Event, imsg))
         result = MUI_EventHandlerRC_Eat;
     }
     #endif

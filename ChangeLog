@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AddressmatchList.c, AddressmatchPopup.c: separated the old class into
+    two classes to be able to implement the old hooks as proper methods.
+
 2010-12-05 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: we will now always show the unit with all kind of size display

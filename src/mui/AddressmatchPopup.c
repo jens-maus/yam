@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "Addrmatchlist_cl.h"
+#include "AddressmatchPopup_cl.h"
 
 #include <stdlib.h>
 #include <proto/muimaster.h>
@@ -37,14 +37,13 @@
 #include <mui/NListview_mcc.h>
 
 #include "newmouse.h"
-#include "SDI_hook.h"
 
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_global.h"
 
 #include "MUIObjects.h"
 
+#include "mui/AddressmatchList.h"
 #include "mui/Recipientstring.h"
 #include "mui/YAMApplication.h"
 
@@ -71,75 +70,6 @@ struct CustomABEntry
 };
 */
 
-/* Hooks */
-/// ConstructHook
-HOOKPROTONHNO(ConstructFunc, struct CustomABEntry *, struct CustomABEntry *e)
-{
-  struct CustomABEntry *entry;
-
-  ENTER();
-
-  entry = memdup(e, sizeof(*e));
-
-  RETURN(entry);
-  return entry;
-}
-MakeStaticHook(ConstructHook, ConstructFunc);
-
-///
-/// DestructHook
-HOOKPROTONHNO(DestructFunc, long, void *entry)
-{
-  free(entry);
-
-  return 0;
-}
-MakeStaticHook(DestructHook, DestructFunc);
-
-///
-/// DisplayHook
-HOOKPROTONH(DisplayFunc, LONG, CONST_STRPTR *array, struct CustomABEntry *e)
-{
-  static char buf[SIZE_ADDRESS + 4];
-
-  ENTER();
-
-  array[0] = e->MatchEntry->Alias[0]    ? e->MatchEntry->Alias    : "-";
-  array[1] = e->MatchEntry->RealName[0] ? e->MatchEntry->RealName : "-";
-  array[2] = e->MatchEntry->Address[0]  ? e->MatchEntry->Address  : "-";
-
-  if(e->MatchField == 0)
-    snprintf(buf, sizeof(buf), "\033b%." STR(SIZE_NAME) "s", e->MatchString);
-  else if(e->MatchField == 1)
-    snprintf(buf, sizeof(buf), "\033b%." STR(SIZE_REALNAME) "s", e->MatchString);
-  else
-    snprintf(buf, sizeof(buf), "\033b%." STR(SIZE_ADDRESS) "s", e->MatchString);
-
-  array[e->MatchField] = buf;
-
-  RETURN(0);
-  return 0;
-}
-MakeStaticHook(DisplayHook, DisplayFunc);
-
-///
-/// CompareHook
-HOOKPROTONH(CompareFunc, LONG, struct CustomABEntry *e2, struct CustomABEntry *e1)
-{
-  LONG result;
-
-  ENTER();
-
-  result = e1->MatchField - e2->MatchField;
-  if(result == 0)
-    result = Stricmp(e1->MatchString, e2->MatchString);
-
-  RETURN(result);
-  return result;
-}
-MakeStaticHook(CompareHook, CompareFunc);
-///
-
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -163,13 +93,7 @@ OVERLOAD(OM_NEW)
       Child, listview = NListviewObject,
         MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
         MUIA_NListview_Vert_ScrollBar,  MUIV_NListview_VSB_FullAuto,
-        MUIA_NListview_NList, list = NListObject,
-          InputListFrame,
-          MUIA_NList_CompareHook,     &CompareHook,
-          MUIA_NList_ConstructHook,   &ConstructHook,
-          MUIA_NList_DestructHook,    &DestructHook,
-          MUIA_NList_DisplayHook,     &DisplayHook,
-          MUIA_NList_Format,          ",,",
+        MUIA_NListview_NList, list = AddressmatchListObject,
         End,
       End,
     End,
@@ -191,7 +115,7 @@ OVERLOAD(OM_NEW)
 
     if(data->String == NULL)
     {
-      E(DBF_GUI, "No MUIA_Addrmatchlist_String supplied");
+      E(DBF_GUI, "No MUIA_AddressmatchPopup_String supplied");
       CoerceMethod(cl, obj, OM_DISPOSE);
       obj = NULL;
     }
@@ -393,7 +317,8 @@ DECLARE(Open) // char *str
   // should we open the popup list (if not already shown)
   if(result != NULL && xget(obj, MUIA_Window_Open) == FALSE)
   {
-    DoMethod(obj, MUIM_Addrmatchlist_ChangeWindow); // refresh the position
+    // refresh the position
+    DoMethod(obj, METHOD(ChangeWindow));
     set(obj, MUIA_Window_Open, TRUE);
   }
   else if(result == NULL)

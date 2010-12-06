@@ -6,8 +6,8 @@ $(OBJDIR)/AppIcon.o: AppIcon.c extrasrc.h include/SDI_compiler.h \
   HashTable.h Themes.h Timer.h include/timeval.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
   tcp/smtp.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -42,25 +42,26 @@ $(OBJDIR)/BayesFilter.o: BayesFilter.c YAM.h include/xpk/xpk.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   include/timeval.h YAM_config.h include/libraries/mui.h YAM_read.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -84,8 +85,8 @@ $(OBJDIR)/DockyIcon.o: DockyIcon.c YAM.h include/xpk/xpk.h include/amiga-align.h
   HashTable.h Themes.h Timer.h include/timeval.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
   tcp/smtp.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -145,8 +146,8 @@ $(OBJDIR)/Logfile.o: Logfile.c extrasrc.h include/SDI_compiler.h \
   HashTable.h Themes.h Timer.h include/timeval.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
   tcp/smtp.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -224,26 +225,26 @@ $(OBJDIR)/MailImport.o: MailImport.c include/libraries/mui.h extrasrc.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -265,8 +266,8 @@ $(OBJDIR)/MailServers.o: MailServers.c YAM_config.h include/libraries/mui.h \
   YAM_read.h YAM_write.h YAM_main.h YAM_stringsizes.h tcp/pop3.h \
   tcp/smtp.h YAM_utilities.h include/SDI_compiler.h YAM_folderconfig.h \
   Logfile.h UpdateCheck.h include/timeval.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -327,45 +328,7 @@ $(OBJDIR)/ParseEmail.o: ParseEmail.c YAM_utilities.h include/SDI_compiler.h \
   YAM_stringsizes.h YAM_folderconfig.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
   tcp/smtp.h Logfile.h UpdateCheck.h include/timeval.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
-  include/openssl/obj_mac.h include/openssl/hmac.h \
-  include/openssl/krb5_asn.h include/openssl/kssl.h \
-  include/openssl/ocsp.h include/openssl/x509.h \
-  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
-  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
-  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
-  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
-  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
-  include/interfaces/amissl.h include/inline4/amissl.h ParseEmail.h \
-  Debug.h
-$(OBJDIR)/Requesters.o: Requesters.c include/mui/NList_mcc.h \
-  include/libraries/mui.h include/mui/NListview_mcc.h \
-  include/proto/muimaster.h include/interfaces/muimaster.h \
-  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
-  include/SDI_stdarg.h include/SDI_compiler.h include/SDI_hook.h YAM.h \
-  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
-  YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
-  BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
-  YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
   include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
   include/openssl/e_os2.h include/openssl/opensslconf.h \
   include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
@@ -393,6 +356,45 @@ $(OBJDIR)/Requesters.o: Requesters.c include/mui/NList_mcc.h \
   include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
+  include/interfaces/amissl.h include/inline4/amissl.h ParseEmail.h \
+  Debug.h
+$(OBJDIR)/Requesters.o: Requesters.c include/mui/NList_mcc.h \
+  include/libraries/mui.h include/mui/NListview_mcc.h \
+  include/proto/muimaster.h include/interfaces/muimaster.h \
+  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h include/SDI_hook.h YAM.h \
+  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
+  BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
+  YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  include/openssl/obj_mac.h include/openssl/hmac.h \
+  include/openssl/krb5_asn.h include/openssl/kssl.h \
+  include/openssl/ocsp.h include/openssl/x509.h \
+  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
+  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
+  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
+  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
+  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_mainFolder.h \
   mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
   mui/AttachmentRequestWindow.h mui/CheckboxRequestWindow.h \
@@ -410,8 +412,8 @@ $(OBJDIR)/Themes.o: Themes.c YAM.h include/xpk/xpk.h include/amiga-align.h \
   HashTable.h Themes.h Timer.h include/timeval.h YAM_global.h \
   YAM_config.h include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h \
   tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -454,26 +456,26 @@ $(OBJDIR)/Timer.o: Timer.c include/mui/NList_mcc.h include/libraries/mui.h YAM.h
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   include/timeval.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -503,25 +505,26 @@ $(OBJDIR)/UpdateCheck.o: UpdateCheck.c include/mui/BetterString_mcc.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h YAM_config.h YAM_read.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -548,8 +551,8 @@ $(OBJDIR)/YAM_AB.o: YAM_AB.c include/mui/BetterString_mcc.h include/mui/NList_mc
   Timer.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_addressbookEntry.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
   YAM_config.h YAM_read.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -632,13 +635,13 @@ $(OBJDIR)/YAM.o: YAM.c include/libraries/amisslmaster.h \
   HashTable.h Themes.h Timer.h include/timeval.h YAM_addressbook.h \
   include/mui/NListtree_mcc.h YAM_config.h YAM_read.h YAM_write.h \
   YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h YAM_configFile.h YAM_global.h \
-  YAM_mainFolder.h AppIcon.h DockyIcon.h FileInfo.h MUIObjects.h \
-  FolderList.h ImageCache.h Locale.h MailList.h MethodStack.h \
-  Requesters.h Rexx.h Threads.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h mui/ClassesSetup.h mui/Splashwindow.h include/timeval.h \
-  mui/ShutdownWindow.h mui/WriteWindow.h mui/YAMApplication.h \
-  mui/PreselectionWindow.h Debug.h
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  YAM_configFile.h YAM_global.h YAM_mainFolder.h AppIcon.h DockyIcon.h \
+  FileInfo.h MUIObjects.h FolderList.h ImageCache.h Locale.h MailList.h \
+  MethodStack.h Requesters.h Rexx.h Threads.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h mui/ClassesSetup.h \
+  mui/Splashwindow.h include/timeval.h mui/ShutdownWindow.h \
+  mui/WriteWindow.h mui/YAMApplication.h mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/YAM_CO.o: YAM_CO.c include/libraries/amisslmaster.h \
   include/mui/BetterString_mcc.h include/mui/NListview_mcc.h \
   include/libraries/mui.h include/mui/NList_mcc.h \
@@ -652,26 +655,26 @@ $(OBJDIR)/YAM_CO.o: YAM_CO.c include/libraries/amisslmaster.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h include/timeval.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -700,25 +703,26 @@ $(OBJDIR)/YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
   BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_config.h YAM_read.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -743,8 +747,8 @@ $(OBJDIR)/YAM_COs.o: YAM_COs.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
   tcp/smtp.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -797,26 +801,26 @@ $(OBJDIR)/YAM_EA.o: YAM_EA.c include/mui/NListview_mcc.h include/libraries/mui.h
   BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h YAM_config.h YAM_read.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -839,26 +843,26 @@ $(OBJDIR)/YAM_ER.o: YAM_ER.c include/mui/NListview_mcc.h include/libraries/mui.h
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -881,8 +885,8 @@ $(OBJDIR)/YAM_FI.o: YAM_FI.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h 
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
   tcp/smtp.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -925,8 +929,8 @@ $(OBJDIR)/YAM_FO.o: YAM_FO.c include/mui/NList_mcc.h include/libraries/mui.h \
   BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
   YAM_addressbook.h YAM_config.h YAM_read.h YAM_write.h YAM_main.h \
   tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -1011,13 +1015,14 @@ $(OBJDIR)/YAM_lowmem.o: YAM_lowmem.c include/libraries/amisslmaster.h \
   HashTable.h Themes.h Timer.h include/timeval.h YAM_addressbook.h \
   include/mui/NListtree_mcc.h YAM_config.h YAM_read.h YAM_write.h \
   YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h YAM_configFile.h YAM_global.h \
-  YAM_mainFolder.h AppIcon.h DockyIcon.h FileInfo.h MUIObjects.h \
-  FolderList.h ImageCache.h Locale.h LowMemHandler.h MailList.h \
-  MethodStack.h Requesters.h Rexx.h Threads.h mui/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h mui/ClassesSetup.h \
-  mui/Splashwindow.h include/timeval.h mui/ShutdownWindow.h \
-  mui/WriteWindow.h mui/YAMApplication.h mui/PreselectionWindow.h Debug.h
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  YAM_configFile.h YAM_global.h YAM_mainFolder.h AppIcon.h DockyIcon.h \
+  FileInfo.h MUIObjects.h FolderList.h ImageCache.h Locale.h \
+  LowMemHandler.h MailList.h MethodStack.h Requesters.h Rexx.h Threads.h \
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/ClassesSetup.h mui/Splashwindow.h include/timeval.h \
+  mui/ShutdownWindow.h mui/WriteWindow.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/YAM_MA.o: YAM_MA.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/mui/NListview_mcc.h \
   include/mui/TextEditor_mcc.h include/mui/TheBar_mcc.h \
@@ -1029,26 +1034,26 @@ $(OBJDIR)/YAM_MA.o: YAM_MA.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h 
   BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h YAM_config.h YAM_read.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -1076,8 +1081,55 @@ $(OBJDIR)/YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h YAM_config.h YAM_read.h YAM_write.h \
   YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
+  include/openssl/obj_mac.h include/openssl/hmac.h \
+  include/openssl/krb5_asn.h include/openssl/kssl.h \
+  include/openssl/ocsp.h include/openssl/x509.h \
+  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
+  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
+  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
+  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
+  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
+  include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
+  YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h mui/InfoBar.h include/timeval.h mui/QuickSearchBar.h \
+  mui/ReadMailGroup.h mime/base64.h mime/rfc2047.h FileInfo.h \
+  FolderList.h Locale.h MailList.h MUIObjects.h Requesters.h Rexx.h \
+  Debug.h include/amiga-align.h include/default-align.h
+$(OBJDIR)/YAM_RE.o: YAM_RE.c include/mui/NList_mcc.h include/libraries/mui.h \
+  include/mui/NListview_mcc.h include/mui/TextEditor_mcc.h \
+  include/proto/codesets.h include/libraries/codesets.h \
+  include/interfaces/codesets.h include/inline4/codesets.h \
+  include/proto/muimaster.h include/interfaces/muimaster.h \
+  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h include/SDI_hook.h YAM.h \
+  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
+  BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
+  YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
+  YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h YAM_config.h YAM_read.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -1105,52 +1157,6 @@ $(OBJDIR)/YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
   YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h mui/InfoBar.h include/timeval.h mui/QuickSearchBar.h \
-  mui/ReadMailGroup.h mime/base64.h mime/rfc2047.h FileInfo.h \
-  FolderList.h Locale.h MailList.h MUIObjects.h Requesters.h Rexx.h \
-  Debug.h include/amiga-align.h include/default-align.h
-$(OBJDIR)/YAM_RE.o: YAM_RE.c include/mui/NList_mcc.h include/libraries/mui.h \
-  include/mui/NListview_mcc.h include/mui/TextEditor_mcc.h \
-  include/proto/codesets.h include/libraries/codesets.h \
-  include/interfaces/codesets.h include/inline4/codesets.h \
-  include/proto/muimaster.h include/interfaces/muimaster.h \
-  include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
-  include/SDI_stdarg.h include/SDI_compiler.h include/SDI_hook.h YAM.h \
-  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
-  YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
-  BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
-  YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
-  YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h YAM_config.h YAM_read.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
-  include/openssl/obj_mac.h include/openssl/hmac.h \
-  include/openssl/krb5_asn.h include/openssl/kssl.h \
-  include/openssl/ocsp.h include/openssl/x509.h \
-  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
-  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
-  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
-  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
-  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
-  include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
   BayesFilter.h mui/MainMailListGroup.h mui/ReadMailGroup.h \
   mui/ReadWindow.h mui/WriteWindow.h mime/rfc2231.h mime/base64.h \
   mime/qprintable.h mime/uucode.h HTML2Mail.h FileInfo.h FolderList.h \
@@ -1165,26 +1171,26 @@ $(OBJDIR)/YAM_US.o: YAM_US.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h include/timeval.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -1214,25 +1220,26 @@ $(OBJDIR)/YAM_UT.o: YAM_UT.c include/libraries/openurl.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h YAM_addressbook.h YAM_config.h YAM_read.h YAM_write.h \
   YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -1257,26 +1264,26 @@ $(OBJDIR)/YAM_WR.o: YAM_WR.c include/proto/muimaster.h include/libraries/mui.h \
   BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h YAM_config.h YAM_read.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -1334,18 +1341,24 @@ $(OBJDIR)/$(MUIDIR)/AddrBookToolbar.o: mui/AddrBookToolbar.c mui/AddrBookToolbar
   include/timeval.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_addressbookEntry.h ImageCache.h include/mui/TheBar_mcc.h Locale.h \
   MUIObjects.h Debug.h
-$(OBJDIR)/$(MUIDIR)/Addrmatchlist.o: mui/Addrmatchlist.c mui/Addrmatchlist_cl.h \
+$(OBJDIR)/$(MUIDIR)/AddressmatchList.o: mui/AddressmatchList.c mui/AddressmatchList_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
   HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
-  include/SDI_compiler.h mui/Addrmatchlist.h include/proto/muimaster.h \
-  include/interfaces/muimaster.h include/inline4/muimaster.h \
-  include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
-  include/mui/NListview_mcc.h include/newmouse.h include/SDI_hook.h YAM.h \
-  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  include/SDI_compiler.h mui/AddressmatchList.h include/mui/NList_mcc.h \
+  YAM_addressbookEntry.h YAM_global.h mui/AddressmatchPopup.h Debug.h
+$(OBJDIR)/$(MUIDIR)/AddressmatchPopup.o: mui/AddressmatchPopup.c mui/AddressmatchPopup_cl.h \
+  include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
+  tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h mui/AddressmatchPopup.h \
+  include/proto/muimaster.h include/interfaces/muimaster.h \
+  include/inline4/muimaster.h include/mui/BetterString_mcc.h \
+  include/mui/NList_mcc.h include/mui/NListview_mcc.h include/newmouse.h \
+  YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
-  Themes.h Timer.h include/timeval.h YAM_addressbookEntry.h YAM_global.h \
-  MUIObjects.h mui/Recipientstring.h mui/YAMApplication.h \
+  Themes.h Timer.h include/timeval.h YAM_addressbookEntry.h MUIObjects.h \
+  mui/AddressmatchList.h mui/Recipientstring.h mui/YAMApplication.h \
   mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/$(MUIDIR)/AttachmentGroup.o: mui/AttachmentGroup.c mui/AttachmentGroup_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
@@ -1355,25 +1368,26 @@ $(OBJDIR)/$(MUIDIR)/AttachmentGroup.o: mui/AttachmentGroup.c mui/AttachmentGroup
   include/interfaces/muimaster.h include/inline4/muimaster.h \
   include/SDI_hook.h YAM_config.h YAM_read.h YAM_utilities.h \
   YAM_folderconfig.h Logfile.h UpdateCheck.h include/timeval.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -1407,26 +1421,26 @@ $(OBJDIR)/$(MUIDIR)/AttachmentObject.o: mui/AttachmentObject.c mui/AttachmentObj
   include/SDI_compiler.h mui/AttachmentObject.h include/proto/muimaster.h \
   include/interfaces/muimaster.h include/inline4/muimaster.h YAM_config.h \
   YAM_read.h YAM_utilities.h YAM_folderconfig.h Logfile.h UpdateCheck.h \
-  include/timeval.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  include/timeval.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -1491,26 +1505,26 @@ $(OBJDIR)/$(MUIDIR)/Classes.o: mui/Classes.c mui/Classes.h mui/ClassesExtra.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -1523,8 +1537,8 @@ $(OBJDIR)/$(MUIDIR)/Classes.o: mui/Classes.c mui/Classes.h mui/ClassesExtra.h \
   YAM_utilities.h Locale.h ParseEmail.h YAM_main.h YAM_read.h \
   BayesFilter.h mui/ClassesSetup.h mui/Aboutwindow.h \
   mui/AddrBookEntryList.h mui/AddrBookListtree.h mui/AddrBookToolbar.h \
-  mui/Addrmatchlist.h mui/AttachmentGroup.h mui/AttachmentImage.h \
-  mui/AttachmentList.h mui/AttachmentObject.h \
+  mui/AddressmatchList.h mui/AddressmatchPopup.h mui/AttachmentGroup.h \
+  mui/AttachmentImage.h mui/AttachmentList.h mui/AttachmentObject.h \
   mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
   mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
   mui/ConfigPageList.h mui/FilterList.h mui/FolderRequestWindow.h \
@@ -1553,8 +1567,8 @@ $(OBJDIR)/$(MUIDIR)/ConfigPageList.o: mui/ConfigPageList.c mui/ConfigPageList_cl
   include/default-align.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h Themes.h Timer.h include/timeval.h \
   YAM_config.h YAM_read.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -1617,26 +1631,26 @@ $(OBJDIR)/$(MUIDIR)/HeaderList.o: mui/HeaderList.c mui/HeaderList_cl.h \
   HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
   include/SDI_compiler.h mui/HeaderList.h include/mui/NList_mcc.h \
   YAM_config.h YAM_read.h YAM_utilities.h YAM_folderconfig.h Logfile.h \
-  UpdateCheck.h include/timeval.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  UpdateCheck.h include/timeval.h mui/ConfigPageList.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -1666,25 +1680,26 @@ $(OBJDIR)/$(MUIDIR)/InfoBar.o: mui/InfoBar.c mui/InfoBar_cl.h include/libraries/
   include/amiga-align.h include/default-align.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
   include/timeval.h YAM_config.h YAM_read.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -1717,47 +1732,7 @@ $(OBJDIR)/$(MUIDIR)/MailTextEdit.o: mui/MailTextEdit.c mui/MailTextEdit_cl.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
   include/timeval.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_addressbookEntry.h YAM_config.h YAM_read.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
-  include/openssl/obj_mac.h include/openssl/hmac.h \
-  include/openssl/krb5_asn.h include/openssl/kssl.h \
-  include/openssl/ocsp.h include/openssl/x509.h \
-  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
-  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
-  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
-  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
-  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
-  include/interfaces/amissl.h include/inline4/amissl.h Locale.h \
-  MUIObjects.h ParseEmail.h Requesters.h Debug.h
-$(OBJDIR)/$(MUIDIR)/MainFolderListtree.o: mui/MainFolderListtree.c \
-  mui/MainFolderListtree_cl.h include/libraries/mui.h mui/ClassesExtra.h \
-  YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h HashTable.h include/SDI_compiler.h \
-  extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h \
-  mui/MainFolderListtree.h include/proto/muimaster.h \
-  include/interfaces/muimaster.h include/inline4/muimaster.h \
-  include/mui/NList_mcc.h include/mui/NListtree_mcc.h include/SDI_hook.h \
-  YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
-  YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
-  Themes.h Timer.h include/timeval.h YAM_config.h YAM_read.h Logfile.h \
-  UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
   include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
   include/openssl/e_os2.h include/openssl/opensslconf.h \
   include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
@@ -1785,6 +1760,47 @@ $(OBJDIR)/$(MUIDIR)/MainFolderListtree.o: mui/MainFolderListtree.c \
   include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
+  include/interfaces/amissl.h include/inline4/amissl.h Locale.h \
+  MUIObjects.h ParseEmail.h Requesters.h Debug.h
+$(OBJDIR)/$(MUIDIR)/MainFolderListtree.o: mui/MainFolderListtree.c \
+  mui/MainFolderListtree_cl.h include/libraries/mui.h mui/ClassesExtra.h \
+  YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \
+  YAM_write.h YAM_main.h BayesFilter.h HashTable.h include/SDI_compiler.h \
+  extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h \
+  mui/MainFolderListtree.h include/proto/muimaster.h \
+  include/interfaces/muimaster.h include/inline4/muimaster.h \
+  include/mui/NList_mcc.h include/mui/NListtree_mcc.h include/SDI_hook.h \
+  YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
+  Themes.h Timer.h include/timeval.h YAM_config.h YAM_read.h Logfile.h \
+  UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  include/openssl/obj_mac.h include/openssl/hmac.h \
+  include/openssl/krb5_asn.h include/openssl/kssl.h \
+  include/openssl/ocsp.h include/openssl/x509.h \
+  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
+  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
+  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
+  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
+  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_find.h \
   YAM_mainFolder.h FolderList.h Locale.h MUIObjects.h Themes.h \
   mui/ImageArea.h ImageCache.h include/mui/TheBar_mcc.h \
@@ -1801,8 +1817,8 @@ $(OBJDIR)/$(MUIDIR)/MainMailList.o: mui/MainMailList.c mui/MainMailList_cl.h \
   YAM_folderconfig.h BayesFilter.h Themes.h Timer.h include/timeval.h \
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
   YAM_config.h YAM_read.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -1842,8 +1858,49 @@ $(OBJDIR)/$(MUIDIR)/MainMailListGroup.o: mui/MainMailListGroup.c mui/MainMailLis
   include/amiga-align.h include/default-align.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
   include/timeval.h YAM_config.h YAM_read.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
+  include/openssl/obj_mac.h include/openssl/hmac.h \
+  include/openssl/krb5_asn.h include/openssl/kssl.h \
+  include/openssl/ocsp.h include/openssl/x509.h \
+  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
+  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
+  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
+  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
+  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
+  include/interfaces/amissl.h include/inline4/amissl.h MUIObjects.h \
+  mui/MainMailList.h Themes.h mui/QuickSearchBar.h include/timeval.h \
+  Debug.h
+$(OBJDIR)/$(MUIDIR)/MainWindow.o: mui/MainWindow.c mui/MainWindow_cl.h \
+  include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
+  tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h mui/MainWindow.h include/proto/muimaster.h \
+  include/interfaces/muimaster.h include/inline4/muimaster.h YAM.h \
+  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
+  Themes.h Timer.h include/timeval.h YAM_config.h YAM_read.h Logfile.h \
+  UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -1869,46 +1926,6 @@ $(OBJDIR)/$(MUIDIR)/MainMailListGroup.o: mui/MainMailListGroup.c mui/MainMailLis
   include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
-  include/interfaces/amissl.h include/inline4/amissl.h MUIObjects.h \
-  mui/MainMailList.h Themes.h mui/QuickSearchBar.h include/timeval.h \
-  Debug.h
-$(OBJDIR)/$(MUIDIR)/MainWindow.o: mui/MainWindow.c mui/MainWindow_cl.h \
-  include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
-  tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
-  HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
-  include/SDI_compiler.h mui/MainWindow.h include/proto/muimaster.h \
-  include/interfaces/muimaster.h include/inline4/muimaster.h YAM.h \
-  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
-  YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
-  Themes.h Timer.h include/timeval.h YAM_config.h YAM_read.h Logfile.h \
-  UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
-  include/openssl/obj_mac.h include/openssl/hmac.h \
-  include/openssl/krb5_asn.h include/openssl/kssl.h \
-  include/openssl/ocsp.h include/openssl/x509.h \
-  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
-  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
-  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
-  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
-  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
   MUIObjects.h mui/Aboutwindow.h mui/MainMailListGroup.h \
   mui/ReadMailGroup.h Debug.h
@@ -1921,26 +1938,26 @@ $(OBJDIR)/$(MUIDIR)/MainWindowToolbar.o: mui/MainWindowToolbar.c mui/MainWindowT
   include/default-align.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h Themes.h Timer.h include/timeval.h \
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_config.h YAM_read.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -1984,25 +2001,26 @@ $(OBJDIR)/$(MUIDIR)/PassphraseRequestWindow.o: mui/PassphraseRequestWindow.c \
   include/amiga-align.h include/default-align.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
   include/timeval.h YAM_config.h YAM_read.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -2081,8 +2099,8 @@ $(OBJDIR)/$(MUIDIR)/ReadMailGroup.o: mui/ReadMailGroup.c mui/ReadMailGroup_cl.h 
   YAM_folderconfig.h BayesFilter.h Themes.h Timer.h include/timeval.h \
   YAM_addressbook.h include/mui/NListtree_mcc.h YAM_addressbookEntry.h \
   YAM_config.h YAM_read.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -2126,26 +2144,26 @@ $(OBJDIR)/$(MUIDIR)/ReadWindow.o: mui/ReadWindow.c mui/ReadWindow_cl.h \
   include/amiga-align.h include/default-align.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
   include/timeval.h YAM_addressbookEntry.h YAM_config.h YAM_read.h \
-  Logfile.h UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -2178,26 +2196,26 @@ $(OBJDIR)/$(MUIDIR)/ReadWindowToolbar.o: mui/ReadWindowToolbar.c mui/ReadWindowT
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   Themes.h Timer.h include/timeval.h YAM_config.h YAM_read.h Logfile.h \
-  UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -2221,43 +2239,7 @@ $(OBJDIR)/$(MUIDIR)/Recipientstring.o: mui/Recipientstring.c mui/Recipientstring
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
   include/timeval.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_addressbookEntry.h YAM_config.h YAM_read.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
-  include/openssl/obj_mac.h include/openssl/hmac.h \
-  include/openssl/krb5_asn.h include/openssl/kssl.h \
-  include/openssl/ocsp.h include/openssl/x509.h \
-  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
-  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
-  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
-  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
-  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
-  include/interfaces/amissl.h include/inline4/amissl.h YAM_mainFolder.h \
-  MUIObjects.h mui/Addrmatchlist.h mui/MainMailListGroup.h \
-  mui/YAMApplication.h mui/PreselectionWindow.h Debug.h
-$(OBJDIR)/$(MUIDIR)/ScriptList.o: mui/ScriptList.c mui/ScriptList_cl.h \
-  include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
-  tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
-  HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
-  include/SDI_compiler.h mui/ScriptList.h include/mui/NList_mcc.h \
-  YAM_config.h YAM_read.h YAM_utilities.h YAM_folderconfig.h Logfile.h \
-  UpdateCheck.h include/timeval.h mui/ConfigPageList.h tcp/Connection.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
   include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
   include/openssl/e_os2.h include/openssl/opensslconf.h \
   include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
@@ -2285,19 +2267,17 @@ $(OBJDIR)/$(MUIDIR)/ScriptList.o: mui/ScriptList.c mui/ScriptList_cl.h \
   include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
-  include/interfaces/amissl.h include/inline4/amissl.h Locale.h Debug.h
-$(OBJDIR)/$(MUIDIR)/SearchControlGroup.o: mui/SearchControlGroup.c \
-  mui/SearchControlGroup_cl.h include/libraries/mui.h mui/ClassesExtra.h \
-  YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \
-  YAM_write.h YAM_main.h BayesFilter.h HashTable.h include/SDI_compiler.h \
-  extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h \
-  mui/SearchControlGroup.h include/proto/muimaster.h \
-  include/interfaces/muimaster.h include/inline4/muimaster.h \
-  include/mui/BetterString_mcc.h YAM.h include/xpk/xpk.h \
-  include/amiga-align.h include/default-align.h YAM_userlist.h \
-  YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
-  include/timeval.h YAM_config.h YAM_read.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
+  include/interfaces/amissl.h include/inline4/amissl.h YAM_mainFolder.h \
+  MUIObjects.h mui/AddressmatchPopup.h mui/MainMailListGroup.h \
+  mui/YAMApplication.h mui/PreselectionWindow.h Debug.h
+$(OBJDIR)/$(MUIDIR)/ScriptList.o: mui/ScriptList.c mui/ScriptList_cl.h \
+  include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
+  tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h mui/ScriptList.h include/mui/NList_mcc.h \
+  YAM_config.h YAM_read.h YAM_utilities.h YAM_folderconfig.h Logfile.h \
+  UpdateCheck.h include/timeval.h mui/ConfigPageList.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
   include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
@@ -2316,6 +2296,46 @@ $(OBJDIR)/$(MUIDIR)/SearchControlGroup.o: mui/SearchControlGroup.c \
   include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
   include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
   include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  include/openssl/obj_mac.h include/openssl/hmac.h \
+  include/openssl/krb5_asn.h include/openssl/kssl.h \
+  include/openssl/ocsp.h include/openssl/x509.h \
+  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
+  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
+  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
+  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
+  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
+  include/interfaces/amissl.h include/inline4/amissl.h Locale.h Debug.h
+$(OBJDIR)/$(MUIDIR)/SearchControlGroup.o: mui/SearchControlGroup.c \
+  mui/SearchControlGroup_cl.h include/libraries/mui.h mui/ClassesExtra.h \
+  YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \
+  YAM_write.h YAM_main.h BayesFilter.h HashTable.h include/SDI_compiler.h \
+  extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h \
+  mui/SearchControlGroup.h include/proto/muimaster.h \
+  include/interfaces/muimaster.h include/inline4/muimaster.h \
+  include/mui/BetterString_mcc.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_userlist.h \
+  YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
+  include/timeval.h YAM_config.h YAM_read.h Logfile.h UpdateCheck.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -2378,26 +2398,26 @@ $(OBJDIR)/$(MUIDIR)/ThemeList.o: mui/ThemeList.c mui/ThemeList_cl.h include/libr
   include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
   include/SDI_compiler.h mui/ThemeList.h include/mui/NList_mcc.h \
   YAM_config.h YAM_read.h YAM_utilities.h YAM_folderconfig.h Logfile.h \
-  UpdateCheck.h include/timeval.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  UpdateCheck.h include/timeval.h mui/ConfigPageList.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -2417,26 +2437,26 @@ $(OBJDIR)/$(MUIDIR)/ThemeListGroup.o: mui/ThemeListGroup.c mui/ThemeListGroup_cl
   include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   Themes.h Timer.h include/timeval.h YAM_config.h YAM_read.h Logfile.h \
-  UpdateCheck.h mui/ConfigPageList.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
+  UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -2530,25 +2550,26 @@ $(OBJDIR)/$(MUIDIR)/TransferMailList.o: mui/TransferMailList.c mui/TransferMailL
   include/default-align.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h Themes.h Timer.h include/timeval.h \
   YAM_addressbookEntry.h YAM_config.h YAM_read.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -2592,25 +2613,26 @@ $(OBJDIR)/$(MUIDIR)/UpdateNotifyWindow.o: mui/UpdateNotifyWindow.c \
   include/amiga-align.h include/default-align.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
   include/timeval.h YAM_config.h YAM_read.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -2642,8 +2664,8 @@ $(OBJDIR)/$(MUIDIR)/WriteAttachmentList.o: mui/WriteAttachmentList.c \
   include/default-align.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h Themes.h Timer.h include/timeval.h \
   YAM_config.h YAM_read.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -2687,25 +2709,26 @@ $(OBJDIR)/$(MUIDIR)/WriteWindow.o: mui/WriteWindow.c mui/WriteWindow_cl.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
   include/timeval.h YAM_addressbook.h include/mui/NListtree_mcc.h \
   YAM_addressbookEntry.h YAM_config.h YAM_read.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -2730,8 +2753,8 @@ $(OBJDIR)/$(MUIDIR)/WriteWindowToolbar.o: mui/WriteWindowToolbar.c \
   include/default-align.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h Themes.h Timer.h include/timeval.h \
   YAM_config.h YAM_read.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -2771,8 +2794,8 @@ $(OBJDIR)/$(MUIDIR)/YAMApplication.o: mui/YAMApplication.c mui/YAMApplication_cl
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
   include/timeval.h YAM_addressbook.h YAM_addressbookEntry.h YAM_config.h \
   YAM_read.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -2800,7 +2823,7 @@ $(OBJDIR)/$(MUIDIR)/YAMApplication.o: mui/YAMApplication.c mui/YAMApplication_cl
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
   YAM_find.h YAM_global.h YAM_mainFolder.h AppIcon.h Locale.h \
-  MUIObjects.h UpdateCheck.h Threads.h mui/Addrmatchlist.h \
+  MUIObjects.h UpdateCheck.h Threads.h mui/AddressmatchPopup.h \
   mui/InfoWindow.h mui/StringRequestWindow.h mui/TransferControlGroup.h \
   include/timeval.h mui/TransferWindow.h Debug.h
 $(OBJDIR)/$(REXXDIR)/addrdelete.o: rexx/addrdelete.c extrasrc.h include/SDI_compiler.h \
@@ -2911,8 +2934,8 @@ $(OBJDIR)/$(REXXDIR)/getconfiginfo.o: rexx/getconfiginfo.c extrasrc.h include/SD
   HashTable.h Themes.h Timer.h include/timeval.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
   tcp/smtp.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -3039,25 +3062,26 @@ $(OBJDIR)/$(REXXDIR)/listunfreeze.o: rexx/listunfreeze.c include/mui/NList_mcc.h
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h include/timeval.h YAM_config.h YAM_read.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -3098,8 +3122,8 @@ $(OBJDIR)/$(REXXDIR)/mailcheck.o: rexx/mailcheck.c extrasrc.h include/SDI_compil
   HashTable.h Themes.h Timer.h include/timeval.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
   tcp/smtp.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -3274,8 +3298,8 @@ $(OBJDIR)/$(REXXDIR)/readsave.o: rexx/readsave.c extrasrc.h include/SDI_compiler
   HashTable.h Themes.h Timer.h include/timeval.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
   tcp/smtp.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -3392,25 +3416,26 @@ $(OBJDIR)/$(REXXDIR)/userinfo.o: rexx/userinfo.c include/libraries/mui.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h include/timeval.h YAM_config.h YAM_read.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -3466,8 +3491,8 @@ $(OBJDIR)/$(REXXDIR)/writeletter.o: rexx/writeletter.c extrasrc.h include/SDI_co
   HashTable.h Themes.h Timer.h include/timeval.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
   tcp/smtp.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -3556,25 +3581,26 @@ $(OBJDIR)/$(MIMEDIR)/base64.o: mime/base64.c include/proto/codesets.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   include/timeval.h YAM_config.h include/libraries/mui.h YAM_read.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -3594,25 +3620,26 @@ $(OBJDIR)/$(MIMEDIR)/qprintable.o: mime/qprintable.c include/proto/codesets.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   include/timeval.h YAM_config.h include/libraries/mui.h YAM_read.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -3632,25 +3659,26 @@ $(OBJDIR)/$(MIMEDIR)/rfc2047.o: mime/rfc2047.c include/proto/codesets.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   include/timeval.h YAM_config.h include/libraries/mui.h YAM_read.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -3669,25 +3697,26 @@ $(OBJDIR)/$(MIMEDIR)/rfc2231.o: mime/rfc2231.c include/proto/codesets.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   include/timeval.h YAM_config.h include/libraries/mui.h YAM_read.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -3706,25 +3735,26 @@ $(OBJDIR)/$(MIMEDIR)/uucode.o: mime/uucode.c include/proto/codesets.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   include/timeval.h YAM_config.h include/libraries/mui.h YAM_read.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -3772,17 +3802,17 @@ $(OBJDIR)/$(TCPDIR)/Connection.o: tcp/Connection.c include/proto/amissl.h \
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   include/timeval.h YAM_config.h include/libraries/mui.h YAM_read.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h YAM_error.h Locale.h Threads.h \
-  tcp/Connection.h extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h \
-  Debug.h
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h YAM_error.h \
+  Locale.h Threads.h tcp/Connection.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h Debug.h
 $(OBJDIR)/$(TCPDIR)/http.o: tcp/http.c YAM.h include/xpk/xpk.h include/amiga-align.h \
   include/default-align.h YAM_stringsizes.h YAM_userlist.h \
   YAM_utilities.h include/SDI_compiler.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h include/timeval.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
   tcp/smtp.h Logfile.h UpdateCheck.h mui/ConfigPageList.h \
-  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
-  include/amissl/amissl.h include/openssl/e_os2.h \
+  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
+  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
   include/openssl/opensslconf.h include/openssl/aes.h \
   include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
   include/openssl/stack.h include/openssl/safestack.h \
@@ -3818,25 +3848,26 @@ $(OBJDIR)/$(TCPDIR)/pop3.o: tcp/pop3.c include/mui/NList_mcc.h include/libraries
   YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
   include/timeval.h YAM_addressbookEntry.h YAM_write.h YAM_main.h \
   tcp/pop3.h tcp/smtp.h YAM_config.h YAM_read.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -3860,25 +3891,26 @@ $(OBJDIR)/$(TCPDIR)/smtp.o: tcp/smtp.c YAM.h include/xpk/xpk.h include/amiga-ali
   HashTable.h Themes.h Timer.h include/timeval.h YAM_addressbookEntry.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h YAM_config.h \
   include/libraries/mui.h YAM_read.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
