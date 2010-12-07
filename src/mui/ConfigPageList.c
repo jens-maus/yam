@@ -47,7 +47,6 @@
 /* CLASSDATA
 struct Data
 {
-  struct Hook displayHook;
   Object *configIcon[cp_Max];
   char pageName[SIZE_DEFAULT];
 };
