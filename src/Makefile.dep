@@ -1601,7 +1601,7 @@ $(OBJDIR)/$(MUIDIR)/FolderRequestList.o: mui/FolderRequestList.c mui/FolderReque
   YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   Themes.h Timer.h include/timeval.h YAM_mainFolder.h FolderList.h \
-  Locale.h Debug.h
+  Debug.h
 $(OBJDIR)/$(MUIDIR)/FolderRequestWindow.o: mui/FolderRequestWindow.c \
   mui/FolderRequestWindow_cl.h include/libraries/mui.h mui/ClassesExtra.h \
   YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \

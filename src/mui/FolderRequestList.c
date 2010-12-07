@@ -36,7 +36,6 @@
 #include "YAM_mainFolder.h"
 
 #include "FolderList.h"
-#include "Locale.h"
 
 #include "Debug.h"
 
