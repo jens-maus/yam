@@ -434,6 +434,7 @@ MUIOBJS = \
 	ConfigPageList.o \
 	FilterList.o \
 	FilterPopupList.o \
+	FolderRequestList.o \
 	FolderRequestWindow.o \
 	GenericRequestWindow.o \
 	HeaderList.o \

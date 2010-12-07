@@ -32,14 +32,14 @@
 
 #include <proto/muimaster.h>
 #include <libraries/iffparse.h>
-
-#include "SDI_hook.h"
+#include <mui/NListview_mcc.h>
 
 #include "YAM.h"
 
-#include "FolderList.h"
 #include "Locale.h"
 #include "MUIObjects.h"
+
+#include "mui/FolderRequestList.h"
 
 #include "Debug.h"
 
@@ -50,20 +50,6 @@ struct Data
   ULONG result;
 };
 */
-
-/// DisplayHook
-HOOKPROTONH(DisplayFunc, LONG, char **array, struct Folder *folder)
-{
-  if(folder != NULL)
-  {
-    array[0] = folder->Name;
-  }
-
-  return 0;
-}
-MakeStaticHook(DisplayHook, DisplayFunc);
-
-///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -144,13 +130,12 @@ OVERLOAD(OM_NEW)
         GroupFrame,
         MUIA_Background, MUII_GroupBack,
         Child, LLabel(bodyText),
-        Child, listviewObj = ListviewObject,
+        Child, listviewObj = NListviewObject,
           MUIA_CycleChain, TRUE,
-          MUIA_Listview_DoubleClick, TRUE,
-          MUIA_Listview_List, listObj = ListObject,
-            InputListFrame,
-            MUIA_List_AutoVisible, TRUE,
-            MUIA_List_DisplayHook, &DisplayHook,
+          MUIA_NListview_NList, listObj = FolderRequestListObject,
+            MUIA_NList_DoubleClick, TRUE,
+            MUIA_FolderRequestList_Folder, prevFolder,
+            MUIA_FolderRequestList_Exclude, excludeFolder,
           End,
         End,
       End,
@@ -164,34 +149,11 @@ OVERLOAD(OM_NEW)
     TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
-    struct FolderNode *fnode;
-    ULONG pos;
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
     data->listObj = listObj;
     data->result = 0;
-
-    LockFolderListShared(G->folders);
-
-    pos = 0;
-    ForEachFolderNode(G->folders, fnode)
-    {
-      if(!isGroupFolder(fnode->folder))
-      {
-        // check if the folder is to be excluded
-        if(fnode->folder != excludeFolder)
-        {
-          DoMethod(listObj, MUIM_List_InsertSingle, fnode->folder, MUIV_List_Insert_Bottom);
-          // mark the previously selected folder
-          if(fnode->folder == prevFolder)
-            set(listObj, MUIA_List_Active, pos);
-        }
-      }
-      pos++;
-    }
-
-    UnlockFolderList(G->folders);
 
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_FolderRequestWindow_FinishInput, 0);
     DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_FolderRequestWindow_FinishInput, 1);

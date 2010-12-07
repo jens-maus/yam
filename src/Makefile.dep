@@ -1495,7 +1495,7 @@ $(OBJDIR)/$(MUIDIR)/Classes.o: mui/Classes.c mui/Classes.h mui/ClassesExtra.h \
   mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
   mui/BirthdayRequestWindow.h mui/CharsetPopupList.h \
   mui/CheckboxRequestWindow.h mui/ConfigPageList.h mui/FilterList.h \
-  mui/FilterPopupList.h mui/FolderRequestWindow.h \
+  mui/FilterPopupList.h mui/FolderRequestList.h mui/FolderRequestWindow.h \
   mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
   ImageCache.h mui/InfoBar.h include/timeval.h mui/InfoWindow.h \
   mui/MailTextEdit.h mui/MainFolderListtree.h mui/MainMailList.h Themes.h \
@@ -1593,6 +1593,15 @@ $(OBJDIR)/$(MUIDIR)/FilterPopupList.o: mui/FilterPopupList.c mui/FilterPopupList
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_find.h Debug.h
+$(OBJDIR)/$(MUIDIR)/FolderRequestList.o: mui/FolderRequestList.c mui/FolderRequestList_cl.h \
+  include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
+  tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h mui/FolderRequestList.h include/mui/NList_mcc.h \
+  YAM.h include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
+  Themes.h Timer.h include/timeval.h YAM_mainFolder.h FolderList.h \
+  Locale.h Debug.h
 $(OBJDIR)/$(MUIDIR)/FolderRequestWindow.o: mui/FolderRequestWindow.c \
   mui/FolderRequestWindow_cl.h include/libraries/mui.h mui/ClassesExtra.h \
   YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \
@@ -1600,10 +1609,11 @@ $(OBJDIR)/$(MUIDIR)/FolderRequestWindow.o: mui/FolderRequestWindow.c \
   extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h \
   mui/FolderRequestWindow.h include/proto/muimaster.h \
   include/interfaces/muimaster.h include/inline4/muimaster.h \
-  include/SDI_hook.h YAM.h include/xpk/xpk.h include/amiga-align.h \
-  include/default-align.h YAM_userlist.h YAM_utilities.h \
-  YAM_folderconfig.h BayesFilter.h Themes.h Timer.h include/timeval.h \
-  FolderList.h Locale.h MUIObjects.h Debug.h
+  include/mui/NListview_mcc.h include/mui/NList_mcc.h YAM.h \
+  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
+  Themes.h Timer.h include/timeval.h Locale.h MUIObjects.h \
+  mui/FolderRequestList.h Debug.h
 $(OBJDIR)/$(MUIDIR)/GenericRequestWindow.o: mui/GenericRequestWindow.c \
   mui/GenericRequestWindow_cl.h include/libraries/mui.h \
   mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h \
