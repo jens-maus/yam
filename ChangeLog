@@ -13,6 +13,8 @@ $URL$
     request list to a separate class to be able to implement the hooks as proper
     methods.
   * mui/CheckboxRequestWindow.c: replaced toggle hook by a proper method.
+  * YAM.c, mui/YAMApplication.c: converted the double start hook to a method of
+    the application object.
 
 2010-12-06 Thore Böckelmann <tboeckel@gmx.de>
 

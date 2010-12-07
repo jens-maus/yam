@@ -79,8 +79,6 @@
 #include "extrasrc.h"
 #include "extrasrc/NewReadArgs.h"
 
-#include "SDI_hook.h"
-
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_config.h"
@@ -1324,20 +1322,6 @@ void PopUp(void)
 }
 
 ///
-/// DoublestartHook
-//  A second copy of YAM was started
-HOOKPROTONHNONP(DoublestartFunc, void)
-{
-  ENTER();
-
-  if(G->App != NULL && G->MA != NULL && G->MA->GUI.WI != NULL)
-    PopUp();
-
-  LEAVE();
-}
-MakeStaticHook(DoublestartHook, DoublestartFunc);
-
-///
 /// StayInProg
 //  Makes sure that the user really wants to quit the program
 BOOL StayInProg(void)
@@ -1563,7 +1547,7 @@ static BOOL Root_New(BOOL hidden)
     if(hidden == TRUE)
       set(G->App, MUIA_Application_Iconified, TRUE);
 
-    DoMethod(G->App, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &DoublestartHook);
+    DoMethod(G->App, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Application, 1, MUIM_YAMApplication_PopUp);
     DoMethod(G->App, MUIM_Notify, MUIA_Application_Iconified, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_ICONIFY);
 
     // create the splash window object and return true if

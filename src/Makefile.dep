@@ -626,18 +626,18 @@ $(OBJDIR)/YAM.o: YAM.c include/libraries/amisslmaster.h \
   include/proto/expat.h include/libraries/expat.h \
   include/interfaces/expat.h include/inline4/expat.h extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
-  extrasrc/NewReadArgs.h include/SDI_hook.h YAM.h YAM_stringsizes.h \
-  YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
-  HashTable.h Themes.h Timer.h include/timeval.h YAM_addressbook.h \
-  include/mui/NListtree_mcc.h YAM_config.h YAM_read.h YAM_write.h \
-  YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
-  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
-  YAM_configFile.h YAM_global.h YAM_mainFolder.h AppIcon.h DockyIcon.h \
-  FileInfo.h MUIObjects.h FolderList.h ImageCache.h Locale.h MailList.h \
-  MethodStack.h Requesters.h Rexx.h Threads.h mui/ClassesExtra.h \
-  YAM_main.h YAM_read.h BayesFilter.h mui/ClassesSetup.h \
-  mui/Splashwindow.h include/timeval.h mui/ShutdownWindow.h \
-  mui/WriteWindow.h mui/YAMApplication.h mui/PreselectionWindow.h Debug.h
+  extrasrc/NewReadArgs.h YAM.h YAM_stringsizes.h YAM_userlist.h \
+  YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
+  Timer.h include/timeval.h YAM_addressbook.h include/mui/NListtree_mcc.h \
+  YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h YAM_configFile.h YAM_global.h YAM_mainFolder.h \
+  AppIcon.h DockyIcon.h FileInfo.h MUIObjects.h FolderList.h ImageCache.h \
+  Locale.h MailList.h MethodStack.h Requesters.h Rexx.h Threads.h \
+  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  mui/ClassesSetup.h mui/Splashwindow.h include/timeval.h \
+  mui/ShutdownWindow.h mui/WriteWindow.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/YAM_CO.o: YAM_CO.c include/libraries/amisslmaster.h \
   include/mui/BetterString_mcc.h include/mui/NListview_mcc.h \
   include/libraries/mui.h include/mui/NList_mcc.h \

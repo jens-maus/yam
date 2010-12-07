@@ -1116,6 +1116,7 @@ DECLARE(CreatePasswordWindow) // APTR thread, const char *title, const char *bod
     set(window, MUIA_Window_Open, TRUE);
   }
 
+  RETURN((IPTR)window);
   return (IPTR)window;
 }
 
@@ -1124,6 +1125,8 @@ DECLARE(CreatePasswordWindow) // APTR thread, const char *title, const char *bod
 DECLARE(CreatePreselectionWindow) // APTR thread, const char *title, const enum PreselectionMode mode, struct MinList *mailList
 {
   Object *window;
+
+  ENTER();
 
   if((window = PreselectionWindowObject,
     MUIA_Window_Title, msg->title,
@@ -1139,6 +1142,7 @@ DECLARE(CreatePreselectionWindow) // APTR thread, const char *title, const enum 
     set(window, MUIA_Window_Open, TRUE);
   }
 
+  RETURN((IPTR)window);
   return (IPTR)window;
 }
 
@@ -1146,12 +1150,15 @@ DECLARE(CreatePreselectionWindow) // APTR thread, const char *title, const enum 
 /// DECLARE(DisposeWindow)
 DECLARE(DisposeWindow) // Object *window
 {
+  ENTER();
+
   if(msg->window != NULL)
   {
     DoMethod(G->App, OM_REMMEMBER, msg->window);
     MUI_DisposeObject(msg->window);
   }
 
+  LEAVE();
   return 0;
 }
 
@@ -1164,6 +1171,19 @@ DECLARE(GotoURL) // char *url, ULONG newWindow
   GotoURL(msg->url, (BOOL)msg->newWindow);
   free(msg->url);
 
+  return 0;
+}
+
+///
+/// DECLARE(PopUp)
+DECLARE(PopUp)
+{
+  ENTER();
+
+  if(G->MA != NULL && G->MA->GUI.WI != NULL)
+    PopUp();
+
+  LEAVE();
   return 0;
 }
 
