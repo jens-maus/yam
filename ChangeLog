@@ -12,6 +12,7 @@ $URL$
   * mui/FolderRequestList.c, mui/FolderRequestWindow.c: split off the folder
     request list to a separate class to be able to implement the hooks as proper
     methods.
+  * mui/CheckboxRequestWindow.c: replaced toggle hook by a proper method.
 
 2010-12-06 Thore Böckelmann <tboeckel@gmx.de>
 

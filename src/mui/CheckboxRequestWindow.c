@@ -32,8 +32,6 @@
 
 #include <proto/muimaster.h>
 
-#include "SDI_hook.h"
-
 #include "YAM.h"
 
 #include "Locale.h"
@@ -48,30 +46,6 @@ struct Data
   ULONG flags;
 };
 */
-
-/// CheckboxFunc
-//
-struct MUIP_CheckboxMsg
-{
-  ULONG active;
-  ULONG *valuePtr;
-  ULONG mask;
-};
-
-HOOKPROTONHNO(CheckboxFunc, void, struct MUIP_CheckboxMsg *msg)
-{
-  ENTER();
-
-  if(msg->active)
-    *msg->valuePtr |= msg->mask;
-  else
-    *msg->valuePtr &= ~msg->mask;
-
-  LEAVE();
-}
-MakeStaticHook(CheckboxHook, CheckboxFunc);
-
-///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -165,12 +139,12 @@ OVERLOAD(OM_NEW)
         if(checkboxObj != NULL && labelObj != NULL)
         {
           set(checkboxObj, MUIA_Selected, TRUE);
-          DoMethod(checkboxObj, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, G->App, 5, MUIM_CallHook, &CheckboxHook, MUIV_TriggerValue, &data->flags, (1 << bit));
+          DoMethod(checkboxObj, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, METHOD(ToggleFlag), MUIV_TriggerValue, (1 << bit));
           DoMethod(checkboxGroup, OM_ADDMEMBER, checkboxObj);
           DoMethod(checkboxGroup, OM_ADDMEMBER, labelObj);
           DoMethod(checkboxGroup, OM_ADDMEMBER, spaceObj);
 
-          // the checkbox is active per default, so we set the corresponding bit in the flags value
+          // the checkbox is active by default, so we set the corresponding bit in the flags value
           data->flags |= (1 << bit);
           bit++;
         }
@@ -183,9 +157,9 @@ OVERLOAD(OM_NEW)
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_CheckboxRequestWindow_FinishInput, 0);
-    DoMethod(useButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_CheckboxRequestWindow_FinishInput, 1);
-    DoMethod(cancelButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_CheckboxRequestWindow_FinishInput, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, METHOD(FinishInput), 0);
+    DoMethod(useButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 1);
+    DoMethod(cancelButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 0);
 
     set(obj, MUIA_Window_DefaultObject, useButton);
   }
@@ -238,11 +212,27 @@ DECLARE(FinishInput) // ULONG result
   data->result = msg->result;
 
   // trigger possible notifications
-  set(obj, MUIA_CheckboxRequestWindow_Result, msg->result);
+  set(obj, ATTR(Result), msg->result);
 
   RETURN(0);
   return 0;
 }
 
 ///
+/// DECLARE(ToggleFlag)
+DECLARE(ToggleFlag) // ULONG state, ULONG mask
+{
+  GETDATA;
 
+  ENTER();
+
+  if(msg->state)
+    SET_FLAG(data->flags, msg->mask);
+  else
+    CLEAR_FLAG(data->flags, msg->mask);
+
+  LEAVE();
+  return 0;
+}
+
+///
