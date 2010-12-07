@@ -317,8 +317,9 @@ $(OBJDIR)/MUIObjects.o: MUIObjects.c include/mui/BetterString_mcc.h \
   YAM_stringsizes.h YAM_userlist.h YAM_utilities.h YAM_folderconfig.h \
   BayesFilter.h HashTable.h Themes.h Timer.h include/timeval.h \
   YAM_addressbook.h YAM_error.h YAM_read.h YAM_write.h YAM_main.h \
-  tcp/pop3.h tcp/smtp.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h mui/Recipientstring.h Locale.h MUIObjects.h Debug.h
+  tcp/pop3.h tcp/smtp.h mui/CharsetPopupList.h mui/ClassesExtra.h \
+  YAM_main.h YAM_read.h BayesFilter.h mui/Recipientstring.h Locale.h \
+  MUIObjects.h Debug.h
 $(OBJDIR)/ParseEmail.o: ParseEmail.c YAM_utilities.h include/SDI_compiler.h \
   YAM_stringsizes.h YAM_folderconfig.h YAM_config.h \
   include/libraries/mui.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h \
@@ -1424,6 +1425,16 @@ $(OBJDIR)/$(MUIDIR)/BirthdayRequestWindow.o: mui/BirthdayRequestWindow.c \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
   include/timeval.h YAM_userlist.h YAM_utilities.h FileInfo.h Locale.h \
   MUIObjects.h mui/WriteWindow.h Debug.h
+$(OBJDIR)/$(MUIDIR)/CharsetPopupList.o: mui/CharsetPopupList.c mui/CharsetPopupList_cl.h \
+  include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
+  tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h mui/CharsetPopupList.h include/proto/codesets.h \
+  include/libraries/codesets.h include/interfaces/codesets.h \
+  include/inline4/codesets.h include/mui/NList_mcc.h YAM.h \
+  include/xpk/xpk.h include/amiga-align.h include/default-align.h \
+  YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
+  Themes.h Timer.h include/timeval.h Debug.h
 $(OBJDIR)/$(MUIDIR)/CheckboxRequestWindow.o: mui/CheckboxRequestWindow.c \
   mui/CheckboxRequestWindow_cl.h include/libraries/mui.h \
   mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h \
@@ -1482,24 +1493,25 @@ $(OBJDIR)/$(MUIDIR)/Classes.o: mui/Classes.c mui/Classes.h mui/ClassesExtra.h \
   mui/AddressmatchList.h mui/AddressmatchPopup.h mui/AttachmentGroup.h \
   mui/AttachmentImage.h mui/AttachmentList.h mui/AttachmentObject.h \
   mui/AttachmentRequestWindow.h mui/Base64Dataspace.h \
-  mui/BirthdayRequestWindow.h mui/CheckboxRequestWindow.h \
-  mui/ConfigPageList.h mui/FilterList.h mui/FilterPopupList.h \
-  mui/FolderRequestWindow.h mui/GenericRequestWindow.h mui/HeaderList.h \
-  mui/ImageArea.h ImageCache.h mui/InfoBar.h include/timeval.h \
-  mui/InfoWindow.h mui/MailTextEdit.h mui/MainFolderListtree.h \
-  mui/MainMailList.h Themes.h mui/MainMailListGroup.h mui/MainWindow.h \
-  mui/MainWindowToolbar.h mui/MimeTypeList.h mui/ObjectList.h \
-  mui/ObjectListitem.h mui/PassphraseRequestWindow.h \
-  mui/PlaceholderPopupList.h mui/PreselectionWindow.h \
-  mui/QuickSearchBar.h mui/ReadMailGroup.h mui/ReadWindow.h \
-  mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h mui/Recipientstring.h \
-  mui/ScriptList.h mui/SearchControlGroup.h mui/Searchwindow.h \
-  mui/ShutdownWindow.h mui/Splashwindow.h mui/StringRequestWindow.h \
-  mui/ThemeList.h mui/ThemeListGroup.h mui/TransferControlGroup.h \
-  mui/TransferControlList.h mui/TransferMailList.h mui/TransferWindow.h \
-  mui/UpdateComponentList.h mui/UpdateNotifyWindow.h mui/UserList.h \
-  mui/WriteAttachmentList.h mui/WriteWindow.h mui/WriteWindowToolbar.h \
-  mui/YAMApplication.h mui/PreselectionWindow.h Debug.h
+  mui/BirthdayRequestWindow.h mui/CharsetPopupList.h \
+  mui/CheckboxRequestWindow.h mui/ConfigPageList.h mui/FilterList.h \
+  mui/FilterPopupList.h mui/FolderRequestWindow.h \
+  mui/GenericRequestWindow.h mui/HeaderList.h mui/ImageArea.h \
+  ImageCache.h mui/InfoBar.h include/timeval.h mui/InfoWindow.h \
+  mui/MailTextEdit.h mui/MainFolderListtree.h mui/MainMailList.h Themes.h \
+  mui/MainMailListGroup.h mui/MainWindow.h mui/MainWindowToolbar.h \
+  mui/MimeTypeList.h mui/ObjectList.h mui/ObjectListitem.h \
+  mui/PassphraseRequestWindow.h mui/PlaceholderPopupList.h \
+  mui/PreselectionWindow.h mui/QuickSearchBar.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h \
+  mui/Recipientstring.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/Searchwindow.h mui/ShutdownWindow.h mui/Splashwindow.h \
+  mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
+  mui/TransferControlGroup.h mui/TransferControlList.h \
+  mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
+  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ConfigPageList.o: mui/ConfigPageList.c mui/ConfigPageList_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \

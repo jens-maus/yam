@@ -48,6 +48,7 @@
 #include "YAM_error.h"
 #include "YAM_read.h"
 
+#include "mui/CharsetPopupList.h"
 #include "mui/ClassesExtra.h"
 #include "mui/Recipientstring.h"
 
@@ -382,15 +383,15 @@ HOOKPROTONH(PO_CharsetOpenFunc, BOOL, Object *list, Object *str)
     {
       char *x;
 
-      DoMethod(list, MUIM_List_GetEntry, i, &x);
+      DoMethod(list, MUIM_NList_GetEntry, i, &x);
       if(x == NULL)
       {
-        set(list, MUIA_List_Active, MUIV_List_Active_Off);
+        set(list, MUIA_NList_Active, MUIV_NList_Active_Off);
         break;
       }
       else if(stricmp(x, s) == 0)
       {
-        set(list, MUIA_List_Active, i);
+        set(list, MUIA_NList_Active, i);
         break;
       }
     }
@@ -410,7 +411,7 @@ HOOKPROTONH(PO_CharsetCloseFunc, void, Object *list, Object *txt)
 
   ENTER();
 
-  DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
+  DoMethod(list, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &var);
   if(var != NULL)
     set(txt, MUIA_Text_Contents, var);
 
@@ -419,51 +420,12 @@ HOOKPROTONH(PO_CharsetCloseFunc, void, Object *list, Object *txt)
 MakeStaticHook(PO_CharsetCloseHook, PO_CharsetCloseFunc);
 
 ///
-/// PO_CharsetListDisplayHook
-//  Pastes an entry from the popup listview into string gadget
-HOOKPROTONH(PO_CharsetListDisplayFunc, LONG, const char **array, STRPTR str)
-{
-  ENTER();
-
-  if(str != NULL)
-  {
-    struct codeset *cs;
-
-    // the standard name is always in column 0
-    array[0] = str;
-
-    // try to find the codeset via codesets.library and
-    // display some more information about it.
-    if((cs = CodesetsFind(str,
-                          CSA_CodesetList,       G->codesetsList,
-                          CSA_FallbackToDefault, FALSE,
-                          TAG_DONE)) != NULL)
-    {
-      if(cs->characterization && stricmp(cs->characterization, str) != 0)
-        array[1] = cs->characterization;
-      else
-        array[1] = "";
-    }
-    else
-      array[1] = "";
-  }
-  else
-  {
-    array[0] = "";
-    array[1] = "";
-  }
-
-  RETURN(0);
-  return 0;
-}
-MakeStaticHook(PO_CharsetListDisplayHook, PO_CharsetListDisplayFunc);
-
-///
 /// MakeCharsetPop
 //  Creates a popup list of available charsets supported by codesets.library
 Object *MakeCharsetPop(Object **string, Object **pop)
 {
-  Object *lv;
+  Object *listview;
+  Object *list;
   Object *po;
 
   ENTER();
@@ -479,34 +441,21 @@ Object *MakeCharsetPop(Object **string, Object **pop)
     MUIA_Popobject_StrObjHook, &PO_CharsetOpenHook,
     MUIA_Popobject_ObjStrHook, &PO_CharsetCloseHook,
     MUIA_Popobject_WindowHook, &PO_WindowHook,
-    MUIA_Popobject_Object, lv = ListviewObject,
-       MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_Right,
-       MUIA_Listview_List, ListObject,
-          InputListFrame,
-          MUIA_List_Format,        "BAR,",
-          MUIA_List_AutoVisible,   TRUE,
-          MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
-          MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
-          MUIA_List_DisplayHook,   &PO_CharsetListDisplayHook,
-       End,
+    MUIA_Popobject_Object, listview = NListviewObject,
+      MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
+      MUIA_NListview_NList, list = CharsetPopupListObject,
+      End,
     End,
 
   End) != NULL)
   {
     struct codeset *codeset;
-    STRPTR *array;
 
     set(*pop, MUIA_CycleChain,TRUE);
-    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+    DoMethod(listview, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
 
-    // Build list of available codesets
-    if((array = CodesetsSupported(CSA_CodesetList, G->codesetsList,
-                                  TAG_DONE)) != NULL)
-    {
-      DoMethod(lv, MUIM_List_Insert, array, -1, MUIV_List_Insert_Sorted);
-      CodesetsFreeA(array, NULL);
-    }
-    else
+    // disable the popup button in case there are no charsets available
+    if(xget(list, MUIA_NList_Entries) == 0)
       set(po, MUIA_Disabled, TRUE);
 
     // Use the system's default codeset

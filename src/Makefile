@@ -430,6 +430,7 @@ MUIOBJS = \
 	Base64Dataspace.o \
 	BirthdayRequestWindow.o \
 	CheckboxRequestWindow.o \
+	CharsetPopupList.o \
 	ConfigPageList.o \
 	FilterList.o \
 	FilterPopupList.o \

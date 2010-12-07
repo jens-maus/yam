@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/CharsetPopupList.c, MUIObjects.c: split off the charset popup list to a
+    separate class to be able to implement the hooks as proper methods.
+
 2010-12-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/AddressmatchList.c, AddressmatchPopup.c: separated the old class into
