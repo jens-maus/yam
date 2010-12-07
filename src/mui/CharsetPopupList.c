@@ -30,6 +30,7 @@
 
 #include "CharsetPopupList_cl.h"
 
+#include <string.h>
 #include <proto/codesets.h>
 #include <mui/NList_mcc.h>
 
