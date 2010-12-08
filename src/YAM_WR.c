@@ -3094,7 +3094,7 @@ BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRe
 
       LockMailListShared(wmData->refMailList);
 
-      if((mnode = FindMailInList(wmData->refMailList, (struct Mail *)search)) != NULL)
+      if((mnode = FindMailInList(wmData->refMailList, search)) != NULL)
       {
         mnode->mail = (struct Mail *)newRef;
         result = TRUE;
