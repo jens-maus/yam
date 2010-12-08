@@ -255,6 +255,8 @@ ifeq ($(OS), os3)
               GetPred.o \
               GetSucc.o \
               GetTail.o \
+              ItemPoolAlloc.o \
+              ItemPoolFree.o \
               MoveList.o \
               NewMinList.o \
               NewReadArgs.o \
@@ -290,6 +292,8 @@ ifeq ($(OS), mos)
               GetPred.o \
               GetSucc.o \
               GetTail.o \
+              ItemPoolAlloc.o \
+              ItemPoolFree.o \
               MoveList.o \
               NewReadArgs.o \
               SetProcWindow.o \
@@ -319,6 +323,8 @@ ifeq ($(OS), aros-i386)
   EXTRAOBJS = AllocSysObject.o \
               DoSuperNew.o \
               ExamineDir.o \
+              ItemPoolAlloc.o \
+              ItemPoolFree.o \
               MoveList.o \
               NewMinList.o \
               NewReadArgs.o \
@@ -352,6 +358,8 @@ ifeq ($(OS), aros-ppc)
   EXTRAOBJS = AllocSysObject.o \
               DoSuperNew.o \
               ExamineDir.o \
+              ItemPoolAlloc.o \
+              ItemPoolFree.o \
               MoveList.o \
               NewMinList.o \
               NewReadArgs.o \
@@ -385,6 +393,8 @@ ifeq ($(OS), aros-x86_64)
   EXTRAOBJS = AllocSysObject.o \
               DoSuperNew.o \
               ExamineDir.o \
+              ItemPoolAlloc.o \
+              ItemPoolFree.o \
               MoveList.o \
               NewMinList.o \
               NewReadArgs.o \
