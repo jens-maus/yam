@@ -451,7 +451,7 @@ static BOOL GetMessageList(struct TransferContext *tc)
         // read the index and size of the first message
         sscanf(tc->pop3Buffer, "%d %d", &serverIndex, &size);
 
-        if(serverIndex > 0 && (newMail = calloc(1, sizeof(*newMail))) != NULL)
+        if(serverIndex > 0 && (newMail = AllocMail()) != NULL)
         {
           int mode;
           struct MailTransferNode *tnode;
@@ -501,7 +501,7 @@ static BOOL GetMessageList(struct TransferContext *tc)
           }
           else
           {
-            free(newMail);
+            FreeMail(newMail);
             success = FALSE;
             break;
           }

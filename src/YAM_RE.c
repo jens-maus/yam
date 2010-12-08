@@ -433,7 +433,7 @@ void RE_DisplayMIME(const char *fname, const char *ctype)
         struct Mail *mail;
         struct ReadMailData *rmData;
 
-        if((mail = calloc(1, sizeof(struct Mail))) == NULL)
+        if((mail = CloneMail(&email->Mail)) == NULL)
         {
           CloseTempFile(tf);
           MA_FreeEMailStruct(email);
@@ -441,7 +441,6 @@ void RE_DisplayMIME(const char *fname, const char *ctype)
           return;
         }
 
-        memcpy(mail, &email->Mail, sizeof(struct Mail));
         mail->Reference = NULL;
         mail->Folder    = NULL;
         mail->sflags    = SFLAG_READ; // this sets the mail as OLD
@@ -466,7 +465,7 @@ void RE_DisplayMIME(const char *fname, const char *ctype)
         else
         {
           CloseTempFile(tf);
-          free(mail);
+          FreeMail(mail);
         }
       }
       else
@@ -4400,7 +4399,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     if(mail != NULL && isVirtualMail(mail))
     {
       D(DBF_MAIL, "freeing virtual mail pointer");
-      free(mail);
+      FreeMail(mail);
     }
 
     // set the mail pointer to NULL

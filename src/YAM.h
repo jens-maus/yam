@@ -119,6 +119,8 @@ struct Global
   struct MinList         * xpkPackerList;
   struct SignalSemaphore * connectionSemaphore;
   struct Part            * virtualMailpart[2]; // two virtual mail parts for the attachment requester window
+  APTR                     mailItemPool;       // item pool for struct Mail
+  APTR                     mailNodeItemPool;   // item pool for struct MailNode
 
   #if defined(__amigaos4__)
   struct MsgPort *         AppLibPort;

@@ -14,6 +14,10 @@ $URL$
   * extrasrc/AllocSysObject.c, extrasrc/ItemPool#?.c: added an emulation for
     AmigaOS4's item pools. These can handle lots of constant size allocations
     much faster than normal pools.
+  * misc: make use of item pools for all struct Mail and struct MailNode. These
+    are the most often used structures in YAM and (de)allocation will be sped up
+    a lot. As a consequence there are new functions to allocate, clone and free
+    mails.
 
 2010-12-07 Thore Böckelmann <tboeckel@gmx.de>
 

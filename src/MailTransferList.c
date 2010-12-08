@@ -33,6 +33,8 @@
 #include "extrasrc.h"
 
 #include "YAM_mainFolder.h"
+
+#include "MailList.h"
 #include "MailTransferList.h"
 
 #include "Debug.h"
@@ -191,7 +193,7 @@ struct MailTransferNode *CreateMailTransferNode(const struct Mail *mail, const U
 
     if(mail != NULL)
     {
-      if((tnode->mail = memdup(mail, sizeof(*mail))) == NULL)
+      if((tnode->mail = CloneMail(mail)) == NULL)
       {
         FreeSysObject(ASOT_NODE, tnode);
         tnode = NULL;
@@ -251,7 +253,7 @@ void DeleteMailTransferNode(struct MailTransferNode *tnode)
 {
   ENTER();
 
-  free(tnode->mail);
+  FreeMail(tnode->mail);
   free(tnode->uidl);
   FreeSysObject(ASOT_NODE, tnode);
 

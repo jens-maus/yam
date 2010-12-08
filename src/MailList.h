@@ -65,6 +65,9 @@ void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1,
 struct Mail **MailListToMailArray(const struct MailList *mlist);
 struct MailNode *FindMailInList(const struct MailList *mlist, const struct Mail *mail);
 struct MailNode *TakeMailNode(struct MailList *mlist);
+struct Mail *AllocMail(void);
+struct Mail *CloneMail(const struct Mail *mail);
+void FreeMail(struct Mail *mail);
 
 // check if a mail list is empty
 #define IsMailListEmpty(mlist)                    IsMinListEmpty(&(mlist)->list)

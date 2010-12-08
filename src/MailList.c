@@ -31,6 +31,9 @@
 
 #include "extrasrc.h"
 
+#include "YAM.h"
+#include "YAM_mainFolder.h"
+
 #include "MailList.h"
 
 #include "Debug.h"
@@ -95,10 +98,10 @@ void ClearMailList(struct MailList *mlist, const BOOL freeMails)
     {
       struct MailNode *mnode = (struct MailNode *)node;
 
-      free(mnode->mail);
+      ItemPoolFree(G->mailItemPool, mnode->mail);
     }
 
-    FreeSysObject(ASOT_NODE, node);
+    ItemPoolFree(G->mailNodeItemPool, node);
   }
   InitMailList(mlist);
 
@@ -183,9 +186,7 @@ struct MailNode *AddNewMailNode(struct MailList *mlist, const struct Mail *mail)
   // we only accept existing mails
   if(mail != NULL && mlist != NULL)
   {
-    if((mnode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*mnode),
-                                              ASONODE_Min,  TRUE,
-                                              TAG_DONE)) != NULL)
+    if((mnode = ItemPoolAlloc(G->mailNodeItemPool)) != NULL)
     {
       // initialize the node's contents
       mnode->mail = (struct Mail *)mail;
@@ -251,7 +252,7 @@ void DeleteMailNode(struct MailNode *mnode)
 {
   ENTER();
 
-  FreeSysObject(ASOT_NODE, mnode);
+  ItemPoolFree(G->mailNodeItemPool, mnode);
 
   LEAVE();
 }
@@ -461,6 +462,49 @@ struct MailNode *TakeMailNode(struct MailList *mlist)
 
   RETURN(mnode);
   return mnode;
+}
+
+///
+/// AllocMail
+// allocate a mail structure
+struct Mail *AllocMail(void)
+{
+  struct Mail *mail;
+
+  ENTER();
+
+  mail = ItemPoolAlloc(G->mailItemPool);
+
+  RETURN(mail);
+  return mail;
+}
+
+///
+/// CloneMail
+// create a clone of a mail structure
+struct Mail *CloneMail(const struct Mail *mail)
+{
+  struct Mail *clone;
+
+  ENTER();
+
+  if((clone = ItemPoolAlloc(G->mailItemPool)) != NULL)
+    memcpy(clone, mail, sizeof(*clone));
+
+  RETURN(clone);
+  return clone;
+}
+
+///
+/// FreeMail
+// free a mail structure
+void FreeMail(struct Mail *mail)
+{
+  ENTER();
+
+  ItemPoolFree(G->mailItemPool, mail);
+
+  LEAVE();
 }
 
 ///

@@ -1159,6 +1159,18 @@ static void Terminate(void)
   free(G->virtualMailpart[0]);
   free(G->virtualMailpart[1]);
 
+  // free the item pools
+  if(G->mailItemPool != NULL)
+  {
+    FreeSysObject(ASOT_ITEMPOOL, G->mailItemPool);
+    G->mailItemPool = NULL;
+  }
+  if(G->mailNodeItemPool != NULL)
+  {
+    FreeSysObject(ASOT_ITEMPOOL, G->mailNodeItemPool);
+    G->mailNodeItemPool = NULL;
+  }
+
   // make sure to free the shared memory pool before
   // freeing the rest
   if(G->SharedMemPool != NULL)
@@ -2504,6 +2516,24 @@ int main(int argc, char **argv)
       break;
     if((G->virtualMailpart[1] = calloc(1, sizeof(*G->virtualMailpart[1]))) == NULL)
       break;
+
+    // setup the item pools for mails and mail nodes
+    if((G->mailItemPool = AllocSysObjectTags(ASOT_ITEMPOOL, ASOITEM_MFlags, MEMF_SHARED|MEMF_CLEAR,
+                                                            ASOITEM_ItemSize, sizeof(struct Mail),
+                                                            ASOITEM_BatchSize, 64,
+                                                            TAG_DONE)) == NULL)
+    {
+      // break out immediately to signal an error!
+      break;
+    }
+    if((G->mailNodeItemPool = AllocSysObjectTags(ASOT_ITEMPOOL, ASOITEM_MFlags, MEMF_SHARED|MEMF_CLEAR,
+                                                                ASOITEM_ItemSize, sizeof(struct MailNode),
+                                                                ASOITEM_BatchSize, 64,
+                                                                TAG_DONE)) == NULL)
+    {
+      // break out immediately to signal an error!
+      break;
+    }
 
     // prepare the exec lists in G and C
     NewList((struct List *)&(C->mailServerList));

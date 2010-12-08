@@ -3230,7 +3230,7 @@ struct Mail *AddMailToList(const struct Mail *mail, struct Folder *folder)
 
   ENTER();
 
-  if((new = memdup(mail, sizeof(*mail))) != NULL)
+  if((new = CloneMail(mail)) != NULL)
   {
     new->Folder = folder;
 
@@ -3383,7 +3383,7 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
   }
 
   // and last, but not least, we have to free the mail
-  free(mail);
+  FreeMail(mail);
 
   LEAVE();
 }
