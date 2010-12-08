@@ -2521,6 +2521,7 @@ int main(int argc, char **argv)
     if((G->mailItemPool = AllocSysObjectTags(ASOT_ITEMPOOL, ASOITEM_MFlags, MEMF_SHARED|MEMF_CLEAR,
                                                             ASOITEM_ItemSize, sizeof(struct Mail),
                                                             ASOITEM_BatchSize, 64,
+                                                            ASOITEM_GCPolicy, ITEMGC_AFTERCOUNT,
                                                             TAG_DONE)) == NULL)
     {
       // break out immediately to signal an error!
@@ -2529,6 +2530,7 @@ int main(int argc, char **argv)
     if((G->mailNodeItemPool = AllocSysObjectTags(ASOT_ITEMPOOL, ASOITEM_MFlags, MEMF_SHARED|MEMF_CLEAR,
                                                                 ASOITEM_ItemSize, sizeof(struct MailNode),
                                                                 ASOITEM_BatchSize, 64,
+                                                                ASOITEM_GCPolicy, ITEMGC_AFTERCOUNT,
                                                                 TAG_DONE)) == NULL)
     {
       // break out immediately to signal an error!
