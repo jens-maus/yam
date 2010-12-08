@@ -58,6 +58,19 @@
 #define ASOPOOL_Threshold   (TAG_USER + 12)
 #define ASOPOOL_Name        (TAG_USER + 13)
 
+#define ASOITEM_MFlags      (TAG_USER + 10)
+#define ASOITEM_ItemSize    (TAG_USER + 11)
+#define ASOITEM_BatchSize   (TAG_USER + 12)
+#define ASOITEM_MaxSize     (TAG_USER + 13)
+#define ASOITEM_GCPolicy    (TAG_USER + 14)
+#define ASOITEM_GCParameter (TAG_USER + 15)
+#define ASOITEM_Constructor (TAG_USER + 16)
+#define ASOITEM_Destructor  (TAG_USER + 17)
+#define ASOITEM_Protected   (TAG_USER + 18)
+
+#define ITEMGC_NONE         0
+#define ITEMGC_AFTERCOUNT   1
+
 #define ASOINTR_Size        (TAG_USER + 10)
 #define ASOINTR_Code        (TAG_USER + 11)
 #define ASOINTR_Data        (TAG_USER + 12)
@@ -71,7 +84,8 @@
 #define ASOT_SEMAPHORE      8
 #define ASOT_TAGLIST        9
 #define ASOT_MEMPOOL        10
-#define ASOT_INTERRUPT      11
+#define ASOT_ITEMPOOL       11
+#define ASOT_INTERRUPT      12
 
 #endif
 

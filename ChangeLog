@@ -11,6 +11,9 @@ $URL$
     either be transferred or deleted to actually start the download. Before only
     mails to be transferred were respected which made it impossible to just
     delete mails from a server without downloading any. This closes #239.
+  * extrasrc/AllocSysObject.c, extrasrc/ItemPool#?.c: added an emulation for
+    AmigaOS4's item pools. These can handle lots of constant size allocations
+    much faster than normal pools.
 
 2010-12-07 Thore Böckelmann <tboeckel@gmx.de>
 

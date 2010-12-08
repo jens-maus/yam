@@ -195,6 +195,8 @@ void W(const unsigned long f, const char *format, ...);
 #undef AllocSysObject
 #undef AllocSysObjectTags
 #undef FreeSysObject
+#undef ItemPoolAlloc
+#undef ItemPoolFree
 #undef ExamineObject
 #undef ExamineObjectTags
 #undef AllocBitMap
@@ -222,6 +224,8 @@ void W(const unsigned long f, const char *format, ...);
 #define AllocSysObject(t, p)          ({APTR P = IExec->AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
 #define AllocSysObjectTags(t, ...)    ({APTR P = IExec->AllocSysObjectTags(t, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "AllocSysObjectTags", P, t+1); P;})
 #define FreeSysObject(t, p)           ({_UNMEMTRACK(__FILE__, __LINE__, p); IExec->FreeSysObject(t, p);})
+#define ItemPoolAlloc(p)              ({APTR P = IExec->ItemPoolAlloc(p); _MEMTRACK(__FILE__, __LINE__, "ItemPoolAlloc", P, 1); P; })
+#define ItemPoolFree(p, i)            ({_UNMEMTRACK(__FILE__, __LINE__, i); IExec->ItemPoolFree(p, i);})
 #define AllocBitMap(sx, sy, d, f, bm) ({APTR P = IGraphics->AllocBitMap(sx, sy, d, f, bm); _MEMTRACK(__FILE__, __LINE__, "AllocBitMap", P, sx); P;})
 #define FreeBitMap(p)                 ({_UNMEMTRACK(__FILE__, __LINE__, p); IGraphics->FreeBitMap(p);})
 #define ObtainDirContext(t)           ({APTR P = IDOS->ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContext", P, 1); P;})
@@ -289,6 +293,8 @@ void W(const unsigned long f, const char *format, ...);
 #define AllocSysObject(t, p)       ({APTR P = AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
 #define AllocSysObjectTags(t, ...) ({ULONG _tags[] = { __VA_ARGS__ }; AllocSysObject(t, (struct TagItem *)_tags);})
 #define FreeSysObject(t, p)        ({_UNMEMTRACK(__FILE__, __LINE__, p); FreeSysObject(t, p);})
+#define ItemPoolAlloc(p)           ({APTR P = ItemPoolAlloc(p); _MEMTRACK(__FILE__, __LINE__, "ItemPoolAlloc", P, 1); P; })
+#define ItemPoolFree(p, i)         ({_UNMEMTRACK(__FILE__, __LINE__, i); ItemPoolFree(p, i);})
 
 #define AllocBitMap(__p0, __p1, __p2, __p3, __p4) ({ \
   APTR P = LP5(918, struct BitMap *, AllocBitMap, \
@@ -388,6 +394,8 @@ void W(const unsigned long f, const char *format, ...);
 #define AllocSysObject(t, p)       ({APTR P = AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
 #define AllocSysObjectTags(t, ...) ({APTR P = AllocSysObjectTags(t, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "AllocSysObjectTags", P, t+1); P;})
 #define FreeSysObject(t, p)        ({_UNMEMTRACK(__FILE__, __LINE__, p); FreeSysObject(t, p);})
+#define ItemPoolAlloc(p)           ({APTR P = ItemPoolAlloc(p); _MEMTRACK(__FILE__, __LINE__, "ItemPoolAlloc", P, 1); P; })
+#define ItemPoolFree(p, i)         ({_UNMEMTRACK(__FILE__, __LINE__, i); ItemPoolFree(p, i);})
 
 #define AllocBitMap(__p0, __p1, __p2, __p3, __p4) ({ \
   APTR P = LP5(0x396, struct BitMap *, AllocBitMap, \

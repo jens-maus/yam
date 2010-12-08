@@ -47,6 +47,7 @@
 #include <exec/semaphores.h>
 
 #include "AllocSysObject.h"
+#include "ItemPool.h"
 #include "SDI_compiler.h"
 #include "SDI_stdarg.h"
 
@@ -156,6 +157,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
     struct SignalSemaphore *semaphore;
     struct TagItem *taglist;
     APTR mempool;
+    struct ItemPool *itempool;
     struct Interrupt *interrupt;
   } object;
   struct TagItem *tstate = tags;
@@ -600,6 +602,57 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
     }
     break;
 
+    case ASOT_ITEMPOOL:
+    {
+      ULONG flags = MEMF_ANY;
+      ULONG itemSize = 8;
+      ULONG batchSize = 32;
+      BOOL protected = FALSE;
+
+      if(tags != NULL)
+      {
+        while((tag = NextTagItem((APTR)&tstate)) != NULL)
+        {
+          switch(tag->ti_Tag)
+          {
+            case ASOITEM_MFlags:
+              flags = tag->ti_Data;
+            break;
+
+            case ASOITEM_ItemSize:
+              itemSize = MAX(8, tag->ti_Data);
+            break;
+
+            case ASOITEM_BatchSize:
+              batchSize = tag->ti_Data;
+            break;
+
+            case ASOITEM_Protected:
+              protected = tag->ti_Data;
+            break;
+
+            // all other tags are ignored as they cannot be emulated with OS3's Exec pools
+          }
+        }
+      }
+
+      if((object.itempool = AllocVec(sizeof(struct ItemPool), MEMF_CLEAR)) != NULL)
+      {
+        if((object.itempool->pool = CreatePool(flags, batchSize*itemSize, itemSize)) != NULL)
+        {
+          object.itempool->itemSize = itemSize;
+          object.itempool->protected = protected;
+          InitSemaphore(&object.itempool->semaphore);
+        }
+        else
+        {
+          FreeVec(object.itempool);
+          object.itempool = NULL;
+        }
+      }
+    }
+    break;
+
     case ASOT_INTERRUPT:
     {
       ULONG size = sizeof(struct Interrupt);
@@ -739,13 +792,6 @@ void FreeSysObject(ULONG type, APTR object)
       }
       break;
 
-      case ASOT_INTERRUPT:
-      {
-        MungeMemory(object, sizeof(struct Interrupt));
-        FreeVec(object);
-      }
-      break;
-
       case ASOT_SEMAPHORE:
       {
         struct SysSignalSemaphore *sobject = (struct SysSignalSemaphore *)((IPTR)object - OFFSET_OF(struct SysSignalSemaphore, semaphore));
@@ -766,6 +812,23 @@ void FreeSysObject(ULONG type, APTR object)
       case ASOT_MEMPOOL:
       {
         DeletePool(object);
+      }
+      break;
+
+      case ASOT_ITEMPOOL:
+      {
+        struct ItemPool *sobject = (struct ItemPool *)object;
+
+        DeletePool(sobject->pool);
+        MungeMemory(sobject, sizeof(struct ItemPool));
+        FreeVec(sobject);
+      }
+      break;
+
+      case ASOT_INTERRUPT:
+      {
+        MungeMemory(object, sizeof(struct Interrupt));
+        FreeVec(object);
       }
       break;
 

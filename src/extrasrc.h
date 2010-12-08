@@ -68,6 +68,8 @@ struct Node;
 #define NEED_GETPRED
 #define NEED_GETSUCC
 #define NEED_GETTAIL
+#define NEED_ITEMPOOLALLOC
+#define NEED_ITEMPOOLFREE
 #define NEED_MOVELIST
 #define NEED_NEWMINLIST
 #define NEED_NEWREADARGS
@@ -102,6 +104,8 @@ struct Node;
 #define NEED_GETPRED
 #define NEED_GETSUCC
 #define NEED_GETTAIL
+#define NEED_ITEMPOOLALLOC
+#define NEED_ITEMPOOLFREE
 #define NEED_MOVELIST
 #define NEED_NEWREADARGS
 #define NEED_SETPROCWINDOW
@@ -120,6 +124,8 @@ struct Node;
 #define NEED_ALLOCSYSOBJECT
 #define NEED_DOSUPERNEW
 #define NEED_EXAMINEDIR
+#define NEED_ITEMPOOLALLOC
+#define NEED_ITEMPOOLFREE
 #define NEED_MOVELIST
 #define NEED_NEWMINLIST
 #define NEED_NEWREADARGS
@@ -248,6 +254,14 @@ struct Node *GetSucc(struct Node *node);
 
 #if defined(NEED_GETTAIL)
 struct Node *GetTail(struct List *list);
+#endif
+
+#if defined(NEED_ITEMPOOLALLOC)
+APTR ItemPoolAlloc(APTR poolHeader);
+#endif
+
+#if defined(NEED_ITEMPOOLFREE)
+APTR ItemPoolFree(APTR poolHeader, APTR item);
 #endif
 
 #if defined(NEED_NEWMINLIST)
