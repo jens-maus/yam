@@ -152,7 +152,7 @@ BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flag
   i = 0;
   ForEachMailTransferNode(tlist, tnode)
   {
-    if(isFlagSet(tnode->tflags, flags))
+    if(hasFlag(tnode->tflags, flags))
     {
       found = TRUE;
 

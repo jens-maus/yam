@@ -1526,8 +1526,8 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                         doDownload = TRUE;
                       }
 
-                      // is there anything left to transfer?
-                      if(ThreadWasAborted() == FALSE && doDownload == TRUE && ScanMailTransferList(tc->transferList, TRF_TRANSFER, NULL) == TRUE)
+                      // is there anything left to transfer or delete?
+                      if(ThreadWasAborted() == FALSE && doDownload == TRUE && ScanMailTransferList(tc->transferList, TRF_TRANSFER|TRF_DELETE, NULL) == TRUE)
                       {
                         SumUpMails(tc);
                         PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, tc->numberOfMails, tc->totalSize);
