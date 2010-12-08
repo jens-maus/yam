@@ -18,6 +18,8 @@ $URL$
     are the most often used structures in YAM and (de)allocation will be sped up
     a lot. As a consequence there are new functions to allocate, clone and free
     mails.
+  * YAM_MAf.c: the automatic index flushing will now also reset the folders' new
+    mail counter and update the folder treeview accordingly.
 
 2010-12-07 Thore Böckelmann <tboeckel@gmx.de>
 

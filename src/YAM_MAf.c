@@ -65,6 +65,7 @@
 #include "mime/base64.h"
 #include "mime/rfc2047.h"
 
+#include "AppIcon.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"
@@ -134,7 +135,6 @@ struct FIndex
 
 /* local protos */
 static BOOL MA_ScanMailBox(struct Folder *folder);
-static void MA_FlushIndex(struct Folder *folder, time_t minAccessTime);
 
 /***************************************************************************
  Module: Main - Folder handling
@@ -465,7 +465,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
       cmail.sflags = mail->sflags;
       cmail.mflags = mail->mflags;
       // we have to make sure that the volatile flag field isn't saved
-      setVOLValue(&cmail, 0);  
+      setVOLValue(&cmail, 0);
       cmail.cMsgID = mail->cMsgID;
       cmail.cIRTMsgID = mail->cIRTMsgID;
       cmail.size = mail->Size;
@@ -668,39 +668,6 @@ void MA_RebuildIndexes(void)
 }
 
 ///
-/// MA_UpdateIndexes
-//  Updates indices of all folders
-void MA_UpdateIndexes(void)
-{
-  struct FolderNode *fnode;
-
-  ENTER();
-
-  LockFolderListShared(G->folders);
-
-  ForEachFolderNode(G->folders, fnode)
-  {
-    struct Folder *folder = fnode->folder;
-
-    if(folder != NULL && !isGroupFolder(folder))
-    {
-      // flush the index of the folder. This will save the index
-      // and here in case the last access time was > 300 seconds
-      // the index will also be expunged from memory in case this
-      // folder isn't a default, sent or the current folder.
-      if(C->ExpungeIndexes == 0)
-        MA_FlushIndex(folder, 1);
-      else
-        MA_FlushIndex(folder, GetDateStamp()-C->ExpungeIndexes);
-    }
-  }
-
-  UnlockFolderList(G->folders);
-
-  LEAVE();
-}
-
-///
 /// MA_FlushIndex
 // flushes (saves/expungs) the loaded index of a folder. You have to
 // make sure yourself to lock the folder list accordingly when you
@@ -708,8 +675,10 @@ void MA_UpdateIndexes(void)
 // prevent this function from expunging the index in case the
 // folder was last accessed >= minAccessTime. Use 0 to expunge it
 // at all times.
-static void MA_FlushIndex(struct Folder *folder, time_t minAccessTime)
+static BOOL MA_FlushIndex(struct Folder *folder, time_t minAccessTime)
 {
+  BOOL flushed = FALSE;
+
   ENTER();
 
   // make sure the folder index is saved
@@ -733,9 +702,14 @@ static void MA_FlushIndex(struct Folder *folder, time_t minAccessTime)
     ClearFolderMails(folder, FALSE);
     folder->LoadedMode = LM_FLUSHED;
     CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
+    // reset the New counter
+    folder->New = 0;
+
+    flushed = TRUE;
   }
 
-  LEAVE();
+  RETURN(flushed);
+  return flushed;
 }
 
 ///
@@ -769,6 +743,55 @@ HOOKPROTONHNONP(MA_FlushIndexFunc, void)
   MA_FlushIndexes();
 }
 MakeHook(MA_FlushIndexHook, MA_FlushIndexFunc);
+
+///
+/// MA_UpdateIndexes
+//  Updates indices of all folders
+void MA_UpdateIndexes(void)
+{
+  struct FolderNode *fnode;
+  BOOL anyFlushed = FALSE;
+
+  ENTER();
+
+  LockFolderListShared(G->folders);
+
+  ForEachFolderNode(G->folders, fnode)
+  {
+    struct Folder *folder = fnode->folder;
+
+    if(folder != NULL && !isGroupFolder(folder))
+    {
+      BOOL flushed;
+
+      // flush the index of the folder. This will save the index
+      // and here in case the last access time was > 300 seconds
+      // the index will also be expunged from memory in case this
+      // folder isn't a default, sent or the current folder.
+      if(C->ExpungeIndexes == 0)
+        flushed = MA_FlushIndex(folder, 1);
+      else
+        flushed = MA_FlushIndex(folder, GetDateStamp()-C->ExpungeIndexes);
+
+      // show the modified stats if we flushed the index,
+      // but don't update the AppIcon yet
+      if(flushed == TRUE)
+      {
+        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, folder->Treenode, MUIF_NONE);
+        anyFlushed = TRUE;
+      }
+    }
+  }
+
+  UnlockFolderList(G->folders);
+
+  // finally update the AppIcon as well
+  if(G->AppIconQuiet == FALSE && anyFlushed == TRUE)
+    UpdateAppIcon();
+
+  LEAVE();
+}
+
 ///
 
 /*** Private functions ***/
