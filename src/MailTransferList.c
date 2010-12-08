@@ -136,8 +136,8 @@ void DeleteMailTransferList(struct MailTransferList *tlist)
 
 ///
 /// ScanMailTransferList
-// iterate over a transfer list and return TRUE if at least one node
-// has the given flags set, optionally the node's index can be returned
+// iterate over a transfer list and return TRUE if at least one node has
+// one of the given flags set, optionally the node's index can be returned
 BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flags, LONG *indexPtr)
 {
   BOOL found = FALSE;
@@ -152,6 +152,7 @@ BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flag
   i = 0;
   ForEachMailTransferNode(tlist, tnode)
   {
+    // check if at least one flag matches
     if(hasFlag(tnode->tflags, flags))
     {
       found = TRUE;
