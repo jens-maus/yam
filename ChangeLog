@@ -10,6 +10,7 @@ $URL$
   * YAM.c: raised the batch size for the mail item pools to 1000.
   * Debug.c: corrected the printed time by the STOPCLOCK() debug macro. We are
     dealing with microseconds instead of nanoseconds.
+  * BayesFilter.c: raised the inital hash table size to 4096 words.
 
 2010-12-08 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -93,7 +93,7 @@ static BOOL tokenizerInit(struct Tokenizer *t)
 
   ENTER();
 
-  result = HashTableInit(&t->tokenTable, HashTableGetDefaultStringOps(), NULL, sizeof(struct Token), 1024);
+  result = HashTableInit(&t->tokenTable, HashTableGetDefaultStringOps(), NULL, sizeof(struct Token), 4096);
 
   RETURN(result);
   return result;
