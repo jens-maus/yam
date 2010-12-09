@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: raised the batch size for the mail item pools to 1000.
+
 2010-12-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c, MailTransferList.c: the POP3 thread now checks for mails to

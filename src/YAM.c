@@ -2520,7 +2520,7 @@ int main(int argc, char **argv)
     // setup the item pools for mails and mail nodes
     if((G->mailItemPool = AllocSysObjectTags(ASOT_ITEMPOOL, ASOITEM_MFlags, MEMF_SHARED|MEMF_CLEAR,
                                                             ASOITEM_ItemSize, sizeof(struct Mail),
-                                                            ASOITEM_BatchSize, 64,
+                                                            ASOITEM_BatchSize, 1000,
                                                             ASOITEM_GCPolicy, ITEMGC_AFTERCOUNT,
                                                             TAG_DONE)) == NULL)
     {
@@ -2529,7 +2529,7 @@ int main(int argc, char **argv)
     }
     if((G->mailNodeItemPool = AllocSysObjectTags(ASOT_ITEMPOOL, ASOITEM_MFlags, MEMF_SHARED|MEMF_CLEAR,
                                                                 ASOITEM_ItemSize, sizeof(struct MailNode),
-                                                                ASOITEM_BatchSize, 64,
+                                                                ASOITEM_BatchSize, 1000,
                                                                 ASOITEM_GCPolicy, ITEMGC_AFTERCOUNT,
                                                                 TAG_DONE)) == NULL)
     {
