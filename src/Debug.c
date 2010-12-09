@@ -975,7 +975,7 @@ void _STOPCLOCK(const unsigned long c, const unsigned long f, const char *m,
 
       GetSysTime(TIMEVAL(&stopTime));
       SubTime(TIMEVAL(&stopTime), TIMEVAL(&startTimes[timer_level]));
-      _DPRINTF(DBC_TIMEVAL, f, m, file, line, "operation '%s' took %ld.%09ld seconds", msg, stopTime.Seconds, stopTime.Microseconds);
+      _DPRINTF(DBC_TIMEVAL, f, m, file, line, "operation '%s' took %ld.%06ld seconds", msg, stopTime.Seconds, stopTime.Microseconds);
       timer_level--;
     }
     else

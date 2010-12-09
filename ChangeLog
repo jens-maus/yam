@@ -8,6 +8,8 @@ $URL$
 2010-12-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: raised the batch size for the mail item pools to 1000.
+  * Debug.c: corrected the printed time by the STOPCLOCK() debug macro. We are
+    dealing with microseconds instead of nanoseconds.
 
 2010-12-08 Thore Böckelmann <tboeckel@gmx.de>
 
