@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/Connection.c: shrinked the 1-second WaitSelect() loops to one single
+    call. The TCP/IP connection are now used in separate threads only and hence
+    cannot freeze the GUI anymore.
+
 2010-12-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: raised the batch size for the mail item pools to 1000.

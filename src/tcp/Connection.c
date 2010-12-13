@@ -761,57 +761,21 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
                 case EINPROGRESS:
                 case EALREADY:
                 {
-                  LONG retVal = -1;
-                  int timeoutSum = 0;
+                  LONG retVal;
 
-                  // now we iterate in a do/while loop and call WaitSelect()
-                  // with a static timeout of 1s. We then continue to do so
-                  // until we reach the predefined socket timeout
-                  do
-                  {
-                    // check if we are here because of a second iteration
-                    if(retVal == 0)
-                    {
-                      W(DBF_NET, "host '%s', recoverable WaitSelect() timeout: %ld", host, timeoutSum);
+                  conn->timeout.tv_sec = C->SocketTimeout;
+                  conn->timeout.tv_usec = 0;
 
-                      // give our GUI the chance to update
-                      if(conn->connectedFromMainThread == TRUE)
-                        DoMethod(G->App, MUIM_Application_InputBuffered);
-
-                      // if retVal is zero, then we are here in a
-                      // consequtive iteration, so WaitSelect()
-                      // seem to have timed out and we have to check
-                      // whether we timed out too much already
-                      timeoutSum += 1; // +1s
-
-                      if(timeoutSum >= C->SocketTimeout)
-                      {
-                        conn->error = CONNECTERR_TIMEDOUT;
-                        break;
-                      }
-                      else if(conn->abort == TRUE)
-                      {
-                        conn->error = CONNECTERR_ABORTED;
-                        break;
-                      }
-                    }
-
-                    // we do a static timeout of 1s
-                    conn->timeout.tv_sec = 1;
-                    conn->timeout.tv_usec = 0;
-
-                    // now we put our socket handle into a descriptor set
-                    // we can pass on to WaitSelect()
-                    FD_ZERO(&conn->fdset);
-                    FD_SET(conn->socket, &conn->fdset);
-                  }
-                  while((retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL)) == 0);
+                  // now we put our socket handle into a descriptor set
+                  // we can pass on to WaitSelect()
+                  FD_ZERO(&conn->fdset);
+                  FD_SET(conn->socket, &conn->fdset);
+                  retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
 
                   // if WaitSelect() returns 1 we successfully waited for
                   // being able to write to the socket. So we can break out of the
                   // loop immediately and continue with our stuff.
-                  if(retVal >= 1 &&
-                     FD_ISSET(conn->socket, &conn->fdset))
+                  if(retVal >= 1 && FD_ISSET(conn->socket, &conn->fdset))
                   {
                     int errval = -1;
                     socklen_t errlen = sizeof(errval);
@@ -1093,61 +1057,25 @@ BOOL MakeSecureConnection(struct Connection *conn)
                           // we are using non-blocking socket IO so an SSL_ERROR_WANT_READ
                           // signals that the SSL socket wants us to wait until data
                           // is available and reissue the SSL_connect() command.
-                          LONG retVal = -1;
-                          int timeoutSum = 0;
+                          LONG retVal;
                           GET_SOCKETBASE(conn);
 
-                          // now we iterate in a do/while loop and call WaitSelect()
-                          // with a static timeout of 1s. We then continue to do so
-                          // until we reach the predefined socket timeout
-                          do
-                          {
-                            // check if we are here because of a second iteration
-                            if(retVal == 0)
-                            {
-                              W(DBF_NET, "TCPMakeSecure: recoverable WaitSelect() timeout: %ld", timeoutSum);
+                          conn->timeout.tv_sec = C->SocketTimeout;
+                          conn->timeout.tv_usec = 0;
 
-                              // give our GUI the chance to update
-                              if(conn->connectedFromMainThread == TRUE)
-                                DoMethod(G->App, MUIM_Application_InputBuffered);
+                          // now we put our socket handle into a descriptor set
+                          // we can pass on to WaitSelect()
+                          FD_ZERO(&conn->fdset);
+                          FD_SET(conn->socket, &conn->fdset);
 
-                              // if retVal is zero, then we are here in a
-                              // consequtive iteration, so WaitSelect()
-                              // seem to have timed out and we have to check
-                              // whether we timed out too much already
-                              timeoutSum += 1; // +1s
-
-                              if(timeoutSum >= C->SocketTimeout)
-                              {
-                                conn->error = CONNECTERR_TIMEDOUT;
-                                break;
-                              }
-                              else if(conn->abort == TRUE)
-                              {
-                                conn->error = CONNECTERR_ABORTED;
-                                break;
-                              }
-                            }
-
-                            // we do a static timeout of 1s
-                            conn->timeout.tv_sec = 1;
-                            conn->timeout.tv_usec = 0;
-
-                            // now we put our socket handle into a descriptor set
-                            // we can pass on to WaitSelect()
-                            FD_ZERO(&conn->fdset);
-                            FD_SET(conn->socket, &conn->fdset);
-
-                            // depending on the SSL error (WANT_READ/WANT_WRITE)
-                            // we either do a WaitSelect() on the read or write mode
-                            // as with SSL both things can happen
-                            // see http://www.openssl.org/docs/ssl/SSL_connect.html
-                            if(err == SSL_ERROR_WANT_READ)
-                              retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
-                            else
-                              retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
-                          }
-                          while(retVal == 0);
+                          // depending on the SSL error (WANT_READ/WANT_WRITE)
+                          // we either do a WaitSelect() on the read or write mode
+                          // as with SSL both things can happen
+                          // see http://www.openssl.org/docs/ssl/SSL_connect.html
+                          if(err == SSL_ERROR_WANT_READ)
+                            retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
+                          else
+                            retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
 
                           // if WaitSelect() returns 1 we successfully waited for
                           // being able to write to the socket. So we go and do another
@@ -1319,60 +1247,24 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
             // we are using non-blocking socket IO so an SSL_ERROR_WANT_READ
             // signals that the SSL socket wants us to wait until data
             // is available and reissue the SSL_read() command.
-            LONG retVal = -1;
-            int timeoutSum = 0;
+            LONG retVal;
 
-            // now we iterate in a do/while loop and call WaitSelect()
-            // with a static timeout of 1s. We then continue to do so
-            // until we reach the predefined socket timeout
-            do
-            {
-              // check if we are here because of a second iteration
-              if(retVal == 0)
-              {
-                W(DBF_NET, "TCPRead: recoverable WaitSelect() timeout: %ld", timeoutSum);
+            conn->timeout.tv_sec = C->SocketTimeout;
+            conn->timeout.tv_usec = 0;
 
-                // give our GUI the chance to update
-                if(conn->connectedFromMainThread == TRUE)
-                  DoMethod(G->App, MUIM_Application_InputBuffered);
+            // now we put our socket handle into a descriptor set
+            // we can pass on to WaitSelect()
+            FD_ZERO(&conn->fdset);
+            FD_SET(conn->socket, &conn->fdset);
 
-                // if retVal is zero, then we are here in a
-                // consequtive iteration, so WaitSelect()
-                // seem to have timed out and we have to check
-                // whether we timed out too much already
-                timeoutSum += 1; // +1s
-
-                if(timeoutSum >= C->SocketTimeout)
-                {
-                  conn->error = CONNECTERR_TIMEDOUT;
-                  break;
-                }
-                else if(conn->abort == TRUE)
-                {
-                  conn->error = CONNECTERR_ABORTED;
-                  break;
-                }
-              }
-
-              // we do a static timeout of 1s
-              conn->timeout.tv_sec = 1;
-              conn->timeout.tv_usec = 0;
-
-              // now we put our socket handle into a descriptor set
-              // we can pass on to WaitSelect()
-              FD_ZERO(&conn->fdset);
-              FD_SET(conn->socket, &conn->fdset);
-
-              // depending on the SSL error (WANT_READ/WANT_WRITE)
-              // we either do a WaitSelect() on the read or write mode
-              // as with SSL both things can happen
-              // see http://www.openssl.org/docs/ssl/SSL_read.html
-              if(err == SSL_ERROR_WANT_READ)
-                retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
-              else
-                retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
-            }
-            while(retVal == 0);
+            // depending on the SSL error (WANT_READ/WANT_WRITE)
+            // we either do a WaitSelect() on the read or write mode
+            // as with SSL both things can happen
+            // see http://www.openssl.org/docs/ssl/SSL_read.html
+            if(err == SSL_ERROR_WANT_READ)
+              retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
+            else
+              retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to read from the socket. So we go and do another
@@ -1462,51 +1354,16 @@ static int ReadFromHost(struct Connection *conn, char *ptr, const int maxlen)
             // we are using non-blocking socket IO so an EAGAIN signals
             // that we should wait for more data to arrive before we
             // can issue a recv() again.
-            LONG retVal = -1;
-            int timeoutSum = 0;
+            LONG retVal;
 
-            // now we iterate in a do/while loop and call WaitSelect()
-            // with a static timeout of 1s. We then continue to do so
-            // until we reach the predefined socket timeout
-            do
-            {
-              // check if we are here because of a second iteration
-              if(retVal == 0)
-              {
-                W(DBF_NET, "TCPRead: recoverable WaitSelect() timeout: %ld", timeoutSum);
+            conn->timeout.tv_sec = C->SocketTimeout;
+            conn->timeout.tv_usec = 0;
 
-                // give our GUI the chance to update
-                if(conn->connectedFromMainThread == TRUE)
-                  DoMethod(G->App, MUIM_Application_InputBuffered);
-
-                // if retVal is zero, then we are here in a
-                // consequtive iteration, so WaitSelect()
-                // seem to have timed out and we have to check
-                // whether we timed out too much already
-                timeoutSum += 1; // +1s
-
-                if(timeoutSum >= C->SocketTimeout)
-                {
-                  conn->error = CONNECTERR_TIMEDOUT;
-                  break;
-                }
-                else if(conn->abort == TRUE)
-                {
-                  conn->error = CONNECTERR_ABORTED;
-                  break;
-                }
-              }
-
-              // we do a static timeout of 1s
-              conn->timeout.tv_sec = 1;
-              conn->timeout.tv_usec = 0;
-
-              // now we put our socket handle into a descriptor set
-              // we can pass on to WaitSelect()
-              FD_ZERO(&conn->fdset);
-              FD_SET(conn->socket, &conn->fdset);
-            }
-            while((retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL)) == 0);
+            // now we put our socket handle into a descriptor set
+            // we can pass on to WaitSelect()
+            FD_ZERO(&conn->fdset);
+            FD_SET(conn->socket, &conn->fdset);
+            retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to read from the socket. So we go and do another
@@ -1800,60 +1657,24 @@ static int WriteToHost(struct Connection *conn, const char *ptr, const int len)
             // we are using non-blocking socket IO so an SSL_ERROR_WANT_READ
             // signals that the SSL socket wants us to wait until data
             // is available and reissue the SSL_read() command.
-            LONG retVal = -1;
-            int timeoutSum = 0;
+            LONG retVal;
 
-            // now we iterate in a do/while loop and call WaitSelect()
-            // with a static timeout of 1s. We then continue to do so
-            // until we reach the predefined socket timeout
-            do
-            {
-              // check if we are here because of a second iteration
-              if(retVal == 0)
-              {
-                W(DBF_NET, "TCPWrite: recoverable WaitSelect() timeout: %ld", timeoutSum);
+            conn->timeout.tv_sec = C->SocketTimeout;
+            conn->timeout.tv_usec = 0;
 
-                // give our GUI the chance to update
-                if(conn->connectedFromMainThread == TRUE)
-                  DoMethod(G->App, MUIM_Application_InputBuffered);
+            // now we put our socket handle into a descriptor set
+            // we can pass on to WaitSelect()
+            FD_ZERO(&conn->fdset);
+            FD_SET(conn->socket, &conn->fdset);
 
-                // if retVal is zero, then we are here in a
-                // consequtive iteration, so WaitSelect()
-                // seem to have timed out and we have to check
-                // whether we timed out too much already
-                timeoutSum += 1; // +1s
-
-                if(timeoutSum >= C->SocketTimeout)
-                {
-                  conn->error = CONNECTERR_TIMEDOUT;
-                  break;
-                }
-                else if(conn->abort == TRUE)
-                {
-                  conn->error = CONNECTERR_ABORTED;
-                  break;
-                }
-              }
-
-              // we do a static timeout of 1s
-              conn->timeout.tv_sec = 1;
-              conn->timeout.tv_usec = 0;
-
-              // now we put our socket handle into a descriptor set
-              // we can pass on to WaitSelect()
-              FD_ZERO(&conn->fdset);
-              FD_SET(conn->socket, &conn->fdset);
-
-              // depending on the SSL error (WANT_READ/WANT_WRITE)
-              // we either do a WaitSelect() on the read or write mode
-              // as with SSL both things can happen
-              // see http://www.openssl.org/docs/ssl/SSL_write.html
-              if(err == SSL_ERROR_WANT_READ)
-                retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
-              else
-                retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
-            }
-            while(retVal == 0);
+            // depending on the SSL error (WANT_READ/WANT_WRITE)
+            // we either do a WaitSelect() on the read or write mode
+            // as with SSL both things can happen
+            // see http://www.openssl.org/docs/ssl/SSL_write.html
+            if(err == SSL_ERROR_WANT_READ)
+              retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
+            else
+              retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to write to the socket. So we go and do another
@@ -1947,51 +1768,16 @@ static int WriteToHost(struct Connection *conn, const char *ptr, const int len)
             // we are using non-blocking socket IO so an EAGAIN signals
             // that we should wait for more data to arrive before we
             // can issue a recv() again.
-            LONG retVal = -1;
-            int timeoutSum = 0;
+            LONG retVal;
 
-            // now we iterate in a do/while loop and call WaitSelect()
-            // with a static timeout of 1s. We then continue to do so
-            // until we reach the predefined socket timeout
-            do
-            {
-              // check if we are here because of a second iteration
-              if(retVal == 0)
-              {
-                W(DBF_NET, "TCPWrite: recoverable WaitSelect() timeout: %ld", timeoutSum);
+            conn->timeout.tv_sec = C->SocketTimeout;
+            conn->timeout.tv_usec = 0;
 
-                // give our GUI the chance to update
-                if(conn->connectedFromMainThread == TRUE)
-                  DoMethod(G->App, MUIM_Application_InputBuffered);
-
-                // if retVal is zero, then we are here in a
-                // consequtive iteration, so WaitSelect()
-                // seem to have timed out and we have to check
-                // whether we timed out too much already
-                timeoutSum += 1; // +1s
-
-                if(timeoutSum >= C->SocketTimeout)
-                {
-                  conn->error = CONNECTERR_TIMEDOUT;
-                  break;
-                }
-                else if(conn->abort == TRUE)
-                {
-                  conn->error = CONNECTERR_ABORTED;
-                  break;
-                }
-              }
-
-              // we do a static timeout of 1s
-              conn->timeout.tv_sec = 1;
-              conn->timeout.tv_usec = 0;
-
-              // now we put our socket handle into a descriptor set
-              // we can pass on to WaitSelect()
-              FD_ZERO(&conn->fdset);
-              FD_SET(conn->socket, &conn->fdset);
-            }
-            while((retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL)) == 0);
+            // now we put our socket handle into a descriptor set
+            // we can pass on to WaitSelect()
+            FD_ZERO(&conn->fdset);
+            FD_SET(conn->socket, &conn->fdset);
+            retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
 
             // if WaitSelect() returns 1 we successfully waited for
             // being able to write to the socket. So we go and do another
