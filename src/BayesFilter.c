@@ -65,7 +65,7 @@
 struct Token
 {
   struct HashEntryHeader hash;
-  CONST_STRPTR word;
+  const char *word;
   ULONG length;
   ULONG count;
   double probability;
@@ -77,12 +77,12 @@ struct TokenEnumeration
   ULONG entrySize;
   ULONG entryCount;
   ULONG entryOffset;
-  STRPTR entryAddr;
-  STRPTR entryLimit;
+  char *entryAddr;
+  char *entryLimit;
 };
 
 // the magic data we expect upon reading the data file
-static const TEXT magicCookie[] = { '\xFE', '\xED', '\xFA', '\xCE' };
+static const unsigned char magicCookie[] = { '\xFE', '\xED', '\xFA', '\xCE' };
 
 /*** Static functions ***/
 /// tokenizerInit
@@ -158,7 +158,7 @@ static enum HashTableOperator optimizeToken(UNUSED struct HashTable *table,
 /// tokenizerOptimizeTokens
 // Optimize a token table and return the number of removed words
 static ULONG tokenizerOptimizeTokens(struct Tokenizer *t,
-                                     ULONG maxCount)
+                                     const ULONG maxCount)
 {
   ULONG num;
 
@@ -174,7 +174,7 @@ static ULONG tokenizerOptimizeTokens(struct Tokenizer *t,
 /// tokenizerGet
 // look up a word in the token table
 static struct Token *tokenizerGet(struct Tokenizer *t,
-                                  CONST_STRPTR word)
+                                  const char *word)
 {
   struct HashEntryHeader *entry;
 
@@ -195,13 +195,13 @@ static struct Token *tokenizerGet(struct Tokenizer *t,
 /// tokenizerAdd
 // add a word to the token table with an arbitrary prefix (maybe NULL) and count
 static struct Token *tokenizerAdd(struct Tokenizer *t,
-                                  CONST_STRPTR word,
-                                  CONST_STRPTR prefix,
-                                  ULONG count)
+                                  const char *word,
+                                  const char *prefix,
+                                  const ULONG count)
 {
   struct Token *token = NULL;
   ULONG len;
-  STRPTR tmpWord;
+  char *tmpWord;
 
   ENTER();
 
@@ -242,8 +242,8 @@ static struct Token *tokenizerAdd(struct Tokenizer *t,
 /// tokenizerRemove
 // remove <count> occurences of word from the token table
 static void tokenizerRemove(struct Tokenizer *t,
-                            CONST_STRPTR word,
-                            ULONG count)
+                            const char *word,
+                            const ULONG count)
 {
   struct Token *token;
 
@@ -266,11 +266,11 @@ static void tokenizerRemove(struct Tokenizer *t,
 ///
 /// isDecimalNumber
 // check if <word> is a decimal number
-static BOOL isDecimalNumber(CONST_STRPTR word)
+static BOOL isDecimalNumber(const char *word)
 {
   BOOL isDecimal = TRUE;
-  CONST_STRPTR p = word;
-  TEXT c;
+  const char *p = word;
+  char c;
 
   ENTER();
 
@@ -293,11 +293,11 @@ static BOOL isDecimalNumber(CONST_STRPTR word)
 ///
 /// isASCII
 // check if <word> is an ASCII word
-static BOOL isASCII(CONST_STRPTR word)
+static BOOL isASCII(const char *word)
 {
   BOOL isAsc = TRUE;
-  CONST_STRPTR p = word;
-  TEXT c;
+  const char *p = word;
+  char c;
 
   ENTER();
 
@@ -319,9 +319,9 @@ static BOOL isASCII(CONST_STRPTR word)
 // add a token for a mail header line, prefix may be NULL
 // the concatenated string can be chosen to be tokenized or be treated as one word
 static void tokenizerAddTokenForHeader(struct Tokenizer *t,
-                                       CONST_STRPTR prefix,
-                                       STRPTR value,
-                                       BOOL tokenizeValue)
+                                       const char *prefix,
+                                       char *value,
+                                       const BOOL tokenizeValue)
 {
   ENTER();
 
@@ -332,7 +332,8 @@ static void tokenizerAddTokenForHeader(struct Tokenizer *t,
       tokenizerAdd(t, value, prefix, 1);
     else
     {
-      STRPTR word = value, next;
+      char *word = value;
+      char *next;
 
       do
       {
@@ -357,11 +358,11 @@ static void tokenizerAddTokenForHeader(struct Tokenizer *t,
 /// tokenizerTokenizeAttachment
 // tokenize a mail attachment
 static void tokenizerTokenizeAttachment(struct Tokenizer *t,
-                                        CONST_STRPTR contentType,
-                                        CONST_STRPTR fileName)
+                                        const char *contentType,
+                                        const char *fileName)
 {
-  STRPTR tmpContentType;
-  STRPTR tmpFileName;
+  char *tmpContentType;
+  char *tmpFileName;
 
   ENTER();
 
@@ -388,7 +389,8 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
                                      const struct Part *part)
 {
   struct Node *curNode;
-  STRPTR contentType, charSet;
+  char *contentType;
+  char *charSet;
 
   ENTER();
 
@@ -398,11 +400,11 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
   IterateList(part->headerList, curNode)
   {
     struct HeaderNode *hdr = (struct HeaderNode *)curNode;
-    STRPTR name;
+    char *name;
 
     if((name = strdup(hdr->name)) != NULL)
     {
-      STRPTR content;
+      char *content;
 
       if((content = strdup(hdr->content)) != NULL)
       {
@@ -483,10 +485,10 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
 ///
 /// countChars
 // count occurences of <c> in string <str>
-static ULONG countChars(CONST_STRPTR str, TEXT c)
+static ULONG countChars(const char *str, const char c)
 {
   ULONG count = 0;
-  TEXT cc;
+  char cc;
 
   ENTER();
 
@@ -504,7 +506,7 @@ static ULONG countChars(CONST_STRPTR str, TEXT c)
 /// tokenizerTokenizeASCIIWord
 // tokenize an ASCII word
 static void tokenizerTokenizeASCIIWord(struct Tokenizer *t,
-                                       STRPTR word)
+                                       char *word)
 {
   size_t length;
 
@@ -523,7 +525,7 @@ static void tokenizerTokenizeASCIIWord(struct Tokenizer *t,
     // don't skip over the word if it looks like an email address
     if(length > BAYES_MAX_TOKEN_LENGTH)
     {
-      if(length < 40 && strchr((CONST_STRPTR)word, '.') != NULL && countChars(word, '@') == 1)
+      if(length < 40 && strchr(word, '.') != NULL && countChars(word, '@') == 1)
       {
         struct Person pe;
 
@@ -546,7 +548,7 @@ static void tokenizerTokenizeASCIIWord(struct Tokenizer *t,
     // we'll round to the nearest of 10
     if(skipped == TRUE)
     {
-      TEXT buffer[40];
+      char buffer[40];
 
       snprintf(buffer, sizeof(buffer), "%c %d", word[0], (length / 10) * 10);
       tokenizerAdd(t, buffer, "skip", 1);
@@ -560,10 +562,10 @@ static void tokenizerTokenizeASCIIWord(struct Tokenizer *t,
 /// tokenizeTokenize
 // tokenize an arbitrary text
 static void tokenizerTokenize(struct Tokenizer *t,
-                              STRPTR text)
+                              char *text)
 {
-  STRPTR word = text;
-  STRPTR next;
+  char *word = text;
+  char *next;
 
   ENTER();
 
@@ -616,8 +618,8 @@ static struct Token *tokenEnumerationNext(struct TokenEnumeration *te)
   if(te->entryOffset < te->entryCount)
   {
     ULONG entrySize = te->entrySize;
-    STRPTR entryAddr = te->entryAddr;
-    STRPTR entryLimit = te->entryLimit;
+    char *entryAddr = te->entryAddr;
+    char *entryLimit = te->entryLimit;
 
     while(entryAddr < entryLimit)
     {
@@ -718,7 +720,7 @@ static BOOL tokenAnalyzerInit(void)
   memset(&G->spamFilter.lockSema, 0, sizeof(G->spamFilter.lockSema));
   InitSemaphore(&G->spamFilter.lockSema);
 
-  if(tokenizerInit(&G->spamFilter.goodTokens) && tokenizerInit(&G->spamFilter.badTokens))
+  if(tokenizerInit(&G->spamFilter.goodTokens) == TRUE && tokenizerInit(&G->spamFilter.badTokens) == TRUE)
     result = TRUE;
 
   RETURN(result);
@@ -789,12 +791,12 @@ static BOOL writeTokens(FILE *stream,
 // read tokens from a stream into the token table
 static BOOL readTokens(FILE *stream,
                        struct Tokenizer *t,
-                       long fileSize)
+                       const LONG fileSize)
 {
   ULONG tokenCount;
-  long filePos;
+  LONG filePos;
   ULONG bufferSize = 4096;
-  STRPTR buffer;
+  char *buffer;
 
   ENTER();
 
@@ -830,7 +832,7 @@ static BOOL readTokens(FILE *stream,
       {
         free(buffer);
 
-        if((long)(filePos + size) > fileSize)
+        if((LONG)(filePos + size) > fileSize)
         {
           RETURN(FALSE);
           return FALSE;
@@ -897,7 +899,7 @@ static void tokenAnalyzerResetTrainingData(void)
   // prepare the filename for analysis
   AddPath(fname, G->MA_MailDir, SPAMDATAFILE, sizeof(fname));
 
-  if(FileExists(fname))
+  if(FileExists(fname) == TRUE)
     DeleteFile(fname);
 
   ReleaseSemaphore(&G->spamFilter.lockSema);
@@ -985,7 +987,7 @@ static void tokenAnalyzerReadTrainingData(void)
     // open the .spamdata file for binary read
     if((stream = fopen(fname, "rb")) != NULL)
     {
-      TEXT cookie[4];
+      unsigned char cookie[4];
       BOOL success = FALSE;
 
       setvbuf(stream, NULL, _IOFBF, SIZE_FILEBUF);
@@ -1026,8 +1028,8 @@ static void tokenAnalyzerReadTrainingData(void)
 // set a new classification for a token table, substract the data from the old class
 // and add them to the new class, if possible
 static void tokenAnalyzerSetClassification(const struct Tokenizer *t,
-                                           enum BayesClassification oldClass,
-                                           enum BayesClassification newClass)
+                                           const enum BayesClassification oldClass,
+                                           const enum BayesClassification newClass)
 {
   struct TokenEnumeration te;
 
@@ -1413,7 +1415,7 @@ static BOOL tokenAnalyzerClassifyMessage(const struct Tokenizer *t,
           for(i = 0; i < count; i++)
           {
             struct Token *token = &tokens[i];
-            CONST_STRPTR word = (CONST_STRPTR)token->word;
+            const char *word = token->word;
             struct Token *_t;
             double hamCount;
             double spamCount;
@@ -1622,7 +1624,7 @@ static void tokenizeMail(struct Tokenizer *t,
 
   if((rmData = AllocPrivateRMData(mail, PM_ALL|PM_QUIET)))
   {
-    STRPTR rptr;
+    char *rptr;
 
     if((rptr = RE_ReadInMessage(rmData, RIM_QUIET)) != NULL)
     {
@@ -1663,7 +1665,7 @@ BOOL BayesFilterClassifyMessage(const struct Mail *mail)
 
   ENTER();
 
-  if(tokenizerInit(&t))
+  if(tokenizerInit(&t) == TRUE)
   {
     tokenizeMail(&t, mail);
 
@@ -1680,13 +1682,13 @@ BOOL BayesFilterClassifyMessage(const struct Mail *mail)
 /// BayesFilterSetClassification
 // change the classification of a message
 void BayesFilterSetClassification(const struct Mail *mail,
-                                  enum BayesClassification newClass)
+                                  const enum BayesClassification newClass)
 {
   struct Tokenizer t;
 
   ENTER();
 
-  if(tokenizerInit(&t))
+  if(tokenizerInit(&t) == TRUE)
   {
     enum BayesClassification oldClass;
 
