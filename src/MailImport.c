@@ -507,9 +507,6 @@ static void BuildImportList(struct TransferContext *tc, const char *importFile)
 
   ENTER();
 
-  // let the application sleep while we parse the file
-  set(G->App, MUIA_Application_Sleep, TRUE);
-
   // prepare the temporary filename buffers
   snprintf(tfname, sizeof(tfname), "YAMi%08x.tmp", (unsigned int)GetUniqueID());
   AddPath(fname, C->TempDir, tfname, sizeof(fname));
@@ -696,9 +693,6 @@ static void BuildImportList(struct TransferContext *tc, const char *importFile)
       // nothing
     break;
   }
-
-  // let the application sleep while we parse the file
-  set(G->App, MUIA_Application_Sleep, FALSE);
 }
 
 ///

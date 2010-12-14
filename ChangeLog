@@ -9,6 +9,9 @@ $URL$
 
   * YAM_MAf.c, YAM_UT.c: removed the non-thread safe GetNextLine() function. It
     was used during folder index loading only.
+  * MailImport.c: putting the complete application to sleep while scanning the
+    file to be imported is absolute non-sense with the thread framework we have
+    now.
 
 2010-12-13 Thore Böckelmann <tboeckel@gmx.de>
 
