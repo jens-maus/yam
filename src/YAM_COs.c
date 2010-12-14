@@ -82,6 +82,7 @@ char *MUIStyle2String(const char *style)
 {
   static char buf[SIZE_SMALL];
   const char *s = style;
+  size_t buflen;
 
   ENTER();
 
@@ -112,8 +113,9 @@ char *MUIStyle2String(const char *style)
   }
 
   // strip the last ':' if it is there.
-  if(strlen(buf) > 0 && buf[strlen(buf)-1] == ':')
-    buf[strlen(buf)-1] = '\0';
+  buflen = strlen(buf);
+  if(buflen > 0 && buf[buflen-1] == ':')
+    buf[buflen-1] = '\0';
 
   LEAVE();
   return buf;
