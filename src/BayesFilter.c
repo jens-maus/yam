@@ -85,7 +85,7 @@ struct TokenEnumeration
 static const TEXT magicCookie[] = { '\xFE', '\xED', '\xFA', '\xCE' };
 
 /*** Static functions ***/
-/// tokenizerInit()
+/// tokenizerInit
 // initalize a token table
 static BOOL tokenizerInit(struct Tokenizer *t)
 {
@@ -100,7 +100,7 @@ static BOOL tokenizerInit(struct Tokenizer *t)
 }
 
 ///
-/// tokenizerCleanup()
+/// tokenizerCleanup
 // cleanup a token table
 static void tokenizerCleanup(struct Tokenizer *t)
 {
@@ -112,7 +112,7 @@ static void tokenizerCleanup(struct Tokenizer *t)
 }
 
 ///
-/// tokenizerClearTokens()
+/// tokenizerClearTokens
 // reinitialize a token table
 static BOOL tokenizerClearTokens(struct Tokenizer *t)
 {
@@ -131,7 +131,7 @@ static BOOL tokenizerClearTokens(struct Tokenizer *t)
 }
 
 ///
-/// optimizeToken()
+/// optimizeToken
 // optimize a token table
 static enum HashTableOperator optimizeToken(UNUSED struct HashTable *table,
                                             struct HashEntryHeader *entry,
@@ -155,7 +155,7 @@ static enum HashTableOperator optimizeToken(UNUSED struct HashTable *table,
 }
 
 ///
-/// tokenizerOptimizeTokens()
+/// tokenizerOptimizeTokens
 // Optimize a token table and return the number of removed words
 static ULONG tokenizerOptimizeTokens(struct Tokenizer *t,
                                      ULONG maxCount)
@@ -171,7 +171,7 @@ static ULONG tokenizerOptimizeTokens(struct Tokenizer *t,
 }
 
 ///
-/// tokenizerGet()
+/// tokenizerGet
 // look up a word in the token table
 static struct Token *tokenizerGet(struct Tokenizer *t,
                                   CONST_STRPTR word)
@@ -192,7 +192,7 @@ static struct Token *tokenizerGet(struct Tokenizer *t,
 }
 
 ///
-/// tokenizerAdd()
+/// tokenizerAdd
 // add a word to the token table with an arbitrary prefix (maybe NULL) and count
 static struct Token *tokenizerAdd(struct Tokenizer *t,
                                   CONST_STRPTR word,
@@ -220,14 +220,12 @@ static struct Token *tokenizerAdd(struct Tokenizer *t,
     {
       if(token->word == NULL)
       {
-        if((token->word = strdup(tmpWord)) != NULL)
-        {
-          token->length = strlen(tmpWord);
-          token->count = count;
-          token->probability = 0.0;
-        }
-        else
-          HashTableRawRemove(&t->tokenTable, (struct HashEntryHeader *)token);
+        token->word = tmpWord;
+        token->length = len-1;
+        token->count = count;
+        token->probability = 0.0;
+        // make sure this one isn't free()'d
+        tmpWord = NULL;
       }
       else
         token->count += count;
@@ -241,7 +239,7 @@ static struct Token *tokenizerAdd(struct Tokenizer *t,
 }
 
 ///
-/// tokenizerRemove()
+/// tokenizerRemove
 // remove <count> occurences of word from the token table
 static void tokenizerRemove(struct Tokenizer *t,
                             CONST_STRPTR word,
@@ -266,7 +264,7 @@ static void tokenizerRemove(struct Tokenizer *t,
 }
 
 ///
-/// isDecimalNumber()
+/// isDecimalNumber
 // check if <word> is a decimal number
 static BOOL isDecimalNumber(CONST_STRPTR word)
 {
@@ -293,7 +291,7 @@ static BOOL isDecimalNumber(CONST_STRPTR word)
 }
 
 ///
-/// isASCII()
+/// isASCII
 // check if <word> is an ASCII word
 static BOOL isASCII(CONST_STRPTR word)
 {
@@ -317,7 +315,7 @@ static BOOL isASCII(CONST_STRPTR word)
 }
 
 ///
-/// tokenizerAddTokenForHeader()
+/// tokenizerAddTokenForHeader
 // add a token for a mail header line, prefix may be NULL
 // the concatenated string can be chosen to be tokenized or be treated as one word
 static void tokenizerAddTokenForHeader(struct Tokenizer *t,
@@ -384,7 +382,7 @@ static void tokenizerTokenizeAttachment(struct Tokenizer *t,
 }
 
 ///
-/// tokenizerTokenizeHeader()
+/// tokenizerTokenizeHeader
 // tokenize all headers of a mail
 static void tokenizerTokenizeHeaders(struct Tokenizer *t,
                                      const struct Part *part)
@@ -483,7 +481,7 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
 }
 
 ///
-/// countChars()
+/// countChars
 // count occurences of <c> in string <str>
 static ULONG countChars(CONST_STRPTR str, TEXT c)
 {
@@ -503,7 +501,7 @@ static ULONG countChars(CONST_STRPTR str, TEXT c)
 }
 
 ///
-/// tokenizerTokenizeASCIIWord()
+/// tokenizerTokenizeASCIIWord
 // tokenize an ASCII word
 static void tokenizerTokenizeASCIIWord(struct Tokenizer *t,
                                        STRPTR word)
@@ -559,7 +557,7 @@ static void tokenizerTokenizeASCIIWord(struct Tokenizer *t,
 }
 
 ///
-/// tokenizeTokenize()
+/// tokenizeTokenize
 // tokenize an arbitrary text
 static void tokenizerTokenize(struct Tokenizer *t,
                               STRPTR text)
@@ -590,7 +588,7 @@ static void tokenizerTokenize(struct Tokenizer *t,
 }
 
 ///
-/// tokenEnumerationInit()
+/// tokenEnumerationInit
 // initialize a token enumeration
 static void tokenEnumerationInit(struct TokenEnumeration *te,
                                  const struct Tokenizer *t)
@@ -607,7 +605,7 @@ static void tokenEnumerationInit(struct TokenEnumeration *te,
 }
 
 ///
-/// tokenEnumerationNext()
+/// tokenEnumerationNext
 // advance one step in the enumeration
 static struct Token *tokenEnumerationNext(struct TokenEnumeration *te)
 {
@@ -642,7 +640,7 @@ static struct Token *tokenEnumerationNext(struct TokenEnumeration *te)
 }
 
 ///
-/// tokenizerCopyTokens()
+/// tokenizerCopyTokens
 // build a copy of the token table
 static struct Token *tokenizerCopyTokens(const struct Tokenizer *t)
 {
@@ -669,7 +667,7 @@ static struct Token *tokenizerCopyTokens(const struct Tokenizer *t)
 }
 
 ///
-/// tokenizerForgetTokens()
+/// tokenizerForgetTokens
 // remove all words of the enumeration from the token table
 static void tokenizerForgetTokens(struct Tokenizer *t,
                                   struct TokenEnumeration *te)
@@ -688,7 +686,7 @@ static void tokenizerForgetTokens(struct Tokenizer *t,
 }
 
 ///
-/// tokenizerRememberTokens()
+/// tokenizerRememberTokens
 // put all words of the enumeration back into the token table
 static void tokenizerRememberTokens(struct Tokenizer *t,
                                     struct TokenEnumeration *te)
@@ -704,7 +702,7 @@ static void tokenizerRememberTokens(struct Tokenizer *t,
 }
 
 ///
-/// tokenAnalyzerInit()
+/// tokenAnalyzerInit
 // initialize the analyzer
 static BOOL tokenAnalyzerInit(void)
 {
@@ -728,7 +726,7 @@ static BOOL tokenAnalyzerInit(void)
 }
 
 ///
-/// tokenAnalyzerCleanup()
+/// tokenAnalyzerCleanup
 // clean up the analyzer
 static void tokenAnalyzerCleanup(void)
 {
@@ -745,7 +743,7 @@ static void tokenAnalyzerCleanup(void)
 }
 
 ///
-/// writeTokens()
+/// writeTokens
 // write the tokens of a token table to a stream
 static BOOL writeTokens(FILE *stream,
                         const struct Tokenizer *t)
@@ -787,7 +785,7 @@ static BOOL writeTokens(FILE *stream,
 }
 
 ///
-/// readTokens()
+/// readTokens
 // read tokens from a stream into the token table
 static BOOL readTokens(FILE *stream,
                        struct Tokenizer *t,
@@ -874,7 +872,7 @@ static BOOL readTokens(FILE *stream,
 }
 
 ///
-/// tokenAnalyzerResetTrainingData()
+/// tokenAnalyzerResetTrainingData
 // reset the training data. The makes the spam filter stupid again
 static void tokenAnalyzerResetTrainingData(void)
 {
@@ -908,7 +906,7 @@ static void tokenAnalyzerResetTrainingData(void)
 }
 
 ///
-/// tokenAnalyzerOptimizeTrainingData()
+/// tokenAnalyzerOptimizeTrainingData
 // Optimize the training data by filtering out words which occured only once so far
 static void tokenAnalyzerOptimizeTrainingData(void)
 {
@@ -928,7 +926,7 @@ static void tokenAnalyzerOptimizeTrainingData(void)
 }
 
 ///
-/// tokenAnalyzerWriteTraningData()
+/// tokenAnalyzerWriteTraningData
 // write the accumulated training data to disk
 static void tokenAnalyzerWriteTrainingData(void)
 {
@@ -968,7 +966,7 @@ static void tokenAnalyzerWriteTrainingData(void)
 }
 
 ///
-/// tokenAnalyzerReadTrainingData()
+/// tokenAnalyzerReadTrainingData
 // read the training data from disk
 static void tokenAnalyzerReadTrainingData(void)
 {
@@ -1024,7 +1022,7 @@ static void tokenAnalyzerReadTrainingData(void)
 }
 
 ///
-/// tokenAnalyzerSetClassification()
+/// tokenAnalyzerSetClassification
 // set a new classification for a token table, substract the data from the old class
 // and add them to the new class, if possible
 static void tokenAnalyzerSetClassification(const struct Tokenizer *t,
@@ -1104,7 +1102,7 @@ static void tokenAnalyzerSetClassification(const struct Tokenizer *t,
 }
 
 ///
-/// compareTokens()
+/// compareTokens
 // compare to tokens to sort them
 static int compareTokens(const void *p1,
                          const void *p2)
@@ -1137,7 +1135,7 @@ static const double C_9 = 43867.0 / 244188.0;
 static const double C_10 = -174611.0 / 125400.0;
 static const double C_11 = 77683.0 / 5796.0;
 
-/// lngamma_asymp()
+/// lngamma_asymp
 // truncated asymptotic series in 1/z
 INLINE double lngamma_asymp(double z)
 {
@@ -1189,7 +1187,7 @@ static const struct fact_table_s FactTable[] =
 // for speed
 static const double ln_2pi_2 = 0.918938533204672741803; // log(2*PI)/2
 
-/// nsLnGamma()
+/// nsLnGamma
 // A simple lgamma function, not very robust.
 //
 // Valid for z_in > 0 ONLY.
@@ -1221,7 +1219,7 @@ static double nsLnGamma (double z_in, int *gsign)
 }
 
 ///
-/// lnPQfactor()
+/// lnPQfactor
 // log( e^(-x)*x^a/Gamma(a) )
 INLINE double lnPQfactor (double a, double x)
 {
@@ -1230,7 +1228,7 @@ INLINE double lnPQfactor (double a, double x)
 }
 
 ///
-/// Pseries()
+/// Pseries
 static double Pseries (double a, double x, int *error)
 {
   double sum, term;
@@ -1254,7 +1252,7 @@ static double Pseries (double a, double x, int *error)
 }
 
 ///
-/// Qcontfrac()
+/// Qcontfrac
 //
 static double Qcontfrac (double a, double x, int *error)
 {
@@ -1295,7 +1293,7 @@ static double Qcontfrac (double a, double x, int *error)
 }
 
 ///
-/// incompleteGammaP()
+/// incompleteGammaP
 //
 double incompleteGammaP( double a, double x, int *error )
 {
@@ -1344,7 +1342,7 @@ double incompleteGammaP( double a, double x, int *error )
 }
 
 ///
-/// chi2P()
+/// chi2P
 //
 INLINE double chi2P(double chi2, double nu, int *error)
 {
@@ -1358,7 +1356,7 @@ INLINE double chi2P(double chi2, double nu, int *error)
 }
 
 ///
-/// tokenAnalyzerClassifyMessage()
+/// tokenAnalyzerClassifyMessage
 // classify a mail based upon the information gathered so far
 static BOOL tokenAnalyzerClassifyMessage(const struct Tokenizer *t,
                                          const struct Mail *mail)
@@ -1561,7 +1559,7 @@ static BOOL tokenAnalyzerClassifyMessage(const struct Tokenizer *t,
 }
 
 ///
-/// BayesFilterInit()
+/// BayesFilterInit
 // initialize the spam filter structures and read the training data from disk
 BOOL BayesFilterInit(void)
 {
@@ -1584,7 +1582,7 @@ BOOL BayesFilterInit(void)
 }
 
 ///
-/// BayesFilterCleanup()
+/// BayesFilterCleanup
 // write the training data to disk and cleanup all structures
 void BayesFilterCleanup(void)
 {
@@ -1613,7 +1611,7 @@ void BayesFilterCleanup(void)
 }
 
 ///
-/// tokenizeMail()
+/// tokenizeMail
 // tokenize a complete mail, including all headers
 static void tokenizeMail(struct Tokenizer *t,
                          const struct Mail *mail)
@@ -1656,7 +1654,7 @@ static void tokenizeMail(struct Tokenizer *t,
 }
 
 ///
-/// BayesFilterClassifyMessage()
+/// BayesFilterClassifyMessage
 // classify a given message based upon the information gathered so far
 BOOL BayesFilterClassifyMessage(const struct Mail *mail)
 {
@@ -1679,7 +1677,7 @@ BOOL BayesFilterClassifyMessage(const struct Mail *mail)
 }
 
 ///
-/// BayesFilterSetClassification()
+/// BayesFilterSetClassification
 // change the classification of a message
 void BayesFilterSetClassification(const struct Mail *mail,
                                   enum BayesClassification newClass)
@@ -1711,7 +1709,7 @@ void BayesFilterSetClassification(const struct Mail *mail,
 }
 
 ///
-/// BayesFilterNumerOfSpamClassifiedMails()
+/// BayesFilterNumerOfSpamClassifiedMails
 // return the number of spam classified mail
 ULONG BayesFilterNumberOfSpamClassifiedMails(void)
 {
@@ -1728,7 +1726,7 @@ ULONG BayesFilterNumberOfSpamClassifiedMails(void)
 }
 
 ///
-/// BayesFilterNumerOfSpamClassifiedWords()
+/// BayesFilterNumerOfSpamClassifiedWords
 // return the number of spam classified words
 ULONG BayesFilterNumberOfSpamClassifiedWords(void)
 {
@@ -1745,7 +1743,7 @@ ULONG BayesFilterNumberOfSpamClassifiedWords(void)
 }
 
 ///
-/// BayesFilterNumberOfHamClassifiedMails()
+/// BayesFilterNumberOfHamClassifiedMails
 // return the number of ham classified mails
 ULONG BayesFilterNumberOfHamClassifiedMails(void)
 {
@@ -1762,7 +1760,7 @@ ULONG BayesFilterNumberOfHamClassifiedMails(void)
 }
 
 ///
-/// BayesFilterNumberOfHamClassifiedWords()
+/// BayesFilterNumberOfHamClassifiedWords
 // return the number of ham classified words
 ULONG BayesFilterNumberOfHamClassifiedWords(void)
 {
@@ -1779,7 +1777,7 @@ ULONG BayesFilterNumberOfHamClassifiedWords(void)
 }
 
 ///
-/// BayesFilterFlushTrainingData()
+/// BayesFilterFlushTrainingData
 // flush training data to disk
 void BayesFilterFlushTrainingData(void)
 {
@@ -1801,7 +1799,7 @@ void BayesFilterFlushTrainingData(void)
 }
 
 ///
-/// BayesFilterResetTrainingData()
+/// BayesFilterResetTrainingData
 // reset the training data
 void BayesFilterResetTrainingData(void)
 {
@@ -1813,7 +1811,7 @@ void BayesFilterResetTrainingData(void)
 }
 
 ///
-/// BayesFilterOptimizeTrainingData()
+/// BayesFilterOptimizeTrainingData
 // Optimize the training data
 void BayesFilterOptimizeTrainingData(void)
 {
