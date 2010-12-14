@@ -296,6 +296,9 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
             struct Mail mail;
             struct ComprMail cmail;
             char buf[SIZE_LARGE];
+            char *line;
+            char *nextLine;
+            int lineNr;
 
             memset(&mail, 0, sizeof(struct Mail));
             if(fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1)
@@ -311,7 +314,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
               break;
             }
 
-            if(cmail.moreBytes > SIZE_LARGE)
+            if(cmail.moreBytes > sizeof(buf))
             {
               ER_NewError(tr(MSG_ER_INDEX_CORRUPTED), indexFileName, folder->Name, ftell(fh), cmail.mailFile, cmail.moreBytes);
               corrupt = TRUE;
@@ -325,13 +328,50 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
               break;
             }
 
-            strlcpy(mail.Subject, GetNextLine(buf), sizeof(mail.Subject));
-            strlcpy(mail.From.Address, GetNextLine(NULL), sizeof(mail.From.Address));
-            strlcpy(mail.From.RealName, GetNextLine(NULL), sizeof(mail.From.RealName));
-            strlcpy(mail.To.Address, GetNextLine(NULL), sizeof(mail.To.Address));
-            strlcpy(mail.To.RealName, GetNextLine(NULL), sizeof(mail.To.RealName));
-            strlcpy(mail.ReplyTo.Address, GetNextLine(NULL), sizeof(mail.ReplyTo.Address));
-            strlcpy(mail.ReplyTo.RealName, GetNextLine(NULL), sizeof(mail.ReplyTo.RealName));
+            line = buf;
+            lineNr = 0;
+            do
+            {
+              if((nextLine = strchr(line, '\n')) != NULL)
+                *nextLine++ = '\0';
+
+              lineNr++;
+
+              switch(lineNr)
+              {
+                case 1:
+                  strlcpy(mail.Subject, line, sizeof(mail.Subject));
+                break;
+
+                case 2:
+                  strlcpy(mail.From.Address, line, sizeof(mail.From.Address));
+                break;
+
+                case 3:
+                  strlcpy(mail.From.RealName, line, sizeof(mail.From.RealName));
+                break;
+
+                case 4:
+                  strlcpy(mail.To.Address, line, sizeof(mail.To.Address));
+                break;
+
+                case 5:
+                  strlcpy(mail.To.RealName, line, sizeof(mail.To.RealName));
+                break;
+
+                case 6:
+                  strlcpy(mail.ReplyTo.Address, line, sizeof(mail.ReplyTo.Address));
+                break;
+
+                case 7:
+                  strlcpy(mail.ReplyTo.RealName, line, sizeof(mail.ReplyTo.RealName));
+                break;
+              }
+
+              line = nextLine;
+            }
+            while(line != NULL && lineNr < 7);
+
             mail.Folder = folder;
             mail.mflags = cmail.mflags;
             mail.sflags = cmail.sflags;

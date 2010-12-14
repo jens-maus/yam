@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c, YAM_UT.c: removed the non-thread safe GetNextLine() function. It
+    was used during folder index loading only.
+
 2010-12-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/Connection.c: shrinked the 1-second WaitSelect() loops to one single

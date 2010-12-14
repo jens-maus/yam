@@ -351,30 +351,6 @@ char *StripUnderscore(const char *label)
 }
 
 ///
-/// GetNextLine
-//  Reads next line from a multi-line string
-char *GetNextLine(char *p1)
-{
-  static char *begin;
-  char *p2;
-
-  ENTER();
-
-  if(p1 != NULL)
-    begin = p1;
-
-  p2 = begin;
-  if((p1 = strchr(p2, '\n')) != NULL)
-  {
-    *p1 = '\0';
-    begin = ++p1;
-  }
-
-  RETURN(p2);
-  return p2;
-}
-
-///
 /// TrimStart
 //  Strips leading spaces
 char *TrimStart(const char *s)
