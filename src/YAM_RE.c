@@ -981,6 +981,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderMode mode)
 {
   struct Node *curNode;
+  BOOL quietParsing = hasFlag(rp->rmData->parseFlags, PM_QUIET);
 
   ENTER();
 
@@ -1001,7 +1002,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
   // we read in the headers from our mail file
   if(MA_ReadHeader(rp->rmData->readFile, in, rp->headerList, mode) == FALSE)
   {
-    if(out != NULL && hasFlag(rp->rmData->parseFlags, PM_QUIET) == FALSE)
+    if(out != NULL && quietParsing == FALSE)
     {
       if(mode == RHM_MAINHEADER)
         ER_NewError(tr(MSG_ER_MIME_ERROR), rp->rmData->readFile);
@@ -1081,7 +1082,8 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
         rp->EncodingCode = ENC_BIN;
       else
       {
-        ER_NewError(tr(MSG_ER_UNKNOWN_MIME_ENCODING), p, rp->rmData->readFile);
+        if(quietParsing == FALSE)
+          ER_NewError(tr(MSG_ER_UNKNOWN_MIME_ENCODING), p, rp->rmData->readFile);
 
         // set the default to ENC_7BIT
         rp->EncodingCode = ENC_7BIT;
@@ -1937,7 +1939,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
         if(parse_ok == TRUE)
           RE_SetPartInfo(hrp);
       }
-      else
+      else if(hasFlag(rp->rmData->parseFlags, PM_QUIET) == FALSE)
         ER_NewError(tr(MSG_ER_CantCreateTempfile));
     }
 
@@ -2857,6 +2859,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               {
                 FILE *outfh;
                 char *nameptr = NULL;
+                BOOL quietParsing = hasFlag(rmData->parseFlags, PM_QUIET);
 
                 D(DBF_MAIL, "inline UUencoded passage found!");
 
@@ -2875,7 +2878,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 {
                   char *endptr = rptr+strlen(rptr)+1;
                   long old_pos;
-
+                
                   // prepare our part META data and fake the new part as being
                   // a application/octet-stream part as we don't know if it
                   // is some text or something else.
@@ -2909,28 +2912,28 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                       {
                         case -1:
                         {
-                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                          if(quietParsing == FALSE)
                             ER_NewError(tr(MSG_ER_UNEXPECTED_UUE_EOF), uup->Filename);
                         }
                         break;
 
                         case -2:
                         {
-                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                          if(quietParsing == FALSE)
                             ER_NewError(tr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "begin");
                         }
                         break;
 
                         case -3:
                         {
-                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                          if(quietParsing == FALSE)
                             ER_NewError(tr(MSG_ER_INVALID_UUE_LENGTH), 0, uup->Filename);
                         }
                         break;
 
                         case -4:
                         {
-                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                          if(quietParsing == FALSE)
                             ER_NewError(tr(MSG_ER_UUDEC_CHECKSUM), uup->Filename);
 
                           SET_FLAG(uup->Flags, PFLAG_DECODED); // allow to save the resulting file
@@ -2939,14 +2942,14 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                         case -5:
                         {
-                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                          if(quietParsing == FALSE)
                             ER_NewError(tr(MSG_ER_UUDEC_CORRUPT), uup->Filename);
                         }
                         break;
 
                         case -6:
                         {
-                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                          if(quietParsing == FALSE)
                             ER_NewError(tr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "end");
 
                           SET_FLAG(uup->Flags, PFLAG_DECODED); // allow to save the resulting file
@@ -2955,7 +2958,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                         default:
                         {
-                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                          if(quietParsing == FALSE)
                             ER_NewError(tr(MSG_ER_UNEXPECTED_UUE_EOF), uup->Filename);
                         }
                         break;
@@ -3001,14 +3004,14 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                         if(uup->Size != expsize)
                         {
-                          if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                          if(quietParsing == FALSE)
                             ER_NewError(tr(MSG_ER_UUSize), uup->Size, expsize);
                         }
                       }
                     }
                     else
                     {
-                      if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+                      if(quietParsing == FALSE)
                         ER_NewError(tr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "end");
 
                       endptr = rptr;
@@ -3023,7 +3026,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   // terminate the end
                   *eolptr = '\0';
                 }
-                else
+                else if(quietParsing == FALSE)
                   ER_NewError(tr(MSG_ER_CantCreateTempfile));
               }
 /* PGP msg */ else if(strncmp(rptr, "-----BEGIN PGP MESSAGE", 21) == 0)
@@ -3716,7 +3719,7 @@ static void RE_SendMDN(const enum MDNMode mode,
     CloseTempFile(tf1);
   }
 
-  if(p1)
+  if(p1 != NULL)
     FreePartsList(p1);
 
   LEAVE();

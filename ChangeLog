@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c, mui/ReadMailGroup.c: possible parsing errors while checking a mail
+    for spam content will not show any error anymore. Normal reading of the mail
+    however will still show any parsing error.
+
 2010-12-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c, YAM_UT.c: removed the non-thread safe GetNextLine() function. It
