@@ -659,7 +659,7 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        case ATTR(EMailCacheName) : data->EMailCacheName = (STRPTR)tag->ti_Data ; break;
+        case ATTR(EMailCacheName) : data->EMailCacheName = (STRPTR)tag->ti_Data; break;
       }
     }
 
@@ -839,9 +839,13 @@ DECLARE(CreateTransferGroup) // APTR thread, const char *title, struct Connectio
   {
     D(DBF_GUI, "creating new transfer window");
 
-    data->transferWindow = TransferWindowObject,
+    if((data->transferWindow = TransferWindowObject,
       MUIA_Window_Activate, C->TransferWindow != TWM_HIDE && msg->openWindow == TRUE && msg->activate == TRUE,
-    End;
+    End) != NULL)
+    {
+      // enable the menu item
+      set(G->MA->GUI.MI_TRANSFERS, MUIA_Menuitem_Enabled, TRUE);
+    }
   }
 
   if(data->transferWindow != NULL)
@@ -892,6 +896,9 @@ DECLARE(DeleteTransferGroup) // Object *transferGroup
       DoMethod(G->App, OM_REMMEMBER, data->transferWindow);
       MUI_DisposeObject(data->transferWindow);
       data->transferWindow = NULL;
+
+      // disable the menu item
+      set(G->MA->GUI.MI_TRANSFERS, MUIA_Menuitem_Enabled, FALSE);
     }
     else
     {
@@ -901,6 +908,18 @@ DECLARE(DeleteTransferGroup) // Object *transferGroup
   }
 
   LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(ShowTransferWindow)
+DECLARE(ShowTransferWindow)
+{
+  GETDATA;
+
+  if(data->transferWindow != NULL && xget(data->transferWindow, MUIA_Window_Open) == FALSE)
+    SafeOpenWindow(data->transferWindow);
+
   return 0;
 }
 

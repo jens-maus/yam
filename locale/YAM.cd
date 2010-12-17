@@ -6991,3 +6991,21 @@ Get mail
 MSG_WR_SECURITYREQ_GADS (2195//)
 *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Cancel
 ;
+MSG_HTTP_CONNECTING_TO_SERVER (2196//)
+Connecting to server...
+;
+MSG_HTTP_SENDING_REQUEST (2197//)
+Sending HTTP request...
+;
+MSG_HTTP_WAITING_FOR_ANSWER (2198//)
+Waiting for server's answer...
+;
+MSG_HTTP_RECEIVING_DATA (2199//)
+Receiving data...
+;
+MSG_HTTP_DISCONNECTING_FROM_SERVER (2200//)
+Disconnecting from server...
+;
+MSG_SHOW_TRANSFER_WINDOW (2201//)
+Show transfers in progress...
+;

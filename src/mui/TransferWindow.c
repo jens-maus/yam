@@ -72,7 +72,7 @@ OVERLOAD(OM_NEW)
 
     MUIA_Window_Title, tr(MSG_TRANSFERS_IN_PROGRESS),
     MUIA_Window_ID, MAKE_ID('T','R','A','N'),
-    MUIA_Window_CloseGadget, FALSE,
+    MUIA_Window_CloseGadget, TRUE,
     MUIA_HelpNode, "TR_W",
     WindowContents, VGroup,
       MUIA_Background, MUII_GroupBack,
@@ -85,6 +85,8 @@ OVERLOAD(OM_NEW)
     GETDATA;
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
+
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_Set, MUIA_Window_Open, FALSE);
 
     data->transferList = transferList;
   }

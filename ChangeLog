@@ -16,6 +16,10 @@ $URL$
     message would be treated as a normal message and be freed, which must not be
     done for a non-allocated static message. The result was a crash. Many thanks
     to Simone Bevilacqua for the hint.
+  * tcp/http.c, mui/YAMApplication.c: downloading a URL (i.e. the update
+    informations for YAM) will now also create an invisible transfer window.
+    As a consequence the transfer window can be closed an made visible again by
+    a new menu item in the "Project" menu.
 
 2010-12-14 Thore Böckelmann <tboeckel@gmx.de>
 

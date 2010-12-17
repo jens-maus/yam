@@ -662,7 +662,7 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
 ///
 
 /*** MIME ***/
-/// ExtractNextParam()
+/// ExtractNextParam
 // extracts the name and value of the next upcoming content paramater in string s
 // returns the end of string s in case we are finished
 static char *ExtractNextParam(char *s, char **name, char **value)
@@ -1338,6 +1338,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
     }
   }
 
+  SHOWVALUE(DBF_MAIL, rp->EncodingCode);
   // lets check if we got some encoding here and
   // if so we have to decode it immediatly
   switch(rp->EncodingCode)
@@ -3467,7 +3468,7 @@ void RE_ClickedOnMessage(char *address)
 ///
 
 /*** MDN management (RFC 3798) ***/
-/// RE_SendMDN()
+/// RE_SendMDN
 //  Creates and sends the message disposition notification
 static void RE_SendMDN(const enum MDNMode mode,
                        const struct Mail *mail,
@@ -3725,7 +3726,7 @@ static void RE_SendMDN(const enum MDNMode mode,
   LEAVE();
 }
 ///
-/// RE_ProcessMDN()
+/// RE_ProcessMDN
 //  Handles/Processes message disposition requests
 //  returns TRUE if all further MDN requests should be ignored, else FALSE
 BOOL RE_ProcessMDN(const enum MDNMode mode,
@@ -4023,7 +4024,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
   return ignoreall;
 }
 ///
-/// RE_HandleMDNReport()
+/// RE_HandleMDNReport
 //  Translates a message disposition notification to readable text
 static BOOL RE_HandleMDNReport(const struct Part *frp)
 {
@@ -4168,7 +4169,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
 ///
 
 /*** GUI ***/
-/// CreateReadWindow()
+/// CreateReadWindow
 // Function that creates a new ReadWindow object and returns
 // the referencing ReadMailData structure which was created
 // during that process - or NULL if an error occurred.
@@ -4230,7 +4231,7 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
 ///
 
 /*** ReadMailData ***/
-/// AllocPrivateRMData()
+/// AllocPrivateRMData
 //  Allocates resources for background message parsing
 struct ReadMailData *AllocPrivateRMData(const struct Mail *mail, short parseFlags)
 {
@@ -4263,7 +4264,7 @@ struct ReadMailData *AllocPrivateRMData(const struct Mail *mail, short parseFlag
   return rmData;
 }
 ///
-/// FreePrivateRMData()
+/// FreePrivateRMData
 //  Frees resources used by background message parsing
 void FreePrivateRMData(struct ReadMailData *rmData)
 {
@@ -4275,7 +4276,7 @@ void FreePrivateRMData(struct ReadMailData *rmData)
   LEAVE();
 }
 ///
-/// CleanupReadMailData()
+/// CleanupReadMailData
 // cleans/deletes all data of a readmaildata structure
 BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 {
@@ -4449,7 +4450,7 @@ struct HeaderNode *AllocHeaderNode(void)
 }
 
 ///
-/// FreeHeaderNode()
+/// FreeHeaderNode
 // free a single header node
 void FreeHeaderNode(struct HeaderNode *hdrNode)
 {
@@ -4467,7 +4468,7 @@ void FreeHeaderNode(struct HeaderNode *hdrNode)
 }
 
 ///
-/// ClearHeaderList()
+/// ClearHeaderList
 // Free all items of an existing header list
 void ClearHeaderList(struct MinList *headerList)
 {
@@ -4490,7 +4491,7 @@ void ClearHeaderList(struct MinList *headerList)
 }
 
 ///
-/// GetReadMailData()
+/// GetReadMailData
 //  returns the ReadMailData of a mail if it exists
 struct ReadMailData *GetReadMailData(const struct Mail *mail)
 {
@@ -4514,7 +4515,7 @@ struct ReadMailData *GetReadMailData(const struct Mail *mail)
   return result;
 }
 ///
-/// UpdateReadMailDataStatus()
+/// UpdateReadMailDataStatus
 // triggers an update of certain GUI and non-GUI relevant status information
 // according to a provided mail pointer. returns TRUE if mail was found
 BOOL UpdateReadMailDataStatus(const struct Mail *mail)

@@ -291,6 +291,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
         if(full == TRUE)
         {
           ClearFolderMails(folder, TRUE);
+          STARTCLOCK(DBF_ALWAYS);
           for(;;)
           {
             struct Mail mail;
@@ -391,6 +392,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
               break;
             }
           }
+          STOPCLOCK(DBF_ALWAYS, folder->Name);
         }
       }
 

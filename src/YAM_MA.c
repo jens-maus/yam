@@ -4067,6 +4067,7 @@ struct MA_ClassData *MA_New(void)
         MenuChild, Menuitem(tr(MSG_MA_AboutMUI), NULL, TRUE, FALSE, MMEN_ABOUTMUI),
         MenuChild, data->GUI.MI_UPDATECHECK = Menuitem(tr(MSG_MA_UPDATECHECK), NULL, TRUE, FALSE, MMEN_VERSION),
         MenuChild, data->GUI.MI_ERRORS = Menuitem(tr(MSG_MA_LastErrors), NULL, G->ER_NumErr > 0, FALSE, MMEN_ERRORS),
+        MenuChild, data->GUI.MI_TRANSFERS = Menuitem(tr(MSG_SHOW_TRANSFER_WINDOW), NULL, FALSE, FALSE, MMEN_TRANSFERS),
         MenuChild, MenuBarLabel,
         MenuChild, Menuitem(tr(MSG_MA_Restart), NULL, TRUE, FALSE, MMEN_LOGIN),
         MenuChild, Menuitem(tr(MSG_MA_HIDE), "H", TRUE, FALSE, MMEN_HIDE),
@@ -4229,6 +4230,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUT,          MUIV_Notify_Self,        1, MUIM_MainWindow_ShowAbout);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_VERSION,        MUIV_Notify_Application, 2, MUIM_YAMApplication_UpdateCheck,      FALSE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ERRORS,         MUIV_Notify_Self,        1, MUIM_MainWindow_ShowErrors);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TRANSFERS,      MUIV_Notify_Application, 1, MUIM_YAMApplication_ShowTransferWindow);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_LOGIN,          MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_RESTART);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HIDE,           MUIV_Notify_Application, 3, MUIM_Set,                  MUIA_Application_Iconified, TRUE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_QUIT,           MUIV_Notify_Application, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);

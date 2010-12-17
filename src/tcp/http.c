@@ -37,6 +37,7 @@
 #include "MethodStack.h"
 #include "Threads.h"
 
+#include "mui/TransferControlGroup.h"
 #include "mui/YAMApplication.h"
 #include "tcp/Connection.h"
 #include "tcp/http.h"
@@ -46,7 +47,9 @@
 struct TransferContext
 {
   struct Connection *connection;
+  Object *transferGroup;
   int hport;
+  char transferGroupTitle[SIZE_DEFAULT]; // the TransferControlGroup's title
   char url[SIZE_URL];
   char host[SIZE_HOST];
   char serverPath[SIZE_LINE];
@@ -108,129 +111,159 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
       else
         tc->hport = noproxy ? 80 : 8080;
 
-      // open the TCP/IP connection to 'host' under the port 'hport'
-      if((ConnectToHost(tc->connection, tc->host, tc->hport)) == CONNECTERR_SUCCESS)
+      snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferFrom), tc->host);
+
+      // create an invisible transfer window
+      if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, FALSE, FALSE)) != NULL)
       {
-        char *serverHost;
-        char *port;
+        PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_HTTP_CONNECTING_TO_SERVER));
 
-        // update the AppIcon now that the connection was established
-        PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
-
-        // now we build the HTTP request we send out to the HTTP
-        // server
-        if(noproxy == TRUE)
+        // open the TCP/IP connection to 'host' under the port 'hport'
+        if((ConnectToHost(tc->connection, tc->host, tc->hport)) == CONNECTERR_SUCCESS)
         {
-          snprintf(tc->serverPath, sizeof(tc->serverPath), "/%s", path);
-          serverHost = tc->host;
-        }
-        else if((port = strchr(tc->url, ':')) != NULL)
-        {
-          *port++ = '\0';
+          char *serverHost;
+          char *port;
 
-          snprintf(tc->serverPath, sizeof(tc->serverPath), "http://%s:%s/%s", tc->url, port, path);
-          serverHost = tc->url;
-        }
-        else
-        {
-          snprintf(tc->serverPath, sizeof(tc->serverPath), "http://%s/%s", tc->url, path);
-          serverHost = tc->url;
-        }
+          // update the AppIcon now that the connection was established
+          PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
 
-        // construct the HTTP request
-        // we send a HTTP/1.0 request because 1.1 implies that we have to be able
-        // to deal with e.g. "Transfer-Encoding: chunked" responses which we can't handle
-        // right now.
-        snprintf(tc->requestResponse, sizeof(tc->requestResponse), "GET %s HTTP/1.0\r\n"
-                                                                   "Host: %s\r\n"
-                                                                   "User-Agent: %s\r\n"
-                                                                   "Connection: close\r\n"
-                                                                   "Accept: */*\r\n"
-                                                                   "\r\n", tc->serverPath, serverHost, yamuseragent);
+          // now we build the HTTP request we send out to the HTTP
+          // server
+          if(noproxy == TRUE)
+          {
+            snprintf(tc->serverPath, sizeof(tc->serverPath), "/%s", path);
+            serverHost = tc->host;
+          }
+          else if((port = strchr(tc->url, ':')) != NULL)
+          {
+            *port++ = '\0';
 
-        SHOWSTRING(DBF_NET, tc->requestResponse);
+            snprintf(tc->serverPath, sizeof(tc->serverPath), "http://%s:%s/%s", tc->url, port, path);
+            serverHost = tc->url;
+          }
+          else
+          {
+            snprintf(tc->serverPath, sizeof(tc->serverPath), "http://%s/%s", tc->url, path);
+            serverHost = tc->url;
+          }
 
-        // send out the httpRequest
-        if(SendLineToHost(tc->connection, tc->requestResponse) > 0)
-        {
-          char *p;
-          int len;
-
-          // now we read out the very first line to see if the
-          // response code matches and is fine
-          len = ReceiveLineFromHost(tc->connection, tc->requestResponse, sizeof(tc->requestResponse));
+          // construct the HTTP request
+          // we send a HTTP/1.0 request because 1.1 implies that we have to be able
+          // to deal with e.g. "Transfer-Encoding: chunked" responses which we can't handle
+          // right now.
+          snprintf(tc->requestResponse, sizeof(tc->requestResponse), "GET %s HTTP/1.0\r\n"
+                                                                     "Host: %s\r\n"
+                                                                     "User-Agent: %s\r\n"
+                                                                     "Connection: close\r\n"
+                                                                     "Accept: */*\r\n"
+                                                                     "\r\n", tc->serverPath, serverHost, yamuseragent);
 
           SHOWSTRING(DBF_NET, tc->requestResponse);
 
-          // check the server response
-          if(len > 0 && strnicmp(tc->requestResponse, "HTTP/", 5) == 0 &&
-             (p = strchr(tc->requestResponse, ' ')) != NULL && atoi(TrimStart(p)) == 200)
+          // send out the httpRequest
+          PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_HTTP_SENDING_REQUEST));
+          if(SendLineToHost(tc->connection, tc->requestResponse) > 0)
           {
-            // we can request all further lines from our socket
-            // until we reach the entity body
-            while(tc->connection->error == CONNECTERR_NO_ERROR &&
-                  (len = ReceiveLineFromHost(tc->connection, tc->requestResponse, sizeof(tc->requestResponse))) > 0)
+            char *p;
+            int len;
+
+            // now we read out the very first line to see if the
+            // response code matches and is fine
+            PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_HTTP_WAITING_FOR_ANSWER));
+            len = ReceiveLineFromHost(tc->connection, tc->requestResponse, sizeof(tc->requestResponse));
+
+            SHOWSTRING(DBF_NET, tc->requestResponse);
+
+            // check the server response
+            if(len > 0 && strnicmp(tc->requestResponse, "HTTP/", 5) == 0 &&
+               (p = strchr(tc->requestResponse, ' ')) != NULL && atoi(TrimStart(p)) == 200)
             {
-              SHOWSTRING(DBF_NET, tc->requestResponse);
+              LONG contentLength = 0;
 
-              // we scan for the end of the
-              // response header by searching for the first '\r\n'
-              // line
-              if(strcmp(tc->requestResponse, "\r\n") == 0)
+              PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_HTTP_RECEIVING_DATA));
+
+              // we can request all further lines from our socket
+              // until we reach the entity body
+              while(tc->connection->error == CONNECTERR_NO_ERROR &&
+                    (len = ReceiveLineFromHost(tc->connection, tc->requestResponse, sizeof(tc->requestResponse))) > 0)
               {
-                FILE *out;
+                SHOWSTRING(DBF_NET, tc->requestResponse);
 
-                // prepare the output file.
-                if((out = fopen(filename, "w")) != NULL)
+                // we scan for the end of the
+                // response header by searching for the first '\r\n'
+                // line
+                if(strnicmp(tc->requestResponse, "Content-Length:", 15) == 0)
                 {
-                  LONG received = -1;
+                  contentLength = atoi(&tc->requestResponse[15]);
+                }
+                else if(strcmp(tc->requestResponse, "\r\n") == 0)
+                {
+                  FILE *out;
 
-                  setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
-
-                  // we seem to have reached the entity body, so
-                  // from here we retrieve everything we can get and
-                  // immediately write it out to a file. that's it :)
-                  while(tc->connection->error == CONNECTERR_NO_ERROR &&
-                        (len = ReceiveLineFromHost(tc->connection, tc->requestResponse, sizeof(tc->requestResponse))) > 0)
+                  // prepare the output file.
+                  if((out = fopen(filename, "w")) != NULL)
                   {
-                    if(fwrite(tc->requestResponse, len, 1, out) != 1)
+                    LONG received = -1;
+
+                    setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+
+                    PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, 1, contentLength);
+                    PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, 0, 1, contentLength, tr(MSG_HTTP_RECEIVING_DATA));
+
+                    // we seem to have reached the entity body, so
+                    // from here we retrieve everything we can get and
+                    // immediately write it out to a file. that's it :)
+                    while(tc->connection->error == CONNECTERR_NO_ERROR &&
+                          (len = ReceiveLineFromHost(tc->connection, tc->requestResponse, sizeof(tc->requestResponse))) > 0)
                     {
-                      received = -1; // signal an error!
-                      break;
+                      PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, len, tr(MSG_TR_Downloading));
+
+                      if(fwrite(tc->requestResponse, len, 1, out) != 1)
+                      {
+                        received = -1; // signal an error!
+                        break;
+                      }
+
+                      // forget the initial value and sum up all further sizes
+                      if(received == -1)
+                        received = len;
+                      else
+                        received += len;
                     }
 
-                    // forget the initial value and sum up all further sizes
-                    if(received == -1)
-                      received = len;
-                    else
-                      received += len;
+                    D(DBF_NET, "received %ld bytes", received);
+
+                    PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_HTTP_RECEIVING_DATA));
+
+                    // check if we retrieved anything
+                    if(tc->connection->error == CONNECTERR_NO_ERROR && received >= 0)
+                      success = TRUE;
+
+                    PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
+
+                    fclose(out);
                   }
+                  else
+                    ER_NewError(tr(MSG_ER_CantCreateFile), filename);
 
-                  D(DBF_NET, "received %ld bytes", received);
-
-                  // check if we retrieved anything
-                  if(tc->connection->error == CONNECTERR_NO_ERROR && received >= 0)
-                    success = TRUE;
-
-                  fclose(out);
+                  break;
                 }
-                else
-                  ER_NewError(tr(MSG_ER_CantCreateFile), filename);
-
-                break;
               }
             }
+            else
+              ER_NewError(tr(MSG_ER_DocNotFound), path);
           }
           else
-            ER_NewError(tr(MSG_ER_DocNotFound), path);
+            ER_NewError(tr(MSG_ER_SendHTTP));
         }
         else
-          ER_NewError(tr(MSG_ER_SendHTTP));
-      }
-      else
-        ER_NewError(tr(MSG_ER_ConnectHTTP), tc->host);
+          ER_NewError(tr(MSG_ER_ConnectHTTP), tc->host);
 
-      DisconnectFromHost(tc->connection);
+        PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_HTTP_DISCONNECTING_FROM_SERVER));
+        DisconnectFromHost(tc->connection);
+
+        PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DeleteTransferGroup, tc->transferGroup);
+      }
 
       // update the AppIcon after closing down the connection
       PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);

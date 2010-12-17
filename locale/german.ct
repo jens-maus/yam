@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.14 (17.11.2010)
+## version $VER: YAM.catalog 7.15 (1.12.2010)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8572,4 +8572,22 @@ Post holen
 ;
 MSG_WR_SECURITYREQ_GADS
 *_Unbehandelt|_Signiert|_Verschlüsselt|S_igniert&Verschl._Abbrechen
+;
+MSG_HTTP_CONNECTING_TO_SERVER
+Baue Verbindung zum Server auf...
+;
+MSG_HTTP_SENDING_REQUEST
+Sende HTTP-Anforderung...
+;
+MSG_HTTP_WAITING_FOR_ANSWER
+Warte auf Antwort des Servers...
+;
+MSG_HTTP_RECEIVING_DATA
+Empfange Daten...
+;
+MSG_HTTP_DISCONNECTING_FROM_SERVER
+Trenne Verbindung zum Server...
+;
+MSG_SHOW_TRANSFER_WINDOW
+Zeige laufende Übertragungen...
 ;
