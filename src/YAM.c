@@ -2742,7 +2742,7 @@ int main(int argc, char **argv)
 
         // handle thread messages
         if(isFlagSet(signals, threadsig))
-          HandleThreads();
+          HandleThreads(TRUE);
 
         // check for a write window file notification signal
         if(isFlagSet(signals, writeWinNotifySig))
@@ -2884,7 +2884,7 @@ void MiniMainLoop(void)
 
       // handle thread messages
       if(isFlagSet(signals, threadSig))
-        HandleThreads();
+        HandleThreads(TRUE);
 
       if(isFlagSet(signals, wakeupSig))
       {
@@ -2924,7 +2924,7 @@ void MicroMainLoop(void)
 
   // handle the possibly received signals
   CheckMethodStack();
-  HandleThreads();
+  HandleThreads(TRUE);
 
   // let the application handle some stuff
   DoMethod(G->App, MUIM_Application_NewInput, &signals);

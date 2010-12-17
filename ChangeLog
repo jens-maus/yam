@@ -10,6 +10,12 @@ $URL$
   * YAM_RE.c, mui/ReadMailGroup.c: possible parsing errors while checking a mail
     for spam content will not show any error anymore. Normal reading of the mail
     however will still show any parsing error.
+  * Threads.c: in case YAM had to create additional threads while another thread
+    finished its work at the same time the replied working message would be
+    treated as the replied startup message. Eventually the true replied startup
+    message would be treated as a normal message and be freed, which must not be
+    done for a non-allocated static message. The result was a crash. Many thanks
+    to Simone Bevilacqua for the hint.
 
 2010-12-14 Thore Böckelmann <tboeckel@gmx.de>
 

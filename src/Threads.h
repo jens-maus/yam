@@ -75,7 +75,7 @@ enum ThreadAction
 /*** Thread system init/cleanup functions ***/
 BOOL InitThreads(void);
 void CleanupThreads(void);
-void HandleThreads(void);
+void HandleThreads(BOOL handleAll);
 void AbortWorkingThreads(void);
 void PurgeIdleThreads(const BOOL purgeAll);
 BOOL VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...);

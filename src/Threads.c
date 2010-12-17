@@ -479,7 +479,7 @@ void AbortWorkingThreads(void)
     while(thread->working == TRUE);
 
     // perform thread clean up stuff
-    HandleThreads();
+    HandleThreads(TRUE);
   }
 
   LEAVE();
@@ -558,6 +558,8 @@ static struct Thread *CreateThread(void)
                                               #endif
                                               TAG_DONE)) != NULL)
       {
+        struct Message *msg;
+
         // prepare the startup message
         memset(&startupMessage, 0, sizeof(startupMessage));
         startupMessage.msg.mn_ReplyPort = G->threadPort;
@@ -566,27 +568,46 @@ static struct Thread *CreateThread(void)
         startupMessage.threadNode = threadNode;
         startupMessage.thread = thread;
 
-        // send out the startup message and wait for a reply
+        // send out the startup message 
         D(DBF_THREAD, "thread 0x%08lx '%s' started, sending startup message", thread, thread->name);
         PutMsg(&thread->process->pr_MsgPort, (struct Message *)&startupMessage);
-        Remove((struct Node *)WaitPort(G->threadPort));
 
-        // check wether the thread function returned something valid
-        if(startupMessage.result != 0)
+        // now wait for a reply
+        do
         {
-          // increase the thread counter
-          G->numberOfThreads++;
-          G->threadCounter++;
+          msg = WaitPort(G->threadPort);
 
-          AddTail((struct List *)&G->idleThreads, (struct Node *)threadNode);
+          // make sure we got our startup message back
+          if(&startupMessage == (struct ThreadMessage *)msg)
+          {
+            // WaitPort() doesn't remove the message, we have to do that ourself
+            Remove((struct Node *)msg);
 
-          result = thread;
+            // check wether the thread function returned something valid
+            if(startupMessage.result != 0)
+            {
+              // increase the thread counter
+              G->numberOfThreads++;
+              G->threadCounter++;
+
+              AddTail((struct List *)&G->idleThreads, (struct Node *)threadNode);
+
+              result = thread;
+            }
+            else
+            {
+              E(DBF_THREAD, "thread 0x%08lx '%s' failed to initialize", thread, thread->name);
+              ShutdownThread(threadNode);
+            }
+          }
+          else
+          {
+            // this was not the startup message
+            // handle the message of a different thread
+            HandleThreads(FALSE);
+          }
         }
-        else
-        {
-          E(DBF_THREAD, "thread 0x%08lx '%s' failed to initialize", thread, thread->name);
-          ShutdownThread(threadNode);
-        }
+        while(msg != NULL);
       }
 
       if(result == NULL)
@@ -696,7 +717,7 @@ void CleanupThreads(void)
 ///
 /// HandleThreads
 // handle a message returned by one of the threads
-void HandleThreads(void)
+void HandleThreads(BOOL handleAll)
 {
   struct Message *msg;
 
@@ -708,26 +729,34 @@ void HandleThreads(void)
 
     D(DBF_THREAD, "thread '%s' finished action %ld, result %ld", tmsg->thread->name, tmsg->action, tmsg->result);
 
-    if(tmsg->object != NULL)
+    // a little paranoia check, we must not free the startup message
+    if(tmsg->action != TA_Startup)
     {
-      D(DBF_THREAD, "sending MUIM_ThreadFinished to object %08lx", tmsg->object);
-      PushMethodOnStackWait(tmsg->object, 4, MUIM_ThreadFinished, tmsg->action, tmsg->result, tmsg->actionTags);
+      if(tmsg->object != NULL)
+      {
+        D(DBF_THREAD, "sending MUIM_ThreadFinished to object %08lx", tmsg->object);
+        PushMethodOnStackWait(tmsg->object, 4, MUIM_ThreadFinished, tmsg->action, tmsg->result, tmsg->actionTags);
+      }
+
+      // remove the thread from the working list and put it back into the idle list
+      Remove((struct Node *)tmsg->threadNode);
+      tmsg->threadNode->thread->working = FALSE;
+      AddTail((struct List *)&G->idleThreads, (struct Node *)tmsg->threadNode);
+
+      // change the thread's priority back to zero
+      if(tmsg->thread->priority != 0)
+        SetTaskPri((struct Task *)tmsg->thread->process, 0);
+
+      // free the parameters
+      FreeThreadTags(tmsg->actionTags);
+
+      // finally dispose the message
+      FreeSysObject(ASOT_MESSAGE, tmsg);
     }
 
-    // remove the thread from the working list and put it back into the idle list
-    Remove((struct Node *)tmsg->threadNode);
-    tmsg->threadNode->thread->working = FALSE;
-    AddTail((struct List *)&G->idleThreads, (struct Node *)tmsg->threadNode);
-
-    // change the thread's priority back to zero
-    if(tmsg->thread->priority != 0)
-      SetTaskPri((struct Task *)tmsg->thread->process, 0);
-
-    // free the parameters
-    FreeThreadTags(tmsg->actionTags);
-
-    // finally dispose the message
-    FreeSysObject(ASOT_MESSAGE, tmsg);
+    // bail out if we are told to handle one message only
+    if(handleAll == FALSE)
+      break;
   }
 
   LEAVE();
