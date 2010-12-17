@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.6 (23.11.2010)
+## version $VER: YAM.catalog 7.6 (18.12.2010)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5450 2010-11-17
+; based on YAM.cd 5545 2010-12-17
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -10006,4 +10006,28 @@ Ricevi la posta
 MSG_WR_SECURITYREQ_GADS
 *Se_mplice|_Firmata|_Criptata|Firmata _e criptata|An_onima|_Annulla
 ; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Anonymous|_Cancel
+;
+MSG_HTTP_CONNECTING_TO_SERVER
+Connessione al server...
+; Connecting to server...
+;
+MSG_HTTP_SENDING_REQUEST
+Invio richiesta HTTP...
+; Sending HTTP request...
+;
+MSG_HTTP_WAITING_FOR_ANSWER
+In attesa della risposta del server...
+; Waiting for server's answer...
+;
+MSG_HTTP_RECEIVING_DATA
+Ricezione dati...
+; Receiving data...
+;
+MSG_HTTP_DISCONNECTING_FROM_SERVER
+Disconnessione dal server...
+; Disconnecting from server...
+;
+MSG_SHOW_TRANSFER_WINDOW
+Trasferimenti in corso...
+; Show transfers in progress...
 ;

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-17 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2010-12-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c, mui/ReadMailGroup.c: possible parsing errors while checking a mail
