@@ -575,7 +575,10 @@ static struct Thread *CreateThread(void)
         // now wait for a reply
         do
         {
+          D(DBF_THREAD, "waiting for startup message to be replied");
+
           msg = WaitPort(G->threadPort);
+          D(DBF_THREAD, "got message %08lx, expected %08lx", msg, &startupMessage);
 
           // make sure we got our startup message back
           if(&startupMessage == (struct ThreadMessage *)msg)
@@ -593,6 +596,9 @@ static struct Thread *CreateThread(void)
               AddTail((struct List *)&G->idleThreads, (struct Node *)threadNode);
 
               result = thread;
+
+              // we got the message back, get out of here
+              break;
             }
             else
             {
