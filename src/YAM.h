@@ -75,7 +75,6 @@ enum GlobalDispatcherJob
   ID_CLOSEALL=1000,
   ID_RESTART,
   ID_RESTART_FORCE,
-  ID_ICONIFY,
   ID_LOGIN
 };
 

@@ -664,6 +664,12 @@ OVERLOAD(OM_NEW)
     }
 
     LoadEMailCache(data->EMailCacheName, &data->EMailCache);
+
+    if(GetTagData(ATTR(Hidden), FALSE, inittags(msg)) != FALSE)
+      set(obj, MUIA_Application_Iconified, TRUE);
+
+    DoMethod(obj, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Self, 1, METHOD(PopUp));
+    DoMethod(obj, MUIM_Notify, MUIA_Application_Iconified, TRUE, MUIV_Notify_Self, 1, METHOD(Iconify));
   }
 
   return (IPTR)obj;
@@ -1207,3 +1213,14 @@ DECLARE(PopUp)
 }
 
 ///
+/// DECLARE(Iconify)
+// hide ourself
+DECLARE(Iconify)
+{
+  MA_UpdateIndexes();
+
+  return 0;
+}
+
+///
+

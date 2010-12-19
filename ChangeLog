@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, mui/YAMApplication.c: moved the notification stuff to the application
+    subclass.
+
 2010-12-17 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

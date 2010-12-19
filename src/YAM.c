@@ -1528,14 +1528,6 @@ static int Root_GlobalDispatcher(ULONG app_input)
       ret = 2;
     }
     break;
-
-    // the application window was iconfified (either
-    // by a user or automatically)
-    case ID_ICONIFY:
-    {
-      MA_UpdateIndexes();
-    }
-    break;
   }
 
   return ret;
@@ -1554,14 +1546,10 @@ static BOOL Root_New(BOOL hidden)
   // MUI chokes if a single task application is created a second time while the first instance is not yet fully created
   ObtainSemaphore(&startupSemaphore->semaphore);
 
-  if((G->App = YAMApplicationObject, End) != NULL)
+  if((G->App = YAMApplicationObject,
+    MUIA_YAMApplication_Hidden, hidden,
+  End) != NULL)
   {
-    if(hidden == TRUE)
-      set(G->App, MUIA_Application_Iconified, TRUE);
-
-    DoMethod(G->App, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Application, 1, MUIM_YAMApplication_PopUp);
-    DoMethod(G->App, MUIM_Notify, MUIA_Application_Iconified, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_ICONIFY);
-
     // create the splash window object and return true if
     // everything worked out fine.
     if((G->SplashWinObject = SplashwindowObject, End) != NULL)
