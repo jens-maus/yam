@@ -968,28 +968,28 @@ void ARexxDispatch(struct RexxHost *host)
 BOOL SendToYAMInstance(char *rxcmd)
 {
   BOOL success = FALSE;
-  struct MsgPort *port;
+  struct MsgPort *replyPort;
 
   ENTER();
 
-  if((port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+  if((replyPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
   {
     struct RexxMsg *rxmsg;
 
-    if((rxmsg = CreateRexxMsg(port, NULL, NULL)) != NULL)
+    if((rxmsg = CreateRexxMsg(replyPort, NULL, NULL)) != NULL)
     {
       rxmsg->rm_Action = RXCOMM|RXFF_STRING|RXFF_NOIO;
 
       if((rxmsg->rm_Args[0] = (APTR)CreateArgstring(rxcmd, strlen(rxcmd))) != 0)
       {
-        struct MsgPort *port;
+        struct MsgPort *yamPort;
 
         // look up the ARexx port of the already running instance
         Forbid();
 
-        if((port = FindPort("YAM")) != NULL)
+        if((yamPort = FindPort("YAM")) != NULL)
         {
-          PutMsg(port, (struct Message *)rxmsg);
+          PutMsg(yamPort, (struct Message *)rxmsg);
 
           success = TRUE;
         }
@@ -1004,7 +1004,7 @@ BOOL SendToYAMInstance(char *rxcmd)
         DeleteRexxMsg(rxmsg);
     }
 
-    FreeSysObject(ASOT_PORT, port);
+    FreeSysObject(ASOT_PORT, replyPort);
   }
 
   RETURN(success);
