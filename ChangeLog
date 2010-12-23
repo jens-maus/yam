@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, mui/YAMApplication.c: moved the "MultipleYAM" variable check out of
+    the application class as it will be necessary to know the single task state
+    in case creating the application fails due to a double start.
+
 2010-12-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, mui/YAMApplication.c: moved the notification stuff to the application

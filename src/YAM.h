@@ -141,6 +141,7 @@ struct Global
   uint32                   applicationID;
   #endif
 
+  BOOL                     SingleTask;
   BOOL                     PGP5;
   BOOL                     AppIconQuiet;
   BOOL                     PGPPassVolatile;

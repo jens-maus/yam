@@ -576,8 +576,6 @@ OVERLOAD(OM_NEW)
 {
   char filebuf[SIZE_PATHFILE];
   char verbuf[CBD_TITLELEN];
-  BOOL singleTaskOnly = TRUE;
-  char var;
 
   // prepare a string pointer array with all the
   // names of the used classes within. This array is only usefull if MUI v20
@@ -591,11 +589,6 @@ OVERLOAD(OM_NEW)
                                          "TheBar.mcc",
                                          NULL
                                        };
-
-  // let us check if there is a "MultipleYAM" env variable and if
-  // so we set SingleTask to true
-  if(GetVar("MultipleYAM", &var, sizeof(var), 0) > -1)
-    singleTaskOnly = FALSE;
 
   // now we load the standard icons like (check.info, new.info etc)
   // but we also try to take care of different icon.library versions.
@@ -626,7 +619,6 @@ OVERLOAD(OM_NEW)
     MUIA_Application_Copyright,      yamcopyright,
     MUIA_Application_Description,    tr(MSG_APP_DESCRIPTION),
     MUIA_Application_UseRexx,        FALSE,
-    MUIA_Application_SingleTask,     singleTaskOnly,
     MUIA_Application_UsedClasses,    Classes,
     MUIA_Application_HelpFile,       "YAM.guide",
     MUIA_Application_DiskObject,     G->HideIcon,

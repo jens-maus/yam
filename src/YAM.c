@@ -1547,6 +1547,7 @@ static BOOL Root_New(BOOL hidden)
   ObtainSemaphore(&startupSemaphore->semaphore);
 
   if((G->App = YAMApplicationObject,
+    MUIA_Application_SingleTask, G->SingleTask,
     MUIA_YAMApplication_Hidden, hidden,
   End) != NULL)
   {
@@ -1858,6 +1859,7 @@ static void InitAfterLogin(void)
 //  Phase 1 of program initialization (before user logs in)
 static void InitBeforeLogin(BOOL hidden)
 {
+  char var;
   int i;
 
   ENTER();
@@ -1982,6 +1984,12 @@ static void InitBeforeLogin(BOOL hidden)
   D(DBF_STARTUP, "setup internal MUI classes...");
   if(YAM_SetupClasses() == FALSE)
     Abort(tr(MSG_ErrorClasses));
+
+  G->SingleTask = TRUE;
+  // let us check if there is a "MultipleYAM" env variable and if
+  // so we set SingleTask to true
+  if(GetVar("MultipleYAM", &var, sizeof(var), 0) > -1)
+    G->SingleTask = FALSE;
 
   // allocate the MUI root object and popup the progress/about window
   D(DBF_STARTUP, "creating root object...");
