@@ -14,6 +14,13 @@ $URL$
     new mail will now pass these options via ARexx to the already running
     instance. Before the first instance would just have popped up and the new
     mail options were completely ignored. This closes #236.
+  * YAM_UT.c: when closing a temp file which was never opened before YAM did
+    nevertheless try to delete this file which of course must fail. As a
+    consequence this file was treated as a zombie file furtheron. When all this
+    happened while YAM was shutting down adding the file to the zombie file list
+    caused a crash, because the timer which then got restarted had been deleted
+    already. Now only existing files will be treated as zombie files. This
+    closes #242.
 
 2010-12-19 Thore Böckelmann <tboeckel@gmx.de>
 

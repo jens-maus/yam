@@ -1500,9 +1500,12 @@ void CloseTempFile(struct TempFile *tf)
     if(tf->FP != NULL)
       fclose(tf->FP);
 
-    D(DBF_UTIL, "DeleteTempFile: %s", tf->Filename);
-    if(DeleteFile(tf->Filename) == 0)
-      AddZombieFile(tf->Filename);
+    if(FileExists(tf->Filename) == TRUE)
+    {
+      D(DBF_UTIL, "DeleteTempFile: '%s'", tf->Filename);
+      if(DeleteFile(tf->Filename) == 0)
+        AddZombieFile(tf->Filename);
+    }
 
     free(tf);
   }
