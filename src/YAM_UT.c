@@ -1383,25 +1383,29 @@ void FreeFileReqCache(struct FileReqCache *frc)
 //  add an orphaned file to the zombie file list
 void AddZombieFile(const char *fileName)
 {
-  struct ZombieFile *zombie;
-
   ENTER();
 
-  if((zombie = (struct ZombieFile *)AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*zombie),
-                                                                  ASONODE_Min, TRUE,
-                                                                  TAG_DONE)) != NULL)
+  // make sure the file exists, otherwise we don't need to do anything
+  if(FileExists(fileName) == TRUE)
   {
-    if((zombie->fileName = strdup(fileName)) != NULL)
+    struct ZombieFile *zombie;
+
+    if((zombie = (struct ZombieFile *)AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*zombie),
+                                                                    ASONODE_Min, TRUE,
+                                                                    TAG_DONE)) != NULL)
     {
-      AddTail((struct List *)&G->zombieFileList, (struct Node *)&zombie->node);
+      if((zombie->fileName = strdup(fileName)) != NULL)
+      {
+        AddTail((struct List *)&G->zombieFileList, (struct Node *)&zombie->node);
 
-      D(DBF_UTIL, "added file '%s' to the zombie list", fileName);
+        D(DBF_UTIL, "added file '%s' to the zombie list", fileName);
 
-      // trigger the retry mechanism in 5 minutes
-      RestartTimer(TIMER_DELETEZOMBIEFILES, 5 * 60, 0);
+        // trigger the retry mechanism in 5 minutes
+        RestartTimer(TIMER_DELETEZOMBIEFILES, 5 * 60, 0);
+      }
+      else
+        free(zombie);
     }
-    else
-      free(zombie);
   }
 
   LEAVE();
@@ -1500,12 +1504,9 @@ void CloseTempFile(struct TempFile *tf)
     if(tf->FP != NULL)
       fclose(tf->FP);
 
-    if(FileExists(tf->Filename) == TRUE)
-    {
-      D(DBF_UTIL, "DeleteTempFile: '%s'", tf->Filename);
-      if(DeleteFile(tf->Filename) == 0)
-        AddZombieFile(tf->Filename);
-    }
+    D(DBF_UTIL, "DeleteTempFile: '%s'", tf->Filename);
+    if(DeleteFile(tf->Filename) == 0)
+      AddZombieFile(tf->Filename);
 
     free(tf);
   }

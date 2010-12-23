@@ -314,11 +314,8 @@ void DeleteUIDLfile(const struct MailServerNode *msn)
 
   BuildUIDLFilename(msn, uidlPath, sizeof(uidlPath));
 
-  if(FileExists(uidlPath) == TRUE)
-  {
-    if(DeleteFile(uidlPath) == 0)
-      AddZombieFile(uidlPath);
-  }
+  if(DeleteFile(uidlPath) == 0)
+    AddZombieFile(uidlPath);
 
   LEAVE();
 }
