@@ -989,6 +989,7 @@ BOOL SendToYAMInstance(char *rxcmd)
 
         if((yamPort = FindPort("YAM")) != NULL)
         {
+          // now send the message
           PutMsg(yamPort, (struct Message *)rxmsg);
 
           success = TRUE;
@@ -996,12 +997,14 @@ BOOL SendToYAMInstance(char *rxcmd)
 
         Permit();
 
-        if(success == FALSE)
-          DeleteArgstring((APTR)rxmsg->rm_Args[0]);
+        // if everything went ok we have to wait for the reply before we may continue
+        if(success == TRUE)
+          WaitPort(replyPort);
+
+        DeleteArgstring((APTR)rxmsg->rm_Args[0]);
       }
 
-      if(success == FALSE)
-        DeleteRexxMsg(rxmsg);
+      DeleteRexxMsg(rxmsg);
     }
 
     FreeSysObject(ASOT_PORT, replyPort);
