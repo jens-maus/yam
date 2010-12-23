@@ -963,3 +963,52 @@ void ARexxDispatch(struct RexxHost *host)
 }
 
 ///
+/// SendToYAMInstance
+// send an ARexx command to an already running instance of YAM
+BOOL SendToYAMInstance(char *rxcmd)
+{
+  BOOL success = FALSE;
+  struct MsgPort *port;
+
+  ENTER();
+
+  if((port = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+  {
+    struct RexxMsg *rxmsg;
+
+    if((rxmsg = CreateRexxMsg(port, NULL, NULL)) != NULL)
+    {
+      rxmsg->rm_Action = RXCOMM|RXFF_STRING|RXFF_NOIO;
+
+      if((rxmsg->rm_Args[0] = (APTR)CreateArgstring(rxcmd, strlen(rxcmd))) != 0)
+      {
+        struct MsgPort *port;
+
+        // look up the ARexx port of the already running instance
+        Forbid();
+
+        if((port = FindPort("YAM")) != NULL)
+        {
+          PutMsg(port, (struct Message *)rxmsg);
+
+          success = TRUE;
+        }
+
+        Permit();
+
+        if(success == FALSE)
+          DeleteArgstring((APTR)rxmsg->rm_Args[0]);
+      }
+
+      if(success == FALSE)
+        DeleteRexxMsg(rxmsg);
+    }
+
+    FreeSysObject(ASOT_PORT, port);
+  }
+
+  RETURN(success);
+  return success;
+}
+
+///

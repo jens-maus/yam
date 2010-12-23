@@ -10,6 +10,10 @@ $URL$
   * YAM.c, mui/YAMApplication.c: moved the "MultipleYAM" variable check out of
     the application class as it will be necessary to know the single task state
     in case creating the application fails due to a double start.
+  * YAM.c, Rexx.c: starting YAM a second time with startup options to compose a
+    new mail will now pass these options via ARexx to the already running
+    instance. Before the first instance would just have popped up and the new
+    mail options were completely ignored. This closes #236.
 
 2010-12-19 Thore Böckelmann <tboeckel@gmx.de>
 

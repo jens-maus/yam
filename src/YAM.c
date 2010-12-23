@@ -1565,7 +1565,57 @@ static BOOL Root_New(BOOL hidden)
       E(DBF_STARTUP, "couldn't create splash window object!");
   }
   else
-    E(DBF_STARTUP, "couldnn't create root object!");
+  {
+    E(DBF_STARTUP, "couldn't create root object!");
+
+    // in case only one instance of YAM is allowed we try to send possible startup
+    // actions (i.e. write a new mail) to the first instance
+    if(G->SingleTask == TRUE)
+    {
+      if(args.mailto != NULL || args.letter != NULL || args.subject != NULL || args.attach != NULL)
+      {
+        char command[SIZE_LINE];
+
+        // start composing a new mail
+        SendToYAMInstance((char *)"MAILWRITE");
+
+        // pass all given parameters to the first instance
+        if(args.mailto != NULL)
+        {
+          snprintf(command, sizeof(command), "WRITETO \"%s\"", args.mailto);
+          SendToYAMInstance(command);
+        }
+
+        if(args.subject != NULL)
+        {
+          snprintf(command, sizeof(command), "WRITESUBJECT \"%s\"", args.subject);
+          SendToYAMInstance(command);
+        }
+
+        if(args.letter != NULL)
+        {
+          snprintf(command, sizeof(command), "WRITELETTER \"%s\"", args.letter);
+          SendToYAMInstance(command);
+        }
+
+        if(args.attach != NULL)
+        {
+          char **sptr;
+
+          for(sptr = args.attach; *sptr; sptr++)
+          {
+            LONG size;
+
+            if(ObtainFileInfo(*sptr, FI_SIZE, &size) == TRUE && size > 0)
+            {
+              snprintf(command, sizeof(command), "WRITEATTACH \"%s\"", *sptr);
+              SendToYAMInstance(command);
+            }
+          }
+        }
+      }
+    }
+  }
 
   // now a second instance may continue
   ReleaseSemaphore(&startupSemaphore->semaphore);

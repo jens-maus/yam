@@ -51,6 +51,7 @@ void FreeRexxCommand(struct RexxMsg *rxmsg);
 void ReplyRexxCommand(struct RexxMsg *rxmsg, long prim, long sec, char *res);
 struct RexxMsg *SendRexxCommand(struct RexxHost *host, char *buff, BPTR fh);
 struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport);
+BOOL SendToYAMInstance(char *rxcmd);
 
 enum RexxAction
 {
