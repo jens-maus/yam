@@ -296,8 +296,8 @@ static BOOL isDecimalNumber(const char *word)
 static BOOL isASCII(const char *word)
 {
   BOOL isAsc = TRUE;
-  const char *p = word;
-  char c;
+  const unsigned char *p = (const unsigned char *)word;
+  unsigned char c;
 
   ENTER();
 
