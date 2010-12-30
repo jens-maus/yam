@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-12-30 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
 2010-12-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, mui/YAMApplication.c: moved the "MultipleYAM" variable check out of
