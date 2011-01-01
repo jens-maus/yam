@@ -517,14 +517,16 @@ HOOKPROTONHNONP(CO_GetPOP3Entry, void)
 
   if(msn != NULL)
   {
-    nnset(gui->ST_POPACCOUNT, MUIA_String_Contents, msn->account);
-    nnset(gui->ST_POPHOST,    MUIA_String_Contents, msn->hostname);
-    nnset(gui->ST_POPPORT,    MUIA_String_Integer,  msn->port);
-    nnset(gui->ST_POPUSERID,  MUIA_String_Contents, msn->username);
-    nnset(gui->ST_PASSWD,     MUIA_String_Contents, msn->password);
-    nnset(gui->CH_POPENABLED, MUIA_Selected,        isServerActive(msn));
-    nnset(gui->CH_USEAPOP,    MUIA_Selected,        hasServerAPOP(msn));
-    nnset(gui->CH_DELETE,     MUIA_Selected,        hasServerPurge(msn));
+    nnset(gui->ST_POPACCOUNT,    MUIA_String_Contents, msn->account);
+    nnset(gui->ST_POPHOST,       MUIA_String_Contents, msn->hostname);
+    nnset(gui->ST_POPPORT,       MUIA_String_Integer,  msn->port);
+    nnset(gui->ST_POPUSERID,     MUIA_String_Contents, msn->username);
+    nnset(gui->ST_PASSWD,        MUIA_String_Contents, msn->password);
+    nnset(gui->CH_POPENABLED,    MUIA_Selected,        isServerActive(msn));
+    nnset(gui->CH_USEAPOP,       MUIA_Selected,        hasServerAPOP(msn));
+    nnset(gui->CH_AVOIDDUP,      MUIA_Selected,        hasServerAvoidDuplicates(msn));
+    nnset(gui->CH_DELETE,        MUIA_Selected,        hasServerPurge(msn));
+    nnset(gui->CY_PRESELECTION,  MUIA_Cycle_Active,    msn->preselection);
 
     if(hasServerTLS(msn))
       nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 1);
@@ -565,6 +567,7 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
       GetMUIString(msn->hostname, gui->ST_POPHOST,    sizeof(msn->hostname));
       GetMUIString(msn->username, gui->ST_POPUSERID,  sizeof(msn->username));
       GetMUIString(msn->password, gui->ST_PASSWD,     sizeof(msn->password));
+      msn->preselection = GetMUICycle(gui->CY_PRESELECTION);
 
       if(GetMUICheck(gui->CH_POPENABLED) == TRUE)
         SET_FLAG(msn->flags, MSF_ACTIVE);
@@ -575,6 +578,11 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
         SET_FLAG(msn->flags, MSF_APOP);
       else
         CLEAR_FLAG(msn->flags, MSF_APOP);
+
+      if(GetMUICheck(gui->CH_AVOIDDUP) == TRUE)
+        SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+      else
+        CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
 
       if(GetMUICheck(gui->CH_DELETE) == TRUE)
         SET_FLAG(msn->flags, MSF_PURGEMESSGAES);
@@ -788,11 +796,11 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_NewMail || page == cp_AllPages)
   {
-    co->AvoidDuplicates = FALSE;
+    //co->AvoidDuplicates = FALSE;
     co->TransferWindow = TWM_AUTO;
     co->UpdateStatus = TRUE;
     co->DownloadLarge = TRUE;
-    co->PreSelection = PSM_LARGE;
+    //co->PreSelection = PSM_LARGE;
     co->WarnSize = 1024; // 1MB warn size
     co->CheckMailDelay = 0;
     co->NotifyType = 1;
@@ -1269,12 +1277,12 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->DSListFormat                    == c2->DSListFormat &&
      c1->SigSepLine                      == c2->SigSepLine &&
      c1->TransferWindow                  == c2->TransferWindow &&
-     c1->PreSelection                    == c2->PreSelection &&
+     //c1->PreSelection                    == c2->PreSelection &&
      c1->FolderInfoMode                  == c2->FolderInfoMode &&
      c1->ForwardMode                     == c2->ForwardMode &&
      c1->InfoBar                         == c2->InfoBar &&
      c1->DaylightSaving                  == c2->DaylightSaving &&
-     c1->AvoidDuplicates                 == c2->AvoidDuplicates &&
+     //c1->AvoidDuplicates                 == c2->AvoidDuplicates &&
      c1->UpdateStatus                    == c2->UpdateStatus &&
      c1->DownloadLarge                   == c2->DownloadLarge &&
      c1->DisplayAllTexts                 == c2->DisplayAllTexts &&

@@ -57,21 +57,23 @@ enum MailServerType { MST_UNKNOWN=0, MST_SMTP, MST_POP3, MST_IMAP };
 #define MSF_AUTH_PLAIN          (1<<11) // [SMTP]      : SMTP AUTH method = PLAIN
 #define MSF_ALLOW_8BIT          (1<<12) // [SMTP]      : Server allows 8bit characters
 #define MSF_IN_USE              (1<<13) // [POP3/SMTP] : server is currently up/downloading mails
+#define MSF_AVOID_DUPLICATES    (1<<14) // [POP3]      : download mail once only
 
-#define isServerActive(v)       (isFlagSet((v)->flags, MSF_ACTIVE))
-#define hasServerAPOP(v)        (isFlagSet((v)->flags, MSF_APOP))
-#define hasServerPurge(v)       (isFlagSet((v)->flags, MSF_PURGEMESSGAES))
-#define hasServerCheckedUIDL(v) (isFlagSet((v)->flags, MSF_UIDLCHECKED))
-#define hasServerSSL(v)         (isFlagSet((v)->flags, MSF_SEC_SSL))
-#define hasServerTLS(v)         (isFlagSet((v)->flags, MSF_SEC_TLS))
-#define hasServerAuth(v)        (isFlagSet((v)->flags, MSF_AUTH))
-#define hasServerAuth_AUTO(v)   (isFlagSet((v)->flags, MSF_AUTH_AUTO))
-#define hasServerAuth_DIGEST(v) (isFlagSet((v)->flags, MSF_AUTH_DIGEST))
-#define hasServerAuth_CRAM(v)   (isFlagSet((v)->flags, MSF_AUTH_CRAM))
-#define hasServerAuth_LOGIN(v)  (isFlagSet((v)->flags, MSF_AUTH_LOGIN))
-#define hasServerAuth_PLAIN(v)  (isFlagSet((v)->flags, MSF_AUTH_PLAIN))
-#define hasServer8bit(v)        (isFlagSet((v)->flags, MSF_ALLOW_8BIT))
-#define hasServerInUse(v)       (isFlagSet((v)->flags, MSF_IN_USE))
+#define isServerActive(v)           (isFlagSet((v)->flags, MSF_ACTIVE))
+#define hasServerAPOP(v)            (isFlagSet((v)->flags, MSF_APOP))
+#define hasServerPurge(v)           (isFlagSet((v)->flags, MSF_PURGEMESSGAES))
+#define hasServerCheckedUIDL(v)     (isFlagSet((v)->flags, MSF_UIDLCHECKED))
+#define hasServerSSL(v)             (isFlagSet((v)->flags, MSF_SEC_SSL))
+#define hasServerTLS(v)             (isFlagSet((v)->flags, MSF_SEC_TLS))
+#define hasServerAuth(v)            (isFlagSet((v)->flags, MSF_AUTH))
+#define hasServerAuth_AUTO(v)       (isFlagSet((v)->flags, MSF_AUTH_AUTO))
+#define hasServerAuth_DIGEST(v)     (isFlagSet((v)->flags, MSF_AUTH_DIGEST))
+#define hasServerAuth_CRAM(v)       (isFlagSet((v)->flags, MSF_AUTH_CRAM))
+#define hasServerAuth_LOGIN(v)      (isFlagSet((v)->flags, MSF_AUTH_LOGIN))
+#define hasServerAuth_PLAIN(v)      (isFlagSet((v)->flags, MSF_AUTH_PLAIN))
+#define hasServer8bit(v)            (isFlagSet((v)->flags, MSF_ALLOW_8BIT))
+#define hasServerInUse(v)           (isFlagSet((v)->flags, MSF_IN_USE))
+#define hasServerAvoidDuplicates(v) (isFlagSet((v)->flags, MSF_AVOID_DUPLICATES))
 
 #define MSF2SMTPSecMethod(v)    (hasServerTLS(v) ? 1 : (hasServerSSL(v) ? 2 : 0))
 #define MSF2POP3SecMethod(v)    (hasServerSSL(v) ? 1 : (hasServerTLS(v) ? 2 : 0))
@@ -87,6 +89,14 @@ enum MailServerType { MST_UNKNOWN=0, MST_SMTP, MST_POP3, MST_IMAP };
                                 ((v) == 2 ? MSF_AUTH_CRAM   : \
                                 ((v) == 3 ? MSF_AUTH_LOGIN  : \
                                 ((v) == 4 ? MSF_AUTH_PLAIN  : 0)))))
+
+enum PreselectionMode
+{
+  PSM_NEVER=0,
+  PSM_LARGE,
+  PSM_ALWAYS,
+  PSM_ALWAYSLARGE
+};
 
 // mail server data structure
 struct MailServerNode
@@ -109,6 +119,7 @@ struct MailServerNode
   unsigned int smtpFlags;                // [MST_SMTP]: runtime SMTP flags found during connection
 
   struct MailList *downloadedMails;      // [MST_POP3]: list of downloaded mails
+  enum PreselectionMode preselection;    // [MST_POP3]: preselection mode of mails
 };
 
 // public functions

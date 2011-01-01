@@ -2186,7 +2186,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       {
         // perform the configured startup actions for receiving and sending mails
         if(C->GetOnStartup == TRUE)
-          MA_PopNow(-1, (C->PreSelection == PSM_NEVER || hide == TRUE) ? RECEIVEF_STARTUP : RECEIVEF_USER, NULL);
+          MA_PopNow(-1, (/*C->PreSelection == PSM_NEVER ||*/ hide == TRUE) ? RECEIVEF_STARTUP : RECEIVEF_USER, NULL);
 
         if(C->SendOnStartup == TRUE)
           SendWaitingMail(hide);

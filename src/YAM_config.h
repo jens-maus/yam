@@ -85,7 +85,7 @@ struct CO_GUIData
   Object *RA_POP3SECURE;
   Object *CH_POPENABLED;
   Object *CH_AVOIDDUP;
-  Object *CY_MSGSELECT;
+  Object *CY_PRESELECTION;
   Object *CY_TRANSWIN;
   Object *CH_UPDSTAT;
   Object *ST_WARNSIZE;
@@ -423,14 +423,12 @@ struct Config
   enum  DateStampType      DSListFormat;
   enum  SigSepType         SigSepLine;
   enum  TransferWindowMode TransferWindow;
-  enum  PreSelMode         PreSelection;
   enum  FolderInfoMode     FolderInfoMode;
   enum  ForwardMode        ForwardMode;
   enum  InfoBarPos         InfoBar;
   enum  WrapMode           EdWrapMode;
 
   BOOL  DaylightSaving;
-  BOOL  AvoidDuplicates;
   BOOL  UpdateStatus;
   BOOL  DownloadLarge;
   BOOL  DisplayAllTexts;

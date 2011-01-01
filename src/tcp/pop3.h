@@ -48,14 +48,6 @@ struct DownloadResult
 #define RECEIVEF_AREXX   (1<<3) // transfer initiated by ARexx
 #define RECEIVEF_SIGNAL  (1<<4) // wakeup a waiting thread after the transfer
 
-enum PreSelMode
-{
-  PSM_NEVER=0,
-  PSM_LARGE,
-  PSM_ALWAYS,
-  PSM_ALWAYSLARGE
-};
-
 // prototypes
 BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult);
 

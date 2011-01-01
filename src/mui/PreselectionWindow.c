@@ -74,10 +74,10 @@ struct Data
 */
 
 /* EXPORT
-enum PreselectionMode
+enum PreselectionWindowMode
 {
-  PRESELMODE_IMPORT=0,
-  PRESELMODE_DOWNLOAD,
+  PRESELWINMODE_IMPORT=0,
+  PRESELWINMODE_DOWNLOAD,
 };
 */
 
@@ -140,7 +140,7 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
     Object *ds;
-    enum PreselectionMode mode;
+    enum PreselectionWindowMode mode;
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
@@ -188,9 +188,9 @@ OVERLOAD(OM_NEW)
                                    MUIA_NList_Quiet, FALSE);
     }
 
-    mode = GetTagData(ATTR(Mode), PRESELMODE_IMPORT, inittags(msg));
-    set(data->deleteOnlyButton, MUIA_Disabled, mode == PRESELMODE_IMPORT);
-    set(data->downloadDeleteButton, MUIA_Disabled, mode == PRESELMODE_IMPORT);
+    mode = GetTagData(ATTR(Mode), PRESELWINMODE_IMPORT, inittags(msg));
+    set(data->deleteOnlyButton, MUIA_Disabled, mode == PRESELWINMODE_IMPORT);
+    set(data->downloadDeleteButton, MUIA_Disabled, mode == PRESELWINMODE_IMPORT);
 
     DoMethod(data->startButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(Accept), TRUE);
     DoMethod(data->quitButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(Accept), FALSE);

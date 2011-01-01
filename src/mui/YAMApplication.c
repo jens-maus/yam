@@ -1139,7 +1139,7 @@ DECLARE(CreatePasswordWindow) // APTR thread, const char *title, const char *bod
 
 ///
 /// DECLARE(CreatePreselectionWindow)
-DECLARE(CreatePreselectionWindow) // APTR thread, const char *title, const enum PreselectionMode mode, struct MinList *mailList
+DECLARE(CreatePreselectionWindow) // APTR thread, const char *title, enum PreselectionWindowMode mode, struct MinList *mailList
 {
   Object *window;
 

@@ -481,14 +481,14 @@ static BOOL GetMessageList(struct TransferContext *tc)
           mode = (C->DownloadLarge == TRUE ? 1 : 0) +
                  (hasServerPurge(tc->msn) == TRUE ? 2 : 0) +
                  (isFlagSet(tc->flags, RECEIVEF_USER) ? 4 : 0) +
-                 ((C->PreSelection >= PSM_LARGE && C->WarnSize > 0 && newMail->Size >= (C->WarnSize*1024)) ? 8 : 0);
+                 ((tc->msn->preselection >= PSM_LARGE && C->WarnSize > 0 && newMail->Size >= (C->WarnSize*1024)) ? 8 : 0);
           tflags = mode2tflags[mode];
 
           // if preselection is configured then force displaying this mail in the list
-          if(C->PreSelection >= PSM_ALWAYS)
+          if(tc->msn->preselection >= PSM_ALWAYS)
             SET_FLAG(tflags, TRF_PRESELECT);
 
-          D(DBF_NET, "mail transfer mode %ld, tflags %08lx (dl large %ld, purge %ld, user %ld, warnsize %ld, size %ld, presel %ld)", mode, tflags, C->DownloadLarge, hasServerPurge(tc->msn), isFlagSet(tc->flags, RECEIVEF_USER), C->WarnSize*1024, newMail->Size, C->PreSelection);
+          D(DBF_NET, "mail transfer mode %ld, tflags %08lx (dl large %ld, purge %ld, user %ld, warnsize %ld, size %ld, presel %ld)", mode, tflags, C->DownloadLarge, hasServerPurge(tc->msn), isFlagSet(tc->flags, RECEIVEF_USER), C->WarnSize*1024, newMail->Size, tc->msn->preselection);
 
           // allocate a new MailTransferNode and add it to our
           // new transferlist
@@ -1248,7 +1248,7 @@ static void DownloadMails(struct TransferContext *tc)
         // right after the DELETE command, but only after a successful
         // QUIT command. Personal experience shows that pop.gmx.de is
         // one of these servers.
-        if(C->AvoidDuplicates == TRUE)
+        if(hasServerAvoidDuplicates(tc->msn) == TRUE)
         {
           D(DBF_NET, "adding mail with subject '%s' to UIDL hash", mail->Subject);
           // add the UIDL to the hash table or update an existing entry
@@ -1271,7 +1271,7 @@ static void DownloadMails(struct TransferContext *tc)
 
       // now we "know" that this mail had existed, don't forget this in case
       // the delete operation fails
-      if(C->AvoidDuplicates == TRUE)
+      if(hasServerAvoidDuplicates(tc->msn) == TRUE)
       {
         D(DBF_NET, "adding mail with subject '%s' to UIDL hash", mail->Subject);
         // add the UIDL to the hash table or update an existing entry
@@ -1419,7 +1419,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
             tc->timerMask = (1UL << ThreadTimerSignal());
 
-            if(C->AvoidDuplicates == TRUE)
+            if(hasServerAvoidDuplicates(tc->msn) == TRUE)
             {
               if((tc->UIDLhashTable = InitUIDLhash(tc->msn)) != NULL)
                 uidlOk = TRUE;
@@ -1479,7 +1479,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
                       // if the user wants to avoid to receive the same message from the
                       // POP3 server again we have to analyze the UIDL of it
-                      if(C->AvoidDuplicates == TRUE)
+                      if(hasServerAvoidDuplicates(tc->msn) == TRUE)
                         FilterDuplicates(tc);
 
                       // check the list of mails if some kind of preselection is required
@@ -1491,7 +1491,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
                         snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MailTransferFrom), tc->msn->account);
 
-                        if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, PRESELMODE_DOWNLOAD, tc->transferList)) != NULL)
+                        if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, PRESELWINMODE_DOWNLOAD, tc->transferList)) != NULL)
                         {
                           int mustWait;
 

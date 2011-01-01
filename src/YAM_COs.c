@@ -321,24 +321,24 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
       if(msn->type == MST_POP3)
       {
-        fprintf(fh, "POP%02d.ID         = %08x\n", i, msn->id);
-        fprintf(fh, "POP%02d.Account    = %s\n", i, msn->account);
-        fprintf(fh, "POP%02d.Server     = %s\n", i, msn->hostname);
-        fprintf(fh, "POP%02d.Port       = %d\n", i, msn->port);
-        fprintf(fh, "POP%02d.User       = %s\n", i, msn->username);
-        fprintf(fh, "POP%02d.Password   = %s\n", i, Encrypt(msn->password));
-        fprintf(fh, "POP%02d.Enabled    = %s\n", i, Bool2Txt(isServerActive(msn)));
-        fprintf(fh, "POP%02d.SSLMode    = %d\n", i, MSF2POP3SecMethod(msn));
-        fprintf(fh, "POP%02d.UseAPOP    = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
-        fprintf(fh, "POP%02d.Delete     = %s\n", i, Bool2Txt(hasServerPurge(msn)));
+        fprintf(fh, "POP%02d.ID              = %08x\n", i, msn->id);
+        fprintf(fh, "POP%02d.Account         = %s\n", i, msn->account);
+        fprintf(fh, "POP%02d.Server          = %s\n", i, msn->hostname);
+        fprintf(fh, "POP%02d.Port            = %d\n", i, msn->port);
+        fprintf(fh, "POP%02d.User            = %s\n", i, msn->username);
+        fprintf(fh, "POP%02d.Password        = %s\n", i, Encrypt(msn->password));
+        fprintf(fh, "POP%02d.Enabled         = %s\n", i, Bool2Txt(isServerActive(msn)));
+        fprintf(fh, "POP%02d.SSLMode         = %d\n", i, MSF2POP3SecMethod(msn));
+        fprintf(fh, "POP%02d.UseAPOP         = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
+        fprintf(fh, "POP%02d.Delete          = %s\n", i, Bool2Txt(hasServerPurge(msn)));
+        fprintf(fh, "POP%02d.AvoidDuplicates = %s\n", i, Bool2Txt(hasServerAvoidDuplicates(msn)));
+        fprintf(fh, "POP%02d.Preselection    = %d\n", i, msn->preselection);
 
         i++;
       }
     }
 
     fprintf(fh, "\n[New mail]\n");
-    fprintf(fh, "AvoidDuplicates  = %s\n", Bool2Txt(co->AvoidDuplicates));
-    fprintf(fh, "PreSelection     = %d\n", co->PreSelection);
     fprintf(fh, "TransferWindow   = %d\n", co->TransferWindow);
     fprintf(fh, "UpdateStatus     = %s\n", Bool2Txt(co->UpdateStatus));
     fprintf(fh, "WarnSize         = %d\n", co->WarnSize);
@@ -728,6 +728,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
       int lastFilterID = -1;
       struct MailServerNode *fPOP3;
       struct MailServerNode *fSMTP;
+      BOOL foundGlobalPOP3Options = FALSE;
+      BOOL globalPOP3AvoidDuplicates = FALSE;
+      int globalPOP3Preselection = -1;
 
       // set defaults and make the configuration actually
       // useall (reset it, e.g.)
@@ -773,6 +776,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
               if(Txt2Bool(value) == FALSE)
                 co->CheckMailDelay = 0;
             }
+/*
             else if(stricmp(buf, "ConfirmSize") == 0)
             {
               switch(atoi(value))
@@ -782,6 +786,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 default: co->PreSelection = PSM_LARGE;           co->WarnSize = 1<<atoi(value); break;
               }
             }
+*/
             else if(stricmp(buf, "Verbosity") == 0)              co->TransferWindow = atoi(value) > 0 ? TWM_SHOW : TWM_HIDE;
             else if(stricmp(buf, "WordWrap") == 0)               co->EdWrapCol = atoi(value);
             else if(stricmp(buf, "DeleteOnExit") == 0)           co->RemoveAtOnce = !(co->RemoveOnQuit = Txt2Bool(value));
@@ -1010,6 +1015,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 else if(stricmp(q, "SSLMode") == 0)              SET_FLAG(msn->flags, POP3SecMethod2MSF(atoi(value)));
                 else if(stricmp(q, "UseAPOP") == 0)              Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_APOP) : CLEAR_FLAG(msn->flags, MSF_APOP);
                 else if(stricmp(q, "Delete") == 0)               Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_PURGEMESSGAES) : CLEAR_FLAG(msn->flags, MSF_PURGEMESSGAES);
+                else if(stricmp(q, "AvoidDuplicates") == 0)      Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES) : CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+                else if(stricmp(q, "Preselection") == 0)         msn->preselection = atoi(value);
               }
               else
                 break;
@@ -1019,8 +1026,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           }
 
 /* New mail */
-          else if(stricmp(buf, "AvoidDuplicates") == 0)          co->AvoidDuplicates = Txt2Bool(value);
-          else if(stricmp(buf, "PreSelection") == 0)             co->PreSelection = atoi(value);
+          else if(stricmp(buf, "AvoidDuplicates") == 0)          { globalPOP3AvoidDuplicates = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
+          else if(stricmp(buf, "PreSelection") == 0)             { globalPOP3Preselection = atoi(value); foundGlobalPOP3Options = TRUE; }
           else if(stricmp(buf, "TransferWindow") == 0)           co->TransferWindow = atoi(value);
           else if(stricmp(buf, "UpdateStatus") == 0)             co->UpdateStatus = Txt2Bool(value);
           else if(stricmp(buf, "WarnSize") == 0)                 co->WarnSize = atoi(value);
@@ -1590,6 +1597,28 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
         co->ConfigIsSaved = TRUE;
 
         D(DBF_CONFIG, "configuration successfully loaded");
+
+        if(foundGlobalPOP3Options == TRUE)
+        {
+          // Propagate the old global POP3 options to each POP3 account.
+          // The old options will vanish as soon as the configuration is saved, thus this
+          // will happen only once.
+          struct Node *curNode;
+
+          IterateList(&co->mailServerList, msn)
+          {
+            struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+            if(msn->type == MST_POP3)
+            {
+              if(globalPOP3AvoidDuplicates == TRUE)
+                SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+              else
+                CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+              msn->preselection = globalPOP3Preselection;
+            }
+          }
+        }
       }
       else
         E(DBF_CONFIG, "error during config load operation");
@@ -1678,8 +1707,14 @@ void CO_GetConfig(BOOL saveConfig)
         else
           CLEAR_FLAG(msn->flags, MSF_AUTH);
 
+        if(GetMUICheck(gui->CH_AVOIDDUP) == TRUE)
+          SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+        else
+          CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+
         GetMUIString(msn->username, gui->ST_SMTPAUTHUSER, sizeof(msn->username));
         GetMUIString(msn->password, gui->ST_SMTPAUTHPASS, sizeof(msn->password));
+        msn->preselection = GetMUICycle(gui->CY_PRESELECTION);
 
         switch(GetMUICycle(gui->CY_SMTPAUTHMETHOD))
         {
@@ -1760,9 +1795,7 @@ void CO_GetConfig(BOOL saveConfig)
 
     case cp_NewMail:
     {
-      CE->PreSelection      = GetMUICycle  (gui->CY_MSGSELECT);
       CE->TransferWindow    = GetMUICycle  (gui->CY_TRANSWIN);
-      CE->AvoidDuplicates   = GetMUICheck  (gui->CH_AVOIDDUP);
       CE->UpdateStatus      = GetMUICheck  (gui->CH_UPDSTAT);
       CE->WarnSize          = GetMUIInteger(gui->ST_WARNSIZE);
       CE->CheckMailDelay    = GetMUINumer  (gui->NM_INTERVAL);
@@ -2458,8 +2491,6 @@ void CO_SetConfig(void)
 
     case cp_NewMail:
     {
-      setcheckmark(gui->CH_AVOIDDUP, CE->AvoidDuplicates);
-      setcycle(gui->CY_MSGSELECT, CE->PreSelection);
       setcycle(gui->CY_TRANSWIN, CE->TransferWindow);
       setcheckmark(gui->CH_UPDSTAT, CE->UpdateStatus);
       set(gui->ST_WARNSIZE, MUIA_String_Integer, CE->WarnSize);

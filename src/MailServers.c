@@ -87,6 +87,7 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
 
           msn->port = 110;
           SET_FLAG(msn->flags, MSF_PURGEMESSGAES);
+          SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
         }
         else
         {
