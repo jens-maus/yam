@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-01 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: updated all copyright strings to refelect the new year and made
+    them all have the same shape.
+
 2011-01-01 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.
