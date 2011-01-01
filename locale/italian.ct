@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.6 (18.12.2010)
+## version $VER: YAM.catalog 7.7 (01.01.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5545 2010-12-17
+; based on YAM.cd 5558 2011-01-01
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -10030,4 +10030,16 @@ Disconnessione dal server...
 MSG_SHOW_TRANSFER_WINDOW
 Trasferimenti in corso...
 ; Show transfers in progress...
+;
+MSG_CO_APPLY_REMOTE_FILTERS
+Applica _filtri remoti
+; Apply remote _filters
+;
+MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS
+Applica tutti i filtri remoti impostati\n\
+durante lo scaricamento della posta da\n\
+questo server.
+; Apply all defined remote filters\n\
+; when downloading mail from this\n\
+; server.
 ;
