@@ -1605,7 +1605,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           // will happen only once.
           struct Node *curNode;
 
-          IterateList(&co->mailServerList, msn)
+          IterateList(&co->mailServerList, curNode)
           {
             struct MailServerNode *msn = (struct MailServerNode *)curNode;
 

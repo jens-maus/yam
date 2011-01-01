@@ -85,6 +85,7 @@ struct CO_GUIData
   Object *RA_POP3SECURE;
   Object *CH_POPENABLED;
   Object *CH_AVOIDDUP;
+  Object *CH_USEREMOTEFILTERS;
   Object *CY_PRESELECTION;
   Object *CY_TRANSWIN;
   Object *CH_UPDSTAT;

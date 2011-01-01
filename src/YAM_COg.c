@@ -1667,6 +1667,9 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                       Child, MakeCheckGroup((Object **)&data->GUI.CH_AVOIDDUP, tr(MSG_CO_AvoidDuplicates)),
 
                       Child, HSpace(1),
+                      Child, MakeCheckGroup((Object **)&data->GUI.CH_USEREMOTEFILTERS, tr(MSG_CO_USE_REMOTE_FILTERS)),
+
+                      Child, HSpace(1),
                       Child, MakeCheckGroup((Object **)&data->GUI.CH_DELETE, tr(MSG_CO_DeleteServerMail)),
 
                       Child, Label2(tr(MSG_CO_PreSelect)),
@@ -1702,46 +1705,48 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.ST_SMTPHOST,       MSG_HELP_CO_ST_SMTPHOST      );
-    SetHelp(data->GUI.ST_SMTPPORT,       MSG_HELP_CO_ST_SMTPPORT      );
-    SetHelp(data->GUI.ST_DOMAIN,         MSG_HELP_CO_ST_DOMAIN        );
-    SetHelp(data->GUI.CH_SMTP8BIT,       MSG_HELP_CO_CH_SMTP8BIT      );
-    SetHelp(data->GUI.CH_USESMTPAUTH,    MSG_HELP_CO_CH_USESMTPAUTH   );
-    SetHelp(data->GUI.ST_SMTPAUTHUSER,   MSG_HELP_CO_ST_SMTPAUTHUSER  );
-    SetHelp(data->GUI.ST_SMTPAUTHPASS,   MSG_HELP_CO_ST_SMTPAUTHPASS  );
-    SetHelp(data->GUI.CY_SMTPAUTHMETHOD, MSG_HELP_CO_CY_SMTPAUTHMETHOD);
-    SetHelp(data->GUI.LV_POP3,           MSG_HELP_CO_LV_POP3          );
-    SetHelp(data->GUI.BT_PADD,           MSG_HELP_CO_BT_PADD          );
-    SetHelp(data->GUI.BT_PDEL,           MSG_HELP_CO_BT_PDEL          );
-    SetHelp(data->GUI.ST_POPACCOUNT,     MSG_HELP_CO_ST_POPACCOUNT    );
-    SetHelp(data->GUI.ST_POPHOST,        MSG_HELP_CO_ST_POPHOST       );
-    SetHelp(data->GUI.ST_POPPORT,        MSG_HELP_CO_ST_POPPORT       );
-    SetHelp(data->GUI.ST_POPUSERID,      MSG_HELP_CO_ST_POPUSERID     );
-    SetHelp(data->GUI.ST_PASSWD,         MSG_HELP_CO_ST_PASSWD        );
-    SetHelp(data->GUI.CH_DELETE,         MSG_HELP_CO_CH_DELETE        );
-    SetHelp(data->GUI.CH_USEAPOP,        MSG_HELP_CO_CH_USEAPOP       );
-    SetHelp(data->GUI.CH_POPENABLED,     MSG_HELP_CO_CH_POPENABLED    );
-    SetHelp(data->GUI.CH_AVOIDDUP,       MSG_HELP_CO_CH_AVOIDDUP      );
-    SetHelp(data->GUI.RA_SMTPSECURE,     MSG_HELP_CO_RA_SMTPSECURE    );
-    SetHelp(data->GUI.RA_POP3SECURE,     MSG_HELP_CO_RA_POP3SECURE    );
-    SetHelp(data->GUI.CY_PRESELECTION,   MSG_HELP_CO_CY_MSGSELECT     );
+    SetHelp(data->GUI.ST_SMTPHOST,         MSG_HELP_CO_ST_SMTPHOST       );
+    SetHelp(data->GUI.ST_SMTPPORT,         MSG_HELP_CO_ST_SMTPPORT       );
+    SetHelp(data->GUI.ST_DOMAIN,           MSG_HELP_CO_ST_DOMAIN         );
+    SetHelp(data->GUI.CH_SMTP8BIT,         MSG_HELP_CO_CH_SMTP8BIT       );
+    SetHelp(data->GUI.CH_USESMTPAUTH,      MSG_HELP_CO_CH_USESMTPAUTH    );
+    SetHelp(data->GUI.ST_SMTPAUTHUSER,     MSG_HELP_CO_ST_SMTPAUTHUSER   );
+    SetHelp(data->GUI.ST_SMTPAUTHPASS,     MSG_HELP_CO_ST_SMTPAUTHPASS   );
+    SetHelp(data->GUI.CY_SMTPAUTHMETHOD,   MSG_HELP_CO_CY_SMTPAUTHMETHOD );
+    SetHelp(data->GUI.LV_POP3,             MSG_HELP_CO_LV_POP3           );
+    SetHelp(data->GUI.BT_PADD,             MSG_HELP_CO_BT_PADD           );
+    SetHelp(data->GUI.BT_PDEL,             MSG_HELP_CO_BT_PDEL           );
+    SetHelp(data->GUI.ST_POPACCOUNT,       MSG_HELP_CO_ST_POPACCOUNT     );
+    SetHelp(data->GUI.ST_POPHOST,          MSG_HELP_CO_ST_POPHOST        );
+    SetHelp(data->GUI.ST_POPPORT,          MSG_HELP_CO_ST_POPPORT        );
+    SetHelp(data->GUI.ST_POPUSERID,        MSG_HELP_CO_ST_POPUSERID      );
+    SetHelp(data->GUI.ST_PASSWD,           MSG_HELP_CO_ST_PASSWD         );
+    SetHelp(data->GUI.CH_DELETE,           MSG_HELP_CO_CH_DELETE         );
+    SetHelp(data->GUI.CH_USEAPOP,          MSG_HELP_CO_CH_USEAPOP        );
+    SetHelp(data->GUI.CH_POPENABLED,       MSG_HELP_CO_CH_POPENABLED     );
+    SetHelp(data->GUI.CH_AVOIDDUP,         MSG_HELP_CO_CH_AVOIDDUP       );
+    SetHelp(data->GUI.CH_USEREMOTEFILTERS, MSG_HELP_CO_USE_REMOTE_FILTERS);
+    SetHelp(data->GUI.RA_SMTPSECURE,       MSG_HELP_CO_RA_SMTPSECURE     );
+    SetHelp(data->GUI.RA_POP3SECURE,       MSG_HELP_CO_RA_POP3SECURE     );
+    SetHelp(data->GUI.CY_PRESELECTION,     MSG_HELP_CO_CY_MSGSELECT      );
 
-    DoMethod(data->GUI.LV_POP3        , MUIM_Notify, MUIA_NList_Active    , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetPOP3EntryHook, 0);
-    DoMethod(data->GUI.ST_POPACCOUNT  , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.ST_POPHOST     , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.ST_POPPORT     , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.ST_POPUSERID   , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.ST_PASSWD      , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.CH_POPENABLED  , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.CH_USEAPOP     , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.CH_DELETE      , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.CH_AVOIDDUP    , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.CY_PRESELECTION, MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.BT_PADD        , MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_AddPOP3Hook);
-    DoMethod(data->GUI.BT_PDEL        , MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_DelPOP3Hook);
-    DoMethod(data->GUI.BT_POPUP       , MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
-    DoMethod(data->GUI.BT_POPDOWN     , MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
-    DoMethod(data->GUI.CH_USESMTPAUTH , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application , 7, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD, NULL);
+    DoMethod(data->GUI.LV_POP3            , MUIM_Notify, MUIA_NList_Active    , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetPOP3EntryHook, 0);
+    DoMethod(data->GUI.ST_POPACCOUNT      , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.ST_POPHOST         , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.ST_POPPORT         , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.ST_POPUSERID       , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.ST_PASSWD          , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.CH_POPENABLED      , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.CH_USEAPOP         , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.CH_DELETE          , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.CH_AVOIDDUP        , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.CH_USEREMOTEFILTERS, MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.CY_PRESELECTION    , MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.BT_PADD            , MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_AddPOP3Hook);
+    DoMethod(data->GUI.BT_PDEL            , MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_DelPOP3Hook);
+    DoMethod(data->GUI.BT_POPUP           , MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
+    DoMethod(data->GUI.BT_POPDOWN         , MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
+    DoMethod(data->GUI.CH_USESMTPAUTH     , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application , 7, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD, NULL);
 
     // modify the POP3 port according to the security level selected.
     DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify, MUIA_Radio_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
