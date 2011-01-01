@@ -582,7 +582,7 @@ static void GetSingleMessageDetails(struct TransferContext *tc, struct MailTrans
           // own one by using the MsgID.
           if(lline == -1)
             tnode->uidl = strdup(email->messageID);
-          else if(lline == -2)
+          else if(lline == -2 && hasServerApplyRemoteFilters(tc->msn) == TRUE)
             ApplyRemoteFilters(tc->remoteFilters, tnode);
 
           MA_FreeEMailStruct(email);
@@ -1411,7 +1411,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
     {
       if((tc->transferList = CreateMailTransferList()) != NULL)
       {
-        if((tc->remoteFilters = CloneFilterList(APPLY_REMOTE)) != NULL)
+        if(hasServerApplyRemoteFilters(tc->msn) == FALSE || (tc->remoteFilters = CloneFilterList(APPLY_REMOTE)) != NULL)
         {
           if(InitThreadTimer() == TRUE)
           {
@@ -1467,7 +1467,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                       BOOL doDownload;
 
                       // apply possible remote filters
-                      if(IsMinListEmpty(tc->remoteFilters) == FALSE)
+                      if(hasServerApplyRemoteFilters(tc->msn) == TRUE && IsMinListEmpty(tc->remoteFilters) == FALSE)
                       {
                         struct MailTransferNode *tnode;
 
@@ -1561,7 +1561,8 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
             CleanupThreadTimer();
           }
 
-          DeleteFilterList(tc->remoteFilters);
+          if(tc->remoteFilters != NULL)
+            DeleteFilterList(tc->remoteFilters);
         }
         else
           E(DBF_THREAD, "could not clone remote filters");

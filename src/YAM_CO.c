@@ -584,6 +584,11 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
       else
         CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
 
+      if(GetMUICheck(gui->CH_APPLYREMOTEFILTERS) == TRUE)
+        SET_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
+      else
+        CLEAR_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
+
       if(GetMUICheck(gui->CH_DELETE) == TRUE)
         SET_FLAG(msn->flags, MSF_PURGEMESSGAES);
       else
@@ -796,11 +801,9 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_NewMail || page == cp_AllPages)
   {
-    //co->AvoidDuplicates = FALSE;
     co->TransferWindow = TWM_AUTO;
     co->UpdateStatus = TRUE;
     co->DownloadLarge = TRUE;
-    //co->PreSelection = PSM_LARGE;
     co->WarnSize = 1024; // 1MB warn size
     co->CheckMailDelay = 0;
     co->NotifyType = 1;
@@ -1277,12 +1280,10 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->DSListFormat                    == c2->DSListFormat &&
      c1->SigSepLine                      == c2->SigSepLine &&
      c1->TransferWindow                  == c2->TransferWindow &&
-     //c1->PreSelection                    == c2->PreSelection &&
      c1->FolderInfoMode                  == c2->FolderInfoMode &&
      c1->ForwardMode                     == c2->ForwardMode &&
      c1->InfoBar                         == c2->InfoBar &&
      c1->DaylightSaving                  == c2->DaylightSaving &&
-     //c1->AvoidDuplicates                 == c2->AvoidDuplicates &&
      c1->UpdateStatus                    == c2->UpdateStatus &&
      c1->DownloadLarge                   == c2->DownloadLarge &&
      c1->DisplayAllTexts                 == c2->DisplayAllTexts &&

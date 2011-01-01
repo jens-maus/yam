@@ -11,6 +11,9 @@ $URL$
   * misc: It is now possible to define the mail preselection individually for
     each account. This closes #46. The same applies for the "avoid duplicates"
     setting.
+  * misc: applying the remote filters is now optional for each POP3 account.
+    This saves possible issues when remote filters are meant for certain
+    accounts only, but were applied for all accounts. This closes #83.
 
 2010-12-30 Mariusz Danilewicz <mandi@interia.pl>
 

@@ -8591,3 +8591,11 @@ Trenne Verbindung zum Server...
 MSG_SHOW_TRANSFER_WINDOW
 Zeige laufende Übertragungen...
 ;
+MSG_CO_APPLY_REMOTE_FILTERS
+Remote-Filter anwenden
+;
+MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS
+Alle definierten Remote-Filter beim\n\
+Holen von Post von diesem Server\n\
+anwenden.
+;

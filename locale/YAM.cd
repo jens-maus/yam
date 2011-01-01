@@ -7009,3 +7009,11 @@ Disconnecting from server...
 MSG_SHOW_TRANSFER_WINDOW (2201//)
 Show transfers in progress...
 ;
+MSG_CO_APPLY_REMOTE_FILTERS (2202//)
+Apply remote _filters
+;
+MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS (2203//)
+Apply all defined remote filters\n\
+when downloading mail from this\n\
+server.
+;

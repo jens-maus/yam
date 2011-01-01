@@ -321,18 +321,19 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
       if(msn->type == MST_POP3)
       {
-        fprintf(fh, "POP%02d.ID              = %08x\n", i, msn->id);
-        fprintf(fh, "POP%02d.Account         = %s\n", i, msn->account);
-        fprintf(fh, "POP%02d.Server          = %s\n", i, msn->hostname);
-        fprintf(fh, "POP%02d.Port            = %d\n", i, msn->port);
-        fprintf(fh, "POP%02d.User            = %s\n", i, msn->username);
-        fprintf(fh, "POP%02d.Password        = %s\n", i, Encrypt(msn->password));
-        fprintf(fh, "POP%02d.Enabled         = %s\n", i, Bool2Txt(isServerActive(msn)));
-        fprintf(fh, "POP%02d.SSLMode         = %d\n", i, MSF2POP3SecMethod(msn));
-        fprintf(fh, "POP%02d.UseAPOP         = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
-        fprintf(fh, "POP%02d.Delete          = %s\n", i, Bool2Txt(hasServerPurge(msn)));
-        fprintf(fh, "POP%02d.AvoidDuplicates = %s\n", i, Bool2Txt(hasServerAvoidDuplicates(msn)));
-        fprintf(fh, "POP%02d.Preselection    = %d\n", i, msn->preselection);
+        fprintf(fh, "POP%02d.ID                = %08x\n", i, msn->id);
+        fprintf(fh, "POP%02d.Account           = %s\n", i, msn->account);
+        fprintf(fh, "POP%02d.Server            = %s\n", i, msn->hostname);
+        fprintf(fh, "POP%02d.Port              = %d\n", i, msn->port);
+        fprintf(fh, "POP%02d.User              = %s\n", i, msn->username);
+        fprintf(fh, "POP%02d.Password          = %s\n", i, Encrypt(msn->password));
+        fprintf(fh, "POP%02d.Enabled           = %s\n", i, Bool2Txt(isServerActive(msn)));
+        fprintf(fh, "POP%02d.SSLMode           = %d\n", i, MSF2POP3SecMethod(msn));
+        fprintf(fh, "POP%02d.UseAPOP           = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
+        fprintf(fh, "POP%02d.Delete            = %s\n", i, Bool2Txt(hasServerPurge(msn)));
+        fprintf(fh, "POP%02d.AvoidDuplicates   = %s\n", i, Bool2Txt(hasServerAvoidDuplicates(msn)));
+        fprintf(fh, "POP%02d.ApplyRemotFilters = %s\n", i, Bool2Txt(hasServerApplyRemoteFilters(msn)));
+        fprintf(fh, "POP%02d.Preselection      = %d\n", i, msn->preselection);
 
         i++;
       }
@@ -1016,6 +1017,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 else if(stricmp(q, "UseAPOP") == 0)              Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_APOP) : CLEAR_FLAG(msn->flags, MSF_APOP);
                 else if(stricmp(q, "Delete") == 0)               Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_PURGEMESSGAES) : CLEAR_FLAG(msn->flags, MSF_PURGEMESSGAES);
                 else if(stricmp(q, "AvoidDuplicates") == 0)      Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES) : CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+                else if(stricmp(q, "ApplyRemoteFilters") == 0)   Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS) : CLEAR_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
                 else if(stricmp(q, "Preselection") == 0)         msn->preselection = atoi(value);
               }
               else
@@ -1711,6 +1713,11 @@ void CO_GetConfig(BOOL saveConfig)
           SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
         else
           CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+
+        if(GetMUICheck(gui->CH_APPLYREMOTEFILTERS) == TRUE)
+          SET_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
+        else
+          CLEAR_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
 
         GetMUIString(msn->username, gui->ST_SMTPAUTHUSER, sizeof(msn->username));
         GetMUIString(msn->password, gui->ST_SMTPAUTHPASS, sizeof(msn->password));
