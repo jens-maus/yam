@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.16 (30.12.2010)
+## version $VER: YAM.catalog 7.17 (02.01.2011)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5545;
+; in sync with .cd in revision 5558;
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9877,4 +9877,16 @@ Roz³±czanie z serwerem...
 MSG_SHOW_TRANSFER_WINDOW
 Pokazywanie przesy³ania danych...
 ; Show transfers in progress...
+;
+MSG_CO_APPLY_REMOTE_FILTERS
+Zastosuj _filtry zdalne
+; Apply remote _filters
+;
+MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS
+Stosuje wszystkie zdefiniowane filtry\n\
+zdalne podczas pobierania wiadomo¶ci\n\
+z tego serwera.
+; Apply all defined remote filters\n\
+; when downloading mail from this\n\
+; server.
 ;

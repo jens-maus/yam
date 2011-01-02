@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-02 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
 2011-01-02 Pär Boberg <pbobbenb@aim.com>
 
   * locale/swedish.ct: updated according to changes.
