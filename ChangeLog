@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: the account based remote filter setting was not remembered
+    correctly.
+
 2011-01-02 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest changes.

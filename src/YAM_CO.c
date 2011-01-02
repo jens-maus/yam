@@ -517,16 +517,17 @@ HOOKPROTONHNONP(CO_GetPOP3Entry, void)
 
   if(msn != NULL)
   {
-    nnset(gui->ST_POPACCOUNT,    MUIA_String_Contents, msn->account);
-    nnset(gui->ST_POPHOST,       MUIA_String_Contents, msn->hostname);
-    nnset(gui->ST_POPPORT,       MUIA_String_Integer,  msn->port);
-    nnset(gui->ST_POPUSERID,     MUIA_String_Contents, msn->username);
-    nnset(gui->ST_PASSWD,        MUIA_String_Contents, msn->password);
-    nnset(gui->CH_POPENABLED,    MUIA_Selected,        isServerActive(msn));
-    nnset(gui->CH_USEAPOP,       MUIA_Selected,        hasServerAPOP(msn));
-    nnset(gui->CH_AVOIDDUP,      MUIA_Selected,        hasServerAvoidDuplicates(msn));
-    nnset(gui->CH_DELETE,        MUIA_Selected,        hasServerPurge(msn));
-    nnset(gui->CY_PRESELECTION,  MUIA_Cycle_Active,    msn->preselection);
+    nnset(gui->ST_POPACCOUNT,         MUIA_String_Contents, msn->account);
+    nnset(gui->ST_POPHOST,            MUIA_String_Contents, msn->hostname);
+    nnset(gui->ST_POPPORT,            MUIA_String_Integer,  msn->port);
+    nnset(gui->ST_POPUSERID,          MUIA_String_Contents, msn->username);
+    nnset(gui->ST_PASSWD,             MUIA_String_Contents, msn->password);
+    nnset(gui->CH_POPENABLED,         MUIA_Selected,        isServerActive(msn));
+    nnset(gui->CH_USEAPOP,            MUIA_Selected,        hasServerAPOP(msn));
+    nnset(gui->CH_AVOIDDUP,           MUIA_Selected,        hasServerAvoidDuplicates(msn));
+    nnset(gui->CH_APPLYREMOTEFILTERS, MUIA_Selected,        hasServerApplyRemoteFilters(msn));
+    nnset(gui->CH_DELETE,             MUIA_Selected,        hasServerPurge(msn));
+    nnset(gui->CY_PRESELECTION,       MUIA_Cycle_Active,    msn->preselection);
 
     if(hasServerTLS(msn))
       nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 1);
