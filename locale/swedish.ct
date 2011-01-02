@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.3 (21.09.2010)
+## version $VER: YAM.catalog 7.4 (02.01.2011)
 ## language svenska
 ## codeset 0
 ## chunk AUTH Pär Boberg
@@ -433,20 +433,10 @@ Kopierade meddelande från '%s' om '%s' från mapp '%s' till '%s'
 ; Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
-MSG_LOG_ConnectPOP
-Loggade in på POP3-kontot '%s@%s': %ld meddelande(n) väntar
-; Logged in on POP3 account '%s@%s': %ld messages waiting
-; USER_ID, HOST, COUNT
-;
 MSG_LOG_RetrievingVerbose
 Hämtade meddelande från '%s' om '%s' (%ld byte)
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
-;
-MSG_LOG_Retrieving
-Hämtade %ld meddelande(n) från POP3-kontot '%s@%s'
-; Retrieved %ld message(s) from POP3 account '%s@%s'
-; COUNT, USER_ID, HOST
 ;
 MSG_LOG_ConnectSMTP
 Ansluten till SMTP-servern '%s'
@@ -1717,18 +1707,6 @@ MSG_CO_EncryptToSelf
 _Kryptera dubbelt
 ; _Encrypt to self
 ;
-MSG_CO_AnonMail
-Anonym post
-; Anonymous mail
-;
-MSG_CO_ReMailer
-Åte_rsändare
-; _Re-Mailer
-;
-MSG_CO_ReMailerLine
-Brev_huvudsfält
-; _Header field
-;
 MSG_CO_Logfiles
 Loggfiler
 ; Log files
@@ -2140,7 +2118,7 @@ Filternamn.
 ; Filter name.
 ;
 MSG_HELP_CO_CH_REMOTE
-Applicera detta filter\ninnan ny e-post hämtas.
+Applicera detta filter\ninnan ny post hämtas.
 ; Apply this filter before\n\
 ; downloading new mail.
 ;
@@ -2488,16 +2466,6 @@ MSG_HELP_CO_CH_ENCSELF
 Kryptera nya meddelanden med din allmänna nyckel,\nså du fortfarande kan läsa eller redigera\nutgående meddelanden.
 ; Encrypt new messages with your public key,\n\
 ; so you can still read or edit outgoing messages.
-;
-MSG_HELP_CO_ST_REMAILER
-E-postadress för återsändartjänsten,\nsom används för att skicka anonyma brev.
-; E-mail address of the remailer service\n\
-; used to send anonymous mail.
-;
-MSG_HELP_CO_ST_FIRSTLINE
-Infoga denna rad i början på alla de meddelanden\nsom skickas genom återsändartjänsten.
-; Automatically insert this line at the top\n\
-; of all messages sent through the remailer.
 ;
 MSG_HELP_CO_ST_LOGFILE
 Sökväg till katalogen där\nloggfilerna kommer att sparas.
@@ -3657,10 +3625,6 @@ MSG_WR_SecBoth
 Signera och kryptera
 ; Sign and encrypt
 ;
-MSG_WR_SecAnon
-Skicka anonymt
-; Send anonymously
-;
 MSG_WR_ImpHigh
 Hög
 ; High
@@ -4110,10 +4074,10 @@ Vilken signatur vill du\ninfoga till detta meddelande?
 MSG_HELP_WR_RA_SECURITY
 Välj ett av dessa säkerhetsval för att skicka\nditt meddelande PGP-signerat, krypterat eller\nanonymt. "Förvalt" försöker hitta mottagaren\ni din adressbok och använda säkerhets-\ninställningarna specifierade där.
 ; Select one of these security options to send\n\
-; your message PGP signed, encrypted\n\
-; or anonymously. "Default" tries to find\n\
-; the recipient in your address book and use\n\
-; the security settings specified there.
+; your message PGP signed or encrypted.\n\
+; "Default" tries to find the recipient\n\
+; in your address book and use the security\n\
+; settings specified there.
 ;
 MSG_HELP_WR_BT_HOLD
 Kopiera det skapta meddelandet till Utkorgen\noch sätt dess status till 'Håll kvar'.
@@ -4147,12 +4111,6 @@ Ansluter till e-postservern...
 MSG_TR_WaitWelcome
 Ansluten, väntar på hälsningsmeddelande...
 ; Connected, awaiting welcome message...
-;
-MSG_TR_PopLoginReq
-Ange ditt POP3-lösenord för konto\n%s@%s
-; Please enter POP3 password for account\n\
-; %s@%s
-; USER_ID, HOST
 ;
 MSG_TR_PopLogin
 Loggar in med POP3
@@ -4201,15 +4159,6 @@ Importerar meddelande...
 MSG_TR_DeletingServerMail
 Raderar post på servern...
 ; Deleting mail on server...
-;
-MSG_TR_NewMailReq
-\e8Du har ny post!\e2\n\n%3ld meddelanden hämtade,\n%3ld kvar på servern\n%3ld dubletter hoppades över\n
-; \e8You have new mail.\e2\n\
-; \n\
-; %3ld messages downloaded,\n\
-; %3ld left on server\n\
-; %3ld duplicates skipped\n
-; COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FilterStats
 \nFiltrering klar:\n\n%3ld meddelanden genomsökta,\n%3ld studsade,\n%3ld vidarebefordrade,\n%3ld autobesvarade,\n%3ld kommandon körda,\n%3ld flyttade,\n%3ld raderade
@@ -6507,10 +6456,6 @@ Brevets mottagare har olika förvalda\nsäkerhetsinställningar.\n\nVilken typ av s
 ; \n\
 ; What type of security do you want to use?
 ;
-MSG_WR_SECURITYREQ_GADS
-*_Vanlig|_Signerad|_Krypterad|S_ignerad & krypterad|_Anonymn|Av_bryt
-; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Anonymous|_Cancel
-;
 MSG_ER_OPENTCPIP
 YAM kunde inte öppna bsdsocket.library gränssnittet, nödvändigt för TCP/IP anslutningar.\n\nVänligen kontrollera att du har en kompatibel TCP/IP stack installerad, korrekt konfigurerad och att ditt nätverksgränssnitt är fungerande.
 ; Couldn't open bsdsocket.library interface required for \
@@ -6970,7 +6915,7 @@ Nollställ t_räningsdata
 ; _Reset training data
 ;
 MSG_CO_SPAM_RESETMAILFLAGS
-Återställ _skräppoststatusen för alla mail
+Återställ _skräppoststatusen för alla brev
 ; Reset _spam state of all mails
 ;
 MSG_CO_SPAM_DELETESPAMFOLDER
@@ -7011,7 +6956,7 @@ PLAIN
 ; PLAIN
 ;
 MSG_CO_ER_SMTPAUTH
-SMTP-servern '%s' verkar inte stödja den valda SMTP AUTH metoden.\n\nVar god verifiera med din leverantör vilka autentisieringsmetoder som är tillgängliga och hur man konfigurerar dem i din epost klient.
+SMTP-servern '%s' verkar inte stödja den valda SMTP AUTH metoden.\n\nVar god verifiera med din leverantör vilka autentisieringsmetoder som är tillgängliga och hur man konfigurerar dem i din e-post klient.
 ; The SMTP server '%s' doesn't seem to support the \
 ; selected SMTP-AUTH method.\n\
 ; \n\
@@ -7137,18 +7082,6 @@ Töm Papperskorgen
 MSG_MA_UPDATEINDEX
 Uppdatera index
 ; Update index
-;
-MSG_MA_MSENDALL
-Skicka köad post
-; Send queued mail
-;
-MSG_MA_MEXCHANGE
-Skicka/hämta post
-; Exchange mail
-;
-MSG_MA_MGETMAIL
-Hämta ny post
-; Get new mail
 ;
 MSG_MA_MREAD
 Läs
@@ -8209,13 +8142,13 @@ Använd popupp knappen för att välja den tecken-\nuppsättning du vill YAM ska anv
 ; proceed.
 ;
 MSG_HELP_CO_CH_NOTISOUND
-Spela en ljudfil\nnär du fått ny e-post.
+Spela en ljudfil\nnär du fått ny post.
 ; Play a sound file\n\
 ; when you receive\n\
 ; new mail.
 ;
 MSG_HELP_CO_CH_NOTICMD
-Kör ett kommando\nnär du fått ny e-post.
+Kör ett kommando\nnär du fått ny post.
 ; Execute a command\n\
 ; when you received\n\
 ; new mail.
@@ -8336,26 +8269,6 @@ MSG_TR_FILTER_STATS_SPAM
 ; %3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
-MSG_CO_EXCHANGE_MAIL
-Växla e-post
-; Exchange mail
-;
-MSG_CO_EXCHANGE_ORDER
-Växlingsordning
-; Exchange order
-;
-MSG_CO_EXCHANGE_ORDER_GET_FIRST
-hämta e-post först, skicka sedan e-post
-; get mail first, then send mail
-;
-MSG_CO_EXCHANGE_ORDER_SEND_FIRST
-skicka e-post först, hämta sedan e-post
-; send mail first, then get mail
-;
-MSG_HELP_CO_CY_EXCHANGE_ORDER
-Ordningen på e-postväxlingen.
-; The order of the mail exchange.
-;
 MSG_FCHANGE_WARN_TITLE
 Filändringsvarning
 ; Filechange warning
@@ -8398,7 +8311,7 @@ Te_ckenupps.
 ; _Charset
 ;
 MSG_HELP_WR_PO_CHARSET
-Använd popup knappen för att välja den tecken-\nuppsättning du vill YAM ska använda för detta mail.\nDetta är förvalt till systemets teckenuppsättning.
+Använd popup knappen för att välja den tecken-\nuppsättning du vill YAM ska använda för detta brev.\nDetta är förvalt till systemets teckenuppsättning.
 ; Use the popup button to select the character set\n\
 ; you would like YAM to use for this mail. This\n\
 ; defaults to the global character set.
@@ -8468,7 +8381,6 @@ POP3-servern '%s' för konto '%s' svarade med ett felmeddelande vid välkomstproce
 MSG_ER_BADRESPONSE_POP3
 Felaktigt svar från mail-servern '%s' för konto '%s' för kommandot '%s':\n\n%s\n\nMail-servern kunde inte exekvera kommandot och svarade med felmeddelandet ovan.
 ; Bad response from mail server '%s' of account '%s' to command '%s':\n\
-; \n\
 ; %s\n\
 ; \n\
 ; The mail server couldn't execute the command \
@@ -8721,7 +8633,7 @@ _Optimera träningsdata
 ; _Optimize training data
 ;
 MSG_HELP_BT_OPTIMIZE_TRAININGDATA
-Tar bort sällan använda ord från träningsdatan\nför att snabba upp laddningen och öka hastigheten\nvid genomgång av skräppost
+Tar bort sällan använda ord från träningsdatan\nför att snabba upp laddningen och öka hastigheten\nvid genomgång av skräppost.
 ; Removes very infrequent words from the training\n\
 ; data to speed up loading of training data and\n\
 ; increase processing speed of spam mails.
@@ -8848,15 +8760,6 @@ MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 Visa inte detta dialogfönster något mer idag.
 ; Do not show this requester today again.
 ;
-MSG_TR_NEW_MAIL_NOTIFY_ONE
-Mottog 1 nytt brev.
-; Received 1 new mail.
-;
-MSG_TR_NEW_MAIL_NOTIFY_MANY
-Mottog %ld nya brev.
-; Received %ld new mails.
-; COUNT
-;
 MSG_RE_SAVE_FILE
 Spara fil
 ; Save file
@@ -8910,5 +8813,122 @@ MSG_TRANSFERS_IN_PROGRESS
 Pågående överföringar
 ; Transfers in progress
 ;
-; ***NEW***
+MSG_ERROR_CONNECTIONS
+Kan inte initiera anslutningar.
+; Cannot initialize connections.
+;
+MSG_LOG_CONNECT_POP3
+Loggade in på POP3 konto '%s': %ld meddelanden väntar
+; Logged in on POP3 account '%s': %ld messages waiting
+; ACCOUNT, COUNT
+;
+MSG_LOG_RETRIEVED_POP3
+Hämtade %ld meddelande(n) från POP3 konto '%s'
+; Retrieved %ld message(s) from POP3 account '%s'
+; COUNT, ACCOUNT
+;
+MSG_TR_ENTER_POP3_PASSWORD
+Ange lösenordet för POP3 kontot '%s':
+; Please enter the password for\n\
+; POP3 account '%s':
+; ACCOUNT
+;
+MSG_ALTIMAGE_STATUS_DOWNLOAD
+D
+; D
+;
+MSG_ALTIMAGE_STATUS_DELETE
+X
+; X
+;
+MSG_PRESELECT_INDEX
+Index
+; Index
+;
+MSG_TR_WAIT_FOR_PASSWORD
+Väntar på inmatning av användarens lösenord...
+; Waiting for user's password input...
+;
+MSG_TR_WAIT_FOR_PRESELECTION
+Väntar på användarens förval...
+; Waiting for user's preselection...
+;
+MSG_POP3_NEW_MAIL_NOTIFY_REQ
+\e8Du har ny post från konto '%s'.\e2\n\
+\n\
+%3ld meddelanden nerladdade,\n\
+%3ld kvar på server\n\
+%3ld dubletter skippade\n
+; \e8You have new mail from account '%s'.\e2\n\
+; \n\
+; %3ld messages downloaded,\n\
+; %3ld left on server\n\
+; %3ld duplicates skipped\n
+; ACCOUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
+%s\n\
+Mottog 1 nytt brev.
+; %s\n\
+; Received 1 new mail.
+; ACCOUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
+%s\n\
+Mottog %ld nya brev.
+; %s\n\
+; Received %ld new mails.
+; ACCOUNT, COUNT
+;
+MSG_MA_SEND_AND_GET_MAIL
+Skicka och hämta post
+; Send and get mail
+;
+MSG_MA_SEND_MAIL
+Skicka post
+; Send mail
+;
+MSG_MA_GET_MAIL
+Hämta post
+; Get mail
+;
+MSG_WR_SECURITYREQ_GADS
+*_Vanlig|_Signerad|_Krypterad|S_ignerad & krypterad|Av_bryt
+; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Cancel
+;
+MSG_HTTP_CONNECTING_TO_SERVER
+Ansluter till server...
+; Connecting to server...
+;
+MSG_HTTP_SENDING_REQUEST
+Skickar HTTP förfrågan...
+; Sending HTTP request...
+;
+MSG_HTTP_WAITING_FOR_ANSWER
+Väntar på serverns svar...
+; Waiting for server's answer...
+;
+MSG_HTTP_RECEIVING_DATA
+Erhåller data...
+; Receiving data...
+;
+MSG_HTTP_DISCONNECTING_FROM_SERVER
+Kopplar ifrån server...
+; Disconnecting from server...
+;
+MSG_SHOW_TRANSFER_WINDOW
+Visa pågående överföringar...
+; Show transfers in progress...
+;
+MSG_CO_APPLY_REMOTE_FILTERS
+Applicera fjärr_filter
+; Apply remote _filters
+;
+MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS
+Applicera alla definierade filter\n\
+vid nedladdning av post från denna\n\
+server.
+; Apply all defined remote filters\n\
+; when downloading mail from this\n\
+; server.
 ;

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-02 Pär Boberg <pbobbenb@aim.com>
+
+  * locale/swedish.ct: updated according to changes.
+
 2011-01-01 Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: updated all copyright strings to refelect the new year and made
