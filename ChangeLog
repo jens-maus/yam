@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-05 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2011-01-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, YAM_MA.c: restored the old "get mail on startup" behaviour.
