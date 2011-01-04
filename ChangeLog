@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, YAM_MA.c: restored the old "get mail on startup" behaviour.
+
 2011-01-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: the account based remote filter setting was not remembered

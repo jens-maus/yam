@@ -703,7 +703,7 @@ static int GetDST(BOOL update)
 ///
 
 /*** XPK Packer initialization routines ***/
-/// InitXPKPackerList()
+/// InitXPKPackerList
 // initializes the internal XPK PackerList
 static BOOL InitXPKPackerList(void)
 {
@@ -794,7 +794,7 @@ static BOOL InitXPKPackerList(void)
 }
 
 ///
-/// FreeXPKPackerList()
+/// FreeXPKPackerList
 // free all content of our previously loaded XPK packer list
 static void FreeXPKPackerList(void)
 {
@@ -1233,7 +1233,7 @@ static void Abort(const char *message, ...)
 }
 
 ///
-/// yam_exitfunc()
+/// yam_exitfunc
 /* This makes it possible to leave YAM without explicitely calling cleanup procedure */
 static void yam_exitfunc(void)
 {
@@ -1828,7 +1828,7 @@ static void InitAfterLogin(void)
   {
     struct Folder *folder = fnode->folder;
 
-    // if this entry is a group lets skip here immediatly
+    // if this entry is a group lets skip here immediately
     if(isGroupFolder(folder))
       continue;
 
@@ -2186,7 +2186,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       {
         // perform the configured startup actions for receiving and sending mails
         if(C->GetOnStartup == TRUE)
-          MA_PopNow(-1, (/*C->PreSelection == PSM_NEVER ||*/ hide == TRUE) ? RECEIVEF_STARTUP : RECEIVEF_USER, NULL);
+          MA_PopNow(-1, hide == TRUE ? RECEIVEF_STARTUP|RECEIVEF_USER : RECEIVEF_USER, NULL);
 
         if(C->SendOnStartup == TRUE)
           SendWaitingMail(hide);
@@ -2228,7 +2228,7 @@ static void Login(const char *user, const char *password,
 ///
 
 /*** Command-Line Argument parsing routines ***/
-/// ParseCommandArgs()
+/// ParseCommandArgs
 //
 static LONG ParseCommandArgs(void)
 {
@@ -2315,7 +2315,7 @@ static LONG ParseCommandArgs(void)
 ///
 
 /*** main entry function ***/
-/// main()
+/// main
 //  Program entry point, main loop
 int main(int argc, char **argv)
 {

@@ -2406,14 +2406,15 @@ BOOL MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult)
   if(C->UpdateStatus == TRUE)
     MA_UpdateStatus();
 
-  if(isFlagSet(flags, RECEIVEF_USER))
-    MA_StartMacro(MACRO_PREGET, "0");
-  else if(isFlagSet(flags, RECEIVEF_STARTUP))
+  // the USER flag must be check at last, because STARTUP and USER might be used together
+  if(isFlagSet(flags, RECEIVEF_STARTUP))
     MA_StartMacro(MACRO_PREGET, "1");
   else if(isFlagSet(flags, RECEIVEF_TIMER))
     MA_StartMacro(MACRO_PREGET, "2");
   else if(isFlagSet(flags, RECEIVEF_AREXX))
     MA_StartMacro(MACRO_PREGET, "3");
+  else if(isFlagSet(flags, RECEIVEF_USER))
+    MA_StartMacro(MACRO_PREGET, "0");
 
   if(pop == -1)
   {
