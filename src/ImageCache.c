@@ -319,8 +319,11 @@ void ImageCacheCleanup(void)
 {
   ENTER();
 
-  HashTableEnumerate(G->imageCacheHashTable, DeleteImageCacheNode, NULL);
-  HashTableDestroy(G->imageCacheHashTable);
+  if(G->imageCacheHashTable != NULL)
+  {
+    HashTableEnumerate(G->imageCacheHashTable, DeleteImageCacheNode, NULL);
+    HashTableDestroy(G->imageCacheHashTable);
+  }
 
   #if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__AROS__)
   if(PictureDTBase != NULL)

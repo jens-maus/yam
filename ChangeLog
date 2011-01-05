@@ -8,6 +8,7 @@ $URL$
 2011-01-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * MailServers.c: added missing comparison of the preselection mode.
+  * ImageCache.c: added a missing NULL pointer check.
 
 2011-01-05 Vit Sindlar <sindlarv at centrum dot cz>
 
