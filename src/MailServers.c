@@ -178,9 +178,8 @@ static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
 
   ENTER();
 
-  // compare every single member of the structure
-  // "UIDLchecked" must not be checked, because that is not saved but
-  // modified while YAM is looking for new mails.
+  // compare every single member of the structure, except the
+  // list of downloaded mails for POP3 servers
   if(msn1->type != msn2->type ||
      strcmp(msn1->account,  msn2->account) != 0 ||
      strcmp(msn1->hostname, msn2->hostname) != 0 ||
@@ -188,7 +187,8 @@ static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
      strcmp(msn1->password, msn2->password) != 0 ||
      msn1->port           != msn2->port ||
      msn1->flags          != msn2->flags ||
-     msn1->smtpFlags      != msn2->smtpFlags)
+     msn1->smtpFlags      != msn2->smtpFlags ||
+     msn1->preselection   != msn2->preselection)
   {
     // something does not match
     equal = FALSE;

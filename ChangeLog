@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailServers.c: added missing comparison of the preselection mode.
+
 2011-01-05 Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.
