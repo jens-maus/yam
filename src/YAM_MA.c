@@ -3607,6 +3607,8 @@ MakeStaticHook(FollowThreadHook, FollowThreadFunc);
 //  Updates ARexx and POP3 account menu items
 void MA_SetupDynamicMenus(void)
 {
+  Object *executeItem;
+
   ENTER();
 
   // update the "Forward" items' shortcut
@@ -3632,31 +3634,43 @@ void MA_SetupDynamicMenus(void)
   // now we generate a new one.
   G->MA->GUI.MN_REXX = MenuObject,
     MUIA_Menu_Title, tr(MSG_MA_Scripts),
-    MenuChild, Menuitem(tr(MSG_MA_ExecuteScript), "_", TRUE, NULL, MMEN_SCRIPT),
-    MenuChild, MenuBarLabel,
+    MenuChild, executeItem = Menuitem(tr(MSG_MA_ExecuteScript), "_", TRUE, NULL, MMEN_SCRIPT),
   End;
 
   if(G->MA->GUI.MN_REXX != NULL)
   {
     static const char *const shortcuts[MAXRX_MENU] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
     int i;
+    BOOL scriptsAdded = FALSE;
 
     // the first ten entries of our user definable
     // rexx script array is for defining rexx items
     // linked to the main menu.
     for(i=0; i < MAXRX_MENU; i++)
     {
-      if(C->RX[i].Script[0] != '\0')
+      if(C->RX[i].Name[0] != '\0' && C->RX[i].Script[0] != '\0')
       {
         Object *newObj = Menuitem(C->RX[i].Name, shortcuts[i], TRUE, FALSE, MMEN_MACRO+i);
 
         if(newObj != NULL)
+        {
           DoMethod(G->MA->GUI.MN_REXX, MUIM_Family_AddTail, newObj);
+          // remember that we just added a custom scriptitem
+          scriptsAdded = TRUE;
+        }
       }
     }
 
-    // add the new dynamic menu to our
-    // main menu
+    // add a separator bar only if at least one custom script item has been added
+    if(scriptsAdded == TRUE)
+    {
+      Object *separator = MenuBarLabel;
+
+      if(separator != NULL)
+        DoMethod(G->MA->GUI.MN_REXX, MUIM_Family_Insert, separator, executeItem);
+    }
+
+    // add the new dynamic menu to our main menu
     DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_AddTail, G->MA->GUI.MN_REXX);
   }
 

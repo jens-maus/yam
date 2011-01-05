@@ -9,6 +9,8 @@ $URL$
 
   * MailServers.c: added missing comparison of the preselection mode.
   * ImageCache.c: added a missing NULL pointer check.
+  * YAM_MA.c: a separator bar in the Scripts menu will only be added if at least
+    one custom script is configured.
 
 2011-01-05 Vit Sindlar <sindlarv at centrum dot cz>
 
