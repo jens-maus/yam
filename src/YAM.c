@@ -2533,12 +2533,27 @@ int main(int argc, char **argv)
     int ret;
 
     // allocate our global G and C structures
-    if((G = calloc(1, sizeof(struct Global))) == NULL ||
-       (C = calloc(1, sizeof(struct Config))) == NULL)
+    if((G = calloc(1, sizeof(struct Global))) == NULL)
     {
       // break out immediately to signal an error!
       break;
     }
+
+    // prepare the exec lists in G
+    NewList((struct List *)&(G->readMailDataList));
+    NewList((struct List *)&(G->writeMailDataList));
+    NewList((struct List *)&(G->zombieFileList));
+
+    if((C = calloc(1, sizeof(struct Config))) == NULL)
+    {
+      // break out immediately to signal an error!
+      break;
+    }
+
+    // prepare the exec lists in C
+    NewList((struct List *)&(C->mailServerList));
+    NewList((struct List *)&(C->mimeTypeList));
+    NewList((struct List *)&(C->filterList));
 
     // create the MEMF_SHARED memory pool we use for our
     // own AllocVecPooled() allocations later on
@@ -2582,14 +2597,6 @@ int main(int argc, char **argv)
       // break out immediately to signal an error!
       break;
     }
-
-    // prepare the exec lists in G and C
-    NewList((struct List *)&(C->mailServerList));
-    NewList((struct List *)&(C->mimeTypeList));
-    NewList((struct List *)&(C->filterList));
-    NewList((struct List *)&(G->readMailDataList));
-    NewList((struct List *)&(G->writeMailDataList));
-    NewList((struct List *)&(G->zombieFileList));
 
     // get the PROGDIR: and program name and put it into own variables
     NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
