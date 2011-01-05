@@ -1135,7 +1135,7 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags)
 /*** Mail Thread Nagivation ***/
 /// FindThreadInFolder
 // Find the next/prev message in a thread within one folder
-struct Mail *FindThreadInFolder(struct Mail *srcMail, struct Folder *folder, BOOL nextThread)
+struct Mail *FindThreadInFolder(const struct Mail *srcMail, const struct Folder *folder, const BOOL nextThread)
 {
   struct Mail *result = NULL;
   struct MailNode *mnode;
@@ -1177,7 +1177,7 @@ struct Mail *FindThreadInFolder(struct Mail *srcMail, struct Folder *folder, BOO
 ///
 /// FindThread
 //  Find the next/prev message in a thread and return a pointer to it
-struct Mail *FindThread(struct Mail *srcMail, BOOL nextThread, Object *window)
+struct Mail *FindThread(const struct Mail *srcMail, const BOOL nextThread)
 {
   struct Mail *mail = NULL;
 
@@ -1197,7 +1197,6 @@ struct Mail *FindThread(struct Mail *srcMail, BOOL nextThread, Object *window)
         // the other folders and search for further mails of the same threads.
         if(C->GlobalMailThreads == TRUE)
         {
-          int autoloadindex = -1;
           struct FolderNode *fnode;
 
           // if we still haven't found the mail we have to scan the other folders aswell
@@ -1205,38 +1204,22 @@ struct Mail *FindThread(struct Mail *srcMail, BOOL nextThread, Object *window)
 
           ForEachFolderNode(G->folders, fnode)
           {
-            struct Folder *fo = fnode->folder;
+            struct Folder *folder = fnode->folder;
 
             // check if this folder isn't a group and that we haven't scanned
             // it already.
-            if(isGroupFolder(fo) == FALSE && fo != srcMail->Folder)
+            if(isGroupFolder(folder) == FALSE && folder != srcMail->Folder)
             {
-              if(fo->LoadedMode != LM_VALID)
+              // make sure the index is loaded and valid
+              if(MA_GetIndex(folder) == TRUE)
               {
-                if(autoloadindex == -1)
+                if((mail = FindThreadInFolder(srcMail, folder, nextThread)) != NULL)
                 {
-                  // if we are going to ask for loading all folders we do it now
-                  if(MUI_Request(G->App, window, 0,
-                                 tr(MSG_MA_ConfirmReq),
-                                 tr(MSG_YesNoReq),
-                                 tr(MSG_RE_FOLLOWTHREAD)) != 0)
-                    autoloadindex = 1;
-                  else
-                    autoloadindex = 0;
+                  // we found a suitable mail
+                  break;
                 }
-
-                // load the folder's index, if we are allowed to do that
-                if(autoloadindex == 1)
-                  MA_GetIndex(fo);
               }
-
-              // check again for a valid index
-              if(fo->LoadedMode == LM_VALID)
-                mail = FindThreadInFolder(srcMail, fo, nextThread);
             }
-
-            if(mail != NULL)
-              break;
           }
 
           UnlockFolderList(G->folders);
@@ -3576,8 +3559,7 @@ HOOKPROTONHNO(FollowThreadFunc, void, int *arg)
   DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
 
   // depending on the direction we get the Question or Answer to the current Message
-  if(mail != NULL &&
-     (fmail = FindThread(mail, direction > 0, gui->WI)) != NULL)
+  if(mail != NULL && (fmail = FindThread(mail, direction > 0)) != NULL)
   {
     LONG pos = MUIV_NList_GetPos_Start;
 

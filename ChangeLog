@@ -11,6 +11,10 @@ $URL$
   * ImageCache.c: added a missing NULL pointer check.
   * YAM_MA.c: a separator bar in the Scripts menu will only be added if at least
     one custom script is configured.
+  * YAM_MA.c, locale/YAM.cd: removed the confirmation requester when a global
+    search over all mail folders for a threaded answer has to be performed.
+    Since YAM periodically flushes all indices the confirmation is more annoying
+    than helpful. See #19 for details.
 
 2011-01-05 Vit Sindlar <sindlarv at centrum dot cz>
 

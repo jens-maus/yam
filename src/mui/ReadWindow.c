@@ -1439,7 +1439,7 @@ DECLARE(FollowThread) // LONG direction
   mail = rmData->mail;
 
   // depending on the direction we get the Question or Answer to the current Message
-  if((fmail = FindThread(mail, msg->direction > 0, obj)) != NULL)
+  if((fmail = FindThread(mail, msg->direction > 0)) != NULL)
   {
     LONG pos = MUIV_NList_GetPos_Start;
 

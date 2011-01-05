@@ -5189,13 +5189,6 @@ MSG_HELP_CO_CONVERTHTML (1717//)
 If the main part of an e-mail is HTML, YAM will\n\
 convert it to plain text before displaying it.
 ;
-MSG_RE_FOLLOWTHREAD (1718//)
-In order to search for more mails of the same thread,\n\
-YAM has to load additional folder indices. This may be\n\
-quite time and memory consuming.\n\
-\n\
-Do you want to continue?
-;
 MSG_TR_TRANSFERSTATUS (1719//)
 %s of %s @ %s/s\n\
 %02ld'%02ld'' running - %02ld'%02ld'' left

@@ -392,8 +392,8 @@ void  MA_ChangeSelected(BOOL forceUpdate);
 
 enum NewMailMode CheckNewMailQualifier(const enum NewMailMode mode, const ULONG qualifier, int *flags);
 struct WriteMailData *NewMessage(enum NewMailMode mode, const int flags);
-struct Mail *FindThreadInFolder(struct Mail *srcMail, struct Folder *folder, BOOL nextThread);
-struct Mail *FindThread(struct Mail *srcMail, BOOL nextThread, Object *window);
+struct Mail *FindThreadInFolder(const struct Mail *srcMail, const struct Folder *folder, const BOOL nextThread);
+struct Mail *FindThread(const struct Mail *srcMail, const BOOL nextThread);
 
 BOOL ReceiveMailsFromPOP(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult);
 

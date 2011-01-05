@@ -434,7 +434,7 @@ static BOOL SetDefaultSecurity(struct Compose *comp)
   return result;
 }
 ///
-/// BuildPartsList()
+/// BuildPartsList
 //  Builds message parts from attachment list
 static struct WritePart *BuildPartsList(struct WriteMailData *wmData)
 {
@@ -514,7 +514,7 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData)
 }
 
 ///
-/// TransformText()
+/// TransformText
 //  Inserts or pastes text as plain, ROT13, uuencoded or quoted text
 static char *TransformText(const char *source, const enum TransformMode mode, const char *qtext)
 {
@@ -618,7 +618,7 @@ static char *TransformText(const char *source, const enum TransformMode mode, co
 }
 
 ///
-/// CreateHashTable()
+/// CreateHashTable
 //  Creates an index table for a database file
 static BOOL CreateHashTable(char *source, char *hashfile, char *sep)
 {
@@ -665,7 +665,7 @@ static BOOL CreateHashTable(char *source, char *hashfile, char *sep)
 }
 
 ///
-/// AddTagline()
+/// AddTagline
 //  Randomly selects a tagline and writes it to the message file
 static void AddTagline(FILE *fh_mail)
 {
@@ -763,7 +763,7 @@ static void AddTagline(FILE *fh_mail)
 }
 
 ///
-/// WriteSignature()
+/// WriteSignature
 //  Writes signature to the message file
 static void WriteSignature(FILE *out, int signat)
 {
@@ -822,7 +822,7 @@ static void WriteSignature(FILE *out, int signat)
 ///
 
 /* Hooks */
-/// CloseWriteWindowHook()
+/// CloseWriteWindowHook
 //  Hook that will be called as soon as a write window is closed
 HOOKPROTONHNO(CloseWriteWindowFunc, void, struct WriteMailData **arg)
 {
@@ -844,7 +844,7 @@ HOOKPROTONHNO(CloseWriteWindowFunc, void, struct WriteMailData **arg)
 MakeStaticHook(CloseWriteWindowHook, CloseWriteWindowFunc);
 
 ///
-/// AppMessageHook()
+/// AppMessageHook
 // Hook to catch the MUIA_AppMessage from a workbench icon drop operation
 // Note, that this must be a hook or otherwise the "struct AppMessage"
 // is not valid anymore at the time this function is executed.

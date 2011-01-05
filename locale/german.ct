@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.16 (1.1.2011)
+## version $VER: YAM.catalog 7.17 (5.1.2011)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -6794,13 +6794,6 @@ MSG_HELP_CO_CONVERTHTML
 Wenn ausgewählt werden reine\n\
 HTML E-Mails automatisch in\n\
 Klartext konvertiert.
-;
-MSG_RE_FOLLOWTHREAD
-Um nach mehr Nachrichten des selben Themas zu suchen,\n\
-muss YAM zusätzliche Postfachindizes nachladen. Dies\n\
-könnte sehr zeit- und speicheraufwendig sein.\n\
-\n\
-Möchten Sie fortfahren?
 ;
 MSG_TR_TRANSFERSTATUS
 %s von %s @ %s/s\n\
