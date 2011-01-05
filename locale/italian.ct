@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.7 (01.01.2011)
+## version $VER: YAM.catalog 7.8 (05.01.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5558 2011-01-01
+; based on YAM.cd 5572 2011-01-05
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -7248,20 +7248,6 @@ testo semplice prima della loro visualizzazione finale.
 ; If the main part of an e-mail is HTML, YAM will\n\
 ; convert it to plain text before displaying it.
 ;
-MSG_RE_FOLLOWTHREAD
-Nel caso si scelga di cercare più messaggi aventi\n\
-lo stesso argomento, il programma sarà costretto\n\
-a caricare tutti gli altri indici delle cartelle.\n\
-Ciò potrebbe comportare un gran consumo di tempo\n\
-e di memoria.\n\
-\n\
-Si desidera continuare?
-; In order to search for more mails of the same thread,\n\
-; YAM has to load additional folder indices. This may be\n\
-; quite time and memory consuming.\n\
-; \n\
-; Do you want to continue?
-;
 MSG_TR_TRANSFERSTATUS
 %s di %s @ %s/s\n\
 %02ld'%02ld'' trasferiti - %02ld'%02ld'' restanti
@@ -10028,7 +10014,7 @@ Disconnessione dal server...
 ; Disconnecting from server...
 ;
 MSG_SHOW_TRANSFER_WINDOW
-Trasferimenti in corso...
+Mostra trasferimenti in corso...
 ; Show transfers in progress...
 ;
 MSG_CO_APPLY_REMOTE_FILTERS

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-05 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: minor changes.
+
 2011-01-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * MailServers.c: added missing comparison of the preselection mode.
