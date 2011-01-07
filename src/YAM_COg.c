@@ -1724,7 +1724,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_DELETE,             MSG_HELP_CO_CH_DELETE               );
     SetHelp(data->GUI.CH_USEAPOP,            MSG_HELP_CO_CH_USEAPOP              );
     SetHelp(data->GUI.CH_POPENABLED,         MSG_HELP_CO_CH_POPENABLED           );
-    SetHelp(data->GUI.CH_DOWNLOADONSTARTUP,  MSG_HELP_CO_CH_DOWNLOADONSTARTUP    );
+    SetHelp(data->GUI.CH_DOWNLOADONSTARTUP,  MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP  );
     SetHelp(data->GUI.CH_APPLYREMOTEFILTERS, MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS );
     SetHelp(data->GUI.RA_SMTPSECURE,         MSG_HELP_CO_RA_SMTPSECURE           );
     SetHelp(data->GUI.RA_POP3SECURE,         MSG_HELP_CO_RA_POP3SECURE           );

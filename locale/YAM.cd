@@ -7002,7 +7002,7 @@ server.
 MSG_CO_DOWNLOAD_ON_STARTUP (2204//)
 Check for new mail on startup
 ;
-MSG_HELP_CO_CH_DOWNLOADONSTARTUP (2205//)
+MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP (2205//)
 Check this account for new mail on every\n\
 startup of YAM automatically.
 ;

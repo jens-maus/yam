@@ -8579,7 +8579,7 @@ anwenden.
 MSG_CO_DOWNLOAD_ON_STARTUP
 Beim Start auf neue Post prüfen
 ;
-MSG_HELP_CO_CH_DOWNLOADONSTARTUP
+MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
 Dieses Konto bei jedem Start von YAM\n\
 automatisch auf neue Post prüfen.
 ;
