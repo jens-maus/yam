@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: replaced MA_IndexFileName() by a thread safe variant.
+
 2011-01-05 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: minor changes.

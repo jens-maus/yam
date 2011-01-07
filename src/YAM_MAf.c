@@ -231,26 +231,11 @@ static void MA_ValidateStatus(struct Folder *folder)
 }
 
 ///
-/// MA_IndexFileName
-//  Returns file name of folder index
-static char *MA_IndexFileName(struct Folder *folder)
-{
-  static char buffer[SIZE_PATHFILE];
-
-  ENTER();
-
-  AddPath(buffer, folder->Fullpath, ".index", sizeof(buffer));
-
-  RETURN(buffer);
-  return buffer;
-}
-
-///
 /// MA_LoadIndex
 //  Loads a folder index from disk
 enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 {
-  char *indexFileName;
+  char indexFileName[SIZE_PATHFILE];
   ULONG indexFileSize;
   enum LoadedMode indexloaded = LM_UNLOAD;
   BOOL corrupt = FALSE;
@@ -260,7 +245,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 
   D(DBF_FOLDER, "Loading index for folder '%s'", folder->Name);
 
-  indexFileName = MA_IndexFileName(folder);
+  AddPath(indexFileName, folder->Fullpath, ".index", sizeof(indexFileName));
 
   // Check the size of the index file. Even an empty folder has an index
   // file with a size of at least sizeof(struct FIndex).
@@ -464,11 +449,14 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 BOOL MA_SaveIndex(struct Folder *folder)
 {
   BOOL success = FALSE;
+  char indexFileName[SIZE_PATHFILE];
   FILE *fh;
 
   ENTER();
 
-  if((fh = fopen(MA_IndexFileName(folder), "w")) != NULL)
+  AddPath(indexFileName, folder->Fullpath, ".index", sizeof(indexFileName));
+
+  if((fh = fopen(indexFileName, "w")) != NULL)
   {
     struct FIndex fi;
     struct MailNode *mnode;
@@ -528,8 +516,8 @@ BOOL MA_SaveIndex(struct Folder *folder)
   }
   else
   {
-    W(DBF_FOLDER, "saving index file '%s' of folder '%s' failed", MA_IndexFileName(folder), folder->Name);
-    ER_NewError(tr(MSG_ER_CANNOT_WRITE_INDEX), MA_IndexFileName(folder), folder->Name);
+    W(DBF_FOLDER, "saving index file '%s' of folder '%s' failed", indexFileName, folder->Name);
+    ER_NewError(tr(MSG_ER_CANNOT_WRITE_INDEX), indexFileName, folder->Name);
   }
 
   RETURN(success);
@@ -606,7 +594,12 @@ void MA_ExpireIndex(struct Folder *folder)
   ENTER();
 
   if(!isModified(folder))
-    DeleteFile(MA_IndexFileName(folder));
+  {
+    char indexFileName[SIZE_PATHFILE];
+
+    AddPath(indexFileName, folder->Fullpath, ".index", sizeof(indexFileName));
+    DeleteFile(indexFileName);
+  }
 
   SET_FLAG(folder->Flags, FOFL_MODIFY);
 
@@ -630,14 +623,14 @@ void MA_RebuildIndexes(void)
 
     if(folder != NULL && !isGroupFolder(folder))
     {
-      char *indexFile = MA_IndexFileName(folder);
+      char indexFileName[SIZE_PATHFILE];
       ULONG dirDate;
       ULONG indexDate;
 
       // get date of the folder directory and the .index file
       // itself
       if(ObtainFileInfo(folder->Fullpath, FI_TIME, &dirDate) == TRUE &&
-         ObtainFileInfo(indexFile, FI_TIME, &indexDate) == TRUE)
+         ObtainFileInfo(indexFileName, FI_TIME, &indexDate) == TRUE)
       {
         // only consider starting to rebuilding the .index if
         // either the date of the directory is greater than the
@@ -653,7 +646,7 @@ void MA_RebuildIndexes(void)
           // bit set we skip the index rescanning process because
           // the A bits might have been set by a backup program
           if(ObtainFileInfo(folder->Fullpath, FI_PROTECTION, &dirProtection) == TRUE &&
-             ObtainFileInfo(indexFile, FI_PROTECTION, &indexProtection) == TRUE)
+             ObtainFileInfo(indexFileName, FI_PROTECTION, &indexProtection) == TRUE)
           {
             if(isFlagClear(indexProtection, FIBF_ARCHIVE) ||
                isFlagClear(dirProtection, FIBF_ARCHIVE))
@@ -662,7 +655,7 @@ void MA_RebuildIndexes(void)
               // make sure MA_GetIndex() is going to
               // rebuild it.
               if(indexDate > 0)
-                DeleteFile(indexFile);
+                DeleteFile(indexFileName);
 
               // then lets call GetIndex() to start rebuilding
               // the .index - but only if this folder is one of the folders
