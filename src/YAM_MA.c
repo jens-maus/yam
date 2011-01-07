@@ -2389,7 +2389,7 @@ BOOL MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult)
   if(C->UpdateStatus == TRUE)
     MA_UpdateStatus();
 
-  // the USER flag must be check at last, because STARTUP and USER might be used together
+  // the USER flag must be checked at last, because STARTUP and USER might be used together
   if(isFlagSet(flags, RECEIVEF_STARTUP))
     MA_StartMacro(MACRO_PREGET, "1");
   else if(isFlagSet(flags, RECEIVEF_TIMER))
@@ -2409,7 +2409,12 @@ BOOL MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult)
     {
       // fetch mails from active servers only
       if(isServerActive(msn) == TRUE)
-        success &= ReceiveMailsFromPOP(msn, flags, dlResult);
+      {
+        // download mails from this server if this either is no startup action
+        // or "download on startup" is enabled
+        if(isFlagClear(flags, RECEIVEF_STARTUP) || hasServerDownloadOnStartup(msn) == TRUE)
+          success &= ReceiveMailsFromPOP(msn, flags, dlResult);
+      }
 
       pop++;
     }
@@ -2420,7 +2425,7 @@ BOOL MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult)
 
     if((msn = GetMailServer(&C->mailServerList, MST_POP3, pop)) != NULL)
     {
-      // we ignore the active state for single servers
+      // we ignore the active state and possible startup flags for single servers
       success = ReceiveMailsFromPOP(msn, flags, dlResult);
     }
   }

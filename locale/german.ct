@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.17 (5.1.2011)
+## version $VER: YAM.catalog 7.18 (8.1.2011)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -1318,10 +1318,6 @@ MSG_CO_Download
 Post runterladen
 ; Download
 ;
-MSG_CO_AvoidDuplicates
-_Duplikate vermeiden
-; _Avoid duplicates
-;
 MSG_CO_TransferWin
 _Transferfenster
 ; _Transfer window
@@ -1766,10 +1762,6 @@ MSG_CO_SendStart
 Wartende Post im Postausgang senden
 ; Send mail in outgoing queue
 ;
-MSG_CO_PopStart
-Neue Post runterladen
-; Download new mail
-;
 MSG_CO_CheckDOB
 Geburtstage überprüfen
 ; Check birthdates
@@ -2095,14 +2087,6 @@ Diesen Server beim Prüfen\n\
 auf neue Post berücksichtigen.
 ; Connect to this server\n\
 ; when checking for new mail
-;
-MSG_HELP_CO_CH_AVOIDDUP
-Falls Sie die alte Post auf dem Server\n\
-nicht löschen, hilft Ihnen diese Option,\n\
-doppelte Nachrichten zu vermeiden.
-; If you don't delete old mail\n\
-; on the server, use this option\n\
-; to avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN
 Zeige Fortschrittsanzeige\n\
@@ -8591,4 +8575,11 @@ MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS
 Alle definierten Remote-Filter beim\n\
 Holen von Post von diesem Server\n\
 anwenden.
+;
+MSG_CO_DOWNLOAD_ON_STARTUP
+Beim Start auf neue Post prüfen
+;
+MSG_HELP_CO_CH_DOWNLOADONSTARTUP
+Dieses Konto bei jedem Start von YAM\n\
+automatisch auf neue Post prüfen.
 ;

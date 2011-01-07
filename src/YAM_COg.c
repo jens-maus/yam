@@ -1664,7 +1664,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                       Child, MakeCheckGroup((Object **)&data->GUI.CH_USEAPOP, tr(MSG_CO_UseAPOP)),
 
                       Child, HSpace(1),
-                      Child, MakeCheckGroup((Object **)&data->GUI.CH_AVOIDDUP, tr(MSG_CO_AvoidDuplicates)),
+                      Child, MakeCheckGroup((Object **)&data->GUI.CH_DOWNLOADONSTARTUP, tr(MSG_CO_DOWNLOAD_ON_STARTUP)),
 
                       Child, HSpace(1),
                       Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYREMOTEFILTERS, tr(MSG_CO_APPLY_REMOTE_FILTERS)),
@@ -1724,7 +1724,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_DELETE,             MSG_HELP_CO_CH_DELETE               );
     SetHelp(data->GUI.CH_USEAPOP,            MSG_HELP_CO_CH_USEAPOP              );
     SetHelp(data->GUI.CH_POPENABLED,         MSG_HELP_CO_CH_POPENABLED           );
-    SetHelp(data->GUI.CH_AVOIDDUP,           MSG_HELP_CO_CH_AVOIDDUP             );
+    SetHelp(data->GUI.CH_DOWNLOADONSTARTUP,  MSG_HELP_CO_CH_DOWNLOADONSTARTUP    );
     SetHelp(data->GUI.CH_APPLYREMOTEFILTERS, MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS );
     SetHelp(data->GUI.RA_SMTPSECURE,         MSG_HELP_CO_RA_SMTPSECURE           );
     SetHelp(data->GUI.RA_POP3SECURE,         MSG_HELP_CO_RA_POP3SECURE           );
@@ -1739,7 +1739,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     DoMethod(data->GUI.CH_POPENABLED        , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
     DoMethod(data->GUI.CH_USEAPOP           , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
     DoMethod(data->GUI.CH_DELETE            , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.CH_AVOIDDUP          , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.CH_DOWNLOADONSTARTUP , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
     DoMethod(data->GUI.CH_APPLYREMOTEFILTERS, MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
     DoMethod(data->GUI.CY_PRESELECTION      , MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
     DoMethod(data->GUI.BT_PADD              , MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_AddPOP3Hook);
@@ -3065,7 +3065,6 @@ Object *CO_PageStartupQuit(struct CO_ClassData *data)
                 Child, MakeCheckGroup((Object **)&data->GUI.CH_REMOVESTART, tr(MSG_CO_RemoveDel)),
                 Child, MakeCheckGroup((Object **)&data->GUI.CH_CHECKBD, tr(MSG_CO_CheckDOB)),
                 Child, MakeCheckGroup((Object **)&data->GUI.CH_SENDSTART, tr(MSG_CO_SendStart)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_POPSTART, tr(MSG_CO_PopStart)),
              End,
              Child, VGroup, GroupFrameT(tr(MSG_CO_OnTermination)),
                 Child, MakeCheckGroup((Object **)&data->GUI.CH_SENDQUIT, tr(MSG_CO_SendStart)),
@@ -3083,12 +3082,12 @@ Object *CO_PageStartupQuit(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_DELETESTART,MSG_HELP_CO_CH_DELETEOLD );
       SetHelp(data->GUI.CH_REMOVESTART,MSG_HELP_CO_CH_REMOVEDEL );
       SetHelp(data->GUI.CH_SENDSTART  ,MSG_HELP_CO_CH_SEND      );
-      SetHelp(data->GUI.CH_POPSTART   ,MSG_HELP_CO_CH_POPSTART  );
       SetHelp(data->GUI.CH_CHECKBD    ,MSG_HELP_CO_CH_CHECKBD   );
       SetHelp(data->GUI.CH_SENDQUIT   ,MSG_HELP_CO_CH_SEND      );
       SetHelp(data->GUI.CH_DELETEQUIT ,MSG_HELP_CO_CH_DELETEOLD );
       SetHelp(data->GUI.CH_REMOVEQUIT ,MSG_HELP_CO_CH_REMOVEDEL );
    }
+
    return grp;
 }
 

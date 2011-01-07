@@ -334,6 +334,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
         fprintf(fh, "POP%02d.AvoidDuplicates   = %s\n", i, Bool2Txt(hasServerAvoidDuplicates(msn)));
         fprintf(fh, "POP%02d.ApplyRemotFilters = %s\n", i, Bool2Txt(hasServerApplyRemoteFilters(msn)));
         fprintf(fh, "POP%02d.Preselection      = %d\n", i, msn->preselection);
+        fprintf(fh, "POP%02d.DownloadOnStartup = %s\n", i, Bool2Txt(hasServerDownloadOnStartup(msn)));
 
         i++;
       }
@@ -530,7 +531,6 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "LogAllEvents     = %s\n", Bool2Txt(co->LogAllEvents));
 
     fprintf(fh, "\n[Start/Quit]\n");
-    fprintf(fh, "GetOnStartup     = %s\n", Bool2Txt(co->GetOnStartup));
     fprintf(fh, "SendOnStartup    = %s\n", Bool2Txt(co->SendOnStartup));
     fprintf(fh, "CleanupOnStartup = %s\n", Bool2Txt(co->CleanupOnStartup));
     fprintf(fh, "RemoveOnStartup  = %s\n", Bool2Txt(co->RemoveOnStartup));
@@ -731,6 +731,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
       struct MailServerNode *fSMTP;
       BOOL foundGlobalPOP3Options = FALSE;
       BOOL globalPOP3AvoidDuplicates = FALSE;
+      BOOL globalDownloadOnStartup = FALSE;
       int globalPOP3Preselection = -1;
 
       // set defaults and make the configuration actually
@@ -1019,6 +1020,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 else if(stricmp(q, "AvoidDuplicates") == 0)      Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES) : CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
                 else if(stricmp(q, "ApplyRemoteFilters") == 0)   Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS) : CLEAR_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
                 else if(stricmp(q, "Preselection") == 0)         msn->preselection = atoi(value);
+                else if(stricmp(q, "DownloadOnStartup") == 0)    Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP) : CLEAR_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
               }
               else
                 break;
@@ -1324,8 +1326,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(stricmp(buf, "SplitLogfile") == 0)             co->SplitLogfile = Txt2Bool(value);
           else if(stricmp(buf, "LogAllEvents") == 0)             co->LogAllEvents = Txt2Bool(value);
 
-/* Startup/QUit */
-          else if(stricmp(buf, "GetOnStartup") == 0)             co->GetOnStartup = Txt2Bool(value);
+/* Startup/Quit */
+          else if(stricmp(buf, "GetOnStartup") == 0)             { globalDownloadOnStartup = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
           else if(stricmp(buf, "SendOnStartup") == 0)            co->SendOnStartup = Txt2Bool(value);
           else if(stricmp(buf, "CleanupOnStartup") == 0)         co->CleanupOnStartup = Txt2Bool(value);
           else if(stricmp(buf, "RemoveOnStartup") == 0)          co->RemoveOnStartup = Txt2Bool(value);
@@ -1617,6 +1619,12 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
               else
                 CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+
+              if(globalDownloadOnStartup == TRUE)
+                SET_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+              else
+                CLEAR_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+
               msn->preselection = globalPOP3Preselection;
             }
           }
@@ -1709,10 +1717,10 @@ void CO_GetConfig(BOOL saveConfig)
         else
           CLEAR_FLAG(msn->flags, MSF_AUTH);
 
-        if(GetMUICheck(gui->CH_AVOIDDUP) == TRUE)
-          SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+        if(GetMUICheck(gui->CH_DOWNLOADONSTARTUP) == TRUE)
+          SET_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
         else
-          CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+          CLEAR_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
 
         if(GetMUICheck(gui->CH_APPLYREMOTEFILTERS) == TRUE)
           SET_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
@@ -2266,7 +2274,6 @@ D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnable
 
     case cp_StartupQuit:
     {
-      CE->GetOnStartup      = GetMUICheck(gui->CH_POPSTART);
       CE->SendOnStartup     = GetMUICheck(gui->CH_SENDSTART);
       CE->CleanupOnStartup  = GetMUICheck(gui->CH_DELETESTART);
       CE->RemoveOnStartup   = GetMUICheck(gui->CH_REMOVESTART);
@@ -2712,7 +2719,6 @@ void CO_SetConfig(void)
 
     case cp_StartupQuit:
     {
-      setcheckmark(gui->CH_POPSTART   ,CE->GetOnStartup);
       setcheckmark(gui->CH_SENDSTART  ,CE->SendOnStartup);
       setcheckmark(gui->CH_DELETESTART,CE->CleanupOnStartup);
       setcheckmark(gui->CH_REMOVESTART,CE->RemoveOnStartup);

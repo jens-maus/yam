@@ -990,9 +990,6 @@ show always
 MSG_CO_Download (366//)
 Download
 ;
-MSG_CO_AvoidDuplicates (367//)
-_Avoid duplicates
-;
 MSG_CO_TransferWin (368//)
 _Transfer window
 ;
@@ -1332,9 +1329,6 @@ Mark new mail as unread
 MSG_CO_SendStart (489//)
 Send mail in outgoing queue
 ;
-MSG_CO_PopStart (490//)
-Download new mail
-;
 MSG_CO_CheckDOB (491//)
 Check birthdates
 ;
@@ -1573,11 +1567,6 @@ away from prying eyes.\n\
 MSG_HELP_CO_CH_POPENABLED (569//)
 Check this account while\n\
 checking for new mail.
-;
-MSG_HELP_CO_CH_AVOIDDUP (570//)
-If you don't delete old mail\n\
-on the server, use this option\n\
-to avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN (571//)
 Show a progress window\n\
@@ -7009,4 +6998,11 @@ MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS (2203//)
 Apply all defined remote filters\n\
 when downloading mail from this\n\
 server.
+;
+MSG_CO_DOWNLOAD_ON_STARTUP (2204//)
+Check for new mail on startup
+;
+MSG_HELP_CO_CH_DOWNLOADONSTARTUP (2205//)
+Check this account for new mail on every\n\
+startup of YAM automatically.
 ;

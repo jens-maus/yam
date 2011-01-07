@@ -2185,8 +2185,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       if(nocheck == FALSE && ConnectionIsOnline(NULL) == TRUE)
       {
         // perform the configured startup actions for receiving and sending mails
-        if(C->GetOnStartup == TRUE)
-          MA_PopNow(-1, hide == TRUE ? RECEIVEF_STARTUP|RECEIVEF_USER : RECEIVEF_USER, NULL);
+        MA_PopNow(-1, RECEIVEF_STARTUP|RECEIVEF_USER, NULL);
 
         if(C->SendOnStartup == TRUE)
           SendWaitingMail(hide);

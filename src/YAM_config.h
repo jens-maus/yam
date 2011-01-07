@@ -84,7 +84,7 @@ struct CO_GUIData
   Object *CH_USEAPOP;
   Object *RA_POP3SECURE;
   Object *CH_POPENABLED;
-  Object *CH_AVOIDDUP;
+  Object *CH_DOWNLOADONSTARTUP;
   Object *CH_APPLYREMOTEFILTERS;
   Object *CY_PRESELECTION;
   Object *CY_TRANSWIN;
@@ -189,7 +189,6 @@ struct CO_GUIData
   Object *CY_LOGMODE;
   Object *CH_SPLITLOG;
   Object *CH_LOGALL;
-  Object *CH_POPSTART;
   Object *CH_SENDSTART;
   Object *CH_DELETESTART;
   Object *CH_REMOVESTART;
@@ -451,7 +450,6 @@ struct Config
   BOOL  EncryptToSelf;
   BOOL  SplitLogfile;
   BOOL  LogAllEvents;
-  BOOL  GetOnStartup;
   BOOL  SendOnStartup;
   BOOL  CleanupOnStartup;
   BOOL  RemoveOnStartup;

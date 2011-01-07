@@ -59,6 +59,7 @@ enum MailServerType { MST_UNKNOWN=0, MST_SMTP, MST_POP3, MST_IMAP };
 #define MSF_IN_USE               (1<<13) // [POP3/SMTP] : server is currently up/downloading mails
 #define MSF_AVOID_DUPLICATES     (1<<14) // [POP3]      : download mail once only
 #define MSF_APPLY_REMOTE_FILTERS (1<<15) // [POP3]      : apply remote filters
+#define MSF_DOWNLOAD_ON_STARTUP  (1<<16) // [POP3]      : check for new mail on startup
 
 #define isServerActive(v)              (isFlagSet((v)->flags, MSF_ACTIVE))
 #define hasServerAPOP(v)               (isFlagSet((v)->flags, MSF_APOP))
@@ -76,6 +77,7 @@ enum MailServerType { MST_UNKNOWN=0, MST_SMTP, MST_POP3, MST_IMAP };
 #define hasServerInUse(v)              (isFlagSet((v)->flags, MSF_IN_USE))
 #define hasServerAvoidDuplicates(v)    (isFlagSet((v)->flags, MSF_AVOID_DUPLICATES))
 #define hasServerApplyRemoteFilters(v) (isFlagSet((v)->flags, MSF_APPLY_REMOTE_FILTERS))
+#define hasServerDownloadOnStartup(v)  (isFlagSet((v)->flags, MSF_DOWNLOAD_ON_STARTUP))
 
 #define MSF2SMTPSecMethod(v)    (hasServerTLS(v) ? 1 : (hasServerSSL(v) ? 2 : 0))
 #define MSF2POP3SecMethod(v)    (hasServerSSL(v) ? 1 : (hasServerTLS(v) ? 2 : 0))

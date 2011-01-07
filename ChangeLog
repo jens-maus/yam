@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: removed the "avoid duplicates" checkmark from the GUI as there is no
+    sensible reason to force duplicate mails. However, it is still possible to
+    enable or disable this setting by modifying the .config file manually if
+    downloading already downloaded mails again is really required.
+    Furthermore the global "download on startup" option is now account specific
+    to be able to download mails from certain servers only when starting YAM.
+    The old global setting will be propagated to all POP3 accounts automati-
+    cally.
+
 2011-01-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: replaced MA_IndexFileName() by a thread safe variant.

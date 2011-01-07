@@ -524,7 +524,7 @@ HOOKPROTONHNONP(CO_GetPOP3Entry, void)
     nnset(gui->ST_PASSWD,             MUIA_String_Contents, msn->password);
     nnset(gui->CH_POPENABLED,         MUIA_Selected,        isServerActive(msn));
     nnset(gui->CH_USEAPOP,            MUIA_Selected,        hasServerAPOP(msn));
-    nnset(gui->CH_AVOIDDUP,           MUIA_Selected,        hasServerAvoidDuplicates(msn));
+    nnset(gui->CH_DOWNLOADONSTARTUP,  MUIA_Selected,        hasServerDownloadOnStartup(msn));
     nnset(gui->CH_APPLYREMOTEFILTERS, MUIA_Selected,        hasServerApplyRemoteFilters(msn));
     nnset(gui->CH_DELETE,             MUIA_Selected,        hasServerPurge(msn));
     nnset(gui->CY_PRESELECTION,       MUIA_Cycle_Active,    msn->preselection);
@@ -580,10 +580,10 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
       else
         CLEAR_FLAG(msn->flags, MSF_APOP);
 
-      if(GetMUICheck(gui->CH_AVOIDDUP) == TRUE)
-        SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+      if(GetMUICheck(gui->CH_DOWNLOADONSTARTUP) == TRUE)
+        SET_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
       else
-        CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+        CLEAR_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
 
       if(GetMUICheck(gui->CH_APPLYREMOTEFILTERS) == TRUE)
         SET_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
@@ -949,7 +949,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_StartupQuit || page == cp_AllPages)
   {
-    co->GetOnStartup = FALSE;
     co->SendOnStartup = FALSE;
     co->LoadAllFolders = FALSE;
     co->SendOnQuit = FALSE;
@@ -1306,7 +1305,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->EncryptToSelf                   == c2->EncryptToSelf &&
      c1->SplitLogfile                    == c2->SplitLogfile &&
      c1->LogAllEvents                    == c2->LogAllEvents &&
-     c1->GetOnStartup                    == c2->GetOnStartup &&
      c1->SendOnStartup                   == c2->SendOnStartup &&
      c1->CleanupOnStartup                == c2->CleanupOnStartup &&
      c1->RemoveOnStartup                 == c2->RemoveOnStartup &&
