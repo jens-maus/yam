@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.8 (05.01.2011)
+## version $VER: YAM.catalog 7.8 (08.01.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5572 2011-01-05
+; based on YAM.cd 5576 2011-01-08
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1318,10 +1318,6 @@ MSG_CO_Download
 Ricezione
 ; Download
 ;
-MSG_CO_AvoidDuplicates
-Evita duplica_ti
-; _Avoid duplicates
-;
 MSG_CO_TransferWin
 _Finestra trasferimenti
 ; _Transfer window
@@ -1774,10 +1770,6 @@ MSG_CO_SendStart
 Spedisci la posta della cartella In attesa
 ; Send mail in outgoing queue
 ;
-MSG_CO_PopStart
-Preleva automaticamente la nuova posta in arrivo
-; Download new mail
-;
 MSG_CO_CheckDOB
 Verifica compleanni/anniversari
 ; Check birthdates
@@ -2109,14 +2101,6 @@ Verifica questo account durante la ricerca\n\
 di nuovi messaggi nel server di posta.
 ; Check this account while\n\
 ; checking for new mail.
-;
-MSG_HELP_CO_CH_AVOIDDUP
-Nel caso la posta non sia stata ancora cancellata dal\n\
-server si consiglia di attivare questa opzione in modo\n\
-da evitare che si presentino inutili duplicati delle mail.
-; If you don't delete old mail\n\
-; on the server, use this option\n\
-; to avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN
 Mostra la finestra di connessione\n\
@@ -10028,4 +10012,14 @@ questo server.
 ; Apply all defined remote filters\n\
 ; when downloading mail from this\n\
 ; server.
+;
+MSG_CO_DOWNLOAD_ON_STARTUP
+Verifica la presenza di nuovi messaggi all'avvio di YAM
+; Check for new mail on startup
+;
+MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
+All'avvio del programma verifica automaticamente\n\
+la presenza di nuovi messaggi per questo account.
+; Check this account for new mail on every\n\
+; startup of YAM automatically.
 ;

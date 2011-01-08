@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-08 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: maintain release.
+
 2011-01-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: removed the "avoid duplicates" checkmark from the GUI as there is no
