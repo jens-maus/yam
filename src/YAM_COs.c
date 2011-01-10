@@ -730,8 +730,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
       struct MailServerNode *fPOP3;
       struct MailServerNode *fSMTP;
       BOOL foundGlobalPOP3Options = FALSE;
-      BOOL globalPOP3AvoidDuplicates = FALSE;
-      BOOL globalDownloadOnStartup = FALSE;
+      int globalPOP3AvoidDuplicates = -1;
+      int globalDownloadOnStartup = -1;
       int globalPOP3Preselection = -1;
 
       // set defaults and make the configuration actually
@@ -1615,17 +1615,25 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
             if(msn->type == MST_POP3)
             {
-              if(globalPOP3AvoidDuplicates == TRUE)
-                SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
-              else
-                CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+              // apply only the found old settings and exclude the non-found ones
+              if(globalPOP3AvoidDuplicates != -1)
+              {
+                if(globalPOP3AvoidDuplicates == TRUE)
+                  SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+                else
+                  CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+              }
 
-              if(globalDownloadOnStartup == TRUE)
-                SET_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
-              else
-                CLEAR_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+              if(globalDownloadOnStartup != -1)
+              {
+                if(globalDownloadOnStartup == TRUE)
+                  SET_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+                else
+                  CLEAR_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+              }
 
-              msn->preselection = globalPOP3Preselection;
+              if(globalPOP3Preselection != -1)
+                msn->preselection = globalPOP3Preselection;
             }
           }
         }

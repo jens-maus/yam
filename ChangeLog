@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COs.c: propagating the old global POP3 options to the single accounts
+    could mess up certain values depending on which nightly build was used
+    before. Now only the really found options will be propagated instead of all
+    possible.
+
 2011-01-08 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: maintain release.
