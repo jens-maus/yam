@@ -1717,19 +1717,8 @@ void CO_GetConfig(BOOL saveConfig)
         else
           CLEAR_FLAG(msn->flags, MSF_AUTH);
 
-        if(GetMUICheck(gui->CH_DOWNLOADONSTARTUP) == TRUE)
-          SET_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
-        else
-          CLEAR_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
-
-        if(GetMUICheck(gui->CH_APPLYREMOTEFILTERS) == TRUE)
-          SET_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
-        else
-          CLEAR_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
-
         GetMUIString(msn->username, gui->ST_SMTPAUTHUSER, sizeof(msn->username));
         GetMUIString(msn->password, gui->ST_SMTPAUTHPASS, sizeof(msn->password));
-        msn->preselection = GetMUICycle(gui->CY_PRESELECTION);
 
         switch(GetMUICycle(gui->CY_SMTPAUTHMETHOD))
         {
