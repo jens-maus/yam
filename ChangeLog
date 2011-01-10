@@ -11,6 +11,8 @@ $URL$
     could mess up certain values depending on which nightly build was used
     before. Now only the really found options will be propagated instead of all
     possible.
+  * YAM_COs.c: fixed a typo which caused the "apply remote filters" setting to
+    be ignored.
 
 2011-01-08 Samir Hawamdeh <s.hawamdeh@tin.it>
 

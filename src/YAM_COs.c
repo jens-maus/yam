@@ -321,20 +321,20 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
       if(msn->type == MST_POP3)
       {
-        fprintf(fh, "POP%02d.ID                = %08x\n", i, msn->id);
-        fprintf(fh, "POP%02d.Account           = %s\n", i, msn->account);
-        fprintf(fh, "POP%02d.Server            = %s\n", i, msn->hostname);
-        fprintf(fh, "POP%02d.Port              = %d\n", i, msn->port);
-        fprintf(fh, "POP%02d.User              = %s\n", i, msn->username);
-        fprintf(fh, "POP%02d.Password          = %s\n", i, Encrypt(msn->password));
-        fprintf(fh, "POP%02d.Enabled           = %s\n", i, Bool2Txt(isServerActive(msn)));
-        fprintf(fh, "POP%02d.SSLMode           = %d\n", i, MSF2POP3SecMethod(msn));
-        fprintf(fh, "POP%02d.UseAPOP           = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
-        fprintf(fh, "POP%02d.Delete            = %s\n", i, Bool2Txt(hasServerPurge(msn)));
-        fprintf(fh, "POP%02d.AvoidDuplicates   = %s\n", i, Bool2Txt(hasServerAvoidDuplicates(msn)));
-        fprintf(fh, "POP%02d.ApplyRemotFilters = %s\n", i, Bool2Txt(hasServerApplyRemoteFilters(msn)));
-        fprintf(fh, "POP%02d.Preselection      = %d\n", i, msn->preselection);
-        fprintf(fh, "POP%02d.DownloadOnStartup = %s\n", i, Bool2Txt(hasServerDownloadOnStartup(msn)));
+        fprintf(fh, "POP%02d.ID                 = %08x\n", i, msn->id);
+        fprintf(fh, "POP%02d.Account            = %s\n", i, msn->account);
+        fprintf(fh, "POP%02d.Server             = %s\n", i, msn->hostname);
+        fprintf(fh, "POP%02d.Port               = %d\n", i, msn->port);
+        fprintf(fh, "POP%02d.User               = %s\n", i, msn->username);
+        fprintf(fh, "POP%02d.Password           = %s\n", i, Encrypt(msn->password));
+        fprintf(fh, "POP%02d.Enabled            = %s\n", i, Bool2Txt(isServerActive(msn)));
+        fprintf(fh, "POP%02d.SSLMode            = %d\n", i, MSF2POP3SecMethod(msn));
+        fprintf(fh, "POP%02d.UseAPOP            = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
+        fprintf(fh, "POP%02d.Delete             = %s\n", i, Bool2Txt(hasServerPurge(msn)));
+        fprintf(fh, "POP%02d.AvoidDuplicates    = %s\n", i, Bool2Txt(hasServerAvoidDuplicates(msn)));
+        fprintf(fh, "POP%02d.ApplyRemoteFilters = %s\n", i, Bool2Txt(hasServerApplyRemoteFilters(msn)));
+        fprintf(fh, "POP%02d.Preselection       = %d\n", i, msn->preselection);
+        fprintf(fh, "POP%02d.DownloadOnStartup  = %s\n", i, Bool2Txt(hasServerDownloadOnStartup(msn)));
 
         i++;
       }
