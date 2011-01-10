@@ -2,6 +2,10 @@
 YAM Open Source - ChangeLog
 ---------------------------
 
+2011-01-11 Alper Sönmez <amithlondestek@gmail.com>
+
+ * locale/turkish.ct: update to the latest changes.
+
 $Id$
 $URL$
 

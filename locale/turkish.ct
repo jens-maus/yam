@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 7.1 (20.10.2010)
+## version $VER: YAM.catalog 7.2 (11.01.2011)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
 ;
-; YAM.cd - YAM 2.6 catalog description
+; YAM.cd - YAM 2.7 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -17,6 +17,9 @@
 ; and increase the last listed identifier number by one for your
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
+;
+;#version 7
+;#language english
 ;
 ; General
 ;
@@ -432,20 +435,10 @@ MSG_LOG_CopyingVerbose
 ; Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
-MSG_LOG_ConnectPOP
-'%s@%s' POP3 hesabýna giriþ yapýldý: %ld ileti bekliyor
-; Logged in on POP3 account '%s@%s': %ld messages waiting
-; USER_ID, HOST, COUNT
-;
 MSG_LOG_RetrievingVerbose
 '%s'den, '%s' konulu ileti alýndý (%ld byte)
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
-;
-MSG_LOG_Retrieving
-%ld ileti, '%s@%s' POP3 hesabýndan alýndý.
-; Retrieved %ld message(s) from POP3 account '%s@%s'
-; COUNT, USER_ID, HOST
 ;
 MSG_LOG_ConnectSMTP
 '%s' SMTP sunucusuna baðlanýldý
@@ -925,7 +918,7 @@ Lütfen þifreyi tekrarlayýnýz:
 MSG_CO_ConfirmDelete
 Bu klasördeki tüm iletiler silinecek!\n\
 Devam etmek istiyor musunuz?
-; All messages in this folder will be lost!\n\
+; All messages in this folder will be lost.\n\
 ; Do you really want to delete it?
 ;
 MSG_CO_InvalidConf
@@ -936,7 +929,7 @@ Lütfen bu alanlarý doldurarak tekrar deneyiniz!
 ; Invalid configuration (missing SMTP/POP3\n\
 ; server name or e-mail address).\n\
 ; \n\
-; Please fill in these fields and try again!
+; Please fill in these fields and try again.
 ;
 MSG_CO_ImportMIMEReq
 Ayarlarý þuradan içe aktar...
@@ -952,11 +945,11 @@ Merhaba,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 Selam,\\\\n
-;
+; 
 ;
 MSG_CO_AltRepPatternDef
 
-;
+; 
 ;
 MSG_CO_ForwardIntroDef
 *** Ýletilmiþ mesajýn baþlangýcý *** \\\\n\
@@ -986,15 +979,15 @@ Sevgiler
 ;
 MSG_CO_AltRepHelloDef
 
-;
+; 
 ;
 MSG_CO_AltRepByeDef
 
-;
+; 
 ;
 MSG_CO_MLRepHelloDef
 
-;
+; 
 ;
 MSG_CO_MLRepIntroDef
 %c tarihinde, %n yazdý ki:\\\\n
@@ -1333,10 +1326,6 @@ MSG_CO_Download
 indir
 ; Download
 ;
-MSG_CO_AvoidDuplicates
-_Çift olanlardan kaçýn
-; _Avoid duplicates
-;
 MSG_CO_TransferWin
 _Aktarým penceresi
 ; _Transfer window
@@ -1398,8 +1387,8 @@ ve
 ; and
 ;
 MSG_CO_CTOr
-veya
-; ve/veya
+ve/veya
+; or
 ;
 MSG_CO_CTXor
 veya
@@ -1753,18 +1742,6 @@ MSG_CO_EncryptToSelf
 K_endine þifrele
 ; _Encrypt to self
 ;
-MSG_CO_AnonMail
-Kaynaðý belirsiz posta
-; Anonymous mail
-;
-MSG_CO_ReMailer
-_Tekrar-gönderici
-; _Re-Mailer
-;
-MSG_CO_ReMailerLine
-_Baþlýk alaný
-; _Header field
-;
 MSG_CO_Logfiles
 Günlük dosyalarý
 ; Log files
@@ -1800,10 +1777,6 @@ Yeni postalarý okunmamýþ olarak iþaretle
 MSG_CO_SendStart
 Giden klasöründe bekleyen postalarý gönder
 ; Send mail in outgoing queue
-;
-MSG_CO_PopStart
-Yeni posta indir
-; Download new mail
 ;
 MSG_CO_CheckDOB
 Doðum günlerini kontrol et
@@ -1890,7 +1863,7 @@ Posta kutusu durumu
 ; Mailbox status
 ;
 MSG_CO_PositionX
-_X Pozisyonu
+_X Konumu
 ; Position _X
 ;
 MSG_CO_CloseGadget
@@ -2134,14 +2107,6 @@ Yeni posta denetlerken\n\
 bu hesabý kullan.
 ; Check this account while\n\
 ; checking for new mail.
-;
-MSG_HELP_CO_CH_AVOIDDUP
-Eðer sunucuda kalan eski postalarý\n\
-silmemeyi tercih ettiyseniz, ayný iletinin\n\
-ikilenmemesi için bu seçeneði kullanýnýz.
-; If you don't delete old mail\n\
-; on the server, use this option\n\
-; to avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN
 Posta aktarýmý sýrasýnda\n\
@@ -2628,18 +2593,6 @@ böylece giden iletilerinizi okuyabilir veya düzenleyebilirsiniz.
 ; Encrypt new messages with your public key,\n\
 ; so you can still read or edit outgoing messages.
 ;
-MSG_HELP_CO_ST_REMAILER
-Kimden geldiði bilinmeyen iletiler için,\n\
-geri postalama hizmetinin e-posta adresi.
-; E-mail address of the remailer service\n\
-; used to send anonymous mail.
-;
-MSG_HELP_CO_ST_FIRSTLINE
-Geri postalama ile gönderilen her iletinin\n\
-baþýna otomatik olara bu satýrý ekle.
-; Automatically insert this line at the top\n\
-; of all messages sent through the remailer.
-;
 MSG_HELP_CO_ST_LOGFILE
 Günlük dosyalarýnýn\n\
 saklanacaðý yer.
@@ -3042,11 +2995,11 @@ Görüntüle
 ; View
 ;
 MSG_AB_Fold
-Hepsini katla
+Tümünü katla
 ; Fold all
 ;
 MSG_AB_Unfold
-Hepsini aç
+Tümünü aç
 ; Unfold all
 ;
 ;
@@ -3907,10 +3860,6 @@ MSG_WR_SecBoth
 Ýmzala ve þifrele
 ; Sign and encrypt
 ;
-MSG_WR_SecAnon
-Ýsimsiz olarak gönder
-; Send anonymously
-;
 MSG_WR_ImpHigh
 Yüksek
 ; High
@@ -4387,16 +4336,16 @@ imzayý eklemek istersiniz?
 ; to append to this message?
 ;
 MSG_HELP_WR_RA_SECURITY
-Ýletinizi, PGP imzalanmýþ, þifrelenmiþ veya\n\
-anonim olarak göndermek için bu güvenlik\n\
+Ýletinizi, PGP imzalanmýþ veya þifrelenmiþ\n\
+olarak göndermek için bu güvenlik\n\
 seçeneklerinden birini seçin.\n\
 "Varsayýlan" alýcýyý adres defterinde arar\n\
 ve orada belirlenmiþ güvenlik ayarlarýný kullanýr.
 ; Select one of these security options to send\n\
-; your message PGP signed, encrypted\n\
-; or anonymously. "Default" tries to find\n\
-; the recipient in your address book and use\n\
-; the security settings specified there.
+; your message PGP signed or encrypted.\n\
+; "Default" tries to find the recipient\n\
+; in your address book and use the security\n\
+; settings specified there.
 ;
 MSG_HELP_WR_BT_HOLD
 Oluþturulan iletiyi Giden klasörüne\n\
@@ -4435,13 +4384,6 @@ Posta sunucusuna baðlanýlýyor...
 MSG_TR_WaitWelcome
 Baðlanýldý, karþýlama mesajý bekleniyor...
 ; Connected, awaiting welcome message...
-;
-MSG_TR_PopLoginReq
-Lütfen hesabýn POP3 þifresini giriniz\n\
-%s@%s
-; Please enter POP3 password for account\n\
-; %s@%s
-; USER_ID, HOST
 ;
 MSG_TR_PopLogin
 POP3 giriþi
@@ -4490,19 +4432,6 @@ MSG_TR_Importing
 MSG_TR_DeletingServerMail
 Sunucudaki posta siliniyor...
 ; Deleting mail on server...
-;
-MSG_TR_NewMailReq
-\e8Yeni postanýz var!\e2\n\
-\n\
-%3ld ileti indirildi,\n\
-%3ld sunucuda býrakýldý\n\
-%3ld ikilenen atlandý\n
-; \e8You have new mail!\e2\n\
-; \n\
-; %3ld messages downloaded,\n\
-; %3ld left on server\n\
-; %3ld duplicates skipped\n
-; COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FilterStats
 \n\
@@ -5140,11 +5069,11 @@ Kullanýcý giriþi bekleniyor...
 ;
 MSG_US_RemoveReq
 Bu kullanýcýya ait, tüm iletiler, klasörler\n\
-ve ayar dosyalarý silinecek!\n\
+ve ayar dosyalarý silinecek.\n\
 \n\
 Kullanýcýyý kaldýrmak istediðinizden emin misiniz?
 ; All messages, folders and configuration\n\
-; files belonging to this user will be lost!\n\
+; files belonging to this user will be lost.\n\
 ; \n\
 ; Do you really want to remove the user?
 ;
@@ -5850,7 +5779,7 @@ AmigaOS için SMTP/POP3 E-Posta istemcisi
 ; SMTP/POP3 E-Mail Client for AmigaOS
 ;
 MSG_CO_INFOBARPOS
-_Pozisyon
+Konu_m
 ; Pos_ition
 ;
 MSG_CO_INFOBARPOS01
@@ -6092,7 +6021,7 @@ Varsayýlan geniþlik: bu
 ; Default width: this
 ;
 MSG_MA_CTX_DEFWIDTH_ALL
-Varsayýlan genliþlik: hepsi
+Varsayýlan genliþlik: tümü
 ; Default width: all
 ;
 MSG_MA_CTX_DEFORDER_THIS
@@ -6100,7 +6029,7 @@ Varsayýlan sýralama: bu
 ; Default order: this
 ;
 MSG_MA_CTX_DEFORDER_ALL
-Varsayýlan sýralama: hepsi
+Varsayýlan sýralama: tümü
 ; Default order: all
 ;
 MSG_MA_CTX_MAILLIST
@@ -6576,7 +6505,7 @@ MSG_QUICKSEARCH_SO_ENTIREMSG
 ; Whole Message
 ;
 MSG_QUICKSEARCH_VO_ALL
-Hepsi
+Tümü
 ; All
 ;
 MSG_QUICKSEARCH_VO_UNREAD
@@ -7045,10 +6974,6 @@ Ne tür bir güvenlik kullanmak istersiniz?
 ; \n\
 ; What type of security do you want to use?
 ;
-MSG_WR_SECURITYREQ_GADS
-*_Düz|_Ýmzalý|_Þifreli|Ý_mzalý ve þifreli|_Anonim|Ý_ptal
-; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Anonymous|_Cancel
-;
 MSG_ER_OPENTCPIP
 TCP/IP baðlantýlarý için gerekli bsdsocket.library\n\
 arayüzü açýlamadý.\n\
@@ -7265,18 +7190,6 @@ Eðer e-postanýn ana kýsmý HTML ise, YAM onu\n\
 göstermeden önce düz metine dönüþtürecektir.
 ; If the main part of an e-mail is HTML, YAM will\n\
 ; convert it to plain text before displaying it.
-;
-MSG_RE_FOLLOWTHREAD
-YAM ayný konudaki daha fazla postayý arayabilmek\n\
-için ilave klasör indisleri yüklemek zorundadýr.\n\
-Bu oldukça zaman alýcý olabilir.\n\
-\n\
-Devam etmek istiyor musunuz?
-; In order to search for more mails of the same thread,\n\
-; YAM has to load additional folder indices. This may be\n\
-; quite time and memory consuming.\n\
-; \n\
-; Do you want to continue?
 ;
 MSG_TR_TRANSFERSTATUS
 %s of %s @ %s/s\n\
@@ -7755,18 +7668,6 @@ MSG_MA_UPDATEINDEX
 Ýndisi güncelle
 ; Update index
 ;
-MSG_MA_MSENDALL
-Sýrada bekleyen iletileri gönder
-; Send queued mail
-;
-MSG_MA_MEXCHANGE
-Posta takasý
-; Exchange mail
-;
-MSG_MA_MGETMAIL
-Yeni posta al
-; Get new mail
-;
 MSG_MA_MREAD
 Okunmuþ
 ; Read
@@ -7852,7 +7753,7 @@ MSG_MA_TOUNMARKED
 ; Unmarked
 ;
 MSG_MA_ALLTOREAD
-Hepsi okunacak
+Tümü okunacak
 ; All to read
 ;
 MSG_MA_MEDITASNEW
@@ -8604,7 +8505,7 @@ düzgün yazdýrýlmadýysa tekrar deneyin.
 ; your document wasn't printed properly.
 ;
 MSG_MA_EDIT
-Düzenle
+Düzen
 ; Edit
 ;
 MSG_MA_EDIT_UNDO
@@ -8684,7 +8585,7 @@ kayýt yapýlabilirliðini kontrol ediniz.
 ; FILENAME, FOLDER
 ;
 MSG_ER_INDEX_CORRUPTED
-'%s' indis dosyasý ('%s' klasöründeki), %d pozisyonunda\n\
+'%s' indis dosyasý ('%s' klasöründeki), %d konumunda\n\
 bozulmuþ. Posta dosyasý '%s' (FazlaBayt: 0x%x)\n\
 \n\
 Klasör 'yüklenmedi' olarak etiketlenmiþ ve bir indis güncellemesi\n\
@@ -8699,8 +8600,8 @@ baþlatýlmýþ yada sorunun çözümü için baþlatýlmalý.
 MSG_ER_UNKNOWN_MIME_ENCODING
 Bilinmeyen MIME kodlamasý : '%s' (posta dosyasý: '%s')\n\
 \n\
-YAM iletinin bir kýsmýný dekode etmeyi baþaramadý. Ýletiyi\n\
-diske kaydedin ve baþka bir dekoder ile deneyin.
+YAM iletinin bir kýsmýnýn kod çözümünü baþaramadý. Ýletiyi\n\
+diske kaydedin ve baþka bir kod çözücü ile deneyin.
 ; Unknown MIME encoding '%s' in mail file '%s'.\n\
 ; \n\
 ; YAM failed to decode a part of the message. Save the message \
@@ -9172,26 +9073,6 @@ Süzme tamamlandý:\n\
 ; %3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
-MSG_CO_EXCHANGE_MAIL
-Posta takas et
-; Exchange mail
-;
-MSG_CO_EXCHANGE_ORDER
-_Takas sýrasý
-; Exchange order
-;
-MSG_CO_EXCHANGE_ORDER_GET_FIRST
-önce posta al, sonra posta gönder
-; get mail first, then send mail
-;
-MSG_CO_EXCHANGE_ORDER_SEND_FIRST
-önce posta gönder, sonra posta al
-; send mail first, then get mail
-;
-MSG_HELP_CO_CY_EXCHANGE_ORDER
-Posta takasýnýn gerçekleþeceði sýralama.
-; The order of the mail exchange.
-;
 MSG_FCHANGE_WARN_TITLE
 Dosya deðiþiklik uyarýsý
 ; Filechange warning
@@ -9230,18 +9111,12 @@ Konu takibi sistemi ilklendirilemedi
 ; Can't initialize thread system
 ;
 MSG_ERROR_PLAYSOUND
-'%s' ses dosyasýnýn çalýnmasý\n\
-sýrasýnda bir hata oluþtur.\n\
+'%s' ses dosyasýnýn çalýnmasý sýrasýnda bir hata oluþtu.\n\
 \n\
-Bu bozuk veya desteklenmeyen\n\
-bir ses dosyasý veya ses veritürünüz\n\
-düzgün çalýþmadýðýndan dolayý olabilir.
-; An error occurred while trying to play\n\
-; the sound file '%s'.\n\
+Bu bozuk veya desteklenmeyen bir ses dosyasýndan veya ses veritürünüz düzgün çalýþmadýðýndan dolayý olabilir.
+; An error occurred while trying to play the sound file '%s'.\n\
 ; \n\
-; This could be either due to a broken or\n\
-; unsupported sound file or because your\n\
-; sound datatype is not properly working.
+; This could be either due to a broken or unsupported sound file or because your sound datatype is not properly working.
 ; FILE
 ;
 MSG_WR_CHARSET
@@ -9338,18 +9213,16 @@ gönderdi ve baðlantý kesildi.\n\
 ; procedure and the connection was terminated:\n\
 ; \n\
 ; %s\n\
-; \n\
+; \n
 ; SERVER, ACCOUNT, TEXT
 ;
 MSG_ER_BADRESPONSE_POP3
 '%s' Posta sunucusundan (Hesap: %s) olumsuz yanýt. Komut: '%s':\n\
-\n\
 %s\n\
 \n\
 Posta sunucusu komutu çalýþtýramadý ve \
 yukarýdaki hata iletisini gönderdi.
 ; Bad response from mail server '%s' of account '%s' to command '%s':\n\
-; \n\
 ; %s\n\
 ; \n\
 ; The mail server couldn't execute the command \
@@ -9680,13 +9553,13 @@ Doðum tarihi biçemi yanlýþ. Doðru biçem: '%s'.\n\
 %%m - ay\n\
 %%y - yýl (2 basamak)\n\
 %%Y - yýl (4 basamak)\n\
-Yýl deðeri en az 1900 olabilir!
+Yýl deðeri en az 1900 olabilir.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n\
 ; %%d - day\n\
 ; %%m - month\n\
 ; %%y - year (2 digits)\n\
 ; %%Y - year (4 digits)\n\
-; The year number must be greater or equal 1900!
+; The year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
 MSG_CO_PGPURL
@@ -9701,11 +9574,6 @@ ayrý bir baþlýk girdisi olarak eklenecektir.
 ; PGP key can be downloaded from. This URL\n\
 ; will then placed into a separate header\n\
 ; entry in every mail.
-;
-MSG_TR_NEW_MAIL_NOTIFY
-%ld yeni posta alýndý!
-; Received %ld new mails!
-; COUNT
 ;
 MSG_CO_NOTIOS41SYSTEM
 AmigaOS_4.1 bildirim sistemi
@@ -9806,4 +9674,195 @@ Lütfen dosyanýn eriþilebilirliðini ve geçerli bir ARexx scripti olduðunu doðrula
 MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 Bu istemciyi bugün bir daha gösterme.
 ; Do not show this requester today again.
+;
+MSG_RE_SAVE_FILE
+Dosyayý kaydet
+; Save file
+;
+MSG_UPD_NO_UPDATES_FOUND_TITLE
+Yazýlým güncelleþtirilmesi bulunamadý
+; No software updates available
+;
+MSG_UPD_NO_UPDATES_FOUND
+Yazýlým güncelleþtirmesi bulunamadý.\n\
+%s
+; There are no software updates available.\n\
+; %s
+; HINT
+MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
+YAM yazýlým güncelleþtirmelerini otomatik olarak denetleyecektir.
+; YAM will check for available updates automatically.
+;
+MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
+Lütfen tekrar deneyin veya otomatik yazýlým\n\
+güncellemesi denetimini etkinleþtirin.
+; Please try again later or activate the automatic\n\
+; software update check.
+;
+MSG_THREAD_EXIT_WARNING_TITLE
+YAM uyarýsý
+; YAM warning
+;
+MSG_THREAD_EXIT_WARNING
+YAM kapatýlýrken çalýþmakta olan alt görevler\n\
+bulundu. Lütfen YAM üzerinden çaðýrmýþ olabileceðiniz\n\
+açýk olan alt görevleri (örn. MIME görüntüleyicileri, vs.)\n\
+kapattýðýnýzdan emin olun.\n\
+\n\
+Bu görevleri sonlandýrýp tekrar deneyebilir ya da yok\n\
+sayarak YAM'ý kapanmaya zorlayabilirsiniz\n\
+(bu daha sonra bir çakýlmaya neden olabilir).
+; While trying to cleanup YAM still running sub threads\n\
+; have been found. Please make sure to close all still\n\
+; existing sub threads (e.g. MIME viewers, etc.) you may\n\
+; have initiated from YAM.\n\
+; \n\
+; Do you want to retry to quit YAM or ignore the still\n\
+; running sub thread (which could end up in later crashes)?
+;
+MSG_THREAD_EXIT_WARNING_BT
+_Tekrar Dene|_Yoksay
+; _Retry|_Ignore
+;
+MSG_EXECUTE_COMMAND_FAILED
+'%s' komutunun çalýþtýrýlmasý baþarýsýz oldu (hata kodu %ld: %s).
+; The execution of the command '%s' failed (error code %ld: %s).
+; COMMAND, ERRORCODE, ERRORSTRING
+;
+MSG_ERROR_METHODSTACK
+Yöntem yýðýný ilklendirilemedi.
+; Cannot initialize method stack.
+;
+MSG_TRANSFERS_IN_PROGRESS
+Etkin aktarýmlar
+; Transfers in progress
+;
+MSG_ERROR_CONNECTIONS
+Baðlantýlar ilklendirilemiyor.
+; Cannot initialize connections.
+;
+MSG_LOG_CONNECT_POP3
+'%s' POP3 hesabýna baðlanýldý: %ld ileti bekleniyor
+; Logged in on POP3 account '%s': %ld messages waiting
+; ACCOUNT, COUNT
+;
+MSG_LOG_RETRIEVED_POP3
+%ld ileti alýndý, '%s' POP3 hesabýndan
+; Retrieved %ld message(s) from POP3 account '%s'
+; COUNT, ACCOUNT
+;
+MSG_TR_ENTER_POP3_PASSWORD
+Lütfen '%s' POP3 hesabý için\n\
+þifreyi giriniz:
+; Please enter the password for\n\
+; POP3 account '%s':
+; ACCOUNT
+;
+MSG_ALTIMAGE_STATUS_DOWNLOAD
+Ý
+; D
+;
+MSG_ALTIMAGE_STATUS_DELETE
+S
+; X
+;
+MSG_PRESELECT_INDEX
+Ýndis
+; Index
+;
+MSG_TR_WAIT_FOR_PASSWORD
+Kullanýcýnýn þifre girmesi bekleniyor...
+; Waiting for user's password input...
+;
+MSG_TR_WAIT_FOR_PRESELECTION
+Kullanýcýnýn önseçim yapmasý bekleniyor...
+; Waiting for user's preselection...
+;
+MSG_POP3_NEW_MAIL_NOTIFY_REQ
+\e8'%s' hesabýndan yeni postanýz var.\e2\n\
+\n\
+%3ld ileti indirildi,\n\
+%3ld sunucuda býrakýldý\n\
+%3ld çift olan atlandý\n
+; \e8You have new mail from account '%s'.\e2\n\
+; \n\
+; %3ld messages downloaded,\n\
+; %3ld left on server\n\
+; %3ld duplicates skipped\n
+; ACCOUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
+%s\n\
+1 yeni ileti alýndý.
+; %s\n\
+; Received 1 new mail.
+; ACCOUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
+%s\n\
+%ld yeni ileti alýndý.
+; %s\n\
+; Received %ld new mails.
+; ACCOUNT, COUNT
+;
+MSG_MA_SEND_AND_GET_MAIL
+Gönder ve posta al
+; Send and get mail
+;
+MSG_MA_SEND_MAIL
+Posta gönder
+; Send mail
+;
+MSG_MA_GET_MAIL
+Posta al
+; Get mail
+;
+MSG_WR_SECURITYREQ_GADS
+*_Düz|_Ýmzalý|_Þifreli|Ý_mzalý ve þifreli|Ý_ptal
+; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Cancel
+;
+MSG_HTTP_CONNECTING_TO_SERVER
+Sunucuya baðlanýyor...
+; Connecting to server...
+;
+MSG_HTTP_SENDING_REQUEST
+HTTP istemi gönderiliyor...
+; Sending HTTP request...
+;
+MSG_HTTP_WAITING_FOR_ANSWER
+Sunucunun yanýtý bekleniyor...
+; Waiting for server's answer...
+;
+MSG_HTTP_RECEIVING_DATA
+Veri alýnýyor...
+; Receiving data...
+;
+MSG_HTTP_DISCONNECTING_FROM_SERVER
+Sunucu baðlantýsý sonlandýrýlýyor...
+; Disconnecting from server...
+;
+MSG_SHOW_TRANSFER_WINDOW
+Etkin aktarýmlarý göster...
+; Show transfers in progress...
+;
+MSG_CO_APPLY_REMOTE_FILTERS
+U_zak süzgeçleri uygula
+; Apply remote _filters
+;
+MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS
+Bu sunucudan posta indirirken\n\
+tanýmlý tüm uzak süzgeçleri uygula.
+; Apply all defined remote filters\n\
+; when downloading mail from this\n\
+; server.
+;
+MSG_CO_DOWNLOAD_ON_STARTUP
+Baþlangýçta yeni postalarý denetle
+; Check for new mail on startup
+;
+MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
+Her baþlangýçta bu hesaba yeni ileti gelip\n\
+gelmediðini otomatik olarak kontrol eder.
+; Check this account for new mail on every\n\
+; startup of YAM automatically.
 ;
