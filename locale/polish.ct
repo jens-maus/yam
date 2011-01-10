@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.17 (02.01.2011)
+## version $VER: YAM.catalog 7.18 (10.01.2011)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5558;
+; in sync with .cd in revision 5576;
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1325,10 +1325,6 @@ MSG_CO_Download
 Odbieranie
 ; Download
 ;
-MSG_CO_AvoidDuplicates
-Nie pobi_eraj kopii
-; _Avoid duplicates
-;
 MSG_CO_TransferWin
 Okno _transferu
 ; _Transfer window
@@ -1781,10 +1777,6 @@ MSG_CO_SendStart
 Wysy³aj pocztê oczekuj±c±
 ; Send mail in outgoing queue
 ;
-MSG_CO_PopStart
-Odbieraj now± pocztê
-; Download new mail
-;
 MSG_CO_CheckDOB
 Sprawd¼ daty urodzin
 ; Check birthdates
@@ -2113,15 +2105,6 @@ MSG_HELP_CO_CH_POPENABLED
 podczas sprawdzania nowej poczty.
 ; Check this account while\n\
 ; checking for new mail.
-;
-MSG_HELP_CO_CH_AVOIDDUP
-Je¶li nie kasujesz starej poczty\n\
-na serwerze, u¿yj tej opcji\n\
-aby nie pobieraæ ju¿ odebranych\n\
-wiadomo¶ci.
-; If you don't delete old mail\n\
-; on the server, use this option\n\
-; to avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN
 Pokazuje okno zaawansowania podczas\n\
@@ -7208,18 +7191,6 @@ YAM przekonwertuje j± na zwyk³y tekst przed wy¶wietleniem.
 ; If the main part of an e-mail is HTML, YAM will\n\
 ; convert it to plain text before displaying it.
 ;
-MSG_RE_FOLLOWTHREAD
-Aby wyszukiwaæ wiêcej wiadomo¶ci w tym samym w±tku,\n\
-YAM wczyta dodatkowe znaczniki folderów. Mo¿e to zaj±æ\n\
-sporo czasu i pamiêci.\n\
-\n\
-Czy chcesz kontynuowaæ?
-; In order to search for more mails of the same thread,\n\
-; YAM has to load additional folder indices. This may be\n\
-; quite time and memory consuming.\n\
-; \n\
-; Do you want to continue?
-;
 MSG_TR_TRANSFERSTATUS
 %s z %s @ %s/s\n\
 up³ynê³o %02ldm%02lds - pozosta³o %02ldm%02lds
@@ -9889,4 +9860,14 @@ z tego serwera.
 ; Apply all defined remote filters\n\
 ; when downloading mail from this\n\
 ; server.
+;
+MSG_CO_DOWNLOAD_ON_STARTUP
+Sprawdzaj nowe wiadomo¶ci przy uruchomieniu
+; Check for new mail on startup
+;
+MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
+Automatycznie Sprawdza nowe wiadomo¶ci dla tego\n\
+konta pocztowego przy ka¿dym uruchomieniu programu.
+; Check this account for new mail on every\n\
+; startup of YAM automatically.
 ;

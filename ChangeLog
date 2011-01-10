@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-10 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
 2011-01-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs.c: propagating the old global POP3 options to the single accounts
