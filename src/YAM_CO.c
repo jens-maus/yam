@@ -562,7 +562,7 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
     DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, p, &msn);
     if(msn != NULL)
     {
-      unsigned int newSSLFlags = 0;
+      unsigned int oldSSLFlags = 0;
 
       GetMUIString(msn->account,  gui->ST_POPACCOUNT, sizeof(msn->account));
       GetMUIString(msn->hostname, gui->ST_POPHOST,    sizeof(msn->hostname));
@@ -600,47 +600,44 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
       if(msn->account[0] == '\0' || strcmp(msn->account, tr(MSG_NewEntry)) == 0)
         snprintf(msn->account, sizeof(msn->account), "%s@%s", msn->username, msn->hostname);
 
-      // set newSSLFlags to msn->flags as we are going to compare
-      // later on
-      newSSLFlags = msn->flags;
+      // remember the current flags of the server
+      oldSSLFlags = msn->flags;
 
       switch(GetMUIRadio(gui->RA_POP3SECURE))
       {
         // TLSv1 secure connection
         case 1:
         {
-          SET_FLAG(newSSLFlags, MSF_SEC_TLS);
-          CLEAR_FLAG(newSSLFlags, MSF_SEC_SSL);
+          SET_FLAG(msn->flags, MSF_SEC_TLS);
+          CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
         }
         break;
 
         // SSLv3 secure connection
         case 2:
         {
-          SET_FLAG(newSSLFlags, MSF_SEC_SSL);
-          CLEAR_FLAG(newSSLFlags, MSF_SEC_TLS);
+          CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
+          SET_FLAG(msn->flags, MSF_SEC_SSL);
         }
         break;
 
         // no secure connection
         default:
         {
-          CLEAR_FLAG(newSSLFlags, MSF_SEC_TLS);
-          CLEAR_FLAG(newSSLFlags, MSF_SEC_SSL);
+          CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
+          CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
         }
         break;
       }
 
-      // check if the user changed something on the SSL/TLS
-      // options
-      if(newSSLFlags != msn->flags)
+      // check if the user changed something on the SSL/TLS options and
+      // update the port accordingly
+      if(oldSSLFlags != msn->flags)
       {
-        if(hasServerSSL(msn))
-          set(gui->ST_POPPORT, MUIA_String_Integer, 995);
+        if(hasServerSSL(msn) == TRUE)
+          nnset(gui->ST_POPPORT, MUIA_String_Integer, 995);
         else
-          set(gui->ST_POPPORT, MUIA_String_Integer, 110);
-
-        msn->flags = newSSLFlags;
+          nnset(gui->ST_POPPORT, MUIA_String_Integer, 110);
       }
 
       msn->port = GetMUIInteger(gui->ST_POPPORT);

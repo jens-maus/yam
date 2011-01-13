@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: changing the security flags of a POP3 server used the former
+    settings to generate the new port number which resulted in a wrong port
+    number most of the time. This closes #244.
+
 2011-01-11 Alper Sönmez <amithlondestek@gmail.com>
 
  * locale/turkish.ct: update to the latest changes.
