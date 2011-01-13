@@ -1117,7 +1117,7 @@ $(OBJDIR)/YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
   YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
   BayesFilter.h mui/InfoBar.h include/timeval.h mui/QuickSearchBar.h \
-  mui/ReadMailGroup.h mime/base64.h mime/rfc2047.h FileInfo.h \
+  mui/ReadMailGroup.h mime/base64.h mime/rfc2047.h AppIcon.h FileInfo.h \
   FolderList.h Locale.h MailList.h MUIObjects.h Requesters.h Rexx.h \
   Debug.h include/amiga-align.h include/default-align.h
 $(OBJDIR)/YAM_RE.o: YAM_RE.c include/mui/NList_mcc.h include/libraries/mui.h \
@@ -1424,7 +1424,7 @@ $(OBJDIR)/$(MUIDIR)/AttachmentList.o: mui/AttachmentList.c mui/AttachmentList_cl
   HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
   include/SDI_compiler.h mui/AttachmentList.h include/mui/NList_mcc.h \
   YAM_mainFolder.h include/timeval.h YAM_utilities.h YAM_folderconfig.h \
-  Locale.h MUIObjects.h Debug.h
+  Locale.h Debug.h
 $(OBJDIR)/$(MUIDIR)/AttachmentObject.o: mui/AttachmentObject.c mui/AttachmentObject_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -1617,9 +1617,8 @@ $(OBJDIR)/$(MUIDIR)/ConfigPageList.o: mui/ConfigPageList.c mui/ConfigPageList_cl
   include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
-  include/interfaces/amissl.h include/inline4/amissl.h Locale.h \
-  MUIObjects.h Themes.h mui/ImageArea.h ImageCache.h \
-  include/mui/TheBar_mcc.h Debug.h
+  include/interfaces/amissl.h include/inline4/amissl.h Locale.h Themes.h \
+  mui/ImageArea.h ImageCache.h include/mui/TheBar_mcc.h Debug.h
 $(OBJDIR)/$(MUIDIR)/FilterList.o: mui/FilterList.c mui/FilterList_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -1728,7 +1727,7 @@ $(OBJDIR)/$(MUIDIR)/HeaderList.o: mui/HeaderList.c mui/HeaderList_cl.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_mainFolder.h \
-  Locale.h MUIObjects.h Debug.h
+  Locale.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ImageArea.o: mui/ImageArea.c mui/ImageArea_cl.h include/libraries/mui.h \
   mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h \
   YAM_read.h YAM_write.h YAM_main.h BayesFilter.h HashTable.h \
@@ -1737,7 +1736,7 @@ $(OBJDIR)/$(MUIDIR)/ImageArea.o: mui/ImageArea.c mui/ImageArea_cl.h include/libr
   include/mui/TheBar_mcc.h YAM.h include/xpk/xpk.h include/amiga-align.h \
   include/default-align.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h Themes.h Timer.h include/timeval.h \
-  MUIObjects.h Debug.h
+  Debug.h
 $(OBJDIR)/$(MUIDIR)/InfoBar.o: mui/InfoBar.c mui/InfoBar_cl.h include/libraries/mui.h \
   mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h \
   YAM_read.h YAM_write.h YAM_main.h BayesFilter.h HashTable.h \
@@ -2035,7 +2034,7 @@ $(OBJDIR)/$(MUIDIR)/MainWindowToolbar.o: mui/MainWindowToolbar.c mui/MainWindowT
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_find.h \
-  YAM_mainFolder.h Locale.h MUIObjects.h Themes.h Debug.h
+  YAM_mainFolder.h Locale.h Themes.h Debug.h
 $(OBJDIR)/$(MUIDIR)/MimeTypeList.o: mui/MimeTypeList.c mui/MimeTypeList_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -2301,8 +2300,8 @@ $(OBJDIR)/$(MUIDIR)/ReadWindowToolbar.o: mui/ReadWindowToolbar.c mui/ReadWindowT
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_mainFolder.h \
-  ImageCache.h Locale.h MUIObjects.h Themes.h mui/ReadMailGroup.h \
-  mui/ReadWindow.h Debug.h
+  ImageCache.h Locale.h Themes.h mui/ReadMailGroup.h mui/ReadWindow.h \
+  Debug.h
 $(OBJDIR)/$(MUIDIR)/Recipientstring.o: mui/Recipientstring.c mui/Recipientstring_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -2421,8 +2420,7 @@ $(OBJDIR)/$(MUIDIR)/SearchControlGroup.o: mui/SearchControlGroup.c \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_find.h \
-  YAM_utilities.h Locale.h MUIObjects.h mui/ImageArea.h ImageCache.h \
-  include/mui/TheBar_mcc.h Debug.h
+  YAM_utilities.h Locale.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/Searchwindow.o: mui/Searchwindow.c mui/Searchwindow_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -2442,8 +2440,8 @@ $(OBJDIR)/$(MUIDIR)/ShutdownWindow.o: mui/ShutdownWindow.c mui/ShutdownWindow_cl
   include/interfaces/muimaster.h include/inline4/muimaster.h YAM.h \
   include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
-  Themes.h Timer.h include/timeval.h Locale.h MUIObjects.h \
-  mui/ImageArea.h ImageCache.h include/mui/TheBar_mcc.h Debug.h
+  Themes.h Timer.h include/timeval.h Locale.h mui/ImageArea.h \
+  ImageCache.h include/mui/TheBar_mcc.h Debug.h
 $(OBJDIR)/$(MUIDIR)/Splashwindow.o: mui/Splashwindow.c mui/Splashwindow_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -2586,36 +2584,8 @@ $(OBJDIR)/$(MUIDIR)/TransferControlList.o: mui/TransferControlList.c \
   YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \
   YAM_write.h YAM_main.h BayesFilter.h HashTable.h include/SDI_compiler.h \
   extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h \
-  mui/TransferControlList.h MUIObjects.h mui/ObjectList.h \
-  mui/TransferControlGroup.h include/timeval.h tcp/Connection.h \
-  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
-  include/openssl/e_os2.h include/openssl/opensslconf.h \
-  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
-  include/openssl/crypto.h include/openssl/stack.h \
-  include/openssl/safestack.h include/openssl/opensslv.h \
-  include/openssl/symhacks.h include/openssl/bn.h \
-  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
-  include/openssl/asn1t.h include/openssl/blowfish.h \
-  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
-  include/openssl/conf.h include/openssl/lhash.h \
-  include/openssl/conf_api.h include/openssl/des.h \
-  include/openssl/des_old.h include/openssl/ui_compat.h \
-  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
-  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
-  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
-  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
-  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
-  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
-  include/openssl/rsa.h include/openssl/objects.h \
-  include/openssl/obj_mac.h include/openssl/hmac.h \
-  include/openssl/krb5_asn.h include/openssl/kssl.h \
-  include/openssl/ocsp.h include/openssl/x509.h \
-  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
-  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
-  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
-  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
-  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
-  include/interfaces/amissl.h include/inline4/amissl.h Debug.h
+  mui/TransferControlList.h mui/ObjectList.h mui/TransferControlGroup.h \
+  include/timeval.h Debug.h
 $(OBJDIR)/$(MUIDIR)/TransferMailList.o: mui/TransferMailList.c mui/TransferMailList_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -2655,8 +2625,8 @@ $(OBJDIR)/$(MUIDIR)/TransferMailList.o: mui/TransferMailList.c mui/TransferMailL
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_mainFolder.h \
-  YAM_utilities.h Locale.h MailTransferList.h MUIObjects.h Themes.h \
-  mui/ImageArea.h ImageCache.h include/mui/TheBar_mcc.h Debug.h
+  YAM_utilities.h Locale.h MailTransferList.h Themes.h mui/ImageArea.h \
+  ImageCache.h include/mui/TheBar_mcc.h Debug.h
 $(OBJDIR)/$(MUIDIR)/TransferWindow.o: mui/TransferWindow.c mui/TransferWindow_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -2857,7 +2827,7 @@ $(OBJDIR)/$(MUIDIR)/WriteWindowToolbar.o: mui/WriteWindowToolbar.c \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h ImageCache.h \
-  include/mui/TheBar_mcc.h Locale.h MUIObjects.h Themes.h Debug.h
+  include/mui/TheBar_mcc.h Locale.h Themes.h Debug.h
 $(OBJDIR)/$(MUIDIR)/YAMApplication.o: mui/YAMApplication.c mui/YAMApplication_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -3915,7 +3885,8 @@ $(OBJDIR)/$(TCPDIR)/http.o: tcp/http.c YAM.h include/xpk/xpk.h include/amiga-ali
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  YAM_global.h Locale.h MethodStack.h Threads.h mui/YAMApplication.h \
+  YAM_global.h Locale.h MethodStack.h Threads.h \
+  mui/TransferControlGroup.h include/timeval.h mui/YAMApplication.h \
   YAM_main.h mui/PreselectionWindow.h tcp/Connection.h tcp/http.h Debug.h
 $(OBJDIR)/$(TCPDIR)/pop3.o: tcp/pop3.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListtree_mcc.h YAM.h include/xpk/xpk.h \

@@ -38,7 +38,6 @@
 #include "YAM_read.h"
 
 #include "Locale.h"
-#include "MUIObjects.h"
 
 #include "Debug.h"
 

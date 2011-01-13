@@ -47,8 +47,6 @@
 #include "Locale.h"
 #include "MUIObjects.h"
 
-#include "mui/ImageArea.h"
-
 #include "Debug.h"
 
 /* CLASSDATA

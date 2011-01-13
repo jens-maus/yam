@@ -43,7 +43,6 @@
 
 #include "Locale.h"
 #include "MailTransferList.h"
-#include "MUIObjects.h"
 #include "Themes.h"
 
 #include "mui/ImageArea.h"

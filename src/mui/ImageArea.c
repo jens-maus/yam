@@ -47,7 +47,6 @@
 #include "YAM.h"
 
 #include "ImageCache.h"
-#include "MUIObjects.h"
 
 #include "Debug.h"
 

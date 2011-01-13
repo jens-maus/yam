@@ -37,7 +37,6 @@
 #include "YAM_config.h"
 
 #include "Locale.h"
-#include "MUIObjects.h"
 #include "Themes.h"
 
 #include "mui/ImageArea.h"

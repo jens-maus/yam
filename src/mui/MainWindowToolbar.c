@@ -40,7 +40,6 @@
 #include "YAM_mainFolder.h"
 
 #include "Locale.h"
-#include "MUIObjects.h"
 #include "Themes.h"
 
 #include "mui/MainWindowToolbar.h"

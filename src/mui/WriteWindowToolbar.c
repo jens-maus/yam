@@ -35,7 +35,6 @@
 
 #include "ImageCache.h"
 #include "Locale.h"
-#include "MUIObjects.h"
 #include "Themes.h"
 
 #include "Debug.h"

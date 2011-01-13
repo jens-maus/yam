@@ -38,7 +38,6 @@
 
 #include "ImageCache.h"
 #include "Locale.h"
-#include "MUIObjects.h"
 #include "Themes.h"
 
 #include "mui/ReadMailGroup.h"

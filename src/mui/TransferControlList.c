@@ -30,11 +30,8 @@
 
 #include "TransferControlList_cl.h"
 
-#include "MUIObjects.h"
-
 #include "mui/ObjectList.h"
 #include "mui/TransferControlGroup.h"
-#include "tcp/Connection.h"
 
 #include "Debug.h"
 

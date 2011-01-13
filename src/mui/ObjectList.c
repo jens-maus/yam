@@ -345,3 +345,34 @@ DECLARE(IterateItems) // void **state
 }
 
 ///
+/// DECLARE(ItemAt)
+DECLARE(ItemAt) // ULONG index
+{
+  GETDATA;
+  Object *item = NULL;
+
+  ENTER();
+
+  if(data->itemCount > 0)
+  {
+    struct List *childList = (struct List *)xget(data->virtgroup, MUIA_Group_ChildList);
+    Object *cstate = (Object *)GetHead(childList);
+    ULONG index = 0;
+
+    while((item = NextObject(&cstate)) != NULL)
+    {
+      if(item == data->spacer || item == data->dummy)
+        continue;
+
+      if(index == msg->index)
+        break;
+
+      index++;
+    }
+  }
+
+  RETURN((IPTR)item);
+  return (IPTR)item;
+}
+
+///
