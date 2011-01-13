@@ -357,17 +357,17 @@ DECLARE(ItemAt) // ULONG index
   {
     struct List *childList = (struct List *)xget(data->virtgroup, MUIA_Group_ChildList);
     Object *cstate = (Object *)GetHead(childList);
-    ULONG index = 0;
+    ULONG idx = 0;
 
     while((item = NextObject(&cstate)) != NULL)
     {
       if(item == data->spacer || item == data->dummy)
         continue;
 
-      if(index == msg->index)
+      if(idx == msg->index)
         break;
 
-      index++;
+      idx++;
     }
   }
 
