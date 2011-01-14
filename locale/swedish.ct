@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.4 (02.01.2011)
+## version $VER: YAM.catalog 7.5 (14.01.2011)
 ## language svenska
 ## codeset 0
 ## chunk AUTH Pär Boberg
@@ -1287,10 +1287,6 @@ MSG_CO_Download
 Hämta
 ; Download
 ;
-MSG_CO_AvoidDuplicates
-_Undvik dubletter
-; _Avoid duplicates
-;
 MSG_CO_TransferWin
 S_tatusfönster
 ; _Transfer window
@@ -1743,10 +1739,6 @@ MSG_CO_SendStart
 Skicka post i kön
 ; Send mail in outgoing queue
 ;
-MSG_CO_PopStart
-Hämta ny post
-; Download new mail
-;
 MSG_CO_CheckDOB
 Kontrollera födelsedagar
 ; Check birthdates
@@ -2055,12 +2047,6 @@ MSG_HELP_CO_CH_POPENABLED
 Kolla detta konto när\ndu kollar efter ny post.
 ; Check this account while\n\
 ; checking for new mail.
-;
-MSG_HELP_CO_CH_AVOIDDUP
-Om du inte raderar gammal post på servern,\nanvänd detta val för att undvika dubletter.
-; If you don't delete old mail\n\
-; on the server, use this option\n\
-; to avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN
 Visa ett statusfönster under\növerföring av post.
@@ -6446,7 +6432,7 @@ Kunde inte fråga uppdateringsservern om uppdateringar.
 ; Couldn't query server for updates.
 ;
 MSG_CO_LASTSTATUS_UPDATESUCCESS
-Hittade och uppmärksammade användaren om nya uppdateringar framgångsrikt.
+Hittade och uppmärksammade användaren om nya uppdateringar.
 ; Successfully found and notified user on new updates.
 ;
 MSG_WR_SECURITYREQ
@@ -6646,14 +6632,6 @@ MSG_HELP_CO_CONVERTHTML
 Om huvudmeddelandet av ett brev innehåller HTML,\nkommer YAM att konvertera dem till vanlig text\ninnan visning.
 ; If the main part of an e-mail is HTML, YAM will\n\
 ; convert it to plain text before displaying it.
-;
-MSG_RE_FOLLOWTHREAD
-För att söka efter fler brev av samma tråd,\nså måste YAM ladda extra mapp index. Detta kan ta tid\noch vara minneskrävande.\n\nVill du fortsätta?
-; In order to search for more mails of the same thread,\n\
-; YAM has to load additional folder indices. This may be\n\
-; quite time and memory consuming.\n\
-; \n\
-; Do you want to continue?
 ;
 MSG_TR_TRANSFERSTATUS
 %s av %s @ %s/s\n%02ld'%02ld'' körs - %02ld'%02ld'' kvar
@@ -8931,4 +8909,13 @@ server.
 ; Apply all defined remote filters\n\
 ; when downloading mail from this\n\
 ; server.
+;
+MSG_CO_DOWNLOAD_ON_STARTUP
+Kolla om det finns ny post vid uppstart
+; Check for new mail on startup
+;
+MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
+Kolla detta konto om det finns ny post vid varje\nuppstart av YAM automatiskt.
+; Check this account for new mail on every\n\
+; startup of YAM automatically.
 ;

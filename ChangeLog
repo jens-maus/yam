@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-14 Pär Boberg <pbobbenb@aim.com>
+
+  * locale/swedish.ct: updated according to changes.
+
 2011-01-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: fixed a possible memory leak in case adding a mail to the
