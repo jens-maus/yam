@@ -1166,10 +1166,10 @@ static BOOL LoadMessage(struct TransferContext *tc, struct Folder *inFolder, con
 
           PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_NEWMSG, msgfile);
 
-          MA_FreeEMailStruct(email);
-
           result = TRUE;
         }
+
+        MA_FreeEMailStruct(email);
       }
     }
 

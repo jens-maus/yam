@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c: fixed a possible memory leak in case adding a mail to the
+    folder's mail list failed.
+
 2011-01-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: changing the security flags of a POP3 server used the former
