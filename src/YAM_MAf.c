@@ -627,6 +627,8 @@ void MA_RebuildIndexes(void)
       ULONG dirDate;
       ULONG indexDate;
 
+      AddPath(indexFileName, folder->Fullpath, ".index", sizeof(indexFileName));
+
       // get date of the folder directory and the .index file
       // itself
       if(ObtainFileInfo(folder->Fullpath, FI_TIME, &dirDate) == TRUE &&
