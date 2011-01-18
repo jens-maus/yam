@@ -13,6 +13,8 @@ $URL$
   * mui/MainMailList.c: choosing "Edit as new" from the mail list's context menu
     to edit an already sent mail in the outgoing folder as new did not work,
     because the corresponding menu item was created in a completely wrong way.
+  * YAM_RE.c: for message/rfc822 attachments the description will no longer be
+    displayed in the read window/pane.
 
 2011-01-14 Pär Boberg <pbobbenb@aim.com>
 

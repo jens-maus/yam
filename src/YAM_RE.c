@@ -2725,11 +2725,12 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
         {
           char buffer[SIZE_LARGE];
 
-          // lets generate the separator bar.
-          snprintf(buffer, sizeof(buffer), "\n\033c\033[s:18]%s%s:%s%s%s\n"
+          // generate the separator bar.
+          snprintf(buffer, sizeof(buffer), "\n"
+                                           "\033c\033[s:18]%s%s:%s%s%s\n"
                                            "\033l\033b%s:\033n %s <%s>\n", rmData->useTextcolors ? "\033p[7]" : "",
                                                                            tr(MSG_MA_ATTACHMENT),
-                                                                           *part->Name ? " " : "",
+                                                                           part->Name[0] != '\0' ? " " : "",
                                                                            part->Name,
                                                                            rmData->useTextcolors ? "\033p[0]" : "",
                                                                            tr(MSG_RE_ContentType),
@@ -2738,9 +2739,11 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
           cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
 
-          buffer[0] = '\0';
-          if(part->Description[0] != '\0')
+          // append the description for non-EMail attachments only
+          if(part->Description[0] != '\0' && stricmp(part->ContentType, "message/rfc822") != 0)
             snprintf(buffer, sizeof(buffer), "\033b%s:\033n %s\n", tr(MSG_RE_Description), part->Description);
+          else
+            buffer[0] = '\0';
 
           strlcat(buffer, "\033[s:2]\n", sizeof(buffer));
           cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
@@ -2879,7 +2882,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 {
                   char *endptr = rptr+strlen(rptr)+1;
                   long old_pos;
-                
+
                   // prepare our part META data and fake the new part as being
                   // a application/octet-stream part as we don't know if it
                   // is some text or something else.
