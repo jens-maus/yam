@@ -30,13 +30,13 @@
 
 #include "HeaderList_cl.h"
 
-#include <string.h>
 #include <mui/NList_mcc.h>
 
 #include "YAM_config.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 
+#include "BoyerMooreSearch.h"
 #include "Locale.h"
 
 #include "Debug.h"
@@ -45,6 +45,7 @@
 struct Data
 {
   struct ReadMailData *rmData;
+  struct BoyerMooreContext *headerBMC;
 };
 */
 
@@ -72,10 +73,35 @@ OVERLOAD(OM_NEW)
     GETDATA;
 
     data->rmData = (struct ReadMailData *)GetTagData(ATTR(ReadMailData), (IPTR)NULL, inittags(msg));
+
+    // create a search context for the header comparison
+    if((data->headerBMC = BoyerMooreInit(C->ShortHeaders, FALSE)) == NULL)
+    {
+      CoerceMethod(cl, obj, OM_DISPOSE);
+      obj = NULL;
+    }
   }
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
+}
+
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+  IPTR result;
+
+  ENTER();
+
+  // free the search context
+  BoyerMooreCleanup(data->headerBMC);
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -90,14 +116,14 @@ OVERLOAD(MUIM_NList_Compare)
 
   ENTER();
 
-  // we sort the headerdisplay  not only by checking which
+  // we sort the headerdisplay not only by checking which
   // header should be displayed, but also by checking in
   // which order they should be displayed regarding the
   // specification in the short headers string object.
   if(data->rmData->headerMode == HM_SHORTHEADER && C->ShortHeaders[0] != '\0')
   {
-    char *e1 = stristr(C->ShortHeaders, hdrNode1->name);
-    char *e2 = stristr(C->ShortHeaders, hdrNode2->name);
+    const char *e1 = BoyerMooreSearch(data->headerBMC, hdrNode1->name);
+    const char *e2 = BoyerMooreSearch(data->headerBMC, hdrNode2->name);
 
     // now we compare the position of the found pointers
     // so that a lower pointer get higher priorities
@@ -111,7 +137,10 @@ OVERLOAD(MUIM_NList_Compare)
       cmp = 0;
   }
   else
-    cmp = 0;
+  {
+    // treat entry 1 < entry 2
+    cmp = +1;
+  }
 
   RETURN(cmp);
   return cmp;
