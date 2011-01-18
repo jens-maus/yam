@@ -10,6 +10,9 @@ $URL$
   * YAM_MAf.c: rebuilding a folder's index could result in a DOS requester
     asking for malformed disks to be inserted because the index file name was
     not set up at all.
+  * mui/MainMailList.c: choosing "Edit as new" from the mail list's context menu
+    to edit an already sent mail in the outgoing folder as new did not work,
+    because the corresponding menu item was created in a completely wrong way.
 
 2011-01-14 Pär Boberg <pbobbenb@aim.com>
 

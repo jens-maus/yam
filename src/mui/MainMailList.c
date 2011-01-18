@@ -642,7 +642,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         data->context_menu = MenustripObject,
           MenuChild, MenuObjectT(data->context_menu_title),
             MenuChild, Menuitem(tr(MSG_MA_MREAD), NULL, TRUE, FALSE, MMEN_READ),
-            MenuChild, MenuitemObject, MUIA_Menuitem_Title, isOutBox ? tr(MSG_MA_MEDIT) : tr(MSG_MA_MEDITASNEW), NULL, TRUE, FALSE, MMEN_EDIT),
+            MenuChild, Menuitem(isOutBox ? tr(MSG_MA_MEDIT) : tr(MSG_MA_MEDITASNEW), NULL, TRUE, FALSE, MMEN_EDIT),
             MenuChild, Menuitem(tr(MSG_MA_MMOVE), NULL, TRUE, FALSE, MMEN_MOVE),
             MenuChild, Menuitem(tr(MSG_MA_MCOPY), NULL, TRUE, FALSE, MMEN_COPY),
             MenuChild, Menuitem(tr(MSG_MA_MDelete), NULL, TRUE, FALSE, MMEN_DELETE),
@@ -714,6 +714,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
 {
   struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
 
+  D(DBF_ALWAYS, "main mail list context menu, item %08lx, user data %ld", m->item,xget(m->item, MUIA_UserData));
   switch(xget(m->item, MUIA_UserData))
   {
     // if the user selected a TitleContextMenu item
