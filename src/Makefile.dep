@@ -1662,7 +1662,7 @@ $(OBJDIR)/$(MUIDIR)/HeaderList.o: mui/HeaderList.c mui/HeaderList_cl.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_mainFolder.h \
-  BoyerMooreSearch.h Locale.h Debug.h
+  Locale.h MUIObjects.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ImageArea.o: mui/ImageArea.c mui/ImageArea_cl.h include/libraries/mui.h \
   mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h \
   YAM_read.h YAM_write.h YAM_main.h BayesFilter.h HashTable.h \
