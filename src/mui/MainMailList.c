@@ -714,7 +714,6 @@ OVERLOAD(MUIM_ContextMenuChoice)
 {
   struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
 
-  D(DBF_ALWAYS, "main mail list context menu, item %08lx, user data %ld", m->item,xget(m->item, MUIA_UserData));
   switch(xget(m->item, MUIA_UserData))
   {
     // if the user selected a TitleContextMenu item
