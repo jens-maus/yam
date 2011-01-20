@@ -657,6 +657,77 @@ BOOL ConnectionIsOnline(struct Connection *conn)
 }
 
 ///
+/// GetHostByName
+// get a struct hostent* with timeout
+struct hostent *GetHostByName(struct Connection *conn, const char *host)
+{
+  struct hostent *hostaddr = NULL;
+  struct MsgPort *timeoutPort;
+  GET_SOCKETBASE(conn);
+
+  // gethostbyname() has no implicit or explicit timeout mechanism.
+  // Propose this network setup:
+  //   Amiga <-> hub/switch <-> Windows PC using a UMTS modem
+  // In this case the the gethostbyname() call might never return in case the
+  // Windows machine is shut down while YAM tries to connect to a host. The
+  // timeout mechanism we put around the gethostbyname() call here makes sure
+  // that the call will eventually return if it would have been stuck otherwise.
+  // Since the semaphore we use here is also used to protect parallel accesses
+  // to other variables the complete application would get stuck as long as
+  // gethostbyname() does not return, either successful or not.
+
+  ENTER();
+
+  // set up a message port with uses out abort signal as signal bit
+  // in case the time runs out it will abort the gethostbyname() call and let it return NULL
+  if((timeoutPort = AllocSysObjectTags(ASOT_PORT, ASOPORT_Signal, ThreadAbortSignal(),
+                                                  ASOPORT_AllocSig, FALSE,
+                                                  TAG_DONE)) != NULL)
+  {
+    struct TimeRequest *timeoutIO;
+
+    if((timeoutIO = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Size, sizeof(*timeoutIO),
+                                                       ASOIOR_ReplyPort, (IPTR)timeoutPort,
+                                                       TAG_DONE)) != NULL)
+    {
+      if(OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)timeoutIO, 0L) == 0)
+      {
+        // we call gethostbyname() with a locked semaphore, because calling this
+        // function heavily from several threads seems to lock up on WinUAE.
+        ObtainSemaphore(G->connectionSemaphore);
+
+        // now that we are safe to call gethostbyname() we start the timeout
+        timeoutIO->Request.io_Command = TR_ADDREQUEST;
+        timeoutIO->Time.Seconds = C->SocketTimeout;
+        timeoutIO->Time.Microseconds = 0;
+        SendIO((struct IORequest *)timeoutIO);
+
+        // this is what all the fuss is about
+        hostaddr = gethostbyname((char *)host);
+
+        // allow other threads to continue
+        ReleaseSemaphore(G->connectionSemaphore);
+
+        // abort the timer in case we were successful and clean up behind us
+        if(CheckIO((struct IORequest *)timeoutIO) == NULL)
+          AbortIO((struct IORequest *)timeoutIO);
+
+        WaitIO((struct IORequest *)timeoutIO);
+
+        CloseDevice((struct IORequest *)timeoutIO);
+      }
+
+      FreeSysObject(ASOT_IOREQUEST, timeoutIO);
+    }
+
+    FreeSysObject(ASOT_PORT, timeoutPort);
+  }
+
+  RETURN(hostaddr);
+  return hostaddr;
+}
+
+///
 /// ConnectToHost
 //  Creates a new connection and tries to connect to a internet service
 enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const int port)
@@ -667,17 +738,13 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
 
   if(conn != NULL)
   {
-    struct hostent *hostaddr;
+    struct hostent *hostaddr = NULL;
     GET_SOCKETBASE(conn);
 
     D(DBF_NET, "connecting to host '%s' port %ld", host, port);
 
     // obtain the hostent from the supplied host name
-    // we call gethostbyname() with a locked semaphore, because calling this
-    // function heavily from several threads seems to lock up on WinUAE.
-    ObtainSemaphore(G->connectionSemaphore);
-    hostaddr = gethostbyname((char *)host);
-    ReleaseSemaphore(G->connectionSemaphore);
+    hostaddr = GetHostByName(conn, host);
 
     // check for a possible abortion and a successful obtainment of the hostent
     if(conn->abort == FALSE && hostaddr != NULL)

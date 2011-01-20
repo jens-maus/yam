@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/Connection.c: gethostbyname() is now protected by a timeout in case the
+    network infinitely tries to resolve the host name without returning failure
+    within the desired time.
+
 2011-01-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: rebuilding a folder's index could result in a DOS requester
