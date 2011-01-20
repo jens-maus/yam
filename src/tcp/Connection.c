@@ -668,7 +668,7 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
   // gethostbyname() has no implicit or explicit timeout mechanism.
   // Propose this network setup:
   //   Amiga <-> hub/switch <-> Windows PC using a UMTS modem
-  // In this case the the gethostbyname() call might never return in case the
+  // In this scenario the gethostbyname() call might never return in case the
   // Windows machine is shut down while YAM tries to connect to a host. The
   // timeout mechanism we put around the gethostbyname() call here makes sure
   // that the call will eventually return if it would have been stuck otherwise.
@@ -738,7 +738,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
 
   if(conn != NULL)
   {
-    struct hostent *hostaddr = NULL;
+    struct hostent *hostaddr;
     GET_SOCKETBASE(conn);
 
     D(DBF_NET, "connecting to host '%s' port %ld", host, port);
