@@ -55,6 +55,7 @@ OVERLOAD(OM_NEW)
   obj = DoSuperNew(cl, obj,
 
     InputListFrame,
+    MUIA_NList_Format,          ",,",
 
     TAG_MORE, inittags(msg));
 

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AddressmatchList.c: readded the vanished multicolumn format specs.
+
 2011-01-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/Connection.c: gethostbyname() is now protected by a timeout in case the
