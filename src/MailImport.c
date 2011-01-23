@@ -39,6 +39,7 @@
 
 #include "YAM.h"
 #include "YAM_config.h"
+#include "YAM_error.h"
 #include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
@@ -1181,6 +1182,8 @@ BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flag
         DeleteMailTransferList(tc->importList);
       }
     }
+    else
+      ER_NewError(tr(MSG_IMPORT_UNKNOWN_FILE_FORMAT), importFile);
 
     free(tc);
   }

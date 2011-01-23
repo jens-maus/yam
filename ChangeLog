@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailImport.c, locale/YAM.cd: trying to import mails from an unknown file now
+    outputs an appropriate error message. This closes #247.
+
 2011-01-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/AddressmatchList.c: readded the vanished multicolumn format specs.
