@@ -7006,6 +7006,6 @@ MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP (2205//)
 Check this account for new mail on every\n\
 startup of YAM automatically.
 ;
-MSG_IMPROT_UNKNOWN_FILE_FORMAT (2206//)
+MSG_IMPORT_UNKNOWN_FILE_FORMAT (2206//)
 Unknown mail file format in file '%s'.
 ;

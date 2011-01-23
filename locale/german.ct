@@ -8583,6 +8583,6 @@ MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
 Dieses Konto bei jedem Start von YAM\n\
 automatisch auf neue Post prüfen.
 ;
-MSG_IMPROT_UNKNOWN_FILE_FORMAT
+MSG_IMPORT_UNKNOWN_FILE_FORMAT
 Unbekanntes Dateiformat in Datei '%s'.
 ;
