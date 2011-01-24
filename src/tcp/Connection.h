@@ -88,6 +88,8 @@ struct Connection
   struct SocketIFace *socketIFace;
   #endif
 
+  LONG abortSignal;              // a copy of the thread's abort signal
+
   BOOL connectedFromMainThread;  // who created this connection?
   BOOL isConnected;              // has ConnectToHost() been called before?
   BOOL abort;                    // should the connection be aborted?

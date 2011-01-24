@@ -319,10 +319,11 @@ struct Connection *CreateConnection(void)
         if((conn->socketBase = OpenLibrary("bsdsocket.library", 2L)) != NULL &&
            GETINTERFACE("main", 1, conn->socketIFace, conn->socketBase))
         {
+          LONG abortSignal = ThreadAbortSignal();
           struct TagItem tags[] =
           {
-            { SBTM_SETVAL(SBTC_BREAKMASK), (1UL << ThreadAbortSignal()) },
-            { TAG_END,                     0                            }
+            { SBTM_SETVAL(SBTC_BREAKMASK), (1UL << abortSignal) },
+            { TAG_END,                     0                    }
           };
           GET_SOCKETBASE(conn);
 
@@ -346,6 +347,8 @@ struct Connection *CreateConnection(void)
             // modified as long as this connection exists
             conn->receiveBufferSize = C->TRBufferSize;
             conn->sendBufferSize = C->TRBufferSize;
+
+            conn->abortSignal = abortSignal;
 
             conn->connectedFromMainThread = IsMainThread();
 
@@ -662,7 +665,6 @@ BOOL ConnectionIsOnline(struct Connection *conn)
 struct hostent *GetHostByName(struct Connection *conn, const char *host)
 {
   struct hostent *hostaddr = NULL;
-  LONG abortSignal;
   struct MsgPort *timeoutPort;
   GET_SOCKETBASE(conn);
 
@@ -679,11 +681,9 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
 
   ENTER();
 
-  abortSignal = ThreadAbortSignal();
-
   // set up a message port with uses out abort signal as signal bit
   // in case the time runs out it will abort the gethostbyname() call and let it return NULL
-  if((timeoutPort = AllocSysObjectTags(ASOT_PORT, ASOPORT_Signal, abortSignal,
+  if((timeoutPort = AllocSysObjectTags(ASOT_PORT, ASOPORT_Signal, conn->abortSignal,
                                                   ASOPORT_AllocSig, FALSE,
                                                   TAG_DONE)) != NULL)
   {
@@ -720,7 +720,7 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
         CloseDevice((struct IORequest *)timeoutIO);
 
         // make sure we don't leave the abort signal pending
-        SetSignal(0UL, 1UL << abortSignal);
+        SetSignal(0UL, 1UL << conn->abortSignal);
       }
 
       FreeSysObject(ASOT_IOREQUEST, timeoutIO);
