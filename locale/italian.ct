@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.8 (08.01.2011)
+## version $VER: YAM.catalog 7.8 (24.01.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5576 2011-01-08
+; based on YAM.cd 5602 2011-01-24
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -2111,7 +2111,7 @@ durante i trasferimenti della posta.
 MSG_HELP_CO_CY_MSGSELECT
 Attiva questa opzione in modo da mostrare\n\
 i contenuti della casella POP3 permettendo\n\
-la selezione dei messaggi da prelevare.
+la selezione dei messaggi da scaricare.
 ; Message pre-selection shows (a part of) the contents of the\n\
 ; POP3 mailbox and allows you to select which messages you\n\
 ; want to download.
@@ -6762,7 +6762,7 @@ Impostazioni dello Stack TCP/IP
 ; TCP/IP Settings
 ;
 MSG_CO_TCPIP_SUMMARY
-Configurazione del server SMTP e POP3...
+Configurazione degli account SMTP e POP3...
 ; Configure your SMTP and POP3 accounts...
 ;
 MSG_CO_NEWMAIL_TITLE
@@ -10007,8 +10007,8 @@ Applica _filtri remoti
 ;
 MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS
 Applica tutti i filtri remoti impostati\n\
-durante lo scaricamento della posta da\n\
-questo server.
+durante lo scaricamento della posta\n\
+da questo server.
 ; Apply all defined remote filters\n\
 ; when downloading mail from this\n\
 ; server.
@@ -10022,4 +10022,14 @@ All'avvio del programma verifica automaticamente\n\
 la presenza di nuovi messaggi per questo account.
 ; Check this account for new mail on every\n\
 ; startup of YAM automatically.
+;
+MSG_IMPORT_UNKNOWN_FILE_FORMAT
+Formato del messaggio sconosciuto nel file '%s'.
+; Unknown mail file format in file '%s'.
+; FILE
+;
+MSG_IMPORT_NO_MAILS
+Il file '%s' non contiene alcun messaggio importabile.
+; The file '%s' does not contain any importable mails.
+; FILE
 ;

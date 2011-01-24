@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-24 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2011-01-24 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest changes.
