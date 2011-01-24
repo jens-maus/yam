@@ -1178,12 +1178,20 @@ BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flag
           if(doImport == TRUE)
             ProcessImport(tc, importFile, folder, flags);
         }
+        else
+        {
+          // the file did not contain any mails to import
+          ER_NewError(tr(MSG_IMPORT_NO_MAILS), importFile);
+        }
 
         DeleteMailTransferList(tc->importList);
       }
     }
     else
+    {
+      // known file format
       ER_NewError(tr(MSG_IMPORT_UNKNOWN_FILE_FORMAT), importFile);
+    }
 
     free(tc);
   }

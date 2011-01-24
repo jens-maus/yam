@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailImport.c, locale/YAM.cd: added another error message in case the file to
+    be imported contains no mails at all.
+
 2011-01-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * MailImport.c, locale/YAM.cd: trying to import mails from an unknown file now

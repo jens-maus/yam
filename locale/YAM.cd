@@ -7008,4 +7008,9 @@ startup of YAM automatically.
 ;
 MSG_IMPORT_UNKNOWN_FILE_FORMAT (2206//)
 Unknown mail file format in file '%s'.
+; FILE
+;
+MSG_IMPORT_NO_MAILS (2207//)
+The file '%s' does not contain any importable mails.
+; FILE
 ;
