@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.18 (10.01.2011)
+## version $VER: YAM.catalog 7.19 (24.01.2011)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5576;
+; in sync with .cd in revision 5602;
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9870,4 +9870,12 @@ Automatycznie Sprawdza nowe wiadomo¶ci dla tego\n\
 konta pocztowego przy ka¿dym uruchomieniu programu.
 ; Check this account for new mail on every\n\
 ; startup of YAM automatically.
+;
+MSG_IMPORT_UNKNOWN_FILE_FORMAT
+Nieznany format wiadomo¶ci w pliku \"%s\".
+; Unknown mail file format in file '%s'.
+;
+MSG_IMPORT_NO_MAILS
+Pli \"%s\" nie zawiera ¿adnych wiadomo¶ci do zaimportowania.
+; The file '%s' does not contain any importable mails.
 ;
