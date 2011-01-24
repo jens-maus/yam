@@ -9,6 +9,10 @@ $URL$
 
   * MailImport.c, locale/YAM.cd: added another error message in case the file to
     be imported contains no mails at all.
+  * tcp/Connection.c: the new timeout mechanism for gethostbyname() could have
+    left the abort signal pending which in turn caused the preselection window
+    to be closed immediately. Now the signal is properly cleared.
+    This closes #248.
 
 2011-01-23 Thore Böckelmann <tboeckel@gmx.de>
 

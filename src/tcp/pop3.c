@@ -1515,6 +1515,8 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                                 doDownload = TRUE;
                               }
                             }
+                            else
+                              D(DBF_NET, "getting message details failed/was aborted, no preselection");
 
                             PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DisposeWindow, tc->preselectWindow);
                           }

@@ -662,6 +662,7 @@ BOOL ConnectionIsOnline(struct Connection *conn)
 struct hostent *GetHostByName(struct Connection *conn, const char *host)
 {
   struct hostent *hostaddr = NULL;
+  LONG abortSignal;
   struct MsgPort *timeoutPort;
   GET_SOCKETBASE(conn);
 
@@ -678,9 +679,11 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
 
   ENTER();
 
+  abortSignal = ThreadAbortSignal();
+
   // set up a message port with uses out abort signal as signal bit
   // in case the time runs out it will abort the gethostbyname() call and let it return NULL
-  if((timeoutPort = AllocSysObjectTags(ASOT_PORT, ASOPORT_Signal, ThreadAbortSignal(),
+  if((timeoutPort = AllocSysObjectTags(ASOT_PORT, ASOPORT_Signal, abortSignal,
                                                   ASOPORT_AllocSig, FALSE,
                                                   TAG_DONE)) != NULL)
   {
@@ -715,6 +718,9 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
         WaitIO((struct IORequest *)timeoutIO);
 
         CloseDevice((struct IORequest *)timeoutIO);
+
+        // make sure we don't leave the abort signal pending
+        SetSignal(0UL, 1UL << abortSignal);
       }
 
       FreeSysObject(ASOT_IOREQUEST, timeoutIO);
