@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c, YAM_COg.c: fixed several places where invoking the method
+    the MUIM_TextEditor_InsertText was missing the last parameter to specify the
+    position where to insert the text. This caused random effects to happen,
+    like inserting the text at the beginning. This closes #250.
+
 2011-01-24 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

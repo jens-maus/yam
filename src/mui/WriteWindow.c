@@ -537,11 +537,11 @@ static char *TransformText(const char *source, const enum TransformMode mode, co
     if(mode == ED_INSUUCODE)
       size += strlen(FilePart(qtext))+12+7; // for the "begin 644 XXX" and "end passage
 
-    if((dest = calloc(size, 1)))
+    if((dest = calloc(size, 1)) != NULL)
     {
       FILE *fp;
 
-      if((fp = fopen(source, "r")))
+      if((fp = fopen(source, "r")) != NULL)
       {
         int ch;
         int p=0;
@@ -1527,10 +1527,10 @@ OVERLOAD(OM_NEW)
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH1,    data->RG_PAGE, 3, MUIM_Set, MUIA_Group_ActivePage, 0);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH2,    data->RG_PAGE, 3, MUIM_Set, MUIA_Group_ActivePage, 1);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH3,    data->RG_PAGE, 3, MUIM_Set, MUIA_Group_ActivePage, 2);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT0,      data->TE_EDIT, 2, MUIM_TextEditor_InsertText, ":-)");
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT1,      data->TE_EDIT, 2, MUIM_TextEditor_InsertText, ":-|");
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT2,      data->TE_EDIT, 2, MUIM_TextEditor_InsertText, ":-(");
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT3,      data->TE_EDIT, 2, MUIM_TextEditor_InsertText, ";-)");
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT0,      data->TE_EDIT, 3, MUIM_TextEditor_InsertText, ":-)", MUIV_TextEditor_InsertText_Cursor);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT1,      data->TE_EDIT, 3, MUIM_TextEditor_InsertText, ":-|", MUIV_TextEditor_InsertText_Cursor);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT2,      data->TE_EDIT, 3, MUIM_TextEditor_InsertText, ":-(", MUIV_TextEditor_InsertText_Cursor);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT3,      data->TE_EDIT, 3, MUIM_TextEditor_InsertText, ";-)", MUIV_TextEditor_InsertText_Cursor);
 
         // catch MUIA_AppMessage with a hook so that we get notified
         // as soon as the user drops a WB icon on the pagegroup object
@@ -3515,7 +3515,7 @@ DECLARE(EditorCmd) // enum TransformMode cmd
     if(msg->cmd == ED_OPEN)
       DoMethod(data->TE_EDIT, MUIM_TextEditor_ClearText);
 
-    DoMethod(data->TE_EDIT, MUIM_TextEditor_InsertText, text);
+    DoMethod(data->TE_EDIT, MUIM_TextEditor_InsertText, text, MUIV_TextEditor_InsertText_Cursor);
 
     // free our allocated text
     free(text);
@@ -3576,7 +3576,7 @@ DECLARE(InsertText) // char *text
   GETDATA;
   ENTER();
 
-  DoMethod(data->TE_EDIT, MUIM_TextEditor_InsertText, msg->text);
+  DoMethod(data->TE_EDIT, MUIM_TextEditor_InsertText, msg->text, MUIV_TextEditor_InsertText_Cursor);
 
   RETURN(0);
   return 0;
@@ -4294,7 +4294,7 @@ DECLARE(DroppedFile) // STRPTR fileName
 
     if((text = TransformText(msg->fileName, ED_INSERT, "")) != NULL)
     {
-      DoMethod(data->TE_EDIT, MUIM_TextEditor_InsertText, text);
+      DoMethod(data->TE_EDIT, MUIM_TextEditor_InsertText, text, MUIV_TextEditor_InsertText_Cursor);
       free(text);
     }
     else

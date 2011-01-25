@@ -2797,8 +2797,8 @@ Object *CO_PageSignature(struct CO_ClassData *data)
       SetHelp(data->GUI.ST_TAGFILE, MSG_HELP_CO_ST_TAGFILE  );
       SetHelp(data->GUI.ST_TAGSEP,  MSG_HELP_CO_ST_TAGSEP   );
 
-      DoMethod(data->GUI.BT_INSTAG, MUIM_Notify, MUIA_Pressed,      FALSE         , data->GUI.TE_SIGEDIT   , 2, MUIM_TextEditor_InsertText, "%t\n");
-      DoMethod(data->GUI.BT_INSENV, MUIM_Notify, MUIA_Pressed,      FALSE         , data->GUI.TE_SIGEDIT   , 2, MUIM_TextEditor_InsertText, "%e\n");
+      DoMethod(data->GUI.BT_INSTAG, MUIM_Notify, MUIA_Pressed,      FALSE         , data->GUI.TE_SIGEDIT   , 3, MUIM_TextEditor_InsertText, "%t\n", MUIV_TextEditor_InsertText_Cursor);
+      DoMethod(data->GUI.BT_INSENV, MUIM_Notify, MUIA_Pressed,      FALSE         , data->GUI.TE_SIGEDIT   , 3, MUIM_TextEditor_InsertText, "%e\n", MUIV_TextEditor_InsertText_Cursor);
       DoMethod(data->GUI.CY_SIGNAT, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_EditSignatHook, FALSE);
       DoMethod(data->GUI.BT_SIGEDIT,MUIM_Notify, MUIA_Pressed,      FALSE         , MUIV_Notify_Application, 3, MUIM_CallHook, &CO_EditSignatHook, TRUE);
       DoMethod(data->GUI.CH_USESIG, MUIM_Notify, MUIA_Selected,     MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_SwitchSignatHook, MUIV_NotTriggerValue);
