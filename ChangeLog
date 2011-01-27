@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ObjectList.c: changed the ObjectList's default behaviour to dispose
+    removed objectItems.
+
 2011-01-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c, YAM_COg.c: fixed several places where invoking the method

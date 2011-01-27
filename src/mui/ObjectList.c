@@ -79,7 +79,7 @@ OVERLOAD(OM_NEW)
     data->spacer = spacer;
     data->dummy = dummy;
     data->itemCount = 0;
-    data->disposeRemovedItems = GetTagData(ATTR(DisposeRemovedItems), FALSE, inittags(msg)) ? TRUE : FALSE;
+    data->disposeRemovedItems = GetTagData(ATTR(DisposeRemovedItems), TRUE, inittags(msg)) ? TRUE : FALSE;
   }
 
   RETURN((IPTR)obj);

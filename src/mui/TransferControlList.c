@@ -48,7 +48,6 @@ OVERLOAD(MUIM_ObjectList_CreateItem)
   ENTER();
 
   item = TransferControlGroupObject,
-    MUIA_ObjectList_DisposeRemovedItems, TRUE,
   End;
 
   RETURN((IPTR)item);
