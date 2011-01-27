@@ -9,6 +9,7 @@ $URL$
 
   * mui/ObjectList.c: changed the ObjectList's default behaviour to dispose
     removed objectItems.
+  * mui/ObjectList.c: fixed the completely wrong disposure of removed objects.
 
 2011-01-25 Thore Böckelmann <tboeckel@gmx.de>
 
