@@ -4,6 +4,13 @@ GenClasses Tool - ChangeLog
 
 $Id$
 
+2011-01-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * gc.c: the generated clean up code now checks for still living objects of
+    each class. This effectively points to memory leaks in case objects are
+    created dynamically and don't belong to the application anymore when the
+    final cleanup happens.
+
 2010-11-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * gc.c: a .crc file will be created for each class. This makes it possible to

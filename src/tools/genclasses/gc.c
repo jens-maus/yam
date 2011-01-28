@@ -1116,8 +1116,13 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "  for(i = NUMBEROFCLASSES-1; i >= 0; i--)\n");
   fprintf(fp, "  {\n");
   fprintf(fp, "    if(%sClasses[i] != NULL)\n", bn);
+  fprintf(fp, "    {\n");
+  fprintf(fp, "      if(%sClasses[i]->mcc_Class->cl_ObjectCount != 0)\n", bn);
+  fprintf(fp, "        E(DBF_STARTUP, \"class '%%s' has still %%ld living objects!\", MCCInfo[i].Name, %sClasses[i]->mcc_Class->cl_ObjectCount);\n", bn);
+  fprintf(fp, "\n");
   fprintf(fp, "      MUI_DeleteCustomClass(%sClasses[i]);\n", bn);
-  fprintf(fp, "    %sClasses[i] = NULL;\n", bn);
+  fprintf(fp, "      %sClasses[i] = NULL;\n", bn);
+  fprintf(fp, "    }\n");
   fprintf(fp, "  }\n");
   fprintf(fp, "\n");
   fprintf(fp, "  LEAVE();\n");
