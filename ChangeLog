@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tools/genclasses: the generated clean up code now checks for still living
+    objects of each internal custom class. This effectively points to memory
+    leaks in case objects are created dynamically and don't belong to the
+    application anymore when the final cleanup happens.
+
 2011-01-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ObjectList.c: changed the ObjectList's default behaviour to dispose
