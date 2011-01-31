@@ -1858,7 +1858,6 @@ void CO_GetConfig(BOOL saveConfig)
       CE->MoveHamToIncoming = GetMUICheck(gui->CH_MOVEHAMTOINCOMING);
       CE->FilterHam = GetMUICheck(gui->CH_FILTERHAM);
 
-D(DBF_ALWAYS,"spam enabled %ld -> %ld",C->SpamFilterEnabled,CE->SpamFilterEnabled);
       if(C->SpamFilterEnabled == TRUE && CE->SpamFilterEnabled == FALSE)
       {
         LONG mask;
