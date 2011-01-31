@@ -117,6 +117,7 @@ struct Global
   struct FolderList *      folders;
   struct MinList         * xpkPackerList;
   struct SignalSemaphore * connectionSemaphore;
+  struct SignalSemaphore * configSemaphore;
   struct Part            * virtualMailpart[2]; // two virtual mail parts for the attachment requester window
   APTR                     mailItemPool;       // item pool for struct Mail
   APTR                     mailNodeItemPool;   // item pool for struct MailNode

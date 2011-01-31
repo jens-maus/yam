@@ -2225,58 +2225,74 @@ MakeStaticHook(CO_ChangePageHook,CO_ChangePageFunc);
 //  Closes configuration window
 HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
 {
+  BOOL gotSemaphore = FALSE;
+
   ENTER();
 
-  // check if we should copy our edited configuration
-  // to the real one or if we should just free/drop it
-  if(arg != NULL && arg[0] >= 1)
+  // If the configuration is to be used/save we must exclusively obtain the semaphore
+  // to avoid destroying the mail server nodes which might be in use by active POP3 or
+  // SMTP transfers. If the window is just to be closed we can go on without a lock.
+  if(arg[0] == 0 || (gotSemaphore = AttemptSemaphore(G->configSemaphore)) != FALSE)
   {
-    // get the current state of the configuration
-    CO_GetConfig(arg[0] == 2);
-
-    // before we copy over the configuration, we
-    // check if it was changed at all
-    if(CompareConfigData(C, CE) == FALSE)
+    // check if we should copy our edited configuration
+    // to the real one or if we should just free/drop it
+    if(arg[0] != 0)
     {
-      struct Config *tmpC;
+      // get the current state of the configuration
+      CO_GetConfig(arg[0] == 2);
 
-      D(DBF_CONFIG, "configuration found to be different");
-
-      // just swap the pointers instead of clearing and copying the whole stuff
-      tmpC = C;
-      C = CE;
-      CE = tmpC;
-      // the up to now "current" configuration will be freed below
-    }
-    else
-      D(DBF_CONFIG, "config wasn't altered, skipped copy operations.");
-
-    // validate that C has valid values
-    CO_Validate(C, TRUE);
-
-    // we save the configuration if the user
-    // has pressed on 'Save' only.
-    if(arg[0] == 2)
-    {
-      // save the signature if it has been modified
-      if(xget(G->CO->GUI.TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE)
+      // before we copy over the configuration, we
+      // check if it was changed at all
+      if(CompareConfigData(C, CE) == FALSE)
       {
-        char sigPath[SIZE_PATHFILE];
+        struct Config *tmpC;
 
-        DoMethod(G->CO->GUI.TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
+        D(DBF_CONFIG, "configuration found to be different");
+
+        // just swap the pointers instead of clearing and copying the whole stuff
+        tmpC = C;
+        C = CE;
+        CE = tmpC;
+        // the up to now "current" configuration will be freed below
       }
+      else
+        D(DBF_CONFIG, "config wasn't altered, skipped copy operations.");
 
-      CO_SaveConfig(C, G->CO_PrefsFile);
+      // validate that C has valid values
+      CO_Validate(C, TRUE);
+
+      // we save the configuration if the user
+      // has pressed on 'Save' only.
+      if(arg[0] == 2)
+      {
+        // save the signature if it has been modified
+        if(xget(G->CO->GUI.TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE)
+        {
+          char sigPath[SIZE_PATHFILE];
+
+          DoMethod(G->CO->GUI.TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
+        }
+
+        CO_SaveConfig(C, G->CO_PrefsFile);
+      }
     }
+
+    // then we free our temporary config structure
+    CO_ClearConfig(CE);
+    free(CE);
+    CE = NULL;
+
+    // Dipose&Close the config window stuff
+    DisposeModulePush(&G->CO);
+
+    // release the config semaphore again if we obtained it before
+    if(gotSemaphore == TRUE)
+      ReleaseSemaphore(G->configSemaphore);
   }
-
-  // then we free our temporary config structure
-  CO_ClearConfig(CE);
-  free(CE);
-  CE = NULL;
-
-  // Dipose&Close the config window stuff
-  DisposeModulePush(&G->CO);
+  else
+  {
+    ER_NewError(tr(MSG_CO_CONFIG_IS_LOCKED));
+  }
 
   LEAVE();
 }
@@ -2478,4 +2494,5 @@ static struct CO_ClassData *CO_New(void)
   return data;
 }
 
-////
+///
+

@@ -2386,6 +2386,9 @@ BOOL MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult)
 
   ENTER();
 
+  // make sure the mail server nodes do not vanish
+  ObtainSemaphoreShared(G->configSemaphore);
+
   if(C->UpdateStatus == TRUE)
     MA_UpdateStatus();
 
@@ -2430,6 +2433,9 @@ BOOL MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult)
     }
   }
 
+  // now we are done
+  ReleaseSemaphore(G->configSemaphore);
+
   RETURN(success);
   return success;
 }
@@ -2465,6 +2471,9 @@ BOOL MA_Send(enum SendMailMode mode)
   struct MailServerNode *msn;
 
   ENTER();
+
+  // make sure the mail server nodes do not vanish
+  ObtainSemaphoreShared(G->configSemaphore);
 
   // get the SMTP server first
   if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) != NULL)
@@ -2511,6 +2520,9 @@ BOOL MA_Send(enum SendMailMode mode)
       }
     }
   }
+
+  // now we are done
+  ReleaseSemaphore(G->configSemaphore);
 
   RETURN(success);
   return success;

@@ -7014,3 +7014,8 @@ MSG_IMPORT_NO_MAILS (2207//)
 The file '%s' does not contain any importable mails.
 ; FILE
 ;
+MSG_CO_CONFIG_IS_LOCKED (2208//)
+The configuration is currently locked.\n\
+\n\
+Please wait until all POP3 and SMTP transfers are finished.
+;

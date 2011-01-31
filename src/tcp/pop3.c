@@ -1396,6 +1396,9 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
   ENTER();
 
+  // make sure the mail server node does not vanish
+  ObtainSemaphoreShared(G->configSemaphore);
+
   if((tc = calloc(1, sizeof(*tc))) != NULL)
   {
     tc->msn = msn;
@@ -1617,6 +1620,9 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
   // mark the server as being no longer "in use"
   CLEAR_FLAG(msn->flags, MSF_IN_USE);
+
+  // now we are done
+  ReleaseSemaphore(G->configSemaphore);
 
   // wake up the calling thread if this is requested
   if(isFlagSet(tc->flags, RECEIVEF_SIGNAL))

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-31 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, YAM_CO.c, tcp/pop3.c, tcp/smtp.c: the configuration is now locked
+    as long as there are active POP3 or SMTP transfers. This avoids the problem
+    that modifying and using/saving the configuration will effectively destroy
+    the mail server nodes which are in use by the active transfers. An error
+    message will be displayed in that case.
+
 2011-01-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * tools/genclasses: the generated clean up code now checks for still living

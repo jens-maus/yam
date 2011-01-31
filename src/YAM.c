@@ -1155,6 +1155,13 @@ static void Terminate(void)
 
   CLOSELIB(LocaleBase, ILocale);
 
+  // free the configuration semaphore
+  if(G->configSemaphore != NULL)
+  {
+    FreeSysObject(ASOT_SEMAPHORE, G->configSemaphore);
+    G->configSemaphore = NULL;
+  }
+
   // free the two virtual mail parts
   free(G->virtualMailpart[0]);
   free(G->virtualMailpart[1]);
@@ -2568,7 +2575,16 @@ int main(int argc, char **argv)
 
     // create a list for all the folders
     if((G->folders = CreateFolderList()) == NULL)
+    {
+      // break out immediately to signal an error!
       break;
+    }
+
+    if((G->configSemaphore = AllocSysObjectTags(ASOT_SEMAPHORE, TAG_DONE)) == NULL)
+    {
+      // break out immediately to signal an error!
+      break;
+    }
 
     // allocate two virtual mail parts for the attachment requester
     // these two must be accessible all the time

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.20 (24.1.2011)
+## version $VER: YAM.catalog 7.21 (31.1.2011)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8588,4 +8588,9 @@ Unbekanntes Dateiformat in Datei '%s'.
 ;
 MSG_IMPORT_NO_MAILS
 Die Datei '%s' enthält keine importierbaren Nachrichten.
+;
+MSG_CO_CONFIG_IS_LOCKED
+Die Konfiguration ist zur Zeit gesperrt.\n\
+\n\
+Bitte warten Sie bis alle POP3- und SMTP-Übertragungen abgeschlossen sind.
 ;
