@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.8 (24.01.2011)
+## version $VER: YAM.catalog 7.8 (31.01.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.7 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5602 2011-01-24
+; based on YAM.cd 5613 2011-01-31
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -2713,11 +2713,8 @@ AppIcon di YAM.
 ; exactly at these coordinates.
 ;
 MSG_HELP_CO_CH_CLGADGET
-Seleziona questa opzione se si desidera\n\
-iconificare YAM cliccando sul suo gadget\n\
-di chiusura.\n\
-Di norma il gadget di chiusura è utilizzato\n\
-per chiudere YAM definitivamente.
+Seleziona questa opzione se si desidera iconificare YAM\n\
+anzichè chiuderlo cliccando sul gadget di chiusura.
 ; Do you want YAM to iconify when\n\
 ; you hit the close gadget?
 ;
@@ -4827,7 +4824,7 @@ Aggiungi filtro
 ; Add filter
 ;
 MSG_FI_AddFilterReq
-Inserisci un nome per un nuovo filtro
+Inserisci un nome per il nuovo filtro:
 ; Enter a name for the new filter
 ;
 ; Module FI - Window
@@ -8855,8 +8852,7 @@ MSG_MA_ADD_WHICH_ADDRESS
 L'indirizzo del mittente (Da) è \033b<%s>\033n ma\n\
 l'indirizzo di ritorno (Rispondi-A) è \033b<%s>\033n.\n\
 \n\
-Quale indirizzo si desidera aggiungere nella propria\n\
-rubrica?
+Quale indirizzo si desidera aggiungere nella propria rubrica?
 ; The sender address (From) is \033b<%s>\033n but\n\
 ; the return address (Reply-To) is \033b<%s>\033n.\n\
 ; \n\
@@ -10032,4 +10028,13 @@ MSG_IMPORT_NO_MAILS
 Il file '%s' non contiene alcun messaggio importabile.
 ; The file '%s' does not contain any importable mails.
 ; FILE
+;
+MSG_CO_CONFIG_IS_LOCKED
+Attenzione, la configurazione è al momento bloccata.\n\
+\n\
+Per favore attendi il completamento dei trasferimenti\n\
+POP3 e SMTP prima di poter proseguire.
+; The configuration is currently locked.\n\
+; \n\
+; Please wait until all POP3 and SMTP transfers are finished.
 ;

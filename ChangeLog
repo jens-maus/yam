@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-01-31 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fix some typos and update to the latest changes.
+
 2011-01-31 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, YAM_CO.c, tcp/pop3.c, tcp/smtp.c: the configuration is now locked
