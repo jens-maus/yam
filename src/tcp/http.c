@@ -179,6 +179,10 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
                (p = strchr(tc->requestResponse, ' ')) != NULL && atoi(TrimStart(p)) == 200)
             {
               LONG contentLength = 0;
+              int (* receiveFunc)(struct Connection *, char *, const int);
+
+              // default to a binary receive function
+              receiveFunc = ReceiveFromHost;
 
               PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_HTTP_RECEIVING_DATA));
 
@@ -195,6 +199,15 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
                 if(strnicmp(tc->requestResponse, "Content-Length:", 15) == 0)
                 {
                   contentLength = atoi(&tc->requestResponse[15]);
+                }
+                else if(strnicmp(tc->requestResponse, "Content-Type:", 13) == 0)
+                {
+                  // for text bodies we use a line based receive function
+                  if(strnicmp(&tc->requestResponse[14], "text", 4) == 0)
+                  {
+                    D(DBF_NET, "using line based content receive function");
+                    receiveFunc = ReceiveLineFromHost;
+                  }
                 }
                 else if(strcmp(tc->requestResponse, "\r\n") == 0)
                 {
@@ -214,7 +227,7 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
                     // from here we retrieve everything we can get and
                     // immediately write it out to a file. that's it :)
                     while(tc->connection->error == CONNECTERR_NO_ERROR &&
-                          (len = ReceiveLineFromHost(tc->connection, tc->requestResponse, sizeof(tc->requestResponse))) > 0)
+                          (len = receiveFunc(tc->connection, tc->requestResponse, sizeof(tc->requestResponse))) > 0)
                     {
                       PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, len, tr(MSG_TR_Downloading));
 

@@ -13,6 +13,9 @@ $URL$
     SMTP transfers to be started/completed although they still will very much
     depend on how fast the search actually can be done. The search really needs
     to be moved to a separate thread.
+  * tcp/http.c: the receive loop now distinguishes between line based text
+    contents and aribtrary binary contents. This makes it possible to let down-
+    load its update archives itself in the future.
 
 2011-01-31 Samir Hawamdeh <s.hawamdeh@tin.it>
 
