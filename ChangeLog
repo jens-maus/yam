@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: hitting the "Send" button will no longer send out mails which are
+    currently being edited. This closes #252.
+
 2011-01-31 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fix some typos and update to the latest changes.

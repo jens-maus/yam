@@ -2506,10 +2506,38 @@ BOOL MA_Send(enum SendMailMode mode)
 
       if(mlist != NULL)
       {
-        success = DoAction(NULL, TA_SendMails, TT_SendMails_MailServer, msn,
-                                               TT_SendMails_Mails, mlist,
-                                               TT_SendMails_Mode, mode,
-                                               TAG_DONE);
+        struct Node *curNode;
+
+        // Now check if any mail currently being edited is contained in the list of
+        // mails to be sent. This may happen if a mail has been put on hold before
+        // and is edited again now. If the user hits the "Send" button in this moment
+        // the currently edited mail should not be sent.
+        IterateList(&G->writeMailDataList, curNode)
+        {
+          struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+          struct MailNode *mnode;
+
+          ForEachMailNode(mlist, mnode)
+          {
+            struct Mail *mail = mnode->mail;
+
+            if(mail == wmData->refMail)
+            {
+              // remove the mail from the list
+              RemoveMailNode(mlist, mnode);
+              break;
+            }
+          }
+        }
+
+        // start the send process if there is anything left to be sent
+        if(mlist->count != 0)
+        {
+          success = DoAction(NULL, TA_SendMails, TT_SendMails_MailServer, msn,
+                                                 TT_SendMails_Mails, mlist,
+                                                 TT_SendMails_Mode, mode,
+                                                 TAG_DONE);
+        }
 
         // reset everything in case of failure
         if(success == FALSE)
