@@ -67,10 +67,11 @@
 
 #include "BayesFilter.h"
 #include "BoyerMooreSearch.h"
+#include "FolderList.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MailList.h"
-#include "FolderList.h"
+#include "MethodStack.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Threads.h"
@@ -1119,6 +1120,10 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
             set(ga, MUIA_Gauge_Current, progress);
             // let the list show the found mails so far
             set(lv, MUIA_NList_Quiet, FALSE);
+
+            // handle the possibly received methods and messages
+            CheckMethodStack();
+            HandleThreads(TRUE);
 
             // signal the application to update now
             DoMethod(G->App, MUIM_Application_InputBuffered);

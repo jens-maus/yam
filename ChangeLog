@@ -9,6 +9,10 @@ $URL$
 
   * YAM_MA.c: hitting the "Send" button will no longer send out mails which are
     currently being edited. This closes #252.
+  * YAM_FI.c: performing a long lasting search will no longer block POP3 and
+    SMTP transfers to be started/completed although they still will very much
+    depend on how fast the search actually can be done. The search really needs
+    to be moved to a separate thread.
 
 2011-01-31 Samir Hawamdeh <s.hawamdeh@tin.it>
 
