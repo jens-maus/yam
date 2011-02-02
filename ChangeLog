@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-02 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: update to the latest changes.
+
 2011-02-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c, mui/MainFolderListtree.c: changed a hook to a method.
