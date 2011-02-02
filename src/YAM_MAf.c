@@ -944,15 +944,6 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
   LEAVE();
 }
 
-HOOKPROTONHNONP(MA_ChangeFolderFunc, void)
-{
-  ENTER();
-
-  MA_ChangeFolder(NULL, FALSE);
-
-  LEAVE();
-}
-MakeHook(MA_ChangeFolderHook, MA_ChangeFolderFunc);
 ///
 /// MA_JumpToNewMsg
 // Function that jumps to the first or last unread mail in a folder,

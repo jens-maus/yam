@@ -310,11 +310,11 @@ OVERLOAD(OM_NEW)
       displayHook->h_Data = data;
       data->displayHook = displayHook;
 
-      DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,   MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainFolderListtree_EditFolder);
+      DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, MUIV_Notify_Self, 1, METHOD(EditFolder));
       //DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_NList_Sort2,          MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
       //DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,      MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,                  MUIA_NList_TitleMark,MUIV_TriggerValue);
-      DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active,    MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeFolderHook);
-      DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active,    MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainFolderListtree_SetFolderInfo);
+      DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 1, METHOD(ChangeFolder));
+      DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 1, METHOD(SetFolderInfo));
 
       // prepare the folder images
       data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[fi_Fold]);
@@ -767,7 +767,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
       else
         SET_FLAG(C->FolderCols, flag);
 
-      DoMethod(obj, MUIM_MainFolderListtree_MakeFormat);
+      DoMethod(obj, METHOD(MakeFormat));
     }
     break;
 
@@ -876,6 +876,18 @@ DECLARE(SetFolderInfo)
   }
   else
     set(obj, MUIA_ShortHelp, NULL);
+
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(ChangeFolder)
+DECLARE(ChangeFolder)
+{
+  ENTER();
+
+  MA_ChangeFolder(NULL, FALSE);
 
   LEAVE();
   return 0;

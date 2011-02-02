@@ -84,7 +84,6 @@ struct ExtendedMail
   struct Person    OriginalRcpt; // the original recipient for a requested MDN
 };
 
-extern struct Hook MA_ChangeFolderHook;
 extern struct Hook MA_FlushIndexHook;
 
 // MA_ReadHeader modes
