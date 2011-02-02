@@ -1241,57 +1241,43 @@ HOOKPROTONHNONP(FI_Open, void)
 
   if(G->FI != NULL && G->FI->GUI.WI != NULL)
   {
-    BOOL success = FALSE;
-    struct Folder *folder;
+    int apos = 0;
+    struct FolderNode *fnode;
+    int j = 0;
 
-    if((folder = FO_GetCurrentFolder()) != NULL)
+    LockFolderListShared(G->folders);
+
+    ForEachFolderNode(G->folders, fnode)
     {
-      int apos = 0;
-      struct FolderNode *fnode;
-      int j = 0;
-
-      LockFolderListShared(G->folders);
-
-      ForEachFolderNode(G->folders, fnode)
+      if(isGroupFolder(fnode->folder) == FALSE)
       {
-        if(isGroupFolder(fnode->folder) == FALSE)
-        {
-          DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, fnode->folder->Name, MUIV_List_Insert_Bottom);
+        DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, fnode->folder->Name, MUIV_List_Insert_Bottom);
 
-          if(fnode->folder == folder)
-            apos = j;
+        if(fnode->folder == G->currentFolder)
+          apos = j;
 
-          j++;
-        }
+        j++;
       }
-
-      UnlockFolderList(G->folders);
-
-      set(G->FI->GUI.LV_FOLDERS, MUIA_List_Active, apos);
-
-      // everything went fine
-      success = TRUE;
     }
 
-    if(success == TRUE)
+    UnlockFolderList(G->folders);
+
+    set(G->FI->GUI.LV_FOLDERS, MUIA_List_Active, apos);
+
+    // check if the window is already open
+    if(xget(G->FI->GUI.WI, MUIA_Window_Open) == TRUE)
     {
-      // check if the window is already open
-      if(xget(G->FI->GUI.WI, MUIA_Window_Open) == TRUE)
-      {
-        // bring window to front
-        DoMethod(G->FI->GUI.WI, MUIM_Window_ToFront);
+      // bring window to front
+      DoMethod(G->FI->GUI.WI, MUIM_Window_ToFront);
 
-        // make window active
-        set(G->FI->GUI.WI, MUIA_Window_Activate, TRUE);
-      }
-      else if(SafeOpenWindow(G->FI->GUI.WI) == FALSE)
-        DisposeModulePush(&G->FI);
-
-      // set object of last search session active as well
-      set(G->FI->GUI.WI, MUIA_Window_ActiveObject, xget(G->FI->GUI.GR_SEARCH, MUIA_SearchControlGroup_ActiveObject));
+      // make window active
+      set(G->FI->GUI.WI, MUIA_Window_Activate, TRUE);
     }
-    else
+    else if(SafeOpenWindow(G->FI->GUI.WI) == FALSE)
       DisposeModulePush(&G->FI);
+
+    // set object of last search session active as well
+    set(G->FI->GUI.WI, MUIA_Window_ActiveObject, xget(G->FI->GUI.GR_SEARCH, MUIA_SearchControlGroup_ActiveObject));
   }
 
   LEAVE();
@@ -1376,43 +1362,38 @@ MakeStaticHook(FI_ReadHook, FI_ReadFunc);
 //  Selects matching messages in the main message list
 HOOKPROTONHNONP(FI_SelectFunc, void)
 {
-  struct Folder *folder;
+  int i;
 
   ENTER();
 
-  if((folder = FO_GetCurrentFolder()) != NULL)
+  // unselect the currently selected mails first
+  set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, MUIV_NList_Active_Off);
+  DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
+
+  for(i=0; ;i++)
   {
-    int i;
+    struct Mail *foundmail;
 
-    // unselect the currently selected mails first
-    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, MUIV_NList_Active_Off);
-    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
+    DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_GetEntry, i, &foundmail);
+    if(foundmail == NULL)
+      break;
 
-    for(i=0; ;i++)
+    // only if the current folder is the same as this messages resists in
+    if(foundmail->Folder == G->currentFolder)
     {
-      struct Mail *foundmail;
+      LONG pos = MUIV_NList_GetPos_Start;
 
-      DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_GetEntry, i, &foundmail);
-      if(foundmail == NULL)
-        break;
+      // get the position of the foundmail in the currently active
+      // listview
+      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, foundmail, &pos);
 
-      // only if the current folder is the same as this messages resists in
-      if(foundmail->Folder == folder)
-      {
-        LONG pos = MUIV_NList_GetPos_Start;
-
-        // get the position of the foundmail in the currently active
-        // listview
-        DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, foundmail, &pos);
-
-        // if we found the one in our listview we select it
-        if(pos != MUIV_NList_GetPos_End)
-          DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Select, pos, MUIV_NList_Select_On, NULL);
-      }
+      // if we found the one in our listview we select it
+      if(pos != MUIV_NList_GetPos_End)
+        DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Select, pos, MUIV_NList_Select_On, NULL);
     }
-
-    MA_ChangeSelected(TRUE);
   }
+
+  MA_ChangeSelected(TRUE);
 
   LEAVE();
 }
@@ -2008,8 +1989,9 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
   memset(&filterResult, 0, sizeof(filterResult));
 
-  if((folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder()) != NULL &&
-     (C->SpamFilterEnabled == FALSE || FO_GetFolderByType(FT_SPAM, NULL) != NULL))
+  folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : G->currentFolder;
+
+  if(folder != NULL && (C->SpamFilterEnabled == FALSE || FO_GetFolderByType(FT_SPAM, NULL) != NULL))
   {
     struct MailList *mlist = NULL;
     BOOL processAllMails = TRUE;

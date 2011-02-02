@@ -115,10 +115,11 @@ struct Global
   struct codesetList *     codesetsList;
   struct HashTable *       imageCacheHashTable;
   struct FolderList *      folders;
-  struct MinList         * xpkPackerList;
+  struct MinList *         xpkPackerList;
   struct SignalSemaphore * connectionSemaphore;
   struct SignalSemaphore * configSemaphore;
-  struct Part            * virtualMailpart[2]; // two virtual mail parts for the attachment requester window
+  struct Part *            virtualMailpart[2]; // two virtual mail parts for the attachment requester window
+  struct Folder *          currentFolder;      // the currently active folder
   APTR                     mailItemPool;       // item pool for struct Mail
   APTR                     mailNodeItemPool;   // item pool for struct MailNode
 

@@ -3250,7 +3250,7 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
   // now we remove the mail from main mail
   // listviews in case the folder of it is the
   // currently active one.
-  if(folder == FO_GetCurrentFolder())
+  if(folder == G->currentFolder)
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RemoveMail, mail);
 
   // remove the mail from the search window's mail list as well, if the
@@ -4459,13 +4459,11 @@ BOOL Busy(const char *text, const char *parameter, int cur, int max)
 //  Calculates folder statistics and update mailbox status icon
 void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 {
-  struct Folder *actfo = FO_GetCurrentFolder();
-
   ENTER();
 
   // If the parsed argument is NULL we want to show the statistics from the actual folder
   if(fo == NULL)
-    fo = actfo;
+    fo = G->currentFolder;
   else if(fo == (struct Folder *)-1)
     fo = FO_GetFolderByType(FT_INCOMING, NULL);
 
@@ -4478,7 +4476,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
     // Recalc the number of messages of the folder group
     FO_UpdateTreeStatistics(fo, TRUE);
 
-    if(fo == actfo)
+    if(fo == G->currentFolder)
     {
       DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_SetMailInfo);
       DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_SetFolderInfo);

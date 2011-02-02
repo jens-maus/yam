@@ -8,6 +8,9 @@ $URL$
 2011-02-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c, mui/MainFolderListtree.c: changed a hook to a method.
+  * misc: the current folder is now kept in a global variable to avoid having
+    to obtain it from the folder tree object everytime it is needed. This should
+    speed up all checks against the current folder a lot.
 
 2011-02-01 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -117,12 +117,12 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 //  Calculates value for sort indicator
 static ULONG MA_GetSortType(int sort)
 {
-   static const ULONG sort2col[8] = { 0, 4, 7, 1, 1, 3, 5, 0 };
+  static const ULONG sort2col[8] = { 0, 4, 7, 1, 1, 3, 5, 0 };
 
-   if(sort > 0)
-      return sort2col[sort];
-   else
-      return sort2col[-sort] | MUIV_NList_SortTypeAdd_2Values;
+  if(sort > 0)
+    return sort2col[sort];
+  else
+    return sort2col[-sort] | MUIV_NList_SortTypeAdd_2Values;
 }
 
 ///
@@ -130,15 +130,10 @@ static ULONG MA_GetSortType(int sort)
 //  Sets sort indicators in message listview header
 void MA_SetSortFlag(void)
 {
-  struct Folder *fo;
-
   ENTER();
 
-  if((fo = FO_GetCurrentFolder()) != NULL)
-  {
-    xset(G->MA->GUI.PG_MAILLIST, MUIA_NList_SortType,  MA_GetSortType(fo->Sort[0]),
-                                 MUIA_NList_SortType2, MA_GetSortType(fo->Sort[1]));
-  }
+  xset(G->MA->GUI.PG_MAILLIST, MUIA_NList_SortType,  MA_GetSortType(G->currentFolder->Sort[0]),
+                               MUIA_NList_SortType2, MA_GetSortType(G->currentFolder->Sort[1]));
 
   LEAVE();
 }
@@ -149,212 +144,207 @@ void MA_SetSortFlag(void)
 // window and triggers an update of the embedded read pane if required.
 void MA_ChangeSelected(BOOL forceUpdate)
 {
-  struct Folder *fo;
+  static struct Mail *lastMail = NULL;
+  struct MA_GUIData *gui = &G->MA->GUI;
+  struct Mail *mail = NULL;
 
   ENTER();
 
-  if((fo = FO_GetCurrentFolder()) != NULL)
+  // get the currently active mail entry.
+  DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+
+  // now we check if the previously selected mail is the same one as
+  // the currently active one, then we don't have to proceed.
+  if(forceUpdate == TRUE || mail != lastMail)
   {
-    static struct Mail *lastMail = NULL;
-    struct MA_GUIData *gui = &G->MA->GUI;
-    struct Mail *mail = NULL;
+    ULONG numEntries;
+    ULONG numSelected = 0;
+    BOOL active;
+    BOOL hasattach = FALSE;
+    BOOL folderEnabled;
 
-    // get the currently active mail entry.
-    DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+    lastMail = mail;
 
-    // now we check if the previously selected mail is the same one as
-    // the currently active one, then we don't have to proceed.
-    if(forceUpdate == TRUE || mail != lastMail)
+    // we make sure the an eventually running timer event for setting the mail
+    // status of a previous mail to read is canceled beforehand
+    if(C->StatusChangeDelayOn == TRUE)
+      StopTimer(TIMER_READSTATUSUPDATE);
+
+    // ask the mail list how many entries are currently available and selected
+    if((numEntries = xget(gui->PG_MAILLIST, MUIA_NList_Entries)) > 0)
+      DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
+
+    SHOWVALUE(DBF_MAIL, numEntries);
+    SHOWVALUE(DBF_MAIL, numSelected);
+
+    // make sure the mail is displayed in our readMailGroup of the main window
+    // (if enabled) - but we do only issue a timer event here so the read pane
+    // is only refreshed about 100 milliseconds after the last change in the listview
+    // was recognized.
+    if(C->EmbeddedReadPane == TRUE)
     {
-      ULONG numEntries;
-      ULONG numSelected = 0;
-      BOOL active;
-      BOOL hasattach = FALSE;
-      BOOL folderEnabled;
-
-      lastMail = mail;
-
-      // we make sure the an eventually running timer event for setting the mail
-      // status of a previous mail to read is canceled beforehand
-      if(C->StatusChangeDelayOn == TRUE)
-        StopTimer(TIMER_READSTATUSUPDATE);
-
-      // ask the mail list how many entries are currently available and selected
-      if((numEntries = xget(gui->PG_MAILLIST, MUIA_NList_Entries)) > 0)
-        DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
-
-      SHOWVALUE(DBF_MAIL, numEntries);
-      SHOWVALUE(DBF_MAIL, numSelected);
-
-      // make sure the mail is displayed in our readMailGroup of the main window
-      // (if enabled) - but we do only issue a timer event here so the read pane
-      // is only refreshed about 100 milliseconds after the last change in the listview
-      // was recognized.
-      if(C->EmbeddedReadPane == TRUE)
-      {
-        // but before we really issue a readpaneupdate we check whether the user has
-        // selected more than one mail at a time which then should clear the
-        // readpane as it might have been disabled.
-        if(numSelected == 1)
-          RestartTimer(TIMER_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
-        else
-        {
-          // make sure an already existing readpaneupdate timer is canceled in advance.
-          StopTimer(TIMER_READPANEUPDATE);
-
-          // clear the readmail group now
-          DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, fo->Total > 0 ? MUIF_ReadMailGroup_Clear_KeepAttachmentGroup : MUIF_NONE);
-          lastMail = NULL;
-        }
-      }
-
-      // in case the currently active maillist is the mainmaillist we
-      // have to save the lastactive mail ID
-      if(xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveList) == LT_MAIN)
-        fo->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);
-
-      if((active = (mail != NULL)) && isMultiPartMail(mail))
-        hasattach = TRUE;
-
-      SHOWVALUE(DBF_MAIL, active);
-
-      // now we have to make sure that all toolbar and menu items are
-      // enabled and disabled according to the folder/mail status
-      folderEnabled = !isGroupFolder(fo);
-
-      // deal with the toolbar and disable/enable certain buttons
-      if(gui->TO_TOOLBAR != NULL)
-      {
-        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_READ,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_EDIT,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(fo));
-        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_MOVE,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_DELETE,  MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETADDR, MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_NEWMAIL, MUIA_TheBar_Attr_Disabled, !folderEnabled);
-        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isOutgoingFolder(fo) || isSpamFolder(fo));
-        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FORWARD, MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-        DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FILTER,  MUIA_TheBar_Attr_Disabled, !folderEnabled || numEntries == 0);
-        DoMethod(gui->TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
-      }
-
-      // change the menu item title of the
-      // Edit item so that we either display "Edit" or "Edit as New"
-      if(isOutgoingFolder(fo))
-        set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDIT));
+      // but before we really issue a readpaneupdate we check whether the user has
+      // selected more than one mail at a time which then should clear the
+      // readpane as it might have been disabled.
+      if(numSelected == 1)
+        RestartTimer(TIMER_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
       else
-        set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDITASNEW));
+      {
+        // make sure an already existing readpaneupdate timer is canceled in advance.
+        StopTimer(TIMER_READPANEUPDATE);
 
-      // in the following section we define which menu item should be
-      // enabled or disabled. Please note that a menu item can only be part of
-      // ONE of the following groups for enabling/disabling items based on
-      // certain dependencies. So if there is a menu item which is part of
-      // more than one group, something is definitly wrong!
-
-      // Enable if:
-      //  * the folder is enabled
-      //  * NOT in the "Outgoing" folder
-      //  * NOT in the "SPAM" folder
-      //  * > 0 mails selected
-      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isOutgoingFolder(fo) && !isSpamFolder(fo) && (active || numSelected > 0),
-                                                             gui->MI_REPLY,
-                                                             NULL);
-
-      // Enable if:
-      //  * the folder is enabled
-      //  * NOT in the "SPAM" folder
-      //  * > 0 mails selected
-      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(fo) && (active || numSelected > 0),
-                                                             gui->MI_EDIT,
-                                                             NULL);
-
-      // Enable if:
-      //  * the folder is enabled
-      //  * NOT in the "Sent" folder
-      //  * > 0 mails selected
-      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSentMailFolder(fo) && (active || numSelected > 0),
-                                                             gui->MI_TOREAD,
-                                                             gui->MI_TOUNREAD,
-                                                             gui->MI_ALLTOREAD,
-                                                             gui->MI_BOUNCE,
-                                                             NULL);
-
-      // Enable if:
-      //  * the folder is enabled
-      //  * is in the "Outgoing" Folder
-      //  * > 0 mails selected
-      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && isOutgoingFolder(fo) && (active || numSelected > 0),
-                                                             gui->MI_SEND,
-                                                             gui->MI_TOHOLD,
-                                                             gui->MI_TOQUEUED,
-                                                             NULL);
-
-      // Enable if:
-      //  * the folder is enabled
-      //  * > 0 mails selected
-      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && (active || numSelected > 0),
-                                                             gui->MI_READ,
-                                                             gui->MI_MOVE,
-                                                             gui->MI_DELETE,
-                                                             gui->MI_GETADDRESS,
-                                                             gui->MI_STATUS,
-                                                             gui->MI_EXPMSG,
-                                                             gui->MI_COPY,
-                                                             gui->MI_PRINT,
-                                                             gui->MI_SAVE,
-                                                             gui->MI_ATTACH,
-                                                             gui->MI_FORWARD,
-                                                             gui->MI_CHSUBJ,
-                                                             gui->MI_NEXTTHREAD,
-                                                             gui->MI_PREVTHREAD,
-                                                             NULL);
-
-      // Enable if:
-      //  * the folder is enabled
-      //  * > 0 mails in folder
-      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0,
-                                                             gui->MI_FILTER,
-                                                             gui->MI_SELECT,
-                                                             NULL);
-
-
-      // Enable if:
-      //  * the folder is enabled
-      DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled,
-                                                             gui->MI_UPDINDEX,
-                                                             gui->MI_IMPORT,
-                                                             gui->MI_EXPORT,
-                                                             gui->MI_NEW,
-                                                             NULL);
-
-
-      // Enable if:
-      //  * TOSPAM menu item exists
-      //  * > 0 mails selected or the active one isn't marked as SPAM
-      //  * the folder is enabled
-      //  * the mail is not spam
-      if(gui->MI_TOSPAM != NULL)
-        set(gui->MI_TOSPAM, MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && !hasStatusSpam(mail))));
-
-      // Enable if:
-      //  * TOHAM menu item exists
-      //  * > 0 mails selected
-      //  * the folder is enabled
-      //  * the mail is classified as spam
-      if(gui->MI_TOHAM != NULL)
-        set(gui->MI_TOHAM,  MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && hasStatusSpam(mail))));
-
-      // Enable if:
-      //  * DELSPAM menu item exists
-      //  * is in the "SPAM" folder
-      if(gui->MI_DELSPAM != NULL)
-        set(gui->MI_DELSPAM, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0);
-
-      // Enable if:
-      //  * CHECKSPAM menu item exists
-      //  * the folder is enabled
-      if(gui->MI_CHECKSPAM != NULL)
-        set(gui->MI_CHECKSPAM, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0);
+        // clear the readmail group now
+        DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, G->currentFolder->Total > 0 ? MUIF_ReadMailGroup_Clear_KeepAttachmentGroup : MUIF_NONE);
+        lastMail = NULL;
+      }
     }
+
+    // in case the currently active maillist is the mainmaillist we
+    // have to save the lastactive mail ID
+    if(xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveList) == LT_MAIN)
+      G->currentFolder->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);
+
+    if((active = (mail != NULL)) && isMultiPartMail(mail))
+      hasattach = TRUE;
+
+    SHOWVALUE(DBF_MAIL, active);
+
+    // now we have to make sure that all toolbar and menu items are
+    // enabled and disabled according to the folder/mail status
+    folderEnabled = !isGroupFolder(G->currentFolder);
+
+    // deal with the toolbar and disable/enable certain buttons
+    if(gui->TO_TOOLBAR != NULL)
+    {
+      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_READ,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_EDIT,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(G->currentFolder));
+      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_MOVE,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_DELETE,  MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETADDR, MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_NEWMAIL, MUIA_TheBar_Attr_Disabled, !folderEnabled);
+      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isOutgoingFolder(G->currentFolder) || isSpamFolder(G->currentFolder));
+      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FORWARD, MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
+      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FILTER,  MUIA_TheBar_Attr_Disabled, !folderEnabled || numEntries == 0);
+      DoMethod(gui->TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
+    }
+
+    // change the menu item title of the
+    // Edit item so that we either display "Edit" or "Edit as New"
+    if(isOutgoingFolder(G->currentFolder))
+      set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDIT));
+    else
+      set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDITASNEW));
+
+    // in the following section we define which menu item should be
+    // enabled or disabled. Please note that a menu item can only be part of
+    // ONE of the following groups for enabling/disabling items based on
+    // certain dependencies. So if there is a menu item which is part of
+    // more than one group, something is definitly wrong!
+
+    // Enable if:
+    //  * the folder is enabled
+    //  * NOT in the "Outgoing" folder
+    //  * NOT in the "SPAM" folder
+    //  * > 0 mails selected
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isOutgoingFolder(G->currentFolder) && !isSpamFolder(G->currentFolder) && (active || numSelected > 0),
+                                                           gui->MI_REPLY,
+                                                           NULL);
+
+    // Enable if:
+    //  * the folder is enabled
+    //  * NOT in the "SPAM" folder
+    //  * > 0 mails selected
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(G->currentFolder) && (active || numSelected > 0),
+                                                           gui->MI_EDIT,
+                                                           NULL);
+
+    // Enable if:
+    //  * the folder is enabled
+    //  * NOT in the "Sent" folder
+    //  * > 0 mails selected
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSentMailFolder(G->currentFolder) && (active || numSelected > 0),
+                                                           gui->MI_TOREAD,
+                                                           gui->MI_TOUNREAD,
+                                                           gui->MI_ALLTOREAD,
+                                                           gui->MI_BOUNCE,
+                                                           NULL);
+
+    // Enable if:
+    //  * the folder is enabled
+    //  * is in the "Outgoing" Folder
+    //  * > 0 mails selected
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && isOutgoingFolder(G->currentFolder) && (active || numSelected > 0),
+                                                           gui->MI_SEND,
+                                                           gui->MI_TOHOLD,
+                                                           gui->MI_TOQUEUED,
+                                                           NULL);
+
+    // Enable if:
+    //  * the folder is enabled
+    //  * > 0 mails selected
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && (active || numSelected > 0),
+                                                           gui->MI_READ,
+                                                           gui->MI_MOVE,
+                                                           gui->MI_DELETE,
+                                                           gui->MI_GETADDRESS,
+                                                           gui->MI_STATUS,
+                                                           gui->MI_EXPMSG,
+                                                           gui->MI_COPY,
+                                                           gui->MI_PRINT,
+                                                           gui->MI_SAVE,
+                                                           gui->MI_ATTACH,
+                                                           gui->MI_FORWARD,
+                                                           gui->MI_CHSUBJ,
+                                                           gui->MI_NEXTTHREAD,
+                                                           gui->MI_PREVTHREAD,
+                                                           NULL);
+
+    // Enable if:
+    //  * the folder is enabled
+    //  * > 0 mails in folder
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0,
+                                                           gui->MI_FILTER,
+                                                           gui->MI_SELECT,
+                                                           NULL);
+
+
+    // Enable if:
+    //  * the folder is enabled
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled,
+                                                           gui->MI_UPDINDEX,
+                                                           gui->MI_IMPORT,
+                                                           gui->MI_EXPORT,
+                                                           gui->MI_NEW,
+                                                           NULL);
+
+
+    // Enable if:
+    //  * TOSPAM menu item exists
+    //  * > 0 mails selected or the active one isn't marked as SPAM
+    //  * the folder is enabled
+    //  * the mail is not spam
+    if(gui->MI_TOSPAM != NULL)
+      set(gui->MI_TOSPAM, MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && !hasStatusSpam(mail))));
+
+    // Enable if:
+    //  * TOHAM menu item exists
+    //  * > 0 mails selected
+    //  * the folder is enabled
+    //  * the mail is classified as spam
+    if(gui->MI_TOHAM != NULL)
+      set(gui->MI_TOHAM,  MUIA_Menuitem_Enabled, folderEnabled && (numSelected > 1 || (active && hasStatusSpam(mail))));
+
+    // Enable if:
+    //  * DELSPAM menu item exists
+    //  * is in the "SPAM" folder
+    if(gui->MI_DELSPAM != NULL)
+      set(gui->MI_DELSPAM, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0);
+
+    // Enable if:
+    //  * CHECKSPAM menu item exists
+    //  * the folder is enabled
+    if(gui->MI_CHECKSPAM != NULL)
+      set(gui->MI_CHECKSPAM, MUIA_Menuitem_Enabled, folderEnabled && numEntries > 0);
   }
 
   LEAVE();
@@ -374,7 +364,7 @@ MakeHook(MA_ChangeSelectedHook, MA_ChangeSelectedFunc);
 //  Returns pointers to the active message and folder
 struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, LONG *activep)
 {
-  struct Folder *folder = forcefolder != NULL ? forcefolder : FO_GetCurrentFolder();
+  struct Folder *folder = forcefolder != NULL ? forcefolder : G->currentFolder;
   struct Mail *mail = NULL;
 
   ENTER();
@@ -613,12 +603,11 @@ struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 {
   struct MailList *mlist = NULL;
-  struct Folder *folder;
 
   ENTER();
 
   // we first have to check whether this is a valid folder or not
-  if((folder = FO_GetCurrentFolder()) != NULL && isGroupFolder(folder) == FALSE)
+  if(isGroupFolder(G->currentFolder) == FALSE)
   {
     LONG selected;
 
@@ -789,7 +778,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 
     if(newMail != NULL)
     {
-      if(to == FO_GetCurrentFolder())
+      if(to == G->currentFolder)
         DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
 
       // check the status flags and set the mail statues to queued if the mail was copied into
@@ -844,7 +833,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
     return;
   }
 
-  if(frombox != FO_GetCurrentFolder() && mail == NULL)
+  if(frombox != G->currentFolder && mail == NULL)
   {
     LEAVE();
     return;
@@ -1931,14 +1920,10 @@ enum NewMailMode CheckNewMailQualifier(const enum NewMailMode mode, const ULONG 
 void MA_DeleteMessage(BOOL delatonce, BOOL force)
 {
   struct Folder *delfolder;
-  struct Folder *folder;
 
   ENTER();
 
-  delfolder = FO_GetFolderByType(FT_TRASH, NULL);
-  folder = FO_GetCurrentFolder();
-
-  if(folder != NULL && delfolder != NULL)
+  if(G->currentFolder != NULL && (delfolder = FO_GetFolderByType(FT_TRASH, NULL)) != NULL)
   {
     struct MA_GUIData *gui = &G->MA->GUI;
     Object *lv = gui->PG_MAILLIST;
@@ -1970,7 +1955,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         BOOL ignoreall = FALSE;
         ULONG delFlags = (delatonce == TRUE) ? DELF_AT_ONCE|DELF_QUIET|DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON|DELF_CHECK_CONNECTIONS : DELF_QUIET|DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON|DELF_CHECK_CONNECTIONS;
 
-        D(DBF_MAIL, "going to delete %ld mails from folder '%s'", selected, folder->Name);
+        D(DBF_MAIL, "going to delete %ld mails from folder '%s'", selected, G->currentFolder->Name);
 
         set(lv, MUIA_NList_Quiet, TRUE);
 
@@ -2012,21 +1997,21 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         // modify the menu items
         set(gui->MI_DELETE, MUIA_Menuitem_Enabled, TRUE);
 
-        if(delatonce == TRUE || C->RemoveAtOnce == TRUE || folder == delfolder || isSpamFolder(folder))
-          AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), deleted, folder->Name);
+        if(delatonce == TRUE || C->RemoveAtOnce == TRUE || G->currentFolder == delfolder || isSpamFolder(G->currentFolder))
+          AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), deleted, G->currentFolder->Name);
         else
-          AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), deleted, folder->Name, delfolder->Name);
+          AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), deleted, G->currentFolder->Name, delfolder->Name);
 
         // update the stats for the deleted folder,
         // but only if it isn't the current one and only
         // if the mail was not instantly deleted without moving
         // it to the delfolder
-        if(delatonce == FALSE && delfolder != folder)
+        if(delatonce == FALSE && delfolder != G->currentFolder)
           DisplayStatistics(delfolder, FALSE);
 
         // then update the statistics for the folder we moved the
         // mail from as well.
-        DisplayStatistics(folder, TRUE);
+        DisplayStatistics(G->currentFolder, TRUE);
         MA_ChangeSelected(FALSE);
       }
 
@@ -2053,17 +2038,15 @@ MakeHook(MA_DeleteMessageHook, MA_DeleteMessageFunc);
 //  Classifies a message and moves it to spam folder if spam
 void MA_ClassifyMessage(enum BayesClassification bclass)
 {
-  struct Folder *folder;
   struct Folder *spamFolder;
   struct Folder *incomingFolder;
 
   ENTER();
 
-  folder = FO_GetCurrentFolder();
   spamFolder = FO_GetFolderByType(FT_SPAM, NULL);
   incomingFolder = FO_GetFolderByType(FT_INCOMING, NULL);
 
-  if(folder != NULL && spamFolder != NULL && incomingFolder != NULL)
+  if(G->currentFolder != NULL && spamFolder != NULL && incomingFolder != NULL)
   {
     Object *lv = G->MA->GUI.PG_MAILLIST;
     struct MailList *mlist;
@@ -2092,8 +2075,8 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
             setStatusToUserSpam(mail);
 
             // move the mail
-            if(folder != spamFolder)
-              MA_MoveCopySingle(mail, folder, spamFolder, MVCPF_CLOSE_WINDOWS);
+            if(G->currentFolder != spamFolder)
+              MA_MoveCopySingle(mail, G->currentFolder, spamFolder, MVCPF_CLOSE_WINDOWS);
           }
           else if(hasStatusHam(mail) == FALSE && bclass == BC_HAM)
           {
@@ -2123,8 +2106,8 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
               }
 
               // if the mail has not been moved to another folder before we move it to the incoming folder now.
-              if(moveToIncoming == TRUE && folder != incomingFolder)
-                MA_MoveCopySingle(mail, folder, incomingFolder, MVCPF_CLOSE_WINDOWS);
+              if(moveToIncoming == TRUE && G->currentFolder != incomingFolder)
+                MA_MoveCopySingle(mail, G->currentFolder, incomingFolder, MVCPF_CLOSE_WINDOWS);
             }
           }
         }
@@ -2141,7 +2124,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
 
       DeleteMailList(mlist);
 
-      AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, folder->Name, spamFolder->Name);
+      AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, G->currentFolder->Name, spamFolder->Name);
       DisplayStatistics(spamFolder, FALSE);
       DisplayStatistics(incomingFolder, FALSE);
 
@@ -2498,7 +2481,7 @@ BOOL MA_Send(enum SendMailMode mode)
         case SENDMAIL_ACTIVE_USER:
         case SENDMAIL_ACTIVE_AUTO:
         {
-          if(fo == FO_GetCurrentFolder())
+          if(fo == G->currentFolder)
             mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
         }
         break;
@@ -2583,7 +2566,7 @@ void MA_SetStatusTo(int addflags, int clearflags, BOOL all)
   // generate a mail list of either all or just the selected
   // (marked) mails.
   if(all == TRUE)
-    mlist = MA_CreateFullList(FO_GetCurrentFolder(), FALSE);
+    mlist = MA_CreateFullList(G->currentFolder, FALSE);
   else
     mlist = MA_CreateMarkedList(lv, FALSE);
 
@@ -2754,7 +2737,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
     trashFolder = FO_GetFolderByType(FT_TRASH, NULL);
     // only update the trash folder item if it is not the active one, as the active one
     // will be updated below
-    if(FO_GetCurrentFolder() != trashFolder)
+    if(G->currentFolder != trashFolder)
       DisplayStatistics(trashFolder, FALSE);
   }
 
@@ -2803,7 +2786,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
 
       MA_ExpireIndex(folder);
 
-      if(FO_GetCurrentFolder() == folder)
+      if(G->currentFolder == folder)
         DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
 
       AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), i, folder->Name);
@@ -2826,11 +2809,9 @@ MakeHook(MA_DeleteDeletedHook, MA_DeleteDeletedFunc);
 //  Removes spam messages from any folder
 HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
 {
-  struct Folder *folder = FO_GetCurrentFolder();
-
   ENTER();
 
-  if(folder != NULL && folder->Type != FT_GROUP)
+  if(G->currentFolder != NULL && isGroupFolder(G->currentFolder) == FALSE)
   {
     ULONG delFlags;
     struct MailList *mlist;
@@ -2838,10 +2819,10 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
     delFlags = (*arg != 0) ? DELF_QUIET|DELF_CLOSE_WINDOWS : DELF_CLOSE_WINDOWS;
 
     // show an interruptable Busy gauge
-    BusyGaugeInt(tr(MSG_MA_BUSYEMPTYINGSPAM), "", folder->Total);
+    BusyGaugeInt(tr(MSG_MA_BUSYEMPTYINGSPAM), "", G->currentFolder->Total);
 
     // get the complete mail list of the spam folder
-    if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
+    if((mlist = MA_CreateFullList(G->currentFolder, FALSE)) != NULL)
     {
       struct MailNode *mnode;
       ULONG i;
@@ -2871,7 +2852,7 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
       }
 
       if(isFlagClear(delFlags, DELF_QUIET))
-        DisplayStatistics(folder, TRUE);
+        DisplayStatistics(G->currentFolder, TRUE);
 
       // finally free the mail list
       DeleteMailList(mlist);
@@ -2889,7 +2870,7 @@ MakeHook(MA_DeleteSpamHook, MA_DeleteSpamFunc);
 //  Updates index of current folder
 HOOKPROTONHNONP(MA_RescanIndexFunc, void)
 {
-  struct Folder *folder = FO_GetCurrentFolder();
+  struct Folder *folder = G->currentFolder;
 
   ENTER();
 
@@ -2905,7 +2886,7 @@ HOOKPROTONHNONP(MA_RescanIndexFunc, void)
     {
       // if we are still in the folder we wanted to rescan,
       // we can refresh the list.
-      if(folder == FO_GetCurrentFolder())
+      if(folder == G->currentFolder)
         MA_ChangeFolder(NULL, FALSE);
     }
   }
@@ -2921,16 +2902,15 @@ BOOL MA_ExportMessages(char *filename, const BOOL all, ULONG flags)
 {
   BOOL success = FALSE;
   char outname[SIZE_PATHFILE];
-  struct Folder *actfo = FO_GetCurrentFolder();
   struct MailList *mlist;
 
   ENTER();
 
   // check that a real folder is active
-  if(actfo != NULL && isGroupFolder(actfo) == FALSE)
+  if(G->currentFolder != NULL && isGroupFolder(G->currentFolder) == FALSE)
   {
     if(all == TRUE)
-      mlist = MA_CreateFullList(actfo, FALSE);
+      mlist = MA_CreateFullList(G->currentFolder, FALSE);
     else
       mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
 
@@ -2952,7 +2932,7 @@ BOOL MA_ExportMessages(char *filename, const BOOL all, ULONG flags)
         else
         {
           // for multiple mail we use the folder's name and append ".mbox"
-          snprintf(suggestedName, sizeof(suggestedName), "%s.mbox", actfo->Name);
+          snprintf(suggestedName, sizeof(suggestedName), "%s.mbox", G->currentFolder->Name);
         }
 
         // remove possible invalid characters
@@ -3007,15 +2987,14 @@ MakeHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 BOOL MA_ImportMessages(const char *fname, const ULONG flags)
 {
   BOOL result = FALSE;
-  struct Folder *actfo = FO_GetCurrentFolder();
 
   ENTER();
 
   // check that a real folder is active
-  if(actfo != NULL && isGroupFolder(actfo) == FALSE)
+  if(G->currentFolder != NULL && isGroupFolder(G->currentFolder) == FALSE)
   {
     result = DoAction(NULL, TA_ImportMails, TT_ImportMails_File, fname,
-                                            TT_ImportMails_Folder, actfo,
+                                            TT_ImportMails_Folder, G->currentFolder,
                                             TT_ImportMails_Flags, flags,
                                             TAG_DONE);
   }
@@ -3028,11 +3007,9 @@ BOOL MA_ImportMessages(const char *fname, const ULONG flags)
 /// MA_ImportMessagesFunc
 HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
 {
-  struct Folder *actfo;
-
   ENTER();
 
-  if((actfo = FO_GetCurrentFolder()) != NULL && !isGroupFolder(actfo))
+  if(G->currentFolder != NULL && isGroupFolder(G->currentFolder) == FALSE)
   {
     struct FileReqCache *frc;
 
@@ -3058,16 +3035,14 @@ MakeStaticHook(MA_ImportMessagesHook, MA_ImportMessagesFunc);
 //  Moves selected messages to a user specified folder
 HOOKPROTONHNONP(MA_MoveMessageFunc, void)
 {
-  struct Folder *src;
-
   ENTER();
 
-  if((src = FO_GetCurrentFolder()) != NULL)
+  if(G->currentFolder != NULL)
   {
     struct Folder *dst;
 
-    if((dst = FolderRequest(tr(MSG_MA_MoveMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_MoveGad), tr(MSG_Cancel), src, G->MA->GUI.WI)) != NULL)
-      MA_MoveCopy(NULL, src, dst, MVCPF_CLOSE_WINDOWS);
+    if((dst = FolderRequest(tr(MSG_MA_MoveMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_MoveGad), tr(MSG_Cancel), G->currentFolder, G->MA->GUI.WI)) != NULL)
+      MA_MoveCopy(NULL, G->currentFolder, dst, MVCPF_CLOSE_WINDOWS);
   }
 
   LEAVE();
@@ -3079,16 +3054,14 @@ MakeHook(MA_MoveMessageHook, MA_MoveMessageFunc);
 //  Copies selected messages to a user specified folder
 HOOKPROTONHNONP(MA_CopyMessageFunc, void)
 {
-  struct Folder *src;
-
   ENTER();
 
-  if((src = FO_GetCurrentFolder()) != NULL)
+  if(G->currentFolder != NULL)
   {
     struct Folder *dst;
 
     if((dst = FolderRequest(tr(MSG_MA_CopyMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_CopyGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)) != NULL)
-      MA_MoveCopy(NULL, src, dst, MVCPF_COPY);
+      MA_MoveCopy(NULL, G->currentFolder, dst, MVCPF_COPY);
   }
 
   LEAVE();

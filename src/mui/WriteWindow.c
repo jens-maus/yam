@@ -4021,7 +4021,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
           }
         }
 
-        if(FO_GetCurrentFolder() == outfolder)
+        if(G->currentFolder == outfolder)
           DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
 
         MA_UpdateMailFile(newMail);

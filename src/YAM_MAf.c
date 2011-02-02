@@ -729,7 +729,7 @@ static BOOL MA_FlushIndex(struct Folder *folder, time_t minAccessTime)
   if((isSentFolder(folder) || isDefaultFolder(folder) == FALSE) &&
      folder->LoadedMode == LM_VALID &&
      (minAccessTime == 0 || minAccessTime >= folder->lastAccessTime) &&
-     folder != FO_GetCurrentFolder())
+     folder != G->currentFolder)
   {
     if(minAccessTime != 0)
       D(DBF_FOLDER, "Flush index of folder '%s' due to lastAccessTime (%d) < minAccessTime (%d)", folder->Name, folder->lastAccessTime, minAccessTime);
@@ -836,19 +836,15 @@ void MA_UpdateIndexes(void)
 //  Changes to another folder
 void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 {
-  struct Folder *actfo;
-
   ENTER();
 
-  actfo = FO_GetCurrentFolder();
-
-  if(actfo != NULL)
+  if(G->currentFolder != NULL)
   {
     BOOL folderChanged = TRUE;
 
     if(folder == NULL)
-      folder = actfo;
-    else if(actfo == folder)
+      folder = G->currentFolder;
+    else if(G->currentFolder == folder)
       folderChanged = FALSE;
     else if(set_active == TRUE)
       FO_SetCurrentFolder(folder);
@@ -887,7 +883,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         // folder the main mail list will get updated accordingly.
         MA_ChangeSelected(TRUE);
       }
-      else if(FO_GetCurrentFolder() == folder) // check again for the current folder
+      else if(G->currentFolder == folder) // check again for the current folder
       {
         BOOL jumped;
 
@@ -950,17 +946,15 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 // depending on sort order of the folder
 BOOL MA_JumpToNewMsg(void)
 {
-  struct Folder *folder;
   Object *lv;
   int i, incr, newIdx = -1;
   BOOL jumped = FALSE;
 
   ENTER();
 
-  folder = FO_GetCurrentFolder();
   lv = G->MA->GUI.PG_MAILLIST;
 
-  if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
+  if(G->currentFolder->Sort[0] < 0 || G->currentFolder->Sort[1] < 0)
   {
     i = xget(lv, MUIA_NList_Entries) - 1;
     incr = -1;
@@ -988,7 +982,7 @@ BOOL MA_JumpToNewMsg(void)
     i += incr;
   }
 
-  if(newIdx >= 0 && newIdx != folder->LastActive)
+  if(newIdx >= 0 && newIdx != G->currentFolder->LastActive)
   {
     set(lv, MUIA_NList_Active, newIdx);
     jumped = TRUE;
@@ -1002,7 +996,6 @@ BOOL MA_JumpToNewMsg(void)
 // Function that jumps to the most recent mail in a folder
 BOOL MA_JumpToRecentMsg(void)
 {
-  struct Folder *folder;
   Object *lv;
   struct Mail *recent = NULL;
   int recentIdx = -1, i;
@@ -1010,7 +1003,6 @@ BOOL MA_JumpToRecentMsg(void)
 
   ENTER();
 
-  folder = FO_GetCurrentFolder();
   lv = G->MA->GUI.PG_MAILLIST;
 
   i = 0;
@@ -1032,7 +1024,7 @@ BOOL MA_JumpToRecentMsg(void)
     i++;
   }
 
-  if(recentIdx >= 0 && recentIdx != folder->LastActive)
+  if(recentIdx >= 0 && recentIdx != G->currentFolder->LastActive)
   {
     set(lv, MUIA_NList_Active, recentIdx);
     jumped = TRUE;
@@ -2738,7 +2730,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
       // now we make sure some GUI components will be disabled
       // or cleared if the rescanning folder is the current one
-      if(FO_GetCurrentFolder() == folder)
+      if(G->currentFolder == folder)
       {
         // before we go and rebuild the index of the folder we make
         // sure all major GUI components of it are disabled for the

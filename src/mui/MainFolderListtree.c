@@ -313,8 +313,8 @@ OVERLOAD(OM_NEW)
       DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, MUIV_Notify_Self, 1, METHOD(EditFolder));
       //DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_NList_Sort2,          MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
       //DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,      MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,                  MUIA_NList_TitleMark,MUIV_TriggerValue);
-      DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 1, METHOD(ChangeFolder));
-      DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 1, METHOD(SetFolderInfo));
+      DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(ChangeFolder), MUIV_TriggerValue);
+      DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(SetFolderInfo), MUIV_TriggerValue);
 
       // prepare the folder images
       data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[fi_Fold]);
@@ -838,11 +838,9 @@ DECLARE(MakeFormat)
 // edit the double clicked folder
 DECLARE(EditFolder)
 {
-  struct Folder *folder = FO_GetCurrentFolder();
-
   ENTER();
 
-  if(C->FolderDoubleClick == TRUE && folder != NULL && isGroupFolder(folder) == FALSE)
+  if(C->FolderDoubleClick == TRUE && G->currentFolder != NULL && isGroupFolder(G->currentFolder) == FALSE)
     DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);
 
   LEAVE();
@@ -852,25 +850,25 @@ DECLARE(EditFolder)
 ///
 /// DECLARE(SetFolderInfo)
 // update the folder listtree bubble help
-DECLARE(SetFolderInfo)
+DECLARE(SetFolderInfo) // struct MUI_NListtree_TreeNode *treenode
 {
+  struct Folder *folder = ((struct FolderNode *)msg->treenode->tn_User)->folder;
   GETDATA;
-  struct Folder *fo;
 
   ENTER();
 
-  if((fo = FO_GetCurrentFolder()) != NULL && !isGroupFolder(fo) && fo->LoadedMode == LM_VALID)
+  if(folder != NULL && !isGroupFolder(folder) && folder->LoadedMode == LM_VALID)
   {
     char sizestr[SIZE_DEFAULT];
 
-    FormatSize(fo->Size, sizestr, sizeof(sizestr), SF_AUTO);
+    FormatSize(folder->Size, sizestr, sizeof(sizestr), SF_AUTO);
 
-    snprintf(data->bubbleInfo, sizeof(data->bubbleInfo), tr(MSG_MA_FOLDERINFO), fo->Name,
-                                                                                fo->Path,
+    snprintf(data->bubbleInfo, sizeof(data->bubbleInfo), tr(MSG_MA_FOLDERINFO), folder->Name,
+                                                                                folder->Path,
                                                                                 sizestr,
-                                                                                fo->Total,
-                                                                                fo->New,
-                                                                                fo->Unread);
+                                                                                folder->Total,
+                                                                                folder->New,
+                                                                                folder->Unread);
 
     set(obj, MUIA_ShortHelp, data->bubbleInfo);
   }
@@ -883,9 +881,12 @@ DECLARE(SetFolderInfo)
 
 ///
 /// DECLARE(ChangeFolder)
-DECLARE(ChangeFolder)
+DECLARE(ChangeFolder) // struct MUI_NListtree_TreeNode *treenode
 {
   ENTER();
+
+  // remember the current folder
+  G->currentFolder = ((struct FolderNode *)msg->treenode->tn_User)->folder;
 
   MA_ChangeFolder(NULL, FALSE);
 

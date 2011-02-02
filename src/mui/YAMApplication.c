@@ -966,8 +966,6 @@ DECLARE(FilterMail) // const struct MinList *filterList, struct Mail *mail
 /// DECLARE(FilterNewMails)
 DECLARE(FilterNewMails) // const struct MailList *mailList, struct FilterResult *filterResult
 {
-  struct Folder *folder;
-
   FilterMails(FO_GetFolderByType(FT_INCOMING, NULL), msg->mailList, APPLY_AUTO, msg->filterResult);
 
   // Now we jump to the first new mail we received if the number of messages has changed
@@ -977,7 +975,7 @@ DECLARE(FilterNewMails) // const struct MailList *mailList, struct FilterResult 
 
   // only call the DisplayStatistics() function if the actual folder wasn't already the INCOMING
   // one or we would have refreshed it twice
-  if((folder = FO_GetCurrentFolder()) != NULL && !isIncomingFolder(folder))
+  if(G->currentFolder != NULL && !isIncomingFolder(G->currentFolder))
     DisplayStatistics((struct Folder *)-1, TRUE);
   else
     UpdateAppIcon();
@@ -1101,7 +1099,7 @@ DECLARE(NewMailAlert) // const char *account, struct DownloadResult *downloadRes
 /// DECLARE(ChangeSelected)
 DECLARE(ChangeSelected) // const struct Folder *folder, const ULONG forceUpdate
 {
-  if(FO_GetCurrentFolder() == msg->folder)
+  if(msg->folder == G->currentFolder)
     MA_ChangeSelected(msg->forceUpdate);
 
   return 0;

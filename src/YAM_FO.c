@@ -93,23 +93,6 @@ const char* const FolderName[FT_NUM] = { NULL,       // FT_CUSTOM
  Module: Folder Configuration
 ***************************************************************************/
 
-/// FO_GetCurrentFolder
-//  Returns pointer to active folder
-struct Folder *FO_GetCurrentFolder(void)
-{
-  struct Folder *folder = NULL;
-  struct MUI_NListtree_TreeNode *tn;
-
-  ENTER();
-
-  if((tn = (struct MUI_NListtree_TreeNode *)xget(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active)) != NULL)
-    folder = ((struct FolderNode *)tn->tn_User)->folder;
-
-  RETURN(folder);
-  return folder;
-}
-
-///
 /// FO_SetCurrentFolder
 //  Set the passed folder as the active one
 void FO_SetCurrentFolder(const struct Folder *fo)
@@ -122,6 +105,7 @@ void FO_SetCurrentFolder(const struct Folder *fo)
     DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, fo->Treenode, MUIF_NONE);
 
     nnset(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, fo->Treenode);
+    G->currentFolder = (struct Folder *)fo;
   }
 
   LEAVE();
@@ -1538,17 +1522,9 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
     case 1: break;
     case 2:
     {
-      struct Folder *currfolder;
-
-      if((currfolder = FO_GetCurrentFolder()) == NULL)
-      {
-        LEAVE();
-        return;
-      }
-
       // as the user decided to use the settings from the current folder, wie copy
       // the current one to our new one.
-      memcpy(&folder, currfolder, sizeof(struct Folder));
+      memcpy(&folder, G->currentFolder, sizeof(folder));
 
       if(isGroupFolder(&folder))
       {
@@ -1627,39 +1603,34 @@ MakeHook(FO_NewFolderHook, FO_NewFolderFunc);
 //  Opens folder window to edit the settings of the active folder
 HOOKPROTONHNONP(FO_EditFolderFunc, void)
 {
-  struct Folder *folder = FO_GetCurrentFolder();
-
   ENTER();
 
-  if(folder != NULL)
+  if(isGroupFolder(G->currentFolder))
   {
-    if(isGroupFolder(folder))
+    if(StringRequest(G->currentFolder->Name, SIZE_NAME, tr(MSG_FO_EDIT_FGROUP), tr(MSG_FO_EDIT_FGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
+  }
+  else
+  {
+    if(G->FO == NULL)
     {
-      if(StringRequest(folder->Name, SIZE_NAME, tr(MSG_FO_EDIT_FGROUP), tr(MSG_FO_EDIT_FGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
-        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
-    }
-    else
-    {
-      if(G->FO == NULL)
+      if((G->FO = FO_New()) == NULL)
       {
-        if((G->FO = FO_New()) == NULL)
-        {
-          LEAVE();
-          return;
-        }
-
-        if(SafeOpenWindow(G->FO->GUI.WI) == FALSE)
-        {
-          DisposeModulePush(&G->FO);
-
-          LEAVE();
-          return;
-        }
+        LEAVE();
+        return;
       }
 
-      G->FO->EditFolder = folder;
-      FO_GetFolder(folder);
+      if(SafeOpenWindow(G->FO->GUI.WI) == FALSE)
+      {
+        DisposeModulePush(&G->FO);
+
+        LEAVE();
+        return;
+      }
     }
+
+    G->FO->EditFolder = G->currentFolder;
+    FO_GetFolder(G->currentFolder);
   }
 
   LEAVE();
@@ -1671,107 +1642,102 @@ MakeHook(FO_EditFolderHook, FO_EditFolderFunc);
 //  Removes the active folder
 HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 {
-  struct Folder *folder;
+  BOOL delete_folder = FALSE;
+  Object *lv = G->MA->GUI.NL_FOLDERS;
 
   ENTER();
 
-  if((folder = FO_GetCurrentFolder()) != NULL)
+  switch(G->currentFolder->Type)
   {
-    BOOL delete_folder = FALSE;
-    Object *lv = G->MA->GUI.NL_FOLDERS;
-
-    switch (folder->Type)
+    case FT_CUSTOM:
+    case FT_CUSTOMSENT:
+    case FT_CUSTOMMIXED:
     {
-      case FT_CUSTOM:
-      case FT_CUSTOMSENT:
-      case FT_CUSTOMMIXED:
+      if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_ConfirmDelete)) != 0)
       {
-        if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_ConfirmDelete)) != 0)
+        // check if the folder that is about to be deleted is part
+        // of an active filter and if so remove it from it
+        if(FolderIsUsedByFilters(G->currentFolder->Name) == TRUE)
+          RemoveFolderFromFilters(G->currentFolder->Name);
+
+        delete_folder = TRUE;
+        DeleteMailDir(G->currentFolder->Fullpath, FALSE);
+        ClearFolderMails(G->currentFolder, TRUE);
+
+        // Here we dispose the folderimage Object because the destructor
+        // of the Folder Listtree can't do this without throwing enforcer hits
+        if(G->currentFolder->imageObject != NULL)
         {
-          // check if the folder that is about to be deleted is part
-          // of an active filter and if so remove it from it
-          if(FolderIsUsedByFilters(folder->Name) == TRUE)
-            RemoveFolderFromFilters(folder->Name);
+          // we make sure that the NList also doesn't use the image in future anymore
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, G->currentFolder->ImageIndex, MUIF_NONE);
 
-          delete_folder = TRUE;
-          DeleteMailDir(folder->Fullpath, FALSE);
-          ClearFolderMails(folder, TRUE);
-
-          // Here we dispose the folderimage Object because the destructor
-          // of the Folder Listtree can't do this without throwing enforcer hits
-          if(folder->imageObject != NULL)
-          {
-            // we make sure that the NList also doesn't use the image in future anymore
-            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
-
-            // and last, but not least we free the BC object here, so that this Object is also gone
-            MUI_DisposeObject(folder->imageObject);
-            folder->imageObject = NULL; // let's set it to NULL so that the destructor doesn't do the work again.
-          }
+          // and last, but not least we free the BC object here, so that this Object is also gone
+          MUI_DisposeObject(G->currentFolder->imageObject);
+          G->currentFolder->imageObject = NULL; // let's set it to NULL so that the destructor doesn't do the work again.
         }
       }
-      break;
-
-      case FT_GROUP:
-      {
-        struct MUI_NListtree_TreeNode *tn_sub;
-        struct MUI_NListtree_TreeNode *tn_group = (struct MUI_NListtree_TreeNode *)xget(lv, MUIA_NListtree_Active);
-
-        // check if the active treenode is a list and if it is empty
-        // we have to do this like the following because there is no other way to
-        // get known if the active entry has subentries.
-        if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE)) != NULL)
-        {
-          // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
-          if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_FO_GROUP_CONFDEL)))
-          {
-            struct MUI_NListtree_TreeNode *tn_sub_next = tn_sub;
-
-            delete_folder = TRUE;
-
-            set(lv, MUIA_NListtree_Quiet, TRUE);
-
-            while(tn_sub_next != NULL)
-            {
-              tn_sub_next = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_sub, MUIV_NListtree_GetEntry_Position_Next, MUIV_NListtree_GetEntry_Flag_SameLevel);
-
-              // move entry to the parent of the group
-              DoMethod(lv, MUIM_NListtree_Move, tn_group, tn_sub, MUIV_NListtree_Move_NewListNode_Active, MUIV_NListtree_Move_NewTreeNode_Tail, MUIF_NONE);
-
-              tn_sub = tn_sub_next;
-            }
-
-            set(lv, MUIA_NListtree_Quiet, FALSE);
-          }
-        }
-        else
-          delete_folder = TRUE;
-      }
-      break;
-
-      default:
-      {
-        DisplayBeep(NULL);
-      }
-      break;
     }
+    break;
 
-    if(delete_folder == TRUE)
+    case FT_GROUP:
     {
-      D(DBF_FOLDER, "deleting folder \"%s\"", folder->Name);
+      struct MUI_NListtree_TreeNode *tn_sub;
+      struct MUI_NListtree_TreeNode *tn_group = (struct MUI_NListtree_TreeNode *)xget(lv, MUIA_NListtree_Active);
 
-      // remove the entry from the listtree now
-      DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, MUIF_NONE);
+      // check if the active treenode is a list and if it is empty
+      // we have to do this like the following because there is no other way to
+      // get known if the active entry has subentries.
+      if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE)) != NULL)
+      {
+        // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
+        if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_FO_GROUP_CONFDEL)))
+        {
+          struct MUI_NListtree_TreeNode *tn_sub_next = tn_sub;
 
-      // Save the Tree to the folder config now
-      FO_SaveTree();
+          delete_folder = TRUE;
 
-      // update the statistics in case the just deleted folder contained new or unread mail
-      DisplayStatistics(NULL, TRUE);
+          set(lv, MUIA_NListtree_Quiet, TRUE);
+
+          while(tn_sub_next != NULL)
+          {
+            tn_sub_next = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_sub, MUIV_NListtree_GetEntry_Position_Next, MUIV_NListtree_GetEntry_Flag_SameLevel);
+
+            // move entry to the parent of the group
+            DoMethod(lv, MUIM_NListtree_Move, tn_group, tn_sub, MUIV_NListtree_Move_NewListNode_Active, MUIV_NListtree_Move_NewTreeNode_Tail, MUIF_NONE);
+
+            tn_sub = tn_sub_next;
+          }
+
+          set(lv, MUIA_NListtree_Quiet, FALSE);
+        }
+      }
+      else
+        delete_folder = TRUE;
     }
-    else
-      D(DBF_FOLDER, "keeping folder \"%s\"", folder->Name);
+    break;
+
+    default:
+    {
+      DisplayBeep(NULL);
+    }
+    break;
   }
+
+  if(delete_folder == TRUE)
+  {
+    D(DBF_FOLDER, "deleting folder '%s'", G->currentFolder->Name);
+
+    // remove the entry from the listtree now
+    DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, MUIF_NONE);
+
+    // Save the Tree to the folder config now
+    FO_SaveTree();
+
+    // update the statistics in case the just deleted folder contained new or unread mail
+    DisplayStatistics(NULL, TRUE);
+  }
+  else
+    D(DBF_FOLDER, "keeping folder '%s'", G->currentFolder->Name);
 
   LEAVE();
 }
@@ -2050,8 +2016,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
                 // allow the listtree to reorder our folder list
                 set(lv, MUIA_MainFolderListtree_ReorderFolderList, TRUE);
 
-                prevFolder = FO_GetCurrentFolder();
-                if(prevFolder != NULL && isGroupFolder(prevFolder))
+                prevFolder = G->currentFolder;
+                if(isGroupFolder(prevFolder))
                 {
                   // add the folder to the end of the current folder group
                   DoMethod(lv, MUIM_NListtree_Insert, oldfolder->Name, fnode, prevFolder->Treenode, MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);

@@ -80,7 +80,7 @@ void rx_newmailfile(UNUSED struct RexxHost *host, struct RexxParams *params, enu
       if(args->folder)
         folder = FO_GetFolderRexx(args->folder, NULL);
       else
-        folder = FO_GetCurrentFolder();
+        folder = G->currentFolder;
 
       if(folder != NULL && !isGroupFolder(folder))
       {

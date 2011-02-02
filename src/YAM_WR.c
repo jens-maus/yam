@@ -1779,7 +1779,7 @@ struct WriteMailData *CreateWriteWindow(const enum NewMailMode mailMode, const B
 struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
 {
   BOOL quiet = hasQuietFlag(flags);
-  struct Folder *folder = FO_GetCurrentFolder();
+  struct Folder *folder = G->currentFolder;
   struct WriteMailData *wmData = NULL;
 
   ENTER();

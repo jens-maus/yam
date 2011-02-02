@@ -219,64 +219,50 @@ DECLARE(UpdateSpamControls)
   // with an enabled spam filter we display just one button, either "Spam" or "no Spam"
   if(C->SpamFilterEnabled == TRUE)
   {
-    struct Folder *folder;
+    Object *lv = G->MA->GUI.PG_MAILLIST;
+    struct Mail *mail = NULL;
+    ULONG numSelected = 0;
 
-    // get the current mail folder
-    if((folder = FO_GetCurrentFolder()) != NULL)
+    // get the currently active mail entry.
+    DoMethod(lv, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+    // ask the mail list how many entries as currently selected
+    DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
+
+    if(isGroupFolder(G->currentFolder) || (mail == NULL && numSelected == 0))
     {
-      Object *lv = G->MA->GUI.PG_MAILLIST;
-      struct Mail *mail = NULL;
-      ULONG numSelected = 0;
-
-      // get the currently active mail entry.
-      DoMethod(lv, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-      // ask the mail list how many entries as currently selected
-      DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
-
-      if(isGroupFolder(folder) || (mail == NULL && numSelected == 0))
+      // either this is a group folder or no message is selected
+      // then just show the disabled "Spam" button
+      spamHidden = FALSE;
+      hamHidden = TRUE;
+      spamDisabled = TRUE;
+      hamDisabled = TRUE;
+    }
+    else if(mail != NULL || numSelected >= 1)
+    {
+      // at least one mail is selected in a regular folder
+      // then show/enable the buttons depending on the mail state
+      if(mail != NULL && hasStatusSpam(mail))
       {
-        // either this is a group folder or no message is selected
-        // then just show the disabled "Spam" button
-        spamHidden = FALSE;
-        hamHidden = TRUE;
+        // definitively a spam mail, just show the "no Spam" button
+        spamHidden = TRUE;
+        hamHidden = FALSE;
         spamDisabled = TRUE;
-        hamDisabled = TRUE;
-      }
-      else if(mail != NULL || numSelected >= 1)
-      {
-        // at least one mail is selected in a regular folder
-        // then show/enable the buttons depending on the mail state
-        if(mail != NULL && hasStatusSpam(mail))
-        {
-          // definitively a spam mail, just show the "no Spam" button
-          spamHidden = TRUE;
-          hamHidden = FALSE;
-          spamDisabled = TRUE;
-          hamDisabled = FALSE;
-        }
-        else
-        {
-          // this mail is either definitively no spam, or it hasn't been classified yet
-          // so just show the "Spam" button
-          spamHidden = FALSE;
-          hamHidden = TRUE;
-          spamDisabled = FALSE;
-          hamDisabled = TRUE;
-        }
+        hamDisabled = FALSE;
       }
       else
       {
-        // any other case, just show the disabled "Spam" button
-        // can this really happen??
+        // this mail is either definitively no spam, or it hasn't been classified yet
+        // so just show the "Spam" button
         spamHidden = FALSE;
         hamHidden = TRUE;
-        spamDisabled = TRUE;
+        spamDisabled = FALSE;
         hamDisabled = TRUE;
       }
     }
     else
     {
-      // no current folder, just show a disabled "Spam" button
+      // any other case, just show the disabled "Spam" button
+      // can this really happen??
       spamHidden = FALSE;
       hamHidden = TRUE;
       spamDisabled = TRUE;
@@ -286,7 +272,6 @@ DECLARE(UpdateSpamControls)
   else
   {
     // the spam filter is not enabled, hide both buttons and the separator
-        D(DBF_ALWAYS, "case 6");
     spamHidden = TRUE;
     hamHidden = TRUE;
     spamDisabled = TRUE;
