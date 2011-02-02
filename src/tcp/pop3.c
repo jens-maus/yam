@@ -33,6 +33,7 @@
 #include <clib/alib_protos.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
+#include <proto/timer.h>
 #include <proto/utility.h>
 
 #include "YAM.h"
@@ -126,6 +127,7 @@ struct TransferContext
   int numberOfMails;
   long totalSize;
   LONG firstToPreselect;
+  struct TimeVal lastUpdateTime;
 };
 
 /// ApplyRemoteFilters
@@ -1213,6 +1215,8 @@ static void DownloadMails(struct TransferContext *tc)
 
   ENTER();
 
+  GetSysTime(TIMEVAL(&tc->lastUpdateTime));
+
   ForEachMailTransferNode(tc->transferList, tnode)
   {
     struct Mail *mail = tnode->mail;
@@ -1227,8 +1231,11 @@ static void DownloadMails(struct TransferContext *tc)
 
       if(LoadMessage(tc, inFolder, tnode->index) == TRUE)
       {
-        // redraw the folderentry in the listtree
-        PushMethodOnStack(G->MA->GUI.NL_FOLDERS, 3, MUIM_NListtree_Redraw, inFolder->Treenode, MUIF_NONE);
+        if(TimeHasElapsed(&tc->lastUpdateTime, 250000) == TRUE)
+        {
+          // redraw the folderentry in the listtree 4 times per second at most
+          PushMethodOnStack(G->MA->GUI.NL_FOLDERS, 3, MUIM_NListtree_Redraw, inFolder->Treenode, MUIF_NONE);
+        }
 
         // put the transferStat for this mail to 100%
         PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Downloading));

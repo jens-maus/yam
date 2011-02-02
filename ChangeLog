@@ -13,6 +13,8 @@ $URL$
     speed up all checks against the current folder a lot.
   * tcp/pop3.c: getting the current folder from the folder tree is no longer
     necessary due to the now globally available pointer.
+  * tcp/pop3.c: the folder tree is updated 4 times per second at most during a
+    POP3 download.
 
 2011-02-01 Thore Böckelmann <tboeckel@gmx.de>
 
