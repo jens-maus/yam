@@ -1137,9 +1137,6 @@ static BOOL LoadMessage(struct TransferContext *tc, struct Folder *inFolder, con
 
         if((mail = AddMailToList(&email->Mail, inFolder)) != NULL)
         {
-          struct MUI_NListtree_TreeNode *tn = NULL;
-          struct Folder *currentFolder = NULL;
-
           // we have to get the actual Time and place it in the transDate, so that we know at
           // which time this mail arrived
           GetSysTimeUTC(&mail->transDate);
@@ -1154,12 +1151,7 @@ static BOOL LoadMessage(struct TransferContext *tc, struct Folder *inFolder, con
           UnlockMailList(tc->msn->downloadedMails);
 
           // if the current folder is the inbox we can go and add the mail instantly to the maillist
-          // unfortunately we cannot cache this information, because due to our now asynchronous
-          // nature the current folder may change at any time
-          PushMethodOnStackWait(G->MA->GUI.NL_FOLDERS, 3, OM_GET, MUIA_NListtree_Active, &tn);
-          if(tn != NULL)
-            currentFolder = ((struct FolderNode *)tn->tn_User)->folder;
-          if(currentFolder == inFolder)
+          if(inFolder == G->currentFolder)
             PushMethodOnStack(G->MA->GUI.PG_MAILLIST, 3, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
 
           AppendToLogfile(LF_VERBOSE, 32, tr(MSG_LOG_RetrievingVerbose), AddrName(mail->From), mail->Subject, mail->Size);

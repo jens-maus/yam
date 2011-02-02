@@ -11,6 +11,8 @@ $URL$
   * misc: the current folder is now kept in a global variable to avoid having
     to obtain it from the folder tree object everytime it is needed. This should
     speed up all checks against the current folder a lot.
+  * tcp/pop3.c: getting the current folder from the folder tree is no longer
+    necessary due to the now globally available pointer.
 
 2011-02-01 Thore Böckelmann <tboeckel@gmx.de>
 
