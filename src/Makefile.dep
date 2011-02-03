@@ -3859,11 +3859,11 @@ $(OBJDIR)/$(TCPDIR)/pop3.o: tcp/pop3.c include/mui/NList_mcc.h include/libraries
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  YAM_find.h YAM_mainFolder.h YAM_stringsizes.h AppIcon.h FolderList.h \
-  Locale.h Logfile.h MailList.h MailServers.h MethodStack.h \
-  MailTransferList.h MUIObjects.h Requesters.h Threads.h UIDL.h \
-  mime/md5.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
-  mui/PreselectionWindow.h mui/StringRequestWindow.h \
+  YAM_find.h YAM_folderconfig.h YAM_mainFolder.h YAM_stringsizes.h \
+  AppIcon.h FolderList.h Locale.h Logfile.h MailList.h MailServers.h \
+  MethodStack.h MailTransferList.h MUIObjects.h Requesters.h Threads.h \
+  UIDL.h mime/md5.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
+  BayesFilter.h mui/PreselectionWindow.h mui/StringRequestWindow.h \
   mui/TransferControlGroup.h include/timeval.h mui/YAMApplication.h \
   mui/PreselectionWindow.h tcp/Connection.h extrasrc.h \
   include/SDI_stdarg.h include/SDI_compiler.h Debug.h

@@ -523,7 +523,7 @@ OVERLOAD(MUIM_NList_Display)
     }
     else
     {
-      struct Folder *folder = G->currentFolder;
+      struct Folder *folder = GetCurrentFolder();
 
       // first we have to make sure that the mail window has a valid folder
       if(searchWinHook == TRUE || folder != NULL)
@@ -600,7 +600,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       End,
     End;
   }
-  else if((fo = G->currentFolder) != NULL)
+  else if((fo = GetCurrentFolder()) != NULL)
   {
     struct MUI_NList_TestPos_Result res;
 
@@ -793,7 +793,7 @@ DECLARE(DoubleClicked) // LONG entryNum
   {
     // A double click in the outgoing folder should popup a write
     // window instead.
-    if(G->currentFolder != NULL && isOutgoingFolder(G->currentFolder))
+    if(GetCurrentFolder() != NULL && isOutgoingFolder(GetCurrentFolder()))
     {
       // in case the folder is the "outgoing" folder
       // we edit the mail instead.

@@ -74,7 +74,7 @@ void rx_getfolderinfo(UNUSED struct RexxHost *host, struct RexxParams *params, e
 
     case RXIF_ACTION:
     {
-      struct Folder *fo = G->currentFolder;
+      struct Folder *fo = GetCurrentFolder();
       char *key = args->item;
 
       // this command should only act on a folder folder and

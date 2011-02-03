@@ -72,7 +72,7 @@ void rx_folderinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
     case RXIF_ACTION:
     {
-      struct Folder *fo = args->folder ? FO_GetFolderRexx(args->folder, NULL) : G->currentFolder;
+      struct Folder *fo = args->folder ? FO_GetFolderRexx(args->folder, NULL) : GetCurrentFolder();
 
       // this command should only act on a folder and
       // only on a non-group

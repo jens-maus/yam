@@ -216,7 +216,6 @@ extern struct Hook FO_SetOrderHook;
 
 BOOL            FO_CreateFolder(enum FolderType type, const char * const path, const char *name);
 BOOL            FO_FreeFolder(struct Folder *folder);
-void            FO_SetCurrentFolder(const struct Folder *fo);
 struct Folder * FO_GetFolderByName(const char *name, int *pos);
 struct Folder * FO_GetFolderByPath(const char *path, int *pos);
 struct Folder * FO_GetFolderByType(const enum FolderType type, int *pos);
@@ -230,5 +229,9 @@ BOOL            FO_SaveTree(void);
 void            FO_SetFolderImage(struct Folder *folder);
 void            FO_UpdateStatistics(struct Folder *folder);
 void            FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw);
+
+struct Folder * GetCurrentFolder(void);
+void            SetCurrentFolder(const struct Folder *folder);
+void            ActivateFolder(const struct Folder *fo);
 
 #endif /* YAM_FOLDERCONFIG_H */

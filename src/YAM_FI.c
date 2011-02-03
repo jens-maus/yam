@@ -1253,7 +1253,7 @@ HOOKPROTONHNONP(FI_Open, void)
       {
         DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, fnode->folder->Name, MUIV_List_Insert_Bottom);
 
-        if(fnode->folder == G->currentFolder)
+        if(fnode->folder == GetCurrentFolder())
           apos = j;
 
         j++;
@@ -1379,7 +1379,7 @@ HOOKPROTONHNONP(FI_SelectFunc, void)
       break;
 
     // only if the current folder is the same as this messages resists in
-    if(foundmail->Folder == G->currentFolder)
+    if(foundmail->Folder == GetCurrentFolder())
     {
       LONG pos = MUIV_NList_GetPos_Start;
 
@@ -1989,7 +1989,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
 
   memset(&filterResult, 0, sizeof(filterResult));
 
-  folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : G->currentFolder;
+  folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : GetCurrentFolder();
 
   if(folder != NULL && (C->SpamFilterEnabled == FALSE || FO_GetFolderByType(FT_SPAM, NULL) != NULL))
   {

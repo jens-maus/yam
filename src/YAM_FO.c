@@ -93,9 +93,42 @@ const char* const FolderName[FT_NUM] = { NULL,       // FT_CUSTOM
  Module: Folder Configuration
 ***************************************************************************/
 
-/// FO_SetCurrentFolder
-//  Set the passed folder as the active one
-void FO_SetCurrentFolder(const struct Folder *fo)
+/// GetCurrentFolder
+// returns the currently active folder
+struct Folder *GetCurrentFolder(void)
+{
+  struct Folder *folder;
+
+  ENTER();
+
+  // obtain the semaphore is shared mode as we reading the variable only
+  ObtainSemaphoreShared(G->globalSemaphore);
+  folder = G->currentFolder;
+  ReleaseSemaphore(G->globalSemaphore);
+
+  RETURN(folder);
+  return folder;
+}
+
+///
+/// SetCurrentFolder
+// set the currently active folder
+void SetCurrentFolder(const struct Folder *folder)
+{
+  ENTER();
+
+  // obtain the semaphore is exclusive mode as we modifying the variable
+  ObtainSemaphore(G->globalSemaphore);
+  G->currentFolder = (struct Folder *)folder;
+  ReleaseSemaphore(G->globalSemaphore);
+
+  LEAVE();
+}
+
+///
+/// ActivateFolder
+// set the passed folder as the active one
+void ActivateFolder(const struct Folder *fo)
 {
   ENTER();
 
@@ -105,7 +138,9 @@ void FO_SetCurrentFolder(const struct Folder *fo)
     DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, fo->Treenode, MUIF_NONE);
 
     nnset(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, fo->Treenode);
-    G->currentFolder = (struct Folder *)fo;
+
+    // and remember the new current folder
+    SetCurrentFolder(fo);
   }
 
   LEAVE();
@@ -1524,7 +1559,7 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
     {
       // as the user decided to use the settings from the current folder, wie copy
       // the current one to our new one.
-      memcpy(&folder, G->currentFolder, sizeof(folder));
+      memcpy(&folder, GetCurrentFolder(), sizeof(folder));
 
       if(isGroupFolder(&folder))
       {
@@ -1605,9 +1640,9 @@ HOOKPROTONHNONP(FO_EditFolderFunc, void)
 {
   ENTER();
 
-  if(isGroupFolder(G->currentFolder))
+  if(isGroupFolder(GetCurrentFolder()))
   {
-    if(StringRequest(G->currentFolder->Name, SIZE_NAME, tr(MSG_FO_EDIT_FGROUP), tr(MSG_FO_EDIT_FGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+    if(StringRequest(GetCurrentFolder()->Name, SIZE_NAME, tr(MSG_FO_EDIT_FGROUP), tr(MSG_FO_EDIT_FGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
       DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
   }
   else
@@ -1629,8 +1664,8 @@ HOOKPROTONHNONP(FO_EditFolderFunc, void)
       }
     }
 
-    G->FO->EditFolder = G->currentFolder;
-    FO_GetFolder(G->currentFolder);
+    G->FO->EditFolder = GetCurrentFolder();
+    FO_GetFolder(GetCurrentFolder());
   }
 
   LEAVE();
@@ -1647,7 +1682,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 
   ENTER();
 
-  switch(G->currentFolder->Type)
+  switch(GetCurrentFolder()->Type)
   {
     case FT_CUSTOM:
     case FT_CUSTOMSENT:
@@ -1657,23 +1692,23 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       {
         // check if the folder that is about to be deleted is part
         // of an active filter and if so remove it from it
-        if(FolderIsUsedByFilters(G->currentFolder->Name) == TRUE)
-          RemoveFolderFromFilters(G->currentFolder->Name);
+        if(FolderIsUsedByFilters(GetCurrentFolder()->Name) == TRUE)
+          RemoveFolderFromFilters(GetCurrentFolder()->Name);
 
         delete_folder = TRUE;
-        DeleteMailDir(G->currentFolder->Fullpath, FALSE);
-        ClearFolderMails(G->currentFolder, TRUE);
+        DeleteMailDir(GetCurrentFolder()->Fullpath, FALSE);
+        ClearFolderMails(GetCurrentFolder(), TRUE);
 
         // Here we dispose the folderimage Object because the destructor
         // of the Folder Listtree can't do this without throwing enforcer hits
-        if(G->currentFolder->imageObject != NULL)
+        if(GetCurrentFolder()->imageObject != NULL)
         {
           // we make sure that the NList also doesn't use the image in future anymore
-          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, G->currentFolder->ImageIndex, MUIF_NONE);
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, GetCurrentFolder()->ImageIndex, MUIF_NONE);
 
           // and last, but not least we free the BC object here, so that this Object is also gone
-          MUI_DisposeObject(G->currentFolder->imageObject);
-          G->currentFolder->imageObject = NULL; // let's set it to NULL so that the destructor doesn't do the work again.
+          MUI_DisposeObject(GetCurrentFolder()->imageObject);
+          GetCurrentFolder()->imageObject = NULL; // let's set it to NULL so that the destructor doesn't do the work again.
         }
       }
     }
@@ -1725,7 +1760,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 
   if(delete_folder == TRUE)
   {
-    D(DBF_FOLDER, "deleting folder '%s'", G->currentFolder->Name);
+    D(DBF_FOLDER, "deleting folder '%s'", GetCurrentFolder()->Name);
 
     // remove the entry from the listtree now
     DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, MUIF_NONE);
@@ -1737,7 +1772,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
     DisplayStatistics(NULL, TRUE);
   }
   else
-    D(DBF_FOLDER, "keeping folder '%s'", G->currentFolder->Name);
+    D(DBF_FOLDER, "keeping folder '%s'", GetCurrentFolder()->Name);
 
   LEAVE();
 }
@@ -2016,7 +2051,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
                 // allow the listtree to reorder our folder list
                 set(lv, MUIA_MainFolderListtree_ReorderFolderList, TRUE);
 
-                prevFolder = G->currentFolder;
+                prevFolder = GetCurrentFolder();
                 if(isGroupFolder(prevFolder))
                 {
                   // add the folder to the end of the current folder group

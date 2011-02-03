@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: access to the currently active folder variable is now protected by a
+    semaphore to avoid possible race conditions.
+
 2011-02-02 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: update to the latest changes.

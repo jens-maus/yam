@@ -674,7 +674,7 @@ DECLARE(AbortSearch)
 DECLARE(ProcessSearch)
 {
   GETDATA;
-  struct Folder *curFolder = G->currentFolder;
+  struct Folder *curFolder = GetCurrentFolder();
 
   ENTER();
 
@@ -854,7 +854,7 @@ DECLARE(UpdateStats) // ULONG force
   {
     char statusText[SIZE_DEFAULT];
     ULONG numEntries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries);
-    struct Folder *curFolder = G->currentFolder;
+    struct Folder *curFolder = GetCurrentFolder();
 
     snprintf(statusText, sizeof(statusText), tr(MSG_QUICKSEARCH_SHOWNMSGS), numEntries, curFolder->Total);
 

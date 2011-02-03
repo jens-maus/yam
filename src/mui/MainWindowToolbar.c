@@ -228,7 +228,7 @@ DECLARE(UpdateSpamControls)
     // ask the mail list how many entries as currently selected
     DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
 
-    if(isGroupFolder(G->currentFolder) || (mail == NULL && numSelected == 0))
+    if(isGroupFolder(GetCurrentFolder()) || (mail == NULL && numSelected == 0))
     {
       // either this is a group folder or no message is selected
       // then just show the disabled "Spam" button

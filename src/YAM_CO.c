@@ -1906,7 +1906,7 @@ void CO_Validate(struct Config *co, BOOL update)
       MA_SortWindow();
 
       // Now we update the InfoBar because the text could have been changed
-      DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, G->currentFolder);
+      DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, GetCurrentFolder());
 
       // we signal the mainwindow that it may check whether to include the
       // quicksearchbar or not

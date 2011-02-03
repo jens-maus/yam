@@ -41,6 +41,7 @@
 #include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
+#include "YAM_folderconfig.h"
 #include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
 
@@ -1153,7 +1154,7 @@ static BOOL LoadMessage(struct TransferContext *tc, struct Folder *inFolder, con
           UnlockMailList(tc->msn->downloadedMails);
 
           // if the current folder is the inbox we can go and add the mail instantly to the maillist
-          if(inFolder == G->currentFolder)
+          if(inFolder == GetCurrentFolder())
             PushMethodOnStack(G->MA->GUI.PG_MAILLIST, 3, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
 
           AppendToLogfile(LF_VERBOSE, 32, tr(MSG_LOG_RetrievingVerbose), AddrName(mail->From), mail->Subject, mail->Size);

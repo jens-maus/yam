@@ -975,7 +975,7 @@ DECLARE(FilterNewMails) // const struct MailList *mailList, struct FilterResult 
 
   // only call the DisplayStatistics() function if the actual folder wasn't already the INCOMING
   // one or we would have refreshed it twice
-  if(G->currentFolder != NULL && !isIncomingFolder(G->currentFolder))
+  if(GetCurrentFolder() != NULL && !isIncomingFolder(GetCurrentFolder()))
     DisplayStatistics((struct Folder *)-1, TRUE);
   else
     UpdateAppIcon();
@@ -1099,7 +1099,7 @@ DECLARE(NewMailAlert) // const char *account, struct DownloadResult *downloadRes
 /// DECLARE(ChangeSelected)
 DECLARE(ChangeSelected) // const struct Folder *folder, const ULONG forceUpdate
 {
-  if(msg->folder == G->currentFolder)
+  if(msg->folder == GetCurrentFolder())
     MA_ChangeSelected(msg->forceUpdate);
 
   return 0;

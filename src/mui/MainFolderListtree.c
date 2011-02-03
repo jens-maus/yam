@@ -840,7 +840,7 @@ DECLARE(EditFolder)
 {
   ENTER();
 
-  if(C->FolderDoubleClick == TRUE && G->currentFolder != NULL && isGroupFolder(G->currentFolder) == FALSE)
+  if(C->FolderDoubleClick == TRUE && GetCurrentFolder() != NULL && isGroupFolder(GetCurrentFolder()) == FALSE)
     DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);
 
   LEAVE();
@@ -881,13 +881,12 @@ DECLARE(SetFolderInfo) // struct MUI_NListtree_TreeNode *treenode
 
 ///
 /// DECLARE(ChangeFolder)
+// set the clicked folder as the current one
 DECLARE(ChangeFolder) // struct MUI_NListtree_TreeNode *treenode
 {
   ENTER();
 
-  // remember the current folder
-  G->currentFolder = ((struct FolderNode *)msg->treenode->tn_User)->folder;
-
+  SetCurrentFolder(((struct FolderNode *)msg->treenode->tn_User)->folder);
   MA_ChangeFolder(NULL, FALSE);
 
   LEAVE();

@@ -1162,6 +1162,13 @@ static void Terminate(void)
     G->configSemaphore = NULL;
   }
 
+  // free the global semaphore
+  if(G->globalSemaphore != NULL)
+  {
+    FreeSysObject(ASOT_SEMAPHORE, G->globalSemaphore);
+    G->globalSemaphore = NULL;
+  }
+
   // free the two virtual mail parts
   free(G->virtualMailpart[0]);
   free(G->virtualMailpart[1]);
@@ -2575,6 +2582,12 @@ int main(int argc, char **argv)
 
     // create a list for all the folders
     if((G->folders = CreateFolderList()) == NULL)
+    {
+      // break out immediately to signal an error!
+      break;
+    }
+
+    if((G->globalSemaphore = AllocSysObjectTags(ASOT_SEMAPHORE, TAG_DONE)) == NULL)
     {
       // break out immediately to signal an error!
       break;

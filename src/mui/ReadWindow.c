@@ -935,7 +935,7 @@ DECLARE(CopyMailRequest)
 
             if((newmail = AddMailToList(mail, dstfolder)) != NULL)
             {
-              if(G->currentFolder == dstfolder)
+              if(GetCurrentFolder() == dstfolder)
                 DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
 
               setStatusToRead(newmail); // OLD status

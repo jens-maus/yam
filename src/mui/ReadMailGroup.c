@@ -1530,7 +1530,7 @@ DECLARE(SaveDecryptedMail)
           if(folder->Mode > FM_SIMPLE)
             RepackMailFile(newmail, -1, NULL);
 
-          if(G->currentFolder == folder)
+          if(GetCurrentFolder() == folder)
             DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
 
           if(choice == 2)

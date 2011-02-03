@@ -75,7 +75,7 @@ void rx_requestfolder(UNUSED struct RexxHost *host, struct RexxParams *params, e
       struct Folder *exfolder, *folder;
       char *reqtext = AllocReqText(args->body);
 
-      exfolder = args->excludeactive ? G->currentFolder : NULL;
+      exfolder = args->excludeactive ? GetCurrentFolder() : NULL;
 
       if((folder = FolderRequest(NULL, reqtext, tr(MSG_Okay), tr(MSG_Cancel), exfolder, G->MA->GUI.WI)))
         results->folder = folder->Name;
