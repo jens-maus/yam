@@ -38,8 +38,6 @@
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
 
-#include "SDI_hook.h"
-
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_find.h"
@@ -168,175 +166,56 @@ static void FormatFolderInfo(char *folderStr, const size_t maxLen, const struct 
 
 ///
 
-/* Hooks */
-/// DisplayHook
-// Folder listview display hook
-HOOKPROTONO(DisplayFunc, ULONG, struct MUIP_NListtree_DisplayMessage *msg)
-{
-  ENTER();
-
-  if(msg != NULL)
-  {
-    if(msg->TreeNode != NULL)
-    {
-      struct Data *data = (struct Data *)hook->h_Data;
-      struct FolderNode *fnode = (struct FolderNode *)msg->TreeNode->tn_User;
-      struct Folder *entry = fnode->folder;
-
-      data->folderStr[0] = '\0';
-      data->totalStr[0] = '\0';
-      data->unreadStr[0] = '\0';
-      data->newStr[0] = '\0';
-      data->sizeStr[0] = '\0';
-
-      msg->Array[0] = data->folderStr;
-      msg->Array[1] = data->totalStr;
-      msg->Array[2] = data->unreadStr;
-      msg->Array[3] = data->newStr;
-      msg->Array[4] = data->sizeStr;
-
-      switch(entry->Type)
-      {
-        case FT_GROUP:
-        {
-          FormatFolderInfo(data->folderStr, sizeof(data->folderStr), entry, msg->TreeNode->tn_Flags);
-
-          msg->Preparse[0] = (entry->New != 0 || entry->Unread != 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
-
-          // show group stats for closed nodes only
-          if(isFlagClear(msg->TreeNode->tn_Flags, TNF_OPEN))
-          {
-            // if other folder columns are enabled lets fill the values in
-            if(hasFColTotal(C->FolderCols))
-              snprintf(data->totalStr, sizeof(data->totalStr), "%d", entry->Total);
-
-            if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
-              snprintf(data->unreadStr, sizeof(data->unreadStr), "%d", entry->Unread);
-
-            if(hasFColNew(C->FolderCols) && entry->New != 0)
-              snprintf(data->newStr, sizeof(data->newStr), "%d", entry->New);
-
-            if(hasFColSize(C->FolderCols) && entry->Size > 0)
-              FormatSize(entry->Size, data->sizeStr, sizeof(data->sizeStr), SF_AUTO);
-          }
-        }
-        break;
-
-        default:
-        {
-          FormatFolderInfo(data->folderStr, sizeof(data->folderStr), entry, 0);
-
-          if(entry->LoadedMode != LM_UNLOAD && entry->LoadedMode != LM_REBUILD)
-          {
-            if(entry->New != 0)
-              msg->Preparse[0] = C->StyleFolderNew;
-            else if(entry->Unread != 0)
-              msg->Preparse[0] = C->StyleFolderUnread;
-            else
-              msg->Preparse[0] = C->StyleFolderRead;
-
-            // if other folder columns are enabled lets fill the values in
-            if(hasFColTotal(C->FolderCols))
-              snprintf(data->totalStr, sizeof(data->totalStr), "%d", entry->Total);
-
-            if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
-              snprintf(data->unreadStr, sizeof(data->unreadStr), "%d", entry->Unread);
-
-            if(hasFColNew(C->FolderCols) && entry->New != 0)
-              snprintf(data->newStr, sizeof(data->newStr), "%d", entry->New);
-
-            if(hasFColSize(C->FolderCols) && entry->Size > 0)
-              FormatSize(entry->Size, data->sizeStr, sizeof(data->sizeStr), SF_AUTO);
-          }
-          else
-            msg->Preparse[0] = (char *)MUIX_I;
-
-          if(isProtectedFolder(entry))
-            snprintf(data->folderStr, sizeof(data->folderStr), "%s \033o[%d]", data->folderStr, FICON_ID_PROTECTED);
-        }
-      }
-    }
-    else
-    {
-      msg->Array[0] = (STRPTR)tr(MSG_Folder);
-      msg->Array[1] = (STRPTR)tr(MSG_Total);
-      msg->Array[2] = (STRPTR)tr(MSG_Unread);
-      msg->Array[3] = (STRPTR)tr(MSG_New);
-      msg->Array[4] = (STRPTR)tr(MSG_Size);
-    }
-  }
-
-  LEAVE();
-  return 0;
-}
-
-///
-
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct Hook *displayHook;
-
   ENTER();
 
-  if((displayHook = AllocSysObjectTags(ASOT_HOOK, ASOHOOK_Entry, (HOOKFUNC)DisplayFunc,
-                                                  TAG_DONE)) != NULL)
+  if((obj = DoSuperNew(cl, obj,
+
+    InputListFrame,
+    MUIA_ObjectID,                    MAKE_ID('N','L','0','1'),
+    MUIA_ContextMenu,                 C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : 0,
+    MUIA_Font,                        C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
+    MUIA_Dropable,                    TRUE,
+    MUIA_NList_DragType,              MUIV_NList_DragType_Immediate,
+    MUIA_NList_DragSortable,          TRUE,
+    MUIA_NList_ActiveObjectOnClick,   TRUE,
+    MUIA_NList_DefaultObjectOnClick,  FALSE,
+    MUIA_NList_Exports,               MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
+    MUIA_NList_Imports,               MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
+    MUIA_NListtree_DragDropSort,      TRUE,
+    MUIA_NListtree_Title,             TRUE,
+    MUIA_NListtree_DoubleClick,       MUIV_NListtree_DoubleClick_All,
+
+    TAG_MORE, inittags(msg))) != NULL)
   {
-    if((obj = DoSuperNew(cl, obj,
+    GETDATA;
+    ULONG i;
 
-      InputListFrame,
-      MUIA_ObjectID,                    MAKE_ID('N','L','0','1'),
-      MUIA_ContextMenu,                 C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : 0,
-      MUIA_Font,                        C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
-      MUIA_Dropable,                    TRUE,
-      MUIA_NList_DragType,              MUIV_NList_DragType_Immediate,
-      MUIA_NList_DragSortable,          TRUE,
-      MUIA_NList_ActiveObjectOnClick,   TRUE,
-      MUIA_NList_DefaultObjectOnClick,  FALSE,
-      MUIA_NList_Exports,               MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
-      MUIA_NList_Imports,               MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
-      MUIA_NListtree_DisplayHook,       displayHook,
-      MUIA_NListtree_DragDropSort,      TRUE,
-      MUIA_NListtree_Title,             TRUE,
-      MUIA_NListtree_DoubleClick,       MUIV_NListtree_DoubleClick_All,
+    DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, MUIV_Notify_Self, 1, METHOD(EditFolder));
+    //DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_NList_Sort2,          MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
+    //DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,      MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,                  MUIA_NList_TitleMark,MUIV_TriggerValue);
+    DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(ChangeFolder), MUIV_TriggerValue);
+    DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(SetFolderInfo), MUIV_TriggerValue);
 
-      TAG_MORE, inittags(msg))) != NULL)
-    {
-      GETDATA;
-      ULONG i;
-
-      // tell the hook about the instance data
-      displayHook->h_Data = data;
-      data->displayHook = displayHook;
-
-      DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, MUIV_Notify_Self, 1, METHOD(EditFolder));
-      //DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_NList_Sort2,          MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
-      //DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,      MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,                  MUIA_NList_TitleMark,MUIV_TriggerValue);
-      DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(ChangeFolder), MUIV_TriggerValue);
-      DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(SetFolderInfo), MUIV_TriggerValue);
-
-      // prepare the folder images
-      data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[fi_Fold]);
-      data->folderImage[FICON_ID_UNFOLD]      = MakeImageObject("folder_unfold",       G->theme.folderImages[fi_Unfold]);
-      data->folderImage[FICON_ID_INCOMING]    = MakeImageObject("folder_incoming",     G->theme.folderImages[fi_Incoming]);
-      data->folderImage[FICON_ID_INCOMING_NEW]= MakeImageObject("folder_incoming_new", G->theme.folderImages[fi_IncomingNew]);
-      data->folderImage[FICON_ID_OUTGOING]    = MakeImageObject("folder_outgoing",     G->theme.folderImages[fi_Outgoing]);
-      data->folderImage[FICON_ID_OUTGOING_NEW]= MakeImageObject("folder_outgoing_new", G->theme.folderImages[fi_OutgoingNew]);
-      data->folderImage[FICON_ID_TRASH]       = MakeImageObject("folder_trash",        G->theme.folderImages[fi_Trash]);
-      data->folderImage[FICON_ID_TRASH_NEW]   = MakeImageObject("folder_trash_new",    G->theme.folderImages[fi_TrashNew]);
-      data->folderImage[FICON_ID_SENT]        = MakeImageObject("folder_sent",         G->theme.folderImages[fi_Sent]);
-      data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt",        G->theme.statusImages[si_Crypt]);
-      data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam",         G->theme.folderImages[fi_Spam]);
-      data->folderImage[FICON_ID_SPAM_NEW]    = MakeImageObject("folder_spam_new",     G->theme.folderImages[fi_SpamNew]);
-      for(i = 0; i < ARRAY_SIZE(data->folderImage); i++)
-        DoMethod(obj, MUIM_NList_UseImage, data->folderImage[i], i, MUIF_NONE);
-    }
-    else
-      FreeSysObject(ASOT_HOOK, displayHook);
+    // prepare the folder images
+    data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[fi_Fold]);
+    data->folderImage[FICON_ID_UNFOLD]      = MakeImageObject("folder_unfold",       G->theme.folderImages[fi_Unfold]);
+    data->folderImage[FICON_ID_INCOMING]    = MakeImageObject("folder_incoming",     G->theme.folderImages[fi_Incoming]);
+    data->folderImage[FICON_ID_INCOMING_NEW]= MakeImageObject("folder_incoming_new", G->theme.folderImages[fi_IncomingNew]);
+    data->folderImage[FICON_ID_OUTGOING]    = MakeImageObject("folder_outgoing",     G->theme.folderImages[fi_Outgoing]);
+    data->folderImage[FICON_ID_OUTGOING_NEW]= MakeImageObject("folder_outgoing_new", G->theme.folderImages[fi_OutgoingNew]);
+    data->folderImage[FICON_ID_TRASH]       = MakeImageObject("folder_trash",        G->theme.folderImages[fi_Trash]);
+    data->folderImage[FICON_ID_TRASH_NEW]   = MakeImageObject("folder_trash_new",    G->theme.folderImages[fi_TrashNew]);
+    data->folderImage[FICON_ID_SENT]        = MakeImageObject("folder_sent",         G->theme.folderImages[fi_Sent]);
+    data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt",        G->theme.statusImages[si_Crypt]);
+    data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam",         G->theme.folderImages[fi_Spam]);
+    data->folderImage[FICON_ID_SPAM_NEW]    = MakeImageObject("folder_spam_new",     G->theme.folderImages[fi_SpamNew]);
+    for(i = 0; i < ARRAY_SIZE(data->folderImage); i++)
+      DoMethod(obj, MUIM_NList_UseImage, data->folderImage[i], i, MUIF_NONE);
   }
-  else
-    obj = NULL;
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
@@ -613,6 +492,106 @@ OVERLOAD(MUIM_NListtree_Move)
   }
 
   RETURN(0);
+  return 0;
+}
+
+///
+/// OVERLOAD(MUIM_NListtree_Display)
+OVERLOAD(MUIM_NListtree_Display)
+{
+  struct MUIP_NListtree_Display *ndm = (struct MUIP_NListtree_Display *)msg;
+
+  ENTER();
+
+  if(ndm->TreeNode != NULL)
+  {
+    GETDATA;
+    struct FolderNode *fnode = (struct FolderNode *)ndm->TreeNode->tn_User;
+    struct Folder *entry = fnode->folder;
+
+    data->folderStr[0] = '\0';
+    data->totalStr[0] = '\0';
+    data->unreadStr[0] = '\0';
+    data->newStr[0] = '\0';
+    data->sizeStr[0] = '\0';
+
+    ndm->Array[0] = data->folderStr;
+    ndm->Array[1] = data->totalStr;
+    ndm->Array[2] = data->unreadStr;
+    ndm->Array[3] = data->newStr;
+    ndm->Array[4] = data->sizeStr;
+
+    switch(entry->Type)
+    {
+      case FT_GROUP:
+      {
+        FormatFolderInfo(data->folderStr, sizeof(data->folderStr), entry, ndm->TreeNode->tn_Flags);
+
+        ndm->Preparse[0] = (entry->New != 0 || entry->Unread != 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
+
+        // show group stats for closed nodes only
+        if(isFlagClear(ndm->TreeNode->tn_Flags, TNF_OPEN))
+        {
+          // if other folder columns are enabled lets fill the values in
+          if(hasFColTotal(C->FolderCols))
+            snprintf(data->totalStr, sizeof(data->totalStr), "%d", entry->Total);
+
+          if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
+            snprintf(data->unreadStr, sizeof(data->unreadStr), "%d", entry->Unread);
+
+          if(hasFColNew(C->FolderCols) && entry->New != 0)
+            snprintf(data->newStr, sizeof(data->newStr), "%d", entry->New);
+
+          if(hasFColSize(C->FolderCols) && entry->Size > 0)
+            FormatSize(entry->Size, data->sizeStr, sizeof(data->sizeStr), SF_AUTO);
+        }
+      }
+      break;
+
+      default:
+      {
+        FormatFolderInfo(data->folderStr, sizeof(data->folderStr), entry, 0);
+
+        if(entry->LoadedMode != LM_UNLOAD && entry->LoadedMode != LM_REBUILD)
+        {
+          if(entry->New != 0)
+            ndm->Preparse[0] = C->StyleFolderNew;
+          else if(entry->Unread != 0)
+            ndm->Preparse[0] = C->StyleFolderUnread;
+          else
+            ndm->Preparse[0] = C->StyleFolderRead;
+
+          // if other folder columns are enabled lets fill the values in
+          if(hasFColTotal(C->FolderCols))
+            snprintf(data->totalStr, sizeof(data->totalStr), "%d", entry->Total);
+
+          if(hasFColUnread(C->FolderCols) && entry->Unread != 0)
+            snprintf(data->unreadStr, sizeof(data->unreadStr), "%d", entry->Unread);
+
+          if(hasFColNew(C->FolderCols) && entry->New != 0)
+            snprintf(data->newStr, sizeof(data->newStr), "%d", entry->New);
+
+          if(hasFColSize(C->FolderCols) && entry->Size > 0)
+            FormatSize(entry->Size, data->sizeStr, sizeof(data->sizeStr), SF_AUTO);
+        }
+        else
+          ndm->Preparse[0] = (char *)MUIX_I;
+
+        if(isProtectedFolder(entry))
+          snprintf(data->folderStr, sizeof(data->folderStr), "%s \033o[%d]", data->folderStr, FICON_ID_PROTECTED);
+      }
+    }
+  }
+  else
+  {
+    ndm->Array[0] = (STRPTR)tr(MSG_Folder);
+    ndm->Array[1] = (STRPTR)tr(MSG_Total);
+    ndm->Array[2] = (STRPTR)tr(MSG_Unread);
+    ndm->Array[3] = (STRPTR)tr(MSG_New);
+    ndm->Array[4] = (STRPTR)tr(MSG_Size);
+  }
+
+  LEAVE();
   return 0;
 }
 

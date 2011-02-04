@@ -2008,11 +2008,11 @@ static void InitBeforeLogin(BOOL hidden)
 
   // we also make sure the user uses the latest brand of all other NList classes, such as
   // NListview, NFloattext etc.
-  CheckMCC(MUIC_NList,      20, 127, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NListview,  19,  82, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NFloattext, 19,  63, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NListtree,  18,  34, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NBalance,   15,   8, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NList,      20, 128, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NListview,  19,  83, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NFloattext, 19,  64, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NListtree,  18,  35, TRUE, "http://www.sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NBalance,   15,   9, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
   // Lets check for the correct TextEditor.mcc version
   CheckMCC(MUIC_TextEditor, 15, 36, TRUE, "http://www.sf.net/projects/texteditor-mcc/");

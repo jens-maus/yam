@@ -18,7 +18,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NFloattext_mcc.h 336 2009-06-06 21:35:40Z damato $
+ $Id: NFloattext_mcc.h 338 2009-06-08 19:28:59Z marust $
 
 ***************************************************************************/
 
@@ -63,13 +63,13 @@ extern "C" {
 
 /* Attributes */
 
-#define MUIA_NFloattext_Text                0x9d5100a1 /* GM  isg STRPTR             */
-#define MUIA_NFloattext_SkipChars           0x9d5100a2 /* GM  isg char *             */
-#define MUIA_NFloattext_TabSize             0x9d5100a3 /* GM  isg ULONG              */
-#define MUIA_NFloattext_Justify             0x9d5100a4 /* GM  isg BOOL               */
-#define MUIA_NFloattext_Align               0x9d5100a5 /* GM  isg LONG               */
+#define MUIA_NFloattext_Text                0x9d5100a1UL /* GM  isg STRPTR             */
+#define MUIA_NFloattext_SkipChars           0x9d5100a2UL /* GM  isg char *             */
+#define MUIA_NFloattext_TabSize             0x9d5100a3UL /* GM  isg ULONG              */
+#define MUIA_NFloattext_Justify             0x9d5100a4UL /* GM  isg BOOL               */
+#define MUIA_NFloattext_Align               0x9d5100a5UL /* GM  isg LONG               */
 
-#define MUIM_NFloattext_GetEntry            0x9d5100aF /* GM */
+#define MUIM_NFloattext_GetEntry            0x9d5100aFUL /* GM */
 struct  MUIP_NFloattext_GetEntry            { STACKED ULONG MethodID; STACKED LONG pos; STACKED APTR *entry; };
 
 #if !defined(__AROS__) && defined(__PPC__)

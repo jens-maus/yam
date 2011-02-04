@@ -16,7 +16,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NListtree_mcc.h 336 2009-06-06 21:35:40Z damato $
+ $Id: NListtree_mcc.h 557 2011-01-17 07:10:45Z thboeckel $
 
 ***************************************************************************/
 
@@ -184,32 +184,36 @@ struct MUI_NListtree_TestPos_Result {
 
 /*** Methods ***/
 
-#define MUIM_NListtree_Open                                 0xfec81101
-#define MUIM_NListtree_Close                                0xfec81102
-#define MUIM_NListtree_Insert                               0xfec81103
-#define MUIM_NListtree_Remove                               0xfec81104
-#define MUIM_NListtree_Exchange                             0xfec81105
-#define MUIM_NListtree_Move                                 0xfec81106
-#define MUIM_NListtree_Rename                               0xfec81107
-#define MUIM_NListtree_FindName                             0xfec81108
-#define MUIM_NListtree_GetEntry                             0xfec81109
-#define MUIM_NListtree_GetNr                                0xfec8110a
-#define MUIM_NListtree_Sort                                 0xfec8110b
-#define MUIM_NListtree_TestPos                              0xfec8110c
-#define MUIM_NListtree_Redraw                               0xfec8110d
-#define MUIM_NListtree_NextSelected                         0xfec81110
-#define MUIM_NListtree_MultiTest                            0xfec81111
-#define MUIM_NListtree_Select                               0xfec81112
-#define MUIM_NListtree_Copy                                 0xfec81113
-#define MUIM_NListtree_InsertStruct                         0xfec81114  // *** Insert a struct (like a path) into the list.
-#define MUIM_NListtree_Active                               0xfec81115  // *** Method which gives the active node/number.
-#define MUIM_NListtree_DoubleClick                          0xfec81116  // *** Occurs on every double click.
-#define MUIM_NListtree_PrevSelected                         0xfec81118  // *** Like reverse NextSelected.
-#define MUIM_NListtree_CopyToClip                           0xfec81119  // *** Copy an entry or part to the clipboard.
-#define MUIM_NListtree_FindUserData                         0xfec8111a  // *** Find a node upon user data.
-#define MUIM_NListtree_Clear                                0xfec8111b  // *** Clear complete tree.
-#define MUIM_NListtree_DropType                             0xfec8111e  // ***
-#define MUIM_NListtree_DropDraw                             0xfec8111f  // ***
+#define MUIM_NListtree_Open                                 0xfec81101UL
+#define MUIM_NListtree_Close                                0xfec81102UL
+#define MUIM_NListtree_Insert                               0xfec81103UL
+#define MUIM_NListtree_Remove                               0xfec81104UL
+#define MUIM_NListtree_Exchange                             0xfec81105UL
+#define MUIM_NListtree_Move                                 0xfec81106UL
+#define MUIM_NListtree_Rename                               0xfec81107UL
+#define MUIM_NListtree_FindName                             0xfec81108UL
+#define MUIM_NListtree_GetEntry                             0xfec81109UL
+#define MUIM_NListtree_GetNr                                0xfec8110aUL
+#define MUIM_NListtree_Sort                                 0xfec8110bUL
+#define MUIM_NListtree_TestPos                              0xfec8110cUL
+#define MUIM_NListtree_Redraw                               0xfec8110dUL
+#define MUIM_NListtree_NextSelected                         0xfec81110UL
+#define MUIM_NListtree_MultiTest                            0xfec81111UL
+#define MUIM_NListtree_Select                               0xfec81112UL
+#define MUIM_NListtree_Copy                                 0xfec81113UL
+#define MUIM_NListtree_InsertStruct                         0xfec81114UL  // *** Insert a struct (like a path) into the list.
+#define MUIM_NListtree_Active                               0xfec81115UL  // *** Method which gives the active node/number.
+#define MUIM_NListtree_DoubleClick                          0xfec81116UL  // *** Occurs on every double click.
+#define MUIM_NListtree_PrevSelected                         0xfec81118UL  // *** Like reverse NextSelected.
+#define MUIM_NListtree_CopyToClip                           0xfec81119UL  // *** Copy an entry or part to the clipboard.
+#define MUIM_NListtree_FindUserData                         0xfec8111aUL  // *** Find a node upon user data.
+#define MUIM_NListtree_Clear                                0xfec8111bUL  // *** Clear complete tree.
+#define MUIM_NListtree_DropType                             0xfec8111eUL  // ***
+#define MUIM_NListtree_DropDraw                             0xfec8111fUL  // ***
+#define MUIM_NListtree_Construct                            0xfec81120UL  // *** Construct a treenode
+#define MUIM_NListtree_Destruct                             0xfec81121UL  // *** Destruct a treenode
+#define MUIM_NListtree_Display                              0xfec81122UL  // *** Display a treenode
+#define MUIM_NListtree_Compare                              0xfec81123UL  // *** Compare two treenodes
 
 
 /*** Method structs ***/
@@ -423,6 +427,41 @@ struct MUIP_NListtree_DropDraw
   STACKED LONG Pos;
   STACKED LONG Type;
   STACKED LONG MinX, MaxX, MinY, MaxY;
+};
+
+struct MUIP_NListtree_Construct
+{
+  STACKED ULONG MethodID;
+  STACKED STRPTR Name;
+  STACKED APTR UserData;
+  STACKED APTR MemPool;
+  STACKED ULONG Flags;
+};
+
+struct MUIP_NListtree_Destruct
+{
+  STACKED ULONG MethodID;
+  STACKED STRPTR Name;
+  STACKED APTR UserData;
+  STACKED APTR MemPool;
+  STACKED ULONG Flags;
+};
+
+struct MUIP_NListtree_Display
+{
+  STACKED ULONG   MethodID;
+  STACKED struct  MUI_NListtree_TreeNode *TreeNode;
+  STACKED LONG    EntryPos;
+  STACKED STRPTR  *Array;
+  STACKED STRPTR  *Preparse;
+};
+
+struct MUIP_NListtree_Compare
+{
+  STACKED ULONG MethodID;
+  STACKED struct MUI_NListtree_TreeNode *TreeNode1;
+  STACKED struct MUI_NListtree_TreeNode *TreeNode2;
+  STACKED LONG SortType;
 };
 
 /*** Special method values ***/

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, mui/MainFolderListtree.c: updated the NList includes to the latest
+    versions and bumped the minimum required versions of NList to 0.109. This
+    makes it possible to implement the listtree hooks as proper methods.
+
 2011-02-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: access to the currently active folder variable is now protected by a

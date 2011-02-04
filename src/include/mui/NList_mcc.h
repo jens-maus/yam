@@ -19,7 +19,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NList_mcc.h 460 2010-08-11 21:15:27Z damato $
+ $Id: NList_mcc.h 462 2010-08-12 09:51:03Z damato $
 
 ***************************************************************************/
 
