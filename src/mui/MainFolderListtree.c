@@ -59,7 +59,6 @@ struct Data
 {
   Object *context_menu;
   Object *folderImage[MAX_FOLDERIMG+1];
-  struct Hook *displayHook;
   char folderStr[SIZE_DEFAULT];
   char totalStr[SIZE_SMALL];
   char unreadStr[SIZE_SMALL];
