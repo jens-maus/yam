@@ -227,7 +227,8 @@ OVERLOAD(OM_DISPOSE)
   IPTR result;
   GETDATA;
   ULONG i;
-  struct Hook *displayHook = data->displayHook;
+
+  ENTER();
 
   // make sure that our context menus are also disposed
   if(data->context_menu != NULL)
@@ -243,13 +244,10 @@ OVERLOAD(OM_DISPOSE)
     }
   }
 
-  // dispose ourself first
+  // dispose ourself
   result = DoSuperMethodA(cl, obj, msg);
 
-  // then finally dispose the hook
-  if(displayHook != NULL)
-    FreeSysObject(ASOT_HOOK, displayHook);
-
+  RETURN(result);
   return result;
 }
 
