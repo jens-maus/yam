@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: added the angled brackets to the range of invalid characters for
+    file names.
+
 2011-02-05 Jens Langner <Jens.Langner@light-speed.de>
 
   * AttachmentObject.c: we display 'alternative' mail parts in italic style only

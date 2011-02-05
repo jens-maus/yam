@@ -676,7 +676,7 @@ void ReplaceInvalidChars(char *name)
   {
     // see if we have to replace certain unallowed characters
     // by a '_'
-    if((c <= 0x20) || (c > 0x80 && c < 0xa0) || strchr(":/#?*()[]|%'\"", c) != NULL)
+    if((c <= 0x20) || (c > 0x80 && c < 0xa0) || strchr(":/#?*()[]<>|%'\"", c) != NULL)
       *ptr = '_';
 
     ptr++;
