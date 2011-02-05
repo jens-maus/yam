@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-05 Jens Langner <Jens.Langner@light-speed.de>
+
+  * AttachmentObject.c: we display 'alternative' mail parts in italic style only
+    instead of supressing the filename or description of the part.
+
 2011-02-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, mui/MainFolderListtree.c: updated the NList includes to the latest

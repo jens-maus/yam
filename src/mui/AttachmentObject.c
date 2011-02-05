@@ -561,22 +561,18 @@ DECLARE(UpdateDescription)
 {
   GETDATA;
   char sizeBuffer[SIZE_DEFAULT];
+  char *p;
 
   ENTER();
 
-  // first line: the attachment name
+  // first line: the attachment name (filename or description)
+  //             italic style in case it is an alternative part
+  p = data->mailPart->Name[0] != '\0' ? data->mailPart->Name : data->mailPart->Description; 
+
   if(isAlternativePart(data->mailPart))
-  {
-    strlcpy(data->descriptionBuffer, MUIX_I "multipart/alternative" MUIX_N, sizeof(data->descriptionBuffer));
-  }
+    snprintf(data->descriptionBuffer, sizeof(data->descriptionBuffer), MUIX_I "%s" MUIX_N "\n", p);
   else
-  {
-    if(data->mailPart->Name[0] != '\0')
-      strlcpy(data->descriptionBuffer, data->mailPart->Name, sizeof(data->descriptionBuffer));
-    else
-      strlcpy(data->descriptionBuffer, data->mailPart->Description, sizeof(data->descriptionBuffer));
-  }
-  strlcat(data->descriptionBuffer, "\n", sizeof(data->descriptionBuffer));
+    snprintf(data->descriptionBuffer, sizeof(data->descriptionBuffer), "%s\n", p);
 
   // second line: the attachment size
   if(isDecoded(data->mailPart))
