@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-06 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: if the content-disposition of an 'alternative' mail part is found
+    to be "attachment" we remove the alternative status of that particular mail
+    part now and make sure YAM displays it under all circumstances. This should
+    work around issues with mails created by HTML-only aware mail clients like
+    the iPhone mail client. These clients are known to drop attachments in the
+    "multipart/alternative" structure, thus they are usually hided per default.
+    Now these attachments should be displayed correctly.
+
 2011-02-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: added the angled brackets to the range of invalid characters for

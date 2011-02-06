@@ -1098,6 +1098,19 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
     else if(stricmp(field, "content-disposition") == 0)
     {
       RE_ParseContentParameters(value, rp, PT_CONTENTDISPOSITION);
+
+      // if a mail part was previously identified as an 'alternative' part to
+      // the main letter part all its sub-parts (in the hierarchy) are usually
+      // hided. However, we simply see if the found disposition type tells us if
+      // the currently processed mail part is meant to be an "attachment". And if
+      // so, we simply remove the 'alternative' flag again so that YAM will go and
+      // display this part under all circumstances. This should fix issues with
+      // attachments being created with pure HTML aware mail client like the iPhone
+      // mail client which is known to always drop their attachments in the alternative
+      // part of the mail structure which is partly incorrect regarding the various
+      // RFCs.
+      if(isAlternativePart(rp) && strnicmp(rp->ContentDisposition, "attachment", 10) == 0)
+        CLEAR_FLAG(rp->Flags, PFLAG_ALTPART);
     }
     else if(mode == RHM_MAINHEADER && stricmp(field, "mime-version") == 0)
     {

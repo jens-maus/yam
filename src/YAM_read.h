@@ -127,7 +127,7 @@ struct Part
   struct ReadMailData *rmData;             // ptr to the parent readmail Data
   struct MinList      *headerList;         // ptr to a list of headers or NULL
   char                *ContentType;        // ptr to the content-type "text/plain"
-  char                *ContentDisposition; // ptr to the content-disposition "attachment"
+  char                *ContentDisposition; // ptr to the content-disposition "attachment" or "inline"
   char                *CParName;           // ptr to the content-type "name"
   char                *CParFileName;       // ptr to the content-disposition "filename"
   char                *CParBndr;           // ptr to the content-type "boundary"
