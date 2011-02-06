@@ -73,15 +73,15 @@
 /*
  * A simple but smart HTML2Text converter using the nice and smooth 'flex'
  * lexical analyzer tool instead of doing all the parsing manually.
- *
  */
 
-%x tag_s tag_e comment style href
+/* start conditions */
+%s tag_s tag_e comment style href pre
 
 /* common 'HTML' tag rules */
-
 NOT_GT        [^>]*
 TAGEND        ("/"?">"|" "{NOT_GT}"/"?">")
+TAGSTART      (">"|" "{NOT_GT}">")
 
 BOLD          "<""/"?("b"|"strong"){NOT_GT}">"
 ITALIC        "<""/"?("i"|"em"){NOT_GT}">"
@@ -95,7 +95,8 @@ UNKNOWN_CHAR  "&""#"?[[:alnum:]]+";"
 
 "<"                         BEGIN(tag_s);
 <tag_s>"!--"                { BEGIN(comment); D(DBF_HTML, "<!--:     '%s'", yytext); }
-<tag_s>"style"{TAGEND}      { BEGIN(style);   D(DBF_HTML, "<style>:  '%s'", yytext); }
+<tag_s>"style"{TAGSTART}    { BEGIN(style);   D(DBF_HTML, "<style>:  '%s'", yytext); }
+<tag_s>"pre"{TAGSTART}      { BEGIN(pre); }
 <tag_s>"br"{TAGEND}         { BEGIN(INITIAL); return ht_BR;         }
 <tag_s>"div"{TAGEND}        { BEGIN(INITIAL); return ht_DIV;        }
 <tag_s>"hr"{TAGEND}         { BEGIN(INITIAL); return ht_HR;         }
@@ -108,7 +109,6 @@ UNKNOWN_CHAR  "&""#"?[[:alnum:]]+";"
 <tag_s>"/dt>"               { BEGIN(INITIAL); return ht_DT;         }
 <tag_s>"/ul>"               { BEGIN(INITIAL); return ht_UL;         }
 <tag_s>"/li>"               { BEGIN(INITIAL); return ht_LI;         }
-<tag_s>"/pre>"              { BEGIN(INITIAL); return ht_PRE;        }
 <tag_s>">"                  BEGIN(INITIAL);
 <tag_s,tag_e>">"            BEGIN(INITIAL);
 <tag_s>.|\n                 BEGIN(tag_e);
@@ -237,6 +237,9 @@ UNKNOWN_CHAR  "&""#"?[[:alnum:]]+";"
 
 "&#8482;"       |
 "&trade;"       { return ht_TRADE;        }
+
+<pre>"</pre>"   { BEGIN(INITIAL); return ht_PRE; }
+<pre>.|\n       { return ht_NORMALTEXT; }
 
 {ASCII_CHAR}    { return ht_ASCII_CHAR;   }
 {UNKNOWN_CHAR}  { return ht_UNKNOWN_CHAR; }

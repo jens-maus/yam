@@ -7,6 +7,9 @@ $URL$
 
 2011-02-06 Jens Langner <Jens.Langner@light-speed.de>
 
+  * HTML2Mail.l: changed the regexp to separately identify <pre> tags and treat
+    everything within them as normal text, thus outputting it as is. This should
+    improve HTML to text conversions for emails with newlines within <pre> tags.
   * YAM_RE.c: if the content-disposition of an 'alternative' mail part is found
     to be "attachment" we remove the alternative status of that particular mail
     part now and make sure YAM displays it under all circumstances. This should
