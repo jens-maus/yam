@@ -1512,6 +1512,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
             // clear the multipart/mixed flag only if we just removed all attachments
             if(keptParts == 0)
               CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
+
             // flag folder as modified
             SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);
             DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
