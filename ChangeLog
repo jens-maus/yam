@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-07 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some typos and compiled with latest FlexCat 2.8.
+
 2011-02-06 Jens Langner <Jens.Langner@light-speed.de>
 
   * HTML2Mail.l: changed the regexp to separately identify <pre> tags and treat
@@ -68,7 +72,7 @@ $URL$
 
 2011-01-31 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italian.ct: fix some typos and update to the latest changes.
+  * locale/italian.ct: fixed some typos and update to the latest changes.
 
 2011-01-31 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -1,10 +1,10 @@
-## version $VER: YAM.catalog 7.8 (31.01.2011)
+## version $VER: YAM.catalog 7.81 (7.02.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
 ;
 ; italian.ct - YAM 2.6p1/2.7 catalog translation file
-; Compiled with FlexCat 2.7 PPC (AmigaOS4)
+; Compiled with FlexCat 2.8 PPC (AmigaOS4)
 ; $Id$
 ;
 ; based on YAM.cd 5613 2011-01-31
@@ -4735,10 +4735,10 @@ Verifica l'esistenza di %s.
 ; FILENAME
 ;
 MSG_ER_AliasNotFound
-Pseudonimo o nome sconosciuto: %s.\n\
+Nome o pseudonimo sconosciuto: %s.\n\
 \n\
-Impossibile trovare l'indirizzo di posta di questo\n\
-destinatario all'interno della rubrica.\n\
+Impossibile trovare l'indirizzo di posta per\n\
+questo destinatario all'interno della rubrica.\n\
 Per favore effettua una verifica ortografica.
 ; Unknown alias or name: %s.\n\
 ; \n\
@@ -9262,7 +9262,8 @@ MSG_ER_CONNECTERR_TIMEDOUT_POP3
 Impossibile connettersi all'host '%s' dell'account '%s'.\n\
 \n\
 Il server di posta non ha risposto entro i termini\n\
-prefissati, perciò la connessione verrà terminata.
+prefissati, a causa di ciò la connessione è stata\n\
+terminata.
 ; Couldn't connect to host '%s' of account '%s'.\n\
 ; \n\
 ; The mail server didn't respond within the predefined \
@@ -9378,7 +9379,8 @@ MSG_ER_CONNECTERR_TIMEDOUT_SMTP
 Impossibile connettersi all'host '%s'.\n\
 \n\
 Il server di posta non ha risposto entro i termini\n\
-prefissati, perciò la connessione verrà terminata.
+prefissati, a causa di ciò la connessione è stata\n\
+terminata.
 ; Couldn't connect to host '%s'.\n\
 ; \n\
 ; The mail server didn't respond within the predefined \
