@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-08 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
 2011-02-07 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed some typos and compiled with latest FlexCat 2.8.

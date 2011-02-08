@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.19 (24.01.2011)
+## version $VER: YAM.catalog 7.20 (08.02.2011)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5602;
+; in sync with .cd in revision 5613;
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9876,6 +9876,14 @@ Nieznany format wiadomo¶ci w pliku \"%s\".
 ; Unknown mail file format in file '%s'.
 ;
 MSG_IMPORT_NO_MAILS
-Pli \"%s\" nie zawiera ¿adnych wiadomo¶ci do zaimportowania.
+Plik \"%s\" nie zawiera ¿adnych wiadomo¶ci do zaimportowania.
 ; The file '%s' does not contain any importable mails.
+;
+MSG_CO_CONFIG_IS_LOCKED (2208//)
+Plik konfiguracyjny jest obecnie zablokowany.\n\
+\n\
+Proszê poczekaæ na zakoñczenie wszystkich transferów POP3 i SMTP.
+; The configuration is currently locked.\n\
+; \n\
+; Please wait until all POP3 and SMTP transfers are finished.
 ;
