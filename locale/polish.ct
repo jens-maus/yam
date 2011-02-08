@@ -9879,7 +9879,7 @@ MSG_IMPORT_NO_MAILS
 Plik \"%s\" nie zawiera ¿adnych wiadomo¶ci do zaimportowania.
 ; The file '%s' does not contain any importable mails.
 ;
-MSG_CO_CONFIG_IS_LOCKED (2208//)
+MSG_CO_CONFIG_IS_LOCKED
 Plik konfiguracyjny jest obecnie zablokowany.\n\
 \n\
 Proszê poczekaæ na zakoñczenie wszystkich transferów POP3 i SMTP.
