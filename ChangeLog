@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-12 Jens Langner <Jens.Langner@light-speed.de>
+
+  * HTML2Mail.l: large rework of the HTML to text conversion functionality. Now
+    the flex regexp rules should hopefully convert HTML text more visibily
+    accurate to pure text. In addition it now injects bold, italic and underline
+    text styles whereever it finds the appropriate tags for it. So hopefully the
+    new rules will give us some more nicer output while not breaking weird
+    layout HTML mails. The common rule still applies: We can't convert ALL
+    HTML to properly formatted ASCII text.
+
 2011-02-08 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest changes.

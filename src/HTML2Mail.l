@@ -38,6 +38,8 @@
 %option prefix="h2m_"
 %option nodefault
 %option warn
+%option pointer
+%option stack
 
 %{
     #include <string.h>
@@ -76,177 +78,222 @@
  */
 
 /* start conditions */
-%s tag_s tag_e comment style href pre
+%x COMMENT STYLE HREF PRE TITLE H BOLD ITALIC UNDERLINE LI
 
 /* common 'HTML' tag rules */
 NOT_GT        [^>]*
 TAGEND        ("/"?">"|" "{NOT_GT}"/"?">")
 TAGSTART      (">"|" "{NOT_GT}">")
 
-BOLD          "<""/"?("b"|"strong"){NOT_GT}">"
-ITALIC        "<""/"?("i"|"em"){NOT_GT}">"
-UNDERLINE     "<""/"?"u"{NOT_GT}">"
-
 ASCII_CHAR    "&#"[[:digit:]]{1,3}";"
 UNKNOWN       "<"{NOT_GT}">"
 UNKNOWN_CHAR  "&""#"?[[:alnum:]]+";"
 
+anything      .|[\n\t\r]
+
 %%
 
-"<"                         BEGIN(tag_s);
-<tag_s>"!--"                { BEGIN(comment); D(DBF_HTML, "<!--:     '%s'", yytext); }
-<tag_s>"style"{TAGSTART}    { BEGIN(style);   D(DBF_HTML, "<style>:  '%s'", yytext); }
-<tag_s>"pre"{TAGSTART}      { BEGIN(pre); }
-<tag_s>"br"{TAGEND}         { BEGIN(INITIAL); return ht_BR;         }
-<tag_s>"div"{TAGEND}        { BEGIN(INITIAL); return ht_DIV;        }
-<tag_s>"hr"{TAGEND}         { BEGIN(INITIAL); return ht_HR;         }
-<tag_s>"/"?"p"{TAGEND}      { BEGIN(INITIAL); return ht_PARAGRAPH;  }
-<tag_s>"/h"[[:digit:]]">"   { BEGIN(INITIAL); return ht_HEAD;       }
-<tag_s>"a "{NOT_GT}"href="  { BEGIN(href);    D(DBF_HTML, "<a href=: '%s'", yytext); }
-<tag_s>"/a>"                { BEGIN(INITIAL); return ht_HREF_END;   }
-<tag_s>"/dd>"               { BEGIN(INITIAL); return ht_DD;         }
-<tag_s>"/dl>"               { BEGIN(INITIAL); return ht_DL;         }
-<tag_s>"/dt>"               { BEGIN(INITIAL); return ht_DT;         }
-<tag_s>"/ul>"               { BEGIN(INITIAL); return ht_UL;         }
-<tag_s>"/li>"               { BEGIN(INITIAL); return ht_LI;         }
-<tag_s>">"                  BEGIN(INITIAL);
-<tag_s,tag_e>">"            BEGIN(INITIAL);
-<tag_s>.|\n                 BEGIN(tag_e);
-<tag_e>.|\n                 /* eat up everything else */
+"<!--"  { yy_push_state(COMMENT); D(DBF_HTML, "<!--"); }
+<COMMENT>{
+  "-->"       { yy_pop_state(); D(DBF_HTML, "-->"); }
+  {anything}  { /*D(DBF_HTML, "[comment]: '%s'", yytext);*/ /* do nothing */ }
+}
 
-<comment>"-->"              { BEGIN(INITIAL); D(DBF_HTML, "--> :     '%s'", yytext); }
-<comment>.|\n               /* eat up everything else */
+"<style"{TAGSTART} { yy_push_state(STYLE); D(DBF_HTML, "<style>"); }
+<STYLE>{
+  "</style>"  { yy_pop_state(); D(DBF_HTML, "</style>"); }
+  {anything}  { /*D(DBF_HTML, "[style]: '%s'", yytext);*/ /* do nothing */ }
+}
 
-<style>"</style>"           { BEGIN(INITIAL); D(DBF_HTML, "</style>: '%s'", yytext); }
-<style>.|\n                 /* eat up everything else */
+"<pre"{TAGSTART}   { yy_push_state(PRE); D(DBF_HTML, "<pre>"); }
+<PRE>{
+  "</pre>"    { yy_pop_state(); D(DBF_HTML, "</pre>"); return ht_PRE; }
+  {anything}  { return ht_NORMALTEXT; }
+}
 
-<href>"\""                  /* eat up quotes */
-<href>[^ >"]+               { BEGIN(tag_e); return ht_HREF; }
-<href>.|\n                  BEGIN(tag_e);
+"<a "{NOT_GT}"href="  { yy_push_state(HREF); D(DBF_HTML, "<a href=: '%s'", yytext); }
+<HREF>{
+  "\""        /* eat up quotes */
+  [^ >"]+     { yy_pop_state(); return ht_HREF; }
+  {anything}  { yy_pop_state(); }
+}
 
-"&sp;"          { return ht_SP;           }
-"&excl;"        { return ht_EXCL;         }
-"&quot;"        { return ht_QUOT;         }
-"&num;"         { return ht_NUM;          }
-"&dollar;"      { return ht_DOLLAR;       }
-"&percnt;"      { return ht_PERCNT;       }
-"&amp;"         { return ht_AMP;          }
-"&apos;"        { return ht_APOS;         }
-"&lpar;"        { return ht_LPAR;         }
-"&rpar;"        { return ht_RPAR;         }
-"&ast;"         { return ht_AST;          }
-"&plus;"        { return ht_PLUS;         }
-"&comma;"       { return ht_COMMA;        }
-"&minus;"       |
-"&ndash;"       |
-"&mdash;"       |
-"&hyphen;"      { return ht_HYPHEN;       }
-"&period;"      { return ht_PERIOD;       }
-"&sol;"         { return ht_SOL;          }
-"&colon;"       { return ht_COLON;        }
-"&semi;"        { return ht_SEMI;         }
-"&lt;"          { return ht_LT;           }
-"&equals;"      { return ht_EQUALS;       }
-"&gt;"          { return ht_GT;           }
-"&quest;"       { return ht_QUEST;        }
-"&commat;"      { return ht_COMMAT;       }
-"&lsgb;"        { return ht_LSGB;         }
-"&bsol;"        { return ht_BSOL;         }
-"&rsgb;"        { return ht_RSGB;         }
-"&circ;"        { return ht_CIRC;         }
-"&horbar;"      |
-"&lowbar;"      { return ht_LOWBAR;       }
-"&grave;"       { return ht_GRAVE;        }
-"&lcub;"        { return ht_LCUB;         }
-"&verbar;"      { return ht_VERBAR;       }
-"&rcub;"        { return ht_RCUB;         }
-"&tilde;"       { return ht_TILDE;        }
+"<title"{TAGSTART} { yy_push_state(TITLE); D(DBF_HTML, "<title>"); return ht_TITLE; }
+<TITLE>{
+  "</title>"    { yy_pop_state(); D(DBF_HTML, "</title"); return ht_TITLE_END; }
+  [\n\r]        /* do nothing */
+  .             { return ht_NORMALTEXT; }
+}
 
-"&nbsp;"        { return ht_NBSP;         }
-"&iexcl;"       { return ht_IEXCL;        }
-"&cent;"        { return ht_CENT;         }
-"&pound;"       { return ht_POUND;        }
-"&euro;"        |
-"&curren;"      { return ht_CURREN;       }
-"&yen;"         { return ht_YEN;          }
-"&brvbar;"      |
-"&brkbar;"      { return ht_BRKBAR;       }
-"&sect;"        { return ht_SECT;         }
-"&uml;"         |
-"&die;"         { return ht_UML;          }
-"&copy;"        { return ht_COPY;         }
-"&ordf;"        { return ht_ORDF;         }
-"&laquo;"       { return ht_LAQUO;        }
-"&not;"         { return ht_NOT;          }
-"&shy;"         { return ht_SHY;          }
-"&reg;"         { return ht_REG;          }
-"&macr;"        { return ht_MACR;         }
-"&deg;"         { return ht_DEG;          }
-"&plusmn;"      { return ht_PLUSMN;       }
-"&sup2;"        { return ht_SUP2;         }
-"&sup3;"        { return ht_SUP3;         }
-"&acute;"       { return ht_ACUTE;        }
-"&micro;"       { return ht_MICRO;        }
-"&para;"        { return ht_PARA;         }
-"&middot;"      { return ht_MIDDOT;       }
-"&cedil;"       { return ht_CEDIL;        }
-"&sup1;"        { return ht_SUP1;         }
-"&ordm;"        { return ht_ORDM;         }
-"&raquo;"       { return ht_RAQUO;        }
-"&frac14;"      { return ht_FRAC14;       }
-"&half;"        |
-"&frac12;"      { return ht_FRAC12;       }
-"&frac34;"      { return ht_FRAC34;       }
-"&iquest;"      { return ht_IQUEST;       }
+"<h"[[:digit:]]{TAGSTART} { yy_push_state(H); D(DBF_HTML, "<hX>"); return ht_HIGHLIGHT; }
+<H>{
+  "</h"[[:digit:]]{TAGEND} { yy_pop_state(); D(DBF_HTML, "</hX>"); return ht_HIGHLIGHT_END; }
+  [\n\r]        /* do nothing */
+  .             { return ht_NORMALTEXT; }
+}
 
-"&agrave;"      { return ht_AGRAVE;       }
-"&aacute;"      { return ht_AACUTE;       }
-"&acirc;"       { return ht_ACIRC;        }
-"&atilde;"      { return ht_ATILDE;       }
-"&auml;"        { return ht_AUML;         }
-"&aring;"       { return ht_ARING;        }
-"&aeling;"      { return ht_AELING;       }
-"&ccedil;"      { return ht_CCEDIL;       }
-"&egrave;"      { return ht_EGRAVE;       }
-"&eacute;"      { return ht_EACUTE;       }
-"&ecirc;"       { return ht_ECIRC;        }
-"&euml;"        { return ht_EUML;         }
-"&igrave;"      { return ht_IGRAVE;       }
-"&iacute;"      { return ht_IACUTE;       }
-"&icirc;"       { return ht_ICIRC;        }
-"&iuml;"        { return ht_IUML;         }
-"&eth;"         { return ht_ETH;          }
-"&ntilde;"      { return ht_NTILDE;       }
-"&ograve;"      { return ht_OGRAVE;       }
-"&oacute;"      { return ht_OACUTE;       }
-"&ocirc;"       { return ht_OCIRC;        }
-"&otilde;"      { return ht_OTILDE;       }
-"&ouml;"        { return ht_OUML;         }
-"&times;"       { return ht_TIMES;        }
-"&oslash;"      { return ht_OSLASH;       }
-"&ugrave;"      { return ht_UGRAVE;       }
-"&uacute;"      { return ht_UACUTE;       }
-"&ucirc;"       { return ht_UCIRC;        }
-"&uuml;"        { return ht_UUML;         }
-"&yacute;"      { return ht_YACUTE;       }
-"&thorn;"       { return ht_THORN;        }
+<*>("<b"|"<strong"){TAGSTART} { yy_push_state(BOLD); D(DBF_HTML, "<b>"); return ht_BOLD; }
+<BOLD>{
+  "</b"{TAGEND} { yy_pop_state(); D(DBF_HTML, "</b>"); return ht_BOLD_END; }
+  [\n\r]        /* do nothing */
+  .             { return ht_NORMALTEXT; }
+}
 
-"&szlig;"       { return ht_SZLIG;        }
-"&divide;"      { return ht_DIVIDE;       }
-"&yuml;"        { return ht_YUML;         }
+<*>("<i"|"<em"){TAGSTART} { yy_push_state(ITALIC); D(DBF_HTML, "<i>"); return ht_ITALIC; }
+<ITALIC>{
+  "</i"{TAGEND} { yy_pop_state(); D(DBF_HTML, "</i>"); return ht_ITALIC_END; }
+  [\n\r]        /* do nothing */
+  .             { return ht_NORMALTEXT; }
+}
 
-"&#8482;"       |
-"&trade;"       { return ht_TRADE;        }
+<*>"<u"{TAGSTART} { yy_push_state(UNDERLINE); D(DBF_HTML, "<u>"); return ht_UNDERLINE; }
+<UNDERLINE>{
+  "</u"{TAGEND} { yy_pop_state(); D(DBF_HTML, "</u>"); return ht_UNDERLINE_END; }
+  [\n\r]        /* do nothing */
+  .             { return ht_NORMALTEXT; }
+}
 
-<pre>"</pre>"   { BEGIN(INITIAL); return ht_PRE; }
-<pre>.|\n       { return ht_NORMALTEXT; }
+"<li"{TAGSTART} { yy_push_state(LI); D(DBF_HTML, "<li>"); return ht_LI; }
+<LI>{
+  "<li"{TAGSTART} { D(DBF_HTML, "<li>"); return ht_LI_IN; }
+  "</li"{TAGEND}  { yy_pop_state(); D(DBF_HTML, "</li>"); return ht_LI_END; }
+  "</ul"{TAGEND}  { yy_pop_state(); D(DBF_HTML, "</ul>"); return ht_UL; }
+  [\n\r]        /* do nothing */
+  .             { return ht_NORMALTEXT; }
+}
 
-{ASCII_CHAR}    { return ht_ASCII_CHAR;   }
-{UNKNOWN_CHAR}  { return ht_UNKNOWN_CHAR; }
+"<br"{TAGEND}            { D(DBF_HTML, "<br>");  return ht_BR;         }
+"<div"{TAGEND}           { D(DBF_HTML, "<div>"); return ht_DIV;        }
+"<hr"{TAGEND}            { D(DBF_HTML, "<hr>");  return ht_HR;         }
+"<""/"?"p"{TAGEND}       { D(DBF_HTML, "<p>");   return ht_PARAGRAPH;  }
+"</a"{TAGEND}            { D(DBF_HTML, "</a>");  return ht_HREF_END;   }
+"</dd"{TAGEND}           { D(DBF_HTML, "</dd>"); return ht_DD;         }
+"</dl"{TAGEND}           { D(DBF_HTML, "</dl>"); return ht_DL;         }
+"</dt"{TAGEND}           { D(DBF_HTML, "</dt>"); return ht_DT;         }
+"</ul"{TAGEND}           { D(DBF_HTML, "</ul>"); return ht_UL;         }
 
+<*>"<"{NOT_GT}{TAGEND}   { D(DBF_HTML, "ignore: '%s'", yytext); /* do nothing */ }
 
-\n              { return ht_UNKNOWN;      }
-.               { return ht_NORMALTEXT;   }
+<*>"&sp;"          { return ht_SP;           }
+<*>"&excl;"        { return ht_EXCL;         }
+<*>"&quot;"        { return ht_QUOT;         }
+<*>"&num;"         { return ht_NUM;          }
+<*>"&dollar;"      { return ht_DOLLAR;       }
+<*>"&percnt;"      { return ht_PERCNT;       }
+<*>"&amp;"         { return ht_AMP;          }
+<*>"&apos;"        { return ht_APOS;         }
+<*>"&lpar;"        { return ht_LPAR;         }
+<*>"&rpar;"        { return ht_RPAR;         }
+<*>"&ast;"         { return ht_AST;          }
+<*>"&plus;"        { return ht_PLUS;         }
+<*>"&comma;"       { return ht_COMMA;        }
+<*>"&minus;"       |
+<*>"&ndash;"       |
+<*>"&mdash;"       |
+<*>"&hyphen;"      { return ht_HYPHEN;       }
+<*>"&period;"      { return ht_PERIOD;       }
+<*>"&sol;"         { return ht_SOL;          }
+<*>"&colon;"       { return ht_COLON;        }
+<*>"&semi;"        { return ht_SEMI;         }
+<*>"&lt;"          { return ht_LT;           }
+<*>"&equals;"      { return ht_EQUALS;       }
+<*>"&gt;"          { return ht_GT;           }
+<*>"&quest;"       { return ht_QUEST;        }
+<*>"&commat;"      { return ht_COMMAT;       }
+<*>"&lsgb;"        { return ht_LSGB;         }
+<*>"&bsol;"        { return ht_BSOL;         }
+<*>"&rsgb;"        { return ht_RSGB;         }
+<*>"&circ;"        { return ht_CIRC;         }
+<*>"&horbar;"      |
+<*>"&lowbar;"      { return ht_LOWBAR;       }
+<*>"&grave;"       { return ht_GRAVE;        }
+<*>"&lcub;"        { return ht_LCUB;         }
+<*>"&verbar;"      { return ht_VERBAR;       }
+<*>"&rcub;"        { return ht_RCUB;         }
+<*>"&tilde;"       { return ht_TILDE;        }
+
+<*>"&nbsp;"        { return ht_NBSP;         }
+<*>"&iexcl;"       { return ht_IEXCL;        }
+<*>"&cent;"        { return ht_CENT;         }
+<*>"&pound;"       { return ht_POUND;        }
+<*>"&euro;"        |
+<*>"&curren;"      { return ht_CURREN;       }
+<*>"&yen;"         { return ht_YEN;          }
+<*>"&brvbar;"      |
+<*>"&brkbar;"      { return ht_BRKBAR;       }
+<*>"&sect;"        { return ht_SECT;         }
+<*>"&uml;"         |
+<*>"&die;"         { return ht_UML;          }
+<*>"&copy;"        { return ht_COPY;         }
+<*>"&ordf;"        { return ht_ORDF;         }
+<*>"&laquo;"       { return ht_LAQUO;        }
+<*>"&not;"         { return ht_NOT;          }
+<*>"&shy;"         { return ht_SHY;          }
+<*>"&reg;"         { return ht_REG;          }
+<*>"&macr;"        { return ht_MACR;         }
+<*>"&deg;"         { return ht_DEG;          }
+<*>"&plusmn;"      { return ht_PLUSMN;       }
+<*>"&sup2;"        { return ht_SUP2;         }
+<*>"&sup3;"        { return ht_SUP3;         }
+<*>"&acute;"       { return ht_ACUTE;        }
+<*>"&micro;"       { return ht_MICRO;        }
+<*>"&para;"        { return ht_PARA;         }
+<*>"&middot;"      { return ht_MIDDOT;       }
+<*>"&cedil;"       { return ht_CEDIL;        }
+<*>"&sup1;"        { return ht_SUP1;         }
+<*>"&ordm;"        { return ht_ORDM;         }
+<*>"&raquo;"       { return ht_RAQUO;        }
+<*>"&frac14;"      { return ht_FRAC14;       }
+<*>"&half;"        |
+<*>"&frac12;"      { return ht_FRAC12;       }
+<*>"&frac34;"      { return ht_FRAC34;       }
+<*>"&iquest;"      { return ht_IQUEST;       }
+
+<*>"&agrave;"      { return ht_AGRAVE;       }
+<*>"&aacute;"      { return ht_AACUTE;       }
+<*>"&acirc;"       { return ht_ACIRC;        }
+<*>"&atilde;"      { return ht_ATILDE;       }
+<*>"&auml;"        { return ht_AUML;         }
+<*>"&aring;"       { return ht_ARING;        }
+<*>"&aeling;"      { return ht_AELING;       }
+<*>"&ccedil;"      { return ht_CCEDIL;       }
+<*>"&egrave;"      { return ht_EGRAVE;       }
+<*>"&eacute;"      { return ht_EACUTE;       }
+<*>"&ecirc;"       { return ht_ECIRC;        }
+<*>"&euml;"        { return ht_EUML;         }
+<*>"&igrave;"      { return ht_IGRAVE;       }
+<*>"&iacute;"      { return ht_IACUTE;       }
+<*>"&icirc;"       { return ht_ICIRC;        }
+<*>"&iuml;"        { return ht_IUML;         }
+<*>"&eth;"         { return ht_ETH;          }
+<*>"&ntilde;"      { return ht_NTILDE;       }
+<*>"&ograve;"      { return ht_OGRAVE;       }
+<*>"&oacute;"      { return ht_OACUTE;       }
+<*>"&ocirc;"       { return ht_OCIRC;        }
+<*>"&otilde;"      { return ht_OTILDE;       }
+<*>"&ouml;"        { return ht_OUML;         }
+<*>"&times;"       { return ht_TIMES;        }
+<*>"&oslash;"      { return ht_OSLASH;       }
+<*>"&ugrave;"      { return ht_UGRAVE;       }
+<*>"&uacute;"      { return ht_UACUTE;       }
+<*>"&ucirc;"       { return ht_UCIRC;        }
+<*>"&uuml;"        { return ht_UUML;         }
+<*>"&yacute;"      { return ht_YACUTE;       }
+<*>"&thorn;"       { return ht_THORN;        }
+
+<*>"&szlig;"       { return ht_SZLIG;        }
+<*>"&divide;"      { return ht_DIVIDE;       }
+<*>"&yuml;"        { return ht_YUML;         }
+
+<*>"&#8482;"       |
+<*>"&trade;"       { return ht_TRADE;        }
+
+<*>{ASCII_CHAR}    { return ht_ASCII_CHAR;   }
+<*>{UNKNOWN_CHAR}  { return ht_UNKNOWN_CHAR; }
+
+[\n\r]             /* do nothing */
+" "+               { return ht_SPACE;        }
+.                  { return ht_NORMALTEXT;   }
 
 %%
 /// html2mail()
@@ -275,6 +322,13 @@ char *html2mail(char *htmlTxt)
     {
       enum htmlTagType type;
       char *lastHref = NULL;
+      BOOL bold=FALSE;
+      BOOL italic=FALSE;
+      BOOL underline=FALSE;
+
+      // this statement is just to make the compiler happy that
+      // we don't use this function at all
+      yy_top_state();
 
       while((type = yylex()))
       {
@@ -286,9 +340,19 @@ char *html2mail(char *htmlTxt)
           case ht_DD:
           case ht_DL:
           case ht_UL:
-          case ht_LI:
-          case ht_HEAD:
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+          break;
+
+          case ht_LI:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "- ");
+          break;
+
+          case ht_LI_END:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+          break;
+
+          case ht_LI_IN:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n- ");
           break;
 
           case ht_DT:
@@ -304,15 +368,61 @@ char *html2mail(char *htmlTxt)
           break;
 
           case ht_BOLD:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "*");
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b");
+            bold = TRUE;
           break;
 
           case ht_ITALIC:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "/");
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i");
+            italic = TRUE;
           break;
 
           case ht_UNDERLINE:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "_");
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u");
+            underline = TRUE;
+          break;
+
+          case ht_BOLD_END:
+          {
+            bold = FALSE;
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n");
+            if(italic)
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i");
+            if(underline)
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u");
+          }
+          break;
+
+          case ht_ITALIC_END:
+          {
+            italic = FALSE;
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n");
+            if(bold)
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b");
+            if(underline)
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u");
+          }
+          break;
+
+          case ht_UNDERLINE_END:
+          {
+            underline = FALSE;
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n");
+            if(bold)
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b");
+            if(italic)
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i");
+          }
+          break;
+
+          case ht_TITLE:
+          case ht_HIGHLIGHT:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b\033i");
+          break;
+
+          case ht_TITLE_END:
+          case ht_HIGHLIGHT_END:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n\n");
           break;
 
           case ht_HREF:
@@ -334,6 +444,10 @@ char *html2mail(char *htmlTxt)
               lastHref = NULL;
             }
           }
+          break;
+
+          case ht_SPACE:
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, " ");
           break;
 
           case ht_STYLE:
