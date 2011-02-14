@@ -104,7 +104,7 @@ cp ../doc/.taglines "release/$yamsys/YAM $yamver/.taglines"
 echo "  MK YAM$yamarcver-$yamsys.lha"
 find release/$yamsys -nowarn -name ".svn" -exec rm -rf {} \; 2>/dev/null
 cd release/$yamsys/
-lha -aq ../YAM$yamarcver-$yamsys.lha *
+lha -ao5q ../YAM$yamarcver-$yamsys.lha *
 cd ../../
 
 echo "  MK $yamsys-debug"
@@ -115,5 +115,5 @@ cp YAM.$1.debug "release/YAM.debug"
 cp YAM.$1.map "release/YAM.debug.map"
 echo "  MK YAM$yamarcver-$yamsys-debug.lha"
 cd release
-lha -aq YAM$yamarcver-$yamsys-debug.lha README.debug YAM.debug YAM.debug.map
+lha -ao5q YAM$yamarcver-$yamsys-debug.lha README.debug YAM.debug YAM.debug.map
 cd ../
