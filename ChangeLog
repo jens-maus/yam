@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-14 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: enhanced the "content-disposition" workaround for iPhone-alike
+    HTML mai clients to also show 'inline' images as real attachments in case
+    they are embedded in 'multipart/alternative' MIME parts.
+
 2011-02-12 Jens Langner <Jens.Langner@light-speed.de>
 
   * HTML2Mail.l: large rework of the HTML to text conversion functionality. Now
