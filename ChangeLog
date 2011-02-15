@@ -9,7 +9,9 @@ $URL$
 
   * YAM_RE.c: fixed the recently introduced off-by-1 string check. Note: the
     word "attachment" consists of ten characters only ;)
-    
+  * misc: replaced all dynamically created image strings for NList.mcc by string
+    constants. This should speed up display of large mail lists significantly.
+
 2011-02-14 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c: enhanced the "content-disposition" workaround for iPhone-alike

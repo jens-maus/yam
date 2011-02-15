@@ -89,11 +89,11 @@ OVERLOAD(OM_NEW)
     GETDATA;
 
     // prepare the group image
-    data->downloadImage = MakeImageAltObject("status_download", G->theme.statusImages[si_Download], tr(MSG_ALTIMAGE_STATUS_DOWNLOAD));
-    data->deleteImage   = MakeImageAltObject("status_delete", G->theme.statusImages[si_Delete], tr(MSG_ALTIMAGE_STATUS_DELETE));
+    data->downloadImage = MakeImageAltObject("status_download", G->theme.statusImages[SI_DOWNLOAD], tr(MSG_ALTIMAGE_STATUS_DOWNLOAD));
+    data->deleteImage   = MakeImageAltObject("status_delete", G->theme.statusImages[SI_DELETE], tr(MSG_ALTIMAGE_STATUS_DELETE));
 
-    DoMethod(obj, MUIM_NList_UseImage, data->downloadImage, si_Download, MUIF_NONE);
-    DoMethod(obj, MUIM_NList_UseImage, data->deleteImage, si_Delete, MUIF_NONE);
+    DoMethod(obj, MUIM_NList_UseImage, data->downloadImage, SI_DOWNLOAD, MUIF_NONE);
+    DoMethod(obj, MUIM_NList_UseImage, data->deleteImage, SI_DELETE, MUIF_NONE);
   }
 
   RETURN((IPTR)obj);
@@ -108,14 +108,14 @@ OVERLOAD(OM_DISPOSE)
 
   if(data->downloadImage != NULL)
   {
-    DoMethod(obj, MUIM_NList_UseImage, NULL, si_Download, MUIF_NONE);
+    DoMethod(obj, MUIM_NList_UseImage, NULL, SI_DOWNLOAD, MUIF_NONE);
     MUI_DisposeObject(data->downloadImage);
     data->downloadImage = NULL;
   }
 
   if(data->deleteImage != NULL)
   {
-    DoMethod(obj, MUIM_NList_UseImage, NULL, si_Delete, MUIF_NONE);
+    DoMethod(obj, MUIM_NList_UseImage, NULL, SI_DELETE, MUIF_NONE);
     MUI_DisposeObject(data->deleteImage);
     data->deleteImage = NULL;
   }
@@ -145,9 +145,9 @@ OVERLOAD(MUIM_NList_Display)
     // status icon display
     data->statusBuffer[0] = '\0';
     if(isFlagSet(entry->tflags, TRF_TRANSFER))
-      strlcat(data->statusBuffer, SI_STR(si_Download), sizeof(data->statusBuffer));
+      strlcat(data->statusBuffer, SI_STR(SI_DOWNLOAD), sizeof(data->statusBuffer));
     if(isFlagSet(entry->tflags, TRF_DELETE))
-      strlcat(data->statusBuffer, SI_STR(si_Delete), sizeof(data->statusBuffer));
+      strlcat(data->statusBuffer, SI_STR(SI_DELETE), sizeof(data->statusBuffer));
     ndm->strings[1] = data->statusBuffer;
 
     // size display

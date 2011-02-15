@@ -1438,7 +1438,7 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO00",
 
-          ConfigPageHeaderObject("config_firststep_big", G->theme.configImages[ci_FirstStepBig], tr(MSG_CO_FIRSTSTEPS_TITLE), tr(MSG_CO_FIRSTSTEPS_SUMMARY)),
+          ConfigPageHeaderObject("config_firststep_big", G->theme.configImages[CI_FIRSTSTEPBIG], tr(MSG_CO_FIRSTSTEPS_TITLE), tr(MSG_CO_FIRSTSTEPS_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -1529,7 +1529,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO01",
 
-          ConfigPageHeaderObject("config_network_big", G->theme.configImages[ci_NetworkBig], tr(MSG_CO_TCPIP_TITLE), tr(MSG_CO_TCPIP_SUMMARY)),
+          ConfigPageHeaderObject("config_network_big", G->theme.configImages[CI_NETWORKBIG], tr(MSG_CO_TCPIP_TITLE), tr(MSG_CO_TCPIP_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -1790,7 +1790,7 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO02",
 
-          ConfigPageHeaderObject("config_newmail_big", G->theme.configImages[ci_NewMailBig], tr(MSG_CO_NEWMAIL_TITLE), tr(MSG_CO_NEWMAIL_SUMMARY)),
+          ConfigPageHeaderObject("config_newmail_big", G->theme.configImages[CI_NEWMAILBIG], tr(MSG_CO_NEWMAIL_TITLE), tr(MSG_CO_NEWMAIL_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -1922,7 +1922,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
    if((grp = VGroup,
          MUIA_HelpNode, "CO03",
 
-         ConfigPageHeaderObject("config_filters_big", G->theme.configImages[ci_FiltersBig], tr(MSG_CO_FILTER_TITLE), tr(MSG_CO_FILTER_SUMMARY)),
+         ConfigPageHeaderObject("config_filters_big", G->theme.configImages[CI_FILTERSBIG], tr(MSG_CO_FILTER_TITLE), tr(MSG_CO_FILTER_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -2141,7 +2141,7 @@ Object *CO_PageSpam(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO17",
 
-          ConfigPageHeaderObject("config_spam_big", G->theme.configImages[ci_SpamBig], tr(MSG_CO_SPAMFILTER_TITLE), tr(MSG_CO_SPAMFILTER_SUMMARY)),
+          ConfigPageHeaderObject("config_spam_big", G->theme.configImages[CI_SPAMBIG], tr(MSG_CO_SPAMFILTER_TITLE), tr(MSG_CO_SPAMFILTER_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -2277,7 +2277,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO04",
 
-          ConfigPageHeaderObject("config_read_big", G->theme.configImages[ci_ReadBig], tr(MSG_CO_READ_TITLE), tr(MSG_CO_READ_SUMMARY)),
+          ConfigPageHeaderObject("config_read_big", G->theme.configImages[CI_READBIG], tr(MSG_CO_READ_TITLE), tr(MSG_CO_READ_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -2505,7 +2505,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO05",
 
-          ConfigPageHeaderObject("config_write_big", G->theme.configImages[ci_WriteBig], tr(MSG_CO_WRITE_TITLE), tr(MSG_CO_WRITE_SUMMARY)),
+          ConfigPageHeaderObject("config_write_big", G->theme.configImages[CI_WRITEBIG], tr(MSG_CO_WRITE_TITLE), tr(MSG_CO_WRITE_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -2644,7 +2644,7 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO06",
 
-          ConfigPageHeaderObject("config_answer_big", G->theme.configImages[ci_AnswerBig], tr(MSG_CO_REPLY_TITLE), tr(MSG_CO_REPLY_SUMMARY)),
+          ConfigPageHeaderObject("config_answer_big", G->theme.configImages[CI_ANSWERBIG], tr(MSG_CO_REPLY_TITLE), tr(MSG_CO_REPLY_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -2738,7 +2738,7 @@ Object *CO_PageSignature(struct CO_ClassData *data)
    if ((grp = VGroup,
          MUIA_HelpNode, "CO07",
 
-         ConfigPageHeaderObject("config_signature_big", G->theme.configImages[ci_SignatureBig], tr(MSG_CO_SIGNATURE_TITLE), tr(MSG_CO_SIGNATURE_SUMMARY)),
+         ConfigPageHeaderObject("config_signature_big", G->theme.configImages[CI_SIGNATUREBIG], tr(MSG_CO_SIGNATURE_TITLE), tr(MSG_CO_SIGNATURE_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -2826,7 +2826,7 @@ Object *CO_PageLists(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO08",
 
-          ConfigPageHeaderObject("config_lists_big", G->theme.configImages[ci_ListsBig], tr(MSG_CO_LISTS_TITLE), tr(MSG_CO_LISTS_SUMMARY)),
+          ConfigPageHeaderObject("config_lists_big", G->theme.configImages[CI_LISTSBIG], tr(MSG_CO_LISTS_TITLE), tr(MSG_CO_LISTS_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -2952,7 +2952,7 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO09",
 
-          ConfigPageHeaderObject("config_security_big", G->theme.configImages[ci_SecurityBig], tr(MSG_CO_SECURITY_TITLE), tr(MSG_CO_SECURITY_SUMMARY)),
+          ConfigPageHeaderObject("config_security_big", G->theme.configImages[CI_SECURITYBIG], tr(MSG_CO_SECURITY_TITLE), tr(MSG_CO_SECURITY_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -3051,7 +3051,7 @@ Object *CO_PageStartupQuit(struct CO_ClassData *data)
    if ((grp = VGroup,
          MUIA_HelpNode, "CO10",
 
-         ConfigPageHeaderObject("config_start_big", G->theme.configImages[ci_StartBig], tr(MSG_CO_STARTUP_TITLE), tr(MSG_CO_STARTUP_SUMMARY)),
+         ConfigPageHeaderObject("config_start_big", G->theme.configImages[CI_STARTBIG], tr(MSG_CO_STARTUP_TITLE), tr(MSG_CO_STARTUP_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -3103,7 +3103,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO11",
 
-          ConfigPageHeaderObject("config_mime_big", G->theme.configImages[ci_MIMEBig], tr(MSG_CO_MIME_TITLE), tr(MSG_CO_MIME_SUMMARY)),
+          ConfigPageHeaderObject("config_mime_big", G->theme.configImages[CI_MIMEBIG], tr(MSG_CO_MIME_TITLE), tr(MSG_CO_MIME_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -3227,7 +3227,7 @@ Object *CO_PageAddressBook(struct CO_ClassData *data)
    if ((grp = VGroup,
          MUIA_HelpNode, "CO12",
 
-         ConfigPageHeaderObject("config_abook_big", G->theme.configImages[ci_ABookBig], tr(MSG_CO_ABOOK_TITLE), tr(MSG_CO_ABOOK_SUMMARY)),
+         ConfigPageHeaderObject("config_abook_big", G->theme.configImages[CI_ABOOKBIG], tr(MSG_CO_ABOOK_TITLE), tr(MSG_CO_ABOOK_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -3310,7 +3310,7 @@ Object *CO_PageScripts(struct CO_ClassData *data)
    if ((grp = VGroup,
          MUIA_HelpNode, "CO13",
 
-         ConfigPageHeaderObject("config_scripts_big", G->theme.configImages[ci_ScriptsBig], tr(MSG_CO_SCRIPTS_TITLE), tr(MSG_CO_SCRIPTS_SUMMARY)),
+         ConfigPageHeaderObject("config_scripts_big", G->theme.configImages[CI_SCRIPTSBIG], tr(MSG_CO_SCRIPTS_TITLE), tr(MSG_CO_SCRIPTS_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -3396,7 +3396,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO14",
 
-          ConfigPageHeaderObject("config_misc_big", G->theme.configImages[ci_MiscBig], tr(MSG_CO_MIXED_TITLE), tr(MSG_CO_MIXED_SUMMARY)),
+          ConfigPageHeaderObject("config_misc_big", G->theme.configImages[CI_MISCBIG], tr(MSG_CO_MIXED_TITLE), tr(MSG_CO_MIXED_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -3584,7 +3584,7 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO15",
 
-          ConfigPageHeaderObject("config_lookfeel_big", G->theme.configImages[ci_LookFeelBig], tr(MSG_CO_LOOKFEEL_TITLE), tr(MSG_CO_LOOKFEEL_SUMMARY)),
+          ConfigPageHeaderObject("config_lookfeel_big", G->theme.configImages[CI_LOOKFEELBIG], tr(MSG_CO_LOOKFEEL_TITLE), tr(MSG_CO_LOOKFEEL_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -3652,7 +3652,7 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
   obj = VGroup,
           MUIA_HelpNode, "CO16",
 
-          ConfigPageHeaderObject("config_update_big", G->theme.configImages[ci_UpdateBig], tr(MSG_CO_UPDATE_TITLE), tr(MSG_CO_UPDATE_SUMMARY)),
+          ConfigPageHeaderObject("config_update_big", G->theme.configImages[CI_UPDATEBIG], tr(MSG_CO_UPDATE_TITLE), tr(MSG_CO_UPDATE_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,

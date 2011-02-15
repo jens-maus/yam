@@ -55,7 +55,7 @@ void InitDockyIcon(void)
   G->applicationID = 0;
   // reset the docky icon id to some sensible default
   // upon restart this makes sure that the docky icon is set to the correct state
-  G->LastIconID = ii_Max;
+  G->LastIconID = II_MAX;
 
   if(ApplicationBase != NULL)
   {
@@ -91,7 +91,7 @@ void InitDockyIcon(void)
       D(DBF_STARTUP, "registering with program Docky icon");
       aii.iconType = APPICONT_ProgramIcon;
     }
-    else if(G->currentAppIcon != ii_Max && G->theme.icons[G->currentAppIcon] != NULL)
+    else if(G->currentAppIcon != II_MAX && G->theme.icons[G->currentAppIcon] != NULL)
     {
       D(DBF_STARTUP, "registering with custom Docky icon %ld %08lx", G->currentAppIcon, G->theme.icons[G->currentAppIcon]);
       aii.iconType = APPICONT_CustomIcon;
@@ -181,7 +181,7 @@ void FreeDockyIcon(void)
     UnregisterApplication(G->applicationID, NULL);
     G->applicationID = 0;
     G->AppLibPort = NULL;
-    G->LastIconID = ii_Max;
+    G->LastIconID = II_MAX;
   }
   #endif
 
@@ -212,7 +212,7 @@ void UpdateDockyIcon(void)
       D(DBF_STARTUP, "remove Docky icon");
       aii.iconType = APPICONT_None;
     }
-    else if(G->currentAppIcon == ii_Max)
+    else if(G->currentAppIcon == II_MAX)
     {
       D(DBF_STARTUP, "set program Docky icon");
       aii.iconType = APPICONT_ProgramIcon;
@@ -246,7 +246,7 @@ void UpdateDockyIcon(void)
       }
       else
       {
-        G->LastIconID = ii_Max;
+        G->LastIconID = II_MAX;
       }
     }
   }

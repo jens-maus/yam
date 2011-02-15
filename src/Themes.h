@@ -33,230 +33,210 @@
 // forward declarations
 struct DiskObject;
 
-enum ConfigImages
-{
-  ci_First = 0,
-  ci_ABook = 0,
-  ci_ABookBig,
-  ci_Answer,
-  ci_AnswerBig,
-  ci_Filters,
-  ci_FiltersBig,
-  ci_FirstStep,
-  ci_FirstStepBig,
-  ci_Lists,
-  ci_ListsBig,
-  ci_LookFeel,
-  ci_LookFeelBig,
-  ci_MIME,
-  ci_MIMEBig,
-  ci_Misc,
-  ci_MiscBig,
-  ci_Network,
-  ci_NetworkBig,
-  ci_NewMail,
-  ci_NewMailBig,
-  ci_Read,
-  ci_ReadBig,
-  ci_Scripts,
-  ci_ScriptsBig,
-  ci_Security,
-  ci_SecurityBig,
-  ci_Signature,
-  ci_SignatureBig,
-  ci_Spam,
-  ci_SpamBig,
-  ci_Start,
-  ci_StartBig,
-  ci_Update,
-  ci_UpdateBig,
-  ci_Write,
-  ci_WriteBig,
-  ci_Max
-};
+// images in the configuration window
+#define CI_FIRST              0
+#define CI_ABOOK              0
+#define CI_ABOOKBIG           1
+#define CI_ANSWER             2
+#define CI_ANSWERBIG          3
+#define CI_FILTERS            4
+#define CI_FILTERSBIG         5
+#define CI_FIRSTSTEP          6
+#define CI_FIRSTSTEPBIG       7
+#define CI_LISTS              8
+#define CI_LISTSBIG           9
+#define CI_LOOKFEEL          10
+#define CI_LOOKFEELBIG       11
+#define CI_MIME              12
+#define CI_MIMEBIG           13
+#define CI_MISC              14
+#define CI_MISCBIG           15
+#define CI_NETWORK           16
+#define CI_NETWORKBIG        17
+#define CI_NEWMAIL           18
+#define CI_NEWMAILBIG        19
+#define CI_READ              20
+#define CI_READBIG           21
+#define CI_SCRIPTS           22
+#define CI_SCRIPTSBIG        23
+#define CI_SECURITY          24
+#define CI_SECURITYBIG       25
+#define CI_SIGNATURE         26
+#define CI_SIGNATUREBIG      27
+#define CI_SPAM              28
+#define CI_SPAMBIG           29
+#define CI_START             30
+#define CI_STARTBIG          31
+#define CI_UPDATE            32
+#define CI_UPDATEBIG         33
+#define CI_WRITE             34
+#define CI_WRITEBIG          35
+#define CI_MAX               36
 
-enum FolderImages
-{
-  fi_First = 0,
-  fi_Fold = 0,
-  fi_Unfold,
-  fi_Incoming,
-  fi_IncomingNew,
-  fi_Outgoing,
-  fi_OutgoingNew,
-  fi_Sent,
-  fi_Spam,
-  fi_SpamNew,
-  fi_Trash,
-  fi_TrashNew,
-  fi_Max
-};
+// images in the folder list
+#define FI_FIRST              0
+#define FI_FOLD               0
+#define FI_UNFOLD             1
+#define FI_INCOMING           2
+#define FI_INCOMINGNEW        3
+#define FI_OUTGOING           4
+#define FI_OUTGOINGNEW        5
+#define FI_SENT               6
+#define FI_SPAM               7
+#define FI_SPAMNEW            8
+#define FI_TRASH              9
+#define FI_TRASHNEW          10
+#define FI_MAX               11
 
-enum IconImages
-{
-  ii_First = 0,
-  ii_Check = 0,
-  ii_Empty,
-  ii_New,
-  ii_Old,
-  ii_Max
-};
+// the AppIcon images
+#define II_FIRST              0
+#define II_CHECK              0
+#define II_EMPTY              1
+#define II_NEW                2
+#define II_OLD                3
+#define II_MAX                4
 
-enum StatusImages
-{
-  si_First = 0,
-  si_Attach = 0,
-  si_Crypt,
-  si_Delete,
-  si_Download,
-  si_Error,
-  si_Forward,
-  si_Group,
-  si_Hold,
-  si_Mark,
-  si_New,
-  si_Old,
-  si_Reply,
-  si_Report,
-  si_Sent,
-  si_Signed,
-  si_Spam,
-  si_Unread,
-  si_Urgent,
-  si_WaitSend,
-  si_Max
-};
+// status images in the mail list
+#define SI_FIRST              0
+#define SI_ATTACH             0
+#define SI_CRYPT              1
+#define SI_DELETE             2
+#define SI_DOWNLOAD           3
+#define SI_ERROR              4
+#define SI_FORWARD            5
+#define SI_GROUP              6
+#define SI_HOLD               7
+#define SI_MARK               8
+#define SI_NEW                9
+#define SI_OLD               10
+#define SI_REPLY             11
+#define SI_REPORT            12
+#define SI_SENT              13
+#define SI_SIGNED            14
+#define SI_SPAM              15
+#define SI_UNREAD            16
+#define SI_URGENT            17
+#define SI_WAITSEND          18
+#define SI_MAX               19
 
-enum ToolbarImageModes
-{
-  tbim_Normal = 0,
-  tbim_Selected,
-  tbim_Ghosted,
-  tbim_Max
-};
+// the different images for a button in the toolbars
+#define TBIM_FIRST            0
+#define TBIM_NORMAL           0
+#define TBIM_SELECTED         1
+#define TBIM_GHOSTED          2
+#define TBIM_MAX              3
 
-enum ToolbarImages
-{
-  tbi_First = 0,
-  tbi_Read = 0,
-  tbi_Edit,
-  tbi_Move,
-  tbi_Delete,
-  tbi_GetAddr,
-  tbi_NewMail,
-  tbi_Reply,
-  tbi_Forward,
-  tbi_GetMail,
-  tbi_SendAll,
-  tbi_Spam,
-  tbi_Ham,
-  tbi_Filter,
-  tbi_Find,
-  tbi_AddrBook,
-  tbi_Config,
-  tbi_Prev,
-  tbi_Next,
-  tbi_PrevThread,
-  tbi_NextThread,
-  tbi_Display,
-  tbi_Save,
-  tbi_Print,
-  tbi_Editor,
-  tbi_Insert,
-  tbi_Cut,
-  tbi_Copy,
-  tbi_Paste,
-  tbi_Undo,
-  tbi_Bold,
-  tbi_Italic,
-  tbi_Underline,
-  tbi_Colored,
-  tbi_NewUser,
-  tbi_NewList,
-  tbi_NewGroup,
-  tbi_OpenTree,
-  tbi_CloseTree,
-  tbi_Max
+// all the toolbar images
+#define TBI_FIRST             0
+#define TBI_READ              0
+#define TBI_EDIT              1
+#define TBI_MOVE              2
+#define TBI_DELETE            3
+#define TBI_GETADDR           4
+#define TBI_NEWMAIL           5
+#define TBI_REPLY             6
+#define TBI_FORWARD           7
+#define TBI_GETMAIL           8
+#define TBI_SENDALL           9
+#define TBI_SPAM             10
+#define TBI_HAM              11
+#define TBI_FILTER           12
+#define TBI_FIND             13
+#define TBI_ADDRBOOK         14
+#define TBI_CONFIG           15
+#define TBI_PREV             16
+#define TBI_NEXT             17
+#define TBI_PREVTHREAD       18
+#define TBI_NEXTTHREAD       19
+#define TBI_DISPLAY          20
+#define TBI_SAVE             21
+#define TBI_PRINT            22
+#define TBI_EDITOR           23
+#define TBI_INSERT           24
+#define TBI_CUT              25
+#define TBI_COPY             26
+#define TBI_PASTE            27
+#define TBI_UNDO             28
+#define TBI_BOLD             29
+#define TBI_ITALIC           30
+#define TBI_UNDERLINE        31
+#define TBI_COLORED          32
+#define TBI_NEWUSER          33
+#define TBI_NEWLIST          34
+#define TBI_NEWGROUP         35
+#define TBI_OPENTREE         36
+#define TBI_CLOSETREE        37
+#define TBI_MAX              38
 
-};
+// the main window's toolbar images
+#define MWTBI_FIRST            0
+#define MWTBI_READ             0
+#define MWTBI_EDIT             1
+#define MWTBI_MOVE             2
+#define MWTBI_DELETE           3
+#define MWTBI_GETADDR          4
+#define MWTBI_NEWMAIL          5
+#define MWTBI_REPLY            6
+#define MWTBI_FORWARD          7
+#define MWTBI_GETMAIL          8
+#define MWTBI_SENDALL          9
+#define MWTBI_SPAM            10
+#define MWTBI_HAM             11
+#define MWTBI_FILTER          12
+#define MWTBI_FIND            13
+#define MWTBI_ADDRBOOK        14
+#define MWTBI_CONFIG          15
+#define MWTBI_NULL            16
+#define MWTBI_MAX             17
 
-enum MainWindowToolbarImages
-{
-  mwtbi_First = 0,
-  mwtbi_Read = 0,
-  mwtbi_Edit,
-  mwtbi_Move,
-  mwtbi_Delete,
-  mwtbi_GetAddr,
-  mwtbi_NewMail,
-  mwtbi_Reply,
-  mwtbi_Forward,
-  mwtbi_GetMail,
-  mwtbi_SendAll,
-  mwtbi_Spam,
-  mwtbi_Ham,
-  mwtbi_Filter,
-  mwtbi_Find,
-  mwtbi_AddrBook,
-  mwtbi_Config,
-  mwtbi_Null,
-  mwtbi_Max
-};
+// the read window's toolbar images
+#define RWTBI_FIRST            0
+#define RWTBI_PREV             0
+#define RWTBI_NEXT             1
+#define RWTBI_PREVTHREAD       2
+#define RWTBI_NEXTTHREAD       3
+#define RWTBI_DISPLAY          4
+#define RWTBI_SAVE             5
+#define RWTBI_PRINT            6
+#define RWTBI_DELETE           7
+#define RWTBI_MOVE             8
+#define RWTBI_REPLY            9
+#define RWTBI_FORWARD         10
+#define RWTBI_SPAM            11
+#define RWTBI_HAM             12
+#define RWTBI_NULL            13
+#define RWTBI_MAX             14
 
-enum ReadWindowToolbarImages
-{
-  rwtbi_First = 0,
-  rwtbi_Prev = 0,
-  rwtbi_Next,
-  rwtbi_PrevThread,
-  rwtbi_NextThread,
-  rwtbi_Display,
-  rwtbi_Save,
-  rwtbi_Print,
-  rwtbi_Delete,
-  rwtbi_Move,
-  rwtbi_Reply,
-  rwtbi_Forward,
-  rwtbi_Spam,
-  rwtbi_Ham,
-  rwtbi_Null,
-  rwtbi_Max
-};
+// the write window's toolbar images
+#define WWTBI_FIRST            0
+#define WWTBI_EDITOR           0
+#define WWTBI_INSERT           1
+#define WWTBI_CUT              2
+#define WWTBI_COPY             3
+#define WWTBI_PASTE            4
+#define WWTBI_UNDO             5
+#define WWTBI_BOLD             6
+#define WWTBI_ITALIC           7
+#define WWTBI_UNDERLINE        8
+#define WWTBI_COLORED          9
+#define WWTBI_SEARCH          10
+#define WWTBI_NULL            11
+#define WWTBI_MAX             12
 
-enum WriteWindowToolbarImages
-{
-  wwtbi_First = 0,
-  wwtbi_Editor= 0,
-  wwtbi_Insert,
-  wwtbi_Cut,
-  wwtbi_Copy,
-  wwtbi_Paste,
-  wwtbi_Undo,
-  wwtbi_Bold,
-  wwtbi_Italic,
-  wwtbi_Underline,
-  wwtbi_Colored,
-  wwtbi_Search,
-  wwtbi_Null,
-  wwtbi_Max
-};
-
-enum ABookWindowToolbarImages
-{
-  awtbi_First = 0,
-  awtbi_Save = 0,
-  awtbi_Find,
-  awtbi_NewUser,
-  awtbi_NewList,
-  awtbi_NewGroup,
-  awtbi_Edit,
-  awtbi_Delete,
-  awtbi_Print,
-  awtbi_OpenTree,
-  awtbi_CloseTree,
-  awtbi_Null,
-  awtbi_Max
-};
+// the addressbook window's toolbar images
+#define AWTBI_FIRST            0
+#define AWTBI_SAVE             0
+#define AWTBI_FIND             1
+#define AWTBI_NEWUSER          2
+#define AWTBI_NEWLIST          3
+#define AWTBI_NEWGROUP         4
+#define AWTBI_EDIT             5
+#define AWTBI_DELETE           6
+#define AWTBI_PRINT            7
+#define AWTBI_OPENTREE         8
+#define AWTBI_CLOSETREE        9
+#define AWTBI_NULL            10
+#define AWTBI_MAX             11
 
 struct Theme
 {
@@ -264,15 +244,15 @@ struct Theme
   char *author;
   char *url;
   char *version;
-  char *configImages[ci_Max];
-  char *folderImages[fi_Max];
-  char *iconImages[ii_Max];
-  char *statusImages[si_Max];
-  char *mainWindowToolbarImages[tbim_Max][mwtbi_Max];
-  char *readWindowToolbarImages[tbim_Max][rwtbi_Max];
-  char *writeWindowToolbarImages[tbim_Max][wwtbi_Max];
-  char *abookWindowToolbarImages[tbim_Max][awtbi_Max];
-  struct DiskObject *icons[ii_Max];
+  char *configImages[CI_MAX];
+  char *folderImages[FI_MAX];
+  char *iconImages[II_MAX];
+  char *statusImages[SI_MAX];
+  char *mainWindowToolbarImages[TBIM_MAX][MWTBI_MAX];
+  char *readWindowToolbarImages[TBIM_MAX][RWTBI_MAX];
+  char *writeWindowToolbarImages[TBIM_MAX][WWTBI_MAX];
+  char *abookWindowToolbarImages[TBIM_MAX][AWTBI_MAX];
+  struct DiskObject *icons[II_MAX];
 
   char directory[SIZE_PATHFILE];
   BOOL loaded;
@@ -284,9 +264,9 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme);
 void LoadTheme(struct Theme *theme, const char *themeName);
 void UnloadTheme(struct Theme *theme);
 
-char *BuildNListString(enum StatusImages id);
 // a macro to build the necessary string to use an image in an NList object
-#define SI_STR(id)  BuildNListString(id)
+#define SI_STR(id)  SI_STR2(id)
+#define SI_STR2(id) "\033o[" #id "]"
 
 #endif /* THEMES_H */
 

@@ -62,7 +62,7 @@ BOOL InitAppIcon(void)
 
   ENTER();
 
-  G->currentAppIcon = ii_Max;
+  G->currentAppIcon = II_MAX;
   if((G->AppPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
     success = TRUE;
 
@@ -97,7 +97,7 @@ void UpdateAppIcon(void)
 {
   int activeConnections;
   static char apptit[SIZE_DEFAULT/2];
-  enum IconImages mode;
+  int mode;
   int new_msg = 0;
   int unr_msg = 0;
   int tot_msg = 0;
@@ -170,13 +170,13 @@ void UpdateAppIcon(void)
 
   // we set the mode accordingly to the status of the folder (new/check/old)
   if(activeConnections != 0)
-    mode = ii_Check;
+    mode = II_CHECK;
   else if(tot_msg == 0)
-    mode = ii_Empty;
+    mode = II_EMPTY;
   else if(unr_msg == 0)
-    mode = ii_Old;
+    mode = II_OLD;
   else
-    mode = ii_New;
+    mode = II_NEW;
 
 
   // We first have to remove the appicon before we can change it
@@ -231,7 +231,7 @@ static void SnapshotAppIcon(void)
 
   ENTER();
 
-  if(G->currentAppIcon != ii_Max && (dobj = G->theme.icons[G->currentAppIcon]) != NULL)
+  if(G->currentAppIcon != II_MAX && (dobj = G->theme.icons[G->currentAppIcon]) != NULL)
   {
     // remember the position.
     C->IconPositionX = dobj->do_CurrentX;

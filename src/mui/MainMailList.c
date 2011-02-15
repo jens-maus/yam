@@ -60,7 +60,7 @@
 struct Data
 {
   Object *context_menu;
-  Object *statusImage[si_Max];
+  Object *statusImage[SI_MAX];
   char fromBuffer[SIZE_DEFAULT];
   char replytoBuffer[SIZE_DEFAULT];
   char date1Buffer[64]; // we don't use LEN_DATSTRING as OS3.1 anyway ignores it.
@@ -260,26 +260,26 @@ OVERLOAD(OM_NEW)
     handleDoubleClick = GetTagData(ATTR(HandleDoubleClick), TRUE, inittags(msg));
 
     // prepare the mail status images
-    data->statusImage[si_Attach]   = MakeImageObject("status_attach",   G->theme.statusImages[si_Attach]);
-    data->statusImage[si_Crypt]    = MakeImageObject("status_crypt",    G->theme.statusImages[si_Crypt]);
-    data->statusImage[si_Delete]   = MakeImageObject("status_delete",   G->theme.statusImages[si_Delete]);
-    data->statusImage[si_Download] = MakeImageObject("status_download", G->theme.statusImages[si_Download]);
-    data->statusImage[si_Error]    = MakeImageObject("status_error",    G->theme.statusImages[si_Error]);
-    data->statusImage[si_Forward]  = MakeImageObject("status_forward",  G->theme.statusImages[si_Forward]);
-    data->statusImage[si_Group]    = MakeImageObject("status_group",    G->theme.statusImages[si_Group]);
-    data->statusImage[si_Hold]     = MakeImageObject("status_hold",     G->theme.statusImages[si_Hold]);
-    data->statusImage[si_Mark]     = MakeImageObject("status_mark",     G->theme.statusImages[si_Mark]);
-    data->statusImage[si_New]      = MakeImageObject("status_new",      G->theme.statusImages[si_New]);
-    data->statusImage[si_Old]      = MakeImageObject("status_old",      G->theme.statusImages[si_Old]);
-    data->statusImage[si_Reply]    = MakeImageObject("status_reply",    G->theme.statusImages[si_Reply]);
-    data->statusImage[si_Report]   = MakeImageObject("status_report",   G->theme.statusImages[si_Report]);
-    data->statusImage[si_Sent]     = MakeImageObject("status_sent",     G->theme.statusImages[si_Sent]);
-    data->statusImage[si_Signed]   = MakeImageObject("status_signed",   G->theme.statusImages[si_Signed]);
-    data->statusImage[si_Spam]     = MakeImageObject("status_spam",     G->theme.statusImages[si_Spam]);
-    data->statusImage[si_Unread]   = MakeImageObject("status_unread",   G->theme.statusImages[si_Unread]);
-    data->statusImage[si_Urgent]   = MakeImageObject("status_urgent",   G->theme.statusImages[si_Urgent]);
-    data->statusImage[si_WaitSend] = MakeImageObject("status_waitsend", G->theme.statusImages[si_WaitSend]);
-    for(i = 0; i < si_Max; i++)
+    data->statusImage[SI_ATTACH]   = MakeImageObject("status_attach",   G->theme.statusImages[SI_ATTACH]);
+    data->statusImage[SI_CRYPT]    = MakeImageObject("status_crypt",    G->theme.statusImages[SI_CRYPT]);
+    data->statusImage[SI_DELETE]   = MakeImageObject("status_delete",   G->theme.statusImages[SI_DELETE]);
+    data->statusImage[SI_DOWNLOAD] = MakeImageObject("status_download", G->theme.statusImages[SI_DOWNLOAD]);
+    data->statusImage[SI_ERROR]    = MakeImageObject("status_error",    G->theme.statusImages[SI_ERROR]);
+    data->statusImage[SI_FORWARD]  = MakeImageObject("status_forward",  G->theme.statusImages[SI_FORWARD]);
+    data->statusImage[SI_GROUP]    = MakeImageObject("status_group",    G->theme.statusImages[SI_GROUP]);
+    data->statusImage[SI_HOLD]     = MakeImageObject("status_hold",     G->theme.statusImages[SI_HOLD]);
+    data->statusImage[SI_MARK]     = MakeImageObject("status_mark",     G->theme.statusImages[SI_MARK]);
+    data->statusImage[SI_NEW]      = MakeImageObject("status_new",      G->theme.statusImages[SI_NEW]);
+    data->statusImage[SI_OLD]      = MakeImageObject("status_old",      G->theme.statusImages[SI_OLD]);
+    data->statusImage[SI_REPLY]    = MakeImageObject("status_reply",    G->theme.statusImages[SI_REPLY]);
+    data->statusImage[SI_REPORT]   = MakeImageObject("status_report",   G->theme.statusImages[SI_REPORT]);
+    data->statusImage[SI_SENT]     = MakeImageObject("status_sent",     G->theme.statusImages[SI_SENT]);
+    data->statusImage[SI_SIGNED]   = MakeImageObject("status_signed",   G->theme.statusImages[SI_SIGNED]);
+    data->statusImage[SI_SPAM]     = MakeImageObject("status_spam",     G->theme.statusImages[SI_SPAM]);
+    data->statusImage[SI_UNREAD]   = MakeImageObject("status_unread",   G->theme.statusImages[SI_UNREAD]);
+    data->statusImage[SI_URGENT]   = MakeImageObject("status_urgent",   G->theme.statusImages[SI_URGENT]);
+    data->statusImage[SI_WAITSEND] = MakeImageObject("status_waitsend", G->theme.statusImages[SI_WAITSEND]);
+    for(i = 0; i < SI_MAX; i++)
     {
       if(data->statusImage[i] != NULL)
         DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
@@ -313,7 +313,7 @@ OVERLOAD(OM_DISPOSE)
   if(data->context_menu != NULL)
     MUI_DisposeObject(data->context_menu);
 
-  for(i=0; i < si_Max; i++)
+  for(i=0; i < SI_MAX; i++)
   {
     DoMethod(obj, MUIM_NList_UseImage, NULL, i, MUIF_NONE);
     if(data->statusImage[i] != NULL)
@@ -389,28 +389,28 @@ OVERLOAD(MUIM_NList_Display)
 
         // first we check which main status this mail has
         // and put the leftmost mail icon accordingly.
-        if(hasStatusError(mail) || isPartialMail(mail)) strlcat(data->statusBuffer, SI_STR(si_Error), sizeof(data->statusBuffer));
-        else if(hasStatusQueued(mail))  strlcat(data->statusBuffer, SI_STR(si_WaitSend), sizeof(data->statusBuffer));
-        else if(hasStatusSent(mail))    strlcat(data->statusBuffer, SI_STR(si_Sent), sizeof(data->statusBuffer));
-        else if(hasStatusNew(mail))     strlcat(data->statusBuffer, SI_STR(si_New), sizeof(data->statusBuffer));
-        else if(hasStatusHold(mail))    strlcat(data->statusBuffer, SI_STR(si_Hold), sizeof(data->statusBuffer));
-        else if(hasStatusRead(mail))    strlcat(data->statusBuffer, SI_STR(si_Old), sizeof(data->statusBuffer));
-        else                            strlcat(data->statusBuffer, SI_STR(si_Unread), sizeof(data->statusBuffer));
+        if(hasStatusError(mail) || isPartialMail(mail)) strlcat(data->statusBuffer, SI_STR(SI_ERROR), sizeof(data->statusBuffer));
+        else if(hasStatusQueued(mail))  strlcat(data->statusBuffer, SI_STR(SI_WAITSEND), sizeof(data->statusBuffer));
+        else if(hasStatusSent(mail))    strlcat(data->statusBuffer, SI_STR(SI_SENT), sizeof(data->statusBuffer));
+        else if(hasStatusNew(mail))     strlcat(data->statusBuffer, SI_STR(SI_NEW), sizeof(data->statusBuffer));
+        else if(hasStatusHold(mail))    strlcat(data->statusBuffer, SI_STR(SI_HOLD), sizeof(data->statusBuffer));
+        else if(hasStatusRead(mail))    strlcat(data->statusBuffer, SI_STR(SI_OLD), sizeof(data->statusBuffer));
+        else                            strlcat(data->statusBuffer, SI_STR(SI_UNREAD), sizeof(data->statusBuffer));
 
         // then we add the 2. level if icons with the additional mail information
         // like importance, signed/crypted, report and attachment information
-        if(C->SpamFilterEnabled == TRUE && hasStatusSpam(mail)) strlcat(data->statusBuffer, SI_STR(si_Spam), sizeof(data->statusBuffer));
-        if(getImportanceLevel(mail) == IMP_HIGH)  strlcat(data->statusBuffer, SI_STR(si_Urgent), sizeof(data->statusBuffer));
-        if(isMP_CryptedMail(mail))                strlcat(data->statusBuffer, SI_STR(si_Crypt), sizeof(data->statusBuffer));
-        else if(isMP_SignedMail(mail))            strlcat(data->statusBuffer, SI_STR(si_Signed), sizeof(data->statusBuffer));
-        if(isMP_ReportMail(mail))                 strlcat(data->statusBuffer, SI_STR(si_Report), sizeof(data->statusBuffer));
-        if(isMP_MixedMail(mail))                  strlcat(data->statusBuffer, SI_STR(si_Attach), sizeof(data->statusBuffer));
+        if(C->SpamFilterEnabled == TRUE && hasStatusSpam(mail)) strlcat(data->statusBuffer, SI_STR(SI_SPAM), sizeof(data->statusBuffer));
+        if(getImportanceLevel(mail) == IMP_HIGH)  strlcat(data->statusBuffer, SI_STR(SI_URGENT), sizeof(data->statusBuffer));
+        if(isMP_CryptedMail(mail))                strlcat(data->statusBuffer, SI_STR(SI_CRYPT), sizeof(data->statusBuffer));
+        else if(isMP_SignedMail(mail))            strlcat(data->statusBuffer, SI_STR(SI_SIGNED), sizeof(data->statusBuffer));
+        if(isMP_ReportMail(mail))                 strlcat(data->statusBuffer, SI_STR(SI_REPORT), sizeof(data->statusBuffer));
+        if(isMP_MixedMail(mail))                  strlcat(data->statusBuffer, SI_STR(SI_ATTACH), sizeof(data->statusBuffer));
 
         // and as the 3rd level of icons we put information on the secondary status
         // like marked, replied, forwarded
-        if(hasStatusMarked(mail))     strlcat(data->statusBuffer, SI_STR(si_Mark), sizeof(data->statusBuffer));
-        if(hasStatusReplied(mail))    strlcat(data->statusBuffer, SI_STR(si_Reply), sizeof(data->statusBuffer));
-        if(hasStatusForwarded(mail))  strlcat(data->statusBuffer, SI_STR(si_Forward), sizeof(data->statusBuffer));
+        if(hasStatusMarked(mail))     strlcat(data->statusBuffer, SI_STR(SI_MARK), sizeof(data->statusBuffer));
+        if(hasStatusReplied(mail))    strlcat(data->statusBuffer, SI_STR(SI_REPLY), sizeof(data->statusBuffer));
+        if(hasStatusForwarded(mail))  strlcat(data->statusBuffer, SI_STR(SI_FORWARD), sizeof(data->statusBuffer));
 
         // now we generate the proper string for the mailaddress
         if(hasMColSender(C->MessageCols) || searchWinHook == TRUE)
@@ -455,7 +455,7 @@ OVERLOAD(MUIM_NList_Display)
             addr = AddrName(*pe);
 
           // lets put the string together
-          snprintf(data->fromBuffer, sizeof(data->fromBuffer), "%s%s%s%s", isMultiRCPTMail(mail) ? SI_STR(si_Group) : "",
+          snprintf(data->fromBuffer, sizeof(data->fromBuffer), "%s%s%s%s", isMultiRCPTMail(mail) ? SI_STR(SI_GROUP) : "",
                                                          toPrefix ? tr(MSG_MA_ToPrefix) : "",
                                                          addr,
                                                          isMultiSenderMail(mail) && toPrefix == FALSE ? ", ..." : "");

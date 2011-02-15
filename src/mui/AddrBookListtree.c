@@ -64,7 +64,7 @@ OVERLOAD(OM_NEW)
     GETDATA;
 
     // prepare the group image
-    data->listImage = MakeImageObject("status_group", G->theme.statusImages[si_Group]);
+    data->listImage = MakeImageObject("status_group", G->theme.statusImages[SI_GROUP]);
     DoMethod(obj, MUIM_NList_UseImage, data->listImage, 0, MUIF_NONE);
   }
 

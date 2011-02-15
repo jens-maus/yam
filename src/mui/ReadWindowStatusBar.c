@@ -52,7 +52,7 @@
 /* CLASSDATA
 struct Data
 {
-  Object *statusImage[si_Max];
+  Object *statusImage[SI_MAX];
   Object *folderImage;
   Object *folderLabel;
 
@@ -199,7 +199,7 @@ static void RemoveAllChildren(struct Data *data, Object *obj)
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  Object *statusImage[si_Max];
+  Object *statusImage[SI_MAX];
   Object *folderLabel;
   ULONG i;
   ULONG minHeight = 0;
@@ -208,26 +208,26 @@ OVERLOAD(OM_NEW)
 
   // prepare the status icons for adding it later on to our statusGroup object
   // prepare the mail status images
-  statusImage[si_Attach]   = MakeImageObject("status_attach",   G->theme.statusImages[si_Attach]);
-  statusImage[si_Crypt]    = MakeImageObject("status_crypt",    G->theme.statusImages[si_Crypt]);
-  statusImage[si_Delete]   = MakeImageObject("status_delete",   G->theme.statusImages[si_Delete]);
-  statusImage[si_Download] = MakeImageObject("status_download", G->theme.statusImages[si_Download]);
-  statusImage[si_Error]    = MakeImageObject("status_error",    G->theme.statusImages[si_Error]);
-  statusImage[si_Forward]  = MakeImageObject("status_forward",  G->theme.statusImages[si_Forward]);
-  statusImage[si_Group]    = MakeImageObject("status_group",    G->theme.statusImages[si_Group]);
-  statusImage[si_Hold]     = MakeImageObject("status_hold",     G->theme.statusImages[si_Hold]);
-  statusImage[si_Mark]     = MakeImageObject("status_mark",     G->theme.statusImages[si_Mark]);
-  statusImage[si_New]      = MakeImageObject("status_new",      G->theme.statusImages[si_New]);
-  statusImage[si_Old]      = MakeImageObject("status_old",      G->theme.statusImages[si_Old]);
-  statusImage[si_Reply]    = MakeImageObject("status_reply",    G->theme.statusImages[si_Reply]);
-  statusImage[si_Report]   = MakeImageObject("status_report",   G->theme.statusImages[si_Report]);
-  statusImage[si_Sent]     = MakeImageObject("status_sent",     G->theme.statusImages[si_Sent]);
-  statusImage[si_Signed]   = MakeImageObject("status_signed",   G->theme.statusImages[si_Signed]);
-  statusImage[si_Spam]     = MakeImageObject("status_spam",     G->theme.statusImages[si_Spam]);
-  statusImage[si_Unread]   = MakeImageObject("status_unread",   G->theme.statusImages[si_Unread]);
-  statusImage[si_Urgent]   = MakeImageObject("status_urgent",   G->theme.statusImages[si_Urgent]);
-  statusImage[si_WaitSend] = MakeImageObject("status_waitsend", G->theme.statusImages[si_WaitSend]);
-  for(i=0; i < si_Max; i++)
+  statusImage[SI_ATTACH]   = MakeImageObject("status_attach",   G->theme.statusImages[SI_ATTACH]);
+  statusImage[SI_CRYPT]    = MakeImageObject("status_crypt",    G->theme.statusImages[SI_CRYPT]);
+  statusImage[SI_DELETE]   = MakeImageObject("status_delete",   G->theme.statusImages[SI_DELETE]);
+  statusImage[SI_DOWNLOAD] = MakeImageObject("status_download", G->theme.statusImages[SI_DOWNLOAD]);
+  statusImage[SI_ERROR]    = MakeImageObject("status_error",    G->theme.statusImages[SI_ERROR]);
+  statusImage[SI_FORWARD]  = MakeImageObject("status_forward",  G->theme.statusImages[SI_FORWARD]);
+  statusImage[SI_GROUP]    = MakeImageObject("status_group",    G->theme.statusImages[SI_GROUP]);
+  statusImage[SI_HOLD]     = MakeImageObject("status_hold",     G->theme.statusImages[SI_HOLD]);
+  statusImage[SI_MARK]     = MakeImageObject("status_mark",     G->theme.statusImages[SI_MARK]);
+  statusImage[SI_NEW]      = MakeImageObject("status_new",      G->theme.statusImages[SI_NEW]);
+  statusImage[SI_OLD]      = MakeImageObject("status_old",      G->theme.statusImages[SI_OLD]);
+  statusImage[SI_REPLY]    = MakeImageObject("status_reply",    G->theme.statusImages[SI_REPLY]);
+  statusImage[SI_REPORT]   = MakeImageObject("status_report",   G->theme.statusImages[SI_REPORT]);
+  statusImage[SI_SENT]     = MakeImageObject("status_sent",     G->theme.statusImages[SI_SENT]);
+  statusImage[SI_SIGNED]   = MakeImageObject("status_signed",   G->theme.statusImages[SI_SIGNED]);
+  statusImage[SI_SPAM]     = MakeImageObject("status_spam",     G->theme.statusImages[SI_SPAM]);
+  statusImage[SI_UNREAD]   = MakeImageObject("status_unread",   G->theme.statusImages[SI_UNREAD]);
+  statusImage[SI_URGENT]   = MakeImageObject("status_urgent",   G->theme.statusImages[SI_URGENT]);
+  statusImage[SI_WAITSEND] = MakeImageObject("status_waitsend", G->theme.statusImages[SI_WAITSEND]);
+  for(i=0; i < SI_MAX; i++)
   {
     if(statusImage[i] != NULL)
     {
@@ -282,7 +282,7 @@ OVERLOAD(OM_DISPOSE)
   }
 
   // now we can free all status icons
-  for(i=0; i < si_Max; i++)
+  for(i=0; i < SI_MAX; i++)
   {
     if(data->statusImage[i] != NULL)
       MUI_DisposeObject(data->statusImage[i]);
@@ -326,54 +326,54 @@ DECLARE(Update) // struct Mail *mail
     // the mail (sort upside-down)
 
     // StatusGroup 8 (Spam status)
-    if(hasStatusSpam(mail) && data->statusImage[si_Spam] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Spam]);
+    if(hasStatusSpam(mail) && data->statusImage[SI_SPAM] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_SPAM]);
 
     // StatusGroup 7 (Forwarded status)
-    if(hasStatusForwarded(mail) && data->statusImage[si_Forward] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Forward]);
+    if(hasStatusForwarded(mail) && data->statusImage[SI_FORWARD] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_FORWARD]);
 
     // StatusGroup 6 (Replied status)
-    if(hasStatusReplied(mail) && data->statusImage[si_Reply] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Reply]);
+    if(hasStatusReplied(mail) && data->statusImage[SI_REPLY] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_REPLY]);
 
     // StatusGroup 5 (marked flag)
-    if(hasStatusMarked(mail) && data->statusImage[si_Mark] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Mark]);
+    if(hasStatusMarked(mail) && data->statusImage[SI_MARK] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_MARK]);
 
     // StatusGroup 4 (multipart info)
-    if(isMP_MixedMail(mail) && data->statusImage[si_Attach] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Attach]);
+    if(isMP_MixedMail(mail) && data->statusImage[SI_ATTACH] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_ATTACH]);
 
     // StatusGroup 3 (report mail info)
-    if(isMP_ReportMail(mail) && data->statusImage[si_Report] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Report]);
+    if(isMP_ReportMail(mail) && data->statusImage[SI_REPORT] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_REPORT]);
 
     // StatusGroup 2 (signed/crypted status)
-    if(isMP_CryptedMail(mail) && data->statusImage[si_Crypt] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Crypt]);
-    else if(isMP_SignedMail(mail) && data->statusImage[si_Signed] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Signed]);
+    if(isMP_CryptedMail(mail) && data->statusImage[SI_CRYPT] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_CRYPT]);
+    else if(isMP_SignedMail(mail) && data->statusImage[SI_SIGNED] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_SIGNED]);
 
     // StatusGroup 1 (importance level)
-    if(getImportanceLevel(mail) == IMP_HIGH && data->statusImage[si_Urgent] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Urgent]);
+    if(getImportanceLevel(mail) == IMP_HIGH && data->statusImage[SI_URGENT] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_URGENT]);
 
     // StatusGroup 0 (main mail status)
-    if((hasStatusError(mail) || isPartialMail(mail)) && data->statusImage[si_Error] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Error]);
-    else if(hasStatusQueued(mail) && data->statusImage[si_WaitSend] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_WaitSend]);
-    else if(hasStatusSent(mail) && data->statusImage[si_Sent] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Sent]);
-    else if(hasStatusNew(mail) && data->statusImage[si_New] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_New]);
-    else if(hasStatusHold(mail) && data->statusImage[si_Hold] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Hold]);
-    else if(hasStatusRead(mail) && data->statusImage[si_Old] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Old]);
-    else if(data->statusImage[si_Unread] != NULL)
-      DoMethod(obj, OM_ADDMEMBER, data->statusImage[si_Unread]);
+    if((hasStatusError(mail) || isPartialMail(mail)) && data->statusImage[SI_ERROR] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_ERROR]);
+    else if(hasStatusQueued(mail) && data->statusImage[SI_WAITSEND] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_WAITSEND]);
+    else if(hasStatusSent(mail) && data->statusImage[SI_SENT] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_SENT]);
+    else if(hasStatusNew(mail) && data->statusImage[SI_NEW] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_NEW]);
+    else if(hasStatusHold(mail) && data->statusImage[SI_HOLD] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_HOLD]);
+    else if(hasStatusRead(mail) && data->statusImage[SI_OLD] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_OLD]);
+    else if(data->statusImage[SI_UNREAD] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_UNREAD]);
 
     // cleanup an eventually existing folder image
     if(data->folderImage != NULL)

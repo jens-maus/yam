@@ -133,10 +133,10 @@ struct Global
   int                      PGPVersion;
   int                      CO_DST;
   int                      ER_NumErr;
-  enum IconImages          currentAppIcon;
+  int                      currentAppIcon;
   int                      activeConnections;
   #if defined(__amigaos4__)
-  enum IconImages          LastIconID;
+  int                      LastIconID;
   #endif
   time_t                   LastPGPUsage;
 

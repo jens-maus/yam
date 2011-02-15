@@ -61,7 +61,7 @@
 
 // static image identifiers
 /// config image IDs
-static const char * const configImageIDs[ci_Max] =
+static const char * const configImageIDs[CI_MAX] =
 {
   "config_abook",     "config_abook_big",
   "config_answer",    "config_answer_big",
@@ -84,7 +84,7 @@ static const char * const configImageIDs[ci_Max] =
 };
 ///
 /// folder image IDs
-static const char * const folderImageIDs[fi_Max] =
+static const char * const folderImageIDs[FI_MAX] =
 {
   "folder_fold",
   "folder_unfold",
@@ -100,7 +100,7 @@ static const char * const folderImageIDs[fi_Max] =
 };
 ///
 /// icon image IDs
-static const char * const iconImageIDs[ii_Max] =
+static const char * const iconImageIDs[II_MAX] =
 {
   "check",
   "empty",
@@ -109,7 +109,7 @@ static const char * const iconImageIDs[ii_Max] =
 };
 ///
 /// status image IDs
-static const char * const statusImageIDs[si_Max] =
+static const char * const statusImageIDs[SI_MAX] =
 {
   "status_attach",
   "status_crypt",
@@ -133,7 +133,7 @@ static const char * const statusImageIDs[si_Max] =
 };
 ///
 /// toolbar image IDs
-static const char * const tbii[tbi_Max][tbim_Max] =
+static const char * const tbii[TBI_MAX][TBIM_MAX] =
 {
  // Normal            Selected            Ghosted
   { "tb_read",        "tb_read_s",        "tb_read_g"       },
@@ -179,73 +179,73 @@ static const char * const tbii[tbi_Max][tbim_Max] =
 
 // window toolbar mappings
 /// main window toolbar image IDs
-static const enum ToolbarImages mainWindowToolbarImageIDs[mwtbi_Max] =
+static const int mainWindowToolbarImageIDs[MWTBI_MAX] =
 {
-  tbi_Read,
-  tbi_Edit,
-  tbi_Move,
-  tbi_Delete,
-  tbi_GetAddr,
-  tbi_NewMail,
-  tbi_Reply,
-  tbi_Forward,
-  tbi_GetMail,
-  tbi_SendAll,
-  tbi_Spam,
-  tbi_Ham,
-  tbi_Filter,
-  tbi_Find,
-  tbi_AddrBook,
-  tbi_Config
+  TBI_READ,
+  TBI_EDIT,
+  TBI_MOVE,
+  TBI_DELETE,
+  TBI_GETADDR,
+  TBI_NEWMAIL,
+  TBI_REPLY,
+  TBI_FORWARD,
+  TBI_GETMAIL,
+  TBI_SENDALL,
+  TBI_SPAM,
+  TBI_HAM,
+  TBI_FILTER,
+  TBI_FIND,
+  TBI_ADDRBOOK,
+  TBI_CONFIG
 };
 ///
 /// read window toolbar image IDs
-static const enum ToolbarImages readWindowToolbarImageIDs[rwtbi_Max] =
+static const int readWindowToolbarImageIDs[RWTBI_MAX] =
 {
-  tbi_Prev,
-  tbi_Next,
-  tbi_PrevThread,
-  tbi_NextThread,
-  tbi_Display,
-  tbi_Save,
-  tbi_Print,
-  tbi_Delete,
-  tbi_Move,
-  tbi_Reply,
-  tbi_Forward,
-  tbi_Spam,
-  tbi_Ham
+  TBI_PREV,
+  TBI_NEXT,
+  TBI_PREVTHREAD,
+  TBI_NEXTTHREAD,
+  TBI_DISPLAY,
+  TBI_SAVE,
+  TBI_PRINT,
+  TBI_DELETE,
+  TBI_MOVE,
+  TBI_REPLY,
+  TBI_FORWARD,
+  TBI_SPAM,
+  TBI_HAM
 };
 ///
 /// write window toolbar image IDs
-static const enum ToolbarImages writeWindowToolbarImageIDs[wwtbi_Max] =
+static const int writeWindowToolbarImageIDs[WWTBI_MAX] =
 {
-  tbi_Editor,
-  tbi_Insert,
-  tbi_Cut,
-  tbi_Copy,
-  tbi_Paste,
-  tbi_Undo,
-  tbi_Bold,
-  tbi_Italic,
-  tbi_Underline,
-  tbi_Colored,
-  tbi_Find
+  TBI_EDITOR,
+  TBI_INSERT,
+  TBI_CUT,
+  TBI_COPY,
+  TBI_PASTE,
+  TBI_UNDO,
+  TBI_BOLD,
+  TBI_ITALIC,
+  TBI_UNDERLINE,
+  TBI_COLORED,
+  TBI_FIND
 };
 ///
 /// addressbook window toolbar image IDs
-static const enum ToolbarImages abookWindowToolbarImageIDs[awtbi_Max] =
+static const int abookWindowToolbarImageIDs[AWTBI_MAX] =
 {
-  tbi_Save,
-  tbi_Find,
-  tbi_NewUser,
-  tbi_NewList,
-  tbi_NewGroup,
-  tbi_Edit,
-  tbi_Delete,
-  tbi_Print,
-  tbi_OpenTree,
-  tbi_CloseTree
+  TBI_SAVE,
+  TBI_FIND,
+  TBI_NEWUSER,
+  TBI_NEWLIST,
+  TBI_NEWGROUP,
+  TBI_EDIT,
+  TBI_DELETE,
+  TBI_PRINT,
+  TBI_OPENTREE,
+  TBI_CLOSETREE
 };
 ///
 
@@ -274,7 +274,7 @@ void AllocTheme(struct Theme *theme, const char *themeName)
 
   // construct pathes to config images
   AddPath(dirname, theme->directory, "config", sizeof(dirname));
-  for(i=ci_First; i < ci_Max; i++)
+  for(i=FI_FIRST; i < CI_MAX; i++)
   {
     AddPath(filepath, dirname, configImageIDs[i], sizeof(filepath));
     theme->configImages[i] = strdup(filepath);
@@ -282,7 +282,7 @@ void AllocTheme(struct Theme *theme, const char *themeName)
 
   // construct pathes to folder images
   AddPath(dirname, theme->directory, "folder", sizeof(dirname));
-  for(i=fi_First; i < fi_Max; i++)
+  for(i=FI_FIRST; i < FI_MAX; i++)
   {
     AddPath(filepath, dirname, folderImageIDs[i], sizeof(filepath));
     theme->folderImages[i] = strdup(filepath);
@@ -290,7 +290,7 @@ void AllocTheme(struct Theme *theme, const char *themeName)
 
   // construct pathes to icon images
   AddPath(dirname, theme->directory, "icon", sizeof(dirname));
-  for(i=ii_First; i < ii_Max; i++)
+  for(i=II_FIRST; i < II_MAX; i++)
   {
     AddPath(filepath, dirname, iconImageIDs[i], sizeof(filepath));
     theme->iconImages[i] = strdup(filepath);
@@ -298,7 +298,7 @@ void AllocTheme(struct Theme *theme, const char *themeName)
 
   // construct pathes to status images
   AddPath(dirname, theme->directory, "status", sizeof(dirname));
-  for(i=si_First; i < si_Max; i++)
+  for(i=SI_FIRST; i < SI_MAX; i++)
   {
     AddPath(filepath, dirname, statusImageIDs[i], sizeof(filepath));
     theme->statusImages[i] = strdup(filepath);
@@ -306,43 +306,43 @@ void AllocTheme(struct Theme *theme, const char *themeName)
 
   // construct pathes for the toolbar images
   AddPath(dirname, theme->directory, "toolbar", sizeof(dirname));
-  for(j=tbim_Normal; j < tbim_Max; j++)
+  for(j=TBIM_FIRST; j < TBIM_MAX; j++)
   {
     // main window toolbar
-    for(i=mwtbi_First; i < mwtbi_Null; i++)
+    for(i=MWTBI_FIRST; i < MWTBI_NULL; i++)
     {
       AddPath(filepath, dirname, tbii[mainWindowToolbarImageIDs[i]][j], sizeof(filepath));
       theme->mainWindowToolbarImages[j][i] = strdup(filepath);
     }
     // the array must be NULL terminated
-    theme->mainWindowToolbarImages[j][mwtbi_Null] = NULL;
+    theme->mainWindowToolbarImages[j][MWTBI_NULL] = NULL;
 
     // read window toolbar
-    for(i=rwtbi_First; i < rwtbi_Null; i++)
+    for(i=RWTBI_FIRST; i < RWTBI_NULL; i++)
     {
       AddPath(filepath, dirname, tbii[readWindowToolbarImageIDs[i]][j], sizeof(filepath));
       theme->readWindowToolbarImages[j][i] = strdup(filepath);
     }
     // the array must be NULL terminated
-    theme->readWindowToolbarImages[j][rwtbi_Null] = NULL;
+    theme->readWindowToolbarImages[j][RWTBI_NULL] = NULL;
 
     // write window toolbar
-    for(i=wwtbi_First; i < wwtbi_Null; i++)
+    for(i=WWTBI_FIRST; i < WWTBI_NULL; i++)
     {
       AddPath(filepath, dirname, tbii[writeWindowToolbarImageIDs[i]][j], sizeof(filepath));
       theme->writeWindowToolbarImages[j][i] = strdup(filepath);
     }
     // the array must be NULL terminated
-    theme->writeWindowToolbarImages[j][wwtbi_Null] = NULL;
+    theme->writeWindowToolbarImages[j][WWTBI_NULL] = NULL;
 
     // addressbook window toolbar
-    for(i=awtbi_First; i < awtbi_Null; i++)
+    for(i=AWTBI_FIRST; i < AWTBI_NULL; i++)
     {
       AddPath(filepath, dirname, tbii[abookWindowToolbarImageIDs[i]][j], sizeof(filepath));
       theme->abookWindowToolbarImages[j][i] = strdup(filepath);
     }
     // the array must be NULL terminated
-    theme->abookWindowToolbarImages[j][awtbi_Null] = NULL;
+    theme->abookWindowToolbarImages[j][AWTBI_NULL] = NULL;
   }
 
   theme->loaded = FALSE;
@@ -446,7 +446,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               }
 
               // config images
-              for(i=ci_First; i < ci_Max && found == FALSE; i++)
+              for(i=CI_FIRST; i < CI_MAX && found == FALSE; i++)
               {
                 if(stricmp(id, configImageIDs[i]) == 0)
                 {
@@ -457,7 +457,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               }
 
               // folder images
-              for(i=fi_First; i < fi_Max && found == FALSE; i++)
+              for(i=FI_FIRST; i < FI_MAX && found == FALSE; i++)
               {
                 if(stricmp(id, folderImageIDs[i]) == 0)
                 {
@@ -468,7 +468,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               }
 
               // icon images
-              for(i=ii_First; i < ii_Max && found == FALSE; i++)
+              for(i=II_FIRST; i < II_MAX && found == FALSE; i++)
               {
                 if(stricmp(id, iconImageIDs[i]) == 0)
                 {
@@ -479,7 +479,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               }
 
               // status images
-              for(i=si_First; i < si_Max && found == FALSE; i++)
+              for(i=SI_FIRST; i < SI_MAX && found == FALSE; i++)
               {
                 if(stricmp(id, statusImageIDs[i]) == 0)
                 {
@@ -490,10 +490,10 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               }
 
               // toolbar images
-              for(j=tbim_Normal; j < tbim_Max && found == FALSE; j++)
+              for(j=TBIM_FIRST; j < TBIM_MAX && found == FALSE; j++)
               {
                 // main window toolbar
-                for(i=mwtbi_First; i < mwtbi_Null; i++)
+                for(i=MWTBI_FIRST; i < MWTBI_NULL; i++)
                 {
                   if(stricmp(id, tbii[mainWindowToolbarImageIDs[i]][j]) == 0)
                   {
@@ -504,7 +504,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                 }
 
                 // read window toolbar
-                for(i=rwtbi_First; i < rwtbi_Null; i++)
+                for(i=RWTBI_FIRST; i < RWTBI_NULL; i++)
                 {
                   if(stricmp(id, tbii[readWindowToolbarImageIDs[i]][j]) == 0)
                   {
@@ -515,7 +515,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                 }
 
                 // write window toolbar
-                for(i=wwtbi_First; i < wwtbi_Null; i++)
+                for(i=WWTBI_FIRST; i < WWTBI_NULL; i++)
                 {
                   if(stricmp(id, tbii[writeWindowToolbarImageIDs[i]][j]) == 0)
                   {
@@ -526,7 +526,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                 }
 
                 // addressbook window toolbar
-                for(i=awtbi_First; i < awtbi_Null; i++)
+                for(i=AWTBI_FIRST; i < AWTBI_NULL; i++)
                 {
                   if(stricmp(id, tbii[abookWindowToolbarImageIDs[i]][j]) == 0)
                   {
@@ -596,56 +596,56 @@ void FreeTheme(struct Theme *theme)
   free(theme->version);
   theme->version = NULL;
 
-  for(i=ci_First; i < ci_Max; i++)
+  for(i=CI_FIRST; i < CI_MAX; i++)
   {
     free(theme->configImages[i]);
     theme->configImages[i] = NULL;
   }
 
-  for(i=fi_First; i < fi_Max; i++)
+  for(i=FI_FIRST; i < FI_MAX; i++)
   {
     free(theme->folderImages[i]);
     theme->folderImages[i] = NULL;
   }
 
-  for(i=ii_First; i < ii_Max; i++)
+  for(i=II_FIRST; i < II_MAX; i++)
   {
     free(theme->iconImages[i]);
     theme->iconImages[i] = NULL;
   }
 
-  for(i=si_First; i < si_Max; i++)
+  for(i=SI_FIRST; i < SI_MAX; i++)
   {
     free(theme->statusImages[i]);
     theme->statusImages[i] = NULL;
   }
 
   // free the toolbar images
-  for(j=tbim_Normal; j < tbim_Max; j++)
+  for(j=TBIM_FIRST; j < TBIM_MAX; j++)
   {
     // main window toolbar
-    for(i=mwtbi_First; i < mwtbi_Null; i++)
+    for(i=MWTBI_FIRST; i < MWTBI_NULL; i++)
     {
       free(theme->mainWindowToolbarImages[j][i]);
       theme->mainWindowToolbarImages[j][i] = NULL;
     }
 
     // read window toolbar
-    for(i=rwtbi_First; i < rwtbi_Null; i++)
+    for(i=RWTBI_FIRST; i < RWTBI_NULL; i++)
     {
       free(theme->readWindowToolbarImages[j][i]);
       theme->readWindowToolbarImages[j][i] = NULL;
     }
 
     // write window toolbar
-    for(i=wwtbi_First; i < wwtbi_Null; i++)
+    for(i=WWTBI_FIRST; i < WWTBI_NULL; i++)
     {
       free(theme->writeWindowToolbarImages[j][i]);
       theme->writeWindowToolbarImages[j][i] = NULL;
     }
 
     // addressbook window toolbar
-    for(i=awtbi_First; i < awtbi_Null; i++)
+    for(i=AWTBI_FIRST; i < AWTBI_NULL; i++)
     {
       free(theme->abookWindowToolbarImages[j][i]);
       theme->abookWindowToolbarImages[j][i] = NULL;
@@ -728,7 +728,7 @@ void LoadTheme(struct Theme *theme, const char *themeName)
     }
   }
 
-  for(i=ci_First; i < ci_Max; i++)
+  for(i=CI_FIRST; i < CI_MAX; i++)
   {
     char *image = theme->configImages[i];
 
@@ -739,7 +739,7 @@ void LoadTheme(struct Theme *theme, const char *themeName)
     }
   }
 
-  for(i=fi_First; i < fi_Max; i++)
+  for(i=FI_FIRST; i < FI_MAX; i++)
   {
     char *image = theme->folderImages[i];
 
@@ -750,7 +750,7 @@ void LoadTheme(struct Theme *theme, const char *themeName)
     }
   }
 
-  for(i=si_First; i < si_Max; i++)
+  for(i=SI_FIRST; i < SI_MAX; i++)
   {
     char *image = theme->statusImages[i];
 
@@ -761,7 +761,7 @@ void LoadTheme(struct Theme *theme, const char *themeName)
     }
   }
 
-  for(i=ii_First; i < ii_Max; i++)
+  for(i=II_FIRST; i < II_MAX; i++)
   {
     char *image = theme->iconImages[i];
 
@@ -819,16 +819,16 @@ void UnloadTheme(struct Theme *theme)
 
   ENTER();
 
-  for(i=ci_First; i < ci_Max; i++)
+  for(i=CI_FIRST; i < CI_MAX; i++)
     ReleaseImage(configImageIDs[i], TRUE);
 
-  for(i=fi_First; i < fi_Max; i++)
+  for(i=FI_FIRST; i < FI_MAX; i++)
     ReleaseImage(folderImageIDs[i], TRUE);
 
-  for(i=si_First; i < si_Max; i++)
+  for(i=SI_FIRST; i < SI_MAX; i++)
     ReleaseImage(statusImageIDs[i], TRUE);
 
-  for(i=ii_First; i < ii_Max; i++)
+  for(i=II_FIRST; i < II_MAX; i++)
   {
     if(theme->icons[i] != NULL)
     {
@@ -840,21 +840,6 @@ void UnloadTheme(struct Theme *theme)
   theme->loaded = FALSE;
 
   LEAVE();
-}
-
-///
-/// BuildNListString
-// build a "\033o[x]" style string to include an image in an NList object
-char *BuildNListString(enum StatusImages id)
-{
-  static char buf[10];
-
-  ENTER();
-
-  snprintf(buf, sizeof(buf), "\033o[%d]", id);
-
-  RETURN(buf);
-  return buf;
 }
 
 ///

@@ -96,24 +96,24 @@ OVERLOAD(OM_NEW)
     enum ConfigPage i;
 
     // create/load all bodychunkimages of our config icons
-    data->configIcon[cp_FirstSteps  ] = MakeImageObject("config_firststep", G->theme.configImages[ci_FirstStep]);
-    data->configIcon[cp_TCPIP       ] = MakeImageObject("config_network",   G->theme.configImages[ci_Network]);
-    data->configIcon[cp_NewMail     ] = MakeImageObject("config_newmail",   G->theme.configImages[ci_NewMail]);
-    data->configIcon[cp_Filters     ] = MakeImageObject("config_filters",   G->theme.configImages[ci_Filters]);
-    data->configIcon[cp_Spam        ] = MakeImageObject("config_spam",      G->theme.configImages[ci_Spam]);
-    data->configIcon[cp_Read        ] = MakeImageObject("config_read",      G->theme.configImages[ci_Read]);
-    data->configIcon[cp_Write       ] = MakeImageObject("config_write",     G->theme.configImages[ci_Write]);
-    data->configIcon[cp_ReplyForward] = MakeImageObject("config_answer",    G->theme.configImages[ci_Answer]);
-    data->configIcon[cp_Signature   ] = MakeImageObject("config_signature", G->theme.configImages[ci_Signature]);
-    data->configIcon[cp_Lists       ] = MakeImageObject("config_lists",     G->theme.configImages[ci_Lists]);
-    data->configIcon[cp_Security    ] = MakeImageObject("config_security",  G->theme.configImages[ci_Security]);
-    data->configIcon[cp_StartupQuit ] = MakeImageObject("config_start",     G->theme.configImages[ci_Start]);
-    data->configIcon[cp_MIME        ] = MakeImageObject("config_mime",      G->theme.configImages[ci_MIME]);
-    data->configIcon[cp_AddressBook ] = MakeImageObject("config_abook",     G->theme.configImages[ci_ABook]);
-    data->configIcon[cp_Scripts     ] = MakeImageObject("config_scripts",   G->theme.configImages[ci_Scripts]);
-    data->configIcon[cp_Mixed       ] = MakeImageObject("config_misc",      G->theme.configImages[ci_Misc]);
-    data->configIcon[cp_LookFeel    ] = MakeImageObject("config_lookfeel",  G->theme.configImages[ci_LookFeel]);
-    data->configIcon[cp_Update      ] = MakeImageObject("config_update",    G->theme.configImages[ci_Update]);
+    data->configIcon[cp_FirstSteps  ] = MakeImageObject("config_firststep", G->theme.configImages[CI_FIRSTSTEP]);
+    data->configIcon[cp_TCPIP       ] = MakeImageObject("config_network",   G->theme.configImages[CI_NETWORK]);
+    data->configIcon[cp_NewMail     ] = MakeImageObject("config_newmail",   G->theme.configImages[CI_NEWMAIL]);
+    data->configIcon[cp_Filters     ] = MakeImageObject("config_filters",   G->theme.configImages[CI_FILTERS]);
+    data->configIcon[cp_Spam        ] = MakeImageObject("config_spam",      G->theme.configImages[CI_SPAM]);
+    data->configIcon[cp_Read        ] = MakeImageObject("config_read",      G->theme.configImages[CI_READ]);
+    data->configIcon[cp_Write       ] = MakeImageObject("config_write",     G->theme.configImages[CI_WRITE]);
+    data->configIcon[cp_ReplyForward] = MakeImageObject("config_answer",    G->theme.configImages[CI_ANSWER]);
+    data->configIcon[cp_Signature   ] = MakeImageObject("config_signature", G->theme.configImages[CI_SIGNATURE]);
+    data->configIcon[cp_Lists       ] = MakeImageObject("config_lists",     G->theme.configImages[CI_LISTS]);
+    data->configIcon[cp_Security    ] = MakeImageObject("config_security",  G->theme.configImages[CI_SECURITY]);
+    data->configIcon[cp_StartupQuit ] = MakeImageObject("config_start",     G->theme.configImages[CI_START]);
+    data->configIcon[cp_MIME        ] = MakeImageObject("config_mime",      G->theme.configImages[CI_MIME]);
+    data->configIcon[cp_AddressBook ] = MakeImageObject("config_abook",     G->theme.configImages[CI_ABOOK]);
+    data->configIcon[cp_Scripts     ] = MakeImageObject("config_scripts",   G->theme.configImages[CI_SCRIPTS]);
+    data->configIcon[cp_Mixed       ] = MakeImageObject("config_misc",      G->theme.configImages[CI_MISC]);
+    data->configIcon[cp_LookFeel    ] = MakeImageObject("config_lookfeel",  G->theme.configImages[CI_LOOKFEEL]);
+    data->configIcon[cp_Update      ] = MakeImageObject("config_update",    G->theme.configImages[CI_UPDATE]);
 
     // now we can add the config icon objects and use UseImage
     // to prepare it for displaying it in the NList

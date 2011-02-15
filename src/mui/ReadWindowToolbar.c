@@ -173,9 +173,9 @@ OVERLOAD(OM_NEW)
     // create the TheBar object, but via loading the images from
     // the corresponding image files.
     obj = DoSuperNew(cl, obj,
-                     MUIA_TheBar_Pics,      G->theme.readWindowToolbarImages[tbim_Normal],
-                     MUIA_TheBar_SelPics,   G->theme.readWindowToolbarImages[tbim_Selected],
-                     MUIA_TheBar_DisPics,   G->theme.readWindowToolbarImages[tbim_Ghosted],
+                     MUIA_TheBar_Pics,      G->theme.readWindowToolbarImages[TBIM_NORMAL],
+                     MUIA_TheBar_SelPics,   G->theme.readWindowToolbarImages[TBIM_SELECTED],
+                     MUIA_TheBar_DisPics,   G->theme.readWindowToolbarImages[TBIM_GHOSTED],
                      TAG_MORE, inittags(msg));
   }
 
