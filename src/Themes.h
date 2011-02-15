@@ -33,6 +33,11 @@
 // forward declarations
 struct DiskObject;
 
+// All the image numbers MUST be declared using #define instead of defining
+// distinct types using enum. Converting the latter to a constant string at
+// compile time (see SI_STR() macro at the bottom) is not possible, hence
+// the bunch of typeless #defines.
+
 // images in the configuration window
 #define CI_FIRST              0
 #define CI_ABOOK              0
