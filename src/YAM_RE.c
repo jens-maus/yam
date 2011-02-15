@@ -1101,7 +1101,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
 
       // if a mail part was previously identified as an 'alternative' part to
       // the main letter part all its sub-parts (in the hierarchy) are usually
-      // hided. However, we simply see if the found disposition type tells us if
+      // hidden. However, we simply see if the found disposition type tells us if
       // the currently processed mail part is meant to be an "attachment". And if
       // so, we simply remove the 'alternative' flag again so that YAM will go and
       // display this part under all circumstances. This should work around issues
@@ -1110,7 +1110,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
       // alternative part of the mail structure which is partly incorrect regarding
       // the various RFCs.
       if(isAlternativePart(rp) &&
-         (strnicmp(rp->ContentDisposition, "attachment", 11) == 0 ||
+         (strnicmp(rp->ContentDisposition, "attachment", 10) == 0 ||
           strnicmp(rp->ContentDisposition, "inline", 6) == 0))
       {
         CLEAR_FLAG(rp->Flags, PFLAG_ALTPART);
