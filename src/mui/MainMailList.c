@@ -52,6 +52,7 @@
 #include "MUIObjects.h"
 #include "Themes.h"
 
+#include "mui/AddrBookListtree.h"
 #include "mui/ImageArea.h"
 
 #include "Debug.h"
@@ -75,17 +76,6 @@ struct Data
 /* INCLUDE
 #include "Themes.h"
 */
-
-/* Hooks */
-/// FindAddressHook
-HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *msg)
-{
-  struct ABEntry *entry = (struct ABEntry *)msg->UserData;
-  return Stricmp(msg->User, entry->Address);
-}
-MakeStaticHook(FindAddressHook, FindAddressFunc);
-
-///
 
 /* Private Functions */
 /// MailCompare
@@ -158,18 +148,16 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
       // list we do it right here.
       if(C->ABookLookup == TRUE)
       {
-        struct MUI_NListtree_TreeNode *tn1;
-        struct MUI_NListtree_TreeNode *tn2;
+        struct Person *fp1;
+        struct Person *fp2;
 
-        set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
-
-        if((tn1 = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe1->Address[0], MUIF_NONE)))
-          addr1 = ((struct ABEntry *)tn1->tn_User)->RealName[0] ? ((struct ABEntry *)tn1->tn_User)->RealName : AddrName((*pe1));
+        if((fp1 = (struct Person *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_FindPerson, pe1)) != NULL)
+          addr1 = fp1->RealName[0] ? fp1->RealName : AddrName(*pe1);
         else
           addr1 = AddrName(*pe1);
 
-        if((tn2 = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe2->Address[0], MUIF_NONE)))
-          addr2 = ((struct ABEntry *)tn2->tn_User)->RealName[0] ? ((struct ABEntry *)tn2->tn_User)->RealName : AddrName((*pe2));
+        if((fp2 = (struct Person *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_FindPerson, pe2)) != NULL)
+          addr2 = fp2->RealName[0] ? fp2->RealName : AddrName(*pe2);
         else
           addr2 = AddrName(*pe2);
       }
@@ -436,16 +424,12 @@ OVERLOAD(MUIM_NList_Display)
           // list we do it right here.
           if(C->ABookLookup == TRUE)
           {
-            struct MUI_NListtree_TreeNode *tn;
+            struct Person *person;
 
-            set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
-
-            if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE)) != NULL)
+            if((person = (struct Person *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_FindPerson, pe)) != NULL)
             {
-              struct ABEntry *ab = (struct ABEntry *)tn->tn_User;
-
-              if(ab->RealName[0] != '\0')
-                addr = ab->RealName;
+              if(person->RealName[0] != '\0')
+                addr = person->RealName;
             }
           }
 

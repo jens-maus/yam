@@ -36,6 +36,11 @@ $(OBJDIR)/AppIcon.o: AppIcon.c extrasrc.h include/SDI_compiler.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_configFile.h \
   mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
   mui/WriteWindow.h AppIcon.h DockyIcon.h FolderList.h Debug.h
+$(OBJDIR)/AVLTree.o: AVLTree.c AVLTree.h extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
+  HashTable.h Themes.h Timer.h include/timeval.h Debug.h
 $(OBJDIR)/BayesFilter.o: BayesFilter.c YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h include/SDI_compiler.h \
@@ -581,7 +586,8 @@ $(OBJDIR)/YAM_AB.o: YAM_AB.c include/mui/BetterString_mcc.h include/mui/NList_mc
   YAM_global.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
   mui/AddrBookListtree.h mui/AddrBookToolbar.h \
   mui/BirthdayRequestWindow.h mui/Recipientstring.h mui/WriteWindow.h \
-  mime/base64.h Locale.h MUIObjects.h Requesters.h FileInfo.h Debug.h
+  mime/base64.h AVLTree.h Locale.h MUIObjects.h Requesters.h FileInfo.h \
+  Debug.h
 $(OBJDIR)/YAM.o: YAM.c include/libraries/amisslmaster.h \
   include/mui/BetterString_mcc.h include/mui/NListview_mcc.h \
   include/libraries/mui.h include/mui/NList_mcc.h \
@@ -635,9 +641,9 @@ $(OBJDIR)/YAM.o: YAM.c include/libraries/amisslmaster.h \
   YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
   Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
   tcp/Connection.h YAM_configFile.h YAM_global.h YAM_mainFolder.h \
-  AppIcon.h DockyIcon.h FileInfo.h MUIObjects.h FolderList.h ImageCache.h \
-  Locale.h MailList.h MethodStack.h Requesters.h Rexx.h Threads.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
+  AppIcon.h AVLTree.h DockyIcon.h FileInfo.h MUIObjects.h FolderList.h \
+  ImageCache.h Locale.h MailList.h MethodStack.h Requesters.h Rexx.h \
+  Threads.h mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
   mui/ClassesSetup.h mui/Splashwindow.h include/timeval.h \
   mui/ShutdownWindow.h mui/WriteWindow.h mui/YAMApplication.h \
   mui/PreselectionWindow.h Debug.h
@@ -1274,9 +1280,9 @@ $(OBJDIR)/$(MUIDIR)/AddrBookListtree.o: mui/AddrBookListtree.c mui/AddrBookListt
   include/mui/NList_mcc.h include/mui/NListtree_mcc.h YAM.h \
   include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
-  Themes.h Timer.h include/timeval.h YAM_addressbookEntry.h MailList.h \
-  MUIObjects.h mui/ImageArea.h ImageCache.h include/mui/TheBar_mcc.h \
-  mui/MainMailListGroup.h Debug.h
+  Themes.h Timer.h include/timeval.h YAM_addressbookEntry.h AVLTree.h \
+  MailList.h MUIObjects.h mui/ImageArea.h ImageCache.h \
+  include/mui/TheBar_mcc.h mui/MainMailListGroup.h Debug.h
 $(OBJDIR)/$(MUIDIR)/AddrBookToolbar.o: mui/AddrBookToolbar.c mui/AddrBookToolbar_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -1847,8 +1853,8 @@ $(OBJDIR)/$(MUIDIR)/MainMailList.o: mui/MainMailList.c mui/MainMailList_cl.h \
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_find.h \
-  YAM_mainFolder.h Locale.h MUIObjects.h mui/ImageArea.h ImageCache.h \
-  include/mui/TheBar_mcc.h Debug.h
+  YAM_mainFolder.h Locale.h MUIObjects.h mui/AddrBookListtree.h \
+  mui/ImageArea.h ImageCache.h include/mui/TheBar_mcc.h Debug.h
 $(OBJDIR)/$(MUIDIR)/MainMailListGroup.o: mui/MainMailListGroup.c mui/MainMailListGroup_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -2095,7 +2101,7 @@ $(OBJDIR)/$(MUIDIR)/QuickSearchBar.o: mui/QuickSearchBar.c mui/QuickSearchBar_cl
   Themes.h Timer.h include/timeval.h YAM_addressbook.h \
   include/mui/NListtree_mcc.h YAM_addressbookEntry.h YAM_find.h \
   YAM_mainFolder.h YAM_utilities.h BoyerMooreSearch.h Locale.h MailList.h \
-  MUIObjects.h mui/MainMailListGroup.h Debug.h
+  MUIObjects.h mui/AddrBookListtree.h mui/MainMailListGroup.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ReadMailGroup.o: mui/ReadMailGroup.c mui/ReadMailGroup_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -2804,9 +2810,10 @@ $(OBJDIR)/$(MUIDIR)/YAMApplication.o: mui/YAMApplication.c mui/YAMApplication_cl
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
   YAM_find.h YAM_global.h YAM_mainFolder.h AppIcon.h Locale.h \
-  MUIObjects.h UpdateCheck.h Threads.h mui/AddressmatchPopup.h \
-  mui/InfoWindow.h mui/StringRequestWindow.h mui/TransferControlGroup.h \
-  include/timeval.h mui/TransferWindow.h Debug.h
+  MUIObjects.h UpdateCheck.h Threads.h mui/AddrBookListtree.h \
+  mui/AddressmatchPopup.h mui/InfoWindow.h mui/StringRequestWindow.h \
+  mui/TransferControlGroup.h include/timeval.h mui/TransferWindow.h \
+  Debug.h
 $(OBJDIR)/$(REXXDIR)/addrdelete.o: rexx/addrdelete.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \

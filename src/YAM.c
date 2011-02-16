@@ -92,6 +92,7 @@
 #include "YAM_utilities.h"
 
 #include "AppIcon.h"
+#include "AVLTree.h"
 #include "BayesFilter.h"
 #include "DockyIcon.h"
 #include "FileInfo.h"
@@ -1174,6 +1175,11 @@ static void Terminate(void)
   free(G->virtualMailpart[1]);
 
   // free the item pools
+  if(G->avlNodeItemPool != NULL)
+  {
+    FreeSysObject(ASOT_ITEMPOOL, G->avlNodeItemPool);
+    G->avlNodeItemPool = NULL;
+  }
   if(G->mailItemPool != NULL)
   {
     FreeSysObject(ASOT_ITEMPOOL, G->mailItemPool);
@@ -2621,6 +2627,15 @@ int main(int argc, char **argv)
                                                                 ASOITEM_BatchSize, 1000,
                                                                 ASOITEM_GCPolicy, ITEMGC_AFTERCOUNT,
                                                                 TAG_DONE)) == NULL)
+    {
+      // break out immediately to signal an error!
+      break;
+    }
+    if((G->avlNodeItemPool = AllocSysObjectTags(ASOT_ITEMPOOL, ASOITEM_MFlags, MEMF_PRIVATE|MEMF_CLEAR,
+                                                               ASOITEM_ItemSize, sizeof(struct AVL_Node),
+                                                               ASOITEM_BatchSize, 100,
+                                                               ASOITEM_GCPolicy, ITEMGC_AFTERCOUNT,
+                                                               TAG_DONE)) == NULL)
     {
       // break out immediately to signal an error!
       break;

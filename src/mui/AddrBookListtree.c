@@ -37,6 +37,7 @@
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"
 
+#include "AVLTree.h"
 #include "MailList.h"
 #include "MUIObjects.h"
 
@@ -49,24 +50,49 @@
 struct Data
 {
   Object *listImage;
+  struct AVL_Tree *avlTree;        // the address book as an AVL tree
 };
 */
+
+/* Private Functions */
+/// ComparePersons
+// compare two person entries in the AVL tree
+static int ComparePersons(const void *p1, const void *p2)
+{
+  const struct Person *entry1 = (const struct Person *)p1;
+  const struct Person *entry2 = (const struct Person *)p2;
+
+  return Stricmp(entry1->Address, entry2->Address);
+}
+
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
+  struct AVL_Tree *avlTree;
+
   ENTER();
 
-  if((obj = DoSuperNew(cl, obj,
-    TAG_MORE, inittags(msg))) != NULL)
+  if((avlTree = CreateAVLTree(ComparePersons)) != NULL)
   {
-    GETDATA;
+    if((obj = DoSuperNew(cl, obj,
+      TAG_MORE, inittags(msg))) != NULL)
+    {
+      GETDATA;
 
-    // prepare the group image
-    data->listImage = MakeImageObject("status_group", G->theme.statusImages[SI_GROUP]);
-    DoMethod(obj, MUIM_NList_UseImage, data->listImage, 0, MUIF_NONE);
+      // prepare the group image
+      data->listImage = MakeImageObject("status_group", G->theme.statusImages[SI_GROUP]);
+      DoMethod(obj, MUIM_NList_UseImage, data->listImage, 0, MUIF_NONE);
+
+      data->avlTree = avlTree;
+    }
+    else
+      DeleteAVLTree(avlTree);
   }
+  else
+    obj = NULL;
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
@@ -83,7 +109,97 @@ OVERLOAD(OM_DISPOSE)
   MUI_DisposeObject(data->listImage);
   data->listImage = NULL;
 
-  return DoSuperMethodA(cl,obj,msg);
+  // delete the AVL tree and erase the pointer, because disposing
+  // an NListtree object will invoke MUIM_NListtree_Clear during
+  // the disposal
+  DeleteAVLTree(data->avlTree);
+  data->avlTree = NULL;
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(MUIM_NListtree_Clear)
+OVERLOAD(MUIM_NListtree_Clear)
+{
+  GETDATA;
+
+  if(data->avlTree != NULL)
+    ClearAVLTree(data->avlTree);
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(MUIM_NListtree_Insert)
+OVERLOAD(MUIM_NListtree_Insert)
+{
+  struct MUI_NListtree_TreeNode *tn;
+
+  // update the AVL tree on every insertion
+  if((tn = (struct MUI_NListtree_TreeNode *)DoSuperMethodA(cl, obj, msg)) != NULL)
+  {
+    GETDATA;
+    // use the user data from the inserted treenode, because the user data in the
+    // message may be a pointer to a structure on the stack and will be void after
+    // this call
+    struct ABEntry *ab = (struct ABEntry *)tn->tn_User;
+
+    // accept real users only
+    if(ab->Type == AET_USER)
+    {
+      // insert the person part in the AVL tree
+      InsertInAVLTree(data->avlTree, &ab->Address[0]);
+    }
+  }
+
+  return (IPTR)tn;
+}
+
+///
+/// OVERLOAD(MUIM_NListtree_Remove)
+OVERLOAD(MUIM_NListtree_Remove)
+{
+  GETDATA;
+  struct MUIP_NListtree_Remove *nrm = (struct MUIP_NListtree_Remove *)msg;
+  struct MUI_NListtree_TreeNode *tn;
+
+  // update the AVL tree on every removal
+  if((LONG)nrm->TreeNode == MUIV_NListtree_Remove_TreeNode_Head)
+  {
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, nrm->ListNode, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE);
+  }
+  else if((LONG)nrm->TreeNode == MUIV_NListtree_Remove_TreeNode_Tail)
+  {
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, nrm->ListNode, MUIV_NListtree_GetEntry_Position_Tail, MUIF_NONE);
+  }
+  else if((LONG)nrm->TreeNode == MUIV_NListtree_Remove_TreeNode_Active || (LONG)nrm->TreeNode == MUIV_NListtree_Remove_TreeNode_Selected)
+  {
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, nrm->ListNode, MUIV_NListtree_GetEntry_Position_Active, MUIF_NONE);
+  }
+  else if((LONG)nrm->TreeNode == MUIV_NListtree_Remove_TreeNode_All)
+  {
+    ClearAVLTree(data->avlTree);
+    tn = NULL;
+  }
+  else
+  {
+    tn = nrm->TreeNode;
+  }
+
+  if(tn != NULL)
+  {
+    struct ABEntry *ab = (struct ABEntry *)tn->tn_User;
+
+    // remove users only
+    if(ab->Type == AET_USER)
+    {
+      // remove the person part from the AVL tree
+      RemoveFromAVLTree(data->avlTree, &ab->Address[0]);
+    }
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -95,7 +211,7 @@ OVERLOAD(MUIM_DragQuery)
   if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
     return MUIV_DragQuery_Accept;
 
-  return DoSuperMethodA(cl,obj,msg);
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -115,7 +231,7 @@ OVERLOAD(MUIM_DragDrop)
     }
   }
 
-  return DoSuperMethodA(cl,obj,msg);
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -152,7 +268,19 @@ OVERLOAD(MUIM_NListtree_DropType)
 
 ///
 
-/* Private Functions */
-
 /* Public Methods */
+/// DECLARE(FindPerson)
+DECLARE(FindPerson) // struct Person *person
+{
+  GETDATA;
+  struct Person *result;
 
+  ENTER();
+
+  result = (struct Person *)FindInAVLTree(data->avlTree, msg->person);
+
+  RETURN(result);
+  return (IPTR)result;
+}
+
+///

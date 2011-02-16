@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * AVLTree.c, misc: added a custom implementation of balanced AVL trees. Such
+    a tree is now used to mirror all user addressbook entries. Performing a
+    search on this tree is about twice as fast as the old search using the
+    methods of NListtree.mcc. This is very noticable with large folders and
+    the "addressbook lookup" option being active.
+
 2011-02-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: fixed the recently introduced off-by-1 string check. Note: the

@@ -56,6 +56,7 @@
 #include "UpdateCheck.h"
 #include "Threads.h"
 
+#include "mui/AddrBookListtree.h"
 #include "mui/AddressmatchPopup.h"
 #include "mui/InfoWindow.h"
 #include "mui/StringRequestWindow.h"
@@ -276,7 +277,7 @@ static BOOL MatchRealName(const char *realName, const char *text, LONG textLen, 
 ///
 /// FindAllABMatches()
 // tries to find all matching addressbook entries and add them to the list
-VOID FindAllABMatches(const char *text, Object *list, struct MUI_NListtree_TreeNode *root)
+static void FindAllABMatches(const char *text, Object *list, struct MUI_NListtree_TreeNode *root)
 {
   LONG tl;
   struct MUI_NListtree_TreeNode *tn;
@@ -330,41 +331,16 @@ VOID FindAllABMatches(const char *text, Object *list, struct MUI_NListtree_TreeN
 
 ///
 /// FindABPerson()
-// tries to find a Person in a addressbook
-BOOL FindABPerson(struct Person *person, struct MUI_NListtree_TreeNode *root)
+// tries to find a Person in the addressbook
+static BOOL FindABPerson(const struct Person *person)
 {
-  struct MUI_NListtree_TreeNode *tn;
   BOOL result = FALSE;
 
   ENTER();
 
   // Now we try to find matches in the Addressbook Listtree
-  tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, root, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE);
-
-  for(;tn;)
-  {
-    if(isFlagSet(tn->tn_Flags, TNF_LIST)) /* it's a sublist */
-    {
-      if(FindABPerson(person, tn))
-      {
-        result = TRUE;
-        break;
-      }
-    }
-    else
-    {
-      struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
-
-      // If the email matches a entry in the AB we already can return here with TRUE
-      if(Stricmp(entry->Address, person->Address) == 0)
-      {
-        result = TRUE;
-        break;
-      }
-    }
-
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
-  }
+  if((APTR)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_FindPerson, person) != NULL)
+    result = TRUE;
 
   RETURN(result);
   return result;
@@ -494,7 +470,7 @@ DECLARE(AddToEmailCache) // struct Person *person
 
   // We first check the Addressbook if this Person already exists in the AB and if
   // so we cancel this whole operation.
-  if(!FindABPerson(msg->person, MUIV_NListtree_GetEntry_ListNode_Root))
+  if(FindABPerson(msg->person) == FALSE)
   {
     int i;
     BOOL found = FALSE;

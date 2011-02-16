@@ -77,6 +77,7 @@
 #include "mui/WriteWindow.h"
 #include "mime/base64.h"
 
+#include "AVLTree.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MUIObjects.h"
@@ -2623,7 +2624,10 @@ static void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *prt, int mo
       struct ABEntry *ab = tn->tn_User;
 
       if(mode == 1)
-        AB_PrintLongEntry(prt, ab); else AB_PrintShortEntry(prt, ab);
+        AB_PrintLongEntry(prt, ab);
+      else
+        AB_PrintShortEntry(prt, ab);
+
       if(ab->Type == AET_GROUP)
          AB_PrintLevel(tn, prt, mode);
     }
@@ -3416,4 +3420,3 @@ struct AB_ClassData *AB_New(void)
 }
 
 ///
-

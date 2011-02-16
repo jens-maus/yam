@@ -602,6 +602,7 @@ YAMOBJS = \
 	YAM_UT.o \
 	YAM_WR.o \
 	AppIcon.o \
+	AVLTree.o \
 	BayesFilter.o \
 	BoyerMooreSearch.o \
 	DockyIcon.o \

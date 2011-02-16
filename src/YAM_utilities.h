@@ -147,6 +147,9 @@ struct FileReqCache
 #ifndef MEMF_SHARED
 #define MEMF_SHARED MEMF_PUBLIC
 #endif
+#ifndef MEMF_PRIVATE
+#define MEMF_PRIVATE MEMF_PUBLIC
+#endif
 
 // define an invalid BPTR value
 #ifndef ZERO

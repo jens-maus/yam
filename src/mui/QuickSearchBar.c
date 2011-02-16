@@ -51,6 +51,7 @@
 #include "MailList.h"
 #include "MUIObjects.h"
 
+#include "mui/AddrBookListtree.h"
 #include "mui/MainMailListGroup.h"
 
 #include "Debug.h"
@@ -73,17 +74,6 @@ struct Data
 /* INCLUDE
 #include "timeval.h"
 */
-
-/* Hooks */
-/// FindAddressHook
-HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *msg)
-{
-  struct ABEntry *entry = (struct ABEntry *)msg->UserData;
-  return Stricmp(msg->User, entry->Address);
-}
-MakeStaticHook(FindAddressHook, FindAddressFunc);
-
-///
 
 /* Enumerations */
 enum SearchOptions { SO_SUBJECT=0, SO_SENDER, SO_SUBJORSENDER, SO_TOORCC, SO_INMSG, SO_ENTIREMSG };
@@ -144,11 +134,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
     // check if the mail comes from a person we know
     case VO_KNOWNPEOPLE:
     {
-      set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
-
-      foundMatch = (DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData,
-                                                      MUIV_NListtree_FindUserData_ListNode_Root, &mail->From.Address[0], MUIF_NONE) != 0);
-
+      foundMatch = ((APTR)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_FindPerson, &mail->From) != NULL);
       if(foundMatch == FALSE && isMultiSenderMail(mail))
       {
         struct ExtendedMail *email;
@@ -159,8 +145,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
 
           for(j=0; j < email->NoSFrom && foundMatch == FALSE; j++)
           {
-            foundMatch = (DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData,
-                                                            MUIV_NListtree_FindUserData_ListNode_Root, &email->SFrom[j].Address[0], MUIF_NONE) != 0);
+            foundMatch = ((APTR)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_FindPerson, &email->SFrom[j]) != NULL);
           }
 
           MA_FreeEMailStruct(email);

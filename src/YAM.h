@@ -123,6 +123,7 @@ struct Global
   struct Folder *          currentFolder;       // the currently active folder
   APTR                     mailItemPool;        // item pool for struct Mail
   APTR                     mailNodeItemPool;    // item pool for struct MailNode
+  APTR                     avlNodeItemPool;     // item pool for struct AVL_Node
 
   #if defined(__amigaos4__)
   struct MsgPort *         AppLibPort;
