@@ -3187,11 +3187,9 @@ void DisplayMailList(struct Folder *fo, Object *lv)
   {
     // We do not encapsulate this Clear&Insert with a NList_Quiet because
     // this will speed up the Insert with about 3-4 seconds for ~6000 items
-STARTCLOCK(DBF_ALWAYS);
     DoMethod(lv, MUIM_NList_Clear);
     DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted,
                  C->AutoColumnResize ? MUIF_NONE : MUIV_NList_Insert_Flag_Raw);
-STOPCLOCK(DBF_ALWAYS, fo->Name);
 
     free(array);
   }
