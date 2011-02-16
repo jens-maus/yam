@@ -12,6 +12,8 @@ $URL$
     search on this tree is about twice as fast as the old search using the
     methods of NListtree.mcc. This is very noticable with large folders and
     the "addressbook lookup" option being active.
+  * YAM_AB.c, mui/AddrBookListtree.c: converted the standard list hooks to
+    proper methods.
 
 2011-02-15 Thore Böckelmann <tboeckel@gmx.de>
 
