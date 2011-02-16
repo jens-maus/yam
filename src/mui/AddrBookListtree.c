@@ -138,14 +138,21 @@ OVERLOAD(MUIM_NListtree_Construct)
   struct MUIP_NListtree_Construct *ncm = (struct MUIP_NListtree_Construct *)msg;
   struct ABEntry *addr = (struct ABEntry *)ncm->UserData;
   struct ABEntry *entry;
+  GETDATA;
 
   ENTER();
 
   if((entry = memdup(addr, sizeof(*addr))) != NULL)
   {
-    // clone the member list aswell
-    if(addr->Members != NULL)
+    // accept real users only
+    if(entry->Type == AET_USER)
     {
+      // insert the person part in the AVL tree
+      InsertInAVLTree(data->avlTree, &entry->Address[0]);
+    }
+    else if(addr->Members != NULL)
+    {
+      // clone the member list of groups
       if((entry->Members = strdup(addr->Members)) == NULL)
       {
         // if strdup() failed then we let the whole function fail
@@ -165,11 +172,19 @@ OVERLOAD(MUIM_NListtree_Destruct)
 {
   struct MUIP_NListtree_Destruct *ndm = (struct MUIP_NListtree_Destruct *)msg;
   struct ABEntry *entry = (struct ABEntry *)ndm->UserData;
+  GETDATA;
 
   ENTER();
 
   if(entry != NULL)
   {
+    // remove users only
+    if(entry->Type == AET_USER && data->avlTree != NULL)
+    {
+      // remove the person part from the AVL tree
+      RemoveFromAVLTree(data->avlTree, &entry->Address[0]);
+    }
+
     free(entry->Members);
     free(entry);
   }
@@ -282,90 +297,6 @@ OVERLOAD(MUIM_NListtree_Display)
 
   LEAVE();
   return 0;
-}
-
-///
-/// OVERLOAD(MUIM_NListtree_Clear)
-OVERLOAD(MUIM_NListtree_Clear)
-{
-  GETDATA;
-
-  if(data->avlTree != NULL)
-    ClearAVLTree(data->avlTree);
-
-  return DoSuperMethodA(cl, obj, msg);
-}
-
-///
-/// OVERLOAD(MUIM_NListtree_Insert)
-OVERLOAD(MUIM_NListtree_Insert)
-{
-  struct MUI_NListtree_TreeNode *tn;
-
-  // update the AVL tree on every insertion
-  if((tn = (struct MUI_NListtree_TreeNode *)DoSuperMethodA(cl, obj, msg)) != NULL)
-  {
-    GETDATA;
-    // use the user data from the inserted treenode, because the user data in the
-    // message may be a pointer to a structure on the stack and will be void after
-    // this call
-    struct ABEntry *ab = (struct ABEntry *)tn->tn_User;
-
-    // accept real users only
-    if(ab->Type == AET_USER)
-    {
-      // insert the person part in the AVL tree
-      InsertInAVLTree(data->avlTree, &ab->Address[0]);
-    }
-  }
-
-  return (IPTR)tn;
-}
-
-///
-/// OVERLOAD(MUIM_NListtree_Remove)
-OVERLOAD(MUIM_NListtree_Remove)
-{
-  GETDATA;
-  struct MUIP_NListtree_Remove *nrm = (struct MUIP_NListtree_Remove *)msg;
-  struct MUI_NListtree_TreeNode *tn;
-
-  // update the AVL tree on every removal
-  if((LONG)nrm->TreeNode == MUIV_NListtree_Remove_TreeNode_Head)
-  {
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, nrm->ListNode, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE);
-  }
-  else if((LONG)nrm->TreeNode == MUIV_NListtree_Remove_TreeNode_Tail)
-  {
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, nrm->ListNode, MUIV_NListtree_GetEntry_Position_Tail, MUIF_NONE);
-  }
-  else if((LONG)nrm->TreeNode == MUIV_NListtree_Remove_TreeNode_Active || (LONG)nrm->TreeNode == MUIV_NListtree_Remove_TreeNode_Selected)
-  {
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, nrm->ListNode, MUIV_NListtree_GetEntry_Position_Active, MUIF_NONE);
-  }
-  else if((LONG)nrm->TreeNode == MUIV_NListtree_Remove_TreeNode_All)
-  {
-    ClearAVLTree(data->avlTree);
-    tn = NULL;
-  }
-  else
-  {
-    tn = nrm->TreeNode;
-  }
-
-  if(tn != NULL)
-  {
-    struct ABEntry *ab = (struct ABEntry *)tn->tn_User;
-
-    // remove users only
-    if(ab->Type == AET_USER)
-    {
-      // remove the person part from the AVL tree
-      RemoveFromAVLTree(data->avlTree, &ab->Address[0]);
-    }
-  }
-
-  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
