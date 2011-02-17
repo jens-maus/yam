@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/AllocSysObject.c: item pools now use the same value for puddle size
+    and threshold to speed up freeing items. This affects non-OS4 builds only.
+
 2011-02-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * AVLTree.c, misc: added a custom implementation of balanced AVL trees. Such

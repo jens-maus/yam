@@ -638,7 +638,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object.itempool = AllocVec(sizeof(struct ItemPool), MEMF_CLEAR)) != NULL)
       {
-        if((object.itempool->pool = CreatePool(flags, batchSize*itemSize, itemSize)) != NULL)
+        if((object.itempool->pool = CreatePool(flags, batchSize*itemSize, batchSize*itemSize)) != NULL)
         {
           object.itempool->itemSize = itemSize;
           object.itempool->protected = protected;
