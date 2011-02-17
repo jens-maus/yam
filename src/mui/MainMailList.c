@@ -315,6 +315,24 @@ OVERLOAD(OM_DISPOSE)
 }
 
 ///
+/// OVERLOAD(MUIM_NList_Construct)
+OVERLOAD(MUIM_NList_Construct)
+{
+  struct MUIP_NList_Construct *ncm = (struct MUIP_NList_Construct *)msg;
+
+  // just return the supplied mail entry, no need to allocate or duplicate anything
+  return (IPTR)ncm->entry;
+}
+
+///
+/// OVERLOAD(MUIM_NList_Destruct)
+OVERLOAD(MUIM_NList_Destruct)
+{
+  // nothing to free as we didn't allocate anything before
+  return (IPTR)0;
+}
+
+///
 /// OVERLOAD(MUIM_NList_Compare)
 //  Message listview compare method
 OVERLOAD(MUIM_NList_Compare)

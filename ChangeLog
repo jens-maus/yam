@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MainMailList.c: implemented empty construct and destruct methods as there
+    is nothing to construct and all the needed information is already contained
+    in the mail structure.
+
 2011-02-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * AVLTree.c, misc: added a custom implementation of balanced AVL trees. Such
