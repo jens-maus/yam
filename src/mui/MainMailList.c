@@ -315,6 +315,34 @@ OVERLOAD(OM_DISPOSE)
 }
 
 ///
+/// OVERLOAD(MUIM_NList_Construct)
+OVERLOAD(MUIM_NList_Construct)
+{
+  struct MUIP_NList_Construct *ncm = (struct MUIP_NList_Construct *)msg;
+
+  // Some words to why there are such empty constructor/destructor methods.
+  // Although NList's default method do basically the same and just return the
+  // supplied entry there is a big difference when it comes to large lists with
+  // more than 10000 entries. In this case every pointer comparison and every
+  // DoSuperMethod() call definitely has an impact on the overall performance.
+  // Hence we try to avoid as much overhead as possible. The difference is
+  // really noticable with large folders consisting of several ten thousand
+  // mails, which is not that uncommon if you keep old mails for more than a
+  // year and are subscribed to several quite active mailing lists.
+
+  // just return the supplied mail entry, no need to allocate or duplicate anything
+  return (IPTR)ncm->entry;
+}
+
+///
+/// OVERLOAD(MUIM_NList_Destruct)
+OVERLOAD(MUIM_NList_Destruct)
+{
+  // nothing to free as we didn't allocate anything before
+  return (IPTR)0;
+}
+
+///
 /// OVERLOAD(MUIM_NList_Compare)
 //  Message listview compare method
 OVERLOAD(MUIM_NList_Compare)

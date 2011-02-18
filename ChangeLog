@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MainMailList.c: implemented empty construct and destruct methods as there
+    is nothing to construct and all the needed information is already contained
+    in the mail structure. Although NList's default methods do basically the
+    same the performance penalty of going through one more class' dispatcher and
+    NList's internal pointer checks becomes quite noticable with large folders
+    of 10000+ mails.
+
 2011-02-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/AllocSysObject.c: item pools now use the same value for puddle size
