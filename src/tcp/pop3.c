@@ -1575,7 +1575,11 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
         // perform the finalizing actions only if we haven't been aborted externally
         if(ThreadWasAborted() == FALSE)
         {
-          PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_POSTGET, itoa((int)tc->downloadResult.downloaded));
+          char downloadedStr[10];
+
+          // do not use itoa() here, as it is not thread safe
+          snprintf(downloadedStr, sizeof(downloadedStr), "%d", tc->downloadResult.downloaded);
+          PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_POSTGET, downloadedStr);
 
           AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_RETRIEVED_POP3), tc->downloadResult.downloaded, msn->account);
 

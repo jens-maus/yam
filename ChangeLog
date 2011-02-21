@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c: fixed a possible race condition in the POP3 thread when starting
+    the POSTGET macro.
+
 2011-02-21 Jens Langner <Jens.Langner@light-speed.de>
 
   * ParseEmail.l: added a check to HSEGMENT for non-ASCII characters so that they
