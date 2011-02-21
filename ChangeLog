@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * ParseEmail.l: added a check to HSEGMENT for non-ASCII characters so that they
+    are matched in http regexp as well. This closes #254.
+
 2011-02-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * MainMailList.c: implemented empty construct and destruct methods as there

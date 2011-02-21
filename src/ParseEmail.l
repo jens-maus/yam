@@ -104,8 +104,8 @@ HTTPURL     "http://"{AUTHORITY}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
 HTTPSURL    "https://"{AUTHORITY}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
 PLAINURL    ("www"|"ftp")"."{HOSTNAME}"."[[:alpha:]]{1,4}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
 HPATH       "~"?{HSEGMENT}("/""~"?{HSEGMENT})*
-HSEGMENT    ({UCHAR}|";"|":"|"@"|"&"|"="|"#")*
-SEARCH      ({UCHAR}|";"|":"|"@"|"&"|"="|"#"|"/")*
+HSEGMENT    ({UCHAR}|[^ \t\r\n]|";"|":"|"@"|"&"|"="|"#")*
+SEARCH      ({UCHAR}|[^ \t\r\n]|";"|":"|"@"|"&"|"="|"#"|"/")*
 
 /* GOPHER (see also RFC1436) */
 GOPHERURL   "gopher://"{AUTHORITY}("/"({GTYPE}({SELECTOR}("%09"{SEARCH}("%09"{GOPHSTR})?)?)?)?)?{NOTATEOL}
