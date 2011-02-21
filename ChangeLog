@@ -9,6 +9,8 @@ $URL$
 
   * tcp/pop3.c: fixed a possible race condition in the POP3 thread when starting
     the POSTGET macro.
+  * misc: completely removed the non-thread safe itoa() function and replaced it
+    locally by its content. It wasn't used that often anyway.
 
 2011-02-21 Jens Langner <Jens.Langner@light-speed.de>
 

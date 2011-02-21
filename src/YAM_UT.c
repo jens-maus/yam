@@ -294,20 +294,6 @@ static void ReleaseSearchPath(BPTR path)
 ///
 
 /*** String related ***/
-/// itoa
-//  Converts an integer into a string
-char *itoa(int val)
-{
-  static char str[SIZE_SMALL];
-
-  ENTER();
-
-  snprintf(str, sizeof(str), "%d", val);
-
-  RETURN(str);
-  return str;
-}
-///
 /// MatchNoCase
 //  Case insensitive pattern matching
 BOOL MatchNoCase(const char *string, const char *match)

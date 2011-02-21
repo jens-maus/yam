@@ -143,6 +143,7 @@ struct Data
 
   char cursorPos[SIZE_SMALL];
   char windowTitle[SIZE_SUBJECT+1]; // string for the title text of the window
+  char windowNumberStr[SIZE_SMALL]; // the unique window number as a string
 };
 */
 
@@ -972,6 +973,7 @@ OVERLOAD(OM_NEW)
     {
       D(DBF_GUI, "Free write window number %ld found.", i);
       data->windowNumber = i;
+      snprintf(data->windowNumberStr, sizeof(data->windowNumberStr), "%d", i);
 
       break;
     }
@@ -1755,7 +1757,7 @@ OVERLOAD(OM_NEW)
 
       // we created a new write window, lets
       // go and start the PREWRITE macro
-      MA_StartMacro(MACRO_PREWRITE, itoa(data->windowNumber));
+      MA_StartMacro(MACRO_PREWRITE, data->windowNumberStr);
     }
   }
 
@@ -3923,7 +3925,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // we execute the POSTWRITE macro right before writing out
     // the message because the postwrite macro may want to modify the
     // text in the editor beforehand.
-    MA_StartMacro(MACRO_POSTWRITE, itoa(data->windowNumber));
+    MA_StartMacro(MACRO_POSTWRITE, data->windowNumberStr);
 
     // export the text of our texteditor to a file
     DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename);
@@ -3937,7 +3939,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     }
   }
   else
-    MA_StartMacro(MACRO_POSTWRITE, itoa(data->windowNumber));
+    MA_StartMacro(MACRO_POSTWRITE, data->windowNumberStr);
 
   // now we check how the new mail file should be named
   // or created off.

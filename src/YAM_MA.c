@@ -847,13 +847,15 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
   }
   else if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
+    char selectedStr[SIZE_SMALL];
     struct MailNode *mnode;
     ULONG i;
 
     // get the list of the currently marked mails
     selected = mlist->count;
+    snprintf(selectedStr, sizeof(selectedStr), "%d", selected);
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
-    BusyGaugeInt(tr(MSG_BusyMoving), itoa(selected), selected);
+    BusyGaugeInt(tr(MSG_BusyMoving), selectedStr, selected);
 
     i = 0;
     ForEachMailNode(mlist, mnode)
@@ -1951,6 +1953,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
       if(okToDelete == TRUE)
       {
+        char selectedStr[SIZE_SMALL];
         struct MailNode *mnode;
         ULONG deleted;
         BOOL ignoreall = FALSE;
@@ -1967,7 +1970,8 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         // modify the menu items
         set(gui->MI_DELETE, MUIA_Menuitem_Enabled, FALSE);
 
-        BusyGaugeInt(tr(MSG_BusyDeleting), itoa(selected), selected);
+        snprintf(selectedStr, sizeof(selectedStr), "%d", selected);
+        BusyGaugeInt(tr(MSG_BusyDeleting), selectedStr, selected);
 
         deleted = 0;
         ForEachMailNode(mlist, mnode)
@@ -2054,12 +2058,14 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
 
     if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
     {
+      char selectedStr[SIZE_SMALL];
       struct MailNode *mnode;
       ULONG selected = mlist->count;
       ULONG i;
 
       set(lv, MUIA_NList_Quiet, TRUE);
-      BusyGaugeInt(tr(MSG_BusyMoving), itoa(selected), selected);
+      snprintf(selectedStr, sizeof(selectedStr), "%d", selected);
+      BusyGaugeInt(tr(MSG_BusyMoving), selectedStr, selected);
 
       i = 0;
       ForEachMailNode(mlist, mnode)

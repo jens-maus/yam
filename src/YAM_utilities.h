@@ -309,7 +309,6 @@ ULONG    GetSimpleID(void);
 BOOL     GotoURLPossible(void);
 BOOL     GotoURL(const char *url, const BOOL newWindow);
 const char *IdentifyFile(const char *fname);
-char *   itoa(int val);
 void     LoadLayout(void);
 BOOL     MailExists(const struct Mail *mailptr, struct Folder *folder);
 BOOL     MatchNoCase(const char *string, const char *match);

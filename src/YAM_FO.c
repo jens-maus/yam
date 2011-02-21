@@ -1252,12 +1252,14 @@ void FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw)
 static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 {
   BOOL success = TRUE;
+  char totalStr[SIZE_SMALL];
   struct MailNode *mnode;
   ULONG i;
 
   ENTER();
 
-  BusyGauge(tr(MSG_BusyMoving), itoa(fo->Total), fo->Total);
+  snprintf(totalStr, sizeof(totalStr), "%d", fo->Total);
+  BusyGauge(tr(MSG_BusyMoving), totalStr, fo->Total);
 
   LockMailListShared(fo->messages);
 

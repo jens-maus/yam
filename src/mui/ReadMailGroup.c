@@ -994,9 +994,14 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 
       // start the macro
       if(rmData->readWindow != NULL)
-        MA_StartMacro(MACRO_READ, itoa(xget(rmData->readWindow, MUIA_ReadWindow_Num)));
+      {
+        char numStr[SIZE_SMALL];
+
+        snprintf(numStr, sizeof(numStr), "%d", xget(rmData->readWindow, MUIA_ReadWindow_Num));
+        MA_StartMacro(MACRO_READ, numStr);
+      }
       else
-        MA_StartMacro(MACRO_READ, itoa(-1));
+        MA_StartMacro(MACRO_READ, "-1");
 
       // if the displayed mail isn't a virtual one we flag it as read now
       if(!isVirtualMail(mail) &&
