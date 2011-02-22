@@ -1577,7 +1577,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
         {
           char downloadedStr[SIZE_SMALL];
 
-          snprintf(downloadedStr, sizeof(downloadedStr), "%d", tc->downloadResult.downloaded);
+          snprintf(downloadedStr, sizeof(downloadedStr), "%d", (int)tc->downloadResult.downloaded);
           PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_POSTGET, downloadedStr);
 
           AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_RETRIEVED_POP3), tc->downloadResult.downloaded, msn->account);

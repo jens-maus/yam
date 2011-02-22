@@ -896,7 +896,7 @@ MakeStaticHook(AppMessageHook, AppMessageFunc);
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  ULONG i=0;
+  ULONG i;
   struct Data *data;
   struct Data *tmpData;
   static const char *rtitles[4] = { NULL, NULL, NULL, NULL };
@@ -950,6 +950,7 @@ OVERLOAD(OM_NEW)
   // before we create all objects of this new write window we have to
   // check which number we can set for this window. Therefore we search in our
   // current WriteMailData list and check which number we can give this window
+  i = 0;
   do
   {
     struct Node *curNode;
@@ -971,9 +972,9 @@ OVERLOAD(OM_NEW)
     // our WriteWindow ID
     if(found == FALSE)
     {
-      D(DBF_GUI, "Free write window number %ld found.", i);
+      D(DBF_GUI, "free write window number %ld found.", i);
       data->windowNumber = i;
-      snprintf(data->windowNumberStr, sizeof(data->windowNumberStr), "%d", i);
+      snprintf(data->windowNumberStr, sizeof(data->windowNumberStr), "%d", (int)i);
 
       break;
     }

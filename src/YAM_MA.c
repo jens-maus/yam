@@ -823,7 +823,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, const ULONG flags)
 {
   struct MailList *mlist;
-  ULONG selected = 0;
+  int selected;
 
   ENTER();
 
@@ -875,20 +875,25 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 
     DeleteMailList(mlist);
   }
-
-  // write some log out
-  if(isFlagSet(flags, MVCPF_COPY))
-    AppendToLogfile(LF_NORMAL, 24, tr(MSG_LOG_Copying), selected, FolderName(frombox), FolderName(tobox));
   else
-    AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, FolderName(frombox), FolderName(tobox));
+    selected = 0;
 
-  // refresh the folder statistics if necessary
-  if(isFlagClear(flags, MVCPF_COPY))
-    DisplayStatistics(frombox, FALSE);
+  if(selected != 0)
+  {
+    // write some log out
+    if(isFlagSet(flags, MVCPF_COPY))
+      AppendToLogfile(LF_NORMAL, 24, tr(MSG_LOG_Copying), selected, FolderName(frombox), FolderName(tobox));
+    else
+      AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, FolderName(frombox), FolderName(tobox));
 
-  DisplayStatistics(tobox, TRUE);
+    // refresh the folder statistics if necessary
+    if(isFlagClear(flags, MVCPF_COPY))
+      DisplayStatistics(frombox, FALSE);
 
-  MA_ChangeSelected(FALSE);
+    DisplayStatistics(tobox, TRUE);
+
+    MA_ChangeSelected(FALSE);
+  }
 
   LEAVE();
 }
@@ -1935,17 +1940,15 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
     // create a list of all selected mails first
     if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
     {
-      ULONG selected;
       BOOL okToDelete = TRUE;
 
-      selected = mlist->count;
       // if there are more mails selected than the user allowed to be deleted
       // silently then ask him first
-      if(C->Confirm == TRUE && selected >= (ULONG)C->ConfirmDelete && force == FALSE)
+      if(C->Confirm == TRUE && mlist->count >= (ULONG)C->ConfirmDelete && force == FALSE)
       {
         char buffer[SIZE_DEFAULT];
 
-        snprintf(buffer, sizeof(buffer), tr(MSG_MA_CONFIRMDELETION), selected);
+        snprintf(buffer, sizeof(buffer), tr(MSG_MA_CONFIRMDELETION), mlist->count);
 
         if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq2), buffer) == 0)
           okToDelete = FALSE;
@@ -1959,7 +1962,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         BOOL ignoreall = FALSE;
         ULONG delFlags = (delatonce == TRUE) ? DELF_AT_ONCE|DELF_QUIET|DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON|DELF_CHECK_CONNECTIONS : DELF_QUIET|DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON|DELF_CHECK_CONNECTIONS;
 
-        D(DBF_MAIL, "going to delete %ld mails from folder '%s'", selected, GetCurrentFolder()->Name);
+        D(DBF_MAIL, "going to delete %ld mails from folder '%s'", mlist->count, GetCurrentFolder()->Name);
 
         set(lv, MUIA_NList_Quiet, TRUE);
 
@@ -1970,8 +1973,8 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         // modify the menu items
         set(gui->MI_DELETE, MUIA_Menuitem_Enabled, FALSE);
 
-        snprintf(selectedStr, sizeof(selectedStr), "%d", selected);
-        BusyGaugeInt(tr(MSG_BusyDeleting), selectedStr, selected);
+        snprintf(selectedStr, sizeof(selectedStr), "%d", (int)mlist->count);
+        BusyGaugeInt(tr(MSG_BusyDeleting), selectedStr, mlist->count);
 
         deleted = 0;
         ForEachMailNode(mlist, mnode)
@@ -1981,7 +1984,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
           if(isSendMDNMail(mail) && ignoreall == FALSE &&
              (hasStatusNew(mail) || !hasStatusRead(mail)))
           {
-            ignoreall = RE_ProcessMDN(MDN_MODE_DELETE, mail, (selected >= 2), FALSE);
+            ignoreall = RE_ProcessMDN(MDN_MODE_DELETE, mail, (mlist->count >= 2), FALSE);
           }
 
           // call our subroutine with quiet option
@@ -2060,12 +2063,11 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
     {
       char selectedStr[SIZE_SMALL];
       struct MailNode *mnode;
-      ULONG selected = mlist->count;
       ULONG i;
 
       set(lv, MUIA_NList_Quiet, TRUE);
-      snprintf(selectedStr, sizeof(selectedStr), "%d", selected);
-      BusyGaugeInt(tr(MSG_BusyMoving), selectedStr, selected);
+      snprintf(selectedStr, sizeof(selectedStr), "%d", (int)mlist->count);
+      BusyGaugeInt(tr(MSG_BusyMoving), selectedStr, mlist->count);
 
       i = 0;
       ForEachMailNode(mlist, mnode)
@@ -2121,17 +2123,14 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
 
         // if BusySet() returns FALSE, then the user aborted
         if(BusySet(++i) == FALSE)
-        {
-          selected = i;
           break;
-        }
       }
       BusyEnd();
       set(lv, MUIA_NList_Quiet, FALSE);
 
       DeleteMailList(mlist);
 
-      AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, GetCurrentFolder()->Name, spamFolder->Name);
+      AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), i, GetCurrentFolder()->Name, spamFolder->Name);
       DisplayStatistics(spamFolder, FALSE);
       DisplayStatistics(incomingFolder, FALSE);
 
