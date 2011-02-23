@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.81 (7.02.2011)
+## version $VER: YAM.catalog 7.82 (23.02.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.8 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5613 2011-01-31
+; based on YAM.cd 5656 2011-02-23
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1990,7 +1990,7 @@ Annulla modifiche
 ; Restore
 ;
 MSG_CO_ImportMIME
-Importa visualizzatori e type MIME...
+Importa visualizzatori e tipi MIME...
 ; Import MIME viewers & types...
 ;
 ; Module CO - Bubblehelp
@@ -7246,36 +7246,6 @@ MSG_FI_GAUGETEXT
 ; %%ld of %ld messages
 ; COUNT, COUNT
 ;
-MSG_MA_MESSAGEINFO
-\ebMessaggio corrente\en\n\
-Da: %s <%s>\n\
-A: %s <%s>\n\
-Oggetto: %s\n\
-Data: %s\n\
-Nome file: %s\n\
-Dimensione: %s
-; \ebCurrent message\en\n\
-; From: %s <%s>\n\
-; To: %s <%s>\n\
-; Subject: %s\n\
-; Date: %s\n\
-; Filename: %s\n\
-; Size: %s
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
-;
-MSG_MA_FOLDERINFO
-\ebCartella corrente\en\n\
-Nome: %s\n\
-Percorso: %s\n\
-Dimensione: %s\n\
-Messaggi: %ld (%ld nuovi, %ld non letti)
-; \ebCurrent folder\en\n\
-; Name: %s\n\
-; Path: %s\n\
-; Size: %s\n\
-; Messages: %ld (%ld new, %ld unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
-;
 MSG_MA_MIMEPART_INFO
 \ebAllegato - Parte-MIME #%ld\en\n\
 Nome: %s\n\
@@ -10039,4 +10009,34 @@ POP3 e SMTP prima di poter proseguire.
 ; The configuration is currently locked.\n\
 ; \n\
 ; Please wait until all POP3 and SMTP transfers are finished.
+;
+MSG_FOLDERINFO_SHORTHELP
+\ebCartella\en\n\
+Nome: %s\n\
+Percorso: %s\n\
+Dimensione: %s\n\
+Messaggi: %ld (%ld nuovi, %ld non letti)
+; \ebFolder\en\n\
+; Name: %s\n\
+; Path: %s\n\
+; Size: %s\n\
+; Messages: %ld (%ld new, %ld unread)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MAILINFO_SHORTHELP
+\ebMessaggio\en\n\
+Da: %s <%s>\n\
+A: %s <%s>\n\
+Oggetto: %s\n\
+Data: %s\n\
+Nome file: %s\n\
+Dimensione: %s
+; \ebMail\en\n\
+; From: %s <%s>\n\
+; To: %s <%s>\n\
+; Subject: %s\n\
+; Date: %s\n\
+; Filename: %s\n\
+; Size: %s
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
