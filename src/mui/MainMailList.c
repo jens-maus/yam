@@ -818,14 +818,14 @@ OVERLOAD(MUIM_CreateShortHelp)
       // use FormatSize() to prettify the size display of the mail info
       FormatSize(mail->Size, sizestr, sizeof(sizestr), SF_AUTO);
 
-      if(asprintf(&shortHelp, tr(MSG_MA_MESSAGEINFO), mail->From.RealName,
-                                                      mail->From.Address,
-                                                      mail->To.RealName,
-                                                      mail->To.Address,
-                                                      mail->Subject,
-                                                      datestr,
-                                                      mail->MailFile,
-                                                      sizestr) == -1)
+      if(asprintf(&shortHelp, tr(MSG_MAILINFO_SHORTHELP), mail->From.RealName,
+                                                          mail->From.Address,
+                                                          mail->To.RealName,
+                                                          mail->To.Address,
+                                                          mail->Subject,
+                                                          datestr,
+                                                          mail->MailFile,
+                                                          sizestr) == -1)
       {
         shortHelp = NULL;
       }

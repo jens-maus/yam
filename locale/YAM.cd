@@ -5191,24 +5191,6 @@ MSG_FI_GAUGETEXT (1721//)
 %%ld of %ld messages
 ; COUNT, COUNT
 ;
-MSG_MA_MESSAGEINFO (1722//)
-\ebCurrent message\en\n\
-From: %s <%s>\n\
-To: %s <%s>\n\
-Subject: %s\n\
-Date: %s\n\
-Filename: %s\n\
-Size: %s
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
-;
-MSG_MA_FOLDERINFO (1723//)
-\ebCurrent folder\en\n\
-Name: %s\n\
-Path: %s\n\
-Size: %s\n\
-Messages: %ld (%ld new, %ld unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
-;
 MSG_MA_MIMEPART_INFO (1725//)
 \ebAttachment - MIME part #%ld\en\n\
 Name: %s\n\
@@ -7018,4 +7000,22 @@ MSG_CO_CONFIG_IS_LOCKED (2208//)
 The configuration is currently locked.\n\
 \n\
 Please wait until all POP3 and SMTP transfers are finished.
+;
+MSG_FOLDERINFO_SHORTHELP (2209//)
+\ebFolder\en\n\
+Name: %s\n\
+Path: %s\n\
+Size: %s\n\
+Messages: %ld (%ld new, %ld unread)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MAILINFO_SHORTHELP (2210//)
+\ebMail\en\n\
+From: %s <%s>\n\
+To: %s <%s>\n\
+Subject: %s\n\
+Date: %s\n\
+Filename: %s\n\
+Size: %s
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;

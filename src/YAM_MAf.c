@@ -860,7 +860,6 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
       if(isGroupFolder(folder) || MA_GetIndex(folder) == FALSE)
       {
         xset(gui->PG_MAILLIST, MUIA_Disabled,     TRUE,
-                               MUIA_ShortHelp,    NULL,
                                MUIA_NList_Active, MUIV_NList_Active_Off);
 
         // set the quickbar as disabled as well and abort a search still in progress
@@ -2733,9 +2732,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
         // before we go and rebuild the index of the folder we make
         // sure all major GUI components of it are disabled for the
         // time being...
-        xset(gui->PG_MAILLIST, MUIA_Disabled, TRUE,
-                               MUIA_ShortHelp, NULL);
-        set(gui->NL_FOLDERS, MUIA_ShortHelp, NULL);
+        xset(gui->PG_MAILLIST, MUIA_Disabled, TRUE);
         DoMethod(gui->PG_MAILLIST, MUIM_NList_Clear);
 
         // and now we also make sure an eventually enabled preview pane

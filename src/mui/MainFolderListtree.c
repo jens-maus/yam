@@ -313,12 +313,12 @@ OVERLOAD(MUIM_CreateShortHelp)
 
       FormatSize(folder->Size, sizestr, sizeof(sizestr), SF_AUTO);
 
-      if(asprintf(&shortHelp, tr(MSG_MA_FOLDERINFO), folder->Name,
-                                                     folder->Path,
-                                                     sizestr,
-                                                     folder->Total,
-                                                     folder->New,
-                                                     folder->Unread) == -1)
+      if(asprintf(&shortHelp, tr(MSG_FOLDERINFO_SHORTHELP), folder->Name,
+                                                            folder->Path,
+                                                            sizestr,
+                                                            folder->Total,
+                                                            folder->New,
+                                                            folder->Unread) == -1)
       {
         shortHelp = NULL;
       }

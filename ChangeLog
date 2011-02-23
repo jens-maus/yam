@@ -13,6 +13,8 @@ $URL$
     and not just of the currently active one, which even might be invisible.
   * mui/AttachmentImage.c, mui/MainFolderListtree.c: applied the same change as
     for the mail list for these two objects as well.
+  * YAM.cd: changed the bubble help for the folder listtree and the mail list
+    according to the latest changes.
 
 2011-02-21 Thore Böckelmann <tboeckel@gmx.de>
 
