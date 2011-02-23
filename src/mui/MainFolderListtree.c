@@ -176,6 +176,7 @@ OVERLOAD(OM_NEW)
     InputListFrame,
     MUIA_ObjectID,                    MAKE_ID('N','L','0','1'),
     MUIA_ContextMenu,                 C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : 0,
+    MUIA_ShortHelp,                   TRUE,
     MUIA_Font,                        C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
     MUIA_Dropable,                    TRUE,
     MUIA_NList_DragType,              MUIV_NList_DragType_Immediate,
@@ -197,7 +198,6 @@ OVERLOAD(OM_NEW)
     //DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_NList_Sort2,          MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
     //DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,      MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,                  MUIA_NList_TitleMark,MUIV_TriggerValue);
     DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(ChangeFolder), MUIV_TriggerValue);
-    DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(SetFolderInfo), MUIV_TriggerValue);
 
     // prepare the folder images
     data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[FI_FOLD]);
@@ -289,6 +289,59 @@ OVERLOAD(OM_SET)
   }
 
   return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(MUIM_CreateShortHelp)
+// set up a text for the bubble help
+OVERLOAD(MUIM_CreateShortHelp)
+{
+  struct MUIP_CreateShortHelp *csh = (struct MUIP_CreateShortHelp *)msg;
+  struct MUI_NListtree_TestPos_Result res;
+  char *shortHelp = NULL;
+
+  ENTER();
+
+  DoMethod(obj, MUIM_NListtree_TestPos, csh->mx, csh->my, &res);
+  if(res.tpr_TreeNode != NULL)
+  {
+    struct Folder *folder = ((struct FolderNode *)res.tpr_TreeNode->tn_User)->folder;
+
+    if(folder != NULL && !isGroupFolder(folder))
+    {
+      char sizestr[SIZE_DEFAULT];
+
+      FormatSize(folder->Size, sizestr, sizeof(sizestr), SF_AUTO);
+
+      if(asprintf(&shortHelp, tr(MSG_MA_FOLDERINFO), folder->Name,
+                                                     folder->Path,
+                                                     sizestr,
+                                                     folder->Total,
+                                                     folder->New,
+                                                     folder->Unread) == -1)
+      {
+        shortHelp = NULL;
+      }
+    }
+  }
+
+  RETURN(shortHelp);
+  return (IPTR)shortHelp;
+}
+
+///
+/// OVERLOAD(MUIM_DeleteShortHelp)
+// free the bubble help text
+OVERLOAD(MUIM_DeleteShortHelp)
+{
+  struct MUIP_DeleteShortHelp *dsh = (struct MUIP_DeleteShortHelp *)msg;
+
+  ENTER();
+
+  free(dsh->help);
+
+  LEAVE();
+  return 0;
 }
 
 ///
@@ -818,38 +871,6 @@ DECLARE(EditFolder)
 
   if(C->FolderDoubleClick == TRUE && GetCurrentFolder() != NULL && isGroupFolder(GetCurrentFolder()) == FALSE)
     DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);
-
-  LEAVE();
-  return 0;
-}
-
-///
-/// DECLARE(SetFolderInfo)
-// update the folder listtree bubble help
-DECLARE(SetFolderInfo) // struct MUI_NListtree_TreeNode *treenode
-{
-  struct Folder *folder = ((struct FolderNode *)msg->treenode->tn_User)->folder;
-  GETDATA;
-
-  ENTER();
-
-  if(folder != NULL && !isGroupFolder(folder) && folder->LoadedMode == LM_VALID)
-  {
-    char sizestr[SIZE_DEFAULT];
-
-    FormatSize(folder->Size, sizestr, sizeof(sizestr), SF_AUTO);
-
-    snprintf(data->bubbleInfo, sizeof(data->bubbleInfo), tr(MSG_MA_FOLDERINFO), folder->Name,
-                                                                                folder->Path,
-                                                                                sizestr,
-                                                                                folder->Total,
-                                                                                folder->New,
-                                                                                folder->Unread);
-
-    set(obj, MUIA_ShortHelp, data->bubbleInfo);
-  }
-  else
-    set(obj, MUIA_ShortHelp, NULL);
 
   LEAVE();
   return 0;

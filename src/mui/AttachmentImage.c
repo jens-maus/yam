@@ -74,7 +74,6 @@ struct Data
   struct BitMap *selectedBitMask;
 
   char *dropPath;
-  char shortHelp[SIZE_LARGE];
 
   struct MUI_EventHandlerNode ehnode;
 
@@ -589,7 +588,8 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   if((obj = DoSuperNew(cl, obj,
-      MUIA_FillArea,    FALSE, // do not care about background filling
+      MUIA_FillArea,  FALSE, // do not care about background filling
+      MUIA_ShortHelp, TRUE,
     TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
@@ -605,22 +605,6 @@ OVERLOAD(OM_NEW)
         case ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
         case ATTR(Group)     : data->attachmentGroup = (Object *)tag->ti_Data; break;
       }
-    }
-
-    if(data->mailPart != NULL)
-    {
-      struct Part *mp = data->mailPart;
-      char sizestr[SIZE_DEFAULT];
-
-      FormatSize(mp->Size, sizestr, sizeof(sizestr), SF_AUTO);
-
-      snprintf(data->shortHelp, sizeof(data->shortHelp), tr(MSG_MA_MIMEPART_INFO), mp->Nr,
-                                                                                   mp->Name,
-                                                                                   mp->Description,
-                                                                                   DescribeCT(mp->ContentType),
-                                                                                   mp->ContentType,
-                                                                                   sizestr);
-      set(obj, MUIA_ShortHelp, data->shortHelp);
     }
   }
 
@@ -992,6 +976,7 @@ OVERLOAD(MUIM_HandleEvent)
   RETURN(0);
   return 0;
 }
+
 ///
 /// OVERLOAD(MUIM_DeleteDragImage)
 OVERLOAD(MUIM_DeleteDragImage)
@@ -1168,6 +1153,54 @@ OVERLOAD(MUIM_DeleteDragImage)
   RETURN(result);
   return result;
 }
+
+///
+/// OVERLOAD(MUIM_CreateShortHelp)
+// set up a text for the bubble help
+OVERLOAD(MUIM_CreateShortHelp)
+{
+  GETDATA;
+  char *shortHelp = NULL;
+
+  ENTER();
+
+  if(data->mailPart != NULL)
+  {
+    struct Part *mp = data->mailPart;
+    char sizestr[SIZE_DEFAULT];
+
+    FormatSize(mp->Size, sizestr, sizeof(sizestr), SF_AUTO);
+
+    if(asprintf(&shortHelp, tr(MSG_MA_MIMEPART_INFO), mp->Nr,
+                                                      mp->Name,
+                                                      mp->Description,
+                                                      DescribeCT(mp->ContentType),
+                                                      mp->ContentType,
+                                                      sizestr) == -1)
+    {
+      shortHelp = NULL;
+    }
+  }
+
+  RETURN(shortHelp);
+  return (IPTR)shortHelp;
+}
+
+///
+/// OVERLOAD(MUIM_DeleteShortHelp)
+// free the bubble help text
+OVERLOAD(MUIM_DeleteShortHelp)
+{
+  struct MUIP_DeleteShortHelp *dsh = (struct MUIP_DeleteShortHelp *)msg;
+
+  ENTER();
+
+  free(dsh->help);
+
+  LEAVE();
+  return 0;
+}
+
 ///
 
 /* Public Methods */

@@ -11,6 +11,8 @@ $URL$
     MUIM_CreateShortHelp implementation. This also makes it possible to let the
     bubble help display the information about the mail under the mouse pointer
     and not just of the currently active one, which even might be invisible.
+  * mui/AttachmentImage.c, mui/MainFolderListtree.c: applied the same change as
+    for the mail list for these two objects as well.
 
 2011-02-21 Thore Böckelmann <tboeckel@gmx.de>
 

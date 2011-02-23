@@ -4464,7 +4464,6 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 
     if(fo == GetCurrentFolder())
     {
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_SetFolderInfo, fo->Treenode);
       DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, fo);
     }
 
