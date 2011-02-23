@@ -496,18 +496,3 @@ DECLARE(IsMailList) // Object* list
 }
 
 ///
-/// DECLARE(SetMailInfo)
-// update the mail list bubble help
-DECLARE(SetMailInfo)
-{
-  GETDATA;
-  int i;
-
-  // forward the method two the mail lists
-  for(i=LT_MAIN; i <= LT_QUICKVIEW; i++)
-    DoMethod(data->mainListObjects[i], MUIM_MainMailList_SetMailInfo);
-
-  return 0;
-}
-
-///

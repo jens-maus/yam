@@ -69,7 +69,6 @@ struct Data
   char statusBuffer[SIZE_DEFAULT];
   char sizeBuffer[SIZE_SMALL];
   char context_menu_title[SIZE_DEFAULT];
-  char bubbleInfo[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
 };
 */
 
@@ -228,6 +227,7 @@ OVERLOAD(OM_NEW)
   if((obj = DoSuperNew(cl, obj,
 
     MUIA_Font,                       C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
+    MUIA_ShortHelp,                  TRUE,
     MUIA_NList_MinColSortable,       0,
     MUIA_NList_TitleClick,           TRUE,
     MUIA_NList_TitleClick2,          TRUE,
@@ -273,10 +273,9 @@ OVERLOAD(OM_NEW)
         DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
     }
 
-    DoMethod(obj, MUIM_MainMailList_MakeFormat);
-    DoMethod(obj, MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_MainMailList_SetMailInfo);
+    DoMethod(obj, METHOD(MakeFormat));
     if(handleDoubleClick == TRUE)
-      DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, MUIV_Notify_Self, 2, MUIM_MainMailList_DoubleClicked, MUIV_TriggerValue);
+      DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(DoubleClicked), MUIV_TriggerValue);
     DoMethod(obj, MUIM_Notify, MUIA_NList_SelectChange, TRUE,           MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeSelectedHook);
 
     // connect some notifies to the mainMailList group
@@ -745,7 +744,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
       else
         SET_FLAG(C->MessageCols, flag);
 
-      DoMethod(obj, MUIM_MainMailList_MakeFormat);
+      DoMethod(obj, METHOD(MakeFormat));
     }
     break;
 
@@ -787,6 +786,68 @@ OVERLOAD(MUIM_ContextMenuChoice)
     }
   }
 
+  return 0;
+}
+
+///
+/// OVERLOAD(MUIM_CreateShortHelp)
+// set up a text for the bubble help
+OVERLOAD(MUIM_CreateShortHelp)
+{
+  struct MUIP_CreateShortHelp *csh = (struct MUIP_CreateShortHelp *)msg;
+  struct MUI_NList_TestPos_Result res;
+  char *shortHelp = NULL;
+
+  ENTER();
+
+  DoMethod(obj, MUIM_NList_TestPos, csh->mx, csh->my, &res);
+  if(res.entry != -1)
+  {
+    struct Mail *mail;
+
+    DoMethod(obj, MUIM_NList_GetEntry, res.entry, &mail);
+    if(mail != NULL)
+    {
+      char datestr[64];
+      char sizestr[SIZE_DEFAULT];
+
+      // convert the datestamp of the mail to
+      // well defined string
+      DateStamp2String(datestr, sizeof(datestr), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+
+      // use FormatSize() to prettify the size display of the mail info
+      FormatSize(mail->Size, sizestr, sizeof(sizestr), SF_AUTO);
+
+      if(asprintf(&shortHelp, tr(MSG_MA_MESSAGEINFO), mail->From.RealName,
+                                                      mail->From.Address,
+                                                      mail->To.RealName,
+                                                      mail->To.Address,
+                                                      mail->Subject,
+                                                      datestr,
+                                                      mail->MailFile,
+                                                      sizestr) == -1)
+      {
+        shortHelp = NULL;
+      }
+    }
+  }
+
+  RETURN(shortHelp);
+  return (IPTR)shortHelp;
+}
+
+///
+/// OVERLOAD(MUIM_DeleteShortHelp)
+// free the bubble help text
+OVERLOAD(MUIM_DeleteShortHelp)
+{
+  struct MUIP_DeleteShortHelp *dsh = (struct MUIP_DeleteShortHelp *)msg;
+
+  ENTER();
+
+  free(dsh->help);
+
+  LEAVE();
   return 0;
 }
 
@@ -884,46 +945,6 @@ DECLARE(RemoveMail) // struct Mail* mail
 
   RETURN(result);
   return result;
-}
-
-///
-/// DECLARE(SetMailInfo)
-// update the mail list bubble help
-DECLARE(SetMailInfo)
-{
-  GETDATA;
-  struct Mail *mail;
-
-  ENTER();
-
-  if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
-  {
-    char datestr[64];
-    char sizestr[SIZE_DEFAULT];
-
-    // convert the datestamp of the mail to
-    // well defined string
-    DateStamp2String(datestr, sizeof(datestr), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
-
-    // use FormatSize() to prettify the size display of the mail info
-    FormatSize(mail->Size, sizestr, sizeof(sizestr), SF_AUTO);
-
-    snprintf(data->bubbleInfo, sizeof(data->bubbleInfo), tr(MSG_MA_MESSAGEINFO), mail->From.RealName,
-                                                                                 mail->From.Address,
-                                                                                 mail->To.RealName,
-                                                                                 mail->To.Address,
-                                                                                 mail->Subject,
-                                                                                 datestr,
-                                                                                 mail->MailFile,
-                                                                                 sizestr);
-
-    set(obj, MUIA_ShortHelp, data->bubbleInfo);
-  }
-  else
-    set(obj, MUIA_ShortHelp, NULL);
-
-  LEAVE();
-  return 0;
 }
 
 ///

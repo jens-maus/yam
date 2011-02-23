@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainMailList.c: replaced the custom SetMailInfo method by an overridden
+    MUIM_CreateShortHelp implementation. This also makes it possible to let the
+    bubble help display the information about the mail under the mouse pointer
+    and not just of the currently active one, which even might be invisible.
+
 2011-02-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: fixed a possible race condition in the POP3 thread when starting
