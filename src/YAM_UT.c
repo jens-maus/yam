@@ -3271,12 +3271,12 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
     int activeConnections;
 
     // now check if the mail to be removed has just been downloaded, but not yet filtered
-    ObtainSemaphore(G->connectionSemaphore);
+    ObtainSemaphoreShared(G->connectionSemaphore);
     activeConnections = G->activeConnections;
     ReleaseSemaphore(G->connectionSemaphore);
 
     // we need to check only if there are any active connections
-    if(activeConnections != 0)
+    if(activeConnections > 0)
     {
       struct MailServerNode *msn;
       int i = 0;

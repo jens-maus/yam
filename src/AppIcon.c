@@ -164,12 +164,12 @@ void UpdateAppIcon(void)
     }
   }
 
-  ObtainSemaphore(G->connectionSemaphore);
+  ObtainSemaphoreShared(G->connectionSemaphore);
   activeConnections = G->activeConnections;
   ReleaseSemaphore(G->connectionSemaphore);
 
   // we set the mode accordingly to the status of the folder (new/check/old)
-  if(activeConnections != 0)
+  if(activeConnections > 0)
     mode = II_CHECK;
   else if(tot_msg == 0)
     mode = II_EMPTY;
