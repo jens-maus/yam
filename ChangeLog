@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-02-28 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
 2011-02-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * AppIcon.c, YAM_UT.c: slightly changed the check for active connections to

@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.20 (08.02.2011)
+## version $VER: YAM.catalog 7.21 (28.02.2011)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5613;
+; in sync with .cd in revision 5656;
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -7208,36 +7208,6 @@ MSG_FI_GAUGETEXT
 ; %%ld of %ld messages
 ; COUNT, COUNT
 ;
-MSG_MA_MESSAGEINFO
-\ebWybrana wiadomo¶æ\en\n\
-Od: %s <%s>\n\
-Do: %s <%s>\n\
-Temat: %s\n\
-Data: %s\n\
-Nazwa pliku: %s\n\
-Wielko¶æ: %s
-; \ebCurrent message\en\n\
-; From: %s <%s>\n\
-; To: %s <%s>\n\
-; Subject: %s\n\
-; Date: %s\n\
-; Filename: %s\n\
-; Size: %s
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
-;
-MSG_MA_FOLDERINFO
-\ebWybrany folder\en\n\
-Nazwa: %s\n\
-¦cie¿ka dostêpu: %s\n\
-Wielko¶æ: %s\n\
-Wiadomo¶ci: %ld (nowych %ld, nieprzeczytanych %ld)
-; \ebCurrent folder\en\n\
-; Name: %s\n\
-; Path: %s\n\
-; Size: %s\n\
-; Messages: %ld (%ld new, %ld unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
-;
 MSG_MA_MIMEPART_INFO
 \ebZa³±cznik - czê¶æ MIME #%ld\en\n\
 Nazwa: %s\n\
@@ -9874,10 +9844,12 @@ konta pocztowego przy ka¿dym uruchomieniu programu.
 MSG_IMPORT_UNKNOWN_FILE_FORMAT
 Nieznany format wiadomo¶ci w pliku \"%s\".
 ; Unknown mail file format in file '%s'.
+; FILE
 ;
 MSG_IMPORT_NO_MAILS
 Plik \"%s\" nie zawiera ¿adnych wiadomo¶ci do zaimportowania.
 ; The file '%s' does not contain any importable mails.
+; FILE
 ;
 MSG_CO_CONFIG_IS_LOCKED
 Plik konfiguracyjny jest obecnie zablokowany.\n\
@@ -9886,4 +9858,34 @@ Proszê poczekaæ na zakoñczenie wszystkich transferów POP3 i SMTP.
 ; The configuration is currently locked.\n\
 ; \n\
 ; Please wait until all POP3 and SMTP transfers are finished.
+;
+MSG_FOLDERINFO_SHORTHELP
+\ebFolder\en\n\
+Nazwa: %s\n\
+¦cie¿ka dostêpu: %s\n\
+Wielko¶æ: %s\n\
+Wiadomo¶ci: %ld (nowych %ld, nieprzeczytanych %ld)
+; \ebFolder\en\n\
+; Name: %s\n\
+; Path: %s\n\
+; Size: %s\n\
+; Messages: %ld (%ld new, %ld unread)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MAILINFO_SHORTHELP
+\ebWiadomo¶æ\en\n\
+Od: %s <%s>\n\
+Do: %s <%s>\n\
+Temat: %s\n\
+Data: %s\n\
+Nazwa pliku: %s\n\
+Wielko¶æ: %s
+; \ebMail\en\n\
+; From: %s <%s>\n\
+; To: %s <%s>\n\
+; Subject: %s\n\
+; Date: %s\n\
+; Filename: %s\n\
+; Size: %s
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
