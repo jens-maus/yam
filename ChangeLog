@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2010-03-02 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2011-03-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * UpdateNotifyWindow.c, misc: YAM now performs the download of possible update

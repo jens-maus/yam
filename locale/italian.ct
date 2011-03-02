@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.82 (23.02.2011)
+## version $VER: YAM.catalog 7.83 (2.03.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.8 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5656 2011-02-23
+; based on YAM.cd 5660 2011-03-2
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -4735,10 +4735,11 @@ Verifica l'esistenza di %s.
 ; FILENAME
 ;
 MSG_ER_AliasNotFound
-Nome o pseudonimo sconosciuto: %s.\n\
+Nome o pseudonimo sconosciuto per l'account:\n\
+%s.\n\
 \n\
-Impossibile trovare l'indirizzo di posta per\n\
-questo destinatario all'interno della rubrica.\n\
+Impossibile trovare l'indirizzo di posta di questo\n\
+destinatario all'interno della rubrica.\n\
 Per favore effettua una verifica ortografica.
 ; Unknown alias or name: %s.\n\
 ; \n\
@@ -4747,7 +4748,7 @@ Per favore effettua una verifica ortografica.
 ; ALIAS
 ;
 MSG_ER_ErrorNoPGPId
-Impossibile trovare ID PGP '%s' nella rubrica.\n\
+Impossibile trovare l'ID PGP di '%s' all'interno della rubrica.\n\
 Tentativo con '%s'.
 ; Couldn't find PGP ID for '%s' in the address book, now trying '%s'.
 ; RECIPIENT, ADDRESS
@@ -7047,10 +7048,6 @@ MSG_UPD_NOTIFICATION_NOUPDATE
 Non notificarmi altri aggiornamenti in futuro
 ; Do not notify me on updates in future
 ;
-MSG_UPD_NOTIFICATION_VISITURL
-Scarica da URL
-; Visit URL
-;
 MSG_UPD_NOTIFICATION_CLOSE
 Chiudi
 ; Close
@@ -9191,6 +9188,8 @@ MSG_ERROR_PLAYSOUND
 Si è verificato un errore durante l'esecuzione del file\n\
 audio '%s'.\n\
 \n\
+Assicurati di aver selezionato un corretto file audio.\n\
+\n\
 Nota: Il problema potrebbe essere stato generato da\n\
 un datatype specifico non compatibile o danneggiato\n\
 oppure il datatype stesso non funziona correttamente.
@@ -10039,4 +10038,17 @@ Dimensione: %s
 ; Filename: %s\n\
 ; Size: %s
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_CO_UPDATE_DOWNLOAD_PATH
+_Percorso download:
+; Download _path:
+;
+MSG_UPD_NOTIFICATION_DOWNLOAD
+Download
+; Download
+;
+MSG_TR_DOWNLOADING_FROM_SERVER
+Scaricamento da '%s'
+; Downloading from '%s'
+; SERVER
 ;
