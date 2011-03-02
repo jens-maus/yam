@@ -346,6 +346,7 @@ DECLARE(Abort)
   {
     // set the connection state to aborted
     data->connection->abort = TRUE;
+    data->connection->error = CONNECTERR_ABORTED;
   }
 
   if(data->thread != NULL)
