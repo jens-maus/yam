@@ -3682,6 +3682,16 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
                 End,
               End,
 
+              Child, HGroup,
+                Child, Label2(tr(MSG_CO_UPDATE_DOWNLOAD_PATH)),
+                Child, data->GUI.PO_UPDATEDOWNLOADPATH = PopaslObject,
+                  MUIA_Popasl_Type, ASL_FileRequest,
+                  MUIA_Popstring_String, data->GUI.ST_UPDATEDOWNLOADPATH = MakeString(SIZE_PATH, tr(MSG_CO_UPDATE_DOWNLOAD_PATH)),
+                  MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
+                  ASLFR_DrawersOnly, TRUE,
+                End,
+              End,
+
               Child, HVSpace,
 
             End,

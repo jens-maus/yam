@@ -265,6 +265,8 @@ struct CO_GUIData
   Object *BT_UPDATENOW;
   Object *TX_UPDATESTATUS;
   Object *TX_UPDATEDATE;
+  Object *ST_UPDATEDOWNLOADPATH;
+  Object *PO_UPDATEDOWNLOADPATH;
   Object *CH_DETECTCYRILLIC;
   Object *CH_ABOOKLOOKUP;
   Object *CH_CONVERTHTML;
@@ -573,6 +575,7 @@ struct Config
   char QuoteChar[2];
   char AltQuoteChar[2];
   char ThemeName[SIZE_FILE];
+  char UpdateDownloadPath[SIZE_PATH];
 };
 
 extern struct Config *C;

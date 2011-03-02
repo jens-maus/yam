@@ -1028,6 +1028,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
   if(page == cp_Update || page == cp_AllPages)
   {
     co->UpdateInterval = 604800; // check weekly for updates per default
+    strlcpy(co->UpdateDownloadPath, "T:", sizeof(co->UpdateDownloadPath));
     SetDefaultUpdateState();
   }
 
@@ -1434,7 +1435,8 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      strcmp(c1->StyleMailRead,       c2->StyleMailRead) == 0 &&
      strcmp(c1->QuoteChar,           c2->QuoteChar) == 0 &&
      strcmp(c1->AltQuoteChar,        c2->AltQuoteChar) == 0 &&
-     strcmp(c1->ThemeName,           c2->ThemeName) == 0)
+     strcmp(c1->ThemeName,           c2->ThemeName) == 0 &&
+     strcmp(c1->UpdateDownloadPath,  c2->UpdateDownloadPath) == 0)
   {
     equal = TRUE;
   }

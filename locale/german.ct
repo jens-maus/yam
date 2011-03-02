@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.22 (23.2.2011)
+## version $VER: YAM.catalog 7.23 (2.3.2011)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -6650,9 +6650,6 @@ MSG_UPD_NOTIFICATION_CHANGES
 MSG_UPD_NOTIFICATION_NOUPDATE
 In Zukunft nicht mehr benachrichtigen
 ;
-MSG_UPD_NOTIFICATION_VISITURL
-URL aufsuchen
-;
 MSG_UPD_NOTIFICATION_CLOSE
 Schliessen
 ;
@@ -8593,4 +8590,13 @@ Datum: %s\n\
 Dateiname: %s\n\
 Grösse: %s
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_CO_UPDATE_DOWNLOAD_PATH
+Download_pfad:
+;
+MSG_UPD_NOTIFICATION_DOWNLOAD
+Update herunterladen
+;
+MSG_TR_DOWNLOADING_FROM_SERVER
+Dateiempfang von '%s'
 ;

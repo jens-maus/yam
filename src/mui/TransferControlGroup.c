@@ -79,6 +79,7 @@ struct Data
   char str_size_curr_max[SIZE_SMALL];
 
   BOOL started;
+  BOOL fileMode;
 };
 */
 
@@ -199,10 +200,12 @@ OVERLOAD(OM_NEW)
   Object *GA_BYTES;
   Object *BT_ABORT;
   const char *title;
+  BOOL mailMode;
 
   ENTER();
 
   title = (const char *)GetTagData(ATTR(Title), (IPTR)tr(MSG_TR_Status), inittags(msg));
+  mailMode = GetTagData(ATTR(MailMode), FALSE, inittags(msg));
 
   if((obj = DoSuperNew(cl, obj,
 
@@ -217,6 +220,7 @@ OVERLOAD(OM_NEW)
       Child, GA_COUNT = GaugeObject,
         GaugeFrame,
         MUIA_Gauge_Horiz, TRUE,
+        MUIA_ShowMe, mailMode,
       End,
       Child, GA_BYTES = GaugeObject,
         GaugeFrame,
@@ -280,6 +284,12 @@ OVERLOAD(OM_SET)
       case ATTR(Thread):
       {
         data->thread = (APTR)tag->ti_Data;
+      }
+      break;
+
+      case ATTR(MailMode):
+      {
+        set(data->GA_COUNT, MUIA_ShowMe, tag->ti_Data);
       }
       break;
     }

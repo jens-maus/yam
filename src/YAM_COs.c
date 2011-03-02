@@ -605,8 +605,9 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "SizeFormat       = %d\n", co->SizeFormat);
 
     fprintf(fh, "\n[Update]\n");
-    fprintf(fh, "UpdateInterval   = %d\n", co->UpdateInterval);
-    fprintf(fh, "UpdateServer     = %s\n", co->UpdateServer);
+    fprintf(fh, "UpdateInterval     = %d\n", co->UpdateInterval);
+    fprintf(fh, "UpdateServer       = %s\n", co->UpdateServer);
+    fprintf(fh, "UpdateDownloadPath = %s\n", co->UpdateDownloadPath);
 
     fprintf(fh, "\n[Advanced]\n");
     fprintf(fh, "LetterPart               = %d\n", co->LetterPart);
@@ -1465,6 +1466,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 /*Update*/
           else if(stricmp(buf, "UpdateInterval") == 0)           co->UpdateInterval = atoi(value);
           else if(stricmp(buf, "UpdateServer") == 0)             strlcpy(co->UpdateServer, value, sizeof(co->UpdateServer));
+          else if(stricmp(buf, "UpdateDownloadPath") == 0)       strlcpy(co->UpdateDownloadPath, value, sizeof(co->UpdateDownloadPath));
 
 /*Advanced*/
           else if(stricmp(buf, "LetterPart") == 0)
@@ -2397,6 +2399,8 @@ void CO_GetConfig(BOOL saveConfig)
           CE->UpdateInterval = 2419200; // 1 month
         break;
       }
+
+      GetMUIString(CE->UpdateDownloadPath, gui->ST_UPDATEDOWNLOADPATH, sizeof(CE->UpdateDownloadPath));
     }
     break;
 
@@ -2879,6 +2883,8 @@ void CO_SetConfig(void)
         // no update check was yet performed, so we clear our status gadgets
         set(gui->TX_UPDATEDATE, MUIA_Text_Contents, "");
       }
+
+      setstring(gui->ST_UPDATEDOWNLOADPATH, CE->UpdateDownloadPath);
     }
     break;
 

@@ -111,11 +111,12 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
       else
         tc->hport = noproxy ? 80 : 8080;
 
-      snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferFrom), tc->host);
+      snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_DOWNLOADING_FROM_SERVER), tc->host);
 
       // create an invisible transfer window
-      if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, FALSE, FALSE)) != NULL)
+      if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, FALSE, isFlagSet(flags, DLURLF_VISIBLE))) != NULL)
       {
+        PushMethodOnStack(tc->transferGroup, 3, OM_SET, MUIA_TransferControlGroup_MailMode, FALSE);
         PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_HTTP_CONNECTING_TO_SERVER));
 
         // open the TCP/IP connection to 'host' under the port 'hport'
@@ -213,7 +214,8 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
                 {
                   FILE *out;
 
-                  // prepare the output file.
+                  // prepare the output file
+                  D(DBF_NET, "downloading to file '%s'", filename);
                   if((out = fopen(filename, "w")) != NULL)
                   {
                     LONG received = -1;

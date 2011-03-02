@@ -32,6 +32,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <proto/dos.h>
 #include <proto/muimaster.h>
 #include <proto/openurl.h>
 #include <libraries/iffparse.h>
@@ -53,18 +54,19 @@
 
 #include "mui/ImageArea.h"
 #include "mui/UpdateComponentList.h"
+#include "tcp/http.h"
 
 #include "Debug.h"
 
 /* CLASSDATA
 struct Data
 {
-  Object *ComponentList;
-  Object *ComponentHistory;
-  Object *SkipInFutureCheckBox;
-  Object *VisitURLButton;
-  char *ChangeLogText;
-  char WindowTitle[SIZE_DEFAULT];
+  Object *componentList;
+  Object *componentHistory;
+  Object *skipInFutureCheckBox;
+  Object *downloadButton;
+  char *changeLogText;
+  char windowTitle[SIZE_DEFAULT];
   struct TempFile *tempFile;
   BOOL quiet;
 };
@@ -80,11 +82,11 @@ OVERLOAD(OM_NEW)
 
   if((tempFile = OpenTempFile(NULL)) != NULL)
   {
-    Object *bt_visit;
-    Object *bt_close;
-    Object *nl_componentlist;
-    Object *nf_componenthistory;
-    Object *ch_skipinfuture;
+    Object *componentList;
+    Object *componentHistory;
+    Object *skipInFutureCheckBox;
+    Object *downloadButton;
+    Object *closeButton;
 
     if((obj = DoSuperNew(cl, obj,
 
@@ -120,7 +122,7 @@ OVERLOAD(OM_NEW)
           MUIA_CycleChain, TRUE,
           MUIA_VertWeight, 20,
           MUIA_Listview_DragType,  MUIV_Listview_DragType_None,
-          MUIA_NListview_NList, nl_componentlist = UpdateComponentListObject,
+          MUIA_NListview_NList, componentList = UpdateComponentListObject,
           End,
         End,
 
@@ -132,7 +134,7 @@ OVERLOAD(OM_NEW)
         End,
         Child, NListviewObject,
           MUIA_CycleChain, TRUE,
-          MUIA_NListview_NList, nf_componenthistory = NFloattextObject,
+          MUIA_NListview_NList, componentHistory = NFloattextObject,
             MUIA_Font,             MUIV_Font_Fixed,
             MUIA_NList_Format,     "P=\33l",
             MUIA_NList_Input,      FALSE,
@@ -141,7 +143,7 @@ OVERLOAD(OM_NEW)
         End,
 
         Child, HGroup,
-          Child, ch_skipinfuture = MakeCheck(tr(MSG_UPD_NOTIFICATION_NOUPDATE)),
+          Child, skipInFutureCheckBox = MakeCheck(tr(MSG_UPD_NOTIFICATION_NOUPDATE)),
           Child, LLabel1(tr(MSG_UPD_NOTIFICATION_NOUPDATE)),
           Child, HVSpace,
         End,
@@ -154,8 +156,8 @@ OVERLOAD(OM_NEW)
         Child, HGroup,
           Child, HVSpace,
           Child, HVSpace,
-          Child, bt_close = MakeButton(tr(MSG_UPD_NOTIFICATION_CLOSE)),
-          Child, bt_visit = MakeButton(tr(MSG_UPD_NOTIFICATION_VISITURL)),
+          Child, closeButton = MakeButton(tr(MSG_UPD_NOTIFICATION_CLOSE)),
+          Child, downloadButton = MakeButton(tr(MSG_UPD_NOTIFICATION_DOWNLOAD)),
         End,
 
       End,
@@ -166,20 +168,20 @@ OVERLOAD(OM_NEW)
 
       DoMethod(G->App, OM_ADDMEMBER, obj);
 
-      data->ComponentList = nl_componentlist;
-      data->ComponentHistory = nf_componenthistory;
-      data->SkipInFutureCheckBox = ch_skipinfuture;
-      data->VisitURLButton = bt_visit;
+      data->componentList = componentList;
+      data->componentHistory = componentHistory;
+      data->skipInFutureCheckBox = skipInFutureCheckBox;
+      data->downloadButton = downloadButton;
       data->tempFile = tempFile;
 
-      // start with a disabled "Visit URL" button
-      set(bt_visit, MUIA_Disabled, TRUE);
+      // start with a disabled "Download" button
+      set(downloadButton, MUIA_Disabled, TRUE);
 
-      DoMethod(obj,               MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, METHOD(Close));
-      DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, METHOD(Select), MUIV_TriggerValue);
-      DoMethod(nl_componentlist,  MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, METHOD(VisitURL));
-      DoMethod(bt_visit,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(VisitURL));
-      DoMethod(bt_close,          MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(Close));
+      DoMethod(obj,              MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, METHOD(Close));
+      DoMethod(componentList,    MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, METHOD(Select), MUIV_TriggerValue);
+      DoMethod(componentHistory, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, METHOD(Download));
+      DoMethod(downloadButton,   MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(Download));
+      DoMethod(closeButton,      MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(Close));
 
       set(obj, MUIA_Window_Activate, TRUE);
     }
@@ -232,15 +234,15 @@ OVERLOAD(OM_SET)
           char buf[64];
 
           // setup some options and select the first entry at the top
-          set(data->SkipInFutureCheckBox, MUIA_Selected, C->UpdateInterval == 0);
-          set(data->ComponentList, MUIA_NList_Active, MUIV_NList_Active_Top);
+          set(data->skipInFutureCheckBox, MUIA_Selected, C->UpdateInterval == 0);
+          set(data->componentList, MUIA_NList_Active, MUIV_NList_Active_Top);
 
           // we now specify the window title as we add the date/time to it
           DateStamp2String(buf, sizeof(buf), NULL, DSS_DATETIME, TZC_NONE);
-          snprintf(data->WindowTitle, sizeof(data->WindowTitle), "%s - %s", tr(MSG_UPD_NOTIFICATION_WTITLE), buf);
+          snprintf(data->windowTitle, sizeof(data->windowTitle), "%s - %s", tr(MSG_UPD_NOTIFICATION_WTITLE), buf);
 
-          xset(obj, MUIA_Window_Title,         data->WindowTitle,
-                    MUIA_Window_DefaultObject, data->ComponentList);
+          xset(obj, MUIA_Window_Title,         data->windowTitle,
+                    MUIA_Window_DefaultObject, data->componentList);
 
           // we also make sure the application in uniconified.
           if(xget(G->App, MUIA_Application_Iconified))
@@ -315,11 +317,11 @@ DECLARE(Clear)
 
   ENTER();
 
-  DoMethod(data->ComponentList, MUIM_NList_Clear);
-  set(data->ComponentHistory, MUIA_NFloattext_Text, "");
+  DoMethod(data->componentList, MUIM_NList_Clear);
+  set(data->componentHistory, MUIA_NFloattext_Text, "");
 
-  free(data->ChangeLogText);
-  data->ChangeLogText = NULL;
+  free(data->changeLogText);
+  data->changeLogText = NULL;
 
   LEAVE();
   return 0;
@@ -334,10 +336,10 @@ DECLARE(Select) // ULONG num
 
   ENTER();
 
-  DoMethod(data->ComponentList, MUIM_NList_GetEntry, msg->num, &comp);
+  DoMethod(data->componentList, MUIM_NList_GetEntry, msg->num, &comp);
 
-  // disable the "Visit URL" button in case we found no valid component
-  set(data->VisitURLButton, MUIA_Disabled, comp == NULL);
+  // disable the "Download" button in case we found no valid component
+  set(data->downloadButton, MUIA_Disabled, comp == NULL);
 
   if(comp != NULL && comp->changeLogFile != NULL)
   {
@@ -348,15 +350,15 @@ DECLARE(Select) // ULONG num
     {
       if((comp->changeLogFile->FP = fopen(comp->changeLogFile->Filename, "r")) != NULL)
       {
-        free(data->ChangeLogText);
+        free(data->changeLogText);
 
-        if((data->ChangeLogText = malloc(size+1)) != NULL)
+        if((data->changeLogText = malloc(size+1)) != NULL)
         {
-          if(fread(data->ChangeLogText, size, 1, comp->changeLogFile->FP) == 1)
+          if(fread(data->changeLogText, size, 1, comp->changeLogFile->FP) == 1)
           {
-            data->ChangeLogText[size] = '\0';
+            data->changeLogText[size] = '\0';
 
-            set(data->ComponentHistory, MUIA_NFloattext_Text, data->ChangeLogText);
+            set(data->componentHistory, MUIA_NFloattext_Text, data->changeLogText);
           }
         }
 
@@ -379,34 +381,32 @@ DECLARE(AddComponent) // struct UpdateComponent *comp
   ENTER();
 
   D(DBF_UPDATE, "added '%s' as a new updateable component", msg->comp->name);
-  DoMethod(data->ComponentList, MUIM_NList_InsertSingle, msg->comp, MUIV_NList_Insert_Bottom);
+  DoMethod(data->componentList, MUIM_NList_InsertSingle, msg->comp, MUIV_NList_Insert_Bottom);
 
   LEAVE();
   return 0;
 }
 
 ///
-/// DECLARE(VisitURL)
-DECLARE(VisitURL)
+/// DECLARE(Download)
+DECLARE(Download)
 {
   GETDATA;
   struct UpdateComponent *comp = NULL;
 
   ENTER();
 
-  DoMethod(data->ComponentList, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &comp);
+  DoMethod(data->componentList, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &comp);
   if(comp != NULL)
   {
-    if(GotoURLPossible() == TRUE)
-    {
-      // openurl.library is available, so let openurl.library or URL: open the link
-      GotoURL(comp->url, TRUE);
-    }
-    else
-    {
-      // no openurl.library or URL: device, just open a requester telling the user what to do
-      MUI_Request(G->App, obj, 0L, NULL, tr(MSG_OkayReq), tr(MSG_NO_OPENURL_LIB), comp->url);
-    }
+    char localFile[SIZE_PATHFILE];
+
+    AddPath(localFile, C->UpdateDownloadPath, FilePart(comp->url), sizeof(localFile));
+
+    DoAction(NULL, TA_DownloadURL, TT_DownloadURL_Server, comp->url,
+                                   TT_DownloadURL_Filename, localFile,
+                                   TT_DownloadURL_Flags, DLURLF_VISIBLE,
+                                   TAG_DONE);
   }
 
   LEAVE();
@@ -423,7 +423,7 @@ DECLARE(Close)
 
   // before we close the window we have to check the status
   // of the SkipInFutureCheckBox and set the configuration accordingly.
-  if(xget(data->SkipInFutureCheckBox, MUIA_Selected) == TRUE)
+  if(xget(data->skipInFutureCheckBox, MUIA_Selected) == TRUE)
   {
     // now we make sure no further update timer is running.
     C->UpdateInterval = 0;

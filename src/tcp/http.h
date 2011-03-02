@@ -28,7 +28,8 @@
 
 ***************************************************************************/
 
-#define DLURLF_SIGNAL (1<<0)
+#define DLURLF_SIGNAL  (1<<0)
+#define DLURLF_VISIBLE (1<<1) // show the transfer window
 
 BOOL DownloadURL(const char *server, const char *request, const char *filename, const ULONG flags);
 

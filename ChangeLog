@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-03-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * UpdateNotifyWindow.c, misc: YAM now performs the download of possible update
+    files itself instead of offloading this work to a browser. This only applies
+    for downloads initiated from within the update notify window. Outdated
+    classes will be downloaded as before using a separate browser.
+    The download path defaults to "T:" but can be customized on the Update page
+    of the configuration window.
+
 2011-02-28 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest changes.
