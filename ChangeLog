@@ -19,6 +19,7 @@ $URL$
     of the configuration window.
   * mui/TransferControlGroup.c: set the connection's error value as well in case
     of an abortion.
+  * tcp/http.c: fixed wrong status message during a file download.
 
 2011-02-28 Mariusz Danilewicz <mandi@interia.pl>
 

@@ -231,7 +231,7 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
                     while(tc->connection->error == CONNECTERR_NO_ERROR &&
                           (len = receiveFunc(tc->connection, tc->requestResponse, sizeof(tc->requestResponse))) > 0)
                     {
-                      PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, len, tr(MSG_TR_Downloading));
+                      PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, len, tr(MSG_HTTP_RECEIVING_DATA));
 
                       if(fwrite(tc->requestResponse, len, 1, out) != 1)
                       {
