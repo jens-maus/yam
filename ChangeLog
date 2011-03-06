@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-03-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/TransferControlGroup.c: fixed wrong default value for the "mail mode"
+    attribute.
+
 2011-03-03 Jens Langner <Jens.Langner@light-speed.de>
 
   * include/SDI: updated SDI headers with patches for AROS/m68k kindly provided

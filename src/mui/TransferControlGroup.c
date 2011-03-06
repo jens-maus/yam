@@ -205,7 +205,7 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   title = (const char *)GetTagData(ATTR(Title), (IPTR)tr(MSG_TR_Status), inittags(msg));
-  mailMode = GetTagData(ATTR(MailMode), FALSE, inittags(msg));
+  mailMode = GetTagData(ATTR(MailMode), TRUE, inittags(msg));
 
   if((obj = DoSuperNew(cl, obj,
 
