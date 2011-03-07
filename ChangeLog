@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-03-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: fixed a typo.
+
 2011-03-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/TransferControlGroup.c: fixed wrong default value for the "mail mode"
