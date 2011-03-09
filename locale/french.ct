@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (02.12.2010)
+## version $VER: YAM.catalog 7.2 (09.03.2011)
 ## language français
 ## codeset 111
 ;
@@ -1325,10 +1325,6 @@ MSG_CO_Download
 Recevoir les messages
 ; Download
 ;
-MSG_CO_AvoidDuplicates
-Éviter les _doublons
-; _Avoid duplicates
-;
 MSG_CO_TransferWin
 Fenêtre de _transfert
 ; _Transfer window
@@ -1781,10 +1777,6 @@ MSG_CO_SendStart
 Envoyer les messages en attente
 ; Send mail in outgoing queue
 ;
-MSG_CO_PopStart
-Charger les nouveaux messages
-; Download new mail
-;
 MSG_CO_CheckDOB
 Vérifier les dates de naissance
 ; Check birthdates
@@ -2112,14 +2104,6 @@ Vérifier ce compte lors de la\n\
 vérification de nouveaux messages
 ; Check this account while\n\
 ; checking for new mail.
-;
-MSG_HELP_CO_CH_AVOIDDUP
-Si vous décidez de ne pas effacer les messages\n\
-sur le serveur. Alors cette option vous \n\
-permettra d'éviter les doublons.
-; If you don't delete old mail\n\
-; on the server, use this option\n\
-; to avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN
 Affiche une fenêtre de progression\n\
@@ -7031,10 +7015,6 @@ MSG_UPD_NOTIFICATION_NOUPDATE
 Ne plus me notifier des mises à jour
 ; Do not notify me on updates in future
 ;
-MSG_UPD_NOTIFICATION_VISITURL
-Visiter l'URL
-; Visit URL
-;
 MSG_UPD_NOTIFICATION_CLOSE
 Fermer
 ; Close
@@ -7213,18 +7193,6 @@ la convertira en texte brut avant de l'afficher.
 ; If the main part of an e-mail is HTML, YAM will\n\
 ; convert it to plain text before displaying it.
 ;
-MSG_RE_FOLLOWTHREAD
- Afin de rechercher d'autres mails appartenant au même\n\
- fil de discussion, YAM doit charger des index supplémentaires.\n\
- Cela peut s'avérer assez consommateur en temps et en mémoire.\n\
- \n\
- Voulez-vous continuer ?
-; In order to search for more mails of the same thread,\n\
-; YAM has to load additional folder indices. This may be\n\
-; quite time and memory consuming.\n\
-; \n\
-; Do you want to continue?
-;
 MSG_TR_TRANSFERSTATUS
 %s sur %s à %s/s\n\
 %02ld'%02ld" écoulées - %02ld'%02ld" restantes
@@ -7241,36 +7209,6 @@ MSG_FI_GAUGETEXT
 Message %%ld sur %ld
 ; %%ld of %ld messages
 ; COUNT, COUNT
-;
-MSG_MA_MESSAGEINFO
-\ebMessage actuel\en\n\
-Expéditeur : %s <%s>\n\
-Destinataire : %s <%s>\n\
-Sujet : %s\n\
-Date : %s\n\
-Fichier : %s\n\
-Taille : %s
-; \ebCurrent message\en\n\
-; From: %s <%s>\n\
-; To: %s <%s>\n\
-; Subject: %s\n\
-; Date: %s\n\
-; Filename: %s\n\
-; Size: %s
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
-;
-MSG_MA_FOLDERINFO
-\ebDossier actuel\en\n\
-Nom : %s\n\
-Chemin : %s\n\
-Taille : %s octets\n\
-Messages : %ld (%ld nouveaux, %ld non lus)
-; \ebCurrent folder\en\n\
-; Name: %s\n\
-; Path: %s\n\
-; Size: %s\n\
-; Messages: %ld (%ld new, %ld unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MA_MIMEPART_INFO
 \ebPièce jointe - Partie #%ld\en\n\
@@ -9887,3 +9825,114 @@ MSG_WR_SECURITYREQ_GADS
 *A_ucune|_Signé|_Crypté|S_igné & crypté|Envoi A_nonyme|_Annuler
 ; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Cancel
 ;
+MSG_HTTP_CONNECTING_TO_SERVER
+Connexion au serveur...
+; Connecting to server...
+;
+MSG_HTTP_SENDING_REQUEST
+Envoie requête HTTP...
+; Sending HTTP request...
+;
+MSG_HTTP_WAITING_FOR_ANSWER
+Attente de la réponse du serveur...
+; Waiting for server's answer...
+;
+MSG_HTTP_RECEIVING_DATA
+Réception des données...
+; Receiving data...
+;
+MSG_HTTP_DISCONNECTING_FROM_SERVER
+Déconnexion du serveur...
+; Disconnecting from server...
+;
+MSG_SHOW_TRANSFER_WINDOW
+Affichage des transferts en cours...
+; Show transfers in progress...
+;
+MSG_CO_APPLY_REMOTE_FILTERS
+Appliquer les _filtres à distance
+; Apply remote _filters
+;
+MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS
+Applique tous les filtres distants\n\
+définis lors de la réception du\n\
+courrier depuis ce serveur.
+; Apply all defined remote filters\n\
+; when downloading mail from this\n\
+; server.
+;
+MSG_CO_DOWNLOAD_ON_STARTUP
+Vérifier le courrier au démarrage
+; Check for new mail on startup
+;
+MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
+Vérifie automatiquement ce compte\n\
+à chaque démarrage de YAM.
+; Check this account for new mail on every\n\
+; startup of YAM automatically.
+;
+MSG_IMPORT_UNKNOWN_FILE_FORMAT
+Format de message inconnu dans le fichier « %s ».
+; Unknown mail file format in file '%s'.
+;
+; FILE
+;
+MSG_IMPORT_NO_MAILS
+Le fichier « %s » ne contient aucun message importable.
+; The file '%s' does not contain any importable mails.
+;
+; FILE
+;
+MSG_CO_CONFIG_IS_LOCKED
+La configuration est actuellement verrouillée.\n\
+\n\
+Veuillez attendre que tous les transferts POP3 et SMTP soient terminés.
+; The configuration is currently locked.\n\
+; \n\
+; Please wait until all POP3 and SMTP transfers are finished.
+;
+MSG_FOLDERINFO_SHORTHELP
+\ebDossier\en\n\
+Nom : %s\n\
+Chemin : %s\n\
+Taille : %s\n\
+Messages : %ld (%ld nouveaux, %ld non lus)
+; \ebFolder\en\n\
+; Name: %s\n\
+; Path: %s\n\
+; Size: %s\n\
+; Messages: %ld (%ld new, %ld unread)
+;
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MAILINFO_SHORTHELP
+\ebMessage\en\n\
+Expéditeur : %s <%s>\n\
+Destinataire : %s <%s>\n\
+Sujet : %s\n\
+Date : %s\n\
+Fichier : %s\n\
+Taille : %s
+; \ebMail\en\n\
+; From: %s <%s>\n\
+; To: %s <%s>\n\
+; Subject: %s\n\
+; Date: %s\n\
+; Filename: %s\n\
+; Size: %s
+;
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_CO_UPDATE_DOWNLOAD_PATH
+Chemin de _téléchargement :
+; Download _path:
+;
+MSG_UPD_NOTIFICATION_DOWNLOAD
+Téléchargement
+; Download
+;
+MSG_TR_DOWNLOADING_FROM_SERVER
+Téléchargement depuis « %s »
+; Downloading from '%s'
+;
+; SERVER
