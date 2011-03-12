@@ -1,6 +1,7 @@
-## version $VER: YAM.catalog 7.15 (02.02.2011)
+## version $VER: YAM.catalog 7.16 (12.03.2011)
 ## codeset 0
 ## language español
+## chunk AUTH Emilio Jimenez
 ## chunk AUTH Emilio Jimenez
 ; YAM.cd - YAM 2.7 catalog description file
 ;
@@ -5941,10 +5942,6 @@ MSG_UPD_NOTIFICATION_NOUPDATE
 No notificarme de actualizaciones en el futuro
 ; Do not notify me on updates in future
 ;
-MSG_UPD_NOTIFICATION_VISITURL
-Visitar URL
-; Visit URL
-;
 MSG_UPD_NOTIFICATION_CLOSE
 Cerrar
 ; Close
@@ -6093,16 +6090,6 @@ MSG_FI_GAUGETEXT
 %%ld de %ld mensajes
 ; %%ld of %ld messages
 ; COUNT, COUNT
-;
-MSG_MA_MESSAGEINFO
-\ebMensaje actual\en\nDe: %s <%s>\nPara: %s <%s>\nAsunto: %s\nFecha: %s\nArchivo: %s\nTamaño: %s
-; \ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %s
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
-;
-MSG_MA_FOLDERINFO
-\ebCarpeta actual\en\nNombre: %s\nRuta: %s\nTamaño: %s\nMensajes: %ld (%ld nuevos, %ld sin leer)
-; \ebCurrent folder\en\nName: %s\nPath: %s\nSize: %s\nMessages: %ld (%ld new, %ld unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MA_MIMEPART_INFO
 \ebAnexo - MIME parte #%ld\en\nNombre: %s\nDescripción: %s\nTipo-Contenido: %s <%s>\nTamaño: ~%s
@@ -7987,3 +7974,25 @@ MSG_CO_CONFIG_IS_LOCKED
 La configuración está bloqueada.\n\nPor favor espere hasta que todas las transferencias del POP3 y SMTP hayan finalizado.
 ; The configuration is currently locked.\n\nPlease wait until all POP3 and SMTP transfers are finished.
 ;
+MSG_FOLDERINFO_SHORTHELP
+\ebCarpeta actual\en\nNombre: %s\nRuta: %s\nTamaño: %s\nMensajes: %ld (%ld nuevos, %ld sin leer)
+; \ebFolder\en\nName: %s\nPath: %s\nSize: %s\nMessages: %ld (%ld new, %ld unread)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MAILINFO_SHORTHELP
+\ebMensaje actual\en\nDe: %s <%s>\nPara: %s <%s>\nAsunto: %s\nFecha: %s\nArchivo: %s\nTamaño: %s
+; \ebMail\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %s
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_CO_UPDATE_DOWNLOAD_PATH
+Ruta de Descarga:
+; Download _path:
+;
+MSG_UPD_NOTIFICATION_DOWNLOAD
+Descargar
+; Download
+;
+MSG_TR_DOWNLOADING_FROM_SERVER
+Descargando desde '%s'
+; Downloading from '%s'
+; SERVER
