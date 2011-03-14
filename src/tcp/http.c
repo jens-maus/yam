@@ -116,7 +116,7 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
       // create an invisible transfer window
       if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, FALSE, isFlagSet(flags, DLURLF_VISIBLE))) != NULL)
       {
-        PushMethodOnStack(tc->transferGroup, 3, OM_SET, MUIA_TransferControlGroup_MailMode, FALSE);
+        PushMethodOnStack(tc->transferGroup, 3, MUIM_Set, MUIA_TransferControlGroup_MailMode, FALSE);
         PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_HTTP_CONNECTING_TO_SERVER));
 
         // open the TCP/IP connection to 'host' under the port 'hport'

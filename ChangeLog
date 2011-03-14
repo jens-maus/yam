@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-03-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/http.c: use MUIM_Set instead of OM_SET to activate the non-mail mode for
+    the transfer control group. OM_SET seems to be swallowed by MUI.
+
 2011-03-12 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: update to the latest changes.

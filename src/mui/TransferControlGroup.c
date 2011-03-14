@@ -79,7 +79,6 @@ struct Data
   char str_size_curr_max[SIZE_SMALL];
 
   BOOL started;
-  BOOL fileMode;
 };
 */
 
