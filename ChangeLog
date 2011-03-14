@@ -9,6 +9,7 @@ $URL$
 
   * tcp/http.c: use MUIM_Set instead of OM_SET to activate the non-mail mode for
     the transfer control group. OM_SET seems to be swallowed by MUI.
+  * tcp/http.c: activate the transfer window when downloading updates.
 
 2011-03-12 Emilio Jimenez <ejim@ono.com>
 

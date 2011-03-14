@@ -114,7 +114,7 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
       snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_DOWNLOADING_FROM_SERVER), tc->host);
 
       // create an invisible transfer window
-      if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, FALSE, isFlagSet(flags, DLURLF_VISIBLE))) != NULL)
+      if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagSet(flags, DLURLF_VISIBLE))) != NULL)
       {
         PushMethodOnStack(tc->transferGroup, 3, MUIM_Set, MUIA_TransferControlGroup_MailMode, FALSE);
         PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_HTTP_CONNECTING_TO_SERVER));
