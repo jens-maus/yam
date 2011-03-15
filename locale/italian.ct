@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.83 (2.03.2011)
+## version $VER: YAM.catalog 7.84 (15.03.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.8 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5660 2011-03-2
+; based on YAM.cd 5673 2011-03-15
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -10044,11 +10044,28 @@ _Percorso download:
 ; Download _path:
 ;
 MSG_UPD_NOTIFICATION_DOWNLOAD
-Download
+Scarica
 ; Download
 ;
 MSG_TR_DOWNLOADING_FROM_SERVER
 Scaricamento da '%s'
 ; Downloading from '%s'
 ; SERVER
+;
+MSG_MA_HELP
+Guida in linea
+; Help
+;
+MSG_MA_HELP_CONTENTS
+Contenuti
+; Contents
+;
+MSG_MA_HELP_AREXX
+Interfaccia ARexx
+; ARexx interface
+;
+MSG_ER_HELP_FILE_DOES_NOT_EXIST
+La guida in linea '%s' è inesistente.
+; The help file '%s' does not exist.
+; FILE
 ;

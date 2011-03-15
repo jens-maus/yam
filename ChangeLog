@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-03-15 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2011-03-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, locale/YAM.cd, locale/german.ct: added a Help menu which contains
@@ -46,7 +50,7 @@ $URL$
   * include/SDI: updated SDI headers with patches for AROS/m68k kindly provided
     by Matthias Rustler.
 
-2010-03-02 Samir Hawamdeh <s.hawamdeh@tin.it>
+2011-03-02 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.
 
@@ -72,7 +76,7 @@ $URL$
     use the semaphore in a shared fashion and check for a positive number of
     currently active connections.
 
-2010-02-23 Samir Hawamdeh <s.hawamdeh@tin.it>
+2011-02-23 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.
 
