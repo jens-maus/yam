@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-03-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c, locale/YAM.cd, locale/german.ct: added a Help menu which contains
+    two items for the main contents and the ARexx interface for now. This closes
+    #258.
+
 2011-03-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/http.c: use MUIM_Set instead of OM_SET to activate the non-mail mode for
@@ -16,6 +22,7 @@ $URL$
   * locale/spanish.ct: update to the latest changes.
 
 2011-03-09  Alexandre Balaban <abalaban@free.fr>
+
   * locale/french.ct: updated according to latest changes.
 
 2011-03-07 Mariusz Danilewicz <mandi@interia.pl>

@@ -3677,7 +3677,7 @@ void MA_SetupDynamicMenus(void)
     }
 
     // add the new dynamic menu to our main menu
-    DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_AddTail, G->MA->GUI.MN_REXX);
+    DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_Insert, G->MA->GUI.MN_REXX, G->MA->GUI.MN_SETTINGS);
   }
 
 
@@ -4173,12 +4173,17 @@ struct MA_ClassData *MA_New(void)
         MenuChild, MenuBarLabel,
         MenuChild, data->GUI.MI_SEND = Menuitem(tr(MSG_MA_MSend), NULL, TRUE, FALSE, MMEN_SEND),
       End,
-      MenuChild, MenuObject,
+      MenuChild, data->GUI.MN_SETTINGS = MenuObject,
         MUIA_Menu_Title, tr(MSG_MA_Settings),
         MenuChild, Menuitem(tr(MSG_MA_MADDRESSBOOK), "B", TRUE, FALSE, MMEN_ABOOK),
         MenuChild, Menuitem(tr(MSG_MA_MCONFIG), "*", TRUE, FALSE, MMEN_CONFIG),
         MenuChild, Menuitem(tr(MSG_SETTINGS_USERS), NULL, TRUE, FALSE, MMEN_USER),
         MenuChild, Menuitem(tr(MSG_SETTINGS_MUI), NULL, TRUE, FALSE, MMEN_MUI),
+      End,
+      MenuChild, MenuObject,
+        MUIA_Menu_Title, tr(MSG_MA_HELP),
+        MenuChild, Menuitem(tr(MSG_MA_HELP_CONTENTS), "Help", TRUE, FALSE, MMEN_HELP_CONTENTS),
+        MenuChild, Menuitem(tr(MSG_MA_HELP_AREXX), NULL, TRUE, FALSE, MMEN_HELP_AREXX),
       End,
     End;
 
@@ -4319,6 +4324,8 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SCRIPT,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_CallRexxHook, -1);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_PREVTH,         MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, -1);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEXTTH,         MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, +1);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HELP_CONTENTS,  MUIV_Notify_Application, 5, MUIM_Application_ShowHelp, data->GUI.WI, NULL, NULL, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HELP_AREXX,     MUIV_Notify_Application, 5, MUIM_Application_ShowHelp, data->GUI.WI, NULL, "RF01", 0);
 
       for(i=0; i < MAXRX_MENU; i++)
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MACRO+i, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_CallRexxHook, i);

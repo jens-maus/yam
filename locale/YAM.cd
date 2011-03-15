@@ -7025,3 +7025,12 @@ Download
 MSG_TR_DOWNLOADING_FROM_SERVER (2213//)
 Downloading from '%s'
 ; SERVER
+MSG_MA_HELP (2214//)
+Help
+;
+MSG_MA_HELP_CONTENTS (2215//)
+Contents
+;
+MSG_MA_HELP_AREXX (2216//)
+ARexx interface
+;
