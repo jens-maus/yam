@@ -51,6 +51,7 @@
 #include "YAM_mainFolder.h"
 
 #include "AppIcon.h"
+#include "FileInfo.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
@@ -732,6 +733,30 @@ OVERLOAD(OM_SET)
   }
 
   return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(MUIM_Application_ShowHelp)
+OVERLOAD(MUIM_Application_ShowHelp)
+{
+  char *helpFile = ((struct MUIP_Application_ShowHelp *)msg)->name;
+  ULONG result = 0;
+
+  if(helpFile == NULL)
+    helpFile = (char *)xget(obj, MUIA_Application_HelpFile);
+
+  // check if the help file exists
+  if(helpFile != NULL && FileExists(helpFile) == FALSE)
+  {
+     ER_NewError(tr(MSG_ER_HELP_FILE_DOES_NOT_EXIST), helpFile);
+  }
+  else
+  {
+    // let MUI handle it
+    result = DoSuperMethodA(cl, obj, msg);
+  }
+
+  return result;
 }
 
 ///

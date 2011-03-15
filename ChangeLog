@@ -10,6 +10,9 @@ $URL$
   * YAM_MA.c, locale/YAM.cd, locale/german.ct: added a Help menu which contains
     two items for the main contents and the ARexx interface for now. This closes
     #258.
+  * mui/YAMApplication.c: the existance of the help file YAM.guide is now
+    checked before MUI is told to display it. In case it is missing an error
+    message will pop up.
 
 2011-03-14 Thore Böckelmann <tboeckel@gmx.de>
 

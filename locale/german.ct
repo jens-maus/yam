@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.25 (15.3.2011)
+## version $VER: YAM.catalog 7.26 (15.3.2011)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8608,4 +8608,7 @@ Inhalt
 ;
 MSG_MA_HELP_AREXX
 ARexx-Schnittstelle
+;
+MSG_ER_HELP_FILE_DOES_NOT_EXIST
+Die Hilfedatei '%s' existiert nicht.
 ;

@@ -7034,3 +7034,7 @@ Contents
 MSG_MA_HELP_AREXX (2216//)
 ARexx interface
 ;
+MSG_ER_HELP_FILE_DOES_NOT_EXIST (2217//)
+The help file '%s' does not exist.
+; FILE
+;
