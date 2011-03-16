@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-03-16 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: ops wrong file committed, fixed.
+
 2011-03-15 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

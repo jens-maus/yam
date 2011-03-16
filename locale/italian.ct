@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.84 (15.03.2011)
+## version $VER: YAM.catalog 7.85 (16.03.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -9192,7 +9192,7 @@ Assicurati di aver selezionato un corretto file audio.\n\
 \n\
 Nota: Il problema potrebbe essere stato generato da\n\
 un datatype specifico non compatibile o danneggiato\n\
-oppure il datatype stesso non funziona correttamente.
+oppure il datatype non funziona correttamente.
 ; An error occurred while trying to play the sound file '%s'.\n\
 ; \n\
 ; This could be either due to a broken or unsupported sound file or because your sound datatype is not properly working.
@@ -10053,11 +10053,11 @@ Scaricamento da '%s'
 ; SERVER
 ;
 MSG_MA_HELP
-Guida in linea
+Aiuto
 ; Help
 ;
 MSG_MA_HELP_CONTENTS
-Contenuti
+Guida in linea
 ; Contents
 ;
 MSG_MA_HELP_AREXX
@@ -10065,7 +10065,7 @@ Interfaccia ARexx
 ; ARexx interface
 ;
 MSG_ER_HELP_FILE_DOES_NOT_EXIST
-La guida in linea '%s' è inesistente.
+Il file '%s' inerente alla guida in linea è inesistente.
 ; The help file '%s' does not exist.
 ; FILE
 ;
