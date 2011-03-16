@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.22 (07.03.2011)
+## version $VER: YAM.catalog 7.23 (16.03.2011)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5660;
+; in sync with .cd in revision 5673;
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9900,4 +9900,20 @@ Pobieranie
 MSG_TR_DOWNLOADING_FROM_SERVER
 Pobieranie z \"%s\"
 ; Downloading from '%s'
-; 
+;
+MSG_MA_HELP
+Pomoc
+; Help
+;
+MSG_MA_HELP_CONTENTS
+Zawarto¶æ
+; Contents
+;
+MSG_MA_HELP_AREXX
+Interfejs ARexx'a
+; ARexx interface
+;
+MSG_ER_HELP_FILE_DOES_NOT_EXIST
+Plik pomocy \"%s\" nie istnieje.
+; The help file '%s' does not exist.
+;

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-03-16 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
 2011-03-16 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: ops wrong file committed, fixed.
