@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (4.1.2011)
+## version $VER: YAM.catalog 7.6 (17.3.2011)
 ## language czech
 ## codeset 5
 ;
@@ -1325,10 +1325,6 @@ MSG_CO_Download
 Stahování po¹ty
 ; Download
 ;
-MSG_CO_AvoidDuplicates
-Nest_ahovat duplicitní
-; _Avoid duplicates
-;
 MSG_CO_TransferWin
 Prùbìh _stahování
 ; _Transfer window
@@ -1781,10 +1777,6 @@ MSG_CO_SendStart
 Poslat po¹tu ve slo¾ce 'K odeslání'
 ; Send mail in outgoing queue
 ;
-MSG_CO_PopStart
-Stáhnout novou po¹tu
-; Download new mail
-;
 MSG_CO_CheckDOB
 Zjistit data narození
 ; Check birthdates
@@ -2106,13 +2098,6 @@ z tohoto serveru v zadaném intervalu stahovat\n\
 po¹tu.
 ; Check this account while\n\
 ; checking for new mail.
-;
-MSG_HELP_CO_CH_AVOIDDUP
-Nema¾ete-li po¹tu ze serveru, touto funkcí mù¾ete\n\
-zamezit stahování duplicitních zpráv.
-; If you don't delete old mail\n\
-; on the server, use this option\n\
-; to avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN
 Zobrazí okno s informacemi o stahování po¹ty.
@@ -6579,7 +6564,7 @@ MSG_ER_LIB_URL
 Nelze otevøít knihovnu %s v%lu.%lu.\n\
 \n\
 Pøeètìte si prosím informace na %s,\n\
-odkud stáhnete nejnovìj¹í verzi a nainstalujte ji.
+stáhnìte nejnovìj¹í verzi a nainstalujte ji.
 ; Couldn't open required '%s', version v%lu.%lu\n\
 ; \n\
 ; Please visit '%s',\n\
@@ -6588,10 +6573,10 @@ odkud stáhnete nejnovìj¹í verzi a nainstalujte ji.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
 ;
 MSG_ER_NO_MCC
-Nelze otevøít externí tøídu MUI %s v%lu.%lu.\n\
+Nelze otevøít po¾adovanou tøídu MUI %s v%lu.%lu.\n\
 \n\
 Pøeètìte si prosím informace na %s,\n\
-odkud stáhnete nejnovìj¹í verzi a nainstalujte ji.
+stáhnìte nejnovìj¹í verzi a nainstalujte ji.
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
 ; \n\
 ; Please visit '%s',\n\
@@ -6600,10 +6585,10 @@ odkud stáhnete nejnovìj¹í verzi a nainstalujte ji.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_OLD
-Nelze otevøít externí tøídu MUI %s v%lu.%lu.\n\
+Nelze otevøít po¾adovanou tøídu MUI %s v%lu.%lu.\n\
 \n\
 V systému máte nainstalovanou verzi %lu.%lu, ale YAM\n\
-vy¾aduje novìj¹í. Stáhnete ji z %s.
+vy¾aduje novìj¹í. K dispozici je na %s.
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
 ; \n\
 ; Currently installed is v%lu.%lu. Please upgrade by downloading\n\
@@ -6611,13 +6596,13 @@ vy¾aduje novìj¹í. Stáhnete ji z %s.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_IN_USE
-Nelze otevøít externí tøídu MUI %s v%lu.%lu.\n\
+Nelze otevøít po¾adovanou tøídu MUI %s v%lu.%lu.\n\
 \n\
-Verzi %lu.%lu právì pou¾ívají jiné programy.\n\
+Star¹í verzi %lu.%lu právì pou¾ívají jiné programy.\n\
 \n\
-Pøeètìte si prosím informace na %s.\n\
-Po dokonèení instalace po¾adované verze této tøídy\n\
-MUI restartujte poèítaè a zkuste znovu spustit YAM.
+Pøeètìte si prosím informace na %s,\n\
+stáhnìte nejnovìj¹í verzi a nainstalujte ji. Po restartu\n\
+poèítaèe zkuste znovu spustit YAM.
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
 ; \n\
 ; %lu.%lu is currently in use by other applications.\n\
@@ -6926,10 +6911,6 @@ MSG_UPD_NOTIFICATION_NOUPDATE
 Nadále neupozoròovat na aktualizace
 ; Do not notify me on updates in future
 ;
-MSG_UPD_NOTIFICATION_VISITURL
-Pøejít na stránku
-; Visit URL
-;
 MSG_UPD_NOTIFICATION_CLOSE
 Zavøít
 ; Close
@@ -7098,19 +7079,6 @@ její obsah do standardního textu.
 ; If the main part of an e-mail is HTML, YAM will\n\
 ; convert it to plain text before displaying it.
 ;
-MSG_RE_FOLLOWTHREAD
-Chcete-li prohledat více zpráv v dané diskusi,\n\
-YAM bude muset naèíst indexy dal¹ích slo¾ek. Tato\n\
-operace mù¾e chvíli trvat a vy¾aduje dost volné\n\
-pamìti.\n\
-\n\
-Opravdu chcete pokraèovat?
-; In order to search for more mails of the same thread,\n\
-; YAM has to load additional folder indices. This may be\n\
-; quite time and memory consuming.\n\
-; \n\
-; Do you want to continue?
-;
 MSG_TR_TRANSFERSTATUS
 %s z %s @ %s/s\n\
 Ubìhlo %02ld'%02ld'', zbývá %02ld'%02ld''
@@ -7127,36 +7095,6 @@ MSG_FI_GAUGETEXT
 %%ld z %ld zpráv
 ; %%ld of %ld messages
 ; COUNT, COUNT
-;
-MSG_MA_MESSAGEINFO
-\ebVybraná zpráva\en\n\
-Od: %s <%s>\n\
-Komu: %s <%s>\n\
-Pøedmìt: %s\n\
-Datum: %s\n\
-Soubor: %s\n\
-Velikost: %s
-; \ebCurrent message\en\n\
-; From: %s <%s>\n\
-; To: %s <%s>\n\
-; Subject: %s\n\
-; Date: %s\n\
-; Filename: %s\n\
-; Size: %s
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
-;
-MSG_MA_FOLDERINFO
-\ebVybraná slo¾ka\en\n\
-Název: %s\n\
-Cesta: %s\n\
-Velikost: %s\n\
-Zpráv: %ld (nových: %ld, nepøeètených: %ld)
-; \ebCurrent folder\en\n\
-; Name: %s\n\
-; Path: %s\n\
-; Size: %s\n\
-; Messages: %ld (%ld new, %ld unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MA_MIMEPART_INFO
 \ebPøíloha è.%ld\en\n\
@@ -8590,11 +8528,11 @@ Zpáteèní ad_resa (Reply-To:)
 ; _Reply address (Reply-To:)
 ;
 MSG_RETRY_HOMEPAGE_QUIT_GAD
-Opakovat|Pøejít na stránky|Ukonèit
+Opakovat|Pøejít na stránku|Ukonèit
 ; Try again|Visit homepage|Quit
 ;
 MSG_HOMEPAGE_QUIT_GAD
-Pøejít na stránky|Ukonèit
+Pøejít na stránku|Ukonèit
 ; Visit homepage|Quit
 ;
 MSG_MA_EDIT_DELETE
@@ -9719,10 +9657,95 @@ _Filtrovat po¹tu na serveru
 ; Apply remote _filters
 ;
 MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS
-
+Aplikuje ve¹keré definované filtry\n\
+je¹tì vlastním stahováním zpráv.
 ; Apply all defined remote filters\n\
 ; when downloading mail from this\n\
 ; server.
 ;
-; ***NEW***
+MSG_CO_DOWNLOAD_ON_STARTUP
+Pøi spu¹tìní stáhnout po¹tu
+; Check for new mail on startup
+;
+MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
+Pøi ka¾dém spu¹tìní automaticky stáhne novou po¹tu.
+; Check this account for new mail on every\n\
+; startup of YAM automatically.
+;
+MSG_IMPORT_UNKNOWN_FILE_FORMAT
+Nelze rozpoznat formát souboru '%s'.
+; Unknown mail file format in file '%s'.
+; FILE
+;
+MSG_IMPORT_NO_MAILS
+Soubor '%s' není v ¾ádném z formátù, které lze naimportovat.
+; The file '%s' does not contain any importable mails.
+; FILE
+;
+MSG_CO_CONFIG_IS_LOCKED
+Konfiguraci nelze v tuto chvíli mìnit.\n\
+\n\
+Poèkejte a¾ program dokonèí stahování a odesílání po¹ty.
+; The configuration is currently locked.\n\
+; \n\
+; Please wait until all POP3 and SMTP transfers are finished.
+;
+MSG_FOLDERINFO_SHORTHELP
+\ebVybraná slo¾ka\en\n\
+Název: %s\n\
+Cesta: %s\n\
+Velikost: %s\n\
+Zpráv: %ld (nových: %ld, nepøeètených: %ld)
+; \ebFolder\en\n\
+; Name: %s\n\
+; Path: %s\n\
+; Size: %s\n\
+; Messages: %ld (%ld new, %ld unread)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MAILINFO_SHORTHELP
+\ebVybraná zpráva\en\n\
+Od: %s <%s>\n\
+Komu: %s <%s>\n\
+Pøedmìt: %s\n\
+Datum: %s\n\
+Soubor: %s\n\
+Velikost: %s
+; \ebMail\en\n\
+; From: %s <%s>\n\
+; To: %s <%s>\n\
+; Subject: %s\n\
+; Date: %s\n\
+; Filename: %s\n\
+; Size: %s
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_CO_UPDATE_DOWNLOAD_PATH
+Umístìní:
+; Download _path:
+;
+MSG_UPD_NOTIFICATION_DOWNLOAD
+Stáhnout
+; Download
+;
+MSG_TR_DOWNLOADING_FROM_SERVER
+Stahování dat z '%s'
+; Downloading from '%s'
+; SERVER
+MSG_MA_HELP
+Nápovìda
+; Help
+;
+MSG_MA_HELP_CONTENTS
+Obsah
+; Contents
+;
+MSG_MA_HELP_AREXX
+ARexx
+; ARexx interface
+;
+MSG_ER_HELP_FILE_DOES_NOT_EXIST
+Soubor s nápovìdou ('%s') není k dispozici.
+; The help file '%s' does not exist.
+; FILE
 ;

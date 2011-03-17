@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-03-17 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2011-03-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/Connection.c: obtain the connection semaphore in an interruptible way to
