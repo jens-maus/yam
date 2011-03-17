@@ -665,7 +665,7 @@ BOOL ConnectionIsOnline(struct Connection *conn)
 struct hostent *GetHostByName(struct Connection *conn, const char *host)
 {
   struct hostent *hostaddr = NULL;
-  struct MsgPort *timeoutPort;
+  struct MsgPort *timeoutProcurePort;
   GET_SOCKETBASE(conn);
 
   // gethostbyname() has no implicit or explicit timeout mechanism.
@@ -681,52 +681,80 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
 
   ENTER();
 
-  // set up a message port with uses out abort signal as signal bit
-  // in case the time runs out it will abort the gethostbyname() call and let it return NULL
-  if((timeoutPort = AllocSysObjectTags(ASOT_PORT, ASOPORT_Signal, conn->abortSignal,
-                                                  ASOPORT_AllocSig, FALSE,
-                                                  TAG_DONE)) != NULL)
+  // set up a message port with uses our abort signal as signal bit
+  // in case the time runs out it will abort the gethostbyname() call
+  // and let it return NULL
+  if((timeoutProcurePort = AllocSysObjectTags(ASOT_PORT, ASOPORT_Signal, conn->abortSignal,
+                                                         ASOPORT_AllocSig, FALSE,
+                                                         TAG_DONE)) != NULL)
   {
     struct TimeRequest *timeoutIO;
 
     if((timeoutIO = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Size, sizeof(*timeoutIO),
-                                                       ASOIOR_ReplyPort, (IPTR)timeoutPort,
+                                                       ASOIOR_ReplyPort, (IPTR)timeoutProcurePort,
                                                        TAG_DONE)) != NULL)
     {
       if(OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)timeoutIO, 0L) == 0)
       {
-        // we call gethostbyname() with a locked semaphore, because calling this
-        // function heavily from several threads seems to lock up on WinUAE.
-        ObtainSemaphore(G->connectionSemaphore);
+        struct SemaphoreMessage *bidMsg;
 
-        // now that we are safe to call gethostbyname() we start the timeout
-        timeoutIO->Request.io_Command = TR_ADDREQUEST;
-        timeoutIO->Time.Seconds = C->SocketTimeout;
-        timeoutIO->Time.Microseconds = 0;
-        SendIO((struct IORequest *)timeoutIO);
+        if((bidMsg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*bidMsg),
+                                                      ASOMSG_ReplyPort, (IPTR)timeoutProcurePort,
+                                                      TAG_DONE)) != NULL)
+        {
+          struct SemaphoreMessage *recvMsg;
 
-        // this is what all the fuss is about
-        hostaddr = gethostbyname((char *)host);
+          // We must call gethostbyname() one thread at a time only, because calling
+          // this function heavily from several threads seems to lock up on WinUAE.
+          // Hence we use a semaphore to force this single threaded. Since waiting
+          // for the lock my take an aribtrary long time we use an interruptible
+          // semaphore to be abortable.
+          Procure(G->connectionSemaphore, bidMsg);
 
-        // allow other threads to continue
-        ReleaseSemaphore(G->connectionSemaphore);
+          // wait for the bid message to be replied or for an abort action
+          Wait(1UL << conn->abortSignal);
 
-        // abort the timer in case we were successful and clean up behind us
-        if(CheckIO((struct IORequest *)timeoutIO) == NULL)
-          AbortIO((struct IORequest *)timeoutIO);
+          // if we receive a message here then it was sent because we successfully
+          // obtained the semaphore
+          if((recvMsg = (struct SemaphoreMessage *)GetMsg(timeoutProcurePort)) != NULL && recvMsg == bidMsg)
+          {
+            // clear the abort signal before we launch the timer on the same port
+            SetSignal(0UL, 1UL << conn->abortSignal);
 
-        WaitIO((struct IORequest *)timeoutIO);
+            // Now we have obtained the semaphore and are safe to call gethostbyname().
+            // Let's start the timeout to let gethostbyname() return failure in case
+            // the name could not be resolved within the given time limit.
+            timeoutIO->Request.io_Command = TR_ADDREQUEST;
+            timeoutIO->Time.Seconds = C->SocketTimeout;
+            timeoutIO->Time.Microseconds = 0;
+            SendIO((struct IORequest *)timeoutIO);
+
+            // this is what all the fuss is about
+            hostaddr = gethostbyname((char *)host);
+
+            // abort the timer in case we were successful and clean up behind us
+            if(CheckIO((struct IORequest *)timeoutIO) == NULL)
+              AbortIO((struct IORequest *)timeoutIO);
+
+            WaitIO((struct IORequest *)timeoutIO);
+          }
+
+          // release the semaphore again and allow other threads to continue
+          Vacate(G->connectionSemaphore, bidMsg);
+
+          FreeSysObject(ASOT_MESSAGE, bidMsg);
+
+          // make sure we don't leave the abort signal pending
+          SetSignal(0UL, 1UL << conn->abortSignal);
+        }
 
         CloseDevice((struct IORequest *)timeoutIO);
-
-        // make sure we don't leave the abort signal pending
-        SetSignal(0UL, 1UL << conn->abortSignal);
       }
 
       FreeSysObject(ASOT_IOREQUEST, timeoutIO);
     }
 
-    FreeSysObject(ASOT_PORT, timeoutPort);
+    FreeSysObject(ASOT_PORT, timeoutProcurePort);
   }
 
   RETURN(hostaddr);

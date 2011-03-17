@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-03-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/Connection.c: obtain the connection semaphore in an interruptible way to
+    be able to be abortable while waiting for the lock.
+
 2011-03-16 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest changes.
