@@ -2202,7 +2202,7 @@ HOOKPROTONHNO(CO_ChangePageFunc, void, int *arg)
     G->CO->VisiblePage = page;
     G->CO->Visited[page] = TRUE;
 
-    #if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__AROS__)
+    #if defined(__amigaos3__)
     // The follow lines are a workaround for OS3.x only because MUI 3.8 is buggy.
     // It seems that changing the Poppen Object Color on MUI 3.8 is only visible if the
     // page is currently the ActivePage, So we make the page active before setting the

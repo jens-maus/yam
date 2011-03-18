@@ -58,7 +58,7 @@ struct Node;
 /*
  * Stuff that exists on AmigaOS3
  */
-#if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__AROS__)
+#if defined(__amigaos3__)
 #define NEED_ALLOCSYSOBJECT
 #define NEED_ALLOCVECPOOLED
 #define NEED_DOSUPERNEW
@@ -80,7 +80,7 @@ struct Node;
 #define NEED_VASTUBS
 #define NEED_CHANGEFILEPOSITION
 #define NEED_STRISTR
-#endif // !__amigaos4__ && !__MORPHOS__ && !__AROS__
+#endif // __amigaos3__
 
 /*
  * Stuff that exists on AmigaOS4

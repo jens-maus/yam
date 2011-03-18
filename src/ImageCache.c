@@ -302,7 +302,7 @@ BOOL ImageCacheSetup(void)
 
   ENTER();
 
-  #if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__AROS__)
+  #if defined(__amigaos3__)
   PictureDTBase = OpenLibrary("picture.datatype", 0);
   #endif
 
@@ -325,7 +325,7 @@ void ImageCacheCleanup(void)
     HashTableDestroy(G->imageCacheHashTable);
   }
 
-  #if !defined(__amigaos4__) && !defined(__MORPHOS__) && !defined(__AROS__)
+  #if defined(__amigaos3__)
   if(PictureDTBase != NULL)
   {
     CloseLibrary(PictureDTBase);

@@ -43,7 +43,7 @@
 
 #include <proto/exec.h>
 #include <proto/intuition.h>
-#if !defined(__amigaos4__) && !defined(__AROS__)
+#if defined(__amigaos3__) || defined(__MORPHOS__)
 #include <proto/miami.h>
 #include <proto/genesis.h>
 #endif
@@ -445,7 +445,7 @@ static BOOL CheckSingleInterface(struct Connection *conn, const char *iface, con
 
     case TCPIP_Miami:
     {
-      #if !defined(__amigaos4__) && !defined(__AROS__)
+      #if defined(__amigaos3__) || defined(__MORPHOS__)
       struct Library *MiamiBase = (struct Library *)stackBase;
 
       if(MiamiIsOnline(iface[0] != '\0' ? (char *)iface : NULL))
@@ -461,7 +461,7 @@ static BOOL CheckSingleInterface(struct Connection *conn, const char *iface, con
 
     case TCPIP_Genesis:
     {
-      #if !defined(__amigaos4__) && !defined(__AROS__)
+      #if defined(__amigaos3__) || defined(__MORPHOS__)
       struct Library *GenesisBase = (struct Library *)stackBase;
 
       if(IsOnline(iface[0] != '\0' ? (long)iface : 0))
@@ -675,9 +675,6 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
   // Windows machine is shut down while YAM tries to connect to a host. The
   // timeout mechanism we put around the gethostbyname() call here makes sure
   // that the call will eventually return if it would have been stuck otherwise.
-  // Since the semaphore we use here is also used to protect parallel accesses
-  // to other variables the complete application would get stuck as long as
-  // gethostbyname() does not return, either successful or not.
 
   ENTER();
 
@@ -704,6 +701,9 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
         SendIO((struct IORequest *)timeoutIO);
 
         // this is what all the fuss is about
+        // NOTE: on WinUAE this call might lock up when being called from several tasks
+        // simultaneously, but since we have a timeout mechanism this will not end up
+        // in a deadlock.
         hostaddr = gethostbyname((char *)host);
 
         // abort the timer in case we were successful and clean up behind us

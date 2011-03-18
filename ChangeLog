@@ -10,6 +10,8 @@ $URL$
   * tcp/Connection.c: completely removed the semaphore lock around the
     gethostbyname() call, since this was necessary for WinUAE only and caused
     major headaches on other systems.
+  * Makefile: added the definition of "__amigaos3__" to make OS3 specific checks
+    easier.
 
 2011-03-17 Vit Sindlar <sindlarv at centrum dot cz>
 

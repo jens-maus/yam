@@ -180,7 +180,7 @@ struct Library* UtilityBase       = NULL;
 struct Library* ApplicationBase   = NULL; // application.library
 struct Library* TimezoneBase      = NULL; // timezone.library
 #endif
-#if !defined(__amigaos4__) && !defined(__MORPHOS__)
+#if defined(__amigaos3__)
 struct Library* PictureDTBase     = NULL;
 #endif
 
