@@ -12,6 +12,10 @@ $URL$
     major headaches on other systems.
   * Makefile: added the definition of "__amigaos3__" to make OS3 specific checks
     easier.
+  * UpdateNotifyWindow.c: downloading an update file now opens a file requester
+    first to let the user modify the path and file name. Already existing files
+    are handled as well and the user must then choose whether to overwrite it or
+    not.
 
 2011-03-17 Vit Sindlar <sindlarv at centrum dot cz>
 

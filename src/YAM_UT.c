@@ -1242,6 +1242,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
     "#?.(tab|txt)",                        // ASL_ABOOK_TAB
     "#?.xml",                              // ASL_ABOOK_XML
     "#?",                                  // ASL_GENERIC
+    "#?",                                  // ASL_UPDATE
   };
 
   struct FileReqCache *result = NULL;

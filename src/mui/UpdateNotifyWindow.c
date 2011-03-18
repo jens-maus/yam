@@ -399,14 +399,53 @@ DECLARE(Download)
   DoMethod(data->componentList, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &comp);
   if(comp != NULL)
   {
-    char localFile[SIZE_PATHFILE];
+    const char *drawer = C->UpdateDownloadPath;
+    const char *file = FilePart(comp->url);
+    BOOL doDownload = TRUE;
+    char path[SIZE_PATHFILE];
 
-    AddPath(localFile, C->UpdateDownloadPath, FilePart(comp->url), sizeof(localFile));
+    do
+    {
+      struct FileReqCache *frc;
 
-    DoAction(NULL, TA_DownloadURL, TT_DownloadURL_Server, comp->url,
-                                   TT_DownloadURL_Filename, localFile,
-                                   TT_DownloadURL_Flags, DLURLF_VISIBLE,
-                                   TAG_DONE);
+      if((frc = ReqFile(ASL_UPDATE, obj, tr(MSG_RE_SAVE_FILE), REQF_SAVEMODE, drawer, file)) != NULL)
+      {
+        AddPath(path, frc->drawer, frc->file, sizeof(path));
+
+        if(FileExists(path) == TRUE)
+        {
+          if(MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), path) == 0)
+          {
+            // user chose not to overwrite the existing file, let him choose another one
+          }
+          else
+          {
+            // download the update to the selected file and overwrite the existing one
+            break;
+          }
+        }
+        else
+        {
+          // download the update to the selected file
+          break;
+        }
+      }
+      else
+      {
+        // file selection canceled, don't download
+        doDownload = FALSE;
+      }
+    }
+    while(doDownload == TRUE);
+
+    if(doDownload == TRUE)
+    {
+      // start the download
+      DoAction(NULL, TA_DownloadURL, TT_DownloadURL_Server, comp->url,
+                                     TT_DownloadURL_Filename, path,
+                                     TT_DownloadURL_Flags, DLURLF_VISIBLE,
+                                     TAG_DONE);
+    }
   }
 
   LEAVE();

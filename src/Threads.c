@@ -568,7 +568,7 @@ static struct Thread *CreateThread(void)
         startupMessage.threadNode = threadNode;
         startupMessage.thread = thread;
 
-        // send out the startup message 
+        // send out the startup message
         D(DBF_THREAD, "thread 0x%08lx '%s' started, sending startup message", thread, thread->name);
         PutMsg(&thread->process->pr_MsgPort, (struct Message *)&startupMessage);
 
