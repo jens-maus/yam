@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-03-19 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: update to the latest changes.
+
 2011-03-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/Connection.c: completely removed the semaphore lock around the
