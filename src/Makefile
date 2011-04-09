@@ -317,7 +317,7 @@ ifeq ($(OS), aros-i386)
 
   # Compiler/Linker flags
   OPTFLAGS = -O2 -fomit-frame-pointer -funroll-loops
-  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
+  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1
   LDLIBS += -lamiga -larossupport -larosc -lmui
 
   EXTRAOBJS = AllocSysObject.o \
@@ -352,7 +352,7 @@ ifeq ($(OS), aros-ppc)
 
   # Compiler/Linker flags
   OPTFLAGS = -O2 -fomit-frame-pointer -funroll-loops
-  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
+  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1
   LDLIBS += -lamiga -larossupport -larosc -lmui
 
   EXTRAOBJS = AllocSysObject.o \
@@ -387,7 +387,7 @@ ifeq ($(OS), aros-x86_64)
 
   # Compiler/Linker flags
   OPTFLAGS = -O2 -fomit-frame-pointer -funroll-loops
-  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
+  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1
   LDLIBS += -lamiga -larossupport -larosc -lmui
 
   EXTRAOBJS = AllocSysObject.o \
