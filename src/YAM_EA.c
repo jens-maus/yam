@@ -57,10 +57,9 @@
 
 #include "mui/ClassesExtra.h"
 #include "mui/AddrBookEntryList.h"
-#include "mui/ImageArea.h"
 #include "mui/Recipientstring.h"
+#include "mui/UserPortraitGroup.h"
 
-#include "FileInfo.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MUIObjects.h"
@@ -69,7 +68,6 @@
 #include "Debug.h"
 
 /* local protos */
-static void EA_SetPhoto(int winnum, char *fname);
 static int EA_Open(int);
 static struct EA_ClassData *EA_New(int, int);
 
@@ -155,7 +153,7 @@ void EA_Setup(int winnum, struct ABEntry *ab)
       setstring(gui->ST_HOMEPAGE, ab->Homepage);
       setstring(gui->ST_COMMENT, ab->Comment);
       setstring(gui->ST_BIRTHDAY, dateStr);
-      EA_SetPhoto(winnum, ab->Photo);
+      DoMethod(gui->GR_PHOTO, MUIM_UserPortraitGroup_SetPortrait, ab->Photo);
     }
     break;
 
@@ -581,111 +579,6 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
 MakeStaticHook(EA_OkayHook, EA_Okay);
 
 ///
-/// EA_SetPhoto
-//  Updates the portrait image
-static void EA_SetPhoto(int winnum, char *fname)
-{
-  struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
-
-  ENTER();
-
-  if(fname != NULL)
-    strlcpy(G->EA[winnum]->PhotoName, fname, sizeof(G->EA[winnum]->PhotoName));
-
-  fname = G->EA[winnum]->PhotoName;
-  if(fname[0] != '\0')
-  {
-    enum FType type;
-
-    if(ObtainFileInfo(fname, FI_TYPE, &type) == TRUE && type == FIT_FILE && gui->BC_PHOTO != NULL &&
-       DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
-    {
-      if((char *)xget(gui->BC_PHOTO, MUIA_ImageArea_Filename) != NULL)
-      {
-        // remove the old image from the cache
-        set(gui->BC_PHOTO, MUIA_ImageArea_Filename, NULL);
-      }
-
-      // set the new attributes
-      xset(gui->BC_PHOTO, MUIA_ImageArea_ID,       G->EA[winnum]->ABEntry != NULL ? G->EA[winnum]->ABEntry->Address : "dummy",
-                          MUIA_ImageArea_Filename, fname);
-
-      // and force a cleanup/setup pair
-      DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
-      DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
-
-      DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
-
-      set(gui->BT_REMOVEPHOTO, MUIA_Disabled, FALSE);
-    }
-  }
-
-  LEAVE();
-}
-
-///
-/// EA_RemovePhoto
-// remove a user photo from the GUI
-static void EA_RemovePhoto(int winnum)
-{
-  struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
-
-  ENTER();
-
-  G->EA[winnum]->PhotoName[0] = '\0';
-  if(DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
-  {
-    // force the image to be removed from the cache
-    set(gui->BC_PHOTO, MUIA_ImageArea_Filename, NULL);
-
-    // and force a cleanup/setup pair
-    DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
-    DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
-
-    DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
-
-    set(gui->BT_REMOVEPHOTO, MUIA_Disabled, TRUE);
-  }
-
-  LEAVE();
-}
-
-///
-/// EA_SelectPhotoFunc
-//  Lets user select an image file to be used as portrait
-HOOKPROTONHNO(EA_SelectPhotoFunc, void, int *arg)
-{
-  struct FileReqCache *frc;
-  int winnum = *arg;
-
-  ENTER();
-
-  if((frc = ReqFile(ASL_PHOTO,G->EA[winnum]->GUI.WI, tr(MSG_EA_SelectPhoto_Title), REQF_NONE, C->GalleryDir, "")))
-  {
-    AddPath(G->EA[winnum]->PhotoName, frc->drawer, frc->file, sizeof(G->EA[winnum]->PhotoName));
-    EA_SetPhoto(winnum, NULL);
-  }
-
-  LEAVE();
-}
-MakeStaticHook(EA_SelectPhotoHook, EA_SelectPhotoFunc);
-
-///
-/// EA_RemovePhotoFunc
-//  Remove a formerly selected portrait
-HOOKPROTONHNO(EA_RemovePhotoFunc, void, int *arg)
-{
-  int winnum = *arg;
-
-  ENTER();
-
-  EA_RemovePhoto(winnum);
-
-  LEAVE();
-}
-MakeStaticHook(EA_RemovePhotoHook, EA_RemovePhotoFunc);
-
-///
 /// EA_HomepageFunc
 //  Launches a browser to view the homepage of the person
 HOOKPROTONHNO(EA_HomepageFunc, void, int *arg)
@@ -738,13 +631,9 @@ HOOKPROTONHNO(EA_CloseFunc, void, int *arg)
 
   ENTER();
 
-  if(gui->BC_PHOTO != NULL && G->EA[winnum]->ABEntry != NULL)
-  {
-    // update the user image ID and remove it from the cache
-    // it will be reloaded when necessary
-    xset(gui->BC_PHOTO, MUIA_ImageArea_ID,       G->EA[winnum]->ABEntry->Address,
-                        MUIA_ImageArea_Filename, NULL);
-  }
+  // update the user image ID and remove it from the cache
+  // it will be reloaded when necessary
+  DoMethod(gui->GR_PHOTO, MUIM_UserPortraitGroup_Clear);
 
   DisposeModulePush(&G->EA[winnum]);
 
@@ -825,26 +714,8 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                  Child, Label2(tr(MSG_EA_DOB)),
                  Child, data->GUI.ST_BIRTHDAY = MakeString(SIZE_SMALL,tr(MSG_EA_DOB)),
               End,
-              Child, VGroupV, GroupFrameT(tr(MSG_EA_Portrait)),
-                 Child, VSpace(0),
-                 Child, HGroup,
-                    Child, HSpace(0),
-                    Child, data->GUI.GR_PHOTO = HGroup,
-                       Child, data->GUI.BC_PHOTO = ImageAreaObject,
-                         ImageButtonFrame,
-                         MUIA_ImageArea_MaxHeight,   64,
-                         MUIA_ImageArea_MaxWidth,    64,
-                         MUIA_ImageArea_NoMinHeight, FALSE,
-                         MUIA_ImageArea_ShowLabel,   FALSE,
-                       End,
-                    End,
-                    Child, HSpace(0),
-                 End,
-                 Child, VSpace(0),
-                 Child, HGroup,
-                    Child, data->GUI.BT_SELECTPHOTO = MakeButton(tr(MSG_EA_SelectPhoto)),
-                    Child, data->GUI.BT_REMOVEPHOTO = MakeButton(tr(MSG_EA_REMOVEPHOTO)),
-                 End,
+              Child, data->GUI.GR_PHOTO = UserPortraitGroupObject,
+                 MUIA_UserPortraitGroup_WindowNumber, winnum,
               End,
            End,
         End;
@@ -863,13 +734,6 @@ static struct EA_ClassData *EA_New(int winnum, int type)
           SetHelp(data->GUI.ST_COUNTRY    ,MSG_HELP_EA_ST_COUNTRY    );
           SetHelp(data->GUI.ST_PHONE      ,MSG_HELP_EA_ST_PHONE      );
           SetHelp(data->GUI.ST_BIRTHDAY   ,MSG_HELP_EA_ST_BIRTHDAY   );
-          SetHelp(data->GUI.BC_PHOTO      ,MSG_HELP_EA_BC_PHOTO      );
-          SetHelp(data->GUI.BT_SELECTPHOTO,MSG_HELP_EA_BT_SELECTPHOTO);
-          SetHelp(data->GUI.BT_REMOVEPHOTO,MSG_HELP_EA_BT_REMOVEPHOTO);
-
-          DoMethod(data->GUI.BT_SELECTPHOTO, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_SelectPhotoHook, winnum);
-          DoMethod(data->GUI.BT_REMOVEPHOTO, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_RemovePhotoHook, winnum);
-          set(data->GUI.BT_REMOVEPHOTO, MUIA_Disabled, TRUE);
 
           // when a key ID is selected, set default security to "encrypt"
           DoMethod(data->GUI.ST_PGPKEY, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, data->GUI.CY_DEFSECURITY, 3, MUIM_Set, MUIA_Cycle_Active, 2);

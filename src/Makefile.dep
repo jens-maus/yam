@@ -837,8 +837,7 @@ $(OBJDIR)/YAM_EA.o: YAM_EA.c include/mui/NListview_mcc.h include/libraries/mui.h
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
   mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h \
-  mui/AddrBookEntryList.h mui/ImageArea.h ImageCache.h \
-  include/mui/TheBar_mcc.h HashTable.h mui/Recipientstring.h FileInfo.h \
+  mui/AddrBookEntryList.h mui/Recipientstring.h mui/UserPortraitGroup.h \
   Locale.h MUIObjects.h Requesters.h Debug.h
 $(OBJDIR)/YAM_ER.o: YAM_ER.c include/mui/NListview_mcc.h include/libraries/mui.h \
   include/mui/NList_mcc.h include/mui/NFloattext_mcc.h \
@@ -1548,9 +1547,9 @@ $(OBJDIR)/$(MUIDIR)/Classes.o: mui/Classes.c mui/Classes.h mui/ClassesExtra.h \
   mui/StringRequestWindow.h mui/ThemeList.h mui/ThemeListGroup.h \
   mui/TransferControlGroup.h mui/TransferControlList.h \
   mui/TransferMailList.h mui/TransferWindow.h mui/UpdateComponentList.h \
-  mui/UpdateNotifyWindow.h mui/UserList.h mui/WriteAttachmentList.h \
-  mui/WriteWindow.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
-  mui/PreselectionWindow.h Debug.h
+  mui/UpdateNotifyWindow.h mui/UserList.h mui/UserPortraitGroup.h \
+  mui/WriteAttachmentList.h mui/WriteWindow.h mui/WriteWindowToolbar.h \
+  mui/YAMApplication.h mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/$(MUIDIR)/ConfigPageList.o: mui/ConfigPageList.c mui/ConfigPageList_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -2661,7 +2660,7 @@ $(OBJDIR)/$(MUIDIR)/UpdateNotifyWindow.o: mui/UpdateNotifyWindow.c \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_configFile.h \
   YAM_utilities.h FileInfo.h Locale.h MUIObjects.h Requesters.h Themes.h \
   Threads.h mui/ImageArea.h ImageCache.h include/mui/TheBar_mcc.h \
-  mui/UpdateComponentList.h Debug.h
+  mui/UpdateComponentList.h tcp/http.h Debug.h
 $(OBJDIR)/$(MUIDIR)/UserList.o: mui/UserList.c mui/UserList_cl.h include/libraries/mui.h \
   mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h \
   YAM_read.h YAM_write.h YAM_main.h BayesFilter.h HashTable.h \
@@ -2670,6 +2669,48 @@ $(OBJDIR)/$(MUIDIR)/UserList.o: mui/UserList.c mui/UserList_cl.h include/librari
   include/xpk/xpk.h include/amiga-align.h include/default-align.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   Themes.h Timer.h include/timeval.h Locale.h Debug.h
+$(OBJDIR)/$(MUIDIR)/UserPortraitGroup.o: mui/UserPortraitGroup.c mui/UserPortraitGroup_cl.h \
+  include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
+  tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h mui/UserPortraitGroup.h \
+  include/proto/muimaster.h include/interfaces/muimaster.h \
+  include/inline4/muimaster.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_userlist.h \
+  YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
+  include/timeval.h YAM_addressbookEntry.h YAM_config.h YAM_read.h \
+  Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
+  tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
+  include/amissl/amissl.h include/openssl/e_os2.h \
+  include/openssl/opensslconf.h include/openssl/aes.h \
+  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
+  include/openssl/stack.h include/openssl/safestack.h \
+  include/openssl/opensslv.h include/openssl/symhacks.h \
+  include/openssl/bn.h include/openssl/ossl_typ.h \
+  include/openssl/asn1_mac.h include/openssl/asn1t.h \
+  include/openssl/blowfish.h include/openssl/buffer.h \
+  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
+  include/openssl/lhash.h include/openssl/conf_api.h \
+  include/openssl/des.h include/openssl/des_old.h \
+  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
+  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
+  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
+  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
+  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
+  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
+  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+  include/openssl/obj_mac.h include/openssl/hmac.h \
+  include/openssl/krb5_asn.h include/openssl/kssl.h \
+  include/openssl/ocsp.h include/openssl/x509.h \
+  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
+  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
+  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
+  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
+  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
+  include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
+  FileInfo.h Locale.h MUIObjects.h Requesters.h Threads.h mime/md5.h \
+  mui/ClassesExtra.h mui/ImageArea.h ImageCache.h \
+  include/mui/TheBar_mcc.h tcp/http.h Debug.h
 $(OBJDIR)/$(MUIDIR)/WriteAttachmentList.o: mui/WriteAttachmentList.c \
   mui/WriteAttachmentList_cl.h include/libraries/mui.h mui/ClassesExtra.h \
   YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \
@@ -2839,7 +2880,7 @@ $(OBJDIR)/$(MUIDIR)/YAMApplication.o: mui/YAMApplication.c mui/YAMApplication_cl
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
-  YAM_find.h YAM_global.h YAM_mainFolder.h AppIcon.h Locale.h \
+  YAM_find.h YAM_global.h YAM_mainFolder.h AppIcon.h FileInfo.h Locale.h \
   MUIObjects.h UpdateCheck.h Threads.h mui/AddrBookListtree.h \
   mui/AddressmatchPopup.h mui/InfoWindow.h mui/StringRequestWindow.h \
   mui/TransferControlGroup.h include/timeval.h mui/TransferWindow.h \

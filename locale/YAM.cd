@@ -7038,3 +7038,12 @@ MSG_ER_HELP_FILE_DOES_NOT_EXIST (2217//)
 The help file '%s' does not exist.
 ; FILE
 ;
+MSG_EA_SEARCH_GRAVATAR (2218//)
+Search on gra_vatar.com...
+;
+MSG_ER_NO_GRAVATAR_FOUND (2219//)
+No Gravatar found for address '%s'.\n\
+\n\
+Perhaps the person has not uploaded a portrait image to gravatar.com yet.
+; ADDRESS
+;

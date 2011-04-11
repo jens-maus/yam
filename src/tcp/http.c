@@ -167,6 +167,7 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
           {
             char *p;
             int len;
+            int error = 0;
 
             // now we read out the very first line to see if the
             // response code matches and is fine
@@ -177,7 +178,7 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
 
             // check the server response
             if(len > 0 && strnicmp(tc->requestResponse, "HTTP/", 5) == 0 &&
-               (p = strchr(tc->requestResponse, ' ')) != NULL && atoi(TrimStart(p)) == 200)
+               (p = strchr(tc->requestResponse, ' ')) != NULL && (error = atoi(TrimStart(p))) == 200)
             {
               LONG contentLength = 0;
               int (* receiveFunc)(struct Connection *, char *, const int);
@@ -266,7 +267,10 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
               }
             }
             else
-              ER_NewError(tr(MSG_ER_DocNotFound), path);
+            {
+              if(error != 404 || isFlagClear(flags, DLURLF_NO_ERROR_ON_404))
+                ER_NewError(tr(MSG_ER_DocNotFound), path);
+            }
           }
           else
             ER_NewError(tr(MSG_ER_SendHTTP));

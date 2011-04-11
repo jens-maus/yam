@@ -52,9 +52,6 @@ struct EA_GUIData
   Object *ST_HOMEPAGE;
   Object *ST_BIRTHDAY;
   Object *GR_PHOTO;
-  Object *BC_PHOTO;
-  Object *BT_SELECTPHOTO;
-  Object *BT_REMOVEPHOTO;
   Object *LV_MEMBER;
   Object *ST_MEMBER;
   Object *BT_ADD;

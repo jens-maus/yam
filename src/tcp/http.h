@@ -28,8 +28,9 @@
 
 ***************************************************************************/
 
-#define DLURLF_SIGNAL  (1<<0)
-#define DLURLF_VISIBLE (1<<1) // show the transfer window
+#define DLURLF_SIGNAL          (1<<0)
+#define DLURLF_VISIBLE         (1<<1) // show the transfer window
+#define DLURLF_NO_ERROR_ON_404 (1<<2) // don't show an error message in case the requested document is not found (error 404)
 
 BOOL DownloadURL(const char *server, const char *request, const char *filename, const ULONG flags);
 

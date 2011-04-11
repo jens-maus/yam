@@ -484,6 +484,7 @@ MUIOBJS = \
 	UpdateComponentList.o \
 	UpdateNotifyWindow.o \
 	UserList.o \
+	UserPortraitGroup.o \
 	WriteAttachmentList.o \
 	WriteWindow.o \
 	WriteWindowToolbar.o \
