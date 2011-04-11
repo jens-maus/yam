@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-04-11 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2011-04-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/UserPortraitGroup.c: it is possible to let YAM search for user portraits
