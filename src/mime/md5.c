@@ -190,8 +190,9 @@ void md5init(struct MD5Context *ctx)
  * Update context to reflect the concatenation of another buffer full
  * of bytes.
  */
-void md5update(struct MD5Context *ctx, unsigned char const *buf, unsigned int len)
+void md5update(struct MD5Context *ctx, const void *buf, unsigned int len)
 {
+  const char *cbuf = buf;
   unsigned int t;
 
   /* Update bitcount */
@@ -210,28 +211,28 @@ void md5update(struct MD5Context *ctx, unsigned char const *buf, unsigned int le
     t = 64-t;
     if(len < t)
     {
-       memcpy(p, buf, len);
+       memcpy(p, cbuf, len);
        return;
     }
-    memcpy(p, buf, t);
+    memcpy(p, cbuf, t);
     byteReverse(ctx->buffer, 16);
     md5transform(ctx->state, (unsigned long *)ctx->buffer);
-    buf += t;
+    cbuf += t;
     len -= t;
   }
 
   /* Process data in 64-byte chunks */
   while(len >= 64)
   {
-    memcpy(ctx->buffer, buf, 64);
+    memcpy(ctx->buffer, cbuf, 64);
     byteReverse(ctx->buffer, 16);
     md5transform(ctx->state, (unsigned long *)ctx->buffer);
-    buf += 64;
+    cbuf += 64;
     len -= 64;
   }
 
   /* Handle any remaining bytes of data. */
-  memcpy(ctx->buffer, buf, len);
+  memcpy(ctx->buffer, cbuf, len);
 }
 ///
 /// md5final()
@@ -349,7 +350,7 @@ void md5hmac(unsigned char * text, int text_len, unsigned char *key, int key_len
 /// md5digestToHex
 // convert an MD5 digest into a NUL-terminated hexdump for transmission
 // NOTE: the hex buffer must have a size of at least 33 bytes!
-void md5digestToHex(unsigned char digest[16], char *hex)
+void md5digestToHex(const unsigned char digest[16], char *hex)
 {
   int i;
 

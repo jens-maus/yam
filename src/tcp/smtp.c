@@ -765,7 +765,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
           //      ":", nonce-value, ":", cnonce-value }
           snprintf(buf, sizeof(buf), "%s:%s:%s", tc->msn->username, realm, tc->msn->password);
           md5init(&context);
-          md5update(&context, (unsigned char *)buf, strlen(buf));
+          md5update(&context, buf, strlen(buf));
           md5final(digest, &context);
           memcpy(buf, digest, 16);
           A1_len += snprintf(&buf[16], sizeof(buf)-16, ":%s:%s", nonce, cnonce);
@@ -774,7 +774,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
           // then we directly build the hexadecimal representation
           // HEX(H(A1))
           md5init(&context);
-          md5update(&context, (unsigned char *)buf, A1_len);
+          md5update(&context, buf, A1_len);
           md5final(digest, &context);
           md5digestToHex(digest, A1);
           D(DBF_NET, "encoded   A1: '%s'", A1);
@@ -788,7 +788,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
           // and also directly build the hexadecimal representation
           // HEX(H(A2))
           md5init(&context);
-          md5update(&context, (unsigned char *)buf, strlen(buf));
+          md5update(&context, buf, strlen(buf));
           md5final(digest, &context);
           md5digestToHex(digest, A2);
           D(DBF_NET, "encoded   A2: '%s'", A2);
@@ -805,7 +805,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
           //          nonce-value, ":", nc-value, ":",
           //          cnonce-value, ":", qop-value, ":", HEX(H(A2)) }))
           md5init(&context);
-          md5update(&context, (unsigned char *)buf, strlen(buf));
+          md5update(&context, buf, strlen(buf));
           md5final(digest, &context);
           md5digestToHex(digest, response);
           D(DBF_NET, "encoded   resp: '%s'", response);

@@ -10,6 +10,8 @@ $URL$
   * mui/UserPortraitGroup.c: it is possible to let YAM search for user portraits
     on gravatar.com. The image will be downloaded to the gallery directory.
     Refer to http://www.gravatar.com for details.
+  * mime/md5.c: changed to prototype of md5update() to accept buffer variables
+    of arbitrary type.
 
 2011-03-19 Emilio Jimenez <ejim@ono.com>
 

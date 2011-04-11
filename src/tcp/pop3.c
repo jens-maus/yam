@@ -1040,7 +1040,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
       // then we send the APOP command to authenticate via APOP
       strlcat(tc->lineBuffer, tc->msn->password, sizeof(tc->lineBuffer));
       md5init(&context);
-      md5update(&context, (unsigned char *)tc->lineBuffer, strlen(tc->lineBuffer));
+      md5update(&context, tc->lineBuffer, strlen(tc->lineBuffer));
       md5final(digest, &context);
       md5digestToHex(digest, digestHex);
       snprintf(tc->lineBuffer, sizeof(tc->lineBuffer), "%s %s", tc->msn->username, digestHex);

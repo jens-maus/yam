@@ -39,9 +39,9 @@ struct MD5Context
 };
 
 void md5init(struct MD5Context *ctx);
-void md5update(struct MD5Context *ctx, unsigned char const *buf, unsigned int len);
+void md5update(struct MD5Context *ctx, const void *buf, const unsigned int len);
 void md5final(unsigned char digest[16], struct MD5Context *ctx);
 void md5hmac(unsigned char *text, int text_len, unsigned char *key, int key_len, unsigned char digest[16]);
-void md5digestToHex(unsigned char digest[16], char *hex);
+void md5digestToHex(const unsigned char digest[16], char *hex);
 
 #endif // MD5_H
