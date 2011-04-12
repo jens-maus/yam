@@ -139,7 +139,7 @@ OVERLOAD(OM_DISPOSE)
 
   // abort the gravatar thread in case it is still running
   if(data->thread != NULL)
-    AbortThread(data->thread);
+    AbortThread(data->thread, TRUE);
 
   result = DoSuperMethodA(cl, obj, msg);
 

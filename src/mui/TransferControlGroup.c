@@ -351,7 +351,7 @@ DECLARE(Abort)
   if(data->thread != NULL)
   {
     // tell the thread to abort
-    AbortThread(data->thread);
+    AbortThread(data->thread, FALSE);
   }
 
   LEAVE();

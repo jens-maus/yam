@@ -82,7 +82,7 @@ APTR VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...);
 BOOL IsMainThread(void);
 APTR CurrentThread(void);
 BOOL SleepThread(void);
-void AbortThread(APTR thread);
+void AbortThread(APTR thread, BOOL targetVanished);
 void WakeupThread(APTR thread);
 LONG ThreadAbortSignal(void);
 LONG ThreadWakeupSignal(void);

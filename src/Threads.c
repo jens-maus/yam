@@ -396,7 +396,7 @@ BOOL SleepThread(void)
 ///
 /// AbortThread
 // signal a thread to abort the current action
-void AbortThread(APTR thread)
+void AbortThread(APTR thread, BOOL targetVanished)
 {
   struct Process *proc;
   ULONG sig;
@@ -418,8 +418,9 @@ void AbortThread(APTR thread)
     proc = _thread->process;
     sig = _thread->abortSignal;
 
-    // don't trigger MUIM_ThreadFinished for aborted threads
-    _thread->actionMsg->object = NULL;
+    // don't trigger MUIM_ThreadFinished for aborted threads if the target may have vanished
+    if(targetVanished == TRUE)
+      _thread->actionMsg->object = NULL;
   }
 
   Signal((struct Task *)proc, 1UL << sig);
@@ -474,7 +475,7 @@ void AbortWorkingThreads(void)
     struct Thread *thread = threadNode->thread;
 
     // abort the working thread
-    AbortThread(thread);
+    AbortThread(thread, TRUE);
 
     // and wait until it finished its work
     do
