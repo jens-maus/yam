@@ -62,6 +62,7 @@ struct Data
   int windowNumber;
   char address[SIZE_ADDRESS];
   char lcAddress[SIZE_ADDRESS];
+  APTR thread;
   BOOL cleared;
 };
 */
@@ -127,6 +128,23 @@ OVERLOAD(OM_NEW)
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
+}
+
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+  IPTR result;
+
+  // abort the gravatar thread in case it is still running
+  if(data->thread != NULL)
+    AbortThread(data->thread);
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -300,11 +318,11 @@ DECLARE(CheckGravatar)
       }
 
       // try to download the user portrait
-      DoAction(obj, TA_DownloadURL, TT_DownloadURL_Server, "http://www.gravatar.com/avatar",
-                                    TT_DownloadURL_Request, hdigest,
-                                    TT_DownloadURL_Filename, imagePath,
-                                    TT_DownloadURL_Flags, DLURLF_VISIBLE|DLURLF_NO_ERROR_ON_404,
-                                    TAG_DONE);
+      data->thread = DoAction(obj, TA_DownloadURL, TT_DownloadURL_Server, "http://www.gravatar.com/avatar",
+                                                   TT_DownloadURL_Request, hdigest,
+                                                   TT_DownloadURL_Filename, imagePath,
+                                                   TT_DownloadURL_Flags, DLURLF_VISIBLE|DLURLF_NO_ERROR_ON_404,
+                                                   TAG_DONE);
     }
   }
 
@@ -338,6 +356,9 @@ OVERLOAD(MUIM_ThreadFinished)
 
     ER_NewError(tr(MSG_ER_NO_GRAVATAR_FOUND), data->address);
   }
+
+  // forget about the thread
+  data->thread = NULL;
 
   LEAVE();
   return 0;

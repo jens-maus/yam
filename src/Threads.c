@@ -77,12 +77,15 @@
 
 #define MIN_THREADS       4
 
+struct ThreadMessage;
+
 struct Thread
 {
   struct MinNode node;     // to make this a full Exec node
   struct Process *process; // the process pointer as returned by CreateNewProc()
   struct MsgPort *timerPort;
   struct TimeRequest *timerRequest;
+  struct ThreadMessage *actionMsg; // the message containing the action description
   LONG priority;           // the thread's priority
   LONG abortSignal;        // an allocated signal to abort the thread
   LONG wakeupSignal;       // an allocated signal to wakeup a sleeping thread
@@ -414,6 +417,9 @@ void AbortThread(APTR thread)
     _thread->aborted = TRUE;
     proc = _thread->process;
     sig = _thread->abortSignal;
+
+    // don't trigger MUIM_ThreadFinished for aborted threads
+    _thread->actionMsg->object = NULL;
   }
 
   Signal((struct Task *)proc, 1UL << sig);
@@ -838,10 +844,14 @@ APTR VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...)
       {
         LONG pri;
 
+        // set up the action message
         msg->action = action;
         msg->threadNode = threadNode;
         msg->thread = thread;
         msg->object = obj;
+
+        // remember the action message for early abortion
+        thread->actionMsg = msg;
 
         // raise the thread's priority if this is requested
         if((pri = GetTagData(TT_Priority, 0, msg->actionTags)) != 0)
