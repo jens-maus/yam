@@ -31,6 +31,7 @@
 #include "UserPortraitGroup_cl.h"
 
 #include <string.h>
+#include <proto/dos.h>
 #include <proto/muimaster.h>
 
 #include "YAM.h"
@@ -61,6 +62,7 @@ struct Data
   int windowNumber;
   char address[SIZE_ADDRESS];
   char lcAddress[SIZE_ADDRESS];
+  BOOL cleared;
 };
 */
 
@@ -238,10 +240,11 @@ DECLARE(CheckGravatar)
     unsigned char digest[16];
     char hdigest[SIZE_DEFAULT];
     char imagePath[SIZE_PATHFILE];
+    BOOL doDownload;
 
     // create a trimmed and lower case copy of the user's address
     strlcpy(data->address, Trim(address), sizeof(data->address));
-    snprintf(data->lcAddress, sizeof(data->lcAddress), "%s", data->address);
+    strlcpy(data->lcAddress, data->address, sizeof(data->lcAddress));
     ToLowerCase(data->lcAddress);
 
     // build the MD5 checksum of the address
@@ -255,18 +258,54 @@ DECLARE(CheckGravatar)
     // we request JPEG images, including a 404 error response if no image is available
     strlcat(hdigest, ".jpg?d=404", sizeof(hdigest));
 
-    // replace invalid characters first
-    ReplaceInvalidChars(data->address);
-    // now build the final file name
+    // build the final file name
     AddPath(imagePath, C->GalleryDir, data->address, sizeof(imagePath));
     strlcat(imagePath, ".jpg", sizeof(imagePath));
 
-    // try to download the user portrait
-    DoAction(obj, TA_DownloadURL, TT_DownloadURL_Server, "http://www.gravatar.com/avatar",
-                                  TT_DownloadURL_Request, hdigest,
-                                  TT_DownloadURL_Filename, imagePath,
-                                  TT_DownloadURL_Flags, DLURLF_VISIBLE|DLURLF_NO_ERROR_ON_404,
-                                  TAG_DONE);
+    // replace possibly invalid characters within the file name at last
+    ReplaceInvalidChars(FilePart(imagePath));
+
+    doDownload = TRUE;
+    while(FileExists(imagePath) == TRUE)
+    {
+      if(MUI_Request(G->App, _win(obj), 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), imagePath) == 0)
+      {
+        struct FileReqCache *frc;
+
+        // user chose not to overwrite the existing file, let him choose another one
+        if((frc = ReqFile(ASL_PHOTO, obj, tr(MSG_RE_SAVE_FILE), REQF_SAVEMODE, C->GalleryDir, FilePart(imagePath))) != NULL)
+        {
+          AddPath(imagePath, frc->drawer, frc->file, sizeof(imagePath));
+        }
+        else
+        {
+          doDownload = FALSE;
+        }
+      }
+      else
+      {
+        // download the image to the selected file and overwrite the existing one
+        break;
+      }
+    }
+
+    if(doDownload == TRUE)
+    {
+      if(stricmp(imagePath, ea->PhotoName) == 0)
+      {
+        // if we are checking for the same image again we must make sure that the current
+        // image is no longer in use
+        DoMethod(obj, METHOD(Clear));
+        data->cleared = TRUE;
+      }
+
+      // try to download the user portrait
+      DoAction(obj, TA_DownloadURL, TT_DownloadURL_Server, "http://www.gravatar.com/avatar",
+                                    TT_DownloadURL_Request, hdigest,
+                                    TT_DownloadURL_Filename, imagePath,
+                                    TT_DownloadURL_Flags, DLURLF_VISIBLE|DLURLF_NO_ERROR_ON_404,
+                                    TAG_DONE);
+    }
   }
 
   LEAVE();
@@ -287,7 +326,18 @@ OVERLOAD(MUIM_ThreadFinished)
   if(tf->result == TRUE)
     DoMethod(obj, METHOD(SetPortrait), GetTagData(TT_DownloadURL_Filename, (IPTR)NULL, tf->actionTags));
   else
+  {
+    struct EA_ClassData *ea = G->EA[data->windowNumber];
+
+    // restore the previous portrait if it was cleared before
+    if(data->cleared == TRUE && ea->PhotoName[0] != '\0')
+    {
+      DoMethod(obj, METHOD(SetPortrait), ea->PhotoName);
+      data->cleared = FALSE;
+    }
+
     ER_NewError(tr(MSG_ER_NO_GRAVATAR_FOUND), data->address);
+  }
 
   LEAVE();
   return 0;

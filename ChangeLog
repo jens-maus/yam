@@ -9,6 +9,8 @@ $URL$
 
   * Threads.c: call DoMethod() directly upon thread termination instead of using
     PushMethodOnStackWait().
+  * mui/UserPortraitGroup.c: the user will be prompted to select a different file
+    name for the portrait image to be downloaded in case it already exists.
 
 2011-04-11 Samir Hawamdeh <s.hawamdeh@tin.it>
 
