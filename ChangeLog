@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-04-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c: call DoMethod() directly upon thread termination instead of using
+    PushMethodOnStackWait().
+
 2011-04-11 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

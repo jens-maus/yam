@@ -741,7 +741,7 @@ void HandleThreads(BOOL handleAll)
       if(tmsg->object != NULL)
       {
         D(DBF_THREAD, "sending MUIM_ThreadFinished to object %08lx", tmsg->object);
-        PushMethodOnStackWait(tmsg->object, 4, MUIM_ThreadFinished, tmsg->action, tmsg->result, tmsg->actionTags);
+        DoMethod(tmsg->object, MUIM_ThreadFinished, tmsg->action, tmsg->result, tmsg->actionTags);
       }
 
       // remove the thread from the working list and put it back into the idle list
