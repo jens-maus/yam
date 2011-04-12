@@ -66,7 +66,7 @@ void rx_geturl(UNUSED struct RexxHost *host, struct RexxParams *params, enum Rex
       if(DoAction(NULL, TA_DownloadURL, TT_DownloadURL_Server, args->url,
                                         TT_DownloadURL_Filename, args->filename,
                                         TT_DownloadURL_Flags, DLURLF_SIGNAL,
-                                        TAG_DONE) == TRUE)
+                                        TAG_DONE) != NULL)
       {
         MiniMainLoop();
       }

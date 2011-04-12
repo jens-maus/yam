@@ -2349,10 +2349,11 @@ BOOL ReceiveMailsFromPOP(struct MailServerNode *msn, const ULONG flags, struct D
     // mark the server as being "in use"
     SET_FLAG(msn->flags, MSF_IN_USE);
 
-    success = DoAction(NULL, TA_ReceiveMails, TT_ReceiveMails_MailServer, msn,
-                                              TT_ReceiveMails_Flags, flags,
-                                              TT_ReceiveMails_Result, dlResult,
-                                              TAG_DONE);
+    success = (DoAction(NULL, TA_ReceiveMails, TT_ReceiveMails_MailServer, msn,
+                                               TT_ReceiveMails_Flags, flags,
+                                               TT_ReceiveMails_Result, dlResult,
+                                               TAG_DONE) != NULL);
+
     if(success == FALSE)
     {
       // clear the "in use" flag again in case of an error
@@ -2522,10 +2523,10 @@ BOOL MA_Send(enum SendMailMode mode)
         // start the send process if there is anything left to be sent
         if(mlist->count != 0)
         {
-          success = DoAction(NULL, TA_SendMails, TT_SendMails_MailServer, msn,
-                                                 TT_SendMails_Mails, mlist,
-                                                 TT_SendMails_Mode, mode,
-                                                 TAG_DONE);
+          success = (DoAction(NULL, TA_SendMails, TT_SendMails_MailServer, msn,
+                                                  TT_SendMails_Mails, mlist,
+                                                  TT_SendMails_Mode, mode,
+                                                  TAG_DONE) != NULL);
         }
 
         // reset everything in case of failure
@@ -2967,10 +2968,10 @@ BOOL MA_ExportMessages(char *filename, const BOOL all, ULONG flags)
 
       if(filename != NULL)
       {
-        success = DoAction(NULL, TA_ExportMails, TT_ExportMails_File, filename,
-                                                 TT_ExportMails_Mails, mlist,
-                                                 TT_ExportMails_Flags, flags,
-                                                 TAG_DONE);
+        success = (DoAction(NULL, TA_ExportMails, TT_ExportMails_File, filename,
+                                                  TT_ExportMails_Mails, mlist,
+                                                  TT_ExportMails_Flags, flags,
+                                                  TAG_DONE) != NULL);
       }
     }
   }
@@ -2999,10 +3000,10 @@ BOOL MA_ImportMessages(const char *fname, const ULONG flags)
   // check that a real folder is active
   if(GetCurrentFolder() != NULL && isGroupFolder(GetCurrentFolder()) == FALSE)
   {
-    result = DoAction(NULL, TA_ImportMails, TT_ImportMails_File, fname,
-                                            TT_ImportMails_Folder, GetCurrentFolder(),
-                                            TT_ImportMails_Flags, flags,
-                                            TAG_DONE);
+    result = (DoAction(NULL, TA_ImportMails, TT_ImportMails_File, fname,
+                                             TT_ImportMails_Folder, GetCurrentFolder(),
+                                             TT_ImportMails_Flags, flags,
+                                             TAG_DONE) != NULL);
   }
 
   RETURN(result);

@@ -799,9 +799,9 @@ void PurgeIdleThreads(const BOOL purgeAll)
 ///
 /// DoAction
 //
-BOOL VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...)
+APTR VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...)
 {
-  BOOL success = FALSE;
+  APTR success = NULL;
   struct Node *node;
 
   ENTER();
@@ -858,7 +858,8 @@ BOOL VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...)
         threadNode->thread->working = TRUE;
         AddTail((struct List *)&G->workingThreads, (struct Node *)threadNode);
 
-        success = TRUE;
+        // return the executing thread on success
+        success = thread;
       }
       else
         FreeSysObject(ASOT_MESSAGE, msg);

@@ -78,7 +78,7 @@ void CleanupThreads(void);
 void HandleThreads(BOOL handleAll);
 void AbortWorkingThreads(void);
 void PurgeIdleThreads(const BOOL purgeAll);
-BOOL VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...);
+APTR VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...);
 BOOL IsMainThread(void);
 APTR CurrentThread(void);
 BOOL SleepThread(void);
