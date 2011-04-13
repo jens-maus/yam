@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-04-13 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some typos.
+
 2011-04-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.c: thread abortion can now be either synchonous or asynchronous.

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.86 (11.04.2011)
+## version $VER: YAM.catalog 7.87 (13.04.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -9473,8 +9473,8 @@ Elimina selezionato
 ; Delete selected
 ;
 MSG_MA_DELETESELECTEDREQUEST
-I seguenti allegati verranno\n\
-cancellati:\n\
+I seguenti allegati verranno cancellati:\n\
+\n\
 %s\
 \n\
 Sei sicuro di voler procedere?
@@ -10070,7 +10070,7 @@ Il file '%s' inerente alla guida in linea è inesistente.
 ; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR
-Ricerca su gra_vatar.com...
+Ricerca su _gravatar.com...
 ; Search on gra_vatar.com...
 ;
 MSG_ER_NO_GRAVATAR_FOUND
