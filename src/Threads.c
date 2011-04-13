@@ -85,7 +85,6 @@ struct Thread
   struct Process *process; // the process pointer as returned by CreateNewProc()
   struct MsgPort *timerPort;
   struct TimeRequest *timerRequest;
-  struct ThreadMessage *actionMsg; // the message containing the action description
   LONG priority;           // the thread's priority
   LONG abortSignal;        // an allocated signal to abort the thread
   LONG wakeupSignal;       // an allocated signal to wakeup a sleeping thread
@@ -396,7 +395,7 @@ BOOL SleepThread(void)
 ///
 /// AbortThread
 // signal a thread to abort the current action
-void AbortThread(APTR thread, BOOL targetVanished)
+void AbortThread(APTR thread, BOOL waitForTermination)
 {
   struct Process *proc;
   ULONG sig;
@@ -408,6 +407,7 @@ void AbortThread(APTR thread, BOOL targetVanished)
     D(DBF_THREAD, "aborting main thread");
     proc = G->mainThread;
     sig = SIGBREAKB_CTRL_C;
+    waitForTermination = FALSE;
   }
   else
   {
@@ -417,13 +417,22 @@ void AbortThread(APTR thread, BOOL targetVanished)
     _thread->aborted = TRUE;
     proc = _thread->process;
     sig = _thread->abortSignal;
-
-    // don't trigger MUIM_ThreadFinished for aborted threads if the target may have vanished
-    if(targetVanished == TRUE)
-      _thread->actionMsg->object = NULL;
   }
 
   Signal((struct Task *)proc, 1UL << sig);
+  
+  if(waitForTermination == TRUE)
+  {
+    struct Thread *_thread = thread;
+    
+    // now wait until the thread has finished its work
+    do
+    {
+      MicroMainLoop();
+      Delay(10);
+    }
+    while(_thread->working == TRUE);
+  }
 
   LEAVE();
 }
@@ -474,19 +483,8 @@ void AbortWorkingThreads(void)
     struct ThreadNode *threadNode = (struct ThreadNode *)node;
     struct Thread *thread = threadNode->thread;
 
-    // abort the working thread
+    // abort the working thread and wait until it finished its work
     AbortThread(thread, TRUE);
-
-    // and wait until it finished its work
-    do
-    {
-      MicroMainLoop();
-      Delay(10);
-    }
-    while(thread->working == TRUE);
-
-    // perform thread clean up stuff
-    HandleThreads(TRUE);
   }
 
   LEAVE();
@@ -850,9 +848,6 @@ APTR VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...)
         msg->threadNode = threadNode;
         msg->thread = thread;
         msg->object = obj;
-
-        // remember the action message for early abortion
-        thread->actionMsg = msg;
 
         // raise the thread's priority if this is requested
         if((pri = GetTagData(TT_Priority, 0, msg->actionTags)) != 0)

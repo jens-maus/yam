@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-04-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c: thread abortion can now be either synchonous or asynchronous.
+
 2011-04-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.c: call DoMethod() directly upon thread termination instead of using
