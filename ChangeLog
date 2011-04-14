@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-04-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/UserPortraitGroup.c: changed the base class from Virtgroup.mui to 
+    Group.mui since there is no need for a virtual group at all.
+
 2011-04-14 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest changes.

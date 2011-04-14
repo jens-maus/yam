@@ -23,7 +23,7 @@
 
  $Id$
 
- Superclass:  MUIC_Virtgroup
+ Superclass:  MUIC_Group
  Description: Provides GUI elements for selecting a user portrait.
 
 ***************************************************************************/
