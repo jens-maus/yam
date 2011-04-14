@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.23 (16.03.2011)
+## version $VER: YAM.catalog 7.24 (14.04.2011)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5673;
+; in sync with .cd in revision 5684;
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9916,4 +9916,17 @@ Interfejs ARexx'a
 MSG_ER_HELP_FILE_DOES_NOT_EXIST
 Plik pomocy \"%s\" nie istnieje.
 ; The help file '%s' does not exist.
+;
+MSG_EA_SEARCH_GRAVATAR
+Szukaj na gra_vatar.com...
+; Search on gra_vatar.com...
+;
+MSG_ER_NO_GRAVATAR_FOUND
+Nie odnaleziono obrazka dla adresu \"%s\".\n\
+\n\
+Prawdopodobnie osoba nie wys³a³a swojego portretu na gravatar.com.
+; No Gravatar found for address '%s'.\n\
+; \n\
+; Perhaps the person has not uploaded a portrait image to gravatar.com yet.
+; ADDRESS
 ;
