@@ -1,0 +1,183 @@
+VERSION: 2.6p1
+BUILDID:
+BUILDDATE: 26.09.2010
+URL: ppc-amigaos http://downloads.sourceforge.net/yamos/YAM26p1-AmigaOS4.lha
+URL: m68k-amigaos http://downloads.sourceforge.net/yamos/YAM26p1-AmigaOS3.lha
+URL: ppc-morphos http://downloads.sourceforge.net/yamos/YAM26p1-MorphOS.lha
+URL: i386-aros http://downloads.sourceforge.net/yamos/YAM26p1-AROS-i386.lha
+URL: ppc-aros http://downloads.sourceforge.net/yamos/YAM26p1-AROS-ppc.lha
+URL: x86_64-aros http://downloads.sourceforge.net/yamos/YAM26p1-AROS-x86_64.lha
+CHANGES:
+---------------------------------------------------------------------------
+                   YAM - Bugfixing patch release 2.6p1
+---------------------------------------------------------------------------
+
+The YAM (Yet Another Mailer) open source development team is pleased to 
+announce the immediate release of its bugfixing 2.6p1 version. After seven
+months of work, the 2.6p1 release brings important fixes for the 2.6 
+release line and all users of YAM 2.6 as well as all previous released
+versions. So all users are adviced to update to this release as soon as
+possible.
+ 
+Before you start the installation
+---------------------------------
+In case you have still YAM 2.4 or a previous version running and you want
+to upgrade to 2.6p1 you have to note that YAM 2.5+ not only uses newer 
+configuration files, the files  used to store separate emails are named
+differently  as well. Therefore, before you start the  installation  script
+to  overwrite  your  existing installation,  it's strongly recommended that
+you create a backup of your old YAM installation, including all folders  and 
+configuration files. Afterwards  you can install the update into your old
+YAM directory  if you wish. On  start-up, YAM 2.5+ will automatically
+convert  your old  configuration files  to the  new 2.5+ format,  and after
+being  started,  YAM will  rename  your  old emails  as necessary,  always
+under  your control.  It  is also  recommended that  you re-save your
+configuration as  soon as  possible in  order to  update your .config  file 
+to  the new  format, which  will reveal  all the  new options available.
+
+In addition,  please note  that since  YAM 2.5 no  YAM: assign  is required
+anymore. That means, you may even install it in a new location and start it
+right  away from  there  without  having to  touch  your old  installation.
+Afterwards you  may manually import  the mails from your  old installation.
+
+What's new
+----------
+Here's a  list (in  alphabetical order)  of the  brave developers  who have
+contributed  to the 2.6 release line up to now:
+
+              Alexey Ivanov
+              David Rey
+              Guenther Nikl
+              Frank Weber
+              Jens Langner
+              Joerg Strohmayer
+              Matthias Rustler
+              Olaf Barthel
+              Thore Boeckelmann
+
+And here's a  PARTIAL list of the  changes in this version  with respect to
+the previous official update (2.5):
+
+YAM 2.6p1 (bugfix release):
+
+- improved general stability by having fixed several memory leaks, important
+  bugs and situations where YAM crashed under certain circumstances.
+- fixed the tons of "empty" themes warnings in case NOIMAGEWARNING tooltype
+  or a themes "NoImageWarning" option is set.
+- fixed the "Jump on XXX" config settings to better interact with each other.
+- fixed keyboard usage (cursor left/right) to switch between the folder and
+  mail list.
+- fixed some endianess cases so that the AROS build for i386 works more
+  smoothly.
+- fixed the spam filter to handle its 'inactive' state better and not reset
+  all values anymore on that occassion. Now it is possibile to turn off
+  the SPAM filter all together.
+- fixed display of the poppen objects for MUI 3.8 installations.
+- the attachment show window will now display the mail part description
+  in a separate column.
+- fixed problems with important mails containing X-Status: and Status:
+  as local headers.
+- fixed bug in the "avoid duplicates" functionality which caused that
+  not all mails have been shown in a preselection window.
+- updated the included AISS based theme to require at least AISS 4.8
+- fixed the mail attachment management to not use internal file names
+  for the "Content-Disposition" header of attachments.
+- fixed mail search functionality to correctly handle mail header searches.
+- fixed XPK packer scanning to show all installed packers correctly.
+- fixed the startup to handle multi user installation more smoothly.
+- fixed the installation script to get the installation going again.
+
+YAM 2.6:
+
+- updated translations for czech, french, german, greek, italian and swedish
+  language.
+- updated default theme images by Martin 'Mason' Merz.
+- added import and export functions for alien address books (i.e. XML files
+  as used by SimpleMail).
+- AmigaOS4.1's new notification system will can used to inform the user about
+  new received mails.
+- improved handling of header lines in general and especially malformed header
+  lines by certain Microsoft software.
+- improved download and export speed of mails by optimizing the amount of data
+  shown on the screen. Overall the speed increased about 200%.
+- improved the spam handling by treating the user's address book as a white
+  list.
+- rewritten RFC2047 and RFC2822 routines to match the current RFC
+  recommendations.
+- individual character sets can now be configured for reading and writing mails
+  instead of having one character set for all actions.
+- improved ARexx command handling and extended command set.
+- all error messages which occured during a mail transfer now include the
+  account name to make it easier to spot the faulty account in case a user has
+  more than one account at the same provider.
+- mail attachments are displayed as a scrollable virtual group to be able to
+  show an unlimited number of files.
+- all balance object use the new NBalance.mcc class which supports custom
+  mouse pointers.
+- foreign characters with a mail may be converted to either "?" or similar look
+  alike characters.
+- reduced overall stack usage by using dynamically allocated memory when needed.
+- the text font and style can be configured independently for reading and
+  writing mails .
+- the spam training data can be optimized to keep the data base small by removing
+  very rarely used word.
+- made the date scanning of birthdays locale aware.
+- added various AROS versions (i386, ppc, x86_64).
+- added NOSPLASHWINDOW tooltype to start/quit YAM silently.
+- on AmigaOS4.1 the new URL: device will be preferred over openurl.library to
+  invoke a browser.
+- lots of other improvement we don't remember right now (keep in mind:
+  more than 2 years of development was put into YAM 2.6!) :)
+
+If  you want  to have  a more  detailed technical  information on  what was
+actually  changed, please  have a  look at  the included  'ChangeLog' file.
+
+What is still missing?
+----------------------
+- lots of translators! YAM 2.4 featured lots of different languages, but
+  due to the large amount of changed texts these catalogs are completely
+  outdated. Especially support for such common languages as Danish,
+  Finnish, Spanish, etc. is currently missing. If you are a native speaker
+  of a language that YAM does not offer (anymore), then please contact us.
+- lots of documentation! As with the translation, the documentation largely
+  lags behind. Again, if you are a native speaker (even for English) and if
+  you are interested in updating/writing YAM's documentation then please
+  contact us.
+- now that YAM 2.5+ comes with a new themes management, users are free to
+  create own themes in a fashion that allow them to exchange them with
+  other users. So go and create your own themes and submit them via
+  AmiNET&Co! :)
+
+Donations
+---------
+If you  like the development of  YAM and you  want to give our  open source
+developers an additional motivation to continue  to update YAM in future or
+if you simply want to say "Thanks", the YAM project accepts money donations
+via PayPal.  All the  donations during  a release  cycle are  collected and
+divided by considering  the activity of each developer during  the time the
+development lasted. This way we hope  to attract more developers in future,
+which   in   turn  should   give   you   a   new  version   more   quickly.
+
+   http://www.yam.ch/wiki/Donations
+
+So in  case you  want to support  our efforts to  develop a  modern up2date
+e-mail client  for modern AmigaOS-based  systems, please consult  the above
+URL for more information on how to donate to us.
+
+Online resources
+----------------
+As  YAM is  an  open  source development  effort,  we  have several  online
+resources cover your daily YAM needs:
+
+   http://www.yam.ch/      - Official Support Homepage
+   http://download.yam.ch/ - Direct path to the download page
+   http://faq.yam.ch/      - Online Frequently Asked Questions (FAQ)
+   http://bugs.yam.ch/     - Bugtracker and Feature Requests
+   http://forum.yam.ch/    - Web-based online forum
+
+   For Developers:
+
+   http://nightly.yam.ch/  - Access to automatic nightly developer
+                             snapshots
+   http://svn.yam.ch/      - Web-based source code SVN access
+   http://stats.yam.ch/    - Daily updated development statistics

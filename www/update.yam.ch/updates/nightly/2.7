@@ -1,0 +1,113 @@
+VERSION: 2.7-dev
+BUILDID: 20110415
+BUILDDATE: 15.04.2011
+URL: m68k-amigaos http://nightly.yam.ch/2011-04-15-dev/YAM27dev-AmigaOS3.lha
+URL: ppc-amigaos http://nightly.yam.ch/2011-04-15-dev/YAM27dev-AmigaOS4.lha
+URL: ppc-morphos http://nightly.yam.ch/2011-04-15-dev/YAM27dev-MorphOS.lha
+URL: i386-aros http://nightly.yam.ch/2011-04-15-dev/YAM27dev-AROSi386.lha
+URL: ppc-aros http://nightly.yam.ch/2011-04-15-dev/YAM27dev-AROSppc.lha
+URL: x86_64-aros http://nightly.yam.ch/2011-04-15-dev/YAM27dev-AROSx86_64.lha
+CHANGES:
+---------------------------
+YAM Open Source - ChangeLog
+---------------------------
+
+$Id: ChangeLog 5695 2011-04-14 12:28:30Z thboeckel $
+$URL: file:///home/svn/yam/trunk/ChangeLog $
+
+2011-04-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/UserPortraitGroup.c: changed the base class from Virtgroup.mui to 
+    Group.mui since there is no need for a virtual group at all.
+
+2011-04-14 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
+2011-04-13 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some typos.
+
+2011-04-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c: thread abortion can now be either synchonous or asynchronous.
+
+2011-04-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c: call DoMethod() directly upon thread termination instead of using
+    PushMethodOnStackWait().
+  * mui/UserPortraitGroup.c: the user will be prompted to select a different file
+    name for the portrait image to be downloaded in case it already exists.
+
+2011-04-11 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
+2011-04-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/UserPortraitGroup.c: it is possible to let YAM search for user portraits
+    on gravatar.com. The image will be downloaded to the gallery directory.
+    Refer to http://www.gravatar.com for details.
+  * mime/md5.c: changed to prototype of md5update() to accept buffer variables
+    of arbitrary type.
+
+2011-03-19 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: update to the latest changes.
+
+2011-03-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/Connection.c: completely removed the semaphore lock around the
+    gethostbyname() call, since this was necessary for WinUAE only and caused
+    major headaches on other systems.
+  * Makefile: added the definition of "__amigaos3__" to make OS3 specific checks
+    easier.
+  * UpdateNotifyWindow.c: downloading an update file now opens a file requester
+    first to let the user modify the path and file name. Already existing files
+    are handled as well and the user must then choose whether to overwrite it or
+    not.
+
+2011-03-17 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
+2011-03-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/Connection.c: obtain the connection semaphore in an interruptible way to
+    be able to be abortable while waiting for the lock.
+
+2011-03-16 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
+2011-03-16 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: ops wrong file committed, fixed.
+
+2011-03-15 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
+2011-03-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c, locale/YAM.cd, locale/german.ct: added a Help menu which contains
+    two items for the main contents and the ARexx interface for now. This closes
+    #258.
+  * mui/YAMApplication.c: the existance of the help file YAM.guide is now
+    checked before MUI is told to display it. In case it is missing an error
+    message will pop up.
+
+2011-03-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/http.c: use MUIM_Set instead of OM_SET to activate the non-mail mode for
+    the transfer control group. OM_SET seems to be swallowed by MUI.
+  * tcp/http.c: activate the transfer window when downloading updates.
+
+2011-03-12 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: update to the latest changes.
+
+2011-03-09  Alexandre Balaban <abalaban@free.fr>
+
+
+THIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG

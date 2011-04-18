@@ -1,10 +1,10 @@
 NAME: NBalance.mcc
 VERSION: 15.10
-BUILDDATE: 17.4.2011
+BUILDDATE: 17.04.2011
 URL: * http://sourceforge.net/projects/nlist-classes/files/MCC%20NList%20Classes/0.110/MCC_NList-0.110.lha/download
 CHANGES:
 ---------------------------------------------------------------------------
-                          NBalance.mcc - 15.10s
+                          NBalance.mcc - 15.10
 ---------------------------------------------------------------------------
 
 NBalance.mcc is a MUI custom class used as a replacement for the builtin

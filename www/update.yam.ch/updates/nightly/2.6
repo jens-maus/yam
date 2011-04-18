@@ -1,113 +1,113 @@
 VERSION: 2.6-dev
-BUILDID: 20091104
-BUILDDATE: 04.11.2009
-URL: m68k-amigaos http://nightly.yam.ch/2009-11-04-dev/YAM26dev-AmigaOS3.lha
-URL: ppc-amigaos http://nightly.yam.ch/2009-11-04-dev/YAM26dev-AmigaOS4.lha
-URL: ppc-morphos http://nightly.yam.ch/2009-11-04-dev/YAM26dev-MorphOS.lha
-URL: i386-aros http://nightly.yam.ch/2009-11-04-dev/YAM26dev-AROSi386.lha
-URL: ppc-aros http://nightly.yam.ch/2009-11-04-dev/YAM26dev-AROSppc.lha
-URL: x86_64-aros http://nightly.yam.ch/2009-11-04-dev/YAM26dev-AROSx86_64.lha
+BUILDID: 20100221
+BUILDDATE: 21.02.2010
+URL: m68k-amigaos http://nightly.yam.ch/2010-02-21-dev/YAM26dev-AmigaOS3.lha
+URL: ppc-amigaos http://nightly.yam.ch/2010-02-21-dev/YAM26dev-AmigaOS4.lha
+URL: ppc-morphos http://nightly.yam.ch/2010-02-21-dev/YAM26dev-MorphOS.lha
+URL: i386-aros http://nightly.yam.ch/2010-02-21-dev/YAM26dev-AROSi386.lha
+URL: ppc-aros http://nightly.yam.ch/2010-02-21-dev/YAM26dev-AROSppc.lha
+URL: x86_64-aros http://nightly.yam.ch/2010-02-21-dev/YAM26dev-AROSx86_64.lha
 CHANGES:
 ---------------------------
 YAM Open Source - ChangeLog
 ---------------------------
 
-$Id: ChangeLog 4412 2009-11-03 07:14:49Z thboeckel $
+$Id: ChangeLog 4534 2010-02-20 06:38:35Z marust $
 $URL: https://yamos.svn.sourceforge.net/svnroot/yamos/trunk/ChangeLog $
 
-2009-11-02 Thore Böckelmann <tboeckel@gmx.de>
+2010-02-20 Matthias Rustler <mrustler@gmx.de>
 
-  * YAM_TR.c: raised minimum required version of application.library for the
-    new notification system to 53.7 due to recent SDK changes.
+  * ImageCache.c: images were drawn on AROS with pink border instead of
+    transparent.
 
-2009-10-30 Thore Böckelmann <tboeckel@gmx.de>
+2010-02-18 Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_MAf.c: modified the address line validation once more to perform the
-    validation only if the mail was created by certain Microsuck products.
+  * themes/default: replaced the OS3 specific icons once more by a set which now
+    definitely includes two images per icon.
 
-2009-10-29 Thore Böckelmann <tboeckel@gmx.de>
+2010-02-16 Jens Langner <Jens.Langner@light-speed.de>
 
-  * mui/WriteWindow.c: enhanced the command placeholder expansion such that it
-    is now able to add closing quotes at the correct place even if the place-
-    holder is followed by some other characters. For example '%a.lha' will be
-    expanded to '"foo bar.lha"' instead of '"foo bar".lha' if 'foo bar' is to
-    be inserted.
+  * misc: replaced all IsListEmpty() occurances by IsMinListEmpty() checks when
+    a MinList is involved. This allowed to remove some unnecessary cast operations.
+  * YAM_UT.c, Rexx.c: fixed some compiler warnings about strict aliasing rules
+    which happen in case YAM is compiled with GCC 4.4.x.
 
-2009-10-28 Thore Böckelmann <tboeckel@gmx.de>
+2010-02-10 Jens Langner <Jens.Langner@light-speed.de>
 
-  * Requesters.c: all requesters can now be aborted by sending a CTRL-C and YAM
-    can be uniconified by sending a CTRL-F while a requester is active.
-  * YAM_TR.c: if no password is given for a POP3 account YAM will make sure the
-    application is visible before prompting for a password. Otherwise there is
-    no way to uniconify YAM and enter the password.
-  * misc: added a convenience macro to make sure that NULL strings can safely be
-    printed out.
+  * mui/Aboutwindow.c: added a reference to expat.library which is used to allow
+    importing an XML addressbook file.
 
-2009-10-27 Thore Böckelmann <tboeckel@gmx.de>
+2010-02-08 Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_WR.c: when constructing a fully qualified mail address from given person
-    data YAM now makes sure that at least either the real name or the address
-    string exist. Before empty strings resulted in "half" addresses only like
-    "@domain" instead of "name <user@domain>". Thanks to Christoph Poelzl for all
-    his hints and testing.
-  * YAM_MAf.c: fixed some NULL pointer accesses when one of the header lines was
-    empty.
-  * YAM_MAf.c: rewrote the address handling when parsing the header lines again
-    from scratch. The new approach correctly handles multiple possibly broken
-    recipient addresses which the old one didn't. I hate this broken Microsuck
-    stuff :(
+  * mui/MainMailList.c: the context menu's "Set status to" entries are now
+    enabled/disabled in respect to the number of selected mails. For a single
+    mail the menu items reflect the current state of the mail and opposite items
+    will be disabled. For multiple mails opposite items will both be enabled
+    (i.e. "read" and "unread") to give the user the chance to modify the status
+    independent of the clicked mail. This fixes bug #2177452.
 
-2009-10-26 Thore Böckelmann <tboeckel@gmx.de>
+2010-02-02  Vit Sindlar <sindlarv at centrum dot cz>
 
-  * YAM_MA.c: YAM complained about an unknown file format when trying to import
-    plain .mbox files which contained a mail without subject as the very first
-    mail. Now at least 2 out of 3 known header lines (From, To, Subject) will
-    suffice to make YAM recognize such a file as a valid .mbox file.
+  * locale/czech.ct: removed diacritics from AUTH chunk text
+  * mui/Aboutwindow.c: added myself to the list of translators; hopefully you
+    don't mind :)
 
-2009-10-26  Pär Boberg <pbobbenb@spray.se>
+2010-02-01 Thore Böckelmann <tboeckel@gmx.de>
 
-  * locale/swedish.ct: updated according to changes.
+  * themes/default: replaced the old planar icons for OS3 by the new icons done
+    by Martin 'Mason' Merz.
 
-2009-10-25 Samir Hawamdeh <s.hawamdeh@tin.it>
+2010-01-29 Thore Böckelmann <tboeckel@gmx.de>
 
-  * locale/italiano.ct: Various minor changes on the italian translation.
+  * Themes.c: each system now tries to obtain a system specific icon from the
+    theme (i.e. icon/new_os4.info). If that fails YAM will fall back to the
+    normal unspecific icon (i.e. icon/new.info). This makes it possible to
+    distribute system specific icons like the new big icons from AmigaOS4.1
+    update 1 with a theme without forcing users of other systems without on-the-
+    fly icon scaling to use these big icons.
+  * themes/default: added separate icons for all supported platforms. For OS4
+    the new big icons will be used, MorphOS and AROS will use dual image PNG
+    icons and OS3 will default to plain Amiga icons.
 
-2009-10-21 Samir Hawamdeh <s.hawamdeh@tin.it>
+2010-01-28 Thore Böckelmann <tboeckel@gmx.de>
 
-  * locale/italiano.ct: Added missing string (MSG_CO_TEXTCOLORS_READ), this should
-    fix bugs #2874442 and #2874431
-  * doc/Install-YAM: Added italian language as "Setting up" option, this need some
-    more testing before 2.6 final release.
-  * doc/YAM_english.guide: Add Samir Hawamdeh and Luca Longone as contributors for
-    the italian translation :-)
+  * mui/Aboutwindow.c, doc/YAM_english.guide, doc/YAM_french.guide: added
+    Matthias Rustler to the list of developers.
+  * mui/Aboutwindow.c, doc/YAM_english.guide, doc/YAM_french.guide: added
+    Antonis Iliakis to the list of translators.
 
-2009-10-17 Thore Böckelmann <tboeckel@gmx.de>
+2010-01-25 Thore Böckelmann <tboeckel@gmx.de>
 
-  * doc/YAM_english.guide: rewrote the section about the single mail file names.
-    This fixes bug #2869911.
-  * Debug.c: the debug log now contains the build date instead of the
-    (currently) empty build ID.
-  * YAM_UT.c: added some debug output to the address generation function when
-    replying to a mail to track down a bug with slightly broken addresses.
-  * YAM_WR.c: added some debug output to the address generation function when
-    replying to a mail to track down a bug with slightly broken addresses.
-  * mui/WriteWindow.c: all filenames containing spaces which may be passed to
-    external commands will now correctly be sourrounded with quotes.
-  * YAM_CO.c: added ".lha" to the %a paramter of the default packer command
-    string.
-  * extrasrc/Get#?.c: removed the ENTER()/RETURN() macros from the list/node
-    functions, because a @ctrace log become far too huge and unmaintainable
-    with these.
+  * themes/default: updated the default theme to use the imagery used with OS4.1
+    update 1. This is about 99% an AISS theme without the need to install AISS.
+    Many thanks to Martin 'Mason' Merz for his work!
+  * locale/#?: fixed some inconsistencies with trailing dots.
+  * doc/Install-YAM: fixed the wrong path of muimaster.library for MorphOS in
+    the MUI version check.
 
-2009-10-15 Thore Böckelmann <tboeckel@gmx.de>
+2010-01-15 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * mime/rfc2047.c, mime/rfc2231.c: in case a conversion fails the source and
-    destination codeset name will now be printed out in the debug log as well.
+  * locale/italiano.ct: minor corrections on the italian translation.
 
-2009-10-14 Thore Böckelmann <tboeckel@gmx.de>
+2010-01-14  Vit Sindlar <sindlarv at centrum dot cz>
 
-  * YAM_MAf.c: fixed a possible endless loop in the recently added workaround.
+  * doc/Install-YAM: updated Czech part of the installer script
 
+2010-01-13 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: reverted the changes of revision 4473 where Thore forced all
+    NListview objects to always carry a vertical scrollbar no matter what.
+    While this fixed the graphics corruption symptoms reported lately,
+    it does not seem to be a wise decision to work around this issue in
+    YAM when the root of the problem is known to be originating from NList.
+    We really need to fix that in NList later, so to allow YAM to benefit
+    from further NList improvements it is better not to force YAM to
+    use vertical scrollers at all times.
+
+2010-01-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AttachmentImage: fixed the non-OS4 builds by defining the unknown
+    ICONGETA_SizeBounds tag as TAG_IGNORE.
 
 
 THIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG

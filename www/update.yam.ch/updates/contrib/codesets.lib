@@ -1,10 +1,10 @@
 NAME: codesets.library
-VERSION: 6.10
-BUILDDATE: 21.12.2009
-URL: * http://downloads.sourceforge.net/codesetslib/codesets-6.10.lha
+VERSION: 6.12
+BUILDDATE: 23.09.2010
+URL: * http://sourceforge.net/projects/codesetslib/files/codesets.library/6.12/codesets-6.12.lha/download
 CHANGES:
 ---------------------------------------------------------------------------
-                         codesets.library - 6.10
+                         codesets.library - 6.12
 ---------------------------------------------------------------------------
 
 codesets.library is a generic codesets conversion library commonly used
