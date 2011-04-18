@@ -1,10 +1,10 @@
 NAME: openurl.library
-VERSION: 7.6
-BUILDDATE: 24.10.2009
-URL: * http://downloads.sourceforge.net/openurllib/OpenURL-7.6.lha
+VERSION: 7.9
+BUILDDATE: 17.4.2011
+URL: * http://sourceforge.net/projects/openurllib/files/OpenURL/7.9/OpenURL-7.9.lha/download
 CHANGES:
 ---------------------------------------------------------------------------
-                          openurl.library - 7.6
+                          openurl.library - 7.9
 ---------------------------------------------------------------------------
 
 openurl.library is a library to make it easier for application programmers
