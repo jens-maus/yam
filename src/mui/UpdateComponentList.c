@@ -31,6 +31,7 @@
 #include "UpdateComponentList_cl.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include <mui/NList_mcc.h>
 
 #include "YAM_utilities.h"
@@ -83,6 +84,29 @@ OVERLOAD(MUIM_NList_Destruct)
 
   LEAVE();
   return 0;
+}
+
+///
+/// OVERLOAD(MUIM_NList_Compare)
+OVERLOAD(MUIM_NList_Compare)
+{
+  struct MUIP_NList_Compare *ncm = (struct MUIP_NList_Compare *)msg;
+  struct UpdateComponent *entry1 = (struct UpdateComponent *)ncm->entry1;
+  struct UpdateComponent *entry2 = (struct UpdateComponent *)ncm->entry2;
+  LONG result;
+
+  ENTER();
+
+  // sort the entries by name, but keep YAM's own updates at the top
+  if(Strnicmp(entry1->name, "YAM", 3) == 0)
+    result = -1;
+  else if(Strnicmp(entry2->name, "YAM", 3) == 0)
+    result = +1;
+  else
+    result = Stricmp(entry1->name, entry2->name);
+
+  RETURN(result);
+  return result;
 }
 
 ///

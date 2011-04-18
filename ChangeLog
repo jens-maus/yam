@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-04-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/UpdateComponentList.c, mui/UpdateNotifyWindow.c: the list of updates is
+    now sorted alphabetically with the exception of YAM updates which are forced
+    to be on top.
+
 2011-04-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/UserPortraitGroup.c: changed the base class from Virtgroup.mui to 

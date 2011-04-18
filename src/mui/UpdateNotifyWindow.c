@@ -381,7 +381,7 @@ DECLARE(AddComponent) // struct UpdateComponent *comp
   ENTER();
 
   D(DBF_UPDATE, "added '%s' as a new updateable component", msg->comp->name);
-  DoMethod(data->componentList, MUIM_NList_InsertSingle, msg->comp, MUIV_NList_Insert_Bottom);
+  DoMethod(data->componentList, MUIM_NList_InsertSingle, msg->comp, MUIV_NList_Insert_Sorted);
 
   LEAVE();
   return 0;
