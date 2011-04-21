@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-04-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile, YAM_global.c: added "aros-arm" target to also compile YAM for the
+    ARM processor target officially supported by the AROS platform. Please note,
+    that YAM does not yet compile for the ARM target cleanly as there seems to
+    be some oddity with the VA_ARG() macros in SDI which we have to investigate
+    soon. But at least the nightly builds should be tried to be generated and
+    the error will be added to our nightly build logfiles so that our AROS
+    maintainers can investigate.
+
 2011-04-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/UpdateComponentList.c, mui/UpdateNotifyWindow.c: the list of updates is

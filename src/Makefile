@@ -90,6 +90,9 @@ ifndef (OS)
     ifeq ($(shell uname -m), x86_64)
       OS = aros-x86_64
     endif
+    ifeq ($(shell uname -m), arm)
+      OS = aros-arm
+    endif
   else
     OS = os4
   endif
@@ -408,6 +411,42 @@ ifeq ($(OS), aros-x86_64)
               vasprintf.o \
               vastubs.o
 
+else
+ifeq ($(OS), aros-arm)
+
+  ##############################
+  # AROS (x86_64)
+
+  ifneq ($(HOST), AROS)
+    CC      = arm-aros-gcc
+    STRIP   = arm-aros-strip
+    OBJDUMP = arm-aros-objdump
+  endif
+
+  # Compiler/Linker flags
+  OPTFLAGS = -O2 -fomit-frame-pointer -funroll-loops
+  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1
+  LDLIBS += -lamiga -larossupport -larosc -lmui
+
+  EXTRAOBJS = AllocSysObject.o \
+              DoSuperNew.o \
+              ExamineDir.o \
+              ItemPoolAlloc.o \
+              ItemPoolFree.o \
+              MoveList.o \
+              NewMinList.o \
+              NewReadArgs.o \
+              SetProcWindow.o \
+              asprintf.o \
+              getdelim.o \
+              memdup.o \
+              stcgfe.o \
+              stristr.o \
+              strtok_r.o \
+              vasprintf.o \
+              vastubs.o
+
+endif
 endif
 endif
 endif
@@ -820,6 +859,7 @@ release:
 	@sh $(TOOLS)/mkrelease.sh aros-i386
 	@sh $(TOOLS)/mkrelease.sh aros-ppc
 	@sh $(TOOLS)/mkrelease.sh aros-x86_64
+	@sh $(TOOLS)/mkrelease.sh aros-arm
 
 ## DEPENDENCY INCLUDE #################
 

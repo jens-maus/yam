@@ -101,6 +101,8 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";
   #define CPU "x86"
 #elif defined(__x86_64__)
   #define CPU "x86_64"
+#elif defined(__arm__)
+  #define CPU "ARM"
 #else
   #warning "Unsupported CPU model - check CPU define"
   #define CPU "???"

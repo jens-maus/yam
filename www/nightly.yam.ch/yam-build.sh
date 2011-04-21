@@ -283,6 +283,10 @@ compile_debug AROSppc aros-ppc
 compile_release AROSx86_64 aros-x86_64
 compile_debug AROSx86_64 aros-x86_64
 
+# AROS/ARM target compile
+compile_release AROSarm aros-arm
+compile_debug AROSarm aros-arm
+
 # then delete the temporary stuff again
 rm $DEVDIR/ChangeLog $DEVDIR/README.txt
 rm -rf $DEVDIR/themes
@@ -314,6 +318,7 @@ printf "URL: ppc-morphos http://nightly.yam.ch/`date +%F-dev`/YAM27dev-MorphOS.l
 printf "URL: i386-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSi386.lha\n" >>${UPDCHKPATH}/2.7
 printf "URL: ppc-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSppc.lha\n" >>${UPDCHKPATH}/2.7
 printf "URL: x86_64-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSx86_64.lha\n" >>${UPDCHKPATH}/2.7
+printf "URL: arm-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSarm.lha\n" >>${UPDCHKPATH}/2.7
 printf "CHANGES:\n"  >>${UPDCHKPATH}/2.7
 head -n 100 ${MODULEPATH}/ChangeLog >>${UPDCHKPATH}/2.7
 printf "\n\nTHIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG\n" >>${UPDCHKPATH}/2.7
