@@ -121,65 +121,71 @@ BOOL ReceiveHTTPHeader(struct TransferContext *tc)
 BOOL ReceiveHTTPBody(struct TransferContext *tc, const char *filename)
 {
   BOOL success = FALSE;
-  FILE *out = NULL;
 
-  // prepare the output file
-  if(filename != NULL)
+  if(tc->contentLength > 0)
   {
-    D(DBF_NET, "downloading to file '%s'", filename);
-    out = fopen(filename, "w");
-  }
+    FILE *out = NULL;
 
-  if(filename == NULL || out != NULL)
-  {
-    LONG received = -1;
-    int len;
-
-    setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
-
-    PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, 1, tc->contentLength);
-    PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, 0, 1, tc->contentLength, tr(MSG_HTTP_RECEIVING_DATA));
-
-    // we seem to have reached the entity body, so
-    // from here we retrieve everything we can get and
-    // immediately write it out to a file. that's it :)
-    while(tc->connection->error == CONNECTERR_NO_ERROR &&
-          (len = tc->receiveFunc(tc->connection, tc->requestResponse, sizeof(tc->requestResponse))) > 0)
+    // prepare the output file
+    if(filename != NULL)
     {
-      PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, len, tr(MSG_HTTP_RECEIVING_DATA));
-
-      if(out != NULL && fwrite(tc->requestResponse, len, 1, out) != 1)
-      {
-        received = -1; // signal an error!
-        break;
-      }
-
-      // forget the initial value and sum up all further sizes
-      if(received == -1)
-        received = len;
-      else
-        received += len;
+      D(DBF_NET, "downloading to file '%s'", filename);
+      out = fopen(filename, "w");
     }
 
-    if(tc->contentLength == 0)
-      received = 0;
+    if(filename == NULL || out != NULL)
+    {
+      LONG received = -1;
+      int len;
 
-    D(DBF_NET, "received %ld bytes", received);
+      setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
-    PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_HTTP_RECEIVING_DATA));
+      PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, 1, tc->contentLength);
+      PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, 0, 1, tc->contentLength, tr(MSG_HTTP_RECEIVING_DATA));
 
-    // check if we retrieved anything
-    if(tc->connection->error == CONNECTERR_NO_ERROR && received >= 0)
-      success = TRUE;
+      // we seem to have reached the entity body, so
+      // from here we retrieve everything we can get and
+      // immediately write it out to a file. that's it :)
+      while(tc->connection->error == CONNECTERR_NO_ERROR &&
+            (len = tc->receiveFunc(tc->connection, tc->requestResponse, sizeof(tc->requestResponse))) > 0)
+      {
+        PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, len, tr(MSG_HTTP_RECEIVING_DATA));
 
-    PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
+        if(out != NULL && fwrite(tc->requestResponse, len, 1, out) != 1)
+        {
+          received = -1; // signal an error!
+          break;
+        }
 
-    if(out != NULL)
-      fclose(out);
+        // forget the initial value and sum up all further sizes
+        if(received == -1)
+          received = len;
+        else
+          received += len;
+      }
+
+      D(DBF_NET, "received %ld bytes", received);
+
+      PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_HTTP_RECEIVING_DATA));
+
+      // check if we retrieved anything
+      if(tc->connection->error == CONNECTERR_NO_ERROR && received == tc->contentLength)
+        success = TRUE;
+
+      PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
+
+      if(out != NULL)
+        fclose(out);
+    }
+    else
+      ER_NewError(tr(MSG_ER_CantCreateFile), filename);
   }
   else
-    ER_NewError(tr(MSG_ER_CantCreateFile), filename);
-
+  {
+    // zero content is treated as immediate success
+    success = TRUE;
+  }
+  
   RETURN(success);
   return success;
 }
