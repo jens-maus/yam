@@ -138,7 +138,8 @@ BOOL ReceiveHTTPBody(struct TransferContext *tc, const char *filename)
       LONG received = -1;
       int len;
 
-      setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+      if(out != NULL)
+        setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
       PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, 1, tc->contentLength);
       PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, 0, 1, tc->contentLength, tr(MSG_HTTP_RECEIVING_DATA));
