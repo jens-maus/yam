@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-05-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/http.c: implemented a basic HTTP redirection handling to be able to
+    download update files from sourceforge.net.
+
 2011-04-21 Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile, YAM_global.c: added "aros-arm" target to also compile YAM for the

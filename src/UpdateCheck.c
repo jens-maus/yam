@@ -38,6 +38,7 @@
 #include <mui/TextEditor_mcc.h>
 #include <mui/TheBar_mcc.h>
 
+#include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/muimaster.h>
 #include <proto/timer.h>
@@ -469,6 +470,43 @@ BOOL ParseUpdateFile(const char *filename, const BOOL quiet)
 }
 
 ///
+/// ExtractUpdateFilename
+// extract a valid file name from a URL
+// the final file name is assumed to contain a '.' ahead of the extension
+BOOL ExtractUpdateFilename(const char *url, char *file, size_t fileSize)
+{
+  BOOL success = FALSE;
+  char *p;
+  
+  ENTER();
+  
+  // try the last component first, this one should include a dot
+  if((p = FilePart(url)) != NULL && strchr(p, '.') != NULL)
+  {
+    strlcpy(file, p, fileSize);
+    success = TRUE;
+  }
+  // alternatively assume a URL like "http://foo.bar/archive.lha/download"
+  else if((p = strrchr(url, '.')) != NULL)
+  {
+    while(p != url && p[-1] != '/')
+      p--;
+    strlcpy(file, p, fileSize);
+
+    // now strip everything after the extension which might by followed by a slash
+    p = strrchr(file, '.');
+    while(*p != '\0' && *p != '/')
+      p++;
+    *p = '\0';  
+
+    success = TRUE;
+  }
+
+  RETURN(success);
+  return success;
+}
+
+///
 /// LoadUpdateState
 // Load update state file from disk
 void LoadUpdateState(void)
@@ -597,3 +635,4 @@ void SetDefaultUpdateState(void)
 }
 
 ///
+

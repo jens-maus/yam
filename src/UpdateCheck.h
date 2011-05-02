@@ -65,6 +65,7 @@ void InitUpdateCheck(const BOOL initial);
 void CheckForUpdates(const BOOL quiet);
 char *BuildUpdateRequest(void);
 BOOL ParseUpdateFile(const char *filename, const BOOL quiet);
+BOOL ExtractUpdateFilename(const char *url, char *file, size_t fileSize);
 void LoadUpdateState(void);
 void SaveUpdateState(void);
 void GetLastUpdateState(struct UpdateState *state);

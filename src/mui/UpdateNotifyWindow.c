@@ -399,52 +399,57 @@ DECLARE(Download)
   DoMethod(data->componentList, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &comp);
   if(comp != NULL)
   {
-    const char *drawer = C->UpdateDownloadPath;
-    const char *file = FilePart(comp->url);
-    BOOL doDownload = TRUE;
-    char path[SIZE_PATHFILE];
-
-    do
+    char urlFile[SIZE_FILE];
+    
+    if(ExtractUpdateFilename(comp->url, urlFile, sizeof(urlFile)) == TRUE)
     {
-      struct FileReqCache *frc;
+      const char *drawer = C->UpdateDownloadPath;
+      const char *file = urlFile;
+      BOOL doDownload = TRUE;
+      char path[SIZE_PATHFILE];
 
-      if((frc = ReqFile(ASL_UPDATE, obj, tr(MSG_RE_SAVE_FILE), REQF_SAVEMODE, drawer, file)) != NULL)
+      do
       {
-        AddPath(path, frc->drawer, frc->file, sizeof(path));
+        struct FileReqCache *frc;
 
-        if(FileExists(path) == TRUE)
+        if((frc = ReqFile(ASL_UPDATE, obj, tr(MSG_RE_SAVE_FILE), REQF_SAVEMODE, drawer, file)) != NULL)
         {
-          if(MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), path) == 0)
+          AddPath(path, frc->drawer, frc->file, sizeof(path));
+
+          if(FileExists(path) == TRUE)
           {
-            // user chose not to overwrite the existing file, let him choose another one
+            if(MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), path) == 0)
+            {
+              // user chose not to overwrite the existing file, let him choose another one
+            }
+            else
+            {
+              // download the update to the selected file and overwrite the existing one
+              break;
+            }
           }
           else
           {
-            // download the update to the selected file and overwrite the existing one
+            // download the update to the selected file
             break;
           }
         }
         else
         {
-          // download the update to the selected file
-          break;
+          // file selection canceled, don't download
+          doDownload = FALSE;
         }
       }
-      else
+      while(doDownload == TRUE);
+    
+      if(doDownload == TRUE)
       {
-        // file selection canceled, don't download
-        doDownload = FALSE;
+        // start the download
+        DoAction(NULL, TA_DownloadURL, TT_DownloadURL_Server, comp->url,
+                                       TT_DownloadURL_Filename, path,
+                                       TT_DownloadURL_Flags, DLURLF_VISIBLE,
+                                       TAG_DONE);
       }
-    }
-    while(doDownload == TRUE);
-
-    if(doDownload == TRUE)
-    {
-      // start the download
-      DoAction(NULL, TA_DownloadURL, TT_DownloadURL_Server, comp->url,
-                                     TT_DownloadURL_Filename, path,
-                                     TT_DownloadURL_Flags, DLURLF_VISIBLE,
-                                     TAG_DONE);
     }
   }
 
