@@ -122,6 +122,7 @@ BOOL ReceiveHTTPBody(struct TransferContext *tc, const char *filename)
 {
   BOOL success = FALSE;
 
+  SHOWVALUE(DBF_NET, tc->contentLength);
   if(tc->contentLength > 0)
   {
     FILE *out = NULL;
@@ -157,7 +158,7 @@ BOOL ReceiveHTTPBody(struct TransferContext *tc, const char *filename)
           received = -1; // signal an error!
           break;
         }
-
+        
         // forget the initial value and sum up all further sizes
         if(received == -1)
           received = len;
@@ -165,12 +166,12 @@ BOOL ReceiveHTTPBody(struct TransferContext *tc, const char *filename)
           received += len;
       }
 
-      D(DBF_NET, "received %ld bytes", received);
+      D(DBF_NET, "received %ld/%ld bytes", received, tc->contentLength);
 
       PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_HTTP_RECEIVING_DATA));
 
       // check if we retrieved anything
-      if(tc->connection->error == CONNECTERR_NO_ERROR && received == tc->contentLength)
+      if(tc->connection->error == CONNECTERR_NO_ERROR && received >= 0)
         success = TRUE;
 
       PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
@@ -181,7 +182,7 @@ BOOL ReceiveHTTPBody(struct TransferContext *tc, const char *filename)
     else
       ER_NewError(tr(MSG_ER_CantCreateFile), filename);
   }
-  else
+  else if(tc->contentLength == 0)
   {
     // zero content is treated as immediate success
     success = TRUE;
