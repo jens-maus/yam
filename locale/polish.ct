@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.24 (14.04.2011)
+## version $VER: YAM.catalog 7.25 (11.05.2011)
 ## language polski
 ## codeset 5
 ;
@@ -7014,10 +7014,6 @@ MSG_UPD_NOTIFICATION_NOUPDATE
 W przysz³o¶ci nie informuj mnie o uaktualnieniach
 ; Do not notify me on updates in future
 ;
-MSG_UPD_NOTIFICATION_VISITURL
-Odwied¼ adres URL
-; Visit URL
-;
 MSG_UPD_NOTIFICATION_CLOSE
 Zamknij
 ; Close
@@ -9900,7 +9896,7 @@ Pobieranie
 MSG_TR_DOWNLOADING_FROM_SERVER
 Pobieranie z \"%s\"
 ; Downloading from '%s'
-;
+; SERVER
 MSG_MA_HELP
 Pomoc
 ; Help
@@ -9916,6 +9912,7 @@ Interfejs ARexx'a
 MSG_ER_HELP_FILE_DOES_NOT_EXIST
 Plik pomocy \"%s\" nie istnieje.
 ; The help file '%s' does not exist.
+; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR
 Szukaj na gra_vatar.com...
