@@ -207,7 +207,7 @@ DECLARE(SelectPortrait)
   if((frc = ReqFile(ASL_PHOTO, ea->GUI.WI, tr(MSG_EA_SelectPhoto_Title), REQF_NONE, C->GalleryDir, ea->PhotoName)) != NULL)
   {
     AddPath(ea->PhotoName, frc->drawer, frc->file, sizeof(ea->PhotoName));
-    DoMethod(obj, METHOD(SetPortrait));
+    DoMethod(obj, METHOD(SetPortrait), NULL);
   }
 
   LEAVE();

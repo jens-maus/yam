@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-05-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/UserPortraitGroup.c: added missing parameter to method call. This
+    closes #259.
+
 2011-05-11 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: fixed one warning.
