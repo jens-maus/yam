@@ -578,14 +578,9 @@ HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
 
   ENTER();
 
-  kprintf("obj %08lx\n",arg[0]);
   soundFile = (char *)xget((Object *)arg[0], MUIA_String_Contents);
-  kprintf("%08lx '%s'\n",soundFile,soundFile?soundFile:"NULL");
   if(soundFile != NULL && soundFile[0] != '\0')
-  {
-  	kprintf("playing sound\n");
     PlaySound(soundFile);
-  }
 
   LEAVE();
 }
