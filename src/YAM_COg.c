@@ -578,8 +578,14 @@ HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
 
   ENTER();
 
+  kprintf("obj %08lx\n",arg[0]);
   soundFile = (char *)xget((Object *)arg[0], MUIA_String_Contents);
-  PlaySound(soundFile);
+  kprintf("%08lx '%s'\n",soundFile,soundFile?soundFile:"NULL");
+  if(soundFile != NULL && soundFile[0] != '\0')
+  {
+  	kprintf("playing sound\n");
+    PlaySound(soundFile);
+  }
 
   LEAVE();
 }
@@ -1896,7 +1902,7 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
     #endif // __amigaos4__
 
     set(bt_notisound,MUIA_CycleChain,1);
-    DoMethod(bt_notisound          ,MUIM_Notify,MUIA_Pressed ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_PlaySoundHook);
+    DoMethod(bt_notisound          ,MUIM_Notify,MUIA_Pressed ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_PlaySoundHook,data->GUI.ST_NOTISOUND);
     DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
     DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,bt_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
     DoMethod(data->GUI.CH_NOTICMD  ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_noticmd             ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);

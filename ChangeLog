@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-06-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c: added missing parameter for MUIM_CallHook and an empty string
+    check to avoid trying to play non-existent sound files. This closes #263.
+
 2011-05-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/UserPortraitGroup.c: added missing parameter to method call. This
@@ -37,7 +42,7 @@ $URL$
 
 2011-04-14 Thore Böckelmann <tboeckel@gmx.de>
 
-  * mui/UserPortraitGroup.c: changed the base class from Virtgroup.mui to 
+  * mui/UserPortraitGroup.c: changed the base class from Virtgroup.mui to
     Group.mui since there is no need for a virtual group at all.
 
 2011-04-14 Mariusz Danilewicz <mandi@interia.pl>
