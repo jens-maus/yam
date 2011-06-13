@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (09.03.2011)
+## version $VER: YAM.catalog 7.2 (13.06.2011)
 ## language français
 ## codeset 111
 ;
@@ -9874,13 +9874,11 @@ Vérifie automatiquement ce compte\n\
 MSG_IMPORT_UNKNOWN_FILE_FORMAT
 Format de message inconnu dans le fichier « %s ».
 ; Unknown mail file format in file '%s'.
-;
 ; FILE
 ;
 MSG_IMPORT_NO_MAILS
 Le fichier « %s » ne contient aucun message importable.
 ; The file '%s' does not contain any importable mails.
-;
 ; FILE
 ;
 MSG_CO_CONFIG_IS_LOCKED
@@ -9902,7 +9900,6 @@ Messages : %ld (%ld nouveaux, %ld non lus)
 ; Path: %s\n\
 ; Size: %s\n\
 ; Messages: %ld (%ld new, %ld unread)
-;
 ; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MAILINFO_SHORTHELP
@@ -9920,7 +9917,6 @@ Taille : %s
 ; Date: %s\n\
 ; Filename: %s\n\
 ; Size: %s
-;
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_CO_UPDATE_DOWNLOAD_PATH
@@ -9934,5 +9930,36 @@ Téléchargement
 MSG_TR_DOWNLOADING_FROM_SERVER
 Téléchargement depuis « %s »
 ; Downloading from '%s'
-;
 ; SERVER
+MSG_MA_HELP
+Aide
+; Help
+;
+MSG_MA_HELP_CONTENTS
+Contenu
+; Contents
+;
+MSG_MA_HELP_AREXX
+Interface ARexx
+; ARexx interface
+;
+MSG_ER_HELP_FILE_DOES_NOT_EXIST
+Le fichier d'aide « %s » n'existe pas.
+; The help file '%s' does not exist.
+;
+; FILE
+;
+MSG_EA_SEARCH_GRAVATAR
+Rechercher sur gra_vatar.com...
+; Search on gra_vatar.com...
+;
+MSG_ER_NO_GRAVATAR_FOUND
+Aucun Gravatar trouvé pour l'adresse « %s ».\n\
+\n\
+Cette personne n'a peut-être pas encore téléchargé de portrait sur gravatar.com.
+; No Gravatar found for address '%s'.\n\
+; \n\
+; Perhaps the person has not uploaded a portrait image to gravatar.com yet.
+;
+; ADDRESS
+;
