@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.27 (11.4.2011)
+## version $VER: YAM.catalog 7.28 (21.6.2011)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -7718,7 +7718,7 @@ MSG_WR_SELECTNONE
 Auswahl aufheben
 ;
 MSG_MA_INVALIDMFILE_TITLE
-Invalide Nachrichtendatei gefunden
+Ungültige Nachrichtendatei gefunden
 ;
 MSG_MA_INVALIDMFILE
 Beim Analysieren der Datei '%s' des Ordners '%s' hat\n\
@@ -7846,7 +7846,7 @@ MSG_ER_B64DEC_WARN
 Es wurden einige nicht erlaubte Zeichen während des \
 Dekodierens des base64-kodierten MIME-Teiles %ld der \
 Nachricht '%s' gefunden. Die Ausgabe könnte daher \
-möglicherweise invalide Daten enthalten oder aber \
+möglicherweise ungültige Daten enthalten oder aber \
 beschädigt sein.\n\
 \n\
 Dies kann durch eine falsche Kodierung der Nachricht \
@@ -8620,4 +8620,9 @@ Kein Gravatar für die Adresse '%s' gefunden.\n\
 \n\
 Eventuell hat die Person noch kein Porträtbild zu gravatar.com hochgeladen.
 ; ADDRESS
+;
+MSG_ER_NON_MIME_CONFORMANT_MAIL
+Beim Durchsuchen der Nachricht '%s' wurde keine 'MIME-Version' Kopfzeile gefunden. \
+Die Ausgabe könnte daher möglicherweise ungültige Daten enthalten oder aber beschädigt sein.
+; MSGFILE
 ;

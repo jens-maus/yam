@@ -7047,3 +7047,8 @@ No Gravatar found for address '%s'.\n\
 Perhaps the person has not uploaded a portrait image to gravatar.com yet.
 ; ADDRESS
 ;
+MSG_ER_NON_MIME_CONFORMANT_MAIL (2220//)
+No 'MIME-Version' header line was found while scanning the mail file '%s'. \
+The generated output may therefore contain invalid data or may be corrupted.
+; MSGFILE
+;

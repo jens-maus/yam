@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-06-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: non-MIME-conformant mails without a MIME-Version header line are
+    no longer displayed as raw 7bit ASCII text but will be decoded as usual.
+    However, a warning about the missing header line will be presented to give
+    the user a hint about that fact. Non-MIME-conformant mail clients (like that
+    Android thingy) are becoming more and more common these days and it is
+    better to have a possibly malformed mail text than a raw base64 dump. This
+    closes #264.
+
 2011-06-13  Alexandre Balaban <abalaban@free.fr>
 
   * locale/french.ct: updated according to latest changes.

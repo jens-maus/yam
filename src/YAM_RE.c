@@ -1135,11 +1135,14 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
 
   // if this is a main header scan and if this main part
   // is non MIME conform, we have to force the encoding mode to
-  // 7bit US-ASCII due to RFC2049 rules
+  // 7bit US-ASCII due to RFC2049 rules.
+  // However, unfortunately non-MIME-conformant mail clients are
+  // becoming more and more common these days that we better present
+  // a possibly broken decoded mail text to the user instead of the
+  // raw base64 encoded text. Thus we just bother the user with a warning.
   if(mode == RHM_MAINHEADER && isMIMEconform(rp) == FALSE)
   {
-    W(DBF_MAIL, "found non-MIME conform mail, forcing encoding to 7bit");
-    rp->EncodingCode = ENC_7BIT;
+    ER_NewError(tr(MSG_ER_NON_MIME_CONFORMANT_MAIL), rp->rmData->readFile);
   }
 
   RETURN(TRUE);
