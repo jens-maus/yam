@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-06-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: the error message about non-MIME-conformant mails will only be
+    shown if an encoding other than plain 7bit ASCII is requested. Without any
+    fancy encoding there will be no error message, even if the MIME-Version
+    header line is missing.
+
 2011-06-21 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.
