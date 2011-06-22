@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.87 (13.04.2011)
+## version $VER: YAM.catalog 7.88 (21.06.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.8 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5684 2011-04-11
+; based on YAM.cd 5670 2011-06-21
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -10082,4 +10082,12 @@ inviato un avatar al sito gravatar.com.
 ; \n\
 ; Perhaps the person has not uploaded a portrait image to gravatar.com yet.
 ; ADDRESS
+;
+MSG_ER_NON_MIME_CONFORMANT_MAIL
+Non è stata trovata alcuna linea di intestazione 'Versione-MIME'\n\
+durante l'analisi del file di posta '%s'.\n\
+L'output generato potrebbe contenere dati invalidi o corrotti.
+; No 'MIME-Version' header line was found while scanning the mail file '%s'. \
+; The generated output may therefore contain invalid data or may be corrupted.
+; MSGFILE
 ;

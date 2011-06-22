@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-06-21 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2011-06-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: non-MIME-conformant mails without a MIME-Version header line are
