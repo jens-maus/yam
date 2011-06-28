@@ -115,6 +115,7 @@ static BOOL FI_MatchString(const struct Search *search, const char *string)
   {
     case 0:
     case 1:
+    case 4:
     {
       if(isFlagSet(search->flags, SEARCHF_DOS_PATTERN))
       {
@@ -430,7 +431,7 @@ static BOOL FI_SearchPatternInHeader(const struct Search *search, const struct M
   BOOL found = FALSE;
 
   ENTER();
-
+  
   GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
 
   if(StartUnpack(mailfile, fullfile, mail->Folder) != NULL)
@@ -758,8 +759,6 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
   #endif // DEBUG
 
   ENTER();
-
-  D(DBF_FILTER, "doing filter search in message '%s'...", mail->Subject);
 
   #if defined(DEBUG)
   if(isFlagSet(search->flags, SEARCHF_DOS_PATTERN))

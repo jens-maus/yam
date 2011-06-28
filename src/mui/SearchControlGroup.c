@@ -283,50 +283,50 @@ OVERLOAD(OM_NEW)
     SetHelp(data->RA_ADRMODE, MSG_HELP_FI_RA_ADRMODE);
     SetHelp(data->CY_STATUS,  MSG_HELP_FI_CY_STATUS);
 
-    DoMethod(data->CY_MODE[0], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, MUIM_SearchControlGroup_Update);
-    DoMethod(data->CY_MODE[1], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, MUIM_SearchControlGroup_Update);
-    DoMethod(data->CY_COMBINE, MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
-    DoMethod(data->RA_ADRMODE, MUIM_Notify, MUIA_Radio_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
-    DoMethod(data->ST_FIELD,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
-    DoMethod(data->CY_STATUS,  MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+    DoMethod(data->CY_MODE[0], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(Update));
+    DoMethod(data->CY_MODE[1], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(Update));
+    DoMethod(data->CY_COMBINE, MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+    DoMethod(data->RA_ADRMODE, MUIM_Notify, MUIA_Radio_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+    DoMethod(data->ST_FIELD,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+    DoMethod(data->CY_STATUS,  MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
 
     for(i = 0; i < 5; i++)
     {
       if(data->CY_COMP[i] != NULL)
       {
-        DoMethod(data->CY_COMP[i], MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 1, MUIM_SearchControlGroup_Update);
-        DoMethod(data->CY_COMP[i], MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+        DoMethod(data->CY_COMP[i], MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 1, METHOD(Update));
+        DoMethod(data->CY_COMP[i], MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
         SetHelp(data->CY_COMP[i], MSG_HELP_FI_CY_COMP);
         set(data->CY_COMP[i], MUIA_HorizWeight, 0);
       }
 
       if(data->ST_MATCH[i] != NULL)
       {
-        DoMethod(data->ST_MATCH[i], MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+        DoMethod(data->ST_MATCH[i], MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
         SetHelp(data->ST_MATCH[i], MSG_HELP_FI_ST_MATCH);
       }
 
       if(data->CH_CASESENS[i] != NULL)
       {
-        DoMethod(data->CH_CASESENS[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+        DoMethod(data->CH_CASESENS[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
         SetHelp(data->CH_CASESENS[i], MSG_HELP_FI_CH_CASESENS);
       }
 
       if(data->CH_SUBSTR[i] != NULL)
       {
-        DoMethod(data->CH_SUBSTR[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+        DoMethod(data->CH_SUBSTR[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
         SetHelp(data->CH_SUBSTR[i], MSG_HELP_FI_CH_SUBSTR);
         nnset(data->CH_SUBSTR[i], MUIA_Selected, TRUE);
       }
 
       if(data->CH_DOSPATTERN[i] != NULL)
       {
-        DoMethod(data->CH_DOSPATTERN[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_SearchControlGroup_Modified, TRUE);
+        DoMethod(data->CH_DOSPATTERN[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
         SetHelp(data->CH_DOSPATTERN[i], MSG_HELP_FI_CH_DOS_PATTERN);
       }
 
       if(data->BT_EDIT[i] != NULL)
-        DoMethod(data->BT_EDIT[i], MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_SearchControlGroup_EditFile, i);
+        DoMethod(data->BT_EDIT[i], MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(EditFile), i);
     }
 
     // make sure all elements are enabled.
@@ -473,6 +473,10 @@ DECLARE(PrepareSearch) // struct Search *search
     match = "";
 
   field = (const char *)xget(data->ST_FIELD, MUIA_String_Contents);
+  
+  // enable DOS patterns automatically if a pattern file is given
+  if(GetMUICycle(data->CY_COMP[pg]) == 4)
+    nnset(data->CH_DOSPATTERN[pg], MUIA_Selected, TRUE);
 
   flags = 0;
   if(GetMUICheck(data->CH_CASESENS[pg]) == TRUE)
@@ -525,6 +529,10 @@ DECLARE(SetToRule) // struct RuleNode *rule
     SET_FLAG(rule->flags, SEARCHF_SUBSTRING);
 
   if(data->CH_DOSPATTERN[g] != NULL && GetMUICheck(data->CH_DOSPATTERN[g]) == TRUE)
+    SET_FLAG(rule->flags, SEARCHF_DOS_PATTERN);
+
+  // enable DOS patterns automatically if a pattern file is given
+  if(rule->comparison == 4)
     SET_FLAG(rule->flags, SEARCHF_DOS_PATTERN);
 
   return 0;
@@ -617,7 +625,7 @@ DECLARE(Update)
     set(obj, MUIA_Disabled, FALSE);
   }
 
-  set(obj, MUIA_SearchControlGroup_Modified, TRUE);
+  set(obj, ATTR(Modified), TRUE);
 
   RETURN(0);
   return 0;
