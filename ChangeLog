@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-06-29 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
 2011-06-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c, mui/SearchControlGroup.c: doing a search with a pattern is now

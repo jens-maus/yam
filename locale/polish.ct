@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.25 (11.05.2011)
+## version $VER: YAM.catalog 7.26 (29.06.2011)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5684;
+; in sync with .cd in revision 5710;
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9926,4 +9926,12 @@ Prawdopodobnie osoba nie wys³a³a swojego portretu na gravatar.com.
 ; \n\
 ; Perhaps the person has not uploaded a portrait image to gravatar.com yet.
 ; ADDRESS
+;
+MSG_ER_NON_MIME_CONFORMANT_MAIL
+Nie odnaleziono linii nag³ówka \"MIME-Version\" podczas skanowania pliku wiadomo¶ci \
+\"%s\". Z tego powodu wygenerowany plik wyj¶ciowy mo¿e zawieraæ nieprawid³owe dane \
+lub mo¿e byæ uszkodzony.
+; No 'MIME-Version' header line was found while scanning the mail file '%s'. \
+; The generated output may therefore contain invalid data or may be corrupted.
+; MSGFILE
 ;
